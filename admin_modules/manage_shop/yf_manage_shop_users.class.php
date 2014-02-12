@@ -17,7 +17,8 @@ class yf_manage_shop_users{
 					'name'		=> 'like',
 					'email'		=> 'like',
 					'phone'		=> 'like',
-					'address'	=> 'like',					
+					'address'	=> 'like',			
+					'add_date'	=> 'dt_between',					
 				),
 			))
 			->text('id')

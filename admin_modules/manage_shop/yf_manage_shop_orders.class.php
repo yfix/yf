@@ -47,7 +47,7 @@ class yf_manage_shop_orders{
 					'phone'		=> array('like','o.phone'),
 					'email' 	=> array('like','o.phone'),
 					'user_id'	=> array('eq','o.user_id'),
-					'date'		=> array('field' => 'o.date'),
+					'date'		=> array('dt_between', 'o.date'),
 					'total_sum' => array('between','o.total_sum'),
 				),
 				'hide_empty' => 1,

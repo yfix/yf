@@ -556,6 +556,13 @@ class yf_table2 {
 			'like'		=> function($a){ return ' LIKE "%'._es($a['value']).'%"'; }, // LIKE '%'.$value.'%'
 			'rlike'		=> function($a){ return ' RLIKE "'._es($a['value']).'"'; }, // regular expression, RLIKE $value
 			'between'	=> function($a){ return strlen($a['and']) ? ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"' : ' = "'._es($a['value']).'"'; }, // BETWEEN $min AND $max
+			'dt_eq'		=> function($a){ return ' = "'._es(strtotime($a['value'])).'"'; }, // "equal"
+			'dt_ne'		=> function($a){ return ' != "'._es(strtotime($a['value'])).'"'; }, // "not equal"
+			'dt_gt'		=> function($a){ return ' > "'._es(strtotime($a['value'])).'"'; }, // "greater than",
+			'dt_gte'		=> function($a){ return ' >= "'._es(strtotime($a['value'])).'"'; }, // "greater or equal than",
+			'dt_lt'		=> function($a){ return ' < "'._es(strtotime($a['value'])).'"'; }, // "less than",
+			'dt_lte'		=> function($a){ return ' <= "'._es(strtotime($a['value'])).'"'; }, // "lower or equal than"
+			'dt_between'	=> function($a){ return strlen($a['and']) ? ' BETWEEN "'._es(strtotime($a['value'])).'" AND "'._es(strtotime($a['and'])).'"' : ' = "'._es(strtotime($a['value'])).'"'; }, // BETWEEN $min AND $max					
 		);
 		foreach((array)$filter_data as $k => $v) {
 			if (!strlen($k)) {
@@ -598,7 +605,7 @@ class yf_table2 {
 				$func = null;
 				// Here we can override default 'eq' condition with custom one by passing filter $params like this: table($sql, array('filter_params' => $filter_params)).
 				$field_params = $filter_params[$k];
-				if ($field_params) {
+				if ($field_params) {					
 					// Fully replacing left and right parts with callback function
 					// Example: table($sql, array('filter_params' => array('value' => function($a){ return ' v.value LIKE "%'._es($a['value']).'%" '; } )))
 					if (is_callable($field_params)) {
@@ -641,7 +648,7 @@ class yf_table2 {
 		}
 		if ($filter_data['order_by'] && strpos(strtoupper($__sql), 'ORDER BY') === false) {
 			$order_by_field = $filter_data['order_by'];
-			if (isset($filter_params[$order_by_field])) {
+			if (is_array($filter_params[$order_by_field])) {
 				$field_params = $filter_params[$order_by_field];
 				if ($field_params['field']) {
 					$order_by_field = $field_params['field'];

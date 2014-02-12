@@ -22,6 +22,7 @@ class yf_manage_shop_feedback{
 					'content'	=> array('like','f.content'),
 					'pros'		=> array('like','f.pros'),
 					'cons'		=> array('like','f.cons'),
+					'add_date'	=> array('dt_between', 'f.add_date'),					
 				),
 			))
 			->text('id')

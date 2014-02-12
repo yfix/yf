@@ -45,7 +45,7 @@ class yf_manage_shop_filter{
 				$fields = array('id','name','cat_id','price','active','quantity','manufacturer_id','supplier_id','add_date','update_date');
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
-				}
+				};
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 //					->number('id')
 					->container(_class('manage_shop_filter')->_product_search_widget('id',$_SESSION[$filter_name]['id']),'Id')						
@@ -55,6 +55,8 @@ class yf_manage_shop_filter{
 						->number('price')
 						->number('price__and')
 					->row_end()
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')
 					->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
 					->select_box('supplier_id', _class('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'no_translate' => 1, 'hide_empty' => 1))
 					->select_box('manufacturer_id', _class('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'no_translate' => 1))
@@ -71,6 +73,8 @@ class yf_manage_shop_filter{
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->number('id', array('class' => 'span1'))
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')						
 					->text('name')
 					->text('email')
 					->text('phone')
@@ -89,6 +93,8 @@ class yf_manage_shop_filter{
 						->number('id')
 						->number('id__and')
 					->row_end()
+					->datetime_select('date')
+					->datetime_select('date__and')						
 					->text('name')
 					->text('phone')
 					->text('email')
@@ -155,6 +161,8 @@ class yf_manage_shop_filter{
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->number('id', array('class' => 'span1'))
 					->container(_class('manage_shop_filter')->_product_search_widget('product_id',$_SESSION[$filter_name]['product_id']),'product_id')						
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')						
 					->text('name')
 					->text('email')
 					->text('content')

@@ -2214,6 +2214,63 @@ class yf_form2 {
 		}
 		return $func($extra, $replace, $this);
 	}
+	
+	/**
+	* Datetimepicker, src: http://tarruda.github.io/bootstrap-datetimepicker/
+	* params :  no_date // no date picker
+				no_time // no time picker
+	 * 
+	*/
+	function datetime_select($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra += $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		
+		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
+		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$func = function($extra, $r, $_this) {
+			// Compatibility with filter
+			if (!strlen($extra['value'])) {
+				if (isset($extra['selected'])) {
+					$extra['value'] = $extra['selected'];
+				} elseif (isset($_this->_params['selected'])) {
+					$extra['value'] = $_this->_params['selected'][$extra['name']];
+				}
+			}
+			$format = array();
+			if ($extra['no_date']!=1) $format[] = "MM/dd/yyyy";
+			if ($extra['no_time']!=1) $format[] = "HH:mm:ss";
+			$body = "
+<script type=\"text/javascript\" src=\"https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js\"></script>
+<link rel=\"stylesheet\" type=\"text/css\" href=\"https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css\">
+<div id=\"{$extra['name']}\" class=\"input-append date\">
+    <input data-format=\"".implode(" ",$format)."\" name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\"></input>
+    <span class=\"add-on\">
+      <i data-time-icon=\"icon-time\" data-date-icon=\"icon-calendar\"></i>
+    </span>		
+</div>
+<script type=\"text/javascript\">
+  $(function() {
+    $('#{$extra['name']}').datetimepicker({
+      language: 'en',
+	  ".($extra['no_time']==1 ? "pickTime: false," : "")."
+	  ".($extra['no_date']==1 ? "pickDate: false," : "")."
+    });
+  });
+</script>
+";
+			return $_this->_row_html($body, $extra, $r);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}	
 
 	/**
 	*/

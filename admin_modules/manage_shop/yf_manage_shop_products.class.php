@@ -28,7 +28,7 @@ class yf_manage_shop_products{
 					'image'			=> array('eq','p.image'),
 					'cat_id'		=> array('field' => 'p.cat_id'),
 					'quantity'		=> array('field' => 'p.quantity'),
-					'add_date'		=> array('field' => 'p.add_date'),
+					'add_date'		=> array('dt_between', 'p.add_date'),
 					'update_date'	=> array('field' => 'p.update_date'),
 				),
 				'hide_empty' => 1,
