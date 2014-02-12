@@ -77,9 +77,9 @@ class yf_divide_pages {
 			} else {
 				if (!empty($this->OVERRIDE_DB_OBJECT)) {
 					$obj = $this->OVERRIDE_DB_OBJECT;
-					list($total_records) = $obj->query_fetch($modified_sql);
+					$total_records = $obj->get_one($modified_sql);
 				} else {
-					list($total_records) = db()->query_fetch($modified_sql);
+					$total_records = db()->get_one($modified_sql);
 				}
 			}
 		} else {
