@@ -627,7 +627,7 @@ class yf_menus_editor {
 				}
 			))
 			->select_box('type_id', $this->_item_types)
-			->select_box('parent_id', $this->_get_parents_for_select($menu_info['id'], $menu_info['id']), array('desc' => 'Parent item'))
+			->select_box('parent_id', $this->_get_parents_for_select($menu_info['id'], $item_info['id']), array('desc' => 'Parent item'))
 			->text('name')
 			->location_select_box('location')
 			->multi_select_box('user_groups', $this->_groups[$menu_info['type']], array('edit_link' => './?object='.$menu_info['type'].'_groups', 'desc' => 'Groups'))
@@ -643,8 +643,11 @@ class yf_menus_editor {
 	*/
 	function _get_parents_for_select($menu_id, $skip_id = null) {
 		$data = array(0 => '-- TOP --');
-		foreach ((array)$this->_recursive_get_menu_items($menu_id, $skip_id) as $cur_item_id => $cur_item_info) {
+		foreach ((array)$this->_recursive_get_menu_items($menu_id/*, $skip_id*/) as $cur_item_id => $cur_item_info) {
 			if (empty($cur_item_id)) {
+				continue;
+			}
+			if ($skip_id && $cur_item_id == $skip_id) {
 				continue;
 			}
 			$data[$cur_item_id] = str_repeat('&nbsp; &nbsp; &nbsp; ', $cur_item_info['level']).' &#9492; &nbsp; '.$cur_item_info['name'];
