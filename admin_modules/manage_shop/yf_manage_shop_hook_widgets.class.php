@@ -18,7 +18,13 @@ class yf_manage_shop_hook_widgets {
 		}
 		$config = $params;
 		$sql = 'SELECT * FROM '.db('shop_products').' ORDER BY add_date DESC';
-		return table($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
+		return table($sql, array(
+				'no_header' => 1, 
+				'btn_no_text' => 1, 
+				'no_records_simple' => 1, 
+				'no_pages' => 1,
+				'pager_sql_callback' => function($sql) { return preg_replace('/^SELECT.*FROM/ims', 'SELECT COUNT(*) FROM', ltrim($sql)); }
+			))
 			->text('id', array('link' => '/shop/product/%d', 'rewrite' => 1, 'data' => '@name'))
 			->text('price')
 			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d')
@@ -44,7 +50,13 @@ class yf_manage_shop_hook_widgets {
 			INNER JOIN '.db('shop_orders').' AS o ON o.id = i.order_id
 			GROUP BY p.id
 			ORDER BY o.date DESC';
-		return table($sql, array('no_header' => 1, 'btn_no_text' => 1, 'no_records_simple' => 1, 'no_pages' => 1))
+		return table($sql, array(
+				'no_header' => 1,
+				'btn_no_text' => 1,
+				'no_records_simple' => 1,
+				'no_pages' => 1,
+				'pager_sql_callback' => function($sql) { return preg_replace('/^SELECT.*FROM/ims', 'SELECT COUNT(*) FROM', ltrim($sql)); }
+			))
 			->text('id', array('link' => '/shop/product/%d', 'rewrite' => 1, 'data' => '@name'))
 			->text('price')
 			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d')
