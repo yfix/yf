@@ -15,6 +15,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   2 => 
   array (
@@ -31,6 +32,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   3 => 
   array (
@@ -47,6 +49,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   4 => 
   array (
@@ -63,6 +66,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   5 => 
   array (
@@ -79,6 +83,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   6 => 
   array (
@@ -95,6 +100,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   7 => 
   array (
@@ -111,6 +117,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   8 => 
   array (
@@ -127,6 +134,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   9 => 
   array (
@@ -143,6 +151,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   10 => 
   array (
@@ -159,6 +168,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   11 => 
   array (
@@ -175,6 +185,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   12 => 
   array (
@@ -191,6 +202,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   13 => 
   array (
@@ -207,6 +219,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   14 => 
   array (
@@ -223,6 +236,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   20 => 
   array (
@@ -239,6 +253,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   21 => 
   array (
@@ -255,6 +270,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   22 => 
   array (
@@ -271,6 +287,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   23 => 
   array (
@@ -287,6 +304,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   24 => 
   array (
@@ -303,6 +321,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   25 => 
   array (
@@ -319,6 +338,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   28 => 
   array (
@@ -335,6 +355,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   29 => 
   array (
@@ -351,6 +372,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   31 => 
   array (
@@ -367,6 +389,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   32 => 
   array (
@@ -383,6 +406,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   34 => 
   array (
@@ -399,6 +423,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   35 => 
   array (
@@ -415,6 +440,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   37 => 
   array (
@@ -431,6 +457,7 @@ $data = array (
     'server_ids' => '',
     'cond_code' => '',
     'icon' => '',
+    'other_info' => '',
   ),
   1274 => 
   array (
