@@ -347,7 +347,7 @@ class yf_debug_info {
 				'id'		=> $num,
 				'sql'		=> $sql,
 				'rows'		=> strval($log['rows']),
-				'error'		=> _prepare_html($log['error']),
+				'error'		=> $log['error'] ? '<pre>'._prepare_html(var_export($log['error'], 1)).'</pre>' : '',
 				'exec_time'	=> strval($exec_time),
 				'trace'		=> $_cur_trace,
 				'explain'	=> $_cur_explain,
@@ -357,7 +357,11 @@ class yf_debug_info {
 		$body .= ' | '.t('connect_time').': '.common()->_format_time_value($db->_connection_time).'<span> sec';
 // TODO: find errors result == -1 or null) or maybe track errors inside db()
 // TODO: highlight errors with <tr class="error">
-		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%','hidden_map' => array('explain' => 'sql', 'trace' => 'sql', 'error' => 'sql')));
+		$body .= $this->_show_auto_table($items, array(
+			'first_col_width' => '1%',
+			'hidden_map' => array('explain' => 'sql', 'trace' => 'sql', 'error' => 'sql'),
+			'tr' => function($row, $id) { return $row['error'] ? ' class="error"' : '';}
+		));
 		return $body;
 	}
 
@@ -1038,6 +1042,8 @@ class yf_debug_info {
 			'pager_records_on_page' => 10000,
 			'hidden_map'		=> $params['hidden_map'],
 			'first_col_width'	=> $params['first_col_width'],
+			'tr'				=> $params['tr'],
+			'td'				=> $params['td'],
 		))->auto();
 
 		foreach ((array)$params['hidden_map'] as $name => $to) {
