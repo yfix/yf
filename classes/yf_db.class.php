@@ -16,13 +16,7 @@ class yf_db {
 	/** @var int @conf_skip Number of queries */
 	public $NUM_QUERIES				= 0;
 	/** @var array Query log array */
-	public $QUERY_LOG				= array();
-	/** @var array */
-	public $QUERY_AFFECTED_ROWS		= array();
-	/** @var array */
-	public $QUERY_EXEC_TIME			= array();
-	/** @var array */
-	public $QUERY_BACKTRACE_LOG		= array();
+	public $_LOG					= array();
 	/** @var int Tables cache lifetime (while developing need to be short) (else need to be very large) */
 	public $TABLE_NAMES_CACHE_TTL	= 3600; // 1*3600*24 = 1 day
 	/** @var bool Auto-connect on/off */
@@ -114,7 +108,11 @@ class yf_db {
 	/** @var array List of tables inside current database */
 	public $_PARSED_TABLES			= array();
 	/** @var array */
-// TODO: read _class('dir')->scan(YF_PATH.'share/db_installer/db_table_sql/', 1, '-f /sys_[a-z0-9_]+\.db_table_sql\.php/')
+// TODO: glob(PROJECT_PATH.'share/db_installer/sql/sys_*.sql.php')
+// TODO: glob(PROJECT_PATH.'plugins/*/share/db_installer/sql/sys_*.sql.php')
+// TODO: glob(YF_PATH.'share/db_installer/sql/sys_*.sql.php')
+// TODO: glob(YF_PATH.'priority2/share/db_installer/sql/sys_*.sql.php')
+// TODO: glob(YF_PATH.'plugins/*/share/db_installer/sql/sys_*.sql.php')
 	public $_need_sys_prefix		= array(
 		'admin', 'admin_groups', 'admin_modules', 'block_rules', 'blocks', 'categories', 'category_items', 'conf', 'core_servers', 'custom_bbcode',
 		'custom_replace_tags', 'custom_replace_words', 'locale_langs', 'locale_translate', 'locale_vars', 'log_admin_auth', 'log_admin_auth_fails', 'log_auth',
@@ -330,7 +328,7 @@ class yf_db {
 			$this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace_string() : array());
 		}
 		if (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
-			$this->_query_log($sql, $this->USE_QUERY_BACKTRACE ? $this->_trace_string() : array());
+			$this->_query_log($sql, $this->USE_QUERY_BACKTRACE ? $this->_trace_string() : array(), $db_error);
 		}
 		return $result;
 	}
@@ -352,7 +350,7 @@ class yf_db {
 
 	/**
 	*/
-	function _query_log($sql, $_trace = array()) {
+	function _query_log($sql, $_trace = array(), $db_error = false) {
 		$_log_allowed = false;
 		if (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
 			$_log_allowed = true;
@@ -361,25 +359,29 @@ class yf_db {
 			return false;
 		}
 		// Save memory on high number of query log entries
-		if ($this->LOGGED_QUERIES_LIMIT && count($this->QUERY_LOG) >= $this->LOGGED_QUERIES_LIMIT) {
+		if ($this->LOGGED_QUERIES_LIMIT && count($this->_LOG) >= $this->LOGGED_QUERIES_LIMIT) {
 			$_log_allowed = false;
 		}
 		if (!$_log_allowed) {
 			return false;
 		}
-		$this->QUERY_LOG[] = $sql;
-		$this->QUERY_EXEC_TIME[] = (float)microtime(true) - (float)$this->_query_time_start;
-		if (!empty($_trace)) {
-			$this->QUERY_BACKTRACE_LOG[] = $_trace;
-		}
+		$time = (float)microtime(true) - (float)$this->_query_time_start;
 		if ($this->GATHER_AFFECTED_ROWS) {
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
+			$rows = null;
 			if (in_array($_sql_type, array('INSERT', 'UPDATE', 'REPLACE', 'DELETE'))) {
-				$this->QUERY_AFFECTED_ROWS[$sql] = $this->affected_rows();
+				$rows = $this->affected_rows();
 			} elseif ($_sql_type == 'SELECT') {
-				$this->QUERY_AFFECTED_ROWS[$sql] = $this->num_rows($result);
+				$rows = $this->num_rows($result);
 			}
 		}
+		$this->_LOG[] = array(
+			'sql'	=> $sql,
+			'rows'	=> $rows,
+			'error'	=> $db_error,
+			'time'	=> $time,
+			'trace'	=> $_trace,
+		);
 	}
 
 	/**

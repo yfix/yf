@@ -276,21 +276,21 @@ class yf_debug_info {
 		if (!$this->_SHOW_DB_QUERY_LOG) {
 			return '';
 		}
-		if (!is_object($db) || !is_array($db->QUERY_LOG) || !$db->_tried_to_connect) {
+		if (!is_object($db) || !is_array($db->_LOG) || !$db->_tried_to_connect) {
 			return false;
 		}
 		$items = array();
-		$db_queries_list = $db->QUERY_LOG;
+		$db_queries_list = $db->_LOG;
 		if ($this->_SHOW_DB_EXPLAIN_QUERY && !empty($db_queries_list) && substr($db->DB_TYPE, 0, 5) == 'mysql') {
-			foreach ((array)$db_queries_list as $id => $_query_text) {
-				$_query_text = trim($_query_text);
+			foreach ((array)$db_queries_list as $id => $log) {
+				$sql = trim($log['sql']);
 				// Cut comment
-				if (substr($_query_text, 0, 2) == '--') {
-					$_query_text = substr($_query_text, strpos($_query_text, "\n"));
+				if (substr($sql, 0, 2) == '--') {
+					$sql = substr($sql, strpos($sql, "\n"));
 				}
-				$_query_text = preg_replace('/[\s]{2,}/ims', ' ', str_replace("\t", ' ', trim($_query_text)));
-				if (preg_match('/^[\(]*select/ims', $_query_text)) {
-					$db_explain_results[$id] = $db->query_fetch_all('EXPLAIN '.$_query_text, -1);
+				$sql = preg_replace('/[\s]{2,}/ims', ' ', str_replace("\t", ' ', trim($sql)));
+				if (preg_match('/^[\(]*select/ims', $sql)) {
+					$db_explain_results[$id] = $db->get_all('EXPLAIN '.$sql, -1);
 				}
 			}
 		}
@@ -313,40 +313,41 @@ class yf_debug_info {
 		$body .= $connect_trace ? $trace_html : '';
 
 		$_this = $this;
-		foreach ((array)$db_queries_list as $id => $text) {
-			$text = trim($text);
+		foreach ((array)$db_queries_list as $id => $log) {
+			$sql = trim($log['sql']);
 			// Cut comment
-			if (substr($text, 0, 2) == '--') {
-				$text = substr($text, strpos($text, "\n"));
-				$text = trim($text);
-				if (!strlen($text)) {
+			if (substr($sql, 0, 2) == '--') {
+				$sql = substr($sql, strpos($sql, "\n"));
+				$sql = trim($sql);
+				if (!strlen($sql)) {
 					continue;
 				}
 			}
-			$total_queries_exec_time += $db->QUERY_EXEC_TIME[$id];
-			$_cur_trace = $db->QUERY_BACKTRACE_LOG[$id];
+			$total_queries_exec_time += $log['time'];
+			$_cur_trace = $log['trace'];
 			$_cur_explain = isset($db_explain_results[$id]) ? $this->_format_db_explain_result($db_explain_results[$id]) : '';
-			$_sql_type = strtoupper(rtrim(substr(ltrim($text), 0, 7)));
+			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
 
-			$orig_sql = $text;
-			$text = htmlspecialchars($text);
+			$sql = htmlspecialchars($sql);
 			$replace = array(
 				','	=> ', ', 
 			);
-			$text = str_replace(array_keys($replace), array_values($replace), $text);
-			$text = preg_replace_callback('/([\s\t]+)('.preg_quote($db->DB_PREFIX, '/').'[a-z0-9_]+)/ims', function($m) use ($_this) {
+			$sql = str_replace(array_keys($replace), array_values($replace), $sql);
+			$sql = preg_replace_callback('/([\s\t]+)('.preg_quote($db->DB_PREFIX, '/').'[a-z0-9_]+)/ims', function($m) use ($_this) {
 				return $m[1]. $_this->_admin_link('show_db_table', $m[2]);
-			}, $text);
+			}, $sql);
 
-			$exec_time = common()->_format_time_value($db->QUERY_EXEC_TIME[$id]);
+			$exec_time = common()->_format_time_value($log['time']);
 			$admin_link = $this->_admin_link('sql_query', rawurlencode($orig_sql), true);
 			if ($admin_link && $this->ADD_ADMIN_LINKS) {
 				$exec_time = '<a href="'.$admin_link.'" class="btn btn-default btn-mini btn-xs">'.$exec_time.'</a>';
 			}
+			$num = $id + 1;
 			$items[] = array(
-				'id'		=> ($id + 1),
-				'sql'		=> $text,
-				'rows'		=> strval($db->QUERY_AFFECTED_ROWS[$orig_sql]),
+				'id'		=> $num,
+				'sql'		=> $sql,
+				'rows'		=> strval($log['rows']),
+				'error'		=> _prepare_html($log['error']),
 				'exec_time'	=> strval($exec_time),
 				'trace'		=> $_cur_trace,
 				'explain'	=> $_cur_explain,
