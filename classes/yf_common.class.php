@@ -1168,6 +1168,16 @@ class yf_common {
 	    return $f5;
 	}
 
+	/*
+	 * Returns all types with empty param 'type'
+	 * Works in both ways: 
+	 * - get status name by id
+	 * - get status id by name
+	 * */
+	function get_static_conf($type = false, $value = false, $translate = true) {
+		return _class('common_static_conf', 'classes/common/')->get_static_conf($type, $value, $translate);
+	}
+
 	/**
 	*/
 	function message_success($text = '') {
