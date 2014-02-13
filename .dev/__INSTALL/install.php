@@ -270,8 +270,8 @@ class yf_core_install {
 		define('DB_PREFIX',	$_POST['install_db_prefix']);
 		define('DB_CHARSET','utf8');
 
-//		define('DEBUG_MODE', $_POST['install_checkbox_debug_info']);
-		define('DEBUG_MODE', 1);
+		define('DEBUG_MODE', (int)$_POST['install_checkbox_debug_info']);
+#		define('DEBUG_MODE', 1);
 
 		define('DB_PREFIX', $_POST['install_db_prefix']);
 		if (!defined('YF_PATH')) {
