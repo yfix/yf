@@ -1,11 +1,11 @@
+{execute(graphics,_show_menu;name=user_main_menu)}
+
 {if("is_logged_in" eq 0)}
 	{execute(login_form,_small_form)}
 {else}
 	<div class="left_menu">
 		<h4>{t(Site Menu)}</h4>
-<!-- LEFT_TOP_MENU -->
 {execute(graphics,_show_menu;name=user_side_menu)}
-<!-- /LEFT_TOP_MENU -->
 	</div>
 {{--
 	<div class="left_area">
