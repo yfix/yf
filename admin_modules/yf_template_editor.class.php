@@ -276,7 +276,7 @@ class yf_template_editor {
 			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'.$stpl_text.'</div>', '', array(
 				'id'	=> $div_id,
 				'wide'	=> 1,
-				'ace_editor' => array(),
+				'ace_editor' => array('mode' => 'html'),
 			))
 			->hidden($hidden_id)
 			->save_and_back();
