@@ -28,12 +28,6 @@ class yf_cats {
 	*/
 	function _init () {
 		$this->_category_sets = main()->get_data('category_sets');
-		if (!empty($_GET['object'])) {
-			$try_callback = array(module($_GET['object']), '_callback_cat_link');
-			if (is_callable($try_callback)) {
-				$this->_default_callback = $try_callback;
-			}
-		}
 		$this->_default_cats_block = $_GET['object'].'_cats';
 	}
 
@@ -298,6 +292,15 @@ class yf_cats {
 		}
 		if (empty($cat_items)) {
 			$cat_items = $this->_get_items_array($this->_default_cats_block);
+		}
+		if (!isset($this->_default_callback)) {
+			$this->_default_callback = false;
+			if (!empty($_GET['object'])) {
+				$try_callback = array(module($_GET['object']), '_callback_cat_link');
+			}
+			if (is_callable($try_callback)) {
+				$this->_default_callback = $try_callback;
+			}
 		}
 		if (empty($prepare_link_callback) && !empty($this->_default_callback)) {
 			$prepare_link_callback = $this->_default_callback;
