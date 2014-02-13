@@ -642,12 +642,12 @@ class yf_main {
 			$this->_set_module_conf($session_class_name, $this->session);
 			// Change the save_handler to use the class functions
 			session_set_save_handler (
-				array($this->session, '_open'),
-				array($this->session, '_close'),
-				array($this->session, '_read'),
-				array($this->session, '_write'),
-				array($this->session, '_destroy'),
-				array($this->session, '_gc')
+				array($this->session, 'open'),
+				array($this->session, 'close'),
+				array($this->session, 'read'),
+				array($this->session, 'write'),
+				array($this->session, 'destroy'),
+				array($this->session, 'gc')
 			);
 		}
 		session_start();

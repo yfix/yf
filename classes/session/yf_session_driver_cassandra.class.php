@@ -3,22 +3,22 @@
 load('session_driver', 'framework', 'classes/session/');
 class yf_session_driver_cassandra extends yf_session_driver {
 
-	function _open($path, $name) {
+	function open($path, $name) {
 // TODO
 	}
-	function _close() {
+	function close() {
 // TODO
 	} 
-	function _read($ses_id) {
+	function read($ses_id) {
 // TODO
 	} 
-	function _write($ses_id, $data) {
+	function write($ses_id, $data) {
 // TODO
 	}
-	function _destroy($ses_id) {
+	function destroy($ses_id) {
 // TODO
 	}
-	function _gc($life_time) {
+	function gc($life_time) {
 // TODO
 	}
 }

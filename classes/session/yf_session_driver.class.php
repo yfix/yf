@@ -4,10 +4,10 @@
 * YF Session driver abstract
 */
 abstract class yf_session_driver {
-	abstract protected function _open($path, $name);
-	abstract protected function _close();
-	abstract protected function _read($ses_id);
-	abstract protected function _write($ses_id, $data);
-	abstract protected function _destroy($ses_id);
-	abstract protected function _gc($life_time);
+	abstract protected function open($path, $name);
+	abstract protected function close();
+	abstract protected function read($ses_id);
+	abstract protected function write($ses_id, $data);
+	abstract protected function destroy($ses_id);
+	abstract protected function gc($life_time);
 }

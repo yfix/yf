@@ -1,7 +1,7 @@
 <?php 
 
 load('session_driver', 'framework', 'classes/session/');
-class yf_session_driver_mongodb extends yf_session_driver {
+class yf_session_driver_riak extends yf_session_driver {
 
 	function open($path, $name) {
 // TODO
