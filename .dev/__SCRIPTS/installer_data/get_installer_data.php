@@ -44,9 +44,10 @@ foreach((array)db()->get_2d('SHOW TABLES LIKE "'.DB_PREFIX.$db_tables_like.'"') 
 	$p1 = strpos($db_create_sql, '(') + 1;
 	$p2 = strrpos($db_create_sql, ')');
 	$db_create_sql = trim(substr($db_create_sql, $p1, $p2 - $p1));
+	$db_create_sql = str_replace('  ', "\t", '  '.$db_create_sql);
 	$file_sql = './sql/'.$tname.'.sql.php';
 	echo $file_sql. PHP_EOL;
-	file_put_contents($file_sql, '<?'.'php'.PHP_EOL.'$data = \''.PHP_EOL.'  '.addslashes($db_create_sql).PHP_EOL.'\';');
+	file_put_contents($file_sql, '<?'.'php'.PHP_EOL.'$data = \''.PHP_EOL.addslashes($db_create_sql).PHP_EOL.'\';');
 	if (false !== strpos($table, 'sys_log_') || false !== strpos($table, '_revisions')) {
 		continue;
 	}
