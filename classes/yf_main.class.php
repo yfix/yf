@@ -151,7 +151,7 @@ class yf_main {
 			$this->_time_start = microtime(true);
 		}
 		global $CONF;
-		if (DEBUG_MODE && ($this->ALLOW_DEBUG_PROFILING || $CONF['main']['ALLOW_DEBUG_PROFILING'])) {
+		if (defined('DEBUG_MODE') && DEBUG_MODE && ($this->ALLOW_DEBUG_PROFILING || $CONF['main']['ALLOW_DEBUG_PROFILING'])) {
 			$this->PROFILING = true;
 		}
 		if ($this->_server('argc') && !array_key_exists('REQUEST_METHOD', $this->_server())) {
