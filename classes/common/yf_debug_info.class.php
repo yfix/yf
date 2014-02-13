@@ -357,7 +357,7 @@ class yf_debug_info {
 		$body .= ' | '.t('connect_time').': '.common()->_format_time_value($db->_connection_time).'<span> sec';
 // TODO: find errors result == -1 or null) or maybe track errors inside db()
 // TODO: highlight errors with <tr class="error">
-		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%','hidden_map' => array('explain' => 'sql', 'trace' => 'sql')));
+		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%','hidden_map' => array('explain' => 'sql', 'trace' => 'sql', 'error' => 'sql')));
 		return $body;
 	}
 
@@ -1041,7 +1041,7 @@ class yf_debug_info {
 		))->auto();
 
 		foreach ((array)$params['hidden_map'] as $name => $to) {
-			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name));
+			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name, 'display_func' => function($row, $info, $params) use($name) { return (bool)strlen($row[$name]); }));
 		}
 		if (!$params['no_total']) {
 			$body .= ' | items: '.count($items). ($total_time ? ' | total time: '.common()->_format_time_value($total_time) : '');
