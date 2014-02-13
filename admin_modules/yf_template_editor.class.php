@@ -239,6 +239,7 @@ class yf_template_editor {
 	/**
 	*/
 	function edit_stpl () {
+// TODO: fix framework_user location (not working now)
 		$theme_name	= $_GET['theme'];
 		$stpl_name	= $_GET['name'];
 		if (empty($theme_name) || empty($stpl_name)) {
@@ -246,6 +247,7 @@ class yf_template_editor {
 		}
 		if (main()->is_post()) {
 			if (false !== strpos($_GET['location'], 'framework')) {
+// TODO: use readonly mode with message and ability to save changed file inside project
 				return $this->_framework_warning();
 			}
 			$lib_stpl_path	= $this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT;
