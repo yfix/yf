@@ -873,9 +873,9 @@ class yf_form2 {
 			(function(){
 			try {
 				var ace_editor = ace.edit("'.$extra['id'].'");
-				ace_editor.setTheme("ace/theme/'.($extra['ace']['theme'] ?: 'tomorrow_night').'");
-				ace_editor.getSession().setMode("ace/mode/html");
-				ace_editor.setFontSize("'.($extra['ace']['font-size'] ?: '16px').'");
+				ace_editor.setTheme("ace/theme/'.($extra['ace_editor']['theme'] ?: 'tomorrow_night').'");
+				ace_editor.getSession().setMode("ace/mode/'.($extra['ace_editor']['mode'] ?: 'html').'");
+				ace_editor.setFontSize("'.($extra['ace_editor']['font-size'] ?: '16px').'");
 				ace_editor.setPrintMarginColumn(false);
 				$("#'.$extra['id'].'").data("ace_editor", ace_editor);
 			} catch (e) {
