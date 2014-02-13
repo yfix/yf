@@ -30,6 +30,23 @@ class yf_file_manager {
 	/**
 	*/
 	function show() {
+// TODO: show preview if file is image
+// TODO: doubleclick should edit file
+// TODO: buttons near eacj table row (edit/show revisions)
+// TODO: show revisions
+// TODO: make table condensed
+// TODO: completely avoid tpl(): speedup, code in one place
+// TODO: overall cleanup and improve UI from bootstrap
+// TODO: left area show directory tree with ajax
+// TODO: ajax file/image upload
+// TODO: wanr if we cannot edit this file _before_ edit (inside table listing)
+// TODO: rewrite JS into angularjs for UI interanction
+// TODO: copy_item rewrite to use infinite recursion
+// TODO: add merge dirs with dialog for new name
+// TODO: test on large number of files inside dir
+// TODO: add ability to allow some paths for specific admiin groups (fine grained internal permissions or ACL)
+// TODO: add ajax calculate dirs size (one-by-one to not kill server performance)
+// TODO: add filesystem stats (disks usage, mounted filesystems, iostat if possible, etc)
 		$path_info = pathinfo($_SERVER["SCRIPT_FILENAME"]);
 		$_old_dir_name	= str_replace("\\", "/", getcwd());
 		if ($_GET['dir_name']) {
@@ -144,6 +161,7 @@ class yf_file_manager {
 	/**
 	*/
 	function view_item() {
+// TODO: unify with edit_item, just set readonly for ace editor
 		foreach ((array)$_POST as $k => $v) {
 			$tmp = substr($k, 0, 2);
 			if ($tmp == "d_" || $tmp == "f_") {
@@ -176,47 +194,53 @@ class yf_file_manager {
 	/**
 	*/
 	function edit_item() {
-		if (!empty($_GET["id"])) {
-			$file_name	= urldecode($_GET["id"]);
+// TODO: save file revision to db on each save
+		if (!empty($_GET['id'])) {
+			$file_name	= urldecode($_GET['id']);
 			$file_path	= $file_name;
 			$dir_name	= dirname($file_path);
 		} else {
 			foreach ((array)$_REQUEST as $k => $v) {
 				$tmp = substr($k, 0, 2);
-				if ($tmp == "d_" || $tmp == "f_") {
+				if ($tmp == 'd_' || $tmp == 'f_') {
 					$name = $v;
 					break;
 				}
 			}
 			$dir_name	= urldecode($_REQUEST['dir_name']);
-			$file_name	= str_replace("\\", "/", $dir_name."/".$name);
+			$file_name	= str_replace("\\", '/', $dir_name.'/'.$name);
 			$file_path	= $file_name;
 		}
-		$_tmp_path = "";
+		if (main()->is_post()) {
+			$file_name = urldecode($_GET['file_name']);
+			file_put_contents($file_name, $_POST['file_text_hidden']);
+			return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_GET['dir_name']._add_get(array('dir_name')));
+		}
 		$_tmp_array = array();
-		foreach ((array)explode("/", dirname($file_name)) as $_folder) {
-			$_tmp_path .= $_folder."/";
-			$_tmp_array[] = "<a href='./?object=".$_GET["object"]."&dir_name=".urlencode($_tmp_path)._add_get(array("dir_name"))."'>"._prepare_html($_folder)."</a>";
+		foreach ((array)explode('/', dirname($file_name)) as $_folder) {
+			$_tmp_array[] = '<a href="./?object='.$_GET['object'].'&dir_name='.urlencode($_folder.'/')._add_get(array('dir_name')).'" class="btn btn-mini btn-xs">'._prepare_html($_folder).'</a>';
 		}
 		if ($_tmp_array) {
-			$file_name = implode("/", $_tmp_array)."/"._prepare_html($name, 0);
+			$file_name = implode('/', $_tmp_array).'/'._prepare_html($name, 0);
 		}
+		$file_text = _prepare_html(file_get_contents($file_path), 0);
 		$replace = array(
-			"form_action"	=> "./?object=".$_GET["object"]."&action=save_file&dir_name=".$_REQUEST['dir_name']."&file_name=".urlencode($file_path)._add_get(array("dir_name")),
-			"file_name"		=> $file_name,
-			"file_ext"		=> common()->get_file_ext(basename($file_path)),
-			"text"			=> _prepare_html(file_get_contents($file_path), 0),
-			"back"			=> back("./?object=".$_GET["object"]."&dir_name=".$_REQUEST['dir_name']._add_get(array("dir_name"))),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'dir_name='.$_REQUEST['dir_name'].'&file_name='.urlencode($file_path)._add_get(array('dir_name')),
+			'back_link'		=> './?object='.$_GET['object'].'&dir_name='.$_REQUEST['dir_name']._add_get(array('dir_name')),
 		);
-		return tpl()->parse($_GET["object"]."/edit", $replace);
-	}
-
-	/**
-	*/
-	function save_file() {
-		$file_name = urldecode($_GET["file_name"]);
-		file_put_contents($file_name, $_POST["source"]);
-		return js_redirect("./?object=".$_GET["object"]."&dir_name=".$_GET['dir_name']._add_get(array("dir_name")));
+		$div_id = 'editor_html';
+		$hidden_id = 'file_text_hidden';
+		return '<h4>edit: '.$file_name. '</h4>'.
+			form($replace, array(
+				'data-onsubmit' => '$(this).find("#'.$hidden_id.'").val( $("#'.$div_id.'").data("ace_editor").session.getValue() );',
+			))
+			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'.$file_text.'</div>', '', array(
+				'id'	=> $div_id,
+				'wide'	=> 1,
+				'ace_editor' => array('mode' => common()->get_file_ext($file_path)),
+			))
+			->hidden($hidden_id)
+			->save_and_back();
 	}
 
 	/**
