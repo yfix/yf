@@ -12,7 +12,8 @@ php:
 #  - phpenv config-add travis.php.ini
 
 script:
-  - cd .dev/__TESTS/ && phpunit --configuration phpunit.xml --coverage-text ./
+#  - cd .dev/__TESTS/ && phpunit --configuration phpunit.xml --coverage-text ./
+  - cd .dev/__TESTS/ && phpunit --configuration phpunit.xml ./
 
 #after_script:
 #  - php ./bin/coveralls -v
