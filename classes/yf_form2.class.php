@@ -667,60 +667,7 @@ class yf_form2 {
 	/**
 	*/
 	function _input_assign_params_from_validate($extra = array()) {
-		$vr = &$this->_validate_rules_names[$extra['name']];
-/*
-// TODO: move this into _class('validate')
-		if ($vr['min_length']) {
-		} elseif ($vr['max_length']) {
-		} elseif ($vr['exact_length']) {
-		} elseif ($vr['alpha']) {
-		} elseif ($vr['alpha_numeric']) {
-		} elseif ($vr['alpha_numeric_spaces']) {
-		} elseif ($vr['alpha_dash']) {
-		} elseif ($vr['exact_length']) {
-		} elseif ($vr['numeric']) {
-		} elseif ($vr['integer']) {
-		} elseif ($vr['decimal']) {
-		} elseif ($vr['is_natural']) {
-		} elseif ($vr['is_natural_no_zero']) {
-		} elseif ($vr['valid_email']) {
-			$extra['type'] = 'email';
-		} elseif ($vr['valid_url']) {
-			$extra['type'] = 'url';
-		} elseif ($vr['valid_ip']) {
-		} elseif ($vr['regex_match']) {
-		}
-		# $extra['title'] is used in html5 validation suggesting messages
-*/
-/*
-		if ($vr['numeric']) {
-			$extra['pattern'] = isset($extra['pattern']) ? $extra['pattern'] : '^[\-+]?[0-9]*\.?[0-9]+$';
-			$extra['title'] = isset($extra['title']) ? $extra['title'] : t('Field must contain only numbers');
-		}
-*/
-		// http://stackoverflow.com/questions/10281962/is-it-minlength-in-html5
-		if (isset($vr['min_length']) && strlen($vr['min_length']) && !isset($extra['pattern'])) {
-			$extra['pattern'] = '.{'.$vr['min_length'].','.($vr['max_length'] ?: '').'}';
-		}
-		if ($vr['max_length'] && !isset($extra['maxlength'])) {
-			$extra['maxlength'] = $vr['max_length'][1];
-		}
-		if (isset($vr['required'])) {
-			$extra['required'] = 1;
-		}
-		foreach (array('ajax_is_unique','ajax_is_unique_without','ajax_exists') as $rule) {
-			$_rule = str_replace('ajax_', '', $rule);
-			if (isset($vr[$rule])) {
-				$extra['data-ajax-validate'][$_rule] = $vr[$rule];
-			}
-		}
-		foreach (array('ajax_is_unique','ajax_is_unique_without','ajax_exists') as $rule) {
-			$_rule = str_replace('ajax_', '', $rule);
-			if (isset($vr[$rule])) {
-				$extra['data-ajax-validate'][$_rule] = $vr[$rule];
-			}
-		}
-		return $extra;
+		return _class('form2_validate', 'classes/form2/')->_input_assign_params_from_validate($extra, $this);
 	}
 
 	/**
@@ -819,71 +766,13 @@ class yf_form2 {
 	* P.S. You can use free CDN for ckeditor as alternate solution: <script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js"></script>
 	*/
 	function _ckeditor_html($extra = array(), $replace = array()) {
-		if (!is_array($extra)) {
-			return '';
-		}
-		$params = $extra['ckeditor'];
-		if (!is_array($params)) {
-			$params = array();
-		}
-		if ($this->_ckeditor_scripts_included) {
-			return '';
-		}
-		$ck_path = $params['ck_path'] ? $params['ck_path'] : 'ckeditor/ckeditor.js';
-		$fs_ck_path = PROJECT_PATH. $ck_path;
-		$web_ck_path = WEB_PATH. $ck_path;
-		if (!file_exists($fs_ck_path)) {
-			return '';
-		}
-		$content_id = $extra['id'] ? $extra['id'] : 'content_editable';
-		$hidden_id = $params['hidden_id'] ? $params['hidden_id'] : '';
-
-		$body .= '<script type="text/javascript">
-			$(function(){
-				var _content_id = "#'.$content_id.'";
-				var _hidden_id = "#'.$hidden_id.'";
-				$(_content_id).parents("form").submit(function(){
-					$("input[type=hidden]" + _hidden_id).val( $(_content_id).html() );
-				})
-			})
-			</script>';
-
-		// Main ckeditor script
-		$body .= '<script src="'.$web_ck_path.'" type="text/javascript"></script>'.PHP_EOL;
-
-		// Theme-wide ckeditor config inside stpl (so any engine vars can be processed or included there)
-		$stpl_name = 'ckeditor_config'; // Example filesystem location: PROJECT_PATH.'templates/admin/ckeditor_config.stpl'
-		if (!isset($replace['content_id'])) {
-			$replace['content_id'] = $content_id;
-		}
-		$body .= tpl()->_stpl_exists($stpl_name) ? tpl()->parse($stpl_name, (array)$extra + (array)$replace ) : '';
-
-		// Avoid including ckeditor scripts several times on same page
-		$this->_ckeditor_scripts_included = true;
-
-		return $body;
+		return _class('form2_ckeditor', 'classes/form2/')->_ckeditor_html($extra, $replace, $this);
 	}
 
 	/**
 	*/
 	function _ace_editor_html($extra = array(), $replace = array()) {
-		$extra['id'] = $extra['id'] ?: 'editor_html';
-		return '<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript"></script>
-			<script type="text/javascript">
-			(function(){
-			try {
-				var ace_editor = ace.edit("'.$extra['id'].'");
-				ace_editor.setTheme("ace/theme/'.($extra['ace_editor']['theme'] ?: 'tomorrow_night').'");
-				ace_editor.getSession().setMode("ace/mode/'.($extra['ace_editor']['mode'] ?: 'html').'");
-				ace_editor.setFontSize("'.($extra['ace_editor']['font-size'] ?: '16px').'");
-				ace_editor.setPrintMarginColumn(false);
-				$("#'.$extra['id'].'").data("ace_editor", ace_editor);
-			} catch (e) {
-				console.log(e)
-			}
-			})()
-			</script>
-		';
+		return _class('form2_ace_editor', 'classes/form2/')->_ace_editor_html($extra, $replace, $this);
 	}
 
 	/**
@@ -2057,47 +1946,7 @@ class yf_form2 {
 	/**
 	*/
 	function ui_range($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc)) {
-			$extra += $desc;
-			$desc = '';
-		}
-		$extra['name'] = $extra['name'] ?: $name;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		$func = function($extra, $r, $_this) {
-// TODO: upgrade look and feel and connect $field__and for filter
-			$body = '
-				<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-				<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-				<script>
-				$(function() {
-					$( "#slider-range" ).slider({
-						range: true,
-						min: 0,
-						max: 500,
-						values: [ 75, 300 ],
-						slide: function( event, ui ) {
-							$( "#'.$name.'" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-						}
-					});
-					$( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-						" - $" + $( "#slider-range" ).slider( "values", 1 ) );
-				});
-				</script>
-				<div class="span10">
-					<div id="slider-range"></div>
-				</div>
-				<input type="hidden" id="'.$name.'" name=".$name." value="'.$extra['value_min'].'" />
-				<input type="hidden" id="'.$name.'__and" name=".$name." value="'.$extra['value_max'].'" />
-
-<!--			<input type="text" id="amount" style="font-weight: bold;" class="input-small" /> -->
-			';
-			return $_this->_row_html($body, $extra, $r);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
+		return _class('form2_ui_range', 'classes/form2/')->ui_range($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
@@ -2162,154 +2011,26 @@ class yf_form2 {
 	}
 
 	/**
-	* Star selector, got from http://fontawesome.io/examples/#custom. Require this CSS:
-	*	'<style>
-	*	.rating { unicode-bidi:bidi-override;direction:rtl;font-size:20px }
-	*	.rating span.star { font-family:FontAwesome;font-weight:normal;font-style:normal;display:inline-block }
-	*	.rating span.star:hover { cursor:pointer }
-	*	.rating span.star:before { content:"\f006";padding-right:0.2em;color:#999 }
-	*	.rating span.star:hover:before, .rating span.star:hover~span.star:before{ content:"\f005";color:#e3cf7a }
-	*	</style>';
+	*/
+	function stars($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return _class('form2_stars', 'classes/form2/')->stars($name, $desc, $extra, $replace, $this);
+	}
+
+	/**
+	* Star selector, got from http://fontawesome.io/examples/#custom
 	*/
 	function stars_select($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc)) {
-			$extra += $desc;
-			$desc = '';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		$func = function($extra, $r, $_this) {
-			$max = $extra['max'] ?: 5;
-			$stars = $extra['stars'] ?: 5;
-			$class = $extra['class'] ?: 'star';
-			$body[] = '<span class="rating">';
-			foreach (range(1, $stars) as $num) {
-				$body[] = '<span class="'.$class.' '.$extra['name'].'" data-name="'.$extra['name'].'" data-value="'.($stars-$num+1).'"></span>';
-			}
-			$body[] = '</span>';
-			$body[] = '<input type="hidden" name="'.$extra['name'].'" id='.$extra['name'].' value="0">';
-			
-			$body[] = '
-				<script>
-					$(function () {
-						$(".'.$class.'.'.$extra['name'].'").on("click",function() {
-							var value = $(this).attr("data-value");
-							$("#"+$(this).attr("data-name")).val(value);
-							$(".rating.star.'.$extra['name'].'").each(function() {
-								$(this).attr("data-value");
-								if (value>=$(this).attr("data-value")) {
-									$(this).addClass("rating_selected");								
-								} else {
-									$(this).removeClass("rating_selected");				
-								}
-							});
-						});
-					});
-				</script>';
-			
-			return $_this->_row_html(implode('', $body), $extra, $r);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
+		return _class('form2_stars', 'classes/form2/')->stars_select($name, $desc, $extra, $replace, $this);
 	}
 	
 	/**
 	* Datetimepicker, src: http://tarruda.github.io/bootstrap-datetimepicker/
 	* params :  no_date // no date picker
-				no_time // no time picker
-	 * 
+	*			no_time // no time picker
 	*/
 	function datetime_select($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc)) {
-			$extra += $desc;
-			$desc = '';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		
-		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		$func = function($extra, $r, $_this) {
-			// Compatibility with filter
-			if (!strlen($extra['value'])) {
-				if (isset($extra['selected'])) {
-					$extra['value'] = $extra['selected'];
-				} elseif (isset($_this->_params['selected'])) {
-					$extra['value'] = $_this->_params['selected'][$extra['name']];
-				}
-			}
-			$format = array();
-			if ($extra['no_date']!=1) $format[] = "MM/dd/yyyy";
-			if ($extra['no_time']!=1) $format[] = "HH:mm:ss";
-			$body = "
-<script type=\"text/javascript\" src=\"https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js\"></script>
-<link rel=\"stylesheet\" type=\"text/css\" href=\"https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css\">
-<div id=\"{$extra['name']}\" class=\"input-append date\">
-    <input data-format=\"".implode(" ",$format)."\" name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium\"></input>
-    <span class=\"add-on\">
-      <i data-time-icon=\"icon-time\" data-date-icon=\"icon-calendar\"></i>
-    </span>		
-</div>
-<script type=\"text/javascript\">
-  $(function() {
-    $('#{$extra['name']}').datetimepicker({
-      language: 'en',
-	  ".($extra['no_time']==1 ? "pickTime: false," : "")."
-	  ".($extra['no_date']==1 ? "pickDate: false," : "")."
-    });
-  });
-</script>
-";
-			return $_this->_row_html($body, $extra, $r);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
+		return _class('form2_datetime', 'classes/form2/')->datetime_select($name, $desc, $extra, $replace, $this);
 	}	
-
-	/**
-	*/
-	function stars($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc)) {
-			$extra += $desc;
-			$desc = '';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		$func = function($extra, $r, $_this) {
-			$extra['id'] = $extra['name'];
-			$color_ok = $extra['color_ok'] ?: 'yellow';
-			$color_ko = $extra['color_ko'] ?: '';
-			$class = $extra['class'] ?: 'icon-star icon-large';
-			$class_ok = $extra['class_ok'] ?: 'star-ok';
-			$class_ko = $extra['class_ko'] ?: 'star-ko';
-			$max = $extra['max'] ?: 5;
-			$stars = $extra['stars'] ?: 5;
-			$input = isset($r[$extra['name']]) ? $r[$extra['name']] : $extra['name'];
-			foreach (range(1, $stars) as $num) {
-				$is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
-				$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $color_ok : $color_ko).';" title="'.$input.'"></i>';
-			}
-			return $_this->_row_html(implode(PHP_EOL, $body), $extra, $r);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
-	}
 
 	/**
 	* For use inside table item template
