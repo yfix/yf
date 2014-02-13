@@ -1,24 +1,16 @@
 <?php 
 
-/**
-* Session storage in memcached handler
-* 
-* @package		YF
-* @author		YFix Team <yfix.dev@gmail.com>
-* @version		1.0
-*/
-class yf_session_memcached {
+load('session_driver', 'framework', 'classes/session/');
+class yf_session_driver_memcached extends yf_session_driver {
 
-	/** @var string */
-	public $CUR_SESSION_NAME	= "PHPSESSID";
-	/** @var string Prefix */
-	public $ITEMS_PREFIX		= "sess:";
+	public $CUR_SESSION_NAME	= 'PHPSESSID';
+	public $ITEMS_PREFIX		= 'sess:';
 
 	/**
 	* Constructor (PHP 5.x)
 	*/
 	function __construct () {
-		if (function_exists("cache_memcached_connect")) {
+		if (function_exists('cache_memcached_connect')) {
 			$this->MC_OBJ = cache_memcached_connect();
 		}
 	}
@@ -44,7 +36,7 @@ class yf_session_memcached {
 	function _read($ses_id) {
 		$sess_data = $this->MC_OBJ->get($this->ITEMS_PREFIX. $ses_id);
 		if (!$sess_data) {
-			return (""); // Must return "" here.
+			return (''); // Must return '' here.
 		} else {
 			return $sess_data;
 		}

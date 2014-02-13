@@ -1,20 +1,11 @@
 <?php 
 
-/**
-* Session storage in files handler
-* 
-* @package		YF
-* @author		YFix Team <yfix.dev@gmail.com>
-* @version		1.0
-*/
-class yf_session_files {
+load('session_driver', 'framework', 'classes/session/');
+class yf_session_driver_files extends yf_session_driver {
 
-	/** @var string */
-	public $CUR_SESSION_NAME	= "PHPSESSID";
-	/** @var string */
-	public $SESSION_FILES_DIR	= "session_data/";
-	/** @var string Session Prefix */
-	public $FILES_PREFIX		= "sess_";
+	public $CUR_SESSION_NAME	= 'PHPSESSID';
+	public $SESSION_FILES_DIR	= 'session_data/';
+	public $FILES_PREFIX		= 'sess_';
 
 	/**
 	*/
@@ -46,7 +37,7 @@ class yf_session_files {
 			$ses_data = file_get_contents($ses_file);
 			return ($ses_data);
 		} else {
-			return (""); // Must return "" here.
+			return (''); // Must return '' here.
 		}
 	} 
 
@@ -73,7 +64,7 @@ class yf_session_files {
 	function _gc($life_time) {
 		$dh		= opendir($start_dir);
 		while (false !== ($f = readdir($dh))) {
-			if ($f == "." || $f == "..") {
+			if ($f == '.' || $f == '..') {
 				continue;
 			}
 			if (@filemtime($f) < (time() - main()->SESSION_LIFE_TIME)) {

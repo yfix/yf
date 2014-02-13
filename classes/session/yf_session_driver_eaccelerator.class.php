@@ -1,18 +1,12 @@
 <?php 
 
-/**
-* Session storage in EAccelerator (http://bart.eaccelerator.net/doc/phpdoc/)
-* 
-* @package		YF
-* @author		YFix Team <yfix.dev@gmail.com>
-* @version		1.0
-*/
-class yf_session_eaccelerator {
+load('session_driver', 'framework', 'classes/session/');
+class yf_session_driver_eaccelerator extends yf_session_driver {
 
 	/** @var string */
-	public $CUR_SESSION_NAME	= "PHPSESSID";
+	public $CUR_SESSION_NAME	= 'PHPSESSID';
 	/** @var string Prefix */
-	public $ITEMS_PREFIX		= "sess_";
+	public $ITEMS_PREFIX		= 'sess_';
 
 	/*
 	* Open session
@@ -35,7 +29,7 @@ class yf_session_eaccelerator {
 	function _read($ses_id) {
 		$sess_data = eaccelerator_get($this->ITEMS_PREFIX. $ses_id);
 		if (!$sess_data) {
-			return (""); // Must return "" here.
+			return (''); // Must return '' here.
 		} else {
 			return $sess_data;
 		}

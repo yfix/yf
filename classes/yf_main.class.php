@@ -633,7 +633,7 @@ class yf_main {
 			session_save_path($s_path);
 		}
 		if ($this->CUSTOM_SESSION_HANDLER) {
-			$session_class_name = 'session_'.$this->CUSTOM_SESSION_HANDLER;
+			$session_class_name = 'session_driver_'.$this->CUSTOM_SESSION_HANDLER;
 			$session_loaded_class_name = $this->load_class_file($session_class_name, 'classes/session/');
 			if (empty($session_loaded_class_name)) {
 				return false;
