@@ -1827,6 +1827,13 @@ class yf_main {
 	}
 
 	/**
+	* Checks whether current page was requested with AJAX
+	*/
+	function is_ajax() {
+		return conf('IS_AJAX');
+	}
+
+	/**
 	*/
 	function event_subscribe($name, $func, $params = array()) {
 // TODO: events system
