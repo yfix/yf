@@ -354,6 +354,8 @@ class yf_debug_info {
 		}
 		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_queries_exec_time).'<span> sec';
 		$body .= ' | '.t('connect_time').': '.common()->_format_time_value($db->_connection_time).'<span> sec';
+// TODO: find errors result == -1 or null) or maybe track errors inside db()
+// TODO: highlight errors with <tr class="error">
 		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%','hidden_map' => array('explain' => 'sql', 'trace' => 'sql')));
 		return $body;
 	}

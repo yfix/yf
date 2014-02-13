@@ -1,11 +1,11 @@
 <?php
 $data = '
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(32) NOT NULL DEFAULT \'\',
-	`desc` text NOT NULL,
-	`products` text NOT NULL,
-	`cat_id` int(11) NOT NULL default \'0\',
-	`add_date` int(11) NOT NULL DEFAULT \'0\',
-	`active` enum(\'0\',\'1\') NOT NULL DEFAULT \'0\',
-	PRIMARY KEY (`id`)
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `cat_id` int(11) unsigned NOT NULL DEFAULT \'0\',
+  `price` decimal(12,2) NOT NULL,
+  `old_price` decimal(12,2) NOT NULL,
+  `name` varchar(128) NOT NULL,
+  `description` text NOT NULL,
+  `active` tinyint(4) NOT NULL DEFAULT \'0\',
+  PRIMARY KEY (`id`)
 ';
