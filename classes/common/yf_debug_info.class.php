@@ -283,6 +283,9 @@ class yf_debug_info {
 		$db_queries_list = $db->_LOG;
 		if ($this->_SHOW_DB_EXPLAIN_QUERY && !empty($db_queries_list) && substr($db->DB_TYPE, 0, 5) == 'mysql') {
 			foreach ((array)$db_queries_list as $id => $log) {
+				if ($log['error']) {
+					continue;
+				}
 				$sql = trim($log['sql']);
 				// Cut comment
 				if (substr($sql, 0, 2) == '--') {

@@ -344,7 +344,8 @@ class yf_db {
 		$msg = 'DB: QUERY ERROR: '.$sql.'<br />'.PHP_EOL.'<b>CAUSE</b>: '.$db_error['message']
 			. ($db_error['code'] ? ' (code:'.$db_error['code'].')' : '')
 			. ($db_error['offset'] ? ' (offset:'.$db_error['offset'].')' : '')
-			. $_trace.'<br />'.PHP_EOL;
+			. (main()->USE_CUSTOM_ERRORS ? '' : $_trace.'<br />'.PHP_EOL)
+		;
 		trigger_error($msg, E_USER_WARNING);
 	}
 
