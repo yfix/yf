@@ -193,7 +193,7 @@ class yf_installer_db_mysql extends yf_installer_db {
 		if (!empty($_tmp)) {
 			$_table_options_string = ' '.implode(', ', $_tmp);
 		}
-		$sql = 'CREATE TABLE '.($this->USE_SQL_IF_NOT_EXISTS ? 'IF NOT EXISTS' : '').' '.$db->enclose_field_name($full_table_name).' ('.PHP_EOL. 
+		$sql = 'CREATE TABLE '.($this->USE_SQL_IF_NOT_EXISTS ? 'IF NOT EXISTS' : '').' '.$db->escape_key($full_table_name).' ('.PHP_EOL. 
 			$table_struct.')'.$_table_options_string;
 		return $db->query($sql);
 	}

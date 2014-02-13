@@ -544,8 +544,8 @@ class yf_db_manager {
 					$cols_names_array = array();
 					$counter = 0;
 					if ($params["add_create_table"]) {
-						$A = db()->query_fetch("SHOW CREATE TABLE ".db()->enclose_field_name($cur_table_name));
-						$_table_sql_header = "\nDROP TABLE IF EXISTS ".db()->enclose_field_name($cur_table_name).";\n";
+						$A = db()->query_fetch("SHOW CREATE TABLE ".db()->escape_key($cur_table_name));
+						$_table_sql_header = "\nDROP TABLE IF EXISTS ".db()->escape_key($cur_table_name).";\n";
 						$_table_sql_header .= str_replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS", $A["Create Table"]).";\n\n";
 						if ($USE_TEMP_FILE) {
 							fwrite($fh, $_table_sql_header);
@@ -555,13 +555,13 @@ class yf_db_manager {
 					}
 					$meta_columns = db()->meta_columns($cur_table_name);
 					foreach ((array)$meta_columns as $cur_col_name => $cur_col_info) {
-						$cols_names_array[$cur_col_name] = db()->enclose_field_name($cur_col_name);
+						$cols_names_array[$cur_col_name] = db()->escape_key($cur_col_name);
 					}
-					$sql_1	= ($EXPORT_TYPE == "insert" ? "INSERT" : "REPLACE")." INTO ".db()->enclose_field_name($cur_table_name)." ";
+					$sql_1	= ($EXPORT_TYPE == "insert" ? "INSERT" : "REPLACE")." INTO ".db()->escape_key($cur_table_name)." ";
 					$sql_2	= $INSERT_FULL ? "(".implode(", ", $cols_names_array).") " : "";
 					$sql_3	= "VALUES \n";
 					$Q = db()->query(
-						"SELECT * FROM ".db()->enclose_field_name(_es($cur_table_name))
+						"SELECT * FROM ".db()->escape_key(_es($cur_table_name))
 						.($WHERE_COND ? " WHERE ".$WHERE_COND : "")
 					);
 					if (!db()->num_rows($Q)) {
@@ -576,7 +576,7 @@ class yf_db_manager {
 					while ($A = db()->fetch_assoc($Q)) {
 						$cols_values_array = array();
 						foreach ((array)$meta_columns as $cur_col_name => $cur_col_info) {
-							$cols_values_array[$cur_col_name] = db()->enclose_field_value(_es(stripslashes($A[$cur_col_name])));
+							$cols_values_array[$cur_col_name] = db()->escape_val(_es(stripslashes($A[$cur_col_name])));
 						}
 						$need_break		= $INSERT_EXTENDED && $counter >= $this->EXPORT_EXTENDED_PER_BLOCK;
 						if ($need_break && strlen($sql_4)) {

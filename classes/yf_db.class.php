@@ -451,25 +451,25 @@ class yf_db {
 				if (empty($cols)) {
 					$cols = array_keys($cur_row);
 				}
-				$cur_values = array_values($cur_row);
-				foreach ((array)$cur_values as $k => $v) {
-					$cur_values[$k] = $this->enclose_field_value($v);
+				// This method ensures that SQL will consist of same key=value pairs, even if in some sub-array they will be missing
+				foreach ((array)$cols as $col) {
+					$cur_values[$col] = $cur_row[$col];
 				}
-				$values_array[] = '('.implode(', ', $cur_values).PHP_EOL.')';
+				$values_array[] = '('.implode(', ', $this->escape_val($cur_values)).PHP_EOL.')';
 			}
 		} else {
 			$cols	= array_keys($data);
 			$values = array_values($data);
 			foreach ((array)$values as $k => $v) {
-				$values[$k] = $this->enclose_field_value($v);
+				$values[$k] = $this->escape_val($v);
 			}
 			$values_array[] = '('.implode(', ', $values).PHP_EOL.')';
 		}
 		foreach ((array)$cols as $k => $v) {
 			unset($cols[$k]);
-			$cols[$v] = $this->enclose_field_name($v);
+			$cols[$v] = $this->escape_key($v);
 		}
-		$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '').' INTO '.$this->enclose_field_name($table).PHP_EOL
+		$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '').' INTO '.$this->escape_key($table).PHP_EOL
 			.' ('.implode(', ', $cols).') VALUES '.PHP_EOL.implode(', ', $values_array);
 		if ($on_duplicate_key_update) {
 			$sql .= PHP_EOL.' ON DUPLICATE KEY UPDATE ';
@@ -552,9 +552,9 @@ class yf_db {
 			if (empty($k)) {
 				continue;
 			}
-			$tmp_data[$k] = $this->enclose_field_name($k).' = '.$this->enclose_field_value($v);
+			$tmp_data[$k] = $this->escape_key($k).' = '.$this->escape_val($v);
 		}
-		$sql = 'UPDATE '.$this->enclose_field_name($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
+		$sql = 'UPDATE '.$this->escape_key($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
 		if ($only_sql) {
 			return $sql;
 		}
@@ -981,9 +981,8 @@ class yf_db {
 	}
 
 	/**
-	* Enclose field names
 	*/
-	function enclose_field_name($data) {
+	function escape_key($data) {
 		if (!is_object($this->db)) {
 			return false;
 		}
@@ -994,13 +993,12 @@ class yf_db {
 			}
 			return $data;
 		}
-		return $this->db->enclose_field_name($data);
+		return $this->db->escape_key($data);
 	}
 
 	/**
-	* Enclose field values
 	*/
-	function enclose_field_value($data) {
+	function escape_val($data) {
 		if (!is_object($this->db)) {
 			return false;
 		}
@@ -1011,7 +1009,21 @@ class yf_db {
 			}
 			return $data;
 		}
-		return $this->db->enclose_field_value($data);
+		return $this->db->escape_val($data);
+	}
+
+	/**
+	* Alias
+	*/
+	function enclose_field_name($data) {
+		return $this->escape_key($data);
+	}
+
+	/**
+	* Alias
+	*/
+	function enclose_field_value($data) {
+		return $this->escape_val($data);
 	}
 
 	/**
@@ -1329,10 +1341,10 @@ class yf_db {
 		if (!$where) {
 			return false;
 		}
-		$cond = 'id='.$this->enclose_field_value($where);
+		$cond = 'id='.$this->escape_val($where);
 // TODO: add support for several fields in where
 		if (is_array($where)) {
-			$cond = key($where).'='.$this->enclose_field_value(current($where));
+			$cond = key($where).'='.$this->escape_val(current($where));
 		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
 			$this->_save_query_revision(__FUNCTION__, $table, array('where' => $where, 'cond' => $cond));
@@ -1392,7 +1404,7 @@ class yf_db {
 	/**
 	*/
 	function _update_batch($table, $values, $index) {
-		$index = $this->enclose_field_name($index);
+		$index = $this->escape_key($index);
 		$ids = array();
 		foreach ((array)$values as $key => $val) {
 			$ids[] = $val[$index];
@@ -1409,7 +1421,7 @@ class yf_db {
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
 			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $values, 'index' => $index));
 		}
-		return 'UPDATE '.$this->enclose_field_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
+		return 'UPDATE '.$this->escape_key($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
 	}
 
 	/**
@@ -1425,7 +1437,7 @@ class yf_db {
 				if ($k2 === $index)	{
 					$index_set = TRUE;
 				}
-				$clean[$this->enclose_field_name($k2)] = $this->enclose_field_value($v2);
+				$clean[$this->escape_key($k2)] = $this->escape_val($v2);
 			}
 			if ($index_set === FALSE) {
 				//return $this->display_error('db_batch_missing_index');

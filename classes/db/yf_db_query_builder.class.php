@@ -234,7 +234,7 @@ class yf_db_query_builder {
 			foreach ((array)$on as $k => $v) {
 				list($t1_as, $t1_field) = explode('.', $k);
 				list($t2_as, $t2_field) = explode('.', $v);
-				$_on[] = $this->db->enclose_field_name($t1_as).'.'.$this->db->enclose_field_name($t1_field).' = '.$this->db->enclose_field_name($t2_as).'.'.$this->db->enclose_field_name($t2_field);
+				$_on[] = $this->db->escape_key($t1_as).'.'.$this->db->escape_key($t1_field).' = '.$this->db->escape_key($t2_as).'.'.$this->db->escape_key($t2_field);
 			}
 		} elseif (is_callable($on)) {
 			$_on = $on($table, $this);
@@ -292,8 +292,8 @@ class yf_db_query_builder {
 					}
 				// array('field', 'condition', 'value'), example: array('id','>','1')
 				} elseif (is_array($v) && count($v) == 3) {
-#					$a[] = $this->db->enclose_field_name($v[0]). $v[1]. $this->db->enclose_field_value($v[2]);
-					$a[] = $v[0]. $v[1]. $this->db->enclose_field_value($v[2]);
+#					$a[] = $this->db->escape_key($v[0]). $v[1]. $this->db->escape_val($v[2]);
+					$a[] = $v[0]. $v[1]. $this->db->escape_val($v[2]);
 				} elseif (is_callable($v)) {
 					$a[] = $v($where, $this);
 				}
@@ -321,7 +321,7 @@ class yf_db_query_builder {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-#					$a[] = $this->db->enclose_field_name($v);
+#					$a[] = $this->db->escape_key($v);
 					$a[] = $v;
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $v2) {
@@ -330,7 +330,7 @@ class yf_db_query_builder {
 						}
 						$v2 = trim($v2);
 						if ($v2) {
-#							$a[] = $this->db->enclose_field_name($v2);
+#							$a[] = $this->db->escape_key($v2);
 							$a[] = $v2;
 						}
 					}
@@ -367,7 +367,7 @@ class yf_db_query_builder {
 					}
 				// array('field', 'condition', 'value'), example: array('id','>','1')
 				} elseif (is_array($v) && count($v) == 3) {
-					$a[] = $v[0]. $v[1]. $this->db->enclose_field_value($v[2]);
+					$a[] = $v[0]. $v[1]. $this->db->escape_val($v[2]);
 				} elseif (is_callable($v)) {
 					$a[] = $v($where, $this);
 				}
@@ -395,7 +395,7 @@ class yf_db_query_builder {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-#					$a[] = $this->db->enclose_field_name($v).' ASC';
+#					$a[] = $this->db->escape_key($v).' ASC';
 					$a[] = $v.' ASC';
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $k2 => $v2) {

@@ -10,8 +10,8 @@ abstract class yf_db_driver {
 	abstract protected function connect();
 	abstract protected function close();
 	abstract protected function commit();
-	abstract protected function enclose_field_name($data);
-	abstract protected function enclose_field_value($data);
+	abstract protected function escape_key($data);
+	abstract protected function escape_val($data);
 	abstract protected function error();
 	abstract protected function fetch_array($query_id = 0);
 	abstract protected function fetch_assoc($query_id = 0);

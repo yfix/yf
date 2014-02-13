@@ -341,7 +341,7 @@ class yf_db_driver_oracle extends yf_db_driver {
 	/**
 	* Enclose field names
 	*/
-	function enclose_field_name($data) {
+	function escape_key($data) {
 		$data = '"'.$data.'"';
 		return $data;
 	}
@@ -349,7 +349,7 @@ class yf_db_driver_oracle extends yf_db_driver {
 	/**
 	* Enclose field values
 	*/
-	function enclose_field_value($data) {
+	function escape_val($data) {
 		$data = '\''.$data.'\'';
 		return $data;
 	}
