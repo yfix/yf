@@ -177,7 +177,7 @@ class yf_errors {
 		if ($this->NO_NOTICES && ($error_type == E_NOTICE || $error_type == E_USER_NOTICE)) {
 			return true;
 		}
-		$log_message = '';
+		$msg = '';
 		$save_log	= false;
 		$send_mail	= false;
 		// Process critical errors
@@ -232,22 +232,23 @@ class yf_errors {
 				$DIVIDER = '#@#';
 			}
 			// Create logging message
-			$log_message  = date('Y-m-d H:i:s'). $DIVIDER;
-			$log_message .= $this->error_types[$error_type]. $DIVIDER;
-			$log_message .= str_replace(array("\r",PHP_EOL), '', $error_msg).';'.$DIVIDER;
-			$log_message .= 'SOURCE='.$error_file.' on line '.$error_line. $DIVIDER;
-			$log_message .= 'SITE_ID='.conf('SITE_ID'). $DIVIDER;
-			$log_message .= 'IP='.$IP. $DIVIDER;
-			$log_message .= 'QUERY_STRING='.WEB_PATH. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : ''). $DIVIDER;
-			$log_message .= 'URL=http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']. $DIVIDER;
-			$log_message .= 'REFERER='.$_SERVER['HTTP_REFERER']. $DIVIDER;
-			$log_message .= $this->_log_display_array('GET'). $DIVIDER;
-			$log_message .= $this->_log_display_array('POST'). $DIVIDER;
-			$log_message .= $this->_log_display_array('FILES'). $DIVIDER;
-			$log_message .= $this->_log_display_array('COOKIE'). $DIVIDER;
-			$log_message .= $this->_log_display_array('SESSION');
-			$log_message .= 'USER_AGENT='.$_SERVER['HTTP_USER_AGENT']. $DIVIDER;
-			$log_message .= PHP_EOL;
+			$msg  = date('Y-m-d H:i:s'). $DIVIDER;
+			$msg .= $this->error_types[$error_type]. $DIVIDER;
+			$msg .= str_replace(array("\r",PHP_EOL), '', $error_msg).';'.$DIVIDER;
+#			$msg .= 'SOURCE='.$error_file.' on line '.$error_line. $DIVIDER;
+			$msg .= 'SOURCE='.implode(';', array_slice(explode(PHP_EOL, main()->trace_string()), 1, 5)). $DIVIDER;
+			$msg .= 'SITE_ID='.conf('SITE_ID'). $DIVIDER;
+			$msg .= 'IP='.$IP. $DIVIDER;
+			$msg .= 'QUERY_STRING='.WEB_PATH. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : ''). $DIVIDER;
+			$msg .= 'URL=http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']. $DIVIDER;
+			$msg .= 'REFERER='.$_SERVER['HTTP_REFERER']. $DIVIDER;
+			$msg .= $this->_log_display_array('GET'). $DIVIDER;
+			$msg .= $this->_log_display_array('POST'). $DIVIDER;
+			$msg .= $this->_log_display_array('FILES'). $DIVIDER;
+			$msg .= $this->_log_display_array('COOKIE'). $DIVIDER;
+			$msg .= $this->_log_display_array('SESSION');
+			$msg .= 'USER_AGENT='.$_SERVER['HTTP_USER_AGENT']. $DIVIDER;
+			$msg .= PHP_EOL;
 		}
 		// Save log message if needed
 		if ($save_log) {
@@ -257,15 +258,16 @@ class yf_errors {
 				}
 				$this->_LOG_STARTED = true;
 			}
-			$this->_do_save_log_info($log_message);
+			$this->_do_save_log_info($msg);
 		}
 		// Send mail notification if needed
 		if ($send_mail) {
-			$this->mail_buffer .= $log_message;
+			$this->mail_buffer .= $msg;
 		}
 		// Do store message into database (also check if that possible)
 		if ($save_in_db && is_object(db()) && !empty(db()->_connected)) {
 			// Prepare SQL
+// TODO: add full trace here
 			$sql = db()->INSERT('log_core_errors', array(
 				'error_level'	=> intval($error_type),
 				'error_text'	=> _es($error_msg),
@@ -288,7 +290,7 @@ class yf_errors {
 			db()->_add_shutdown_query($sql);
 		}
 		// Check if need to show error message to the user
-		if (DEBUG_MODE && ($this->ERROR_REPORTING & $error_type) && strlen($log_message)) {
+		if (DEBUG_MODE && ($this->ERROR_REPORTING & $error_type) && strlen($msg)) {
 			echo '<b>'.$this->error_types[$error_type].'</b>: '. $error_msg.' (<i>'.$error_file.' on line '.$error_line.'</i>)<pre>'.main()->trace_string().'</pre><br />'.PHP_EOL;
 		}
 		// For critical errors stop execution here
@@ -317,19 +319,19 @@ class yf_errors {
 	/**
 	* Save log info to file or stdout
 	*/
-	function _do_save_log_info($log_message, $add_time = false) {
+	function _do_save_log_info($msg, $add_time = false) {
 		if ($add_time) {
-			$log_message = date('Y-m-d H:i:s').' - '.$log_message;
+			$msg = date('Y-m-d H:i:s').' - '.$msg;
 		}
 		// Save log to file
 		if ($this->error_log_filename == '') {
-			error_log($log_message, 0);
+			error_log($msg, 0);
 		} else {
 			$log_dir = dirname($this->error_log_filename);
 			if (!file_exists($log_dir)) {
 				_mkdir_m($log_dir);
 			}
-			error_log($log_message, 3, $this->error_log_filename);
+			error_log($msg, 3, $this->error_log_filename);
 		}
 	}
 
