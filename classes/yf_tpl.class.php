@@ -302,7 +302,7 @@ class yf_tpl {
 			}
 			if (DEBUG_MODE) {
 #				$body['debug_info'] = $this->parse('system/debug_info', array('items' => common()->show_debug_info(), 'content' => 'debug_info'));
-				$body['debug_info'] = array('items' => common()->show_debug_info(), 'content' => 'debug_info');
+				$body['debug_info'] = common()->show_debug_info();
 				if ($this->ALLOW_INLINE_DEBUG || main()->INLINE_EDIT_LOCALE) {
 					$body['debug_info'] .= $this->parse('system/js_inline_editor');
 				}
