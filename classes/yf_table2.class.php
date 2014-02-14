@@ -304,7 +304,7 @@ class yf_table2 {
 					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
-					$body .= '<th>'.t('Actions').'</th>'.PHP_EOL;
+					$body .= '<th>'.(isset($params['actions_desc']) ? t($params[actions_desc]) : t('Actions')).'</th>'.PHP_EOL;
 				}
 				$body .= '</thead>'.PHP_EOL;
 			}
