@@ -7,7 +7,7 @@
 	</ul>
 </li>
 
-<script type="text/css" class="yf_core">
+<script type="text/javascript" class="yf_core">
 $(function(){
 	$(".theme-selector > li > a").click(function(){
 		var theme = this.id.substr(9) // 9 == strlen('theme_id_')
