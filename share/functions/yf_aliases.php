@@ -106,6 +106,12 @@ if (!function_exists('table')) {
 if (!function_exists('table2')) {
 	function table2($data = array(), $params = array()) { $table = clone _class('table2'); return $table->chained_wrapper($data, $params); }
 }
+if (!function_exists('require_js')) {
+	function require_js($content, $is_file = true, $params = array()) { return _class('core_js')->add($content, $is_file, $params); }
+}
+if (!function_exists('require_css')) {
+	function require_css($content, $is_file = true, $params = array()) { return _class('core_css')->add($content, $is_file, $params); }
+}
 if (!function_exists('getmicrotime')) {
 	function getmicrotime() { return microtime(true); }
 }
