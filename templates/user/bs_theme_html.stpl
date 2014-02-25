@@ -1,10 +1,10 @@
 {catch(min_ext)}{if(const.DEBUG_MODE eq 0)}.min{/if}{/catch}
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery{min_ext}.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui{min_ext}.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular{min_ext}.js"></script>
-<link href="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui{min_ext}.css" rel="stylesheet">
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui{min_ext}.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery{min_ext}.js" class="yf_core"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui{min_ext}.js" class="yf_core"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular{min_ext}.js" class="yf_core"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui{min_ext}.css" rel="stylesheet" class="yf_core">
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui{min_ext}.js" class="yf_core"></script>
 
 <!--script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-loader{min_ext}.js"></script-->
 <!--script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore{min_ext}.js"></script-->
@@ -12,47 +12,47 @@
 {if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
 	{if(cur_theme eq "bootstrap")}
 		{if(const.DEBUG_MODE eq 1)}
-			<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.css" rel="stylesheet">
+			<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.css" rel="stylesheet" class="yf_core">
 		{else}
-			<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+			<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" class="yf_core">
 		{/if}
 	{else}
 		{if(const.DEBUG_MODE eq 1)}
-			<link href="http://bootswatch.com/2/{cur_theme}/bootstrap.css" rel="stylesheet">
+			<link href="http://bootswatch.com/2/{cur_theme}/bootstrap.css" rel="stylesheet" class="yf_core">
 		{else}
-			<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/{cur_theme}/bootstrap.min.css" rel="stylesheet">
+			<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/{cur_theme}/bootstrap.min.css" rel="stylesheet" class="yf_core">
 		{/if}
 	{/if}
-	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap{min_ext}.js"></script>
+	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap{min_ext}.js" class="yf_core"></script>
 
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.8.0/ui-bootstrap{min_ext}.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.8.0/ui-bootstrap-tpls{min_ext}.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.8.0/ui-bootstrap{min_ext}.js" class="yf_core"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.8.0/ui-bootstrap-tpls{min_ext}.js" class="yf_core"></script>
 {/if}
 
 {if("conf.css_framework" eq "bs3")}
 	{if(cur_theme eq "bootstrap")}
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap{min_ext}.css" rel="stylesheet">
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme{min_ext}.css" rel="stylesheet">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme{min_ext}.css" rel="stylesheet" class="yf_core">
 	{else}
 		{if(const.DEBUG_MODE eq 1)}
-			<link href="http://bootswatch.com/{cur_theme}/bootstrap.css" rel="stylesheet">
+			<link href="http://bootswatch.com/{cur_theme}/bootstrap.css" rel="stylesheet" class="yf_core">
 		{else}
-			<link href="//netdna.bootstrapcdn.com/bootswatch/3.1.0/{cur_theme}/bootstrap{min_ext}.css" rel="stylesheet">
+			<link href="//netdna.bootstrapcdn.com/bootswatch/3.1.0/{cur_theme}/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
 		{/if}
 	{/if}
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap{min_ext}.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap{min_ext}.js" class="yf_core"></script>
 
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap{min_ext}.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls{min_ext}.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap{min_ext}.js" class="yf_core"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls{min_ext}.js" class="yf_core"></script>
 {/if}
 
-<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome{min_ext}.css" rel="stylesheet">
-<!--link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome{min_ext}.css" rel="stylesheet"-->
+<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome{min_ext}.css" rel="stylesheet" class="yf_core">
+<!--link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome{min_ext}.css" rel="stylesheet" class="yf_core"-->
 
-<script type="text/javascript" src="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/js/bootstrap-formhelpers-selectbox.js.gz"></script>
-<link rel="stylesheet" href="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/css/bootstrap-formhelpers.min.css.gz">
+<script type="text/javascript" src="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/js/bootstrap-formhelpers-selectbox.js.gz" class="yf_core"></script>
+<link rel="stylesheet" href="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/css/bootstrap-formhelpers.min.css.gz" class="yf_core">
 
-<style type="text/css">
+<style type="text/css" class="yf_core">
 [class^="bfh-flag-"], [class*="bfh-flag-"] {
 	display: inline-block;
 	margin-right: 5px;
@@ -66,5 +66,5 @@
 </style>
 
 <!--[if lt IE 9]>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv{min_ext}.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv{min_ext}.js" class="yf_core"></script>
 <![endif]-->

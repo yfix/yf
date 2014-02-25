@@ -321,6 +321,9 @@ class yf_db {
 				}
 			}
 		}
+// TODO: if query with 1 or more joined tables and all of them not exists 
+//		- then we need to try several times, checking that error changing
+//      as mysql will not tell all missing tables at once, only one-by-one
 		if (!$result && $query_allowed && $db_error && $this->ERROR_AUTO_REPAIR) {
 			$result = $this->_repair_table($sql, $db_error);
 		}

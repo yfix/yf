@@ -32,48 +32,18 @@ class yf_core_install {
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/<?php echo installer()->bs_current_theme(); ?>/bootstrap.min.css" rel="stylesheet">
-
 	<style type="text/css">
-.sidebar-nav {
-    padding: 9px 0;
-}
-.dropdown-menu .sub-menu {
-    left: 100%;
-    position: absolute;
-    top: 0;
-    visibility: hidden;
-    margin-top: -1px;
-}
-.dropdown-menu li:hover .sub-menu {
-    visibility: visible;
-}
-.dropdown:hover .dropdown-menu {
-    display: block;
-}
-.nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu {
-    margin-top: 0;
-}
-.navbar .sub-menu:before {
-    border-bottom: 7px solid transparent;
-    border-left: none;
-    border-right: 7px solid rgba(0, 0, 0, 0.2);
-    border-top: 7px solid transparent;
-    left: -7px;
-    top: 10px;
-}
-.navbar .sub-menu:after {
-    border-top: 6px solid transparent;
-    border-left: none;
-    border-right: 6px solid #fff;
-    border-bottom: 6px solid transparent;
-    left: 10px;
-    top: 11px;
-    left: -6px;
-}
+.sidebar-nav { padding: 9px 0; }
+.dropdown-menu .sub-menu { left: 100%; position: absolute; top: 0; visibility: hidden; margin-top: -1px; }
+.dropdown-menu li:hover .sub-menu { visibility: visible; }
+.dropdown:hover .dropdown-menu { display: block; }
+.nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu { margin-top: 0; }
+.navbar .sub-menu:before { border-bottom: 7px solid transparent; border-left: none; border-right: 7px solid rgba(0, 0, 0, 0.2); border-top: 7px solid transparent; left: -7px; top: 10px; }
+.navbar .sub-menu:after { border-top: 6px solid transparent; border-left: none; border-right: 6px solid #fff; border-bottom: 6px solid transparent; left: 10px; top: 11px; left: -6px; }
 	</style>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-	<script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" type="text/javascript"></script>
+	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
 	$(function(){
 		$(".theme-selector > li > a").click(function(){
 			var theme = this.id.substr(9) // 9 == strlen('theme_id_')
@@ -83,7 +53,6 @@ class yf_core_install {
 		})
 	})
 	</script>
-
 </head>
 <body>
 	<div class="navbar">

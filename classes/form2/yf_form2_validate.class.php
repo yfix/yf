@@ -36,6 +36,7 @@ class yf_form2_validate {
 			$extra['title'] = isset($extra['title']) ? $extra['title'] : t('Field must contain only numbers');
 		}
 */
+/*
 		// http://stackoverflow.com/questions/10281962/is-it-minlength-in-html5
 		if (isset($vr['min_length']) && strlen($vr['min_length']) && !isset($extra['pattern'])) {
 			$extra['pattern'] = '.{'.$vr['min_length'].','.($vr['max_length'] ?: '').'}';
@@ -43,6 +44,7 @@ class yf_form2_validate {
 		if ($vr['max_length'] && !isset($extra['maxlength'])) {
 			$extra['maxlength'] = $vr['max_length'][1];
 		}
+*/
 		if (isset($vr['required'])) {
 			$extra['required'] = 1;
 		}

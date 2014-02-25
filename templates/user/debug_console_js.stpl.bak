@@ -42,3 +42,22 @@ $(function(){
 	})
 });
 </script>
+<script type="text/javascript">
+/*
+var debug_window = null;
+$(function(){
+	var debug_window_name = 'yf_debug_window';
+	$("#debug_console").prepend('<button class="btn btn-mini btn-xs" id="debug-open">Debug open window</button>').find("#debug-open").click(function(){
+// TODO: try to fix issue with clickable tabs inside popup window
+		debug_window = window.open(''/*'/debug.html'*/, debug_window_name/*, 'width=800,height=600,location=no,menubar=no,status=no,top=100,left=100,titlebar=no,toolbar=no'*/)
+		$('.yf_core').each(function(){
+console.log(debug_window)
+			$('head', debug_window.document).append( $(this).clone()[0].outerHTML )
+		})
+		$('body', debug_window.document).html( $("#debug_console").clone()[0].outerHTML )
+		$('a', debug_window.document).attr('target', debug_window_name)
+//		$("#debug_console").hide()
+	});
+})
+*/
+</script>
