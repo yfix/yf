@@ -1915,6 +1915,12 @@ class yf_form2 {
 		return $func($extra, $replace, $this);
 	}
 
+	
+	function file_uploader($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return false;
+		return _class('form2_file_uploader', 'classes/form2/')->file_uploader($name, $desc, $extra, $replace, $this);
+	}	
+
 	/**
 	*/
 	function captcha($name = '', $desc = '', $extra = array(), $replace = array()) {
