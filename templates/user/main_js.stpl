@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script type="text/javascript" class="yf_core">
 $(function(){
 	$('.yf_tip').popover({
 		'trigger' : 'hover',
@@ -6,7 +6,7 @@ $(function(){
 	})
 })
 </script>
-<script type="text/javascript">
+<script type="text/javascript" class="yf_core">
 $(function(){
 	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
 	var yf_ajax_link_validate = '{url(dynamic,ajax_validate)}';

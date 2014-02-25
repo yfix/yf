@@ -68,7 +68,7 @@ class yf_form2_stars {
 			$body[] = '</span>';
 			$body[] = '<input type="hidden" name="'.$extra['name'].'" id='.$extra['name'].' value="0">';
 			
-			$body[] = '
+			_class('core_js')->add('
 				<script>
 					$(function () {
 						$(".'.$class.'.'.$extra['name'].'").on("click",function() {
@@ -84,7 +84,7 @@ class yf_form2_stars {
 							});
 						});
 					});
-				</script>';
+				</script>',false);
 			
 			return $_this->_row_html(implode('', $body), $extra, $r);
 		};

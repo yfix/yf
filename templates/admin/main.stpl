@@ -5,7 +5,8 @@
 	<base href="{const(ADMIN_WEB_PATH)}"/>
 	<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
 {execute(common,bs_theme_html)}
-{include("main_style_css")}
+{execute_shutdown(graphics,show_css)}
+
 {execute(graphics,show_metatags)}
 </head>
 <body class="bs-theme-{execute(common,bs_current_theme)}">
@@ -31,6 +32,6 @@
 {execute(common,show_messages)}
 {block(center_area)}
 	</div>
-	{include("main_js")}
+{execute_shutdown(graphics,show_js)}
 </body>
 </html>

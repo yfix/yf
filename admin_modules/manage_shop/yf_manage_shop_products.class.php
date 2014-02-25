@@ -218,17 +218,23 @@ class yf_manage_shop_products{
 		if(!$_GET['search_word']) return false;
 		$word = common()->sphinx_escape_string($_GET['search_word']);
 //		$word = str_replace("_", " ", common()->_propose_url_from_name($word));
-		$result = common()->sphinx_query("
+/*		$result = common()->sphinx_query("
 			SELECT product_id,name 
 			FROM products 
 			WHERE MATCH ('@name ".$word."*')
 			LIMIT 20"
-		);
+		); */
+		$result = db()->get_all("
+			SELECT `id`,`name` FROM `".db('shop_products')."` WHERE 
+				`name` LIKE '%"._es($word)."%' OR 
+				`id` LIKE '%"._es($word)."%'
+			LIMIT 20
+		");
 		if(!$result) return false;
 		foreach((array)$result as $k){
 			$return_array[] = array(
-				'id' => $k['product_id'],
-				'text' => '['.$k['product_id'].'] '.$k['name'],
+				'id' => $k['id'],
+				'text' => '['.$k['id'].'] '.$k['name'],
 			);
 		}
 		return json_encode($return_array);

@@ -30,25 +30,22 @@ class yf_form2_datetime {
 			$format = array();
 			if ($extra['no_date']!=1) $format[] = "MM/dd/yyyy";
 			if ($extra['no_time']!=1) $format[] = "HH:mm:ss";
-			$body = "
-<script type=\"text/javascript\" src=\"https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js\"></script>
-<link rel=\"stylesheet\" type=\"text/css\" href=\"https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css\">
+			_class('core_js')->add("https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js", true);
+			_class('core_css')->add("https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css", true);			$body = "
 <div id=\"{$extra['name']}\" class=\"input-append date\">
     <input data-format=\"".implode(" ",$format)."\" name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium\"></input>
     <span class=\"add-on\">
       <i data-time-icon=\"icon-time\" data-date-icon=\"icon-calendar\"></i>
     </span>		
 </div>
-<script type=\"text/javascript\">
+";
+			_class('core_js')->add("<script type=\"text/javascript\">
   $(function() {
     $('#{$extra['name']}').datetimepicker({
-      language: 'en',
-	  ".($extra['no_time']==1 ? "pickTime: false," : "")."
-	  ".($extra['no_date']==1 ? "pickDate: false," : "")."
+      language: 'en',".($extra['no_time']==1 ? "pickTime: false," : "")."".($extra['no_date']==1 ? "pickDate: false," : "")."
     });
   });
-</script>
-";
+</script>", false);
 			return $_this->_row_html($body, $extra, $r);
 		};
 		if ($__this->_chained_mode) {

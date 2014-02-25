@@ -6,7 +6,7 @@ $( document ).ready( function() {
 	
 	$("#product_name").select2({
 		placeholder: "{t('name')}",
-		minimumInputLength: 1,
+		minimumInputLength: 2,
 		ajax: { 
 		    url: "./?object=manage_shop&action=product_search_autocomplete",
 		    dataType: 'json',
@@ -47,4 +47,4 @@ $( document ).ready( function() {
 </script>
 <input type="text" name="product_name" id="product_name" style="width:500px;" value="">
 <input type="hidden" name="product_id" id="product_id" value="">
-<div id="add_product_button_container" style="display:none;">Кол-во: <input type="text" id="add_product_quantity" name="quantity" value="1" style="width:30px;"> <input type="button" id="add_product_button" value="Добавить в заказ"></div>
+<div id="add_product_button_container" style="display:none;">Кол-во: <input type="text" id="add_product_quantity" name="quantity" value="1" style="width:30px;"> <input type="button" id="add_product_button" value="Добавить в заказ" class="btn"></div>

@@ -58,6 +58,8 @@ class yf_cache {
 	*/
 	public $LOG_MAX_ITEMS	= 200;
 
+// TODO: connect plugins, stored inside classes/cache/*
+
 	/**
 	* Framework constructor
 	*/

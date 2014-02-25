@@ -131,8 +131,8 @@ class yf_graphics {
 	/**
 	* Common javascript loader
 	*/
-	function show_javascript () {
-		return _class('core_js')->show_javascript();
+	function show_js () {
+		return _class('core_js')->show_js();
 	}
 
 	/**

@@ -6,7 +6,7 @@ $( document ).ready( function() {
 	
 	$("#{input_name}_search").select2({
 		placeholder: "",
-		minimumInputLength: 1,
+		minimumInputLength: 2,
 		ajax: {
 		    url: "./?object=manage_shop&action=product_search_autocomplete",
 		    dataType: 'json',

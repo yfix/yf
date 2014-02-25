@@ -1,15 +1,15 @@
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.jquery.min.js"></script>
-<link href="//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.css" rel="stylesheet">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.jquery.min.js" class="yf_core"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.css" rel="stylesheet" class="yf_core">
 
 {if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
-<script type="text/javascript">
+<script type="text/javascript" class="yf_core">
 $(function(){
 	$('select').not('.portlet select').not('.no-chosen').chosen();
 });
 </script>
 {/if}
 
-<script type="text/javascript">
+<script type="text/javascript" class="yf_core">
 $(function(){
 	var _t_active = "{t(Active)}";
 	var _t_inactive = "{t(Disabled)}";
