@@ -49,6 +49,7 @@ class yf_db_manager {
 	function show () {
 		$data = $this->_get_tables_infos();
 		return table($data, array('id' => 'name', 'pager_records_on_page' => 10000))
+// TODO: group actions: truncate, check, optimize, repair, drop(?)
 			->check_box('name', array('width' => '1%'))
 			->link('name')
 			->text('rows', array('width' => '1%'))
@@ -58,8 +59,8 @@ class yf_db_manager {
 			->btn('View', './?object='.$_GET['object'].'&action=table_show&id=%d')
 			->btn('Structure', './?object='.$_GET['object'].'&action=table_structure&id=%d')
 			->btn('Export', './?object='.$_GET['object'].'&action=table_export&id=%d')
+			->header_link('import sql', './?object='.$_GET['object'].'&action=import')
 #			->footer_link('backup')
-#			->footer_link('sql')
 		;
 	}
 
@@ -492,10 +493,10 @@ class yf_db_manager {
 				}
 			}
 			if (empty($tables_to_export)) {
-				_re(t("No tables to export!"));
+				_re("No tables to export!");
 			}
 			if (!isset($this->_export_types[$EXPORT_TYPE])) {
-				_re(t("Wrong export type!"));
+				_re("Wrong export type!");
 			}
 // checking
 			if ($USE_TEMP_FILE) {
