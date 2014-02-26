@@ -779,7 +779,7 @@ class yf_table2 {
 					if ($link_id) {
 						$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
 					}
-					$is_link_allowed = $this->_is_link_allowed($link);
+					$is_link_allowed = $_this->_is_link_allowed($link);
 				}
 				if ($link && $is_link_allowed) {
 					if ($extra['rewrite']) {
@@ -1019,7 +1019,7 @@ class yf_table2 {
 				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$link = trim(str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add']);
-				if (strlen($link) && !$this->_is_link_allowed($link)) {
+				if (strlen($link) && !$_this->_is_link_allowed($link)) {
 					return '';
 				}
 				if ($extra['rewrite']) {
@@ -1183,7 +1183,7 @@ class yf_table2 {
 				}
 				$id = $override_id ? $override_id : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				if (strlen($link) && !$this->_is_link_allowed($link)) {
+				if (strlen($link) && !$_this->_is_link_allowed($link)) {
 					return '';
 				}
 				if ($extra['rewrite']) {
@@ -1218,7 +1218,7 @@ class yf_table2 {
 				$extra = $params['extra'];
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				if (strlen($link) && !$this->_is_link_allowed($link)) {
+				if (strlen($link) && !$_this->_is_link_allowed($link)) {
 					return '';
 				}
 				if ($extra['rewrite']) {
