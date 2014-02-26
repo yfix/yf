@@ -74,7 +74,7 @@ class yf_log_exec_analyser {
 			"user_agents_link"		=> "./?object=".$_GET["object"]."&action=user_agents_stats",
 			"referers_link"			=> "./?object=".$_GET["object"]."&action=referers_stats",
 			"max_exec_link"			=> "./?object=".$_GET["object"]."&action=max_exec_stats",
-			"exec_log_link"			=> "./?object=db_parser&table=sys_log_exec",
+			"exec_log_link"			=> "./?object=db_manager&action=table_show&id=sys_log_exec",
 			"hourly_latest_link"	=> "./?object=".$_GET["object"]."&action=hourly_latest_stats",
 			"hourly_archive_link"	=> "./?object=".$_GET["object"]."&action=hourly_archive_stats",
 			"move_to_archive_action"=> "./?object=".$_GET["object"]."&action=move_to_archive",
@@ -1262,7 +1262,7 @@ class yf_log_exec_analyser {
 			),
 			array(
 				"name"	=> "Raw Exec Log",
-				"url"	=> "object=db_parser&table=sys_log_exec",
+				"url"	=> "object=db_manager&action=table_show&id=sys_log_exec",
 			),
 			array(
 				"name"	=> "Max Exec Time Stats",
