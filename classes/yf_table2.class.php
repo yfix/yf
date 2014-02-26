@@ -710,6 +710,24 @@ class yf_table2 {
 
 	/**
 	*/
+	function _is_link_allowed($link = '') {
+		$link = trim($link);
+		if (!strlen($link)) {
+			return true;
+		}
+		$is_link_allowed = true;
+		if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
+			if (in_array($link, array('','#','javascript:void();'))) {
+				$is_link_allowed = true;
+			} else {
+				$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
+			}
+		}
+		return $is_link_allowed;
+	}
+
+	/**
+	*/
 	function text($name, $desc = '', $extra = array()) {
 		if (!is_array($extra)) {
 			$extra = array();
@@ -761,9 +779,7 @@ class yf_table2 {
 					if ($link_id) {
 						$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
 					}
-					if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-						$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
-					}
+					$is_link_allowed = $this->_is_link_allowed($link);
 				}
 				if ($link && $is_link_allowed) {
 					if ($extra['rewrite']) {
@@ -1002,12 +1018,8 @@ class yf_table2 {
 					$attrs .= ' target="'.$extra['target'].'"';
 				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
-				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				$is_link_allowed = true;
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-					$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
-				}
-				if (!$is_link_allowed) {
+				$link = trim(str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add']);
+				if (strlen($link) && !$this->_is_link_allowed($link)) {
 					return '';
 				}
 				if ($extra['rewrite']) {
@@ -1171,11 +1183,7 @@ class yf_table2 {
 				}
 				$id = $override_id ? $override_id : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				$is_link_allowed = true;
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-					$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
-				}
-				if (!$is_link_allowed) {
+				if (strlen($link) && !$this->_is_link_allowed($link)) {
 					return '';
 				}
 				if ($extra['rewrite']) {
@@ -1210,11 +1218,7 @@ class yf_table2 {
 				$extra = $params['extra'];
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				$is_link_allowed = true;
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-					$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
-				}
-				if (!$is_link_allowed) {
+				if (strlen($link) && !$this->_is_link_allowed($link)) {
 					return '';
 				}
 				if ($extra['rewrite']) {
