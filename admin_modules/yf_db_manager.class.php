@@ -116,14 +116,13 @@ class yf_db_manager {
 	/**
 	*/
 	function show () {
+
 		$total_rows = 0;
 		$total_size = 0;
-		// Process tables
 		foreach ((array)$this->_get_tables_infos() as $table_name => $table_info) {
 			$total_rows += $table_info['rows'];
 			$total_size += $table_info['data_size'];
 			$small_table_name = substr($table_name, strlen(DB_PREFIX));
-			// Process template
 			$replace2 = array(
 				"bg_class"			=> !(++$i % 2) ? "bg1" : "bg2",
 				"name"				=> _prepare_html($table_name),
@@ -160,12 +159,29 @@ class yf_db_manager {
 			"global_check_link"	=> "./?object=".$_GET["object"]."&action=check_structure",
 			"backup_link"		=> "./?object=".$_GET["object"]."&action=show_backup",
 			"ajax_status_link"	=> "./?object=".$_GET["object"]."&action=ajax_status",
-			
 			"actions_select_box"=> $actions_select_box,
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);
+
+/*
+		$data = $this->_get_tables_infos();
+		return table($data)
+			->check_box('id')
+			->link('name')
+			->text('engine')
+			->text('collation')
+			->text('num_rows')
+			->text('data_size')
+			->btn('View', './?object='.$_GET['object'].'&action=table_show&id=%d')
+			->btn('Structure', './?object='.$_GET['object'].'&action=structure&id=%d')
+			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
+#			->footer_link('backup')
+#			->footer_link('refresh')
+#			->footer_link('sql')
+		;
+*/
 	}
-	
+
 	/**
 	*/
 	function structure () {
@@ -178,7 +194,7 @@ class yf_db_manager {
 			$replace2 = array(
 				"field"		=> $A["Field"],
 				"type"		=> $A["Type"],
-				"collation"		=> $A["Collation"],
+				"collation"	=> $A["Collation"],
 				"null"		=> $A["Null"],
 				"key"		=> $A["Key"],
 				"default"	=> $A["Default"],
@@ -199,43 +215,37 @@ class yf_db_manager {
 		);
 		return tpl()->parse($_GET["object"]."/structure_main", $replace);
 	}
-	
+
 	/**
 	*/
 	function truncate () {
 		main()->NO_GRAPHICS = true;
-		
-		if(empty($_POST["tables"])){
+		if (empty($_POST["tables"])) {
 			return false;
 		}
 		$tables = rtrim($_POST["tables"], ",");
 		$tables = explode(",", $tables);
-		
-		foreach ((array)$tables as $table){
+		foreach ((array)$tables as $table) {
 			db()->query("TRUNCATE ".$table."");
 		}
 		echo "<b>truncate <span style='color:green'>complete!</span></b>";
 	}
-	
+
 	/**
 	*/
 	function drop () {
 		main()->NO_GRAPHICS = true;
-		
-		if(empty($_POST["tables"])){
+		if (empty($_POST["tables"])) {
 			return false;
 		}
-		
 		$tables = rtrim($_POST["tables"], ",");
 		$tables = explode(",", $tables);
-		
-		foreach ((array)$tables as $table){
+		foreach ((array)$tables as $table) {
 			db()->query("DROP TABLE ".$table."");
 		}
-		
 		echo "<b>drop <span style='color:green'>complete!</span></b>";
 	}
-	
+
 	/**
 	*/
 	function optimize () {
