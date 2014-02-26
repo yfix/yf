@@ -479,4 +479,3 @@ class yf_core_blocks {
 		}
 	}
 }
-
