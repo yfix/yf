@@ -15,6 +15,10 @@ class yf_core_js {
 			$content = array(0 => $content);
 		}
 		foreach ($content as $v) {
+			$v = trim($v);
+			if (!strlen($v)) {
+				continue;
+			}
 			if ($is_file) {
 				$v = '<script src="'.htmlspecialchars($v, ENT_QUOTES).'" type="text/javascript"></script>';
 			}
