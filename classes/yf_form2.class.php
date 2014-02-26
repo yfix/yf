@@ -141,6 +141,9 @@ class yf_form2 {
 		if ($table && $id) {
 			$columns = db()->meta_columns($table);
 			$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
+			if (!is_array($this->_replace)) {
+				$this->_replace = array();
+			}
 			foreach ((array)$info as $k => $v) {
 				$this->_replace[$k] = $v;
 			}
