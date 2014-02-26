@@ -61,7 +61,7 @@ class yf_debug_info {
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={{THEME}}&name={{ID}}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={{ID}}',
 		'edit_file'		=> 'object=file_manager&action=edit_item&id={{ID}}',
-		'show_db_table'	=> 'object=db_parser&table={{ID}}',
+		'show_db_table'	=> 'object=db_manager&action=table_show&id={{ID}}',
 		'sql_query'		=> 'object=db_manager&action=import&id={{ID}}',
 		'link'			=> '{{ID}}',
 	);
@@ -332,6 +332,7 @@ class yf_debug_info {
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
 
 			$sql = htmlspecialchars($sql);
+			$admin_link = $this->_admin_link('sql_query', rawurlencode($sql), true);
 			$replace = array(
 				','	=> ', ', 
 			);
@@ -341,7 +342,6 @@ class yf_debug_info {
 			}, $sql);
 
 			$exec_time = common()->_format_time_value($log['time']);
-			$admin_link = $this->_admin_link('sql_query', rawurlencode($orig_sql), true);
 			if ($admin_link && $this->ADD_ADMIN_LINKS) {
 				$exec_time = '<a href="'.$admin_link.'" class="btn btn-default btn-mini btn-xs">'.$exec_time.'</a>';
 			}
@@ -1092,15 +1092,11 @@ class yf_debug_info {
 			return '<a href="'.$text.'" class="btn btn-default btn-mini btn-xs">'.$text.'</a>';
 		}
 		$id = $text;
-		if ($type == 'show_db_table') {
-			$id = str_replace(db()->DB_PREFIX, '', $id);
-		}
 		$replace += array(
 			'{{ID}}'	=> urlencode(str_replace("\\", '/', $id)),
 			'{{THEME}}'	=> conf('theme'),
 		);
 		$url = str_replace(array_keys($replace), array_values($replace), $this->ADMIN_PATHS[$type]);
-//		$link = WEB_PATH. 'admin/?'. $url;
 		$link = ADMIN_WEB_PATH. '?'. $url;
 		if ($just_link) {
 			return $link;
