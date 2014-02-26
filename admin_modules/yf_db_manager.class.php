@@ -12,13 +12,13 @@ class yf_db_manager {
 	/** @var bool */
 	public $AUTO_GET_TABLES_STATUS		= 0;
 	/** @var string @conf_skip */
-	public $TABLES_CONSTS_PREFIX		= "dbt_";
+	public $TABLES_CONSTS_PREFIX		= 'dbt_';
 	/** @var bool */
 	public $USE_HIGHLIGHT				= 1;
 	/** @var int Number of records in extended export mode to use in one INSERT block */
 	public $EXPORT_EXTENDED_PER_BLOCK	= 500;
 	/** @var string Path where auto-backups will be stored */
-	public $BACKUP_PATH				= "backup_sql/";
+	public $BACKUP_PATH					= 'backup_sql/';
 	/** @var string Path to mysql.exe */
 	public $MYSQL_CLIENT_PATH			= "d:\\www\\mysql\\bin\\";
 	/** @var int Max number of backups files to store */
@@ -28,9 +28,9 @@ class yf_db_manager {
 	*/
 	function _init () {
 		$this->_boxes = array(
-			"tables"		=> 'multi_select("tables",		$this->_tables_names,	$selected, false, 2, " size=10 class=small_for_select ", false)',
-			"export_type"	=> 'radio_box("export_type",	$this->_export_types,	$selected ? $selected : "insert", false, 2, "", false)',
-			"compress"		=> 'radio_box("compress",		$this->_compress_types,	$selected ? $selected : "gzip", false, 2, "", false)',
+			'tables'		=> 'multi_select("tables",		$this->_tables_names,	$selected, false, 2, " size=10 class=small_for_select ", false)',
+			'export_type'	=> 'radio_box("export_type",	$this->_export_types,	$selected ? $selected : "insert", false, 2, "", false)',
+			'compress'		=> 'radio_box("compress",		$this->_compress_types,	$selected ? $selected : "gzip", false, 2, "", false)',
 		);
 		$this->_export_types = array(
 			"insert"	=> "INSERT",
@@ -44,13 +44,84 @@ class yf_db_manager {
 
 	/**
 	*/
+	function table_show() {
+		$table = $this->_get_table_name($_GET['id']);
+		if (!$table) {
+			return _e('Wrong params');
+		}
+		return table2('SELECT * FROM '.db($table), array('auto_no_buttons' => 1))
+			->btn_edit('', './?object='.$_GET['object'].'&action=table_edit&id=%d&table='.$table)
+			->btn_delete('', './?object='.$_GET['object'].'&action=table_delete&id=%d&table='.$table)
+			->footer_add('', './?object='.$_GET['object'].'&action=table_add&id='.$table)
+			->auto();
+	}
+
+	/**
+	*/
+	function table_edit() {
+		$id = intval($_GET['id']);
+		$table = $this->_get_table_name($_GET['table']);
+		if (!$id || !$table) {
+			return _e('Wrong params');
+		}
+		$replace = _class('admin_methods')->edit(array(
+			'table' 	=> $table,
+			'links_add' => '&table='.$table,
+			'back_link'	=> './?object='.$_GET['object'].'&action=table_show&id='.$table,
+		));
+		return form2($replace)
+			->auto(db($table), $id, array('links_add' => '&table='.$table));
+	}
+
+	/**
+	*/
+	function table_add() {
+		$table = $this->_get_table_name($_GET['id']);
+		if (!$table) {
+			return _e('Wrong params');
+		}
+		$replace = _class('admin_methods')->add(array(
+			'table' 	=> $table,
+			'links_add' => '&table='.$table,
+			'back_link'	=> './?object='.$_GET['object'].'&action=table_show&id='.$table,
+		));
+		return form2($replace)
+			->auto(db($table), $id, array('links_add' => '&table='.$table));
+	}
+
+	/**
+	*/
+	function table_delete() {
+		$id = intval($_GET['id']);
+		$table = $this->_get_table_name($_GET['table']);
+		if (!$id || !$table) {
+			return _e('Wrong params');
+		}
+		return _class('admin_methods')->delete(array('table' => $table, 'links_add' => '&table='.$table));
+	}
+
+	/**
+	*/
+	function _get_table_name($table = '') {
+		if (!$table) {
+			$table = $_GET['id'];
+		}
+		$table = preg_replace('/[^a-z0-9_]+/ims', '', $table);
+		if (defined('DB_PREFIX') && strlen(DB_PREFIX) && strlen($table) && substr($table, 0, strlen(DB_PREFIX)) == DB_PREFIX) {
+			$table = substr($table, strlen(DB_PREFIX));
+		}
+		return $table;
+	}
+
+	/**
+	*/
 	function show () {
 		$total_rows = 0;
 		$total_size = 0;
 		// Process tables
 		foreach ((array)$this->_get_tables_infos() as $table_name => $table_info) {
-			$total_rows += $table_info["rows"];
-			$total_size += $table_info["data_size"];
+			$total_rows += $table_info['rows'];
+			$total_size += $table_info['data_size'];
 			$small_table_name = substr($table_name, strlen(DB_PREFIX));
 			// Process template
 			$replace2 = array(
@@ -60,7 +131,7 @@ class yf_db_manager {
 				"num_rows"			=> intval($table_info["rows"]),
 				"data_size"			=> common()->format_file_size($table_info["data_size"]),
 				"collation"			=> _prepare_html($table_info["collation"]),
-				"view_link"			=> "./?object=db_parser&table=".$small_table_name,
+				"view_link"			=> "./?object=".$_GET['object']."&action=table_show&id=".$small_table_name,
 				"show_create_link"	=> "./?object=".$_GET["object"]."&action=show_create_table&table=".$small_table_name,
 				"delete_link"		=> "./?object=".$_GET["object"]."&action=delete&table=".$small_table_name,
 				"export_link"		=> "./?object=".$_GET["object"]."&action=export&table=".$small_table_name,
