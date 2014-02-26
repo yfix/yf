@@ -284,6 +284,10 @@ class yf_table2 {
 				}
 				$body .= '<thead'.$thead_attrs.'>'.PHP_EOL;
 				$data1row = current($data);
+				// Needed to correctly process null values, when some other rows contain real data there
+				foreach ((array)$data1row as $k => $v) {
+					$data1row[$k] = strval($v);
+				}
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
 					if (!isset($data1row[$name])) {
@@ -386,7 +390,6 @@ class yf_table2 {
 		if (isset($params['tbody'])) {
 			$tbody_attrs = is_array($params['tbody']) ? $this->_attrs($params['tbody'], array('class', 'id')) : ' '.$params['tbody'];
 		}
-// $body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
 		$body .= '<tbody'.$tbody_attrs.'>'.PHP_EOL;
 		foreach ((array)$data as $_id => $row) {
 			$tr_attrs = '';
@@ -480,10 +483,9 @@ class yf_table2 {
 	*/
 	function _render_table_td($info, $row, $params) {
 		$name = $info['name'];
-		if (!isset($row[$name])) {
+		if (!array_key_exists($name, $row)) {
 			return false;
 		}
-
 		$func = &$info['func'];
 		$_extra = &$info['extra'];
 
