@@ -51,12 +51,11 @@ class yf_db_manager {
 		return table($data, array('id' => 'name', 'pager_records_on_page' => 10000))
 // TODO: group actions: truncate, check, optimize, repair, drop(?)
 			->check_box('name', array('width' => '1%'))
-			->link('name')
+			->link('name', './?object='.$_GET['object'].'&action=table_show&id=%d')
 			->text('rows', array('width' => '1%'))
 			->text('data_size', array('width' => '1%'))
 			->text('engine', array('width' => '1%'))
 			->text('collation', array('width' => '1%'))
-			->btn('View', './?object='.$_GET['object'].'&action=table_show&id=%d')
 			->btn('Structure', './?object='.$_GET['object'].'&action=table_structure&id=%d')
 			->btn('Export', './?object='.$_GET['object'].'&action=table_export&id=%d')
 			->header_link('import sql', './?object='.$_GET['object'].'&action=import')
@@ -421,6 +420,7 @@ class yf_db_manager {
 			"num_queries"		=> intval($num_queries),
 			"fetch_result"		=> $fetch_result,
 		);
+// TODO: form display file upload to import
 		return tpl()->parse($_GET["object"]."/import", $replace);
 	}
 
