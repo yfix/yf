@@ -331,8 +331,8 @@ class yf_debug_info {
 			$_cur_explain = isset($db_explain_results[$id]) ? $this->_format_db_explain_result($db_explain_results[$id]) : '';
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
 
+			$admin_link = $this->_admin_link('sql_query', urlencode($sql), true);
 			$sql = htmlspecialchars($sql);
-			$admin_link = $this->_admin_link('sql_query', rawurlencode($sql), true);
 			$replace = array(
 				','	=> ', ', 
 			);
