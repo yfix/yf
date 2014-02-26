@@ -10,7 +10,7 @@
 class yf_db_manager {
 
 	/** @var bool */
-	public $AUTO_GET_TABLES_STATUS		= 0;
+	public $AUTO_GET_TABLES_STATUS		= true;
 	/** @var string @conf_skip */
 	public $TABLES_CONSTS_PREFIX		= 'dbt_';
 	/** @var bool */
@@ -27,6 +27,7 @@ class yf_db_manager {
 	/**
 	*/
 	function _init () {
+/*
 		$this->_boxes = array(
 			'tables'		=> 'multi_select("tables",		$this->_tables_names,	$selected, false, 2, " size=10 class=small_for_select ", false)',
 			'export_type'	=> 'radio_box("export_type",	$this->_export_types,	$selected ? $selected : "insert", false, 2, "", false)',
@@ -40,6 +41,39 @@ class yf_db_manager {
 			""		=> "None",
 			"gzip"	=> "Gzip",
 		);
+*/
+	}
+
+	/**
+	*/
+	function show () {
+		$data = $this->_get_tables_infos();
+		return table($data, array('id' => 'name', 'pager_records_on_page' => 10000))
+			->check_box('name', array('width' => '1%'))
+			->link('name')
+			->text('rows', array('width' => '1%'))
+			->text('data_size', array('width' => '1%'))
+			->text('engine', array('width' => '1%'))
+			->text('collation', array('width' => '1%'))
+			->btn('View', './?object='.$_GET['object'].'&action=table_show&id=%d')
+			->btn('Structure', './?object='.$_GET['object'].'&action=table_structure&id=%d')
+			->btn('Export', './?object='.$_GET['object'].'&action=table_export&id=%d')
+#			->footer_link('backup')
+#			->footer_link('sql')
+		;
+	}
+
+	/**
+	*/
+	function _get_table_name($table = '') {
+		if (!$table) {
+			$table = $_GET['id'];
+		}
+		$table = preg_replace('/[^a-z0-9_]+/ims', '', $table);
+		if (defined('DB_PREFIX') && strlen(DB_PREFIX) && strlen($table) && substr($table, 0, strlen(DB_PREFIX)) == DB_PREFIX) {
+			$table = substr($table, strlen(DB_PREFIX));
+		}
+		return $table;
 	}
 
 	/**
@@ -102,123 +136,31 @@ class yf_db_manager {
 
 	/**
 	*/
-	function _get_table_name($table = '') {
-		if (!$table) {
-			$table = $_GET['id'];
+	function table_structure () {
+		$table = $this->_get_table_name($_GET['id']);
+		if (!strlen($table)) {
+			return _e('Empty table name');
 		}
-		$table = preg_replace('/[^a-z0-9_]+/ims', '', $table);
-		if (defined('DB_PREFIX') && strlen(DB_PREFIX) && strlen($table) && substr($table, 0, strlen(DB_PREFIX)) == DB_PREFIX) {
-			$table = substr($table, strlen(DB_PREFIX));
-		}
-		return $table;
+		$table = DB_PREFIX. $table;
+
+		$body .= '<h1>'.$table.'</h1>';
+
+		$body .= '<h3>'.t('Columns').'</h3>';
+		$body .= table(db()->get_all('SHOW FULL COLUMNS FROM '.$table), array('auto_no_buttons' => 1))->auto();
+
+		$body .= '<h3>'.t('Indexes').'</h3>';
+		$body .= table(db()->get_all('SHOW INDEX FROM '.$table), array('auto_no_buttons' => 1))->auto();
+
+		$body .= '<h3>'.t('SHOW CREATE TABLE').'</h3>';
+		list(, $create_table) = array_values(db()->get('SHOW CREATE TABLE '.$table));
+		$body .= '<pre>'._prepare_html($create_table).'</pre>';
+
+		return $body;
 	}
 
 	/**
 	*/
-	function show () {
-
-		$total_rows = 0;
-		$total_size = 0;
-		foreach ((array)$this->_get_tables_infos() as $table_name => $table_info) {
-			$total_rows += $table_info['rows'];
-			$total_size += $table_info['data_size'];
-			$small_table_name = substr($table_name, strlen(DB_PREFIX));
-			$replace2 = array(
-				"bg_class"			=> !(++$i % 2) ? "bg1" : "bg2",
-				"name"				=> _prepare_html($table_name),
-				"engine"			=> _prepare_html($table_info["engine"]),
-				"num_rows"			=> intval($table_info["rows"]),
-				"data_size"			=> common()->format_file_size($table_info["data_size"]),
-				"collation"			=> _prepare_html($table_info["collation"]),
-				"view_link"			=> "./?object=".$_GET['object']."&action=table_show&id=".$small_table_name,
-				"show_create_link"	=> "./?object=".$_GET["object"]."&action=show_create_table&table=".$small_table_name,
-				"delete_link"		=> "./?object=".$_GET["object"]."&action=delete&table=".$small_table_name,
-				"export_link"		=> "./?object=".$_GET["object"]."&action=export&table=".$small_table_name,
-				"structure_link"	=> "./?object=".$_GET["object"]."&action=structure&table=".$small_table_name,
-			);
-			$tables .= tpl()->parse($_GET["object"]."/table_item", $replace2);
-		}
-		$actions = array(
-			"truncate"	=> "truncate",
-			"drop"		=> "drop",
-			"check"		=> "check",
-			"optimize"	=> "optimize",
-			"repair"	=> "repair",
-		);
-		$first_element = array("0" => t(" - select - "));
-		$actions = my_array_merge($first_element, $actions);
-		$actions_select_box = common()->select_box("group_action_select", $actions, $_GET["id"], false, 2, "onchange='group_action();'", false);
-		
-		$replace = array(
-			"tables"			=> $tables,
-			"total"				=> intval($i),
-			"total_rows"		=> intval($total_rows),
-			"total_size"		=> common()->format_file_size($total_size),
-			"form_action"		=> "./?object=".$_GET["object"]."&action=import",
-			"export_link"		=> "./?object=".$_GET["object"]."&action=export",
-			"global_check_link"	=> "./?object=".$_GET["object"]."&action=check_structure",
-			"backup_link"		=> "./?object=".$_GET["object"]."&action=show_backup",
-			"ajax_status_link"	=> "./?object=".$_GET["object"]."&action=ajax_status",
-			"actions_select_box"=> $actions_select_box,
-		);
-		return tpl()->parse($_GET["object"]."/main", $replace);
-
-/*
-		$data = $this->_get_tables_infos();
-		return table($data)
-			->check_box('id')
-			->link('name')
-			->text('engine')
-			->text('collation')
-			->text('num_rows')
-			->text('data_size')
-			->btn('View', './?object='.$_GET['object'].'&action=table_show&id=%d')
-			->btn('Structure', './?object='.$_GET['object'].'&action=structure&id=%d')
-			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
-#			->footer_link('backup')
-#			->footer_link('refresh')
-#			->footer_link('sql')
-		;
-*/
-	}
-
-	/**
-	*/
-	function structure () {
-		$table_name = DB_PREFIX.$_GET["table"];
-		
-		$Q = db()->query("SHOW FULL COLUMNS FROM ".$table_name."");
-		while ($A = db()->fetch_assoc($Q)) {
-			$table_info[] = $A;
-			
-			$replace2 = array(
-				"field"		=> $A["Field"],
-				"type"		=> $A["Type"],
-				"collation"	=> $A["Collation"],
-				"null"		=> $A["Null"],
-				"key"		=> $A["Key"],
-				"default"	=> $A["Default"],
-				"extra"		=> $A["Extra"],
-				"bg_class"	=> !(++$i % 2) ? "bg1" : "bg2",
-			);
-			$items .= tpl()->parse($_GET["object"]."/structure_item", $replace2);
-		}
-		$Q = db()->query("SHOW INDEX FROM ".$table_name."");
-		while ($A = db()->fetch_assoc($Q)) {
-			$table_index[] = $A;
-		}
-		$replace = array(
-			"items"				=> $items,
-			"table_index"		=> $table_index,
-			"show_create_table"		=> $table_index,
-			"show_create_table"		=> $this->show_create_table(true),
-		);
-		return tpl()->parse($_GET["object"]."/structure_main", $replace);
-	}
-
-	/**
-	*/
-	function truncate () {
+	function table_truncate () {
 		main()->NO_GRAPHICS = true;
 		if (empty($_POST["tables"])) {
 			return false;
@@ -228,12 +170,13 @@ class yf_db_manager {
 		foreach ((array)$tables as $table) {
 			db()->query("TRUNCATE ".$table."");
 		}
+// TODO: use common()->message_success()
 		echo "<b>truncate <span style='color:green'>complete!</span></b>";
 	}
 
 	/**
 	*/
-	function drop () {
+	function table_drop () {
 		main()->NO_GRAPHICS = true;
 		if (empty($_POST["tables"])) {
 			return false;
@@ -243,12 +186,13 @@ class yf_db_manager {
 		foreach ((array)$tables as $table) {
 			db()->query("DROP TABLE ".$table."");
 		}
+// TODO: use common()->message_success()
 		echo "<b>drop <span style='color:green'>complete!</span></b>";
 	}
 
 	/**
 	*/
-	function optimize () {
+	function table_optimize () {
 		main()->NO_GRAPHICS = true;
 		
 		if(empty($_POST["tables"])){
@@ -266,12 +210,13 @@ class yf_db_manager {
 			$text .= "</tr>";
 		}
 		$text .= "</table>";
+// TODO: use common()->message_success()
 		echo $text;
 	}
 	
 	/**
 	*/
-	function check () {
+	function table_check () {
 		main()->NO_GRAPHICS = true;
 		
 		if(empty($_POST["tables"])){
@@ -289,12 +234,13 @@ class yf_db_manager {
 			$text .= "</tr>";
 		}
 		$text .= "</table>";
+// TODO: use common()->message_success()
 		echo $text;
 	}
 	
 	/**
 	*/
-	function repair () {
+	function table_repair () {
 		main()->NO_GRAPHICS = true;
 		
 		if(empty($_POST["tables"])){
@@ -313,60 +259,41 @@ class yf_db_manager {
 		}
 		$text .= "</table>";
 		
+// TODO: use common()->message_success()
 		echo $text;
-	}
-
-	/**
-	*/
-	function ajax_status () {
-		main()->NO_GRAPHICS = true;
-
-		$this->AUTO_GET_TABLES_STATUS = true;
-
-		$info = $this->_get_tables_infos();
-		foreach ((array)$info as $k => $table_info) {
-			$total_rows += $table_info["rows"];
-			$total_size += $table_info["data_size"];
-
-			$info[$k]["data_size"]	= common()->format_file_size($table_info["data_size"]);
-		}
-		$info["__total_rows"] = $total_rows;
-		$info["__total_size"] = common()->format_file_size($total_size);
-
-		return print json_encode($info);
 	}
 
 	/**
 	*/
 	function _get_tables_infos () {
 		if ($this->AUTO_GET_TABLES_STATUS) {
-			$Q = db()->query("SHOW TABLE STATUS LIKE '".DB_PREFIX."%'");
+			$Q = db()->query('SHOW TABLE STATUS LIKE "'.DB_PREFIX.'%"');
 			while ($A = db()->fetch_assoc($Q)) {
-				$table_name = $A["Name"];
+				$table_name = $A['Name'];
 				if (substr($table_name, 0, strlen(DB_PREFIX)) != DB_PREFIX) {
 					continue;
 				}
 				$tables_infos[$table_name] = array(
-					"name"		=> $table_name,
-					"engine"	=> $A["Engine"],
-					"rows"		=> $A["Rows"],
-					"data_size"	=> $A["Data_length"],
-					"collation"	=> $A["Collation"],
+					'name'		=> $table_name,
+					'engine'	=> $A['Engine'],
+					'rows'		=> $A['Rows'],
+					'data_size'	=> $A['Data_length'],
+					'collation'	=> $A['Collation'],
 				);
 			}
 		} else {
-			$Q = db()->query("SHOW TABLES LIKE '".DB_PREFIX."%'");
+			$Q = db()->query('SHOW TABLES LIKE "'.DB_PREFIX.'%"');
 			while ($A = db()->fetch_row($Q)) {
 				$table_name = $A[0];
 				if (substr($table_name, 0, strlen(DB_PREFIX)) != DB_PREFIX) {
 					continue;
 				}
 				$tables_infos[$table_name] = array(
-					"name"		=> $table_name,
-					"engine"	=> "",
-					"rows"		=> "",
-					"data_size"	=> "",
-					"collation"	=> "",
+					'name'		=> $table_name,
+					'engine'	=> '',
+					'rows'		=> '',
+					'data_size'	=> '',
+					'collation'	=> '',
 				);
 			}
 		}
@@ -374,28 +301,9 @@ class yf_db_manager {
 	}
 
 	/**
-	* Show table structure as "SHOW CREATE TABLE" (specific for MySQL)
-	*/
-	function show_create_table ($return_text = false) {
-		$table_name = DB_PREFIX.$_GET["table"];
-		$A = db()->query_fetch("SHOW CREATE TABLE "._es($table_name)."");
-		$text = $A["Create Table"];
-
-		$replace = array(
-			"table_name"	=> _prepare_html($table_name),
-			"text"			=> nl2br(_prepare_html($text, 0)),
-		);
-		if($return_text){
-			return $replace["text"];
-		}
-		return tpl()->parse($_GET["object"]."/show_create_table", $replace);
-	}
-
-	/**
 	* Import SQL
 	*/
 	function import () {
-
 		if (!empty($_FILES['sql_file']["tmp_name"])) {
 			$path = $_FILES['sql_file']["tmp_name"];
 
@@ -518,7 +426,7 @@ class yf_db_manager {
 	/**
 	* Export SQL
 	*/
-	function export ($params = array()) {
+	function table_export ($params = array()) {
 		$SINGLE_TABLE = !empty($_GET["table"]) ? DB_PREFIX. $_GET["table"] : "";
 		if ($SINGLE_TABLE) {
 			$A = db()->query_fetch("SHOW TABLE STATUS LIKE '".$SINGLE_TABLE."'");
