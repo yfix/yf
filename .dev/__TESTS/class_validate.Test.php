@@ -15,34 +15,6 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$var = 'test'; _class('validate')->md5_not_empty($var);
 		$this->assertEquals( md5('test'),  $var);
 	}
-	public function test_valid_url() {
-		$this->assertFalse( _class('validate')->valid_url('') );
-		$this->assertFalse( _class('validate')->valid_url(null) );
-		$this->assertFalse( _class('validate')->valid_url(false) );
-		$this->assertFalse( _class('validate')->valid_url(array()) );
-		$this->assertFalse( _class('validate')->valid_url(' ') );
-		$this->assertFalse( _class('validate')->valid_url(PHP_EOL) );
-
-#		$this->assertFalse( _class('validate')->valid_url(new StdClass()) );
-#		$this->assertFalse( _class('validate')->valid_url('fsfsfs') );
-
-#		$this->assertFalse( _class('validate')->valid_url('#') );
-#		$this->assertFalse( _class('validate')->valid_url('#id') );
-
-		$this->assertTrue( _class('validate')->valid_url('index') );
-		$this->assertTrue( _class('validate')->valid_url('index.html') );
-		$this->assertTrue( _class('validate')->valid_url('script.js') );
-#		$this->assertTrue( _class('validate')->valid_url('/script.js') );
-#		$this->assertTrue( _class('validate')->valid_url('./script.js') );
-#		$this->assertTrue( _class('validate')->valid_url('../script.js') );
-#		$this->assertTrue( _class('validate')->valid_url('//script.js') );
-		$this->assertTrue( _class('validate')->valid_url('http://domain.com/script.js') );
-		$this->assertTrue( _class('validate')->valid_url('https://domain.com/script.js') );
-		$this->assertTrue( _class('validate')->valid_url('http://domain.com/script.js?key1=val1&key2=val2#fragment') );
-		$this->assertTrue( _class('validate')->valid_url('http://domain.com:8080/some_path/script.js?key1=val1&key2=val2#fragment') );
-		$this->assertTrue( _class('validate')->valid_url('http://user:pswd@domain.com:8080/some_path/script.js?key1=val1&key2=val2#fragment') );
-#		$this->assertTrue( _class('validate')->valid_url('ftp://user:pswd@domain.com:8080/some_path/script.js') );
-	}
 	public function test_required() {
 		$this->assertFalse( _class('validate')->required('') );
 		$this->assertFalse( _class('validate')->required(' ') );
@@ -157,31 +129,101 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->less_than_equal_to('5', array('param' => '5')) );
 		$this->assertFalse( _class('validate')->less_than_equal_to('6', array('param' => '5')) );
 	}
-/*
-	alpha($in) {
-	alpha_numeric($in) {
-	alpha_numeric_spaces($in) {
-	alpha_dash($in) {
-	numeric($in) {
-	integer($in) {
-	decimal($in) {
-	is_natural($in) {
-	is_natural_no_zero($in) {
-	valid_email($in) {
-	valid_emails($in) {
-	valid_base64($in) {
-	prep_url($in) {
-	encode_php_tags($in) {
-	valid_ip($in, $params = array()) {
-	captcha($in, $params = array(), $fields = array()) {
-	xss_clean($in) {
-	strip_image_tags($in) {
-	_valid_ip($ip, $ip_version = 'ipv4') {
-	_check_user_nick ($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'nick') {
-	_check_profile_url ($CUR_VALUE = "", $force_value_to_check = null, $name_in_form = "profile_url") {
-	_check_login () {
-	_check_location ($cur_country = '', $cur_region = '', $cur_city = '') {
-	_check_birth_date ($CUR_VALUE = '') {
-*/
+	public function test_alpha() {
+		$this->assertFalse( _class('validate')->alpha() );
+		$this->assertFalse( _class('validate')->alpha('') );
+		$this->assertFalse( _class('validate')->alpha(null) );
+		$this->assertFalse( _class('validate')->alpha(false) );
+		$this->assertFalse( _class('validate')->alpha(array()) );
+		$this->assertFalse( _class('validate')->alpha('~') );
+		$this->assertTrue( _class('validate')->alpha('a') );
+		$this->assertTrue( _class('validate')->alpha('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertFalse( _class('validate')->alpha('0') );
+	}
+	public function test_alpha_numeric() {
+		$this->assertFalse( _class('validate')->alpha_numeric() );
+		$this->assertFalse( _class('validate')->alpha_numeric('') );
+		$this->assertFalse( _class('validate')->alpha_numeric(null) );
+		$this->assertFalse( _class('validate')->alpha_numeric(false) );
+		$this->assertFalse( _class('validate')->alpha_numeric(array()) );
+		$this->assertFalse( _class('validate')->alpha_numeric('~') );
+		$this->assertTrue( _class('validate')->alpha_numeric('a') );
+		$this->assertTrue( _class('validate')->alpha_numeric('abcdefghijklmnopqrstuvwxyz01234567890') );
+		$this->assertTrue( _class('validate')->alpha_numeric('0123456789') );
+	}
+	public function test_alpha_numeric_spaces() {
+		$this->assertFalse( _class('validate')->alpha_numeric_spaces() );
+		$this->assertFalse( _class('validate')->alpha_numeric_spaces('') );
+		$this->assertFalse( _class('validate')->alpha_numeric_spaces(null) );
+		$this->assertFalse( _class('validate')->alpha_numeric_spaces(false) );
+		$this->assertFalse( _class('validate')->alpha_numeric_spaces(array()) );
+		$this->assertFalse( _class('validate')->alpha_numeric_spaces('~') );
+		$this->assertTrue( _class('validate')->alpha_numeric_spaces('a') );
+		$this->assertTrue( _class('validate')->alpha_numeric_spaces(' abcdefghijklmnopqrstuvwxyz01234567890 ') );
+		$this->assertTrue( _class('validate')->alpha_numeric_spaces('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertTrue( _class('validate')->alpha_numeric_spaces('0123456789') );
+		$this->assertTrue( _class('validate')->alpha_numeric_spaces(' ') );
+	}
+	public function test_alpha_dash() {
+#		$this->assertFalse( _class('validate')->() );
+	}
+	public function test_numeric() {
+#		$this->assertFalse( _class('validate')->() );
+	}
+	public function test_integer() {
+#		$this->assertFalse( _class('validate')->() );
+	}
+	public function test_decimal() {
+#		$this->assertFalse( _class('validate')->() );
+	}
+	public function test_is_natural() {
+#		$this->assertFalse( _class('validate')->() );
+	}
+	public function test_is_natural_no_zero() {
+#		$this->assertFalse( _class('validate')->() );
+	}
+	public function test_valid_email() {
+#		$this->assertFalse( _class('validate')->() );
+	}
+	public function test_valid_emails() {
+#		$this->assertFalse( _class('validate')->() );
+	}
+	public function test_valid_base64() {
+#		$this->assertFalse( _class('validate')->() );
+	}
+	public function test_valid_ip() {
+#		$this->assertFalse( _class('validate')->() );
+	}
+	public function test_valid_url() {
+		$this->assertFalse( _class('validate')->valid_url('') );
+		$this->assertFalse( _class('validate')->valid_url(null) );
+		$this->assertFalse( _class('validate')->valid_url(false) );
+		$this->assertFalse( _class('validate')->valid_url(array()) );
+		$this->assertFalse( _class('validate')->valid_url(' ') );
+		$this->assertFalse( _class('validate')->valid_url(PHP_EOL) );
+
+#		$this->assertFalse( _class('validate')->valid_url(new StdClass()) );
+#		$this->assertFalse( _class('validate')->valid_url('fsfsfs') );
+
+#		$this->assertFalse( _class('validate')->valid_url('#') );
+#		$this->assertFalse( _class('validate')->valid_url('#id') );
+
+		$this->assertTrue( _class('validate')->valid_url('index') );
+		$this->assertTrue( _class('validate')->valid_url('index.html') );
+		$this->assertTrue( _class('validate')->valid_url('script.js') );
+#		$this->assertTrue( _class('validate')->valid_url('/script.js') );
+#		$this->assertTrue( _class('validate')->valid_url('./script.js') );
+#		$this->assertTrue( _class('validate')->valid_url('../script.js') );
+#		$this->assertTrue( _class('validate')->valid_url('//script.js') );
+		$this->assertTrue( _class('validate')->valid_url('http://domain.com/script.js') );
+		$this->assertTrue( _class('validate')->valid_url('https://domain.com/script.js') );
+		$this->assertTrue( _class('validate')->valid_url('http://domain.com/script.js?key1=val1&key2=val2#fragment') );
+		$this->assertTrue( _class('validate')->valid_url('http://domain.com:8080/some_path/script.js?key1=val1&key2=val2#fragment') );
+		$this->assertTrue( _class('validate')->valid_url('http://user:pswd@domain.com:8080/some_path/script.js?key1=val1&key2=val2#fragment') );
+#		$this->assertTrue( _class('validate')->valid_url('ftp://user:pswd@domain.com:8080/some_path/script.js') );
+	}
+	public function test_xss_clean() {
+// TODO
+	}
 
 }
