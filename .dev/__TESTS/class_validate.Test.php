@@ -3,6 +3,26 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 class class_validate_test extends PHPUnit_Framework_TestCase {
+	public function test_is_unique() {
+// TODO: require database mocking
+		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
+		// $this->assertFalse( _class('validate')->is_unqiue('testme@yfix.net', array('param' => 'user.email')) );
+		// $this->assertTrue( _class('validate')->is_unqiue('notexists@yfix.net', array('param' => 'user.email')) );
+	}
+	public function test_is_unique_without() {
+// TODO: require database mocking
+		// db()->insert('user', array('id' => 123456789, 'name' => 'testmeexisting'))
+		// $this->assertFalse( _class('validate')->is_unqiue_without('testmeexisting', array('param' => 'user.name.987654321')) );
+		// db()->insert('user', array('id' => 1234567890, 'name' => 'testme'))
+		// $this->assertTrue( _class('validate')->is_unqiue_without('testme', array('param' => 'user.name.1234567890')) );
+		// $this->assertTrue( _class('validate')->is_unqiue_without('notexists', array('param' => 'user.name.1234567890')) );
+	}
+	public function test_exists() {
+// TODO: require database mocking
+		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
+		// $this->assertTrue( _class('validate')->is_unqiue('testme@yfix.net', array('param' => 'user.email')) );
+		// $this->assertFalse( _class('validate')->is_unqiue('notexists@yfix.net', array('param' => 'user.email')) );
+	}
 	public function test_password_update() {
 		$var = ''; _class('validate')->password_update($var);
 		$this->assertEquals( null,  $var);
@@ -50,26 +70,6 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$_POST['my_field'] = '55';
 		$this->assertTrue( _class('validate')->differs('', array('param' => 'my_field'), array('my_field' => '55')) );
 		$this->assertFalse( _class('validate')->differs('55', array('param' => 'my_field'), array('my_field' => '55')) );
-	}
-	public function test_is_unique() {
-// TODO: require database mocking
-		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
-		// $this->assertFalse( _class('validate')->is_unqiue('testme@yfix.net', array('param' => 'user.email')) );
-		// $this->assertTrue( _class('validate')->is_unqiue('notexists@yfix.net', array('param' => 'user.email')) );
-	}
-	public function test_is_unique_without() {
-// TODO: require database mocking
-		// db()->insert('user', array('id' => 123456789, 'name' => 'testmeexisting'))
-		// $this->assertFalse( _class('validate')->is_unqiue_without('testmeexisting', array('param' => 'user.name.987654321')) );
-		// db()->insert('user', array('id' => 1234567890, 'name' => 'testme'))
-		// $this->assertTrue( _class('validate')->is_unqiue_without('testme', array('param' => 'user.name.1234567890')) );
-		// $this->assertTrue( _class('validate')->is_unqiue_without('notexists', array('param' => 'user.name.1234567890')) );
-	}
-	public function test_exists() {
-// TODO: require database mocking
-		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
-		// $this->assertTrue( _class('validate')->is_unqiue('testme@yfix.net', array('param' => 'user.email')) );
-		// $this->assertFalse( _class('validate')->is_unqiue('notexists@yfix.net', array('param' => 'user.email')) );
 	}
 	public function test_regex_match() {
 		$this->assertFalse( _class('validate')->matches() );
@@ -249,12 +249,26 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->is_natural_no_zero(1.1) );
 	}
 	public function test_valid_email() {
-	}
-	public function test_valid_emails() {
+		$this->assertFalse( _class('validate')->valid_email('') );
+		$this->assertFalse( _class('validate')->valid_email(null) );
+		$this->assertFalse( _class('validate')->valid_email(false) );
+		$this->assertFalse( _class('validate')->valid_email(array()) );
+		$this->assertFalse( _class('validate')->valid_email(' ') );
+		$this->assertFalse( _class('validate')->valid_email(PHP_EOL) );
+#		$this->assertTrue( _class('validate')->valid_email('testme@localhost') );
+		$this->assertTrue( _class('validate')->valid_email('testme@yfix.net') );
+		$this->assertFalse( _class('validate')->valid_email('testme.something.wrong.yfix.net') );
 	}
 	public function test_valid_base64() {
-	}
-	public function test_valid_ip() {
+		$this->assertFalse( _class('validate')->valid_base64('') );
+		$this->assertFalse( _class('validate')->valid_base64(null) );
+		$this->assertFalse( _class('validate')->valid_base64(false) );
+		$this->assertFalse( _class('validate')->valid_base64(array()) );
+		$this->assertFalse( _class('validate')->valid_base64(' ') );
+		$this->assertFalse( _class('validate')->valid_base64(PHP_EOL) );
+		$this->assertTrue( _class('validate')->valid_base64('abcdefghijklmnopqrstuvwxyz0123456789') );
+		$this->assertTrue( _class('validate')->valid_base64('aGVsbG8=') ); // base64_encode("hello")
+		$this->assertFalse( _class('validate')->valid_base64('abcdefghijklmnopqrstuvwxyz0123456789/=_') );
 	}
 	public function test_valid_url() {
 		$this->assertFalse( _class('validate')->valid_url('') );
@@ -263,13 +277,10 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->valid_url(array()) );
 		$this->assertFalse( _class('validate')->valid_url(' ') );
 		$this->assertFalse( _class('validate')->valid_url(PHP_EOL) );
-
 #		$this->assertFalse( _class('validate')->valid_url(new StdClass()) );
 #		$this->assertFalse( _class('validate')->valid_url('fsfsfs') );
-
 #		$this->assertFalse( _class('validate')->valid_url('#') );
 #		$this->assertFalse( _class('validate')->valid_url('#id') );
-
 		$this->assertTrue( _class('validate')->valid_url('index') );
 		$this->assertTrue( _class('validate')->valid_url('index.html') );
 		$this->assertTrue( _class('validate')->valid_url('script.js') );
@@ -284,8 +295,13 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->valid_url('http://user:pswd@domain.com:8080/some_path/script.js?key1=val1&key2=val2#fragment') );
 #		$this->assertTrue( _class('validate')->valid_url('ftp://user:pswd@domain.com:8080/some_path/script.js') );
 	}
+	public function test_valid_emails() {
+// TODO
+	}
+	public function test_valid_ip() {
+// TODO
+	}
 	public function test_xss_clean() {
 // TODO
 	}
-
 }
