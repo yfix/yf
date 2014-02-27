@@ -106,12 +106,26 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_min_length() {
 		$this->assertFalse( _class('validate')->min_length() );
+		$this->assertFalse( _class('validate')->min_length('12345') );
 		$this->assertFalse( _class('validate')->min_length('1234', array('param' => '5')) );
+		$this->assertTrue( _class('validate')->min_length('12345', array('param' => '5')) );
+		$this->assertTrue( _class('validate')->min_length('123456', array('param' => '5')) );
+	}
+	public function test_max_length() {
+		$this->assertFalse( _class('validate')->max_length() );
+		$this->assertFalse( _class('validate')->max_length('12345') );
+		$this->assertTrue( _class('validate')->max_length('1234', array('param' => '5')) );
+		$this->assertTrue( _class('validate')->max_length('12345', array('param' => '5')) );
+		$this->assertFalse( _class('validate')->max_length('123456', array('param' => '5')) );
+	}
+	public function test_exact_length() {
+		$this->assertFalse( _class('validate')->exact_length() );
+		$this->assertFalse( _class('validate')->exact_length('12345') );
+		$this->assertFalse( _class('validate')->exact_length('1234', array('param' => '5')) );
+		$this->assertTrue( _class('validate')->exact_length('12345', array('param' => '5')) );
+		$this->assertFalse( _class('validate')->exact_length('123456', array('param' => '5')) );
 	}
 /*
-	min_length($in, $params = array()) {
-	max_length($in, $params = array()) {
-	exact_length($in, $params = array()) {
 	greater_than($in, $params = array()) {
 	less_than($in, $params = array()) {
 	greater_than_equal_to($in, $params = array()) {
