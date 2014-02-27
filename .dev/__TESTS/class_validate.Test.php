@@ -65,8 +65,14 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->required_any('', array('param' => 'd_day,d_week'), array('d_day' => 1, 'd_week' => '')) );
 		$this->assertTrue( _class('validate')->required_any('', array('param' => 'd_*'), array('d_day' => 1, 'd_week' => '')) );
 	}
+	public function test_matches() {
+		$this->assertFalse( _class('validate')->matches() );
+		$this->assertFalse( _class('validate')->matches('', array('param' => 'my_field')) );
+		$_POST['my_field'] = '55';
+		$this->assertFalse( _class('validate')->matches('', array('param' => 'my_field'), array('my_field' => '55')) );
+		$this->assertTrue( _class('validate')->matches('55', array('param' => 'my_field'), array('my_field' => '55')) );
+	}
 /*
-	required_any($in, $params = array(), $fields = array()) {
 	matches($in, $params = array(), $fields = array()) {
 	is_unique($in, $params = array()) {
 	is_unique_without($in, $params = array()) {
