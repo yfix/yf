@@ -9,10 +9,25 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->required(false) );
 		$this->assertFalse( _class('validate')->required(null) );
 		$this->assertFalse( _class('validate')->required(array()) );
+
 		$this->assertTrue( _class('validate')->required('str') );
+		$this->assertTrue( _class('validate')->required(array('str')) );
+		$this->assertTrue( _class('validate')->required(array(1,2)) );
+		$this->assertTrue( _class('validate')->required(array(' ')) );
+	}
+	public function test_password_update() {
+		$var = ''; _class('validate')->password_update($var);
+		$this->assertEquals( null,  $var);
+		$var = 'test'; _class('validate')->password_update($var);
+		$this->assertEquals( md5('test'),  $var);
+	}
+	public function test_md5_not_empty() {
+		$var = ''; _class('validate')->md5_not_empty($var);
+		$this->assertEquals( '',  $var);
+		$var = 'test'; _class('validate')->md5_not_empty($var);
+		$this->assertEquals( md5('test'),  $var);
 	}
 /*
-	password_update(&$in) {
 	md5_not_empty(&$in) {
 	required($in) {
 	required_any($in, $params = array(), $fields = array()) {
