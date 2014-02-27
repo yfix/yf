@@ -214,16 +214,6 @@ class yf_validate {
 		return $out;
 	}
 
-	/***/
-	function password_update(&$in) {
-		if (!strlen($in)) {
-			$in = null; // Somehow unset($in) not working here...
-		} else {
-			$in = md5($in);
-		}
-		return true;
-	}
-
 	/**
 	*/
 	function _validate_rules_array_from_raw($raw = '') {
@@ -247,6 +237,16 @@ class yf_validate {
 			$rules[] = array($raw, null);
 		}
 		return $rules;
+	}
+
+	/***/
+	function password_update(&$in) {
+		if (!strlen($in)) {
+			$in = null; // Somehow unset($in) not working here...
+		} else {
+			$in = md5($in);
+		}
+		return true;
 	}
 
 	/***/
