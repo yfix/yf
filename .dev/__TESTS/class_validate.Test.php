@@ -72,6 +72,13 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->matches('', array('param' => 'my_field'), array('my_field' => '55')) );
 		$this->assertTrue( _class('validate')->matches('55', array('param' => 'my_field'), array('my_field' => '55')) );
 	}
+	public function test_differs() {
+		$this->assertTrue( _class('validate')->differs() );
+		$this->assertTrue( _class('validate')->differs('', array('param' => 'my_field')) );
+		$_POST['my_field'] = '55';
+		$this->assertTrue( _class('validate')->differs('', array('param' => 'my_field'), array('my_field' => '55')) );
+		$this->assertFalse( _class('validate')->differs('55', array('param' => 'my_field'), array('my_field' => '55')) );
+	}
 	public function test_is_unique() {
 // TODO: require database mocking
 		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
