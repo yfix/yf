@@ -72,11 +72,32 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->matches('', array('param' => 'my_field'), array('my_field' => '55')) );
 		$this->assertTrue( _class('validate')->matches('55', array('param' => 'my_field'), array('my_field' => '55')) );
 	}
+	public function test_is_unique() {
+// TODO: require database mocking
+		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
+		// $this->assertFalse( _class('validate')->is_unqiue('testme@yfix.net', array('param' => 'user.email')) );
+		// $this->assertTrue( _class('validate')->is_unqiue('notexists@yfix.net', array('param' => 'user.email')) );
+	}
+	public function test_is_unique_without() {
+// TODO: require database mocking
+		// db()->insert('user', array('id' => 123456789, 'name' => 'testmeexisting'))
+		// $this->assertFalse( _class('validate')->is_unqiue_without('testmeexisting', array('param' => 'user.name.987654321')) );
+		// db()->insert('user', array('id' => 1234567890, 'name' => 'testme'))
+		// $this->assertTrue( _class('validate')->is_unqiue_without('testme', array('param' => 'user.name.1234567890')) );
+		// $this->assertTrue( _class('validate')->is_unqiue_without('notexists', array('param' => 'user.name.1234567890')) );
+	}
+	public function test_exists() {
+// TODO: require database mocking
+		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
+		// $this->assertTrue( _class('validate')->is_unqiue('testme@yfix.net', array('param' => 'user.email')) );
+		// $this->assertFalse( _class('validate')->is_unqiue('notexists@yfix.net', array('param' => 'user.email')) );
+	}
+	public function test_regex_match() {
+		$this->assertFalse( _class('validate')->matches() );
+		$this->assertFalse( _class('validate')->regex_match('testme@yfixnet', array('param' => '/^[a-z]+@[a-z]+\.[a-z]+$/')) );
+		$this->assertTrue( _class('validate')->regex_match('testme@yfix.net', array('param' => '/^[a-z]+@[a-z]+\.[a-z]+$/')) );
+	}
 /*
-	matches($in, $params = array(), $fields = array()) {
-	is_unique($in, $params = array()) {
-	is_unique_without($in, $params = array()) {
-	exists($in, $params = array()) {
 	regex_match($in, $params = array()) {
 	differs($in, $params = array(), $fields = array()) {
 	min_length($in, $params = array()) {
