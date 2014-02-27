@@ -165,34 +165,34 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->alpha_numeric_spaces(' ') );
 	}
 	public function test_alpha_dash() {
-#		$this->assertFalse( _class('validate')->() );
+		$this->assertFalse( _class('validate')->alpha_dash() );
+		$this->assertFalse( _class('validate')->alpha_dash('') );
+		$this->assertFalse( _class('validate')->alpha_dash(null) );
+		$this->assertFalse( _class('validate')->alpha_dash(false) );
+		$this->assertFalse( _class('validate')->alpha_dash(array()) );
+		$this->assertFalse( _class('validate')->alpha_dash('~') );
+		$this->assertTrue( _class('validate')->alpha_dash('a') );
+		$this->assertTrue( _class('validate')->alpha_dash('abcdefghijklmnopqrstuvwxyz0123456789_-') );
+		$this->assertTrue( _class('validate')->alpha_dash('_') );
+		$this->assertTrue( _class('validate')->alpha_dash('-_-') );
 	}
 	public function test_numeric() {
-#		$this->assertFalse( _class('validate')->() );
 	}
 	public function test_integer() {
-#		$this->assertFalse( _class('validate')->() );
 	}
 	public function test_decimal() {
-#		$this->assertFalse( _class('validate')->() );
 	}
 	public function test_is_natural() {
-#		$this->assertFalse( _class('validate')->() );
 	}
 	public function test_is_natural_no_zero() {
-#		$this->assertFalse( _class('validate')->() );
 	}
 	public function test_valid_email() {
-#		$this->assertFalse( _class('validate')->() );
 	}
 	public function test_valid_emails() {
-#		$this->assertFalse( _class('validate')->() );
 	}
 	public function test_valid_base64() {
-#		$this->assertFalse( _class('validate')->() );
 	}
 	public function test_valid_ip() {
-#		$this->assertFalse( _class('validate')->() );
 	}
 	public function test_valid_url() {
 		$this->assertFalse( _class('validate')->valid_url('') );
