@@ -508,7 +508,7 @@ class yf_validate {
 
 	/***/
 	function valid_base64($in) {
-		return (base64_encode(base64_decode($in)) === $in);
+		return strlen($in) && (base64_encode(base64_decode($in)) === $in);
 	}
 
 	/***/
