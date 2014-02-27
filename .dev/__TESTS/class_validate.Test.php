@@ -125,11 +125,39 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->exact_length('12345', array('param' => '5')) );
 		$this->assertFalse( _class('validate')->exact_length('123456', array('param' => '5')) );
 	}
+	public function test_greater_than() {
+		$this->assertFalse( _class('validate')->greater_than() );
+		$this->assertTrue( _class('validate')->greater_than('12345') );
+		$this->assertTrue( _class('validate')->greater_than('12345', array('param' => '0')) );
+		$this->assertFalse( _class('validate')->greater_than('4', array('param' => '5')) );
+		$this->assertFalse( _class('validate')->greater_than('5', array('param' => '5')) );
+		$this->assertTrue( _class('validate')->greater_than('6', array('param' => '5')) );
+	}
+	public function test_less_than() {
+		$this->assertFalse( _class('validate')->less_than() );
+		$this->assertFalse( _class('validate')->less_than('12345') );
+		$this->assertFalse( _class('validate')->less_than('12345', array('param' => '0')) );
+		$this->assertTrue( _class('validate')->less_than('4', array('param' => '5')) );
+		$this->assertFalse( _class('validate')->less_than('5', array('param' => '5')) );
+		$this->assertFalse( _class('validate')->less_than('6', array('param' => '5')) );
+	}
+	public function test_greater_than_equal_to() {
+		$this->assertFalse( _class('validate')->greater_than_equal_to() );
+		$this->assertTrue( _class('validate')->greater_than_equal_to('12345') );
+		$this->assertTrue( _class('validate')->greater_than_equal_to('12345', array('param' => '0')) );
+		$this->assertFalse( _class('validate')->greater_than_equal_to('4', array('param' => '5')) );
+		$this->assertTrue( _class('validate')->greater_than_equal_to('5', array('param' => '5')) );
+		$this->assertTrue( _class('validate')->greater_than_equal_to('6', array('param' => '5')) );
+	}
+	public function test_less_than_equal_to() {
+		$this->assertFalse( _class('validate')->less_than_equal_to() );
+		$this->assertFalse( _class('validate')->less_than_equal_to('12345') );
+		$this->assertFalse( _class('validate')->less_than_equal_to('12345', array('param' => '0')) );
+		$this->assertTrue( _class('validate')->less_than_equal_to('4', array('param' => '5')) );
+		$this->assertTrue( _class('validate')->less_than_equal_to('5', array('param' => '5')) );
+		$this->assertFalse( _class('validate')->less_than_equal_to('6', array('param' => '5')) );
+	}
 /*
-	greater_than($in, $params = array()) {
-	less_than($in, $params = array()) {
-	greater_than_equal_to($in, $params = array()) {
-	less_than_equal_to($in, $params = array()) {
 	alpha($in) {
 	alpha_numeric($in) {
 	alpha_numeric_spaces($in) {
