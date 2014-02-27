@@ -279,7 +279,7 @@ class yf_validate {
 			$skip = true;
 			if ($strpos && false !== strpos($k, $strpos)) {
 				$skip = false;
-			} elseif ($field_names && in_array($v, $field_names)) {
+			} elseif ($field_names && in_array($k, $field_names)) {
 				$skip = false;
 			}
 			if ($skip) {
