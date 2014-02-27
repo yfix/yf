@@ -3,18 +3,6 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 class class_validate_test extends PHPUnit_Framework_TestCase {
-	public function test_required() {
-		$this->assertFalse( _class('validate')->required('') );
-		$this->assertFalse( _class('validate')->required(' ') );
-		$this->assertFalse( _class('validate')->required(false) );
-		$this->assertFalse( _class('validate')->required(null) );
-		$this->assertFalse( _class('validate')->required(array()) );
-
-		$this->assertTrue( _class('validate')->required('str') );
-		$this->assertTrue( _class('validate')->required(array('str')) );
-		$this->assertTrue( _class('validate')->required(array(1,2)) );
-		$this->assertTrue( _class('validate')->required(array(' ')) );
-	}
 	public function test_password_update() {
 		$var = ''; _class('validate')->password_update($var);
 		$this->assertEquals( null,  $var);
@@ -27,9 +15,57 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$var = 'test'; _class('validate')->md5_not_empty($var);
 		$this->assertEquals( md5('test'),  $var);
 	}
+	public function test_valid_url() {
+		$this->assertFalse( _class('validate')->valid_url('') );
+		$this->assertFalse( _class('validate')->valid_url(null) );
+		$this->assertFalse( _class('validate')->valid_url(false) );
+		$this->assertFalse( _class('validate')->valid_url(array()) );
+		$this->assertFalse( _class('validate')->valid_url(' ') );
+		$this->assertFalse( _class('validate')->valid_url(PHP_EOL) );
+
+#		$this->assertFalse( _class('validate')->valid_url(new StdClass()) );
+#		$this->assertFalse( _class('validate')->valid_url('fsfsfs') );
+
+#		$this->assertFalse( _class('validate')->valid_url('#') );
+#		$this->assertFalse( _class('validate')->valid_url('#id') );
+
+		$this->assertTrue( _class('validate')->valid_url('index') );
+		$this->assertTrue( _class('validate')->valid_url('index.html') );
+		$this->assertTrue( _class('validate')->valid_url('script.js') );
+#		$this->assertTrue( _class('validate')->valid_url('/script.js') );
+#		$this->assertTrue( _class('validate')->valid_url('./script.js') );
+#		$this->assertTrue( _class('validate')->valid_url('../script.js') );
+#		$this->assertTrue( _class('validate')->valid_url('//script.js') );
+		$this->assertTrue( _class('validate')->valid_url('http://domain.com/script.js') );
+		$this->assertTrue( _class('validate')->valid_url('https://domain.com/script.js') );
+		$this->assertTrue( _class('validate')->valid_url('http://domain.com/script.js?key1=val1&key2=val2#fragment') );
+		$this->assertTrue( _class('validate')->valid_url('http://domain.com:8080/some_path/script.js?key1=val1&key2=val2#fragment') );
+		$this->assertTrue( _class('validate')->valid_url('http://user:pswd@domain.com:8080/some_path/script.js?key1=val1&key2=val2#fragment') );
+#		$this->assertTrue( _class('validate')->valid_url('ftp://user:pswd@domain.com:8080/some_path/script.js') );
+	}
+	public function test_required() {
+		$this->assertFalse( _class('validate')->required('') );
+		$this->assertFalse( _class('validate')->required(' ') );
+		$this->assertFalse( _class('validate')->required(false) );
+		$this->assertFalse( _class('validate')->required(null) );
+		$this->assertFalse( _class('validate')->required(array()) );
+
+		$this->assertTrue( _class('validate')->required('str') );
+		$this->assertTrue( _class('validate')->required(array('str')) );
+		$this->assertTrue( _class('validate')->required(array(1,2)) );
+		$this->assertTrue( _class('validate')->required(array(' ')) );
+	}
+	public function test_required_any() {
+		$this->assertFalse( _class('validate')->required_any() );
+		$this->assertFalse( _class('validate')->required_any(null, array()) );
+		$this->assertFalse( _class('validate')->required_any('', array('param' => 'd_day,d_week')) );
+		$this->assertFalse( _class('validate')->required_any('', array('param' => 'd_day,d_week'), array('d_day' => '', 'd_week' => '')) );
+		$this->assertFalse( _class('validate')->required_any('', array('param' => 'd_*'), array('d_day' => '', 'd_week' => '')) );
+
+		$this->assertTrue( _class('validate')->required_any('', array('param' => 'd_day,d_week'), array('d_day' => 1, 'd_week' => '')) );
+		$this->assertTrue( _class('validate')->required_any('', array('param' => 'd_*'), array('d_day' => 1, 'd_week' => '')) );
+	}
 /*
-	md5_not_empty(&$in) {
-	required($in) {
 	required_any($in, $params = array(), $fields = array()) {
 	matches($in, $params = array(), $fields = array()) {
 	is_unique($in, $params = array()) {
@@ -37,7 +73,6 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 	exists($in, $params = array()) {
 	regex_match($in, $params = array()) {
 	differs($in, $params = array(), $fields = array()) {
-	valid_url($in, $params = array()) {
 	min_length($in, $params = array()) {
 	max_length($in, $params = array()) {
 	exact_length($in, $params = array()) {
@@ -70,34 +105,5 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 	_check_location ($cur_country = '', $cur_region = '', $cur_city = '') {
 	_check_birth_date ($CUR_VALUE = '') {
 */
-
-	function test_valid_url() {
-		$this->assertFalse( _class('validate')->valid_url('') );
-		$this->assertFalse( _class('validate')->valid_url(null) );
-		$this->assertFalse( _class('validate')->valid_url(false) );
-		$this->assertFalse( _class('validate')->valid_url(array()) );
-		$this->assertFalse( _class('validate')->valid_url(' ') );
-		$this->assertFalse( _class('validate')->valid_url(PHP_EOL) );
-
-#		$this->assertFalse( _class('validate')->valid_url(new StdClass()) );
-#		$this->assertFalse( _class('validate')->valid_url('fsfsfs') );
-
-#		$this->assertFalse( _class('validate')->valid_url('#') );
-#		$this->assertFalse( _class('validate')->valid_url('#id') );
-
-		$this->assertTrue( _class('validate')->valid_url('index') );
-		$this->assertTrue( _class('validate')->valid_url('index.html') );
-		$this->assertTrue( _class('validate')->valid_url('script.js') );
-#		$this->assertTrue( _class('validate')->valid_url('/script.js') );
-#		$this->assertTrue( _class('validate')->valid_url('./script.js') );
-#		$this->assertTrue( _class('validate')->valid_url('../script.js') );
-#		$this->assertTrue( _class('validate')->valid_url('//script.js') );
-		$this->assertTrue( _class('validate')->valid_url('http://domain.com/script.js') );
-		$this->assertTrue( _class('validate')->valid_url('https://domain.com/script.js') );
-		$this->assertTrue( _class('validate')->valid_url('http://domain.com/script.js?key1=val1&key2=val2#fragment') );
-		$this->assertTrue( _class('validate')->valid_url('http://domain.com:8080/some_path/script.js?key1=val1&key2=val2#fragment') );
-		$this->assertTrue( _class('validate')->valid_url('http://user:pswd@domain.com:8080/some_path/script.js?key1=val1&key2=val2#fragment') );
-#		$this->assertTrue( _class('validate')->valid_url('ftp://user:pswd@domain.com:8080/some_path/script.js') );
-	}
 
 }
