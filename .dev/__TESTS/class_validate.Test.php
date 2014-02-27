@@ -104,9 +104,11 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->regex_match('testme@yfixnet', array('param' => '/^[a-z]+@[a-z]+\.[a-z]+$/')) );
 		$this->assertTrue( _class('validate')->regex_match('testme@yfix.net', array('param' => '/^[a-z]+@[a-z]+\.[a-z]+$/')) );
 	}
+	public function test_min_length() {
+		$this->assertFalse( _class('validate')->min_length() );
+		$this->assertFalse( _class('validate')->min_length('1234', array('param' => '5')) );
+	}
 /*
-	regex_match($in, $params = array()) {
-	differs($in, $params = array(), $fields = array()) {
 	min_length($in, $params = array()) {
 	max_length($in, $params = array()) {
 	exact_length($in, $params = array()) {
