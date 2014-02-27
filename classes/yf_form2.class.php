@@ -774,6 +774,12 @@ class yf_form2 {
 
 	/**
 	*/
+	function _tinymce_html($extra = array(), $replace = array()) {
+		return _class('form2_tinymce', 'classes/form2/')->_tinymce_html($extra, $replace, $this);
+	}
+
+	/**
+	*/
 	function _ace_editor_html($extra = array(), $replace = array()) {
 		return _class('form2_ace_editor', 'classes/form2/')->_ace_editor_html($extra, $replace, $this);
 	}

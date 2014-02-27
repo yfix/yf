@@ -33,6 +33,7 @@ class yf_html5_framework_empty {
 					.$before_content_html. $content. PHP_EOL. $after_content_html
 					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
 					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
+					.(isset($extra['tinymce']) ? $this->_tinymce_html($extra, $replace) : '')
 				.$row_end;
 		}
 	}
