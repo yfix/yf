@@ -450,7 +450,7 @@ class yf_validate {
 
 	/***/
 	function alpha_numeric($in) {
-		return ctype_alnum((string) $in);
+		return (is_array($in) || is_object($in) || is_callable($in)) ? false : ctype_alnum((string) $in);
 	}
 
 	/***/
