@@ -177,14 +177,76 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->alpha_dash('-_-') );
 	}
 	public function test_numeric() {
+		$this->assertFalse( _class('validate')->numeric() );
+		$this->assertFalse( _class('validate')->numeric('') );
+		$this->assertFalse( _class('validate')->numeric(null) );
+		$this->assertFalse( _class('validate')->numeric(false) );
+		$this->assertFalse( _class('validate')->numeric(array()) );
+		$this->assertFalse( _class('validate')->numeric('~') );
+		$this->assertFalse( _class('validate')->numeric('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertTrue( _class('validate')->numeric('0123456789') );
+		$this->assertTrue( _class('validate')->numeric(123456789) );
+		$this->assertTrue( _class('validate')->numeric(1.1) );
+		$this->assertTrue( _class('validate')->numeric('1.1') );
+		$this->assertTrue( _class('validate')->numeric('-1.1') );
 	}
 	public function test_integer() {
+		$this->assertFalse( _class('validate')->integer() );
+		$this->assertFalse( _class('validate')->integer('') );
+		$this->assertFalse( _class('validate')->integer(null) );
+		$this->assertFalse( _class('validate')->integer(false) );
+		$this->assertFalse( _class('validate')->integer(array()) );
+		$this->assertFalse( _class('validate')->integer('~') );
+		$this->assertFalse( _class('validate')->integer('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertTrue( _class('validate')->integer('0') );
+		$this->assertTrue( _class('validate')->integer('1230') );
+		$this->assertTrue( _class('validate')->integer(1234567890) );
+		$this->assertTrue( _class('validate')->integer(-1234567890) );
+		$this->assertFalse( _class('validate')->integer(1.1) );
+		$this->assertFalse( _class('validate')->integer(-111.11) );
 	}
 	public function test_decimal() {
+		$this->assertFalse( _class('validate')->decimal() );
+		$this->assertFalse( _class('validate')->decimal('') );
+		$this->assertFalse( _class('validate')->decimal(null) );
+		$this->assertFalse( _class('validate')->decimal(false) );
+		$this->assertFalse( _class('validate')->decimal(array()) );
+		$this->assertFalse( _class('validate')->decimal('~') );
+		$this->assertFalse( _class('validate')->decimal('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertFalse( _class('validate')->decimal('0') );
+		$this->assertFalse( _class('validate')->decimal(1) );
+		$this->assertFalse( _class('validate')->decimal(0.0) );
+		$this->assertTrue( _class('validate')->decimal('0.0') );
+		$this->assertTrue( _class('validate')->decimal(1.1) );
+		$this->assertTrue( _class('validate')->decimal(-111.11) );
 	}
 	public function test_is_natural() {
+		$this->assertFalse( _class('validate')->is_natural() );
+		$this->assertFalse( _class('validate')->is_natural('') );
+		$this->assertFalse( _class('validate')->is_natural(null) );
+		$this->assertFalse( _class('validate')->is_natural(false) );
+		$this->assertFalse( _class('validate')->is_natural(array()) );
+		$this->assertFalse( _class('validate')->is_natural('~') );
+		$this->assertFalse( _class('validate')->is_natural('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertTrue( _class('validate')->is_natural('0') );
+		$this->assertTrue( _class('validate')->is_natural('1') );
+		$this->assertTrue( _class('validate')->is_natural(1234567890) );
+		$this->assertFalse( _class('validate')->is_natural(-1) );
+		$this->assertFalse( _class('validate')->is_natural(1.1) );
 	}
 	public function test_is_natural_no_zero() {
+		$this->assertFalse( _class('validate')->is_natural_no_zero() );
+		$this->assertFalse( _class('validate')->is_natural_no_zero('') );
+		$this->assertFalse( _class('validate')->is_natural_no_zero(null) );
+		$this->assertFalse( _class('validate')->is_natural_no_zero(false) );
+		$this->assertFalse( _class('validate')->is_natural_no_zero(array()) );
+		$this->assertFalse( _class('validate')->is_natural_no_zero('~') );
+		$this->assertFalse( _class('validate')->is_natural_no_zero('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertFalse( _class('validate')->is_natural_no_zero('0') );
+		$this->assertTrue( _class('validate')->is_natural_no_zero('1') );
+		$this->assertTrue( _class('validate')->is_natural_no_zero(1234567890) );
+		$this->assertFalse( _class('validate')->is_natural_no_zero(-1234567890) );
+		$this->assertFalse( _class('validate')->is_natural_no_zero(1.1) );
 	}
 	public function test_valid_email() {
 	}
