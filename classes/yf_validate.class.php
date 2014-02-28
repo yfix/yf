@@ -586,9 +586,7 @@ class yf_validate {
 
 	/***/
 	function xss_clean($in) {
-# TODO: write unit tests and only then enable
-#		return _class('security')->xss_clean($in);
-		return true;
+		return _class('security')->xss_clean($in);
 	}
 
 	/***/
