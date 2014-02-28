@@ -106,7 +106,7 @@ class yf_tpl_driver_yf {
 		$string = $this->_process_replaces($string, $replace, $name);
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
 		
-		$string = $this->_process_executes_shutdown($string, $replace, $name);
+		$string = $this->_process_executes_last($string, $replace, $name);
 		
 		return $string;
 	}
@@ -308,23 +308,20 @@ class yf_tpl_driver_yf {
 	}
 
 	/**
-	* Replace '{execute' patterns
+	* Replace '{exec_last' patterns
+	* This code block needed to be executed inside template after all other patterns
 	*/
-	function _process_executes_shutdown($string, $replace = array(), $name = '', $params = array()) {
+	function _process_executes_last($string, $replace = array(), $name = '', $params = array()) {
 		if (empty($string)) {
 			return $string;
 		}
 		$_this = $this;
-		// Examples: {execute(graphics, translate, value = blabla; extra = strtoupper)
-		if (strpos($string, '{execute_shutdown') !== false) {
+		// Examples: {exec_last(graphics, translate, value = blabla; extra = strtoupper)
+		if (strpos($string, '{exec_last') !== false || strpos($string, '{execute_shutdown') !== false) {
 			$string = preg_replace_callback(
-				'/\{(execute_shutdown)\(\s*["\']{0,1}\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i', 
+				'/\{(exec_last|execute_shutdown)\(\s*["\']{0,1}\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i', 
 				function($m) use ($replace, $name, $_this) {
-					$use_cache = false;
-					if ($m[1] == 'exec_cached') {
-						$use_cache = true;
-					}
-					return main()->_execute($m[2], $m[3], $m[4], $name. $_this->_STPL_EXT, 0, $use_cache);
+					return main()->_execute($m[2], $m[3], $m[4], $name. $_this->_STPL_EXT, 0, $use_cache = false);
 				}
 			, $string);
 		}
