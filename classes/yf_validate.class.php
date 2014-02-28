@@ -299,6 +299,31 @@ class yf_validate {
 	}
 
 	/***/
+	function length($in, $params = array(), $fields = array()) {
+// TODO: from kohana: length Returns FALSE if the field is too long or too shortlength[1,30] - between 1 and 30 characters longor length[30] - exactly 30 characters long
+	}
+
+	/***/
+	function depends_on($in, $params = array(), $fields = array()) {
+// TODO: from kohana: depends_on Returns FALSE if form field(s) defined in parameter are not filled independs_on[field_name]
+	}
+
+	/***/
+	function chars($in, $params = array(), $fields = array()) {
+// TODO: chars Returns FALSE if field contains characters not in the parameterchars[a,b,c,d,1,2,3,4]
+	}
+
+	/***/
+	function credit_card($in, $params = array(), $fields = array()) {
+// TODO: from kohana: credit_card Returns FALSE if credit card is not validcredit_card[mastercard]
+	}
+
+	/***/
+	function standard_text($in, $params = array(), $fields = array()) {
+// TODO: standard_text Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
+	}
+
+	/***/
 	function is_unique($in, $params = array()) {
 		if (!$in) {
 			return true;
@@ -555,11 +580,6 @@ class yf_validate {
 	}
 
 	/***/
-	function encode_php_tags($in) {
-		return str_replace(array('<?', '?>'), array('&lt;?', '?&gt;'), $in);
-	}
-
-	/***/
 	function captcha($in, $params = array(), $fields = array()) {
 		return _class('captcha')->check('captcha');
 	}
@@ -569,13 +589,6 @@ class yf_validate {
 # TODO: write unit tests and only then enable
 #		return _class('security')->xss_clean($in);
 		return true;
-	}
-
-	/***/
-	function strip_image_tags($in) {
-# TODO: write unit tests and only then enable
-		return true;
-#		return _class('security')->strip_image_tags($in);
 	}
 
 	/***/
