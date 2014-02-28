@@ -37,11 +37,11 @@ class yf_manage_shop_product_edit {
 
 				if (!empty($_FILES)) {
 					module('manage_shop')->_product_image_upload($_GET['id']);
-				} 
-				
+				}
+
 				$params_to_insert = array();
 				foreach ((array)$_POST['productparams'] as $param_id) {
-					db()->query('DELETE FROM '.db('shop_products_productparams').' WHERE product_id='.intval($_GET['id']));					
+					db()->query('DELETE FROM '.db('shop_products_productparams').' WHERE product_id='.intval($_GET['id']));
 					$param_id = intval($param_id);
 					if (!$param_id) {
 						continue;
@@ -110,6 +110,8 @@ class yf_manage_shop_product_edit {
 				module('manage_shop')->_product_add_revision('edit',$_GET['id']);
 				module('manage_shop')->_product_cache_purge($_GET['id']);
 				common()->admin_wall_add(array('shop product updated: '.$_POST['name'], $_GET['id']));
+				// sphinx reindex by flag file
+				exec( 'touch /tmp/sphinx/indexer-kupi' );
 			}
 			return js_redirect('./?object='.main()->_get('object').'&action=product_edit&id='.$_GET['id']);
 		}
@@ -131,7 +133,7 @@ class yf_manage_shop_product_edit {
 		$products_to_category = array();
 		foreach ((array)db()->get_all('SELECT category_id FROM '.db('shop_product_to_category').' WHERE product_id='.intval($_GET['id'])) as $a) {
 			$products_to_category[$a['category_id']] = $a['category_id'];
-		}	
+		}
 		$products_to_unit = array();
 		foreach ((array)db()->get_all('SELECT unit_id FROM '.db('shop_product_to_unit').' WHERE product_id='.intval($_GET['id'])) as $a) {
 			$products_to_unit[$a['unit_id']] = $a['unit_id'];
@@ -174,7 +176,7 @@ class yf_manage_shop_product_edit {
 		->tab_start('params')
 			->link('Search images', './?object='.main()->_get('object').'&action=product_image_search&id='.$product_info['id'], array('class_add' => 'btn-success'))
 			->container(
-				($images_items ? implode(PHP_EOL, $images_items) : ''). 
+				($images_items ? implode(PHP_EOL, $images_items) : '').
 				'<a class="btn btn-default btn-mini btn-xs" onclick="addImage();"><span>'.t('Add Image').'</span></a> <div id="images"></div>'
 				, array('desc' => 'Images')
 			)
