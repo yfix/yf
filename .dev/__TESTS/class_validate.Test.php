@@ -359,9 +359,25 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->valid_ip('.8.8.8') );
 		$this->assertFalse( _class('validate')->valid_ip('256.8.8.8') );
 		$this->assertFalse( _class('validate')->valid_ip('256.256.256.256') );
-// TODO
 	}
 	public function test_xss_clean() {
+		$this->assertEquals( 'test', _class('validate')->xss_clean('test') );
+		$this->assertEquals( 'Hello, i try to [removed]alert&#40;\'Hack\'&#41;;[removed] your site', _class('validate')->xss_clean('Hello, i try to <script>alert(\'Hack\');</script> your site') );
 // TODO
+	}
+	public function length() {
+// TODO: from kohana: length Returns FALSE if the field is too long or too shortlength[1,30] - between 1 and 30 characters longor length[30] - exactly 30 characters long
+	}
+	public function depends_on() {
+// TODO: from kohana: depends_on Returns FALSE if form field(s) defined in parameter are not filled independs_on[field_name]
+	}
+	public function chars() {
+// TODO: chars Returns FALSE if field contains characters not in the parameterchars[a,b,c,d,1,2,3,4]
+	}
+	public function credit_card() {
+// TODO: from kohana: credit_card Returns FALSE if credit card is not validcredit_card[mastercard]
+	}
+	public function standard_text() {
+// TODO: standard_text Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
 	}
 }
