@@ -299,6 +299,31 @@ class yf_validate {
 	}
 
 	/***/
+	function length($in, $params = array(), $fields = array()) {
+// TODO: from kohana: length Returns FALSE if the field is too long or too shortlength[1,30] - between 1 and 30 characters longor length[30] - exactly 30 characters long
+	}
+
+	/***/
+	function depends_on($in, $params = array(), $fields = array()) {
+// TODO: from kohana: depends_on Returns FALSE if form field(s) defined in parameter are not filled independs_on[field_name]
+	}
+
+	/***/
+	function chars($in, $params = array(), $fields = array()) {
+// TODO: chars Returns FALSE if field contains characters not in the parameterchars[a,b,c,d,1,2,3,4]
+	}
+
+	/***/
+	function credit_card($in, $params = array(), $fields = array()) {
+// TODO: from kohana: credit_card Returns FALSE if credit card is not validcredit_card[mastercard]
+	}
+
+	/***/
+	function standard_text($in, $params = array(), $fields = array()) {
+// TODO: standard_text Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
+	}
+
+	/***/
 	function is_unique($in, $params = array()) {
 		if (!$in) {
 			return true;
@@ -364,31 +389,86 @@ class yf_validate {
 		return ! (isset($fields[$field]) && $_POST[$field] === $in);
 	}
 
+	/**
+	* The original specification of hostnames in RFC 952, mandated that labels could not start with a digit or with a hyphen, and must not end with a hyphen. 
+	* However, a subsequent specification (RFC 1123) permitted hostname labels to start with digits.
+	* http://tools.ietf.org/html/rfc952, http://tools.ietf.org/html/rfc1123
+	* Each label within a valid hostname may be no more than 63 octets long.
+	* the total length of the hostname must not exceed 255 characters. For more information, please consult RFC-952 and RFC-1123.
+	* see also: 
+	*    http://stackoverflow.com/questions/106179/regular-expression-to-match-hostname-or-ip-address
+	*    http://data.iana.org/TLD/tlds-alpha-by-domain.txt
+	*/
+	function valid_hostname ($in = '') {
+		$len = strlen($in);
+		if (!$len && $len > 255) {
+			return false;
+		}
+		foreach ((array)explode('.', $in) as $v) {
+			if (strlen($v) > 63) {
+				return false;
+			}
+		}
+		return (bool) preg_match('/^([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9])(\.([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9]))*$/i', $in);
+	}
+
 	/***/
 	function valid_url($in, $params = array()) {
 		if (empty($in)) {
-			return FALSE;
+			return false;
 		} elseif (preg_match('/^(?:([^:]*)\:)?\/\/(.+)$/', $in, $matches)) {
 			if (empty($matches[2])) {
-				return FALSE;
-			} elseif ( ! in_array($matches[1], array('http', 'https'), TRUE)) {
-				return FALSE;
+				return false;
+			} elseif ( ! in_array($matches[1], array('http', 'https'), true)) {
+				return false;
 			}
 			$in = $matches[2];
 		}
 		$in = 'http://'.$in;
-		return (filter_var($in, FILTER_VALIDATE_URL) !== FALSE);
+		return (filter_var($in, FILTER_VALIDATE_URL) !== false);
 	}
-	
+
+	/***/
+	function valid_email($in) {
+		return (bool) filter_var($in, FILTER_VALIDATE_EMAIL);
+	}
+
+	/***/
+	function valid_emails($in) {
+		if (!$in) {
+			return false;
+		}
+		if (strpos($in, ',') === false) {
+			return $this->valid_email(trim($in));
+		}
+		foreach (explode(',', $in) as $email) {
+			if (trim($email) !== '' && $this->valid_email(trim($email)) === false) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/***/
+	function valid_base64($in) {
+		return strlen($in) && (base64_encode(base64_decode($in)) === $in);
+	}
+
+	/***/
+	function valid_ip($in, $params = array()) {
+		$which = $params['param'];
+		return $this->_valid_ip($in, $which);
+	}
+
 	/***/
 	function min_length($in, $params = array()) {
 		$val = $params['param'];
 		if ( ! is_numeric($val)) {
-			return FALSE;
+			return false;
 		} else {
 			$val = (int) $val;
 		}
-		return ($this->MB_ENABLED === TRUE)
+		return ($this->MB_ENABLED === true)
 			? ($val <= mb_strlen($in))
 			: ($val <= strlen($in));
 	}
@@ -397,11 +477,11 @@ class yf_validate {
 	function max_length($in, $params = array()) {
 		$val = $params['param'];
 		if ( ! is_numeric($val)) {
-			return FALSE;
+			return false;
 		} else {
 			$val = (int) $val;
 		}
-		return ($this->MB_ENABLED === TRUE)
+		return ($this->MB_ENABLED === true)
 			? ($val >= mb_strlen($in))
 			: ($val >= strlen($in));
 	}
@@ -410,11 +490,11 @@ class yf_validate {
 	function exact_length($in, $params = array()) {
 		$val = $params['param'];
 		if ( ! is_numeric($val)) {
-			return FALSE;
+			return false;
 		} else {
 			$val = (int) $val;
 		}
-		return ($this->MB_ENABLED === TRUE)
+		return ($this->MB_ENABLED === true)
 			? (mb_strlen($in) === $val)
 			: (strlen($in) === $val);
 	}
@@ -422,25 +502,25 @@ class yf_validate {
 	/***/
 	function greater_than($in, $params = array()) {
 		$min = $params['param'];
-		return is_numeric($in) ? ($in > $min) : FALSE;
+		return is_numeric($in) ? ($in > $min) : false;
 	}
 
 	/***/
 	function less_than($in, $params = array()) {
 		$max = $params['param'];
-		return is_numeric($in) ? ($in < $max) : FALSE;
+		return is_numeric($in) ? ($in < $max) : false;
 	}
 
 	/***/
 	function greater_than_equal_to($in, $params = array()) {
 		$min = $params['param'];
-		return is_numeric($in) ? ($in >= $min) : FALSE;
+		return is_numeric($in) ? ($in >= $min) : false;
 	}
 
 	/***/
 	function less_than_equal_to($in, $params = array()) {
 		$max = $params['param'];
-		return is_numeric($in) ? ($in <= $max) : FALSE;
+		return is_numeric($in) ? ($in <= $max) : false;
 	}
 
 	/***/
@@ -489,29 +569,6 @@ class yf_validate {
 	}
 
 	/***/
-	function valid_email($in) {
-		return (bool) filter_var($in, FILTER_VALIDATE_EMAIL);
-	}
-
-	/***/
-	function valid_emails($in) {
-		if (strpos($in, ',') === FALSE) {
-			return $this->valid_email(trim($in));
-		}
-		foreach (explode(',', $in) as $email) {
-			if (trim($email) !== '' && $this->valid_email(trim($email)) === FALSE) {
-				return FALSE;
-			}
-		}
-		return TRUE;
-	}
-
-	/***/
-	function valid_base64($in) {
-		return strlen($in) && (base64_encode(base64_decode($in)) === $in);
-	}
-
-	/***/
 	function prep_url($in) {
 		if ($in === 'http://' OR $in === '') {
 			return '';
@@ -520,17 +577,6 @@ class yf_validate {
 			return 'http://'.$in;
 		}
 		return $in;
-	}
-
-	/***/
-	function encode_php_tags($in) {
-		return str_replace(array('<?', '?>'), array('&lt;?', '?&gt;'), $in);
-	}
-
-	/***/
-	function valid_ip($in, $params = array()) {
-		$which = $params['param'];
-		return $this->_valid_ip($in, $which);
 	}
 
 	/***/
@@ -543,13 +589,6 @@ class yf_validate {
 # TODO: write unit tests and only then enable
 #		return _class('security')->xss_clean($in);
 		return true;
-	}
-
-	/***/
-	function strip_image_tags($in) {
-# TODO: write unit tests and only then enable
-		return true;
-#		return _class('security')->strip_image_tags($in);
 	}
 
 	/***/
@@ -582,14 +621,14 @@ class yf_validate {
 		if (empty($TEXT_TO_CHECK) || (strlen($TEXT_TO_CHECK) < $this->MIN_NICK_LENGTH)) {
 			_re(t('Nick must have at least @num symbols', array('@num' => $this->MIN_NICK_LENGTH)));
 		} elseif (!preg_match('/^['.$_nick_pattern.']+$/iu', $TEXT_TO_CHECK)) {
-			_re(t("Nick can contain only these characters: \"@text1\"", array("@text1" => _prepare_html(stripslashes(implode("\" , \"", $this->NICK_ALLOWED_SYMBOLS))))));
+			_re(t('Nick can contain only these characters: @text1', array('@text1' => _prepare_html(stripslashes(implode('" , "', $this->NICK_ALLOWED_SYMBOLS))))));
 			if (!$OVERRIDE_MODE) {
-				$_POST[$name_in_form] = preg_replace("/[^".$_nick_pattern."]+/iu", "", $_POST[$name_in_form]);
+				$_POST[$name_in_form] = preg_replace('/[^'.$_nick_pattern.']+/iu', '', $_POST[$name_in_form]);
 			}
 		} elseif ($TEXT_TO_CHECK != $CUR_VALUE) {
-			$NICK_ALREADY_EXISTS = (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE nick='"._es($TEXT_TO_CHECK)."'") >= 1);
+			$NICK_ALREADY_EXISTS = (db()->query_num_rows('SELECT id FROM '.db('user').' WHERE nick="'._es($TEXT_TO_CHECK).'"') >= 1);
 			if ($NICK_ALREADY_EXISTS) {
-				_re(t("Nick (\"@name\") is already reserved. Please try another one.", array("@name" => $TEXT_TO_CHECK)));
+				_re(t('Nick "@name" is already reserved. Please try another one.', array('@name' => $TEXT_TO_CHECK)));
 			}
 		}
 	}
@@ -597,7 +636,7 @@ class yf_validate {
 	/**
 	* Check user profile url
 	*/
-	function _check_profile_url ($CUR_VALUE = "", $force_value_to_check = null, $name_in_form = "profile_url") {
+	function _check_profile_url ($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'profile_url') {
 // TODO: rewrite me
 		$TEXT_TO_CHECK = $_POST[$name_in_form];
 		// Override value to check
@@ -612,13 +651,13 @@ class yf_validate {
 		$this->_prepare_reserved_words();
 		// Do check profile url
 		if (!empty($CUR_VALUE)) {
-			_re("You have already chosen your profile url. You are not allowed to change it!");
-		} elseif (!preg_match("/^[a-z0-9]{0,64}$/ims", $TEXT_TO_CHECK)) {
-			_re("Wrong Profile url format! Letters or numbers only with no spaces");
+			_re('You have already chosen your profile url. You are not allowed to change it!');
+		} elseif (!preg_match('/^[a-z0-9]{0,64}$/ims', $TEXT_TO_CHECK)) {
+			_re('Wrong Profile url format! Letters or numbers only with no spaces');
 		} elseif (in_array($TEXT_TO_CHECK, $this->reserved_words)) {
-			_re("This profile url (\"".$TEXT_TO_CHECK."\") is our site reserved name. Please try another one.");
-		} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE profile_url='"._es($TEXT_TO_CHECK)."'") >= 1) {
-			_re("This profile url (\"".$TEXT_TO_CHECK."\") has already been registered with us! Please try another one.");
+			_re('This profile url ("'.$TEXT_TO_CHECK.'") is our site reserved name. Please try another one.');
+		} elseif (db()->query_num_rows('SELECT id FROM '.db('user').' WHERE profile_url="'._es($TEXT_TO_CHECK).'"') >= 1) {
+			_re('This profile url ("'.$TEXT_TO_CHECK.'") has already been registered with us! Please try another one.');
 		}
 	}
 
@@ -627,10 +666,10 @@ class yf_validate {
 	*/
 	function _check_login () {
 // TODO: rewrite me
-		if ($_POST["login"] == "") {
+		if ($_POST['login'] == '') {
 			_re('Login required');
-		} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE login='"._es($_POST['login'])."'") >= 1) {
-			_re("This login (".$_POST["login"].") has already been registered with us!");
+		} elseif (db()->query_num_rows('SELECT id FROM '.db('user').' WHERE login="'._es($_POST['login']).'"') >= 1) {
+			_re('This login '.$_POST['login'].' has already been registered with us!');
 		}
 	}
 
@@ -714,14 +753,15 @@ class yf_validate {
 
 	/**
 	*/
-	function _url_verify ($url = '', $absolute = false) {
-		return preg_match('/^(http|https):\/\/(www\.){0,1}[a-z0-9\-]+\.[a-z]{2,5}[^\s]*$/i', $url);
-	}
-
-	/**
-	*/
 	function _validate_url_by_http($url) {
 		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
+	}
+	
+	/**
+	* Alias
+	*/
+	function _url_verify ($in = '') {
+		return $this->valid_url($in);
 	}
 
 	/**
