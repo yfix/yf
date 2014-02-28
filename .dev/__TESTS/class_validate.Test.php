@@ -259,6 +259,19 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->valid_email('testme@yfix.net') );
 		$this->assertFalse( _class('validate')->valid_email('testme.something.wrong.yfix.net') );
 	}
+	public function test_valid_emails() {
+		$this->assertFalse( _class('validate')->valid_emails('') );
+		$this->assertFalse( _class('validate')->valid_emails(null) );
+		$this->assertFalse( _class('validate')->valid_emails(false) );
+		$this->assertFalse( _class('validate')->valid_emails(array()) );
+		$this->assertFalse( _class('validate')->valid_emails(' ') );
+		$this->assertFalse( _class('validate')->valid_emails(PHP_EOL) );
+		$this->assertTrue( _class('validate')->valid_emails('testme@yfix.net') );
+		$this->assertFalse( _class('validate')->valid_emails('testme.something.wrong.yfix.net') );
+		$this->assertTrue( _class('validate')->valid_emails('testme@yfix.net,testme2@yfix.net') );
+		$this->assertTrue( _class('validate')->valid_emails('testme@yfix.net,testme2@yfix.net,testme3@yfix.net,testme4@yfix.net,testme5@yfix.net') );
+		$this->assertFalse( _class('validate')->valid_emails('testme@yfix.net,testme2@yfix.net,testme3@yfix.net,testme4@yfix.net,@yfix.net') );
+	}
 	public function test_valid_base64() {
 		$this->assertFalse( _class('validate')->valid_base64('') );
 		$this->assertFalse( _class('validate')->valid_base64(null) );
@@ -295,10 +308,57 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->valid_url('http://user:pswd@domain.com:8080/some_path/script.js?key1=val1&key2=val2#fragment') );
 #		$this->assertTrue( _class('validate')->valid_url('ftp://user:pswd@domain.com:8080/some_path/script.js') );
 	}
-	public function test_valid_emails() {
-// TODO
+	public function test_valid_hostname() {
+		$this->assertTrue( _class('validate')->valid_hostname('yahoo.com') );
+		$this->assertTrue( _class('validate')->valid_hostname('facebook.com') );
+		$this->assertTrue( _class('validate')->valid_hostname('google.to.cc') );
+		$this->assertTrue( _class('validate')->valid_hostname('mkyong-info.com') );
+		$this->assertTrue( _class('validate')->valid_hostname('mkyong.com.au') );
+		$this->assertTrue( _class('validate')->valid_hostname('verdi.com.my') );
+		$this->assertTrue( _class('validate')->valid_hostname('google.t.co') );
+		$this->assertTrue( _class('validate')->valid_hostname('google.t.t.co') );
+		$this->assertTrue( _class('validate')->valid_hostname('abc.99.com') );
+		$this->assertTrue( _class('validate')->valid_hostname('abc.mkyong-info.com') );
+		$this->assertTrue( _class('validate')->valid_hostname('abc-123.mkyong-99b.com.my') );
+		$this->assertTrue( _class('validate')->valid_hostname('travel.travel') );
+		$this->assertTrue( _class('validate')->valid_hostname('www.travel.travel') );
+		$this->assertTrue( _class('validate')->valid_hostname('zp.ua') );
+		$this->assertTrue( _class('validate')->valid_hostname('i.ua') );
+		$this->assertTrue( _class('validate')->valid_hostname('a12.b34.c56.d78.e90.long.sub.hostname.name') );
+		$this->assertTrue( _class('validate')->valid_hostname('test.info') );
+		$this->assertTrue( _class('validate')->valid_hostname('t.co') );
+		$this->assertTrue( _class('validate')->valid_hostname('localhost') );
+
+		$this->assertFalse( _class('validate')->valid_hostname('123,345.com') );
+		$this->assertFalse( _class('validate')->valid_hostname('.com.my') );
+		$this->assertFalse( _class('validate')->valid_hostname('-bad.com') );
+		$this->assertFalse( _class('validate')->valid_hostname('-.bad.com') );
+#		$this->assertFalse( _class('validate')->valid_hostname('yfix.net123') );
+#		$this->assertFalse( _class('validate')->valid_hostname('0.bad.com') );
+#		$this->assertFalse( _class('validate')->valid_hostname('google.t') );
+#		$this->assertFalse( _class('validate')->valid_hostname('google.t.t.t') );
+		$this->assertFalse( _class('validate')->valid_hostname('youtube.com/users/abc') );
+		$this->assertFalse( _class('validate')->valid_hostname('%*.com') );
+		$this->assertFalse( _class('validate')->valid_hostname('test..com') );
+		$this->assertFalse( _class('validate')->valid_hostname('test.test..com') );
+		$this->assertFalse( _class('validate')->valid_hostname('test..test.com') );
 	}
 	public function test_valid_ip() {
+		$this->assertFalse( _class('validate')->valid_ip('') );
+		$this->assertFalse( _class('validate')->valid_ip(null) );
+		$this->assertFalse( _class('validate')->valid_ip(false) );
+		$this->assertFalse( _class('validate')->valid_ip(array()) );
+		$this->assertFalse( _class('validate')->valid_ip(' ') );
+		$this->assertFalse( _class('validate')->valid_ip(PHP_EOL) );
+		$this->assertTrue( _class('validate')->valid_ip('127.0.0.1') );
+#		$this->assertTrue( _class('validate')->valid_ip('127.1') );
+		$this->assertTrue( _class('validate')->valid_ip('192.168.1.1') );
+		$this->assertTrue( _class('validate')->valid_ip('255.255.255.255') );
+		$this->assertTrue( _class('validate')->valid_ip('0.0.0.0') );
+		$this->assertTrue( _class('validate')->valid_ip('8.8.8.8') );
+		$this->assertFalse( _class('validate')->valid_ip('.8.8.8') );
+		$this->assertFalse( _class('validate')->valid_ip('256.8.8.8') );
+		$this->assertFalse( _class('validate')->valid_ip('256.256.256.256') );
 // TODO
 	}
 	public function test_xss_clean() {
