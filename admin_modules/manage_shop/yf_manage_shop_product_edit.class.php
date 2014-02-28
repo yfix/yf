@@ -111,10 +111,8 @@ class yf_manage_shop_product_edit {
 				module('manage_shop')->_product_cache_purge($_GET['id']);
 				common()->admin_wall_add(array('shop product updated: '.$_POST['name'], $_GET['id']));
 				// sphinx reindex by flag file
-				// exec( 'touch /tmp/sphinx/indexer-kupi' );
-				// exec( 'touch /tmp/sphinx/indexer-kupi_dev' );
-				file_put_contents( '/tmp/sphinx/indexer-kupi',     1 );
-				file_put_contents( '/tmp/sphinx/indexer-kupi_dev', 1 );
+				exec( 'touch /tmp/sphinx/indexer-kupi' );
+				exec( 'touch /tmp/sphinx/indexer-kupi_dev' );
 			}
 			return js_redirect('./?object='.main()->_get('object').'&action=product_edit&id='.$_GET['id']);
 		}
