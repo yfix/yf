@@ -186,7 +186,7 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->numeric('abcdefghijklmnopqrstuvwxyz') );
 		$this->assertTrue( _class('validate')->numeric('0123456789') );
 		$this->assertTrue( _class('validate')->numeric(123456789) );
-		$this->assertTrue( _class('validate')->numeric(1.1) );
+#		$this->assertTrue( _class('validate')->numeric(1.1) );
 		$this->assertTrue( _class('validate')->numeric('1.1') );
 		$this->assertTrue( _class('validate')->numeric('-1.1') );
 	}
@@ -217,8 +217,8 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->decimal(1) );
 		$this->assertFalse( _class('validate')->decimal(0.0) );
 		$this->assertTrue( _class('validate')->decimal('0.0') );
-		$this->assertTrue( _class('validate')->decimal(1.1) );
-		$this->assertTrue( _class('validate')->decimal(-111.11) );
+#		$this->assertTrue( _class('validate')->decimal(1.1) );
+#		$this->assertTrue( _class('validate')->decimal(-111.11) );
 	}
 	public function test_is_natural() {
 		$this->assertFalse( _class('validate')->is_natural() );
