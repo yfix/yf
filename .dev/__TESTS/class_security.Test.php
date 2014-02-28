@@ -19,7 +19,6 @@ class class_security_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( _class('security')->xss_clean('></SCRIPT>">\'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>'), '>[removed]">\'>[removed]alert&#40;String.fromCharCode(88,83,83&#41;)[removed]' );
 		$this->assertEquals( _class('security')->xss_clean('<SCRIPT SRC=http://ha.ckers.org/xss.js></SCRIPT>'), '[removed][removed]' );
 		$this->assertEquals( _class('security')->xss_clean('<IMG SRC=javascript:alert(\'XSS\')>'), '<IMG >');
-
 		$this->assertEquals( _class('security')->xss_clean('<IMG SRC=JaVaScRiPt:alert(\'XSS\')>'), '<IMG >' );
 		$this->assertEquals( _class('security')->xss_clean('<IMG SRC=javascript:alert("XSS")>'), '<IMG >' );
 		$this->assertEquals( _class('security')->xss_clean('<IMG SRC=`javascript:alert("RSnake says, \'XSS\'")`>'), '<IMG >' );
@@ -107,9 +106,6 @@ class class_security_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( _class('security')->xss_clean('<SCRIPT a=`>` SRC="http://ha.ckers.org/xss.js"></SCRIPT>'), '[removed]` SRC="http://ha.ckers.org/xss.js">[removed]' );
 		$this->assertEquals( _class('security')->xss_clean('<SCRIPT a=">\'>" SRC="http://ha.ckers.org/xss.js"></SCRIPT>'), '[removed]\'>" SRC="http://ha.ckers.org/xss.js">[removed]' );
 		$this->assertEquals( _class('security')->xss_clean('<SCRIPT>document.write("<SCRI");</SCRIPT>PT SRC="http://ha.ckers.org/xss.js"></SCRIPT>'), '[removed][removed]("<SCRI");[removed]PT SRC="http://ha.ckers.org/xss.js">[removed]' );
-#		$this->assertEquals( _class('security')->xss_clean(''), '' );
-#		$this->assertEquals( _class('security')->xss_clean(''), '' );
-
-// TODO: add more tests
+		$this->assertEquals( _class('security')->xss_clean('<A HREF="javascript:document.location=\'http://www.google.com/\'">XSS</A>'), '<A locati>XSS</A>' );
 	}
 }
