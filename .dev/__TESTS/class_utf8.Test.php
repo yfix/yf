@@ -11,7 +11,7 @@ class class_utf8_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(21, _strlen(_substr($str, 0, 21)));
 	}
 	public function test_cases() {
-		$sentence = "пользователь должен быть у Вас в друзьях а Вы у него";
+		$sentence = 'пользователь должен быть у Вас в друзьях а Вы у него';
 		$this->assertEquals('ПОЛЬЗОВАТЕЛЬ ДОЛЖЕН БЫТЬ У ВАС В ДРУЗЬЯХ А ВЫ У НЕГО', trim(_strtoupper($sentence)));
 		$this->assertEquals('пользователь должен быть у вас в друзьях а вы у него', trim(_strtolower($sentence)));
 		$this->assertNotEquals(strtoupper($sentence), _strtoupper($sentence));
@@ -20,7 +20,7 @@ class class_utf8_test extends PHPUnit_Framework_TestCase {
 		$this->assertNotEquals(ucwords($sentence), _ucwords($sentence));
 	}
 	public function test_strings() {
-		$sentence = "пользователь должен быть у Вас в друзьях а Вы у него";
+		$sentence = 'пользователь должен быть у Вас в друзьях а Вы у него';
 		$testcase = array(
 			'tHe QUIcK bRoWn' => 'QUI',
 			'frànçAIS' => 'çAI',
