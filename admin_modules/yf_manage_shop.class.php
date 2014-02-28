@@ -446,6 +446,10 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop_paywill', 'admin_modules/manage_shop/')->$func();
 	}
 
+	function _prepare_paywill_body($params = false) {
+		$func = __FUNCTION__; return _class('manage_shop_paywill', 'admin_modules/manage_shop/')->$func($params);
+	}
+ 
 	function express_pdf($params = array()) {
 		$func = __FUNCTION__; return _class('manage_shop_express', 'admin_modules/manage_shop/')->$func($params);
 	}
