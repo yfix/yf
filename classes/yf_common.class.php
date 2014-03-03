@@ -697,20 +697,6 @@ class yf_common {
 	}
 
 	/**
-	* Update given user info by id
-	*/
-	function update_user($user_id, $data = array(), $params = '', $return_sql = false) {
-		return _class('user_data', 'classes/common/')->_update_user($user_id, $data, $params, $return_sql);
-	}
-
-	/**
-	* Search user(s) info by params
-	*/
-	function search_user($params = array(), $fields = array(), $return_sql = false) {
-		return _class('user_data', 'classes/common/')->_search_user($params, $fields, $return_sql);
-	}
-
-	/**
 	* Check if user is ignored by second one
 	*/
 	function _is_ignored($target_user_id, $owner_id) {

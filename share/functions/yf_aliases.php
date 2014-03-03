@@ -135,12 +135,6 @@ if (!function_exists('_ee')) {
 if (!function_exists('user')) {
 	function user($user_id, $fields = 'full', $params = '', $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, 'user') ? $_common->user($user_id, $fields, $params, $return_sql) : false; }
 }
-if (!function_exists('update_user')) {
-	function update_user($user_id, $data = array(), $params = '', $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, 'update_user') ? $_common->update_user($user_id, $data, $params, $return_sql) : false; }
-}
-if (!function_exists('search_user')) {
-	function search_user($params = array(), $fields = array(), $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, 'user') ? $_common->search_user($params, $fields, $return_sql) : false; }
-}
 if (!function_exists('_truncate')) {
 	function _truncate($string, $len, $wordsafe = false, $dots = false) { return _class('utf8')->truncate_utf8($string, $len, $wordsafe, $dots); }
 }

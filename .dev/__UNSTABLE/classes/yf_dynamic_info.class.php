@@ -116,11 +116,9 @@ class yf_dynamic_info {
 		
 			$dynamic_sql_array[$val["name"]] = $_POST[$val["name"]];
 		}
-		
-		// Do update user dynamic info
-		update_user($user_id, $dynamic_sql_array);	
+		db()->update('user', $dynamic_sql_array, $user_id);
 	}
-	
+
 	/**
 	*
 	*/

@@ -88,7 +88,7 @@ class yf_manage_users {
 			$user_info = user($_GET['id']);
 		}
 		if (!empty($user_info)) {
-			update_user($user_info['id'], array('active' => (int)!$user_info['active']));
+			db()->update('user', array('active' => (int)!$user_info['active']), $user_info['id']);
 		}
 		cache_del('user');
 		if ($_POST['ajax_mode']) {

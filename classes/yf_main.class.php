@@ -278,7 +278,7 @@ class yf_main {
 		if ($this->TRACK_USER_PAGE_VIEWS && $this->USER_ID) {
 			$this->_add_shutdown_code(function(){
 				if (!main()->NO_GRAPHICS) {
-					update_user($this->USER_ID, array('last_view' => time(), 'num_views' => ++$this->_user_info['num_views']));
+					db()->update('user', array('last_view' => time(), 'num_views' => ++$this->_user_info['num_views']), $this->USER_ID);
 				}
 			});
 		}
