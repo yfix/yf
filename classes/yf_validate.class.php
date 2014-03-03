@@ -75,8 +75,9 @@ class yf_validate {
 	}
 
 	/**
+	* Method by form-less checking of any custom data for validity
 	*/
-	function _process_text($text, $validate_rules = array()) {
+	function _input_is_valid($input, $validate_rules = array()) {
 		$rules = array();
 		$global_rules = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
 		foreach ((array)$global_rules as $name => $rules) {
@@ -86,15 +87,25 @@ class yf_validate {
 			$rules[$name] = $rules;
 		}
 		$rules = $this->_validate_rules_cleanup($rules);
-		return $this->_do_process_text($rules, $text);
+		$ok = true;
+		if (is_array($input)) {
+			foreach ((array)$input as $k => $_input) {
+				if (!$this->_do_check_data_is_valid($rules, $_input)) {
+					$ok = false;
+					break;
+				}
+			}
+		} else {
+			$ok = $this->_do_check_data_is_valid($rules, $input);
+		}
+		return (bool)$ok;
 	}
 
 	/**
 	*/
-	function _do_process_text($validate_rules = array(), &$data) {
-/*
+	function _do_check_data_is_valid($validate_rules = array(), &$data) {
 		$validate_ok = true;
-		foreach ((array)$validate_rules as $name => $rules) {
+		foreach ((array)$validate_rules as $rules) {
 			$is_required = false;
 			foreach ((array)$rules as $rule) {
 				if ($rule[0] == 'required') {
@@ -109,33 +120,32 @@ class yf_validate {
 				$param = $rule[1];
 				// PHP pure function, from core or user
 				if (is_string($func) && function_exists($func)) {
-					$data[$name] = $func($data[$name]);
+					$data = $func($data);
 				} elseif (is_callable($func)) {
-					$is_ok = $func($data[$name], null, $data);
+					$is_ok = $func($data, null, $data);
 				} else {
-					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
+					$is_ok = _class('validate')->$func($data, array('param' => $param), $data, $error_msg);
 					if (!$is_ok && empty($error_msg)) {
-						$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
+						$error_msg = t('form_validate_'.$func, array('%field' => '', '%param' => $param));
 					}
 				}
 				// In this case we do not track error if field is empty and not required
-				if (!$is_ok && !$is_required && !strlen($data[$name])) {
+				if (!$is_ok && !$is_required && !strlen($data)) {
 					$is_ok = true;
 					$error_msg = '';
 				}
 				if (!$is_ok) {
 					$validate_ok = false;
 					if (!$error_msg) {
-						$error_msg = 'Wrong field '.$name;
+						$error_msg = 'Wrong value';
 					}
-					_re($error_msg, $name);
+					_re($error_msg);
 					// In case when we see any validation rule is not OK - we stop checking further for this field
 					continue 2;
 				}
 			}
 		}
 		return $validate_ok;
-*/
 	}
 
 	/**

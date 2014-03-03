@@ -203,7 +203,7 @@ if (!function_exists('html')) {
 	function html ($params) { return _class('html')->chained_wrapper($params); }
 }
 if (!function_exists('validate')) {
-	function validate($text = '', $rules = array()) { return _class('validate')->_process_text($text, $rules); }
+	function validate($input = '', $rules = array()) { return _class('validate')->_input_is_valid($input, $rules); }
 }
 // Check user banned or not
 if (!function_exists('_check_user_ban')) {

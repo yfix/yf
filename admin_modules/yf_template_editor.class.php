@@ -242,7 +242,7 @@ class yf_template_editor {
 // TODO: fix framework_user location (not working now)
 		$theme_name	= $_GET['theme'];
 		$stpl_name	= $_GET['name'];
-		if (empty($theme_name) || empty($stpl_name)) {
+		if (!validate(array($theme_name, $stpl_name), 'trim|required')) {
 			return _e('Template name and theme required!');
 		}
 		if (main()->is_post()) {
