@@ -20,6 +20,7 @@ class yf_form2_file_uploader {
 			
 			$body = tpl()->parse("form2/file_uploader",$replace);
 			
+// TODO: use this CDN for JS and CSS: http://cdnjs.com/libraries/blueimp-file-upload/
 			
 			// todo: move sources to repository
 			_class('core_css')->add(array(
