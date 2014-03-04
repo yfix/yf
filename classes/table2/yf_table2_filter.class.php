@@ -28,10 +28,10 @@ class yf_table2_filter {
 			'dt_eq'		=> function($a){ return ' = "'._es(strtotime($a['value'])).'"'; }, // "equal"
 			'dt_ne'		=> function($a){ return ' != "'._es(strtotime($a['value'])).'"'; }, // "not equal"
 			'dt_gt'		=> function($a){ return ' > "'._es(strtotime($a['value'])).'"'; }, // "greater than",
-			'dt_gte'		=> function($a){ return ' >= "'._es(strtotime($a['value'])).'"'; }, // "greater or equal than",
+			'dt_gte'	=> function($a){ return ' >= "'._es(strtotime($a['value'])).'"'; }, // "greater or equal than",
 			'dt_lt'		=> function($a){ return ' < "'._es(strtotime($a['value'])).'"'; }, // "less than",
-			'dt_lte'		=> function($a){ return ' <= "'._es(strtotime($a['value'])).'"'; }, // "lower or equal than"
-			'dt_between'	=> function($a){ return strlen($a['and']) ? ' BETWEEN "'._es(strtotime($a['value'])).'" AND "'._es(strtotime($a['and'])).'"' : ' = "'._es(strtotime($a['value'])).'"'; }, // BETWEEN $min AND $max					
+			'dt_lte'	=> function($a){ return ' <= "'._es(strtotime($a['value'])).'"'; }, // "lower or equal than"
+			'dt_between'=> function($a){ return strlen($a['and']) ? ' BETWEEN "'._es(strtotime($a['value'])).'" AND "'._es(strtotime($a['and'])).'"' : ' = "'._es(strtotime($a['value'])).'"'; }, // BETWEEN $min AND $max					
 		);
 		foreach((array)$filter_data as $k => $v) {
 			if (!strlen($k)) {
@@ -147,11 +147,30 @@ class yf_table2_filter {
 			foreach ((array)$filter as $fk => $fv) {
 				if (isset($_data[$fk]) && strlen($fv)) {
 					if (is_array($_data[$fk])) {
-						if (isset($filter_params[$fk]) && $filter_params[$fk] == 'like') {
+						if (isset($filter_params[$fk])) {
+							$fp = $filter_params[$fk];
 							foreach ((array)$_data[$fk] as $k2 => $v2) {
-								if (false === strpos($_data[$fk][$k2], $fv)) {
-									unset($data[$_id]);
-									continue 3;
+								if ($fp == 'like') {
+									if (false === strpos($_data[$fk][$k2], $fv)) {
+										unset($data[$_id]);
+										continue 3;
+									}
+								} elseif ($fp == 'rlike') {
+// TODO
+								} elseif ($fp == 'eq') {
+// TODO
+								} elseif ($fp == 'ne') {
+// TODO
+								} elseif ($fp == 'gt') {
+// TODO
+								} elseif ($fp == 'gte') {
+// TODO
+								} elseif ($fp == 'lt') {
+// TODO
+								} elseif ($fp == 'lte') {
+// TODO
+								} elseif ($fp == 'between') {
+// TODO
 								}
 							}
 						} elseif (!isset($_data[$fk][$fv])) {
@@ -159,10 +178,29 @@ class yf_table2_filter {
 							continue 2;
 						}
 					} else {
-						if (isset($filter_params[$fk]) && $filter_params[$fk] == 'like') {
-							if (false === strpos($_data[$fk], $fv)) {
-								unset($data[$_id]);
-								continue 2;
+						if (isset($filter_params[$fk])) {
+							$fp = $filter_params[$fk]
+							if ($fp == 'like') {
+								if (false === strpos($_data[$fk], $fv)) {
+									unset($data[$_id]);
+									continue 2;
+								}
+							} elseif ($fp == 'rlike') {
+// TODO
+							} elseif ($fp == 'eq') {
+// TODO
+							} elseif ($fp == 'ne') {
+// TODO
+							} elseif ($fp == 'gt') {
+// TODO
+							} elseif ($fp == 'gte') {
+// TODO
+							} elseif ($fp == 'lt') {
+// TODO
+							} elseif ($fp == 'lte') {
+// TODO
+							} elseif ($fp == 'between') {
+// TODO
 							}
 						} elseif ($_data[$fk] != $fv) {
 							unset($data[$_id]);
