@@ -12,6 +12,8 @@ class yf_manage_shop_paywill{
 		"porch",
 		"intercom",
 	);
+		
+	public $units = "1 шт.";
 
 	public $discount = 0;
 
@@ -39,28 +41,25 @@ class yf_manage_shop_paywill{
 		if (empty($order_info)) {
 			return _e('No such order');
 		}
-		$products_ids = array();
-		$Q = db()->query('SELECT * FROM '.db('shop_order_items').' WHERE `order_id`='.intval($order_info['id']));
-		while ($_info = db()->fetch_assoc($Q)) {
-			if ($_info['product_id']) {
-				$products_ids[$_info['product_id']] = $_info['product_id'];
-			}
-			$order_items[$_info['product_id']] = $_info;
-		}
-		if (!empty($products_ids)) {
-			$products_infos = db()->query_fetch_all('SELECT * FROM '.db('shop_products').' WHERE id IN('.implode(',', $products_ids).')');
+		$Q = db()->query('SELECT o.*, p.name , u.title
+							FROM '.db('shop_order_items').' as o 
+							RIGHT JOIN '.db('shop_products').' as p ON p.id = o.product_id
+							LEFT JOIN '.db('shop_product_units').' as u ON u.id = o.unit
+							WHERE o.order_id='.intval($order_info['id'])
+		);
+		while ($A = db()->fetch_assoc($Q)) {
+			$order_items[$A['product_id']] = $A;
 		}
 		foreach ((array)$order_items as $_info) {
-			$_product = $products_infos[$_info['product_id']];
-			$products[$_info['product_id']] = 
-				'<tr style="border: 1px solid rgb(206, 206, 206);">'
-				.'<td style="text-align: left; width: 350px;padding: 15px 12px;">'._prepare_html($_product['name']).'</td>'
-				.'<td style="width: 45px;padding: 15px 12px;">'._prepare_html(module('shop')->CURRENCY).'</td>'
-				.'<td style="width: 140px;text-align: right;padding: 15px 12px;">'.intval($_info['quantity']).'</td>'
-				.'<td style="width: 140px;text-align: right;padding: 15px 12px;">'.module('shop')->_format_price($_info['quantity']*$_info['price']).'</td>'
-				.'</tr>';
-
-			$out['products'] .= $products[$_info['product_id']];
+			$price_one = _class("shop_basket", "modules/shop/")->_get_price_one($_info);
+			$price_item = _class("shop_basket", "modules/shop/")->_get_price_item($_info);
+			$out['products'][] = array(
+				"product_name"		=> _prepare_html($_info['name']),
+				"product_units"		=> $_info['title']? : $this->units,
+				"product_price_one"	=> module('shop')->_format_price($price_one),
+				"product_quantity"	=> intval($_info['quantity']),
+				"product_item_price"=> module('shop')->_format_price($price_item),
+			);
 		}
 		$total_sum = module('shop')->_format_price(floatval($order_info['total_sum']));
 		foreach((array)$order_info as $k => $v){

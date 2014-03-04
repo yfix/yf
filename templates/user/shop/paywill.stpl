@@ -1,4 +1,4 @@
-    <div style="margin: 0 auto;  max-width: 780px; width: 100%;">
+    <div style="margin: 0 auto; max-width: 1000px;">
 		    <!--main-->
 		    <div style=" background: none repeat scroll 0 0 rgb(255, 255, 255); padding: 10px;">
 				<div style="    background: none repeat scroll 0 0 rgb(255, 255, 255); border: 2px solid rgb(206, 206, 206); padding: 10px;">
@@ -21,32 +21,38 @@
 						</div>
 					</div>
 					<h3 style="font: bold 15px Arial;margin-bottom: 6px;text-align: center;">Счет-фактура № {id}<br />от {date}</h3>
-					<div class="pay">
-						<p><b class="rt">ПЛАТЕЛЬЩИК:</b> <br /> {user_address}</p>
+					<div>
+						<p><b>ПЛАТЕЛЬЩИК:</b> <br /> {user_address}</p>
+						{if("payment" ne "")}<p><b>ФОРМА ОПЛАТЫ:</b> {payment}</p>{/if}
 						<table style="border-collapse: collapse; border-bottom: 2px solid rgb(206, 206, 206);">
 							<tr style="background-color: rgb(206, 206, 206);border-bottom: 1px solid rgb(206, 206, 206);">
 								<th style="text-align: left; width: 350px;padding: 15px 12px;">Название</th>
-								<th style="width: 45px;padding: 15px 12px;">Ед.</th>
+								<th style="width: 60px;padding: 15px 12px;">Ед. изм.</th>
+								<th style="width: 140px;text-align: right;padding: 15px 12px;">Цена</th>
 								<th style="width: 140px;text-align: right;padding: 15px 12px;">Количество</th>
 								<th style="width: 140px;text-align: right;padding: 15px 12px;">Сумма</th>
 							</tr>
-                                                               {products}
-							
+                            {foreach('products')}
+								<tr style="border: 1px solid rgb(206, 206, 206);">
+									<td style="text-align: left; width: 350px;padding: 15px 12px;">{#.product_name}</td>
+									<td style="width: 60px;padding: 15px 12px;">{#.product_units}</td>
+									<td style="width: 140px;text-align: right;padding: 15px 12px;">{#.product_price_one}</td>
+									<td style="width: 140px;text-align: right;padding: 15px 12px;">{#.product_quantity}</td>
+									<td style="width: 140px;text-align: right;padding: 15px 12px;">{#.product_item_price}</td>
+								</tr>
+							{/foreach}	
 								<tr>
-									<td style="text-align: left; width: 350px;padding: 0 15px;"></td>
-									<td style="width: 45px;padding: 15px 12px;"></td>
-									<td style="width: 140px;text-align: right;padding: 0 15px;"><b>Скидка</b></td>
-									<td style="width: 140px;text-align: right;padding: 0 15px ;">{discount}</td>
+									<td colspan="3"></td>
+									<td style="width: 140px;text-align: right;padding: 5px 15px ;"><b>Скидка</b></td>
+									<td style="width: 140px;text-align: right;padding: 5px 15px ;">{discount}</td>
 								</tr>
 								<tr>
-									<td style="text-align: left; width: 350px;padding: 0 15px ;"></td>
-									<td style="width: 45px;padding: 15px 12px;"></td>
-									<td style="width: 140px;text-align: right;padding: 0 15px ;"><b>Доставка</b></td>
-									<td style="width: 140px;text-align: right;padding: 0 15px ;">{delivery}</td>
+									<td colspan="3"></td>
+									<td style="width: 140px;text-align: right;padding: 5px 15px ;"><b>Доставка</b></td>
+									<td style="width: 140px;text-align: right;padding: 5px 15px ;">{delivery}</td>
 								</tr>
 								<tr>
-									<td style="text-align: left; width: 350px;padding: 0 15px ;"></td>
-									<td style="width: 45px;padding: 15px 12px;"></td>
+									<td colspan="3"></td>
 									<td style="width: 140px;text-align: right;padding: 0 15px ;"><b>Итого</b></td>
 									<td style="width: 140px;text-align: right;padding: 0 15px ;"><h4>{total_sum}</h4></td>
 								</tr>
