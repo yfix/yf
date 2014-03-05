@@ -1154,6 +1154,12 @@ class yf_common {
 	    return $f5;
 	}
 
+	/**
+	*/
+	function dashboard_display($name) {
+		return _class('dashboards', 'classes/common/')->display($name);
+	}
+
 	/*
 	 * Returns all types with empty param 'type'
 	 * Works in both ways: 

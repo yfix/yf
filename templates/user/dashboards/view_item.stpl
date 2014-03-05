@@ -1,0 +1,6 @@
+	  <div class="portlet {css_class}" id="{id}">
+	    <div class="portlet-header">
+			{name}
+		</div>
+    	<div class="portlet-content">{desc}</div>
+	  </div>

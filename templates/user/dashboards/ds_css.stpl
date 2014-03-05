@@ -1,0 +1,39 @@
+<style type="text/css">
+	.portlet { padding: 10px; margin-bottom: 20px; border: 1px solid #dddddd; border-radius: 4px; -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }
+	.portlet-header { padding: 5px 10px; margin: -10px -10px 10px; border-bottom: 1px solid #dddddd; border-top-right-radius: 3px; border-top-left-radius: 3px; }
+	.portlet-options { border-bottom: 1px solid #dddddd; margin: -10px -10px 10px; padding: 5px 10px;}
+	.portlet-options select { width: auto; }
+	.portlet-options .form-horizontal .control-group { }
+	.portlet-options .form-horizontal .control-label { width: auto; margin-right: 10px; }
+	.portlet-options .form-horizontal .controls { margin-left: 0; }
+	.portlet-content { }
+	.portlets-side-column .portlet { padding: 5px; margin-bottom: 10px; }
+	.portlets-side-column .portlet-header { margin: -5px; padding: 0 5px; border-bottom: transparent; }
+	.portlets-side-column .portlet-content { display: none; }
+	.portlets-side-column .yf_ds_delete { display: none; }
+	.ui-sortable-placeholder { border: 1px dotted #dddddd; visibility: visible !important; height: 50px !important; }
+
+	.ds_view .portlet { padding: 0; margin-bottom: 20px; border-radius: 4px; -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }
+	.ds_view .portlet-header { padding: 5px 10px; margin: 0; border-top-right-radius: 3px; border-top-left-radius: 3px; }
+	.ds_view .portlet-content { max-height: 300px; overflow-y:auto; }
+	.ds_view .portlet-content table { margin-bottom: 0; }
+	.ds_view .portlet-content table td { padding: 3px; }
+
+	ul.colors { margin-left: 0; padding-top: 10px; }
+	ul.colors li { width: 20px; height: 20px; border: 1px solid #EEE; float: left; display: inline; margin: 0 5px 0 0; cursor: pointer; }
+
+	li.color-default { background: #272b30; }
+	.color-default.portlet, .color-default div { border-color: #dddddd; }  .color-default .portlet-header, .color-default i { background-color: #151719; font-weight:bold; color: #dddddd; }
+	li.color-yellow { background: #f2bc00; }
+	.color-yellow.portlet, .color-yellow div { border-color: #f2bc00; }  .color-yellow .portlet-header, .color-yellow i { background-color: #f2bc00; font-weight:bold; color: #151719; }
+	li.color-red { background: #dd0000; }
+	.color-red.portlet, .color-red div { border-color: #dd0000; }  .color-red .portlet-header, .color-red i { background-color: #dd0000; font-weight:bold; color: #151719; }
+	li.color-blue { background: #148ea4; }
+	.color-blue.portlet, .color-blue div { border-color: #148ea4; } .color-blue .portlet-header, .color-blue i { background-color: #148ea4; font-weight:bold; color: #151719; }
+	li.color-white { background: #dfdfdf; }
+	.color-white.portlet, .color-white div { border-color: #dfdfdf; }  .color-white .portlet-header, .color-white i { background-color: #dfdfdf; font-weight:bold; color: #151719; }
+	li.color-orange { background: #f66e00; }
+	.color-orange.portlet, .color-orange div { border-color: #f66e00; }  .color-orange .portlet-header, .color-orange i { background-color: #f66e00; font-weight:bold; color: #151719; }
+	li.color-green { background: #8dc100; }
+	.color-green.portlet, .color-green div { border-color: #8dc100; }  .color-green .portlet-header, .color-green i { background-color: #8dc100; font-weight:bold; color: #151719; }
+</style>
