@@ -179,7 +179,7 @@ class yf_table2_filter {
 						}
 					} else {
 						if (isset($filter_params[$fk])) {
-							$fp = $filter_params[$fk]
+							$fp = $filter_params[$fk];
 							if ($fp == 'like') {
 								if (false === strpos($_data[$fk], $fv)) {
 									unset($data[$_id]);

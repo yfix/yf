@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_debug_info {
+class yf_debug {
 
 	public $_file_prefix				= 'logs/not_translated_';
 	public $_file_ext					= '.php';
@@ -1170,9 +1170,9 @@ class yf_debug_info {
 #			if () {
 #			}
 		}
-		foreach ((array)$items as $i => $v) {
-			$items[$i] = $v + array('time_change_p' => '10%');
-		}
+#		foreach ((array)$items as $i => $v) {
+#			$items[$i] = $v + array('time_change_p' => '10%');
+#		}
 		return $items;
 	}
 

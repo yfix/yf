@@ -390,7 +390,7 @@ class yf_common {
 	* Create simple table with debug info
 	*/
 	function show_debug_info() {
-		return _class('debug_info', 'classes/common/')->go();
+		return _class('debug')->go();
 	}
 
 	/**
