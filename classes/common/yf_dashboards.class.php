@@ -156,7 +156,7 @@ class yf_dashboards {
 						list($module_name, $method_name) = explode('.', $info['method_name']);
 					}
 				} elseif ($auto_type == 'block_item') {
-					$content = _class('core_blocks')->show_block(array('name' => $info['block_name']));
+					$content = _class('core_blocks')->show_block(array('block_id' => $info['block_name']));
 				} elseif ($auto_type == 'stpl_item') {
 					if (strlen($info['code'])) {
 						$content = tpl()->parse_string($info['code']);
