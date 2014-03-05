@@ -18,8 +18,8 @@ class yf_dashboards {
 	);
 
 // TODO: add options for items:
-// show_header=1|0
-// show_border=1|0
+// hide_header=1|0
+// hide_border=1|0
 // min_height=0|(int)
 // max_height=0|(int)
 
