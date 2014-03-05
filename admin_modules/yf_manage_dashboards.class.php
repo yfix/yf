@@ -426,17 +426,19 @@ class yf_manage_dashboards {
 	/**
 	*/
 	function _options_container($info = array(), $saved = array()) {
-		$form = form();
+		$form = form(array(), array('class' => 'form-horizontal form-condensed'));
 		if ($info['cloneable']) {
 			$form->text('name', array('class' => 'input-medium', 'value' => $saved['name']));
 			$form->text('desc', 'Description', array('class' => 'input-medium', 'value' => $saved['desc']));
 			if ($info['auto_type'] == 'php_item') {
 				$form->text('method_name','Custom class method', array('value' => $saved['method_name']));
 			} elseif ($info['auto_type'] == 'block_item') {
-				$form->select_box('block_name', db()->get_2d('SELECT id, name FROM '.db('blocks').' ORDER BY name ASC'), array('value' => $saved['block_name']));
+				$form->select_box('block_name', main()->get_data('blocks_names'), array('selected' => $saved['block_name']));
 			} elseif ($info['auto_type'] == 'stpl_item') {
 				$form->text('stpl_name','Custom template', array('value' => $saved['stpl_name']));
 			}
+			$form->check_box('hide_header', '1', array('selected' => $saved['hide_header'], 'no_label' => 1));
+			$form->check_box('hide_border', '1', array('selected' => $saved['hide_border'], 'no_label' => 1));
 			$form->textarea('code', array('value' => $saved['code']));
 		}
 		foreach ((array)$info['configurable'] as $k => $v) {
