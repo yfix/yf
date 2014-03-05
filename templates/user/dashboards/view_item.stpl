@@ -1,6 +1,8 @@
-	  <div class="portlet {css_class}" id="{id}">
+	  <div class="portlet {css_class}" id="{id}"{if(hide_border eq 1)} style="border:0;box-shadow:none;-webkit-box-shadow:none;"{/if}>
+{if(hide_header ne 1)}
 	    <div class="portlet-header">
 			{name}
 		</div>
-    	<div class="portlet-content">{desc}</div>
+{/if}
+    	<div class="portlet-content">{content}</div>
 	  </div>
