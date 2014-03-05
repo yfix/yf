@@ -550,6 +550,7 @@ class yf_debug_info {
 			return '';
 		}
 		$items = $this->_get_debug_data('main_get_data');
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
 	}
 
@@ -1128,6 +1129,51 @@ class yf_debug_info {
 		$data = debug($name);
 		debug($name, false);
 		return $data;
+	}
+
+	/**
+	*/
+	function _time_count_changes ($items = array(), $field = 'time') {
+/*
+		$_last_item = end($all_timings);
+		$time_all = $_last_item[0] - $ts;
+		$items = array();
+		foreach ((array)$all_timings as $i => $v) {
+			$time_offset = $v[0] - $ts;
+			$time_change = '';
+			$time_change_p = '';
+			if (isset($all_timings[$i + 1])) {
+				$time_change = $all_timings[$i + 1][0] - $v[0];
+			}
+			$time_warning = false;
+			if ($time_change > 0.001) {
+				$time_change_p = round(100 - (($time_all - $time_change) / $time_all * 100), 1);
+				if ($time_change_p >= 5) {
+					$time_warning = true;
+				}
+			}
+			$items[] = array(
+				'i'				=> $i,
+				'time_offset'	=> common()->_format_time_value($time_offset),
+				'time_change'	=> $time_change && $time_change > 0.0001 ? common()->_format_time_value($time_change) : '',
+				'time_change_p'	=> $time_change_p ? '<span class="'.($time_warning ? 'label label-warning' : '').'">'.$time_change_p.'%</span>' : '',
+				'class'			=> $v[1],
+				'method'		=> $v[2],
+				'trace'			=> $v[3],
+				'args'			=> $v[4] ? _prepare_html(var_export($v[4], 1)) : '',
+			);
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'args')));
+*/
+		foreach ((array)$items as $i => $v) {
+// TODO
+#			if () {
+#			}
+		}
+		foreach ((array)$items as $i => $v) {
+			$items[$i] = $v + array('time_change_p' => '10%');
+		}
+		return $items;
 	}
 
 	/**
