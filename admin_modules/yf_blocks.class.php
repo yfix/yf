@@ -236,7 +236,7 @@ class yf_blocks {
 				'on_after_update' => function() {
 					common()->admin_wall_add(array('block rule added for '.$block_info['name'], $_GET['id']));
 					cache_del('blocks_rules');
-				}, 'redirect_link' => './?object=blocks&action=show_rules&id='.$a['block_id'],
+				}, 'redirect_link' => './?object=blocks&action=show_rules&id='.$block_info['id'],
 			))
 			->info('type')
 			->allow_deny_box('rule_type')
