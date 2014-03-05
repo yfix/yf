@@ -12,7 +12,7 @@ class yf_admin_groups {
 	/**
 	*/
 	function show () {
-		$blocks = main()->get_data('blocks_names');
+		$blocks = main()->get_data('blocks_all');
 		foreach ((array)$blocks as $_id => $_info) {
 			if ($_info['type'] == 'admin' && $_info['name'] == 'center_area') {
 				$admin_center_id = $_id;
