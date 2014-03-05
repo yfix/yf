@@ -66,16 +66,9 @@ class yf_core_blocks {
 	* Show custom block contents
 	*/
 	function _show_block ($input = array()) {
-		$block_name = $input['name'];
-		if (empty($block_name)) {
-			trigger_error(__CLASS__.': Given empty block name to show', E_USER_WARNING);
-			return false;
-		}
-		// Try to get available blocks names
 		if (!isset($this->_blocks_infos)) {
 			$this->_blocks_infos = main()->get_data('blocks_names');
 		}
-		// Check if such block exists
 		if (empty($this->_blocks_infos)) {
 			if (!$this->_error_no_blocks_raised) {
 				trigger_error(__CLASS__.': Blocks names not loaded', E_USER_WARNING);
@@ -84,16 +77,30 @@ class yf_core_blocks {
 			return false;
 		}
 		$BLOCK_EXISTS = false;
-		foreach ((array)$this->_blocks_infos as $block_info) {
-			// Skip blocks from other init type ('admin' or 'user')
-			if (trim($block_info['type']) != MAIN_TYPE) {
-				continue;
-			}
-			// Found!
-			if ($block_info['name'] == $block_name) {
+		if (isset($input['block_id']) && is_numeric($input['block_id'])) {
+			$block_info = $this->_blocks_infos[$input['block_id']];
+			if ($block_info && trim($block_info['type']) == MAIN_TYPE) {
+				$block_id = $input['block_id'];
+				$block_name = $block_info['name'];
 				$BLOCK_EXISTS = true;
-				$block_id = $block_info['id'];
-				break;
+			}
+		} else {
+			$block_name = $input['name'];
+			if (empty($block_name)) {
+				trigger_error(__CLASS__.': Given empty block name to show', E_USER_WARNING);
+				return false;
+			}
+			foreach ((array)$this->_blocks_infos as $block_info) {
+				// Skip blocks from other init type ('admin' or 'user')
+				if (trim($block_info['type']) != MAIN_TYPE) {
+					continue;
+				}
+				// Found!
+				if ($block_info['name'] == $block_name) {
+					$BLOCK_EXISTS = true;
+					$block_id = $block_info['id'];
+					break;
+				}
 			}
 		}
 		if (!$BLOCK_EXISTS) {
