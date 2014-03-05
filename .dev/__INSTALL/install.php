@@ -283,11 +283,11 @@ define(\'DB_CHARSET\',\'utf8\');';
 	}
 	function write_user_index_php($rewrite_enabled = true) {
 		$index_file_content = '<?php
-$dev_settings = dirname(__FILE__).\'/.dev/override.php\';
+$dev_settings = dirname(dirname(__FILE__)).\'/.dev/override.php\';
 if (file_exists($dev_settings)) {
     require_once $dev_settings;
 }
-$saved_settings = dirname(dirname(__FILE__)).\'/saved_settings.php\';
+$saved_settings = dirname(__FILE__).\'/saved_settings.php\';
 if (file_exists($saved_settings)) {
     require_once $saved_settings;
 }
@@ -312,11 +312,11 @@ new yf_main(\'user\', $no_db_connect = false, $auto_init_all = true);';
 	}
 	function write_admin_index_php($rewrite_enabled = true) {
 		$admin_index_file_content = '<?php
-$dev_settings = dirname(dirname(__FILE__)).\'/.dev/override.php\';
+$dev_settings = dirname(dirname(dirname(__FILE__))).\'/.dev/override.php\';
 if (file_exists($dev_settings)) {
     require_once $dev_settings;
 }
-$saved_settings = dirname(__FILE__).\'/saved_settings.php\';
+$saved_settings = dirname(dirname(__FILE__)).\'/saved_settings.php\';
 if (file_exists($saved_settings)) {
     require_once $saved_settings;
 }
