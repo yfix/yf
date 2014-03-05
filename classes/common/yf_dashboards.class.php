@@ -18,8 +18,6 @@ class yf_dashboards {
 	);
 
 // TODO: add options for items:
-// hide_header=1|0
-// hide_border=1|0
 // min_height=0|(int)
 // max_height=0|(int)
 
@@ -182,11 +180,13 @@ class yf_dashboards {
 			}
 
 			$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', array(
-				'id'		=> $info['auto_id'].'_'.$info['auto_id'],
-				'name'		=> _prepare_html($info['name']),
-				'desc'		=> $content,
-				'has_config'=> $info['configurable'] ? 1 : 0,
-				'css_class'	=> $saved_config['color'],
+				'id'			=> $info['auto_id'].'_'.$info['auto_id'],
+				'name'			=> _prepare_html($info['name']),
+				'content'		=> $content,
+				'has_config'	=> $info['configurable'] ? 1 : 0,
+				'css_class'		=> $saved_config['color'],
+				'hide_header'	=> $saved_config['hide_header'],
+				'hide_border'	=> $saved_config['hide_border'],
 			));
 		}
 		if (!$items) {
