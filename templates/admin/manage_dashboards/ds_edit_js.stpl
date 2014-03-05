@@ -15,7 +15,7 @@ $(function() {
 
 			var _container = $(e.target)
 			var _cur_item_id = _item.attr('id')
-			if (_cur_item_id == 'php_item' || _cur_item_id == 'stpl_item') {
+			if (_cur_item_id == 'php_item' || _cur_item_id == 'block_item' || _cur_item_id == 'stpl_item') {
 				_item.attr('id', _auto_id)
 				_cur_item_id = _auto_id
 			}

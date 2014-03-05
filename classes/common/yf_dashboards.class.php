@@ -17,6 +17,12 @@ class yf_dashboards {
 		12 => 'span1',
 	);
 
+// TODO: add options for items:
+// show_header=1|0
+// show_border=1|0
+// min_height=0|(int)
+// max_height=0|(int)
+
 	/**
 	*/
 	function _init () {
@@ -27,6 +33,14 @@ class yf_dashboards {
 			'configurable'	=> array(),
 			'cloneable'		=> 1,
 			'auto_type'		=> 'php_item',
+		);
+		$this->_auto_info['block_item'] = array(
+			'id'			=> 'php_item',
+			'name'			=> 'CLONEABLE: block item name',
+			'desc'			=> 'CLONEABLE: block item desc',
+			'configurable'	=> array(),
+			'cloneable'		=> 1,
+			'auto_type'		=> 'block_item',
 		);
 		$this->_auto_info['stpl_item'] = array(
 			'id'			=> 'stpl_item',
@@ -141,6 +155,8 @@ class yf_dashboards {
 					} elseif ($info['method_name']) {
 						list($module_name, $method_name) = explode('.', $info['method_name']);
 					}
+				} elseif ($auto_type == 'block_item') {
+					$content = _class('core_blocks')->show_block(array('name' => $info['block_name']));
 				} elseif ($auto_type == 'stpl_item') {
 					if (strlen($info['code'])) {
 						$content = tpl()->parse_string($info['code']);
@@ -158,8 +174,8 @@ class yf_dashboards {
 				$module_obj = module_safe($module_name);
 				if (is_object($module_obj) && method_exists($module_obj, $method_name)) {
 					$content = $module_obj->$method_name($saved_config);
-#				} else {
-#					trigger_error(__CLASS__.': '.$module_name.'.'.$method_name.' not exists', E_USER_WARNING);
+				} else {
+					trigger_error(__CLASS__.': called module.method from widget not exists: '.$module_name.'.'.$method_name.'', E_USER_WARNING);
 				}
 				$_GET['object'] = $_orig_object;
 				$_GET['action'] = $_orig_action;
@@ -211,9 +227,8 @@ class yf_dashboards {
 			'_' => '',
 			':' => '',
 		);
-// TODO: add ability to use user module dashboards also
 		$_widgets = array();
-		foreach ((array)module('user_modules')->_get_methods(array('private' => '1')) as $module_name => $module_methods) {
+		foreach ((array)_class('user_modules', 'admin_modules/')->_get_methods(array('private' => '1')) as $module_name => $module_methods) {
 			foreach ((array)$module_methods as $method_name) {
 				if (substr($method_name, 0, strlen($method_prefix)) != $method_prefix) {
 					continue;
