@@ -42,19 +42,15 @@ class yf_form2_file_handler
 
     function process($options = null, $initialize = true, $error_messages = null) {
         $this->options = array(
-            'script_url' => $this->get_full_url().'/',
-            'upload_dir' => '/var/www/php_fileupload/files/', // TODO: CONFIGURABLE
-            'upload_url' => 'http://localhost/php_fileupload/files/',
-            'user_dirs' => false,
+            'upload_dir' => INCLUDE_PATH.'uploads/'.$_GET['object'].'/',
+            'upload_url' => WEB_PATH.'uploads/'.$_GET['object'].'/',
             'mkdir_mode' => 0755,
             'param_name' => 'files',
             // Set the following option to 'POST', if your server does not support
             // DELETE requests. This is a parameter sent to the client:
-            'delete_type' => 'DELETE',
             'access_control_allow_origin' => '*',
             'access_control_allow_credentials' => false,
             'access_control_allow_methods' => array(
-                'OPTIONS',
                 'HEAD',
                 'GET',
                 'POST'
@@ -64,16 +60,6 @@ class yf_form2_file_handler
                 'Content-Range',
                 'Content-Disposition'
             ),
-            // Enable to provide file downloads via GET requests to the PHP script:
-            //     1. Set to 1 to download files via readfile method through PHP
-            //     2. Set to 2 to send a X-Sendfile header for lighttpd/Apache
-            //     3. Set to 3 to send a X-Accel-Redirect header for nginx
-            // If set to 2 or 3, adjust the upload_url option to the base path of
-            // the redirect parameter, e.g. '/files/'.
-            'download_via_php' => false,
-            // Read files in chunks to avoid memory limits when download_via_php
-            // is enabled, set to 0 to disable chunked reading of files:
-            'readfile_chunk_size' => 10 * 1024 * 1024, // 10 MiB
             // Defines which files can be displayed inline when downloaded:
             'inline_file_types' => '/\.(gif|jpe?g|png)$/i',
             // Defines which files (based on their names) are accepted for upload:
@@ -82,8 +68,11 @@ class yf_form2_file_handler
             // take precedence over the following max_file_size setting:
             'max_file_size' => null,
             'min_file_size' => 1,
+			
             // The maximum number of files for the upload directory:
             'max_number_of_files' => null,
+			
+			
             // Defines which files are handled as image files:
             'image_file_types' => '/\.(gif|jpe?g|png)$/i',
             // Image resolution restrictions:
@@ -97,24 +86,14 @@ class yf_form2_file_handler
             // set to 1 to use imagick (if installed, falls back to GD),
             // set to 2 to use the ImageMagick convert binary directly:
             'image_library' => 1,
-            // Uncomment the following to define an array of resource limits
-            // for imagick:
-            /*
-            'imagick_resource_limits' => array(
-                imagick::RESOURCETYPE_MAP => 32,
-                imagick::RESOURCETYPE_MEMORY => 32
-            ),
-            */
             // Command or path for to the ImageMagick convert binary:
             'convert_bin' => 'convert',
-            // Uncomment the following to add parameters in front of each
-            // ImageMagick convert call (the limit constraints seem only
-            // to have an effect if put in front):
-            /*
-            'convert_params' => '-limit memory 32MiB -limit map 32MiB',
-            */
             // Command or path for to the ImageMagick identify binary:
             'identify_bin' => 'identify',
+			
+			'versions' => array(
+				
+			),
             'image_versions' => array(
                 // The empty image version key defines options for the original image:
                 '' => array(
@@ -128,20 +107,15 @@ class yf_form2_file_handler
                     'max_height' => 600
                 ),
                 */
+				/*
                 'thumbnail' => array(
-                    // Uncomment the following to use a defined directory for the thumbnails
-                    // instead of a subdirectory based on the version identifier.
-                    // Make sure that this directory doesn't allow execution of files if you
-                    // don't pose any restrictions on the type of uploaded files, e.g. by
-                    // copying the .htaccess file from the files directory for Apache:
                     //'upload_dir' => dirname($this->get_server_var('SCRIPT_FILENAME')).'/thumb/',
                     //'upload_url' => $this->get_full_url().'/thumb/',
-                    // Uncomment the following to force the max
-                    // dimensions and e.g. create square thumbnails:
                     //'crop' => true,
                     'max_width' => 80,
                     'max_height' => 80
                 )
+				*/
             )
         );
         if ($options) {
@@ -156,16 +130,17 @@ class yf_form2_file_handler
     }
 
     protected function initialize() {
+		if ($_GET['delete_file'] != '') {
+             $this->delete();
+			 return true;
+		}
         switch ($this->get_server_var('REQUEST_METHOD')) {
-            case 'OPTIONS':
             case 'HEAD':
                 $this->head();
                 break;
             case 'GET':
                 $this->get();
                 break;
-            case 'PATCH':
-            case 'PUT':
             case 'POST':
                 $this->post();
                 break;
@@ -183,18 +158,6 @@ class yf_form2_file_handler
             substr($_SERVER['SCRIPT_NAME'],0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
     }
 
-    protected function get_user_id() {
-        @session_start();
-        return session_id();
-    }
-
-    protected function get_user_path() {
-        if ($this->options['user_dirs']) {
-            return $this->get_user_id().'/';
-        }
-        return '';
-    }
-
     protected function get_upload_path($file_name = null, $version = null) {
         $file_name = $file_name ? $file_name : '';
         if (empty($version)) {
@@ -202,12 +165,11 @@ class yf_form2_file_handler
         } else {
             $version_dir = @$this->options['image_versions'][$version]['upload_dir'];
             if ($version_dir) {
-                return $version_dir.$this->get_user_path().$file_name;
+                return $version_dir.$file_name;
             }
             $version_path = $version.'/';
         }
-        return $this->options['upload_dir'].$this->get_user_path()
-            .$version_path.$file_name;
+        return $this->options['upload_dir'].$version_path.$file_name;
     }
 
     protected function get_query_separator($url) {
@@ -215,41 +177,17 @@ class yf_form2_file_handler
     }
 
     protected function get_download_url($file_name, $version = null, $direct = false) {
-        if (!$direct && $this->options['download_via_php']) {
-            $url = $this->options['script_url']
-                .$this->get_query_separator($this->options['script_url'])
-                .$this->get_singular_param_name()
-                .'='.rawurlencode($file_name);
-            if ($version) {
-                $url .= '&version='.rawurlencode($version);
-            }
-            return $url.'&download=1';
-        }
         if (empty($version)) {
             $version_path = '';
         } else {
+			
             $version_url = @$this->options['image_versions'][$version]['upload_url'];
             if ($version_url) {
-                return $version_url.$this->get_user_path().rawurlencode($file_name);
+                return $version_url.rawurlencode($file_name);
             }
             $version_path = rawurlencode($version).'/';
         }
-        return $this->options['upload_url'].$this->get_user_path()
-            .$version_path.rawurlencode($file_name);
-    }
-
-    protected function set_additional_file_properties($file) {
-        $file->deleteUrl = $this->options['script_url']
-            .$this->get_query_separator($this->options['script_url'])
-            .$this->get_singular_param_name()
-            .'='.rawurlencode($file->name);
-        $file->deleteType = $this->options['delete_type'];
-        if ($file->deleteType !== 'DELETE') {
-            $file->deleteUrl .= '&_method=DELETE';
-        }
-        if ($this->options['access_control_allow_credentials']) {
-            $file->deleteWithCredentials = true;
-        }
+        return $this->options['upload_url'].$version_path.rawurlencode($file_name);
     }
 
     // Fix for overflowing signed 32 bit integers,
@@ -298,7 +236,6 @@ class yf_form2_file_handler
                     }
                 }
             }
-            $this->set_additional_file_properties($file);
             return $file;
         }
         return null;
@@ -1057,25 +994,8 @@ class yf_form2_file_handler
                     $file->error = $this->get_error_message('abort');
                 }
             }
-            $this->set_additional_file_properties($file);
         }
         return $file;
-    }
-
-    protected function readfile($file_path) {
-        $file_size = $this->get_file_size($file_path);
-        $chunk_size = $this->options['readfile_chunk_size'];
-        if ($chunk_size && $file_size > $chunk_size) {
-            $handle = fopen($file_path, 'rb');
-            while (!feof($handle)) {
-                echo fread($handle, $chunk_size);
-                ob_flush();
-                flush();
-            }
-            fclose($handle);
-            return $file_size;
-        }
-        return readfile($file_path);
     }
 
     protected function body($str) {
@@ -1150,48 +1070,6 @@ class yf_form2_file_handler
         }
     }
 
-    protected function download() {
-        switch ($this->options['download_via_php']) {
-            case 1:
-                $redirect_header = null;
-                break;
-            case 2:
-                $redirect_header = 'X-Sendfile';
-                break;
-            case 3:
-                $redirect_header = 'X-Accel-Redirect';
-                break;
-            default:
-                return $this->header('HTTP/1.1 403 Forbidden');
-        }
-        $file_name = $this->get_file_name_param();
-        if (!$this->is_valid_file_object($file_name)) {
-            return $this->header('HTTP/1.1 404 Not Found');
-        }
-        if ($redirect_header) {
-            return $this->header(
-                $redirect_header.': '.$this->get_download_url(
-                    $file_name,
-                    $this->get_version_param(),
-                    true
-                )
-            );
-        }
-        $file_path = $this->get_upload_path($file_name, $this->get_version_param());
-        // Prevent browsers from MIME-sniffing the content-type:
-        $this->header('X-Content-Type-Options: nosniff');
-        if (!preg_match($this->options['inline_file_types'], $file_name)) {
-            $this->header('Content-Type: application/octet-stream');
-            $this->header('Content-Disposition: attachment; filename="'.$file_name.'"');
-        } else {
-            $this->header('Content-Type: '.$this->get_file_type($file_path));
-            $this->header('Content-Disposition: inline; filename="'.$file_name.'"');
-        }
-        $this->header('Content-Length: '.$this->get_file_size($file_path));
-        $this->header('Last-Modified: '.gmdate('D, d M Y H:i:s T', filemtime($file_path)));
-        $this->readfile($file_path);
-    }
-
     protected function send_content_type_header() {
         $this->header('Vary: Accept');
         if (strpos($this->get_server_var('HTTP_ACCEPT'), 'application/json') !== false) {
@@ -1224,9 +1102,6 @@ class yf_form2_file_handler
     }
 
     public function get($print_response = true) {
-        if ($print_response && isset($_GET['download'])) {
-            return $this->download();
-        }
         $file_name = $this->get_file_name_param();
         if ($file_name) {
             $response = array(
@@ -1241,9 +1116,6 @@ class yf_form2_file_handler
     }
 
     public function post($print_response = true) {
-        if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
-            return $this->delete($print_response);
-        }
         $upload = isset($_FILES[$this->options['param_name']]) ?
             $_FILES[$this->options['param_name']] : null;
         // Parse the Content-Disposition header, if available:
@@ -1296,26 +1168,21 @@ class yf_form2_file_handler
     }
 
     public function delete($print_response = true) {
-        $file_names = $this->get_file_names_params();
-        if (empty($file_names)) {
-            $file_names = array($this->get_file_name_param());
-        }
         $response = array();
-        foreach($file_names as $file_name) {
-            $file_path = $this->get_upload_path($file_name);
-            $success = is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
-            if ($success) {
-                foreach($this->options['image_versions'] as $version => $options) {
-                    if (!empty($version)) {
-                        $file = $this->get_upload_path($file_name, $version);
-                        if (is_file($file)) {
-                            unlink($file);
-                        }
-                    }
-                }
-            }
-            $response[$file_name] = $success;
-        }
+		$file_name = $_GET['delete_file'];
+		$file_path = $this->get_upload_path($file_name);
+		$success = is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
+		if ($success) {
+			foreach($this->options['image_versions'] as $version => $options) {
+				if (!empty($version)) {
+					$file = $this->get_upload_path($file_name, $version);
+					if (is_file($file)) {
+						unlink($file);
+					}
+				}
+			}
+		}
+		$response[$file_name] = $success;
         return $this->generate_response($response, $print_response);
     }
 

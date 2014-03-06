@@ -1917,7 +1917,7 @@ class yf_form2 {
 
 	
 	function file_uploader($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return false;
+		return ''; // disabled for now; todo later
 		return _class('form2_file_uploader', 'classes/form2/')->file_uploader($name, $desc, $extra, $replace, $this);
 	}	
 

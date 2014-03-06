@@ -15,6 +15,8 @@ class yf_form2_file_uploader {
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $_this) {
 			$replace = array(
+				'multiple' => $extra['options']['max_number_of_files'] != 1 ? 1 : 0,
+				'max_number_of_files' => $extra['options']['max_number_of_files'],
 				'url' => "./?object={$_GET['object']}&action=ajax_file_uploader&id={$_GET['id']}",
 			);
 			

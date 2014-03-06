@@ -1,17 +1,14 @@
 
 <style>.ng-cloak { display: none; }</style>
 <div class="container">
-    <div id="fileupload" action="http://localhost/php_fileupload/index.php" method="POST" enctype="multipart/form-data" data-ng-app="fileupload" data-ng-controller="DemoFileUploadController" data-file-upload="options" data-ng-class="{'fileupload-processing': processing() || loadingFiles}">
-        <!-- Redirect browsers with JavaScript disabled to the origin page -->
-        <noscript><input type="hidden" name="redirect" value="http://blueimp.github.io/jQuery-File-Upload/"></noscript>
-        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+    <div id="fileupload" action="http://localhost/php_fileupload/index.php" method="POST" enctype="multipart/form-data" data-ng-app="fileupload" data-ng-controller="DemoFileUploadController" data-file-upload="options" data-ng-class="{'fileupload-processing': processing() || loadingFiles}">        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
         <div class="row fileupload-buttonbar">
             <div class="col-lg-7">
                 <!-- The fileinput-button span is used to style the file input field as button -->
                 <span class="btn btn-success fileinput-button" ng-class="{disabled: disabled}">
                     <i class="glyphicon glyphicon-plus"></i>
-                    <span>Add files...</span>
-                    <input type="file" name="files[]" multiple ng-disabled="disabled">
+                    <span>Add file{if('multiple' eq '1')}s{/if}...</span>
+                    <input type="file" name="files[]" {if('multiple' eq '1')}multiple {/if}ng-disabled="disabled">
                 </span>
                 <button type="button" class="btn btn-primary start" data-ng-click="submit()">
                     <i class="glyphicon glyphicon-upload"></i>
@@ -35,9 +32,9 @@
         <!-- The table listing the files available for upload/download -->
         <table class="table table-striped files ng-cloak">
             <tr data-ng-repeat="file in queue" data-ng-class="{'processing': file.$processing()}">
-                <td data-ng-switch data-on="!!file.thumbnailUrl">
+                <td data-ng-switch data-on="!!file.url">
                     <div class="preview" data-ng-switch-when="true">
-                        <a data-ng-href="{{file.url}}" title="{{file.name}}" download="{{file.name}}" data-gallery><img data-ng-src="{{file.thumbnailUrl}}" alt=""></a>
+                        <a data-ng-href="{{file.url}}" title="{{file.name}}" download="{{file.name}}" data-gallery><img data-ng-src="{{file.url}}" alt="" width="100px"></a>
                     </div>
                     <div class="preview" data-ng-switch-default data-file-upload-preview="file"></div>
                 </td>
@@ -128,10 +125,11 @@
 
         .controller('FileDestroyController', [
             '$scope', '$http',
+			
             function ($scope, $http) {
-				console.log($scope.file);
                 var file = $scope.file,
                     state;
+
                 if (file.url) {
                     file.$state = function () {
                         return state;
@@ -139,7 +137,7 @@
                     file.$destroy = function () {
                         state = 'pending';
                         return $http({
-                            url: file.deleteUrl+"&_method=DELETE",
+                            url: url + "&delete_file=" + file.name,
                             method: 'GET'
                         }).then(
                             function () {
