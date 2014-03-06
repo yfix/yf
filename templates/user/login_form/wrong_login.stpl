@@ -1,4 +1,4 @@
-<div class="alert alert-error">
+<div class="alert alert-error alert-danger">
 	{t(Sorry, but some info you have entered is wrong.)}<br />
 	{t(You will be redirected to the login form.)}
 </div>

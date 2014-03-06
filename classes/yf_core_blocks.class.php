@@ -175,9 +175,9 @@ class yf_core_blocks {
 					}
 				}
 			} elseif (MAIN_TYPE_USER && main()->USER_ID) {
-				return '<div class="alert alert-error">'.t('Access denied').'</div>';
+				return '<div class="alert alert-error alert-danger">'.t('Access denied').'</div>';
 			} elseif (MAIN_TYPE_ADMIN && main()->ADMIN_ID) {
-				return '<div class="alert alert-error">'.t('Access denied').'</div>';
+				return '<div class="alert alert-error alert-danger">'.t('Access denied').'</div>';
 			//} elseif (MAIN_TYPE_ADMIN && !main()->ADMIN_ID) {
 			}
 		}
