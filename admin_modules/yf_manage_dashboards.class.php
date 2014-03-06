@@ -223,7 +223,7 @@ class yf_manage_dashboards {
 		$ds_name = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
 		$ds = $this->_get_dashboard_data($ds_name);
 		if (!$ds['id']) {
-			return _e('No such record');
+			return _e('Dashboard not exists: '.$ds_name);
 		}
 		$items_configs = $ds['data']['items_configs'];
 		$ds_settings = $ds['data']['settings'];
