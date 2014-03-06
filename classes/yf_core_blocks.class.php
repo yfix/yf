@@ -104,29 +104,23 @@ class yf_core_blocks {
 			}
 		}
 		if (!$BLOCK_EXISTS) {
-			trigger_error(__CLASS__.': Block name "'._prepare_html($block_name).'" not found in blocks list', E_USER_WARNING);
+			trigger_error(__CLASS__.': block "'._prepare_html($block_name).'" not found in blocks list', E_USER_WARNING);
 			return false;
 		}
-		// Block is inactive, stop here
 		if (!$this->_blocks_infos[$block_id]['active']) {
 			return false;
 		}
-		// Check rules
 		if (!$this->_check_block_rights($block_id, $_GET['object'], $_GET['action'])) {
 			return _class('graphics')->_action_on_block_denied($block_name);
 		}
-		// Set SE keywords if allowed
 		if (MAIN_TYPE_USER && $block_name == 'center_area' && _class('graphics')->USE_SE_KEYWORDS) {
 			_class('graphics')->_set_se_keywords();
 		}
 		$cur_block_info = $this->_blocks_infos[$block_id];
-		/* 	If special object method specified - then call it
-
-			Syntax: [path_to]$class_name.$method_name
-
-			@example 'static_pages.show'
-			@example 'classes/minicalendar.createcalendar'
-		*/
+		// 	If special object method specified - then call it
+		//	Syntax: [path_to]$class_name.$method_name
+		//	@example 'static_pages.show'
+		//	@example 'classes/minicalendar.createcalendar'
 		if (!empty($cur_block_info['method_name'])) {
 			$special_path = '';
 			if (false !== strpos($cur_block_info['method_name'], '/')) {
@@ -139,20 +133,20 @@ class yf_core_blocks {
 				'block_id'		=> $block_id,
 			);
 			if (!empty($special_class_name) && !empty($special_method_name)) {
-				return _class($special_class_name, $special_path)->$special_method_name($special_params);
+				$obj = _class_safe($special_class_name, $special_path);
+				if (is_object($obj) && method_exists($obj, $special_method_name)) {
+					return $obj->$special_method_name($special_params);
+				} else {
+					trigger_error(__CLASS__.': block "'._prepare_html($block_name).'" custom php module.method not exists: '._prepare_html($cur_block_info['method_name']), E_USER_WARNING);
+					return false;
+				}
 			}
 		}
-		// If template name specified - then use it
-		$STPL_NAME = $block_name;
-		if (!empty($cur_block_info['stpl_name'])) {
-			$STPL_NAME = $cur_block_info['stpl_name'];
-		}
-		// Show template contents
-		$replace = array(
-			'block_name'	=> $block_name,
-			'block_id'		=> $block_id,
-		);
-		return tpl()->parse($STPL_NAME, $replace);
+		$stpl_name = $cur_block_info['stpl_name'] ?: $block_name;
+		return tpl()->parse($stpl_name, array(
+			'block_name'=> $block_name,
+			'block_id'	=> $block_id,
+		));
 	}
 
 	/**
