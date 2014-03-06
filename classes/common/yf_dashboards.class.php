@@ -9,12 +9,12 @@ class yf_dashboards {
 	* Bootstrap CSS classes used to create configurable grid
 	*/
 	private $_col_classes = array(
-		1 => 'span12',
-		2 => 'span6',
-		3 => 'span4',
-		4 => 'span3',
-		6 => 'span2',
-		12 => 'span1',
+		1 => 'span12 col-md-12 column',
+		2 => 'span6 col-md-6 column',
+		3 => 'span4 col-md-4 column',
+		4 => 'span3 col-md-3 column',
+		6 => 'span2 col-md-2 column',
+		12 => 'span1 col-md-1 column',
 	);
 
 // TODO: add options for items:
