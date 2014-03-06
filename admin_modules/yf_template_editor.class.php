@@ -239,10 +239,9 @@ class yf_template_editor {
 	/**
 	*/
 	function edit_stpl () {
-// TODO: fix framework_user location (not working now)
 		$theme_name	= $_GET['theme'];
 		$stpl_name	= $_GET['name'];
-		if (empty($theme_name) || empty($stpl_name)) {
+		if (!validate(array($theme_name, $stpl_name), 'trim|required')) {
 			return _e('Template name and theme required!');
 		}
 		if (main()->is_post()) {
@@ -258,7 +257,14 @@ class yf_template_editor {
 			file_put_contents($lib_stpl_path, $text);
 			return js_redirect('./?object='.$_GET['object'].'&action=show_stpls_in_theme&theme='.$theme_name.'&location='.$_GET['location']);
 		}
-		$stpl_text = file_get_contents($this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT);
+		$stpl_path = $this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT;
+		if ($_GET['location'] == 'framework_user') {
+			$stpl_path = YF_PATH. 'templates/user/'. $stpl_name. tpl()->_STPL_EXT;
+		}
+		if (!file_exists($stpl_path)) {
+			return _e('Cannot find template: '.$stpl_path);
+		}
+		$stpl_text = file_get_contents($stpl_path);
 		$stpl_text = _prepare_html($stpl_text, 0);
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&name='.$stpl_name.'&theme='.$theme_name.'&location='.$_GET['location'],
@@ -268,7 +274,6 @@ class yf_template_editor {
 			'back_url'		=> './?object='.$_GET['object'].'&action=show_stpls_in_theme&theme='.$theme_name.'&location='.$_GET['location'],
 			'location'		=> $_GET['location'],
 		);
-#		return tpl()->parse($_GET['object'].'/edit_main', $replace);
 		$div_id = 'editor_html';
 		$hidden_id = 'stpl_text_hidden';
 		return '<h4>edit: '.$replace['stpl_name'].' for theme: '.$replace['theme_name'].', inside: '.$replace['location'].'</h4>'.

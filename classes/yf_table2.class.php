@@ -92,11 +92,179 @@ class yf_table2 {
 		$params = $tmp;
 		unset($tmp);
 
+		$a = $this->_render_get_data($params);
+		$data	= &$a['data'];
+		$ids	= &$a['ids'];
+		// Automatically get fields from results
+		if ($params['auto'] && $data) {
+			$this->_render_auto($params, $data);
+		}
+		// Fill data array with custom fields, also fitting slots with empty strings where no custom data.
+		if ($data && $ids && $params['custom_fields']) {
+			$this->_render_add_custom_fields($params, $data, $ids);
+		}
+		$to_hide = array();
+		if ($data && $params['hide_empty']) {
+			foreach ((array)current($data) as $k => $v) {
+				$to_hide[$k] = $k;
+			}
+			foreach ((array)$data as $_id => $row) {
+				foreach ((array)$row as $k => $v) {
+					if (strlen($v)) {
+						unset($to_hide[$k]);
+					}
+				}
+			}
+		}
+		if ($params['as_json']) {
+			$body = $this->_render_as_json($params, $a, $to_hide);
+		} else {
+			$body = $this->_render_as_html($params, $a, $to_hide);
+		}
+		if (DEBUG_MODE) {
+			$this->_render_debug_info($params, $ts, main()->trace_string());
+		}
+		return $body;
+	}
+
+	/**
+	* Render table as JSON-encoded string
+	*/
+	function _render_as_json(&$params, &$a, &$to_hide) {
+		$header_links = array();
+		foreach ((array)$this->_header_links as $info) {
+			$func = &$info['func'];
+			$header_links[] = $func($info, $params, $this).PHP_EOL;
+		}
+		$footer_links = array();
+		foreach ((array)$this->_footer_links as $info) {
+			$func = &$info['func'];
+			$footer_links[] = $func($info, $params, $this).PHP_EOL;
+		}
+		return json_encode(array(
+			'data'			=> &$a['data'],
+			'pages'			=> &$a['pages'],
+			'total'			=> &$a['total'],
+			'header_links'	=> $header_links,
+			'footer_links'	=> $footer_links,
+		));
+	}
+
+	/**
+	* Render table as HTML string
+	*/
+	function _render_as_html(&$params, &$a, &$to_hide) {
+		$body = '';
+		if (MAIN_TYPE_ADMIN && !$params['no_pages'] && !$params['no_total'] && $a['total']) {
+			$body .= '<div class="label label-info" style="margin: 0 5px;">'.t('Total').':&nbsp;'.$a['total'].'</div>'.PHP_EOL;
+		}
+		$body .= (!$params['no_pages'] && $params['pages_on_top'] ? $a['pages'] : '').PHP_EOL;
+
+		$data = &$a['data'];
+		if ($data) {
+			if ($this->_form_params) {
+				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
+			}
+			$header_links = array();
+			foreach ((array)$this->_header_links as $info) {
+				$name = $info['name'];
+				$func = &$info['func'];
+				$header_links[] = $func($info, $params, $this).PHP_EOL;
+			}
+			if ($header_links) {
+				$body .= '<div class="controls">'.implode(PHP_EOL, $header_links).'</div>';
+			}
+			if ($params['condensed']) {
+				$params['table_class'] .= ' table-condensed';
+			}
+			$body .= '<table class="table table-bordered table-striped table-hover'
+				.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'
+				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
+
+			if (!$params['no_header'] && !$params['rotate_table']) {
+				$thead_attrs = '';
+				if (isset($params['thead'])) {
+					$thead_attrs = is_array($params['thead']) ? $this->_attrs($params['thead'], array('class', 'id')) : ' '.$params['thead'];
+				}
+				$body .= '<thead'.$thead_attrs.'>'.PHP_EOL;
+				$data1row = current($data);
+				// Needed to correctly process null values, when some other rows contain real data there
+				foreach ((array)$data1row as $k => $v) {
+					$data1row[$k] = strval($v);
+				}
+				foreach ((array)$this->_fields as $info) {
+					$name = $info['name'];
+					if (!isset($data1row[$name])) {
+						continue;
+					}
+					if (isset($to_hide[$name])) {
+						continue;
+					}
+					$info['extra'] = (array)$info['extra'];
+					if (++$counter2 == 1 && $this->_params['first_col_width']) {
+						$info['extra']['width'] = $this->_params['first_col_width'];
+					}
+					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
+					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
+					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
+					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip']) : '';
+					$title = isset($info['extra']['th_desc']) ? $info['extra']['th_desc'] : $info['desc'];
+					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
+				}
+				if ($this->_buttons) {
+					$body .= '<th>'.(isset($params['actions_desc']) ? t($params[actions_desc]) : t('Actions')).'</th>'.PHP_EOL;
+				}
+				$body .= '</thead>'.PHP_EOL;
+			}
+			$sortable_url = $params['sortable'];
+			if ($sortable_url && strlen($sortable_url) <= 5) {
+				$sortable_url = './?object='.$_GET['object'].'&action=sortable';
+			}
+			if ($params['rotate_table']) {
+				$body .= $this->_render_table_contents_rotated($data, $params, $to_hide);
+			} else {
+				$body .= $this->_render_table_contents($data, $params, $to_hide);
+			}
+			if ($params['show_total']) {
+				$params['caption'] .= PHP_EOL.' '.t('Total records:').':'.$a['total']. PHP_EOL;
+			}
+			if ($params['caption']) {
+				$body .= '<caption>'.$params['caption'].'</caption>'.PHP_EOL;
+			}
+			$body .= '</table>'.PHP_EOL;
+		} else {
+			if (isset($params['no_records_html'])) {
+				$body .= $params['no_records_html'].PHP_EOL;
+			} else {
+				$body .= ($params['no_records_simple'] ? t('No records') : '<div class="alert alert-info">'.t('No records').'</div>').PHP_EOL;
+			}
+		}
+		$footer_links = array();
+		foreach ((array)$this->_footer_links as $info) {
+			$name = $info['name'];
+			$func = &$info['func'];
+			$footer_links[] = $func($info, $params, $this).PHP_EOL;
+		}
+		if ($footer_links) {
+			$body .= '<div class="controls">'.implode(PHP_EOL, $footer_links).'</div>';
+		}
+		if ($data && $this->_form_params) {
+			$body .= '</form>';
+		}
+		if (!isset($params['pages_on_bottom'])) {
+			$params['pages_on_bottom'] = true;
+		}
+		$body .= (!$params['no_pages'] && $params['pages_on_bottom'] ? $a['pages'] : '').PHP_EOL;
+		return $body;
+	}
+
+	/**
+	*/
+	function _render_get_data(&$params) {
 		$default_per_page = MAIN_TYPE_USER ? conf('user_per_page') : conf('admin_per_page');
 		if ($params['rotate_table']) {
 			$default_per_page = 10;
 		}
-
 		$pager_path = $params['pager_path'] ?: '';
 		$pager_type = $params['pager_type'] ?: 'blocks';
 		$pager_records_on_page = $params['pager_records_on_page'] ?: $default_per_page;
@@ -159,7 +327,18 @@ class yf_table2 {
 				}
 			}
 		}
-		// Automatically get fields from results
+		return array(
+			'data'	=> $data,
+			'pages'	=> $pages,
+			'total'	=> $total,
+			'ids'	=> $ids,
+		);
+	}
+
+	/**
+	* Automatically get fields from results
+	*/
+	function _render_auto(&$params, &$data) {
 		if ($params['auto'] && $data) {
 			$field_names = array_keys((array)current((array)$data));
 			$skip_fields = array();
@@ -188,21 +367,24 @@ class yf_table2 {
 				$this->footer_add();
 			}
 		}
-		/*
-		* Fill data array with custom fields, also fitting slots with empty strings where no custom data. Example:
-		* 	table2('SELECT * FROM '.db('user'), array('custom_fields'	=> array(
-		*		'num_logins' => 'SELECT user_id, COUNT(*) AS num FROM '.db('log_user_auth').' WHERE user_id IN(%ids) GROUP BY user_id'
-		*		'num_auth_fails' => 'SELECT user_id, COUNT(*) AS num FROM '.db('log_user_auth_fails').' WHERE user_id IN(%ids) GROUP BY user_id'
-		* 	)))
-		*	->text('name')
-		*	->text('num_logins')
-		*	->text('num_auth_fails')
-		*
-		*	table2('SELECT * FROM '.db('shop_orders'), array('custom_fields' => array(
-		*		'user' => array('SELECT id, CONCAT(login," ",email) AS name FROM '.db('user').' WHERE id IN(%ids)', 'user_id'),
-		*	)))
-		*	->text('user')
-		*/
+	}
+
+	/*
+	* Fill data array with custom fields, also fitting slots with empty strings where no custom data. Example:
+	* 	table2('SELECT * FROM '.db('user'), array('custom_fields'	=> array(
+	*		'num_logins' => 'SELECT user_id, COUNT(*) AS num FROM '.db('log_user_auth').' WHERE user_id IN(%ids) GROUP BY user_id'
+	*		'num_auth_fails' => 'SELECT user_id, COUNT(*) AS num FROM '.db('log_user_auth_fails').' WHERE user_id IN(%ids) GROUP BY user_id'
+	* 	)))
+	*	->text('name')
+	*	->text('num_logins')
+	*	->text('num_auth_fails')
+	*
+	*	table2('SELECT * FROM '.db('shop_orders'), array('custom_fields' => array(
+	*		'user' => array('SELECT id, CONCAT(login," ",email) AS name FROM '.db('user').' WHERE id IN(%ids)', 'user_id'),
+	*	)))
+	*	->text('user')
+	*/
+	function _render_add_custom_fields(&$params, &$data, &$ids) {
 		if ($data && $ids && $params['custom_fields']) {
 			$ids_sql = implode(',', $ids);
 			$custom_foreign_fields = array();
@@ -240,143 +422,39 @@ class yf_table2 {
 			// Needed to correctly pass inside $instance_params to each function
 			$params['data_sql_names'] = $this->_data_sql_names;
 		}
-		$to_hide = array();
-		if ($data && $params['hide_empty']) {
-			foreach ((array)current($data) as $k => $v) {
-				$to_hide[$k] = $k;
-			}
-			foreach ((array)$data as $_id => $row) {
-				foreach ((array)$row as $k => $v) {
-					if (strlen($v)) {
-						unset($to_hide[$k]);
-					}
-				}
-			}
-		}
-		$body = '';
-		$body .= (MAIN_TYPE_ADMIN && !$params['no_pages'] && !$params['no_total'] && $total) ? '<div class="label label-info" style="margin: 0 5px;">'.t('Total').':&nbsp;'.$total.'</div>'.PHP_EOL : '';
-		$body .= (!$params['no_pages'] && $params['pages_on_top'] ? $pages : '').PHP_EOL;
+	}
 
-		if ($data) {
-			if ($this->_form_params) {
-				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
-			}
-			$header_links = array();
-			foreach ((array)$this->_header_links as $info) {
-				$name = $info['name'];
-				$func = &$info['func'];
-				$header_links[] = $func($info, $params, $this).PHP_EOL;
-			}
-			if ($header_links) {
-				$body .= '<div class="controls">'.implode(PHP_EOL, $header_links).'</div>';
-			}
-			if ($params['condensed']) {
-				$params['table_class'] .= ' table-condensed';
-			}
-			$body .= '<table class="table table-bordered table-striped table-hover'
-				.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'
-				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
-
-			if (!$params['no_header'] && !$params['rotate_table']) {
-				$thead_attrs = '';
-				if (isset($params['thead'])) {
-					$thead_attrs = is_array($params['thead']) ? $this->_attrs($params['thead'], array('class', 'id')) : ' '.$params['thead'];
-				}
-				$body .= '<thead'.$thead_attrs.'>'.PHP_EOL;
-				$data1row = current($data);
-				foreach ((array)$this->_fields as $info) {
-					$name = $info['name'];
-					if (!isset($data1row[$name])) {
-						continue;
-					}
-					if (isset($to_hide[$name])) {
-						continue;
-					}
-					$info['extra'] = (array)$info['extra'];
-					if (++$counter2 == 1 && $this->_params['first_col_width']) {
-						$info['extra']['width'] = $this->_params['first_col_width'];
-					}
-					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
-					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
-					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
-					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip']) : '';
-					$title = isset($info['extra']['th_desc']) ? $info['extra']['th_desc'] : $info['desc'];
-					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
-				}
-				if ($this->_buttons) {
-					$body .= '<th>'.(isset($params['actions_desc']) ? t($params[actions_desc]) : t('Actions')).'</th>'.PHP_EOL;
-				}
-				$body .= '</thead>'.PHP_EOL;
-			}
-			$sortable_url = $params['sortable'];
-			if ($sortable_url && strlen($sortable_url) <= 5) {
-				$sortable_url = './?object='.$_GET['object'].'&action=sortable';
-			}
-
-			if ($params['rotate_table']) {
-				$body .= $this->_render_table_contents_rotated($data, $params, $to_hide);
-			} else {
-				$body .= $this->_render_table_contents($data, $params, $to_hide);
-			}
-
-			if ($params['show_total']) {
-				$params['caption'] .= PHP_EOL.' '.t('Total records:').':'.$total. PHP_EOL;
-			}
-			if ($params['caption']) {
-				$body .= '<caption>'.$params['caption'].'</caption>'.PHP_EOL;
-			}
-			$body .= '</table>'.PHP_EOL;
-		} else {
-			if (isset($params['no_records_html'])) {
-				$body .= $params['no_records_html'].PHP_EOL;
-			} else {
-				$body .= ($params['no_records_simple'] ? t('No records') : '<div class="alert alert-info">'.t('No records').'</div>').PHP_EOL;
-			}
+	/**
+	*/
+	function _render_debug_info(&$params, $ts = 0, $trace = '') {
+		if (!DEBUG_MODE) {
+			return false;
 		}
-		$footer_links = array();
-		foreach ((array)$this->_footer_links as $info) {
-			$name = $info['name'];
-			$func = &$info['func'];
-			$footer_links[] = $func($info, $params, $this).PHP_EOL;
+		$_fields = array();
+		foreach ((array)$this->_fields as $k => $v) {
+			$_fields[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
 		}
-		if ($footer_links) {
-			$body .= '<div class="controls">'.implode(PHP_EOL, $footer_links).'</div>';
+		$_header_links = array();
+		foreach ((array)$this->_header_links as $k => $v) {
+			$_header_links[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
 		}
-		if ($data && $this->_form_params) {
-			$body .= '</form>';
+		$_footer_links = array();
+		foreach ((array)$this->_footer_links as $k => $v) {
+			$_footer_links[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
 		}
-		if (!isset($params['pages_on_bottom'])) {
-			$params['pages_on_bottom'] = true;
+		$_buttons = array();
+		foreach ((array)$this->_buttons as $k => $v) {
+			$_buttons[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
 		}
-		$body .= (!$params['no_pages'] && $params['pages_on_bottom'] ? $pages : '').PHP_EOL;
-		if (DEBUG_MODE) {
-			$_fields = array();
-			foreach ((array)$this->_fields as $k => $v) {
-				$_fields[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
-			}
-			$_header_links = array();
-			foreach ((array)$this->_header_links as $k => $v) {
-				$_header_links[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
-			}
-			$_footer_links = array();
-			foreach ((array)$this->_footer_links as $k => $v) {
-				$_footer_links[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
-			}
-			$_buttons = array();
-			foreach ((array)$this->_buttons as $k => $v) {
-				$_buttons[$k] = array('func' => '%lambda%', 'data' => '%data%') + $v;
-			}
-			debug('table2[]', array(
-				'params'		=> $params,
-				'fields'		=> $_fields,
-				'buttons'		=> $_buttons,
-				'header_links'	=> $_header_links,
-				'footer_links'	=> $_footer_links,
-				'time'			=> round(microtime(true) - $ts, 5),
-				'trace'			=> main()->trace_string(),
-			));
-		}
-		return $body;
+		debug('table2[]', array(
+			'params'		=> $params,
+			'fields'		=> $_fields,
+			'buttons'		=> $_buttons,
+			'header_links'	=> $_header_links,
+			'footer_links'	=> $_footer_links,
+			'time'			=> round(microtime(true) - $ts, 5),
+			'trace'			=> $trace ?: main()->trace_string(),
+		));
 	}
 
 	/**
@@ -386,7 +464,6 @@ class yf_table2 {
 		if (isset($params['tbody'])) {
 			$tbody_attrs = is_array($params['tbody']) ? $this->_attrs($params['tbody'], array('class', 'id')) : ' '.$params['tbody'];
 		}
-// $body .= '<tbody'.($sortable_url ? ' class="sortable" data-sortable-url="'.htmlspecialchars($sortable_url).'"' : '').'>'.PHP_EOL;
 		$body .= '<tbody'.$tbody_attrs.'>'.PHP_EOL;
 		foreach ((array)$data as $_id => $row) {
 			$tr_attrs = '';
@@ -480,10 +557,9 @@ class yf_table2 {
 	*/
 	function _render_table_td($info, $row, $params) {
 		$name = $info['name'];
-		if (!isset($row[$name])) {
+		if (!array_key_exists($name, $row)) {
 			return false;
 		}
-
 		$func = &$info['func'];
 		$_extra = &$info['extra'];
 
@@ -710,6 +786,24 @@ class yf_table2 {
 
 	/**
 	*/
+	function _is_link_allowed($link = '') {
+		$link = trim($link);
+		if (!strlen($link)) {
+			return true;
+		}
+		$is_link_allowed = true;
+		if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
+			if (in_array($link, array('','#','javascript:void();'))) {
+				$is_link_allowed = true;
+			} else {
+				$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
+			}
+		}
+		return $is_link_allowed;
+	}
+
+	/**
+	*/
 	function text($name, $desc = '', $extra = array()) {
 		if (!is_array($extra)) {
 			$extra = array();
@@ -761,9 +855,7 @@ class yf_table2 {
 					if ($link_id) {
 						$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
 					}
-					if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-						$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
-					}
+					$is_link_allowed = $_this->_is_link_allowed($link);
 				}
 				if ($link && $is_link_allowed) {
 					if ($extra['rewrite']) {
@@ -1002,12 +1094,8 @@ class yf_table2 {
 					$attrs .= ' target="'.$extra['target'].'"';
 				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
-				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				$is_link_allowed = true;
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-					$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
-				}
-				if (!$is_link_allowed) {
+				$link = trim(str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add']);
+				if (strlen($link) && !$_this->_is_link_allowed($link)) {
 					return '';
 				}
 				if ($extra['rewrite']) {
@@ -1171,11 +1259,7 @@ class yf_table2 {
 				}
 				$id = $override_id ? $override_id : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				$is_link_allowed = true;
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-					$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
-				}
-				if (!$is_link_allowed) {
+				if (strlen($link) && !$_this->_is_link_allowed($link)) {
 					return '';
 				}
 				if ($extra['rewrite']) {
@@ -1210,11 +1294,7 @@ class yf_table2 {
 				$extra = $params['extra'];
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				$is_link_allowed = true;
-				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1) {
-					$is_link_allowed = _class('common_admin')->_admin_link_is_allowed($link);
-				}
-				if (!$is_link_allowed) {
+				if (strlen($link) && !$_this->_is_link_allowed($link)) {
 					return '';
 				}
 				if ($extra['rewrite']) {

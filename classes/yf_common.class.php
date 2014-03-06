@@ -390,7 +390,7 @@ class yf_common {
 	* Create simple table with debug info
 	*/
 	function show_debug_info() {
-		return _class('debug_info', 'classes/common/')->go();
+		return _class('debug')->go();
 	}
 
 	/**
@@ -694,20 +694,6 @@ class yf_common {
 	*/
 	function user($user_id, $fields = 'full', $params = '', $return_sql = false) {
 		return _class('user_data', 'classes/common/')->_user($user_id, $fields, $params, $return_sql);
-	}
-
-	/**
-	* Update given user info by id
-	*/
-	function update_user($user_id, $data = array(), $params = '', $return_sql = false) {
-		return _class('user_data', 'classes/common/')->_update_user($user_id, $data, $params, $return_sql);
-	}
-
-	/**
-	* Search user(s) info by params
-	*/
-	function search_user($params = array(), $fields = array(), $return_sql = false) {
-		return _class('user_data', 'classes/common/')->_search_user($params, $fields, $return_sql);
 	}
 
 	/**
@@ -1166,6 +1152,12 @@ class yf_common {
 	    if ($n>1 && $n<5) return $f2;
     	if ($n==1) return $f1;
 	    return $f5;
+	}
+
+	/**
+	*/
+	function dashboard_display($name) {
+		return _class('dashboards', 'classes/common/')->display($name);
 	}
 
 	/*

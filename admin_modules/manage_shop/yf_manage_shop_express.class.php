@@ -74,15 +74,23 @@ class yf_manage_shop_express{
 		$date = date("Y-m-d");
 		$hours = intval($_GET['hours']);
 		$orders = db()->get_2d("SELECT id FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date." ".$hours."%' AND status = 1");
+		if(empty($orders)){
+			common()->message_warning("No orders for this time");
+			return js_redirect("./?object=manage_shop&action=express");
+		}
 		$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id 
 											FROM ".db('shop_order_items')." as o
 											RIGHT JOIN ".db('shop_products')." as p
 											ON o.product_id = p.id 
 											WHERE o.order_id IN(".implode(",", $orders).")
 												AND o.status = 1");
+		if(empty($products)){
+			common()->message_warning("No products for this time");
+			return js_redirect("./?object=manage_shop&action=express");
+		}
 		$ids = $replace = array();
 		$_category = _class("_shop_categories", "modules/shop/");
-		foreach($products as $k => $v){
+		foreach((array)$products as $k => $v){
 			$alcohol = in_array($this->alcohol_category, $_category->recursive_get_parents_ids($v['cat_id']));
 			if($alcohol){
 				$replace_alcohol[$v['order_id']][$v['product_id']] = array(

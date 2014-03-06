@@ -136,18 +136,14 @@ class yf_register {
 			}
 		}
 		if (!common()->_error_exists()) {
-			// Check whole code
 			if ($_GET["id"] != $target_user_info["verify_code"]) {
 				_re("Wrong confirmation code");
 			}
 		}
 		if (!common()->_error_exists()) {
-			// Do update user's table (confirm account)
-			update_user($user_id, array("active"=>1));
-			// Display success message
+			db()->update('user', array('active' => 1), $user_id);
 			return tpl()->parse($_GET["object"]."/confirm_messages", array("msg" => "confirm_success"));
 		}
-		// Display form
 		$body .= _e();
 		$body .= tpl()->parse($_GET["object"]."/enter_code", $replace3);
 		$body .= tpl()->parse($_GET["object"]."/resend_code", $replace4);
@@ -185,7 +181,7 @@ class yf_register {
 			}
 			if (!common()->_error_exists()) {
 				$code = base64_encode($user_info["id"] . "wvcn" . time());
-				update_user($user_info["id"], array("verify_code" => $code));
+				db()->update('user', array("verify_code" => $code), $user_info["id"]);
 				$replace = array(
 					"nick"			=> $user_info["nick"],
 					"confirm_code"	=> $code,

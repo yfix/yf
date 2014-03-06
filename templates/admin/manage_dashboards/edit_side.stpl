@@ -7,25 +7,15 @@
 	</h4>
 
 <div id="ds-settings-container" style="display:none;">
-<!--
-	<ul class="colors" style="margin-left:30%;">
-		<li class="color-yellow"></li>
-		<li class="color-red"></li>
-		<li class="color-blue"></li>
-		<li class="color-white"></li>
-		<li class="color-orange"></li>
-		<li class="color-green"></li>
-		<li class="color-default"></li>
-	</ul>
--->
 	<input type="hidden" name="color_item_global" value="{color}">
 	<br class="clearfix" />
 	{settings_items}
 </div>
 
 	<div class="column span4">
-{php_item}
-{stpl_item}
+{foreach(auto_items)}
+	{_val}
+{/foreach}
 {items}
 	</div>
 </div>

@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_debug_info {
+class yf_debug {
 
 	public $_file_prefix				= 'logs/not_translated_';
 	public $_file_ext					= '.php';
@@ -61,7 +61,7 @@ class yf_debug_info {
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={{THEME}}&name={{ID}}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={{ID}}',
 		'edit_file'		=> 'object=file_manager&action=edit_item&id={{ID}}',
-		'show_db_table'	=> 'object=db_parser&table={{ID}}',
+		'show_db_table'	=> 'object=db_manager&action=table_show&id={{ID}}',
 		'sql_query'		=> 'object=db_manager&action=import&id={{ID}}',
 		'link'			=> '{{ID}}',
 	);
@@ -331,6 +331,7 @@ class yf_debug_info {
 			$_cur_explain = isset($db_explain_results[$id]) ? $this->_format_db_explain_result($db_explain_results[$id]) : '';
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
 
+			$admin_link = $this->_admin_link('sql_query', urlencode($sql), true);
 			$sql = htmlspecialchars($sql);
 			$replace = array(
 				','	=> ', ', 
@@ -341,7 +342,6 @@ class yf_debug_info {
 			}, $sql);
 
 			$exec_time = common()->_format_time_value($log['time']);
-			$admin_link = $this->_admin_link('sql_query', rawurlencode($orig_sql), true);
 			if ($admin_link && $this->ADD_ADMIN_LINKS) {
 				$exec_time = '<a href="'.$admin_link.'" class="btn btn-default btn-mini btn-xs">'.$exec_time.'</a>';
 			}
@@ -550,6 +550,7 @@ class yf_debug_info {
 			return '';
 		}
 		$items = $this->_get_debug_data('main_get_data');
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
 	}
 
@@ -1092,15 +1093,11 @@ class yf_debug_info {
 			return '<a href="'.$text.'" class="btn btn-default btn-mini btn-xs">'.$text.'</a>';
 		}
 		$id = $text;
-		if ($type == 'show_db_table') {
-			$id = str_replace(db()->DB_PREFIX, '', $id);
-		}
 		$replace += array(
 			'{{ID}}'	=> urlencode(str_replace("\\", '/', $id)),
 			'{{THEME}}'	=> conf('theme'),
 		);
 		$url = str_replace(array_keys($replace), array_values($replace), $this->ADMIN_PATHS[$type]);
-//		$link = WEB_PATH. 'admin/?'. $url;
 		$link = ADMIN_WEB_PATH. '?'. $url;
 		if ($just_link) {
 			return $link;
@@ -1132,6 +1129,51 @@ class yf_debug_info {
 		$data = debug($name);
 		debug($name, false);
 		return $data;
+	}
+
+	/**
+	*/
+	function _time_count_changes ($items = array(), $field = 'time') {
+/*
+		$_last_item = end($all_timings);
+		$time_all = $_last_item[0] - $ts;
+		$items = array();
+		foreach ((array)$all_timings as $i => $v) {
+			$time_offset = $v[0] - $ts;
+			$time_change = '';
+			$time_change_p = '';
+			if (isset($all_timings[$i + 1])) {
+				$time_change = $all_timings[$i + 1][0] - $v[0];
+			}
+			$time_warning = false;
+			if ($time_change > 0.001) {
+				$time_change_p = round(100 - (($time_all - $time_change) / $time_all * 100), 1);
+				if ($time_change_p >= 5) {
+					$time_warning = true;
+				}
+			}
+			$items[] = array(
+				'i'				=> $i,
+				'time_offset'	=> common()->_format_time_value($time_offset),
+				'time_change'	=> $time_change && $time_change > 0.0001 ? common()->_format_time_value($time_change) : '',
+				'time_change_p'	=> $time_change_p ? '<span class="'.($time_warning ? 'label label-warning' : '').'">'.$time_change_p.'%</span>' : '',
+				'class'			=> $v[1],
+				'method'		=> $v[2],
+				'trace'			=> $v[3],
+				'args'			=> $v[4] ? _prepare_html(var_export($v[4], 1)) : '',
+			);
+		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'args')));
+*/
+		foreach ((array)$items as $i => $v) {
+// TODO
+#			if () {
+#			}
+		}
+#		foreach ((array)$items as $i => $v) {
+#			$items[$i] = $v + array('time_change_p' => '10%');
+#		}
+		return $items;
 	}
 
 	/**

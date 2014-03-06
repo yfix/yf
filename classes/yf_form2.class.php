@@ -141,6 +141,9 @@ class yf_form2 {
 		if ($table && $id) {
 			$columns = db()->meta_columns($table);
 			$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
+			if (!is_array($this->_replace)) {
+				$this->_replace = array();
+			}
 			foreach ((array)$info as $k => $v) {
 				$this->_replace[$k] = $v;
 			}
@@ -767,6 +770,12 @@ class yf_form2 {
 	*/
 	function _ckeditor_html($extra = array(), $replace = array()) {
 		return _class('form2_ckeditor', 'classes/form2/')->_ckeditor_html($extra, $replace, $this);
+	}
+
+	/**
+	*/
+	function _tinymce_html($extra = array(), $replace = array()) {
+		return _class('form2_tinymce', 'classes/form2/')->_tinymce_html($extra, $replace, $this);
 	}
 
 	/**

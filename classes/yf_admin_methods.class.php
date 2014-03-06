@@ -69,8 +69,8 @@ class yf_admin_methods {
 		}
 		$DATA = _prepare_html($_POST);
 		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action']. $params['links_add'],
-			'back_link'		=> './?object='.$_GET['object']. $params['links_add'],
+			'form_action'	=> $params['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action']. $params['links_add'],
+			'back_link'		=> $params['back_link'] ?: './?object='.$_GET['object']. $params['links_add'],
 		);
 		foreach ((array)$fields as $f) {
 			$replace[$f] = $DATA[$f];
@@ -138,8 +138,8 @@ class yf_admin_methods {
 			}
 		}
 		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.urlencode($_GET['id']). $params['links_add'],
-			'back_link'		=> './?object='.$_GET['object']. $params['links_add'],
+			'form_action'	=> $params['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.urlencode($_GET['id']). $params['links_add'],
+			'back_link'		=> $params['back_link'] ?: './?object='.$_GET['object']. $params['links_add'],
 		);
 		foreach ((array)$a as $k => $v) {
 			if (!isset($replace[$k])) {

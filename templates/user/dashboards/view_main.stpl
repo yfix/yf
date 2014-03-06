@@ -1,0 +1,22 @@
+{include("dashboards/ds_css")}
+<style>
+/*
+ 	.container { width: 100%; }
+	.left_area { width: 0px; }
+	.center_area { margin-left: 1%; }
+*/
+</style>
+
+<div class="container-fluid ds_view" id="yf_dashboard">
+  <div class="row-fluid">
+{foreach("columns")}
+	<div class="column {#.class}" id="yf_ds_column_{#.num}">
+{#.items}
+	</div>
+{/foreach}
+  </div>
+</div>
+
+{if(edit_link ne "")}
+	<a href="{edit_link}" class="btn btn-mini"><i class="icon-edit"></i> {t(Edit)}</a>
+{/if}

@@ -139,19 +139,12 @@ class yf_blog_posting {
 					$this->TAGS_OBJ->_save_tags($_POST["tags"], $RECORD_ID, 'blog');
 				}
 
-				// Synchronize all blogs stats
 				module('blog')->_update_all_stats();
-				// Save activity log
 				common()->_add_activity_points(module('blog')->USER_ID, "blog_post", strlen($_POST["post_text"]), $RECORD_ID);
-				// Last update
-				update_user(module('blog')->USER_ID, array("last_update"=>time()));
-				// Update user stats
+				db()->update('user', array('last_update' => time()), module('blog')->USER_ID);
 				_class_safe("user_stats")->_update(array("user_id" => module('blog')->USER_ID));
-				// Do ping on blog change
 				module('blog')->_do_ping($RECORD_ID, module('blog')->USER_ID);
-				// Return user back
 				if(!empty($_POST["community_select_box"])){ 
-					//if post in community
 					return js_redirect("./?object=community&action=view&id=".$community_info["id"]);
 				}else{
 					return js_redirect("./?object=".'blog'."&action=show_posts"._add_get(array("page")));
@@ -364,7 +357,7 @@ class yf_blog_posting {
 				// Synchronize all blogs stats
 				module('blog')->_update_all_stats();
 				// Last update
-				update_user(module('blog')->USER_ID, array("last_update"=>time()));
+				db()->update('user', array("last_update"=>time()), module('blog')->USER_ID);
 				// Update user stats
 				_class_safe("user_stats")->_update(array("user_id" => module('blog')->USER_ID));
 				// Return user back
@@ -496,10 +489,9 @@ class yf_blog_posting {
 		
 		$is_community = $this->_check_community_permissions($post_info["user_id"]);
 
-		if(common()->_error_exists()){
+		if (common()->_error_exists()) {
 			return _e();
 		}
-
 		$post_info_real_user_id = $is_community ? $post_info["poster_id"] : $post_info["user_id"];
 		
 		if ($post_info_real_user_id != module('blog')->USER_ID) {
@@ -515,24 +507,15 @@ class yf_blog_posting {
 		if ($attach_fs_path && file_exists($attach_fs_path)) {
 			unlink($attach_fs_path);
 		}
-		// Do delete post and its comments
 		db()->query("DELETE FROM ".db('blog_posts')." WHERE id=".intval($post_info["id"])." AND user_id='".intval($post_info["user_id"])."' LIMIT 1");
 		db()->query("DELETE FROM ".db('comments')." WHERE object_name='"._es('blog')."' AND object_id=".intval($post_info["id"]));
-		// Last update
-		update_user(module('blog')->USER_ID, array("last_update"=>time()));
-		// Synchronize all blogs stats
+		db()->update('user', array('last_update' => time()), module('blog')->USER_ID);
 		module('blog')->_update_all_stats();
-		// Remove activity points
 		common()->_remove_activity_points($post_info["user_id"], "blog_post", $post_info["id"]);
-		// Update user stats
 		_class_safe("user_stats")->_update(array("user_id" => module('blog')->USER_ID));
-		// Return user back
-		
-		//if this post in community
-		if($is_community){
+		if ($is_community) {
 			return js_redirect("./?object=community");
 		}
-		
 		return js_redirect("./?object=".'blog'."&action=show_posts"._add_get(array("page")));
 	}
 
@@ -581,11 +564,8 @@ class yf_blog_posting {
 		if ($attach_fs_path && file_exists($attach_fs_path)) {
 			unlink($attach_fs_path);
 		}
-		// Update post record
 		db()->query("UPDATE ".db('blog_posts')." SET attach_image='' WHERE id=".intval($post_info["id"])." AND user_id='".intval(main()->USER_ID)."' LIMIT 1");
-		// Last update
-		update_user(module('blog')->USER_ID, array("last_update"=>time()));
-		// Return user back
+		db()->update('user', array('last_update' => time()), module('blog')->USER_ID);
 		return js_redirect($_SERVER["HTTP_REFERER"], 1);
 	}
 

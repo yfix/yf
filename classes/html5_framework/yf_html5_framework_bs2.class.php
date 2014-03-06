@@ -62,6 +62,7 @@ class yf_html5_framework_bs2 {
 					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
 					.(isset($extra['ace_editor']) ? $obj->_ace_editor_html($extra, $replace) : '')
 					.(isset($extra['ckeditor']) ? $obj->_ckeditor_html($extra, $replace) : '')
+					.(isset($extra['tinymce']) ? $obj->_tinymce_html($extra, $replace) : '')
 				.$row_end;
 		}
 	}
@@ -97,6 +98,7 @@ class yf_html5_framework_bs2 {
 					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
 					.(isset($extra['ace_editor']) ? $obj->_ace_editor_html($extra, $replace) : '')
 					.(isset($extra['ckeditor']) ? $obj->_ckeditor_html($extra, $replace) : '')
+					.(isset($extra['tinymce']) ? $obj->_tinymce_html($extra, $replace) : '')
 				.$row_end;
 		}
 	}

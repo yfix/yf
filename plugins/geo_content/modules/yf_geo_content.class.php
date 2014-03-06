@@ -264,7 +264,7 @@ class yf_geo_content {
 					if (!empty($sel_data["zip_code"]) && is_numeric($sel_data["zip_code"])) {
 						$sql_array["zip_code"]	= _es($sel_data["zip_code"]);
 					}
-					update_user(main()->USER_ID, $sql_array);
+					db()->update('user', $sql_array, main()->USER_ID);
 				}
 				return js_redirect("./?object=account");
 			}

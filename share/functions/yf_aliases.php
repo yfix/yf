@@ -106,6 +106,12 @@ if (!function_exists('table')) {
 if (!function_exists('table2')) {
 	function table2($data = array(), $params = array()) { $table = clone _class('table2'); return $table->chained_wrapper($data, $params); }
 }
+if (!function_exists('require_js')) {
+	function require_js($content, $is_file = true, $params = array()) { return _class('core_js')->add($content, $is_file, $params); }
+}
+if (!function_exists('require_css')) {
+	function require_css($content, $is_file = true, $params = array()) { return _class('core_css')->add($content, $is_file, $params); }
+}
 if (!function_exists('getmicrotime')) {
 	function getmicrotime() { return microtime(true); }
 }
@@ -128,12 +134,6 @@ if (!function_exists('_ee')) {
 }
 if (!function_exists('user')) {
 	function user($user_id, $fields = 'full', $params = '', $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, 'user') ? $_common->user($user_id, $fields, $params, $return_sql) : false; }
-}
-if (!function_exists('update_user')) {
-	function update_user($user_id, $data = array(), $params = '', $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, 'update_user') ? $_common->update_user($user_id, $data, $params, $return_sql) : false; }
-}
-if (!function_exists('search_user')) {
-	function search_user($params = array(), $fields = array(), $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, 'user') ? $_common->search_user($params, $fields, $return_sql) : false; }
 }
 if (!function_exists('_truncate')) {
 	function _truncate($string, $len, $wordsafe = false, $dots = false) { return _class('utf8')->truncate_utf8($string, $len, $wordsafe, $dots); }
@@ -203,7 +203,7 @@ if (!function_exists('html')) {
 	function html ($params) { return _class('html')->chained_wrapper($params); }
 }
 if (!function_exists('validate')) {
-	function validate($text = '', $rules = array()) { return _class('validate')->_process_text($text, $rules); }
+	function validate($input = '', $rules = array()) { return _class('validate')->_input_is_valid($input, $rules); }
 }
 // Check user banned or not
 if (!function_exists('_check_user_ban')) {

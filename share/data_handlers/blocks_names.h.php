@@ -1,3 +1,3 @@
 <?php
 
-$data = db()->get_all('SELECT * FROM '.db('blocks'));
+$data = db()->get_2d('SELECT id, name FROM '.db('blocks').' ORDER BY name ASC');

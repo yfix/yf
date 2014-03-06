@@ -117,15 +117,6 @@ $data = array (
     'author' => '',
     'active' => '1',
   ),
-  16 => 
-  array (
-    'id' => '16',
-    'name' => 'db_parser',
-    'description' => '',
-    'version' => '',
-    'author' => '',
-    'active' => '1',
-  ),
   19 => 
   array (
     'id' => '19',
