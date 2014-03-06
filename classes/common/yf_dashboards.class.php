@@ -102,9 +102,17 @@ class yf_dashboards {
 			$num_columns = $filled_columns;
 		}
 		foreach ((array)$ds['data']['columns'] as $column_id => $column_items) {
+			$css_class_override = '';
+			// find grid classes inside items
+			foreach ((array)$column_items as $item_id) {
+				$item_config = $items_configs[$item_id.'_'.$item_id];
+				if ($item_config['grid_class']) {
+					$css_class_override = $item_config['grid_class'];
+				}
+			}
 			$columns[$column_id] = array(
 				'num'	=> $column_id,
-				'class'	=> $this->_col_classes[$num_columns],
+				'class'	=> $css_class_override ?: $this->_col_classes[$num_columns],
 				'items'	=> $this->_view_widget_items($column_items, $items_configs, $ds_settings),
 			);
 		}
