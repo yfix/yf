@@ -42,11 +42,24 @@ class yf_manage_shop__product_revisions {
 	}
 
 	function _product_add_revision($action = false, $ids = false) {
-		$this->_add_revision('product', $action, $ids);
+		return $this->_add_revision('product', $action, $ids);
 	}
 
 	function _order_add_revision($action = false, $ids = false) {
-		$this->_add_revision('order', $action, $ids);
+		return $this->_add_revision('order', $action, $ids);
+	}
+
+	function _add_group_revision($action = false, $ids = false, $group_id = false){
+		$revision_db = $this->get_revision_db($action);
+		$data = json_encode($ids);
+		$insert = array(
+			'user_id'  => intval(main()->ADMIN_ID),
+			'add_date' => time(),
+			'action'   => 'group',
+			'item_id'  => intval($group_id),
+			'data'     => $data ? : '',
+		);
+		db()->insert_safe($revision_db, $insert);
 	}
 
 	function get_revision_db ($type) {
@@ -121,11 +134,13 @@ class yf_manage_shop__product_revisions {
 		}
 
 		if (!empty($insert_array)) {
-			$insert_array = array_chunk($insert_array, 100);
+//			$insert_array = array_chunk($insert_array, 100);
 			foreach ($insert_array as $insert_item) {
 				db()->insert_safe($revision_db, $insert_item);
+				$revision_ids[] = db()->insert_id();
 			}
 		}
+		return $revision_ids;
 	}
 
 	/**

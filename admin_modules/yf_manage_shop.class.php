@@ -466,6 +466,10 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $item_id);
 	}
 
+	function _add_group_revision($action, $item_id, $group_id) {		
+		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $item_id, $group_id);
+	}
+
 	function _product_images_add_revision($action, $product_id, $image_id) {		
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $product_id, $image_id);
 	}
