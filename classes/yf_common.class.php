@@ -2,7 +2,7 @@
 
 /**
 * Class where most common used functions are stored
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -17,7 +17,7 @@ class yf_common {
 	public $TRACK_USER_ERRORS		= false;
 	/** @var bool Display debug info for the empty page */
 	public $EMPTY_PAGE_DEBUG_INFO	= true;
-	/** @var string 
+	/** @var string
 	*	Default value. Cloud creates in alphabetic text order
 	*	available values - 'text' or 'num'
 	*	(For cloud creaion)
@@ -66,7 +66,7 @@ class yf_common {
 		$table = clone _class('table2');
 		return $table->chained_wrapper($data, $params);
 	}
-	
+
 	/**
 	*/
 	function bs_get_avail_themes() {
@@ -103,7 +103,7 @@ class yf_common {
 		$theme = $this->bs_current_theme();
 		return tpl()->parse('bs_theme_html', array('cur_theme' => $this->bs_current_theme()));
 	}
-	
+
 	/**
 	*/
 	function bs_theme_changer() {
@@ -112,7 +112,7 @@ class yf_common {
 			'themes'	=> $this->bs_get_avail_themes(),
 		));
 	}
-	
+
 	/**
 	* Secondary database connection
 	*/
@@ -151,7 +151,7 @@ class yf_common {
 	*/
 	function send_mail ($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = array(), $priority = 3) {
 		return _class('send_mail', 'classes/common/')->send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $pear_mailer_backend, $force_mta_opts, $priority);
-	} 
+	}
 
 	/**
 	* Quick send mail (From admin info)
@@ -208,7 +208,7 @@ class yf_common {
 	function multi_check_box ($box_name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
 		return _class('html_controls')->multi_check_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array);
 	}
-	
+
 	/**
 	*/
 	function date_box ($selected_date = '', $years = '', $name_postfix = '', $add_str = '', $order = 'ymd', $show_text = 1, $translate = 1) {
@@ -220,7 +220,7 @@ class yf_common {
 	function time_box ($selected_time = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1) {
 		return _class('html_controls')->time_box($selected_time, $name_postfix, $add_str, $show_text, $translate);
 	}
-	
+
 	/**
 	*/
 	function date_box2 ($name = '', $selected = '', $range = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
@@ -270,7 +270,7 @@ class yf_common {
 			if ($r == 0) {
 				break;
 			}
-			$timestamp = $r;			
+			$timestamp = $r;
 		}
 		return $result_string;
 	}
@@ -356,7 +356,7 @@ class yf_common {
 	*/
 	function make_thumb($source_file_path = '', $dest_file_path = '', $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $ext = '') {
 		return _class('make_thumb', 'classes/common/')->go($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path, $ext);
-	} 
+	}
 
 	/**
 	* Do upload image
@@ -364,20 +364,20 @@ class yf_common {
 	function upload_image($new_file_path, $name_in_form = 'image', $max_image_size = 0, $is_local = false) {
 		return _class('upload_image', 'classes/common/')->go($new_file_path, $name_in_form, $max_image_size, $is_local);
 	}
-	
+
 	/**
 	* Do multi upload image
 	*/
 	function multi_upload_image($new_file_path, $k , $name_in_form = 'image', $max_image_size = 0, $is_local = false) {
 		return _class('multi_upload_image', 'classes/common/')->go($new_file_path, $k, $name_in_form, $max_image_size, $is_local);
-	} 
-	
+	}
+
 	/**
 	* Do crop image
 	*/
 	function crop_image($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $pos_left, $pos_top) {
 		return _class('image_manip', 'classes/common/')->crop($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $pos_left, $pos_top);
-	} 
+	}
 
 	/**
 	* Do upload archive file (zip, rar, tar accepted)
@@ -590,7 +590,7 @@ class yf_common {
 
 	/**
 	* Display message if server is overloaded
-	* 
+	*
 	*/
 	function server_is_busy($msg = '') {
 		$replace = array(
@@ -755,10 +755,10 @@ class yf_common {
 	*/
 	function _create_cloud($cloud_data = array(), $params = array()) {
 		return _class('other_common', 'classes/common/')->_create_cloud($cloud_data, $params);
-	}	
+	}
 
 	/**
-	* Makes thumb of remote web page 
+	* Makes thumb of remote web page
 	* parameters: page url, filename(without extension)
 	*/
 	function _make_thumb_remote($url, $filename) {
@@ -845,7 +845,7 @@ class yf_common {
 	}
 
 	/**
-	* Print nice 
+	* Print nice
 	*/
 	function trace_string() {
 		$e = new Exception();
@@ -858,42 +858,42 @@ class yf_common {
 	function url_to_absolute($base_url, $relative_url) {
 		return _class('url_to_absolute', 'classes/common/')->url_to_absolute($base_url, $relative_url);
 	}
-	
+
 	/**
 	* is_utf8
 	*/
 	function is_utf8 ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path()); 
+			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
 		$this->_set_include_path = true;
-		
+
 		include_once 'is_utf8.php';
 		return is_utf8($content);
 	}
-	
+
 	/**
 	* utf8_html_entity_decode
 	*/
 	function utf8_html_entity_decode ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path()); 
+			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
 		$this->_set_include_path = true;
-		
+
 		include_once 'utf8_html_entity_decode.php';
 		return utf8_html_entity_decode($content, true);
 	}
-	
+
 	/**
 	* strip_tags_smart
 	*/
 	function strip_tags_smart ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path()); 
+			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
 		$this->_set_include_path = true;
-		
+
 		include_once 'strip_tags_smart.php';
 		return strip_tags_smart($content);
 	}
@@ -904,30 +904,30 @@ class yf_common {
 	function utf8_clean ($text = '', $params = array()) {
 		return _class('utf8_clean', 'classes/common/')->_do($text, $params);
 	}
-	
+
 	/**
 	* current GMT time
 	*/
 	function gmtime () {
 		return strtotime('now GMT');
 	}
-	
+
 	/**
-	* 
+	*
 	*/
 	function graph ($data, $params = '') {
 		return _class('graph', 'classes/common/')->graph($data, $params);
 	}
-	
+
 	/**
-	* 
+	*
 	*/
 	function graph_bar ($data, $params = '') {
 		return _class('graph', 'classes/common/')->graph_bar($data, $params);
 	}
-	
+
 	/**
-	* 
+	*
 	*/
 	function graph_pie ($data, $params = '') {
 		return _class('graph', 'classes/common/')->graph_pie($data, $params);
@@ -1016,9 +1016,9 @@ class yf_common {
 		$method = '_show_filter';
 		if (method_exists($obj, $method) && !(isset($obj->USE_FILTER) && !$obj->USE_FILTER)) {
 			return $obj->$method();
-		}	
+		}
 	}
-	
+
 	/**
 	*/
 	function show_side_column_hooked(){
@@ -1026,7 +1026,7 @@ class yf_common {
 		$method = '_hook_side_column';
 		if (method_exists($obj, $method)) {
 			return $obj->$method();
-		}	
+		}
 	}
 
 	/**
@@ -1083,9 +1083,9 @@ class yf_common {
 		$rar = rar_open($archive_name);
 		$list = rar_list($rar);
 		foreach($list as $file) {
-			$file = explode("\"",$file); 
+			$file = explode("\"",$file);
 		    $entry = rar_entry_get($rar, $file[1]);
-		    $entry->extract($EXTRACT_PATH); 
+		    $entry->extract($EXTRACT_PATH);
 		}
 		rar_close($rar);
 	}
@@ -1105,6 +1105,7 @@ class yf_common {
 	 * Returns the sum in words (for money)
 	 */
 	function num2str($num) {
+		$num = (float)$num;
 	    $nul='ноль';
     	$ten=array(
         	array('','один','два','три','четыре','пять','шесть','семь', 'восемь','девять'),
@@ -1120,7 +1121,9 @@ class yf_common {
 	        array('миллион' ,'миллиона','миллионов' ,0),
     	    array('миллиард','милиарда','миллиардов',0),
     	);
-    	list($rub,$kop) = explode(',',sprintf("%015.2f", floatval($num)));
+		$d1 = (int)$num; $d2 = (int)( $num*100 - $d1*100 );
+		$rub = sprintf( '%015d', $d1 );
+		$kop = sprintf( '%02d', $d2 );
 	    $out = array();
 	    if (intval($rub)>0) {
     	    foreach(str_split($rub,3) as $uk=>$v) { // by 3 symbols
@@ -1162,7 +1165,7 @@ class yf_common {
 
 	/*
 	 * Returns all types with empty param 'type'
-	 * Works in both ways: 
+	 * Works in both ways:
 	 * - get status name by id
 	 * - get status id by name
 	 * */
