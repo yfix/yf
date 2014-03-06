@@ -168,6 +168,7 @@ class yf_manage_shop_filter{
 					->text('content')
 					->text('pros')
 					->text('cons')
+					->active_box('active', array('horizontal' => 1))						
 					->select_box('order_by', $order_fields, array('show_text' => 1));
 
 			},

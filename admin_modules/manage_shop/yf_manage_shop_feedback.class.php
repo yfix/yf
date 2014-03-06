@@ -22,6 +22,7 @@ class yf_manage_shop_feedback{
 					'content'	=> array('like','f.content'),
 					'pros'		=> array('like','f.pros'),
 					'cons'		=> array('like','f.cons'),
+					'active'	=> array('eq','f.active'),
 					'add_date'	=> array('dt_between', 'f.add_date'),					
 				),
 			))
@@ -36,6 +37,7 @@ class yf_manage_shop_feedback{
 			->text('pros')
 			->text('cons')
 			->date('add_date', array('format' => 'full','nowrap' => 1))
+			->btn_active('', './?object='.main()->_get('object').'&action=feedback_activate&id=%d')				
 			->btn_delete('', './?object='.main()->_get('object').'&action=feedback_delete&id=%d')
 		;
 	}
@@ -61,6 +63,27 @@ class yf_manage_shop_feedback{
 		}
 
 	}
+	
+	function feedback_activate () {
+		if ($_GET['id']) {
+			$a = db()->query_fetch('SELECT * FROM '.db('shop_product_feedback').' WHERE id = '.intval($_GET['id']));
+		}
+		if ($a['id']) {
+			if ($a['active'] == 1) {
+				$active = 0;
+			} elseif ($a['active'] == 0) {
+				$active = 1;
+			}
+			db()->update_safe(db('shop_product_feedback'), array('active' => $active), 'id='.intval($_GET['id']));
+		}
+		if ($_POST['ajax_mode']) {
+			main()->NO_GRAPHICS = true;
+			echo ($active ? 1 : 0);
+		} else {
+			return js_redirect('./?object='.main()->_get('object').'');
+		}
+	}
+
 	
 	function _recalc_rating($product_id) {
 		if (intval($product_id) == 0) return false;

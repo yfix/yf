@@ -590,4 +590,7 @@ class yf_manage_shop {
 	function feedback_delete() {
 		$func = __FUNCTION__; return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->$func();		
 	}
+	function feedback_activate() {
+		$func = __FUNCTION__; return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->$func();
+	}	
 }
