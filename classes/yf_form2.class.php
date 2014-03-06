@@ -294,7 +294,7 @@ class yf_form2 {
 	*/
 	function form_begin($name = '', $method = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!is_array($extra)) {
@@ -443,7 +443,7 @@ class yf_form2 {
 	*/
 	function tab_start($name = '', $extra = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -643,7 +643,7 @@ class yf_form2 {
 	*/
 	function container($text, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$text = strval($text);
@@ -678,7 +678,7 @@ class yf_form2 {
 	*/
 	function input($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -722,7 +722,7 @@ class yf_form2 {
 	*/
 	function textarea($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -820,7 +820,7 @@ class yf_form2 {
 		$extra['type'] = 'password';
 		$extra['prepend'] = '<i class="icon-key"></i>';
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -840,7 +840,7 @@ class yf_form2 {
 	*/
 	function button($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$desc) {
@@ -864,7 +864,7 @@ class yf_form2 {
 		$extra['type'] = $extra['type'] ?: 'text';
 		$extra['prepend'] = '<i class="icon-user"></i>';
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -880,7 +880,7 @@ class yf_form2 {
 		$extra['type'] = 'email';
 		$extra['prepend'] = '@';
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -921,7 +921,7 @@ class yf_form2 {
 	*/
 	function money($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['type'] = 'text';
@@ -939,8 +939,8 @@ class yf_form2 {
 		$extra['type'] = 'url';
 		$extra['prepend'] = 'url';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'url';
@@ -954,8 +954,8 @@ class yf_form2 {
 	function color($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'color';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'color';
@@ -969,8 +969,8 @@ class yf_form2 {
 	function date($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'date';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'date';
@@ -984,8 +984,8 @@ class yf_form2 {
 	function datetime($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'datetime';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'datetime';
@@ -999,8 +999,8 @@ class yf_form2 {
 	function datetime_local($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'datetime-local';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'datetime_local';
@@ -1014,8 +1014,8 @@ class yf_form2 {
 	function month($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'month';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'month';
@@ -1029,8 +1029,8 @@ class yf_form2 {
 	function range($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'range';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'range';
@@ -1044,8 +1044,8 @@ class yf_form2 {
 	function search($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'search';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'search';
@@ -1059,8 +1059,8 @@ class yf_form2 {
 	function tel($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'tel';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'tel';
@@ -1075,7 +1075,7 @@ class yf_form2 {
 		$extra['type'] = 'tel';
 		if (is_array($name)) {
 			$extra += $name;
-			$desc = '';
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'phone';
@@ -1090,7 +1090,7 @@ class yf_form2 {
 		$extra['type'] = 'time';
 		if (is_array($name)) {
 			$extra += $name;
-			$desc = '';
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'time';
@@ -1105,7 +1105,7 @@ class yf_form2 {
 		$extra['type'] = 'week';
 		if (is_array($name)) {
 			$extra += $name;
-			$desc = '';
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'week';
@@ -1181,11 +1181,11 @@ class yf_form2 {
 	*/
 	function submit($name = '', $value = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($value)) {
-			$extra += $value;
+			$extra = (array)$extra + $value;
 			$value = '';
 		}
 		if (!is_array($extra)) {
@@ -1243,7 +1243,7 @@ class yf_form2 {
 			}
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['link_url'] = $name;
@@ -1265,7 +1265,7 @@ class yf_form2 {
 			}
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['link_url'] = $name;
@@ -1280,7 +1280,7 @@ class yf_form2 {
 	*/
 	function info($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -1391,7 +1391,7 @@ class yf_form2 {
 	function info_date($name = '', $format = '', $extra = array(), $replace = array()) {
 		$r = (array)$this->_replace + (array)$replace;
 		if (is_array($format)) {
-			$extra += $format;
+			$extra = (array)$extra + $format;
 			$format = '';
 		}
 		$extra['format'] = $extra['format'] ?: $format;
@@ -1413,11 +1413,11 @@ class yf_form2 {
 	*/
 	function link($name = '', $link = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($link)) {
-			$extra += $link;
+			$extra = (array)$extra + $link;
 			$link = '';
 		}
 		$extra['link'] = isset($extra['link']) ? $extra['link'] : $link;
@@ -1475,7 +1475,7 @@ class yf_form2 {
 	*/
 	function box($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -1543,7 +1543,7 @@ class yf_form2 {
 	*/
 	function date_box($name = '', $values = array(), $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -1556,7 +1556,7 @@ class yf_form2 {
 	*/
 	function time_box($name = '', $values = array(), $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -1569,7 +1569,7 @@ class yf_form2 {
 	*/
 	function datetime_box($name = '', $values = array(), $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -1585,7 +1585,7 @@ class yf_form2 {
 	*/
 	function birth_box($name = '', $values = array(), $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -1610,11 +1610,11 @@ class yf_form2 {
 	*/
 	function country_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1634,11 +1634,11 @@ class yf_form2 {
 	*/
 	function region_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1658,11 +1658,11 @@ class yf_form2 {
 	*/
 	function city_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1683,11 +1683,11 @@ class yf_form2 {
 	*/
 	function currency_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1707,11 +1707,11 @@ class yf_form2 {
 	*/
 	function language_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1731,11 +1731,11 @@ class yf_form2 {
 	*/
 	function timezone_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1755,11 +1755,11 @@ class yf_form2 {
 	*/
 	function icon_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1779,11 +1779,11 @@ class yf_form2 {
 	*/
 	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1819,11 +1819,11 @@ class yf_form2 {
 	*/
 	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1859,11 +1859,11 @@ class yf_form2 {
 	*/
 	function location_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1903,7 +1903,7 @@ class yf_form2 {
 	*/
 	function image($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 // TODO: show already uploaded image, link to delete it, input to upload new
@@ -1934,7 +1934,7 @@ class yf_form2 {
 	*/
 	function captcha($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!is_array($extra)) {
@@ -1969,7 +1969,7 @@ class yf_form2 {
 	*/
 	function func($name, $func, $extra = array(), $replace = array()) {
 		if (is_array($func)) {
-			$extra += $func;
+			$extra = (array)$extra + $func;
 			$func = '';
 		}
 		if (!$func) {
