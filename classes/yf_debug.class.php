@@ -100,7 +100,7 @@ class yf_debug {
 			$name = substr($method, strlen('_debug_'));
 			$ts2 = microtime(true);
 			$content = $this->$method();
-			$debug_timings[$method] = common()->_format_time_value(microtime(true) - $ts2).' secs';
+			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' secs';
 			$debug_contents[$name] = $content;
 		}
 		$body .= '<div id="debug_console">';
@@ -341,7 +341,7 @@ class yf_debug {
 				return $m[1]. $_this->_admin_link('show_db_table', $m[2]);
 			}, $sql);
 
-			$exec_time = common()->_format_time_value($log['time']);
+			$exec_time = round($log['time'], 4);
 			if ($admin_link && $this->ADD_ADMIN_LINKS) {
 				$exec_time = '<a href="'.$admin_link.'" class="btn btn-default btn-mini btn-xs">'.$exec_time.'</a>';
 			}
@@ -352,12 +352,18 @@ class yf_debug {
 				'rows'		=> strval($log['rows']),
 				'error'		=> $log['error'] ? '<pre>'._prepare_html(var_export($log['error'], 1)).'</pre>' : '',
 				'exec_time'	=> strval($exec_time),
+				'time'		=> round($log['time'], 4),
 				'trace'		=> $_cur_trace,
 				'explain'	=> $_cur_explain,
 			);
 		}
-		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_queries_exec_time).'<span> sec';
-		$body .= ' | '.t('connect_time').': '.common()->_format_time_value($db->_connection_time).'<span> sec';
+		$items = $this->_time_count_changes($items);
+		foreach ((array)$items as $k => $v) {
+			unset($items[$k]['time']);
+		}
+
+		$body .= ' | '.t('total_exec_time').': '.round($total_queries_exec_time, 4).'<span> sec';
+		$body .= ' | '.t('connect_time').': '.round($db->_connection_time, 4).'<span> sec';
 // TODO: find errors result == -1 or null) or maybe track errors inside db()
 // TODO: highlight errors with <tr class="error">
 		$body .= $this->_show_auto_table($items, array(
@@ -458,16 +464,18 @@ class yf_debug {
 				'storage'	=> strval($v['storage']),
 				'calls'		=> strval($v['calls']),
 				'size'		=> strval($cur_size),
-				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
+				'time'		=> round($v['exec_time'], 4),
 				'trace'		=> _prepare_html($stpl_traces[$k]),
 			);
 			if (isset($stpl_vars[$counter])) {
 				$items[$counter]['vars'] = '<pre><small>'._prepare_html(var_export($stpl_vars[$counter], 1)).'</small></pre>';
 			}
 		}
+		$items = $this->_time_count_changes($items);
+
 		$body .= t('tpl_driver').': '.tpl()->DRIVER_NAME.' | '.t('compile_mode').': '.(int)tpl()->COMPILE_TEMPLATES.' | ';
 		$body .= t('used_templates_size').': '.$total_size.' bytes';
-		$body .= ' | '.t('total_exec_time').': '.common()->_format_time_value($total_stpls_exec_time).' seconds';
+		$body .= ' | '.t('total_exec_time').': '.round($total_stpls_exec_time, 4).' seconds';
 		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'name', 'vars' => 'name')));
 		return $body;
 	}
@@ -488,11 +496,12 @@ class yf_debug {
 				'id'		=> $k + 1,
 				'source'	=> strval($v['source']),
 				'rewrited'	=> strval($this->_admin_link('link', $v['rewrited'])),
-				'exec_time'	=> strval(common()->_format_time_value($v['exec_time'])),
+				'time'		=> round($v['exec_time'], 4),
 				'trace'		=> $v['trace'],
 			);
 		}
-		$body .= t('Rewrite processing time').': '.common()->_format_time_value($this->_get_debug_data('rewrite_exec_time')).' <span>sec</span>';
+		$items = $this->_time_count_changes($items);
+		$body .= t('Rewrite processing time').': '.round($this->_get_debug_data('rewrite_exec_time'), 4).' <span>sec</span>';
 		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'source')));
 		return $body;
 	}
@@ -505,9 +514,10 @@ class yf_debug {
 		}
 		$items = $this->_get_debug_data('_force_get_url');
 		foreach ((array)$items as $k => $v) {
-			$items[$k]['time'] = strval(common()->_format_time_value($v['time']));
+			$items[$k]['time'] = round($v['time'], 4);
 			$items[$k]['rewrited_link'] = strval($this->_admin_link('link', $v['rewrited_link']));
 		}
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params')));
 	}
 
@@ -526,10 +536,11 @@ class yf_debug {
 				'path'			=> $this->_admin_link('edit_file', $data['loaded_path']),
 				'size'			=> file_exists($data['loaded_path']) ? filesize($data['loaded_path']) : '',
 				'storage'		=> $data['storage'],
-				'time'			=> common()->_format_time_value($data['time']),
+				'time'			=> round($data['time'], 4),
 				'trace'			=> $data['trace'],
 			);
 		}
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'path')));
 	}
 
@@ -540,6 +551,7 @@ class yf_debug {
 			return '';
 		}
 		$items = $this->_get_debug_data('main_execute_block_time');
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'params')));
 	}
 
@@ -561,6 +573,7 @@ class yf_debug {
 			return '';
 		}
 		$items = $this->_get_debug_data('cache_get');
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
 	}
 
@@ -571,6 +584,7 @@ class yf_debug {
 			return '';
 		}
 		$items = $this->_get_debug_data('cache_set');
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name', 'data' => 'name')));
 	}
 
@@ -581,6 +595,7 @@ class yf_debug {
 			return '';
 		}
 		$items = $this->_get_debug_data('cache_refresh');
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
 	}
 
@@ -684,11 +699,11 @@ class yf_debug {
 		$tr_time	= _class('i18n')->_tr_time;
 		$tr_calls	= _class('i18n')->_tr_calls;
 		foreach ((array)$tr_time[$lang] as $k => $v) {
-			$data['calls'][$this->_admin_link('edit_i18n', $k)] = $tr_calls[$lang][$k].'|'.common()->_format_time_value($v);
+			$data['calls'][$this->_admin_link('edit_i18n', $k)] = $tr_calls[$lang][$k].'|'.round($v, 4);
 		}
 		$data['not_translated'] = (array)_class('i18n')->_NOT_TRANSLATED[$lang];
 
-		$body .= t('translate time').': '.common()->_format_time_value(_class('i18n')->_tr_total_time).' sec<br>';
+		$body .= t('translate time').': '.round(_class('i18n')->_tr_total_time, 4).' sec<br>';
 		foreach ($data as $name => $_data) {
 			$body .= '<div class="span6 col-lg-6">'.$name.'<br>'.$this->_show_key_val_table(_prepare_html($_data), array('no_total' => 1, 'no_escape' => 1)).'</div>';
 		}
@@ -716,12 +731,15 @@ class yf_debug {
 				unset($items[$id]);
 				continue;
 			}
+			$item['time'] = round($item['time'], 4);
 			$item['results'] = '<pre>'._prepare_html(var_export($item['results'], 1)).'</pre>';
 			$item['meta'] = '<pre>'._prepare_html(var_export($item['meta'], 1)).'</pre>';
 			$item['describe'] = '<pre>'._prepare_html(var_export($item['describe'], 1)).'</pre>';
 			$items[$id] = array('id' => $id) + $item;
 		}
-#		$body .= '<i>'.t('Total time').': '.common()->_format_time_value($total_time).' secs';
+		$items = $this->_time_count_changes($items);
+
+#		$body .= '<i>'.t('Total time').': '.round($total_time, 4).' secs';
 		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'query', 'meta' => 'count', 'describe' => 'count', 'results' => 'count')));
 		$body .= $sphinx_connect_debug ? '<pre>'._prepare_html(var_export($sphinx_connect_debug, 1)).'</pre>' : '';
 		$body .= $this->_show_key_val_table(_class('sphinxsearch')->_get_server_status());
@@ -831,11 +849,13 @@ class yf_debug {
 				'id'	=> ++$counter,
 				'name'	=> $this->_admin_link('edit_file', $file_name),
 				'size'	=> $cur_size,
-				'time'	=> strval($exec_times[$file_name]),
+				'time'	=> round($exec_times[$file_name], 4),
 				'trace'	=> strval($traces[$file_name]),
 			);
 			$total_size += $cur_size;
 		}
+		$items = $this->_time_count_changes($items);
+
 		$body .= 'total size: '.$total_size;
 		return $body. $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
 	}
@@ -854,6 +874,7 @@ class yf_debug {
 				'trace'	=> $v['trace'],
 			);
 		}
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'id')));
 	}
 
@@ -869,6 +890,7 @@ class yf_debug {
 			$v['fields'] = '<pre>'._prepare_html(var_export($v['fields'], 1)).'</pre>';
 			$items[$k] = array('id' => ++$i) + $v;
 		}
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'fields' => 'params')));
 	}
 
@@ -891,6 +913,7 @@ class yf_debug {
 			}
 			$items[$k] = array('id' => ++$i) + $v;
 		}
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'header_links', 'fields' => 'header_links', 'buttons' => 'header_links')));
 	}
 
@@ -909,6 +932,7 @@ class yf_debug {
 			}
 			$items[$k] = array('id' => ++$i) + $v;
 		}
+		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'fields')));
 	}
 
@@ -952,8 +976,8 @@ class yf_debug {
 			}
 			$items[] = array(
 				'i'				=> $i,
-				'time_offset'	=> common()->_format_time_value($time_offset),
-				'time_change'	=> $time_change && $time_change > 0.0001 ? common()->_format_time_value($time_change) : '',
+				'time_offset'	=> round($time_offset, 4),
+				'time_change'	=> $time_change && $time_change > 0.0001 ? round($time_change, 4) : '',
 				'time_change_p'	=> $time_change_p ? '<span class="'.($time_warning ? 'label label-warning' : '').'">'.$time_change_p.'%</span>' : '',
 				'class'			=> $v[1],
 				'method'		=> $v[2],
@@ -1054,7 +1078,7 @@ class yf_debug {
 			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name, 'display_func' => function($row, $info, $params) use($name) { return (bool)strlen($row[$name]); }));
 		}
 		if (!$params['no_total']) {
-			$body .= ' | items: '.count($items). ($total_time ? ' | total time: '.common()->_format_time_value($total_time) : '');
+			$body .= ' | items: '.count($items). ($total_time ? ' | total time: '.round($total_time, 4) : '');
 		}
 		return $body. $table;
 	}
@@ -1134,45 +1158,27 @@ class yf_debug {
 	/**
 	*/
 	function _time_count_changes ($items = array(), $field = 'time') {
-/*
-		$_last_item = end($all_timings);
-		$time_all = $_last_item[0] - $ts;
-		$items = array();
-		foreach ((array)$all_timings as $i => $v) {
-			$time_offset = $v[0] - $ts;
-			$time_change = '';
-			$time_change_p = '';
-			if (isset($all_timings[$i + 1])) {
-				$time_change = $all_timings[$i + 1][0] - $v[0];
-			}
-			$time_warning = false;
-			if ($time_change > 0.001) {
-				$time_change_p = round(100 - (($time_all - $time_change) / $time_all * 100), 1);
-				if ($time_change_p >= 5) {
-					$time_warning = true;
-				}
-			}
-			$items[] = array(
-				'i'				=> $i,
-				'time_offset'	=> common()->_format_time_value($time_offset),
-				'time_change'	=> $time_change && $time_change > 0.0001 ? common()->_format_time_value($time_change) : '',
-				'time_change_p'	=> $time_change_p ? '<span class="'.($time_warning ? 'label label-warning' : '').'">'.$time_change_p.'%</span>' : '',
-				'class'			=> $v[1],
-				'method'		=> $v[2],
-				'trace'			=> $v[3],
-				'args'			=> $v[4] ? _prepare_html(var_export($v[4], 1)) : '',
-			);
-		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'args')));
-*/
+		$time_all = 0;
+		$time_max = 0;
 		foreach ((array)$items as $i => $v) {
-// TODO
-#			if () {
-#			}
+			$time = $v[$field];
+			$time_all += $time;
+			if ($time > $time_max) {
+				$time_max = $time;
+			}
 		}
-#		foreach ((array)$items as $i => $v) {
-#			$items[$i] = $v + array('time_change_p' => '10%');
-#		}
+		if (!$time_all) {
+			return $items;
+		}
+		$warn_limit = $time_max / $time_all * 100 / 2;
+		if ($warn_limit < 20) {
+			$warn_limit = 20;
+		}
+		foreach ((array)$items as $i => $v) {
+			$time = $v[$field];
+			$timep = round($time / $time_all * 100, 1);
+			$items[$i]['timep'] = $timep ? '<span class="'.($timep > $warn_limit ? 'label label-warning' : '').'">'.$timep.'%</span>' : '';
+		}
 		return $items;
 	}
 
