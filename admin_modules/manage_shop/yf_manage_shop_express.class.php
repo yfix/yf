@@ -92,25 +92,8 @@ class yf_manage_shop_express{
 		$ids = $replace = array();
 		$_category = _class("_shop_categories", "modules/shop/");
 		foreach((array)$products as $k => $v){
-			$alcohol = in_array($this->alcohol_category, $_category->recursive_get_parents_ids($v['cat_id']));
-			if($alcohol){
-				$replace_alcohol[$v['order_id']][$v['product_id']] = array(
-					"id"		=> $v['product_id'],
-					"name"		=> $v['name'],
-					"quantity"	=> $v['quantity'],
-					"price"		=> $v['price'],
-					"order_id"	=> $v['order_id'],
-					"unit"		=> $v['title'],
-
-				);
-				continue;
-			}
-			if(in_array($v['product_id'], $ids)){
-				$replace[$v['product_id']]['quantity'] +=1;
-				continue;
-			}
-			$ids[] = $v['product_id'];
-			$replace[$v['product_id']] = array(
+			$p_id = $v['product_id'];
+			$item = array(
 				"id"		=> $v['product_id'],
 				"name"		=> $v['name'],
 				"quantity"	=> $v['quantity'],
@@ -118,13 +101,20 @@ class yf_manage_shop_express{
 				"order_id"	=> $v['order_id'],
 				"unit"		=> $v['title'],
 			);
-		}
-		if($replace)
-			$out[] = $this->_prepare_express_pdf($replace);
-		if($replace_alcohol){
-			foreach($replace_alcohol as $order_id => $data){
-				$out[] = $this->_prepare_express_pdf($data);
+			$alcohol = in_array($this->alcohol_category, $_category->recursive_get_parents_ids($v['cat_id']));
+			if($alcohol){
+				$replace[$v['order_id']][$p_id] = $item;
+				continue;
 			}
+			if(in_array($p_id, $ids)){
+				$replace['product'][$p_id]['quantity'] +=$v['quantity'];
+				continue;
+			}
+			$ids[] = $p_id;
+			$replace['product'][$p_id] = $item;
+		}
+		foreach($replace as $k => $data){
+			$out[] = $this->_prepare_express_pdf($data);
 		}
 		$out = implode("<pagebreak />", $out);
 		if($send_mail){
