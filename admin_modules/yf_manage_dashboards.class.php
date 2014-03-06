@@ -348,6 +348,7 @@ class yf_manage_dashboards {
 				}
 			}
 		}
+		$ds_settings = $ds['data']['settings'];
 		$auto_items = array();
 		foreach((array)$this->_auto_info as $name => $info) {
 			$auto_items[$name] = tpl()->parse(__CLASS__.'/edit_item', array(
@@ -356,7 +357,7 @@ class yf_manage_dashboards {
 				'desc'				=> _prepare_html($info['desc']),
 				'has_config'		=> $info['configurable'] ? 1 : 0,
 				'css_class'			=> 'drag-clone-needed custom_widget_template_'.$name,
-				'options_container'	=> $this->_options_container($info, $auto_saved_config[$name]),
+				'options_container'	=> $this->_options_container($info, $auto_saved_config[$name], $ds),
 			));
 		}
 		$replace = array(
@@ -414,7 +415,7 @@ class yf_manage_dashboards {
 				'desc'				=> _prepare_html($info['desc']),
 				'has_config'		=> $info['configurable'] ? 1 : 0,
 				'css_class'			=> $saved_config['color'],
-				'options_container'	=> $this->_options_container($info, $saved_config),
+				'options_container'	=> $this->_options_container($info, $saved_config, $ds),
 			));
 		}
 		if (!$items) {
@@ -425,27 +426,32 @@ class yf_manage_dashboards {
 
 	/**
 	*/
-	function _options_container($info = array(), $saved = array()) {
-		$form = form(array(), array('class' => 'form-horizontal form-condensed'));
+	function _options_container($info = array(), $saved = array(), $ds = array()) {
+		$for_section = $ds['type'] == 'user' ? 'user' : 'admin';
+
+		$a = array();
 		if ($info['cloneable']) {
-			$form->text('name', array('class' => 'input-medium', 'value' => $saved['name']));
-			$form->text('desc', 'Description', array('class' => 'input-medium', 'value' => $saved['desc']));
+			$a[] = array('text', 'name', array('class' => 'input-medium'));
+			$a[] = array('text', 'desc', 'Description', array('class' => 'input-medium'));
 			if ($info['auto_type'] == 'php_item') {
-				$form->text('method_name','Custom class method', array('value' => $saved['method_name']));
+				$a[] = array('text', 'method_name', 'Custom class method');
 			} elseif ($info['auto_type'] == 'block_item') {
-				$form->select_box('block_name', main()->get_data('blocks_names'), array('selected' => $saved['block_name']));
+				$a[] = array('select_box', 'block_name', main()->get_data('blocks_names_'.$for_section));
 			} elseif ($info['auto_type'] == 'stpl_item') {
-				$form->text('stpl_name','Custom template', array('value' => $saved['stpl_name']));
+				$a[] = array('text', 'stpl_name', 'Custom template');
 			}
-			$form->check_box('hide_header', '1', array('selected' => $saved['hide_header'], 'no_label' => 1));
-			$form->check_box('hide_border', '1', array('selected' => $saved['hide_border'], 'no_label' => 1));
-			$form->textarea('code', array('value' => $saved['code']));
+#			$a[] = array('text', 'html_id', array('class' => 'input-medium'));
+#			$a[] = array('textarea', 'code');
 		}
+		$a[] = array('check_box', 'hide_header', '1', array('no_label' => 1));
+		$a[] = array('check_box', 'hide_border', '1', array('no_label' => 1));
+		$a[] = array('text', 'grid_class', array('class' => 'input-small'));
+		$a[] = array('text', 'offset_class', array('class' => 'input-small'));
 		foreach ((array)$info['configurable'] as $k => $v) {
-			$form->select_box($k, $v, array('selected' => $saved[$k]));
+			$a[] = array('select_box', $k, $v);
 		}
 		return tpl()->parse(__CLASS__.'/ds_options', array(
-			'form_items'	=> $form,
+			'form_items'	=> form($saved, array('class' => 'form-horizontal form-condensed'))->array_to_form($a),
 			'color'			=> $saved['color'],
 			'item_id'		=> _prepare_html($info['auto_id']),
 			'auto_type'		=> $info['cloneable'] ? $info['auto_type'] : '',
