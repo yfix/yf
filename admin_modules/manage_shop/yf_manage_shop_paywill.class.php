@@ -13,7 +13,7 @@ class yf_manage_shop_paywill{
 		"intercom",
 	);
 		
-	public $units = "1 шт.";
+	public $default_unit = "шт";
 
 	public $discount = 0;
 
@@ -51,14 +51,12 @@ class yf_manage_shop_paywill{
 			$order_items[$A['product_id']] = $A;
 		}
 		foreach ((array)$order_items as $_info) {
-			$price_one = _class("shop_basket", "modules/shop/")->_get_price_one($_info);
-			$price_item = _class("shop_basket", "modules/shop/")->_get_price_item($_info);
 			$out['products'][] = array(
 				"product_name"		=> _prepare_html($_info['name']),
-				"product_units"		=> $_info['title']? : $this->units,
-				"product_price_one"	=> module('shop')->_format_price($price_one),
+				"product_units"		=> $_info['title']? : $this->default_unit,
+				"product_price_one"	=> module('shop')->_format_price($_info['price']),
 				"product_quantity"	=> intval($_info['quantity']),
-				"product_item_price"=> module('shop')->_format_price($price_item),
+				"product_item_price"=> module('shop')->_format_price($_info['price'] * $_info['quantity']),
 			);
 		}
 		$total_sum = module('shop')->_format_price(floatval($order_info['total_sum']));
