@@ -44,7 +44,7 @@ class yf_login_form {
 			return '';
 		}
 		return form(array('form_action' => './?task=login'), array(
-				'class'		=> 'form-inline',
+				'class'		=> 'form-horizontal form-condensed form-no-labels',
 				'no_label'	=> 1,
 			))
 			->validate(array(
@@ -52,7 +52,7 @@ class yf_login_form {
 				$this->LOGIN_FIELD => 'trim|required',
 				'password' => 'trim|required',
 			))
-			->login($this->LOGIN_FIELD, "", array('class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'))
+			->login($this->LOGIN_FIELD, '', array('class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'))
 			->password(array('class' => 'input-medium'))
 			->check_box('remember_me')
 			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
@@ -100,11 +100,11 @@ class yf_login_form {
 				$this->LOGIN_FIELD => 'trim|required',
 				'password' => 'trim|required',
 			))
-			->login($this->LOGIN_FIELD, "", array('class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'))
+			->login($this->LOGIN_FIELD, '', array('class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'))
 			->password(array('class' => 'input-medium'))
-			->check_box('remember_me', "", array('no_label' => 1))
+			->check_box('remember_me', '', array('no_label' => 1))
 			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
-			->link('Retrieve lost password', "./?object=get_pswd", array('class' => 'btn btn-mini btn-xs'))
+			->link('Retrieve lost password', './?object=get_pswd', array('class' => 'btn btn-mini btn-xs'))
 			->container($this->oauth(array('only_icons' => 1)), array('wide' => 1))
 			->hidden('action', '', array('value' => 'login'))
 		;
