@@ -862,13 +862,19 @@ class yf_table2 {
 						$link = url($link);
 					}
 					if ($extra['hidden_toggle']) {
-						$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
+						$attrs .= ' data-hidden-toggle="'._prepare_html($extra['hidden_toggle']).'"';
 					}
 					if (!isset($extra['nowrap']) || $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
 					$a_class = $extra['a_class'];
-					$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs"'.($a_class ? ' '.trim($a_class) : ''). $attrs. '>'.(strlen($text) ? $text : t('link')).'</a>';
+					$link_trim_width = conf('link_trim_width') ?: 100;
+					if (isset($extra['link_trim_width'])) {
+						$link_trim_width = $extra['link_trim_width'];
+					}
+					$link_text = strlen($text) ? mb_strimwidth($text, 0, $link_trim_width, '...') : t('link');
+					$attrs .= ' title="'._prepare_html($text).'"';
+					$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs"'.($a_class ? ' '._prepare_html(trim($a_class)) : ''). $attrs. '>'._prepare_html($link_text).'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
