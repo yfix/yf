@@ -29,7 +29,7 @@ class yf_login_form {
 	/**
 	*/
 	function _admin_login_form() {
-		return form(array('form_action' => './?task=login'), array('no_label' => 1, 'class' => 'form-horizontal col-md-6'))
+		return form(array('form_action' => './?task=login'), array('no_label' => 1, 'class' => 'form-horizontal col-md-4 col-md-offset-3 form-no-label'))
 			->validate(array('login' => 'trim|required', 'password' => 'trim|required'))
 			->login(array('class' => 'input-medium'))
 			->password(array('class' => 'input-medium'))
