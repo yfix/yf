@@ -478,14 +478,6 @@ class yf_manage_shop {
 		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_import', 'admin_modules/'.$cl.'/')->$func($params);
 	}
 
-	function import_csv($params = array()) {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_import', 'admin_modules/'.$cl.'/')->$func($params);
-	}	
-
-	function import_xml($params = array()) {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_import', 'admin_modules/'.$cl.'/')->$func($params);
-	}
-
 	function import_products() {
 		return $this->import_xls();
 	}
