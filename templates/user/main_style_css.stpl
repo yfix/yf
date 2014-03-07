@@ -5,7 +5,7 @@
 .dropdown-menu li:hover > .sub-menu { visibility: visible; }
 .dropdown:hover .dropdown-menu { display: block; }
 .nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu { margin-top: 0; }
-.cssfw-bs3 .navbar-header { width:100%; padding-right:10px; }
+.cssfw-bs3 .navbar-header { width:99%; padding-right:1%; }
 
 .form-no-labels .controls { margin-left: 0; }
 
