@@ -274,14 +274,14 @@ class yf_manage_shop_clear_products {
 
 			$update_ids[] = $row['id'];
 		}
-
+		module('manage_shop')->_product_check_first_revision('product', $update_ids);
 		if (!empty($update_array)) {
 			$update_array = array_chunk($update_array, 300);
 			foreach ($update_array as $update_items) {
-				db()->update_batch('shop_products', $update_items, 'id');
+				db()->update_batch_safe('shop_products', $update_items, 'id');
 			}
-			
-			module('manage_shop')->_product_add_revision('correct_name', $update_ids);
+			$revision_ids = module('manage_shop')->_product_add_revision('correct_name', $update_ids);
+			module('manage_shop')->_add_group_revision('product', $revision_ids, $_GET['id']);
 		}
 
 		db()->commit();
