@@ -177,8 +177,8 @@ class yf_manage_shop_orders{
 					$price += $_attr_info['price'];
 				}
 			}
-			$price_one  = $_info[ 'price'    ];
-			$quantity   = $_info[ 'quantity' ];
+			$price_one  = (float)$_info[ 'price'    ];
+			$quantity   = (int)$_info[ 'quantity' ];
 			$price_item = $price_one * $quantity;
 			$products[$_info['product_id'].'_'.$_info['param_id']] = array(
 				'product_id'   => intval($_info['product_id']),
@@ -199,7 +199,7 @@ class yf_manage_shop_orders{
 		$_class_discount = _class( '_shop_discount', 'modules/shop/' );
 		$discount        = $order_info[ 'discount' ];
 		$discount_price  = $_class_discount->calc_discount_global( $price_total, $discount );
-		$total_price     = $order_info['total_sum'];
+		$total_price     = (float)$order_info['total_sum'];
 		$replace = my_array_merge($replace, _prepare_html($order_info));
 		$replace = my_array_merge($replace, array(
 			'form_action'         => './?object='.main()->_get('object').'&action='.$_GET['action'].'&id='.$_GET['id'],
@@ -208,7 +208,7 @@ class yf_manage_shop_orders{
 			'discount'            => $discount,
 			'discount_price_info' => module('manage_shop')->_format_price( $discount_price ),
 			'delivery_info'       => module('manage_shop')->_format_price( $order_info[ 'delivery_price' ] ),
-			'total_sum'           => module('manage_shop')->_format_price($order_info['total_sum']),
+			'total_sum'           => module('manage_shop')->_format_price( $total_price ),
 			'user_link'           => _profile_link($order_info['user_id']),
 			'user_name'           => _display_name(user($order_info['user_id'])),
 			'error_message'       => _e(),
