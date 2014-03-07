@@ -42,7 +42,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 '<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
 <fieldset>
 <div class="control-group form-group">
-<div class="controls col-lg-offset-4">
+<div class="controls">
 <input type="text" class="form-control">
 </div>
 </div>
