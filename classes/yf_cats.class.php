@@ -72,7 +72,10 @@ class yf_cats {
 			$raw_items_array = $this->_items_cache[$cat_id];
 		}
 		if ($recursive_sort && !empty($raw_items_array)) {
+#$ts = microtime(true);
 			$raw_items_array = $this->_recursive_sort_items($raw_items_array);
+#			$raw_items_array = $this->_recursive_sort_items_new($raw_items_array);
+#echo round(microtime(true) - $ts, 4);
 		}
 		return $raw_items_array ? $raw_items_array: false;
 	}
@@ -179,6 +182,60 @@ class yf_cats {
 	function _cats_box($cat_name = '', $selected = '', $name_in_form = 'cat_id', $with_all = 1) {
 		$items = $this->_get_items_for_box($cat_name, $with_all);
 		return common()->select_box($name_in_form, $items, $selected, false, 2, '', false);
+	}
+
+	/**
+	* Get and sort items ordered array (recursively)
+	*/
+	function _recursive_sort_items_new($cat_items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
+		$items_ids		= array();
+		$items_array	= array();
+		if (!empty($cat_items) && is_string($cat_items)) {
+			$cat_items = $this->_get_items_array($cat_items);
+		}
+		if (empty($cat_items)) {
+			$cat_items = $this->_get_items_array($this->_default_cats_block);
+		}
+		$children = array();
+		$cur_group = MAIN_TYPE_USER ? $_SESSION['user_group'] : $_SESSION['admin_group'];
+		foreach ((array)$cat_items as $id => $info) {
+			$parent_id = $info['parent_id'];
+			if ($skip_item_id == $id) {
+				continue;
+			}
+			$user_groups = array();
+			if (!empty($info['user_groups'])) {
+				foreach (explode(',',$info['user_groups']) as $v) {
+					if (!empty($v)) {
+						$user_groups[$v] = $v;
+					}
+				}
+				if (!empty($user_groups) && !isset($user_groups[$cur_group])) {
+					continue;
+				}
+			}
+			$levels[$id] = null;
+			$children[$parent_id][$id] = $id;
+		}
+		/*$new_levels = */$this->_count_levels(0, $children, $levels);
+#print_r($levels);
+		return $cat_items;
+	}
+
+	/**
+	*/
+	function _count_levels($start_id = 0, &$children, &$levels, $level = 0) {
+		foreach ((array)$children[$start_id] as $parent_id => $ids) {
+#			$this->_count_levels($parent_id, &$children, &$levels, $level + 1);
+#			foreach ((array)$ids as $id => $_level) {
+#				$levels[$id] = $level;
+#				if (isset($children[$id])) {
+#					$this->_count_levels($ids, $children, $levels, $level + 1);
+#				}
+#			}
+#echo $parent_id;
+// TODO
+		}
 	}
 
 	/**
