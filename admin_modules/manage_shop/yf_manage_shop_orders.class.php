@@ -137,6 +137,7 @@ class yf_manage_shop_orders{
 						$recount_price = true;
 					}
 					if( $f == 'discount' ) {
+						$order_info['discount'] = $sql['discount'];
 						$recount_price = true;
 					}
 				}
@@ -165,6 +166,7 @@ class yf_manage_shop_orders{
 			$products_infos = db()->query_fetch_all('SELECT * FROM '.db('shop_products').' WHERE id IN('.implode(',', $products_ids).')');
 			$products_atts	= module('manage_shop')->_get_products_attributes($products_ids);
 		}
+		$price_total = 0;
 		foreach ((array)$order_items as $_info) {
 			$_product = $products_infos[$_info['product_id']];
 			$dynamic_atts = array();
@@ -175,46 +177,58 @@ class yf_manage_shop_orders{
 					$price += $_attr_info['price'];
 				}
 			}
+			$price_one  = $_info[ 'price'    ];
+			$quantity   = $_info[ 'quantity' ];
+			$price_item = $price_one * $quantity;
 			$products[$_info['product_id'].'_'.$_info['param_id']] = array(
-				'product_id'	=> intval($_info['product_id']),
-				'param_id'	=> intval($_info['param_id']),
-				'param_name'	=> _class( '_shop_product_params', 'modules/shop/' )->_get_name_by_option_id($_info['param_id']),
-				'name'			=> _prepare_html($_product['name']),
-				'price_unit'	=> $_info['price'],
-				'price'			=> $_info['quantity']*$_info['price'],
-				'currency'		=> _prepare_html(module('manage_shop')->CURRENCY),
-				'quantity'		=> intval($_info['quantity']),
-				'details_link'	=> process_url('./?object='.main()->_get('object').'&action=view&id='.$_product['id']),
-				'dynamic_atts'	=> !empty($dynamic_atts) ? implode('<br />'.PHP_EOL, $dynamic_atts) : '',
-				'status'		=> module('manage_shop')->_box('status_item', $_info['status']),
-				'delete'		=> '', // will be filled later on table2()
+				'product_id'   => intval($_info['product_id']),
+				'param_id'     => intval($_info['param_id']),
+				'param_name'   => _class( '_shop_product_params', 'modules/shop/' )->_get_name_by_option_id($_info['param_id']),
+				'name'         => _prepare_html($_product['name']),
+				'price_unit'   => $price_one,
+				'price'        => $price_item,
+				'currency'     => _prepare_html(module('manage_shop')->CURRENCY),
+				'quantity'     => intval($_info['quantity']),
+				'details_link' => process_url('./?object='.main()->_get('object').'&action=view&id='.$_product['id']),
+				'dynamic_atts' => !empty($dynamic_atts) ? implode('<br />'.PHP_EOL, $dynamic_atts) : '',
+				'status'       => module('manage_shop')->_box('status_item', $_info['status']),
+				'delete'       => '', // will be filled later on table2()
 			);
-			$total_price += $_info['price'] * $quantity;
+			$price_total += $price_item;
 		}
-		$total_price = $order_info['total_sum'];
+		$_class_discount = _class( '_shop_discount', 'modules/shop/' );
+		$discount        = $order_info[ 'discount' ];
+		$discount_price  = $_class_discount->calc_discount_global( $price_total, $discount );
+		$total_price     = $order_info['total_sum'];
 		$replace = my_array_merge($replace, _prepare_html($order_info));
 		$replace = my_array_merge($replace, array(
-			'form_action'	=> './?object='.main()->_get('object').'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'order_id'		=> $order_info['id'],
-			'discount'		=> $order_info['discount'],
-			'total_sum'		=> module('manage_shop')->_format_price($order_info['total_sum']),
-			'user_link'		=> _profile_link($order_info['user_id']),
-			'user_name'		=> _display_name(user($order_info['user_id'])),
-			'error_message'	=> _e(),
-			'products'		=> (array)$products,
-			'total_price'	=> module('manage_shop')->_format_price($total_price),
-			'ship_type'		=> module('manage_shop')->_ship_types[$order_info['ship_type']],
-			'pay_type'		=> module('manage_shop')->_pay_types[$order_info['pay_type']],
-			'date'			=> $order_info['date'],
-			'status_box'	=> module('manage_shop')->_box('status', $order_info['status']),
-			'back_url'		=> './?object='.main()->_get('object').'&action=show_orders',
-			'print_url'		=> './?object='.main()->_get('object').'&action=show_print&id='.$order_info['id'],
-			'payment'		=> common()->get_static_conf('payment_methods', $order_info['payment']),
+			'form_action'         => './?object='.main()->_get('object').'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'order_id'            => $order_info['id'],
+			'price_total_info'    => module('manage_shop')->_format_price( $price_total ),
+			'discount'            => $discount,
+			'discount_price_info' => module('manage_shop')->_format_price( $discount_price ),
+			'delivery_info'       => module('manage_shop')->_format_price( $order_info[ 'delivery_price' ] ),
+			'total_sum'           => module('manage_shop')->_format_price($order_info['total_sum']),
+			'user_link'           => _profile_link($order_info['user_id']),
+			'user_name'           => _display_name(user($order_info['user_id'])),
+			'error_message'       => _e(),
+			'products'            => (array)$products,
+			'total_price'         => module('manage_shop')->_format_price($total_price),
+			'ship_type'           => module('manage_shop')->_ship_types[$order_info['ship_type']],
+			'pay_type'            => module('manage_shop')->_pay_types[$order_info['pay_type']],
+			'date'                => $order_info['date'],
+			'status_box'          => module('manage_shop')->_box('status', $order_info['status']),
+			'back_url'            => './?object='.main()->_get('object').'&action=show_orders',
+			'print_url'           => './?object='.main()->_get('object').'&action=show_print&id='.$order_info['id'],
+			'payment'             => common()->get_static_conf('payment_methods', $order_info['payment']),
 		));
 
 		$out = form2($replace, array('dd_mode' => 1, 'big_labels' => true))
 			->info('id')
+			->info('price_total_info', array( 'desc' => 'Сумма' ) )
 			->text('discount', array( 'desc' => 'Скидка, %' ) )
+			->info('discount_price_info', array( 'desc' => 'Скидка' ) )
+			->info('delivery_info', array( 'desc' => 'Доставка' ) )
 			->info('total_sum', '', array('no_escape' => 1))
 			->info_date('date', array('format' => 'full'))
 			->info('name')
@@ -426,7 +440,9 @@ class yf_manage_shop_orders{
 		$price_total = 0;
 		$Q = db()->query( 'SELECT * FROM '.db('shop_order_items')." WHERE order_id=$order_id" );
 		while ($_info = db()->fetch_assoc($Q)) {
-			$price_total += $_info['quantity']*$_info['price'];
+			$price        = (float)$_info['price'];
+			$quantity     = (float)$_info['quantity'];
+			$price_total += $price * $quantity;
 		}
 
 		// discount
