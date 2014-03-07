@@ -1336,9 +1336,6 @@ class yf_main {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		if (!conf('data_handlers')) {
-			$this->_load_data_handlers();
-		}
 		$data_to_return = null;
 		if (empty($handler_name)) {
 			return $data_to_return;
@@ -1353,6 +1350,9 @@ class yf_main {
 			if (strpos($handler_name, 'locale:') === 0) {
 				$handler_name = substr($handler_name, 7);
 				$locale_handler_name = $handler_name.'___'.conf('language');
+			}
+			if (!conf('data_handlers')) {
+				$this->_load_data_handlers();
 			}
 			$handler_php_source = conf('data_handlers::'.$handler_name);
 			if (is_callable($handler_php_source)) {
