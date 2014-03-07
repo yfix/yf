@@ -5,6 +5,9 @@
 .dropdown-menu li:hover > .sub-menu { visibility: visible; }
 .dropdown:hover .dropdown-menu { display: block; }
 .nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu { margin-top: 0; }
+.navbar-header { width:100%; padding-right:10px; }
+
+.form-no-labels .controls { margin-left: 0; }
 
 td input[type=text], td textarea { margin-bottom: 0; }
 .modal.fade.in { top: 30px; }
@@ -36,6 +39,8 @@ label.radio-horizontal input[type=radio]{ float: none; margin-left:inherit; marg
 fieldset.well { padding-bottom: 0; }
 fieldset.well legend { margin-bottom:0; padding: 0 0.5em; width: auto; line-height: 1.5em; background: inherit; }
 legend+.control-group { margin-top: 0; }
+
+.table a.btn { text-decoration: none; }
 
 .bs-theme-slate { /* override styles per bs theme here */ }
 </style>
