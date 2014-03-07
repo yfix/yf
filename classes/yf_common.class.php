@@ -1121,9 +1121,9 @@ class yf_common {
 	        array('миллион' ,'миллиона','миллионов' ,0),
     	    array('миллиард','милиарда','миллиардов',0),
     	);
-		$d1 = (int)$num; $d2 = (int)( $num*100 - $d1*100 );
-		$rub = sprintf( '%015d', $d1 );
-		$kop = sprintf( '%02d', $d2 );
+		$number_format = localeconv();
+		$decimal_point = $number_format[ 'decimal_point' ];
+		list( $rub, $kop ) = explode( $decimal_point, sprintf( '%015.2f', $num ) );
 	    $out = array();
 	    if (intval($rub)>0) {
     	    foreach(str_split($rub,3) as $uk=>$v) { // by 3 symbols
