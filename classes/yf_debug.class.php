@@ -87,7 +87,7 @@ class yf_debug {
 	function go () {
 		$ts = microtime(true);
 		// Do hide console if needed
-		if (isset($_SESSION['hide_debug_console']) && $_SESSION['hide_debug_console']) {
+		if ($_SESSION['hide_debug_console'] || $_GET['hide_debug_console']) {
 			return '';
 		}
 		$debug_timings = array();
