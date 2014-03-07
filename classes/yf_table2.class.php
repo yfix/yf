@@ -889,10 +889,6 @@ class yf_table2 {
 			$extra = (array)$extra + $link;
 			$link = '';
 		}
-		if (is_array($data)) {
-			$extra = (array)$extra + $data;
-			$data = '';
-		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -912,10 +908,6 @@ class yf_table2 {
 		if (is_array($link)) {
 			$extra = (array)$extra + $link;
 			$link = '';
-		}
-		if (is_array($data)) {
-			$extra = (array)$extra + $data;
-			$data = '';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -948,10 +940,6 @@ class yf_table2 {
 		if (is_array($link)) {
 			$extra = (array)$extra + $link;
 			$link = '';
-		}
-		if (is_array($data)) {
-			$extra = (array)$extra + $data;
-			$data = '';
 		}
 		if (!is_array($extra)) {
 			$extra = array();
