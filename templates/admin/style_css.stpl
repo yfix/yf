@@ -13,6 +13,8 @@
 .nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu { margin-top: 0; }
 .navbar-header { width:100%; padding-right:10px; }
 
+.form-no-labels .controls { margin-left: 0; }
+
 td input[type=text], td textarea { margin-bottom: 0; }
 .modal { width: auto; }
 .modal.fade.in { top: 30px; }
@@ -46,12 +48,13 @@ legend+.control-group { margin-top: 0; }
 .form-inline .radio:first-child { padding-left: 5px; }
 .form-inline .radio input[type=radio] { float: none; }
 
+.table a.btn { text-decoration: none; }
+
 /* override styles per bs theme here */
 .bs-theme-slate textarea { color: #52575c; }
 </style>
 {if("conf.css_framework" eq "bs3")}
 <style type="text/css">
 /*input, textarea, select { max-width: 300px; }*/
-.table a.btn { text-decoration: none; }
 </style>
 {/if}
