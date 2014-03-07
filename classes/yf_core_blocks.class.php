@@ -9,6 +9,9 @@
 */
 class yf_core_blocks {
 
+	public $TASK_NOT_FOUND_404_HEADER = false;
+	public $TASK_DENIED_403_HEADER = false;
+
 	/**
 	* Catch missing method call
 	*/
@@ -154,6 +157,9 @@ class yf_core_blocks {
 	*/
 	function _action_on_block_denied ($block_name = '') {
 		if ($block_name == 'center_area') {
+			if ($this->TASK_DENIED_403_HEADER) {
+				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+			}
 			if (MAIN_TYPE_USER && !main()->USER_ID) {
 				$redir_params = array(
 					'%%object%%'		=> $_GET['object'],
@@ -163,7 +169,7 @@ class yf_core_blocks {
 				$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), main()->REDIR_URL_DENIED);
 				if (!empty($redir_url)) {
 					if ($_GET['object'] == 'login_form') {
-						return 'Access to login form denied on center block (graphics->_action_on_block_denied)';
+						return 'Access to login form denied on center block ('.__CLASS__.'.'.__FUNCTION__.')';
 					} else {
 						return js_redirect($redir_url);
 					}
@@ -354,7 +360,9 @@ class yf_core_blocks {
 
 		_class('graphics')->_route_request();
 		// Check if called class method is 'private' - then do not use it
-		if (substr($_GET['action'], 0, 1) == '_' || $_GET['object'] == 'main') {
+		// Also we protect here core classes that can be instantinated before this method and can be allowed by mistake
+		// Use other module names, think about this list as "reserved" words
+		if (substr($_GET['action'], 0, 1) == '_' || in_array($_GET['object'], array('main','common','db','graphics','cache','form2','table2','tpl'))) {
 			$ACCESS_DENIED = true;
 		}
 		if (!$ACCESS_DENIED) {
@@ -369,15 +377,13 @@ class yf_core_blocks {
 			if (method_exists($obj, main()->MODULE_CUSTOM_HANDLER)) {
 				$custom_handler_exists = true;
 			}
-			// Do call class method
 			if (!$NOT_FOUND || $custom_handler_exists) {
 				if ($custom_handler_exists) {
 					$NOT_FOUND = false;
 					$body = $obj->{main()->MODULE_CUSTOM_HANDLER}($_GET['action']);
 				} else {
-					// Automatically call output cache trigger
 					$is_banned = false;
-					if (MAIN_TYPE_USER && isset(main()->AUTO_BAN_CHECKING) && main()->AUTO_BAN_CHECKING) {
+					if (MAIN_TYPE_USER && main()->AUTO_BAN_CHECKING) {
 						$is_banned = _class('ban_status')->_auto_check(array());
 					}
 					if ($is_banned) {
@@ -388,52 +394,50 @@ class yf_core_blocks {
 				}
 			}
 		}
-		// Process errors if exiss ones
-		$redir_params = array(
-			'%%object%%'		=> $_GET['object'],
-			'%%action%%'		=> $_GET['action'],
-			'%%add_get_vars%%'	=> str_replace('&',';',_add_get(array('object','action'))),
-		);
+		$redirect_func = function($url) {
+			$redir_params = array(
+				'%%object%%'		=> $_GET['object'],
+				'%%action%%'		=> $_GET['action'],
+				'%%add_get_vars%%'	=> str_replace('&',';',_add_get(array('object','action'))),
+			);
+			$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), $url);
+			if (!empty($redir_url)) {
+				redirect($redir_url, 1, tpl()->parse('system/error_not_found'));
+			}
+		};
 		if ($NOT_FOUND) {
+			if ($this->TASK_NOT_FOUND_404_HEADER) {
+				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 404 Not Found');
+			}
 			if (_class('graphics')->NOT_FOUND_RAISE_WARNING) {
-				trigger_error('MAIN: Task not found: '.$_GET['object'].'->'.$_GET['action'], E_USER_WARNING);
+				trigger_error(__CLASS__.': Task not found: '.$_GET['object'].'.'.$_GET['action'], E_USER_WARNING);
 			}
 			if (MAIN_TYPE_USER) {
-				$url_not_found = main()->REDIR_URL_NOT_FOUND;
-				if (is_array($url_not_found) && !empty($url_not_found)) {
-					$_GET['object'] = $url_not_found['object'];
-					$_GET['action'] = $url_not_found['action'];
-					$_GET['id']		= $url_not_found['id'];
-					$_GET['page']	= $url_not_found['page'];
-
-					if (!empty($url_not_found['object'])) {
-						$OBJ = _class($url_not_found['object'], $url_not_found['path']);
-						$action = $url_not_found['action'] ? $url_not_found['action'] : 'show';
-						if (method_exists($OBJ, $action)) {
-							$body = $OBJ->$action();
-						} else {
-							main()->NO_GRAPHICS = true;
-							echo '404: not found by main';
-						}
-					} elseif (isset($url_not_found['stpl'])) {
+				$u = main()->REDIR_URL_NOT_FOUND;
+				if (is_array($u) && !empty($u)) {
+					// Prefill GET keys from redirect url
+					foreach (array('object','action','id','page') as $k) {
+						$_GET[$k] = $u[$k];
+					}
+					if (!empty($u['object'])) {
+						$action = $u['action'] ?: 'show';
+						$body = _class_safe($u['object'], $u['path'])->$action();
+					} elseif (isset($u['stpl'])) {
 						main()->NO_GRAPHICS = true;
-						echo tpl()->parse($url_not_found['stpl']);
+						echo tpl()->parse($u['stpl']);
 					}
 				} else {
-					$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), $url_not_found);
-					if (!empty($redir_url)) {
-						redirect($redir_url, 1, tpl()->parse('system/error_not_found'));
-					}
+					$redirect_func($u);
 				}
 				$GLOBALS['task_not_found'] = true;
 			}
 		} elseif ($CHECK_IF_ALLOWED && $ACCESS_DENIED) {
-			trigger_error('MAIN: Access denied: '.$_GET['object'].'->'.$_GET['action'], E_USER_WARNING);
+			if ($this->TASK_DENIED_403_HEADER) {
+				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+			}
+			trigger_error(__CLASS__.': Access denied: '.$_GET['object'].'.'.$_GET['action'], E_USER_WARNING);
 			if (MAIN_TYPE_USER) {
-				$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), main()->REDIR_URL_DENIED);
-				if (!empty($redir_url)) {
-					redirect($redir_url, 1, tpl()->parse('system/error_not_found'));
-				}
+				$redirect_func(main()->REDIR_URL_DENIED);
 				$GLOBALS['task_denied'] = true;
 			}
 		}
