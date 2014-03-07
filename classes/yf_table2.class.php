@@ -822,7 +822,7 @@ class yf_table2 {
 			'extra'	=> $extra,
 			'desc'	=> $desc,
 			'link'	=> $extra['link'],
-			'data'	=> t($extra['data']),
+			'data'	=> $extra['translate'] ? t($extra['data']) : $extra['data'],
 			'func'	=> function($field, $params, $row, $instance_params, $_this) {
 				$name = $params['name'];
 				$extra = $params['extra'];
