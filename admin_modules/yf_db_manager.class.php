@@ -48,7 +48,7 @@ class yf_db_manager {
 	*/
 	function show () {
 		$data = $this->_get_tables_infos();
-		return table($data, array('id' => 'name', 'pager_records_on_page' => 10000))
+		return table($data, array('id' => 'name', 'condensed' => 1, 'pager_records_on_page' => 10000))
 // TODO: group actions: truncate, check, optimize, repair, drop(?)
 			->check_box('name', array('width' => '1%'))
 			->link('name', './?object='.$_GET['object'].'&action=table_show&id=%d')

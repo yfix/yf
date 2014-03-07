@@ -19,10 +19,17 @@ class yf_html5_framework_bs2 {
 		if (isset($extra['success'][$extra['name']])) { $css_group = 'success'; }
 		if (isset($extra['warnings'][$extra['name']])) { $css_group = 'warning'; }
 		if (isset($extra['infos'][$extra['name']])) { $css_group = 'info'; }
+		$no_label = false;
+		if (isset($obj->_params['no_label'])) {
+			$no_label = $obj->_params['no_label'];
+		}
+		if (isset($extra['no_label'])) {
+			$no_label = $extra['no_label'];
+		}
 		$row_start = 
 			'<div class="control-group form-group'. ($css_group ? ' '.$css_group : '').'">'.PHP_EOL
-				.($extra['desc'] && !$extra['no_label'] ? '<label class="control-label col-lg-4" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
-				.(!$extra['wide'] ? '<div class="controls'.($extra['desc'] && !$extra['no_label'] ? ' col-lg-8' : ' col-lg-offset-4').'">'.PHP_EOL : '');
+				.($extra['desc'] && !$no_label ? '<label class="control-label col-lg-4" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
+				.(!$extra['wide'] ? '<div class="controls'.($extra['desc'] && !$no_label ? ' col-lg-8' : ''/*' col-lg-offset-4'*/).'">'.PHP_EOL : '');
 
 		$row_end =
 				(!$extra['wide'] ? '</div>'.PHP_EOL : '')

@@ -9,7 +9,7 @@
 
 {execute(graphics,show_metatags)}
 </head>
-<body class="bs-theme-{execute(common,bs_current_theme)}">
+<body class="bs-theme-{execute(common,bs_current_theme)} cssfw-{conf(css_framework)}">
 {if("conf.css_framework" eq "bs3")}
 	<div class="navbar navbar-default">
 {else}
