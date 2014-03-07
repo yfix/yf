@@ -805,13 +805,13 @@ class yf_table2 {
 	/**
 	*/
 	function text($name, $desc = '', $extra = array()) {
-		if (!is_array($extra)) {
-			$extra = array();
-		}
 		// Shortcut: use second param as $extra
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
 		}
 		if (!$desc) {
 			$desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
@@ -885,8 +885,23 @@ class yf_table2 {
 	/**
 	*/
 	function link($name, $link = '', $data = '', $extra = array()) {
-		$extra['link'] = $link;
-		$extra['data'] = $data;
+		if (is_array($link)) {
+			$extra = (array)$extra + $link;
+			$link = '';
+		}
+		if (is_array($data)) {
+			$extra = (array)$extra + $data;
+			$data = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		if ($link) {
+			$extra['link'] = $link;
+		}
+		if ($data) {
+			$extra['data'] = $data;
+		}
 		return $this->text($name, '', $extra);
 	}
 
@@ -895,16 +910,30 @@ class yf_table2 {
 	*/
 	function user($name = '', $link = '', $data = '', $extra = array()) {
 		if (is_array($link)) {
-			$extra += $link;
+			$extra = (array)$extra + $link;
 			$link = '';
+		}
+		if (is_array($data)) {
+			$extra = (array)$extra + $data;
+			$data = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
 		}
 		if (!$name) {
 			$name = 'user_id';
 		}
+		if ($link) {
+			$extra['link'] = $link;
+		}
+		if (!$extra['link']) {
+			$extra['link'] = './?object=members&action=edit&id=%d';
+		}
+		if (!$extra['link_field_name']) {
+			$extra['link_field_name'] = $name;
+		}
+		$extra['data'] = $data ?: $extra['data'];
 		$_name = 'user';
-		$extra['link'] = $link ?: './?object=members&action=edit&id=%d';
-		$extra['link_field_name'] = $name;
-		$extra['data'] = $data;
 		$this->_params['custom_fields'][$_name] = array(
 			'SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), ""), IF(STRCMP(email,""), CONCAT("; ",email), IF(STRCMP(phone,""), CONCAT("; ",phone), ""))) AS user_name 
 			FROM '.db('user').' WHERE id IN(%ids)'
@@ -917,16 +946,30 @@ class yf_table2 {
 	*/
 	function admin($name = '', $link = '', $data = '', $extra = array()) {
 		if (is_array($link)) {
-			$extra += $link;
+			$extra = (array)$extra + $link;
 			$link = '';
+		}
+		if (is_array($data)) {
+			$extra = (array)$extra + $data;
+			$data = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
 		}
 		if (!$name) {
 			$name = 'user_id';
 		}
+		if ($link) {
+			$extra['link'] = $link;
+		}
+		if (!$extra['link']) {
+			$extra['link'] = './?object=admin&action=edit&id=%d';
+		}
+		if (!$extra['link_field_name']) {
+			$extra['link_field_name'] = $name;
+		}
+		$extra['data'] = $data ?: $extra['data'];
 		$_name = 'user';
-		$extra['link'] = $link ?: './?object=admin&action=edit&id=%d';
-		$extra['link_field_name'] = $name;
-		$extra['data'] = $data;
 		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), "")) AS user_name FROM '.db('admin').' WHERE id IN(%ids)', $name);
 		return $this->text($_name, '', $extra);
 	}
@@ -934,8 +977,8 @@ class yf_table2 {
 	/**
 	*/
 	function date($name, $desc = '', $extra = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$desc) {
@@ -958,9 +1001,8 @@ class yf_table2 {
 	/**
 	*/
 	function stars($name, $desc = '', $extra = array()) {
-		// Shortcut: use second param as $extra
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$desc) {
