@@ -54,30 +54,76 @@ class yf_cats {
 				}
 			}
 			$cat_items = $all ? 'category_items_all': 'category_items';
-			foreach ((array)main()->get_data($cat_items) as $A) {
-				if ($A['cat_id'] != $cat_id) {
+			foreach ((array)main()->get_data($cat_items) as $a) {
+				if ($a['cat_id'] != $cat_id) {
 					continue;
 				}
-				$raw_items_array[$A['id']] = $A;
 				// Try to parse 'dynamic' attributes for the item
 				if ($this->USE_DYNAMIC_ATTS && $custom_fields) {
-					$custom_attrs = (array)$this->_convert_atts_string_into_array($A['other_info']);
+					if ($a['other_info']) {
+						$custom_attrs = (array)$this->_convert_atts_string_into_array($a['other_info']);
+					}
 					foreach ((array)$custom_fields as $f) {
-						$raw_items_array[$A['id']][$f] = strval($custom_attrs[$f]);
+						$a[$f] = isset($custom_attrs[$f]) ? (string)$custom_attrs[$f]: '';
 					}
 				}
+				$raw_items[$a['id']] = $a;
 			}
-			$this->_items_cache[$cat_id] = $raw_items_array;
+			$this->_items_cache[$cat_id] = $raw_items;
 		} else {
-			$raw_items_array = $this->_items_cache[$cat_id];
+			$raw_items = $this->_items_cache[$cat_id];
 		}
-		if ($recursive_sort && !empty($raw_items_array)) {
-#$ts = microtime(true);
-			$raw_items_array = $this->_recursive_sort_items($raw_items_array);
-#			$raw_items_array = $this->_recursive_sort_items_new($raw_items_array);
-#echo round(microtime(true) - $ts, 4);
+		if ($recursive_sort && !empty($raw_items)) {
+			$raw_items = $this->_recursive_sort_items($raw_items);
 		}
-		return $raw_items_array ? $raw_items_array: false;
+		return $raw_items ? $raw_items : false;
+	}
+
+	/**
+	* Get and sort items ordered array (recursively)
+	*/
+	function _recursive_sort_items($cat_items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
+		$children = array();
+		$cur_group = MAIN_TYPE_USER ? $_SESSION['user_group'] : $_SESSION['admin_group'];
+		foreach ((array)$cat_items as $id => $info) {
+			$parent_id = $info['parent_id'];
+			if ($skip_item_id == $id) {
+				continue;
+			}
+			$user_groups = array();
+			if (!empty($info['user_groups'])) {
+				foreach (explode(',',$info['user_groups']) as $v) {
+					if (!empty($v)) {
+						$user_groups[$v] = $v;
+					}
+				}
+				if (!empty($user_groups) && !isset($user_groups[$cur_group])) {
+					continue;
+				}
+			}
+			$children[$parent_id][$id] = $id;
+		}
+		$ids = $this->_count_levels(0, $children);
+		$new_items = array();
+		foreach ((array)$ids as $id => $level) {
+			$new_items[$id] = $cat_items[$id] + array('level' => $level);
+		}		
+		return $new_items;
+	}
+
+	/**
+	*/
+	function _count_levels($start_id = 0, &$children, $level = 0) {
+		$ids = array();
+		foreach ((array)$children[$start_id] as $id => $_tmp) {
+			$ids[$id] = $level;
+			if (isset($children[$id])) {
+				foreach ((array)$this->_count_levels($id, $children, $level + 1) as $_id => $_level) {
+					$ids[$_id] = $_level;
+				}
+			}
+		}
+		return $ids;
 	}
 
 	/**
@@ -182,104 +228,6 @@ class yf_cats {
 	function _cats_box($cat_name = '', $selected = '', $name_in_form = 'cat_id', $with_all = 1) {
 		$items = $this->_get_items_for_box($cat_name, $with_all);
 		return common()->select_box($name_in_form, $items, $selected, false, 2, '', false);
-	}
-
-	/**
-	* Get and sort items ordered array (recursively)
-	*/
-	function _recursive_sort_items_new($cat_items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
-		$items_ids		= array();
-		$items_array	= array();
-		if (!empty($cat_items) && is_string($cat_items)) {
-			$cat_items = $this->_get_items_array($cat_items);
-		}
-		if (empty($cat_items)) {
-			$cat_items = $this->_get_items_array($this->_default_cats_block);
-		}
-		$children = array();
-		$cur_group = MAIN_TYPE_USER ? $_SESSION['user_group'] : $_SESSION['admin_group'];
-		foreach ((array)$cat_items as $id => $info) {
-			$parent_id = $info['parent_id'];
-			if ($skip_item_id == $id) {
-				continue;
-			}
-			$user_groups = array();
-			if (!empty($info['user_groups'])) {
-				foreach (explode(',',$info['user_groups']) as $v) {
-					if (!empty($v)) {
-						$user_groups[$v] = $v;
-					}
-				}
-				if (!empty($user_groups) && !isset($user_groups[$cur_group])) {
-					continue;
-				}
-			}
-			$levels[$id] = null;
-			$children[$parent_id][$id] = $id;
-		}
-		/*$new_levels = */$this->_count_levels(0, $children, $levels);
-#print_r($levels);
-		return $cat_items;
-	}
-
-	/**
-	*/
-	function _count_levels($start_id = 0, &$children, &$levels, $level = 0) {
-		foreach ((array)$children[$start_id] as $parent_id => $ids) {
-#			$this->_count_levels($parent_id, &$children, &$levels, $level + 1);
-#			foreach ((array)$ids as $id => $_level) {
-#				$levels[$id] = $level;
-#				if (isset($children[$id])) {
-#					$this->_count_levels($ids, $children, $levels, $level + 1);
-#				}
-#			}
-#echo $parent_id;
-// TODO
-		}
-	}
-
-	/**
-	* Get and sort items ordered array (recursively)
-	*/
-	function _recursive_sort_items($cat_items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
-		$items_ids		= array();
-		$items_array	= array();
-		if (!empty($cat_items) && is_string($cat_items)) {
-			$cat_items = $this->_get_items_array($cat_items);
-		}
-		if (empty($cat_items)) {
-			$cat_items = $this->_get_items_array($this->_default_cats_block);
-		}
-		foreach ((array)$cat_items as $item_info) {
-			if ($item_info['parent_id'] != $parent_id) {
-				continue;
-			}
-			if ($skip_item_id == $item_info['id']) {
-				continue;
-			}
-			$user_groups = array();
-			if (!empty($item_info['user_groups'])) {
-				foreach (explode(',',$item_info['user_groups']) as $v) {
-					if (empty($v)) {
-						continue;
-					}
-					$user_groups[$v] = $v;
-				}
-				if (!empty($user_groups) && !isset($user_groups[MAIN_TYPE_USER ? $_SESSION['user_group'] : $_SESSION['admin_group']])) {
-					continue;
-				}
-			}
-			$items_array[$item_info['id']] = $item_info;
-			$items_array[$item_info['id']]['level'] = $level;
-			$tmp_array = $this->_recursive_sort_items($cat_items, $skip_item_id, $item_info['id'], $level + 1);
-			foreach ((array)$tmp_array as $sub_item_info) {
-				if ($sub_item_info['id'] == $item_info['id']) {
-					continue;
-				}
-				$items_array[$sub_item_info['id']] = $sub_item_info;
-			}
-		}
-		return $items_array;
 	}
 
 	/**
