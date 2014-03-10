@@ -25,10 +25,11 @@ class yf_manage_shop_hook_side_column {
 		if (!$product_info) {
 			return false;
 		}
-		$sql = 'SELECT * FROM '.db('shop_product_revisions').' WHERE item_id='.intval($product_id).' ORDER BY id DESC';
+		$sql = 'SELECT id, user_id, add_date, action, item_id FROM '.db('shop_product_revisions').' WHERE item_id='.intval($product_id).' ORDER BY id DESC';
 		return table($sql, array(
 				'caption' => t('Product revisions'),
 				'no_records_html' => '',
+				'pager_sql_callback' => function($sql) { return preg_replace('/\s+ORDER BY.+$/ims', '', preg_replace('/^SELECT.+?FROM/ms', 'SELECT COUNT(*) FROM', ltrim($sql))); }
 			))
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
@@ -68,12 +69,13 @@ class yf_manage_shop_hook_side_column {
 		if (!$product_info) {
 			return false;
 		}
-		$sql = 'SELECT * FROM '.db('shop_product_images_revisions').' WHERE product_id='.intval($product_id).' ORDER BY id DESC';
+		$sql = 'SELECT id, user_id, add_date, action, product_id, image_id FROM '.db('shop_product_images_revisions').' WHERE product_id='.intval($product_id).' ORDER BY id DESC';
 		return table($sql, array(
 				'caption' => t('Product images revisions'),
 				'no_records_html' => '',
 			//	'btn_no_text' => 1,
 			//	'no_header' => 1
+				'pager_sql_callback' => function($sql) { return preg_replace('/\s+ORDER BY.+$/ims', '', preg_replace('/^SELECT.+?FROM/ms', 'SELECT COUNT(*) FROM', ltrim($sql))); }
 			))
 			->date('add_date', array('format' => '%d/%m/%Y', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
