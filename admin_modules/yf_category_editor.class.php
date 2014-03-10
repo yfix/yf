@@ -475,31 +475,7 @@ class yf_category_editor {
 		if (empty($this->_category_items_from_db)) {
 			return '';
 		}
-/*
-		$items_ids		= array();
-		$items_array	= array();
-		foreach ((array)$this->_category_items_from_db as $item_info) {
-			if ($item_info['parent_id'] != $parent_id) {
-				continue;
-			}
-			if ($skip_item_id == $item_info['id']) {
-				continue;
-			}
-			$items_array[$item_info['id']] = $item_info;
-			$items_array[$item_info['id']]['level'] = $level;
-
-			$tmp_array = $this->_recursive_get_cat_items($cat_id, $skip_item_id, $item_info['id'], $level + 1);
-			foreach ((array)$tmp_array as $sub_item_info) {
-				if ($sub_item_info['id'] == $item_info['id']) {
-					continue;
-				}
-				$items_array[$sub_item_info['id']] = $sub_item_info;
-			}
-		}
-*/
-		$items_array = $this->_recursive_sort_items($this->_category_items_from_db, $skip_item_id, $parent_id);
-
-		return $items_array;
+		return $this->_recursive_sort_items($this->_category_items_from_db, $skip_item_id, $parent_id);
 	}
 
 	/**
