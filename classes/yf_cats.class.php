@@ -226,8 +226,7 @@ class yf_cats {
 	* Display category block items box
 	*/
 	function _cats_box($cat_name = '', $selected = '', $name_in_form = 'cat_id', $with_all = 1) {
-		$items = $this->_get_items_for_box($cat_name, $with_all);
-		return common()->select_box($name_in_form, $items, $selected, false, 2, '', false);
+		return common()->select_box($name_in_form, $this->_get_items_for_box($cat_name, $with_all), $selected, false, 2, '', false);
 	}
 
 	/**
@@ -377,6 +376,8 @@ class yf_cats {
 		return $this->_items_cache[$cat_id][$item_id]['name'];
 	}
 
+	/**
+	*/
 	function _get_recursive_cat_ids ($cat_id = 0, $all_cats = false) {
 		$cat_id = intval($cat_id);
 		if (empty($all_cats)) {
@@ -389,7 +390,6 @@ class yf_cats {
 				conf('all_cats', $all_cats);
 			}
 		}
-
 		$current_func = __FUNCTION__;
 		$ids[$cat_id] = $cat_id;
 		foreach ($all_cats as $key => $item) {
@@ -397,7 +397,6 @@ class yf_cats {
 				$ids += $this->$current_func($item['id'], $all_cats);
 			}
 		}
-
 		return $ids;
 	}
 }
