@@ -373,6 +373,24 @@ class yf_validate {
 // TODO: mimes:foo,bar,... The file under validation must have a MIME type corresponding to one of the listed extensions.  mime:jpeg,bmp,png
 	}
 
+/*
+Validator::extend('unicode_alpha',function($field,$value){
+    return preg_match('/^[\pL\pM]+$/u', $value);
+});
+Validator::extend('unicode_alpha_num',function($field,$value){
+    return preg_match('/^[\pL\pM\pN]+$/u', $value);
+});
+Validator::extend('unicode_alpha_space',function($field,$value){
+    return preg_match('/^[\pL\pM\s]+$/u', $value);
+});   
+Validator::extend('unicode_alpha_dash',function($field,$value){
+    return preg_match('/^[\pL\pM-]+$/u', $value);
+});
+Validator::extend('unicode_alpha_underscore',function($field,$value){
+    return preg_match('/^[\pL\pM_]+$/u', $value);
+});
+*/
+
 	/***/
 	function is_unique($in, $params = array()) {
 		if (!$in) {
