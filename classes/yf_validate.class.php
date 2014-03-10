@@ -310,27 +310,67 @@ class yf_validate {
 
 	/***/
 	function length($in, $params = array(), $fields = array()) {
-// TODO: from kohana: length Returns FALSE if the field is too long or too shortlength[1,30] - between 1 and 30 characters longor length[30] - exactly 30 characters long
+// TODO: from kohana: length Returns FALSE if the field is too long or too short  length[1,30] - between 1 and 30 characters longor length[30] - exactly 30 characters long
 	}
 
 	/***/
 	function depends_on($in, $params = array(), $fields = array()) {
-// TODO: from kohana: depends_on Returns FALSE if form field(s) defined in parameter are not filled independs_on[field_name]
+// TODO: from kohana: depends_on Returns FALSE if form field(s) defined in parameter are not filled in  depends_on[field_name]
 	}
 
 	/***/
 	function chars($in, $params = array(), $fields = array()) {
-// TODO: chars Returns FALSE if field contains characters not in the parameterchars[a,b,c,d,1,2,3,4]
+// TODO: chars Returns FALSE if field contains characters not in the parameter  chars[a,b,c,d,1,2,3,4]
 	}
 
 	/***/
 	function credit_card($in, $params = array(), $fields = array()) {
-// TODO: from kohana: credit_card Returns FALSE if credit card is not validcredit_card[mastercard]
+// TODO: from kohana: credit_card Returns FALSE if credit card is not valid  credit_card[mastercard]
 	}
 
 	/***/
 	function standard_text($in, $params = array(), $fields = array()) {
 // TODO: standard_text Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
+	}
+
+	/***/
+	function active_url($in, $params = array(), $fields = array()) {
+// TODO: The field under validation must be a valid URL according to the checkdnsrr PHP function.
+	}
+
+	/***/
+	function after_date($in, $params = array(), $fields = array()) {
+// TODO: after:date. The field under validation must be a value after a given date. The dates will be passed into the PHP strtotime function.
+	}
+
+	/***/
+	function before_date($in, $params = array(), $fields = array()) {
+// TODO: before:date. The field under validation must be a value preceding the given date. The dates will be passed into the PHP strtotime function.
+	}
+
+	/***/
+	function between($in, $params = array(), $fields = array()) {
+// TODO: between:min,max. The field under validation must have a size between the given min and max. Strings, numerics, and files are evaluated in the same fashion as the size rule.
+	}
+
+	/***/
+	function valid_date($in, $params = array(), $fields = array()) {
+// TODO: date. The field under validation must be a valid date according to the strtotime PHP function.
+	}
+
+	/***/
+	function valid_date_format($in, $params = array(), $fields = array()) {
+// TODO: date_format:format The field under validation must match the format defined according to the date_parse_from_format PHP function.
+	}
+
+	/***/
+	function image($in, $params = array(), $fields = array()) {
+// TODO: image. The file under validation must be an image (jpeg, png, bmp, or gif)
+	}
+
+	/***/
+	function mime($in, $params = array(), $fields = array()) {
+// TODO: mimes:foo,bar,... The file under validation must have a MIME type corresponding to one of the listed extensions.  mime:jpeg,bmp,png
 	}
 
 	/***/
