@@ -468,7 +468,7 @@ class yf_category_editor {
 
 	/**
 	*/
-	function _recursive_get_cat_items($cat_id = 0, $skip_item_id = 0, $parent_id = 0/*, $level = 0*/) {
+	function _recursive_get_cat_items($cat_id = 0, $skip_item_id = 0, $parent_id = 0) {
 		if (!isset($this->_category_items_from_db)) {
 			$this->_category_items_from_db = db()->get_all('SELECT * FROM '.db('category_items').' WHERE cat_id='.intval($cat_id).' ORDER BY `order` ASC');
 		}
@@ -481,9 +481,9 @@ class yf_category_editor {
 	/**
 	* Get and sort items ordered array (recursively)
 	*/
-	function _recursive_sort_items($cat_items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
+	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
 		$children = array();
-		foreach ((array)$cat_items as $id => $info) {
+		foreach ((array)$items as $id => $info) {
 			$parent_id = $info['parent_id'];
 			if ($skip_item_id == $id) {
 				continue;
@@ -493,7 +493,7 @@ class yf_category_editor {
 		$ids = $this->_count_levels(0, $children);
 		$new_items = array();
 		foreach ((array)$ids as $id => $level) {
-			$new_items[$id] = $cat_items[$id] + array('level' => $level);
+			$new_items[$id] = $items[$id] + array('level' => $level);
 		}		
 		return $new_items;
 	}
