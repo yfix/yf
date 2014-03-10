@@ -44,7 +44,7 @@ class yf_login_form {
 			return '';
 		}
 		return form(array('form_action' => './?task=login'), array(
-				'class'		=> 'form-horizontal form-condensed form-no-labels',
+				'class'		=> 'form-horizontal form-condensed form-no-labels col-md-10',
 				'no_label'	=> 1,
 			))
 			->validate(array(
