@@ -82,10 +82,10 @@ class yf_cats {
 	/**
 	* Get and sort items ordered array (recursively)
 	*/
-	function _recursive_sort_items($cat_items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
+	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
 		$children = array();
 		$cur_group = MAIN_TYPE_USER ? $_SESSION['user_group'] : $_SESSION['admin_group'];
-		foreach ((array)$cat_items as $id => $info) {
+		foreach ((array)$items as $id => $info) {
 			$parent_id = $info['parent_id'];
 			if ($skip_item_id == $id) {
 				continue;
@@ -106,7 +106,7 @@ class yf_cats {
 		$ids = $this->_count_levels(0, $children);
 		$new_items = array();
 		foreach ((array)$ids as $id => $level) {
-			$new_items[$id] = $cat_items[$id] + array('level' => $level);
+			$new_items[$id] = $items[$id] + array('level' => $level);
 		}		
 		return $new_items;
 	}
