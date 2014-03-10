@@ -227,7 +227,7 @@ class yf_utils {
 			$text = stripslashes($text);
 		}
 		// Prepare special chars
-		$text = $use_smart_function ? smart_htmlspecialchars($text) : htmlspecialchars($text, ENT_QUOTES);
+		$text = $use_smart_function ? $this->smart_htmlspecialchars($text) : htmlspecialchars($text, ENT_QUOTES);
 		if (DEBUG_MODE && $have_tr) {
 			$text = $tr_1.$text.$tr_2;
 		}
