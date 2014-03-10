@@ -82,7 +82,7 @@ class yf_cats {
 	/**
 	* Get and sort items ordered array (recursively)
 	*/
-	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
+	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0) {
 		$children = array();
 		$cur_group = MAIN_TYPE_USER ? $_SESSION['user_group'] : $_SESSION['admin_group'];
 		foreach ((array)$items as $id => $info) {

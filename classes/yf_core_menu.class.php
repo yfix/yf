@@ -280,7 +280,7 @@ class yf_core_menu {
 	/**
 	* Get menu items ordered array (recursively)
 	*/
-	function _recursive_get_menu_items($menu_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
+	function _recursive_get_menu_items($menu_id = 0, $skip_item_id = 0) {
 		if (empty($menu_id) || empty($this->_menu_items[$menu_id])) {
 			return false;
 		}
@@ -336,13 +336,13 @@ class yf_core_menu {
 			}
 			$items_array[$item_info['id']] = $item_info;
 		}
-		return $this->_recursive_sort_items($items_array, $skip_item_id, $parent_id);
+		return $this->_recursive_sort_items($items_array, $skip_item_id);
 	}
 
 	/**
 	* Get and sort items ordered array (recursively)
 	*/
-	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
+	function _recursive_sort_items($items = array(), $skip_item_id = 0) {
 		$children = array();
 		foreach ((array)$items as $id => $info) {
 			$parent_id = $info['parent_id'];
