@@ -53,6 +53,7 @@ class yf_manage_shop_clear_products {
 		->btn('List of changes', './?object=manage_shop&action=clear_pattern_list&id=%d', array('icon' => 'icon-th-list'))
 		->btn_edit('', './?object=manage_shop&action=clear_pattern_edit&id=%d',array('no_ajax' => 1))
 		->btn_delete('', './?object=manage_shop&action=clear_pattern_delete&id=%d')
+		->btn('Checkout revision', './?object=manage_shop&action=checkout_group_revision&id=%d')
 		->footer_add('Add pattern', './?object=manage_shop&action=clear_pattern_add',array('no_ajax' => 1));
 
 		$replace = array(

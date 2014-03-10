@@ -53,7 +53,7 @@ class yf_manage_shop__product_revisions {
 		$revision_db = $this->get_revision_db($action);
 		$data = json_encode($ids);
 		$insert = array(
-			'user_id'  => intval(main()->ADMIN_ID),
+			'user_id'  => main()->ADMIN_ID,
 			'add_date' => time(),
 			'action'   => 'group',
 			'item_id'  => intval($group_id),
@@ -450,6 +450,47 @@ class yf_manage_shop__product_revisions {
 		common()->message_success("Revision retrieved");
 		common()->admin_wall_add(array('shop order checkout revision: '.$_GET['id'], $order_id));
 		return js_redirect('./?object=manage_shop&action=view_order&id='.$order_id);
+	}
+
+	function checkout_group_revision(){
+		$_GET['id'] = intval($_GET['id']);
+		$db = db('shop_product_revisions');
+		$ids = db()->get_one('SELECT data FROM '.$db.' WHERE item_id='.$_GET['id'].' ORDER BY id DESC');
+		if (empty($ids)) {
+			return _e('Revision not found');
+		}
+		$revisions_ids = json_decode($ids, true);
+		$products = db()->get_2d('SELECT id, item_id FROM '.$db.' WHERE id IN ('.implode(',', $revisions_ids).') ORDER BY id DESC');
+		foreach($products as $id => $item_id){
+			$Q[] = '(SELECT * FROM '.$db.' WHERE item_id ='.$item_id.' AND id<'.$id.' ORDER BY id DESC LIMIT 1)';
+		}
+		$Q = implode(' UNION ALL ', $Q);
+		$revisions = db()->query_fetch_all($Q);
+
+		db()->begin();
+		foreach($revisions as $data){
+			$product_id = $data['item_id'];
+			$data_stamp = json_decode($data['data'], true);
+			foreach($data_stamp as $type => $array){
+				$table = $this->all_queries['product'][$type]['table'];
+				$field = $this->all_queries['product'][$type]['field'];
+				$multi = $this->all_queries['product'][$type]['multi'];
+				if(!$multi){
+					db()->update_safe($table, $array, $field.'='.$array['id']);
+				}else{
+					db()->query('DELETE FROM '.db($table).' WHERE '.$field.'='.$product_id);
+					if(!empty($array))
+						db()->insert_safe($table, $array);
+				}
+			}
+			module('manage_shop')->_product_cache_purge($product_id);
+		}
+		$group_ids = module('manage_shop')->_product_add_revision('checkout', $products);
+		module('manage_shop')->_add_group_revision('product', $group_ids, $_GET['id']);
+		db()->commit();
+		common()->message_success("Group revision retrieved");
+		common()->admin_wall_add(array('checkout group revision: '.$_GET['id'], $_GET['id']));
+		return js_redirect('./?object=manage_shop&action=clear_patterns');
 	}
 
 }
