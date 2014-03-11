@@ -249,7 +249,9 @@ class yf_validate {
 		return $rules;
 	}
 
-	/***/
+	/**
+	* return md5() from input string, or null
+	*/
 	function password_update(&$in) {
 		if (!strlen($in)) {
 			$in = null; // Somehow unset($in) not working here...
@@ -259,7 +261,9 @@ class yf_validate {
 		return true;
 	}
 
-	/***/
+	/**
+	* return md5() from given input string, only if not empty. Example usage: ["password" => 'trim|min_length[6]|max_length[32]|md5_not_empty']
+	*/
 	function md5_not_empty(&$in) {
 		if (strlen($in)) {
 			$in = md5($in);
@@ -267,7 +271,30 @@ class yf_validate {
 		return true;
 	}
 
-	/***/
+	/**
+	* return sha1() from given input string, only if not empty. Example usage: ["password" => 'trim|min_length[6]|max_length[32]|sha1_not_empty']
+	*/
+	function sha1_not_empty(&$in) {
+		if (strlen($in)) {
+			$in = sha1($in);
+		}
+		return true;
+	}
+
+	/**
+	* return hash() from given input string, only if not empty. Example usage: ["password" => 'trim|min_length[6]|max_length[32]|hash_not_empty[sha256]']
+	*/
+	function hash_not_empty(&$in, $params = array(), $fields = array()) {
+		$hash_name = is_array($params) ? $params['param'] : $params;
+		if (strlen($in) && $hash_name) {
+			$in = hash($hash_name, $in);
+		}
+		return true;
+	}
+
+	/**
+	* Returns FALSE if form field is empty.
+	*/
 	function required($in) {
 		return is_array($in) ? (bool) count($in) : (trim($in) !== '');
 	}
@@ -302,20 +329,25 @@ class yf_validate {
 		return false;
 	}
 
-	/***/
+	/**
+	* Returns FALSE if field does not match field(s) in parameter. Example: matches[password_again]
+	*/
 	function matches($in, $params = array(), $fields = array()) {
-		$field = $params['param'];
+		$field = is_array($params) ? $params['param'] : $params;
 		return isset($fields[$field], $_POST[$field]) ? ($in === $_POST[$field]) : false;
+	}
+
+	/**
+	* Returns FALSE if form field(s) defined in parameter are not filled in. Example:  depends_on[field_name]
+	*/
+	function depends_on($in, $params = array(), $fields = array()) {
+		$field = is_array($params) ? $params['param'] : $params;
+		return isset($fields[$field], $_POST[$field]);
 	}
 
 	/***/
 	function length($in, $params = array(), $fields = array()) {
 // TODO: from kohana: length Returns FALSE if the field is too long or too short  length[1,30] - between 1 and 30 characters longor length[30] - exactly 30 characters long
-	}
-
-	/***/
-	function depends_on($in, $params = array(), $fields = array()) {
-// TODO: from kohana: depends_on Returns FALSE if form field(s) defined in parameter are not filled in  depends_on[field_name]
 	}
 
 	/***/
