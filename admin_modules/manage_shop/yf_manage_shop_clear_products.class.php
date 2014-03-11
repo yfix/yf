@@ -25,7 +25,7 @@ class yf_manage_shop_clear_products {
 				'cat_id'  => 'in',
 			),
 		))
-		->text('search', array('tip' => $this->SEARCH_TIP))
+		->text('search', array('header_tip' => $this->SEARCH_TIP))
 		->text('replace')
 		->text('description')
 		->func('cat_id', function($value, $extra, $row_info) {
