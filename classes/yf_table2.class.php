@@ -207,7 +207,7 @@ class yf_table2 {
 					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
-					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip']) : '';
+					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip'], $name) : '';
 					$title = isset($info['extra']['th_desc']) ? $info['extra']['th_desc'] : $info['desc'];
 					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
 				}
@@ -565,7 +565,7 @@ class yf_table2 {
 
 		$td_width = ($_extra['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $_extra['width']).'"' : '');
 		$td_nowrap = ($_extra['nowrap'] ? ' nowrap="nowrap" ' : '');
-		$tip = $_extra['tip'] ? ''.$this->_show_tip($_extra['tip']) : '';
+		$tip = $_extra['tip'] ? '&nbsp;'.$this->_show_tip($_extra['tip'], $info['name'], $row) : '';
 
 		if ($_extra['hl_filter'] && isset($this->_filter_data[$name])) {
 			$_kw = $this->_filter_data[$name];
@@ -748,9 +748,20 @@ class yf_table2 {
 
 	/**
 	*/
-	function _show_tip($value = '', $extra = array()) {
-// TODO: also add ability to pass tips array into table2() params like 'data', to provide different tips, according to value
-		return _class('graphics')->_show_help_tip(array('tip_id' => $value));
+	function _show_tip($value = '', $name = '', $row = array()) {
+		$tip = '';
+		if (is_string($value)) {
+			$tip = $value;
+		} elseif (is_array($value)) {
+			if (!empty($row) && isset($row[$name])) {
+				$tip = $value[$row[$name]];
+			} elseif (isset($value[$name])) {
+				$tip = $value[$name];
+			}
+		} elseif (is_callable($value)) {
+			$tip = $value($name, $row);
+		}
+		return strlen($tip) ? _class('graphics')->_show_help_tip(array('tip_id' => $tip)) : '';
 	}
 
 	/**
