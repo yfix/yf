@@ -1,10 +1,13 @@
-<style type="text/css">
+<style type="text/css" class="yf_core">
 .sidebar-nav { padding: 9px 0; }
 
 .dropdown-menu .sub-menu { left: 100%; position: absolute; top: 0; visibility: hidden; margin-top: -1px; }
 .dropdown-menu li:hover > .sub-menu { visibility: visible; }
 .dropdown:hover .dropdown-menu { display: block; }
 .nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu { margin-top: 0; }
+.cssfw-bs3 .navbar-header { width:99%; padding-right:1%; }
+
+.form-no-labels .controls { margin-left: 0; }
 
 td input[type=text], td textarea { margin-bottom: 0; }
 .modal.fade.in { top: 30px; }
@@ -32,4 +35,12 @@ label.radio-horizontal { padding-left: inherit; display: inline-block; margin-bo
 label.radio-horizontal input[type=radio]{ float: none; margin-left:inherit; margin-top:0; }
 
 .form-condensed .control-group { margin-bottom: 1em; }
+
+fieldset.well { padding-bottom: 0; }
+fieldset.well legend { margin-bottom:0; padding: 0 0.5em; width: auto; line-height: 1.5em; background: inherit; }
+legend+.control-group { margin-top: 0; }
+
+.table a.btn { text-decoration: none; }
+
+.bs-theme-slate { /* override styles per bs theme here */ }
 </style>

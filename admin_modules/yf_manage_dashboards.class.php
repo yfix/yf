@@ -13,12 +13,12 @@ class yf_manage_dashboards {
 	* Bootstrap CSS classes used to create configurable grid
 	*/
 	private $_col_classes = array(
-		1 => 'span12',
-		2 => 'span6',
-		3 => 'span4',
-		4 => 'span3',
-		6 => 'span2',
-		12 => 'span1',
+		1 => 'span12 col-md-12 column',
+		2 => 'span6 col-md-6 column',
+		3 => 'span4 col-md-4 column',
+		4 => 'span3 col-md-3 column',
+		6 => 'span2 col-md-2 column',
+		12 => 'span1 col-md-1 column',
 	);
 
 // TODO: add ability to use user module dashboards also
@@ -33,6 +33,14 @@ class yf_manage_dashboards {
 			'configurable'	=> array(),
 			'cloneable'		=> 1,
 			'auto_type'		=> 'php_item',
+		);
+		$this->_auto_info['block_item'] = array(
+			'id'			=> 'block_item',
+			'name'			=> 'CLONEABLE: block item name',
+			'desc'			=> 'CLONEABLE: block item desc',
+			'configurable'	=> array(),
+			'cloneable'		=> 1,
+			'auto_type'		=> 'block_item',
 		);
 		$this->_auto_info['stpl_item'] = array(
 			'id'			=> 'stpl_item',
@@ -215,7 +223,7 @@ class yf_manage_dashboards {
 		$ds_name = isset($params['name']) ? $params['name'] : ($this->_name ? $this->_name : $_GET['id']);
 		$ds = $this->_get_dashboard_data($ds_name);
 		if (!$ds['id']) {
-			return _e('No such record');
+			return _e('Dashboard not exists: '.$ds_name);
 		}
 		$items_configs = $ds['data']['items_configs'];
 		$ds_settings = $ds['data']['settings'];
@@ -288,6 +296,8 @@ class yf_manage_dashboards {
 					} elseif ($info['method_name']) {
 						list($module_name, $method_name) = explode('.', $info['method_name']);
 					}
+				} elseif ($auto_type == 'block_item') {
+					$content = _class('core_blocks')->show_block(array('name' => $info['block_name']));
 				} elseif ($auto_type == 'stpl_item') {
 					if (strlen($info['code'])) {
 						$content = tpl()->parse_string($info['code']);
@@ -338,30 +348,24 @@ class yf_manage_dashboards {
 				}
 			}
 		}
-		$auto_info_php = $this->_auto_info['php_item'];
-		$auto_info_stpl = $this->_auto_info['stpl_item'];
-
+		$ds_settings = $ds['data']['settings'];
+		$auto_items = array();
+		foreach((array)$this->_auto_info as $name => $info) {
+			$auto_items[$name] = tpl()->parse(__CLASS__.'/edit_item', array(
+				'id'				=> _prepare_html($info['id']),
+				'name'				=> _prepare_html($info['name']),
+				'desc'				=> _prepare_html($info['desc']),
+				'has_config'		=> $info['configurable'] ? 1 : 0,
+				'css_class'			=> 'drag-clone-needed custom_widget_template_'.$name,
+				'options_container'	=> $this->_options_container($info, $auto_saved_config[$name], $ds),
+			));
+		}
 		$replace = array(
 			'items' 		=> $this->_show_edit_widget_items(array_keys($avail_hooks)),
 			'save_link'		=> './?object='.$_GET['object'].'&action=edit&id='.$ds['id'],
 			'view_link'		=> './?object='.$_GET['object'].'&action=view&id='.$ds['id'],
 			'settings_items'=> $this->_show_ds_settings_items($ds),
-			'php_item' => tpl()->parse(__CLASS__.'/edit_item', array(
-				'id'				=> _prepare_html($auto_info_php['id']),
-				'name'				=> _prepare_html($auto_info_php['name']),
-				'desc'				=> _prepare_html($auto_info_php['desc']),
-				'has_config'		=> $auto_info_php['configurable'] ? 1 : 0,
-				'css_class'			=> 'drag-clone-needed custom_widget_template_php',
-				'options_container'	=> $this->_options_container($auto_info_php, $php_item_saved_config),
-			)),
-			'stpl_item' => tpl()->parse(__CLASS__.'/edit_item', array(
-				'id'				=> _prepare_html($auto_info_stpl['id']),
-				'name'				=> _prepare_html($auto_info_stpl['name']),
-				'desc'				=> _prepare_html($auto_info_stpl['desc']),
-				'has_config'		=> $auto_info_stpl['configurable'] ? 1 : 0,
-				'css_class'			=> 'drag-clone-needed custom_widget_template_stpl',
-				'options_container'	=> $this->_options_container($auto_info_stpl, $stpl_item_saved_config),
-			)),
+			'auto_items'	=> $auto_items,
 		);
 		return tpl()->parse(__CLASS__.'/edit_side', $replace);
 	}
@@ -411,7 +415,7 @@ class yf_manage_dashboards {
 				'desc'				=> _prepare_html($info['desc']),
 				'has_config'		=> $info['configurable'] ? 1 : 0,
 				'css_class'			=> $saved_config['color'],
-				'options_container'	=> $this->_options_container($info, $saved_config),
+				'options_container'	=> $this->_options_container($info, $saved_config, $ds),
 			));
 		}
 		if (!$items) {
@@ -422,23 +426,32 @@ class yf_manage_dashboards {
 
 	/**
 	*/
-	function _options_container($info = array(), $saved = array()) {
-		$form = form();
+	function _options_container($info = array(), $saved = array(), $ds = array()) {
+		$for_section = $ds['type'] == 'user' ? 'user' : 'admin';
+
+		$a = array();
 		if ($info['cloneable']) {
-			$form->text('name', array('class' => 'input-medium', 'value' => $saved['name']));
-			$form->text('desc', 'Description', array('class' => 'input-medium', 'value' => $saved['desc']));
+			$a[] = array('text', 'name', array('class' => 'input-medium'));
+			$a[] = array('text', 'desc', 'Description', array('class' => 'input-medium'));
 			if ($info['auto_type'] == 'php_item') {
-				$form->text('method_name','Custom class method', array('value' => $saved['method_name']));
+				$a[] = array('text', 'method_name', 'Custom class method');
+			} elseif ($info['auto_type'] == 'block_item') {
+				$a[] = array('select_box', 'block_name', main()->get_data('blocks_names_'.$for_section));
 			} elseif ($info['auto_type'] == 'stpl_item') {
-				$form->text('stpl_name','Custom template', array('value' => $saved['stpl_name']));
+				$a[] = array('text', 'stpl_name', 'Custom template');
 			}
-			$form->textarea('code', array('value' => $saved['code']));
+#			$a[] = array('text', 'html_id', array('class' => 'input-medium'));
+#			$a[] = array('textarea', 'code');
 		}
+		$a[] = array('check_box', 'hide_header', '1', array('no_label' => 1));
+		$a[] = array('check_box', 'hide_border', '1', array('no_label' => 1));
+		$a[] = array('text', 'grid_class', array('class' => 'input-small'));
+		$a[] = array('text', 'offset_class', array('class' => 'input-small'));
 		foreach ((array)$info['configurable'] as $k => $v) {
-			$form->select_box($k, $v, array('selected' => $saved[$k]));
+			$a[] = array('select_box', $k, $v);
 		}
 		return tpl()->parse(__CLASS__.'/ds_options', array(
-			'form_items'	=> $form,
+			'form_items'	=> form($saved, array('class' => 'form-horizontal form-condensed'))->array_to_form($a),
 			'color'			=> $saved['color'],
 			'item_id'		=> _prepare_html($info['auto_id']),
 			'auto_type'		=> $info['cloneable'] ? $info['auto_type'] : '',
@@ -467,9 +480,24 @@ class yf_manage_dashboards {
 
 	/**
 	*/
-	function _get_available_widgets_hooks () {
-		if (isset($this->_avail_widgets)) {
-			return $this->_avail_widgets;
+	function _get_available_widgets_hooks_user () {
+		return $this->_get_available_widgets_hooks('user');
+	}
+
+	/**
+	*/
+	function _get_available_widgets_hooks_admin () {
+		return $this->_get_available_widgets_hooks('admin');
+	}
+
+	/**
+	*/
+	function _get_available_widgets_hooks ($for_section = 'admin') {
+		if (!in_array($for_section, array('user', 'admin'))) {
+			$for_section = 'admin';
+		}
+		if (isset($this->_avail_widgets[$for_section])) {
+			return $this->_avail_widgets[$for_section];
 		}
 		$method_prefix = '_hook_widget_';
 		$r = array(
@@ -477,9 +505,13 @@ class yf_manage_dashboards {
 			'_' => '',
 			':' => '',
 		);
-// TODO: add ability to use user module dashboards also
 		$_widgets = array();
-		foreach ((array)module('admin_modules')->_get_methods(array('private' => '1')) as $module_name => $module_methods) {
+		if ($for_section == 'admin') {
+			$methods = module('admin_modules')->_get_methods(array('private' => '1'));
+		} else {
+			$methods = module('user_modules')->_get_methods(array('private' => '1'));
+		}
+		foreach ((array)$methods as $module_name => $module_methods) {
 			foreach ((array)$module_methods as $method_name) {
 				if (substr($method_name, 0, strlen($method_prefix)) != $method_prefix) {
 					continue;
@@ -507,7 +539,7 @@ continue;
 			}
 		}
 		ksort($widgets);
-		$this->_avail_widgets = $widgets;
+		$this->_avail_widgets[$for_section] = $widgets;
 		return $widgets;
 	}
 
@@ -521,5 +553,15 @@ continue;
 	*/
 	function _hook_widget__dashboards_list ($params = array()) {
 // TODO
+	}
+
+	/**
+	*/
+	function _hook_settings(&$selected = array()) {
+/*
+		return array(
+			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
+		);
+*/
 	}
 }

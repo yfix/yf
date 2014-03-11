@@ -11,7 +11,7 @@ class yf_resize_images {
 
 	/** @var string @conf_skip Image source file name */
 	public $source_file	= null;
-	/** @var string @conf_skip Image type (like "jpeg", "gif", "png" etc) detected from source file */
+	/** @var string @conf_skip Image type (like 'jpeg', 'gif', 'png' etc) detected from source file */
 	public $source_type	= null;
 	/** @var int @conf_skip Image width (source) */
 	public $source_width	= null;
@@ -31,26 +31,25 @@ class yf_resize_images {
 	public $output_width	= null;
 	/** @var int @conf_skip Thumbnail height */
 	public $output_height	= null;
-	/** @var string Output image type (could be "jpeg" or "png") */
-	public $output_type	= "jpeg";
+	/** @var string Output image type (could be 'jpeg' or 'png') */
+	public $output_type	= 'jpeg';
 	/** @var mixed @conf_skip For internal manipulation */
 	public $tmp_img		= null;
 	/** @var mixed @conf_skip Temporary resampled file stored here */
 	public $tmp_resampled	= null;
 	/** @var array @conf_skip Available image types */
 	public $_avail_types	= array (
-		1 => "gif",
-		2 => "jpeg",
-		3 => "png",
-		6 => "wbmp",
+		1 => 'gif',
+		2 => 'jpeg',
+		3 => 'png',
+		6 => 'wbmp',
 	);
 	/** @var bool */
 	public $SILENT_MODE	= false;
  
 	/**
-	* Constructor
 	*/
-	function yf_resize_images ($img_file = "") {
+	function __construct ($img_file = '') {
 		if (strlen($img_file)) {
 			$this->set_source($img_file);
 		}
@@ -59,28 +58,24 @@ class yf_resize_images {
 	/**
 	* Set source file for processing
 	*/
-	function set_source ($img_file = "") {
-		// Clean all values before processing
+	function set_source ($img_file = '') {
 		$this->_clean_data();
-		// Check image file
 		if (empty($img_file) || !file_exists($img_file) || !is_readable($img_file)) {
 			if (!$this->SILENT_MODE) {
-				trigger_error("Wrong image file!", E_USER_WARNING);
+				trigger_error('Wrong image file!', E_USER_WARNING);
 			}
 			return false;
 		}
 		$this->source_file = $img_file;
-		// Check image data
 		$this->_get_img_info();
 		if (empty($this->source_width) || empty($this->source_height) || empty($this->source_type)) {
 			if (!$this->SILENT_MODE) {
-				trigger_error("Cant get correct image info!", E_USER_WARNING);
+				trigger_error('Cant get correct image info!', E_USER_WARNING);
 			}
 			return false;
 		} else {
 			$this->_set_new_size_auto();
-			// Create processing fnuction name according to image type
-			$func_name = "imagecreatefrom".$this->source_type;
+			$func_name = 'imagecreatefrom'.$this->source_type;
 			$this->tmp_img = strlen($this->source_type) ? $func_name ($this->source_file) : null;
 			if (empty($this->tmp_img)) {
 				return false;
@@ -92,7 +87,7 @@ class yf_resize_images {
 	/**
 	* Set output image type
 	*/
-	function set_output_type ($new_type = "") {
+	function set_output_type ($new_type = '') {
 		// If image type is set by number (1,2,3)
 		if (!empty($new_type) && is_numeric($new_type) && isset($this->_avail_types[$new_type])) {
 			$this->output_type = $this->_avail_types[$new_type];
@@ -102,7 +97,7 @@ class yf_resize_images {
 		// Send error message if type is unknown
 		} else {
 			if (!$this->SILENT_MODE) {
-				trigger_error("Unknown new output image type \"".$new_type."\"", E_USER_WARNING);
+				trigger_error('Unknown new output image type "'.$new_type.'"', E_USER_WARNING);
 			}
 			return false;
 		}
@@ -125,10 +120,10 @@ class yf_resize_images {
 	/**
 	* Save processed image into specified location
 	*/
-	function save ($output_file = "") {
+	function save ($output_file = '') {
 		if (empty($this->tmp_img)) {
 			if (!$this->SILENT_MODE) {
-				trigger_error("No temporary image for resizing!", E_USER_WARNING);
+				trigger_error('No temporary image for resizing!', E_USER_WARNING);
 			}
 			return false;
 		}
@@ -146,12 +141,9 @@ class yf_resize_images {
 				return false;
 			}
 			imagecopyresampled ($this->tmp_resampled, $this->tmp_img, 0, 0, 0, 0, $this->output_width, $this->output_height, $this->source_width, $this->source_height);
-			// Create processing fnuction name according to image type
-			$func_name = "image".$this->output_type;
-			strlen($this->output_type) ? $func_name ($this->tmp_resampled, $output_file, defined("THUMB_QUALITY") ? THUMB_QUALITY : 85) : null;
-			// Destroy temporary image
+			$func_name = 'image'.$this->output_type;
+			strlen($this->output_type) ? $func_name ($this->tmp_resampled, $output_file, defined('THUMB_QUALITY') ? THUMB_QUALITY : 85) : null;
 			imagedestroy ($this->tmp_resampled);
-		// If image file has another name - just copy it there (only if non-empty)
 		} else {
 			if ($this->source_file != $output_file) {
 				$out_dir = dirname($output_file);
@@ -170,21 +162,18 @@ class yf_resize_images {
 	function output_image () {
 		if (empty($this->tmp_img)) {
 			if (!$this->SILENT_MODE) {
-				trigger_error("No temporary image for resizing!", E_USER_WARNING);
+				trigger_error('No temporary image for resizing!', E_USER_WARNING);
 			}
 			return false;
 		}
-		header("Content-Type: image/".$this->output_type);
+		header('Content-Type: image/'.$this->output_type);
 		$this->_set_new_size_auto();
-		// Detect if need to resize image (if something has changed)
 		if ($this->output_width != $this->source_width || $this->output_height != $this->source_height || $this->output_type != $this->source_type) {
 			$this->tmp_resampled = imagecreatetruecolor($this->output_width, $this->output_height); 
 			imagecopyresampled ($this->tmp_resampled, $this->tmp_img, 0, 0, 0, 0, $this->output_width, $this->output_height, $this->source_width, $this->source_height);
 		}
-		// Create processing fnuction name according to image type
-		$func_name = "image".$this->output_type;
+		$func_name = 'image'.$this->output_type;
 		strlen($this->output_type) ? $func_name ($this->tmp_resampled) : null;
-
 		return true;
 	}
 
@@ -192,12 +181,10 @@ class yf_resize_images {
 	* Get image details and put them into class property
 	*/
 	function _get_img_info () {
-		// Do not check missing files
 		if (!file_exists($this->source_file) || !filesize($this->source_file)) {
 			return false;
 		}
 		list($this->source_width, $this->source_height, $type, $this->source_atts) = getimagesize($this->source_file);
-		// Check if current type is supported
 		return array_key_exists($type, $this->_avail_types) ? ($this->source_type = $this->_avail_types[$type]) : false;
 	}
 
@@ -207,21 +194,17 @@ class yf_resize_images {
 	function _set_new_size_auto () {
 		if (empty($this->source_width) || empty($this->source_height)) {
 			if (!$this->SILENT_MODE) {
-				trigger_error("Missing source image sizes!", E_USER_WARNING);
+				trigger_error('Missing source image sizes!', E_USER_WARNING);
 			}
 			return false;
 		}
-		// Try to find resize coef
 		$k1 = $this->source_width / $this->limit_x;
 		$k2 = $this->source_height / $this->limit_y;
-		// Get max value from two numbers
 		$k = $k1 >= $k2 ? $k1 : $k2;
-		// Decide if we need to just reduce or fit the limits
 		if ($this->reduce_only && $k1 <= 1 && $k2 <= 1) {
 			$this->output_width		= $this->source_width;
 			$this->output_height	= $this->source_height;
 		} else {
-			// Calculate output sizes
 			$this->output_width		= round($this->source_width / $k, 0);
 			$this->output_height	= round($this->source_height / $k, 0);
 		}
@@ -241,7 +224,7 @@ class yf_resize_images {
 		$this->limit_y			= 100;
 		$this->output_width		= null;
 		$this->output_height	= null;
-		$this->output_type		= "jpeg";
+		$this->output_type		= 'jpeg';
 		$this->tmp_img			= null;
 		$this->tmp_resampled	= null;
 		return true;

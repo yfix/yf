@@ -31,7 +31,7 @@ INSERT INTO test_user_data_info_values (user_id, field_id, value) VALUES
 		$start = 2000000000;
 		$end = $start + 1000;
 		for ($i = $start; $i <= $end; $i++) {
-			update_user($i, array("active" => 1, "blabla" => "test ".rand(1000, $start)." test"));
+			db()->update('user', array("active" => 1, "blabla" => "test ".rand(1000, $start)." test"), $i);
 		}
 */
 	}
@@ -69,43 +69,6 @@ INSERT INTO test_user_data_info_values (user_id, field_id, value) VALUES
 				user(array(1,2,3,4), "dynamic")
 				user(array(1,2,3,4), "dynamic", null, true)
 				user("2000000000,2000000001,2000000002", "dynamic", null, true)
-
-				update_user(2000000000)
-				update_user(2000000000, array("active" => 1))
-				update_user("2000000000,2000000001,2000000002", array("active" => 1))
-				update_user("2000000000,2000000001,-1999999997,,,+", array("active" => 1))
-				update_user(2000000000, array("non_existed_field" => 1))
-				update_user(0, array("non_existed_field" => 1))
-				update_user(-1, array("non_existed_field" => 1))
-				update_user(array(), array())
-				update_user(array("" => ""), array("" => ""))
-				update_user(array(), array("non_existed_field" => 1))
-				update_user(array(2000000000, 2000000001, 2000000002), array("active" => 1))
-				update_user(array(2000000000, 2000000001, 2000000002), array("active" => 1), array("WHERE" => array("active" => 1)))
-				update_user(array(2000000000, 2000000001, 2000000002), array("blabla" => "updated from php!"), array("WHERE" => array("active" => 1)))
-
-				search_user(array("WHERE" => array("active" => 1)))
-				search_user(array("WHERE" => array("active" => 1)), "short")
-				search_user(array("WHERE" => array("active" => 1)), "full")
-				search_user(array("WHERE" => array("active" => 1)), array("login","nick"))
-				search_user("active = 1, `group` = 2")
-				search_user(array("WHERE" => array("" => "")))
-				search_user(array())
-				search_user(array(""))
-				search_user(-1)
-				search_user(array("WHERE" => array("active" => 1)), "short", true)
-				search_user(array("WHERE" => array("active" => 1)), "full", true)
-				search_user(array("WHERE" => array("active" => 1)), array("login","nick"), true)
-				search_user(array("WHERE" => array("active" => 1), "LIMIT" => 1), null)
-				search_user(array("WHERE" => array("active" => 1), "LIMIT" => 1), null, true)
-				search_user(array("WHERE" => array("active" => 1), "LIMIT" => 1, "OFFSET" => 1), null)
-				search_user(array("WHERE" => array("active" => 1), "LIMIT" => 1, "OFFSET" => 1), null, true)
-				search_user(array("WHERE" => array("active" => 1), "LIMIT" => 1, "OFFSET" => 1), array("nick", "login"))
-				search_user(array("WHERE" => array("active" => 1), "LIMIT" => 1, "OFFSET" => 1), array("nick", "login"), true)
-				search_user(array("WHERE" => array("active" => 1, "id" => 2000000000), "LIMIT" => 1), array("nick", "login"))
-				search_user(array("WHERE" => array("active" => 1, "id" => 2000000000), "LIMIT" => 1), array("nick", "login"), true)
-				search_user(array("WHERE" => array("active" => 1), "LIMIT" => 10, "ORDER BY" => "nick"), array("nick", "login"), true)
-				search_user(array("WHERE" => array("active" => 1), "LIMIT" => 10, "ORDER BY" => "nick"), array("nick", "login"))
 */
 	}
 }

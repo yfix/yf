@@ -2,7 +2,7 @@
 <style>
  	.container { width: 100%; }
 	.left_area { width: 0px; }
-	.center_area { margin-left: 1%; }
+	.center_area { width: 98%; margin-left: 1%; margin-right: 1%; }
 </style>
 
 <div class="container-fluid ds_view" id="yf_dashboard">

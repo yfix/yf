@@ -1,8 +1,10 @@
 <?php
 class yf_manage_shop_express{
 
-	var $alcohol_category = 4;
+	public $alcohol_category = 4;
 
+	public $default_unit = "шт";
+	
 	function _init(){
 		$this->PATH_TO_PDF = PROJECT_PATH."uploads/pdf/";
 	}
@@ -12,13 +14,14 @@ class yf_manage_shop_express{
 	function express () {
 		$date = date("Y-m-d");
 		$orders_info = db()->query_fetch_all("SELECT * FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date."%' AND status = 1");
-		$orders = array_keys($orders_info);
-		$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id 
+		if(!empty($orders_info)){
+			$orders = array_keys($orders_info);
+			$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id 
 											FROM ".db('shop_order_items')." as o
-											RIGHT JOIN ".db('shop_products')." as p
-											ON o.product_id = p.id 
+											RIGHT JOIN ".db('shop_products')." as p ON o.product_id = p.id 
 											WHERE o.order_id IN(".implode(",", $orders).") AND o.status = 1
 											ORDER BY o.order_id DESC");
+		}
 		$_category = _class("_shop_categories", "modules/shop/");
 		//always add one empty row in table for ajax
 		if(empty($products)){
@@ -31,7 +34,7 @@ class yf_manage_shop_express{
 			);
 			$orders_info['-']['delivery_time'] = '-';
 		}
-		foreach($products as $k => $v){
+		foreach((array)$products as $k => $v){
 			$replace[] = array(
 				"product_id"	=> $v['product_id'],
 				"name"			=> $v['name'],
@@ -72,46 +75,46 @@ class yf_manage_shop_express{
 		$date = date("Y-m-d");
 		$hours = intval($_GET['hours']);
 		$orders = db()->get_2d("SELECT id FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date." ".$hours."%' AND status = 1");
-		$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id 
+		if(empty($orders)){
+			common()->message_warning("No orders for this time");
+			return js_redirect("./?object=manage_shop&action=express");
+		}
+		$products = db()->query_fetch_all("SELECT o.*, p.name, p.cat_id, u.title
 											FROM ".db('shop_order_items')." as o
-											RIGHT JOIN ".db('shop_products')." as p
-											ON o.product_id = p.id 
+											RIGHT JOIN ".db('shop_products')." as p	ON o.product_id = p.id 
+											LEFT JOIN ".db('shop_product_units')." as u ON u.id = o.unit
 											WHERE o.order_id IN(".implode(",", $orders).")
 												AND o.status = 1");
+		if(empty($products)){
+			common()->message_warning("No products for this time");
+			return js_redirect("./?object=manage_shop&action=express");
+		}
 		$ids = $replace = array();
 		$_category = _class("_shop_categories", "modules/shop/");
-		foreach($products as $k => $v){
-			$alcohol = in_array($this->alcohol_category, $_category->recursive_get_parents_ids($v['cat_id']));
-			if($alcohol){
-				$replace_alcohol[$v['order_id']][$v['product_id']] = array(
-					"id"		=> $v['product_id'],
-					"name"		=> $v['name'],
-					"quantity"	=> $v['quantity'],
-					"price"		=> module('shop')->_format_price(floatval($v['price'])),
-					"order"		=> $v['order_id'],
-				);
-				continue;
-			}
-			$order_ids[] = $v['order_id'];
-			if(in_array($v['product_id'], $ids)){
-				$replace[$v['product_id']]['quantity'] +=1;
-				continue;
-			}
-			$ids[] = $v['product_id'];
-			$replace[$v['product_id']] = array(
+		foreach((array)$products as $k => $v){
+			$p_id = $v['product_id'];
+			$item = array(
 				"id"		=> $v['product_id'],
 				"name"		=> $v['name'],
 				"quantity"	=> $v['quantity'],
-				"price"		=> module('shop')->_format_price(floatval($v['price'])),
-				"order"		=> $v['order_id'],
+				"price"		=> $v['price'],
+				"order_id"	=> $v['order_id'],
+				"unit"		=> $v['title'],
 			);
-		}
-		if($replace)
-			$out[] = $this->_prepare_pdf_tpl($replace, $order_ids);
-		if($replace_alcohol){
-			foreach($replace_alcohol as $order_id => $data){
-				$out[] = $this->_prepare_pdf_tpl($data);
+			$alcohol = in_array($this->alcohol_category, $_category->recursive_get_parents_ids($v['cat_id']));
+			if($alcohol){
+				$replace[$v['order_id']][$p_id] = $item;
+				continue;
 			}
+			if(in_array($p_id, $ids)){
+				$replace['product'][$p_id]['quantity'] +=$v['quantity'];
+				continue;
+			}
+			$ids[] = $p_id;
+			$replace['product'][$p_id] = $item;
+		}
+		foreach($replace as $k => $data){
+			$out[] = $this->_prepare_express_pdf($data);
 		}
 		$out = implode("<pagebreak />", $out);
 		if($send_mail){
@@ -123,43 +126,32 @@ class yf_manage_shop_express{
 
 	/**
 	*/	
-	function _prepare_pdf_tpl($items = false, $orders_ids = false){
-		$ids = array_keys($items);
-		if (!empty($ids)) {
-			$products_infos = db()->query_fetch_all('SELECT * FROM '.db('shop_products').' WHERE id IN('.implode(',', $ids).') AND active="1"');
-		}
+	function _prepare_express_pdf($items = false){
+		if(empty($items))
+			return false;
 		foreach ((array)$items as $_info) {
-			$_product = $products_infos[$_info['id']];
-			$products[$_info['id']] = 
-				'<tr style="border: 1px solid rgb(206, 206, 206);">'
-				.'<td style="text-align: left; width: 350px;padding: 15px 12px;">'._prepare_html($_info['name']).'</td>'
-				.'<td style="width: 45px;padding: 15px 12px;">'._prepare_html(module('shop')->CURRENCY).'</td>'
-				.'<td style="width: 140px;text-align: right;padding: 15px 12px;">'.intval($_info['quantity']).'</td>'
-				.'<td style="width: 140px;text-align: right;padding: 15px 12px;">'.module('shop')->_format_price(floatval($_info['quantity']*$_product['price'])).'</td>'
-				.'</tr>';
-
-			$out['products'] .= $products[$_info['id']];
-			$total_sum += $_info['quantity']*$_product['price'] ;
-			$order_ids[] = $_info['order'];
+			$price_item = $_info['price'] * $_info['quantity'];
+			$out['products'][] = array(
+				"product_name"		=> _prepare_html($_info['name']),
+				"product_units"		=> $_info['unit']? : $this->default_unit,
+				"product_price_one"	=> module('shop')->_format_price($_info['price']),
+				"product_quantity"	=> intval($_info['quantity']),
+				"product_item_price"=> module('shop')->_format_price($price_item),
+			);
+			$order_ids[] = $_info['order_id'];
+			$total_sum += $price_item; 
 		}
 		$order_ids = implode(",", array_unique($order_ids));
 		$delivery_times = db()->get_2d("SELECT delivery_time FROM ".db('shop_orders')." WHERE id IN(".$order_ids.")");
+
 		$replace = array(
-			'total_sum'		=> module('shop')->_format_price($total_sum),
+			'order_ids'		=> $order_ids,
+			'total_sum'		=> module('shop')->_format_price(floatval($total_sum)),
 			'date'			=> implode(",", array_unique($delivery_times)),
 			'products'		=> $out['products'],
-			'num_to_str'	=> common()->num2str(str_replace(",", ".", $total_sum)),
-			'order_numbers'	=> $order_ids,
+			'num_to_str'	=> common()->num2str($total_sum),
 		);
-		$replace_tpl = array(
-			'total_sum'		=> '__PRICE__',
-			'date'			=> '__DATE__',
-			'products'		=> '__PRODUCTS__',
-			'num_to_str'	=> '__NUM_TO_STR__',
-			'order_numbers'	=> '__ORDERS__',
-		);
-		$Q = db()->get_2d('SELECT text FROM '.db('static_pages').' WHERE `name`= "express"');
-		return str_replace($replace_tpl, $replace, $Q[0]);
+		return tpl()->parse('shop/express_pdf', $replace);
 	}
 
 	/**

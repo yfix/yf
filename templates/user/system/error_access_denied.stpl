@@ -1,3 +1,3 @@
-<div class="alert alert-error">
+<div class="alert alert-error alert-danger">
 	{t(Error)}: {t(Access denied)}!
 </div>

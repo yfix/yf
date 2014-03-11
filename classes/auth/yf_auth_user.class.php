@@ -243,12 +243,6 @@ class yf_auth_user {
 		if (empty($_GET['object'])) {
 			$_GET['object'] = $this->DEF_USER_MODULE;
 		}
-		// Site enabled or not
-		if (!conf('site_enabled')) {
-			main()->NO_GRAPHICS = true;
-			echo tpl()->parse('site_closed');
-			exit;
-		}
 		// Store user inside the main module
 		if (!empty($_SESSION[$this->VAR_USER_ID]) && !empty($_SESSION[$this->VAR_USER_GROUP_ID])) {
 			main()->USER_ID		= $_SESSION[$this->VAR_USER_ID];

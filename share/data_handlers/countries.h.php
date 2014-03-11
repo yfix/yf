@@ -1,5 +1,4 @@
 <?php
 
-$data[" "] = " ";
-$Q = db()->query("SELECT * FROM ".db("countries")." ORDER BY n");
-while ($A = db()->fetch_assoc($Q)) $data[$A["c"]] = $A["n"];
+// TODO: maybe remove empty item from here?
+$data = array(' ' => ' ') + (array)db()->get_2d('SELECT c, n FROM '.db('countries').' ORDER BY n');

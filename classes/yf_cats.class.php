@@ -28,12 +28,6 @@ class yf_cats {
 	*/
 	function _init () {
 		$this->_category_sets = main()->get_data('category_sets');
-		if (!empty($_GET['object'])) {
-			$try_callback = array(module($_GET['object']), '_callback_cat_link');
-			if (is_callable($try_callback)) {
-				$this->_default_callback = $try_callback;
-			}
-		}
 		$this->_default_cats_block = $_GET['object'].'_cats';
 	}
 
@@ -60,27 +54,76 @@ class yf_cats {
 				}
 			}
 			$cat_items = $all ? 'category_items_all': 'category_items';
-			foreach ((array)main()->get_data($cat_items) as $A) {
-				if ($A['cat_id'] != $cat_id) {
+			foreach ((array)main()->get_data($cat_items) as $a) {
+				if ($a['cat_id'] != $cat_id) {
 					continue;
 				}
-				$raw_items_array[$A['id']] = $A;
 				// Try to parse 'dynamic' attributes for the item
 				if ($this->USE_DYNAMIC_ATTS && $custom_fields) {
-					$custom_attrs = (array)$this->_convert_atts_string_into_array($A['other_info']);
+					if ($a['other_info']) {
+						$custom_attrs = (array)$this->_convert_atts_string_into_array($a['other_info']);
+					}
 					foreach ((array)$custom_fields as $f) {
-						$raw_items_array[$A['id']][$f] = strval($custom_attrs[$f]);
+						$a[$f] = isset($custom_attrs[$f]) ? (string)$custom_attrs[$f]: '';
 					}
 				}
+				$raw_items[$a['id']] = $a;
 			}
-			$this->_items_cache[$cat_id] = $raw_items_array;
+			$this->_items_cache[$cat_id] = $raw_items;
 		} else {
-			$raw_items_array = $this->_items_cache[$cat_id];
+			$raw_items = $this->_items_cache[$cat_id];
 		}
-		if ($recursive_sort && !empty($raw_items_array)) {
-			$raw_items_array = $this->_recursive_sort_items($raw_items_array);
+		if ($recursive_sort && !empty($raw_items)) {
+			$raw_items = $this->_recursive_sort_items($raw_items);
 		}
-		return $raw_items_array ? $raw_items_array: false;
+		return $raw_items ? $raw_items : false;
+	}
+
+	/**
+	* Get and sort items ordered array (recursively)
+	*/
+	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0) {
+		$children = array();
+		$cur_group = MAIN_TYPE_USER ? $_SESSION['user_group'] : $_SESSION['admin_group'];
+		foreach ((array)$items as $id => $info) {
+			$parent_id = $info['parent_id'];
+			if ($skip_item_id == $id) {
+				continue;
+			}
+			$user_groups = array();
+			if (!empty($info['user_groups'])) {
+				foreach (explode(',',$info['user_groups']) as $v) {
+					if (!empty($v)) {
+						$user_groups[$v] = $v;
+					}
+				}
+				if (!empty($user_groups) && !isset($user_groups[$cur_group])) {
+					continue;
+				}
+			}
+			$children[$parent_id][$id] = $id;
+		}
+		$ids = $this->_count_levels(0, $children);
+		$new_items = array();
+		foreach ((array)$ids as $id => $level) {
+			$new_items[$id] = $items[$id] + array('level' => $level);
+		}		
+		return $new_items;
+	}
+
+	/**
+	*/
+	function _count_levels($start_id = 0, &$children, $level = 0) {
+		$ids = array();
+		foreach ((array)$children[$start_id] as $id => $_tmp) {
+			$ids[$id] = $level;
+			if (isset($children[$id])) {
+				foreach ((array)$this->_count_levels($id, $children, $level + 1) as $_id => $_level) {
+					$ids[$_id] = $_level;
+				}
+			}
+		}
+		return $ids;
 	}
 
 	/**
@@ -167,7 +210,7 @@ class yf_cats {
 			}
 			$items_for_box[$cur_item_id] = str_repeat($this->BOX_LEVEL_SPACER, $cur_item_info['level'])
 				.($cur_item_info['level'] > 0 ? $this->BOX_LEVEL_MARKER : '')
-				.t($cur_item_info['name']);
+				.$cur_item_info['name'];
 		}
 		return $items_for_box;
 	}
@@ -183,52 +226,7 @@ class yf_cats {
 	* Display category block items box
 	*/
 	function _cats_box($cat_name = '', $selected = '', $name_in_form = 'cat_id', $with_all = 1) {
-		$items = $this->_get_items_for_box($cat_name, $with_all);
-		return common()->select_box($name_in_form, $items, $selected, false, 2, '', false);
-	}
-
-	/**
-	* Get and sort items ordered array (recursively)
-	*/
-	function _recursive_sort_items($cat_items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
-		$items_ids		= array();
-		$items_array	= array();
-		if (!empty($cat_items) && is_string($cat_items)) {
-			$cat_items = $this->_get_items_array($cat_items);
-		}
-		if (empty($cat_items)) {
-			$cat_items = $this->_get_items_array($this->_default_cats_block);
-		}
-		foreach ((array)$cat_items as $item_info) {
-			if ($item_info['parent_id'] != $parent_id) {
-				continue;
-			}
-			if ($skip_item_id == $item_info['id']) {
-				continue;
-			}
-			$user_groups = array();
-			if (!empty($item_info['user_groups'])) {
-				foreach (explode(',',$item_info['user_groups']) as $v) {
-					if (empty($v)) {
-						continue;
-					}
-					$user_groups[$v] = $v;
-				}
-				if (!empty($user_groups) && !isset($user_groups[MAIN_TYPE_USER ? $_SESSION['user_group'] : $_SESSION['admin_group']])) {
-					continue;
-				}
-			}
-			$items_array[$item_info['id']] = $item_info;
-			$items_array[$item_info['id']]['level'] = $level;
-			$tmp_array = $this->_recursive_sort_items($cat_items, $skip_item_id, $item_info['id'], $level + 1);
-			foreach ((array)$tmp_array as $sub_item_info) {
-				if ($sub_item_info['id'] == $item_info['id']) {
-					continue;
-				}
-				$items_array[$sub_item_info['id']] = $sub_item_info;
-			}
-		}
-		return $items_array;
+		return common()->select_box($name_in_form, $this->_get_items_for_box($cat_name, $with_all), $selected, false, 2, '', false);
 	}
 
 	/**
@@ -298,6 +296,15 @@ class yf_cats {
 		}
 		if (empty($cat_items)) {
 			$cat_items = $this->_get_items_array($this->_default_cats_block);
+		}
+		if (!isset($this->_default_callback)) {
+			$this->_default_callback = false;
+			if (!empty($_GET['object'])) {
+				$try_callback = array(module($_GET['object']), '_callback_cat_link');
+			}
+			if (is_callable($try_callback)) {
+				$this->_default_callback = $try_callback;
+			}
 		}
 		if (empty($prepare_link_callback) && !empty($this->_default_callback)) {
 			$prepare_link_callback = $this->_default_callback;
@@ -369,6 +376,8 @@ class yf_cats {
 		return $this->_items_cache[$cat_id][$item_id]['name'];
 	}
 
+	/**
+	*/
 	function _get_recursive_cat_ids ($cat_id = 0, $all_cats = false) {
 		$cat_id = intval($cat_id);
 		if (empty($all_cats)) {
@@ -381,7 +390,6 @@ class yf_cats {
 				conf('all_cats', $all_cats);
 			}
 		}
-
 		$current_func = __FUNCTION__;
 		$ids[$cat_id] = $cat_id;
 		foreach ($all_cats as $key => $item) {
@@ -389,7 +397,6 @@ class yf_cats {
 				$ids += $this->$current_func($item['id'], $all_cats);
 			}
 		}
-
 		return $ids;
 	}
 }

@@ -15,19 +15,13 @@ class yf_template_editor {
 	* Framework constructor
 	*/
 	function _init () {
-		$this->templates_path_framework = YF_PATH. tpl()->_THEMES_PATH;
-		$this->templates_path_framework2 = YF_PATH. 'priority2/'. tpl()->_THEMES_PATH;
-
-		$this->templates_path_project = INCLUDE_PATH. tpl()->_THEMES_PATH;
-		$this->templates_path_project2 = INCLUDE_PATH. 'priority2/'. tpl()->_THEMES_PATH;
-
 		$this->_dir_array = array(
-			'framework'		=> $this->templates_path_framework,
-			'project'		=> $this->templates_path_project,
-#			'framework_p2'	=> $this->templates_path_framework2,
-#			'project_p2'	=> $this->templates_path_project2,
+			'framework'			=> YF_PATH. tpl()->_THEMES_PATH,
+			'project'			=> INCLUDE_PATH. tpl()->_THEMES_PATH,
+#			'framework_p2'		=> YF_PATH. 'priority2/'. tpl()->_THEMES_PATH,
+#			'project_p2'		=> INCLUDE_PATH. 'priority2/'. tpl()->_THEMES_PATH,
+#			'framework_user'	=> YF_PATH. 'templates/user/',
 		);
-
 		foreach ((array)_class('sites_info')->info as $site_dir_array) {
 			$this->_dir_array[$site_dir_array['name']] = $site_dir_array['REAL_PATH'].'templates/';		
 		}
@@ -54,8 +48,9 @@ class yf_template_editor {
 			cache_set($this->CACHE_NAME, $num_stpls_array);
 		}
 		// Process records
+		$rp = realpath($this->_dir_array['project']);
 		foreach ((array)$themes as $theme_class => $theme_attr) {
-			if (realpath($this->templates_path_project) == realpath($this->_dir_array[$theme_class]) && $theme_class != 'project') {
+			if ($rp == realpath($this->_dir_array[$theme_class]) && $theme_class != 'project') {
 				continue;
 			}
 			$replace3 = array(
@@ -89,7 +84,7 @@ class yf_template_editor {
 	/**
 	*/
 	function edit_theme () {
-		if ($_GET['location'] == 'framework') {
+		if (false !== strpos($_GET['location'], 'framework')) {
 			return $this->_framework_warning();
 		}
 		$new_theme_name	= $_POST['theme_name'];
@@ -246,11 +241,12 @@ class yf_template_editor {
 	function edit_stpl () {
 		$theme_name	= $_GET['theme'];
 		$stpl_name	= $_GET['name'];
-		if (empty($theme_name) || empty($stpl_name)) {
+		if (!validate(array($theme_name, $stpl_name), 'trim|required')) {
 			return _e('Template name and theme required!');
 		}
 		if (main()->is_post()) {
-			if ($_GET['location'] == 'framework') {
+			if (false !== strpos($_GET['location'], 'framework')) {
+// TODO: use readonly mode with message and ability to save changed file inside project
 				return $this->_framework_warning();
 			}
 			$lib_stpl_path	= $this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT;
@@ -261,7 +257,14 @@ class yf_template_editor {
 			file_put_contents($lib_stpl_path, $text);
 			return js_redirect('./?object='.$_GET['object'].'&action=show_stpls_in_theme&theme='.$theme_name.'&location='.$_GET['location']);
 		}
-		$stpl_text = file_get_contents($this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT);
+		$stpl_path = $this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT;
+		if ($_GET['location'] == 'framework_user') {
+			$stpl_path = YF_PATH. 'templates/user/'. $stpl_name. tpl()->_STPL_EXT;
+		}
+		if (!file_exists($stpl_path)) {
+			return _e('Cannot find template: '.$stpl_path);
+		}
+		$stpl_text = file_get_contents($stpl_path);
 		$stpl_text = _prepare_html($stpl_text, 0);
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&name='.$stpl_name.'&theme='.$theme_name.'&location='.$_GET['location'],
@@ -271,7 +274,6 @@ class yf_template_editor {
 			'back_url'		=> './?object='.$_GET['object'].'&action=show_stpls_in_theme&theme='.$theme_name.'&location='.$_GET['location'],
 			'location'		=> $_GET['location'],
 		);
-#		return tpl()->parse($_GET['object'].'/edit_main', $replace);
 		$div_id = 'editor_html';
 		$hidden_id = 'stpl_text_hidden';
 		return '<h4>edit: '.$replace['stpl_name'].' for theme: '.$replace['theme_name'].', inside: '.$replace['location'].'</h4>'.
@@ -281,7 +283,7 @@ class yf_template_editor {
 			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'.$stpl_text.'</div>', '', array(
 				'id'	=> $div_id,
 				'wide'	=> 1,
-				'ace_editor' => array(),
+				'ace_editor' => array('mode' => 'html'),
 			))
 			->hidden($hidden_id)
 			->save_and_back();
@@ -375,5 +377,13 @@ class yf_template_editor {
 	*/
 	function _framework_warning () {
 		return _e( tpl()->parse($_GET['object'].'/framework_warning') );
+	}
+
+	/**
+	*/
+	function _hook_settings(&$selected = array()) {
+#		return array(
+#			array('text', 'template_editor__ACE_THEME'),
+#		);
 	}
 }

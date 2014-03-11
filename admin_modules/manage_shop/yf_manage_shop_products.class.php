@@ -28,10 +28,11 @@ class yf_manage_shop_products{
 					'image'			=> array('eq','p.image'),
 					'cat_id'		=> array('field' => 'p.cat_id'),
 					'quantity'		=> array('field' => 'p.quantity'),
-					'add_date'		=> array('field' => 'p.add_date'),
+					'add_date'		=> array('dt_between', 'p.add_date'),
 					'update_date'	=> array('field' => 'p.update_date'),
 				),
 				'hide_empty' => 1,
+				'pager_sql_callback' => function($sql) { return preg_replace('/^SELECT.*FROM/ims', 'SELECT COUNT(*) FROM', ltrim($sql)); }
 			))
 			->image('id', '', array('width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {
                 $product_id = $row['id'];
@@ -100,6 +101,7 @@ class yf_manage_shop_products{
 			$a = $this->_get_product($_GET['id']);
 		}
 		if ($a['id']) {
+			module('manage_shop')->_product_check_first_revision('product', $_GET['id']);
 			module('manage_shop')->_product_image_delete($_GET['id']);
 			db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$_GET['id']);		
 			db()->query('DELETE FROM '.db('shop_product_to_region').' WHERE product_id='.$_GET['id']);		
@@ -137,9 +139,6 @@ class yf_manage_shop_products{
 				'product_id' => $new_product_id,
 				'productparam_id' => $v['productparam_id'],
 				'value' => $v['value'],
-				'articul' => $v['articul'],
-				'item_quantity' => $v['item_quantity'],
-				'barcode' => $v['barcode'],
 			));
 		}
 		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_category')."` WHERE `product_id`='{$new_product_id}'");
@@ -219,17 +218,23 @@ class yf_manage_shop_products{
 		if(!$_GET['search_word']) return false;
 		$word = common()->sphinx_escape_string($_GET['search_word']);
 //		$word = str_replace("_", " ", common()->_propose_url_from_name($word));
-		$result = common()->sphinx_query("
+/*		$result = common()->sphinx_query("
 			SELECT product_id,name 
 			FROM products 
 			WHERE MATCH ('@name ".$word."*')
 			LIMIT 20"
-		);
+		); */
+		$result = db()->get_all("
+			SELECT `id`,`name` FROM `".db('shop_products')."` WHERE 
+				`name` LIKE '%"._es($word)."%' OR 
+				`id` LIKE '%"._es($word)."%'
+			LIMIT 20
+		");
 		if(!$result) return false;
 		foreach((array)$result as $k){
 			$return_array[] = array(
-				'id' => $k['product_id'],
-				'text' => '['.$k['product_id'].'] '.$k['name'],
+				'id' => $k['id'],
+				'text' => '['.$k['id'].'] '.$k['name'],
 			);
 		}
 		return json_encode($return_array);

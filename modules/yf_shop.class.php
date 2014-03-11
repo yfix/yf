@@ -352,14 +352,6 @@ class yf_shop extends yf_module {
 		return _class('shop__box', 'modules/shop/')->_box($name, $selected);
 	}
 
-	function _quick_menu() {
-		return _class('shop__quick_menu', 'modules/shop/')->_quick_menu();
-	}
-
-	function _show_header() {
-		return _class('shop__show_header', 'modules/shop/')->_show_header();
-	}
-
 	function _site_title($title) {
 		return _class('shop__site_title', 'modules/shop/')->_site_title($title);
 	}
@@ -411,5 +403,62 @@ class yf_shop extends yf_module {
 
 	function category() {
 // TODO: show category contents
+	}
+
+	/**
+	*/
+	function _get_images($product_id) {
+		$A = db()->get_all('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.intval($product_id).' AND active=1 ORDER BY is_default DESC');
+		$d = sprintf('%09s', $product_id);
+		foreach((array)$A as $img){
+	    	$replace = array(
+			    '{subdir2}' => substr($d, -6, 3),
+			    '{subdir3}' => substr($d, -3, 3),
+		    	'{product_id}' => $product_id,
+			    '{image_id}' => $img['id'],
+			);
+			$images[] = array(
+				'big' 	=> str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_big.jpg'),
+				'thumb' => str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_thumb.jpg'),
+				'id'	=> $img['id'],
+			);
+		}
+		return $images;
+	}
+
+	/**
+	*/
+	function _generate_image_name($product_id, $image_id, $media = false){
+		$dirs = sprintf('%06s', $product_id);
+		$dir2 = substr($dirs, -3, 3);
+		$dir1 = substr($dirs, -6, 3);
+		$m_path = $dir1.'/'.$dir2.'/';
+
+		$media_host = defined('MEDIA_HOST') ? MEDIA_HOST : false;
+		$base_url = WEB_PATH;
+		if (!empty($media_host) && $media) {
+			$base_url = '//' . $media_host . '/';
+		}
+		$image = array(
+			'big' 		=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_big.jpg',
+			'thumb' 	=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'_thumb.jpg',
+			'default' 	=> $base_url.'uploads/shop/products/'.$m_path.'product_'.$product_id.'_'.$image_id.'.jpg',
+		);
+		return $image;
+	}
+
+	/**
+	* Hook to provide settigns from shop
+	*/
+	function _hook_settings() {
+		return array(
+			array('yes_no_box', 'shop__sms_order_send', 'Send SMS to user when new order arrives'),
+			array('yes_no_box', 'shop__sms_order_copy', 'Send SMS copy when new order arrives'),
+			array('text', 		'shop__sms_order_copy_to', 'Phone numbers to send SMS copy when new order arrives'),
+			array('yes_no_box', 'shop__emails_all_send', 'Send emails'),
+			array('yes_no_box', 'shop__emails_all_copy', 'Send email copies'),
+			array('text', 		'shop__emails_all_copy_to', 'Emails to copy all userland emails'),
+			array('text', 		'shop__currency', 'Currency to use in userland'),
+		);
 	}
 }

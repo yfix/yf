@@ -12,7 +12,7 @@ class yf_user_groups {
 	/**
 	*/
 	function show() {
-		$blocks = main()->get_data('blocks_names');
+		$blocks = main()->get_data('blocks_all');
 		foreach ((array)$blocks as $_id => $_info) {
 			if ($_info['type'] == 'user' && $_info['name'] == 'center_area') {
 				$block_center_id = $_id;

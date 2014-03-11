@@ -9,6 +9,9 @@
 */
 class yf_core_blocks {
 
+	public $TASK_NOT_FOUND_404_HEADER = false;
+	public $TASK_DENIED_403_HEADER = false;
+
 	/**
 	* Catch missing method call
 	*/
@@ -66,16 +69,9 @@ class yf_core_blocks {
 	* Show custom block contents
 	*/
 	function _show_block ($input = array()) {
-		$block_name = $input['name'];
-		if (empty($block_name)) {
-			trigger_error(__CLASS__.': Given empty block name to show', E_USER_WARNING);
-			return false;
-		}
-		// Try to get available blocks names
 		if (!isset($this->_blocks_infos)) {
-			$this->_blocks_infos = main()->get_data('blocks_names');
+			$this->_blocks_infos = main()->get_data('blocks_all');
 		}
-		// Check if such block exists
 		if (empty($this->_blocks_infos)) {
 			if (!$this->_error_no_blocks_raised) {
 				trigger_error(__CLASS__.': Blocks names not loaded', E_USER_WARNING);
@@ -84,42 +80,50 @@ class yf_core_blocks {
 			return false;
 		}
 		$BLOCK_EXISTS = false;
-		foreach ((array)$this->_blocks_infos as $block_info) {
-			// Skip blocks from other init type ('admin' or 'user')
-			if (trim($block_info['type']) != MAIN_TYPE) {
-				continue;
-			}
-			// Found!
-			if ($block_info['name'] == $block_name) {
+		if (isset($input['block_id']) && is_numeric($input['block_id'])) {
+			$block_info = $this->_blocks_infos[$input['block_id']];
+			if ($block_info && trim($block_info['type']) == MAIN_TYPE) {
+				$block_id = $input['block_id'];
+				$block_name = $block_info['name'];
 				$BLOCK_EXISTS = true;
-				$block_id = $block_info['id'];
-				break;
+			}
+		} else {
+			$block_name = $input['name'];
+			if (empty($block_name)) {
+				trigger_error(__CLASS__.': Given empty block name to show', E_USER_WARNING);
+				return false;
+			}
+			foreach ((array)$this->_blocks_infos as $block_info) {
+				// Skip blocks from other init type ('admin' or 'user')
+				if (trim($block_info['type']) != MAIN_TYPE) {
+					continue;
+				}
+				// Found!
+				if ($block_info['name'] == $block_name) {
+					$BLOCK_EXISTS = true;
+					$block_id = $block_info['id'];
+					break;
+				}
 			}
 		}
 		if (!$BLOCK_EXISTS) {
-			trigger_error(__CLASS__.': Block name "'._prepare_html($block_name).'" not found in blocks list', E_USER_WARNING);
+			trigger_error(__CLASS__.': block "'._prepare_html($block_name).'" not found in blocks list', E_USER_WARNING);
 			return false;
 		}
-		// Block is inactive, stop here
 		if (!$this->_blocks_infos[$block_id]['active']) {
 			return false;
 		}
-		// Check rules
 		if (!$this->_check_block_rights($block_id, $_GET['object'], $_GET['action'])) {
 			return _class('graphics')->_action_on_block_denied($block_name);
 		}
-		// Set SE keywords if allowed
 		if (MAIN_TYPE_USER && $block_name == 'center_area' && _class('graphics')->USE_SE_KEYWORDS) {
 			_class('graphics')->_set_se_keywords();
 		}
 		$cur_block_info = $this->_blocks_infos[$block_id];
-		/* 	If special object method specified - then call it
-
-			Syntax: [path_to]$class_name.$method_name
-
-			@example 'static_pages.show'
-			@example 'classes/minicalendar.createcalendar'
-		*/
+		// 	If special object method specified - then call it
+		//	Syntax: [path_to]$class_name.$method_name
+		//	@example 'static_pages.show'
+		//	@example 'classes/minicalendar.createcalendar'
 		if (!empty($cur_block_info['method_name'])) {
 			$special_path = '';
 			if (false !== strpos($cur_block_info['method_name'], '/')) {
@@ -132,20 +136,20 @@ class yf_core_blocks {
 				'block_id'		=> $block_id,
 			);
 			if (!empty($special_class_name) && !empty($special_method_name)) {
-				return _class($special_class_name, $special_path)->$special_method_name($special_params);
+				$obj = _class_safe($special_class_name, $special_path);
+				if (is_object($obj) && method_exists($obj, $special_method_name)) {
+					return $obj->$special_method_name($special_params);
+				} else {
+					trigger_error(__CLASS__.': block "'._prepare_html($block_name).'" custom php module.method not exists: '._prepare_html($cur_block_info['method_name']), E_USER_WARNING);
+					return false;
+				}
 			}
 		}
-		// If template name specified - then use it
-		$STPL_NAME = $block_name;
-		if (!empty($cur_block_info['stpl_name'])) {
-			$STPL_NAME = $cur_block_info['stpl_name'];
-		}
-		// Show template contents
-		$replace = array(
-			'block_name'	=> $block_name,
-			'block_id'		=> $block_id,
-		);
-		return tpl()->parse($STPL_NAME, $replace);
+		$stpl_name = $cur_block_info['stpl_name'] ?: $block_name;
+		return tpl()->parse($stpl_name, array(
+			'block_name'=> $block_name,
+			'block_id'	=> $block_id,
+		));
 	}
 
 	/**
@@ -153,6 +157,9 @@ class yf_core_blocks {
 	*/
 	function _action_on_block_denied ($block_name = '') {
 		if ($block_name == 'center_area') {
+			if ($this->TASK_DENIED_403_HEADER) {
+				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+			}
 			if (MAIN_TYPE_USER && !main()->USER_ID) {
 				$redir_params = array(
 					'%%object%%'		=> $_GET['object'],
@@ -162,15 +169,15 @@ class yf_core_blocks {
 				$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), main()->REDIR_URL_DENIED);
 				if (!empty($redir_url)) {
 					if ($_GET['object'] == 'login_form') {
-						return 'Access to login form denied on center block (graphics->_action_on_block_denied)';
+						return 'Access to login form denied on center block ('.__CLASS__.'.'.__FUNCTION__.')';
 					} else {
 						return js_redirect($redir_url);
 					}
 				}
 			} elseif (MAIN_TYPE_USER && main()->USER_ID) {
-				return '<div class="alert alert-error">'.t('Access denied').'</div>';
+				return '<div class="alert alert-error alert-danger">'.t('Access denied').'</div>';
 			} elseif (MAIN_TYPE_ADMIN && main()->ADMIN_ID) {
-				return '<div class="alert alert-error">'.t('Access denied').'</div>';
+				return '<div class="alert alert-error alert-danger">'.t('Access denied').'</div>';
 			//} elseif (MAIN_TYPE_ADMIN && !main()->ADMIN_ID) {
 			}
 		}
@@ -182,7 +189,7 @@ class yf_core_blocks {
 	*/
 	function _get_center_block_id() {
 		if (!isset($this->_blocks_infos)) {
-			$this->_blocks_infos = main()->get_data('blocks_names');
+			$this->_blocks_infos = main()->get_data('blocks_all');
 		}
 		$center_block_id = 0;
 		foreach ((array)$this->_blocks_infos as $cur_block_id => $cur_block_info) {
@@ -310,7 +317,7 @@ class yf_core_blocks {
 	function prefetch_center() {
 		$block_name = 'center_area';
 		if (!isset($this->_blocks_infos)) {
-			$this->_blocks_infos = main()->get_data('blocks_names');
+			$this->_blocks_infos = main()->get_data('blocks_all');
 		}
 		if (empty($this->_blocks_infos)) {
 			return false;
@@ -353,7 +360,9 @@ class yf_core_blocks {
 
 		_class('graphics')->_route_request();
 		// Check if called class method is 'private' - then do not use it
-		if (substr($_GET['action'], 0, 1) == '_' || $_GET['object'] == 'main') {
+		// Also we protect here core classes that can be instantinated before this method and can be allowed by mistake
+		// Use other module names, think about this list as "reserved" words
+		if (substr($_GET['action'], 0, 1) == '_' || in_array($_GET['object'], array('main','common','db','graphics','cache','form2','table2','tpl'))) {
 			$ACCESS_DENIED = true;
 		}
 		if (!$ACCESS_DENIED) {
@@ -368,15 +377,13 @@ class yf_core_blocks {
 			if (method_exists($obj, main()->MODULE_CUSTOM_HANDLER)) {
 				$custom_handler_exists = true;
 			}
-			// Do call class method
 			if (!$NOT_FOUND || $custom_handler_exists) {
 				if ($custom_handler_exists) {
 					$NOT_FOUND = false;
 					$body = $obj->{main()->MODULE_CUSTOM_HANDLER}($_GET['action']);
 				} else {
-					// Automatically call output cache trigger
 					$is_banned = false;
-					if (MAIN_TYPE_USER && isset(main()->AUTO_BAN_CHECKING) && main()->AUTO_BAN_CHECKING) {
+					if (MAIN_TYPE_USER && main()->AUTO_BAN_CHECKING) {
 						$is_banned = _class('ban_status')->_auto_check(array());
 					}
 					if ($is_banned) {
@@ -387,52 +394,50 @@ class yf_core_blocks {
 				}
 			}
 		}
-		// Process errors if exiss ones
-		$redir_params = array(
-			'%%object%%'		=> $_GET['object'],
-			'%%action%%'		=> $_GET['action'],
-			'%%add_get_vars%%'	=> str_replace('&',';',_add_get(array('object','action'))),
-		);
+		$redirect_func = function($url) {
+			$redir_params = array(
+				'%%object%%'		=> $_GET['object'],
+				'%%action%%'		=> $_GET['action'],
+				'%%add_get_vars%%'	=> str_replace('&',';',_add_get(array('object','action'))),
+			);
+			$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), $url);
+			if (!empty($redir_url)) {
+				redirect($redir_url, 1, tpl()->parse('system/error_not_found'));
+			}
+		};
 		if ($NOT_FOUND) {
+			if ($this->TASK_NOT_FOUND_404_HEADER) {
+				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 404 Not Found');
+			}
 			if (_class('graphics')->NOT_FOUND_RAISE_WARNING) {
-				trigger_error('MAIN: Task not found: '.$_GET['object'].'->'.$_GET['action'], E_USER_WARNING);
+				trigger_error(__CLASS__.': Task not found: '.$_GET['object'].'.'.$_GET['action'], E_USER_WARNING);
 			}
 			if (MAIN_TYPE_USER) {
-				$url_not_found = main()->REDIR_URL_NOT_FOUND;
-				if (is_array($url_not_found) && !empty($url_not_found)) {
-					$_GET['object'] = $url_not_found['object'];
-					$_GET['action'] = $url_not_found['action'];
-					$_GET['id']		= $url_not_found['id'];
-					$_GET['page']	= $url_not_found['page'];
-
-					if (!empty($url_not_found['object'])) {
-						$OBJ = _class($url_not_found['object'], $url_not_found['path']);
-						$action = $url_not_found['action'] ? $url_not_found['action'] : 'show';
-						if (method_exists($OBJ, $action)) {
-							$body = $OBJ->$action();
-						} else {
-							main()->NO_GRAPHICS = true;
-							echo '404: not found by main';
-						}
-					} elseif (isset($url_not_found['stpl'])) {
+				$u = main()->REDIR_URL_NOT_FOUND;
+				if (is_array($u) && !empty($u)) {
+					// Prefill GET keys from redirect url
+					foreach (array('object','action','id','page') as $k) {
+						$_GET[$k] = $u[$k];
+					}
+					if (!empty($u['object'])) {
+						$action = $u['action'] ?: 'show';
+						$body = _class_safe($u['object'], $u['path'])->$action();
+					} elseif (isset($u['stpl'])) {
 						main()->NO_GRAPHICS = true;
-						echo tpl()->parse($url_not_found['stpl']);
+						echo tpl()->parse($u['stpl']);
 					}
 				} else {
-					$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), $url_not_found);
-					if (!empty($redir_url)) {
-						redirect($redir_url, 1, tpl()->parse('system/error_not_found'));
-					}
+					$redirect_func($u);
 				}
 				$GLOBALS['task_not_found'] = true;
 			}
 		} elseif ($CHECK_IF_ALLOWED && $ACCESS_DENIED) {
-			trigger_error('MAIN: Access denied: '.$_GET['object'].'->'.$_GET['action'], E_USER_WARNING);
+			if ($this->TASK_DENIED_403_HEADER) {
+				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+			}
+			trigger_error(__CLASS__.': Access denied: '.$_GET['object'].'.'.$_GET['action'], E_USER_WARNING);
 			if (MAIN_TYPE_USER) {
-				$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), main()->REDIR_URL_DENIED);
-				if (!empty($redir_url)) {
-					redirect($redir_url, 1, tpl()->parse('system/error_not_found'));
-				}
+				$redirect_func(main()->REDIR_URL_DENIED);
 				$GLOBALS['task_denied'] = true;
 			}
 		}
@@ -479,4 +484,3 @@ class yf_core_blocks {
 		}
 	}
 }
-

@@ -22,7 +22,7 @@
                 {/if}
         </td>
         <td nowrap="">
-                <a class="btn btn-mini btn-xs" href="{#.edit_url}"><i class=" icon-edit"></i>Edit</a>
+                <a class="btn btn-mini btn-xs" href="{#.edit_url}" target="_blank"><i class=" icon-edit"></i>Edit</a>
         </td>
 </tr>
 {/foreach}

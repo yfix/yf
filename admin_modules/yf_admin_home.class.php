@@ -15,10 +15,6 @@ class yf_admin_home {
 	public $ADMIN_HOME_CACHE_TIME  = 600;		//60sec * 10minutes 
 	/** @var bool */
 	public $DISPLAY_STATS			= false;
-	/** @var bool */
-	public $SHOW_CUR_SETTINGS		= false;
-	/** @var bool */
-	public $SHOW_GENERAL_INFO		= true;
 
 	/**
 	*/
@@ -229,5 +225,14 @@ class yf_admin_home {
 	* Custom content specific only for this project (designed to be inherited)
 	*/
 	function _custom_content () {
+	}
+
+	/**
+	*/
+	function _hook_settings(&$selected = array()) {
+#		return array(
+#			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
+#			array('number', 'admin_home__ADMIN_HOME_CACHE_TIME'),
+#		);
 	}
 }

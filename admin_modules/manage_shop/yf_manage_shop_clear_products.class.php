@@ -60,6 +60,7 @@ class yf_manage_shop_clear_products {
 		->btn('List of changes', './?object=manage_shop&action=clear_pattern_list&id=%d', array('icon' => 'icon-th-list'))
 		->btn_edit('', './?object=manage_shop&action=clear_pattern_edit&id=%d',array('no_ajax' => 1))
 		->btn_delete('', './?object=manage_shop&action=clear_pattern_delete&id=%d')
+		->btn('Checkout revision', './?object=manage_shop&action=checkout_group_revision&id=%d')
 		->footer_add('Add pattern', './?object=manage_shop&action=clear_pattern_add',array('no_ajax' => 1));
 
 		$replace = array(
@@ -287,14 +288,14 @@ class yf_manage_shop_clear_products {
 
 			$update_ids[] = $row['id'];
 		}
-
+		module('manage_shop')->_product_check_first_revision('product', $update_ids);
 		if (!empty($update_array)) {
 			$update_array = array_chunk($update_array, 300);
 			foreach ($update_array as $update_items) {
-				db()->update_batch('shop_products', $update_items, 'id');
+				db()->update_batch_safe('shop_products', $update_items, 'id');
 			}
-			
-			module('manage_shop')->_product_add_revision('correct_name', $update_ids);
+			$revision_ids = module('manage_shop')->_product_add_revision('correct_name', $update_ids);
+			module('manage_shop')->_add_group_revision('product', $revision_ids, $_GET['id']);
 		}
 
 		db()->commit();

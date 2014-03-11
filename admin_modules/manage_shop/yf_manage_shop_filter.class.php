@@ -2,7 +2,7 @@
 
 class yf_manage_shop_filter{
 
-	public $_avail_filters = array('products','users','orders','suppliers','manufacturers','product_sets','attributes');
+	public $_avail_filters = array('products','users','orders','suppliers','manufacturers','product_sets','attributes','feedback','product_revisions', 'order_revisions', 'product_images_revisions');
 
 	/**
 	*/
@@ -45,15 +45,18 @@ class yf_manage_shop_filter{
 				$fields = array('id','name','cat_id','price','active','quantity','manufacturer_id','supplier_id','add_date','update_date');
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
-				}
+				};
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
-					->number('id')
+//					->number('id')
+					->container(_class('manage_shop_filter')->_product_search_widget('id',$_SESSION[$filter_name]['id']),'Id')						
 					->text('name')
 					->text('articul')
 					->row_start(array('desc' => 'price'))
 						->number('price')
 						->number('price__and')
 					->row_end()
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')
 					->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
 					->select_box('supplier_id', _class('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'no_translate' => 1, 'hide_empty' => 1))
 					->select_box('manufacturer_id', _class('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'no_translate' => 1))
@@ -70,6 +73,8 @@ class yf_manage_shop_filter{
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->number('id', array('class' => 'span1'))
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')						
 					->text('name')
 					->text('email')
 					->text('phone')
@@ -88,6 +93,8 @@ class yf_manage_shop_filter{
 						->number('id')
 						->number('id__and')
 					->row_end()
+					->datetime_select('date')
+					->datetime_select('date__and')						
 					->text('name')
 					->text('phone')
 					->text('email')
@@ -145,6 +152,65 @@ class yf_manage_shop_filter{
 					->select_box('order_by', $order_fields, array('show_text' => 1));
 
 			},
+			'feedback' => function($filter_name, $replace) {
+				
+				$fields = array('id','product_id','name','email','content','pros','cons');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+					->number('id', array('class' => 'span1'))
+					->container(_class('manage_shop_filter')->_product_search_widget('product_id',$_SESSION[$filter_name]['product_id']),'product_id')						
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')						
+					->text('name')
+					->text('email')
+					->text('content')
+					->text('pros')
+					->text('cons')
+					->active_box('active', array('horizontal' => 1))						
+					->select_box('order_by', $order_fields, array('show_text' => 1));
+
+			},
+			'product_revisions'	=> function($filter_name, $replace) {
+				$fields = array('user_id', 'add_date', 'item_id', 'action');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+					->container(_class('manage_shop_filter')->_product_search_widget('item_id',$_SESSION[$filter_name]['item_id']),'Item id')						
+					->text('user_id', 'Admin')
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')
+					->select_box('action', common()->get_static_conf('product_revisions',false,false), array('show_text' => 1))
+					->select_box('order_by', $order_fields, array('show_text' => 1));
+			},					
+			'order_revisions'	=> function($filter_name, $replace) {
+				$fields = array('user_id', 'add_date', 'item_id', 'action');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+					->text('item_id','Order id')						
+					->text('user_id', 'Admin')
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')
+					->select_box('action', common()->get_static_conf('order_revisions',false,false), array('show_text' => 1))
+					->select_box('order_by', $order_fields, array('show_text' => 1));
+			},					
+			'product_images_revisions'	=> function($filter_name, $replace) {
+				$fields = array('user_id', 'add_date', 'product_id', 'action');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+					->container(_class('manage_shop_filter')->_product_search_widget('product_id',$_SESSION[$filter_name]['product_id']),'Product id')
+					->text('user_id', 'Admin')
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')
+					->select_box('action', common()->get_static_conf('images_revisions',false,false), array('show_text' => 1))
+					->select_box('order_by', $order_fields, array('show_text' => 1));
+			},					
 		);
 		$action = $_GET['action'];
 		if (isset($filters[$action])) {
@@ -153,5 +219,9 @@ class yf_manage_shop_filter{
 				->save_and_clear();
 		}
 		return false;
+	}
+	
+	function _product_search_widget($input_name,$input_value) {
+		return tpl()->parse('manage_shop/product_search_filter',array('input_name' => $input_name,'input_value' => $input_value));
 	}
 }

@@ -6,6 +6,54 @@ class yf_db_utils {
 
 	/**
 	*/
+	function create_database($name, $options = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	function drop_database($name, $options = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	function alter_database($name, $options = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	function rename_database($name, $new_name) {
+// TODO
+	}
+
+	/**
+	*/
+	function create_table($name, $options = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	function drop_table($name, $options = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	function alter_table($name, $options = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	function rename_table($name, $new_name) {
+// TODO
+	}
+
+	/**
+	*/
 	function split_sql(&$ret, $sql) {
 		// do not trim
 		$sql			= rtrim($sql, "\n\r");
@@ -106,4 +154,4 @@ class yf_db_utils {
 		}
 		return TRUE;
 	}
-	}
+}

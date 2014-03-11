@@ -102,6 +102,9 @@ class yf_site_nav_bar {
 			'force_stpl_name'	=> 'site_nav_bar/dropdown_menu',
 			'return_array'		=> 1,
 		));
+		if (!$items) {
+			return false;
+		}
 		foreach ((array)$items as $id => $item) {
 			$item['need_clear'] = 0;
 			if ($item['type_id'] != 1/* $item['type_id'] == 1 && !module('admin_home')->_url_allowed($item['link'])*/) {

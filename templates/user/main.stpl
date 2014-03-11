@@ -4,19 +4,20 @@
 	<title>{execute(graphics,show_site_title)}</title>
 
 {execute(common,bs_theme_html)}
+{{--execute_shutdown(graphics,show_css)--}}
 {include("main_style_css")}
 {execute(graphics,show_metatags)}
 
 </head>
-<body>
-	<div class="navbar navbar-inverse">
-		<div class="navbar-inner">
-			<a class="brand" href="{const(WEB_PATH)}">{const(SITE_ADVERT_NAME)}</a>
-			<ul class="nav">
+<body class="bs-theme-{execute(common,bs_current_theme)} cssfw-{conf(css_framework)}">
+	<div class="navbar navbar-default{if(conf.css_havbar_inverse eq 1)} navbar-inverse{/if}">
+		<div class="navbar-inner navbar-header">
+			<a class="brand navbar-brand" href="{const(WEB_PATH)}">{const(SITE_ADVERT_NAME)}</a>
+			<ul class="nav navbar-nav">
 {execute(site_nav_bar,_show)}
 			</ul>
 {execute(site_nav_bar,_show_dropdown_menu)}
-			<ul class="nav pull-right">
+			<ul class="nav pull-right navbar-right navbar-nav">
 {execute(common,bs_theme_changer)}
 {if("is_logged_in" ne 0)}
 				<li>{execute(graphics,show_welcome)}</li>
@@ -27,15 +28,14 @@
 	</div>
 	<div class="container-fluid">
 		<div class="row-fluid">
-			<div class="span2">
-{execute(graphics,_show_menu;name=user_main_menu)}
+			<div class="span2 col-md-2">
 {block(left_area)}
 			</div>
-			<div class="span8">
+			<div class="span8 col-md-8">
 {execute(common,show_messages)}
 {block(center_area)}
 			</div>
-			<div class="span2">
+			<div class="span2 col-md-2">
 {execute(common,show_left_filter)}
 {{--{block(right_area)}--}}
 			</div>

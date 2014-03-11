@@ -73,7 +73,7 @@ class yf_utils {
 		if (!$where_go_back) {
 			$where_go_back = 'javascript:history.back()';
 		}
-		return $Text = '<div align="center"><strong>'.$what_to_say."</strong><input type='button' class='btn' onclick=\"javascript:window.location.href='".$where_go_back."'\" value='".ucfirst(t('back'))."'></div>";
+		return $Text = '<div align="center"><strong>'.$what_to_say."</strong><input type='button' class='btn btn-default' onclick=\"javascript:window.location.href='".$where_go_back."'\" value='".ucfirst(t('back'))."'></div>";
 	}
 
 	// Back link with text message
@@ -81,7 +81,7 @@ class yf_utils {
 		if ($what_to_say == 'back' || $what_to_say == '') {
 			$what_to_say = t('back');
 		}
-		return $Text = "<div align=\"center\"><input type='button' class='btn' onclick=\"javascript:window.location.href='".$where_go_back."'\" value='".$what_to_say."'></div>";
+		return $Text = "<div align=\"center\"><input type='button' class='btn btn-default' onclick=\"javascript:window.location.href='".$where_go_back."'\" value='".$what_to_say."'></div>";
 	}
 
 	// Show Javascript alert
@@ -227,7 +227,7 @@ class yf_utils {
 			$text = stripslashes($text);
 		}
 		// Prepare special chars
-		$text = $use_smart_function ? smart_htmlspecialchars($text) : htmlspecialchars($text, ENT_QUOTES);
+		$text = $use_smart_function ? $this->smart_htmlspecialchars($text) : htmlspecialchars($text, ENT_QUOTES);
 		if (DEBUG_MODE && $have_tr) {
 			$text = $tr_1.$text.$tr_2;
 		}
@@ -746,4 +746,14 @@ class yf_utils {
 			return $d;
 		}
 	}
+
+	function recursive_unset(&$array, $unwanted_key) {
+	    unset($array[$unwanted_key]);
+   		foreach ($array as &$value) {
+	        if (is_array($value)) {
+    	        $this->recursive_unset($value, $unwanted_key);
+        	}
+    	}
+	}
+
 }

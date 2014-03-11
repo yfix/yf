@@ -1,0 +1,70 @@
+    <div style="margin: 0 auto; max-width: 1000px;">
+		    <!--main-->
+		    <div style=" background: none repeat scroll 0 0 rgb(255, 255, 255); padding: 10px;">
+				<div style="    background: none repeat scroll 0 0 rgb(255, 255, 255); border: 2px solid rgb(206, 206, 206); padding: 10px;">
+					<div style="    background-size: 135px 42px; margin-bottom: 16px; position: relative; text-align: left;">
+						<ul style="    margin: 0; padding: 0;">
+							<li style="list-style: none outside none;margin-bottom: 5px;"><b>ПОСТАВЩИК:</b>
+								УКРАЇНА<br />
+								ТОВ «КУПУЙ ВСЕ»<br />
+								69095, м. Запоріжжя, вул. Щаслива 5а<br />
+								тел.: 095-829-66-11, 096-829-66-11, 093-829-66-11
+							</li>
+							<li style="list-style: none outside none;margin-bottom: 5px;"><b>РЕКВИЗИТЫ ПОСТАВЩИКА:</b> 
+								ЄДРПОУ 38909273<br />
+								р/р 5169330501572850 <br />
+								в ПрАТ «Приват Банк»<br />
+								МФО 313939<br />
+							</li>
+						</ul>
+						<div style="position: absolute;	top:0px;right: 0px;	width: 165px;height: 52px;">
+						</div>
+					</div>
+					<h3 style="font: bold 15px Arial;margin-bottom: 6px;text-align: center;">Счет-фактура № {id}<br />от {date}</h3>
+					<div>
+						<p><b>ПЛАТЕЛЬЩИК:</b> <br /> {user_address}</p>
+						{if("payment" ne "")}<p><b>ФОРМА ОПЛАТЫ:</b> {payment}</p>{/if}
+						<table style="border-collapse: collapse; border-bottom: 2px solid rgb(206, 206, 206);">
+							<tr style="background-color: rgb(206, 206, 206);border-bottom: 1px solid rgb(206, 206, 206);">
+								<th style="text-align: left; width: 350px;padding: 15px 12px;">Название</th>
+								<th style="width: 60px;padding: 15px 12px;">Ед. изм.</th>
+								<th style="width: 140px;text-align: right;padding: 15px 12px;">Цена</th>
+								<th style="width: 140px;text-align: right;padding: 15px 12px;">Количество</th>
+								<th style="width: 140px;text-align: right;padding: 15px 12px;">Сумма</th>
+							</tr>
+                            {foreach('products')}
+								<tr style="border: 1px solid rgb(206, 206, 206);">
+									<td style="text-align: left; width: 350px;padding: 15px 12px;">{#.product_name}</td>
+									<td style="width: 60px;padding: 15px 12px;">{#.product_units}</td>
+									<td style="width: 140px;text-align: right;padding: 15px 12px;">{#.product_price_one}</td>
+									<td style="width: 140px;text-align: right;padding: 15px 12px;">{#.product_quantity}</td>
+									<td style="width: 140px;text-align: right;padding: 15px 12px;">{#.product_item_price}</td>
+								</tr>
+							{/foreach}	
+								<tr>
+									<td colspan="3"></td>
+									<td style="width: 140px;text-align: right;padding: 5px 15px ;"><b>Скидка</b></td>
+									<td style="width: 140px;text-align: right;padding: 5px 15px ;">{discount}</td>
+								</tr>
+								<tr>
+									<td colspan="3"></td>
+									<td style="width: 140px;text-align: right;padding: 5px 15px ;"><b>Доставка</b></td>
+									<td style="width: 140px;text-align: right;padding: 5px 15px ;">{delivery}</td>
+								</tr>
+								<tr>
+									<td colspan="3"></td>
+									<td style="width: 140px;text-align: right;padding: 0 15px ;"><b>Итого</b></td>
+									<td style="width: 140px;text-align: right;padding: 0 15px ;"><h4>{total_sum}</h4></td>
+								</tr>
+								
+							</table>
+							<ul>
+								<li style="list-style: none outside none;margin-bottom: 5px;">Сумма: <b>{total_sum}  ({num_to_str})</b></li>
+							</ul>
+						</div>
+					</div>		     
+			    </div>
+			    <!--/main-->
+			  </div>
+
+<div style='clear:both; height:0; overflow:hidden;'></div>

@@ -1,0 +1,60 @@
+<style type="text/css" class="yf_core">
+.sidebar-nav { padding: 9px 0; }
+
+.left_area { margin-left: 20px; margin-right: 20px; width: 410px; float:left; word-wrap: break-word; }
+@media (min-width: 1650px) {
+	.left_area { margin-left: 1%; margin-right: 1%; width: 20%; }
+	.center_area { margin-left:25%; margin-right: 1%; width: 74%; }
+}
+
+.dropdown-menu .sub-menu { left: 100%; position: absolute; top: 0; visibility: hidden; margin-top: -1px; }
+.dropdown-menu li:hover > .sub-menu { visibility: visible; }
+.dropdown:hover .dropdown-menu { display: block; }
+.nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu { margin-top: 0; }
+.cssfw-bs3 .navbar-header { width:99%; padding-right:1%; }
+
+.form-no-labels .controls { margin-left: 0; }
+
+td input[type=text], td textarea { margin-bottom: 0; }
+.modal { width: auto; }
+.modal.fade.in { top: 30px; }
+.modal .form-horizontal .control-group { margin-bottom: 1em; }
+.modal .form-horizontal .controls { margin-left: 150px; margin-right: 20px; }
+.modal .form-horizontal .control-label { width: 130px; }
+
+.rating { unicode-bidi:bidi-override;direction:rtl;font-size:20px }
+.rating span.star { font-family:FontAwesome;font-weight:normal;font-style:normal;display:inline-block }
+.rating span.star:hover { cursor:pointer }
+.rating span.star:before { content:"\f006";padding-right:0.2em;color:#999 }
+.rating span.star:hover:before, .rating span.star:hover~span.star:before{ content:"\f005";color:#e3cf7a }
+
+.label.labels-big, .badge.labels-big { font-size: inherit; }
+label.radio-horizontal { padding-left: inherit; display: inline-block; margin-bottom: inherit; }
+label.radio-horizontal input[type=radio]{ float: none; margin-left:inherit; margin-top:0; }
+
+.form-condensed .control-group { margin-bottom: 1em; }
+.tab-content { overflow: visible; }
+.chzn-container { color: black; }
+
+fieldset.well { padding-bottom: 0; }
+fieldset.well legend { margin-bottom:0; padding: 0 0.5em; width: auto; line-height: 1.5em; background: inherit; }
+legend+.control-group { margin-top: 0; }
+
+.bs-docs-sidenav { width: 250px; margin: 0; padding: 0; }
+.bs-docs-sidenav > li > a { display: block; margin: 0; padding: 5px 15px; /*  border: 1px solid #555;*/ }
+.bs-docs-sidenav .icon-chevron-right { float: right; margin-top: 0; margin-right: -5px; opacity: .25; }
+
+.controls>.radio:first-child { padding-top:inherit; }
+.form-inline .radio:first-child { padding-left: 5px; }
+.form-inline .radio input[type=radio] { float: none; }
+
+.table a.btn { text-decoration: none; }
+
+/* override styles per bs theme here */
+.bs-theme-slate textarea { color: #52575c; }
+</style>
+{if("conf.css_framework" eq "bs3")}
+<style type="text/css">
+/*input, textarea, select { max-width: 300px; }*/
+</style>
+{/if}

@@ -2,7 +2,7 @@
 
 /**
 * Class where most common used functions are stored
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -17,7 +17,7 @@ class yf_common {
 	public $TRACK_USER_ERRORS		= false;
 	/** @var bool Display debug info for the empty page */
 	public $EMPTY_PAGE_DEBUG_INFO	= true;
-	/** @var string 
+	/** @var string
 	*	Default value. Cloud creates in alphabetic text order
 	*	available values - 'text' or 'num'
 	*	(For cloud creaion)
@@ -66,11 +66,16 @@ class yf_common {
 		$table = clone _class('table2');
 		return $table->chained_wrapper($data, $params);
 	}
-	
+
 	/**
 	*/
 	function bs_get_avail_themes() {
-		return array('amelia','cerulean','cosmo','cyborg','flatly','journal','readable','simplex','slate','spacelab','spruce','superhero','united','bootstrap');
+		$themes = array('amelia','cerulean','cosmo','cyborg','flatly','journal','readable','simplex','slate','spacelab','spruce','superhero','united');
+		if (conf('css_framework') == 'bs3') {
+			$themes[] = 'yeti';
+		}
+		$themes[] = 'bootstrap';
+		return $themes;
 	}
 
 	/**
@@ -98,7 +103,7 @@ class yf_common {
 		$theme = $this->bs_current_theme();
 		return tpl()->parse('bs_theme_html', array('cur_theme' => $this->bs_current_theme()));
 	}
-	
+
 	/**
 	*/
 	function bs_theme_changer() {
@@ -107,7 +112,7 @@ class yf_common {
 			'themes'	=> $this->bs_get_avail_themes(),
 		));
 	}
-	
+
 	/**
 	* Secondary database connection
 	*/
@@ -135,10 +140,10 @@ class yf_common {
 	/**
 	* This function generate dividing table contents per pages
 	*/
-	function divide_pages ($input_data = '', $path = '', $type = 'blocks', $records_on_page = 0, $num_records = 0, $TPLS_PATH = '', $add_get_vars = 1) {
+	function divide_pages ($input_data = '', $path = '', $type = 'blocks', $records_on_page = 0, $num_records = 0, $TPLS_PATH = '', $add_get_vars = 1, $extra = array()) {
 		// Override default method for input array
 		$method = is_array($input_data) ? 'go_with_array' : 'go';
-		return _class('divide_pages', 'classes/common/')->$method($input_data, $path, $type, $records_on_page, $num_records, $TPLS_PATH, $add_get_vars);
+		return _class('divide_pages', 'classes/common/')->$method($input_data, $path, $type, $records_on_page, $num_records, $TPLS_PATH, $add_get_vars, $extra);
 	}
 
 	/**
@@ -146,7 +151,7 @@ class yf_common {
 	*/
 	function send_mail ($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = array(), $priority = 3) {
 		return _class('send_mail', 'classes/common/')->send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $pear_mailer_backend, $force_mta_opts, $priority);
-	} 
+	}
 
 	/**
 	* Quick send mail (From admin info)
@@ -203,7 +208,7 @@ class yf_common {
 	function multi_check_box ($box_name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
 		return _class('html_controls')->multi_check_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array);
 	}
-	
+
 	/**
 	*/
 	function date_box ($selected_date = '', $years = '', $name_postfix = '', $add_str = '', $order = 'ymd', $show_text = 1, $translate = 1) {
@@ -215,7 +220,7 @@ class yf_common {
 	function time_box ($selected_time = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1) {
 		return _class('html_controls')->time_box($selected_time, $name_postfix, $add_str, $show_text, $translate);
 	}
-	
+
 	/**
 	*/
 	function date_box2 ($name = '', $selected = '', $range = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
@@ -265,7 +270,7 @@ class yf_common {
 			if ($r == 0) {
 				break;
 			}
-			$timestamp = $r;			
+			$timestamp = $r;
 		}
 		return $result_string;
 	}
@@ -295,21 +300,21 @@ class yf_common {
 	* Email verifying function
 	*/
 	function email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
-		return _class('remote_files', 'classes/common/')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
+		return _class('validate')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
 	}
 
 	/**
 	* Verify url
 	*/
 	function url_verify ($url = '', $absolute = false) {
-		return preg_match('/^(http|https):\/\/(www\.){0,1}[a-z0-9\-]+\.[a-z]{2,5}[^\s]*$/i', $url);
+		return _class('validate')->_url_verify($url, $absolute);
 	}
 
 	/**
 	* Verify url using remote call
 	*/
 	function _validate_url_by_http($url) {
-		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
+		return _class('validate')->_validate_url_by_http($url);
 	}
 
 	/**
@@ -351,7 +356,7 @@ class yf_common {
 	*/
 	function make_thumb($source_file_path = '', $dest_file_path = '', $LIMIT_X = -1, $LIMIT_Y = -1, $watermark_path = '', $ext = '') {
 		return _class('make_thumb', 'classes/common/')->go($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $watermark_path, $ext);
-	} 
+	}
 
 	/**
 	* Do upload image
@@ -359,20 +364,20 @@ class yf_common {
 	function upload_image($new_file_path, $name_in_form = 'image', $max_image_size = 0, $is_local = false) {
 		return _class('upload_image', 'classes/common/')->go($new_file_path, $name_in_form, $max_image_size, $is_local);
 	}
-	
+
 	/**
 	* Do multi upload image
 	*/
 	function multi_upload_image($new_file_path, $k , $name_in_form = 'image', $max_image_size = 0, $is_local = false) {
 		return _class('multi_upload_image', 'classes/common/')->go($new_file_path, $k, $name_in_form, $max_image_size, $is_local);
-	} 
-	
+	}
+
 	/**
 	* Do crop image
 	*/
 	function crop_image($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $pos_left, $pos_top) {
 		return _class('image_manip', 'classes/common/')->crop($source_file_path, $dest_file_path, $LIMIT_X, $LIMIT_Y, $pos_left, $pos_top);
-	} 
+	}
 
 	/**
 	* Do upload archive file (zip, rar, tar accepted)
@@ -385,7 +390,7 @@ class yf_common {
 	* Create simple table with debug info
 	*/
 	function show_debug_info() {
-		return _class('debug_info', 'classes/common/')->go();
+		return _class('debug')->go();
 	}
 
 	/**
@@ -422,118 +427,6 @@ class yf_common {
 	*/
 	function pdf_page ($text = '', $name = '', $destination = 'I') {
 		return _class('pdf_page', 'classes/common/')->go($text, $name, $destination);
-	}
-
-	/**
-	* Raise user error
-	*/
-	function _raise_error ($text = '', $error_key = '') {
-		$text		= t((string)$text);
-		$error_key	= (string)$error_key;
-		if (!$text) {
-			return false;
-		}
-		if (!isset($this->USER_ERRORS)) {
-			$this->USER_ERRORS = array();
-		}
-		if ($error_key) {
-			$this->USER_ERRORS[$error_key] = $text;
-		} else {
-			$this->USER_ERRORS[] = $text;
-		}
-		return true;
-	}
-
-	/**
-	* Chec if user error exists
-	*/
-	function _error_exists ($error_key = '') {
-		if (!empty($error_key)) {
-			return (bool)$this->USER_ERRORS[$error_key];
-		}
-		return isset($this->USER_ERRORS) && count($this->USER_ERRORS) ? true : false;
-	}
-
-	/**
-	* Show formatted contents of user errors
-	*/
-	function _get_error_messages ($key = '') {
-		if (!$this->USER_ERRORS) {
-			return false;
-		}
-		return $key ? $this->USER_ERRORS[$key] : $this->USER_ERRORS;
-	}
-
-	/**
-	* Show formatted contents of user errors
-	*/
-	function _show_error_message ($cur_error_msg = '', $clear_error = true) {
-		// Prevent recursive display
-		if (strlen($cur_error_msg) && false !== strpos($cur_error_msg, '<!--YF_ERROR_MESSAGE_START-->')) {
-			return t($cur_error_msg);
-		}
-		if (!isset($this->USER_ERRORS)) {
-			$this->USER_ERRORS = array();
-		}
-		if (strlen($cur_error_msg)) {
-			$this->USER_ERRORS[] = $cur_error_msg;
-		}
-		foreach ((array)$this->USER_ERRORS as $error_key => $value) {
-			if (empty($value)) {
-				continue;
-			}
-			$items[$error_key] = $value;
-		}
-		// Try to save errors log
-		if ($this->TRACK_USER_ERRORS && !empty($this->USER_ERRORS)) {
-			_class('user_errors', 'classes/common/')->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
-		}
-		// Set default value
-		if ($clear_error) {
-			$this->USER_ERRORS = array();
-		}
-		// Do not display error messages to spiders
-		if (conf('IS_SPIDER')) {
-			return false;
-		}
-		// Do not show error messages on front
-		if (IS_FRONT == 1) {
-//			return false;
-		}
-		if (empty($items)) {
-			return '';
-		}
-		$replace = array(
-			'items' => $items,
-			'error' => 'error', // DO NOT REMOVE THIS!!! NEEDED TO AVOID INFINITE LOOP INSIDE TPL CLASS
-		);
-		return tpl()->parse('system/error_message', $replace);
-	}
-
-	/**
-	* Show formatted single error message
-	*/
-	function _show_error_inline ($error_key = '') {
-		if (empty($error_key)) {
-			return false;
-		}
-		// Try to get error message
-		$error_msg = '';
-		if (isset($this->USER_ERRORS[$error_key])) {
-			$error_msg = $this->USER_ERRORS[$error_key];
-// TODO: need to decide if we need to do this
-//			$this->USER_ERRORS[$error_key] = '';
-		}
-		// Last check
-		if (empty($error_msg)) {
-			return false;
-		}
-		// Prepare template
-		$replace = array(
-			'text'	=> $error_msg,
-			'key'	=> $error_key,
-		);
-		return tpl()->parse('system/error_inline', $replace);
 	}
 
 	/**
@@ -697,7 +590,7 @@ class yf_common {
 
 	/**
 	* Display message if server is overloaded
-	* 
+	*
 	*/
 	function server_is_busy($msg = '') {
 		$replace = array(
@@ -804,20 +697,6 @@ class yf_common {
 	}
 
 	/**
-	* Update given user info by id
-	*/
-	function update_user($user_id, $data = array(), $params = '', $return_sql = false) {
-		return _class('user_data', 'classes/common/')->_update_user($user_id, $data, $params, $return_sql);
-	}
-
-	/**
-	* Search user(s) info by params
-	*/
-	function search_user($params = array(), $fields = array(), $return_sql = false) {
-		return _class('user_data', 'classes/common/')->_search_user($params, $fields, $return_sql);
-	}
-
-	/**
 	* Check if user is ignored by second one
 	*/
 	function _is_ignored($target_user_id, $owner_id) {
@@ -863,29 +742,6 @@ class yf_common {
 	}
 
 	/**
-	* Show formatted contents of notices for user
-	*/
-	function show_notices ($keep = false, $force_text = '') {
-		if ($force_text) {
-			$this->set_notice($force_text);
-		}
-		$name_in_session = '_user_notices';
-		$items = $_SESSION[$name_in_session];
-		if (!$keep) {
-			$_SESSION[$name_in_session] = array();
-			unset($_SESSION[$name_in_session]);
-		}
-		return $items ? tpl()->parse('system/user_notices', array('items' => $items)) : '';
-	}
-
-	/**
-	* Set notice to display on next page (usually after redirect)
-	*/
-	function set_notice ($text = '') {
-		$_SESSION['_user_notices'][crc32($text)] = $text;
-	}
-
-	/**
 	* Log user actions for stats
 	*/
 	function _log_user_action ($action_name, $member_id, $object_name = '', $object_id = 0) {
@@ -899,10 +755,10 @@ class yf_common {
 	*/
 	function _create_cloud($cloud_data = array(), $params = array()) {
 		return _class('other_common', 'classes/common/')->_create_cloud($cloud_data, $params);
-	}	
+	}
 
 	/**
-	* Makes thumb of remote web page 
+	* Makes thumb of remote web page
 	* parameters: page url, filename(without extension)
 	*/
 	function _make_thumb_remote($url, $filename) {
@@ -989,7 +845,7 @@ class yf_common {
 	}
 
 	/**
-	* Print nice 
+	* Print nice
 	*/
 	function trace_string() {
 		$e = new Exception();
@@ -1002,42 +858,42 @@ class yf_common {
 	function url_to_absolute($base_url, $relative_url) {
 		return _class('url_to_absolute', 'classes/common/')->url_to_absolute($base_url, $relative_url);
 	}
-	
+
 	/**
 	* is_utf8
 	*/
 	function is_utf8 ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path()); 
+			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
 		$this->_set_include_path = true;
-		
+
 		include_once 'is_utf8.php';
 		return is_utf8($content);
 	}
-	
+
 	/**
 	* utf8_html_entity_decode
 	*/
 	function utf8_html_entity_decode ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path()); 
+			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
 		$this->_set_include_path = true;
-		
+
 		include_once 'utf8_html_entity_decode.php';
 		return utf8_html_entity_decode($content, true);
 	}
-	
+
 	/**
 	* strip_tags_smart
 	*/
 	function strip_tags_smart ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path()); 
+			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
 		$this->_set_include_path = true;
-		
+
 		include_once 'strip_tags_smart.php';
 		return strip_tags_smart($content);
 	}
@@ -1048,30 +904,30 @@ class yf_common {
 	function utf8_clean ($text = '', $params = array()) {
 		return _class('utf8_clean', 'classes/common/')->_do($text, $params);
 	}
-	
+
 	/**
 	* current GMT time
 	*/
 	function gmtime () {
 		return strtotime('now GMT');
 	}
-	
+
 	/**
-	* 
+	*
 	*/
 	function graph ($data, $params = '') {
 		return _class('graph', 'classes/common/')->graph($data, $params);
 	}
-	
+
 	/**
-	* 
+	*
 	*/
 	function graph_bar ($data, $params = '') {
 		return _class('graph', 'classes/common/')->graph_bar($data, $params);
 	}
-	
+
 	/**
-	* 
+	*
 	*/
 	function graph_pie ($data, $params = '') {
 		return _class('graph', 'classes/common/')->graph_pie($data, $params);
@@ -1123,47 +979,9 @@ class yf_common {
 
 	/**
 	* Threaded execution of the given object/action
-	* @example: 
-	*	$data_for_threads = array(
-	*		array('id' => 1), 
-	*		array('id' => 2),
-	* 	);
-	* @example: 
-	*	for ($i = 0; $i < 10; $i++) {
-	*		$threads[] = array('id' => $i);
-	*	}
-	*	print_r(common()->threaded_exec($_GET['object'], 'console', $threads), 1);
-	* @example: 
-	*	function console () {
-	*		main()->NO_GRAPHICS = true;
-	*		session_write_close();
-	*		if (!main()->CONSOLE_MODE) {
-	*			exit('No direct access to method allowed');
-	*		}
-	*		sleep(3);
-	*   	$params = common()->get_console_params();
-	*		echo $params['id'];
-	*		exit();
-	*	}
 	*/
 	function threaded_exec($object, $action = 'show', $threads_params = array(), $max_threads = 10) {
-		$results = array();
-		// Limit max number of parallel threads
-		foreach (array_chunk($threads_params, $max_threads, true) as $chunk) {
-			$ids_to_params = array();
-			foreach ((array)$chunk as $param_id => $_params) {
-				$thread_id = _class('threads')->new_framework_thread($object, $action, $_params);
-				$ids_to_params[$thread_id] = $param_id;
-			}
-			while (false !== ($result = _class('threads')->iteration())) {
-				if (!empty($result)) {
-					$thread_id	= $result[0];
-					$param_id	= $ids_to_params[$thread_id];
-					$results[$param_id] = $result[1];
-				}
-			}
-		}
-		return $results;
+		return _class('threads')->threaded_exec($object, $action, $threads_params, $max_threads);
 	}
 
 	/**
@@ -1198,9 +1016,9 @@ class yf_common {
 		$method = '_show_filter';
 		if (method_exists($obj, $method) && !(isset($obj->USE_FILTER) && !$obj->USE_FILTER)) {
 			return $obj->$method();
-		}	
+		}
 	}
-	
+
 	/**
 	*/
 	function show_side_column_hooked(){
@@ -1208,29 +1026,13 @@ class yf_common {
 		$method = '_hook_side_column';
 		if (method_exists($obj, $method)) {
 			return $obj->$method();
-		}	
+		}
 	}
 
 	/**
 	*/
 	function admin_wall_add($data = array()) {
-# TODO: check this and enable
-#		if (!is_array($data)) {
-#			$data = func_get_args();
-#		}
-		return db()->insert('admin_walls', db()->es(array(
-			'message'	=> isset($data['message']) ? $data['message'] : (isset($data[0]) ? $data[0] : ''),
-			'object_id'	=> isset($data['object_id']) ? $data['object_id'] : (isset($data[1]) ? $data[1] : ''),
-			'user_id'	=> isset($data['user_id']) ? $data['user_id'] : (isset($data[2]) ? $data[2] : main()->ADMIN_ID),
-			'object'	=> isset($data['object']) ? $data['object'] : (isset($data[3]) ? $data[3] : $_GET['object']),
-			'action'	=> isset($data['action']) ? $data['action'] : (isset($data[4]) ? $data[4] : $_GET['action']),
-			'important'	=> isset($data['important']) ? $data['important'] : (isset($data[5]) ? $data[5] : 0),
-			'old_data'	=> json_encode(isset($data['old_data']) ? $data['old_data'] : (isset($data[6]) ? $data[6] : '')),
-			'new_data'	=> json_encode(isset($data['new_data']) ? $data['new_data'] : (isset($data[7]) ? $data[7] : '')),
-			'add_date'	=> date('Y-m-d H:i:s'),
-			'server_id'	=> (int)main()->SERVER_ID,
-			'site_id'	=> (int)main()->SITE_ID,
-		)));
+		return _class('common_admin')->admin_wall_add($data);
 	}
 
 	/**
@@ -1258,49 +1060,21 @@ class yf_common {
 	}
 
 	/**
-	*
 	*/
-	function date_picker ($name, $cur_date = '') {
-		$content = '';
-		if (empty($this->date_picker_count)) {
-			$content .= '
-				<script src="'.WEB_PATH.'js/jquery/ui/jquery.ui.core.js"></script>
-				<script src="'.WEB_PATH.'js/jquery/ui/jquery.ui.datepicker.js"></script>
-				<link rel="stylesheet" href="'.WEB_PATH.'js/jquery/ui/jquery.ui.datepicker.css">
-				<link rel="stylesheet" href="'.WEB_PATH.'js/jquery/ui/jquery.ui.all.css">
-				<script>
-					$(function() {
-						$( ".datepicker" ).datepicker(
-							{ dateFormat: "yy-mm-dd" }
-						);
-					});
-				</script>
-			';
-		}
-		$content .= '<input type="text" name="'.$name.'" class="datepicker" value="'.$cur_date.'" style="width:80px" readonly="true" />';
-		$this->date_picker_count++;
-		return $content;
+	function date_picker($name, $cur_date = '') {
+		return _class('html_controls')->date_picker($name, $cur_date);
 	}
 
 	/**
 	*/
 	function shop_get_images($product_id) {
-		$A = db()->get_all('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.intval($product_id).' ORDER BY is_default DESC');
-		$d = sprintf('%09s', $product_id);
-		foreach((array)$A as $img){
-	    	$replace = array(
-			    '{subdir2}' => substr($d, -6, 3),
-			    '{subdir3}' => substr($d, -3, 3),
-		    	'{product_id}' => $product_id,
-			    '{image_id}' => $img['id'],
-			);
-			$images[] = array(
-				'big' 	=> str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_big.jpg'),
-				'thumb' => str_replace(array_keys($replace), array_values($replace), 'uploads/shop/products/{subdir2}/{subdir3}/product_{product_id}_{image_id}_thumb.jpg'),
-				'id'	=> $img['id'],
-			);
-		}
-		return $images;
+		return module('shop')->_get_images($product_id);
+	}
+
+	/**
+	*/
+	function shop_generate_image_name($product_id, $image_id, $media = false){
+		return module('shop')->_generate_image_name($product_id, $image_id, $media);
 	}
 
 	/**
@@ -1309,9 +1083,9 @@ class yf_common {
 		$rar = rar_open($archive_name);
 		$list = rar_list($rar);
 		foreach($list as $file) {
-			$file = explode("\"",$file); 
+			$file = explode("\"",$file);
 		    $entry = rar_entry_get($rar, $file[1]);
-		    $entry->extract($EXTRACT_PATH); 
+		    $entry->extract($EXTRACT_PATH);
 		}
 		rar_close($rar);
 	}
@@ -1331,6 +1105,7 @@ class yf_common {
 	 * Returns the sum in words (for money)
 	 */
 	function num2str($num) {
+		$num = (float)$num;
 	    $nul='ноль';
     	$ten=array(
         	array('','один','два','три','четыре','пять','шесть','семь', 'восемь','девять'),
@@ -1346,7 +1121,9 @@ class yf_common {
 	        array('миллион' ,'миллиона','миллионов' ,0),
     	    array('миллиард','милиарда','миллиардов',0),
     	);
-    	list($rub,$kop) = explode(',',sprintf("%015.2f", floatval($num)));
+		$number_format = localeconv();
+		$decimal_point = $number_format[ 'decimal_point' ];
+		list( $rub, $kop ) = explode( $decimal_point, sprintf( '%015.2f', $num ) );
 	    $out = array();
 	    if (intval($rub)>0) {
     	    foreach(str_split($rub,3) as $uk=>$v) { // by 3 symbols
@@ -1382,35 +1159,55 @@ class yf_common {
 
 	/**
 	*/
+	function dashboard_display($name) {
+		return _class('dashboards', 'classes/common/')->display($name);
+	}
+
+	/*
+	 * Returns all types with empty param 'type'
+	 * Works in both ways:
+	 * - get status name by id
+	 * - get status id by name
+	 * */
+	function get_static_conf($type = false, $value = false, $translate = true) {
+		return _class('common_static_conf', 'classes/common/')->get_static_conf($type, $value, $translate);
+	}
+
+	/**
+	*/
 	function message_success($text = '') {
-		return $this->add_message($text, 'success');
+		return $this->add_message($text, 'success', $key);
 	}
 
 	/**
 	*/
 	function message_info($text = '') {
-		return $this->add_message($text, 'info');
+		return $this->add_message($text, 'info', $key);
 	}
 
 	/**
 	*/
 	function message_warning($text = '') {
-		return $this->add_message($text, 'warning');
+		return $this->add_message($text, 'warning', $key);
 	}
 
 	/**
 	*/
 	function message_error($text = '') {
-		return $this->add_message($text, 'error');
+		return $this->add_message($text, 'error', $key);
 	}
 
 	/**
 	*/
-	function add_message($text = '', $level = 'info') {
+	function add_message($text = '', $level = 'info', $key = '') {
 		if (!strlen($text)) {
 			return false;
 		}
-		$_SESSION['permanent'][$level][] = $text;
+		if ($key) {
+			$_SESSION['permanent'][$level][$key] = $text;
+		} else {
+			$_SESSION['permanent'][$level][] = $text;
+		}
 		return true;
 	}
 
@@ -1439,9 +1236,137 @@ class yf_common {
 	}
 
 	/**
+	* Raise user error
 	*/
-	function _admin_link_is_allowed($link = '') {
-		$func = __FUNCTION__;
-		return _class('common_admin')->$func($link);
+	function _raise_error ($text = '', $error_key = '') {
+		$text		= t((string)$text);
+		$error_key	= (string)$error_key;
+		if (!$text) {
+			return false;
+		}
+		if (!isset($this->USER_ERRORS)) {
+			$this->USER_ERRORS = array();
+		}
+		if ($error_key) {
+			$this->USER_ERRORS[$error_key] = $text;
+		} else {
+			$this->USER_ERRORS[] = $text;
+		}
+		return true;
+	}
+
+	/**
+	* Chec if user error exists
+	*/
+	function _error_exists ($error_key = '') {
+		if (!empty($error_key)) {
+			return (bool)$this->USER_ERRORS[$error_key];
+		}
+		return isset($this->USER_ERRORS) && count($this->USER_ERRORS) ? true : false;
+	}
+
+	/**
+	* Show formatted contents of user errors
+	*/
+	function _get_error_messages ($key = '') {
+		if (!$this->USER_ERRORS) {
+			return false;
+		}
+		return $key ? $this->USER_ERRORS[$key] : $this->USER_ERRORS;
+	}
+
+	/**
+	* Show formatted contents of user errors
+	*/
+	function _show_error_message ($cur_error_msg = '', $clear_error = true) {
+		// Prevent recursive display
+		if (strlen($cur_error_msg) && false !== strpos($cur_error_msg, '<!--YF_ERROR_MESSAGE_START-->')) {
+			return t($cur_error_msg);
+		}
+		if (!isset($this->USER_ERRORS)) {
+			$this->USER_ERRORS = array();
+		}
+		if (strlen($cur_error_msg)) {
+			$this->USER_ERRORS[] = $cur_error_msg;
+		}
+		foreach ((array)$this->USER_ERRORS as $error_key => $value) {
+			if (empty($value)) {
+				continue;
+			}
+			$items[$error_key] = $value;
+		}
+		// Try to save errors log
+		if ($this->TRACK_USER_ERRORS && !empty($this->USER_ERRORS)) {
+			_class('user_errors', 'classes/common/')->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
+		}
+		// Set default value
+		if ($clear_error) {
+			$this->USER_ERRORS = array();
+		}
+		// Do not display error messages to spiders
+		if (conf('IS_SPIDER')) {
+			return false;
+		}
+		// Do not show error messages on front
+		if (IS_FRONT == 1) {
+//			return false;
+		}
+		if (empty($items)) {
+			return '';
+		}
+		$replace = array(
+			'items' => $items,
+			'error' => 'error', // DO NOT REMOVE THIS!!! NEEDED TO AVOID INFINITE LOOP INSIDE TPL CLASS
+		);
+		return tpl()->parse('system/error_message', $replace);
+	}
+
+	/**
+	* Show formatted single error message
+	*/
+	function _show_error_inline ($error_key = '') {
+		if (empty($error_key)) {
+			return false;
+		}
+		// Try to get error message
+		$error_msg = '';
+		if (isset($this->USER_ERRORS[$error_key])) {
+			$error_msg = $this->USER_ERRORS[$error_key];
+// TODO: need to decide if we need to do this
+//			$this->USER_ERRORS[$error_key] = '';
+		}
+		// Last check
+		if (empty($error_msg)) {
+			return false;
+		}
+		// Prepare template
+		$replace = array(
+			'text'	=> $error_msg,
+			'key'	=> $error_key,
+		);
+		return tpl()->parse('system/error_inline', $replace);
+	}
+
+	/**
+	* Show formatted contents of notices for user
+	*/
+	function show_notices ($keep = false, $force_text = '') {
+		if ($force_text) {
+			$this->set_notice($force_text);
+		}
+		$name_in_session = '_user_notices';
+		$items = $_SESSION[$name_in_session];
+		if (!$keep) {
+			$_SESSION[$name_in_session] = array();
+			unset($_SESSION[$name_in_session]);
+		}
+		return $items ? tpl()->parse('system/user_notices', array('items' => $items)) : '';
+	}
+
+	/**
+	* Set notice to display on next page (usually after redirect)
+	*/
+	function set_notice ($text = '') {
+		$_SESSION['_user_notices'][crc32($text)] = $text;
 	}
 }

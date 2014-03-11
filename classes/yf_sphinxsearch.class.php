@@ -141,7 +141,7 @@ class yf_sphinxsearch {
 		}
 		return $results;
 	}
-	
+
 	/**
 	*/
 	function _connect() {
@@ -190,7 +190,7 @@ class yf_sphinxsearch {
 		}
 		return $this->sphinx_connection;
 	}
-	
+
 	/**
 	*/
 	function escape_string ($string) {
@@ -238,7 +238,7 @@ class yf_sphinxsearch {
 		$GLOBALS['_SPHINX_WARNINGS'] = $warnings;
 		return $warnings;
 	}
-	
+
 	/**
 	*/
 	function _get_latest_describe($sql = '') {
@@ -260,7 +260,7 @@ class yf_sphinxsearch {
 		}
 		return $describe;
 	}
-	
+
 	/**
 	*/
 	function _get_server_status() {
@@ -279,7 +279,7 @@ class yf_sphinxsearch {
 		}
 		return $status;
 	}
-	
+
 	/**
 	*/
 	function _get_server_version() {
@@ -291,7 +291,7 @@ class yf_sphinxsearch {
 		}
 		return mysql_get_server_info($this->sphinx_connection);
 	}
-	
+
 	/**
 	*/
 	function _get_host() {
@@ -309,7 +309,7 @@ class yf_sphinxsearch {
 			conf('CUR_DOMAIN_SHORT'),
 			common()->_db_escape($_SERVER['HTTP_REFERER']),
 			common()->_db_escape($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']),
-			common()->_db_escape($_SERVER['HTTP_USER_AGENT']),			
+			common()->_db_escape($_SERVER['HTTP_USER_AGENT']),
 			common()->_db_escape($sql),
 		)). PHP_EOL;
 		return file_put_contents($this->EMPTY_RESULTS_LOG_PATH, $out, FILE_APPEND);

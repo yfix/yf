@@ -16,13 +16,7 @@ class yf_db {
 	/** @var int @conf_skip Number of queries */
 	public $NUM_QUERIES				= 0;
 	/** @var array Query log array */
-	public $QUERY_LOG				= array();
-	/** @var array */
-	public $QUERY_AFFECTED_ROWS		= array();
-	/** @var array */
-	public $QUERY_EXEC_TIME			= array();
-	/** @var array */
-	public $QUERY_BACKTRACE_LOG		= array();
+	public $_LOG					= array();
 	/** @var int Tables cache lifetime (while developing need to be short) (else need to be very large) */
 	public $TABLE_NAMES_CACHE_TTL	= 3600; // 1*3600*24 = 1 day
 	/** @var bool Auto-connect on/off */
@@ -114,7 +108,11 @@ class yf_db {
 	/** @var array List of tables inside current database */
 	public $_PARSED_TABLES			= array();
 	/** @var array */
-// TODO: read _class('dir')->scan(YF_PATH.'share/db_installer/db_table_sql/', 1, '-f /sys_[a-z0-9_]+\.db_table_sql\.php/')
+// TODO: glob(PROJECT_PATH.'share/db_installer/sql/sys_*.sql.php')
+// TODO: glob(PROJECT_PATH.'plugins/*/share/db_installer/sql/sys_*.sql.php')
+// TODO: glob(YF_PATH.'share/db_installer/sql/sys_*.sql.php')
+// TODO: glob(YF_PATH.'priority2/share/db_installer/sql/sys_*.sql.php')
+// TODO: glob(YF_PATH.'plugins/*/share/db_installer/sql/sys_*.sql.php')
 	public $_need_sys_prefix		= array(
 		'admin', 'admin_groups', 'admin_modules', 'block_rules', 'blocks', 'categories', 'category_items', 'conf', 'core_servers', 'custom_bbcode',
 		'custom_replace_tags', 'custom_replace_words', 'locale_langs', 'locale_translate', 'locale_vars', 'log_admin_auth', 'log_admin_auth_fails', 'log_auth',
@@ -323,6 +321,9 @@ class yf_db {
 				}
 			}
 		}
+// TODO: if query with 1 or more joined tables and all of them not exists 
+//		- then we need to try several times, checking that error changing
+//      as mysql will not tell all missing tables at once, only one-by-one
 		if (!$result && $query_allowed && $db_error && $this->ERROR_AUTO_REPAIR) {
 			$result = $this->_repair_table($sql, $db_error);
 		}
@@ -330,7 +331,7 @@ class yf_db {
 			$this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace_string() : array());
 		}
 		if (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
-			$this->_query_log($sql, $this->USE_QUERY_BACKTRACE ? $this->_trace_string() : array());
+			$this->_query_log($sql, $this->USE_QUERY_BACKTRACE ? $this->_trace_string() : array(), $db_error);
 		}
 		return $result;
 	}
@@ -346,13 +347,14 @@ class yf_db {
 		$msg = 'DB: QUERY ERROR: '.$sql.'<br />'.PHP_EOL.'<b>CAUSE</b>: '.$db_error['message']
 			. ($db_error['code'] ? ' (code:'.$db_error['code'].')' : '')
 			. ($db_error['offset'] ? ' (offset:'.$db_error['offset'].')' : '')
-			. $_trace.'<br />'.PHP_EOL;
+			. (main()->USE_CUSTOM_ERRORS ? '' : $_trace.'<br />'.PHP_EOL)
+		;
 		trigger_error($msg, E_USER_WARNING);
 	}
 
 	/**
 	*/
-	function _query_log($sql, $_trace = array()) {
+	function _query_log($sql, $_trace = array(), $db_error = false) {
 		$_log_allowed = false;
 		if (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
 			$_log_allowed = true;
@@ -361,25 +363,29 @@ class yf_db {
 			return false;
 		}
 		// Save memory on high number of query log entries
-		if ($this->LOGGED_QUERIES_LIMIT && count($this->QUERY_LOG) >= $this->LOGGED_QUERIES_LIMIT) {
+		if ($this->LOGGED_QUERIES_LIMIT && count($this->_LOG) >= $this->LOGGED_QUERIES_LIMIT) {
 			$_log_allowed = false;
 		}
 		if (!$_log_allowed) {
 			return false;
 		}
-		$this->QUERY_LOG[] = $sql;
-		$this->QUERY_EXEC_TIME[] = (float)microtime(true) - (float)$this->_query_time_start;
-		if (!empty($_trace)) {
-			$this->QUERY_BACKTRACE_LOG[] = $_trace;
-		}
+		$time = (float)microtime(true) - (float)$this->_query_time_start;
 		if ($this->GATHER_AFFECTED_ROWS) {
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
+			$rows = null;
 			if (in_array($_sql_type, array('INSERT', 'UPDATE', 'REPLACE', 'DELETE'))) {
-				$this->QUERY_AFFECTED_ROWS[$sql] = $this->affected_rows();
+				$rows = $this->affected_rows();
 			} elseif ($_sql_type == 'SELECT') {
-				$this->QUERY_AFFECTED_ROWS[$sql] = $this->num_rows($result);
+				$rows = $this->num_rows($result);
 			}
 		}
+		$this->_LOG[] = array(
+			'sql'	=> $sql,
+			'rows'	=> $rows,
+			'error'	=> $db_error,
+			'time'	=> $time,
+			'trace'	=> $_trace,
+		);
 	}
 
 	/**
@@ -451,25 +457,25 @@ class yf_db {
 				if (empty($cols)) {
 					$cols = array_keys($cur_row);
 				}
-				$cur_values = array_values($cur_row);
-				foreach ((array)$cur_values as $k => $v) {
-					$cur_values[$k] = $this->enclose_field_value($v);
+				// This method ensures that SQL will consist of same key=value pairs, even if in some sub-array they will be missing
+				foreach ((array)$cols as $col) {
+					$cur_values[$col] = $cur_row[$col];
 				}
-				$values_array[] = '('.implode(', ', $cur_values).PHP_EOL.')';
+				$values_array[] = '('.implode(', ', $this->escape_val($cur_values)).PHP_EOL.')';
 			}
 		} else {
 			$cols	= array_keys($data);
 			$values = array_values($data);
 			foreach ((array)$values as $k => $v) {
-				$values[$k] = $this->enclose_field_value($v);
+				$values[$k] = $this->escape_val($v);
 			}
 			$values_array[] = '('.implode(', ', $values).PHP_EOL.')';
 		}
 		foreach ((array)$cols as $k => $v) {
 			unset($cols[$k]);
-			$cols[$v] = $this->enclose_field_name($v);
+			$cols[$v] = $this->escape_key($v);
 		}
-		$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '').' INTO '.$this->enclose_field_name($table).PHP_EOL
+		$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '').' INTO '.$this->escape_key($table).PHP_EOL
 			.' ('.implode(', ', $cols).') VALUES '.PHP_EOL.implode(', ', $values_array);
 		if ($on_duplicate_key_update) {
 			$sql .= PHP_EOL.' ON DUPLICATE KEY UPDATE ';
@@ -552,9 +558,9 @@ class yf_db {
 			if (empty($k)) {
 				continue;
 			}
-			$tmp_data[$k] = $this->enclose_field_name($k).' = '.$this->enclose_field_value($v);
+			$tmp_data[$k] = $this->escape_key($k).' = '.$this->escape_val($v);
 		}
-		$sql = 'UPDATE '.$this->enclose_field_name($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
+		$sql = 'UPDATE '.$this->escape_key($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
 		if ($only_sql) {
 			return $sql;
 		}
@@ -971,26 +977,18 @@ class yf_db {
 	}
 
 	/**
-	* Enclose field names
+	* Return database-specific limit of returned rows
 	*/
-	function enclose_field_name($data) {
-		if (!is_object($this->db)) {
+	function limit($count, $offset = null) {
+		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
-		if (is_array($data)) {
-			$func = __FUNCTION__;
-			foreach ((array)$data as $k => $v) {
-				$data[$k] = $this->$func($v);
-			}
-			return $data;
-		}
-		return $this->db->enclose_field_name($data);
+		return $this->db->limit($count, $offset);
 	}
 
 	/**
-	* Enclose field values
 	*/
-	function enclose_field_value($data) {
+	function escape_key($data) {
 		if (!is_object($this->db)) {
 			return false;
 		}
@@ -1001,7 +999,37 @@ class yf_db {
 			}
 			return $data;
 		}
-		return $this->db->enclose_field_value($data);
+		return $this->db->escape_key($data);
+	}
+
+	/**
+	*/
+	function escape_val($data) {
+		if (!is_object($this->db)) {
+			return false;
+		}
+		if (is_array($data)) {
+			$func = __FUNCTION__;
+			foreach ((array)$data as $k => $v) {
+				$data[$k] = $this->$func($v);
+			}
+			return $data;
+		}
+		return $this->db->escape_val($data);
+	}
+
+	/**
+	* Alias
+	*/
+	function enclose_field_name($data) {
+		return $this->escape_key($data);
+	}
+
+	/**
+	* Alias
+	*/
+	function enclose_field_value($data) {
+		return $this->escape_val($data);
 	}
 
 	/**
@@ -1319,16 +1347,22 @@ class yf_db {
 		if (!$where) {
 			return false;
 		}
-		$cond = 'id='.$this->enclose_field_value($where);
+		$cond = 'id='.$this->escape_val($where);
 // TODO: add support for several fields in where
 		if (is_array($where)) {
-			$cond = key($where).'='.$this->enclose_field_value(current($where));
+			$cond = key($where).'='.$this->escape_val(current($where));
 		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
 			$this->_save_query_revision(__FUNCTION__, $table, array('where' => $where, 'cond' => $cond));
 		}
 		$sql = 'DELETE FROM '.$this->_real_name($table).' WHERE '.$cond.' LIMIT 1';
 		return $this->query($sql);
+	}
+
+	/**
+	*/
+	function update_batch_safe($table, $data, $index = null, $only_sql = false) {
+		return $this->update_batch($table, $this->es($data), $index, $only_sql);
 	}
 
 	/**
@@ -1376,9 +1410,9 @@ class yf_db {
 	/**
 	*/
 	function _update_batch($table, $values, $index) {
-		$index = $this->enclose_field_name($index);
+		$index = $this->escape_key($index);
 		$ids = array();
-		foreach ($values as $key => $val) {
+		foreach ((array)$values as $key => $val) {
 			$ids[] = $val[$index];
 			foreach (array_keys($val) as $field) {
 				if ($field !== $index) {
@@ -1387,13 +1421,13 @@ class yf_db {
 			}
 		}
 		$cases = '';
-		foreach ($final as $k => $v) {
+		foreach ((array)$final as $k => $v) {
 			$cases .= $k.' = CASE '.PHP_EOL. implode(PHP_EOL, $v). PHP_EOL. 'ELSE '.$k.' END, ';
 		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
 			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $values, 'index' => $index));
 		}
-		return 'UPDATE '.$this->enclose_field_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
+		return 'UPDATE '.$this->escape_key($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
 	}
 
 	/**
@@ -1402,14 +1436,14 @@ class yf_db {
 		if ( ! is_array($key)) {
 			return false;
 		}
-		foreach ($key as $k => $v) {
+		foreach ((array)$key as $k => $v) {
 			$index_set = FALSE;
 			$clean = array();
-			foreach ($v as $k2 => $v2) {
+			foreach ((array)$v as $k2 => $v2) {
 				if ($k2 === $index)	{
 					$index_set = TRUE;
 				}
-				$clean[$this->enclose_field_name($k2)] = $this->enclose_field_value($v2);
+				$clean[$this->escape_key($k2)] = $this->escape_val($v2);
 			}
 			if ($index_set === FALSE) {
 				//return $this->display_error('db_batch_missing_index');

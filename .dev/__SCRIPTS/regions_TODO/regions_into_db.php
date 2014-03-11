@@ -7,9 +7,16 @@ if (!$project_path) {
 	exit('Error: missing project_path. Example: '.basename(__FILE__).' /home/www/test2/'.PHP_EOL);
 }
 $project_path = rtrim($project_path, '/').'/';
-$fp = exec('find '.escapeshellarg($project_path).' -name "db_setup.php"');
-if ($fp && file_exists($fp)) {
-	require $fp;
+foreach (array('', '*/', '*/*/', '*/*/*/') as $g) {
+	$paths = glob($project_path. $g. 'db_setup.php');
+	if (!$paths || !isset($paths[0])) {
+		continue;
+	}
+	$fp = $paths[0];
+	if ($fp && file_exists($fp)) {
+		require $fp;
+		break;
+	}
 }
 if (!defined('DB_NAME')) {
 	exit('Error: cannot init database connection.');

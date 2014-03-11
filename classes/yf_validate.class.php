@@ -75,8 +75,9 @@ class yf_validate {
 	}
 
 	/**
+	* Method by form-less checking of any custom data for validity
 	*/
-	function _process_text($text, $validate_rules = array()) {
+	function _input_is_valid($input, $validate_rules = array()) {
 		$rules = array();
 		$global_rules = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
 		foreach ((array)$global_rules as $name => $rules) {
@@ -86,15 +87,25 @@ class yf_validate {
 			$rules[$name] = $rules;
 		}
 		$rules = $this->_validate_rules_cleanup($rules);
-		return $this->_do_process_text($rules, $text);
+		$ok = true;
+		if (is_array($input)) {
+			foreach ((array)$input as $k => $_input) {
+				if (!$this->_do_check_data_is_valid($rules, $_input)) {
+					$ok = false;
+					break;
+				}
+			}
+		} else {
+			$ok = $this->_do_check_data_is_valid($rules, $input);
+		}
+		return (bool)$ok;
 	}
 
 	/**
 	*/
-	function _do_process_text($validate_rules = array(), &$data) {
-/*
+	function _do_check_data_is_valid($validate_rules = array(), &$data) {
 		$validate_ok = true;
-		foreach ((array)$validate_rules as $name => $rules) {
+		foreach ((array)$validate_rules as $rules) {
 			$is_required = false;
 			foreach ((array)$rules as $rule) {
 				if ($rule[0] == 'required') {
@@ -109,33 +120,32 @@ class yf_validate {
 				$param = $rule[1];
 				// PHP pure function, from core or user
 				if (is_string($func) && function_exists($func)) {
-					$data[$name] = $func($data[$name]);
+					$data = $func($data);
 				} elseif (is_callable($func)) {
-					$is_ok = $func($data[$name], null, $data);
+					$is_ok = $func($data, null, $data);
 				} else {
-					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
+					$is_ok = _class('validate')->$func($data, array('param' => $param), $data, $error_msg);
 					if (!$is_ok && empty($error_msg)) {
-						$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
+						$error_msg = t('form_validate_'.$func, array('%field' => '', '%param' => $param));
 					}
 				}
 				// In this case we do not track error if field is empty and not required
-				if (!$is_ok && !$is_required && !strlen($data[$name])) {
+				if (!$is_ok && !$is_required && !strlen($data)) {
 					$is_ok = true;
 					$error_msg = '';
 				}
 				if (!$is_ok) {
 					$validate_ok = false;
 					if (!$error_msg) {
-						$error_msg = 'Wrong field '.$name;
+						$error_msg = 'Wrong value';
 					}
-					_re($error_msg, $name);
+					_re($error_msg);
 					// In case when we see any validation rule is not OK - we stop checking further for this field
 					continue 2;
 				}
 			}
 		}
 		return $validate_ok;
-*/
 	}
 
 	/**
@@ -214,16 +224,6 @@ class yf_validate {
 		return $out;
 	}
 
-	/***/
-	function password_update(&$in) {
-		if (!strlen($in)) {
-			$in = null; // Somehow unset($in) not working here...
-		} else {
-			$in = md5($in);
-		}
-		return true;
-	}
-
 	/**
 	*/
 	function _validate_rules_array_from_raw($raw = '') {
@@ -247,6 +247,16 @@ class yf_validate {
 			$rules[] = array($raw, null);
 		}
 		return $rules;
+	}
+
+	/***/
+	function password_update(&$in) {
+		if (!strlen($in)) {
+			$in = null; // Somehow unset($in) not working here...
+		} else {
+			$in = md5($in);
+		}
+		return true;
 	}
 
 	/***/
@@ -279,7 +289,7 @@ class yf_validate {
 			$skip = true;
 			if ($strpos && false !== strpos($k, $strpos)) {
 				$skip = false;
-			} elseif ($field_names && in_array($v, $field_names)) {
+			} elseif ($field_names && in_array($k, $field_names)) {
 				$skip = false;
 			}
 			if ($skip) {
@@ -296,6 +306,71 @@ class yf_validate {
 	function matches($in, $params = array(), $fields = array()) {
 		$field = $params['param'];
 		return isset($fields[$field], $_POST[$field]) ? ($in === $_POST[$field]) : false;
+	}
+
+	/***/
+	function length($in, $params = array(), $fields = array()) {
+// TODO: from kohana: length Returns FALSE if the field is too long or too short  length[1,30] - between 1 and 30 characters longor length[30] - exactly 30 characters long
+	}
+
+	/***/
+	function depends_on($in, $params = array(), $fields = array()) {
+// TODO: from kohana: depends_on Returns FALSE if form field(s) defined in parameter are not filled in  depends_on[field_name]
+	}
+
+	/***/
+	function chars($in, $params = array(), $fields = array()) {
+// TODO: chars Returns FALSE if field contains characters not in the parameter  chars[a,b,c,d,1,2,3,4]
+	}
+
+	/***/
+	function credit_card($in, $params = array(), $fields = array()) {
+// TODO: from kohana: credit_card Returns FALSE if credit card is not valid  credit_card[mastercard]
+	}
+
+	/***/
+	function standard_text($in, $params = array(), $fields = array()) {
+// TODO: standard_text Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
+	}
+
+	/***/
+	function active_url($in, $params = array(), $fields = array()) {
+// TODO: The field under validation must be a valid URL according to the checkdnsrr PHP function.
+	}
+
+	/***/
+	function after_date($in, $params = array(), $fields = array()) {
+// TODO: after:date. The field under validation must be a value after a given date. The dates will be passed into the PHP strtotime function.
+	}
+
+	/***/
+	function before_date($in, $params = array(), $fields = array()) {
+// TODO: before:date. The field under validation must be a value preceding the given date. The dates will be passed into the PHP strtotime function.
+	}
+
+	/***/
+	function between($in, $params = array(), $fields = array()) {
+// TODO: between:min,max. The field under validation must have a size between the given min and max. Strings, numerics, and files are evaluated in the same fashion as the size rule.
+	}
+
+	/***/
+	function valid_date($in, $params = array(), $fields = array()) {
+// TODO: date. The field under validation must be a valid date according to the strtotime PHP function.
+	}
+
+	/***/
+	function valid_date_format($in, $params = array(), $fields = array()) {
+// TODO: date_format:format The field under validation must match the format defined according to the date_parse_from_format PHP function.
+	}
+
+	/***/
+	function image($in, $params = array(), $fields = array()) {
+// TODO: image. The file under validation must be an image (jpeg, png, bmp, or gif)
+	}
+
+	/***/
+	function mime($in, $params = array(), $fields = array()) {
+// TODO: mimes:foo,bar,... The file under validation must have a MIME type corresponding to one of the listed extensions.  mime:jpeg,bmp,png
 	}
 
 	/***/
@@ -364,31 +439,86 @@ class yf_validate {
 		return ! (isset($fields[$field]) && $_POST[$field] === $in);
 	}
 
+	/**
+	* The original specification of hostnames in RFC 952, mandated that labels could not start with a digit or with a hyphen, and must not end with a hyphen. 
+	* However, a subsequent specification (RFC 1123) permitted hostname labels to start with digits.
+	* http://tools.ietf.org/html/rfc952, http://tools.ietf.org/html/rfc1123
+	* Each label within a valid hostname may be no more than 63 octets long.
+	* the total length of the hostname must not exceed 255 characters. For more information, please consult RFC-952 and RFC-1123.
+	* see also: 
+	*    http://stackoverflow.com/questions/106179/regular-expression-to-match-hostname-or-ip-address
+	*    http://data.iana.org/TLD/tlds-alpha-by-domain.txt
+	*/
+	function valid_hostname ($in = '') {
+		$len = strlen($in);
+		if (!$len && $len > 255) {
+			return false;
+		}
+		foreach ((array)explode('.', $in) as $v) {
+			if (strlen($v) > 63) {
+				return false;
+			}
+		}
+		return (bool) preg_match('/^([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9])(\.([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9]))*$/i', $in);
+	}
+
 	/***/
 	function valid_url($in, $params = array()) {
 		if (empty($in)) {
-			return FALSE;
+			return false;
 		} elseif (preg_match('/^(?:([^:]*)\:)?\/\/(.+)$/', $in, $matches)) {
 			if (empty($matches[2])) {
-				return FALSE;
-			} elseif ( ! in_array($matches[1], array('http', 'https'), TRUE)) {
-				return FALSE;
+				return false;
+			} elseif ( ! in_array($matches[1], array('http', 'https'), true)) {
+				return false;
 			}
 			$in = $matches[2];
 		}
 		$in = 'http://'.$in;
-		return (filter_var($in, FILTER_VALIDATE_URL) !== FALSE);
+		return (filter_var($in, FILTER_VALIDATE_URL) !== false);
 	}
-	
+
+	/***/
+	function valid_email($in) {
+		return (bool) filter_var($in, FILTER_VALIDATE_EMAIL);
+	}
+
+	/***/
+	function valid_emails($in) {
+		if (!$in) {
+			return false;
+		}
+		if (strpos($in, ',') === false) {
+			return $this->valid_email(trim($in));
+		}
+		foreach (explode(',', $in) as $email) {
+			if (trim($email) !== '' && $this->valid_email(trim($email)) === false) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/***/
+	function valid_base64($in) {
+		return strlen($in) && (base64_encode(base64_decode($in)) === $in);
+	}
+
+	/***/
+	function valid_ip($in, $params = array()) {
+		$which = $params['param'];
+		return $this->_valid_ip($in, $which);
+	}
+
 	/***/
 	function min_length($in, $params = array()) {
 		$val = $params['param'];
 		if ( ! is_numeric($val)) {
-			return FALSE;
+			return false;
 		} else {
 			$val = (int) $val;
 		}
-		return ($this->MB_ENABLED === TRUE)
+		return ($this->MB_ENABLED === true)
 			? ($val <= mb_strlen($in))
 			: ($val <= strlen($in));
 	}
@@ -397,11 +527,11 @@ class yf_validate {
 	function max_length($in, $params = array()) {
 		$val = $params['param'];
 		if ( ! is_numeric($val)) {
-			return FALSE;
+			return false;
 		} else {
 			$val = (int) $val;
 		}
-		return ($this->MB_ENABLED === TRUE)
+		return ($this->MB_ENABLED === true)
 			? ($val >= mb_strlen($in))
 			: ($val >= strlen($in));
 	}
@@ -410,11 +540,11 @@ class yf_validate {
 	function exact_length($in, $params = array()) {
 		$val = $params['param'];
 		if ( ! is_numeric($val)) {
-			return FALSE;
+			return false;
 		} else {
 			$val = (int) $val;
 		}
-		return ($this->MB_ENABLED === TRUE)
+		return ($this->MB_ENABLED === true)
 			? (mb_strlen($in) === $val)
 			: (strlen($in) === $val);
 	}
@@ -422,25 +552,25 @@ class yf_validate {
 	/***/
 	function greater_than($in, $params = array()) {
 		$min = $params['param'];
-		return is_numeric($in) ? ($in > $min) : FALSE;
+		return is_numeric($in) ? ($in > $min) : false;
 	}
 
 	/***/
 	function less_than($in, $params = array()) {
 		$max = $params['param'];
-		return is_numeric($in) ? ($in < $max) : FALSE;
+		return is_numeric($in) ? ($in < $max) : false;
 	}
 
 	/***/
 	function greater_than_equal_to($in, $params = array()) {
 		$min = $params['param'];
-		return is_numeric($in) ? ($in >= $min) : FALSE;
+		return is_numeric($in) ? ($in >= $min) : false;
 	}
 
 	/***/
 	function less_than_equal_to($in, $params = array()) {
 		$max = $params['param'];
-		return is_numeric($in) ? ($in <= $max) : FALSE;
+		return is_numeric($in) ? ($in <= $max) : false;
 	}
 
 	/***/
@@ -450,7 +580,12 @@ class yf_validate {
 
 	/***/
 	function alpha_numeric($in) {
-		return ctype_alnum((string) $in);
+		return (is_array($in) || is_object($in) || is_callable($in)) ? false : ctype_alnum((string) $in);
+	}
+
+	/***/
+	function alpha_spaces($in) {
+		return (bool) preg_match('/^[A-Z ]+$/i', $in);
 	}
 
 	/***/
@@ -461,6 +596,31 @@ class yf_validate {
 	/***/
 	function alpha_dash($in) {
 		return (bool) preg_match('/^[a-z0-9_-]+$/i', $in);
+	}
+
+	/***/
+	function unicode_alpha($in) {
+		return (bool)preg_match('/^[\pL\pM]+$/u', $in);
+	}
+
+	/***/
+	function unicode_alpha_numeric($in) {
+		return (bool)preg_match('/^[\pL\pM\pN]+$/u', $in);
+	}
+
+	/***/
+	function unicode_alpha_spaces($in) {
+		return (bool)preg_match('/^[\pL\pM\s]+$/u', $in);
+	}
+
+	/***/
+	function unicode_alpha_numeric_spaces($in) {
+		return (bool)preg_match('/^[\pL\pM\pN\s]+$/u', $in);
+	}
+
+	/***/
+	function unicode_alpha_dash($in) {
+		return (bool)preg_match('/^[\pL\pM\pN_-]+$/u', $in);
 	}
 
 	/***/
@@ -489,29 +649,6 @@ class yf_validate {
 	}
 
 	/***/
-	function valid_email($in) {
-		return (bool) filter_var($in, FILTER_VALIDATE_EMAIL);
-	}
-
-	/***/
-	function valid_emails($in) {
-		if (strpos($in, ',') === FALSE) {
-			return $this->valid_email(trim($in));
-		}
-		foreach (explode(',', $in) as $email) {
-			if (trim($email) !== '' && $this->valid_email(trim($email)) === FALSE) {
-				return FALSE;
-			}
-		}
-		return TRUE;
-	}
-
-	/***/
-	function valid_base64($in) {
-		return (base64_encode(base64_decode($in)) === $in);
-	}
-
-	/***/
 	function prep_url($in) {
 		if ($in === 'http://' OR $in === '') {
 			return '';
@@ -523,33 +660,13 @@ class yf_validate {
 	}
 
 	/***/
-	function encode_php_tags($in) {
-		return str_replace(array('<?', '?>'), array('&lt;?', '?&gt;'), $in);
-	}
-
-	/***/
-	function valid_ip($in, $params = array()) {
-		$which = $params['param'];
-		return $this->_valid_ip($in, $which);
-	}
-
-	/***/
 	function captcha($in, $params = array(), $fields = array()) {
 		return _class('captcha')->check('captcha');
 	}
 
 	/***/
 	function xss_clean($in) {
-# TODO: write unit tests and only then enable
-#		return _class('security')->xss_clean($in);
-		return true;
-	}
-
-	/***/
-	function strip_image_tags($in) {
-# TODO: write unit tests and only then enable
-		return true;
-#		return _class('security')->strip_image_tags($in);
+		return _class('security')->xss_clean($in);
 	}
 
 	/***/
@@ -582,14 +699,14 @@ class yf_validate {
 		if (empty($TEXT_TO_CHECK) || (strlen($TEXT_TO_CHECK) < $this->MIN_NICK_LENGTH)) {
 			_re(t('Nick must have at least @num symbols', array('@num' => $this->MIN_NICK_LENGTH)));
 		} elseif (!preg_match('/^['.$_nick_pattern.']+$/iu', $TEXT_TO_CHECK)) {
-			_re(t("Nick can contain only these characters: \"@text1\"", array("@text1" => _prepare_html(stripslashes(implode("\" , \"", $this->NICK_ALLOWED_SYMBOLS))))));
+			_re(t('Nick can contain only these characters: @text1', array('@text1' => _prepare_html(stripslashes(implode('" , "', $this->NICK_ALLOWED_SYMBOLS))))));
 			if (!$OVERRIDE_MODE) {
-				$_POST[$name_in_form] = preg_replace("/[^".$_nick_pattern."]+/iu", "", $_POST[$name_in_form]);
+				$_POST[$name_in_form] = preg_replace('/[^'.$_nick_pattern.']+/iu', '', $_POST[$name_in_form]);
 			}
 		} elseif ($TEXT_TO_CHECK != $CUR_VALUE) {
-			$NICK_ALREADY_EXISTS = (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE nick='"._es($TEXT_TO_CHECK)."'") >= 1);
+			$NICK_ALREADY_EXISTS = (db()->query_num_rows('SELECT id FROM '.db('user').' WHERE nick="'._es($TEXT_TO_CHECK).'"') >= 1);
 			if ($NICK_ALREADY_EXISTS) {
-				_re(t("Nick (\"@name\") is already reserved. Please try another one.", array("@name" => $TEXT_TO_CHECK)));
+				_re(t('Nick "@name" is already reserved. Please try another one.', array('@name' => $TEXT_TO_CHECK)));
 			}
 		}
 	}
@@ -597,7 +714,7 @@ class yf_validate {
 	/**
 	* Check user profile url
 	*/
-	function _check_profile_url ($CUR_VALUE = "", $force_value_to_check = null, $name_in_form = "profile_url") {
+	function _check_profile_url ($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'profile_url') {
 // TODO: rewrite me
 		$TEXT_TO_CHECK = $_POST[$name_in_form];
 		// Override value to check
@@ -612,13 +729,13 @@ class yf_validate {
 		$this->_prepare_reserved_words();
 		// Do check profile url
 		if (!empty($CUR_VALUE)) {
-			_re("You have already chosen your profile url. You are not allowed to change it!");
-		} elseif (!preg_match("/^[a-z0-9]{0,64}$/ims", $TEXT_TO_CHECK)) {
-			_re("Wrong Profile url format! Letters or numbers only with no spaces");
+			_re('You have already chosen your profile url. You are not allowed to change it!');
+		} elseif (!preg_match('/^[a-z0-9]{0,64}$/ims', $TEXT_TO_CHECK)) {
+			_re('Wrong Profile url format! Letters or numbers only with no spaces');
 		} elseif (in_array($TEXT_TO_CHECK, $this->reserved_words)) {
-			_re("This profile url (\"".$TEXT_TO_CHECK."\") is our site reserved name. Please try another one.");
-		} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE profile_url='"._es($TEXT_TO_CHECK)."'") >= 1) {
-			_re("This profile url (\"".$TEXT_TO_CHECK."\") has already been registered with us! Please try another one.");
+			_re('This profile url ("'.$TEXT_TO_CHECK.'") is our site reserved name. Please try another one.');
+		} elseif (db()->query_num_rows('SELECT id FROM '.db('user').' WHERE profile_url="'._es($TEXT_TO_CHECK).'"') >= 1) {
+			_re('This profile url ("'.$TEXT_TO_CHECK.'") has already been registered with us! Please try another one.');
 		}
 	}
 
@@ -627,10 +744,10 @@ class yf_validate {
 	*/
 	function _check_login () {
 // TODO: rewrite me
-		if ($_POST["login"] == "") {
+		if ($_POST['login'] == '') {
 			_re('Login required');
-		} elseif (db()->query_num_rows("SELECT id FROM ".db('user')." WHERE login='"._es($_POST['login'])."'") >= 1) {
-			_re("This login (".$_POST["login"].") has already been registered with us!");
+		} elseif (db()->query_num_rows('SELECT id FROM '.db('user').' WHERE login="'._es($_POST['login']).'"') >= 1) {
+			_re('This login '.$_POST['login'].' has already been registered with us!');
 		}
 	}
 
@@ -708,21 +825,22 @@ class yf_validate {
 
 	/**
 	*/
-#	function email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
-#		return _class('remote_files', 'classes/common/')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
-#	}
+	function _email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
+		return _class('remote_files', 'classes/common/')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
+	}
 
 	/**
 	*/
-#	function url_verify ($url = '', $absolute = false) {
-#		return preg_match('/^(http|https):\/\/(www\.){0,1}[a-z0-9\-]+\.[a-z]{2,5}[^\s]*$/i', $url);
-#	}
-
+	function _validate_url_by_http($url) {
+		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
+	}
+	
 	/**
+	* Alias
 	*/
-#	function _validate_url_by_http($url) {
-#		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
-#	}
+	function _url_verify ($in = '') {
+		return $this->valid_url($in);
+	}
 
 	/**
 	*/

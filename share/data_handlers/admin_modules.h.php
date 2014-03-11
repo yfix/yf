@@ -1,5 +1,9 @@
 <?php
 
-$Q = db()->query("SELECT name FROM ".db("admin_modules")." WHERE active='1'");
-while ($A = db()->fetch_assoc($Q)) $data[$A["name"]] = $A["name"];
-if (is_array($data)) ksort($data);
+$a = db()->query('SELECT name FROM '.db('admin_modules').' WHERE active="1"');
+while ($a = db()->fetch_assoc($q)) {
+	$data[$a['name']] = $a['name'];
+}
+if (is_array($data)) {
+	ksort($data);
+}

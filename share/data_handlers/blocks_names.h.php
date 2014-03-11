@@ -1,4 +1,3 @@
 <?php
 
-$Q = db()->query("SELECT * FROM ".db("blocks")."");
-while ($A = db()->fetch_assoc($Q)) $data[$A["id"]] = $A;
+$data = db()->get_2d('SELECT id, name FROM '.db('blocks').' ORDER BY name ASC');

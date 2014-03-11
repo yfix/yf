@@ -16,17 +16,31 @@ class yf_manage_shop_product_images{
 		if (empty($_GET['key'])) {
 			return _e('Empty image key!');
 		}
-		$A = db()->get_all('SELECT * FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($_GET['id']).' && `id`='.intval($_GET['key']));
+		$A = db()->get_all('SELECT * FROM '.db('shop_product_images').' 
+							WHERE product_id='.intval($_GET['id']).' 
+								AND id='.intval($_GET['key']).'
+								AND active=1');
 		if (count($A) == 0){
 			return _e('Image not found');
 		}
+		module('manage_shop')->_product_check_first_revision('product_images', $_GET['id']);
 		module('manage_shop')->_product_image_delete($_GET['id'], $_GET['key']);
-		module('manage_shop')->_product_images_add_revision('delete', $_GET['id'], $_GET['key']);
-
+		module('manage_shop')->_product_images_add_revision('deleted', $_GET['id'], $_GET['key']);
 		module('manage_shop')->_product_cache_purge($_GET['id']);
-
+		common()->message_success("Image deleted");
 		common()->admin_wall_add(array('shop product image deleted: '.$_GET['id'], $_GET['id']));
 		return js_redirect($_SERVER['HTTP_REFERER']);
+	}
+
+	/**
+	 */
+	function _product_image_delete ($id, $k) {
+		db()->query('UPDATE '.db('shop_product_images').' SET active=0, is_default=0 WHERE product_id='.$id.' AND id='.$k);
+		$A = db()->get_all('SELECT * FROM '.db('shop_product_images').' WHERE product_id='.$id.' AND active=1');
+		if (count($A) == 0) {
+			db()->query('UPDATE '.db('shop_products').' SET image=0 WHERE id='.$id);
+		}
+		return true;
 	}
 
 	/**
@@ -40,11 +54,13 @@ class yf_manage_shop_product_images{
 		}
 		$product_id = intval($_GET['id']);
 		if (main()->is_post()) {
+			module('manage_shop')->_product_check_first_revision('product_images', $product_id);
 			db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'0\' WHERE `product_id`='.$product_id);
 			db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'1\' WHERE `id`='.$_POST['main_image']);
-			module('manage_shop')->_product_images_add_revision('change_main', $_GET['id']);
 
+			module('manage_shop')->_product_images_add_revision('changed_main', $_GET['id']);
 			module('manage_shop')->_product_cache_purge($_GET['id']);
+			common()->message_success("Main image changed");
 		} else {
 			$images = common()->shop_get_images($product_id);
 			if(!$images){
@@ -69,32 +85,6 @@ class yf_manage_shop_product_images{
 		}
 	}
 
-	/**
-	 */
-	function _product_image_delete ($id, $k) {
-		$dirs = sprintf('%06s',$id);
-		$dir2 = substr($dirs,-3,3);
-		$dir1 = substr($dirs,-6,3);
-		$mpath = $dir1.'/'.$dir2.'/';
-
-		$image_files = _class('dir')->scan_dir(
-			module('manage_shop')->products_img_dir. $mpath,
-			true,
-			'/product_'.$id.'_'.$k.'.+?jpg'.'/'
-		);
-		foreach((array)$image_files as $filepath) {
-			if (file_exists($filepath)) {
-				rename($filepath, $filepath."_");
-			}
-		}
-		db()->query('DELETE FROM `'.db('shop_product_images').'` WHERE `product_id`='.$id.' AND `id`='.$k);
-
-		$A = db()->get_all('SELECT * FROM `'.db('shop_product_images').'` WHERE `product_id`='.$id);
-		if (count($A) == 0) {
-			db()->query('UPDATE `'.db('shop_products').'` SET `image`=\'0\' WHERE `id`='.$id);
-		}
-		return true;
-	}
 
 	/**
 	 */
@@ -106,8 +96,11 @@ class yf_manage_shop_product_images{
 		if (!$product['id']) {
 			return _e('No such product!');
 		}
+		module('manage_shop')->_product_check_first_revision('product_images', $_GET['id']);
 		module('manage_shop')->_product_image_upload($_GET['id']);
 		module('manage_shop')->_product_cache_purge($_GET['id']);
+		common()->message_success("New image uploaded");
+		common()->admin_wall_add(array('shop product image uploaded: '.$_GET['id'], $_GET['id']));
 		return js_redirect($_SERVER['HTTP_REFERER']);
 	}
 
@@ -134,7 +127,7 @@ class yf_manage_shop_product_images{
 				continue;
 			}
 			$md5 = md5_file($v);
-			$db_item = db()->query_fetch('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.$product_id.' AND md5="'._es($md5).'"');
+			$db_item = db()->query_fetch('SELECT id FROM '.db('shop_product_images').' WHERE product_id='.$product_id.' AND md5="'._es($md5).'" AND active=1');
 			if (!empty($db_item)) {
 				continue;
 			}
@@ -159,14 +152,14 @@ class yf_manage_shop_product_images{
 			common()->make_thumb($v, $img_path_thumb, module('manage_shop')->THUMB_X, module('manage_shop')->THUMB_Y);
 			common()->make_thumb($v, $img_path_big, module('manage_shop')->BIG_X, module('manage_shop')->BIG_Y, $watermark_path); 
 
-			$A = db()->query_fetch('SELECT COUNT(*) AS `cnt` FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($product_id).' AND is_default=\'1\'');
+			$A = db()->query_fetch('SELECT COUNT(*) AS `cnt` FROM '.db('shop_product_images').' WHERE product_id='.intval($product_id).' AND is_default=1 AND active=1');
 			if ($A['cnt'] == 0) {
-				$A = db()->query_fetch('SELECT `id` FROM `'.db('shop_product_images').'` WHERE `product_id`='.intval($product_id).' ORDER BY `id`');
-				db()->query('UPDATE `'.db('shop_product_images').'` SET `is_default`=\'1\' WHERE `id`='.$A['id']);
+				$A = db()->query_fetch('SELECT `id` FROM '.db('shop_product_images').' WHERE `product_id`='.intval($product_id).' ORDER BY `id` DESC');
+				db()->query('UPDATE '.db('shop_product_images').' SET `is_default`=1 WHERE `id`='.$A['id']);
 			}
-			db()->query('UPDATE `'.db('shop_products').'` SET `image`=\'1\' WHERE `id`='.$product_id);
+			db()->query('UPDATE '.db('shop_products').' SET `image`=1 WHERE `id`='.$product_id);
 			db()->commit();
-			module('manage_shop')->_product_images_add_revision('upload', $product_id, $i);
+			module('manage_shop')->_product_images_add_revision('uploaded', $product_id, $i);
 		} 
 		return $i;
 	}	

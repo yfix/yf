@@ -1,32 +1,11 @@
+{execute(graphics,_show_menu;name=user_side_menu)}
+
 {if("is_logged_in" eq 0)}
 	{execute(login_form,_small_form)}
 {else}
-	<div class="left_menu">
-		<h4>{t(Site Menu)}</h4>
-<!-- LEFT_TOP_MENU -->
-{execute(graphics,_show_menu;name=user_side_menu)}
-<!-- /LEFT_TOP_MENU -->
-	</div>
 {{--
 	<div class="left_area">
 {execute(common,show_left_filter)}
 	</div>
 --}}
 {/if}
-{{--
-	<div class="left_menu">
-		<a href="./?object=layout_settings">{t(layout settings)}</a> 
-	</div>
-	<div>
-{execute(unread,show)}
-	</div>
-
-	<h4>{t(Account)}</h4>
-<!-- LEFT_BOTTOM_MENU -->
-{execute(graphics,_show_menu;name=left_bottom_menu)}
-<!-- /LEFT_BOTTOM_MENU -->
-
-	<div id="widgets">
-{execute(widgets,_show;column=left)}
-	</div>
---}}

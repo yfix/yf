@@ -1,0 +1,32 @@
+<?php
+$data = array (
+  5 => 
+  array (
+    'id' => '5',
+    'id2' => '1',
+    'user_id' => '4',
+    'cat_id' => '0',
+    'folder_id' => '4',
+    'img_name' => '_______________________.jpg',
+    'name' => 'чумна макака',
+    'desc' => 'чумна макака',
+    'show_in_ads' => '0',
+    'diplay_order' => '0',
+    'general_sort_id' => '0',
+    'folder_sort_id' => '0',
+    'add_date' => '1208961476',
+    'other_info' => 'a:4:{s:12:"ad thumbnail";a:2:{s:1:"w";i:40;s:1:"h";i:33;}s:9:"thumbnail";a:2:{s:1:"w";i:100;s:1:"h";i:83;}s:6:"medium";a:2:{s:1:"w";i:350;s:1:"h";i:291;}s:8:"original";a:2:{s:1:"w";i:400;s:1:"h";i:333;}}',
+    'active' => '1',
+    'is_public' => '1',
+    'is_featured' => '0',
+    'geo_cc' => '',
+    'geo_rc' => '',
+    'priority' => '0',
+    'allow_rate' => '1',
+    'rating' => '0',
+    'num_votes' => '0',
+    'votes_sum' => '0',
+    'last_vote_date' => '0',
+    'allow_tagging' => '1',
+  ),
+);

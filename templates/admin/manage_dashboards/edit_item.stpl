@@ -2,8 +2,8 @@
 	    <div class="portlet-header">
 			{name}
 			<div style="float:right;">
-				<a href="javascript:void();" class="yf_ds_options"><i class="icon icon-wrench"></i></a>&nbsp;
-				<a href="javascript:void();" class="yf_ds_delete"><i class="icon-trash"></i></a>
+				<a href="javascript:void();" class="yf_ds_options"><i class="icon icon-large icon-wrench"></i></a>&nbsp;&nbsp;
+				<a href="javascript:void();" class="yf_ds_delete"><i class="icon icon-large icon-trash"></i></a>
 			</div>
 		</div>
 {options_container}

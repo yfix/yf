@@ -331,21 +331,21 @@ class yf_db_driver_mysql41 extends yf_db_driver {
 	function limit($count, $offset) {
 		if ($count > 0) {
 			$offset = ($offset > 0) ? $offset : 0;
-			$sql .= 'LIMIT '.$offset.', '.$count;
+			$sql .= 'LIMIT '.($offset ? $offset.', ' : ''). $count;
 		}
 		return $sql;
 	}
 
 	/**
 	*/
-	function enclose_field_name($data) {
+	function escape_key($data) {
 		$data = '`'.$data.'`';
 		return $data;
 	}
 
 	/**
 	*/
-	function enclose_field_value($data) {
+	function escape_val($data) {
 		$data = '\''.$data.'\'';
 		return $data;
 	}

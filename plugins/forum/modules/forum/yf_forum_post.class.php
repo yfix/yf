@@ -697,9 +697,7 @@ class yf_forum_post {
 		// Update post record
 		db()->query('UPDATE '.db('blog_posts').' SET attach_image='' WHERE id='.intval($_GET['id']).' LIMIT 1');
 */
-		// Last update
-		update_user(FORUM_USER_ID, array('last_update'=>time()));
-		// Return user back
+		db()->update('user', array('last_update' => time()), FORUM_USER_ID);
 		return js_redirect($_SERVER['HTTP_REFERER'], 1);
 	}
 

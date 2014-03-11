@@ -21,8 +21,6 @@ class form2_new_controls {
 			->date_box()
 			->datetime_box()
 			->birth_box()
-//			->navbar_start()->div_box('testdiv1', array('val1','val2'))->navbar_end()
-//			->navbar_start()->div_box('testdiv2', array('val1','val2'))->navbar_end()
 			->user_method_box(array('desc' => 'user method'))
 			->admin_method_box(array('desc' => 'admin method'))
 			->user_template_box(array('desc' => 'user template'))

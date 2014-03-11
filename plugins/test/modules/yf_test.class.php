@@ -3,26 +3,6 @@
 // Module for testing different new stuff
 class yf_test {
 
-	/** @conf_skip */
-	public $SMTP_OPTIONS = array(
-		'smtp_host'		=> 'smtp.gmail.com',
-		'smtp_port'		=> '465',
-		'smtp_user_name'=> 'test@test.com',
-		'smtp_password'	=> 'test password',
-		'smtp_from'		=> 'test@test.com',
-		'smtp_secure'	=> 'tls',
-	);
-	/** @conf_skip */
-	public $TEST_MAIL = array(
-		'email_to'		=> 'yfix.dev@gmail.com',
-		'name_to'		=> 'test receiver',
-		'email_from'	=> 'of@of.com',
-		'name_from'		=> 'test from',
-		'subject'		=> 'blabla test blabla',
-		'text'			=> '!!text text!!',
-		'html'			=> '<h1>!!html html!!</h1>',
-	);
-
 	/**
 	* Catch missing method call
 	*/
@@ -328,22 +308,6 @@ class yf_test {
 	*/
 	function text_typos () {
 		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
-	}
-
-	/**
-	* Testing short functions: user(), update_user(), search_user()
-	*/
-	function user () {
-		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
-	}
-
-	//
-	function utf8_clean () {
-		$text = file_get_contents(YF_PATH. 'libs/utf8_funcs/utils/broken_utf8.txt');
-		$body .= $text;
-		$body .= '<br /><hr />'.PHP_EOL;
-		$body .= common()->utf8_clean($text);
-		return $body;
 	}
 
 	// 

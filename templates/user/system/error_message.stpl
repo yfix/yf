@@ -1,5 +1,5 @@
 <!--YF_ERROR_MESSAGE_START-->
-<div class="alert alert-error">
+<div class="alert alert-error alert-danger">
 	<h4>{t(Error)}</h4>
 	{foreach("items")}<li>{_val}</li>{/foreach}
 </div>

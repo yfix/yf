@@ -37,6 +37,51 @@ class yf_threads {
 	}
 
 	/**
+	* Threaded execution of the given object/action
+	* @example: 
+	*	$data_for_threads = array(
+	*		array('id' => 1), 
+	*		array('id' => 2),
+	* 	);
+	* @example: 
+	*	for ($i = 0; $i < 10; $i++) {
+	*		$threads[] = array('id' => $i);
+	*	}
+	*	print_r(common()->threaded_exec($_GET['object'], 'console', $threads), 1);
+	* @example: 
+	*	function console () {
+	*		main()->NO_GRAPHICS = true;
+	*		session_write_close();
+	*		if (!main()->CONSOLE_MODE) {
+	*			exit('No direct access to method allowed');
+	*		}
+	*		sleep(3);
+	*   	$params = common()->get_console_params();
+	*		echo $params['id'];
+	*		exit();
+	*	}
+	*/
+	function threaded_exec($object, $action = 'show', $threads_params = array(), $max_threads = 10) {
+		$results = array();
+		// Limit max number of parallel threads
+		foreach (array_chunk($threads_params, $max_threads, true) as $chunk) {
+			$ids_to_params = array();
+			foreach ((array)$chunk as $param_id => $_params) {
+				$thread_id = _class('threads')->new_framework_thread($object, $action, $_params);
+				$ids_to_params[$thread_id] = $param_id;
+			}
+			while (false !== ($result = _class('threads')->iteration())) {
+				if (!empty($result)) {
+					$thread_id	= $result[0];
+					$param_id	= $ids_to_params[$thread_id];
+					$results[$param_id] = $result[1];
+				}
+			}
+		}
+		return $results;
+	}
+
+	/**
 	* You should avoid './' or '../' in config paths for example '../project_conf.php'
 	* Need to be replaced into dirname(dirname(__FILE__)).'/project_conf.php'
 	*/

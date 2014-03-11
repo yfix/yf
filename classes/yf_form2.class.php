@@ -61,8 +61,8 @@ class yf_form2 {
 	/**
 	*/
 	function array_to_form($a = array(), $params = array(), $replace = array()) {
-		$this->_replace = $replace;
-		$this->_params = $params;
+		$this->_params = $params + (array)$this->_params;
+		$this->_replace = $replace + (array)$this->_replace;
 		// Example of row: array('text', 'login', array('class' => 'input-medium'))
 		foreach ((array)$a as $v) {
 			$func = '';
@@ -141,6 +141,9 @@ class yf_form2 {
 		if ($table && $id) {
 			$columns = db()->meta_columns($table);
 			$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
+			if (!is_array($this->_replace)) {
+				$this->_replace = array();
+			}
 			foreach ((array)$info as $k => $v) {
 				$this->_replace[$k] = $v;
 			}
@@ -198,7 +201,7 @@ class yf_form2 {
 			if ($errors) {
 				$e = array();
 				foreach ((array)$errors as $msg) {
-					$e[] = '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button>'.$msg.'</div>';
+					$e[] = '<div class="alert alert-error alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>'.$msg.'</div>';
 				}
 				array_unshift($this->_body, implode(PHP_EOL, $e));
 			}
@@ -271,6 +274,11 @@ class yf_form2 {
 			$this->_body[$tabs_container] = _class('html')->tabs($tabs, $this->_params['tabs']);
 		}
 		$this->_rendered = implode(PHP_EOL, $this->_body);
+
+		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
+		$extra['css_framework'] = $css_framework;
+		$this->_rendered = _class('html5_framework')->form_render_out($this->_rendered, $extra, $replace, $this);
+
 		if (DEBUG_MODE) {
 			debug('form2[]', array(
 				'params'	=> $this->_params,
@@ -286,7 +294,7 @@ class yf_form2 {
 	*/
 	function form_begin($name = '', $method = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!is_array($extra)) {
@@ -314,13 +322,19 @@ class yf_form2 {
 			if (!isset($extra['action'])) {
 				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $_this->_params['links_add'];
 			}
-			$extra['class'] = $extra['class'] ?: 'form-horizontal';
+			$extra['class'] = $extra['class'] ?: 'form-horizontal';// col-md-6';
+			if ($extra['class_add']) {
+				$extra['class'] .= ' '.$extra['class_add'];
+			}
 			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
 			$body = '<form'.$_this->_attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate')).'>'.PHP_EOL;
-			$body .= '<fieldset>';
+// TODO: use unified fieldset_start() method
+// Fieldset hardcode here needed to avoid strange bug with recursion
+			$_this->_fieldset_mode_on = true;
+			$body .= '<fieldset'.$_this->_attrs($extra['fieldset'], array('class','style','id','name')).'>';
 			if ($extra['legend']) {
-				$body .= '<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>';
+				$body .= PHP_EOL.'<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
 			}
 			return $body;
 		};
@@ -338,7 +352,10 @@ class yf_form2 {
 			$extra = array();
 		}
 		$func = function($extra, $r, $_this) {
-			$body = '</fieldset>'.PHP_EOL;
+// TODO: use unified fieldset_start() method
+// Fieldset hardcode here needed to avoid strange bug with recursion
+			$_this->_fieldset_mode_on = false;
+			$body .= '</fieldset>'.PHP_EOL;
 			$body .= '</form>'.PHP_EOL;
 			return $body;
 		};
@@ -347,6 +364,115 @@ class yf_form2 {
 			return $this;
 		}
 		return $func($extra, $replace, $this);
+	}
+
+	/**
+	* Shortcut for adding fieldset
+	*/
+	function fieldset_start($name = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		$extra['name'] = $extra['name'] ?: $name;
+		$func = function($extra, $r, $_this) {
+			if ($_this->_fieldset_mode_on) {
+				$body = '</fieldset>'.PHP_EOL;
+			} else {
+				$_this->_fieldset_mode_on = true;
+			}
+			$body .= '<fieldset'.$_this->_attrs($extra, array('class','style','id','name')).'>';
+			if ($extra['legend']) {
+				$body .= PHP_EOL.'<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
+			}
+			return $body;
+		};
+		if ($this->_chained_mode || $extra['chained_mode']) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+	}
+
+	/**
+	* Paired with fieldset_start
+	*/
+	function fieldset_end($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			if ($_this->_fieldset_mode_on) {
+				$_this->_fieldset_mode_on = false;
+				return '</fieldset>'.PHP_EOL;
+			}
+		};
+		if ($this->_chained_mode || $extra['chained_mode']) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+	}
+
+	/**
+	* Shortcut for starting form row, needed to build row with several inlined inputs
+	*/
+	function row_start($extra = array()) {
+		$func = function($extra, $r, $_this) {
+// TODO: auto-close row_end(), if not called implicitely
+			$_this->_stacked_mode_on = true;
+			$extra['errors'] = common()->_get_error_messages();
+			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+	/**
+	* Paired with row_start
+	*/
+	function row_end($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			$_this->_stacked_mode_on = false;
+			return $_this->_row_html('', array('only_row_end' => 1) + (array)$extra);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func($extra, $replace, $this);
+	}
+
+	/**
+	* Shortcut for making tabbable form
+	*/
+	function tab_start($name = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		$extra['name'] = $extra['name'] ?: $name;
+		$func = function($extra, $r, $_this) {
+// TODO: auto-close tab_end(), if not called implicitely
+			$_this->_tabbed_mode_on = true;
+			$_this->_tabs_name = $extra['name'];
+			$_this->_tabs_extra = $extra;
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+	}
+
+	/**
+	* Paired with tab_start
+	*/
+	function tab_end($extra = array()) {
+		$func = function($extra, $r, $_this) {
+			$_this->_tabbed_mode_on = false;
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
 	}
 
 	/**
@@ -387,9 +513,9 @@ class yf_form2 {
 	*/
 	function _attrs($extra = array(), $names = array()) {
 		$body = array();
-		// Try to find and allow all data-* attributes automatically
+		// Try to find and allow all data-* and ng-* attributes automatically
 		foreach ((array)$extra as $k => $v) {
-			if (strpos($k, 'data-') === 0) {
+			if (strpos($k, 'data-') === 0 || strpos($k, 'ng-') === 0) {
 				$names[] = $k;
 			}
 		}
@@ -423,7 +549,7 @@ class yf_form2 {
 				}
 			}
 		}
-		return ' '.implode(' ', $body);
+		return $body ? ' '.implode(' ', $body) : '';
 	}
 
 	/**
@@ -487,7 +613,6 @@ class yf_form2 {
 		if ($this->_params['dd_mode']) {
 			return $this->_dd_row_html($content, $extra, $replace);
 		}
-		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		if ($extra['form_input_no_append'] || $this->_params['form_input_no_append'] || conf('form_input_no_append')) {
 			$extra['append'] = '';
 			$extra['prepend'] = '';
@@ -495,55 +620,9 @@ class yf_form2 {
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
 		}
-		if ($css_framework) {
-			$extra['css_framework'] = $css_framework;
-			return _class('html')->form_row($content, $extra, $replace, $this);
-		}
-		$row_start = 
-			'<div class="control-group form-group'.(isset($extra['errors'][$extra['name']]) ? ' error' : '').'">'.PHP_EOL
-				.($extra['desc'] && !$extra['no_label'] ? '<label class="control-label col-lg-2" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
-				.(!$extra['wide'] ? '<div class="controls col-lg-4">'.PHP_EOL : '');
-
-		$row_end =
-				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
-			.'</div>';
-
-		$before_content_html = 
-			(($extra['prepend'] || $extra['append']) ? '<div class="input-group '.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
-			.($extra['prepend'] ? '<span class="add-on input-group-addon">'.$extra['prepend'].'</span>'.PHP_EOL : '');
-
-		$after_content_html = 
-			($extra['append'] ? '<span class="add-on input-group-addon">'.$extra['append'].'</span>'.PHP_EOL : '')
-			.(($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '');
-
-		if ($extra['edit_link']) {
-			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
-				$extra['edit_link'] = '';
-			}
-		}
-
-		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
-		$link_name_html = (($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn">'.t($extra['link_name']).'</a>'.PHP_EOL : '');
-
-		$inline_help_html = ($extra['inline_help'] ? '<span class="help-inline">'.$extra['inline_help'].'</span>'.PHP_EOL : '');
-		$inline_tip_html = ($extra['tip'] ? ' '.$this->_show_tip($extra['tip'], $extra, $replace) : '');
-
-		if ($extra['only_row_start']) {
-			return $row_start;
-		} elseif ($extra['only_row_end']) {
-			return $row_end;
-		} elseif ($extra['stacked']) {
-			return $before_content_html. $content. PHP_EOL. $after_content_html
-				.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html;
-		} else {
-			// Full variant
-			return $row_start
-					.$before_content_html. $content. PHP_EOL. $after_content_html
-					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
-					.(isset($extra['ace_editor']) ? $this->_ace_editor_html($extra, $replace) : '')
-					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
-				.$row_end;
-		}
+		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
+		$extra['css_framework'] = $css_framework;
+		return _class('html5_framework')->form_row($content, $extra, $replace, $this);
 	}
 
 	/**
@@ -553,134 +632,12 @@ class yf_form2 {
 		if ($extra['hide_empty'] && !strlen($content)) {
 			return '';
 		}
-		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		if ($this->_stacked_mode_on) {
 			$extra['stacked'] = true;
 		}
-		$dd_class = $this->_params['dd_class'] ?: 'span6';
-
-		$row_start = !$extra['wide'] ? '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL : '';
-		$content = '<dd>'.$content.'</dd>'.PHP_EOL;
-		$row_end = '</dl>'.PHP_EOL;
-
-		if ($extra['edit_link']) {
-			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
-				$extra['edit_link'] = '';
-			}
-		}
-		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
-
-		if ($extra['only_row_start']) {
-			return $row_start;
-		} elseif ($extra['only_row_end']) {
-			return $row_end;
-		} elseif ($extra['stacked']) {
-			return $before_content_html. $content. PHP_EOL. $after_content_html
-				.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html;
-		} else {
-			// Full variant
-			return $row_start
-					.$before_content_html. $content. PHP_EOL. $after_content_html
-					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
-					.(isset($extra['ace_editor']) ? $this->_ace_editor_html($extra, $replace) : '')
-					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
-				.$row_end;
-		}
-	}
-
-	/**
-	* Shortcut for starting form row, needed to build row with several inlined inputs
-	*/
-	function row_start($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_stacked_mode_on = true;
-			$extra['errors'] = common()->_get_error_messages();
-			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
-	}
-
-	/**
-	* Paired with row_start
-	*/
-	function row_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_stacked_mode_on = false;
-			return $_this->_row_html('', array('only_row_end' => 1) + (array)$extra);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
-	}
-
-	/**
-	* Shortcut for starting navbar, needed to test div_box containers
-	*/
-	function navbar_start($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_params['no_form'] = true;
-			$_this->_stacked_mode_on = true;
-			return '<div class="navbar span2"><div class="navbar-inner"><ul class="nav">';
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
-	}
-
-	/**
-	* Paired with navbar_start
-	*/
-	function navbar_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_stacked_mode_on = false;
-			return '</ul></div></div>';
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
-	}
-
-	/**
-	* Shortcut for making tabbable form
-	*/
-	function tab_start($name = '', $extra = array()) {
-		if (is_array($name)) {
-			$extra += $name;
-			$name = '';
-		}
-		$extra['name'] = $extra['name'] ?: $name;
-		$func = function($extra, $r, $_this) {
-			$_this->_tabs_name = $extra['name'];
-			$_this->_tabs_extra = $extra;
-			$_this->_tabbed_mode_on = true;
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-	}
-
-	/**
-	* Paired with tab_start
-	*/
-	function tab_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_tabbed_mode_on = false;
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
+		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
+		$extra['css_framework'] = $css_framework;
+		return _class('html5_framework')->form_dd_row($content, $extra, $replace, $this);
 	}
 
 	/**
@@ -689,7 +646,7 @@ class yf_form2 {
 	*/
 	function container($text, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$text = strval($text);
@@ -716,60 +673,7 @@ class yf_form2 {
 	/**
 	*/
 	function _input_assign_params_from_validate($extra = array()) {
-		$vr = &$this->_validate_rules_names[$extra['name']];
-/*
-// TODO: move this into _class('validate')
-		if ($vr['min_length']) {
-		} elseif ($vr['max_length']) {
-		} elseif ($vr['exact_length']) {
-		} elseif ($vr['alpha']) {
-		} elseif ($vr['alpha_numeric']) {
-		} elseif ($vr['alpha_numeric_spaces']) {
-		} elseif ($vr['alpha_dash']) {
-		} elseif ($vr['exact_length']) {
-		} elseif ($vr['numeric']) {
-		} elseif ($vr['integer']) {
-		} elseif ($vr['decimal']) {
-		} elseif ($vr['is_natural']) {
-		} elseif ($vr['is_natural_no_zero']) {
-		} elseif ($vr['valid_email']) {
-			$extra['type'] = 'email';
-		} elseif ($vr['valid_url']) {
-			$extra['type'] = 'url';
-		} elseif ($vr['valid_ip']) {
-		} elseif ($vr['regex_match']) {
-		}
-		# $extra['title'] is used in html5 validation suggesting messages
-*/
-/*
-		if ($vr['numeric']) {
-			$extra['pattern'] = isset($extra['pattern']) ? $extra['pattern'] : '^[\-+]?[0-9]*\.?[0-9]+$';
-			$extra['title'] = isset($extra['title']) ? $extra['title'] : t('Field must contain only numbers');
-		}
-*/
-		// http://stackoverflow.com/questions/10281962/is-it-minlength-in-html5
-		if (isset($vr['min_length']) && strlen($vr['min_length']) && !isset($extra['pattern'])) {
-			$extra['pattern'] = '.{'.$vr['min_length'].','.($vr['max_length'] ?: '').'}';
-		}
-		if ($vr['max_length'] && !isset($extra['maxlength'])) {
-			$extra['maxlength'] = $vr['max_length'][1];
-		}
-		if (isset($vr['required'])) {
-			$extra['required'] = 1;
-		}
-		foreach (array('ajax_is_unique','ajax_is_unique_without','ajax_exists') as $rule) {
-			$_rule = str_replace('ajax_', '', $rule);
-			if (isset($vr[$rule])) {
-				$extra['data-ajax-validate'][$_rule] = $vr[$rule];
-			}
-		}
-		foreach (array('ajax_is_unique','ajax_is_unique_without','ajax_exists') as $rule) {
-			$_rule = str_replace('ajax_', '', $rule);
-			if (isset($vr[$rule])) {
-				$extra['data-ajax-validate'][$_rule] = $vr[$rule];
-			}
-		}
-		return $extra;
+		return _class('form2_validate', 'classes/form2/')->_input_assign_params_from_validate($extra, $this);
 	}
 
 	/**
@@ -777,7 +681,7 @@ class yf_form2 {
 	*/
 	function input($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -821,7 +725,7 @@ class yf_form2 {
 	*/
 	function textarea($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -868,71 +772,19 @@ class yf_form2 {
 	* P.S. You can use free CDN for ckeditor as alternate solution: <script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js"></script>
 	*/
 	function _ckeditor_html($extra = array(), $replace = array()) {
-		if (!is_array($extra)) {
-			return '';
-		}
-		$params = $extra['ckeditor'];
-		if (!is_array($params)) {
-			$params = array();
-		}
-		if ($this->_ckeditor_scripts_included) {
-			return '';
-		}
-		$ck_path = $params['ck_path'] ? $params['ck_path'] : 'ckeditor/ckeditor.js';
-		$fs_ck_path = PROJECT_PATH. $ck_path;
-		$web_ck_path = WEB_PATH. $ck_path;
-		if (!file_exists($fs_ck_path)) {
-			return '';
-		}
-		$content_id = $extra['id'] ? $extra['id'] : 'content_editable';
-		$hidden_id = $params['hidden_id'] ? $params['hidden_id'] : '';
+		return _class('form2_ckeditor', 'classes/form2/')->_ckeditor_html($extra, $replace, $this);
+	}
 
-		$body .= '<script type="text/javascript">
-			$(function(){
-				var _content_id = "#'.$content_id.'";
-				var _hidden_id = "#'.$hidden_id.'";
-				$(_content_id).parents("form").submit(function(){
-					$("input[type=hidden]" + _hidden_id).val( $(_content_id).html() );
-				})
-			})
-			</script>';
-
-		// Main ckeditor script
-		$body .= '<script src="'.$web_ck_path.'" type="text/javascript"></script>'.PHP_EOL;
-
-		// Theme-wide ckeditor config inside stpl (so any engine vars can be processed or included there)
-		$stpl_name = 'ckeditor_config'; // Example filesystem location: PROJECT_PATH.'templates/admin/ckeditor_config.stpl'
-		if (!isset($replace['content_id'])) {
-			$replace['content_id'] = $content_id;
-		}
-		$body .= tpl()->_stpl_exists($stpl_name) ? tpl()->parse($stpl_name, (array)$extra + (array)$replace ) : '';
-
-		// Avoid including ckeditor scripts several times on same page
-		$this->_ckeditor_scripts_included = true;
-
-		return $body;
+	/**
+	*/
+	function _tinymce_html($extra = array(), $replace = array()) {
+		return _class('form2_tinymce', 'classes/form2/')->_tinymce_html($extra, $replace, $this);
 	}
 
 	/**
 	*/
 	function _ace_editor_html($extra = array(), $replace = array()) {
-		$extra['id'] = $extra['id'] ?: 'editor_html';
-		return '<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript"></script>
-			<script type="text/javascript">
-			(function(){
-			try {
-				var ace_editor = ace.edit("'.$extra['id'].'");
-				ace_editor.setTheme("ace/theme/'.($extra['ace']['theme'] ?: 'tomorrow_night').'");
-				ace_editor.getSession().setMode("ace/mode/html");
-				ace_editor.setFontSize("'.($extra['ace']['font-size'] ?: '16px').'");
-				ace_editor.setPrintMarginColumn(false);
-				$("#'.$extra['id'].'").data("ace_editor", ace_editor);
-			} catch (e) {
-				console.log(e)
-			}
-			})()
-			</script>
-		';
+		return _class('form2_ace_editor', 'classes/form2/')->_ace_editor_html($extra, $replace, $this);
 	}
 
 	/**
@@ -971,7 +823,7 @@ class yf_form2 {
 		$extra['type'] = 'password';
 		$extra['prepend'] = '<i class="icon-key"></i>';
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -991,7 +843,7 @@ class yf_form2 {
 	*/
 	function button($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$desc) {
@@ -1003,7 +855,7 @@ class yf_form2 {
 		}
 		$extra['value'] = t($extra['value']);
 		if (!$extra['class']) {
-			$extra['class'] = 'btn';
+			$extra['class'] = 'btn btn-default';
 		}
 		return $this->input($name, $desc, $extra, $replace);
 	}
@@ -1015,7 +867,7 @@ class yf_form2 {
 		$extra['type'] = $extra['type'] ?: 'text';
 		$extra['prepend'] = '<i class="icon-user"></i>';
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -1031,7 +883,7 @@ class yf_form2 {
 		$extra['type'] = 'email';
 		$extra['prepend'] = '@';
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -1072,7 +924,7 @@ class yf_form2 {
 	*/
 	function money($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['type'] = 'text';
@@ -1090,8 +942,8 @@ class yf_form2 {
 		$extra['type'] = 'url';
 		$extra['prepend'] = 'url';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'url';
@@ -1105,8 +957,8 @@ class yf_form2 {
 	function color($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'color';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'color';
@@ -1120,8 +972,8 @@ class yf_form2 {
 	function date($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'date';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'date';
@@ -1135,8 +987,8 @@ class yf_form2 {
 	function datetime($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'datetime';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'datetime';
@@ -1150,8 +1002,8 @@ class yf_form2 {
 	function datetime_local($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'datetime-local';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'datetime_local';
@@ -1165,8 +1017,8 @@ class yf_form2 {
 	function month($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'month';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'month';
@@ -1180,8 +1032,8 @@ class yf_form2 {
 	function range($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'range';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'range';
@@ -1195,8 +1047,8 @@ class yf_form2 {
 	function search($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'search';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'search';
@@ -1210,8 +1062,8 @@ class yf_form2 {
 	function tel($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'tel';
 		if (is_array($name)) {
-			$extra += $name;
-			$desc = '';
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'tel';
@@ -1226,7 +1078,7 @@ class yf_form2 {
 		$extra['type'] = 'tel';
 		if (is_array($name)) {
 			$extra += $name;
-			$desc = '';
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'phone';
@@ -1241,7 +1093,7 @@ class yf_form2 {
 		$extra['type'] = 'time';
 		if (is_array($name)) {
 			$extra += $name;
-			$desc = '';
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'time';
@@ -1256,7 +1108,7 @@ class yf_form2 {
 		$extra['type'] = 'week';
 		if (is_array($name)) {
 			$extra += $name;
-			$desc = '';
+			$name = '';
 		}
 		if (!$name) {
 			$name = 'week';
@@ -1332,11 +1184,11 @@ class yf_form2 {
 	*/
 	function submit($name = '', $value = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($value)) {
-			$extra += $value;
+			$extra = (array)$extra + $value;
 			$value = '';
 		}
 		if (!is_array($extra)) {
@@ -1352,7 +1204,7 @@ class yf_form2 {
 				$extra['link_url'] = '';
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
-			$extra['class'] = $extra['class'] ?: 'btn btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = $extra['class'] ?: 'btn btn-default btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['value'] = t($extra['value']);
 			$extra['desc'] = ''; // We do not need label here
@@ -1394,7 +1246,7 @@ class yf_form2 {
 			}
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['link_url'] = $name;
@@ -1416,7 +1268,7 @@ class yf_form2 {
 			}
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['link_url'] = $name;
@@ -1431,7 +1283,7 @@ class yf_form2 {
 	*/
 	function info($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -1454,25 +1306,29 @@ class yf_form2 {
 				$extra['desc'] = t($extra['desc']);
 				$value = t($value);
 			}
-
-			$content = '';
+			if ($extra['no_text']) {
+				$value = '';
+			}
 			if ($extra['link']) {
 				if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['link'])) {
 					$extra['link'] = '';
 				}
 			}
+			$icon = $extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '';
+			$content = '';
 			if ($extra['link']) {
 				if ($extra['rewrite']) {
 					$extra['link'] = url($extra['link']);
 				}
-				$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs';
+				$extra['class'] = $extra['class'] ?: 'btn btn-default btn-mini btn-xs';
 				$extra['class'] = $_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra);
 				$extra['href'] = $extra['link'];
-				$attrs_names = array('href','name','class','style','disabled','target');
-				$content = '<a'.$_this->_attrs($extra, $attrs_names).'>'.$value.'</a>';
+				$extra['title'] = $extra['desc'] ?: $extra['name'];
+				$attrs_names = array('href','name','class','style','disabled','target','alt','title');
+				$content = '<a'.$_this->_attrs($extra, $attrs_names).'>'.$icon. $value.'</a>';
 			} else {
 				$extra['class'] = $extra['class'] ?: 'label label-info';
-				$content = '<span class="'.$_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$value.'</span>';
+				$content = '<span class="'.$_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$icon. $value.'</span>';
 			}
 			return $_this->_row_html($content, $extra, $r);
 		};
@@ -1538,7 +1394,7 @@ class yf_form2 {
 	function info_date($name = '', $format = '', $extra = array(), $replace = array()) {
 		$r = (array)$this->_replace + (array)$replace;
 		if (is_array($format)) {
-			$extra += $format;
+			$extra = (array)$extra + $format;
 			$format = '';
 		}
 		$extra['format'] = $extra['format'] ?: $format;
@@ -1560,11 +1416,11 @@ class yf_form2 {
 	*/
 	function link($name = '', $link = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($link)) {
-			$extra += $link;
+			$extra = (array)$extra + $link;
 			$link = '';
 		}
 		$extra['link'] = isset($extra['link']) ? $extra['link'] : $link;
@@ -1622,7 +1478,7 @@ class yf_form2 {
 	*/
 	function box($name, $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
@@ -1690,7 +1546,7 @@ class yf_form2 {
 	*/
 	function date_box($name = '', $values = array(), $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -1703,7 +1559,7 @@ class yf_form2 {
 	*/
 	function time_box($name = '', $values = array(), $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -1716,7 +1572,7 @@ class yf_form2 {
 	*/
 	function datetime_box($name = '', $values = array(), $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -1732,7 +1588,7 @@ class yf_form2 {
 	*/
 	function birth_box($name = '', $values = array(), $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (!$name) {
@@ -1757,11 +1613,11 @@ class yf_form2 {
 	*/
 	function country_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1781,11 +1637,11 @@ class yf_form2 {
 	*/
 	function region_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1805,11 +1661,11 @@ class yf_form2 {
 	*/
 	function city_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1830,11 +1686,11 @@ class yf_form2 {
 	*/
 	function currency_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1854,11 +1710,11 @@ class yf_form2 {
 	*/
 	function language_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1878,11 +1734,11 @@ class yf_form2 {
 	*/
 	function timezone_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1902,11 +1758,11 @@ class yf_form2 {
 	*/
 	function icon_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1926,11 +1782,11 @@ class yf_form2 {
 	*/
 	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -1966,11 +1822,11 @@ class yf_form2 {
 	*/
 	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -2006,11 +1862,11 @@ class yf_form2 {
 	*/
 	function location_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
-			$extra += $name;
+			$extra = (array)$extra + $name;
 			$name = '';
 		}
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$name) {
@@ -2050,7 +1906,7 @@ class yf_form2 {
 	*/
 	function image($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 // TODO: show already uploaded image, link to delete it, input to upload new
@@ -2071,11 +1927,17 @@ class yf_form2 {
 		return $func($extra, $replace, $this);
 	}
 
+	
+	function file_uploader($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return ''; // disabled for now; todo later
+		return _class('form2_file_uploader', 'classes/form2/')->file_uploader($name, $desc, $extra, $replace, $this);
+	}	
+
 	/**
 	*/
 	function captcha($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!is_array($extra)) {
@@ -2102,47 +1964,7 @@ class yf_form2 {
 	/**
 	*/
 	function ui_range($name, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc)) {
-			$extra += $desc;
-			$desc = '';
-		}
-		$extra['name'] = $extra['name'] ?: $name;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		$func = function($extra, $r, $_this) {
-// TODO: upgrade look and feel and connect $field__and for filter
-			$body = '
-				<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-				<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-				<script>
-				$(function() {
-					$( "#slider-range" ).slider({
-						range: true,
-						min: 0,
-						max: 500,
-						values: [ 75, 300 ],
-						slide: function( event, ui ) {
-							$( "#'.$name.'" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-						}
-					});
-					$( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-						" - $" + $( "#slider-range" ).slider( "values", 1 ) );
-				});
-				</script>
-				<div class="span10">
-					<div id="slider-range"></div>
-				</div>
-				<input type="hidden" id="'.$name.'" name=".$name." value="'.$extra['value_min'].'" />
-				<input type="hidden" id="'.$name.'__and" name=".$name." value="'.$extra['value_max'].'" />
-
-<!--			<input type="text" id="amount" style="font-weight: bold;" class="input-small" /> -->
-			';
-			return $_this->_row_html($body, $extra, $r);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
+		return _class('form2_ui_range', 'classes/form2/')->ui_range($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
@@ -2150,7 +1972,7 @@ class yf_form2 {
 	*/
 	function func($name, $func, $extra = array(), $replace = array()) {
 		if (is_array($func)) {
-			$extra += $func;
+			$extra = (array)$extra + $func;
 			$func = '';
 		}
 		if (!$func) {
@@ -2207,97 +2029,26 @@ class yf_form2 {
 	}
 
 	/**
-	* Star selector, got from http://fontawesome.io/examples/#custom. Require this CSS:
-	*	'<style>
-	*	.rating { unicode-bidi:bidi-override;direction:rtl;font-size:20px }
-	*	.rating span.star { font-family:FontAwesome;font-weight:normal;font-style:normal;display:inline-block }
-	*	.rating span.star:hover { cursor:pointer }
-	*	.rating span.star:before { content:"\f006";padding-right:0.2em;color:#999 }
-	*	.rating span.star:hover:before, .rating span.star:hover~span.star:before{ content:"\f005";color:#e3cf7a }
-	*	</style>';
 	*/
-	function stars_select($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc)) {
-			$extra += $desc;
-			$desc = '';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		$func = function($extra, $r, $_this) {
-			$max = $extra['max'] ?: 5;
-			$stars = $extra['stars'] ?: 5;
-			$class = $extra['class'] ?: 'star';
-			$body[] = '<span class="rating">';
-			foreach (range(1, $stars) as $num) {
-				$body[] = '<span class="'.$class.' '.$extra['name'].'" data-name="'.$extra['name'].'" data-value="'.($stars-$num+1).'"></span>';
-			}
-			$body[] = '</span>';
-			$body[] = '<input type="hidden" name="'.$extra['name'].'" id='.$extra['name'].' value="0">';
-			
-			$body[] = '
-				<script>
-					$(function () {
-						$(".'.$class.'.'.$extra['name'].'").on("click",function() {
-							var value = $(this).attr("data-value");
-							$("#"+$(this).attr("data-name")).val(value);
-							$(".rating.star.'.$extra['name'].'").each(function() {
-								$(this).attr("data-value");
-								if (value>=$(this).attr("data-value")) {
-									$(this).addClass("rating_selected");								
-								} else {
-									$(this).removeClass("rating_selected");				
-								}
-							});
-						});
-					});
-				</script>';
-			
-			return $_this->_row_html(implode('', $body), $extra, $r);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
+	function stars($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return _class('form2_stars', 'classes/form2/')->stars($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
+	* Star selector, got from http://fontawesome.io/examples/#custom
 	*/
-	function stars($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc)) {
-			$extra += $desc;
-			$desc = '';
-		}
-		if (!is_array($extra)) {
-			$extra = array();
-		}
-		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		$func = function($extra, $r, $_this) {
-			$extra['id'] = $extra['name'];
-			$color_ok = $extra['color_ok'] ?: 'yellow';
-			$color_ko = $extra['color_ko'] ?: '';
-			$class = $extra['class'] ?: 'icon-star icon-large';
-			$class_ok = $extra['class_ok'] ?: 'star-ok';
-			$class_ko = $extra['class_ko'] ?: 'star-ko';
-			$max = $extra['max'] ?: 5;
-			$stars = $extra['stars'] ?: 5;
-			$input = isset($r[$extra['name']]) ? $r[$extra['name']] : $extra['name'];
-			foreach (range(1, $stars) as $num) {
-				$is_ok = $input >= ($num * $max / $stars) ? 1 : 0;
-				$body[] = '<i class="'.$class.' '.($is_ok ? $class_ok : $class_ko).'" style="color:'.($is_ok ? $color_ok : $color_ko).';" title="'.$input.'"></i>';
-			}
-			return $_this->_row_html(implode(PHP_EOL, $body), $extra, $r);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
+	function stars_select($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return _class('form2_stars', 'classes/form2/')->stars_select($name, $desc, $extra, $replace, $this);
 	}
+	
+	/**
+	* Datetimepicker, src: http://tarruda.github.io/bootstrap-datetimepicker/
+	* params :  no_date // no date picker
+	*			no_time // no time picker
+	*/
+	function datetime_select($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return _class('form2_datetime', 'classes/form2/')->datetime_select($name, $desc, $extra, $replace, $this);
+	}	
 
 	/**
 	* For use inside table item template
@@ -2325,8 +2076,8 @@ class yf_form2 {
 			}
 			$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
 			$extra['href'] = $link_url;
-			$extra['class'] = $extra['class'] ?: 'btn btn-mini btn-xs'. ($extra['class_add'] ? ' '.$extra['class_add'] : '');
-			$attrs_names = array('id','name','href','class','style','target');
+			$extra['class'] = $extra['class'] ?: 'btn btn-default btn-mini btn-xs'. ($extra['class_add'] ? ' '.$extra['class_add'] : '');
+			$attrs_names = array('id','name','href','class','style','target','alt','title');
 			return ' <a'.$_this->_attrs($extra, $attrs_names).'><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
 		};
 		if ($this->_chained_mode) {

@@ -47,12 +47,12 @@ class yf_html {
 
 	/**
 	*/
-	function form_row ($content, $extra = array(), $replace = array(), $obj) {
-		$css_framework = $extra['css_framework'] ?: conf('css_framework');
-		if ($css_framework) {
-			return _class('html_'.$css_framework, 'classes/html/')->form_row($content, $extra, $replace, $obj);
-		}
-	}
+#	function form_row ($content, $extra = array(), $replace = array(), $obj) {
+#		$css_framework = $extra['css_framework'] ?: conf('css_framework');
+#		if ($css_framework) {
+#			return _class('html_'.$css_framework, 'classes/html/')->form_row($content, $extra, $replace, $obj);
+#		}
+#	}
 
 	/**
 	*/
@@ -64,7 +64,7 @@ class yf_html {
 			'legend' => $replace['title'],
 			'no_form' => 1,
 			'dd_mode' => 1,
-			'dd_class' => 'span6',
+			'dd_class' => 'span6 col-lg-6',
 		));
 		foreach ((array)$replace as $name => $val) {
 			$func = 'container';
@@ -96,7 +96,7 @@ class yf_html {
 			}
 		}
 		$legend = $extra['legend'] ? '<legend>'._prepare_html(t($extra['legend'])).'</legend>' : '';
-		$div_class = $extra['div_class'] ? $extra['div_class'] : 'span6';
+		$div_class = $extra['div_class'] ? $extra['div_class'] : 'span6 col-lg-6';
 		if (DEBUG_MODE) {
 			debug('dd_table[]', array(
 				'fields'		=> $replace,
@@ -148,7 +148,7 @@ class yf_html {
 				$css_class .= ' '.$extra['class'];
 			}
 			if (!$extra['no_headers']) {
-				$headers[] = '<li class="'.($is_active ? 'active' : '').'"><a href="#'.$id.'" data-toggle="tab">'.$desc.'</a></li>';
+				$headers[] = '<li class="'.($is_active ? 'active' : '').'"><a href="#'.$id.'" data-toggle="tab">'.t($desc).'</a></li>';
 			}
 			$items[] = '<div class="tab-pane '.$css_class.'" id="'.$id.'">'.$content.'</div>';
 		}

@@ -124,4 +124,11 @@ class yf_admin_wall {
 		;
 	}
 
+	/**
+	*/
+	function _hook_settings(&$selected = array()) {
+#		return array(
+#			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
+#		);
+	}
 }
