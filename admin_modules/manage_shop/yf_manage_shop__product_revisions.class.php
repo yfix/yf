@@ -51,7 +51,8 @@ class yf_manage_shop__product_revisions {
 
 	function _add_group_revision($action = false, $ids = false, $group_id = false){
 		$revision_db = $this->get_revision_db($action);
-		$data = json_encode($ids);
+		if(!empty($ids))
+			$data = json_encode($ids);
 		$insert = array(
 			'user_id'  => main()->ADMIN_ID,
 			'add_date' => time(),
@@ -319,7 +320,7 @@ class yf_manage_shop__product_revisions {
 			db()->update_batch('shop_product_images', db()->es($set));
 			db()->query('UPDATE '.db('shop_products').' SET image=1 WHERE id='.$product_id);
 		}
-		module('manage_shop')->_product_images_add_revision('checkout', $product_id, false);
+		module('manage_shop')->_product_images_add_revision('rollback', $product_id, false);
 		db()->commit();
 		module('manage_shop')->_product_cache_purge($product_id);
 		common()->message_success("Revision retrieved");
@@ -351,7 +352,7 @@ class yf_manage_shop__product_revisions {
 					db()->insert_safe($table, $array);
 			}
 		}
-		module('manage_shop')->_product_add_revision('checkout', $product_id);
+		module('manage_shop')->_product_add_revision('rollback', $product_id);
 		db()->commit();
 
 		module('manage_shop')->_product_cache_purge($product_id);
@@ -444,7 +445,7 @@ class yf_manage_shop__product_revisions {
 					db()->insert_safe($table, $array);
 			}
 		}
-		module('manage_shop')->_order_add_revision('checkout', $order_id);
+		module('manage_shop')->_order_add_revision('rollback', $order_id);
 		db()->commit();
 
 		common()->message_success("Revision retrieved");
@@ -455,7 +456,7 @@ class yf_manage_shop__product_revisions {
 	function checkout_group_revision(){
 		$_GET['id'] = intval($_GET['id']);
 		$db = db('shop_product_revisions');
-		$ids = db()->get_one('SELECT data FROM '.$db.' WHERE item_id='.$_GET['id'].' ORDER BY id DESC');
+		$ids = db()->get_one('SELECT data FROM '.$db.' WHERE item_id='.$_GET['id'].' AND data IS NOT NULL ORDER BY id DESC');
 		if (empty($ids)) {
 			return _e('Revision not found');
 		}
@@ -485,7 +486,7 @@ class yf_manage_shop__product_revisions {
 			}
 			module('manage_shop')->_product_cache_purge($product_id);
 		}
-		$group_ids = module('manage_shop')->_product_add_revision('checkout', $products);
+		$group_ids = module('manage_shop')->_product_add_revision('rollback', $products);
 		module('manage_shop')->_add_group_revision('product', $group_ids, $_GET['id']);
 		db()->commit();
 		common()->message_success("Group revision retrieved");

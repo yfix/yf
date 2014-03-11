@@ -34,7 +34,7 @@
 			}
 			btn_dom.removeClass('btn-info').addClass('btn-warning');
 			btn_dom.find('i').removeClass('icon-play').addClass('icon-refresh icon-spin');
-			btn_dom.find('span').text('{t('Process...')}');
+			btn_dom.find('span').text('{t('Process')}...');
 		} else if(type == 'rollback') {
 			btn_dom.removeClass('btn-warning').addClass('btn-danger').show();
 			btn_dom.find('i').removeClass('icon-refresh icon-spin').addClass('icon-undo');
