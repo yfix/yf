@@ -472,17 +472,8 @@ class yf_manage_shop__product_revisions {
 		foreach($revisions as $data){
 			$product_id = $data['item_id'];
 			$data_stamp = json_decode($data['data'], true);
-			foreach($data_stamp as $type => $array){
-				$table = $this->all_queries['product'][$type]['table'];
-				$field = $this->all_queries['product'][$type]['field'];
-				$multi = $this->all_queries['product'][$type]['multi'];
-				if(!$multi){
-					db()->update_safe($table, $array, $field.'='.$array['id']);
-				}else{
-					db()->query('DELETE FROM '.db($table).' WHERE '.$field.'='.$product_id);
-					if(!empty($array))
-						db()->insert_safe($table, $array);
-				}
+			foreach($data_stamp as $array){
+				db()->update_safe('shop_products', array('name' => $array['name']), 'id='.$array['id']);
 			}
 			module('manage_shop')->_product_cache_purge($product_id);
 		}
