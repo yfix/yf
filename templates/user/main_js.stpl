@@ -74,4 +74,6 @@ $(function(){
 })
 </script>
 
-{include("debug_console_js")}
+{if(const.DEBUG_MODE eq 1)}
+	{include("debug_console_js")}
+{/if}

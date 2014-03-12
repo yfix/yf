@@ -11,6 +11,7 @@
 	border: 0;
 }
 </style>
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js" class="yf_core"></script>
 <script type="text/javascript" class="yf_core">
 $(function(){
@@ -42,3 +43,29 @@ $(function(){
 	})
 });
 </script>
+
+{catch(DEBUG_CONSOLE_POPUP)}{conf(DEBUG_CONSOLE_POPUP)}{/catch}
+{if(DEBUG_CONSOLE_POPUP eq 1)}
+<script type="text/javascript">
+$(function(){
+//	$('<iframe src="about:blank" id="dbgif" style="position:fixed; bottom:0; height:10%; width:100%; border:0;" border="0"></iframe>').appendTo("body");
+//	var debug_iframe = $("iframe#dbgif")[0]
+	var debug_window_name = "yf_debug_frame"
+	var debug_iframe = window.open('', debug_window_name, 'width=800,height=600,location=no,menubar=no,status=no,top=100,left=100,titlebar=no,toolbar=no')
+
+//	console.log(debug_iframe);
+	var frame_doc = debug_iframe.document; // We need the iframe document object, different browsers different ways
+	if (debug_iframe.contentDocument) frame_doc = debug_iframe.contentDocument;
+	else if (debug_iframe.contentWindow) frame_doc = debug_iframe.contentWindow.document;
+	frame_doc.open(); // We open the document of the empty frame and we write desired content. 
+	$('.yf_core').each(function(){
+		frame_doc.writeln( $(this).clone(true)[0].outerHTML )
+	})
+	frame_doc.writeln( $("#debug_console").clone(true)[0].outerHTML );
+	frame_doc.close();
+//	$('a', frame_doc).attr('target', debug_window_name)
+	$("#debug_console").hide()
+	console.log(frame_doc);
+})
+</script>
+{/if}
