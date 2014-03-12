@@ -726,27 +726,6 @@ class yf_utils {
 		}
 	}
 
-	function object_to_array($d) {
-		if (is_object($d)) {
-			$d = get_object_vars($d);
-		}
-		if (is_array($d)) {
-			return array_map(__FUNCTION__, $d);
-		} else {
-			// Return array
-			return $d;
-		}
-	}
-
-	function array_to_object($d) {
-		if (is_array($d)) {
-			return (object) array_map(__FUNCTION__, $d);
-		} else {
-			// Return object
-			return $d;
-		}
-	}
-
 	function recursive_unset(&$array, $unwanted_key) {
 	    unset($array[$unwanted_key]);
    		foreach ($array as &$value) {
