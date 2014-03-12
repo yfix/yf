@@ -469,7 +469,6 @@ class yf_manage_shop__product_revisions {
 		$Q = implode(' UNION ALL ', $Q);
 		$revisions = db()->query_fetch_all($Q);
 
-		sleep(5);
 		db()->begin();
 		foreach($revisions as $data){
 			$product_id = $data['item_id'];
@@ -480,8 +479,10 @@ class yf_manage_shop__product_revisions {
 			module('manage_shop')->_product_cache_purge($product_id);
 		}
 		$group_ids = module('manage_shop')->_product_add_revision('rollback', $products);
-		module('manage_shop')->_add_group_revision('product', $group_ids, $_GET['id']);
+		if($group_ids)
+			module('manage_shop')->_add_group_revision('product', $group_ids, $_GET['id']);
 		db()->commit();
+
 		common()->message_success("Group revision retrieved");
 		common()->admin_wall_add(array('checkout group revision: '.$_GET['id'], $_GET['id']));
 		return js_redirect('./?object=manage_shop&action=clear_patterns');
