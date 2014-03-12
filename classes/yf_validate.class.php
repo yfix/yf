@@ -370,6 +370,8 @@ class yf_validate {
 	*/
 	function active_url($in, $params = array(), $fields = array()) {
 // TODO
+#		$url = str_replace(array('http://', 'https://', 'ftp://'), '', strtolower($value));
+#		return checkdnsrr($url);
 	}
 
 	/**
@@ -378,6 +380,14 @@ class yf_validate {
 	*/
 	function after_date($in, $params = array(), $fields = array()) {
 // TODO
+#		if ($format = $this->getDateFormat($attribute)) {
+#			return DateTime::createFromFormat($format, $value) > DateTime::createFromFormat($format, $parameters[0]);
+#		}
+#		if ( ! ($date = strtotime($parameters[0]))) {
+#			return strtotime($value) > strtotime($this->getValue($parameters[0]));
+#		} else {
+#			return strtotime($value) > $date;
+#		}
 	}
 
 	/**
@@ -386,6 +396,14 @@ class yf_validate {
 	*/
 	function before_date($in, $params = array(), $fields = array()) {
 // TODO
+#		if ($format = $this->getDateFormat($attribute)) {
+#			return DateTime::createFromFormat($format, $value) < DateTime::createFromFormat($format, $parameters[0]);
+#		}
+#		if ( ! ($date = strtotime($parameters[0]))) {
+#			return strtotime($value) < strtotime($this->getValue($parameters[0]));
+#		} else {
+#			return strtotime($value) < $date;
+#		}
 	}
 
 	/**
@@ -401,6 +419,10 @@ class yf_validate {
 	*/
 	function valid_date($in, $params = array(), $fields = array()) {
 // TODO
+#		if ($value instanceof DateTime) return true;
+#		if (strtotime($value) === false) return false;
+#		$date = date_parse($value);
+#		return checkdate($date['month'], $date['day'], $date['year']);
 	}
 
 	/**
@@ -408,6 +430,8 @@ class yf_validate {
 	*/
 	function valid_date_format($in, $params = array(), $fields = array()) {
 // TODO
+#		$parsed = date_parse_from_format($parameters[0], $value);
+#		return $parsed['error_count'] === 0 && $parsed['warning_count'] === 0;
 	}
 
 	/**
