@@ -296,12 +296,10 @@ class yf_tpl {
 			if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
 				_class('output_cache')->_put_page_to_output_cache($body);
 			}
-			if (DEBUG_MODE || conf('exec_time')) {
-#				$body['exec_time'] = $this->parse('system/debug_info', array('items' => common()->_show_execution_time(), 'content' => 'exec_time'));
-				$body['exec_time'] = common()->_show_execution_time();
-			}
+#			if (DEBUG_MODE || conf('exec_time')) {
+#				$body['exec_time'] = common()->_show_execution_time();
+#			}
 			if (DEBUG_MODE) {
-#				$body['debug_info'] = $this->parse('system/debug_info', array('items' => common()->show_debug_info(), 'content' => 'debug_info'));
 				$body['debug_info'] = common()->show_debug_info();
 				if ($this->ALLOW_INLINE_DEBUG || main()->INLINE_EDIT_LOCALE) {
 					$body['debug_info'] .= $this->parse('system/js_inline_editor');
@@ -320,7 +318,7 @@ class yf_tpl {
 			echo $output;
 		}
 		if (main()->NO_GRAPHICS && DEBUG_MODE && !conf('IS_AJAX')) {
-			echo common()->_show_execution_time();
+#			echo common()->_show_execution_time();
 			echo common()->show_debug_info();
 		}
 		// Output cache for 'no graphics' content
