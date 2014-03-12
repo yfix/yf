@@ -51,10 +51,11 @@ class yf_manage_shop__product_revisions {
 
 	function _add_group_revision($action = false, $ids = false, $group_id = false){
 		$revision_db = $this->get_revision_db($action);
+		$admin_id = main()->ADMIN_ID?:intval($_GET['admin_id']);
 		if(!empty($ids))
 			$data = json_encode($ids);
 		$insert = array(
-			'user_id'  => main()->ADMIN_ID,
+			'user_id'  => $admin_id,
 			'add_date' => time(),
 			'action'   => 'group',
 			'item_id'  => intval($group_id),
@@ -126,7 +127,7 @@ class yf_manage_shop__product_revisions {
 			}
 
 			$insert_array[] = array(
-				'user_id'  => intval(main()->ADMIN_ID),
+				'user_id'  => intval(main()->ADMIN_ID)?:intval($_GET['admin_id']),
 				'add_date' => $add_rev_date,
 				'action'   => $action,
 				'item_id'  => $id,

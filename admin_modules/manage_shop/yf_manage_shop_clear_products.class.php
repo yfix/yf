@@ -193,7 +193,7 @@ class yf_manage_shop_clear_products {
 		}
 
 		$admin_fs_path = ADMIN_SITE_PATH; // INCLUDE_PATH.'admin/
-		shell_exec('cd '.$admin_fs_path.' && php index.php --object=manage_shop --action='.$action.' --id='.$_GET['id'].' > /dev/null &');
+		shell_exec('cd '.$admin_fs_path.' && php index.php --object=manage_shop --action='.$action.' --id='.$_GET['id'].' --admin_id='.main()->ADMIN_ID.' > /dev/null &');
 
 		echo json_encode(array('status' => 'done'));
 		exit;
