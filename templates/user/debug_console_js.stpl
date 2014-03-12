@@ -75,7 +75,11 @@ $(function(){
 		var debug_frame = window.open('', debug_window_name, 'width=800,height=600,location=no,menubar=no,status=no,top=100,left=100,titlebar=no,toolbar=no')
 	}
 	// We need the iframe document object, different browsers different ways
-	var frame_doc = debug_frame.document; 
+	if (typeof debug_frame != 'undefined') {
+		var frame_doc = debug_frame.document; 
+	} else {
+		console.error('Debug console popup: debug_frame not created, maybe popup blocker killed it');
+	}
 	if (typeof frame_doc != 'undefined') {
 		if (debug_frame.contentDocument) {
 			frame_doc = debug_frame.contentDocument;
@@ -91,7 +95,6 @@ $(function(){
 		frame_doc.writeln( $("#debug_console").clone(true)[0].outerHTML );
 		frame_doc.close();
 		$("#debug_console").hide().remove()
-		console.log(frame_doc);
 	} else {
 		console.error('Debug console popup: cannot access frame document');
 	}
