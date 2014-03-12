@@ -62,6 +62,10 @@ $(function(){
 		$.each(debug_console_override_head, function(i, _html){
 			debug_console_head.push( _html )
 		})
+		// Add debug console specific .yf_core items, not all, as in other case
+		$('.yf_core', '#debug_console').each(function(){
+			debug_console_head.push( $(this).clone(true)[0].outerHTML )
+		})
 	} else {
 		$('.yf_core').each(function(){
 			debug_console_head.push( $(this).clone(true)[0].outerHTML )
