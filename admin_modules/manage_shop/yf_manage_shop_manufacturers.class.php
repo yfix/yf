@@ -10,12 +10,14 @@ class manage_shop_manufacturers{
 	*/
 	function manufacturers () {
 		return table('SELECT * FROM '.db('shop_manufacturers'), array(
+				'custom_fields' => array('num_products' => 'SELECT manufacturer_id, COUNT(*) AS num FROM '.db('shop_products').' GROUP BY manufacturer_id'),
 				'filter' => $_SESSION[$_GET['object'].'__manufacturers'],
 				'hide_empty' => 1,
 			))
 			->image('id', 'uploads/shop/manufacturers/%d.jpg', array('width' => '50px'))
 			->text('name')
 			->text('url')
+			->text('num_products')
 			->text('meta_keywords')
 			->text('meta_desc')
 			->btn_edit('', './?object='.main()->_get('object').'&action=manufacturer_edit&id=%d',array('no_ajax' => 1))
@@ -131,7 +133,7 @@ class manage_shop_manufacturers{
 			->text('url')
 			->text('meta_keywords')
 			->text('meta_desc')
-			->integer('sort_order')
+	//		->integer('sort_order')
 			->save_and_back();
 	}
 

@@ -201,7 +201,6 @@ class yf_manage_shop_clear_products {
 	
 	function clear_pattern_rollback() {
 		$this->clear_pattern_run('checkout_group_revision');
-//		$this->clear_pattern_run('clear_pattern_child_process');
 	}
 	
 	/*
