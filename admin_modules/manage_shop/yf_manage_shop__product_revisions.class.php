@@ -469,6 +469,7 @@ class yf_manage_shop__product_revisions {
 		$Q = implode(' UNION ALL ', $Q);
 		$revisions = db()->query_fetch_all($Q);
 
+		sleep(5);
 		db()->begin();
 		foreach($revisions as $data){
 			$product_id = $data['item_id'];
