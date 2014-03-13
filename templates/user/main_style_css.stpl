@@ -41,6 +41,8 @@ fieldset.well legend { margin-bottom:0; padding: 0 0.5em; width: auto; line-heig
 legend+.control-group { margin-top: 0; }
 
 .table a.btn { text-decoration: none; }
+.table { width:auto; }
 
-.bs-theme-slate { /* override styles per bs theme here */ }
+/* override styles per bs theme here */ 
+.bs-theme-slate textarea, select { color: inherit; }
 </style>
