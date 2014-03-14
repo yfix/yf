@@ -7,10 +7,17 @@ class yf_table2_image {
 
 	/**
 	*/
-	function image($name, $path, $link = '', $extra = array(), $__this) {
-		if (is_array($link) && empty($extra)) {
-			$extra = $link;
+	function image($name, $path, $link = '', $extra = array(), $_this) {
+		if (is_array($path)) {
+			$extra = (array)$extra + $path;
+			$path = '';
+		}
+		if (is_array($link)) {
+			$extra = (array)$extra + $link;
 			$link = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
 		}
 		if (!$link) {
 			$link = $extra['link'] ?: WEB_PATH. $path;
@@ -18,7 +25,7 @@ class yf_table2_image {
 		if (!isset($extra['width'])) {
 			$extra['width'] = '50px';
 		}
-		$__this->_fields[] = array(
+		$_this->_fields[] = array(
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
@@ -82,6 +89,6 @@ class yf_table2_image {
 					.($link_url ? '</a>' : '');
 			}
 		);
-		return $__this;
+		return $_this;
 	}
 }
