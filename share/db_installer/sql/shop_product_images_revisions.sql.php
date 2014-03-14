@@ -7,5 +7,6 @@ $data = '
   `product_id` int(11) NOT NULL DEFAULT \'0\',
   `image_id` int(11) NOT NULL DEFAULT \'0\',
   `data` longtext NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `product_id` (`product_id`)
 ';

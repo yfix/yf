@@ -25,7 +25,7 @@ class yf_manage_shop_clear_products {
 				'cat_id'  => 'in',
 			),
 		))
-		->text('search', array('tip' => $this->SEARCH_TIP))
+		->text('search', array('header_tip' => $this->SEARCH_TIP))
 		->text('replace')
 		->text('description')
 		->func('cat_id', function($value, $extra, $row_info) {
@@ -45,9 +45,16 @@ class yf_manage_shop_clear_products {
 		}, array('desc' => 'Products for changing'))
 		->btn_func('Run', function($row_info, $params, $instance_params, $_this) {
 			if ($row_info['process']) {
-				return '<button class="btn btn-mini btn-xs pattern_item btn-warning" data-id="'.$row_info['id'].'"><i class="icon-refresh icon-spin"></i> <span>'.t('Process').'...</span></button>';
+				return '<button class="btn btn-mini btn-xs run_item btn-warning" data-id="'.$row_info['id'].'"><i class="icon-refresh icon-spin"></i> <span>'.t('Process').'...</span></button>';
 			} else {
-				return '<button class="btn btn-mini btn-xs btn-info pattern_item" data-id="'.$row_info['id'].'"><i class="icon-play"></i> <span>'.t('Run').'</span></button>';
+				return '<button class="btn btn-mini btn-xs btn-info run_item" data-id="'.$row_info['id'].'"><i class="icon-play"></i> <span>'.t('Run').'</span></button>';
+			}
+		})
+		->btn_func('Rollback', function($row_info, $params, $instance_params, $_this) {
+			if ($row_info['process']) {
+				return '<button class="btn btn-mini btn-xs btn-warning rollback_item" data-id="'.$row_info['id'].'"><i class="icon-refresh icon-spin"></i> <span>'.t('Process').'...</span></button>';
+			} else {
+				return '<button class="btn btn-mini btn-xs btn-danger rollback_item" data-id="'.$row_info['id'].'"><i class="icon-undo"></i> <span>'.t('Rollback').'</span></button>';
 			}
 		})
 		->btn('List of changes', './?object=manage_shop&action=clear_pattern_list&id=%d', array('icon' => 'icon-th-list'))
@@ -56,9 +63,10 @@ class yf_manage_shop_clear_products {
 		->footer_add('Add pattern', './?object=manage_shop&action=clear_pattern_add',array('no_ajax' => 1));
 
 		$replace = array(
-			'pattern_run_url'    => './?object=manage_shop&action=clear_pattern_run',
-			'pattern_stop_url'    => './?object=manage_shop&action=clear_pattern_stop',
-			'pattern_status_url' => './?object=manage_shop&action=clear_pattern_status',
+			'pattern_run_url'      => './?object=manage_shop&action=clear_pattern_run',
+			'pattern_stop_url'     => './?object=manage_shop&action=clear_pattern_stop',
+			'pattern_status_url'   => './?object=manage_shop&action=clear_pattern_status',
+			'pattern_rollback_url' => './?object=manage_shop&action=clear_pattern_rollback',
 		);
 		$html .= tpl()->parse('manage_shop/product_clear_patterns', $replace);
 		return $html;
@@ -171,7 +179,7 @@ class yf_manage_shop_clear_products {
 	/*
 	 *
 	 */
-	function clear_pattern_run () {
+	function clear_pattern_run ($action = 'clear_pattern_child_process') {
 		if (!isset($_GET['id']) && intval($_GET['id'])) {
 			exit;
 		}
@@ -185,10 +193,14 @@ class yf_manage_shop_clear_products {
 		}
 
 		$admin_fs_path = ADMIN_SITE_PATH; // INCLUDE_PATH.'admin/
-		shell_exec('cd '.$admin_fs_path.' && php index.php --object=manage_shop --action=clear_pattern_child_process --id='.$_GET['id'].' > /dev/null &');
+		shell_exec('cd '.$admin_fs_path.' && php index.php --object=manage_shop --action='.$action.' --id='.$_GET['id'].' --admin_id='.main()->ADMIN_ID.' > /dev/null &');
 
 		echo json_encode(array('status' => 'done'));
 		exit;
+	} 
+	
+	function clear_pattern_rollback() {
+		$this->clear_pattern_run('checkout_group_revision');
 	}
 	
 	/*

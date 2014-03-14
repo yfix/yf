@@ -323,6 +323,9 @@ class yf_form2 {
 				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $_this->_params['links_add'];
 			}
 			$extra['class'] = $extra['class'] ?: 'form-horizontal';// col-md-6';
+			if ($extra['class_add']) {
+				$extra['class'] .= ' '.$extra['class_add'];
+			}
 			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
 			$body = '<form'.$_this->_attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate')).'>'.PHP_EOL;

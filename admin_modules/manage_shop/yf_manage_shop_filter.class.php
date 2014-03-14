@@ -62,7 +62,7 @@ class yf_manage_shop_filter{
 					->select_box('manufacturer_id', _class('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'no_translate' => 1))
 					->active_box('active', array('horizontal' => 1))
 					->yes_no_box('image', array('horizontal' => 1))
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 
 			},
 			'users' => function($filter_name, $replace) {
@@ -79,7 +79,7 @@ class yf_manage_shop_filter{
 					->text('email')
 					->text('phone')
 					->text('address')
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 
 			},
 			'orders' => function($filter_name, $replace) {
@@ -104,7 +104,7 @@ class yf_manage_shop_filter{
 						->number('total_sum__and')
 					->row_end()
 					->select_box('status', common()->get_static_conf('order_status'), array('show_text' => 1))
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 
 			},
 			'manufacturers' => function($filter_name, $replace) {
@@ -115,7 +115,7 @@ class yf_manage_shop_filter{
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->text('name')
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 
 			},
 			'suppliers' => function($filter_name, $replace) {
@@ -126,7 +126,7 @@ class yf_manage_shop_filter{
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->text('name')
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 
 			},
 			'product_sets' => function($filter_name, $replace) {
@@ -138,7 +138,7 @@ class yf_manage_shop_filter{
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->text('name')
 					->select_box('cat_id', _class('cats')->_get_items_names_cached('shop_cats'), array('desc' => 'Main category'))
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 
 			},
 			'attributes' => function($filter_name, $replace) {
@@ -149,7 +149,7 @@ class yf_manage_shop_filter{
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->text('title')
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 
 			},
 			'feedback' => function($filter_name, $replace) {
@@ -169,7 +169,7 @@ class yf_manage_shop_filter{
 					->text('pros')
 					->text('cons')
 					->active_box('active', array('horizontal' => 1))						
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 
 			},
 			'product_revisions'	=> function($filter_name, $replace) {
@@ -183,7 +183,7 @@ class yf_manage_shop_filter{
 					->datetime_select('add_date')
 					->datetime_select('add_date__and')
 					->select_box('action', common()->get_static_conf('product_revisions',false,false), array('show_text' => 1))
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 			},					
 			'order_revisions'	=> function($filter_name, $replace) {
 				$fields = array('user_id', 'add_date', 'item_id', 'action');
@@ -196,7 +196,7 @@ class yf_manage_shop_filter{
 					->datetime_select('add_date')
 					->datetime_select('add_date__and')
 					->select_box('action', common()->get_static_conf('order_revisions',false,false), array('show_text' => 1))
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 			},					
 			'product_images_revisions'	=> function($filter_name, $replace) {
 				$fields = array('user_id', 'add_date', 'product_id', 'action');
@@ -209,7 +209,7 @@ class yf_manage_shop_filter{
 					->datetime_select('add_date')
 					->datetime_select('add_date__and')
 					->select_box('action', common()->get_static_conf('images_revisions',false,false), array('show_text' => 1))
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 			},					
 		);
 		$action = $_GET['action'];

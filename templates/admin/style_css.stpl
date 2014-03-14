@@ -11,7 +11,7 @@
 .dropdown-menu li:hover > .sub-menu { visibility: visible; }
 .dropdown:hover .dropdown-menu { display: block; }
 .nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu { margin-top: 0; }
-.cssfw-bs3 .navbar-header { width:100%; padding-right:10px; }
+.cssfw-bs3 .navbar-header { width:99%; padding-right:1%; }
 
 .form-no-labels .controls { margin-left: 0; }
 
@@ -49,12 +49,13 @@ legend+.control-group { margin-top: 0; }
 .form-inline .radio input[type=radio] { float: none; }
 
 .table a.btn { text-decoration: none; }
+.table { width:auto; }
 
 /* override styles per bs theme here */
-.bs-theme-slate textarea { color: #52575c; }
+.bs-theme-slate textarea, .bs-theme-slate select { color: #52575c; }
 </style>
 {if("conf.css_framework" eq "bs3")}
-<style type="text/css">
-/*input, textarea, select { max-width: 300px; }*/
-</style>
+	<style type="text/css">
+	/*input, textarea, select { max-width: 300px; }*/
+	</style>
 {/if}

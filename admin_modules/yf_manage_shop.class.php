@@ -233,6 +233,10 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
 	}
 
+	function checkout_group_revision() {
+		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+	}
+
 	function orders() {
 		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->orders_manage();
 	}
@@ -575,6 +579,9 @@ class yf_manage_shop {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
 	function clear_pattern_run() {
+		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+	}
+	function clear_pattern_rollback() {
 		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
 	}
 	function clear_pattern_child_process() {

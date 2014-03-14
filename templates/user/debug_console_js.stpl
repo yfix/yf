@@ -10,7 +10,14 @@
 	padding: 2px;
 	border: 0;
 }
+#debug_console #debug_exec_time {
+	float:left;
+	display:block;
+	padding-left: 20px;
+	padding-right: 20px;
+}
 </style>
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js" class="yf_core"></script>
 <script type="text/javascript" class="yf_core">
 $(function(){
@@ -42,3 +49,59 @@ $(function(){
 	})
 });
 </script>
+
+{if(conf.DEBUG_CONSOLE_POPUP eq 1)}
+<style type="text/css">#debug_console{display:none;}</style>
+<script type="text/javascript">
+$(function(){
+	var debug_window_name = "yf_debug_frame"
+	var debug_console_use_iframe = false;
+	var debug_console_head = [];
+	// Allow to override JS, CSS as array of html elements strings
+	if (typeof debug_console_override_head == "object") {
+		$.each(debug_console_override_head, function(i, _html){
+			debug_console_head.push( _html )
+		})
+		// Add debug console specific .yf_core items, not all, as in other case
+		$('.yf_core', '#debug_console').each(function(){
+			debug_console_head.push( $(this).clone(true)[0].outerHTML )
+		})
+	} else {
+		$('.yf_core').each(function(){
+			debug_console_head.push( $(this).clone(true)[0].outerHTML )
+		})
+	}
+	if (debug_console_use_iframe) {
+// TODO: need to do popup div display of tab contents in this mode
+		$('<iframe src="about:blank" id="' + debug_window_name + '" style="position:fixed; bottom:0; height:10%; width:100%; border:0;" border="0"></iframe>').appendTo("body");
+		var debug_frame = $("iframe#dbgif")[0]
+	} else {
+		var debug_frame = window.open('', debug_window_name, 'width=800,height=600,location=no,menubar=no,status=no,top=100,left=100,titlebar=no,toolbar=no')
+	}
+	// We need the iframe document object, different browsers different ways
+	if (typeof debug_frame != 'undefined') {
+		var frame_doc = debug_frame.document; 
+	} else {
+		console.error('Debug console popup: debug_frame not created, maybe popup blocker killed it');
+	}
+	if (typeof frame_doc != 'undefined') {
+		if (debug_frame.contentDocument) {
+			frame_doc = debug_frame.contentDocument;
+		} else if (debug_frame.contentWindow) {
+			frame_doc = debug_frame.contentWindow.document;
+		}
+		// We open the document of the empty frame and we write desired content. 
+		frame_doc.open(); 
+		// Copy JS, CSS from original frame
+		$.each(debug_console_head, function(i, _html){
+			frame_doc.writeln( _html )
+		})
+		frame_doc.writeln( $("#debug_console").clone(true)[0].outerHTML );
+		frame_doc.close();
+		$("#debug_console").hide().remove()
+	} else {
+		console.error('Debug console popup: cannot access frame document');
+	}
+})
+</script>
+{/if}

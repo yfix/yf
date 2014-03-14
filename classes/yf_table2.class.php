@@ -207,7 +207,7 @@ class yf_table2 {
 					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
-					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip']) : '';
+					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip'], $name) : '';
 					$title = isset($info['extra']['th_desc']) ? $info['extra']['th_desc'] : $info['desc'];
 					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
 				}
@@ -565,7 +565,7 @@ class yf_table2 {
 
 		$td_width = ($_extra['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $_extra['width']).'"' : '');
 		$td_nowrap = ($_extra['nowrap'] ? ' nowrap="nowrap" ' : '');
-		$tip = $_extra['tip'] ? ''.$this->_show_tip($_extra['tip']) : '';
+		$tip = $_extra['tip'] ? '&nbsp;'.$this->_show_tip($_extra['tip'], $info['name'], $row) : '';
 
 		if ($_extra['hl_filter'] && isset($this->_filter_data[$name])) {
 			$_kw = $this->_filter_data[$name];
@@ -748,9 +748,20 @@ class yf_table2 {
 
 	/**
 	*/
-	function _show_tip($value = '', $extra = array()) {
-// TODO: also add ability to pass tips array into table2() params like 'data', to provide different tips, according to value
-		return _class('graphics')->_show_help_tip(array('tip_id' => $value));
+	function _show_tip($value = '', $name = '', $row = array()) {
+		$tip = '';
+		if (is_string($value)) {
+			$tip = $value;
+		} elseif (is_array($value)) {
+			if (!empty($row) && isset($row[$name])) {
+				$tip = $value[$row[$name]];
+			} elseif (isset($value[$name])) {
+				$tip = $value[$name];
+			}
+		} elseif (is_callable($value)) {
+			$tip = $value($name, $row);
+		}
+		return strlen($tip) ? _class('graphics')->_show_help_tip(array('tip_id' => $tip)) : '';
 	}
 
 	/**
@@ -805,13 +816,13 @@ class yf_table2 {
 	/**
 	*/
 	function text($name, $desc = '', $extra = array()) {
-		if (!is_array($extra)) {
-			$extra = array();
-		}
 		// Shortcut: use second param as $extra
 		if (is_array($desc)) {
-			$extra += $desc;
+			$extra = (array)$extra + $desc;
 			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
 		}
 		if (!$desc) {
 			$desc = ucfirst(str_replace('_', ' ', $extra['desc'] ?: $name));
@@ -822,7 +833,7 @@ class yf_table2 {
 			'extra'	=> $extra,
 			'desc'	=> $desc,
 			'link'	=> $extra['link'],
-			'data'	=> t($extra['data']),
+			'data'	=> $extra['translate'] ? t($extra['data']) : $extra['data'],
 			'func'	=> function($field, $params, $row, $instance_params, $_this) {
 				$name = $params['name'];
 				$extra = $params['extra'];
@@ -862,13 +873,19 @@ class yf_table2 {
 						$link = url($link);
 					}
 					if ($extra['hidden_toggle']) {
-						$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
+						$attrs .= ' data-hidden-toggle="'._prepare_html($extra['hidden_toggle']).'"';
 					}
 					if (!isset($extra['nowrap']) || $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
 					$a_class = $extra['a_class'];
-					$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs"'.($a_class ? ' '.trim($a_class) : ''). $attrs. '>'.(strlen($text) ? $text : t('link')).'</a>';
+					$link_trim_width = conf('link_trim_width') ?: 100;
+					if (isset($extra['link_trim_width'])) {
+						$link_trim_width = $extra['link_trim_width'];
+					}
+					$link_text = strlen($text) ? mb_strimwidth($text, 0, $link_trim_width, '...') : t('link');
+					$attrs .= ' title="'._prepare_html($text).'"';
+					$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs"'.($a_class ? ' '._prepare_html(trim($a_class)) : ''). $attrs. '>'._prepare_html($link_text).'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
@@ -885,8 +902,19 @@ class yf_table2 {
 	/**
 	*/
 	function link($name, $link = '', $data = '', $extra = array()) {
-		$extra['link'] = $link;
-		$extra['data'] = $data;
+		if (is_array($link)) {
+			$extra = (array)$extra + $link;
+			$link = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		if ($link) {
+			$extra['link'] = $link;
+		}
+		if ($data) {
+			$extra['data'] = $data;
+		}
 		return $this->text($name, '', $extra);
 	}
 
@@ -895,16 +923,26 @@ class yf_table2 {
 	*/
 	function user($name = '', $link = '', $data = '', $extra = array()) {
 		if (is_array($link)) {
-			$extra += $link;
+			$extra = (array)$extra + $link;
 			$link = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
 		}
 		if (!$name) {
 			$name = 'user_id';
 		}
+		if ($link) {
+			$extra['link'] = $link;
+		}
+		if (!$extra['link']) {
+			$extra['link'] = './?object=members&action=edit&id=%d';
+		}
+		if (!$extra['link_field_name']) {
+			$extra['link_field_name'] = $name;
+		}
+		$extra['data'] = $data ?: $extra['data'];
 		$_name = 'user';
-		$extra['link'] = $link ?: './?object=members&action=edit&id=%d';
-		$extra['link_field_name'] = $name;
-		$extra['data'] = $data;
 		$this->_params['custom_fields'][$_name] = array(
 			'SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), ""), IF(STRCMP(email,""), CONCAT("; ",email), IF(STRCMP(phone,""), CONCAT("; ",phone), ""))) AS user_name 
 			FROM '.db('user').' WHERE id IN(%ids)'
@@ -917,16 +955,26 @@ class yf_table2 {
 	*/
 	function admin($name = '', $link = '', $data = '', $extra = array()) {
 		if (is_array($link)) {
-			$extra += $link;
+			$extra = (array)$extra + $link;
 			$link = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
 		}
 		if (!$name) {
 			$name = 'user_id';
 		}
+		if ($link) {
+			$extra['link'] = $link;
+		}
+		if (!$extra['link']) {
+			$extra['link'] = './?object=admin&action=edit&id=%d';
+		}
+		if (!$extra['link_field_name']) {
+			$extra['link_field_name'] = $name;
+		}
+		$extra['data'] = $data ?: $extra['data'];
 		$_name = 'user';
-		$extra['link'] = $link ?: './?object=admin&action=edit&id=%d';
-		$extra['link_field_name'] = $name;
-		$extra['data'] = $data;
 		$this->_params['custom_fields'][$_name] = array('SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), "")) AS user_name FROM '.db('admin').' WHERE id IN(%ids)', $name);
 		return $this->text($_name, '', $extra);
 	}
@@ -934,8 +982,8 @@ class yf_table2 {
 	/**
 	*/
 	function date($name, $desc = '', $extra = array()) {
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$desc) {
@@ -958,9 +1006,8 @@ class yf_table2 {
 	/**
 	*/
 	function stars($name, $desc = '', $extra = array()) {
-		// Shortcut: use second param as $extra
-		if (is_array($desc) && empty($extra)) {
-			$extra = $desc;
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
 		if (!$desc) {

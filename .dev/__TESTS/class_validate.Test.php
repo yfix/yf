@@ -138,7 +138,27 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->alpha('~') );
 		$this->assertTrue( _class('validate')->alpha('a') );
 		$this->assertTrue( _class('validate')->alpha('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertTrue( _class('validate')->alpha('ABCDEFGHIJKLMNOPQRSTUVWXYZ') );
+		$this->assertFalse( _class('validate')->alpha('абвгдеёжзиЙклмнопрстуфхцчшщьъэюяієї') );
+		$this->assertFalse( _class('validate')->alpha('АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЪЭЮЯІЄЇ') );
 		$this->assertFalse( _class('validate')->alpha('0') );
+	}
+	public function test_alpha_spaces() {
+		$this->assertFalse( _class('validate')->alpha_spaces() );
+		$this->assertFalse( _class('validate')->alpha_spaces('') );
+		$this->assertFalse( _class('validate')->alpha_spaces(null) );
+		$this->assertFalse( _class('validate')->alpha_spaces(false) );
+		$this->assertFalse( _class('validate')->alpha_spaces(array()) );
+		$this->assertFalse( _class('validate')->alpha_spaces('~') );
+		$this->assertTrue( _class('validate')->alpha_spaces('a') );
+		$this->assertTrue( _class('validate')->alpha_spaces('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertTrue( _class('validate')->alpha_spaces('ABCDEFGHIJKLMNOPQRSTUVWXYZ') );
+		$this->assertFalse( _class('validate')->alpha_spaces('абвгдеёжзиЙклмнопрстуфхцчшщьъэюяієї') );
+		$this->assertFalse( _class('validate')->alpha_spaces('АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЪЭЮЯІЄЇ') );
+		$this->assertFalse( _class('validate')->alpha_spaces('0') );
+		$this->assertTrue( _class('validate')->alpha_spaces(' abcdefghijklmnopqrstuvwxyz') );
+		$this->assertTrue( _class('validate')->alpha_spaces(' ABCDEFGHIJKLMNOPQRSTUVWXYZ') );
+		$this->assertTrue( _class('validate')->alpha_spaces(' ') );
 	}
 	public function test_alpha_numeric() {
 		$this->assertFalse( _class('validate')->alpha_numeric() );
@@ -149,6 +169,7 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->alpha_numeric('~') );
 		$this->assertTrue( _class('validate')->alpha_numeric('a') );
 		$this->assertTrue( _class('validate')->alpha_numeric('abcdefghijklmnopqrstuvwxyz01234567890') );
+		$this->assertTrue( _class('validate')->alpha_numeric('ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890') );
 		$this->assertTrue( _class('validate')->alpha_numeric('0123456789') );
 	}
 	public function test_alpha_numeric_spaces() {
@@ -160,7 +181,8 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->alpha_numeric_spaces('~') );
 		$this->assertTrue( _class('validate')->alpha_numeric_spaces('a') );
 		$this->assertTrue( _class('validate')->alpha_numeric_spaces(' abcdefghijklmnopqrstuvwxyz01234567890 ') );
-		$this->assertTrue( _class('validate')->alpha_numeric_spaces('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertTrue( _class('validate')->alpha_numeric_spaces(' ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890 ') );
+		$this->assertTrue( _class('validate')->alpha_numeric_spaces('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') );
 		$this->assertTrue( _class('validate')->alpha_numeric_spaces('0123456789') );
 		$this->assertTrue( _class('validate')->alpha_numeric_spaces(' ') );
 	}
@@ -175,6 +197,79 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->alpha_dash('abcdefghijklmnopqrstuvwxyz0123456789_-') );
 		$this->assertTrue( _class('validate')->alpha_dash('_') );
 		$this->assertTrue( _class('validate')->alpha_dash('-_-') );
+	}
+	public function test_unicode_alpha() {
+		$this->assertFalse( _class('validate')->unicode_alpha() );
+		$this->assertFalse( _class('validate')->unicode_alpha('') );
+		$this->assertFalse( _class('validate')->unicode_alpha(null) );
+		$this->assertFalse( _class('validate')->unicode_alpha(false) );
+		$this->assertFalse( _class('validate')->unicode_alpha(array()) );
+		$this->assertFalse( _class('validate')->unicode_alpha('~') );
+		$this->assertTrue( _class('validate')->unicode_alpha('a') );
+		$this->assertTrue( _class('validate')->unicode_alpha('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertTrue( _class('validate')->unicode_alpha('ABCDEFGHIJKLMNOPQRSTUVWXYZ') );
+		$this->assertTrue( _class('validate')->unicode_alpha('абвгдеёжзиЙклмнопрстуфхцчшщьъэюяієї') );
+		$this->assertTrue( _class('validate')->unicode_alpha('АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЪЭЮЯІЄЇ') );
+		$this->assertFalse( _class('validate')->unicode_alpha('0') );
+	}
+	public function test_unicode_alpha_spaces() {
+		$this->assertFalse( _class('validate')->unicode_alpha_spaces() );
+		$this->assertFalse( _class('validate')->unicode_alpha_spaces('') );
+		$this->assertFalse( _class('validate')->unicode_alpha_spaces(null) );
+		$this->assertFalse( _class('validate')->unicode_alpha_spaces(false) );
+		$this->assertFalse( _class('validate')->unicode_alpha_spaces(array()) );
+		$this->assertFalse( _class('validate')->unicode_alpha_spaces('~') );
+		$this->assertTrue( _class('validate')->unicode_alpha_spaces('a') );
+		$this->assertTrue( _class('validate')->unicode_alpha_spaces('abcdefghijklmnopqrstuvwxyz') );
+		$this->assertTrue( _class('validate')->unicode_alpha_spaces('ABCDEFGHIJKLMNOPQRSTUVWXYZ') );
+		$this->assertTrue( _class('validate')->unicode_alpha_spaces('абвгдеёжзиЙклмнопрстуфхцчшщьъэюяієї') );
+		$this->assertTrue( _class('validate')->unicode_alpha_spaces('АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЪЭЮЯІЄЇ') );
+		$this->assertTrue( _class('validate')->unicode_alpha_spaces(' абвгдеёжзиЙклмнопрстуфхцчшщьъэюяієїАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЪЭЮЯІЄЇ') );
+		$this->assertFalse( _class('validate')->unicode_alpha_spaces('0') );
+		$this->assertTrue( _class('validate')->unicode_alpha_spaces(' abcdefghijklmnopqrstuvwxyz ') );
+		$this->assertTrue( _class('validate')->unicode_alpha_spaces(' ABCDEFGHIJKLMNOPQRSTUVWXYZ ') );
+		$this->assertTrue( _class('validate')->unicode_alpha_spaces(' ') );
+	}
+	public function test_unicode_alpha_numeric() {
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric() );
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric('') );
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric(null) );
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric(false) );
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric(array()) );
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric('~') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric('a') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric('abcdefghijklmnopqrstuvwxyz01234567890') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric('ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric('абвгдеёжзиЙклмнопрстуфхцчшщьъэюяієїАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЪЭЮЯІЄЇ0123456789') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric('0123456789') );
+	}
+	public function test_unicode_alpha_numeric_spaces() {
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric_spaces() );
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric_spaces('') );
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric_spaces(null) );
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric_spaces(false) );
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric_spaces(array()) );
+		$this->assertFalse( _class('validate')->unicode_alpha_numeric_spaces('~') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric_spaces('a') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric_spaces(' abcdefghijklmnopqrstuvwxyz01234567890 ') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric_spaces(' ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890 ') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric_spaces('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric_spaces(' абвгдеёжзиЙклмнопрстуфхцчшщьъэюяієїАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЪЭЮЯІЄЇ0123456789') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric_spaces('0123456789') );
+		$this->assertTrue( _class('validate')->unicode_alpha_numeric_spaces(' ') );
+	}
+	public function test_unicode_alpha_dash() {
+		$this->assertFalse( _class('validate')->unicode_alpha_dash() );
+		$this->assertFalse( _class('validate')->unicode_alpha_dash('') );
+		$this->assertFalse( _class('validate')->unicode_alpha_dash(null) );
+		$this->assertFalse( _class('validate')->unicode_alpha_dash(false) );
+		$this->assertFalse( _class('validate')->unicode_alpha_dash(array()) );
+		$this->assertFalse( _class('validate')->unicode_alpha_dash('~') );
+		$this->assertTrue( _class('validate')->unicode_alpha_dash('a') );
+		$this->assertTrue( _class('validate')->unicode_alpha_dash('abcdefghijklmnopqrstuvwxyz0123456789_-') );
+		$this->assertTrue( _class('validate')->unicode_alpha_dash('abcdefghijklmnopqrstuvwxyz0123456789_-абвгдеёжзиЙклмнопрстуфхцчшщьъэюяієїАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЪЭЮЯІЄЇ0123456789') );
+		$this->assertTrue( _class('validate')->unicode_alpha_dash('_') );
+		$this->assertTrue( _class('validate')->unicode_alpha_dash('-_-') );
 	}
 	public function test_numeric() {
 		$this->assertFalse( _class('validate')->numeric() );

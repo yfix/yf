@@ -25,6 +25,7 @@ class yf_manage_shop_feedback{
 					'active'	=> array('eq','f.active'),
 					'add_date'	=> array('dt_between', 'f.add_date'),					
 				),
+				'hide_empty' => 1,
 			))
 			->text('id')
 			->user('user_id')

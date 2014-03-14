@@ -472,7 +472,7 @@ class yf_manage_dashboards {
 		}
 		$ds = db()->get('SELECT * FROM '.db('dashboards').' WHERE name="'.db()->es($id).'" OR id='.intval($id));
 		if ($ds) {
-			$ds['data'] = object_to_array(json_decode($ds['data']));
+			$ds['data'] = json_decode($ds['data'], $assoc = true);
 		}
 		$this->_dashboard_data[$id] = $ds;
 		return $ds;

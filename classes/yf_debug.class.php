@@ -90,6 +90,9 @@ class yf_debug {
 		if ($_SESSION['hide_debug_console'] || $_GET['hide_debug_console']) {
 			return '';
 		}
+		$body .= '<div id="debug_console">';
+		$body .= common()->_show_execution_time();
+
 		$debug_timings = array();
 		$methods = array();
 		$class_name = get_class($this);
@@ -103,7 +106,6 @@ class yf_debug {
 			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' secs';
 			$debug_contents[$name] = $content;
 		}
-		$body .= '<div id="debug_console">';
 
 		$i = 0;
 		$cookie_active_tab = substr($_COOKIE['debug_tabs_active'], strlen('debug_item_'));

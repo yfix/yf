@@ -398,7 +398,7 @@ class yf_common {
 	*/
 	function _show_execution_time () {
 		main()->_time_end = $this->_format_time_value(microtime(true) - main()->_time_start);
-		return '<br><div align="center">'._ucfirst(t('page_generated_in')).' '.main()->_time_end.' '.t('seconds').', &nbsp;&nbsp;'.t('number_of_queries').' = '.intval(db()->NUM_QUERIES).'</div>'.PHP_EOL;
+		return '<div align="center" id="debug_exec_time">'._ucfirst(t('page_generated_in')).' '.main()->_time_end.' '.t('seconds').', &nbsp;&nbsp;'.t('number_of_queries').' = '.intval(db()->NUM_QUERIES).'</div>'.PHP_EOL;
 	}
 
 	/**

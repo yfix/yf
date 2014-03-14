@@ -293,6 +293,7 @@ $(function() {
 		$selected['main[USE_SYSTEM_CACHE]'] = module_conf('main', 'USE_SYSTEM_CACHE') || (defined('USE_CACHE') && USE_CACHE) ?: 0; // TODO: unify and simplify
 		$selected['cache[DRIVER]'] = module_conf('cache', 'DRIVER') ?: 'memcache';
 		$selected['main[ALLOW_DEBUG_PROFILING]'] = main()->ALLOW_DEBUG_PROFILING;
+		$selected['DEBUG_CONSOLE_POPUP'] = conf('DEBUG_CONSOLE_POPUP');
 
 		return array(
 			array('yes_no_box', 'site_maintenance', array('tip' => '')),
@@ -300,7 +301,8 @@ $(function() {
 			array('select_box', 'cache[DRIVER]', $this->cache_drivers, array('desc' => 'cache_driver')),
 #			array('number', 'cache[FILES_TTL]', array('desc' => 'cache_ttl')), //, cache()->FILES_TTL
 			array('select_box', 'css_framework', $this->css_frameworks, array('show_text' => 1)), // TODO: link to edit
-			array('yes_no_box', 'main[ALLOW_DEBUG_PROFILING]', array('desc' => 'Use built-in code profiling (Works only in DEBUG_MODE)')),
+			array('yes_no_box', 'main[ALLOW_DEBUG_PROFILING]', array('desc' => 'Use built-in code profiling (for DEBUG_MODE)')),
+			array('yes_no_box', 'DEBUG_CONSOLE_POPUP', array('desc' => 'Debug console as popup window (for DEBUG_MODE)')),
 /*
 #			array('select_box', 'DEF_BOOTSTRAP_THEME', $this->css_subthemes, array('desc' => 'default_css_subtheme')), // TODO: link to edit
 			array('select_box', 'default_css_subtheme', $this->css_subthemes), // TODO: link to edit

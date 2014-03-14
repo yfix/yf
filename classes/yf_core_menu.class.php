@@ -280,7 +280,7 @@ class yf_core_menu {
 	/**
 	* Get menu items ordered array (recursively)
 	*/
-	function _recursive_get_menu_items($menu_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
+	function _recursive_get_menu_items($menu_id = 0, $skip_item_id = 0) {
 		if (empty($menu_id) || empty($this->_menu_items[$menu_id])) {
 			return false;
 		}
@@ -298,64 +298,80 @@ class yf_core_menu {
 		$items_ids		= array();
 		$items_array	= array();
 		foreach ((array)$this->_menu_items[$menu_id] as $item_info) {
-			if (!is_array($item_info)) {
-				continue;
-			}
-			if ($item_info['parent_id'] != $parent_id) {
-				continue;
-			}
 			if ($skip_item_id == $item_info['id']) {
 				continue;
 			}
-			$user_groups = array();
 			if (!empty($item_info['user_groups'])) {
+				$user_groups = array();
 				foreach (explode(',',$item_info['user_groups']) as $v) {
-					if (empty($v)) {
-						continue;
+					if (!empty($v)) {
+						$user_groups[$v] = $v;
 					}
-					$user_groups[$v] = $v;
 				}
-			}
-			if (!empty($user_groups) && !isset($user_groups[$CUR_USER_GROUP])) {
-				continue;
-			}
-			// Process site ids
-			$site_ids = array();
-			if (!empty($item_info['site_ids'])) {
-				foreach (explode(',',$item_info['site_ids']) as $v) {
-					if (empty($v)) {
-						continue;
-					}
-					$site_ids[$v] = $v;
-				}
-			}
-			if (!empty($site_ids) && !isset($site_ids[$CUR_SITE])) {
-				continue;
-			}
-			$server_ids = array();
-			if (!empty($item_info['server_ids'])) {
-				foreach (explode(',',$item_info['server_ids']) as $v) {
-					if (empty($v)) {
-						continue;
-					}
-					$server_ids[$v] = $v;
-				}
-			}
-			if (!empty($server_ids) && !isset($server_ids[$CUR_SERVER])) {
-				continue;
-			}
-			$items_array[$item_info['id']] = $item_info;
-			$items_array[$item_info['id']]['level'] = $level;
-
-			$tmp_array = $this->_recursive_get_menu_items($menu_id, $skip_item_id, $item_info['id'], $level + 1);
-			foreach ((array)$tmp_array as $sub_item_info) {
-				if ($sub_item_info['id'] == $item_info['id']) {
+				if (!empty($user_groups) && !isset($user_groups[$CUR_USER_GROUP])) {
 					continue;
 				}
-				$items_array[$sub_item_info['id']] = $sub_item_info;
+			}
+			if (!empty($item_info['site_ids'])) {
+				$site_ids = array();
+				foreach (explode(',',$item_info['site_ids']) as $v) {
+					if (!empty($v)) {
+						$site_ids[$v] = $v;
+					}
+				}
+				if (!empty($site_ids) && !isset($site_ids[$CUR_SITE])) {
+					continue;
+				}
+			}
+			if (!empty($item_info['server_ids'])) {
+				$server_ids = array();
+				foreach (explode(',',$item_info['server_ids']) as $v) {
+					if (!empty($v)) {
+						$server_ids[$v] = $v;
+					}
+				}
+				if (!empty($server_ids) && !isset($server_ids[$CUR_SERVER])) {
+					continue;
+				}
+			}
+			$items_array[$item_info['id']] = $item_info;
+		}
+		return $this->_recursive_sort_items($items_array, $skip_item_id);
+	}
+
+	/**
+	* Get and sort items ordered array (recursively)
+	*/
+	function _recursive_sort_items($items = array(), $skip_item_id = 0) {
+		$children = array();
+		foreach ((array)$items as $id => $info) {
+			$parent_id = $info['parent_id'];
+			if ($skip_item_id == $id) {
+				continue;
+			}
+			$children[$parent_id][$id] = $id;
+		}
+		$ids = $this->_count_levels(0, $children);
+		$new_items = array();
+		foreach ((array)$ids as $id => $level) {
+			$new_items[$id] = $items[$id] + array('level' => $level);
+		}		
+		return $new_items;
+	}
+
+	/**
+	*/
+	function _count_levels($start_id = 0, &$children, $level = 0) {
+		$ids = array();
+		foreach ((array)$children[$start_id] as $id => $_tmp) {
+			$ids[$id] = $level;
+			if (isset($children[$id])) {
+				foreach ((array)$this->_count_levels($id, $children, $level + 1) as $_id => $_level) {
+					$ids[$_id] = $_level;
+				}
 			}
 		}
-		return $items_array;
+		return $ids;
 	}
 
 	/**

@@ -33,6 +33,12 @@ class yf_menus_editor {
 	}
 
 	/**
+	*/	
+	function _purge_caches() {
+		cache_del(array('menus', 'menu_items'));
+	}
+
+	/**
 	* Display menus
 	*/
 	function show() {
@@ -68,7 +74,7 @@ class yf_menus_editor {
 			))
 			->db_insert_if_ok('menus', array('type','name','desc','stpl_name','method_name','custom_fields','active'), array(), array('on_after_update' => function() {
 				common()->admin_wall_add(array('menu added: '.$_POST['name'].'', db()->insert_id()));
-				cache_del('menus');
+				module('menus_editor')->_purge_caches();
 			}))
 			->radio_box('type', array('user' => 'User', 'admin' => 'Admin'))
 			->text('name')
@@ -95,7 +101,7 @@ class yf_menus_editor {
 			))
 			->db_update_if_ok('menus', array('name','desc','stpl_name','method_name','custom_fields','active'), 'id='.$id, array('on_after_update' => function() {
 				common()->admin_wall_add(array('menu updated: '.$_POST['name'].'', $menu_info['id']));
-				cache_del('menus');
+				module('menus_editor')->_purge_caches();
 			}))
 			->info('type')
 			->text('name')
@@ -155,7 +161,7 @@ class yf_menus_editor {
 			db()->update_safe('menu_items', array('parent_id' => $_new_parent_id), 'id='.intval($_new_id));
 		}
 		common()->admin_wall_add(array('menu cloned: '.$menu_info['name'].'', $NEW_ITEM_ID));
-		cache_del(array('menus', 'menu_items'));
+		module('menus_editor')->_purge_caches();
 		return js_redirect('./?object='.$_GET['object'].'&action=edit&id='.intval($NEW_MENU_ID));
 	}
 
@@ -171,7 +177,7 @@ class yf_menus_editor {
 			db()->query('DELETE FROM '.db('menus').' WHERE id='.intval($_GET['id']).' LIMIT 1');
 			db()->query('DELETE FROM '.db('menu_items').' WHERE menu_id='.intval($_GET['id']));
 			common()->admin_wall_add(array('menu deleted: '.$menu_info['name'].'', $menu_info['id']));
-			cache_del(array('menus', 'menu_items'));
+			module('menus_editor')->_purge_caches();
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -191,7 +197,7 @@ class yf_menus_editor {
 		if (!empty($menu_info)) {
 			db()->UPDATE('menus', array('active' => (int)!$menu_info['active']), 'id='.intval($menu_info['id']));
 			common()->admin_wall_add(array('menu: '.$menu_info['name'].' '.($menu_info['active'] ? 'inactivated' : 'activated'), $menu_info['id']));
-			cache_del(array('menus', 'menu_items'));
+			module('menus_editor')->_purge_caches();
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
@@ -227,7 +233,7 @@ class yf_menus_editor {
 			if ($batch) {
 				db()->update_batch('menu_items', db()->es($batch));
 				common()->admin_wall_add(array('menu items updated: '.$menu_info['name'].'', $menu_info['id']));
-				cache_del(array('menus', 'menu_items'));
+				module('menus_editor')->_purge_caches();
 			}
 			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$_GET['id']);
 		}
@@ -294,7 +300,7 @@ class yf_menus_editor {
 			if ($batch) {
 				db()->update_batch('menu_items', db()->es($batch));
 				common()->admin_wall_add(array('menu items dragged: '.$menu_info['name'].'', $menu_info['id']));
-				cache_del(array('menus', 'menu_items'));
+				module('menus_editor')->_purge_caches();
 			}
 			main()->NO_GRAPHICS = true;
 			return false;
@@ -496,7 +502,7 @@ class yf_menus_editor {
 
 	/**
 	*/
-	function _recursive_get_menu_items($menu_id = 0, $skip_item_id = 0, $parent_id = 0, $level = 0) {
+	function _recursive_get_menu_items($menu_id = 0, $skip_item_id = 0, $parent_id = 0) {
 		if (empty($menu_id)) {
 			return false;
 		}
@@ -506,27 +512,42 @@ class yf_menus_editor {
 		if (empty($this->_menu_items[$menu_id])) {
 			return false;
 		}
-		$items_ids		= array();
-		$items_array	= array();
-		foreach ((array)$this->_menu_items[$menu_id] as $item_info) {
-			if ($item_info['parent_id'] != $parent_id) {
-				continue;
-			}
-			if ($skip_item_id == $item_info['id']) {
-				continue;
-			}
-			$items_array[$item_info['id']] = $item_info;
-			$items_array[$item_info['id']]['level'] = $level;
+		return $this->_recursive_sort_items($this->_menu_items[$menu_id], $skip_item_id, $parent_id);
+	}
 
-			$tmp_array = $this->_recursive_get_menu_items($menu_id, $skip_item_id, $item_info['id'], $level + 1);
-			foreach ((array)$tmp_array as $sub_item_info) {
-				if ($sub_item_info['id'] == $item_info['id']) {
-					continue;
+	/**
+	* Get and sort items ordered array (recursively)
+	*/
+	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0, $level = 0) {
+		$children = array();
+		foreach ((array)$items as $id => $info) {
+			$parent_id = $info['parent_id'];
+			if ($skip_item_id == $id) {
+				continue;
+			}
+			$children[$parent_id][$id] = $id;
+		}
+		$ids = $this->_count_levels(0, $children);
+		$new_items = array();
+		foreach ((array)$ids as $id => $level) {
+			$new_items[$id] = $items[$id] + array('level' => $level);
+		}		
+		return $new_items;
+	}
+
+	/**
+	*/
+	function _count_levels($start_id = 0, &$children, $level = 0) {
+		$ids = array();
+		foreach ((array)$children[$start_id] as $id => $_tmp) {
+			$ids[$id] = $level;
+			if (isset($children[$id])) {
+				foreach ((array)$this->_count_levels($id, $children, $level + 1) as $_id => $_level) {
+					$ids[$_id] = $_level;
 				}
-				$items_array[$sub_item_info['id']] = $sub_item_info;
 			}
 		}
-		return $items_array;
+		return $ids;
 	}
 
 	/**
@@ -566,7 +587,7 @@ class yf_menus_editor {
 			), array('menu_id' => $menu_info['id']), array(
 				'on_after_update' => function() {
 					common()->admin_wall_add(array('menu item added: '.$_POST['name'].'', db()->insert_id()));
-					cache_del(array('menus', 'menu_items'));
+					module('menus_editor')->_purge_caches();
 				}
 			))
 			->select_box('type_id', $this->_item_types)
@@ -623,7 +644,7 @@ class yf_menus_editor {
 			), 'id='.$item_info['id'], array(
 				'on_after_update' => function() {
 					common()->admin_wall_add(array('menu item updated: '.$_POST['name'].'', $item_info['id']));
-					cache_del(array('menus', 'menu_items'));
+					module('menus_editor')->_purge_caches();
 				}
 			))
 			->select_box('type_id', $this->_item_types)
@@ -675,7 +696,7 @@ class yf_menus_editor {
 		unset($sql['id']);
 		db()->insert_safe('menu_items', $sql);
 		common()->admin_wall_add(array('menu item cloned: '.$item_info['name'].'', $item_info['id']));
-		cache_del(array('menus', 'menu_items'));
+		module('menus_editor')->_purge_caches();
 		return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$menu_info['id']);
 	}
 
@@ -689,7 +710,7 @@ class yf_menus_editor {
 			db()->update('menu_items', array('active' => (int)!$item_info['active']), 'id='.intval($item_info['id']));
 			common()->admin_wall_add(array('menu item: '.$item_info['name'].' '.($item_info['active'] ? 'inactivated' : 'activated'), $item_info['id']));
 		}
-		cache_del(array('menus', 'menu_items'));
+		module('menus_editor')->_purge_caches();
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo ($item_info['active'] ? 0 : 1);
@@ -710,7 +731,7 @@ class yf_menus_editor {
 			db()->update('menu_items', array('parent_id' => 0), 'parent_id='.intval($_GET['id']));
 			common()->admin_wall_add(array('menu item deleted: '.$item_info['name'].'', $item_info['id']));
 		}
-		cache_del(array('menus', 'menu_items'));
+		module('menus_editor')->_purge_caches();
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];

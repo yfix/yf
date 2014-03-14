@@ -227,7 +227,7 @@ class yf_utils {
 			$text = stripslashes($text);
 		}
 		// Prepare special chars
-		$text = $use_smart_function ? smart_htmlspecialchars($text) : htmlspecialchars($text, ENT_QUOTES);
+		$text = $use_smart_function ? $this->smart_htmlspecialchars($text) : htmlspecialchars($text, ENT_QUOTES);
 		if (DEBUG_MODE && $have_tr) {
 			$text = $tr_1.$text.$tr_2;
 		}
@@ -723,27 +723,6 @@ class yf_utils {
 			pclose(popen('start /B '. $cmd, 'r'));
 		} else {
 			exec($cmd . ' > /dev/null &');
-		}
-	}
-
-	function object_to_array($d) {
-		if (is_object($d)) {
-			$d = get_object_vars($d);
-		}
-		if (is_array($d)) {
-			return array_map(__FUNCTION__, $d);
-		} else {
-			// Return array
-			return $d;
-		}
-	}
-
-	function array_to_object($d) {
-		if (is_array($d)) {
-			return (object) array_map(__FUNCTION__, $d);
-		} else {
-			// Return object
-			return $d;
 		}
 	}
 

@@ -12,6 +12,7 @@ abstract class yf_installer_db {
 	/** @var bool */
 	public $USE_SQL_IF_NOT_EXISTS	= true;
 	/** @var array @conf_skip Required patterns */
+// TODO: complete this and add unit tests
 	public $_patterns	= array(
 		'table'		=> "/^CREATE[\s\t]*TABLE[\s\t]*[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]*\((.*)\)([^\(]*)\$/ims",
 		'split'		=> "/[\n]+,?/",

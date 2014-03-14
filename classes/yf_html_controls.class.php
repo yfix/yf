@@ -59,13 +59,13 @@ class yf_html_controls {
 			$extra = $name;
 			$name = $extra['name'];
 			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			if (!$extra['no_translate']) {
-				$values = t($values);
+			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+			if ($extra['no_translate']) {
+				$translate = 0;
 			}
 			$selected = $extra['selected'];
 			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
 			$type = isset($extra['type']) ? $extra['type'] : 2;
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 			$level = isset($extra['level']) ? $extra['level'] : 0;
 			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 			$extra['class'] .= ' form-control';
@@ -117,13 +117,13 @@ class yf_html_controls {
 			$extra = $name;
 			$name = $extra['name'];
 			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			if (!$extra['no_translate']) {
-				$values = t($values);
+			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+			if ($extra['no_translate']) {
+				$translate = 0;
 			}
 			$selected = $extra['selected'];
 			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
 			$type = isset($extra['type']) ? $extra['type'] : 2;
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 			$level = isset($extra['level']) ? $extra['level'] : 0;
 			$disabled = isset($extra['disabled']) ? $extra['disabled'] : false;
 			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
@@ -187,12 +187,12 @@ class yf_html_controls {
 			$extra = $name;
 			$name = $extra['name'];
 			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			if (!$extra['no_translate']) {
-				$values = t($values);
+			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+			if ($extra['no_translate']) {
+				$translate = 0;
 			}
 			$selected = $extra['selected'];
 			$type = isset($extra['type']) ? $extra['type'] : 2;
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 			$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
 			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 			if ($extra['class']) {
@@ -272,12 +272,12 @@ class yf_html_controls {
 			$extra = $name;
 			$name = $extra['name'];
 			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			if (!$extra['no_translate']) {
-				$values = t($values);
+			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+			if ($extra['no_translate']) {
+				$translate = 0;
 			}
 			$selected = $extra['selected'];
 			$type = isset($extra['type']) ? $extra['type'] : 2;
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 			$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
 			$name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
 			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
@@ -616,13 +616,13 @@ class yf_html_controls {
 			$name = $extra['name'];
 			$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
 			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			if (!$extra['no_translate']) {
-				$values = t($values);
+			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+			if ($extra['no_translate']) {
+				$translate = 0;
 			}
 			$selected = $extra['selected'] ?: $selected;
 			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
 			$type = isset($extra['type']) ? $extra['type'] : 2;
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
 			$level = isset($extra['level']) ? $extra['level'] : 0;
 			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 			$extra['class'] .= ' form-control';
@@ -663,8 +663,9 @@ class yf_html_controls {
 			$name = $extra['name'];
 			$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
 			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			if (!$extra['no_translate']) {
-				$values = t($values);
+			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+			if ($extra['no_translate']) {
+				$translate = 0;
 			}
 			$selected = $extra['selected'] ?: $selected;
 		}
