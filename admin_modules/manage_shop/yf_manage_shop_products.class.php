@@ -34,11 +34,10 @@ class yf_manage_shop_products{
 				'hide_empty' => 1,
 				'pager_sql_callback' => function($sql) { return preg_replace('/^SELECT.*FROM/ims', 'SELECT COUNT(*) FROM', ltrim($sql)); }
 			))
-			->image('id', '', array('width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {
-                $product_id = $row['id'];
+			->image('id', array('width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {
+				$product_id = $row['id'];
 				$image = common()->shop_get_images($product_id);
-                return $image[0]['thumb'];
-
+				return $image[0]['thumb'];
             }))
 			->text('name', array('link' => '/shop/product/%d', 'rewrite' => 1, 'data' => '@name', 'link_field_name' => 'id'))
 			->link('cat_id', './?object=category_editor&action=edit_item&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
@@ -210,12 +209,17 @@ class yf_manage_shop_products{
 				'name'			=> $v['name'],
 			);
 		}
-		echo json_encode($products);
+		print json_encode($products);
+		exit(); // To prevent printing additional debug info later and break JS
 	}	
 	
+	/**
+	*/
 	function product_search_autocomplete () {
-		$_GLOBALS['no_graphics'] = true;
-		if(!$_GET['search_word']) return false;
+		main()->NO_GRAPHICS = true;
+		if (!$_GET['search_word']) {
+			return false;
+		}
 		$word = common()->sphinx_escape_string($_GET['search_word']);
 //		$word = str_replace("_", " ", common()->_propose_url_from_name($word));
 /*		$result = common()->sphinx_query("
@@ -230,15 +234,17 @@ class yf_manage_shop_products{
 				`id` LIKE '%"._es($word)."%'
 			LIMIT 20
 		");
-		if(!$result) return false;
+		if (!$result) {
+			return false;
+		}
 		foreach((array)$result as $k){
 			$return_array[] = array(
 				'id' => $k['id'],
 				'text' => '['.$k['id'].'] '.$k['name'],
 			);
 		}
-		return json_encode($return_array);
-
+		print json_encode($return_array);
+		exit(); // To prevent printing additional debug info later and break JS
 	}
 
 }
