@@ -1,5 +1,6 @@
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.jquery.min.js" class="yf_core"></script>
 <link href="//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.css" rel="stylesheet" class="yf_core">
+<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" class="yf_core">
 
 {if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
 <script type="text/javascript" class="yf_core">
