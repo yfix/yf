@@ -16,21 +16,21 @@ class yf_auth_user {
 	/** @var int Online TTL if inactive */
 	public $ONLINE_MAX_IDS			= 1000; // Max number of online records (to prevent server flooding)
 	/** @var string Login field name to use @conf_skip */
-	public $LOGIN_FIELD			= 'login';
+	public $LOGIN_FIELD				= 'login';
 	/** @var string Alternative login field name to use @conf_skip */
-	public $LOGIN_ALIAS			= '';
+	public $LOGIN_ALIAS				= '';
 	/** @var string Password field name to use @conf_skip */
 	public $PSWD_FIELD				= 'password';
 	/** @var string Remeber field name to use @conf_skip */
 	public $REMEMBER_FIELD			= 'remember_me';
 	/** @var string Cookie name @conf_skip */
-	public $VAR_COOKIE_NAME		= 'remember_user_id';
+	public $VAR_COOKIE_NAME			= 'remember_user_id';
 	/** @var int Cookie TTL */
 	public $VAR_COOKIE_LIFE_TIME	= 2592000;	// 60*60*24*30 = 30 days (default value)
 	/** @var string Default user object (module) to redirect */
-	public $DEF_USER_MODULE		= 'signup';
+	public $DEF_USER_MODULE			= 'signup';
 	/** @var string Redirect URL */
-	public $URL_WRONG_LOGIN		= './?object=login_form&action=wrong_login';
+	public $URL_WRONG_LOGIN			= './?object=login_form&action=wrong_login';
 	/** @var string Redirect URL */
 	public $URL_ACCOUNT_INACTIVE	= './?object=login_form&action=account_inactive';
 	/** @var string Redirect URL */
@@ -38,17 +38,17 @@ class yf_auth_user {
 	/** @var string Redirect URL */
 	public $URL_AFTER_LOGOUT		= './';
 	/** @var string field name @conf_skip */
-	public $VAR_USER_ID			= 'user_id';
+	public $VAR_USER_ID				= 'user_id';
 	/** @var string field name @conf_skip */
 	public $VAR_USER_GROUP_ID		= 'user_group';
 	/** @var string field name @conf_skip */
-	public $VAR_USER_LOGIN_TIME	= 'user_login_time';
+	public $VAR_USER_LOGIN_TIME		= 'user_login_time';
 	/** @var string field name @conf_skip */
-	public $VAR_USER_GO_URL		= 'user_go_url';
+	public $VAR_USER_GO_URL			= 'user_go_url';
 	/** @var string field name @conf_skip */
 	public $VAR_USER_INFO			= 'user_info';
 	/** @var string field name @conf_skip */
-	public $VAR_LOCK_IP			= 'auth_lock_to_ip';
+	public $VAR_LOCK_IP				= 'auth_lock_to_ip';
 	/** @var bool Do log into db user login actions */
 	public $DO_LOG_LOGINS			= true;
 	/** @var bool Set cookie 'member_id', useful for fast_init before session start */
@@ -59,39 +59,29 @@ class yf_auth_user {
 	public $SITE_CLOSED_STPL		= 'site_closed';
 	/** @var array @conf_skip 
 	* Methods to execute after success login or logout
-	*
 	* @example	$EXEC_AFTER_LOGIN = array(array('test_method', array('Working!')));
 	* @example	$EXEC_AFTER_LOGIN = array(array(array('custom_class', 'custom_method'), array('my_param_1' => 'Working!')));
-	*	If you need to call just function with parameters:
-	*		call_user_func_array('Foo',$args);
-	*	If you need to call CLASS method (NOT object):
-	*		call_user_func_array(array('class', 'Foo'),$args); 
-	*	If you need to call OBJECT method:
-	*		call_user_func_array(array($Object, 'Foo'),$args);
-	*	If you need to call method of object of object:
-	*		call_user_func_array(array($Object->Object, 'Foo'),$args);
-	*	If you need to call object method from within the very same object (NOT CLASS!):
-	*		call_user_func_array(array($this, 'Foo'),args);
 	*/
 	public $EXEC_AFTER_LOGIN		= array();
 	/** @var array @conf_skip */
 	public $EXEC_AFTER_LOGOUT		= array();
 	/** @var string	*/
-	public $COOKIE_PATH			= '/';
+// TODO: be able to import cookies settings from main()->_init_session()
+	public $COOKIE_PATH				= '/';
 	/** @var string	*/
 	public $COOKIE_DOMAIN			= '';
 	/** @var string	*/
 	public $COOKIE_SECURE			= false;
 	/** @var string	*/
-	public $COOKIE_HTTPONLY		= false;
+	public $COOKIE_HTTPONLY			= false;
 	/** @var bool Store or not user info in session sub array or not */
 	public $USER_INFO_IN_SESSION	= 0;
 	/** @var bool Check if user have multiple accounts @security */
 	public $CHECK_MULTI_ACCOUNTS	= false;
 	/** @var bool Catch ref codes */
-	public $CATCH_REF_CODES		= false;
+	public $CATCH_REF_CODES			= false;
 	/** @var array Pages where we do not need to track online stats @conf_skip */
-	public $ONLINE_SKIP_PAGES	= array(
+	public $ONLINE_SKIP_PAGES		= array(
 		'user_profile->compact_info',
 		'help->show_tip',
 		'forum->compact_topic_repliers',
@@ -103,13 +93,17 @@ class yf_auth_user {
 	/** @var bool Save failed logins @security */
 	public $LOG_FAILED_LOGINS		= true;
 	/** @var bool Block failed logins after several attempts (To prevent password bruteforcing, hacking, etc) @security */
-	public $BLOCK_FAILED_LOGINS	= false;
+	public $BLOCK_FAILED_LOGINS		= false;
 	/** @var bool Track failed logins TTL @security */
 	public $BLOCK_FAILED_TTL		= 3600;
+	/** @var bool @security */
+	public $BLOCK_FAILS_BY_LOGIN_COUNT	= 5;
+	/** @var bool @security */
+	public $BLOCK_FAILS_BY_IP_COUNT	= 10;
 	/** @var bool Track banned IPs list @security */
 	public $BLOCK_BANNED_IPS		= false;
 	/** @var bool Allow to login only by HTTPS protocol, else raise error @security */
-	public $AUTH_ONLY_HTTPS		= false;
+	public $AUTH_ONLY_HTTPS			= false;
 	/** @var bool Check referer in session @security */
 	public $SESSION_REFERER_CHECK	= false;
 	/** @var bool Lock session to IP address (to prevent hacks) @security */
@@ -143,7 +137,7 @@ class yf_auth_user {
 	* Initialize auth
 	*/
 	function init () {
-		// Chanined config rule
+		// Chained config rule
 		if ($this->BLOCK_FAILED_LOGINS) {
 			$this->LOG_FAILED_LOGINS = true;
 		}
@@ -159,6 +153,7 @@ class yf_auth_user {
 		}
 		// Delete expired users (expiration time for now 300 seconds == 5 minutes)
 		// make this to run randomly every ~10th page call
+// TODO: this needed to be done on global cron rarely (every minute or every hour), not on every request
 		if ($this->STORE_ONLINE_USERS && $this->ONLINE_AUTO_CLEAN && rand(1,10) == 1) {
 			db()->_add_shutdown_query('DELETE FROM '.db('online').' WHERE ('.time().'-time) > '.intval($this->ONLINE_AUTO_CLEAN));
 		}
@@ -201,26 +196,20 @@ class yf_auth_user {
 		}
 		// Check if current user session has expired
 		if ($this->STORE_ONLINE_USERS) {
-			// First we select all online users into globals array
-			$MAIN = &main();
-			if (!isset($MAIN->_online_users)) {
-				$MAIN->_online_users = array();
-				$Q = db()->query(
-					'SELECT id,user_id FROM '.db('online').''
-					.(MAIN_TYPE_USER ? ' WHERE type != "admin"' : '')
-					.($this->ONLINE_MAX_IDS ? ' LIMIT '.intval($this->ONLINE_MAX_IDS) : '')
-				);
-				while ($A = db()->fetch_assoc($Q)) {
-					$MAIN->_online_users[$A['id']] = $A['user_id'];
+			$online_users = &main()->_online_users;
+			if (!isset($online_users)) {
+				$online_users = array();
+				$sql = 'SELECT id, user_id FROM '.db('online'). (MAIN_TYPE_USER ? ' WHERE type != "admin"' : ''). ($this->ONLINE_MAX_IDS ? ' LIMIT '.intval($this->ONLINE_MAX_IDS) : '');
+				foreach ((array)db()->get_2d($sql) as $online_id => $user_id) {
+					$online_users[$online_id] = $user_id;
 				}
 			}
 			// Create default record if not exists one
-			if (!isset($MAIN->_online_users[session_id()])) {
+			if (!isset($online_users[session_id()])) {
 				$_cur_user_data = $this->_update_online_info();
-				$MAIN->_online_users[session_id()] = $_cur_user_data['user_id'];
+				$online_users[session_id()] = $_cur_user_data['user_id'];
 			}
 		}
-		// Store GEO location data
 		if ($this->TRACK_GEO_LOCATION && main()->USE_GEO_IP) {
 			$this->_track_geo_location();
 		}
@@ -247,7 +236,6 @@ class yf_auth_user {
 		if (!empty($_SESSION[$this->VAR_USER_ID]) && !empty($_SESSION[$this->VAR_USER_GROUP_ID])) {
 			main()->USER_ID		= $_SESSION[$this->VAR_USER_ID];
 			main()->USER_GROUP	= $_SESSION[$this->VAR_USER_GROUP_ID];
-			// Store user info in session
 			if ($this->USER_INFO_IN_SESSION && !empty($_SESSION[$this->VAR_USER_INFO])) {
 				main()->USER_INFO = $_SESSION[$this->VAR_USER_INFO];
 			}
@@ -258,8 +246,8 @@ class yf_auth_user {
 	* Try to log in user
 	*/
 	function _do_login ($params = array()) {
-		$AUTH_LOGIN	= $params['login'];
-		$AUTH_PSWD	= $params['pswd'];
+		$AUTH_LOGIN	= trim($params['login']);
+		$AUTH_PSWD	= trim($params['pswd']);
 
 		if ($this->AUTH_ONLY_HTTPS && !($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL'])) {
 			$redirect_url = '';
@@ -274,7 +262,6 @@ class yf_auth_user {
 			return js_redirect($redirect_url);
 		}
 
-		// Try to get info from db
 		if (!empty($AUTH_LOGIN) && !empty($AUTH_PSWD)) {
 			$NEED_QUERY_DB = true;
 
@@ -287,15 +274,13 @@ class yf_auth_user {
 				}
 			}
 			if ($this->BLOCK_FAILED_LOGINS) {
-				// Get number of failed logins with such account for the last time perios
 				list($_fails_by_login) = db()->query_fetch(
 					'SELECT COUNT(*) AS `0` FROM '.db('log_auth_fails').' WHERE time > '.(time() - $this->BLOCK_FAILED_TTL).' AND login="'._es($AUTH_LOGIN).'"'
 				);
-				// Get number of failed logins with such ip address for the last time perios
 				list($_fails_by_ip) = db()->query_fetch(
 					'SELECT COUNT(*) AS `0` FROM '.db('log_auth_fails').' WHERE time > '.(time() - $this->BLOCK_FAILED_TTL).' AND ip="'._es(common()->get_ip()).'"'
 				);
-				if ($_fails_by_login >= 5 || $_fails_by_ip >= 10) {
+				if ($_fails_by_login >= $this->BLOCK_FAILS_BY_LOGIN_COUNT || $_fails_by_ip >= $this->BLOCK_FAILS_BY_IP_COUNT) {
 					$NEED_QUERY_DB = false;
 					trigger_error('AUTH: Attempt to login as "'.$AUTH_LOGIN.'" blocked, fails_by_login: '.intval($_fails_by_login).', fails_by_ip: '.intval($_fails_by_ip), E_USER_WARNING);
 				}
@@ -483,12 +468,9 @@ class yf_auth_user {
 		// Auto-redirect to the page before login form if needed
 		if (!empty($_SESSION[$this->VAR_USER_GO_URL]) && !($this->URL_SUCCESS_LOGIN && $_POST['skip_auto_url'])) {
 			$REDIRECT_URL = (substr($_SESSION[$this->VAR_USER_GO_URL], 0, 2) != './' ? './?' : ''). str_replace(WEB_PATH, '', str_replace(array('http:','https:'), '', $_SESSION[$this->VAR_USER_GO_URL]));
-			// Cleanup redirect url
 			$_SESSION[$this->VAR_USER_GO_URL] = '';
-		// Redirect user to the user default
 		} elseif (!empty($user_info['go_after_login'])) {
 			$REDIRECT_URL = $user_info['go_after_login'];
-		// Redirect user to the group default
 		} elseif (!empty($group_info['go_after_login'])) {
 			$REDIRECT_URL = $group_info['go_after_login'];
 		// Force redirect user to the default location
@@ -504,7 +486,6 @@ class yf_auth_user {
 	* Do log out user
 	*/
 	function _do_logout () {
-		// Process logout with session variables
 		if ($this->STORE_ONLINE_USERS) {
 			db()->_add_shutdown_query('DELETE FROM '.db('online').' WHERE user_id='.intval($_SESSION[$this->VAR_USER_ID]));
 			$MAIN = &main();
@@ -512,9 +493,7 @@ class yf_auth_user {
 				unset($MAIN->_online_users[session_id()]);
 			}
 		}
-		// Execute custom code
 		$this->_exec_method_on_action('logout');
-		// Array of vars to handle
 		$user_session_vars = array(
 			$this->VAR_USER_ID,
 			$this->VAR_USER_GROUP_ID,
@@ -551,7 +530,6 @@ class yf_auth_user {
 		if (time() < ($cookie_created + $this->VAR_COOKIE_LIFE_TIME) && !empty($login) && !empty($password)) {
 			// Empty redirect address (in every case)
 			$_SESSION[$this->VAR_USER_GO_URL] = null;
-
 			$this->_do_login(array(
 				'login'			=> $login,
 				'pswd'			=> $password,
@@ -580,23 +558,16 @@ class yf_auth_user {
 
 	/**
 	* Execute user method after specified action
-	*
-	* @private
-	* @param	$action		string	Specified action on which execute user function
-	* @return void
 	*/
 	function _exec_method_on_action($action = 'login') {
-		// Assign action callbacks
 		if ($action == 'login') {
 			$CALLBACKS = $this->EXEC_AFTER_LOGIN;
 		} elseif ($action == 'logout') {
 			$CALLBACKS = $this->EXEC_AFTER_LOGOUT;
 		}
-		// Quick check
 		if (empty($CALLBACKS)) {
 			return false;
 		}
-		// Do call custom method
 		foreach ((array)$CALLBACKS as $cur_method) {
 			if (is_callable($cur_method[0])) {
 				call_user_func_array($cur_method[0], (array)$cur_method[1]);
@@ -606,38 +577,29 @@ class yf_auth_user {
 
 	/**
 	* Multiple accounts checker
-	*
-	* @private
-	* @return void
 	*/
 	function _check_multi_accounts() {
 		if (empty($_SESSION[$this->VAR_USER_ID]) || empty($_SESSION[$this->VAR_USER_GROUP_ID])) {
 			return false;
 		}
 		$_SPECIAL_NAME = 'accounts';
-		// Set initial cookie
 		if (empty($_COOKIE[$_SPECIAL_NAME])) {
 			return $this->_set_special_cookie($_SESSION[$this->VAR_USER_ID]);
 		}
-		// Get last id from cookie
 		$cookie_users = array();
 		foreach (explode('_', $_COOKIE[$_SPECIAL_NAME]) as $_user_id) {
 			$cookie_users[$_user_id] = $_user_id;
 		}
-		// Ignore same ids
 		if ($_COOKIE[$_SPECIAL_NAME] == $_SESSION[$this->VAR_USER_ID] 
 			|| (count($cookie_users) > 1 && isset($cookie_users[$_SESSION[$this->VAR_USER_ID]]))
 		) {
 			return false;
 		}
-		// Check if we have record for this user
 		$data = db()->query_fetch('SELECT * FROM '.db('check_multi_accounts').' WHERE user_id='.intval($_SESSION[$this->VAR_USER_ID]));
-		// Remove self user from array
 		if (isset($cookie_users[$_SESSION[$this->VAR_USER_ID]])) {
 			unset($cookie_users[$_SESSION[$this->VAR_USER_ID]]);
 		}
 		$matching_users = implode(',', $cookie_users);
-		// Store into db
 		if (empty($data)) {
 			db()->INSERT('check_multi_accounts', array(
 				'user_id'		=> intval($_SESSION[$this->VAR_USER_ID]),
@@ -652,19 +614,13 @@ class yf_auth_user {
 				'cookie_match'	=> 1,
 			), 'user_id='.intval($_SESSION[$this->VAR_USER_ID]));
 		}
-		// Set new cookie with new id added
 		$this->_set_special_cookie($_COOKIE[$_SPECIAL_NAME].'_'.$_SESSION[$this->VAR_USER_ID]);
-		// Global variable
 		main()->_HAS_MULTI_ACCOUNTS = true;
-		// Do store debug log
 		_debug_log('_check_multi_accounts: found possible multi-account, old_id='.$last_id.',new_id='.$_SESSION[$this->VAR_USER_ID].',cookie='.$_COOKIE[$_SPECIAL_NAME], E_NOTICE);
 	}
 
 	/**
 	* Set cookie for the _check_multi_accounts()
-	*
-	* @private
-	* @return void
 	*/
 	function _set_special_cookie($value = '') {
 		return $this->_cookie_set('accounts', $value, strtotime((date('Y') + 10).'-01-01 00:00:00'));
@@ -677,14 +633,11 @@ class yf_auth_user {
 		if (!$this->STORE_ONLINE_USERS) {
 			return false;
 		}
-		// Check if current user is a spider
 		if (!$_SESSION[$this->VAR_USER_ID] && main()->SPIDERS_DETECTION) {
-			// Do not store or update spiders online
 			if (conf('SPIDER_NAME')) {
 				return false;
 			}
 		}
-		// Prepare data
 		$data = array(
 			'id'			=> _es(session_id()),
 			'user_id'		=> intval($_SESSION[$this->VAR_USER_ID]),
@@ -696,27 +649,19 @@ class yf_auth_user {
 			'query_string'	=> _es($_SERVER['QUERY_STRING']),
 			'site_id'		=> (int)conf('SITE_ID'),
 		);
-		// Get SQL text from array
 		$sql = db()->REPLACE('online', $data, 1);
-		// Do update db record
 		db()->_add_shutdown_query($sql);
-		// Return data array for future use
 		return $data;
 	}
 
 	/**
 	* Do save geo location for guests
-	*
-	* @private
-	* @return void
 	*/
 	function _track_geo_location() {
 		if (!$this->TRACK_GEO_LOCATION || !main()->USE_GEO_IP) {
 			return false;
 		}
-		// Check if current user is a spider
 		if (!$_SESSION[$this->VAR_USER_ID] && main()->SPIDERS_DETECTION) {
-			// Do not store or update spiders online
 			if (conf('SPIDER_NAME')) {
 				return false;
 			}
@@ -787,7 +732,6 @@ class yf_auth_user {
 		if (!empty($where) && preg_match('/\?r=([0-9]{1,8})$/ims', $where, $m)) {
 			$ref_code = $m[1];
 		}
-		// Stop here if nothing to do
 		if (empty($ref_code)) {
 			return false;
 		}
