@@ -3,6 +3,22 @@
 /**
 */
 class yf_manage_shop_products{
+	
+	var $_filter_params = array(
+		'name'			=> array('like','p.name'),
+		'price' 		=> array('between','p.price'),
+		'articul'		=> array('like','p.articul'),
+		'price'			=> array('eq','p.price'),
+		'supplier_id'	=> array('eq','p.supplier_id'),
+		'manufacturer_id' => array('eq','p.manufacturer_id'),
+		'active'		=> array('eq','p.active'),
+		'status'		=> array('eq','p.status'),					
+		'image'			=> array('eq','p.image'),
+		'cat_id'		=> array('field' => 'p.cat_id'),
+		'quantity'		=> array('field' => 'p.quantity'),
+		'add_date'		=> array('dt_between', 'p.add_date'),
+		'update_date'	=> array('field' => 'p.update_date'),
+	);
 
 	/**
 	*/
@@ -15,22 +31,10 @@ class yf_manage_shop_products{
 		} else {
 			$sql = 'SELECT * FROM '.db('shop_products').' AS p';
 		}
+		
 		return table($sql, array(
 				'filter' => $_SESSION[$_GET['object'].'__products'],
-				'filter_params' => array(
-					'name'			=> array('like','p.name'),
-					'price' 		=> array('between','p.price'),
-					'articul'		=> array('like','p.articul'),
-					'price'			=> array('eq','p.price'),
-					'supplier_id'	=> array('eq','p.supplier_id'),
-					'manufacturer_id' => array('eq','p.manufacturer_id'),
-					'active'		=> array('eq','p.active'),
-					'image'			=> array('eq','p.image'),
-					'cat_id'		=> array('field' => 'p.cat_id'),
-					'quantity'		=> array('field' => 'p.quantity'),
-					'add_date'		=> array('dt_between', 'p.add_date'),
-					'update_date'	=> array('field' => 'p.update_date'),
-				),
+				'filter_params' => $this->_filter_params,
 				'hide_empty' => 1,
 				'pager_sql_callback' => function($sql) { return preg_replace('/^SELECT.*FROM/ims', 'SELECT COUNT(*) FROM', ltrim($sql)); }
 			))
@@ -53,7 +57,65 @@ class yf_manage_shop_products{
 			->footer_add('Add product', './?object='.main()->_get('object').'&action=product_add',array('no_ajax' => 1))
 			->footer_link('Attributes', './?object='.main()->_get('object').'&action=attributes')
 			->footer_link('Categories', './?object=category_editor&action=show_items&id=shop_cats')
-			->footer_link('Orders', './?object='.main()->_get('object').'&action=show_orders');
+			->footer_link('Orders', './?object='.main()->_get('object').'&action=show_orders')
+			->footer_link('XLS Export', './?object='.main()->_get('object').'&action=products_xls_export');
+	}
+	
+	
+	/**
+	*/
+	function products_xls_export () {
+		if (module('manage_shop')->SUPPLIER_ID) {
+			$sql = 'SELECT `p`.`id`,`p`.`articul`,`p`.`name`,`p`.`price` FROM '.db('shop_products').' AS p
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
+					WHERE 
+						m.admin_id='.intval(main()->ADMIN_ID).'';
+		} else {
+			$sql = 'SELECT `p`.`id`,`p`.`articul`,`p`.`name`,`p`.`price` FROM '.db('shop_products').' AS p';
+		}
+		
+		list($filter_sql,$order_sql) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($_SESSION[$_GET['object'].'__products'], $this->_filter_params, $sql);
+		
+		if ($filter_sql || $order_sql) {
+			$sql .= ' WHERE 1 '.$filter_sql;
+			if ($order_sql) {
+				$sql .= ' '.$order_sql;
+			}
+		}
+		
+		if (file_exists(YF_PATH."libs/phpexcel/PHPExcel.php")) {
+			require_once(YF_PATH."libs/phpexcel/PHPExcel.php");
+		} else {
+			require_once(INCLUDE_PATH."libs/phpexcel/PHPExcel.php");
+		}
+		$objPHPExcel = new PHPExcel();
+		$objPHPExcel->setActiveSheetIndex(0);
+		$objPHPExcel->getActiveSheet()->SetCellValue('A1', t('id'));
+		$objPHPExcel->getActiveSheet()->SetCellValue('B1', t('articul'));
+		$objPHPExcel->getActiveSheet()->SetCellValue('C1', t('name'));
+		$objPHPExcel->getActiveSheet()->SetCellValue('D1', t('price'));
+
+		foreach(range('A','D') as $columnID) {
+			$objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
+				->setAutoSize(true);
+		}
+
+		$R = db()->query($sql);
+		$i = 2;
+		while ($A = db()->fetch_assoc($R)) {
+			$objPHPExcel->getActiveSheet()->SetCellValue('A'.$i, $A['id']);
+			$objPHPExcel->getActiveSheet()->SetCellValue('B'.$i, $A['articul']);
+			$objPHPExcel->getActiveSheet()->SetCellValue('C'.$i, $A['name']);
+			$objPHPExcel->getActiveSheet()->SetCellValue('D'.$i, $A['price']);
+			$i++;
+		}
+		
+		$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+		
+		header('Content-type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment; filename="products_'.date('Y_m_d_H_i_s').'.xlsx"');
+		$objWriter->save('php://output');		
+		exit;
 	}
 
 	/**
