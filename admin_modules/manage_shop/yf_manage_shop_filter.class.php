@@ -48,7 +48,7 @@ class yf_manage_shop_filter{
 				};
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 //					->number('id')
-					->container(_class('manage_shop_filter')->_product_search_widget('id',$_SESSION[$filter_name]['id']),'Id')						
+					->container( _class('manage_shop_filter')->_product_search_widget('id', $_SESSION[$filter_name]['id']), 'Id')
 					->text('name')
 					->text('articul')
 					->row_start(array('desc' => 'price'))
@@ -223,6 +223,10 @@ class yf_manage_shop_filter{
 	}
 	
 	function _product_search_widget($input_name,$input_value) {
-		return tpl()->parse('manage_shop/product_search_filter',array('input_name' => $input_name,'input_value' => $input_value));
+		return tpl()->parse('manage_shop/product_search_filter', array(
+			'ajax_search_url'	=> ADMIN_WEB_PATH.'?object=manage_shop&action=product_search_autocomplete',
+			'input_name'		=> $input_name,
+			'input_value'		=> $input_value,
+		));
 	}
 }

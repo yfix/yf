@@ -1,14 +1,18 @@
-<link href="{CONST('WEB_PATH')}js/select2/select2.css" rel="stylesheet"/>
-<script src="{CONST('WEB_PATH')}js/select2/select2.min.js"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.min.css" rel="stylesheet"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.min.js" type="text/javascript"></script>
 
-<script>
+<script type="text/javascript">
 $( document ).ready( function() {
-	
-	$("#{input_name}_search").select2({
+
+//	var ajax_search_url = "{ajax_search_url}";
+    var ajax_search_url = "./?object=manage_shop&action=product_search_autocomplete";
+	var ajax_search_input = "{input_name}";
+
+	$("#" + ajax_search_input + "_search").select2({
 		placeholder: "",
 		minimumInputLength: 2,
 		ajax: {
-		    url: "./?object=manage_shop&action=product_search_autocomplete",
+		    url: ajax_search_url,
 		    dataType: 'json',
 			data: function (term, page) {
 				return {
@@ -20,11 +24,12 @@ $( document ).ready( function() {
 			}
 		},
 	});	
-	$("#{input_name}_search").on("change",function() {
-		$("#{input_name}_value").val($(this).val());
+	$("#" + ajax_search_input + "_search").on("change",function() {
+		$("#" + ajax_search_input + "_value").val($(this).val());
 	});
 	
 });
 </script>
-<input type="text" id="{input_name}_search" value="" style="width:220px;"><br />
-<input type="text" name="{input_name}" id="{input_name}_value" value="{input_value}">
+
+<input type="text" id="{input_name}_search" value="" class="input-large">
+<input type="text" name="{input_name}" id="{input_name}_value" value="{input_value}" class="input-small">

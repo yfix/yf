@@ -30,19 +30,21 @@ class yf_form2_datetime {
 			$format = array();
 			if ($extra['no_date']!=1) $format[] = "MM/dd/yyyy";
 			if ($extra['no_time']!=1) $format[] = "HH:mm:ss";
-			_class('core_js')->add("https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js", true);
-			_class('core_css')->add("https://s3-eu-west-1.amazonaws.com/yfix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css", true);			$body = "
-<div id=\"{$extra['name']}\" class=\"input-append date\">
-    <input data-format=\"".implode(" ",$format)."\" name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium\"></input>
+			_class('core_js')->add("//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js", true);
+			_class('core_js')->add("//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/locales/bootstrap-datepicker.ru.min.js", true);
+			_class('core_css')->add("//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css", true);
+			$body = "
+<div id=\"{$extra['name']}\" class=\"input-append date date_bd\">
+    <input data-format=\"".implode(" ",$format)."\" name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium\" placeholder=\"{$extra['placeholder']}\"></input>
     <span class=\"add-on\">
-      <i data-time-icon=\"icon-time\" data-date-icon=\"icon-calendar\"></i>
+		<i class=\"fa fa-calendar\"></i>
     </span>		
 </div>
 ";
 			_class('core_js')->add("<script type=\"text/javascript\">
   $(function() {
-    $('#{$extra['name']}').datetimepicker({
-      language: 'en',".($extra['no_time']==1 ? "pickTime: false," : "")."".($extra['no_date']==1 ? "pickDate: false," : "")."
+    $('#{$extra['name']}').datepicker({
+      language: 'ru', format: 'dd/mm/yyyy',".($extra['no_time']==1 ? "pickTime: false," : "")."".($extra['no_date']==1 ? "pickDate: false," : "")."
     });
   });
 </script>", false);

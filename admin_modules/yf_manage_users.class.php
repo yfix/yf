@@ -20,7 +20,7 @@ class yf_manage_users {
 			->text('login')
 			->text('email')
 			->text('name')
-			->btn_edit()
+			->btn_edit(array('no_ajax' => 1))
 			->btn_delete()
 			->btn_active()
 			->btn('log_auth', './?object=log_user_auth&action=show_for_user&id=%d')
@@ -63,15 +63,16 @@ class yf_manage_users {
 		$a['redirect_link'] = './?object='.$_GET['object'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
-				'login' => 'trim|required|alpha_numeric|is_unique_without[user.login.'.$id.']',
+				'login' => 'trim|alpha_numeric|is_unique_without[user.login.'.$id.']',
 				'email' => 'trim|required|valid_email|is_unique_without[user.email.'.$id.']',
 			))
-			->db_update_if_ok('user', array('login','email','name','active'), 'id='.$id, array('on_after_update' => function() {
+			->db_update_if_ok('user', array('login','email','name','active', 'birthday'), 'id='.$id, array('on_after_update' => function() {
 				common()->admin_wall_add(array('user updated: '.$_POST['login'].'', $id));
 			}))
 			->login()
 			->email()
 			->text('name')
+			->datetime_select('birthday', 'Дата рождения', array('no_time' => 1, 'placeholder' => 'день/месяц/год', 'value' => $a['birthday']?:''))
 			->active_box()
 			->row_start()
 				->save_and_back()

@@ -1071,7 +1071,8 @@ class yf_debug {
 			'auto_no_buttons' 	=> 1,
 			'pager_records_on_page' => 10000,
 			'hidden_map'		=> $params['hidden_map'],
-			'first_col_width'	=> $params['first_col_width'],
+// Temporary disabled, as somehow borwser renders table with width=100% if first col width provided, why???
+#			'first_col_width'	=> $params['first_col_width'],
 			'tr'				=> $params['tr'],
 			'td'				=> $params['td'],
 		))->auto();
