@@ -339,15 +339,13 @@ class yf_db_driver_mysql41 extends yf_db_driver {
 	/**
 	*/
 	function escape_key($data) {
-		$data = '`'.$data.'`';
-		return $data;
+		return '`'.$data.'`';
 	}
 
 	/**
 	*/
 	function escape_val($data) {
-		$data = '\''.$data.'\'';
-		return $data;
+		return '\''.$data.'\'';
 	}
 
 	/**

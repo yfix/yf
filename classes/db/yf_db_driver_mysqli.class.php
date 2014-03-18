@@ -376,16 +376,14 @@ if ($mysqli->multi_query($query)) {
 	* Enclose field names
 	*/
 	function escape_key($data) {
-		$data = '`'.$data.'`';
-		return $data;
+		return '`'.$data.'`';
 	}
 
 	/**
 	* Enclose field values
 	*/
 	function escape_val($data) {
-		$data = '\''.$data.'\'';
-		return $data;
+		return '\''.$data.'\'';
 	}
 
 	/**
