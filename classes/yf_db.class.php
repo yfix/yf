@@ -982,7 +982,12 @@ class yf_db {
 	*/
 	function limit($count, $offset = null) {
 		if (!$this->_connected && !$this->connect()) {
-			return false;
+			$sql = '';
+			if ($count > 0) {
+				$offset = ($offset > 0) ? $offset : 0;
+				$sql = 'LIMIT '.($offset ? $offset.', ' : ''). $count;
+			}
+			return $sql;
 		}
 		return $this->db->limit($count, $offset);
 	}
@@ -990,15 +995,15 @@ class yf_db {
 	/**
 	*/
 	function escape_key($data) {
-		if (!is_object($this->db)) {
-			return false;
-		}
 		if (is_array($data)) {
 			$func = __FUNCTION__;
 			foreach ((array)$data as $k => $v) {
 				$data[$k] = $this->$func($v);
 			}
 			return $data;
+		}
+		if (!is_object($this->db)) {
+			return '`'.$data.'`';
 		}
 		return $this->db->escape_key($data);
 	}
@@ -1006,15 +1011,15 @@ class yf_db {
 	/**
 	*/
 	function escape_val($data) {
-		if (!is_object($this->db)) {
-			return false;
-		}
 		if (is_array($data)) {
 			$func = __FUNCTION__;
 			foreach ((array)$data as $k => $v) {
 				$data[$k] = $this->$func($v);
 			}
 			return $data;
+		}
+		if (!is_object($this->db)) {
+			return '\''.$data.'\'';
 		}
 		return $this->db->escape_val($data);
 	}
