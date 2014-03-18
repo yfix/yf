@@ -846,7 +846,7 @@ class yf_db {
 	*/
 	function es($string) {
 		if (!$this->_connected && !$this->connect()) {
-			return false;
+			return $this->_mysql_escape_mimic($string);
 		}
 		// Helper method for passing here whole arrays as param
 		if (is_array($string)) {
@@ -1507,4 +1507,16 @@ class yf_db {
 		$sql = $this->insert_safe('sys_db_revisions', $to_insert, $only_sql = true);
 		$this->_add_shutdown_query($sql);
 	}
+
+	/**
+	*/
+	function _mysql_escape_mimic($inp) { 
+		if (is_array($inp)) {
+	        return array_map(array($this, __FUNCTION__), $inp);
+		}
+		if (!empty($inp) && is_string($inp)) {
+	        return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $inp);
+		}
+	    return $inp; 
+	}	
 }
