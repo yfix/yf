@@ -125,8 +125,8 @@ class yf_auth_admin {
 	* Process login
 	*/
 	function _do_login () {
-		$AUTH_LOGIN	= $_POST[$this->LOGIN_FIELD];
-		$AUTH_PSWD	= $_POST[$this->PSWD_FIELD];
+		$AUTH_LOGIN	= trim($_POST[$this->LOGIN_FIELD]);
+		$AUTH_PSWD	= trim($_POST[$this->PSWD_FIELD]);
 
 		if (empty($AUTH_LOGIN) || empty($AUTH_PSWD)) {
 			return false;
@@ -143,7 +143,6 @@ class yf_auth_admin {
 			}
 			return js_redirect($redirect_url);
 		}
-
 		$NEED_QUERY_DB = true;
 
 		$CUR_IP = common()->get_ip();
@@ -155,24 +154,13 @@ class yf_auth_admin {
 			}
 		}
 		if ($this->BLOCK_FAILED_LOGINS) {
-			// Get number of failed logins with such account for the last time perios
-			list($_fails_by_login) = db()->query_fetch(
-				'SELECT COUNT(*) AS `0` FROM '.db('log_admin_auth_fails').' 
-				WHERE time > '.(time() - $this->BLOCK_FAILED_TTL).' 
-					AND login="'._es($AUTH_LOGIN).'"'
-			);
-			// Get number of failed logins with such ip address for the last time perios
-			list($_fails_by_ip) = db()->query_fetch(
-				'SELECT COUNT(*) AS `0` FROM '.db('log_admin_auth_fails').' 
-				WHERE time > '.(time() - $this->BLOCK_FAILED_TTL).' 
-					AND ip="'._es(common()->get_ip()).'"'
-			);
+			$_fails_by_login = db()->get_one('SELECT COUNT(*) AS `0` FROM '.db('log_admin_auth_fails').' WHERE time > '.(time() - $this->BLOCK_FAILED_TTL).' AND login="'._es($AUTH_LOGIN).'"');
+			$_fails_by_ip = db()->get_one('SELECT COUNT(*) AS `0` FROM '.db('log_admin_auth_fails').' WHERE time > '.(time() - $this->BLOCK_FAILED_TTL).' AND ip="'._es(common()->get_ip()).'"');
 			if ($_fails_by_login >= 5 || $_fails_by_ip >= 10) {
 				$NEED_QUERY_DB = false;
 				trigger_error('AUTH ADMIN: Attempt to login as "'.$AUTH_LOGIN.'" blocked, fails_by_login: '.intval($_fails_by_login).', fails_by_ip: '.intval($_fails_by_ip), E_USER_WARNING);
 			}
 		}
-		// Try to get info from db
 		if ($NEED_QUERY_DB) {
 			$admin_info = db()->query_fetch('SELECT * FROM '.db('admin').' WHERE '.$this->LOGIN_FIELD.'="'._es($AUTH_LOGIN).'" AND `password`="'.md5(_es($AUTH_PSWD)).'" AND active="1"');
 		}
@@ -184,7 +172,6 @@ class yf_auth_admin {
 		if ($admin_info['id'] && $group_info['id']) {
 
 			ob_start();
-			// Do some logging operations here
 			if ($this->DO_LOG_LOGINS) {
 				_class('logs')->store_admin_auth($admin_info);
 			}
@@ -270,9 +257,7 @@ class yf_auth_admin {
 	* Process logout
 	*/
 	function _do_logout () {
-		// Execute custom code
 		$this->_exec_method_on_action('logout');
-		// Array of vars to handle
 		$admin_session_vars = array(
 			$this->VAR_ADMIN_ID,
 			$this->VAR_ADMIN_GROUP_ID,
@@ -294,7 +279,6 @@ class yf_auth_admin {
 		$main->ADMIN_INFO = &$main->_admin_info;
 
 		session_destroy();
-		// Redirect user
 		if (!empty($this->URL_AFTER_LOGOUT)) {
 			js_redirect($this->URL_AFTER_LOGOUT);
 		}
@@ -304,17 +288,14 @@ class yf_auth_admin {
 	* Execute user method after specified action
 	*/
 	function _exec_method_on_action($action = 'login') {
-		// Assign action callbacks
 		if ($action == 'login') {
 			$CALLBACKS = $this->EXEC_AFTER_LOGIN;
 		} elseif ($action == 'logout') {
 			$CALLBACKS = $this->EXEC_AFTER_LOGOUT;
 		}
-		// Quick check
 		if (empty($CALLBACKS)) {
 			return false;
 		}
-		// Do call custom method
 		foreach ((array)$CALLBACKS as $cur_method) {
 			if (is_callable($cur_method[0])) {
 				call_user_func_array($cur_method[0], $cur_method[1]);
