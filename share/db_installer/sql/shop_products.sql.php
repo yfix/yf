@@ -40,7 +40,7 @@ $data = '
   KEY `sold` (`sold`),
   KEY `active_cat_id` (`active`,`cat_id`),
   KEY `add_date` (`add_date`),
-  KEY `update_date` (`update_date`)
-  KEY `manufacturer_id` (`manufacturer_id`)
+  KEY `update_date` (`update_date`),
+  KEY `manufacturer_id` (`manufacturer_id`),
   KEY `supplier_id` (`supplier_id`)
 ';
