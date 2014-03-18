@@ -64,6 +64,7 @@ class yf_manage_shop_products{
 	/**
 	*/
 	function products_xls_export () {
+		ini_set("memory_limit","1024M");
 		if (module('manage_shop')->SUPPLIER_ID) {
 			$sql = 'SELECT `p`.`id`,`p`.`articul`,`p`.`name`,`p`.`price` FROM '.db('shop_products').' AS p
 					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
