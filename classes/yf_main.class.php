@@ -1527,6 +1527,20 @@ class yf_main {
 		if (!is_null($this->_server('HTTP_HOST'))) {
 			$this->_server('HTTP_HOST', strtolower(str_replace('..', '.', preg_replace('#[^0-9a-z\-\.]+#', '', trim( $this->_server('HTTP_HOST') )))));
 		}
+		if (!is_null($this->_server('REQUEST_URI'))) {
+			// Possible bug when apache sends full url into request_uri, like this: "http://test.dev/" instead of "/"
+			$p = parse_url($this->_server('REQUEST_URI'));
+			if (isset($p['scheme']) || isset($p['host'])) {
+				$this->_server('REQUEST_URI', ($p['path'] ?: '/'). ($p['query'] ? '?'.$p['query'] : ''));
+				if ($this->_server('QUERY_STRING') != $p['query']) {
+					$this->_server('QUERY_STRING', $p['query']);
+					parse_str($p['query'], $_get);
+					foreach ((array)$_get as $k => $v) {
+						$_GET[$k] = $v;
+					}
+				}
+			}
+		}
 		if (defined('DEV_MODE')) {
 			conf('DEV_MODE', DEV_MODE);
 		}
