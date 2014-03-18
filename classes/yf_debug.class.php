@@ -340,8 +340,8 @@ class yf_debug {
 				','	=> ', ', 
 			);
 			$sql = str_replace(array_keys($replace), array_values($replace), $sql);
-			$sql = preg_replace_callback('/([\s\t]+)('.preg_quote($db->DB_PREFIX, '/').'[a-z0-9_]+)/ims', function($m) use ($_this) {
-				return $m[1]. $_this->_admin_link('show_db_table', $m[2]);
+			$sql = preg_replace_callback('/([\s\t]+`?)('.preg_quote($db->DB_PREFIX, '/').'[a-z0-9_]+)(`?)/ims', function($m) use ($_this) {
+				return $m[1]. $_this->_admin_link('show_db_table', $m[2]). $m[3];
 			}, $sql);
 
 			$exec_time = round($log['time'], 4);
