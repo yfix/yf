@@ -2,29 +2,72 @@
 
 /**
 */
-class yf_manage_db_revisions {
+class yf_manage_revisions {
 
 	/**
 	*/
 	function show() {
-		return table('SELECT * FROM '.db('db_revisions'), array(
+		return table('SELECT * FROM '.db('shop_revisions'), array(
 				'filter' => $_SESSION[$_GET['object'].'__show'],
 				'filter_params' => array(
 					'user_id'	=> array('eq','user_id'),
 					'add_date'	=> array('like','date'),
-					'query_method' 	=> array('eq','query_method'),
-					'query_table' 	=> array('eq','query_table'),
+					'action' 	=> array('eq','action'),
+					'item_id' 	=> array('eq','item_id'),
 					'ip'		=> array('like', 'ip'),
 				),
 				'hide_empty' => 1,
 			))
-			->text('date')
+			->date('add_date', array('format' => '%d-%m-%Y', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('ip')	
-			->text('query_method')
-			->text('query_table')
-			->btn_view('', './?object=manage_db_revisions&action=details&id=%d')
+			->text('action')
+			->text('item_id')
+			->btn_view('', './?object=manage_revisions&action=details&id=%d')
 			;
+	}
+	
+	/**
+	*/	
+	function new_revision($function, $ids, $db_table){
+		if(empty($function) || empty($ids) || empty($db_table))
+			return false;
+		if (!is_array($ids) && intval($ids)) {
+			$ids = array(intval($ids));
+		}
+		$user_id = intval(main()->ADMIN_ID)?:intval($_GET['admin_id']);
+		$add_rev_date = time();
+		foreach((array)$ids as $id){
+			$data_stump = db()->query_fetch('SELECT * FROM '.db($db_table).' WHERE id='.$id);
+			$data_stump_json = json_encode($data_stump);
+			$check_equal_data = db()->get_one('SELECT data FROM '.db('shop_revisions').' WHERE item_id='.$id.' ORDER BY id DESC');
+			if($data_stump_json == $check_equal_data)
+				continue;
+			$insert = array(
+				'user_id'  => $user_id,
+				'add_date' => $add_rev_date,
+				'action'   => $function,
+				'item_id'  => $id,
+				'ip'	   => common()->get_ip(),
+				'data'     => $data_stump_json ? : '',
+			);
+			db()->insert_safe('shop_revisions', $insert);
+			$revisions_ids[] = db()->insert_id();
+		}
+		return $revision_ids;
+	}
+
+	/**
+	*/	
+	function check_revision($function, $id, $db_table){
+		if(empty($function) || empty($id) || empty($db_table))
+			return false;
+		if (!is_array($id) && intval($id)) {
+			$ids = array(intval($id));
+		}
+		$check_ids = db()->get_2d('SELECT id, item_id FROM '.db('shop_revisions').' WHERE item_id IN ('.implode(',',$ids).') AND action=\''.$function.'\'');
+		$ids = array_diff($ids, (array)$check_ids);
+		return $this->new_revision($function, $ids, $db_table);
 	}
 
 	/**

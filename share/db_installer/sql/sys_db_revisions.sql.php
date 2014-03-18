@@ -14,5 +14,7 @@ $data = '
 	`ip` char(15) NOT NULL,
 	`url` text NOT NULL,
 	`extra` longtext NOT NULL,
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	KEY `query_table` (`query_table`),
+	KEY `query_method` (`query_method`)
 ';
