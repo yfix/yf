@@ -107,23 +107,22 @@ class yf_db {
 	public $QUERY_REVISIONS			= false;
 	/** @var array List of tables inside current database */
 	public $_PARSED_TABLES			= array();
-	/** @var array */
-// TODO: glob(PROJECT_PATH.'share/db_installer/sql/sys_*.sql.php')
-// TODO: glob(PROJECT_PATH.'plugins/*/share/db_installer/sql/sys_*.sql.php')
-// TODO: glob(YF_PATH.'share/db_installer/sql/sys_*.sql.php')
-// TODO: glob(YF_PATH.'priority2/share/db_installer/sql/sys_*.sql.php')
-// TODO: glob(YF_PATH.'plugins/*/share/db_installer/sql/sys_*.sql.php')
-	public $_need_sys_prefix		= array(
-		'admin', 'admin_groups', 'admin_modules','banned_ips', 'block_rules', 'blocks', 'cache', 'cache_info', 'categories', 'category_items', 'code_source', 'conf', 'conf_items', 'core_servers',
-		'db_revisions', 'locale_langs', 'locale_translate', 'locale_user_tr', 'locale_vars', 'log_admin_auth', 'log_admin_auth_fails', 'log_admin_exec', 'log_auth', 'log_auth_fails', 'log_core_errors',
-		'log_emails', 'log_exec', 'log_img_resizes', 'log_redirects', 'log_ssh_action', 'log_tags', 'log_user_errors', 'log_webshell_action', 'menu_items', 'menus', 'online', 'revisions', 'sessions',
-		'settings', 'sites', 'skins', 'smilies', 'task_manager', 'templates', 'user_groups', 'user_modules',
-	);
+	/** @var array Filled automatically from generated file */
+	public $_need_sys_prefix		= array();
+
+	/**
+	*/
+	function _load_tables_with_sys_prefix() {
+		include YF_PATH. 'share/db_sys_prefix_tables.php';
+		$this->_need_sys_prefix = $data;
+		return (array)$data;
+	}
 
 	/**
 	* Constructor
 	*/
 	function __construct($db_type = '', $no_parse_tables = 0, $db_prefix = null, $db_replication_slave = null) {
+		$this->_load_tables_with_sys_prefix();
 		$this->_no_parse_tables = $no_parse_tables;
 		// Type/driver of database server
 		$this->DB_TYPE = !empty($db_type) ? $db_type : DB_TYPE;
