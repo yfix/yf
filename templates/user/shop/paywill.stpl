@@ -22,7 +22,7 @@
 					</div>
 					<h3 style="font: bold 15px Arial;margin-bottom: 6px;text-align: center;">Счет-фактура № {id}<br />от {date}</h3>
 					<div>
-						<p><b>ПЛАТЕЛЬЩИК:</b> <br /> {user_address}</p>
+						<p><b>ПЛАТЕЛЬЩИК:</b> <br /> {user_address}<br />Город: Запорожье</p>
 						{if("payment" ne "")}<p><b>ФОРМА ОПЛАТЫ:</b> {payment}</p>{/if}
 						<table style="border-collapse: collapse; border-bottom: 2px solid rgb(206, 206, 206);">
 							<tr style="background-color: rgb(206, 206, 206);border-bottom: 1px solid rgb(206, 206, 206);">
