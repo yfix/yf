@@ -181,7 +181,8 @@ class yf_debug {
 			'NO_GRAPHICS'		=> (int)main()->NO_GRAPHICS,
 			'OUTPUT_CACHING'	=> (int)main()->OUTPUT_CACHING,
 			'NO_CACHE_HEADERS'	=> (int)main()->NO_CACHE_HEADERS,
-			'HTTP_OUT_HEADERS'	=> _prepare_html(headers_list()),
+#			'HTTP_IN_HEADERS'	=> function_exists('apache_request_headers') ? apache_request_headers() : '', // From PHP5.4+ it works also with fastcgi, not only apache
+			'HTTP_OUT_HEADERS'	=> headers_list(),
 		);
 		foreach ((array)$this->_get_debug_data('_DEBUG_META') as $k => $v) {
 			$data['yf']['META_'.strtoupper($k)] = $v;

@@ -7,6 +7,7 @@ class yf_manage_shop_import {
 			'epicentr' => 'epicentr',
 			'talisman' => 'talisman',
 			'fortuna' => 'fortuna',
+			'zakaz_ua' => 'zakaz_ua [update only]',
 		);
 		$this->_modes = array(
 			'validate' => 'validate',
@@ -127,6 +128,23 @@ class yf_manage_shop_import {
 		return $this->table_format($result);
 	}
 	
+	function process_items_zakaz_ua($items, $mode = 'process') { // process/validate
+		$supplier_id = "0,104,105";
+		$products = $this->get_products_by_supplier($supplier_id,"`id`,`articul`");
+		foreach ($items as $item) {
+			if (trim($item[0])=='' || intval($item[0]) == 0) continue;
+			$v = $this->format_data($item[1],$item[0],$item[3],$supplier_id);
+			if (!isset($products[$v['articul']])) {
+				$v['is_new'] = 'new';
+				// note: no new items must be passed here(!)
+			} else {
+				$v['is_new'] = 'upd';									
+				if ($mode == 'process') db()->update(db('shop_products'), _es($v),"`supplier_id`='".$supplier_id."' AND `id`='".$v['articul']."'");
+			}
+			$result[] = $this->add_result($v);
+		}
+		return $this->table_format($result);
+	}
 	
 	
 	function table_format($result) {
@@ -144,8 +162,8 @@ class yf_manage_shop_import {
 		))->auto();		
 	}
 	
-	function get_products_by_supplier($supplier_id) {
-		return db()->get_2d("SELECT `articul`,`id` FROM `".db('shop_products')."` WHERE `supplier_id`=".$supplier_id);
+	function get_products_by_supplier($supplier_id, $rows = "`articul`,`id`") {
+		return db()->get_2d("SELECT {$rows} FROM `".db('shop_products')."` WHERE `supplier_id` IN ({$supplier_id})");
 	}
 	
 	function add_result($v) {
@@ -162,6 +180,7 @@ class yf_manage_shop_import {
 			'name' => trim($name),
 			'articul' => trim($articul),
 			'price' => number_format((double)$price, 2, '.', ''),
+			'price_raw' => number_format((double)$price, 2, '.', ''),
 			'url' => common()->_propose_url_from_name(trim($name)),
 			'supplier_id' => $supplier_id,
 			'status' => 1,

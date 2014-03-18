@@ -40,6 +40,10 @@ class yf_manage_shop {
 	);
 	/** @var @conf_skip */
 	public $_statuses = array();
+	public $_products_statuses = array(
+		0	=> 'standard',
+		1	=> 'imported',
+	);
 	/** @var Company info */
 	public $COMPANY_INFO = array(
 		'company_name'		=> 'Company Name',
@@ -138,6 +142,10 @@ class yf_manage_shop {
 	}
 
 	function products() {
+		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
+	}
+
+	function products_xls_export() {
 		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
 	}
 
