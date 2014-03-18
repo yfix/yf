@@ -149,10 +149,6 @@ class yf_db {
 		if (defined('DEBUG_MODE') && DEBUG_MODE) {
 			$GLOBALS['DEBUG']['db_instances_trace'][$debug_index] = $this->_trace_string();
 		}
-		// Compatibility with standalone mode (when main() instance is not present)
-		if (!is_object($GLOBALS['main'])) {
-			$GLOBALS['main'] = new StdClass();
-		}
 	}
 
 	/**
@@ -168,15 +164,11 @@ class yf_db {
 	*/
 	function _init() {
 		// Perform auto-connection to db if needed
-		if ($this->AUTO_CONNECT || $GLOBALS['main']->type == 'admin') {
+		if ($this->AUTO_CONNECT || MAIN_TYPE == 'admin') {
 			$this->connect();
 		}
 		$this->_set_debug_items();
-		// Put all table names into constants
-#		if (!$this->_no_parse_tables) {
-#			$this->_parse_tables();
-#		}
-		if ($GLOBALS['main']->CONSOLE_MODE) {
+		if (main()->CONSOLE_MODE) {
 			$this->enable_silent_mode();
 		}
 		// Set shutdown function
@@ -200,15 +192,7 @@ class yf_db {
 			return $this->_connected;
 		}
 		$this->_connect_start_time = microtime(true);
-		// Use standard main class method (if exists)
-		if (is_object($GLOBALS['main']) && $GLOBALS['main']->type) {
-			// Get driver class name
-			$driver_class_name = $GLOBALS['main']->load_class_file('db_driver_'. $this->DB_TYPE, $this->DB_DRIVERS_DIR);
-		} else {
-			$driver_class_name = 'yf_'. 'db_driver_'. $this->DB_TYPE;
-			$db_driver_path = (defined('YF_PATH') ? YF_PATH: INCLUDE_PATH). $this->DB_DRIVERS_DIR. $driver_class_name. '.class.php';
-			include_once ($db_driver_path);
-		}
+		$driver_class_name = main()->load_class_file('db_driver_'. $this->DB_TYPE, $this->DB_DRIVERS_DIR);
 		$this->DB_HOST		= !empty($db_host)		? $db_host		: DB_HOST;
 		$this->DB_USER		= !empty($db_user)		? $db_user		: DB_USER;
 		$this->DB_PSWD		= !is_null($db_pswd)	? $db_pswd		: (defined('DB_PSWD') ? DB_PSWD : '');
@@ -1092,7 +1076,7 @@ class yf_db {
 	*/
 	function _execute_shutdown_queries() {
 		// Restore startup working directory
-		@chdir($GLOBALS['main']->_CWD);
+		@chdir(main()->_CWD);
 
 		if (!$this->USE_SHUTDOWN_QUERIES || $this->_shutdown_executed) {
 			return false;
@@ -1116,7 +1100,7 @@ class yf_db {
 	*/
 	function _log_queries () {
 		// Restore startup working directory
-		@chdir($GLOBALS['main']->_CWD);
+		@chdir(main()->_CWD);
 
 		if (!isset($this->_queries_logged)) {
 			$this->_queries_logged = true;
@@ -1127,71 +1111,9 @@ class yf_db {
 	}
 
 	/**
-	* Function return resource ID of the query
-	*/
-	function _parse_tables() {
-/*
-		if ($this->_already_parsed_tables) {
-			return true;
-		}
-		// Do connect (if not done yet)
-		if (!is_object($this->db)) {
-			$this->connect();
-		}
-		$included = false;
-		$use_defines = true;
-		// Check for first/primary connection
-		if (count($GLOBALS['_debug_db_instances']) > 1) {
-			$use_defines = false;
-		}
-// TODO: use cache() class/function if available
-		if (empty($included)) {
-			// Do get current database tables array
-			$tmp_tables = $this->meta_tables();
-			// Clean up tables from system prefixes
-			$this->_PARSED_TABLES = array();
-			foreach ((array)$tmp_tables as $table_name) {
-				$short_name = substr(str_replace('sys_','',$table_name), strlen($this->DB_PREFIX));
-				$this->_PARSED_TABLES[$short_name] = $table_name;
-				$tables['dbt_'.$short_name] = $table_name;
-			}
-			ksort($this->_PARSED_TABLES);
-			// If non-empty - apply override of table names (useful for pre-release or development on same database as production)
-			if (isset($GLOBALS['_OVERRIDES']['DB_TABLE_NAMES'][$this->DB_NAME])) {
-				$override_table_names = $GLOBALS['_OVERRIDES']['DB_TABLE_NAMES'][$this->DB_NAME];
-				foreach ((array)$override_table_names as $cur_name => $use_name) {
-					$this->_PARSED_TABLES[$cur_name] = $use_name;
-				}
-			}
-			if ($use_defines) {
-				foreach ((array)$tables as $k => $v) {
-					define($k, $v);
-				}
-			}
-			// Put tables names to cache
-			if ($use_defines && !empty($this->CACHE_TABLE_NAMES)) {
-				// Do create folder for cache (if not exists)
-				if (!file_exists(dirname($cache_path))) {
-					mkdir(dirname($cache_path), 0777);
-				}
-				foreach ((array)$tables as $k => $v) {
-					$file_text .= 'define(\''.$k.'\',\''.$v.'\');'.PHP_EOL;
-				}
-				file_put_contents($cache_path, '<?php'.PHP_EOL.$file_text.'?>');
-			}
-		}
-		$this->_already_parsed_tables = true;
-*/
-	}
-
-	/**
 	* Get real table name from its short variant
 	*/
 	function _real_name ($name) {
-#		if (!$this->_already_parsed_tables) {
-#			$this->_parse_tables();
-#		}
-#		return isset($this->_PARSED_TABLES[$name]) ? $this->_PARSED_TABLES[$name] : $this->DB_PREFIX. (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
 		return $this->DB_PREFIX. (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
 	}
 
@@ -1209,7 +1131,6 @@ class yf_db {
 		return INCLUDE_PATH. $file_name;
 	}
 
-// TODO: cover this method with unit tests and simplify/remove constants/use PARSED TABLES
 	/**
 	* Try to fix table name
 	*/
@@ -1217,9 +1138,6 @@ class yf_db {
 		if (!strlen($name)) {
 			return '';
 		}
-#		if (!$this->_already_parsed_tables) {
-#			$this->_parse_tables();
-#		}
 		if (substr($name, 0, strlen('dbt_')) == 'dbt_') {
 			$name = substr($name, strlen('dbt_'));
 		}
@@ -1228,19 +1146,17 @@ class yf_db {
 		if ($this->DB_PREFIX && substr($name, 0, strlen($this->DB_PREFIX)) == $this->DB_PREFIX) {
 			$name_wo_db_prefix = substr($name, strlen($this->DB_PREFIX));
 		}
-#		if (isset($this->_PARSED_TABLES[$name])) {
-#			$n2 = $this->_PARSED_TABLES[$name];
-#		} elseif (isset($this->_PARSED_TABLES[$name_wo_db_prefix])) {
-#			$n2 = $this->_PARSED_TABLES[$name_wo_db_prefix];
-#		} else {
-#			if ($name_wo_db_prefix != $name) {
-// TODO: get _need_sys_prefix from db_installer files
-				$n2 = $this->DB_PREFIX. (in_array($name_wo_db_prefix, $this->_need_sys_prefix) ? 'sys_' : ''). $name_wo_db_prefix;
-#			} else {
-#				$n2 = $this->DB_PREFIX. $name_wo_db_prefix;
-#			}
-#		}
-		return $n2;
+/*
+// TODO: implement overrides here
+			// If non-empty - apply override of table names (useful for pre-release or development on same database as production)
+			if (isset($GLOBALS['_OVERRIDES']['DB_TABLE_NAMES'][$this->DB_NAME])) {
+				$override_table_names = $GLOBALS['_OVERRIDES']['DB_TABLE_NAMES'][$this->DB_NAME];
+				foreach ((array)$override_table_names as $cur_name => $use_name) {
+					$this->_PARSED_TABLES[$cur_name] = $use_name;
+				}
+			}
+*/
+		return $this->DB_PREFIX. (in_array($name_wo_db_prefix, $this->_need_sys_prefix) ? 'sys_' : ''). $name_wo_db_prefix;
 	}
 
 	/**
@@ -1511,6 +1427,29 @@ class yf_db {
 		);
 		$sql = $this->insert_safe('sys_db_revisions', $to_insert, $only_sql = true);
 		$this->_add_shutdown_query($sql);
+	}
+
+	/**
+	* !!! DEPRECATED !!! and should not be used from now on.
+	*/
+	function _parse_tables() {
+		if ($this->_already_parsed_tables) {
+			return true;
+		}
+		if (!is_object($this->db)) {
+			$this->connect();
+		}
+		if (empty($included)) {
+			$tmp_tables = $this->meta_tables();
+			// Clean up tables from system prefixes
+			$this->_PARSED_TABLES = array();
+			foreach ((array)$tmp_tables as $table_name) {
+				$short_name = substr(str_replace('sys_','',$table_name), strlen($this->DB_PREFIX));
+				$this->_PARSED_TABLES[$short_name] = $table_name;
+			}
+			ksort($this->_PARSED_TABLES);
+		}
+		$this->_already_parsed_tables = true;
 	}
 
 	/**
