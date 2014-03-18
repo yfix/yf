@@ -26,7 +26,10 @@ class yf_form2_datetime {
 				} elseif (isset($_this->_params['selected'])) {
 					$extra['value'] = $_this->_params['selected'][$extra['name']];
 				}
+			}else{
+				$extra['value'] = date("d-m-Y", $extra['value']);
 			}
+
 			$format = array();
 			if ($extra['no_date']!=1) $format[] = "MM/dd/yyyy";
 			if ($extra['no_time']!=1) $format[] = "HH:mm:ss";
@@ -44,7 +47,7 @@ class yf_form2_datetime {
 			_class('core_js')->add("<script type=\"text/javascript\">
   $(function() {
     $('#{$extra['name']}').datepicker({
-      language: 'ru', format: 'dd/mm/yyyy',".($extra['no_time']==1 ? "pickTime: false," : "")."".($extra['no_date']==1 ? "pickDate: false," : "")."
+      language: 'ru', format: 'dd-mm-yyyy',".($extra['no_time']==1 ? "pickTime: false," : "")."".($extra['no_date']==1 ? "pickDate: false," : "")."
     });
   });
 </script>", false);
