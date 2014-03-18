@@ -99,9 +99,7 @@ class manage_shop_manufacturers{
 					'meta_desc'     => $_POST['meta_desc'],
 					'sort_order'    => intval($_POST['sort_order']),
 				);
-//				module('manage_revisions')->check_revision(__FUNCTION__, $_GET['id'], 'shop_manufacturers');
 				db()->update('shop_manufacturers', db()->es($sql_array), 'id='.$_GET['id']);
-				module('manage_revisions')->new_revision(__FUNCTION__, $_GET['id'], 'shop_manufacturers');
 				common()->admin_wall_add(array('shop manufacturer updated: '.$_POST['name'], $_GET['id']));
 				if (!empty($_FILES)) {
 					$man_id = $_GET['id'];

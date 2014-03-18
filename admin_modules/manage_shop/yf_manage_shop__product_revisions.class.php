@@ -75,8 +75,7 @@ class yf_manage_shop__product_revisions {
 	function _add_revision($type, $action, $ids = false) {
 		if (empty($ids) || empty($action) || empty($type)) {
 			return false;
-		}
-		if (!is_array($ids) && intval($ids)) {
+		} elseif (!is_array($ids) && intval($ids)) {
 			$ids = array(intval($ids));
 		}
 
