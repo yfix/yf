@@ -114,9 +114,10 @@ class yf_db {
 // TODO: glob(YF_PATH.'priority2/share/db_installer/sql/sys_*.sql.php')
 // TODO: glob(YF_PATH.'plugins/*/share/db_installer/sql/sys_*.sql.php')
 	public $_need_sys_prefix		= array(
-		'admin', 'admin_groups', 'admin_modules', 'block_rules', 'blocks', 'categories', 'category_items', 'conf', 'core_servers', 'custom_bbcode',
-		'custom_replace_tags', 'custom_replace_words', 'locale_langs', 'locale_translate', 'locale_vars', 'log_admin_auth', 'log_admin_auth_fails', 'log_auth',
-		'log_auth_fails', 'log_core_errors', 'log_emails', 'log_img_resizes', 'menu_items', 'menus', 'online', 'settings', 'sites', 'smilies', 'user_groups', 'user_modules',
+		'admin', 'admin_groups', 'admin_modules','banned_ips', 'block_rules', 'blocks', 'cache', 'cache_info', 'categories', 'category_items', 'code_source', 'conf', 'conf_items', 'core_servers',
+		'db_revisions', 'locale_langs', 'locale_translate', 'locale_user_tr', 'locale_vars', 'log_admin_auth', 'log_admin_auth_fails', 'log_admin_exec', 'log_auth', 'log_auth_fails', 'log_core_errors',
+		'log_emails', 'log_exec', 'log_img_resizes', 'log_redirects', 'log_ssh_action', 'log_tags', 'log_user_errors', 'log_webshell_action', 'menu_items', 'menus', 'online', 'revisions', 'sessions',
+		'settings', 'sites', 'skins', 'smilies', 'task_manager', 'templates', 'user_groups', 'user_modules',
 	);
 
 	/**
@@ -172,9 +173,9 @@ class yf_db {
 		}
 		$this->_set_debug_items();
 		// Put all table names into constants
-		if (!$this->_no_parse_tables) {
-			$this->_parse_tables();
-		}
+#		if (!$this->_no_parse_tables) {
+#			$this->_parse_tables();
+#		}
 		if ($GLOBALS['main']->CONSOLE_MODE) {
 			$this->enable_silent_mode();
 		}
@@ -1124,6 +1125,7 @@ class yf_db {
 	* Function return resource ID of the query
 	*/
 	function _parse_tables() {
+/*
 		if ($this->_already_parsed_tables) {
 			return true;
 		}
@@ -1172,19 +1174,20 @@ class yf_db {
 				}
 				file_put_contents($cache_path, '<?php'.PHP_EOL.$file_text.'?>');
 			}
-
 		}
 		$this->_already_parsed_tables = true;
+*/
 	}
 
 	/**
 	* Get real table name from its short variant
 	*/
 	function _real_name ($name) {
-		if (!$this->_already_parsed_tables) {
-			$this->_parse_tables();
-		}
-		return isset($this->_PARSED_TABLES[$name]) ? $this->_PARSED_TABLES[$name] : $this->DB_PREFIX. (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
+#		if (!$this->_already_parsed_tables) {
+#			$this->_parse_tables();
+#		}
+#		return isset($this->_PARSED_TABLES[$name]) ? $this->_PARSED_TABLES[$name] : $this->DB_PREFIX. (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
+		return $this->DB_PREFIX. (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
 	}
 
 	/**
@@ -1209,9 +1212,9 @@ class yf_db {
 		if (!strlen($name)) {
 			return '';
 		}
-		if (!$this->_already_parsed_tables) {
-			$this->_parse_tables();
-		}
+#		if (!$this->_already_parsed_tables) {
+#			$this->_parse_tables();
+#		}
 		if (substr($name, 0, strlen('dbt_')) == 'dbt_') {
 			$name = substr($name, strlen('dbt_'));
 		}
@@ -1220,18 +1223,18 @@ class yf_db {
 		if ($this->DB_PREFIX && substr($name, 0, strlen($this->DB_PREFIX)) == $this->DB_PREFIX) {
 			$name_wo_db_prefix = substr($name, strlen($this->DB_PREFIX));
 		}
-		if (isset($this->_PARSED_TABLES[$name])) {
-			$n2 = $this->_PARSED_TABLES[$name];
-		} elseif (isset($this->_PARSED_TABLES[$name_wo_db_prefix])) {
-			$n2 = $this->_PARSED_TABLES[$name_wo_db_prefix];
-		} else {
-			if ($name_wo_db_prefix != $name) {
+#		if (isset($this->_PARSED_TABLES[$name])) {
+#			$n2 = $this->_PARSED_TABLES[$name];
+#		} elseif (isset($this->_PARSED_TABLES[$name_wo_db_prefix])) {
+#			$n2 = $this->_PARSED_TABLES[$name_wo_db_prefix];
+#		} else {
+#			if ($name_wo_db_prefix != $name) {
 // TODO: get _need_sys_prefix from db_installer files
 				$n2 = $this->DB_PREFIX. (in_array($name_wo_db_prefix, $this->_need_sys_prefix) ? 'sys_' : ''). $name_wo_db_prefix;
-			} else {
-				$n2 = $this->DB_PREFIX. $name_wo_db_prefix;
-			}
-		}
+#			} else {
+#				$n2 = $this->DB_PREFIX. $name_wo_db_prefix;
+#			}
+#		}
 		return $n2;
 	}
 
