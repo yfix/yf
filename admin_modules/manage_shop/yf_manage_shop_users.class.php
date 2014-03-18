@@ -85,19 +85,23 @@ class yf_manage_shop_users{
 		}
 		$validate_rules = array(
 			'name'		=> array( 'trim|required' ),
-			'email'		=> array( 'trim|required|valid_email' ),
+			'email'		=> array( 'trim|valid_email' ),
 			'phone'		=> array( 'trim|required' ),
 			'address'	=> array( 'trim|required' ),
 		);
 		$A['redirect_link'] = './?object='.$_GET['object'].'&action=users';
-		
 		return form($A)
 			->validate($validate_rules)
-			->db_update_if_ok('user', array('name','phone','address'), $_GET['id'])
+			->db_update_if_ok('user', array('name','phone','address','birthday'), $_GET['id'], array(
+				'on_before_update' =>  function(&$data, $table, $fields) { 
+					$data['birthday'] = strtotime($data['birthday']); 
+				}
+			))
 			->text('name')
 			->email('email')
 			->text('phone')
 			->text('address')
+			->datetime_select('birthday', 'Дата рождения', array('no_time' => 1, 'placeholder' => 'день-месяц-год', 'value' => $A['birthday']?:''))
 			->save();
 	}
 

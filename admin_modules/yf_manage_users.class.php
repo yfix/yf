@@ -72,7 +72,6 @@ class yf_manage_users {
 			->login()
 			->email()
 			->text('name')
-			->datetime_select('birthday', 'Дата рождения', array('no_time' => 1, 'placeholder' => 'день/месяц/год', 'value' => $a['birthday']?:''))
 			->active_box()
 			->row_start()
 				->save_and_back()
