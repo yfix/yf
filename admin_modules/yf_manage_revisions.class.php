@@ -11,7 +11,7 @@ class yf_manage_revisions {
 				'filter' => $_SESSION[$_GET['object'].'__show'],
 				'filter_params' => array(
 					'user_id'	=> array('eq','user_id'),
-					'add_date'	=> array('like','date'),
+					'add_date'	=> array('dt_between','add_date'),
 					'action' 	=> array('eq','action'),
 					'item_id' 	=> array('eq','item_id'),
 					'ip'		=> array('like', 'ip'),
@@ -49,6 +49,7 @@ class yf_manage_revisions {
 				'action'   => $function,
 				'item_id'  => $id,
 				'ip'	   => common()->get_ip(),
+//				'table'		=> $db_table,
 				'data'     => $data_stump_json ? : '',
 			);
 			db()->insert_safe('shop_revisions', $insert);
@@ -73,35 +74,35 @@ class yf_manage_revisions {
 	/**
 	*/
 	function details(){
-		if (empty($_GET['id'])) {
-			return _e('Empty revision id');
-		}
-		$sql = 'SELECT * FROM '.db('db_revisions').' WHERE id='.intval($_GET['id']);
+		$sql = 'SELECT * FROM '.db('shop_revisions').' WHERE id='.intval($_GET['id']);
 		$a = db()->get($sql);
-		if (empty($a['id'])) {
+		if (empty($a)) {
 			return _e('Revision not found');
 		}
 		return form($a, array(
-				'dd_mode' => 1,
-			))
-			->admin_info('user_id')
-			->info_date('date', array('format' => 'full'))
-			->info('query_table')
-			->info('query_method')
-			->info('ip')
-			->info('url')
-			->tab_start('new data')
-				->func('data_new', function($extra, $r, $_this) {
-					return '<pre>'.var_export(json_decode($r['data_new'], true), 1).'</pre>';
-				})
-			->tab_end()
-			->tab_start('trace')
-				->func('extra', function($extra, $r, $_this) {
-					return '<pre>'.var_export(json_decode($r['extra'], true), 1).'</pre>';
-				})
-			->tab_end()
+			'dd_mode' => 1,
+		))
+		->link('Revisions list','./?object=manage_revisions')
+		->admin_info('user_id')
+		->info_date('add_date', array('format' => 'full'))
+		->info('action')
+		->link('Activate new version', './?object=manage_revisions&action=rollback_revision&id='.$a['id'])
+		->tab_start('View_difference')
+			->func('data', function($extra, $r, $_this) {
+				$origin = json_decode($r[$extra['name']], true);
+				$before = db()->get('SELECT * FROM '.db('shop_revisions').' WHERE id<'.$r['id'].' AND item_id='.$r['item_id'].' ORDER BY id DESC' );
+				$before = json_decode($before[$extra['name']], true);
+				$origin = var_export($origin, true);
+				$before = var_export($before, true);
+				return _class('diff')->get_diff($before, $origin);
+			})
+		->tab_end()
+		->tab_start('New_version')
+			->func('data', function($extra, $r, $_this) {
+				return '<pre>'.var_export(json_decode($r[$extra['name']], true), 1).'</pre>';
+			})
+		->tab_end()
 		;
-
 	}
 
 	/**
@@ -135,21 +136,19 @@ class yf_manage_revisions {
 		);
 		$filters = array(
 			'show'	=> function($filter_name, $replace) {
-				$fields = array('id','data','query_method','query_table','ip', 'user_id');
+				$fields = array('id','add_date','action','item_id','ip', 'user_id');
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
-				$methods = db()->get_2d('SELECT DISTINCT query_method FROM '.db('db_revisions'));
-				$method_fields = array_combine($methods, $methods);
-				$tables = db()->get_2d('SELECT DISTINCT query_table FROM '.db('db_revisions'));
-				$table_fields = array_combine($tables, $tables);
+				$action = db()->get_2d('SELECT DISTINCT action FROM '.db('shop_revisions'));
+				$action = array_combine($action, $action );
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
-					->text('add_date')
-					->text('user_id')
+					->datetime_select('add_date')
+					->datetime_select('add_date__and')
+					->text('user_id', 'Админ')
 					->text('ip')
-					->select_box('query_method', $method_fields, array('no_translate' => 1, 'show_text' => 1))
-					->select_box('query_table', $table_fields, array('no_translate' => 1, 'show_text' => 1))
-					->select_box('order_by', $order_fields, array('show_text' => 1));
+					->select_box('action', $action, array('no_translate' => 1, 'show_text' => 1))
+					->select_box('order_by', $order_fields, array('no_translate' => 1,'show_text' => 1));
 			},
 		);
 		$action = $_GET['action'];
@@ -159,6 +158,64 @@ class yf_manage_revisions {
 				->save_and_clear();
 		}
 		return false;
+	}
+
+	/**
+	*/
+	function _hook_side_column () {
+		$rev = db()->get('SELECT * FROM '.db('shop_revisions').' WHERE id='.intval($_GET['id']));
+		if (!$rev) {
+			return false;
+		}
+		$sql = 'SELECT * FROM '.db('shop_revisions').' WHERE item_id='.intval($rev['item_id']).' AND action !=\'\' ORDER BY id DESC';
+		return table($sql, array(
+				'caption' => t('Product revisions'),
+				'no_records_html' => '',
+				'tr' => array(
+					$rev['id'] => array('class' => 'success'),
+				),
+				'pager_records_on_page' => 10,
+				'btn_no_text'	=> 1,
+				'no_header'	=> 1,
+			))
+			->date('add_date', array('format' => '%d/%m/%Y', 'nowrap' => 1))
+			->admin('user_id', array('desc' => 'admin'))
+			->text('action')
+			->btn_view('', './?object=manage_revisions&action=details&id=%d')
+		;
+	}
+
+	/**
+	*/
+	function rollback_revision(){
+/*
+		$_GET['id'] = intval($_GET['id']);
+		$revision_data = db()->get('SELECT * FROM '.db('shop_revisions').' WHERE id='.$_GET['id']);
+		if (empty($revision_data)) {
+			return _e('Revision not found');
+		}
+		if(empty($revision_data['table'])){
+			return _e('Revision failed');
+		}
+		$data_stamp = json_decode($revision_data['data'], true);
+		$check_db_row = db()->get('SELECT * FROM '.db($revision_data['table']).' WHERE id='.$revision_data['id']);
+		db()->begin();
+		
+		if($data_stamp){
+			if($check_db_row){
+				db()->update_safe(db($revision_data['table']), $data_stamp, 'id ='.$revision_data['id']);
+			}else{
+				db()->insert_safe(db($revision_data['table']), $data_stamp);
+			}
+		}else{
+			db()->query('DELETE FROM '.db($revision_data['table']).' WHERE id ='.$revision_data['id']);
+		}
+		$this->new_revision($revision_data['action'], $revision_data['item_id'], $revision_data['table']);
+		db()->commit();
+		common()->message_success("Revision retrieved");
+		common()->admin_wall_add(array('Rollback common revision: '.$_GET['id'], $_GET['id']));
+		return js_redirect('./?object=manage_revisions&action=details&id='.$_GET['id']);
+*/
 	}
 	
 }
