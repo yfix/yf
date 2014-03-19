@@ -2,7 +2,7 @@
 
 /**
 * Common admin methods hidden by simple api
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -124,7 +124,8 @@ class yf_admin_methods {
 				if (is_callable($params['on_after_update'])) {
 					$params['on_after_update']($sql);
 				}
-				return js_redirect('./?object='.$_GET['object'].'&action=edit&id='.urlencode($_GET['id']). $params['links_add']);
+				$form_action = $params['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.urlencode($_GET['id']). $params['links_add'];
+				return js_redirect( $form_action );
 			} else {
 				if (is_callable($params['on_error'])) {
 					$params['on_error']();
