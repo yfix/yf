@@ -416,12 +416,6 @@ class yf_db {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
 		}
-		if (!$this->_connected && !$this->connect()) {
-			return false;
-		}
-		if (!is_object($this->db)) {
-			return false;
-		}
 		$table = $this->_fix_table_name($table);
 		if (!strlen($table)) {
 			return false;
@@ -521,12 +515,6 @@ class yf_db {
 	*/
 	function update($table, $data, $where, $only_sql = false) {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
-			return false;
-		}
-		if (!$this->_connected && !$this->connect()) {
-			return false;
-		}
-		if (!is_object($this->db)) {
 			return false;
 		}
 		$table = $this->_fix_table_name($table);
