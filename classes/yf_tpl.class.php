@@ -367,20 +367,6 @@ class yf_tpl {
 	}
 
 	/**
-	* Wrapper to parse given template string
-	*/
-	function parse_string($string = '', $replace = array(), $name = '', $params = array()) {
-		if (!strlen($string)) {
-			$string = ' ';
-		}
-		if (!$name) {
-			$name = 'auto__'.abs(crc32($string));
-		}
-		$params['string'] = $string;
-		return $this->parse($name, $replace, $params);
-	}
-
-	/**
 	* Simple template parser (*.stpl)
 	*/
 	function parse($name, $replace = array(), $params = array()) {
@@ -426,6 +412,27 @@ class yf_tpl {
 	}
 
 	/**
+	* Wrapper to parse given template string
+	*/
+	function parse_string($string = '', $replace = array(), $name = '', $params = array()) {
+		if (!strlen($string)) {
+			$string = ' ';
+		}
+		if (!$name) {
+			$name = 'auto__'.abs(crc32($string));
+		}
+		$params['string'] = $string;
+		return $this->parse($name, $replace, $params);
+	}
+
+	/**
+	* Wrapper on parse(), silently failing if template not exists
+	*/
+	function parse_if_exists($name, $replace = array(), $params = array()) {
+		return $this->exists($name) ? $this->parse($name, $replace, $params) : '';
+	}
+
+	/**
 	*/
 	function _parse_get_user_errors($name, $err) {
 		if (isset($err)) {
@@ -467,17 +474,10 @@ class yf_tpl {
 	}
 
 	/**
+	* Alias
 	*/
-	function _process_clear_unused($string, $replace = array(), $name = '') {
-		// If content need to be cleaned from unused tags - do that
-		return preg_replace('/\{[\w_]+\}/i', '', $string);
-	}
-
-	/**
-	*/
-	function _process_eval_string($string, $replace = array(), $name = '') {
-		eval('$string = "'.str_replace('"', '\"', $string).'";');
-		return $string;
+	function exists ($stpl_name = '', $get_from_db = false) {
+		return (bool)$this->_stpl_exists($stpl_name, $get_from_db);
 	}
 
 	/**
@@ -485,13 +485,6 @@ class yf_tpl {
 	*/
 	function _stpl_exists ($stpl_name = '', $get_from_db = false) {
 		return (bool)$this->_get_template_file($stpl_name, $get_from_db, 1);
-	}
-
-	/**
-	* Alias
-	*/
-	function exists ($stpl_name = '', $get_from_db = false) {
-		return (bool)$this->_stpl_exists($stpl_name, $get_from_db);
 	}
 
 	/**
@@ -715,6 +708,20 @@ class yf_tpl {
 			cache()->put($CACHE_NAME, $stpls_paths);
 		}
 		$this->_stpls_paths_cache = $stpls_paths;
+	}
+
+	/**
+	*/
+	function _process_clear_unused($string, $replace = array(), $name = '') {
+		// If content need to be cleaned from unused tags - do that
+		return preg_replace('/\{[\w_]+\}/i', '', $string);
+	}
+
+	/**
+	*/
+	function _process_eval_string($string, $replace = array(), $name = '') {
+		eval('$string = "'.str_replace('"', '\"', $string).'";');
+		return $string;
 	}
 
 	/**
