@@ -196,9 +196,12 @@ class yf_manage_shop_orders{
 			);
 			$price_total += $price_item;
 		}
-		$_class_discount = _class( '_shop_discount', 'modules/shop/' );
-		$discount        = $order_info[ 'discount' ];
-		$discount_price  = $_class_discount->calc_discount_global( $price_total, $discount );
+		$discount = $order_info[ 'discount' ];
+		// $_class_discount = _class( '_shop_discount', 'modules/shop/' );
+		// $discount_price  = $_class_discount->calc_discount_global( $price_total, $discount );
+		$_class_price = _class( '_shop_price', 'modules/shop/' );
+		$discount_price = $_class_price->apply_price( $price_total, $discount );
+		$discount_price -= $price_total;
 		$total_price     = (float)$order_info['total_sum'];
 		$replace = my_array_merge($replace, _prepare_html($order_info));
 		$replace = my_array_merge($replace, array(
@@ -446,8 +449,12 @@ class yf_manage_shop_orders{
 		}
 
 		// discount
-		$_class_discount = _class( '_shop_discount', 'modules/shop/' );
-		$discount        = $_class_discount->calc_discount_global( $price_total, $order_info[ 'discount' ] );
+		$discount = $order_info[ 'discount' ];
+		// $_class_discount = _class( '_shop_discount', 'modules/shop/' );
+		// $discount        = $_class_discount->calc_discount_global( $price_total, $discount );
+		$_class_price = _class( '_shop_price', 'modules/shop/' );
+		$discount_price = $_class_price->apply_price( $price_total, $discount );
+		$discount_price -= $price_total;
 		if ($order_info['is_manual_delivery_price'] == 1) {
 			$delivery_price = $order_info['delivery_price'];
 		} else {
@@ -455,7 +462,7 @@ class yf_manage_shop_orders{
 			$delivery_price = $_class_basket->delivery_price( $price_total );
 		}
 		// calc total
-		$price_total += $discount + $delivery_price;
+		$price_total += $discount_price + $delivery_price;
 
 		db()->UPDATE(db('shop_orders'), array(
 				'total_sum'      => number_format($price_total, 2, '.', ''),

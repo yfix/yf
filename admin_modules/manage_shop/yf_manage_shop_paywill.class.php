@@ -67,9 +67,13 @@ class yf_manage_shop_paywill{
 				$user_address[] = t($k).': '.$v;
 		}
 		// discount
-		$_class_discount  = _class( '_shop_discount', 'modules/shop/' );
-		$discount_percent = $order_info[ 'discount' ];
-		$discount         = $_class_discount->calc_discount_global( $price_total, $discount_percent );
+		$discount = $order_info[ 'discount' ];
+		// $_class_discount  = _class( '_shop_discount', 'modules/shop/' );
+		// $discount_percent = $order_info[ 'discount' ];
+		// $discount         = $_class_discount->calc_discount_global( $price_total, $discount_percent );
+		$_class_price = _class( '_shop_price', 'modules/shop/' );
+		$discount_price = $_class_price->apply_price( $price_total, $discount );
+		$discount_price -= $price_total;
 		// total string
 		$total_sum	= $order_info[ 'total_sum' ];
 		$num_to_str	= common()->num2str( $total_sum );
@@ -82,7 +86,7 @@ class yf_manage_shop_paywill{
 //			'payment'		=> common()->get_static_conf('payment_methods', $order_info['payment']),
 			'products'		=> $out['products'],
 			'delivery'		=> ($order_info['delivery_price'] !== '')? module('shop')->_format_price(floatval($order_info['delivery_price'])) : 'не расчитана',
-			'discount'		=> module('shop')->_format_price( $discount ),
+			'discount'		=> module('shop')->_format_price( $discount_price ),
 			'num_to_str'	=> $num_to_str,
 		);
 		return tpl()->parse('shop/paywill', $replace);

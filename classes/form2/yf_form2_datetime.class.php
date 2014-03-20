@@ -22,9 +22,9 @@ class yf_form2_datetime {
 			$format = $format_php = $placeholder = array();
 			$extra['no_time'] = $extra['no_time'] ?: 1;
 			if ($extra['no_date']!=1) {
-				$format[]      = 'DD/MM/YYYY';
-				$format_php[]  = 'd/m/Y';
-				$placeholder[] = 'ДД/ММ/ГГГГ';
+				$format[]      = 'DD.MM.YYYY';
+				$format_php[]  = 'd.m.Y';
+				$placeholder[] = 'ДД.ММ.ГГГГ';
 			}
 			if ($extra['no_time']!=1) {
 				$format[]      = 'HH:mm';
@@ -44,6 +44,8 @@ class yf_form2_datetime {
 				}
 			}else{
 				$extra['value'] = date($_format_php, $extra['value']);
+				var_dump( $_format_php, $extra[ 'value' ] );
+				// exit;
 			}
 
 			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js', true);
