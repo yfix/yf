@@ -15,7 +15,7 @@ class yf_form2_datetime {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		
+
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $_this) {
@@ -31,25 +31,34 @@ class yf_form2_datetime {
 			}
 
 			$format = array();
-			if ($extra['no_date']!=1) $format[] = "MM/dd/yyyy";
-			if ($extra['no_time']!=1) $format[] = "HH:mm:ss";
-			_class('core_js')->add("//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js", true);
-			_class('core_js')->add("//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/locales/bootstrap-datepicker.ru.min.js", true);
-			_class('core_css')->add("//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css", true);
+			// $extra['no_time'] = $extra['no_time'] ?: 1;
+			if ($extra['no_date']!=1) $format[] = "MM/DD/YYYY";
+			if ($extra['no_time']!=1) $format[] = "HH:mm";
+			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js', true);
+			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment-with-langs.min.js', true);
+			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js', true);
+			_class('core_css')->add('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/css/bootstrap-datetimepicker.min.css', true);
 			$body = "
-<div id=\"{$extra['name']}\" class=\"input-append date date_bd\">
-    <input data-format=\"".implode(" ",$format)."\" name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium\" placeholder=\"{$extra['placeholder']}\"></input>
+<div id=\"{$extra['name']}\" data-date-format=\"".implode(" ",$format)."\" class=\"input-append date\">
+    <input name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium\" placeholder=\"{$extra['placeholder']}\"></input>
     <span class=\"add-on\">
 		<i class=\"fa fa-calendar\"></i>
-    </span>		
+    </span>
 </div>
 ";
 			_class('core_js')->add("<script type=\"text/javascript\">
-  $(function() {
-    $('#{$extra['name']}').datepicker({
-      language: 'ru', format: 'dd-mm-yyyy',".($extra['no_time']==1 ? "pickTime: false," : "")."".($extra['no_date']==1 ? "pickDate: false," : "")."
-    });
-  });
+$(function() {
+	$('#{$extra['name']}').datetimepicker({
+		language: 'ru'
+		, icons: {
+			time: 'fa fa-clock-o',
+			date: 'fa fa-calendar',
+			up:   'fa fa-arrow-up',
+			down: 'fa fa-arrow-down'
+		}
+		".($extra['no_time']==1 ? ", pickTime: false" : "")."".($extra['no_date']==1 ? ", pickDate: false" : "")."
+	});
+});
 </script>", false);
 			return $_this->_row_html($body, $extra, $r);
 		};
@@ -58,5 +67,5 @@ class yf_form2_datetime {
 			return $__this;
 		}
 		return $func($extra, $replace, $__this);
-	}	
+	}
 }
