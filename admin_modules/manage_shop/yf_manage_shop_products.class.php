@@ -14,11 +14,25 @@ class yf_manage_shop_products{
 		'active'		=> array('eq','p.active'),
 		'status'		=> array('eq','p.status'),					
 		'image'			=> array('eq','p.image'),
-		'cat_id'		=> array('field' => 'p.cat_id'),
+#		'cat_id'		=> array('field' => 'p.cat_id'),
 		'quantity'		=> array('field' => 'p.quantity'),
 		'add_date'		=> array('dt_between', 'p.add_date'),
 		'update_date'	=> array('field' => 'p.update_date'),
 	);
+
+	/**
+	*/
+	function _init () {
+		// This is needed, as it is currently impossible to set callback function inside class variable
+		$this->_filter_params['cat_id'] = function($a) {
+			$top_cat_id = (int)$a['value'];
+			if ($top_cat_id) {
+				$cat_ids = (array) _class('cats')->_recursive_get_children_ids($top_cat_id, 'shop_cats', $sub_children = 1, $as_array = 1);
+			}
+			$cat_ids[$top_cat_id] = $top_cat_id;
+			return $cat_ids ? 'p.cat_id IN('.implode(',', $cat_ids).')' : '';
+		};
+	}
 
 	/**
 	*/
