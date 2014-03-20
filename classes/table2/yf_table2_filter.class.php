@@ -76,7 +76,7 @@ class yf_table2_filter {
 				$field_params = $filter_params[$k];
 				if ($field_params) {					
 					// Fully replacing left and right parts with callback function
-					// Example: table($sql, array('filter_params' => array('value' => function($a){ return ' v.value LIKE "%'._es($a['value']).'%" '; } )))
+					// Example: table($sql, array('filter_params' => array('my_field' => function($a){ return ' v.value LIKE "%'._es($a['value']).'%" '; } )))
 					if (is_callable($field_params)) {
 						$left_part = ' ';
 						$func = $field_params;
@@ -85,6 +85,9 @@ class yf_table2_filter {
 					// Example: table($sql, array('filter_params' => array('translation' => array('like', 't.value'))))
 					} elseif (is_array($field_params)) {
 						$cond = isset($field_params['cond']) ? $field_params['cond'] : $field_params[0];
+						if (!$cond) {
+							$cond = 'eq';
+						}
 						$func = $supported_conds[$cond];
 						if ($field_params['field']) {
 							$field = $field_params['field'];
