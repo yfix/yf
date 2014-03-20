@@ -9,6 +9,16 @@
 */
 class yf_ssh {
 
+// TODO: chained mode like in form and table, mass actions on one server, array of servers, named group(s) of servers:
+// ssh('s23.dev')->exec('service memcached restart');
+// ssh('s23*.dev')->exec('service memcached restart');
+// ssh('s23.dev','s567.dev')->exec('service memcached restart');
+// ssh(array('s23.dev','s567.dev'), 's89*.dev')->exec('service memcached restart');
+// ssh('group:nginx_proxy')->exec('service nginx reload');
+// ssh('group:nginx_proxy')->exec('service nginx reload', 'service cron reload');
+// ssh('group:nginx_proxy', 's345.dev')->exec(array('service nginx reload', 'service cron reload'))->write_string('/tmp/last_mass_ssh_action.done', time());
+// ssh('group:nginx_proxy', 's345.dev')->each(function($srv, $ssh){ $ssh->exec('service nginx reload'); });
+
 	/** @var string @conf_skip array('phpseclib','pecl_ssh2','auto') */
 	public $DRIVER				= 'phpseclib';
 	/** @var bool @conf_skip */
