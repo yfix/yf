@@ -80,7 +80,7 @@ $(function(){
 	}
 	// We need the iframe document object, different browsers different ways
 	if (typeof debug_frame != 'undefined') {
-		var frame_doc = debug_frame.document; 
+		var frame_doc = debug_frame.document;
 	} else {
 		console.error('Debug console popup: debug_frame not created, maybe popup blocker killed it');
 	}
@@ -90,8 +90,8 @@ $(function(){
 		} else if (debug_frame.contentWindow) {
 			frame_doc = debug_frame.contentWindow.document;
 		}
-		// We open the document of the empty frame and we write desired content. 
-		frame_doc.open(); 
+		// We open the document of the empty frame and we write desired content.
+		frame_doc.open();
 		// Copy JS, CSS from original frame
 		$.each(debug_console_head, function(i, _html){
 			frame_doc.writeln( _html )
