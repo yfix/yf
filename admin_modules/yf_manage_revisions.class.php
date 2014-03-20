@@ -49,7 +49,7 @@ class yf_manage_revisions {
 				'action'   => $function,
 				'item_id'  => $id,
 				'ip'	   => common()->get_ip(),
-//				'table'		=> $db_table,
+				'table'		=> $db_table,
 				'data'     => $data_stump_json ? : '',
 			);
 			db()->insert_safe('shop_revisions', $insert);
@@ -188,7 +188,7 @@ class yf_manage_revisions {
 	/**
 	*/
 	function rollback_revision(){
-/*
+
 		$_GET['id'] = intval($_GET['id']);
 		$revision_data = db()->get('SELECT * FROM '.db('shop_revisions').' WHERE id='.$_GET['id']);
 		if (empty($revision_data)) {
@@ -198,24 +198,22 @@ class yf_manage_revisions {
 			return _e('Revision failed');
 		}
 		$data_stamp = json_decode($revision_data['data'], true);
-		$check_db_row = db()->get('SELECT * FROM '.db($revision_data['table']).' WHERE id='.$revision_data['id']);
+		$check_db_row = db()->get('SELECT * FROM '.db($revision_data['table']).' WHERE id='.$revision_data['item_id']);
 		db()->begin();
-		
 		if($data_stamp){
 			if($check_db_row){
-				db()->update_safe(db($revision_data['table']), $data_stamp, 'id ='.$revision_data['id']);
+				db()->update_safe(db($revision_data['table']), $data_stamp, 'id ='.$revision_data['item_id']);
 			}else{
 				db()->insert_safe(db($revision_data['table']), $data_stamp);
 			}
 		}else{
-			db()->query('DELETE FROM '.db($revision_data['table']).' WHERE id ='.$revision_data['id']);
+			db()->query('DELETE FROM '.db($revision_data['table']).' WHERE id ='.$revision_data['item_id']);
 		}
 		$this->new_revision($revision_data['action'], $revision_data['item_id'], $revision_data['table']);
 		db()->commit();
 		common()->message_success("Revision retrieved");
 		common()->admin_wall_add(array('Rollback common revision: '.$_GET['id'], $_GET['id']));
 		return js_redirect('./?object=manage_revisions&action=details&id='.$_GET['id']);
-*/
 	}
 	
 }

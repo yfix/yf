@@ -282,8 +282,8 @@ class yf_manage_shop__product_revisions {
 		->admin_info('user_id', "Editor")
 		->info_date('add_date', array('format' => 'full'))
 		->info('action')
-		->container($changed_image)
-		->container($images_stamp, 'Revision stamp')
+//		->container($changed_image)
+		->container($images_stamp, 'Product foto')
 		->container($main_image, 'Main image')
 		->link("Retrieve current stamp",'./?object=manage_shop&action=checkout_images_revision&id='.$a['id'])
 		;

@@ -92,7 +92,7 @@ class yf_db_revisions {
 		);
 		$filters = array(
 			'show'	=> function($filter_name, $replace) {
-				$fields = array('id','data','query_method','query_table','ip', 'user_id');
+				$fields = array('id','date','query_method','query_table','ip', 'user_id');
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
