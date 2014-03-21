@@ -395,4 +395,18 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$a = array( array('key1' => ' val11 '), array('key1' => ' val21 '), );
 		$this->assertEquals('+val11++val21+', self::_tpl( '{foreach("testarray")}+{#.key1|trim}+{/foreach}', array('testarray' => $a) ));
 	}
+	public function test_144() {
+		$a = array('quantity' => 10, 'active' => 1);
+		$this->assertEquals(' ok ', self::_tpl( '{if("quantity" gt 0)} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if("active" ne 0)} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if("quantity" gt "0" and "active" ne "0")} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(quantity gt 0 and active ne 0)} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if("quantity" gt 0 and active ne 0)} ok {/if}', $a ));
+#		$this->assertEquals(' ok ', self::_tpl( '{if("quantity" gt 0 and "active" ne 0)} ok {/if}', $a ));
+
+#		$a = array('quantity' => 10, 'active' => 0);
+#		$this->assertEquals('', self::_tpl( '{if("quantity" gt 0 and "active" ne 0)} ok {/if}', $a ));
+#		$a = array('quantity' => 0, 'active' => 0);
+#		$this->assertEquals('', self::_tpl( '{if("quantity" gt 0 and "active" ne 0)} ok {/if}', $a ));
+	}
 }
