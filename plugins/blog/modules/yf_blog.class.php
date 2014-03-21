@@ -1121,7 +1121,7 @@ class yf_blog extends yf_module {
 	* Ban error display
 	*/
 	function _ban_check () {
-		if ($this->_user_info["ban_blog"]) {
+		if (main()->_user_info["ban_blog"]) {
 			return _e(
 				"You broke some of our rules, so you are not allowed to post in blog!"
 				."For more details <a href=\"./?object=faq&action=view&id=16\">click here</a>"
