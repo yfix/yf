@@ -127,12 +127,10 @@ class yf_gallery_manage {
 				}
 			}
 		}
-		// Change order id for these elements
 		if (!empty($SECOND_PHOTO_ID)) {
 			db()->UPDATE("gallery_photos", array($FIELD_NAME => intval($_sort_ids[$SECOND_PHOTO_ID])), "id=".intval($photo_info["id"]));
 			db()->UPDATE("gallery_photos", array($FIELD_NAME => intval($photo_info[$FIELD_NAME])), "id=".intval($SECOND_PHOTO_ID));
 		}
-		// Return user back
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo "1";
@@ -154,58 +152,41 @@ class yf_gallery_manage {
 		if (!main()->_user_info && MAIN_TYPE_USER) {
 			return _error_need_login();
 		}
-		// Ban check
 		if (main()->_user_info["ban_images"] && MAIN_TYPE_USER) {
 			return module('gallery')->_error_msg("ban_images");
 		}
-		// Prepare folder id
 		$FOLDER_ID = intval($_GET["id"]);
-		// Get current user folders
 		$user_folders = module('gallery')->_get_user_folders($NEW_USER_ID);
-		// Try to find default folder
 		$def_folder_id = module('gallery')->_get_def_folder_id($user_folders);
-		// Assign default folder if empty
 		if (empty($FOLDER_ID) && !empty($def_folder_id)) {
 			$FOLDER_ID = $def_folder_id;
 		}
-		// Check for folder's owner
 		if (!empty($FOLDER_ID)) {
 			$cur_folder_info = $user_folders[$FOLDER_ID];
 		}
 		if (!empty($cur_folder_info["user_id"]) && $cur_folder_info["user_id"] != $NEW_USER_ID && MAIN_TYPE_USER) {
 			return _e("Not your folder!");
 		}
-		// Prepare folders list for the box
 		foreach ((array)$user_folders as $_folder_id => $_folder_info) {
 			module('gallery')->_folders_for_select[$_folder_id] = _prepare_html($_folder_info["title"]);
 		}
-		// Prepare show in ads
 		$SHOW_IN_ADS_ALLOWED = 0;
 		if ($cur_folder_info["content_level"] <= 1 && $cur_folder_info["privacy"] <= 1 && $cur_folder_info["password"] == "") {
 			$SHOW_IN_ADS_ALLOWED = 1;
 		}
-		// Check number of photos to show in ads
 		$num_photos_for_ads = db()->query_num_rows(
 			"SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval($NEW_USER_ID)." AND show_in_ads='1'"
 		);
-		// Fix second id
 		$_max_id2 = $this->_fix_id2($NEW_USER_ID);
 		// Check posted data and save
 		if (!empty($_POST["go"])) {
 			$_POST["photo_name"]	= substr($_POST["photo_name"], 0, module('gallery')->MAX_NAME_LENGTH);
 			$_POST["photo_desc"]	= substr($_POST["photo_desc"], 0, module('gallery')->MAX_DESC_LENGTH);
 			$_POST["folder_id"]		= intval($_POST["folder_id"]);
-			// Load original photo
 			if (empty($_POST["folder_id"]) || !isset($user_folders[$_POST["folder_id"]])) {
 				_re("Wrong selected folder");
 			}
-			// Cleanup wrong or incompleted photos from db
-			db()->query(
-				"DELETE FROM ".db('gallery_photos')." 
-				WHERE user_id=".intval($NEW_USER_ID)." 
-					AND active='0'"
-			);
-			// Check number of user photos
+			db()->query("DELETE FROM ".db('gallery_photos')." WHERE user_id=".intval($NEW_USER_ID)." AND active='0'");
 			if (!empty(module('gallery')->MAX_TOTAL_PHOTOS)) {
 				$num_photos = db()->query_num_rows("SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval($NEW_USER_ID));
 				if ($num_photos >= module('gallery')->MAX_TOTAL_PHOTOS) {
@@ -217,29 +198,21 @@ class yf_gallery_manage {
 			}
 			// Shortcut for the uploaded photo info
 			$_PHOTO = $_FILES[module('gallery')->PHOTO_NAME_IN_FORM];
-			// Check for photo
 			if (empty($_PHOTO) || empty($_PHOTO["size"])) {
 				_re("Photo file required");
 			}
-			// Check for errors and try bulk mode
 			if (!common()->_error_exists()) {
 				$_source_file_ext = common()->get_file_ext($_PHOTO["name"]);
 				if (module('gallery')->ALLOW_BULK_UPLOAD && strtolower($_source_file_ext) == "zip") {
 					return $this->_add_photos_bulk($NEW_USER_ID);
 				}
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
-				// Check text fields
 				$_POST["photo_name"] = module('gallery')->_filter_text($_POST["photo_name"]);
 				$_POST["photo_desc"] = module('gallery')->_filter_text($_POST["photo_desc"]);
-				// Prepare source file photo name
 				$SOURCE_PHOTO_NAME = $this->_prepare_photo_name($_PHOTO["name"]);
-				// Get time
 				$creation_time = time();
-				// Begin transaction
 				db()->query("BEGIN");
-				// Generate SQL
 				$sql_array = array(
 					"user_id"		=> intval($NEW_USER_ID),
 					"folder_id"		=> intval($_POST["folder_id"]),
@@ -255,20 +228,15 @@ class yf_gallery_manage {
 					"is_featured"	=> intval((bool) $_POST["is_featured"]),
 				);
 				db()->INSERT("gallery_photos", $sql_array);
-				// Get new record id
 				$PHOTO_RECORD_ID = intval(db()->INSERT_ID());
 				if (empty($PHOTO_RECORD_ID)) {
 					_re("Cant insert record into db");
 				}
-				// Save tags 
 				if (isset($_POST["tags"])) {
 					$this->TAGS_OBJ->_save_tags($_POST["tags"], $PHOTO_RECORD_ID, 'gallery');
 				}
-
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
-				// Create new photo name (using name template)
 				$new_photo_info = array(
 					"id"		=> $PHOTO_RECORD_ID,
 					"id2"		=> intval($_max_id2 + 1),
@@ -277,42 +245,28 @@ class yf_gallery_manage {
 					"add_date"	=> $creation_time,
 				);
 				$load_result = $this->_load_photo($_PHOTO, $new_photo_info);
-				// Roll back uploaded photos
 				if (!$load_result) {
 					$this->_load_photo_rollback($new_photo_info);
 				} else {
-					// Update "other_info"
 					module('gallery')->_update_other_info($new_photo_info);
 				}
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
-				// Set db record active
-				db()->UPDATE("gallery_photos", array(
-					"active"	=> 1,
-				), "id=".intval($PHOTO_RECORD_ID));
+				db()->UPDATE("gallery_photos", array("active" => 1), "id=".intval($PHOTO_RECORD_ID));
 			} 
-			// Redirect user
 			if (!common()->_error_exists()) {
-				// Commit transaction
 				db()->query("COMMIT");
-				// Update public photos
 				module('gallery')->_sync_public_photos(main()->USER_ID);
-				// Update user stats
 				_class_safe("user_stats")->_update(array("user_id" => $NEW_USER_ID));
-
 				$redirect_folder_id = module('gallery')->HIDE_TOTAL_ID ? $user_folders[$_POST["folder_id"]]["id2"] : $_POST["folder_id"];
-
 				return js_redirect("./?object=".'gallery'."&action=".(!empty($redirect_folder_id) ? "view_folder&id=".$redirect_folder_id : "show_gallery"). _add_get(array("page")));
 			}
 		}
 		if (common()->_error_exists()) {
 			$error_message = _e();
-			// Roll back transaction
 			db()->query("ROLLBACK");
 		}
 		$allow_edit_tags = module('gallery')->ALLOW_TAGGING ? true : false;
-		// Show form
 		$replace = array(
 			"form_action"		=> "./?object=".'gallery'."&action=".$_GET["action"]._add_get(array("page")),
 			"error_message"		=> $error_message,
