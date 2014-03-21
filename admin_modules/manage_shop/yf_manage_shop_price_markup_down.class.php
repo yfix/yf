@@ -5,12 +5,16 @@ class yf_manage_shop_price_markup_down {
 	private $_table = array(
 		'table' => 'shop_price_markup_down',
 		'fields' => array(
+			'active',
+			'type',
 			'value',
-			'description',
+			'time_from',
+			'time_to',
 		),
 	);
 
-	private $_uri            = '';
+	private $_uri      = '';
+	private $_instance = false;
 
 	function _init() {
 		$_object = main()->_get( 'object' );
@@ -26,6 +30,13 @@ class yf_manage_shop_price_markup_down {
 			'active' => $_uri_action . 'price_markup_down_active' . '&id=%d',
 		);
 		$this->_table[ 'back_link' ] = $this->_uri[ 'show' ];
+		$_instance = $this; $this->_instance = $_instance;
+		$this->_table[ 'on_before_show' ] = function( &$fields ) use( $_instance ) {
+			return( $_instance->_on_before_show( $fields ) );
+		};
+		$this->_table[ 'on_before_update' ] = function( &$fields ) use( $_instance ) {
+			return( $_instance->_on_before_update( $fields ) );
+		};
 	}
 
 	function price_markup_down() {
@@ -47,23 +58,36 @@ class yf_manage_shop_price_markup_down {
 		return _class( 'admin_methods' )->active( $this->_table );
 	}
 
+	function _form( $replace ) {
+		return( form( $replace )
+			->text( 'type', 'Тип' )
+			->text( 'value', 'Процент, +/-' )
+			->text( 'description' )
+			->datetime_select( 'time_from', 'Дата от', array( 'no_time' => 0 ) )
+			->datetime_select( 'time_to',   'Дата до', array( 'no_time' => 0 ) )
+			->active_box('active')
+			->save_and_back()
+		);
+	}
+
+	function _on_before_show( &$fields ) {
+		$fields[ 'time_from' ] = $fields[ 'time_from' ] == '0000-00-00 00:00:00' ? null : strtotime( $fields[ 'time_from' ] );
+		$fields[ 'time_to'   ] = $fields[ 'time_to'   ] == '0000-00-00 00:00:00' ? null : strtotime( $fields[ 'time_to'   ] );
+	}
+
+	function _on_before_update( &$fields ) {
+		$fields[ 'time_from' ] = $fields[ 'time_from' ] ? date( 'Y-m-d H:m', strtotime( $fields[ 'time_from' ] ) ) : null;
+		$fields[ 'time_to'   ] = $fields[ 'time_to'   ] ? date( 'Y-m-d H:m', strtotime( $fields[ 'time_to'   ] ) ) : null;
+	}
+
 	function price_markup_down_add() {
 		$replace = _class( 'admin_methods' )->add( $this->_table );
-		return form( $replace )
-			->text( 'value' )
-			->text( 'description' )
-			->active_box('active')
-			->save_and_back();
+		return( $this->_form( $replace ) );
 	}
 
 	function price_markup_down_edit() {
 		$replace = _class( 'admin_methods' )->edit( $this->_table );
-		$form = form( $replace )
-			->text( 'value' )
-			->text( 'description' )
-			->active_box('active')
-			->save_and_back();
-		return( $form );
+		return( $this->_form( $replace ) );
 	}
 
 	/**

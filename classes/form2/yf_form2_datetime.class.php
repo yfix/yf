@@ -18,9 +18,9 @@ class yf_form2_datetime {
 
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		$func = function($extra, $r, $_this) {
+		$func = function($extra, $r, $__this) {
 			$format = $format_php = $placeholder = array();
-			$extra['no_time'] = $extra['no_time'] ?: 1;
+			$extra['no_time'] = isset( $extra['no_time'] ) ? $extra['no_time'] : 1;
 			if ($extra['no_date']!=1) {
 				$format[]      = 'DD.MM.YYYY';
 				$format_php[]  = 'd.m.Y';
@@ -39,12 +39,13 @@ class yf_form2_datetime {
 			if (!strlen($extra['value'])) {
 				if (isset($extra['selected'])) {
 					$extra['value'] = $extra['selected'];
-				} elseif (isset($_this->_params['selected'])) {
-					$extra['value'] = $_this->_params['selected'][$extra['name']];
+				} elseif (isset($__this->_params['selected'])) {
+					$extra['value'] = $__this->_params['selected'][$extra['name']];
+				} elseif (isset($__this->_replace[$extra['name']])) {
+					$extra['value'] = $__this->_replace[$extra['name']];
 				}
-			}else{
-				$extra['value'] = date($_format_php, $extra['value']);
 			}
+			$extra['value'] = empty( $extra['value'] ) ? '' : date( $_format_php, $extra['value'] );
 
 			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js', true);
 			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment-with-langs.min.js', true);
@@ -72,7 +73,7 @@ $(function() {
 	});
 });
 </script>", false);
-			return $_this->_row_html($body, $extra, $r);
+			return $__this->_row_html($body, $extra, $r);
 		};
 		if ($__this->_chained_mode) {
 			$__this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);

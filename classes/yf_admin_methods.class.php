@@ -67,6 +67,9 @@ class yf_admin_methods {
 				}
 			}
 		}
+		if (is_callable($params['on_before_show'])) {
+			$params['on_before_show']($_POST);
+		}
 		$DATA = _prepare_html($_POST);
 		$replace = array(
 			'form_action'	=> $params['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action']. $params['links_add'],
@@ -133,10 +136,8 @@ class yf_admin_methods {
 			}
 		}
 		$DATA = $a;
-		foreach((array)$_POST as $k => $v) {
-			if (isset($DATA[$k])) {
-				$DATA[$k] = $_POST[$k];
-			}
+		if (is_callable($params['on_before_show'])) {
+			$params['on_before_show']($DATA);
 		}
 		$replace = array(
 			'form_action'	=> $params['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.urlencode($_GET['id']). $params['links_add'],
