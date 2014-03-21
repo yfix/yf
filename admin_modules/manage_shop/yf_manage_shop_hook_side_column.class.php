@@ -91,7 +91,7 @@ class yf_manage_shop_hook_side_column {
 			->date('add_date', array('format' => '%d/%m/%Y', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d')
+			->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d&page='.$_GET['page'])
 		;
 	}
 
@@ -115,7 +115,7 @@ class yf_manage_shop_hook_side_column {
 			->date('add_date', array('format' => '%d/%m/%Y', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=product_images_revisions_view&id=%d')
+			->btn_view('', './?object=manage_shop&action=product_images_revisions_view&id=%d&page='.$_GET['page'])
 		;
 	}
 
@@ -161,7 +161,7 @@ class yf_manage_shop_hook_side_column {
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d')
+			->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d&page='.$_GET['page'])
 		;
 	}
 
