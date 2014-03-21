@@ -126,27 +126,31 @@ abstract class yf_installer_db {
 	function _load_data_files() {
 		$data = array();
 		// Load install data from external files
-		$dir_installer_db = YF_PATH.'share/db_installer/';
-		foreach (glob($dir_installer_db.'sql/*.sql.php') as $f) {
-			$t_name = substr(basename($f), 0, -strlen('.sql.php'));
-			require_once $f; // $data should be loaded from file
-			$this->TABLES_SQL[$t_name] = $data;
+		$globs_sql = array(
+			'yf_main'			=> YF_PATH.'share/db_installer/sql/*.sql.php',
+			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
+			'project_main'		=> PROJECT_PATH.'share/db_installer/sql/*.sql.php',
+			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
+		);
+		foreach ($globs_sql as $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen('.sql.php'));
+				require_once $f; // $data should be loaded from file
+				$this->TABLES_SQL[$t_name] = $data;
+			}
 		}
-		foreach (glob($dir_installer_db.'data/*.data.php') as $f) {
-			$t_name = substr(basename($f), 0, -strlen('.data.php'));
-			require_once $f; // $data should be loaded from file
-			$this->TABLES_DATA[$t_name] = $data;
-		}
-		$dir_installer_db = PROJECT_PATH.'share/db_installer/';
-		foreach (glob($dir_installer_db.'sql/*.sql.php') as $f) {
-			$t_name = substr(basename($f), 0, -strlen('.sql.php'));
-			require_once $f; // $data should be loaded from file
-			$this->TABLES_SQL[$t_name] = $data;
-		}
-		foreach (glob($dir_installer_db.'data/*.data.php') as $f) {
-			$t_name = substr(basename($f), 0, -strlen('.data.php'));
-			require_once $f; // $data should be loaded from file
-			$this->TABLES_DATA[$t_name] = $data;
+		$globs_data = array(
+			'yf_main'			=> YF_PATH.'share/db_installer/data/*.data.php',
+			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/data/*.data.php',
+			'project_main'		=> PROJECT_PATH.'share/db_installer/data/*.data.php',
+			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/data/*.data.php',
+		);
+		foreach ($globs_data as $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen('.data.php'));
+				require_once $f; // $data should be loaded from file
+				$this->TABLES_DATA[$t_name] = $data;
+			}
 		}
 		// Project has higher priority than framework (allow to change anything in project)
 		// Try to load db structure from project file
