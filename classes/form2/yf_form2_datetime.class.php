@@ -44,8 +44,6 @@ class yf_form2_datetime {
 				}
 			}else{
 				$extra['value'] = date($_format_php, $extra['value']);
-				var_dump( $_format_php, $extra[ 'value' ] );
-				// exit;
 			}
 
 			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js', true);
