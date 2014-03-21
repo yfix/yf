@@ -672,7 +672,7 @@ class yf_gallery extends yf_module {
 	* Get users available folders (for many users at one time)
 	*/
 	function _get_user_folders_for_ids ($users_ids = array()) {
-		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}($users_ids);
+		return _class_safe('gallery_folders', 'modules/gallery/')->{__FUNCTION__}($users_ids);
 	}
 
 	/**
