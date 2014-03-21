@@ -181,7 +181,7 @@ class yf_manage_revisions {
 			->date('add_date', array('format' => '%d/%m/%Y', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_revisions&action=details&id=%d')
+			->btn_view('', './?object=manage_revisions&action=details&id=%d&page='.$_GET['page'])
 		;
 	}
 
