@@ -32,7 +32,7 @@ class yf_gallery_tags {
 // TODO: make this compatible with HIDE_TOTAL_ID
 		// Only for members and only if turned on
 		if (MAIN_TYPE_USER 
-			&& (!module('gallery')->ALLOW_TAGGING || !module('gallery')->USER_ID)
+			&& (!module('gallery')->ALLOW_TAGGING || !main()->USER_ID)
 		) {
 			return "";
 		}
@@ -55,7 +55,7 @@ class yf_gallery_tags {
 			$photo_info = &module('gallery')->_photo_info;
 		}
 		if (MAIN_TYPE_USER) {
-			module('gallery')->is_own_gallery = intval(!empty(module('gallery')->USER_ID) && module('gallery')->USER_ID == module('gallery')->_photo_info["user_id"]);
+			module('gallery')->is_own_gallery = intval(!empty(main()->USER_ID) && main()->USER_ID == module('gallery')->_photo_info["user_id"]);
 		} elseif (MAIN_TYPE_ADMIN) {
 			module('gallery')->is_own_gallery = true;
 		}

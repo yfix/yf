@@ -46,7 +46,7 @@ class yf_gallery_manage {
 			$Q = db()->query(
 				"SELECT id,".$FIELD_NAME." AS _sort_id 
 				FROM ".db('gallery_photos')." 
-				WHERE user_id=".intval(module('gallery')->USER_ID)." 
+				WHERE user_id=".intval(main()->USER_ID)." 
 					AND active='1'"
 					. ($IS_FOR_FOLDER ? " AND folder_id=".intval($photo_info["folder_id"]) : "")
 					. " ORDER BY ".$FIELD_NAME." ASC"
@@ -73,7 +73,7 @@ class yf_gallery_manage {
 			}
 			if (!empty($_ids_to_update)) {
 				db()->query(
-					"UPDATE ".db('gallery_photos')." SET ".$FIELD_NAME." = id WHERE id IN(".implode(",", $_ids_to_update).") AND user_id=".intval(module('gallery')->USER_ID)
+					"UPDATE ".db('gallery_photos')." SET ".$FIELD_NAME." = id WHERE id IN(".implode(",", $_ids_to_update).") AND user_id=".intval(main()->USER_ID)
 				);
 			}
 			asort($_sort_ids);
@@ -145,19 +145,17 @@ class yf_gallery_manage {
 	* Add Photo
 	*/
 	function add_photo($NEW_USER_ID = 0) {
-		if (empty($NEW_USER_ID) && !empty(module('gallery')->USER_ID)) {
-			$NEW_USER_ID = module('gallery')->USER_ID;
+		if (empty($NEW_USER_ID) && !empty(main()->USER_ID)) {
+			$NEW_USER_ID = main()->USER_ID;
 		}
-		// User id is required
 		if (empty($NEW_USER_ID)) {
 			return false;
 		}
-		// Check if user is member
-		if (empty(module('gallery')->_user_info) && MAIN_TYPE_USER) {
+		if (!main()->_user_info && MAIN_TYPE_USER) {
 			return _error_need_login();
 		}
 		// Ban check
-		if (module('gallery')->_user_info["ban_images"] && MAIN_TYPE_USER) {
+		if (main()->_user_info["ban_images"] && MAIN_TYPE_USER) {
 			return module('gallery')->_error_msg("ban_images");
 		}
 		// Prepare folder id
@@ -299,7 +297,7 @@ class yf_gallery_manage {
 				// Commit transaction
 				db()->query("COMMIT");
 				// Update public photos
-				module('gallery')->_sync_public_photos(module('gallery')->USER_ID);
+				module('gallery')->_sync_public_photos(main()->USER_ID);
 				// Update user stats
 				_class_safe("user_stats")->_update(array("user_id" => $NEW_USER_ID));
 
@@ -531,7 +529,7 @@ class yf_gallery_manage {
 		}
 		// Check number of photos to show in ads
 		$num_photos_for_ads = db()->query_num_rows(
-			"SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval(module('gallery')->USER_ID)." AND show_in_ads='1'"
+			"SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval(main()->USER_ID)." AND show_in_ads='1'"
 		);
 		// Fix second id
 		$_max_id2 = $this->_fix_id2($photo_info["user_id"]);
@@ -603,7 +601,7 @@ class yf_gallery_manage {
 				// Commit transaction
 				db()->query("COMMIT");
 				// Update public photos
-				module('gallery')->_sync_public_photos(module('gallery')->USER_ID);
+				module('gallery')->_sync_public_photos(main()->USER_ID);
 
 				$redirect_folder_id = module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"];
 				// Changed folder
@@ -655,7 +653,7 @@ class yf_gallery_manage {
 			"photo_name"		=> _prepare_html($_POST["photo_name"]),
 			"photo_desc"		=> _prepare_html($_POST["photo_desc"]),
 			"thumb_src"			=> $thumb_web_path,
-			"user_id"			=> intval(module('gallery')->USER_ID),
+			"user_id"			=> intval(main()->USER_ID),
 			"show_ads_denied"	=> intval(!$SHOW_IN_ADS_ALLOWED),
 			"crop_link"			=> "./?object=".'gallery'."&action=crop_photo&id=".$_GET["id"]._add_get(array("page")),
 			"rotate_link"		=> "./?object=".'gallery'."&action=rotate_photo&id=".$_GET["id"]._add_get(array("page")),
@@ -691,7 +689,7 @@ class yf_gallery_manage {
 			unset($_SESSION["_refresh_image_in_browser"]);
 			$photo_info = array(
 				"photo_id"	=> $PHOTO_ID,
-				"user_id"	=> module('gallery')->USER_ID,
+				"user_id"	=> main()->USER_ID,
 			);
 			foreach ((array)module('gallery')->PHOTO_TYPES as $format_name => $format_info) {
 				if ($format_name == "original") {
@@ -705,7 +703,7 @@ class yf_gallery_manage {
 			// Prevent double execution
 			unset($_SESSION["_refresh_avatar_in_browser"]);
 
-			$_images[] = SITE_AVATARS_DIR. _gen_dir_path(module('gallery')->USER_ID). intval(module('gallery')->USER_ID). ".jpg";
+			$_images[] = SITE_AVATARS_DIR. _gen_dir_path(main()->USER_ID). intval(main()->USER_ID). ".jpg";
 		}
 		$body .= "";
 		if (!empty($_images)) {
@@ -776,7 +774,7 @@ class yf_gallery_manage {
 		}
 		db()->query("DELETE FROM ".db('gallery_photos')." WHERE id=".intval($photo_info["id"])." LIMIT 1");
 		module('gallery')->_sync_public_photos();
-		_class_safe("user_stats")->_update(array("user_id" => module('gallery')->USER_ID));
+		_class_safe("user_stats")->_update(array("user_id" => main()->USER_ID));
 		return js_redirect("./?object=".'gallery'."&action=".(!empty($photo_info["folder_id"]) ? "view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]) : "show_gallery")._add_get(array("page")));
 	}
 
@@ -848,7 +846,7 @@ class yf_gallery_manage {
 			"photo_name"		=> _prepare_html($_POST["photo_name"]),
 			"photo_desc"		=> _prepare_html($_POST["photo_desc"]),
 			"thumb_src"			=> $thumb_web_path,
-			"user_id"			=> intval(module('gallery')->USER_ID),
+			"user_id"			=> intval(main()->USER_ID),
 			"back_link"			=> "./?object=".'gallery'."&action=edit_photo&id=".$photo_info["id"]._add_get(array("page")),
 			"real_w"			=> intval($real_w),
 			"real_h"			=> intval($real_h),
@@ -893,7 +891,7 @@ class yf_gallery_manage {
 		}
 		$cur_folder_info = $this->_get_photo_folder_info($photo_info);
 		// Check number of photos to show in ads
-		$num_photos_for_ads = db()->query_num_rows("SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval(module('gallery')->USER_ID)." AND show_in_ads='1'");
+		$num_photos_for_ads = db()->query_num_rows("SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval(main()->USER_ID)." AND show_in_ads='1'");
 		if ($num_photos_for_ads >= module('gallery')->MAX_PHOTOS_FOR_ADS && $photo_info["show_in_ads"] == 0) {
 			_re(t("You can use max @num photos in your ads!", array("@num" => intval(module('gallery')->MAX_PHOTOS_FOR_ADS))));
 			return redirect("./?object=".'gallery'."&action=show_gallery"._add_get(array("page")), 1, _e());
@@ -972,8 +970,8 @@ class yf_gallery_manage {
 		// Create paths
 		$thumb_path_1	= module('gallery')->_photo_fs_path($photo_info, "thumbnail");
 		$thumb_path_2	= module('gallery')->_photo_fs_path($photo_info, "medium");
-		$avatar_path_1	= INCLUDE_PATH. SITE_AVATARS_DIR. intval(module('gallery')->USER_ID). module('gallery')->IMAGE_EXT;
-		$avatar_path_2	= INCLUDE_PATH. SITE_AVATARS_DIR. intval(module('gallery')->USER_ID). "_m". module('gallery')->IMAGE_EXT;
+		$avatar_path_1	= INCLUDE_PATH. SITE_AVATARS_DIR. intval(main()->USER_ID). module('gallery')->IMAGE_EXT;
+		$avatar_path_2	= INCLUDE_PATH. SITE_AVATARS_DIR. intval(main()->USER_ID). "_m". module('gallery')->IMAGE_EXT;
 		// Copy thumb to the avatars folder
 		// Hm... strange, but this case is most stable and work in most cases (instead of "rename" or "copy")
 		file_put_contents($avatar_path_1, file_get_contents($thumb_path_1));
@@ -1159,17 +1157,17 @@ class yf_gallery_manage {
 		$_GET["id"] = intval($_GET["id"]);
 		$PHOTO_ID = $force_photo_id ? $force_photo_id : $_GET["id"];
 		// Check if user is member
-		if (empty(module('gallery')->_user_info) && MAIN_TYPE_USER) {
+		if (empty(main()->_user_info) && MAIN_TYPE_USER) {
 			return _error_need_login();
 		}
 		// Ban check
-		if (module('gallery')->_user_info["ban_images"]) {
+		if (main()->_user_info["ban_images"]) {
 			return module('gallery')->_error_msg("ban_images");
 		}
 		// Try to get given photo info
 		$sql = "SELECT * FROM ".db('gallery_photos')." WHERE ";
-		if (module('gallery')->HIDE_TOTAL_ID && module('gallery')->USER_ID && !$force_photo_id) {
-			$sql .= " id2=".intval($PHOTO_ID)." AND user_id=".intval(module('gallery')->USER_ID);
+		if (module('gallery')->HIDE_TOTAL_ID && main()->USER_ID && !$force_photo_id) {
+			$sql .= " id2=".intval($PHOTO_ID)." AND user_id=".intval(main()->USER_ID);
 		} else {
 			$sql .= " id=".intval($PHOTO_ID);
 		}
@@ -1178,7 +1176,7 @@ class yf_gallery_manage {
 			return _e("No such photo!");
 		}
 		// Check owner
-		if (MAIN_TYPE_USER && $photo_info["user_id"] != module('gallery')->USER_ID) {
+		if (MAIN_TYPE_USER && $photo_info["user_id"] != main()->USER_ID) {
 			return _e("Not your photo!");
 		}
 

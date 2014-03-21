@@ -795,7 +795,7 @@ class yf_gallery extends yf_module {
 			if (!empty($this->_author_name)) {
 				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html($this->_author_name), "./?object=".'gallery'."&action=show_gallery&id=".$this->_author_id);
 			} elseif (!empty(main()->USER_ID)) {
-				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html(_display_name($this->_user_info)), "./?object=".'gallery'."&action=show_gallery&id=".main()->USER_ID);
+				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html(_display_name(main()->_user_info)), "./?object=".'gallery'."&action=show_gallery&id=".main()->USER_ID);
 			}
 		}
 		if (in_array($_GET["action"], array("show_all_galleries"))) {

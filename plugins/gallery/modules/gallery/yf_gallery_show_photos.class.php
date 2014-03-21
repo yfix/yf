@@ -41,7 +41,7 @@ class yf_gallery_show_photos {
 			$GLOBALS['user_info'] = $user_info;
 		}
 		if (MAIN_TYPE_USER) {
-			module('gallery')->is_own_gallery = intval(!empty(module('gallery')->USER_ID) && module('gallery')->USER_ID == module('gallery')->_photo_info["user_id"]);
+			module('gallery')->is_own_gallery = intval(!empty(main()->USER_ID) && main()->USER_ID == module('gallery')->_photo_info["user_id"]);
 		} elseif (MAIN_TYPE_ADMIN) {
 			module('gallery')->is_own_gallery = true;
 		}
@@ -126,7 +126,7 @@ class yf_gallery_show_photos {
 		);
 		// Process template
 		$replace = array(
-			"is_logged_in"			=> intval((bool) module('gallery')->USER_ID),
+			"is_logged_in"			=> intval((bool) main()->USER_ID),
 			"is_own_gallery"		=> module('gallery')->is_own_gallery,
 			"user_name"				=> module('gallery')->_author_name,
 			"user_profile_link"		=> _profile_link($user_info["id"]),
@@ -139,7 +139,7 @@ class yf_gallery_show_photos {
 			"photo_desc"			=> _prepare_html(module('gallery')->_photo_info["desc"]),
 			"cat_name"				=> module('gallery')->_cat_name,
 			"page_link"				=> process_url("./?object=".'gallery'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page"))),
-			"user_id"				=> intval(module('gallery')->USER_ID),
+			"user_id"				=> intval(main()->USER_ID),
 			"comments"				=> $settings["allow_comments"] != 9 ? module('gallery')->_view_comments(array("object_id" => $photo_info["id"])) : "",
 			"prev_photo_link"		=> $prev_photo_link,
 			"next_photo_link"		=> $next_photo_link,
@@ -582,7 +582,7 @@ class yf_gallery_show_photos {
 		$_sort_link_tpl	= process_url("./?object=".$_GET["object"]."&action=sort_photo&id={id}&page=up".$_sort_add);
 		// Preocess template
 		$replace = array(
-			"is_logged_in"			=> intval((bool) module('gallery')->USER_ID),
+			"is_logged_in"			=> intval((bool) main()->USER_ID),
 			"is_own_gallery"		=> module('gallery')->is_own_gallery,
 			"user_name"				=> module('gallery')->_author_name,
 			"user_avatar"			=> _show_avatar($user_info["id"], module('gallery')->_author_name, 1, 1),
@@ -591,7 +591,7 @@ class yf_gallery_show_photos {
 			"page_link"				=> process_url("./?object=".'gallery'."&action=".$_GET["action"].($_GET["id"] ? "&id=".$_GET["id"] : ""). _add_get(array("page"))),
 			"user_gallery_link"		=> $user_info["id"] ? "./?object=".'gallery'."&action=show_gallery".(module('gallery')->HIDE_TOTAL_ID ? "" : "&id=".$user_info["id"]). _add_get(array("page")) : "",
 			"max_photos"			=> intval(module('gallery')->MAX_TOTAL_PHOTOS),
-			"user_id"				=> intval(module('gallery')->USER_ID),
+			"user_id"				=> intval(main()->USER_ID),
 			"add_form"				=> $stpl_prefix == "edit_" && module('gallery')->is_own_gallery && !$limit_reached ? module('gallery')->add_photo() : "",
 			"photos"				=> $photos,
 			"folders"				=> $folders_array,
