@@ -553,9 +553,7 @@ class yf_gallery_show_photos {
 
 		// Main user's page
 		if (empty($FOLDER_ID)) {
-			// Get latest photos
-			$GALLERY_STATS_OBJ = module('gallery')->_load_sub_module("gallery_stats");
-			$photos = $GALLERY_STATS_OBJ->_show_latest_user_photos($user_info, $_show_featured, $photos_array);
+			$photos = _class_safe('gallery_stats', 'modules/gallery/')->_show_latest_user_photos($user_info, $_show_featured, $photos_array);
 		// Inside selected folder
 		} else {
 			// Process photos

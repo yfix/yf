@@ -220,7 +220,6 @@ class yf_gallery_tags {
 		module('gallery')->clear_filter(1);
 		module('gallery')->save_filter(1);
 
-		$OBJ = module('gallery')->_load_sub_module("gallery_stats");
-		return $OBJ->_show_all_galleries(array("pager_url" => "./?object=".'gallery'."&action=tag&id=".urlencode($_POST["tag"])));
+		return _class_safe('gallery_stats', 'modules/gallery/')->_show_all_galleries(array("pager_url" => "./?object=".'gallery'."&action=tag&id=".urlencode($_POST["tag"])));
 	}
 }

@@ -445,7 +445,7 @@ class yf_gallery_stats {
 	/**
 	* Display latest photos in all galleries
 	*/
-	function _show_latest($params = array()) {
+	function latest($params = array()) {
 // TODO: decide what to here if HIDE_TOTAL_ID enabled
 		// Override page
 		if (!empty($_GET["id"]) && empty($_GET["page"])) {

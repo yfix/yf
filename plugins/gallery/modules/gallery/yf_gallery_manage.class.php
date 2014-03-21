@@ -751,15 +751,9 @@ class yf_gallery_manage {
 		}
 		foreach ((array)$photos_to_update as $_photo_id => $_photo_info) {
 			$_max_id2++;
-
-			db()->UPDATE("gallery_photos", array(
-				"id2" => intval($_max_id2)
-			), "id=".intval($_photo_id));
+			db()->UPDATE("gallery_photos", array("id2" => intval($_max_id2)), "id=".intval($_photo_id));
 		}
-		// Fix folders
-		$FOLDERS_OBJ = module('gallery')->_load_sub_module("gallery_folders");
-		$FOLDERS_OBJ->_fix_folder_id2($user_id);
-
+		_class_safe('gallery_folders', 'modules/gallery/')->_fix_folder_id2($user_id);
 		return $_max_id2;
 	}
 	
@@ -780,13 +774,9 @@ class yf_gallery_manage {
 			}
 			@unlink($thumb_path);
 		}
-		// Delete from database
 		db()->query("DELETE FROM ".db('gallery_photos')." WHERE id=".intval($photo_info["id"])." LIMIT 1");
-		// Update public photos
 		module('gallery')->_sync_public_photos();
-		// Update user stats
 		_class_safe("user_stats")->_update(array("user_id" => module('gallery')->USER_ID));
-		// Redirect user
 		return js_redirect("./?object=".'gallery'."&action=".(!empty($photo_info["folder_id"]) ? "view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]) : "show_gallery")._add_get(array("page")));
 	}
 
@@ -794,15 +784,11 @@ class yf_gallery_manage {
 	* Folder info
 	*/
 	function _get_photo_folder_info ($photo_info = array(), $FOLDER_ID = 0) {
-		// Get current user folders
 		$user_folders = module('gallery')->_get_user_folders(main()->USER_ID);
-		// Try to find default folder
 		$def_folder_id = module('gallery')->_get_def_folder_id($user_folders);
-		// Assign default folder if empty
 		if (empty($FOLDER_ID) && !empty($def_folder_id)) {
 			$FOLDER_ID = $def_folder_id;
 		}
-		// Check for folder's owner
 		if (!empty($FOLDER_ID)) {
 			$cur_folder_info = $user_folders[$FOLDER_ID];
 		}
@@ -900,7 +886,7 @@ class yf_gallery_manage {
 	/**
 	* Change show in ads status
 	*/
-	function _change_show_ads () {
+	function change_show_ads () {
 		$photo_info = $this->_acl_manage_checks();
 		if (!is_array($photo_info)) {
 			return $photo_info; // error string
@@ -930,7 +916,7 @@ class yf_gallery_manage {
 	/**
 	* Change rate if allowed
 	*/
-	function _change_rate_allowed () {
+	function change_rate_allowed () {
 		$photo_info = $this->_acl_manage_checks();
 		if (!is_array($photo_info)) {
 			return $photo_info; // error string
@@ -954,7 +940,7 @@ class yf_gallery_manage {
 	/**
 	* Change allow_tagging
 	*/
-	function _change_tagging_allowed () {
+	function change_tagging_allowed () {
 		$photo_info = $this->_acl_manage_checks();
 		if (!is_array($photo_info)) {
 			return $photo_info; // error string
@@ -978,7 +964,7 @@ class yf_gallery_manage {
 	/**
 	* Make given photo default
 	*/
-	function _make_default () {
+	function make_default () {
 		$photo_info = $this->_acl_manage_checks();
 		if (!is_array($photo_info)) {
 			return $photo_info; // error string

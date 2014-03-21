@@ -12,7 +12,7 @@ class yf_gallery_compact {
 	/**
 	* Display single photo link (Specially for AJAX)
 	*/
-	function _compact_view() {
+	function compact_view() {
 		main()->NO_GRAPHICS = true;
 		// Prepare params
 		$PHOTO_ID	= intval(substr($_POST["id"], strlen("gallery_")));

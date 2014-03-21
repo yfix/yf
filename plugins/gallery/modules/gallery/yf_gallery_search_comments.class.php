@@ -130,7 +130,7 @@ class yf_gallery_search_comments {
 	/**
 	* Do delete comment
 	*/
-	function _delete(){
+	function delete_gallery_comment() {
 		// Check if user is member
 		if (empty(main()->USER_ID)) {
 			return _error_need_login();
