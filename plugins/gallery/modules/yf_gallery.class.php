@@ -725,9 +725,6 @@ class yf_gallery extends yf_module {
 
 	/**
 	* Check if post comment is allowed
-	*
-	* @access	private
-	* @return	bool
 	*/
 	function _comment_is_allowed ($params = array()) {
 		$photo_info	= $this->_photo_info;
@@ -749,71 +746,67 @@ class yf_gallery extends yf_module {
 	* Generate filter SQL query
 	*/
 	function _create_filter_sql ($_source_sql = "") {
-#		$OBJ = $this->_load_sub_module("gallery_filter");
-#		return is_object($OBJ) ? $OBJ->_create_filter_sql($_source_sql) : "";
+// TODO
 	}
 
 	/**
 	* Session - based filter form
 	*/
 	function _show_filter () {
-#		$OBJ = $this->_load_sub_module("gallery_filter");
-#		return is_object($OBJ) ? $OBJ->_show_filter() : "";
+// TODO
 	}
 
 	/**
 	* Filter save method
 	*/
 	function save_filter ($silent = false) {
-#		$OBJ = $this->_load_sub_module("gallery_filter");
-#		return is_object($OBJ) ? $OBJ->_save_filter($silent) : "";
+// TODO
 	}
 
 	/**
 	* Clear filter
 	*/
 	function clear_filter ($silent = false) {
-#		$OBJ = $this->_load_sub_module("gallery_filter");
-#		return is_object($OBJ) ? $OBJ->_clear_filter($silent) : "";
+// TODO
 	}
 
 	/**
 	* Hook for navigation bar
 	*/
 	function _nav_bar_items ($params = array()) {
-		$NAV_BAR_OBJ = &$params["nav_bar_obj"];
-		if (!is_object($NAV_BAR_OBJ)) {
+		$obj = &$params["nav_bar_obj"];
+		if (!is_object($obj)) {
 			return false;
 		}
 		// Save old items
 		$old_items = $params["items"];
 		// Create new items
 		$items = array();
-		$items[]	= $NAV_BAR_OBJ->_nav_item("Home", "./");
-		$items[]	= $NAV_BAR_OBJ->_nav_item("Galleries", "./?object=".'gallery');
+		$items[] = $obj->_nav_item("Home", "./");
+		$items[] = $obj->_nav_item("Galleries", "./?object=".'gallery');
 		if (!in_array($_GET["action"], array("show", "show_all_galleries"))) {
 			if (!empty($this->_author_name)) {
-				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html($this->_author_name), "./?object=".'gallery'."&action=show_gallery&id=".$this->_author_id);
+				$items[] = $obj->_nav_item(_prepare_html($this->_author_name), "./?object=".'gallery'."&action=show_gallery&id=".$this->_author_id);
 			} elseif (!empty(main()->USER_ID)) {
-				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html(_display_name(main()->_user_info)), "./?object=".'gallery'."&action=show_gallery&id=".main()->USER_ID);
+				$items[] = $obj->_nav_item(_prepare_html(_display_name(main()->_user_info)), "./?object=".'gallery'."&action=show_gallery&id=".main()->USER_ID);
 			}
 		}
 		if (in_array($_GET["action"], array("show_all_galleries"))) {
-			$items[]	= $NAV_BAR_OBJ->_nav_item("Galleries Search");
+			$items[] = $obj->_nav_item("Galleries Search");
 		} elseif (in_array($_GET["action"], array("show_gallery"))) {
-			$items[]	= $NAV_BAR_OBJ->_nav_item("View Gallery");
+			$items[] = $obj->_nav_item("View Gallery");
 		} elseif (in_array($_GET["action"], array("show_medium_size"))) {
-			$items[]	= $NAV_BAR_OBJ->_nav_item("View Medium Size");
+			$items[] = $obj->_nav_item("View Medium Size");
 		} elseif (in_array($_GET["action"], array("add_photo"))) {
-			$items[]	= $NAV_BAR_OBJ->_nav_item("Add New Photo");
+			$items[] = $obj->_nav_item("Add New Photo");
 		} elseif (in_array($_GET["action"], array("edit_photo"))) {
-			$items[]	= $NAV_BAR_OBJ->_nav_item("Edit Photo");
+			$items[] = $obj->_nav_item("Edit Photo");
 		} elseif (in_array($_GET["action"], array("add_folder"))) {
-			$items[]	= $NAV_BAR_OBJ->_nav_item("Add New Folder");
+			$items[] = $obj->_nav_item("Add New Folder");
 		} elseif (in_array($_GET["action"], array("edit_folder"))) {
-			$items[]	= $NAV_BAR_OBJ->_nav_item("Edit Folder");
+			$items[] = $obj->_nav_item("Edit Folder");
 		} elseif (in_array($_GET["action"], array("view_folder"))) {
-			$items[]	= $NAV_BAR_OBJ->_nav_item("View Folder");
+			$items[] = $obj->_nav_item("View Folder");
 		}
 		return $items;
 	}
