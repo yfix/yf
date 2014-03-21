@@ -21,7 +21,7 @@ class yf_gallery_manage {
 	/**
 	* Change photo sorting id
 	*/
-	function _sort_photo () {
+	function sort_photo () {
 		// Second id passed in $_GET["id"] (example: 14_56)
 		if (false !== strpos($_GET["id"], "_")) {
 			list($_GET["id"], $_second_get_id) = explode("_", $_GET["id"]);
@@ -144,7 +144,7 @@ class yf_gallery_manage {
 	/**
 	* Add Photo
 	*/
-	function _add_photo($NEW_USER_ID = 0) {
+	function add_photo($NEW_USER_ID = 0) {
 		if (empty($NEW_USER_ID) && !empty(module('gallery')->USER_ID)) {
 			$NEW_USER_ID = module('gallery')->USER_ID;
 		}
@@ -498,7 +498,7 @@ class yf_gallery_manage {
 	/**
 	* Edit Photo
 	*/
-	function _edit_photo() {
+	function edit_photo() {
 		$photo_info = $this->_acl_manage_checks();
 		if (!is_array($photo_info)) {
 			return $photo_info; // error string
@@ -766,7 +766,7 @@ class yf_gallery_manage {
 	/**
 	* Delete Photo
 	*/
-	function _delete_photo($FORCE_PHOTO_ID = 0) {
+	function delete_photo($FORCE_PHOTO_ID = 0) {
 		$photo_info = $this->_acl_manage_checks($FORCE_PHOTO_ID);
 		if (!is_array($photo_info)) {
 			return $photo_info; // error string
@@ -812,7 +812,7 @@ class yf_gallery_manage {
 	/**
 	* Image cropper
 	*/
-	function _crop_photo() {
+	function crop_photo() {
 		$photo_info = $this->_acl_manage_checks();
 		if (!is_array($photo_info)) {
 			return $photo_info; // error string
@@ -873,7 +873,7 @@ class yf_gallery_manage {
 	/**
 	* Image rotater
 	*/
-	function _rotate_photo() {
+	function rotate_photo() {
 		$photo_info = $this->_acl_manage_checks();
 		if (!is_array($photo_info)) {
 			return $photo_info; // error string

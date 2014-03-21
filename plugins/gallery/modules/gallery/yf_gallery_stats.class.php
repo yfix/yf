@@ -60,7 +60,7 @@ class yf_gallery_stats {
 			}
 			$_POST["gender"]	= "Female";
 			module('gallery')->save_filter(1);
-			$geo_top_galleries = $this->_show_all_galleries(array(
+			$geo_top_galleries = $this->show_all_galleries(array(
 				"stpl_main"	=> 'gallery'."/stats_geo_top_main",
 				"for_stats"	=> true,
 			));
@@ -161,7 +161,7 @@ class yf_gallery_stats {
 	/**
 	* Show all galleries
 	*/
-	function _show_all_galleries ($params = array()) {
+	function show_all_galleries ($params = array()) {
 // TODO: decide what to here if HIDE_TOTAL_ID enabled
 		// Override page
 		if (!empty($_GET["id"]) && empty($_GET["page"])) {

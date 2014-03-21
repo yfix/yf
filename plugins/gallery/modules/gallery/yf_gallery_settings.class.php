@@ -21,7 +21,7 @@ class yf_gallery_settings {
 	/**
 	* Edit gallery settings
 	*/
-	function _edit () {
+	function settings () {
 		// Check if user is member
 		if (empty(module('gallery')->_user_info)) {
 			return _error_need_login();
@@ -114,7 +114,7 @@ class yf_gallery_settings {
 	/**
 	* General method for retrieving users gallery settings
 	*/
-	function _get($user_id = 0) {
+	function _get_settings($user_id = 0) {
 		if (empty($user_id)) {
 			return false;
 		}

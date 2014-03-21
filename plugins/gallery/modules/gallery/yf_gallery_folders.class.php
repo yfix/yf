@@ -12,7 +12,7 @@ class yf_gallery_folders {
 	/**
 	* View folder contents
 	*/
-	function _view_folder () {
+	function view_folder () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
 			return _e("Missing folder id!");
@@ -52,7 +52,7 @@ class yf_gallery_folders {
 	/**
 	* Add new folder
 	*/
-	function _add_folder () {
+	function add_folder () {
 		// Check if user is member
 		if (empty(module('gallery')->_user_info) && MAIN_TYPE_USER) {
 			return _error_need_login();
@@ -138,7 +138,7 @@ class yf_gallery_folders {
 	/**
 	* Edit folder
 	*/
-	function _edit_folder () {
+	function edit_folder () {
 		// Check if user is member
 		if (empty(module('gallery')->_user_info) && MAIN_TYPE_USER) {
 			return _error_need_login();
@@ -251,7 +251,7 @@ class yf_gallery_folders {
 	/**
 	* Delete folder
 	*/
-	function _delete_folder () {
+	function delete_folder () {
 		// Check if user is member
 		if (empty(module('gallery')->_user_info) && MAIN_TYPE_USER) {
 			return _error_need_login();
