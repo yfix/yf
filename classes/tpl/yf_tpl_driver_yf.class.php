@@ -467,7 +467,7 @@ class yf_tpl_driver_yf {
 			$part_left	  = $this->_prepare_cond_text($m[1][$k], $replace);
 			$cur_operator = $this->_cond_operators[strtolower($m[2][$k])];
 			$part_right	 = trim($m[3][$k]);
-			if ($part_right && $part_right{0} == '#') {
+			if (strlen($part_right) && $part_right{0} == '#') {
 				$part_right = $replace[ltrim($part_right, '#')];
 			}
 			if (!is_numeric($part_right)) {
@@ -526,7 +526,7 @@ class yf_tpl_driver_yf {
 		}
 		$part_left		= $this->_prepare_cond_text($m[1], $replace);
 		$cur_operator	= $this->_cond_operators[strtolower($m[2])];
-		$part_right		= $m[3];
+		$part_right		= strval($m[3]);
 		if (strlen($part_right) && $part_right{0} == '#') {
 			$part_right = $replace[ltrim($part_right, '#')];
 		}
