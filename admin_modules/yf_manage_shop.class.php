@@ -142,107 +142,107 @@ class yf_manage_shop {
 	}
 
 	function products() {
-		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function products_xls_export() {
-		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function product_add() {
-		$func = __FUNCTION__; return _class('manage_shop_product_add', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_product_add', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function product_edit() {
-		$func = __FUNCTION__; return _class('manage_shop_product_edit', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_product_edit', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function product_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function product_clone() {
-		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function product_activate() {
-		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function product_image_upload() {
-		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function _product_image_upload($product_id) {
-		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func($product_id);
+		return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->{__FUNCTION__}($product_id);
 	}
 
 	function product_image_search() {
-		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function upload_images() {
-		$func = __FUNCTION__; return _class('manage_shop_upload_images', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_upload_images', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function set_main_image() {
-		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function _product_image_delete($id, $k) {
-		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func($id, $k);
+		return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->{__FUNCTION__}($id, $k);
 	}
 
 	function product_image_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_product_images', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function products_by_category($cat = '') {
-		$func = __FUNCTION__; return _class('manage_shop_products', 'admin_modules/manage_shop/')->$func($cat);
+		return _class('manage_shop_products', 'admin_modules/manage_shop/')->{__FUNCTION__}($cat);
 	}
 
 	function related_products($id = '') {
-		$func = __FUNCTION__; return _class('manage_shop_related_products', 'admin_modules/manage_shop/')->$func($id);
+		return _class('manage_shop_related_products', 'admin_modules/manage_shop/')->{__FUNCTION__}($id);
 	}
 
 	function product_revisions() {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function product_images_revisions() {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function order_revisions() {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function product_revisions_view() {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
  	function product_images_revisions_view() {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function order_revisions_view() {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function checkout_images_revision() {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function checkout_product_revision() {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function checkout_order_revision() {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function checkout_group_revision() {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function orders() {
@@ -251,159 +251,159 @@ class yf_manage_shop {
 
 	function show_orders() {
 		$_GET['action'] = 'orders';
-		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function orders_manage() {
-		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function show_print() {
-		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function view_order() {
-		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function merge_order() {
-		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function delete_order() {
-		$func = __FUNCTION__; return _class('manage_shop_orders', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function _order_add_revision($action, $item_id) {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $item_id);
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}($action, $item_id);
 	}
 
 	function manufacturers() {
-		$func = __FUNCTION__; return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function manufacturer_edit() {
-		$func = __FUNCTION__; return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function manufacturer_add() {
-		$func = __FUNCTION__; return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function manufacturer_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_manufacturers', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function suppliers() {
-		$func = __FUNCTION__; return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function supplier_edit() {
-		$func = __FUNCTION__; return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function supplier_add() {
-		$func = __FUNCTION__; return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function supplier_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_suppliers', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function units() {
-		$func = __FUNCTION__; return _class('manage_shop_units', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_units', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function unit_edit() {
-		$func = __FUNCTION__; return _class('manage_shop_units', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_units', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function unit_add() {
-		$func = __FUNCTION__; return _class('manage_shop_units', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_units', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function unit_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_units', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_units', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function price_markup_down() {
-		$func = __FUNCTION__; return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function price_markup_down_active() {
-		$func = __FUNCTION__; return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function price_markup_down_edit() {
-		$func = __FUNCTION__; return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function price_markup_down_add() {
-		$func = __FUNCTION__; return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function price_markup_down_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function attributes() {
-		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function attribute_add() {
-		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function attribute_edit() {
-		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function attribute_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function attribute_activate() {
-		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function _attributes_view($object_id = 0) {
-		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($object_id);
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}($object_id);
 	}
 
 	function _attributes_html($object_id = 0, $only_selected = false) {
-		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($object_id, $only_selected);
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}($object_id, $only_selected);
 	}
 
 	function _attributes_save($object_id = 0) {
-		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($object_id);
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}($object_id);
 	}
 
 	function _get_attributes($category_id = 0) {
-		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($category_id);
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}($category_id);
 	}
 
 	function _get_products_attributes($products_ids = array()) {
-		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($products_ids);
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}($products_ids);
 	}
 
 	function _get_attributes_values($category_id = 0, $object_id = 0, $fields_ids = 0) {
-		$func = __FUNCTION__; return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->$func($category_id, $object_id, $fields_ids);
+		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}($category_id, $object_id, $fields_ids);
 	}
 
 	function product_sets() {
-		$func = __FUNCTION__; return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function product_set_edit() {
-		$func = __FUNCTION__; return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function product_set_add() {
-		$func = __FUNCTION__; return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function product_set_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function _show_header() {
@@ -419,99 +419,99 @@ class yf_manage_shop {
 	}
 
 	function _show_filter($params = array()) {
-		$func = __FUNCTION__; return _class('manage_shop_filter', 'admin_modules/manage_shop/')->$func($params);
+		return _class('manage_shop_filter', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function filter_save($params = array()) {
-		$func = __FUNCTION__; return _class('manage_shop_filter', 'admin_modules/manage_shop/')->$func($params);
+		return _class('manage_shop_filter', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function _hook_widget__new_products ($params = array()) {
-		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
+		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function _hook_widget__latest_sold_products ($params = array()) {
-		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
+		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function _hook_widget__top_sold_products ($params = array()) {
-		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
+		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function _hook_widget__latest_orders ($params = array()) {
-		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
+		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function _hook_widget__top_customers ($params = array()) {
-		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
+		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function _hook_widget__latest_customers ($params = array()) {
-		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
+		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function _hook_widget__stats ($params = array()) {
-		$func = __FUNCTION__; return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->$func($params);
+		return _class('manage_shop_hook_widgets', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function users() {
-		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_users', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function user_activate() {
-		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_users', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function user_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_users', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function user_edit() {
-		$func = __FUNCTION__; return _class('manage_shop_users', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_users', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function express() {
-		$func = __FUNCTION__; return _class('manage_shop_express', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_express', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function paywill() {
-		$func = __FUNCTION__; return _class('manage_shop_paywill', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_paywill', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function _prepare_paywill_body($params = false) {
-		$func = __FUNCTION__; return _class('manage_shop_paywill', 'admin_modules/manage_shop/')->$func($params);
+		return _class('manage_shop_paywill', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function express_pdf($params = array()) {
-		$func = __FUNCTION__; return _class('manage_shop_express', 'admin_modules/manage_shop/')->$func($params);
+		return _class('manage_shop_express', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function mail_pdf() {
-		$func = __FUNCTION__; return _class('manage_shop_express', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_express', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function _productparams_container($product_id) {
-		$func = __FUNCTION__; return _class('manage_shop__productparams_container', 'admin_modules/manage_shop/')->$func($product_id);
+		return _class('manage_shop__productparams_container', 'admin_modules/manage_shop/')->{__FUNCTION__}($product_id);
 	}
 
 	function _product_add_revision($action, $item_id) {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $item_id);
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}($action, $item_id);
 	}
 
 	function _add_group_revision($action, $item_id, $group_id) {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $item_id, $group_id);
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}($action, $item_id, $group_id);
 	}
 
 	function _product_images_add_revision($action, $product_id, $image_id) {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $product_id, $image_id);
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}($action, $product_id, $image_id);
 	}
 
 	function _product_check_first_revision($action, $item_id) {
-		$func = __FUNCTION__; return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->$func($action, $item_id);
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}($action, $item_id);
 	}
 
 	function import_xls($params = array()) {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_import', 'admin_modules/'.$cl.'/')->$func($params);
+		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function import_products() {
@@ -519,39 +519,39 @@ class yf_manage_shop {
 	}
 
 	function product_search_autocomplete(){
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_products', 'admin_modules/'.$cl.'/')->$func($params);
+		return _class('manage_shop_products', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function order_product_add_ajax() {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_orders', 'admin_modules/'.$cl.'/')->$func($params);
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function productparams_container_ajax() {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'__productparams_container', 'admin_modules/'.$cl.'/')->_productparams_container($params,'productparams_container_ajax');
+		return _class('manage_shop__productparams_container', 'admin_modules/manage_shop/')->_productparams_container($params,'productparams_container_ajax');
 	}
 
 	function pics_browser($params = array()) {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_pics_browser', 'admin_modules/'.$cl.'/')->$func($params);
+		return _class('manage_shop_pics_browser', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function send_sms() {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_send_sms', 'admin_modules/'.$cl.'/')->$func($params);
+		return _class('manage_shop_send_sms', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function category_mapping($params = array()) {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
+		return _class('manage_shop_categories', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function category_mapping_add($params = array()) {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
+		return _class('manage_shop_categories', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function category_mapping_edit($params = array()) {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
+		return _class('manage_shop_categories', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function category_mapping_delete($params = array()) {
-		$func = __FUNCTION__; $cl = $_GET['object']; return _class($cl.'_categories', 'admin_modules/'.$cl.'/')->$func($params);
+		return _class('manage_shop_categories', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function _product_cache_purge($product_id = 0) {
@@ -589,47 +589,47 @@ class yf_manage_shop {
 	 * Patterns for massive corrections of names of products
 	 */
 	function clear_patterns() {
-		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 	function clear_pattern_list() {
-		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 	function clear_pattern_add() {
-		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 	function clear_pattern_edit() {
-		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 	function clear_pattern_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 	function clear_pattern_stop() {
-		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 	function clear_pattern_run() {
-		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 	function clear_pattern_rollback() {
-		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 	function clear_pattern_child_process() {
-		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 	function clear_pattern_status() {
-		$func = __FUNCTION__; return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_clear_products', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function _hook_side_column() {
-		$func = __FUNCTION__; return _class('manage_shop_hook_side_column', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_hook_side_column', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function feedback() {
-		$func = __FUNCTION__; return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 	function feedback_delete() {
-		$func = __FUNCTION__; return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 	function feedback_activate() {
-		$func = __FUNCTION__; return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->$func();
+		return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 }

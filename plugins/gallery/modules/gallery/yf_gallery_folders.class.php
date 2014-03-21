@@ -12,7 +12,7 @@ class yf_gallery_folders {
 	/**
 	* View folder contents
 	*/
-	function _view_folder () {
+	function view_folder () {
 		$_GET["id"] = intval($_GET["id"]);
 		if (empty($_GET["id"])) {
 			return _e("Missing folder id!");
@@ -41,7 +41,7 @@ class yf_gallery_folders {
 			$GLOBALS['user_info'] = $user_info;
 		}
 		if (MAIN_TYPE_USER) {
-			module('gallery')->is_own_gallery = intval(module('gallery')->USER_ID == $cur_folder_info["user_id"]);
+			module('gallery')->is_own_gallery = intval(main()->USER_ID == $cur_folder_info["user_id"]);
 		} elseif (MAIN_TYPE_ADMIN) {
 			module('gallery')->is_own_gallery = true;
 		}
@@ -52,17 +52,17 @@ class yf_gallery_folders {
 	/**
 	* Add new folder
 	*/
-	function _add_folder () {
+	function add_folder () {
 		// Check if user is member
-		if (empty(module('gallery')->_user_info) && MAIN_TYPE_USER) {
+		if (empty(main()->_user_info) && MAIN_TYPE_USER) {
 			return _error_need_login();
 		}
 		// Ban check
-		if (module('gallery')->_user_info["ban_images"]) {
+		if (main()->_user_info["ban_images"]) {
 			return module('gallery')->_error_msg("ban_images");
 		}
 		// Get current user folders
-		$user_folders = module('gallery')->_get_user_folders(module('gallery')->USER_ID);
+		$user_folders = module('gallery')->_get_user_folders(main()->USER_ID);
 		// Check number of user folders
 		if (!empty(module('gallery')->MAX_TOTAL_FOLDERS) && count($user_folders) >= module('gallery')->MAX_TOTAL_FOLDERS) {
 			_re("You can create max ".intval(module('gallery')->MAX_TOTAL_FOLDERS)." folders!");
@@ -70,7 +70,7 @@ class yf_gallery_folders {
 		// Warn user about photos will not displayed in ads
 		$WARN_USER = 0;
 		// Fix second id
-		$_max_folder_id2 = $this->_fix_folder_id2(module('gallery')->USER_ID);
+		$_max_folder_id2 = $this->_fix_folder_id2(main()->USER_ID);
 		// Check posted data and save
 		if (!empty($_POST["go"])) {
 			$_POST["title"]		= substr($_POST["title"], 0, module('gallery')->MAX_FOLDER_TITLE_LENGTH);
@@ -90,7 +90,7 @@ class yf_gallery_folders {
 
 				// Generate SQL
 				db()->INSERT("gallery_folders", array(
-					"user_id"		=> intval(module('gallery')->USER_ID),
+					"user_id"		=> intval(main()->USER_ID),
 					"title"			=> _es($_POST["title"]),
 					"comment"		=> _es($_POST["comment"]),
 					"content_level"	=> intval($_POST["content_level"]),
@@ -111,7 +111,7 @@ class yf_gallery_folders {
 				return js_redirect("./?object=".'gallery'."&action=edit_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? ($_max_folder_id2 + 1) : intval($NEW_FOLDER_ID)). _add_get(array("page")));
 			}
 			// Update user stats
-			_class_safe("user_stats")->_update(array("user_id" => module('gallery')->USER_ID));
+			_class_safe("user_stats")->_update(array("user_id" => main()->USER_ID));
 		}
 		// Fill POST data
 		$DATA = $_POST;
@@ -127,7 +127,7 @@ class yf_gallery_folders {
 			"content_level_box"		=> module('gallery')->_box("content_level",	$DATA["content_level"]),
 			"privacy_box"			=> module('gallery')->_box("privacy",			$DATA["privacy"]),
 			"allow_comments_box"	=> module('gallery')->_box("allow_comments",	$DATA["allow_comments"]),
-			"user_id"				=> intval(module('gallery')->USER_ID),
+			"user_id"				=> intval(main()->USER_ID),
 			"back_link"				=> "./?object=".'gallery'."&action=show_gallery"._add_get(array("page")),
 			"warn_user"				=> intval($WARN_USER),
 			"folder_tagging_box"	=> module('gallery')->ALLOW_TAGGING ? module('gallery')->TAG_OBJ->_mod_spec_settings(array("module"=>"gallery")) : "",			
@@ -138,13 +138,13 @@ class yf_gallery_folders {
 	/**
 	* Edit folder
 	*/
-	function _edit_folder () {
+	function edit_folder () {
 		// Check if user is member
-		if (empty(module('gallery')->_user_info) && MAIN_TYPE_USER) {
+		if (empty(main()->_user_info) && MAIN_TYPE_USER) {
 			return _error_need_login();
 		}
 		// Ban check
-		if (module('gallery')->_user_info["ban_images"]) {
+		if (main()->_user_info["ban_images"]) {
 			return module('gallery')->_error_msg("ban_images");
 		}
 		// Prepare folder id
@@ -153,7 +153,7 @@ class yf_gallery_folders {
 			return _e("Missing folder id!");
 		}
 		// Fix second id
-		$_max_folder_id2 = $this->_fix_folder_id2(module('gallery')->USER_ID);
+		$_max_folder_id2 = $this->_fix_folder_id2(main()->USER_ID);
 		// Check if such folder exists
 		$sql = "SELECT * FROM ".db('gallery_folders')." WHERE ";
 		if (module('gallery')->HIDE_TOTAL_ID) {
@@ -166,11 +166,11 @@ class yf_gallery_folders {
 			return _e("No such folder!");
 		}
 		// Fix owner for the admin section
-		if (MAIN_TYPE_ADMIN && empty(module('gallery')->USER_ID)) {
-			module('gallery')->USER_ID = $cur_folder_info["user_id"];
+		if (MAIN_TYPE_ADMIN && empty(main()->USER_ID)) {
+			main()->USER_ID = $cur_folder_info["user_id"];
 		}
 		$FOLDER_ID	= intval($cur_folder_info["id"]);
-		if ($cur_folder_info["user_id"] != module('gallery')->USER_ID) {
+		if ($cur_folder_info["user_id"] != main()->USER_ID) {
 			return _e("Not your folder!");
 		}
 		// Warn user about photos will not displayed in ads
@@ -204,7 +204,7 @@ class yf_gallery_folders {
 				$creation_time = time();
 				// Generate SQL
 				db()->UPDATE("gallery_folders", array(
-					"user_id"		=> intval(module('gallery')->USER_ID),
+					"user_id"		=> intval(main()->USER_ID),
 					"title"			=> _es($_POST["title"]),
 					"comment"		=> _es($_POST["comment"]),
 					"content_level"	=> intval($_POST["content_level"]),
@@ -217,7 +217,7 @@ class yf_gallery_folders {
 				// Update public photos
 				module('gallery')->_sync_public_photos();
 				// Update user stats
-				_class_safe("user_stats")->_update(array("user_id" => module('gallery')->USER_ID));
+				_class_safe("user_stats")->_update(array("user_id" => main()->USER_ID));
 				// Redirect user
 				return js_redirect("./?object=".'gallery'."&action=edit_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : intval($FOLDER_ID)). _add_get(array("page")));
 			}
@@ -238,7 +238,7 @@ class yf_gallery_folders {
 			"content_level_box"		=> module('gallery')->_box("content_level",	$DATA["content_level"]),
 			"privacy_box"			=> module('gallery')->_box("privacy",			$DATA["privacy"]),
 			"allow_comments_box"	=> module('gallery')->_box("allow_comments",	$DATA["allow_comments"]),
-			"user_id"				=> intval(module('gallery')->USER_ID),
+			"user_id"				=> intval(main()->USER_ID),
 			"back_link"				=> "./?object=".'gallery'."&action=view_folder&id=".$_GET["id"]. _add_get(array("page")),
 			"is_default"			=> intval((bool)$cur_folder_info["is_default"]),
 			"content_level"			=> module('gallery')->_content_levels[$cur_folder_info["content_level"]],
@@ -251,17 +251,17 @@ class yf_gallery_folders {
 	/**
 	* Delete folder
 	*/
-	function _delete_folder () {
+	function delete_folder () {
 		// Check if user is member
-		if (empty(module('gallery')->_user_info) && MAIN_TYPE_USER) {
+		if (empty(main()->_user_info) && MAIN_TYPE_USER) {
 			return _error_need_login();
 		}
 		// Ban check
-		if (module('gallery')->_user_info["ban_images"]) {
+		if (main()->_user_info["ban_images"]) {
 			return module('gallery')->_error_msg("ban_images");
 		}
 		// Fix second id
-		$_max_folder_id2 = $this->_fix_folder_id2(module('gallery')->USER_ID);
+		$_max_folder_id2 = $this->_fix_folder_id2(main()->USER_ID);
 		// Check if such folder exists
 		$sql = "SELECT * FROM ".db('gallery_folders')." WHERE ";
 		if (module('gallery')->HIDE_TOTAL_ID) {
@@ -274,15 +274,15 @@ class yf_gallery_folders {
 			return _e("No such folder!");
 		}
 		// Fix owner for the admin section
-		if (MAIN_TYPE_ADMIN && empty(module('gallery')->USER_ID)) {
-			module('gallery')->USER_ID = $cur_folder_info["user_id"];
+		if (MAIN_TYPE_ADMIN && empty(main()->USER_ID)) {
+			main()->USER_ID = $cur_folder_info["user_id"];
 		}
 		$FOLDER_ID	= intval($cur_folder_info["id"]);
-		if ($cur_folder_info["user_id"] != module('gallery')->USER_ID) {
+		if ($cur_folder_info["user_id"] != main()->USER_ID) {
 			return _e("Not your folder!");
 		}
 		// Get current user folders
-		$user_folders = module('gallery')->_get_user_folders(module('gallery')->USER_ID);
+		$user_folders = module('gallery')->_get_user_folders(main()->USER_ID);
 		// Get default folder id
 		$def_folder_id = $this->_get_def_folder_id($user_folders);
 		// Get all photos inside folder
@@ -350,7 +350,7 @@ class yf_gallery_folders {
 				// Delete folder record from database
 				db()->query("DELETE FROM ".db('gallery_folders')." WHERE id=".intval($FOLDER_ID)." LIMIT 1");
 				// Update user stats
-				_class_safe("user_stats")->_update(array("user_id" => module('gallery')->USER_ID));
+				_class_safe("user_stats")->_update(array("user_id" => main()->USER_ID));
 				// Update public photos
 				module('gallery')->_sync_public_photos();
 				// Return user back

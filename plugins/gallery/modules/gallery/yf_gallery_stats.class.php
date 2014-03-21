@@ -20,8 +20,8 @@ class yf_gallery_stats {
 		if (empty($MAIN_STPL)) {
 			$MAIN_STPL = 'gallery'."/stats_main";
 		}
-		if (empty($GLOBALS['user_info']) && !empty(module('gallery')->_user_info)) {
-			$GLOBALS['user_info'] = module('gallery')->_user_info;
+		if (empty($GLOBALS['user_info']) && !empty(main()->_user_info)) {
+			$GLOBALS['user_info'] = main()->_user_info;
 		}
 		// Create sql code for the access checks
 		// We want only clean, non-private, normal by content level photos on the main page
@@ -60,7 +60,7 @@ class yf_gallery_stats {
 			}
 			$_POST["gender"]	= "Female";
 			module('gallery')->save_filter(1);
-			$geo_top_galleries = $this->_show_all_galleries(array(
+			$geo_top_galleries = $this->show_all_galleries(array(
 				"stpl_main"	=> 'gallery'."/stats_geo_top_main",
 				"for_stats"	=> true,
 			));
@@ -138,8 +138,8 @@ class yf_gallery_stats {
 		}
 		// Process template
 		$replace = array(
-			"is_logged_in"			=> intval((bool) module('gallery')->USER_ID),
-			"show_own_gallery_link"	=> module('gallery')->USER_ID ? "./?object=".'gallery'."&action=show_gallery&id=".intval(module('gallery')->USER_ID)._add_get(array("page")) : "",
+			"is_logged_in"			=> intval((bool) main()->USER_ID),
+			"show_own_gallery_link"	=> main()->USER_ID ? "./?object=".'gallery'."&action=show_gallery&id=".intval(main()->USER_ID)._add_get(array("page")) : "",
 			"all_galleries_link"	=> "./?object=".'gallery'."&action=show_all_galleries"._add_get(array("page")),
 			"latest_photos"			=> $latest_photos,
 			"num_latest"			=> intval(module('gallery')->STATS_NUM_LATEST),
@@ -161,7 +161,7 @@ class yf_gallery_stats {
 	/**
 	* Show all galleries
 	*/
-	function _show_all_galleries ($params = array()) {
+	function show_all_galleries ($params = array()) {
 // TODO: decide what to here if HIDE_TOTAL_ID enabled
 		// Override page
 		if (!empty($_GET["id"]) && empty($_GET["page"])) {
@@ -445,7 +445,7 @@ class yf_gallery_stats {
 	/**
 	* Display latest photos in all galleries
 	*/
-	function _show_latest($params = array()) {
+	function latest($params = array()) {
 // TODO: decide what to here if HIDE_TOTAL_ID enabled
 		// Override page
 		if (!empty($_GET["id"]) && empty($_GET["page"])) {

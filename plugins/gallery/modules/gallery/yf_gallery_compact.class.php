@@ -12,7 +12,7 @@ class yf_gallery_compact {
 	/**
 	* Display single photo link (Specially for AJAX)
 	*/
-	function _compact_view() {
+	function compact_view() {
 		main()->NO_GRAPHICS = true;
 		// Prepare params
 		$PHOTO_ID	= intval(substr($_POST["id"], strlen("gallery_")));
@@ -34,7 +34,7 @@ class yf_gallery_compact {
 			return _e("No such user in database!");
 		}
 		if (MAIN_TYPE_USER) {
-			module('gallery')->is_own_gallery = intval(!empty(module('gallery')->USER_ID) && module('gallery')->USER_ID == $photo_info["user_id"]);
+			module('gallery')->is_own_gallery = intval(!empty(main()->USER_ID) && main()->USER_ID == $photo_info["user_id"]);
 		} elseif (MAIN_TYPE_ADMIN) {
 			module('gallery')->is_own_gallery = true;
 		}

@@ -1,8 +1,10 @@
 <?php
 
 $handlers_dirs = array(
-	'framework'	=> YF_PATH.'share/data_handlers/',
-	'project'	=> PROJECT_PATH.'share/data_handlers/',
+	'yf_main'			=> YF_PATH.'share/data_handlers/',
+	'yf_plugins'		=> YF_PATH.'plugins/*/share/data_handlers/',
+	'project_main'		=> PROJECT_PATH.'share/data_handlers/',
+	'project_plugins'	=> PROJECT_PATH.'plugins/*/share/data_handlers/',
 );
 $handlers = array();
 $h_suffix = '.h.php';

@@ -24,14 +24,14 @@ class yf_blog_posting {
 	* Add post method
 	*/
 	function _add_post() {
-		if (empty(module('blog')->_user_info)) {
+		if (empty(main()->_user_info)) {
 			return _error_need_login();
 		}
 		if ($_ban_error = module('blog')->_ban_check()) {
 			return $_ban_error;
 		}
 		// Get current blog settings
-		module('blog')->BLOG_SETTINGS = module('blog')->_get_user_blog_settings(module('blog')->USER_ID);
+		module('blog')->BLOG_SETTINGS = module('blog')->_get_user_blog_settings(main()->USER_ID);
 		// Prepare user custom categories
 		$custom_cats_info = module('blog')->_custom_cats_into_array(module('blog')->BLOG_SETTINGS["custom_cats"]);
 		foreach ((array)$custom_cats_info as $custom_cat_id => $info) {
@@ -43,7 +43,7 @@ class yf_blog_posting {
 		// Check posted data and save
 		if (!empty($_POST["go"])) {
 			// Fix and get max second id
-			$max_id2 = module('blog')->_fix_id2(module('blog')->USER_ID);
+			$max_id2 = module('blog')->_fix_id2(main()->USER_ID);
 
 			$_POST["post_title"]	= substr($_POST["post_title"], 0, module('blog')->MAX_POST_TITLE_LENGTH);
 			$_POST["post_text"]		= substr($_POST["post_text"], 0, module('blog')->MAX_POST_TEXT_LENGTH);
@@ -97,9 +97,9 @@ class yf_blog_posting {
 					}
 					
 					$user_id = $community_info["user_id"];
-					$poster_id = intval(module('blog')->USER_ID);
+					$poster_id = intval(main()->USER_ID);
 				}else{
-					$user_id = intval(module('blog')->USER_ID);
+					$user_id = intval(main()->USER_ID);
 					$poster_id = "";
 					$active = 1;
 				}
@@ -115,7 +115,7 @@ class yf_blog_posting {
 					"id2"				=> intval($max_id2 + 1),
 					"user_id"			=> $user_id,
 					"poster_id"			=> $poster_id,
-					"user_name"			=> _es(_display_name(module('blog')->_user_info)),
+					"user_name"			=> _es(_display_name(main()->_user_info)),
 					"cat_id"			=> _es($_POST["cat_id"]),
 					"title"				=> _es($_POST["post_title"]),
 					"text"				=> _es($_POST["post_text"]),
@@ -140,10 +140,10 @@ class yf_blog_posting {
 				}
 
 				module('blog')->_update_all_stats();
-				common()->_add_activity_points(module('blog')->USER_ID, "blog_post", strlen($_POST["post_text"]), $RECORD_ID);
-				db()->update('user', array('last_update' => time()), module('blog')->USER_ID);
-				_class_safe("user_stats")->_update(array("user_id" => module('blog')->USER_ID));
-				module('blog')->_do_ping($RECORD_ID, module('blog')->USER_ID);
+				common()->_add_activity_points(main()->USER_ID, "blog_post", strlen($_POST["post_text"]), $RECORD_ID);
+				db()->update('user', array('last_update' => time()), main()->USER_ID);
+				_class_safe("user_stats")->_update(array("user_id" => main()->USER_ID));
+				module('blog')->_do_ping($RECORD_ID, main()->USER_ID);
 				if(!empty($_POST["community_select_box"])){ 
 					return js_redirect("./?object=community&action=view&id=".$community_info["id"]);
 				}else{
@@ -204,7 +204,7 @@ class yf_blog_posting {
 				"mode_text"			=> _prepare_html($_POST["mode_text"]),
 				"add_date"			=> date("Y-m-d H:i:s", !empty($_POST["add_date"]) ? strtotime($_POST["add_date"]) : time()),
 				"back_url"			=> "./?object=".'blog'."&action=show_posts"._add_get(array("page")),
-				"user_id"			=> intval(module('blog')->USER_ID),
+				"user_id"			=> intval(main()->USER_ID),
 				"stpl_for_edit"		=> 0,
 				"custom_cats_box"	=> !empty($custom_cats_for_box) ? common()->select_box("custom_cat_id", array_merge(array(""), $custom_cats_for_box), $_POST["custom_cat_id"], false, 2, "", false) : "",
 				"edit_settings_link"=> "./?object=".'blog'."&action=settings"._add_get(array("page")),
@@ -228,7 +228,7 @@ class yf_blog_posting {
 	* Edit post method
 	*/
 	function _edit_post () {
-		if (empty(module('blog')->_user_info)) {
+		if (empty(main()->_user_info)) {
 			return _error_need_login();
 		}
 		
@@ -257,11 +257,11 @@ class yf_blog_posting {
 		
 		$is_community?$post_info["user_id"] = $post_info["poster_id"]:"";
 		
-		if ($post_info["user_id"] != module('blog')->USER_ID) {
+		if ($post_info["user_id"] != main()->USER_ID) {
 			return _e("Not your post!");
 		}
 		// Get current blog settings
-		module('blog')->BLOG_SETTINGS = module('blog')->_get_user_blog_settings(module('blog')->USER_ID);
+		module('blog')->BLOG_SETTINGS = module('blog')->_get_user_blog_settings(main()->USER_ID);
 		// Prepare user custom categories
 		$custom_cats_info = module('blog')->_custom_cats_into_array(module('blog')->BLOG_SETTINGS["custom_cats"]);
 		foreach ((array)$custom_cats_info as $custom_cat_id => $info) {
@@ -273,7 +273,7 @@ class yf_blog_posting {
 		// Check posted data and save
 		if (!empty($_POST["go"])) {
 			// Fix and get max second id
-			$max_id2 = module('blog')->_fix_id2(module('blog')->USER_ID);
+			$max_id2 = module('blog')->_fix_id2(main()->USER_ID);
 
 			// Save tags 
 			if (isset($_POST["tags"])) {
@@ -357,9 +357,9 @@ class yf_blog_posting {
 				// Synchronize all blogs stats
 				module('blog')->_update_all_stats();
 				// Last update
-				db()->update('user', array("last_update"=>time()), module('blog')->USER_ID);
+				db()->update('user', array("last_update"=>time()), main()->USER_ID);
 				// Update user stats
-				_class_safe("user_stats")->_update(array("user_id" => module('blog')->USER_ID));
+				_class_safe("user_stats")->_update(array("user_id" => main()->USER_ID));
 				// Return user back
 				
 				//if this post in community
@@ -443,7 +443,7 @@ class yf_blog_posting {
 				"disable_comments"	=> intval((bool) $_POST["disable_comments"]),
 				"add_date"			=> date("Y-m-d H:i:s", !empty($_POST["add_date"]) ? $_POST["add_date"] : time()),
 				"back_url"			=> "./?object=".'blog'."&action=show_single_post&id=".$_GET["id"]._add_get(array("page")),
-				"user_id"			=> intval(module('blog')->USER_ID),
+				"user_id"			=> intval(main()->USER_ID),
 				"stpl_for_edit"		=> 1,
 				"custom_cats_box"	=> !empty($custom_cats_for_box) ? common()->select_box("custom_cat_id", array_merge(array(""), $custom_cats_for_box), $_POST["custom_cat_id"], false, 2, "", false) : "",
 				"edit_settings_link"=> "./?object=".'blog'."&action=settings"._add_get(array("page")),
@@ -467,7 +467,7 @@ class yf_blog_posting {
 	* Delete post method
 	*/
 	function _delete_post () {
-		if (empty(module('blog')->_user_info)) {
+		if (empty(main()->_user_info)) {
 			return _error_need_login();
 		}
 		if ($_ban_error = module('blog')->_ban_check()) {
@@ -494,11 +494,11 @@ class yf_blog_posting {
 		}
 		$post_info_real_user_id = $is_community ? $post_info["poster_id"] : $post_info["user_id"];
 		
-		if ($post_info_real_user_id != module('blog')->USER_ID) {
+		if ($post_info_real_user_id != main()->USER_ID) {
 			return _e("Not your post!");
 		}
 		// Fix and get max second id
-		$max_id2 = module('blog')->_fix_id2(module('blog')->USER_ID);
+		$max_id2 = module('blog')->_fix_id2(main()->USER_ID);
 		// Delete image
 		$attach_fs_path = "";
 		if (!empty($post_info["attach_image"])) {
@@ -509,10 +509,10 @@ class yf_blog_posting {
 		}
 		db()->query("DELETE FROM ".db('blog_posts')." WHERE id=".intval($post_info["id"])." AND user_id='".intval($post_info["user_id"])."' LIMIT 1");
 		db()->query("DELETE FROM ".db('comments')." WHERE object_name='"._es('blog')."' AND object_id=".intval($post_info["id"]));
-		db()->update('user', array('last_update' => time()), module('blog')->USER_ID);
+		db()->update('user', array('last_update' => time()), main()->USER_ID);
 		module('blog')->_update_all_stats();
 		common()->_remove_activity_points($post_info["user_id"], "blog_post", $post_info["id"]);
-		_class_safe("user_stats")->_update(array("user_id" => module('blog')->USER_ID));
+		_class_safe("user_stats")->_update(array("user_id" => main()->USER_ID));
 		if ($is_community) {
 			return js_redirect("./?object=community");
 		}
@@ -523,7 +523,7 @@ class yf_blog_posting {
 	* Delete attached image
 	*/
 	function _delete_attach_image () {
-		if (empty(module('blog')->_user_info)) {
+		if (empty(main()->_user_info)) {
 			return _error_need_login();
 		}
 		// Ban check
@@ -552,7 +552,7 @@ class yf_blog_posting {
 		// if this post in community
 		$post_info_real_user_id = $is_community ? $post_info["poster_id"] : $post_info["user_id"];
 		
-		if ($post_info_real_user_id != module('blog')->USER_ID) {
+		if ($post_info_real_user_id != main()->USER_ID) {
 			return _e("Not your post!");
 		}
 
@@ -565,7 +565,7 @@ class yf_blog_posting {
 			unlink($attach_fs_path);
 		}
 		db()->query("UPDATE ".db('blog_posts')." SET attach_image='' WHERE id=".intval($post_info["id"])." AND user_id='".intval(main()->USER_ID)."' LIMIT 1");
-		db()->update('user', array('last_update' => time()), module('blog')->USER_ID);
+		db()->update('user', array('last_update' => time()), main()->USER_ID);
 		return js_redirect($_SERVER["HTTP_REFERER"], 1);
 	}
 
@@ -575,11 +575,11 @@ class yf_blog_posting {
 	function _load_attach_image ($new_file_name = "") {
 		// Create new file name
 		if (empty($new_file_name)) {
-			$new_file_name = module('blog')->USER_ID. "-". substr(md5(microtime(true)), 0, 8). ".jpg";
+			$new_file_name = main()->USER_ID. "-". substr(md5(microtime(true)), 0, 8). ".jpg";
 		}
 		// Placeholder
 		$post_info = array(
-			"user_id"		=> intval(module('blog')->USER_ID),
+			"user_id"		=> intval(main()->USER_ID),
 			"attach_image"	=> $new_file_name,
 		);
 		$attach_fs_path = "";
@@ -627,7 +627,7 @@ class yf_blog_posting {
 				_re("No community");
 			}
 			
-			$community_user_settings = db()->query_fetch("SELECT * FROM ".db('community_users')." WHERE community_id=".intval($community_info["id"])." AND user_id = ".intval(module('blog')->USER_ID));
+			$community_user_settings = db()->query_fetch("SELECT * FROM ".db('community_users')." WHERE community_id=".intval($community_info["id"])." AND user_id = ".intval(main()->USER_ID));
 			$GLOBALS["community_user_settings"] = $community_user_settings;
 					
 			if(empty($community_user_settings)){

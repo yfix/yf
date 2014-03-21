@@ -225,10 +225,13 @@ class yf_i18n {
 		// share/langs/ru/other.php
 		// share/langs/ru/ru_shop.php
 		// share/langs/ru/ru_user_register.php
+		// plugins/shop/share/langs/ru/ru_user_register.php
 		if ($this->ALLOW_SHARED_LANG_FILES) {
 			$dirs = array(
-				'fwork'		=> YF_PATH.'share/langs/'.$lang.'/',
-				'project'	=> PROJECT_PATH.'share/langs/'.$lang.'/',
+				'yf_main'			=> YF_PATH.'share/langs/'.$lang.'/',
+				'yf_plugins'		=> YF_PATH.'plugins/*/share/langs/'.$lang.'/',
+				'project_main'		=> PROJECT_PATH.'share/langs/'.$lang.'/',
+				'project_plugins'	=> PROJECT_PATH.'plugins/*/share/langs/'.$lang.'/',
 			);
 			if (SITE_PATH != PROJECT_PATH) {
 				$dirs['site'] = SITE_PATH.'share/langs/'.$lang.'/';
@@ -246,11 +249,14 @@ class yf_i18n {
 		// modules/shop/__locale__ru.php
 		// modules/shop/__locale__ru_orders.php
 		// modules/shop/__locale__ru_products.php
+		// plugins/shop/modules/shop/__locale__ru_products.php
 		if ($this->ALLOW_MODULE_FILES) {
 			$m_dir = (MAIN_TYPE_USER ? 'modules/' : 'admin_modules/');
 			$dirs = array(
-				'fwork'		=> YF_PATH. $m_dir,
-				'project'	=> PROJECT_PATH. $m_dir,
+				'yf_main'			=> YF_PATH. $m_dir,
+				'yf_plugins'		=> YF_PATH. 'plugins/*/'. $m_dir,
+				'project_main'		=> PROJECT_PATH. $m_dir,
+				'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $m_dir,
 			);
 			if (MAIN_TYPE_USER && SITE_PATH != PROJECT_PATH) {
 				$dirs['site'] = SITE_PATH. $m_dir;

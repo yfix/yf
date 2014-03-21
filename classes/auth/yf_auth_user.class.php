@@ -18,7 +18,7 @@ class yf_auth_user {
 	/** @var string Login field name to use @conf_skip */
 	public $LOGIN_FIELD				= 'login';
 	/** @var string Alternative login field name to use @conf_skip */
-	public $LOGIN_ALIAS				= '';
+	public $LOGIN_ALIAS				= array('email','phone');
 	/** @var string Password field name to use @conf_skip */
 	public $PSWD_FIELD				= 'password';
 	/** @var string Remeber field name to use @conf_skip */
@@ -383,8 +383,24 @@ class yf_auth_user {
 		if (empty($login)) {
 			return false;
 		}
-		$db_user_table = main()->USER_INFO_DYNAMIC ? db('user_data_main') : db('user');
-		return db()->query_fetch('SELECT * FROM '.$db_user_table.' WHERE '.$this->LOGIN_FIELD.'="'.db()->es($login).'" '.($this->LOGIN_ALIAS !='' ? ' OR '.$this->LOGIN_ALIAS.'="'.db()->es($login).'"' : '') );
+		$sql = 'SELECT * FROM '.db('user').' WHERE '.db()->escape_key($this->LOGIN_FIELD).'="'.db()->es($login).'" ';
+		$login_aliases = $this->LOGIN_ALIAS;
+		if ($login_aliases) {
+			if (!is_array($login_aliases)) {
+				$login_aliases = array($login_aliases);
+			}
+			$alias_sql = array();
+			foreach ((array)$login_aliases as $alias) {
+				$alias = trim($alias);
+				if (preg_match('/^[a-z0-9_]+$/ims', $alias)) {
+					$alias_sql[] = db()->escape_key($alias).'="'.db()->es($login).'"';
+				}
+			}
+			if ($alias_sql) {
+				$sql .= ' OR '.implode(' OR ', $alias_sql);
+			}
+		}
+		return db()->get($sql);
 	}
 
 	/**

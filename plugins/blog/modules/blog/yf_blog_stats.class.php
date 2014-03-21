@@ -120,9 +120,9 @@ class yf_blog_stats {
 		$latest_posts			= $this->_process_stats_item($latest_posts_ids, $counter_start, module('blog')->STATS_NUM_LATEST_POSTS);
 		// Process main template
 		$replace = array(
-			"is_logged_in"			=> intval((bool) module('blog')->USER_ID),
-			"show_own_posts_link"	=> module('blog')->USER_ID ? "./?object=".'blog'."&action=show_posts"._add_get(array("page")) : "",
-			"change_settings_link"	=> module('blog')->USER_ID ? "./?object=".'blog'."&action=settings"._add_get(array("page")) : "",
+			"is_logged_in"			=> intval((bool) main()->USER_ID),
+			"show_own_posts_link"	=> main()->USER_ID ? "./?object=".'blog'."&action=show_posts"._add_get(array("page")) : "",
+			"change_settings_link"	=> main()->USER_ID ? "./?object=".'blog'."&action=settings"._add_get(array("page")) : "",
 			"all_blogs_link"		=> "./?object=".'blog'."&action=show_all_blogs"._add_get(array("page")),
 			"latest_posts"			=> $latest_posts,
 			"latest_total"			=> intval($latest_total),
@@ -205,9 +205,9 @@ class yf_blog_stats {
 
 		// Process main template
 		$replace = array(
-			"is_logged_in"			=> intval((bool) module('blog')->USER_ID),
-			"show_own_posts_link"	=> module('blog')->USER_ID ? "./?object=".'blog'."&action=show_posts"._add_get(array("page")) : "",
-			"change_settings_link"	=> module('blog')->USER_ID ? "./?object=".'blog'."&action=settings"._add_get(array("page")) : "",
+			"is_logged_in"			=> intval((bool) main()->USER_ID),
+			"show_own_posts_link"	=> main()->USER_ID ? "./?object=".'blog'."&action=show_posts"._add_get(array("page")) : "",
+			"change_settings_link"	=> main()->USER_ID ? "./?object=".'blog'."&action=settings"._add_get(array("page")) : "",
 			"all_blogs_link"		=> "./?object=".'blog'."&action=show_all_blogs"._add_get(array("page")),
 			"most_commented_posts"	=> $most_commented_posts,
 			"pages"					=> $pages,
@@ -267,9 +267,9 @@ class yf_blog_stats {
 		$most_read_posts		= $this->_process_stats_item($most_read_ids, $counter, module('blog')->STATS_NUM_MOST_READ);
 		// Process main template
 		$replace = array(
-			"is_logged_in"			=> intval((bool) module('blog')->USER_ID),
-			"show_own_posts_link"	=> module('blog')->USER_ID ? "./?object=".'blog'."&action=show_posts"._add_get(array("page")) : "",
-			"change_settings_link"	=> module('blog')->USER_ID ? "./?object=".'blog'."&action=settings"._add_get(array("page")) : "",
+			"is_logged_in"			=> intval((bool) main()->USER_ID),
+			"show_own_posts_link"	=> main()->USER_ID ? "./?object=".'blog'."&action=show_posts"._add_get(array("page")) : "",
+			"change_settings_link"	=> main()->USER_ID ? "./?object=".'blog'."&action=settings"._add_get(array("page")) : "",
 			"all_blogs_link"		=> "./?object=".'blog'."&action=show_all_blogs"._add_get(array("page")),
 			"most_read_posts"		=> $most_read_posts,
 			"pages"					=> $pages,
@@ -328,9 +328,9 @@ class yf_blog_stats {
 		$latest_posts	= $this->_process_stats_item($latest_posts_ids, $counter, module('blog')->STATS_NUM_LATEST_POSTS);
 		// Process main template
 		$replace = array(
-			"is_logged_in"			=> intval((bool) module('blog')->USER_ID),
-			"show_own_posts_link"	=> module('blog')->USER_ID ? "./?object=".'blog'."&action=show_posts"._add_get(array("page")) : "",
-			"change_settings_link"	=> module('blog')->USER_ID ? "./?object=".'blog'."&action=settings"._add_get(array("page")) : "",
+			"is_logged_in"			=> intval((bool) main()->USER_ID),
+			"show_own_posts_link"	=> main()->USER_ID ? "./?object=".'blog'."&action=show_posts"._add_get(array("page")) : "",
+			"change_settings_link"	=> main()->USER_ID ? "./?object=".'blog'."&action=settings"._add_get(array("page")) : "",
 			"all_blogs_link"		=> "./?object=".'blog'."&action=show_all_blogs"._add_get(array("page")),
 			"latest_posts"			=> $latest_posts,
 			"pages"					=> $pages,

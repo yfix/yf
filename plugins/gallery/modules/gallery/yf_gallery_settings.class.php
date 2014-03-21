@@ -21,17 +21,17 @@ class yf_gallery_settings {
 	/**
 	* Edit gallery settings
 	*/
-	function _edit () {
+	function settings () {
 		// Check if user is member
-		if (empty(module('gallery')->_user_info)) {
+		if (empty(main()->_user_info)) {
 			return _error_need_login();
 		}
 		// Ban check
-		if (module('gallery')->_user_info["ban_images"]) {
+		if (main()->_user_info["ban_images"]) {
 			return module('gallery')->_error_msg("ban_images");
 		}
 		// Try to get user settings
-		$GALLERY_SETTINGS = module('gallery')->_get_settings(module('gallery')->USER_ID);
+		$GALLERY_SETTINGS = module('gallery')->_get_settings(main()->USER_ID);
 		// Check posted data and save
 		if (!empty($_POST["go"])) {
 			// Check required data
@@ -65,10 +65,10 @@ class yf_gallery_settings {
 				if (isset($_POST["allow_rate"])) {
 					$sql["allow_rate"]		= _es($_POST["allow_rate"]);
 				}
-				db()->UPDATE("gallery_settings", $sql, "user_id=".intval(module('gallery')->USER_ID));
+				db()->UPDATE("gallery_settings", $sql, "user_id=".intval(main()->USER_ID));
 				// Update cache
-				$GLOBALS['_gal_settings'][module('gallery')->USER_ID]["thumb_type"]	= $_POST["thumb_type"];
-				$GLOBALS['_gal_settings'][module('gallery')->USER_ID]["medium_size"]	= $_POST["medium_size"];
+				$GLOBALS['_gal_settings'][main()->USER_ID]["thumb_type"]	= $_POST["thumb_type"];
+				$GLOBALS['_gal_settings'][main()->USER_ID]["medium_size"]	= $_POST["medium_size"];
 				// Regenerate thumbs (if changed)
 				if ($_POST["thumb_type"] != $GALLERY_SETTINGS["thumb_type"]) {
 					$this->_regenerate_format("thumbnail");
@@ -97,8 +97,8 @@ class yf_gallery_settings {
 				"error_message"		=> _e(),
 				"privacy_box"		=> module('gallery')->_box("privacy", $DATA["privacy"]),
 				"comments_box"		=> module('gallery')->_box("allow_comments", $DATA["allow_comments"]),
-				"tagging_box"		=> module('gallery')->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => module('gallery')->USER_ID)) : "",
-				"allow_rate_box"	=> module('gallery')->ALLOW_RATE ? $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => module('gallery')->USER_ID)) : "",
+				"tagging_box"		=> module('gallery')->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => main()->USER_ID)) : "",
+				"allow_rate_box"	=> module('gallery')->ALLOW_RATE ? $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => main()->USER_ID)) : "",
 				"thumb_type_box"	=> module('gallery')->_box("thumb_type", $DATA["thumb_type"]),
 				"medium_size_box"	=> module('gallery')->_box("medium_size", $DATA["medium_size"]),
 				"layout_type_box"	=> module('gallery')->_box("layout_type", $DATA["layout_type"]),
@@ -114,7 +114,7 @@ class yf_gallery_settings {
 	/**
 	* General method for retrieving users gallery settings
 	*/
-	function _get($user_id = 0) {
+	function _get_settings($user_id = 0) {
 		if (empty($user_id)) {
 			return false;
 		}
@@ -150,7 +150,7 @@ class yf_gallery_settings {
 			return $users_settings;
 		// Single user_id
 		} else {
-			if (!empty(module('gallery')->USER_ID) && $user_id == module('gallery')->USER_ID && !empty($this->CUR_USER_SETTINGS)) {
+			if (!empty(main()->USER_ID) && $user_id == main()->USER_ID && !empty($this->CUR_USER_SETTINGS)) {
 				return module('gallery')->CUR_USER_SETTINGS;
 			}
 			// Use cache
@@ -185,7 +185,7 @@ class yf_gallery_settings {
 		$sql_array = module('gallery')->DEFAULT_SETTINGS;
 		$sql_array["user_id"]	= intval($user_id);
 		// Set global tags settings as defaults
-		$default_tags_settings = $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => module('gallery')->USER_ID), $this->TAG_OBJ->ALLOWED_GROUP);
+		$default_tags_settings = $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => main()->USER_ID), $this->TAG_OBJ->ALLOWED_GROUP);
 		$sql_array["allow_tagging"]	= intval($default_tags_settings);
 
 		db()->INSERT("gallery_settings", $sql_array);

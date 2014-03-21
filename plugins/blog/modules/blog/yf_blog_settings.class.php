@@ -23,14 +23,14 @@ class yf_blog_settings {
 	*/
 	function _start_blog () {
 		// Check if user is member
-		if (empty(module('blog')->_user_info)) {
+		if (empty(main()->_user_info)) {
 			return _error_need_login();
 		}
 		if ($_ban_error = module('blog')->_ban_check()) {
 			return $_ban_error;
 		}
 		// Try to get user settings (also start them if not done yet)
-		$BLOG_SETTINGS = module('blog')->_get_user_blog_settings(module('blog')->USER_ID);
+		$BLOG_SETTINGS = module('blog')->_get_user_blog_settings(main()->USER_ID);
 		// Save data
 		if (main()->is_post()) {
 			// Prepare posted blog links
@@ -60,7 +60,7 @@ class yf_blog_settings {
 					$sql["blog_title"]	= _es($_POST["blog_title"]);
 				}
 				// Generate SQL
-				db()->UPDATE("blog_settings", $sql, "user_id=".intval(module('blog')->USER_ID));
+				db()->UPDATE("blog_settings", $sql, "user_id=".intval(main()->USER_ID));
 
 				module('blog')->_callback_on_update(array("page_header" => $_POST["blog_title"]));
 
@@ -99,14 +99,14 @@ class yf_blog_settings {
 	*/
 	function _change () {
 		// Check if user is member
-		if (empty(module('blog')->_user_info)) {
+		if (empty(main()->_user_info)) {
 			return _error_need_login();
 		}
 		if ($_ban_error = module('blog')->_ban_check()) {
 			return $_ban_error;
 		}
 		// Try to get user settings
-		$BLOG_SETTINGS = module('blog')->_get_user_blog_settings(module('blog')->USER_ID);
+		$BLOG_SETTINGS = module('blog')->_get_user_blog_settings(main()->USER_ID);
 		// Check posted data and save
 		if (!empty($_POST["go"])) {
 			// Prepare posted blog links
@@ -140,7 +140,7 @@ class yf_blog_settings {
 
 					$sql["blog_title"]	= _es($_POST["blog_title"]);
 				}
-				db()->UPDATE("blog_settings", $sql, "user_id=".intval(module('blog')->USER_ID));
+				db()->UPDATE("blog_settings", $sql, "user_id=".intval(main()->USER_ID));
 				// Synchronize blog title with site menu
 				module('blog')->_callback_on_update(array("page_header" => $_POST["blog_title"]));
 				// Synchronize all blogs stats
@@ -379,7 +379,7 @@ class yf_blog_settings {
 	*/
 	function _fix_id2($user_id = 0) {
 		if (empty($user_id)) {
-			$user_id = module('blog')->USER_ID;
+			$user_id = main()->USER_ID;
 		}
 		if (empty($user_id) || !module('blog')->HIDE_TOTAL_ID) {
 			return false;

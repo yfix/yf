@@ -18,12 +18,12 @@ class yf_blog_utils {
 			return true;
 		}
 		// This is owner
-		if ($post_author_id == module('blog')->USER_ID) {
+		if ($post_author_id == main()->USER_ID) {
 			return true;
 		}
 		// Public section was over, now begin checking for members,
 		// so if user is guest - we deny view here
-		if (!module('blog')->USER_ID) {
+		if (!main()->USER_ID) {
 			return false;
 		}
 		// Currently user can set more private status for the current 
@@ -34,37 +34,37 @@ class yf_blog_utils {
 			return true;
 		// Friends (simple, user need only to add poster to his friends list)
 		} elseif ($cur_privacy == 3) {
-			if ($post_author_id != module('blog')->USER_ID) {
+			if ($post_author_id != main()->USER_ID) {
 				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_a_friend = $FRIENDS_OBJ->_is_a_friend(module('blog')->USER_ID, $post_author_id);
+					$is_a_friend = $FRIENDS_OBJ->_is_a_friend(main()->USER_ID, $post_author_id);
 					return $is_a_friend;
 				}
 			}
 			return true;
 		// My friends (simple, user need to be in poster's friends list)
 		} elseif ($cur_privacy == 4) {
-			if ($post_author_id != module('blog')->USER_ID) {
+			if ($post_author_id != main()->USER_ID) {
 				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($post_author_id, module('blog')->USER_ID);
+					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($post_author_id, main()->USER_ID);
 					return $is_my_friend;
 				}
 			}
 			return true;
 		// Mutual Friends (both users must have each other in friends lists)
 		} elseif ($cur_privacy == 5) {
-			if ($post_author_id != module('blog')->USER_ID) {
+			if ($post_author_id != main()->USER_ID) {
 				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend(module('blog')->USER_ID, $post_author_id);
-					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($post_author_id, module('blog')->USER_ID);
+					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend(main()->USER_ID, $post_author_id);
+					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($post_author_id, main()->USER_ID);
 					return $is_a_friend_1 && $is_a_friend_2;
 				}
 			}
 			return true;
 		// Diary
-		} elseif ($cur_privacy == 9 && $post_author_id == module('blog')->USER_ID) {
+		} elseif ($cur_privacy == 9 && $post_author_id == main()->USER_ID) {
 			return true;
 		}
 		// In all other cases -> deny view
@@ -81,7 +81,7 @@ class yf_blog_utils {
 		}
 		// Public section was over, now begin checking for members,
 		// so if user is guest - we deny view here
-		if (!module('blog')->USER_ID) {
+		if (!main()->USER_ID) {
 			return false;
 		}
 		// Currently user can set more private status for the current 
@@ -92,31 +92,31 @@ class yf_blog_utils {
 			return true;
 		// Friends (simple, user need only to add poster to his friends list)
 		} elseif ($cur_comments == 3) {
-			if ($post_author_id != module('blog')->USER_ID) {
+			if ($post_author_id != main()->USER_ID) {
 				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_a_friend = $FRIENDS_OBJ->_is_a_friend(module('blog')->USER_ID, $post_author_id);
+					$is_a_friend = $FRIENDS_OBJ->_is_a_friend(main()->USER_ID, $post_author_id);
 					return $is_a_friend;
 				}
 			}
 			return true;
 		// My friends (simple, user need to be in poster's friends list)
 		} elseif ($cur_comments == 4) {
-			if ($post_author_id != module('blog')->USER_ID) {
+			if ($post_author_id != main()->USER_ID) {
 				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($post_author_id, module('blog')->USER_ID);
+					$is_my_friend = $FRIENDS_OBJ->_is_a_friend($post_author_id, main()->USER_ID);
 					return $is_my_friend;
 				}
 			}
 			return true;
 		// Mutual Friends (both users must have each other in friends lists)
 		} elseif ($cur_comments == 5) {
-			if ($post_author_id != module('blog')->USER_ID) {
+			if ($post_author_id != main()->USER_ID) {
 				$FRIENDS_OBJ = module("friends");
 				if (is_object($FRIENDS_OBJ)) {
-					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend(module('blog')->USER_ID, $post_author_id);
-					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($post_author_id, module('blog')->USER_ID);
+					$is_a_friend_1 = $FRIENDS_OBJ->_is_a_friend(main()->USER_ID, $post_author_id);
+					$is_a_friend_2 = $FRIENDS_OBJ->_is_a_friend($post_author_id, main()->USER_ID);
 					return $is_a_friend_1 && $is_a_friend_2;
 				}
 			}
@@ -213,7 +213,7 @@ class yf_blog_utils {
 		$old_items = $params["items"];
 		// Create new items
 		$items = array();
-		if (module('blog')->USER_ID) {
+		if (main()->USER_ID) {
 			$items[]	= $NAV_BAR_OBJ->_nav_item("My Account", "./?object=account");
 		}
 		if (in_array($_GET["action"], array("", "show"))) {

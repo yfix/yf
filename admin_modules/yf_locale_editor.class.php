@@ -453,47 +453,47 @@ class yf_locale_editor {
 	* Display list of user-specific vars
 	*/
 	function user_vars() {
-		$func = __FUNCTION__; $cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->$func();
+		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Edit user var
 	*/
 	function user_var_edit() {
-		$func = __FUNCTION__; $cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->$func();
+		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Delete user var
 	*/
 	function user_var_delete() {
-		$func = __FUNCTION__; $cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->$func();
+		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Push user var into main traslation table
 	*/
 	function user_var_push($FORCE_ID = false) {
-		$func = __FUNCTION__; $cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->$func($FORCE_ID);
+		$cls = 'locale_editor'; return _class($cls.'_user_vars', 'admin_modules/'.$cls.'/')->{__FUNCTION__}($FORCE_ID);
 	}
 
 	/**
 	*/
 	function import_vars() {
-		$func = __FUNCTION__; $cls = 'locale_editor'; return _class($cls.'_import', 'admin_modules/'.$cls.'/')->$func();
+		$cls = 'locale_editor'; return _class($cls.'_import', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
 	*/
 	function export_vars() {
-		$func = __FUNCTION__; $cls = 'locale_editor'; return _class($cls.'_export', 'admin_modules/'.$cls.'/')->$func();
+		$cls = 'locale_editor'; return _class($cls.'_export', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Automatic translator via Google translate
 	*/
 	function autotranslate() {
-		$func = __FUNCTION__; $cls = 'locale_editor'; return _class($cls.'_'.$func, 'admin_modules/'.$cls.'/')->$func();
+		$cls = 'locale_editor'; return _class($cls.'_'.$func, 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}	
 
 	/**
@@ -578,7 +578,7 @@ class yf_locale_editor {
 	* Cleanup variables (Delete not translated or missed vars)
 	*/
 	function cleanup_vars () {
-		$func = __FUNCTION__; $cls = 'locale_editor'; return _class($cls.'_cleanup', 'admin_modules/'.$cls.'/')->$func();
+		$cls = 'locale_editor'; return _class($cls.'_cleanup', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**
@@ -769,7 +769,7 @@ class yf_locale_editor {
 	* Based on ISO 639 and http://people.w3.org/rishida/names/languages.html
 	*/
 	function _get_iso639_list() {
-		$func = __FUNCTION__; $cls = 'locale_editor'; return _class($cls.'_langs', 'admin_modules/'.$cls.'/')->$func();
+		$cls = 'locale_editor'; return _class($cls.'_langs', 'admin_modules/'.$cls.'/')->{__FUNCTION__}();
 	}
 
 	/**

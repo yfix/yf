@@ -268,24 +268,21 @@ class yf_gallery extends yf_module {
 	* Edit gallery settings
 	*/
 	function settings () {
-		$OBJ = $this->_load_sub_module("gallery_settings");
-		return is_object($OBJ) ? $OBJ->_edit() : "";
+		return _class_safe('gallery_settings', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Get gallery settings
 	*/
 	function _get_settings ($user_id = 0) {
-		$OBJ = $this->_load_sub_module("gallery_settings");
-		return is_object($OBJ) ? $OBJ->_get($user_id) : "";
+		return _class_safe('gallery_settings', 'modules/gallery/')->{__FUNCTION__}($user_id);
 	}
 
 	/**
 	* Create default gallery settings for the given user ID
 	*/
 	function _start_settings ($user_id = 0) {
-		$OBJ = $this->_load_sub_module("gallery_settings");
-		return is_object($OBJ) ? $OBJ->_start ($user_id) : "";
+		return _class_safe('gallery_settings', 'modules/gallery/')->{__FUNCTION__}($user_id);
 	}
 
 	/**
@@ -300,6 +297,13 @@ class yf_gallery extends yf_module {
 	*/
 	function edit () {
 		return $this->show_gallery("edit_");
+	}
+
+	/**
+	* Alias
+	*/
+	function my () {
+		return $this->show_gallery();
 	}
 
 	/**
@@ -350,8 +354,7 @@ class yf_gallery extends yf_module {
 	* View folder contents
 	*/
 	function view_folder () {
-		$OBJ = $this->_load_sub_module("gallery_folders");
-		return is_object($OBJ) ? $OBJ->_view_folder() : "";
+		return _class_safe('gallery_folders', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
@@ -366,24 +369,21 @@ class yf_gallery extends yf_module {
 	* Add new folder
 	*/
 	function add_folder () {
-		$OBJ = $this->_load_sub_module("gallery_folders");
-		return is_object($OBJ) ? $OBJ->_add_folder() : "";
+		return _class_safe('gallery_folders', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Edit folder
 	*/
 	function edit_folder () {
-		$OBJ = $this->_load_sub_module("gallery_folders");
-		return is_object($OBJ) ? $OBJ->_edit_folder() : "";
+		return _class_safe('gallery_folders', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Delete folder
 	*/
 	function delete_folder () {
-		$OBJ = $this->_load_sub_module("gallery_folders");
-		return is_object($OBJ) ? $OBJ->_delete_folder() : "";
+		return _class_safe('gallery_folders', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
@@ -397,12 +397,10 @@ class yf_gallery extends yf_module {
 	* Show list of all galleries
 	*/
 	function show_all_galleries () {
-		// Check CPU Load
-		if (conf('HIGH_CPU_LOAD') == 1) {
+		if (conf('HIGH_CPU_LOAD')) {
 			return common()->server_is_busy();
 		}
-		$OBJ = $this->_load_sub_module("gallery_stats");
-		return is_object($OBJ) ? $OBJ->_show_all_galleries() : "";
+		return _class_safe('gallery_stats', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
@@ -445,136 +443,119 @@ class yf_gallery extends yf_module {
 	* Display user photos
 	*/
 	function _show_user_photos ($user_info = array(), $single_folder_id = 0, $stpl_prefix = "show_") {
-		$OBJ = $this->_load_sub_module("gallery_show_photos");
-		return is_object($OBJ) ? $OBJ->_show_user_photos ($user_info, $single_folder_id, $stpl_prefix) : "";
+		return _class_safe('gallery_show_photos', 'modules/gallery/')->{__FUNCTION__}($user_info, $single_folder_id, $stpl_prefix);
 	}
 
 	/**
 	* Show photo item
 	*/
 	function _show_photo_item ($photo_info = array(), $stpl_prefix = "show_") {
-		$OBJ = $this->_load_sub_module("gallery_show_photos");
-		return is_object($OBJ) ? $OBJ->_show_photo_item ($photo_info, $stpl_prefix) : "";
+		return _class_safe('gallery_show_photos', 'modules/gallery/')->{__FUNCTION__}($photo_info, $stpl_prefix);
 	}
 
 	/**
 	* Show random photo
 	*/
 	function _show_random_photo ($photo_info = array(), $stpl_prefix = "widget_") {
-		$OBJ = $this->_load_sub_module("gallery_show_photos");
-		return is_object($OBJ) ? $OBJ->_show_photo_item ($photo_info, $stpl_prefix) : "";
+		return $this->_show_photo_item($photo_info, $stpl_prefix);
 	}
 
 	/**
 	* Galleries stats
 	*/
 	function _show_stats ($MAIN_STPL = "", $ITEM_STPL = "", $NUM_ITEM = 0) {
-		$OBJ = $this->_load_sub_module("gallery_stats");
-		return is_object($OBJ) ? $OBJ->_show_stats($MAIN_STPL, $ITEM_STPL, $NUM_ITEM) : "";
+		return _class_safe('gallery_stats', 'modules/gallery/')->{__FUNCTION__}($MAIN_STPL, $ITEM_STPL, $NUM_ITEM);
 	}
 
 	/**
 	* Display single photo
 	*/
 	function _show_single_photo ($params = array()) {
-		$OBJ = $this->_load_sub_module("gallery_show_photos");
-		return is_object($OBJ) ? $OBJ->_show_single_photo($params) : "";
+		return _class_safe('gallery_show_photos', 'modules/gallery/')->{__FUNCTION__}($params);
 	}
 
 	/**
 	* Add new photo method
 	*/
 	function add_photo () {
-		$OBJ = $this->_load_sub_module("gallery_manage");
-		return is_object($OBJ) ? $OBJ->_add_photo() : "";
+		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Edit photo management
 	*/
 	function edit_photo () {
-		$OBJ = $this->_load_sub_module("gallery_manage");
-		return is_object($OBJ) ? $OBJ->_edit_photo() : "";
+		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Do delete photo
 	*/
 	function delete_photo () {
-		$OBJ = $this->_load_sub_module("gallery_manage");
-		return is_object($OBJ) ? $OBJ->_delete_photo() : "";
+		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Image cropper
 	*/
 	function crop_photo () {
-		$OBJ = $this->_load_sub_module("gallery_manage");
-		return is_object($OBJ) ? $OBJ->_crop_photo() : "";
+		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Image rotater
 	*/
 	function rotate_photo () {
-		$OBJ = $this->_load_sub_module("gallery_manage");
-		return is_object($OBJ) ? $OBJ->_rotate_photo() : "";
+		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Change photo sorting position
 	*/
 	function sort_photo () {
-		$OBJ = $this->_load_sub_module("gallery_manage");
-		return is_object($OBJ) ? $OBJ->_sort_photo() : "";
+		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Change password for private gallery of given user
 	*/
 	function _enter_pswd ($FOLDER_ID = 0) {
-		$OBJ = $this->_load_sub_module("gallery_folders");
-		return is_object($OBJ) ? $OBJ->_enter_pswd($FOLDER_ID) : "";
+		return _class_safe('gallery_folders', 'modules/gallery/')->{__FUNCTION__}($FOLDER_ID);
 	}
 
 	/**
 	* Change show in ads status
 	*/
 	function change_show_ads () {
-		$OBJ = $this->_load_sub_module("gallery_manage");
-		return is_object($OBJ) ? $OBJ->_change_show_ads() : "";
+		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Change allow_rate status
 	*/
 	function change_rate_allowed () {
-		$OBJ = $this->_load_sub_module("gallery_manage");
-		return is_object($OBJ) ? $OBJ->_change_rate_allowed() : "";
+		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Change allow_tagging status
 	*/
 	function change_tagging_allowed () {
-		$OBJ = $this->_load_sub_module("gallery_manage");
-		return is_object($OBJ) ? $OBJ->_change_tagging_allowed() : "";
+		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Make given photo default
 	*/
 	function make_default () {
-		$OBJ = $this->_load_sub_module("gallery_manage");
-		return is_object($OBJ) ? $OBJ->_make_default() : "";
+		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Manage tags for the selected photo
 	*/
 	function edit_tags ($photo_id = 0) {
-		$OBJ = $this->_load_sub_module("gallery_tags");
-		return is_object($OBJ) ? $OBJ->_edit_tags($photo_id) : "";
+		return _class_safe('gallery_tags', 'modules/gallery/')->{__FUNCTION__}($photo_id);
 	}
 
 	/**
@@ -589,8 +570,7 @@ class yf_gallery extends yf_module {
 	* Prefetch tags for given ids
 	*/
 	function _get_tags ($photos_ids = array()) {
-		$OBJ = $this->_load_sub_module("gallery_tags");
-		return is_object($OBJ) ? $OBJ->_get_tags($photos_ids) : "";
+		return _class_safe('gallery_tags', 'modules/gallery/')->{__FUNCTION__}($photos_ids);
 	}
 
 	/**
@@ -598,7 +578,6 @@ class yf_gallery extends yf_module {
 	*/
 	function _create_name_from_tpl ($photo_info = array(), $cur_photo_type = "original", $return_full_path = 1) {
 		$type	= $this->PHOTO_TYPES[$cur_photo_type];
-		// Prepare replace pairs
 		$name_replace = array(
 			"photo_id"		=> intval($photo_info["id"]),
 			"id2"			=> intval($photo_info["id2"]),
@@ -607,7 +586,6 @@ class yf_gallery extends yf_module {
 			"photo_type"	=> $cur_photo_type,
 		);
 		$photo_name = $this->PHOTO_NAME_TEMPLATE;
-		// Replace given items (if exists ones)
 		foreach ((array)$name_replace as $item => $value) {
 			$photo_name = str_replace("{".$item."}", $value, $photo_name);
 		}
@@ -622,7 +600,7 @@ class yf_gallery extends yf_module {
 	* Return web path to given photo
 	*/
 	function _photo_web_path ($photo_info = array(), $cur_photo_type = "original") {
-		$type	= $this->PHOTO_TYPES[$cur_photo_type];
+		$type = $this->PHOTO_TYPES[$cur_photo_type];
 		if ($this->HIDE_TOTAL_ID && $GLOBALS["HOSTING_FULL_NAME"]) {
 			$photo_name = $this->GALLERY_DIR. $type["sub_folder"]. $photo_info["id2"]. $this->IMAGE_EXT;
 			return "http://".$GLOBALS["HOSTING_FULL_NAME"]."/".$photo_name;
@@ -635,7 +613,7 @@ class yf_gallery extends yf_module {
 	* Return filesystem path to given photo
 	*/
 	function _photo_fs_path ($photo_info = array(), $cur_photo_type = "original") {
-		$type	= $this->PHOTO_TYPES[$cur_photo_type];
+		$type = $this->PHOTO_TYPES[$cur_photo_type];
 		if ($this->HIDE_TOTAL_ID && $GLOBALS["HOSTING_FULL_NAME"]) {
 			$photo_name = $this->GALLERY_DIR. $type["sub_folder"]. $photo_info["id2"]. $this->IMAGE_EXT;
 			return INCLUDE_PATH."users/".$GLOBALS["HOSTING_FULL_NAME"]."/".$photo_name;
@@ -660,8 +638,7 @@ class yf_gallery extends yf_module {
 	* Get real photo sizes from photo files for the given photo db record
 	*/
 	function _update_other_info ($photo_info = array()) {
-		$OBJ = $this->_load_sub_module("gallery_utils");
-		return $OBJ->_update_other_info($photo_info);
+		return _class_safe('gallery_utils', 'modules/gallery/')->{__FUNCTION__}($photo_info);
 	}
 
 	/**
@@ -677,31 +654,25 @@ class yf_gallery extends yf_module {
 	* Process custom box
 	*/
 	function _box ($name = "", $selected = "") {
-		if (empty($name) || empty($this->_boxes[$name])) return false;
-		else return eval("return common()->".$this->_boxes[$name].";");
-	}
-
-	/**
-	* Try to load sub_module
-	*/
-	function _load_sub_module ($module_name = "") {
-		return _class($module_name, 'modules/gallery/');
+		if (empty($name) || empty($this->_boxes[$name])) {
+			return false;
+		} else {
+			return eval("return common()->".$this->_boxes[$name].";");
+		}
 	}
 
 	/**
 	* Get user's available folders
 	*/
 	function _get_user_folders ($user_id = 0) {
-		$OBJ = $this->_load_sub_module("gallery_folders");
-		return is_object($OBJ) ? $OBJ->_get_user_folders($user_id) : "";
+		return _class_safe('gallery_folders', 'modules/gallery/')->{__FUNCTION__}($user_id);
 	}
 
 	/**
 	* Get users available folders (for many users at one time)
 	*/
 	function _get_user_folders_for_ids ($users_ids = array()) {
-		$OBJ = $this->_load_sub_module("gallery_folders");
-		return is_object($OBJ) ? $OBJ->_get_user_folders_for_ids($users_ids) : "";
+		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}($users_ids);
 	}
 
 	/**
@@ -713,13 +684,9 @@ class yf_gallery extends yf_module {
 			return false;
 		}
 		$FOLDER_ID = $photo_info["folder_id"];
-		// Get user folders
 		$user_folders = $this->_get_user_folders($user_id);
-		// Get default folder id
 		$def_folder_id = $this->_get_def_folder_id($user_folders);
-		// Do set default folder for photo with empty folder field
 		if (empty($FOLDER_ID) && !empty($def_folder_id)) {
-			// Do update record
 			db()->UPDATE("gallery_photos", array(
 				"folder_id"	=> intval($def_folder_id),
 			), "id=".intval($photo_info["id"]));
@@ -732,32 +699,28 @@ class yf_gallery extends yf_module {
 	* Get default folder from given user folders array
 	*/
 	function _get_def_folder_id ($user_folders = array()) {
-		$OBJ = $this->_load_sub_module("gallery_folders");
-		return is_object($OBJ) ? $OBJ->_get_def_folder_id($user_folders) : "";
+		return _class_safe('gallery_folders', 'modules/gallery/')->{__FUNCTION__}($user_folders);
 	}
 
 	/**
 	* Get max privacy value that current user can view
 	*/
 	function _get_max_privacy ($user_id = 0) {
-		$OBJ = $this->_load_sub_module("gallery_utils");
-		return $OBJ->_get_max_privacy($user_id);
+		return _class_safe('gallery_utils', 'modules/gallery/')->{__FUNCTION__}($user_id);
 	}
 
 	/**
 	* Check privacy permissions (allow current user to view or not)
 	*/
 	function _privacy_check ($folder_privacy = 0, $photo_privacy = 0, $owner_id = 0) {
-		$OBJ = $this->_load_sub_module("gallery_utils");
-		return $OBJ->_privacy_check($folder_privacy, $photo_privacy, $owner_id);
+		return _class_safe('gallery_utils', 'modules/gallery/')->{__FUNCTION__}($folder_privacy, $photo_privacy, $owner_id);
 	}
 
 	/**
 	* Check allow comments (allow current user to view/post or not)
 	*/
 	function _comment_allowed_check ($folder_comments = 0, $photo_comments = 0, $owner_id = 0) {
-		$OBJ = $this->_load_sub_module("gallery_utils");
-		return $OBJ->_comment_allowed_check($folder_comments, $photo_comments, $owner_id);
+		return _class_safe('gallery_utils', 'modules/gallery/')->{__FUNCTION__}($folder_comments, $photo_comments, $owner_id);
 	}
 
 	/**
@@ -774,7 +737,6 @@ class yf_gallery extends yf_module {
 		}
 		$cur_folder_info = $this->_user_folders_infos[$FOLDER_ID];
 		if ($_GET["action"] == "show_medium_size") {
-			// Check if target user is ignored by owner
 			if (common()->_is_ignored(main()->USER_ID, $photo_info["user_id"])) {
 				return false;
 			}
@@ -787,32 +749,32 @@ class yf_gallery extends yf_module {
 	* Generate filter SQL query
 	*/
 	function _create_filter_sql ($_source_sql = "") {
-		$OBJ = $this->_load_sub_module("gallery_filter");
-		return is_object($OBJ) ? $OBJ->_create_filter_sql($_source_sql) : "";
+#		$OBJ = $this->_load_sub_module("gallery_filter");
+#		return is_object($OBJ) ? $OBJ->_create_filter_sql($_source_sql) : "";
 	}
 
 	/**
 	* Session - based filter form
 	*/
 	function _show_filter () {
-		$OBJ = $this->_load_sub_module("gallery_filter");
-		return is_object($OBJ) ? $OBJ->_show_filter() : "";
+#		$OBJ = $this->_load_sub_module("gallery_filter");
+#		return is_object($OBJ) ? $OBJ->_show_filter() : "";
 	}
 
 	/**
 	* Filter save method
 	*/
 	function save_filter ($silent = false) {
-		$OBJ = $this->_load_sub_module("gallery_filter");
-		return is_object($OBJ) ? $OBJ->_save_filter($silent) : "";
+#		$OBJ = $this->_load_sub_module("gallery_filter");
+#		return is_object($OBJ) ? $OBJ->_save_filter($silent) : "";
 	}
 
 	/**
 	* Clear filter
 	*/
 	function clear_filter ($silent = false) {
-		$OBJ = $this->_load_sub_module("gallery_filter");
-		return is_object($OBJ) ? $OBJ->_clear_filter($silent) : "";
+#		$OBJ = $this->_load_sub_module("gallery_filter");
+#		return is_object($OBJ) ? $OBJ->_clear_filter($silent) : "";
 	}
 
 	/**
@@ -833,7 +795,7 @@ class yf_gallery extends yf_module {
 			if (!empty($this->_author_name)) {
 				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html($this->_author_name), "./?object=".'gallery'."&action=show_gallery&id=".$this->_author_id);
 			} elseif (!empty(main()->USER_ID)) {
-				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html(_display_name($this->_user_info)), "./?object=".'gallery'."&action=show_gallery&id=".main()->USER_ID);
+				$items[]	= $NAV_BAR_OBJ->_nav_item(_prepare_html(_display_name(main()->_user_info)), "./?object=".'gallery'."&action=show_gallery&id=".main()->USER_ID);
 			}
 		}
 		if (in_array($_GET["action"], array("show_all_galleries"))) {
@@ -860,32 +822,28 @@ class yf_gallery extends yf_module {
 	* Clean up gallery
 	*/
 	function _cleanup () {
-		$OBJ = $this->_load_sub_module("gallery_cleanup");
-		return is_object($OBJ) ? $OBJ->_cleanup() : "";
+		return _class_safe('gallery_cleanup', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Sync public photos
 	*/
 	function _sync_public_photos ($user_id = 0) {
-		$OBJ = $this->_load_sub_module("gallery_utils");
-		return $OBJ->_sync_public_photos($user_id);
+		return _class_safe('gallery_utils', 'modules/gallery/')->{__FUNCTION__}($user_id);
 	}
 
 	/**
 	* Display single photo link (Specially for AJAX)
 	*/
 	function compact_view () {
-		$OBJ = $this->_load_sub_module("gallery_compact");
-		return is_object($OBJ) ? $OBJ->_compact_view() : "";
+		return _class_safe('gallery_compact', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Display latest photos by pages
 	*/
-	function latest () {
-		$OBJ = $this->_load_sub_module("gallery_stats");
-		return is_object($OBJ) ? $OBJ->_show_latest() : "";
+	function latest ($params = array()) {
+		return _class_safe('gallery_stats', 'modules/gallery/')->{__FUNCTION__}($params);
 	}
 
 	/**
@@ -895,8 +853,7 @@ class yf_gallery extends yf_module {
 		if (!$this->ALLOW_GEO_FILTERING) {
 			return false;
 		}
-		$OBJ = $this->_load_sub_module("gallery_stats");
-		return is_object($OBJ) ? $OBJ->_show_latest(array("geo" => 1)) : "";
+		return $this->latest(array("geo" => 1));
 	}
 
 	/**
@@ -912,8 +869,7 @@ class yf_gallery extends yf_module {
 			"rating"	=> $photo_info["rating"],
 			"num_votes"	=> $photo_info["num_votes"],
 		);
-		$OBJ = module("photo_rating");
-		return is_object($OBJ) ? $OBJ->_show_ajax_box($params) : "";
+		return module_safe("photo_rating")->_show_ajax_box($params);
 	}
 
 	/**
@@ -931,8 +887,7 @@ class yf_gallery extends yf_module {
 	* Hook for the site_map
 	*/
 	function _site_map_items ($SITE_MAP_OBJ = false) {
-		$OBJ = $this->_load_sub_module("gallery_utils");
-		return $OBJ->_site_map_items($SITE_MAP_OBJ);
+		return _class_safe('gallery_utils', 'modules/gallery/')->{__FUNCTION__}($SITE_MAP_OBJ);
 	}
 
 	/**
@@ -956,32 +911,28 @@ class yf_gallery extends yf_module {
 	* Hook for user profile
 	*/
 	function _for_user_profile($user_id, $MAX_SHOW_GALLERY_PHOTO){
-		$OBJ = $this->_load_sub_module("gallery_integration");
-		return $OBJ->_for_user_profile($user_id, $MAX_SHOW_GALLERY_PHOTO);
+		return _class_safe('gallery_integration', 'modules/gallery/')->{__FUNCTION__}($user_id, $MAX_SHOW_GALLERY_PHOTO);
 	}
 
 	/**
 	* Show For home page
 	*/
 	function _for_home_page($num = 5) {
-		$OBJ = $this->_load_sub_module("gallery_integration");
-		return $OBJ->_for_home_page($num);
+		return _class_safe('gallery_integration', 'modules/gallery/')->{__FUNCTION__}($num);
 	}
 	
 	/**
 	* Comments to photos search
 	*/
 	function search_comments() {
-		$OBJ = $this->_load_sub_module("gallery_search_comments");
-		return $OBJ->search_comments();
+		return _class_safe('gallery_search_comments', 'modules/gallery/')->{__FUNCTION__}();
 	}
 	
 	/**
 	* Do delete comment to photo
 	*/
 	function delete_gallery_comment() {
-		$OBJ = $this->_load_sub_module("gallery_search_comments");
-		return $OBJ->_delete();
+		return _class_safe('gallery_search_comments', 'modules/gallery/')->{__FUNCTION__}();
 	}
 	
 	/**
@@ -991,8 +942,7 @@ class yf_gallery extends yf_module {
 		if ($params["describe"]) {
 			return array("allow_cache" => 1, "cache_ttl" => 600);
 		}
-		$OBJ = $this->_load_sub_module("gallery_integration");
-		return $OBJ->_widget_last_photo($num);
+		return _class_safe('gallery_integration', 'modules/gallery/')->{__FUNCTION__}($num);
 
 	}
 
@@ -1003,8 +953,7 @@ class yf_gallery extends yf_module {
 		if ($params["describe"]) {
 			return array("allow_cache" => 1, "cache_ttl" => 600);
 		}
-		$OBJ = module("tags");
-		$items = $OBJ->_tags_cloud("gallery");
+		$items = module_safe("tags")->_tags_cloud("gallery");
 		if (!$items) {
 			return "";
 		}
@@ -1060,9 +1009,8 @@ class yf_gallery extends yf_module {
 		return $this->_show_random_photo($_photo_info);
 	}
 	
-	function _rss_general(){
-		$OBJ = $this->_load_sub_module("gallery_integration");
-		return $OBJ->_rss_general();
+	function _rss_general() {
+		return _class_safe('gallery_integration', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
