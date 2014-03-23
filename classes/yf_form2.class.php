@@ -178,13 +178,24 @@ class yf_form2 {
 		if (!is_array($this->_body)) {
 			$this->_body = array();
 		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra_override = array();
+		$form_id = $this->_replace['__form_id__'] ?: $this->_form_id;
+		if ($form_id) {
+			$all_attrs_override = main()->get_data('form_attributes');
+			$extra_override = &$all_attrs_override[$form_id];
+		}
+		$r = (array)$this->_replace + (array)$replace;
+
 		if (!$extra['no_form'] && !$this->_params['no_form']) {
 			// Call these methods, if not done yet, save 2 api calls
 			if (!isset($this->_body['form_begin'])) {
-				$this->form_begin('', '', $extra, $replace);
+				$this->form_begin('', '', $extra + (array)$extra_override['form_begin'], $r);
 			}
 			if (!isset($this->_body['form_end'])) {
-				$this->form_end();
+				$this->form_end($extra + (array)$extra_override['form_end'], $r);
 			}
 			// Force form_begin as first array element
 			$form_begin = $this->_body['form_begin'];
@@ -206,15 +217,6 @@ class yf_form2 {
 				array_unshift($this->_body, implode(PHP_EOL, $e));
 			}
 		}
-		$attrs_override = array();
-		$form_id = $this->_replace['__form_id__'] ?: $this->_form_id;
-		if ($form_id) {
-			$all_attrs_override = main()->get_data('form_attributes');
-			$attrs_override = &$all_attrs_override[$form_id];
-		}
-
-		$r = (array)$this->_replace + (array)$replace;
-
 		$tabbed_mode = false;
 		$tabbed_buffer = array();
 		$tabs = array();
@@ -225,17 +227,8 @@ class yf_form2 {
 			if (!is_array($v)) {
 				continue;
 			}
-			$_extra = $v['extra'];
-			$_override = $attrs_override[$v['extra']['name']];
-			if (is_array($_override)) {
-				foreach ((array)$_override as $_k => $_v) {
-					$_extra[$_k] = $_v;
-				}
-			}
-			$_replace = $r;
-			if (is_array($v['replace'])) {
-				$_replace += $v['replace'];
-			}
+			$_extra = $v['extra'] + (array)$extra_override[$v['extra']['name']];
+			$_replace = $r + (array)$v['replace'];
 			$func = $v['func'];
 			if ($this->_stacked_mode_on) {
 				$_extra['stacked'] = true;
@@ -289,7 +282,7 @@ class yf_form2 {
 
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		$extra['css_framework'] = $css_framework;
-		$this->_rendered = _class('html5_framework')->form_render_out($this->_rendered, $extra, $replace, $this);
+		$this->_rendered = _class('html5_framework')->form_render_out($this->_rendered, $extra, $r, $this);
 
 		if (DEBUG_MODE) {
 			debug('form2[]', array(
