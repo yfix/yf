@@ -323,10 +323,82 @@ class yf_validate {
 	}
 
 	/**
-	* Returns FALSE if field contains characters not in the parameter. 
-	* Example: chars[a,b,c,d,1,2,3,4]
+	* The field under validation must be a valid URL according to the checkdnsrr PHP function.
 	*/
-	function chars($in, $params = array(), $fields = array()) {
+	function active_url($in) {
+		return checkdnsrr(str_replace(array('http://', 'https://', 'ftp://'), '', strtolower($in)));
+	}
+
+	/**
+	* The field under validation must be a value after a given date. The dates will be passed into the PHP strtotime function. 
+	* Examples: after_date[2012-01-01], after_date[day ago]
+	*/
+	function after_date($in, $params = array(), $fields = array()) {
+		if ($format = $this->getDateFormat($params['format'])) {
+			return DateTime::createFromFormat($format, $in) > DateTime::createFromFormat($format, $params['param']);
+		}
+		if ( ! ($date = strtotime($params['param']))) {
+			return strtotime($in) > strtotime($this->getValue($params['param']));
+		} else {
+			return strtotime($in) > $date;
+		}
+	}
+
+	/**
+	* The field under validation must be a value preceding the given date. The dates will be passed into the PHP strtotime function. 
+	* Example: before_date[2020-12-31], after_date[+1 day]
+	*/
+	function before_date($in, $params = array(), $fields = array()) {
+		if ($format = $this->getDateFormat($params['format'])) {
+			return DateTime::createFromFormat($format, $in) < DateTime::createFromFormat($format, $params['param']);
+		}
+		if ( ! ($date = strtotime($params['param']))) {
+			return strtotime($in) < strtotime($this->getValue($params['param']));
+		} else {
+			return strtotime($in) < $date;
+		}
+	}
+
+	/**
+	* The field under validation must be a valid date according to the strtotime PHP function.
+	*/
+	function valid_date($in) {
+		if ($in instanceof DateTime) {
+			return true;
+		}
+		if (strtotime($in) === false) {
+			return false;
+		}
+		$date = date_parse($in);
+		return checkdate($date['month'], $date['day'], $date['year']);
+	}
+
+	/**
+	* The field under validation must match the format defined according to the date_parse_from_format PHP function.
+	*/
+	function valid_date_format($in, $params = array(), $fields = array()) {
+		$parsed = date_parse_from_format($params['param'], $in);
+		return $parsed['error_count'] === 0 && $parsed['warning_count'] === 0;
+	}
+
+	/**
+	* Alias
+	*/
+	function valid_image($in, $params = array(), $fields = array()) {
+		return $this->image($in, $params, $fields);
+	}
+
+	/**
+	* The file under validation must be an image (jpeg, png, bmp, or gif)
+	*/
+	function image($in, $params = array(), $fields = array()) {
+// TODO
+	}
+
+	/**
+	* The file under validation must have a MIME type corresponding to one of the listed extensions.  mime:jpeg,bmp,png
+	*/
+	function mime($in, $params = array(), $fields = array()) {
 // TODO
 	}
 
@@ -342,48 +414,7 @@ class yf_validate {
 	* Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
 	*/
 	function standard_text($in, $params = array(), $fields = array()) {
-// TODO
-	}
-
-	/**
-	* The field under validation must be a valid URL according to the checkdnsrr PHP function.
-	*/
-	function active_url($in, $params = array(), $fields = array()) {
-// TODO
-#		$url = str_replace(array('http://', 'https://', 'ftp://'), '', strtolower($value));
-#		return checkdnsrr($url);
-	}
-
-	/**
-	* The field under validation must be a value after a given date. The dates will be passed into the PHP strtotime function. 
-	* Examples: after_date[2012-01-01], after_date[day ago]
-	*/
-	function after_date($in, $params = array(), $fields = array()) {
-// TODO
-#		if ($format = $this->getDateFormat($attribute)) {
-#			return DateTime::createFromFormat($format, $value) > DateTime::createFromFormat($format, $parameters[0]);
-#		}
-#		if ( ! ($date = strtotime($parameters[0]))) {
-#			return strtotime($value) > strtotime($this->getValue($parameters[0]));
-#		} else {
-#			return strtotime($value) > $date;
-#		}
-	}
-
-	/**
-	* The field under validation must be a value preceding the given date. The dates will be passed into the PHP strtotime function. 
-	* Example: before_date[2020-12-31], after_date[+1 day]
-	*/
-	function before_date($in, $params = array(), $fields = array()) {
-// TODO
-#		if ($format = $this->getDateFormat($attribute)) {
-#			return DateTime::createFromFormat($format, $value) < DateTime::createFromFormat($format, $parameters[0]);
-#		}
-#		if ( ! ($date = strtotime($parameters[0]))) {
-#			return strtotime($value) < strtotime($this->getValue($parameters[0]));
-#		} else {
-#			return strtotime($value) < $date;
-#		}
+		return (bool) preg_match('~^[a-z0-9\s\t,\._-]+$~ims', $in);
 	}
 
 	/**
@@ -391,41 +422,27 @@ class yf_validate {
 	* Examples: between[a,z]  between[44,99]
 	*/
 	function between($in, $params = array(), $fields = array()) {
-// TODO
+		list($min, $nax) = explode(',', $params['param']);
+		return $in >= $min && $in <= $max;
 	}
 
 	/**
-	* The field under validation must be a valid date according to the strtotime PHP function.
+	* Returns FALSE if field contains characters not in the parameter. 
+	* Example: chars[a,b,c,d,1,2,3,4]
 	*/
-	function valid_date($in, $params = array(), $fields = array()) {
-// TODO
-#		if ($value instanceof DateTime) return true;
-#		if (strtotime($value) === false) return false;
-#		$date = date_parse($value);
-#		return checkdate($date['month'], $date['day'], $date['year']);
-	}
-
-	/**
-	* The field under validation must match the format defined according to the date_parse_from_format PHP function.
-	*/
-	function valid_date_format($in, $params = array(), $fields = array()) {
-// TODO
-#		$parsed = date_parse_from_format($parameters[0], $value);
-#		return $parsed['error_count'] === 0 && $parsed['warning_count'] === 0;
-	}
-
-	/**
-	* The file under validation must be an image (jpeg, png, bmp, or gif)
-	*/
-	function image($in, $params = array(), $fields = array()) {
-// TODO
-	}
-
-	/**
-	* The file under validation must have a MIME type corresponding to one of the listed extensions.  mime:jpeg,bmp,png
-	*/
-	function mime($in, $params = array(), $fields = array()) {
-// TODO
+	function chars($in, $params = array(), $fields = array()) {
+		$chars = array();
+		foreach (explode(',', trim($params['param'])) as $char) {
+			$char = trim($char);
+			if (strlen($char)) {
+				$chars[$char] = $char;
+			}
+		}
+		if (!count($chars)) {
+			return false;
+		}
+		$regex = '~^['.preg_qoute(implode($chars), '~').']+$~ims';
+		return (bool) preg_match($regex, $in);
 	}
 
 	/**
