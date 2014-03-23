@@ -32,26 +32,6 @@ class yf_validate {
 			'examples'	=> array('25', '25.05'),
 		),
 	);
-		if ($vr['min_length']) {
-		} elseif ($vr['max_length']) {
-		} elseif ($vr['exact_length']) {
-		} elseif ($vr['alpha']) {
-		} elseif ($vr['alpha_numeric']) {
-		} elseif ($vr['alpha_numeric_spaces']) {
-		} elseif ($vr['alpha_dash']) {
-		} elseif ($vr['exact_length']) {
-		} elseif ($vr['numeric']) {
-		} elseif ($vr['integer']) {
-		} elseif ($vr['decimal']) {
-		} elseif ($vr['is_natural']) {
-		} elseif ($vr['is_natural_no_zero']) {
-		} elseif ($vr['valid_email']) {
-			$extra['type'] = 'email';
-		} elseif ($vr['valid_url']) {
-			$extra['type'] = 'url';
-		} elseif ($vr['valid_ip']) {
-		} elseif ($vr['regex_match']) {
-		}
 		# $extra['title'] is used in html5 validation suggesting messages
 */
 
