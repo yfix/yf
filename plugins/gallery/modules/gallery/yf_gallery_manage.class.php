@@ -286,7 +286,7 @@ class yf_gallery_manage {
 			"max_tag_len"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->MAX_KEYWORD_LENGTH : "",
 		);
 #		return tpl()->parse('gallery'."/add_photo_form", $replace);
-		return form($replace, array('for_upload' => 1))
+		return form($replace, array('for_upload' => 1, '__form_id__' => 'gallery_add_photo'))
 			->validate(array(
 				'folder_id'		=> 'required|integer',
 				'photo_file'	=> 'required', // valid_image[jpeg,png]|image_max_size[500000]|image_height[100,1000],image_width[100,1000],
