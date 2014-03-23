@@ -206,6 +206,12 @@ class yf_form2 {
 				array_unshift($this->_body, implode(PHP_EOL, $e));
 			}
 		}
+		$attrs_override = array();
+		$form_id = $this->_replace['__form_id__'] ?: $this->_form_id;
+		if ($form_id) {
+			$all_attrs_override = main()->get_data('form_attributes');
+			$attrs_override = &$all_attrs_override[$form_id];
+		}
 
 		$r = (array)$this->_replace + (array)$replace;
 
@@ -220,6 +226,12 @@ class yf_form2 {
 				continue;
 			}
 			$_extra = $v['extra'];
+			$_override = $attrs_override[$v['extra']['name']];
+			if (is_array($_override)) {
+				foreach ((array)$_override as $_k => $_v) {
+					$_extra[$_k] = $_v;
+				}
+			}
 			$_replace = $r;
 			if (is_array($v['replace'])) {
 				$_replace += $v['replace'];
@@ -1989,8 +2001,13 @@ class yf_form2 {
 		$form_id_field = '__form_id__';
 		if (isset($this->_validate_rules[$form_id_field])) {
 			$form_id = $this->_validate_rules[$form_id_field];
-			$this->_form_id = $form_id;
 			unset($this->_validate_rules[$form_id_field]);
+		} elseif (isset($this->_params[$form_id_field])) {
+			$form_id = $this->_params[$form_id_field];
+			unset($this->_params[$form_id_field]);
+		}
+		if ($form_id) {
+			$this->_form_id = $form_id;
 			$this->hidden($form_id_field, array('value' => $form_id));
 		}
 		$this->_validate_rules = $this->_validate_rules_cleanup($this->_validate_rules);
