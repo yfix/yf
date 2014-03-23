@@ -48,7 +48,6 @@ class yf_html5_framework_bs2 {
 				$extra['edit_link'] = '';
 			}
 		}
-
 		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-default btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
 		$link_name_html = (($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn btn-default">'.t($extra['link_name']).'</a>'.PHP_EOL : '');
 
@@ -82,7 +81,8 @@ class yf_html5_framework_bs2 {
 		$dd_class = $obj->_params['dd_class'] ?: 'span6';
 
 		$row_start = !$extra['wide'] ? '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL : '';
-		$content = '<dd>'.$content.'</dd>'.PHP_EOL;
+		$before_content_html = '<dd>';
+		$after_content_html = '</dd>';
 		$row_end = '</dl>'.PHP_EOL;
 
 		if ($extra['edit_link']) {
@@ -91,19 +91,24 @@ class yf_html5_framework_bs2 {
 			}
 		}
 		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-default btn-mini btn-xs"><i class="icon-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
+		$link_name_html = (($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn btn-default">'.t($extra['link_name']).'</a>'.PHP_EOL : '');
+
+#		$inline_help_before = ($extra['help_before'] ? '<span class="help-block">'.nl2br($extra['help_before']).'</span>'.PHP_EOL : '');
+#		$inline_help_after = ($extra['inline_help'] ? '<span class="help-block">'.nl2br($extra['inline_help']).'</span>'.PHP_EOL : '');
+		$inline_tip_html = ($extra['tip'] ? ' '.$obj->_show_tip($extra['tip'], $extra, $replace) : '');
 
 		if ($extra['only_row_start']) {
 			return $row_start;
 		} elseif ($extra['only_row_end']) {
 			return $row_end;
 		} elseif ($extra['stacked']) {
-			return $before_content_html. $content. PHP_EOL. $after_content_html
-				.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html;
+			return $before_content_html. $inline_help_before. $content. PHP_EOL
+				.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after. $after_content_html;
 		} else {
 			// Full variant
 			return $row_start
-					.$before_content_html. $content. PHP_EOL. $after_content_html
-					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
+					.$before_content_html. $inline_help_before. $content. PHP_EOL
+					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after. $after_content_html
 					.(isset($extra['ace_editor']) ? $obj->_ace_editor_html($extra, $replace) : '')
 					.(isset($extra['ckeditor']) ? $obj->_ckeditor_html($extra, $replace) : '')
 					.(isset($extra['tinymce']) ? $obj->_tinymce_html($extra, $replace) : '')
