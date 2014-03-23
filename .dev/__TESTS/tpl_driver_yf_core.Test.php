@@ -387,6 +387,8 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	}
 	public function test_141() {
 		$this->assertEquals('val1', self::_tpl( '{key1|trim|urlencode}', array('key1' => ' val1 ') ));
+		$this->assertEquals('val+1', self::_tpl( '{key1|trim|urlencode}', array('key1' => ' val 1 ') ));
+		$this->assertEquals('val%201', self::_tpl( '{key1|trim|rawurlencode}', array('key1' => ' val 1 ') ));
 	}
 	public function test_142() {
 		$this->assertEquals('val1 val2', self::_tpl( '{sub.key1|trim} {sub.key2|urlencode}', array('sub' => array('key1' => ' val1 ', 'key2' => 'val2')) ));
@@ -408,5 +410,9 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 #		$this->assertEquals('', self::_tpl( '{if("quantity" gt 0 and "active" ne 0)} ok {/if}', $a ));
 #		$a = array('quantity' => 0, 'active' => 0);
 #		$this->assertEquals('', self::_tpl( '{if("quantity" gt 0 and "active" ne 0)} ok {/if}', $a ));
+	}
+	public function test_150() {
+		module_conf('main', 'unit_var1', 'unit_val');
+		$this->assertEquals('unit_val', self::_tpl( '{module_conf(main,unit_var1)}' ));
 	}
 }
