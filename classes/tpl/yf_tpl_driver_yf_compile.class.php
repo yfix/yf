@@ -35,6 +35,9 @@ class yf_tpl_driver_yf_compile {
 			'/(\{conf\(\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start. 'echo conf(\'$2\');'. $_php_end,
 
+			'/(\{module_conf\(\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*,\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*\)\})/i'
+				=> $_php_start. 'echo module_conf(\'$2\',\'$3\');'. $_php_end,
+
 			// Common replace vars
 			'/\{([a-z0-9\-\_]+)\}/i'
 				=> $_php_start. 'echo $replace[\'$1\'];'. $_php_end,

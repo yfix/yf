@@ -344,6 +344,11 @@ class yf_tpl_driver_yf {
 			return conf($m[1]);
 		}, $string);
 
+		// Module Config item. Examples: {module_conf(gallery,MAX_SIZE)}
+		$string = preg_replace_callback('/\{module_conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*,\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i', function($m) {
+			return module_conf($m[1], $m[2]);
+		}, $string);
+
 		// Translate some items if needed. Examples: {t("Welcome")}
 		$string = preg_replace_callback('/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims', function($m) use ($replace, $name, $_this) {
 			return $_this->tpl->_i18n_wrapper($m[2], $replace);
