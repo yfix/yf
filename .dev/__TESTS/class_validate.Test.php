@@ -97,6 +97,15 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->exact_length('12345', array('param' => '5')) );
 		$this->assertFalse( _class('validate')->exact_length('123456', array('param' => '5')) );
 	}
+	public function test_length() {
+		$this->assertFalse( _class('validate')->length() );
+		$this->assertFalse( _class('validate')->length('12345') );
+		$this->assertFalse( _class('validate')->length('1234', array('param' => '5')) );
+		$this->assertTrue( _class('validate')->length('12345', array('param' => '5')) );
+		$this->assertFalse( _class('validate')->length('123456', array('param' => '5')) );
+		$this->assertTrue( _class('validate')->length('123456', array('param' => '1,10')) );
+		$this->assertFalse( _class('validate')->length('123456', array('param' => '8,10')) );
+	}
 	public function test_greater_than() {
 		$this->assertFalse( _class('validate')->greater_than() );
 		$this->assertTrue( _class('validate')->greater_than('12345') );
@@ -458,21 +467,63 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 	public function test_xss_clean() {
 		$this->assertEquals( 'test', _class('validate')->xss_clean('test') );
 		$this->assertEquals( 'Hello, i try to [removed]alert&#40;\'Hack\'&#41;;[removed] your site', _class('validate')->xss_clean('Hello, i try to <script>alert(\'Hack\');</script> your site') );
+	}
+	public function test_active_url() {
+		$this->assertTrue( _class('validate')->active_url('google.com') );
+		$this->assertTrue( _class('validate')->active_url('http://google.com') );
+		$this->assertTrue( _class('validate')->active_url('https://google.com') );
+	}
+	public function test_between() {
+		$this->assertFalse( _class('validate')->between('0', '1,10') );
+		$this->assertTrue( _class('validate')->between('5', '1,10') );
+		$this->assertFalse( _class('validate')->between('50', '1,10') );
+		$this->assertTrue( _class('validate')->between('a', 'a,z') );
+		$this->assertFalse( _class('validate')->between('a', 'b,z') );
+	}
+	public function test_chars() {
+		$this->assertTrue( _class('validate')->chars('0', '1,10') );
+		$this->assertTrue( _class('validate')->chars('a', 'a,b,c') );
+		$this->assertFalse( _class('validate')->chars('d', 'a,b,c') );
+	}
+	public function test_before_date() {
+#		$this->assertFalse( _class('validate')->before_date('2014-03-01', '') );
+		$this->assertFalse( _class('validate')->before_date('2014-03-01', '2013-12-12') );
+		$this->assertTrue( _class('validate')->before_date('2014-03-01', '2014-12-12') );
+	}
+	public function test_after_date() {
+#		$this->assertTrue( _class('validate')->after_date('2014-03-01', '') );
+		$this->assertTrue( _class('validate')->after_date('2014-03-01', '2013-12-12') );
+		$this->assertFalse( _class('validate')->after_date('2014-03-01', '2014-12-12') );
+	}
+	public function test_valid_date() {
+		$this->assertTrue( _class('validate')->valid_date('2014-03-01') );
+		$this->assertTrue( _class('validate')->valid_date('2014-03-01 01:01:01') );
+		$this->assertTrue( _class('validate')->valid_date('2014-03-01 23:23:23') );
+		$this->assertTrue( _class('validate')->valid_date('2014-12-31 23:59:59') );
+		$this->assertTrue( _class('validate')->valid_date('1970-01-01 00:00:00') );
+		$this->assertFalse( _class('validate')->valid_date('197-01-01 00:00:00') );
+		$this->assertFalse( _class('validate')->valid_date('197-01-01') );
+		$this->assertFalse( _class('validate')->valid_date('197') );
+		$this->assertFalse( _class('validate')->valid_date('') );
+	}
+	public function test_valid_date_format() {
+		$this->assertTrue( _class('validate')->valid_date_format('2014-03-01', 'Y-m-d') );
+		$this->assertTrue( _class('validate')->valid_date_format('6.1.2009 13:00+01:00', 'j.n.Y H:iP') );
+		$this->assertFalse( _class('validate')->valid_date_format('6.1.2009', 'j.n.Y H:iP') );
+	}
+	public function test_standard_text() {
+// TODO: standard_text Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
+	}
+	public function test_valid_image() {
 // TODO
 	}
-	public function length() {
-// TODO: from kohana: length Returns FALSE if the field is too long or too shortlength[1,30] - between 1 and 30 characters longor length[30] - exactly 30 characters long
+	public function test_mime() {
+// TODO
 	}
-	public function depends_on() {
+	public function test_depends_on() {
 // TODO: from kohana: depends_on Returns FALSE if form field(s) defined in parameter are not filled independs_on[field_name]
 	}
-	public function chars() {
-// TODO: chars Returns FALSE if field contains characters not in the parameterchars[a,b,c,d,1,2,3,4]
-	}
-	public function credit_card() {
+	public function test_credit_card() {
 // TODO: from kohana: credit_card Returns FALSE if credit card is not validcredit_card[mastercard]
-	}
-	public function standard_text() {
-// TODO: standard_text Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
 	}
 }
