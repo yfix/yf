@@ -39,28 +39,28 @@ class yf_tpl_driver_yf_compile {
 				=> $_php_start. 'echo module_conf(\'$2\',\'$3\');'. $_php_end,
 
 			// Common replace vars
-			'/\{([a-z0-9\-\_]+)\}/i'
+			'/\{([a-z0-9_-]+)\}/i'
 				=> $_php_start. 'echo $replace[\'$1\'];'. $_php_end,
 
 			// Second level vars
-			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\}/i'
+			'/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\}/i'
 				=> $_php_start. 'echo $replace[\'$1\'][\'$2\'];'. $_php_end,
 
 			// vars inside foreach
-			'/\{\#\.([a-z0-9\-\_]+)\}/i'
+			'/\{\#\.([a-z0-9_-]+)\}/i'
 				=> $_php_start. 'echo $_v[\'$1\'];'. $_php_end,
 
 			// Variable filtering like in Smarty/Twig
 			// Examples:	 {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}   {sub1.var1|trim}
-			'/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/i'
+			'/\{([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i'
 				=> $_php_start. 'echo _class(\'tpl\')->_process_var_filters($replace[\'$1\'],\'$2\');'. $_php_end,
 
 			// Second level variables with filters
-			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/i'
+			'/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i'
 				=> $_php_start. 'echo _class(\'tpl\')->_process_var_filters($replace[\'$1\'][\'$2\'],\'$3\');'. $_php_end,
 
 			// Vars inside foreach with filters
-			'/\{\#\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/i'
+			'/\{\#\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i'
 				=> $_php_start. 'echo _class(\'tpl\')->_process_var_filters($_v[\'$1\'],\'$2\');'. $_php_end,
 
 			// Just closing foreach tags
@@ -68,29 +68,29 @@ class yf_tpl_driver_yf_compile {
 				=> $_php_start. '}'. $_php_end,
 
 			// !!! This pattern also differs from original adding \#\. symbols
-			'/\{if\(\s*["\']{0,1}([\w\s\.\-\+\%\#\.]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/imse'
+			'/\{if\(\s*["\']{0,1}([\w\s\.+%#-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/imse'
 				=> "'". $_php_start. 'if (\'.$this->_compile_prepare_condition(\'$1\',\'$2\',\'$3\',\'$4\').\') {'. $_php_end. "'",
 
 			// !!! This is a completely written from scratch pattern for compilation only
-			'/\{foreach\(\s*["\']{0,1}([\w\s\.\-]+)["\']{0,1}\s*\)\}/is'
+			'/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}/is'
 				=> $_php_start.'$__f_total = count($replace[\'$1\']); foreach (is_array($replace[\'$1\']) ? $replace[\'$1\'] : range(1, (int)$replace[\'$1\']) as $_k => $_v) {$__f_counter++;'.$_php_end,
 
-			'/(\{execute\(\s*["\']{0,1})\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
+			'/(\{execute\(\s*["\']{0,1})\s*([\w-]+)\s*[,;]\s*([\w-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\',0,false);'.$_php_end,
 
-			'/(\{exec_cached\(\s*["\']{0,1})\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
+			'/(\{exec_cached\(\s*["\']{0,1})\s*([\w-]+)\s*[,;]\s*([\w-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\',0,true);'.$_php_end,
 
 			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i'
 				=> $_php_start.'echo main()->_execute(\'graphics\',\'_show_block\',\'name=$1;$2\',\''.$name.'\',0,false);'.$_php_end,
 
-			'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
+			'/\{tip\(\s*["\']{0,1}([\w\.#-]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start.'echo _class_safe("graphics")->_show_help_tip(array("tip_id"=>\'$1\',"tip_type"=>\'$2\'));'.$_php_end,
 
 			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start.'echo _class_safe("graphics")->_show_inline_tip(array("text"=>\'$1\'));'.$_php_end,
 
-			'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims'
+			'/\{(e|user_error)\(\s*["\']{0,1}([\w\.-]+)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start.'echo common()->_show_error_inline(\'$2\');'.$_php_end,
 
 			'/(\{include\(\s*["\']{0,1})\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/i'
@@ -111,11 +111,11 @@ class yf_tpl_driver_yf_compile {
 			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims'
 				=> $_php_start. 'echo _class(\'tp\')->_generate_url_wrapper(\'$1\');'. $_php_end,
 
-			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims'
+			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9_-]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims'
 				=> $_php_start. 'echo _class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\');'. $_php_end,
 
 // TODO: this code needed to be executed last, but if compiled - this will be hard to achieve
-			'/(\{exec_last|execute_shutdown\(\s*["\']{0,1})\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
+			'/(\{exec_last|execute_shutdown\(\s*["\']{0,1})\s*([\w-]+)\s*[,;]\s*([\w-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\',0,false);'.$_php_end,
 
 			// DEBUG_MODE patterns
