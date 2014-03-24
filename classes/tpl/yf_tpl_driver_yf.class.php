@@ -564,6 +564,10 @@ class yf_tpl_driver_yf {
 			// Configuration item
 			} elseif (false !== strpos($tmp_v, 'conf.')) {
 				$res_v = 'conf("'.substr($tmp_v, strlen('conf.')).'")';
+			// Module config item
+			} elseif (false !== strpos($tmp_v, 'module_conf.')) {
+				list($mod_name, $mod_conf) = explode('.', substr($tmp_v, strlen('module_conf.')));
+				$res_v = 'module_conf("'.$mod_name.'","'.$mod_conf.'")';
 			// Constant
 			} elseif (false !== strpos($tmp_v, 'const.')) {
 				$res_v = substr($tmp_v, strlen('const.'));
