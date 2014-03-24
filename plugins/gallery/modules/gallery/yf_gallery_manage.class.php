@@ -294,11 +294,11 @@ class yf_gallery_manage {
 				'comments'		=> 'trim|xss_clean|strip_tags',
 				'tags'			=> 'trim|xss_clean|strip_tags',
 			))
-			->select_box('folder_id', module('gallery')->_folders_for_select, array('desc' => 'Folder', 'edit_link' => './?object=gallery&action=add_folder', 'tip' => 'Folders allow you to organize your gallery in a more structured way. If you have only a few photos you do not need it, but if you have several sets of photos, it is better to create several folders for them. Splitting your gallery to several subgalleries of 10-20 images each is a good practice.'))
-			->file('photo_file', array('desc' => 'Image', 'tip' => t('JPEGs only, up to %max bytes', array('%max' => module('gallery')->MAX_IMAGE_SIZE))))
-			->text('title', array('tip' => t('Optional field. Although you may leave it blank, photo title will allow your site pages to be better positioned on search engines. Up to %max characters', array('%max' => module('gallery')->MAX_IMAGE_SIZE))))
-			->textarea('comments', array('tip' => t('Optional field. You can write a short photo description here. Remember, although you may leave it blank, description texts allow your site pages to be better positioned on search engines.')))
-			->textarea('tags', array('tip' => t('Optional field. Tags allow you to further organize your gallery by adding simple one-two word descrtiptions of the content. Remember, although you may leave it blank, tags allow your site pages to be better positioned on search engines. Up to %maxnum tags, from %minlen to %maxlen characters each; one tag per line', array('%maxnum' => (int)module_safe('tags')->TAGS_PER_OBJ, '%minlen' => (int)module_safe('tags')->MIN_KEYWORD_LENGTH, '%maxlen' => (int)module_safe('tags')->MAX_KEYWORD_LENGTH))))
+			->select_box('folder_id', module('gallery')->_folders_for_select, array('desc' => 'Folder', 'edit_link' => './?object=gallery&action=add_folder'))
+			->file('photo_file', array('desc' => 'Image'))
+			->text('title')
+			->textarea('comments')
+			->textarea('tags')
 			->save('Upload');
 	}
 	
