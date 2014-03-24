@@ -334,11 +334,16 @@ class yf_validate {
 	* Examples: after_date[2012-01-01], after_date[day ago]
 	*/
 	function after_date($in, $params = array(), $fields = array()) {
-		if ($format = $this->getDateFormat($params['format'])) {
-			return DateTime::createFromFormat($format, $in) > DateTime::createFromFormat($format, $params['param']);
+		$param = is_array($params) ? $params['param'] : $params;
+		if (!$param) {
+			return false;
 		}
-		if ( ! ($date = strtotime($params['param']))) {
-			return strtotime($in) > strtotime($this->getValue($params['param']));
+		if (isset($params['format']) && $format = $this->getDateFormat($params['format'])) {
+			return DateTime::createFromFormat($format, $in) > DateTime::createFromFormat($format, $param);
+		}
+		$date = strtotime($param);
+		if ( ! $date) {
+			return strtotime($in) > strtotime($this->getValue($param));
 		} else {
 			return strtotime($in) > $date;
 		}
@@ -349,11 +354,16 @@ class yf_validate {
 	* Example: before_date[2020-12-31], after_date[+1 day]
 	*/
 	function before_date($in, $params = array(), $fields = array()) {
-		if ($format = $this->getDateFormat($params['format'])) {
-			return DateTime::createFromFormat($format, $in) < DateTime::createFromFormat($format, $params['param']);
+		$param = is_array($params) ? $params['param'] : $params;
+		if (!$param) {
+			return false;
 		}
-		if ( ! ($date = strtotime($params['param']))) {
-			return strtotime($in) < strtotime($this->getValue($params['param']));
+		if (isset($params['format']) && $format = $this->getDateFormat($params['format'])) {
+			return DateTime::createFromFormat($format, $in) < DateTime::createFromFormat($format, $param);
+		}
+		$date = strtotime($param);
+		if ( ! $date) {
+			return strtotime($in) < strtotime($this->getValue($param));
 		} else {
 			return strtotime($in) < $date;
 		}
@@ -383,35 +393,6 @@ class yf_validate {
 	}
 
 	/**
-	* Alias
-	*/
-	function valid_image($in, $params = array(), $fields = array()) {
-		return $this->image($in, $params, $fields);
-	}
-
-	/**
-	* The file under validation must be an image (jpeg, png, bmp, or gif)
-	*/
-	function image($in, $params = array(), $fields = array()) {
-// TODO
-	}
-
-	/**
-	* The file under validation must have a MIME type corresponding to one of the listed extensions.  mime:jpeg,bmp,png
-	*/
-	function mime($in, $params = array(), $fields = array()) {
-// TODO
-	}
-
-	/**
-	* Returns FALSE if credit card is not valid. 
-	* Examples: credit_card[mastercard]
-	*/
-	function credit_card($in, $params = array(), $fields = array()) {
-// TODO
-	}
-
-	/**
 	* Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
 	*/
 	function standard_text($in, $params = array(), $fields = array()) {
@@ -424,7 +405,7 @@ class yf_validate {
 	*/
 	function between($in, $params = array(), $fields = array()) {
 		$param = is_array($params) ? $params['param'] : $params;
-		list($min, $nax) = explode(',', $param);
+		list($min, $max) = explode(',', $param);
 		return $in >= $min && $in <= $max;
 	}
 
@@ -444,7 +425,7 @@ class yf_validate {
 		if (!count($chars)) {
 			return false;
 		}
-		$regex = '~^['.preg_qoute(implode($chars), '~').']+$~ims';
+		$regex = '~^['.preg_quote(implode($chars), '~').']+$~ims';
 		return (bool) preg_match($regex, $in);
 	}
 
@@ -1019,6 +1000,35 @@ class yf_validate {
 	*/
 	function _url_verify ($in = '') {
 		return $this->valid_url($in);
+	}
+
+	/**
+	* Alias
+	*/
+	function valid_image($in, $params = array(), $fields = array()) {
+		return $this->image($in, $params, $fields);
+	}
+
+	/**
+	* The file under validation must be an image (jpeg, png, bmp, or gif)
+	*/
+	function image($in, $params = array(), $fields = array()) {
+// TODO
+	}
+
+	/**
+	* The file under validation must have a MIME type corresponding to one of the listed extensions.  mime:jpeg,bmp,png
+	*/
+	function mime($in, $params = array(), $fields = array()) {
+// TODO
+	}
+
+	/**
+	* Returns FALSE if credit card is not valid. 
+	* Examples: credit_card[mastercard]
+	*/
+	function credit_card($in, $params = array(), $fields = array()) {
+// TODO
 	}
 
 	/**
