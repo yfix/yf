@@ -259,7 +259,7 @@ class yf_validate {
 	* Most popular are: md5 sha1 sha224 sha256 sha384 sha512 ripemd128 ripemd160 ripemd256 ripemd320 gost crc32
 	* Example usage: ["password" => 'trim|min_length[6]|max_length[32]|hash_not_empty[sha256]']
 	*/
-	function hash_not_empty(&$in, $params = array(), $fields = array()) {
+	function hash_not_empty(&$in, $params = array()) {
 		$hash_name = is_array($params) ? $params['param'] : $params;
 		if (strlen($in) && $hash_name) {
 			$in = hash($hash_name, $in);
@@ -333,7 +333,7 @@ class yf_validate {
 	* The field under validation must be a value after a given date. The dates will be passed into the PHP strtotime function. 
 	* Examples: after_date[2012-01-01], after_date[day ago]
 	*/
-	function after_date($in, $params = array(), $fields = array()) {
+	function after_date($in, $params = array()) {
 		$param = is_array($params) ? $params['param'] : $params;
 		if (!$param) {
 			return false;
@@ -353,7 +353,7 @@ class yf_validate {
 	* The field under validation must be a value preceding the given date. The dates will be passed into the PHP strtotime function. 
 	* Example: before_date[2020-12-31], after_date[+1 day]
 	*/
-	function before_date($in, $params = array(), $fields = array()) {
+	function before_date($in, $params = array()) {
 		$param = is_array($params) ? $params['param'] : $params;
 		if (!$param) {
 			return false;
@@ -386,7 +386,7 @@ class yf_validate {
 	/**
 	* The field under validation must match the format defined according to the date_parse_from_format PHP function.
 	*/
-	function valid_date_format($in, $params = array(), $fields = array()) {
+	function valid_date_format($in, $params = array()) {
 		$param = is_array($params) ? $params['param'] : $params;
 		$parsed = date_parse_from_format($param, $in);
 		return $parsed['error_count'] === 0 && $parsed['warning_count'] === 0;
@@ -395,7 +395,7 @@ class yf_validate {
 	/**
 	* Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
 	*/
-	function standard_text($in, $params = array(), $fields = array()) {
+	function standard_text($in) {
 		return (bool) preg_match('~^[a-z0-9\s\t,\._-]+$~ims', $in);
 	}
 
@@ -403,7 +403,7 @@ class yf_validate {
 	* The field under validation must have a size between the given min and max. Strings, numerics, and files are evaluated in the same fashion as the size rule. 
 	* Examples: between[a,z]  between[44,99]
 	*/
-	function between($in, $params = array(), $fields = array()) {
+	function between($in, $params = array()) {
 		$param = is_array($params) ? $params['param'] : $params;
 		list($min, $max) = explode(',', $param);
 		return $in >= $min && $in <= $max;
@@ -413,7 +413,7 @@ class yf_validate {
 	* Returns FALSE if field contains characters not in the parameter. 
 	* Example: chars[a,b,c,d,1,2,3,4]
 	*/
-	function chars($in, $params = array(), $fields = array()) {
+	function chars($in, $params = array()) {
 		$param = is_array($params) ? $params['param'] : $params;
 		$chars = array();
 		foreach (explode(',', trim($param)) as $char) {
@@ -638,7 +638,7 @@ class yf_validate {
 	* Returns FALSE if the field is too long or too short. 
 	* Examples: length[1,30] - between 1 and 30 characters long. length[30] - exactly 30 characters long
 	*/
-	function length($in, $params = array(), $fields = array()) {
+	function length($in, $params = array()) {
 		$val = is_array($params) ? $params['param'] : $params;
 		if (false === strpos($val, ',')) {
 			return $this->exact_length($in, $params);
@@ -814,7 +814,7 @@ class yf_validate {
 	/**
 	* Returns TRUE is captcha user input value is valid
 	*/
-	function captcha($in, $params = array(), $fields = array()) {
+	function captcha($in) {
 		return _class('captcha')->check('captcha');
 	}
 
@@ -847,12 +847,10 @@ class yf_validate {
 	function _check_user_nick ($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'nick') {
 // TODO: rewrite me
 		$TEXT_TO_CHECK = $_POST[$name_in_form];
-		// Override value to check
 		if (!is_null($force_value_to_check)) {
 			$TEXT_TO_CHECK = $force_value_to_check;
 			$OVERRIDE_MODE = true;
 		}
-		// Do check
 		$_nick_pattern = implode('', $this->NICK_ALLOWED_SYMBOLS);
 		if (empty($TEXT_TO_CHECK) || (strlen($TEXT_TO_CHECK) < $this->MIN_NICK_LENGTH)) {
 			_re(t('Nick must have at least @num symbols', array('@num' => $this->MIN_NICK_LENGTH)));
@@ -885,7 +883,6 @@ class yf_validate {
 			return false;
 		}
 		$this->_prepare_reserved_words();
-		// Do check profile url
 		if (!empty($CUR_VALUE)) {
 			_re('You have already chosen your profile url. You are not allowed to change it!');
 		} elseif (!preg_match('/^[a-z0-9]{0,64}$/ims', $TEXT_TO_CHECK)) {
@@ -914,16 +911,13 @@ class yf_validate {
 	*/
 	function _check_location ($cur_country = '', $cur_region = '', $cur_city = '') {
 // TODO: rewrite me
-		// Process featured countries
 		if (FEATURED_COUNTRY_SELECT && !empty($_POST['country']) && substr($_POST['country'], 0, 2) == 'f_') {
 			$_POST['country'] = substr($_POST['country'], 2);
 		}
-		// verify country
 		if (!empty($_POST['country'])) {
 			if (!isset($GLOBALS['countries'])) {
 				$GLOBALS['countries'] = main()->get_data('countries');
 			}
-			// Check for correct country
 			if (!isset($GLOBALS['countries'][$_POST['country']])) {
 				$_POST['country']	= '';
 				$_POST['region']	= '';
@@ -933,7 +927,6 @@ class yf_validate {
 				$GLOBALS['_country_name'] = $GLOBALS['countries'][$_POST['country']];
 			}
 		}
-		// Verify region
 		if (!empty($_POST['region'])) {
 			$region_info = db()->query_fetch('SELECT * FROM '.db('geo_regions').' WHERE country = "'._es($_POST['country']).'" AND code="'._es($_POST['region']).'"');
 			if (empty($region_info)) {
@@ -944,9 +937,8 @@ class yf_validate {
 				$GLOBALS['_region_name'] = $region_info['name'];
 			}
 		}
-		// Verify city
 		if (!empty($_POST['city'])) {
-			$city_info = db()->query_fetch('SELECT * FROM '.db('geo_city_location')." WHERE region = '"._es($_POST["region"])."' AND country = '"._es($_POST["country"])."' AND city='"._es($_POST["city"])."'");
+			$city_info = db()->query_fetch('SELECT * FROM '.db('geo_city_location').' WHERE region = "'._es($_POST['region']).'" AND country = "'._es($_POST['country']).'" AND city="'._es($_POST['city']).'"');
 			if (empty($city_info)) {
 				$_POST['city']		= '';
 			}
@@ -958,7 +950,6 @@ class yf_validate {
 	*/
 	function _check_birth_date ($CUR_VALUE = '') {
 // TODO: rewrite me
-		// Validate birth date
 		$_POST['birth_date']	= $CUR_VALUE;
 
 		$_POST['year_birth']	= intval($_POST['year_birth']);
