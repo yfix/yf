@@ -270,8 +270,7 @@ class yf_gallery_manage {
 		$replace = array(
 			"form_action"		=> "./?object=".'gallery'."&action=".$_GET["action"]._add_get(array("page")),
 			"error_message"		=> $error_message,
-			"folders_box"		=> module('gallery')->_box("folder_id", !empty($_POST["folder_id"]) ? $_POST["folder_id"] : $FOLDER_ID),
-			"show_in_ads_box"	=> $SHOW_IN_ADS_ALLOWED ? module('gallery')->_box("show_in_ads", $_POST["show_in_ads"] || $num_photos_for_ads < module('gallery')->MAX_PHOTOS_FOR_ADS ? 1 : 0) : "",
+			"folders_box"		=> common()->select_box("folder_id", module('gallery')->_folders_for_select, !empty($_POST["folder_id"]) ? $_POST["folder_id"] : $FOLDER_ID),
 			"max_image_size"	=> intval(module('gallery')->MAX_IMAGE_SIZE),
 			"max_name_length"	=> intval(module('gallery')->MAX_NAME_LENGTH),
 			"max_desc_length"	=> intval(module('gallery')->MAX_DESC_LENGTH),
@@ -281,15 +280,26 @@ class yf_gallery_manage {
 			"show_ads_denied"	=> intval(!$SHOW_IN_ADS_ALLOWED),
 			"rate_enabled"		=> intval((bool) module('gallery')->ALLOW_RATE),
 			"tagging_enabled"	=> intval((bool) module('gallery')->ALLOW_TAGGING),
-			"allow_rate_box"	=> module('gallery')->_box("allow_rate", $_POST["allow_rate"] || module('gallery')->ALLOW_RATE ? 1 : 0),
-			"allow_tagging_box"	=> module('gallery')->_box("allow_tagging", $_POST["allow_tagging"] || module('gallery')->ALLOW_TAGGING ? 1 : 0),
 			"tags"				=> "",
 			"max_num_tags"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->TAGS_PER_OBJ : "",
 			"min_tag_len"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->MIN_KEYWORD_LENGTH : "",
 			"max_tag_len"		=> is_object($this->TAGS_OBJ) ? $this->TAGS_OBJ->MAX_KEYWORD_LENGTH : "",
-			"is_featured_box"	=> module('gallery')->_box("is_featured", $photo_info["is_featured"]),
 		);
-		return tpl()->parse('gallery'."/add_photo_form", $replace);
+#		return tpl()->parse('gallery'."/add_photo_form", $replace);
+		return form($replace, array('for_upload' => 1, '__form_id__' => 'gallery_add_photo'))
+			->validate(array(
+				'folder_id'		=> 'required|integer',
+				'photo_file'	=> 'required', // valid_image[jpeg,png]|image_max_size[500000]|image_height[100,1000],image_width[100,1000],
+				'title'			=> 'trim|xss_clean|strip_tags',
+				'comments'		=> 'trim|xss_clean|strip_tags',
+				'tags'			=> 'trim|xss_clean|strip_tags',
+			))
+			->select_box('folder_id', module('gallery')->_folders_for_select, array('desc' => 'Folder', 'edit_link' => './?object=gallery&action=add_folder'))
+			->file('photo_file', array('desc' => 'Image'))
+			->text('title')
+			->textarea('comments')
+			->textarea('tags')
+			->save('Upload');
 	}
 	
 	/**

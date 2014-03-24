@@ -7,18 +7,18 @@ class yf_tpl_driver_yf {
 
 	/** @var array @conf_skip Catch dynamic content into variable */
 	// Examples: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
-	public $_PATTERN_CATCH = '/\{catch\(\s*["\']{0,1}([a-z0-9_\-]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims';
+	public $_PATTERN_CATCH = '/\{catch\(\s*["\']{0,1}([\w_-]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims';
 	/** @var array @conf_skip STPL internal comment pattern */
 	// Examples: {{-- some content you want to comment inside template only --}}
 	public $_PATTERN_COMMENT = '/(\{\{--.*?--\}\})/ims';
 	/** @var string @conf_skip Conditional pattern */
 	// Examples: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
-	public $_PATTERN_IF	= '/\{if\(\s*["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
+	public $_PATTERN_IF	= '/\{if\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w#-]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
 	/** @var string @conf_skip pattern for multi-conditions */
-	public $_PATTERN_MULTI_COND = '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
+	public $_PATTERN_MULTI_COND = '/["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s#-]*)["\']{0,1}/ims';
 	/** @var string @conf_skip Cycle pattern */
 	// Examples: {foreach ("var")}<li>{var.value1}</li>{/foreach}
-	public $_PATTERN_FOREACH = '/\{foreach\(\s*["\']{0,1}([\w\s\.\-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
+	public $_PATTERN_FOREACH = '/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
 	/** @var array @conf_skip For "_process_conditions" */
 	public $_cond_operators	= array('eq'=>'==','ne'=>'!=','gt'=>'>','lt'=>'<','ge'=>'>=','le'=>'<=','mod'=>'%');
 	/** @var array @conf_skip For '_process_conditions' */
@@ -344,6 +344,11 @@ class yf_tpl_driver_yf {
 			return conf($m[1]);
 		}, $string);
 
+		// Module Config item. Examples: {module_conf(gallery,MAX_SIZE)}
+		$string = preg_replace_callback('/\{module_conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*,\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i', function($m) {
+			return module_conf($m[1], $m[2]);
+		}, $string);
+
 		// Translate some items if needed. Examples: {t("Welcome")}
 		$string = preg_replace_callback('/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims', function($m) use ($replace, $name, $_this) {
 			return $_this->tpl->_i18n_wrapper($m[2], $replace);
@@ -464,7 +469,7 @@ class yf_tpl_driver_yf {
 		$string = str_replace(array('<'.'?', '?'.'>'), array('&lt;?', '?&gt;'), $string);
 		// Process matches
 		foreach ((array)$m[0] as $k => $v) {
-			$part_left	  = $this->_prepare_cond_text($m[1][$k], $replace);
+			$part_left	  = $this->_prepare_cond_text($m[1][$k], $replace, $stpl_name);
 			$cur_operator = $this->_cond_operators[strtolower($m[2][$k])];
 			$part_right	 = trim($m[3][$k]);
 			if (strlen($part_right) && $part_right{0} == '#') {
@@ -484,7 +489,7 @@ class yf_tpl_driver_yf {
 					$_tmp_count = count($_tmp_parts);
 				}
 				for ($i = 1; $i < $_tmp_count; $i+=2) {
-					$_tmp_parts[$i] = $this->_process_multi_conds($_tmp_parts[$i], $replace);
+					$_tmp_parts[$i] = $this->_process_multi_conds($_tmp_parts[$i], $replace, $stpl_name);
 					if (!strlen($_tmp_parts[$i])) {
 						unset($_tmp_parts[$i]);
 						unset($_tmp_parts[$i - 1]);
@@ -520,11 +525,11 @@ class yf_tpl_driver_yf {
 	/**
 	* Multi-condition special parser
 	*/
-	function _process_multi_conds ($cond_text = '', $replace = array()) {
+	function _process_multi_conds ($cond_text = '', $replace = array(), $stpl_name = '') {
 		if (!preg_match($this->_PATTERN_MULTI_COND, $cond_text, $m)) {
 			return '';
 		}
-		$part_left		= $this->_prepare_cond_text($m[1], $replace);
+		$part_left		= $this->_prepare_cond_text($m[1], $replace, $stpl_name);
 		$cur_operator	= $this->_cond_operators[strtolower($m[2])];
 		$part_right		= strval($m[3]);
 		if (strlen($part_right) && $part_right{0} == '#') {
@@ -542,7 +547,7 @@ class yf_tpl_driver_yf {
 	/**
 	* Prepare text for '_process_conditions' method
 	*/
-	function _prepare_cond_text ($cond_text = '', $replace = array()) {
+	function _prepare_cond_text ($cond_text = '', $replace = array(), $stpl_name = '') {
 		$prepared_array = array();
 		foreach (explode(' ', str_replace("\t",'',$cond_text)) as $tmp_k => $tmp_v) {
 			$res_v = '';
@@ -556,8 +561,12 @@ class yf_tpl_driver_yf {
 			// Arithmetic operators (currently we allow only '+' and '-')
 			} elseif (isset($this->_math_operators[$tmp_v])) {
 				$res_v = $this->_math_operators[$tmp_v];
+			// Module config item
+			} elseif (strpos($tmp_v, 'module_conf.') === 0) {
+				list($mod_name, $mod_conf) = explode('.', substr($tmp_v, strlen('module_conf.')));
+				$res_v = 'module_conf("'.$mod_name.'","'.$mod_conf.'")';
 			// Configuration item
-			} elseif (false !== strpos($tmp_v, 'conf.')) {
+			} elseif (strpos($tmp_v, 'conf.') === 0) {
 				$res_v = 'conf("'.substr($tmp_v, strlen('conf.')).'")';
 			// Constant
 			} elseif (false !== strpos($tmp_v, 'const.')) {

@@ -89,19 +89,24 @@ class yf_manage_shop_users{
 			'phone'		=> array( 'trim|required' ),
 			'address'	=> array( 'trim|required' ),
 		);
-		$A['redirect_link'] = './?object='.$_GET['object'].'&action=users';
+		$A['redirect_link'] = './?object='.$_GET['object'].'&action=users';	
+		if($A['birthday'] !== "0000-00-00"){
+			$A['birthday'] = date("d-m-Y", strtotime($A['birthday']));
+		}else{
+			$A['birthday'] = "";
+		}
 		return form($A)
 			->validate($validate_rules)
 			->db_update_if_ok('user', array('name','phone','address','birthday'), $_GET['id'], array(
 				'on_before_update' =>  function(&$data, $table, $fields) { 
-					$data['birthday'] = strtotime($data['birthday']); 
+					$data['birthday'] = date("Y-m-d" ,strtotime($data['birthday'])); 
 				}
 			))
 			->text('name')
 			->email('email')
 			->text('phone')
 			->text('address')
-			->datetime_select('birthday', 'Дата рождения', array('no_time' => 1, 'placeholder' => 'день-месяц-год', 'value' => $A['birthday']?:''))
+			->datetime_select('birthday', 'Дата рождения', array('no_time' => 1, 'placeholder' => 'день-месяц-год', 'value' => $A['birthday']))
 			->save();
 	}
 

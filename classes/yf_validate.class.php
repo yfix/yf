@@ -32,26 +32,6 @@ class yf_validate {
 			'examples'	=> array('25', '25.05'),
 		),
 	);
-		if ($vr['min_length']) {
-		} elseif ($vr['max_length']) {
-		} elseif ($vr['exact_length']) {
-		} elseif ($vr['alpha']) {
-		} elseif ($vr['alpha_numeric']) {
-		} elseif ($vr['alpha_numeric_spaces']) {
-		} elseif ($vr['alpha_dash']) {
-		} elseif ($vr['exact_length']) {
-		} elseif ($vr['numeric']) {
-		} elseif ($vr['integer']) {
-		} elseif ($vr['decimal']) {
-		} elseif ($vr['is_natural']) {
-		} elseif ($vr['is_natural_no_zero']) {
-		} elseif ($vr['valid_email']) {
-			$extra['type'] = 'email';
-		} elseif ($vr['valid_url']) {
-			$extra['type'] = 'url';
-		} elseif ($vr['valid_ip']) {
-		} elseif ($vr['regex_match']) {
-		}
 		# $extra['title'] is used in html5 validation suggesting messages
 */
 
@@ -279,7 +259,7 @@ class yf_validate {
 	* Most popular are: md5 sha1 sha224 sha256 sha384 sha512 ripemd128 ripemd160 ripemd256 ripemd320 gost crc32
 	* Example usage: ["password" => 'trim|min_length[6]|max_length[32]|hash_not_empty[sha256]']
 	*/
-	function hash_not_empty(&$in, $params = array(), $fields = array()) {
+	function hash_not_empty(&$in, $params = array()) {
 		$hash_name = is_array($params) ? $params['param'] : $params;
 		if (strlen($in) && $hash_name) {
 			$in = hash($hash_name, $in);
@@ -299,7 +279,7 @@ class yf_validate {
 	* Examples: required_any[duration_*] or required_any[duration_day,duration_week,duration_month]
 	*/
 	function required_any($in, $params = array(), $fields = array()) {
-		$param = trim($params['param']);
+		$param = trim(is_array($params) ? $params['param'] : $params);
 		// Example: duration_*
 		if (false !== strpos($param, '*')) {
 			$strpos = str_replace('*', '', $param);
@@ -343,109 +323,110 @@ class yf_validate {
 	}
 
 	/**
-	* Returns FALSE if field contains characters not in the parameter. 
-	* Example: chars[a,b,c,d,1,2,3,4]
-	*/
-	function chars($in, $params = array(), $fields = array()) {
-// TODO
-	}
-
-	/**
-	* Returns FALSE if credit card is not valid. 
-	* Examples: credit_card[mastercard]
-	*/
-	function credit_card($in, $params = array(), $fields = array()) {
-// TODO
-	}
-
-	/**
-	* Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
-	*/
-	function standard_text($in, $params = array(), $fields = array()) {
-// TODO
-	}
-
-	/**
 	* The field under validation must be a valid URL according to the checkdnsrr PHP function.
 	*/
-	function active_url($in, $params = array(), $fields = array()) {
-// TODO
-#		$url = str_replace(array('http://', 'https://', 'ftp://'), '', strtolower($value));
-#		return checkdnsrr($url);
+	function active_url($in) {
+		return checkdnsrr(str_replace(array('http://', 'https://', 'ftp://'), '', strtolower($in)));
 	}
 
 	/**
 	* The field under validation must be a value after a given date. The dates will be passed into the PHP strtotime function. 
 	* Examples: after_date[2012-01-01], after_date[day ago]
 	*/
-	function after_date($in, $params = array(), $fields = array()) {
-// TODO
-#		if ($format = $this->getDateFormat($attribute)) {
-#			return DateTime::createFromFormat($format, $value) > DateTime::createFromFormat($format, $parameters[0]);
-#		}
-#		if ( ! ($date = strtotime($parameters[0]))) {
-#			return strtotime($value) > strtotime($this->getValue($parameters[0]));
-#		} else {
-#			return strtotime($value) > $date;
-#		}
+	function after_date($in, $params = array()) {
+		$param = is_array($params) ? $params['param'] : $params;
+		if (!$param) {
+			return false;
+		}
+		if (isset($params['format']) && $format = $this->getDateFormat($params['format'])) {
+			return DateTime::createFromFormat($format, $in) > DateTime::createFromFormat($format, $param);
+		}
+		$date = strtotime($param);
+		if ( ! $date) {
+			return strtotime($in) > strtotime($this->getValue($param));
+		} else {
+			return strtotime($in) > $date;
+		}
 	}
 
 	/**
 	* The field under validation must be a value preceding the given date. The dates will be passed into the PHP strtotime function. 
 	* Example: before_date[2020-12-31], after_date[+1 day]
 	*/
-	function before_date($in, $params = array(), $fields = array()) {
-// TODO
-#		if ($format = $this->getDateFormat($attribute)) {
-#			return DateTime::createFromFormat($format, $value) < DateTime::createFromFormat($format, $parameters[0]);
-#		}
-#		if ( ! ($date = strtotime($parameters[0]))) {
-#			return strtotime($value) < strtotime($this->getValue($parameters[0]));
-#		} else {
-#			return strtotime($value) < $date;
-#		}
+	function before_date($in, $params = array()) {
+		$param = is_array($params) ? $params['param'] : $params;
+		if (!$param) {
+			return false;
+		}
+		if (isset($params['format']) && $format = $this->getDateFormat($params['format'])) {
+			return DateTime::createFromFormat($format, $in) < DateTime::createFromFormat($format, $param);
+		}
+		$date = strtotime($param);
+		if ( ! $date) {
+			return strtotime($in) < strtotime($this->getValue($param));
+		} else {
+			return strtotime($in) < $date;
+		}
+	}
+
+	/**
+	* The field under validation must be a valid date according to the strtotime PHP function.
+	*/
+	function valid_date($in) {
+		if ($in instanceof DateTime) {
+			return true;
+		}
+		if (strtotime($in) === false) {
+			return false;
+		}
+		$date = date_parse($in);
+		return checkdate($date['month'], $date['day'], $date['year']);
+	}
+
+	/**
+	* The field under validation must match the format defined according to the date_parse_from_format PHP function.
+	*/
+	function valid_date_format($in, $params = array()) {
+		$param = is_array($params) ? $params['param'] : $params;
+		$parsed = date_parse_from_format($param, $in);
+		return $parsed['error_count'] === 0 && $parsed['warning_count'] === 0;
+	}
+
+	/**
+	* Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
+	*/
+	function standard_text($in) {
+		return (bool) preg_match('~^[a-z0-9\s\t,\._-]+$~ims', $in);
 	}
 
 	/**
 	* The field under validation must have a size between the given min and max. Strings, numerics, and files are evaluated in the same fashion as the size rule. 
 	* Examples: between[a,z]  between[44,99]
 	*/
-	function between($in, $params = array(), $fields = array()) {
-// TODO
+	function between($in, $params = array()) {
+		$param = is_array($params) ? $params['param'] : $params;
+		list($min, $max) = explode(',', $param);
+		return $in >= $min && $in <= $max;
 	}
 
 	/**
-	* The field under validation must be a valid date according to the strtotime PHP function.
+	* Returns FALSE if field contains characters not in the parameter. 
+	* Example: chars[a,b,c,d,1,2,3,4]
 	*/
-	function valid_date($in, $params = array(), $fields = array()) {
-// TODO
-#		if ($value instanceof DateTime) return true;
-#		if (strtotime($value) === false) return false;
-#		$date = date_parse($value);
-#		return checkdate($date['month'], $date['day'], $date['year']);
-	}
-
-	/**
-	* The field under validation must match the format defined according to the date_parse_from_format PHP function.
-	*/
-	function valid_date_format($in, $params = array(), $fields = array()) {
-// TODO
-#		$parsed = date_parse_from_format($parameters[0], $value);
-#		return $parsed['error_count'] === 0 && $parsed['warning_count'] === 0;
-	}
-
-	/**
-	* The file under validation must be an image (jpeg, png, bmp, or gif)
-	*/
-	function image($in, $params = array(), $fields = array()) {
-// TODO
-	}
-
-	/**
-	* The file under validation must have a MIME type corresponding to one of the listed extensions.  mime:jpeg,bmp,png
-	*/
-	function mime($in, $params = array(), $fields = array()) {
-// TODO
+	function chars($in, $params = array()) {
+		$param = is_array($params) ? $params['param'] : $params;
+		$chars = array();
+		foreach (explode(',', trim($param)) as $char) {
+			$char = trim($char);
+			if (strlen($char)) {
+				$chars[$char] = $char;
+			}
+		}
+		if (!count($chars)) {
+			return false;
+		}
+		$regex = '~^['.preg_quote(implode($chars), '~').']+$~ims';
+		return (bool) preg_match($regex, $in);
 	}
 
 	/**
@@ -456,7 +437,7 @@ class yf_validate {
 		if (!$in) {
 			return true;
 		}
-		$param = $params['param'];
+		$param = is_array($params) ? $params['param'] : $params;
 		if ($param) {
 			list($check_table, $check_field) = explode('.', $param);
 		}
@@ -477,7 +458,7 @@ class yf_validate {
 		if (!$in) {
 			return true;
 		}
-		$param = $params['param'];
+		$param = is_array($params) ? $params['param'] : $params;
 		$id_field = $params['id_field'] ?: 'id';
 		if ($param) {
 			list($check_table, $check_field, $check_id) = explode('.', $param);
@@ -499,7 +480,7 @@ class yf_validate {
 		if (!$in) {
 			return false;
 		}
-		$param = $params['param'];
+		$param = is_array($params) ? $params['param'] : $params;
 		if ($param) {
 			list($check_table, $check_field) = explode('.', $param);
 		}
@@ -517,7 +498,7 @@ class yf_validate {
 	* Example: regex_match[/^[a-z0-9]+$/]
 	*/
 	function regex_match($in, $params = array()) {
-		$regex = $params['param'];
+		$regex = is_array($params) ? $params['param'] : $params;
 		return (bool) preg_match($regex, $in);
 	}
 
@@ -526,7 +507,7 @@ class yf_validate {
 	* Example: differs[address_2]
 	*/
 	function differs($in, $params = array(), $fields = array()) {
-		$field = $params['param'];
+		$field = is_array($params) ? $params['param'] : $params;
 		return ! (isset($fields[$field]) && $_POST[$field] === $in);
 	}
 
@@ -607,7 +588,7 @@ class yf_validate {
 	* Returns TRUE if given field contains valid IP address, ipv4 by default, ipv6 supported too
 	*/
 	function valid_ip($in, $params = array()) {
-		$which = is_array($params) ? $params['param'] : $oaram;
+		$which = is_array($params) ? $params['param'] : $params;
 		return $this->_valid_ip($in, $which);
 	}
 
@@ -616,7 +597,7 @@ class yf_validate {
 	* Example: min_length[10]
 	*/
 	function min_length($in, $params = array()) {
-		$val = $params['param'];
+		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
 		} else {
@@ -630,7 +611,7 @@ class yf_validate {
 	* Example: max_length[10]
 	*/
 	function max_length($in, $params = array()) {
-		$val = $params['param'];
+		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
 		} else {
@@ -644,7 +625,7 @@ class yf_validate {
 	* Example: exact_length[10]
 	*/
 	function exact_length($in, $params = array()) {
-		$val = $params['param'];
+		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
 		} else {
@@ -657,9 +638,8 @@ class yf_validate {
 	* Returns FALSE if the field is too long or too short. 
 	* Examples: length[1,30] - between 1 and 30 characters long. length[30] - exactly 30 characters long
 	*/
-	function length($in, $params = array(), $fields = array()) {
+	function length($in, $params = array()) {
 		$val = is_array($params) ? $params['param'] : $params;
-// TODO: unit tests
 		if (false === strpos($val, ',')) {
 			return $this->exact_length($in, $params);
 		} else {
@@ -682,7 +662,7 @@ class yf_validate {
 	* Example: greater_than[10]
 	*/
 	function greater_than($in, $params = array()) {
-		$min = $params['param'];
+		$min = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in > $min) : false;
 	}
 
@@ -691,7 +671,7 @@ class yf_validate {
 	* Example: less_than[10]
 	*/
 	function less_than($in, $params = array()) {
-		$max = $params['param'];
+		$max = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in < $max) : false;
 	}
 
@@ -700,7 +680,7 @@ class yf_validate {
 	* Example: greater_than_equal_to[10]
 	*/
 	function greater_than_equal_to($in, $params = array()) {
-		$min = $params['param'];
+		$min = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in >= $min) : false;
 	}
 
@@ -709,7 +689,7 @@ class yf_validate {
 	* Example: less_than_equal_to[10]
 	*/
 	function less_than_equal_to($in, $params = array()) {
-		$max = $params['param'];
+		$max = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in <= $max) : false;
 	}
 
@@ -834,7 +814,7 @@ class yf_validate {
 	/**
 	* Returns TRUE is captcha user input value is valid
 	*/
-	function captcha($in, $params = array(), $fields = array()) {
+	function captcha($in) {
 		return _class('captcha')->check('captcha');
 	}
 
@@ -867,12 +847,10 @@ class yf_validate {
 	function _check_user_nick ($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'nick') {
 // TODO: rewrite me
 		$TEXT_TO_CHECK = $_POST[$name_in_form];
-		// Override value to check
 		if (!is_null($force_value_to_check)) {
 			$TEXT_TO_CHECK = $force_value_to_check;
 			$OVERRIDE_MODE = true;
 		}
-		// Do check
 		$_nick_pattern = implode('', $this->NICK_ALLOWED_SYMBOLS);
 		if (empty($TEXT_TO_CHECK) || (strlen($TEXT_TO_CHECK) < $this->MIN_NICK_LENGTH)) {
 			_re(t('Nick must have at least @num symbols', array('@num' => $this->MIN_NICK_LENGTH)));
@@ -905,7 +883,6 @@ class yf_validate {
 			return false;
 		}
 		$this->_prepare_reserved_words();
-		// Do check profile url
 		if (!empty($CUR_VALUE)) {
 			_re('You have already chosen your profile url. You are not allowed to change it!');
 		} elseif (!preg_match('/^[a-z0-9]{0,64}$/ims', $TEXT_TO_CHECK)) {
@@ -934,16 +911,13 @@ class yf_validate {
 	*/
 	function _check_location ($cur_country = '', $cur_region = '', $cur_city = '') {
 // TODO: rewrite me
-		// Process featured countries
 		if (FEATURED_COUNTRY_SELECT && !empty($_POST['country']) && substr($_POST['country'], 0, 2) == 'f_') {
 			$_POST['country'] = substr($_POST['country'], 2);
 		}
-		// verify country
 		if (!empty($_POST['country'])) {
 			if (!isset($GLOBALS['countries'])) {
 				$GLOBALS['countries'] = main()->get_data('countries');
 			}
-			// Check for correct country
 			if (!isset($GLOBALS['countries'][$_POST['country']])) {
 				$_POST['country']	= '';
 				$_POST['region']	= '';
@@ -953,7 +927,6 @@ class yf_validate {
 				$GLOBALS['_country_name'] = $GLOBALS['countries'][$_POST['country']];
 			}
 		}
-		// Verify region
 		if (!empty($_POST['region'])) {
 			$region_info = db()->query_fetch('SELECT * FROM '.db('geo_regions').' WHERE country = "'._es($_POST['country']).'" AND code="'._es($_POST['region']).'"');
 			if (empty($region_info)) {
@@ -964,9 +937,8 @@ class yf_validate {
 				$GLOBALS['_region_name'] = $region_info['name'];
 			}
 		}
-		// Verify city
 		if (!empty($_POST['city'])) {
-			$city_info = db()->query_fetch('SELECT * FROM '.db('geo_city_location')." WHERE region = '"._es($_POST["region"])."' AND country = '"._es($_POST["country"])."' AND city='"._es($_POST["city"])."'");
+			$city_info = db()->query_fetch('SELECT * FROM '.db('geo_city_location').' WHERE region = "'._es($_POST['region']).'" AND country = "'._es($_POST['country']).'" AND city="'._es($_POST['city']).'"');
 			if (empty($city_info)) {
 				$_POST['city']		= '';
 			}
@@ -978,7 +950,6 @@ class yf_validate {
 	*/
 	function _check_birth_date ($CUR_VALUE = '') {
 // TODO: rewrite me
-		// Validate birth date
 		$_POST['birth_date']	= $CUR_VALUE;
 
 		$_POST['year_birth']	= intval($_POST['year_birth']);
@@ -1020,6 +991,35 @@ class yf_validate {
 	*/
 	function _url_verify ($in = '') {
 		return $this->valid_url($in);
+	}
+
+	/**
+	* Alias
+	*/
+	function valid_image($in, $params = array(), $fields = array()) {
+		return $this->image($in, $params, $fields);
+	}
+
+	/**
+	* The file under validation must be an image (jpeg, png, bmp, or gif)
+	*/
+	function image($in, $params = array(), $fields = array()) {
+// TODO
+	}
+
+	/**
+	* The file under validation must have a MIME type corresponding to one of the listed extensions.  mime:jpeg,bmp,png
+	*/
+	function mime($in, $params = array(), $fields = array()) {
+// TODO
+	}
+
+	/**
+	* Returns FALSE if credit card is not valid. 
+	* Examples: credit_card[mastercard]
+	*/
+	function credit_card($in, $params = array(), $fields = array()) {
+// TODO
 	}
 
 	/**

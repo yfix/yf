@@ -364,11 +364,8 @@ class yf_debug {
 		foreach ((array)$items as $k => $v) {
 			unset($items[$k]['time']);
 		}
-
 		$body .= ' | '.t('total_exec_time').': '.round($total_queries_exec_time, 4).'<span> sec';
 		$body .= ' | '.t('connect_time').': '.round($db->_connection_time, 4).'<span> sec';
-// TODO: find errors result == -1 or null) or maybe track errors inside db()
-// TODO: highlight errors with <tr class="error">
 		$body .= $this->_show_auto_table($items, array(
 			'first_col_width' => '1%',
 			'hidden_map' => array('explain' => 'sql', 'trace' => 'sql', 'error' => 'sql'),
@@ -455,7 +452,7 @@ class yf_debug {
 			}
 			$stpl_inline_edit = '';
 			if (tpl()->ALLOW_INLINE_DEBUG) {
-				$stpl_inline_edit = " stpl_name='".$k."' ";
+				$stpl_inline_edit = ' stpl_name=\''.$k.'\' ';
 			}
 			$cur_size = strlen($v['string']);
 			$total_size += $cur_size;
@@ -463,6 +460,7 @@ class yf_debug {
 
 			$items[$counter] = array(
 				'id'		=> ++$counter,
+// TODO: add link to inline stpl edit
 				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $v['storage'])),
 				'storage'	=> strval($v['storage']),
 				'calls'		=> strval($v['calls']),
@@ -575,6 +573,7 @@ class yf_debug {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
+// TODO: add admin link to purge cache
 		$items = $this->_get_debug_data('cache_get');
 		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
@@ -626,6 +625,7 @@ class yf_debug {
 		if (!$this->_SHOW_COOKIE_DATA) {
 			return '';
 		}
+// TODO: add link to delete cookie (inside browser)
 		return $this->_show_key_val_table($_COOKIE);
 	}
 
@@ -687,9 +687,11 @@ class yf_debug {
 		if (!$this->_SHOW_I18N_VARS) {
 			return '';
 		}
+// TODO: unify into one table, when translated/called/not translated will be as status
 		$lang = conf('language');
 		$i18n_vars = (array)_class('i18n')->_I18N_VARS;
 // TODO: show translations on other languages here too: print_r($i18n_vars)
+// TODO: previous todo seems means multi-language translation debug support
 		if ($i18n_vars[$lang]) {
 			ksort($i18n_vars[$lang]);
 		}
@@ -755,6 +757,7 @@ class yf_debug {
 		if (!$this->_SHOW_SSH) {
 			return '';
 		}
+// TODO: add link to webshell of that server
 		// Need to enable only when ssh was used
 		if (!isset(main()->modules['ssh'])) {
 			return '';
@@ -1189,7 +1192,7 @@ class yf_debug {
 	/**
 	*/
 	function _i18n_vars_todo () {
-// TODO
+// TODO: JS full rewrite needed, as was done for i18n inline editor
 		// !!! Needed to be on the bottom of the page
 		$i18n_vars = _class('i18n')->_I18N_VARS;
 		if ($this->_SHOW_I18N_VARS && !empty($i18n_vars)) {

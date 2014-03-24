@@ -3,40 +3,22 @@
 require_once dirname(__FILE__).'/tpl__setup.php';
 
 class tpl_driver_yf_translate_test extends tpl_abstract {
-	public function test_10() {
-		$this->assertEquals('my translate', self::_tpl( '{t("my translate")}' ));
-	}
-	public function test_11() {
-		$this->assertEquals('my translate', self::_tpl( "{t('my translate')}" ));
-	}
-	public function test_12() {
-		$this->assertEquals('my translate', self::_tpl( '{t(my translate)}' ));
-	}
-	public function test_13() {
-		$this->assertEquals('my translate', self::_tpl( "{t('my translate)}" ));
-	}
-	public function test_14() {
-		$this->assertEquals('my translate', self::_tpl( '{t(my translate")}' ));
-	}
-	public function test_15() {
+	public function test_aliases() {
 		$this->assertEquals('my translate', self::_tpl( '{translate("my translate")}' ));
-	}
-	public function test_16() {
 		$this->assertEquals('my translate', self::_tpl( '{i18n("my translate")}' ));
 	}
-	public function test_17() {
+	public function test_simple_syntax() {
+		$this->assertEquals('my translate', self::_tpl( '{t("my translate")}' ));
+		$this->assertEquals('my translate', self::_tpl( "{t('my translate')}" ));
+		$this->assertEquals('my translate', self::_tpl( '{t(my translate)}' ));
+		$this->assertEquals('my translate', self::_tpl( "{t('my translate)}" ));
+		$this->assertEquals('my translate', self::_tpl( '{t(my translate")}' ));
 		$this->assertEquals('my translate', self::_tpl( '{t( my translate)}' ));
-	}
-	public function test_18() {
 		$this->assertEquals('my translate', self::_tpl( '{t(my translate )}' ));
-	}
-	public function test_19() {
 		$this->assertEquals('my translate', self::_tpl( '{t( my translate )}' ));
 	}
-	public function test_20() {
+	public function test_namespace() {
 		$this->assertEquals('my translate', self::_tpl( '{t("::test::my translate")}' ));
-	}
-	public function test_21() {
 		$this->assertEquals(':test:my translate', self::_tpl( '{t(":test:my translate")}' ));
 	}
 	public function test_22() {

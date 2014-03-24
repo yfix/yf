@@ -8,7 +8,7 @@ class yf_manage_shop_products{
 		'name'			=> array('like','p.name'),
 		'price' 		=> array('between','p.price'),
 		'articul'		=> array('like','p.articul'),
-		'price'			=> array('eq','p.price'),
+//		'price'			=> array('eq','p.price'),
 		'supplier_id'	=> array('eq','p.supplier_id'),
 		'manufacturer_id' => array('eq','p.manufacturer_id'),
 		'active'		=> array('eq','p.active'),

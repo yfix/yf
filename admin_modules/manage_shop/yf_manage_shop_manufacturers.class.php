@@ -36,7 +36,7 @@ class manage_shop_manufacturers{
 			if (!common()->_error_exists()) {
 				$sql_array = array(
 					'name'          => $_POST['name'],
-					'url'           => common()->_propose_url_from_name($_POST['name']),
+					'url'           => $_POST['url']?:common()->_propose_url_from_name($_POST['name']),
 					'desc'          => $_POST['desc'],
 					'meta_keywords' => $_POST['meta_keywords'],
 					'meta_desc'     => $_POST['meta_desc'],
@@ -63,6 +63,7 @@ class manage_shop_manufacturers{
 			'name'				=> '',
 			'sort_order'		=> '',
 			'desc'				=> '',
+			'url'				=> '',
 			'thumb_path'		=> '',
 			'delete_image_url'	=> './?object='.main()->_get('object').'&action=delete_image&id='.$manufacturer_info['id'],
 			'form_action'		=> './?object='.main()->_get('object').'&action=manufacturer_add',

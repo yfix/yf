@@ -2,6 +2,13 @@
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
+/*
+// TODO:
+_rewrite_replace_links()
+_correct_protocol()
+_get_unique_links()
+*/
+
 class class_rewrite_test extends PHPUnit_Framework_TestCase {
 	private static $host = 'test.dev';
 	private static $_bak_settings = array();
@@ -61,12 +68,4 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/////////////') );
 		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/////////////something') );
 	}
-
-/*
-// TODO:
-_rewrite_replace_links()
-_correct_protocol()
-_get_unique_links()
-*/
-
 }
