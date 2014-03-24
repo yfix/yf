@@ -20,39 +20,44 @@ class yf_form2_datetime {
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $__this) {
 			$format = $format_php = $placeholder = array();
+			$extra['no_time'] = $extra['with_time'] ? !$extra['with_time'] : $extra['no_time'];
 			$extra['no_time'] = isset( $extra['no_time'] ) ? $extra['no_time'] : 1;
 			if ($extra['no_date']!=1) {
-				$format[]      = 'DD.MM.YYYY';
+				$format_js[]      = 'DD.MM.YYYY';
 				$format_php[]  = 'd.m.Y';
 				$placeholder[] = 'ДД.ММ.ГГГГ';
 			}
 			if ($extra['no_time']!=1) {
-				$format[]      = 'HH:mm';
-				$format_php[]  = 'H:m';
+				$format_js[]      = 'HH:mm';
+				$format_php[]  = 'H:i';
 				$placeholder[] = 'ЧЧ:ММ';
 			}
-			$_format      = implode(' ',$format);
+			$_format_js      = implode(' ',$format_js);
 			$_format_php  = implode(' ',$format_php);
 			$_placeholder = implode(' ',$placeholder);
 			$extra['placeholder'] = $extra['placeholder'] ?: $_placeholder;
 			// Compatibility with filter
 			if (!strlen($extra['value'])) {
 				if (isset($extra['selected'])) {
-					$extra['value'] = $extra['selected'];
+					$value = $extra['selected'];
 				} elseif (isset($__this->_params['selected'])) {
-					$extra['value'] = $__this->_params['selected'][$extra['name']];
+					$value = $__this->_params['selected'][$extra['name']];
 				} elseif (isset($__this->_replace[$extra['name']])) {
-					$extra['value'] = $__this->_replace[$extra['name']];
+					$value = $__this->_replace[$extra['name']];
 				}
+				$extra['value'] = empty( $value ) || $value == '0000-00-00 00:00:00' ? null : strtotime( $value );
 			}
 			$extra['value'] = empty( $extra['value'] ) ? '' : date( $_format_php, $extra['value'] );
-
+			// error
+			$extra['errors'] = common()->_get_error_messages();
+			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			// js lib
 			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js', true);
 			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment-with-langs.min.js', true);
 			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js', true);
 			_class('core_css')->add('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/css/bootstrap-datetimepicker.min.css', true);
 			$body = "
-<div id=\"{$extra['name']}\" data-date-format=\"$_format\" class=\"input-append datetimepicker\">
+<div id=\"{$extra['name']}\" data-date-format=\"$_format_js\" class=\"input-append datetimepicker\">
     <input name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium\" placeholder=\"{$extra['placeholder']}\"></input>
     <span class=\"add-on\">
 		<i class=\"fa fa-calendar\"></i>

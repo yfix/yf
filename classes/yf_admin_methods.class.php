@@ -60,7 +60,10 @@ class yf_admin_methods {
 				if (is_callable($params['on_after_update'])) {
 					$params['on_after_update']($sql, $NEW_ID);
 				}
-				return js_redirect('./?object='.$_GET['object']. ($NEW_ID ? '&action=edit&id='.$NEW_ID : ''). $params['links_add']);
+				$form_action = $params['form_action'] ?: './?object='.$_GET['object'] . '&action='.$_GET['action'] . $params['links_add'];
+				if( $NEW_ID ) { $form_action .= '&id=' . $NEW_ID; }
+				$form_action = str_replace( array( 'add', '_add' ), array( 'edit', '_edit' ), $form_action );
+				return js_redirect( $form_action );
 			} else {
 				if (is_callable($params['on_error'])) {
 					$params['on_error']();

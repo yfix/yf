@@ -8,15 +8,18 @@ class yf_manage_shop_price_markup_down {
 			'active',
 			'type',
 			'value',
+			'description',
 			'time_from',
 			'time_to',
+			'conditions',
 		),
 	);
 
-	private $_uri      = '';
-	private $_instance = false;
+	private $_instance    = false;
+	private $_class_price = false;
 
 	function _init() {
+		$this->_class_price = _class( '_shop_price', 'modules/shop/' );
 		$_object = main()->_get( 'object' );
 		$_module = 'price_markup_down';
 		$_uri_object = "./?object=$_object";
@@ -40,44 +43,56 @@ class yf_manage_shop_price_markup_down {
 	}
 
 	function price_markup_down() {
-		return table('SELECT * FROM '.db('shop_price_markup_down'), array(
-				'filter'        => $_SESSION[ $_GET[ 'object' ]. $_GET[ 'action' ] ],
-				'filter_params' => array( 'description' => 'like' ),
-				// 'hide_empty'    => 1,
-			))
-			->text( 'value' )
+		$filter = array(
+			// 'filter'        => $_SESSION[ $_GET[ 'object' ]. $_GET[ 'action' ] ],
+			// 'filter_params' => array( 'description' => 'like' ),
+			// // 'hide_empty'    => 1,
+		);
+
+		$table = table( 'SELECT * FROM ' . db( 'shop_price_markup_down' ), $filter )
+			->text( 'value', 'Процент, +/-' )
 			->text( 'description' )
-			// ->btn_delete('', './?object='.main()->_get('object').'&action=unit_delete&id=%d')
-			->btn_edit(   '', $this->_uri[ 'edit'   ], array( 'no_ajax' => 1 ) )
 			->btn_active( '', $this->_uri[ 'active' ] )
-			->footer_add( '', $this->_uri[ 'add'    ] );
+			->btn_edit(   '', $this->_uri[ 'edit'   ], array( 'no_ajax' => 1 ) )
+			->btn_delete( '', $this->_uri[ 'delete'   ] )
+			->footer_add( '', $this->_uri[ 'add'    ], array( 'no_ajax' => 1 ) );
 		;
+		return( $table );
 	}
 
 	function price_markup_down_active() {
 		return _class( 'admin_methods' )->active( $this->_table );
 	}
 
+	function _select_box__type() {
+		$_class_price = $this->_class_price;
+		$types = $_class_price->types;
+		$result = array();
+		foreach( $types as $id => $item ) {
+			$result[ $id ] = $item[ 'description' ];
+		}
+		return( $result );
+	}
+
 	function _form( $replace ) {
 		return( form( $replace )
-			->text( 'type', 'Тип' )
-			->text( 'value', 'Процент, +/-' )
+			->select_box( 'type', $this->_select_box__type() )
+			->number( 'value', 'Процент, +/-' )
 			->text( 'description' )
-			->datetime_select( 'time_from', 'Дата от', array( 'no_time' => 0 ) )
-			->datetime_select( 'time_to',   'Дата до', array( 'no_time' => 0 ) )
+			->datetime_select( 'time_from', 'Дата от', array( 'with_time' => 1 ) )
+			->datetime_select( 'time_to',   'Дата до', array( 'with_time' => 1 ) )
+			// ->textarea( 'conditions', 'Условия' )
 			->active_box('active')
 			->save_and_back()
 		);
 	}
 
 	function _on_before_show( &$fields ) {
-		$fields[ 'time_from' ] = $fields[ 'time_from' ] == '0000-00-00 00:00:00' ? null : strtotime( $fields[ 'time_from' ] );
-		$fields[ 'time_to'   ] = $fields[ 'time_to'   ] == '0000-00-00 00:00:00' ? null : strtotime( $fields[ 'time_to'   ] );
 	}
 
 	function _on_before_update( &$fields ) {
-		$fields[ 'time_from' ] = $fields[ 'time_from' ] ? date( 'Y-m-d H:m', strtotime( $fields[ 'time_from' ] ) ) : null;
-		$fields[ 'time_to'   ] = $fields[ 'time_to'   ] ? date( 'Y-m-d H:m', strtotime( $fields[ 'time_to'   ] ) ) : null;
+		$fields[ 'time_from' ] = $fields[ 'time_from' ] ? date( 'Y-m-d H:i', strtotime( $fields[ 'time_from' ] ) ) : null;
+		$fields[ 'time_to'   ] = $fields[ 'time_to'   ] ? date( 'Y-m-d H:i', strtotime( $fields[ 'time_to'   ] ) ) : null;
 	}
 
 	function price_markup_down_add() {
@@ -90,98 +105,9 @@ class yf_manage_shop_price_markup_down {
 		return( $this->_form( $replace ) );
 	}
 
-	/**
-	*/
-	function unit_add () {
-		if (main()->is_post()) {
-			if (!$_POST['title']) {
-				_re('Unit title must be filled');
-			}
-			if (!common()->_error_exists()) {
-				$sql_array = array(
-					'title'			=> $_POST['title'],
-					'description'	=> $_POST['description'],
-					'step'			=> intval($_POST['step']),
-					'k'				=> floatval($_POST['k']),
-				);
-				db()->insert(db('shop_product_units'), db()->es($sql_array));
-				common()->admin_wall_add(array('shop product unit added: '.$_POST['title'], db()->insert_id()));
-			}
-			return js_redirect('./?object='.main()->_get('object').'&action=units');
-		}
-
-		$replace = array(
-			'title'				=> '',
-			'description'		=> '',
-			'step'				=> '',
-			'k'					=> '',
-			'form_action'		=> './?object='.main()->_get('object').'&action=unit_add',
-			'back_url'			=> './?object='.main()->_get('object').'&action=units',
-		);
-		return form($replace)
-			->text('title')
-			->textarea('description','Description')
-			->text('step')
-			->text('k')
-			->save_and_back();
+	function price_markup_down_delete() {
+		$replace = _class( 'admin_methods' )->delete( $this->_table );
+		return( $this->_form( $replace ) );
 	}
 
-	/**
-	*/
-	function unit_edit () {
-		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return _e('Empty ID!');
-		}
-		$unit_info = db()->query_fetch('SELECT * FROM '.db('shop_product_units').' WHERE id='.$_GET['id']);
-		if (main()->is_post()) {
-			if (!$_POST['title']) {
-				_re('Unit title must be filled');
-			}
-			if (!common()->_error_exists()) {
-				$sql_array = array(
-					'title'			=> $_POST['title'],
-					'description'	=> $_POST['description'],
-					'step'			=> intval($_POST['step']),
-					'k'				=> floatval($_POST['k']),
-				);
-				db()->update('shop_product_units', db()->es($sql_array), 'id='.$_GET['id']);
-				common()->admin_wall_add(array('shop product unit updated: '.$_POST['title'], $_GET['id']));
-			}
-			return js_redirect('./?object='.main()->_get('object').'&action=units');
-		}
-		$replace = array(
-			'title'				=> $unit_info['title'],
-			'description'		=> $unit_info['description'],
-			'step'				=> $unit_info['step'],
-			'k'					=> $unit_info['k'],
-			'form_action'		=> './?object='.main()->_get('object').'&action=unit_edit&id='.$unit_info['id'],
-			'back_url'			=> './?object='.main()->_get('object').'&action=units',
-		);
-		return form($replace)
-			->text('title')
-			->textarea('description','Description')
-			->text('step')
-			->text('k')
-			->save_and_back();
-	}
-
-	/**
-	*/
-	function unit_delete () {
-		$_GET['id'] = intval($_GET['id']);
-		if (!empty($_GET['id'])) {
-			$info = db()->query_fetch('SELECT * FROM '.db('shop_product_units').' WHERE id='.intval($_GET['id']));
-		}
-		if (!empty($info['id'])) {
-			db()->query('DELETE FROM '.db('shop_product_units').' WHERE id='.intval($_GET['id']).' LIMIT 1');
-			common()->admin_wall_add(array('shop product unit deleted: '.$info['name'], $_GET['id']));
-		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
-			echo $_GET['id'];
-		} else {
-			return js_redirect('./?object='.main()->_get('object').'&action=units');
-		}
-	}
 }

@@ -20,15 +20,15 @@ class yf_manage_revisions {
 			))
 			->date('add_date', array('format' => '%d-%m-%Y', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
-			->text('ip')	
+			->text('ip')
 			->text('action')
 			->text('item_id')
 			->btn_view('', './?object=manage_revisions&action=details&id=%d')
 			;
 	}
-	
+
 	/**
-	*/	
+	*/
 	function new_revision($function, $ids, $db_table){
 		if(empty($function) || empty($ids) || empty($db_table))
 			return false;
@@ -59,7 +59,7 @@ class yf_manage_revisions {
 	}
 
 	/**
-	*/	
+	*/
 	function check_revision($function, $id, $db_table){
 		if(empty($function) || empty($id) || empty($db_table))
 			return false;
@@ -143,8 +143,8 @@ class yf_manage_revisions {
 				$action = db()->get_2d('SELECT DISTINCT action FROM '.db('shop_revisions'));
 				$action = array_combine($action, $action );
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
-					->datetime_select('add_date')
-					->datetime_select('add_date__and')
+					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
+					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
 					->text('user_id', 'Админ')
 					->text('ip')
 					->select_box('action', $action, array('no_translate' => 1, 'show_text' => 1))
@@ -215,5 +215,5 @@ class yf_manage_revisions {
 		common()->admin_wall_add(array('Rollback common revision: '.$_GET['id'], $_GET['id']));
 		return js_redirect('./?object=manage_revisions&action=details&id='.$_GET['id']);
 	}
-	
+
 }
