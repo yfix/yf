@@ -253,43 +253,33 @@ class yf_tpl_driver_yf_compile {
 			'_key'	=> '$_k',
 			'_val'	=> '$_v',
 		);
+		// Array item
 		if (substr($part_left, 0, 2) == '#.') {
-
-			// Array item
 			$part_left = '$_v[\''.substr($part_left, 2).'\']';
-
+		// Array special magic keyword
 		} elseif (isset($_array_magick[$part_left])) {
-
-			// Array special magick keyword
 			$part_left = $_array_magick[$part_left];
-
-		} elseif (false !== strpos($part_left, 'const.')) {
-
-			// Configuration item
+		// Configuration item
+		} elseif (false !== strpos($part_left, 'conf.')) {
 			$part_left = 'conf(\''.substr($part_left, strlen('conf.')).'\')';
-
+		// Module config item
+		} elseif (false !== strpos($part_left, 'module_conf.')) {
+			list($mod_name, $mod_conf) = explode('.', substr($part_left, strlen('module_conf.')));
+			$part_left = 'module_conf(\''.$mod_name.'\',\''.$mod_conf.'\')';
+		// Constant
 		} elseif (false !== strpos($part_left, 'const.')) {
-
-			// Constant
 			$part_left = substr($part_left, strlen('const.'));
 			$part_left = '(defined(\''.$part_left.'\') ? '.$part_left.' : \'\')';
-
+		// Global array item in left part
 		} elseif (false !== strpos($part_left, '.')) {
-
-			// Global array item in left part
 			list($k, $v) = explode('.', $part_left);
 			$avail_arrays = (array)_class('tpl')->_avail_arrays;
 			$part_left = '$'.str_replace(array_keys($avail_arrays), array_values($avail_arrays), $k).'[\''.$v.'\']';
-
+		// Simple number or string, started with '%'
 		} elseif ($part_left{0} == '%' && strlen($part_left) > 1) {
-
-			// Simple number or string, started with '%'
 			$part_left = '"'.str_replace('"', '\"', substr($part_left, 1)).'"';
-
 		} else {
-
 			$part_left = '$replace[\''.$part_left.'\']';
-
 		}
 		return $part_left;
 	}
