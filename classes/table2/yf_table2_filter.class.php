@@ -159,32 +159,32 @@ class yf_table2_filter {
 										continue 3;
 									}
 								} elseif ($fp == 'eq') {
-									if ($_data[$fk][$k2] != $fv)) {
+									if ($_data[$fk][$k2] != $fv) {
 										unset($data[$_id]);
 										continue 3;
 									}
 								} elseif ($fp == 'ne') {
-									if ($_data[$fk][$k2] == $fv)) {
+									if ($_data[$fk][$k2] == $fv) {
 										unset($data[$_id]);
 										continue 3;
 									}
 								} elseif ($fp == 'gt') {
-									if ($_data[$fk][$k2] <= $fv)) {
+									if ($_data[$fk][$k2] <= $fv) {
 										unset($data[$_id]);
 										continue 3;
 									}
 								} elseif ($fp == 'gte') {
-									if ($_data[$fk][$k2] < $fv)) {
+									if ($_data[$fk][$k2] < $fv) {
 										unset($data[$_id]);
 										continue 3;
 									}
 								} elseif ($fp == 'lt') {
-									if ($_data[$fk][$k2] >= $fv)) {
+									if ($_data[$fk][$k2] >= $fv) {
 										unset($data[$_id]);
 										continue 3;
 									}
 								} elseif ($fp == 'lte') {
-									if ($_data[$fk][$k2] > $fv)) {
+									if ($_data[$fk][$k2] > $fv) {
 										unset($data[$_id]);
 										continue 3;
 									}
