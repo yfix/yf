@@ -259,13 +259,13 @@ class yf_tpl_driver_yf_compile {
 		// Array special magic keyword
 		} elseif (isset($_array_magick[$part_left])) {
 			$part_left = $_array_magick[$part_left];
-		// Configuration item
-		} elseif (false !== strpos($part_left, 'conf.')) {
-			$part_left = 'conf(\''.substr($part_left, strlen('conf.')).'\')';
 		// Module config item
-		} elseif (false !== strpos($part_left, 'module_conf.')) {
+		} elseif (strpos($part_left, 'module_conf.') === 0) {
 			list($mod_name, $mod_conf) = explode('.', substr($part_left, strlen('module_conf.')));
 			$part_left = 'module_conf(\''.$mod_name.'\',\''.$mod_conf.'\')';
+		// Configuration item
+		} elseif (strpos($part_left, 'conf.') === 0) {
+			$part_left = 'conf(\''.substr($part_left, strlen('conf.')).'\')';
 		// Constant
 		} elseif (false !== strpos($part_left, 'const.')) {
 			$part_left = substr($part_left, strlen('const.'));
