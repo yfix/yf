@@ -5,10 +5,10 @@ $data = array(
 		'tip' => t('Folders allow you to organize your gallery in a more structured way. If you have only a few photos you do not need it, but if you have several sets of photos, it is better to create several folders for them. Splitting your gallery to several subgalleries of 10-20 images each is a good practice.'),
 	),
 	'photo_file' => array(
-		'tip' => t('JPEGs only, up to %max bytes', array('%max' => module('gallery')->MAX_IMAGE_SIZE)),
+		'tip' => t('JPEGs only, up to %max bytes', array('%max' => (int)module('gallery')->MAX_IMAGE_SIZE)),
 	),
 	'title' => array(
-		'tip' => t('Optional field. Although you may leave it blank, photo title will allow your site pages to be better positioned on search engines. Up to %max characters', array('%max' => module('gallery')->MAX_IMAGE_SIZE)),
+		'tip' => t('Optional field. Although you may leave it blank, photo title will allow your site pages to be better positioned on search engines. Up to %max characters', array('%max' => (int)module('gallery')->MAX_IMAGE_SIZE)),
 	),
 	'comments' => array(
 		'tip' => t('Optional field. You can write a short photo description here. Remember, although you may leave it blank, description texts allow your site pages to be better positioned on search engines.'),
