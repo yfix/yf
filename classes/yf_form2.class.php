@@ -165,6 +165,37 @@ class yf_form2 {
 	}
 
 	/**
+	*/
+	function _get_extra_override($form_id = '') {
+		if (!strlen($form_id)) {
+			return array();
+		}
+		$extra_override = array();
+		// Data from database have highest priority, so we init it first
+		$all_attrs_override = main()->get_data('form_attributes');
+		$extra_override = $all_attrs_override[$form_id];
+		// Search for override params inside shared files
+		$suffix = $form_id.'.form.php';
+// TODO: optimize this to avoid searching filesystem on each this function call
+		$paths = array(
+			'yf_main'			=> YF_PATH. 'share/form/'.$suffix,
+			'yf_plugins'		=> YF_PATH. 'plugins/*/share/form/'.$suffix,
+#			'project_main'		=> PROJECT_PATH. 'share/form/'.$suffix,
+#			'project_plugins'	=> PROJECT_PATH. 'plugins/*/share/form/'.$suffix,
+#			'site_main'			=> SITE_PATH. 'share/form/'.$suffix,
+		);
+		foreach ((array)$paths as $glob) {
+			foreach (glob($glob) as $f) {
+				include $f;
+				foreach ((array)$data as $field => $attrs) {
+					$extra_override[$field] = (array)$extra_override[$field] + (array)$attrs;
+				}
+			}
+		}
+		return $extra_override;
+	}
+
+	/**
 	* Render result form html, gathered by row functions
 	* Params here not required, but if provided - will be passed to form_begin()
 	*/
@@ -184,8 +215,7 @@ class yf_form2 {
 		$extra_override = array();
 		$form_id = $this->_replace['__form_id__'] ?: $this->_form_id;
 		if ($form_id) {
-			$all_attrs_override = main()->get_data('form_attributes');
-			$extra_override = &$all_attrs_override[$form_id];
+			$extra_override = $this->_get_extra_override($form_id);
 		}
 		$r = (array)$this->_replace + (array)$replace;
 
