@@ -279,7 +279,7 @@ class yf_validate {
 	* Examples: required_any[duration_*] or required_any[duration_day,duration_week,duration_month]
 	*/
 	function required_any($in, $params = array(), $fields = array()) {
-		$param = trim($params['param']);
+		$param = trim(is_array($params) ? $params['param'] : $params);
 		// Example: duration_*
 		if (false !== strpos($param, '*')) {
 			$strpos = str_replace('*', '', $param);
@@ -377,7 +377,8 @@ class yf_validate {
 	* The field under validation must match the format defined according to the date_parse_from_format PHP function.
 	*/
 	function valid_date_format($in, $params = array(), $fields = array()) {
-		$parsed = date_parse_from_format($params['param'], $in);
+		$param = is_array($params) ? $params['param'] : $params;
+		$parsed = date_parse_from_format($param, $in);
 		return $parsed['error_count'] === 0 && $parsed['warning_count'] === 0;
 	}
 
@@ -422,7 +423,8 @@ class yf_validate {
 	* Examples: between[a,z]  between[44,99]
 	*/
 	function between($in, $params = array(), $fields = array()) {
-		list($min, $nax) = explode(',', $params['param']);
+		$param = is_array($params) ? $params['param'] : $params;
+		list($min, $nax) = explode(',', $param);
 		return $in >= $min && $in <= $max;
 	}
 
@@ -431,8 +433,9 @@ class yf_validate {
 	* Example: chars[a,b,c,d,1,2,3,4]
 	*/
 	function chars($in, $params = array(), $fields = array()) {
+		$param = is_array($params) ? $params['param'] : $params;
 		$chars = array();
-		foreach (explode(',', trim($params['param'])) as $char) {
+		foreach (explode(',', trim($param)) as $char) {
 			$char = trim($char);
 			if (strlen($char)) {
 				$chars[$char] = $char;
@@ -453,7 +456,7 @@ class yf_validate {
 		if (!$in) {
 			return true;
 		}
-		$param = $params['param'];
+		$param = is_array($params) ? $params['param'] : $params;
 		if ($param) {
 			list($check_table, $check_field) = explode('.', $param);
 		}
@@ -474,7 +477,7 @@ class yf_validate {
 		if (!$in) {
 			return true;
 		}
-		$param = $params['param'];
+		$param = is_array($params) ? $params['param'] : $params;
 		$id_field = $params['id_field'] ?: 'id';
 		if ($param) {
 			list($check_table, $check_field, $check_id) = explode('.', $param);
@@ -496,7 +499,7 @@ class yf_validate {
 		if (!$in) {
 			return false;
 		}
-		$param = $params['param'];
+		$param = is_array($params) ? $params['param'] : $params;
 		if ($param) {
 			list($check_table, $check_field) = explode('.', $param);
 		}
@@ -514,7 +517,7 @@ class yf_validate {
 	* Example: regex_match[/^[a-z0-9]+$/]
 	*/
 	function regex_match($in, $params = array()) {
-		$regex = $params['param'];
+		$regex = is_array($params) ? $params['param'] : $params;
 		return (bool) preg_match($regex, $in);
 	}
 
@@ -523,7 +526,7 @@ class yf_validate {
 	* Example: differs[address_2]
 	*/
 	function differs($in, $params = array(), $fields = array()) {
-		$field = $params['param'];
+		$field = is_array($params) ? $params['param'] : $params;
 		return ! (isset($fields[$field]) && $_POST[$field] === $in);
 	}
 
@@ -604,7 +607,7 @@ class yf_validate {
 	* Returns TRUE if given field contains valid IP address, ipv4 by default, ipv6 supported too
 	*/
 	function valid_ip($in, $params = array()) {
-		$which = is_array($params) ? $params['param'] : $oaram;
+		$which = is_array($params) ? $params['param'] : $params;
 		return $this->_valid_ip($in, $which);
 	}
 
@@ -613,7 +616,7 @@ class yf_validate {
 	* Example: min_length[10]
 	*/
 	function min_length($in, $params = array()) {
-		$val = $params['param'];
+		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
 		} else {
@@ -627,7 +630,7 @@ class yf_validate {
 	* Example: max_length[10]
 	*/
 	function max_length($in, $params = array()) {
-		$val = $params['param'];
+		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
 		} else {
@@ -641,7 +644,7 @@ class yf_validate {
 	* Example: exact_length[10]
 	*/
 	function exact_length($in, $params = array()) {
-		$val = $params['param'];
+		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
 		} else {
@@ -656,7 +659,6 @@ class yf_validate {
 	*/
 	function length($in, $params = array(), $fields = array()) {
 		$val = is_array($params) ? $params['param'] : $params;
-// TODO: unit tests
 		if (false === strpos($val, ',')) {
 			return $this->exact_length($in, $params);
 		} else {
@@ -679,7 +681,7 @@ class yf_validate {
 	* Example: greater_than[10]
 	*/
 	function greater_than($in, $params = array()) {
-		$min = $params['param'];
+		$min = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in > $min) : false;
 	}
 
@@ -688,7 +690,7 @@ class yf_validate {
 	* Example: less_than[10]
 	*/
 	function less_than($in, $params = array()) {
-		$max = $params['param'];
+		$max = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in < $max) : false;
 	}
 
@@ -697,7 +699,7 @@ class yf_validate {
 	* Example: greater_than_equal_to[10]
 	*/
 	function greater_than_equal_to($in, $params = array()) {
-		$min = $params['param'];
+		$min = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in >= $min) : false;
 	}
 
@@ -706,7 +708,7 @@ class yf_validate {
 	* Example: less_than_equal_to[10]
 	*/
 	function less_than_equal_to($in, $params = array()) {
-		$max = $params['param'];
+		$max = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in <= $max) : false;
 	}
 
