@@ -561,13 +561,13 @@ class yf_tpl_driver_yf {
 			// Arithmetic operators (currently we allow only '+' and '-')
 			} elseif (isset($this->_math_operators[$tmp_v])) {
 				$res_v = $this->_math_operators[$tmp_v];
-			// Configuration item
-			} elseif (false !== strpos($tmp_v, 'conf.')) {
-				$res_v = 'conf("'.substr($tmp_v, strlen('conf.')).'")';
 			// Module config item
-			} elseif (false !== strpos($tmp_v, 'module_conf.')) {
+			} elseif (strpos($tmp_v, 'module_conf.') === 0) {
 				list($mod_name, $mod_conf) = explode('.', substr($tmp_v, strlen('module_conf.')));
 				$res_v = 'module_conf("'.$mod_name.'","'.$mod_conf.'")';
+			// Configuration item
+			} elseif (strpos($tmp_v, 'conf.') === 0) {
+				$res_v = 'conf("'.substr($tmp_v, strlen('conf.')).'")';
 			// Constant
 			} elseif (false !== strpos($tmp_v, 'const.')) {
 				$res_v = substr($tmp_v, strlen('const.'));
