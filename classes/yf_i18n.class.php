@@ -238,10 +238,9 @@ class yf_i18n {
 			}
 			// Order matters! Project vars will have ability to override vars from franework
 			foreach ($dirs as $dir) {
-				if (!file_exists($dir)) {
-					continue;
+				foreach ((array)glob($dir.'*.php') as $f) {
+					$lang_files[basename($f)] = $f;
 				}
-				$lang_files += (array)glob($dir.'*.php');
 			}
 		}
 		// Auto-find vars for user modules. They will be connected in order of file system
@@ -263,10 +262,9 @@ class yf_i18n {
 			}
 			// Order matters! Project vars will have ability to override vars from franework
 			foreach ($dirs as $dir) {
-				if (!file_exists($dir)) {
-					continue;
+				foreach ((array)glob($dir.'/*/__locale__'.$lang.'*.php') as $f) {
+					$lang_files[basename($f)] = $f;
 				}
-				$lang_files += (array)glob($dir.'/*/__locale__'.$lang.'*.php');
 			}
 		}
 		//
@@ -386,6 +384,14 @@ class yf_i18n {
 				$is_translated = true;
 			// Last - is untranslated
 			} else {
+if (strtolower(substr($input_string, 0, 4)) == 'jpeg') {
+	echo $input_string;
+	foreach ($this->TR_VARS[$lang] as $k => $v) {
+		if (strtolower(substr($k, 0, 4)) == 'jpeg') {
+			echo '<br>'.$k.' | '.$v. '<br>'. PHP_EOL;
+		}
+	}
+}
 				$output_string = $input_string;
 				if (DEBUG_MODE) {
 					if (!isset($this->_NOT_TRANSLATED)) {
