@@ -1,3 +1,3 @@
 <div align="center">
-{if("img_src" ne "")}<img src="{img_src}" border="0" alt="{photo_name}" {if('real_w' ne 0)} width="{real_w}"{/if}{if('real_h' ne 0)} height="{real_h}"{/if} />{/if}
+{if("img_src" ne "")}<img src="{img_src}" class="img-rounded" alt="{photo_name}" {if('real_w' ne 0)} width="{real_w}"{/if}{if('real_h' ne 0)} height="{real_h}"{/if} />{/if}
 </div>

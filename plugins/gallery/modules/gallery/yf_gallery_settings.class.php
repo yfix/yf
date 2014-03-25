@@ -10,15 +10,6 @@
 class yf_gallery_settings {
 
 	/**
-	* Constructor
-	*/
-	function _init () {
-		if (!is_object($this->TAG_OBJ && module('gallery')->ALLOW_TAGGING)) {
-			$this->TAG_OBJ = module("tags");
-		}
-	}
-
-	/**
 	* Edit gallery settings
 	*/
 	function settings () {
@@ -97,8 +88,8 @@ class yf_gallery_settings {
 				"error_message"		=> _e(),
 				"privacy_box"		=> module('gallery')->_box("privacy", $DATA["privacy"]),
 				"comments_box"		=> module('gallery')->_box("allow_comments", $DATA["allow_comments"]),
-				"tagging_box"		=> module('gallery')->ALLOW_TAGGING ? $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => main()->USER_ID)) : "",
-				"allow_rate_box"	=> module('gallery')->ALLOW_RATE ? $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => main()->USER_ID)) : "",
+				"tagging_box"		=> module('gallery')->ALLOW_TAGGING ? module_safe('tags')->_mod_spec_settings(array("module" => "gallery", "object_id" => main()->USER_ID)) : "",
+				"allow_rate_box"	=> module('gallery')->ALLOW_RATE ? module_safe('rating')->_mod_spec_settings(array("module" => "gallery", "object_id" => main()->USER_ID)) : "",
 				"thumb_type_box"	=> module('gallery')->_box("thumb_type", $DATA["thumb_type"]),
 				"medium_size_box"	=> module('gallery')->_box("medium_size", $DATA["medium_size"]),
 				"layout_type_box"	=> module('gallery')->_box("layout_type", $DATA["layout_type"]),
@@ -185,7 +176,9 @@ class yf_gallery_settings {
 		$sql_array = module('gallery')->DEFAULT_SETTINGS;
 		$sql_array["user_id"]	= intval($user_id);
 		// Set global tags settings as defaults
-		$default_tags_settings = $this->TAG_OBJ->_mod_spec_settings(array("module" => "gallery", "object_id" => main()->USER_ID), $this->TAG_OBJ->ALLOWED_GROUP);
+		if (module('gallery')->ALLOW_TAGGING) {
+			$default_tags_settings = module_safe('tags')->_mod_spec_settings(array("module" => "gallery", "object_id" => main()->USER_ID), module_safe('tags')->ALLOWED_GROUP);
+		}
 		$sql_array["allow_tagging"]	= intval($default_tags_settings);
 
 		db()->INSERT("gallery_settings", $sql_array);

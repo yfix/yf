@@ -11,7 +11,7 @@ class yf_gallery extends yf_module {
 
 	/** @var array Array of current photo sizes details */
 	public $PHOTO_TYPES = array(
-		'thumb'	=> array(
+		'thumbnail'	=> array(
 			'max_x'		=> 100,
 			'max_y'		=> 100,
 			'sub_folder'=> 'thumbs/',
@@ -28,13 +28,10 @@ class yf_gallery extends yf_module {
 		),
 	);
 	/** @var string */
-	public $PHOTO_ITEM_DISPLAY_TYPE	= 'thumb';
+	public $PHOTO_ITEM_DISPLAY_TYPE	= 'thumbnail';
 	/** @var string Root folder for the gallery photos */
 	public $GALLERY_DIR				= 'uploads/gallery/';
-	/** @var string Photos names template. 
-	* Any of these keys allowed:
-	* {photo_id},{user_id},{folder_id},{photo_type}
-	*/
+	/** @var string Photos names template. Any of these keys allowed: {photo_id}, {user_id}, {folder_id}, {photo_type} */
 	public $PHOTO_NAME_TEMPLATE		= '{user_id}_{photo_id}';
 	/** @var string Default auto-generated images extension */
 	public $IMAGE_EXT					= '.jpg';
@@ -56,9 +53,6 @@ class yf_gallery extends yf_module {
 	public $MAX_TOTAL_PHOTOS			= 0;
 	/** @var int Max number of folders (0 - to unlimited) */
 	public $MAX_TOTAL_FOLDERS			= 0;
-	/** @var int Max number of photos in folder (0 - to unlimited) */
-// TODO: connect this
-	public $MAX_PHOTOS_IN_FOLDER		= 0;
 	/** @var int Number of photos per column to display */
 	public $PHOTOS_IN_COLUMN			= 2;
 	/** @var int Number of records to show on one page for 'view all' */
@@ -69,16 +63,10 @@ class yf_gallery extends yf_module {
 	public $STATS_NUM_MOST_ACTIVE		= 25;
 	/** @var int */
 	public $STATS_NUM_LATEST			= 15;
-	/** @var int */
-// TODO: connect this
-	public $STATS_NUM_MOST_COMMENTED	= 10;
-	/** @var int */
-// TODO: connect this
-	public $STATS_NUM_MOST_VIEWED		= 10;
 	/** @var bool Display or not groupped by user latest photos */
 	public $LATEST_GROUP_BY_USER		= false;
 	/** @var bool Make default photo from the first uploaded one automatically or not */
-	public $MAKE_DEFAULT_PHOTO_AUTO	= true;
+	public $MAKE_DEFAULT_PHOTO_AUTO		= true;
 	/** @var int @conf_skip Default attributes for new directories */
 	public $DEF_DIR_MODE				= 0777;
 	/** @var bool All galleries search filter on/off */
@@ -93,27 +81,23 @@ class yf_gallery extends yf_module {
 	public $SESSION_PSWD_FIELD			= 'gallery_pswds';
 	/** @var bool Warn user about changing content level for the folder (photos will not be shown in public) */
 	public $WARN_NON_PUBLIC_PHOTOS		= 1;
-	/** @var int Display mini thumbs on medium size view (additional for the 
-	* navigation for the next and prev photos).Set to '0' to disable 
-	*/
+	/** @var int Display mini thumbs on medium size view (additional for the navigation for the next and prev photos).Set to '0' to disable */
 	public $FOR_MEDIUM_NUM_MINI_THUMBS	= 9; 
 	/** @var bool Display mini thumbs only from current folder */
-	public $MINI_THUMBS_SAME_FOLDER	= false;
+	public $MINI_THUMBS_SAME_FOLDER		= false;
 	/** @var bool Display mini thumbs for all availiable to display photos */
 	public $MINI_THUMBS_SHOW_ALL		= false;
 	/** @var bool Rating system for gallery on/off */
 	public $ALLOW_RATE					= false;
 	/** @var bool Geo filtering on/off */
-	public $ALLOW_GEO_FILTERING		= false;
+	public $ALLOW_GEO_FILTERING			= false;
 	/** @var bool Tagging system for gallery on/off */
 	public $ALLOW_TAGGING				= true;
 	/** @var int Max number of allowed tags for single photo */
 	public $TAGS_PER_PHOTO				= 5;
 	/** @var bool Crop, rotate image on/off */
 	public $ALLOW_IMAGE_MANIPULATIONS	= true;
-	/** @var bool If this turned on - then system will hide total ids for user, 
-	* and wiil try to use small id numbers dedicated only for this user
-	*/
+	/** @var bool If this turned on - then system will hide total ids for user, and wiil try to use small id numbers dedicated only for this user */
 	public $HIDE_TOTAL_ID				= false;
 	/** @var int Number of items for the RSS feed */
 	public $NUM_RSS 					= 10;
@@ -177,7 +161,6 @@ class yf_gallery extends yf_module {
 			$this->GALLERY_DIR = SITE_GALLERY_DIR;
 		}
 		$this->DEFAULT_FOLDER_NAME = t($this->DEFAULT_FOLDER_NAME);
-		// Array of select boxes to process
 		$this->_boxes = array(
 			'folder_id'			=> 'select_box("folder_id", 	$this->_folders_for_select, $selected, false, 2, "", false)',
 			'privacy'			=> 'select_box("privacy",		$this->_privacy_types,	$selected, false, 2, "", false)',
@@ -203,7 +186,7 @@ class yf_gallery extends yf_module {
 		$this->_privacy_types	= main()->get_data('privacy_types');
 		$this->_comments_types	= main()->get_data('allow_comments_types');
 		$this->_content_levels	= main()->get_data('content_levels');
-		// Prepare privacy and allow_comments for edit photos
+
 		$this->_privacy_types2[0] = t('-- USE GLOBAL SETTINGS --');
 		foreach ((array)$this->_privacy_types as $k => $v) {
 			$this->_privacy_types2[$k] = $v;
@@ -212,34 +195,20 @@ class yf_gallery extends yf_module {
 		foreach ((array)$this->_comments_types as $k => $v) {
 			$this->_comments_types2[$k] = $v;
 		}
-		// Do some translate
 		$this->_thumb_types		= t($this->_thumb_types);
 		$this->_layout_types	= t($this->_layout_types);
 		$this->_thumbs_loc		= t($this->_thumbs_loc);
 		$this->_slideshow_modes	= t($this->_slideshow_modes);
-		// Reorder thumbs in a row
-		$_tmp = array();
-		foreach ((array)$this->_thumbs_in_row as $v) {
-			$_tmp[$v] = $v;
-		}
-		$this->_thumbs_in_row = $_tmp;
-		// Set number of photos for ads
-		$this->MAX_PHOTOS_FOR_ADS = defined('MAX_PHOTOS_PER_AD') ? MAX_PHOTOS_PER_AD : 10;
-		// Check total id mode
+
+		$this->_thumbs_in_row = array_combine($this->_thumbs_in_row, $this->_thumbs_in_row);
+
 		$this->HIDE_TOTAL_ID = main()->HIDE_TOTAL_ID;
-		if ($this->HIDE_TOTAL_ID && (
-			MAIN_TYPE_ADMIN || 
-			(empty($GLOBALS['HOSTING_ID']) && empty(main()->USER_ID))
-		)) {
+		if ($this->HIDE_TOTAL_ID && (MAIN_TYPE_ADMIN || (empty($GLOBALS['HOSTING_ID']) && empty(main()->USER_ID)))) {
 			$this->HIDE_TOTAL_ID = false;
 		}
 		// Remove geo customization for the guests
 		if (!main()->USER_ID) {
 			$this->ALLOW_GEO_FILTERING = false;
-		}
-		// Tagging
-		if (!is_object($this->TAG_OBJ && $this->ALLOW_TAGGING)) {
-			$this->TAG_OBJ = module('tags');
 		}
 	}
 

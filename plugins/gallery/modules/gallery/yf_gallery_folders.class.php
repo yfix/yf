@@ -101,7 +101,7 @@ class yf_gallery_folders {
 					"active" 		=> 1,
 					"is_default"	=> 0,
 					"id2"			=> intval($_max_folder_id2 + 1),
-					"allow_tagging"	=> $_POST["allowed_group"] ? $_POST["allowed_group"] : $this->TAG_OBJ->ALLOWED_GROUP,
+					"allow_tagging"	=> $_POST["allowed_group"] ? $_POST["allowed_group"] : module_safe('tags')->ALLOWED_GROUP,
 				));
 				// Get new record id
 				$NEW_FOLDER_ID = db()->INSERT_ID();
@@ -130,7 +130,7 @@ class yf_gallery_folders {
 			"user_id"				=> intval(main()->USER_ID),
 			"back_link"				=> "./?object=".'gallery'."&action=show_gallery"._add_get(array("page")),
 			"warn_user"				=> intval($WARN_USER),
-			"folder_tagging_box"	=> module('gallery')->ALLOW_TAGGING ? module('gallery')->TAG_OBJ->_mod_spec_settings(array("module"=>"gallery")) : "",			
+			"folder_tagging_box"	=> module('gallery')->ALLOW_TAGGING ? module_safe('tags')->_mod_spec_settings(array("module"=>"gallery")) : "",			
 		);
 		return tpl()->parse('gallery'."/add_folder_form", $replace);
 	}
@@ -212,7 +212,7 @@ class yf_gallery_folders {
 					"allow_comments"=> intval($_POST["allow_comments"]),
 					"password"		=> _es($_POST["password"]),
 					"active" 		=> 1,
-					"allow_tagging"	=> $_POST["allowed_group"] ? $_POST["allowed_group"] : $this->TAG_OBJ->ALLOWED_GROUP,
+					"allow_tagging"	=> $_POST["allowed_group"] ? $_POST["allowed_group"] : module_safe('tags')->ALLOWED_GROUP,
 				), "id=".intval($FOLDER_ID));
 				// Update public photos
 				module('gallery')->_sync_public_photos();
@@ -243,7 +243,7 @@ class yf_gallery_folders {
 			"is_default"			=> intval((bool)$cur_folder_info["is_default"]),
 			"content_level"			=> module('gallery')->_content_levels[$cur_folder_info["content_level"]],
 			"warn_user"				=> intval($WARN_USER),
-			"folder_tagging_box"	=> module('gallery')->ALLOW_TAGGING ? module('gallery')->TAG_OBJ->_mod_spec_settings(array("module"=>"gallery", "object_id"=>$DATA["id"])) : "",			
+			"folder_tagging_box"	=> module('gallery')->ALLOW_TAGGING ? module_safe('tags')->_mod_spec_settings(array("module"=>"gallery", "object_id"=>$DATA["id"])) : "",			
 		);
 		return tpl()->parse('gallery'."/edit_folder_form", $replace);
 	}
