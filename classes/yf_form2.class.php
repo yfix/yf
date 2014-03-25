@@ -449,7 +449,10 @@ class yf_form2 {
 	*/
 	function row_start($extra = array()) {
 		$func = function($extra, $r, $_this) {
-// TODO: auto-close row_end(), if not called implicitely
+			// auto-close row_end(), if not called implicitely
+			if ($_this->_stacked_mode_on) {
+				$_this->row_end();
+			}
 			$_this->_stacked_mode_on = true;
 			$extra['errors'] = common()->_get_error_messages();
 			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
@@ -486,7 +489,10 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $_this) {
-// TODO: auto-close tab_end(), if not called implicitely
+			// auto-close tab_end(), if not called implicitely
+			if ($_this->_tabbed_mode_on) {
+				$_this->tab_end();
+			}
 			$_this->_tabbed_mode_on = true;
 			$_this->_tabs_name = $extra['name'];
 			$_this->_tabs_extra = $extra;
@@ -1712,29 +1718,11 @@ class yf_form2 {
 	* Image upload
 	*/
 	function image($name = '', $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc)) {
-			$extra = (array)$extra + $desc;
-			$desc = '';
-		}
-// TODO: show already uploaded image, link to delete it, input to upload new
-		$extra['name'] = $extra['name'] ?: ($name ?: 'image');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		$func = function($extra, $r, $_this) {
-/*
-			$extra['errors'] = common()->_get_error_messages();
-			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
-			$extra['id'] = $extra['name'];
-*/
-			return $_this->_row_html('<input type="file">', $extra, $r);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func($extra, $replace, $this);
+		return _class('form2_image', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
-
 	
+	/**
+	*/
 	function file_uploader($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return ''; // disabled for now; todo later
 #		return _class('form2_file_uploader', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);

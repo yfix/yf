@@ -158,19 +158,37 @@ class yf_table2_filter {
 										unset($data[$_id]);
 										continue 3;
 									}
-								} elseif ($fp == 'rlike') {
-// TODO
 								} elseif ($fp == 'eq') {
-// TODO
+									if ($_data[$fk][$k2] != $fv) {
+										unset($data[$_id]);
+										continue 3;
+									}
 								} elseif ($fp == 'ne') {
-// TODO
+									if ($_data[$fk][$k2] == $fv) {
+										unset($data[$_id]);
+										continue 3;
+									}
 								} elseif ($fp == 'gt') {
-// TODO
+									if ($_data[$fk][$k2] <= $fv) {
+										unset($data[$_id]);
+										continue 3;
+									}
 								} elseif ($fp == 'gte') {
-// TODO
+									if ($_data[$fk][$k2] < $fv) {
+										unset($data[$_id]);
+										continue 3;
+									}
 								} elseif ($fp == 'lt') {
-// TODO
+									if ($_data[$fk][$k2] >= $fv) {
+										unset($data[$_id]);
+										continue 3;
+									}
 								} elseif ($fp == 'lte') {
+									if ($_data[$fk][$k2] > $fv) {
+										unset($data[$_id]);
+										continue 3;
+									}
+								} elseif ($fp == 'rlike') {
 // TODO
 								} elseif ($fp == 'between') {
 // TODO
@@ -188,19 +206,37 @@ class yf_table2_filter {
 									unset($data[$_id]);
 									continue 2;
 								}
-							} elseif ($fp == 'rlike') {
-// TODO
 							} elseif ($fp == 'eq') {
-// TODO
+								if ($_data[$fk] != $fv) {
+									unset($data[$_id]);
+									continue 2;
+								}
 							} elseif ($fp == 'ne') {
-// TODO
+								if ($_data[$fk] == $fv) {
+									unset($data[$_id]);
+									continue 2;
+								}
 							} elseif ($fp == 'gt') {
-// TODO
+								if ($_data[$fk] <= $fv) {
+									unset($data[$_id]);
+									continue 2;
+								}
 							} elseif ($fp == 'gte') {
-// TODO
+								if ($_data[$fk] < $fv) {
+									unset($data[$_id]);
+									continue 2;
+								}
 							} elseif ($fp == 'lt') {
-// TODO
+								if ($_data[$fk] >= $fv) {
+									unset($data[$_id]);
+									continue 2;
+								}
 							} elseif ($fp == 'lte') {
+								if ($_data[$fk] > $fv) {
+									unset($data[$_id]);
+									continue 2;
+								}
+							} elseif ($fp == 'rlike') {
 // TODO
 							} elseif ($fp == 'between') {
 // TODO
