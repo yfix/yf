@@ -16,6 +16,7 @@ class yf_docs_generator {
 	/**
 	*/
 	function find_all_funcs(&$all_tokens, &$s_lines) {
+		$funcs = array();
 		foreach ($all_tokens as $id => $t) {
 			$token = $t[0];
 			$line = $t[2];
@@ -27,13 +28,16 @@ class yf_docs_generator {
 				continue;
 			}
 			$args = self::find_func_args($id, $all_tokens);
-			$desc = self::find_func_desc($id, $all_tokens);
-			$funcs[$id] = array(
-				'source'	=> $s_lines[$line - 1],
-				'name'		=> $name,
-				'args'		=> $args,
-				'desc'		=> $desc,
+			$doc = self::find_func_desc($id, $all_tokens);
+			$funcs[$name] = array(
+#				'line'	=> $s_lines[$line - 1],
+				'func'	=> $name,
+				'args'	=> $args,
+				'doc'	=> self::cleanup_doc_comment($doc),
 			);
+		}
+		if ($funcs) {
+			asort($funcs);
 		}
 		return $funcs;
 	}
@@ -79,5 +83,22 @@ class yf_docs_generator {
 			}
 		}
 		return $args;
+	}
+
+	/**
+	*/
+	function cleanup_doc_comment($str = '') {
+		$str = trim(trim(trim($str),'*/'));
+		if (!strlen($str)) {
+			return '';
+		}
+		$tmp = array();
+		foreach (explode(PHP_EOL, $str) as $line) {
+			$line = trim(ltrim(trim($line), '*'));
+			if (strlen($line)) {
+				$tmp[] = $line;
+			}
+		}
+		return implode(PHP_EOL, $tmp);
 	}
 }
