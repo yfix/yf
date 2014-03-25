@@ -230,7 +230,7 @@ class yf_gallery_stats {
 				$photos_by_users[$A["user_id"]][$A["id"]]	= $A;
 			}
 		}
-		$cur_photo_type = "ad thumbnail";
+		$cur_photo_type = "mini_thumbnail";
 		$MAX_PHOTOS_PER_USER	= 5;
 		// Display results
 		foreach ((array)$gallery_users_num_photos as $user_id => $user_num_photos) {

@@ -303,7 +303,7 @@ class yf_gallery_show_photos {
 		if (empty($this->_all_photos) || count($this->_all_photos) <= 1) {
 			return false;
 		}
-		$cur_photo_type		= "ad thumbnail";
+		$cur_photo_type		= "mini_thumbnail";
 		$settings = module('gallery')->CUR_SETTINGS;
 		// Prepare arrays
 		$photos_ids		= array_keys($this->_all_photos);

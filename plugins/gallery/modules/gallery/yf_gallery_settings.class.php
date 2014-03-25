@@ -63,7 +63,7 @@ class yf_gallery_settings {
 				// Regenerate thumbs (if changed)
 				if ($_POST["thumb_type"] != $GALLERY_SETTINGS["thumb_type"]) {
 					$this->_regenerate_format("thumbnail");
-					$this->_regenerate_format("ad thumbnail");
+					$this->_regenerate_format("mini_thumbnail");
 				}
 				// Regenerate medium sizes (if changed)
 				if ($GALLERY_SETTINGS["medium_size"] && $_POST["medium_size"] != $GALLERY_SETTINGS["medium_size"]) {

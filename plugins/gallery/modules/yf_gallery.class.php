@@ -11,6 +11,11 @@ class yf_gallery extends yf_module {
 
 	/** @var array Array of current photo sizes details */
 	public $PHOTO_TYPES = array(
+		'mini_thumbnail'	=> array(
+			'max_x'		=> 50,
+			'max_y'		=> 50,
+			'sub_folder'=> 'mini_thumbs/',
+		),
 		'thumbnail'	=> array(
 			'max_x'		=> 100,
 			'max_y'		=> 100,
@@ -28,21 +33,21 @@ class yf_gallery extends yf_module {
 		),
 	);
 	/** @var string */
-	public $PHOTO_ITEM_DISPLAY_TYPE	= 'thumbnail';
+	public $PHOTO_ITEM_DISPLAY_TYPE		= 'thumbnail';
 	/** @var string Root folder for the gallery photos */
-	public $GALLERY_DIR				= 'uploads/gallery/';
+	public $GALLERY_DIR					= 'uploads/gallery/';
 	/** @var string Photos names template. Any of these keys allowed: {photo_id}, {user_id}, {folder_id}, {photo_type} */
-	public $PHOTO_NAME_TEMPLATE		= '{user_id}_{photo_id}';
+	public $PHOTO_NAME_TEMPLATE			= '{user_id}_{photo_id}';
 	/** @var string Default auto-generated images extension */
 	public $IMAGE_EXT					= '.jpg';
 	/** @var string Default name in form to use */
 	public $PHOTO_NAME_IN_FORM			= 'photo_file';
 	/** @var int Max photo name length */
-	public $MAX_NAME_LENGTH			= 100;
+	public $MAX_NAME_LENGTH				= 100;
 	/** @var int Max photo description length */
-	public $MAX_DESC_LENGTH			= 500;
+	public $MAX_DESC_LENGTH				= 500;
 	/** @var int Max folder title length */
-	public $MAX_FOLDER_TITLE_LENGTH	= 100;
+	public $MAX_FOLDER_TITLE_LENGTH		= 100;
 	/** @var int Max folder comment length */
 	public $MAX_FOLDER_COMMENT_LENGTH	= 500;
 	/** @var int Limit uploaded image size in bytes */
@@ -137,7 +142,7 @@ class yf_gallery extends yf_module {
 	/** @var array */
 	public $DEFAULT_SETTINGS			= array();
 	/** @var srting Default folder name */
-	public $DEFAULT_FOLDER_NAME		= 'General';
+	public $DEFAULT_FOLDER_NAME			= 'General';
 	/** @var bool What to show on user gallery home. (Currently availiable: latest|featured) */
 	public $USER_GALLERY_HOME_SHOW		= 'latest';
 	/** @var bool allow delete comments */
@@ -438,14 +443,14 @@ class yf_gallery extends yf_module {
 	* Add new photo method
 	*/
 	function add_photo () {
-		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
+		return _class_safe('gallery_add_photo', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
 	* Edit photo management
 	*/
 	function edit_photo () {
-		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
+		return _class_safe('gallery_add_photo', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
@@ -473,7 +478,7 @@ class yf_gallery extends yf_module {
 	* Change photo sorting position
 	*/
 	function sort_photo () {
-		return _class_safe('gallery_manage', 'modules/gallery/')->{__FUNCTION__}();
+		return _class_safe('gallery_sort_photo', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**
@@ -726,6 +731,16 @@ class yf_gallery extends yf_module {
 	*/
 	function clear_filter ($silent = false) {
 // TODO
+	}
+	
+	/**
+	* Prepare photo name
+	*/
+	function _prepare_photo_name($name = "") {
+		$name = substr(trim($name), 0, 32);
+		$name = common()->make_translit($name);
+		$name = preg_replace("/[^0-9a-z\-\_\.]/i", "_", $name);
+		return $name;
 	}
 
 	/**
