@@ -9,22 +9,6 @@
 
 {if("photo_desc" ne "")}<p>{photo_desc}</p>{/if}
 
-{if("const.PROJECT_NAME" eq "SEXY_NET")}
-	{if("tagging_allowed" eq 1)}
-	<br />
-		{if("tags" ne "")}<small><b>{t(Tags)}: {foreach("tags")} <a href="{_val}">{_key}</a> {/foreach}</b></small>{/if}
-		{if("tags" eq "")}<small><b>{t(Tags)}: {t(No tags yet)}</b></small>{/if}
-		{if("allow_edit_tag" eq 1)} <a href="javascript:openWin('{edit_tag_link}',400,500)" class="actionlink">{if("is_own_gallery" eq 0)}[{t(Add tags)}]{/if}{if("is_own_gallery" eq 1)}[{t(Edit&nbsp;tags)}]{/if}</a>{/if}
-	<br />
-	{/if}
-{/if}
-
-{if("const.PROJECT_NAME" ne "SEXY_NET")}
-	{if("tags_block" ne "")}
-	<div id="tags">{tags_block}</div>
-	{/if}
-{/if}
-
 {if("rate_allowed" eq "1")}{if("is_logged_in" eq "1")}
 	<b>{t(Rate this image)}:</b> {rate_block}
 	<br />
@@ -38,12 +22,6 @@
 	{if("edit_photo_link" ne "")} <a href="{edit_photo_link}" class="actionlink"><b>{t(Edit)}</b></a>&nbsp; {/if}
 	{if("delete_photo_link" ne "")} <a href="{delete_photo_link}" onclick="return confirm('{t(Are you sure)}?');" class="actionlink"><b>{t(Delete)}</b></a>&nbsp; {/if}
 
-	{if("const.PROJECT_NAME" eq "SEXY_NET")}
-		{if("show_in_ads" ge 0)} <a href="{change_show_ads_link}" class="actionlink change_show_in_ads" yf:photo_id="{photo_id}">{if("show_in_ads" eq 0)}{t(Show in ads)}{/if}{if("show_in_ads" eq 1)}{t(Don&#39;t show in ads)}{/if}</a>&nbsp;	{/if}
-		{if("show_ads_denied" ne "")}<small><b class="alarm">Not allowed in ads</b></small>{/if}
-	{/if}
-
-	<br />
 	{if("rate_enabled" eq 1)} <a href="{change_rate_link}" class="actionlink change_allow_rate" yf:photo_id="{photo_id}">{if("rate_allowed" eq 0)}{t(Allow rate)}{/if}{if("rate_allowed" eq 1)}{t(Deny rate)}{/if}</a>&nbsp; {/if}
 	{if("tagging_enabled" eq 1)} 
 		<a href="{change_tagging_link}" class="actionlink change_allow_tagging">{if("tagging_allowed" eq 0)}Allow tagging{/if}{if("tagging_allowed" eq 1)}{t(Deny tagging)}{/if}</a>&nbsp; 
@@ -62,17 +40,6 @@
 <!--
 // JQuery on DOM ready
 $(function(){
-
-{if("const.PROJECT_NAME" eq "SEXY_NET")}
-	$("a.change_show_in_ads").click(function(){
-		var obj = this;
-		obj.innerHTML = "Wait...";
-		$.post(obj.href, {ajax_mode: 1}, function(data){
-			obj.innerHTML = (data == "1") ? '{t(Don&#39;t show in ads)}' : '{t(Show in ads)}';
-		});
-		return false;
-	});
-{/if}
 
 	$("a.change_allow_rate").click(function(){
 		var obj = this;

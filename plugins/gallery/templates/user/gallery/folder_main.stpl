@@ -7,10 +7,6 @@
 <div align="right">
 <small> 
 {if("folder_add_date" ne "")}{t(Folder Created)}: {folder_add_date}<br />{/if}
-{if("const.PROJECT_NAME" eq "SEXY_NET")}
-	{if("folder_content_level" ne "")}{t(Content Level)}: {folder_content_level}<br />{/if}
-	{if("show_ads_denied" ne "")}<small><b class="alarm">{t(Folder items are not allowed to show up in ads)}<br />{t(due to folder content level restrictions)}</b></small><br />{/if}
-{/if}
 {if("folder_privacy" ne "")}{t(Privacy)}: {folder_privacy}<br />{/if}
 {if("folder_allow_comments" ne "")}{t(Comments)}: {folder_allow_comments}<br />{/if}
 {if("folder_password" ne "")}{t(Password protection: enabled)}<br />{/if}

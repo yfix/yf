@@ -182,8 +182,8 @@ class yf_gallery_manage {
 				_re('Photo file required');
 			}
 			if (!common()->_error_exists()) {
-				$_source_file_ext = common()->get_file_ext($_PHOTO['name']);
-				if (module('gallery')->ALLOW_BULK_UPLOAD && strtolower($_source_file_ext) == 'zip') {
+				$ext = strtolower(common()->get_file_ext($_PHOTO['name']));
+				if (module('gallery')->ALLOW_BULK_UPLOAD && in_array($ext, array('zip', 'tar'))) {
 					return $this->_add_photos_bulk($NEW_USER_ID);
 				}
 			}
@@ -312,7 +312,7 @@ class yf_gallery_manage {
 // TODO
 		}
 		// Get photos availiable to process
-		$photos = _class('dir')->scan_dir($_archive_extract_path, true, array('', '/\.(jpg|jpeg|gif|png)$/'), '/(svn|git)/');
+		$photos = _class('dir')->scan_dir($_archive_extract_path, true, array('-f /\.(jpg|jpeg|gif|png)$/'), '/\.(svn|git)/');
 		$photos = array_slice((array)$photos, -abs($ADD_PHOTOS_ALLOWED_NUM));
 
 		$_POST['photo_name'] = module('gallery')->_filter_text($_POST['photo_name']);
@@ -320,12 +320,24 @@ class yf_gallery_manage {
 		$creation_time = time();
 		$_max_id2 = $this->_fix_id2($NEW_USER_ID);
 
+		$ext_to_mime = array(
+			'jpg'	=> 'image/jpeg',
+			'jpeg'	=> 'image/jpeg',
+			'png'	=> 'image/png',
+			'gif'	=> 'image/gif',
+		);
 		foreach ((array)$photos as $_photo_path) {
+			if (!$ext_to_mime[$file_ext]) {
+				continue;
+			}
 			if (common()->_error_exists()) {
 				break;
 			}
 			$SOURCE_PHOTO_NAME = $this->_prepare_photo_name(basename($_photo_path));
+			$file_ext = strtolower(common()->get_file_ext($_photo_path));
+
 			db()->query('BEGIN');
+
 			$sql_array = array(
 				'user_id'		=> intval($NEW_USER_ID),
 				'folder_id'		=> intval($_POST['folder_id']),
@@ -343,13 +355,7 @@ class yf_gallery_manage {
 			db()->INSERT('gallery_photos', $sql_array);
 
 			$PHOTO_RECORD_ID = intval(db()->INSERT_ID());
-			if (empty($PHOTO_RECORD_ID)) {
-				_re('Cant insert record into db');
-			}
-			if (isset($_POST['tags'])) {
-				module_safe('tags')->_save_tags($_POST['tags'], $PHOTO_RECORD_ID, 'gallery');
-			}
-			if (!common()->_error_exists()) {
+			if ($PHOTO_RECORD_ID) {
 				// Create new photo name (using name template)
 				$new_photo_info = array(
 					'id'		=> $PHOTO_RECORD_ID,
@@ -360,7 +366,7 @@ class yf_gallery_manage {
 				);
 				$load_result = $this->_load_photo(array(
 					'name'		=> $SOURCE_PHOTO_NAME,
-					'type'		=> '',
+					'type'		=> $ext_to_mime[$file_ext],
 					'tmp_name'	=> $_photo_path,
 					'error'		=> 0,
 					'size'		=> @filesize($_photo_path),
@@ -375,6 +381,9 @@ class yf_gallery_manage {
 			if (!common()->_error_exists()) {
 				db()->UPDATE('gallery_photos', array('active' => 1), 'id='.intval($PHOTO_RECORD_ID));
 				db()->query('COMMIT');
+				if (isset($_POST['tags'])) {
+					module_safe('tags')->_save_tags($_POST['tags'], $PHOTO_RECORD_ID, 'gallery');
+				}
 			} else {
 				db()->query('ROLLBACK');
 			}
