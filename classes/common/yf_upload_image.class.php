@@ -42,7 +42,7 @@ class yf_upload_image {
 			_re('Invalid image size');
 		}
 		// First mime type check (quick and simple)
-		if ($PHOTO['type'] && !isset($this->ALLOWED_MIME_TYPES[$PHOTO['type']])) {
+		if (!$PHOTO['type'] || !isset($this->ALLOWED_MIME_TYPES[$PHOTO['type']])) {
 			_re('Invalid image type');
 		}
 		// Check for errors and stop if exists
