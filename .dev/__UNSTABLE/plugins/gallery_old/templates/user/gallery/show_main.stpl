@@ -41,3 +41,14 @@
 {/if}
 
 {include("gallery/js_sorting")}
+
+<style type="text/css">
+.gallery_photo_edit_controls {
+	position: absolute;
+	z-index: 1000;
+	display: none;
+}
+.gallery_photo_item:hover .gallery_photo_edit_controls {
+	display: block;
+}
+</style>

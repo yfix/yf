@@ -47,15 +47,6 @@
 		<textarea id="tags" name="tags" cols="30" rows="{max_num_tags}">{tags}</textarea>
 	</p>
 {/if}
-{if("const.PROJECT_NAME" eq "SEXY_NET")}
-	<p>
-		<label for="show_in_ads_box">{t(Show in ads)}<br /><small>{t(Check if you want this photo to appear on your ads.)}</small></label>
-		<span>
-{if("show_ads_denied" ne "")}<span class="alarm">{t(Photos from this folder are not allowed to be displayed on ads. Only images from public accessible folders can be included in ads. Change folder privacy settings if you want to enable this feature.)}</span>{/if}
-{if("show_ads_denied" eq "")}{show_in_ads_box} {tip('gallery.show_in_ads')}{/if}	
-		</span>
-	</p>
-{/if}
 {if("rate_enabled" eq 1)}
 	<p>
 		<label for="allow_rate_box">{t(Allow to rate this photo)}</label>

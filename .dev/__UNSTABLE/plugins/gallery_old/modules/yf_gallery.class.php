@@ -168,7 +168,7 @@ class yf_gallery extends yf_module {
 	/** @var bool */
 	public $USE_SQL_FORCE_KEY			= false;
 	/** @var bool */
-	public $ALLOW_BULK_UPLOAD			= false;
+	public $ALLOW_BULK_UPLOAD			= true;
 	/** @var array @conf_skip Params for the comments */
 	public $_comments_params	= array(
 		"return_action" => "show_medium_size",
@@ -245,10 +245,6 @@ class yf_gallery extends yf_module {
 		// Tagging
 		if (!is_object($this->TAG_OBJ && $this->ALLOW_TAGGING)) {
 			$this->TAG_OBJ = module("tags");
-		}
-		// Check if we could handle bulk upload (using zip archive with photos)
-		if ($this->ALLOW_BULK_UPLOAD && !file_exists(YF_PATH."classes/yf_pclzip.class.php")) {
-			$this->ALLOW_BULK_UPLOAD = false;
 		}
 	}
 

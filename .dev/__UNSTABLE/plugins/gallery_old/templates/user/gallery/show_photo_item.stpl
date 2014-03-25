@@ -1,0 +1,37 @@
+<div class="gallery_photo_item" style="float:left;margin:10px;">
+	<div class="gallery_photo_edit_controls">
+{{--
+		<small><b>
+{if("photo_number" ne "")}{photo_number}.&nbsp;{/if}
+		</b></small>
+--}}
+{if("photo_name" ne "")}{photo_name}{/if}{if("photo_name" eq "")}{user_name}{/if}
+{{--
+{if("tags_block" ne "")}
+		<div><small>{tags_block}</small></div>
+{/if}
+--}}
+
+{if("rate_allowed" eq "1")}{if("rate_num_votes" gt 0)}
+	<div class="photo_rate_result" yf:photo_id="{photo_id}"><small><b>{t(Rating)}: {rating}, {t(votes)}: {rate_num_votes}</b></small></div> 
+{/if}{/if}
+
+{if("slideshow_mode" gt "0")} <a href="{medium_size_link}" style="display:none;">.</a>{/if}
+
+{if("is_own_gallery" eq 1)}
+	{if("edit_photo_link" ne "")}<a href="{edit_photo_link}" class="btn btn-mini btn-xs" title="{t(Edit)}"><i class="icon icon-edit"></i></a>{/if}
+	{if("delete_photo_link" ne "")}<a href="{delete_photo_link}" onclick="return confirm('{t(Are you sure)}?');" class="btn btn-mini btn-xs" title="{t(Delete)}"><i class="icon icon-trash"></i></a>{/if}
+
+{{--
+{if("sort_up_link" ne "" or "sort_down_link" ne "")}
+	<div>
+	{if("sort_up_link" ne "")}<a href="{sort_up_link}" class="sort_change_link sort_up"><b>&#x25C4;</b></a> &nbsp;{/if}
+	{if("sort_down_link" ne "")}&nbsp; <a href="{sort_down_link}" class="sort_change_link sort_down"><b>&#x25BA;</b></a>{/if}
+	</div>
+{/if}
+--}}
+
+{/if}
+	</div>
+	<a href="{medium_size_link}" class="gallery_photo" yf:user_id="{user_id}"><img src="{img_src}" class="img-rounded" alt="{photo_name}{if('photo_name' eq '')}{user_name} {t(photo)}{/if}" {if('real_w' ne 0)} width="{real_w}"{/if}{if('real_h' ne 0)} height="{real_h}"{/if} /></a>
+</div>

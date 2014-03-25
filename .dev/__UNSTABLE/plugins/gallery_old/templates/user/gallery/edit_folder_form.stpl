@@ -20,12 +20,6 @@
 		<small>({t('up to %maxlen characters',%maxlen='{max_comment_length}')})</small></label>
 		<span><textarea cols="50" rows="5" id="folder_comment" name="comment" >{comment}</textarea></span>
 	</p>
-{if("const.PROJECT_NAME" eq "SEXY_NET")}
-	<p>
-		<label for="content_level_box">{t(Content Level)}</label>
-		<span>{content_level_box}  {tip('gallery.content')}</span>
-	</p>
-{/if}
 	<p>
 		<label for="privacy_box">{t(Privacy)}&nbsp;{itip('You can restrict assess to the folder. Making it private will allow you to load photos to your gallery, but they will not be published on your site. Nobody will be able to see them. Allowing public access to the folder makes all of the photos visible to all the site visitors.')}</label>
 		<span>{privacy_box}</span>
@@ -59,14 +53,6 @@
 function form_check(the_form) {
 	try {
 		var error_msg = '';
-{if("const.PROJECT_NAME" eq "SEXY_NET")}
-		var error_1 = 'Warning! Some images that are currently being shown in your ads will be removed from your ads.'
-			+ '\nYou can show only photos from public accessable folders in your ads.'
-			+ '\nDo you wish to continue with these new settings?';
-		if (the_form["content_level"].selectedIndex > 0 || the_form["privacy"].selectedIndex > 0 || the_form["password"].value != "") {
-			error_msg = error_1;
-		}
-{/if}
 		// Show error or submit form
 		if (error_msg) {
 			return confirm(error_msg);

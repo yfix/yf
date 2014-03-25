@@ -1,6 +1,3 @@
-{if("const.PROJECT_NAME" eq "SEXY_NET")}<h1>{t(Blogs of Escorts and their Clients)}</h1>{/if}
-{{--{if("const.PROJECT_NAME" ne "SEXY_NET")}{t(Blogs)}{/if}--}}
-
 {include("blog/main_page_note")}
 
 <div align="right">
