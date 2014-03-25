@@ -11,6 +11,7 @@ $( document ).ready( function() {
 	$("#" + ajax_search_input + "_search").select2({
 		placeholder: "",
 		minimumInputLength: 2,
+		multiple: {multiple},
 		ajax: {
 		    url: ajax_search_url,
 		    dataType: 'json',
@@ -23,11 +24,11 @@ $( document ).ready( function() {
 				return { results: data };
 			}
 		},
-	});	
+	});
 	$("#" + ajax_search_input + "_search").on("change",function() {
 		$("#" + ajax_search_input + "_value").val($(this).val());
 	});
-	
+
 });
 </script>
 

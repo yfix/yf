@@ -3,8 +3,9 @@
 /**
 */
 class yf_manage_shop_products{
-	
+
 	var $_filter_params = array(
+		'id'			=> array('in','p.id'),
 		'name'			=> array('like','p.name'),
 		'price' 		=> array('between','p.price'),
 		'articul'		=> array('like','p.articul'),
@@ -12,7 +13,7 @@ class yf_manage_shop_products{
 		'supplier_id'	=> array('eq','p.supplier_id'),
 		'manufacturer_id' => array('eq','p.manufacturer_id'),
 		'active'		=> array('eq','p.active'),
-		'status'		=> array('eq','p.status'),					
+		'status'		=> array('eq','p.status'),
 		'image'			=> array('eq','p.image'),
 #		'cat_id'		=> array('field' => 'p.cat_id'),
 		'quantity'		=> array('field' => 'p.quantity'),
@@ -39,13 +40,13 @@ class yf_manage_shop_products{
 	function products () {
 		if (module('manage_shop')->SUPPLIER_ID) {
 			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
-					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
-					WHERE 
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id
+					WHERE
 						m.admin_id='.intval(main()->ADMIN_ID).'';
 		} else {
 			$sql = 'SELECT * FROM '.db('shop_products').' AS p';
 		}
-		
+
 		return table($sql, array(
 				'filter' => $_SESSION[$_GET['object'].'__products'],
 				'filter_params' => $this->_filter_params,
@@ -73,30 +74,30 @@ class yf_manage_shop_products{
 			->footer_link('Orders', './?object='.main()->_get('object').'&action=show_orders')
 			->footer_link('XLS Export', './?object='.main()->_get('object').'&action=products_xls_export');
 	}
-	
-	
+
+
 	/**
 	*/
 	function products_xls_export () {
 		ini_set("memory_limit","1024M");
 		if (module('manage_shop')->SUPPLIER_ID) {
 			$sql = 'SELECT `p`.`id`,`p`.`articul`,`p`.`name`,`p`.`price` FROM '.db('shop_products').' AS p
-					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
-					WHERE 
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id
+					WHERE
 						m.admin_id='.intval(main()->ADMIN_ID).'';
 		} else {
 			$sql = 'SELECT `p`.`id`,`p`.`articul`,`p`.`name`,`p`.`price` FROM '.db('shop_products').' AS p';
 		}
-		
+
 		list($filter_sql,$order_sql) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($_SESSION[$_GET['object'].'__products'], $this->_filter_params, $sql);
-		
+
 		if ($filter_sql || $order_sql) {
 			$sql .= ' WHERE 1 '.$filter_sql;
 			if ($order_sql) {
 				$sql .= ' '.$order_sql;
 			}
 		}
-		
+
 		if (file_exists(YF_PATH."libs/phpexcel/PHPExcel.php")) {
 			require_once(YF_PATH."libs/phpexcel/PHPExcel.php");
 		} else {
@@ -123,12 +124,12 @@ class yf_manage_shop_products{
 			$objPHPExcel->getActiveSheet()->SetCellValue('D'.$i, $A['price']);
 			$i++;
 		}
-		
+
 		$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
-		
+
 		header('Content-type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment; filename="products_'.date('Y_m_d_H_i_s').'.xlsx"');
-		$objWriter->save('php://output');		
+		$objWriter->save('php://output');
 		exit;
 	}
 
@@ -137,8 +138,8 @@ class yf_manage_shop_products{
 	function _get_product($pid) {
 		if (module('manage_shop')->SUPPLIER_ID) {
 			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
-					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id 
-					WHERE 
+					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id
+					WHERE
 						p.id='.intval($pid).'
 						AND m.admin_id='.intval(main()->ADMIN_ID).'';
 		} else {
@@ -179,8 +180,8 @@ class yf_manage_shop_products{
 		if ($a['id']) {
 			module('manage_shop')->_product_check_first_revision('product', $_GET['id']);
 			module('manage_shop')->_product_image_delete($_GET['id']);
-			db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$_GET['id']);		
-			db()->query('DELETE FROM '.db('shop_product_to_region').' WHERE product_id='.$_GET['id']);		
+			db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$_GET['id']);
+			db()->query('DELETE FROM '.db('shop_product_to_region').' WHERE product_id='.$_GET['id']);
 			db()->query('DELETE FROM '.db('shop_product_productparams').' WHERE product_id='.$_GET['id']);
 			db()->query('DELETE FROM '.db('shop_products').' WHERE id='.$_GET['id']);
 			module("manage_shop")->_product_add_revision('delete',$_GET['id']);
@@ -208,7 +209,7 @@ class yf_manage_shop_products{
 		db()->insert('shop_products', $sql);
 		$new_product_id = db()->insert_id();
 		common()->admin_wall_add(array('shop product cloned: '.$a['name'], $new_product_id));
-		
+
 		$arr =  db()->get_all("SELECT * FROM `".db('shop_products_productparams')."` WHERE `product_id`='{$new_product_id}'");
 		foreach ($arr as $v) {
 			db()->INSERT(array(
@@ -221,7 +222,7 @@ class yf_manage_shop_products{
 		foreach ($arr as $v) {
 			db()->INSERT(array(
 				'product_id' => $new_product_id,
-				'category_id' => $v['category_id'],				
+				'category_id' => $v['category_id'],
 			));
 		}
 		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_region')."` WHERE `product_id`='{$new_product_id}'");
@@ -238,7 +239,7 @@ class yf_manage_shop_products{
 				'related_id' => $v['related_id'],
 			));
 		}
-			
+
 		if ($sql['image'] && $new_product_id) {
 			$dirs = sprintf('%06s', $old_product_id);
 			$dir2 = substr($dirs, -3, 3);
@@ -274,9 +275,9 @@ class yf_manage_shop_products{
 			$products = db()->query($sql1);
 			while ($A = db()->fetch_assoc($products)) {
 				$product_info .= $A['product_id'].',';
-			}	
+			}
 			$product_info = rtrim($product_info, ',');
-			
+
 		$sql = 'SELECT * FROM '.db('shop_products').' WHERE active="1" AND id IN ('.$product_info .')  ORDER BY name';
 		$product = db()->query_fetch_all($sql);
 		$products = array();
@@ -288,8 +289,8 @@ class yf_manage_shop_products{
 		}
 		print json_encode($products);
 		exit(); // To prevent printing additional debug info later and break JS
-	}	
-	
+	}
+
 	/**
 	*/
 	function product_search_autocomplete () {
@@ -300,14 +301,14 @@ class yf_manage_shop_products{
 		$word = common()->sphinx_escape_string($_GET['search_word']);
 //		$word = str_replace("_", " ", common()->_propose_url_from_name($word));
 /*		$result = common()->sphinx_query("
-			SELECT product_id,name 
-			FROM products 
+			SELECT product_id,name
+			FROM products
 			WHERE MATCH ('@name ".$word."*')
 			LIMIT 20"
 		); */
 		$result = db()->get_all("
-			SELECT `id`,`name` FROM `".db('shop_products')."` WHERE 
-				`name` LIKE '%"._es($word)."%' OR 
+			SELECT `id`,`name` FROM `".db('shop_products')."` WHERE
+				`name` LIKE '%"._es($word)."%' OR
 				`id` LIKE '%"._es($word)."%'
 			LIMIT 20
 		");

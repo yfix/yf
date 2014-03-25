@@ -16,6 +16,7 @@ class yf_table2_filter {
 			'order_direction',
 		);
 		$supported_conds = array(
+			'in'		=> function($a){ return ' IN( '._es($a['value']).')'; }, // "equal"
 			'eq'		=> function($a){ return ' = "'._es($a['value']).'"'; }, // "equal"
 			'ne'		=> function($a){ return ' != "'._es($a['value']).'"'; }, // "not equal"
 			'gt'		=> function($a){ return ' > "'._es($a['value']).'"'; }, // "greater than",
@@ -31,7 +32,7 @@ class yf_table2_filter {
 			'dt_gte'	=> function($a){ return ' >= "'._es(strtotime($a['value'])).'"'; }, // "greater or equal than",
 			'dt_lt'		=> function($a){ return ' < "'._es(strtotime($a['value'])).'"'; }, // "less than",
 			'dt_lte'	=> function($a){ return ' <= "'._es(strtotime($a['value'])).'"'; }, // "lower or equal than"
-			'dt_between'=> function($a){ return strlen($a['and']) ? ' BETWEEN "'._es(strtotime($a['value'])).'" AND "'._es(strtotime($a['and'])).'"' : ' = "'._es(strtotime($a['value'])).'"'; }, // BETWEEN $min AND $max					
+			'dt_between'=> function($a){ return strlen($a['and']) ? ' BETWEEN "'._es(strtotime($a['value'])).'" AND "'._es(strtotime($a['and'])).'"' : ' = "'._es(strtotime($a['value'])).'"'; }, // BETWEEN $min AND $max
 		);
 		foreach((array)$filter_data as $k => $v) {
 			if (!strlen($k)) {
@@ -74,7 +75,7 @@ class yf_table2_filter {
 				$func = null;
 				// Here we can override default 'eq' condition with custom one by passing filter $params like this: table($sql, array('filter_params' => $filter_params)).
 				$field_params = $filter_params[$k];
-				if ($field_params) {					
+				if ($field_params) {
 					// Fully replacing left and right parts with callback function
 					// Example: table($sql, array('filter_params' => array('my_field' => function($a){ return ' v.value LIKE "%'._es($a['value']).'%" '; } )))
 					if (is_callable($field_params)) {

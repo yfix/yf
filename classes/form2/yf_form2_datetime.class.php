@@ -57,6 +57,11 @@ class yf_form2_datetime {
 			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js', true);
 			_class('core_css')->add('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/css/bootstrap-datetimepicker.min.css', true);
 			$body = "
+<style>
+.bootstrap-datetimepicker-widget .picker-switch {
+	width: 90%;
+}
+</style>
 <div id=\"{$extra['name']}\" data-date-format=\"$_format_js\" class=\"input-append datetimepicker\">
     <input name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium\" placeholder=\"{$extra['placeholder']}\"></input>
     <span class=\"add-on\">
