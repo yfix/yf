@@ -41,7 +41,7 @@ class yf_manage_shop_import {
 			return "Script is already executing.";
 		} else {
 			$cmd = $path . "/import.php";
-			exec("cd {$path}/ && php import.php > /dev/null &");
+			exec("(cd {$path}/ && php import.php) > /dev/null 2>&1 &");
 			return "Script is running now. You will receive an e-mail with xls file when it will be done.";
 		}
 	}
