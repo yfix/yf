@@ -14,11 +14,6 @@ class yf_html5_framework_bs2 {
 	/**
 	*/
 	function form_row ($content, $extra = array(), $replace = array(), $obj) {
-		$css_group = '';
-		if (isset($extra['errors'][$extra['name']])) { $css_group = 'error'; }
-		if (isset($extra['success'][$extra['name']])) { $css_group = 'success'; }
-		if (isset($extra['warnings'][$extra['name']])) { $css_group = 'warning'; }
-		if (isset($extra['infos'][$extra['name']])) { $css_group = 'info'; }
 		$no_label = false;
 		if (isset($obj->_params['no_label'])) {
 			$no_label = $obj->_params['no_label'];
@@ -26,10 +21,26 @@ class yf_html5_framework_bs2 {
 		if (isset($extra['no_label'])) {
 			$no_label = $extra['no_label'];
 		}
+		$_css_group_map = array(
+			'errors'	=> 'error',
+			'success'	=> 'success',
+			'warnings'	=> 'warning',
+			'infos'		=> 'info',
+		);
+		foreach ($_css_group_map as $_a => $_css_class) {
+			if (isset($extra[$_a][$extra['name']])) {
+				$extra['class_add_form_group'] .= ' '.$_css_class;
+				break;
+			}
+		}
+		$class_form_group = $extra['class_form_group'] ?: 'control-group form-group'. ($extra['class_add_form_group'] ? ' '.$extra['class_add_form_group'] : '');
+		$class_label = $extra['class_label'] ?: 'control-label col-lg-4'. ($extra['class_add_label'] ? ' '.$extra['class_add_label'] : '');
+		$class_controls = $extra['class_controls'] ?: 'controls'. ($extra['desc'] && !$no_label ? ' col-lg-8' : ''/*' col-lg-offset-4'*/). ($extra['class_add_controls'] ? ' '.$extra['class_add_controls'] : '');
+
 		$row_start = 
-			'<div class="control-group form-group'. ($css_group ? ' '.$css_group : '').'">'.PHP_EOL
-				.($extra['desc'] && !$no_label ? '<label class="control-label col-lg-4" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
-				.(!$extra['wide'] ? '<div class="controls'.($extra['desc'] && !$no_label ? ' col-lg-8' : ''/*' col-lg-offset-4'*/).'">'.PHP_EOL : '');
+			'<div class="'.$class_form_group.'">'.PHP_EOL
+				.($extra['desc'] && !$no_label ? '<label class="'.$class_label.'" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
+				.(!$extra['wide'] ? '<div class="'.$class_controls.'">'.PHP_EOL : '');
 
 		$row_end =
 				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
