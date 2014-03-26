@@ -30,6 +30,8 @@ class yf_core_js {
 
 // todo: auto detection of script/link
 	
+	/**
+	*/
 	function add($content, $is_file = true, $params = array()) {
 		// input: string/array		
 		if (!is_array($content)) {
@@ -53,6 +55,8 @@ class yf_core_js {
 		}
 	}
 	
+	/**
+	*/
 	function show_js($params = array()) {
 		$content = tpl()->parse_if_exists('script_js');
 		$content = trim($content);
@@ -63,11 +67,16 @@ class yf_core_js {
 		foreach ((array)$this->content as $md5 => $info) {
 			$content .= $info['text'];
 		}
+		$module_js_path = $this->_find_module_js($_GET['object']);
+		if ($module_js_path) {
+			$content .= PHP_EOL. '<script type="text/javascript">'.file_get_contents($module_js_path).'</style>'. PHP_EOL;
+		}
 		return $content;
 	}
 
+	/**
+	*/
 	function _find_module_js($module = '') {
-// TODO: connect this
 		if (!$module) {
 			$module = $_GET['object'];
 		}
@@ -83,6 +92,9 @@ class yf_core_js {
 		);
 		$found = '';
 		foreach (array_reverse($paths, true) as $path) {
+			if (!strlen($path)) {
+				continue;
+			}
 			if (file_exists($path)) {
 				$found = $path;
 				break;
