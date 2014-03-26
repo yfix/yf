@@ -17,7 +17,7 @@
 
 {if("vote_popup_link" ne "")}
 <br />
-	<div align="right"><a href="javascript:openWin('{vote_popup_link}',400,500)" class="actionlink">{t(Vote for this post)}!</a></div>
+	<div align="right"><a href="javascript:openWin('{vote_popup_link}',400,500)" class="btn btn-mini btn-xs">{t(Vote for this post)}!</a></div>
 {/if}
 
 {if("related_posts" ne "")}
@@ -34,7 +34,7 @@
 
 <div align="center">
 	<br /><br />
-	<p align="center"><a href="{back_url}" class="actionlink">{t(Back to the main page of this blog)}</a></p>
+	<p align="center"><a href="{back_url}" class="btn btn-mini btn-xs">{t(Back to the main page of this blog)}</a></p>
 </div>
 
 <br />

@@ -14,15 +14,15 @@
 {calendar_container}
 
 {if("archive_nav" ne "")}
-	<a href="{all_posts_link}" class="actionlink">{t(All My Posts)}</a>
+	<a href="{all_posts_link}" class="btn btn-mini btn-xs">{t(All My Posts)}</a>
 	<br />
 
 	{foreach("archive_nav")}
 		{if("#.is_year" eq 1)}
-			<a href="{#.link}" class="actionlink">{#.year} {t(Blogs)}</a>
+			<a href="{#.link}" class="btn btn-mini btn-xs">{#.year} {t(Blogs)}</a>
 		{/if}
 		{if("#.is_year" eq 0)}
-			<a href="{#.link}" class="actionlink" style="margin-left:10px;">{#.name} {#.year}</a>
+			<a href="{#.link}" class="btn btn-mini btn-xs" style="margin-left:10px;">{#.name} {#.year}</a>
 		{/if}
 		<br />
 	{/foreach}
@@ -58,6 +58,6 @@
 	{/foreach}
 	</ul>
 
-	<div align="right" class="actionlink"><a href="{all_friends_posts_link}">{t(View all)}</a></div>
+	<div align="right" class="btn btn-mini btn-xs"><a href="{all_friends_posts_link}">{t(View all)}</a></div>
 {/if}
 </div>

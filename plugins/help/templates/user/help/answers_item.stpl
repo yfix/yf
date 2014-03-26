@@ -17,8 +17,8 @@
 <div align="right">
 <small>{t(Posted on)}: {add_date}</small>
 <br />
-{if("edit_comment_link" ne "")}<a href="{edit_comment_link}" class="actionlink">{t(Edit)}</a>&nbsp;{/if}
-{if("delete_comment_link" ne "")}<a href="{delete_comment_link}" onclick="return confirm('{t(Are you sure)}?');" class="actionlink">{t(Delete)}</a>{/if}
+{if("edit_comment_link" ne "")}<a href="{edit_comment_link}" class="btn btn-mini btn-xs">{t(Edit)}</a>&nbsp;{/if}
+{if("delete_comment_link" ne "")}<a href="{delete_comment_link}" onclick="return confirm('{t(Are you sure)}?');" class="btn btn-mini btn-xs">{t(Delete)}</a>{/if}
 </div>
 	</td>
 </tr>

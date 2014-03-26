@@ -450,7 +450,7 @@ class yf_gallery extends yf_module {
 	* Edit photo management
 	*/
 	function edit_photo () {
-		return _class_safe('gallery_add_photo', 'modules/gallery/')->{__FUNCTION__}();
+		return _class_safe('gallery_edit_photo', 'modules/gallery/')->{__FUNCTION__}();
 	}
 
 	/**

@@ -2,10 +2,10 @@
 
 <div align="right">
 {if("is_logged_in" eq 1)}
-	<br /><a href="{show_own_posts_link}" class="actionlink">{t(Go to my blog)}</a>
-	&nbsp;&nbsp;<a href="{change_settings_link}" class="actionlink">{t(Change my blog settings)}</a>
+	<br /><a href="{show_own_posts_link}" class="btn btn-mini btn-xs">{t(Go to my blog)}</a>
+	&nbsp;&nbsp;<a href="{change_settings_link}" class="btn btn-mini btn-xs">{t(Change my blog settings)}</a>
 {/if}
-	&nbsp;&nbsp;<a href="{all_blogs_link}" class="actionlink">{t(List all blogs)}</a><br /><br />
+	&nbsp;&nbsp;<a href="{all_blogs_link}" class="btn btn-mini btn-xs">{t(List all blogs)}</a><br /><br />
 </div>
 
 <h2 class="subtitle">{t(The most recent entries posted in blogs)}:&nbsp;{rss_latest_button}</h2>

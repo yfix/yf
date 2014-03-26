@@ -1,8 +1,8 @@
 <h1 class="header">{t(Edit Gallery Folder)}</h1>
 
 <div align="right">
-	<a href="./?object=gallery&action=settings" class="actionlink">{t(Gallery Settings)}</a><br />
-	<a href="./?object=gallery&action=add_folder" class="actionlink">{t(Add new folder)}</a>
+	<a href="./?object=gallery&action=settings" class="btn btn-mini btn-xs">{t(Gallery Settings)}</a><br />
+	<a href="./?object=gallery&action=add_folder" class="btn btn-mini btn-xs">{t(Add new folder)}</a>
 </div>
 
 <p>{t(Here you can set the folder title, description and properties that determine the rules applied to all photos inside this folder)}.</p>

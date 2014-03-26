@@ -1,1 +1,1 @@
-<div class="photo_item">	<div class="photo_inner">		<div class="thumb_holder">		<a href="{large_size_link}"><img src="{img_src}" alt="{photo_name}" class="blackborder" hspace="5" vspace="5"></a>	</div>	</div></div>
+{include(gallery/show_photo_item)}

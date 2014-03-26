@@ -7,7 +7,7 @@
 		<tr valign="top">
 			<td>{avatar}</td>
 			<td>
-				{post_text}... <a href="{post_link}" class="actionlink">{t(More)}...</a>
+				{post_text}... <a href="{post_link}" class="btn btn-mini btn-xs">{t(More)}...</a>
 			</td>
 		</tr>
 	</table>

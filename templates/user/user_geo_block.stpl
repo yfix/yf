@@ -10,7 +10,7 @@
 	{if("city_name" ne "")},<br /> {city_name}{/if}
 {/if}
 {if("country_name" eq "")}Unknown location{/if}
-				<br /><a href="{change_link}" class="actionlink">Change</a>
+				<br /><a href="{change_link}" class="btn btn-mini btn-xs">Change</a>
 			</small>
 		</td>
 	</tr>

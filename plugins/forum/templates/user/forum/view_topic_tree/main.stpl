@@ -2,9 +2,9 @@
 	<tr>
 		<td width="40%" valign="middle"><div>{topic_pages}&nbsp;</div></td>
 		<td class='nopad' align="right" width="60%" valign="middle">
-{if("add_post_link" ne "")}<a href="{add_post_link}" class=actionlink>{t(Reply to this topic)}</a>{/if}
+{if("add_post_link" ne "")}<a href="{add_post_link}" class=btn btn-mini btn-xs>{t(Reply to this topic)}</a>{/if}
 {if("topic_closed" eq 1)}&nbsp;{t(Topic is closed)}{/if}
-{if("new_topic_link" ne "")}&nbsp;<a href="{new_topic_link}" class=actionlink>{t(Start new topic)}</a>{/if}
+{if("new_topic_link" ne "")}&nbsp;<a href="{new_topic_link}" class=btn btn-mini btn-xs>{t(Start new topic)}</a>{/if}
 {if("forum_closed" eq 1)}&nbsp;Forum is read-only{/if}
 		</td>
 	</tr>
@@ -50,9 +50,9 @@ function link_to_post(post_id) {
 			<div>{topic_pages}&nbsp;</div>
 		</td>
 		<td class="nopad" align="right" width="70%">
-{if("add_post_link" ne "")}<a href="{add_post_link}" class="actionlink">{t(Reply to this topic)}</a>{/if}
+{if("add_post_link" ne "")}<a href="{add_post_link}" class="btn btn-mini btn-xs">{t(Reply to this topic)}</a>{/if}
 {if("topic_closed" eq 1)}&nbsp;{t(Topic is closed)}{/if}
-{if("new_topic_link" ne "")}&nbsp;<a href="{new_topic_link}" class="actionlink">{t(Start new topic)}</a>{/if}
+{if("new_topic_link" ne "")}&nbsp;<a href="{new_topic_link}" class="btn btn-mini btn-xs">{t(Start new topic)}</a>{/if}
 {if("forum_closed" eq 1)}&nbsp;Forum is read-only{/if}
 		</td>
 	</tr>

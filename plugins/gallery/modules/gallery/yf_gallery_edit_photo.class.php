@@ -153,7 +153,7 @@ class yf_gallery_edit_photo {
 			"crop_link"			=> "./?object=".'gallery'."&action=crop_photo&id=".$_GET["id"]._add_get(array("page")),
 			"rotate_link"		=> "./?object=".'gallery'."&action=rotate_photo&id=".$_GET["id"]._add_get(array("page")),
 			"back_link"			=> "./?object=".'gallery'."&action=".(!empty($photo_info["folder_id"]) ? "view_folder&id=".$photo_info["folder_id"] : "show_gallery")._add_get(array("page")),
-			"refresh_image_code"=> $this->_refresh_images_in_browser($photo_info["id"]),
+			"refresh_image_code"=> _class('gallery_manage', 'modules/gallery/')->_refresh_images_in_browser($photo_info["id"]),
 			"rate_enabled"		=> intval((bool) module('gallery')->ALLOW_RATE),
 			"rating"			=> round($photo_info["rating"], 1),
 			"rate_num_votes"	=> intval($photo_info["num_votes"]),

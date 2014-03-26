@@ -19,12 +19,12 @@
 
 {if("is_own_gallery" eq 1)}
 
-	{if("edit_photo_link" ne "")} <a href="{edit_photo_link}" class="actionlink"><b>{t(Edit)}</b></a>&nbsp; {/if}
-	{if("delete_photo_link" ne "")} <a href="{delete_photo_link}" onclick="return confirm('{t(Are you sure)}?');" class="actionlink"><b>{t(Delete)}</b></a>&nbsp; {/if}
+	{if("edit_photo_link" ne "")} <a href="{edit_photo_link}" class="btn btn-mini btn-xs"><b>{t(Edit)}</b></a>&nbsp; {/if}
+	{if("delete_photo_link" ne "")} <a href="{delete_photo_link}" onclick="return confirm('{t(Are you sure)}?');" class="btn btn-mini btn-xs"><b>{t(Delete)}</b></a>&nbsp; {/if}
 
-	{if("rate_enabled" eq 1)} <a href="{change_rate_link}" class="actionlink change_allow_rate" yf:photo_id="{photo_id}">{if("rate_allowed" eq 0)}{t(Allow rate)}{/if}{if("rate_allowed" eq 1)}{t(Deny rate)}{/if}</a>&nbsp; {/if}
+	{if("rate_enabled" eq 1)} <a href="{change_rate_link}" class="btn btn-mini btn-xs change_allow_rate" yf:photo_id="{photo_id}">{if("rate_allowed" eq 0)}{t(Allow rate)}{/if}{if("rate_allowed" eq 1)}{t(Deny rate)}{/if}</a>&nbsp; {/if}
 	{if("tagging_enabled" eq 1)} 
-		<a href="{change_tagging_link}" class="actionlink change_allow_tagging">{if("tagging_allowed" eq 0)}Allow tagging{/if}{if("tagging_allowed" eq 1)}{t(Deny tagging)}{/if}</a>&nbsp; 
+		<a href="{change_tagging_link}" class="btn btn-mini btn-xs change_allow_tagging">{if("tagging_allowed" eq 0)}Allow tagging{/if}{if("tagging_allowed" eq 1)}{t(Deny tagging)}{/if}</a>&nbsp; 
 	{/if}
 
 <br />

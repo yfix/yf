@@ -2,7 +2,7 @@
 	<p>
 		Your request has been saved and will be answered shortly.<br />
 		You can see	the current status of your request and our answers here:<br />
-		<a href="{view_answers_link}" class="actionlink">{view_answers_link}</a> <br />
+		<a href="{view_answers_link}" class="btn btn-mini btn-xs">{view_answers_link}</a> <br />
 		Site members can always find all their tickets under Support Tickets section of their account.
 		<br />
 		We've also sent you an email with these details. However, quite often spam-filters prevent our emails from being delivered, so we strongly suggest you to save this URL for future correspondence. 

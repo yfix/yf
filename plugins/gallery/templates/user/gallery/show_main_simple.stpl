@@ -12,5 +12,3 @@ try {
 } catch (e) {}
 -->
 </script>
-
-{include("gallery/js_sorting")}
