@@ -75,7 +75,6 @@ class yf_gallery_add_photo {
 					'desc'			=> _es($_POST['photo_desc']),
 					'add_date'		=> $creation_time,
 					'active' 		=> 0,
-					'show_in_ads'	=> intval((bool) $_POST['show_in_ads']),
 					'allow_rate'	=> intval((bool) $_POST['allow_rate']),
 					'allow_tagging'	=> intval((bool) $_POST['allow_tagging']),
 					'id2'			=> intval($_max_id2 + 1),

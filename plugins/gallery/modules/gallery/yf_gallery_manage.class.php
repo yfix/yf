@@ -105,7 +105,7 @@ class yf_gallery_manage {
 		$real_w = $other_info[$cur_photo_type]["w"];
 		$real_h = $other_info[$cur_photo_type]["h"];
 		// Check posted data and save
-		if (!empty($_POST["go"])) {
+		if (main()->is_post()) {
 			if (empty($_POST["params"])) {
 				_re("Missing required params for image cropper.");
 			}
@@ -173,36 +173,6 @@ class yf_gallery_manage {
 	}
 
 	/**
-	* Change show in ads status
-	*/
-	function change_show_ads () {
-		$photo_info = $this->_acl_manage_checks();
-		if (!is_array($photo_info)) {
-			return $photo_info; // error string
-		}
-		$cur_folder_info = $this->_get_photo_folder_info($photo_info);
-		// Check number of photos to show in ads
-		$num_photos_for_ads = db()->query_num_rows("SELECT id FROM ".db('gallery_photos')." WHERE user_id=".intval(main()->USER_ID)." AND show_in_ads='1'");
-		if ($num_photos_for_ads >= module('gallery')->MAX_PHOTOS_FOR_ADS && $photo_info["show_in_ads"] == 0) {
-			_re(t("You can use max @num photos in your ads!", array("@num" => intval(module('gallery')->MAX_PHOTOS_FOR_ADS))));
-			return redirect("./?object=".'gallery'."&action=show_gallery"._add_get(array("page")), 1, _e());
-		}
-		// Do update db record
-		db()->query(
-			"UPDATE ".db('gallery_photos')." 
-			SET show_in_ads='".($photo_info["show_in_ads"] ? 0 : 1)."' 
-			WHERE id=".intval($photo_info["id"])
-		);
-		// Return user back
-		if ($_POST["ajax_mode"]) {
-			main()->NO_GRAPHICS = true;
-			echo $photo_info["show_in_ads"] ? 0 : 1;
-		} else {
-			return js_redirect("./?object=".'gallery'."&action=view_folder&id=".(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info["id2"] : $cur_folder_info["id"]));
-		}
-	}
-
-	/**
 	* Change rate if allowed
 	*/
 	function change_rate_allowed () {
@@ -211,13 +181,7 @@ class yf_gallery_manage {
 			return $photo_info; // error string
 		}
 		$cur_folder_info = $this->_get_photo_folder_info($photo_info);
-		// Do update db record
-		db()->query(
-			"UPDATE ".db('gallery_photos')." 
-			SET allow_rate='".($photo_info["allow_rate"] ? 0 : 1)."' 
-			WHERE id=".intval($photo_info["id"])
-		);
-		// Return user back
+		db()->update('gallery_photos', array('allow_rate' => $photo_info["allow_rate"] ? 0 : 1), (int)$photo_info["id"]);
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo $photo_info["allow_rate"] ? 0 : 1;
@@ -235,13 +199,7 @@ class yf_gallery_manage {
 			return $photo_info; // error string
 		}
 		$cur_folder_info = $this->_get_photo_folder_info($photo_info);
-		// Do update db record
-		db()->query(
-			"UPDATE ".db('gallery_photos')." 
-			SET allow_tagging='".($photo_info["allow_tagging"] ? 0 : 1)."' 
-			WHERE id=".intval($photo_info["id"])
-		);
-		// Return user back
+		db()->update('gallery_photos', array('allow_tagging' => $photo_info["allow_tagging"] ? 0 : 1), (int)$photo_info["id"]);
 		if ($_POST["ajax_mode"]) {
 			main()->NO_GRAPHICS = true;
 			echo $photo_info["allow_tagging"] ? 0 : 1;

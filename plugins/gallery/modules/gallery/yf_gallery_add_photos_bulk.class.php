@@ -84,7 +84,6 @@ class yf_gallery_add_photos_bulk {
 				'desc'			=> _es($_POST['photo_desc']),
 				'add_date'		=> $creation_time,
 				'active' 		=> 0,
-				'show_in_ads'	=> 0,
 				'allow_rate'	=> intval((bool) $_POST['allow_rate']),
 				'allow_tagging'	=> intval((bool) $_POST['allow_tagging']),
 				'id2'			=> intval($_max_id2 + 1),

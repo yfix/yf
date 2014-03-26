@@ -120,7 +120,7 @@ class yf_gallery_cleanup {
 				}
 				// Update user photos with gathered info
 				foreach ((array)$user_photos_other_infos as $_photo_id => $_cur_photo_info) {
-					db()->query("UPDATE ".db('gallery_photos')." SET other_info='"._es(serialize($_cur_photo_info))."' WHERE id=".intval($_photo_id));
+					db()->update_safe('gallery_photos', array('other_info' => serialize($_cur_photo_info)), 'id='.intval($_photo_id));
 				}
 			}
 		}
@@ -207,10 +207,10 @@ class yf_gallery_cleanup {
 					if ($DELETE_WRONG_RECORDS && !$PHOTO_HAS_PROBLEMS) {
 						db()->query("DELETE FROM ".db('gallery_photos')." WHERE id=".intval($A["id"]));
 					} else {
-						db()->query("UPDATE ".db('gallery_photos')." SET active='0' WHERE id=".intval($A["id"]));
+						db()->update('gallery_photos', array('active' => 0), (int)$A["id"]);
 					}
 				} else {
-					db()->query("UPDATE ".db('gallery_photos')." SET active='1' WHERE id=".intval($A["id"]));
+					db()->update('gallery_photos', array('active' => 1), (int)$A["id"]);
 				}
 			}
 		}

@@ -61,7 +61,6 @@ class yf_gallery_edit_photo {
 					"folder_id"		=> intval($_POST["folder_id"]),
 					"name"			=> _es($_POST["photo_name"]),
 					"desc"			=> _es($_POST["photo_desc"]),
-					"show_in_ads"	=> intval((bool) $_POST["show_in_ads"]),
 					"allow_rate"	=> intval((bool) $_POST["allow_rate"]),
 					"allow_tagging"	=> intval((bool) $_POST["allow_tagging"]),
 					"is_featured"	=> intval((bool) $_POST["is_featured"]),
@@ -110,7 +109,6 @@ class yf_gallery_edit_photo {
 			$_POST["photo_name"]	= $photo_info["name"];
 			$_POST["photo_desc"]	= $photo_info["desc"];
 			$_POST["folder_id"]		= $photo_info["folder_id"];
-			$_POST["show_in_ads"]	= $photo_info["show_in_ads"];
 		}
 		if (common()->_error_exists()) {
 			$error_message = _e();
@@ -141,7 +139,6 @@ class yf_gallery_edit_photo {
 			"form_action"		=> "./?object=".'gallery'."&action=".$_GET["action"]."&id=".$_GET["id"]._add_get(array("page")),
 			"error_message"		=> $error_message,
 			"folders_box"		=> module('gallery')->_box("folder_id", !empty($_POST["folder_id"]) ? $_POST["folder_id"] : $FOLDER_ID),
-			"show_in_ads_box"	=> $SHOW_IN_ADS_ALLOWED ? module('gallery')->_box("show_in_ads", $num_photos_for_ads >= module('gallery')->MAX_PHOTOS_FOR_ADS ? 0 : $_POST["show_in_ads"]) : "",
 			"max_image_size"	=> intval(module('gallery')->MAX_IMAGE_SIZE),
 			"max_name_length"	=> intval(module('gallery')->MAX_NAME_LENGTH),
 			"max_desc_length"	=> intval(module('gallery')->MAX_DESC_LENGTH),
@@ -149,7 +146,6 @@ class yf_gallery_edit_photo {
 			"photo_desc"		=> _prepare_html($_POST["photo_desc"]),
 			"thumb_src"			=> $thumb_web_path,
 			"user_id"			=> intval(main()->USER_ID),
-			"show_ads_denied"	=> intval(!$SHOW_IN_ADS_ALLOWED),
 			"crop_link"			=> "./?object=".'gallery'."&action=crop_photo&id=".$_GET["id"]._add_get(array("page")),
 			"rotate_link"		=> "./?object=".'gallery'."&action=rotate_photo&id=".$_GET["id"]._add_get(array("page")),
 			"back_link"			=> "./?object=".'gallery'."&action=".(!empty($photo_info["folder_id"]) ? "view_folder&id=".$photo_info["folder_id"] : "show_gallery")._add_get(array("page")),

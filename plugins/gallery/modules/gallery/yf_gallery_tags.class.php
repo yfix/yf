@@ -29,27 +29,20 @@ class yf_gallery_tags {
 	* Manage tags for the selected photo
 	*/
 	function _edit_tags ($photo_id = 0) {
-// TODO: make this compatible with HIDE_TOTAL_ID
-		// Only for members and only if turned on
-		if (MAIN_TYPE_USER 
-			&& (!module('gallery')->ALLOW_TAGGING || !main()->USER_ID)
-		) {
+		if (MAIN_TYPE_USER && (!module('gallery')->ALLOW_TAGGING || !main()->USER_ID)) {
 			return "";
 		}
 		if (empty($photo_id)) {
 			$photo_id = intval($_GET["id"]);
 		}
-		// Do nothing if no photo_id provided
 		if (empty($photo_id)) {
 			return "";
 		}
 		$_tags = array();
-		// Get current photo tags
 		$Q = db()->query("SELECT * FROM ".db('tags')." WHERE object_name='gallery' AND object_id=".intval($photo_id));
 		while ($A = db()->fetch_assoc($Q)) {
 			$_tags[$A["id"]] = $A["text"];
 		}
-		// Get photo details if not done yet
 		if (empty(module('gallery')->_photo_info)) {
 			module('gallery')->_photo_info = db()->query_fetch("SELECT * FROM ".db('gallery_photos')." WHERE id=".intval($photo_id));
 			$photo_info = &module('gallery')->_photo_info;
@@ -59,16 +52,13 @@ class yf_gallery_tags {
 		} elseif (MAIN_TYPE_ADMIN) {
 			module('gallery')->is_own_gallery = true;
 		}
-		// Check for owner or for the member if we have free slots for adding
 		if (!module('gallery')->is_own_gallery && count($_tags) >= module('gallery')->TAGS_PER_PHOTO) {
 			return "";
 		}
-		// Prepare for edit
 		$tags_to_edit = implode("\r\n", (array)$_tags);
-		// Save data
-		if (!empty($_POST["tags"])) {
+		if (main()->is_post()) {
 			$keywords_array = array();
-			// Process submitted tags
+
 			$source = $_POST["tags"];
 			$source = str_replace(array("\r", "\t"), array("", " "), $source);
 			$source = trim(preg_replace("/[ ]{2,}/ims", " ", $source));
@@ -121,12 +111,10 @@ class yf_gallery_tags {
 				$num_tags = count($_tags);
 				// Save new keywords
 				foreach ((array)$keywords_array as $_word) {
-					// Check total ads limit for non-owner
 					if (!module('gallery')->is_own_gallery && $num_tags >= module('gallery')->TAGS_PER_PHOTO) {
 						break;
 					}
 					$num_tags++;
-					// Save tag
 					db()->INSERT("tags", array(
 						"object_name"	=> "gallery",
 						"object_id"		=> intval($photo_id),
@@ -136,7 +124,6 @@ class yf_gallery_tags {
 						"active"		=> 1,
 					));
 					$TAG_ID = db()->INSERT_ID();
-					// Save log
 					db()->INSERT("log_tags", array(
 						"object_id"		=> intval($photo_id),
 						"object_name"	=> "gallery",

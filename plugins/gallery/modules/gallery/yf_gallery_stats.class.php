@@ -223,8 +223,7 @@ class yf_gallery_stats {
 				FROM ".db('gallery_photos')." AS p
 				WHERE p.user_id IN(".implode(",", array_keys($gallery_users_num_photos)).") "
 					.$PHOTOS_ACCESS_SQL." 
-				ORDER BY p.show_in_ads DESC 
-						,p.add_date DESC"
+				ORDER BY p.add_date DESC"
 			);
 			while ($A = db()->fetch_assoc($Q)) {
 				$photos_by_users[$A["user_id"]][$A["id"]]	= $A;
@@ -373,7 +372,6 @@ class yf_gallery_stats {
 		$params = array(
 			"stpl_full_path"	=> $ITEM_STPL,
 			"user_name"			=> $user_name,
-			"no_show_in_ads"	=> 1,
 			"no_make_default"	=> 1,
 		);
 		return module('gallery')->_show_photo_item($photo_info, $params);

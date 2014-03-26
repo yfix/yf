@@ -13,19 +13,14 @@ class yf_gallery_settings {
 	* Edit gallery settings
 	*/
 	function settings () {
-		// Check if user is member
 		if (empty(main()->_user_info)) {
 			return _error_need_login();
 		}
-		// Ban check
 		if (main()->_user_info["ban_images"]) {
 			return module('gallery')->_error_msg("ban_images");
 		}
-		// Try to get user settings
 		$GALLERY_SETTINGS = module('gallery')->_get_settings(main()->USER_ID);
-		// Check posted data and save
-		if (!empty($_POST["go"])) {
-			// Check required data
+		if (main()->is_post()) {
 			if (!isset(module('gallery')->_thumb_types[$_POST["thumb_type"]])) {
 				_re("Wrong thumb type");
 			}
@@ -35,9 +30,7 @@ class yf_gallery_settings {
 			if (!isset(module('gallery')->_layout_types[$_POST["layout_type"]])) {
 				_re("Wrong layout type");
 			}
-			// Check for errors
 			if (!common()->_error_exists()) {
-				// Generate SQL
 				$sql = array(
 					"title"			=> _es($_POST["title"]),
 					"desc"			=> _es($_POST["desc"]),
@@ -57,7 +50,6 @@ class yf_gallery_settings {
 					$sql["allow_rate"]		= _es($_POST["allow_rate"]);
 				}
 				db()->UPDATE("gallery_settings", $sql, "user_id=".intval(main()->USER_ID));
-				// Update cache
 				$GLOBALS['_gal_settings'][main()->USER_ID]["thumb_type"]	= $_POST["thumb_type"];
 				$GLOBALS['_gal_settings'][main()->USER_ID]["medium_size"]	= $_POST["medium_size"];
 				// Regenerate thumbs (if changed)
@@ -70,18 +62,15 @@ class yf_gallery_settings {
 					$this->_regenerate_format("medium");
 				}
 // TODO: connect these privacy, allow_comments, allow_tagging and allow_rate everywhere in other gallery edit forms
-				// Return user back
 				return js_redirect("./?object=".'gallery'."&action=".$_GET["action"]._add_get(array("page")));
 			}
 		}
-		// Merge data
 		foreach ((array)$GALLERY_SETTINGS as $k => $v) {
 			$DATA[$k] = $v;
 		}
 		foreach ((array)$_POST as $k => $v) {
 			$DATA[$k] = $v;
 		}
-		// Show form
 		if (empty($_POST["go"])) {
 			$replace = array(
 				"form_action"		=> "./?object=".'gallery'."&action=".$_GET["action"]._add_get(array("page")),

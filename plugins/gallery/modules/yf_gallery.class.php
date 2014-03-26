@@ -408,14 +408,14 @@ class yf_gallery extends yf_module {
 	* Display user photos
 	*/
 	function _show_user_photos ($user_info = array(), $single_folder_id = 0, $stpl_prefix = 'show_') {
-		return _class_safe('gallery_show_photos', 'modules/gallery/')->{__FUNCTION__}($user_info, $single_folder_id, $stpl_prefix);
+		return _class_safe('gallery_show_user_photos', 'modules/gallery/')->{__FUNCTION__}($user_info, $single_folder_id, $stpl_prefix);
 	}
 
 	/**
 	* Show photo item
 	*/
 	function _show_photo_item ($photo_info = array(), $stpl_prefix = 'show_') {
-		return _class_safe('gallery_show_photos', 'modules/gallery/')->{__FUNCTION__}($photo_info, $stpl_prefix);
+		return _class_safe('gallery_show_photo_item', 'modules/gallery/')->{__FUNCTION__}($photo_info, $stpl_prefix);
 	}
 
 	/**
@@ -436,7 +436,7 @@ class yf_gallery extends yf_module {
 	* Display single photo
 	*/
 	function _show_single_photo ($params = array()) {
-		return _class_safe('gallery_show_photos', 'modules/gallery/')->{__FUNCTION__}($params);
+		return _class_safe('gallery_show_single_photo', 'modules/gallery/')->{__FUNCTION__}($params);
 	}
 
 	/**
