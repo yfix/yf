@@ -1,0 +1,9 @@
+<h3>{t('Import xls')}</h3>
+{form_import_xls}
+
+<h3>{t('Export xls')}</h3>
+{form_export_xls}
+
+<h3>{t('Parse zakaz.ua prices')}</h3>
+<p>results will be sent to admin by email on finishing</p>
+{form_export_zakaz}
