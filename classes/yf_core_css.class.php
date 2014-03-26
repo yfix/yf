@@ -42,4 +42,29 @@ class yf_core_css {
 		}
 		return $content;
 	}
+
+	function _find_module_css($module = '') {
+// TODO: connect this
+		if (!$module) {
+			$module = $_GET['object'];
+		}
+		$stpl_path = $module.'/'.$module.'.css';
+		$paths = array(
+			MAIN_TYPE_ADMIN ? YF_PATH. 'templates/admin/'.$stpl_path : '',
+			YF_PATH. 'templates/user/'.$stpl_path,
+			MAIN_TYPE_ADMIN ? YF_PATH. 'plugins/'.$module.'/templates/admin/'.$stpl_path : '',
+			YF_PATH. 'plugins/'.$module.'/templates/user/'.$stpl_path,
+			MAIN_TYPE_ADMIN ? PROJECT_PATH. 'templates/admin/'.$stpl_path : '',
+			PROJECT_PATH. 'templates/user/'.$stpl_path,
+			SITE_PATH != PROJECT_PATH ? SITE_PATH. 'templates/user/'.$stpl_path : '',
+		);
+		$found = '';
+		foreach (array_reverse($paths, true) as $path) {
+			if (file_exists($path)) {
+				$found = $path;
+				break;
+			}
+		}
+		return $found;
+	}
 }
