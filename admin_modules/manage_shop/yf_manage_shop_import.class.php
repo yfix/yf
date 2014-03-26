@@ -37,11 +37,11 @@ class yf_manage_shop_import {
 	
 	function export_zakaz_start() {
 		$path = realpath("../../scripts/import/zakaz_ua/");
-		if (file_exists($path."/out/lock") && file_get_contents($path."/out/lock") == 1) {
+		if (file_exists($path."/out/lock") && (file_get_contents($path."/out/lock") == 1)) {
 			return "Script is already executing.";
 		} else {
-			$cmd = $path . "import.php";
-			exec($cmd . ' > /dev/null &');
+			$cmd = $path . "/import.php";
+			exec("cd {$path}/ && php import.php > /dev/null &");
 			return "Script is running now. You will receive an e-mail with xls file when it will be done.";
 		}
 	}
