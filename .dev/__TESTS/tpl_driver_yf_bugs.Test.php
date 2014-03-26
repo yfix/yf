@@ -29,4 +29,29 @@ class tpl_driver_yf_bugs_test extends tpl_abstract {
 		$this->assertEquals(' ok ', self::_tpl( '{if(conf.unit_test_conf_item2 eq "6" and module_conf.main.unit_var2 eq "5")} ok {/if}' ));
 		$this->assertEquals(' ok ', self::_tpl( '{if(conf.unit_test_conf_item2 eq 6 and module_conf.main.unit_var2 eq 5)} ok {/if}' ));
 	}
+	public function test_bug_05() {
+		$this->assertEquals('.min', self::_tpl('{if(debug_mode eq 0)}.min{/if}', array('debug_mode' => 0)) );
+
+		$tpl_str = '{catch(min_ext)}{if(debug_mode eq 0)}.min{/if}{/catch}{min_ext}';
+		$this->assertEquals('.min', self::_tpl($tpl_str, array('debug_mode' => 0)) );
+		$this->assertEquals('', self::_tpl($tpl_str, array('debug_mode' => 1)) );
+	}
+	public function test_bug_06() {
+		$tpl_str = '
+			{catch(min_ext)}{if(debug_mode eq 0)}.min{/if}{/catch}
+			{if(css_framework eq "bs2" or css_framework eq "")}
+				<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap{min_ext}.js"></script>
+			{else}
+				<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap{min_ext}.js"></script>
+			{/if}
+		';
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.js"></script>'
+			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs2', 'debug_mode' => 1))) );
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap.js"></script>'
+			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs3', 'debug_mode' => 1))) );
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>'
+			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs2', 'debug_mode' => 0))) );
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap.min.js"></script>'
+			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs3', 'debug_mode' => 0))) );
+	}
 }
