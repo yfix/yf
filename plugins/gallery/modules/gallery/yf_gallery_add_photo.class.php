@@ -37,12 +37,7 @@ class yf_gallery_add_photo {
 		}
 		$_max_id2 = _class('gallery_fix_id2', 'modules/gallery/')->_fix_id2($NEW_USER_ID);
 		if (main()->is_post()) {
-			$_POST['photo_name']	= substr($_POST['photo_name'], 0, module('gallery')->MAX_NAME_LENGTH);
-			$_POST['photo_desc']	= substr($_POST['photo_desc'], 0, module('gallery')->MAX_DESC_LENGTH);
-			$_POST['folder_id']		= intval($_POST['folder_id']);
-			if (empty($_POST['folder_id']) || !isset($user_folders[$_POST['folder_id']])) {
-				_re('Wrong selected folder');
-			}
+/*
 			db()->query('DELETE FROM '.db('gallery_photos').' WHERE user_id='.intval($NEW_USER_ID).' AND active=0');
 			if (!empty(module('gallery')->MAX_TOTAL_PHOTOS)) {
 				$num_photos = db()->query_num_rows('SELECT id FROM '.db('gallery_photos').' WHERE user_id='.intval($NEW_USER_ID));
@@ -50,37 +45,34 @@ class yf_gallery_add_photo {
 					_re(t('You can upload max @num photos!', array('@num' => intval(module('gallery')->MAX_TOTAL_PHOTOS))));
 				}
 			}
+*/
 			// Shortcut for the uploaded photo info
 			$_PHOTO = $_FILES[module('gallery')->PHOTO_NAME_IN_FORM];
 			if (empty($_PHOTO) || empty($_PHOTO['size'])) {
 				_re('Photo file required');
 			}
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				$ext = strtolower(common()->get_file_ext($_PHOTO['name']));
 				if (module('gallery')->ALLOW_BULK_UPLOAD && in_array($ext, array('zip', 'tar'))) {
 					return _class('gallery_add_photos_bulk', 'modules/gallery/')->_add_photos_bulk($NEW_USER_ID);
 				}
 			}
-			if (!common()->_error_exists()) {
-				$_POST['photo_name'] = module('gallery')->_filter_text($_POST['photo_name']);
-				$_POST['photo_desc'] = module('gallery')->_filter_text($_POST['photo_desc']);
-				$SOURCE_PHOTO_NAME = module('gallery')->_prepare_photo_name($_PHOTO['name']);
+			if (!_ee()) {
 				$creation_time = time();
 				db()->query('BEGIN');
-				$sql_array = array(
+				db()->insert_safe('gallery_photos', array(
 					'user_id'		=> intval($NEW_USER_ID),
 					'folder_id'		=> intval($_POST['folder_id']),
-					'img_name'		=> _es($SOURCE_PHOTO_NAME),
-					'name'			=> _es($_POST['photo_name']),
-					'desc'			=> _es($_POST['photo_desc']),
+					'name'			=> module('gallery')->_filter_text($_POST['name']),
+					'desc'			=> module('gallery')->_filter_text($_POST['desc']),
+					'img_name'		=> module('gallery')->_prepare_photo_name($_PHOTO['name']),
 					'add_date'		=> $creation_time,
 					'active' 		=> 0,
 					'allow_rate'	=> intval((bool) $_POST['allow_rate']),
 					'allow_tagging'	=> intval((bool) $_POST['allow_tagging']),
 					'id2'			=> intval($_max_id2 + 1),
 					'is_featured'	=> intval((bool) $_POST['is_featured']),
-				);
-				db()->INSERT('gallery_photos', $sql_array);
+				));
 				$PHOTO_RECORD_ID = intval(db()->INSERT_ID());
 				if (empty($PHOTO_RECORD_ID)) {
 					_re('Cant insert record into db');
@@ -89,7 +81,7 @@ class yf_gallery_add_photo {
 					module_safe('tags')->_save_tags($_POST['tags'], $PHOTO_RECORD_ID, 'gallery');
 				}
 			}
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				$new_photo_info = array(
 					'id'		=> $PHOTO_RECORD_ID,
 					'id2'		=> intval($_max_id2 + 1),
@@ -104,10 +96,10 @@ class yf_gallery_add_photo {
 					module('gallery')->_update_other_info($new_photo_info);
 				}
 			}
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				db()->UPDATE('gallery_photos', array('active' => 1), 'id='.intval($PHOTO_RECORD_ID));
 			} 
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				db()->query('COMMIT');
 				module('gallery')->_sync_public_photos(main()->USER_ID);
 				_class_safe('user_stats')->_update(array('user_id' => $NEW_USER_ID));
@@ -115,7 +107,7 @@ class yf_gallery_add_photo {
 				return js_redirect('./?object='.'gallery'.'&action='.(!empty($redirect_folder_id) ? 'view_folder&id='.$redirect_folder_id : 'show_gallery'). _add_get(array('page')));
 			}
 		}
-		if (common()->_error_exists()) {
+		if (_ee()) {
 			$error_message = _e();
 			db()->query('ROLLBACK');
 		}
@@ -127,14 +119,14 @@ class yf_gallery_add_photo {
 			->validate(array(
 				'folder_id'		=> 'required|integer',
 				'photo_file'	=> 'required', // valid_image[jpeg,png]|image_max_size[500000]|image_height[100,1000],image_width[100,1000],
-				'title'			=> 'trim|xss_clean|strip_tags',
-				'comments'		=> 'trim|xss_clean|strip_tags',
+				'name'			=> 'trim|xss_clean|strip_tags|max_length['.module('gallery')->MAX_NAME_LENGTH.']',
+				'desc'			=> 'trim|xss_clean|strip_tags|max_length['.module('gallery')->MAX_DESC_LENGTH.']',
 				'tags'			=> 'trim|xss_clean|strip_tags',
 			))
 			->select_box('folder_id', module('gallery')->_folders_for_select, array('desc' => 'Folder', 'edit_link' => './?object=gallery&action=add_folder'))
 			->file('photo_file', array('desc' => 'Image'))
-			->text('title')
-			->textarea('comments')
+			->text('name')
+			->textarea('desc')
 			->textarea('tags')
 			->save('Upload');
 	}

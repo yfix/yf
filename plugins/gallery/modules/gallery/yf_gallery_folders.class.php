@@ -70,7 +70,7 @@ class yf_gallery_folders {
 			if (!strlen($_POST["title"])) {
 				_re("Folder title is required");
 			}
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				$_POST["title"]		= module('gallery')->_filter_text($_POST["title"]);
 				$_POST["comment"]	= module('gallery')->_filter_text($_POST["comment"]);
 				$creation_time = time();
@@ -154,7 +154,7 @@ class yf_gallery_folders {
 			if (!strlen($_POST["title"])) {
 				_re("Folder title is required");
 			}
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				$_POST["title"]		= module('gallery')->_filter_text($_POST["title"]);
 				$_POST["comment"]	= module('gallery')->_filter_text($_POST["comment"]);
 				$creation_time = time();
@@ -252,7 +252,7 @@ class yf_gallery_folders {
 					}
 				}
 			}
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				if ($_POST["choose"] == "delete") {
 					foreach ((array)$folder_photos as $photo_info) {
 						foreach ((array)module('gallery')->PHOTO_TYPES as $format_name => $format_info) {
@@ -356,7 +356,7 @@ class yf_gallery_folders {
 				_re("Wrong password!");
 			}
 			// Return user back
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				return js_redirect("./?object=".'gallery'."&action=".$_GET["action"]. (!empty($_GET["id"]) ? "&id=".$_GET["id"] : ""));
 			}
 		}

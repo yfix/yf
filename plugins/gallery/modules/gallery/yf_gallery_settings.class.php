@@ -30,7 +30,7 @@ class yf_gallery_settings {
 			if (!isset(module('gallery')->_layout_types[$_POST["layout_type"]])) {
 				_re("Wrong layout type");
 			}
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				$sql = array(
 					"title"			=> _es($_POST["title"]),
 					"desc"			=> _es($_POST["desc"]),

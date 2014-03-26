@@ -110,10 +110,10 @@ class yf_gallery_manage {
 				_re("Missing required params for image cropper.");
 			}
 			// Check for errors
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				list($pos_left, $pos_top, $crop_width, $crop_height) = explode(";", $_POST["params"]);
 			}
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				// Check if crop width and height matches source ones (so we do not need to crop anything)
 				if (!empty($crop_width) 
 					&& !empty($crop_height) 
@@ -157,7 +157,7 @@ class yf_gallery_manage {
 			return _e("Image manipulations not allowed.");
 		}
 		// Check for errors
-		if (!common()->_error_exists()) {
+		if (!_ee()) {
 			if ($_GET["page"] == "cw")	$angle = -90;
 			if ($_GET["page"] == "ccw") $angle = 90;
 			if ($_GET["page"] == "180") $angle = 180;
@@ -245,7 +245,7 @@ class yf_gallery_manage {
 		// Do upload image
 		$upload_result = common()->upload_image($photo_path, $_PHOTO, module('gallery')->MAX_IMAGE_SIZE, $is_local);
 		if (!$upload_result) {
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				_e("Unrecognized error occured while uploading image");
 			}
 			return false;

@@ -69,7 +69,7 @@ class yf_gallery_add_photos_bulk {
 			if (!$ext_to_mime[$file_ext]) {
 				continue;
 			}
-			if (common()->_error_exists()) {
+			if (_ee()) {
 				break;
 			}
 			$SOURCE_PHOTO_NAME = module('gallery')->_prepare_photo_name(basename($_photo_path));
@@ -115,7 +115,7 @@ class yf_gallery_add_photos_bulk {
 					module('gallery')->_update_other_info($new_photo_info);
 				}
 			}
-			if (!common()->_error_exists()) {
+			if (!_ee()) {
 				db()->UPDATE('gallery_photos', array('active' => 1), 'id='.intval($PHOTO_RECORD_ID));
 				db()->query('COMMIT');
 				if (isset($_POST['tags'])) {
@@ -128,7 +128,7 @@ class yf_gallery_add_photos_bulk {
 			$_max_id2++;
 		}
 
- 		if (!common()->_error_exists()) {
+ 		if (!_ee()) {
 			module('gallery')->_sync_public_photos($NEW_USER_ID);
 			_class_safe('user_stats')->_update(array('user_id' => $NEW_USER_ID));
 		}
@@ -136,7 +136,7 @@ class yf_gallery_add_photos_bulk {
 		_class('dir')->delete_dir($_archive_extract_path, true);
 		unlink($_archive_uploaded_path);
 
-		if (common()->_error_exists()) {
+		if (_ee()) {
 			return _e();
 		}
 		$redirect_folder_id = module('gallery')->HIDE_TOTAL_ID ? $user_folders[$_POST['folder_id']]['id2'] : $_POST['folder_id'];

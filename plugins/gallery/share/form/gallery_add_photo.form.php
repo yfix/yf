@@ -7,10 +7,10 @@ $data = array(
 	'photo_file' => array(
 		'tip' => t('JPEGs only, up to %max bytes', array('%max' => (int)module('gallery')->MAX_IMAGE_SIZE)),
 	),
-	'title' => array(
+	'name' => array(
 		'tip' => t('Optional field. Although you may leave it blank, photo title will allow your site pages to be better positioned on search engines. Up to %max characters', array('%max' => (int)module('gallery')->MAX_IMAGE_SIZE)),
 	),
-	'comments' => array(
+	'desc' => array(
 		'tip' => t('Optional field. You can write a short photo description here. Remember, although you may leave it blank, description texts allow your site pages to be better positioned on search engines.'),
 	),
 	'tags' => array(
