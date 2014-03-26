@@ -1,9 +1,6 @@
 [submodule "libs/php5-utf8"]
 	path = libs/php5-utf8
 	url = https://github.com/yfix/php5-utf8.git
-[submodule "libs/lessphp"]
-	path = libs/lessphp
-	url = https://github.com/yfix/lessphp.git
 [submodule "libs/phpmailer"]
 	path = libs/phpmailer
 	url = https://github.com/yfix/PHPMailer.git
@@ -16,9 +13,6 @@
 [submodule "libs/kcfinder"]
 	path = libs/kcfinder
 	url = https://github.com/yfix/yf_kcfinder.git
-[submodule "libs/php-sass"]
-	path = libs/php-sass
-	url = https://github.com/yfix/php-sass.git
 [submodule "libs/smarty"]
 	path = libs/smarty
 	url = https://github.com/yfix/smarty.git
