@@ -65,4 +65,29 @@ class yf_core_js {
 		}
 		return $content;
 	}
+
+	function _find_module_js($module = '') {
+// TODO: connect this
+		if (!$module) {
+			$module = $_GET['object'];
+		}
+		$js_path = $module.'/'.$module.'.js';
+		$paths = array(
+			MAIN_TYPE_ADMIN ? YF_PATH. 'templates/admin/'.$js_path : '',
+			YF_PATH. 'templates/user/'.$js_path,
+			MAIN_TYPE_ADMIN ? YF_PATH. 'plugins/'.$module.'/templates/admin/'.$js_path : '',
+			YF_PATH. 'plugins/'.$module.'/templates/user/'.$js_path,
+			MAIN_TYPE_ADMIN ? PROJECT_PATH. 'templates/admin/'.$js_path : '',
+			PROJECT_PATH. 'templates/user/'.$js_path,
+			SITE_PATH != PROJECT_PATH ? SITE_PATH. 'templates/user/'.$js_path : '',
+		);
+		$found = '';
+		foreach (array_reverse($paths, true) as $path) {
+			if (file_exists($path)) {
+				$found = $path;
+				break;
+			}
+		}
+		return $found;
+	}
 }
