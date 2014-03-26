@@ -1,10 +1,10 @@
 <div align="right">
 {{--
 {if("is_logged_in" eq 1)}
-	<br /><a href="{manage_link}" class="actionlink">{t(Go to my articles)}</a>
+	<br /><a href="{manage_link}" class="btn btn-mini btn-xs">{t(Go to my articles)}</a>
 {/if}
 --}}
-	&nbsp;<a href="{search_link}" class="actionlink">{t(Search articles)}</a><br /><br />
+	&nbsp;<a href="{search_link}" class="btn btn-mini btn-xs">{t(Search articles)}</a><br /><br />
 </div>
 
 <div>

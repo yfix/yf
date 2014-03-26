@@ -11,8 +11,8 @@
 	<tr>
 		<td align="left">
 			<p  class="text_main">{#.head_text} <a href="{#.full_link}">{t(Read more...)}</a></p>
-			<a href="{#.full_link}" class="actionlink">{t(Read entire article)}</a>&nbsp;
-			<a href="{#.full_link}" class="actionlink">{t(Comments)} ({#.num_comments})</a>&nbsp;
+			<a href="{#.full_link}" class="btn btn-mini btn-xs">{t(Read entire article)}</a>&nbsp;
+			<a href="{#.full_link}" class="btn btn-mini btn-xs">{t(Comments)} ({#.num_comments})</a>&nbsp;
 			<br /><br />
 		</td>
 	</tr>

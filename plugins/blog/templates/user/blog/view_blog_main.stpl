@@ -8,9 +8,9 @@
 
 {{--
 <div align="right">
-{if("add_post_link" ne "")}<a href="{add_post_link}"  class="actionlink">{t(Add new entry)}</a>{/if}
-{if("change_settings_link" ne "")}&nbsp;<a href="{change_settings_link}" class="actionlink">{t(Change blog settings)}</a>{/if}
-{if("users_comments_link" ne "")}&nbsp;<a href="{users_comments_link}" class="actionlink">{t(Comments to my blog)}</a>{/if}
+{if("add_post_link" ne "")}<a href="{add_post_link}"  class="btn btn-mini btn-xs">{t(Add new entry)}</a>{/if}
+{if("change_settings_link" ne "")}&nbsp;<a href="{change_settings_link}" class="btn btn-mini btn-xs">{t(Change blog settings)}</a>{/if}
+{if("users_comments_link" ne "")}&nbsp;<a href="{users_comments_link}" class="btn btn-mini btn-xs">{t(Comments to my blog)}</a>{/if}
 </div>
 --}}
 

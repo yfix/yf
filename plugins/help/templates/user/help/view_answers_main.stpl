@@ -47,7 +47,7 @@
 <form method="post" action="{close_link}" id="close_ticket_form">
 	<p class="full_width">
 		<input type="hidden" name="go" value="">
-		<a href="javascript:;" class="actionlink" onclick="if (confirm ('{t(Are you sure?)}')) document.getElementById('close_ticket_form').submit();" title="{t(Close this ticket)}">{t(Close this ticket)}</a>
+		<a href="javascript:;" class="btn btn-mini btn-xs" onclick="if (confirm ('{t(Are you sure?)}')) document.getElementById('close_ticket_form').submit();" title="{t(Close this ticket)}">{t(Close this ticket)}</a>
 	</p>
 </form>
 {/if}
@@ -55,7 +55,7 @@
 <form method="post" action="{reopen_link}" id="reopen_ticket_form">
 	<p class="full_width">
 		<input type="hidden" name="go" value="">
-		<a href="javascript:;" class="actionlink" onclick="if (confirm ('{t(Are you sure?)}')) document.getElementById('reopen_ticket_form').submit();" title="{t(Re-Open this ticket)}">{t(Re-Open this ticket)}</a>
+		<a href="javascript:;" class="btn btn-mini btn-xs" onclick="if (confirm ('{t(Are you sure?)}')) document.getElementById('reopen_ticket_form').submit();" title="{t(Re-Open this ticket)}">{t(Re-Open this ticket)}</a>
 	</p>
 </form>
 {/if}

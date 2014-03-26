@@ -14,12 +14,11 @@
 </div>
 
 <div align="right">
-{if("change_pswd_link" ne "")}<a href="{change_pswd_link}" class="actionlink">{t(Change folder password)}</a><br />{/if}
-{if("add_photo_link" ne "")}<a href="{add_photo_link}" class="actionlink">{t(Add new photo)}</a><br />{/if}
-{if("edit_folder_link" ne "")}<a href="{edit_folder_link}" class="actionlink">{t(Edit folder)}</a><br />{/if}
-{if("delete_folder_link" ne "")}<a href="{delete_folder_link}" class="actionlink" onclick="return confirm('{t(Are you sure?)}')">{t(Delete folder)}</a><br />{/if}
-{if("add_folder_link" ne "")}<a href="{add_folder_link}" class="actionlink">{t(Add new folder)}</a><br />{/if}
-
+{if("change_pswd_link" ne "")}<a href="{change_pswd_link}" class="btn btn-mini btn-xs">{t(Change folder password)}</a><br />{/if}
+{if("add_photo_link" ne "")}<a href="{add_photo_link}" class="btn btn-mini btn-xs">{t(Add new photo)}</a><br />{/if}
+{if("edit_folder_link" ne "")}<a href="{edit_folder_link}" class="btn btn-mini btn-xs">{t(Edit folder)}</a><br />{/if}
+{if("delete_folder_link" ne "")}<a href="{delete_folder_link}" class="btn btn-mini btn-xs" onclick="return confirm('{t(Are you sure?)}')">{t(Delete folder)}</a><br />{/if}
+{if("add_folder_link" ne "")}<a href="{add_folder_link}" class="btn btn-mini btn-xs">{t(Add new folder)}</a><br />{/if}
 </div>
 
 {if("photos" eq "")}

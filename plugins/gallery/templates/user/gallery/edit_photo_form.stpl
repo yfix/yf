@@ -1,7 +1,7 @@
 <h1 class="header">{t(Edit Photo)}</h1>
 
 <div align="right">
-	<a href="./?object=gallery&action=settings" class="actionlink">{t(Gallery Settings)}</a><br />
+	<a href="./?object=gallery&action=settings" class="btn btn-mini btn-xs">{t(Gallery Settings)}</a><br />
 </div>
 
 {refresh_image_code}
@@ -16,10 +16,10 @@
 			<tr valign="top">
 				<td><img src="{thumb_src}" alt="{t(Photo)}" /></td>
 				<td align="left">
-					<a href="{crop_link}" class="actionlink">{t(Crop photo)}</a><br />
-					<a href="{rotate_link}&page=cw" class="actionlink" onclick="return confirm('{t(Are you sure)}?')">{t(Rotate clockwise)}</a><br />
-					<a href="{rotate_link}&page=ccw" class="actionlink" onclick="return confirm('{t(Are you sure)}?')">{t(Rotate counterclockwise)}</a><br />
-					<a href="{rotate_link}&page=180" class="actionlink" onclick="return confirm('{t(Are you sure)}?')">{t(Rotate 180 degrees)}</a>
+					<a href="{crop_link}" class="btn btn-mini btn-xs">{t(Crop photo)}</a><br />
+					<a href="{rotate_link}&page=cw" class="btn btn-mini btn-xs" onclick="return confirm('{t(Are you sure)}?')">{t(Rotate clockwise)}</a><br />
+					<a href="{rotate_link}&page=ccw" class="btn btn-mini btn-xs" onclick="return confirm('{t(Are you sure)}?')">{t(Rotate counterclockwise)}</a><br />
+					<a href="{rotate_link}&page=180" class="btn btn-mini btn-xs" onclick="return confirm('{t(Are you sure)}?')">{t(Rotate 180 degrees)}</a>
 				</td>
 			</tr>
 		</table>
@@ -56,7 +56,7 @@
 {if("tagging_enabled" eq 1)}
 	<p>
 		<label for="allow_tagging_box">{t(Allow tagging)}</label>
-		<span>{allow_tagging_box} <a href="javascript:openWin('{edit_tags_link}', 400, 500)" class="actionlink">{t(Edit tags)}</a></span>
+		<span>{allow_tagging_box} <a href="javascript:openWin('{edit_tags_link}', 400, 500)" class="btn btn-mini btn-xs">{t(Edit tags)}</a></span>
 	</p>
 {/if}
 	<p>

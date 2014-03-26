@@ -21,5 +21,5 @@
 <br />
 
 <div align="right">
-	<a href="./?object=help&action=email_form" class="actionlink">{t(Add New Ticket)}</a>
+	<a href="./?object=help&action=email_form" class="btn btn-mini btn-xs">{t(Add New Ticket)}</a>
 </div>

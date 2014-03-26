@@ -41,9 +41,9 @@
 		</td>
 		<td class="formbuttonrow">
 		 	<div align="right">
-{if("delete_link" ne "")}&nbsp;<a href="{delete_link}"  class="actionlink" onclick="return confirm('{t(Are you sure)}?');">{t(Delete Post)}</a>&nbsp;{/if}
-{if("edit_link" ne "")}&nbsp;<a href="{edit_link}"  class="actionlink">{t(Edit Post)}</a>&nbsp;{/if}
-{if("quote_link" ne "")}&nbsp;<a href="{quote_link}"  class="actionlink" title="{t(Reply to this post)}">{t(Reply to this Post)}</a>&nbsp;{/if}
+{if("delete_link" ne "")}&nbsp;<a href="{delete_link}"  class="btn btn-mini btn-xs" onclick="return confirm('{t(Are you sure)}?');">{t(Delete Post)}</a>&nbsp;{/if}
+{if("edit_link" ne "")}&nbsp;<a href="{edit_link}"  class="btn btn-mini btn-xs">{t(Edit Post)}</a>&nbsp;{/if}
+{if("quote_link" ne "")}&nbsp;<a href="{quote_link}"  class="btn btn-mini btn-xs" title="{t(Reply to this post)}">{t(Reply to this Post)}</a>&nbsp;{/if}
 		 	</div>
 		 </td>
 	</tr>

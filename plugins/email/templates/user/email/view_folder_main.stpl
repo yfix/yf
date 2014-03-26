@@ -5,8 +5,8 @@
 
 
 <div align="right">
-	<a class="actionlink" href="{inbox_link}">{t(Inbox)} ({t(Received)})</a> &nbsp;
-	<a class="actionlink" href="{sent_link}">{t(Outbox)} ({t(Sent)})</a>
+	<a class="btn btn-mini btn-xs" href="{inbox_link}">{t(Inbox)} ({t(Received)})</a> &nbsp;
+	<a class="btn btn-mini btn-xs" href="{sent_link}">{t(Outbox)} ({t(Sent)})</a>
 <br />
 </div>
 {if("items" ne "")}

@@ -7,7 +7,7 @@
 			<td align="center" valign="top" width="10%">{avatar}</td>
 			<td valign="top" align="left">
 				<p class="text_short">{summary} </p>
-				<a href="{view_link}" class="actionlink">{t(More)}...</a><br />
+				<a href="{view_link}" class="btn btn-mini btn-xs">{t(More)}...</a><br />
 {if("credentials" ne "")}{t(About the author)}:<br />{credentials}{/if}
 				<div align="right">
 {if("tags_block" ne "")}

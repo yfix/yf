@@ -11,8 +11,8 @@
 
 {if("is_own_gallery" eq 1)}
 	<div>
-	{if("edit_photo_link" ne "")}<a href="{edit_photo_link}" class="actionlink"><b>{t(Edit)}</b></a>{/if}
-	{if("delete_photo_link" ne "")}<a href="{delete_photo_link}" onclick="return confirm('{t(Are you sure?)}');" class="actionlink"><b>{t(Delete)}</b></a>{/if}
+	{if("edit_photo_link" ne "")}<a href="{edit_photo_link}" class="btn btn-mini btn-xs"><b>{t(Edit)}</b></a>{/if}
+	{if("delete_photo_link" ne "")}<a href="{delete_photo_link}" onclick="return confirm('{t(Are you sure?)}');" class="btn btn-mini btn-xs"><b>{t(Delete)}</b></a>{/if}
 	</div>
 {/if}
 

@@ -30,5 +30,5 @@
 
 <br />
 
-<div align="center"><a href="javascript:self.close();" class="actionlink">{t(Close Window)}</a></div>
+<div align="center"><a href="javascript:self.close();" class="btn btn-mini btn-xs">{t(Close Window)}</a></div>
 </div>

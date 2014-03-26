@@ -1,9 +1,9 @@
 <h1 class="header">{t(Gallery Main Page)}</h1>
 
 <div align="right">
-{if("is_logged_in" eq 1)}<br /><a href="{show_own_gallery_link}" class="actionlink">{t(Go to my gallery)}</a><br />{/if}
+{if("is_logged_in" eq 1)}<br /><a href="{show_own_gallery_link}" class="btn btn-mini btn-xs">{t(Go to my gallery)}</a><br />{/if}
 
-	<br /><a href="{all_galleries_link}" class="actionlink">{t(All galleries)}</a><br />
+	<br /><a href="{all_galleries_link}" class="btn btn-mini btn-xs">{t(All galleries)}</a><br />
 </div>
 
 {if("geo_top_galleries" eq "")}

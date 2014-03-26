@@ -2,7 +2,7 @@
 
 {if("is_logged_in" eq 1)}
 <div align="right">
-	<br /><a href="{own_reput_link}" class="actionlink">{t(Go to my reputation stats)}</a>
+	<br /><a href="{own_reput_link}" class="btn btn-mini btn-xs">{t(Go to my reputation stats)}</a>
 </div>
 {/if}
 
