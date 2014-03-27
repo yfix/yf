@@ -191,7 +191,7 @@ class yf_html_controls {
 			if ($extra['no_translate']) {
 				$translate = 0;
 			}
-			$selected = $extra['selected'];
+			$selected = $extra['selected'] ? $extra['selected'] : $selected;
 			$type = isset($extra['type']) ? $extra['type'] : 2;
 			$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
 			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
