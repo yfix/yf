@@ -44,5 +44,5 @@ legend+.control-group { margin-top: 0; }
 .table { width:auto; }
 
 /* override styles per bs theme here */ 
-.bs-theme-slate textarea, select { color: inherit; }
+.bs-theme-slate textarea, .bs-theme-slate select { color: #52575c; }
 </style>
