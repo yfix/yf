@@ -77,6 +77,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name', '', array('stacked' => 1))) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(form('', array('no_form' => 1))->text('name', '', array('stacked' => 1))) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc">', trim(self::form_no_chain($r)->text('name', array('desc' => 'Desc'))) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc">', trim(self::form_no_chain($r)->text('name', 'Desc')) );
 	}
 	public function test_input_text_value() {
 		$r['name'] = 'value1';
@@ -104,6 +105,40 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	public function test_container() {
 		$this->assertEquals('<section id="test"></section>', trim(self::form_no_chain($r)->container('<section id="test"></section>')) );
 	}
+	public function test_select_box() {
+		$data = array('k1' => 'v1',	'k2' => 'v2');
+		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" >
+<option value="k1" >v1</option>
+<option value="k2" >v2</option>
+</select>', trim(self::form_no_chain($r)->select_box('myselect', $data)) );
+		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" ><option value="k1" >v1</option><option value="k2" >v2</option></select>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data))) );
+	}
+	public function test_select_box_subarray() {
+		$data = array(
+			'group1' => array('k1' => 'v1', 'k2' => 'v2'),
+			'group2' => array('k3' => 'v3',	'k4' => 'v4'),
+		);
+		$selected = 'k3';
+		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup><optgroup label="group2" title="group2"><option value="k3" >v3</option><option value="k4" >v4</option></optgroup></select>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data))) );
+		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup><optgroup label="group2" title="group2"><option value="k3" selected="selected">v3</option><option value="k4" >v4</option></optgroup></select>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data, array('selected' => $selected)))) );
+		$r['myselect'] = $selected;
+		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup><optgroup label="group2" title="group2"><option value="k3" selected="selected">v3</option><option value="k4" >v4</option></optgroup></select>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data))) );
+	}
+	public function test_multi_select_box() {
+		$data = array('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v2');
+		$selected = array('k2' => '1', 'k3' => '1');
+		$this->assertEquals('<select  multiple name="myselect[]" id="myselect_box" class=" form-control" ><option value="k1" >v1</option><option value="k2" >v2</option><option value="k3" >v2</option></select>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_select_box('myselect', $data))) );
+		$this->assertEquals('<select  multiple name="myselect[]" id="myselect_box" class=" form-control" ><option value="k1" >v1</option><option value="k2" selected="selected">v2</option><option value="k3" selected="selected">v2</option></select>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_select_box('myselect', $data, array('selected' => $selected)))) );
+		$r['myselect'] = $selected;
+		$this->assertEquals('<select  multiple name="myselect[]" id="myselect_box" class=" form-control" ><option value="k1" >v1</option><option value="k2" selected="selected">v2</option><option value="k3" selected="selected">v2</option></select>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_select_box('myselect', $data))) );
+	}
 	public function test_check_box() {
 		$this->assertEquals('<label class="checkbox"><input type="checkbox" name="id" id="id" value="1"> &nbsp;Id</label>'
 			, trim(self::form_no_chain($r)->check_box('id')) );
@@ -118,39 +153,28 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<label class="checkbox"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
 			, trim(self::form_no_chain($r)->check_box('is_public', array('checked' => 'true'))) );
 	}
-	public function test_select_box() {
-		$data = array(
-			'k1' => 'v1',
-			'k2' => 'v2',
-		);
-		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" >
-<option value="k1" >v1</option>
-<option value="k2" >v2</option>
-</select>', trim(self::form_no_chain($r)->select_box('myselect', $data)) );
-		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" ><option value="k1" >v1</option><option value="k2" >v2</option></select>'
-			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data))) );
+	public function test_multi_check_box() {
+		$data = array('k1' => 'v1', 'k2' => 'v2');
+		$selected = array('k2' => '1');
+		$this->assertEquals('<label class="checkbox">	<input type="checkbox" name="mycheck_k1" value="k1"  >	v1 &nbsp;</label><label class="checkbox">	<input type="checkbox" name="mycheck_k2" value="k2"  >	v2 &nbsp;</label>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_check_box('mycheck', $data))) );
+		$this->assertEquals('<label class="checkbox">	<input type="checkbox" name="mycheck_k1" value="k1"  >	v1 &nbsp;</label><label class="checkbox">	<input type="checkbox" name="mycheck_k2" value="k2" checked >	v2 &nbsp;</label>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_check_box('mycheck', $data, array('selected' => $selected)))) );
 	}
-	public function test_select_box_subarray() {
-		$data = array(
-			'group1' => array('k1' => 'v1', 'k2' => 'v2'),
-			'group2' => array('k3' => 'v3',	'k4' => 'v4'),
-		);
-		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup><optgroup label="group2" title="group2"><option value="k3" >v3</option><option value="k4" >v4</option></optgroup></select>'
-			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data))) );
-
-		$selected = 'k3';
-		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup><optgroup label="group2" title="group2"><option value="k3" selected="selected">v3</option><option value="k4" >v4</option></optgroup></select>'
-			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data, array('selected' => $selected)))) );
-		$r['myselect'] = $selected;
-		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup><optgroup label="group2" title="group2"><option value="k3" selected="selected">v3</option><option value="k4" >v4</option></optgroup></select>'
-			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data))) );
+	public function test_radio_box() {
+		$data = array('k1' => 'v1', 'k2' => 'v2');
+		$selected = 'k2';
+		$this->assertEquals('<label class="radio">	<input type="radio" name="myradio" value="k1"  >	v1&nbsp;</label><label class="radio">	<input type="radio" name="myradio" value="k2"  >	v2&nbsp;</label>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->radio_box('myradio', $data))) );
+		$this->assertEquals('<label class="radio">	<input type="radio" name="myradio" value="k1"  >	v1&nbsp;</label><label class="radio">	<input type="radio" name="myradio" value="k2"  checked="true">	v2&nbsp;</label>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->radio_box('myradio', $data, array('selected' => $selected)))) );
 	}
-	public function test_multi_select_box() {
-		$data = array(
-			'k1' => 'v1',
-			'k2' => 'v2',
-		);
-		$this->assertEquals('<select  multiple name="myselect[]" id="myselect_box" class=" form-control" ><option value="k1" >v1</option><option value="k2" >v2</option></select>'
-			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_select_box('myselect', $data))) );
+	public function test_div_box() {
+		$data = array('k1' => 'v1', 'k2' => 'v2');
+		$selected = 'k2';
+		$this->assertEquals('<li class="dropdown" style="list-style-type:none;"><a class="dropdown-toggle" data-toggle="dropdown">Mydiv&nbsp;<span class="caret"></span></a><ul class="dropdown-menu"><li class="dropdown"><a data-value="k1" >v1</a></li><li class="dropdown"><a data-value="k2" >v2</a></li></ul></li>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->div_box('mydiv', $data))) );
+		$this->assertEquals('<li class="dropdown" style="list-style-type:none;"><a class="dropdown-toggle" data-toggle="dropdown">Mydiv&nbsp;<span class="caret"></span></a><ul class="dropdown-menu"><li class="dropdown"><a data-value="k1" >v1</a></li><li class="dropdown"><a data-value="k2" data-selected="selected">v2</a></li></ul></li>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->div_box('mydiv', $data, array('selected' => $selected)))) );
 	}
 }
