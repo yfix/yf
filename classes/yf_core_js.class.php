@@ -8,6 +8,7 @@ class yf_core_js {
 	public $content = array();
 	/** @array List of pre-defined assets */
 	public $assets = array(
+// TODO: add support for sub-arrays and params
 		'jquery'	=> '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js',
 		'jquery-ui'	=> '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js',
 		'angular'	=> '//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js',
@@ -61,7 +62,7 @@ class yf_core_js {
 	
 	/**
 	* $content: string/array
-	* $type: = auto|url|file|inline
+	* $type: = auto|asset|url|file|inline
 	*/
 	public function add($content, $type = 'auto', $params = array()) {
 		if ($type === true) {
