@@ -837,6 +837,9 @@ class yf_table2 {
 			'func'	=> function($field, $params, $row, $instance_params, $_this) {
 				$name = $params['name'];
 				$extra = $params['extra'];
+				if ($extra['padding'] && $row['level']) {
+					$body = '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px;">&#9492;</span>';
+				}
 				if (!$params['data'] && $extra['data_name']) {
 					$params['data'] = $instance_params['data_sql_names'][$extra['data_name']];
 				}
@@ -885,18 +888,26 @@ class yf_table2 {
 					}
 					$link_text = strlen($text) ? mb_strimwidth($text, 0, $link_trim_width, '...') : t('link');
 					$attrs .= ' title="'._prepare_html($text).'"';
-					$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs"'.($a_class ? ' '._prepare_html(trim($a_class)) : ''). $attrs. '>'._prepare_html($link_text).'</a>';
+					$body .= '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs"'.($a_class ? ' '._prepare_html(trim($a_class)) : ''). $attrs. '>'._prepare_html($link_text).'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
-					$body = $text;
+					$body .= $text;
 				}
 				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
 				return $_this->_apply_badges($body, $extra, $field);
 			}
 		);
 		return $this;
+	}
+
+
+	/**
+	*/
+	function text_padded($name, $extra = array()) {
+		$extra['padding'] = true;
+		return $this->text($name, $extra);
 	}
 
 	/**
