@@ -180,9 +180,9 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	public function test_list_box() {
 		$data = array('k1' => 'v1', 'k2' => 'v2');
 		$selected = 'k2';
-		$this->assertEquals(''
+		$this->assertEquals('<div class="bfh-selectbox"><input type="hidden" name="mylist" value=""><a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#"><span class="bfh-selectbox-option bfh-selectbox-medium" data-option=""></span><b class="caret"></b></a><div class="bfh-selectbox-options"><input type="text" class="bfh-selectbox-filter"><div role="listbox"><ul role="option"><li><a tabindex="-1" href="#" data-option="k1">v1</a></li><li><a tabindex="-1" href="#" data-option="k2">v2</a></li></ul></div></div></div>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->list_box('mylist', $data))) );
-		$this->assertEquals(''
+		$this->assertEquals('<div class="bfh-selectbox"><input type="hidden" name="mylist" value="k2"><a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#"><span class="bfh-selectbox-option bfh-selectbox-medium" data-option="k2">v2</span><b class="caret"></b></a><div class="bfh-selectbox-options"><input type="text" class="bfh-selectbox-filter"><div role="listbox"><ul role="option"><li><a tabindex="-1" href="#" data-option="k1">v1</a></li><li><a tabindex="-1" href="#" data-option="k2">v2</a></li></ul></div></div></div>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->list_box('mylist', $data, array('selected' => $selected)))) );
 	}
 }
