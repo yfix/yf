@@ -28,16 +28,17 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	}
 	public static function tearDownAfterClass() {
 	}
-	public function test_01() {
-		$html = form();
+	private function form_no_chain($r = array()) {
+		return form($r, array('no_form' => 1, 'only_content' => 1, 'no_chained_mode' => 1));
+	}
+	public function test_empty_form() {
 		$this->assertEquals(  
 '<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
 <fieldset>
 </fieldset>
-</form>', trim($html));
+</form>', trim(form()) );
 	}
-	public function test_10() {
-		$html = form()->text();
+	public function test_input_text() {
 		$this->assertEquals(  
 '<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
 <fieldset>
@@ -47,10 +48,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 </div>
 </div>
 </fieldset>
-</form>', trim($html));
-	}
-	public function test_11() {
-		$html = form()->text('name');
+</form>', trim(form()->text()) );
 		$this->assertEquals(  
 '<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
 <fieldset>
@@ -61,50 +59,74 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 </div>
 </div>
 </fieldset>
-</form>', trim($html));
+</form>', trim(form()->text('name')) );
 	}
-	public function test_12() {
-		$html = form('', array('no_form' => 1))->text('name');
+	public function test_input_text_no_form() {
 		$this->assertEquals(  
 '<div class="control-group form-group">
 <label class="control-label col-lg-4" for="name">Name</label>
 <div class="controls col-lg-8">
 <input name="name" type="text" id="name" class="form-control" placeholder="Name">
 </div>
-</div>', trim($html));
+</div>', trim(form('', array('no_form' => 1))->text('name')) );
 	}
-	public function test_13() {
-		$html = form('', array('no_form' => 1))->text('name', array('stacked' => 1));
-		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim($html));
+	public function test_input_text_simple() {
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name')) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name', '')) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name', '', array('stacked' => 1))) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name', '', array('stacked' => 1))) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(form('', array('no_form' => 1))->text('name', '', array('stacked' => 1))) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc">', trim(self::form_no_chain($r)->text('name', array('desc' => 'Desc'))) );
 	}
-	public function test_14() {
-		$html = form('', array('no_form' => 1))->text('name', '', array('stacked' => 1));
-		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim($html));
-	}
-	public function test_15() {
-		$html = form('', array('no_form' => 1))->text('name', array('stacked' => 1, 'desc' => 'Desc'));
-		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc">', trim($html));
-	}
-	public function test_16() {
+	public function test_input_text_value() {
 		$r['name'] = 'value1';
-		$html = form($r, array('no_form' => 1))->text('name', array('stacked' => 1, 'desc' => 'Desc'));
-		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc" value="value1">', trim($html));
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc" value="value1">'
+			, trim(self::form_no_chain($r)->text('name', array('desc' => 'Desc'))) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc" value="value1">'
+			, trim(form($r, array('no_form' => 1))->text('name', array('stacked' => 1, 'desc' => 'Desc'))) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" style="color:red;" placeholder="Desc" value="value1">'
+			, self::form_no_chain($r)->text('name', array('desc' => 'Desc', 'style' => 'color:red;')) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" style="color:red;" placeholder="Desc" value="value1">'
+			, self::form_no_chain($r)->text('name', array('desc' => 'Desc', 'style' => 'color:red;', 'value' => 'value1')) );
 	}
-	public function test_17() {
-		$r['name'] = 'value1';
-		$html = form($r, array('no_form' => 1))->text('name', array('stacked' => 1, 'desc' => 'Desc', 'style' => 'color:red;'));
-		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" style="color:red;" placeholder="Desc" value="value1">', trim($html));
+	public function test_input_textarea() {
+		$this->assertEquals('<textarea id="name" name="name" placeholder="Name" contenteditable="true" class="ckeditor form-control"></textarea>', trim(self::form_no_chain($r)->textarea('name')) );
+		$this->assertEquals('<textarea id="name" name="name" placeholder="Name" contenteditable="true" class="ckeditor form-control"></textarea>', trim(self::form_no_chain($r)->textarea('name', '')) );
+		$this->assertEquals('<textarea id="name" name="name" placeholder="Desc" contenteditable="true" class="ckeditor form-control"></textarea>'
+			, trim(self::form_no_chain($r)->textarea('name', '', array('desc' => 'Desc'))) );
+		$this->assertEquals('<textarea id="name" name="name" placeholder="Desc" contenteditable="true" class="ckeditor form-control"></textarea>'
+			, trim(self::form_no_chain($r)->textarea('name', array('desc' => 'Desc'))) );
 	}
-	public function test_18() {
-		$html = form($r, array('no_form' => 1))->text('name', array('stacked' => 1, 'desc' => 'Desc', 'style' => 'color:red;', 'value' => 'value1'));
-		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" style="color:red;" placeholder="Desc" value="value1">', trim($html));
+	public function test_input_hidden() {
+		$this->assertEquals('<input type="hidden" id="hdn" name="hdn">', trim(self::form_no_chain($r)->hidden('hdn')) );
+		$this->assertEquals('<input type="hidden" id="hdn" name="hdn" value="val1">', trim(self::form_no_chain($r)->hidden('hdn', array('value' => 'val1'))) );
 	}
-	public function test_19() {
-		$html = form($r, array('no_form' => 1))->hidden('hdn');
-		$this->assertEquals('<input type="hidden" id="hdn" name="hdn">', trim($html));
+	public function test_container() {
+		$this->assertEquals('<section id="test"></section>', trim(self::form_no_chain($r)->container('<section id="test"></section>')) );
 	}
-	public function test_20() {
-		$html = form($r, array('no_form' => 1))->hidden('hdn', array('value' => 'val1'));
-		$this->assertEquals('<input type="hidden" id="hdn" name="hdn" value="val1">', trim($html));
+	public function test_check_box() {
+		$this->assertEquals('<label class="checkbox"><input type="checkbox" name="id" id="id" value="1"> &nbsp;Id</label>'
+			, trim(self::form_no_chain($r)->check_box('id')) );
+		$this->assertEquals('<label class="checkbox"><input type="checkbox" name="id" id="id" value="1" checked="checked"> &nbsp;Id</label>'
+			, trim(self::form_no_chain($r)->check_box('id', array('selected' => 'true'))) );
+		$this->assertEquals('<label class="checkbox"><input type="checkbox" name="id" id="id" value="1" checked="checked"> &nbsp;Id</label>'
+			, trim(self::form_no_chain($r)->check_box('id', '1', array('selected' => 'true'))) );
+		$this->assertEquals('<label class="checkbox"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+			, trim(self::form_no_chain($r)->check_box('is_public', '1', array('selected' => 'true'))) );
+		$this->assertEquals('<label class="checkbox"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+			, trim(self::form_no_chain($r)->check_box('is_public', '1', array('checked' => 'true'))) );
+		$this->assertEquals('<label class="checkbox"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+			, trim(self::form_no_chain($r)->check_box('is_public', array('checked' => 'true'))) );
+	}
+	public function test_select_box() {
+		$data = array(
+			'k1' => 'v1',
+			'k2' => 'v2',
+		);
+		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" >
+<option value="k1" >v1</option>
+<option value="k2" >v2</option>
+</select>', trim(self::form_no_chain($r)->select_box('myselect', $data)) );
+		$this->assertEquals('<select name="myselect" id="myselect_box" class=" form-control" ><option value="k1" >v1</option><option value="k2" >v2</option></select>', str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data))) );
 	}
 }
