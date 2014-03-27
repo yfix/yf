@@ -16,8 +16,8 @@
 
 <div align="center">
 	<br />
-	<a href="javascript:history.back()" class="actionlink">{t("Back")}</a>&nbsp;
-	- &nbsp;<a href="{reply_link}" class="actionlink">{t("Reply")}</a>&nbsp;
-	- &nbsp;<a href="{forward_link}" class="actionlink">{t("Forward")}</a>&nbsp;
-	- &nbsp;<a href="{delete_link}" class="actionlink">{t("Delete")}</a>
+	<a href="javascript:history.back()" class="btn btn-mini btn-xs">{t("Back")}</a>&nbsp;
+	- &nbsp;<a href="{reply_link}" class="btn btn-mini btn-xs">{t("Reply")}</a>&nbsp;
+	- &nbsp;<a href="{forward_link}" class="btn btn-mini btn-xs">{t("Forward")}</a>&nbsp;
+	- &nbsp;<a href="{delete_link}" class="btn btn-mini btn-xs">{t("Delete")}</a>
 </div>

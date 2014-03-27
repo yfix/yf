@@ -8,6 +8,8 @@ class yf_core_css {
 	function _init() {
 	}
 
+	/**
+	*/
 	function add($content, $is_file = true, $params = array()) {
 		// input: string/array
 		// todo: auto detection of css/link
@@ -30,6 +32,8 @@ class yf_core_css {
 		}
 	}
 
+	/**
+	*/
 	function show_css($params = array()) {
 		$content = tpl()->parse_if_exists('style_css');
 		$content = trim($content);
@@ -40,6 +44,39 @@ class yf_core_css {
 		foreach ((array)$this->content_added as $v) {
 			$content .= $v;
 		}
+		$module_css_path = $this->_find_module_css($_GET['object']);
+		if ($module_css_path) {
+			$content .= PHP_EOL. '<style type="text/css">'.file_get_contents($module_css_path).'</style>'. PHP_EOL;
+		}
 		return $content;
+	}
+
+	/**
+	*/
+	function _find_module_css($module = '') {
+		if (!$module) {
+			$module = $_GET['object'];
+		}
+		$stpl_path = $module.'/'.$module.'.css';
+		$paths = array(
+			MAIN_TYPE_ADMIN ? YF_PATH. 'templates/admin/'.$stpl_path : '',
+			YF_PATH. 'templates/user/'.$stpl_path,
+			MAIN_TYPE_ADMIN ? YF_PATH. 'plugins/'.$module.'/templates/admin/'.$stpl_path : '',
+			YF_PATH. 'plugins/'.$module.'/templates/user/'.$stpl_path,
+			MAIN_TYPE_ADMIN ? PROJECT_PATH. 'templates/admin/'.$stpl_path : '',
+			PROJECT_PATH. 'templates/user/'.$stpl_path,
+			SITE_PATH != PROJECT_PATH ? SITE_PATH. 'templates/user/'.$stpl_path : '',
+		);
+		$found = '';
+		foreach (array_reverse($paths, true) as $path) {
+			if (!strlen($path)) {
+				continue;
+			}
+			if (file_exists($path)) {
+				$found = $path;
+				break;
+			}
+		}
+		return $found;
 	}
 }

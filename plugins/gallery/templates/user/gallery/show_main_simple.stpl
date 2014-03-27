@@ -1,0 +1,14 @@
+{if("photos" eq "")}<p>{t(No public accessible photos yet. Either this user has not uploaded any images yet, or your access level is not high enough to see them)}.</p>{/if}
+
+<div>{photos}</div>
+
+<div style="clear:both;"></div>
+
+<script type="text/javascript">
+<!--
+try {
+	{if("slideshow_mode" ge "2")} _hs_params['captionId'] = 'controlbar'; {/if}
+	{if("slideshow_mode" eq "3")} _hs_params['dimmingOpacity'] = 0.75; {/if}
+} catch (e) {}
+-->
+</script>

@@ -1,7 +1,7 @@
 <table border="0" width="100%">
 	<tr valign="top">
 		<td width="60%">
-{t(Name)}: <a href="{user_profile_link}" class="actionlink">{user_name}</a><br />
+{t(Name)}: <a href="{user_profile_link}" class="btn btn-mini btn-xs">{user_name}</a><br />
 <small>
 {t(Group)}: {user_group}<br />
 {t(Registration Date)}: {reg_date}<br />
@@ -9,12 +9,12 @@
 {t(Last Login)}: {last_login}<br />
 {t(Number of Logins)}: {num_logins}<br />
 </small>
-{if("gallery_link" ne "")}<a href="{gallery_link}" class="actionlink">{t(Gallery)}</a><br />{/if}
-{if("blog_link" ne "")}<a href="{blog_link}" class="actionlink">{t(Blog)}</a><br />{/if}
-{if("articles_link" ne "")}<a href="{articles_link}" class="actionlink">{t(Articles)}</a><br />{/if}
-{if("interests_link" ne "")}<a href="{interests_link}" class="actionlink">{t(Interests)}</a><br />{/if}
+{if("gallery_link" ne "")}<a href="{gallery_link}" class="btn btn-mini btn-xs">{t(Gallery)}</a><br />{/if}
+{if("blog_link" ne "")}<a href="{blog_link}" class="btn btn-mini btn-xs">{t(Blog)}</a><br />{/if}
+{if("articles_link" ne "")}<a href="{articles_link}" class="btn btn-mini btn-xs">{t(Articles)}</a><br />{/if}
+{if("interests_link" ne "")}<a href="{interests_link}" class="btn btn-mini btn-xs">{t(Interests)}</a><br />{/if}
 
-{if("contact_link" ne "")}<br /><a href="{contact_link}" class="actionlink">{t(Contact)}</a>{/if}
+{if("contact_link" ne "")}<br /><a href="{contact_link}" class="btn btn-mini btn-xs">{t(Contact)}</a>{/if}
 		</td>
 		<td>
 	{user_avatar}

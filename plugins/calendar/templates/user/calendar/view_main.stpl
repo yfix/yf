@@ -1,7 +1,7 @@
 {{--
 {if("manage_link" ne "")}
 <div align="right">
-	<a href="{manage_link}" class="actionlink">{t(Edit your calendar)}</a>
+	<a href="{manage_link}" class="btn btn-mini btn-xs">{t(Edit your calendar)}</a>
 </div>
 {/if}
 --}}
@@ -18,10 +18,10 @@
 <table align="center">
 	<tr>
 		<td align="left" width="50%" nowrap>
-{if("prev_month_link" ne "")}<a href='{prev_month_link}' class="actionlink">({t(Previous month)}) &lt;&lt;&lt;</a>{/if}
+{if("prev_month_link" ne "")}<a href='{prev_month_link}' class="btn btn-mini btn-xs">({t(Previous month)}) &lt;&lt;&lt;</a>{/if}
 		</td>
 		<td align="right" width="50%" nowrap>
-{if("next_month_link" ne "")}<a href='{next_month_link}' class="actionlink">&gt;&gt;&gt; ({t(Next month)})</a>{/if}
+{if("next_month_link" ne "")}<a href='{next_month_link}' class="btn btn-mini btn-xs">&gt;&gt;&gt; ({t(Next month)})</a>{/if}
 		</td>
 	</tr>
 </table>

@@ -15,6 +15,37 @@ class yf_manage_shop_import {
 		);		
 	}
 
+	function _show_form() {
+		$form_import_xls = form('',array('enctype' => 'multipart/form-data'))
+				->select_box('type', module('manage_shop_import')->_types)
+				->select_box('mode', module('manage_shop_import')->_modes)
+				->file("file")
+				->save('', "Upload");
+		
+		$form_export_xls = form('',array('action' => "./?object=manage_shop&action=products_xls_export"))
+				->select_box('supplier_id', _class('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'no_translate' => 1, 'hide_empty' => 1))
+				->save('', "Export");
+		$form_export_zakaz = form('',array('action' => "./?object=manage_shop&action=export_zakaz_start"))	
+				->save('', "Execute zakaz.ua export script");
+		
+		return tpl()->parse("manage_shop/import_xls", array(
+			'form_import_xls' => $form_import_xls,
+			'form_export_xls' => $form_export_xls,
+			'form_export_zakaz' => $form_export_zakaz,
+		));
+	}
+	
+	function export_zakaz_start() {
+		$path = realpath("../../scripts/import/zakaz_ua/");
+		if (file_exists($path."/out/lock") && (file_get_contents($path."/out/lock") == 1)) {
+			return "Script is already executing.";
+		} else {
+			$cmd = $path . "/import.php";
+			exec("(cd {$path}/ && php import.php) > /dev/null 2>&1 &");
+			return "Script is running now. You will receive an e-mail with xls file when it will be done.";
+		}
+	}
+	
 	/**
 	*/
 	function import_xls() {
@@ -22,12 +53,9 @@ class yf_manage_shop_import {
 		$SUPPLIER_ID = module('shop_supplier_panel')->SUPPLIER_ID;
 		$cat_aliases = db()->get_2d("SELECT name, cat_id FROM `".db('shop_suppliers_cat_aliases')."` WHERE supplier_id=".intval($SUPPLIER_ID));
 		
-		if (empty($_FILES)) {
-			return form('',array('enctype' => 'multipart/form-data'))
-				->select_box('type', module('manage_shop_import')->_types)
-				->select_box('mode', module('manage_shop_import')->_modes)
-				->file("file")
-				->save('', "Upload");
+		if (empty($_FILES['file'])) {
+			
+			return $this->_show_form();
 		}
 		if (file_exists(YF_PATH."libs/phpexcel/PHPExcel.php")) {
 			require_once(YF_PATH."libs/phpexcel/PHPExcel.php");

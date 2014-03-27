@@ -1,8 +1,8 @@
 <div align="right">
 {if("is_logged_in" eq 1)}
-	<a href="{manage_link}" class="actionlink">{t(Go to my interests)}</a><br />
+	<a href="{manage_link}" class="btn btn-mini btn-xs">{t(Go to my interests)}</a><br />
 {/if}
-	<a href="{search_link}" class="actionlink">{t(Search members by interest)}</a>
+	<a href="{search_link}" class="btn btn-mini btn-xs">{t(Search members by interest)}</a>
 </div>
 
 <br />

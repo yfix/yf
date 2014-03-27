@@ -1,10 +1,18 @@
+{catch(ng_app)}api.admin{/catch}
 <!DOCTYPE html>
-<html>
+<html{if( ng_app ne '' )} ng-app="{ng_app}"{/if}>
 <head>
 	<title>{execute(graphics,show_site_title)}</title>
 	<base href="{const(ADMIN_WEB_PATH)}"/>
 	<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
 {execute(common,bs_theme_html)}
+
+{{-- angular api --}}
+{if( ng_app ne '' )}
+	{include( ng_app_lib )}
+	{include( ng_app_js )}
+{/if}
+
 {execute_shutdown(graphics,show_css)}
 
 {execute(graphics,show_metatags)}

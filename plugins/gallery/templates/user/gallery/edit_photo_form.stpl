@@ -1,0 +1,71 @@
+<h1 class="header">{t(Edit Photo)}</h1>
+
+<div align="right">
+	<a href="./?object=gallery&action=settings" class="btn btn-mini btn-xs">{t(Gallery Settings)}</a><br />
+</div>
+
+{refresh_image_code}
+
+{error_message}
+
+<div class="editform">
+<form action="{form_action}" method="post" enctype="multipart/form-data">
+{if("thumb_src" ne "")}
+	<p class="full_width first">
+		<table align="center">
+			<tr valign="top">
+				<td><img src="{thumb_src}" alt="{t(Photo)}" /></td>
+				<td align="left">
+					<a href="{crop_link}" class="btn btn-mini btn-xs">{t(Crop photo)}</a><br />
+					<a href="{rotate_link}&page=cw" class="btn btn-mini btn-xs" onclick="return confirm('{t(Are you sure)}?')">{t(Rotate clockwise)}</a><br />
+					<a href="{rotate_link}&page=ccw" class="btn btn-mini btn-xs" onclick="return confirm('{t(Are you sure)}?')">{t(Rotate counterclockwise)}</a><br />
+					<a href="{rotate_link}&page=180" class="btn btn-mini btn-xs" onclick="return confirm('{t(Are you sure)}?')">{t(Rotate 180 degrees)}</a>
+				</td>
+			</tr>
+		</table>
+	</p>
+{/if}
+	<p>
+		<label for="folders_box">{t(Photo Folder)}</label>
+		<span>{folders_box} {tip('gallery.folder')}{if("edit_folder_link" ne "")} <small><a href="{edit_folder_link}">{t(Edit Folder Properties)}</a></small>{/if}</span>
+	</p>
+	<p>
+		<label for="photo_file">{t(Image File)}<br /><small>{t(JPEGs only, max file size)}={max_image_size} {t(bytes)}</small></label>
+		<input type="file" id="photo_file" name="photo_file" size="30">
+	</p>
+	<p>
+		<label for="photo_name">{t(Photo Title)}<br /><small>{t(max)} {max_name_length} {t(characters)}</small></label>
+		<input type="text" id="photo_name" name="photo_name" value="{photo_name}" size="30" maxlength="{max_name_length}">
+	</p>
+	<p>
+		<label for="photo_desc">{t(Photo Comments)}<br /><small>{t(max)} {max_desc_length} {t(characters)}</small></label>
+		<textarea cols="50" rows="5" id="photo_desc" name="photo_desc">{photo_desc}</textarea>
+	</p>
+{if("max_num_tags" ne "")}
+	<p>
+		<label for="tags">{t(Tags)}: <br /><small>(max: <b>{max_num_tags}</b> tags, from <b>{min_tag_len}</b> to <b>{max_tag_len} symbols</b> each. One tag per line)</small></label>
+		<textarea id="tags" name="tags" cols="30" rows="{max_num_tags}">{tags}</textarea>
+	</p>
+{/if}
+{if("rate_enabled" eq 1)}
+	<p>
+		<label for="allow_rate_box">{t(Allow to rate this photo)}</label>
+		{allow_rate_box}
+	</p>
+{/if}
+{if("tagging_enabled" eq 1)}
+	<p>
+		<label for="allow_tagging_box">{t(Allow tagging)}</label>
+		<span>{allow_tagging_box} <a href="javascript:openWin('{edit_tags_link}', 400, 500)" class="btn btn-mini btn-xs">{t(Edit tags)}</a></span>
+	</p>
+{/if}
+	<p>
+		<label for="is_featured_box">{t(Featured photo)}<br /><small>{t(Featured photos will appear on the main page of your gallery. Check this field to show the best of your pics. You can have up to 15 featured images.)}</small></label>
+		{is_featured_box}
+	</p>
+	<div class="button_div">
+		<input type="submit" name="go" value="  {t(Save)}  " />
+		<input type="button" onclick="window.location.href='{back_link}'" value="  {t(Cancel)}  " />
+	</div>
+</form>
+</div>

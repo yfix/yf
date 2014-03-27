@@ -36,8 +36,8 @@
 <br />
 
 <div align="center">
-	<a href="{apply_defaults_link}" class="actionlink" {if("quick_confirm" eq 1)}onclick="return confirm('Are you sure?');"{/if}>{t(Apply default settings to this day)}</a>
-	&nbsp; &nbsp; <a href="{edit_defaults_link}" class="actionlink">{t(Edit defaults)}</a>
+	<a href="{apply_defaults_link}" class="btn btn-mini btn-xs" {if("quick_confirm" eq 1)}onclick="return confirm('Are you sure?');"{/if}>{t(Apply default settings to this day)}</a>
+	&nbsp; &nbsp; <a href="{edit_defaults_link}" class="btn btn-mini btn-xs">{t(Edit defaults)}</a>
 
 	<br /><br />
 	<form action="{form_action}" method="post">

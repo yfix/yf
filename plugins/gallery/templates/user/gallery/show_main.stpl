@@ -1,0 +1,26 @@
+{foreach("folders")}
+	<a href="{#.link}" class="btn btn-default"><i class="icon icon-folder-open"></i> {#.title}</a>
+{/foreach}
+
+<div align="left">
+{if("folders" eq "")}{t(No folders yet)}{/if}
+{if("is_own_gallery" eq 1)}
+	<small>{t(To edit your photos, please, go to the appropriate folder)}.
+	{if("add_folder_link" ne "")}<a href="{add_folder_link}">{t(Click here)}</a> {t(to create a new folder in your gallery)}.{/if}
+	</small>
+{/if}
+</div>
+
+{if("show_featured" eq 1)}
+
+<h3 class="subtitle">{t(Featured photos)}</h3>
+{if("photos" eq "")}<p>{t(No featured photos yet.)}.</p>{/if}
+<div>{photos}</div>
+
+{else}
+
+<h2 class="subtitle">{t(Latest photos)}</h2>
+{if("photos" eq "")}<p>{t(No public accessible photos yet. Either this user has not uploaded any images yet, or your access level is not high enough to see them)}.</p>{/if}
+<div>{photos}</div>
+
+{/if}

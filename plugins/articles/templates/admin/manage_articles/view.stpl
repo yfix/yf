@@ -23,9 +23,9 @@
 	{credentials}
 	<br /><br />
 {/if}
-	{if("vote_popup_link" ne "")}<a href="javascript:openWin('{vote_popup_link}',400,500);" class="actionlink" style="margin:auto 0px auto 0px; padding:auto 0px auto 0px;">{t(Rate this Article!)}</a>{/if}
-	{if("edit_link" ne "")}<a href="{edit_link}" class="actionlink">{t(Edit article)} </a>&nbsp;{/if}
-	{if("delete_link" ne "")}<a href="{delete_link}" onclick="return confirm('{t(Are you sure?)} ');" class="actionlink">{t(Delete article)}</a>&nbsp;{/if}
+	{if("vote_popup_link" ne "")}<a href="javascript:openWin('{vote_popup_link}',400,500);" class="btn btn-mini btn-xs" style="margin:auto 0px auto 0px; padding:auto 0px auto 0px;">{t(Rate this Article!)}</a>{/if}
+	{if("edit_link" ne "")}<a href="{edit_link}" class="btn btn-mini btn-xs">{t(Edit article)} </a>&nbsp;{/if}
+	{if("delete_link" ne "")}<a href="{delete_link}" onclick="return confirm('{t(Are you sure?)} ');" class="btn btn-mini btn-xs">{t(Delete article)}</a>&nbsp;{/if}
 			<br />
 </div>
 <div>{comments}</div>

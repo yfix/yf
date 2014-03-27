@@ -14,9 +14,9 @@
 	{if("mood" ne "")}{t(Current mood)}: {mood}<br />{/if}
 	{t(Added on)}: {add_date}
 	</small><br />
-	{if("edit_post_link" ne "")}<a href="{edit_post_link}" class="actionlink">{t(Edit entry)}</a>&nbsp;{/if}
-	{if("delete_post_link" ne "")}<a href="{delete_post_link}" onclick="return confirm('{t(Are you sure)}?');" class="actionlink">{t(Delete entry)}</a>&nbsp;{/if}
-	{if("vote_popup_link" ne "")}<br /><a href="javascript:openWin('{vote_popup_link}',400,500)" class="actionlink">{t(Vote for this post)}!</a>{/if}
+	{if("edit_post_link" ne "")}<a href="{edit_post_link}" class="btn btn-mini btn-xs">{t(Edit entry)}</a>&nbsp;{/if}
+	{if("delete_post_link" ne "")}<a href="{delete_post_link}" onclick="return confirm('{t(Are you sure)}?');" class="btn btn-mini btn-xs">{t(Delete entry)}</a>&nbsp;{/if}
+	{if("vote_popup_link" ne "")}<br /><a href="javascript:openWin('{vote_popup_link}',400,500)" class="btn btn-mini btn-xs">{t(Vote for this post)}!</a>{/if}
 	<br />
 	</div>
 

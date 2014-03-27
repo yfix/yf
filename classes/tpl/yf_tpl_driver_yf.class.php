@@ -7,7 +7,7 @@ class yf_tpl_driver_yf {
 
 	/** @var array @conf_skip Catch dynamic content into variable */
 	// Examples: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
-	public $_PATTERN_CATCH = '/\{catch\(\s*["\']{0,1}([\w_-]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims';
+	public $_PATTERN_CATCH = '/\{catch\([\s\t]*["\']{0,1}([\w_-]+?)["\']{0,1}[\s\t]*\)\}(.*?)\{\/catch\}/ims';
 	/** @var array @conf_skip STPL internal comment pattern */
 	// Examples: {{-- some content you want to comment inside template only --}}
 	public $_PATTERN_COMMENT = '/(\{\{--.*?--\}\})/ims';
@@ -446,10 +446,18 @@ class yf_tpl_driver_yf {
 		foreach ((array)$m[0] as $k => $v) {
 			$string = str_replace($v, '', $string);
 			// Add replace var
-			$_new_var_name  = $m[1][$k];
-			$_new_var_value = $m[2][$k];
-			if (!empty($_new_var_name)) {
-				$replace[$_new_var_name] = trim($_new_var_value);
+			$catched_name	= $m[1][$k];
+			$catched_string	= $m[2][$k];
+			if (!empty($catched_name)) {
+				if (strlen($catched_string) && strpos($catched_string, '{') !== false) {
+					$catched_string = $this->_replace_std_patterns($catched_string, $stpl_name, $replace);
+					$catched_string = $this->_process_cycles($catched_string, $replace, $stpl_name);
+					$catched_string = $this->_process_conditions($catched_string, $replace, $stpl_name);
+					$catched_string = $this->_process_replaces($catched_string, $replace, $stpl_name);
+					$catched_string = $this->_process_includes($catched_string, $replace, $stpl_name);
+					$catched_string = $this->_process_executes($catched_string, $replace, $stpl_name);
+				}
+				$replace[$catched_name] = trim($catched_string);
 			}
 		}
 		return $string;

@@ -11,10 +11,10 @@ available for escort service.
 <table>
 	<tr>
 		<td width='50%' align="left" nowrap>
-{if("prev_month_link" ne "")}<a href='{prev_month_link}' class="actionlink">(Previous month) &lt;&lt;&lt;</a>{/if}
+{if("prev_month_link" ne "")}<a href='{prev_month_link}' class="btn btn-mini btn-xs">(Previous month) &lt;&lt;&lt;</a>{/if}
 		</td>
 		<td width='50%' align="right" nowrap>
-{if("next_month_link" ne "")}<a href='{next_month_link}' class="actionlink">&gt;&gt;&gt; (Next month)</a>{/if}
+{if("next_month_link" ne "")}<a href='{next_month_link}' class="btn btn-mini btn-xs">&gt;&gt;&gt; (Next month)</a>{/if}
 		</td>
 	</tr>
 </table>
@@ -23,8 +23,8 @@ available for escort service.
 <br />
 
 <div align="center">
-	<a href="{apply_defaults_link}" class="actionlink" onclick="return confirm('Are you sure?');">Apply default settings to this month</a>
-	&nbsp; &nbsp; <a href="{edit_defaults_link}" class="actionlink">Edit defaults</a>
+	<a href="{apply_defaults_link}" class="btn btn-mini btn-xs" onclick="return confirm('Are you sure?');">Apply default settings to this month</a>
+	&nbsp; &nbsp; <a href="{edit_defaults_link}" class="btn btn-mini btn-xs">Edit defaults</a>
 
 	<br /><br />
 	<form action="{form_action}" method="post">

@@ -1,0 +1,41 @@
+<h3>{folder_name}</h3>
+
+{if("folder_comment" ne "")}
+<p>{folder_comment}</p>
+{/if}
+
+<div align="right">
+<small> 
+{if("folder_add_date" ne "")}{t(Folder Created)}: {folder_add_date}<br />{/if}
+{if("folder_privacy" ne "")}{t(Privacy)}: {folder_privacy}<br />{/if}
+{if("folder_allow_comments" ne "")}{t(Comments)}: {folder_allow_comments}<br />{/if}
+{if("folder_password" ne "")}{t(Password protection: enabled)}<br />{/if}
+</small>
+</div>
+
+<div align="right">
+{if("change_pswd_link" ne "")}<a href="{change_pswd_link}" class="btn btn-mini btn-xs">{t(Change folder password)}</a><br />{/if}
+{if("add_photo_link" ne "")}<a href="{add_photo_link}" class="btn btn-mini btn-xs">{t(Add new photo)}</a><br />{/if}
+{if("edit_folder_link" ne "")}<a href="{edit_folder_link}" class="btn btn-mini btn-xs">{t(Edit folder)}</a><br />{/if}
+{if("delete_folder_link" ne "")}<a href="{delete_folder_link}" class="btn btn-mini btn-xs" onclick="return confirm('{t(Are you sure?)}')">{t(Delete folder)}</a><br />{/if}
+{if("add_folder_link" ne "")}<a href="{add_folder_link}" class="btn btn-mini btn-xs">{t(Add new folder)}</a><br />{/if}
+</div>
+
+{if("photos" eq "")}
+<div align="center"><br />{t(No photos yet)}</div>
+{/if}
+
+<div>
+{photos}
+</div>
+
+<div style="clear:both;"></div>
+
+<script type="text/javascript">
+<!--
+try {
+	{if("slideshow_mode" ge "2")} _hs_params['captionId'] = 'controlbar'; {/if}
+	{if("slideshow_mode" eq "3")} _hs_params['dimmingOpacity'] = 0.75; {/if}
+} catch (e) {}
+-->
+</script>

@@ -1,16 +1,16 @@
 {if("subscr_topics_link" ne "")}
-	&nbsp; <a href="{subscr_topics_link}" class="actionlink">{t(View Subscribed Topics)}</a> 
+	&nbsp; <a href="{subscr_topics_link}" class="btn btn-mini btn-xs">{t(View Subscribed Topics)}</a> 
 {/if}
 {if("subscr_forums_link" ne "")}
-	&nbsp; <a href="{subscr_forums_link}" class="actionlink">{t(View Subscribed Forums)}</a> 
+	&nbsp; <a href="{subscr_forums_link}" class="btn btn-mini btn-xs">{t(View Subscribed Forums)}</a> 
 {/if}
 
- &nbsp; <a href="{edit_info_link}" class="actionlink">{t(Edit Profile info)}</a> 
+ &nbsp; <a href="{edit_info_link}" class="btn btn-mini btn-xs">{t(Edit Profile info)}</a> 
 
-<!-- &nbsp; <a href="{board_settings_link}" class="actionlink">{t(Board Settings)}</a> -->
+<!-- &nbsp; <a href="{board_settings_link}" class="btn btn-mini btn-xs">{t(Board Settings)}</a> -->
 
 {if("announce_link" ne "")}
-	&nbsp; <a href="{announce_link}" class="actionlink">{t(Manage Announcements)}</a> 
+	&nbsp; <a href="{announce_link}" class="btn btn-mini btn-xs">{t(Manage Announcements)}</a> 
 {/if}
 
 <br /><br />

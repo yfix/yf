@@ -79,6 +79,7 @@ class yf_manage_shop_products{
 	/**
 	*/
 	function products_xls_export () {
+		$old_supplier_id = '';
 		ini_set("memory_limit","1024M");
 		if (module('manage_shop')->SUPPLIER_ID) {
 			$sql = 'SELECT `p`.`id`,`p`.`articul`,`p`.`name`,`p`.`price` FROM '.db('shop_products').' AS p
@@ -88,9 +89,8 @@ class yf_manage_shop_products{
 		} else {
 			$sql = 'SELECT `p`.`id`,`p`.`articul`,`p`.`name`,`p`.`price` FROM '.db('shop_products').' AS p';
 		}
-
-		list($filter_sql,$order_sql) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($_SESSION[$_GET['object'].'__products'], $this->_filter_params, $sql);
-
+		$filter_arr = main()->is_post() ? array('supplier_id' => intval($_POST['supplier_id'])) : $_SESSION[$_GET['object'].'__products'];
+		list($filter_sql,$order_sql) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_arr, $this->_filter_params, $sql);
 		if ($filter_sql || $order_sql) {
 			$sql .= ' WHERE 1 '.$filter_sql;
 			if ($order_sql) {

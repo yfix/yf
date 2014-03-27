@@ -513,6 +513,10 @@ class yf_manage_shop {
 	function import_xls($params = array()) {
 		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
+	
+	function export_zakaz_start($params = array()) {
+		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
+	}
 
 	function import_products() {
 		return $this->import_xls();

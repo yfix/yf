@@ -69,10 +69,30 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertNotEquals('tru', self::_tpl( '{execute(test,true_for_unittest)}' ));
 	}
 	public function test_catch() {
+		$this->assertEquals('  __true__', self::_tpl( '{catch( mytest1 )}{execute(test,true_for_unittest)}{/catch}  __{mytest1}__' ));
+		$this->assertEquals('  __true__', self::_tpl( '{catch(mytest1)}{execute(test,true_for_unittest)}{/catch}  __{mytest1}__' ));
 		$this->assertEquals('  __true__', self::_tpl( '{catch("mytest1")}{execute(test,true_for_unittest)}{/catch}  __{mytest1}__' ));
 		$this->assertEquals('22true33', self::_tpl( '{catch("mytest1")}22{execute(test,true_for_unittest)}33{/catch}{mytest1}' ));
 		$this->assertEquals('22true33', self::_tpl( '{catch( "mytest1" )}22{execute(test,true_for_unittest)}33{/catch}{mytest1}' ));
 		$this->assertEquals('22true33', self::_tpl( '{catch( mytest1 )}22{execute(test,true_for_unittest)}33{/catch}{mytest1}' ));
+	}
+	public function test_catch_complex() {
+		$tpl_str = '
+			{catch(min_ext)}{if(debug_mode eq 0)}.min{/if}{/catch}
+			{if(css_framework eq "bs2" or css_framework eq "")}
+				<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap{min_ext}.js"></script>
+			{else}
+				<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap{min_ext}.js"></script>
+			{/if}
+		';
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.js"></script>'
+			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs2', 'debug_mode' => 1))) );
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap.js"></script>'
+			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs3', 'debug_mode' => 1))) );
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>'
+			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs2', 'debug_mode' => 0))) );
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap.min.js"></script>'
+			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs3', 'debug_mode' => 0))) );
 	}
 	public function test_cleanup() {
 		$this->assertEquals('<script>function myjs(){ var i = 0 }<script>', self::_tpl( '{cleanup()}<script>function myjs(){ {js-var} }<script>{/cleanup}', array('js-var' => 'var i = 0') ));

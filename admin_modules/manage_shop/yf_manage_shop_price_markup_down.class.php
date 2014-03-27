@@ -50,8 +50,8 @@ class yf_manage_shop_price_markup_down {
 		);
 
 		$table = table( 'SELECT * FROM ' . db( 'shop_price_markup_down' ), $filter )
-			->text( 'value', 'Процент, +/-' )
 			->text( 'description' )
+			// ->text( 'value', 'Процент, +/-' )
 			->btn_active( '', $this->_uri[ 'active' ] )
 			->btn_edit(   '', $this->_uri[ 'edit'   ], array( 'no_ajax' => 1 ) )
 			->btn_delete( '', $this->_uri[ 'delete'   ] )
@@ -75,19 +75,37 @@ class yf_manage_shop_price_markup_down {
 	}
 
 	function _form( $replace ) {
-		return( form( $replace )
+		// prepare ng-app
+		$_ng_controller = 'ctrl.price_markup_down.conditions';
+		$replace[ '_ng_controller' ] = $_ng_controller;
+		// create form
+		$_form = form( $replace, array( 'ng-controller' => $_ng_controller ) )
 			->select_box( 'type', $this->_select_box__type() )
 			->number( 'value', 'Процент, +/-' )
 			->text( 'description' )
 			->datetime_select( 'time_from', 'Дата от', array( 'with_time' => 1 ) )
 			->datetime_select( 'time_to',   'Дата до', array( 'with_time' => 1 ) )
-			// ->textarea( 'conditions', 'Условия' )
+			->fieldset_start( 'Дополнительные условие' )
+				->hidden( 'conditions', array(
+					'ng-model' => 'conditions'
+				))
+				->input( 'search_conditions', 'Поиск', array(
+					'data-bs-select' => 'true',
+					'ng-model' => 'term',
+					'ng-change' => 'change( term )',
+					'data-animation' => 'am-flip-x',
+					'ng-options' => 'address.key as address.formatted_address for address in search( $viewValue )',
+					'placeholder' => 'введите фразу',
+				))
+			->fieldset_end()
 			->active_box('active')
-			->save_and_back()
-		);
+			->save_and_back();
+		$_form_ctrl = tpl()->parse( 'manage_shop/price_markup_down', $replace );
+		return( $_form . $_form_ctrl );
 	}
 
 	function _on_before_show( &$fields ) {
+		$fields[ 'conditions' ] = $fields[ 'conditions' ] ?: '{}';
 	}
 
 	function _on_before_update( &$fields ) {

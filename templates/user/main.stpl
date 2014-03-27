@@ -4,7 +4,7 @@
 	<title>{execute(graphics,show_site_title)}</title>
 
 {execute(common,bs_theme_html)}
-{{--execute_shutdown(graphics,show_css)--}}
+{execute_shutdown(graphics,show_css)}
 {include("main_style_css")}
 {execute(graphics,show_metatags)}
 
@@ -41,6 +41,7 @@
 			</div>
 		</div>
 	</div>
+{execute_shutdown(graphics,show_js)}
 {include("main_js")}
 </body>
 </html>

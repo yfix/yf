@@ -11,7 +11,7 @@
 		<td align="center" valign="top">{avatar}</td>
 		<td valign="top" align="left">
 			<p class="text_short">{post_text}... </p>
-			<a href="{post_link}" class="actionlink">{t(More)}...</a><br />
+			<a href="{post_link}" class="btn btn-mini btn-xs">{t(More)}...</a><br />
 			<div align="right"><small>
 {t(Posted in)}: <a href="{blog_link}">{if("blog_title" eq "")}{user_name}'s {t(blog)}{/if}{if("blog_title" ne "")}{blog_title}{/if}</a>
 {t( on)}: {post_date}<br />

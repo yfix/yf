@@ -1,1 +1,1 @@
-<a href="{search_link}" class="actionlink">{keyword}</a>&nbsp; 
+<a href="{search_link}" class="btn btn-mini btn-xs">{keyword}</a>&nbsp; 

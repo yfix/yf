@@ -1,0 +1,73 @@
+<h1 class="header">{t(Edit Gallery Folder)}</h1>
+
+<div align="right">
+	<a href="./?object=gallery&action=settings" class="btn btn-mini btn-xs">{t(Gallery Settings)}</a><br />
+	<a href="./?object=gallery&action=add_folder" class="btn btn-mini btn-xs">{t(Add new folder)}</a>
+</div>
+
+<p>{t(Here you can set the folder title, description and properties that determine the rules applied to all photos inside this folder)}.</p>
+
+{error_message}
+
+<div class="editform">
+<form action="{form_action}" method="post" enctype="multipart/form-data" {if("warn_user" eq 1)}onsubmit="return form_check(this);"{/if}>
+	<p class="first">
+		<label for="title">{t(Folder title)}<small><br />({t('up to %maxlen characters',%maxlen='{max_title_length}')})</small></label>
+		<span><input type="text" id="title" name="title" value="{title}" size="30" maxlength="{max_title_length}" /></span>
+	</p>
+	<p>
+		<label for="folder_comment">{t(Folder comments)}&nbsp;{itip('Optional field. You can write a short description or comment text to this folder.')}<br />
+		<small>({t('up to %maxlen characters',%maxlen='{max_comment_length}')})</small></label>
+		<span><textarea cols="50" rows="5" id="folder_comment" name="comment" >{comment}</textarea></span>
+	</p>
+	<p>
+		<label for="privacy_box">{t(Privacy)}&nbsp;{itip('You can restrict assess to the folder. Making it private will allow you to load photos to your gallery, but they will not be published on your site. Nobody will be able to see them. Allowing public access to the folder makes all of the photos visible to all the site visitors.')}</label>
+		<span>{privacy_box}</span>
+	</p>
+	<p>
+		<label for="allow_comments_box">{t(Allow comments)}&nbsp;{itip('You can manage commenting permissions here. Disable comment posting if you do not want site visitors to write them.')}</label>
+		{allow_comments_box}
+	</p>
+{if("folder_tagging_box" ne "")}
+	<p>
+		<label for="folder_tagging_box">{t(Allow tagging for)}</label>
+		<span>{folder_tagging_box}</span>
+	</p>
+{/if}
+	<p>
+		<label for="folder_password">{t(Folder password)}&nbsp;{itip('Set the password, if you want to make the folder password protected. Attention! This will make this folder not accessible to most of the site visitors! Do not use protection for open folders! Just leave this field blank if you do not want to restrict access.')}</label>
+		<span><input type="text" id="folder_password" name="password" value="{password}" size="15">
+			<br /><small>{t(Attention)}! {t(Setting this value will make this folder not accessible to most of the site visitors)}!</small>
+		</span>
+	</p>
+	<div class="button_div">
+		<input type="submit" name="go" value=" {t(Submit)} ">
+	</div>
+</form>
+</div>
+
+{if("warn_user" eq 1)}
+<script type="text/javascript">
+<!--
+// Cross-browser form required fields checking function
+function form_check(the_form) {
+	try {
+		var error_msg = '';
+		// Show error or submit form
+		if (error_msg) {
+			return confirm(error_msg);
+		} else {
+			the_form.submit();
+			return true;
+		}
+	} catch (x) {
+		if (typeof the_form == "object") {
+			the_form.submit();
+			return true;
+		}
+		return false;
+	}
+}
+-->
+</script>
+{/if}
