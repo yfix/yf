@@ -25,13 +25,13 @@ class yf_form2_file_uploader {
 // TODO: use this CDN for JS and CSS: http://cdnjs.com/libraries/blueimp-file-upload/
 			
 			// todo: move sources to repository
-			_class('core_css')->add(array(
+			require_css(array(
 				'http://blueimp.github.io/Gallery/css/blueimp-gallery.min.css',
 				'http://localhost/fileupload_tmp/css/jquery.fileupload.css',
 				'http://localhost/fileupload_tmp/css/jquery.fileupload-ui.css',
 			));
 			
-			_class('core_js')->add(array(
+			require_js(array(
 				'http://localhost/fileupload_tmp/js/vendor/jquery.ui.widget.js',
 				'http://blueimp.github.io/JavaScript-Load-Image/js/load-image.min.js',
 				'http://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js',
@@ -44,7 +44,7 @@ class yf_form2_file_uploader {
 				'http://localhost/fileupload_tmp/js/jquery.fileupload-video.js',
 				'http://localhost/fileupload_tmp/js/jquery.fileupload-validate.js',
 				'http://localhost/fileupload_tmp/js/jquery.fileupload-angular.js',				
-			),true);
+			));
 			
 			return $_this->_row_html($body, $extra, $r);
 		};
