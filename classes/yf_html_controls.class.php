@@ -244,6 +244,9 @@ class yf_html_controls {
 		$name = $extra['name'] ? $extra['name'] : 'checkbox';
 		$value = $extra['value'] ? $extra['value'] : (strlen($value) ? $value : '1');
 		$selected = $extra['selected'] ? $extra['selected'] : $selected;
+		if (isset($extra['checked'])) {
+			$selected = $extra['checked'];
+		}
 		$id = $extra['id'] ? $extra['id'] : $name;
 		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
 		$translate = $extra['translate'] ? $extra['translate'] : true;
