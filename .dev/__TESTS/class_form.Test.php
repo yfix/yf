@@ -3,19 +3,14 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 /* TODO:
-* extra merge with 1nd and 1st param
 * tab_start()
 * fieldset_start()
 * row_start()
-* auto()
-* replace passing to form and directly to method
 * _attrs()
 * _htmlchars()
-* chained_wrapper()
 * clone (__clone)
 * _dd_row_html()
 * _input_assing_params_from_validate()
-* input,textarea,number,etc
 */
 
 class class_form_test extends PHPUnit_Framework_TestCase {
@@ -71,6 +66,11 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$a = array(array('text','name'));
 		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><label class="control-label col-lg-4" for="name">Name</label><div class="controls col-lg-8"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div></fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form()->array_to_form($a))) );
+	}
+	public function test_form_auto() {
+#		$data = array('user' => 'name', 'email' => 'some@email.com');
+#		$this->assertEquals(''
+#			, str_replace(PHP_EOL, '', trim(form($data)->auto())) );
 	}
 	public function test_input_text_simple() {
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name')) );
@@ -302,5 +302,88 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box())) );
 		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="0"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> No</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="1"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Yes</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box('test'))) );
+	}
+	public function test_submit() {
+		$this->assertEquals('<button type="submit" id="save" class="btn btn-default btn-primary" value="Save">Save</button>', trim(self::form_no_chain($r)->submit()) );
+		$this->assertEquals('<button type="submit" name="test" id="test" class="btn btn-default btn-primary" value="Save">Save</button>', trim(self::form_no_chain($r)->submit('test')) );
+	}
+	public function test_save() {
+		$this->assertEquals('<button type="submit" id="save" class="btn btn-default btn-primary" value="Save"><i class="icon-save"></i> Save</button>', trim(self::form_no_chain($r)->save()) );
+		$this->assertEquals('<button type="submit" name="test" id="test" class="btn btn-default btn-primary" value="Save"><i class="icon-save"></i> Save</button>', trim(self::form_no_chain($r)->save('test')) );
+	}
+	public function test_save_and_back() {
+#		$r['back_link'] = 'http://somewhere.com/';
+		$this->assertEquals('<button type="submit" name="back_link" id="back_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save"></i> Save</button>'
+			, trim(self::form_no_chain($r)->save_and_back()) );
+		$this->assertEquals('<button type="submit" name="test" id="test" class="btn btn-default btn-primary" value="Save"><i class="icon-save"></i> Save</button>'
+			, trim(self::form_no_chain($r)->save_and_back('test')) );
+	}
+	public function test_save_and_clear() {
+		$this->assertEquals('<button type="submit" name="clear_link" id="clear_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save"></i> Save</button>'
+			, trim(self::form_no_chain($r)->save_and_clear()) );
+		$this->assertEquals('<button type="submit" name="test" id="test" class="btn btn-default btn-primary" value="Save"><i class="icon-save"></i> Save</button>'
+			, trim(self::form_no_chain($r)->save_and_clear('test')) );
+	}
+	public function test_info() {
+		$this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info()) );
+		$this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info('test')) );
+		$r['test'] = 'some info';
+		$this->assertEquals('<span class=" label label-info">some info</span>', trim(self::form_no_chain($r)->info('test')) );
+	}
+	public function test_info_date() {
+		$this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info_date()) );
+		$this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info_date('test')) );
+		$r['test'] = '2015-01-01';
+		$this->assertEquals('<span class=" label label-info">2015/01/01</span>', trim(self::form_no_chain($r)->info_date('test', '%Y/%m/%d')) );
+	}
+	public function test_info_link() {
+		$this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info_link()) );
+		$this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info_link('test')) );
+		$r['test'] = './?object=someobject&action=someaction';
+		$this->assertEquals('<a href="./?object=someobject&action=someaction" name="test" class=" btn btn-default btn-mini btn-xs" title="Test">./?object=someobject&action=someaction</a>'
+			, trim(self::form_no_chain($r)->info_link('test')) );
+	}
+	public function test_tbl_link() {
+		$this->assertEquals('<a class="btn btn-default btn-mini btn-xs"><i class="icon-tasks"></i> </a>', trim(self::form_no_chain($r)->tbl_link()) );
+		$this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs"><i class="icon-tasks"></i> test</a>', trim(self::form_no_chain($r)->tbl_link('test')) );
+		$this->assertEquals('<a name="test" href="./?object=someobject&action=someaction" class="btn btn-default btn-mini btn-xs"><i class="icon-tasks"></i> test</a>'
+			, trim(self::form_no_chain($r)->tbl_link('test', './?object=someobject&action=someaction')) );
+	}
+	public function test_tbl_link_edit() {
+		$this->assertEquals('<a name="Edit" class="btn btn-default btn-mini btn-xs ajax_edit"><i class="icon-edit"></i> Edit</a>', trim(self::form_no_chain($r)->tbl_link_edit()) );
+		$this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs ajax_edit"><i class="icon-edit"></i> test</a>', trim(self::form_no_chain($r)->tbl_link_edit('test')) );
+		$r['edit_link'] = './?object=someobject&action=someaction';
+		$this->assertEquals('<a name="test" href="./?object=someobject&action=someaction" class="btn btn-default btn-mini btn-xs ajax_edit"><i class="icon-edit"></i> test</a>'
+			, trim(self::form_no_chain($r)->tbl_link_edit('test')) );
+	}
+	public function test_tbl_link_delete() {
+		$this->assertEquals('<a name="Delete" class="btn btn-default btn-mini btn-xs ajax_delete btn-danger"><i class="icon-trash"></i> Delete</a>', trim(self::form_no_chain($r)->tbl_link_delete()) );
+		$this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs ajax_delete btn-danger"><i class="icon-trash"></i> test</a>', trim(self::form_no_chain($r)->tbl_link_delete('test')) );
+		$r['delete_link'] = './?object=someobject&action=someaction';
+		$this->assertEquals('<a name="test" href="./?object=someobject&action=someaction" class="btn btn-default btn-mini btn-xs ajax_delete btn-danger"><i class="icon-trash"></i> test</a>'
+			, trim(self::form_no_chain($r)->tbl_link_delete('test')) );
+	}
+	public function test_tbl_link_clone() {
+		$this->assertEquals('<a name="Clone" class="btn btn-default btn-mini btn-xs ajax_clone"><i class="icon-plus"></i> Clone</a>', trim(self::form_no_chain($r)->tbl_link_clone()) );
+		$this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs ajax_clone"><i class="icon-plus"></i> test</a>', trim(self::form_no_chain($r)->tbl_link_clone('test')) );
+		$r['clone_link'] = './?object=someobject&action=someaction';
+		$this->assertEquals('<a name="test" href="./?object=someobject&action=someaction" class="btn btn-default btn-mini btn-xs ajax_clone"><i class="icon-plus"></i> test</a>'
+			, trim(self::form_no_chain($r)->tbl_link_clone('test')) );
+	}
+	public function test_tbl_link_view() {
+		$this->assertEquals('<a name="View" class="btn btn-default btn-mini btn-xs ajax_view"><i class="icon-eye-open"></i> View</a>', trim(self::form_no_chain($r)->tbl_link_view()) );
+		$this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs ajax_view"><i class="icon-eye-open"></i> test</a>', trim(self::form_no_chain($r)->tbl_link_view('test')) );
+		$r['view_link'] = './?object=someobject&action=someaction';
+		$this->assertEquals('<a name="test" href="./?object=someobject&action=someaction" class="btn btn-default btn-mini btn-xs ajax_view"><i class="icon-eye-open"></i> test</a>'
+			, trim(self::form_no_chain($r)->tbl_link_view('test')) );
+	}
+	public function test_tbl_link_active() {
+#		$this->assertEquals('<a href="active_link" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</button></a>'
+#			, trim(self::form_no_chain($r)->tbl_link_active()) );
+#		$this->assertEquals('<a href="active_link" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</button></a>'
+#			, trim(self::form_no_chain($r)->tbl_link_active('test')) );
+		$r['active_link'] = './?object=someobject&action=someaction';
+		$this->assertEquals('<a href="./?object=someobject&action=someaction" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</button></a>'
+			, trim(self::form_no_chain($r)->tbl_link_active('test')) );
 	}
 }
