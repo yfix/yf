@@ -3,13 +3,10 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 /* TODO:
-* data-* attrs
-* ng-* attrs
 * extra merge with 1nd and 1st param
 * tab_start()
 * fieldset_start()
 * row_start()
-* array_to_form()
 * auto()
 * replace passing to form and directly to method
 * _attrs()
@@ -124,6 +121,8 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<input type="hidden" id="hdn" name="hdn" value="val1">', trim(self::form_no_chain($r)->hidden('hdn', array('value' => 'val1'))) );
 	}
 	public function test_container() {
+		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><div class="controls"><section id="test"></section></div></div></fieldset></form>'
+			, str_replace(PHP_EOL, '', trim(form()->container('<section id="test"></section>'))) );
 		$this->assertEquals('<section id="test"></section>', trim(self::form_no_chain($r)->container('<section id="test"></section>')) );
 	}
 	public function test_select_box() {
@@ -205,5 +204,103 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->list_box('mylist', $data))) );
 		$this->assertEquals('<div class="bfh-selectbox"><input type="hidden" name="mylist" value="k2"><a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#"><span class="bfh-selectbox-option bfh-selectbox-medium" data-option="k2">v2</span><b class="caret"></b></a><div class="bfh-selectbox-options"><input type="text" class="bfh-selectbox-filter"><div role="listbox"><ul role="option"><li><a tabindex="-1" href="#" data-option="k1">v1</a></li><li><a tabindex="-1" href="#" data-option="k2">v2</a></li></ul></div></div></div>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->list_box('mylist', $data, array('selected' => $selected)))) );
+	}
+	public function test_fieldset_start() {
+		$this->assertEquals('<fieldset name="f1">', trim(self::form_no_chain($r)->fieldset_start('f1')) );
+	}
+	public function test_input() {
+		$this->assertEquals('<input name="test" type="text" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->input('test')) );
+	}
+	public function test_password() {
+		$this->assertEquals('<input name="test" type="password" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->password('test')) );
+	}
+	public function test_file() {
+		$this->assertEquals('<input name="test" type="file" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->file('test')) );
+	}
+	public function test_button() {
+		$this->assertEquals('<input name="test" type="button" id="test" class="form-control btn btn-default" placeholder="Test" value="Test">', trim(self::form_no_chain($r)->button('test')) );
+	}
+	public function test_login() {
+		$this->assertEquals('<input name="login" type="text" id="login" class="form-control" placeholder="Login">', trim(self::form_no_chain($r)->login()) );
+		$this->assertEquals('<input name="test" type="text" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->login('test')) );
+	}
+	public function test_email() {
+		$this->assertEquals('<input name="email" type="email" id="email" class="form-control" placeholder="Email">', trim(self::form_no_chain($r)->email()) );
+		$this->assertEquals('<input name="test" type="email" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->email('test')) );
+	}
+	public function test_number() {
+		$this->assertEquals('<input name="test" type="number" id="test" class="form-control input-small" placeholder="Test" maxlength="10">', trim(self::form_no_chain($r)->number('test')) );
+	}
+	public function test_integer() {
+		$this->assertEquals('<input name="test" type="number" id="test" class="form-control input-small" placeholder="Test" maxlength="10">', trim(self::form_no_chain($r)->integer('test')) );
+	}
+	public function test_money() {
+		$this->assertEquals('<input name="test" type="text" id="test" class="form-control input-small" placeholder="Test" maxlength="8">', trim(self::form_no_chain($r)->money('test')) );
+	}
+	public function test_url() {
+		$this->assertEquals('<input name="url" type="url" id="url" class="form-control" placeholder="Url">', trim(self::form_no_chain($r)->url()) );
+		$this->assertEquals('<input name="test" type="url" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->url('test')) );
+	}
+	public function test_color() {
+		$this->assertEquals('<input name="color" type="color" id="color" class="form-control" placeholder="Color">', trim(self::form_no_chain($r)->color()) );
+		$this->assertEquals('<input name="test" type="color" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->color('test')) );
+	}
+	public function test_date() {
+		$this->assertEquals('<input name="date" type="date" id="date" class="form-control" placeholder="Date">', trim(self::form_no_chain($r)->date()) );
+		$this->assertEquals('<input name="test" type="date" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->date('test')) );
+	}
+	public function test_datetime() {
+		$this->assertEquals('<input name="datetime" type="datetime" id="datetime" class="form-control" placeholder="Datetime">', trim(self::form_no_chain($r)->datetime()) );
+		$this->assertEquals('<input name="test" type="datetime" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->datetime('test')) );
+	}
+	public function test_datetime_local() {
+		$this->assertEquals('<input name="datetime_local" type="datetime-local" id="datetime_local" class="form-control" placeholder="Datetime local">', trim(self::form_no_chain($r)->datetime_local()) );
+		$this->assertEquals('<input name="test" type="datetime-local" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->datetime_local('test')) );
+	}
+	public function test_month() {
+		$this->assertEquals('<input name="month" type="month" id="month" class="form-control" placeholder="Month">', trim(self::form_no_chain($r)->month()) );
+		$this->assertEquals('<input name="test" type="month" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->month('test')) );
+	}
+	public function test_range() {
+		$this->assertEquals('<input name="range" type="range" id="range" class="form-control" placeholder="Range">', trim(self::form_no_chain($r)->range()) );
+		$this->assertEquals('<input name="test" type="range" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->range('test')) );
+	}
+	public function test_search() {
+		$this->assertEquals('<input name="search" type="search" id="search" class="form-control" placeholder="Search">', trim(self::form_no_chain($r)->search()) );
+		$this->assertEquals('<input name="test" type="search" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->search('test')) );
+	}
+	public function test_tel() {
+		$this->assertEquals('<input name="tel" type="tel" id="tel" class="form-control" placeholder="Tel">', trim(self::form_no_chain($r)->tel()) );
+		$this->assertEquals('<input name="test" type="tel" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->tel('test')) );
+	}
+	public function test_phone() {
+		$this->assertEquals('<input name="phone" type="tel" id="phone" class="form-control" placeholder="Phone">', trim(self::form_no_chain($r)->phone()) );
+		$this->assertEquals('<input name="test" type="tel" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->phone('test')) );
+	}
+	public function test_time() {
+		$this->assertEquals('<input name="time" type="time" id="time" class="form-control" placeholder="Time">', trim(self::form_no_chain($r)->time()) );
+		$this->assertEquals('<input name="test" type="time" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->time('test')) );
+	}
+	public function test_week() {
+		$this->assertEquals('<input name="week" type="week" id="week" class="form-control" placeholder="Week">', trim(self::form_no_chain($r)->week()) );
+		$this->assertEquals('<input name="test" type="week" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->week('test')) );
+	}
+	public function test_active_box() {
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="0"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="1"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Active</span>&nbsp;</label>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->active_box())) );
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="0"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="1"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Active</span>&nbsp;</label>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->active_box('test'))) );
+	}
+	public function test_allow_deny_box() {
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="DENY"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Deny</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="ALLOW"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Allow</span>&nbsp;</label>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->allow_deny_box())) );
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="DENY"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Deny</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="ALLOW"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Allow</span>&nbsp;</label>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->allow_deny_box('test'))) );
+	}
+	public function test_yes_no_box() {
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="0"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> No</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="1"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Yes</span>&nbsp;</label>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box())) );
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="0"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> No</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="1"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Yes</span>&nbsp;</label>'
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box('test'))) );
 	}
 }
