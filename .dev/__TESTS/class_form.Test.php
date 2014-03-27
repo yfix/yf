@@ -70,6 +70,11 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 </div>
 </div>', trim(form('', array('no_form' => 1))->text('name')) );
 	}
+	public function test_form_from_array() {
+		$a = array(array('text','name'));
+		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><label class="control-label col-lg-4" for="name">Name</label><div class="controls col-lg-8"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div></fieldset></form>'
+			, str_replace(PHP_EOL, '', trim(form()->array_to_form($a))) );
+	}
 	public function test_input_text_simple() {
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name')) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name', '')) );
@@ -89,6 +94,22 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			, self::form_no_chain($r)->text('name', array('desc' => 'Desc', 'style' => 'color:red;')) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" style="color:red;" placeholder="Desc" value="value1">'
 			, self::form_no_chain($r)->text('name', array('desc' => 'Desc', 'style' => 'color:red;', 'value' => 'value1')) );
+	}
+	public function test_input_text_attr_data() {
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" data-something="5">'
+			, trim(self::form_no_chain($r)->text('name', array('data-something' => '5'))) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" data-a1="a11" data-b1="b11">'
+			, trim(self::form_no_chain($r)->text('name', array('data-a1' => 'a11', 'data-b1' => 'b11'))) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" data-test-escape="!@#$%^&*(&quot;&apos;&lt;&gt;?&gt;&lt;:;">'
+			, trim(self::form_no_chain($r)->text('name', array('data-test-escape' => '!@#$%^&*("\'<>?><:;'))) );
+	}
+	public function test_input_text_attr_ng() {
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" ng-something="5">'
+			, trim(self::form_no_chain($r)->text('name', array('ng-something' => '5'))) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" ng-a1="a11" ng-b1="b11">'
+			, trim(self::form_no_chain($r)->text('name', array('ng-a1' => 'a11', 'ng-b1' => 'b11'))) );
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name" ng-test-escape="!@#$%^&*(&quot;&apos;&lt;&gt;?&gt;&lt;:;">'
+			, trim(self::form_no_chain($r)->text('name', array('ng-test-escape' => '!@#$%^&*("\'<>?><:;'))) );
 	}
 	public function test_input_textarea() {
 		$this->assertEquals('<textarea id="name" name="name" placeholder="Name" contenteditable="true" class="ckeditor form-control"></textarea>', trim(self::form_no_chain($r)->textarea('name')) );
