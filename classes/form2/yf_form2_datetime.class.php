@@ -33,9 +33,9 @@ class yf_form2_datetime {
 			$format = array();
 			if ($extra['no_date']!=1) $format[] = 'MM/dd/yyyy';
 			if ($extra['no_time']!=1) $format[] = 'HH:mm:ss';
-			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js', true);
-			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/locales/bootstrap-datepicker.ru.min.js', true);
-			_class('core_css')->add('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css', true);
+			require_js('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js');
+			require_js('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/locales/bootstrap-datepicker.ru.min.js');
+			require_css('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css');
 			$body = '
 <div id="'.$extra['name'].'" class="input-append date date_bd">
     <input data-format="'.implode(' ',$format).'" name="'.$extra['name'].'" value="'.$extra['value'].'" type="text" class="input-medium" placeholder="'.$extra['placeholder'].'"></input>
@@ -44,7 +44,7 @@ class yf_form2_datetime {
     </span>		
 </div>
 ';
-			_class('core_js')->add('<script type="text/javascript">
+			require_js('<script type="text/javascript">
 $(function() {
 	$("#'.$extra['name'].'").datepicker({
 		language: "ru", 
@@ -54,7 +54,7 @@ $(function() {
 		.'
 	});
 });
-</script>', false);
+</script>');
 			return $_this->_row_html($body, $extra, $r);
 		};
 		if ($__this->_chained_mode) {
