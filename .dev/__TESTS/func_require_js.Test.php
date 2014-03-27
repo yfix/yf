@@ -3,30 +3,37 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 class func_require_js_test extends PHPUnit_Framework_TestCase {
-	public function test_01() {
-#		$this->assertEquals( require_js('//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'), _class('core_js')-> );
-// TODO
-/*
-	function _content_is_url($content) {
-// TODO: //domain.com/script.js
-// TODO: http://domain.com/script.js
-// TODO: https://domain.com/script.js
-// TODO: domain.com/script.js
-// TODO: /script.js
-// TODO: script.js
-// TODO: explode by newlines into several items 
-	}
+	public function test_detect_content_type() {
+		$this->assertEquals('asset', _class('core_js')->_detect_content('jquery'));
+		$this->assertEquals('url', _class('core_js')->_detect_content('http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'));
+		$this->assertEquals('url', _class('core_js')->_detect_content('https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'));
+		$this->assertEquals('url', _class('core_js')->_detect_content('//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'));
+		$this->assertEquals('inline', _class('core_js')->_detect_content('<script>$(function(){})</script>'));
+		$this->assertEquals('inline', _class('core_js')->_detect_content('<script type="text/javascript">$(function(){})</script>'));
+		$this->assertEquals('inline', _class('core_js')->_detect_content('$(function(){
+			$("#element").on("click", function(){})
+		})'));
+		$this->assertEquals('inline', _class('core_js')->_detect_content('$(function(){})'));
 
-	function _content_is_file($content) {
-// TODO: file_exists and not starts with (http:// | https:// | //)
-// TODO: file allowed to begin with PROJECT_PATH, SITE_PATH or YF_PATH
+		$f = '/tmp/yf_unit_tests_empty_script.js';
+		file_put_contents($f, 'test');
+		$this->assertEquals('file', _class('core_js')->_detect_content($f));
+		unlink($f);
 	}
-
-	function _content_is_inline($content) {
-// TODO: can contain one line, but not like url
-// TODO: can be without <script> inside
-// TODO: trim <script[^>]+>(?P<content>.+?)</script>
+	public function test_strip_script_tags() {
+		$this->assertEquals('$(function(){})', _class('core_js')->_strip_script_tags('<script>$(function(){})</script>'));
+		$this->assertEquals('$(function(){})', _class('core_js')->_strip_script_tags('<script>$(function(){})'));
+		$this->assertEquals('$(function(){})', _class('core_js')->_strip_script_tags('$(function(){})</script>'));
+		$this->assertEquals('$(function(){})', _class('core_js')->_strip_script_tags('$(function(){})'));
+		$this->assertEquals('$(function(){})', _class('core_js')->_strip_script_tags('<script type="text/javascript">$(function(){})</script>'));
+		$this->assertEquals('$(function(){})', _class('core_js')->_strip_script_tags('<script type="text/javascript" id="test">$(function(){})</script>'));
+		$this->assertEquals('$(function(){})', _class('core_js')->_strip_script_tags('<script type="text/javascript" some-attr="some-val">$(function(){})</script>'));
+		$this->assertEquals('$(function(){})', _class('core_js')->_strip_script_tags('<script><script>$(function(){})</script></script>'));
+		$this->assertEquals('$(function(){})', _class('core_js')->_strip_script_tags('<script><script type="text/javascript" some-attr="some-val"><script>$(function(){})</script></script></script>'));
+		$this->assertEquals('$(function(){})', _class('core_js')->_strip_script_tags('<script><script type="text/javascript" some-attr="some-val"><script>$(function(){})'));
 	}
-*/
+	public function test_complex() {
+		require_js('//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js');
+		$this->assertEquals('', _class('core_js')->show());
 	}
 }
