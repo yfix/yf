@@ -2,15 +2,10 @@
 
 /**
 * Gallery virtual folders handler
-* 
-* @package		YF
-* @author		YFix Team <yfix.dev@gmail.com>
-* @version		1.0
 */
 class yf_gallery_folders {
 
 	/**
-	* View folder contents
 	*/
 	function view_folder () {
 		$_GET['id'] = intval($_GET['id']);
@@ -48,7 +43,6 @@ class yf_gallery_folders {
 	}
 
 	/**
-	* Add new folder
 	*/
 	function add_folder () {
 		if (empty(main()->_user_info) && MAIN_TYPE_USER) {
@@ -63,14 +57,15 @@ class yf_gallery_folders {
 			return _e(t('You can create max %num folders!', array('%num' => intval($max_folders))));
 		}
 		$_max_folder_id2 = $this->_fix_folder_id2(main()->USER_ID);
-		$replace = array(
-			'form_action'	=> './?object='.'gallery'.'&action='.$_GET['action']._add_get(array('page')),
-			'back_link'		=> './?object='.'gallery'.'&action=show_gallery'._add_get(array('page')),
+		$r = array(
+			'form_action'	=> './?object=gallery&action='.$_GET['action'],
+			'back_link'		=> './?object=gallery&action=show_gallery',
 		);
-		return form($replace + $_POST, array('for_upload' => 1, '__form_id__' => 'gallery_add_folder'))
+		return form($r + $_POST, array('for_upload' => 1, '__form_id__' => 'gallery_add_folder'))
 			->validate(array(
-				'title'		=> 'trim|xss_clean|strip_tags|max_length['.module('gallery')->MAX_FOLDER_TITLE_LENGTH.']',
+				'title'		=> 'trim|xss_clean|strip_tags|max_length['.module('gallery')->MAX_FOLDER_TITLE_LENGTH.']|required',
 				'comment'	=> 'trim|xss_clean|strip_tags|max_length['.module('gallery')->MAX_FOLDER_COMMENT_LENGTH.']',
+				'password'	=> 'trim',
 			))
 			->db_insert_if_ok('gallery_folders', array('title', 'comment', 'privacy', 'allow_comments', 'password', 'active'),
 				array(
@@ -78,11 +73,11 @@ class yf_gallery_folders {
 					'add_date'	=> time(), 
 					'id2'		=> intval($_max_folder_id2 + 1)
 				),
-				array('on_after_update' => function() {
+				array('on_after_update' => function() use ($_max_folder_id2) {
 					module('gallery')->_sync_public_photos();
 					_class_safe('user_stats')->_update(array('user_id' => main()->USER_ID));
 					$id = module('gallery')->HIDE_TOTAL_ID ? ($_max_folder_id2 + 1) : db()->insert_id();
-					return js_redirect('./?object=gallery&action=edit_folder&id='. (int)$id. _add_get(array('page')));
+					return js_redirect('./?object=gallery&action=edit_folder&id='. (int)$id);
 				})
 			)
 			->text('title')
@@ -91,11 +86,10 @@ class yf_gallery_folders {
 			->select_box('allow_comments', module('gallery')->_comments_types)
 			->active_box()
 			->text('password')
-			->save();
+			->save_and_back();
 	}
 
 	/**
-	* Edit folder
 	*/
 	function edit_folder () {
 		if (empty(main()->_user_info) && MAIN_TYPE_USER) {
@@ -115,67 +109,42 @@ class yf_gallery_folders {
 		} else {
 			$sql .= 'id='.intval($_GET['id']);
 		}
-		$cur_folder_info = db()->query_fetch($sql);
-		if (empty($cur_folder_info)) {
+		$folder = db()->get($sql);
+		if (empty($folder)) {
 			return _e('No such folder!');
 		}
 		// Fix owner for the admin section
 		if (MAIN_TYPE_ADMIN && empty(main()->USER_ID)) {
-			main()->USER_ID = $cur_folder_info['user_id'];
+			main()->USER_ID = $folder['user_id'];
 		}
-		$FOLDER_ID	= intval($cur_folder_info['id']);
-		if ($cur_folder_info['user_id'] != main()->USER_ID) {
+		if ($folder['user_id'] != main()->USER_ID) {
 			return _e('Not your folder!');
 		}
-		if (main()->is_post()) {
-			$_POST['title']		= substr($_POST['title'], 0, module('gallery')->MAX_FOLDER_TITLE_LENGTH);
-			$_POST['comment']	= substr($_POST['comment'], 0, module('gallery')->MAX_FOLDER_COMMENT_LENGTH);
-			$_POST['password']	= substr($_POST['password'], 0, 32);
-			if (!strlen($_POST['title'])) {
-				_re('Folder title is required');
-			}
-			if (!_ee()) {
-				$_POST['title']		= module('gallery')->_filter_text($_POST['title']);
-				$_POST['comment']	= module('gallery')->_filter_text($_POST['comment']);
-				$creation_time = time();
-				db()->update('gallery_folders', array(
-					'user_id'		=> intval(main()->USER_ID),
-					'title'			=> _es($_POST['title']),
-					'comment'		=> _es($_POST['comment']),
-					'content_level'	=> intval($_POST['content_level']),
-					'privacy'		=> intval($_POST['privacy']),
-					'allow_comments'=> intval($_POST['allow_comments']),
-					'password'		=> _es($_POST['password']),
-					'active' 		=> 1,
-					'allow_tagging'	=> $_POST['allowed_group'] ? $_POST['allowed_group'] : module_safe('tags')->ALLOWED_GROUP,
-				), 'id='.intval($FOLDER_ID));
-				module('gallery')->_sync_public_photos();
-				_class_safe('user_stats')->_update(array('user_id' => main()->USER_ID));
-				return js_redirect('./?object='.'gallery'.'&action=edit_folder&id='.(module('gallery')->HIDE_TOTAL_ID ? $cur_folder_info['id2'] : intval($FOLDER_ID)). _add_get(array('page')));
-			}
-		}
-		foreach ((array)$cur_folder_info as $k => $v) {
-			$DATA[$k] = isset($_POST[$k]) ? $_POST[$k] : $v;
-		}
-		$replace = array(
-			'form_action'			=> './?object='.'gallery'.'&action='.$_GET['action'].'&id='.intval($_GET['id'])._add_get(array('page')),
-			'error_message'			=> _e(),
-			'max_title_length'		=> intval(module('gallery')->MAX_FOLDER_TITLE_LENGTH),
-			'max_comment_length'	=> intval(module('gallery')->MAX_FOLDER_COMMENT_LENGTH),
-			'title'					=> _prepare_html($DATA['title']),
-			'comment'				=> _prepare_html($DATA['comment']),
-			'password'				=> _prepare_html($DATA['password']),
-			'content_level_box'		=> module('gallery')->_box('content_level',	$DATA['content_level']),
-			'privacy_box'			=> module('gallery')->_box('privacy',			$DATA['privacy']),
-			'allow_comments_box'	=> module('gallery')->_box('allow_comments',	$DATA['allow_comments']),
-			'user_id'				=> intval(main()->USER_ID),
-			'back_link'				=> './?object='.'gallery'.'&action=view_folder&id='.$_GET['id']. _add_get(array('page')),
-			'is_default'			=> intval((bool)$cur_folder_info['is_default']),
-			'content_level'			=> module('gallery')->_content_levels[$cur_folder_info['content_level']],
-			'warn_user'				=> intval($WARN_USER),
-			'folder_tagging_box'	=> module('gallery')->ALLOW_TAGGING ? module_safe('tags')->_mod_spec_settings(array('module'=>'gallery', 'object_id'=>$DATA['id'])) : '',			
+		$r = array(
+			'form_action'	=> './?object=gallery&action='.$_GET['action'].'&id='.$folder['id'],
+			'back_link'		=> './?object=gallery&action=view_folder&id='.$folder['id'],
 		);
-		return tpl()->parse('gallery'.'/edit_folder_form', $replace);
+		return form($folder + $r + $_POST, array('for_upload' => 1, '__form_id__' => 'gallery_edit_folder'))
+			->validate(array(
+				'title'		=> 'trim|xss_clean|strip_tags|max_length['.module('gallery')->MAX_FOLDER_TITLE_LENGTH.']|required',
+				'comment'	=> 'trim|xss_clean|strip_tags|max_length['.module('gallery')->MAX_FOLDER_COMMENT_LENGTH.']',
+				'password'	=> 'trim',
+			))
+			->db_update_if_ok('gallery_folders', array('title', 'comment', 'privacy', 'allow_comments', 'password', 'active'), 'id='.$folder['id'], 
+				array('on_after_update' => function() use ($folder) {
+					module('gallery')->_sync_public_photos();
+					_class_safe('user_stats')->_update(array('user_id' => main()->USER_ID));
+					$id = module('gallery')->HIDE_TOTAL_ID ? $folder['id2'] : $folder['id'];
+					return js_redirect('./?object=gallery&action=edit_folder&id='. (int)$id);
+				})
+			)
+			->text('title')
+			->textarea('comment')
+			->select_box('privacy', module('gallery')->_privacy_types)
+			->select_box('allow_comments', module('gallery')->_comments_types)
+			->active_box()
+			->text('password')
+			->save_and_back();
 	}
 
 	/**
@@ -195,16 +164,16 @@ class yf_gallery_folders {
 		} else {
 			$sql .= 'id='.intval($_GET['id']);
 		}
-		$cur_folder_info = db()->query_fetch($sql);
-		if (empty($cur_folder_info)) {
+		$folder = db()->query_fetch($sql);
+		if (empty($folder)) {
 			return _e('No such folder!');
 		}
 		// Fix owner for the admin section
 		if (MAIN_TYPE_ADMIN && empty(main()->USER_ID)) {
-			main()->USER_ID = $cur_folder_info['user_id'];
+			main()->USER_ID = $folder['user_id'];
 		}
-		$FOLDER_ID	= intval($cur_folder_info['id']);
-		if ($cur_folder_info['user_id'] != main()->USER_ID) {
+		$FOLDER_ID	= intval($folder['id']);
+		if ($folder['user_id'] != main()->USER_ID) {
 			return _e('Not your folder!');
 		}
 		$user_folders = module('gallery')->_get_user_folders(main()->USER_ID);
@@ -257,7 +226,7 @@ class yf_gallery_folders {
 				db()->query('DELETE FROM '.db('gallery_folders').' WHERE id='.intval($FOLDER_ID).' LIMIT 1');
 				_class_safe('user_stats')->_update(array('user_id' => main()->USER_ID));
 				module('gallery')->_sync_public_photos();
-				return js_redirect('./?object='.'gallery'.'&action=show_gallery');
+				return js_redirect('./?object=gallery&action=show_gallery');
 			}
 		}
 		foreach ((array)$user_folders as $_folder_id => $_folder_info) {
@@ -267,15 +236,15 @@ class yf_gallery_folders {
 			$new_folders[$_folder_id] = _prepare_html($_folder_info['title']);
 		}
 		$replace = array(
-			'form_action'		=> './?object='.'gallery'.'&action='.$_GET['action'].'&id='.$_GET['id']. _add_get(array('page')),
-			'back_link'			=> './?object='.'gallery'.'&action=view_folder&id='.$_GET['id']. _add_get(array('page')),
+			'form_action'		=> './?object=gallery&action='.$_GET['action'].'&id='.$_GET['id']. _add_get(array('page')),
+			'back_link'			=> './?object=gallery&action=view_folder&id='.$_GET['id']. _add_get(array('page')),
 			'error_message'		=> _e(),
 			'folders_box'		=> common()->select_box('new_folder_id', $new_folders, 0, 0, 2, '', false),
-			'folder_name'		=> _prepare_html($cur_folder_info['title']),
+			'folder_name'		=> _prepare_html($folder['title']),
 			'contains_photos'	=> !empty($folder_photos) ? 1 : 0,
 			'is_last_folder'	=> count($user_folders) <= 1 ? 1 : 0,
 		);
-		return tpl()->parse('gallery'.'/delete_folder', $replace);
+		return tpl()->parse('gallery/delete_folder', $replace);
 	}
 	
 	/**
@@ -319,25 +288,25 @@ class yf_gallery_folders {
 			return _e('Missing folder id!');
 		}
 		$user_folders = module('gallery')->_user_folders_infos;
-		$cur_folder_info = $user_folders[$FOLDER_ID];
-		if (empty($cur_folder_info)) {
+		$folder = $user_folders[$FOLDER_ID];
+		if (empty($folder)) {
 			return _e('No such folder!');
 		}
 		if (main()->is_post()) {
-			if (!empty($cur_folder_info['password']) && $_POST['pswd'] == $cur_folder_info['password']) {
-				$_SESSION[module('gallery')->SESSION_PSWD_FIELD][$FOLDER_ID] = $cur_folder_info['password'];
+			if (!empty($folder['password']) && $_POST['pswd'] == $folder['password']) {
+				$_SESSION[module('gallery')->SESSION_PSWD_FIELD][$FOLDER_ID] = $folder['password'];
 			} else {
 				_re('Wrong password!');
 			}
 			if (!_ee()) {
-				return js_redirect('./?object='.'gallery'.'&action='.$_GET['action']. (!empty($_GET['id']) ? '&id='.$_GET['id'] : ''));
+				return js_redirect('./?object=gallery&action='.$_GET['action']. (!empty($_GET['id']) ? '&id='.$_GET['id'] : ''));
 			}
 		}
 		$replace = array(
 			'error_message'		=> _e(),
-			'enter_pswd_action'	=> './?object='.'gallery'.'&action='.$_GET['action']. (!empty($_GET['id']) ? '&id='.$_GET['id'] : ''),
+			'enter_pswd_action'	=> './?object=gallery&action='.$_GET['action']. (!empty($_GET['id']) ? '&id='.$_GET['id'] : ''),
 		);
-		return tpl()->parse('gallery'.'/enter_password', $replace);
+		return tpl()->parse('gallery/enter_password', $replace);
 	}
 
 	/**
