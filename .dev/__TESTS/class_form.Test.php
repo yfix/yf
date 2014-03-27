@@ -177,4 +177,12 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<li class="dropdown" style="list-style-type:none;"><a class="dropdown-toggle" data-toggle="dropdown">Mydiv&nbsp;<span class="caret"></span></a><ul class="dropdown-menu"><li class="dropdown"><a data-value="k1" >v1</a></li><li class="dropdown"><a data-value="k2" data-selected="selected">v2</a></li></ul></li>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->div_box('mydiv', $data, array('selected' => $selected)))) );
 	}
+	public function test_list_box() {
+		$data = array('k1' => 'v1', 'k2' => 'v2');
+		$selected = 'k2';
+		$this->assertEquals(''
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->list_box('mylist', $data))) );
+		$this->assertEquals(''
+			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->list_box('mylist', $data, array('selected' => $selected)))) );
+	}
 }
