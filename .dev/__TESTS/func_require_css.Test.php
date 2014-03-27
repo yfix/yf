@@ -22,14 +22,14 @@ class func_require_css_test extends PHPUnit_Framework_TestCase {
 		unlink($f);
 	}
 	public function test_strip_style_tags() {
-		$this->assertEquals('#some_id { display:none; }', _class('core_js')->_strip_style_tags('<style>#some_id { display:none; }</style>'));
-		$this->assertEquals('#some_id { display:none; }', _class('core_js')->_strip_style_tags('<style>#some_id { display:none; }'));
-		$this->assertEquals('#some_id { display:none; }', _class('core_js')->_strip_style_tags('#some_id { display:none; }</style>'));
-		$this->assertEquals('#some_id { display:none; }', _class('core_js')->_strip_style_tags('#some_id { display:none; }'));
-		$this->assertEquals('#some_id { display:none; }', _class('core_js')->_strip_style_tags('<style type="text/css">#some_id { display:none; }</style>'));
-		$this->assertEquals('#some_id { display:none; }', _class('core_js')->_strip_style_tags('<style type="text/css" id="some_id">#some_id { display:none; }</style>'));
-		$this->assertEquals('#some_id { display:none; }', _class('core_js')->_strip_style_tags('<style><style><style type="text/css" id="some_id">#some_id { display:none; }</style></style></style>'));
-		$this->assertEquals('#some_id { display:none; }', _class('core_js')->_strip_style_tags('<style><style><style type="text/css" id="some_id">#some_id { display:none; }'));
+		$this->assertEquals('#some_id { display:none; }', _class('core_css')->_strip_style_tags('<style>#some_id { display:none; }</style>'));
+		$this->assertEquals('#some_id { display:none; }', _class('core_css')->_strip_style_tags('<style>#some_id { display:none; }'));
+		$this->assertEquals('#some_id { display:none; }', _class('core_css')->_strip_style_tags('#some_id { display:none; }</style>'));
+		$this->assertEquals('#some_id { display:none; }', _class('core_css')->_strip_style_tags('#some_id { display:none; }'));
+		$this->assertEquals('#some_id { display:none; }', _class('core_css')->_strip_style_tags('<style type="text/css">#some_id { display:none; }</style>'));
+		$this->assertEquals('#some_id { display:none; }', _class('core_css')->_strip_style_tags('<style type="text/css" id="some_id">#some_id { display:none; }</style>'));
+		$this->assertEquals('#some_id { display:none; }', _class('core_css')->_strip_style_tags('<style><style><style type="text/css" id="some_id">#some_id { display:none; }</style></style></style>'));
+		$this->assertEquals('#some_id { display:none; }', _class('core_css')->_strip_style_tags('<style><style><style type="text/css" id="some_id">#some_id { display:none; }'));
 	}
 	public function test_complex() {
 		require_css('//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.css');
