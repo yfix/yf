@@ -34,6 +34,6 @@ class func_require_js_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_complex() {
 		require_js('//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js');
-		$this->assertEquals('', _class('core_js')->show());
+		$this->assertEquals('<script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js" type="text/javascript"></script>', _class('core_js')->show());
 	}
 }
