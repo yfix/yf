@@ -52,10 +52,10 @@ class yf_form2_datetime {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			// js lib
-			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js', true);
-			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment-with-langs.min.js', true);
-			_class('core_js')->add('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js', true);
-			_class('core_css')->add('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/css/bootstrap-datetimepicker.min.css', true);
+			require_js('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js');
+			require_js('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment-with-langs.min.js');
+			require_js('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js');
+			require_css('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/css/bootstrap-datetimepicker.min.css');
 			$body = "
 <style>
 .bootstrap-datetimepicker-widget .picker-switch {
@@ -69,7 +69,7 @@ class yf_form2_datetime {
     </span>
 </div>
 ";
-			_class('core_js')->add("<script type=\"text/javascript\">
+			require_js("<script type=\"text/javascript\">
 $(function() {
 	$('#{$extra['name']}').datetimepicker({
 		language: 'ru'
@@ -82,7 +82,7 @@ $(function() {
 		".($extra['no_time']==1 ? ", pickTime: false" : "")."".($extra['no_date']==1 ? ", pickDate: false" : "")."
 	});
 });
-</script>", false);
+</script>");
 			return $__this->_row_html($body, $extra, $r);
 		};
 		if ($__this->_chained_mode) {

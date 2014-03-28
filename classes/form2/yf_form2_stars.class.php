@@ -68,23 +68,22 @@ class yf_form2_stars {
 			$body[] = '</span>';
 			$body[] = '<input type="hidden" name="'.$extra['name'].'" id='.$extra['name'].' value="0">';
 			
-			_class('core_js')->add('
-				<script>
-					$(function () {
-						$(".'.$class.'.'.$extra['name'].'").on("click",function() {
-							var value = $(this).attr("data-value");
-							$("#"+$(this).attr("data-name")).val(value);
-							$(".rating.star.'.$extra['name'].'").each(function() {
-								$(this).attr("data-value");
-								if (value>=$(this).attr("data-value")) {
-									$(this).addClass("rating_selected");								
-								} else {
-									$(this).removeClass("rating_selected");				
-								}
-							});
+			require_js('<script type="text/javascript">
+				$(function () {
+					$(".'.$class.'.'.$extra['name'].'").on("click",function() {
+						var value = $(this).attr("data-value");
+						$("#"+$(this).attr("data-name")).val(value);
+						$(".rating.star.'.$extra['name'].'").each(function() {
+							$(this).attr("data-value");
+							if (value>=$(this).attr("data-value")) {
+								$(this).addClass("rating_selected");								
+							} else {
+								$(this).removeClass("rating_selected");				
+							}
 						});
 					});
-				</script>',false);
+				});
+				</script>');
 			
 			return $_this->_row_html(implode('', $body), $extra, $r);
 		};

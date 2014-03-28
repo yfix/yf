@@ -385,13 +385,13 @@ class yf_tpl_driver_yf {
 		}, $string);
 
 // TODO: unit tests, try in the wild, add compile rules, enable
-#		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css)}
+#		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css, url)}, {require_css(path.to/file.css, file)}, {catch(tpl_var)}.some_css_class {} {/catch} {require_css(tpl_var, inline)}
 #		$string = preg_replace_callback('/\{require_css\(\s*["\']{0,1}([^"\'\)\}]+)["\']{0,1}\s*\)\}/ims', function($m) use ($_this) {
 #			return require_css($m[1]);
 #		}, $string);
 
 // TODO: unit tests, try in the wild, add compile rules, enable
-#		// JS smart inclusion. Examples: {require_js(http//path.to/file.js)}
+#		// JS smart inclusion. Examples: {require_js(http//path.to/file.js, url)}, {require_js(path.to/file.js, file)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var, inline)}
 #		$string = preg_replace_callback('/\{require_js\(\s*["\']{0,1}([^"\'\)\}]+)["\']{0,1}\s*\)\}/ims', function($m) use ($_this) {
 #			return require_js($m[1]);
 #		}, $string);

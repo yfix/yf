@@ -174,15 +174,17 @@ class yf_manage_shop_filter{
 
 			},
 			'product_revisions'	=> function($filter_name, $replace) {
-				$fields = array('user_id', 'add_date', 'item_id', 'action');
+				$fields = array('user_id', 'add_date', 'item_id', 'action', 'name');
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->container(_class('manage_shop_filter')->_product_search_widget('item_id',$_SESSION[$filter_name]['item_id']),'Item id')
+					->text('name')
 					->text('user_id', 'Admin')
 					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
 					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
+					->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
 					->select_box('action', common()->get_static_conf('product_revisions',false,false), array('show_text' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 			},

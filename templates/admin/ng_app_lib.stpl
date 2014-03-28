@@ -1,0 +1,16 @@
+{catch( js_min )}{if( const.DEBUG_MODE eq 0 )}.min{/if}{/catch}
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular{js_min}.js" class="yf_core"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.2.10/angular-locale_ru{js_min}.js" class="yf_core"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular-animate{js_min}.js" class="yf_core"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular-sanitize{js_min}.js" class="yf_core"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular-resource{js_min}.js" class="yf_core"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular-touch{js_min}.js" class="yf_core"></script>
+
+	{{-- AngularStrap was initially written to provide AngularJS wrapping directives for Twitter Bootstrap --}}
+	<script src="//rawgithub.com/mgcrea/angular-strap/master/dist/angular-strap{js_min}.js" class="yf_core"></script>
+	<script src="//rawgithub.com/mgcrea/angular-strap/master/dist/angular-strap.tpl{js_min}.js" class="yf_core"></script>
+
+{{--
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui{js_min}.js" class="yf_core"></script>
+	<link href="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui{js_min}.css" rel="stylesheet" class="yf_core">
+ --}}

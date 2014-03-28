@@ -1,0 +1,106 @@
+<script>
+
+ng_app_admin.config( function( $typeaheadProvider ) {
+	angular.extend( $typeaheadProvider.defaults, {
+		delay: 1000
+		, animation: 'am-flip-x'
+		, minLength: 2
+		, limit: 20
+	});
+});
+
+
+ng_app_admin.factory( 'srv_search', function( $http, $log ) {
+	var service = {
+		api_url: {
+			products     : '{_api_url_products}'
+			, categories : '{_api_url_categories}'
+		}
+		, products: function( term ) {
+			var params  = { search_word: term };
+			return( service.query( term, service.api_url.products, params ) );
+		}
+		, categories: function( term ) {
+			var params  = { search_word: term };
+			return( service.query( term, service.api_url.categories, params ) );
+		}
+		, query: function( term, url, params ) {
+			$log.log( 'query: ', term );
+			var results = $http.get( url, { params: params } )
+				.then( function( response ) {
+					var data =  angular.isObject( response.data ) && response.data || [];
+					return( data );
+				});
+			return( results );
+		}
+	}
+	return( service );
+});
+
+ng_app_admin.controller( '{_ng_controller}', function ( srv_search, $scope, $filter, $log ) {
+	// default
+	$scope.active = false;
+	// data
+	$scope.search = srv_search;
+	$scope.search_api_key = false;
+	$scope.search_api_storage = false;
+	$scope.search_api = false;
+	$scope.searched = '';
+	$scope.conditions = {conditions};
+	$log.log( 'init', $scope.conditions );
+
+	$scope.$on('$typeahead.select', function( value, index ) {
+		$log.log( 'selected: ', index, value );
+		var id = +index;
+		$scope.selected = id;
+		$scope.store( $scope.search_api_storage, id );
+		$scope.$digest();
+	});
+
+	$scope.store = function( key, id ) {
+		$log.log( 'store', key, id );
+		$scope.conditions[ key ].push( id );
+		$log.log( 'conditions', $scope.conditions );
+	}
+
+	$scope.set_api = function( key, storage ) {
+		$scope.term = '';
+		$scope.search_api_key = key;
+		$scope.search_api = srv_search[ key ];
+		$scope.search_api_storage = storage;
+	}
+
+	$scope.add_product = function() {
+		$log.log( 'add product' );
+		angular.element( 'label[for=_search]' ).text( 'добавить товар' );
+		angular.element( '#_search' ).attr( 'placeholder', 'название товара' );
+		$scope.set_api( 'products', 'product_id' );
+	}
+
+	$scope.add_category = function() {
+		$log.log( 'add category' );
+		angular.element( 'label[for=_search]' ).text( 'добавить категорию' );
+		angular.element( '#_search' ).attr( 'placeholder', 'название категории' );
+		{{-- $scope.search_api = $scope.search_categories; --}}
+		$scope.set_api( 'categories', 'category_id' );
+	}
+
+	$scope.search_categories = function( term ) {
+		var source = $scope.categories;
+		var results = $filter( 'filter' )( source, term, false );
+		return( results );
+	}
+
+	$scope.search = function( term ) {
+		if( term ) {
+			$log.log( 'update: ', term );
+			var results = $scope.search_api( term );
+			return( results );
+		}
+	};
+
+	$scope.set_api( 'products', 'product_id' );
+
+});
+
+</script>

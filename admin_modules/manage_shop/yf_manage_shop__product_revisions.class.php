@@ -21,6 +21,7 @@ class yf_manage_shop__product_revisions {
 		),
 	);
 
+
 	function _product_check_first_revision($type = false, $ids = false) {
 		$db = $this->get_revision_db($type);
 		if($type == 'product_images'){
@@ -163,18 +164,34 @@ class yf_manage_shop__product_revisions {
 	/**
 	 */
 	function product_revisions() {
-		return table('SELECT * FROM '.db('shop_product_revisions'), array(
+		$filter_params = array(
+			'name'		=> array('like','p.name'),
+			'action'	=> array('eq','r.action'),
+			'user_id'	=> array('eq','r.user_id'),
+			'add_date'	=> array('dt_between','r.add_date'),
+			'item_id' 	=> array('eq','r.item_id'),
+		);
+		$filter_params['cat_id'] = function($a) {
+			$top_cat_id = (int)$a['value'];
+			if ($top_cat_id) {
+				$cat_ids = (array) _class('cats')->_recursive_get_children_ids($top_cat_id, 'shop_cats', $sub_children = 1, $as_array = 1);
+			}
+			$cat_ids[$top_cat_id] = $top_cat_id;
+			return $cat_ids ? 'p.cat_id IN('.implode(',', $cat_ids).')' : '';
+		};
+
+		return table('SELECT r.*, p.name, p.cat_id 
+						FROM '.db('shop_product_revisions').' as r 
+						INNER JOIN '.db('shop_products').' as p ON p.id=r.item_id', 
+			array(
 				'filter' => $_SESSION[$_GET['object'].'__product_revisions'],
-				'filter_params' => array(
-					'action'	=> array('eq','action'),
-					'user_id'	=> array('eq','user_id'),
-					'add_date'	=> array('dt_between','add_date'),
-					'item_id' 	=> array('eq','item_id'),
-				),
+				'filter_params' => $filter_params,
 				'hide_empty' => 1,
 			))
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->link('item_id', './?object='.$_GET['object'].'&action=product_edit&id=%d')
+			->text('name')
+			->link('cat_id', './?object=category_editor&action=edit_item&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
 			->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d')

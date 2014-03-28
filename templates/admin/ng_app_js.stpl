@@ -1,0 +1,19 @@
+
+	<script>
+		var ng_app_admin = angular.module( '{ng_app}', [
+			'ngAnimate'
+			, 'ngSanitize'
+			, 'ngResource'
+			, 'ngTouch'
+			, 'mgcrea.ngStrap'
+		])
+
+		.config( function( $datepickerProvider ) {
+			angular.extend( $datepickerProvider.defaults, {
+				dateFormat: 'dd.MM.yyyy'
+				, autoclose: 1
+				, startWeek: 1
+				, startView: 2
+			});
+		});
+	</script>
