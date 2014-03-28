@@ -50,11 +50,19 @@ ng_app_admin.controller( '{_ng_controller}', function ( srv_search, $scope, $fil
 	$log.log( 'init', $scope.conditions );
 
 	$scope.$on('$typeahead.select', function( value, index ) {
-		$log.log( 'selected: ', index, value );
-		var id = +index;
-		$scope.selected = id;
-		$scope.store( $scope.search_api_storage, id );
-		$scope.$digest();
+		$log.log( 'on selected: ', index, value );
+		if( index ) {
+			$scope.selected = +index;
+		}
+	});
+
+	$scope.$watch('selected', function() {
+		if( $scope.selected ) {
+			$log.log( 'watch selected: ', $scope.selected );
+			$scope.store( $scope.search_api_storage, $scope.selected );
+			$scope.selected = null;
+			$scope.term = null;
+		}
 	});
 
 	$scope.store = function( key, id ) {

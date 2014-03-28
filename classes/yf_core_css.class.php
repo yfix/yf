@@ -61,112 +61,94 @@ class yf_core_css {
 	
 	/**
 	* $content: string/array
-	* $type: = auto|asset|url|file|inline
+	* $type: = auto|asset|url|file|inline|raw
 	*/
-	public function add($content, $type = 'auto', $params = array()) {
-		if ($type === true) {
-			$type = 'file';
+	public function add($content, $force_type = 'auto', $params = array()) {
+		if (DEBUG_MODE) {
+			$trace = main()->trace_string();
 		}
 		if (!is_array($content)) {
 			$content = array($content);
 		}
 		foreach ($content as $_content) {
 			$_content = trim($_content);
-			$_type = $type;
-			if (!$type || $type == 'auto') {
-				$_type = $this->_detect_content($_content);
+			if (!strlen($_content)) {
+				continue;
 			}
+			$type = '';
+			if (in_array($force_type, array('url','file','inline','raw','asset'))) {
+				$type = $force_type;
+			} else {
+				$type = $this->_detect_content($_content);
+			}
+			$md5 = md5($_content);
 			if ($type == 'url') {
-				$this->add_url($_content, $params);
+				$this->content[$md5] = array(
+					'type'	=> 'url',
+					'text'	=> $_content,
+				);
 			} elseif ($type == 'file') {
-				$this->add_file($_content, $params);
+				if (file_exists($_content)) {
+					$text = file_get_contents($_content);
+					if (strlen($text)) {
+						$this->content[$md5] = array(
+							'type'	=> 'file',
+							'text'	=> $_content,
+						);
+					}
+				}
 			} elseif ($type == 'inline') {
-				$this->add_inline($_content, $params);
+				$this->content[$md5] = array(
+					'type'	=> 'inline',
+					'text'	=> $_content,
+				);
+			} elseif ($type == 'raw') {
+				$this->content[$md5] = array(
+					'type'	=> 'raw',
+					'text'	=> $_content,
+				);
 			} elseif ($type == 'asset') {
-				$this->add_url($this->assets[$_content], $params);
+				$url = $this->assets[$_content];
+				$md5 = md5($url);
+				$this->content[$md5] = array(
+					'type'	=> 'url',
+					'text'	=> $url,
+				);
+			}
+			if (DEBUG_MODE) {
+				debug('core_css[]', array(
+					'type'		=> $type,
+					'md5'		=> $md5,
+					'content'	=> $_content,
+					'is_added'	=> isset($this->content[$md5]),
+					'trace'		=> $trace,
+				));
 			}
 		}
 	}
 
 	/**
 	*/
-	public function add_url($urls, $params = array()) {
-		if (!is_array($urls)) {
-			$urls = array($urls);
-		}
-		foreach ((array)$urls as $url) {
-			$path = trim($url);
-			if (!strlen($url)) {
-				continue;
-			}
-			$md5 = md5($url);
-			$this->content[$md5] = array(
-				'type'	=> 'url',
-				'text'	=> $url,
-			);
-		}
+	public function add_url($content, $params = array()) {
+		return $this->add($content, 'url');
 	}
 
 	/**
 	*/
-	public function add_file($paths, $params = array()) {
-		if (!is_array($paths)) {
-			$paths = array($paths);
-		}
-		foreach ((array)$paths as $path) {
-			$path = trim($path);
-			if (!strlen($path)) {
-				continue;
-			}
-			if (!file_exists($path)) {
-				continue;
-			}
-			$text = file_get_contents($path);
-			if (!strlen($text)) {
-				continue;
-			}
-			$md5 = md5($path);
-			$this->content[$md5] = array(
-				'type'	=> 'file',
-				'text'	=> $path,
-			);
-		}
+	public function add_file($content, $params = array()) {
+		return $this->add($content, 'file');
 	}
 
 	/**
 	*/
-	public function add_inline($texts, $params = array()) {
-		if (!is_array($texts)) {
-			$texts = array($texts);
-		}
-		foreach ((array)$texts as $text) {
-			if (!strlen($text)) {
-				continue;
-			}
-			$md5 = md5($text);
-			$this->content[$md5] = array(
-				'type'	=> 'inline',
-				'text'	=> $text,
-			);
-		}
+	public function add_inline($content, $params = array()) {
+		return $this->add($content, 'inline');
 	}
 
 	/**
 	*/
-	public function add_raw($texts, $params = array()) {
-		if (!is_array($texts)) {
-			$texts = array($texts);
-		}
-		foreach ((array)$texts as $text) {
-			if (!strlen($text)) {
-				continue;
-			}
-			$md5 = md5($text);
-			$this->content[$md5] = array(
-				'type'	=> 'raw',
-				'text'	=> $text,
-			);
-		}
+	public function add_raw($content, $params = array()) {
+		return $this->add($content, 'raw');
 	}
 
 	/**
@@ -210,11 +192,11 @@ class yf_core_css {
 			$type = 'asset';
 		} elseif (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content)) {
 			$type = 'url';
-		} elseif (preg_match('~^(<style|[$;#\.@/\*])~ims', $content) || strpos($content, PHP_EOL) !== false) {
-			$type = 'inline';
 // TODO: file allowed to begin with PROJECT_PATH, SITE_PATH or YF_PATH
 		} elseif (preg_match('~^/[a-z0-9\./_-]+\.css$~ims', $content) && file_exists($content)) {
 			$type = 'file';
+		} elseif (preg_match('~^(<style|[$;#\.@/\*])~ims', $content) || strpos($content, PHP_EOL) !== false) {
+			$type = 'inline';
 		}
 		return $type;
 	}
