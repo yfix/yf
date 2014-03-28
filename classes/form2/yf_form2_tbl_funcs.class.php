@@ -59,7 +59,7 @@ class yf_form2_tbl_funcs {
 	/**
 	* For use inside table item template
 	*/
-	function tbl_link_delete($name = '', $link = '', $extra = array(), $replace = array()) {
+	function tbl_link_delete($name = '', $link = '', $extra = array(), $replace = array(), $__this) {
 		if (!$name) {
 			$name = 'Delete';
 		}
