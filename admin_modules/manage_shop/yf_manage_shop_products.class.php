@@ -293,20 +293,22 @@ class yf_manage_shop_products{
 
 	function category_search_autocomplete () {
 		main()->NO_GRAPHICS = true;
-		if (!$_GET['search_word']) {
-			return false;
-		}
-		$word = common()->sphinx_escape_string($_GET['search_word']);
-		$cat_id = _class( 'cats' )->_get_cat_id_by_name( 'shop_cats' );
-		$result = db()->get_all("
-			SELECT `id`,`name` FROM `".db('sys_category_items')."` WHERE
-				`name` LIKE '%"._es($word)."%' OR
-				`id` LIKE '%"._es($word)."%'
-			LIMIT 20
-		");
-		if (!$result) {
-			return false;
-		}
+		if( empty( $_GET[ 'search_word' ] ) ) { return false; }
+		$sql_table = db( 'sys_category_items' );
+		$sql_cat_id    = _class( 'cats' )->_get_cat_id_by_name( 'shop_cats' );
+		$sql_word  = '%' . _es( $_GET[ 'search_word' ] ) . '%';
+		$sql = sprintf('
+			SELECT id, name FROM %s WHERE cat_id = %u AND (
+				name LIKE "%s" OR
+				id LIKE "%s"
+			) LIMIT 20
+			'
+			, $sql_table
+			, $sql_cat_id
+			, $sql_word
+		);
+		$result = db()->get_all( $sql );
+		if( empty( $result ) ) { return( null ); }
 		foreach((array)$result as $k){
 			$return_array[] = array(
 				'id' => $k['id'],

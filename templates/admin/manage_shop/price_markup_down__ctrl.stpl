@@ -41,32 +41,37 @@ ng_app_admin.controller( '{_ng_controller}', function ( srv_search, $scope, $fil
 	// default
 	$scope.active = false;
 	// data
-	$scope.search = srv_search;
-	$scope.search_api_key = false;
-	$scope.search_api_storage = false;
-	$scope.search_api = false;
-	$scope.searched = '';
 	$scope.conditions = {conditions};
 	$log.log( 'init', $scope.conditions );
+	// local
+	$scope.products   = {_products};
+	$scope.categories = {_categories};
+	$scope.search             = srv_search;
+	$scope.search_api         = false;
+	$scope.search_api_key     = false;
+	$scope.search_api_storage = false;
 
-	$scope.$on('$typeahead.select', function( value, index ) {
-		$log.log( 'on selected: ', index, value );
-		if( index ) {
-			$scope.selected = +index;
+	$scope.$on('$typeahead.select', function( value, item ) {
+		$log.log( 'on selected: ', item, value );
+		if( item ) {
+			add( item );
 		}
 	});
 
-	$scope.$watch('selected', function() {
-		if( $scope.selected ) {
-			$log.log( 'watch selected: ', $scope.selected );
-			$scope.store( $scope.search_api_storage, $scope.selected );
-			$scope.selected = null;
-			$scope.term = null;
-		}
-	});
+	var add = function( item ) {
+		var key = $scope.search_api_key;
+		var storage = $scope.search_api_storage;
+		var id = item.id;
+		var text = item.text;
+		$scope[ storage ] = null;
+		$log.log( 'add', storage, key, item );
+		$scope.conditions[ storage ].push( id );
+		$scope[ key ].push( item );;
+	}
 
-	$scope.store = function( key, id ) {
-		$log.log( 'store', key, id );
+	var remove = function( key, id ) {
+		var key = $scope.search_api_storage;
+		$log.log( 'delete', key, id );
 		$scope.conditions[ key ].push( id );
 		$log.log( 'conditions', $scope.conditions );
 	}
@@ -93,21 +98,23 @@ ng_app_admin.controller( '{_ng_controller}', function ( srv_search, $scope, $fil
 		$scope.set_api( 'categories', 'category_id' );
 	}
 
-	$scope.search_categories = function( term ) {
-		var source = $scope.categories;
-		var results = $filter( 'filter' )( source, term, false );
-		return( results );
-	}
-
-	$scope.search = function( term ) {
+	$scope.search_product_id = function( term ) {
 		if( term ) {
-			$log.log( 'update: ', term );
+			$log.log( 'search_product_id', term );
+			$scope.set_api( 'products', 'product_id' );
 			var results = $scope.search_api( term );
 			return( results );
 		}
 	};
 
-	$scope.set_api( 'products', 'product_id' );
+	$scope.search_category_id = function( term ) {
+		if( term ) {
+			$log.log( 'search_category_id', term );
+			$scope.set_api( 'categories', 'category_id' );
+			var results = $scope.search_api( term );
+			return( results );
+		}
+	};
 
 });
 

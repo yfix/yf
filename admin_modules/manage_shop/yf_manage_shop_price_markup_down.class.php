@@ -77,9 +77,14 @@ class yf_manage_shop_price_markup_down {
 	function _form( $replace ) {
 		// prepare ng-app
 		$_ng_controller = 'ctrl.price_markup_down.conditions';
-		$replace[ '_ng_controller' ] = $_ng_controller;
-		$replace[ '_api_url_products' ] = ADMIN_WEB_PATH.'?object=manage_shop&action=product_search_autocomplete';
+		$replace[ '_ng_controller'      ] = $_ng_controller;
+		$replace[ '_api_url_products'   ] = ADMIN_WEB_PATH.'?object=manage_shop&action=product_search_autocomplete';
 		$replace[ '_api_url_categories' ] = ADMIN_WEB_PATH.'?object=manage_shop&action=category_search_autocomplete';
+		$conditions = json_decode( $replace[ 'conditions' ], true );
+		$replace[ '_categories' ] = $this->get_categories( $conditions[ 'category_id' ] ) ?: '{}';
+		$replace[ '_products'   ] = $this->get_products( $conditions[ 'product_id' ] ) ?: '{}';
+		// prepare form
+		$_form_tpl = tpl()->parse( 'manage_shop/price_markup_down__form', $replace );
 		// create form
 		$_form = form( $replace, array( 'ng-controller' => $_ng_controller ) )
 			->select_box( 'type', $this->_select_box__type() )
@@ -87,44 +92,66 @@ class yf_manage_shop_price_markup_down {
 			->text( 'description' )
 			->datetime_select( 'time_from', 'Дата от', array( 'with_time' => 1 ) )
 			->datetime_select( 'time_to',   'Дата до', array( 'with_time' => 1 ) )
-			->fieldset_start( 'Дополнительные условие' )
-				->hidden( 'conditions', array(
-					'ng-model' => 'conditions'
-				))
-				->input( '_product_ids', 'список продуктов', array(
-					'ng-model' => 'conditions.product_id',
-					'ng-list'  => 'true',
-				))
-				->button( '_add_product_id', 'добавить', array(
-					'ng-click' => 'add_product()',
-				))
-				->input( '_categories_ids', 'список категорий', array(
-					'ng-model' => 'conditions.category_id',
-					'ng-list'  => 'true',
-				))
-				->button( '_add_category_id', 'добавить', array(
-					'ng-click' => 'add_category()',
-				))
-				->input( '_search', 'добавить', array(
-					'data-bs-typeahead'   => 'true',
-					'ng-model'            => 'term',
-					'ng-options'          => 'data.id as data.text for data in search( $viewValue )',
-					'placeholder'         => 'введите фразу',
-				))
+			->fieldset_start()
+				->container( $_form_tpl, 'Условие' )
 			->fieldset_end()
 			->active_box('active')
 			->save_and_back();
-		$_form_ctrl = tpl()->parse( 'manage_shop/price_markup_down', $replace );
+		// form controller
+		$_form_ctrl = tpl()->parse( 'manage_shop/price_markup_down__ctrl', $replace );
 		return( $_form . $_form_ctrl );
 	}
 
 	function _on_before_show( &$fields ) {
-		$fields[ 'conditions' ] = $fields[ 'conditions' ] ?: '{}';
+		$conditions_json = $fields[ 'conditions' ];
+		$fields[ 'conditions' ] = $conditions_json ?: '{}';
 	}
 
 	function _on_before_update( &$fields ) {
 		$fields[ 'time_from' ] = $fields[ 'time_from' ] ? date( 'Y-m-d H:i', strtotime( $fields[ 'time_from' ] ) ) : null;
 		$fields[ 'time_to'   ] = $fields[ 'time_to'   ] ? date( 'Y-m-d H:i', strtotime( $fields[ 'time_to'   ] ) ) : null;
+	}
+
+	function get_categories( $ids ) {
+		if( empty( $ids ) ) { return( null ); }
+		$sql_table  = db( 'sys_category_items' );
+		$sql_cat_id = _class( 'cats' )->_get_cat_id_by_name( 'shop_cats' );
+		$sql_ids   = implode( ',', (array)$ids );
+		$sql = sprintf( 'SELECT id, name FROM %s WHERE cat_id = %u AND id IN( %s )'
+			, $sql_table
+			, $sql_cat_id
+			, $sql_ids
+		);
+		$items = db()->get_all( $sql );
+		if( empty( $items ) ) { return false; }
+		$result = array();
+		foreach( $items as $i ){
+			$result[] = array(
+				'id'   => (int)$i[ 'id' ],
+				'text' => $i[ 'name' ],
+			);
+		}
+		return( json_encode( $result ) );
+	}
+
+	function get_products( $ids ) {
+		if( empty( $ids ) ) { return( null ); }
+		$sql_table  = db( 'shop_products' );
+		$sql_ids   = implode( ',', (array)$ids );
+		$sql = sprintf( 'SELECT id, name FROM %s WHERE id IN( %s )'
+			, $sql_table
+			, $sql_ids
+		);
+		$items = db()->get_all( $sql );
+		if( empty( $items ) ) { return false; }
+		$result = array();
+		foreach( $items as $i ){
+			$result[] = array(
+				'id'   => (int)$i[ 'id' ],
+				'text' => $i[ 'name' ],
+			);
+		}
+		return( json_encode( $result ) );
 	}
 
 	function price_markup_down_add() {
