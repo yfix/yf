@@ -291,8 +291,32 @@ class yf_manage_shop_products{
 		exit(); // To prevent printing additional debug info later and break JS
 	}
 
-	/**
-	*/
+	function category_search_autocomplete () {
+		main()->NO_GRAPHICS = true;
+		if (!$_GET['search_word']) {
+			return false;
+		}
+		$word = common()->sphinx_escape_string($_GET['search_word']);
+		$cat_id = _class( 'cats' )->_get_cat_id_by_name( 'shop_cats' );
+		$result = db()->get_all("
+			SELECT `id`,`name` FROM `".db('sys_category_items')."` WHERE
+				`name` LIKE '%"._es($word)."%' OR
+				`id` LIKE '%"._es($word)."%'
+			LIMIT 20
+		");
+		if (!$result) {
+			return false;
+		}
+		foreach((array)$result as $k){
+			$return_array[] = array(
+				'id' => $k['id'],
+				'text' => '['.$k['id'].'] '.$k['name'],
+			);
+		}
+		print json_encode($return_array);
+		exit(); // To prevent printing additional debug info later and break JS
+	}
+
 	function product_search_autocomplete () {
 		main()->NO_GRAPHICS = true;
 		if (!$_GET['search_word']) {

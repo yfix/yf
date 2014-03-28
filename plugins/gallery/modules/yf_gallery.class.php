@@ -166,6 +166,7 @@ class yf_gallery extends yf_module {
 			$this->GALLERY_DIR = SITE_GALLERY_DIR;
 		}
 		$this->DEFAULT_FOLDER_NAME = t($this->DEFAULT_FOLDER_NAME);
+/*
 		$this->_boxes = array(
 			'folder_id'			=> 'select_box("folder_id", 	$this->_folders_for_select, $selected, false, 2, "", false)',
 			'privacy'			=> 'select_box("privacy",		$this->_privacy_types,	$selected, false, 2, "", false)',
@@ -184,6 +185,7 @@ class yf_gallery extends yf_module {
 			'slideshow_mode'	=> 'select_box("slideshow_mode",$this->_slideshow_modes,$selected, false, 2, "", false)',
 			'is_featured'		=> 'check_box("is_featured", 	$this->_simple_switch,	$selected, false, 2, "", false)',
 		);
+*/
 		$this->_simple_switch = array(
 			0 => t('No'),
 			1 => t('Yes')

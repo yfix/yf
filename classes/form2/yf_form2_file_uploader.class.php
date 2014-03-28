@@ -17,33 +17,33 @@ class yf_form2_file_uploader {
 			$replace = array(
 				'multiple' => $extra['options']['max_number_of_files'] != 1 ? 1 : 0,
 				'max_number_of_files' => $extra['options']['max_number_of_files'],
-				'url' => "./?object={$_GET['object']}&action=ajax_file_uploader&id={$_GET['id']}",
+				'url' => './?object='.$_GET['object'].'&action=ajax_file_uploader&id='.$_GET['id'],
 			);
 			
-			$body = tpl()->parse("form2/file_uploader",$replace);
+			$body = tpl()->parse('form2/file_uploader',$replace);
 			
 // TODO: use this CDN for JS and CSS: http://cdnjs.com/libraries/blueimp-file-upload/
 			
 			// todo: move sources to repository
 			_class('core_css')->add(array(
-				"http://blueimp.github.io/Gallery/css/blueimp-gallery.min.css",
-				"http://localhost/fileupload_tmp/css/jquery.fileupload.css",
-				"http://localhost/fileupload_tmp/css/jquery.fileupload-ui.css",
+				'http://blueimp.github.io/Gallery/css/blueimp-gallery.min.css',
+				'http://localhost/fileupload_tmp/css/jquery.fileupload.css',
+				'http://localhost/fileupload_tmp/css/jquery.fileupload-ui.css',
 			));
 			
 			_class('core_js')->add(array(
-				"http://localhost/fileupload_tmp/js/vendor/jquery.ui.widget.js",
-				"http://blueimp.github.io/JavaScript-Load-Image/js/load-image.min.js",
-				"http://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js",
-				"http://blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js",
-				"http://localhost/fileupload_tmp/js/jquery.iframe-transport.js",
-				"http://localhost/fileupload_tmp/js/jquery.fileupload.js",
-				"http://localhost/fileupload_tmp/js/jquery.fileupload-process.js",
-				"http://localhost/fileupload_tmp/js/jquery.fileupload-image.js",
-				"http://localhost/fileupload_tmp/js/jquery.fileupload-audio.js",
-				"http://localhost/fileupload_tmp/js/jquery.fileupload-video.js",
-				"http://localhost/fileupload_tmp/js/jquery.fileupload-validate.js",
-				"http://localhost/fileupload_tmp/js/jquery.fileupload-angular.js",				
+				'http://localhost/fileupload_tmp/js/vendor/jquery.ui.widget.js',
+				'http://blueimp.github.io/JavaScript-Load-Image/js/load-image.min.js',
+				'http://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js',
+				'http://blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js',
+				'http://localhost/fileupload_tmp/js/jquery.iframe-transport.js',
+				'http://localhost/fileupload_tmp/js/jquery.fileupload.js',
+				'http://localhost/fileupload_tmp/js/jquery.fileupload-process.js',
+				'http://localhost/fileupload_tmp/js/jquery.fileupload-image.js',
+				'http://localhost/fileupload_tmp/js/jquery.fileupload-audio.js',
+				'http://localhost/fileupload_tmp/js/jquery.fileupload-video.js',
+				'http://localhost/fileupload_tmp/js/jquery.fileupload-validate.js',
+				'http://localhost/fileupload_tmp/js/jquery.fileupload-angular.js',				
 			),true);
 			
 			return $_this->_row_html($body, $extra, $r);

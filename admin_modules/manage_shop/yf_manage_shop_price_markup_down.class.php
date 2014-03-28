@@ -78,6 +78,8 @@ class yf_manage_shop_price_markup_down {
 		// prepare ng-app
 		$_ng_controller = 'ctrl.price_markup_down.conditions';
 		$replace[ '_ng_controller' ] = $_ng_controller;
+		$replace[ '_api_url_products' ] = ADMIN_WEB_PATH.'?object=manage_shop&action=product_search_autocomplete';
+		$replace[ '_api_url_categories' ] = ADMIN_WEB_PATH.'?object=manage_shop&action=category_search_autocomplete';
 		// create form
 		$_form = form( $replace, array( 'ng-controller' => $_ng_controller ) )
 			->select_box( 'type', $this->_select_box__type() )
@@ -89,13 +91,25 @@ class yf_manage_shop_price_markup_down {
 				->hidden( 'conditions', array(
 					'ng-model' => 'conditions'
 				))
-				->input( 'search_conditions', 'Поиск', array(
-					'data-bs-select' => 'true',
-					'ng-model' => 'term',
-					'ng-change' => 'change( term )',
-					'data-animation' => 'am-flip-x',
-					'ng-options' => 'address.key as address.formatted_address for address in search( $viewValue )',
-					'placeholder' => 'введите фразу',
+				->input( '_product_ids', 'список продуктов', array(
+					'ng-model' => 'conditions.product_id',
+					'ng-list'  => 'true',
+				))
+				->button( '_add_product_id', 'добавить', array(
+					'ng-click' => 'add_product()',
+				))
+				->input( '_categories_ids', 'список категорий', array(
+					'ng-model' => 'conditions.category_id',
+					'ng-list'  => 'true',
+				))
+				->button( '_add_category_id', 'добавить', array(
+					'ng-click' => 'add_category()',
+				))
+				->input( '_search', 'добавить', array(
+					'data-bs-typeahead'   => 'true',
+					'ng-model'            => 'term',
+					'ng-options'          => 'data.id as data.text for data in search( $viewValue )',
+					'placeholder'         => 'введите фразу',
 				))
 			->fieldset_end()
 			->active_box('active')

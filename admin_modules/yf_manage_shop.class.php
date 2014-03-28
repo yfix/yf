@@ -513,7 +513,7 @@ class yf_manage_shop {
 	function import_xls($params = array()) {
 		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
-	
+
 	function export_zakaz_start($params = array()) {
 		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
@@ -523,6 +523,10 @@ class yf_manage_shop {
 	}
 
 	function product_search_autocomplete(){
+		return _class('manage_shop_products', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
+	}
+
+	function category_search_autocomplete(){
 		return _class('manage_shop_products', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 

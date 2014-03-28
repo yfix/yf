@@ -257,8 +257,8 @@ class yf_form2 {
 			if (!is_array($v)) {
 				continue;
 			}
-			$_extra = $v['extra'] + (array)$extra_override[$v['extra']['name']];
-			$_replace = $r + (array)$v['replace'];
+			$_extra = (array)$v['extra'] + (array)$extra_override[$v['extra']['name']];
+			$_replace = (array)$r + (array)$v['replace'];
 			$func = $v['func'];
 			if ($this->_stacked_mode_on) {
 				$_extra['stacked'] = true;
