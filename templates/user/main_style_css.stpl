@@ -1,3 +1,4 @@
+<!-- main_style_css.stpl --> {{-- Do not remove this line! --}}
 <style type="text/css" class="yf_core">
 .sidebar-nav { padding: 9px 0; }
 
@@ -46,3 +47,4 @@ legend+.control-group { margin-top: 0; }
 /* override styles per bs theme here */ 
 .bs-theme-slate textarea, .bs-theme-slate select { color: #52575c; }
 </style>
+<!-- /main_style_css.stpl --> {{-- Do not remove this line! --}}

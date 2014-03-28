@@ -29,7 +29,7 @@ class yf_core_js {
 		if (strpos($main_script_js, "\n") === false && strlen($main_script_js) && preg_match('~^js/script.js\?[0-9]{10}$~ims', $main_script_js)) {
 			$this->add_url(WEB_PATH. tpl()->TPL_PATH. $main_script_js);
 		} else {
-			$this->add_inline($main_script_js);
+			$this->add_raw($main_script_js);
 		}
 		// JS from current module
 		$module_js_path = $this->_find_module_js($_GET['object']);
@@ -48,6 +48,8 @@ class yf_core_js {
 			} elseif ($type == 'inline') {
 				$text = $this->_strip_script_tags($text);
 				$out[$md5] = '<script type="text/javascript">'. PHP_EOL. $text. PHP_EOL. '</script>';
+			} elseif ($type == 'raw') {
+				$out[$md5] = $text;
 			}
 		}
 		return implode(PHP_EOL, $out);
@@ -147,6 +149,24 @@ class yf_core_js {
 			$md5 = md5($text);
 			$this->content[$md5] = array(
 				'type'	=> 'inline',
+				'text'	=> $text,
+			);
+		}
+	}
+	
+	/**
+	*/
+	public function add_raw($texts, $params = array()) {
+		if (!is_array($texts)) {
+			$texts = array($texts);
+		}
+		foreach ((array)$texts as $text) {
+			if (!strlen($text)) {
+				continue;
+			}
+			$md5 = md5($text);
+			$this->content[$md5] = array(
+				'type'	=> 'raw',
 				'text'	=> $text,
 			);
 		}

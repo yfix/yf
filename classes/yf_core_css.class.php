@@ -26,7 +26,7 @@ class yf_core_css {
 		if (strpos($main_style_css, "\n") === false && strlen($main_style_css) && preg_match('~^css/style.css\?[0-9]{10}$~ims', $main_style_css)) {
 			$this->add_url(WEB_PATH. tpl()->TPL_PATH. $main_style_css);
 		} else {
-			$this->add_inline($main_style_css);
+			$this->add_raw($main_style_css);
 		}
 		// CSS from current module
 		$module_css_path = $this->_find_module_css($_GET['object']);
@@ -45,6 +45,8 @@ class yf_core_css {
 			} elseif ($type == 'inline') {
 				$text = $this->_strip_style_tags($text);
 				$out[$md5] = '<style type="text/css">'. PHP_EOL. $text. PHP_EOL. '</style>';
+			} elseif ($type == 'raw') {
+				$out[$md5] = $text;
 			}
 		}
 		return implode(PHP_EOL, $out);
@@ -104,7 +106,7 @@ class yf_core_css {
 			);
 		}
 	}
-	
+
 	/**
 	*/
 	public function add_file($paths, $params = array()) {
@@ -130,7 +132,7 @@ class yf_core_css {
 			);
 		}
 	}
-	
+
 	/**
 	*/
 	public function add_inline($texts, $params = array()) {
@@ -144,6 +146,24 @@ class yf_core_css {
 			$md5 = md5($text);
 			$this->content[$md5] = array(
 				'type'	=> 'inline',
+				'text'	=> $text,
+			);
+		}
+	}
+
+	/**
+	*/
+	public function add_raw($texts, $params = array()) {
+		if (!is_array($texts)) {
+			$texts = array($texts);
+		}
+		foreach ((array)$texts as $text) {
+			if (!strlen($text)) {
+				continue;
+			}
+			$md5 = md5($text);
+			$this->content[$md5] = array(
+				'type'	=> 'raw',
 				'text'	=> $text,
 			);
 		}
