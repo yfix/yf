@@ -232,17 +232,16 @@ if (!function_exists('_floatval')) {
 		return tofloat($val);
 	}
 }
-// This function takes the last comma or dot (if any) to make a clean float, ignoring thousand separator, currency or any other letter
-/*
-$num = '1.999,369€';
-var_dump(tofloat($num)); // float(1999.369)
-$otherNum = '126,564,789.33 m²';
-var_dump(tofloat($otherNum)); // float(126564789.33)
-
-Demo : http://codepad.org/NW4e9hQH
+/* 
+This function takes the last comma or dot (if any) to make a clean float, ignoring thousand separator, currency or any other letter
+$num = '1.999,369€';  var_dump(tofloat($num)); // float(1999.369)
+$otherNum = '126,564,789.33 m²';  var_dump(tofloat($otherNum)); // float(126564789.33)
 */
 if (!function_exists('tofloat')) {
-	function tofloat($num) {
+	function tofloat($num = 0) {
+		if (is_array($num)) {
+			return array_map(__FUNCTION__, $num);
+		}
 		$dotPos = strrpos($num, '.');
 		$commaPos = strrpos($num, ',');
 		$sep = (($dotPos > $commaPos) && $dotPos) ? $dotPos : 
@@ -254,5 +253,14 @@ if (!function_exists('tofloat')) {
 			preg_replace('/[^0-9]/', '', substr($num, 0, $sep)) . '.' .
 			preg_replace('/[^0-9]/', '', substr($num, $sep+1, strlen($num)))
 		);
+	}
+}
+// Use this to corrently insert user input into mysql decimal field with float typecasting in the middle
+if (!function_exists('todecimal')) {
+	function todecimal($num = 0) {
+		if (is_array($num)) {
+			return array_map(__FUNCTION__, $num);
+		}
+		return str_replace(',', '.', round(tofloat($num), 2));
 	}
 }
