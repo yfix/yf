@@ -73,6 +73,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 #			, str_replace(PHP_EOL, '', trim(form($data)->auto())) );
 	}
 	public function test_input_text_simple() {
+		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(form_item($r)->text('name')) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name')) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name', '')) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name', '', array('stacked' => 1))) );
