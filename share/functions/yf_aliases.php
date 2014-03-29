@@ -86,7 +86,7 @@ if (!function_exists('t')) {
 	function t($string, $args = 0, $lang = '') { return _class('i18n')->translate_string($string, $args, $lang); }
 }
 if (!function_exists('url')) {
-	function url($params = array(), $params2 = array()) { return module('rewrite')->_force_get_url($params, $params2); }
+	function url($params = array(), $host = '', $url_str = '') { return module('rewrite')->_force_get_url($params, $host, $url_str); }
 }
 if (!function_exists('_force_get_url')) {
 	function _force_get_url($params = array(), $host = '', $url_str = '') { return module('rewrite')->_force_get_url($params, $host, $url_str); }
@@ -96,6 +96,9 @@ if (!function_exists('_generate_url')) {
 }
 if (!function_exists('form')) {
 	function form($replace = array(), $params = array()) { $form = clone _class('form2'); return $form->chained_wrapper($replace, $params); }
+}
+if (!function_exists('form_item')) {
+	function form_item($replace = array(), $params = array()) {	$form = clone _class('form2'); return $form->chained_wrapper($replace, array('no_form' => 1, 'only_content' => 1, 'no_chained_mode' => 1) + (array)$params); }
 }
 if (!function_exists('form2')) {
 	function form2($replace = array(), $params = array()) { $form = clone _class('form2'); return $form->chained_wrapper($replace, $params); }
