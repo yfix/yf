@@ -643,16 +643,22 @@ class yf_html_controls {
 		}
 		$selected = strval($selected);
 
-		$body .= '<li class="dropdown" style="list-style-type:none;">';
-
-		$body .= '<a class="dropdown-toggle" data-toggle="dropdown">'.$desc.'&nbsp;<span class="caret"></span></a>';
-		$body .= '<ul class="dropdown-menu">';
+		$items = array();
+		$selected_val = '';
 		foreach ((array)$values as $key => $cur_value) {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
-			$body .= '<li class="dropdown"><a data-value="'.$key.'" '.($_what_compare == $selected ? 'data-selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
+			$is_selected = $_what_compare == $selected;
+			$val = ($translate ? t($cur_value) : $cur_value);
+			$items[] = '<li class="dropdown"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			if ($is_selected) {
+				$selected_val = $val;
+			}
 		}
+		$body .= '<li class="dropdown" style="list-style-type:none;">';
+		$body .= '<a class="dropdown-toggle" data-toggle="dropdown">'.($selected_val ?: $desc).'&nbsp;<span class="caret"></span></a>';
+		$body .= '<ul class="dropdown-menu">';
+		$body .= implode(PHP_EOL, $items);
 		$body .= '</ul>';
-
 		$body .= '</li>';
 		return $body;
 	}
