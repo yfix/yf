@@ -95,6 +95,7 @@ class yf_tpl_driver_yf_compile {
 
 			'/(\{include\(\s*["\']{0,1})\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/i'
 				=> $_php_start. 'echo $this->_include_stpl(\'$2\',\'$3\',$replace);'. $_php_end,
+// TODO: add support for {include_if_exists()}
 
 			'/(\{eval_code\()([^\}]+?)(\)\})/i'
 				=> $_php_start. 'echo $2;'. $_php_end,
