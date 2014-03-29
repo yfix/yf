@@ -215,7 +215,7 @@ class yf_form2 {
 			$extra = array();
 		}
 		$extra_override = array();
-		$form_id = $this->_replace['__form_id__'] ?: $this->_form_id;
+		$form_id = isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : $this->_form_id;
 		if ($form_id) {
 			$extra_override = $this->_get_extra_override($form_id);
 		}
