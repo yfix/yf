@@ -1560,6 +1560,18 @@ class yf_form2 {
 
 	/**
 	*/
+	function div_box($name, $values, $extra = array(), $replace = array()) {
+		return $this->_html_control($name, $values, $extra, $replace, 'div_box');
+	}
+
+	/**
+	*/
+	function list_box($name, $values, $extra = array(), $replace = array()) {
+		return $this->_html_control($name, $values, $extra, $replace, 'list_box');
+	}
+
+	/**
+	*/
 	function date_box($name = '', $values = array(), $extra = array(), $replace = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
@@ -1611,18 +1623,6 @@ class yf_form2 {
 			$name = 'birth';
 		}
 		return $this->date_box($name, $values, $extra, $replace);
-	}
-
-	/**
-	*/
-	function div_box($name, $values, $extra = array(), $replace = array()) {
-		return $this->_html_control($name, $values, $extra, $replace, 'div_box');
-	}
-
-	/**
-	*/
-	function list_box($name, $values, $extra = array(), $replace = array()) {
-		return $this->_html_control($name, $values, $extra, $replace, 'list_box');
 	}
 
 	/**
