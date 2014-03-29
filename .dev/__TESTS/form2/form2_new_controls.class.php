@@ -7,9 +7,13 @@ class form2_new_controls {
 			->hidden('hdn')
 
 			->icon_select_box(array('selected' => 'icon-anchor'))
+			->icon_select_box(array('selected' => 'icon-anchor', 'row_tpl' => '%name %icon', 'renderer' => 'div_box'))
 			->currency_box(array('selected' => 'RUB'))
+			->currency_box(array('selected' => 'RUB', 'row_tpl' => '%code %name %sign', 'renderer' => 'div_box'))
 			->language_box(array('selected' => 'uk'))
+			->language_box(array('selected' => 'uk', 'row_tpl' => '%name %icon %code', 'renderer' => 'div_box'))
 			->timezone_box(array('selected' => 'UTC'))
+			->timezone_box(array('selected' => 'UTC', 'row_tpl' => '%name %code %offset', 'renderer' => 'div_box'))
 
 			->country_box(array('selected' => 'US'))
 			->country_box(array('selected' => 'US', 'renderer' => 'div_box'))
