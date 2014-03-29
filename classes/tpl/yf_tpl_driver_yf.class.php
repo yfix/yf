@@ -225,10 +225,15 @@ class yf_tpl_driver_yf {
 	*/
 	function _process_includes($string, $replace = array(), $name = '') {
 		$_this = $this;
-		$pattern = '/(\{include\(\s*["\']{0,1})\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/i';
-		$func = function($m) use ($replace, $name, $_this) {
+		$pattern = '/\{(include|include_if_exists)\(\s*["\']{0,1}\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*["\']{0,1}\s*\)\}/i';
+		$extra = array();
+		$func = function($m) use ($replace, $name, $_this, $extra) {
+			$if_exists = ($m[1] == 'include_if_exists');
 			$stpl_name = $m[2];
 			$_replace = $m[3];
+			if ($if_exists && !tpl()->exists($stpl_name)) {
+				return false;
+			}
 			// Here we merge/override incoming $replace with parsed params, to be passed to included template
 			foreach ((array)explode(';', str_replace(array('\'','"'), '', $_replace)) as $v) {
 				list($a_name, $a_val) = explode('=', trim($v));
