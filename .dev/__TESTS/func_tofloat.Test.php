@@ -18,5 +18,8 @@ class func_tofloat_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(122.34343, tofloat('The122.34343'));
 		$this->assertEquals(0, tofloat('some string not containing numbers'));
 		$this->assertEquals(1234, tofloat('01234'));
+		$this->assertEquals(array(12.341, 56.7811111), tofloat(array(12.341, '56,7811111')));
+		$this->assertEquals(array('k1' => 12.341, 'k2' => 56.7811111), tofloat(array('k1' => 12.341, 'k2' => '56,7811111')));
+		$this->assertEquals(array('k1' => 12.341, 'k2' => array(array(56.7811111))), tofloat(array('k1' => 12.341, 'k2' => array(array('56,7811111')))));
 	}
 }
