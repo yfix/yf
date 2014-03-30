@@ -140,10 +140,12 @@ class yf_html {
 			if ($extra['class']) {
 				$css_class .= ' '.$extra['class'];
 			}
+			$class_head = $v['class_head'] ?: $extra['class_head'];
+			$class_body = $v['class_body'] ?: $extra['class_body'];
 			if (!$extra['no_headers']) {
-				$headers[] = '<li class="'.($is_active ? 'active' : '').'"><a href="#'.$id.'" data-toggle="tab">'.t($desc).'</a></li>';
+				$headers[] = '<li class="'.($is_active ? 'active' : ''). ($class_head ? ' '.$class_head : '').'"><a href="#'.$id.'" data-toggle="tab">'.t($desc).'</a></li>';
 			}
-			$items[] = '<div class="tab-pane '.$css_class.'" id="'.$id.'">'.$content.'</div>';
+			$items[] = '<div class="tab-pane '.$css_class. ($class_body ? ' '.$class_body : '').'" id="'.$id.'">'.$content.'</div>';
 		}
 		$extra['id'] = $extra['id'] ?: 'tabs_'.substr(md5(microtime()), 0, 8);
 		$body .= $headers ? '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL : '';
@@ -174,6 +176,7 @@ class yf_html {
 			$class_group = $v['class_group'] ?: $extra['class_group'];
 			$class_head = $v['class_head'] ?: $extra['class_head'];
 			$class_body = $v['class_body'] ?: $extra['class_body'];
+
 			$items[] = 
 				'<div class="accordion-group'.($class_group ? ' '.$class_group : '').'">
 					<div class="accordion-heading'.($class_head ? ' '.$class_head : '').'">
