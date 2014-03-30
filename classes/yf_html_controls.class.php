@@ -613,7 +613,6 @@ class yf_html_controls {
 	/**
 	*/
 	function div_box ($name, $values = array(), $selected = '', $extra = array()) {
-		// Passing params as array
 		if (is_array($name)) {
 			$extra = $name;
 			$name = $extra['name'];
@@ -624,19 +623,6 @@ class yf_html_controls {
 				$translate = 0;
 			}
 			$selected = $extra['selected'] ?: $selected;
-			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
-			$type = isset($extra['type']) ? $extra['type'] : 2;
-			$level = isset($extra['level']) ? $extra['level'] : 0;
-			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-			$extra['class'] .= ' form-control';
-			if ($extra['class']) {
-				$add_str .= ' class="'.$extra['class'].'" ';
-			}
-			if ($extra['style']) {
-				$add_str .= ' style="'.$extra['style'].'" ';
-			}
-		} else {
-			$add_str .= ' class="form-control" ';
 		}
 		if (!$values) {
 			return false;
@@ -665,8 +651,46 @@ class yf_html_controls {
 
 	/**
 	*/
+	function button_box ($name, $values = array(), $selected = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+			$name = $extra['name'];
+			$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+			if ($extra['no_translate']) {
+				$translate = 0;
+			}
+			$selected = $extra['selected'] ?: $selected;
+		}
+		if (!$values) {
+			return false;
+		}
+		$selected = strval($selected);
+
+		$items = array();
+		$selected_val = '';
+		foreach ((array)$values as $key => $cur_value) {
+			$_what_compare = strval($type == 1 ? $cur_value : $key);
+			$is_selected = $_what_compare == $selected;
+			$val = ($translate ? t($cur_value) : $cur_value);
+			$items[] = '<li class="dropdown"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			if ($is_selected) {
+				$selected_val = $val;
+			}
+		}
+		$body .= '<div class="btn-group">';
+		$body .= '<a class="btn dropdown-toggle" data-toggle="dropdown">'.($selected_val ?: $desc).'&nbsp;<span class="caret"></span></a>';
+		$body .= '<ul class="dropdown-menu">';
+		$body .= implode(PHP_EOL, $items);
+		$body .= '</ul>';
+		$body .= '</div>';
+		return $body;
+	}
+
+	/**
+	*/
 	function list_box ($name, $values = array(), $selected = '', $extra = array()) {
-		// Passing params as array
 		if (is_array($name)) {
 			$extra = $name;
 			$name = $extra['name'];
