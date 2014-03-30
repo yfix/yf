@@ -50,10 +50,38 @@ class test_html {
 
 		$body .= '<h1>navbar</h1>';
 		$body .= _class('html')->navbar(array(
+			'brand'	=> array(
+				'link'	=> './',
+				'name'	=> 'Title',
+			),
+			array(
+				'link'	=> './?object=home',
+				'name'	=> 'Home',
+			),
+			array(
+				'link'	=> './?object=link1',
+				'name'	=> 'Link1',
+			),
+			array(
+				'link'	=> './?object=link2',
+				'name'	=> 'Link2',
+			),
 		));
 
 		$body .= '<h1>breadcrumbs</h1>';
-		$body .= _class('html')->breadcrumbs(array());
+		$body .= _class('html')->breadcrumbs(array(
+			array(
+				'link'	=> './?object=home',
+				'name'	=> 'Home',
+			),
+			array(
+				'link'	=> './?object=library',
+				'name'	=> 'Library',
+			),
+			array(
+				'name'	=> 'Data',
+			),
+		));
 
 		$body .= '<h1>alert</h1>';
 		$body .= _class('html')->alert(array(
