@@ -252,36 +252,55 @@ class yf_html {
 
 	/**
 	*/
-	function navbar ($data = array()) {
-// TODO
-		return '
-			<div class="navbar">
-				<div class="navbar-inner">
-					<a class="brand" href="#">Title</a>
-					<ul class="nav">
-						<li class="active"><a href="#">Home</a></li>
-						<li><a href="#">Link</a></li>
-						<li><a href="#">Link</a></li>
-					</ul>
+	function navbar ($data = array(), $extra = array()) {
+		$items = array();
+		$extra['id'] = $extra['id'] ?: 'navbar_'.substr(md5(microtime()), 0, 8);
+		$brand = '';
+		if (isset($data['brand'])) {
+			$b = $data['brand'];
+			unset($data['brand']);
+			$brand = '<a class="brand'.($b['class'] ? ' '.$b['class'] : '').'" href="'.$b['link'].'" title="'.$b['name'].'">'.$b['name'].'</a>';
+		}
+		$data = _prepare_html($data);
+		foreach ((array)$data as $k => $v) {
+			if (isset($extra['selected'])) {
+				$is_selected = ($extra['selected'] == $k);
+			} else {
+				$is_selected = (++$i == 1);
+			}
+			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$items[] = '<li class="'.($is_selected ? ' active' : ''). ($class_item ? ' '.$class_item : '').'"><a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a></li>';
+		}
+		return 
+			'<div class="navbar'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
+				<div class="navbar-inner">'
+					.$brand
+					.'<ul class="nav">'.implode(PHP_EOL, (array)$items).'</a>
 				</div>
 			</div>';
 	}
 
 	/**
 	*/
-	function breadcrumbs ($data = array()) {
-// TODO
-		return '
-			<ul class="breadcrumb">
-				<li><a href="#">Home</a> <span class="divider">/</span></li>
-				<li><a href="#">Library</a> <span class="divider">/</span></li>
-				<li class="active">Data</li>
-			</ul>';
+	function breadcrumbs ($data = array(), $extra = array()) {
+		$items = array();
+		$extra['id'] = $extra['id'] ?: 'navbar_'.substr(md5(microtime()), 0, 8);
+		$divider = $extra['divider'] ?: '/';
+		$len = count($data);
+		$data = _prepare_html($data);
+		foreach ((array)$data as $k => $v) {
+			$is_last = (++$i == $len);
+			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$items[] = '<li class="'.($is_last ? ' active' : ''). ($class_item ? ' '.$class_item : '').'">
+				'.(!$is_last ? '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a> <span class="divider">'.$divider.'</span>' : $v['name']).'
+			</li>';
+		}
+		return '<ul class="breadcrumb'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"">'.implode(PHP_EOL, (array)$items).'</ul>';
 	}
 
 	/**
 	*/
-	function pagination ($data = array()) {
+	function pagination ($data = array(), $extra = array()) {
 // TODO
 		return '
 			<div class="pagination">
@@ -299,7 +318,7 @@ class yf_html {
 
 	/**
 	*/
-	function thumbnails ($data = array()) {
+	function thumbnails ($data = array(), $extra = array()) {
 // TODO
 		return '
 				<ul class="thumbnails">
@@ -339,7 +358,7 @@ class yf_html {
 
 	/**
 	*/
-	function media_objects ($data = array()) {
+	function media_objects ($data = array(), $extra = array()) {
 // TODO
 		return '
 			<div class="bs-docs-example">
@@ -376,7 +395,7 @@ class yf_html {
 
 	/**
 	*/
-	function progress_bar ($data = array()) {
+	function progress_bar ($data = array(), $extra = array()) {
 // TODO
 		return '
 			<div class="progress">
@@ -388,7 +407,7 @@ class yf_html {
 
 	/**
 	*/
-	function grid ($data = array()) {
+	function grid ($data = array(), $extra = array()) {
 // TODO
 		return '
 			<div class="bs-docs-grid">
@@ -427,7 +446,7 @@ class yf_html {
 
 	/**
 	*/
-	function panel ($data = array()) {
+	function panel ($data = array(), $extra = array()) {
 // bs3+
 // TODO
 		return '
@@ -444,7 +463,7 @@ class yf_html {
 
 	/**
 	*/
-	function list_group ($data = array()) {
+	function list_group ($data = array(), $extra = array()) {
 // bs3+
 // TODO
 		return '
@@ -467,7 +486,7 @@ class yf_html {
 
 	/**
 	*/
-	function jumbotron ($data = array()) {
+	function jumbotron ($data = array(), $extra = array()) {
 // bs3+
 // TODO
 		return '
@@ -481,7 +500,7 @@ class yf_html {
 
 	/**
 	*/
-	function well ($data = array()) {
+	function well ($data = array(), $extra = array()) {
 // bs3+
 // TODO
 		return '
