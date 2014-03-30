@@ -302,11 +302,10 @@ class yf_html {
 	function thumbnails ($data = array()) {
 // TODO
 		return '
-			<div class="row-fluid">
 				<ul class="thumbnails">
 					<li class="span4">
 						<div class="thumbnail">
-							<img data-src="holder.js/300x200" alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
+							<img alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
 							<div class="caption">
 								<h3>Thumbnail label</h3>
 								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
@@ -316,7 +315,7 @@ class yf_html {
 					</li>
 					<li class="span4">
 						<div class="thumbnail">
-							<img data-src="holder.js/300x200" alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
+							<img alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
 							<div class="caption">
 								<h3>Thumbnail label</h3>
 								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
@@ -326,7 +325,7 @@ class yf_html {
 					</li>
 					<li class="span4">
 						<div class="thumbnail">
-							<img data-src="holder.js/300x200" alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
+							<img alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
 							<div class="caption">
 								<h3>Thumbnail label</h3>
 								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
@@ -335,7 +334,7 @@ class yf_html {
 						</div>
 					</li>
 				</ul>
-			</div>';
+';
 	}
 
 	/**
