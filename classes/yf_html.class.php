@@ -292,7 +292,7 @@ class yf_html {
 			$is_last = (++$i == $len);
 			$class_item = $v['class_item'] ?: $extra['class_item'];
 			$items[] = '<li class="'.($is_last ? ' active' : ''). ($class_item ? ' '.$class_item : '').'">
-				'.(!$is_last ? '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a> <span class="divider">'.$divider.'</span>' : $v['name']).'
+				'.(($is_last || !$v['link']) ? $v['name'] : '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a> <span class="divider">'.$divider.'</span>').'
 			</li>';
 		}
 		return '<ul class="breadcrumb'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"">'.implode(PHP_EOL, (array)$items).'</ul>';
