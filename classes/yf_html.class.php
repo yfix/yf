@@ -192,16 +192,59 @@ class yf_html {
 
 	/**
 	*/
+	function carousel ($data = array()) {
+		$items = array();
+		$headers = array();
+		$extra['id'] = $extra['id'] ?: 'caroousel_'.substr(md5(microtime()), 0, 8);
+		foreach ((array)$data as $k => $v) {
+			if (!is_array($v)) {
+				$img_src = $v;
+				$v = array();
+			} else {
+				$img_src = $v['img'];
+			}
+			$desc = $v['desc'];
+			$alt = $v['alt'] ?: strip_tags($desc);
+			$id = $v['id'] ?: 'carousel_item_'.$k;
+			if (isset($extra['selected'])) {
+				$is_active = ($extra['selected'] == $k);
+			} else {
+				$is_active = (++$i == 1);
+			}
+			$class_head = $v['class_head'] ?: $extra['class_head'];
+			$class_body = $v['class_body'] ?: $extra['class_body'];
+
+			$headers[] = '<li data-target="#'.$extra['id'].'" data-slide-to="'.($i - 1).'" class="'.($is_active ? 'active' : ''). ($class_head ? ' '.$class_head : '').'"></li>';
+			$items[] = 
+				'<div class="item'.($is_active ? ' active' : ''). ($class_body ? ' '.$class_body : '').'">
+					<img src="'.$img_src.'" alt="'.$alt.'">
+					'.($desc ? '<div class="carousel-caption">'.$desc.'</div>' : '').'
+				</div>';
+		}
+		$controls = '
+			<a class="left carousel-control" href="#'.$extra['id'].'" data-slide="prev">‹</a>
+			<a class="right carousel-control" href="#'.$extra['id'].'" data-slide="next">›</a>
+		';
+		return '<div id="'.$extra['id'].'" class="carousel slide'.($extra['class'] ? ' '.$extra['class'] : '').'">
+				<ol class="carousel-indicators">'.implode(PHP_EOL, $headers).'</ol>
+				<div class="carousel-inner">'.implode(PHP_EOL, $items).'</div>
+				'.(!$extra['no_controls'] ? $controls : '').'
+			</div>';
+	}
+
+	/**
+	*/
 	function alert ($data = array()) {
 // TODO
-		return '<div class="alert alert-block alert-error fade in">
-						<button type="button" class="close" data-dismiss="alert">×</button>
-						<h4 class="alert-heading">Oh snap! You got an error!</h4>
-						<p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
-						<p>
-							<a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a>
-						</p>
-					</div>';
+		return '
+			<div class="alert alert-block alert-error fade in">
+				<button type="button" class="close" data-dismiss="alert">×</button>
+				<h4 class="alert-heading">Oh snap! You got an error!</h4>
+				<p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
+				<p>
+					<a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a>
+				</p>
+			</div>';
 	}
 
 	/**
@@ -327,46 +370,6 @@ class yf_html {
 					</div>
 				</div>
 			</div>';
-	}
-
-	/**
-	*/
-	function carousel ($data = array()) {
-// TODO
-		return '
-			<div id="myCarousel" class="carousel slide">
-				<ol class="carousel-indicators">
-					<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-					<li data-target="#myCarousel" data-slide-to="1" class=""></li>
-					<li data-target="#myCarousel" data-slide-to="2" class=""></li>
-				</ol>
-				<div class="carousel-inner">
-					<div class="item active">
-						<img src="//twbs.github.io/bootstrap/2.3.2/assets/img/bootstrap-mdo-sfmoma-01.jpg" alt="">
-						<div class="carousel-caption">
-							<h4>First Thumbnail label</h4>
-							<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-						</div>
-					</div>
-					<div class="item">
-						<img src="//twbs.github.io/bootstrap/2.3.2/assets/img/bootstrap-mdo-sfmoma-02.jpg" alt="">
-						<div class="carousel-caption">
-							<h4>Second Thumbnail label</h4>
-							<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-						</div>
-					</div>
-					<div class="item">
-						<img src="//twbs.github.io/bootstrap/2.3.2/assets/img/bootstrap-mdo-sfmoma-03.jpg" alt="">
-						<div class="carousel-caption">
-							<h4>Third Thumbnail label</h4>
-							<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-						</div>
-					</div>
-				</div>
-				<a class="left carousel-control" href="#myCarousel" data-slide="prev">‹</a>
-				<a class="right carousel-control" href="#myCarousel" data-slide="next">›</a>
-			</div>
-		';
 	}
 
 	/**
