@@ -25,14 +25,34 @@ class test_html {
 			'footer'		=> form_item()->save(),
 		));
 		$body .= '<h1>carousel</h1>';
-		$body .= _class('html')->carousel(array(
-		));
+		$body .= _class('html')->carousel(array());
 		$body .= '<h1>navbar</h1>';
-		$body .= _class('html')->navbar(array(
-		));
+		$body .= _class('html')->navbar(array());
 		$body .= '<h1>breadcrumbs</h1>';
-		$body .= _class('html')->breadcrumbs(array(
-		));
+		$body .= _class('html')->breadcrumbs(array());
+		$body .= '<h1>alert</h1>';
+		$body .= _class('html')->alert(array());
+		$body .= '<h1>pagination</h1>';
+		$body .= _class('html')->pagination(array());
+		$body .= '<h1>thumbnails</h1>';
+		$body .= _class('html')->thumbnails(array());
+		$body .= '<h1>progress_bar</h1>';
+		$body .= _class('html')->progress_bar(array());
+		$body .= '<h1>media_objects</h1>';
+		$body .= _class('html')->media_objects(array());
+		$body .= '<h1>grid</h1>';
+		$body .= _class('html')->grid(array());
+		if (conf('css_framework') == 'bs3') {
+			$body .= '<h1>panel</h1>';
+			$body .= _class('html')->panel(array());
+			$body .= '<h1>list_group</h1>';
+			$body .= _class('html')->list_group(array());
+			$body .= '<h1>jumbotron</h1>';
+			$body .= _class('html')->jumbotron(array());
+			$body .= '<h1>well</h1>';
+			$body .= _class('html')->well(array());
+		}
+		$body .= '<br><br>';
 		return $body;
 	}
 }
