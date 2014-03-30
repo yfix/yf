@@ -17,6 +17,7 @@ class form2_new_controls {
 
 			->country_box(array('selected' => 'US'))
 			->country_box(array('selected' => 'US', 'renderer' => 'div_box'))
+			->country_box(array('selected' => 'US', 'renderer' => 'button_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'select_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'multi_select_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'multi_check_box'))
