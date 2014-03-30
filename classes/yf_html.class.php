@@ -118,20 +118,193 @@ class yf_html {
 
 	/**
 	*/
+	function alert ($data = array()) {
+// TODO
+		return '<div class="alert alert-block alert-error fade in">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <h4 class="alert-heading">Oh snap! You got an error!</h4>
+            <p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
+            <p>
+              <a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a>
+            </p>
+          </div>';
+	}
+
+	/**
+	*/
 	function navbar ($data = array()) {
 // TODO
+		return '
+			<div class="navbar">
+				<div class="navbar-inner">
+					<a class="brand" href="#">Title</a>
+					<ul class="nav">
+						<li class="active"><a href="#">Home</a></li>
+						<li><a href="#">Link</a></li>
+						<li><a href="#">Link</a></li>
+					</ul>
+				</div>
+			</div>';
 	}
 
 	/**
 	*/
 	function breadcrumbs ($data = array()) {
 // TODO
+		return '
+			<ul class="breadcrumb">
+				<li><a href="#">Home</a> <span class="divider">/</span></li>
+				<li><a href="#">Library</a> <span class="divider">/</span></li>
+				<li class="active">Data</li>
+			</ul>';
+	}
+
+	/**
+	*/
+	function pagination ($data = array()) {
+// TODO
+		return '
+			<div class="pagination">
+				<ul>
+					<li><a href="#">Prev</a></li>
+					<li><a href="#">1</a></li>
+					<li><a href="#">2</a></li>
+					<li><a href="#">3</a></li>
+					<li><a href="#">4</a></li>
+					<li><a href="#">5</a></li>
+					<li><a href="#">Next</a></li>
+				</ul>
+			</div>';
+	}
+
+	/**
+	*/
+	function thumbnails ($data = array()) {
+// TODO
+		return '
+			<div class="row-fluid">
+				<ul class="thumbnails">
+					<li class="span4">
+						<div class="thumbnail">
+							<img data-src="holder.js/300x200" alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
+							<div class="caption">
+								<h3>Thumbnail label</h3>
+								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+								<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>
+							</div>
+						</div>
+					</li>
+					<li class="span4">
+						<div class="thumbnail">
+							<img data-src="holder.js/300x200" alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
+							<div class="caption">
+								<h3>Thumbnail label</h3>
+								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+								<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>
+							</div>
+						</div>
+					</li>
+					<li class="span4">
+						<div class="thumbnail">
+							<img data-src="holder.js/300x200" alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
+							<div class="caption">
+								<h3>Thumbnail label</h3>
+								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+								<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>';
+	}
+
+	/**
+	*/
+	function media_objects ($data = array()) {
+// TODO
+		return '
+			<div class="bs-docs-example">
+				<div class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Media heading</h4>
+						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+					</div>
+				</div>
+				<div class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Media heading</h4>
+						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+
+						<div class="media">
+							<a class="pull-left" href="#">
+								<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
+							</a>
+							<div class="media-body">
+								<h4 class="media-heading">Media heading</h4>
+								Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>';
 	}
 
 	/**
 	*/
 	function carousel ($data = array()) {
 // TODO
+		return '
+			<div id="myCarousel" class="carousel slide">
+				<ol class="carousel-indicators">
+					<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+					<li data-target="#myCarousel" data-slide-to="1" class=""></li>
+					<li data-target="#myCarousel" data-slide-to="2" class=""></li>
+				</ol>
+				<div class="carousel-inner">
+					<div class="item active">
+						<img src="//twbs.github.io/bootstrap/2.3.2/assets/img/bootstrap-mdo-sfmoma-01.jpg" alt="">
+						<div class="carousel-caption">
+							<h4>First Thumbnail label</h4>
+							<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+						</div>
+					</div>
+					<div class="item">
+						<img src="//twbs.github.io/bootstrap/2.3.2/assets/img/bootstrap-mdo-sfmoma-02.jpg" alt="">
+						<div class="carousel-caption">
+							<h4>Second Thumbnail label</h4>
+							<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+						</div>
+					</div>
+					<div class="item">
+						<img src="//twbs.github.io/bootstrap/2.3.2/assets/img/bootstrap-mdo-sfmoma-03.jpg" alt="">
+						<div class="carousel-caption">
+							<h4>Third Thumbnail label</h4>
+							<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+						</div>
+					</div>
+				</div>
+				<a class="left carousel-control" href="#myCarousel" data-slide="prev">‹</a>
+				<a class="right carousel-control" href="#myCarousel" data-slide="next">›</a>
+			</div>
+		';
+	}
+
+	/**
+	*/
+	function progress_bar ($data = array()) {
+// TODO
+		return '
+			<div class="progress">
+				<div class="bar bar-success" style="width: 35%;"></div>
+				<div class="bar bar-warning" style="width: 20%;"></div>
+				<div class="bar bar-danger" style="width: 10%;"></div>
+			</div>';
 	}
 
 	/**
