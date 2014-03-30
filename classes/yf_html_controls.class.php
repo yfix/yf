@@ -730,24 +730,17 @@ class yf_html_controls {
 	/**
 	*/
 	function date_picker ($name, $cur_date = '') {
-		$content = '';
-		if (empty($this->date_picker_count)) {
-			$content .= '
-				<script src="'.WEB_PATH.'js/jquery/ui/jquery.ui.core.js"></script>
-				<script src="'.WEB_PATH.'js/jquery/ui/jquery.ui.datepicker.js"></script>
-				<link rel="stylesheet" href="'.WEB_PATH.'js/jquery/ui/jquery.ui.datepicker.css">
-				<link rel="stylesheet" href="'.WEB_PATH.'js/jquery/ui/jquery.ui.all.css">
-				<script>
-					$(function() {
-						$( ".datepicker" ).datepicker(
-							{ dateFormat: "yy-mm-dd" }
-						);
-					});
-				</script>
-			';
-		}
-		$content .= '<input type="text" name="'.$name.'" class="datepicker" value="'.$cur_date.'" style="width:80px" readonly="true" />';
-		$this->date_picker_count++;
-		return $content;
+		require_js(array(
+			'jquery-ui',
+			'$(function() {
+				$( ".datepicker" ).datepicker({ dateFormat: "yy-mm-dd" });
+			});',
+		));
+		require_css(array(
+			'jquery-ui',
+			'//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery.ui.datepicker.min.css',
+		));
+// TODO: use input() unified control
+		return '<input type="text" name="'.$name.'" class="datepicker" value="'.$cur_date.'" style="width:80px" readonly="true" />';
 	}
 }
