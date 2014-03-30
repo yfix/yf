@@ -192,7 +192,7 @@ class yf_html {
 
 	/**
 	*/
-	function carousel ($data = array()) {
+	function carousel ($data = array(), $extra = array()) {
 		$items = array();
 		$headers = array();
 		$extra['id'] = $extra['id'] ?: 'caroousel_'.substr(md5(microtime()), 0, 8);
@@ -234,16 +234,19 @@ class yf_html {
 
 	/**
 	*/
-	function alert ($data = array()) {
-// TODO
+	function alert ($data = array(), $extra = array()) {
+		$close_btn = (!$extra['no_close'] && !$data['no_close']) ? '<button type="button" class="close" data-dismiss="alert">×</button>' : '';
+		$head = is_array($data) ? $data['head'] : '';
+		$body = is_array($data) ? $data['body'] : $data;
+		$alert_type = $extra['alert'] ?: (is_array($data) ? $data['alert'] : '');
+		if (!$alert_type) {
+			$alert_type = 'error';
+		}
 		return '
-			<div class="alert alert-block alert-error fade in">
-				<button type="button" class="close" data-dismiss="alert">×</button>
-				<h4 class="alert-heading">Oh snap! You got an error!</h4>
-				<p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
-				<p>
-					<a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a>
-				</p>
+			<div class="alert alert-block alert-'.$alert_type.' fade in'.($extra['class'] ? ' '.$extra['class'] : '').'">
+				'.$close_btn.'
+				'.($head ? '<h4 class="alert-heading">'.$head.'</h4>' : '').'
+				'.$body.'
 			</div>';
 	}
 
