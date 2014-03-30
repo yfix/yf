@@ -509,4 +509,73 @@ class yf_html {
 			</div>
 		';
 	}
+
+	/**
+	*/
+	function menu ($data = array(), $extra = array()) {
+// TODO
+		return '
+	<div class="navbar">
+		<div class="navbar-inner">
+
+			<ul class="nav navbar-nav">
+				<li class="dropdown">
+					<a href="" class="dropdown-toggle">Tools  <b class="caret"></b></a>
+					<ul class="dropdown-menu sub-menu">
+						<li class="dropdown">
+							<a href="./?object=blocks" class="dropdown-toggle">Blocks editor </a>
+						</li>
+						<li class="dropdown">
+							<a href="./?object=file_manager" class="dropdown-toggle">File manager </a>
+						</li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a href="" class="dropdown-toggle">		Administration  <b class="caret"></b>	</a>
+					<ul class="dropdown-menu sub-menu">
+						<li class="dropdown">
+							<a href="./?object=admin_groups" class="dropdown-toggle">		Admin Groups 	</a>
+						</li>
+						<li class="dropdown">
+							<a href="./?object=admin" class="dropdown-toggle">		Admin Management 	</a>
+						</li>
+						<li class="dropdown">
+							<a href="./?object=admin_modules" class="dropdown-toggle">		Admin Modules Manager 	</a>
+						</li>
+						<li class="dropdown">
+							<a href="" class="dropdown-toggle">		Users  <b class="caret"></b>	</a>
+							<ul class="dropdown-menu sub-menu">
+								<li class="dropdown">
+									<a href="./?object=user_groups" class="dropdown-toggle">		User Groups 	</a>
+								</li>
+								<li class="dropdown">
+									<a href="./?object=members" class="dropdown-toggle">		User Management 	</a>
+								</li>
+								<li class="dropdown">
+									<a href="./?object=user_modules" class="dropdown-toggle">		User Modules Manager 	</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a href="" class="dropdown-toggle">		Content  <b class="caret"></b>	</a>
+					<ul class="dropdown-menu sub-menu">
+						<li class="dropdown">
+							<a href="./?object=static_pages" class="dropdown-toggle">		Static Pages 	</a>
+						</li>
+						<li class="dropdown">
+							<a href="./?object=manage_news" class="dropdown-toggle">		News 	</a>
+						</li>
+						<li class="dropdown">
+							<a href="./?object=manage_comments" class="dropdown-toggle">		Comments 	</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+
+		</div>
+	</div>
+		';
+	}
 }
