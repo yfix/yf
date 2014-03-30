@@ -102,12 +102,6 @@ class yf_html {
 
 	/**
 	*/
-	function table_header () {
-// TODO
-	}
-
-	/**
-	*/
 	function navbar () {
 // TODO
 	}
@@ -120,8 +114,41 @@ class yf_html {
 
 	/**
 	*/
-	function accordion () {
+	function carousel () {
 // TODO
+	}
+
+	/**
+	*/
+	function accordion ($tabs = array(), $extra = array()) {
+		$items = array();
+		$extra['id'] = $extra['id'] ?: 'accordion_'.substr(md5(microtime()), 0, 8);
+		foreach ((array)$tabs as $k => $v) {
+			if (!is_array($v)) {
+				$content = $v;
+				$v = array();
+			} else {
+				$content = $v['content'];
+			}
+			$name = $v['name'] ?: $k;
+			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
+			$id = $v['id'] ?: 'accordion_item_'.$k;
+			if (isset($extra['selected'])) {
+				$is_selected = ($extra['selected'] == $k);
+			} else {
+				$is_selected = (++$i == 1);
+			}
+			$items[] = 
+				'<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$extra['id'].'" href="#'.$id.'">'.$desc.'</a>
+					</div>
+					<div id="'.$id.'" class="accordion-body collapse'.($is_selected ? ' in' : '').'">
+						<div class="accordion-inner">'.$content.'</div>
+					</div>
+				</div>';
+		}
+		return '<div class="accordion'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
 	}
 
 	/**
@@ -139,7 +166,11 @@ class yf_html {
 			$name = $v['name'] ?: $k;
 			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
 			$id = $v['id'] ?: 'tab_'.$k;
-			$is_active = (++$i == 1);
+			if (isset($extra['selected'])) {
+				$is_active = ($extra['selected'] == $k);
+			} else {
+				$is_active = (++$i == 1);
+			}
 			$css_class = ($is_active || $extra['show_all']) ? 'active' : 'fade';
 			if ($extra['class']) {
 				$css_class .= ' '.$extra['class'];
