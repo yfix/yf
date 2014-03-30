@@ -47,15 +47,6 @@ class yf_html {
 
 	/**
 	*/
-#	function form_row ($content, $extra = array(), $replace = array(), $obj) {
-#		$css_framework = $extra['css_framework'] ?: conf('css_framework');
-#		if ($css_framework) {
-#			return _class('html_'.$css_framework, 'classes/html/')->form_row($content, $extra, $replace, $obj);
-#		}
-#	}
-
-	/**
-	*/
 	function dd_table($replace = array(), $field_types = array(), $extra = array()) {
 		if (DEBUG_MODE) {
 			$ts = microtime(true);
@@ -124,6 +115,12 @@ class yf_html {
 	/**
 	*/
 	function breadcrumbs () {
+// TODO
+	}
+
+	/**
+	*/
+	function accordion () {
 // TODO
 	}
 
