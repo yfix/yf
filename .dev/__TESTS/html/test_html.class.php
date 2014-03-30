@@ -56,7 +56,17 @@ class test_html {
 		$body .= _class('html')->breadcrumbs(array());
 
 		$body .= '<h1>alert</h1>';
-		$body .= _class('html')->alert(array());
+		$body .= _class('html')->alert(array(
+			'head'	=> 'Oh snap! You got an error!',
+			'body'	=> '<p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
+				<p><a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a></p>',
+		));
+		$body .= _class('html')->alert(array(
+			'alert'	=> 'info',
+			'head'	=> 'Oh snap! You got an error!',
+			'body'	=> '<p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
+				<p><a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a></p>',
+		));
 
 		$body .= '<h1>pagination</h1>';
 		$body .= _class('html')->pagination(array());
