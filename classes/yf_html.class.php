@@ -118,16 +118,84 @@ class yf_html {
 
 	/**
 	*/
+	function accordion ($tabs = array(), $extra = array()) {
+		$items = array();
+		$extra['id'] = $extra['id'] ?: 'accordion_'.substr(md5(microtime()), 0, 8);
+		foreach ((array)$tabs as $k => $v) {
+			if (!is_array($v)) {
+				$content = $v;
+				$v = array();
+			} else {
+				$content = $v['content'];
+			}
+			$name = $v['name'] ?: $k;
+			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
+			$id = $v['id'] ?: 'accordion_item_'.$k;
+			if (isset($extra['selected'])) {
+				$is_selected = ($extra['selected'] == $k);
+			} else {
+				$is_selected = (++$i == 1);
+			}
+			$items[] = 
+				'<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$extra['id'].'" href="#'.$id.'">'.$desc.'</a>
+					</div>
+					<div id="'.$id.'" class="accordion-body collapse'.($is_selected ? ' in' : '').'">
+						<div class="accordion-inner">'.$content.'</div>
+					</div>
+				</div>';
+		}
+		return '<div class="accordion'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
+	}
+
+	/**
+	*/
+	function tabs ($tabs = array(), $extra = array()) {
+		$headers = array();
+		$items = array();
+		foreach ((array)$tabs as $k => $v) {
+			if (!is_array($v)) {
+				$content = $v;
+				$v = array();
+			} else {
+				$content = $v['content'];
+			}
+			$name = $v['name'] ?: $k;
+			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
+			$id = $v['id'] ?: 'tab_'.$k;
+			if (isset($extra['selected'])) {
+				$is_active = ($extra['selected'] == $k);
+			} else {
+				$is_active = (++$i == 1);
+			}
+			$css_class = ($is_active || $extra['show_all']) ? 'active' : 'fade';
+			if ($extra['class']) {
+				$css_class .= ' '.$extra['class'];
+			}
+			if (!$extra['no_headers']) {
+				$headers[] = '<li class="'.($is_active ? 'active' : '').'"><a href="#'.$id.'" data-toggle="tab">'.t($desc).'</a></li>';
+			}
+			$items[] = '<div class="tab-pane '.$css_class.'" id="'.$id.'">'.$content.'</div>';
+		}
+		$extra['id'] = $extra['id'] ?: 'tabs_'.substr(md5(microtime()), 0, 8);
+		$body .= $headers ? '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL : '';
+		$body .= '<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$items).'</div>';
+		return $body;
+	}
+
+	/**
+	*/
 	function alert ($data = array()) {
 // TODO
 		return '<div class="alert alert-block alert-error fade in">
-            <button type="button" class="close" data-dismiss="alert">×</button>
-            <h4 class="alert-heading">Oh snap! You got an error!</h4>
-            <p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
-            <p>
-              <a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a>
-            </p>
-          </div>';
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<h4 class="alert-heading">Oh snap! You got an error!</h4>
+						<p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
+						<p>
+							<a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a>
+						</p>
+					</div>';
 	}
 
 	/**
@@ -309,69 +377,106 @@ class yf_html {
 
 	/**
 	*/
-	function accordion ($tabs = array(), $extra = array()) {
-		$items = array();
-		$extra['id'] = $extra['id'] ?: 'accordion_'.substr(md5(microtime()), 0, 8);
-		foreach ((array)$tabs as $k => $v) {
-			if (!is_array($v)) {
-				$content = $v;
-				$v = array();
-			} else {
-				$content = $v['content'];
-			}
-			$name = $v['name'] ?: $k;
-			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
-			$id = $v['id'] ?: 'accordion_item_'.$k;
-			if (isset($extra['selected'])) {
-				$is_selected = ($extra['selected'] == $k);
-			} else {
-				$is_selected = (++$i == 1);
-			}
-			$items[] = 
-				'<div class="accordion-group">
-					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$extra['id'].'" href="#'.$id.'">'.$desc.'</a>
-					</div>
-					<div id="'.$id.'" class="accordion-body collapse'.($is_selected ? ' in' : '').'">
-						<div class="accordion-inner">'.$content.'</div>
-					</div>
-				</div>';
-		}
-		return '<div class="accordion'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
+	function grid ($data = array()) {
+// TODO
+		return '
+			<div class="bs-docs-grid">
+				<div class="row-fluid show-grid">
+					<div class="span1">1</div>
+					<div class="span1">1</div>
+					<div class="span1">1</div>
+					<div class="span1">1</div>
+					<div class="span1">1</div>
+					<div class="span1">1</div>
+					<div class="span1">1</div>
+					<div class="span1">1</div>
+					<div class="span1">1</div>
+					<div class="span1">1</div>
+					<div class="span1">1</div>
+					<div class="span1">1</div>
+				</div>
+				<div class="row-fluid show-grid">
+					<div class="span4">4</div>
+					<div class="span4">4</div>
+					<div class="span4">4</div>
+				</div>
+				<div class="row-fluid show-grid">
+					<div class="span4">4</div>
+					<div class="span8">8</div>
+				</div>
+				<div class="row-fluid show-grid">
+					<div class="span6">6</div>
+					<div class="span6">6</div>
+				</div>
+				<div class="row-fluid show-grid">
+					<div class="span12">12</div>
+				</div>
+			</div>';
 	}
 
 	/**
 	*/
-	function tabs ($tabs = array(), $extra = array()) {
-		$headers = array();
-		$items = array();
-		foreach ((array)$tabs as $k => $v) {
-			if (!is_array($v)) {
-				$content = $v;
-				$v = array();
-			} else {
-				$content = $v['content'];
-			}
-			$name = $v['name'] ?: $k;
-			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
-			$id = $v['id'] ?: 'tab_'.$k;
-			if (isset($extra['selected'])) {
-				$is_active = ($extra['selected'] == $k);
-			} else {
-				$is_active = (++$i == 1);
-			}
-			$css_class = ($is_active || $extra['show_all']) ? 'active' : 'fade';
-			if ($extra['class']) {
-				$css_class .= ' '.$extra['class'];
-			}
-			if (!$extra['no_headers']) {
-				$headers[] = '<li class="'.($is_active ? 'active' : '').'"><a href="#'.$id.'" data-toggle="tab">'.t($desc).'</a></li>';
-			}
-			$items[] = '<div class="tab-pane '.$css_class.'" id="'.$id.'">'.$content.'</div>';
-		}
-		$extra['id'] = $extra['id'] ?: 'tabs_'.substr(md5(microtime()), 0, 8);
-		$body .= $headers ? '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL : '';
-		$body .= '<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$items).'</div>';
-		return $body;
+	function panel ($data = array()) {
+// bs3+
+// TODO
+		return '
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">Panel title</h3>
+				</div>
+				<div class="panel-body">
+					Panel content
+				</div>
+			</div>
+		';
+	}
+
+	/**
+	*/
+	function list_group ($data = array()) {
+// bs3+
+// TODO
+		return '
+			<ul class="list-group">
+				<li class="list-group-item">
+					<span class="badge">14</span>
+					Cras justo odio
+				</li>
+				<li class="list-group-item active">
+					<span class="badge">2</span>
+					Dapibus ac facilisis in
+				</li>
+				<li class="list-group-item list-group-item-warning">
+					<span class="badge">1</span>
+					Morbi leo risus
+				</li>
+			</ul>
+		';
+	}
+
+	/**
+	*/
+	function jumbotron ($data = array()) {
+// bs3+
+// TODO
+		return '
+			<div class="jumbotron">
+				<h1>Hello, world!</h1>
+				<p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+				<p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p>
+			</div>
+		';
+	}
+
+	/**
+	*/
+	function well ($data = array()) {
+// bs3+
+// TODO
+		return '
+			<div class="well well-lg">
+				in a large well!
+			</div>
+		';
 	}
 }
