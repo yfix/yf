@@ -111,6 +111,9 @@ class test_html {
 		$body .= '<h1>grid</h1>';
 		$body .= _class('html')->grid(array());
 
+		$body .= '<h1>menu</h1>';
+		$body .= _class('html')->menu(array());
+
 		if (conf('css_framework') == 'bs3') {
 			$body .= '<h1>panel</h1>';
 			$body .= _class('html')->panel(array());
