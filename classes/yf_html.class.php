@@ -118,39 +118,6 @@ class yf_html {
 
 	/**
 	*/
-	function accordion ($tabs = array(), $extra = array()) {
-		$items = array();
-		$extra['id'] = $extra['id'] ?: 'accordion_'.substr(md5(microtime()), 0, 8);
-		foreach ((array)$tabs as $k => $v) {
-			if (!is_array($v)) {
-				$content = $v;
-				$v = array();
-			} else {
-				$content = $v['content'];
-			}
-			$name = $v['name'] ?: $k;
-			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
-			$id = $v['id'] ?: 'accordion_item_'.$k;
-			if (isset($extra['selected'])) {
-				$is_selected = ($extra['selected'] == $k);
-			} else {
-				$is_selected = (++$i == 1);
-			}
-			$items[] = 
-				'<div class="accordion-group">
-					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$extra['id'].'" href="#'.$id.'">'.$desc.'</a>
-					</div>
-					<div id="'.$id.'" class="accordion-body collapse'.($is_selected ? ' in' : '').'">
-						<div class="accordion-inner">'.$content.'</div>
-					</div>
-				</div>';
-		}
-		return '<div class="accordion'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
-	}
-
-	/**
-	*/
 	function tabs ($tabs = array(), $extra = array()) {
 		$headers = array();
 		$items = array();
@@ -182,6 +149,42 @@ class yf_html {
 		$body .= $headers ? '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL : '';
 		$body .= '<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$items).'</div>';
 		return $body;
+	}
+
+	/**
+	*/
+	function accordion ($data = array(), $extra = array()) {
+		$items = array();
+		$extra['id'] = $extra['id'] ?: 'accordion_'.substr(md5(microtime()), 0, 8);
+		foreach ((array)$data as $k => $v) {
+			if (!is_array($v)) {
+				$content = $v;
+				$v = array();
+			} else {
+				$content = $v['content'];
+			}
+			$name = $v['name'] ?: $k;
+			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
+			$id = $v['id'] ?: 'accordion_item_'.$k;
+			if (isset($extra['selected'])) {
+				$is_selected = ($extra['selected'] == $k);
+			} else {
+				$is_selected = (++$i == 1);
+			}
+			$class_group = $v['class_group'] ?: $extra['class_group'];
+			$class_head = $v['class_head'] ?: $extra['class_head'];
+			$class_body = $v['class_body'] ?: $extra['class_body'];
+			$items[] = 
+				'<div class="accordion-group'.($class_group ? ' '.$class_group : '').'">
+					<div class="accordion-heading'.($class_head ? ' '.$class_head : '').'">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$extra['id'].'" href="#'.$id.'">'.$desc.'</a>
+					</div>
+					<div id="'.$id.'" class="accordion-body collapse'.($is_selected ? ' in' : ''). ($class_body ? ' '.$class_body : '').'">
+						<div class="accordion-inner">'.$content.'</div>
+					</div>
+				</div>';
+		}
+		return '<div class="accordion'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
 	}
 
 	/**
