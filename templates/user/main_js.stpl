@@ -1,3 +1,4 @@
+<!-- main_js.stpl --> {{-- Do not remove this line! --}}
 <script type="text/javascript" class="yf_core">
 $(function(){
 	$('.yf_tip').popover({
@@ -77,3 +78,4 @@ $(function(){
 {if(const.DEBUG_MODE eq 1)}
 	{include("debug_console_js")}
 {/if}
+<!-- /main_js.stpl --> {{-- Do not remove this line! --}}

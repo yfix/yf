@@ -1,3 +1,4 @@
+<!-- style_css.stpl --> {{-- Do not remove this line! --}}
 <style type="text/css" class="yf_core">
 .sidebar-nav { padding: 9px 0; }
 
@@ -59,3 +60,4 @@ legend+.control-group { margin-top: 0; }
 	/*input, textarea, select { max-width: 300px; }*/
 	</style>
 {/if}
+<!-- /style_css.stpl --> {{-- Do not remove this line! --}}

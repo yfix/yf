@@ -128,7 +128,8 @@ class yf_gallery_edit_photo {
 				'desc'			=> 'trim|xss_clean|strip_tags|max_length['.module('gallery')->MAX_DESC_LENGTH.']',
 				'tags'			=> 'trim|xss_clean|strip_tags',
 			))
-			->image('photo_file', $thumb_web_path, array('desc' => 'Image'))
+#			->image('photo_file', $thumb_web_path, array('desc' => 'Image'))
+			->file_uploader('photo_file')
 			->row_start()
 				->link('crop_photo', './?object=gallery&action=crop_photo&id='.$photo['id'])
 				->link('rotate_photo', './?object=gallery&action=rotate_photo&id='.$photo['id'])

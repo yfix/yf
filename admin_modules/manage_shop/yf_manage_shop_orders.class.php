@@ -120,7 +120,7 @@ class yf_manage_shop_orders{
 				} elseif ($k=='price_unit') {
 					foreach ($v as $k1 => $price) {
 						list ($product_id,$param_id) = explode('_',$k1);
-						db()->UPDATE(db('shop_order_items'), array('price'	=> $price), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
+						db()->UPDATE(db('shop_order_items'), array('price'	=> todecimal($price)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
 						$recount_price = true;
 					}
 				}
@@ -177,8 +177,8 @@ class yf_manage_shop_orders{
 					$price += $_attr_info['price'];
 				}
 			}
-			$price_one  = (float)$_info[ 'price'    ];
-			$quantity   = (int)$_info[ 'quantity' ];
+			$price_one  = tofloat($_info['price']);
+			$quantity   = (int)$_info['quantity'];
 			$price_item = $price_one * $quantity;
 			$products[$_info['product_id'].'_'.$_info['param_id']] = array(
 				'product_id'   => intval($_info['product_id']),
@@ -198,8 +198,8 @@ class yf_manage_shop_orders{
 		}
 		$_class_discount = _class( '_shop_discount', 'modules/shop/' );
 		$discount        = $order_info[ 'discount' ];
-		$discount_price  = $_class_discount->calc_discount_global( $price_total, $discount );
-		$total_price     = (float)$order_info['total_sum'];
+		$discount_price  = round($_class_discount->calc_discount_global( $price_total, $discount ), 2);
+		$total_price     = tofloat($order_info['total_sum']);
 		$replace = my_array_merge($replace, _prepare_html($order_info));
 		$replace = my_array_merge($replace, array(
 			'form_action'         => './?object='.main()->_get('object').'&action='.$_GET['action'].'&id='.$_GET['id'],

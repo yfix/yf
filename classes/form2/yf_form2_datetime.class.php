@@ -31,8 +31,12 @@ class yf_form2_datetime {
 			}
 
 			$format = array();
-			if ($extra['no_date']!=1) $format[] = 'MM/dd/yyyy';
-			if ($extra['no_time']!=1) $format[] = 'HH:mm:ss';
+			if ($extra['no_date']!=1) {
+				$format[] = 'MM/dd/yyyy';
+			}
+			if ($extra['no_time']!=1) {
+				$format[] = 'HH:mm:ss';
+			}
 			require_js('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js');
 			require_js('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/locales/bootstrap-datepicker.ru.min.js');
 			require_css('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css');

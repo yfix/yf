@@ -613,7 +613,6 @@ class yf_html_controls {
 	/**
 	*/
 	function div_box ($name, $values = array(), $selected = '', $extra = array()) {
-		// Passing params as array
 		if (is_array($name)) {
 			$extra = $name;
 			$name = $extra['name'];
@@ -624,43 +623,74 @@ class yf_html_controls {
 				$translate = 0;
 			}
 			$selected = $extra['selected'] ?: $selected;
-			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
-			$type = isset($extra['type']) ? $extra['type'] : 2;
-			$level = isset($extra['level']) ? $extra['level'] : 0;
-			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-			$extra['class'] .= ' form-control';
-			if ($extra['class']) {
-				$add_str .= ' class="'.$extra['class'].'" ';
-			}
-			if ($extra['style']) {
-				$add_str .= ' style="'.$extra['style'].'" ';
-			}
-		} else {
-			$add_str .= ' class="form-control" ';
 		}
 		if (!$values) {
 			return false;
 		}
 		$selected = strval($selected);
 
-		$body .= '<li class="dropdown" style="list-style-type:none;">';
-
-		$body .= '<a class="dropdown-toggle" data-toggle="dropdown">'.$desc.'&nbsp;<span class="caret"></span></a>';
-		$body .= '<ul class="dropdown-menu">';
+		$items = array();
+		$selected_val = '';
 		foreach ((array)$values as $key => $cur_value) {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
-			$body .= '<li class="dropdown"><a data-value="'.$key.'" '.($_what_compare == $selected ? 'data-selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
+			$is_selected = $_what_compare == $selected;
+			$val = ($translate ? t($cur_value) : $cur_value);
+			$items[] = '<li class="dropdown"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			if ($is_selected) {
+				$selected_val = $val;
+			}
 		}
+		$body .= '<li class="dropdown" style="list-style-type:none;">';
+		$body .= '<a class="dropdown-toggle" data-toggle="dropdown">'.($selected_val ?: $desc).'&nbsp;<span class="caret"></span></a>';
+		$body .= '<ul class="dropdown-menu">';
+		$body .= implode(PHP_EOL, $items);
 		$body .= '</ul>';
-
 		$body .= '</li>';
 		return $body;
 	}
 
 	/**
 	*/
+	function button_box ($name, $values = array(), $selected = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+			$name = $extra['name'];
+			$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+			if ($extra['no_translate']) {
+				$translate = 0;
+			}
+			$selected = $extra['selected'] ?: $selected;
+		}
+		if (!$values) {
+			return false;
+		}
+		$selected = strval($selected);
+
+		$items = array();
+		$selected_val = '';
+		foreach ((array)$values as $key => $cur_value) {
+			$_what_compare = strval($type == 1 ? $cur_value : $key);
+			$is_selected = $_what_compare == $selected;
+			$val = ($translate ? t($cur_value) : $cur_value);
+			$items[] = '<li class="dropdown"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			if ($is_selected) {
+				$selected_val = $val;
+			}
+		}
+		$body .= '<div class="btn-group">';
+		$body .= '<a class="btn dropdown-toggle" data-toggle="dropdown">'.($selected_val ?: $desc).'&nbsp;<span class="caret"></span></a>';
+		$body .= '<ul class="dropdown-menu">';
+		$body .= implode(PHP_EOL, $items);
+		$body .= '</ul>';
+		$body .= '</div>';
+		return $body;
+	}
+
+	/**
+	*/
 	function list_box ($name, $values = array(), $selected = '', $extra = array()) {
-		// Passing params as array
 		if (is_array($name)) {
 			$extra = $name;
 			$name = $extra['name'];
@@ -700,24 +730,17 @@ class yf_html_controls {
 	/**
 	*/
 	function date_picker ($name, $cur_date = '') {
-		$content = '';
-		if (empty($this->date_picker_count)) {
-			$content .= '
-				<script src="'.WEB_PATH.'js/jquery/ui/jquery.ui.core.js"></script>
-				<script src="'.WEB_PATH.'js/jquery/ui/jquery.ui.datepicker.js"></script>
-				<link rel="stylesheet" href="'.WEB_PATH.'js/jquery/ui/jquery.ui.datepicker.css">
-				<link rel="stylesheet" href="'.WEB_PATH.'js/jquery/ui/jquery.ui.all.css">
-				<script>
-					$(function() {
-						$( ".datepicker" ).datepicker(
-							{ dateFormat: "yy-mm-dd" }
-						);
-					});
-				</script>
-			';
-		}
-		$content .= '<input type="text" name="'.$name.'" class="datepicker" value="'.$cur_date.'" style="width:80px" readonly="true" />';
-		$this->date_picker_count++;
-		return $content;
+		require_js(array(
+			'jquery-ui',
+			'$(function() {
+				$( ".datepicker" ).datepicker({ dateFormat: "yy-mm-dd" });
+			});',
+		));
+		require_css(array(
+			'jquery-ui',
+			'//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery.ui.datepicker.min.css',
+		));
+// TODO: use input() unified control
+		return '<input type="text" name="'.$name.'" class="datepicker" value="'.$cur_date.'" style="width:80px" readonly="true" />';
 	}
 }

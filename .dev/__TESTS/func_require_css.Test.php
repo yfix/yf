@@ -33,6 +33,6 @@ class func_require_css_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_complex() {
 		require_css('//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.css');
-		$this->assertEquals('', _class('core_css')->show());
+		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.css" rel="stylesheet" />', _class('core_css')->show());
 	}
 }

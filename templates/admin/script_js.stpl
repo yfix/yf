@@ -1,3 +1,4 @@
+<!-- script_js.stpl --> {{-- Do not remove this line! --}}
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.jquery.min.js" class="yf_core"></script>
 <link href="//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.css" rel="stylesheet" class="yf_core">
 <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" class="yf_core">
@@ -132,3 +133,4 @@ $(function(){
 {if(const.DEBUG_MODE eq 1)}
 	{include("debug_console_js")}
 {/if}
+<!-- /script_js.stpl --> {{-- Do not remove this line! --}}
