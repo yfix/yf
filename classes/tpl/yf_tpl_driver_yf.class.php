@@ -29,6 +29,11 @@ class yf_tpl_driver_yf {
 	public $_MAX_RECURSE_LEVEL = 4;
 	/** @var @conf_skip */
 	public $CACHE = array();
+/*
+// TODO
+{ife(is_logged_in)}  {/ife}
+{ifne(is_logged_in)}  {/ifne}
+*/
 
 	/**
 	* YF constructor
