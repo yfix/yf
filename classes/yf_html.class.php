@@ -330,13 +330,19 @@ class yf_html {
 	/**
 	*/
 	function progress_bar ($data = array(), $extra = array()) {
-// TODO
-		return '
-			<div class="progress">
-				<div class="bar bar-success" style="width: 35%;"></div>
-				<div class="bar bar-warning" style="width: 20%;"></div>
-				<div class="bar bar-danger" style="width: 10%;"></div>
-			</div>';
+		$items = array();
+		foreach ((array)$data as $v) {
+			if (!is_array($v)) {
+				$val = $v;
+				$v = array();
+			} else {
+				$val = $v['val'];
+			}
+			$type = $v['type'] ?: $extra['type'];
+			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$items[] = '<div class="bar bar-'.$type. ($class_item ? ' '.$class_item : '').'" style="width: '.$val.'%;'.($v['style'] ? ' '.$v['style'] : '').'"></div>';
+		}
+		return '<div class="progress'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
 	}
 
 	/**
