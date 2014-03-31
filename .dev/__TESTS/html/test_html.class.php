@@ -136,18 +136,166 @@ class test_html {
 		), array('type' => 'success'));
 
 		$body .= '<h1>pagination</h1>';
-		$body .= _class('html')->pagination(array());
+		$body .= _class('html')->pagination(array(
+			'1'	=> './?object=some&id=1',
+			'2'	=> './?object=some&id=2',
+			'prev'	=> './?object=some&id=1',
+			'next'	=> './?object=some&id=2',
+			'3'	=> './?object=some&id=3',
+			'4'	=> './?object=some&id=4',
+			'5'	=> './?object=some&id=5',
+		));
 
 		$body .= '<h1>media_objects</h1>';
-		$body .= _class('html')->media_objects(array());
+		$body .= _class('html')->media_objects(array(
+			11 => array(
+				'link'	=> './?object=comments&action=view&id=11',
+				'img'	=> 'http://placehold.it/64x64',
+				'alt'	=> '64x64',
+				'head'	=> 'Comment 1',
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+			),
+			22 => array(
+				'link'	=> './?object=comments&action=view&id=22',
+				'img'	=> 'http://placehold.it/64x64',
+				'alt'	=> '64x64',
+				'head'	=> 'Comment 2',
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+			),
+			33 => array(
+				'link'	=> './?object=comments&action=view&id=33',
+				'img'	=> 'http://placehold.it/64x64',
+				'alt'	=> '64x64',
+				'head'	=> 'Comment 1',
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'parent_id'	=> 22,
+			),
+			44 => array(
+				'link'	=> './?object=comments&action=view&id=44',
+				'img'	=> 'http://placehold.it/64x64',
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'parent_id'	=> 33,
+			),
+			55 => array(
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'parent_id'	=> 44,
+			),
+			66 => array(
+				'link'	=> './?object=comments&action=view&id=66',
+				'img'	=> 'http://placehold.it/64x64',
+				'alt'	=> '64x64',
+				'head'	=> 'Comment 1',
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+			),
+		));
 
 		$body .= '<h1>grid</h1>';
-		$body .= _class('html')->grid(array());
+		$body .= _class('html')->grid(array(
+			array(
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+			),
+			array(
+				array('s4'),
+				array('s4'),
+				array('s4'),
+			),
+			array(
+				array('s4', 'col' => 4),
+				array('s8', 'col' => 8),
+			),
+			array(
+				array('s6'),
+				array('s6'),
+			),
+			array(
+				array('s12'),
+			),
+		));
 
 		$body .= '<h1>menu</h1>';
-		$body .= _class('html')->menu(array());
+		$body .= _class('html')->menu(array(
+			11 => array(
+				'name'	=> 'Tools',
+			),
+			22 => array(
+				'link'		=> './?object=blocks',
+				'name'		=> 'Blocks editor',
+				'parent_id'	=> 11,
+			),
+			33 => array(
+				'link'		=> './?object=file_manager',
+				'name'		=> 'File manager',
+				'parent_id'	=> 11,
+			),
+			44 => array(
+				'name'		=> 'Administration',
+			),
+			55 => array(
+				'link'		=> './?object=admin',
+				'name'		=> 'Admin accounts',
+				'parent_id'	=> 44,
+			),
+			66 => array(
+				'link'		=> './?object=admin_groups',
+				'name'		=> 'Admin groups',
+				'parent_id'	=> 44,
+			),
+			77 => array(
+				'link'		=> './?object=admin_modules',
+				'name'		=> 'Admin modules',
+				'parent_id'	=> 44,
+			),
+			88 => array(
+				'name'		=> 'Users',
+				'parent_id'	=> 44,
+			),
+			99 => array(
+				'link'		=> './?object=manage_users',
+				'name'		=> 'User accounts',
+				'parent_id'	=> 88,
+			),
+			101 => array(
+				'link'		=> './?object=user_groups',
+				'name'		=> 'User groups',
+				'parent_id'	=> 88,
+			),
+			102 => array(
+				'link'		=> './?object=user_modules',
+				'name'		=> 'User modules',
+				'parent_id'	=> 88,
+			),
+			103 => array(
+				'name'		=> 'Content',
+			),
+			104 => array(
+				'link'		=> './?object=static_pages',
+				'name'		=> 'Static pages',
+				'parent_id'	=> 103,
+			),
+			105 => array(
+				'link'		=> './?object=manage_news',
+				'name'		=> 'News',
+				'parent_id'	=> 103,
+			),
+			106 => array(
+				'link'		=> './?object=manage_comments',
+				'name'		=> 'Comments',
+				'parent_id'	=> 103,
+			),
+		));
 
-		if (conf('css_framework') == 'bs3') {
+#		if (conf('css_framework') == 'bs3') {
 			$body .= '<h1>panel</h1>';
 			$body .= _class('html')->panel(array());
 
@@ -159,7 +307,7 @@ class test_html {
 
 			$body .= '<h1>well</h1>';
 			$body .= _class('html')->well(array());
-		}
+#		}
 		$body .= '<br><br>';
 		return $body;
 	}
