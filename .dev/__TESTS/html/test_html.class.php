@@ -297,16 +297,22 @@ class test_html {
 
 #		if (conf('css_framework') == 'bs3') {
 			$body .= '<h1>panel</h1>';
-			$body .= _class('html')->panel(array());
-
-			$body .= '<h1>list_group</h1>';
-			$body .= _class('html')->list_group(array());
+			$body .= _class('html')->panel(array('title' => 'Panel title', 'body' => 'Panel content'));
 
 			$body .= '<h1>jumbotron</h1>';
-			$body .= _class('html')->jumbotron(array());
+			$body .= _class('html')->jumbotron(array(
+				'head'	=> 'My big header',
+				'body'	=> '<p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+					<p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p>',
+			));
 
 			$body .= '<h1>well</h1>';
-			$body .= _class('html')->well(array());
+			$body .= _class('html')->well('Large well content');
+
+			$body .= '<h1>list_group</h1>';
+			$body .= _class('html')->list_group(array(
+// TODO
+			));
 #		}
 		$body .= '<br><br>';
 		return $body;
