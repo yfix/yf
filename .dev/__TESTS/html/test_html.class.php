@@ -96,14 +96,51 @@ class test_html {
 				<p><a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a></p>',
 		));
 
-		$body .= '<h1>pagination</h1>';
-		$body .= _class('html')->pagination(array());
-
 		$body .= '<h1>thumbnails</h1>';
-		$body .= _class('html')->thumbnails(array());
+		$body .= _class('html')->thumbnails(array(
+			array(
+				'img'	=> 'http://placehold.it/300x200',
+				'alt'	=> '300x200',
+				'head'	=> 'Thumbnail label 1',
+				'body'	=> '<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+					<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>',
+			),
+			array(
+				'img'	=> 'http://placehold.it/300x200',
+				'alt'	=> '300x200',
+				'head'	=> 'Thumbnail label 2',
+				'body'	=> '<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>',
+			),
+			array(
+				'img'	=> 'http://placehold.it/300x200',
+				'head'	=> 'Thumbnail label 3',
+				'body'	=> '<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>',
+			),
+			array(
+				'img'	=> 'http://placehold.it/300x200',
+				'head'	=> 'Thumbnail label 4',
+			),
+			array(
+				'img'	=> 'http://placehold.it/300x200',
+			),
+			'http://placehold.it/300x200',
+		), array('columns' => 3));
 
 		$body .= '<h1>progress_bar</h1>';
-		$body .= _class('html')->progress_bar(array());
+		$body .= _class('html')->progress_bar(array(
+			'35',
+			array(
+				'val'	=> '20',
+				'type'	=> 'warning',
+			),
+			array(
+				'val'	=> '10',
+				'type'	=> 'warning',
+			),
+		), array('type' => 'success'));
+
+		$body .= '<h1>pagination</h1>';
+		$body .= _class('html')->pagination(array());
 
 		$body .= '<h1>media_objects</h1>';
 		$body .= _class('html')->media_objects(array());
