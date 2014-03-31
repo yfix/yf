@@ -100,21 +100,6 @@ class test_html {
 		$body .= _class('html')->thumbnails(array(
 			array(
 				'img'	=> 'http://placehold.it/300x200',
-				'alt'	=> '300x200',
-				'head'	=> 'Thumbnail label 1',
-				'body'	=> '<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-					<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>',
-			),
-			array(
-				'img'	=> 'http://placehold.it/300x200',
-				'alt'	=> '300x200',
-				'head'	=> 'Thumbnail label 2',
-				'body'	=> '<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>',
-			),
-			array(
-				'img'	=> 'http://placehold.it/300x200',
-				'head'	=> 'Thumbnail label 3',
-				'body'	=> '<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>',
 			),
 			array(
 				'img'	=> 'http://placehold.it/300x200',
@@ -122,6 +107,17 @@ class test_html {
 			),
 			array(
 				'img'	=> 'http://placehold.it/300x200',
+				'alt'	=> '300x200',
+				'head'	=> 'Thumbnail label 1',
+				'body'	=> '<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+					<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>',
+			),
+			'http://placehold.it/300x200',
+			array(
+				'img'	=> 'http://placehold.it/300x200',
+				'alt'	=> '300x200',
+				'head'	=> 'Thumbnail label 2',
+				'body'	=> '<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>',
 			),
 			'http://placehold.it/300x200',
 		), array('columns' => 3));
