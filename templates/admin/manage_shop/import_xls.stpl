@@ -1,6 +1,11 @@
 <h3>{t('Import xls')}</h3>
 {form_import_xls}
 
+<h4>{t('Sample prices')}</h4>
+{foreach("sample_xls")}
+<a href="{#.url}">{#.name}</a><br />
+{/foreach}
+
 <h3>{t('Export xls')}</h3>
 {form_export_xls}
 

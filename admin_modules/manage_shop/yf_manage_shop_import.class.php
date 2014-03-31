@@ -28,10 +28,19 @@ class yf_manage_shop_import {
 		$form_export_zakaz = form('',array('action' => "./?object=manage_shop&action=export_zakaz_start"))	
 				->save('', "Execute zakaz.ua export script");
 		
+		$sample_xls = array();
+		foreach(array_keys($this->_types) as $k) {
+			$sample_xls[] = array(
+				"url" => WEB_PATH."uploads/sample_prices/".$k.".xls",
+				"name" => $k,
+			);
+		}
+		
 		return tpl()->parse("manage_shop/import_xls", array(
 			'form_import_xls' => $form_import_xls,
 			'form_export_xls' => $form_export_xls,
 			'form_export_zakaz' => $form_export_zakaz,
+			'sample_xls' => $sample_xls,
 		));
 	}
 	
