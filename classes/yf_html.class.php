@@ -301,41 +301,30 @@ class yf_html {
 	/**
 	*/
 	function thumbnails ($data = array(), $extra = array()) {
-// TODO
-		return '
-				<ul class="thumbnails">
-					<li class="span4">
-						<div class="thumbnail">
-							<img alt="300x200" src="http://placehold.it/300x200">
-							<div class="caption">
-								<h3>Thumbnail label</h3>
-								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-								<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>
-							</div>
-						</div>
-					</li>
-					<li class="span4">
-						<div class="thumbnail">
-							<img alt="300x200" src="http://placehold.it/300x200">
-							<div class="caption">
-								<h3>Thumbnail label</h3>
-								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-								<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>
-							</div>
-						</div>
-					</li>
-					<li class="span4">
-						<div class="thumbnail">
-							<img alt="300x200" src="http://placehold.it/300x200">
-							<div class="caption">
-								<h3>Thumbnail label</h3>
-								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-								<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>
-							</div>
-						</div>
-					</li>
-				</ul>
-';
+		$items = array();
+		$columns = (int)$extra['columns'] ?: 3;
+		$row_class = 'span'.round(12 / $columns);
+		foreach ((array)$data as $k => $v) {
+			if (!is_array($v)) {
+				$img_src = $v;
+				$v = array();
+			} else {
+				$img_src = $v['img'];
+			}
+			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$items[] = 
+				'<li class="'.$row_class. ($class_item ? ' '.$class_item : ''). ($v['style'] ? ' style="'.$v['style'].'"' : '').'">
+					<div class="thumbnail">
+						<img alt="'._prepare_html($v['alt'] ?: $v['head']).'" src="'._prepare_html($img_src).'" />
+						'.(($v['head'] || $v['body']) ? '<div class="caption">'.($v['head'] ? '<h3>'._prepare_html($v['head']).'</h3>' : '').' '.$v['body'].'</div>' : '').'
+					</div>
+				</li>';
+		}
+		$body = array();
+		foreach (array_chunk($items, $columns) as $_items) {
+			$body[] = '<ul class="thumbnails'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"">'.implode(PHP_EOL, (array)$_items).'</ul>';
+		}
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
