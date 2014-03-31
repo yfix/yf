@@ -300,31 +300,13 @@ class yf_html {
 
 	/**
 	*/
-	function pagination ($data = array(), $extra = array()) {
-// TODO
-		return '
-			<div class="pagination">
-				<ul>
-					<li><a href="#">Prev</a></li>
-					<li><a href="#">1</a></li>
-					<li><a href="#">2</a></li>
-					<li><a href="#">3</a></li>
-					<li><a href="#">4</a></li>
-					<li><a href="#">5</a></li>
-					<li><a href="#">Next</a></li>
-				</ul>
-			</div>';
-	}
-
-	/**
-	*/
 	function thumbnails ($data = array(), $extra = array()) {
 // TODO
 		return '
 				<ul class="thumbnails">
 					<li class="span4">
 						<div class="thumbnail">
-							<img alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
+							<img alt="300x200" src="http://placehold.it/300x200">
 							<div class="caption">
 								<h3>Thumbnail label</h3>
 								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
@@ -334,7 +316,7 @@ class yf_html {
 					</li>
 					<li class="span4">
 						<div class="thumbnail">
-							<img alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
+							<img alt="300x200" src="http://placehold.it/300x200">
 							<div class="caption">
 								<h3>Thumbnail label</h3>
 								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
@@ -344,7 +326,7 @@ class yf_html {
 					</li>
 					<li class="span4">
 						<div class="thumbnail">
-							<img alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
+							<img alt="300x200" src="http://placehold.it/300x200">
 							<div class="caption">
 								<h3>Thumbnail label</h3>
 								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
@@ -354,43 +336,6 @@ class yf_html {
 					</li>
 				</ul>
 ';
-	}
-
-	/**
-	*/
-	function media_objects ($data = array(), $extra = array()) {
-// TODO
-		return '
-			<div class="bs-docs-example">
-				<div class="media">
-					<a class="pull-left" href="#">
-						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
-					</a>
-					<div class="media-body">
-						<h4 class="media-heading">Media heading</h4>
-						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-					</div>
-				</div>
-				<div class="media">
-					<a class="pull-left" href="#">
-						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
-					</a>
-					<div class="media-body">
-						<h4 class="media-heading">Media heading</h4>
-						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-
-						<div class="media">
-							<a class="pull-left" href="#">
-								<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
-							</a>
-							<div class="media-body">
-								<h4 class="media-heading">Media heading</h4>
-								Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>';
 	}
 
 	/**
@@ -440,6 +385,61 @@ class yf_html {
 				</div>
 				<div class="row-fluid show-grid">
 					<div class="span12">12</div>
+				</div>
+			</div>';
+	}
+
+	/**
+	*/
+	function pagination ($data = array(), $extra = array()) {
+// TODO
+		return '
+			<div class="pagination">
+				<ul>
+					<li><a href="#">Prev</a></li>
+					<li><a href="#">1</a></li>
+					<li><a href="#">2</a></li>
+					<li><a href="#">3</a></li>
+					<li><a href="#">4</a></li>
+					<li><a href="#">5</a></li>
+					<li><a href="#">Next</a></li>
+				</ul>
+			</div>';
+	}
+
+	/**
+	*/
+	function media_objects ($data = array(), $extra = array()) {
+// TODO
+		return '
+			<div class="bs-docs-example">
+				<div class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Media heading</h4>
+						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+					</div>
+				</div>
+				<div class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Media heading</h4>
+						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+
+						<div class="media">
+							<a class="pull-left" href="#">
+								<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
+							</a>
+							<div class="media-body">
+								<h4 class="media-heading">Media heading</h4>
+								Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>';
 	}
