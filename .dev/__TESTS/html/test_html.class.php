@@ -131,7 +131,7 @@ class test_html {
 			),
 			array(
 				'val'	=> '10',
-				'type'	=> 'warning',
+				'type'	=> 'info',
 			),
 		), array('type' => 'success'));
 
