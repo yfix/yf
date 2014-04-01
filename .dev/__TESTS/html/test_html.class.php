@@ -443,7 +443,21 @@ class test_html {
 	function list_group() {
 #		if (conf('css_framework') == 'bs3') { return ''; }
 		return _class('html')->list_group(array(
-// TODO
+			'First line',
+			array(
+				'body'	=> 'Cras justo odio',
+				'badge'	=> '14',
+			),
+			array(
+				'body'	=> 'Dapibus ac facilisis in',
+				'badge'	=> '2',
+				'class_item'	=> 'active'
+			),
+			array(
+				'body'	=> 'Morbi leo risus',
+				'badge'	=> '1',
+				'class_item'	=> 'list-group-item-warning',
+			),
 		));
 	}
 
