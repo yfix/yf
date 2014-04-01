@@ -387,19 +387,26 @@ class yf_html {
 	/**
 	*/
 	function pagination ($data = array(), $extra = array()) {
-// TODO
-		return '
-			<div class="pagination">
-				<ul>
-					<li><a href="#">Prev</a></li>
-					<li><a href="#">1</a></li>
-					<li><a href="#">2</a></li>
-					<li><a href="#">3</a></li>
-					<li><a href="#">4</a></li>
-					<li><a href="#">5</a></li>
-					<li><a href="#">Next</a></li>
-				</ul>
-			</div>';
+		if (isset($data['prev'])) {
+			$prev = $data['prev'];
+			unset($data['prev']);
+		}
+		if (isset($data['next'])) {
+			$next = $data['next'];
+			unset($data['next']);
+		}
+		$items = array();
+// TODO: auto-detect current page and need of first. last
+		if ($prev) {
+			$items[] = '<li><a href="'.$prev.'">'.t('Prev').'</a></li>';
+		}
+		foreach ((array)$data as $page => $link) {
+			$items[] = '<li><a href="'.$link.'">'.$page.'</a></li>';
+		}
+		if ($next) {
+			$items[] = '<li><a href="'.$next.'">'.t('Next').'</a></li>';
+		}
+		return '<div class="pagination"><ul>'.implode(PHP_EOL, $items).'</ul></div>';
 	}
 
 	/**
