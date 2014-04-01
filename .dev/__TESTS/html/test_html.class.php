@@ -236,7 +236,7 @@ class test_html {
 
 	/***/
 	function progress_bar() {
-		$body .= _class('html')->progress_bar(array(
+		return _class('html')->progress_bar(array(
 			'35',
 			array(
 				'val'	=> '20',
