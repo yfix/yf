@@ -13,13 +13,93 @@ class test_html {
 	);
 
 	/***/
-	function show() {
-		$url = process_url('./?object='.$_GET['object']);
-		foreach ((array)get_class_methods($this) as $name) {
+	function _get_method_source($cls, $method) {
+		if (is_object($cls)) {
+			$cls = get_class($cls);
+		}
+		$methods = $this->_cache[__FUNCTION__][$cls];
+		if (is_null($methods)) {
+			$methods = $this->_get_methods_source($cls);
+			$this->_cache[__FUNCTION__][$cls] = $methods;
+		}
+		return $methods[$method];
+	}
+
+	/***/
+	function _get_methods_source($cls) {
+		if (is_object($cls)) {
+			$cls = get_class($cls);
+		}
+		$data = array();
+		$class = new ReflectionClass($cls);
+		foreach ($class->getMethods() as $v) {
+			$name = $v->name;
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$items[] = '<h1 id="head_'.$name.'">'.$name.'</h1>'. PHP_EOL. $this->$name();
+			preg_match('~@@\s+(?P<file>.+?)\s+(?P<line1>[0-9]+)\s+-\s+(?P<line2>[0-9]+)$~ims', ReflectionMethod::export($cls, $name, 1), $m);
+			$file = trim($m['file']);
+			$line_start = intval($m['line1'] - 1);
+			$line_end = intval($m['line2'] + 1);
+			$data[$name] = array(
+				'body'		=> $this->_get_file_slice($file, $line_start, $line_end),
+				'file'		=> $file,
+				'line_start'=> $line_start,
+				'line_end'	=> $line_end,
+			);
+		}
+		return $data;
+	}
+
+	/***/
+	function _get_file_slice($file, $line_start, $line_end) {
+		$source = $this->_cache[__FUNCTION__][$file];
+		if (is_null($source)) {
+			$source = file($file);
+			$this->_cache[__FUNCTION__][$file] = $source;
+		}
+		$offset = $line_end - $line_start;
+		return implode(array_slice($source, $line_start, $offset));
+	}
+
+	/***/
+	function show() {
+#		require_js('//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js');
+		$url = process_url('./?object='.$_GET['object']);
+		$methods = get_class_methods($this);
+		sort($methods);
+		foreach ((array)$methods as $name) {
+			if ($name == 'show' || substr($name, 0, 1) == '_') {
+				continue;
+			}
+			$self_source = $this->_get_method_source(__CLASS__, $name);
+			$target_source = $this->_get_method_source(_class('html'), $name);
+			$items[] = 
+				'<div class="row" id="head_'.$name.'">
+					<h1>'.$name.'
+						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button>
+						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("html")-&gt;'.$name.'() source</button>
+						<a class="btn btn-primary btn-small btn-sm" href="https://github.com/yfix/yf/tree/master/'.substr($target_source['file'], strlen(YF_PATH)).'#L'.$target_source['line_start'].'">Github <i class="icon icon-github"></i></a>
+					</h1>
+					<div id="func_self_source_'.$name.'" class="collapse out"><pre>'.(_prepare_html($self_source['body'])).'</pre></div>
+					<div id="func_target_source_'.$name.'" class="collapse out"><pre>'.(_prepare_html($target_source['body'])).'</pre></div>
+					<div id="func_out_'.$name.'">'.$this->$name().'</div>
+				</div>';
+/*
+			$target_id = 'func_target_source_'.$name;
+			require_js('(function(){
+				try {
+					var ace_editor = ace.edit("'.$target_id.'");
+					ace_editor.setTheme("ace/theme/'.($extra['ace_editor']['theme'] ?: 'tomorrow_night').'");
+					ace_editor.getSession().setMode("ace/mode/'.($extra['ace_editor']['mode'] ?: 'php').'");
+					ace_editor.setFontSize("'.($extra['ace_editor']['font-size'] ?: '16px').'");
+					ace_editor.setPrintMarginColumn(false);
+					$("#'.$target_id.'").data("ace_editor", ace_editor);
+				} catch (e) {
+					console.log(e)
+				}
+				})()');
+*/
 		}
 		return implode(PHP_EOL, $items);
 	}
@@ -31,7 +111,7 @@ class test_html {
 
 	/***/
 	function accordion() {
-		return _class('html')->accordion($this->data, array('selected' => 'second', 'class_head' => 'alert-info'));
+		return _class('html')->accordion($this->data, array('selected' => 'second', 'class_head' => 'alert-info', 'class' => 'span4'));
 	}
 
 	/***/
@@ -370,12 +450,13 @@ class test_html {
 	function _hook_side_column() {
 		$items = array();
 		$url = process_url('./?object='.$_GET['object']);
-		foreach ((array)get_class_methods($this) as $name) {
+		$methods = get_class_methods($this);
+		foreach ((array)$methods as $name) {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
 			$items[] = '<li><a href="#head_'.$name.'"><i class="icon-chevron-right"></i> '.t($name).'</a></li>';
 		}
-		return '<div class="span3 bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav">'.implode(PHP_EOL, $items).'</ul></div>';
+		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav">'.implode(PHP_EOL, $items).'</ul></div>';
 	}
 }
