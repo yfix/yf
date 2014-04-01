@@ -2,6 +2,7 @@
 
 class test_html {
 
+	/***/
 	public $data = array(
 		'first' 	=> 'first text',
 		'second'	=> 'second text',
@@ -11,6 +12,7 @@ class test_html {
 			Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
 	);
 
+	/***/
 	function show() {
 		$url = process_url('./?object='.$_GET['object']);
 		foreach ((array)get_class_methods($this) as $name) {
@@ -21,15 +23,23 @@ class test_html {
 		}
 		return implode(PHP_EOL, $items);
 	}
+
+	/***/
 	function dd_table() {
 		return _class('html')->dd_table($this->data, array());
 	}
+
+	/***/
 	function accordion() {
 		return _class('html')->accordion($this->data, array('selected' => 'second', 'class_head' => 'alert-info'));
 	}
+
+	/***/
 	function tabs() {
 		return _class('html')->tabs($this->data, array('selected' => 'third'));
 	}
+
+	/***/
 	function modal() {
 		return _class('html')->modal(array(
 			'inline'		=> 1,
@@ -39,6 +49,8 @@ class test_html {
 			'footer'		=> form_item()->save(),
 		));
 	}
+
+	/***/
 	function carousel() {
 		return _class('html')->carousel(array(
 			array(
@@ -58,6 +70,8 @@ class test_html {
 			'//twbs.github.io/bootstrap/2.3.2/assets/img/bootstrap-mdo-sfmoma-03.jpg',
 		));
 	}
+
+	/***/
 	function navbar() {
 		return _class('html')->navbar(array(
 			'brand'	=> array(
@@ -78,6 +92,8 @@ class test_html {
 			),
 		));
 	}
+
+	/***/
 	function breadcrumbs() {
 		return _class('html')->breadcrumbs(array(
 			array(
@@ -93,6 +109,8 @@ class test_html {
 			),
 		));
 	}
+
+	/***/
 	function alert() {
 		return _class('html')->alert(array(
 			'head'	=> 'Oh snap! You got an error!',
@@ -106,6 +124,8 @@ class test_html {
 				<p><a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a></p>',
 		));
 	}
+
+	/***/
 	function thumbnails() {
 		return _class('html')->thumbnails(array(
 			array(
@@ -132,6 +152,8 @@ class test_html {
 			'http://placehold.it/300x200',
 		), array('columns' => 3));
 	}
+
+	/***/
 	function progress_bar() {
 		$body .= _class('html')->progress_bar(array(
 			'35',
@@ -145,6 +167,8 @@ class test_html {
 			),
 		), array('type' => 'success'));
 	}
+
+	/***/
 	function pagination() {
 		return _class('html')->pagination(array(
 			'1'	=> './?object=some&id=1',
@@ -156,6 +180,8 @@ class test_html {
 			'5'	=> './?object=some&id=5',
 		));
 	}
+
+	/***/
 	function media_objects() {
 		return _class('html')->media_objects(array(
 			11 => array(
@@ -199,6 +225,8 @@ class test_html {
 			),
 		));
 	}
+
+	/***/
 	function grid() {
 		return _class('html')->grid(array(
 			array(
@@ -233,6 +261,8 @@ class test_html {
 			),
 		));
 	}
+
+	/***/
 	function menu() {
 		return _class('html')->menu(array(
 			11 => array(
@@ -305,10 +335,14 @@ class test_html {
 			),
 		));
 	}
+
+	/***/
 	function panel() {
 #		if (conf('css_framework') == 'bs3') { return ''; }
 		return _class('html')->panel(array('title' => 'Panel title', 'body' => 'Panel content'));
 	}
+
+	/***/
 	function jumbotron() {
 #		if (conf('css_framework') == 'bs3') { return ''; }
 		return _class('html')->jumbotron(array(
@@ -317,16 +351,22 @@ class test_html {
 				<p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p>',
 		));
 	}
+
+	/***/
 	function well() {
 #		if (conf('css_framework') == 'bs3') { return ''; }
 		return _class('html')->well('Large well content');
 	}
+
+	/***/
 	function list_group() {
 #		if (conf('css_framework') == 'bs3') { return ''; }
 		return _class('html')->list_group(array(
 // TODO
 		));
 	}
+
+	/***/
 	function _hook_side_column() {
 		$items = array();
 		$url = process_url('./?object='.$_GET['object']);
