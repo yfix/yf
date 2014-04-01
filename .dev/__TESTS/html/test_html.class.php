@@ -75,15 +75,15 @@ class test_html {
 			$self_source = $this->_get_method_source(__CLASS__, $name);
 			$target_source = $this->_get_method_source(_class('html'), $name);
 			$items[] = 
-				'<div class="row" id="head_'.$name.'">
+				'<div id="head_'.$name.'" style="margin-bottom: 30px;">
 					<h1>'.$name.'
 						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button>
 						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("html")-&gt;'.$name.'() source</button>
-						<a class="btn btn-primary btn-small btn-sm" href="https://github.com/yfix/yf/tree/master/'.substr($target_source['file'], strlen(YF_PATH)).'#L'.$target_source['line_start'].'">Github <i class="icon icon-github"></i></a>
+						<a target="_blank" class="btn btn-primary btn-small btn-sm" href="https://github.com/yfix/yf/tree/master/'.substr($target_source['file'], strlen(YF_PATH)).'#L'.$target_source['line_start'].'">Github <i class="icon icon-github"></i></a>
 					</h1>
 					<div id="func_self_source_'.$name.'" class="collapse out"><pre>'.(_prepare_html($self_source['body'])).'</pre></div>
 					<div id="func_target_source_'.$name.'" class="collapse out"><pre>'.(_prepare_html($target_source['body'])).'</pre></div>
-					<div id="func_out_'.$name.'">'.$this->$name().'</div>
+					<div id="func_out_'.$name.'" class="row well well-lg">'.$this->$name().'</div>
 				</div>';
 /*
 			$target_id = 'func_target_source_'.$name;
@@ -451,6 +451,7 @@ class test_html {
 		$items = array();
 		$url = process_url('./?object='.$_GET['object']);
 		$methods = get_class_methods($this);
+		sort($methods);
 		foreach ((array)$methods as $name) {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
