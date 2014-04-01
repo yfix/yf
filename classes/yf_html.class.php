@@ -157,7 +157,7 @@ class yf_html {
 	*/
 	function accordion ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: 'accordion_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$content = $v;
@@ -195,7 +195,7 @@ class yf_html {
 	function carousel ($data = array(), $extra = array()) {
 		$items = array();
 		$headers = array();
-		$extra['id'] = $extra['id'] ?: 'caroousel_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$img_src = $v;
@@ -254,7 +254,7 @@ class yf_html {
 	*/
 	function navbar ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: 'navbar_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 		$brand = '';
 		if (isset($data['brand'])) {
 			$b = $data['brand'];
@@ -284,7 +284,7 @@ class yf_html {
 	*/
 	function breadcrumbs ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: 'navbar_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 		$divider = $extra['divider'] ?: '/';
 		$len = count($data);
 		$data = _prepare_html($data);
@@ -322,7 +322,7 @@ class yf_html {
 		}
 		$body = array();
 		foreach (array_chunk($items, $columns) as $_items) {
-			$body[] = '<ul class="thumbnails'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"">'.implode(PHP_EOL, (array)$_items).'</ul>';
+			$body[] = '<ul class="thumbnails'.($extra['class'] ? ' '.$extra['class'] : '').'">'.implode(PHP_EOL, (array)$_items).'</ul>';
 		}
 		return implode(PHP_EOL, $body);
 	}
@@ -330,6 +330,7 @@ class yf_html {
 	/**
 	*/
 	function progress_bar ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 		$items = array();
 		foreach ((array)$data as $v) {
 			if (!is_array($v)) {
@@ -347,7 +348,83 @@ class yf_html {
 
 	/**
 	*/
+	function pagination ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		if (isset($data['prev'])) {
+			$prev = $data['prev'];
+			unset($data['prev']);
+		}
+		if (isset($data['next'])) {
+			$next = $data['next'];
+			unset($data['next']);
+		}
+		$items = array();
+// TODO: auto-detect current page and need of first. last
+		if ($prev) {
+			$items[] = '<li><a href="'.$prev.'">'.t('Prev').'</a></li>';
+		}
+		foreach ((array)$data as $page => $link) {
+			$items[] = '<li><a href="'.$link.'">'.$page.'</a></li>';
+		}
+		if ($next) {
+			$items[] = '<li><a href="'.$next.'">'.t('Next').'</a></li>';
+		}
+		return '<div class="pagination'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><ul>'.implode(PHP_EOL, $items).'</ul></div>';
+	}
+
+	/**
+	*/
+	function panel ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		return 
+			'<div class="panel panel-primary'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
+				<div class="panel-heading">
+					<h3 class="panel-title">'.$data['title'].'</h3>
+				</div>
+				<div class="panel-body">'.$data['body'].'</div>
+			</div>';
+	}
+
+	/**
+	*/
+	function jumbotron ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		return '<div class="jumbotron'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><h1>'.$data['head'].'</h1>'.$data['body'].'</div>';
+	}
+
+	/**
+	*/
+	function well ($body = '', $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		if (!$extra['class']) {
+			$extra['class'] = 'well-lg';
+		}
+		return '<div class="well well-lg'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.$body.'</div>';
+	}
+
+	/**
+	*/
+	function list_group ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$items = array();
+		foreach ((array)$data as $v) {
+			if (!is_array($v)) {
+				$body = $v;
+				$v = array();
+			} else {
+				$body = $v['body'];
+			}
+			$type = $v['type'] ?: $extra['type'];
+			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$items[] = '<li class="list-group-item'. ($class_item ? ' '.$class_item : '').'"><span class="badge">'.$v['badge'].'</span> '.$body.'</li>';
+		}
+		return '<ul class="list-group'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</ul>';
+	}
+
+	/**
+	*/
 	function grid ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 // TODO
 		return '
 			<div class="bs-docs-grid">
@@ -386,31 +463,6 @@ class yf_html {
 
 	/**
 	*/
-	function pagination ($data = array(), $extra = array()) {
-		if (isset($data['prev'])) {
-			$prev = $data['prev'];
-			unset($data['prev']);
-		}
-		if (isset($data['next'])) {
-			$next = $data['next'];
-			unset($data['next']);
-		}
-		$items = array();
-// TODO: auto-detect current page and need of first. last
-		if ($prev) {
-			$items[] = '<li><a href="'.$prev.'">'.t('Prev').'</a></li>';
-		}
-		foreach ((array)$data as $page => $link) {
-			$items[] = '<li><a href="'.$link.'">'.$page.'</a></li>';
-		}
-		if ($next) {
-			$items[] = '<li><a href="'.$next.'">'.t('Next').'</a></li>';
-		}
-		return '<div class="pagination"><ul>'.implode(PHP_EOL, $items).'</ul></div>';
-	}
-
-	/**
-	*/
 	function media_objects ($data = array(), $extra = array()) {
 // TODO
 		return '
@@ -444,72 +496,6 @@ class yf_html {
 					</div>
 				</div>
 			</div>';
-	}
-
-	/**
-	*/
-	function panel ($data = array(), $extra = array()) {
-// bs3+
-// TODO
-		return '
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title">Panel title</h3>
-				</div>
-				<div class="panel-body">
-					Panel content
-				</div>
-			</div>
-		';
-	}
-
-	/**
-	*/
-	function list_group ($data = array(), $extra = array()) {
-// bs3+
-// TODO
-		return '
-			<ul class="list-group">
-				<li class="list-group-item">
-					<span class="badge">14</span>
-					Cras justo odio
-				</li>
-				<li class="list-group-item active">
-					<span class="badge">2</span>
-					Dapibus ac facilisis in
-				</li>
-				<li class="list-group-item list-group-item-warning">
-					<span class="badge">1</span>
-					Morbi leo risus
-				</li>
-			</ul>
-		';
-	}
-
-	/**
-	*/
-	function jumbotron ($data = array(), $extra = array()) {
-// bs3+
-// TODO
-		return '
-			<div class="jumbotron">
-				<h1>Hello, world!</h1>
-				<p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-				<p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p>
-			</div>
-		';
-	}
-
-	/**
-	*/
-	function well ($data = array(), $extra = array()) {
-// bs3+
-// TODO
-		return '
-			<div class="well well-lg">
-				in a large well!
-			</div>
-		';
 	}
 
 	/**
