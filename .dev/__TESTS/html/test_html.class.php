@@ -1,36 +1,46 @@
 <?php
 
 class test_html {
+
+	public $data = array(
+		'first' 	=> 'first text',
+		'second'	=> 'second text',
+		'third'		=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. 
+			Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
+			Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
+			Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
+	);
+
 	function show() {
-		$data = array(
-			'first' 	=> 'first text',
-			'second'	=> 'second text',
-			'third'		=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. 
-				Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
-				Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
-				Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
-		);
-
-		$body .= '<h1>dd table</h1>';
-		$body .= _class('html')->dd_table($data, array());
-
-		$body .= '<h1>accordion</h1>';
-		$body .= _class('html')->accordion($data, array('selected' => 'second', 'class_head' => 'alert-info'));
-
-		$body .= '<h1>tabs</h1>';
-		$body .= _class('html')->tabs($data, array('selected' => 'third'));
-
-		$body .= '<h1>modal</h1>';
-		$body .= _class('html')->modal(array(
+		$url = process_url('./?object='.$_GET['object']);
+		foreach ((array)get_class_methods($this) as $name) {
+			if ($name == 'show' || substr($name, 0, 1) == '_') {
+				continue;
+			}
+			$items[] = '<h1 id="head_'.$name.'">'.$name.'</h1>'. PHP_EOL. $this->$name();
+		}
+		return implode(PHP_EOL, $items);
+	}
+	function dd_table() {
+		return _class('html')->dd_table($this->data, array());
+	}
+	function accordion() {
+		return _class('html')->accordion($this->data, array('selected' => 'second', 'class_head' => 'alert-info'));
+	}
+	function tabs() {
+		return _class('html')->tabs($this->data, array('selected' => 'third'));
+	}
+	function modal() {
+		return _class('html')->modal(array(
 			'inline'		=> 1,
 			'show_close'	=> 1,
 			'header'		=> 'Modal header',
 			'body'			=> '<p>Some body</p>',
 			'footer'		=> form_item()->save(),
 		));
-
-		$body .= '<h1>carousel</h1>';
-		$body .= _class('html')->carousel(array(
+	}
+	function carousel() {
+		return _class('html')->carousel(array(
 			array(
 				'img'	=> '//twbs.github.io/bootstrap/2.3.2/assets/img/bootstrap-mdo-sfmoma-01.jpg',
 				'desc'	=> '<h4>First Thumbnail label</h4><p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>',
@@ -47,9 +57,9 @@ class test_html {
 			'//twbs.github.io/bootstrap/2.3.2/assets/img/bootstrap-mdo-sfmoma-02.jpg',
 			'//twbs.github.io/bootstrap/2.3.2/assets/img/bootstrap-mdo-sfmoma-03.jpg',
 		));
-
-		$body .= '<h1>navbar</h1>';
-		$body .= _class('html')->navbar(array(
+	}
+	function navbar() {
+		return _class('html')->navbar(array(
 			'brand'	=> array(
 				'link'	=> './',
 				'name'	=> 'Title',
@@ -67,9 +77,9 @@ class test_html {
 				'name'	=> 'Link2',
 			),
 		));
-
-		$body .= '<h1>breadcrumbs</h1>';
-		$body .= _class('html')->breadcrumbs(array(
+	}
+	function breadcrumbs() {
+		return _class('html')->breadcrumbs(array(
 			array(
 				'link'	=> './?object=home',
 				'name'	=> 'Home',
@@ -82,22 +92,22 @@ class test_html {
 				'name'	=> 'Data',
 			),
 		));
-
-		$body .= '<h1>alert</h1>';
-		$body .= _class('html')->alert(array(
+	}
+	function alert() {
+		return _class('html')->alert(array(
 			'head'	=> 'Oh snap! You got an error!',
 			'body'	=> '<p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
 				<p><a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a></p>',
-		));
-		$body .= _class('html')->alert(array(
+		))
+		. _class('html')->alert(array(
 			'alert'	=> 'info',
 			'head'	=> 'Oh snap! You got an error!',
 			'body'	=> '<p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
 				<p><a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a></p>',
 		));
-
-		$body .= '<h1>thumbnails</h1>';
-		$body .= _class('html')->thumbnails(array(
+	}
+	function thumbnails() {
+		return _class('html')->thumbnails(array(
 			array(
 				'img'	=> 'http://placehold.it/300x200',
 			),
@@ -121,8 +131,8 @@ class test_html {
 			),
 			'http://placehold.it/300x200',
 		), array('columns' => 3));
-
-		$body .= '<h1>progress_bar</h1>';
+	}
+	function progress_bar() {
 		$body .= _class('html')->progress_bar(array(
 			'35',
 			array(
@@ -134,9 +144,9 @@ class test_html {
 				'type'	=> 'info',
 			),
 		), array('type' => 'success'));
-
-		$body .= '<h1>pagination</h1>';
-		$body .= _class('html')->pagination(array(
+	}
+	function pagination() {
+		return _class('html')->pagination(array(
 			'1'	=> './?object=some&id=1',
 			'2'	=> './?object=some&id=2',
 			'prev'	=> './?object=some&id=1',
@@ -145,9 +155,9 @@ class test_html {
 			'4'	=> './?object=some&id=4',
 			'5'	=> './?object=some&id=5',
 		));
-
-		$body .= '<h1>media_objects</h1>';
-		$body .= _class('html')->media_objects(array(
+	}
+	function media_objects() {
+		return _class('html')->media_objects(array(
 			11 => array(
 				'link'	=> './?object=comments&action=view&id=11',
 				'img'	=> 'http://placehold.it/64x64',
@@ -188,9 +198,9 @@ class test_html {
 				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
 			),
 		));
-
-		$body .= '<h1>grid</h1>';
-		$body .= _class('html')->grid(array(
+	}
+	function grid() {
+		return _class('html')->grid(array(
 			array(
 				array('s1'),
 				array('s1'),
@@ -222,9 +232,9 @@ class test_html {
 				array('s12'),
 			),
 		));
-
-		$body .= '<h1>menu</h1>';
-		$body .= _class('html')->menu(array(
+	}
+	function menu() {
+		return _class('html')->menu(array(
 			11 => array(
 				'name'	=> 'Tools',
 			),
@@ -294,27 +304,38 @@ class test_html {
 				'parent_id'	=> 103,
 			),
 		));
-
-#		if (conf('css_framework') == 'bs3') {
-			$body .= '<h1>panel</h1>';
-			$body .= _class('html')->panel(array('title' => 'Panel title', 'body' => 'Panel content'));
-
-			$body .= '<h1>jumbotron</h1>';
-			$body .= _class('html')->jumbotron(array(
-				'head'	=> 'My big header',
-				'body'	=> '<p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-					<p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p>',
-			));
-
-			$body .= '<h1>well</h1>';
-			$body .= _class('html')->well('Large well content');
-
-			$body .= '<h1>list_group</h1>';
-			$body .= _class('html')->list_group(array(
+	}
+	function panel() {
+#		if (conf('css_framework') == 'bs3') { return ''; }
+		return _class('html')->panel(array('title' => 'Panel title', 'body' => 'Panel content'));
+	}
+	function jumbotron() {
+#		if (conf('css_framework') == 'bs3') { return ''; }
+		return _class('html')->jumbotron(array(
+			'head'	=> 'My big header',
+			'body'	=> '<p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+				<p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p>',
+		));
+	}
+	function well() {
+#		if (conf('css_framework') == 'bs3') { return ''; }
+		return _class('html')->well('Large well content');
+	}
+	function list_group() {
+#		if (conf('css_framework') == 'bs3') { return ''; }
+		return _class('html')->list_group(array(
 // TODO
-			));
-#		}
-		$body .= '<br><br>';
-		return $body;
+		));
+	}
+	function _hook_side_column() {
+		$items = array();
+		$url = process_url('./?object='.$_GET['object']);
+		foreach ((array)get_class_methods($this) as $name) {
+			if ($name == 'show' || substr($name, 0, 1) == '_') {
+				continue;
+			}
+			$items[] = '<li><a href="#head_'.$name.'"><i class="icon-chevron-right"></i> '.t($name).'</a></li>';
+		}
+		return '<div class="span3 bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav">'.implode(PHP_EOL, $items).'</ul></div>';
 	}
 }
