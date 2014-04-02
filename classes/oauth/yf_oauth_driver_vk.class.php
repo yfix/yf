@@ -8,9 +8,9 @@ class yf_oauth_driver_vk extends yf_oauth_driver2 {
 	protected $url_authorize = 'https://oauth.vk.com/authorize';
 	protected $url_access_token = 'https://oauth.vk.com/access_token';
 	protected $url_user = 'https://api.vk.com/method/users.get';
-	protected $scope = 'offline,wall,friends,email'; // Comma or space separated names. Note: "email" currently works only for verified partners like afisha.ru
-	protected $get_access_token_method = 'GET';
-	protected $url_params = array(
+	public $scope = 'offline,wall,friends,email'; // Comma or space separated names. Note: "email" currently works only for verified partners like afisha.ru
+	public $get_access_token_method = 'GET';
+	public $url_params = array(
 		'v'	=> '5.5',
 	);
 

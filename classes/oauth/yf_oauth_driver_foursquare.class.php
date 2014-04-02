@@ -6,11 +6,11 @@ class yf_oauth_driver_foursquare extends yf_oauth_driver2 {
 	protected $url_authorize = 'https://foursquare.com/oauth2/authorize';
 	protected $url_access_token = 'https://foursquare.com/oauth2/access_token';
 	protected $url_user = 'https://api.foursquare.com/v2/users/self';
-	protected $scope = '';
-	protected $url_params_access_token = array(
+	public $scope = '';
+	public $url_params_access_token = array(
 		'grant_type'	=> 'authorization_code',
 	);
-	protected $get_access_token_method = 'POST';
+	public $get_access_token_method = 'POST';
 
 	/**
 	*/

@@ -9,9 +9,9 @@ class yf_oauth_driver_google extends yf_oauth_driver2 {
 	protected $url_access_token = 'https://accounts.google.com/o/oauth2/token';
 	protected $url_user = 'https://www.googleapis.com/oauth2/v1/userinfo';
 #	protected $url_user = 'https://www.googleapis.com/plus/v1/people/me';
-	protected $scope = 'email profile https://www.googleapis.com/auth/plus.login';
-	protected $get_access_token_method = 'POST';
-	protected $url_params_access_token = array(
+	public $scope = 'email profile https://www.googleapis.com/auth/plus.login';
+	public $get_access_token_method = 'POST';
+	public $url_params_access_token = array(
 		'grant_type'	=> 'authorization_code',
 	);
 

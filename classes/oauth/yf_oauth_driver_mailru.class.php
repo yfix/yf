@@ -8,9 +8,9 @@ class yf_oauth_driver_mailru extends yf_oauth_driver2 {
 	protected $url_authorize = 'https://connect.mail.ru/oauth/authorize';
 	protected $url_access_token = 'https://connect.mail.ru/oauth/token';
 	protected $url_user = 'http://www.appsmail.ru/platform/api';
-	protected $scope = '';
-	protected $get_access_token_method = 'POST';
-	protected $url_params_access_token = array(
+	public $scope = '';
+	public $get_access_token_method = 'POST';
+	public $url_params_access_token = array(
 		'grant_type'	=> 'authorization_code',
 	);
 
