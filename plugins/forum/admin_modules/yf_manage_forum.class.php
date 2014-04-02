@@ -3,7 +3,7 @@
 /**
 * Forum administration class
 */
-class yf_forum {
+class yf_manage_forum {
 
 	/** @var string @conf_skip Current forum version */
 	public $VERSION		= 'admin 1.1.2';
