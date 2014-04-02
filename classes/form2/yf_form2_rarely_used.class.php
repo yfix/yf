@@ -12,6 +12,7 @@ class yf_form2_rarely_used {
 
 		$user_info = db()->get('SELECT login,email,phone,nick,id AS user_name FROM '.db('user').' WHERE id='.intval($user_id));
 		$user_name = array();
+// TODO: add tpl param
 		if ($user_info) {
 			if (strlen($user_info['id'])) {
 				$user_name[] = $user_info['id'];
@@ -40,6 +41,7 @@ class yf_form2_rarely_used {
 		$user_id = $__this->_replace['user_id'];
 
 		$user_info = db()->get('SELECT login,id AS user_name FROM '.db('admin').' WHERE id='.intval($user_id));
+// TODO: add tpl param
 		$user_name = array();
 		if ($user_info) {
 			if (strlen($user_info['id'])) {
@@ -69,13 +71,20 @@ class yf_form2_rarely_used {
 			$name = 'country';
 		}
 		$data = array();
+		$row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
 		foreach ((array)main()->get_data('countries_new') as $v) {
-			$data[$v['code']] = '<i class="bfh-flag-'.strtoupper($v['code']).'"></i> '. $v['name'].' ['.strtoupper($v['code']).']';
+			$r = array(
+				'%icon'	=> '<i class="bfh-flag-'.strtoupper($v['code']).'"></i>',
+				'%name'	=> $v['name'],
+				'%code'	=> '['.strtoupper($v['code']).']',
+			);
+			$data[$v['code']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = './?object=manage_countries';
 		}
-		return $__this->list_box($name, $data, $extra, $replace);
+		$renderer = $extra['renderer'] ?: 'list_box';
+		return $__this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
@@ -93,13 +102,19 @@ class yf_form2_rarely_used {
 			$name = 'region';
 		}
 		$data = array();
+		$row_tpl = $extra['row_tpl'] ?: '%name %code';
 		foreach ((array)main()->get_data('regions_new') as $v) {
-			$data[$v['code']] = $v['name'].' ['.$v['code'].']';
+			$r = array(
+				'%name'	=> $v['name'],
+				'%code'	=> '['.$v['code'].']',
+			);
+			$data[$v['code']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = './?object=manage_regions';
 		}
-		return $__this->list_box($name, $data, $extra, $replace);
+		$renderer = $extra['renderer'] ?: 'list_box';
+		return $__this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
@@ -118,13 +133,19 @@ class yf_form2_rarely_used {
 		}
 		$data = array();
 // TODO
+		$row_tpl = $extra['row_tpl'] ?: '%name %code';
 		foreach ((array)main()->get_data('cities_new') as $v) {
-			$data[$v['code']] = $v['name'].' ['.$v['code'].']';
+			$r = array(
+				'%name'	=> $v['name'],
+				'%code'	=> '['.$v['code'].']',
+			);
+			$data[$v['code']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = './?object=manage_cities';
 		}
-		return $__this->list_box($name, $data, $extra, $replace);
+		$renderer = $extra['renderer'] ?: 'list_box';
+		return $__this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
@@ -142,13 +163,20 @@ class yf_form2_rarely_used {
 			$name = 'currency';
 		}
 		$data = array();
+		$row_tpl = $extra['row_tpl'] ?: '%sign &nbsp; %name %code';
 		foreach ((array)main()->get_data('currencies') as $v) {
-			$data[$v['id']] = $v['sign'].' &nbsp; '. $v['name'].' ['.$v['id'].']';
+			$r = array(
+				'%sign'	=> $v['sign'],
+				'%name'	=> $v['name'],
+				'%code'	=> '['.$v['id'].']',
+			);
+			$data[$v['id']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = './?object=manage_currencies';
 		}
-		return $__this->list_box($name, $data, $extra, $replace);
+		$renderer = $extra['renderer'] ?: 'list_box';
+		return $__this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
@@ -166,13 +194,20 @@ class yf_form2_rarely_used {
 			$name = 'language';
 		}
 		$data = array();
+		$row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
 		foreach ((array)main()->get_data('languages_new') as $v) {
-			$data[$v['code']] = ($v['country'] ? '<i class="bfh-flag-'.strtoupper($v['country']).'"></i> ' : ''). $v['native'].' ['.$v['code'].']';
+			$r = array(
+				'%icon'	=> ($v['country'] ? '<i class="bfh-flag-'.strtoupper($v['country']).'"></i> ' : ''),
+				'%name'	=> $v['native'],
+				'%code'	=> '['.$v['code'].']',
+			);
+			$data[$v['code']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = './?object=manage_languages';
 		}
-		return $__this->list_box($name, $data, $extra, $replace);
+		$renderer = $extra['renderer'] ?: 'list_box';
+		return $__this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
@@ -190,13 +225,20 @@ class yf_form2_rarely_used {
 			$name = 'timezone';
 		}
 		$data = array();
+		$row_tpl = $extra['row_tpl'] ?: '<small>%offset %code %name</small>';
 		foreach ((array)main()->get_data('timezones_new') as $v) {
-			$data[$v['code']] = '<small>'.$v['offset'].' ['.$v['code'].'] '.$v['name'].'</small>';
+			$r = array(
+				'%offset'	=> $v['offset'],
+				'%name'		=> $v['name'],
+				'%code'		=> '['.$v['code'].']',
+			);
+			$data[$v['code']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = './?object=manage_timezones';
 		}
-		return $__this->list_box($name, $data, $extra, $replace);
+		$renderer = $extra['renderer'] ?: 'list_box';
+		return $__this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
@@ -214,13 +256,19 @@ class yf_form2_rarely_used {
 			$name = 'icon';
 		}
 		$data = array();
+		$row_tpl = $extra['row_tpl'] ?: '%icon %name';
 		foreach ((array)main()->get_data('fontawesome_icons') as $icon) {
-			$data[$icon] = '<i class="icon '.$icon.'"></i> '.$icon;
+			$r = array(
+				'%icon'	=> '<i class="icon '.$icon.'"></i> ',
+				'%name'	=> $icon,
+			);
+			$data[$icon] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = './?object=manage_icons';
 		}
-		return $__this->list_box($name, $data, $extra, $replace);
+		$renderer = $extra['renderer'] ?: 'list_box';
+		return $__this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
@@ -246,7 +294,8 @@ class yf_form2_rarely_used {
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=admin_modules' : './?object=user_modules';
 		}
-		return $__this->list_box($name, $data, $extra, $replace);
+		$renderer = $extra['renderer'] ?: 'list_box';
+		return $__this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
@@ -272,7 +321,8 @@ class yf_form2_rarely_used {
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=template_editor' : './?object=template_editor';
 		}
-		return $__this->list_box($name, $data, $extra, $replace);
+		$renderer = $extra['renderer'] ?: 'list_box';
+		return $__this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
@@ -300,7 +350,8 @@ class yf_form2_rarely_used {
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=blocks' : './?object=blocks';
 		}
-		return $__this->list_box($name, $data, $extra, $replace);
+		$renderer = $extra['renderer'] ?: 'list_box';
+		return $__this->$renderer($name, $data, $extra, $replace);
 */
 	}
 }

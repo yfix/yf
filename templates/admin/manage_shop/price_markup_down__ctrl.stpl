@@ -2,36 +2,47 @@
 
 ng_app_admin.config( function( $typeaheadProvider ) {
 	angular.extend( $typeaheadProvider.defaults, {
-		delay: 1000
-		, animation: 'am-flip-x'
-		, minLength: 2
-		, limit: 20
+		minLength   : 2
+		, limit     : 20
 	});
 });
 
 
-ng_app_admin.factory( 'srv_search', function( $http, $log ) {
+ng_app_admin.factory( 'srv_search', function( $timeout, $http, $log ) {
+	var query_timer   = false;
+	var query_timeout = 500;
 	var service = {
 		api_url: {
 			products     : '{_api_url_products}'
 			, categories : '{_api_url_categories}'
 		}
-		, products: function( term ) {
+		, products: function( term, scope ) {
 			var params  = { search_word: term };
-			return( service.query( term, service.api_url.products, params ) );
+			return( service.query( term, service.api_url.products, params, scope ) );
 		}
-		, categories: function( term ) {
+		, categories: function( term, scope ) {
 			var params  = { search_word: term };
-			return( service.query( term, service.api_url.categories, params ) );
+			return( service.query( term, service.api_url.categories, params, scope ) );
 		}
-		, query: function( term, url, params ) {
-			$log.log( 'query: ', term );
-			var results = $http.get( url, { params: params } )
-				.then( function( response ) {
-					var data =  angular.isObject( response.data ) && response.data || [];
-					return( data );
-				});
-			return( results );
+		, query: function( term, url, params, scope ) {
+			$timeout.cancel( query_timer );
+			if( !angular.isString( term ) ) {
+				var storage = scope.search_api_storage;
+				scope[ storage ] = null;
+				return( false );
+			}
+			query_timer = $timeout(
+				function() {
+					var results = $http.get( url, { params: params } )
+						.then( function( response ) {
+							var data =  angular.isObject( response.data ) && response.data || [];
+							return( data );
+						});
+					return( results );
+				}
+				, query_timeout
+			);
+			return( query_timer );
 		}
 	}
 	return( service );
@@ -42,78 +53,114 @@ ng_app_admin.controller( '{_ng_controller}', function ( srv_search, $scope, $fil
 	$scope.active = false;
 	// data
 	$scope.conditions = {conditions};
-	$log.log( 'init', $scope.conditions );
 	// local
 	$scope.products   = {_products};
 	$scope.categories = {_categories};
+	$scope.types      = {_types};
+	$scope.value      = {value};
 	$scope.search             = srv_search;
 	$scope.search_api         = false;
 	$scope.search_api_key     = false;
 	$scope.search_api_storage = false;
 
+	$scope.change_type = function() {
+		var type = $scope.type;
+		$scope.products   = [];
+		$scope.categories = [];
+		$scope.conditions = {};
+		if( type == 3  ) {
+			$scope.conditions = {
+				'user_birthday' : 2
+			};
+		}
+	}
+
+	$scope.show_on_products = function() {
+		var type = $scope.type;
+		return( type == 1 );
+	}
+
+	$scope.show_on_user = function() {
+		var type = $scope.type;
+		return( type == 3 );
+	}
+
 	$scope.$on('$typeahead.select', function( value, item ) {
-		$log.log( 'on selected: ', item, value );
-		if( item ) {
+		if( angular.isObject( item ) ) {
 			add( item );
+			var storage = $scope.search_api_storage;
+			$scope[ storage ] = null;
+			$scope.$digest();
 		}
 	});
 
 	var add = function( item ) {
-		var key = $scope.search_api_key;
+		var key     = $scope.search_api_key;
 		var storage = $scope.search_api_storage;
-		var id = item.id;
-		var text = item.text;
-		$scope[ storage ] = null;
-		$log.log( 'add', storage, key, item );
+		var id      = +item.id;
+		$scope.conditions[ storage ] = angular.isArray( $scope.conditions[ storage ] ) && $scope.conditions[ storage ] || [];
 		$scope.conditions[ storage ].push( id );
-		$scope[ key ].push( item );;
-	}
-
-	var remove = function( key, id ) {
-		var key = $scope.search_api_storage;
-		$log.log( 'delete', key, id );
-		$scope.conditions[ key ].push( id );
-		$log.log( 'conditions', $scope.conditions );
+		$scope[ key ] = angular.isArray( $scope[ key ] ) && $scope[ key ] || [];
+		$scope[ key ].push( item );
 	}
 
 	$scope.set_api = function( key, storage ) {
-		$scope.term = '';
 		$scope.search_api_key = key;
 		$scope.search_api = srv_search[ key ];
 		$scope.search_api_storage = storage;
 	}
 
-	$scope.add_product = function() {
-		$log.log( 'add product' );
-		angular.element( 'label[for=_search]' ).text( 'добавить товар' );
-		angular.element( '#_search' ).attr( 'placeholder', 'название товара' );
-		$scope.set_api( 'products', 'product_id' );
-	}
-
-	$scope.add_category = function() {
-		$log.log( 'add category' );
-		angular.element( 'label[for=_search]' ).text( 'добавить категорию' );
-		angular.element( '#_search' ).attr( 'placeholder', 'название категории' );
-		{{-- $scope.search_api = $scope.search_categories; --}}
-		$scope.set_api( 'categories', 'category_id' );
-	}
-
 	$scope.search_product_id = function( term ) {
 		if( term ) {
-			$log.log( 'search_product_id', term );
 			$scope.set_api( 'products', 'product_id' );
-			var results = $scope.search_api( term );
+			var results = $scope.search_api( term, $scope );
 			return( results );
 		}
 	};
 
 	$scope.search_category_id = function( term ) {
 		if( term ) {
-			$log.log( 'search_category_id', term );
 			$scope.set_api( 'categories', 'category_id' );
-			var results = $scope.search_api( term );
+			var results = $scope.search_api( term, $scope );
 			return( results );
 		}
+	};
+
+	var remove = function( id ) {
+		var key      = $scope.search_api_key;
+		var storage  = $scope.search_api_storage;
+		var _key     = $scope[ key ];
+		var _storage = $scope.conditions[ storage ];
+		var index    = _storage.indexOf( id );
+		_key.splice( index, 1 );
+		_storage.splice( index, 1 );
+	};
+
+	$scope.remove_product_id = function( id ) {
+		$scope.set_api( 'products', 'product_id' );
+		remove( id );
+	};
+
+	$scope.remove_category_id = function( id ) {
+		$scope.set_api( 'categories', 'category_id' );
+		remove( id );
+	};
+
+	var clear = function() {
+		var key      = $scope.search_api_key;
+		var storage  = $scope.search_api_storage;
+		$scope[ key ] = [];
+		$scope.conditions[ storage ] = [];
+	};
+
+	$scope.clear_product_id = function() {
+		$scope.set_api( 'products', 'product_id' );
+		clear();
+	};
+
+	$scope.clear_category_id = function() {
+		$scope.set_api( 'categories', 'category_id' );
+		clear();
 	};
 
 });

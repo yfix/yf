@@ -120,7 +120,7 @@ class yf_manage_shop_orders{
 				} elseif ($k=='price_unit') {
 					foreach ($v as $k1 => $price) {
 						list ($product_id,$param_id) = explode('_',$k1);
-						db()->UPDATE(db('shop_order_items'), array('price'	=> $price), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
+						db()->UPDATE(db('shop_order_items'), array('price'	=> todecimal($price)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
 						$recount_price = true;
 					}
 				}
@@ -177,8 +177,8 @@ class yf_manage_shop_orders{
 					$price += $_attr_info['price'];
 				}
 			}
-			$price_one  = (float)$_info[ 'price'    ];
-			$quantity   = (int)$_info[ 'quantity' ];
+			$price_one  = tofloat($_info['price']);
+			$quantity   = (int)$_info['quantity'];
 			$price_item = $price_one * $quantity;
 			$products[$_info['product_id'].'_'.$_info['param_id']] = array(
 				'product_id'   => intval($_info['product_id']),
@@ -196,13 +196,11 @@ class yf_manage_shop_orders{
 			);
 			$price_total += $price_item;
 		}
-		$discount = $order_info[ 'discount' ];
-		// $_class_discount = _class( '_shop_discount', 'modules/shop/' );
-		// $discount_price  = $_class_discount->calc_discount_global( $price_total, $discount );
 		$_class_price = _class( '_shop_price', 'modules/shop/' );
-		$discount_price = $_class_price->apply_price( $price_total, $discount );
+		$discount        = $order_info[ 'discount' ];
+		$discount_price  = $_class_price->apply_price( $price_total, $discount );
 		$discount_price -= $price_total;
-		$total_price     = (float)$order_info['total_sum'];
+		$total_price     = tofloat($order_info['total_sum']);
 		$replace = my_array_merge($replace, _prepare_html($order_info));
 		$replace = my_array_merge($replace, array(
 			'form_action'         => './?object='.main()->_get('object').'&action='.$_GET['action'].'&id='.$_GET['id'],
@@ -232,7 +230,7 @@ class yf_manage_shop_orders{
 			->text('discount', array( 'desc' => 'Скидка, %' ) )
 			->info('discount_price_info', array( 'desc' => 'Скидка' ) )
 			->info('delivery_info', array( 'desc' => 'Доставка' ) )
-			->info('total_sum', '', array('no_escape' => 1))
+			->info('total_sum', '', array('desc' => 'Итоговая сумма', 'no_escape' => 1))
 			->info_date('date', array('format' => 'full'))
 			->info('name')
 			->email('email')

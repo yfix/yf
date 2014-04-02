@@ -225,10 +225,15 @@ class yf_tpl_driver_yf {
 	*/
 	function _process_includes($string, $replace = array(), $name = '') {
 		$_this = $this;
-		$pattern = '/(\{include\(\s*["\']{0,1})\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/i';
-		$func = function($m) use ($replace, $name, $_this) {
+		$pattern = '/\{(include|include_if_exists)\(\s*["\']{0,1}\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*["\']{0,1}\s*\)\}/i';
+		$extra = array();
+		$func = function($m) use ($replace, $name, $_this, $extra) {
+			$if_exists = ($m[1] == 'include_if_exists');
 			$stpl_name = $m[2];
 			$_replace = $m[3];
+			if ($if_exists && !tpl()->exists($stpl_name)) {
+				return false;
+			}
 			// Here we merge/override incoming $replace with parsed params, to be passed to included template
 			foreach ((array)explode(';', str_replace(array('\'','"'), '', $_replace)) as $v) {
 				list($a_name, $a_val) = explode('=', trim($v));
@@ -384,17 +389,22 @@ class yf_tpl_driver_yf {
 			return $_this->tpl->_generate_url_wrapper($m[1]);
 		}, $string);
 
-// TODO: unit tests, try in the wild, add compile rules, enable
-#		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css, url)}, {require_css(path.to/file.css, file)}, {catch(tpl_var)}.some_css_class {} {/catch} {require_css(tpl_var, inline)}
-#		$string = preg_replace_callback('/\{require_css\(\s*["\']{0,1}([^"\'\)\}]+)["\']{0,1}\s*\)\}/ims', function($m) use ($_this) {
-#			return require_css($m[1]);
-#		}, $string);
+// TODO: unit tests
+		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css)}, {catch(tpl_var)}.some_css_class {} {/catch} {require_css(tpl_var)}
+		// JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
+		$string = preg_replace_callback('/\{(require_css|require_js)\(\s*["\']{0,1}([^"\'\)\}]+)["\']{0,1}\s*\)\}/ims', function($m) use ($_this) {
+			$func = $m[1]; return $func($m[2]);
+		}, $string);
 
-// TODO: unit tests, try in the wild, add compile rules, enable
-#		// JS smart inclusion. Examples: {require_js(http//path.to/file.js, url)}, {require_js(path.to/file.js, file)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var, inline)}
-#		$string = preg_replace_callback('/\{require_js\(\s*["\']{0,1}([^"\'\)\}]+)["\']{0,1}\s*\)\}/ims', function($m) use ($_this) {
-#			return require_js($m[1]);
-#		}, $string);
+		// JS block inclusion
+		$string = preg_replace_callback('/\{require_js\(\s*\)\}(.*?)\{\/require_js\}/ims', function($m) {
+			return require_js($m[1]);
+		}, $string);
+
+		// CSS block inclusion
+		$string = preg_replace_callback('/\{require_css\(\s*\)\}(.*?)\{\/require_css\}/ims', function($m) {
+			return require_css($m[1]);
+		}, $string);
 
 		// Form item/row. Examples: {form_row("text","password","New Password")}
 		$string = preg_replace_callback('/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,'

@@ -1,11 +1,17 @@
 <div class="ng-cloak">
 
-<input type="hidden" ng-model="conditions">
+<input type="hidden" name="conditions" ng-value='conditions|json' ng-model="conditions">
+<input type="hidden" name="type" ng-value='type' ng-model="conditions">
+
+<button type="button" class="btn btn-default"
+	ng-init="type = {type}" ng-model="type"
+	ng-options="i.id as i.title for i in types"
+	ng-change="change_type()"
+	bs-select></button>
 
 {{-- product_id --}}
-<table class="table table-striped table-bordered">
+<table class="table table-striped table-bordered" ng-show="show_on_products()">
 	<tr>
-		<th>Товары</th>
 		<th colspan="2">
 			<input type="text"
 				bs-typeahead
@@ -13,21 +19,54 @@
 				ng-options  = "data as data.text for data in search_product_id( $viewValue )"
 				placeholder = "добавить товар"
 			>
+			<span ng-show="products.length > 1" ng-click="clear_product_id()" class="btn btn-mini btn-danger pull-right"><i class=" icon-trash"></i> Очистить список</span>
 		</th>
 	</tr>
-	<tr ng-repeat="i in products">
-		<td>{{i.id}}</td>
+	<tr ng-repeat="i in products" class="am-slide-top">
 		<td>{{i.text}}</td>
 		<td>
-			<span ng-click="delete( 'product_id', id )" class="btn btn-mini btn-warning"><i class=" icon-trash"></i> Удалить</span>
+			<span ng-click="remove_product_id( i.id )" class="btn btn-mini btn-warning"><i class=" icon-trash"></i> Удалить</span>
 		</td>
 	</tr>
+</table>
+
+{{-- category_id --}}
+<table class="table table-striped table-bordered" ng-show="show_on_products()">
 	<tr>
-		<th colspan="3"><p class="text-center">
-			<span ng-click="clear( 'product_id', id )" class="btn btn-mini btn-danger"><i class=" icon-trash"></i> Очистить список</span>
-		</p></th>
+		<th colspan="2">
+			<input type="text"
+				bs-typeahead
+				ng-model    = "category_id"
+				ng-options  = "data as data.text for data in search_category_id( $viewValue )"
+				placeholder = "добавить категорию"
+			>
+			<span ng-show="categories.length > 1" ng-click="clear_category_id()" class="btn btn-mini btn-danger"><i class=" icon-trash"></i> Очистить список</span>
+		</th>
+	</tr>
+	<tr ng-repeat="i in categories" class="am-slide-top">
+		<td>{{i.text}}</td>
+		<td>
+			<span ng-click="remove_category_id( i.id )" class="btn btn-mini btn-warning pull-right"><i class=" icon-trash"></i> Удалить</span>
+		</td>
 	</tr>
 </table>
+
+{{-- user_birthday --}}
+<div ng-show="show_on_user()">
+	<label for="user_birthday">интервал действия</label>
+	<input type="text" id="user_birthday" placeholder = "количество дней"
+		ng-value    = "conditions.user_birthday"
+		ng-model    = "conditions.user_birthday"
+		bs-tooltip     = "tooltip_user"
+		data-animation = "am-fade-and-scale"
+		data-placement = "right"
+		data-trigger   = "focus"
+		data-html      = "true"
+		data-title     = "Скидка будет действовать в течении
+			<b>{{conditions.user_birthday}}</b>&nbsp;дней
+			до наступления дня рождения пользователя, включительно"
+	>
+</div>
 
 
 </div>

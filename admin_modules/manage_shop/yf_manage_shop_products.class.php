@@ -294,9 +294,9 @@ class yf_manage_shop_products{
 	function category_search_autocomplete () {
 		main()->NO_GRAPHICS = true;
 		if( empty( $_GET[ 'search_word' ] ) ) { return false; }
-		$sql_table = db( 'sys_category_items' );
-		$sql_cat_id    = _class( 'cats' )->_get_cat_id_by_name( 'shop_cats' );
-		$sql_word  = '%' . _es( $_GET[ 'search_word' ] ) . '%';
+		$sql_table  = db( 'sys_category_items' );
+		$sql_cat_id = _class( 'cats' )->_get_cat_id_by_name( 'shop_cats' );
+		$sql_word   = '%' . _es( $_GET[ 'search_word' ] ) . '%';
 		$sql = sprintf('
 			SELECT id, name FROM %s WHERE cat_id = %u AND (
 				name LIKE "%s" OR
@@ -305,7 +305,7 @@ class yf_manage_shop_products{
 			'
 			, $sql_table
 			, $sql_cat_id
-			, $sql_word
+			, $sql_word, $sql_word
 		);
 		$result = db()->get_all( $sql );
 		if( empty( $result ) ) { return( null ); }

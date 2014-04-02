@@ -95,6 +95,7 @@ class yf_tpl_driver_yf_compile {
 
 			'/(\{include\(\s*["\']{0,1})\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/i'
 				=> $_php_start. 'echo $this->_include_stpl(\'$2\',\'$3\',$replace);'. $_php_end,
+// TODO: add support for {include_if_exists()}
 
 			'/(\{eval_code\()([^\}]+?)(\)\})/i'
 				=> $_php_start. 'echo $2;'. $_php_end,
@@ -113,6 +114,15 @@ class yf_tpl_driver_yf_compile {
 
 			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9_-]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims'
 				=> $_php_start. 'echo _class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\');'. $_php_end,
+
+			'/\{(require_css|require_js)\(\s*["\']{0,1}([^"\'\)\}]+)["\']{0,1}\s*\)\}/ims'
+				=> $_php_start. 'echo $1(\'$2\');'. $_php_end,
+
+			'/\{require_js\(\s*\)\}(.*?)\{\/require_js\}/ims'
+				=> $_php_start. 'require_js(\'$1\');'. $_php_end,
+
+			'/\{require_css\(\s*\)\}(.*?)\{\/require_css\}/ims'
+				=> $_php_start. 'require_css(\'$1\');'. $_php_end,
 
 // TODO: this code needed to be executed last, but if compiled - this will be hard to achieve
 			'/(\{exec_last|execute_shutdown\(\s*["\']{0,1})\s*([\w-]+)\s*[,;]\s*([\w-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'

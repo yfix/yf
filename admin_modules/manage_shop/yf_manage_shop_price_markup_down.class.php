@@ -69,25 +69,30 @@ class yf_manage_shop_price_markup_down {
 		$types = $_class_price->types;
 		$result = array();
 		foreach( $types as $id => $item ) {
-			$result[ $id ] = $item[ 'description' ];
+			$result[] = array(
+				'id'    => (int)$id,
+				'title' => $item[ 'description' ],
+			);
 		}
 		return( $result );
 	}
 
 	function _form( $replace ) {
+		$replace = (array)$replace;
 		// prepare ng-app
 		$_ng_controller = 'ctrl.price_markup_down.conditions';
 		$replace[ '_ng_controller'      ] = $_ng_controller;
 		$replace[ '_api_url_products'   ] = ADMIN_WEB_PATH.'?object=manage_shop&action=product_search_autocomplete';
 		$replace[ '_api_url_categories' ] = ADMIN_WEB_PATH.'?object=manage_shop&action=category_search_autocomplete';
 		$conditions = json_decode( $replace[ 'conditions' ], true );
-		$replace[ '_categories' ] = $this->get_categories( $conditions[ 'category_id' ] ) ?: '{}';
-		$replace[ '_products'   ] = $this->get_products( $conditions[ 'product_id' ] ) ?: '{}';
+		$replace[ '_categories' ] = $this->get_categories( $conditions[ 'category_id' ] ) ?: '[]';
+		$replace[ '_products'   ] = $this->get_products( $conditions[ 'product_id' ] ) ?: '[]';
+		$replace[ '_types'   ] = json_encode( $this->_select_box__type() ) ?: '[]';
+;
 		// prepare form
 		$_form_tpl = tpl()->parse( 'manage_shop/price_markup_down__form', $replace );
 		// create form
 		$_form = form( $replace, array( 'ng-controller' => $_ng_controller ) )
-			->select_box( 'type', $this->_select_box__type() )
 			->number( 'value', 'Процент, +/-' )
 			->text( 'description' )
 			->datetime_select( 'time_from', 'Дата от', array( 'with_time' => 1 ) )
@@ -99,15 +104,19 @@ class yf_manage_shop_price_markup_down {
 			->save_and_back();
 		// form controller
 		$_form_ctrl = tpl()->parse( 'manage_shop/price_markup_down__ctrl', $replace );
-		return( $_form . $_form_ctrl );
+		return( $_form_ctrl . $_form );
 	}
 
 	function _on_before_show( &$fields ) {
+		$_class_price = $this->_class_price;
 		$conditions_json = $fields[ 'conditions' ];
 		$fields[ 'conditions' ] = $conditions_json ?: '{}';
+		$fields[ 'value'     ] = $_class_price->_number_from_mysql( $fields[ 'value' ] );
 	}
 
 	function _on_before_update( &$fields ) {
+		$_class_price = $this->_class_price;
+		$fields[ 'value'     ] = $_class_price->_number_mysql( $fields[ 'value' ] );
 		$fields[ 'time_from' ] = $fields[ 'time_from' ] ? date( 'Y-m-d H:i', strtotime( $fields[ 'time_from' ] ) ) : null;
 		$fields[ 'time_to'   ] = $fields[ 'time_to'   ] ? date( 'Y-m-d H:i', strtotime( $fields[ 'time_to'   ] ) ) : null;
 	}
@@ -126,9 +135,10 @@ class yf_manage_shop_price_markup_down {
 		if( empty( $items ) ) { return false; }
 		$result = array();
 		foreach( $items as $i ){
+			$id = (int)$i[ 'id' ];
 			$result[] = array(
-				'id'   => (int)$i[ 'id' ],
-				'text' => $i[ 'name' ],
+				'id'   => $id,
+				'text' => "[$id] ${i[name]}",
 			);
 		}
 		return( json_encode( $result ) );
@@ -146,9 +156,10 @@ class yf_manage_shop_price_markup_down {
 		if( empty( $items ) ) { return false; }
 		$result = array();
 		foreach( $items as $i ){
+			$id = (int)$i[ 'id' ];
 			$result[] = array(
-				'id'   => (int)$i[ 'id' ],
-				'text' => $i[ 'name' ],
+				'id'   => $id,
+				'text' => "[$id] ${i[name]}",
 			);
 		}
 		return( json_encode( $result ) );

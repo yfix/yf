@@ -215,7 +215,7 @@ class yf_form2 {
 			$extra = array();
 		}
 		$extra_override = array();
-		$form_id = $this->_replace['__form_id__'] ?: $this->_form_id;
+		$form_id = isset($this->_replace['__form_id__']) ? $this->_replace['__form_id__'] : $this->_form_id;
 		if ($form_id) {
 			$extra_override = $this->_get_extra_override($form_id);
 		}
@@ -1560,6 +1560,24 @@ class yf_form2 {
 
 	/**
 	*/
+	function div_box($name, $values, $extra = array(), $replace = array()) {
+		return $this->_html_control($name, $values, $extra, $replace, 'div_box');
+	}
+
+	/**
+	*/
+	function list_box($name, $values, $extra = array(), $replace = array()) {
+		return $this->_html_control($name, $values, $extra, $replace, 'list_box');
+	}
+
+	/**
+	*/
+	function button_box($name, $values, $extra = array(), $replace = array()) {
+		return $this->_html_control($name, $values, $extra, $replace, 'button_box');
+	}
+
+	/**
+	*/
 	function date_box($name = '', $values = array(), $extra = array(), $replace = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
@@ -1611,18 +1629,6 @@ class yf_form2 {
 			$name = 'birth';
 		}
 		return $this->date_box($name, $values, $extra, $replace);
-	}
-
-	/**
-	*/
-	function div_box($name, $values, $extra = array(), $replace = array()) {
-		return $this->_html_control($name, $values, $extra, $replace, 'div_box');
-	}
-
-	/**
-	*/
-	function list_box($name, $values, $extra = array(), $replace = array()) {
-		return $this->_html_control($name, $values, $extra, $replace, 'list_box');
 	}
 
 	/**
