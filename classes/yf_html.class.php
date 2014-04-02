@@ -464,6 +464,7 @@ class yf_html {
 	/**
 	*/
 	function media_objects ($data = array(), $extra = array()) {
+		$items = array();
 /*
 		return _class('html')->media_objects(array(
 			11 => array(
