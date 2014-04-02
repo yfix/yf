@@ -464,6 +464,49 @@ class yf_html {
 	/**
 	*/
 	function media_objects ($data = array(), $extra = array()) {
+/*
+		return _class('html')->media_objects(array(
+			11 => array(
+				'link'	=> './?object=comments&action=view&id=11',
+				'img'	=> 'http://placehold.it/64x64',
+				'alt'	=> '64x64',
+				'head'	=> 'Comment 1',
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+			),
+			22 => array(
+				'link'	=> './?object=comments&action=view&id=22',
+				'img'	=> 'http://placehold.it/64x64',
+				'alt'	=> '64x64',
+				'head'	=> 'Comment 2',
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+			),
+			33 => array(
+				'link'	=> './?object=comments&action=view&id=33',
+				'img'	=> 'http://placehold.it/64x64',
+				'alt'	=> '64x64',
+				'head'	=> 'Comment 1',
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'parent_id'	=> 22,
+			),
+			44 => array(
+				'link'	=> './?object=comments&action=view&id=44',
+				'img'	=> 'http://placehold.it/64x64',
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'parent_id'	=> 33,
+			),
+			55 => array(
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'parent_id'	=> 44,
+			),
+			66 => array(
+				'link'	=> './?object=comments&action=view&id=66',
+				'img'	=> 'http://placehold.it/64x64',
+				'alt'	=> '64x64',
+				'head'	=> 'Comment 1',
+				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+			),
+		));
+*/
 // TODO
 		return '
 			<div class="bs-docs-example">

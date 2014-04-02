@@ -13,6 +13,7 @@ class yf_manage_shop_price_markup_down {
 			'time_to',
 			'conditions',
 		),
+		'no_escape' => true,
 	);
 
 	private $_instance    = false;
@@ -84,7 +85,7 @@ class yf_manage_shop_price_markup_down {
 		$replace[ '_ng_controller'      ] = $_ng_controller;
 		$replace[ '_api_url_products'   ] = ADMIN_WEB_PATH.'?object=manage_shop&action=product_search_autocomplete';
 		$replace[ '_api_url_categories' ] = ADMIN_WEB_PATH.'?object=manage_shop&action=category_search_autocomplete';
-		$conditions = json_decode( $replace[ 'conditions' ], true );
+		$conditions = json_decode( $replace[ 'conditions' ], true ) ?: array();
 		$replace[ '_categories' ] = $this->get_categories( $conditions[ 'category_id' ] ) ?: '[]';
 		$replace[ '_products'   ] = $this->get_products( $conditions[ 'product_id' ] ) ?: '[]';
 		$replace[ '_types'   ] = json_encode( $this->_select_box__type() ) ?: '[]';
@@ -109,9 +110,9 @@ class yf_manage_shop_price_markup_down {
 
 	function _on_before_show( &$fields ) {
 		$_class_price = $this->_class_price;
-		$conditions_json = $fields[ 'conditions' ];
-		$fields[ 'conditions' ] = $conditions_json ?: '{}';
-		$fields[ 'value'     ] = $_class_price->_number_from_mysql( $fields[ 'value' ] );
+		$fields[ 'type'       ] = $fields[ 'type'       ] ?: 1;
+		$fields[ 'conditions' ] = $fields[ 'conditions' ] ?: '{ }';
+		$fields[ 'value'      ] = $_class_price->_number_from_mysql( $fields[ 'value' ] );
 	}
 
 	function _on_before_update( &$fields ) {

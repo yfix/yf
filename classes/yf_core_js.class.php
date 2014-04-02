@@ -45,7 +45,8 @@ class yf_core_js {
 			$type = $v['type'];
 			$text = $v['text'];
 			if ($type == 'url') {
-				$out[$md5] = '<script src="'._prepare_html($text).'" type="text/javascript"></script>';
+// TODO: add optional _prepare_html() for $url
+				$out[$md5] = '<script src="'.$text.'" type="text/javascript"></script>';
 			} elseif ($type == 'file') {
 				$out[$md5] = '<script type="text/javascript">'. PHP_EOL. file_get_contents($text). PHP_EOL. '</script>';
 			} elseif ($type == 'inline') {
