@@ -39,7 +39,8 @@ class yf_core_css {
 			$type = $v['type'];
 			$text = $v['text'];
 			if ($type == 'url') {
-				$out[$md5] = '<link href="'._prepare_html($text).'" rel="stylesheet" />';
+// TODO: add optional _prepare_html() for $url
+				$out[$md5] = '<link href="'.$text.'" rel="stylesheet" />';
 			} elseif ($type == 'file') {
 				$out[$md5] = '<style type="text/css">'. PHP_EOL. file_get_contents($text). PHP_EOL. '</style>';
 			} elseif ($type == 'inline') {
