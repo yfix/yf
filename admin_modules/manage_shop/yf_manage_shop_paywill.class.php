@@ -68,9 +68,6 @@ class yf_manage_shop_paywill{
 		}
 		// discount
 		$discount = $order_info[ 'discount' ];
-		// $_class_discount  = _class( '_shop_discount', 'modules/shop/' );
-		// $discount_percent = $order_info[ 'discount' ];
-		// $discount         = $_class_discount->calc_discount_global( $price_total, $discount_percent );
 		$_class_price = _class( '_shop_price', 'modules/shop/' );
 		$discount_price = $_class_price->apply_price( $price_total, $discount );
 		$discount_price -= $price_total;

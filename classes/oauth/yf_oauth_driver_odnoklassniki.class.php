@@ -9,9 +9,9 @@ class yf_oauth_driver_odnoklassniki extends yf_oauth_driver2 {
 	protected $url_authorize = 'http://www.odnoklassniki.ru/oauth/authorize';
 	protected $url_access_token = 'http://api.odnoklassniki.ru/oauth/token.do';
 	protected $url_user = 'http://api.odnoklassniki.ru/fb.do';
-	protected $scope = 'SET_STATUS;VALUABLE_ACCESS';
-	protected $get_access_token_method = 'POST';
-	protected $url_params_access_token = array(
+	public $scope = 'SET_STATUS;VALUABLE_ACCESS';
+	public $get_access_token_method = 'POST';
+	public $url_params_access_token = array(
 		'grant_type'	=> 'authorization_code',
 	);
 

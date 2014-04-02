@@ -6,9 +6,9 @@ class yf_oauth_driver_linkedin extends yf_oauth_driver2 {
 	protected $url_authorize = 'https://www.linkedin.com/uas/oauth2/authorization';
 	protected $url_access_token = 'https://www.linkedin.com/uas/oauth2/accessToken';
 	protected $url_user = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,formatted-name,picture-url,public-profile-url,email-address,location:(name),industry,headline)';
-	protected $scope = '';
-	protected $get_access_token_method = 'POST';
-	protected $url_params_access_token = array(
+	public $scope = '';
+	public $get_access_token_method = 'POST';
+	public $url_params_access_token = array(
 		'grant_type'	=> 'authorization_code',
 	);
 // TODO

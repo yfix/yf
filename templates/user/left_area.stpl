@@ -1,11 +1,11 @@
+<div class="left_area">
 {execute(graphics,_show_menu;name=user_side_menu)}
 
 {if("is_logged_in" eq 0)}
 	{execute(login_form,_small_form)}
 {else}
-{{--
-	<div class="left_area">
-{execute(common,show_left_filter)}
-	</div>
---}}
+{{-- {execute(common,show_left_filter)} --}}
 {/if}
+
+{execute(common,show_side_column_hooked)}
+</div>

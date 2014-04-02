@@ -6,9 +6,9 @@ class yf_oauth_driver_disqus extends yf_oauth_driver2 {
 	protected $url_authorize = 'https://disqus.com/api/oauth/2.0/authorize/';
 	protected $url_access_token = 'https://disqus.com/api/oauth/2.0/access_token/';
 	protected $url_user = 'https://disqus.com/api/3.0/users/details.json';
-	protected $scope = 'read';
-	protected $get_access_token_method = 'POST';
-	protected $url_params_access_token = array(
+	public $scope = 'read';
+	public $get_access_token_method = 'POST';
+	public $url_params_access_token = array(
 		'grant_type'	=> 'authorization_code',
 	);
 

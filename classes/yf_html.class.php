@@ -157,7 +157,7 @@ class yf_html {
 	*/
 	function accordion ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: 'accordion_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$content = $v;
@@ -195,7 +195,7 @@ class yf_html {
 	function carousel ($data = array(), $extra = array()) {
 		$items = array();
 		$headers = array();
-		$extra['id'] = $extra['id'] ?: 'caroousel_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$img_src = $v;
@@ -254,7 +254,7 @@ class yf_html {
 	*/
 	function navbar ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: 'navbar_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 		$brand = '';
 		if (isset($data['brand'])) {
 			$b = $data['brand'];
@@ -284,7 +284,7 @@ class yf_html {
 	*/
 	function breadcrumbs ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: 'navbar_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 		$divider = $extra['divider'] ?: '/';
 		$len = count($data);
 		$data = _prepare_html($data);
@@ -300,114 +300,131 @@ class yf_html {
 
 	/**
 	*/
-	function pagination ($data = array(), $extra = array()) {
-// TODO
-		return '
-			<div class="pagination">
-				<ul>
-					<li><a href="#">Prev</a></li>
-					<li><a href="#">1</a></li>
-					<li><a href="#">2</a></li>
-					<li><a href="#">3</a></li>
-					<li><a href="#">4</a></li>
-					<li><a href="#">5</a></li>
-					<li><a href="#">Next</a></li>
-				</ul>
-			</div>';
-	}
-
-	/**
-	*/
 	function thumbnails ($data = array(), $extra = array()) {
-// TODO
-		return '
-				<ul class="thumbnails">
-					<li class="span4">
-						<div class="thumbnail">
-							<img alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
-							<div class="caption">
-								<h3>Thumbnail label</h3>
-								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-								<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>
-							</div>
-						</div>
-					</li>
-					<li class="span4">
-						<div class="thumbnail">
-							<img alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
-							<div class="caption">
-								<h3>Thumbnail label</h3>
-								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-								<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>
-							</div>
-						</div>
-					</li>
-					<li class="span4">
-						<div class="thumbnail">
-							<img alt="300x200" src="http://placehold.it/300x200" style="width: 300px; height: 200px;">
-							<div class="caption">
-								<h3>Thumbnail label</h3>
-								<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-								<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>
-							</div>
-						</div>
-					</li>
-				</ul>
-';
-	}
-
-	/**
-	*/
-	function media_objects ($data = array(), $extra = array()) {
-// TODO
-		return '
-			<div class="bs-docs-example">
-				<div class="media">
-					<a class="pull-left" href="#">
-						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
-					</a>
-					<div class="media-body">
-						<h4 class="media-heading">Media heading</h4>
-						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+		$items = array();
+		$columns = (int)$extra['columns'] ?: 3;
+		$row_class = 'span'.round(12 / $columns);
+		foreach ((array)$data as $k => $v) {
+			if (!is_array($v)) {
+				$img_src = $v;
+				$v = array();
+			} else {
+				$img_src = $v['img'];
+			}
+			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$items[] = 
+				'<li class="'.$row_class. ($class_item ? ' '.$class_item : ''). ($v['style'] ? ' style="'.$v['style'].'"' : '').'">
+					<div class="thumbnail">
+						<img alt="'._prepare_html($v['alt'] ?: $v['head']).'" src="'._prepare_html($img_src).'" />
+						'.(($v['head'] || $v['body']) ? '<div class="caption">'.($v['head'] ? '<h3>'._prepare_html($v['head']).'</h3>' : '').' '.$v['body'].'</div>' : '').'
 					</div>
-				</div>
-				<div class="media">
-					<a class="pull-left" href="#">
-						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
-					</a>
-					<div class="media-body">
-						<h4 class="media-heading">Media heading</h4>
-						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-
-						<div class="media">
-							<a class="pull-left" href="#">
-								<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
-							</a>
-							<div class="media-body">
-								<h4 class="media-heading">Media heading</h4>
-								Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>';
+				</li>';
+		}
+		$body = array();
+		foreach (array_chunk($items, $columns) as $_items) {
+			$body[] = '<ul class="thumbnails'.($extra['class'] ? ' '.$extra['class'] : '').'">'.implode(PHP_EOL, (array)$_items).'</ul>';
+		}
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
 	*/
 	function progress_bar ($data = array(), $extra = array()) {
-// TODO
-		return '
-			<div class="progress">
-				<div class="bar bar-success" style="width: 35%;"></div>
-				<div class="bar bar-warning" style="width: 20%;"></div>
-				<div class="bar bar-danger" style="width: 10%;"></div>
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$items = array();
+		foreach ((array)$data as $v) {
+			if (!is_array($v)) {
+				$val = $v;
+				$v = array();
+			} else {
+				$val = $v['val'];
+			}
+			$type = $v['type'] ?: $extra['type'];
+			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$items[] = '<div class="bar bar-'.$type. ($class_item ? ' '.$class_item : '').'" style="width: '.$val.'%;'.($v['style'] ? ' '.$v['style'] : '').'"></div>';
+		}
+		return '<div class="progress'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
+	}
+
+	/**
+	*/
+	function pagination ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		if (isset($data['prev'])) {
+			$prev = $data['prev'];
+			unset($data['prev']);
+		}
+		if (isset($data['next'])) {
+			$next = $data['next'];
+			unset($data['next']);
+		}
+		$items = array();
+// TODO: auto-detect current page and need of first. last
+		if ($prev) {
+			$items[] = '<li><a href="'.$prev.'">'.t('Prev').'</a></li>';
+		}
+		foreach ((array)$data as $page => $link) {
+			$items[] = '<li><a href="'.$link.'">'.$page.'</a></li>';
+		}
+		if ($next) {
+			$items[] = '<li><a href="'.$next.'">'.t('Next').'</a></li>';
+		}
+		return '<div class="pagination'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><ul>'.implode(PHP_EOL, $items).'</ul></div>';
+	}
+
+	/**
+	*/
+	function panel ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		return 
+			'<div class="panel panel-primary'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
+				<div class="panel-heading">
+					<h3 class="panel-title">'.$data['title'].'</h3>
+				</div>
+				<div class="panel-body">'.$data['body'].'</div>
 			</div>';
 	}
 
 	/**
 	*/
+	function jumbotron ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		return '<div class="jumbotron'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><h1>'.$data['head'].'</h1>'.$data['body'].'</div>';
+	}
+
+	/**
+	*/
+	function well ($body = '', $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		if (!$extra['class']) {
+			$extra['class'] = 'well-lg';
+		}
+		return '<div class="well well-lg'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.$body.'</div>';
+	}
+
+	/**
+	*/
+	function list_group ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$items = array();
+		foreach ((array)$data as $v) {
+			if (!is_array($v)) {
+				$body = $v;
+				$v = array();
+			} else {
+				$body = $v['body'];
+			}
+			$type = $v['type'] ?: $extra['type'];
+			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$items[] = '<li class="list-group-item'. ($class_item ? ' '.$class_item : '').'"><span class="badge">'.$v['badge'].'</span> '.$body.'</li>';
+		}
+		return '<ul class="list-group'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</ul>';
+	}
+
+	/**
+	*/
 	function grid ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 // TODO
 		return '
 			<div class="bs-docs-grid">
@@ -446,68 +463,39 @@ class yf_html {
 
 	/**
 	*/
-	function panel ($data = array(), $extra = array()) {
-// bs3+
+	function media_objects ($data = array(), $extra = array()) {
 // TODO
 		return '
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title">Panel title</h3>
+			<div class="bs-docs-example">
+				<div class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Media heading</h4>
+						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+					</div>
 				</div>
-				<div class="panel-body">
-					Panel content
+				<div class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Media heading</h4>
+						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+
+						<div class="media">
+							<a class="pull-left" href="#">
+								<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
+							</a>
+							<div class="media-body">
+								<h4 class="media-heading">Media heading</h4>
+								Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+							</div>
+						</div>
+					</div>
 				</div>
-			</div>
-		';
-	}
-
-	/**
-	*/
-	function list_group ($data = array(), $extra = array()) {
-// bs3+
-// TODO
-		return '
-			<ul class="list-group">
-				<li class="list-group-item">
-					<span class="badge">14</span>
-					Cras justo odio
-				</li>
-				<li class="list-group-item active">
-					<span class="badge">2</span>
-					Dapibus ac facilisis in
-				</li>
-				<li class="list-group-item list-group-item-warning">
-					<span class="badge">1</span>
-					Morbi leo risus
-				</li>
-			</ul>
-		';
-	}
-
-	/**
-	*/
-	function jumbotron ($data = array(), $extra = array()) {
-// bs3+
-// TODO
-		return '
-			<div class="jumbotron">
-				<h1>Hello, world!</h1>
-				<p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-				<p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p>
-			</div>
-		';
-	}
-
-	/**
-	*/
-	function well ($data = array(), $extra = array()) {
-// bs3+
-// TODO
-		return '
-			<div class="well well-lg">
-				in a large well!
-			</div>
-		';
+			</div>';
 	}
 
 	/**

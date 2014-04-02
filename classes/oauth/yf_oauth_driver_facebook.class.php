@@ -8,8 +8,8 @@ class yf_oauth_driver_facebook extends yf_oauth_driver2 {
 	protected $url_authorize = 'https://www.facebook.com/dialog/oauth';
 	protected $url_access_token = 'https://graph.facebook.com/oauth/access_token';
 	protected $url_user = 'https://graph.facebook.com/me';
-	protected $scope = '';
-	protected $get_access_token_method = 'GET';
+	public $scope = '';
+	public $get_access_token_method = 'GET';
 
 	/**
 	*/

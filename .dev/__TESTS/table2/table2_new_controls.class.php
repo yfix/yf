@@ -4,7 +4,7 @@ class table2_new_controls {
 	function show() {
 		$values = array('', 'k1' => 'v1', 'k2' => 'v2');
 
-		return table('SELECT *, "4" AS stars, "20" AS stars_big FROM '.db('shop_products'))
+		return table('SELECT *, "4" AS stars, "20" AS stars_big, "" AS test FROM '.db('shop_products'))
 			->stars('stars')
 			->stars('stars_big', array('stars' => 5, 'max' => 100))
 
