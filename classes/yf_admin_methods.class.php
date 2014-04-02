@@ -67,7 +67,10 @@ class yf_admin_methods {
 				}
 			}
 		}
-		$DATA = _prepare_html($_POST);
+		$DATA = $_POST;
+		if (!$params['no_escape']) {
+			$DATA = _prepare_html($DATA);
+		}
 		$replace = array(
 			'form_action'	=> $params['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action']. $params['links_add'],
 			'back_link'		=> $params['back_link'] ?: './?object='.$_GET['object']. $params['links_add'],
