@@ -96,15 +96,34 @@ class test_html {
 				'<div id="head_'.$name.'" style="margin-bottom: 30px;">
 					<h1>'.$name.'
 						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button>
-						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("html")-&gt;'.$name.'() source</button>
-						<a target="_blank" class="btn btn-primary btn-small btn-sm" href="https://github.com/yfix/yf/tree/master/'.substr($target_source['file'], strlen(YF_PATH)).'#L'.$target_source['line_start'].'">Github <i class="icon icon-github"></i></a>
+						'.($target_source['body'] ? '<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("html")-&gt;'.$name.'() source</button>' : '').'
+						'.($target_source['body'] ? '<a target="_blank" class="btn btn-primary btn-small btn-sm" href="https://github.com/yfix/yf/tree/master/'.substr($target_source['file'], strlen(YF_PATH)).'#L'.$target_source['line_start'].'">Github <i class="icon icon-github"></i></a>' : '').'
 					</h1>
 					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php">'.(_prepare_html($self_source['body'])).'</pre></div>
-					<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php">'.(_prepare_html($target_source['body'])).'</pre></div>
+					'.($target_source['body'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php">'.(_prepare_html($target_source['body'])).'</pre></div>' : '').'
 					<div id="func_out_'.$name.'" class="row well well-lg" style="margin-left:0;">'.$this->$name().'</div>
 				</div>';
 		}
 		return implode(PHP_EOL, $items);
+	}
+
+	/***/
+	function complex_test() {
+		return _class('html')->tabs(array(
+			'thumbnails'	=> $this->thumbnails(),
+			'media_objects'	=> $this->media_objects(),
+			'carousel'		=> $this->carousel(),
+			'menu'			=> $this->menu(),
+			'dd_table'		=> $this->dd_table(),
+			'accordion'		=> _class('html')->accordion(array(
+				'modal'			=> $this->modal(),
+				'navbar' 		=> $this->navbar(),
+				'breadcrumbs'	=> $this->breadcrumbs(),
+				'pagination'	=> $this->pagination(),
+			), array('class_head' => 'alert-error')),
+#			'table'			=> _class('form2_stacked_sample', YF_PATH.'.dev/__TESTS/form2/')->show(),
+#			'form'			=> _class('table2_new_controls', YF_PATH.'.dev/__TESTS/table2/')->show(),
+		));
 	}
 
 	/***/
