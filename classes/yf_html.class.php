@@ -510,40 +510,26 @@ class yf_html {
 	*/
 	function grid ($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
-// TODO
-		return '
-			<div class="bs-docs-grid">
-				<div class="row-fluid show-grid">
-					<div class="span1">1</div>
-					<div class="span1">1</div>
-					<div class="span1">1</div>
-					<div class="span1">1</div>
-					<div class="span1">1</div>
-					<div class="span1">1</div>
-					<div class="span1">1</div>
-					<div class="span1">1</div>
-					<div class="span1">1</div>
-					<div class="span1">1</div>
-					<div class="span1">1</div>
-					<div class="span1">1</div>
-				</div>
-				<div class="row-fluid show-grid">
-					<div class="span4">4</div>
-					<div class="span4">4</div>
-					<div class="span4">4</div>
-				</div>
-				<div class="row-fluid show-grid">
-					<div class="span4">4</div>
-					<div class="span8">8</div>
-				</div>
-				<div class="row-fluid show-grid">
-					<div class="span6">6</div>
-					<div class="span6">6</div>
-				</div>
-				<div class="row-fluid show-grid">
-					<div class="span12">12</div>
-				</div>
-			</div>';
+		$rows = array();
+		$ul_opened = false;
+		foreach ((array)$data as $id => $row) {
+			$items = array();
+			$row_col = count($row) ? floor(12 / count($row)) : 1;
+			if ($row_col < 1) {
+				$row_col = 1;
+			}
+			foreach ((array)$row as $rid => $item) {
+				$body = $item[0] ?: $item['body'];
+				$col = $item[1] ?: $item['col'];
+				$class = $item['class'];
+				if (!$col) {
+					$col = $row_col;
+				}
+				$items[] = '<div class="span'.$col.($class ? ' '.$class : '').'">'.$body.'</div>';
+			}
+			$rows[] = '<div class="row-fluid show-grid">'.implode(PHP_EOL, $items).'</div>';
+		}
+		return '<div class="grid'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$rows).'</div>';
 	}
 
 	/**
