@@ -118,8 +118,8 @@ if (!function_exists('_gen_dir_path')) {
 }
 if (!function_exists('my_array_merge')) {
 	function my_array_merge($a1, $a2) {
-		foreach ((array)$a2 as $k => $v) { if (isset($a1[$k]) && is_array($a1[$k])) { if (is_array($a2[$k])) { 
-			foreach ((array)$a2[$k] as $k2 => $v2) { if (isset($a1[$k][$k1]) && is_array($a1[$k][$k1])) { $a1[$k][$k2] += $v2; } else { $a1[$k][$k2] = $v2; } 
+		foreach ((array)$a2 as $k => $v) { if (isset($a1[$k]) && is_array($a1[$k])) { if (is_array($a2[$k])) {
+			foreach ((array)$a2[$k] as $k2 => $v2) { if (isset($a1[$k][$k1]) && is_array($a1[$k][$k1])) { $a1[$k][$k2] += $v2; } else { $a1[$k][$k2] = $v2; }
 		} } else { $a1[$k] += $v; } } else { $a1[$k] = $v; } }
 		return $a1;
 	}
@@ -232,7 +232,7 @@ if (!function_exists('_floatval')) {
 		return tofloat($val);
 	}
 }
-/* 
+/*
 This function takes the last comma or dot (if any) to make a clean float, ignoring thousand separator, currency or any other letter
 $num = '1.999,369€';  var_dump(tofloat($num)); // float(1999.369)
 $otherNum = '126,564,789.33 m²';  var_dump(tofloat($otherNum)); // float(126564789.33)
@@ -244,13 +244,13 @@ if (!function_exists('tofloat')) {
 		}
 		$dotPos = strrpos($num, '.');
 		$commaPos = strrpos($num, ',');
-		$sep = (($dotPos > $commaPos) && $dotPos) ? $dotPos : 
+		$sep = (($dotPos > $commaPos) && $dotPos) ? $dotPos :
 			((($commaPos > $dotPos) && $commaPos) ? $commaPos : false);
 		if (!$sep) {
-			return floatval(preg_replace('/[^0-9]/', '', $num));
-		} 
+			return floatval(preg_replace('/[^0-9\-]/', '', $num));
+		}
 		return floatval(
-			preg_replace('/[^0-9]/', '', substr($num, 0, $sep)) . '.' .
+			preg_replace('/[^0-9\-]/', '', substr($num, 0, $sep)) . '.' .
 			preg_replace('/[^0-9]/', '', substr($num, $sep+1, strlen($num)))
 		);
 	}
