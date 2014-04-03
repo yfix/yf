@@ -454,9 +454,9 @@ class test_html {
 				array('s1'),
 				array('s1'),
 				array('s1'),
+				array('s1', 'class' => 'btn btn-warning'),
 				array('s1'),
-				array('s1'),
-				array('s1'),
+				array('s1', 'class' => 'btn btn-primary'),
 				array('s1'),
 				array('s1'),
 			),
@@ -466,8 +466,8 @@ class test_html {
 				array('s4'),
 			),
 			array(
-				array('s4', 'col' => 4),
-				array('s8', 'col' => 8),
+				array('s4', 'col' => 4, 'class' => 'alert alert-error'),
+				array('s8', 'col' => 8, 'class' => 'alert alert-info'),
 			),
 			array(
 				array('s6'),
