@@ -98,6 +98,7 @@ class yf_manage_shop_orders{
 			return _e('No such order');
 		}
 		$recount_price = false;
+		$_class_price  = _class( '_shop_price', 'modules/shop/' );
 		if(main()->is_post()) {
 			module('manage_shop')->_product_check_first_revision('order', intval($_GET['id']));
 			foreach($_POST as $k => $v) {
@@ -145,8 +146,15 @@ class yf_manage_shop_orders{
 						$recount_price = true;
 					}
 					if( $f == 'discount' ) {
-						$order_info['discount'] = $sql['discount'];
+						$discount = $_class_price->_number_mysql( $sql[ 'discount' ] );
+						$order_info[ 'discount' ] = $discount;
+						$sql[ 'discount' ] = $discount;
 						$recount_price = true;
+					}
+					if( $f == 'discount_add' ) {
+						$discount = $_class_price->_number_mysql( $sql[ 'discount_add' ] );
+						$order_info[ 'discount_add' ] = $discount;
+						$sql[ 'discount_add' ] = $discount;
 					}
 				}
 			}
@@ -204,14 +212,13 @@ class yf_manage_shop_orders{
 			);
 			$price_total += $price_item;
 		}
-		$_class_price = _class( '_shop_price', 'modules/shop/' );
 		// discount
 		$discount     = $order_info[ 'discount'     ];
 		$discount_add = $order_info[ 'discount_add' ];
 		$_discount       = $discount;
 		$discount_price  = $_class_price->apply_price( $price_total, $_discount );
 		$discount_price -= $price_total;
-		$_discount           = $discount + $discount_add;
+		$_discount           = $discount_add;
 		$discount_add_price  = $_class_price->apply_price( $price_total, $_discount );
 		$discount_add_price -= $price_total;
 		$total_price     = tofloat($order_info['total_sum']);
@@ -220,8 +227,10 @@ class yf_manage_shop_orders{
 			'form_action'             => './?object='.main()->_get('object').'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'order_id'                => $order_info['id'],
 			'price_total_info'        => module('manage_shop')->_format_price( $price_total ),
-			'discount_price_info'     => module('manage_shop')->_format_price( $discount_price ),
-			'discount_add_price_info' => module('manage_shop')->_format_price( $discount_add_price ),
+			'discount'                => $_class_price->_number_format( $discount ),
+			'discount_add'            => $_class_price->_number_format( $discount_add ),
+			'discount_price_info'     => $_class_price->_price_format( $discount_price ),
+			'discount_add_price_info' => $_class_price->_price_format( $discount_add_price ),
 			'delivery_info'           => module('manage_shop')->_format_price( $order_info[ 'delivery_price' ] ),
 			'total_sum'               => module('manage_shop')->_format_price( $total_price ),
 			'user_link'               => _profile_link($order_info['user_id']),
@@ -246,13 +255,13 @@ class yf_manage_shop_orders{
 			->info('id')
 			->info('price_total_info', array( 'desc' => 'Сумма' ) )
 			->row_start( array( 'desc' => 'Скидка, %' ) )
-				->number( 'discount'  )
+				->number( 'discount',  array( 'desc' => 'Скидка, %' ) )
 				->info( 'discount_price_info' )
 				->link( 'Paywill', $link_invoice    , array( 'title' => 'Накладная без учета добавочной скидки'    , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
 				->link( 'PDF'    , $link_pdf_invoice, array( 'title' => 'Накладная PDF без учета добавочной скидки', 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
 			->row_end()
 			->row_start( array( 'desc' => 'Скидка добавочная, %' ) )
-				->number( 'discount_add' )
+				->number( 'discount_add', array( 'desc' => 'Скидка добавочная, %' ) )
 				->info( 'discount_add_price_info', array( 'desc' => ' ' )  )
 				->link( t( 'Paywill' ) . '+', $link_invoice_add    , array( 'title' => 'Накладная с учетом добавочной скидки'    , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
 				->link( t( 'PDF' ) . '+'    , $link_pdf_invoice_add, array( 'title' => 'Накладная PDF с учетом добавочной скидки', 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
