@@ -423,6 +423,91 @@ class yf_html {
 
 	/**
 	*/
+	function media_objects ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		if ($data) {
+			$data = $this->_recursive_sort_items($data);
+		}
+		$keys = array_keys($data);
+		$keys_counter = array_flip($keys);
+		$items = array();
+		foreach ((array)$data as $id => $item) {
+			$next_id = $keys[$keys_counter[$id] + 1];
+			$next_item = $next_id ? $data[$next_id] : array();
+			$close_num_levels = 1;
+			if ($next_item) {
+				$close_num_levels = $item['level'] - $next_item['level'] + 1;
+				if ($close_num_levels < 0) {
+					$close_num_levels = 0;
+				}
+			}
+			$items[] = '
+				<div class="media">
+					<a class="pull-left" href="'.$item['link'].'"><img class="media-object" alt="'.$item['alt'].'" src="'.$item['img'].'"></a>
+					<div class="media-body">
+						<h4 class="media-heading">'.$item['head'].'</h4>'
+						.$item['body'].'
+			';
+			if ($close_num_levels) {
+				$items[] = str_repeat(PHP_EOL.'</div></div>'.PHP_EOL, $close_num_levels);
+			}
+		}
+		return '<div class="media-objects'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
+	}
+
+	/**
+	*/
+	function menu ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		if ($data) {
+			$data = $this->_recursive_sort_items($data);
+		}
+		$keys = array_keys($data);
+		$keys_counter = array_flip($keys);
+		$items = array();
+		$ul_opened = false;
+		foreach ((array)$data as $id => $item) {
+			$next_item = $data[ $keys[$keys_counter[$id] + 1] ];
+			$has_children = false;
+			$close_li = 1;
+			$close_ul = 0;
+			if ($next_item) {
+				if ($next_item['level'] > $item['level']) {
+					$has_children = true;
+				}
+				$close_li = $item['level'] - $next_item['level'] + 1;
+				if ($close_li < 0) {
+					$close_li = 0;
+				}
+			}
+			$items[] = '
+				<li class="dropdown">
+					<a href="'.$item['link'].'" class="dropdown-toggle">'. $item['name']. ($has_children ? ' <b class="caret"></b>' : ''). '</a>'
+				;
+			if ($has_children) {
+				$ul_opened = true;
+				$items[] = PHP_EOL. '<ul class="dropdown-menu sub-menu">'. PHP_EOL;
+			} elseif ($close_li) {
+				if ($ul_opened && !$has_children && $item['level'] != $next_item['level']) {
+					$ul_opened = false;
+					$close_ul = 1;
+				}
+				$tmp = str_repeat(PHP_EOL. ($close_ul ? '</li></ul>' : '</li>'). PHP_EOL, $close_li);
+				if ($close_li > 1 && $close_ul) {
+					$tmp = substr($tmp, 0, -strlen('</ul>'.PHP_EOL)). PHP_EOL;
+				}
+				$items[] = $tmp;
+			}
+		}
+		return '<div class="navbar'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
+					<div class="navbar-inner">
+						<ul class="nav navbar-nav">'.implode(PHP_EOL, (array)$items).'</ul>
+					</div>
+				</div>';
+	}
+
+	/**
+	*/
 	function grid ($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
 // TODO
@@ -462,152 +547,37 @@ class yf_html {
 	}
 
 	/**
+	* Get and sort items ordered array (recursively)
 	*/
-	function media_objects ($data = array(), $extra = array()) {
-		$items = array();
-/*
-		return _class('html')->media_objects(array(
-			11 => array(
-				'link'	=> './?object=comments&action=view&id=11',
-				'img'	=> 'http://placehold.it/64x64',
-				'alt'	=> '64x64',
-				'head'	=> 'Comment 1',
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
-			),
-			22 => array(
-				'link'	=> './?object=comments&action=view&id=22',
-				'img'	=> 'http://placehold.it/64x64',
-				'alt'	=> '64x64',
-				'head'	=> 'Comment 2',
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
-			),
-			33 => array(
-				'link'	=> './?object=comments&action=view&id=33',
-				'img'	=> 'http://placehold.it/64x64',
-				'alt'	=> '64x64',
-				'head'	=> 'Comment 1',
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
-				'parent_id'	=> 22,
-			),
-			44 => array(
-				'link'	=> './?object=comments&action=view&id=44',
-				'img'	=> 'http://placehold.it/64x64',
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
-				'parent_id'	=> 33,
-			),
-			55 => array(
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
-				'parent_id'	=> 44,
-			),
-			66 => array(
-				'link'	=> './?object=comments&action=view&id=66',
-				'img'	=> 'http://placehold.it/64x64',
-				'alt'	=> '64x64',
-				'head'	=> 'Comment 1',
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
-			),
-		));
-*/
-// TODO
-		return '
-			<div class="bs-docs-example">
-				<div class="media">
-					<a class="pull-left" href="#">
-						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
-					</a>
-					<div class="media-body">
-						<h4 class="media-heading">Media heading</h4>
-						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-					</div>
-				</div>
-				<div class="media">
-					<a class="pull-left" href="#">
-						<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
-					</a>
-					<div class="media-body">
-						<h4 class="media-heading">Media heading</h4>
-						Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-
-						<div class="media">
-							<a class="pull-left" href="#">
-								<img class="media-object" alt="64x64" src="http://placehold.it/64x64" style="width: 64px; height: 64px;">
-							</a>
-							<div class="media-body">
-								<h4 class="media-heading">Media heading</h4>
-								Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>';
+	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0) {
+		$children = array();
+		foreach ((array)$items as $id => $info) {
+			$parent_id = (int)$info['parent_id'];
+			if ($skip_item_id == $id) {
+				continue;
+			}
+			$children[$parent_id][$id] = $id;
+		}
+		$ids = $this->_count_levels(0, $children);
+		$new_items = array();
+		foreach ((array)$ids as $id => $level) {
+			$new_items[$id] = $items[$id] + array('level' => $level);
+		}		
+		return $new_items;
 	}
 
 	/**
 	*/
-	function menu ($data = array(), $extra = array()) {
-// TODO
-		return '
-	<div class="navbar">
-		<div class="navbar-inner">
-
-			<ul class="nav navbar-nav">
-				<li class="dropdown">
-					<a href="" class="dropdown-toggle">Tools  <b class="caret"></b></a>
-					<ul class="dropdown-menu sub-menu">
-						<li class="dropdown">
-							<a href="./?object=blocks" class="dropdown-toggle">Blocks editor </a>
-						</li>
-						<li class="dropdown">
-							<a href="./?object=file_manager" class="dropdown-toggle">File manager </a>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<a href="" class="dropdown-toggle">		Administration  <b class="caret"></b>	</a>
-					<ul class="dropdown-menu sub-menu">
-						<li class="dropdown">
-							<a href="./?object=admin_groups" class="dropdown-toggle">		Admin Groups 	</a>
-						</li>
-						<li class="dropdown">
-							<a href="./?object=admin" class="dropdown-toggle">		Admin Management 	</a>
-						</li>
-						<li class="dropdown">
-							<a href="./?object=admin_modules" class="dropdown-toggle">		Admin Modules Manager 	</a>
-						</li>
-						<li class="dropdown">
-							<a href="" class="dropdown-toggle">		Users  <b class="caret"></b>	</a>
-							<ul class="dropdown-menu sub-menu">
-								<li class="dropdown">
-									<a href="./?object=user_groups" class="dropdown-toggle">		User Groups 	</a>
-								</li>
-								<li class="dropdown">
-									<a href="./?object=members" class="dropdown-toggle">		User Management 	</a>
-								</li>
-								<li class="dropdown">
-									<a href="./?object=user_modules" class="dropdown-toggle">		User Modules Manager 	</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<a href="" class="dropdown-toggle">		Content  <b class="caret"></b>	</a>
-					<ul class="dropdown-menu sub-menu">
-						<li class="dropdown">
-							<a href="./?object=static_pages" class="dropdown-toggle">		Static Pages 	</a>
-						</li>
-						<li class="dropdown">
-							<a href="./?object=manage_news" class="dropdown-toggle">		News 	</a>
-						</li>
-						<li class="dropdown">
-							<a href="./?object=manage_comments" class="dropdown-toggle">		Comments 	</a>
-						</li>
-					</ul>
-				</li>
-			</ul>
-
-		</div>
-	</div>
-		';
+	function _count_levels($start_id = 0, &$children, $level = 0) {
+		$ids = array();
+		foreach ((array)$children[$start_id] as $id => $_tmp) {
+			$ids[$id] = $level;
+			if (isset($children[$id])) {
+				foreach ((array)$this->_count_levels($id, $children, $level + 1) as $_id => $_level) {
+					$ids[$_id] = $_level;
+				}
+			}
+		}
+		return $ids;
 	}
 }

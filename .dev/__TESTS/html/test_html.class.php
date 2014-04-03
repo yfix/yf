@@ -14,6 +14,21 @@ class test_html {
 	);
 
 	/***/
+	function _hook_side_column() {
+		$items = array();
+		$url = process_url('./?object='.$_GET['object']);
+		$methods = get_class_methods($this);
+		sort($methods);
+		foreach ((array)$methods as $name) {
+			if ($name == 'show' || substr($name, 0, 1) == '_') {
+				continue;
+			}
+			$items[] = '<li><a href="#head_'.$name.'"><i class="icon-chevron-right"></i> '.t($name).'</a></li>';
+		}
+		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav">'.implode(PHP_EOL, $items).'</ul></div>';
+	}
+
+	/***/
 	function _get_method_source($cls, $method) {
 		if (is_object($cls)) {
 			$cls = get_class($cls);
@@ -65,7 +80,7 @@ class test_html {
 
 	/***/
 	function show() {
-		require_js('//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js?autoload=true&amp;skin=desert&amp;lang=php');
+		require_js('//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js?autoload=true&amp;skin=desert');
 		require_css('<style>pre.prettyprint { font-weight: bold; }</style>');
 
 		$url = process_url('./?object='.$_GET['object']);
@@ -250,6 +265,46 @@ class test_html {
 	}
 
 	/***/
+	function panel() {
+		return _class('html')->panel(array('title' => 'Panel title', 'body' => 'Panel content'));
+	}
+
+	/***/
+	function jumbotron() {
+		return _class('html')->jumbotron(array(
+			'head'	=> 'My big header',
+			'body'	=> '<p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+				<p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p>',
+		));
+	}
+
+	/***/
+	function well() {
+		return _class('html')->well('Large well content');
+	}
+
+	/***/
+	function list_group() {
+		return _class('html')->list_group(array(
+			'First line',
+			array(
+				'body'	=> 'Cras justo odio',
+				'badge'	=> '14',
+			),
+			array(
+				'body'	=> 'Dapibus ac facilisis in',
+				'badge'	=> '2',
+				'class_item'	=> 'active'
+			),
+			array(
+				'body'	=> 'Morbi leo risus',
+				'badge'	=> '1',
+				'class_item'	=> 'list-group-item-warning',
+			),
+		));
+	}
+
+	/***/
 	function media_objects() {
 		return _class('html')->media_objects(array(
 			11 => array(
@@ -281,6 +336,7 @@ class test_html {
 				'parent_id'	=> 33,
 			),
 			55 => array(
+				'img'	=> 'http://placehold.it/64x64',
 				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
 				'parent_id'	=> 44,
 			),
@@ -290,42 +346,6 @@ class test_html {
 				'alt'	=> '64x64',
 				'head'	=> 'Comment 1',
 				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
-			),
-		));
-	}
-
-	/***/
-	function grid() {
-		return _class('html')->grid(array(
-			array(
-				array('s1'),
-				array('s1'),
-				array('s1'),
-				array('s1'),
-				array('s1'),
-				array('s1'),
-				array('s1'),
-				array('s1'),
-				array('s1'),
-				array('s1'),
-				array('s1'),
-				array('s1'),
-			),
-			array(
-				array('s4'),
-				array('s4'),
-				array('s4'),
-			),
-			array(
-				array('s4', 'col' => 4),
-				array('s8', 'col' => 8),
-			),
-			array(
-				array('s6'),
-				array('s6'),
-			),
-			array(
-				array('s12'),
 			),
 		));
 	}
@@ -405,61 +425,38 @@ class test_html {
 	}
 
 	/***/
-	function panel() {
-#		if (conf('css_framework') == 'bs3') { return ''; }
-		return _class('html')->panel(array('title' => 'Panel title', 'body' => 'Panel content'));
-	}
-
-	/***/
-	function jumbotron() {
-#		if (conf('css_framework') == 'bs3') { return ''; }
-		return _class('html')->jumbotron(array(
-			'head'	=> 'My big header',
-			'body'	=> '<p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-				<p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p>',
-		));
-	}
-
-	/***/
-	function well() {
-#		if (conf('css_framework') == 'bs3') { return ''; }
-		return _class('html')->well('Large well content');
-	}
-
-	/***/
-	function list_group() {
-#		if (conf('css_framework') == 'bs3') { return ''; }
-		return _class('html')->list_group(array(
-			'First line',
+	function grid() {
+		return _class('html')->grid(array(
 			array(
-				'body'	=> 'Cras justo odio',
-				'badge'	=> '14',
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
+				array('s1'),
 			),
 			array(
-				'body'	=> 'Dapibus ac facilisis in',
-				'badge'	=> '2',
-				'class_item'	=> 'active'
+				array('s4'),
+				array('s4'),
+				array('s4'),
 			),
 			array(
-				'body'	=> 'Morbi leo risus',
-				'badge'	=> '1',
-				'class_item'	=> 'list-group-item-warning',
+				array('s4', 'col' => 4),
+				array('s8', 'col' => 8),
+			),
+			array(
+				array('s6'),
+				array('s6'),
+			),
+			array(
+				array('s12'),
 			),
 		));
-	}
-
-	/***/
-	function _hook_side_column() {
-		$items = array();
-		$url = process_url('./?object='.$_GET['object']);
-		$methods = get_class_methods($this);
-		sort($methods);
-		foreach ((array)$methods as $name) {
-			if ($name == 'show' || substr($name, 0, 1) == '_') {
-				continue;
-			}
-			$items[] = '<li><a href="#head_'.$name.'"><i class="icon-chevron-right"></i> '.t($name).'</a></li>';
-		}
-		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav">'.implode(PHP_EOL, $items).'</ul></div>';
 	}
 }
