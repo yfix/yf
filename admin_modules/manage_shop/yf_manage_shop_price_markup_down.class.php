@@ -52,6 +52,8 @@ class yf_manage_shop_price_markup_down {
 
 		$table = table( 'SELECT * FROM ' . db( 'shop_price_markup_down' ), $filter )
 			->text( 'description' )
+			// ->text( 'time_from' )
+			// ->text( 'time_to' )
 			// ->text( 'value', 'Процент, +/-' )
 			->btn_active( '', $this->_uri[ 'active' ] )
 			->btn_edit(   '', $this->_uri[ 'edit'   ], array( 'no_ajax' => 1 ) )

@@ -21,6 +21,8 @@ class yf_dashboards {
 // min_height=0|(int)
 // max_height=0|(int)
 
+# TODO: в дашборде  сдлеать по умолчанию вызов метода show если указан тролько класс  register == register.show
+
 	/**
 	*/
 	function _init () {
