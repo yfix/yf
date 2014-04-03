@@ -35,6 +35,41 @@ class yf_html {
 	}
 
 	/**
+	* Get and sort items ordered array (recursively)
+	*/
+	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0) {
+		$children = array();
+		foreach ((array)$items as $id => $info) {
+			$parent_id = (int)$info['parent_id'];
+			if ($skip_item_id == $id) {
+				continue;
+			}
+			$children[$parent_id][$id] = $id;
+		}
+		$ids = $this->_count_levels(0, $children);
+		$new_items = array();
+		foreach ((array)$ids as $id => $level) {
+			$new_items[$id] = $items[$id] + array('level' => $level);
+		}		
+		return $new_items;
+	}
+
+	/**
+	*/
+	function _count_levels($start_id = 0, &$children, $level = 0) {
+		$ids = array();
+		foreach ((array)$children[$start_id] as $id => $_tmp) {
+			$ids[$id] = $level;
+			if (isset($children[$id])) {
+				foreach ((array)$this->_count_levels($id, $children, $level + 1) as $_id => $_level) {
+					$ids[$_id] = $_level;
+				}
+			}
+		}
+		return $ids;
+	}
+
+	/**
 	* Wrapper for template engine
 	* Example:
 	*	return html()->dd_table(db()->get_2d('SELECT * FROM '.db('countries')));
@@ -530,40 +565,5 @@ class yf_html {
 			$rows[] = '<div class="row-fluid show-grid">'.implode(PHP_EOL, $items).'</div>';
 		}
 		return '<div class="grid'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$rows).'</div>';
-	}
-
-	/**
-	* Get and sort items ordered array (recursively)
-	*/
-	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0) {
-		$children = array();
-		foreach ((array)$items as $id => $info) {
-			$parent_id = (int)$info['parent_id'];
-			if ($skip_item_id == $id) {
-				continue;
-			}
-			$children[$parent_id][$id] = $id;
-		}
-		$ids = $this->_count_levels(0, $children);
-		$new_items = array();
-		foreach ((array)$ids as $id => $level) {
-			$new_items[$id] = $items[$id] + array('level' => $level);
-		}		
-		return $new_items;
-	}
-
-	/**
-	*/
-	function _count_levels($start_id = 0, &$children, $level = 0) {
-		$ids = array();
-		foreach ((array)$children[$start_id] as $id => $_tmp) {
-			$ids[$id] = $level;
-			if (isset($children[$id])) {
-				foreach ((array)$this->_count_levels($id, $children, $level + 1) as $_id => $_level) {
-					$ids[$_id] = $_level;
-				}
-			}
-		}
-		return $ids;
 	}
 }
