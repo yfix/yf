@@ -67,18 +67,16 @@ class yf_manage_shop_paywill{
 				$user_address[] = t($k).': '.$v;
 		}
 		// discount
-		$discount = $order_info[ 'discount' ];
 		$_class_price = _class( '_shop_price', 'modules/shop/' );
-		$discount_price = $_class_price->apply_price( $price_total, $discount );
+		$discount     = $order_info[ 'discount'     ];
+		$discount_add = $order_info[ 'discount_add' ];
+		$_discount    = $discount;
+		$with_discount_add = isset( $_GET[ 'with_discount_add' ] );
+		if( $with_discount_add ) {
+			$_discount += $discount_add;
+		}
+		$discount_price = $_class_price->apply_price( $price_total, $_discount );
 		$discount_price -= $price_total;
-		// markup_down
-		// by user birthday
-		if( $_GET[ 'user_birthday' ] ) {
-			$user_id = $_info[ 'user_id' ];
-			$_price_total = $price_total + $discount_price;
-			$discount_price = $_class_price->markdown_user( $_price_total, $user_id );
-			$discount_price -= $_price_total;
-	   	}
 		// total string
 		$total_sum	= $order_info[ 'total_sum' ];
 		$num_to_str	= common()->num2str( $total_sum );

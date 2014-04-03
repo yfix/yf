@@ -2,7 +2,7 @@
 
 /**
 * Table2, using bootstrap html/css framework
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -955,7 +955,7 @@ class yf_table2 {
 		$extra['data'] = $data ?: $extra['data'];
 		$_name = 'user';
 		$this->_params['custom_fields'][$_name] = array(
-			'SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), ""), IF(STRCMP(email,""), CONCAT("; ",email), IF(STRCMP(phone,""), CONCAT("; ",phone), ""))) AS user_name 
+			'SELECT id, CONCAT(id, IF(STRCMP(login,""), CONCAT("; ",login), ""), IF(STRCMP(email,""), CONCAT("; ",email), IF(STRCMP(phone,""), CONCAT("; ",phone), ""))) AS user_name
 			FROM '.db('user').' WHERE id IN(%ids)'
 		, $name);
 		return $this->text($_name, '', $extra);
@@ -1151,6 +1151,7 @@ class yf_table2 {
 				if ($extra['target']) {
 					$attrs .= ' target="'.$extra['target'].'"';
 				}
+				$title = $extra['title'] ?: $extra['desc'] ?: $extra['name'];
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$link = trim(str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add']);
 				if (strlen($link) && !$_this->_is_link_allowed($link)) {
@@ -1161,7 +1162,7 @@ class yf_table2 {
 				}
 				$renderer = $extra['renderer'] ?: 'a';
 				if ($renderer == 'a') {
-					$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+					$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.' title="' . $title . '"><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 				} elseif ($renderer == 'button') {
 					$body = '<button class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</button> ';
 				}
@@ -1436,7 +1437,7 @@ class yf_table2 {
 				$value = $extra['value'] ? $extra['value'] : $value;
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-save');
 				$class = $extra['class'] ?: $extra['a_class'];
-				
+
 				return '<button type="submit" name="'.$value.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '. t($value).'</button>';
 			}
 		);
@@ -1513,7 +1514,7 @@ class yf_table2 {
 			if (!$icon) {
 				return '';
 			}
-			// Icon class from bootstrap icon class names 
+			// Icon class from bootstrap icon class names
 			if (preg_match('/^icon\-[a-z0-9_-]+$/i', $icon)) {
 				return '<i class="'.$icon.'"></i>';
 			} else {

@@ -36,6 +36,10 @@ class yf_manage_shop_orders{
 			$filter['order_by'] = 'id';
 			$filter['order_direction'] = 'desc';
 		}
+		$link_invoice         = './?object=manage_shop&action=paywill&id=%d';
+		$link_invoice_add     = $link_invoice     . '&with_discount_add=y';
+		$link_pdf_invoice     = $link_invoice     . '&pdf=y';
+		$link_pdf_invoice_add = $link_invoice_add . '&pdf=y';
 		return table($sql, array(
 				'filter' => $filter,
 				'filter_params' => array(
@@ -62,8 +66,12 @@ class yf_manage_shop_orders{
 				return common()->get_static_conf('order_status', $field);
 			}, array('nowrap' => 1))
 			->btn_edit('', './?object='.main()->_get('object').'&action=view_order&id=%d',array('no_ajax' => 1))
-			->btn('Paywill', './?object=manage_shop&action=paywill&id=%d',array('no_ajax' => 1, 'target' => '_blank'))
-			->btn('PDF', './?object=manage_shop&action=paywill&id=%d&pdf=y',array('no_ajax' => 1, 'target' => '_blank'))
+			// ->btn('Paywill', './?object=manage_shop&action=paywill&id=%d',array('no_ajax' => 1, 'target' => '_blank'))
+			// ->btn('PDF', './?object=manage_shop&action=paywill&id=%d&pdf=y',array('no_ajax' => 1, 'target' => '_blank'))
+				->btn( 'Paywill'           , $link_invoice        , array( 'title' => 'Накладная без учета добавочной скидки'    , 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
+				->btn( 'PDF'               , $link_pdf_invoice    , array( 'title' => 'Накладная PDF без учета добавочной скидки', 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
+				->btn( t( 'Paywill' ) . '+', $link_invoice_add    , array( 'title' => 'Накладная с учетом добавочной скидки'     , 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
+				->btn( t( 'PDF' ) . '+'    , $link_pdf_invoice_add, array( 'title' => 'Накладная PDF с учетом добавочной скидки' , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
 		;
 	}
 
@@ -127,7 +135,7 @@ class yf_manage_shop_orders{
 			}
 
 			$sql = array();
-			foreach (array('address','phone','address','house','apartment','floor','porch','intercom','delivery_price','status','discount') as $f) {
+			foreach (array('address','phone','address','house','apartment','floor','porch','intercom','delivery_price','status','discount','discount_add') as $f) {
 				if (isset($_POST[$f])) {
 					$sql[$f] = $_POST[$f];
 					if (($f == 'delivery_price') && ($_POST['delivery_price'] != $order_info['delivery_price'])) {
@@ -197,40 +205,60 @@ class yf_manage_shop_orders{
 			$price_total += $price_item;
 		}
 		$_class_price = _class( '_shop_price', 'modules/shop/' );
-		$discount        = $order_info[ 'discount' ];
-		$discount_price  = $_class_price->apply_price( $price_total, $discount );
+		// discount
+		$discount     = $order_info[ 'discount'     ];
+		$discount_add = $order_info[ 'discount_add' ];
+		$_discount       = $discount;
+		$discount_price  = $_class_price->apply_price( $price_total, $_discount );
 		$discount_price -= $price_total;
+		$_discount           = $discount + $discount_add;
+		$discount_add_price  = $_class_price->apply_price( $price_total, $_discount );
+		$discount_add_price -= $price_total;
 		$total_price     = tofloat($order_info['total_sum']);
 		$replace = my_array_merge($replace, _prepare_html($order_info));
 		$replace = my_array_merge($replace, array(
-			'form_action'         => './?object='.main()->_get('object').'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'order_id'            => $order_info['id'],
-			'price_total_info'    => module('manage_shop')->_format_price( $price_total ),
-			'discount'            => $discount,
-			'discount_price_info' => module('manage_shop')->_format_price( $discount_price ),
-			'delivery_info'       => module('manage_shop')->_format_price( $order_info[ 'delivery_price' ] ),
-			'total_sum'           => module('manage_shop')->_format_price( $total_price ),
-			'user_link'           => _profile_link($order_info['user_id']),
-			'user_name'           => _display_name(user($order_info['user_id'])),
-			'error_message'       => _e(),
-			'products'            => (array)$products,
-			'total_price'         => module('manage_shop')->_format_price($total_price),
-			'ship_type'           => module('manage_shop')->_ship_types[$order_info['ship_type']],
-			'pay_type'            => module('manage_shop')->_pay_types[$order_info['pay_type']],
-			'date'                => $order_info['date'],
-			'status_box'          => module('manage_shop')->_box('status', $order_info['status']),
-			'back_url'            => './?object='.main()->_get('object').'&action=show_orders',
-			'print_url'           => './?object='.main()->_get('object').'&action=show_print&id='.$order_info['id'],
-			'payment'             => common()->get_static_conf('payment_methods', $order_info['payment']),
+			'form_action'             => './?object='.main()->_get('object').'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'order_id'                => $order_info['id'],
+			'price_total_info'        => module('manage_shop')->_format_price( $price_total ),
+			'discount_price_info'     => module('manage_shop')->_format_price( $discount_price ),
+			'discount_add_price_info' => module('manage_shop')->_format_price( $discount_add_price ),
+			'delivery_info'           => module('manage_shop')->_format_price( $order_info[ 'delivery_price' ] ),
+			'total_sum'               => module('manage_shop')->_format_price( $total_price ),
+			'user_link'               => _profile_link($order_info['user_id']),
+			'user_name'               => _display_name(user($order_info['user_id'])),
+			'error_message'           => _e(),
+			'products'                => (array)$products,
+			'total_price'             => module('manage_shop')->_format_price($total_price),
+			'ship_type'               => module('manage_shop')->_ship_types[$order_info['ship_type']],
+			'pay_type'                => module('manage_shop')->_pay_types[$order_info['pay_type']],
+			'date'                    => $order_info['date'],
+			'status_box'              => module('manage_shop')->_box('status', $order_info['status']),
+			'back_url'                => './?object='.main()->_get('object').'&action=show_orders',
+			'print_url'               => './?object='.main()->_get('object').'&action=show_print&id='.$order_info['id'],
+			'payment'                 => common()->get_static_conf('payment_methods', $order_info['payment']),
 		));
 
+		$link_invoice         = './?object=manage_shop&action=paywill&id=' . $replace[ 'id' ];
+		$link_invoice_add     = $link_invoice     . '&with_discount_add=y';
+		$link_pdf_invoice     = $link_invoice     . '&pdf=y';
+		$link_pdf_invoice_add = $link_invoice_add . '&pdf=y';
 		$out = form2($replace, array('dd_mode' => 1, 'big_labels' => true))
 			->info('id')
 			->info('price_total_info', array( 'desc' => 'Сумма' ) )
-			->text('discount', array( 'desc' => 'Скидка, %' ) )
-			->info('discount_price_info', array( 'desc' => 'Скидка' ) )
+			->row_start( array( 'desc' => 'Скидка, %' ) )
+				->number( 'discount'  )
+				->info( 'discount_price_info' )
+				->link( 'Paywill', $link_invoice    , array( 'title' => 'Накладная без учета добавочной скидки'    , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
+				->link( 'PDF'    , $link_pdf_invoice, array( 'title' => 'Накладная PDF без учета добавочной скидки', 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
+			->row_end()
+			->row_start( array( 'desc' => 'Скидка добавочная, %' ) )
+				->number( 'discount_add' )
+				->info( 'discount_add_price_info', array( 'desc' => ' ' )  )
+				->link( t( 'Paywill' ) . '+', $link_invoice_add    , array( 'title' => 'Накладная с учетом добавочной скидки'    , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
+				->link( t( 'PDF' ) . '+'    , $link_pdf_invoice_add, array( 'title' => 'Накладная PDF с учетом добавочной скидки', 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
+			->row_end()
 			->info('delivery_info', array( 'desc' => 'Доставка' ) )
-			->info('total_sum', '', array('desc' => 'Итоговая сумма', 'no_escape' => 1))
+			->info('total_sum', '', array('desc' => 'Итоговая сумма', 'tip' => 'Итоговая сумма без учета добавочной скидки', 'no_escape' => 1))
 			->info_date('date', array('format' => 'full'))
 			->info('name')
 			->email('email')

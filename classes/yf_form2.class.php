@@ -2,7 +2,7 @@
 
 /**
 * Form2, using bootstrap html/css framework
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -813,11 +813,11 @@ class yf_form2 {
 
 	/**
 	* Embedding ckeditor (http://ckeditor.com/) with kcfinder (http://kcfinder.sunhater.com/).
-	* Best way to include it into project: 
+	* Best way to include it into project:
 	*
 	* git submodule add https://github.com/yfix/ckeditor-releases.git www/ckeditor/ && cd www/ckeditor/ && git checkout latest/full
 	* git submodule add git@github.com:yfix/yf_kcfinder.git www/kcfinder
-	* 
+	*
 	* 'www/' usually means PROJECT_PATH inside project working copy.
 	* P.S. You can use free CDN for ckeditor as alternate solution: <script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js"></script>
 	*/
@@ -1373,7 +1373,7 @@ class yf_form2 {
 				$extra['class'] = $extra['class'] ?: 'btn btn-default btn-mini btn-xs';
 				$extra['class'] = $_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra);
 				$extra['href'] = $extra['link'];
-				$extra['title'] = $extra['desc'] ?: $extra['name'];
+				$extra['title'] = $extra['title'] ?: $extra['desc'] ?: $extra['name'];
 				$attrs_names = array('href','name','class','style','disabled','target','alt','title');
 				$content = '<a'.$_this->_attrs($extra, $attrs_names).'>'.$icon. $value.'</a>';
 			} else {
@@ -1739,12 +1739,12 @@ class yf_form2 {
 	function image($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return _class('form2_image', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
-	
+
 	/**
 	*/
 	function file_uploader($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return _class('form2_file_uploader', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
-	}	
+	}
 
 	/**
 	*/
@@ -1853,7 +1853,7 @@ class yf_form2 {
 	function stars_select($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return _class('form2_stars', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
-	
+
 	/**
 	* Datetimepicker, src: http://tarruda.github.io/bootstrap-datetimepicker/
 	* params :  no_date // no date picker
@@ -1861,7 +1861,7 @@ class yf_form2 {
 	*/
 	function datetime_select($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return _class('form2_datetime', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
-	}	
+	}
 
 	/**
 	*/

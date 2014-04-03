@@ -37,7 +37,7 @@ class yf_html5_framework_bs2 {
 		$class_label = $extra['class_label'] ?: 'control-label col-lg-4'. ($extra['class_add_label'] ? ' '.$extra['class_add_label'] : '');
 		$class_controls = $extra['class_controls'] ?: 'controls'. ($extra['desc'] && !$no_label ? ' col-lg-8' : ''/*' col-lg-offset-4'*/). ($extra['class_add_controls'] ? ' '.$extra['class_add_controls'] : '');
 
-		$row_start = 
+		$row_start =
 			'<div class="'.$class_form_group.'">'.PHP_EOL
 				.($extra['desc'] && !$no_label ? '<label class="'.$class_label.'" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
 				.(!$extra['wide'] ? '<div class="'.$class_controls.'">'.PHP_EOL : '');
@@ -46,11 +46,11 @@ class yf_html5_framework_bs2 {
 				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
 			.'</div>';
 
-		$before_content_html = 
+		$before_content_html =
 			(($extra['prepend'] || $extra['append']) ? '<div class="input-group '.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
 			.($extra['prepend'] ? '<span class="add-on input-group-addon">'.$extra['prepend'].'</span>'.PHP_EOL : '');
 
-		$after_content_html = 
+		$after_content_html =
 			($extra['append'] ? '<span class="add-on input-group-addon">'.$extra['append'].'</span>'.PHP_EOL : '')
 			.(($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '');
 
@@ -109,12 +109,12 @@ class yf_html5_framework_bs2 {
 		$inline_tip_html = ($extra['tip'] ? ' '.$obj->_show_tip($extra['tip'], $extra, $replace) : '');
 
 		if ($extra['only_row_start']) {
-			return $row_start;
+			return $row_start . $before_content_html;
 		} elseif ($extra['only_row_end']) {
-			return $row_end;
+			return $after_content_html . $row_end;
 		} elseif ($extra['stacked']) {
-			return $before_content_html. $inline_help_before. $content. PHP_EOL
-				.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after. $after_content_html;
+			return $inline_help_before. $content. PHP_EOL
+				.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after;
 		} else {
 			// Full variant
 			return $row_start
