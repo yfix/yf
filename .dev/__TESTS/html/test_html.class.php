@@ -113,7 +113,7 @@ class test_html {
 			'thumbnails'	=> $this->thumbnails(),
 			'media_objects'	=> $this->media_objects(),
 			'carousel'		=> $this->carousel(),
-			'menu'			=> $this->menu(),
+			'menu'			=> '<div style="min-height:200px;">'.$this->menu().'</div>',
 			'dd_table'		=> $this->dd_table(),
 			'accordion'		=> _class('html')->accordion(array(
 				'modal'			=> $this->modal(),
