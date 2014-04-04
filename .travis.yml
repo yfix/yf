@@ -11,9 +11,9 @@ php:
 #  - composer self-update
 #  - composer install --prefer-source --no-interaction --dev
 
-script: cd .dev/__TESTS/ && phpunit -d memory_limit=1024M --configuration phpunit.xml ./
-#  - cd .dev/__TESTS/ && phpunit --configuration phpunit.xml --coverage-text ./
-#  - cd .dev/__TESTS/ && phpunit --configuration phpunit.xml ./
+script: cd .dev/tests/ && phpunit -d memory_limit=1024M --configuration phpunit.xml ./
+#  - cd .dev/tests/ && phpunit --configuration phpunit.xml --coverage-text ./
+#  - cd .dev/tests/ && phpunit --configuration phpunit.xml ./
 
 matrix:
   allow_failures:

@@ -121,8 +121,8 @@ class test_html {
 				'breadcrumbs'	=> $this->breadcrumbs(),
 				'pagination'	=> $this->pagination(),
 			), array('class_head' => 'alert-error')),
-#			'table'			=> _class('form2_stacked_sample', YF_PATH.'.dev/__TESTS/form2/')->show(),
-#			'form'			=> _class('table2_new_controls', YF_PATH.'.dev/__TESTS/table2/')->show(),
+#			'table'			=> _class('form2_stacked_sample', YF_PATH.'.dev/tests/form2/')->show(),
+#			'form'			=> _class('table2_new_controls', YF_PATH.'.dev/tests/table2/')->show(),
 		));
 	}
 
