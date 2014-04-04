@@ -68,9 +68,9 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			, str_replace(PHP_EOL, '', trim(form()->array_to_form($a))) );
 	}
 	public function test_form_auto() {
-#		$data = array('user' => 'name', 'email' => 'some@email.com');
-#		$this->assertEquals(''
-#			, str_replace(PHP_EOL, '', trim(form($data)->auto())) );
+		$data = array('user' => 'name', 'email' => 'some@email.com');
+		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><div class="controls"><button type="submit" name="back_link" id="back_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save"></i> Save</button></div></div></fieldset></form>'
+			, str_replace(PHP_EOL, '', trim(form($data)->auto())) );
 	}
 	public function test_input_text_simple() {
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(form_item($r)->text('name')) );
