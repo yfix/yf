@@ -406,6 +406,7 @@ class yf_db {
 	* Alias of insert() with auto-escaping of data
 	*/
 	function insert_safe($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false) {
+		$data = $this->_fix_data_safe($table, $data);
 		return $this->insert($table, $this->es($data), $only_sql, $replace, $ignore, $on_duplicate_key_update);
 	}
 
@@ -504,9 +505,63 @@ class yf_db {
 	}
 
 	/**
+	*/
+	function get_table_columns_cached($table) {
+		$cache_name = __FUNCTION__.'|'.$table.'|'.$this->DB_HOST.'|'.$this->DB_PORT.'|'.$this->DB_NAME.'|'.$this->DB_PREFIX;
+		$data = cache_get($cache_name);
+		if (!$data) {
+			$data = $this->meta_columns($table);
+			cache_set($cache_name, $data);
+		}
+		return $data;
+	}
+
+	/**
+	*/
+	function _fix_data_safe($table, $data = array()) {
+		$table = $this->_fix_table_name($table);
+		$cols = $this->get_table_columns_cached($table);
+		if (!$cols) {
+			$msg = __CLASS__.'->'.__FUNCTION__.': columns for table '.$table.' is empty, truncating data array';
+			trigger_error($msg, E_USER_WARNING);
+			return false;
+		}
+		$is_data_3d = false;
+		// Try to check if array is two-dimensional
+		foreach ((array)$data as $cur_row) {
+			$is_data_3d = is_array($cur_row) ? 1 : 0;
+			break;
+		}
+		$not_existing_cols = array();
+		if ($is_data_3d) {
+			foreach ((array)$data as $k => $_data) {
+				foreach ((array)$_data as $name => $v) {
+					if (!isset($cols[$name])) {
+						$not_existing_cols[$name] = $name;
+						unset($data[$k][$name]);
+					}
+				}
+			}
+		} else {
+			foreach ((array)$data as $name => $v) {
+				if (!isset($cols[$name])) {
+					$not_existing_cols[$name] = $name;
+					unset($data[$name]);
+				}
+			}
+		}
+		if ($not_existing_cols) {
+			$msg = __CLASS__.'->'.__FUNCTION__.': not existing columns for table '.$table.': '.implode(', ', $not_existing_cols);
+			trigger_error($msg, E_USER_WARNING);
+		}
+		return $data;
+	}
+
+	/**
 	* Alias of update() with data auto-escape
 	*/
 	function update_safe($table, $data, $where, $only_sql = false) {
+		$data = $this->_fix_data_safe($table, $data);
 		return $this->update($table, $this->es($data), $where, $only_sql);
 	}
 
@@ -1273,6 +1328,7 @@ class yf_db {
 	/**
 	*/
 	function update_batch_safe($table, $data, $index = null, $only_sql = false) {
+		$data = $this->_fix_data_safe($table, $data);
 		return $this->update_batch($table, $this->es($data), $index, $only_sql);
 	}
 

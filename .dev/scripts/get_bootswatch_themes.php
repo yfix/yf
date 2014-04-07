@@ -10,7 +10,11 @@ if (!file_exists($themes_file) || !filesize($themes_file)) {
 	exit('ERROR: Themes not found');
 }
 
-$d = './bootswatch_copy-2.3.2/';
+$bs_v2 = '2.3.2';
+$bs_v3 = '3.1.1';
+$jquery_v = '1.11.0';
+
+$d = './bootswatch_copy-'.$bs_v2.'/';
 if (!file_exists($d)) {
 	mkdir($d, 0777, true);
 }
@@ -19,24 +23,24 @@ foreach(explode("\n", file_get_contents($themes_file)) as $theme) {
 	if (file_exists($f) || $theme == 'default') {
 		continue;
 	}
-	$url = 'http://netdna.bootstrapcdn.com/bootswatch/2.3.2/'.$theme.'/bootstrap.min.css';
+	$url = 'http://netdna.bootstrapcdn.com/bootswatch/'.$bs_v2.'/'.$theme.'/bootstrap.min.css';
 	file_put_contents($f, file_get_contents($url));
 }
 
 $f = $d.'jquery.min.js';
-$url = 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js';
+$url = 'http://ajax.googleapis.com/ajax/libs/jquery/'.$jquery_v.'/jquery.min.js';
 if (!file_exists($f)) {
 	file_put_contents($f, file_get_contents($url));
 }
 $f = $d.'bootstrap.min.js';
-$url = 'http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js';
+$url = 'http://netdna.bootstrapcdn.com/twitter-bootstrap/'.$bs_v2.'/js/bootstrap.min.js';
 if (!file_exists($f)) {
 	file_put_contents($f, file_get_contents($url));
 }
 
 ///////////////
 
-$d = './bootswatch_copy-3.0.0/';
+$d = './bootswatch_copy-'.$bs_v3.'/';
 if (!file_exists($d)) {
 	mkdir($d, 0777, true);
 }
@@ -45,18 +49,17 @@ foreach(explode("\n", file_get_contents($themes_file)) as $theme) {
 	if (file_exists($f) || $theme == 'default') {
 		continue;
 	}
-	$url = 'http://netdna.bootstrapcdn.com/bootswatch/3.0.0/'.$theme.'/bootstrap.min.css';
+	$url = 'http://netdna.bootstrapcdn.com/bootswatch/'.$bs_v3.'/'.$theme.'/bootstrap.min.css';
 	file_put_contents($f, file_get_contents($url));
 }
 
 $f = $d.'jquery.min.js';
-$url = 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js';
+$url = 'http://ajax.googleapis.com/ajax/libs/jquery/'.$jquery_v.'/jquery.min.js';
 if (!file_exists($f)) {
 	file_put_contents($f, file_get_contents($url));
 }
 $f = $d.'bootstrap.min.js';
-$url = 'http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js';
+$url = 'http://netdna.bootstrapcdn.com/bootstrap/'.$bs_v3.'/js/bootstrap.min.js';
 if (!file_exists($f)) {
 	file_put_contents($f, file_get_contents($url));
 }
-

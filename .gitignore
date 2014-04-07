@@ -5,5 +5,5 @@
 *.log
 *.swp
 # ignore folders
-logs/
-artifacts/
+#logs/
+#artifacts/
