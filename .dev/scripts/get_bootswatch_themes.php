@@ -24,7 +24,7 @@ foreach(explode("\n", file_get_contents($themes_file)) as $theme) {
 }
 
 $f = $d.'jquery.min.js';
-$url = 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js';
+$url = 'http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js';
 if (!file_exists($f)) {
 	file_put_contents($f, file_get_contents($url));
 }
@@ -36,7 +36,7 @@ if (!file_exists($f)) {
 
 ///////////////
 
-$d = './bootswatch_copy-3.0.0/';
+$d = './bootswatch_copy-3.1.1/';
 if (!file_exists($d)) {
 	mkdir($d, 0777, true);
 }
@@ -45,18 +45,17 @@ foreach(explode("\n", file_get_contents($themes_file)) as $theme) {
 	if (file_exists($f) || $theme == 'default') {
 		continue;
 	}
-	$url = 'http://netdna.bootstrapcdn.com/bootswatch/3.0.0/'.$theme.'/bootstrap.min.css';
+	$url = 'http://netdna.bootstrapcdn.com/bootswatch/3.1.1/'.$theme.'/bootstrap.min.css';
 	file_put_contents($f, file_get_contents($url));
 }
 
 $f = $d.'jquery.min.js';
-$url = 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js';
+$url = 'http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js';
 if (!file_exists($f)) {
 	file_put_contents($f, file_get_contents($url));
 }
 $f = $d.'bootstrap.min.js';
-$url = 'http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js';
+$url = 'http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js';
 if (!file_exists($f)) {
 	file_put_contents($f, file_get_contents($url));
 }
-
