@@ -35,8 +35,7 @@
 				return false;
 			});
 			
-			$($('#'+container_id)).on('keypress','.marker_description',function() {				
-				console.log($(this).val());
+			$($('#'+container_id)).on('change','.marker_description',function() {				
 				descriptionsArray[$(this).attr('data_id')] = $(this).val();
 //				markersArray[$(this).attr('data_id')].setTitle($(this).val());
 				saveMarkers();
