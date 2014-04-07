@@ -8,13 +8,14 @@
 // Only one class from functions listed below
 if (!class_exists('my_missing_method_handler')) {
 	class my_missing_method_handler {
-		function __construct($o_name, $silent = false) {
+		function __construct($o_name, $silent = false, $c_name = '') {
 			$this->_o_name = $o_name;
+			$this->_c_name = $c_name;
 			$this->_silent = $silent;
 		}
 		function __call($name, $arguments) {
 			if (!$this->_silent) {
-				trigger_error($this->_o_name.'(): missing object method: '.$name, E_USER_WARNING);
+				trigger_error($this->_o_name.'(): missing object method: '.$name. ($this->_c_name ? ' for class: '.$this->_c_name : ''), E_USER_WARNING);
 				return false;
 			}
 		}
@@ -23,27 +24,27 @@ if (!class_exists('my_missing_method_handler')) {
 // example: _class('i18n')->load_lang();
 if (!function_exists('_class')) {
 	function _class($class_name, $custom_path = '', $params = '', $silent = false) {
-		return main()->init_class($class_name, $custom_path ?: 'classes/', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent);
+		return main()->init_class($class_name, $custom_path ?: 'classes/', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent, $class_name);
 	}
 }
 // Alias to _class() with $silent = true
 // example: _class_safe('not_existing_module')->not_existing_method();
 if (!function_exists('_class_safe')) {
 	function _class_safe($class_name, $custom_path = '', $params = '') {
-		return main()->init_class($class_name, $custom_path ?: 'classes/', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent = true);
+		return main()->init_class($class_name, $custom_path ?: 'classes/', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent = true, $class_name);
 	}
 }
 // example: module('test')->test_stpls();
 if (!function_exists('module')) {
 	function module($class_name, $params = '', $silent = false) {
-		return main()->init_class($class_name, '', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent);
+		return main()->init_class($class_name, '', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent, $class_name);
 	}
 }
 // Alias to module() with $silent = true
 // example: module_safe('not_existing_module')->not_existing_method();
 if (!function_exists('module_safe')) {
 	function module_safe($class_name, $params = '') {
-		return main()->init_class($class_name, '', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent = true);
+		return main()->init_class($class_name, '', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent = true, $class_name);
 	}
 }
 // example: load('home_page', 'framework')
