@@ -1,0 +1,130 @@
+    <style type="text/css">
+        #map_canvas {height:350px;width:500px}
+    </style>
+
+    <script type="text/javascript">
+        var map;
+        var markersArray = [];
+		var descriptionsArray = [];
+		var marker_index = 0;
+		var markers_limit = 4;
+
+        function initMap(container_id) {
+            var latlng = new google.maps.LatLng(41, 29);
+            var myOptions = {
+                zoom: 10,
+                center: latlng,
+				disableDefaultUI: false,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+				mapTypeControlOptions: {
+					style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+					position: google.maps.ControlPosition.TOP_CENTER							
+				}
+            };
+            map = new google.maps.Map($('#'+container_id)[0], myOptions);
+			loadMarkers();			
+            google.maps.event.addListener(map, "click", function(event) {
+				placeMarker(event.latLng,"");
+            });
+			
+			$($('#'+container_id)).on('click','.marker_delete',function() {
+				var index= $(this).attr('data_marker_id');
+				markersArray[index].setMap(null);
+				markersArray[index] = false;
+				saveMarkers();
+				return false;
+			});
+			
+			$($('#'+container_id)).on('keypress','.marker_description',function() {				
+				console.log($(this).val());
+				descriptionsArray[$(this).attr('data_id')] = $(this).val();
+//				markersArray[$(this).attr('data_id')].setTitle($(this).val());
+				saveMarkers();
+				return false;
+			});
+			
+        }
+		
+		function isinfowindowOpen(infowindow){
+			var map = infowindow.getMap();
+			return (map !== null && typeof map !== "undefined");
+		}
+
+		
+        function placeMarker(location,description) {
+			marker_index = 0;
+			while (markersArray[marker_index]) marker_index++;
+			if (marker_index > markers_limit) {
+				// todo:limit reached popup
+			} else {
+				var marker = new google.maps.Marker({
+					position: location, 
+					draggable:true,	
+					clickable: true,
+//					title: description,
+					map: map
+				});
+				markersArray[marker_index] = marker;
+				descriptionsArray[marker_index] = description;
+				var infowindow = new google.maps.InfoWindow({
+					content: '<input type="text" data_id="'+marker_index+'" class="marker_description" placeholder="description" value="'+description+'"><br />' +
+							'<button class="marker_delete" data_marker_id="'+marker_index+'">delete marker</button>', 
+				});
+				google.maps.event.addListener(marker, 'click', function() {
+					if (isinfowindowOpen(infowindow)){
+						infowindow.close(map,marker);
+					} else {
+						infowindow.open(map,marker);
+						
+						$(".marker_description").each(function() {
+							$(this).val(descriptionsArray[$(this).attr('data_id')]);
+						});
+					}					
+				});
+				google.maps.event.addListener(marker, 'dragend', function() { 
+					saveMarkers();
+				});
+				saveMarkers();
+			}
+        }
+		
+		function saveMarkers() {
+			var out_array = {};
+			marker_index = 0;
+			while (marker_index <= markers_limit) {
+				if (markersArray[marker_index]) {
+					out_array[marker_index] = {};
+					out_array[marker_index]['lat'] = markersArray[marker_index].getPosition().lat();
+					out_array[marker_index]['lng'] = markersArray[marker_index].getPosition().lng();
+					out_array[marker_index]['dsc'] = descriptionsArray[marker_index];
+				}
+				marker_index++;
+			}
+			var json = JSON.stringify(out_array);
+			$('#markers_data').val(json);
+			
+		}
+		
+		function loadMarkers() {
+		    try {
+				result = JSON.parse($('#markers_data').val());
+			} catch (e) {
+				return false;
+			}
+			marker_index_load = 0;
+			while (marker_index_load <= markers_limit) {
+				if (result[marker_index_load]) {
+					placeMarker(new google.maps.LatLng(result[marker_index_load]['lat'], result[marker_index_load]['lng']),result[marker_index_load]['dsc']);					
+				}
+				marker_index_load++;
+			}
+		}
+			
+		
+		$(function() {
+			initMap('map_canvas');
+		});
+		
+    </script>
+    <div id="map_canvas"></div>
+	<input type="text" name='{name}' id="markers_data" value='{value}'>
