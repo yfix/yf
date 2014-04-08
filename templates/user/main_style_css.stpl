@@ -51,6 +51,7 @@ legend+.control-group { margin-top: 0; }
 
 body.cssfw-bs3 .carousel-control .icon-chevron-left,
 body.cssfw-bs3 .carousel-control .icon-chevron-right { position: absolute; top: 50%; z-index: 5; display: inline-block; }
+body.cssfw-bs3 a.accordion-toggle { display: block; }
 
 /* override styles per bs theme here */ 
 .bs-theme-slate textarea, .bs-theme-slate select { color: #52575c; }

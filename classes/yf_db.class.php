@@ -105,6 +105,8 @@ class yf_db {
 	public $ALLOW_AUTO_CREATE_DB	= false;
 	/** @var bool Use sql query revisions for update/insert/replace/delete */
 	public $QUERY_REVISIONS			= false;
+	/** @var bool update_safe, insert_safe, update_batch_safe: use additional checking for exising table fields */
+	public $FIX_DATA_SAFE			= true;
 	/** @var array List of tables inside current database */
 	public $_PARSED_TABLES			= array();
 	/** @var array Filled automatically from generated file */
@@ -519,6 +521,9 @@ class yf_db {
 	/**
 	*/
 	function _fix_data_safe($table, $data = array()) {
+		if (!$this->FIX_DATA_SAFE) {
+			return $data;
+		}
 		$table = $this->_fix_table_name($table);
 		$cols = $this->get_table_columns_cached($table);
 		if (!$cols) {
