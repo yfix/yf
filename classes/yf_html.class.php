@@ -198,7 +198,7 @@ class yf_html {
 				$content = $v;
 				$v = array();
 			} else {
-				$content = $v['content'];
+				$content = $v['body'];
 			}
 			$name = $v['name'] ?: $k;
 			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
