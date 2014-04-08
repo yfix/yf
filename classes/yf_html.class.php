@@ -145,17 +145,21 @@ class yf_html {
 	/**
 	*/
 	function modal ($extra = array()) {
-		$def_style = $extra['inline'] ? 'position: relative; top: auto; left: auto; right: auto; margin: 0 auto 20px; z-index: 1; max-width: 100%;' : '';
+		$def_style = $extra['inline'] ? 'position: relative; top: auto; left: auto; right: auto; bottom: auto; margin: 0 auto 20px; z-index: 1; max-width: 100%; display: block; overflow-y: auto;' : '';
 		$extra['style'] = $extra['style'] ?: $def_style;
 		return '
 			<div class="modal" style="'.$extra['style'].'">
-				<div class="modal-header">'
-					.($extra['show_close'] ? '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' : '')
-					.($extra['header'] ? '<h3>'.$extra['header'].'</h3>' : '')
-				.'</div>
-				<div class="modal-body">'.$extra['body'].'</div>'
-				.($extra['footer'] ? '<div class="modal-footer">'.$extra['footer'].'</div>' : '')
-			.'</div>';
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">'
+							.($extra['show_close'] ? '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' : '')
+							.($extra['header'] ? '<h3>'.$extra['header'].'</h3>' : '')
+						.'</div>
+						<div class="modal-body">'.$extra['body'].'</div>'
+						.($extra['footer'] ? '<div class="modal-footer">'.$extra['footer'].'</div>' : '').'
+					</div>
+				</div>
+			</div>';
 	}
 
 	/**
