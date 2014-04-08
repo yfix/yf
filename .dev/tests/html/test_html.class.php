@@ -133,7 +133,18 @@ class test_html {
 
 	/***/
 	function accordion() {
-		return _class('html')->accordion($this->data, array('selected' => 'third', 'class_head' => 'alert-info', 'class' => 'span4'));
+		$data = $this->data;
+		$data['first'] = array(
+			'body'	=> $data['first'],
+			'class_group'	=> 'panel-info',
+			'class_head'	=> 'alert-info',
+		);
+		$data['second'] = array(
+			'body'	=> $data['second'],
+			'class_group'	=> 'panel-danger',
+			'class_head'	=> 'alert-error',
+		);
+		return _class('html')->accordion($data, array('selected' => 'third', 'class' => 'span4 col-lg-4'));
 	}
 
 	/***/
@@ -217,13 +228,13 @@ class test_html {
 		return _class('html')->alert(array(
 			'head'	=> 'Oh snap! You got an error!',
 			'body'	=> '<p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
-				<p><a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a></p>',
+				<p><a class="btn btn-danger btn-default" href="#">Take this action</a> <a class="btn btn-default" href="#">Or do this</a></p>',
 		))
 		. _class('html')->alert(array(
 			'alert'	=> 'info',
 			'head'	=> 'Oh snap! You got an error!',
 			'body'	=> '<p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
-				<p><a class="btn btn-danger" href="#">Take this action</a> <a class="btn" href="#">Or do this</a></p>',
+				<p><a class="btn btn-danger btn-default" href="#">Take this action</a> <a class="btn btn-default" href="#">Or do this</a></p>',
 		));
 	}
 
