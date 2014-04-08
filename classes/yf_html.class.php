@@ -212,17 +212,21 @@ class yf_html {
 			$class_head = $v['class_head'] ?: $extra['class_head'];
 			$class_body = $v['class_body'] ?: $extra['class_body'];
 
+			$is_bs3 = (conf('css_framework') == 'bs3');
+
 			$items[] = 
-				'<div class="accordion-group'.($class_group ? ' '.$class_group : '').'">
-					<div class="accordion-heading'.($class_head ? ' '.$class_head : '').'">
+				'<div class="accordion-group panel panel-default'.($class_group ? ' '.$class_group : '').'">
+					<div class="accordion-heading panel-heading'.($class_head ? ' '.$class_head : '').'">
+						'.($is_bs3 ? '<h4 class="panel-title">' : '').'
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$extra['id'].'" href="#'.$id.'">'.$desc.'</a>
+						'.($is_bs3 ? '</h4>' : '').'
 					</div>
-					<div id="'.$id.'" class="accordion-body collapse'.($is_selected ? ' in' : ''). ($class_body ? ' '.$class_body : '').'">
-						<div class="accordion-inner">'.$content.'</div>
+					<div id="'.$id.'" class="accordion-body panel-collapse collapse'.($is_selected ? ' in' : ''). ($class_body ? ' '.$class_body : '').'">
+						<div class="accordion-inner panel-body">'.$content.'</div>
 					</div>
 				</div>';
 		}
-		return '<div class="accordion'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
+		return '<div class="panel-group accordion'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
 	}
 
 	/**
