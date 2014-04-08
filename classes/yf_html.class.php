@@ -350,7 +350,7 @@ class yf_html {
 	function thumbnails ($data = array(), $extra = array()) {
 		$items = array();
 		$columns = (int)$extra['columns'] ?: 3;
-		$row_class = 'span'.round(12 / $columns);
+		$row_class = 'span'.round(12 / $columns).' col-lg-'.round(12 / $columns);
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$img_src = $v;
@@ -359,17 +359,19 @@ class yf_html {
 				$img_src = $v['img'];
 			}
 			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$tag = $this->is_bs3 ? 'div' : 'li';
 			$items[] = 
-				'<li class="'.$row_class. ($class_item ? ' '.$class_item : ''). ($v['style'] ? ' style="'.$v['style'].'"' : '').'">
+				'<'.$tag.' class="'.$row_class. ($class_item ? ' '.$class_item : ''). ($v['style'] ? ' style="'.$v['style'].'"' : '').'">
 					<div class="thumbnail">
 						<img alt="'._prepare_html($v['alt'] ?: $v['head']).'" src="'._prepare_html($img_src).'" />
 						'.(($v['head'] || $v['body']) ? '<div class="caption">'.($v['head'] ? '<h3>'._prepare_html($v['head']).'</h3>' : '').' '.$v['body'].'</div>' : '').'
 					</div>
-				</li>';
+				</'.$tag.'>';
 		}
 		$body = array();
+		$tag = $this->is_bs3 ? 'div' : 'ul';
 		foreach (array_chunk($items, $columns) as $_items) {
-			$body[] = '<ul class="thumbnails'.($extra['class'] ? ' '.$extra['class'] : '').'">'.implode(PHP_EOL, (array)$_items).'</ul>';
+			$body[] = '<'.$tag.' class="thumbnails'.($extra['class'] ? ' '.$extra['class'] : '').'">'.implode(PHP_EOL, (array)$_items).'</'.$tag.'>';
 		}
 		return implode(PHP_EOL, $body);
 	}
@@ -388,7 +390,8 @@ class yf_html {
 			}
 			$type = $v['type'] ?: $extra['type'];
 			$class_item = $v['class_item'] ?: $extra['class_item'];
-			$items[] = '<div class="bar bar-'.$type. ($class_item ? ' '.$class_item : '').'" style="width: '.$val.'%;'.($v['style'] ? ' '.$v['style'] : '').'"></div>';
+			$items[] = '<div class="progress-bar bar bar-'.$type.' progress-bar-'.$type. ($class_item ? ' '.$class_item : '')
+				.'" style="width: '.$val.'%;'.($v['style'] ? ' '.$v['style'] : '').'" role="progressbar"></div>';
 		}
 		return '<div class="progress'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
 	}
