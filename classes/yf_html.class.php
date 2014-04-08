@@ -38,6 +38,7 @@ class yf_html {
 	*/
 	function _init() {
 		$this->is_bs3 = (conf('css_framework') == 'bs3');
+		$this->rnd = substr(md5(microtime()), 0, 8);
 	}
 
 	/**
@@ -188,7 +189,7 @@ class yf_html {
 			}
 			$items[] = '<div class="tab-pane '.$css_class. ($class_body ? ' '.$class_body : '').'" id="'.$id.'">'.$content.'</div>';
 		}
-		$extra['id'] = $extra['id'] ?: 'tabs_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: 'tabs_'.$this->rnd;
 		$body .= $headers ? '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL : '';
 		$body .= '<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$items).'</div>';
 		return $body;
@@ -198,7 +199,7 @@ class yf_html {
 	*/
 	function accordion ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$content = $v;
@@ -238,7 +239,7 @@ class yf_html {
 	function carousel ($data = array(), $extra = array()) {
 		$items = array();
 		$headers = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$img_src = $v;
@@ -265,10 +266,10 @@ class yf_html {
 				</div>';
 		}
 		$controls = '
-			<a class="left carousel-control" href="#'.$extra['id'].'" data-slide="prev">‹</a>
-			<a class="right carousel-control" href="#'.$extra['id'].'" data-slide="next">›</a>
+			<a class="left carousel-control" href="#'.$extra['id'].'" data-slide="prev"><span class="icon icon-chevron-left"></span></a>
+			<a class="right carousel-control" href="#'.$extra['id'].'" data-slide="next"><span class="icon icon-chevron-right"></span></a>
 		';
-		return '<div id="'.$extra['id'].'" class="carousel slide'.($extra['class'] ? ' '.$extra['class'] : '').'">
+		return '<div id="'.$extra['id'].'" class="carousel slide'.($extra['class'] ? ' '.$extra['class'] : '').'" data-ride="carousel">
 				<ol class="carousel-indicators">'.implode(PHP_EOL, $headers).'</ol>
 				<div class="carousel-inner">'.implode(PHP_EOL, $items).'</div>
 				'.(!$extra['no_controls'] ? $controls : '').'
@@ -297,7 +298,7 @@ class yf_html {
 	*/
 	function navbar ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$brand = '';
 		if (isset($data['brand'])) {
 			$b = $data['brand'];
@@ -327,7 +328,7 @@ class yf_html {
 	*/
 	function breadcrumbs ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$divider = $extra['divider'] ?: '/';
 		$len = count($data);
 		$data = _prepare_html($data);
@@ -376,7 +377,7 @@ class yf_html {
 	/**
 	*/
 	function progress_bar ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$items = array();
 		foreach ((array)$data as $v) {
 			if (!is_array($v)) {
@@ -395,7 +396,7 @@ class yf_html {
 	/**
 	*/
 	function pagination ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		if (isset($data['prev'])) {
 			$prev = $data['prev'];
 			unset($data['prev']);
@@ -421,7 +422,7 @@ class yf_html {
 	/**
 	*/
 	function panel ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		return 
 			'<div class="panel panel-primary'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
 				<div class="panel-heading">
@@ -434,14 +435,14 @@ class yf_html {
 	/**
 	*/
 	function jumbotron ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		return '<div class="jumbotron'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><h1>'.$data['head'].'</h1>'.$data['body'].'</div>';
 	}
 
 	/**
 	*/
 	function well ($body = '', $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		if (!$extra['class']) {
 			$extra['class'] = 'well-lg';
 		}
@@ -451,7 +452,7 @@ class yf_html {
 	/**
 	*/
 	function list_group ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$items = array();
 		foreach ((array)$data as $v) {
 			if (!is_array($v)) {
@@ -470,7 +471,7 @@ class yf_html {
 	/**
 	*/
 	function media_objects ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
 		}
@@ -504,7 +505,7 @@ class yf_html {
 	/**
 	*/
 	function menu ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
 		}
@@ -555,7 +556,7 @@ class yf_html {
 	/**
 	*/
 	function grid ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$rows = array();
 		$ul_opened = false;
 		foreach ((array)$data as $id => $row) {
@@ -571,7 +572,7 @@ class yf_html {
 				if (!$col) {
 					$col = $row_col;
 				}
-				$items[] = '<div class="span'.$col.($class ? ' '.$class : '').'">'.$body.'</div>';
+				$items[] = '<div class="span'.$col.' col-lg-'.$col.($class ? ' '.$class : '').'">'.$body.'</div>';
 			}
 			$rows[] = '<div class="row-fluid show-grid">'.implode(PHP_EOL, $items).'</div>';
 		}
