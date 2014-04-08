@@ -291,64 +291,76 @@ class yf_manage_shop_products{
 		exit(); // To prevent printing additional debug info later and break JS
 	}
 
-	function category_search_autocomplete () {
+	function _search_autocomplete( $options = array() ) {
 		main()->NO_GRAPHICS = true;
+		// prepare options
+		$_ = &$options;
+		$table = $_[ 'table' ];
+		$where = $_[ 'where' ];
+		if( empty( $table ) ) { return( false ); }
+		// get search words
 		if( empty( $_GET[ 'search_word' ] ) ) { return false; }
-		$sql_table  = db( 'sys_category_items' );
-		$sql_cat_id = _class( 'cats' )->_get_cat_id_by_name( 'shop_cats' );
-		$sql_word   = '%' . _es( $_GET[ 'search_word' ] ) . '%';
+		$sql_words = mb_split( '\s', _es( $_GET[ 'search_word' ] ) );
+		// prepare search ids
+		$ids = array();
+		foreach( $sql_words as $i => $w ) {
+			$id = (int)$w;
+			$sql_words[ $i ] = mb_strtolower( $w );
+			if( $id < 1 ) { continue; }
+			$ids[ $id ] = $id;
+		}
+		$sql_ids = '';
+		if( !empty( $ids ) ) {
+			$sql_ids = 'OR id IN(' . implode( ',', $ids ) . ')';
+		}
+		// prepare search words
+		$sql_words  = '.*' . implode( '.*', $sql_words ) . '.*';
+		// prepare where
+		if( !empty( $where ) ) {
+			$sql_where = $where. ' AND';
+		}
+		// prepare sql
+		$sql_table = db( $table );
 		$sql = sprintf('
-			SELECT id, name FROM %s WHERE cat_id = %u AND (
-				name LIKE "%s" OR
-				id LIKE "%s"
+			SELECT id, name FROM %s
+			WHERE %s (
+				LOWER( name ) RLIKE "%s"
+				%s
 			) LIMIT 20
 			'
 			, $sql_table
-			, $sql_cat_id
-			, $sql_word, $sql_word
+			, $sql_where
+			, $sql_words
+			, $sql_ids
 		);
 		$result = db()->get_all( $sql );
 		if( empty( $result ) ) { return( null ); }
-		foreach((array)$result as $k){
-			$return_array[] = array(
-				'id' => $k['id'],
-				'text' => '['.$k['id'].'] '.$k['name'],
+		$json = array();
+		foreach( $result as $i ){
+			$id = (int)$i[ 'id' ];
+			$text = "[$id] $i[name]";
+			$json[] = array(
+				'id'   => $id,
+				'text' => $text,
 			);
 		}
-		print json_encode($return_array);
-		exit(); // To prevent printing additional debug info later and break JS
+		echo( json_encode( $json ) );
+		exit();
+	}
+
+	function category_search_autocomplete () {
+		$options = array(
+			'table' => 'sys_category_items',
+			'where' => 'cat_id = ' . (int)_class( 'cats' )->_get_cat_id_by_name( 'shop_cats' ),
+		);
+		return( $this->_search_autocomplete( $options ) );
 	}
 
 	function product_search_autocomplete () {
-		main()->NO_GRAPHICS = true;
-		if (!$_GET['search_word']) {
-			return false;
-		}
-		$word = common()->sphinx_escape_string($_GET['search_word']);
-//		$word = str_replace("_", " ", common()->_propose_url_from_name($word));
-/*		$result = common()->sphinx_query("
-			SELECT product_id,name
-			FROM products
-			WHERE MATCH ('@name ".$word."*')
-			LIMIT 20"
-		); */
-		$result = db()->get_all("
-			SELECT `id`,`name` FROM `".db('shop_products')."` WHERE
-				`name` LIKE '%"._es($word)."%' OR
-				`id` LIKE '%"._es($word)."%'
-			LIMIT 20
-		");
-		if (!$result) {
-			return false;
-		}
-		foreach((array)$result as $k){
-			$return_array[] = array(
-				'id' => $k['id'],
-				'text' => '['.$k['id'].'] '.$k['name'],
-			);
-		}
-		print json_encode($return_array);
-		exit(); // To prevent printing additional debug info later and break JS
+		$options = array(
+			'table' => 'shop_products',
+		);
+		return( $this->_search_autocomplete( $options ) );
 	}
 
 }
