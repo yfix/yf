@@ -35,6 +35,12 @@ class yf_html {
 	}
 
 	/**
+	*/
+	function _init() {
+		$this->is_bs3 = (conf('css_framework') == 'bs3');
+	}
+
+	/**
 	* Get and sort items ordered array (recursively)
 	*/
 	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0) {
@@ -212,14 +218,12 @@ class yf_html {
 			$class_head = $v['class_head'] ?: $extra['class_head'];
 			$class_body = $v['class_body'] ?: $extra['class_body'];
 
-			$is_bs3 = (conf('css_framework') == 'bs3');
-
 			$items[] = 
 				'<div class="accordion-group panel panel-default'.($class_group ? ' '.$class_group : '').'">
 					<div class="accordion-heading panel-heading'.($class_head ? ' '.$class_head : '').'">
-						'.($is_bs3 ? '<h4 class="panel-title">' : '').'
+						'.($this->is_bs3 ? '<h4 class="panel-title">' : '').'
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$extra['id'].'" href="#'.$id.'">'.$desc.'</a>
-						'.($is_bs3 ? '</h4>' : '').'
+						'.($this->is_bs3 ? '</h4>' : '').'
 					</div>
 					<div id="'.$id.'" class="accordion-body panel-collapse collapse'.($is_selected ? ' in' : ''). ($class_body ? ' '.$class_body : '').'">
 						<div class="accordion-inner panel-body">'.$content.'</div>
@@ -331,10 +335,13 @@ class yf_html {
 			$is_last = (++$i == $len);
 			$class_item = $v['class_item'] ?: $extra['class_item'];
 			$items[] = '<li class="'.($is_last ? ' active' : ''). ($class_item ? ' '.$class_item : '').'">
-				'.(($is_last || !$v['link']) ? $v['name'] : '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a> <span class="divider">'.$divider.'</span>').'
+				'.(($is_last || !$v['link']) ? $v['name'] 
+					: '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a>'.(!$this->is_bs3 ? ' <span class="divider">'.$divider.'</span>' : '')
+				).'
 			</li>';
 		}
-		return '<ul class="breadcrumb'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"">'.implode(PHP_EOL, (array)$items).'</ul>';
+		$tag = $this->is_bs3 ? 'ol' : 'ul';
+		return '<'.$tag.' class="breadcrumb'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"">'.implode(PHP_EOL, (array)$items).'</'.$tag.'>';
 	}
 
 	/**
