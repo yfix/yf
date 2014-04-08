@@ -307,7 +307,7 @@ class yf_html {
 		if (isset($data['brand'])) {
 			$b = $data['brand'];
 			unset($data['brand']);
-			$brand = '<a class="brand'.($b['class'] ? ' '.$b['class'] : '').'" href="'.$b['link'].'" title="'.$b['name'].'">'.$b['name'].'</a>';
+			$brand = '<a class="brand navbar-brand'.($b['class'] ? ' '.$b['class'] : '').'" href="'.$b['link'].'" title="'.$b['name'].'">'.$b['name'].'</a>';
 		}
 		$data = _prepare_html($data);
 		foreach ((array)$data as $k => $v) {
@@ -320,10 +320,10 @@ class yf_html {
 			$items[] = '<li class="'.($is_selected ? ' active' : ''). ($class_item ? ' '.$class_item : '').'"><a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a></li>';
 		}
 		return 
-			'<div class="navbar'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
-				<div class="navbar-inner">'
+			'<div class="navbar navbar-default'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
+				<div class="navbar-inner navbar-header">'
 					.$brand
-					.'<ul class="nav">'.implode(PHP_EOL, (array)$items).'</a>
+					.'<ul class="nav navbar-nav">'.implode(PHP_EOL, (array)$items).'</a>
 				</div>
 			</div>';
 	}
@@ -557,8 +557,8 @@ class yf_html {
 				$items[] = $tmp;
 			}
 		}
-		return '<div class="navbar'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
-					<div class="navbar-inner">
+		return '<div class="navbar navbar-default'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
+					<div class="navbar-inner navbar-header">
 						<ul class="nav navbar-nav">'.implode(PHP_EOL, (array)$items).'</ul>
 					</div>
 				</div>';
