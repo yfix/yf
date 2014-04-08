@@ -35,6 +35,13 @@ class yf_html {
 	}
 
 	/**
+	*/
+	function _init() {
+		$this->is_bs3 = (conf('css_framework') == 'bs3');
+		$this->rnd = substr(md5(microtime()), 0, 8);
+	}
+
+	/**
 	* Get and sort items ordered array (recursively)
 	*/
 	function _recursive_sort_items($items = array(), $skip_item_id = 0, $parent_id = 0) {
@@ -138,17 +145,21 @@ class yf_html {
 	/**
 	*/
 	function modal ($extra = array()) {
-		$def_style = $extra['inline'] ? 'position: relative; top: auto; left: auto; right: auto; margin: 0 auto 20px; z-index: 1; max-width: 100%;' : '';
+		$def_style = $extra['inline'] ? 'position: relative; top: auto; left: auto; right: auto; bottom: auto; margin: 0 auto 20px; z-index: 1; max-width: 100%; display: block; overflow-y: auto;' : '';
 		$extra['style'] = $extra['style'] ?: $def_style;
 		return '
 			<div class="modal" style="'.$extra['style'].'">
-				<div class="modal-header">'
-					.($extra['show_close'] ? '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' : '')
-					.($extra['header'] ? '<h3>'.$extra['header'].'</h3>' : '')
-				.'</div>
-				<div class="modal-body">'.$extra['body'].'</div>'
-				.($extra['footer'] ? '<div class="modal-footer">'.$extra['footer'].'</div>' : '')
-			.'</div>';
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">'
+							.($extra['show_close'] ? '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' : '')
+							.($extra['header'] ? '<h3>'.$extra['header'].'</h3>' : '')
+						.'</div>
+						<div class="modal-body">'.$extra['body'].'</div>'
+						.($extra['footer'] ? '<div class="modal-footer">'.$extra['footer'].'</div>' : '').'
+					</div>
+				</div>
+			</div>';
 	}
 
 	/**
@@ -182,7 +193,7 @@ class yf_html {
 			}
 			$items[] = '<div class="tab-pane '.$css_class. ($class_body ? ' '.$class_body : '').'" id="'.$id.'">'.$content.'</div>';
 		}
-		$extra['id'] = $extra['id'] ?: 'tabs_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: 'tabs_'.$this->rnd;
 		$body .= $headers ? '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL : '';
 		$body .= '<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$items).'</div>';
 		return $body;
@@ -192,13 +203,13 @@ class yf_html {
 	*/
 	function accordion ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$content = $v;
 				$v = array();
 			} else {
-				$content = $v['content'];
+				$content = $v['body'];
 			}
 			$name = $v['name'] ?: $k;
 			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
@@ -213,16 +224,18 @@ class yf_html {
 			$class_body = $v['class_body'] ?: $extra['class_body'];
 
 			$items[] = 
-				'<div class="accordion-group'.($class_group ? ' '.$class_group : '').'">
-					<div class="accordion-heading'.($class_head ? ' '.$class_head : '').'">
+				'<div class="accordion-group panel panel-default'.($class_group ? ' '.$class_group : '').'">
+					<div class="accordion-heading panel-heading'.($class_head ? ' '.$class_head : '').'">
+						'.($this->is_bs3 ? '<h4 class="panel-title">' : '').'
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$extra['id'].'" href="#'.$id.'">'.$desc.'</a>
+						'.($this->is_bs3 ? '</h4>' : '').'
 					</div>
-					<div id="'.$id.'" class="accordion-body collapse'.($is_selected ? ' in' : ''). ($class_body ? ' '.$class_body : '').'">
-						<div class="accordion-inner">'.$content.'</div>
+					<div id="'.$id.'" class="accordion-body panel-collapse collapse'.($is_selected ? ' in' : ''). ($class_body ? ' '.$class_body : '').'">
+						<div class="accordion-inner panel-body">'.$content.'</div>
 					</div>
 				</div>';
 		}
-		return '<div class="accordion'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
+		return '<div class="panel-group accordion'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
 	}
 
 	/**
@@ -230,7 +243,7 @@ class yf_html {
 	function carousel ($data = array(), $extra = array()) {
 		$items = array();
 		$headers = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$img_src = $v;
@@ -257,10 +270,10 @@ class yf_html {
 				</div>';
 		}
 		$controls = '
-			<a class="left carousel-control" href="#'.$extra['id'].'" data-slide="prev">‹</a>
-			<a class="right carousel-control" href="#'.$extra['id'].'" data-slide="next">›</a>
+			<a class="left carousel-control" href="#'.$extra['id'].'" data-slide="prev"><span class="icon icon-chevron-left"></span></a>
+			<a class="right carousel-control" href="#'.$extra['id'].'" data-slide="next"><span class="icon icon-chevron-right"></span></a>
 		';
-		return '<div id="'.$extra['id'].'" class="carousel slide'.($extra['class'] ? ' '.$extra['class'] : '').'">
+		return '<div id="'.$extra['id'].'" class="carousel slide'.($extra['class'] ? ' '.$extra['class'] : '').'" data-ride="carousel">
 				<ol class="carousel-indicators">'.implode(PHP_EOL, $headers).'</ol>
 				<div class="carousel-inner">'.implode(PHP_EOL, $items).'</div>
 				'.(!$extra['no_controls'] ? $controls : '').'
@@ -289,12 +302,12 @@ class yf_html {
 	*/
 	function navbar ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$brand = '';
 		if (isset($data['brand'])) {
 			$b = $data['brand'];
 			unset($data['brand']);
-			$brand = '<a class="brand'.($b['class'] ? ' '.$b['class'] : '').'" href="'.$b['link'].'" title="'.$b['name'].'">'.$b['name'].'</a>';
+			$brand = '<a class="brand navbar-brand'.($b['class'] ? ' '.$b['class'] : '').'" href="'.$b['link'].'" title="'.$b['name'].'">'.$b['name'].'</a>';
 		}
 		$data = _prepare_html($data);
 		foreach ((array)$data as $k => $v) {
@@ -307,10 +320,10 @@ class yf_html {
 			$items[] = '<li class="'.($is_selected ? ' active' : ''). ($class_item ? ' '.$class_item : '').'"><a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a></li>';
 		}
 		return 
-			'<div class="navbar'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
-				<div class="navbar-inner">'
+			'<div class="navbar navbar-default'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
+				<div class="navbar-inner navbar-header">'
 					.$brand
-					.'<ul class="nav">'.implode(PHP_EOL, (array)$items).'</a>
+					.'<ul class="nav navbar-nav">'.implode(PHP_EOL, (array)$items).'</a>
 				</div>
 			</div>';
 	}
@@ -319,7 +332,7 @@ class yf_html {
 	*/
 	function breadcrumbs ($data = array(), $extra = array()) {
 		$items = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$divider = $extra['divider'] ?: '/';
 		$len = count($data);
 		$data = _prepare_html($data);
@@ -327,10 +340,13 @@ class yf_html {
 			$is_last = (++$i == $len);
 			$class_item = $v['class_item'] ?: $extra['class_item'];
 			$items[] = '<li class="'.($is_last ? ' active' : ''). ($class_item ? ' '.$class_item : '').'">
-				'.(($is_last || !$v['link']) ? $v['name'] : '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a> <span class="divider">'.$divider.'</span>').'
+				'.(($is_last || !$v['link']) ? $v['name'] 
+					: '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a>'.(!$this->is_bs3 ? ' <span class="divider">'.$divider.'</span>' : '')
+				).'
 			</li>';
 		}
-		return '<ul class="breadcrumb'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"">'.implode(PHP_EOL, (array)$items).'</ul>';
+		$tag = $this->is_bs3 ? 'ol' : 'ul';
+		return '<'.$tag.' class="breadcrumb'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"">'.implode(PHP_EOL, (array)$items).'</'.$tag.'>';
 	}
 
 	/**
@@ -338,7 +354,7 @@ class yf_html {
 	function thumbnails ($data = array(), $extra = array()) {
 		$items = array();
 		$columns = (int)$extra['columns'] ?: 3;
-		$row_class = 'span'.round(12 / $columns);
+		$row_class = 'span'.round(12 / $columns).' col-lg-'.round(12 / $columns);
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$img_src = $v;
@@ -347,17 +363,19 @@ class yf_html {
 				$img_src = $v['img'];
 			}
 			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$tag = $this->is_bs3 ? 'div' : 'li';
 			$items[] = 
-				'<li class="'.$row_class. ($class_item ? ' '.$class_item : ''). ($v['style'] ? ' style="'.$v['style'].'"' : '').'">
+				'<'.$tag.' class="'.$row_class. ($class_item ? ' '.$class_item : ''). ($v['style'] ? ' style="'.$v['style'].'"' : '').'">
 					<div class="thumbnail">
 						<img alt="'._prepare_html($v['alt'] ?: $v['head']).'" src="'._prepare_html($img_src).'" />
 						'.(($v['head'] || $v['body']) ? '<div class="caption">'.($v['head'] ? '<h3>'._prepare_html($v['head']).'</h3>' : '').' '.$v['body'].'</div>' : '').'
 					</div>
-				</li>';
+				</'.$tag.'>';
 		}
 		$body = array();
+		$tag = $this->is_bs3 ? 'div' : 'ul';
 		foreach (array_chunk($items, $columns) as $_items) {
-			$body[] = '<ul class="thumbnails'.($extra['class'] ? ' '.$extra['class'] : '').'">'.implode(PHP_EOL, (array)$_items).'</ul>';
+			$body[] = '<'.$tag.' class="thumbnails'.($extra['class'] ? ' '.$extra['class'] : '').'">'.implode(PHP_EOL, (array)$_items).'</'.$tag.'>';
 		}
 		return implode(PHP_EOL, $body);
 	}
@@ -365,7 +383,7 @@ class yf_html {
 	/**
 	*/
 	function progress_bar ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$items = array();
 		foreach ((array)$data as $v) {
 			if (!is_array($v)) {
@@ -376,7 +394,8 @@ class yf_html {
 			}
 			$type = $v['type'] ?: $extra['type'];
 			$class_item = $v['class_item'] ?: $extra['class_item'];
-			$items[] = '<div class="bar bar-'.$type. ($class_item ? ' '.$class_item : '').'" style="width: '.$val.'%;'.($v['style'] ? ' '.$v['style'] : '').'"></div>';
+			$items[] = '<div class="progress-bar bar bar-'.$type.' progress-bar-'.$type. ($class_item ? ' '.$class_item : '')
+				.'" style="width: '.$val.'%;'.($v['style'] ? ' '.$v['style'] : '').'" role="progressbar"></div>';
 		}
 		return '<div class="progress'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</div>';
 	}
@@ -384,7 +403,7 @@ class yf_html {
 	/**
 	*/
 	function pagination ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		if (isset($data['prev'])) {
 			$prev = $data['prev'];
 			unset($data['prev']);
@@ -404,13 +423,17 @@ class yf_html {
 		if ($next) {
 			$items[] = '<li><a href="'.$next.'">'.t('Next').'</a></li>';
 		}
-		return '<div class="pagination'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><ul>'.implode(PHP_EOL, $items).'</ul></div>';
+		if ($this->is_bs3) {
+			return '<div><ul class="pagination'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, $items).'</ul></div>';
+		} else {
+			return '<div class="pagination'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><ul>'.implode(PHP_EOL, $items).'</ul></div>';
+		}
 	}
 
 	/**
 	*/
 	function panel ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		return 
 			'<div class="panel panel-primary'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
 				<div class="panel-heading">
@@ -423,14 +446,14 @@ class yf_html {
 	/**
 	*/
 	function jumbotron ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		return '<div class="jumbotron'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><h1>'.$data['head'].'</h1>'.$data['body'].'</div>';
 	}
 
 	/**
 	*/
 	function well ($body = '', $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		if (!$extra['class']) {
 			$extra['class'] = 'well-lg';
 		}
@@ -440,7 +463,7 @@ class yf_html {
 	/**
 	*/
 	function list_group ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$items = array();
 		foreach ((array)$data as $v) {
 			if (!is_array($v)) {
@@ -459,7 +482,7 @@ class yf_html {
 	/**
 	*/
 	function media_objects ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
 		}
@@ -493,7 +516,7 @@ class yf_html {
 	/**
 	*/
 	function menu ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
 		}
@@ -534,8 +557,8 @@ class yf_html {
 				$items[] = $tmp;
 			}
 		}
-		return '<div class="navbar'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
-					<div class="navbar-inner">
+		return '<div class="navbar navbar-default'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
+					<div class="navbar-inner navbar-header">
 						<ul class="nav navbar-nav">'.implode(PHP_EOL, (array)$items).'</ul>
 					</div>
 				</div>';
@@ -544,7 +567,7 @@ class yf_html {
 	/**
 	*/
 	function grid ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.substr(md5(microtime()), 0, 8);
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$rows = array();
 		$ul_opened = false;
 		foreach ((array)$data as $id => $row) {
@@ -560,7 +583,7 @@ class yf_html {
 				if (!$col) {
 					$col = $row_col;
 				}
-				$items[] = '<div class="span'.$col.($class ? ' '.$class : '').'">'.$body.'</div>';
+				$items[] = '<div class="span'.$col.' col-lg-'.$col.($class ? ' '.$class : '').'">'.$body.'</div>';
 			}
 			$rows[] = '<div class="row-fluid show-grid">'.implode(PHP_EOL, $items).'</div>';
 		}

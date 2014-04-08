@@ -80,7 +80,7 @@ $(function(){
 			return true;
 		}
 		$.get(_obj.attr("href"), function(data) {
-			$('<div class="modal hide fade" id="edit_link_modal"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></div>' + data + '</div>').modal({
+			$('<div class="modal hide fade" id="edit_link_modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></div>' + data + '</div></div></div>').modal({
 				keyboard: true,
 				backdrop: true,
 				show: true
