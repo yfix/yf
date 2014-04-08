@@ -80,8 +80,14 @@ class test_html {
 
 	/***/
 	function show() {
-		require_js('//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js?autoload=true&amp;skin=desert');
-		require_css('<style>pre.prettyprint { font-weight: bold; }</style>');
+#		require_js('//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js?autoload=true&amp;skin=desert');
+#		require_css('<style>pre.prettyprint { font-weight: bold; }</style>');
+
+		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
+		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
+		require_js('<script>hljs.initHighlightingOnLoad();</script>');
+		require_css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
+		require_css('<style>pre.prettyprint { background-color: transparent; border: 0;} pre.prettyprint code { font-family: monospace; }</style>');
 
 		$url = process_url('./?object='.$_GET['object']);
 		$methods = get_class_methods($this);
@@ -99,8 +105,8 @@ class test_html {
 						'.($target_source['body'] ? '<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("html")-&gt;'.$name.'() source</button>' : '').'
 						'.($target_source['body'] ? '<a target="_blank" class="btn btn-primary btn-small btn-sm" href="https://github.com/yfix/yf/tree/master/'.substr($target_source['file'], strlen(YF_PATH)).'#L'.$target_source['line_start'].'">Github <i class="icon icon-github"></i></a>' : '').'
 					</h1>
-					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php">'.(_prepare_html($self_source['body'])).'</pre></div>
-					'.($target_source['body'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php">'.(_prepare_html($target_source['body'])).'</pre></div>' : '').'
+					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($self_source['body'])).'</code></pre></div>
+					'.($target_source['body'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['body'])).'</code></pre></div>' : '').'
 					<div id="func_out_'.$name.'" class="row well well-lg" style="margin-left:0;">'.$this->$name().'</div>
 				</div>';
 		}
