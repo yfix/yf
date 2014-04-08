@@ -9,10 +9,7 @@
 	{{-- AngularStrap was initially written to provide AngularJS wrapping directives for Twitter Bootstrap --}}
 	<script src="//rawgithub.com/mgcrea/angular-strap/master/dist/angular-strap{js_min}.js" class="yf_core"></script>
 	<script src="//rawgithub.com/mgcrea/angular-strap/master/dist/angular-strap.tpl{js_min}.js" class="yf_core"></script>
-    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/static/styles/angular-motion{js_min}.css">
-    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/static/styles/bootstrap-additions{js_min}.css">
-    {{-- <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/static/styles/libraries{js_min}.css"> --}}
-    {{-- <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/static/styles/main{js_min}.css"> --}}
+    <link href="//rawgithub.com/mgcrea/angular-motion/master/dist/angular-motion{js_min}.css" rel="stylesheet">
 
 {{--
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui{js_min}.js" class="yf_core"></script>
