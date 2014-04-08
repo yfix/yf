@@ -416,7 +416,11 @@ class yf_html {
 		if ($next) {
 			$items[] = '<li><a href="'.$next.'">'.t('Next').'</a></li>';
 		}
-		return '<div class="pagination'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><ul>'.implode(PHP_EOL, $items).'</ul></div>';
+		if ($this->is_bs3) {
+			return '<div><ul class="pagination'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, $items).'</ul></div>';
+		} else {
+			return '<div class="pagination'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><ul>'.implode(PHP_EOL, $items).'</ul></div>';
+		}
 	}
 
 	/**
