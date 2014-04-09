@@ -36,7 +36,8 @@ abstract class yf_oauth_driver2 {
 		}
 		$this->provider = substr($called_class, strlen('oauth_driver_')); // yf_oauth_driver_vk, yf_oauth_driver2
 		if (!$config[$this->provider] || !$config[$this->provider]['client_id'] || !$config[$this->provider]['client_secret']) {
-			return '<h1 class="text-error">Error: no config client_id and client_secret for provider: '.$this->provider.'</h1>';
+			trigger_error('Error: no config client_id and client_secret for provider: '.$this->provider, E_USER_WARNING);
+			return false;
 		}
 		$this->redirect_uri = _force_get_url(array('object' => $_GET['object'], 'action' => $_GET['action'], 'id' => $_GET['id']));
 		if ($this->redirect_uri_force_https) {
