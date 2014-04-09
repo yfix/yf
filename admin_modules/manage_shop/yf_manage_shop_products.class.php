@@ -298,14 +298,14 @@ class yf_manage_shop_products{
 		$table = $_[ 'table' ];
 		$where = $_[ 'where' ];
 		if( empty( $table ) ) { return( false ); }
-		// get search words
+		// prepare search words
 		if( empty( $_GET[ 'search_word' ] ) ) { return false; }
-		$sql_words = mb_split( '\s', _es( $_GET[ 'search_word' ] ) );
+		$sql_words = mb_split( '\s', mb_strtolower( _es( $_GET[ 'search_word' ] ) ) );
+		$sql_words  = '.*' . implode( '.*', $sql_words ) . '.*';
 		// prepare search ids
 		$ids = array();
 		foreach( $sql_words as $i => $w ) {
 			$id = (int)$w;
-			$sql_words[ $i ] = mb_strtolower( $w );
 			if( $id < 1 ) { continue; }
 			$ids[ $id ] = $id;
 		}
@@ -313,12 +313,25 @@ class yf_manage_shop_products{
 		if( !empty( $ids ) ) {
 			$sql_ids = 'OR id IN(' . implode( ',', $ids ) . ')';
 		}
-		// prepare search words
-		$sql_words  = '.*' . implode( '.*', $sql_words ) . '.*';
-		// prepare where
-		if( !empty( $where ) ) {
-			$sql_where = $where. ' AND';
+		// collect sql where
+		$sql_where = array();
+		// prepare exclude ids
+		if( !empty( $_GET[ 'exclude' ] ) ) {
+			$exclude = $_GET[ 'exclude' ];
+			$ids = array();
+			foreach( $exclude as $id ) {
+				$id = (int)$id;
+				if( $id < 1 ) { continue; }
+				$ids[ $id ] = $id;
+			}
+			if( !empty( $ids ) ) {
+				$sql_where[] = 'id NOT IN(' . implode( ',', $ids ) . ')';
+			}
 		}
+		// prepare where
+		if( !empty( $where ) ) { $sql_where[] = $where; }
+		if( !empty( $sql_where ) ) { $sql_where = implode( ' AND ', $sql_where ) . ' AND'; }
+		else { $sql_where = ''; }
 		// prepare sql
 		$sql_table = db( $table );
 		$sql = sprintf('

@@ -11,8 +11,6 @@ class yf_core_js {
 // TODO: add support for sub-arrays and params
 		'jquery'	=> '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js',
 		'jquery-ui'	=> '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js',
-		'angular'	=> '//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js',
-		'angular-ui'=> '//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js',
 		'bs2'		=> '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js',
 		'bs3'		=> '//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js',
 #		'html5shiv'	=> '<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js" class="yf_core"></script><![endif]-->',
