@@ -27,7 +27,7 @@ class func_check_ip_test extends PHPUnit_Framework_TestCase {
 			'172.19.177.198',
 			'172.44.141.63',
 		);
-		foreach ((array)$test_array as $test_ip => $expect_ip){
+		foreach ((array)$test_array as $test_ip => $expect_ip) {
 			$_SERVER['HTTP_X_FORWARDED_FOR'] = $key;
 // TODO
 #			$this->assertEquals($expect_ip, common()->_check_ip($test_ip, $ignore_ips, 'GEO'));

@@ -13,7 +13,7 @@ class tpl_driver_yf_include_compiled2_test extends tpl_abstract {
 // TODO: we need to avoid this double execution
 		// Needed 2 times to correctly compile templates
 		$result = self::_tpl( '{include("unittest_include2")}', array('key1' => 'val1') );
-		$result = self::_tpl( '{include("unittest_include2")}', array('key1' => 'val1') );
+#		$result = self::_tpl( '{include("unittest_include2")}', array('key1' => 'val1') );
 		$this->assertEquals('Inherited var: val1', $result);
 	}
 	public function test_112() {
@@ -21,7 +21,7 @@ class tpl_driver_yf_include_compiled2_test extends tpl_abstract {
 // TODO: we need to avoid this double execution
 		// Needed 2 times to correctly compile templates
 		$result = self::_tpl( '{include("unittest_include3",var2=42)}', array('key1' => 'val1') );
-		$result = self::_tpl( '{include("unittest_include3",var2=42)}', array('key1' => 'val1') );
+#		$result = self::_tpl( '{include("unittest_include3",var2=42)}', array('key1' => 'val1') );
 		$this->assertEquals('Inherited var: val1, passed var: 42', $result);
 	}
 	public function test_113() {
