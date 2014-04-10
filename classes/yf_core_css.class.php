@@ -74,6 +74,10 @@ class yf_core_css {
 		if (!is_array($content)) {
 			$content = array($content);
 		}
+		if (is_array($force_type)) {
+			$params = (array)$params + $force_type;
+			$force_type = '';
+		}
 		foreach ($content as $_content) {
 			$_content = trim($_content);
 			if (!strlen($_content)) {
