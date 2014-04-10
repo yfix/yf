@@ -138,6 +138,8 @@ class yf_debug {
 		$body .= implode(PHP_EOL, $contents);
 		$body .= '</div>';
 
+// TODO: convert into _class('html')->tabs()
+
 		// DO NOT REMOVE!!! Needed to correct display template tags in debug output
 		$body = str_replace(array('{', '}'), array('&#123;', '&#125;'), $body);
 
@@ -270,8 +272,8 @@ class yf_debug {
 			$name = $db->DB_TYPE.' | '.$db->DB_USER.' | '.$db->DB_HOST. ($db->DB_PORT ? ':'.$db->DB_PORT : '').' | '.$db->DB_NAME;
 			$items[$name] = $this->_do_debug_db_connection_queries($db, $connect_trace);
 		}
-		$items['shutdown_queries'] = $this->_show_db_shutdown_queries();
-		$items['stats'] = $this->_show_db_stats();
+		$items['db_shutdown_queries'] = $this->_show_db_shutdown_queries();
+		$items['db_stats'] = $this->_show_db_stats();
 		return _class('html')->tabs($items, array('hide_empty' => 1));
 	}
 
