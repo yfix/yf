@@ -952,19 +952,6 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_other (&$params = array()) {
-		$items = array();
-		foreach (debug() as $k => $v) {
-			if (isset($this->_used_debug_datas[$k])) {
-				continue;
-			}
-			$items[$k] = $v;
-		}
-		return $this->_show_key_val_table($items);
-	}
-
-	/**
-	*/
 	function _debug_profiling (&$params = array()) {
 		$all_timings = main()->_timing;
 		if (!$all_timings) {
@@ -1012,6 +999,47 @@ class yf_debug {
 				continue;
 			}
 			$items[$module_name] = $module_obj->$hook_name($this);
+		}
+		return $this->_show_key_val_table($items);
+	}
+
+	/**
+	*/
+	function _debug_css (&$params = array()) {
+		$items = $this->_get_debug_data('core_css');
+		foreach ((array)$items as $k => $v) {
+			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
+#			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
+			unset($v['is_added']);
+			$items[$k] = array('id' => ++$i) + $v;
+		}
+#		$items = $this->_time_count_changes($items);
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'type')));
+	}
+
+	/**
+	*/
+	function _debug_js (&$params = array()) {
+		$items = $this->_get_debug_data('core_js');
+		foreach ((array)$items as $k => $v) {
+			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
+#			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
+			unset($v['is_added']);
+			$items[$k] = array('id' => ++$i) + $v;
+		}
+#		$items = $this->_time_count_changes($items);
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'type')));
+	}
+
+	/**
+	*/
+	function _debug_other (&$params = array()) {
+		$items = array();
+		foreach (debug() as $k => $v) {
+			if (isset($this->_used_debug_datas[$k])) {
+				continue;
+			}
+			$items[$k] = $v;
 		}
 		return $this->_show_key_val_table($items);
 	}
