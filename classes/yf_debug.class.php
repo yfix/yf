@@ -256,21 +256,23 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_db_queries () {
+	function _debug_db () {
 		if (!$this->_SHOW_DB_QUERY_LOG) {
 			return false;
 		}
-		$body = '';
+		$items = array();
 		$instances_trace = $this->_get_debug_data('db_instances_trace');
-		foreach ((array)$this->_get_debug_data('db_instances') as $k => $v) {
+		foreach ((array)$this->_get_debug_data('db_instances') as $k => $db) {
 			$connect_trace = array();
 			if (isset($instances_trace[$k])) {
 				$connect_trace = $instances_trace[$k];
 			}
-// TODO: use subtabs here for different db instances
-			$body .= $this->_do_debug_db_connection_queries($v, $connect_trace);
+			$name = $db->DB_TYPE.' | '.$db->DB_USER.' | '.$db->DB_HOST. ($db->DB_PORT ? ':'.$db->DB_PORT : '').' | '.$db->DB_NAME;
+			$items[$name] = $this->_do_debug_db_connection_queries($db, $connect_trace);
 		}
-		return $body;
+		$items['shutdown_queries'] = $this->_show_db_shutdown_queries();
+		$items['stats'] = $this->_show_db_stats();
+		return _class('html')->tabs($items, array('hide_empty' => 1));
 	}
 
 	/**
@@ -376,7 +378,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_db_shutdown () {
+	function _show_db_shutdown_queries () {
 		if (!$this->_SHOW_DB_QUERY_LOG) {
 			return '';
 		}
@@ -385,7 +387,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_db_stats () {
+	function _show_db_stats () {
 		if (!$this->_SHOW_DB_STATS) {
 			return '';
 		}
