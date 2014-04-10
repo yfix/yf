@@ -16,6 +16,10 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	/**
 	*/
 	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false) {
+		if (!function_exists('sqlite_open')) {
+			trigger_error('SQLite db driver require missing php extension sqlite', E_USER_ERROR);
+			return false;
+		}
 		$this->persistency = $persistency;
 		$this->user = $user;
 		$this->server = $server . (($port) ? ':' . $port : '');

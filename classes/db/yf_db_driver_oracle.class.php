@@ -35,6 +35,10 @@ class yf_db_driver_oracle extends yf_db_driver {
 	* Constructor
 	*/
 	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false) {
+		if (!function_exists('OCINLogon')) {
+			trigger_error('Oracle db driver require missing php extension OCI', E_USER_ERROR);
+			return false;
+		}
 		$this->persistency = $persistency;
 		$this->user = $user;
 		$this->password = $password;
