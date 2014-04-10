@@ -102,7 +102,11 @@ class yf_debug {
 			}
 			$name = substr($method, strlen('_debug_'));
 			$ts2 = microtime(true);
-			$content = $this->$method();
+			$content = $this->$method($method_params);
+			if ($method_params) {
+// TODO: support for callback params (title, desc, style, class, etc..)
+				$debug_params[$method] = $method_params;
+			}
 			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' secs';
 			$debug_contents[$name] = $content;
 		}
@@ -149,7 +153,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_DEBUG_YF () {
+	function _debug_DEBUG_YF (&$params = array()) {
 		if (!$this->_SHOW_SETTINGS) {
 			return '';
 		}
@@ -258,7 +262,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_db () {
+	function _debug_db (&$params = array()) {
 		if (!$this->_SHOW_DB_QUERY_LOG) {
 			return false;
 		}
@@ -406,7 +410,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_memcached () {
+	function _debug_memcached (&$params = array()) {
 		if (!$this->_SHOW_MEMCACHED_INFO) {
 			return '';
 		}
@@ -438,7 +442,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_stpls () {
+	function _debug_stpls (&$params = array()) {
 		if (!$this->_SHOW_STPLS) {
 			return '';
 		}
@@ -487,7 +491,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_rewrite () {
+	function _debug_rewrite (&$params = array()) {
 		if (!$this->_SHOW_REWRITE_INFO) {
 			return '';
 		}
@@ -513,7 +517,7 @@ class yf_debug {
 
 	/*
 	*/
-	function _debug_force_get_url () {
+	function _debug_force_get_url (&$params = array()) {
 		if (!$this->_SHOW_REWRITE_INFO) {
 			return '';
 		}
@@ -528,7 +532,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_modules () {
+	function _debug_modules (&$params = array()) {
 		if (!$this->_SHOW_LOADED_MODULES) {
 			return '';
 		}
@@ -551,7 +555,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_execute () {
+	function _debug_execute (&$params = array()) {
 		if (!$this->_SHOW_MAIN_EXECUTE) {
 			return '';
 		}
@@ -562,7 +566,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_main_get_data () {
+	function _debug_main_get_data (&$params = array()) {
 		if (!$this->_SHOW_MAIN_GET_DATA) {
 			return '';
 		}
@@ -573,7 +577,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_cache_get () {
+	function _debug_cache_get (&$params = array()) {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
@@ -585,7 +589,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_cache_set () {
+	function _debug_cache_set (&$params = array()) {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
@@ -596,7 +600,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_cache_refresh () {
+	function _debug_cache_refresh (&$params = array()) {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
@@ -607,7 +611,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__get () {
+	function _debug__get (&$params = array()) {
 		if (!$this->_SHOW_GET_DATA) {
 			return '';
 		}
@@ -616,7 +620,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__post () {
+	function _debug__post (&$params = array()) {
 		if (!$this->_SHOW_POST_DATA) {
 			return '';
 		}
@@ -625,7 +629,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__cookie () {
+	function _debug__cookie (&$params = array()) {
 		if (!$this->_SHOW_COOKIE_DATA) {
 			return '';
 		}
@@ -635,7 +639,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__request () {
+	function _debug__request (&$params = array()) {
 		if (!$this->_SHOW_REQUEST_DATA) {
 			return '';
 		}
@@ -644,7 +648,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__files () {
+	function _debug__files (&$params = array()) {
 		if (!$this->_SHOW_FILES_DATA) {
 			return '';
 		}
@@ -653,7 +657,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__session () {
+	function _debug__session (&$params = array()) {
 		if (!$this->_SHOW_SESSION_DATA) {
 			return '';
 		}
@@ -669,7 +673,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__server () {
+	function _debug__server (&$params = array()) {
 		if (!$this->_SHOW_SERVER_DATA) {
 			return '';
 		}
@@ -678,7 +682,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__env () {
+	function _debug__env (&$params = array()) {
 		if (!$this->_SHOW_ENV_DATA) {
 			return '';
 		}
@@ -687,7 +691,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_i18n () {
+	function _debug_i18n (&$params = array()) {
 		if (!$this->_SHOW_I18N_VARS) {
 			return '';
 		}
@@ -721,7 +725,7 @@ class yf_debug {
 	
 	/**
 	*/
-	function _debug_sphinxsearch () {
+	function _debug_sphinxsearch (&$params = array()) {
 		if (!$this->_SHOW_SPHINX) {
 			return "";
 		}
@@ -757,7 +761,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_ssh () {
+	function _debug_ssh (&$params = array()) {
 		if (!$this->_SHOW_SSH) {
 			return '';
 		}
@@ -771,7 +775,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_eaccelerator () {
+	function _debug_eaccelerator (&$params = array()) {
 		if (!$this->_SHOW_EACCELERATOR_INFO || !function_exists('eaccelerator_info')) {
 			return '';
 		}
@@ -785,7 +789,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_apc () {
+	function _debug_apc (&$params = array()) {
 		if (!$this->_SHOW_APC_INFO || !function_exists('apc_cache_info')) {
 			return '';
 		}
@@ -799,7 +803,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_xcache () {
+	function _debug_xcache (&$params = array()) {
 		if (!$this->_SHOW_XCACHE_INFO || !function_exists('xcache_get')) {
 			return '';
 		}
@@ -812,7 +816,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_resize_images () {
+	function _debug_resize_images (&$params = array()) {
 		if (!$this->_SHOW_RESIZED_IMAGES_LOG || empty($GLOBALS['_RESIZED_IMAGES_LOG'])) {
 			return '';
 		}
@@ -821,7 +825,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_globals () {
+	function _debug_globals (&$params = array()) {
 		if (!$this->_SHOW_GLOBALS) {
 			return '';
 		}
@@ -842,7 +846,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_included_files () {
+	function _debug_included_files (&$params = array()) {
 		if (!$this->_SHOW_INCLUDED_FILES) {
 			return '';
 		}
@@ -872,7 +876,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_curl_requests () {
+	function _debug_curl_requests (&$params = array()) {
 		if (!$this->_SHOW_CURL_REQUESTS) {
 			return '';
 		}
@@ -890,7 +894,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_form2 () {
+	function _debug_form2 (&$params = array()) {
 		if (!$this->_SHOW_FORM2) {
 			return '';
 		}
@@ -906,7 +910,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_table2 () {
+	function _debug_table2 (&$params = array()) {
 		if (!$this->_SHOW_TABLE2) {
 			return '';
 		}
@@ -929,7 +933,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_dd_table () {
+	function _debug_dd_table (&$params = array()) {
 		if (!$this->_SHOW_DD_TABLE) {
 			return '';
 		}
@@ -948,7 +952,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_other () {
+	function _debug_other (&$params = array()) {
 		$items = array();
 		foreach (debug() as $k => $v) {
 			if (isset($this->_used_debug_datas[$k])) {
@@ -961,7 +965,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_profiling () {
+	function _debug_profiling (&$params = array()) {
 		$all_timings = main()->_timing;
 		if (!$all_timings) {
 			return false;
@@ -1000,7 +1004,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_hooks () {
+	function _debug_hooks (&$params = array()) {
 		$items = array();
 		$hook_name = '_hook_debug';
 		foreach (main()->modules as $module_name => $module_obj) {
