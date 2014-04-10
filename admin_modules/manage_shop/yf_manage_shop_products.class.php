@@ -301,7 +301,8 @@ class yf_manage_shop_products{
 		// prepare search words
 		if( empty( $_GET[ 'search_word' ] ) ) { return false; }
 		$sql_words = mb_split( '\s', mb_strtolower( _es( $_GET[ 'search_word' ] ) ) );
-		$sql_words  = '.*' . implode( '.*', $sql_words ) . '.*';
+		$sql_words = str_replace( array( '%', '_', '*', '?' ), array( '\%', '\_', '%', '_' ), $sql_words );
+		$sql_words  = '%' . implode( '%', $sql_words ) . '%';
 		// prepare search ids
 		$ids = array();
 		foreach( $sql_words as $i => $w ) {
@@ -337,7 +338,7 @@ class yf_manage_shop_products{
 		$sql = sprintf('
 			SELECT id, name FROM %s
 			WHERE %s (
-				LOWER( name ) RLIKE "%s"
+				LOWER( name ) LIKE "%s"
 				%s
 			) LIMIT 20
 			'
