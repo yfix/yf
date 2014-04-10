@@ -297,9 +297,9 @@ class yf_manage_shop_products{
 		$_ = &$options;
 		$table = $_[ 'table' ];
 		$where = $_[ 'where' ];
-		if( empty( $table ) ) { return( false ); }
+		if( empty( $table ) ) { exit(); }
 		// prepare search words
-		if( empty( $_GET[ 'search_word' ] ) ) { return false; }
+		if( empty( $_GET[ 'search_word' ] ) ) { exit(); }
 		$words = mb_split( '\s', mb_strtolower( _es( $_GET[ 'search_word' ] ) ) );
 		$sql_words = str_replace( array( '%', '_', '*', '?' ), array( '\%', '\_', '%', '_' ), $words );
 		$sql_words  = '%' . implode( '%', $sql_words ) . '%';
@@ -348,7 +348,7 @@ class yf_manage_shop_products{
 			, $sql_ids
 		);
 		$result = db()->get_all( $sql );
-		if( empty( $result ) ) { return( null ); }
+		if( empty( $result ) ) { exit(); }
 		$json = array();
 		foreach( $result as $i ){
 			$id = (int)$i[ 'id' ];
@@ -367,14 +367,14 @@ class yf_manage_shop_products{
 			'table' => 'sys_category_items',
 			'where' => 'cat_id = ' . (int)_class( 'cats' )->_get_cat_id_by_name( 'shop_cats' ),
 		);
-		return( $this->_search_autocomplete( $options ) );
+		$this->_search_autocomplete( $options );
 	}
 
 	function product_search_autocomplete () {
 		$options = array(
 			'table' => 'shop_products',
 		);
-		return( $this->_search_autocomplete( $options ) );
+		$this->_search_autocomplete( $options );
 	}
 
 }
