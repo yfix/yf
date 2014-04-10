@@ -124,7 +124,7 @@ class yf_core_css {
 				);
 			}
 			if (DEBUG_MODE) {
-				debug(__CLASS__.'[]', array(
+				debug('core_css[]', array(
 					'type'		=> $type,
 					'md5'		=> $md5,
 					'content'	=> $_content,
