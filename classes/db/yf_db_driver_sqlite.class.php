@@ -15,10 +15,10 @@ class yf_db_driver_sqlite extends yf_db_driver {
 
 	/**
 	*/
-	function __construct($sqlserver, $sqluser, $sqlpassword, $database, $port = false, $persistency = false) {
+	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false) {
 		$this->persistency = $persistency;
-		$this->user = $sqluser;
-		$this->server = $sqlserver . (($port) ? ':' . $port : '');
+		$this->user = $user;
+		$this->server = $server . (($port) ? ':' . $port : '');
 		$this->dbname = $database;
 
 		$error = '';
@@ -28,14 +28,6 @@ class yf_db_driver_sqlite extends yf_db_driver {
 			@sqlite_query('PRAGMA short_column_names = 1', $this->db_connect_id);
 		}
 		return ($this->db_connect_id) ? true : array('message' => $error);
-	}
-
-	/**
-	* Close sql connection
-	* @access: private
-	*/
-	function close() {
-		return @sqlite_close($this->db_connect_id);
 	}
 
 	/**
@@ -55,6 +47,12 @@ class yf_db_driver_sqlite extends yf_db_driver {
 			}
 		}
 		return ($this->query_result) ? $this->query_result : false;
+	}
+
+	/**
+	*/
+	function close() {
+		return @sqlite_close($this->db_connect_id);
 	}
 
 	/**
@@ -168,8 +166,11 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	/**
 	* Build LIMIT query
 	*/
-	function query_limit($query, $total, $offset = 0, $cache_ttl = 0) {
-		if ($query == '') return false;
+// TODO: convert to number of argumenets like in mysql
+	function limit($query, $total, $offset = 0, $cache_ttl = 0) {
+		if ($query == '') {
+			return false;
+		}
 		$this->query_result = false; 
 		// if $total is set to 0 we do not want to limit the number of rows
 		if ($total == 0) {
@@ -234,5 +235,61 @@ class yf_db_driver_sqlite extends yf_db_driver {
 		}
 // TODO
 		return '';
+	}
+
+	/**
+	*/
+	function begin() {
+// TODO
+	}
+
+	/**
+	*/
+	function commit() {
+// TODO
+	}
+
+	/**
+	*/
+	function rollback() {
+// TODO
+	}
+
+	/**
+	*/
+	function connect() {
+// TODO
+	}
+
+	/**
+	*/
+	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = false) {
+// TODO
+	}
+
+	/**
+	*/
+	function meta_tables($DB_PREFIX = '') {
+// TODO
+	}
+
+	function escape_key($data) {
+		return '"'.addslashes($data).'"';
+	}
+
+	function escape_val($data) {
+		return '"'.addslashes($data).'"';
+	}
+	function fetch_array($query_id = 0) {
+		if (!$query_id) {
+			$query_id = $this->query_result;
+		}
+		if ($query_id) {
+			return sqlite_fetch_array($query_id);
+		}
+		return false;
+	}
+	function fetch_assoc($query_id = 0) {
+		return $this->fetch_array($query_id);
 	}
 }
