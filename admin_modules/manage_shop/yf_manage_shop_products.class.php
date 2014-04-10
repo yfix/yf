@@ -300,12 +300,12 @@ class yf_manage_shop_products{
 		if( empty( $table ) ) { return( false ); }
 		// prepare search words
 		if( empty( $_GET[ 'search_word' ] ) ) { return false; }
-		$sql_words = mb_split( '\s', mb_strtolower( _es( $_GET[ 'search_word' ] ) ) );
-		$sql_words = str_replace( array( '%', '_', '*', '?' ), array( '\%', '\_', '%', '_' ), $sql_words );
+		$words = mb_split( '\s', mb_strtolower( _es( $_GET[ 'search_word' ] ) ) );
+		$sql_words = str_replace( array( '%', '_', '*', '?' ), array( '\%', '\_', '%', '_' ), $words );
 		$sql_words  = '%' . implode( '%', $sql_words ) . '%';
 		// prepare search ids
 		$ids = array();
-		foreach( $sql_words as $i => $w ) {
+		foreach( $words as $i => $w ) {
 			$id = (int)$w;
 			if( $id < 1 ) { continue; }
 			$ids[ $id ] = $id;
