@@ -33,20 +33,20 @@ class yf_db_driver_postgres7 extends yf_db_driver {
 
 	/**
 	*/
-	function __construct($sqlserver, $sqluser, $sqlpassword, $database, $persistency = false) {
+	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false) {
 		$this->connect_string = '';
-		if (strlen($sqluser)) {
-			$this->connect_string .= 'user='.$sqluser.' ';
+		if (strlen($user)) {
+			$this->connect_string .= 'user='.$user.' ';
 		}
-		if (strlen($sqlpassword)) {
-			$this->connect_string .= 'password='.$sqlpassword.' ';
+		if (strlen($password)) {
+			$this->connect_string .= 'password='.$password.' ';
 		}
-		if ($sqlserver) {
-			if (preg_match('#:#', $sqlserver)) {
-				list($sqlserver, $sqlport) = split(':', $sqlserver);
-				$this->connect_string .= 'host='.$sqlserver.' port='.$sqlport.' ';
-			} elseif ($sqlserver != 'localhost') {
-				$this->connect_string .= 'host='.$sqlserver.' ';
+		if ($server) {
+			if (preg_match('#:#', $server)) {
+				list($server, $port) = split(':', $server);
+				$this->connect_string .= 'host='.$server.' port='.$port.' ';
+			} elseif ($server != 'localhost') {
+				$this->connect_string .= 'host='.$server.' ';
 			}
 		}
 		if ($database) {
