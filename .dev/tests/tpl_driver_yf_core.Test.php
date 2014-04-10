@@ -230,23 +230,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('+val11++val21+', self::_tpl( '{foreach("testarray")}+{#.key1|trim}+{/foreach}', array('testarray' => $a) ));
 	}
 	public function test_complex_foreach() {
-		$this->assertEquals(
-"1). <small>(key: One)</small>
-<b style='color:red;'>First!!!</b><br />
-<span style='color: blue;'>name: First<br />, num_items: 4<br /></span>, <br />
-2). <small>(key: Two)</small>
-<span style='color: green;'>name: Second<br />, num_items: 4<br /></span>, <br />
-3). <small>(key: Three)</small>
-<span style='color: blue;'>name: Third<br />, num_items: 4<br /></span>, <br />
-4). <small>(key: Four)</small>
-<span style='color: green;'>name: Fourth<br />, num_items: 4<br /></span>"
-		, self::_tpl( 
-"{foreach('test_array_2')}
-{_num}). <small>(key: {_key})</small>
-{if('_first' eq 1)}<b style='color:red;'>First!!!</b><br />\n{/if}
-<span style='{if('_even' eq 1)}color: blue;{/if}{if('_odd' eq 1)}color: green;{/if}'>name: {#.name}<br />, num_items: {_total}<br /></span>{if('_last' ne 1)}, <br />\n{/if}
-{/foreach}"
-		, array(
+		$data = array(
 			'test_array_1'  => array('One', 'Two', 'Three', 'Four'),
 			'test_array_2'  => array(
 				'One'   => array('name'  => 'First'),
@@ -257,6 +241,31 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 			'cond_1' => 1,
 			'cond_2' => 2,
 			'cond_3' => 2,
-		) ));
+		);
+		$this->assertEquals(
+'1). <small>(key: One)</small><b style="color:red;">First!!!</b><br /><span style="color: blue;">name: First<br />, num_items: 4<br /></span>, <br />
+2). <small>(key: Two)</small><span style="color: green;">name: Second<br />, num_items: 4<br /></span>, <br />
+3). <small>(key: Three)</small><span style="color: blue;">name: Third<br />, num_items: 4<br /></span>, <br />
+4). <small>(key: Four)</small><span style="color: green;">name: Fourth<br />, num_items: 4<br /></span>
+'		, self::_tpl( 
+'{foreach(test_array_2)}
+{_num}). <small>(key: {_key})</small>{if(_first eq 1)}<b style="color:red;">First!!!</b><br />{/if}
+<span style="{if(_even eq 1)}color: blue;{/if}{if(_odd eq 1)}color: green;{/if}">name: {#.name}<br />, num_items: {_total}<br /></span>{if(_last ne 1)}, <br />{/if}'.PHP_EOL.'
+{/foreach}'
+		, $data) );
+	}
+	public function test_complex_foreach2() {
+		$data = array(
+			'test_array'  => array(
+				'One'   => array('name'  => 'First'),
+				'Two'   => array('name'  => 'Second'),
+				'Three' => array('name'  => 'Third'),
+				'Four'  => array('name'  => 'Fourth'),
+			),
+			'cond_name'	=> 'Third',
+			'cond_array'=> array('mykey' => 'Third'),
+		);
+		$this->assertEquals('ok', self::_tpl('{foreach("test_array")}{if(#.name eq #cond_name)}ok{/if}{/foreach}', $data) );
+		$this->assertEquals('ok', self::_tpl('{catch(mycond)}{cond_array.mykey}{/catch}{foreach("test_array")}{if(#.name eq #mycond)}ok{/if}{/foreach}', $data) );
 	}
 }
