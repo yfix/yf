@@ -210,34 +210,59 @@ class yf_manage_shop_products{
 		$new_product_id = db()->insert_id();
 		common()->admin_wall_add(array('shop product cloned: '.$a['name'], $new_product_id));
 
-		$arr =  db()->get_all("SELECT * FROM `".db('shop_products_productparams')."` WHERE `product_id`='{$new_product_id}'");
-		foreach ($arr as $v) {
-			db()->INSERT(array(
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_products_productparams')."` WHERE `product_id`='{$old_product_id}'");
+		db()->query('DELETE FROM '.db('shop_products_productparams').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_products_productparams', array(
 				'product_id' => $new_product_id,
 				'productparam_id' => $v['productparam_id'],
 				'value' => $v['value'],
 			));
 		}
-		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_category')."` WHERE `product_id`='{$new_product_id}'");
-		foreach ($arr as $v) {
-			db()->INSERT(array(
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_category')."` WHERE `product_id`='{$old_product_id}'");
+		db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_product_to_category', array(
 				'product_id' => $new_product_id,
 				'category_id' => $v['category_id'],
 			));
 		}
-		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_region')."` WHERE `product_id`='{$new_product_id}'");
-		foreach ($arr as $v) {
-			db()->INSERT(array(
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_region')."` WHERE `product_id`='{$old_product_id}'");
+		db()->query('DELETE FROM '.db('shop_product_to_region').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_product_to_region', array(
 				'product_id' => $new_product_id,
 				'region_id' => $v['region_id'],
 			));
 		}
-		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_related')."` WHERE `product_id`='{$new_product_id}'");
-		foreach ($arr as $v) {
-			db()->INSERT(array(
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_related')."` WHERE `product_id`='{$old_product_id}'");
+		db()->query('DELETE FROM '.db('shop_product_related').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_product_related', array(
 				'product_id' => $new_product_id,
 				'related_id' => $v['related_id'],
 			));
+		}
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_unit')."` WHERE `product_id`='{$old_product_id}'");
+		db()->query('DELETE FROM '.db('shop_product_to_unit').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_product_to_unit', array(
+				'product_id' => $new_product_id,
+				'unit_id' => $v['unit_id'],
+			));
+		}
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`='{$old_product_id}' AND `active`=1");
+		db()->query('DELETE FROM '.db('shop_product_images').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_product_images', array(
+				'product_id' 	=> $new_product_id,
+				'is_default' 	=> $v['is_default'],
+				'md5'			=> $v['md5'],
+				'date_uploaded'	=> time(),
+				'active'		=> $v['active'],
+			));
+			$old_img_names[] = '/product_'.$old_product_id.'_'.$v['id'];
+			$new_img_names[] = '/product_'.$new_product_id.'_'.db()->insert_id();
 		}
 
 		if ($sql['image'] && $new_product_id) {
@@ -255,7 +280,7 @@ class yf_manage_shop_products{
 				$nd2 = substr($nd, -3, 3);
 				$nd1 = substr($nd, -6, 3);
 				$n_path = $nd1.'/'.$nd2.'/';
-				$new_image_path = str_replace('/product_'.$old_product_id.'_', '/product_'.$new_product_id.'_', str_replace($m_path, $n_path, $old_image_path));
+				$new_image_path = str_replace($old_img_names, $new_img_names, str_replace($m_path, $n_path, $old_image_path));
 				$new_dir = dirname($new_image_path);
 				if (!file_exists($new_dir)) {
 					mkdir($new_dir, 0777, true);
@@ -263,7 +288,7 @@ class yf_manage_shop_products{
 				copy($old_image_path, $new_image_path);
 			}
 		}
-		return js_redirect('./?object='.main()->_get('object').'action=products');
+		return js_redirect('./?object='.main()->_get('object').'&action=products');
 	}
 
 	/**
