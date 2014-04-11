@@ -42,14 +42,16 @@ class yf_core_js {
 		foreach ((array)$this->content as $md5 => $v) {
 			$type = $v['type'];
 			$text = $v['text'];
+			$_params = (array)$v['params'] + (array)$params;
+			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
 			if ($type == 'url') {
 // TODO: add optional _prepare_html() for $url
-				$out[$md5] = '<script src="'.$text.'" type="text/javascript"></script>';
+				$out[$md5] = '<script src="'.$text.'" type="text/javascript"'.$css_class.'></script>';
 			} elseif ($type == 'file') {
-				$out[$md5] = '<script type="text/javascript">'. PHP_EOL. file_get_contents($text). PHP_EOL. '</script>';
+				$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</script>';
 			} elseif ($type == 'inline') {
 				$text = $this->_strip_script_tags($text);
-				$out[$md5] = '<script type="text/javascript">'. PHP_EOL. $text. PHP_EOL. '</script>';
+				$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</script>';
 			} elseif ($type == 'raw') {
 				$out[$md5] = $text;
 			}
@@ -95,6 +97,7 @@ class yf_core_js {
 				$this->content[$md5] = array(
 					'type'	=> 'url',
 					'text'	=> $_content,
+					'params'=> $params,
 				);
 			} elseif ($type == 'file') {
 				if (file_exists($_content)) {
@@ -103,6 +106,7 @@ class yf_core_js {
 						$this->content[$md5] = array(
 							'type'	=> 'file',
 							'text'	=> $_content,
+							'params'=> $params,
 						);
 					}
 				}
@@ -110,11 +114,13 @@ class yf_core_js {
 				$this->content[$md5] = array(
 					'type'	=> 'inline',
 					'text'	=> $_content,
+					'params'=> $params,
 				);
 			} elseif ($type == 'raw') {
 				$this->content[$md5] = array(
 					'type'	=> 'raw',
 					'text'	=> $_content,
+					'params'=> $params,
 				);
 			} elseif ($type == 'asset') {
 				$url = $this->assets[$_content];
@@ -122,6 +128,7 @@ class yf_core_js {
 				$this->content[$md5] = array(
 					'type'	=> 'url',
 					'text'	=> $url,
+					'params'=> $params,
 				);
 			}
 			if (DEBUG_MODE) {
@@ -130,6 +137,7 @@ class yf_core_js {
 					'md5'		=> $md5,
 					'content'	=> $_content,
 					'is_added'	=> isset($this->content[$md5]),
+					'params'	=> $params,
 					'trace'		=> $trace,
 				));
 			}
