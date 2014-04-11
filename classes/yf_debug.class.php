@@ -1009,7 +1009,7 @@ class yf_debug {
 		$items = $this->_get_debug_data('core_css');
 		foreach ((array)$items as $k => $v) {
 			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
-#			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
+			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
 			unset($v['is_added']);
 			$items[$k] = array('id' => ++$i) + $v;
 		}
@@ -1023,7 +1023,7 @@ class yf_debug {
 		$items = $this->_get_debug_data('core_js');
 		foreach ((array)$items as $k => $v) {
 			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
-#			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
+			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
 			unset($v['is_added']);
 			$items[$k] = array('id' => ++$i) + $v;
 		}
