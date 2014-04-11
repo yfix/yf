@@ -12,17 +12,27 @@ class yf_form2_google_maps {
 		}
 		
 		require_js("http://maps.google.com/maps/api/js?sensor=false");
-		
 		$extra['name'] = $extra['name'] ?: ($name ?: 'map');
+		$extra['markers_limit'] = $extra['markers_limit'] ?: 5;
+		$extra['start_zoom'] = $extra['start_zoom'] ?: 5;		
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $_this) {
-			// Compatibility with filter
-			
+			// Compatibility with filter			
+			$start_lat = 49;
+			$start_lng = 32;
 			$replace = array(
+				'start_lat' => $start_lat,
+				'start_lng' => $start_lng,
+				'start_zoom' => $extra['start_zoom'],
+				'markers_limit' => $extra['markers_limit'],
 				'name' => $extra['name'],
 				'value' => $r[$extra['name']],
 			);
-			$body = tpl()->parse('form2/google_maps',$replace);			
+			if ($extra['disable_edit_mode']) {
+				$body = tpl()->parse('form2/google_maps_view',$replace);
+			} else {
+				$body = tpl()->parse('form2/google_maps',$replace);
+			}
 			return $_this->_row_html($body, $extra, $r);
 		};
 		if ($__this->_chained_mode) {

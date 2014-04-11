@@ -7,12 +7,15 @@
         var markersArray = [];
 		var descriptionsArray = [];
 		var marker_index = 0;
-		var markers_limit = 4;
+		var markers_limit = {markers_limit};
 
         function initMap(container_id) {
-            var latlng = new google.maps.LatLng(41, 29);
+			markers_limit--;
+            var latlng = new google.maps.LatLng({start_lat}, {start_lng});
             var myOptions = {
-                zoom: 10,
+                zoom: {start_zoom},
+				minZoom: 1,
+				maxZoom: 17,
                 center: latlng,
 				disableDefaultUI: false,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -22,16 +25,16 @@
 				}
             };
             map = new google.maps.Map($('#'+container_id)[0], myOptions);
-			loadMarkers();			
+			markers_cnt = loadMarkers();			
             google.maps.event.addListener(map, "click", function(event) {
 				placeMarker(event.latLng,"");
             });
 			
 			$($('#'+container_id)).on('click','.marker_delete',function() {
 				var index= $(this).attr('data_marker_id');
-				markersArray[index].setMap(null);
-				markersArray[index] = false;
+				deleteMarker(index);
 				saveMarkers();
+				updateMarkersCnt();				
 				return false;
 			});
 			
@@ -42,7 +45,39 @@
 				return false;
 			});
 			
+			zoomtoAllMarkers();
+
+			$($('.all_marker_delete')).on('click',function() {
+				marker_index = 0;
+				while (marker_index <= markers_limit) {
+					if (markersArray[marker_index]) {
+						deleteMarker(marker_index);
+					}
+					marker_index++;
+				}
+				saveMarkers();
+				return false;
+			});
+			
+			$($('.all_marker_show')).on('click',function() {
+				zoomtoAllMarkers();
+				return false;
+			});
         }
+		
+		function zoomtoAllMarkers() {
+			var bounds = new google.maps.LatLngBounds();
+			var num_markers = 0;
+			marker_index = 0;
+			while (marker_index <= markers_limit) {
+				if (markersArray[marker_index]) {
+					bounds.extend(markersArray[marker_index].getPosition());
+					num_markers++;
+				}
+				marker_index++;
+			}
+			if (num_markers > 0) map.fitBounds(bounds);
+		}
 		
 		function isinfowindowOpen(infowindow){
 			var map = infowindow.getMap();
@@ -54,7 +89,8 @@
 			marker_index = 0;
 			while (markersArray[marker_index]) marker_index++;
 			if (marker_index > markers_limit) {
-				// todo:limit reached popup
+				// todo:limit msg
+				alert("{t('markers limit reached')}");
 			} else {
 				var marker = new google.maps.Marker({
 					position: location, 
@@ -66,8 +102,8 @@
 				markersArray[marker_index] = marker;
 				descriptionsArray[marker_index] = description;
 				var infowindow = new google.maps.InfoWindow({
-					content: '<input type="text" data_id="'+marker_index+'" class="marker_description" placeholder="description" value="'+description+'"><br />' +
-							'<button class="marker_delete" data_marker_id="'+marker_index+'">delete marker</button>', 
+					content: '<input type="text" data_id="'+marker_index+'" class="marker_description form-control" placeholder="description" value="'+description+'"><br />' +
+							'<p align="right"><a data_marker_id="'+marker_index+'" class="btn btn-default btn-mini btn-xs marker_delete">{t('delete marker')}</a></p>', 
 				});
 				google.maps.event.addListener(marker, 'click', function() {
 					if (isinfowindowOpen(infowindow)){
@@ -84,6 +120,7 @@
 					saveMarkers();
 				});
 				saveMarkers();
+				updateMarkersCnt();
 			}
         }
 		
@@ -112,11 +149,25 @@
 			}
 			marker_index_load = 0;
 			while (marker_index_load <= markers_limit) {
-				if (result[marker_index_load]) {
-					placeMarker(new google.maps.LatLng(result[marker_index_load]['lat'], result[marker_index_load]['lng']),result[marker_index_load]['dsc']);					
-				}
+				if (result[marker_index_load]) placeMarker(new google.maps.LatLng(result[marker_index_load]['lat'], result[marker_index_load]['lng']),result[marker_index_load]['dsc']);					
 				marker_index_load++;
 			}
+		}
+		
+		function updateMarkersCnt() {
+			var markers_cnt = 0;
+			var marker_index_cnt = 0;
+			while (marker_index_cnt <= markers_limit) {
+				if (markersArray[marker_index_cnt]) markers_cnt++;
+				marker_index_cnt++;
+			}
+			$('#markers_cnt').html(markers_cnt);
+		}
+		
+		function deleteMarker(index) {
+			markersArray[index].setMap(null);
+			markersArray[index] = false;
+			updateMarkersCnt();			
 		}
 			
 		
@@ -126,4 +177,8 @@
 		
     </script>
     <div id="map_canvas"></div>
-	<input type="text" name='{name}' id="markers_data" value='{value}'>
+	<input type="hidden" name='{name}' id="markers_data" value='{value}'>
+	<b>{t('Markers set')}: <span id="markers_cnt">0</span>/{markers_limit}</b>
+	<a class="btn btn-default btn-mini btn-xs all_marker_show"> {t('zoom to show all markers')} </a>
+	<a class="btn btn-default btn-mini btn-xs all_marker_delete"> {t('delete all markers')} </a>
+	

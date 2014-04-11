@@ -1,0 +1,82 @@
+    <style type="text/css">
+        #map_canvas {height:350px;width:500px}
+    </style>
+
+    <script type="text/javascript">
+        var map;
+		var content = '{value}';
+        var markersArray = [];
+		var descriptionsArray = [];
+		var marker_index = 0;
+		var markers_limit = {markers_limit};
+
+        function initMap(container_id) {
+			markers_limit--;
+            var latlng = new google.maps.LatLng({start_lat}, {start_lng});
+            var myOptions = {
+                zoom: {start_zoom},
+				minZoom: 1,
+				maxZoom: 17,
+                center: latlng,
+				disableDefaultUI: false,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+				mapTypeControlOptions: {
+					style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+					position: google.maps.ControlPosition.TOP_CENTER							
+				}
+            };
+            map = new google.maps.Map($('#'+container_id)[0], myOptions);
+			markers_cnt = loadMarkers();			
+			
+			zoomtoAllMarkers();
+        }
+		
+		function zoomtoAllMarkers() {
+			var bounds = new google.maps.LatLngBounds();
+			var num_markers = 0;
+			marker_index = 0;
+			while (marker_index <= markers_limit) {
+				if (markersArray[marker_index]) {
+					bounds.extend(markersArray[marker_index].getPosition());
+					num_markers++;
+				}
+				marker_index++;
+			}
+			if (num_markers > 0) map.fitBounds(bounds);
+		}
+		
+        function placeMarker(location,description) {
+			marker_index = 0;
+			while (markersArray[marker_index]) marker_index++;
+			if (marker_index > markers_limit) {
+			} else {
+				var marker = new google.maps.Marker({
+					position: location, 
+					title: description,
+					map: map
+				});
+				markersArray[marker_index] = marker;
+				descriptionsArray[marker_index] = description;
+			}
+        }
+				
+		function loadMarkers() {
+		    try {
+				result = JSON.parse(content);
+			} catch (e) {
+				return false;
+			}
+			marker_index_load = 0;
+			while (marker_index_load <= markers_limit) {
+				if (result[marker_index_load]) placeMarker(new google.maps.LatLng(result[marker_index_load]['lat'], result[marker_index_load]['lng']),result[marker_index_load]['dsc']);					
+				marker_index_load++;
+			}
+		}
+		
+		$(function() {
+			initMap('map_canvas');
+		});
+		
+    </script>
+    <div id="map_canvas"></div>
+	
