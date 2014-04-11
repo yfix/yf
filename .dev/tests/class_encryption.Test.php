@@ -2,6 +2,9 @@
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
+/**
+* @requires extension mcrypt
+*/
 class class_encryption_test extends PHPUnit_Framework_TestCase {
 	private static $secret = 'my_secret';
 	private static $to_encode = 'testing long string containing different symols:;.,%^&*()';
