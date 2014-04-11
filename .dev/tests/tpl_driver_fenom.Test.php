@@ -5,7 +5,6 @@ require_once dirname(__FILE__).'/tpl__setup.php';
 class tpl_driver_fenom_test extends tpl_abstract {
 	public static $driver_bak = array();
 	public static function setUpBeforeClass() {
-#		$GLOBALS['PROJECT_CONF']['tpl']['DRIVER_NAME'] = 'fenom';
 		self::$driver_bak = tpl()->DRIVER_NAME;
 		tpl()->DRIVER_NAME = 'fenom';
 		parent::setUpBeforeClass();

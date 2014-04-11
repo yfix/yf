@@ -27,6 +27,10 @@ class yf_db_driver_mysql41 extends yf_db_driver {
 	/**
 	*/
 	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false) {
+		if (!function_exists('mysql_connect')) {
+			trigger_error('MySQL db driver require missing php extension mysql', E_USER_ERROR);
+			return false;
+		}
 		$this->persistency	= $persistency;
 		$this->user			= $user;
 		$this->password		= $password;

@@ -63,10 +63,12 @@ class yf_form2_datetime {
 }
 </style>
 <div id=\"{$extra['name']}\" data-date-format=\"$_format_js\" class=\"input-append datetimepicker\">
-    <input name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium\" placeholder=\"{$extra['placeholder']}\"></input>
-    <span class=\"add-on\">
+<div class=\"input-group\">
+    <input name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium form-control\" placeholder=\"{$extra['placeholder']}\"></input>
+    <span class=\"add-on input-group-addon\">
 		<i class=\"fa fa-calendar\"></i>
     </span>
+</div>
 </div>
 ";
 			require_js("<script type=\"text/javascript\">

@@ -97,11 +97,12 @@ class yf_send_mail {
 			$subject		= $params['subj'];
 			$text			= $params['text'];
 			$html			= $params['html'];
-			$attaches		= is_array($params['attach']) ? $params['attach'] : array();
+			$attaches		= is_array($params['attach']) ? $params['attach'] : $attaches;
 			$charset		= $params['charset'];
-			$force_mta_opts = $params['force_mta_opts'] ? $params['force_mta_opts'] : array();
+			$force_mta_opts = $params['force_mta_opts'] ? $params['force_mta_opts'] : $force_mta_opts;
 			$priority		= $params['priority'] ? $params['priority'] : 3;
 			$pear_mailer_backend = $params['pear_mailer_backend'] ? $params['pear_mailer_backend'] : 'smtp';
+			$smtp			= $params['smtp'] ?: $smtp;
 		}
 		$_prev_num_errors = count((array)main()->_all_core_error_msgs);
 		// Check required params

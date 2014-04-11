@@ -210,34 +210,59 @@ class yf_manage_shop_products{
 		$new_product_id = db()->insert_id();
 		common()->admin_wall_add(array('shop product cloned: '.$a['name'], $new_product_id));
 
-		$arr =  db()->get_all("SELECT * FROM `".db('shop_products_productparams')."` WHERE `product_id`='{$new_product_id}'");
-		foreach ($arr as $v) {
-			db()->INSERT(array(
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_products_productparams')."` WHERE `product_id`='{$old_product_id}'");
+		db()->query('DELETE FROM '.db('shop_products_productparams').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_products_productparams', array(
 				'product_id' => $new_product_id,
 				'productparam_id' => $v['productparam_id'],
 				'value' => $v['value'],
 			));
 		}
-		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_category')."` WHERE `product_id`='{$new_product_id}'");
-		foreach ($arr as $v) {
-			db()->INSERT(array(
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_category')."` WHERE `product_id`='{$old_product_id}'");
+		db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_product_to_category', array(
 				'product_id' => $new_product_id,
 				'category_id' => $v['category_id'],
 			));
 		}
-		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_region')."` WHERE `product_id`='{$new_product_id}'");
-		foreach ($arr as $v) {
-			db()->INSERT(array(
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_region')."` WHERE `product_id`='{$old_product_id}'");
+		db()->query('DELETE FROM '.db('shop_product_to_region').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_product_to_region', array(
 				'product_id' => $new_product_id,
 				'region_id' => $v['region_id'],
 			));
 		}
-		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_related')."` WHERE `product_id`='{$new_product_id}'");
-		foreach ($arr as $v) {
-			db()->INSERT(array(
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_related')."` WHERE `product_id`='{$old_product_id}'");
+		db()->query('DELETE FROM '.db('shop_product_related').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_product_related', array(
 				'product_id' => $new_product_id,
 				'related_id' => $v['related_id'],
 			));
+		}
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_to_unit')."` WHERE `product_id`='{$old_product_id}'");
+		db()->query('DELETE FROM '.db('shop_product_to_unit').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_product_to_unit', array(
+				'product_id' => $new_product_id,
+				'unit_id' => $v['unit_id'],
+			));
+		}
+		$arr =  db()->get_all("SELECT * FROM `".db('shop_product_images')."` WHERE `product_id`='{$old_product_id}' AND `active`=1");
+		db()->query('DELETE FROM '.db('shop_product_images').' WHERE product_id='.$new_product_id);
+		foreach ((array)$arr as $v) {
+			db()->INSERT('shop_product_images', array(
+				'product_id' 	=> $new_product_id,
+				'is_default' 	=> $v['is_default'],
+				'md5'			=> $v['md5'],
+				'date_uploaded'	=> time(),
+				'active'		=> $v['active'],
+			));
+			$old_img_names[] = '/product_'.$old_product_id.'_'.$v['id'];
+			$new_img_names[] = '/product_'.$new_product_id.'_'.db()->insert_id();
 		}
 
 		if ($sql['image'] && $new_product_id) {
@@ -255,7 +280,7 @@ class yf_manage_shop_products{
 				$nd2 = substr($nd, -3, 3);
 				$nd1 = substr($nd, -6, 3);
 				$n_path = $nd1.'/'.$nd2.'/';
-				$new_image_path = str_replace('/product_'.$old_product_id.'_', '/product_'.$new_product_id.'_', str_replace($m_path, $n_path, $old_image_path));
+				$new_image_path = str_replace($old_img_names, $new_img_names, str_replace($m_path, $n_path, $old_image_path));
 				$new_dir = dirname($new_image_path);
 				if (!file_exists($new_dir)) {
 					mkdir($new_dir, 0777, true);
@@ -263,7 +288,7 @@ class yf_manage_shop_products{
 				copy($old_image_path, $new_image_path);
 			}
 		}
-		return js_redirect('./?object='.main()->_get('object').'action=products');
+		return js_redirect('./?object='.main()->_get('object').'&action=products');
 	}
 
 	/**
@@ -291,64 +316,90 @@ class yf_manage_shop_products{
 		exit(); // To prevent printing additional debug info later and break JS
 	}
 
-	function category_search_autocomplete () {
+	function _search_autocomplete( $options = array() ) {
 		main()->NO_GRAPHICS = true;
-		if( empty( $_GET[ 'search_word' ] ) ) { return false; }
-		$sql_table  = db( 'sys_category_items' );
-		$sql_cat_id = _class( 'cats' )->_get_cat_id_by_name( 'shop_cats' );
-		$sql_word   = '%' . _es( $_GET[ 'search_word' ] ) . '%';
+		// prepare options
+		$_ = &$options;
+		$table = $_[ 'table' ];
+		$where = $_[ 'where' ];
+		if( empty( $table ) ) { exit(); }
+		// prepare search words
+		if( empty( $_GET[ 'search_word' ] ) ) { exit(); }
+		$words = mb_split( '\s', mb_strtolower( _es( $_GET[ 'search_word' ] ) ) );
+		$sql_words = str_replace( array( '%', '_', '*', '?' ), array( '\%', '\_', '%', '_' ), $words );
+		$sql_words  = '%' . implode( '%', $sql_words ) . '%';
+		// prepare search ids
+		$ids = array();
+		foreach( $words as $i => $w ) {
+			$id = (int)$w;
+			if( $id < 1 ) { continue; }
+			$ids[ $id ] = $id;
+		}
+		$sql_ids = '';
+		if( !empty( $ids ) ) {
+			$sql_ids = 'OR id IN(' . implode( ',', $ids ) . ')';
+		}
+		// collect sql where
+		$sql_where = array();
+		// prepare exclude ids
+		if( !empty( $_GET[ 'exclude' ] ) ) {
+			$exclude = $_GET[ 'exclude' ];
+			$ids = array();
+			foreach( $exclude as $id ) {
+				$id = (int)$id;
+				if( $id < 1 ) { continue; }
+				$ids[ $id ] = $id;
+			}
+			if( !empty( $ids ) ) {
+				$sql_where[] = 'id NOT IN(' . implode( ',', $ids ) . ')';
+			}
+		}
+		// prepare where
+		if( !empty( $where ) ) { $sql_where[] = $where; }
+		if( !empty( $sql_where ) ) { $sql_where = implode( ' AND ', $sql_where ) . ' AND'; }
+		else { $sql_where = ''; }
+		// prepare sql
+		$sql_table = db( $table );
 		$sql = sprintf('
-			SELECT id, name FROM %s WHERE cat_id = %u AND (
-				name LIKE "%s" OR
-				id LIKE "%s"
+			SELECT id, name FROM %s
+			WHERE %s (
+				LOWER( name ) LIKE "%s"
+				%s
 			) LIMIT 20
 			'
 			, $sql_table
-			, $sql_cat_id
-			, $sql_word, $sql_word
+			, $sql_where
+			, $sql_words
+			, $sql_ids
 		);
 		$result = db()->get_all( $sql );
-		if( empty( $result ) ) { return( null ); }
-		foreach((array)$result as $k){
-			$return_array[] = array(
-				'id' => $k['id'],
-				'text' => '['.$k['id'].'] '.$k['name'],
+		if( empty( $result ) ) { exit(); }
+		$json = array();
+		foreach( $result as $i ){
+			$id = (int)$i[ 'id' ];
+			$text = "[$id] $i[name]";
+			$json[] = array(
+				'id'   => $id,
+				'text' => $text,
 			);
 		}
-		print json_encode($return_array);
-		exit(); // To prevent printing additional debug info later and break JS
+		echo( json_encode( $json ) );
+		exit();
+	}
+
+	function category_search_autocomplete () {
+		$options = array(
+			'table' => 'sys_category_items',
+			'where' => 'cat_id = ' . (int)_class( 'cats' )->_get_cat_id_by_name( 'shop_cats' ),
+		);
+		$this->_search_autocomplete( $options );
 	}
 
 	function product_search_autocomplete () {
-		main()->NO_GRAPHICS = true;
-		if (!$_GET['search_word']) {
-			return false;
-		}
-		$word = common()->sphinx_escape_string($_GET['search_word']);
-//		$word = str_replace("_", " ", common()->_propose_url_from_name($word));
-/*		$result = common()->sphinx_query("
-			SELECT product_id,name
-			FROM products
-			WHERE MATCH ('@name ".$word."*')
-			LIMIT 20"
-		); */
-		$result = db()->get_all("
-			SELECT `id`,`name` FROM `".db('shop_products')."` WHERE
-				`name` LIKE '%"._es($word)."%' OR
-				`id` LIKE '%"._es($word)."%'
-			LIMIT 20
-		");
-		if (!$result) {
-			return false;
-		}
-		foreach((array)$result as $k){
-			$return_array[] = array(
-				'id' => $k['id'],
-				'text' => '['.$k['id'].'] '.$k['name'],
-			);
-		}
-		print json_encode($return_array);
-		exit(); // To prevent printing additional debug info later and break JS
+		$options = array(
+			'table' => 'shop_products',
+		);
+		$this->_search_autocomplete( $options );
 	}
 
 }

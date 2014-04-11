@@ -110,8 +110,14 @@ if (!function_exists('table')) {
 if (!function_exists('table2')) {
 	function table2($data = array(), $params = array()) { $table = clone _class('table2'); return $table->chained_wrapper($data, $params); }
 }
+if (!function_exists('js')) {
+	function js($content, $type = 'auto', $params = array()) { return _class('core_js')->add($content, $type, $params); }
+}
 if (!function_exists('require_js')) {
 	function require_js($content, $type = 'auto', $params = array()) { return _class('core_js')->add($content, $type, $params); }
+}
+if (!function_exists('css')) {
+	function css($content, $type = 'auto', $params = array()) { return _class('core_css')->add($content, $type, $params); }
 }
 if (!function_exists('require_css')) {
 	function require_css($content, $type = 'auto', $params = array()) { return _class('core_css')->add($content, $type, $params); }

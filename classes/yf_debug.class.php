@@ -102,7 +102,11 @@ class yf_debug {
 			}
 			$name = substr($method, strlen('_debug_'));
 			$ts2 = microtime(true);
-			$content = $this->$method();
+			$content = $this->$method($method_params);
+			if ($method_params) {
+// TODO: support for callback params (title, desc, style, class, etc..)
+				$debug_params[$method] = $method_params;
+			}
 			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' secs';
 			$debug_contents[$name] = $content;
 		}
@@ -138,6 +142,8 @@ class yf_debug {
 		$body .= implode(PHP_EOL, $contents);
 		$body .= '</div>';
 
+// TODO: convert into _class('html')->tabs()
+
 		// DO NOT REMOVE!!! Needed to correct display template tags in debug output
 		$body = str_replace(array('{', '}'), array('&#123;', '&#125;'), $body);
 
@@ -147,7 +153,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_DEBUG_YF () {
+	function _debug_DEBUG_YF (&$params = array()) {
 		if (!$this->_SHOW_SETTINGS) {
 			return '';
 		}
@@ -256,21 +262,23 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_db_queries () {
+	function _debug_db (&$params = array()) {
 		if (!$this->_SHOW_DB_QUERY_LOG) {
 			return false;
 		}
-		$body = '';
+		$items = array();
 		$instances_trace = $this->_get_debug_data('db_instances_trace');
-		foreach ((array)$this->_get_debug_data('db_instances') as $k => $v) {
+		foreach ((array)$this->_get_debug_data('db_instances') as $k => $db) {
 			$connect_trace = array();
 			if (isset($instances_trace[$k])) {
 				$connect_trace = $instances_trace[$k];
 			}
-// TODO: use subtabs here for different db instances
-			$body .= $this->_do_debug_db_connection_queries($v, $connect_trace);
+			$name = $db->DB_TYPE.' | '.$db->DB_USER.' | '.$db->DB_HOST. ($db->DB_PORT ? ':'.$db->DB_PORT : '').' | '.$db->DB_NAME;
+			$items[$name] = $this->_do_debug_db_connection_queries($db, $connect_trace);
 		}
-		return $body;
+		$items['db_shutdown_queries'] = $this->_show_db_shutdown_queries();
+		$items['db_stats'] = $this->_show_db_stats();
+		return _class('html')->tabs($items, array('hide_empty' => 1));
 	}
 
 	/**
@@ -376,7 +384,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_db_shutdown () {
+	function _show_db_shutdown_queries () {
 		if (!$this->_SHOW_DB_QUERY_LOG) {
 			return '';
 		}
@@ -385,7 +393,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_db_stats () {
+	function _show_db_stats () {
 		if (!$this->_SHOW_DB_STATS) {
 			return '';
 		}
@@ -402,7 +410,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_memcached () {
+	function _debug_memcached (&$params = array()) {
 		if (!$this->_SHOW_MEMCACHED_INFO) {
 			return '';
 		}
@@ -434,7 +442,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_stpls () {
+	function _debug_stpls (&$params = array()) {
 		if (!$this->_SHOW_STPLS) {
 			return '';
 		}
@@ -483,7 +491,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_rewrite () {
+	function _debug_rewrite (&$params = array()) {
 		if (!$this->_SHOW_REWRITE_INFO) {
 			return '';
 		}
@@ -509,7 +517,7 @@ class yf_debug {
 
 	/*
 	*/
-	function _debug_force_get_url () {
+	function _debug_force_get_url (&$params = array()) {
 		if (!$this->_SHOW_REWRITE_INFO) {
 			return '';
 		}
@@ -524,7 +532,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_modules () {
+	function _debug_modules (&$params = array()) {
 		if (!$this->_SHOW_LOADED_MODULES) {
 			return '';
 		}
@@ -547,7 +555,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_execute () {
+	function _debug_execute (&$params = array()) {
 		if (!$this->_SHOW_MAIN_EXECUTE) {
 			return '';
 		}
@@ -558,7 +566,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_main_get_data () {
+	function _debug_main_get_data (&$params = array()) {
 		if (!$this->_SHOW_MAIN_GET_DATA) {
 			return '';
 		}
@@ -569,7 +577,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_cache_get () {
+	function _debug_cache_get (&$params = array()) {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
@@ -581,7 +589,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_cache_set () {
+	function _debug_cache_set (&$params = array()) {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
@@ -592,7 +600,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_cache_refresh () {
+	function _debug_cache_refresh (&$params = array()) {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
@@ -603,7 +611,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__get () {
+	function _debug__get (&$params = array()) {
 		if (!$this->_SHOW_GET_DATA) {
 			return '';
 		}
@@ -612,7 +620,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__post () {
+	function _debug__post (&$params = array()) {
 		if (!$this->_SHOW_POST_DATA) {
 			return '';
 		}
@@ -621,7 +629,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__cookie () {
+	function _debug__cookie (&$params = array()) {
 		if (!$this->_SHOW_COOKIE_DATA) {
 			return '';
 		}
@@ -631,7 +639,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__request () {
+	function _debug__request (&$params = array()) {
 		if (!$this->_SHOW_REQUEST_DATA) {
 			return '';
 		}
@@ -640,7 +648,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__files () {
+	function _debug__files (&$params = array()) {
 		if (!$this->_SHOW_FILES_DATA) {
 			return '';
 		}
@@ -649,7 +657,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__session () {
+	function _debug__session (&$params = array()) {
 		if (!$this->_SHOW_SESSION_DATA) {
 			return '';
 		}
@@ -665,7 +673,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__server () {
+	function _debug__server (&$params = array()) {
 		if (!$this->_SHOW_SERVER_DATA) {
 			return '';
 		}
@@ -674,7 +682,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug__env () {
+	function _debug__env (&$params = array()) {
 		if (!$this->_SHOW_ENV_DATA) {
 			return '';
 		}
@@ -683,7 +691,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_i18n () {
+	function _debug_i18n (&$params = array()) {
 		if (!$this->_SHOW_I18N_VARS) {
 			return '';
 		}
@@ -717,7 +725,7 @@ class yf_debug {
 	
 	/**
 	*/
-	function _debug_sphinxsearch () {
+	function _debug_sphinxsearch (&$params = array()) {
 		if (!$this->_SHOW_SPHINX) {
 			return "";
 		}
@@ -753,7 +761,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_ssh () {
+	function _debug_ssh (&$params = array()) {
 		if (!$this->_SHOW_SSH) {
 			return '';
 		}
@@ -767,7 +775,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_eaccelerator () {
+	function _debug_eaccelerator (&$params = array()) {
 		if (!$this->_SHOW_EACCELERATOR_INFO || !function_exists('eaccelerator_info')) {
 			return '';
 		}
@@ -781,7 +789,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_apc () {
+	function _debug_apc (&$params = array()) {
 		if (!$this->_SHOW_APC_INFO || !function_exists('apc_cache_info')) {
 			return '';
 		}
@@ -795,7 +803,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_xcache () {
+	function _debug_xcache (&$params = array()) {
 		if (!$this->_SHOW_XCACHE_INFO || !function_exists('xcache_get')) {
 			return '';
 		}
@@ -808,7 +816,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_resize_images () {
+	function _debug_resize_images (&$params = array()) {
 		if (!$this->_SHOW_RESIZED_IMAGES_LOG || empty($GLOBALS['_RESIZED_IMAGES_LOG'])) {
 			return '';
 		}
@@ -817,7 +825,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_globals () {
+	function _debug_globals (&$params = array()) {
 		if (!$this->_SHOW_GLOBALS) {
 			return '';
 		}
@@ -838,7 +846,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_included_files () {
+	function _debug_included_files (&$params = array()) {
 		if (!$this->_SHOW_INCLUDED_FILES) {
 			return '';
 		}
@@ -868,7 +876,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_curl_requests () {
+	function _debug_curl_requests (&$params = array()) {
 		if (!$this->_SHOW_CURL_REQUESTS) {
 			return '';
 		}
@@ -886,7 +894,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_form2 () {
+	function _debug_form2 (&$params = array()) {
 		if (!$this->_SHOW_FORM2) {
 			return '';
 		}
@@ -902,7 +910,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_table2 () {
+	function _debug_table2 (&$params = array()) {
 		if (!$this->_SHOW_TABLE2) {
 			return '';
 		}
@@ -925,7 +933,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_dd_table () {
+	function _debug_dd_table (&$params = array()) {
 		if (!$this->_SHOW_DD_TABLE) {
 			return '';
 		}
@@ -944,20 +952,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_other () {
-		$items = array();
-		foreach (debug() as $k => $v) {
-			if (isset($this->_used_debug_datas[$k])) {
-				continue;
-			}
-			$items[$k] = $v;
-		}
-		return $this->_show_key_val_table($items);
-	}
-
-	/**
-	*/
-	function _debug_profiling () {
+	function _debug_profiling (&$params = array()) {
 		$all_timings = main()->_timing;
 		if (!$all_timings) {
 			return false;
@@ -996,7 +991,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_hooks () {
+	function _debug_hooks (&$params = array()) {
 		$items = array();
 		$hook_name = '_hook_debug';
 		foreach (main()->modules as $module_name => $module_obj) {
@@ -1004,6 +999,47 @@ class yf_debug {
 				continue;
 			}
 			$items[$module_name] = $module_obj->$hook_name($this);
+		}
+		return $this->_show_key_val_table($items);
+	}
+
+	/**
+	*/
+	function _debug_css (&$params = array()) {
+		$items = $this->_get_debug_data('core_css');
+		foreach ((array)$items as $k => $v) {
+			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
+#			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
+			unset($v['is_added']);
+			$items[$k] = array('id' => ++$i) + $v;
+		}
+#		$items = $this->_time_count_changes($items);
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'type')));
+	}
+
+	/**
+	*/
+	function _debug_js (&$params = array()) {
+		$items = $this->_get_debug_data('core_js');
+		foreach ((array)$items as $k => $v) {
+			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
+#			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
+			unset($v['is_added']);
+			$items[$k] = array('id' => ++$i) + $v;
+		}
+#		$items = $this->_time_count_changes($items);
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'type')));
+	}
+
+	/**
+	*/
+	function _debug_other (&$params = array()) {
+		$items = array();
+		foreach (debug() as $k => $v) {
+			if (isset($this->_used_debug_datas[$k])) {
+				continue;
+			}
+			$items[$k] = $v;
 		}
 		return $this->_show_key_val_table($items);
 	}

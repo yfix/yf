@@ -16,15 +16,13 @@ ng_app_admin.factory( 'srv_search', function( $timeout, $http, $log ) {
 			products     : '{_api_url_products}'
 			, categories : '{_api_url_categories}'
 		}
-		, products: function( term, scope ) {
-			var params  = { search_word: term };
-			return( service.query( term, service.api_url.products, params, scope ) );
+		, products: function( term, ids, scope ) {
+			return( service.query( term, ids, service.api_url.products, scope ) );
 		}
-		, categories: function( term, scope ) {
-			var params  = { search_word: term };
-			return( service.query( term, service.api_url.categories, params, scope ) );
+		, categories: function( term, ids, scope ) {
+			return( service.query( term, ids, service.api_url.categories, scope ) );
 		}
-		, query: function( term, url, params, scope ) {
+		, query: function( term, ids, url, scope ) {
 			$timeout.cancel( query_timer );
 			if( !angular.isString( term ) ) {
 				var storage = scope.search_api_storage;
@@ -33,6 +31,10 @@ ng_app_admin.factory( 'srv_search', function( $timeout, $http, $log ) {
 			}
 			query_timer = $timeout(
 				function() {
+					var params  = {
+						search_word   : term
+						, 'exclude[]' : ids
+					};
 					var results = $http.get( url, { params: params } )
 						.then( function( response ) {
 							var data =  angular.isObject( response.data ) && response.data || [];
@@ -113,7 +115,7 @@ ng_app_admin.controller( '{_ng_controller}', function ( srv_search, $scope, $fil
 	$scope.search_product_id = function( term ) {
 		if( term ) {
 			$scope.set_api( 'products', 'product_id' );
-			var results = $scope.search_api( term, $scope );
+			var results = $scope.search_api( term, $scope.conditions[ 'product_id' ], $scope );
 			return( results );
 		}
 	};
@@ -121,7 +123,7 @@ ng_app_admin.controller( '{_ng_controller}', function ( srv_search, $scope, $fil
 	$scope.search_category_id = function( term ) {
 		if( term ) {
 			$scope.set_api( 'categories', 'category_id' );
-			var results = $scope.search_api( term, $scope );
+			var results = $scope.search_api( term, $scope.conditions[ 'category_id' ], $scope );
 			return( results );
 		}
 	};
