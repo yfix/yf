@@ -36,24 +36,79 @@ class yf_core_css {
 		if ($module_css_path) {
 			$this->add_file($module_css_path);
 		}
+		if ($params['pack']) {
+			$packed = $this->_show_packed_content($params);
+			// Degrade gracefully
+			if (strlen($packed)) {
+				return $packed;
+			}
+		}
 		$out = array();
 		// Process previously added content, depending on its type
 		foreach ((array)$this->content as $md5 => $v) {
 			$type = $v['type'];
 			$text = $v['text'];
+			$_params = (array)$v['params'] + (array)$params;
+			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
 			if ($type == 'url') {
 // TODO: add optional _prepare_html() for $url
-				$out[$md5] = '<link href="'.$text.'" rel="stylesheet" />';
+				$out[$md5] = '<link href="'.$text.'" rel="stylesheet"'.$css_class.' />';
 			} elseif ($type == 'file') {
-				$out[$md5] = '<style type="text/css">'. PHP_EOL. file_get_contents($text). PHP_EOL. '</style>';
+				$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</style>';
 			} elseif ($type == 'inline') {
 				$text = $this->_strip_style_tags($text);
-				$out[$md5] = '<style type="text/css">'. PHP_EOL. $text. PHP_EOL. '</style>';
+				$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</style>';
 			} elseif ($type == 'raw') {
 				$out[$md5] = $text;
 			}
 		}
+// TODO: optionally clear content array after completion
 		return implode(PHP_EOL, $out);
+	}
+
+	/**
+	*/
+	public function _show_packed_content($params = array()) {
+		$packed_file = $this->_pack_content($params);
+		if (!$packed_file || !file_exists($packed_file)) {
+			return false;
+		}
+		$css_class = $params['class'] ? ' class="'.$params['class'].'"' : '';
+		return '<link href="'.$packed_file.'" rel="stylesheet"'.$css_class.' />';
+	}
+
+	/**
+	*/
+	public function _pack_content($params = array()) {
+// TODO: add tpl for auto-generated hash file name, using: %host, %project, %include_path, %yf_path, %date, %is_user, %is_admin ...
+// TODO: add ability to pass callback for auto-generated hash file name
+// TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
+		$packed_file = INCLUDE_PATH. 'uploads/css/packed_'.md5($_SERVER['HTTP_HOST']).'.css';
+		if (file_exists($packed_file) && filemtime($packed_file) > (time() - 3600)) {
+			return $packed_file;
+		}
+		$packed_dir = dirname($packed_file);
+		if (!file_exists($packed_dir)) {
+			mkdir($packed_dir, 0755, true);
+		}
+		$out = array();
+		foreach ((array)$this->content as $md5 => $v) {
+			$type = $v['type'];
+			$text = $v['text'];
+			if ($type == 'url') {
+				$out[$md5] = file_get_contents($text);
+			} elseif ($type == 'file') {
+				$out[$md5] = file_get_contents($text);
+			} elseif ($type == 'inline') {
+				$text = $this->_strip_style_tags($text);
+				$out[$md5] = $text;
+			} elseif ($type == 'raw') {
+				$out[$md5] = $text;
+			}
+		}
+// TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
+		file_put_contents($packed_file, implode(PHP_EOL, $out));
+		return $packed_file;
 	}
 
 	/**
@@ -94,6 +149,7 @@ class yf_core_css {
 				$this->content[$md5] = array(
 					'type'	=> 'url',
 					'text'	=> $_content,
+					'params'=> $params,
 				);
 			} elseif ($type == 'file') {
 				if (file_exists($_content)) {
@@ -102,6 +158,7 @@ class yf_core_css {
 						$this->content[$md5] = array(
 							'type'	=> 'file',
 							'text'	=> $_content,
+							'params'=> $params,
 						);
 					}
 				}
@@ -109,11 +166,13 @@ class yf_core_css {
 				$this->content[$md5] = array(
 					'type'	=> 'inline',
 					'text'	=> $_content,
+					'params'=> $params,
 				);
 			} elseif ($type == 'raw') {
 				$this->content[$md5] = array(
 					'type'	=> 'raw',
 					'text'	=> $_content,
+					'params'=> $params,
 				);
 			} elseif ($type == 'asset') {
 				$url = $this->assets[$_content];
@@ -121,6 +180,7 @@ class yf_core_css {
 				$this->content[$md5] = array(
 					'type'	=> 'url',
 					'text'	=> $url,
+					'params'=> $params,
 				);
 			}
 			if (DEBUG_MODE) {
@@ -129,6 +189,7 @@ class yf_core_css {
 					'md5'		=> $md5,
 					'content'	=> $_content,
 					'is_added'	=> isset($this->content[$md5]),
+					'params'	=> $params,
 					'trace'		=> $trace,
 				));
 			}
@@ -138,25 +199,25 @@ class yf_core_css {
 	/**
 	*/
 	public function add_url($content, $params = array()) {
-		return $this->add($content, 'url');
+		return $this->add($content, 'url', $params);
 	}
 
 	/**
 	*/
 	public function add_file($content, $params = array()) {
-		return $this->add($content, 'file');
+		return $this->add($content, 'file', $params);
 	}
 
 	/**
 	*/
 	public function add_inline($content, $params = array()) {
-		return $this->add($content, 'inline');
+		return $this->add($content, 'inline', $params);
 	}
 
 	/**
 	*/
 	public function add_raw($content, $params = array()) {
-		return $this->add($content, 'raw');
+		return $this->add($content, 'raw', $params);
 	}
 
 	/**
