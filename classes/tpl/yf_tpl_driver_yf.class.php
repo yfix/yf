@@ -398,7 +398,7 @@ class yf_tpl_driver_yf {
 // TODO: ability to pass params (current requirement is to pass: class="yf_core")
 // TODO: shortcuts: {css(k1=v1)} .class { selectors} {/css}, {js(k1=v1)} some script inside {/css}, 
 		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css)}, {catch(tpl_var)}.some_css_class {} {/catch} {require_css(tpl_var)}
-		$string = preg_replace_callback('/\{(css|require_css)\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}(.+?){\/css|require_css\}/ims', function($m) use ($_this) {
+		$string = preg_replace_callback('/\{(css|require_css)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(css|require_css)\}/ims', function($m) use ($_this) {
 			$func = $m[1];
 			if (substr($func, 0, strlen('require_')) != 'require_') {
 				$func = 'require_'.$func;
@@ -407,7 +407,7 @@ class yf_tpl_driver_yf {
 		}, $string);
 
 		// JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
-		$string = preg_replace_callback('/\{(js|require_js)\(\s*["\']{0,1}([^"\'\)\}]+)["\']{0,1}\s*\)\}(.+?){\/js|require_js\}/ims', function($m) use ($_this) {
+		$string = preg_replace_callback('/\{(js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(js|require_js)\}/ims', function($m) use ($_this) {
 			$func = $m[1];
 			if (substr($func, 0, strlen('require_')) != 'require_') {
 				$func = 'require_'.$func;
