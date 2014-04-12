@@ -2,7 +2,6 @@
 
 class yf_core_js {
 
-// TODO: debug console block
 // TODO: auto-caching into web-accessible dir with locking (to avoid duplicate cache entry attempts)
 
 	public $content = array();

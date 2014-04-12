@@ -3,7 +3,6 @@
 class yf_core_css {
 
 // TODO: auto-caching into web-accessible dir with locking (to avoid duplicate cache entry attempts)
-// TODO: debug console block
 
 	public $content = array();
 	/** @array List of pre-defined assets */
@@ -36,7 +35,7 @@ class yf_core_css {
 		if ($module_css_path) {
 			$this->add_file($module_css_path);
 		}
-		if ($params['pack']) {
+		if ($params['packed']) {
 			$packed = $this->_show_packed_content($params);
 			// Degrade gracefully
 			if (strlen($packed)) {
