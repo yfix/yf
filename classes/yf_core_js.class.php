@@ -44,6 +44,9 @@ class yf_core_js {
 			$_params = (array)$v['params'] + (array)$params;
 			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
 			if ($type == 'url') {
+				if ($params['min'] && !DEBUG_MODE && strpos($text, '.min.') === false) {
+					$text = substr($text, 0, -strlen('.js')).'.min.js';
+				}
 // TODO: add optional _prepare_html() for $url
 				$out[$md5] = '<script src="'.$text.'" type="text/javascript"'.$css_class.'></script>';
 			} elseif ($type == 'file') {
@@ -55,6 +58,7 @@ class yf_core_js {
 				$out[$md5] = $text;
 			}
 		}
+		$this->content = array();
 		return implode(PHP_EOL, $out);
 	}
 
