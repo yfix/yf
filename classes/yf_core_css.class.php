@@ -50,6 +50,9 @@ class yf_core_css {
 			$_params = (array)$v['params'] + (array)$params;
 			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
 			if ($type == 'url') {
+				if ($params['min'] && !DEBUG_MODE && strpos($text, '.min.') === false) {
+					$text = substr($text, 0, -strlen('.css')).'.min.css';
+				}
 // TODO: add optional _prepare_html() for $url
 				$out[$md5] = '<link href="'.$text.'" rel="stylesheet"'.$css_class.' />';
 			} elseif ($type == 'file') {
@@ -61,7 +64,7 @@ class yf_core_css {
 				$out[$md5] = $text;
 			}
 		}
-// TODO: optionally clear content array after completion
+		$this->content = array();
 		return implode(PHP_EOL, $out);
 	}
 
