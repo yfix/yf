@@ -109,10 +109,9 @@ class yf_tpl_driver_yf {
 			$string = $this->_process_executes($string, $replace, $name);
 		}
 		$string = $this->_process_replaces($string, $replace, $name);
+		$string = $this->_process_js_css($string, $replace, $name);
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
-		
 		$string = $this->_process_executes_last($string, $replace, $name);
-		
 		return $string;
 	}
 
@@ -339,6 +338,34 @@ class yf_tpl_driver_yf {
 	}
 
 	/**
+	* Replace JS/CSS related patterns
+	*/
+	function _process_js_css($string, $replace = array(), $name = '') {
+// TODO: unit tests
+// TODO: ability to pass params (current requirement is to pass: class="yf_core")
+// TODO: shortcuts: {css(k1=v1)} .class { selectors} {/css}, {js(k1=v1)} some script inside {/css}, 
+		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css)}, {catch(tpl_var)}.some_css_class {} {/catch} {require_css(tpl_var)}
+		$string = preg_replace_callback('/\{(css|require_css)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(css|require_css)\}/ims', function($m) use ($_this) {
+			$func = $m[1];
+			if (substr($func, 0, strlen('require_')) != 'require_') {
+				$func = 'require_'.$func;
+			}
+			return $func($m[3], _attrs_string2array($m[2]));
+		}, $string);
+
+		// JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
+		$string = preg_replace_callback('/\{(js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(js|require_js)\}/ims', function($m) use ($_this) {
+			$func = $m[1];
+			if (substr($func, 0, strlen('require_')) != 'require_') {
+				$func = 'require_'.$func;
+			}
+			return $func($m[3], _attrs_string2array($m[2]));
+		}, $string);
+
+		return $string;
+	}
+
+	/**
 	* Replace standard patterns
 	*/
 	function _replace_std_patterns($string, $name = '', $replace = array(), $params = array()) {
@@ -392,27 +419,6 @@ class yf_tpl_driver_yf {
 		// Url generation with params. Examples: {url(object=home_page;action=test)}
 		$string = preg_replace_callback('/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims', function($m) use ($_this) {
 			return $_this->tpl->_generate_url_wrapper($m[1]);
-		}, $string);
-
-// TODO: unit tests
-// TODO: ability to pass params (current requirement is to pass: class="yf_core")
-// TODO: shortcuts: {css(k1=v1)} .class { selectors} {/css}, {js(k1=v1)} some script inside {/css}, 
-		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css)}, {catch(tpl_var)}.some_css_class {} {/catch} {require_css(tpl_var)}
-		$string = preg_replace_callback('/\{(css|require_css)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(css|require_css)\}/ims', function($m) use ($_this) {
-			$func = $m[1];
-			if (substr($func, 0, strlen('require_')) != 'require_') {
-				$func = 'require_'.$func;
-			}
-			return $func($m[3], _attrs_string2array($m[2]));
-		}, $string);
-
-		// JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
-		$string = preg_replace_callback('/\{(js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(js|require_js)\}/ims', function($m) use ($_this) {
-			$func = $m[1];
-			if (substr($func, 0, strlen('require_')) != 'require_') {
-				$func = 'require_'.$func;
-			}
-			return $func($m[3], _attrs_string2array($m[2]));
 		}, $string);
 
 		// Form item/row. Examples: {form_row("text","password","New Password")}
@@ -473,6 +479,7 @@ class yf_tpl_driver_yf {
 					$catched_string = $this->_process_cycles($catched_string, $replace, $stpl_name);
 					$catched_string = $this->_process_conditions($catched_string, $replace, $stpl_name);
 					$catched_string = $this->_process_replaces($catched_string, $replace, $stpl_name);
+					$catched_string = $this->_process_js_css($catched_string, $replace, $stpl_name);
 					$catched_string = $this->_process_includes($catched_string, $replace, $stpl_name);
 					$catched_string = $this->_process_executes($catched_string, $replace, $stpl_name);
 				}
