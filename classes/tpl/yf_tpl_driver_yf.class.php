@@ -341,9 +341,6 @@ class yf_tpl_driver_yf {
 	* Replace JS/CSS related patterns
 	*/
 	function _process_js_css($string, $replace = array(), $name = '') {
-// TODO: unit tests
-// TODO: ability to pass params (current requirement is to pass: class="yf_core")
-// TODO: shortcuts: {css(k1=v1)} .class { selectors} {/css}, {js(k1=v1)} some script inside {/css}, 
 		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css)}, {catch(tpl_var)}.some_css_class {} {/catch} {require_css(tpl_var)}
 		$string = preg_replace_callback('/\{(css|require_css)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(css|require_css)\}/ims', function($m) use ($_this) {
 			$func = $m[1];
@@ -790,15 +787,7 @@ class yf_tpl_driver_yf {
 		if (!is_array($replace)) {
 			$replace = array();
 		}
-		// Try to process method params (string like attrib1=value1;attrib2=value2)
-		foreach ((array)explode(';', str_replace(array("'",''), '', $params)) as $v) {
-			$attrib_name	= '';
-			$attrib_value   = '';
-			if (false !== strpos($v, '=')) {
-				list($attrib_name, $attrib_value) = explode('=', trim($v));
-			}
-			$replace[trim($attrib_name)] = trim($attrib_value);
-		}
+		$replace = (array)_attrs_string2array($params) + (array)$replace;
 		return $this->parse($stpl_name, $replace);
 	}
 }
