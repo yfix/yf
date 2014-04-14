@@ -267,15 +267,23 @@ if (!function_exists('todecimal')) {
 
 // Used by tpl, form, table to convert str like this: k1=v1,k2=v2;k3=v3
 if (!function_exists('_attrs_string2array')) {
-	function _attrs_string2array($string = '') {
+	function _attrs_string2array($string = '', $strip_quotes = true) {
 // TODO: unit tests
 		$output_array = array();
 		foreach (explode(';', str_replace(',', ';', trim($string))) as $tmp_string) {
-			list($try_key, $try_value) = explode('=', trim($tmp_string));
-			$try_key = trim(trim(trim($try_key), '"'));
-			$try_value = trim(trim(trim($try_value), '"'));
-			if (strlen($try_key) && strlen($try_value)) {
-				$output_array[$try_key] = $try_value;
+			$tmp_string = trim($tmp_string);
+			if ($strip_quotes) {
+				$tmp_string = trim(trim($tmp_string, '"\''));
+			}
+			list($try_key, $try_value) = explode('=', $tmp_string);
+			$try_key = trim($try_key);
+			$try_value = trim($try_value);
+			if ($strip_quotes) {
+				$try_key = trim(trim($try_key, '"\''));
+				$try_value = trim(trim($try_value, '"\''));
+			}
+			if (strlen($try_key)) {
+				$output_array[$try_key] = (string)$try_value;
 			}
 		}
 		return $output_array;
