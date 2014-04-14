@@ -46,4 +46,9 @@ class func_attrs_string2array_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(array('k1' => '" v1 "'), _attrs_string2array(' k1 = " v1 " ', $strip_quotes = false));
 		$this->assertEquals(array('k1' => 'v1'), _attrs_string2array(' k1 = " v1 " ', $strip_quotes = true));
 	}
+	public function test_empty() {
+		$this->assertEquals(array('k1' => ''), _attrs_string2array('k1='));
+		$this->assertEquals(array('k1' => ''), _attrs_string2array('k1'));
+		$this->assertEquals(array('k1' => ''), _attrs_string2array(' k1 = '));
+	}
 }
