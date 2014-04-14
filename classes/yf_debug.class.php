@@ -1008,13 +1008,13 @@ class yf_debug {
 	function _debug_css (&$params = array()) {
 		$items = $this->_get_debug_data('core_css');
 		foreach ((array)$items as $k => $v) {
+			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
 			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
 			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
 			unset($v['is_added']);
 			$items[$k] = array('id' => ++$i) + $v;
 		}
-#		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'type')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
 	}
 
 	/**
@@ -1022,13 +1022,13 @@ class yf_debug {
 	function _debug_js (&$params = array()) {
 		$items = $this->_get_debug_data('core_js');
 		foreach ((array)$items as $k => $v) {
+			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
 			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
 			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
 			unset($v['is_added']);
 			$items[$k] = array('id' => ++$i) + $v;
 		}
-#		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'type')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
 	}
 
 	/**
