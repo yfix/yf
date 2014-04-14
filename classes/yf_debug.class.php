@@ -9,17 +9,13 @@
 */
 class yf_debug {
 
-	public $_file_prefix				= 'logs/not_translated_';
-	public $_file_ext					= '.php';
 	public $_SHOW_DB_QUERY_LOG			= 1;
 	public $_SHOW_DB_STATS				= 1;
 	public $_SHOW_DB_EXPLAIN_QUERY		= 1;
 	public $_SHOW_SPHINX				= 1;
 	public $_SHOW_SSH					= 1;
-	public $_SHOW_TPLS					= 1;
 	public $_SHOW_STPLS					= 1;
 	public $_SHOW_REWRITE_INFO			= 1;
-	public $_SHOW_CUSTOM_REPLACED		= 1;
 	public $_SHOW_OUTPUT_CACHE_INFO		= 1;
 	public $_SHOW_RESIZED_IMAGES_LOG	= 1;
 	public $_SHOW_INCLUDED_FILES		= 1;
@@ -32,7 +28,6 @@ class yf_debug {
 	public $_SHOW_MAIN_GET_DATA			= 1;
 	public $_SHOW_CORE_CACHE			= 1;
 	public $_SHOW_MAIN_EXECUTE			= 1;
-	public $_SHOW_SEND_MAIL				= 1;
 	public $_SHOW_GLOBALS				= 1;
 	public $_SHOW_NOT_TRANSLATED		= 1;
 	public $_SHOW_I18N_VARS				= 1;
@@ -57,6 +52,8 @@ class yf_debug {
 	public $SORT_TEMPLATES_BY_NAME		= 1;
 	public $ADD_ADMIN_LINKS				= true;
 	public $_NOT_TRANSLATED_FILE		= '';
+	public $_file_prefix				= 'logs/not_translated_';
+	public $_file_ext					= '.php';
 	public $ADMIN_PATHS				= array(
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={{THEME}}&name={{ID}}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={{ID}}',
@@ -401,7 +398,6 @@ class yf_debug {
 // TODO: use subtabs here for different db instances
 		$data['stats'] = db()->get_2d('SHOW SESSION STATUS');
 		$data['vars'] = db()->get_2d('SHOW VARIABLES');
-#		$body .= 'PHP Extension used: '.$ext.'<br>'.PHP_EOL;
 		foreach ($data as $name => $_data) {
 			$body .= '<div class="span10 col-lg-10">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
 		}
@@ -779,7 +775,6 @@ class yf_debug {
 		if (!$this->_SHOW_EACCELERATOR_INFO || !function_exists('eaccelerator_info')) {
 			return '';
 		}
-// TODO: check me
 		$eaccel_stats = eaccelerator_info();
 		foreach ((array)ini_get_all('eaccelerator') as $_k => $_v) {
 			$eaccel_stats[$_k] = $_v['local_value'];
@@ -793,12 +788,11 @@ class yf_debug {
 		if (!$this->_SHOW_APC_INFO || !function_exists('apc_cache_info')) {
 			return '';
 		}
-// TODO
-#		$data = apc_cache_info();
-#		foreach ((array)ini_get_all('apc') as $_k => $_v) {
-#			$data[$_k] = $_v['local_value'];
-#		}
-#		return $this->_show_key_val_table($data);
+		$data = apc_cache_info();
+		foreach ((array)ini_get_all('apc') as $_k => $_v) {
+			$data[$_k] = $_v['local_value'];
+		}
+		return $this->_show_key_val_table($data);
 	}
 
 	/**
@@ -807,11 +801,10 @@ class yf_debug {
 		if (!$this->_SHOW_XCACHE_INFO || !function_exists('xcache_get')) {
 			return '';
 		}
-// TODO
-#		foreach ((array)ini_get_all('xcache') as $_k => $_v) {
-#			$data[$_k] = $_v['local_value'];
-#		}
-#		return $this->_show_key_val_table($data);
+		foreach ((array)ini_get_all('xcache') as $_k => $_v) {
+			$data[$_k] = $_v['local_value'];
+		}
+		return $this->_show_key_val_table($data);
 	}
 
 	/**
