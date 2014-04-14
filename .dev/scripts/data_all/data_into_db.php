@@ -1,6 +1,8 @@
 #!/usr/bin/php
 <?php
 
+require_once dirname(dirname(__FILE__)).'/scripts_init.php';
+
 $force = trim($argv[2]);
 $project_path = trim($argv[1]);
 if (!$project_path) {
@@ -21,14 +23,6 @@ foreach (array('', '*/', '*/*/', '*/*/*/') as $g) {
 if (!defined('DB_NAME')) {
 	exit('Error: cannot init database connection.');
 }
-
-###########
-if (!defined('YF_PATH')) {
-	define('YF_PATH', dirname(dirname(dirname(dirname(__FILE__)))).'/');
-	require YF_PATH.'classes/yf_main.class.php';
-	new yf_main('admin', $no_db_connect = false, $auto_init_all = true);
-}
-###########
 
 $self = __FILE__;
 foreach(glob(dirname(dirname(__FILE__)).'/*/*into_db*.php') as $path) {
