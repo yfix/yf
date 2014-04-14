@@ -18,6 +18,14 @@ class class_db_test extends PHPUnit_Framework_TestCase {
 		'total_sum'	=> '19,12',
 		'name'		=> 'name\'',
 	);
+	public static $_er = array();
+	public static function setUpBeforeClass() {
+		self::$_er = error_reporting();
+		error_reporting(0);
+	}
+	public static function tearDownAfterClass() {
+		error_reporting(self::$_er);
+	}
 	private function db() {
 		return _class('db');
 	}
