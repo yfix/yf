@@ -1,36 +1,42 @@
 #!/usr/bin/php
 <?php
 
-#define('YF_PATH', dirname(dirname(dirname(dirname(__FILE__)))).'/');
-define('YF_PATH', '/home/www/yf/');
-#$dir_in = '';
-#$dir_out = '';
+require_once dirname(dirname(__FILE__)).'/scripts_init.php';
 
-		// Load install data from external files
-		$globs_sql = array(
-			'yf_main'			=> YF_PATH.'share/db_installer/sql/*.sql.php',
-			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
-#			'project_main'		=> PROJECT_PATH.'share/db_installer/sql/*.sql.php',
-#			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
-		);
-		foreach ($globs_sql as $glob) {
-			foreach (glob($glob) as $f) {
-				$t_name = substr(basename($f), 0, -strlen('.sql.php'));
-echo $f. PHP_EOL;
-#				require_once $f; // $data should be loaded from file
-#				$this->TABLES_SQL[$t_name] = $data;
-			}
+$globs_sql = array(
+	'yf_main'		=> YF_PATH.'share/db_installer/sql/*.sql.php',
+	'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
+);
+foreach ($globs_sql as $glob) {
+	foreach (glob($glob) as $f) {
+		echo '== '.$f. PHP_EOL;
+		$t_name = substr(basename($f), 0, -strlen('.sql.php'));
+		$fields_file = dirname(dirname($f)).'/fields/'.$t_name.'.fields.php';
+		echo '++ fields: '.$fields_file. PHP_EOL;
+		if (file_exists($fields_file)) {
+			echo 'exists, skipped'. PHP_EOL;
+			continue;
 		}
-		$globs_data = array(
-			'yf_main'			=> YF_PATH.'share/db_installer/data/*.data.php',
-			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/data/*.data.php',
-#			'project_main'		=> PROJECT_PATH.'share/db_installer/data/*.data.php',
-#			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/data/*.data.php',
-		);
-		foreach ($globs_data as $glob) {
-			foreach (glob($glob) as $f) {
-				$t_name = substr(basename($f), 0, -strlen('.data.php'));
-#				require_once $f; // $data should be loaded from file
-#				$this->TABLES_DATA[$t_name] = $data;
-			}
+		$fields_dir = dirname($fields_file);
+		if (!file_exists($fields_dir)) {
+			mkdir($fields_dir, 0755, true);
 		}
+
+		$data = '';
+		include $f; // $data should be loaded from file
+
+		if (!$data) {
+			echo '-- ERROR: empty data'. PHP_EOL;
+			continue;
+		}
+
+		$a = _class('installer_db_mysql', 'classes/db/')->_db_table_struct_into_array($data);
+
+		if (!$a) {
+			echo '-- ERROR: empty fields'. PHP_EOL;
+			continue;
+		}
+#		print_r($a);
+		file_put_contents($fields_file, '<?'.'php'.PHP_EOL.'$data = '.str_replace('  ', "\t", var_export($a, 1)).';'.PHP_EOL);
+	}
+}
