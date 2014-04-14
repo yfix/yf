@@ -155,15 +155,6 @@ $data = array (
 			'default' => '0',
 			'auto_inc' => 0,
 		),
-		'/**' => 
-		array (
-			'type' => 'engine',
-			'length' => '=MyISAM',
-			'attrib' => NULL,
-			'not_null' => 0,
-			'default' => 'CHARSET=utf8 **/',
-			'auto_inc' => 0,
-		),
 	),
 	'keys' => 
 	array (
