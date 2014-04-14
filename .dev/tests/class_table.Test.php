@@ -24,7 +24,7 @@ class class_table_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_10() {
 		$a = array(	array('k1' => 'v1', 'k2' => 'v2') );
-		$html = table($a)->text();
+		$html = @table($a)->text();
 		$this->assertEquals(str_replace(PHP_EOL, '', 
 '<table class="table table-bordered table-striped table-hover">
 <thead></thead><tbody><tr></tr></tbody>
