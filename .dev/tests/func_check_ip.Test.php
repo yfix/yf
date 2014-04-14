@@ -22,15 +22,17 @@ class func_check_ip_test extends PHPUnit_Framework_TestCase {
 			'213.86.127.13","remote_addr_ip":"94.23.1.212"'	=> '213.86.127.13',
 			'102.219.202.23, 124.81.238.226'	=> '124.81.238.226',
 		);
-#		$ignore_ips = common()->_get_servers_ips();
 		$ignore_ips = array(
 			'172.19.177.198',
 			'172.44.141.63',
+			'50.23.132.250',
+			'188.165.140.51',
+			'102.219.202.23',
 		);
+		$ignore_ips = array_combine($ignore_ips, $ignore_ips);
 		foreach ((array)$test_array as $test_ip => $expect_ip) {
 			$_SERVER['HTTP_X_FORWARDED_FOR'] = $key;
-// TODO
-#			$this->assertEquals($expect_ip, common()->_check_ip($test_ip, $ignore_ips, 'GEO'));
+			$this->assertEquals($expect_ip, _class('client_utils', 'classes/common/')->_check_ip($test_ip, $ignore_ips/*, 'GEO'*/));
 		}
 	}
 
