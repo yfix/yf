@@ -429,7 +429,7 @@ class yf_db_query_builder {
 	/**
 	* Examples: limit(10), limit(10,100)
 	*/
-	function limit($count, $offset = null) {
+	function limit($count = 10, $offset = null) {
 		if ($count) {
 			$sql = $this->db->limit($count, $offset);
 		}
