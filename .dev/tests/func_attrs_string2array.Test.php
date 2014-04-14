@@ -26,5 +26,17 @@ class func_attrs_string2array_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($a, _attrs_string2array('k1=v1;k2=v2'));
 		$this->assertEquals($a, _attrs_string2array(' k1 = v1 ; k2 = v2 '));
 		$this->assertEquals($a, _attrs_string2array('  k1  =  v1  ,  k2  =  v2  '));
+		$this->assertEquals($a, _attrs_string2array(',,,,,,  k1   =    v1  ,,,,,  k2    =   v2 ,,,,, '));
+	}
+	public function test_many() {
+		$a = array('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3', 'k4' => 'v4');
+		$this->assertEquals($a, _attrs_string2array('k1=v1;k2=v2;k3=v3;k4=v4'));
+		$this->assertEquals($a, _attrs_string2array(' k1 = v1; k2 = v2; k3 = v3; k4 = v4'));
+		$this->assertEquals($a, _attrs_string2array(' k1 = 0; k2 = v2; k3 = v3; k4 = v4; k1 = v1'));
+	}
+	public function test_special_symbols() {
+		$a = array('k1' => '!@#$%^&&*(()_-+1234567890"\'');
+		$this->assertEquals($a, _attrs_string2array('k1=!@#$%^&&*(()_-+1234567890"\''));
+		$this->assertEquals($a, _attrs_string2array(' k1 = !@#$%^&&*(()_-+1234567890"\' '));
 	}
 }
