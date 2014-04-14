@@ -47,12 +47,16 @@ class yf_manage_shop_price_update {
 		list( $total, $preview ) = $data;
 		$replace = array(
 			'_all'  => $total,
-			'value' => $_class_price->_number_format( $_POST[ 'value' ] ),
+			'percent' => $_class_price->_number_format( $_POST[ 'percent' ] ),
 		);
 		$to_field = $this->_fields_update;
 		// create form
+		$link_back = './?object=manage_shop&action=products';
 		$_form = form( $replace )
-			->info( '_all', 'Всего для обновления' )
+			->row_start( array( 'desc' => 'Всего выбрано' ) )
+				->info( '_all' )
+				->link( 'Back', $link_back , array( 'title' => 'Вернуться в к фильтру продуктов', 'icon' => 'fa fa-arrow-circle-left' ))
+			->row_end()
 			->number( 'percent', 'Процент, +/-' )
 			->select_box( 'to_field', $to_field, array(
 				'selected'  => $_POST[ 'to_field' ],
@@ -62,6 +66,7 @@ class yf_manage_shop_price_update {
 			))
 			->submit( 'preview', 'Предпросмотр' )
 			->submit( 'apply', 'Выполнить' )
+			->check_box( 'confirm', false, array( 'desc' => 'подтверждение', 'no_label' => true ) )
 		;
 		return( $_form . $preview );
 	}
@@ -110,7 +115,7 @@ class yf_manage_shop_price_update {
 		$count = db()->get_one( $sql_count );
 		// build temp data
 		// prepare percent
-		$percent = $_class_price->_number_format( $_POST[ 'percent' ] );
+		$percent = $_class_price->_number_float( $_POST[ 'percent' ] );
 		$percent = 1 + $percent / 100;
 		$percent = $_class_price->_number_mysql( $percent, 4 );
 		// prepare to field
@@ -118,29 +123,30 @@ class yf_manage_shop_price_update {
 		$to_field = $_POST[ 'to_field' ];
 		// to field error
 		if( !empty( $to_field ) && !isset( $_fields[ $to_field ] ) ) { return( js_redirect( './', true, 'error to field' ) ); }
-		$apply     = $_POST[ 'apply'    ];
-		$is_update = isset( $_fields[ $to_field ] ) && isset( $apply ) ? true : false;
+		$apply   = $_POST[ 'apply'   ];
+		$confirm = $_POST[ 'confirm' ];
+		$is_update = isset( $_fields[ $to_field ] ) && isset( $apply ) && isset( $confirm ) ? true : false;
 		$to_field = $to_field ?: $_fields[ 'price_raw' ];
-		$sql_price_update = "$to_field = IF( price_raw > 0, price_raw, price ) * $percent";
+		$sql_price_update = "$to_field = ( IF( price_raw > 0, price_raw, price ) * $percent )";
+		$css_field[ $to_field ] = 'text-success';
 		$limit = 5;
 		// preview
 		// db_query( "DROP TABLE IF EXISTS $sql_table_t" );
 		db_query( "CREATE TEMPORARY TABLE $sql_table_t LIKE $sql_table" );
 		db_query( "INSERT INTO $sql_table_t $sql_filter LIMIT $limit" );
 		db_query( "UPDATE $sql_table_t SET $sql_price_update LIMIT $limit" );
-		$sql_t = "SELECT $sql_fields FROM $sql_table_t LIMIT $limit";
-		$result_t = db_get_all( $sql_t );
-		$result_t = table( $result_t )
+		$result = db_get_all( "SELECT $sql_fields FROM $sql_table_t LIMIT $limit" );
+		$result_t = table( $result )
 			->text( 'name' )
-			->text( 'price_raw' )
-			->text( 'price' )
-			->text( 'old_price' )
+			->text( 'price_raw', array( 'class' => $css_field[ 'price_raw' ] ) )
+			->text( 'price',     array( 'class' => $css_field[ 'price'     ] ) )
+			->text( 'old_price', array( 'class' => $css_field[ 'old_price' ] ) )
 		;
 		$result_t = _class('html')->panel( array( 'title' => 'Предпросмотр', 'body' => $result_t ) );
 		$result = array( $count, $result_t );
 		// apply
 		if( $is_update ) {
-			db_query( "UPDATE $sql_table SET $sql_price_update $sql_where" );
+			db_query( "UPDATE $sql_table as p SET $sql_price_update $sql_where" );
 		}
 		return( $result );
 	}
