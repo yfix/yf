@@ -23,23 +23,27 @@ class yf_core_menu {
 	/**
 	* Show menu (alias for the '_show_menu')
 	*/
+	function show ($params) {
+		return $this->_show_menu($params);
+	}
+
+	/**
+	* Show menu (alias for the '_show_menu')
+	*/
 	function show_menu ($params) {
 		return $this->_show_menu($params);
 	}
 
 	/**
 	* Show menu
+	* 	$_item_types = array(
+	*		1 => 'Internal link',
+	*		2 => 'External link',
+	*		3 => 'Spacer',
+	*		4 => 'Divider',
+	*	);
 	*/
 	function _show_menu ($input = array()) {
-// TODO: optimize for speed (takes too much time now)
-		/*
-		$_item_types = array(
-			1 => 'Internal link',
-			2 => 'External link',
-			3 => 'Spacer',
-			4 => 'Divider',
-		);
-		*/
 		$RETURN_ARRAY	= isset($input['return_array']) ? $input['return_array'] : false;
 		$force_stpl_name= isset($input['force_stpl_name']) ? $input['force_stpl_name'] : false;
 		$menu_name		= $input['name'];
@@ -47,79 +51,9 @@ class yf_core_menu {
 			trigger_error(__CLASS__.': Given empty menu name to display', E_USER_WARNING);
 			return false;
 		}
-		if (!isset($this->_menus_infos)) {
-			$this->_menus_infos = main()->get_data('menus');
-		}
-		if (empty($this->_menus_infos)) {
-			if (!$this->_error_no_menus_raised) {
-				trigger_error(__CLASS__.': Menus info not loaded', E_USER_WARNING);
-				$this->_error_no_menus_raised = true;
-			}
-			return false;
-		}
-		$MENU_EXISTS = false;
-		foreach ((array)$this->_menus_infos as $menu_info) {
-			if ($menu_info['type'] != MAIN_TYPE) {
-				continue;
-			}
-			if ($menu_info['name'] == $menu_name) {
-				$MENU_EXISTS = true;
-				$menu_id = $menu_info['id'];
-				break;
-			}
-		}
-		if (!$MENU_EXISTS) {
-			trigger_error(__CLASS__.': Menu name "'._prepare_html($menu_name).'" not found in menus list', E_USER_WARNING);
-			return false;
-		}
-		$cur_menu_info	= &$this->_menus_infos[$menu_id];
+		$cur_menu_info	= $this->_get_cur_menu_info($menu_name);
 		if (!$cur_menu_info['active']) {
 			return false;
-		}
-		if (!isset($this->_menu_items)) {
-			$this->_menu_items = main()->get_data('menu_items');
-		}
-		// Do not show menu if there is no items in it
-		if (empty($this->_menu_items[$menu_id])) {
-			return false;
-		}
-
-		// Check if we need to call special menu handler
-		$special_class_name = '';
-		$special_method_name = '';
-		if (false !== strpos($cur_menu_info['method_name'], '.')) {
-			list($special_class_name, $special_method_name) = explode('.', $cur_menu_info['method_name']);
-		}
-		$special_params = array(
-			'menu_name'	=> $menu_name,
-			'menu_id'	=> $menu_id,
-		);
-		$menu_items = array();
-		if (!empty($special_class_name) && !empty($special_method_name)) {
-			$menu_items = _class($special_class_name, $special_path)->$special_method_name($special_params);
-		} else {
-			$menu_items = $this->_recursive_get_menu_items($menu_id);
-		}
-		// Support for custom fields, that will be available as menu_items array keys
-		$custom_fields = array();
-		if ($cur_menu_info['custom_fields']) {
-			foreach (explode(',', str_replace(';', ',', trim($cur_menu_info['custom_fields']))) as $f) {
-				$f = trim($f);
-				if ($f) {
-					$custom_fields[$f] = $f;
-				}
-			}
-		}
-		if ($this->USE_DYNAMIC_ATTS && $custom_fields) {
-			foreach ((array)$menu_items as $item_id => $item_info) {
-				if (!strlen($item_info['other_info'])) {
-					continue;
-				}
-				$custom_attrs = (array)$this->_convert_atts_string_into_array($item_info['other_info']);
-				foreach ((array)$custom_fields as $f) {
-					$menu_items[$item_id][$f] = strval($custom_attrs[$f]);
-				}
-			}
 		}
 		if ($force_stpl_name) {
 			$cur_menu_info['stpl_name'] = $force_stpl_name;
@@ -129,8 +63,10 @@ class yf_core_menu {
 		$STPL_MENU_PAD		= !empty($cur_menu_info['stpl_name']) ? $cur_menu_info['stpl_name'].'_pad' : 'system/menu_pad';
 		$level_pad_text		= tpl()->parse($STPL_MENU_PAD);
 
-		$menu_items = $this->_cleanup_menu_items($menu_items);
-
+		$menu_items = $this->_get_menu_items($cur_menu_info);
+		if (empty($menu_items)) {
+			return false;
+		}
 		$num_menu_items = count($menu_items);
 		$_prev_level = 0;
 		$_next_level = 0;
@@ -169,7 +105,7 @@ class yf_core_menu {
 					}
 				}
 			}
-			$replace2 = array(
+			$items[$item['id']] = array(
 				'item_id'		=> intval($item['id']),
 				'parent_id'		=> intval($item['parent_id']),
 				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
@@ -188,7 +124,6 @@ class yf_core_menu {
 				'have_children'	=> intval((bool)$item['have_children']),
 				'next_level_diff'=> intval(abs($item['level'] - $_next_level)),
 			);
-			$items[$item['id']] = $replace2;
 			// Save current level for the next iteration
 			$_prev_level = $item['level'];
 		}
@@ -198,11 +133,99 @@ class yf_core_menu {
 		foreach ((array)$items as $id => $item) {
 			$items[$id] = tpl()->parse($STPL_MENU_ITEM, $item);
 		}
-		// Process main template
-		$replace = array(
-			'items' => implode('', (array)$items),
+		return tpl()->parse($STPL_MENU_MAIN, array(
+			'items' => implode(PHP_EOL, (array)$items),
+		));
+	}
+
+	/**
+	*/
+	function _get_menu_items($cur_menu_info) {
+		$menu_id = $cur_menu_info['id'];
+		$menu_name = $cur_menu_info['name'];
+		if (!isset($this->_menu_items)) {
+			$this->_menu_items = main()->get_data('menu_items');
+		}
+		// Do not show menu if there is no items in it
+		if (empty($this->_menu_items[$menu_id])) {
+			return false;
+		}
+		// Check if we need to call special menu handler
+		$special_class_name = '';
+		$special_method_name = '';
+		if (false !== strpos($cur_menu_info['method_name'], '.')) {
+			list($special_class_name, $special_method_name) = explode('.', $cur_menu_info['method_name']);
+		}
+		$special_params = array(
+			'menu_name'	=> $menu_name,
+			'menu_id'	=> $menu_id,
 		);
-		return tpl()->parse($STPL_MENU_MAIN, $replace);
+		$menu_items = array();
+		if (!empty($special_class_name) && !empty($special_method_name)) {
+			$menu_items = _class($special_class_name, $special_path)->$special_method_name($special_params);
+		} else {
+			$menu_items = $this->_recursive_get_menu_items($menu_id);
+		}
+		// Support for custom fields, that will be available as menu_items array keys
+		$menu_items = $this->_apply_custom_fields($cur_menu_info, $menu_items);
+		$menu_items = $this->_cleanup_menu_items($menu_items);
+		return $menu_items;
+	}
+
+	/**
+	*/
+	function _get_cur_menu_info($menu_name) {
+		if (!isset($this->_menus_infos)) {
+			$this->_menus_infos = main()->get_data('menus');
+		}
+		if (empty($this->_menus_infos)) {
+			if (!$this->_error_no_menus_raised) {
+				trigger_error(__CLASS__.': Menus info not loaded', E_USER_WARNING);
+				$this->_error_no_menus_raised = true;
+			}
+			return false;
+		}
+		$menu_id = 0;
+		foreach ((array)$this->_menus_infos as $menu_info) {
+			if ($menu_info['type'] != MAIN_TYPE) {
+				continue;
+			}
+			if ($menu_info['name'] == $menu_name) {
+				$menu_id = $menu_info['id'];
+				break;
+			}
+		}
+		if (!$menu_id) {
+			trigger_error(__CLASS__.': Menu name "'._prepare_html($menu_name).'" not found in menus list', E_USER_WARNING);
+			return false;
+		}
+		return $this->_menus_infos[$menu_id];
+	}
+
+	/**
+	*/
+	function _apply_custom_fields($cur_menu_info, $menu_items) {
+		$custom_fields = array();
+		if ($cur_menu_info['custom_fields']) {
+			foreach (explode(',', str_replace(';', ',', trim($cur_menu_info['custom_fields']))) as $f) {
+				$f = trim($f);
+				if ($f) {
+					$custom_fields[$f] = $f;
+				}
+			}
+		}
+		if ($this->USE_DYNAMIC_ATTS && $custom_fields) {
+			foreach ((array)$menu_items as $item_id => $item_info) {
+				if (!strlen($item_info['other_info'])) {
+					continue;
+				}
+				$custom_attrs = (array)_attrs_string2array($item_info['other_info']);
+				foreach ((array)$custom_fields as $f) {
+					$menu_items[$item_id][$f] = strval($custom_attrs[$f]);
+				}
+			}
+		}
+		return $menu_items;
 	}
 
 	/**
@@ -389,21 +412,5 @@ class yf_core_menu {
 			}
 		}
 		return $ids;
-	}
-
-	/**
-	* Convert string attributes (from field 'other_info') into array
-	*/
-	function _convert_atts_string_into_array($string = '') {
-		$output_array = array();
-		foreach (explode(';', trim($string)) as $tmp_string) {
-			list($try_key, $try_value) = explode('=', trim($tmp_string));
-			$try_key	= trim(trim(trim($try_key), '"'));
-			$try_value	= trim(trim(trim($try_value), '"'));
-			if (strlen($try_key) && strlen($try_value)) {
-				$output_array[$try_key] = $try_value;
-			}
-		}
-		return $output_array;
 	}
 }
