@@ -3,6 +3,14 @@
 require_once dirname(__FILE__).'/tpl__setup.php';
 
 class tpl_driver_yf_bugs_test extends tpl_abstract {
+	public static $_er = array();
+	public static function setUpBeforeClass() {
+		self::$_er = error_reporting();
+		error_reporting(0);
+	}
+	public static function tearDownAfterClass() {
+		error_reporting(self::$_er);
+	}
 	public function test_bug_01() {
 		$this->assertEquals('#description ', self::_tpl( '#description {execute(main,_show_block123123)}', array('description' => 'test') ));
 	}
