@@ -40,7 +40,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 </div>
 </div>
 </fieldset>
-</form>', trim(form()->text()) );
+</form>', trim(@form()->text()) );
 		$this->assertEquals(  
 '<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
 <fieldset>
@@ -326,7 +326,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			, trim(self::form_no_chain($r)->save_and_clear('test')) );
 	}
 	public function test_info() {
-		$this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info()) );
+		$this->assertEquals('<span class=" label label-info"></span>', trim(@self::form_no_chain($r)->info()) );
 		$this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info('test')) );
 		$r['test'] = 'some info';
 		$this->assertEquals('<span class=" label label-info">some info</span>', trim(self::form_no_chain($r)->info('test')) );
@@ -345,8 +345,8 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			, trim(self::form_no_chain($r)->info_link('test')) );
 	}
 	public function test_tbl_link() {
-		$this->assertEquals('<a class="btn btn-default btn-mini btn-xs"><i class="icon-tasks"></i> </a>', trim(self::form_no_chain($r)->tbl_link()) );
-		$this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs"><i class="icon-tasks"></i> test</a>', trim(self::form_no_chain($r)->tbl_link('test')) );
+		$this->assertEquals('<a class="btn btn-default btn-mini btn-xs"><i class="icon-tasks"></i> </a>', trim(@self::form_no_chain($r)->tbl_link()) );
+		$this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs"><i class="icon-tasks"></i> test</a>', trim(@self::form_no_chain($r)->tbl_link('test')) );
 		$this->assertEquals('<a name="test" href="./?object=someobject&action=someaction" class="btn btn-default btn-mini btn-xs"><i class="icon-tasks"></i> test</a>'
 			, trim(self::form_no_chain($r)->tbl_link('test', './?object=someobject&action=someaction')) );
 	}
