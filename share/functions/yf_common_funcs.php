@@ -176,8 +176,8 @@ if (!function_exists('_account_info')) {
 	function _account_info ($account_id) { return _class('utils')->_account_info($account_id); }
 }
 if (!function_exists('my_explode')) {
-	function my_explode ($string = '', $divider = "\n") {
-		$result = explode("\n", trim($string));
+	function my_explode ($string = '', $divider = PHP_EOL) {
+		$result = explode($divider, trim($string));
 		foreach ((array)$result as $k => $v) {
 			$v = trim($v);
 			if (!strlen($v)) {
@@ -225,17 +225,13 @@ if (!function_exists('array_to_object')) {
 		}
 	}
 }
-// Locale safe floatval
 if (!function_exists('_floatval')) {
-	function _floatval ($val = 0) {
-#		return floatval(str_replace(',', '.', $val));
-		return tofloat($val);
-	}
+	function _floatval ($val = 0) { return tofloat($val); }
 }
 /*
-This function takes the last comma or dot (if any) to make a clean float, ignoring thousand separator, currency or any other letter
-$num = '1.999,369€';  var_dump(tofloat($num)); // float(1999.369)
-$otherNum = '126,564,789.33 m²';  var_dump(tofloat($otherNum)); // float(126564789.33)
+* This function takes the last comma or dot (if any) to make a clean float, ignoring thousand separator, currency or any other letter
+* $num = '1.999,369€';  var_dump(tofloat($num)); // float(1999.369)
+* $otherNum = '126,564,789.33 m²';  var_dump(tofloat($otherNum)); // float(126564789.33)
 */
 if (!function_exists('tofloat')) {
 	function tofloat($num = 0) {
@@ -268,7 +264,6 @@ if (!function_exists('todecimal')) {
 // Used by tpl, form, table to convert str like this: k1=v1,k2=v2;k3=v3
 if (!function_exists('_attrs_string2array')) {
 	function _attrs_string2array($string = '', $strip_quotes = true) {
-// TODO: unit tests
 		$output_array = array();
 		foreach (explode(';', str_replace(',', ';', trim($string))) as $tmp_string) {
 			$tmp_string = trim($tmp_string);
