@@ -1206,17 +1206,7 @@ class yf_main {
 		}
 		// Try to process method params (string like attrib1=value1;attrib2=value2)
 		if (is_string($method_params) && strlen($method_params)) {
-			$tmp_params		= explode(';', $method_params);
-			$method_params	= array();
-			// Convert params string into array
-			foreach ((array)$tmp_params as $v) {
-				$attrib_name = '';
-				$attrib_value = '';
-				if (false !== strpos($v, '=')) {
-					list($attrib_name, $attrib_value) = explode('=', trim($v));
-				}
-				$method_params[trim($attrib_name)] = trim($attrib_value);
-			}
+			$method_params	= (array)_attrs_string2array($method_params);
 		}
 		$result = $OBJ->$method_name($method_params);
 		if ($use_cache) {
