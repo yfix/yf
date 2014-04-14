@@ -83,7 +83,6 @@ class yf_core_menu {
 		if (empty($this->_menu_items[$menu_id])) {
 			return false;
 		}
-		$center_block_id = _class('graphics')->_get_center_block_id();
 
 		// Check if we need to call special menu handler
 		$special_class_name = '';
@@ -130,51 +129,9 @@ class yf_core_menu {
 		$STPL_MENU_PAD		= !empty($cur_menu_info['stpl_name']) ? $cur_menu_info['stpl_name'].'_pad' : 'system/menu_pad';
 		$level_pad_text		= tpl()->parse($STPL_MENU_PAD);
 
-		$menu_items_to_display = array();
-		foreach ((array)$menu_items as $item_id => $item_info) {
-			if (empty($item_info)) {
-				continue;
-			}
-			// Check PHP conditional code for display
-			if (!empty($item_info['cond_code'])) {
-				$cond_result = (bool)eval('return ('.$item_info['cond_code'].');');
-				if (!$cond_result) {
-					continue;
-				}
-			}
-			if (substr($item_info['location'], 0, 3) == './?') {
-				$item_info['location'] = substr($item_info['location'], 3);
-			}
-			// Internal link
-			if ($item_info['type_id'] == 1 && strlen($item_info['location']) > 0) {
-				parse_str($item_info['location'], $_item_parts);
-				if (_class('graphics')->MENU_HIDE_INACTIVE_MODULES) {
-					if (!isset($this->_active_modules)) {
-						$cl_name = MAIN_TYPE_USER ? 'user_modules' : 'admin_modules';
-						$this->_active_modules = _class($cl_name, 'admin_modules/')->_get_modules();
-					}
-					if ($_item_parts['object'] && !isset($this->_active_modules[$_item_parts['object']])) {
-						continue;
-					}
-					if ($center_block_id && !_class('graphics')->_check_block_rights($center_block_id, $_item_parts['object'], $_item_parts['action']) && $_item_parts['task'] != 'logout') {
-						continue;
-					}
-				}
-			}
-			$menu_items_to_display[] = $item_info;
-		}
-		// Check for empty blocks starts with spacers
-		if (_class('graphics')->MENU_HIDE_INACTIVE_MODULES) {
-			foreach ((array)$menu_items_to_display as $i => $item) {
-				if ($item['level_num'] == 0 && $item['type_id'] == 3) {
-					$next_item = $menu_items_to_display[$i + 1];
-					if (!$next_item || ($next_item['level_num'] == 0 && $next_item['type_id'] == 3)) {
-						unset($menu_items_to_display[$i]);
-					}
-				}
-			}
-		}
-		$num_menu_items = count($menu_items_to_display);
+		$menu_items = $this->_cleanup_menu_items($menu_items);
+
+		$num_menu_items = count($menu_items);
 		$_prev_level = 0;
 		$_next_level = 0;
 		$item_counter = 0;
@@ -182,40 +139,23 @@ class yf_core_menu {
 		$ICONS_DIR = _class('graphics')->ICONS_PATH;
 		$MEDIA_PATH = _class('graphics')->MEDIA_PATH;
 
-		foreach ((array)$menu_items_to_display as $i => $item_info) {
+		foreach ((array)$menu_items as $i => $item) {
 			$item_counter++;
-			$_next_info	= isset($menu_items_to_display[$i + 1]) ? $menu_items_to_display[$i + 1] : array();
+			$_next_info	= isset($menu_items[$i + 1]) ? $menu_items[$i + 1] : array();
 			$_next_level = isset($_next_info['level']) ? (int)$_next_info['level'] : 0;
 			$is_cur_page = false;
 			$item_link = '';
-			if (substr($item_info['location'], 0, 3) == './?') {
-				$item_info['location'] = substr($item_info['location'], 3);
+			if (substr($item['location'], 0, 3) == './?') {
+				$item['location'] = substr($item['location'], 3);
 			}
 			// Internal link
-			if ($item_info['type_id'] == 1 && strlen($item_info['location']) > 0) {
-				parse_str($item_info['location'], $_item_parts);
-				$item_link = './?'.$item_info['location'];
-				// Check if we are on the current page
-				if (isset($_item_parts['object']) && $_item_parts['object'] && $_item_parts['object'] == $_GET['object']) {
-					if (isset($_item_parts['action']) && $_item_parts['action']) {
-						if ($_item_parts['action'] == $_GET['action']) {
-							// Needed for static pages
-							if ($_item_parts['id']) {
-								if ($_item_parts['id'] == $_GET['id']) {
-									$is_cur_page = true;
-								}
-							} else {
-								$is_cur_page = true;
-							}
-						}
-					} else {
-						$is_cur_page = true;
-					}
-				}
-			} elseif ($item_info['type_id'] == 2) {
-				$item_link = $item_info['location'];
+			if ($item['type_id'] == 1 && strlen($item['location']) > 0) {
+				$is_cur_page = $this->_is_current_page($item);
+				$item_link = './?'.$item['location'];
+			} elseif ($item['type_id'] == 2) {
+				$item_link = $item['location'];
 			}
-			$icon = trim($item_info['icon']);
+			$icon = trim($item['icon']);
 			$icon_path = '';
 			$icon_class = '';
 			if ($icon) {
@@ -230,27 +170,27 @@ class yf_core_menu {
 				}
 			}
 			$replace2 = array(
-				'item_id'		=> intval($item_info['id']),
-				'parent_id'		=> intval($item_info['parent_id']),
+				'item_id'		=> intval($item['id']),
+				'parent_id'		=> intval($item['parent_id']),
 				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
 				'link'			=> !empty($IN_OUTPUT_CACHE) ? process_url($item_link) : $item_link,
-				'name'			=> _prepare_html(t($item_info['name'])),
-				'level_pad'		=> str_repeat($level_pad_text, $item_info['level']),
-				'level_num'		=> intval($item_info['level']),
+				'name'			=> _prepare_html(t($item['name'])),
+				'level_pad'		=> str_repeat($level_pad_text, $item['level']),
+				'level_num'		=> intval($item['level']),
 				'prev_level'	=> intval($_prev_level),
 				'next_level'	=> intval($_next_level),
-				'type_id'		=> $item_info['type_id'],
+				'type_id'		=> $item['type_id'],
 				'icon_path'		=> $icon_path,
 				'icon_class'	=> $icon_class,
 				'is_first_item'	=> (int)($item_counter == 1),
 				'is_last_item'	=> (int)($item_counter == $num_menu_items),
 				'is_cur_page'	=> (int)$is_cur_page,
-				'have_children'	=> intval((bool)$item_info['have_children']),
-				'next_level_diff'=> intval(abs($item_info['level'] - $_next_level)),
+				'have_children'	=> intval((bool)$item['have_children']),
+				'next_level_diff'=> intval(abs($item['level'] - $_next_level)),
 			);
-			$items[$item_info['id']] = $replace2;
+			$items[$item['id']] = $replace2;
 			// Save current level for the next iteration
-			$_prev_level = $item_info['level'];
+			$_prev_level = $item['level'];
 		}
 		if ($RETURN_ARRAY) {
 			return $items;
@@ -263,6 +203,83 @@ class yf_core_menu {
 			'items' => implode('', (array)$items),
 		);
 		return tpl()->parse($STPL_MENU_MAIN, $replace);
+	}
+
+	/**
+	*/
+	function _cleanup_menu_items($menu_items = array()) {
+		$center_block_id = _class('graphics')->_get_center_block_id();
+
+		$out = array();
+		foreach ((array)$menu_items as $item_id => $item) {
+			if (empty($item)) {
+				continue;
+			}
+			// Check PHP conditional code for display
+			if (!empty($item['cond_code'])) {
+				$cond_result = (bool)eval('return ('.$item['cond_code'].');');
+				if (!$cond_result) {
+					continue;
+				}
+			}
+			if (substr($item['location'], 0, 3) == './?') {
+				$item['location'] = substr($item['location'], 3);
+			}
+			// Internal link
+			if ($item['type_id'] == 1 && strlen($item['location']) > 0) {
+				parse_str($item['location'], $_item_parts);
+				if (_class('graphics')->MENU_HIDE_INACTIVE_MODULES) {
+					if (!isset($this->_active_modules)) {
+						$cl_name = MAIN_TYPE_USER ? 'user_modules' : 'admin_modules';
+						$this->_active_modules = _class($cl_name, 'admin_modules/')->_get_modules();
+					}
+					if ($_item_parts['object'] && !isset($this->_active_modules[$_item_parts['object']])) {
+						continue;
+					}
+					if ($center_block_id && !_class('graphics')->_check_block_rights($center_block_id, $_item_parts['object'], $_item_parts['action']) && $_item_parts['task'] != 'logout') {
+						continue;
+					}
+				}
+			}
+			$out[] = $item;
+		}
+		// Check for empty blocks starts with spacers
+		if (_class('graphics')->MENU_HIDE_INACTIVE_MODULES) {
+			foreach ((array)$out as $i => $item) {
+				if ($item['level_num'] == 0 && $item['type_id'] == 3) {
+					$next_item = $out[$i + 1];
+					if (!$next_item || ($next_item['level_num'] == 0 && $next_item['type_id'] == 3)) {
+						unset($out[$i]);
+					}
+				}
+			}
+		}
+		return $out;
+	}
+
+	/**
+	*/
+	function _is_current_page(&$item) {
+		$is_cur_page = false;
+		parse_str($item['location'], $_item_parts);
+		// Check if we are on the current page
+		if (isset($_item_parts['object']) && $_item_parts['object'] && $_item_parts['object'] == $_GET['object']) {
+			if (isset($_item_parts['action']) && $_item_parts['action']) {
+				if ($_item_parts['action'] == $_GET['action']) {
+					// Needed for static pages
+					if ($_item_parts['id']) {
+						if ($_item_parts['id'] == $_GET['id']) {
+							$is_cur_page = true;
+						}
+					} else {
+						$is_cur_page = true;
+					}
+				}
+			} else {
+				$is_cur_page = true;
+			}
+		}
+		return $is_cur_page;
 	}
 
 	/**
@@ -297,13 +314,13 @@ class yf_core_menu {
 
 		$items_ids		= array();
 		$items_array	= array();
-		foreach ((array)$this->_menu_items[$menu_id] as $item_info) {
-			if ($skip_item_id == $item_info['id']) {
+		foreach ((array)$this->_menu_items[$menu_id] as $item) {
+			if ($skip_item_id == $item['id']) {
 				continue;
 			}
-			if (!empty($item_info['user_groups'])) {
+			if (!empty($item['user_groups'])) {
 				$user_groups = array();
-				foreach (explode(',',$item_info['user_groups']) as $v) {
+				foreach (explode(',',$item['user_groups']) as $v) {
 					if (!empty($v)) {
 						$user_groups[$v] = $v;
 					}
@@ -312,9 +329,9 @@ class yf_core_menu {
 					continue;
 				}
 			}
-			if (!empty($item_info['site_ids'])) {
+			if (!empty($item['site_ids'])) {
 				$site_ids = array();
-				foreach (explode(',',$item_info['site_ids']) as $v) {
+				foreach (explode(',',$item['site_ids']) as $v) {
 					if (!empty($v)) {
 						$site_ids[$v] = $v;
 					}
@@ -323,9 +340,9 @@ class yf_core_menu {
 					continue;
 				}
 			}
-			if (!empty($item_info['server_ids'])) {
+			if (!empty($item['server_ids'])) {
 				$server_ids = array();
-				foreach (explode(',',$item_info['server_ids']) as $v) {
+				foreach (explode(',',$item['server_ids']) as $v) {
 					if (!empty($v)) {
 						$server_ids[$v] = $v;
 					}
@@ -334,7 +351,7 @@ class yf_core_menu {
 					continue;
 				}
 			}
-			$items_array[$item_info['id']] = $item_info;
+			$items_array[$item['id']] = $item;
 		}
 		return $this->_recursive_sort_items($items_array, $skip_item_id);
 	}
