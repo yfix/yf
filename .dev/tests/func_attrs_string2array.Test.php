@@ -24,6 +24,7 @@ class func_attrs_string2array_test extends PHPUnit_Framework_TestCase {
 	public function test_two() {
 		$a = array('k1' => 'v1', 'k2' => 'v2');
 		$this->assertEquals($a, _attrs_string2array('k1=v1;k2=v2'));
-		$this->assertEquals($a, _attrs_string2array('k1=v1;k2=v2'));
+		$this->assertEquals($a, _attrs_string2array(' k1 = v1 ; k2 = v2 '));
+		$this->assertEquals($a, _attrs_string2array('  k1  =  v1  ,  k2  =  v2  '));
 	}
 }
