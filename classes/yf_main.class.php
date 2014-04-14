@@ -1666,12 +1666,12 @@ class yf_main {
 	function set_required_php_params() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		error_reporting(DEBUG_MODE ? $this->ERROR_REPORTING_DEBUG : $this->ERROR_REPORTING_PROD);
-		// Set path to PEAR
 		ini_set('url_rewriter.tags', '');
 		ini_set('magic_quotes_runtime',	0);
 		ini_set('magic_quotes_sybase', 0);
+		date_default_timezone_set(conf('timezone') ?: 'Europe/Kiev');
 		// Prepare GPC data. get_magic_quotes_gpc always return 0 starting from PHP 5.4+
-		if (get_magic_quotes_gpc()) {
+		if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
 			$_GET		= $this->_strip_quotes_recursive($_GET);
 			$_POST		= $this->_strip_quotes_recursive($_POST);
 			$_COOKIE	= $this->_strip_quotes_recursive($_COOKIE);
