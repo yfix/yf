@@ -14,8 +14,8 @@ foreach ($globs_sql as $glob) {
 		$fields_file = dirname(dirname($f)).'/fields/'.$t_name.'.fields.php';
 		echo '++ fields: '.$fields_file. PHP_EOL;
 		if (file_exists($fields_file)) {
-			echo 'exists, skipped'. PHP_EOL;
-			continue;
+#			echo 'exists, skipped'. PHP_EOL;
+#			continue;
 		}
 		$fields_dir = dirname($fields_file);
 		if (!file_exists($fields_dir)) {
@@ -37,6 +37,10 @@ foreach ($globs_sql as $glob) {
 			continue;
 		}
 #		print_r($a);
-		file_put_contents($fields_file, '<?'.'php'.PHP_EOL.'$data = '.str_replace('  ', "\t", var_export($a, 1)).';'.PHP_EOL);
+		$body = '<?'.'php'.PHP_EOL.'$data = '.str_replace('  ', "\t", var_export($a, 1)).';'.PHP_EOL;
+		if (file_exists($fields_file) && md5($body) == md5(file_get_contents($fields_file))) {
+			continue;
+		}
+		file_put_contents($fields_file, $body);
 	}
 }
