@@ -855,19 +855,7 @@ class yf_tpl {
 		$args = array();
 		// Try to convert args
 		if (is_string($args_from_tpl) && strlen($args_from_tpl)) {
-			$args_from_tpl = stripslashes($args_from_tpl);
-			$tmp_array = explode(';', $args_from_tpl);
-			// Convert string into array
-			foreach ((array)$tmp_array as $v) {
-				$attrib_name = '';
-				$attrib_value = '';
-				if (false !== strpos($v, '=')) {
-					list($attrib_name, $attrib_value) = explode('=', trim($v));
-				}
-				$attrib_name	= trim(str_replace(array("'",'"'), '', $attrib_name));
-				$attrib_value	= trim(str_replace(array("'",'"'), '', $attrib_value));
-				$args[$attrib_name] = $attrib_value;
-			}
+			$args = _attrs_string2array($args_from_tpl);
 		}
 		return t($string, $args, $lang);
 	}
@@ -906,17 +894,7 @@ class yf_tpl {
 			if ($params[0] == '/') {
 				// Do nothing, just directly pass this to url() as string
 			} elseif (false !== strpos($params, '=')) {
-				$tmp_params	 = explode(';', str_replace(',', ';', $params));
-				$params  = array();
-				// Convert params string into array
-				foreach ((array)$tmp_params as $v) {
-					$attrib_name = '';
-					$attrib_value = '';
-					if (false !== strpos($v, '=')) {
-						list($attrib_name, $attrib_value) = explode('=', trim($v));
-					}
-					$params[trim($attrib_name)] = trim($attrib_value);
-				}
+				$params = _attrs_string2array($params);
 			} else {
 				list($object, $action, $id, $page) = explode(';', str_replace(',', ';', $params));
 				$params = array(
