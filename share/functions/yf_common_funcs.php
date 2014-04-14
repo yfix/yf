@@ -264,3 +264,40 @@ if (!function_exists('todecimal')) {
 		return str_replace(',', '.', round(tofloat($num), 2));
 	}
 }
+
+// Used by tpl, form, table to convert str like this: k1=v1,k2=v2;k3=v3
+if (!function_exists('_attrs_string2array')) {
+	function _attrs_string2array($string = '') {
+// TODO: unit tests
+		$output_array = array();
+		foreach (explode(';', str_replace(',', ';', trim($string))) as $tmp_string) {
+			list($try_key, $try_value) = explode('=', trim($tmp_string));
+			$try_key = trim(trim(trim($try_key), '"'));
+			$try_value = trim(trim(trim($try_value), '"'));
+			if (strlen($try_key) && strlen($try_value)) {
+				$output_array[$try_key] = $try_value;
+			}
+		}
+		return $output_array;
+	}
+}
+
+// We need this to avoid encoding & => &amp; by standard htmlspecialchars()
+if (!function_exists('_htmlchars')) {
+	function _htmlchars($str = '') {
+// TODO: unit tests
+		if (is_array($str)) {
+			foreach ((array)$str as $k => $v) {
+				$str[$k] = _htmlchars($v);
+			}
+			return $str;
+		}
+		$replace = array(
+			'"' => '&quot;',
+			"'" => '&apos;',
+			'<'	=> '&lt;',
+			'>'	=> '&gt;',
+		);
+		return str_replace(array_keys($replace), array_values($replace), $str);
+	}
+}

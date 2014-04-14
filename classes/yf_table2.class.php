@@ -668,25 +668,6 @@ class yf_table2 {
 	}
 
 	/**
-	* We need this to avoid encoding & => &amp; by standard htmlspecialchars()
-	*/
-	function _htmlchars($str = '') {
-		if (is_array($str)) {
-			foreach ((array)$str as $k => $v) {
-				$str[$k] = $this->_htmlchars($v);
-			}
-			return $str;
-		}
-		$replace = array(
-			'"' => '&quot;',
-			"'" => '&apos;',
-			'<'	=> '&lt;',
-			'>'	=> '&gt;',
-		);
-		return str_replace(array_keys($replace), array_values($replace), $str);
-	}
-
-	/**
 	*/
 	function _attrs($extra = array(), $names = array()) {
 		$body = array();
@@ -702,12 +683,12 @@ class yf_table2 {
 			}
 			$val = $extra[$name];
 			if (is_array($val)) {
-				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+				$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
 			} else {
 				if (!strlen($val)) {
 					continue;
 				}
-				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+				$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
 			}
 		}
 		// Custom html attributes forced with sub-array "attr"
@@ -717,12 +698,12 @@ class yf_table2 {
 					continue;
 				}
 				if (is_array($val)) {
-					$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+					$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
 				} else {
 					if (!strlen($val)) {
 						continue;
 					}
-					$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+					$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
 				}
 			}
 		}

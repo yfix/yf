@@ -2,7 +2,6 @@
 
 class yf_core_js {
 
-// TODO: debug console block
 // TODO: auto-caching into web-accessible dir with locking (to avoid duplicate cache entry attempts)
 
 	public $content = array();
@@ -42,18 +41,24 @@ class yf_core_js {
 		foreach ((array)$this->content as $md5 => $v) {
 			$type = $v['type'];
 			$text = $v['text'];
+			$_params = (array)$v['params'] + (array)$params;
+			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
 			if ($type == 'url') {
+				if ($params['min'] && !DEBUG_MODE && strpos($text, '.min.') === false) {
+					$text = substr($text, 0, -strlen('.js')).'.min.js';
+				}
 // TODO: add optional _prepare_html() for $url
-				$out[$md5] = '<script src="'.$text.'" type="text/javascript"></script>';
+				$out[$md5] = '<script src="'.$text.'" type="text/javascript"'.$css_class.'></script>';
 			} elseif ($type == 'file') {
-				$out[$md5] = '<script type="text/javascript">'. PHP_EOL. file_get_contents($text). PHP_EOL. '</script>';
+				$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</script>';
 			} elseif ($type == 'inline') {
 				$text = $this->_strip_script_tags($text);
-				$out[$md5] = '<script type="text/javascript">'. PHP_EOL. $text. PHP_EOL. '</script>';
+				$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</script>';
 			} elseif ($type == 'raw') {
 				$out[$md5] = $text;
 			}
 		}
+		$this->content = array();
 		return implode(PHP_EOL, $out);
 	}
 
@@ -75,6 +80,10 @@ class yf_core_js {
 		if (!is_array($content)) {
 			$content = array($content);
 		}
+		if (is_array($force_type)) {
+			$params = (array)$params + $force_type;
+			$force_type = '';
+		}
 		foreach ($content as $_content) {
 			$_content = trim($_content);
 			if (!strlen($_content)) {
@@ -91,6 +100,7 @@ class yf_core_js {
 				$this->content[$md5] = array(
 					'type'	=> 'url',
 					'text'	=> $_content,
+					'params'=> $params,
 				);
 			} elseif ($type == 'file') {
 				if (file_exists($_content)) {
@@ -99,6 +109,7 @@ class yf_core_js {
 						$this->content[$md5] = array(
 							'type'	=> 'file',
 							'text'	=> $_content,
+							'params'=> $params,
 						);
 					}
 				}
@@ -106,11 +117,13 @@ class yf_core_js {
 				$this->content[$md5] = array(
 					'type'	=> 'inline',
 					'text'	=> $_content,
+					'params'=> $params,
 				);
 			} elseif ($type == 'raw') {
 				$this->content[$md5] = array(
 					'type'	=> 'raw',
 					'text'	=> $_content,
+					'params'=> $params,
 				);
 			} elseif ($type == 'asset') {
 				$url = $this->assets[$_content];
@@ -118,14 +131,16 @@ class yf_core_js {
 				$this->content[$md5] = array(
 					'type'	=> 'url',
 					'text'	=> $url,
+					'params'=> $params,
 				);
 			}
 			if (DEBUG_MODE) {
-				debug(__CLASS__.'[]', array(
+				debug('core_js[]', array(
 					'type'		=> $type,
 					'md5'		=> $md5,
 					'content'	=> $_content,
 					'is_added'	=> isset($this->content[$md5]),
+					'params'	=> $params,
 					'trace'		=> $trace,
 				));
 			}

@@ -35,4 +35,12 @@ class func_require_css_test extends PHPUnit_Framework_TestCase {
 		require_css('//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.css');
 		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.css" rel="stylesheet" />', _class('core_css')->show());
 	}
+	public function test_shortcut_function() {
+		css('//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.css');
+		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.css" rel="stylesheet" />', _class('core_css')->show());
+	}
+	public function test_params() {
+		require_css('//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.css', array('class' => 'yf_core'));
+		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.css" rel="stylesheet" class="yf_core" />', _class('core_css')->show());
+	}
 }

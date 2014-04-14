@@ -119,7 +119,7 @@ class yf_form2 {
 		if (is_string($extra)) {
 			$extra = trim($extra);
 			if (false !== strpos($extra, ';') && false !== strpos($extra, '=')) {
-				$extra = $this->_attrs_string2array($extra);
+				$extra = _attrs_string2array($extra);
 			}
 		}
 		if (!is_array($extra)) {
@@ -371,7 +371,7 @@ class yf_form2 {
 			$_this->_fieldset_mode_on = true;
 			$body .= '<fieldset'.$_this->_attrs($extra['fieldset'], array('class','style','id','name')).'>';
 			if ($extra['legend']) {
-				$body .= PHP_EOL.'<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
+				$body .= PHP_EOL.'<legend>'._htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
 			}
 			return $body;
 		};
@@ -420,7 +420,7 @@ class yf_form2 {
 			}
 			$body .= '<fieldset'.$_this->_attrs($extra, array('class','style','id','name')).'>';
 			if ($extra['legend']) {
-				$body .= PHP_EOL.'<legend>'.$_this->_htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
+				$body .= PHP_EOL.'<legend>'._htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
 			}
 			return $body;
 		};
@@ -524,40 +524,6 @@ class yf_form2 {
 
 	/**
 	*/
-	function _attrs_string2array($string = '') {
-		$output_array = array();
-		foreach (explode(';', trim($string)) as $tmp_string) {
-			list($try_key, $try_value) = explode('=', trim($tmp_string));
-			$try_key = trim(trim(trim($try_key), '"'));
-			$try_value = trim(trim(trim($try_value), '"'));
-			if (strlen($try_key) && strlen($try_value)) {
-				$output_array[$try_key] = $try_value;
-			}
-		}
-		return $output_array;
-	}
-
-	/**
-	* We need this to avoid encoding & => &amp; by standard htmlspecialchars()
-	*/
-	function _htmlchars($str = '') {
-		if (is_array($str)) {
-			foreach ((array)$str as $k => $v) {
-				$str[$k] = $this->_htmlchars($v);
-			}
-			return $str;
-		}
-		$replace = array(
-			'"' => '&quot;',
-			"'" => '&apos;',
-			'<'	=> '&lt;',
-			'>'	=> '&gt;',
-		);
-		return str_replace(array_keys($replace), array_values($replace), $str);
-	}
-
-	/**
-	*/
 	function _attrs($extra = array(), $names = array()) {
 		$body = array();
 		// Try to find and allow all data-* and ng-* attributes automatically
@@ -572,12 +538,12 @@ class yf_form2 {
 			}
 			$val = $extra[$name];
 			if (is_array($val)) {
-				$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+				$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
 			} else {
 				if (!strlen($val)) {
 					continue;
 				}
-				$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+				$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
 			}
 		}
 		// Custom html attributes forced with sub-array "attr"
@@ -587,12 +553,12 @@ class yf_form2 {
 					continue;
 				}
 				if (is_array($val)) {
-					$body[$name] = $this->_htmlchars($name).'="'.http_build_query($this->_htmlchars($val)).'"';
+					$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
 				} else {
 					if (!strlen($val)) {
 						continue;
 					}
-					$body[$name] = $this->_htmlchars($name).'="'.$this->_htmlchars($val).'"';
+					$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
 				}
 			}
 		}
@@ -604,7 +570,7 @@ class yf_form2 {
 	function _prepare_custom_attr($attr = array()) {
 		$body = array();
 		foreach ((array)$attr as $k => $v) {
-			$body[] = $this->_htmlchars($k).'="'.$this->_htmlchars($v).'"';
+			$body[] = _htmlchars($k).'="'._htmlchars($v).'"';
 		}
 		return implode(" ", $body);
 	}
@@ -802,7 +768,7 @@ class yf_form2 {
 			}
 			$extra = $_this->_input_assign_params_from_validate($extra);
 			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required');
-			return $_this->_row_html('<textarea'.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value).'</textarea>', $extra, $r);
+			return $_this->_row_html('<textarea'.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($value) : $value).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -1263,7 +1229,7 @@ class yf_form2 {
 			$attrs_names = array('type','name','id','class','style','value','disabled','target');
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
-				$value = (!isset($extra['no_escape']) ? $_this->_htmlchars($extra['value']) : $extra['value']);
+				$value = (!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']);
 				return $_this->_row_html('<button'.$_this->_attrs($extra, $attrs_names).'>'.$icon. $value.'</button>', $extra, $r);
 			} else {
 				return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
@@ -1351,7 +1317,7 @@ class yf_form2 {
 					$value = $extra['data'][$extra['name']];
 				}
 			}
-			$value = !isset($extra['no_escape']) ? $_this->_htmlchars($value) : $value;
+			$value = !isset($extra['no_escape']) ? _htmlchars($value) : $value;
 			if (!$extra['no_translate']) {
 				$extra['desc'] = t($extra['desc']);
 				$value = t($value);
@@ -1820,7 +1786,7 @@ class yf_form2 {
 		$func = function($extra, $r, $_this) {
 			$custom_fields = explode(',', $extra['custom_fields']);
 			$sub_array_name = $extra['sub_array'] ?: 'custom';
-			$custom_info = $_this->_attrs_string2array($r[$extra['name']]);
+			$custom_info = _attrs_string2array($r[$extra['name']]);
 
 			$body = array();
 			$_this->_chained_mode = false;

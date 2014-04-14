@@ -174,9 +174,12 @@ class yf_html {
 			} else {
 				$content = $v['content'];
 			}
+			if ($extra['hide_empty'] && !strlen($content)) {
+				continue;
+			}
 			$name = $v['name'] ?: $k;
 			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
-			$id = $v['id'] ?: 'tab_'.$k;
+			$id = preg_replace('~[^a-z0-9_-]+~', '', $v['id'] ?: 'tab_'.$k);
 			if (isset($extra['selected'])) {
 				$is_active = ($extra['selected'] == $k);
 			} else {
