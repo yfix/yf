@@ -35,8 +35,15 @@ class func_attrs_string2array_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($a, _attrs_string2array(' k1 = 0; k2 = v2; k3 = v3; k4 = v4; k1 = v1'));
 	}
 	public function test_special_symbols() {
-		$a = array('k1' => '!@#$%^&&*(()_-+1234567890"\'');
-		$this->assertEquals($a, _attrs_string2array('k1=!@#$%^&&*(()_-+1234567890"\''));
-		$this->assertEquals($a, _attrs_string2array(' k1 = !@#$%^&&*(()_-+1234567890"\' '));
+		$a = array('k1' => '!@#$%^&&*(()_-+1234567890.');
+		$this->assertEquals($a, _attrs_string2array('k1=!@#$%^&&*(()_-+1234567890.'));
+		$this->assertEquals($a, _attrs_string2array(' k1 = !@#$%^&&*(()_-+1234567890. '));
+		$this->assertEquals(array('k1' => 'test"test'),  _attrs_string2array(' k1 = test"test '));
+	}
+	public function test_quotes() {
+		$this->assertEquals(array('k1' => 'v1'), _attrs_string2array('k1="v1"', $strip_quotes = true));
+		$this->assertEquals(array('k1' => '"v1"'), _attrs_string2array('k1="v1"', $strip_quotes = false));
+		$this->assertEquals(array('k1' => '" v1 "'), _attrs_string2array(' k1 = " v1 " ', $strip_quotes = false));
+		$this->assertEquals(array('k1' => 'v1'), _attrs_string2array(' k1 = " v1 " ', $strip_quotes = true));
 	}
 }
