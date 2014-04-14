@@ -20,7 +20,7 @@ class yf_encryption {
 #		99	=> 'rijndael-256',
 	);
 	/** @var string Secret key */
-	public $_secret_key	= 'secret 134578';
+	public $_secret_key	= 'secret__13457890'; // Padded for 16 bytes
 	/** @var mixed @conf_skip Mcrypt cipher constant value */
 	public $_mcrypt_cipher = null;
 	/** @var mixed @conf_skip Current cipher processor */
