@@ -6,7 +6,7 @@ require dirname(__FILE__).'/yf_unit_tests_setup.php';
  * @requires extension mcrypt
  */
 class class_encryption_test extends PHPUnit_Framework_TestCase {
-	private static $secret = 'my_secret';
+	private static $secret = 'my_secret_padded_to_24_b';
 	private static $to_encode = 'testing long string containing different symols:;.,%^&*()';
 	private static $cipher = 'CAST_128';
 	private static $_bak_settings = array();
