@@ -72,7 +72,8 @@ class yf_manage_shop_products{
 			->footer_link('Attributes', './?object='.main()->_get('object').'&action=attributes')
 			->footer_link('Categories', './?object=category_editor&action=show_items&id=shop_cats')
 			->footer_link('Orders', './?object='.main()->_get('object').'&action=show_orders')
-			->footer_link('XLS Export', './?object='.main()->_get('object').'&action=products_xls_export');
+			->footer_link('XLS Export', './?object='.main()->_get('object').'&action=products_xls_export')
+			->footer_link('Обновление цен', './?object='.main()->_get('object').'&action=products_price_update&init=1&filter=' . main()->_get( 'action' ));
 	}
 
 
