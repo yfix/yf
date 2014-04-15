@@ -13,13 +13,13 @@ function html_table_to_array($html) {
 		}
 		$val = $m2[1];
 		// Get contents of within the tags, cannot be done with strip_tags
-		$r = '~<[^>]+>(.*?)</[^>]+>~ims';
-		$val = preg_replace($r, '$1', $val);
-		$val = preg_replace($r, '$1', $val);
-		$val = preg_replace($r, '$1', $val);
 		foreach ($val as &$v1) {
-			$v1 = trim(strip_tags($v1));
-			$v1 = trim(preg_replace('~[\!&#]+.+~ims', '', $v1));
+			if (preg_match('~<[^>]+>([^<]+?)</[^>]+>~ims', $v1, $mm)) {
+				$v1 = $mm[1];
+			}
+#			$v1 = trim(strip_tags($v1));
+			$v1 = trim(preg_replace('~&[#]?[0-9a-z]+;~ims', '', $v1));
+			$v1 = trim(preg_replace('~\!.+~ims', '', $v1));
 		}
 		$tmp_tbl[] = $val;
 	}
@@ -27,16 +27,28 @@ function html_table_to_array($html) {
 }
 }
 
+// TODO: try json api from wikipedia
+#$u = 'http://en.wikipedia.org/w/api.php?format=json&action=query&titles=ISO_3166-1&prop=langlinks';
+#print_r(json_decode(file_get_contents($u), 1));
+
 // TODO: list of continents and country mapping
 #$url = 'http://unstats.un.org/unsd/methods/m49/m49regin.htm';
 
 $url = $url ?: 'https://en.wikipedia.org/wiki/ISO_3166-1';
 $result_file = $result_file ?: dirname(__FILE__).'/countries.php';
 $suffix = $suffix ?: '';
+$mtpl = $mtpl ?: array(
+	'id'	=> 1,
+	'code'	=> 1,
+	'code3' => 2,
+	'num'	=> 3,
+	'name'	=> 0,
+);
 
 if (!function_exists('data_get_latest_countries')) {
 function data_get_latest_countries() {
-	global $url, $result_file, $suffix;
+	global $url, $result_file, $suffix, $mtpl;
+print_r($mtpl);
 
 	$f2 = dirname(__FILE__).'/'.basename($url).'.table'.$suffix.'.html';
 	if (!file_exists($f2)) {
@@ -50,15 +62,15 @@ function data_get_latest_countries() {
 	$tmp_tbl = html_table_to_array($html2);
 	$data = array();
 	foreach ($tmp_tbl as $v) {
-		$id = $v[1];
+		$id = $v[$mtpl['id']];
 		if (!$id) {
 			continue;
 		}
 		$data[$id] = array(
 			'code'	=> $id,
-			'code3' => $v[2],
-			'num'	=> $v[3],
-			'name'	=> $v[0],
+			'code3' => $v[$mtpl['code3']],
+			'num'	=> $v[$mtpl['num']],
+			'name'	=> $v[$mtpl['name']],
 			'cont'	=> '',
 			'active'=> 0,
 		);
