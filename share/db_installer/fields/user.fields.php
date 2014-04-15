@@ -344,15 +344,6 @@ $data = array (
 			'default' => '',
 			'auto_inc' => 0,
 		),
-		'/**' => 
-		array (
-			'type' => 'engine',
-			'length' => '=InnoDB',
-			'attrib' => NULL,
-			'not_null' => 0,
-			'default' => 'CHARSET=utf8 **/',
-			'auto_inc' => 0,
-		),
 	),
 	'keys' => 
 	array (

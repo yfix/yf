@@ -245,15 +245,6 @@ $data = array (
 			'default' => '(`id2`)',
 			'auto_inc' => 0,
 		),
-		'/**' => 
-		array (
-			'type' => 'engine',
-			'length' => '=INNODB',
-			'attrib' => NULL,
-			'not_null' => 0,
-			'default' => '**/',
-			'auto_inc' => 0,
-		),
 	),
 	'keys' => 
 	array (

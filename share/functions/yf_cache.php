@@ -19,16 +19,22 @@ function _get_some_cached_data () {
 if (!conf('CACHE_DRIVER')) {
 	conf('CACHE_DRIVER', 'memcache'); // memcache | apc | xcache | eaccelerator | files
 }
-if (conf('CACHE_DRIVER') == 'memcache' && !function_exists('memcache_connect') && !class_exists('memcached')) { conf('CACHE_DRIVER', ''); }
-elseif (conf('CACHE_DRIVER') == 'apc' && !function_exists('apc_fetch')) { conf('CACHE_DRIVER', ''); }
-elseif (conf('CACHE_DRIVER') == 'xcache' && !function_exists('xcache_set')) { conf('CACHE_DRIVER', ''); }
-elseif (conf('CACHE_DRIVER') == 'eaccelerator' && !function_exists('eaccelerator_get')) { conf('CACHE_DRIVER', ''); }
+$CACHE_DRIVER = conf('CACHE_DRIVER');
+if ($CACHE_DRIVER == 'memcache' && !function_exists('memcache_connect') && !class_exists('memcached')) {
+	conf('CACHE_DRIVER', '');
+} elseif ($CACHE_DRIVER == 'apc' && !function_exists('apc_fetch')) {
+	conf('CACHE_DRIVER', '');
+} elseif ($CACHE_DRIVER == 'xcache' && !function_exists('xcache_set')) {
+	conf('CACHE_DRIVER', '');
+} elseif ($CACHE_DRIVER == 'eaccelerator' && !function_exists('eaccelerator_get')) {
+	conf('CACHE_DRIVER', '');
+}
 
 # TODO: implement $level: '' | 'globals' | 'apc' | 'memcached'
-#	if (isset($GLOBALS['CACHE'][$name])) {
-#		return $GLOBALS['CACHE'][$name];
+#	if (isset($CACHE[$name])) {
+#		return $CACHE[$name];
 #	}
-# $GLOBALS['CACHE'][$name] = $result;
+# $CACHE[$name] = $result;
 
 if (conf('USE_CACHE') === null) {
 	if (defined('USE_CACHE')) {
