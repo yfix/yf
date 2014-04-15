@@ -1,6 +1,9 @@
 #!/usr/bin/php
 <?php
 
+require_once dirname(dirname(__FILE__)).'/scripts_utils.php';
+
+/*
 if (!function_exists('html_table_to_array')) {
 function html_table_to_array($html) {
 	if (!preg_match_all('~<tr[^>]*>(.*?)</tr>~ims', $html, $m)) {
@@ -26,6 +29,7 @@ function html_table_to_array($html) {
 	return $tmp_tbl;
 }
 }
+*/
 
 function data_get_latest_languages() {
 
