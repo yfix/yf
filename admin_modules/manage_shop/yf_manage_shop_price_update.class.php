@@ -46,8 +46,9 @@ class yf_manage_shop_price_update {
 		$_class_price = $this->_class_price;
 		list( $total, $preview ) = $data;
 		$replace = array(
-			'_all'  => $total,
+			'_all'    => $total,
 			'percent' => $_class_price->_number_format( $_POST[ 'percent' ] ),
+			'add'     => $_class_price->_number_format( $_POST[ 'add'     ] ),
 		);
 		$to_field = $this->_fields_update;
 		// create form
@@ -57,7 +58,8 @@ class yf_manage_shop_price_update {
 				->info( '_all' )
 				->link( 'Back', $link_back , array( 'title' => 'Вернуться в к фильтру продуктов', 'icon' => 'fa fa-arrow-circle-left' ))
 			->row_end()
-			->number( 'percent', 'Процент, +/-' )
+			->number( 'percent', 'Цена +/-, %' )
+			->number( 'add', 'Цена +/-, ' . $_class_price->CURRENCY )
 			->select_box( 'to_field', $to_field, array(
 				'selected'  => $_POST[ 'to_field' ],
 				'translate' => true,
@@ -65,8 +67,10 @@ class yf_manage_shop_price_update {
 				'tip'       => 'цена берется из поля "'. t( 'price_raw' ) . '" и применяется к данному полю' ,
 			))
 			->submit( 'preview', 'Предпросмотр' )
-			->submit( 'apply', 'Выполнить' )
-			->check_box( 'confirm', false, array( 'desc' => 'подтверждение', 'no_label' => true ) )
+			->row_start( array( 'desc' => '' ) )
+				->submit( 'apply', 'Выполнить' )
+				->check_box( 'confirm', false, array( 'desc' => 'подтверждение', 'no_label' => true ) )
+			->row_end()
 		;
 		return( $_form . $preview );
 	}
@@ -115,9 +119,12 @@ class yf_manage_shop_price_update {
 		$count = db()->get_one( $sql_count );
 		// build temp data
 		// prepare percent
-		$percent = $_class_price->_number_float( $_POST[ 'percent' ] );
-		$percent = 1 + $percent / 100;
+		$_percent = $_class_price->_number_float( $_POST[ 'percent' ] );
+		$percent = 1 + $_percent / 100;
 		$percent = $_class_price->_number_mysql( $percent, 4 );
+		// prepare add
+		$_add = $_class_price->_number_float( $_POST[ 'add' ] );
+		$add  = $_class_price->_number_mysql( $_add   );
 		// prepare to field
 		$_fields  = $this->_fields_update;
 		$to_field = $_POST[ 'to_field' ];
@@ -127,7 +134,7 @@ class yf_manage_shop_price_update {
 		$confirm = $_POST[ 'confirm' ];
 		$is_update = isset( $_fields[ $to_field ] ) && isset( $apply ) && isset( $confirm ) ? true : false;
 		$to_field = $to_field ?: $_fields[ 'price_raw' ];
-		$sql_price_update = "$to_field = ( IF( price_raw > 0, price_raw, price ) * $percent )";
+		$sql_price_update = "$to_field = ( IF( price_raw > 0, price_raw, price ) * $percent + $add )";
 		$css_field[ $to_field ] = 'text-success';
 		$limit = 5;
 		// preview
@@ -147,6 +154,15 @@ class yf_manage_shop_price_update {
 		// apply
 		if( $is_update ) {
 			db_query( "UPDATE $sql_table as p SET $sql_price_update $sql_where" );
+			$info = '';
+			if( !empty( $this->_filter ) ) {
+				foreach( $this->_filter as $key => $value ) {
+					if( strlen( $value ) < 1 ) { continue; }
+					$info .= "$key: $value; ";
+				}
+				$info = " ( $info )";
+			}
+			common()->admin_wall_add( array( "shop price update: percent = $_percent%; add = $_add" . $_class_price->CURRENCY . $info ) );
 		}
 		return( $result );
 	}
