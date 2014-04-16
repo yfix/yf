@@ -1,31 +1,7 @@
 #!/usr/bin/php
 <?php
 
-if (!function_exists('html_table_to_array')) {
-function html_table_to_array($html) {
-	if (!preg_match_all('~<tr[^>]*>(.*?)</tr>~ims', $html, $m)) {
-		return array();
-	}
-	$tmp_tbl = array();
-	foreach ($m[1] as $v) {
-		if (!preg_match_all('~<td[^>]*>(.*?)</td>~ims', $v, $m2)) {
-			continue;
-		}
-		$val = $m2[1];
-		// Get contents of within the tags, cannot be done with strip_tags
-		$r = '~<[^>]+>(.*?)</[^>]+>~ims';
-		$val = preg_replace($r, '$1', $val);
-		$val = preg_replace($r, '$1', $val);
-		$val = preg_replace($r, '$1', $val);
-		foreach ($val as &$v1) {
-			$v1 = trim(strip_tags($v1));
-			$v1 = trim(preg_replace('~[\!&#]+.+~ims', '', $v1));
-		}
-		$tmp_tbl[] = $val;
-	}
-	return $tmp_tbl;
-}
-}
+require_once dirname(dirname(__FILE__)).'/scripts_utils.php';
 
 // TODO
 
