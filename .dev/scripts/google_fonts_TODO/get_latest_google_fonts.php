@@ -5,21 +5,19 @@ require_once dirname(dirname(__FILE__)).'/scripts_utils.php';
 
 // TODO
 
-$url = $url ?: 'https://en.wikipedia.org/wiki/ISO_3166-1';
-$result_file = $result_file ?: dirname(__FILE__).'/countries.php';
+$url = $url ?: 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyAMEY_I9-FBC4xH--Smf0-E38Mguk-1PVU';
+$result_file = $result_file ?: dirname(__FILE__).'/google_webfonts.php';
 $suffix = $suffix ?: '';
 
 if (!function_exists('data_get_latest_google_fonts')) {
 function data_get_latest_google_fonts() {
 	global $url, $result_file, $suffix;
-/*
-	$f2 = dirname(__FILE__).'/'.basename($url).'.table'.$suffix.'.html';
+
+	$f2 = dirname(__FILE__).'/google_webfonts'.$suffix.'.json';
 	if (!file_exists($f2)) {
-		$html1 = file_get_contents($url);
-		$regex1 = '~<table[^>]*wikitable[^>]*>(.*?)</table>~ims';
-		preg_match($regex1, $html1, $m1);
-		file_put_contents($f2, $m1[1]);
+		file_put_contents($f2, file_get_contents($url));
 	}
+/*
 	$html2 = file_get_contents($f2);
 
 	$tmp_tbl = html_table_to_array($html2);
