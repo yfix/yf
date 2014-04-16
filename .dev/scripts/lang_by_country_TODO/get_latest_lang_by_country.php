@@ -30,8 +30,23 @@ function data_get_latest_lang_by_country() {
 		file_put_contents($f2, $html1);
 	}
 	$html2 = file_get_contents($f2);
+
+	preg_match_all('~<table[^>]*id="(?P<code>[a-z]{2})"[^>]*>.*?<td[^>]*class="category_data"[^>]*>(?P<data>.+?)</td>.*?</table>~ims', $html2, $m2);
+	$data_tmp = array();
+	foreach ((array)$m2[0] as $k => $tmp) {
+		$data_tmp[$m2['code'][$k]] = trim(strip_tags($m2['data'][$k]));
+	}
+	$data = array();
+	foreach ((array)$data_tmp as $code => $text) {
+		preg_match_all('~([a-z]+)\s*\(official[^\)]*\)~ims', $text, $m3);
+		if ($m3[1]) {
+			$data[$code] = $m3[1];
+		}
+	}
+print_r($data);
+#	$tmp_tbl = html_table_to_array($html2);
+#print_r($tmp_tbl);
 /*
-	$tmp_tbl = html_table_to_array($html2);
 	$data = array();
 	foreach ($tmp_tbl as $v) {
 		$id = $v[1];
