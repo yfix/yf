@@ -1,31 +1,11 @@
 #!/usr/bin/php
 <?php
 
-if (!function_exists('html_table_to_array')) {
-function html_table_to_array($html) {
-	if (!preg_match_all('~<tr[^>]*>(.*?)</tr>~ims', $html, $m)) {
-		return array();
-	}
-	$tmp_tbl = array();
-	foreach ($m[1] as $v) {
-		if (!preg_match_all('~<td[^>]*>(.*?)</td>~ims', $v, $m2)) {
-			continue;
-		}
-		$val = $m2[1];
-		// Get contents of within the tags, cannot be done with strip_tags
-		$r = '~<[^>]+>(.*?)</[^>]+>~ims';
-		$val = preg_replace($r, '$1', $val);
-		$val = preg_replace($r, '$1', $val);
-		$val = preg_replace($r, '$1', $val);
-		foreach ($val as &$v1) {
-			$v1 = trim(strip_tags($v1));
-			$v1 = trim(preg_replace('~[\!&#]+.+~ims', '', $v1));
-		}
-		$tmp_tbl[] = $val;
-	}
-	return $tmp_tbl;
-}
-}
+require_once dirname(dirname(__FILE__)).'/scripts_utils.php';
+
+// TODO: try json api from wikipedia
+#$u = 'http://en.wikipedia.org/w/api.php?format=json&action=query&titles=ISO_3166-1&prop=langlinks';
+#print_r(json_decode(file_get_contents($u), 1));
 
 // TODO: list of continents and country mapping
 #$url = 'http://unstats.un.org/unsd/methods/m49/m49regin.htm';
@@ -33,10 +13,17 @@ function html_table_to_array($html) {
 $url = $url ?: 'https://en.wikipedia.org/wiki/ISO_3166-1';
 $result_file = $result_file ?: dirname(__FILE__).'/countries.php';
 $suffix = $suffix ?: '';
+$mtpl = $mtpl ?: array(
+	'id'	=> 1,
+	'code'	=> 1,
+	'code3' => 2,
+	'num'	=> 3,
+	'name'	=> 0,
+);
 
 if (!function_exists('data_get_latest_countries')) {
 function data_get_latest_countries() {
-	global $url, $result_file, $suffix;
+	global $url, $result_file, $suffix, $mtpl;
 
 	$f2 = dirname(__FILE__).'/'.basename($url).'.table'.$suffix.'.html';
 	if (!file_exists($f2)) {
@@ -50,15 +37,15 @@ function data_get_latest_countries() {
 	$tmp_tbl = html_table_to_array($html2);
 	$data = array();
 	foreach ($tmp_tbl as $v) {
-		$id = $v[1];
+		$id = $v[$mtpl['id']];
 		if (!$id) {
 			continue;
 		}
 		$data[$id] = array(
 			'code'	=> $id,
-			'code3' => $v[2],
-			'num'	=> $v[3],
-			'name'	=> $v[0],
+			'code3' => $v[$mtpl['code3']],
+			'num'	=> $v[$mtpl['num']],
+			'name'	=> $v[$mtpl['name']],
 			'cont'	=> '',
 			'active'=> 0,
 		);

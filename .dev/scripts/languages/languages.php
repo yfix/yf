@@ -121,7 +121,7 @@ $data = array (
   array (
     'code' => 'az',
     'name' => 'South Azerbaijani',
-    'native' => 'تورکجه‎',
+    'native' => 'تورکجه',
     'code3' => 'azb',
     'country' => '',
     'active' => 0,
@@ -165,7 +165,7 @@ $data = array (
   'bn' => 
   array (
     'code' => 'bn',
-    'name' => 'Bengali; Bangla',
+    'name' => 'Bengali',
     'native' => 'বাংলা',
     'code3' => 'ben',
     'country' => '',
@@ -228,7 +228,7 @@ $data = array (
   'ca' => 
   array (
     'code' => 'ca',
-    'name' => 'Catalan; Valencian',
+    'name' => 'Catalan',
     'native' => 'català, valencià',
     'code3' => 'cat',
     'country' => '',
@@ -255,7 +255,7 @@ $data = array (
   'ny' => 
   array (
     'code' => 'ny',
-    'name' => 'Chichewa; Chewa; Nyanja',
+    'name' => 'Chichewa',
     'native' => 'chiCheŵa, chinyanja',
     'code3' => 'nya',
     'country' => '',
@@ -265,7 +265,7 @@ $data = array (
   array (
     'code' => 'zh',
     'name' => 'Chinese',
-    'native' => '中文 (Zhōngwén), 汉语, 漢語',
+    'native' => '中文',
     'code3' => 'zho',
     'country' => 'cn',
     'active' => 0,
@@ -336,7 +336,7 @@ $data = array (
   'dv' => 
   array (
     'code' => 'dv',
-    'name' => 'Divehi; Dhivehi; Maldivian;',
+    'name' => 'Divehi',
     'native' => 'ދިވެހި',
     'code3' => 'div',
     'country' => '',
@@ -435,7 +435,7 @@ $data = array (
   'ff' => 
   array (
     'code' => 'ff',
-    'name' => 'Fula; Fulah; Pulaar; Pular',
+    'name' => 'Fula',
     'native' => 'Fulfulde, Pulaar, Pular',
     'code3' => 'ful',
     'country' => '',
@@ -471,7 +471,7 @@ $data = array (
   'el' => 
   array (
     'code' => 'el',
-    'name' => 'Greek, Modern',
+    'name' => 'Greek',
     'native' => 'ελληνικά',
     'code3' => 'ell',
     'country' => 'gr',
@@ -498,7 +498,7 @@ $data = array (
   'ht' => 
   array (
     'code' => 'ht',
-    'name' => 'Haitian; Haitian Creole',
+    'name' => 'Haitian',
     'native' => 'Kreyòl ayisyen',
     'code3' => 'hat',
     'country' => '',
@@ -516,7 +516,7 @@ $data = array (
   'he' => 
   array (
     'code' => 'he',
-    'name' => 'Hebrew (modern)',
+    'name' => 'Hebrew',
     'native' => 'עברית',
     'code3' => 'heb',
     'country' => 'il',
@@ -580,7 +580,7 @@ $data = array (
   array (
     'code' => 'ie',
     'name' => 'Interlingue',
-    'native' => 'Originally called Occidental; then Interlingue after WWII',
+    'native' => 'Occidental',
     'code3' => 'ile',
     'country' => '',
     'active' => 0,
@@ -652,7 +652,7 @@ $data = array (
   array (
     'code' => 'ja',
     'name' => 'Japanese',
-    'native' => '日本語 (にほんご)',
+    'native' => '日本語',
     'code3' => 'jpn',
     'country' => 'jp',
     'active' => 0,
@@ -669,7 +669,7 @@ $data = array (
   'kl' => 
   array (
     'code' => 'kl',
-    'name' => 'Kalaallisut, Greenlandic',
+    'name' => 'Kalaallisut',
     'native' => 'kalaallisut, kalaallit oqaasii',
     'code3' => 'kal',
     'country' => '',
@@ -697,7 +697,7 @@ $data = array (
   array (
     'code' => 'ks',
     'name' => 'Kashmiri',
-    'native' => 'कश्मीरी, كشميري‎',
+    'native' => 'कश्मीरी',
     'code3' => 'kas',
     'country' => '',
     'active' => 0,
@@ -723,7 +723,7 @@ $data = array (
   'ki' => 
   array (
     'code' => 'ki',
-    'name' => 'Kikuyu, Gikuyu',
+    'name' => 'Kikuyu',
     'native' => 'Gĩkũyũ',
     'code3' => 'kik',
     'country' => '',
@@ -769,7 +769,7 @@ $data = array (
   array (
     'code' => 'ko',
     'name' => 'Korean',
-    'native' => '한국어 (韓國語), 조선어 (朝鮮語)',
+    'native' => '한국어',
     'code3' => 'kor',
     'country' => 'kp',
     'active' => 0,
@@ -778,7 +778,7 @@ $data = array (
   array (
     'code' => 'ku',
     'name' => 'Kurdish',
-    'native' => 'Kurdî, كوردی‎',
+    'native' => 'Kurdî',
     'code3' => 'kur',
     'country' => '',
     'active' => 0,
@@ -786,7 +786,7 @@ $data = array (
   'kj' => 
   array (
     'code' => 'kj',
-    'name' => 'Kwanyama, Kuanyama',
+    'name' => 'Kwanyama',
     'native' => 'Kuanyama',
     'code3' => 'kua',
     'country' => '',
@@ -804,7 +804,7 @@ $data = array (
   'lb' => 
   array (
     'code' => 'lb',
-    'name' => 'Luxembourgish, Letzeburgesch',
+    'name' => 'Luxembourgish',
     'native' => 'Lëtzebuergesch',
     'code3' => 'ltz',
     'country' => '',
@@ -822,7 +822,7 @@ $data = array (
   'li' => 
   array (
     'code' => 'li',
-    'name' => 'Limburgish, Limburgan, Limburger',
+    'name' => 'Limburgish',
     'native' => 'Limburgs',
     'code3' => 'lim',
     'country' => '',
@@ -904,7 +904,7 @@ $data = array (
   array (
     'code' => 'ms',
     'name' => 'Malay',
-    'native' => 'bahasa Melayu, بهاس ملايو‎',
+    'native' => 'bahasa Melayu',
     'code3' => 'msa',
     'country' => '',
     'active' => 0,
@@ -975,7 +975,7 @@ $data = array (
   'nv' => 
   array (
     'code' => 'nv',
-    'name' => 'Navajo, Navaho',
+    'name' => 'Navajo',
     'native' => 'Diné bizaad, Dinékʼehǰí',
     'code3' => 'nav',
     'country' => '',
@@ -1065,7 +1065,7 @@ $data = array (
   'oj' => 
   array (
     'code' => 'oj',
-    'name' => 'Ojibwe, Ojibwa',
+    'name' => 'Ojibwe',
     'native' => 'ᐊᓂᔑᓈᐯᒧᐎᓐ',
     'code3' => 'oji',
     'country' => '',
@@ -1074,7 +1074,7 @@ $data = array (
   'cu' => 
   array (
     'code' => 'cu',
-    'name' => 'Old Church Slavonic, Church Slavic, Church Slavonic, Old Bulgarian, Old Slavonic',
+    'name' => 'Old Church Slavonic',
     'native' => 'ѩзыкъ словѣньскъ',
     'code3' => 'chu',
     'country' => '',
@@ -1101,7 +1101,7 @@ $data = array (
   'os' => 
   array (
     'code' => 'os',
-    'name' => 'Ossetian, Ossetic',
+    'name' => 'Ossetian',
     'native' => 'ирон æвзаг',
     'code3' => 'oss',
     'country' => '',
@@ -1110,8 +1110,8 @@ $data = array (
   'pa' => 
   array (
     'code' => 'pa',
-    'name' => 'Panjabi, Punjabi',
-    'native' => 'ਪੰਜਾਬੀ, پنجابی‎',
+    'name' => 'Panjabi',
+    'native' => 'ਪੰਜਾਬੀ',
     'code3' => 'pan',
     'country' => '',
     'active' => 0,
@@ -1128,7 +1128,7 @@ $data = array (
   'fa' => 
   array (
     'code' => 'fa',
-    'name' => 'Persian (Farsi)',
+    'name' => 'Persian',
     'native' => 'فارسی',
     'code3' => 'fas',
     'country' => '',
@@ -1146,7 +1146,7 @@ $data = array (
   'ps' => 
   array (
     'code' => 'ps',
-    'name' => 'Pashto, Pushto',
+    'name' => 'Pashto',
     'native' => 'پښتو',
     'code3' => 'pus',
     'country' => '',
@@ -1191,7 +1191,7 @@ $data = array (
   'ro' => 
   array (
     'code' => 'ro',
-    'name' => 'Romanian, [])',
+    'name' => 'Romanian',
     'native' => 'limba română',
     'code3' => 'ron',
     'country' => 'ro',
@@ -1228,7 +1228,7 @@ $data = array (
   array (
     'code' => 'sd',
     'name' => 'Sindhi',
-    'native' => 'सिन्धी, سنڌي، سندھی‎',
+    'native' => 'सिन्धी',
     'code3' => 'snd',
     'country' => '',
     'active' => 0,
@@ -1272,7 +1272,7 @@ $data = array (
   'gd' => 
   array (
     'code' => 'gd',
-    'name' => 'Scottish Gaelic; Gaelic',
+    'name' => 'Scottish Gaelic',
     'native' => 'Gàidhlig',
     'code3' => 'gla',
     'country' => '',
@@ -1290,7 +1290,7 @@ $data = array (
   'si' => 
   array (
     'code' => 'si',
-    'name' => 'Sinhala, Sinhalese',
+    'name' => 'Sinhala',
     'native' => 'සිංහල',
     'code3' => 'sin',
     'country' => '',
@@ -1335,7 +1335,7 @@ $data = array (
   'es' => 
   array (
     'code' => 'es',
-    'name' => 'Spanish; Castilian',
+    'name' => 'Spanish',
     'native' => 'español, castellano',
     'code3' => 'spa',
     'country' => 'es',
@@ -1399,7 +1399,7 @@ $data = array (
   array (
     'code' => 'tg',
     'name' => 'Tajik',
-    'native' => 'тоҷикӣ, toğikī, تاجیکی‎',
+    'native' => 'тоҷикӣ',
     'code3' => 'tgk',
     'country' => '',
     'active' => 0,
@@ -1425,7 +1425,7 @@ $data = array (
   'bo' => 
   array (
     'code' => 'bo',
-    'name' => 'Tibetan Standard, Tibetan, Central',
+    'name' => 'Tibetan Standard',
     'native' => 'བོད་ཡིག',
     'code3' => 'bod',
     'country' => '',
@@ -1461,7 +1461,7 @@ $data = array (
   'to' => 
   array (
     'code' => 'to',
-    'name' => 'Tonga (Tonga Islands)',
+    'name' => 'Tonga',
     'native' => 'faka Tonga',
     'code3' => 'ton',
     'country' => '',
@@ -1489,7 +1489,7 @@ $data = array (
   array (
     'code' => 'tt',
     'name' => 'Tatar',
-    'native' => 'татар теле, tatar tele',
+    'native' => 'татар теле',
     'code3' => 'tat',
     'country' => '',
     'active' => 0,
@@ -1515,8 +1515,8 @@ $data = array (
   'ug' => 
   array (
     'code' => 'ug',
-    'name' => 'Uyghur, Uighur',
-    'native' => 'Uyƣurqə, ئۇيغۇرچە‎',
+    'name' => 'Uyghur',
+    'native' => 'Uyƣurqə',
     'code3' => 'uig',
     'country' => '',
     'active' => 0,
@@ -1543,7 +1543,7 @@ $data = array (
   array (
     'code' => 'uz',
     'name' => 'Uzbek',
-    'native' => 'O‘zbek, Ўзбек, أۇزبېك‎',
+    'native' => 'O‘zbek',
     'code3' => 'uzb',
     'country' => '',
     'active' => 0,
@@ -1641,7 +1641,7 @@ $data = array (
   'za' => 
   array (
     'code' => 'za',
-    'name' => 'Zhuang, Chuang',
+    'name' => 'Zhuang',
     'native' => 'Saɯ cueŋƅ, Saw cuengh',
     'code3' => 'zha',
     'country' => '',
