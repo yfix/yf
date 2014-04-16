@@ -350,6 +350,10 @@ class yf_manage_shop {
 		return _class('manage_shop_price_update', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
+	function novaposhta_ua__import() {
+		return _class('manage_shop_novaposhta_ua', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
 	function attributes() {
 		return _class('manage_shop_attributes', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
