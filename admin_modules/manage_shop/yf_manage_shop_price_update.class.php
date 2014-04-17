@@ -143,7 +143,7 @@ class yf_manage_shop_price_update {
 		db_query( "INSERT INTO $sql_table_t $sql_filter LIMIT $limit" );
 		db_query( "UPDATE $sql_table_t SET $sql_price_update LIMIT $limit" );
 		$result = db_get_all( "SELECT $sql_fields FROM $sql_table_t LIMIT $limit" );
-		$result_t = table( $result )
+		$result_t = table( $result, array( 'no_total' => true ) )
 			->text( 'name' )
 			->text( 'price_raw', array( 'class' => $css_field[ 'price_raw' ] ) )
 			->text( 'price',     array( 'class' => $css_field[ 'price'     ] ) )
