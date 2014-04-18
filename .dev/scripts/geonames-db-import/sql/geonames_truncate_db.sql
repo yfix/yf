@@ -1,0 +1,10 @@
+TRUNCATE TABLE geo_geoname;
+TRUNCATE TABLE geo_alternate_name;
+TRUNCATE TABLE geo_country;
+TRUNCATE TABLE geo_language;
+TRUNCATE TABLE geo_admin1;
+TRUNCATE TABLE geo_admin2;
+TRUNCATE TABLE geo_hierarchy;
+TRUNCATE TABLE geo_feature;
+TRUNCATE TABLE geo_timezone;
+TRUNCATE TABLE geo_continent;
