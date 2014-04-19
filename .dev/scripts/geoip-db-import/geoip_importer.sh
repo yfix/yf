@@ -35,17 +35,24 @@ download_geoip_data() {
 	    unzip -j -o GeoIPASNum2.zip
 	    rm GeoIPASNum2.zip
 	fi
+	if [ ! -f region_codes.csv ]; then
+		wget -N http://www.maxmind.com/download/geoip/misc/region_codes.csv
+	fi
+	# Cities-DMA Regions  Latest .csv (2013-09-27)   https://developers.google.com/adwords/api/docs/appendix/cities-DMAregions
+	if [ ! -f cities-DMAregions.csv ]; then
+		wget http://goo.gl/itBaJE -O cities-DMAregions.csv
+	fi
 
-#	if [ ! -f GeoLite2-City-Blocks.csv ]; then
-#		wget -N http://geolite.maxmind.com/download/geoip/database/GeoLite2-City-CSV.zip
-#	    unzip -j -o GeoLite2-City-CSV.zip
-#	    rm GeoLite2-City-CSV.zip
-#	fi
-#	if [ ! -f GeoLite2-Country-Blocks.csv ]; then
-#		wget -N http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country-CSV.zip
-#	    unzip -j -o GeoLite2-Country-CSV.zip
-#	    rm GeoLite2-Country-CSV.zip
-#	fi
+	if [ ! -f GeoLite2-City-Blocks.csv ]; then
+		wget -N http://geolite.maxmind.com/download/geoip/database/GeoLite2-City-CSV.zip
+	    unzip -j -o GeoLite2-City-CSV.zip
+	    rm GeoLite2-City-CSV.zip
+	fi
+	if [ ! -f GeoLite2-Country-Blocks.csv ]; then
+		wget -N http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country-CSV.zip
+	    unzip -j -o GeoLite2-Country-CSV.zip
+	    rm GeoLite2-Country-CSV.zip
+	fi
 
 	cd $orig_dir
 }
