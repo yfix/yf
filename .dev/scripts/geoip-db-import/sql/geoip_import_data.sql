@@ -82,6 +82,42 @@ FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 IGNORE 2 LINES
 (start_ip, end_ip, loc_id);
 /*---------------------------*/
+CREATE TABLE IF NOT EXISTS geoip_region_names (
+	country 		char(2) NOT NULL,
+	region_code 	varchar(16) NOT NULL,
+	region_name		varchar(64) NOT NULL,
+	PRIMARY KEY (country, region_code)
+) CHARACTER SET utf8;
+/*
+==> ./region_codes.csv <==
+AD,02,"Canillo"
+AD,03,"Encamp"
+*/
+LOAD DATA LOCAL INFILE './data/region_codes.csv'
+INTO TABLE geoip_region_names
+CHARACTER SET 'UTF8'
+FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+(country, region_code, region_name);
+/*---------------------------*/
+CREATE TABLE IF NOT EXISTS geoip_cities_dma_regions (
+	criteria_id		int unsigned NOT NULL,
+	dma_code 		int(8) unsigned NOT NULL,
+	city_name		varchar(64) NOT NULL,
+	dma_region		varchar(64) NOT NULL,
+	PRIMARY KEY (criteria_id)
+) CHARACTER SET utf8;
+/*
+==> ./cities-DMAregions.csv <==
+City Name,Criteria ID,DMA Region Name,DMA Region Code
+Acton,1018752,"Portland-Auburn, ME",500
+*/
+LOAD DATA LOCAL INFILE './data/cities-DMAregions.csv'
+INTO TABLE geoip_cities_dma_regions
+CHARACTER SET 'UTF8'
+FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+IGNORE 1 LINES
+(city_name, criteria_id, dma_region, dma_code);
+/*---------------------------*/
 UPDATE geoip_city_blocks AS b
 INNER JOIN geoip_city_location AS l ON b.loc_id = l.id
 SET b.country = l.country, b.region = l.region;
