@@ -66,7 +66,7 @@ FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 (geoname_id, continent, @skip, country, @skip, region, region_name, city_name, metro_code, time_zone);
 /*---------------------------*/
 UPDATE `geoip2_city_blocks`
-SET start_ip4 = SUBSTRING(start_ip6 FROM 8)
+SET start_ip4 = INET_ATON(SUBSTRING(start_ip6 FROM 8))
 WHERE start_ip4 = '' AND start_ip6 LIKE '::FFFF:%'
 /*---------------------------*/
 COMMIT;
