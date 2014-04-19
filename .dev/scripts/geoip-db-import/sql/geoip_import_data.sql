@@ -60,7 +60,7 @@ LOAD DATA LOCAL INFILE './data/GeoIPCountryWhois.csv'
 INTO TABLE geoip_countries
 CHARACTER SET 'UTF8'
 FIELDS TERMINATED BY ',' ENCLOSED BY '"'
-(@tmp, @tmp, start_ip, end_ip, country);
+(@skip, @skip, start_ip, end_ip, country);
 /*---------------------------*/
 CREATE TABLE IF NOT EXISTS geoip_city_blocks (
 	start_ip		int unsigned NOT NULL,
