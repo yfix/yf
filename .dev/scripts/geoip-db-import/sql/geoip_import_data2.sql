@@ -58,8 +58,8 @@ city_name,
 metro_code,
 time_zone
 */
-LOAD DATA LOCAL INFILE './data/GeoLite2-City-Blocks.csv'
-INTO TABLE geoip2_city_blocks
+LOAD DATA LOCAL INFILE './data/GeoLite2-City-Locations.csv'
+INTO TABLE geoip2_city_locations
 CHARACTER SET 'UTF8'
 FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 (geoname_id, continent, @skip, country, @skip, region, region_name, city_name, metro_code, time_zone);
