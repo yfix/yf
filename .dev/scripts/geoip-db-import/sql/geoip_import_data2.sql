@@ -3,8 +3,9 @@ SET unique_checks=0;
 SET foreign_key_checks=0;
 /*------------------------*/
 CREATE TABLE IF NOT EXISTS geoip2_city_blocks (
-	start_ip			char(39) NOT NULL,
-	mask_len			int unsigned NOT NULL,
+	start_ip6			char(39) NOT NULL,
+	mask_len6			int unsigned NOT NULL,
+	start_ip4			int unsigned NOT NULL,
 	geoname_id			int unsigned NOT NULL,
 	registered_cgid		int unsigned NOT NULL,
 	represented_cgid	int unsigned NOT NULL,
@@ -13,7 +14,7 @@ CREATE TABLE IF NOT EXISTS geoip2_city_blocks (
 	lon 				decimal(6,4) NOT NULL,
 	is_anonymous_proxy	tinyint(1) unsigned NOT NULL,
 	is_satellite_provider	tinyint(1) unsigned NOT NULL,
-	PRIMARY KEY (start_ip, mask_len)
+	PRIMARY KEY (start_ip6, mask_len6)
 ) CHARACTER SET utf8;
 /*
 ==> GeoLite2-City-Blocks.csv <==
@@ -32,7 +33,7 @@ LOAD DATA LOCAL INFILE './data/GeoLite2-City-Blocks.csv'
 INTO TABLE geoip2_city_blocks
 CHARACTER SET 'UTF8'
 FIELDS TERMINATED BY ',' ENCLOSED BY '"'
-(start_ip, mask_len, geoname_id, registered_cgid, represented_cgid, postal_code, lat, lon, is_anonymous_proxy, is_satellite_provider);
+(start_ip6, mask_len6, geoname_id, registered_cgid, represented_cgid, postal_code, lat, lon, is_anonymous_proxy, is_satellite_provider);
 /*---------------------------*/
 CREATE TABLE IF NOT EXISTS geoip2_city_locations (
 	geoname_id			int unsigned NOT NULL,
@@ -63,6 +64,10 @@ INTO TABLE geoip2_city_locations
 CHARACTER SET 'UTF8'
 FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 (geoname_id, continent, @skip, country, @skip, region, region_name, city_name, metro_code, time_zone);
+/*---------------------------*/
+UPDATE `geoip2_city_blocks`
+SET start_ip4 = SUBSTRING(start_ip6 FROM 8)
+WHERE start_ip4 = '' AND start_ip6 LIKE '::FFFF:%'
 /*---------------------------*/
 COMMIT;
 SET unique_checks=1;
