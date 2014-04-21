@@ -1430,7 +1430,7 @@ class yf_db {
 	*/
 	function query_builder() {
 		$obj = clone _class('db_query_builder', 'classes/db/');
-		$obj->db = &$this;
+		$obj->db = $this;
 		return $obj;
 	}
 
@@ -1438,7 +1438,7 @@ class yf_db {
 	*/
 	function utils() {
 		$obj = clone _class('db_utils', 'classes/db/');
-		$obj->db = &$this;
+		$obj->db = $this;
 		return $obj;
 	}
 
