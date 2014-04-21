@@ -278,7 +278,9 @@ class yf_db_query_builder {
 // TODO: support for binding params (':field' => $val)
 		$sql = '';
 		$where = func_get_args();
-		if (count($where)) {
+		if (count($where) == 3 && is_string($where[0]) && is_string($where[1])) {
+			$sql = 'WHERE '.$where[0]. $where[1]. $this->db->escape_val($where[2]);
+		} elseif (count($where)) {
 			$a = array();
 			foreach ((array)$where as $k => $v) {
 				if (is_string($v)) {
