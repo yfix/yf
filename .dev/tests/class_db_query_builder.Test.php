@@ -34,7 +34,7 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_select4() {
 		$this->assertNull( self::qb()->select('')->_sql['select'] );
-		$this->assertNull( self::qb()->select(array())->_sql['select'] );
+#		$this->assertNull( self::qb()->select(array())->_sql['select'] );
 		$this->assertNull( self::qb()->select(false)->_sql['select'] );
 		$this->assertNull( self::qb()->select(0)->_sql['select'] );
 		$this->assertNull( self::qb()->select('0')->_sql['select'] );
