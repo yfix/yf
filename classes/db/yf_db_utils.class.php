@@ -91,31 +91,43 @@ class yf_db_utils {
 
 	/**
 	*/
-	function create_database($name, $options = array()) {
+	function list_databases($extra = array()) {
+#		$sql = 'SHOW DATABASES';
 // TODO
 	}
 
 	/**
 	*/
-	function drop_database($name, $options = array()) {
+	function create_database($name, $extra = array()) {
+#		$sql = 'CREATE DATABASE '.$this->db->_es($name).'';
 // TODO
 	}
 
 	/**
 	*/
-	function alter_database($name, $options = array()) {
+	function drop_database($name, $extra = array()) {
+#		$sql = 'DROP DATABASE '.$this->db->_es($name).'';
+// TODO
+	}
+
+	/**
+	*/
+	function alter_database($name, $extra = array()) {
+#		$sql = 'ALTER DATABASE '.$this->db->_es($name).'';
 // TODO
 	}
 
 	/**
 	*/
 	function rename_database($name, $new_name) {
+#		$sql = 'ALTER DATABASE '.$this->db->_es($name).'';
+#Script, in bash: for table in mysql -u root -s -N -e "show tables from goedi_drupal"; do mysql -u root -s -N -e "rename table goedi_drupal.$table to iota_drupal.$table"; done;
 // TODO
 	}
 
 	/**
 	*/
-	function get_all_tables($extra = array(), &$error = false) {
+	function list_tables($extra = array(), &$error = false) {
 		return (array)$this->db->get_2d('show tables');
 	}
 
@@ -126,7 +138,7 @@ class yf_db_utils {
 			$error = 'name is empty';
 			return false;
 		}
-		return (bool)in_array($name, (array)$this->get_all_tables());
+		return (bool)in_array($name, (array)$this->list_tables());
 	}
 
 	/**
@@ -165,25 +177,66 @@ class yf_db_utils {
 
 	/**
 	*/
-	function alter_table($name, $options = array()) {
+	function alter_table($name, $extra = array()) {
+#		$sql = 'ALTER TABLE '.$this->db->_es($name).'';
 // TODO
 	}
 
 	/**
 	*/
 	function rename_table($name, $new_name) {
+#		$sql = 'RENAME TABLE '.$this->db->_es($name).' TO '.$this->db->_es($new_name);
+// TODO
+	}
+
+	/**
+	*/
+	function truncate_table($name, $extra = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	function check_table($name, $extra = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	function optimize_table($name, $extra = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	function repair_table($name, $extra = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	function list_indexes($table, $extra = array()) {
 // TODO
 	}
 
 	/**
 	*/
 	function add_index($table, $fields, $name) {
+# CREATE INDEX id_index ON lookup (id)
+#		$sql = 'ALTER TABLE '.$this->db->_es($name).'';
 // TODO
 	}
 
 	/**
 	*/
 	function drop_index($table, $fields, $name) {
+# DROP INDEX index_name ON tbl_name
+// TODO
+	}
+
+	/**
+	*/
+	function list_foreign_keys($table, $extra = array()) {
 // TODO
 	}
 
@@ -196,6 +249,12 @@ class yf_db_utils {
 	/**
 	*/
 	function drop_foreign_key($table, $fields, $name) {
+// TODO
+	}
+
+	/**
+	*/
+	function list_columns($table, $extra = array()) {
 // TODO
 	}
 
@@ -225,49 +284,91 @@ class yf_db_utils {
 
 	/**
 	*/
+	function list_views($extra = array()) {
+// TODO
+	}
+
+	/**
+	*/
 	function create_view($name, $data) {
+# CREATE VIEW test.v AS SELECT * FROM t;
 // TODO
 	}
 
 	/**
 	*/
 	function drop_view($name, $data) {
+# DROP VIEW view_name
+// TODO
+	}
+
+	/**
+	*/
+	function list_procedures($extra = array()) {
 // TODO
 	}
 
 	/**
 	*/
 	function create_procedure($name, $data) {
+# CREATE PROCEDURE simpleproc (OUT param1 INT)
+# BEGIN
+#    SELECT COUNT(*) INTO param1 FROM t;
+# END//
 // TODO
 	}
 
 	/**
 	*/
 	function drop_procedure($name, $data) {
+# DROP PROCEDURE name
+// TODO
+	}
+
+	/**
+	*/
+	function list_functions($extra = array()) {
 // TODO
 	}
 
 	/**
 	*/
 	function create_function($name, $data) {
+# CREATE FUNCTION hello (s CHAR(20))
+# RETURNS CHAR(50) DETERMINISTIC
+# RETURN CONCAT('Hello, ',s,'!');
 // TODO
 	}
 
 	/**
 	*/
 	function drop_function($name, $data) {
+# DROP FUNCTION name
 // TODO
 	}
 
 	/**
 	*/
+	function list_triggers($extra = array()) {
+	}
+
+	/**
+	*/
 	function create_trigger($name, $data) {
+# CREATE    [DEFINER = { user | CURRENT_USER }]    TRIGGER trigger_name    trigger_time trigger_event     ON tbl_name FOR EACH ROW    trigger_body
 // TODO
 	}
 
 	/**
 	*/
 	function drop_trigger($name, $data) {
+# DROP TRIGGER [IF EXISTS] [schema_name.]trigger_name
+// TODO
+	}
+
+	/**
+	*/
+	function list_events($extra = array()) {
 // TODO
 	}
 
@@ -280,6 +381,24 @@ class yf_db_utils {
 	/**
 	*/
 	function drop_event($name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function list_users($extra = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	function create_user($name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function drop_user($name, $data) {
 // TODO
 	}
 
