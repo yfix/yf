@@ -1,8 +1,76 @@
 <?php
 
+// TODO: implement migrations like in ROR, based on these methods
+
 /**
- */
+*/
 class yf_db_utils {
+
+	/**
+	* Will be like this: 
+	* db()->utils()->database('geonames')->create();
+	* db()->utils()->database('geonames')->drop();
+	* db()->utils()->database('geonames')->alter($params);
+	* db()->utils()->database('geonames')->rename($new_name);
+	*/
+	function database($name) {
+// TODO
+		return _class('db_utils_database', 'classes/db/');
+	}
+
+	/**
+	* Will be like this: 
+	* db()->utils()->database('geonames')->table('geo_city')->create();
+	* db()->utils()->database('geonames')->table('geo_city')->drop();
+	* db()->utils()->database('geonames')->table('geo_city')->alter($params);
+	* db()->utils()->database('geonames')->table('geo_city')->rename($new_name);
+	*/
+	function table($name) {
+// TODO
+		return _class('db_utils_table', 'classes/db/');
+	}
+
+	/**
+	* Will be like this: 
+	* db()->utils()->database('geonames')->table('geo_city')->column('name')->add();
+	* db()->utils()->database('geonames')->table('geo_city')->column('name')->drop();
+	*/
+	function column($name) {
+// TODO
+		return _class('db_utils_column', 'classes/db/');
+	}
+
+	/**
+	* db()->utils()->database('geonames')->view('test')->create();
+	*/
+	function view($name) {
+// TODO
+		return _class('db_utils_view', 'classes/db/');
+	}
+
+	/**
+	* db()->utils()->database('geonames')->procedure('test')->create();
+	*/
+	function procedure($name) {
+// TODO
+		return _class('db_utils_procedure', 'classes/db/');
+	}
+
+	/**
+	* db()->utils()->database('geonames')->trigger('test')->create();
+	*/
+	function trigger($name) {
+// TODO
+		return _class('db_utils_trigger', 'classes/db/');
+	}
+
+	/**
+	* db()->utils()->database('geonames')->event('test')->create();
+	*/
+	function event($name) {
+// TODO
+		return _class('db_utils_event', 'classes/db/');
+	}
 
 	/**
 	*/
@@ -49,6 +117,114 @@ class yf_db_utils {
 	/**
 	*/
 	function rename_table($name, $new_name) {
+// TODO
+	}
+
+	/**
+	*/
+	function add_index($table, $fields, $name) {
+// TODO
+	}
+
+	/**
+	*/
+	function drop_index($table, $fields, $name) {
+// TODO
+	}
+
+	/**
+	*/
+	function add_foreign_key($table, $fields, $name) {
+// TODO
+	}
+
+	/**
+	*/
+	function drop_foreign_key($table, $fields, $name) {
+// TODO
+	}
+
+	/**
+	*/
+	function add_column($table, $name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function rename_column($table, $name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function alter_column($table, $name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function drop_column($table, $name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function create_view($name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function drop_view($name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function create_procedure($name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function drop_procedure($name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function create_function($name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function drop_function($name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function create_trigger($name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function drop_trigger($name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function create_event($name, $data) {
+// TODO
+	}
+
+	/**
+	*/
+	function drop_event($name, $data) {
 // TODO
 	}
 
