@@ -21,7 +21,7 @@ do
     esac
 done
 
-mysql="mysql -v"
+mysql="mysql -vf"
 if [ ! -z "$db_host" ]; then
 	mysql=$mysql" -h "$db_host;
 fi
