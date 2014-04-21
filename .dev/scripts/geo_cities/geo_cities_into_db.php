@@ -40,7 +40,7 @@ foreach (db_geonames()->get_all($sql) as $a) {
 		'population'	=> $a['population'],
 		'lat'			=> todecimal($a['latitude'], 6),
 		'lon'			=> todecimal($a['longitude'], 6),
-		'region'		=> $region_ids[$a['country'].'.'.$a['admin1']],
+		'region_id'		=> $region_ids[$a['country'].'.'.$a['admin1']],
 	);
 }
 db()->replace_safe($table, $to_update);
