@@ -253,11 +253,11 @@ if (!function_exists('tofloat')) {
 }
 // Use this to corrently insert user input into mysql decimal field with float typecasting in the middle
 if (!function_exists('todecimal')) {
-	function todecimal($num = 0) {
+	function todecimal($num = 0, $digits = 2) {
 		if (is_array($num)) {
 			return array_map(__FUNCTION__, $num);
 		}
-		return str_replace(',', '.', round(tofloat($num), 2));
+		return str_replace(',', '.', round(tofloat($num), $digits));
 	}
 }
 
