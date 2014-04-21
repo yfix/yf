@@ -1449,7 +1449,12 @@ class yf_db {
 	/**
 	*/
 	function query_builder() {
-		$cname = 'db_query_builder';
+		if (strpos($this->DB_TYPE, 'mysql') !== false) {
+			$driver = 'mysql';
+		} else {
+			$driver = $this->DB_TYPE;
+		}
+		$cname = 'db_query_builder_'.$driver;
 		$obj = clone _class($cname, 'classes/db/');
 		$obj->db = $this;
 		return $obj;
