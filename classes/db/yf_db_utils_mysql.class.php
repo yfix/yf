@@ -25,72 +25,6 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	}
 
 	/**
-	* Will be like this: 
-	* db()->utils()->database('geonames')->create();
-	* db()->utils()->database('geonames')->drop();
-	* db()->utils()->database('geonames')->alter($params);
-	* db()->utils()->database('geonames')->rename($new_name);
-	*/
-	function database($name) {
-// TODO
-		return _class('db_utils_database', 'classes/db/');
-	}
-
-	/**
-	* Will be like this: 
-	* db()->utils()->database('geonames')->table('geo_city')->create();
-	* db()->utils()->database('geonames')->table('geo_city')->drop();
-	* db()->utils()->database('geonames')->table('geo_city')->alter($params);
-	* db()->utils()->database('geonames')->table('geo_city')->rename($new_name);
-	*/
-	function table($name) {
-// TODO
-		return _class('db_utils_table', 'classes/db/');
-	}
-
-	/**
-	* Will be like this: 
-	* db()->utils()->database('geonames')->table('geo_city')->column('name')->add();
-	* db()->utils()->database('geonames')->table('geo_city')->column('name')->drop();
-	*/
-	function column($name) {
-// TODO
-		return _class('db_utils_column', 'classes/db/');
-	}
-
-	/**
-	* db()->utils()->database('geonames')->view('test')->create();
-	*/
-	function view($name) {
-// TODO
-		return _class('db_utils_view', 'classes/db/');
-	}
-
-	/**
-	* db()->utils()->database('geonames')->procedure('test')->create();
-	*/
-	function procedure($name) {
-// TODO
-		return _class('db_utils_procedure', 'classes/db/');
-	}
-
-	/**
-	* db()->utils()->database('geonames')->trigger('test')->create();
-	*/
-	function trigger($name) {
-// TODO
-		return _class('db_utils_trigger', 'classes/db/');
-	}
-
-	/**
-	* db()->utils()->database('geonames')->event('test')->create();
-	*/
-	function event($name) {
-// TODO
-		return _class('db_utils_event', 'classes/db/');
-	}
-
-	/**
 	*/
 	function list_databases($extra = array()) {
 		$sql = 'SHOW DATABASES';
@@ -524,5 +458,71 @@ GROUP BY 1,2;
 			$ret[] = array('query' => $sql, 'empty' => $nothing);
 		}
 		return TRUE;
+	}
+
+	/**
+	* Will be like this: 
+	* db()->utils()->database('geonames')->create();
+	* db()->utils()->database('geonames')->drop();
+	* db()->utils()->database('geonames')->alter($params);
+	* db()->utils()->database('geonames')->rename($new_name);
+	*/
+	function database($name) {
+// TODO
+		return _class('db_utils_database', 'classes/db/');
+	}
+
+	/**
+	* Will be like this: 
+	* db()->utils()->database('geonames')->table('geo_city')->create();
+	* db()->utils()->database('geonames')->table('geo_city')->drop();
+	* db()->utils()->database('geonames')->table('geo_city')->alter($params);
+	* db()->utils()->database('geonames')->table('geo_city')->rename($new_name);
+	*/
+	function table($name) {
+// TODO
+		return _class('db_utils_table', 'classes/db/');
+	}
+
+	/**
+	* Will be like this: 
+	* db()->utils()->database('geonames')->table('geo_city')->column('name')->add();
+	* db()->utils()->database('geonames')->table('geo_city')->column('name')->drop();
+	*/
+	function column($name) {
+// TODO
+		return _class('db_utils_column', 'classes/db/');
+	}
+
+	/**
+	* db()->utils()->database('geonames')->view('test')->create();
+	*/
+	function view($name) {
+// TODO
+		return _class('db_utils_view', 'classes/db/');
+	}
+
+	/**
+	* db()->utils()->database('geonames')->procedure('test')->create();
+	*/
+	function procedure($name) {
+// TODO
+		return _class('db_utils_procedure', 'classes/db/');
+	}
+
+	/**
+	* db()->utils()->database('geonames')->trigger('test')->create();
+	*/
+	function trigger($name) {
+// TODO
+		return _class('db_utils_trigger', 'classes/db/');
+	}
+
+	/**
+	* db()->utils()->database('geonames')->event('test')->create();
+	*/
+	function event($name) {
+// TODO
+		return _class('db_utils_event', 'classes/db/');
 	}
 }
