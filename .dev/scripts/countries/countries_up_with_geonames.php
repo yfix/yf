@@ -5,6 +5,11 @@ require_once dirname(dirname(__FILE__)).'/scripts_init.php';
 
 $table = DB_PREFIX. 'countries';
 
+$capital_ids = array();
+foreach (db_geonames()->from('geo_geoname')->where('feature_code', '=', 'pplc')->get_all() as $a) {
+	$capital_ids[$a['country']] = $a['id'];
+}
+
 $to_update = array();
 foreach (db_geonames()->from('geo_country')->get_all() as $a) {
 	$to_update[$a['code']] = array(
@@ -17,7 +22,7 @@ foreach (db_geonames()->from('geo_country')->get_all() as $a) {
 		'phone_prefix'	=> $a['phone_prefix'],
 		'languages'		=> $a['languages'],
 		'geoname_id'	=> $a['geoname_id'],
-#		'capital_id'	=> $a[],
+		'capital_id'	=> $capital_ids[$a['code']],
 	);
 }
 
