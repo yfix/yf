@@ -20,10 +20,10 @@ $data = array (
 			'default' => '',
 			'auto_inc' => 0,
 		),
-		'code' => 
+		'region' => 
 		array (
 			'type' => 'char',
-			'length' => '2',
+			'length' => '3',
 			'attrib' => NULL,
 			'not_null' => 1,
 			'default' => '',
@@ -32,16 +32,34 @@ $data = array (
 		'name' => 
 		array (
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => '32',
 			'attrib' => NULL,
 			'not_null' => 1,
 			'default' => '',
 			'auto_inc' => 0,
 		),
-		'capital_id' => 
+		'lat' => 
+		array (
+			'type' => 'float',
+			'length' => '',
+			'attrib' => NULL,
+			'not_null' => 1,
+			'default' => '0',
+			'auto_inc' => 0,
+		),
+		'lon' => 
+		array (
+			'type' => 'float',
+			'length' => '',
+			'attrib' => NULL,
+			'not_null' => 1,
+			'default' => '0',
+			'auto_inc' => 0,
+		),
+		'population' => 
 		array (
 			'type' => 'int',
-			'length' => '10',
+			'length' => '8',
 			'attrib' => NULL,
 			'not_null' => 1,
 			'default' => '0',
@@ -66,11 +84,11 @@ $data = array (
 			),
 			'type' => 'key',
 		),
-		'code' => 
+		'region' => 
 		array (
 			'fields' => 
 			array (
-				0 => 'code',
+				0 => 'region',
 			),
 			'type' => 'key',
 		),
