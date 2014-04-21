@@ -304,3 +304,27 @@ if (!function_exists('_htmlchars')) {
 		return str_replace(array_keys($replace), array_values($replace), $str);
 	}
 }
+
+if (!function_exists('load_db_class')) {
+	function load_db_class() {
+		static $_loaded_class;
+		if ($_loaded_class) {
+			return $_loaded_class;
+		}
+		$classes = array(
+			'db'	=> INCLUDE_PATH.'classes/db.class.php',
+			'yf_db'	=> YF_PATH.'classes/yf_db.class.php',
+		);
+		foreach ((array)$classes as $cl => $f) {
+			if (!file_exists($f)) {
+				continue;
+			}
+			require_once $f;
+			if (class_exists($cl)) {
+				$_loaded_class = $cl;
+				return $_loaded_class;
+			}
+		}
+		return false;
+	}
+}
