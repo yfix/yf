@@ -7,6 +7,23 @@
 class yf_db_utils {
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $arguments) {
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
+		return false;
+	}
+
+	/**
+	* We cleanup object properties when cloning
+	*/
+	function __clone() {
+		foreach ((array)get_object_vars($this) as $k => $v) {
+			$this->$k = null;
+		}
+	}
+
+	/**
 	* Will be like this: 
 	* db()->utils()->database('geonames')->create();
 	* db()->utils()->database('geonames')->drop();
