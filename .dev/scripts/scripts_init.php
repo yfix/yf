@@ -7,3 +7,8 @@ if (!defined('YF_PATH')) {
 	ini_set('display_errors', 'on');
 	error_reporting(E_ALL ^ E_NOTICE);
 }
+
+function _get_create_table_sql($tname) {
+	include (YF_PATH. 'share/db_installer/sql/'.$tname.'.sql.php');
+	return 'CREATE TABLE IF NOT EXISTS `'.$table.'` ('.$data.') ENGINE=InnoDB DEFAULT CHARSET=utf8;'.PHP_EOL;
+}
