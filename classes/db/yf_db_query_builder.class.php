@@ -32,7 +32,6 @@ class yf_db_query_builder {
 	/**
 	*/
 	function _init () {
-		$this->db = _class('db');
 	}
 
 	/**
@@ -146,7 +145,7 @@ class yf_db_query_builder {
 	function select() {
 		$sql = '';
 		$fields = func_get_args();
-		if (!count($fields)) {
+		if (!count($fields) || $fields === array(array())) {
 			$sql = 'SELECT *';
 		} else {
 			$a = array();
