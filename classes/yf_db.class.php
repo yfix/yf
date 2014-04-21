@@ -1451,15 +1451,15 @@ class yf_db {
 	/**
 	* Query builder shortcut
 	*/
-	function select($sql = array()) {
-		return $this->query_builder()->select($sql);
+	function select() {
+		return $this->query_builder()->select(array('__args__' => func_get_args()));
 	}
 
 	/**
 	* Query builder shortcut
 	*/
-	function from($sql = array()) {
-		return $this->query_builder()->select()->from($sql);
+	function from() {
+		return $this->query_builder()->select()->from(array('__args__' => func_get_args()));
 	}
 
 	/**
