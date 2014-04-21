@@ -14,9 +14,9 @@ function get_latest_timezones() {
 		file_put_contents($f2, $m1[1]);
 	}
 	$html2 = file_get_contents($f2);
-	#############
+	//#############
 	$tmp_tbl = html_table_to_array($html2);
-	#############
+	//#############
 	$data = array();
 	foreach ($tmp_tbl as $v) {
 		$id = $v[0];
