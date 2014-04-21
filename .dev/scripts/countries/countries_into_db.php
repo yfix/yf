@@ -31,16 +31,8 @@ $table = DB_PREFIX.'countries';
 $tables = db()->get_2d('show tables');
 $table_exists = in_array($table, $table2);
 
-$drop_table_sql = "DROP TABLE IF EXISTS `".$table."`;".PHP_EOL;
-$create_table_sql = "CREATE TABLE IF NOT EXISTS `".$table."` (
-  `code` char(2) NOT NULL DEFAULT '',
-  `code3` char(3) NOT NULL DEFAULT '',
-  `num` char(3) NOT NULL DEFAULT '',
-  `name` varchar(64) NOT NULL DEFAULT '',
-  `cont` char(2) NOT NULL DEFAULT '',
-  `active` enum('0','1') NOT NULL DEFAULT '0',
-  PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;".PHP_EOL;
+$drop_table_sql = 'DROP TABLE IF EXISTS `'.$table.'`;'.PHP_EOL;
+$create_table_sql = _get_create_table_sql('countries');
 
 $sql = db()->insert($table, _es($data), $only_sql = true);
 if (!$table_exists || $force) {
