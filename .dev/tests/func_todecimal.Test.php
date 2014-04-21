@@ -37,5 +37,8 @@ class func_todecimal_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(array('k1' => '-12.34', 'k2' => '-56.78'), todecimal(array('k1' => -12.341, 'k2' => '-56,7811111')));
 		$this->assertEquals(array('k1' => '12.34', 'k2' => array(array('56.78'))), todecimal(array('k1' => 12.341, 'k2' => array(array('56,7811111')))));
 		$this->assertEquals(array('k1' => '12.34', 'k2' => array(array('-56.78'))), todecimal(array('k1' => 12.341, 'k2' => array(array('-56,7811111')))));
+
+		$this->assertEquals('56.7811', todecimal('56,7811111', $digits = 4) );
+#		$this->assertEquals(array('12.341', '56.7811'), todecimal(array(12.341, '56,7811111'), $digits = 4) );
 	}
 }
