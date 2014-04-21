@@ -3,48 +3,47 @@
 
 require_once dirname(dirname(__FILE__)).'/scripts_init.php';
 
-$force = trim($argv[2]);
-$project_path = trim($argv[1]);
-if (!$project_path) {
-	exit('Error: missing project_path. Example: '.basename(__FILE__).' /home/www/test2/'.PHP_EOL);
+$lang = 'ru';
+$table = DB_PREFIX. 'geo_cities';
+if ( ! db()->utils()->table_exists($table) || $force) {
+	db()->utils()->drop_table($table);
+	db()->utils()->create_table($table);
 }
-$project_path = rtrim($project_path, '/').'/';
-foreach (array('', '*/', '*/*/', '*/*/*/') as $g) {
-	$paths = glob($project_path. $g. 'db_setup.php');
-	if (!$paths || !isset($paths[0])) {
-		continue;
-	}
-	$fp = $paths[0];
-	if ($fp && file_exists($fp)) {
-		require $fp;
-		break;
-	}
-}
-if (!defined('DB_NAME')) {
-	exit('Error: cannot init database connection.');
-}
-/*
-require dirname(__FILE__).'/timezones.php';
-if (!$data) {
-	exit('Error: $data is missing');
-}
-$table = DB_PREFIX.'geo_regions';
-$tables = db()->get_2d('show tables');
-$table_exists = in_array($table, $table2);
 
-$drop_table_sql = 'DROP TABLE IF EXISTS `'.$table.'`;'.PHP_EOL;
-$create_table_sql = _get_create_table_sql('geo_regions');
-
-$sql = db()->insert($table, _es($data), $only_sql = true);
-if (!$table_exists || $force) {
-#	echo $drop_table_sql;
-	db()->query($drop_table_sql) or print_r(db()->error());
-#	echo $create_table_sql;
-	db()->query($create_table_sql) or print_r(db()->error());
+$country_ids = array();
+foreach (db_geonames()->select('code','geoname_id')->from('geo_country')->get_2d() as $code => $id) {
+	$id && $country_ids[$code] = $id;
 }
-#echo $sql.PHP_EOL;
-db()->query($sql) or print_r(db()->error());
+$region_ids = array();
+foreach (db_geonames()->select('code','geoname_id')->from('geo_admin1')->get_2d() as $code => $id) {
+	$id && $region_ids[$code] = $id;
+}
+if ($lang) {
+	$sql = '
+		SELECT g.id, a.name, g.country, g.latitude, g.longitude, g.admin1, g.population
+		FROM geo_geoname AS g
+		LEFT JOIN geo_alternate_name AS a ON a.geoname_id = g.id
+		WHERE 
+			g.feature_class = "p"
+			AND g.population > 10000
+			AND a.language_code = "'._es($lang).'"
+		GROUP BY g.id
+		ORDER BY g.country, a.name COLLATE utf8_unicode_ci
+	';
+}
+$to_update = array();
+foreach (db_geonames()->get_all($sql) as $a) {
+	$to_update[$a['id']] = array(
+		'id'			=> $a['id'],
+		'country'		=> $a['country'],
+		'name'			=> $a['name'],
+		'population'	=> $a['population'],
+		'lat'			=> todecimal($a['latitude'], 6),
+		'lon'			=> todecimal($a['longitude'], 6),
+		'region'		=> $region_ids[$a['country'].'.'.$a['admin1']],
+	);
+}
+db()->replace_safe($table, $to_update);
 
 echo 'Trying to get 2 first records: '.PHP_EOL;
 print_r(db()->get_all('SELECT * FROM '.$table.' LIMIT 2'));
-*/
