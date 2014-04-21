@@ -145,7 +145,7 @@ class yf_db_query_builder {
 	function select() {
 		$sql = '';
 		$fields = func_get_args();
-		if (isset($fields[0]['__args__'])) {
+		if (isset($fields[0]) && is_array($fields[0]) && isset($fields[0]['__args__'])) {
 			$fields = $fields[0]['__args__'];
 		}
 		if (!count($fields) || $fields === array(array())) {
@@ -190,7 +190,7 @@ class yf_db_query_builder {
 	function from() {
 		$sql = '';
 		$tables = func_get_args();
-		if (isset($tables[0]['__args__'])) {
+		if (isset($fields[0]) && is_array($fields[0]) && isset($tables[0]['__args__'])) {
 			$tables = $tables[0]['__args__'];
 		}
 		if (count($tables)) {
