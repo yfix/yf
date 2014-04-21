@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS geoip2_city_blocks (
 	start_ip6			char(39) NOT NULL,
 	mask_len6			int unsigned NOT NULL,
 	start_ip4			int unsigned NOT NULL,
+	mask_len4			int unsigned NOT NULL,
 	geoname_id			int unsigned NOT NULL,
 	registered_cgid		int unsigned NOT NULL,
 	represented_cgid	int unsigned NOT NULL,
@@ -15,6 +16,8 @@ CREATE TABLE IF NOT EXISTS geoip2_city_blocks (
 	is_anonymous_proxy	tinyint(1) unsigned NOT NULL,
 	is_satellite_provider	tinyint(1) unsigned NOT NULL,
 	PRIMARY KEY (start_ip6, mask_len6)
+	,KEY (start_ip4, mask_len4)
+/*	,UNIQUE KEY (start_ip4, mask_len4)*/
 ) CHARACTER SET utf8;
 /*
 ==> GeoLite2-City-Blocks.csv <==
@@ -67,7 +70,10 @@ FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 /*---------------------------*/
 UPDATE `geoip2_city_blocks`
 SET start_ip4 = INET_ATON(SUBSTRING(start_ip6 FROM 8))
-WHERE start_ip4 = '' AND start_ip6 LIKE '::FFFF:%'
+	, mask_len4 = mask_len6 - 96
+WHERE start_ip4 = '' AND start_ip6 LIKE '::FFFF:%';
+
+/*DELETE FROM `geoip2_city_blocks` WHERE start_ip6 NOT LIKE '::FFFF:%';*/
 /*---------------------------*/
 COMMIT;
 SET unique_checks=1;
