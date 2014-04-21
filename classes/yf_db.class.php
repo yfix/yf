@@ -1434,8 +1434,14 @@ class yf_db {
 
 	/**
 	*/
+	function utils() {
+		return _class('db_utils', 'classes/db/');
+	}
+
+	/**
+	*/
 	function split_sql(&$ret, $sql) {
-		return _class('db_utils', 'classes/db/')->split_sql($ret, $sql);
+		return $this->utils()->split_sql($ret, $sql);
 	}
 
 	/**
