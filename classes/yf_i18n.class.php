@@ -172,7 +172,7 @@ class yf_i18n {
 	*/
 	function _load_lang_get_vars_from_db($lang) {
 		$CACHE_NAME = 'locale_translate_'.$lang;
-		$data = cache()->get($CACHE_NAME);
+		$data = cache_get($CACHE_NAME);
 		if (!$data && !is_array($data)) {
 			$data = array();
 			$q = db()->query(
@@ -186,7 +186,7 @@ class yf_i18n {
 			while ($a = db()->fetch_assoc($Q)) {
 				$data[$a['source']] = $a['translation'];
 			}
-			cache()->put($CACHE_NAME, $data);
+			cache_set($CACHE_NAME, $data);
 		}
 		foreach ((array)$data as $k => $v) {
 			$this->TR_VARS[$lang][$k] = $v;
