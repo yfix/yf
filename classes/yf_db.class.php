@@ -1428,16 +1428,14 @@ class yf_db {
 
 	/**
 	*/
-	function query_builder() {
-		$obj = clone _class('db_query_builder', 'classes/db/');
-		$obj->db = $this;
-		return $obj;
-	}
-
-	/**
-	*/
 	function utils() {
-		$obj = clone _class('db_utils', 'classes/db/');
+		if (strpos($this->DB_TYPE, 'mysql') !== false) {
+			$driver = 'mysql';
+		} else {
+			$driver = $this->DB_TYPE;
+		}
+		$cname = 'db_utils_'.$driver;
+		$obj = clone _class($cname, 'classes/db/');
 		$obj->db = $this;
 		return $obj;
 	}
@@ -1446,6 +1444,15 @@ class yf_db {
 	*/
 	function split_sql(&$ret, $sql) {
 		return $this->utils()->split_sql($ret, $sql);
+	}
+
+	/**
+	*/
+	function query_builder() {
+		$cname = 'db_query_builder';
+		$obj = clone _class($cname, 'classes/db/');
+		$obj->db = $this;
+		return $obj;
 	}
 
 	/**
