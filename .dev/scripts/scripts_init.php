@@ -1,38 +1,36 @@
 <?php
 
+$force = trim($argv[2]);
+$project_path = trim($argv[1]);
+if (!$project_path) {
+	exit('Error: missing project_path. Example: '.basename($argv[0]).' /home/www/test2/'.PHP_EOL);
+}
+$project_path = rtrim($project_path, '/').'/';
+foreach (array('', '*/', '*/*/', '*/*/*/') as $g) {
+	$paths = glob($project_path. $g. 'db_setup.php');
+	if (!$paths || !isset($paths[0])) {
+		continue;
+	}
+	$fp = $paths[0];
+	if ($fp && file_exists($fp)) {
+		require $fp;
+		break;
+	}
+}
+#####
+$PROJECT_CONF['db']['RECONNECT_NUM_TRIES'] = 1;
+$PROJECT_CONF['db']['FIX_DATA_SAFE'] = 0;
+$_GET['object'] = 'not_exists';
+#####
 if (!defined('YF_PATH')) {
 	define('YF_PATH', dirname(dirname(dirname(__FILE__))).'/');
 	require YF_PATH.'classes/yf_main.class.php';
-	new yf_main('admin', $no_db_connect = false, $auto_init_all = true);
+	new yf_main('admin', $no_db_connect = false, $auto_init_all = false);
+	date_default_timezone_set('Europe/Kiev');
 	ini_set('display_errors', 'on');
-	error_reporting(E_ALL ^ E_NOTICE);
+	error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
 }
-
-function _get_create_table_sql($tname) {
-	include (YF_PATH. 'share/db_installer/sql/'.$tname.'.sql.php');
-	return 'CREATE TABLE IF NOT EXISTS `'.$table.'` ('.$data.') ENGINE=InnoDB DEFAULT CHARSET=utf8;'.PHP_EOL;
-}
-function load_db_class() {
-	static $_loaded_class;
-	if ($_loaded_class) {
-		return $_loaded_class;
-	}
-	$classes = array(
-		'db'	=> INCLUDE_PATH.'classes/db.class.php',
-		'yf_db'	=> YF_PATH.'classes/yf_db.class.php',
-	);
-	foreach ((array)$classes as $cl => $f) {
-		if (!file_exists($f)) {
-			continue;
-		}
-		require_once $f;
-		if (class_exists($cl)) {
-			$_loaded_class = $cl;
-			return $_loaded_class;
-		}
-	}
-	return false;
-}
+#####
 if (!defined('DB_NAME_GEONAMES')) {
 	define('DB_PREFIX_GEONAMES', '');
 	define('DB_HOST_GEONAMES', 'localhost');
@@ -46,8 +44,8 @@ function db_geonames($tbl_name = '') {
 		$db_class = load_db_class();
 		if ($db_class) {
 			$_instance = new $db_class('mysql5', 1, DB_PREFIX_GEONAMES);
+			$_instance->DB_PREFIX = DB_PREFIX_GEONAMES;
 			$_instance->connect(DB_HOST_GEONAMES, DB_USER_GEONAMES, DB_PSWD_GEONAMES, DB_NAME_GEONAMES, true);
-			$_instance->_parse_tables();
 		} else {
 			$_instance = false;
 		}
