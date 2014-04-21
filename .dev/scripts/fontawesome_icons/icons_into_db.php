@@ -31,14 +31,8 @@ $table = DB_PREFIX.'icons';
 $tables = db()->get_2d('show tables');
 $table_exists = in_array($table, $table2);
 
-$drop_table_sql = "DROP TABLE IF EXISTS `".$table."`;".PHP_EOL;
-$create_table_sql = "CREATE TABLE IF NOT EXISTS `".$table."` (
-  `id` int(6) NOT NULL auto_increment,
-  `name` varchar(64) NOT NULL DEFAULT '',
-  `active` enum('0','1') NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;".PHP_EOL;
+$drop_table_sql = 'DROP TABLE IF EXISTS `'.$table.'`;'.PHP_EOL;
+$create_table_sql = _get_create_table_sql('icons');
 
 $sql = db()->insert($table, _es($data), $only_sql = true);
 if (!$table_exists || $force) {
