@@ -3,50 +3,25 @@
 
 require_once dirname(dirname(__FILE__)).'/scripts_init.php';
 
-$force = trim($argv[2]);
-$project_path = trim($argv[1]);
-if (!$project_path) {
-	exit('Error: missing project_path. Example: '.basename(__FILE__).' /home/www/test2/'.PHP_EOL);
-}
-$project_path = rtrim($project_path, '/').'/';
-foreach (array('', '*/', '*/*/', '*/*/*/') as $g) {
-	$paths = glob($project_path. $g. 'db_setup.php');
-	if (!$paths || !isset($paths[0])) {
-		continue;
-	}
-	$fp = $paths[0];
-	if ($fp && file_exists($fp)) {
-		require $fp;
-		break;
-	}
-}
-if (!defined('DB_NAME')) {
-	exit('Error: cannot init database connection.');
+$table = DB_PREFIX. 'countries';
+
+$to_update = array();
+foreach (db_geonames()->from('geo_country')->get_all() as $a) {
+	$to_update[$a['code']] = array(
+		'code'			=> $a['code'],
+		'cont'			=> $a['continent'],
+		'tld'			=> substr($a['tld'], 1),
+		'currency'		=> $a['currency'],
+		'area'			=> $a['area'],
+		'population'	=> $a['population'],
+		'phone_prefix'	=> $a['phone_prefix'],
+		'languages'		=> $a['languages'],
+		'geoname_id'	=> $a['geoname_id'],
+#		'capital_id'	=> $a[],
+	);
 }
 
-print_r(db_geonames()->from('geo_country')->get_all());
-/*
-require dirname(__FILE__).'/countries.php';
-if (!$data) {
-	exit('Error: $data is missing');
-}
-$table = DB_PREFIX.'countries';
-$tables = db()->get_2d('show tables');
-$table_exists = in_array($table, $table2);
-
-$drop_table_sql = 'DROP TABLE IF EXISTS `'.$table.'`;'.PHP_EOL;
-$create_table_sql = _get_create_table_sql('countries');
-
-$sql = db()->insert($table, _es($data), $only_sql = true);
-if (!$table_exists || $force) {
-#	echo $drop_table_sql;
-	db()->query($drop_table_sql) or print_r(db()->error());
-#	echo $create_table_sql;
-	db()->query($create_table_sql) or print_r(db()->error());
-}
-#echo $sql.PHP_EOL;
-db()->query($sql) or print_r(db()->error());
+db()->update_batch_safe($table, $to_update, 'code');
 
 echo 'Trying to get 2 first records: '.PHP_EOL;
 print_r(db()->get_all('SELECT * FROM '.$table.' LIMIT 2'));
-*/
