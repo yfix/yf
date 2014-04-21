@@ -115,14 +115,52 @@ class yf_db_utils {
 
 	/**
 	*/
-	function create_table($name, $options = array()) {
-// TODO
+	function get_all_tables($extra = array(), &$error = false) {
+		return (array)$this->db->get_2d('show tables');
 	}
 
 	/**
 	*/
-	function drop_table($name, $options = array()) {
-// TODO
+	function table_exists($name, $extra = array(), &$error = false) {
+		if (!$name) {
+			$error = 'name is empty';
+			return false;
+		}
+		return (bool)in_array($name, (array)$this->get_all_tables());
+	}
+
+	/**
+	*/
+	function create_table($name, $extra = array(), &$error = false) {
+		if (!$name) {
+			$error = 'name is empty';
+			return false;
+		}
+		$path = YF_PATH. 'share/db_installer/sql/'.$name.'.sql.php';
+// TODO: optionally check if table really exists in database: show_tables and in_array(...)
+// TODO: use glob for YF and PROJECT
+		if (!file_exists($path)) {
+			$error = 'file not exists: '.$path;
+			return false;
+		}
+		include $path;
+		if (!$data) {
+			$error = 'data is empty';
+			return false;
+		}
+		$sql = 'CREATE TABLE IF NOT EXISTS `'.$this->db->_fix_table_name($name).'` ('. PHP_EOL. $data. PHP_EOL. ') ENGINE=InnoDB DEFAULT CHARSET=utf8;'. PHP_EOL;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+
+	/**
+	*/
+	function drop_table($name, $extra = array(), &$error = false) {
+		if (!$name) {
+			$error = 'name is empty';
+			return false;
+		}
+		$sql = 'DROP TABLE IF EXISTS `'.$this->db->_fix_table_name($name).'`;'.PHP_EOL;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
