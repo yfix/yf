@@ -10,6 +10,11 @@ if (!$data) {
 
 // TODO
 
+/**
+lang char2
+country char2
+*/
+
 $table = DB_PREFIX. 'geo_lang_to_country';
 if ( ! db()->utils()->table_exists($table) || $force) {
 	db()->utils()->drop_table($table);
