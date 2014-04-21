@@ -71,6 +71,7 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 	public function test_where() {
 		$this->assertFalse( self::qb()->where()->sql() );
 		$this->assertFalse( self::qb()->select()->from()->where()->sql() );
+		$this->assertEquals( 'SELECT * FROM '.DB_PREFIX.'user WHERE id=\'1\'', self::qb()->select()->from('user')->where('id','=','1')->sql() );
 		$this->assertEquals( 'SELECT * FROM '.DB_PREFIX.'user WHERE id=\'1\'', self::qb()->select()->from('user')->where(array('id','=',1))->sql() );
 		$this->assertEquals( 'SELECT * FROM '.DB_PREFIX.'user, '.DB_PREFIX.'articles WHERE u.id=\'1\'', self::qb()->select()->from('user','articles')->where(array('u.id','=',1))->sql() );
 		$this->assertEquals( 'SELECT * FROM '.DB_PREFIX.'user AS u WHERE u.id=\'1\'', self::qb()->select()->from(array('user' => 'u'))->where(array('u.id','=',1))->sql() );
