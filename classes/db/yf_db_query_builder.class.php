@@ -284,6 +284,9 @@ class yf_db_query_builder {
 // TODO: support for binding params (':field' => $val)
 		$sql = '';
 		$where = func_get_args();
+		if (isset($where[0]) && is_array($where[0]) && isset($where[0]['__args__'])) {
+			$where = $where[0]['__args__'];
+		}
 		if (count($where) == 3 && is_string($where[0]) && is_string($where[1])) {
 			$sql = 'WHERE '.$where[0]. $where[1]. $this->db->escape_val($where[2]);
 		} elseif (count($where)) {
