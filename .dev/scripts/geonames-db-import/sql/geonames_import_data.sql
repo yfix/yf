@@ -1,4 +1,4 @@
-SET autocommit=0;
+#SET autocommit=0;
 SET unique_checks=0;
 SET foreign_key_checks=0;
 
@@ -62,6 +62,6 @@ CHARACTER SET 'UTF8'
 (id, geoname_id, language_code, name, is_preferred, is_short, is_colloquial, is_historic);
 
 
-COMMIT;
+#COMMIT;
 SET unique_checks=1;
 SET foreign_key_checks=1;

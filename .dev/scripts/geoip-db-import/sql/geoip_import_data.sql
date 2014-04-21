@@ -1,4 +1,4 @@
-SET autocommit=0;
+#SET autocommit=0;
 SET unique_checks=0;
 SET foreign_key_checks=0;
 /*------------------------*/
@@ -122,6 +122,6 @@ UPDATE geoip_city_blocks AS b
 INNER JOIN geoip_city_location AS l ON b.loc_id = l.id
 SET b.country = l.country, b.region = l.region;
 /*---------------------------*/
-COMMIT;
+#COMMIT;
 SET unique_checks=1;
 SET foreign_key_checks=1;
