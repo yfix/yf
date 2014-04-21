@@ -20,13 +20,13 @@ $data = array (
 			'default' => '',
 			'auto_inc' => 0,
 		),
-		'region' => 
+		'region_id' => 
 		array (
-			'type' => 'char',
-			'length' => '3',
+			'type' => 'int',
+			'length' => '10',
 			'attrib' => NULL,
 			'not_null' => 1,
-			'default' => '',
+			'default' => '0',
 			'auto_inc' => 0,
 		),
 		'name' => 
@@ -84,11 +84,11 @@ $data = array (
 			),
 			'type' => 'key',
 		),
-		'region' => 
+		'region_id' => 
 		array (
 			'fields' => 
 			array (
-				0 => 'region',
+				0 => 'region_id',
 			),
 			'type' => 'key',
 		),
