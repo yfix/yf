@@ -1429,13 +1429,17 @@ class yf_db {
 	/**
 	*/
 	function query_builder() {
-		return _class('db_query_builder', 'classes/db/');
+		$obj = clone _class('db_query_builder', 'classes/db/');
+		$obj->db = &$this;
+		return $obj;
 	}
 
 	/**
 	*/
 	function utils() {
-		return _class('db_utils', 'classes/db/');
+		$obj = clone _class('db_utils', 'classes/db/');
+		$obj->db = &$this;
+		return $obj;
 	}
 
 	/**
@@ -1445,10 +1449,17 @@ class yf_db {
 	}
 
 	/**
-	* I plan to start query builder qurying from this shortcut
+	* Query builder shortcut
 	*/
 	function select($sql = array()) {
-		return _class('db_query_builder', 'classes/db/')->select($sql);
+		return $this->query_builder()->select($sql);
+	}
+
+	/**
+	* Query builder shortcut
+	*/
+	function from($sql = array()) {
+		return $this->query_builder()->select()->from($sql);
 	}
 
 	/**
