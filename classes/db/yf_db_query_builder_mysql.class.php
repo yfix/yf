@@ -191,7 +191,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	function from() {
 		$sql = '';
 		$tables = func_get_args();
-		if (isset($fields[0]) && is_array($fields[0]) && isset($tables[0]['__args__'])) {
+		if (isset($tables[0]) && is_array($tables[0]) && isset($tables[0]['__args__'])) {
 			$tables = $tables[0]['__args__'];
 		}
 		if (count($tables)) {
