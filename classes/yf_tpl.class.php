@@ -671,7 +671,7 @@ class yf_tpl {
 		}
 		$stpls_paths = array();
 		$CACHE_NAME = 'stpls_paths_'.(MAIN_TYPE_ADMIN ? 'admin' : 'site_'.conf('SITE_ID'));
-		$stpls_paths = cache()->get($CACHE_NAME);
+		$stpls_paths = cache_get($CACHE_NAME);
 		// Create full array (cache is empty or turned off)
 		if (empty($stpls_paths)) {
 			if (MAIN_TYPE_ADMIN) {
@@ -705,7 +705,7 @@ class yf_tpl {
 				}
 			}
 			ksort($stpls_paths);
-			cache()->put($CACHE_NAME, $stpls_paths);
+			cache_set($CACHE_NAME, $stpls_paths);
 		}
 		$this->_stpls_paths_cache = $stpls_paths;
 	}

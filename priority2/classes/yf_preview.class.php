@@ -44,7 +44,7 @@ class yf_preview {
 					$replace[$k] = $this->_format_text($v);
 				} else {
 					// Try to get category_id based on parent object
-					$categories = cache()->get($PARENT_OBJECT."_categories");
+					$categories = cache_get($PARENT_OBJECT."_categories");
 					$replace['category_id'] = $categories[$v];
 				}
 			}

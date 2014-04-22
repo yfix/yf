@@ -114,7 +114,7 @@ class yf_user_data {
 			$cache_name = "dynamic_fields";
 			// Create array of dynamic info fields
 			if (main()->USE_SYSTEM_CACHE) {
-				$this->_avail_dynamic_fields = cache()->get($cache_name);
+				$this->_avail_dynamic_fields = cache_get($cache_name);
 			}
 			if (empty($this->_avail_dynamic_fields)) {
 				$Q = db()->query("SELECT * FROM ".db('user_data_info_fields')." WHERE active='1'");
@@ -122,7 +122,7 @@ class yf_user_data {
 					$this->_avail_dynamic_fields[$A["id"]] = $A["name"];
 				}
 				if (main()->USE_SYSTEM_CACHE) {
-					cache()->put($cache_name, $this->_avail_dynamic_fields);
+					cache_set($cache_name, $this->_avail_dynamic_fields);
 				}
 			}
 			// "Magick" field group
@@ -684,7 +684,7 @@ class yf_user_data {
 		}
 		// Create array of fields in tables
 		if (main()->USE_SYSTEM_CACHE) {
-			$db_cols = cache()->get($cache_name);
+			$db_cols = cache_get($cache_name);
 		}
 		if (empty($db_cols)) {
 			$Q = db()->query("SHOW COLUMNS FROM ".db('user')."");
@@ -695,7 +695,7 @@ class yf_user_data {
 				$db_cols[$A["Field"]] = $A["Field"];
 			}
 			if (main()->USE_SYSTEM_CACHE) {
-				cache()->put($cache_name, $db_cols);
+				cache_set($cache_name, $db_cols);
 			}
 		}
 		// Put to local cache
@@ -726,7 +726,7 @@ class yf_user_data {
 		}
 		// Create array of fields in tables
 		if (main()->USE_SYSTEM_CACHE) {
-			$db_cols = cache()->get($cache_name);
+			$db_cols = cache_get($cache_name);
 		}
 		if (empty($db_cols)) {
 			foreach ((array)$this->_user_tables as $_table_name) {
@@ -743,7 +743,7 @@ class yf_user_data {
 				$db_cols["_dynamic"][$_field_name] = $_field_name;
 			}
 			if (main()->USE_SYSTEM_CACHE) {
-				cache()->put($cache_name, $db_cols);
+				cache_set($cache_name, $db_cols);
 			}
 		}
 		// Put to local cache

@@ -153,7 +153,7 @@ class yf_forum_stats {
 		$online_users_num = count(module('forum')->online_array);
 		// Get forum most number of users
 		if (main()->USE_SYSTEM_CACHE) {
-			$cache = cache()->get('forum_most_users');
+			$cache = cache_get('forum_most_users');
 		}
 		if (!empty($cache)) {
 			$forum_most_users = $cache;
@@ -183,7 +183,7 @@ class yf_forum_stats {
 		// Do update file cache
 		if (main()->USE_SYSTEM_CACHE) {
 			if (empty($cache) || $NEED_UPDATE_FILE) {
-				cache()->put('forum_most_users', $forum_most_users);
+				cache_set('forum_most_users', $forum_most_users);
 			}
 		}
 		// Do update db cache

@@ -740,7 +740,7 @@ class yf_dev{
 				}
 
 				if (main()->USE_SYSTEM_CACHE) {
-					$syntax_check_file_hashes = cache()->get("syntax_check_file_hashes");
+					$syntax_check_file_hashes = cache_get("syntax_check_file_hashes");
 				}
 			
 				$hashes_old = (array)$syntax_check_file_hashes;
@@ -797,7 +797,7 @@ class yf_dev{
 				}
 				// Put file hashes to cache
 				if (main()->USE_SYSTEM_CACHE && $files_changed) {
-					cache()->put("syntax_check_file_hashes", $syntax_check_file_hashes);
+					cache_set("syntax_check_file_hashes", $syntax_check_file_hashes);
 				}
 			
 				$num_errors = count($error_message);

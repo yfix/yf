@@ -137,7 +137,7 @@ class yf_geo_content {
 					$cities[$A["loc_id"]] = $A["city"];
 				}
 				if ($this->AJAX_USE_CACHE && main()->USE_SYSTEM_CACHE) {
-					cache()->put($CACHE_NAME, $cities);
+					cache_set($CACHE_NAME, $cities);
 				}
 			}
 			foreach ((array)$cities as $_city_name) {

@@ -107,7 +107,7 @@ class yf_forum_sync {
 			'last_user_id'		=> $last_user_id,
 			'last_user_login'	=> $last_user_login,
 		);
-		cache()->put('forum_totals', $forum_totals);
+		cache_set('forum_totals', $forum_totals);
 	}
 
 	/**
