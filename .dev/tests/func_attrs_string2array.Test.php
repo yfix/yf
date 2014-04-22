@@ -7,9 +7,9 @@ class func_attrs_string2array_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(array(), _attrs_string2array());
 		$this->assertEquals(array(), _attrs_string2array(null));
 		$this->assertEquals(array(), _attrs_string2array(''));
-#		$this->assertEquals(array(), _attrs_string2array(array()));
-#		$this->assertEquals(array(), _attrs_string2array(new stdClass()));
-#		$this->assertEquals(array(), _attrs_string2array(function(){}));
+		$this->assertEquals(array(), _attrs_string2array(array()));
+		$this->assertEquals(array(), _attrs_string2array(new stdClass()));
+		$this->assertEquals(array(), _attrs_string2array(function(){}));
 	}
 	public function test_simple() {
 		$a = array('k1' => 'v1');
