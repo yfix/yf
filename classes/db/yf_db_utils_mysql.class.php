@@ -182,9 +182,9 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	function add_index($table, $fields, $extra = array()) {
-# CREATE INDEX id_index ON lookup (id)
-// TODO
+	function add_index($table, $fields = array(), $extra = array()) {
+		$name = $extra['name'] ?: implode('_', $fields);
+		$sql = 'CREATE INDEX '.$name.' ON '.$this->db->_fix_table_name($table).' ('.implode(',', $fields).')';
 	}
 
 	/**
@@ -288,7 +288,8 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			if ($type != 'VIEW') {
 				continue;
 			}
-			$tables[$name] = $this->db->get_one('SHOW CREATE VIEW '.$name);
+			$create_view = !$extra['no_details'] ? $this->db->get('SHOW CREATE VIEW '.$name) : '';
+			$tables[$name] = is_array($create_view) ? $create_view['Create View'] : '';
 		}
 		return $tables;
 	}
@@ -310,8 +311,13 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	*/
 	function list_procedures($extra = array()) {
-// TODO
-		return $this->db->get_all('SHOW PROCEDURE STATUS');
+		$data = array();
+		foreach ($this->db->get_all('SHOW PROCEDURE STATUS') as $v) {
+			$name = $v['Name'];
+			$source = $extra['show_code'] ? $this->db->get_all('SHOW PROCEDURE CODE '.$name) : '';
+			$data[$name] = $v + array('source' => $source);
+		}
+		return $data;
 	}
 
 	/**
