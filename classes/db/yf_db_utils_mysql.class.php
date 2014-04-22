@@ -69,7 +69,8 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	*/
 	function list_tables($extra = array(), &$error = false) {
-		return (array)$this->db->get_2d('show tables');
+		$tables = $this->db->get_2d('show tables');
+		return $tables ? array_combine($tables, $tables) : false;
 	}
 
 	/**
@@ -172,12 +173,14 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 		");*/
 		$indexes = array();
 		foreach ($this->db->get_all('SHOW INDEX FROM ' . $this->db->_fix_table_name($table)) as $row) {
-			$indexes[$row['Key_name']]['name'] = $row['Key_name'];
-			$indexes[$row['Key_name']]['unique'] = !$row['Non_unique'];
-			$indexes[$row['Key_name']]['primary'] = $row['Key_name'] === 'PRIMARY';
+			$indexes[$row['Key_name']] = array(
+				'name'		=> $row['Key_name'],
+				'unique'	=> !$row['Non_unique'],
+				'primary'	=> $row['Key_name'] === 'PRIMARY',
+			);
 			$indexes[$row['Key_name']]['columns'][$row['Seq_in_index'] - 1] = $row['Column_name'];
 		}
-		return array_values($indexes);
+		return $indexes;
 	}
 
 	/**
@@ -185,13 +188,14 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	function add_index($table, $fields = array(), $extra = array()) {
 		$name = $extra['name'] ?: implode('_', $fields);
 		$sql = 'CREATE INDEX '.$name.' ON '.$this->db->_fix_table_name($table).' ('.implode(',', $fields).')';
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	function drop_index($table, $name) {
-# DROP INDEX index_name ON tbl_name
-// TODO
+		$sql = 'DROP INDEX '.$name.' ON '.$this->db->_fix_table_name($table);
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
@@ -204,10 +208,12 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 				AND REFERENCED_TABLE_NAME IS NOT NULL 
 				AND TABLE_NAME = '. $this->db->_fix_table_name($table);
 		foreach ($this->db->get_all($sql) as $id => $row) {
-			$keys[$id]['name'] = $row['CONSTRAINT_NAME']; // foreign key name
-			$keys[$id]['local'] = $row['COLUMN_NAME']; // local columns
-			$keys[$id]['table'] = $row['REFERENCED_TABLE_NAME']; // referenced table
-			$keys[$id]['foreign'] = $row['REFERENCED_COLUMN_NAME']; // referenced columns
+			$keys[$id] = array(
+				'name'		=> $row['CONSTRAINT_NAME'], // foreign key name
+				'local'		=> $row['COLUMN_NAME'], // local columns
+				'table'		=> $row['REFERENCED_TABLE_NAME'], // referenced table
+				'foreign' 	=> $row['REFERENCED_COLUMN_NAME'], // referenced columns
+			);
 		}
 		return array_values($keys);
 	}
@@ -215,13 +221,22 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	*/
 	function add_foreign_key($table, $fields, $extra = array()) {
+/*
+ALTER TABLE tbl_name
+    ADD [CONSTRAINT [symbol]] FOREIGN KEY
+    [index_name] (index_col_name, ...)
+    REFERENCES tbl_name (index_col_name,...)
+    [ON DELETE reference_option]
+    [ON UPDATE reference_option]
+*/
 // TODO
 	}
 
 	/**
 	*/
-	function drop_foreign_key($table, $fields, $extra = array()) {
-// TODO
+	function drop_foreign_key($table, $name, $extra = array()) {
+		$sql = 'ALTER TABLE '.$this->db->_fix_table_name($table).' DROP FOREIGN KEY '.$name;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
@@ -235,7 +250,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 		$columns = array();
 		foreach ($this->db->get_all('SHOW FULL COLUMNS FROM '. $this->db->_fix_table_name($table)) as $row) {
 			$type = explode('(', $row['Type']);
-			$columns[] = array(
+			$columns[$row['Field']] = array(
 				'name'		=> $row['Field'],
 				'table'		=> $table,
 				'nativetype'=> strtoupper($type[0]),
@@ -254,25 +269,29 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	*/
 	function add_column($table, $name, $data, $extra = array()) {
+// TODO: serialize/unserizlialize sql<->array before implement this
 // TODO
 	}
 
 	/**
 	*/
 	function rename_column($table, $name, $data, $extra = array()) {
+// TODO: serialize/unserizlialize sql<->array before implement this
 // TODO
 	}
 
 	/**
 	*/
 	function alter_column($table, $name, $data, $extra = array()) {
+// TODO: serialize/unserizlialize sql<->array before implement this
 // TODO
 	}
 
 	/**
 	*/
-	function drop_column($table, $name, $data, $extra = array()) {
-// TODO
+	function drop_column($table, $name, $extra = array()) {
+		$sql = 'ALTER TABLE '.$this->db->_fix_table_name($name).' DROP COLUMN '.$this->db->escape_key($name);
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
@@ -296,16 +315,16 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	function create_view($name, $data, $extra = array()) {
-# CREATE VIEW test.v AS SELECT * FROM t;
-// TODO
+	function create_view($name, $sql_as, $extra = array()) {
+		$sql = 'CREATE VIEW '.$this->db->_fix_table_name($name).' AS '.$sql_as;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	function drop_view($name, $extra = array()) {
-# DROP VIEW view_name
-// TODO
+		$sql = 'DROP VIEW '.$this->db->_fix_table_name($name);
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
@@ -323,6 +342,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	*/
 	function create_procedure($name, $data, $extra = array()) {
+// https://dev.mysql.com/doc/refman/5.5/en/create-procedure.html
 # CREATE PROCEDURE simpleproc (OUT param1 INT)
 # BEGIN
 #    SELECT COUNT(*) INTO param1 FROM t;
@@ -332,16 +352,21 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_procedure($name, $data, $extra = array()) {
-# DROP PROCEDURE name
-// TODO
+	function drop_procedure($name, $extra = array()) {
+		$sql = 'DROP PROCEDURE '.$name;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	function list_functions($extra = array()) {
-// TODO
-		return $this->db->get_all('SHOW PROCEDURE STATUS');
+		$data = array();
+		foreach ($this->db->get_all('SHOW FUNCTION STATUS') as $v) {
+			$name = $v['Name'];
+			$source = $extra['show_code'] ? $this->db->get_all('SHOW FUNCTION CODE '.$name) : '';
+			$data[$name] = $v + array('source' => $source);
+		}
+		return $data;
 	}
 
 	/**
@@ -355,9 +380,9 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_function($name, $data, $extra = array()) {
-# DROP FUNCTION name
-// TODO
+	function drop_function($name, $extra = array()) {
+		$sql = 'DROP FUNCTION '.$name;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
@@ -369,50 +394,49 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	*/
 	function create_trigger($name, $data, $extra = array()) {
+// https://dev.mysql.com/doc/refman/5.5/en/create-trigger.html
 # CREATE    [DEFINER = { user | CURRENT_USER }]    TRIGGER trigger_name    trigger_time trigger_event     ON tbl_name FOR EACH ROW    trigger_body
 // TODO
 	}
 
 	/**
 	*/
-	function drop_trigger($name, $data, $extra = array()) {
-# DROP TRIGGER [IF EXISTS] [schema_name.]trigger_name
-// TODO
+	function drop_trigger($name, $extra = array()) {
+		$sql = 'DROP TRIGGER '.$name;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	function list_events($extra = array()) {
+		// SHOW EVENTS
+		// SHOW CREATE EVENT
 // TODO
 	}
 
 	/**
 	*/
 	function create_event($name, $data, $extra = array()) {
+// https://dev.mysql.com/doc/refman/5.5/en/create-event.html
+/*
+CREATE EVENT e_totals
+ON SCHEDULE AT '2006-02-10 23:59:00'
+DO INSERT INTO test.totals VALUES (NOW());
+*/
 // TODO
 	}
 
 	/**
 	*/
 	function drop_event($name, $data, $extra = array()) {
-// TODO
+		$sql = 'DROP EVENT '.$name;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	function list_users($extra = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	function create_user($name, $data, $extra = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	function drop_user($name, $data, $extra = array()) {
+		// SELECT * FROM mysql.user
 // TODO
 	}
 
