@@ -1475,7 +1475,7 @@ class yf_db {
 	* Query builder shortcut
 	*/
 	function from() {
-		return $this->query_builder()->select()->from(array('__args__' => func_get_args()));
+		return $this->query_builder()->from(array('__args__' => func_get_args()));
 	}
 
 	/**
