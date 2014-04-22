@@ -278,22 +278,19 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	*/
 	function list_views($extra = array()) {
-// TODO
 		/*$this->connection->query("
 			SELECT TABLE_NAME as name, TABLE_TYPE = 'VIEW' as view
 			FROM INFORMATION_SCHEMA.TABLES
 			WHERE TABLE_SCHEMA = DATABASE()
 		");*/
-/*
 		$tables = array();
-		foreach ($this->connection->query('SHOW FULL TABLES') as $row) {
-			$tables[] = array(
-				'name' => $row[0],
-				'view' => isset($row[1]) && $row[1] === 'VIEW',
-			);
+		foreach ($this->db->get_2d('SHOW FULL TABLES') as $name => $type) {
+			if ($type != 'VIEW') {
+				continue;
+			}
+			$tables[$name] = $this->db->get_one('SHOW CREATE VIEW '.$name);
 		}
 		return $tables;
-*/
 	}
 
 	/**
@@ -314,6 +311,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	*/
 	function list_procedures($extra = array()) {
 // TODO
+		return $this->db->get_all('SHOW PROCEDURE STATUS');
 	}
 
 	/**
@@ -337,6 +335,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	*/
 	function list_functions($extra = array()) {
 // TODO
+		return $this->db->get_all('SHOW PROCEDURE STATUS');
 	}
 
 	/**
@@ -358,6 +357,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	*/
 	function list_triggers($extra = array()) {
+		return $this->db->get_all('SHOW TRIGGERS');
 	}
 
 	/**
