@@ -90,9 +90,19 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$path = YF_PATH. 'share/db_installer/sql/'.$name.'.sql.php';
-// TODO: optionally check if table really exists in database: show_tables and in_array(...)
-// TODO: use glob for YF and PROJECT
+		$globs = array(
+			PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
+			PROJECT_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
+			YF_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
+			YF_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
+		);
+		$path = '';
+		foreach ($globs as $glob) {
+			foreach (glob($glob) as $f) {
+				$path = $f;
+				break 2;
+			}
+		}
 		if (!file_exists($path)) {
 			$error = 'file not exists: '.$path;
 			return false;
