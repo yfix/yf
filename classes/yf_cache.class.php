@@ -32,6 +32,8 @@ class yf_cache {
 	public $DRIVER					= 'file';
 	/** @var string Namespace for drivers other than 'file' */
 	public $CACHE_NS				= '';
+	/** @var bool Allows to turn off cache at any moment. Useful for unit tests and complex situations. */
+	public $NO_CACHE				= false;
 	/** @var array internal @conf_skip */
 	public $MEMCACHE_DEF_PARAMS	= array(
 		'port'		=> 11211,
@@ -205,7 +207,7 @@ class yf_cache {
 	* Get data from cache
 	*/
 	function get ($cache_name = '', $force_ttl = 0, $params = array()) {
-		if (empty($cache_name)) {
+		if (empty($cache_name) || $this->NO_CACHE) {
 			return false;
 		}
 		if ($this->FORCE_REBUILD_CACHE) {
@@ -281,6 +283,9 @@ class yf_cache {
 	* Put data into cache
 	*/
 	function put ($cache_name = '', $data = null, $TTL = 0) {
+		if ($this->NO_CACHE) {
+			return false;
+		}
 		if (!$TTL) {
 			$TTL = $this->FILES_TTL;
 		}
@@ -410,6 +415,9 @@ class yf_cache {
 	/**
 	*/
 	function _refresh ($cache_name = '', $force_clean = false) {
+		if ($this->NO_CACHE) {
+			return false;
+		}
 		if ($this->DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
