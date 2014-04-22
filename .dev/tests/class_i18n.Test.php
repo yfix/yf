@@ -5,8 +5,8 @@ require dirname(__FILE__).'/yf_unit_tests_setup.php';
 class class_i18n_test extends PHPUnit_Framework_TestCase {
 	public static function setUpBeforeClass() {
 		define('DEFAULT_LANG', 'en');
-		$_GET['no_core_cache'] = true;
-		_class('i18n')->USE_TRANSLATE_CACHE = false;
+#		$_GET['no_core_cache'] = true;
+#		_class('i18n')->USE_TRANSLATE_CACHE = false;
 		_class('i18n')->TR_VARS['en']['unit_test_var1'] = 'unit_test_value1';
 	}
 	public static function tearDownAfterClass() {
