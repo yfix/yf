@@ -164,15 +164,20 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	/**
 	*/
 	function list_indexes($table, $extra = array()) {
-/*
-		SELECT table_name AS `Table`,
-       index_name AS `Index`,
-       GROUP_CONCAT(column_name ORDER BY seq_in_index) AS `Columns`
-FROM information_schema.statistics
-WHERE table_schema = 'sakila'
-GROUP BY 1,2;
-*/
-// TODO
+		/*$this->db->query("
+			SELECT *
+			FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+			WHERE TABLE_NAME = {$this->db->_fix_table_name($table)} AND TABLE_SCHEMA = DATABASE()
+			AND REFERENCED_COLUMN_NAME IS NULL
+		");*/
+		$indexes = array();
+		foreach ($this->db->get_all('SHOW INDEX FROM ' . $this->db->_fix_table_name($table)) as $row) {
+			$indexes[$row['Key_name']]['name'] = $row['Key_name'];
+			$indexes[$row['Key_name']]['unique'] = !$row['Non_unique'];
+			$indexes[$row['Key_name']]['primary'] = $row['Key_name'] === 'PRIMARY';
+			$indexes[$row['Key_name']]['columns'][$row['Seq_in_index'] - 1] = $row['Column_name'];
+		}
+		return array_values($indexes);
 	}
 
 	/**
@@ -192,7 +197,19 @@ GROUP BY 1,2;
 	/**
 	*/
 	function list_foreign_keys($table, $extra = array()) {
-// TODO
+		$keys = array();
+		$sql = 'SELECT CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
+			FROM information_schema.KEY_COLUMN_USAGE
+			WHERE TABLE_SCHEMA = DATABASE() 
+				AND REFERENCED_TABLE_NAME IS NOT NULL 
+				AND TABLE_NAME = '. $this->db->_fix_table_name($table);
+		foreach ($this->db->get_all($sql) as $id => $row) {
+			$keys[$id]['name'] = $row['CONSTRAINT_NAME']; // foreign key name
+			$keys[$id]['local'] = $row['COLUMN_NAME']; // local columns
+			$keys[$id]['table'] = $row['REFERENCED_TABLE_NAME']; // referenced table
+			$keys[$id]['foreign'] = $row['REFERENCED_COLUMN_NAME']; // referenced columns
+		}
+		return array_values($keys);
 	}
 
 	/**
@@ -210,7 +227,28 @@ GROUP BY 1,2;
 	/**
 	*/
 	function list_columns($table, $extra = array()) {
-// TODO
+		/*$this->db->query("
+			SELECT *
+			FROM INFORMATION_SCHEMA.COLUMNS
+			WHERE TABLE_NAME = {$this->db->_fix_table_name($table)} AND TABLE_SCHEMA = DATABASE()
+		");*/
+		$columns = array();
+		foreach ($this->db->get_all('SHOW FULL COLUMNS FROM '. $this->db->_fix_table_name($table)) as $row) {
+			$type = explode('(', $row['Type']);
+			$columns[] = array(
+				'name'		=> $row['Field'],
+				'table'		=> $table,
+				'nativetype'=> strtoupper($type[0]),
+				'size'		=> isset($type[1]) ? (int) $type[1] : NULL,
+				'unsigned'	=> (bool) strstr($row['Type'], 'unsigned'),
+				'nullable'	=> $row['Null'] === 'YES',
+				'default'	=> $row['Default'],
+				'autoincrement' => $row['Extra'] === 'auto_increment',
+				'primary'	=> $row['Key'] === 'PRI',
+				'vendor'	=> (array) $row,
+			);
+		}
+		return $columns;
 	}
 
 	/**
@@ -241,6 +279,21 @@ GROUP BY 1,2;
 	*/
 	function list_views($extra = array()) {
 // TODO
+		/*$this->connection->query("
+			SELECT TABLE_NAME as name, TABLE_TYPE = 'VIEW' as view
+			FROM INFORMATION_SCHEMA.TABLES
+			WHERE TABLE_SCHEMA = DATABASE()
+		");*/
+/*
+		$tables = array();
+		foreach ($this->connection->query('SHOW FULL TABLES') as $row) {
+			$tables[] = array(
+				'name' => $row[0],
+				'view' => isset($row[1]) && $row[1] === 'VIEW',
+			);
+		}
+		return $tables;
+*/
 	}
 
 	/**
