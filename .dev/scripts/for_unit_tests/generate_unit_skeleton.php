@@ -3,6 +3,7 @@
 
 # Example: ./generate_unit_skeleton.php /home/www/test2/ /home/www/yf/classes/yf_table2.class.php 
 $path = $argv[2];
+$custom_path = $argv[3];
 
 require_once dirname(dirname(__FILE__)).'/scripts_init.php';
 
@@ -23,7 +24,7 @@ foreach ($m['func'] as $func) {
 	if (substr($func, 0, 2) == '__') {
 		continue;
 	}
-	$res = @_class($name)->$func();
+	$res = @_class($name, $custom_path)->$func();
 	if (is_object($res)) {
 		$res = (string)$res;
 	}
