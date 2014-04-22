@@ -23,10 +23,18 @@ foreach ($m['func'] as $func) {
 	if (substr($func, 0, 2) == '__') {
 		continue;
 	}
-	$res = @(string)_class($name)->$func();
-	$res = str_replace('\"', '"', substr(addslashes(var_export(trim($res), 1)), 2, -2));
+	$res = @_class($name)->$func();
+	if (is_object($res)) {
+		$res = (string)$res;
+	}
+	if (is_array($res)) {
+		$res = str_replace('array (', 'array(', var_export($res, 1));
+		$res = preg_replace('~=>[\s\t]+array\(~ims', '=> array(', $res);
+	} else {
+		$res = '\''.str_replace('\"', '"', trim(substr(addslashes(var_export($res, 1)), 2, -2))).'\'';
+	}
 	$out[] = PHP_EOL."\t".'public function test_'.$func.'() {'.PHP_EOL
-		."\t\t".'$this->assertEquals(\''.$res.'\', trim(_class(\''.$name.'\')->'.$func.'()) );'.PHP_EOL
+		."\t\t".'$this->assertEquals('.$res.', trim(_class(\''.$name.'\')->'.$func.'()) );'.PHP_EOL
 		."\t".'}';
 }
 
