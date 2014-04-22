@@ -23,8 +23,10 @@ foreach ($m['func'] as $func) {
 	if (substr($func, 0, 2) == '__') {
 		continue;
 	}
+	$res = @(string)_class($name)->$func();
+	$res = str_replace('\"', '"', substr(addslashes(var_export(trim($res), 1)), 2, -2));
 	$out[] = PHP_EOL."\t".'public function test_'.$func.'() {'.PHP_EOL
-		."\t\t".'$this->assertEquals(\'\', _class(\''.$name.'\')->'.$func.'() );'.PHP_EOL
+		."\t\t".'$this->assertEquals(\''.$res.'\', trim(_class(\''.$name.'\')->'.$func.'()) );'.PHP_EOL
 		."\t".'}';
 }
 
