@@ -614,10 +614,12 @@ class yf_db {
 			return $CACHE_CONTAINER[$query];
 		}
 		$Q = $this->query($query);
-		if ($assoc) {
-			$data = $this->db->fetch_assoc($Q);
-		} else {
-			$data = $this->db->fetch_row($Q);
+		if ($Q) {
+			if ($assoc) {
+				$data = @$this->db->fetch_assoc($Q);
+			} else {
+				$data = @$this->db->fetch_row($Q);
+			}
 		}
 		$this->free_result($Q);
 		// Store result in variable cache
@@ -747,17 +749,19 @@ class yf_db {
 		}
 		$data = null;
 		$Q = $this->query($query);
-		// If $key_name is specified - then save to $data using it as key
-		while ($A = $this->db->fetch_assoc($Q)) {
-			if ($key_name != null && $key_name != '-1') {
-				$data[$A[$key_name]] = $A;
-			} elseif (isset($A['id']) && $key_name != '-1') {
-				$data[$A['id']] = $A;
-			} else {
-				$data[] = $A;
+		if ($Q) {
+			// If $key_name is specified - then save to $data using it as key
+			while ($A = @$this->db->fetch_assoc($Q)) {
+				if ($key_name != null && $key_name != '-1') {
+					$data[$A[$key_name]] = $A;
+				} elseif (isset($A['id']) && $key_name != '-1') {
+					$data[$A['id']] = $A;
+				} else {
+					$data[] = $A;
+				}
 			}
+			@$this->free_result($Q);
 		}
-		$this->free_result($Q);
 		// Store result in variable cache
 		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($CACHE_CONTAINER[$query])) {
 			$CACHE_CONTAINER[$query] = $data;
