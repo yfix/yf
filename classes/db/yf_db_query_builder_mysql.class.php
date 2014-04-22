@@ -47,18 +47,18 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	*/
 	function render() {
 		$a = array();
-		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
-		foreach (array('select','from','join','left_join','right_join','inner_join','where','group_by','having','order_by','limit') as $name) {
-			if ($this->_sql[$name]) {
-				$a[] = $this->_sql[$name];
-			}
-		}
 		// Save 1 call of select()
 		if (empty($this->_sql['select']) && !empty($this->_sql['from'])) {
 			$this->select();
 		}
 		if (empty($this->_sql['select']) || empty($this->_sql['from'])) {
 			return false;
+		}
+		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
+		foreach (array('select','from','join','left_join','right_join','inner_join','where','group_by','having','order_by','limit') as $name) {
+			if ($this->_sql[$name]) {
+				$a[] = $this->_sql[$name];
+			}
 		}
 		// HAVING without GROUP BY makes no sense
 		if (!empty($this->_sql['having']) && empty($this->_sql['group_by'])) {
