@@ -54,15 +54,32 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 		if (empty($this->_sql['select']) || empty($this->_sql['from'])) {
 			return false;
 		}
-		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
-		foreach (array('select','from','join','left_join','right_join','inner_join','where','group_by','having','order_by','limit') as $name) {
-			if ($this->_sql[$name]) {
-				$a[] = $this->_sql[$name];
-			}
-		}
 		// HAVING without GROUP BY makes no sense
 		if (!empty($this->_sql['having']) && empty($this->_sql['group_by'])) {
 			unset($this->_sql['having']);
+		}
+		$separators = array(
+			'select'		=> ',',
+			'from'			=> ',',
+			'join'			=> '',
+			'where'			=> 'AND',
+			'where_or'		=> 'OR',
+			'group_by'		=> ',',
+			'having'		=> ',',
+			'order_by'		=> ',',
+		);
+		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
+		foreach (array('select','from','join','where','where_or','group_by','having','order_by','limit') as $name) {
+			if (empty($this->_sql[$name])) {
+				continue;
+			}
+			if (is_array($this->_sql[$name])) {
+				if (isset($separators[$name])) {
+					$a[] = implode(' '.$separators[$name].' ', $this->_sql[$name]);
+				}
+			} else {
+				$a[] = $this->_sql[$name];
+			}
 		}
 		if ($a) {
 			$sql = implode(' ', $a);
@@ -143,6 +160,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	*	->group_by('id')
 	*	->limit(10)
 	*/
+// TODO: add support for syntax: select('a.id')  select('a.id as aid')
 	function select() {
 		$sql = '';
 		$fields = func_get_args();
@@ -180,7 +198,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			}
 		}
 		if ($sql) {
-			$this->_sql[__FUNCTION__] = $sql;
+			$this->_sql[__FUNCTION__][] = $sql;
 		}
 		return $this;
 	}
@@ -188,6 +206,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	* Examples: from('users'), from(array('users' => 'u', 'suppliers' => 's'))
 	*/
+// TODO: add support for syntax: from('users as u') from('users as u, messages as m')
 	function from() {
 		$sql = '';
 		$tables = func_get_args();
@@ -223,7 +242,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			}
 		}
 		if ($sql) {
-			$this->_sql[__FUNCTION__] = $sql;
+			$this->_sql[__FUNCTION__][] = $sql;
 		}
 		return $this;
 	}
@@ -231,6 +250,8 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	* Examples: join('suppliers', array('u.supplier_id' => 's.id'))
 	*/
+// TODO: add support for syntax: join('users as u')
+// TODO: add support for simpler join type: left|right|inner
 	function join($table, $on, $join_type = 'JOIN') {
 		if (!$join_type) {
 			$join_type = 'JOIN';
@@ -255,7 +276,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			$sql = strtoupper($join_type).' '.$this->db->_real_name($table). ($as ? ' AS '.$as : '').' ON '.implode(',', $_on);
 		}
 		if ($sql) {
-			$this->_sql[__FUNCTION__] = $sql;
+			$this->_sql[__FUNCTION__][] = $sql;
 		}
 		return $this;
 	}
@@ -281,10 +302,29 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	* Example: where(array('id','>','1'),'and',array('name','!=','peter'))
 	*/
+// TODO: add support for syntax: where('u.id', 1)  where('u.id = 1')  where('u.id > 1')
+// TODO: support for binding params (':field' => $val)
 	function where() {
+		$this->_process_where(func_get_args(), __FUNCTION__);
+		return $this;
+	}
+
+	/**
+	* Example: where_or(array('id','>','1'))
+	*/
+// TODO: add support for syntax: where_or('u.id', 1)  where_or('u.id = 1')  where_or('u.id > 1')
+// TODO: support for binding params (':field' => $val)
+	function where_or() {
+		$this->_process_where(func_get_args(), __FUNCTION__);
+		return $this;
+	}
+
+	/**
+	*/
+	function _process_where(array $where, $func_name = 'where') {
+// TODO: add support for syntax: where('u.id', 1)  where('u.id = 1')  where('u.id > 1')
 // TODO: support for binding params (':field' => $val)
 		$sql = '';
-		$where = func_get_args();
 		if (isset($where[0]) && is_array($where[0]) && isset($where[0]['__args__'])) {
 			$where = $where[0]['__args__'];
 		}
@@ -314,14 +354,14 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			}
 		}
 		if ($sql) {
-			$this->_sql[__FUNCTION__] = $sql;
+			$this->_sql[$func_name][] = $sql;
 		}
-		return $this;
 	}
 
 	/**
 	* Examples: group_by('user_group'), group_by(array('supplier','manufacturer'))
 	*/
+// TODO: add support for syntax: group_by('user_group')  group_by('u.id', 'm.id')
 	function group_by() {
 		$sql = '';
 		$items = func_get_args();
@@ -354,7 +394,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			}
 		}
 		if ($sql) {
-			$this->_sql[__FUNCTION__] = $sql;
+			$this->_sql[__FUNCTION__][] = $sql;
 		}
 		return $this;
 	}
@@ -362,6 +402,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	* Examples: having(array('COUNT(*)','>','1'))
 	*/
+// TODO: add support for syntax: having('count(*) > 1') having('count(id) > 1', 'count(num) > 2')
 	function having() {
 		$sql = '';
 		$where = func_get_args();
@@ -388,7 +429,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			}
 		}
 		if ($sql) {
-			$this->_sql[__FUNCTION__] = $sql;
+			$this->_sql[__FUNCTION__][] = $sql;
 		}
 		return $this;
 	}
@@ -396,6 +437,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	* Examples: order_by('user_group'), order_by(array('supplier' => 'DESC','manufacturer' => ASC))
 	*/
+// TODO: add support for syntax: order_by('user_group') order_by('user_group asc') order_by('user_group asc', 'u.id desc')
 	function order_by() {
 		$sql = '';
 		$items = func_get_args();
@@ -432,7 +474,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			}
 		}
 		if ($sql) {
-			$this->_sql[__FUNCTION__] = $sql;
+			$this->_sql[__FUNCTION__][] = $sql;
 		}
 		return $this;
 	}
