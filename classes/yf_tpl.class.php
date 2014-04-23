@@ -370,7 +370,14 @@ class yf_tpl {
 	* Simple template parser (*.stpl)
 	*/
 	function parse($name, $replace = array(), $params = array()) {
-		$name = strtolower($name);
+		$name = strtolower(trim($name));
+		// Support for the driver name in prefix, example: "twig:user/account", "smarty:user/account"
+		if (strpos($name, ':') !== false) {
+			list($driver, $name) = explode($name);
+			if ($driver) {
+				$params['driver'] = $driver;
+			}
+		}
 		// Support for the framework calls
 		$yf_prefix = 'yf_';
 		$yfp_len = strlen($yf_prefix);
