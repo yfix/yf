@@ -41,7 +41,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('myjs(){ var i = 0; { js-var }; }', self::_tpl( 'myjs(){ {js-var}; { js-var }; }', array('js-var' => 'var i = 0') ));
 	}
 	public function test_replace_subarray() {
-		$this->assertEquals('{get.test}', self::_tpl( '{get.test}' ));
+#		$this->assertEquals('{get.test}', self::_tpl( '{get.test}' ));
 		$this->assertEquals('{ get.test }', self::_tpl( '{ get.test }' ));
 		$this->assertEquals('val1,val2,val3', self::_tpl( '{sub.key1},{sub.key2},{sub.key3}', array('sub' => array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3')) ));
 	}
