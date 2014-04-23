@@ -570,7 +570,13 @@ class yf_common {
 	* Revert html special chars
 	*/
 	function unhtmlspecialchars($text = '') {
-		$trans_tbl = get_html_translation_table (HTML_SPECIALCHARS);
+		$trans_tbl = array(
+			'"' => '&quot;',
+			'&' => '&amp;',
+			'\'' => '&#039;',
+			'<' => '&lt;',
+			'>' => '&gt;',
+		);
 		$trans_tbl = array_flip($trans_tbl);
 		return strtr($string ,$trans_tbl);
 	}
