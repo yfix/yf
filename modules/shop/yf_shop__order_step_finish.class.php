@@ -13,7 +13,7 @@ class yf_shop__order_step_finish{
 		}
 		$_GET["id"] = intval($_GET["id"]);
 		if ($_GET["id"]) {
-			$order_info = db()->query_fetch("SELECT * FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"])." AND user_id=".intval(module('shop')->USER_ID));
+			$order_info = db()->query_fetch("SELECT * FROM ".db('shop_orders')." WHERE id=".intval($_GET["id"])." AND user_id=".intval(main()->USER_ID));
 		}
 		if (empty($order_info)) {
 			return _e("No such order");
