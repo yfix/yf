@@ -486,18 +486,20 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->chars('d', 'a,b,c') );
 	}
 // TODO: need to setup datetime settings in portable way to pass tests on travis.ci and drone.io
-/*
 	public function test_before_date() {
+		date_default_timezone_set('UTC');
 #		$this->assertFalse( _class('validate')->before_date('2014-03-01', '') );
 		$this->assertFalse( _class('validate')->before_date('2014-03-01', '2013-12-12') );
 		$this->assertTrue( _class('validate')->before_date('2014-03-01', '2014-12-12') );
 	}
 	public function test_after_date() {
+		date_default_timezone_set('UTC');
 #		$this->assertTrue( _class('validate')->after_date('2014-03-01', '') );
 		$this->assertTrue( _class('validate')->after_date('2014-03-01', '2013-12-12') );
 		$this->assertFalse( _class('validate')->after_date('2014-03-01', '2014-12-12') );
 	}
 	public function test_valid_date() {
+		date_default_timezone_set('UTC');
 		$this->assertTrue( _class('validate')->valid_date('2014-03-01') );
 		$this->assertTrue( _class('validate')->valid_date('2014-03-01 01:01:01') );
 		$this->assertTrue( _class('validate')->valid_date('2014-03-01 23:23:23') );
@@ -509,11 +511,11 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->valid_date('') );
 	}
 	public function test_valid_date_format() {
+		date_default_timezone_set('UTC');
 		$this->assertTrue( _class('validate')->valid_date_format('2014-03-01', 'Y-m-d') );
 		$this->assertTrue( _class('validate')->valid_date_format('6.1.2009 13:00+01:00', 'j.n.Y H:iP') );
 		$this->assertFalse( _class('validate')->valid_date_format('6.1.2009', 'j.n.Y H:iP') );
 	}
-*/
 	public function test_standard_text() {
 // TODO: standard_text Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
 	}
