@@ -136,7 +136,7 @@ class yf_manage_shop_orders{
 			}
 
 			$sql = array();
-			foreach (array('address','phone','address','house','apartment','floor','porch','intercom','delivery_price','status','discount','discount_add') as $f) {
+			foreach (array('address','phone','address','house','apartment','floor','porch','intercom','delivery_price','status','discount','discount_add','delivery_type','delivery_id','delivery_location') as $f) {
 				if (isset($_POST[$f])) {
 					$sql[$f] = $_POST[$f];
 					if (($f == 'delivery_price') && ($_POST['delivery_price'] != $order_info['delivery_price'])) {
@@ -273,6 +273,9 @@ class yf_manage_shop_orders{
 			->email('email')
 			->info('phone')
 			->container('<a href="./?object='.main()->_get('object').'&action=send_sms&phone='.urlencode($replace["phone"]).'" class="btn">Send SMS</a><br /><br />')
+			->select_box('delivery_type', _class( '_shop_delivery', 'modules/shop/' )->_get_types(), array( 'desc' => 'Тип доставки' ) )
+			->select_box('delivery_id', _class( '_shop_delivery', 'modules/shop/' )->_get_locations_by_type( $replace[ 'delivery_type' ] ), array( 'desc' => 'Отделение' ) )
+			->text('delivery_location', 'Отделение доставки')
 			->text('address')
 			->text('house')
 			->text('apartment')
