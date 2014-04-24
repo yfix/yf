@@ -4,6 +4,7 @@ $data = '
 	`code3` char(3) NOT NULL DEFAULT \'\',
 	`num` char(3) NOT NULL DEFAULT \'\',
 	`name` varchar(64) NOT NULL DEFAULT \'\',
+	`name_eng` varchar(64) NOT NULL DEFAULT \'\',
 	`cont` char(2) NOT NULL DEFAULT \'\',
 	`tld` char(2) NOT NULL DEFAULT \'\',
 	`currency` char(3) NOT NULL DEFAULT \'\',
