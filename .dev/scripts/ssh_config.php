@@ -13,7 +13,20 @@ require_once INCLUDE_PATH.'project_conf.php';
 require_once YF_PATH.'classes/yf_main.class.php';
 new yf_main('admin', 0, 0);
 
+// TODO: create global func ssh() as YF built-in tool to deal with ssh servers, idea can be got from Laravel:  http://laravel.com/docs/ssh
+/*
+SSH::into('staging')->run(array(
+    'cd /var/www',
+    'git pull origin master',
+));
 
+Catching Output From Commands
+You may catch the "live" output of your remote commands by passing a Closure into the run method:
+
+SSH::run($commands, function($line) {
+    echo $line.PHP_EOL;
+});
+*/
 if (!function_exists('ssh_exec_all')) {
 	function ssh_exec_all ($group_name = '', $cmd = '') {
 		static $server_groups, $server_groups_names, $server_groups, $server_groups_names, $servers, $servers_ids_by_group;
