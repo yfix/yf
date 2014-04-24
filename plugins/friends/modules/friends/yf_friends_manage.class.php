@@ -11,7 +11,7 @@ class yf_friends_manage {
 	
 	// Add user to friends list
 	function add () {
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		// Check target user id
@@ -25,16 +25,16 @@ class yf_friends_manage {
 			return _e("No such user!");
 		}
 		// Check if user is already a friend
-		$IS_A_FRIEND = module('friends')->_is_a_friend(module('friends')->USER_ID, $_GET["id"]);
+		$IS_A_FRIEND = module('friends')->_is_a_friend(main()->USER_ID, $_GET["id"]);
 		if ($IS_A_FRIEND) {
 			return _e("This user is already in your friends list");
 		}
 		// Do add user
-		module('friends')->_add_user_friends_ids(module('friends')->USER_ID, $_GET["id"]);
+		module('friends')->_add_user_friends_ids(main()->USER_ID, $_GET["id"]);
 		// Output cache trigger
 		if (main()->OUTPUT_CACHING) {
 			_class_safe("output_cache")->_exec_trigger(array(
-				"user_id"	=> module('friends')->USER_ID,
+				"user_id"	=> main()->USER_ID,
 				"user_id2"	=> $target_user_info['id'],
 			));
 		}
@@ -52,14 +52,14 @@ class yf_friends_manage {
 			common()->quick_send_mail($target_user_info["email"], "You have been added to user's friends list", $mail_text);
 		}
 		// Update user stats
-		_class_safe("user_stats")->_update(array("user_id" => module('friends')->USER_ID));
+		_class_safe("user_stats")->_update(array("user_id" => main()->USER_ID));
 		// Return user to the "manage" page
 		return js_redirect("./?object=".'friends'."&action=view_all_friends");
 	}
 
 	// Delete selected friend
 	function delete () {
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -71,11 +71,11 @@ class yf_friends_manage {
 			return _e();
 		}
 		// Do delete
-		module('friends')->_del_user_friends_ids(module('friends')->USER_ID, $target_user_info);
+		module('friends')->_del_user_friends_ids(main()->USER_ID, $target_user_info);
 		// Output cache trigger
 		if (main()->OUTPUT_CACHING) {
 			_class_safe("output_cache")->_exec_trigger(array(
-				"user_id"	=> module('friends')->USER_ID,
+				"user_id"	=> main()->USER_ID,
 				"user_id2"	=> $target_user_info['id'],
 			));
 		}
@@ -94,7 +94,7 @@ class yf_friends_manage {
 		common()->_log_user_action("del_friend", $_GET["id"], "friends");
 
 		// Update user stats
-		_class_safe("user_stats")->_update(array("user_id" => module('friends')->USER_ID));
+		_class_safe("user_stats")->_update(array("user_id" => main()->USER_ID));
 		// Return user back
 		return js_redirect("./?object=".'friends'."&action=view_all_friends");
 	}

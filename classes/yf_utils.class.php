@@ -389,7 +389,13 @@ class yf_utils {
 		if (!strlen($html_text)) {
 			return '';
 		}
-		$translation_table = get_html_translation_table (HTML_SPECIALCHARS, ENT_QUOTES);
+		$translation_table = array(
+			'"' => '&quot;',
+			'&' => '&amp;',
+			'\'' => '&#039;',
+			'<' => '&lt;',
+			'>' => '&gt;',
+		);
 		// Change the ampersand to translate to itself, to avoid getting &amp;
 		$translation_table[ chr(38) ] = '&';
 		// Perform replacements

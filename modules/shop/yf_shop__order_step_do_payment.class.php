@@ -19,7 +19,7 @@ class yf_shop__order_step_do_payment{
 			_re("Missing order ID");
 		}
 		// Get order info
-		$order_info = db()->query_fetch("SELECT * FROM ".db('shop_orders')." WHERE id=".intval($ORDER_ID)." AND user_id=".intval(module('shop')->USER_ID)." AND status='pending'");
+		$order_info = db()->query_fetch("SELECT * FROM ".db('shop_orders')." WHERE id=".intval($ORDER_ID)." AND user_id=".intval(main()->USER_ID)." AND status='pending'");
 		if (empty($order_info["id"])) {
 			_re("Missing order record");
 		}

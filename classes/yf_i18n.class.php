@@ -384,16 +384,6 @@ class yf_i18n {
 				$is_translated = true;
 			// Last - is untranslated
 			} else {
-/*
-if (strtolower(substr($input_string, 0, 4)) == 'jpeg') {
-	echo $input_string;
-	foreach ($this->TR_VARS[$lang] as $k => $v) {
-		if (strtolower(substr($k, 0, 4)) == 'jpeg') {
-			echo '<br>'.$k.' | '.$v. '<br>'. PHP_EOL;
-		}
-	}
-}
-*/
 				$output_string = $input_string;
 				if (DEBUG_MODE) {
 					if (!isset($this->_NOT_TRANSLATED)) {

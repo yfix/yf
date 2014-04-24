@@ -171,9 +171,9 @@ class yf_articles_stats {
 		$most_read_articles			= $this->_process_stats_item($most_read_ids);
 		// Process main template
 		$replace = array(
-			"is_logged_in"				=> intval((bool) module('articles')->USER_ID),
-			"show_own_articles_link"	=> module('articles')->USER_ID ? "./?object=".'articles'."&action=search&user_id=".module('articles')->USER_ID._add_get(array("page")) : "",
-			"manage_link"				=> module('articles')->USER_ID ? "./?object=".'articles'."&action=manage".(MAIN_TYPE_ADMIN ? _add_get(array("page")) : "") : "",
+			"is_logged_in"				=> intval((bool) main()->USER_ID),
+			"show_own_articles_link"	=> main()->USER_ID ? "./?object=".'articles'."&action=search&user_id=".main()->USER_ID._add_get(array("page")) : "",
+			"manage_link"				=> main()->USER_ID ? "./?object=".'articles'."&action=manage".(MAIN_TYPE_ADMIN ? _add_get(array("page")) : "") : "",
 			"search_link"				=> "./?object=".'articles'."&action=search".(MAIN_TYPE_ADMIN ? _add_get(array("page")) : ""),
 			"latest_articles"			=> $latest_articles,
 			"last_article_pages"		=> $last_article_pages,

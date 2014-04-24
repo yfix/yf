@@ -338,8 +338,8 @@ class yf_validate {
 		if (!$param) {
 			return false;
 		}
-		if (isset($params['format']) && $format = $this->getDateFormat($params['format'])) {
-			return DateTime::createFromFormat($format, $in) > DateTime::createFromFormat($format, $param);
+		if (isset($params['format'])) {
+			return DateTime::createFromFormat($params['format'], $in) > DateTime::createFromFormat($params['format'], $param);
 		}
 		$date = strtotime($param);
 		if ( ! $date) {
@@ -358,8 +358,8 @@ class yf_validate {
 		if (!$param) {
 			return false;
 		}
-		if (isset($params['format']) && $format = $this->getDateFormat($params['format'])) {
-			return DateTime::createFromFormat($format, $in) < DateTime::createFromFormat($format, $param);
+		if (isset($params['format'])) {
+			return DateTime::createFromFormat($params['format'], $in) < DateTime::createFromFormat($params['format'], $param);
 		}
 		$date = strtotime($param);
 		if ( ! $date) {

@@ -14,7 +14,7 @@ $data = array (
     'phone_prefix' => '376',
     'languages' => 'ca',
     'geoname_id' => '3041565',
-    'capital_id' => '0',
+    'capital_id' => '3041563',
     'active' => '0',
   ),
   1 => 
@@ -31,7 +31,7 @@ $data = array (
     'phone_prefix' => '971',
     'languages' => 'ar-AE,fa,en,hi,ur',
     'geoname_id' => '290557',
-    'capital_id' => '0',
+    'capital_id' => '292968',
     'active' => '0',
   ),
   2 => 
@@ -48,7 +48,7 @@ $data = array (
     'phone_prefix' => '93',
     'languages' => 'fa-AF,ps,uz-AF,tk',
     'geoname_id' => '1149361',
-    'capital_id' => '0',
+    'capital_id' => '1138958',
     'active' => '0',
   ),
   3 => 
@@ -65,7 +65,7 @@ $data = array (
     'phone_prefix' => '+1-268',
     'languages' => 'en-AG',
     'geoname_id' => '3576396',
-    'capital_id' => '0',
+    'capital_id' => '3576022',
     'active' => '0',
   ),
   4 => 
@@ -82,7 +82,7 @@ $data = array (
     'phone_prefix' => '+1-264',
     'languages' => 'en-AI',
     'geoname_id' => '3573511',
-    'capital_id' => '0',
+    'capital_id' => '3573374',
     'active' => '0',
   ),
   5 => 
@@ -99,7 +99,7 @@ $data = array (
     'phone_prefix' => '355',
     'languages' => 'sq,el',
     'geoname_id' => '783754',
-    'capital_id' => '0',
+    'capital_id' => '3183875',
     'active' => '0',
   ),
   6 => 
@@ -116,7 +116,7 @@ $data = array (
     'phone_prefix' => '374',
     'languages' => 'hy',
     'geoname_id' => '174982',
-    'capital_id' => '0',
+    'capital_id' => '616052',
     'active' => '0',
   ),
   7 => 
@@ -133,7 +133,7 @@ $data = array (
     'phone_prefix' => '244',
     'languages' => 'pt-AO',
     'geoname_id' => '3351879',
-    'capital_id' => '0',
+    'capital_id' => '2240449',
     'active' => '0',
   ),
   8 => 
@@ -167,7 +167,7 @@ $data = array (
     'phone_prefix' => '54',
     'languages' => 'es-AR,en,it,de,fr,gn',
     'geoname_id' => '3865483',
-    'capital_id' => '0',
+    'capital_id' => '3435910',
     'active' => '0',
   ),
   10 => 
@@ -184,7 +184,7 @@ $data = array (
     'phone_prefix' => '+1-684',
     'languages' => 'en-AS,sm,to',
     'geoname_id' => '5880801',
-    'capital_id' => '0',
+    'capital_id' => '5881576',
     'active' => '0',
   ),
   11 => 
@@ -201,7 +201,7 @@ $data = array (
     'phone_prefix' => '43',
     'languages' => 'de-AT,hr,hu,sl',
     'geoname_id' => '2782113',
-    'capital_id' => '0',
+    'capital_id' => '2761369',
     'active' => '0',
   ),
   12 => 
@@ -218,7 +218,7 @@ $data = array (
     'phone_prefix' => '61',
     'languages' => 'en-AU',
     'geoname_id' => '2077456',
-    'capital_id' => '0',
+    'capital_id' => '2172517',
     'active' => '0',
   ),
   13 => 
@@ -235,7 +235,7 @@ $data = array (
     'phone_prefix' => '297',
     'languages' => 'nl-AW,es,en',
     'geoname_id' => '3577279',
-    'capital_id' => '0',
+    'capital_id' => '3577154',
     'active' => '0',
   ),
   14 => 
@@ -252,7 +252,7 @@ $data = array (
     'phone_prefix' => '+358-18',
     'languages' => 'sv-AX',
     'geoname_id' => '661882',
-    'capital_id' => '0',
+    'capital_id' => '3041732',
     'active' => '0',
   ),
   15 => 
@@ -269,7 +269,7 @@ $data = array (
     'phone_prefix' => '994',
     'languages' => 'az,ru,hy',
     'geoname_id' => '587116',
-    'capital_id' => '0',
+    'capital_id' => '587084',
     'active' => '0',
   ),
   16 => 
@@ -286,7 +286,7 @@ $data = array (
     'phone_prefix' => '387',
     'languages' => 'bs,hr-BA,sr-BA',
     'geoname_id' => '3277605',
-    'capital_id' => '0',
+    'capital_id' => '3191281',
     'active' => '0',
   ),
   17 => 
@@ -303,7 +303,7 @@ $data = array (
     'phone_prefix' => '+1-246',
     'languages' => 'en-BB',
     'geoname_id' => '3374084',
-    'capital_id' => '0',
+    'capital_id' => '3374036',
     'active' => '0',
   ),
   18 => 
@@ -320,7 +320,7 @@ $data = array (
     'phone_prefix' => '880',
     'languages' => 'bn-BD,en',
     'geoname_id' => '1210997',
-    'capital_id' => '0',
+    'capital_id' => '1185241',
     'active' => '0',
   ),
   19 => 
@@ -337,7 +337,7 @@ $data = array (
     'phone_prefix' => '32',
     'languages' => 'nl-BE,fr-BE,de-BE',
     'geoname_id' => '2802361',
-    'capital_id' => '0',
+    'capital_id' => '2800866',
     'active' => '0',
   ),
   20 => 
@@ -354,7 +354,7 @@ $data = array (
     'phone_prefix' => '226',
     'languages' => 'fr-BF',
     'geoname_id' => '2361809',
-    'capital_id' => '0',
+    'capital_id' => '2357048',
     'active' => '0',
   ),
   21 => 
@@ -371,7 +371,7 @@ $data = array (
     'phone_prefix' => '359',
     'languages' => 'bg,tr-BG',
     'geoname_id' => '732800',
-    'capital_id' => '0',
+    'capital_id' => '727011',
     'active' => '0',
   ),
   22 => 
@@ -388,7 +388,7 @@ $data = array (
     'phone_prefix' => '973',
     'languages' => 'ar-BH,en,fa,ur',
     'geoname_id' => '290291',
-    'capital_id' => '0',
+    'capital_id' => '290340',
     'active' => '0',
   ),
   23 => 
@@ -405,7 +405,7 @@ $data = array (
     'phone_prefix' => '257',
     'languages' => 'fr-BI,rn',
     'geoname_id' => '433561',
-    'capital_id' => '0',
+    'capital_id' => '425378',
     'active' => '0',
   ),
   24 => 
@@ -422,7 +422,7 @@ $data = array (
     'phone_prefix' => '229',
     'languages' => 'fr-BJ',
     'geoname_id' => '2395170',
-    'capital_id' => '0',
+    'capital_id' => '2392087',
     'active' => '0',
   ),
   25 => 
@@ -439,7 +439,7 @@ $data = array (
     'phone_prefix' => '590',
     'languages' => 'fr',
     'geoname_id' => '3578476',
-    'capital_id' => '0',
+    'capital_id' => '3579132',
     'active' => '0',
   ),
   26 => 
@@ -456,7 +456,7 @@ $data = array (
     'phone_prefix' => '+1-441',
     'languages' => 'en-BM,pt',
     'geoname_id' => '3573345',
-    'capital_id' => '0',
+    'capital_id' => '3573197',
     'active' => '0',
   ),
   27 => 
@@ -473,7 +473,7 @@ $data = array (
     'phone_prefix' => '673',
     'languages' => 'ms-BN,en-BN',
     'geoname_id' => '1820814',
-    'capital_id' => '0',
+    'capital_id' => '1820906',
     'active' => '0',
   ),
   28 => 
@@ -490,7 +490,7 @@ $data = array (
     'phone_prefix' => '591',
     'languages' => 'es-BO,qu,ay',
     'geoname_id' => '3923057',
-    'capital_id' => '0',
+    'capital_id' => '3903987',
     'active' => '0',
   ),
   29 => 
@@ -507,7 +507,7 @@ $data = array (
     'phone_prefix' => '599',
     'languages' => 'nl,pap,en',
     'geoname_id' => '7626844',
-    'capital_id' => '0',
+    'capital_id' => '3513563',
     'active' => '0',
   ),
   30 => 
@@ -524,7 +524,7 @@ $data = array (
     'phone_prefix' => '55',
     'languages' => 'pt-BR,es,en,fr',
     'geoname_id' => '3469034',
-    'capital_id' => '0',
+    'capital_id' => '3469058',
     'active' => '0',
   ),
   31 => 
@@ -541,7 +541,7 @@ $data = array (
     'phone_prefix' => '+1-242',
     'languages' => 'en-BS',
     'geoname_id' => '3572887',
-    'capital_id' => '0',
+    'capital_id' => '3571824',
     'active' => '0',
   ),
   32 => 
@@ -558,7 +558,7 @@ $data = array (
     'phone_prefix' => '975',
     'languages' => 'dz',
     'geoname_id' => '1252634',
-    'capital_id' => '0',
+    'capital_id' => '1252416',
     'active' => '0',
   ),
   33 => 
@@ -592,7 +592,7 @@ $data = array (
     'phone_prefix' => '267',
     'languages' => 'en-BW,tn-BW',
     'geoname_id' => '933860',
-    'capital_id' => '0',
+    'capital_id' => '933773',
     'active' => '0',
   ),
   35 => 
@@ -609,7 +609,7 @@ $data = array (
     'phone_prefix' => '375',
     'languages' => 'be,ru',
     'geoname_id' => '630336',
-    'capital_id' => '0',
+    'capital_id' => '625144',
     'active' => '0',
   ),
   36 => 
@@ -626,7 +626,7 @@ $data = array (
     'phone_prefix' => '501',
     'languages' => 'en-BZ,es',
     'geoname_id' => '3582678',
-    'capital_id' => '0',
+    'capital_id' => '3582672',
     'active' => '0',
   ),
   37 => 
@@ -643,7 +643,7 @@ $data = array (
     'phone_prefix' => '1',
     'languages' => 'en-CA,fr-CA,iu',
     'geoname_id' => '6251999',
-    'capital_id' => '0',
+    'capital_id' => '6094817',
     'active' => '0',
   ),
   38 => 
@@ -660,7 +660,7 @@ $data = array (
     'phone_prefix' => '61',
     'languages' => 'ms-CC,en',
     'geoname_id' => '1547376',
-    'capital_id' => '0',
+    'capital_id' => '7304591',
     'active' => '0',
   ),
   39 => 
@@ -677,7 +677,7 @@ $data = array (
     'phone_prefix' => '243',
     'languages' => 'fr-CD,ln,kg',
     'geoname_id' => '203312',
-    'capital_id' => '0',
+    'capital_id' => '2314302',
     'active' => '0',
   ),
   40 => 
@@ -694,7 +694,7 @@ $data = array (
     'phone_prefix' => '236',
     'languages' => 'fr-CF,sg,ln,kg',
     'geoname_id' => '239880',
-    'capital_id' => '0',
+    'capital_id' => '2389853',
     'active' => '0',
   ),
   41 => 
@@ -711,7 +711,7 @@ $data = array (
     'phone_prefix' => '242',
     'languages' => 'fr-CG,kg,ln-CG',
     'geoname_id' => '2260494',
-    'capital_id' => '0',
+    'capital_id' => '2260535',
     'active' => '0',
   ),
   42 => 
@@ -728,7 +728,7 @@ $data = array (
     'phone_prefix' => '41',
     'languages' => 'de-CH,fr-CH,it-CH,rm',
     'geoname_id' => '2658434',
-    'capital_id' => '0',
+    'capital_id' => '2661552',
     'active' => '0',
   ),
   43 => 
@@ -745,7 +745,7 @@ $data = array (
     'phone_prefix' => '225',
     'languages' => 'fr-CI',
     'geoname_id' => '2287781',
-    'capital_id' => '0',
+    'capital_id' => '2279755',
     'active' => '0',
   ),
   44 => 
@@ -762,7 +762,7 @@ $data = array (
     'phone_prefix' => '682',
     'languages' => 'en-CK,mi',
     'geoname_id' => '1899402',
-    'capital_id' => '0',
+    'capital_id' => '4035715',
     'active' => '0',
   ),
   45 => 
@@ -779,7 +779,7 @@ $data = array (
     'phone_prefix' => '56',
     'languages' => 'es-CL',
     'geoname_id' => '3895114',
-    'capital_id' => '0',
+    'capital_id' => '3871336',
     'active' => '0',
   ),
   46 => 
@@ -796,7 +796,7 @@ $data = array (
     'phone_prefix' => '237',
     'languages' => 'en-CM,fr-CM',
     'geoname_id' => '2233387',
-    'capital_id' => '0',
+    'capital_id' => '2220957',
     'active' => '0',
   ),
   47 => 
@@ -813,7 +813,7 @@ $data = array (
     'phone_prefix' => '86',
     'languages' => 'zh-CN,yue,wuu,dta,ug,za',
     'geoname_id' => '1814991',
-    'capital_id' => '0',
+    'capital_id' => '1816670',
     'active' => '0',
   ),
   48 => 
@@ -830,7 +830,7 @@ $data = array (
     'phone_prefix' => '57',
     'languages' => 'es-CO',
     'geoname_id' => '3686110',
-    'capital_id' => '0',
+    'capital_id' => '3688689',
     'active' => '0',
   ),
   49 => 
@@ -847,7 +847,7 @@ $data = array (
     'phone_prefix' => '506',
     'languages' => 'es-CR,en',
     'geoname_id' => '3624060',
-    'capital_id' => '0',
+    'capital_id' => '3621849',
     'active' => '0',
   ),
   50 => 
@@ -864,7 +864,7 @@ $data = array (
     'phone_prefix' => '53',
     'languages' => 'es-CU',
     'geoname_id' => '3562981',
-    'capital_id' => '0',
+    'capital_id' => '3553478',
     'active' => '0',
   ),
   51 => 
@@ -881,7 +881,7 @@ $data = array (
     'phone_prefix' => '238',
     'languages' => 'pt-CV',
     'geoname_id' => '3374766',
-    'capital_id' => '0',
+    'capital_id' => '3374333',
     'active' => '0',
   ),
   52 => 
@@ -898,7 +898,7 @@ $data = array (
     'phone_prefix' => '599',
     'languages' => 'nl,pap',
     'geoname_id' => '7626836',
-    'capital_id' => '0',
+    'capital_id' => '3513090',
     'active' => '0',
   ),
   53 => 
@@ -915,7 +915,7 @@ $data = array (
     'phone_prefix' => '61',
     'languages' => 'en,zh,ms-CC',
     'geoname_id' => '2078138',
-    'capital_id' => '0',
+    'capital_id' => '2078127',
     'active' => '0',
   ),
   54 => 
@@ -932,7 +932,7 @@ $data = array (
     'phone_prefix' => '357',
     'languages' => 'el-CY,tr-CY,en',
     'geoname_id' => '146669',
-    'capital_id' => '0',
+    'capital_id' => '146268',
     'active' => '0',
   ),
   55 => 
@@ -949,7 +949,7 @@ $data = array (
     'phone_prefix' => '420',
     'languages' => 'cs,sk',
     'geoname_id' => '3077311',
-    'capital_id' => '0',
+    'capital_id' => '3067696',
     'active' => '0',
   ),
   56 => 
@@ -966,7 +966,7 @@ $data = array (
     'phone_prefix' => '49',
     'languages' => 'de',
     'geoname_id' => '2921044',
-    'capital_id' => '0',
+    'capital_id' => '2950159',
     'active' => '1',
   ),
   57 => 
@@ -983,7 +983,7 @@ $data = array (
     'phone_prefix' => '253',
     'languages' => 'fr-DJ,ar,so-DJ,aa',
     'geoname_id' => '223816',
-    'capital_id' => '0',
+    'capital_id' => '223817',
     'active' => '0',
   ),
   58 => 
@@ -1000,7 +1000,7 @@ $data = array (
     'phone_prefix' => '45',
     'languages' => 'da-DK,en,fo,de-DK',
     'geoname_id' => '2623032',
-    'capital_id' => '0',
+    'capital_id' => '2618425',
     'active' => '0',
   ),
   59 => 
@@ -1017,7 +1017,7 @@ $data = array (
     'phone_prefix' => '+1-767',
     'languages' => 'en-DM',
     'geoname_id' => '3575830',
-    'capital_id' => '0',
+    'capital_id' => '3575635',
     'active' => '0',
   ),
   60 => 
@@ -1034,7 +1034,7 @@ $data = array (
     'phone_prefix' => '+1-809 and',
     'languages' => 'es-DO',
     'geoname_id' => '3508796',
-    'capital_id' => '0',
+    'capital_id' => '3492908',
     'active' => '0',
   ),
   61 => 
@@ -1051,7 +1051,7 @@ $data = array (
     'phone_prefix' => '213',
     'languages' => 'ar-DZ',
     'geoname_id' => '2589581',
-    'capital_id' => '0',
+    'capital_id' => '2507480',
     'active' => '0',
   ),
   62 => 
@@ -1068,7 +1068,7 @@ $data = array (
     'phone_prefix' => '593',
     'languages' => 'es-EC',
     'geoname_id' => '3658394',
-    'capital_id' => '0',
+    'capital_id' => '3652462',
     'active' => '0',
   ),
   63 => 
@@ -1085,7 +1085,7 @@ $data = array (
     'phone_prefix' => '372',
     'languages' => 'et,ru',
     'geoname_id' => '453733',
-    'capital_id' => '0',
+    'capital_id' => '588409',
     'active' => '0',
   ),
   64 => 
@@ -1102,7 +1102,7 @@ $data = array (
     'phone_prefix' => '20',
     'languages' => 'ar-EG,en,fr',
     'geoname_id' => '357994',
-    'capital_id' => '0',
+    'capital_id' => '360630',
     'active' => '0',
   ),
   65 => 
@@ -1119,7 +1119,7 @@ $data = array (
     'phone_prefix' => '212',
     'languages' => 'ar,mey',
     'geoname_id' => '2461445',
-    'capital_id' => '0',
+    'capital_id' => '2462881',
     'active' => '0',
   ),
   66 => 
@@ -1136,7 +1136,7 @@ $data = array (
     'phone_prefix' => '291',
     'languages' => 'aa-ER,ar,tig,kun,ti-ER',
     'geoname_id' => '338010',
-    'capital_id' => '0',
+    'capital_id' => '343300',
     'active' => '0',
   ),
   67 => 
@@ -1153,7 +1153,7 @@ $data = array (
     'phone_prefix' => '34',
     'languages' => 'es-ES,ca,gl,eu,oc',
     'geoname_id' => '2510769',
-    'capital_id' => '0',
+    'capital_id' => '3117735',
     'active' => '1',
   ),
   68 => 
@@ -1170,7 +1170,7 @@ $data = array (
     'phone_prefix' => '251',
     'languages' => 'am,en-ET,om-ET,ti-ET,so-ET,sid',
     'geoname_id' => '337996',
-    'capital_id' => '0',
+    'capital_id' => '344979',
     'active' => '0',
   ),
   69 => 
@@ -1187,7 +1187,7 @@ $data = array (
     'phone_prefix' => '358',
     'languages' => 'fi-FI,sv-FI,smn',
     'geoname_id' => '660013',
-    'capital_id' => '0',
+    'capital_id' => '658225',
     'active' => '0',
   ),
   70 => 
@@ -1204,7 +1204,7 @@ $data = array (
     'phone_prefix' => '679',
     'languages' => 'en-FJ,fj',
     'geoname_id' => '2205218',
-    'capital_id' => '0',
+    'capital_id' => '2198148',
     'active' => '0',
   ),
   71 => 
@@ -1221,7 +1221,7 @@ $data = array (
     'phone_prefix' => '500',
     'languages' => 'en-FK',
     'geoname_id' => '3474414',
-    'capital_id' => '0',
+    'capital_id' => '3426691',
     'active' => '0',
   ),
   72 => 
@@ -1238,7 +1238,7 @@ $data = array (
     'phone_prefix' => '691',
     'languages' => 'en-FM,chk,pon,yap,kos,uli,woe,nkr,kpg',
     'geoname_id' => '2081918',
-    'capital_id' => '0',
+    'capital_id' => '2081986',
     'active' => '0',
   ),
   73 => 
@@ -1255,7 +1255,7 @@ $data = array (
     'phone_prefix' => '298',
     'languages' => 'fo,da-FO',
     'geoname_id' => '2622320',
-    'capital_id' => '0',
+    'capital_id' => '2611396',
     'active' => '0',
   ),
   74 => 
@@ -1272,7 +1272,7 @@ $data = array (
     'phone_prefix' => '33',
     'languages' => 'fr-FR,frp,br,co,ca,eu,oc',
     'geoname_id' => '3017382',
-    'capital_id' => '0',
+    'capital_id' => '2988507',
     'active' => '1',
   ),
   75 => 
@@ -1289,7 +1289,7 @@ $data = array (
     'phone_prefix' => '241',
     'languages' => 'fr-GA',
     'geoname_id' => '2400553',
-    'capital_id' => '0',
+    'capital_id' => '2399697',
     'active' => '0',
   ),
   76 => 
@@ -1306,7 +1306,7 @@ $data = array (
     'phone_prefix' => '44',
     'languages' => 'en-GB,cy-GB,gd',
     'geoname_id' => '2635167',
-    'capital_id' => '0',
+    'capital_id' => '2643743',
     'active' => '1',
   ),
   77 => 
@@ -1323,7 +1323,7 @@ $data = array (
     'phone_prefix' => '+1-473',
     'languages' => 'en-GD',
     'geoname_id' => '3580239',
-    'capital_id' => '0',
+    'capital_id' => '3579925',
     'active' => '0',
   ),
   78 => 
@@ -1340,7 +1340,7 @@ $data = array (
     'phone_prefix' => '995',
     'languages' => 'ka,ru,hy,az',
     'geoname_id' => '614540',
-    'capital_id' => '0',
+    'capital_id' => '611717',
     'active' => '0',
   ),
   79 => 
@@ -1357,7 +1357,7 @@ $data = array (
     'phone_prefix' => '594',
     'languages' => 'fr-GF',
     'geoname_id' => '3381670',
-    'capital_id' => '0',
+    'capital_id' => '3382160',
     'active' => '0',
   ),
   80 => 
@@ -1374,7 +1374,7 @@ $data = array (
     'phone_prefix' => '+44-1481',
     'languages' => 'en,fr',
     'geoname_id' => '3042362',
-    'capital_id' => '0',
+    'capital_id' => '3042287',
     'active' => '0',
   ),
   81 => 
@@ -1391,7 +1391,7 @@ $data = array (
     'phone_prefix' => '233',
     'languages' => 'en-GH,ak,ee,tw',
     'geoname_id' => '2300660',
-    'capital_id' => '0',
+    'capital_id' => '2306104',
     'active' => '0',
   ),
   82 => 
@@ -1408,7 +1408,7 @@ $data = array (
     'phone_prefix' => '350',
     'languages' => 'en-GI,es,it,pt',
     'geoname_id' => '2411586',
-    'capital_id' => '0',
+    'capital_id' => '2411585',
     'active' => '0',
   ),
   83 => 
@@ -1425,7 +1425,7 @@ $data = array (
     'phone_prefix' => '299',
     'languages' => 'kl,da-GL,en',
     'geoname_id' => '3425505',
-    'capital_id' => '0',
+    'capital_id' => '3421319',
     'active' => '0',
   ),
   84 => 
@@ -1442,7 +1442,7 @@ $data = array (
     'phone_prefix' => '220',
     'languages' => 'en-GM,mnk,wof,wo,ff',
     'geoname_id' => '2413451',
-    'capital_id' => '0',
+    'capital_id' => '2413876',
     'active' => '0',
   ),
   85 => 
@@ -1459,7 +1459,7 @@ $data = array (
     'phone_prefix' => '224',
     'languages' => 'fr-GN',
     'geoname_id' => '2420477',
-    'capital_id' => '0',
+    'capital_id' => '2422465',
     'active' => '0',
   ),
   86 => 
@@ -1476,7 +1476,7 @@ $data = array (
     'phone_prefix' => '590',
     'languages' => 'fr-GP',
     'geoname_id' => '3579143',
-    'capital_id' => '0',
+    'capital_id' => '3579732',
     'active' => '0',
   ),
   87 => 
@@ -1493,7 +1493,7 @@ $data = array (
     'phone_prefix' => '240',
     'languages' => 'es-GQ,fr',
     'geoname_id' => '2309096',
-    'capital_id' => '0',
+    'capital_id' => '2309527',
     'active' => '0',
   ),
   88 => 
@@ -1510,7 +1510,7 @@ $data = array (
     'phone_prefix' => '30',
     'languages' => 'el-GR,en,fr',
     'geoname_id' => '390903',
-    'capital_id' => '0',
+    'capital_id' => '264371',
     'active' => '0',
   ),
   89 => 
@@ -1527,7 +1527,7 @@ $data = array (
     'phone_prefix' => '',
     'languages' => 'en',
     'geoname_id' => '3474415',
-    'capital_id' => '0',
+    'capital_id' => '3426466',
     'active' => '0',
   ),
   90 => 
@@ -1544,7 +1544,7 @@ $data = array (
     'phone_prefix' => '502',
     'languages' => 'es-GT',
     'geoname_id' => '3595528',
-    'capital_id' => '0',
+    'capital_id' => '3598132',
     'active' => '0',
   ),
   91 => 
@@ -1561,7 +1561,7 @@ $data = array (
     'phone_prefix' => '+1-671',
     'languages' => 'en-GU,ch-GU',
     'geoname_id' => '4043988',
-    'capital_id' => '0',
+    'capital_id' => '4044012',
     'active' => '0',
   ),
   92 => 
@@ -1578,7 +1578,7 @@ $data = array (
     'phone_prefix' => '245',
     'languages' => 'pt-GW,pov',
     'geoname_id' => '2372248',
-    'capital_id' => '0',
+    'capital_id' => '2374775',
     'active' => '0',
   ),
   93 => 
@@ -1595,7 +1595,7 @@ $data = array (
     'phone_prefix' => '592',
     'languages' => 'en-GY',
     'geoname_id' => '3378535',
-    'capital_id' => '0',
+    'capital_id' => '3378644',
     'active' => '0',
   ),
   94 => 
@@ -1612,7 +1612,7 @@ $data = array (
     'phone_prefix' => '852',
     'languages' => 'zh-HK,yue,zh,en',
     'geoname_id' => '1819730',
-    'capital_id' => '0',
+    'capital_id' => '1819729',
     'active' => '0',
   ),
   95 => 
@@ -1646,7 +1646,7 @@ $data = array (
     'phone_prefix' => '504',
     'languages' => 'es-HN',
     'geoname_id' => '3608932',
-    'capital_id' => '0',
+    'capital_id' => '3600949',
     'active' => '0',
   ),
   97 => 
@@ -1663,7 +1663,7 @@ $data = array (
     'phone_prefix' => '385',
     'languages' => 'hr-HR,sr',
     'geoname_id' => '3202326',
-    'capital_id' => '0',
+    'capital_id' => '3186886',
     'active' => '0',
   ),
   98 => 
@@ -1680,7 +1680,7 @@ $data = array (
     'phone_prefix' => '509',
     'languages' => 'ht,fr-HT',
     'geoname_id' => '3723988',
-    'capital_id' => '0',
+    'capital_id' => '3718426',
     'active' => '0',
   ),
   99 => 
@@ -1697,7 +1697,7 @@ $data = array (
     'phone_prefix' => '36',
     'languages' => 'hu-HU',
     'geoname_id' => '719819',
-    'capital_id' => '0',
+    'capital_id' => '3054643',
     'active' => '0',
   ),
   100 => 
@@ -1714,7 +1714,7 @@ $data = array (
     'phone_prefix' => '62',
     'languages' => 'id,en,nl,jv',
     'geoname_id' => '1643084',
-    'capital_id' => '0',
+    'capital_id' => '1642911',
     'active' => '0',
   ),
   101 => 
@@ -1731,7 +1731,7 @@ $data = array (
     'phone_prefix' => '353',
     'languages' => 'en-IE,ga-IE',
     'geoname_id' => '2963597',
-    'capital_id' => '0',
+    'capital_id' => '2964574',
     'active' => '0',
   ),
   102 => 
@@ -1765,7 +1765,7 @@ $data = array (
     'phone_prefix' => '+44-1624',
     'languages' => 'en,gv',
     'geoname_id' => '3042225',
-    'capital_id' => '0',
+    'capital_id' => '3042237',
     'active' => '0',
   ),
   104 => 
@@ -1782,7 +1782,7 @@ $data = array (
     'phone_prefix' => '91',
     'languages' => 'en-IN,hi,bn,te,mr,ta,ur,gu,kn,ml,or,pa,as,bh,sat,ks,ne,sd,kok,doi,mni,sit,sa,fr,lus,inc',
     'geoname_id' => '1269750',
-    'capital_id' => '0',
+    'capital_id' => '1261481',
     'active' => '0',
   ),
   105 => 
@@ -1816,7 +1816,7 @@ $data = array (
     'phone_prefix' => '964',
     'languages' => 'ar-IQ,ku,hy',
     'geoname_id' => '99237',
-    'capital_id' => '0',
+    'capital_id' => '98182',
     'active' => '0',
   ),
   107 => 
@@ -1833,7 +1833,7 @@ $data = array (
     'phone_prefix' => '98',
     'languages' => 'fa-IR,ku',
     'geoname_id' => '130758',
-    'capital_id' => '0',
+    'capital_id' => '112931',
     'active' => '0',
   ),
   108 => 
@@ -1850,7 +1850,7 @@ $data = array (
     'phone_prefix' => '354',
     'languages' => 'is,en,de,da,sv,no',
     'geoname_id' => '2629691',
-    'capital_id' => '0',
+    'capital_id' => '3413829',
     'active' => '0',
   ),
   109 => 
@@ -1867,7 +1867,7 @@ $data = array (
     'phone_prefix' => '39',
     'languages' => 'it-IT,de-IT,fr-IT,sc,ca,co,sl',
     'geoname_id' => '3175395',
-    'capital_id' => '0',
+    'capital_id' => '3169070',
     'active' => '0',
   ),
   110 => 
@@ -1884,7 +1884,7 @@ $data = array (
     'phone_prefix' => '+44-1534',
     'languages' => 'en,pt',
     'geoname_id' => '3042142',
-    'capital_id' => '0',
+    'capital_id' => '3042091',
     'active' => '0',
   ),
   111 => 
@@ -1901,7 +1901,7 @@ $data = array (
     'phone_prefix' => '+1-876',
     'languages' => 'en-JM',
     'geoname_id' => '3489940',
-    'capital_id' => '0',
+    'capital_id' => '3489854',
     'active' => '0',
   ),
   112 => 
@@ -1918,7 +1918,7 @@ $data = array (
     'phone_prefix' => '962',
     'languages' => 'ar-JO,en',
     'geoname_id' => '248816',
-    'capital_id' => '0',
+    'capital_id' => '250441',
     'active' => '0',
   ),
   113 => 
@@ -1935,7 +1935,7 @@ $data = array (
     'phone_prefix' => '81',
     'languages' => 'ja',
     'geoname_id' => '1861060',
-    'capital_id' => '0',
+    'capital_id' => '1850147',
     'active' => '0',
   ),
   114 => 
@@ -1952,7 +1952,7 @@ $data = array (
     'phone_prefix' => '254',
     'languages' => 'en-KE,sw-KE',
     'geoname_id' => '192950',
-    'capital_id' => '0',
+    'capital_id' => '184745',
     'active' => '0',
   ),
   115 => 
@@ -1969,7 +1969,7 @@ $data = array (
     'phone_prefix' => '996',
     'languages' => 'ky,uz,ru',
     'geoname_id' => '1527747',
-    'capital_id' => '0',
+    'capital_id' => '1528675',
     'active' => '0',
   ),
   116 => 
@@ -1986,7 +1986,7 @@ $data = array (
     'phone_prefix' => '855',
     'languages' => 'km,fr,en',
     'geoname_id' => '1831722',
-    'capital_id' => '0',
+    'capital_id' => '1821306',
     'active' => '0',
   ),
   117 => 
@@ -2003,7 +2003,7 @@ $data = array (
     'phone_prefix' => '686',
     'languages' => 'en-KI,gil',
     'geoname_id' => '4030945',
-    'capital_id' => '0',
+    'capital_id' => '2110257',
     'active' => '0',
   ),
   118 => 
@@ -2020,7 +2020,7 @@ $data = array (
     'phone_prefix' => '269',
     'languages' => 'ar,fr-KM',
     'geoname_id' => '921929',
-    'capital_id' => '0',
+    'capital_id' => '921772',
     'active' => '0',
   ),
   119 => 
@@ -2037,7 +2037,7 @@ $data = array (
     'phone_prefix' => '+1-869',
     'languages' => 'en-KN',
     'geoname_id' => '3575174',
-    'capital_id' => '0',
+    'capital_id' => '3575551',
     'active' => '0',
   ),
   120 => 
@@ -2054,7 +2054,7 @@ $data = array (
     'phone_prefix' => '850',
     'languages' => 'ko-KP',
     'geoname_id' => '1873107',
-    'capital_id' => '0',
+    'capital_id' => '1871859',
     'active' => '0',
   ),
   121 => 
@@ -2071,7 +2071,7 @@ $data = array (
     'phone_prefix' => '82',
     'languages' => 'ko-KR,en',
     'geoname_id' => '1835841',
-    'capital_id' => '0',
+    'capital_id' => '1835848',
     'active' => '0',
   ),
   122 => 
@@ -2088,7 +2088,7 @@ $data = array (
     'phone_prefix' => '965',
     'languages' => 'ar-KW,en',
     'geoname_id' => '285570',
-    'capital_id' => '0',
+    'capital_id' => '285787',
     'active' => '0',
   ),
   123 => 
@@ -2105,7 +2105,7 @@ $data = array (
     'phone_prefix' => '+1-345',
     'languages' => 'en-KY',
     'geoname_id' => '3580718',
-    'capital_id' => '0',
+    'capital_id' => '3580661',
     'active' => '0',
   ),
   124 => 
@@ -2122,7 +2122,7 @@ $data = array (
     'phone_prefix' => '7',
     'languages' => 'kk,ru',
     'geoname_id' => '1522867',
-    'capital_id' => '0',
+    'capital_id' => '1526273',
     'active' => '0',
   ),
   125 => 
@@ -2139,7 +2139,7 @@ $data = array (
     'phone_prefix' => '856',
     'languages' => 'lo,fr,en',
     'geoname_id' => '1655842',
-    'capital_id' => '0',
+    'capital_id' => '1651944',
     'active' => '0',
   ),
   126 => 
@@ -2156,7 +2156,7 @@ $data = array (
     'phone_prefix' => '961',
     'languages' => 'ar-LB,fr-LB,en,hy',
     'geoname_id' => '272103',
-    'capital_id' => '0',
+    'capital_id' => '276781',
     'active' => '0',
   ),
   127 => 
@@ -2173,7 +2173,7 @@ $data = array (
     'phone_prefix' => '+1-758',
     'languages' => 'en-LC',
     'geoname_id' => '3576468',
-    'capital_id' => '0',
+    'capital_id' => '3576812',
     'active' => '0',
   ),
   128 => 
@@ -2190,7 +2190,7 @@ $data = array (
     'phone_prefix' => '423',
     'languages' => 'de-LI',
     'geoname_id' => '3042058',
-    'capital_id' => '0',
+    'capital_id' => '3042030',
     'active' => '0',
   ),
   129 => 
@@ -2207,7 +2207,7 @@ $data = array (
     'phone_prefix' => '94',
     'languages' => 'si,ta,en',
     'geoname_id' => '1227603',
-    'capital_id' => '0',
+    'capital_id' => '1248991',
     'active' => '0',
   ),
   130 => 
@@ -2224,7 +2224,7 @@ $data = array (
     'phone_prefix' => '231',
     'languages' => 'en-LR',
     'geoname_id' => '2275384',
-    'capital_id' => '0',
+    'capital_id' => '2274895',
     'active' => '0',
   ),
   131 => 
@@ -2241,7 +2241,7 @@ $data = array (
     'phone_prefix' => '266',
     'languages' => 'en-LS,st,zu,xh',
     'geoname_id' => '932692',
-    'capital_id' => '0',
+    'capital_id' => '932505',
     'active' => '0',
   ),
   132 => 
@@ -2258,7 +2258,7 @@ $data = array (
     'phone_prefix' => '370',
     'languages' => 'lt,ru,pl',
     'geoname_id' => '597427',
-    'capital_id' => '0',
+    'capital_id' => '593116',
     'active' => '0',
   ),
   133 => 
@@ -2275,7 +2275,7 @@ $data = array (
     'phone_prefix' => '352',
     'languages' => 'lb,de-LU,fr-LU',
     'geoname_id' => '2960313',
-    'capital_id' => '0',
+    'capital_id' => '2960316',
     'active' => '0',
   ),
   134 => 
@@ -2292,7 +2292,7 @@ $data = array (
     'phone_prefix' => '371',
     'languages' => 'lv,ru,lt',
     'geoname_id' => '458258',
-    'capital_id' => '0',
+    'capital_id' => '456172',
     'active' => '0',
   ),
   135 => 
@@ -2309,7 +2309,7 @@ $data = array (
     'phone_prefix' => '218',
     'languages' => 'ar-LY,it,en',
     'geoname_id' => '2215636',
-    'capital_id' => '0',
+    'capital_id' => '2210247',
     'active' => '0',
   ),
   136 => 
@@ -2326,7 +2326,7 @@ $data = array (
     'phone_prefix' => '212',
     'languages' => 'ar-MA,fr',
     'geoname_id' => '2542007',
-    'capital_id' => '0',
+    'capital_id' => '2538475',
     'active' => '0',
   ),
   137 => 
@@ -2343,7 +2343,7 @@ $data = array (
     'phone_prefix' => '377',
     'languages' => 'fr-MC,en,it',
     'geoname_id' => '2993457',
-    'capital_id' => '0',
+    'capital_id' => '2993458',
     'active' => '0',
   ),
   138 => 
@@ -2360,7 +2360,7 @@ $data = array (
     'phone_prefix' => '373',
     'languages' => 'ro,ru,gag,tr',
     'geoname_id' => '617790',
-    'capital_id' => '0',
+    'capital_id' => '618426',
     'active' => '0',
   ),
   139 => 
@@ -2377,7 +2377,7 @@ $data = array (
     'phone_prefix' => '382',
     'languages' => 'sr,hu,bs,sq,hr,rom',
     'geoname_id' => '3194884',
-    'capital_id' => '0',
+    'capital_id' => '3193044',
     'active' => '0',
   ),
   140 => 
@@ -2394,7 +2394,7 @@ $data = array (
     'phone_prefix' => '590',
     'languages' => 'fr',
     'geoname_id' => '3578421',
-    'capital_id' => '0',
+    'capital_id' => '3578851',
     'active' => '0',
   ),
   141 => 
@@ -2411,7 +2411,7 @@ $data = array (
     'phone_prefix' => '261',
     'languages' => 'fr-MG,mg',
     'geoname_id' => '1062947',
-    'capital_id' => '0',
+    'capital_id' => '1070940',
     'active' => '0',
   ),
   142 => 
@@ -2428,7 +2428,7 @@ $data = array (
     'phone_prefix' => '692',
     'languages' => 'mh,en-MH',
     'geoname_id' => '2080185',
-    'capital_id' => '0',
+    'capital_id' => '2113779',
     'active' => '0',
   ),
   143 => 
@@ -2445,7 +2445,7 @@ $data = array (
     'phone_prefix' => '389',
     'languages' => 'mk,sq,tr,rmm,sr',
     'geoname_id' => '718075',
-    'capital_id' => '0',
+    'capital_id' => '785842',
     'active' => '0',
   ),
   144 => 
@@ -2462,7 +2462,7 @@ $data = array (
     'phone_prefix' => '223',
     'languages' => 'fr-ML,bm',
     'geoname_id' => '2453866',
-    'capital_id' => '0',
+    'capital_id' => '2460596',
     'active' => '0',
   ),
   145 => 
@@ -2479,7 +2479,7 @@ $data = array (
     'phone_prefix' => '95',
     'languages' => 'my',
     'geoname_id' => '1327865',
-    'capital_id' => '0',
+    'capital_id' => '6611854',
     'active' => '0',
   ),
   146 => 
@@ -2496,7 +2496,7 @@ $data = array (
     'phone_prefix' => '976',
     'languages' => 'mn,ru',
     'geoname_id' => '2029969',
-    'capital_id' => '0',
+    'capital_id' => '2028462',
     'active' => '0',
   ),
   147 => 
@@ -2513,7 +2513,7 @@ $data = array (
     'phone_prefix' => '853',
     'languages' => 'zh,zh-MO,pt',
     'geoname_id' => '1821275',
-    'capital_id' => '0',
+    'capital_id' => '1821274',
     'active' => '0',
   ),
   148 => 
@@ -2530,7 +2530,7 @@ $data = array (
     'phone_prefix' => '+1-670',
     'languages' => 'fil,tl,zh,ch-MP,en-MP',
     'geoname_id' => '4041468',
-    'capital_id' => '0',
+    'capital_id' => '7828758',
     'active' => '0',
   ),
   149 => 
@@ -2547,7 +2547,7 @@ $data = array (
     'phone_prefix' => '596',
     'languages' => 'fr-MQ',
     'geoname_id' => '3570311',
-    'capital_id' => '0',
+    'capital_id' => '3570675',
     'active' => '0',
   ),
   150 => 
@@ -2564,7 +2564,7 @@ $data = array (
     'phone_prefix' => '222',
     'languages' => 'ar-MR,fuc,snk,fr,mey,wo',
     'geoname_id' => '2378080',
-    'capital_id' => '0',
+    'capital_id' => '2377450',
     'active' => '0',
   ),
   151 => 
@@ -2581,7 +2581,7 @@ $data = array (
     'phone_prefix' => '+1-664',
     'languages' => 'en-MS',
     'geoname_id' => '3578097',
-    'capital_id' => '0',
+    'capital_id' => '3578069',
     'active' => '0',
   ),
   152 => 
@@ -2598,7 +2598,7 @@ $data = array (
     'phone_prefix' => '356',
     'languages' => 'mt,en-MT',
     'geoname_id' => '2562770',
-    'capital_id' => '0',
+    'capital_id' => '2562305',
     'active' => '0',
   ),
   153 => 
@@ -2615,7 +2615,7 @@ $data = array (
     'phone_prefix' => '230',
     'languages' => 'en-MU,bho,fr',
     'geoname_id' => '934292',
-    'capital_id' => '0',
+    'capital_id' => '934154',
     'active' => '0',
   ),
   154 => 
@@ -2632,7 +2632,7 @@ $data = array (
     'phone_prefix' => '960',
     'languages' => 'dv,en',
     'geoname_id' => '1282028',
-    'capital_id' => '0',
+    'capital_id' => '1282027',
     'active' => '0',
   ),
   155 => 
@@ -2649,7 +2649,7 @@ $data = array (
     'phone_prefix' => '265',
     'languages' => 'ny,yao,tum,swk',
     'geoname_id' => '927384',
-    'capital_id' => '0',
+    'capital_id' => '927967',
     'active' => '0',
   ),
   156 => 
@@ -2666,7 +2666,7 @@ $data = array (
     'phone_prefix' => '52',
     'languages' => 'es-MX',
     'geoname_id' => '3996063',
-    'capital_id' => '0',
+    'capital_id' => '3530597',
     'active' => '0',
   ),
   157 => 
@@ -2683,7 +2683,7 @@ $data = array (
     'phone_prefix' => '60',
     'languages' => 'ms-MY,en,zh,ta,te,ml,pa,th',
     'geoname_id' => '1733045',
-    'capital_id' => '0',
+    'capital_id' => '1735161',
     'active' => '0',
   ),
   158 => 
@@ -2700,7 +2700,7 @@ $data = array (
     'phone_prefix' => '258',
     'languages' => 'pt-MZ,vmw',
     'geoname_id' => '1036973',
-    'capital_id' => '0',
+    'capital_id' => '1040652',
     'active' => '0',
   ),
   159 => 
@@ -2717,7 +2717,7 @@ $data = array (
     'phone_prefix' => '264',
     'languages' => 'en-NA,af,de,hz,naq',
     'geoname_id' => '3355338',
-    'capital_id' => '0',
+    'capital_id' => '3352136',
     'active' => '0',
   ),
   160 => 
@@ -2734,7 +2734,7 @@ $data = array (
     'phone_prefix' => '687',
     'languages' => 'fr-NC',
     'geoname_id' => '2139685',
-    'capital_id' => '0',
+    'capital_id' => '2139521',
     'active' => '0',
   ),
   161 => 
@@ -2751,7 +2751,7 @@ $data = array (
     'phone_prefix' => '227',
     'languages' => 'fr-NE,ha,kr,dje',
     'geoname_id' => '2440476',
-    'capital_id' => '0',
+    'capital_id' => '2440485',
     'active' => '0',
   ),
   162 => 
@@ -2768,7 +2768,7 @@ $data = array (
     'phone_prefix' => '672',
     'languages' => 'en-NF',
     'geoname_id' => '2155115',
-    'capital_id' => '0',
+    'capital_id' => '2161314',
     'active' => '0',
   ),
   163 => 
@@ -2785,7 +2785,7 @@ $data = array (
     'phone_prefix' => '234',
     'languages' => 'en-NG,ha,yo,ig,ff',
     'geoname_id' => '2328926',
-    'capital_id' => '0',
+    'capital_id' => '2352778',
     'active' => '0',
   ),
   164 => 
@@ -2802,7 +2802,7 @@ $data = array (
     'phone_prefix' => '505',
     'languages' => 'es-NI,en',
     'geoname_id' => '3617476',
-    'capital_id' => '0',
+    'capital_id' => '3617763',
     'active' => '0',
   ),
   165 => 
@@ -2819,7 +2819,7 @@ $data = array (
     'phone_prefix' => '31',
     'languages' => 'nl-NL,fy-NL',
     'geoname_id' => '2750405',
-    'capital_id' => '0',
+    'capital_id' => '2759794',
     'active' => '0',
   ),
   166 => 
@@ -2836,7 +2836,7 @@ $data = array (
     'phone_prefix' => '47',
     'languages' => 'no,nb,nn,se,fi',
     'geoname_id' => '3144096',
-    'capital_id' => '0',
+    'capital_id' => '3143244',
     'active' => '0',
   ),
   167 => 
@@ -2853,7 +2853,7 @@ $data = array (
     'phone_prefix' => '977',
     'languages' => 'ne,en',
     'geoname_id' => '1282988',
-    'capital_id' => '0',
+    'capital_id' => '1283240',
     'active' => '0',
   ),
   168 => 
@@ -2887,7 +2887,7 @@ $data = array (
     'phone_prefix' => '683',
     'languages' => 'niu,en-NU',
     'geoname_id' => '4036232',
-    'capital_id' => '0',
+    'capital_id' => '4036284',
     'active' => '0',
   ),
   170 => 
@@ -2904,7 +2904,7 @@ $data = array (
     'phone_prefix' => '64',
     'languages' => 'en-NZ,mi',
     'geoname_id' => '2186224',
-    'capital_id' => '0',
+    'capital_id' => '2179537',
     'active' => '0',
   ),
   171 => 
@@ -2921,7 +2921,7 @@ $data = array (
     'phone_prefix' => '968',
     'languages' => 'ar-OM,en,bal,ur',
     'geoname_id' => '286963',
-    'capital_id' => '0',
+    'capital_id' => '287286',
     'active' => '0',
   ),
   172 => 
@@ -2938,7 +2938,7 @@ $data = array (
     'phone_prefix' => '507',
     'languages' => 'es-PA,en',
     'geoname_id' => '3703430',
-    'capital_id' => '0',
+    'capital_id' => '3703443',
     'active' => '0',
   ),
   173 => 
@@ -2955,7 +2955,7 @@ $data = array (
     'phone_prefix' => '51',
     'languages' => 'es-PE,qu,ay',
     'geoname_id' => '3932488',
-    'capital_id' => '0',
+    'capital_id' => '3936456',
     'active' => '0',
   ),
   174 => 
@@ -2972,7 +2972,7 @@ $data = array (
     'phone_prefix' => '689',
     'languages' => 'fr-PF,ty',
     'geoname_id' => '4030656',
-    'capital_id' => '0',
+    'capital_id' => '4033936',
     'active' => '0',
   ),
   175 => 
@@ -2989,7 +2989,7 @@ $data = array (
     'phone_prefix' => '675',
     'languages' => 'en-PG,ho,meu,tpi',
     'geoname_id' => '2088628',
-    'capital_id' => '0',
+    'capital_id' => '2088122',
     'active' => '0',
   ),
   176 => 
@@ -3006,7 +3006,7 @@ $data = array (
     'phone_prefix' => '63',
     'languages' => 'tl,en-PH,fil',
     'geoname_id' => '1694008',
-    'capital_id' => '0',
+    'capital_id' => '1701668',
     'active' => '0',
   ),
   177 => 
@@ -3023,7 +3023,7 @@ $data = array (
     'phone_prefix' => '92',
     'languages' => 'ur-PK,en-PK,pa,sd,ps,brh',
     'geoname_id' => '1168579',
-    'capital_id' => '0',
+    'capital_id' => '1176615',
     'active' => '0',
   ),
   178 => 
@@ -3040,7 +3040,7 @@ $data = array (
     'phone_prefix' => '48',
     'languages' => 'pl',
     'geoname_id' => '798544',
-    'capital_id' => '0',
+    'capital_id' => '756135',
     'active' => '0',
   ),
   179 => 
@@ -3057,7 +3057,7 @@ $data = array (
     'phone_prefix' => '508',
     'languages' => 'fr-PM',
     'geoname_id' => '3424932',
-    'capital_id' => '0',
+    'capital_id' => '3424934',
     'active' => '0',
   ),
   180 => 
@@ -3074,7 +3074,7 @@ $data = array (
     'phone_prefix' => '870',
     'languages' => 'en-PN',
     'geoname_id' => '4030699',
-    'capital_id' => '0',
+    'capital_id' => '4030723',
     'active' => '0',
   ),
   181 => 
@@ -3091,7 +3091,7 @@ $data = array (
     'phone_prefix' => '+1-787 and',
     'languages' => 'en-PR,es-PR',
     'geoname_id' => '4566966',
-    'capital_id' => '0',
+    'capital_id' => '4568127',
     'active' => '0',
   ),
   182 => 
@@ -3125,7 +3125,7 @@ $data = array (
     'phone_prefix' => '351',
     'languages' => 'pt-PT,mwl',
     'geoname_id' => '2264397',
-    'capital_id' => '0',
+    'capital_id' => '2267057',
     'active' => '0',
   ),
   184 => 
@@ -3142,7 +3142,7 @@ $data = array (
     'phone_prefix' => '680',
     'languages' => 'pau,sov,en-PW,tox,ja,fil,zh',
     'geoname_id' => '1559582',
-    'capital_id' => '0',
+    'capital_id' => '7303944',
     'active' => '0',
   ),
   185 => 
@@ -3159,7 +3159,7 @@ $data = array (
     'phone_prefix' => '595',
     'languages' => 'es-PY,gn',
     'geoname_id' => '3437598',
-    'capital_id' => '0',
+    'capital_id' => '3439389',
     'active' => '0',
   ),
   186 => 
@@ -3176,7 +3176,7 @@ $data = array (
     'phone_prefix' => '974',
     'languages' => 'ar-QA,es',
     'geoname_id' => '289688',
-    'capital_id' => '0',
+    'capital_id' => '290030',
     'active' => '0',
   ),
   187 => 
@@ -3193,7 +3193,7 @@ $data = array (
     'phone_prefix' => '262',
     'languages' => 'fr-RE',
     'geoname_id' => '935317',
-    'capital_id' => '0',
+    'capital_id' => '935264',
     'active' => '0',
   ),
   188 => 
@@ -3210,7 +3210,7 @@ $data = array (
     'phone_prefix' => '40',
     'languages' => 'ro,hu,rom',
     'geoname_id' => '798549',
-    'capital_id' => '0',
+    'capital_id' => '683506',
     'active' => '0',
   ),
   189 => 
@@ -3227,7 +3227,7 @@ $data = array (
     'phone_prefix' => '381',
     'languages' => 'sr,hu,bs,rom',
     'geoname_id' => '6290252',
-    'capital_id' => '0',
+    'capital_id' => '792680',
     'active' => '0',
   ),
   190 => 
@@ -3244,7 +3244,7 @@ $data = array (
     'phone_prefix' => '7',
     'languages' => 'ru,tt,xal,cau,ady,kv,ce,tyv,cv,udm,tut,mns,bua,myv,mdf,chm,ba,inh,tut,kbd,krc,ava,sah,nog',
     'geoname_id' => '2017370',
-    'capital_id' => '0',
+    'capital_id' => '524901',
     'active' => '1',
   ),
   191 => 
@@ -3261,7 +3261,7 @@ $data = array (
     'phone_prefix' => '250',
     'languages' => 'rw,en-RW,fr-RW,sw',
     'geoname_id' => '49518',
-    'capital_id' => '0',
+    'capital_id' => '202061',
     'active' => '0',
   ),
   192 => 
@@ -3278,7 +3278,7 @@ $data = array (
     'phone_prefix' => '966',
     'languages' => 'ar-SA',
     'geoname_id' => '102358',
-    'capital_id' => '0',
+    'capital_id' => '108410',
     'active' => '0',
   ),
   193 => 
@@ -3295,7 +3295,7 @@ $data = array (
     'phone_prefix' => '677',
     'languages' => 'en-SB,tpi',
     'geoname_id' => '2103350',
-    'capital_id' => '0',
+    'capital_id' => '2108502',
     'active' => '0',
   ),
   194 => 
@@ -3312,7 +3312,7 @@ $data = array (
     'phone_prefix' => '248',
     'languages' => 'en-SC,fr-SC',
     'geoname_id' => '241170',
-    'capital_id' => '0',
+    'capital_id' => '241131',
     'active' => '0',
   ),
   195 => 
@@ -3329,7 +3329,7 @@ $data = array (
     'phone_prefix' => '249',
     'languages' => 'ar-SD,en,fia',
     'geoname_id' => '366755',
-    'capital_id' => '0',
+    'capital_id' => '379252',
     'active' => '0',
   ),
   196 => 
@@ -3346,7 +3346,7 @@ $data = array (
     'phone_prefix' => '46',
     'languages' => 'sv-SE,se,sma,fi-SE',
     'geoname_id' => '2661886',
-    'capital_id' => '0',
+    'capital_id' => '2673730',
     'active' => '0',
   ),
   197 => 
@@ -3363,7 +3363,7 @@ $data = array (
     'phone_prefix' => '65',
     'languages' => 'cmn,en-SG,ms-SG,ta-SG,zh-SG',
     'geoname_id' => '1880251',
-    'capital_id' => '0',
+    'capital_id' => '1880252',
     'active' => '0',
   ),
   198 => 
@@ -3380,7 +3380,7 @@ $data = array (
     'phone_prefix' => '290',
     'languages' => 'en-SH',
     'geoname_id' => '3370751',
-    'capital_id' => '0',
+    'capital_id' => '3370903',
     'active' => '0',
   ),
   199 => 
@@ -3397,7 +3397,7 @@ $data = array (
     'phone_prefix' => '386',
     'languages' => 'sl,sh',
     'geoname_id' => '3190538',
-    'capital_id' => '0',
+    'capital_id' => '3196359',
     'active' => '0',
   ),
   200 => 
@@ -3414,7 +3414,7 @@ $data = array (
     'phone_prefix' => '47',
     'languages' => 'no,ru',
     'geoname_id' => '607072',
-    'capital_id' => '0',
+    'capital_id' => '2729907',
     'active' => '0',
   ),
   201 => 
@@ -3431,7 +3431,7 @@ $data = array (
     'phone_prefix' => '421',
     'languages' => 'sk,hu',
     'geoname_id' => '3057568',
-    'capital_id' => '0',
+    'capital_id' => '3060972',
     'active' => '0',
   ),
   202 => 
@@ -3448,7 +3448,7 @@ $data = array (
     'phone_prefix' => '232',
     'languages' => 'en-SL,men,tem',
     'geoname_id' => '2403846',
-    'capital_id' => '0',
+    'capital_id' => '2409306',
     'active' => '0',
   ),
   203 => 
@@ -3465,7 +3465,7 @@ $data = array (
     'phone_prefix' => '378',
     'languages' => 'it-SM',
     'geoname_id' => '3168068',
-    'capital_id' => '0',
+    'capital_id' => '3168070',
     'active' => '0',
   ),
   204 => 
@@ -3482,7 +3482,7 @@ $data = array (
     'phone_prefix' => '221',
     'languages' => 'fr-SN,wo,fuc,mnk',
     'geoname_id' => '2245662',
-    'capital_id' => '0',
+    'capital_id' => '2253354',
     'active' => '0',
   ),
   205 => 
@@ -3499,7 +3499,7 @@ $data = array (
     'phone_prefix' => '252',
     'languages' => 'so-SO,ar-SO,it,en-SO',
     'geoname_id' => '51537',
-    'capital_id' => '0',
+    'capital_id' => '53654',
     'active' => '0',
   ),
   206 => 
@@ -3516,7 +3516,7 @@ $data = array (
     'phone_prefix' => '597',
     'languages' => 'nl-SR,en,srn,hns,jv',
     'geoname_id' => '3382998',
-    'capital_id' => '0',
+    'capital_id' => '3383330',
     'active' => '0',
   ),
   207 => 
@@ -3533,7 +3533,7 @@ $data = array (
     'phone_prefix' => '211',
     'languages' => 'en',
     'geoname_id' => '7909807',
-    'capital_id' => '0',
+    'capital_id' => '373303',
     'active' => '0',
   ),
   208 => 
@@ -3550,7 +3550,7 @@ $data = array (
     'phone_prefix' => '239',
     'languages' => 'pt-ST',
     'geoname_id' => '2410758',
-    'capital_id' => '0',
+    'capital_id' => '2410763',
     'active' => '0',
   ),
   209 => 
@@ -3567,7 +3567,7 @@ $data = array (
     'phone_prefix' => '503',
     'languages' => 'es-SV',
     'geoname_id' => '3585968',
-    'capital_id' => '0',
+    'capital_id' => '3583361',
     'active' => '0',
   ),
   210 => 
@@ -3584,7 +3584,7 @@ $data = array (
     'phone_prefix' => '599',
     'languages' => 'nl,en',
     'geoname_id' => '7609695',
-    'capital_id' => '0',
+    'capital_id' => '3513392',
     'active' => '0',
   ),
   211 => 
@@ -3601,7 +3601,7 @@ $data = array (
     'phone_prefix' => '963',
     'languages' => 'ar-SY,ku,hy,arc,fr,en',
     'geoname_id' => '163843',
-    'capital_id' => '0',
+    'capital_id' => '170654',
     'active' => '0',
   ),
   212 => 
@@ -3618,7 +3618,7 @@ $data = array (
     'phone_prefix' => '268',
     'languages' => 'en-SZ,ss-SZ',
     'geoname_id' => '934841',
-    'capital_id' => '0',
+    'capital_id' => '934985',
     'active' => '0',
   ),
   213 => 
@@ -3635,7 +3635,7 @@ $data = array (
     'phone_prefix' => '+1-649',
     'languages' => 'en-TC',
     'geoname_id' => '3576916',
-    'capital_id' => '0',
+    'capital_id' => '3576994',
     'active' => '0',
   ),
   214 => 
@@ -3652,7 +3652,7 @@ $data = array (
     'phone_prefix' => '235',
     'languages' => 'fr-TD,ar-TD,sre',
     'geoname_id' => '2434508',
-    'capital_id' => '0',
+    'capital_id' => '2427123',
     'active' => '0',
   ),
   215 => 
@@ -3669,7 +3669,7 @@ $data = array (
     'phone_prefix' => '',
     'languages' => 'fr',
     'geoname_id' => '1546748',
-    'capital_id' => '0',
+    'capital_id' => '1546102',
     'active' => '0',
   ),
   216 => 
@@ -3686,7 +3686,7 @@ $data = array (
     'phone_prefix' => '228',
     'languages' => 'fr-TG,ee,hna,kbp,dag,ha',
     'geoname_id' => '2363686',
-    'capital_id' => '0',
+    'capital_id' => '2365267',
     'active' => '0',
   ),
   217 => 
@@ -3703,7 +3703,7 @@ $data = array (
     'phone_prefix' => '66',
     'languages' => 'th,en',
     'geoname_id' => '1605651',
-    'capital_id' => '0',
+    'capital_id' => '1609350',
     'active' => '0',
   ),
   218 => 
@@ -3720,7 +3720,7 @@ $data = array (
     'phone_prefix' => '992',
     'languages' => 'tg,ru',
     'geoname_id' => '1220409',
-    'capital_id' => '0',
+    'capital_id' => '1221874',
     'active' => '0',
   ),
   219 => 
@@ -3754,7 +3754,7 @@ $data = array (
     'phone_prefix' => '670',
     'languages' => 'tet,pt-TL,id,en',
     'geoname_id' => '1966436',
-    'capital_id' => '0',
+    'capital_id' => '1645457',
     'active' => '0',
   ),
   221 => 
@@ -3771,7 +3771,7 @@ $data = array (
     'phone_prefix' => '993',
     'languages' => 'tk,ru,uz',
     'geoname_id' => '1218197',
-    'capital_id' => '0',
+    'capital_id' => '162183',
     'active' => '0',
   ),
   222 => 
@@ -3788,7 +3788,7 @@ $data = array (
     'phone_prefix' => '216',
     'languages' => 'ar-TN,fr',
     'geoname_id' => '2464461',
-    'capital_id' => '0',
+    'capital_id' => '2464470',
     'active' => '0',
   ),
   223 => 
@@ -3805,7 +3805,7 @@ $data = array (
     'phone_prefix' => '676',
     'languages' => 'to,en-TO',
     'geoname_id' => '4032283',
-    'capital_id' => '0',
+    'capital_id' => '4032402',
     'active' => '0',
   ),
   224 => 
@@ -3822,7 +3822,7 @@ $data = array (
     'phone_prefix' => '90',
     'languages' => 'tr-TR,ku,diq,az,av',
     'geoname_id' => '298795',
-    'capital_id' => '0',
+    'capital_id' => '323786',
     'active' => '0',
   ),
   225 => 
@@ -3839,7 +3839,7 @@ $data = array (
     'phone_prefix' => '+1-868',
     'languages' => 'en-TT,hns,fr,es,zh',
     'geoname_id' => '3573591',
-    'capital_id' => '0',
+    'capital_id' => '3573890',
     'active' => '0',
   ),
   226 => 
@@ -3856,7 +3856,7 @@ $data = array (
     'phone_prefix' => '688',
     'languages' => 'tvl,en,sm,gil',
     'geoname_id' => '2110297',
-    'capital_id' => '0',
+    'capital_id' => '2110394',
     'active' => '0',
   ),
   227 => 
@@ -3873,7 +3873,7 @@ $data = array (
     'phone_prefix' => '886',
     'languages' => 'zh-TW,zh,nan,hak',
     'geoname_id' => '1668284',
-    'capital_id' => '0',
+    'capital_id' => '1668341',
     'active' => '0',
   ),
   228 => 
@@ -3890,7 +3890,7 @@ $data = array (
     'phone_prefix' => '255',
     'languages' => 'sw-TZ,en,ar',
     'geoname_id' => '149590',
-    'capital_id' => '0',
+    'capital_id' => '160196',
     'active' => '0',
   ),
   229 => 
@@ -3907,7 +3907,7 @@ $data = array (
     'phone_prefix' => '380',
     'languages' => 'uk,ru-UA,rom,pl,hu',
     'geoname_id' => '690791',
-    'capital_id' => '0',
+    'capital_id' => '703448',
     'active' => '1',
   ),
   230 => 
@@ -3924,7 +3924,7 @@ $data = array (
     'phone_prefix' => '256',
     'languages' => 'en-UG,lg,sw,ar',
     'geoname_id' => '226074',
-    'capital_id' => '0',
+    'capital_id' => '232422',
     'active' => '0',
   ),
   231 => 
@@ -3958,7 +3958,7 @@ $data = array (
     'phone_prefix' => '1',
     'languages' => 'en-US,es-US,haw,fr',
     'geoname_id' => '6252001',
-    'capital_id' => '0',
+    'capital_id' => '4140963',
     'active' => '1',
   ),
   233 => 
@@ -3975,7 +3975,7 @@ $data = array (
     'phone_prefix' => '598',
     'languages' => 'es-UY',
     'geoname_id' => '3439705',
-    'capital_id' => '0',
+    'capital_id' => '3441575',
     'active' => '0',
   ),
   234 => 
@@ -3992,7 +3992,7 @@ $data = array (
     'phone_prefix' => '998',
     'languages' => 'uz,ru,tg',
     'geoname_id' => '1512440',
-    'capital_id' => '0',
+    'capital_id' => '1512569',
     'active' => '0',
   ),
   235 => 
@@ -4009,7 +4009,7 @@ $data = array (
     'phone_prefix' => '379',
     'languages' => 'la,it,fr',
     'geoname_id' => '3164670',
-    'capital_id' => '0',
+    'capital_id' => '6691831',
     'active' => '0',
   ),
   236 => 
@@ -4026,7 +4026,7 @@ $data = array (
     'phone_prefix' => '+1-784',
     'languages' => 'en-VC,fr',
     'geoname_id' => '3577815',
-    'capital_id' => '0',
+    'capital_id' => '3577887',
     'active' => '0',
   ),
   237 => 
@@ -4043,7 +4043,7 @@ $data = array (
     'phone_prefix' => '58',
     'languages' => 'es-VE',
     'geoname_id' => '3625428',
-    'capital_id' => '0',
+    'capital_id' => '3646738',
     'active' => '0',
   ),
   238 => 
@@ -4060,7 +4060,7 @@ $data = array (
     'phone_prefix' => '+1-284',
     'languages' => 'en-VG',
     'geoname_id' => '3577718',
-    'capital_id' => '0',
+    'capital_id' => '3577430',
     'active' => '0',
   ),
   239 => 
@@ -4077,7 +4077,7 @@ $data = array (
     'phone_prefix' => '+1-340',
     'languages' => 'en-VI',
     'geoname_id' => '4796775',
-    'capital_id' => '0',
+    'capital_id' => '4795467',
     'active' => '0',
   ),
   240 => 
@@ -4094,7 +4094,7 @@ $data = array (
     'phone_prefix' => '84',
     'languages' => 'vi,en,fr,zh,km',
     'geoname_id' => '1562822',
-    'capital_id' => '0',
+    'capital_id' => '1581130',
     'active' => '0',
   ),
   241 => 
@@ -4111,7 +4111,7 @@ $data = array (
     'phone_prefix' => '678',
     'languages' => 'bi,en-VU,fr-VU',
     'geoname_id' => '2134431',
-    'capital_id' => '0',
+    'capital_id' => '2135171',
     'active' => '0',
   ),
   242 => 
@@ -4128,7 +4128,7 @@ $data = array (
     'phone_prefix' => '681',
     'languages' => 'wls,fud,fr-WF',
     'geoname_id' => '4034749',
-    'capital_id' => '0',
+    'capital_id' => '4034821',
     'active' => '0',
   ),
   243 => 
@@ -4145,7 +4145,7 @@ $data = array (
     'phone_prefix' => '685',
     'languages' => 'sm,en-WS',
     'geoname_id' => '4034894',
-    'capital_id' => '0',
+    'capital_id' => '4035413',
     'active' => '0',
   ),
   244 => 
@@ -4162,7 +4162,7 @@ $data = array (
     'phone_prefix' => '967',
     'languages' => 'ar-YE',
     'geoname_id' => '69543',
-    'capital_id' => '0',
+    'capital_id' => '71137',
     'active' => '0',
   ),
   245 => 
@@ -4179,7 +4179,7 @@ $data = array (
     'phone_prefix' => '262',
     'languages' => 'fr-YT',
     'geoname_id' => '1024031',
-    'capital_id' => '0',
+    'capital_id' => '921815',
     'active' => '0',
   ),
   246 => 
@@ -4196,7 +4196,7 @@ $data = array (
     'phone_prefix' => '27',
     'languages' => 'zu,xh,af,nso,en-ZA,tn,st,ts,ss,ve,nr',
     'geoname_id' => '953987',
-    'capital_id' => '0',
+    'capital_id' => '964137',
     'active' => '0',
   ),
   247 => 
@@ -4213,7 +4213,7 @@ $data = array (
     'phone_prefix' => '260',
     'languages' => 'en-ZM,bem,loz,lun,lue,ny,toi',
     'geoname_id' => '895949',
-    'capital_id' => '0',
+    'capital_id' => '909137',
     'active' => '0',
   ),
   248 => 
@@ -4230,7 +4230,7 @@ $data = array (
     'phone_prefix' => '263',
     'languages' => 'en-ZW,sn,nr,nd',
     'geoname_id' => '878675',
-    'capital_id' => '0',
+    'capital_id' => '890299',
     'active' => '0',
   ),
 );

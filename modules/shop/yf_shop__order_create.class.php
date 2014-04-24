@@ -32,7 +32,7 @@ class yf_shop__order_create{
 			// Insert order into db
 			$order_sql = array(
 				"date"		=> time(),
-				"user_id"	=> intval(module('shop')->USER_ID),
+				"user_id"	=> intval(main()->USER_ID),
 				"ship_type"	=> intval($_POST["ship_type"]),
 				"pay_type"	=> intval($_POST["pay_type"]),
 				"card_num"	=> $_POST["card_num"],
@@ -68,7 +68,7 @@ class yf_shop__order_create{
 				db()->INSERT(db('shop_order_items'), array(
 					"order_id"		=> intval($ORDER_ID),
 					"product_id"	=> intval($_info["id"]),
-					"user_id"		=> intval(module('shop')->USER_ID),
+					"user_id"		=> intval(main()->USER_ID),
 					"quantity"		=> intval($quantity),
 					"sum"			=> floatval($price * $quantity),
 					"attributes"	=> _es(serialize($_atts_to_save)),
@@ -79,7 +79,7 @@ class yf_shop__order_create{
 			db()->UPDATE(db('shop_orders'), array(
 				"status"		=> "pending",
 				"total_sum"	=> floatval($total_price),
-				"hash"			=> md5(microtime(true)."#".module('shop')->USER_ID."#".$total_price),
+				"hash"			=> md5(microtime(true)."#".main()->USER_ID."#".$total_price),
 			), "id=".intval($ORDER_ID));
 		}
 		if (!common()->_error_exists()) {

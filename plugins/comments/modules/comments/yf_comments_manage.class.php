@@ -9,7 +9,7 @@ class yf_comments_manage {
 	* Form to add comments
 	*/
 	function _add ($params = array()) {
-		if (empty(module('comments')->USER_ID) && MAIN_TYPE_USER && !$params['allow_guests_posts']) {
+		if (empty(main()->USER_ID) && MAIN_TYPE_USER && !$params['allow_guests_posts']) {
 			return '';
 		}
 		$_GET['id'] = intval($_GET['id']);
@@ -50,7 +50,7 @@ class yf_comments_manage {
 			}
 			if (module($_GET['object'])->USE_CAPTCHA) {
 				if (module('comments')->USE_TREE_MODE && isset($_POST['parent_id'])) {
-					if (empty(module('comments')->USER_ID)) {
+					if (empty(main()->USER_ID)) {
 						module($_GET['object'])->_captcha_check();
 					}
 				} else {
@@ -60,11 +60,11 @@ class yf_comments_manage {
 			if (!common()->_error_exists() && MAIN_TYPE_USER) {
 				$info_for_check = array(
 					'comment_text'	=> $_POST['text'],
-					'user_id'		=> module('comments')->USER_ID,
+					'user_id'		=> main()->USER_ID,
 				);
 				$USER_BANNED = _check_user_ban($info_for_check, module('comments')->_user_info);
 				if ($USER_BANNED) {
-					module('comments')->_user_info = user(module('comments')->USER_ID);
+					module('comments')->_user_info = user(main()->USER_ID);
 				}
 				if (module('comments')->_user_info['ban_comments']) {
 					return _e(
@@ -76,7 +76,7 @@ class yf_comments_manage {
 			if (!common()->_error_exists() && module('comments')->ANTI_FLOOD_TIME && MAIN_TYPE_USER) {
 				$FLOOD_DETECTED = db()->query_fetch(
 					'SELECT id,add_date FROM '.db('comments').' 
-					WHERE '.(module('comments')->USER_ID ? 'user_id='.intval(module('comments')->USER_ID) : 'ip="'._es(common()->get_ip()).'"')
+					WHERE '.(main()->USER_ID ? 'user_id='.intval(main()->USER_ID) : 'ip="'._es(common()->get_ip()).'"')
 						.' AND add_date > '.(time() - module('comments')->ANTI_FLOOD_TIME).' 
 					ORDER BY add_date DESC LIMIT 1'
 				);
@@ -112,9 +112,9 @@ class yf_comments_manage {
 					'object_name'		=> _es($OBJECT_NAME),
 					'object_id'			=> intval($OBJECT_ID),
 					'parent_id'			=> intval(isset($_POST['parent_id'])?$_POST['parent_id']:0),
-					'user_id'			=> intval(module('comments')->USER_ID),
-					'user_name'			=> !module('comments')->USER_ID ? _es($_POST['user_name']) : '',
-					'user_email'		=> !module('comments')->USER_ID ? _es($_POST['user_email']): '',
+					'user_id'			=> intval(main()->USER_ID),
+					'user_name'			=> !main()->USER_ID ? _es($_POST['user_name']) : '',
+					'user_email'		=> !main()->USER_ID ? _es($_POST['user_email']): '',
 					'text' 				=> _es($_POST['text']),
 					'add_date'			=> time(),
 					'active'			=> 1,
@@ -126,13 +126,13 @@ class yf_comments_manage {
 				if (is_callable($try_trigger_callback)) {
 					call_user_func($try_trigger_callback, $params);
 				}
-				common()->_add_activity_points(module('comments')->USER_ID, $OBJECT_NAME.'_comment', strlen($_POST['text']), $RECORD_ID);
+				common()->_add_activity_points(main()->USER_ID, $OBJECT_NAME.'_comment', strlen($_POST['text']), $RECORD_ID);
 				return js_redirect($RETURN_PATH, false);
 			}
 		}
 		$error_message = _e();
 		if (empty($_POST['go']) || !empty($error_message)) {
-			if((module('comments')->VIEW_EMAIL_FIELD == true) AND (empty(module('comments')->USER_ID))){
+			if((module('comments')->VIEW_EMAIL_FIELD == true) AND (empty(main()->USER_ID))){
 				$view_user_email = '1';
 			}else{
 				$view_user_email = '0';
@@ -162,7 +162,7 @@ class yf_comments_manage {
 	* Do edit own comment
 	*/
 	function _edit ($params = array()) {
-		if (empty(module('comments')->USER_ID) && MAIN_TYPE_USER) {
+		if (empty(main()->USER_ID) && MAIN_TYPE_USER) {
 			return _error_need_login();
 		}
 		$_GET['id'] = intval($_GET['id']);
@@ -192,7 +192,7 @@ class yf_comments_manage {
 				'object_id' => $comment_info['object_id']
 			));
 		} else {
-			$edit_allowed = module('comments')->USER_ID && $comment_info['user_id'] == module('comments')->USER_ID;
+			$edit_allowed = main()->USER_ID && $comment_info['user_id'] == main()->USER_ID;
 		}
 		if (MAIN_TYPE_ADMIN) {
 			$edit_allowed	= true;
@@ -219,11 +219,11 @@ class yf_comments_manage {
 			if (!common()->_error_exists() && MAIN_TYPE_USER) {
 				$info_for_check = array(
 					'comment_text'	=> $_POST['text'],
-					'user_id'		=> module('comments')->USER_ID,
+					'user_id'		=> main()->USER_ID,
 				);
 				$USER_BANNED = _check_user_ban($info_for_check, module('comments')->_user_info);
 				if ($USER_BANNED) {
-					module('comments')->_user_info = user(module('comments')->USER_ID);
+					module('comments')->_user_info = user(main()->USER_ID);
 				}
 				if (module('comments')->_user_info['ban_comments']) {
 					return _e(
@@ -236,7 +236,7 @@ class yf_comments_manage {
 			if (!common()->_error_exists() && module('comments')->ANTI_FLOOD_TIME && MAIN_TYPE_USER) {
 				$FLOOD_DETECTED = db()->query_fetch(
 					'SELECT id,add_date FROM '.db('comments').' WHERE '
-						.(module('comments')->USER_ID ? 'user_id='.intval(module('comments')->USER_ID) : 'ip="'._es(common()->get_ip()).'"')
+						.(main()->USER_ID ? 'user_id='.intval(main()->USER_ID) : 'ip="'._es(common()->get_ip()).'"')
 						.' AND add_date > '.(time() - module('comments')->ANTI_FLOOD_TIME).' 
 					ORDER BY add_date DESC 
 					LIMIT 1');
@@ -281,7 +281,7 @@ class yf_comments_manage {
 			$replace = array(
 				'form_action'		=> $FORM_ACTION,
 				'error_message'		=> $error_message,
-				'user_id'			=> intval(module('comments')->USER_ID),
+				'user_id'			=> intval(main()->USER_ID),
 				'user_name'			=> _prepare_html(_display_name($user_info)),
 				'user_avatar'		=> _show_avatar($comment_info['user_id'], $user_info, 1, 1),
 				'user_profile_link'	=> _profile_link($comment_info['user_id']),
@@ -304,7 +304,7 @@ class yf_comments_manage {
 	* Do delete comment
 	*/
 	function _delete ($params = array()) {
-		if (empty(module('comments')->USER_ID) && MAIN_TYPE_USER) {
+		if (empty(main()->USER_ID) && MAIN_TYPE_USER) {
 			return _error_need_login();
 		}
 		$_GET['id'] = intval($_GET['id']);
@@ -341,7 +341,7 @@ class yf_comments_manage {
 				'object_id' => $comment_info['object_id']
 			));
 		} else {
-			$delete_allowed = module('comments')->USER_ID && $comment_info['user_id'] == module('comments')->USER_ID;
+			$delete_allowed = main()->USER_ID && $comment_info['user_id'] == main()->USER_ID;
 		}
 		if (MAIN_TYPE_ADMIN || $SILENT_MODE) {
 			$delete_allowed	= true;
@@ -392,7 +392,7 @@ class yf_comments_manage {
 		preg_match_all(module('comments')->HTML_LINK_REGEX, $text, $result);
 		preg_match_all(module('comments')->BBCODE_LINK_REGEX, $text, $result2);
 		$count_links = count($result[1]) + count($result2[1]);
-		if (empty(module('comments')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			if ($count_links > 1) {
 				_re('Too many links');
 			}

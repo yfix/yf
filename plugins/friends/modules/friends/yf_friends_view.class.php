@@ -12,8 +12,8 @@ class yf_friends_view {
 	// All friends list for the given user
 	function view_all_friends () {
 		$_GET["id"] = intval($_GET["id"]);
-		if (!empty(module('friends')->USER_ID) && empty($_GET["id"])) {
-			$_GET["id"] = module('friends')->USER_ID;
+		if (!empty(main()->USER_ID) && empty($_GET["id"])) {
+			$_GET["id"] = main()->USER_ID;
 			$user_info = &module('friends')->_user_info;
 		}
 		if (empty($_GET["id"])) {
@@ -41,7 +41,7 @@ class yf_friends_view {
 			// Try to get users details
 			$users_array = user($friends_ids_1, array("id","name","nick","photo_verified","group"), array("WHERE" => array("active" => 1)));
 		}
-		$IS_OWN_PAGE = module('friends')->USER_ID && module('friends')->USER_ID == $user_info["id"];
+		$IS_OWN_PAGE = main()->USER_ID && main()->USER_ID == $user_info["id"];
 		// Get users friend of ids
 		$friend_of_ids = module('friends')->_get_users_where_friend_of($user_info["id"]);
 		// Process users
@@ -84,8 +84,8 @@ class yf_friends_view {
 	// All friends list for the given user
 	function view_all_friend_of () {
 		$_GET["id"] = intval($_GET["id"]);
-		if (!empty(module('friends')->USER_ID) && empty($_GET["id"])) {
-			$_GET["id"] = module('friends')->USER_ID;
+		if (!empty(main()->USER_ID) && empty($_GET["id"])) {
+			$_GET["id"] = main()->USER_ID;
 			$user_info = &module('friends')->_user_info;
 		}
 		if (empty($_GET["id"])) {
@@ -112,7 +112,7 @@ class yf_friends_view {
 			// Try to get users details
 			$users_array = user($friend_of_ids, array("id","name","nick","photo_verified","group"), array("WHERE" => array("active" => 1)));
 		}
-		$IS_OWN_PAGE = module('friends')->USER_ID && module('friends')->USER_ID == $user_info["id"];
+		$IS_OWN_PAGE = main()->USER_ID && main()->USER_ID == $user_info["id"];
 		// Get my friends ids
 		$my_friends_ids = module('friends')->_get_user_friends_ids($user_info["id"]);
 		// Process users
@@ -242,7 +242,7 @@ class yf_friends_view {
 	* View rool of friends posts
 	*/
 	function friends_posts(){
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		
@@ -262,7 +262,7 @@ class yf_friends_view {
 			$_SESSION["sort_type_select_box"] = $_POST["sort_type_select_box"];
 		}
 		
-		$all_friends = implode(",", (array)module('friends')->_get_user_friends_ids(module('friends')->USER_ID));
+		$all_friends = implode(",", (array)module('friends')->_get_user_friends_ids(main()->USER_ID));
 		
 		if(!empty($_SESSION["author_select_box"])){
 			$friends_ids = $_SESSION["author_select_box"];

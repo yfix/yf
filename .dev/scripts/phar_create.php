@@ -23,7 +23,7 @@ ini_set("phar.readonly", 0); // Could be done in php.ini
 #$path = $dir.'/yf';
 $path = "/home/www/yf/";
 
-$name = 'text_wiki.phar';
+$name = 'yf.phar';
 echo $name;
 $mode = Phar::GZ;
 
@@ -71,6 +71,9 @@ class FrameworkIterator implements Iterator, Countable {
 	global $phar, $baselen, $total;
 	
 	foreach (glob($path.'/'.$this->mask) as $file) {
+		if (false !== strpos($file, '/libs/')) {
+			continue;
+		}
 	  if (is_dir($file)) {
 		$this->dirs[ $this->getRelative($file) ] = $file;
 		$this->scan($file);

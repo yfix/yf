@@ -265,6 +265,9 @@ if (!function_exists('todecimal')) {
 if (!function_exists('_attrs_string2array')) {
 	function _attrs_string2array($string = '', $strip_quotes = true) {
 		$output_array = array();
+		if (!is_string($string)) {
+			return array();
+		}
 		foreach (explode(';', str_replace(',', ';', trim($string))) as $tmp_string) {
 			$tmp_string = trim($tmp_string);
 			if ($strip_quotes) {

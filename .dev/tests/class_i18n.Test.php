@@ -3,19 +3,42 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 class class_i18n_test extends PHPUnit_Framework_TestCase {
+	public static $no_cache = null;
 	public static function setUpBeforeClass() {
+		self::$no_cache = cache()->NO_CACHE;
+		cache()->NO_CACHE = true;
 		define('DEFAULT_LANG', 'en');
 		_class('i18n')->USE_TRANSLATE_CACHE = false;
-		_class('i18n')->TR_VARS['en']['unit_test_var1'] = 'unit_test_value1';
 	}
 	public static function tearDownAfterClass() {
+		cache()->NO_CACHE = self::$no_cache;
 	}
-	public function test_10() {
+	public function test_simple() {
+		_class('i18n')->TR_VARS['en']['unit_test_var1'] = 'unit_test_value1';
 		$this->assertEquals('unit_test_value1', t('unit_test_var1'));
 		$this->assertEquals('unit_test_value1', t(' unit_test_var1'));
 		$this->assertEquals('unit_test_value1', t('unit_test_var1 '));
 		$this->assertEquals('unit_test_value1', t(' unit_test_var1 '));
 		$this->assertEquals('unit_test_value1', t('   unit_test_var1   '));
+	}
+	public function test_underscores() {
+		_class('i18n')->TR_VARS['en']['unit_test_var1'] = 'unit_test_value1';
+		$this->assertEquals('unit_test_value1', t('unit test var1'));
+	}
+	public function test_namespaces() {
+		_class('i18n')->TR_VARS['en']['unit_test_var1'] = 'unit_test_value1';
+		_class('i18n')->TR_VARS['en']['::prefix::unit_test_var1'] = 'unit_test_value2';
+		_class('i18n')->TR_VARS['en']['::prefix_with_underscores::unit_test_var1'] = 'unit_test_value3';
+		$this->assertEquals('unit_test_value1', t('unit_test_var1'));
+		$this->assertEquals('unit_test_value2', t('::prefix::unit_test_var1'));
+		$this->assertEquals('unit_test_value3', t('::prefix_with_underscores::unit_test_var1'));
+		$this->assertEquals('unit_test_value1', t('::not_existing_prefix::unit_test_var1'));
+		$this->assertEquals('wrongprefix::unit test var1', t('wrongprefix::unit_test_var1'));
+		$this->assertEquals(':wrongprefix:unit test var1', t(':wrongprefix:unit_test_var1'));
+		$this->assertEquals('unit test var1:wrongprefix:', t('unit_test_var1:wrongprefix:'));
+	}
+	public function test_special_symbols() {
+		$this->assertEquals('[img]http://www.google.com/intl/en ALL/images/logo.gif[/img]', t('[img]http://www.google.com/intl/en_ALL/images/logo.gif[/img]'));
 	}
 	public function test_patterns_direct() {
 		$str = 'В процессе поиска {Найдено %num папок|0:Папок не найдено|1:Найдена %num папка|2,3,4:Найдено %num папки|11-14:Найдено %num папок|Найдено %num папок}';
@@ -43,11 +66,7 @@ class class_i18n_test extends PHPUnit_Framework_TestCase {
 		$translation = 'В процессе поиска {Найдено %num папок|0:Папок не найдено|1:Найдена %num папка|2,3,4:Найдено %num папки|11-14:Найдено %num папок|Найдено %num папок}';
 
 		_class('i18n')->TR_VARS['ru'][strtolower(str_replace(' ', '_', $var))] = $translation;
-		_class('i18n')->USE_TRANSLATE_CACHE = false;
 		_class('i18n')->_loaded['ru'] = true;
-
-		$old_no_cache = cache()->NO_CACHE;
-		cache()->NO_CACHE = 1;
 
 		$this->assertEquals('В процессе поиска Папок не найдено', t($var, array('%num' => '0'), 'ru') );
 		$this->assertEquals('В процессе поиска Найдена 1 папка', t($var, array('%num' => '1'), 'ru') );
@@ -67,17 +86,5 @@ class class_i18n_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('В процессе поиска Найдено 15 папок', t($var, array('%num' => '15'), 'ru') );
 		$this->assertEquals('В процессе поиска Найдено 100 папок', t($var, array('%num' => '100'), 'ru') );
 		$this->assertEquals('В процессе поиска Найдено 1222 папки', t($var, array('%num' => '1222'), 'ru') );
-
-		cache()->NO_CACHE = $old_no_cache;
-	}
-	public function test_40() {
-//		$this->assertEquals('', t('[img]http://www.google.com/intl/en_ALL/images/logo.gif[/img]'));
-/*
-		t("Test var");
-		t("::forum::Test var");
-		t("::forum__new_post::Test var");
-		t("::gallery::Test var");
-		t("::bl_ablabla::Test var");
-*/
 	}
 }

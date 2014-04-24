@@ -70,9 +70,6 @@ class yf_comments {
 	* Framework constructor
 	*/
 	function _init () {
-		if (!main()->USER_ID && main()->USER_ID) {
-			main()->USER_ID = main()->USER_ID;
-		}
 	}
 
 	/**

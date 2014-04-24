@@ -1876,7 +1876,7 @@ class yf_form2 {
 	* Here we have special rule, called __form_id__ , it is used to track which form need to be validated from $_POST.
 	*/
 	function validate($validate_rules = array(), $post = array()) {
-		$form_global_validate = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
+		$form_global_validate = isset($this->_params['validate']) ? $this->_params['validate'] : (isset($this->_replace['validate']) ? $this->_replace['validate']: array());
 		foreach ((array)$form_global_validate as $name => $rules) {
 			$this->_validate_rules[$name] = $rules;
 		}

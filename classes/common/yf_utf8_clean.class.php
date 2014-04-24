@@ -225,7 +225,13 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 		if (!$search) {
 			$search = array();
 			// Get the HTML entities table into an array
-			$trans = get_html_translation_table(HTML_ENTITIES);
+			$trans = array(
+				'"' => '&quot;',
+				'&' => '&amp;',
+				'\'' => '&#039;',
+				'<' => '&lt;',
+				'>' => '&gt;',
+			);
 			// Go through the entity mappings one-by-one
 			foreach ((array)$trans as $literal => $entity) {
 			  // Make sure we don't process any other characters

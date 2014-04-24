@@ -13,7 +13,7 @@ class yf_friends_handshake {
 	* 
 	*/
 	function request_handshake_form(){
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
@@ -24,7 +24,7 @@ class yf_friends_handshake {
 			return _e("No such user in database!");
 		}
 
-		if ($receiver_info["id"] == module('friends')->USER_ID) {
+		if ($receiver_info["id"] == main()->USER_ID) {
 			return _e("You are trying to send handshake to yourself!");
 		}
 
@@ -42,7 +42,7 @@ class yf_friends_handshake {
 	* 
 	*/
 	function send_request_handshake(){
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
@@ -53,7 +53,7 @@ class yf_friends_handshake {
 			return _e("No such user in database!");
 		}
 
-		if ($receiver_info["id"] == module('friends')->USER_ID) {
+		if ($receiver_info["id"] == main()->USER_ID) {
 			return _e("You are trying to send handshake to yourself!");
 		}
 
@@ -96,14 +96,14 @@ class yf_friends_handshake {
 	*/
 	function all_handshake_request($sender = 0, $object = ""){
 		
-		module('friends')->USER_ID = $sender?$sender:module('friends')->USER_ID;
+		main()->USER_ID = $sender?$sender:main()->USER_ID;
 		$object = $object?$object:'friends';
 	
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
-		$sql = "SELECT * FROM ".db('handshake')." WHERE sender=".module('friends')->USER_ID;
+		$sql = "SELECT * FROM ".db('handshake')." WHERE sender=".main()->USER_ID;
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 
 		$Q = db()->query($sql.$add_sql);
@@ -149,14 +149,14 @@ class yf_friends_handshake {
 	* 
 	*/
 	function all_handshake_request_to_you($receiver = 0, $object = ""){
-		module('friends')->USER_ID = $receiver?$receiver:module('friends')->USER_ID;
+		main()->USER_ID = $receiver?$receiver:main()->USER_ID;
 		$object = $object?$object:'friends';
 	
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
-		$sql = "SELECT * FROM ".db('handshake')." WHERE receiver=".module('friends')->USER_ID." ORDER BY status";
+		$sql = "SELECT * FROM ".db('handshake')." WHERE receiver=".main()->USER_ID." ORDER BY status";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 
 		$Q = db()->query($sql.$add_sql);
@@ -199,7 +199,7 @@ class yf_friends_handshake {
 	* 
 	*/
 	function accept_handshake(){
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -208,7 +208,7 @@ class yf_friends_handshake {
 			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 
-		if(module('friends')->USER_ID != $handshake["receiver"]){
+		if(main()->USER_ID != $handshake["receiver"]){
 			return _e("Only for owner!");
 		}
 		
@@ -226,12 +226,12 @@ class yf_friends_handshake {
 			), "id=".intval($handshake["id"]));			
 			
 			// Check if user is already a friend
-			$IS_A_FRIEND = module('friends')->_is_a_friend(module('friends')->USER_ID, $handshake["sender"]);
+			$IS_A_FRIEND = module('friends')->_is_a_friend(main()->USER_ID, $handshake["sender"]);
 			if ($IS_A_FRIEND) {
 				return _e("This user is already in your friends list");
 			}
 			// Do add user
-			module('friends')->_add_user_friends_ids(module('friends')->USER_ID, $handshake["sender"]);
+			module('friends')->_add_user_friends_ids(main()->USER_ID, $handshake["sender"]);
 	
 		}
 		return js_redirect("./?object=".'friends'."&action=all_handshake_request_to_you");
@@ -241,7 +241,7 @@ class yf_friends_handshake {
 	* 
 	*/
 	function decline_handshake(){
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -250,7 +250,7 @@ class yf_friends_handshake {
 			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 
-		if(module('friends')->USER_ID != $handshake["receiver"]){
+		if(main()->USER_ID != $handshake["receiver"]){
 			return _e("Only for owner!");
 		}
 		
@@ -263,9 +263,9 @@ class yf_friends_handshake {
 				return _e("No such user!");
 			}
 			// Check if user is already a friend
-			$IS_A_FRIEND = module('friends')->_is_a_friend(module('friends')->USER_ID, $handshake["sender"]);
+			$IS_A_FRIEND = module('friends')->_is_a_friend(main()->USER_ID, $handshake["sender"]);
 			if ($IS_A_FRIEND) {
-				module('friends')->_del_user_friends_ids(module('friends')->USER_ID, $target_user_info);
+				module('friends')->_del_user_friends_ids(main()->USER_ID, $target_user_info);
 			}
 			
 			db()->UPDATE("handshake", array(
@@ -280,7 +280,7 @@ class yf_friends_handshake {
 	* 
 	*/
 	function group_handshake_action(){
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 
@@ -289,7 +289,7 @@ class yf_friends_handshake {
 				if (!empty($value_id)) {
 					$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 				}
-				if(module('friends')->USER_ID != $handshake["receiver"]){
+				if(main()->USER_ID != $handshake["receiver"]){
 					return _e("Only for owner!");
 				}
 
@@ -300,7 +300,7 @@ class yf_friends_handshake {
 						return _e("No such user!");
 					}
 					// Check if user is already a friend
-					$IS_A_FRIEND = module('friends')->_is_a_friend(module('friends')->USER_ID, $handshake["sender"]);
+					$IS_A_FRIEND = module('friends')->_is_a_friend(main()->USER_ID, $handshake["sender"]);
 					if ($IS_A_FRIEND) {
 						db()->UPDATE("handshake", array(
 							"action_date"	=> time(),
@@ -308,7 +308,7 @@ class yf_friends_handshake {
 						), "id=".intval($handshake["id"]));
 					}else{
 					// Do add user
-					module('friends')->_add_user_friends_ids(module('friends')->USER_ID, $handshake["sender"]);
+					module('friends')->_add_user_friends_ids(main()->USER_ID, $handshake["sender"]);
 			
 					// update status
 						db()->UPDATE("handshake", array(
@@ -325,7 +325,7 @@ class yf_friends_handshake {
 				if (!empty($value_id)) {
 					$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 				}
-				if(module('friends')->USER_ID != $handshake["receiver"]){
+				if(main()->USER_ID != $handshake["receiver"]){
 					return _e("Only for owner!");
 				}
 
@@ -351,7 +351,7 @@ class yf_friends_handshake {
 	* 
 	*/
 	function delete_handshake(){
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		$_GET["id"] = intval($_GET["id"]);
@@ -360,7 +360,7 @@ class yf_friends_handshake {
 			$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$_GET["id"]);
 		}
 
-		if (module('friends')->USER_ID != $handshake["sender"]){
+		if (main()->USER_ID != $handshake["sender"]){
 			return _e("Only for owner!");
 		}
 		if (!empty($_GET["id"])){
@@ -373,7 +373,7 @@ class yf_friends_handshake {
 	* 
 	*/
 	function group_handshake_delete(){
-		if (empty(module('friends')->USER_ID)) {
+		if (empty(main()->USER_ID)) {
 			return _error_need_login();
 		}
 		foreach ((array)$_POST["item"] as $value_id){
@@ -381,7 +381,7 @@ class yf_friends_handshake {
 				$handshake = db()->query_fetch("SELECT * FROM ".db('handshake')." WHERE id=".$value_id);
 			}
 
-			if (module('friends')->USER_ID != $handshake["sender"]){
+			if (main()->USER_ID != $handshake["sender"]){
 				return _e("Only for owner!");
 			}
 			if (!empty($value_id)){
