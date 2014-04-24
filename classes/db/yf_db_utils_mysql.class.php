@@ -90,6 +90,9 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
+		if (strlen($this->db->DB_PREFIX) && substr($name, 0, strlen($this->db->DB_PREFIX)) == $this->db->DB_PREFIX) {
+			$name = substr($name, strlen($this->db->DB_PREFIX));
+		}
 		$globs = array(
 			PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
 			PROJECT_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
@@ -113,7 +116,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			return false;
 		}
 		$sql = 'CREATE TABLE IF NOT EXISTS '.$this->db->_fix_table_name($name).' ('. PHP_EOL. $data. PHP_EOL. ') ENGINE=InnoDB DEFAULT CHARSET=utf8;'. PHP_EOL;
-		return $extra['sql'] ? $sql : $this->db->query($sql);
+		return $extra['sql'] ? $sql : $this->db->query($sql) && $error = $this->db->error();
 	}
 
 	/**
