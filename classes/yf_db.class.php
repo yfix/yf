@@ -1330,7 +1330,7 @@ class yf_db {
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
 			$this->_save_query_revision(__FUNCTION__, $table, array('where' => $where, 'cond' => $cond));
 		}
-		$sql = 'DELETE FROM '.$this->_real_name($table).' WHERE '.$cond.' LIMIT 1';
+		$sql = 'DELETE FROM '.$this->_real_name($table).' WHERE '.$cond;
 		return $this->query($sql);
 	}
 
