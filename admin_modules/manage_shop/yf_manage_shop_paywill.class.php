@@ -80,17 +80,22 @@ class yf_manage_shop_paywill{
 		// total string
 		$total_sum	= $order_info[ 'total_sum' ];
 		$num_to_str	= common()->num2str( $total_sum );
+		// delivery
+		$_class_delivery = _class( '_shop_delivery', 'modules/shop/' );
+		$delivery_name = $_class_delivery->_get_name_by_id( $order_info[ 'delivery_type' ] );
 		$replace = array(
-			'id'			=> $order_info['id'],
-			'total_sum'		=> module('shop')->_format_price( $total_sum ),
-			'user_address'	=> implode(" / ", $user_address),
-//			'pay_type'		=> module('shop')->_pay_types[$order_info['pay_type']],
-			'date'			=> _format_date($order_info['date'], '%d.%m.%Y г.'),
-//			'payment'		=> common()->get_static_conf('payment_methods', $order_info['payment']),
-			'products'		=> $out['products'],
-			'delivery'		=> ($order_info['delivery_price'] !== '')? module('shop')->_format_price(floatval($order_info['delivery_price'])) : 'не расчитана',
-			'discount'		=> module('shop')->_format_price( $discount_price ),
-			'num_to_str'	=> $num_to_str,
+			'id'                => $order_info['id'],
+			'total_sum'         => module('shop')->_format_price( $total_sum ),
+			'user_address'      => implode(" / ", $user_address),
+			// 'pay_type'          => module('shop')->_pay_types[$order_info['pay_type']],
+			// 'payment'           => common()->get_static_conf('payment_methods', $order_info['payment']),
+			'date'              => _format_date($order_info['date'], '%d.%m.%Y г.'),
+			'products'          => $out['products'],
+			'delivery'          => ($order_info['delivery_price'] !== '')? module('shop')->_format_price(floatval($order_info['delivery_price'])) : 'не расчитана',
+			'discount'          => module('shop')->_format_price( $discount_price ),
+			'num_to_str'        => $num_to_str,
+			'delivery_name'     => $delivery_name,
+			'delivery_location' => $order_info['delivery_location'],
 		);
 		return tpl()->parse('shop/paywill', $replace);
 	}

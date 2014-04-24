@@ -199,6 +199,9 @@ if (!function_exists('db_get')) {
 if (!function_exists('db_get_all')) {
 	function db_get_all($sql = '', $key_name = null, $use_cache = true) { return db()->query_fetch_all($sql, $key_name, $use_cache); }
 }
+if (!function_exists('db_get_one')) {
+	function db_get_one($sql = '', $use_cache = true) { return db()->get_one($sql, $use_cache); }
+}
 // current GMT time
 if (!function_exists('gmtime')) {
 	function gmtime () { return common()->gmtime(); }

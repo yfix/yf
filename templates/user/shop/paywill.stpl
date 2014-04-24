@@ -10,7 +10,7 @@
 								69095, м. Запоріжжя, вул. Щаслива 5а<br />
 								тел.: 095-829-66-11, 096-829-66-11, 093-829-66-11
 							</li>
-							<li style="list-style: none outside none;margin-bottom: 5px;"><b>РЕКВИЗИТЫ ПОСТАВЩИКА:</b> 
+							<li style="list-style: none outside none;margin-bottom: 5px;"><b>РЕКВИЗИТЫ ПОСТАВЩИКА:</b>
 								ЄДРПОУ 38909273<br />
 								р/р 5169330501572850 <br />
 								в ПрАТ «Приват Банк»<br />
@@ -24,6 +24,12 @@
 					<div>
 						<p><b>ПЛАТЕЛЬЩИК:</b> <br /> {user_address}<br />Город: Запорожье</p>
 						{if("payment" ne "")}<p><b>ФОРМА ОПЛАТЫ:</b> {payment}</p>{/if}
+{if( delivery_location ne '' )}
+						<p>
+							<b>ДОСТАВКА:</b>
+							{delivery_name}, {delivery_location}
+						</p>
+{/if}
 						<table style="border-collapse: collapse; border-bottom: 2px solid rgb(206, 206, 206);">
 							<tr style="background-color: rgb(206, 206, 206);border-bottom: 1px solid rgb(206, 206, 206);">
 								<th style="text-align: left; width: 350px;padding: 15px 12px;">Название</th>
@@ -40,7 +46,7 @@
 									<td style="width: 140px;text-align: right;padding: 15px 12px;">{#.product_quantity}</td>
 									<td style="width: 140px;text-align: right;padding: 15px 12px;">{#.product_item_price}</td>
 								</tr>
-							{/foreach}	
+							{/foreach}
 								<tr>
 									<td colspan="3"></td>
 									<td style="width: 140px;text-align: right;padding: 5px 15px ;"><b>Скидка</b></td>
@@ -56,13 +62,13 @@
 									<td style="width: 140px;text-align: right;padding: 0 15px ;"><b>Итого</b></td>
 									<td style="width: 140px;text-align: right;padding: 0 15px ;"><h4>{total_sum}</h4></td>
 								</tr>
-								
+
 							</table>
 							<ul>
 								<li style="list-style: none outside none;margin-bottom: 5px;">Сумма: <b>{total_sum}  ({num_to_str})</b></li>
 							</ul>
 						</div>
-					</div>		     
+					</div>
 			    </div>
 			    <!--/main-->
 			  </div>

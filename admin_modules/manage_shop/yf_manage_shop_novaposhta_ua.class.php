@@ -1,5 +1,14 @@
 <?php
 
+/***
+	todo:
+	map, geocode
+	src: http://novaposhta.ua/map/index/ru
+	city: Авдеевка (654)
+	map page: /map/citymap?id=654
+	map iframe: http://maps.novaposhta.ua/index.php?r=site/map_city&id=654
+*/
+
 class yf_manage_shop_novaposhta_ua {
 
 	private $_class_price          = false;
