@@ -9,7 +9,7 @@ if ( ! db()->utils()->table_exists($table) || $force) {
 	db()->utils()->drop_table($table);
 	db()->utils()->create_table($table);
 }
-
+exit;
 $country_ids = array();
 foreach (db_geonames()->select('code','geoname_id')->from('geo_country')->get_2d() as $code => $id) {
 	$id && $country_ids[$code] = $id;
@@ -20,7 +20,7 @@ foreach (db_geonames()->select('code','geoname_id')->from('geo_admin1')->get_2d(
 }
 if ($lang) {
 	$sql = '
-		SELECT g.id, a.name, g.country, g.latitude, g.longitude, g.admin1, g.population
+		SELECT g.id, a.name, g.name AS name_eng, g.country, g.latitude, g.longitude, g.admin1, g.population
 		FROM geo_geoname AS g
 		LEFT JOIN geo_alternate_name AS a ON a.geoname_id = g.id
 		WHERE 
@@ -37,6 +37,7 @@ foreach (db_geonames()->get_all($sql) as $a) {
 		'id'			=> $a['id'],
 		'country'		=> $a['country'],
 		'name'			=> $a['name'],
+		'name_eng'		=> $a['name_eng'],
 		'population'	=> $a['population'],
 		'lat'			=> todecimal($a['latitude'], 6),
 		'lon'			=> todecimal($a['longitude'], 6),
