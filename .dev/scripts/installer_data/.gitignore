@@ -1,9 +1,0 @@
-# git ignore
-
-# Ignore files,
-*~
-*.log
-*.swp
-# ignore folders
-data/
-sql/
