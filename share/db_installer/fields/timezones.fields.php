@@ -20,6 +20,15 @@ $data = array (
 			'default' => '',
 			'auto_inc' => 0,
 		),
+		'name_eng' => 
+		array (
+			'type' => 'varchar',
+			'length' => '64',
+			'attrib' => NULL,
+			'not_null' => 1,
+			'default' => '',
+			'auto_inc' => 0,
+		),
 		'offset' => 
 		array (
 			'type' => 'varchar',

@@ -29,6 +29,15 @@ $data = array (
 			'default' => '0',
 			'auto_inc' => 0,
 		),
+		'active' => 
+		array (
+			'type' => 'enum',
+			'length' => '\'0\',\'1\'',
+			'attrib' => NULL,
+			'not_null' => 1,
+			'default' => '0',
+			'auto_inc' => 0,
+		),
 	),
 	'keys' => 
 	array (
