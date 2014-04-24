@@ -20,6 +20,15 @@ $data = array (
 			'default' => '',
 			'auto_inc' => 0,
 		),
+		'name_eng' => 
+		array (
+			'type' => 'varchar',
+			'length' => '20',
+			'attrib' => NULL,
+			'not_null' => 0,
+			'default' => '',
+			'auto_inc' => 0,
+		),
 		'geoname_id' => 
 		array (
 			'type' => 'int',

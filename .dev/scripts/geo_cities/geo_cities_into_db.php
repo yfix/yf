@@ -7,9 +7,8 @@ $lang = 'ru';
 $table = DB_PREFIX. 'geo_cities';
 if ( ! db()->utils()->table_exists($table) || $force) {
 	db()->utils()->drop_table($table);
-	db()->utils()->create_table($table);
+	db()->utils()->create_table($table, array(), $error);
 }
-exit;
 $country_ids = array();
 foreach (db_geonames()->select('code','geoname_id')->from('geo_country')->get_2d() as $code => $id) {
 	$id && $country_ids[$code] = $id;
