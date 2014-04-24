@@ -31,6 +31,7 @@ if ( ! db()->utils()->table_exists($table) || $force) {
 	db()->utils()->create_table($table);
 }
 db()->insert_safe($table, $data) or print_r(db()->error());
+db()->update($table, array('active' => 1), 'country IN("ua","ru","by","es","de","us")');
 
 echo 'Trying to get 2 first records: '.PHP_EOL;
 print_r(db()->get_all('SELECT * FROM '.$table.' LIMIT 2'));
