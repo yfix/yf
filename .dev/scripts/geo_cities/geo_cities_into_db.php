@@ -45,5 +45,8 @@ foreach (db_geonames()->get_all($sql) as $a) {
 }
 db()->replace_safe($table, $to_update);
 
+db()->query('DELETE FROM '.$table.' WHERE country != "ua"') or print_r(db()->error());
+db()->update($table, array('active' => 1), 'country = "ua"');
+
 echo 'Trying to get 2 first records: '.PHP_EOL;
 print_r(db()->get_all('SELECT * FROM '.$table.' LIMIT 2'));
