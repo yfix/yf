@@ -36,7 +36,7 @@ class form2_2forms {
 				'force'           => true,
 				'add_fields'      => array('cancel_time' => time(), 'status' => $request_types),
 				'on_after_update' => function($data, $table, $fields, $type, $extra) {
-#					_class('rating')->_log_rating_points('credit_requests_add', db()->insert_id());
+#					_class('rating')->_log_rating_points('creditor_requests_add', db()->insert_id());
 				})
 			)
 			->submit('cancel', false, array('value' => $request_owner == false ? 'Reject' : 'Cancel', 'class' => 'btn-danger'));
