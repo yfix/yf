@@ -29,8 +29,16 @@ class yf_category_editor {
 		if (isset($cat_info['name'])) {
 			cache_del(array(
 				'cats__get_items_names__'.$cat_info['name'],
+				'cats__get_items_names__'.$cat_info['name'].'_0',
+				'cats__get_items_names__'.$cat_info['name'].'_1',
+				'cats__get_items_names__'.$cat_info['name'].'_0_0',
+				'cats__get_items_names__'.$cat_info['name'].'_0_1',
+				'cats__get_items_names__'.$cat_info['name'].'_1_0',
+				'cats__get_items_names__'.$cat_info['name'].'_1_1',
 				'cats__prepare_for_box__'.$cat_info['name'].'_0',
 				'cats__prepare_for_box__'.$cat_info['name'].'_1',
+				'cats__prepare_for_box__'.$cat_info['name'].'_0_0',
+				'cats__prepare_for_box__'.$cat_info['name'].'_1_0',
 			));
 		}
 		_class( '_shop_categories', 'modules/shop/' )->_refresh_cache();
@@ -301,7 +309,7 @@ class yf_category_editor {
 					<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="icon-save"></i> '.t('Save').'</button>
 					<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-backward"></i> '.t('Go Back').'</a>
 					<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-plus-sign"></i> '.t('Add').'</a>
-					<a href="javascript:void(0);" class="btn btn-mini btn-xs" id="draggable-menu-expand-all"><i class="icon-expand-alt"></i> '.t('Expand').'</a>
+					<a href="javascript:void(0);" class="btn btn-mini btn-xs" id="draggable-menu-expand-all"><i class="icon-expand-alt fa-expand"></i> '.t('Expand').'</a>
 				</div>
 				<ul class="draggable_menu">'.implode(PHP_EOL, (array)$this->_drag_tpl_items($items)).'</ul>
 			</form>'

@@ -10,7 +10,7 @@ function rsearch($folder, $pattern) {
     $files = new RegexIterator($ite, $pattern, RegexIterator::GET_MATCH);
     $fileList = array();
     foreach($files as $file) {
-        $fileList = array_merge($fileList, $file);
+        $fileList[] = $file[0];
     }
     return $fileList;
 }
@@ -42,14 +42,14 @@ class bench {
 			$files[$name] = $_files;
 			$out[$name] = ++$i.') '.$desc.' | time: '.round(microtime(true) - $start_time, 3).' | mem: '.(memory_get_usage() - $start_mem).' | peakmem: '.memory_get_peak_usage();
 		}
-		return print_r($files). PHP_EOL. implode(PHP_EOL, $out). PHP_EOL;
+		return print_r($files, 1). PHP_EOL. implode(PHP_EOL, $out). PHP_EOL;
 	}
 	function dir_scan() {
-		$files = _class('dir')->scan(YF_PATH, 1, '-f ~gallery.*.php~ims');
+		$files = _class('dir')->scan(YF_PATH, 1, '-f ~gallery.*.php$~ims');
 		return array('_class("dir")->scan()', $files);
 	}
 	function directory_iterator() {
-		$files = rsearch(YF_PATH, '~gallery.*.php~ims');
+		$files = rsearch(YF_PATH, '~gallery.*.php$~ims');
 		return array('DirectoryIterator', $files);
 	}
 	function rglob() {
