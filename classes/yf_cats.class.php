@@ -42,7 +42,8 @@ class yf_cats {
 		if (empty($cat_id)) {
 			return false;
 		}
-		if (!isset($this->_items_cache[$cat_id])) {
+		$cache_name = intval($cat_id).'_'.intval($all);
+		if (!isset($this->_items_cache[$cache_name])) {
 			$cat_id = $this->_get_cat_id_by_name($cat_name);
 			$custom_fields = array();
 			if ($cat_id) {
@@ -69,9 +70,9 @@ class yf_cats {
 				}
 				$raw_items[$a['id']] = $a;
 			}
-			$this->_items_cache[$cat_id] = $raw_items;
+			$this->_items_cache[$cache_name] = $raw_items;
 		} else {
-			$raw_items = $this->_items_cache[$cat_id];
+			$raw_items = $this->_items_cache[$cache_name];
 		}
 		if ($recursive_sort && !empty($raw_items)) {
 			$raw_items = $this->_recursive_sort_items($raw_items);
@@ -140,7 +141,7 @@ class yf_cats {
 	/**
 	*/
 	function _get_items_names_cached($cat_name = '', $recursive_sort = true, $all = false) {
-		$cache_name = 'cats__get_items_names__'.$cat_name.'_'.$all.'_'.$recursive_sort;
+		$cache_name = 'cats__get_items_names__'.$cat_name.'_'.intval($all).'_'.intval($recursive_sort);
 		$items = cache_get($cache_name);
 		if ($items) {
 			return $items;
@@ -153,7 +154,7 @@ class yf_cats {
 	/**
 	*/
 	function _prepare_for_box_cached($cat_name = '', $with_all = 1, $parent_item_id = 0, $all = false) {
-		$cache_name = 'cats__prepare_for_box__'.$cat_name.'_'.$all.'_'.$parent_item_id;
+		$cache_name = 'cats__prepare_for_box__'.$cat_name.'_'.intval($all).'_'.intval($parent_item_id);
 		$items = cache_get($cache_name);
 		if ($items) {
 			return $items;
@@ -362,7 +363,8 @@ class yf_cats {
 		if (empty($cat_id) || empty($item_id)) {
 			return false;
 		}
-		return $this->_items_cache[$cat_id][$item_id]['name'];
+		$items = $this->_get_items_names_cached($cat_name, $recursive_sort = true, $all = false);
+		return $items[$item_id];
 	}
 
 	/**
@@ -381,7 +383,7 @@ class yf_cats {
 		}
 		$current_func = __FUNCTION__;
 		$ids[$cat_id] = $cat_id;
-		foreach ($all_cats as $key => $item) {
+		foreach ((array)$all_cats as $key => $item) {
 			if ($item['parent_id'] == $cat_id) {
 				$ids += $this->$current_func($item['id'], $all_cats);
 			}
