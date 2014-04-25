@@ -29,8 +29,16 @@ class yf_category_editor {
 		if (isset($cat_info['name'])) {
 			cache_del(array(
 				'cats__get_items_names__'.$cat_info['name'],
+				'cats__get_items_names__'.$cat_info['name'].'_0',
+				'cats__get_items_names__'.$cat_info['name'].'_1',
+				'cats__get_items_names__'.$cat_info['name'].'_0_0',
+				'cats__get_items_names__'.$cat_info['name'].'_0_1',
+				'cats__get_items_names__'.$cat_info['name'].'_1_0',
+				'cats__get_items_names__'.$cat_info['name'].'_1_1',
 				'cats__prepare_for_box__'.$cat_info['name'].'_0',
 				'cats__prepare_for_box__'.$cat_info['name'].'_1',
+				'cats__prepare_for_box__'.$cat_info['name'].'_0_0',
+				'cats__prepare_for_box__'.$cat_info['name'].'_1_0',
 			));
 		}
 	}
