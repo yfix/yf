@@ -73,9 +73,9 @@ class yf_manage_shop {
 		$this->_category_names	= _class('cats')->_get_items_names_cached('shop_cats');
 
 		if ($this->SUPPLIER_ID && $supplier_parent_cat_item) {
-			$this->_cats_for_select	= _class('cats')->_prepare_for_box_cached('shop_cats', 0, $supplier_parent_cat_item);
+			$this->_cats_for_select	= _class('cats')->_prepare_for_box_cached('shop_cats', 1, $supplier_parent_cat_item);
 		} else {
-			$this->_cats_for_select	= _class('cats')->_prepare_for_box_cached('shop_cats', 0);
+			$this->_cats_for_select	= _class('cats')->_prepare_for_box_cached('shop_cats', 1);
 		}
 
 		$this->man = db()->query_fetch_all('SELECT * FROM '.db('shop_manufacturers').' ORDER BY name ASC');
@@ -582,6 +582,7 @@ class yf_manage_shop {
 		cache_del('_shop_product_params|_product_image|'.$product_id);
 		cache_del('_shop_product_params|_get_params_by_product|'.$product_id);
 		cache_del('pattern_yf|_get_shop_product_details|'.$product_id);
+		_class( '_shop_categories', 'modules/shop/' )->_refresh_cache();
 	}
 
 	function _product_get_info($product_id = 0) {
