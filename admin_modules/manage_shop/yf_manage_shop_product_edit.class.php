@@ -166,6 +166,7 @@ class yf_manage_shop_product_edit {
 			->select_box('manufacturer_id', module('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'edit_link' => './?object='.main()->_get('object').'&action=manufacturers', 'translate' => 0))
 			->select_box('supplier_id', module('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'edit_link' => './?object='.main()->_get('object').'&action=suppliers'))
 			->textarea('description')
+			->money('old_price')
 			->money('price')
 			->money('price_promo')
 			->money('price_partner')

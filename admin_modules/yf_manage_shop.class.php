@@ -418,6 +418,10 @@ class yf_manage_shop {
 		return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
+	function product_set_active() {
+		return _class('manage_shop_product_sets', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
 	function _show_header() {
 		return _class('manage_shop__show_header', 'admin_modules/manage_shop/')->_show_header();
 	}

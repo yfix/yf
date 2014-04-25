@@ -21,17 +21,18 @@ class yf_manage_shop_price_markup_down {
 
 	function _init() {
 		$this->_class_price = _class( '_shop_price', 'modules/shop/' );
+		// actions urls
 		$_object = main()->_get( 'object' );
 		$_module = 'price_markup_down';
 		$_uri_object = "./?object=$_object";
-		$_uri_action = "$_uri_object&action=";
+		$_uri_action = "$_uri_object&action=$_module";
 
 		$this->_uri = array(
-			'show'   => $_uri_action . 'price_markup_down',
-			'add'    => $_uri_action . 'price_markup_down_add',
-			'edit'   => $_uri_action . 'price_markup_down_edit'   . '&id=%d',
-			'delete' => $_uri_action . 'price_markup_down_delete' . '&id=%d',
-			'active' => $_uri_action . 'price_markup_down_active' . '&id=%d',
+			'show'   => $_uri_action,
+			'add'    => $_uri_action . '_add',
+			'edit'   => $_uri_action . '_edit'   . '&id=%d',
+			'delete' => $_uri_action . '_delete' . '&id=%d',
+			'active' => $_uri_action . '_active' . '&id=%d',
 		);
 		$this->_table[ 'back_link' ] = $this->_uri[ 'show' ];
 		$_instance = $this; $this->_instance = $_instance;
