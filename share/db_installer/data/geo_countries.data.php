@@ -5,7 +5,8 @@ $data = array (
     'code' => 'AD',
     'code3' => 'AND',
     'num' => '020',
-    'name' => 'Andorra',
+    'name' => 'Андорра',
+    'name_eng' => 'Andorra',
     'cont' => 'EU',
     'tld' => 'ad',
     'currency' => 'EUR',
@@ -22,7 +23,8 @@ $data = array (
     'code' => 'AE',
     'code3' => 'ARE',
     'num' => '784',
-    'name' => 'United Arab Emirates',
+    'name' => 'ОАЭ',
+    'name_eng' => 'United Arab Emirates',
     'cont' => 'AS',
     'tld' => 'ae',
     'currency' => 'AED',
@@ -39,7 +41,8 @@ $data = array (
     'code' => 'AF',
     'code3' => 'AFG',
     'num' => '004',
-    'name' => 'Afghanistan',
+    'name' => 'Афганистан',
+    'name_eng' => 'Afghanistan',
     'cont' => 'AS',
     'tld' => 'af',
     'currency' => 'AFN',
@@ -56,7 +59,8 @@ $data = array (
     'code' => 'AG',
     'code3' => 'ATG',
     'num' => '028',
-    'name' => 'Antigua and Barbuda',
+    'name' => 'Антигуа и Барбуда',
+    'name_eng' => 'Antigua and Barbuda',
     'cont' => 'NA',
     'tld' => 'ag',
     'currency' => 'XCD',
@@ -73,7 +77,8 @@ $data = array (
     'code' => 'AI',
     'code3' => 'AIA',
     'num' => '660',
-    'name' => 'Anguilla',
+    'name' => 'Ангилья',
+    'name_eng' => 'Anguilla',
     'cont' => 'NA',
     'tld' => 'ai',
     'currency' => 'XCD',
@@ -90,7 +95,8 @@ $data = array (
     'code' => 'AL',
     'code3' => 'ALB',
     'num' => '008',
-    'name' => 'Albania',
+    'name' => 'Албания',
+    'name_eng' => 'Albania',
     'cont' => 'EU',
     'tld' => 'al',
     'currency' => 'ALL',
@@ -107,7 +113,8 @@ $data = array (
     'code' => 'AM',
     'code3' => 'ARM',
     'num' => '051',
-    'name' => 'Armenia',
+    'name' => 'Армения',
+    'name_eng' => 'Armenia',
     'cont' => 'AS',
     'tld' => 'am',
     'currency' => 'AMD',
@@ -124,7 +131,8 @@ $data = array (
     'code' => 'AO',
     'code3' => 'AGO',
     'num' => '024',
-    'name' => 'Angola',
+    'name' => 'Ангола',
+    'name_eng' => 'Angola',
     'cont' => 'AF',
     'tld' => 'ao',
     'currency' => 'AOA',
@@ -141,7 +149,8 @@ $data = array (
     'code' => 'AQ',
     'code3' => 'ATA',
     'num' => '010',
-    'name' => 'Antarctica',
+    'name' => 'Антарктида',
+    'name_eng' => 'Antarctica',
     'cont' => 'AN',
     'tld' => 'aq',
     'currency' => '',
@@ -158,7 +167,8 @@ $data = array (
     'code' => 'AR',
     'code3' => 'ARG',
     'num' => '032',
-    'name' => 'Argentina',
+    'name' => 'Аргентина',
+    'name_eng' => 'Argentina',
     'cont' => 'SA',
     'tld' => 'ar',
     'currency' => 'ARS',
@@ -175,7 +185,8 @@ $data = array (
     'code' => 'AS',
     'code3' => 'ASM',
     'num' => '016',
-    'name' => 'American Samoa',
+    'name' => 'Американское Самоа',
+    'name_eng' => 'American Samoa',
     'cont' => 'OC',
     'tld' => 'as',
     'currency' => 'USD',
@@ -192,7 +203,8 @@ $data = array (
     'code' => 'AT',
     'code3' => 'AUT',
     'num' => '040',
-    'name' => 'Austria',
+    'name' => 'Австрия',
+    'name_eng' => 'Austria',
     'cont' => 'EU',
     'tld' => 'at',
     'currency' => 'EUR',
@@ -209,7 +221,8 @@ $data = array (
     'code' => 'AU',
     'code3' => 'AUS',
     'num' => '036',
-    'name' => 'Australia',
+    'name' => 'Австралия',
+    'name_eng' => 'Australia',
     'cont' => 'OC',
     'tld' => 'au',
     'currency' => 'AUD',
@@ -226,7 +239,8 @@ $data = array (
     'code' => 'AW',
     'code3' => 'ABW',
     'num' => '533',
-    'name' => 'Aruba',
+    'name' => 'Аруба',
+    'name_eng' => 'Aruba',
     'cont' => 'NA',
     'tld' => 'aw',
     'currency' => 'AWG',
@@ -243,7 +257,8 @@ $data = array (
     'code' => 'AX',
     'code3' => 'ALA',
     'num' => '248',
-    'name' => 'Aland Islands',
+    'name' => 'Аландские острова',
+    'name_eng' => 'Aland Islands',
     'cont' => 'EU',
     'tld' => 'ax',
     'currency' => 'EUR',
@@ -260,7 +275,8 @@ $data = array (
     'code' => 'AZ',
     'code3' => 'AZE',
     'num' => '031',
-    'name' => 'Azerbaijan',
+    'name' => 'Азербайджан',
+    'name_eng' => 'Azerbaijan',
     'cont' => 'AS',
     'tld' => 'az',
     'currency' => 'AZN',
@@ -277,7 +293,8 @@ $data = array (
     'code' => 'BA',
     'code3' => 'BIH',
     'num' => '070',
-    'name' => 'Bosnia and Herzegovina',
+    'name' => 'Босния и Герцеговина',
+    'name_eng' => 'Bosnia and Herzegovina',
     'cont' => 'EU',
     'tld' => 'ba',
     'currency' => 'BAM',
@@ -294,7 +311,8 @@ $data = array (
     'code' => 'BB',
     'code3' => 'BRB',
     'num' => '052',
-    'name' => 'Barbados',
+    'name' => 'Барбадос',
+    'name_eng' => 'Barbados',
     'cont' => 'NA',
     'tld' => 'bb',
     'currency' => 'BBD',
@@ -311,7 +329,8 @@ $data = array (
     'code' => 'BD',
     'code3' => 'BGD',
     'num' => '050',
-    'name' => 'Bangladesh',
+    'name' => 'Бангладеш',
+    'name_eng' => 'Bangladesh',
     'cont' => 'AS',
     'tld' => 'bd',
     'currency' => 'BDT',
@@ -328,7 +347,8 @@ $data = array (
     'code' => 'BE',
     'code3' => 'BEL',
     'num' => '056',
-    'name' => 'Belgium',
+    'name' => 'Бельгия',
+    'name_eng' => 'Belgium',
     'cont' => 'EU',
     'tld' => 'be',
     'currency' => 'EUR',
@@ -345,7 +365,8 @@ $data = array (
     'code' => 'BF',
     'code3' => 'BFA',
     'num' => '854',
-    'name' => 'Burkina Faso',
+    'name' => 'Буркина-Фасо',
+    'name_eng' => 'Burkina Faso',
     'cont' => 'AF',
     'tld' => 'bf',
     'currency' => 'XOF',
@@ -362,7 +383,8 @@ $data = array (
     'code' => 'BG',
     'code3' => 'BGR',
     'num' => '100',
-    'name' => 'Bulgaria',
+    'name' => 'Болгария',
+    'name_eng' => 'Bulgaria',
     'cont' => 'EU',
     'tld' => 'bg',
     'currency' => 'BGN',
@@ -379,7 +401,8 @@ $data = array (
     'code' => 'BH',
     'code3' => 'BHR',
     'num' => '048',
-    'name' => 'Bahrain',
+    'name' => 'Бахрейн',
+    'name_eng' => 'Bahrain',
     'cont' => 'AS',
     'tld' => 'bh',
     'currency' => 'BHD',
@@ -396,7 +419,8 @@ $data = array (
     'code' => 'BI',
     'code3' => 'BDI',
     'num' => '108',
-    'name' => 'Burundi',
+    'name' => 'Бурунди',
+    'name_eng' => 'Burundi',
     'cont' => 'AF',
     'tld' => 'bi',
     'currency' => 'BIF',
@@ -413,7 +437,8 @@ $data = array (
     'code' => 'BJ',
     'code3' => 'BEN',
     'num' => '204',
-    'name' => 'Benin',
+    'name' => 'Бенин',
+    'name_eng' => 'Benin',
     'cont' => 'AF',
     'tld' => 'bj',
     'currency' => 'XOF',
@@ -430,7 +455,8 @@ $data = array (
     'code' => 'BL',
     'code3' => 'BLM',
     'num' => '652',
-    'name' => 'Saint Barthelemy',
+    'name' => 'Сен-Бартелеми',
+    'name_eng' => 'Saint Barthelemy',
     'cont' => 'NA',
     'tld' => 'gp',
     'currency' => 'EUR',
@@ -447,7 +473,8 @@ $data = array (
     'code' => 'BM',
     'code3' => 'BMU',
     'num' => '060',
-    'name' => 'Bermuda',
+    'name' => 'Бермуды',
+    'name_eng' => 'Bermuda',
     'cont' => 'NA',
     'tld' => 'bm',
     'currency' => 'BMD',
@@ -464,7 +491,8 @@ $data = array (
     'code' => 'BN',
     'code3' => 'BRN',
     'num' => '096',
-    'name' => 'Brunei Darussalam',
+    'name' => 'Бруней',
+    'name_eng' => 'Brunei Darussalam',
     'cont' => 'AS',
     'tld' => 'bn',
     'currency' => 'BND',
@@ -481,7 +509,8 @@ $data = array (
     'code' => 'BO',
     'code3' => 'BOL',
     'num' => '068',
-    'name' => 'Bolivia, Plurinational State of',
+    'name' => 'Боливия',
+    'name_eng' => 'Bolivia, Plurinational State of',
     'cont' => 'SA',
     'tld' => 'bo',
     'currency' => 'BOB',
@@ -498,7 +527,8 @@ $data = array (
     'code' => 'BQ',
     'code3' => 'BES',
     'num' => '535',
-    'name' => 'Bonaire, Sint Eustatius and Saba',
+    'name' => 'Бонэйр, Синт-Эстатиус и Саба',
+    'name_eng' => 'Bonaire, Sint Eustatius and Saba',
     'cont' => 'NA',
     'tld' => 'bq',
     'currency' => 'USD',
@@ -515,7 +545,8 @@ $data = array (
     'code' => 'BR',
     'code3' => 'BRA',
     'num' => '076',
-    'name' => 'Brazil',
+    'name' => 'Бразилия',
+    'name_eng' => 'Brazil',
     'cont' => 'SA',
     'tld' => 'br',
     'currency' => 'BRL',
@@ -532,7 +563,8 @@ $data = array (
     'code' => 'BS',
     'code3' => 'BHS',
     'num' => '044',
-    'name' => 'Bahamas',
+    'name' => 'Багамы',
+    'name_eng' => 'Bahamas',
     'cont' => 'NA',
     'tld' => 'bs',
     'currency' => 'BSD',
@@ -549,7 +581,8 @@ $data = array (
     'code' => 'BT',
     'code3' => 'BTN',
     'num' => '064',
-    'name' => 'Bhutan',
+    'name' => 'Бутан',
+    'name_eng' => 'Bhutan',
     'cont' => 'AS',
     'tld' => 'bt',
     'currency' => 'BTN',
@@ -566,7 +599,8 @@ $data = array (
     'code' => 'BV',
     'code3' => 'BVT',
     'num' => '074',
-    'name' => 'Bouvet Island',
+    'name' => 'Остров Буве',
+    'name_eng' => 'Bouvet Island',
     'cont' => 'AN',
     'tld' => 'bv',
     'currency' => 'NOK',
@@ -583,7 +617,8 @@ $data = array (
     'code' => 'BW',
     'code3' => 'BWA',
     'num' => '072',
-    'name' => 'Botswana',
+    'name' => 'Ботсвана',
+    'name_eng' => 'Botswana',
     'cont' => 'AF',
     'tld' => 'bw',
     'currency' => 'BWP',
@@ -600,7 +635,8 @@ $data = array (
     'code' => 'BY',
     'code3' => 'BLR',
     'num' => '112',
-    'name' => 'Belarus',
+    'name' => 'Белоруссия',
+    'name_eng' => 'Belarus',
     'cont' => 'EU',
     'tld' => 'by',
     'currency' => 'BYR',
@@ -617,7 +653,8 @@ $data = array (
     'code' => 'BZ',
     'code3' => 'BLZ',
     'num' => '084',
-    'name' => 'Belize',
+    'name' => 'Белиз',
+    'name_eng' => 'Belize',
     'cont' => 'NA',
     'tld' => 'bz',
     'currency' => 'BZD',
@@ -634,7 +671,8 @@ $data = array (
     'code' => 'CA',
     'code3' => 'CAN',
     'num' => '124',
-    'name' => 'Canada',
+    'name' => 'Канада',
+    'name_eng' => 'Canada',
     'cont' => 'NA',
     'tld' => 'ca',
     'currency' => 'CAD',
@@ -651,7 +689,8 @@ $data = array (
     'code' => 'CC',
     'code3' => 'CCK',
     'num' => '166',
-    'name' => 'Cocos (Keeling) Islands',
+    'name' => 'Кокосовые острова',
+    'name_eng' => 'Cocos (Keeling) Islands',
     'cont' => 'AS',
     'tld' => 'cc',
     'currency' => 'AUD',
@@ -668,7 +707,8 @@ $data = array (
     'code' => 'CD',
     'code3' => 'COD',
     'num' => '180',
-    'name' => 'Congo, the Democratic Republic of the',
+    'name' => 'ДР Конго',
+    'name_eng' => 'Congo, the Democratic Republic of the',
     'cont' => 'AF',
     'tld' => 'cd',
     'currency' => 'CDF',
@@ -685,7 +725,8 @@ $data = array (
     'code' => 'CF',
     'code3' => 'CAF',
     'num' => '140',
-    'name' => 'Central African Republic',
+    'name' => 'ЦАР',
+    'name_eng' => 'Central African Republic',
     'cont' => 'AF',
     'tld' => 'cf',
     'currency' => 'XAF',
@@ -702,7 +743,8 @@ $data = array (
     'code' => 'CG',
     'code3' => 'COG',
     'num' => '178',
-    'name' => 'Congo',
+    'name' => 'Республика Конго',
+    'name_eng' => 'Congo',
     'cont' => 'AF',
     'tld' => 'cg',
     'currency' => 'XAF',
@@ -719,7 +761,8 @@ $data = array (
     'code' => 'CH',
     'code3' => 'CHE',
     'num' => '756',
-    'name' => 'Switzerland',
+    'name' => 'Швейцария',
+    'name_eng' => 'Switzerland',
     'cont' => 'EU',
     'tld' => 'ch',
     'currency' => 'CHF',
@@ -736,7 +779,8 @@ $data = array (
     'code' => 'CI',
     'code3' => 'CIV',
     'num' => '384',
-    'name' => 'Cote d\'Ivoire',
+    'name' => 'Кот-д’Ивуар',
+    'name_eng' => 'Cote d\'Ivoire',
     'cont' => 'AF',
     'tld' => 'ci',
     'currency' => 'XOF',
@@ -753,7 +797,8 @@ $data = array (
     'code' => 'CK',
     'code3' => 'COK',
     'num' => '184',
-    'name' => 'Cook Islands',
+    'name' => 'Острова Кука',
+    'name_eng' => 'Cook Islands',
     'cont' => 'OC',
     'tld' => 'ck',
     'currency' => 'NZD',
@@ -770,7 +815,8 @@ $data = array (
     'code' => 'CL',
     'code3' => 'CHL',
     'num' => '152',
-    'name' => 'Chile',
+    'name' => 'Чили',
+    'name_eng' => 'Chile',
     'cont' => 'SA',
     'tld' => 'cl',
     'currency' => 'CLP',
@@ -787,7 +833,8 @@ $data = array (
     'code' => 'CM',
     'code3' => 'CMR',
     'num' => '120',
-    'name' => 'Cameroon',
+    'name' => 'Камерун',
+    'name_eng' => 'Cameroon',
     'cont' => 'AF',
     'tld' => 'cm',
     'currency' => 'XAF',
@@ -804,7 +851,8 @@ $data = array (
     'code' => 'CN',
     'code3' => 'CHN',
     'num' => '156',
-    'name' => 'China',
+    'name' => 'КНР',
+    'name_eng' => 'China',
     'cont' => 'AS',
     'tld' => 'cn',
     'currency' => 'CNY',
@@ -821,7 +869,8 @@ $data = array (
     'code' => 'CO',
     'code3' => 'COL',
     'num' => '170',
-    'name' => 'Colombia',
+    'name' => 'Колумбия',
+    'name_eng' => 'Colombia',
     'cont' => 'SA',
     'tld' => 'co',
     'currency' => 'COP',
@@ -838,7 +887,8 @@ $data = array (
     'code' => 'CR',
     'code3' => 'CRI',
     'num' => '188',
-    'name' => 'Costa Rica',
+    'name' => 'Коста-Рика',
+    'name_eng' => 'Costa Rica',
     'cont' => 'NA',
     'tld' => 'cr',
     'currency' => 'CRC',
@@ -855,7 +905,8 @@ $data = array (
     'code' => 'CU',
     'code3' => 'CUB',
     'num' => '192',
-    'name' => 'Cuba',
+    'name' => 'Куба',
+    'name_eng' => 'Cuba',
     'cont' => 'NA',
     'tld' => 'cu',
     'currency' => 'CUP',
@@ -872,7 +923,8 @@ $data = array (
     'code' => 'CV',
     'code3' => 'CPV',
     'num' => '132',
-    'name' => 'Cape Verde',
+    'name' => 'Кабо-Верде',
+    'name_eng' => 'Cape Verde',
     'cont' => 'AF',
     'tld' => 'cv',
     'currency' => 'CVE',
@@ -889,7 +941,8 @@ $data = array (
     'code' => 'CW',
     'code3' => 'CUW',
     'num' => '531',
-    'name' => 'Curacao',
+    'name' => 'Кюрасао',
+    'name_eng' => 'Curacao',
     'cont' => 'NA',
     'tld' => 'cw',
     'currency' => 'ANG',
@@ -906,7 +959,8 @@ $data = array (
     'code' => 'CX',
     'code3' => 'CXR',
     'num' => '162',
-    'name' => 'Christmas Island',
+    'name' => 'Остров Рождества',
+    'name_eng' => 'Christmas Island',
     'cont' => 'AS',
     'tld' => 'cx',
     'currency' => 'AUD',
@@ -923,7 +977,8 @@ $data = array (
     'code' => 'CY',
     'code3' => 'CYP',
     'num' => '196',
-    'name' => 'Cyprus',
+    'name' => 'Кипр',
+    'name_eng' => 'Cyprus',
     'cont' => 'EU',
     'tld' => 'cy',
     'currency' => 'EUR',
@@ -940,7 +995,8 @@ $data = array (
     'code' => 'CZ',
     'code3' => 'CZE',
     'num' => '203',
-    'name' => 'Czech Republic',
+    'name' => 'Чехия',
+    'name_eng' => 'Czech Republic',
     'cont' => 'EU',
     'tld' => 'cz',
     'currency' => 'CZK',
@@ -957,7 +1013,8 @@ $data = array (
     'code' => 'DE',
     'code3' => 'DEU',
     'num' => '276',
-    'name' => 'Germany',
+    'name' => 'Германия',
+    'name_eng' => 'Germany',
     'cont' => 'EU',
     'tld' => 'de',
     'currency' => 'EUR',
@@ -974,7 +1031,8 @@ $data = array (
     'code' => 'DJ',
     'code3' => 'DJI',
     'num' => '262',
-    'name' => 'Djibouti',
+    'name' => 'Джибути',
+    'name_eng' => 'Djibouti',
     'cont' => 'AF',
     'tld' => 'dj',
     'currency' => 'DJF',
@@ -991,7 +1049,8 @@ $data = array (
     'code' => 'DK',
     'code3' => 'DNK',
     'num' => '208',
-    'name' => 'Denmark',
+    'name' => 'Дания',
+    'name_eng' => 'Denmark',
     'cont' => 'EU',
     'tld' => 'dk',
     'currency' => 'DKK',
@@ -1008,7 +1067,8 @@ $data = array (
     'code' => 'DM',
     'code3' => 'DMA',
     'num' => '212',
-    'name' => 'Dominica',
+    'name' => 'Доминика',
+    'name_eng' => 'Dominica',
     'cont' => 'NA',
     'tld' => 'dm',
     'currency' => 'XCD',
@@ -1025,7 +1085,8 @@ $data = array (
     'code' => 'DO',
     'code3' => 'DOM',
     'num' => '214',
-    'name' => 'Dominican Republic',
+    'name' => 'Доминиканская Республика',
+    'name_eng' => 'Dominican Republic',
     'cont' => 'NA',
     'tld' => 'do',
     'currency' => 'DOP',
@@ -1042,7 +1103,8 @@ $data = array (
     'code' => 'DZ',
     'code3' => 'DZA',
     'num' => '012',
-    'name' => 'Algeria',
+    'name' => 'Алжир',
+    'name_eng' => 'Algeria',
     'cont' => 'AF',
     'tld' => 'dz',
     'currency' => 'DZD',
@@ -1059,7 +1121,8 @@ $data = array (
     'code' => 'EC',
     'code3' => 'ECU',
     'num' => '218',
-    'name' => 'Ecuador',
+    'name' => 'Эквадор',
+    'name_eng' => 'Ecuador',
     'cont' => 'SA',
     'tld' => 'ec',
     'currency' => 'USD',
@@ -1076,7 +1139,8 @@ $data = array (
     'code' => 'EE',
     'code3' => 'EST',
     'num' => '233',
-    'name' => 'Estonia',
+    'name' => 'Эстония',
+    'name_eng' => 'Estonia',
     'cont' => 'EU',
     'tld' => 'ee',
     'currency' => 'EUR',
@@ -1093,7 +1157,8 @@ $data = array (
     'code' => 'EG',
     'code3' => 'EGY',
     'num' => '818',
-    'name' => 'Egypt',
+    'name' => 'Египет',
+    'name_eng' => 'Egypt',
     'cont' => 'AF',
     'tld' => 'eg',
     'currency' => 'EGP',
@@ -1110,7 +1175,8 @@ $data = array (
     'code' => 'EH',
     'code3' => 'ESH',
     'num' => '732',
-    'name' => 'Western Sahara',
+    'name' => 'Западная Сахара',
+    'name_eng' => 'Western Sahara',
     'cont' => 'AF',
     'tld' => 'eh',
     'currency' => 'MAD',
@@ -1127,7 +1193,8 @@ $data = array (
     'code' => 'ER',
     'code3' => 'ERI',
     'num' => '232',
-    'name' => 'Eritrea',
+    'name' => 'Эритрея',
+    'name_eng' => 'Eritrea',
     'cont' => 'AF',
     'tld' => 'er',
     'currency' => 'ERN',
@@ -1144,7 +1211,8 @@ $data = array (
     'code' => 'ES',
     'code3' => 'ESP',
     'num' => '724',
-    'name' => 'Spain',
+    'name' => 'Испания',
+    'name_eng' => 'Spain',
     'cont' => 'EU',
     'tld' => 'es',
     'currency' => 'EUR',
@@ -1161,7 +1229,8 @@ $data = array (
     'code' => 'ET',
     'code3' => 'ETH',
     'num' => '231',
-    'name' => 'Ethiopia',
+    'name' => 'Эфиопия',
+    'name_eng' => 'Ethiopia',
     'cont' => 'AF',
     'tld' => 'et',
     'currency' => 'ETB',
@@ -1175,10 +1244,29 @@ $data = array (
   ),
   69 => 
   array (
+    'code' => 'EU',
+    'code3' => '',
+    'num' => '',
+    'name' => 'Европейский союз',
+    'name_eng' => '',
+    'cont' => '',
+    'tld' => '',
+    'currency' => '',
+    'area' => '0',
+    'population' => '0',
+    'phone_prefix' => '',
+    'languages' => '',
+    'geoname_id' => '0',
+    'capital_id' => '0',
+    'active' => '0',
+  ),
+  70 => 
+  array (
     'code' => 'FI',
     'code3' => 'FIN',
     'num' => '246',
-    'name' => 'Finland',
+    'name' => 'Финляндия',
+    'name_eng' => 'Finland',
     'cont' => 'EU',
     'tld' => 'fi',
     'currency' => 'EUR',
@@ -1190,12 +1278,13 @@ $data = array (
     'capital_id' => '658225',
     'active' => '0',
   ),
-  70 => 
+  71 => 
   array (
     'code' => 'FJ',
     'code3' => 'FJI',
     'num' => '242',
-    'name' => 'Fiji',
+    'name' => 'Фиджи',
+    'name_eng' => 'Fiji',
     'cont' => 'OC',
     'tld' => 'fj',
     'currency' => 'FJD',
@@ -1207,12 +1296,13 @@ $data = array (
     'capital_id' => '2198148',
     'active' => '0',
   ),
-  71 => 
+  72 => 
   array (
     'code' => 'FK',
     'code3' => 'FLK',
     'num' => '238',
-    'name' => 'Falkland Islands (Malvinas)',
+    'name' => 'Фолклендские острова',
+    'name_eng' => 'Falkland Islands (Malvinas)',
     'cont' => 'SA',
     'tld' => 'fk',
     'currency' => 'FKP',
@@ -1224,12 +1314,13 @@ $data = array (
     'capital_id' => '3426691',
     'active' => '0',
   ),
-  72 => 
+  73 => 
   array (
     'code' => 'FM',
     'code3' => 'FSM',
     'num' => '583',
-    'name' => 'Micronesia, Federated States of',
+    'name' => 'Микронезия',
+    'name_eng' => 'Micronesia, Federated States of',
     'cont' => 'OC',
     'tld' => 'fm',
     'currency' => 'USD',
@@ -1241,12 +1332,13 @@ $data = array (
     'capital_id' => '2081986',
     'active' => '0',
   ),
-  73 => 
+  74 => 
   array (
     'code' => 'FO',
     'code3' => 'FRO',
     'num' => '234',
-    'name' => 'Faroe Islands',
+    'name' => 'Фарерские острова',
+    'name_eng' => 'Faroe Islands',
     'cont' => 'EU',
     'tld' => 'fo',
     'currency' => 'DKK',
@@ -1258,12 +1350,13 @@ $data = array (
     'capital_id' => '2611396',
     'active' => '0',
   ),
-  74 => 
+  75 => 
   array (
     'code' => 'FR',
     'code3' => 'FRA',
     'num' => '250',
-    'name' => 'France',
+    'name' => 'Франция',
+    'name_eng' => 'France',
     'cont' => 'EU',
     'tld' => 'fr',
     'currency' => 'EUR',
@@ -1275,12 +1368,13 @@ $data = array (
     'capital_id' => '2988507',
     'active' => '1',
   ),
-  75 => 
+  76 => 
   array (
     'code' => 'GA',
     'code3' => 'GAB',
     'num' => '266',
-    'name' => 'Gabon',
+    'name' => 'Габон',
+    'name_eng' => 'Gabon',
     'cont' => 'AF',
     'tld' => 'ga',
     'currency' => 'XAF',
@@ -1292,12 +1386,13 @@ $data = array (
     'capital_id' => '2399697',
     'active' => '0',
   ),
-  76 => 
+  77 => 
   array (
     'code' => 'GB',
     'code3' => 'GBR',
     'num' => '826',
-    'name' => 'United Kingdom',
+    'name' => 'Великобритания',
+    'name_eng' => 'United Kingdom',
     'cont' => 'EU',
     'tld' => 'uk',
     'currency' => 'GBP',
@@ -1309,12 +1404,13 @@ $data = array (
     'capital_id' => '2643743',
     'active' => '1',
   ),
-  77 => 
+  78 => 
   array (
     'code' => 'GD',
     'code3' => 'GRD',
     'num' => '308',
-    'name' => 'Grenada',
+    'name' => 'Гренада',
+    'name_eng' => 'Grenada',
     'cont' => 'NA',
     'tld' => 'gd',
     'currency' => 'XCD',
@@ -1326,12 +1422,13 @@ $data = array (
     'capital_id' => '3579925',
     'active' => '0',
   ),
-  78 => 
+  79 => 
   array (
     'code' => 'GE',
     'code3' => 'GEO',
     'num' => '268',
-    'name' => 'Georgia',
+    'name' => 'Грузия',
+    'name_eng' => 'Georgia',
     'cont' => 'AS',
     'tld' => 'ge',
     'currency' => 'GEL',
@@ -1343,12 +1440,13 @@ $data = array (
     'capital_id' => '611717',
     'active' => '0',
   ),
-  79 => 
+  80 => 
   array (
     'code' => 'GF',
     'code3' => 'GUF',
     'num' => '254',
-    'name' => 'French Guiana',
+    'name' => 'Гвиана',
+    'name_eng' => 'French Guiana',
     'cont' => 'SA',
     'tld' => 'gf',
     'currency' => 'EUR',
@@ -1360,12 +1458,13 @@ $data = array (
     'capital_id' => '3382160',
     'active' => '0',
   ),
-  80 => 
+  81 => 
   array (
     'code' => 'GG',
     'code3' => 'GGY',
     'num' => '831',
-    'name' => 'Guernsey',
+    'name' => 'Гернси',
+    'name_eng' => 'Guernsey',
     'cont' => 'EU',
     'tld' => 'gg',
     'currency' => 'GBP',
@@ -1377,12 +1476,13 @@ $data = array (
     'capital_id' => '3042287',
     'active' => '0',
   ),
-  81 => 
+  82 => 
   array (
     'code' => 'GH',
     'code3' => 'GHA',
     'num' => '288',
-    'name' => 'Ghana',
+    'name' => 'Гана',
+    'name_eng' => 'Ghana',
     'cont' => 'AF',
     'tld' => 'gh',
     'currency' => 'GHS',
@@ -1394,12 +1494,13 @@ $data = array (
     'capital_id' => '2306104',
     'active' => '0',
   ),
-  82 => 
+  83 => 
   array (
     'code' => 'GI',
     'code3' => 'GIB',
     'num' => '292',
-    'name' => 'Gibraltar',
+    'name' => 'Гибралтар',
+    'name_eng' => 'Gibraltar',
     'cont' => 'EU',
     'tld' => 'gi',
     'currency' => 'GIP',
@@ -1411,12 +1512,13 @@ $data = array (
     'capital_id' => '2411585',
     'active' => '0',
   ),
-  83 => 
+  84 => 
   array (
     'code' => 'GL',
     'code3' => 'GRL',
     'num' => '304',
-    'name' => 'Greenland',
+    'name' => 'Гренландия',
+    'name_eng' => 'Greenland',
     'cont' => 'NA',
     'tld' => 'gl',
     'currency' => 'DKK',
@@ -1428,12 +1530,13 @@ $data = array (
     'capital_id' => '3421319',
     'active' => '0',
   ),
-  84 => 
+  85 => 
   array (
     'code' => 'GM',
     'code3' => 'GMB',
     'num' => '270',
-    'name' => 'Gambia',
+    'name' => 'Гамбия',
+    'name_eng' => 'Gambia',
     'cont' => 'AF',
     'tld' => 'gm',
     'currency' => 'GMD',
@@ -1445,12 +1548,13 @@ $data = array (
     'capital_id' => '2413876',
     'active' => '0',
   ),
-  85 => 
+  86 => 
   array (
     'code' => 'GN',
     'code3' => 'GIN',
     'num' => '324',
-    'name' => 'Guinea',
+    'name' => 'Гвинея',
+    'name_eng' => 'Guinea',
     'cont' => 'AF',
     'tld' => 'gn',
     'currency' => 'GNF',
@@ -1462,12 +1566,13 @@ $data = array (
     'capital_id' => '2422465',
     'active' => '0',
   ),
-  86 => 
+  87 => 
   array (
     'code' => 'GP',
     'code3' => 'GLP',
     'num' => '312',
-    'name' => 'Guadeloupe',
+    'name' => 'Гваделупа',
+    'name_eng' => 'Guadeloupe',
     'cont' => 'NA',
     'tld' => 'gp',
     'currency' => 'EUR',
@@ -1479,12 +1584,13 @@ $data = array (
     'capital_id' => '3579732',
     'active' => '0',
   ),
-  87 => 
+  88 => 
   array (
     'code' => 'GQ',
     'code3' => 'GNQ',
     'num' => '226',
-    'name' => 'Equatorial Guinea',
+    'name' => 'Экваториальная Гвинея',
+    'name_eng' => 'Equatorial Guinea',
     'cont' => 'AF',
     'tld' => 'gq',
     'currency' => 'XAF',
@@ -1496,12 +1602,13 @@ $data = array (
     'capital_id' => '2309527',
     'active' => '0',
   ),
-  88 => 
+  89 => 
   array (
     'code' => 'GR',
     'code3' => 'GRC',
     'num' => '300',
-    'name' => 'Greece',
+    'name' => 'Греция',
+    'name_eng' => 'Greece',
     'cont' => 'EU',
     'tld' => 'gr',
     'currency' => 'EUR',
@@ -1513,12 +1620,13 @@ $data = array (
     'capital_id' => '264371',
     'active' => '0',
   ),
-  89 => 
+  90 => 
   array (
     'code' => 'GS',
     'code3' => 'SGS',
     'num' => '239',
-    'name' => 'South Georgia and the South Sandwich Islands',
+    'name' => 'Южная Георгия и Южные Сандвичевы острова',
+    'name_eng' => 'South Georgia and the South Sandwich Islands',
     'cont' => 'AN',
     'tld' => 'gs',
     'currency' => 'GBP',
@@ -1530,12 +1638,13 @@ $data = array (
     'capital_id' => '3426466',
     'active' => '0',
   ),
-  90 => 
+  91 => 
   array (
     'code' => 'GT',
     'code3' => 'GTM',
     'num' => '320',
-    'name' => 'Guatemala',
+    'name' => 'Гватемала',
+    'name_eng' => 'Guatemala',
     'cont' => 'NA',
     'tld' => 'gt',
     'currency' => 'GTQ',
@@ -1547,12 +1656,13 @@ $data = array (
     'capital_id' => '3598132',
     'active' => '0',
   ),
-  91 => 
+  92 => 
   array (
     'code' => 'GU',
     'code3' => 'GUM',
     'num' => '316',
-    'name' => 'Guam',
+    'name' => 'Гуам',
+    'name_eng' => 'Guam',
     'cont' => 'OC',
     'tld' => 'gu',
     'currency' => 'USD',
@@ -1564,12 +1674,13 @@ $data = array (
     'capital_id' => '4044012',
     'active' => '0',
   ),
-  92 => 
+  93 => 
   array (
     'code' => 'GW',
     'code3' => 'GNB',
     'num' => '624',
-    'name' => 'Guinea-Bissau',
+    'name' => 'Гвинея-Бисау',
+    'name_eng' => 'Guinea-Bissau',
     'cont' => 'AF',
     'tld' => 'gw',
     'currency' => 'XOF',
@@ -1581,12 +1692,13 @@ $data = array (
     'capital_id' => '2374775',
     'active' => '0',
   ),
-  93 => 
+  94 => 
   array (
     'code' => 'GY',
     'code3' => 'GUY',
     'num' => '328',
-    'name' => 'Guyana',
+    'name' => 'Гайана',
+    'name_eng' => 'Guyana',
     'cont' => 'SA',
     'tld' => 'gy',
     'currency' => 'GYD',
@@ -1598,12 +1710,13 @@ $data = array (
     'capital_id' => '3378644',
     'active' => '0',
   ),
-  94 => 
+  95 => 
   array (
     'code' => 'HK',
     'code3' => 'HKG',
     'num' => '344',
-    'name' => 'Hong Kong',
+    'name' => 'Гонконг',
+    'name_eng' => 'Hong Kong',
     'cont' => 'AS',
     'tld' => 'hk',
     'currency' => 'HKD',
@@ -1615,12 +1728,13 @@ $data = array (
     'capital_id' => '1819729',
     'active' => '0',
   ),
-  95 => 
+  96 => 
   array (
     'code' => 'HM',
     'code3' => 'HMD',
     'num' => '334',
-    'name' => 'Heard Island and McDonald Islands',
+    'name' => 'Херд и Макдональд',
+    'name_eng' => 'Heard Island and McDonald Islands',
     'cont' => 'AN',
     'tld' => 'hm',
     'currency' => 'AUD',
@@ -1632,12 +1746,13 @@ $data = array (
     'capital_id' => '0',
     'active' => '0',
   ),
-  96 => 
+  97 => 
   array (
     'code' => 'HN',
     'code3' => 'HND',
     'num' => '340',
-    'name' => 'Honduras',
+    'name' => 'Гондурас',
+    'name_eng' => 'Honduras',
     'cont' => 'NA',
     'tld' => 'hn',
     'currency' => 'HNL',
@@ -1649,12 +1764,13 @@ $data = array (
     'capital_id' => '3600949',
     'active' => '0',
   ),
-  97 => 
+  98 => 
   array (
     'code' => 'HR',
     'code3' => 'HRV',
     'num' => '191',
-    'name' => 'Croatia',
+    'name' => 'Хорватия',
+    'name_eng' => 'Croatia',
     'cont' => 'EU',
     'tld' => 'hr',
     'currency' => 'HRK',
@@ -1666,12 +1782,13 @@ $data = array (
     'capital_id' => '3186886',
     'active' => '0',
   ),
-  98 => 
+  99 => 
   array (
     'code' => 'HT',
     'code3' => 'HTI',
     'num' => '332',
-    'name' => 'Haiti',
+    'name' => 'Гаити',
+    'name_eng' => 'Haiti',
     'cont' => 'NA',
     'tld' => 'ht',
     'currency' => 'HTG',
@@ -1683,12 +1800,13 @@ $data = array (
     'capital_id' => '3718426',
     'active' => '0',
   ),
-  99 => 
+  100 => 
   array (
     'code' => 'HU',
     'code3' => 'HUN',
     'num' => '348',
-    'name' => 'Hungary',
+    'name' => 'Венгрия',
+    'name_eng' => 'Hungary',
     'cont' => 'EU',
     'tld' => 'hu',
     'currency' => 'HUF',
@@ -1700,12 +1818,13 @@ $data = array (
     'capital_id' => '3054643',
     'active' => '0',
   ),
-  100 => 
+  101 => 
   array (
     'code' => 'ID',
     'code3' => 'IDN',
     'num' => '360',
-    'name' => 'Indonesia',
+    'name' => 'Индонезия',
+    'name_eng' => 'Indonesia',
     'cont' => 'AS',
     'tld' => 'id',
     'currency' => 'IDR',
@@ -1717,12 +1836,13 @@ $data = array (
     'capital_id' => '1642911',
     'active' => '0',
   ),
-  101 => 
+  102 => 
   array (
     'code' => 'IE',
     'code3' => 'IRL',
     'num' => '372',
-    'name' => 'Ireland',
+    'name' => 'Ирландия',
+    'name_eng' => 'Ireland',
     'cont' => 'EU',
     'tld' => 'ie',
     'currency' => 'EUR',
@@ -1734,12 +1854,13 @@ $data = array (
     'capital_id' => '2964574',
     'active' => '0',
   ),
-  102 => 
+  103 => 
   array (
     'code' => 'IL',
     'code3' => 'ISR',
     'num' => '376',
-    'name' => 'Israel',
+    'name' => 'Израиль',
+    'name_eng' => 'Israel',
     'cont' => 'AS',
     'tld' => 'il',
     'currency' => 'ILS',
@@ -1751,12 +1872,13 @@ $data = array (
     'capital_id' => '0',
     'active' => '0',
   ),
-  103 => 
+  104 => 
   array (
     'code' => 'IM',
     'code3' => 'IMN',
     'num' => '833',
-    'name' => 'Isle of Man',
+    'name' => 'Остров Мэн',
+    'name_eng' => 'Isle of Man',
     'cont' => 'EU',
     'tld' => 'im',
     'currency' => 'GBP',
@@ -1768,12 +1890,13 @@ $data = array (
     'capital_id' => '3042237',
     'active' => '0',
   ),
-  104 => 
+  105 => 
   array (
     'code' => 'IN',
     'code3' => 'IND',
     'num' => '356',
-    'name' => 'India',
+    'name' => 'Индия',
+    'name_eng' => 'India',
     'cont' => 'AS',
     'tld' => 'in',
     'currency' => 'INR',
@@ -1785,12 +1908,13 @@ $data = array (
     'capital_id' => '1261481',
     'active' => '0',
   ),
-  105 => 
+  106 => 
   array (
     'code' => 'IO',
     'code3' => 'IOT',
     'num' => '086',
-    'name' => 'British Indian Ocean Territory',
+    'name' => 'Британская территория в Индийском океане',
+    'name_eng' => 'British Indian Ocean Territory',
     'cont' => 'AS',
     'tld' => 'io',
     'currency' => 'USD',
@@ -1802,12 +1926,13 @@ $data = array (
     'capital_id' => '0',
     'active' => '0',
   ),
-  106 => 
+  107 => 
   array (
     'code' => 'IQ',
     'code3' => 'IRQ',
     'num' => '368',
-    'name' => 'Iraq',
+    'name' => 'Ирак',
+    'name_eng' => 'Iraq',
     'cont' => 'AS',
     'tld' => 'iq',
     'currency' => 'IQD',
@@ -1819,12 +1944,13 @@ $data = array (
     'capital_id' => '98182',
     'active' => '0',
   ),
-  107 => 
+  108 => 
   array (
     'code' => 'IR',
     'code3' => 'IRN',
     'num' => '364',
-    'name' => 'Iran, Islamic Republic of',
+    'name' => 'Иран',
+    'name_eng' => 'Iran, Islamic Republic of',
     'cont' => 'AS',
     'tld' => 'ir',
     'currency' => 'IRR',
@@ -1836,12 +1962,13 @@ $data = array (
     'capital_id' => '112931',
     'active' => '0',
   ),
-  108 => 
+  109 => 
   array (
     'code' => 'IS',
     'code3' => 'ISL',
     'num' => '352',
-    'name' => 'Iceland',
+    'name' => 'Исландия',
+    'name_eng' => 'Iceland',
     'cont' => 'EU',
     'tld' => 'is',
     'currency' => 'ISK',
@@ -1853,12 +1980,13 @@ $data = array (
     'capital_id' => '3413829',
     'active' => '0',
   ),
-  109 => 
+  110 => 
   array (
     'code' => 'IT',
     'code3' => 'ITA',
     'num' => '380',
-    'name' => 'Italy',
+    'name' => 'Италия',
+    'name_eng' => 'Italy',
     'cont' => 'EU',
     'tld' => 'it',
     'currency' => 'EUR',
@@ -1870,12 +1998,13 @@ $data = array (
     'capital_id' => '3169070',
     'active' => '0',
   ),
-  110 => 
+  111 => 
   array (
     'code' => 'JE',
     'code3' => 'JEY',
     'num' => '832',
-    'name' => 'Jersey',
+    'name' => 'Джерси (остров)',
+    'name_eng' => 'Jersey',
     'cont' => 'EU',
     'tld' => 'je',
     'currency' => 'GBP',
@@ -1887,12 +2016,13 @@ $data = array (
     'capital_id' => '3042091',
     'active' => '0',
   ),
-  111 => 
+  112 => 
   array (
     'code' => 'JM',
     'code3' => 'JAM',
     'num' => '388',
-    'name' => 'Jamaica',
+    'name' => 'Ямайка',
+    'name_eng' => 'Jamaica',
     'cont' => 'NA',
     'tld' => 'jm',
     'currency' => 'JMD',
@@ -1904,12 +2034,13 @@ $data = array (
     'capital_id' => '3489854',
     'active' => '0',
   ),
-  112 => 
+  113 => 
   array (
     'code' => 'JO',
     'code3' => 'JOR',
     'num' => '400',
-    'name' => 'Jordan',
+    'name' => 'Иордания',
+    'name_eng' => 'Jordan',
     'cont' => 'AS',
     'tld' => 'jo',
     'currency' => 'JOD',
@@ -1921,12 +2052,13 @@ $data = array (
     'capital_id' => '250441',
     'active' => '0',
   ),
-  113 => 
+  114 => 
   array (
     'code' => 'JP',
     'code3' => 'JPN',
     'num' => '392',
-    'name' => 'Japan',
+    'name' => 'Япония',
+    'name_eng' => 'Japan',
     'cont' => 'AS',
     'tld' => 'jp',
     'currency' => 'JPY',
@@ -1938,12 +2070,13 @@ $data = array (
     'capital_id' => '1850147',
     'active' => '0',
   ),
-  114 => 
+  115 => 
   array (
     'code' => 'KE',
     'code3' => 'KEN',
     'num' => '404',
-    'name' => 'Kenya',
+    'name' => 'Кения',
+    'name_eng' => 'Kenya',
     'cont' => 'AF',
     'tld' => 'ke',
     'currency' => 'KES',
@@ -1955,12 +2088,13 @@ $data = array (
     'capital_id' => '184745',
     'active' => '0',
   ),
-  115 => 
+  116 => 
   array (
     'code' => 'KG',
     'code3' => 'KGZ',
     'num' => '417',
-    'name' => 'Kyrgyzstan',
+    'name' => 'Киргизия',
+    'name_eng' => 'Kyrgyzstan',
     'cont' => 'AS',
     'tld' => 'kg',
     'currency' => 'KGS',
@@ -1972,12 +2106,13 @@ $data = array (
     'capital_id' => '1528675',
     'active' => '0',
   ),
-  116 => 
+  117 => 
   array (
     'code' => 'KH',
     'code3' => 'KHM',
     'num' => '116',
-    'name' => 'Cambodia',
+    'name' => 'Камбоджа',
+    'name_eng' => 'Cambodia',
     'cont' => 'AS',
     'tld' => 'kh',
     'currency' => 'KHR',
@@ -1989,12 +2124,13 @@ $data = array (
     'capital_id' => '1821306',
     'active' => '0',
   ),
-  117 => 
+  118 => 
   array (
     'code' => 'KI',
     'code3' => 'KIR',
     'num' => '296',
-    'name' => 'Kiribati',
+    'name' => 'Кирибати',
+    'name_eng' => 'Kiribati',
     'cont' => 'OC',
     'tld' => 'ki',
     'currency' => 'AUD',
@@ -2006,12 +2142,13 @@ $data = array (
     'capital_id' => '2110257',
     'active' => '0',
   ),
-  118 => 
+  119 => 
   array (
     'code' => 'KM',
     'code3' => 'COM',
     'num' => '174',
-    'name' => 'Comoros',
+    'name' => 'Коморы',
+    'name_eng' => 'Comoros',
     'cont' => 'AF',
     'tld' => 'km',
     'currency' => 'KMF',
@@ -2023,12 +2160,13 @@ $data = array (
     'capital_id' => '921772',
     'active' => '0',
   ),
-  119 => 
+  120 => 
   array (
     'code' => 'KN',
     'code3' => 'KNA',
     'num' => '659',
-    'name' => 'Saint Kitts and Nevis',
+    'name' => 'Сент-Китс и Невис',
+    'name_eng' => 'Saint Kitts and Nevis',
     'cont' => 'NA',
     'tld' => 'kn',
     'currency' => 'XCD',
@@ -2040,12 +2178,13 @@ $data = array (
     'capital_id' => '3575551',
     'active' => '0',
   ),
-  120 => 
+  121 => 
   array (
     'code' => 'KP',
     'code3' => 'PRK',
     'num' => '408',
-    'name' => 'Korea, Democratic People\'s Republic of',
+    'name' => 'КНДР',
+    'name_eng' => 'Korea, Democratic People\'s Republic of',
     'cont' => 'AS',
     'tld' => 'kp',
     'currency' => 'KPW',
@@ -2057,12 +2196,13 @@ $data = array (
     'capital_id' => '1871859',
     'active' => '0',
   ),
-  121 => 
+  122 => 
   array (
     'code' => 'KR',
     'code3' => 'KOR',
     'num' => '410',
-    'name' => 'Korea, Republic of',
+    'name' => 'Республика Корея',
+    'name_eng' => 'Korea, Republic of',
     'cont' => 'AS',
     'tld' => 'kr',
     'currency' => 'KRW',
@@ -2074,12 +2214,13 @@ $data = array (
     'capital_id' => '1835848',
     'active' => '0',
   ),
-  122 => 
+  123 => 
   array (
     'code' => 'KW',
     'code3' => 'KWT',
     'num' => '414',
-    'name' => 'Kuwait',
+    'name' => 'Кувейт',
+    'name_eng' => 'Kuwait',
     'cont' => 'AS',
     'tld' => 'kw',
     'currency' => 'KWD',
@@ -2091,12 +2232,13 @@ $data = array (
     'capital_id' => '285787',
     'active' => '0',
   ),
-  123 => 
+  124 => 
   array (
     'code' => 'KY',
     'code3' => 'CYM',
     'num' => '136',
-    'name' => 'Cayman Islands',
+    'name' => 'Каймановы острова',
+    'name_eng' => 'Cayman Islands',
     'cont' => 'NA',
     'tld' => 'ky',
     'currency' => 'KYD',
@@ -2108,12 +2250,13 @@ $data = array (
     'capital_id' => '3580661',
     'active' => '0',
   ),
-  124 => 
+  125 => 
   array (
     'code' => 'KZ',
     'code3' => 'KAZ',
     'num' => '398',
-    'name' => 'Kazakhstan',
+    'name' => 'Казахстан',
+    'name_eng' => 'Kazakhstan',
     'cont' => 'AS',
     'tld' => 'kz',
     'currency' => 'KZT',
@@ -2125,12 +2268,13 @@ $data = array (
     'capital_id' => '1526273',
     'active' => '0',
   ),
-  125 => 
+  126 => 
   array (
     'code' => 'LA',
     'code3' => 'LAO',
     'num' => '418',
-    'name' => 'Lao People\'s Democratic Republic',
+    'name' => 'Лаос',
+    'name_eng' => 'Lao People\'s Democratic Republic',
     'cont' => 'AS',
     'tld' => 'la',
     'currency' => 'LAK',
@@ -2142,12 +2286,13 @@ $data = array (
     'capital_id' => '1651944',
     'active' => '0',
   ),
-  126 => 
+  127 => 
   array (
     'code' => 'LB',
     'code3' => 'LBN',
     'num' => '422',
-    'name' => 'Lebanon',
+    'name' => 'Ливан',
+    'name_eng' => 'Lebanon',
     'cont' => 'AS',
     'tld' => 'lb',
     'currency' => 'LBP',
@@ -2159,12 +2304,13 @@ $data = array (
     'capital_id' => '276781',
     'active' => '0',
   ),
-  127 => 
+  128 => 
   array (
     'code' => 'LC',
     'code3' => 'LCA',
     'num' => '662',
-    'name' => 'Saint Lucia',
+    'name' => 'Сент-Люсия',
+    'name_eng' => 'Saint Lucia',
     'cont' => 'NA',
     'tld' => 'lc',
     'currency' => 'XCD',
@@ -2176,12 +2322,13 @@ $data = array (
     'capital_id' => '3576812',
     'active' => '0',
   ),
-  128 => 
+  129 => 
   array (
     'code' => 'LI',
     'code3' => 'LIE',
     'num' => '438',
-    'name' => 'Liechtenstein',
+    'name' => 'Лихтенштейн',
+    'name_eng' => 'Liechtenstein',
     'cont' => 'EU',
     'tld' => 'li',
     'currency' => 'CHF',
@@ -2193,12 +2340,13 @@ $data = array (
     'capital_id' => '3042030',
     'active' => '0',
   ),
-  129 => 
+  130 => 
   array (
     'code' => 'LK',
     'code3' => 'LKA',
     'num' => '144',
-    'name' => 'Sri Lanka',
+    'name' => 'Шри-Ланка',
+    'name_eng' => 'Sri Lanka',
     'cont' => 'AS',
     'tld' => 'lk',
     'currency' => 'LKR',
@@ -2210,12 +2358,13 @@ $data = array (
     'capital_id' => '1248991',
     'active' => '0',
   ),
-  130 => 
+  131 => 
   array (
     'code' => 'LR',
     'code3' => 'LBR',
     'num' => '430',
-    'name' => 'Liberia',
+    'name' => 'Либерия',
+    'name_eng' => 'Liberia',
     'cont' => 'AF',
     'tld' => 'lr',
     'currency' => 'LRD',
@@ -2227,12 +2376,13 @@ $data = array (
     'capital_id' => '2274895',
     'active' => '0',
   ),
-  131 => 
+  132 => 
   array (
     'code' => 'LS',
     'code3' => 'LSO',
     'num' => '426',
-    'name' => 'Lesotho',
+    'name' => 'Лесото',
+    'name_eng' => 'Lesotho',
     'cont' => 'AF',
     'tld' => 'ls',
     'currency' => 'LSL',
@@ -2244,12 +2394,13 @@ $data = array (
     'capital_id' => '932505',
     'active' => '0',
   ),
-  132 => 
+  133 => 
   array (
     'code' => 'LT',
     'code3' => 'LTU',
     'num' => '440',
-    'name' => 'Lithuania',
+    'name' => 'Литва',
+    'name_eng' => 'Lithuania',
     'cont' => 'EU',
     'tld' => 'lt',
     'currency' => 'LTL',
@@ -2261,12 +2412,13 @@ $data = array (
     'capital_id' => '593116',
     'active' => '0',
   ),
-  133 => 
+  134 => 
   array (
     'code' => 'LU',
     'code3' => 'LUX',
     'num' => '442',
-    'name' => 'Luxembourg',
+    'name' => 'Люксембург',
+    'name_eng' => 'Luxembourg',
     'cont' => 'EU',
     'tld' => 'lu',
     'currency' => 'EUR',
@@ -2278,12 +2430,13 @@ $data = array (
     'capital_id' => '2960316',
     'active' => '0',
   ),
-  134 => 
+  135 => 
   array (
     'code' => 'LV',
     'code3' => 'LVA',
     'num' => '428',
-    'name' => 'Latvia',
+    'name' => 'Латвия',
+    'name_eng' => 'Latvia',
     'cont' => 'EU',
     'tld' => 'lv',
     'currency' => 'LVL',
@@ -2295,12 +2448,13 @@ $data = array (
     'capital_id' => '456172',
     'active' => '0',
   ),
-  135 => 
+  136 => 
   array (
     'code' => 'LY',
     'code3' => 'LBY',
     'num' => '434',
-    'name' => 'Libya',
+    'name' => 'Ливия',
+    'name_eng' => 'Libya',
     'cont' => 'AF',
     'tld' => 'ly',
     'currency' => 'LYD',
@@ -2312,12 +2466,13 @@ $data = array (
     'capital_id' => '2210247',
     'active' => '0',
   ),
-  136 => 
+  137 => 
   array (
     'code' => 'MA',
     'code3' => 'MAR',
     'num' => '504',
-    'name' => 'Morocco',
+    'name' => 'Марокко',
+    'name_eng' => 'Morocco',
     'cont' => 'AF',
     'tld' => 'ma',
     'currency' => 'MAD',
@@ -2329,12 +2484,13 @@ $data = array (
     'capital_id' => '2538475',
     'active' => '0',
   ),
-  137 => 
+  138 => 
   array (
     'code' => 'MC',
     'code3' => 'MCO',
     'num' => '492',
-    'name' => 'Monaco',
+    'name' => 'Монако',
+    'name_eng' => 'Monaco',
     'cont' => 'EU',
     'tld' => 'mc',
     'currency' => 'EUR',
@@ -2346,12 +2502,13 @@ $data = array (
     'capital_id' => '2993458',
     'active' => '0',
   ),
-  138 => 
+  139 => 
   array (
     'code' => 'MD',
     'code3' => 'MDA',
     'num' => '498',
-    'name' => 'Moldova, Republic of',
+    'name' => 'Молдавия',
+    'name_eng' => 'Moldova, Republic of',
     'cont' => 'EU',
     'tld' => 'md',
     'currency' => 'MDL',
@@ -2363,12 +2520,13 @@ $data = array (
     'capital_id' => '618426',
     'active' => '0',
   ),
-  139 => 
+  140 => 
   array (
     'code' => 'ME',
     'code3' => 'MNE',
     'num' => '499',
-    'name' => 'Montenegro',
+    'name' => 'Черногория',
+    'name_eng' => 'Montenegro',
     'cont' => 'EU',
     'tld' => 'me',
     'currency' => 'EUR',
@@ -2380,12 +2538,13 @@ $data = array (
     'capital_id' => '3193044',
     'active' => '0',
   ),
-  140 => 
+  141 => 
   array (
     'code' => 'MF',
     'code3' => 'MAF',
     'num' => '663',
-    'name' => 'Saint Martin (French part)',
+    'name' => 'Сен-Мартен',
+    'name_eng' => 'Saint Martin (French part)',
     'cont' => 'NA',
     'tld' => 'gp',
     'currency' => 'EUR',
@@ -2397,12 +2556,13 @@ $data = array (
     'capital_id' => '3578851',
     'active' => '0',
   ),
-  141 => 
+  142 => 
   array (
     'code' => 'MG',
     'code3' => 'MDG',
     'num' => '450',
-    'name' => 'Madagascar',
+    'name' => 'Мадагаскар',
+    'name_eng' => 'Madagascar',
     'cont' => 'AF',
     'tld' => 'mg',
     'currency' => 'MGA',
@@ -2414,12 +2574,13 @@ $data = array (
     'capital_id' => '1070940',
     'active' => '0',
   ),
-  142 => 
+  143 => 
   array (
     'code' => 'MH',
     'code3' => 'MHL',
     'num' => '584',
-    'name' => 'Marshall Islands',
+    'name' => 'Маршалловы Острова',
+    'name_eng' => 'Marshall Islands',
     'cont' => 'OC',
     'tld' => 'mh',
     'currency' => 'USD',
@@ -2431,12 +2592,13 @@ $data = array (
     'capital_id' => '2113779',
     'active' => '0',
   ),
-  143 => 
+  144 => 
   array (
     'code' => 'MK',
     'code3' => 'MKD',
     'num' => '807',
-    'name' => 'Macedonia, the former Yugoslav Republic of',
+    'name' => 'Македония',
+    'name_eng' => 'Macedonia, the former Yugoslav Republic of',
     'cont' => 'EU',
     'tld' => 'mk',
     'currency' => 'MKD',
@@ -2448,12 +2610,13 @@ $data = array (
     'capital_id' => '785842',
     'active' => '0',
   ),
-  144 => 
+  145 => 
   array (
     'code' => 'ML',
     'code3' => 'MLI',
     'num' => '466',
-    'name' => 'Mali',
+    'name' => 'Мали',
+    'name_eng' => 'Mali',
     'cont' => 'AF',
     'tld' => 'ml',
     'currency' => 'XOF',
@@ -2465,12 +2628,13 @@ $data = array (
     'capital_id' => '2460596',
     'active' => '0',
   ),
-  145 => 
+  146 => 
   array (
     'code' => 'MM',
     'code3' => 'MMR',
     'num' => '104',
-    'name' => 'Myanmar',
+    'name' => 'Мьянма',
+    'name_eng' => 'Myanmar',
     'cont' => 'AS',
     'tld' => 'mm',
     'currency' => 'MMK',
@@ -2482,12 +2646,13 @@ $data = array (
     'capital_id' => '6611854',
     'active' => '0',
   ),
-  146 => 
+  147 => 
   array (
     'code' => 'MN',
     'code3' => 'MNG',
     'num' => '496',
-    'name' => 'Mongolia',
+    'name' => 'Монголия',
+    'name_eng' => 'Mongolia',
     'cont' => 'AS',
     'tld' => 'mn',
     'currency' => 'MNT',
@@ -2499,12 +2664,13 @@ $data = array (
     'capital_id' => '2028462',
     'active' => '0',
   ),
-  147 => 
+  148 => 
   array (
     'code' => 'MO',
     'code3' => 'MAC',
     'num' => '446',
-    'name' => 'Macao',
+    'name' => 'Макао',
+    'name_eng' => 'Macao',
     'cont' => 'AS',
     'tld' => 'mo',
     'currency' => 'MOP',
@@ -2516,12 +2682,13 @@ $data = array (
     'capital_id' => '1821274',
     'active' => '0',
   ),
-  148 => 
+  149 => 
   array (
     'code' => 'MP',
     'code3' => 'MNP',
     'num' => '580',
-    'name' => 'Northern Mariana Islands',
+    'name' => 'Северные Марианские острова',
+    'name_eng' => 'Northern Mariana Islands',
     'cont' => 'OC',
     'tld' => 'mp',
     'currency' => 'USD',
@@ -2533,12 +2700,13 @@ $data = array (
     'capital_id' => '7828758',
     'active' => '0',
   ),
-  149 => 
+  150 => 
   array (
     'code' => 'MQ',
     'code3' => 'MTQ',
     'num' => '474',
-    'name' => 'Martinique',
+    'name' => 'Мартиника',
+    'name_eng' => 'Martinique',
     'cont' => 'NA',
     'tld' => 'mq',
     'currency' => 'EUR',
@@ -2550,12 +2718,13 @@ $data = array (
     'capital_id' => '3570675',
     'active' => '0',
   ),
-  150 => 
+  151 => 
   array (
     'code' => 'MR',
     'code3' => 'MRT',
     'num' => '478',
-    'name' => 'Mauritania',
+    'name' => 'Мавритания',
+    'name_eng' => 'Mauritania',
     'cont' => 'AF',
     'tld' => 'mr',
     'currency' => 'MRO',
@@ -2567,12 +2736,13 @@ $data = array (
     'capital_id' => '2377450',
     'active' => '0',
   ),
-  151 => 
+  152 => 
   array (
     'code' => 'MS',
     'code3' => 'MSR',
     'num' => '500',
-    'name' => 'Montserrat',
+    'name' => 'Монтсеррат',
+    'name_eng' => 'Montserrat',
     'cont' => 'NA',
     'tld' => 'ms',
     'currency' => 'XCD',
@@ -2584,12 +2754,13 @@ $data = array (
     'capital_id' => '3578069',
     'active' => '0',
   ),
-  152 => 
+  153 => 
   array (
     'code' => 'MT',
     'code3' => 'MLT',
     'num' => '470',
-    'name' => 'Malta',
+    'name' => 'Мальта',
+    'name_eng' => 'Malta',
     'cont' => 'EU',
     'tld' => 'mt',
     'currency' => 'EUR',
@@ -2601,12 +2772,13 @@ $data = array (
     'capital_id' => '2562305',
     'active' => '0',
   ),
-  153 => 
+  154 => 
   array (
     'code' => 'MU',
     'code3' => 'MUS',
     'num' => '480',
-    'name' => 'Mauritius',
+    'name' => 'Маврикий',
+    'name_eng' => 'Mauritius',
     'cont' => 'AF',
     'tld' => 'mu',
     'currency' => 'MUR',
@@ -2618,12 +2790,13 @@ $data = array (
     'capital_id' => '934154',
     'active' => '0',
   ),
-  154 => 
+  155 => 
   array (
     'code' => 'MV',
     'code3' => 'MDV',
     'num' => '462',
-    'name' => 'Maldives',
+    'name' => 'Мальдивы',
+    'name_eng' => 'Maldives',
     'cont' => 'AS',
     'tld' => 'mv',
     'currency' => 'MVR',
@@ -2635,12 +2808,13 @@ $data = array (
     'capital_id' => '1282027',
     'active' => '0',
   ),
-  155 => 
+  156 => 
   array (
     'code' => 'MW',
     'code3' => 'MWI',
     'num' => '454',
-    'name' => 'Malawi',
+    'name' => 'Малави',
+    'name_eng' => 'Malawi',
     'cont' => 'AF',
     'tld' => 'mw',
     'currency' => 'MWK',
@@ -2652,12 +2826,13 @@ $data = array (
     'capital_id' => '927967',
     'active' => '0',
   ),
-  156 => 
+  157 => 
   array (
     'code' => 'MX',
     'code3' => 'MEX',
     'num' => '484',
-    'name' => 'Mexico',
+    'name' => 'Мексика',
+    'name_eng' => 'Mexico',
     'cont' => 'NA',
     'tld' => 'mx',
     'currency' => 'MXN',
@@ -2669,12 +2844,13 @@ $data = array (
     'capital_id' => '3530597',
     'active' => '0',
   ),
-  157 => 
+  158 => 
   array (
     'code' => 'MY',
     'code3' => 'MYS',
     'num' => '458',
-    'name' => 'Malaysia',
+    'name' => 'Малайзия',
+    'name_eng' => 'Malaysia',
     'cont' => 'AS',
     'tld' => 'my',
     'currency' => 'MYR',
@@ -2686,12 +2862,13 @@ $data = array (
     'capital_id' => '1735161',
     'active' => '0',
   ),
-  158 => 
+  159 => 
   array (
     'code' => 'MZ',
     'code3' => 'MOZ',
     'num' => '508',
-    'name' => 'Mozambique',
+    'name' => 'Мозамбик',
+    'name_eng' => 'Mozambique',
     'cont' => 'AF',
     'tld' => 'mz',
     'currency' => 'MZN',
@@ -2703,12 +2880,13 @@ $data = array (
     'capital_id' => '1040652',
     'active' => '0',
   ),
-  159 => 
+  160 => 
   array (
     'code' => 'NA',
     'code3' => 'NAM',
     'num' => '516',
-    'name' => 'Namibia',
+    'name' => 'Намибия',
+    'name_eng' => 'Namibia',
     'cont' => 'AF',
     'tld' => 'na',
     'currency' => 'NAD',
@@ -2720,12 +2898,13 @@ $data = array (
     'capital_id' => '3352136',
     'active' => '0',
   ),
-  160 => 
+  161 => 
   array (
     'code' => 'NC',
     'code3' => 'NCL',
     'num' => '540',
-    'name' => 'New Caledonia',
+    'name' => 'Новая Каледония',
+    'name_eng' => 'New Caledonia',
     'cont' => 'OC',
     'tld' => 'nc',
     'currency' => 'XPF',
@@ -2737,12 +2916,13 @@ $data = array (
     'capital_id' => '2139521',
     'active' => '0',
   ),
-  161 => 
+  162 => 
   array (
     'code' => 'NE',
     'code3' => 'NER',
     'num' => '562',
-    'name' => 'Niger',
+    'name' => 'Нигер',
+    'name_eng' => 'Niger',
     'cont' => 'AF',
     'tld' => 'ne',
     'currency' => 'XOF',
@@ -2754,12 +2934,13 @@ $data = array (
     'capital_id' => '2440485',
     'active' => '0',
   ),
-  162 => 
+  163 => 
   array (
     'code' => 'NF',
     'code3' => 'NFK',
     'num' => '574',
-    'name' => 'Norfolk Island',
+    'name' => 'Остров Норфолк',
+    'name_eng' => 'Norfolk Island',
     'cont' => 'OC',
     'tld' => 'nf',
     'currency' => 'AUD',
@@ -2771,12 +2952,13 @@ $data = array (
     'capital_id' => '2161314',
     'active' => '0',
   ),
-  163 => 
+  164 => 
   array (
     'code' => 'NG',
     'code3' => 'NGA',
     'num' => '566',
-    'name' => 'Nigeria',
+    'name' => 'Нигерия',
+    'name_eng' => 'Nigeria',
     'cont' => 'AF',
     'tld' => 'ng',
     'currency' => 'NGN',
@@ -2788,12 +2970,13 @@ $data = array (
     'capital_id' => '2352778',
     'active' => '0',
   ),
-  164 => 
+  165 => 
   array (
     'code' => 'NI',
     'code3' => 'NIC',
     'num' => '558',
-    'name' => 'Nicaragua',
+    'name' => 'Никарагуа',
+    'name_eng' => 'Nicaragua',
     'cont' => 'NA',
     'tld' => 'ni',
     'currency' => 'NIO',
@@ -2805,12 +2988,13 @@ $data = array (
     'capital_id' => '3617763',
     'active' => '0',
   ),
-  165 => 
+  166 => 
   array (
     'code' => 'NL',
     'code3' => 'NLD',
     'num' => '528',
-    'name' => 'Netherlands',
+    'name' => 'Нидерланды',
+    'name_eng' => 'Netherlands',
     'cont' => 'EU',
     'tld' => 'nl',
     'currency' => 'EUR',
@@ -2822,12 +3006,13 @@ $data = array (
     'capital_id' => '2759794',
     'active' => '0',
   ),
-  166 => 
+  167 => 
   array (
     'code' => 'NO',
     'code3' => 'NOR',
     'num' => '578',
-    'name' => 'Norway',
+    'name' => 'Норвегия',
+    'name_eng' => 'Norway',
     'cont' => 'EU',
     'tld' => 'no',
     'currency' => 'NOK',
@@ -2839,12 +3024,13 @@ $data = array (
     'capital_id' => '3143244',
     'active' => '0',
   ),
-  167 => 
+  168 => 
   array (
     'code' => 'NP',
     'code3' => 'NPL',
     'num' => '524',
-    'name' => 'Nepal',
+    'name' => 'Непал',
+    'name_eng' => 'Nepal',
     'cont' => 'AS',
     'tld' => 'np',
     'currency' => 'NPR',
@@ -2856,12 +3042,13 @@ $data = array (
     'capital_id' => '1283240',
     'active' => '0',
   ),
-  168 => 
+  169 => 
   array (
     'code' => 'NR',
     'code3' => 'NRU',
     'num' => '520',
-    'name' => 'Nauru',
+    'name' => 'Науру',
+    'name_eng' => 'Nauru',
     'cont' => 'OC',
     'tld' => 'nr',
     'currency' => 'AUD',
@@ -2873,12 +3060,13 @@ $data = array (
     'capital_id' => '0',
     'active' => '0',
   ),
-  169 => 
+  170 => 
   array (
     'code' => 'NU',
     'code3' => 'NIU',
     'num' => '570',
-    'name' => 'Niue',
+    'name' => 'Ниуэ',
+    'name_eng' => 'Niue',
     'cont' => 'OC',
     'tld' => 'nu',
     'currency' => 'NZD',
@@ -2890,12 +3078,13 @@ $data = array (
     'capital_id' => '4036284',
     'active' => '0',
   ),
-  170 => 
+  171 => 
   array (
     'code' => 'NZ',
     'code3' => 'NZL',
     'num' => '554',
-    'name' => 'New Zealand',
+    'name' => 'Новая Зеландия',
+    'name_eng' => 'New Zealand',
     'cont' => 'OC',
     'tld' => 'nz',
     'currency' => 'NZD',
@@ -2907,12 +3096,13 @@ $data = array (
     'capital_id' => '2179537',
     'active' => '0',
   ),
-  171 => 
+  172 => 
   array (
     'code' => 'OM',
     'code3' => 'OMN',
     'num' => '512',
-    'name' => 'Oman',
+    'name' => 'Оман',
+    'name_eng' => 'Oman',
     'cont' => 'AS',
     'tld' => 'om',
     'currency' => 'OMR',
@@ -2924,12 +3114,13 @@ $data = array (
     'capital_id' => '287286',
     'active' => '0',
   ),
-  172 => 
+  173 => 
   array (
     'code' => 'PA',
     'code3' => 'PAN',
     'num' => '591',
-    'name' => 'Panama',
+    'name' => 'Панама',
+    'name_eng' => 'Panama',
     'cont' => 'NA',
     'tld' => 'pa',
     'currency' => 'PAB',
@@ -2941,12 +3132,13 @@ $data = array (
     'capital_id' => '3703443',
     'active' => '0',
   ),
-  173 => 
+  174 => 
   array (
     'code' => 'PE',
     'code3' => 'PER',
     'num' => '604',
-    'name' => 'Peru',
+    'name' => 'Перу',
+    'name_eng' => 'Peru',
     'cont' => 'SA',
     'tld' => 'pe',
     'currency' => 'PEN',
@@ -2958,12 +3150,13 @@ $data = array (
     'capital_id' => '3936456',
     'active' => '0',
   ),
-  174 => 
+  175 => 
   array (
     'code' => 'PF',
     'code3' => 'PYF',
     'num' => '258',
-    'name' => 'French Polynesia',
+    'name' => 'Французская Полинезия',
+    'name_eng' => 'French Polynesia',
     'cont' => 'OC',
     'tld' => 'pf',
     'currency' => 'XPF',
@@ -2975,12 +3168,13 @@ $data = array (
     'capital_id' => '4033936',
     'active' => '0',
   ),
-  175 => 
+  176 => 
   array (
     'code' => 'PG',
     'code3' => 'PNG',
     'num' => '598',
-    'name' => 'Papua New Guinea',
+    'name' => 'Папуа — Новая Гвинея',
+    'name_eng' => 'Papua New Guinea',
     'cont' => 'OC',
     'tld' => 'pg',
     'currency' => 'PGK',
@@ -2992,12 +3186,13 @@ $data = array (
     'capital_id' => '2088122',
     'active' => '0',
   ),
-  176 => 
+  177 => 
   array (
     'code' => 'PH',
     'code3' => 'PHL',
     'num' => '608',
-    'name' => 'Philippines',
+    'name' => 'Филиппины',
+    'name_eng' => 'Philippines',
     'cont' => 'AS',
     'tld' => 'ph',
     'currency' => 'PHP',
@@ -3009,12 +3204,13 @@ $data = array (
     'capital_id' => '1701668',
     'active' => '0',
   ),
-  177 => 
+  178 => 
   array (
     'code' => 'PK',
     'code3' => 'PAK',
     'num' => '586',
-    'name' => 'Pakistan',
+    'name' => 'Пакистан',
+    'name_eng' => 'Pakistan',
     'cont' => 'AS',
     'tld' => 'pk',
     'currency' => 'PKR',
@@ -3026,12 +3222,13 @@ $data = array (
     'capital_id' => '1176615',
     'active' => '0',
   ),
-  178 => 
+  179 => 
   array (
     'code' => 'PL',
     'code3' => 'POL',
     'num' => '616',
-    'name' => 'Poland',
+    'name' => 'Польша',
+    'name_eng' => 'Poland',
     'cont' => 'EU',
     'tld' => 'pl',
     'currency' => 'PLN',
@@ -3043,12 +3240,13 @@ $data = array (
     'capital_id' => '756135',
     'active' => '0',
   ),
-  179 => 
+  180 => 
   array (
     'code' => 'PM',
     'code3' => 'SPM',
     'num' => '666',
-    'name' => 'Saint Pierre and Miquelon',
+    'name' => 'Сен-Пьер и Микелон',
+    'name_eng' => 'Saint Pierre and Miquelon',
     'cont' => 'NA',
     'tld' => 'pm',
     'currency' => 'EUR',
@@ -3060,12 +3258,13 @@ $data = array (
     'capital_id' => '3424934',
     'active' => '0',
   ),
-  180 => 
+  181 => 
   array (
     'code' => 'PN',
     'code3' => 'PCN',
     'num' => '612',
-    'name' => 'Pitcairn',
+    'name' => 'Острова Питкэрн',
+    'name_eng' => 'Pitcairn',
     'cont' => 'OC',
     'tld' => 'pn',
     'currency' => 'NZD',
@@ -3077,12 +3276,13 @@ $data = array (
     'capital_id' => '4030723',
     'active' => '0',
   ),
-  181 => 
+  182 => 
   array (
     'code' => 'PR',
     'code3' => 'PRI',
     'num' => '630',
-    'name' => 'Puerto Rico',
+    'name' => 'Пуэрто-Рико',
+    'name_eng' => 'Puerto Rico',
     'cont' => 'NA',
     'tld' => 'pr',
     'currency' => 'USD',
@@ -3094,12 +3294,13 @@ $data = array (
     'capital_id' => '4568127',
     'active' => '0',
   ),
-  182 => 
+  183 => 
   array (
     'code' => 'PS',
     'code3' => 'PSE',
     'num' => '275',
-    'name' => 'Palestine, State of',
+    'name' => 'Государство Палестина',
+    'name_eng' => 'Palestine, State of',
     'cont' => 'AS',
     'tld' => 'ps',
     'currency' => 'ILS',
@@ -3111,12 +3312,13 @@ $data = array (
     'capital_id' => '0',
     'active' => '0',
   ),
-  183 => 
+  184 => 
   array (
     'code' => 'PT',
     'code3' => 'PRT',
     'num' => '620',
-    'name' => 'Portugal',
+    'name' => 'Португалия',
+    'name_eng' => 'Portugal',
     'cont' => 'EU',
     'tld' => 'pt',
     'currency' => 'EUR',
@@ -3128,12 +3330,13 @@ $data = array (
     'capital_id' => '2267057',
     'active' => '0',
   ),
-  184 => 
+  185 => 
   array (
     'code' => 'PW',
     'code3' => 'PLW',
     'num' => '585',
-    'name' => 'Palau',
+    'name' => 'Палау',
+    'name_eng' => 'Palau',
     'cont' => 'OC',
     'tld' => 'pw',
     'currency' => 'USD',
@@ -3145,12 +3348,13 @@ $data = array (
     'capital_id' => '7303944',
     'active' => '0',
   ),
-  185 => 
+  186 => 
   array (
     'code' => 'PY',
     'code3' => 'PRY',
     'num' => '600',
-    'name' => 'Paraguay',
+    'name' => 'Парагвай',
+    'name_eng' => 'Paraguay',
     'cont' => 'SA',
     'tld' => 'py',
     'currency' => 'PYG',
@@ -3162,12 +3366,13 @@ $data = array (
     'capital_id' => '3439389',
     'active' => '0',
   ),
-  186 => 
+  187 => 
   array (
     'code' => 'QA',
     'code3' => 'QAT',
     'num' => '634',
-    'name' => 'Qatar',
+    'name' => 'Катар',
+    'name_eng' => 'Qatar',
     'cont' => 'AS',
     'tld' => 'qa',
     'currency' => 'QAR',
@@ -3179,12 +3384,13 @@ $data = array (
     'capital_id' => '290030',
     'active' => '0',
   ),
-  187 => 
+  188 => 
   array (
     'code' => 'RE',
     'code3' => 'REU',
     'num' => '638',
-    'name' => 'Reunion',
+    'name' => 'Реюньон',
+    'name_eng' => 'Reunion',
     'cont' => 'AF',
     'tld' => 're',
     'currency' => 'EUR',
@@ -3196,12 +3402,13 @@ $data = array (
     'capital_id' => '935264',
     'active' => '0',
   ),
-  188 => 
+  189 => 
   array (
     'code' => 'RO',
     'code3' => 'ROU',
     'num' => '642',
-    'name' => 'Romania',
+    'name' => 'Румыния',
+    'name_eng' => 'Romania',
     'cont' => 'EU',
     'tld' => 'ro',
     'currency' => 'RON',
@@ -3213,12 +3420,13 @@ $data = array (
     'capital_id' => '683506',
     'active' => '0',
   ),
-  189 => 
+  190 => 
   array (
     'code' => 'RS',
     'code3' => 'SRB',
     'num' => '688',
-    'name' => 'Serbia',
+    'name' => 'Сербия',
+    'name_eng' => 'Serbia',
     'cont' => 'EU',
     'tld' => 'rs',
     'currency' => 'RSD',
@@ -3230,12 +3438,13 @@ $data = array (
     'capital_id' => '792680',
     'active' => '0',
   ),
-  190 => 
+  191 => 
   array (
     'code' => 'RU',
     'code3' => 'RUS',
     'num' => '643',
-    'name' => 'Russian Federation',
+    'name' => 'Россия',
+    'name_eng' => 'Russian Federation',
     'cont' => 'EU',
     'tld' => 'ru',
     'currency' => 'RUB',
@@ -3247,12 +3456,13 @@ $data = array (
     'capital_id' => '524901',
     'active' => '1',
   ),
-  191 => 
+  192 => 
   array (
     'code' => 'RW',
     'code3' => 'RWA',
     'num' => '646',
-    'name' => 'Rwanda',
+    'name' => 'Руанда',
+    'name_eng' => 'Rwanda',
     'cont' => 'AF',
     'tld' => 'rw',
     'currency' => 'RWF',
@@ -3264,12 +3474,13 @@ $data = array (
     'capital_id' => '202061',
     'active' => '0',
   ),
-  192 => 
+  193 => 
   array (
     'code' => 'SA',
     'code3' => 'SAU',
     'num' => '682',
-    'name' => 'Saudi Arabia',
+    'name' => 'Саудовская Аравия',
+    'name_eng' => 'Saudi Arabia',
     'cont' => 'AS',
     'tld' => 'sa',
     'currency' => 'SAR',
@@ -3281,12 +3492,13 @@ $data = array (
     'capital_id' => '108410',
     'active' => '0',
   ),
-  193 => 
+  194 => 
   array (
     'code' => 'SB',
     'code3' => 'SLB',
     'num' => '090',
-    'name' => 'Solomon Islands',
+    'name' => 'Соломоновы Острова',
+    'name_eng' => 'Solomon Islands',
     'cont' => 'OC',
     'tld' => 'sb',
     'currency' => 'SBD',
@@ -3298,12 +3510,13 @@ $data = array (
     'capital_id' => '2108502',
     'active' => '0',
   ),
-  194 => 
+  195 => 
   array (
     'code' => 'SC',
     'code3' => 'SYC',
     'num' => '690',
-    'name' => 'Seychelles',
+    'name' => 'Сейшельские Острова',
+    'name_eng' => 'Seychelles',
     'cont' => 'AF',
     'tld' => 'sc',
     'currency' => 'SCR',
@@ -3315,12 +3528,13 @@ $data = array (
     'capital_id' => '241131',
     'active' => '0',
   ),
-  195 => 
+  196 => 
   array (
     'code' => 'SD',
     'code3' => 'SDN',
     'num' => '729',
-    'name' => 'Sudan',
+    'name' => 'Судан',
+    'name_eng' => 'Sudan',
     'cont' => 'AF',
     'tld' => 'sd',
     'currency' => 'SDG',
@@ -3332,12 +3546,13 @@ $data = array (
     'capital_id' => '379252',
     'active' => '0',
   ),
-  196 => 
+  197 => 
   array (
     'code' => 'SE',
     'code3' => 'SWE',
     'num' => '752',
-    'name' => 'Sweden',
+    'name' => 'Швеция',
+    'name_eng' => 'Sweden',
     'cont' => 'EU',
     'tld' => 'se',
     'currency' => 'SEK',
@@ -3349,12 +3564,13 @@ $data = array (
     'capital_id' => '2673730',
     'active' => '0',
   ),
-  197 => 
+  198 => 
   array (
     'code' => 'SG',
     'code3' => 'SGP',
     'num' => '702',
-    'name' => 'Singapore',
+    'name' => 'Сингапур',
+    'name_eng' => 'Singapore',
     'cont' => 'AS',
     'tld' => 'sg',
     'currency' => 'SGD',
@@ -3366,12 +3582,13 @@ $data = array (
     'capital_id' => '1880252',
     'active' => '0',
   ),
-  198 => 
+  199 => 
   array (
     'code' => 'SH',
     'code3' => 'SHN',
     'num' => '654',
-    'name' => 'Saint Helena, Ascension and Tristan da Cunha',
+    'name' => 'Острова Святой Елены, Вознесения и Тристан-да-Кунья',
+    'name_eng' => 'Saint Helena, Ascension and Tristan da Cunha',
     'cont' => 'AF',
     'tld' => 'sh',
     'currency' => 'SHP',
@@ -3383,12 +3600,13 @@ $data = array (
     'capital_id' => '3370903',
     'active' => '0',
   ),
-  199 => 
+  200 => 
   array (
     'code' => 'SI',
     'code3' => 'SVN',
     'num' => '705',
-    'name' => 'Slovenia',
+    'name' => 'Словения',
+    'name_eng' => 'Slovenia',
     'cont' => 'EU',
     'tld' => 'si',
     'currency' => 'EUR',
@@ -3400,12 +3618,13 @@ $data = array (
     'capital_id' => '3196359',
     'active' => '0',
   ),
-  200 => 
+  201 => 
   array (
     'code' => 'SJ',
     'code3' => 'SJM',
     'num' => '744',
-    'name' => 'Svalbard and Jan Mayen',
+    'name' => 'Шпицберген и Ян-Майен',
+    'name_eng' => 'Svalbard and Jan Mayen',
     'cont' => 'EU',
     'tld' => 'sj',
     'currency' => 'NOK',
@@ -3417,12 +3636,13 @@ $data = array (
     'capital_id' => '2729907',
     'active' => '0',
   ),
-  201 => 
+  202 => 
   array (
     'code' => 'SK',
     'code3' => 'SVK',
     'num' => '703',
-    'name' => 'Slovakia',
+    'name' => 'Словакия',
+    'name_eng' => 'Slovakia',
     'cont' => 'EU',
     'tld' => 'sk',
     'currency' => 'EUR',
@@ -3434,12 +3654,13 @@ $data = array (
     'capital_id' => '3060972',
     'active' => '0',
   ),
-  202 => 
+  203 => 
   array (
     'code' => 'SL',
     'code3' => 'SLE',
     'num' => '694',
-    'name' => 'Sierra Leone',
+    'name' => 'Сьерра-Леоне',
+    'name_eng' => 'Sierra Leone',
     'cont' => 'AF',
     'tld' => 'sl',
     'currency' => 'SLL',
@@ -3451,12 +3672,13 @@ $data = array (
     'capital_id' => '2409306',
     'active' => '0',
   ),
-  203 => 
+  204 => 
   array (
     'code' => 'SM',
     'code3' => 'SMR',
     'num' => '674',
-    'name' => 'San Marino',
+    'name' => 'Сан-Марино',
+    'name_eng' => 'San Marino',
     'cont' => 'EU',
     'tld' => 'sm',
     'currency' => 'EUR',
@@ -3468,12 +3690,13 @@ $data = array (
     'capital_id' => '3168070',
     'active' => '0',
   ),
-  204 => 
+  205 => 
   array (
     'code' => 'SN',
     'code3' => 'SEN',
     'num' => '686',
-    'name' => 'Senegal',
+    'name' => 'Сенегал',
+    'name_eng' => 'Senegal',
     'cont' => 'AF',
     'tld' => 'sn',
     'currency' => 'XOF',
@@ -3485,12 +3708,13 @@ $data = array (
     'capital_id' => '2253354',
     'active' => '0',
   ),
-  205 => 
+  206 => 
   array (
     'code' => 'SO',
     'code3' => 'SOM',
     'num' => '706',
-    'name' => 'Somalia',
+    'name' => 'Сомали',
+    'name_eng' => 'Somalia',
     'cont' => 'AF',
     'tld' => 'so',
     'currency' => 'SOS',
@@ -3502,12 +3726,13 @@ $data = array (
     'capital_id' => '53654',
     'active' => '0',
   ),
-  206 => 
+  207 => 
   array (
     'code' => 'SR',
     'code3' => 'SUR',
     'num' => '740',
-    'name' => 'Suriname',
+    'name' => 'Суринам',
+    'name_eng' => 'Suriname',
     'cont' => 'SA',
     'tld' => 'sr',
     'currency' => 'SRD',
@@ -3519,12 +3744,13 @@ $data = array (
     'capital_id' => '3383330',
     'active' => '0',
   ),
-  207 => 
+  208 => 
   array (
     'code' => 'SS',
     'code3' => 'SSD',
     'num' => '728',
-    'name' => 'South Sudan',
+    'name' => 'Южный Судан',
+    'name_eng' => 'South Sudan',
     'cont' => 'AF',
     'tld' => '',
     'currency' => 'SSP',
@@ -3536,12 +3762,13 @@ $data = array (
     'capital_id' => '373303',
     'active' => '0',
   ),
-  208 => 
+  209 => 
   array (
     'code' => 'ST',
     'code3' => 'STP',
     'num' => '678',
-    'name' => 'Sao Tome and Principe',
+    'name' => 'Сан-Томе и Принсипи',
+    'name_eng' => 'Sao Tome and Principe',
     'cont' => 'AF',
     'tld' => 'st',
     'currency' => 'STD',
@@ -3553,12 +3780,31 @@ $data = array (
     'capital_id' => '2410763',
     'active' => '0',
   ),
-  209 => 
+  210 => 
+  array (
+    'code' => 'SU',
+    'code3' => 'SUN',
+    'num' => '810',
+    'name' => 'СССР',
+    'name_eng' => '',
+    'cont' => '',
+    'tld' => '',
+    'currency' => '',
+    'area' => '0',
+    'population' => '0',
+    'phone_prefix' => '',
+    'languages' => '',
+    'geoname_id' => '0',
+    'capital_id' => '0',
+    'active' => '0',
+  ),
+  211 => 
   array (
     'code' => 'SV',
     'code3' => 'SLV',
     'num' => '222',
-    'name' => 'El Salvador',
+    'name' => 'Сальвадор',
+    'name_eng' => 'El Salvador',
     'cont' => 'NA',
     'tld' => 'sv',
     'currency' => 'USD',
@@ -3570,12 +3816,13 @@ $data = array (
     'capital_id' => '3583361',
     'active' => '0',
   ),
-  210 => 
+  212 => 
   array (
     'code' => 'SX',
     'code3' => 'SXM',
     'num' => '534',
-    'name' => 'Sint Maarten (Dutch part)',
+    'name' => 'Синт-Мартен',
+    'name_eng' => 'Sint Maarten (Dutch part)',
     'cont' => 'NA',
     'tld' => 'sx',
     'currency' => 'ANG',
@@ -3587,12 +3834,13 @@ $data = array (
     'capital_id' => '3513392',
     'active' => '0',
   ),
-  211 => 
+  213 => 
   array (
     'code' => 'SY',
     'code3' => 'SYR',
     'num' => '760',
-    'name' => 'Syrian Arab Republic',
+    'name' => 'Сирия',
+    'name_eng' => 'Syrian Arab Republic',
     'cont' => 'AS',
     'tld' => 'sy',
     'currency' => 'SYP',
@@ -3604,12 +3852,13 @@ $data = array (
     'capital_id' => '170654',
     'active' => '0',
   ),
-  212 => 
+  214 => 
   array (
     'code' => 'SZ',
     'code3' => 'SWZ',
     'num' => '748',
-    'name' => 'Swaziland',
+    'name' => 'Свазиленд',
+    'name_eng' => 'Swaziland',
     'cont' => 'AF',
     'tld' => 'sz',
     'currency' => 'SZL',
@@ -3621,12 +3870,13 @@ $data = array (
     'capital_id' => '934985',
     'active' => '0',
   ),
-  213 => 
+  215 => 
   array (
     'code' => 'TC',
     'code3' => 'TCA',
     'num' => '796',
-    'name' => 'Turks and Caicos Islands',
+    'name' => 'Тёркс и Кайкос',
+    'name_eng' => 'Turks and Caicos Islands',
     'cont' => 'NA',
     'tld' => 'tc',
     'currency' => 'USD',
@@ -3638,12 +3888,13 @@ $data = array (
     'capital_id' => '3576994',
     'active' => '0',
   ),
-  214 => 
+  216 => 
   array (
     'code' => 'TD',
     'code3' => 'TCD',
     'num' => '148',
-    'name' => 'Chad',
+    'name' => 'Чад',
+    'name_eng' => 'Chad',
     'cont' => 'AF',
     'tld' => 'td',
     'currency' => 'XAF',
@@ -3655,12 +3906,13 @@ $data = array (
     'capital_id' => '2427123',
     'active' => '0',
   ),
-  215 => 
+  217 => 
   array (
     'code' => 'TF',
     'code3' => 'ATF',
     'num' => '260',
-    'name' => 'French Southern Territories',
+    'name' => 'Французские Южные и Антарктические Территории',
+    'name_eng' => 'French Southern Territories',
     'cont' => 'AN',
     'tld' => 'tf',
     'currency' => 'EUR',
@@ -3672,12 +3924,13 @@ $data = array (
     'capital_id' => '1546102',
     'active' => '0',
   ),
-  216 => 
+  218 => 
   array (
     'code' => 'TG',
     'code3' => 'TGO',
     'num' => '768',
-    'name' => 'Togo',
+    'name' => 'Того',
+    'name_eng' => 'Togo',
     'cont' => 'AF',
     'tld' => 'tg',
     'currency' => 'XOF',
@@ -3689,12 +3942,13 @@ $data = array (
     'capital_id' => '2365267',
     'active' => '0',
   ),
-  217 => 
+  219 => 
   array (
     'code' => 'TH',
     'code3' => 'THA',
     'num' => '764',
-    'name' => 'Thailand',
+    'name' => 'Таиланд',
+    'name_eng' => 'Thailand',
     'cont' => 'AS',
     'tld' => 'th',
     'currency' => 'THB',
@@ -3706,12 +3960,13 @@ $data = array (
     'capital_id' => '1609350',
     'active' => '0',
   ),
-  218 => 
+  220 => 
   array (
     'code' => 'TJ',
     'code3' => 'TJK',
     'num' => '762',
-    'name' => 'Tajikistan',
+    'name' => 'Таджикистан',
+    'name_eng' => 'Tajikistan',
     'cont' => 'AS',
     'tld' => 'tj',
     'currency' => 'TJS',
@@ -3723,12 +3978,13 @@ $data = array (
     'capital_id' => '1221874',
     'active' => '0',
   ),
-  219 => 
+  221 => 
   array (
     'code' => 'TK',
     'code3' => 'TKL',
     'num' => '772',
-    'name' => 'Tokelau',
+    'name' => 'Токелау',
+    'name_eng' => 'Tokelau',
     'cont' => 'OC',
     'tld' => 'tk',
     'currency' => 'NZD',
@@ -3740,12 +3996,13 @@ $data = array (
     'capital_id' => '0',
     'active' => '0',
   ),
-  220 => 
+  222 => 
   array (
     'code' => 'TL',
     'code3' => 'TLS',
     'num' => '626',
-    'name' => 'Timor-Leste',
+    'name' => 'Восточный Тимор',
+    'name_eng' => 'Timor-Leste',
     'cont' => 'OC',
     'tld' => 'tl',
     'currency' => 'USD',
@@ -3757,12 +4014,13 @@ $data = array (
     'capital_id' => '1645457',
     'active' => '0',
   ),
-  221 => 
+  223 => 
   array (
     'code' => 'TM',
     'code3' => 'TKM',
     'num' => '795',
-    'name' => 'Turkmenistan',
+    'name' => 'Туркмения',
+    'name_eng' => 'Turkmenistan',
     'cont' => 'AS',
     'tld' => 'tm',
     'currency' => 'TMT',
@@ -3774,12 +4032,13 @@ $data = array (
     'capital_id' => '162183',
     'active' => '0',
   ),
-  222 => 
+  224 => 
   array (
     'code' => 'TN',
     'code3' => 'TUN',
     'num' => '788',
-    'name' => 'Tunisia',
+    'name' => 'Тунис',
+    'name_eng' => 'Tunisia',
     'cont' => 'AF',
     'tld' => 'tn',
     'currency' => 'TND',
@@ -3791,12 +4050,13 @@ $data = array (
     'capital_id' => '2464470',
     'active' => '0',
   ),
-  223 => 
+  225 => 
   array (
     'code' => 'TO',
     'code3' => 'TON',
     'num' => '776',
-    'name' => 'Tonga',
+    'name' => 'Тонга',
+    'name_eng' => 'Tonga',
     'cont' => 'OC',
     'tld' => 'to',
     'currency' => 'TOP',
@@ -3808,12 +4068,13 @@ $data = array (
     'capital_id' => '4032402',
     'active' => '0',
   ),
-  224 => 
+  226 => 
   array (
     'code' => 'TR',
     'code3' => 'TUR',
     'num' => '792',
-    'name' => 'Turkey',
+    'name' => 'Турция',
+    'name_eng' => 'Turkey',
     'cont' => 'AS',
     'tld' => 'tr',
     'currency' => 'TRY',
@@ -3825,12 +4086,13 @@ $data = array (
     'capital_id' => '323786',
     'active' => '0',
   ),
-  225 => 
+  227 => 
   array (
     'code' => 'TT',
     'code3' => 'TTO',
     'num' => '780',
-    'name' => 'Trinidad and Tobago',
+    'name' => 'Тринидад и Тобаго',
+    'name_eng' => 'Trinidad and Tobago',
     'cont' => 'NA',
     'tld' => 'tt',
     'currency' => 'TTD',
@@ -3842,12 +4104,13 @@ $data = array (
     'capital_id' => '3573890',
     'active' => '0',
   ),
-  226 => 
+  228 => 
   array (
     'code' => 'TV',
     'code3' => 'TUV',
     'num' => '798',
-    'name' => 'Tuvalu',
+    'name' => 'Тувалу',
+    'name_eng' => 'Tuvalu',
     'cont' => 'OC',
     'tld' => 'tv',
     'currency' => 'AUD',
@@ -3859,12 +4122,13 @@ $data = array (
     'capital_id' => '2110394',
     'active' => '0',
   ),
-  227 => 
+  229 => 
   array (
     'code' => 'TW',
     'code3' => 'TWN',
     'num' => '158',
-    'name' => 'Taiwan, Province of China',
+    'name' => 'Китайская Республика',
+    'name_eng' => 'Taiwan, Province of China',
     'cont' => 'AS',
     'tld' => 'tw',
     'currency' => 'TWD',
@@ -3876,12 +4140,13 @@ $data = array (
     'capital_id' => '1668341',
     'active' => '0',
   ),
-  228 => 
+  230 => 
   array (
     'code' => 'TZ',
     'code3' => 'TZA',
     'num' => '834',
-    'name' => 'Tanzania, United Republic of',
+    'name' => 'Танзания',
+    'name_eng' => 'Tanzania, United Republic of',
     'cont' => 'AF',
     'tld' => 'tz',
     'currency' => 'TZS',
@@ -3893,12 +4158,13 @@ $data = array (
     'capital_id' => '160196',
     'active' => '0',
   ),
-  229 => 
+  231 => 
   array (
     'code' => 'UA',
     'code3' => 'UKR',
     'num' => '804',
-    'name' => 'Ukraine',
+    'name' => 'Украина',
+    'name_eng' => 'Ukraine',
     'cont' => 'EU',
     'tld' => 'ua',
     'currency' => 'UAH',
@@ -3910,12 +4176,13 @@ $data = array (
     'capital_id' => '703448',
     'active' => '1',
   ),
-  230 => 
+  232 => 
   array (
     'code' => 'UG',
     'code3' => 'UGA',
     'num' => '800',
-    'name' => 'Uganda',
+    'name' => 'Уганда',
+    'name_eng' => 'Uganda',
     'cont' => 'AF',
     'tld' => 'ug',
     'currency' => 'UGX',
@@ -3927,12 +4194,13 @@ $data = array (
     'capital_id' => '232422',
     'active' => '0',
   ),
-  231 => 
+  233 => 
   array (
     'code' => 'UM',
     'code3' => 'UMI',
     'num' => '581',
-    'name' => 'United States Minor Outlying Islands',
+    'name' => 'Внешние малые острова (США)',
+    'name_eng' => 'United States Minor Outlying Islands',
     'cont' => 'OC',
     'tld' => 'um',
     'currency' => 'USD',
@@ -3944,12 +4212,13 @@ $data = array (
     'capital_id' => '0',
     'active' => '0',
   ),
-  232 => 
+  234 => 
   array (
     'code' => 'US',
     'code3' => 'USA',
     'num' => '840',
-    'name' => 'United States',
+    'name' => 'США',
+    'name_eng' => 'United States',
     'cont' => 'NA',
     'tld' => 'us',
     'currency' => 'USD',
@@ -3961,12 +4230,13 @@ $data = array (
     'capital_id' => '4140963',
     'active' => '1',
   ),
-  233 => 
+  235 => 
   array (
     'code' => 'UY',
     'code3' => 'URY',
     'num' => '858',
-    'name' => 'Uruguay',
+    'name' => 'Уругвай',
+    'name_eng' => 'Uruguay',
     'cont' => 'SA',
     'tld' => 'uy',
     'currency' => 'UYU',
@@ -3978,12 +4248,13 @@ $data = array (
     'capital_id' => '3441575',
     'active' => '0',
   ),
-  234 => 
+  236 => 
   array (
     'code' => 'UZ',
     'code3' => 'UZB',
     'num' => '860',
-    'name' => 'Uzbekistan',
+    'name' => 'Узбекистан',
+    'name_eng' => 'Uzbekistan',
     'cont' => 'AS',
     'tld' => 'uz',
     'currency' => 'UZS',
@@ -3995,12 +4266,13 @@ $data = array (
     'capital_id' => '1512569',
     'active' => '0',
   ),
-  235 => 
+  237 => 
   array (
     'code' => 'VA',
     'code3' => 'VAT',
     'num' => '336',
-    'name' => 'Holy See (Vatican City State)',
+    'name' => 'Ватикан',
+    'name_eng' => 'Holy See (Vatican City State)',
     'cont' => 'EU',
     'tld' => 'va',
     'currency' => 'EUR',
@@ -4012,12 +4284,13 @@ $data = array (
     'capital_id' => '6691831',
     'active' => '0',
   ),
-  236 => 
+  238 => 
   array (
     'code' => 'VC',
     'code3' => 'VCT',
     'num' => '670',
-    'name' => 'Saint Vincent and the Grenadines',
+    'name' => 'Сент-Винсент и Гренадины',
+    'name_eng' => 'Saint Vincent and the Grenadines',
     'cont' => 'NA',
     'tld' => 'vc',
     'currency' => 'XCD',
@@ -4029,12 +4302,13 @@ $data = array (
     'capital_id' => '3577887',
     'active' => '0',
   ),
-  237 => 
+  239 => 
   array (
     'code' => 'VE',
     'code3' => 'VEN',
     'num' => '862',
-    'name' => 'Venezuela, Bolivarian Republic of',
+    'name' => 'Венесуэла',
+    'name_eng' => 'Venezuela, Bolivarian Republic of',
     'cont' => 'SA',
     'tld' => 've',
     'currency' => 'VEF',
@@ -4046,12 +4320,13 @@ $data = array (
     'capital_id' => '3646738',
     'active' => '0',
   ),
-  238 => 
+  240 => 
   array (
     'code' => 'VG',
     'code3' => 'VGB',
     'num' => '092',
-    'name' => 'Virgin Islands, British',
+    'name' => 'Британские Виргинские острова',
+    'name_eng' => 'Virgin Islands, British',
     'cont' => 'NA',
     'tld' => 'vg',
     'currency' => 'USD',
@@ -4063,12 +4338,13 @@ $data = array (
     'capital_id' => '3577430',
     'active' => '0',
   ),
-  239 => 
+  241 => 
   array (
     'code' => 'VI',
     'code3' => 'VIR',
     'num' => '850',
-    'name' => 'Virgin Islands, U.S.',
+    'name' => 'Американские Виргинские острова',
+    'name_eng' => 'Virgin Islands, U.S.',
     'cont' => 'NA',
     'tld' => 'vi',
     'currency' => 'USD',
@@ -4080,12 +4356,13 @@ $data = array (
     'capital_id' => '4795467',
     'active' => '0',
   ),
-  240 => 
+  242 => 
   array (
     'code' => 'VN',
     'code3' => 'VNM',
     'num' => '704',
-    'name' => 'Viet Nam',
+    'name' => 'Вьетнам',
+    'name_eng' => 'Viet Nam',
     'cont' => 'AS',
     'tld' => 'vn',
     'currency' => 'VND',
@@ -4097,12 +4374,13 @@ $data = array (
     'capital_id' => '1581130',
     'active' => '0',
   ),
-  241 => 
+  243 => 
   array (
     'code' => 'VU',
     'code3' => 'VUT',
     'num' => '548',
-    'name' => 'Vanuatu',
+    'name' => 'Вануату',
+    'name_eng' => 'Vanuatu',
     'cont' => 'OC',
     'tld' => 'vu',
     'currency' => 'VUV',
@@ -4114,12 +4392,13 @@ $data = array (
     'capital_id' => '2135171',
     'active' => '0',
   ),
-  242 => 
+  244 => 
   array (
     'code' => 'WF',
     'code3' => 'WLF',
     'num' => '876',
-    'name' => 'Wallis and Futuna',
+    'name' => 'Уоллис и Футуна',
+    'name_eng' => 'Wallis and Futuna',
     'cont' => 'OC',
     'tld' => 'wf',
     'currency' => 'XPF',
@@ -4131,12 +4410,13 @@ $data = array (
     'capital_id' => '4034821',
     'active' => '0',
   ),
-  243 => 
+  245 => 
   array (
     'code' => 'WS',
     'code3' => 'WSM',
     'num' => '882',
-    'name' => 'Samoa',
+    'name' => 'Самоа',
+    'name_eng' => 'Samoa',
     'cont' => 'OC',
     'tld' => 'ws',
     'currency' => 'WST',
@@ -4148,12 +4428,13 @@ $data = array (
     'capital_id' => '4035413',
     'active' => '0',
   ),
-  244 => 
+  246 => 
   array (
     'code' => 'YE',
     'code3' => 'YEM',
     'num' => '887',
-    'name' => 'Yemen',
+    'name' => 'Йемен',
+    'name_eng' => 'Yemen',
     'cont' => 'AS',
     'tld' => 'ye',
     'currency' => 'YER',
@@ -4165,12 +4446,13 @@ $data = array (
     'capital_id' => '71137',
     'active' => '0',
   ),
-  245 => 
+  247 => 
   array (
     'code' => 'YT',
     'code3' => 'MYT',
     'num' => '175',
-    'name' => 'Mayotte',
+    'name' => 'Майотта',
+    'name_eng' => 'Mayotte',
     'cont' => 'AF',
     'tld' => 'yt',
     'currency' => 'EUR',
@@ -4182,12 +4464,13 @@ $data = array (
     'capital_id' => '921815',
     'active' => '0',
   ),
-  246 => 
+  248 => 
   array (
     'code' => 'ZA',
     'code3' => 'ZAF',
     'num' => '710',
-    'name' => 'South Africa',
+    'name' => 'ЮАР',
+    'name_eng' => 'South Africa',
     'cont' => 'AF',
     'tld' => 'za',
     'currency' => 'ZAR',
@@ -4199,12 +4482,13 @@ $data = array (
     'capital_id' => '964137',
     'active' => '0',
   ),
-  247 => 
+  249 => 
   array (
     'code' => 'ZM',
     'code3' => 'ZMB',
     'num' => '894',
-    'name' => 'Zambia',
+    'name' => 'Замбия',
+    'name_eng' => 'Zambia',
     'cont' => 'AF',
     'tld' => 'zm',
     'currency' => 'ZMK',
@@ -4216,12 +4500,13 @@ $data = array (
     'capital_id' => '909137',
     'active' => '0',
   ),
-  248 => 
+  250 => 
   array (
     'code' => 'ZW',
     'code3' => 'ZWE',
     'num' => '716',
-    'name' => 'Zimbabwe',
+    'name' => 'Зимбабве',
+    'name_eng' => 'Zimbabwe',
     'cont' => 'AF',
     'tld' => 'zw',
     'currency' => 'ZWL',

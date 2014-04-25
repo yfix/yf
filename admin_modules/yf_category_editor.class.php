@@ -2,7 +2,7 @@
 
 /**
 * Categories editor
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -23,16 +23,25 @@ class yf_category_editor {
 	}
 
 	/**
-	*/	
+	*/
 	function _purge_category_caches($cat_info = array()) {
 		cache_del(array('category_sets', 'category_items', 'category_items_all'));
 		if (isset($cat_info['name'])) {
 			cache_del(array(
 				'cats__get_items_names__'.$cat_info['name'],
+				'cats__get_items_names__'.$cat_info['name'].'_0',
+				'cats__get_items_names__'.$cat_info['name'].'_1',
+				'cats__get_items_names__'.$cat_info['name'].'_0_0',
+				'cats__get_items_names__'.$cat_info['name'].'_0_1',
+				'cats__get_items_names__'.$cat_info['name'].'_1_0',
+				'cats__get_items_names__'.$cat_info['name'].'_1_1',
 				'cats__prepare_for_box__'.$cat_info['name'].'_0',
 				'cats__prepare_for_box__'.$cat_info['name'].'_1',
+				'cats__prepare_for_box__'.$cat_info['name'].'_0_0',
+				'cats__prepare_for_box__'.$cat_info['name'].'_1_0',
 			));
 		}
+		_class( '_shop_categories', 'modules/shop/' )->_refresh_cache();
 	}
 
 	/**
@@ -300,7 +309,7 @@ class yf_category_editor {
 					<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="icon-save"></i> '.t('Save').'</button>
 					<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-backward"></i> '.t('Go Back').'</a>
 					<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-plus-sign"></i> '.t('Add').'</a>
-					<a href="javascript:void(0);" class="btn btn-mini btn-xs" id="draggable-menu-expand-all"><i class="icon-expand-alt"></i> '.t('Expand').'</a>
+					<a href="javascript:void(0);" class="btn btn-mini btn-xs" id="draggable-menu-expand-all"><i class="icon-expand-alt fa-expand"></i> '.t('Expand').'</a>
 				</div>
 				<ul class="draggable_menu">'.implode(PHP_EOL, (array)$this->_drag_tpl_items($items)).'</ul>
 			</form>'
@@ -319,7 +328,7 @@ class yf_category_editor {
 			'delete_link'	=> './?object='.$_GET['object'].'&action=delete_item&id=%d',
 			'clone_link'	=> './?object='.$_GET['object'].'&action=clone_item&id=%d',
 		);
-		$form_controls = 
+		$form_controls =
 			$form->tpl_row('tbl_link_edit', $replace, '', '', '')
 			.$form->tpl_row('tbl_link_delete', $replace, '', '', '')
 			.$form->tpl_row('tbl_link_clone', $replace, '', '', '')
@@ -405,7 +414,7 @@ class yf_category_editor {
 			$icon_path = '';
 			$icon_class = '';
 			if ($icon) {
-				// Icon class from bootstrap icon class names 
+				// Icon class from bootstrap icon class names
 				if (preg_match('/^icon\-[a-z0-9_-]+$/i', $icon) || (strpos($icon, '.') === false)) {
 					$icon_class = $icon;
 				} else {
@@ -494,7 +503,7 @@ class yf_category_editor {
 		$new_items = array();
 		foreach ((array)$ids as $id => $level) {
 			$new_items[$id] = $items[$id] + array('level' => $level);
-		}		
+		}
 		return $new_items;
 	}
 

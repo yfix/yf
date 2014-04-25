@@ -3,7 +3,7 @@
 
 require_once dirname(dirname(__FILE__)).'/scripts_init.php';
 
-$table = DB_PREFIX. 'countries';
+$table = DB_PREFIX. 'geo_countries';
 
 $capital_ids = array();
 foreach (db_geonames()->from('geo_geoname')->where('feature_code', '=', 'pplc')->get_all() as $a) {

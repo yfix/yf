@@ -10,6 +10,7 @@ class yf_manage_shop_product_add {
 				$id = db()->insert_id();
 				$extra['redirect_link'] = './?object='.main()->_get('object').'&action=product_edit&id='.$id;
 				common()->admin_wall_add(array(t('shop product added: %name', array('%name' => $_POST['name'])), $id));
+				module('manage_shop')->_product_cache_purge($id);
 			}))
 			->text('name')
 			->save_and_back();

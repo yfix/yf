@@ -38,10 +38,28 @@ $data = array (
 			'default' => '',
 			'auto_inc' => 0,
 		),
+		'name_eng' => 
+		array (
+			'type' => 'varchar',
+			'length' => '255',
+			'attrib' => NULL,
+			'not_null' => 1,
+			'default' => '',
+			'auto_inc' => 0,
+		),
 		'capital_id' => 
 		array (
 			'type' => 'int',
 			'length' => '10',
+			'attrib' => NULL,
+			'not_null' => 1,
+			'default' => '0',
+			'auto_inc' => 0,
+		),
+		'active' => 
+		array (
+			'type' => 'enum',
+			'length' => '\'0\',\'1\'',
 			'attrib' => NULL,
 			'not_null' => 1,
 			'default' => '0',

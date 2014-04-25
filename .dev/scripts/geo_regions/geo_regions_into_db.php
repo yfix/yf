@@ -22,7 +22,7 @@ foreach (db_geonames()->from('geo_geoname')->where('feature_code', '=', 'ppla')-
 $sql = 'SELECT id, name, country, admin1 AS code FROM geo_geoname WHERE feature_code = "adm1"';
 if ($lang) {
 	$sql = 
-		'SELECT g.id, a.name, g.country, g.admin1 AS code
+		'SELECT g.id, a.name, g.name AS name_eng, g.country, g.admin1 AS code
 		FROM geo_geoname AS g
 		LEFT JOIN geo_alternate_name AS a ON g.id = a.geoname_id
 		WHERE a.language_code = "'._es($lang).'"
@@ -42,10 +42,15 @@ foreach (db_geonames()->get_all($sql) as $a) {
 		'country'		=> $a['country'],
 		'code'			=> $a['code'],
 		'name'			=> $a['name'],
+		'name_eng'		=> $a['name_eng'],
+// TODO: need additional efforts to fill all capitals, example: Kiev and Kievskaya oblast does not have detected capital_id
 		'capital_id'	=> $capital_ids[$a['country'].$a['code']],
 	);
 }
 db()->replace_safe($table, $to_update);
+
+db()->query('DELETE FROM '.$table.' WHERE country != "ua"');
+db()->update($table, array('active' => 1), 'country = "ua"');
 
 echo 'Trying to get 2 first records: '.PHP_EOL;
 print_r(db()->get_all('SELECT * FROM '.$table.' LIMIT 2'));

@@ -1,3 +1,3 @@
 <?php
 
-$data = db()->get_2d('SELECT name, offset FROM '.db('timezones').' ORDER BY n');
+$data = db()->get_all('SELECT * FROM '.db('timezones').' WHERE active="1" ORDER BY offset ASC, name ASC');
