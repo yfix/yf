@@ -129,9 +129,9 @@ class yf_cats {
 	/**
 	* Get all category items names for the given block
 	*/
-	function _get_items_names($cat_name = '') {
+	function _get_items_names($cat_name = '', $recursive_sort = true, $all = false) {
 		$items = array();
-		foreach ((array)$this->_get_items_array($cat_name) as $item_id => $item_info) {
+		foreach ((array)$this->_get_items_array($cat_name, $recursive_sort, $all) as $item_id => $item_info) {
 			$items[$item_info['id']] = $item_info['name'];
 		}
 		return $items;
@@ -139,39 +139,44 @@ class yf_cats {
 
 	/**
 	*/
-	function _get_items_names_cached($cat_name = '') {
-		$cache_name = 'cats__get_items_names__'.$cat_name;
+	function _get_items_names_cached($cat_name = '', $recursive_sort = true, $all = false) {
+		$cache_name = 'cats__get_items_names__'.$cat_name.'_'.$all.'_'.$recursive_sort;
 		$items = cache_get($cache_name);
 		if ($items) {
 			return $items;
 		}
-		$items = $this->_get_items_names($cat_name);
+		$items = $this->_get_items_names($cat_name, $recursive_sort, $all);
 		cache_set($cache_name, $items);
 		return $items;
 	}
 
 	/**
 	*/
-	function _prepare_for_box_cached($cat_name = '', $with_all = 1, $parent_item_id = 0) {
-		$cache_name = 'cats__prepare_for_box__'.$cat_name.'_'.$with_all.'_'.$parent_item_id;
+	function _prepare_for_box_cached($cat_name = '', $with_all = 1, $parent_item_id = 0, $all = false) {
+		$cache_name = 'cats__prepare_for_box__'.$cat_name.'_'.$all.'_'.$parent_item_id;
 		$items = cache_get($cache_name);
 		if ($items) {
 			return $items;
 		}
-		$items = $this->_prepare_for_box($cat_name, $with_all, $parent_item_id);
+		$items = $this->_prepare_for_box($cat_name, $with_all, $parent_item_id, $all);
 		cache_set($cache_name, $items);
+		if (!$with_all) {
+			unset($items[' ']);
+		} elseif (!isset($items[' '])) {
+			$items = array(' ' => t('-- All --')) + $items;
+		}
 		return $items;
 	}
 
 	/**
 	* Prepare category items for use in box
 	*/
-	function _prepare_for_box($cat_items = array(), $with_all = true, $parent_item_id = 0) {
+	function _prepare_for_box($cat_items = array(), $with_all = true, $parent_item_id = 0, $all = false) {
 		if (!empty($cat_items) && is_string($cat_items)) {
 			$cat_items = $this->_get_items_array($cat_items);
 		}
 		if (empty($cat_items)) {
-			$cat_items = $this->_get_items_array($this->_default_cats_block);
+			$cat_items = $this->_get_items_array($this->_default_cats_block, true, $all);
 		}
 		$items_for_box = array();
 		if ($with_all) {
