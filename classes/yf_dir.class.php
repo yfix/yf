@@ -100,21 +100,68 @@ class yf_dir {
 	}
 
 	/**
+	*/
+	function scan_dir_fast($start_dir, $pattern = '') {
+		$files = array();
+		$dh	= @opendir($start_dir);
+		if (!$dh) {
+			return $files;
+		}
+		while (false !== ($f = readdir($dh))) {
+			if ($f === '.' || $f === '..') {
+				continue;
+			}
+			$item = $start_dir.'/'.$f;
+			if (is_dir($item)) {
+				$files = array_merge($files, $this->scan_dir_fast($item, $pattern));
+			} elseif (is_file($item) && (!$pattern || preg_match($pattern, $item))) {
+				$files[] = $item;
+			}
+		}
+		closedir($dh);
+		return $files;
+	}
+
+	/**
+	* Recursive folder search, based on RecursiveDirectoryIterator 
+	*/
+	function rsearch($folder, $pattern) {
+		$dir = new RecursiveDirectoryIterator($folder);
+		$ite = new RecursiveIteratorIterator($dir);
+		$files = new RegexIterator($ite, $pattern, RegexIterator::GET_MATCH);
+		$fileList = array();
+		foreach($files as $file) {
+			$fileList = array_merge($fileList, $file);
+		}
+		return $fileList;
+	}
+
+	/**
+	* Recursive glob(). Note that glob and rglob does not search hidden files (starting from dot on linux/unix)
+	*/
+	function rglob($pattern, $flags = 0) {
+		$files = glob($pattern, $flags); 
+		foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
+			$files = array_merge($files, $this->rglob($dir.'/'.basename($pattern), $flags));
+		}
+		return $files;
+	}
+
+	/**
 	* Alias
 	*/
-	function scan ($start_dir, $FLAT_MODE = true, $pattern_include = '', $pattern_exclude = '', $level = null) {
-		return $this->scan_dir($start_dir, $FLAT_MODE, $pattern_include, $pattern_exclude, $level);
+	function scan ($start_dir, $_tmp = true, $pattern_include = '', $pattern_exclude = '') {
+		return $this->scan_dir($start_dir, $_tmp, $pattern_include, $pattern_exclude);
 	}
 
 	/**
 	* Recursively scanning directory structure (including subdirectories) //
 	*/
-	function scan_dir ($start_dir, $FLAT_MODE = true, $pattern_include = '', $pattern_exclude = '', $level = null) {
+	function scan_dir ($start_dir, $_tmp = 1, $pattern_include = '', $pattern_exclude = '') {
 		// Here we accept several start folders, result will be merged
 		if (is_array($start_dir)) {
-			$FLAT_MODE = true;
 			foreach ((array)$start_dir as $_dir_name) {
-				foreach ((array)$this->scan_dir($_dir_name, 1, $pattern_include, $pattern_exclude, $level) as $_file_path) {
+				foreach ((array)$this->scan_dir($_dir_name, 1, $pattern_include, $pattern_exclude) as $_file_path) {
 					$_files[] = $_file_path;
 				}
 			}
@@ -131,30 +178,18 @@ class yf_dir {
 			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$item_name	= $start_dir.'/'.$f;
-			$tmp_file	= $FLAT_MODE ? $item_name : $f;
-			$_is_dir	= is_dir($item_name);
-			// Check patterns
-			if ($this->_skip_by_pattern($_is_dir ? $item_name : $tmp_file, $_is_dir, $pattern_include, $pattern_exclude)) {
+			$item		= $start_dir.'/'.$f;
+			$_is_dir	= is_dir($item);
+			if ($this->_skip_by_pattern($item, $_is_dir, $pattern_include, $pattern_exclude)) {
 				continue;
 			}
-			// 'Flat' mode (all filenames are stored as 1-dimension array, else - multi-dimension array)
 			if ($_is_dir) {
-				if (is_null($level) || $level > 0) {
-					$tmp_file = $this->scan_dir($item_name, $FLAT_MODE, $pattern_include, $pattern_exclude, is_null($level) ? $level : $level - 1);
-				}
+				$files = array_merge($files, $this->scan_dir($item, 1, $pattern_include, $pattern_exclude));
+			} elseif (is_file($item)) {
+				$files[] = $item;
 			}
-			// Add item to the result array
-			$files[$item_name] = $tmp_file;
 		}
 		closedir($dh);
-		// Prepare for the flat mode (if needed)
-		if (is_array($files)) {
-			if ($FLAT_MODE) {
-				$files = $this->array_values_recursive($files);
-			}
-			ksort($files);
-		}
 		return $files;
 	}
 
@@ -253,22 +288,22 @@ class yf_dir {
 			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$item_name_1 = $path1.'/'.$f;
-			$item_name_2 = $path2.'/'.$f;
-			$_is_dir	= is_dir($item_name_1);
+			$item_1 = $path1.'/'.$f;
+			$item_2 = $path2.'/'.$f;
+			$_is_dir	= is_dir($item_1);
 			// Check patterns
-			if ($this->_skip_by_pattern($item_name_1, $_is_dir, $pattern_include, $pattern_exclude)) {
+			if ($this->_skip_by_pattern($item_1, $_is_dir, $pattern_include, $pattern_exclude)) {
 				continue;
 			}
 			if ($_is_dir) {
-				if (!file_exists($item_name_2)) {
-					$this->mkdir_m($item_name_2);
+				if (!file_exists($item_2)) {
+					$this->mkdir_m($item_2);
 				}
 				if (is_null($level) || $level > 0) {
-					$this->copy_dir($item_name_1, $item_name_2, $pattern_include, $pattern_exclude, is_null($level) ? $level : $level - 1);
+					$this->copy_dir($item_1, $item_2, $pattern_include, $pattern_exclude, is_null($level) ? $level : $level - 1);
 				}
 			} else {
-				$this->_copy_file($item_name_1, $item_name_2);
+				$this->_copy_file($item_1, $item_2);
 			}
 		}
 		umask($old_mask);
@@ -299,21 +334,21 @@ class yf_dir {
 			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$item_name_1 = $path1.'/'.$f;
-			$item_name_2 = $path2.'/'.$f;
-			$_is_dir	= is_dir($item_name_1);
+			$item_1 = $path1.'/'.$f;
+			$item_2 = $path2.'/'.$f;
+			$_is_dir	= is_dir($item_1);
 			// Check patterns
-			if ($this->_skip_by_pattern($item_name_1, $_is_dir, $pattern_include, $pattern_exclude)) {
+			if ($this->_skip_by_pattern($item_1, $_is_dir, $pattern_include, $pattern_exclude)) {
 				continue;
 			}
 			if ($_is_dir) {
-				if (!file_exists($item_name_2)) {
-					mkdir($item_name_2, 0777);
+				if (!file_exists($item_2)) {
+					mkdir($item_2, 0777);
 				}
-				$this->move_dir($item_name_1, $item_name_2, $pattern_include, $pattern_exclude);
+				$this->move_dir($item_1, $item_2, $pattern_include, $pattern_exclude);
 			} else {
-				$this->_copy_file($item_name_1, $item_name_2);
-				unlink ($item_name_1);
+				$this->_copy_file($item_1, $item_2);
+				unlink ($item_1);
 			}
 		}
 		rmdir($path1);
@@ -359,15 +394,15 @@ class yf_dir {
 			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$item_name = str_replace('//', '/', $start_dir.'/'.$f);
-			chmod($item_name, 0777);
+			$item = str_replace('//', '/', $start_dir.'/'.$f);
+			chmod($item, 0777);
 			// Delete files immediatelly
-			if (is_file($item_name)) {
-				unlink($item_name);
+			if (is_file($item)) {
+				unlink($item);
 			// Store folders to delete in stack and try to delete sub items
-			} elseif (is_dir($item_name)) {
-				$this->delete_dir ($item_name);
-				$sub_dirs_list[] = $item_name;
+			} elseif (is_dir($item)) {
+				$this->delete_dir ($item);
+				$sub_dirs_list[] = $item;
 			}
 		}
 		closedir($dh);
@@ -411,15 +446,15 @@ class yf_dir {
 			if ($f == '.' || $f == '..') {
 				continue;
 			}
-			$item_name = $start_dir.'/'.$f;
-			$_is_dir	= is_dir($item_name);
+			$item = $start_dir.'/'.$f;
+			$_is_dir	= is_dir($item);
 			// Check patterns
-			if ($this->_skip_by_pattern($item_name, $_is_dir, $pattern_include, $pattern_exclude)) {
+			if ($this->_skip_by_pattern($item, $_is_dir, $pattern_include, $pattern_exclude)) {
 				continue;
 			}
-			chmod($item_name, $new_mode);
+			chmod($item, $new_mode);
 			if ($_is_dir) {
-				$this->chmod_dir ($item_name, $new_mode);
+				$this->chmod_dir ($item, $new_mode);
 			}
 		}
 	}
