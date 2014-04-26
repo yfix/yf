@@ -390,4 +390,27 @@ class yf_cats {
 		}
 		return $ids;
 	}
+
+	/**
+	*/
+	function _get_all_parents_tree($cat_name, $recursive_sort = true, $all_records = false) {
+		$cats_parents = array();
+		foreach ((array)$this->_get_items_array($cat_name, $recursive_sort, $all_records) as $cid => $a) {
+			$cats_parents[$cid] = $a['parent_id'];
+		}
+		$tree = array();
+		foreach ((array)$cats_parents as $cid => $parent_id) {
+			$parents = array();
+			$parents[$cid] = $cid;
+			do {
+				$parents[$parent_id] = $parent_id;
+			} while ($parent_id = $cats_parents[$parent_id]);
+
+			if (isset($parents[0])) {
+				unset($parents[0]);
+			}
+			$tree[$cid] = $parents;
+		}
+		return $tree;
+	}
 }
