@@ -21,7 +21,10 @@ class yf_site_nav_bar {
 	}
 
 	// Display navigation bar
-	function _show () {
+	function _show ($return_array = false) {
+		if ($return_array) {
+			$this->_nav_item_as_array = true;
+		}
 		$items = array();
 		// Switch between specific actions
 		if (in_array($_GET['object'], array('', 'home_page'))) {
@@ -60,7 +63,10 @@ class yf_site_nav_bar {
 		if (!empty($hooked_items)) {
 			$items = $hooked_items;
 		}
-		// Process template
+		if ($return_array) {
+			$this->_nav_item_as_array = false;
+			return $items;
+		}
 		$replace = array(
 			'items'			=> implode(tpl()->parse(__CLASS__.'/div'), $items),
 			'is_logged_in'	=> intval((bool) (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0)),
@@ -81,6 +87,9 @@ class yf_site_nav_bar {
 			'as_link'		=> !empty($nav_link) ? 1 : 0,
 			'is_logged_in'	=> intval((bool) (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0)),
 		);
+		if ($this->_nav_item_as_array) {
+			return $replace;
+		}
 		return tpl()->parse(__CLASS__.'/item', $replace);
 	}
 
@@ -116,5 +125,22 @@ class yf_site_nav_bar {
 		return tpl()->parse('site_nav_bar/dropdown_menu', array(
 			'items' => implode('', (array)$items)
 		));
+	}
+
+	/**
+	*/
+	function _breadcrumbs () {
+		$items = $this->_show($return_array = true);
+		if (count($items) <= 1) {
+			return false;
+		}
+		foreach ($items as $v) {
+			$a[] = array(
+				'link'	=> $v['as_link'] ? $v['link'] : false,
+				'name'	=> $v['name'],
+			);
+		}
+		css('.navbar { margin-bottom: 0; }');
+		return _class('html')->breadcrumbs($a);
 	}
 }
