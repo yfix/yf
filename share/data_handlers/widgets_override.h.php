@@ -1,5 +1,6 @@
 <?php
 
+$data = array();
 $Q = db()->query('SELECT * FROM '.db('widgets').' ORDER BY object ASC, action ASC');
 while ($A = db()->fetch_assoc($Q)) {
 	$cur_themes = array();

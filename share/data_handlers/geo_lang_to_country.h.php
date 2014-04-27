@@ -1,3 +1,3 @@
 <?php
 
-$data = db()->get_all('SELECT * FROM '.db('geo_lang_to_country'));
+$data = (array)db()->get_all('SELECT * FROM '.db('geo_lang_to_country'));
