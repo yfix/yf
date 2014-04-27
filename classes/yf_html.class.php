@@ -504,9 +504,12 @@ class yf_html {
 			}
 			$items[] = '
 				<div class="media">
-					<a class="pull-left" href="'.$item['link'].'"><img class="media-object" alt="'.$item['alt'].'" src="'.$item['img'].'"></a>
+					<a class="pull-left"'.($item['link'] ? ' href="'.$item['link'].'"' : '').'><img class="media-object" alt="'.$item['alt'].'" src="'.$item['img'].'"></a>
 					<div class="media-body">
-						<h4 class="media-heading">'.$item['head'].'</h4>'
+						<h4 class="media-heading">'
+						.($item['link'] ? '<a href="'.$item['link'].'">' : ''). $item['head']. ($item['link'] ? '</a>' : '')
+						.($item['date'] ? '<small class="pull-right">'._format_date($item['date'], $extra['date_format'] ?: 'full').'</small>' : '')
+						. '</h4>'
 						.$item['body'].'
 			';
 			if ($close_num_levels) {
