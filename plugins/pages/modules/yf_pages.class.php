@@ -59,8 +59,20 @@ class yf_pages {
 	* List all available active pages
 	*/
 	function all () {
+/*
 		return table('SELECT * FROM '.db('pages').' WHERE active = 1', array('no_header' => 1))
-			->text('title', array('link' => './?object=pages&id=%d', 'link_field_name' => 'name'));
+			->text('title', array('link' => './?object=pages&id=%d', 'link_field_name' => 'name', 'link_trim_width' => 200));
+*/
+		$data = db()->get_all('SELECT * FROM '.db('pages').' WHERE active = 1');
+		foreach ((array)$data as $v) {
+			$a[$v['id']] = array(
+				'link'	=> './?object=pages&id='.$v['name'],
+				'head'	=> $v['title'],
+#				'body'	=> _substr($v['text'], 0, 400),
+				'date'	=> $v['date_modified'],
+			);
+		}
+		return _class('html')->media_objects($a);
 	}
 
 	/**
