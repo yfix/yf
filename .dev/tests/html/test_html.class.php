@@ -349,6 +349,7 @@ class test_html {
 				'alt'	=> '64x64',
 				'head'	=> 'Comment 1',
 				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'date'	=> date('Y-m-d H:i:s'),
 			),
 			22 => array(
 				'link'	=> './?object=comments&action=view&id=22',
@@ -356,6 +357,7 @@ class test_html {
 				'alt'	=> '64x64',
 				'head'	=> 'Comment 2',
 				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'date'	=> date('Y-m-d H:i:s'),
 			),
 			33 => array(
 				'link'	=> './?object=comments&action=view&id=33',
@@ -369,6 +371,7 @@ class test_html {
 				'link'	=> './?object=comments&action=view&id=44',
 				'img'	=> 'http://placehold.it/64x64',
 				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'date'	=> date('Y-m-d H:i:s'),
 				'parent_id'	=> 33,
 			),
 			55 => array(
@@ -382,6 +385,7 @@ class test_html {
 				'alt'	=> '64x64',
 				'head'	=> 'Comment 1',
 				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'date'	=> date('Y-m-d H:i:s'),
 			),
 		));
 	}
