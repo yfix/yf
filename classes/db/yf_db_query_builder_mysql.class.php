@@ -303,13 +303,19 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	* Example: whereid(1)
 	*/
 // TODO: unit tests for it
-// TODO: add support for array() that will be converted into IN(ids)
 	function whereid($id) {
 		$sql = '';
 		if (is_array($id)) {
-// TODO
+			$ids = array();
+			foreach ((array)$id as $v) {
+				$v = intval($v);
+				$v && $ids[$v] = $v;
+			}
+			if ($ids) {
+				$sql = 'WHERE id IN('.implode(',', $ids).')';
+			}
 		} elseif (is_callable($id)) {
-// TODO
+			$sql = 'WHERE '.$id();
 		} else {
 			$sql = 'WHERE id = '.intval($id);
 		}
