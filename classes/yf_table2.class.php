@@ -1314,7 +1314,8 @@ class yf_table2 {
 					$_this->_pair_active = main()->get_data('pair_active');
 				}
 				$values = $_this->_pair_active;
-				return '<a href="'.$link.'" class="change_active">'. $values[intval((bool)$row['active'])]. '</a> ';
+				$val = $values[intval((bool)$row['active'])];
+				return !$extra['disabled'] ? '<a href="'.$link.'" class="change_active">'. $val. '</a> ' : $val;
 			},
 		);
 		return $this;
