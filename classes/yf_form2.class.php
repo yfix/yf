@@ -911,6 +911,7 @@ class yf_form2 {
 	/**
 	* HTML5
 	*/
+ // TODO: float() input type
 	function number($name, $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'number';
 		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
