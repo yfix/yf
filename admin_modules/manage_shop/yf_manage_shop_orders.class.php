@@ -289,6 +289,10 @@ class yf_manage_shop_orders{
 			->info('payment', 'Payment method')
 			->container(
 				table2($products)
+					->image('product_id', array('width' => '50px', 'no_link' => 1, 'img_path_callback' => function($_p1, $_p2, $row) {
+						$image = common()->shop_get_images($row['product_id']);
+						return $image[0]['thumb'];
+    	    	    }))
 					->link('product_id', './?object='.main()->_get('object').'&action=product_edit&id=%d')
 					->func('quantity',function($f, $p, $row){
 						$row['quantity'] = "<input type='text' name='qty[".$row['product_id']."_".$row['param_id']."]' value='".intval($row['quantity'])."' style='width:50px;'>";
