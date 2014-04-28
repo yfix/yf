@@ -18,6 +18,7 @@ abstract class yf_db_query_builder_driver {
 	abstract function right_join($table, $on);
 	abstract function inner_join($table, $on);
 	abstract function where();
+	abstract function whereid($id);
 	abstract function group_by();
 	abstract function having();
 	abstract function order_by();
