@@ -1,1 +1,1 @@
-<li><a href="{link}" title="{t(First page)}">&laquo;&laquo;</a></li>
+<li class="first"><a href="{link}" title="{t(First page)}">&laquo;&laquo;</a></li>
