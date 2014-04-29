@@ -1571,4 +1571,22 @@ class yf_table2 {
 			return _class('html_controls')->select_box($extra);
 		}, $extra);
 	}
+
+	/**
+	*/
+	function on_post() {
+// TODO: intended to be used when main()->is_post() detected
+	}
+
+	/**
+	*/
+	function on_before_render() {
+// TODO
+	}
+
+	/**
+	*/
+	function on_after_render() {
+// TODO
+	}
 }
