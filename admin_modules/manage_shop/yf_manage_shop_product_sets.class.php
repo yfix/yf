@@ -104,20 +104,22 @@ class yf_manage_shop_product_sets {
 			}
 			// Editable quantity for each product in list
 			if (!empty($_POST['quantity']) && is_array($_POST['quantity'])) {
-				$current_ids = array_keys( (array)db()->get_all(str_replace('%sid', $product_set_id, $this->_sql_set_list_products)) );
+				$current_items = (array)db()->get_all(str_replace('%sid', $product_set_id, $this->_sql_set_list_products));
+				$current_ids = array_keys($current_items);
 				$current_ids && $current_ids = array_combine($current_ids, $current_ids);
-				$qup = array();
 				foreach ((array)$_POST['quantity'] as $id => $quantity) {
 					if (!isset($current_ids[$id])) {
 						continue;
 					}
-					$qup[$id] = array(
+					$item = $current_items[$id];
+					if ($item['quantity'] == $quantity) {
+						continue;
+					}
+					$qup = array(
 						'product_id'=> (int)$id,
 						'quantity'	=> (int)$quantity,
 					);
-				}
-				if ($qup) {
-					db()->update_batch('shop_product_sets_items', $qup, 'product_id');
+					db()->update_safe('shop_product_sets_items', $qup, 'product_id='.(int)$id.' AND product_set_id='.(int)$product_set_id);
 				}
 			}
 			// Process common form fields
