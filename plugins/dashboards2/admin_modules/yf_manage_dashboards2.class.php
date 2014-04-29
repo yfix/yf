@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class manage_dashboards2 {
+class yf_manage_dashboards2 {
 
 	/**
 	* Bootstrap CSS classes used to create configurable grid
