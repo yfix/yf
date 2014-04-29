@@ -3,7 +3,7 @@
 /**
 * dashboards2 for user
 */
-class dashboards2 {
+class yf_dashboards2 {
 
 	/**
 	* Bootstrap CSS classes used to create configurable grid
