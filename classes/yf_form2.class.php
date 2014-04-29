@@ -2078,4 +2078,52 @@ class yf_form2 {
 		}
 		return $this;
 	}
+
+	/**
+	*/
+	function on_post() {
+// TODO: intended to be used when main()->is_post() detected
+	}
+
+	/**
+	*/
+	function on_before_validate() {
+// TODO
+	}
+
+	/**
+	*/
+	function on_after_validate() {
+// TODO
+	}
+
+	/**
+	*/
+	function on_validate_error() {
+// TODO
+	}
+
+	/**
+	*/
+	function on_before_update() {
+// TODO
+	}
+
+	/**
+	*/
+	function on_after_update() {
+// TODO
+	}
+
+	/**
+	*/
+	function on_before_render() {
+// TODO
+	}
+
+	/**
+	*/
+	function on_after_render() {
+// TODO
+	}
 }
