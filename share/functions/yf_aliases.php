@@ -67,6 +67,15 @@ if (!function_exists('common')) {
 if (!function_exists('cache')) {
 	function cache($silent = false) { return $GLOBALS['sys_cache'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
 }
+if (!function_exists('cache_set')) {
+	function cache_set($name, $data, $ttl = 3600, $level = '') { return cache()->put($name, $data, $ttl); }
+}
+if (!function_exists('cache_get')) {
+	function cache_get($name, $level = '') { return cache()->get($name); }
+}
+if (!function_exists('cache_del')) {
+	function cache_del($name, $level = '') { return cache()->del($name); }
+}
 // example: db()->query()
 // exampleof getting real table name: db('user') should return DB_PREFIX.'user' value;
 if (!function_exists('db')) {

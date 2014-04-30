@@ -180,14 +180,14 @@ class yf_main {
 			$this->init_server_health();
 			$this->try_fast_init();
 			$this->init_modules_base();
-			$this->init_cache_functions();
+			$this->init_main_functions();
+			$this->init_cache();
 			$this->init_files();
 			$this->init_db();
 			$this->init_common();
 			$this->init_class('graphics', 'classes/');
 			$this->load_class_file('module', 'classes/');
 			$this->init_error_reporting();
-			$this->init_cache();
 			$this->init_site_id();
 			$this->init_server_id();
 			$this->init_server_role();
@@ -360,20 +360,20 @@ class yf_main {
 	*/
 	function init_conf_functions () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		$fwork_conf_path = dirname(dirname(__FILE__)).'/share/functions/yf_conf.php';
-		if (file_exists($fwork_conf_path)) {
-			$this->include_module($fwork_conf_path, 1);
+		$path = dirname(dirname(__FILE__)).'/share/functions/yf_conf.php';
+		if (file_exists($path)) {
+			$this->include_module($path, 1);
 		}
 	}
 
 	/**
-	* cache_set(), cache_get(), cache_del() wrappers
+	* main(), _class(), module(), db(), tpl(), common() wrappers and more
 	*/
-	function init_cache_functions () {
+	function init_main_functions () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		$fwork_cache_path	= dirname(dirname(__FILE__)).'/share/functions/yf_cache.php';
-		if (file_exists($fwork_cache_path)) {
-			$this->include_module($fwork_cache_path, 1);
+		$path = dirname(dirname(__FILE__)).'/share/functions/yf_aliases.php';
+		if (file_exists($path)) {
+			$this->include_module($path, 1);
 		}
 	}
 
@@ -470,18 +470,36 @@ class yf_main {
 	*/
 	function init_cache() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+
+		$CACHE_DRIVER = conf('CACHE_DRIVER');
+		if (!$CACHE_DRIVER) {
+			$CACHE_DRIVER = 'memcache'; // memcache | apc | xcache | eaccelerator | files
+		}
+		if ($CACHE_DRIVER == 'memcache' && !function_exists('memcache_connect') && !class_exists('memcached')) {
+			$CACHE_DRIVER = '';
+		} elseif ($CACHE_DRIVER == 'apc' && !function_exists('apc_fetch')) {
+			$CACHE_DRIVER = '';
+		} elseif ($CACHE_DRIVER == 'xcache' && !function_exists('xcache_set')) {
+			$CACHE_DRIVER = '';
+		} elseif ($CACHE_DRIVER == 'eaccelerator' && !function_exists('eaccelerator_get')) {
+			$CACHE_DRIVER = '';
+		}
+		conf('CACHE_DRIVER', $CACHE_DRIVER);
+		if ($CACHE_DRIVER) {
+			conf('cache::DRIVER', $CACHE_DRIVER);
+		}
+
+		$this->init_class('cache', 'classes/');
+		$this->sys_cache =& $this->modules['cache'];
+		$GLOBALS['sys_cache'] =& $this->modules['cache'];
+
 		if ($this->CACHE_CONTROL_FROM_URL && $this->_get('no_core_cache')) {
 			$this->USE_SYSTEM_CACHE = false;
 		}
-		if ($this->USE_SYSTEM_CACHE) {
-			$this->init_class('cache', 'classes/');
-			if (method_exists($this->modules['cache'], '_init_from_main')) {
-				$this->_set_module_conf('cache', $this->modules['cache']);
-				$this->modules['cache']->_init_from_main();
-			}
-			$this->sys_cache =& $this->modules['cache'];
-			$GLOBALS['sys_cache'] =& $this->modules['cache'];
+		if (!$this->USE_SYSTEM_CACHE) {
+			$this->modules['cache']->NO_CACHE = $this->USE_SYSTEM_CACHE;
 		}
+		$this->modules['cache']->_init_from_main();
 	}
 
 	/**
