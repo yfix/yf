@@ -116,10 +116,18 @@ class yf_manage_shop_import {
 			$v = $this->format_data($item[1],$item[0],$item[4],$supplier_id);
 			if (empty($products[$v['articul']])) {
 				$v['is_new'] = 'new';
-				if ($mode == 'process') db()->insert(db('shop_products'), _es($v));
+				$v1 = $v;
+				unset($v1['is_new']);
+				$v1['add_date'] = time();												
+				if ($mode == 'process') db()->insert(db('shop_products'), _es($v1));
 			} else {
-				$v['is_new'] = 'upd';									
-				if ($mode == 'process') db()->update(db('shop_products'), _es($v),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'");
+				$v['is_new'] = 'upd';
+				$v1 = array(
+					'price' => $v['price'],
+					'price_raw' => $v['price_raw'],
+					'update_date' => time(),
+				);
+				if ($mode == 'process') db()->update(db('shop_products'), _es($v1),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'");
 			}
 			$result[] = $this->add_result($v);			
 		}
@@ -136,10 +144,18 @@ class yf_manage_shop_import {
 				$v = $this->format_data($item[1],$item[2],$item[3], $supplier_id);
 				if (empty($products[$v['articul']])) {
 					$v['is_new'] = 'new';
-					if ($mode == 'process') db()->insert(db('shop_products'), _es($v));
+					$v1 = $v;
+					unset($v1['is_new']);
+					$v1['add_date'] = time();
+					if ($mode == 'process') db()->insert(db('shop_products'), _es($v1));
 				} else {
 					$v['is_new'] = 'upd';									
-					if ($mode == 'process') db()->update(db('shop_products'), _es($v),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'");
+					$v1 = array(
+						'price' => $v['price'],
+						'price_raw' => $v['price_raw'],
+						'update_date' => time(),
+					);
+					if ($mode == 'process') db()->update(db('shop_products'), _es($v1),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'");
 				}
 				$result[] = $this->add_result($v);
 			}
@@ -155,10 +171,18 @@ class yf_manage_shop_import {
 			$v = $this->format_data($item[0],$item[3],$item[4],$supplier_id);
 			if (empty($products[$v['articul']])) {
 				$v['is_new'] = 'new';
-				if ($mode == 'process') db()->insert(db('shop_products'), _es($v));
+				$v1 = $v;
+				unset($v1['is_new']);
+				$v1['add_date'] = time();												
+				if ($mode == 'process') db()->insert(db('shop_products'), _es($v1));
 			} else {
 				$v['is_new'] = 'upd';									
-				if ($mode == 'process') db()->update(db('shop_products'), _es($v),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'");
+				$v1 = array(
+					'price' => $v['price'],
+					'price_raw' => $v['price_raw'],
+					'update_date' => time(),
+				);
+				if ($mode == 'process') db()->update(db('shop_products'), _es($v1),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'");
 			}
 			$result[] = $this->add_result($v);
 		}
@@ -175,8 +199,13 @@ class yf_manage_shop_import {
 				$v['is_new'] = 'new';
 				// note: no new items must be passed here(!)
 			} else {
-				$v['is_new'] = 'upd';									
-				if ($mode == 'process') db()->update(db('shop_products'), _es($v),"`supplier_id`='".$supplier_id."' AND `id`='".$v['articul']."'");
+				$v['is_new'] = 'upd';		
+				$v1 = array(
+					'price' => $v['price'],
+					'price_raw' => $v['price_raw'],
+					'update_date' => time(),
+				);
+				if ($mode == 'process') db()->update(db('shop_products'), _es($v1),"`supplier_id`='".$supplier_id."' AND `id`='".$v['articul']."'");
 			}
 			$result[] = $this->add_result($v);
 		}
@@ -221,7 +250,7 @@ class yf_manage_shop_import {
 			'url' => common()->_propose_url_from_name(trim($name)),
 			'supplier_id' => $supplier_id,
 			'status' => 1,
-			'active' => 0,
+			'active' => 1,
 		);		
 	}
 }
