@@ -26,7 +26,7 @@ class yf_manage_dashboards2 {
 	/**
 	*/
 	function _init () {
-
+		conf('css_framework', 'bs3');
 	}
 
 	/**

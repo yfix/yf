@@ -28,7 +28,7 @@ class yf_dashboards2 {
 	/**
 	*/
 	function _init () {
-
+		conf('css_framework', 'bs3');
 	}
 
 	/**
