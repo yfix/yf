@@ -1,8 +1,8 @@
 <div class="container ">
-  {foreach("rows")}
-  <div class="row {#.css_class}">
-	{#.cols}
-  </div>
- {/foreach} 
+{foreach("rows")}
+	<div class="row {#.css_class}">
+		{#.cols}
+	</div>
+{/foreach} 
 </div>
 
