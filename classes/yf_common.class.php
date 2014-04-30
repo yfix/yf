@@ -1169,6 +1169,11 @@ class yf_common {
 	function dashboard_display($name) {
 		return _class('dashboards', 'classes/common/')->display($name);
 	}
+/**
+	*/
+	function dashboard2_display($name) {
+		return _class('dashboards2')->display($name);
+	}
 
 	/*
 	 * Returns all types with empty param 'type'

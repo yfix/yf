@@ -1,1 +1,1 @@
-<li><a href="{link}" title="{t(Next page)}">&raquo;</a></li>
+<li class="next"><a href="{link}" title="{t(Next page)}">&raquo;</a></li>

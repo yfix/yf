@@ -300,6 +300,32 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	}
 
 	/**
+	* Example: whereid(1)
+	*/
+// TODO: unit tests for it
+	function whereid($id) {
+		$sql = '';
+		if (is_array($id)) {
+			$ids = array();
+			foreach ((array)$id as $v) {
+				$v = intval($v);
+				$v && $ids[$v] = $v;
+			}
+			if ($ids) {
+				$sql = 'WHERE id IN('.implode(',', $ids).')';
+			}
+		} elseif (is_callable($id)) {
+			$sql = 'WHERE '.$id();
+		} else {
+			$sql = 'WHERE id = '.intval($id);
+		}
+		if ($sql) {
+			$this->_sql['where'][] = $sql;
+		}
+		return $this;
+	}
+
+	/**
 	* Example: where(array('id','>','1'),'and',array('name','!=','peter'))
 	*/
 // TODO: add support for syntax: where('u.id', 1)  where('u.id = 1')  where('u.id > 1')
@@ -314,6 +340,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	*/
 // TODO: add support for syntax: where_or('u.id', 1)  where_or('u.id = 1')  where_or('u.id > 1')
 // TODO: support for binding params (':field' => $val)
+// TODO: unit tests for it
 	function where_or() {
 		$this->_process_where(func_get_args(), __FUNCTION__);
 		return $this;

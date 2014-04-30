@@ -1314,7 +1314,8 @@ class yf_table2 {
 					$_this->_pair_active = main()->get_data('pair_active');
 				}
 				$values = $_this->_pair_active;
-				return '<a href="'.$link.'" class="change_active">'. $values[intval((bool)$row['active'])]. '</a> ';
+				$val = $values[intval((bool)$row['active'])];
+				return !$extra['disabled'] ? '<a href="'.$link.'" class="change_active">'. $val. '</a> ' : $val;
 			},
 		);
 		return $this;
@@ -1569,5 +1570,23 @@ class yf_table2 {
 			$extra['id'] = 'selectbox_'.$field;
 			return _class('html_controls')->select_box($extra);
 		}, $extra);
+	}
+
+	/**
+	*/
+	function on_post() {
+// TODO: intended to be used when main()->is_post() detected
+	}
+
+	/**
+	*/
+	function on_before_render() {
+// TODO
+	}
+
+	/**
+	*/
+	function on_after_render() {
+// TODO
 	}
 }

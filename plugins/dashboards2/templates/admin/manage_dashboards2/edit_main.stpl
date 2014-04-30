@@ -1,0 +1,307 @@
+{include("manage_dashboards2/ds_css")}
+<script src="https://rawgit.com/yfix/jquery-htmlclean/master/jquery.htmlClean.js" type="text/javascript"></script>
+{include("manage_dashboards2/ds_edit_js")}
+
+<div class="edit" id="main_container">
+	<div class="navbar navbar-default">
+		<h3><b>Dashboard name:</b> {dashboard_name}</h3>
+		<div id="message_save"></div>
+		<div id="message_lock">
+			<h4>
+{if("lock" eq 1)}
+				<span class="label label-success">This dashboard locked. Any changes will not be save</span>
+{else}
+				<span class="label label-danger">This dashboard unlocked. Changes will be applied to the current dashboard</span>
+{/if}
+			</h4>
+		</div>
+		<div class="collapse navbar-collapse">
+			<ul class="nav" id="menu-layoutit">
+				<li>
+					<div class="btn-group" data-toggle="buttons-radio">
+						<button type="button" id="edit" class="active btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit "></i> Edit</button>
+						<button type="button" class="btn btn-xs btn-primary" id="devpreview"><i class="glyphicon-eye-close glyphicon"></i> Developer</button>
+						<button type="button" class="btn btn-xs btn-primary" id="sourcepreview"><i class="glyphicon-eye-open glyphicon"></i> Preview</button>
+					</div>
+					<div class="btn-group">             
+						<button class="btn btn-xs btn-primary" href="#clear" id="clear"><i class="glyphicon-trash glyphicon"></i> Clear</button>
+					</div>
+    		    </li>
+		        <li>
+					<div class="btn-group">             
+						<button class="btn btn-xs btn-primary" href="#save" id="save"  {if("lock" eq 1)}disabled="disabled"{/if}><i class="glyphicon-save glyphicon"></i> Save</button>
+					</div>
+					<div class="btn-group" id='lock_div'>             
+						<button class="btn btn-xs btn-primary" href="#lock" id="lock"><i class="glyphicon glyphicon-lock"></i> {if("lock" eq 1)}Unlock{else}Lock{/if}</button>
+					</div>
+				</li>
+			</ul>
+		</div><!--/.navbar-collapse -->
+	</div><!--/.navbar-fixed-top -->
+
+	<div class="container">
+		<div class="row">
+			<div class="">
+				<div class="sidebar-nav">
+					<ul class="nav nav-list accordion-group">
+						<li class="nav-header">
+							<div class="pull-right popover-info">
+								<i class="glyphicon glyphicon-question-sign"></i> 
+								<div class="popover fade right">
+									<div class="arrow"></div> 
+									<h3 class="popover-title">Help</h3> 
+									<div class="popover-content">To change the column configuration you can edit the different values in the input (they should add 12).</div>
+								</div> 
+							</div> 
+							<i class="glyphicon-plus glyphicon"></i>  Grid system
+						</li>
+						<li class="rows" id="estRows">
+							<div class="lyrow ui-draggable" >
+								<span class="edit_columns label label-default">12</span>
+								<a href="#close" class="remove label label-danger"><i class="glyphicon-remove glyphicon"></i> remove</a>
+								<span class="drag label label-default"><i class="glyphicon glyphicon-move"></i> drag</span>
+								<div class="preview"><input type="text" value="12" class="form-control"></div>
+								<div class="view">
+									<div class="row clearfix">
+										<div class="col-md-12 span12 column">  </div>
+									</div>
+								</div>
+							</div>
+
+							<div class="lyrow ui-draggable" >
+								<span class="edit_columns label label-default">6 6</span>
+								<a href="#close" class="remove label label-danger"><i class="glyphicon-remove glyphicon"></i> remove</a>
+								<span class="drag label label-default"><i class="glyphicon glyphicon-move"></i> drag</span>
+								<div class="preview"><input type="text" value="6 6" class="form-control"></div>
+								<div class="view">
+									<div class="row clearfix">
+										<div class="col-md-6 span6 column"></div>
+										<div class="col-md-6 span6 column"></div>
+									</div>
+								</div>
+							</div>
+
+							<div class="lyrow ui-draggable" >
+								<span class="edit_columns label label-default">8 4</span>
+								<a href="#close" class="remove label label-danger"><i class="glyphicon-remove glyphicon"></i> remove</a>
+								<span class="drag label label-default"><i class="glyphicon glyphicon-move"></i> drag</span>
+								<div class="preview"><input type="text" value="8 4" class="form-control"></div>
+								<div class="view">
+									<div class="row clearfix">
+										<div class="col-md-8 span8 column"></div>
+										<div class="col-md-4 span4 column"></div>
+									</div>
+								</div>
+							</div>
+
+							<div class="lyrow ui-draggable" >
+								<span class="edit_columns label label-default">4 4 4</span>
+								<a href="#close" class="remove label label-danger"><i class="glyphicon-remove glyphicon"></i> remove</a>
+								<span class="drag label label-default"><i class="glyphicon glyphicon-move"></i> drag</span>
+								<div class="preview"><input type="text" value="4 4 4" class="form-control"></div>
+								<div class="view">
+									<div class="row clearfix">
+										<div class="col-md-4 span4 column"></div>
+										<div class="col-md-4 span4 column"></div>
+										<div class="col-md-4 span4 column"></div>
+									</div>
+								</div>
+							</div>
+
+							<div class="lyrow ui-draggable">
+								<span class="edit_columns label label-default">2 6 4</span>
+								<a href="#close" class="remove label label-danger"><i class="glyphicon-remove glyphicon"></i> remove</a>
+								<span class="drag label label-default"><i class="glyphicon glyphicon-move"></i> drag</span>
+								<div class="preview"><input type="text" value="2 6 4" class="form-control"></div>
+								<div class="view">
+									<div class="row clearfix">
+										<div class="col-md-2 span2 column"></div>
+										<div class="col-md-6 span6 column"></div>
+										<div class="col-md-4 span4 column"></div>
+									</div>
+								</div>
+							</div>
+						</li>
+					</ul>
+					<ul class="nav nav-list accordion-group">
+						<li class="nav-header">
+							<i class="glyphicon glyphicon-plus"></i> widgets
+							<div class="pull-right popover-info"><i class="glyphicon glyphicon-question-sign "></i> 
+								<div class="popover fade right"><div class="arrow"></div> 
+									<h3 class="popover-title">Help</h3> 
+									<div class="popover-content">Drag &amp; Drop the elements inside the edit_columns where you want to insert it. </div>
+								</div> 
+							</div>
+						</li>
+						<li class="boxes mute" id="elmItems" style="display: list-item;">
+							<div class="box box-element ui-draggable">
+								<a href="#close" class="remove label label-danger"><i class="glyphicon glyphicon-remove"></i> remove</a>
+								<span class="drag label label-default"><i class="glyphicon glyphicon-move"></i> drag</span>
+								<div class="preview">php item name</div>
+								<div class="view">
+									{php item name}
+									<input type="text" palceholder="php item name" data-type="php" class="form-control">
+								</div>
+							</div>
+
+							<div class="box box-element ui-draggable">
+								<a href="#close" class="remove label label-danger"><i class="glyphicon glyphicon-remove"></i> remove</a>
+								<span class="drag label label-default"><i class="glyphicon glyphicon-move"></i> drag</span>
+								<div class="preview">stpl item name</div>
+								<div class="view">
+									{stpl item name}
+									<input type="text" palceholder="stpl item name" data-type="stpl" class="form-control">
+								</div>
+							</div>
+
+							<div class="box box-element ui-draggable">
+								<a href="#close" class="remove label label-danger"><i class="glyphicon glyphicon-remove"></i> remove</a>
+								<span class="drag label label-default"><i class="glyphicon glyphicon-move"></i> drag</span>
+								<div class="preview">block item name</div>
+								<div class="view">
+									{block item name}
+									<input type="text" palceholder="block item name" data-type="block" class="form-control">
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!--/span-->
+			<div class="demo grid_struct ui-sortable column" style="min-height: 438px;">{if("rows" ne "")}{rows}{/if}</div>
+			<!--/span-->
+			<div id="download-layout"><div class="container"></div></div>
+		</div>
+		<!--/row-->
+	</div><!--/.fluid-container-->
+</div> 
+
+
+<script type="text/javascript">
+  var _btn_locked     = '<button class="btn btn-xs btn-primary" href="#lock" id="lock"><i class="glyphicon glyphicon-lock"></i> Unlock</button>'
+  var _btn_unlocked   = '<button class="btn btn-xs btn-primary" href="#lock" id="lock"><i class="glyphicon glyphicon-lock"></i> Lock</button>'
+  var mesage_locked   = '<h4><span class="label label-success">This dashboard locked. Any changes will not be save</span> </h3>'
+  var mesage_unlocked = '<h4><span class="label label-danger">This dashboard unlocked. Changes will be applied to the current dashboard</span> </h4>'
+  var mesage_save     = '<h4><span class="label label-success">This dashboard was save</span> </h4>'
+ 
+ 	var parse_grid_row = function(DOM) {
+		var row = DOM.children('.view').children('.row');
+		var items = { };
+		items['cols'] = { };
+		row.children('[class*="col-"]').each(function(key) {
+			var column = {
+				'class' : $(this).attr('class').match(/\d{1,2}/)
+			};
+
+			var content = $(this).children('div');
+			if (content.length > 0) {
+				column['content'] = { };
+				content.each(function(key) {
+					if ($(this).hasClass('box')) {
+						column['content'][key] = {'widget' : {
+							'type' : $(this).find('input').data('type'),
+							'val'  : $(this).find('input').val()
+						}};
+					} else {
+						column['content'][key] = {'rows' : [parse_grid_row($(this))]};
+					}
+				});
+			}
+
+			items['cols'][key] = column;
+		});
+		return items;
+	};
+
+	var parse_grid_structure = function(DOM) {
+		var lyrow_DOM = DOM.children('.lyrow');
+		var result = { };
+		if (lyrow_DOM.length < 1) {
+			return false;
+		}
+		result['rows'] = { };
+		lyrow_DOM.each(function(key) {
+			result['rows'][key] = parse_grid_row($(this));
+		});
+		return result;
+	};
+
+	var saveLayout = function() {
+    var struct = parse_grid_structure($('.grid_struct'));
+    $.ajax({
+      type: "POST",
+      url: "{save_link}",
+      dataType: 'json',
+      data: {'structure' : struct},
+      success: function(data) {
+      	$('#message_save').html(mesage_save);
+	    setInterval(function () {
+			$('#message_save').html('');
+	    }, 5000)
+      }
+    });
+    downloadLayoutSrc()
+
+  };
+
+
+  // Change activity status of different elements without page refresh
+  $(document).on("click", "#lock", function(){
+    var _obj = this;
+
+    $.post("{lock_link}", {ajax_mode: 1}, function(data){
+      
+      if (data =='1'){
+        $('#lock_div').html(_btn_locked);
+        $('#message_lock').html(mesage_locked);
+        $('#save').attr( "disabled", "disabled");
+      }else{
+        $('#lock_div').html(_btn_unlocked);
+        $('#message_lock').html(mesage_unlocked);
+        $('#save').removeAttr("disabled");
+      }
+    //  _obj.innerHTML = (data == "1") ? _btn_active : _btn_inactive;
+    });
+    return false; // Do not allow new page
+  });
+
+   $(document).on("click", ".edit_columns", function(){
+    var _obj = this;
+
+    $(_obj).next().next().next().removeClass( "preview" );
+    $(_obj).next().next().next().addClass( "preview_edit" );
+    return false; // Do not allow new page
+  });
+$(".demo .lyrow .preview input").bind("keyup", function () {
+//   $(".demo .lyrow .preview input").bind("keyup", function () {
+console.log(2);
+      
+        var input_val = '';
+        var e = 0;
+        var t = "";
+        var n = false;
+        var r = $(this).val().split(" ", 12);
+        $.each(r, function (r, i) {
+            if (!n) {
+                if (parseInt(i) <= 0) n = true;
+                e = e + parseInt(i);
+        //        t += '<div class="col-md-' + i + ' span' + i + ' column"></div>'
+                input_val += i + ' ';
+            }
+        });
+        if (e == 12 && !n) {
+        //    $(this).parent().next().children().html(t);
+        //    $(this).parent().prev().show();
+            $(this).attr( "value", $.trim(input_val))
+            $(this).parent().prev().prev().prev().html($.trim(input_val));
+   			$(this).parent().removeClass( "preview_edit" );
+   			$(this).parent().addClass( "preview" );
+             
+        } else {
+     //       $(this).parent().prev().hide()
+        }
+      
+  
+    })
+
+</script>

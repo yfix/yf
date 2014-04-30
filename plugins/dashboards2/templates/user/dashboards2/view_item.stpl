@@ -1,0 +1,12 @@
+{if(hide_header ne 1)}
+<div class=" " {if(hide_border eq 1)} style="border:0;box-shadow:none;-webkit-box-shadow:none;"{/if}>
+	<div class="">
+		{name}
+	</div>
+<div>
+{/if}
+	{content}
+{if(hide_header ne 1)}	
+</div>
+</div>
+{/if}

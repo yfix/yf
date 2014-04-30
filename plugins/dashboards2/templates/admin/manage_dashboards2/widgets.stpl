@@ -1,0 +1,9 @@
+<div class="box box-element ui-draggable" style="display: block;">
+	<a href="#close" class="remove label label-danger"><i class="glyphicon glyphicon-remove"></i> remove</a>
+	<span class="drag label label-default"><i class="glyphicon glyphicon-move"></i> drag</span>
+	<div class="preview">{type} item name</div>
+	<div class="view">
+		{type} item name
+		<input type="text" palceholder="{type} item name" data-type="{type}" class="form-control" value="{val}">
+	</div>
+</div>

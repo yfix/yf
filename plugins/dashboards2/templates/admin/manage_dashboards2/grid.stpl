@@ -1,0 +1,15 @@
+{if("rows" ne "")}
+{foreach("rows")}
+<div class="lyrow ui-draggable" style="display: block;">
+	<span class="edit_columns label label-default">{#.num_cols}</span>
+	<a href="#close" class="remove label label-danger"><i class="glyphicon-remove glyphicon"></i> remove</a>
+	<span class="drag label label-default"><i class="glyphicon glyphicon-move"></i> drag</span>
+	<div class="preview"><input type="text" value="{#.num_cols}" class="form-control"></div>
+ 	<div class="view">
+		<div class="row clearfix">
+		{#.cols}
+		</div>
+	</div>
+</div>
+{/foreach}
+{/if}

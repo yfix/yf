@@ -54,8 +54,7 @@ class yf_manage_shop_products{
 				'pager_sql_callback' => function($sql) { return preg_replace('/^SELECT.*FROM/ims', 'SELECT COUNT(*) FROM', ltrim($sql)); }
 			))
 			->image('id', array('width' => '50px', 'img_path_callback' => function($_p1, $_p2, $row) {
-				$product_id = $row['id'];
-				$image = common()->shop_get_images($product_id);
+				$image = common()->shop_get_images($row['id']);
 				return $image[0]['thumb'];
             }))
 			->text('name', array('link' => '/shop/product/%d', 'rewrite' => 1, 'data' => '@name', 'link_field_name' => 'id'))

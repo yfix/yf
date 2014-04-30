@@ -138,7 +138,7 @@ class yf_manage_shop_filter{
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->text('name')
-					->select_box('cat_id', _class('cats')->_get_items_names_cached('shop_cats'), array('desc' => 'Main category'))
+					->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 
 			},
