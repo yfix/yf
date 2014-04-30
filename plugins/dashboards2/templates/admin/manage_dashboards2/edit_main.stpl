@@ -1,4 +1,5 @@
 {include("manage_dashboards2/ds_css")}
+<script src="https://rawgit.com/yfix/jquery-htmlclean/master/jquery.htmlClean.js" type="text/javascript"></script>
 {include("manage_dashboards2/ds_edit_js")}
 
 <div class="edit" id="main_container">
@@ -174,6 +175,8 @@
 		<!--/row-->
 	</div><!--/.fluid-container-->
 </div> 
+
+
 <script type="text/javascript">
   var _btn_locked     = '<button class="btn btn-xs btn-primary" href="#lock" id="lock"><i class="glyphicon glyphicon-lock"></i> Unlock</button>'
   var _btn_unlocked   = '<button class="btn btn-xs btn-primary" href="#lock" id="lock"><i class="glyphicon glyphicon-lock"></i> Lock</button>'
