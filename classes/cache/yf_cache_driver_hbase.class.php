@@ -1,6 +1,6 @@
 <?php
 
-load('cache_driver', 'framework', 'classes/session/');
+load('cache_driver', 'framework', 'classes/cache/');
 class yf_cache_driver_files extends yf_cache_driver {
 // TODO
 	function get($name, $ttl = 0, $params = array()) {
