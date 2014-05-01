@@ -4,7 +4,7 @@ load('cache_driver', 'framework', 'classes/cache/');
 class yf_cache_driver_files extends yf_cache_driver {
 
 	/** @var array config for file driver @conf_skip */
-	public $_file_conf				= array(
+	public $_file_conf = array(
 		'auto_header'	=> "<?php\n",
 		'auto_footer'	=> "\n?>",
 		'file_prefix'	=> 'cache_',
@@ -12,59 +12,78 @@ class yf_cache_driver_files extends yf_cache_driver {
 	);
 	/** @var bool Auto-create cache folder */
 	public $AUTO_CREATE_CACHE_DIR	= true;
-	/** @var array list of implemented featues */
-	public $implemented = array(
-// TODO
-#		'get', 'set', 'del', 'multi_get', 'multi_set', 'multi_del'//, 'clean', 'list_all', ...
-	);
 
 	/**
 	*/
 	function _init() {
-		$this->CORE_CACHE_DIR = PROJECT_PATH. 'core_cache/';
-		if (!file_exists($this->CORE_CACHE_DIR) && $this->AUTO_CREATE_CACHE_DIR) {
+		$this->CACHE_DIR = PROJECT_PATH. 'core_cache/';
+		if (!file_exists($this->CACHE_DIR) && $this->AUTO_CREATE_CACHE_DIR) {
 // TODO: add 1-2 levels of subdirs to store 100 000+ entries easily in files (no matters when use memcached)
-			mkdir($this->CORE_CACHE_DIR, 0777, true);
+			mkdir($this->CACHE_DIR, 0777, true);
 		}
-// TODO
 	}
 
 	/**
 	*/
 	function is_ready() {
-		return is_writable($this->CORE_CACHE_DIR) ? true : false;
+		return file_exists($this->CACHE_DIR) && is_writable($this->CACHE_DIR);
 	}
 
 	/**
 	*/
 	function get($name, $ttl = 0, $params = array()) {
-		$path = $this->CORE_CACHE_DIR. $this->_file_conf['file_prefix']. $name. $this->_file_conf['file_ext'];
+		if (!$this->is_ready()) {
+			return null;
+		}
+		$path = $this->CACHE_DIR. $this->_file_conf['file_prefix']. $name. $this->_file_conf['file_ext'];
 		return $this->_get_cache_file($path, $ttl);
 	}
 
 	/**
 	*/
 	function set($name, $data, $ttl = 0) {
-		$path = $this->CORE_CACHE_DIR. $this->_file_conf['file_prefix']. $name. $this->_file_conf['file_ext'];
+		if (!$this->is_ready()) {
+			return null;
+		}
+		$path = $this->CACHE_DIR. $this->_file_conf['file_prefix']. $name. $this->_file_conf['file_ext'];
 		return $this->_put_cache_file($data, $path);
 	}
 
 	/**
 	*/
 	function del($name) {
+		if (!$this->is_ready()) {
+			return null;
+		}
 // TODO
+			// Not locale specific
+			if (empty($locales)) {
+				$cache_file = $this->CACHE_DIR. $this->_file_conf['file_prefix']. $cache_name. $this->_file_conf['file_ext'];
+				if (file_exists($cache_file)) {
+					if ($force_clean) {
+						unlink($cache_file);
+					} elseif ($need_touch) {
+						@touch($cache_file, time() - $this->TTL * 2);
+					}
+				} elseif (!$force_clean) {
+					$this->put($cache_name);
+				}
+			}
 	}
 
 	/**
 	*/
 	function flush($name) {
+		if (!$this->is_ready()) {
+			return null;
+		}
 // TODO: use glob() for this, also support for subdirs
-			$dh = opendir(CORE_CACHE_DIR);
+			$dh = opendir($this->CACHE_DIR);
 			if (!$dh) {
 				return false;
 			}
 			while (($f = readdir($dh)) !== false) {
-				if ($f == '.' || $f == '..' || !is_file(CORE_CACHE_DIR.$f)) {
+				if ($f == '.' || $f == '..' || !is_file($this->CACHE_DIR.$f)) {
 					continue;
 				}
 				if (pathinfo($f, PATHINFO_EXTENSION) != 'php') {
@@ -73,12 +92,21 @@ class yf_cache_driver_files extends yf_cache_driver {
 				if (substr($f, 0, strlen($this->_file_conf['file_prefix'])) != $this->_file_conf['file_prefix']) {
 					continue;
 				}
-				if (file_exists(CORE_CACHE_DIR.$f)) {
-					unlink(CORE_CACHE_DIR.$f);
+				if (file_exists($this->CACHE_DIR.$f)) {
+					unlink($this->CACHE_DIR.$f);
 				}
 			}
 			closedir($dh);
 			return true;
+	}
+
+	/**
+	*/
+	function list_keys($filter = '') {
+		if (!$this->is_ready()) {
+			return null;
+		}
+// TODO
 	}
 
 	/**

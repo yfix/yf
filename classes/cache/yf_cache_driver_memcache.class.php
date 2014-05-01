@@ -11,10 +11,6 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 	);
 	/** @var object internal @conf_skip */
 	public $_connection = null;
-	/** @var array list of implemented featues @conf_skip */
-	public $implemented = array(
-		'get', 'set', 'del', 'clean_all', 'list_keys'
-	);
 	/** @var mixed @conf_skip */
 	public $_memcache_new_extension = null;
 // TODO: create setting which extension to use (memcache|memcached)
@@ -66,16 +62,13 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		}
 		if (is_object($this->_connection)) {
 			$this->_memcache_new_extension = method_exists($this->_connection, 'getMulti');
-			if ($this->_memcache_new_extension) {
-				$this->implemented = array_merge($this->implemented, array('multi_get', 'multi_set', 'multi_del'));
-			}
 		}
 	}
 
 	/**
 	*/
 	function is_ready() {
-		return isset($this->_connection) ? true : false;
+		return isset($this->_connection);
 	}
 
 	/**

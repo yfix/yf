@@ -18,7 +18,7 @@ class yf_cache {
 	/** @var bool Allows to turn off cache at any moment. Useful for unit tests and complex situations. */
 	public $NO_CACHE			= false;
 	/** @var bool Forcing to delete elements */
-#	public $FORCE_REBUILD_CACHE	= false;
+	public $FORCE_REBUILD_CACHE	= false;
 	/** @var bool Add random value for each entry TTL (to avoid one-time cache invalidation problems) */
 	public $RANDOM_TTL_ADD		= true;
 	/** @var bool Force cache class to generate unique namespace, based on project_path. Usually needed to separate projects within same cache storage (memcached as example) */
@@ -80,8 +80,11 @@ class yf_cache {
 			$this->NO_CACHE = true;
 		}
 // TODO: add auth checking like debug auth or DEBUG_MODE checking to not allow no_cache attacks
-		if ($_GET['no_core_cache'] || $_GET['no_cache']/* || $_GET['refresh_cache']*/) {
+		if ($_GET['no_core_cache'] || $_GET['no_cache']) {
 			$this->NO_CACHE = true;
+		}
+		if ($_GET['refresh_cache']) {
+			$this->FORCE_REBUILD_CACHE = true;
 		}
 		$this->FORCE_REBUILD_CACHE = false;
 		if (main()->CACHE_CONTROL_FROM_URL && $_GET['rebuild_core_cache']) {
@@ -104,6 +107,13 @@ class yf_cache {
 		if ($this->DRIVER) {
 			$this->_driver = _class('cache_driver_'.$this->DRIVER, 'classes/cache/');
 			$this->_driver_ok = $this->_driver->is_ready();
+			$implemented = array();
+			foreach (get_class_methods($this->_driver) as $method) {
+				if ($method[0] != '_') {
+					$implemented[$method] = $method;
+				}
+			}
+			$this->_driver->implemented = $implemented;
 		} else {
 			trigger_error('CACHE: empty driver name, will not use cache', E_USER_WARNING);
 		}
@@ -163,22 +173,13 @@ class yf_cache {
 			return false;
 		}
 		if ($this->FORCE_REBUILD_CACHE) {
-			return $this->refresh($cache_name, true);
+			$this->del($cache_name, true);
+			return false;
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-// TODO: decide if we need this or remove
-/*
-		// Check if handler is locale-specific
-		$locale_cache_name = '';
-		if (strpos($cache_name, 'locale:') === 0) {
-			$cache_name = substr($cache_name, 7);
-			$locale_cache_name = $cache_name.'___'.conf('language');
-		}
-*/
-		$key_name = $locale_cache_name ? $locale_cache_name : $cache_name;
-		$key_name_ns = $this->CACHE_NS. $key_name;
+		$key_name_ns = $this->CACHE_NS. $cache_name;
 
 		$result = $this->_driver->get($key_name_ns, $force_ttl, $params);
 
@@ -222,29 +223,18 @@ class yf_cache {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-// TODO: decide if we need this or remove
-/*
-		// Check if handler is locale-specific
-		if (strpos($cache_name, 'locale:') === 0) {
-			$cache_name	= substr($cache_name, 7);
-			$locale_cache_name = $cache_name.'___'.conf('language');
-		}
-*/
-		$key_name = $locale_cache_name ? $locale_cache_name : $cache_name;
-		$key_name_ns = $this->CACHE_NS. $key_name;
-		// Stop here if custom rules not allowed
-// TODO: use main()->data_handlers for this
-#		if (is_null($data)) {
-#			$data = $this->_process_rule($cache_name, $locale_cache_name ? 1 : 0);
-#		}
 		// Do not put empty data if database could not connect
 // TODO: remove me, as cache class should not care about database, maybe use cache()->NO_CACHE in that case
 #		if (empty($data) && is_object($GLOBALS['db']) && !$GLOBALS['db']->_connected) {
 #			return false;
 #		}
-		if ($this->_no_cache[$cache_name]) {
-			return true;
-		}
+
+// TODO: decide if we need this
+#		if ($this->_no_cache[$cache_name]) {
+#			return true;
+#		}
+
+		$key_name_ns = $this->CACHE_NS. $cache_name;
 		$result = $this->_driver->set($key_name_ns, $data_to_put, $ttl);
 
 		if (DEBUG_MODE) {
@@ -283,60 +273,8 @@ class yf_cache {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-// TODO: check if we need this
-/*
-		// Check if handler is locale-specific
-		if (strpos($cache_name, 'locale:') === 0) {
-			$cache_name	= substr($cache_name, 7);
-			$locale_cache_name = $cache_name.'___'.conf('language');
-			// get available locales
-			$locales = array();
-			$locale_obj = _class('locale');
-			if (is_object($obj)) {
-				$locales = array_keys((array)$locale_obj->LANGUAGES);
-			}
-		}
-*/
-		$key_name = $locale_cache_name ? $locale_cache_name : $cache_name;
-		$key_name_ns = $this->CACHE_NS. $key_name;
-		$need_touch = (bool)conf('data_handlers::'.$cache_name);
 
-/*
-		if ($this->DRIVER == 'memcache') {
-		}
-		if ($this->DRIVER == 'file') {
-			// Not locale specific
-			if (empty($locales)) {
-				$cache_file = CORE_CACHE_DIR. $this->_file_conf['file_prefix']. $cache_name. $this->_file_conf['file_ext'];
-				if (file_exists($cache_file)) {
-					if ($force_clean) {
-						unlink($cache_file);
-					} elseif ($need_touch) {
-						@touch($cache_file, time() - $this->TTL * 2);
-					}
-				} elseif (!$force_clean) {
-					$this->put($cache_name);
-				}
-			}
-			// Locale-specific
-			foreach ((array)$locales as $_cur_locale) {
-				$cache_file = CORE_CACHE_DIR. $this->_file_conf['file_prefix']. $cache_name.'___'.$_cur_locale. $this->_file_conf['file_ext'];
-				if (file_exists($cache_file)) {
-					if ($force_clean) {
-						unlink($cache_file);
-					} elseif ($need_touch) {
-						@touch($cache_file, time() - $this->TTL * 2);
-					}
-				}
-			}
-		} elseif ($this->DRIVER == 'eaccelerator') {
-			$result = eaccelerator_rm($key_name_ns);
-		} elseif ($this->DRIVER == 'apc') {
-			$result = apc_delete($key_name_ns);
-		} elseif ($this->DRIVER == 'xcache') {
-			$result = xcache_unset($key_name_ns);
-		}
-*/
+		$key_name_ns = $this->CACHE_NS. $cache_name;
 		$result = $this->_driver->del($key_name_ns);
 
 		if (DEBUG_MODE) {

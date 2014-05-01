@@ -2,8 +2,19 @@
 
 load('cache_driver', 'framework', 'classes/cache/');
 class yf_cache_driver_xcache extends yf_cache_driver {
-// TODO
+
+	/**
+	*/
+	function is_ready() {
+		return function_exists('xcache_get');
+	}
+
+	/**
+	*/
 	function get($name, $ttl = 0, $params = array()) {
+		if (!$this->is_ready()) {
+			return null;
+		}
 		$result = xcache_get($name);
 		if (is_string($result)) {
 			$try_unpack = unserialize($result);
@@ -13,12 +24,31 @@ class yf_cache_driver_xcache extends yf_cache_driver {
 		}
 		return $result;
 	}
+
+	/**
+	*/
 	function set($name, $data, $ttl = 0) {
+		if (!$this->is_ready()) {
+			return null;
+		}
 		return xcache_set($name, $data, $ttl);
 	}
+
+	/**
+	*/
 	function del($name) {
+		if (!$this->is_ready()) {
+			return null;
+		}
+		return xcache_unset($name);
 	}
-	function clean_all() {
+
+	/**
+	*/
+	function flush() {
+		if (!$this->is_ready()) {
+			return null;
+		}
 		return xcache_clear_cache();
 	}
 }
