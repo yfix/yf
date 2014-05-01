@@ -9,6 +9,8 @@
 */
 class yf_output_cache {
 
+// TODO: inherit basic cache() class, move out from here everything related to cache storage, leave only output cache specifics
+
 	/** @var bool Output caching on/off */
 	public $OUTPUT_CACHING			= false;
 	/** @var int Output cache TTL, in seconds (0 - for unlimited) */
