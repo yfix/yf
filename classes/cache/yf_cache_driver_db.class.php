@@ -5,8 +5,6 @@ class yf_cache_driver_db extends yf_cache_driver {
 
 	public $table = 'cache';
 
-// TODO: create table "cache" with Engine=MEMORY
-
 	/**
 	*/
 	function is_ready() {
@@ -19,8 +17,9 @@ class yf_cache_driver_db extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$data = db()->select('value')->from($table)->where('key', '=', $name)->get_2d();
-		if (!$data) {
+		$ttl = intval($ttl ?: $this->_parent->TTL);
+		$data = db()->select('value')->from($this->table)->where('key', '=', $name)->get_2d();
+		if (!$data || $data['time'] < (time() - $ttl)) {
 			return false;
 		}
 		foreach ($data as &$v) {
@@ -35,9 +34,10 @@ class yf_cache_driver_db extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return db()->replace($table, db()->es(array(
+		return db()->replace($this->table, db()->es(array(
 			'key'	=> $name,
 			'value'	=> json_encode($data),
+			'time'	=> time(),
 		)));
 	}
 
@@ -47,7 +47,7 @@ class yf_cache_driver_db extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return db()->query('DELETE FROM '.db($table).' WHERE `key`="'.db()->es($name).'"');
+		return db()->query('DELETE FROM '.db($this->table).' WHERE `key`="'.db()->es($name).'"');
 	}
 
 	/**
@@ -56,7 +56,7 @@ class yf_cache_driver_db extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return db()->query('TRUNCATE '.db($table));
+		return db()->query('TRUNCATE '.db($this->table));
 	}
 
 	/**
@@ -65,7 +65,7 @@ class yf_cache_driver_db extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$data = db()->from($table)->get_2d();
+		$data = db()->from($this->table)->get_2d();
 		if (!$data) {
 			return false;
 		}
