@@ -493,13 +493,9 @@ class yf_main {
 		$this->sys_cache =& $this->modules['cache'];
 		$GLOBALS['sys_cache'] =& $this->modules['cache'];
 
-		if ($this->CACHE_CONTROL_FROM_URL && $this->_get('no_core_cache')) {
-			$this->USE_SYSTEM_CACHE = false;
-		}
 		if (!$this->USE_SYSTEM_CACHE) {
 			$this->modules['cache']->NO_CACHE = $this->USE_SYSTEM_CACHE;
 		}
-		$this->modules['cache']->_init_from_main();
 	}
 
 	/**
@@ -699,16 +695,10 @@ class yf_main {
 	function init_settings() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->set_default_settings();
-/*
 		// Overriding default settings with the values stored in database
-		foreach ((array)$this->get_data('settings') as $k => $v) {
-			conf($k, $v);
-		}
-*/
-		// Overriding default settings with the values stored in database
-		foreach ((array)$this->get_data('conf') as $k => $v) {
-			conf($k, $v);
-		}
+#		foreach ((array)$this->get_data('conf') as $k => $v) {
+#			conf($k, $v);
+#		}
 		$output_caching = conf('output_caching');
 		if (isset($output_caching)) {
 			$this->OUTPUT_CACHING = $output_caching;
@@ -1228,7 +1218,7 @@ class yf_main {
 		}
 		$result = $OBJ->$method_name($method_params);
 		if ($use_cache) {
-			$this->modules['cache']->put($cache_name, array($result));
+			$this->modules['cache']->set($cache_name, array($result));
 		}
 		return $result;
 	}
@@ -1241,6 +1231,7 @@ class yf_main {
 			$_time_start = microtime(true);
 		}
 		$body = '';
+/*
 		// Special widgets processing
 		$widget_name = false;
 		if (substr($method_name, 0, 8) == '_widget_') {
@@ -1271,10 +1262,11 @@ class yf_main {
 				$body = $body[0];
 			}
 		}
+*/
 		if (empty($body)) {
 			$body = $this->call_class_method($class_name, in_array($class_name, array('graphics')) ? 'classes/' : '', $method_name, $method_params, $tpl_name, $silent, $use_cache, $cache_ttl, $cache_key_override);
 			if ($widget_name && $this->USE_SYSTEM_CACHE) {
-				$this->modules['cache']->put($widget_name, $body);
+				$this->modules['cache']->set($widget_name, $body);
 			}
 		}
 		if (DEBUG_MODE) {
@@ -1340,42 +1332,47 @@ class yf_main {
 	/**
 	* Get named data array
 	*/
-	function get_data ($handler_name = '', $force_ttl = 0, $params = array()) {
+	function get_data ($name = '', $force_ttl = 0, $params = array()) {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
 		$data_to_return = null;
-		if (empty($handler_name)) {
+		if (empty($name)) {
 			return $data_to_return;
 		}
 		$cache_obj_available = is_object($this->modules['cache']);
 		if (!empty($this->USE_SYSTEM_CACHE) && $cache_obj_available) {
-			$data_to_return = $this->modules['cache']->get($handler_name, $force_ttl, $params);
+			$data_to_return = $this->modules['cache']->get($name, $force_ttl, $params);
 		}
 		$no_cache = false;
 		if (empty($data_to_return) && !is_array($data_to_return)) {
-			$locale_handler_name = '';
-			if (strpos($handler_name, 'locale:') === 0) {
-				$handler_name = substr($handler_name, 7);
-				$locale_handler_name = $handler_name.'___'.conf('language');
+			$locale_special_name = '';
+			$lang = conf('language');
+			if (strpos($name, 'locale:') === 0) {
+				$name = substr($name, 7);
+				$locale_special_name = $name.'___'.$lang;
 			}
 			if (!conf('data_handlers')) {
 				$this->_load_data_handlers();
 			}
-			$handler_php_source = conf('data_handlers::'.$handler_name);
-			if (is_callable($handler_php_source)) {
-				$data_to_return = $handler_php_source($handler_name, $params);
-			} elseif (is_string($handler_php_source)) {
-				$data_to_return = eval( ($locale_handler_name ? '$locale="'.conf('language').'";' : ''). $handler_php_source. '; return isset($data) ? $data : null;' );
+			$handler_php_source = conf('data_handlers::'.$name);
+			if (is_string($handler_php_source)) {
+// TODO: convert eval() into closure function() {}
+				$data_to_return = eval( ($locale_special_name ? '$locale="'.$lang.'";' : ''). $handler_php_source. '; return isset($data) ? $data : null;' );
+			} elseif (is_callable($handler_php_source)) {
+				$data_to_return = $handler_php_source($name, $params);
 			}
-			if (!empty($this->USE_SYSTEM_CACHE) && !$no_cache && $cache_obj_available) {
-				$this->modules['cache']->put($locale_handler_name ? $locale_handler_name : $handler_name, $data_to_return);
+			if (!$data_to_return) {
+				$data_to_return = array();
+			}
+			if ($this->USE_SYSTEM_CACHE && !$no_cache && $cache_obj_available) {
+				$this->modules['cache']->set($locale_special_name ?: $name, $data_to_return);
 			}
 		}
 		if (DEBUG_MODE) {
 			debug('main_get_data[]', array(
-				'name'		=> $handler_name,
-				'data'		=> '<pre><small>'._prepare_html(substr(var_export($data_to_return, 1), 0, 1000)).'</small></pre>',
+				'name'		=> $name,
+				'data'		=> $data_to_return,
 				'params'	=> $params,
 				'force_ttl'	=> $force_ttl,
 				'time'		=> round(microtime(true) - $time_start, 5),
@@ -1388,14 +1385,14 @@ class yf_main {
 	/**
 	* Put named data array
 	*/
-	function put_data ($handler_name = '', $data = array()) {
+	function put_data ($name = '', $data = array()) {
 		if (empty($this->USE_SYSTEM_CACHE)) {
 			return false;
 		}
 		if (!is_object($this->modules['cache'])) {
 			return false;
 		}
-		return $this->modules['cache']->put($handler_name, $data);
+		return $this->modules['cache']->set($name, $data);
 	}
 
 	/**
