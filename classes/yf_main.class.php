@@ -1356,14 +1356,20 @@ class yf_main {
 				$this->_load_data_handlers();
 			}
 			$handler_php_source = conf('data_handlers::'.$name);
-			if (is_string($handler_php_source)) {
+			if (!empty($handler_php_source)) {
+				if (is_string($handler_php_source)) {
 // TODO: convert eval() into closure function() {}
-				$data_to_return = eval( ($locale_special_name ? '$locale="'.$lang.'";' : ''). $handler_php_source. '; return isset($data) ? $data : null;' );
-			} elseif (is_callable($handler_php_source)) {
-				$data_to_return = $handler_php_source($name, $params);
+					$data_to_return = eval( ($locale_special_name ? '$locale="'.$lang.'";' : ''). $handler_php_source. '; return isset($data) ? $data : null;' );
+				} elseif (is_callable($handler_php_source)) {
+					$data_to_return = $handler_php_source($name, $params);
+				}
+				if (!$data_to_return) {
+					$data_to_return = array();
+				}
 			}
-			if (!$data_to_return) {
-				$data_to_return = array();
+			// Do not put empty data if database could not connected (not hiding mistakes with empty get_data)
+			if (empty($data_to_return) && is_object($this->db) && !$this->db->_connected) {
+				$no_cache = true;
 			}
 			if ($this->USE_SYSTEM_CACHE && !$no_cache && $cache_obj_available) {
 				$this->modules['cache']->set($locale_special_name ?: $name, $data_to_return);
