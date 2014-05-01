@@ -160,7 +160,7 @@ class yf_debug {
 			'DEBUG_MODE'		=> DEBUG_MODE,
 			'DEV_MODE'			=> (int)conf('DEV_MODE'),
 			'REWRITE_MODE'		=> (int)tpl()->REWRITE_MODE,
-			'CACHE_USE'			=> (int)conf('USE_CACHE'),
+			'CACHE_USE'			=> (int)((main()->USE_SYSTEM_CACHE || conf('USE_CACHE')) && !cache()->NO_CACHE),
 			'CACHE_NO_CACHE'	=> (int)cache()->NO_CACHE,
 			'CACHE_DRIVER'		=> cache()->DRIVER,
 			'CACHE_NS'			=> cache()->CACHE_NS,
