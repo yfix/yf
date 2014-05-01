@@ -572,7 +572,13 @@ class yf_debug {
 		if (!$this->_SHOW_MAIN_GET_DATA) {
 			return '';
 		}
-		$items = $this->_get_debug_data('main_get_data');
+		$items = (array)$this->_get_debug_data('main_get_data');
+		foreach ($items as &$v) {
+			$data = var_export($v['data'], 1);
+			$size = strlen($data);
+			$v['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
+			$v['data_size'] = $size;
+		}
 		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
 	}
@@ -583,10 +589,15 @@ class yf_debug {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
-// TODO: add admin link to purge cache
-		$items = $this->_get_debug_data('cache_get');
-#					'data'		=> '<pre><small>'._prepare_html(substr(var_export($result, 1), 0, 1000)).'</small></pre>',
-
+// TODO + add admin link to purge cache
+// TODO + add link to inspect current cache contents if driver supports this
+		$items = (array)$this->_get_debug_data('cache_get');
+		foreach ($items as &$v) {
+			$data = var_export($v['data'], 1);
+			$size = strlen($data);
+			$v['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
+			$v['data_size'] = $size;
+		}
 		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
 	}
@@ -597,15 +608,20 @@ class yf_debug {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
-		$items = $this->_get_debug_data('cache_set');
-#					'data'		=> '<pre><small>'._prepare_html(substr(var_export($result, 1), 0, 1000)).'</small></pre>',
+		$items = (array)$this->_get_debug_data('cache_set');
+		foreach ($items as &$v) {
+			$data = var_export($v['data'], 1);
+			$size = strlen($data);
+			$v['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
+			$v['data_size'] = $size;
+		}
 		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name', 'data' => 'name')));
 	}
 
 	/**
 	*/
-	function _debug_cache_refresh (&$params = array()) {
+	function _debug_cache_del (&$params = array()) {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
