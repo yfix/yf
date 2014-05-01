@@ -110,7 +110,7 @@ class yf_utils {
 			return $string;
 		}
 		$class = !empty($class) ? ' class="'.$class.'"' : '';
-		$search_words = preg_replace('/[^\d_!?-\p{L}]/imsu', ' ', $search_words);
+		$search_words = preg_replace('/[^\d_!?\p{L}-]/imsu', ' ', $search_words);
 		$search_words = explode(' ', $search_words);
 		$prepared = array();
 		foreach((array)$search_words as $item){
