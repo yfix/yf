@@ -299,7 +299,7 @@ class yf_tpl {
 #			if (DEBUG_MODE || conf('exec_time')) {
 #				$body['exec_time'] = common()->_show_execution_time();
 #			}
-			if (DEBUG_MODE) {
+			if (DEBUG_MODE && !main()->CONSOLE_MODE && !main()->is_ajax()) {
 				$body['debug_info'] = common()->show_debug_info();
 				if ($this->ALLOW_INLINE_DEBUG || main()->INLINE_EDIT_LOCALE) {
 					$body['debug_info'] .= $this->parse('system/js_inline_editor');
@@ -317,7 +317,7 @@ class yf_tpl {
 			// Throw generated output to user
 			echo $output;
 		}
-		if (main()->NO_GRAPHICS && DEBUG_MODE && !conf('IS_AJAX')) {
+		if (DEBUG_MODE && main()->NO_GRAPHICS && !main()->CONSOLE_MODE && !main()->is_ajax()) {
 #			echo common()->_show_execution_time();
 			echo common()->show_debug_info();
 		}
