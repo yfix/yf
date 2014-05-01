@@ -156,21 +156,21 @@ class yf_cache {
 	/**
 	* Get data from cache
 	*/
-	function get ($cache_name = '', $force_ttl = 0, $params = array()) {
+	function get ($name = '', $force_ttl = 0, $params = array()) {
 		if (!$this->_driver_ok) {
 			return false;
 		}
-		if (empty($cache_name) || $this->NO_CACHE) {
+		if (empty($name) || $this->NO_CACHE) {
 			return false;
 		}
 		if ($this->FORCE_REBUILD_CACHE) {
-			$this->del($cache_name, true);
+			$this->del($name, true);
 			return false;
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		$key_name_ns = $this->CACHE_NS. $cache_name;
+		$key_name_ns = $this->CACHE_NS. $name;
 
 		$result = $this->_driver->get($key_name_ns, $force_ttl, $params);
 
@@ -180,7 +180,7 @@ class yf_cache {
 // TODO: move debug items limiting into debug() itself
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
 				debug('cache_'.__FUNCTION__.'::'.$debug_index, array(
-					'name'		=> $cache_name,
+					'name'		=> $name,
 					'name_real'	=> $key_name_ns,
 					'data'		=> $result,
 					'driver'	=> $this->DRIVER,
@@ -201,11 +201,11 @@ class yf_cache {
 	/**
 	* Set data into cache
 	*/
-	function set ($cache_name = '', $data = null, $ttl = 0) {
+	function set ($name = '', $data = null, $ttl = 0) {
 		if (!$this->_driver_ok) {
 			return false;
 		}
-		if ($this->NO_CACHE || $this->_no_cache[$cache_name]) {
+		if ($this->NO_CACHE || $this->_no_cache[$name]) {
 			return false;
 		}
 		if (DEBUG_MODE) {
@@ -215,7 +215,7 @@ class yf_cache {
 		if ($this->RANDOM_TTL_ADD) {
 			$ttl += mt_rand(1, 15);
 		}
-		$key_name_ns = $this->CACHE_NS. $cache_name;
+		$key_name_ns = $this->CACHE_NS. $name;
 		$result = $this->_driver->set($key_name_ns, $data, $ttl);
 
 		if (DEBUG_MODE) {
@@ -223,7 +223,7 @@ class yf_cache {
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
 				debug('cache_'.__FUNCTION__.'::'.$debug_index, array(
-					'name'		=> $cache_name,
+					'name'		=> $name,
 					'name_real'	=> $key_name_ns,
 					'data'		=> $data,
 					'driver'	=> $this->DRIVER,
@@ -238,23 +238,23 @@ class yf_cache {
 	/**
 	* Delete selected cache entry
 	*/
-	function del ($cache_name = '', $force_clean = false) {
+	function del ($name = '', $force_clean = false) {
 		if (!$this->_driver_ok) {
 			return false;
 		}
 		if ($this->NO_CACHE) {
 			return false;
 		}
-		if (is_array($cache_name)) {
-			foreach ((array)$cache_name as $name) {
-				$result[$name] = $this->del($name, $force_clean);
+		if (is_array($name)) {
+			foreach ((array)$name as $_name) {
+				$result[$_name] = $this->del($_name, $force_clean);
 			}
 			return $result;
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		$key_name_ns = $this->CACHE_NS. $cache_name;
+		$key_name_ns = $this->CACHE_NS. $name;
 		$result = $this->_driver->del($key_name_ns);
 
 		if (DEBUG_MODE) {
@@ -262,7 +262,7 @@ class yf_cache {
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
 				debug('cache_'.__FUNCTION__.'::'.$debug_index, array(
-					'name'			=> $cache_name,
+					'name'			=> $name,
 					'name_real'		=> $key_name_ns,
 					'force_clean'	=> $force_clean,
 					'driver'		=> $this->DRIVER,
@@ -276,29 +276,29 @@ class yf_cache {
 	/**
 	* Delete selected cache entry (alias)
 	*/
-	function refresh ($cache_name = '') {
-		return $this->del($cache_name, true);
+	function refresh ($name = '') {
+		return $this->del($name, true);
 	}
 
 	/**
 	* Clean selected cache entry (alias)
 	*/
-	function clean ($cache_name = '') {
-		return $this->del($cache_name, true);
+	function clean ($name = '') {
+		return $this->del($name, true);
 	}
 
 	/**
 	* Clean selected cache entry (alias)
 	*/
-	function clear ($cache_name = '') {
-		return $this->del($cache_name, true);
+	function clear ($name = '') {
+		return $this->del($name, true);
 	}
 
 	/**
 	* Put data into cache (alias for 'set')
 	*/
-	function put ($cache_name = '', $data = null, $ttl = 0) {
-		return $this->set($cache_name, $data, $ttl);
+	function put ($name = '', $data = null, $ttl = 0) {
+		return $this->set($name, $data, $ttl);
 	}
 
 	/**
@@ -459,6 +459,37 @@ class yf_cache {
 		}
 		if (DEBUG_MODE) {
 			debug('cache_'.__FUNCTION__.'[]', array(
+				'data'		=> $result,
+				'driver'	=> $this->DRIVER,
+				'time'		=> microtime(true) - $time_start,
+			));
+		}
+		return $result;
+	}
+
+	/**
+	*/
+	function del_all_by_prefix ($prefix = '') {
+		if (DEBUG_MODE) {
+			$time_start = microtime(true);
+		}
+		if (!strlen($prefix) || !is_string($prefix)) {
+			$result = $this->flush();
+		} else {
+			$prefix_len = strlen($prefix);
+			$result = $this->list_keys();
+			if ($keys) {
+				foreach ($result as &$v) {
+					if (substr($v, 0, $prefix_len) != $prefix) {
+						unset($v);
+					}
+				}
+			}
+			$result && $this->multi_del($result);
+		}
+		if (DEBUG_MODE) {
+			debug('cache_'.__FUNCTION__.'[]', array(
+				'prefix'	=> $prefix,
 				'data'		=> $result,
 				'driver'	=> $this->DRIVER,
 				'time'		=> microtime(true) - $time_start,
