@@ -61,7 +61,7 @@ class yf_cache_driver_db extends yf_cache_driver {
 
 	/**
 	*/
-	function list_keys($filter = '') {
+	function list_keys() {
 		if (!$this->is_ready()) {
 			return null;
 		}

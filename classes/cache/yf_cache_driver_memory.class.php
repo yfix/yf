@@ -48,7 +48,7 @@ class yf_cache_driver_memory extends yf_cache_driver {
 
 	/**
 	*/
-	function list_keys($filter = '') {
+	function list_keys() {
 		return $this->storage;
 	}
 
