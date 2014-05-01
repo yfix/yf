@@ -20,6 +20,18 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 // TODO: create setting which extension to use (memcache|memcached)
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		// Support for driver-specific methods
+		if (is_object($this->_connected) && method_exists($this->_connected, $name)) {
+			return call_user_func_array(array($this->_connected, $name), $args);
+		}
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
+		return false;
+	}
+
+	/**
 	*/
 	function _init ($params = array()) {
 		$conf_mc_host = conf('MEMCACHED_HOST');

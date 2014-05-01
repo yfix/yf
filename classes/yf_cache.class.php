@@ -9,105 +9,45 @@
 */
 class yf_cache {
 
-	/** @var int Cache files TimeToLive value (in seconds) */
-// TODO: rename this into "TTL" with backwards compatibility
-	public $FILES_TTL				= 3600;
-	/** @var int Add random value for each entry TTL (to avoid one-time cache invalidation problems) */
-	public $RANDOM_TTL_ADD			= true;
-	/** @var string Cache rules file */
-	public $RULES_FILE				= 'cache_rules.php';
-	/** @var bool Allow or not custom rules (not found in rules array) */
-	public $ALLOW_CUSTOM_RULES		= true;
-	/** @var string Cache driver enum('','auto','file','eaccelerator','apc','xcache','memcache') */
-	public $DRIVER					= 'file';
+	/** @var int Cache entries time-to-live (in seconds) */
+	public $TTL					= 3600;
+	/** @var string Cache driver to use */
+	public $DRIVER				= 'memcache';
 	/** @var string Namespace for drivers other than 'file' */
-	public $CACHE_NS				= '';
+	public $CACHE_NS			= '';
 	/** @var bool Allows to turn off cache at any moment. Useful for unit tests and complex situations. */
-	public $NO_CACHE				= false;
-	/** @var bool */
-	public $FORCE_REBUILD_CACHE		= false;
-	/** @var int Max number of items to log when DEBUG_MODE is enabled, this limit needed to prevent stealing all RAM 
-		when we have high number of cache entries at once. Applied separately for 'get', 'set', 'refresh'.
-	*/
-	public $LOG_MAX_ITEMS	= 200;
+	public $NO_CACHE			= false;
+	/** @var bool Forcing to delete elements */
+	public $FORCE_REBUILD_CACHE	= false;
+	/** @var bool Add random value for each entry TTL (to avoid one-time cache invalidation problems) */
+	public $RANDOM_TTL_ADD		= true;
+	/** @var bool Force cache class to generate unique namespace, based on project_path. Usually needed to separate projects within same cache storage (memcached as example) */
+	public $AUTO_CACHE_NS		= false;
+	/** @var int Max number of items to log when DEBUG_MODE is enabled, this limit needed to prevent stealing all RAM when we have high number of cache entries at once. */
+	public $LOG_MAX_ITEMS		= 200;
 
-// TODO: connect plugins, stored inside classes/cache/*
+	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		// Support for driver-specific methods
+		if (is_object($this->_driver)) {
+			return call_user_func_array(array($this->_driver, $name), $args);
+		}
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
+		return false;
+	}
 
 	/**
 	* Framework constructor
 	*/
 	function _init ($params = array()) {
-		// Cache namespace need to be unique, especially when using memcached shared between several projects
-// TODO: move this into setting: $this->AUTO_CACHE_NS = false|true
-#		$this->CACHE_NS = 'core_'.intval(abs(crc32(defined('INCLUDE_PATH') ? INCLUDE_PATH : __FILE__)));
-		$conf_cache_ns = conf('CACHE_NS');
-		if ($conf_cache_ns) {
-			$this->CACHE_NS = $conf_cache_ns;
-		}
-		if (conf('USE_CACHE') === null) {
-// TODO: remove ?
-			if (defined('USE_CACHE')) {
-				conf('USE_CACHE', USE_CACHE);
-			}
-			// By default we have cache enabled
-			$use_cache = true;
-			if (!main()->USE_SYSTEM_CACHE) {
-				$use_cache = false;
-			}
-// TODO: add DEBUG_MODE checking here to not allow no_cache attacks
-// TODO: add auth checking like debug auth
-			if ($_GET['no_core_cache'] || $_GET['no_cache']) {
-				$use_cache = false;
-			}
-			conf('USE_CACHE', $use_cache);
-		}
-		define('CORE_CACHE_DIR', INCLUDE_PATH. 'core_cache/');
-		// Singleton pattern, prevents double cache init overhead when called without main and then with main class
 		if (isset($this->_init_complete)) {
 			return true;
 		}
-// TODO: get available cache systems from classes/cache/
-		$cache_systems = array();
-		if (function_exists('eaccelerator_get')) {
-			$cache_systems[] = 'eaccelerator';
-		}
-		if (function_exists('apc_fetch')) {
-			$cache_systems[] = 'apc';
-		}
-		if (function_exists('xcache_get')) {
-			$cache_systems[] = 'xcache';
-		}
-		if (class_exists('Memcache') || class_exists('Memcached')) {
-			$cache_systems[] = 'memcache';
-		}
-		$cache_systems[] = 'file';
-		$required_cache = isset($params['driver']) ? $params['driver'] : $this->DRIVER;
-		if (!$required_cache) {
-			$required_cache = 'file';
-		}
-		if (count($cache_systems)) {
-			if ($required_cache == 'auto') {
-				$this->DRIVER = array_shift($cache_systems);
-			} elseif (in_array($required_cache, $cache_systems)) {
-				$this->DRIVER = $required_cache;
-			} else {
-				$this->DRIVER = 'file';
-			}
-		}
-		// Driver load instance
-// TODO: move this into _connect() like in db() to not include driver until first time called?
-		$this->_driver = _class('cache_driver_'.$this->DRIVER, 'classes/cache/');
-
+		$this->_init_settings();
+		$this->_connect($params);
 		$this->_init_complete = true;
-	}
-
-	/**
-	* Catch missing method call
-	*/
-	function __call($name, $arguments) {
-// TODO: first check if this is specific method of the driver, yes - call it, not - fail like now
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
 	}
 
 	/**
@@ -119,6 +59,117 @@ class yf_cache {
 			$this->FORCE_REBUILD_CACHE = true;
 		}
 		main()->_load_data_handlers();
+	}
+
+	/**
+	*/
+	function _init_settings ($params = array()) {
+		// backwards compatibility
+		if ($this->FILES_TTL) {
+			$this->TTL = $this->FILES_TTL;
+		}
+		$conf_cache_ns = conf('CACHE_NS');
+		// Cache namespace need to be unique, especially when using memcached shared between several projects
+		if (!$conf_cache_ns && $this->AUTO_CACHE_NS) {
+			$this->CACHE_NS = substr(md5(PROJECT_PATH), 0, 8).'_';
+		}
+		if ($conf_cache_ns) {
+			$this->CACHE_NS = $conf_cache_ns;
+		}
+		if (conf('USE_CACHE') === null) {
+			// backwards compatibility
+			if (defined('USE_CACHE')) {
+				conf('USE_CACHE', USE_CACHE);
+			}
+			// By default we have cache enabled
+			$use_cache = true;
+			if (!main()->USE_SYSTEM_CACHE) {
+				$use_cache = false;
+			}
+// TODO: add auth checking like debug auth or DEBUG_MODE checking to not allow no_cache attacks
+			if ($_GET['no_core_cache'] || $_GET['no_cache']) {
+				$use_cache = false;
+			}
+			conf('USE_CACHE', $use_cache);
+		}
+		define('CORE_CACHE_DIR', INCLUDE_PATH. 'core_cache/');
+	}
+
+	/**
+	*/
+	function _connect ($params = array()) {
+		if (!$this->DRIVER) {
+			return false;
+		}
+		if (isset($this->_tried_to_connect)) {
+			return $this->_driver;
+		}
+		$this->_set_current_driver($params);
+		$this->_driver = null;
+		if ($this->DRIVER) {
+			$this->_driver = _class('cache_driver_'.$this->DRIVER, 'classes/cache/');
+		} else {
+			trigger_error('CACHE: empty driver name, will not use cache', E_USER_WARNING);
+		}
+		$this->_tried_to_connect = true;
+		return $this->_driver;
+	}
+
+	/**
+	*/
+	function _set_current_driver ($params = array()) {
+		$avail_drivers = $this->_get_avail_drivers_list();
+		$driver = '';
+		$want = isset($params['driver']) ? $params['driver'] : $this->DRIVER;
+		if (!$want || $want == 'auto') {
+			$want = 'memcache';
+		}
+		if (isset($avail_drivers[$want])) {
+			$driver = $want;
+		}
+		$this->DRIVER = $driver;
+		return $driver;
+	}
+
+	/**
+	*/
+	function _get_avail_drivers_list () {
+		$paths = array(
+			'project'	=> PROJECT_PATH. 'classes/cache/',
+			'yf_core'	=> YF_PATH. 'classes/cache/',
+			'yf_plugins'=> YF_PATH. 'plugins/*/classes/cache/',
+		);
+		$prefix = 'cache_driver_';
+		$suffix = '.class.php';
+		$plen = strlen($prefix);
+		$slen = strlen($suffix);
+		$drivers = array();
+		foreach ($paths as $path) {
+			foreach (glob($path.'*'.$prefix.'*'.$suffix) as $f) {
+				$f = basename($f);
+				$name = substr($f, strpos($f, $prefix) + $plen, -$slen);
+				if ($name) {
+					$drivers[$name] = $name;
+				}
+			}
+		}
+		return $drivers;
+	}
+
+	/**
+	* Escape html and framework specific symbols to display in debug console
+	*/
+	function _debug_escape($string = '') {
+// TODO: remove/move this into debug class, no need to have this responsibility in-place
+		$symbols = array(
+			'{'	=> '&#123;',
+			'}'	=> '&#125;',
+			"\\"=> '&#92;',
+			'(' => '&#40;',
+			')' => '&#41;',
+			'?' => '&#63;',
+		);
+		return str_replace(array_keys($symbols), array_values($symbols), htmlspecialchars($string, ENT_QUOTES));
 	}
 
 	/**
@@ -207,7 +258,7 @@ class yf_cache {
 			return false;
 		}
 		if (!$TTL) {
-			$TTL = $this->FILES_TTL;
+			$TTL = $this->TTL;
 		}
 		// Add random value for each entry TTL (to avoid 'at once' cache invalidation problems)
 		if ($this->RANDOM_TTL_ADD) {
@@ -228,9 +279,6 @@ class yf_cache {
 		$key_name_ns = $this->CACHE_NS. $key_name;
 		// Stop here if custom rules not allowed
 // TODO: use main()->data_handlers for this
-		if (!$this->ALLOW_CUSTOM_RULES && !conf('data_handlers::'.$cache_name)) {
-			return false;
-		}
 		if (is_null($data)) {
 			$data = $this->_process_rule($cache_name, $locale_cache_name ? 1 : 0);
 		}
@@ -330,7 +378,7 @@ class yf_cache {
 					if ($force_clean) {
 						unlink($cache_file);
 					} elseif ($need_touch) {
-						@touch($cache_file, time() - $this->FILES_TTL * 2);
+						@touch($cache_file, time() - $this->TTL * 2);
 					}
 				} elseif (!$force_clean) {
 					$this->put($cache_name);
@@ -343,7 +391,7 @@ class yf_cache {
 					if ($force_clean) {
 						unlink($cache_file);
 					} elseif ($need_touch) {
-						@touch($cache_file, time() - $this->FILES_TTL * 2);
+						@touch($cache_file, time() - $this->TTL * 2);
 					}
 				}
 			}
@@ -391,6 +439,7 @@ class yf_cache {
 	* Clean all cache entries
 	*/
 	function clean_all () {
+// TODO: DEBUG_MODE
 		return $this->_driver->clean_all();
 	}
 
@@ -430,9 +479,9 @@ class yf_cache {
 	/**
 	* Clears all cache files inside cache folder
 	*/
-#	function _clear_cache_files () {
-#		return $this->_clear_all();
-#	}
+	function _clear_cache_files () {
+		return $this->clean_all();
+	}
 
 	/**
 	* Clears all cache entries (do not use widely!)
@@ -481,6 +530,7 @@ class yf_cache {
 	* Get several cache entries at once
 	*/
 	function multi_get ($cache_names = array(), $force_ttl = 0, $params = array()) {
+/*
 		if ($this->_driver->implemented['multi_get']) {
 			$result $this->_driver->multi_get($cache_names, $force_ttl, $params);
 		} else {
@@ -489,6 +539,7 @@ class yf_cache {
 				$result[$cache_name] = $this->get($cache_name, $force_ttl, $params);
 			}
 		}
+*/
 // TODO: DEBUG_MODE
 		return $result;
 	}
@@ -513,6 +564,7 @@ class yf_cache {
 	* Del several cache entries at once
 	*/
 	function multi_del ($cache_data = array()) {
+/*
 		if ($this->_driver->implemented['multi_del']) {
 			$result $this->_driver->multi_del($cache_data);
 		} else {
@@ -521,6 +573,7 @@ class yf_cache {
 				$result[$cache_name] = $this->del($cache_name);
 			}
 		}
+*/
 // TODO: DEBUG_MODE
 		return $result;
 	}
@@ -532,21 +585,5 @@ class yf_cache {
 			return $this->_driver->list_keys($filter);
 		}
 		return null;
-	}
-
-	/**
-	* Escape html and framework specific symbols to display in debug console
-	*/
-	function _debug_escape($string = '') {
-// TODO: remove/move this into debug class, no need to have this responsibility in-place
-		$symbols = array(
-			'{'	=> '&#123;',
-			'}'	=> '&#125;',
-			"\\"=> '&#92;',
-			'(' => '&#40;',
-			')' => '&#41;',
-			'?' => '&#63;',
-		);
-		return str_replace(array_keys($symbols), array_values($symbols), htmlspecialchars($string, ENT_QUOTES));
 	}
 }

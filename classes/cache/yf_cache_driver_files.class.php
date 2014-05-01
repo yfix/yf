@@ -48,7 +48,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 		}
 		// Delete expired cache files
 		$last_modified = filemtime($cache_file);
-		$TTL = intval($force_ttl ? $force_ttl : $this->FILES_TTL);
+#		$TTL = intval($force_ttl ? $force_ttl : $this->TTL);
 		if ($last_modified < (time() - $TTL)) {
 			return null;
 		}
