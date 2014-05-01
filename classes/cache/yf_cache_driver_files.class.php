@@ -18,6 +18,8 @@ class yf_cache_driver_files extends yf_cache_driver {
 #		'get', 'set', 'del', 'multi_get', 'multi_set', 'multi_del'//, 'clean', 'list_all', ...
 	);
 
+	/**
+	*/
 	function _init() {
 		$this->CORE_CACHE_DIR = PROJECT_PATH. 'core_cache/';
 		if (!file_exists($this->CORE_CACHE_DIR) && $this->AUTO_CREATE_CACHE_DIR) {
@@ -26,14 +28,57 @@ class yf_cache_driver_files extends yf_cache_driver {
 		}
 // TODO
 	}
+
+	/**
+	*/
+	function is_ready() {
+		return is_writable($this->CORE_CACHE_DIR) ? true : false;
+	}
+
+	/**
+	*/
 	function get($name, $ttl = 0, $params = array()) {
-// TODO
+		$path = $this->CORE_CACHE_DIR. $this->_file_conf['file_prefix']. $name. $this->_file_conf['file_ext'];
+		return $this->_get_cache_file($path, $ttl);
 	}
+
+	/**
+	*/
 	function set($name, $data, $ttl = 0) {
-// TODO
+		$path = $this->CORE_CACHE_DIR. $this->_file_conf['file_prefix']. $name. $this->_file_conf['file_ext'];
+		return $this->_put_cache_file($data, $path);
 	}
+
+	/**
+	*/
 	function del($name) {
 // TODO
+	}
+
+	/**
+	*/
+	function flush($name) {
+// TODO: use glob() for this, also support for subdirs
+			$dh = opendir(CORE_CACHE_DIR);
+			if (!$dh) {
+				return false;
+			}
+			while (($f = readdir($dh)) !== false) {
+				if ($f == '.' || $f == '..' || !is_file(CORE_CACHE_DIR.$f)) {
+					continue;
+				}
+				if (pathinfo($f, PATHINFO_EXTENSION) != 'php') {
+					continue;
+				}
+				if (substr($f, 0, strlen($this->_file_conf['file_prefix'])) != $this->_file_conf['file_prefix']) {
+					continue;
+				}
+				if (file_exists(CORE_CACHE_DIR.$f)) {
+					unlink(CORE_CACHE_DIR.$f);
+				}
+			}
+			closedir($dh);
+			return true;
 	}
 
 	/**
@@ -48,8 +93,8 @@ class yf_cache_driver_files extends yf_cache_driver {
 		}
 		// Delete expired cache files
 		$last_modified = filemtime($cache_file);
-#		$TTL = intval($force_ttl ? $force_ttl : $this->TTL);
-		if ($last_modified < (time() - $TTL)) {
+#		$ttl = intval($force_ttl ? $force_ttl : $this->TTL);
+		if ($last_modified < (time() - $ttl)) {
 			return null;
 		}
 		$data = array();

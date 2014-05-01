@@ -127,7 +127,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 
 	/**
 	*/
-	function clean_all() {
+	function flush() {
 		if (!$this->is_ready()) {
 			return null;
 		}

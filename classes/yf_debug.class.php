@@ -585,6 +585,8 @@ class yf_debug {
 		}
 // TODO: add admin link to purge cache
 		$items = $this->_get_debug_data('cache_get');
+#					'data'		=> '<pre><small>'._prepare_html(substr(var_export($result, 1), 0, 1000)).'</small></pre>',
+
 		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
 	}
@@ -596,6 +598,7 @@ class yf_debug {
 			return '';
 		}
 		$items = $this->_get_debug_data('cache_set');
+#					'data'		=> '<pre><small>'._prepare_html(substr(var_export($result, 1), 0, 1000)).'</small></pre>',
 		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name', 'data' => 'name')));
 	}
@@ -606,7 +609,7 @@ class yf_debug {
 		if (!$this->_SHOW_CORE_CACHE) {
 			return '';
 		}
-		$items = $this->_get_debug_data('cache_refresh');
+		$items = $this->_get_debug_data('cache_del');
 		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
 	}
