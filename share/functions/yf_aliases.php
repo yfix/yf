@@ -65,7 +65,7 @@ if (!function_exists('common')) {
 }
 // example: cache()->put()
 if (!function_exists('cache')) {
-	function cache($silent = false) { return $GLOBALS['sys_cache'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
+	function cache($silent = false) { return $GLOBALS['cache'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
 }
 if (!function_exists('cache_set')) {
 	function cache_set($name, $data, $ttl = 3600, $level = '') { return cache()->set($name, $data, $ttl); }
