@@ -24,7 +24,7 @@ class yf_cache {
 	/** @var bool Force cache class to generate unique namespace, based on project_path. Usually needed to separate projects within same cache storage (memcached as example) */
 	public $AUTO_CACHE_NS		= false;
 	/** @var int Max number of items to log when DEBUG_MODE is enabled, this limit needed to prevent stealing all RAM when we have high number of cache entries at once. */
-	public $LOG_MAX_ITEMS		= 200;
+	public $LOG_MAX_ITEMS		= 500;
 
 	/**
 	* Catch missing method call
@@ -59,7 +59,7 @@ class yf_cache {
 		}
 		$conf_cache_ns = conf('CACHE_NS');
 		// Cache namespace need to be unique, especially when using memcached shared between several projects
-		if (!$conf_cache_ns && $this->AUTO_CACHE_NS) {
+		if (!$conf_cache_ns && !$this->CACHE_NS && $this->AUTO_CACHE_NS) {
 			$this->CACHE_NS = substr(md5(PROJECT_PATH), 0, 8).'_';
 		}
 		if ($conf_cache_ns) {
@@ -104,6 +104,7 @@ class yf_cache {
 				}
 			}
 			$this->_driver->implemented = $implemented;
+			$this->_driver->_parent = $this;
 		} else {
 			trigger_error('CACHE: empty driver name, will not use cache', E_USER_WARNING);
 		}
@@ -176,8 +177,9 @@ class yf_cache {
 		if (DEBUG_MODE) {
 			$all_debug = debug('cache_get');
 			$debug_index = count($all_debug);
+// TODO: move debug items limiting into debug() itself
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				debug('cache_get::'.$debug_index, array(
+				debug('cache_'.__FUNCTION__.'::'.$debug_index, array(
 					'name'		=> $cache_name,
 					'name_real'	=> $key_name_ns,
 					'data'		=> $result,
@@ -203,27 +205,16 @@ class yf_cache {
 		if (!$this->_driver_ok) {
 			return false;
 		}
-		if ($this->NO_CACHE) {
+		if ($this->NO_CACHE || $this->_no_cache[$cache_name]) {
 			return false;
+		}
+		if (DEBUG_MODE) {
+			$time_start = microtime(true);
 		}
 		$ttl = intval($ttl ?: $this->TTL);
 		if ($this->RANDOM_TTL_ADD) {
 			$ttl += mt_rand(1, 15);
 		}
-		if (DEBUG_MODE) {
-			$time_start = microtime(true);
-		}
-		// Do not put empty data if database could not connect
-// TODO: remove me, as cache class should not care about database, maybe use cache()->NO_CACHE in that case
-#		if (empty($data) && is_object($GLOBALS['db']) && !$GLOBALS['db']->_connected) {
-#			return false;
-#		}
-
-// TODO: decide if we need this
-#		if ($this->_no_cache[$cache_name]) {
-#			return true;
-#		}
-
 		$key_name_ns = $this->CACHE_NS. $cache_name;
 		$result = $this->_driver->set($key_name_ns, $data, $ttl);
 
@@ -231,7 +222,7 @@ class yf_cache {
 			$all_debug = debug('cache_set');
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				debug('cache_set::'.$debug_index, array(
+				debug('cache_'.__FUNCTION__.'::'.$debug_index, array(
 					'name'		=> $cache_name,
 					'name_real'	=> $key_name_ns,
 					'data'		=> $data,
@@ -256,14 +247,13 @@ class yf_cache {
 		}
 		if (is_array($cache_name)) {
 			foreach ((array)$cache_name as $name) {
-				$result[$name] = $this->refresh($name, $force_clean);
+				$result[$name] = $this->del($name, $force_clean);
 			}
 			return $result;
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-
 		$key_name_ns = $this->CACHE_NS. $cache_name;
 		$result = $this->_driver->del($key_name_ns);
 
@@ -271,7 +261,7 @@ class yf_cache {
 			$all_debug = debug('cache_del');
 			$debug_index = count($all_debug);
 			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				debug('cache_del::'.$debug_index, array(
+				debug('cache_'.__FUNCTION__.'::'.$debug_index, array(
 					'name'			=> $cache_name,
 					'name_real'		=> $key_name_ns,
 					'force_clean'	=> $force_clean,
@@ -318,15 +308,24 @@ class yf_cache {
 		if (!$this->_driver_ok) {
 			return false;
 		}
-// TODO: DEBUG_MODE
-		return $this->_driver->flush();
+		if (DEBUG_MODE) {
+			$time_start = microtime(true);
+		}
+		$result = $this->_driver->flush();
+		if (DEBUG_MODE) {
+			debug('cache_'.__FUNCTION__.'[]', array(
+				'data'		=> $result,
+				'driver'	=> $this->DRIVER,
+				'time'		=> microtime(true) - $time_start,
+			));
+		}
+		return $result;
 	}
 
 	/**
 	* Clean all cache entries (alias)
 	*/
 	function clean_all () {
-// TODO: DEBUG_MODE
 		return $this->flush();
 	}
 
@@ -354,90 +353,117 @@ class yf_cache {
 	/**
 	* Get several cache entries at once
 	*/
-	function multi_get ($cache_names = array(), $force_ttl = 0, $params = array()) {
+	function multi_get ($names = array(), $force_ttl = 0, $params = array()) {
 		if (!$this->_driver_ok) {
 			return false;
 		}
+		if (DEBUG_MODE) {
+			$time_start = microtime(true);
+		}
 		if ($this->_driver->implemented['multi_get']) {
-			$result = $this->_driver->multi_get($cache_names, $force_ttl, $params);
+			$result = $this->_driver->multi_get($names, $force_ttl, $params);
 		} else {
 			$result = array();
-			foreach ((array)$cache_names as $cache_name) {
-				$result[$cache_name] = $this->get($cache_name, $force_ttl, $params);
+			foreach ((array)$names as $name) {
+				$result[$name] = $this->get($name, $force_ttl, $params);
 			}
 		}
-// TODO: DEBUG_MODE
+		if (DEBUG_MODE) {
+			debug('cache_'.__FUNCTION__.'[]', array(
+				'names'		=> $names,
+				'data'		=> $result,
+				'driver'	=> $this->DRIVER,
+				'time'		=> microtime(true) - $time_start,
+			));
+		}
 		return $result;
 	}
 
 	/**
 	* Set several cache entries at once
 	*/
-	function multi_set ($cache_data = array(), $ttl = 0) {
+	function multi_set ($data = array(), $ttl = 0) {
 		if (!$this->_driver_ok) {
 			return false;
 		}
+		if (DEBUG_MODE) {
+			$time_start = microtime(true);
+		}
 		if ($this->_driver->implemented['multi_set']) {
-			$result = $this->_driver->multi_set($cache_data, $ttl);
+			$result = $this->_driver->multi_set($data, $ttl);
 		} else {
 			$result = array();
-			foreach ((array)$cache_data as $cache_name => $data) {
-				$result[$cache_name] = $this->put($cache_name, $data, $ttl);
+			foreach ((array)$data as $name => $_data) {
+				$result[$name] = $this->put($name, $_data, $ttl);
 			}
 		}
-// TODO: DEBUG_MODE
+		if (DEBUG_MODE) {
+			debug('cache_'.__FUNCTION__.'[]', array(
+				'data'		=> $data,
+				'driver'	=> $this->DRIVER,
+				'time'		=> microtime(true) - $time_start,
+			));
+		}
 		return $result;
 	}
 
 	/**
 	* Del several cache entries at once
 	*/
-	function multi_del ($cache_data = array()) {
+	function multi_del ($names = array()) {
 		if (!$this->_driver_ok) {
 			return false;
 		}
-		if ($this->_driver->implemented['multi_del']) {
-			$result = $this->_driver->multi_del($cache_data);
+		if (DEBUG_MODE) {
+			$time_start = microtime(true);
+		}
+		if (!$this->_driver->implemented['multi_del']) {
+			$result = $this->_driver->multi_del($names);
 		} else {
 			$result = array();
-			foreach ((array)$cache_data as $cache_name) {
-				$result[$cache_name] = $this->del($cache_name);
+			foreach ((array)$names as $name) {
+				$result[$name] = $this->del($name);
 			}
 		}
-// TODO: DEBUG_MODE
+		if (DEBUG_MODE) {
+			debug('cache_'.__FUNCTION__.'[]', array(
+				'names'		=> $names,
+				'data'		=> $result,
+				'driver'	=> $this->DRIVER,
+				'time'		=> microtime(true) - $time_start,
+			));
+		}
 		return $result;
 	}
 
 	/**
 	*/
-	function list_keys ($filter = '') {
+	function list_keys () {
 		if (!$this->_driver_ok) {
 			return false;
 		}
-		if ($this->_driver->implemented['list_keys']) {
-			return $this->_driver->list_keys($filter);
+		if (DEBUG_MODE) {
+			$time_start = microtime(true);
 		}
-		return null;
-	}
-
-	/**
-	* Process given rule name
-	*/
-// TODO: remove me or move out
-	function _process_rule ($rule_name = '', $locale_specific = false) {
-		$data = array();
-		$no_cache = false;
-		$rule_data = conf('data_handlers::'.$rule_name);
-		if (!empty($rule_name) && $rule_data) {
-			$data = eval(
-				($locale_specific ? '$locale="'.conf('language').'";' : '')
-				.$rule_data
-				.'; return $data;'
-			);
+		if (!$this->_driver->implemented['list_keys']) {
+			return null;
 		}
-		if ($no_cache) {
-			$this->_no_cache[$rule_name];
+		$result = $this->_driver->list_keys();
+		if ($this->CACHE_NS && $result) {
+			$ns_len = strlen($this->CACHE_NS);
+			foreach ($result as &$v) {
+				if (substr($v, 0, $ns_len) != $this->CACHE_NS) {
+					unset($v);
+				}
+			}
 		}
-		return $data;
+		if (DEBUG_MODE) {
+			debug('cache_'.__FUNCTION__.'[]', array(
+				'data'		=> $result,
+				'driver'	=> $this->DRIVER,
+				'time'		=> microtime(true) - $time_start,
+			));
+		}
+		return $result;
 	}
 }
