@@ -51,13 +51,6 @@ class yf_cache {
 	}
 
 	/**
-	* Run init from main class if that exists
-	*/
-	function _init_from_main () {
-		main()->_load_data_handlers();
-	}
-
-	/**
 	*/
 	function _init_settings ($params = array()) {
 		// backwards compatibility
@@ -79,17 +72,14 @@ class yf_cache {
 		if (!main()->USE_SYSTEM_CACHE) {
 			$this->NO_CACHE = true;
 		}
-// TODO: add auth checking like debug auth or DEBUG_MODE checking to not allow no_cache attacks
+// TODO: add auth checking like debug auth or DEBUG_MODE checking to not allow no_cache attacks, main()->CACHE_CONTROL_FROM_URL
 		if ($_GET['no_core_cache'] || $_GET['no_cache']) {
 			$this->NO_CACHE = true;
 		}
-		if ($_GET['refresh_cache']) {
+		if ($_GET['refresh_cache'] || $_GET['rebuild_core_cache']) {
 			$this->FORCE_REBUILD_CACHE = true;
 		}
 		$this->FORCE_REBUILD_CACHE = false;
-		if (main()->CACHE_CONTROL_FROM_URL && $_GET['rebuild_core_cache']) {
-			$this->FORCE_REBUILD_CACHE = true;
-		}
 	}
 
 	/**
@@ -101,11 +91,11 @@ class yf_cache {
 		if (isset($this->_tried_to_connect)) {
 			return $this->_driver;
 		}
-		$this->_set_current_driver($params);
 		$this->_driver = null;
 		$this->_driver_ok = false;
-		if ($this->DRIVER) {
-			$this->_driver = _class('cache_driver_'.$this->DRIVER, 'classes/cache/');
+		$driver = $this->_set_current_driver($params);
+		if ($driver) {
+			$this->_driver = _class('cache_driver_'.$driver, 'classes/cache/');
 			$this->_driver_ok = $this->_driver->is_ready();
 			$implemented = array();
 			foreach (get_class_methods($this->_driver) as $method) {
@@ -235,7 +225,7 @@ class yf_cache {
 #		}
 
 		$key_name_ns = $this->CACHE_NS. $cache_name;
-		$result = $this->_driver->set($key_name_ns, $data_to_put, $ttl);
+		$result = $this->_driver->set($key_name_ns, $data, $ttl);
 
 		if (DEBUG_MODE) {
 			$all_debug = debug('cache_set');
