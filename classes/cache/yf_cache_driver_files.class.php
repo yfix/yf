@@ -12,6 +12,11 @@ class yf_cache_driver_files extends yf_cache_driver {
 	);
 	/** @var bool Auto-create cache folder */
 	public $AUTO_CREATE_CACHE_DIR	= true;
+	/** @var array list of implemented featues */
+	public $implemented = array(
+// TODO
+#		'get', 'set', 'del', 'multi_get', 'multi_set', 'multi_del'//, 'clean', 'list_all', ...
+	);
 
 	function _init() {
 		$this->CORE_CACHE_DIR = PROJECT_PATH. 'core_cache/';
@@ -28,9 +33,6 @@ class yf_cache_driver_files extends yf_cache_driver {
 // TODO
 	}
 	function del($name) {
-// TODO
-	}
-	function clean($name) {
 // TODO
 	}
 

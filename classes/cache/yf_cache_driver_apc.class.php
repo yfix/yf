@@ -9,6 +9,4 @@ class yf_cache_driver_apc extends yf_cache_driver {
 	}
 	function del($name) {
 	}
-	function clean($name) {
-	}
 }

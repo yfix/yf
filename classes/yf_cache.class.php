@@ -148,11 +148,6 @@ class yf_cache {
 
 /*
 		if ($this->DRIVER == 'memcache') {
-			if (isset($this->_memcache)) {
-				$result = $this->_memcache->get($key_name_ns);
-			} else {
-				$this->DRIVER = 'file';
-			}
 		}
 		if ($this->DRIVER == 'file') {
 			$result = $this->_get_cache_file(CORE_CACHE_DIR. $this->_file_conf['file_prefix']. $key_name. $this->_file_conf['file_ext'], $force_ttl);
@@ -284,51 +279,6 @@ class yf_cache {
 	}
 
 	/**
-	* Get several cache entries at once
-	*/
-	function multi_get ($cache_names = array(), $force_ttl = 0, $params = array()) {
-// TODO: DEBUG_MODE
-		if ($this->_driver->implemented['multi_get']) {
-			return $this->_driver->multi_get($cache_names, $force_ttl, $params);
-		}
-		$result = array();
-		foreach ((array)$cache_names as $cache_name) {
-			$result[$cache_name] = $this->get($cache_name, $force_ttl, $params);
-		}
-		return $result;
-	}
-
-	/**
-	* Set several cache entries at once
-	*/
-	function multi_set ($cache_data = array(), $TTL = 0) {
-// TODO: DEBUG_MODE
-		if ($this->_driver->implemented['multi_set']) {
-			return $this->_driver->multi_set($cache_data, $TTL);
-		}
-		$result = array();
-		foreach ((array)$cache_data as $cache_name => $data) {
-			$result[$cache_name] = $this->put($cache_name, $data, $TTL);
-		}
-		return $result;
-	}
-
-	/**
-	* Del several cache entries at once
-	*/
-	function multi_del ($cache_data = array()) {
-// TODO: DEBUG_MODE
-		if ($this->_driver->implemented['multi_del']) {
-			return $this->_driver->multi_del($cache_data);
-		}
-		$result = array();
-		foreach ((array)$cache_data as $cache_name) {
-			$result[$cache_name] = $this->del($cache_name);
-		}
-		return $result;
-	}
-
-	/**
 	* Update selected cache entry
 	*/
 	function refresh ($cache_name = '', $force_clean = false) {
@@ -351,6 +301,8 @@ class yf_cache {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
+// TODO: check if we need this
+/*
 		// Check if handler is locale-specific
 		if (strpos($cache_name, 'locale:') === 0) {
 			$cache_name	= substr($cache_name, 7);
@@ -362,16 +314,13 @@ class yf_cache {
 				$locales = array_keys((array)$locale_obj->LANGUAGES);
 			}
 		}
+*/
 		$key_name = $locale_cache_name ? $locale_cache_name : $cache_name;
 		$key_name_ns = $this->CACHE_NS. $key_name;
 		$need_touch = (bool)conf('data_handlers::'.$cache_name);
+
 /*
 		if ($this->DRIVER == 'memcache') {
-			if (isset($this->_memcache)) {
-				$result = $this->_memcache->delete($key_name_ns, 0);
-			} else {
-				$this->DRIVER = 'file';
-			}
 		}
 		if ($this->DRIVER == 'file') {
 			// Not locale specific
@@ -406,6 +355,8 @@ class yf_cache {
 			$result = xcache_unset($key_name_ns);
 		}
 */
+		$result = $this->_driver->del($key_name_ns);
+
 		if (DEBUG_MODE) {
 			$all_debug = debug('cache_refresh');
 			$debug_index = count($all_debug);
@@ -437,13 +388,23 @@ class yf_cache {
 	}
 
 	/**
-	* Update all cache entries
+	* Clean all cache entries
+	*/
+	function clean_all () {
+		return $this->_driver->clean_all();
+	}
+
+	/**
+	* Clean all cache entries (alias)
 	*/
 	function refresh_all () {
+		return $this->clean_all();
+/*
 		foreach ((array)conf('data_handlers') as $name => $v) {
 			$this->refresh($name);
-			$this->refresh('locale:'.$name);
+#			$this->refresh('locale:'.$name);
 		}
+*/
 	}
 
 	/**
@@ -469,14 +430,15 @@ class yf_cache {
 	/**
 	* Clears all cache files inside cache folder
 	*/
-	function _clear_cache_files () {
-		return $this->_clear_all();
-	}
+#	function _clear_cache_files () {
+#		return $this->_clear_all();
+#	}
 
 	/**
 	* Clears all cache entries (do not use widely!)
 	*/
 	function _clear_all () {
+/*
 		if ($this->DRIVER == 'memcache') {
 			if (isset($this->_memcache)) {
 				return $this->_memcache->flush();
@@ -512,6 +474,64 @@ class yf_cache {
 		} elseif ($this->DRIVER == 'xcache') {
 			return xcache_clear_cache();
 		}
+*/
+	}
+
+	/**
+	* Get several cache entries at once
+	*/
+	function multi_get ($cache_names = array(), $force_ttl = 0, $params = array()) {
+		if ($this->_driver->implemented['multi_get']) {
+			$result $this->_driver->multi_get($cache_names, $force_ttl, $params);
+		} else {
+			$result = array();
+			foreach ((array)$cache_names as $cache_name) {
+				$result[$cache_name] = $this->get($cache_name, $force_ttl, $params);
+			}
+		}
+// TODO: DEBUG_MODE
+		return $result;
+	}
+
+	/**
+	* Set several cache entries at once
+	*/
+	function multi_set ($cache_data = array(), $TTL = 0) {
+		if ($this->_driver->implemented['multi_set']) {
+			$result = $this->_driver->multi_set($cache_data, $TTL);
+		} else {
+			$result = array();
+			foreach ((array)$cache_data as $cache_name => $data) {
+				$result[$cache_name] = $this->put($cache_name, $data, $TTL);
+			}
+		}
+// TODO: DEBUG_MODE
+		return $result;
+	}
+
+	/**
+	* Del several cache entries at once
+	*/
+	function multi_del ($cache_data = array()) {
+		if ($this->_driver->implemented['multi_del']) {
+			$result $this->_driver->multi_del($cache_data);
+		} else {
+			$result = array();
+			foreach ((array)$cache_data as $cache_name) {
+				$result[$cache_name] = $this->del($cache_name);
+			}
+		}
+// TODO: DEBUG_MODE
+		return $result;
+	}
+
+	/**
+	*/
+	function list_keys ($filter = '') {
+		if ($this->_driver->implemented['list_keys']) {
+			return $this->_driver->list_keys($filter);
+		}
+		return null;
 	}
 
 	/**
