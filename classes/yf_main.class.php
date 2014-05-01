@@ -470,32 +470,16 @@ class yf_main {
 	*/
 	function init_cache() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-
 		$CACHE_DRIVER = conf('CACHE_DRIVER');
-		if (!$CACHE_DRIVER) {
-			$CACHE_DRIVER = 'memcache'; // memcache | apc | xcache | eaccelerator | files
-		}
-		if ($CACHE_DRIVER == 'memcache' && !function_exists('memcache_connect') && !class_exists('memcached')) {
-			$CACHE_DRIVER = '';
-		} elseif ($CACHE_DRIVER == 'apc' && !function_exists('apc_fetch')) {
-			$CACHE_DRIVER = '';
-		} elseif ($CACHE_DRIVER == 'xcache' && !function_exists('xcache_set')) {
-			$CACHE_DRIVER = '';
-		} elseif ($CACHE_DRIVER == 'eaccelerator' && !function_exists('eaccelerator_get')) {
-			$CACHE_DRIVER = '';
-		}
-		conf('CACHE_DRIVER', $CACHE_DRIVER);
 		if ($CACHE_DRIVER) {
 			conf('cache::DRIVER', $CACHE_DRIVER);
 		}
-
 		$this->init_class('cache', 'classes/');
-		$this->sys_cache =& $this->modules['cache'];
-		$GLOBALS['sys_cache'] =& $this->modules['cache'];
-
 		if (!$this->USE_SYSTEM_CACHE) {
-			$this->modules['cache']->NO_CACHE = $this->USE_SYSTEM_CACHE;
+			$this->modules['cache']->NO_CACHE = true;
 		}
+		$this->cache =& $this->modules['cache'];
+		$GLOBALS['cache'] =& $this->modules['cache'];
 	}
 
 	/**
