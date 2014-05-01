@@ -99,15 +99,15 @@ class yf_cache_driver_files extends yf_cache_driver {
 	/**
 	* Do get cache file contents
 	*/
-	function _get_cache_file ($cache_file = '', $force_ttl = 0) {
-		if (empty($cache_file)) {
+	function _get_cache_file ($path = '', $ttl = 0) {
+		if (empty($path)) {
 			return null;
 		}
-		if (!file_exists($cache_file)) {
+		if (!file_exists($path)) {
 			return null;
 		}
-		$last_modified = filemtime($cache_file);
-		$ttl = intval($force_ttl ?: $this->_parent->TTL);
+		$last_modified = filemtime($path);
+		$ttl = intval($ttl ?: $this->_parent->TTL);
 		if ($last_modified < (time() - $ttl)) {
 			return null;
 		}
@@ -116,10 +116,10 @@ class yf_cache_driver_files extends yf_cache_driver {
 			$_time_start = microtime(true);
 		}
 
-		include ($cache_file);
+		include $path;
 
 		if (DEBUG_MODE) {
-			$_cf = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', $cache_file));
+			$_cf = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', $path));
 			debug('include_files_exec_time::'.$_cf, microtime(true) - $_time_start);
 		}
 		return $data;
@@ -128,12 +128,12 @@ class yf_cache_driver_files extends yf_cache_driver {
 	/**
 	* Do put cache file contents
 	*/
-	function _put_cache_file ($data = array(), $cache_file = '') {
-		if (empty($cache_file)) {
+	function _put_cache_file ($data = array(), $path = '') {
+		if (empty($path)) {
 			return false;
 		}
 		$str = str_replace(' => '.PHP_EOL.'array (', '=>array(', preg_replace('/^\s+/m', '', var_export($data, 1)));
 		$str = '<?'.'php'.PHP_EOL.'$data = '.$str.';'.PHP_EOL;
-		return file_put_contents($cache_file, $str);
+		return file_put_contents($path, $str);
 	}
 }
