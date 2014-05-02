@@ -1,7 +1,7 @@
 <?php
 
 load('cache_driver', 'framework', 'classes/cache/');
-class yf_cache_driver_memory extends yf_cache_driver {
+class yf_cache_driver_tmp extends yf_cache_driver {
 
 	public $storage = array();
 

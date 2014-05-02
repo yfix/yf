@@ -7,6 +7,17 @@ class yf_cache_driver_db extends yf_cache_driver {
 
 	/**
 	*/
+	function _init() {
+		if (!$this->is_ready()) {
+			main()->init_db();
+			if (is_object(db()) && !db()->_connected) {
+				db()->connect();
+			}
+		}
+	}
+
+	/**
+	*/
 	function is_ready() {
 		return is_object(db()) && db()->_connected;
 	}
