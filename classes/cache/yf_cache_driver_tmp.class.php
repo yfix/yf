@@ -15,6 +15,12 @@ class yf_cache_driver_tmp extends yf_cache_driver {
 
 	/**
 	*/
+	function __clone() {
+		$this->storage = array();
+	}
+
+	/**
+	*/
 	function is_ready() {
 		return true;
 	}
