@@ -177,7 +177,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					$v = trim($v);
-					$a[] = $v;
+					$a[] = $this->_escape_key($v);
 				} elseif (is_callable($v)) {
 					$a[] = $v($fields, $this);
 				} elseif (is_array($v)) {
@@ -188,7 +188,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 						$k2 = trim($k2);
 						$v2 = trim($v2);
 						if (strlen($k2) && strlen($v2)) {
-							$a[] = $k2.' AS '.$v2;
+							$a[] = $this->_escape_key($k2).' AS '.$this->_escape_key($v2);
 						}
 					}
 				}
@@ -221,7 +221,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					$v = trim($v);
-					$a[] = $this->db->_real_name($v);
+					$a[] = $this->_escape_key($this->db->_real_name($v));
 				} elseif (is_callable($v)) {
 					$a[] = $v($tables, $this);
 				} elseif (is_array($v)) {
@@ -232,7 +232,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 						$k2 = trim($k2);
 						$v2 = trim($v2);
 						if (strlen($k2) && strlen($v2)) {
-							$a[] = $this->db->_real_name($k2).' AS '.$v2;
+							$a[] = $this->_escape_key($this->db->_real_name($k2)).' AS '.$this->_escape_key($v2);
 						}
 					}
 				}
@@ -261,7 +261,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			foreach ((array)$on as $k => $v) {
 				list($t1_as, $t1_field) = explode('.', $k);
 				list($t2_as, $t2_field) = explode('.', $v);
-				$_on[] = $this->db->escape_key($t1_as).'.'.$this->db->escape_key($t1_field).' = '.$this->db->escape_key($t2_as).'.'.$this->db->escape_key($t2_field);
+				$_on[] = $this->_escape_key($t1_as).'.'.$this->_escape_key($t1_field).' = '.$this->_escape_key($t2_as).'.'.$this->_escape_key($t2_field);
 			}
 		} elseif (is_callable($on)) {
 			$_on = $on($table, $this);
@@ -273,7 +273,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 		}
 		$sql = '';
 		if (is_string($table) && !empty($_on)) {
-			$sql = strtoupper($join_type).' '.$this->db->_real_name($table). ($as ? ' AS '.$as : '').' ON '.implode(',', $_on);
+			$sql = strtoupper($join_type).' '.$this->_escape_key($this->db->_real_name($table)). ($as ? ' AS '.$this->_escape_key($as) : '').' ON '.implode(',', $_on);
 		}
 		if ($sql) {
 			$this->_sql[__FUNCTION__][] = $sql;
@@ -356,7 +356,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			$where = $where[0]['__args__'];
 		}
 		if (count($where) == 3 && is_string($where[0]) && is_string($where[1])) {
-			$sql = 'WHERE '.$where[0]. $where[1]. $this->db->escape_val($where[2]);
+			$sql = 'WHERE '.$this->_escape_key($where[0]). $where[1]. $this->_escape_val($where[2]);
 		} elseif (count($where)) {
 			$a = array();
 			foreach ((array)$where as $k => $v) {
@@ -370,8 +370,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 					}
 				// array('field', 'condition', 'value'), example: array('id','>','1')
 				} elseif (is_array($v) && count($v) == 3) {
-#					$a[] = $this->db->escape_key($v[0]). $v[1]. $this->db->escape_val($v[2]);
-					$a[] = $v[0]. $v[1]. $this->db->escape_val($v[2]);
+					$a[] = $this->_escape_key($v[0]). $v[1]. $this->_escape_val($v[2]);
 				} elseif (is_callable($v)) {
 					$a[] = $v($where, $this);
 				}
@@ -399,8 +398,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-#					$a[] = $this->db->escape_key($v);
-					$a[] = $v;
+					$a[] = $this->_escape_key($v);
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $v2) {
 						if (!is_string($v2)) {
@@ -408,8 +406,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 						}
 						$v2 = trim($v2);
 						if ($v2) {
-#							$a[] = $this->db->escape_key($v2);
-							$a[] = $v2;
+							$a[] = $this->_escape_key($v2);
 						}
 					}
 				} elseif (is_callable($v)) {
@@ -446,7 +443,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 					}
 				// array('field', 'condition', 'value'), example: array('id','>','1')
 				} elseif (is_array($v) && count($v) == 3) {
-					$a[] = $v[0]. $v[1]. $this->db->escape_val($v[2]);
+					$a[] = $this->_escape_key($v[0]). $v[1]. $this->_escape_val($v[2]);
 				} elseif (is_callable($v)) {
 					$a[] = $v($where, $this);
 				}
@@ -475,8 +472,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-#					$a[] = $this->db->escape_key($v).' ASC';
-					$a[] = $v.' ASC';
+					$a[] = $this->_escape_key($v).' ASC';
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $k2 => $v2) {
 						if (!is_string($v2)) {
@@ -489,7 +485,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 							$v2 = trim($k2);
 						}
 						if ($v2) {
-							$a[] = $v2.' '.strtoupper($direction);
+							$a[] = $this->_escape_key($v2).' '.strtoupper($direction);
 						}
 					}
 				} elseif (is_callable($items)) {
@@ -517,5 +513,24 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			$this->_sql[__FUNCTION__] = $sql;
 		}
 		return $this;
+	}
+
+	/**
+	*/
+	function _escape_key($key = '') {
+		$out = '';
+		if ($key != '*' && false === strpos($key, '.') && false === strpos($key, '(')) {
+			$out = $this->db->escape_key($key);
+		} else {
+// TODO: split by "." and escape each value
+			$out = $key;
+		}
+		return $out;
+	}
+
+	/**
+	*/
+	function _escape_val($val = '') {
+		return $this->db->escape_val($val);
 	}
 }
