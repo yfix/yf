@@ -76,6 +76,12 @@ if (!function_exists('cache_get')) {
 if (!function_exists('cache_del')) {
 	function cache_del($name, $level = '') { return cache()->del($name); }
 }
+if (!function_exists('cache_tmp')) {
+	function cache_tmp() { $cache = clone _class('cache'); $cache->_init(array('driver' => 'tmp')); return $cache; }
+}
+if (!function_exists('cache_files')) {
+	function cache_files() { $cache = clone _class('cache'); $cache->_init(array('driver' => 'files')); return $cache; }
+}
 // example: db()->query()
 // exampleof getting real table name: db('user') should return DB_PREFIX.'user' value;
 if (!function_exists('db')) {
