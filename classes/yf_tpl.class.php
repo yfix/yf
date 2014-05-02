@@ -179,7 +179,20 @@ class yf_tpl {
 		if (main()->CONSOLE_MODE) {
 			$this->_OB_CATCH_CONTENT = false;
 		}
-		$this->driver = _class('tpl_driver_'.$this->DRIVER_NAME, 'classes/tpl/');
+		$this->_set_default_driver($this->DRIVER_NAME);
+	}
+
+	/**
+	*/
+	function _set_default_driver ($name = '') {
+		if (!$name) {
+			$name = $this->DRIVER_NAME;
+		}
+		if (!$name) {
+			$name = 'yf';
+		}
+		$this->DRIVER_NAME = $name;
+		$this->driver = _class('tpl_driver_'.$name, 'classes/tpl/');
 	}
 
 	/**
