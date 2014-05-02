@@ -29,14 +29,15 @@ class yf_cache_driver_db extends yf_cache_driver {
 			return null;
 		}
 		$ttl = intval($ttl ?: $this->_parent->TTL);
-		$data = db()->select('value')->from($this->table)->where('key', '=', $name)->get_2d();
+		$data = db()->from($this->table)->where('key', '=', $name)->get();
 		if (!$data || $data['time'] < (time() - $ttl)) {
 			return false;
 		}
-		foreach ($data as &$v) {
-			$v = json_decode($v, true);
+		$val = $data['value'];
+		if ($val[0] == '[' || $val[0] == '{') {
+			$val = json_decode($val, true);
 		}
-		return $data;
+		return $val;
 	}
 
 	/**
@@ -47,7 +48,7 @@ class yf_cache_driver_db extends yf_cache_driver {
 		}
 		return db()->replace($this->table, db()->es(array(
 			'key'	=> $name,
-			'value'	=> json_encode($data),
+			'value'	=> is_array($data) || is_object($data) ? json_encode($data) : $data,
 			'time'	=> time(),
 		)));
 	}
