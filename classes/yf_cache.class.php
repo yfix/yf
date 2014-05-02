@@ -39,6 +39,16 @@ class yf_cache {
 	}
 
 	/**
+	*/
+	function __clone() {
+		foreach ((array)get_object_vars($this) as $k => $v) {
+			if ($k[0] == '_') {
+				unset($this->$k);
+			}
+		}
+	}
+
+	/**
 	* Framework constructor
 	*/
 	function _init ($params = array()) {
