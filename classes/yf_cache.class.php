@@ -479,7 +479,7 @@ class yf_cache {
 
 	/**
 	*/
-	function del_all_by_prefix ($prefix = '') {
+	function del_by_prefix ($prefix = '') {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
