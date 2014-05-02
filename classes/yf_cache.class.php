@@ -488,10 +488,10 @@ class yf_cache {
 		} else {
 			$prefix_len = strlen($prefix);
 			$result = $this->list_keys();
-			if ($keys) {
-				foreach ($result as &$v) {
+			if ($result) {
+				foreach ($result as $k => $v) {
 					if (substr($v, 0, $prefix_len) != $prefix) {
-						unset($v);
+						unset($result[$k]);
 					}
 				}
 			}
