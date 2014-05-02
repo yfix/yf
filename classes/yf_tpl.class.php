@@ -386,7 +386,7 @@ class yf_tpl {
 		$name = strtolower(trim($name));
 		// Support for the driver name in prefix, example: "twig:user/account", "smarty:user/account"
 		if (strpos($name, ':') !== false) {
-			list($driver, $name) = explode($name);
+			list($driver, $name) = explode(':', $name);
 			if ($driver) {
 				$params['driver'] = $driver;
 			}
