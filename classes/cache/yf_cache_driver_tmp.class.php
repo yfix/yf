@@ -55,7 +55,7 @@ class yf_cache_driver_tmp extends yf_cache_driver {
 	/**
 	*/
 	function list_keys() {
-		return $this->storage;
+		return array_keys($this->storage);
 	}
 
 	/**
