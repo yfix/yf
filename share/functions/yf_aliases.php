@@ -71,10 +71,10 @@ if (!function_exists('cache_set')) {
 	function cache_set($name, $data, $ttl = 3600) { return cache()->set($name, $data, $ttl); }
 }
 if (!function_exists('cache_get')) {
-	function cache_get($name, $level) { return cache()->get($name); }
+	function cache_get($name) { return cache()->get($name); }
 }
 if (!function_exists('cache_del')) {
-	function cache_del($name, $level) { return cache()->del($name); }
+	function cache_del($name) { return cache()->del($name); }
 }
 if (!function_exists('cache_tmp')) {
 	function cache_tmp() { static $cache; if (!isset($cache)) { $cache = clone _class('cache'); $cache->_init(array('driver' => 'tmp')); } return $cache; }
