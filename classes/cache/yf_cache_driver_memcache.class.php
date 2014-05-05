@@ -11,6 +11,8 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 	);
 	/** @var object internal @conf_skip */
 	public $_connection = null;
+	/** @var boo; internal @conf_skip */
+	public $_connected_ok = false;
 	/** @var mixed @conf_skip */
 	public $_memcache_new_extension = null;
 // TODO: create setting which extension to use (memcache|memcached)
@@ -20,8 +22,8 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 	*/
 	function __call($name, $args) {
 		// Support for driver-specific methods
-		if (is_object($this->_connected) && method_exists($this->_connected, $name)) {
-			return call_user_func_array(array($this->_connected, $name), $args);
+		if (is_object($this->_connection) && method_exists($this->_connection, $name)) {
+			return call_user_func_array(array($this->_connection, $name), $args);
 		}
 		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
@@ -38,10 +40,11 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		if ($conf_mc_host) {
 			$this->DEFAULT['port'] = $conf_mc_port;
 		}
+		$this->_connected_ok = false;
 		if (class_exists('Memcached')) {
-			$this->_connection = new Memcached();
+			$this->_connection = new Memcached;
 		} elseif (class_exists('Memcache')) {
-			$this->_connection = new Memcache();
+			$this->_connection = new Memcache;
 		}
 		if (is_object($this->_connection)) {
 			$mc_params = array($this->DEFAULT);
@@ -55,9 +58,14 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 				}
 				$server['port'] = isset($server['port']) ? (int)$server['port'] : 11211;
 				$server['persistent'] = isset($server['persistent']) ? (bool) $server['persistent'] : true;
+#				if ($this->_connection->addServer($server['host'], $server['port'], $server['persistent'])) {
 				if ($this->_connection->addServer($server['host'], $server['port'], $server['persistent'])) {
 					$failed = false;
+					break;
 				}
+			}
+			if (!$failed) {
+				$this->_connected_ok = true;
 			}
 		}
 		if (is_object($this->_connection)) {
@@ -68,7 +76,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 	/**
 	*/
 	function is_ready() {
-		return isset($this->_connection);
+		return isset($this->_connection) && $this->_connected_ok;
 	}
 
 	/**
@@ -144,7 +152,10 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		}
 		if (!$this->_memcache_new_extension) {
 			foreach ((array)$names as $name) {
-				$result[$name] = $this->get($name);
+				$res = $this->get($name);
+				if (isset($res)) {
+					$result[$name] = $res;
+				}
 			}
 			return $result;
 		}
@@ -176,7 +187,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		}
 		if (!$this->_memcache_new_extension) {
 			foreach ((array)$names as $name) {
-				$result[$name] = $this->del($name);
+				$result[$name] = $res;
 			}
 			return $result;
 		}

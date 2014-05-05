@@ -74,21 +74,26 @@ class yf_cache_driver_tmp extends yf_cache_driver {
 	/**
 	*/
 	function multi_set(array $data, $ttl = 0) {
+		$result = array();
 		foreach ($data as $name => $_data) {
 			$this->storage[$name] = $_data;
+			$result[$name] = true;
 		}
-		return true;
+		return $result;
 	}
 
 	/**
 	*/
 	function multi_del(array $names) {
+		$result = array();
 		foreach ($names as $name) {
-			if (!isset($this->storage[$name])) {
-				continue;
+			if (isset($this->storage[$name])) {
+				unset($this->storage[$name]);
+				$result[$name] = true;
+			} else {
+				$result[$name] = null;
 			}
-			unset($this->storage[$name]);
 		}
-		return true;
+		return $result;
 	}
 }

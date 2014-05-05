@@ -48,7 +48,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 			return null;
 		}
 		$path = $this->_dir_by_name($name). $this->FILE_PREFIX. $name. $this->FILE_EXT;
-		return $this->_put_cache_file($data, $path);
+		return (bool)$this->_put_cache_file($data, $path);
 	}
 
 	/**
@@ -89,7 +89,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 				$keys[$name] = $name;
 			}
 		}
-		return $keys;
+		return array_keys($keys);
 	}
 
 	/**
