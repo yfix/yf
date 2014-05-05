@@ -8,15 +8,20 @@ class yf_cache_driver_files extends yf_cache_driver {
 	/** @var @conf_skip */
 	public $FILE_EXT	= '.php';
 	/** @var bool Auto-create cache folder */
-	public $CREATE_DIR	= true;
+	public $CREATE_DIRS	= true;
+	/** @var int Number of levels of subdirs, set to 0 to store everything in plain dir */
+	public $DIR_LEVELS	= 2;
+	/** @var int Number of symbols from name to use in subdirs, example: name = testme, subdir == te/st/ */
+	public $DIR_STEP	= 2;
+	/** @var int Octal value of cache dir and subdirs */
+	public $DIR_CHMOD	= 0777;
 
 	/**
 	*/
 	function _init() {
 		$this->CACHE_DIR = PROJECT_PATH. 'core_cache/';
-		if (!file_exists($this->CACHE_DIR) && $this->CREATE_DIR) {
-// TODO: add 1-2 levels of subdirs to store 100 000+ entries easily in files (no matters when use memcached)
-			mkdir($this->CACHE_DIR, 0777, true);
+		if ($this->CREATE_DIRS && !file_exists($this->CACHE_DIR)) {
+			mkdir($this->CACHE_DIR, $this->DIR_CHMOD, true);
 		}
 	}
 
@@ -32,7 +37,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$path = $this->CACHE_DIR. $this->FILE_PREFIX. $name. $this->FILE_EXT;
+		$path = $this->_dir_by_name($name). $this->FILE_PREFIX. $name. $this->FILE_EXT;
 		return $this->_get_cache_file($path, $ttl);
 	}
 
@@ -42,7 +47,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$path = $this->CACHE_DIR. $this->FILE_PREFIX. $name. $this->FILE_EXT;
+		$path = $this->_dir_by_name($name). $this->FILE_PREFIX. $name. $this->FILE_EXT;
 		return $this->_put_cache_file($data, $path);
 	}
 
@@ -52,7 +57,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		$path = $this->CACHE_DIR. $this->FILE_PREFIX. $name. $this->FILE_EXT;
+		$path = $this->_dir_by_name($name). $this->FILE_PREFIX. $name. $this->FILE_EXT;
 		if (file_exists($path)) {
 			unlink($path);
 		}
@@ -94,6 +99,23 @@ class yf_cache_driver_files extends yf_cache_driver {
 			return null;
 		}
 		return _class('dir')->rglob($this->CACHE_DIR. '*'. $this->FILE_PREFIX. '*'. $this->FILE_EXT);
+	}
+
+	/**
+	*/
+	function _dir_by_name($name) {
+		$dir = $this->CACHE_DIR;
+		if (!$this->DIR_LEVELS) {
+			return $dir;
+		}
+		$step = $this->DIR_STEP;
+		for ($i = 0; $i < $this->DIR_LEVELS; $i++) {
+			$dir .= substr($name, $i * $step, $step).'/';
+		}
+		if ($this->CREATE_DIRS && !file_exists($dir)) {
+			mkdir($dir, $this->DIR_CHMOD, true);
+		}
+		return $dir;
 	}
 
 	/**
