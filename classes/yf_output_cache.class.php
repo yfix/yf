@@ -7,9 +7,8 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_output_cache {
-
-// TODO: inherit basic cache() class, move out from here everything related to cache storage, leave only output cache specifics
+load('cache', 'framework', 'classes/');
+class yf_output_cache extends yf_cache {
 
 	/** @var bool Output caching on/off */
 	public $OUTPUT_CACHING			= false;
@@ -17,10 +16,6 @@ class yf_output_cache {
 	public $OUTPUT_CACHE_TTL		= 604800; // 1 week (7 * 24 * 60 * 60)
 	/** @var string Output cache dir (relative to the SITE_PATH constant) */
 	public $OUTPUT_CACHE_DIR		= 'pages_cache/';
-	/** @var bool Use separate dirs for caching for each site or not */
-	public $USE_SITES_DIRS			= true;
-	/** @var bool Use subdirs for caching for each site or not (useful hen lot of sites inside one SITE_PATH) */
-	public $SITE_ID_SUBDIR			= false;
 	/** @var array Stop-list for output caching (REGEXPs allowed here) @conf_skip */
 	public $_OC_STOP_LIST			= array(
 		'object=(account|advert|aff|email|forum|manage_escorts|que|reviews|reviews_search|stats|task_loader|user_info|user_profile).*',
@@ -36,33 +31,14 @@ class yf_output_cache {
 	public $CUSTOM_CACHE_TTLS		= array(
 //		'object=(user_profile)'		=> 20,
 	);
-	/** @var bool Include cache file as HTML file with PHP code within or throw it contents as plain HTML */
-	public $OUTPUT_CACHE_INCLUDE	= 0;
 	/** @var bool @conf_skip Tells that current page will not be cached (default) */
 	public $NO_NEED_TO_CACHE		= false;
-	/** @var string @conf_skip Current page cache file path */
-	public $CACHE_FILE_PATH		= '';
-	/** @var string Extension of all cache files */
-	public $CACHE_FILE_EXT			= '.cache.php';
-	/** @var bool Auto-create cache folder */
-	public $AUTO_CREATE_CACHE_DIR	= true;
-	/** @var bool Create and use sub-dirs for cache files */
-	public $USE_SUB_DIRS_FOR_CACHE	= true;
-	/** @var int @conf_skip */
-	public $DEFAULT_CHMOD			= 0777;
-	/** @var bool */
-	public $LOG_PAGES_HASHES_TO_DB	= false;
 	/** @var bool Append string to the end of the cached file */
-	public $CACHE_APPEND_STRING	= true;
+	public $CACHE_APPEND_STRING		= true;
 	/** @var string PHP code that will be eval'ed and added to the cache file @conf_skip */
 	public $APPEND_STRING_CODE		= 'return PHP_EOL."<!-- cache generated at ".date("Y-m-d H:i:s")." in ".common()->_format_time_value(microtime(true) - main()->_time_start)." secs -->".PHP_EOL;';
-	/** @var string Cache driver enum('','auto','file','eaccelerator','apc','xcache','memcached') */
-// TODO
-//	public $DRIVER					= 'file';
-	/** @var bool Use memcached */
-	public $USE_MEMCACHED			= false;
 	/** @var string Namespace for drivers other than 'file' */
-	public $CACHE_NS				= 'oc:';
+	public $CACHE_NS				= 'oc_';
 	/** @var bool Allow to refresh cache from url */
 	public $CACHE_CONTROL_FROM_URL	= true;
 
@@ -77,18 +53,17 @@ class yf_output_cache {
 	/**
 	* Module constructor
 	*/
-	function _init () {
+	function _init ($params = array()) {
 		// Assign group_id = 1 for guests
 		if (empty($_SESSION['user_group'])) {
 			$_SESSION['user_group'] = 1;
 		}
 		$this->OUTPUT_CACHING	= main()->OUTPUT_CACHING;
 
-		if (/*DEBUG_MODE || */$_SESSION['user_group'] > 1 || $_COOKIE['member_id']) {
+		if ($_SESSION['user_group'] > 1 || $_COOKIE['member_id']) {
 			main()->OUTPUT_CACHING	= false;
 			$this->OUTPUT_CACHING	= false;
 		}
-
 		// Ability to handle output cache through http query
 		if ($this->OUTPUT_CACHING && $this->CACHE_CONTROL_FROM_URL) {
 			// Display current page without as it is without cache
@@ -99,15 +74,10 @@ class yf_output_cache {
 				conf('refresh_output_cache', true);
 			}
 		}
-		if ($this->USE_MEMCACHED && function_exists('cache_memcached_connect')) {
-			$mc_obj = cache_memcached_connect($params['memcache']);
-			if (is_object($mc_obj)) {
-				$this->_memcache = $mc_obj;
-			} else {
-				$this->_memcache = null;
-				$this->USE_MEMCACHED = false;
-			}
-		}
+#		$params = array(
+#			'driver'	=> 'files',
+#		) + (array)$params;
+		parent::_init($params);
 	}
 
 	/**
@@ -121,11 +91,12 @@ class yf_output_cache {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
+		$cache_key = $this->CACHE_NS. $this->_get_page_cache_name();
+/*
 		if ($this->USE_MEMCACHED) {
-			$cache_key = $this->_get_page_cache_name();
 			// Remove old page from cache (force)
 			if (conf('refresh_output_cache')) {
-				$this->_memcache->del($this->CACHE_NS. $cache_key);
+				$this->_memcache->del($cache_key);
 				return false;
 			}
 		} else {
@@ -154,19 +125,13 @@ class yf_output_cache {
 				return false;
 			}
 		}
+*/
+/*
 		main()->_IN_OUTPUT_CACHE = true;
 
 		$this->_post_filter();
-
-		if (main()->OUTPUT_GZIP_COMPRESS) {
-			if (ob_get_level()) {
-				ob_end_clean();
-			}
-			ob_start('ob_gzhandler');
-			conf('GZIP_ENABLED', true);
-		} else {
-			ob_start();
-		}
+*/
+/*
 		if ($this->USE_MEMCACHED) {
 			$mc_result = $this->_memcache->get($this->CACHE_NS. $cache_key);
 			if (DEBUG_MODE) {
@@ -190,17 +155,14 @@ class yf_output_cache {
 				echo file_get_contents($this->CACHE_FILE_PATH);
 			}
 		}
+*/
+/*
 		$output = ob_get_contents();
 		if (DEBUG_MODE) {
 			debug('output_cache::exec_time', microtime(true) - $time_start);
 		}
 		if (DEBUG_MODE || conf('exec_time')) {
 			echo common()->_show_execution_time();
-		}
-		// Count number of compressed bytes (not exactly accurate)
-		if (DEBUG_MODE && conf('GZIP_ENABLED')) {
-			debug('output_cache::page_size_original', strlen($output));
-			debug('output_cache::page_size_gzipped', strlen(gzencode($output, 3, FORCE_GZIP)));
 		}
 		if (DEBUG_MODE) {
 			echo common()->show_debug_info();
@@ -210,6 +172,7 @@ class yf_output_cache {
 		main()->NO_GRAPHICS = true;
 
 		exit();
+*/
 	}
 
 	/**
@@ -248,6 +211,7 @@ class yf_output_cache {
 	*/
 	function _put_page_to_output_cache ($body = array()) {
 		$this->_check_if_need_to_cache();
+/*
 		if (!$this->OUTPUT_CACHING || $_SERVER['REQUEST_METHOD'] != 'GET' || $this->NO_NEED_TO_CACHE) {
 			return false;
 		}
@@ -294,6 +258,7 @@ class yf_output_cache {
 				}
 			}
 		}
+*/
 	}
 
 	/**
@@ -363,37 +328,6 @@ class yf_output_cache {
 			}
 		}
 		return false; // Default return value
-	}
-
-	/**
-	* Prepare path for the cache file (current page)
-	*/
-	function _prepare_cache_path($cur_cache_name = '') { 
-		if ($this->USE_MEMCACHED) {
-			return $cur_cache_name;
-		}
-		// Get name of the cache file
-		if (empty($cur_cache_name)) {
-			$cur_cache_name = $this->_get_page_cache_name();
-		}
-		// Base cache dir
-		$cache_dir = ($this->USE_SITES_DIRS ? SITE_PATH : PROJECT_PATH). $this->OUTPUT_CACHE_DIR;
-		if ($this->SITE_ID_SUBDIR) {
-			$cache_dir = $cache_dir. conf('SITE_ID').'/';
-		}
-		// Create folder for cache
-		if ($this->AUTO_CREATE_CACHE_DIR && !file_exists($cache_dir)) {
-			_class('dir')->mkdir_m($cache_dir, $this->DEFAULT_CHMOD);
-		}
-		// Create subdir if needed (a/b/c)
-		if ($this->USE_SUB_DIRS_FOR_CACHE) {
-			$cache_sub_dir = $cur_cache_name[0].'/'.$cur_cache_name[1].'/';
-			$cache_dir .= $cache_sub_dir;
-			if (!file_exists($cache_dir)) {
-				_mkdir_m($cache_dir, $this->DEFAULT_CHMOD);
-			}
-		}
-		return $cache_dir. $cur_cache_name. $this->CACHE_FILE_EXT;
 	}
 
 	/**
