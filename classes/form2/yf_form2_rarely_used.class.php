@@ -226,7 +226,7 @@ class yf_form2_rarely_used {
 		}
 		$data = array();
 		$row_tpl = $extra['row_tpl'] ?: '<small>%offset %code %name</small>';
-		foreach ((array)main()->get_data('timezones_new') as $v) {
+		foreach ((array)main()->get_data('timezones') as $v) {
 			$r = array(
 				'%offset'	=> $v['offset'],
 				'%name'		=> $v['name'],
