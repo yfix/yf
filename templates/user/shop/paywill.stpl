@@ -24,7 +24,7 @@
 					<div>
 						<p><b>ПЛАТЕЛЬЩИК:</b> <br /> {user_address}<br />Город: Запорожье</p>
 						{if("payment" ne "")}<p><b>ФОРМА ОПЛАТЫ:</b> {payment}</p>{/if}
-{if( delivery_location ne '' )}
+{if( delivery_type gt 1 and delivery_location ne '' )}
 						<p>
 							<b>ДОСТАВКА:</b>
 							{delivery_name}, {delivery_location}

@@ -128,7 +128,9 @@ class yf_manage_shop_paywill{
 		$num_to_str	= common()->num2str( $total_sum );
 		// delivery
 		$_class_delivery = _class( '_shop_delivery', 'modules/shop/' );
-		$delivery_name = $_class_delivery->_get_name_by_id( $order_info[ 'delivery_type' ] );
+		$delivery_id   = (int)$order_info[ 'delivery_id'   ];
+		$delivery_type = (int)$order_info[ 'delivery_type' ];
+		$delivery_name = $_class_delivery->_get_name_by_id( $delivery_type );
 		$replace = array(
 			'id'			=> $id,
 			'total_sum'		=> $_class_shop->_format_price( $total_sum ),
@@ -138,6 +140,8 @@ class yf_manage_shop_paywill{
 //			'payment'		=> common()->get_static_conf('payment_methods', $order_info['payment']),
 			'products'		=> $out['products'],
 			'delivery'		=> ($order_info['delivery_price'] !== '')? $_class_shop->_format_price(floatval($order_info['delivery_price'])) : 'не расчитана',
+			'delivery_id'       => $delivery_id,
+			'delivery_type'     => $delivery_type,
 			'delivery_name'     => $delivery_name,
 			'delivery_location' => $order_info['delivery_location'],
 			'discount'		=> $_class_shop->_format_price( $discount_price ),
