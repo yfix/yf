@@ -274,7 +274,7 @@ class yf_manage_shop_orders{
 			->info('phone')
 			->container('<a href="./?object='.main()->_get('object').'&action=send_sms&phone='.urlencode($replace["phone"]).'" class="btn">Send SMS</a><br /><br />')
 			->select_box('delivery_type', _class( '_shop_delivery', 'modules/shop/' )->_get_types(), array( 'desc' => 'Тип доставки' ) )
-			->select_box('delivery_id', _class( '_shop_delivery', 'modules/shop/' )->_get_locations_by_type( $replace[ 'delivery_type' ] ), array( 'desc' => 'Отделение' ) )
+			->select_box('delivery_id', _class( '_shop_delivery', 'modules/shop/' )->_get_locations_by_type( $replace[ 'delivery_type' ] ), array( 'id' => 'delivery_id', 'desc' => 'Отделение' ) )
 			->text('delivery_location', 'Отделение доставки')
 			->text('address')
 			->text('house')
@@ -321,6 +321,18 @@ class yf_manage_shop_orders{
 			->box('status_box', 'Status order', array('selected' => $order_info['status']))
 			->save_and_back()
 		;
+
+		// misc handlers
+		$out .= '
+			<script>
+			$(function() {
+				$("#delivery_id_box").on( "change", function( event ) {
+					var location =  $(this).find( "option:selected" ).text();
+					$("#delivery_location").val( location );
+				});
+			});
+			</script>
+		';
 
 		// get similar orders
 		$sql= "SELECT o.*, COUNT(*) AS num_items FROM `".db('shop_orders')."` AS `o`
