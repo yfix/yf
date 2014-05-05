@@ -17,7 +17,7 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('tmp', self::_cache()->DRIVER);
 	}
 	public function test_get() {
-		$this->assertFalse(self::_cache()->get());
+		$this->assertFalse(@self::_cache()->get());
 		$this->assertNull(self::_cache()->get('k1'));
 
 		self::_cache()->set('k1', 'val1');
