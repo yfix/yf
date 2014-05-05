@@ -1323,6 +1323,7 @@ class yf_db {
 			return false;
 		}
 		$cond = 'id='.$this->escape_val($where);
+// TODO: connect query builder's where() for $where, also supporting wherein() and passing number as whereid()
 // TODO: add support for several fields in where
 		if (is_array($where)) {
 			$cond = key($where).'='.$this->escape_val(current($where));
