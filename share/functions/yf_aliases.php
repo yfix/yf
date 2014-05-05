@@ -77,13 +77,13 @@ if (!function_exists('cache_del')) {
 	function cache_del($name, $level = '') { return cache()->del($name); }
 }
 if (!function_exists('cache_tmp')) {
-	function cache_tmp() { $cache = clone _class('cache'); $cache->_init(array('driver' => 'tmp')); return $cache; }
+	function cache_tmp() { static $cache; if (!isset($cache)) { $cache = clone _class('cache'); $cache->_init(array('driver' => 'tmp')); } return $cache; }
 }
 if (!function_exists('cache_files')) {
-	function cache_files() { $cache = clone _class('cache'); $cache->_init(array('driver' => 'files')); return $cache; }
+	function cache_files() { static $cache; if (!isset($cache)) { $cache = clone _class('cache'); $cache->_init(array('driver' => 'files')); } return $cache; }
 }
 // example: db()->query()
-// exampleof getting real table name: db('user') should return DB_PREFIX.'user' value;
+// example of getting real table name: db('user') should return DB_PREFIX.'user' value;
 if (!function_exists('db')) {
 	function db($tbl_name = '', $silent = false) {
 		if (!is_object($GLOBALS['db'])) {
