@@ -381,7 +381,10 @@ class yf_cache {
 		} else {
 			$result = array();
 			foreach ((array)$names as $name) {
-				$result[$name] = $this->get($name, $force_ttl, $params);
+				$res = $this->get($name, $force_ttl, $params);
+				if (isset($res)) {
+					$result[$name] = $res;
+				}
 			}
 		}
 		if (DEBUG_MODE) {
@@ -443,7 +446,7 @@ class yf_cache {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		if (!$this->_driver->implemented['multi_del']) {
+		if ($this->_driver->implemented['multi_del']) {
 			$result = $this->_driver->multi_del($names);
 		} else {
 			$result = array();
