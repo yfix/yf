@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Cache handler
+* Caching layer
 * 
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -166,7 +166,7 @@ class yf_cache {
 	/**
 	* Get data from cache
 	*/
-	function get ($name = '', $force_ttl = 0, $params = array()) {
+	function get ($name, $force_ttl = 0, $params = array()) {
 		if (!$this->_driver_ok) {
 			return false;
 		}
@@ -211,12 +211,15 @@ class yf_cache {
 	/**
 	* Set data into cache
 	*/
-	function set ($name = '', $data = null, $ttl = 0) {
+	function set ($name, $data, $ttl = 0) {
 		if (!$this->_driver_ok) {
 			return false;
 		}
 		if ($this->NO_CACHE || $this->_no_cache[$name]) {
 			return false;
+		}
+		if (is_array($name)) {
+			return $this->multi_set($name, $data);
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
@@ -248,18 +251,12 @@ class yf_cache {
 	/**
 	* Delete selected cache entry
 	*/
-	function del ($name = '', $force_clean = false) {
+	function del ($name) {
 		if (!$this->_driver_ok) {
 			return false;
 		}
-		if ($this->NO_CACHE) {
-			return false;
-		}
 		if (is_array($name)) {
-			foreach ((array)$name as $_name) {
-				$result[$_name] = $this->del($_name, $force_clean);
-			}
-			return $result;
+			return $this->multi_del($name);
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
@@ -274,7 +271,6 @@ class yf_cache {
 				debug('cache_'.__FUNCTION__.'::'.$debug_index, array(
 					'name'			=> $name,
 					'name_real'		=> $key_name_ns,
-					'force_clean'	=> $force_clean,
 					'driver'		=> $this->DRIVER,
 					'time'			=> microtime(true) - $time_start,
 				));
@@ -367,8 +363,18 @@ class yf_cache {
 		if (!$this->_driver_ok) {
 			return false;
 		}
+		if ($this->NO_CACHE) {
+			return false;
+		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
+		}
+		if (!empty($this->_no_cache)) {
+			foreach ((array)$names as $k => $name) {
+				if (isset($this->_no_cache[$name])) {
+					unset($names[$k]);
+				}
+			}
 		}
 		if ($this->_driver->implemented['multi_get']) {
 			$result = $this->_driver->multi_get($names, $force_ttl, $params);
@@ -396,15 +402,25 @@ class yf_cache {
 		if (!$this->_driver_ok) {
 			return false;
 		}
+		if ($this->NO_CACHE) {
+			return false;
+		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
+		}
+		if (!empty($this->_no_cache)) {
+			foreach ((array)$this->_no_cache as $name => $tmp) {
+				if (isset($data[$name])) {
+					unset($data[$name]);
+				}
+			}
 		}
 		if ($this->_driver->implemented['multi_set']) {
 			$result = $this->_driver->multi_set($data, $ttl);
 		} else {
 			$result = array();
 			foreach ((array)$data as $name => $_data) {
-				$result[$name] = $this->put($name, $_data, $ttl);
+				$result[$name] = $this->set($name, $_data, $ttl);
 			}
 		}
 		if (DEBUG_MODE) {
