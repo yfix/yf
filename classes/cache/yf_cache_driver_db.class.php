@@ -6,6 +6,19 @@ class yf_cache_driver_db extends yf_cache_driver {
 	public $table = 'cache';
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		// Support for driver-specific methods
+		$db = db();
+		if (is_object($db) && method_exists($db, $name)) {
+			return call_user_func_array(array($db, $name), $args);
+		}
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
+		return false;
+	}
+
+	/**
 	*/
 	function _init() {
 		if (!$this->is_ready()) {
