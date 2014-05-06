@@ -4,37 +4,29 @@
 
 <div class="edit" id="main_container">
 	<div class="navbar navbar-default">
-		<h3><b>Dashboard name:</b> {dashboard_name}</h3>
-		<div id="message_save"></div>
-		<div id="message_lock">
-			<h4>
-{if("lock" eq 1)}
-				<span class="label label-success">This dashboard locked. Any changes will not be save</span>
-{else}
-				<span class="label label-danger">This dashboard unlocked. Changes will be applied to the current dashboard</span>
-{/if}
-			</h4>
-		</div>
-		<div class="collapse navbar-collapse">
-			<ul class="nav" id="menu-layoutit">
+		<div class="navbar-inner navbar-header">
+			<ul class="nav navbar-nav" id="menu-layoutit">
 				<li>
+					<div class="btn-group">Dashboard: <b>{dashboard_name}</b></div>
+					<div class="btn-group" id="message_save"></div>
 					<div class="btn-group" data-toggle="buttons-radio">
 						<button type="button" id="edit" class="active btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit "></i> Edit</button>
 						<button type="button" class="btn btn-xs btn-primary" id="devpreview"><i class="glyphicon-eye-close glyphicon"></i> Developer</button>
 						<button type="button" class="btn btn-xs btn-primary" id="sourcepreview"><i class="glyphicon-eye-open glyphicon"></i> Preview</button>
 					</div>
-					<div class="btn-group">             
+					<div class="btn-group">
 						<button class="btn btn-xs btn-primary" href="#clear" id="clear"><i class="glyphicon-trash glyphicon"></i> Clear</button>
-					</div>
-    		    </li>
-		        <li>
-					<div class="btn-group">             
 						<button class="btn btn-xs btn-primary" href="#save" id="save"  {if("lock" eq 1)}disabled="disabled"{/if}><i class="glyphicon-save glyphicon"></i> Save</button>
-					</div>
-					<div class="btn-group" id='lock_div'>             
 						<button class="btn btn-xs btn-primary" href="#lock" id="lock"><i class="glyphicon glyphicon-lock"></i> {if("lock" eq 1)}Unlock{else}Lock{/if}</button>
 					</div>
-				</li>
+					<div id="message_lock" class="btn-group">
+{if("lock" eq 1)}
+						<span class="label label-success">This dashboard locked. Any changes will not be save</span>
+{else}
+						<span class="label label-danger">This dashboard unlocked. Changes will be applied to the current dashboard</span>
+{/if}
+					</div>
+    		    </li>
 			</ul>
 		</div><!--/.navbar-collapse -->
 	</div><!--/.navbar-fixed-top -->
