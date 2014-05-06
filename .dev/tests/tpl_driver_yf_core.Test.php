@@ -170,12 +170,16 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	}
 	public function test_if_const() {
 		define('MY_TEST_CONST_1', '42');
+		define('MY_TEST_CONST_2', '43');
 		$this->assertEquals('GOOD', self::_tpl( '{if("const.MY_TEST_CONST_1" ne "")}GOOD{else}BAD{/if}' ));
 		$this->assertEquals('GOOD', self::_tpl( '{if("const.MY_NOT_EXISTING_CONST" eq "")}GOOD{else}BAD{/if}' ));
 		$this->assertEquals('GOOD', self::_tpl( '{if(const.MY_NOT_EXISTING_CONST eq "")}GOOD{else}BAD{/if}' ));
 		$this->assertEquals('GOOD', self::_tpl( '{if("const.MY_NOT_EXISTING_CONST" ne "")}BAD{else}GOOD{/if}' ));
 		$this->assertEquals('GOOD', self::_tpl( '{if(const.MY_NOT_EXISTING_CONST ne "")}BAD{else}GOOD{/if}' ));
 		$this->assertEquals('GOOD', self::_tpl( '{if( const.MY_NOT_EXISTING_CONST ne "" )}BAD{else}GOOD{/if}' ));
+		$this->assertEquals('GOOD', self::_tpl( '{if(const.MY_TEST_CONST_1 eq 42 and const.MY_TEST_CONST_2 eq 43)}GOOD{else}BAD{/if}' ));
+		$this->assertEquals('GOOD', self::_tpl( '{if(const.MY_TEST_CONST_1 eq 42 and const.MY_NOT_EXISTING_CONST eq "")}GOOD{else}BAD{/if}' ));
+		$this->assertEquals('GOOD', self::_tpl( '{if( const.MY_NOT_EXISTING_CONST1 ne 42 and const.MY_NOT_EXISTING_CONST2 eq "" )}GOOD{else}BAD{/if}' ));
 	}
 	public function test_module_conf() {
 		module_conf('main', 'unit_var1', 'unit_val');
