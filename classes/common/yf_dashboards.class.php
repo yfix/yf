@@ -178,7 +178,7 @@ class yf_dashboards {
 			if ($module_name && $method_name) {
 				// This is needed to correctly execute widget (maybe not nicest method, I know...)
 				$_GET['object'] = $module_name;
-				$_GET['action'] = $module_name;
+				$_GET['action'] = $method_name;
 				$module_obj = module_safe($module_name);
 				if (is_object($module_obj) && method_exists($module_obj, $method_name)) {
 					$content = $module_obj->$method_name($saved_config);
