@@ -486,6 +486,10 @@ class yf_cache {
 				}
 			}
 		}
+		if ($result) {
+			asort($result);
+			$result = array_values($result);
+		}
 		if (DEBUG_MODE) {
 			debug('cache_'.__FUNCTION__.'[]', array(
 				'data'		=> $result,
