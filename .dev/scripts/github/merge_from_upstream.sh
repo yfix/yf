@@ -15,11 +15,12 @@ fi
 
 (
 	cd $repo_dir \
-	&& git branch \
-	&& git reset --hard upstream/$main_branch \
+	&& git branch -a \
+	&& git reset --hard \
+	&& git checkout origin/master \
 	&& git fetch upstream \
 	&& git checkout $main_branch \
-	&& git reset --hard upstream/$main_branch \
-	&& git merge upstream/$main_branch \
+	&& git reset --hard upstream/master \
+	&& git merge upstream/master \
 	&& git push --all
 )

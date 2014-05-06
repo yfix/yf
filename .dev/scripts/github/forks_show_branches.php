@@ -29,6 +29,6 @@ foreach ($data as $k => $a) {
 	$upstream = 'https://github.com/'.$source_repo.'.git';
 
 	if (false === strpos($out, $upstream)) {
-		passthru('(cd '.$target.' && git branch)');
+		passthru('(cd '.$target.' && git branch -a)');
 	}
 }
