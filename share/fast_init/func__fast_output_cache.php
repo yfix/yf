@@ -10,18 +10,15 @@ function _fast_output_cache () {
 	if (!empty($_COOKIE['member_id'])) {
 		return false;
 	}
-	// Stop here
-	if (false !== strpos($_SERVER['REQUEST_URI'], '?no_cache') || false !== strpos($_SERVER['REQUEST_URI'], '?refresh_cache')) {
+	if (isset($_GET['no_cache']) || isset($_GET['refresh_cache'])) {
 		return false;
 	}
 	// Special for the 'share on facebook' feature
 	if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit')) {
 		return false;
 	}
-	// Check 'white' list first
 	$w = $MODULE_CONF['WHITE_LIST_PATTERN'];
 	if (!empty($w)) {
-		// Array like: 'search' => array(), 'static_pages' => array('show')
 		if (is_array($w)) {
 			if (defined('SITE_DEFAULT_PAGE')) {
 				@parse_str(substr(SITE_DEFAULT_PAGE, 3), $_tmp);
@@ -37,7 +34,6 @@ function _fast_output_cache () {
 			$NO_NEED_TO_CACHE = true;
 		}
 	} else {
-		// Try to search current query string in the stop list
 		foreach ((array)$MODULE_CONF['_OC_STOP_LIST'] as $pattern) {
 			if (preg_match('/'.$pattern.'/i', $_SERVER['QUERY_STRING'])) {
 				$NO_NEED_TO_CACHE = true;
@@ -58,6 +54,7 @@ function _fast_output_cache () {
 		'---'.($_SESSION['user_group'] <= 1 ? 'guest' : 'member')
 	);
 	$CACHE_CONTENTS = '';
+/*
 	// Memcached code
 	if ($MODULE_CONF['USE_MEMCACHED']) {
 		$params = conf('MEMCACHED_PARAMS');
@@ -95,9 +92,10 @@ function _fast_output_cache () {
 			}
 		}
 		if (!$failed) {
-			$CACHE_CONTENTS = $_memcache->get('oc:'.$cur_cache_name);
+			$CACHE_CONTENTS = $_memcache->get('oc_'.$cur_cache_name);
 		}
 	}
+*/
 	// File-based method
 	if (!$CACHE_CONTENTS) {
 		$cache_dir	= REAL_PATH. 'pages_cache/';
@@ -106,7 +104,6 @@ function _fast_output_cache () {
 			$sub_dir = conf('SITE_ID').'/'.$sub_dir;
 		}
 		$CACHE_FILE_PATH = $cache_dir. $sub_dir. $cur_cache_name .'.cache.php';
-		// Try to process output cache file
 		if (!file_exists($CACHE_FILE_PATH)) {
 			return false;
 		}
@@ -131,15 +128,8 @@ function _fast_output_cache () {
 	if (!$CACHE_CONTENTS) {
 		return false;
 	}
-	// Output cache contents
 	main()->NO_GRAPHICS = true;
 	main()->_IN_OUTPUT_CACHE = true;
-	// GZIP compression
-	if (main()->OUTPUT_GZIP_COMPRESS && extension_loaded('zlib') && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false) {
-		ini_set('zlib.output_compression_level', 3);
-		ob_start('ob_gzhandler');
-		conf('GZIP_ENABLED', true);
-	}
 	echo preg_replace('/<\?php.+?\?>/ms', '', $CACHE_CONTENTS);
 
 	$t = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
