@@ -27,25 +27,4 @@ foreach ($data as $k => $a) {
 		$clone_url = 'git@github.com:yfix/'.$a['name'].'.git';
 		passthru('git clone '.$clone_url.' '.$target);
 	}
-
-	$repo_info = get_repo_info($user, $a['name']);
-	$source_repo = $repo_info['source']['full_name'];
-	$upstream = 'https://github.com/'.$source_repo.'.git';
-
-	echo $source_repo. PHP_EOL;
-
-	$out = null;
-	exec('(cd '.$target.' && git remote -v)', $out);
-	$out = implode(PHP_EOL, $out);
-
-	echo PHP_EOL. $out. PHP_EOL;
-
-	if (false === strpos($out, $upstream)) {
-		passthru('(cd '.$target.' && git remote add upstream '.$upstream.')');
-	}
-	passthru('(cd '.$target.' && git fetch upstream)');
-	passthru('(cd '.$target.' && git checkout master)');
-	passthru('(cd '.$target.' && git reset --hard upstream/master)');
-	passthru('(cd '.$target.' && git merge upstream/master)');
-	passthru('(cd '.$target.' && git push --all)');
 }
