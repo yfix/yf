@@ -8,6 +8,7 @@ abstract class yf_db_query_builder_driver {
 	abstract function render();
 	abstract function exec($as_sql = true);
 	abstract function get($use_cache = true);
+	abstract function get_one($use_cache = true);
 	abstract function get_all($use_cache = true);
 	abstract function get_2d($use_cache = true);
 	abstract function get_deep_array($levels = 1, $use_cache = true);
