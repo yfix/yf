@@ -20,8 +20,8 @@ class yf_manage_forum_manage_view {
 				'num_topics'	=> $_sub_info['num_topics'],
 				'num_posts'		=> $_sub_info['num_posts'],
 				'num_views'		=> $_sub_info['num_views'],
-				'activity'		=> module('manage_forum')->_active_select[$_sub_info['status']],
-				'is_active'		=> $_sub_info['status'] == 'a' ? 1 : 0,
+				'activity'		=> module('manage_forum')->_active_select[$_sub_info['active']],
+				'is_active'		=> (int)$_sub_info['status'],
 				'is_closed'		=> intval($_sub_info['options'] == '2' ? 1 : 0),
 				'view_link'		=> './?object='.$_GET['object'].'&action=view_forum&id='.$_sub_info['id'],
 				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_forum&id='.$_sub_id,
@@ -49,8 +49,8 @@ class yf_manage_forum_manage_view {
 			'num_topics'	=> $forum_info['num_topics'],
 			'num_posts'		=> $forum_info['num_posts'],
 			'num_views'		=> $forum_info['num_views'],
-			'activity'		=> module('manage_forum')->_active_select[$forum_info['status']],
-			'is_active'		=> $forum_info['status'] == 'a' ? 1 : 0,
+			'activity'		=> module('manage_forum')->_active_select[$forum_info['active']],
+			'is_active'		=> (int)$forum_info['status'],
 			'edit_link'		=> './?object='.$_GET['object'].'&action=edit_forum&id='.$forum_info['id'],
 			'delete_link'	=> './?object='.$_GET['object'].'&action=delete_forum&id='.$forum_info['id'],
 			'sub_forums'	=> $sub_forums,
@@ -100,8 +100,8 @@ class yf_manage_forum_manage_view {
 				'num_posts'		=> $_topic_info['num_posts'],
 				'num_views'		=> $_topic_info['num_views'],
 				'last_post'		=> module('manage_forum')->last_posts[$_topic_info['last_post_id']],
-				'activity'		=> module('manage_forum')->_active_select[$_topic_info['status']],
-				'is_active'		=> $_topic_info['status'] == 'a' ? 1 : 0,
+				'activity'		=> module('manage_forum')->_active_select[$_topic_info['active']],
+				'is_active'		=> (int)$_topic_info['active'],
 				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_topic&id='.$_topic_info['id'],
 				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_topic&id='.$_topic_info['id'],
 				'ban_popup_link'=> module('manage_auto_ban')->_popup_link(array('user_id' => intval($_topic_info['user_id']))),
@@ -133,8 +133,8 @@ class yf_manage_forum_manage_view {
 			'pages'				=> $pages,
 			'topics'			=> $topics,
 			'show_filter'		=> '',
-			'activity'			=> module('manage_forum')->_active_select[$forum_info['status']],
-			'is_active'			=> $forum_info['status'] == 'a' ? 1 : 0,
+			'activity'			=> module('manage_forum')->_active_select[$forum_info['active']],
+			'is_active'			=> $forum_info['active'],
 			'edit_link'			=> './?object='.$_GET['object'].'&action=edit_forum&id='.$forum_info['id'],
 			'delete_link'		=> './?object='.$_GET['object'].'&action=delete_forum&id='.$forum_info['id'],
 			'parent_forums'		=> !empty($parent_forums) ? $parent_forums : '',
@@ -204,8 +204,8 @@ class yf_manage_forum_manage_view {
 				'register_date'	=> $reg_date ? t('register').': '.$reg_date : '',
 				'user_sig'		=> module('manage_forum')->BB_OBJ->_process_text(module('manage_forum')->users[$_post_info['user_id']]['user_sig']),
 				'quote_link'	=> './?object='.$_GET['object'].'&action=reply&id='.$_GET['id'].'&msg_id='.$_post_info['id'],
-				'activity'		=> module('manage_forum')->_active_select[$_post_info['status']],
-				'is_active'		=> $_post_info['status'] == 'a' ? 1 : 0,
+				'activity'		=> module('manage_forum')->_active_select[$_post_info['active']],
+				'is_active'		=> $_post_info['active'],
 				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_post&id='.$_GET['id'].'&msg_id='.$_post_info['id'],
 				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_post&id='.$_GET['id'].'&msg_id='.$_post_info['id'],
 				'ban_popup_link'=> module('manage_auto_ban')->_popup_link(array('user_id' => intval($_post_info['user_id']))),
@@ -234,8 +234,8 @@ class yf_manage_forum_manage_view {
 			'td_class'			=> !($i++ % 2) ? module('manage_forum')->css['show1'] : module('manage_forum')->css['show2'],
 			'pages'				=> $pages,
 			'posts'				=> $posts,
-			'activity'			=> module('manage_forum')->_active_select[$topic_info['status']],
-			'is_active'			=> $topic_info['status'] == 'a' ? 1 : 0,
+			'activity'			=> module('manage_forum')->_active_select[$topic_info['active']],
+			'is_active'			=> $topic_info['active'],
 			'edit_link'			=> './?object='.$_GET['object'].'&action=edit_topic&id='.$topic_info['id'],
 			'delete_link'		=> './?object='.$_GET['object'].'&action=delete_topic&id='.$topic_info['id'],
 			'parent_forums'		=> !empty($parent_forums) ? $parent_forums : '',
@@ -264,7 +264,7 @@ class yf_manage_forum_manage_view {
 					'user_id'	=> 0,
 					'user_name'	=> module('manage_forum')->USER_NAME,
 					'created'	=> time(),
-					'status'	=> module('manage_forum')->APPROVE ? 'n' : 'a',
+					'active'	=> module('manage_forum')->APPROVE ? 0 : 1,
 				));
 				$new_topic_id = db()->insert_id();
 
@@ -278,7 +278,7 @@ class yf_manage_forum_manage_view {
 					'user_name'	=> module('manage_forum')->USER_NAME,
 					'created'	=> time(),
 					'poster_ip'	=> common()->get_ip(),
-					'status'	=> module('manage_forum')->APPROVE ? 'n' : 'a',
+					'active'	=> module('manage_forum')->APPROVE ? 0 : 1,
 				));
 				$new_post_id = db()->insert_id();
 				// Update forum, topic, topic_watch, user tables
@@ -351,7 +351,7 @@ class yf_manage_forum_manage_view {
 					'user_name'	=> _es(module('manage_forum')->USER_NAME),
 					'created'	=> time(),
 					'poster_ip'	=> common()->get_ip(),
-					'status'	=> (module('manage_forum')->APPROVE ? 'n' : 'a'),
+					'active'	=> module('manage_forum')->APPROVE ? 0 : 1,
 				));
 				$new_post_id = db()->insert_id();
 				if (!module('manage_forum')->APPROVE) {

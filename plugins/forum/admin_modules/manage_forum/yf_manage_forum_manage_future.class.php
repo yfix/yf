@@ -567,8 +567,8 @@ class yf_manage_forum_manage_future {
 			$NEW_TOPIC_ID	= 0;
 			if ($A['new_topic']) {
 				db()->INSERT('forum_topics', array(
-					'forum'				=> $A['forum_id'],
-					'status'			=> 'c',
+					'forum'		=> $A['forum_id'],
+					'active'	=> 0,
 				));
 				$NEW_TOPIC_ID = db()->INSERT_ID();
 				if (empty($NEW_TOPIC_ID)) {
@@ -584,7 +584,7 @@ class yf_manage_forum_manage_future {
 					'subject'		=> _prepare_html($A['subject']),
 					'text'			=> _prepare_html($A['text']),
 					'new_topic'		=> 1,
-					'status'		=> 'a',
+					'active'		=> 1,
 				));
 				$NEW_POST_ID = db()->INSERT_ID();
 				if (empty($NEW_POST_ID)) {
@@ -603,7 +603,7 @@ class yf_manage_forum_manage_future {
 					'last_post_id'		=> intval($NEW_POST_ID),
 					'last_poster_id'	=> intval($A['user_id']),
 					'last_poster_name'	=> _es($A['user_name']),
-					'status'			=> 'a',
+					'active'			=> 1,
 					'approved'			=> 1,
 				), 'id='.intval($NEW_TOPIC_ID));
 			} else {
@@ -617,7 +617,7 @@ class yf_manage_forum_manage_future {
 					'subject'		=> _prepare_html($A['subject']),
 					'text'			=> _prepare_html($A['text']),
 					'new_topic'		=> 1,
-					'status'		=> 'a',
+					'active'		=> 1,
 				));
 				$NEW_POST_ID = db()->INSERT_ID();
 				if (empty($NEW_POST_ID)) {

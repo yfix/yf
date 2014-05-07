@@ -140,14 +140,8 @@ class yf_manage_forum {
 		if ($this->SHOW_USER_RANKS && in_array($_GET['action'], array('view_topic'))) {
 			$this->user_ranks = (array)db()->from('forum_ranks')->get_all();
 		}
-		$this->_std_trigger = array(
-			'1' => '<span class=positive>'.t('YES').'</span>',
-			'0' => '<span class=negative>'.t('NO').'</span>',
-		);
-		$this->_active_select = array(
-			'a' => '<b style="color:green;">'.t('Active').'</b>',
-			'c' => '<b style="color:red;">'.t('Inactive').'</b>',
-		);
+		$this->_std_trigger = main()->get_data('pair_yes_no');
+		$this->_active_select = main()->get_data('pair_active');
 		$this->_postings_select = array(
 			'' => '<b style="color:green;">'.t('Open').'</b>',
 			'2' => '<b style="color:red;">'.t('Closed').'</b>',
@@ -205,8 +199,8 @@ class yf_manage_forum {
 			'cat_name'			=> $this->_forum_cats_array[$cat_id]['name'],
 			'cat_link'			=> './?object='.$_GET['object'].'&id='.$cat_id,
 			'forums'			=> $forums,
-			'activity'			=> $this->_active_select[$cat_details['status']],
-			'is_active'			=> $cat_details['status'] == 'a' ? 1 : 0,
+			'activity'			=> $this->_active_select[$cat_details['active']],
+			'is_active'			=> (int)$cat_details['active'],
 			'edit_link'			=> './?object='.$_GET['object'].'&action=edit_category&id='.$cat_id,
 			'delete_link'		=> './?object='.$_GET['object'].'&action=delete_category&id='.$cat_id,
 			'add_link'			=> './?object='.$_GET['object'].'&action=add_forum&id='.$cat_id,
@@ -381,9 +375,9 @@ class yf_manage_forum {
 			return false;
 		}
 		db()->update_safe('forum_forums', array(
-			'num_topics'	=> (int)db()->get_one('SELECT COUNT(id) FROM '.db('forum_topics').' WHERE forum='.(int)$forum_id.' AND status="a"'),
-			'num_posts'		=> (int)db()->get_one('SELECT COUNT(id) FROM '.db('forum_posts').' WHERE forum='.(int)$forum_id.' AND status="a"'),
-			'last_post_id'	=> (int)db()->get_one('SELECT id FROM '.db('forum_posts').' WHERE forum='.(int)$forum_id.' AND status="a" ORDER BY created DESC LIMIT 1'),
+			'num_topics'	=> (int)db()->get_one('SELECT COUNT(id) FROM '.db('forum_topics').' WHERE forum='.(int)$forum_id.' AND active="1"'),
+			'num_posts'		=> (int)db()->get_one('SELECT COUNT(id) FROM '.db('forum_posts').' WHERE forum='.(int)$forum_id.' AND active="1"'),
+			'last_post_id'	=> (int)db()->get_one('SELECT id FROM '.db('forum_posts').' WHERE forum='.(int)$forum_id.' AND active="1" ORDER BY created DESC LIMIT 1'),
 		), (int)$forum_id);
 	}
 
@@ -395,8 +389,8 @@ class yf_manage_forum {
 			return false;
 		}
 		db()->update_safe('forum_topics', array(
-			'num_posts'		=> db()->get_one('SELECT COUNT(id) FROM '.db('forum_posts').' WHERE topic='.(int)$topic_id.' AND status="a"'),
-			'last_post_id'	=> db()->get_one('SELECT id FROM '.db('forum_posts').' WHERE topic='.(int)$topic_id.' AND status="a" ORDER BY created DESC LIMIT 1'),
+			'num_posts'		=> db()->get_one('SELECT COUNT(id) FROM '.db('forum_posts').' WHERE topic='.(int)$topic_id.' AND active="1"'),
+			'last_post_id'	=> db()->get_one('SELECT id FROM '.db('forum_posts').' WHERE topic='.(int)$topic_id.' AND active="1" ORDER BY created DESC LIMIT 1'),
 		), (int)$topic_id);
 	}
 

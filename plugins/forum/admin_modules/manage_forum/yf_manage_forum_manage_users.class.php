@@ -316,7 +316,7 @@ class yf_manage_forum_manage_users {
 						'name'	 		=> _es($mod_info['member_name']),
 						'group'	 		=> 3, // Member
 						'user_regdate'	=> time(),
-						'status' 		=> 'a',
+						'active' 		=> 1,
 					);
 					db()->INSERT('forum_users', $forum_user_info);
 				}
@@ -436,7 +436,7 @@ class yf_manage_forum_manage_users {
 						'name'	 		=> _es($mod_info['member_name']),
 						'group'	 		=> 3, // Member
 						'user_regdate'	=> time(),
-						'status' 		=> 'a',
+						'active' 		=> 1,
 					);
 					db()->INSERT('forum_users', $forum_user_info);
 				}
