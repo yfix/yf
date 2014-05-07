@@ -8,6 +8,7 @@ $data = '
 	`user_name` varchar(64) NOT NULL default \'\',
 	`created` int(10) unsigned NOT NULL default \'0\',
 	`status` char(1) NOT NULL default \'a\',
+	`active` tinyint(1) NOT NULL default \'1\',
 	`subject` varchar(255) NOT NULL default \'\',
 	`text` longtext NOT NULL,
 	`new_topic` tinyint(1) unsigned NOT NULL default \'0\',
