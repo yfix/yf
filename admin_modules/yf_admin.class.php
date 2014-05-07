@@ -100,7 +100,7 @@ class yf_admin {
 				'password'		=> 'required|md5',
 				'group'			=> 'required|exists[admin_groups.id]',
 			))
-			->db_insert_if_ok('admin', array('login','email','first_name','last_name','go_after_login','password','group','active'), array('add_date' => time()) ))
+			->db_insert_if_ok('admin', array('login','email','first_name','last_name','go_after_login','password','group','active'), array('add_date' => time()))
 			->on_after_update(function() {
 				common()->admin_wall_add(array('admin account added: '.$_POST['login'].'', main()->ADMIN_ID));
 			})
