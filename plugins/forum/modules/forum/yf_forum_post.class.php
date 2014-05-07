@@ -271,14 +271,14 @@ class yf_forum_post {
 		// Process template
 		$replace = array(
 			'is_admin'			=> intval(FORUM_IS_ADMIN),
-			'form_action'		=> './?object='.'forum'.'&action=save_post&id='.$_GET['id']._add_get(array('id')),
+			'form_action'		=> './?object=forum&action=save_post&id='.$_GET['id']._add_get(array('id')),
 			'bbcode_js_src'		=> WEB_PATH. 'js/bbcode.js',
 			'cat_name'			=> _prepare_html($cat_info['name']),
 			'forum_name'		=> _prepare_html($forum_info['name']),
 			'topic_name'		=> !$new_topic ? _prepare_html($topic_info['name']) : '',
 			'cat_link'			=> './?object='.'forum'._add_get(array('id')),
 			'forum_link'		=> module('forum')->_link_to_forum($forum_info['id']),
-			'topic_link'		=> !$new_topic ? './?object='.'forum'.'&action=view_topic&id='.$_GET['id']._add_get(array('id')) : '',
+			'topic_link'		=> !$new_topic ? './?object=forum&action=view_topic&id='.$_GET['id']._add_get(array('id')) : '',
 			'subject'			=> !$new_topic ? 'Re:'._prepare_html($topic_info['name']) : '',
 			'text'				=> !$new_topic ? $text : '',
 			'last_posts'		=> !$new_topic ? $last_posts : '',
@@ -309,9 +309,9 @@ class yf_forum_post {
 			'attach_max_width'	=> intval(module('forum')->SETTINGS['ATTACH_LIMIT_X']),
 			'attach_max_height'	=> intval(module('forum')->SETTINGS['ATTACH_LIMIT_Y']),
 			'attach_image_src'	=> !empty($attach_path) && file_exists(INCLUDE_PATH. $attach_path) ? WEB_PATH. $attach_path : '',
-			'del_attach_link'	=> !empty($attach_path) && FORUM_USER_ID ? './?object='.'forum'.'&action=delete_attach&id='.$post_info['id']._add_get(array('id')) : '',
+			'del_attach_link'	=> !empty($attach_path) && FORUM_USER_ID ? './?object=forum&action=delete_attach&id='.$post_info['id']._add_get(array('id')) : '',
 			'bb_codes_block'	=> module('forum')->SETTINGS['BB_CODE'] ? _class('bb_codes')->_display_buttons($bb_codes_params) : '',
-			'bb_pop_link'		=> process_url('./?object='.'forum'.'&action=bb_code_help'._add_get(array('page'))),
+			'bb_pop_link'		=> process_url('./?object=forum&action=bb_code_help'._add_get(array('page'))),
 			'wysiwyg_editor'	=> module('forum')->_show_wysiwyg_editor($text),
 		);
 		return tpl()->parse('forum'.'/new_post', $replace);
@@ -615,7 +615,7 @@ class yf_forum_post {
 			}
 		}
 		// Redirect user back
-		return js_redirect('./?object='.'forum'.'&action=view_topic&id='.$topic_info['id']. (!empty($topic_last_page) ? '&page='.intval($topic_last_page) : ''). _add_get(array('page')). '#last_post');
+		return js_redirect('./?object=forum&action=view_topic&id='.$topic_info['id']. (!empty($topic_last_page) ? '&page='.intval($topic_last_page) : ''). _add_get(array('page')). '#last_post');
 	}
 
 	/**

@@ -214,8 +214,8 @@ class yf_forum_view_forum {
 			'sub_forums'			=> $this->_show_sub_forums(),
 			'cat_name'				=> $this->_cat_info['name'],
 			'cat_link'				=> './?object='.'forum'._add_get(array('page')),
-			'add_topic_link'		=> $allow_new_topic ? './?object='.'forum'.'&action=new_topic&id='.$this->_forum_info['id']._add_get(array('page')) : '',
-			'new_poll_link'			=> $allow_new_poll ? './?object='.'forum'.'&action=new_poll&id='.$this->_forum_info['id']._add_get(array('page')) : '',
+			'add_topic_link'		=> $allow_new_topic ? './?object=forum&action=new_topic&id='.$this->_forum_info['id']._add_get(array('page')) : '',
+			'new_poll_link'			=> $allow_new_poll ? './?object=forum&action=new_poll&id='.$this->_forum_info['id']._add_get(array('page')) : '',
 			'forum_name'			=> _prepare_html($this->_forum_info['name']),
 			'forum_num_posts'		=> $forum_num_posts > 0 ? $forum_num_posts - 1 : $forum_num_posts,
 			'forum_pages'			=> $forum_pages,
@@ -226,22 +226,22 @@ class yf_forum_view_forum {
 			'anounce_items'			=> $announce_items,
 			'pinned_items'			=> $pinned_items,
 			'show_sub_header'		=> !empty($announce_items) || !empty($pinned_items),
-			'mark_forum_read_link'	=> FORUM_USER_ID && module('forum')->SETTINGS['USE_READ_MESSAGES'] ? './?object='.'forum'.'&action=mark_read&id='.$this->_forum_info['id']._add_get(array('page')) : '',
-			'subscribe_forum_link'	=> FORUM_USER_ID && module('forum')->SETTINGS['ALLOW_TRACK_FORUM'] ? './?object='.'forum'.'&action=subscribe_forum&id='.$this->_forum_info['id']._add_get(array('page')) : '',
-			'search_form_action'	=> module('forum')->SETTINGS['ALLOW_SEARCH'] && module('forum')->USER_RIGHTS['use_search'] ? './?object='.'forum'.'&action=search'. _add_get() : '',
+			'mark_forum_read_link'	=> FORUM_USER_ID && module('forum')->SETTINGS['USE_READ_MESSAGES'] ? './?object=forum&action=mark_read&id='.$this->_forum_info['id']._add_get(array('page')) : '',
+			'subscribe_forum_link'	=> FORUM_USER_ID && module('forum')->SETTINGS['ALLOW_TRACK_FORUM'] ? './?object=forum&action=subscribe_forum&id='.$this->_forum_info['id']._add_get(array('page')) : '',
+			'search_form_action'	=> module('forum')->SETTINGS['ALLOW_SEARCH'] && module('forum')->USER_RIGHTS['use_search'] ? './?object=forum&action=search'. _add_get() : '',
 			'forum_closed'			=> intval($forum_is_closed),
 			't_act_box'				=> FORUM_IS_ADMIN || FORUM_IS_MODERATOR ? $this->_t_act_box() : '',
-			'rss_forum_button'		=> module('forum')->_show_rss_link('./?object='.'forum'.'&action=rss_forum&id='.$this->_forum_info['id'], 'RSS feed for forum: '.$this->_forum_info['name']),
+			'rss_forum_button'		=> module('forum')->_show_rss_link('./?object=forum&action=rss_forum&id='.$this->_forum_info['id'], 'RSS feed for forum: '.$this->_forum_info['name']),
 			'sub_forums_items'		=> $sub_forums_items,
 		);
 		// Administration methods
 		if (FORUM_IS_ADMIN || FORUM_IS_MODERATOR) {
 			$replace = array_merge($replace, array(
-				'admin_action_link'		=> './?object='.'forum'.'&action=admin&id='.$this->_forum_info['id']._add_get(array('page')),
-				'inv_topics_link'		=> './?object='.'forum'.'&action=show_inv_topics&id='.$this->_forum_info['id']._add_get(array('page')),
-				'inv_posts_link'		=> './?object='.'forum'.'&action=show_inv_posts&id='.$this->_forum_info['id']._add_get(array('page')),
-				'resync_forum_link'		=> './?object='.'forum'.'&action=sync_forum&id='.$this->_forum_info['id']._add_get(array('page')),
-				'prune_link'			=> './?object='.'forum'.'&action=prune&id='.$this->_forum_info['id']._add_get(array('page')),
+				'admin_action_link'		=> './?object=forum&action=admin&id='.$this->_forum_info['id']._add_get(array('page')),
+				'inv_topics_link'		=> './?object=forum&action=show_inv_topics&id='.$this->_forum_info['id']._add_get(array('page')),
+				'inv_posts_link'		=> './?object=forum&action=show_inv_posts&id='.$this->_forum_info['id']._add_get(array('page')),
+				'resync_forum_link'		=> './?object=forum&action=sync_forum&id='.$this->_forum_info['id']._add_get(array('page')),
+				'prune_link'			=> './?object=forum&action=prune&id='.$this->_forum_info['id']._add_get(array('page')),
 			));
 		}
 		return module('forum')->_show_main_tpl(tpl()->parse('forum'.'/view_forum_main', $replace));
@@ -276,7 +276,7 @@ class yf_forum_view_forum {
 		if (module('forum')->SETTINGS['SHOW_TOPIC_PAGES'] && !empty($topic_pages_ids)) {
 			$topic_pages = array();
 			foreach ((array)$topic_pages_ids as $topic_id => $topic_num_posts) {
-				list(,$topic_pages[$topic_id],,,$_total_pages[$topic_id]) = common()->divide_pages('', './?object='.'forum'.'&action=view_topic&id='.$topic_id, null, module('forum')->SETTINGS['NUM_POSTS_ON_PAGE'], $topic_num_posts + 1, 'forum'.'/pages_2/');
+				list(,$topic_pages[$topic_id],,,$_total_pages[$topic_id]) = common()->divide_pages('', './?object=forum&action=view_topic&id='.$topic_id, null, module('forum')->SETTINGS['NUM_POSTS_ON_PAGE'], $topic_num_posts + 1, 'forum'.'/pages_2/');
 			}
 		}
 		// Process last posts records
@@ -293,7 +293,7 @@ class yf_forum_view_forum {
 					'last_post_author_link'	=> $post_info['user_id'] ? module('forum')->_user_profile_link($post_info['user_id']) : '',
 					'last_post_subject'		=> _prepare_html($subject),
 					'last_post_date'		=> module('forum')->_show_date($post_info['created'], 'last_post_date'),
-					'last_post_link'		=> './?object='.'forum'.'&action=view_topic&id='.$post_info['topic'].($_total_pages[$post_info['topic']] > 1 ? '&page='.$_total_pages[$post_info['topic']] : '').'#last_post',
+					'last_post_link'		=> './?object=forum&action=view_topic&id='.$post_info['topic'].($_total_pages[$post_info['topic']] > 1 ? '&page='.$_total_pages[$post_info['topic']] : '').'#last_post',
 					'last_post_id'			=> $post_info['id'],
 					'user_id'				=> $post_info['user_id'],
 					'fast_text_preview'		=> (int)module('forum')->SETTINGS['FAST_TEXT_PREVIEW'],
@@ -336,7 +336,7 @@ class yf_forum_view_forum {
 					'last_post_author_link'	=> $post_info['user_id'] ? module('forum')->_user_profile_link($post_info['user_id']) : '',
 					'last_post_subject'		=> _prepare_html($subject),
 					'last_post_date'		=> module('forum')->_show_date($post_info['created'], 'last_post_date'),
-					'last_post_link'		=> './?object='.'forum'.'&action=view_topic&id='.$post_info['topic']._add_get(),
+					'last_post_link'		=> './?object=forum&action=view_topic&id='.$post_info['topic']._add_get(),
 					'user_id'				=> intval($post_info['user_id']),
 				);
 				$forums_last_posts[$post_info['forum']] = tpl()->parse('forum'.'/view_home_last_posts', $replace3);
@@ -390,7 +390,7 @@ class yf_forum_view_forum {
 				// Show anounce item
 				$replace = array(
 					'is_admin'				=> intval(FORUM_IS_ADMIN),
-					'announce_link'			=> './?object='.'forum'.'&action=view_announce&id='.$info['id']._add_get(array('page')),
+					'announce_link'			=> './?object=forum&action=view_announce&id='.$info['id']._add_get(array('page')),
 					'announce_title'		=> _prepare_html($info['title']),
 					'announce_author_link'	=> module('forum')->_user_profile_link($info['author_id']),
 					'announce_author_name'	=> _prepare_html($users_names[$info['author_id']]),
@@ -449,7 +449,7 @@ class yf_forum_view_forum {
 	*/
 	function _show_filter () {
 		$replace = array(
-			'save_action'	=> './?object='.'forum'.'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
+			'save_action'	=> './?object=forum&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
 		);
 		// Process boxes
 		foreach ((array)$this->_boxes as $item_name => $v) {
@@ -468,7 +468,7 @@ class yf_forum_view_forum {
 			}
 		}
 		if (!$silent) {
-			js_redirect('./?object='.'forum'.'&action='.$_GET['action'].'&id='.$_GET['id']._add_get());
+			js_redirect('./?object=forum&action='.$_GET['action'].'&id='.$_GET['id']._add_get());
 		}
 	}
 
@@ -482,7 +482,7 @@ class yf_forum_view_forum {
 			}
 		}
 		if (!$silent) {
-			js_redirect('./?object='.'forum'.'&action='.$_GET['action'].'&id='.$_GET['id']._add_get());
+			js_redirect('./?object=forum&action='.$_GET['action'].'&id='.$_GET['id']._add_get());
 		}
 	}
 

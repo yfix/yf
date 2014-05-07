@@ -98,20 +98,20 @@ class yf_forum_main_tpl {
 				$items_texts[] = array('name' => t('Search Form'));
 			} else {
 				$items_links[] = array(
-					'link'	=> './?object='.'forum'.'&action='.$_GET['action']. _add_get(array('page')),
+					'link'	=> './?object=forum&action='.$_GET['action']. _add_get(array('page')),
 					'name'	=> t('Search Form'),
 				);
 				$items_texts[] = array('name' => t('Search Engine'));
 			}
 		} elseif ($_GET['action'] == 'help' && !empty($_GET['id'])) {
 			$items_links[] = array(
-				'link'	=> './?object='.'forum'.'&action='.$_GET['action']. _add_get(array('page')),
+				'link'	=> './?object=forum&action='.$_GET['action']. _add_get(array('page')),
 				'name'	=> t('Help Topics'),
 			);
 			$items_texts[] = array('name' => t('Help Topic'));
 		} elseif (in_array($_GET['action'], array('user_cp','tracker_manage_topics','tracker_manage_forums','edit_profile','edit_settings','edit_announces'))) {
 			$items_links[] = array(
-				'link'	=> './?object='.'forum'.'&action=user_cp'. _add_get(array('page')),
+				'link'	=> './?object=forum&action=user_cp'. _add_get(array('page')),
 				'name'	=> t('Your control panel'),
 			);
 			if ($_GET['action'] == 'edit_announces') {
@@ -124,7 +124,7 @@ class yf_forum_main_tpl {
 		// Add category item
 		if ($cat_id) {
 			$items_links[] = array(
-				'link'	=> './?object='.'forum'.'&id='.$cat_id. _add_get(array('page')),
+				'link'	=> './?object=forum&id='.$cat_id. _add_get(array('page')),
 				'name'	=> _prepare_html(module('forum')->_forum_cats_array[$cat_id]['name']),
 			);
 		}
@@ -144,7 +144,7 @@ class yf_forum_main_tpl {
 		// Add topic item
 		if ($topic_id) {
 			$items_links[] = array(
-				'link'	=> './?object='.'forum'.'&action=view_topic&id='.$topic_id. _add_get(array('page')),
+				'link'	=> './?object=forum&action=view_topic&id='.$topic_id. _add_get(array('page')),
 				'name'	=> _prepare_html(module('forum')->_topic_info['name']),
 			);
 		}
@@ -167,11 +167,11 @@ class yf_forum_main_tpl {
 	function _show_menu_top() {
 		$replace = array(
 			'home_link'			=> './?object='.'forum'. _add_get(array('page')),
-			'help_link'			=> module('forum')->SETTINGS['SHOW_HELP'] ? './?object='.'forum'.'&action=help'. _add_get(array('page')) : '',
-			'search_link'		=> module('forum')->SETTINGS['ALLOW_SEARCH'] ? './?object='.'forum'.'&action=search'. _add_get(array('page')) : '',
-			'members_link'		=> module('forum')->SETTINGS['SHOW_MEMBERS_LIST'] ? './?object='.'forum'.'&action=view_members'. _add_get(array('page')) : '',
-			'user_cp_link'		=> FORUM_USER_ID ? './?object='.'forum'.'&action=user_cp'. _add_get(array('page')) : '',
-			'view_reports_link'	=> (FORUM_IS_ADMIN || FORUM_IS_MODERATOR) ? './?object='.'forum'.'&action=view_reports'. _add_get(array('page')) : '',
+			'help_link'			=> module('forum')->SETTINGS['SHOW_HELP'] ? './?object=forum&action=help'. _add_get(array('page')) : '',
+			'search_link'		=> module('forum')->SETTINGS['ALLOW_SEARCH'] ? './?object=forum&action=search'. _add_get(array('page')) : '',
+			'members_link'		=> module('forum')->SETTINGS['SHOW_MEMBERS_LIST'] ? './?object=forum&action=view_members'. _add_get(array('page')) : '',
+			'user_cp_link'		=> FORUM_USER_ID ? './?object=forum&action=user_cp'. _add_get(array('page')) : '',
+			'view_reports_link'	=> (FORUM_IS_ADMIN || FORUM_IS_MODERATOR) ? './?object=forum&action=view_reports'. _add_get(array('page')) : '',
 		);
 		return tpl()->parse('forum'.'/menu_top',	$replace);
 	}
@@ -186,13 +186,13 @@ class yf_forum_main_tpl {
 			'admin_cp_link'		=> WEB_PATH.'admin/',
 			'user_name'			=> FORUM_USER_ID ? FORUM_USER_NAME : t('Guest'),
 			'user_info_link'	=> FORUM_USER_ID ? module('forum')->_user_profile_link(FORUM_USER_ID) : '',
-			'user_cp_link'		=> './?object='.'forum'.'&action=user_cp'. _add_get(array('page')),
-			'edit_profile_link'	=> './?object='.'forum'.'&action=edit_profile'. _add_get(array('page')),
-			'new_posts_link'	=> './?object='.'forum'.'&action=view_new_posts'. _add_get(array('page')),
-			'inbox_link'		=> './?object='.'forum'.'&action=inbox'. _add_get(array('page')),
-			'register_link'		=> './?object='.'forum'.'&action=register'. _add_get(array('page')),
-			'login_link'		=> './?object='.'forum'.'&action=login'. _add_get(array('page')),
-			'logout_link'		=> './?object='.'forum'.'&action=logout'. _add_get(array('page')),
+			'user_cp_link'		=> './?object=forum&action=user_cp'. _add_get(array('page')),
+			'edit_profile_link'	=> './?object=forum&action=edit_profile'. _add_get(array('page')),
+			'new_posts_link'	=> './?object=forum&action=view_new_posts'. _add_get(array('page')),
+			'inbox_link'		=> './?object=forum&action=inbox'. _add_get(array('page')),
+			'register_link'		=> './?object=forum&action=register'. _add_get(array('page')),
+			'login_link'		=> './?object=forum&action=login'. _add_get(array('page')),
+			'logout_link'		=> './?object=forum&action=logout'. _add_get(array('page')),
 		);
 		return tpl()->parse('forum'.'/menu_main', $replace);
 	}
@@ -220,15 +220,15 @@ class yf_forum_main_tpl {
 		$replace = array(
 			'logged_in'			=> intval(FORUM_USER_ID),
 			'cur_time'			=> module('forum')->_show_date(time(), 'footer'),
-			'light_version_link'=> './?object='.'forum'.'&action=light_version'. _add_get(),
-			'skin_form_link'	=> './?object='.'forum'.'&action=change_skin',
-			'lang_form_link'	=> './?object='.'forum'.'&action=change_lang',
+			'light_version_link'=> './?object=forum&action=light_version'. _add_get(),
+			'skin_form_link'	=> './?object=forum&action=change_skin',
+			'lang_form_link'	=> './?object=forum&action=change_lang',
 			'skin_id_box'		=> $skin_id_box,
 			'lang_id_box'		=> $lang_id_box,
 			'allow_skin_change'	=> intval(module('forum')->SETTINGS['ALLOW_SKIN_CHANGE']),
 			'allow_lang_change'	=> intval(module('forum')->SETTINGS['ALLOW_LANG_CHANGE']),
 			'back_url'			=> WEB_PATH.'?object='.'forum'.($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). (!empty($_GET['id']) ? '&id='.$_GET['id'] : ''). (!empty($_GET['page']) ? '&page='.$_GET['page'] : ''),
-			'rss_board_button'	=> module('forum')->_show_rss_link('./?object='.'forum'.'&action=rss_board', 'RSS feed for board'),
+			'rss_board_button'	=> module('forum')->_show_rss_link('./?object=forum&action=rss_board', 'RSS feed for board'),
 		);
 		return tpl()->parse('forum'.'/main_footer', $replace);
 	}
@@ -247,11 +247,11 @@ class yf_forum_main_tpl {
 			'text'				=> $text,
 			'is_logged_in'		=> intval(FORUM_USER_ID),
 			'back_url'			=> $this->USER_RIGHTS['view_board'] && !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '',
-			'form_action'		=> './?object='.'forum'.'&action=login',
-			'forgot_pswd_link'	=> './?object='.'forum'.'&action=send_password',
-			'register_link'		=> './?object='.'forum'.'&action=register',
-			'help_link'			=> './?object='.'forum'.'&action=help',
-			'contact_admin_link'=> './?object='.'forum'.'&action=contact_admin',
+			'form_action'		=> './?object=forum&action=login',
+			'forgot_pswd_link'	=> './?object=forum&action=send_password',
+			'register_link'		=> './?object=forum&action=register',
+			'help_link'			=> './?object=forum&action=help',
+			'contact_admin_link'=> './?object=forum&action=contact_admin',
 			'admin_email_1'		=> $admin_email[0],
 			'admin_email_2'		=> $admin_email[1],
 			'show_login_form'	=> !FORUM_USER_ID && $this->USER_RIGHTS['view_board'],

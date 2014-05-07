@@ -82,8 +82,8 @@ class yf_forum_auth {
 		// Show login form
 		} else {
 			$replace = array(
-				'form_action'		=> './?object='.'forum'.'&action='.$_GET['action']._add_get(array('page')),
-				'forgot_pswd_link'	=> './?object='.'forum'.'&action=send_password'._add_get(array('page')),
+				'form_action'		=> './?object=forum&action='.$_GET['action']._add_get(array('page')),
+				'forgot_pswd_link'	=> './?object=forum&action=send_password'._add_get(array('page')),
 				'back_url'			=> getenv('HTTP_REFERER'),
 			);
 			$body .= tpl()->parse('forum'.'/login_form', $replace);

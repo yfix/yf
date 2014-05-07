@@ -217,7 +217,7 @@ class yf_forum {
 		foreach ((array)$GLOBALS['PROJECT_CONF']['_forum_def_rights'] as $k => $v) {
 			$this->USER_RIGHTS[$k] = $v;
 		}
-		define('FORUM_AUTH_MODULE', $this->SETTINGS['USE_GLOBAL_USERS'] ? 'forum_auth_global' : 'forum_auth');
+		define('FORUM_AUTH_MODULE', 'forum_auth_global');
 		if (isset($_SESSION['board_topic_view']) && in_array($_SESSION['board_topic_view'], array(1,2))) {
 			$this->SETTINGS['TOPIC_VIEW_TYPE'] = intval($_SESSION['board_topic_view']);
 		}
@@ -764,7 +764,6 @@ class yf_forum {
 		if (empty($this->SETTINGS['RSS_EXPORT'])) {
 			return '';
 		}
-		// Process template
 		$replace = array(
 			'feed_link'	=> $feed_link,
 			'feed_name'	=> _prepare_html($feed_name),
@@ -790,16 +789,14 @@ class yf_forum {
 	* Show user info in post
 	*/
 	function _show_user_details($user_info = array(), $is_online = 0, $post_user_name = '', $post_id = 0) {
-		$submodule_name = $this->SETTINGS['USE_GLOBAL_USERS'] ? 'forum_user_details_global' : 'forum_user_details';
-		return $this->_load_sub_module($submodule_name)->_show_user_details($user_info, $is_online, $post_user_name, $post_id);
+		return $this->_load_sub_module('forum_user_details_global')->_show_user_details($user_info, $is_online, $post_user_name, $post_id);
 	}
 
 	/**
 	* Get users infos
 	*/
 	function _get_users_infos($users_ids = array(), $params = array()) {
-		$submodule_name = $this->SETTINGS['USE_GLOBAL_USERS'] ? 'forum_user_details_global' : 'forum_user_details';
-		return $this->_load_sub_module($submodule_name)->_get_users_infos($users_ids, $params);
+		return $this->_load_sub_module('forum_user_details_global')->_get_users_infos($users_ids, $params);
 	}
 
 	/**
@@ -826,7 +823,7 @@ class yf_forum {
 		if (empty($user_id) || $this->SETTINGS['HIDE_USERS_INFO']) {
 			return '';
 		}
-		return ($this->SETTINGS['USE_GLOBAL_USERS'] && !$force_forum_link ? _profile_link($user_id) : './?object='.'forum'.'&action=view_profile&id='.$user_id);
+		return !$force_forum_link ? _profile_link($user_id) : './?object=forum&action=view_profile&id='.$user_id;
 	}
 
 	/**
@@ -878,11 +875,11 @@ class yf_forum {
 			'text'				=> $text,
 			'is_logged_in'		=> intval(FORUM_USER_ID),
 			'back_url'			=> $this->USER_RIGHTS['view_board'] && !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '',
-			'form_action'		=> './?object='.'forum'.'&action=login',
-			'forgot_pswd_link'	=> './?object='.'forum'.'&action=send_password',
-			'register_link'		=> './?object='.'forum'.'&action=register',
-			'help_link'			=> './?object='.'forum'.'&action=help',
-			'contact_admin_link'=> './?object='.'forum'.'&action=contact_admin',
+			'form_action'		=> './?object=forum&action=login',
+			'forgot_pswd_link'	=> './?object=forum&action=send_password',
+			'register_link'		=> './?object=forum&action=register',
+			'help_link'			=> './?object=forum&action=help',
+			'contact_admin_link'=> './?object=forum&action=contact_admin',
 			'admin_email_1'		=> $admin_email[0],
 			'admin_email_2'		=> $admin_email[1],
 			'show_login_form'	=> !FORUM_USER_ID && $this->USER_RIGHTS['view_board'],
@@ -1056,7 +1053,7 @@ class yf_forum {
 			$forum_name = $this->_forums_array[$forum_id]['name'];
 			$forum_name = preg_replace('/[^a-z0-9\-\_]/ims', '_', strtolower($forum_name));
 		}
-		return './?object='.'forum'.'&action=view_forum&id='.(!empty($forum_name) ? $forum_name : $forum_id);
+		return './?object=forum&action=view_forum&id='.(!empty($forum_name) ? $forum_name : $forum_id);
 	}
 
 	/**

@@ -123,7 +123,7 @@ class yf_forum_search {
 	*/
 	function _search_form ($force_stpl = '') {
 		$replace = array(
-			'form_action'		=> './?object='.'forum'.'&action='.$_GET['action']. ($_GET['language'] ? '&language='.$_GET['language'] : ''),
+			'form_action'		=> './?object=forum&action='.$_GET['action']. ($_GET['language'] ? '&language='.$_GET['language'] : ''),
 			'prune_days_box'	=> $this->_box('prune_days', 1000),
 			'forums_box'		=> $this->_box('forums', 'all'),
 			'sort_by_box'		=> $this->_box('sort_by', 'last_post_date'),
@@ -365,7 +365,7 @@ class yf_forum_search {
 			$topic_pages = array();
 			foreach ((array)$topic_pages_ids as $topic_id => $topic_num_posts) {
 				$topics_per_page = !empty(module('forum')->USER_SETTINGS['TOPICS_PER_PAGE']) ? module('forum')->USER_SETTINGS['TOPICS_PER_PAGE'] : module('forum')->SETTINGS['NUM_TOPICS_ON_PAGE'];
-				list(,$topic_pages[$topic_id],,,$_total_pages[$topic_id]) = common()->divide_pages('', './?object='.'forum'.'&action=view_topic&id='.$topic_id, null, $topics_per_page, $topic_num_posts + 1, 'forum'.'/pages_2/');
+				list(,$topic_pages[$topic_id],,,$_total_pages[$topic_id]) = common()->divide_pages('', './?object=forum&action=view_topic&id='.$topic_id, null, $topics_per_page, $topic_num_posts + 1, 'forum'.'/pages_2/');
 			}
 		}
 		// Process last posts records
@@ -382,7 +382,7 @@ class yf_forum_search {
 					'last_post_author_link'	=> $post_info['user_id'] ? module('forum')->_user_profile_link($post_info['user_id']) : '',
 					'last_post_subject'		=> _prepare_html($subject),
 					'last_post_date'		=> module('forum')->_show_date($post_info['created'], 'last_post_date'),
-					'last_post_link'		=> './?object='.'forum'.'&action=view_topic&id='.$post_info['topic'].($_total_pages[$post_info['topic']] > 1 ? '&page='.$_total_pages[$post_info['topic']] : '').'#last_post',
+					'last_post_link'		=> './?object=forum&action=view_topic&id='.$post_info['topic'].($_total_pages[$post_info['topic']] > 1 ? '&page='.$_total_pages[$post_info['topic']] : '').'#last_post',
 				);
 				$last_posts[$post_info['topic']] = tpl()->parse('forum'.'/view_forum_last_posts', $replace3);
 			}
@@ -459,7 +459,7 @@ class yf_forum_search {
 			}
 			$matched_records = intval($matched_records);
 			// Get pages string
-			$path = './?object='.'forum'.'&action='.$_GET['action'].$q.'&q=results'.($_GET['language'] ? '&language='.$_GET['language'] : '');
+			$path = './?object=forum&action='.$_GET['action'].$q.'&q=results'.($_GET['language'] ? '&language='.$_GET['language'] : '');
 			$posts_per_page		= !empty(module('forum')->USER_SETTINGS['POSTS_PER_PAGE']) ? module('forum')->USER_SETTINGS['POSTS_PER_PAGE'] : module('forum')->SETTINGS['NUM_POSTS_ON_PAGE'];
 			$topics_per_page	= !empty(module('forum')->USER_SETTINGS['TOPICS_PER_PAGE']) ? module('forum')->USER_SETTINGS['TOPICS_PER_PAGE'] : module('forum')->SETTINGS['NUM_TOPICS_ON_PAGE'];
 			list($limit_sql, $this->pages, ) = common()->divide_pages(null, $path, null, $AF['result_type'] == 'topics' ? $topics_per_page : $posts_per_page, $matched_records, 'forum'.'/pages_1/');

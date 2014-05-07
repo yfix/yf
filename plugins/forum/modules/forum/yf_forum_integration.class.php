@@ -65,7 +65,7 @@ class yf_forum_integration {
 				'author'		=> _prepare_html($A['user_name']),
 				'reply_link'	=> './?object=forum&action=view_topic&id='.$A['topic'],
 				'created'		=> _format_date($A['created']),
-				'profile_url'	=> './?object='.'forum'.'&action=show&id='.$A['user_id'],
+				'profile_url'	=> './?object=forum&action=show&id='.$A['user_id'],
 			);
 			$items .= tpl()->parse('forum'.'/for_profile_forum_item', $replace2);
 		}

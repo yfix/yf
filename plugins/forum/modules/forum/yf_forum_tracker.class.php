@@ -98,7 +98,7 @@ class yf_forum_tracker {
 			if ($EXISTS) $sql = 'DELETE FROM '.db('forum_email_notify').' WHERE user_id='.intval(FORUM_USER_ID).' AND topic_id='.intval($_GET['id']);
 			else $sql = 'INSERT INTO '.db('forum_email_notify').' VALUES ('.intval(FORUM_USER_ID).', '.intval($_GET['id']).', '.time().')';
 			db()->query($sql);
-			js_redirect('./?object='.'forum'.'&action=view_topic&id='.$_GET['id']. ($_GET['page'] ? '&page='.$_GET['page'] : ''));
+			js_redirect('./?object=forum&action=view_topic&id='.$_GET['id']. ($_GET['page'] ? '&page='.$_GET['page'] : ''));
 		}
 */
 	}
@@ -117,8 +117,8 @@ class yf_forum_tracker {
 			// Process users that wanted to receive notifications for this topic
 			$topic_name		= $this->BB_OBJ->_process_text($topic_info['name']);
 			$post_text		= $this->BB_OBJ->_process_text(_substr($_POST['text'], 0, 100)).'...';
-			$view_topic_url	= process_url('./?object='.'forum'.'&action=view_topic&id='.$topic_info['id']);
-			$dont_notify_url= process_url('./?object='.'forum'.'&action=notify_me&id='.$topic_info['id']);
+			$view_topic_url	= process_url('./?object=forum&action=view_topic&id='.$topic_info['id']);
+			$dont_notify_url= process_url('./?object=forum&action=notify_me&id='.$topic_info['id']);
 			// Get users details
 			$Q6 = db()->query('SELECT user_email AS `0`, name AS 1 FROM '.db('forum_users').' WHERE id IN('.implode(',', $notify_user_ids).') AND status='a'');
 			while (list($notify_email, $user_login) = db()->fetch_assoc($Q6)) {

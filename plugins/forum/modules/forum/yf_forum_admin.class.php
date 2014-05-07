@@ -75,7 +75,7 @@ class yf_forum_admin {
 		if (!empty($_POST['selected_ids'])) {
 			$selected_ids = explode(',', $_POST['selected_ids']);
 			db()->update_safe('forum_topics', array(
-				'active' => $_POST['t_act'] == 'open' ? 1 : 0
+				'status' => $_POST['t_act'] == 'open' ? 'a' : 'c'
 			), 'forum='.intval($forum_info['id']).' AND id IN('.implode(',', $selected_ids).')');
 		}
 		return js_redirect(module('forum')->_link_to_forum($_GET['id']));
@@ -213,7 +213,7 @@ class yf_forum_admin {
 				);
 			}
 			$replace = array(
-				'form_action'		=> './?object='.'forum'.'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
+				'form_action'		=> './?object=forum&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
 				'forum_id'			=> intval($_GET['id']),
 				'forum_name'		=> $forum_info['name'],
 				'forums_box'		=> $this->_forums_box(),
@@ -342,7 +342,7 @@ class yf_forum_admin {
 				$this->SYNC_OBJ->_fix_subforums();
 			}
 		}
-		return js_redirect('./?object='.'forum'.'&action=view_topic&id='.$_GET['id']);
+		return js_redirect('./?object=forum&action=view_topic&id='.$_GET['id']);
 	}
 	
 	/**
@@ -376,7 +376,7 @@ class yf_forum_admin {
 				$this->SYNC_OBJ->_fix_subforums();
 			}
 		}
-		return js_redirect('./?object='.'forum'.'&action=view_topic&id='.$_GET['id']);
+		return js_redirect('./?object=forum&action=view_topic&id='.$_GET['id']);
 	}
 	
 	/**
@@ -417,7 +417,7 @@ class yf_forum_admin {
 				);
 			}
 			$replace = array(
-				'form_action'		=> './?object='.'forum'.'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
+				'form_action'		=> './?object=forum&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
 				'forum_id'			=> intval($forum_info['id']),
 				'topic_id'			=> intval($topic_info['id']),
 				'old_forum_name'	=> $forum_info['name'],
@@ -470,7 +470,7 @@ class yf_forum_admin {
 				}
 			}
 		}
-		return js_redirect('./?object='.'forum'.'&action=view_topic&id='.$_GET['id']);
+		return js_redirect('./?object=forum&action=view_topic&id='.$_GET['id']);
 	}
 	
 	/**
@@ -511,7 +511,7 @@ class yf_forum_admin {
 				);
 			}
 			$replace = array(
-				'form_action'		=> './?object='.'forum'.'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
+				'form_action'		=> './?object=forum&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
 				'forum_id'			=> intval($forum_info['id']),
 				'topic_id'			=> intval($topic_info['id']),
 				'old_forum_name'	=> $forum_info['name'],
@@ -572,7 +572,7 @@ class yf_forum_admin {
 				$this->SYNC_OBJ->_fix_subforums();
 			}
 		}
-		return js_redirect('./?object='.'forum'.'&action=view_topic&id='.$_GET['id']);
+		return js_redirect('./?object=forum&action=view_topic&id='.$_GET['id']);
 	}
 	
 	/**
@@ -615,7 +615,7 @@ class yf_forum_admin {
 				}
 			}
 			$replace = array(
-				'form_action'	=> './?object='.'forum'.'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
+				'form_action'	=> './?object=forum&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
 				'dates_box'		=> common()->select_box('new_date', $dates_array, $selected, false, 2, '', false),
 				'authors_box'	=> common()->select_box('new_author', $authors_array, $selected, false, 2, '', false),
 				'selected_ids'	=> implode(',', $selected_ids),
@@ -660,7 +660,7 @@ class yf_forum_admin {
 				$this->SYNC_OBJ->_fix_subforums();
 			}
 		}
-		return js_redirect('./?object='.'forum'.'&action=view_topic&id='.$_GET['id']);
+		return js_redirect('./?object=forum&action=view_topic&id='.$_GET['id']);
 	}
 
 	/**
