@@ -229,12 +229,12 @@ class yf_forum {
 		$this->_forums_array		= main()->get_data('forum_forums');
 		// Hide inactive forums and categories
 		foreach ((array)$this->_forum_cats_array as $_cat_id => $_cat_info) {
-			if ($_cat_info['status'] != 'a') {
+			if (!$_cat_info['active']) {
 				unset($this->_forum_cats_array[$_cat_id]);
 			}
 		}
 		foreach ((array)$this->_forums_array as $_forum_id => $_forum_info) {
-			if ($_forum_info['status'] != 'a') {
+			if (!$_forum_info['active']) {
 				unset($this->_forums_array[$_forum_id]);
 			}
 		}
