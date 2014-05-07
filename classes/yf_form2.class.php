@@ -182,8 +182,8 @@ class yf_form2 {
 		$paths = array(
 			'yf_main'			=> YF_PATH. 'share/form/'.$suffix,
 			'yf_plugins'		=> YF_PATH. 'plugins/*/share/form/'.$suffix,
-#			'project_main'		=> PROJECT_PATH. 'share/form/'.$suffix,
-#			'project_plugins'	=> PROJECT_PATH. 'plugins/*/share/form/'.$suffix,
+			'project_main'		=> PROJECT_PATH. 'share/form/'.$suffix,
+			'project_plugins'	=> PROJECT_PATH. 'plugins/*/share/form/'.$suffix,
 #			'site_main'			=> SITE_PATH. 'share/form/'.$suffix,
 		);
 		foreach ((array)$paths as $glob) {
@@ -207,6 +207,26 @@ class yf_form2 {
 		}
 		if (DEBUG_MODE) {
 			$ts = microtime(true);
+		}
+		$on_before_render = isset($extra['on_before_render']) ? $extra['on_before_render'] : $this->_on['on_before_render'];
+		if (is_callable($on_before_render)) {
+			$on_before_render($extra, $replace, $this);
+		}
+		if (main()->is_post()) {
+			$on_post = isset($extra['on_post']) ? $extra['on_post'] : $this->_on['on_post'];
+			if (is_callable($on_post)) {
+				$on_post($extra, $replace, $this);
+			}
+			$v = $this->_validate;
+			if (isset($v) && is_callable($v['func'])) {
+				$func = $v['func'];
+				$func($v['validate_rules'], $v['post'], $v['extra'], $this);
+			}
+			$up = $this->_db_change_if_ok;
+			if (isset($up) && is_callable($up['func'])) {
+				$func = $up['func'];
+				$func($up['table'], $up['fields'], $up['type'], $up['extra'], $this);
+			}
 		}
 		if (!is_array($this->_body)) {
 			$this->_body = array();
@@ -316,6 +336,10 @@ class yf_form2 {
 		$extra['css_framework'] = $css_framework;
 		$this->_rendered = _class('html5_framework')->form_render_out($this->_rendered, $extra, $r, $this);
 
+		$on_after_render = isset($extra['on_after_render']) ? $extra['on_after_render'] : $this->_on['on_after_render'];
+		if (is_callable($on_after_render)) {
+			$on_after_render($extra, $replace, $this);
+		}
 		if (DEBUG_MODE) {
 			debug('form2[]', array(
 				'params'	=> $this->_params,
@@ -911,7 +935,6 @@ class yf_form2 {
 	/**
 	* HTML5
 	*/
- // TODO: float() input type
 	function number($name, $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'number';
 		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
@@ -935,6 +958,12 @@ class yf_form2 {
 	*/
 	function integer($name, $desc = '', $extra = array(), $replace = array()) {
 		return $this->number($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function float($name, $desc = '', $extra = array(), $replace = array()) {
+ // TODO: float() input type
 	}
 
 	/**
@@ -1876,61 +1905,84 @@ class yf_form2 {
 	* Form validation handler.
 	* Here we have special rule, called __form_id__ , it is used to track which form need to be validated from $_POST.
 	*/
-	function validate($validate_rules = array(), $post = array()) {
-		$form_global_validate = isset($this->_params['validate']) ? $this->_params['validate'] : (isset($this->_replace['validate']) ? $this->_replace['validate']: array());
-		foreach ((array)$form_global_validate as $name => $rules) {
-			$this->_validate_rules[$name] = $rules;
-		}
-		foreach ((array)$this->_body as $v) {
-			$_extra = $v['extra'];
-			if (isset($_extra['validate']) && isset($_extra['name'])) {
-				$this->_validate_rules[$_extra['name']] = $_extra['validate'];
+	function validate($validate_rules = array(), $post = array(), $extra = array()) {
+		$func = function($validate_rules, $post, $extra, $_this) {
+			$form_global_validate = isset($_this->_params['validate']) ? $_this->_params['validate'] : (isset($_this->_replace['validate']) ? $_this->_replace['validate'] : array());
+			foreach ((array)$form_global_validate as $name => $rules) {
+				$_this->_validate_rules[$name] = $rules;
 			}
-		}
-		foreach ((array)$validate_rules as $name => $rules) {
-			$this->_validate_rules[$name] = $rules;
-		}
-		$form_id = '';
-		$form_id_field = '__form_id__';
-		if (isset($this->_validate_rules[$form_id_field])) {
-			$form_id = $this->_validate_rules[$form_id_field];
-			unset($this->_validate_rules[$form_id_field]);
-		} elseif (isset($this->_params[$form_id_field])) {
-			$form_id = $this->_params[$form_id_field];
-			unset($this->_params[$form_id_field]);
-		}
-		if ($form_id) {
-			$this->_form_id = $form_id;
-			$this->hidden($form_id_field, array('value' => $form_id));
-		}
-		$this->_validate_rules = $this->_validate_rules_cleanup($this->_validate_rules);
-		// Prepare array of rules by form method for quick access
-		if ($this->_validate_rules) {
-			foreach ((array)$this->_validate_rules as $item => $rules) {
-				foreach ((array)$rules as $rule) {
-					if (is_string($rule[0])) {
-						$this->_validate_rules_names[$item][$rule[0]] = $rule[1] ?: true;
+			foreach ((array)$_this->_body as $v) {
+				$_extra = $v['extra'];
+				if (isset($_extra['validate']) && isset($_extra['name'])) {
+					$_this->_validate_rules[$_extra['name']] = $_extra['validate'];
+				}
+			}
+			foreach ((array)$validate_rules as $name => $rules) {
+				$_this->_validate_rules[$name] = $rules;
+			}
+			$form_id = '';
+			$form_id_field = '__form_id__';
+			if (isset($_this->_validate_rules[$form_id_field])) {
+				$form_id = $_this->_validate_rules[$form_id_field];
+				unset($_this->_validate_rules[$form_id_field]);
+			} elseif (isset($_this->_params[$form_id_field])) {
+				$form_id = $_this->_params[$form_id_field];
+				unset($_this->_params[$form_id_field]);
+			}
+			if ($form_id) {
+				$_this->_form_id = $form_id;
+				$_this->hidden($form_id_field, array('value' => $form_id));
+			}
+			$_this->_validate_rules = $_this->_validate_rules_cleanup($_this->_validate_rules);
+			// Prepare array of rules by form method for quick access
+			if ($_this->_validate_rules) {
+				foreach ((array)$_this->_validate_rules as $item => $rules) {
+					foreach ((array)$rules as $rule) {
+						if (is_string($rule[0])) {
+							$_this->_validate_rules_names[$item][$rule[0]] = $rule[1] ?: true;
+						}
 					}
 				}
 			}
-		}
-		// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
-		$data = (array)(!empty($post) ? $post : $_POST);
-		if (empty($data)) {
+			// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
+			$data = (array)(!empty($post) ? $post : $_POST);
+			if (empty($data)) {
+				return $_this;
+			}
+			// We need this to validate only correct form on page, where there can be several forms with validation at once
+			if ($form_id && $data[$form_id_field] != $form_id) {
+				return $_this;
+			}
+			$on_before_validate = isset($extra['on_before_validate']) ? $extra['on_before_validate'] : $_this->_on['on_before_validate'];
+			if (is_callable($on_before_validate)) {
+				$on_before_validate($_this->_validate_rules, $data);
+			}
+			// Processing of prepared rules
+			$validate_ok = $_this->_validate_rules_process($_this->_validate_rules, $data, $extra);
+			if ($validate_ok) {
+				$_this->_validate_ok = true;
+			} else {
+				$_this->_validate_ok = false;
+				$on_validate_error = isset($extra['on_validate_error']) ? $extra['on_validate_error'] : $this->_on['on_validate_error'];
+				if (is_callable($on_validate_error)) {
+					$on_validate_error($_this->_validate_rules, $data, $extra);
+				}
+			}
+			$on_after_validate = isset($extra['on_after_validate']) ? $extra['on_after_validate'] : $_this->_on['on_after_validate'];
+			if (is_callable($on_after_validate)) {
+				$on_after_validate($_this->_validate_ok, $_this->_validate_rules, $data, $extra);
+			}
+			$_this->_validated_fields = $data;
+		};
+		if ($this->_chained_mode) {
+			$this->_validate = array(
+				'func'		=> $func,
+				'extra'		=> $extra,
+				'post'		=> $post,
+				'validate_rules' => $validate_rules,
+			);
 			return $this;
 		}
-		// We need this to validate only correct form on page, where there can be several forms with validation at once
-		if ($form_id && $data[$form_id_field] != $form_id) {
-			return $this;
-		}
-		// Processing of prepared rules
-		$validate_ok = $this->_validate_rules_process($this->_validate_rules, $data);
-		if ($validate_ok) {
-			$this->_validate_ok = true;
-		} else {
-			$this->_validate_ok = false;
-		}
-		$this->_validated_fields = $data;
 		return $this;
 	}
 
@@ -1959,7 +2011,8 @@ class yf_form2 {
 				} else {
 					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
 					if (!$is_ok && empty($error_msg)) {
-						$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
+						$desc = $this->_find_field_desc($name) ?: $name;
+						$error_msg = t('form_validate_'.$func, array('%field' => $desc, '%param' => $param));
 					}
 				}
 				// In this case we do not track error if field is empty and not required
@@ -1979,6 +2032,23 @@ class yf_form2 {
 			}
 		}
 		return $validate_ok;
+	}
+
+	/**
+	*/
+	function _find_field_desc($name) {
+		if (!strlen($name)) {
+			return '';
+		}
+		$desc = $name;
+		foreach ((array)$this->_body as $a) {
+			if (!isset($a['extra']) || $a['extra']['name'] != $name || !strlen($a['extra']['desc'])) {
+				continue;
+			}
+			$desc = $a['extra']['desc'];
+			break;
+		}
+		return $desc;
 	}
 
 	/**
@@ -2020,110 +2090,126 @@ class yf_form2 {
 	/**
 	*/
 	function _db_change_if_ok($table, $fields, $type, $extra = array()) {
-		if (!$table || !$type || empty($_POST)) {
-			return $this;
-		}
-		$validate_ok = ($this->_validate_ok || $extra['force']);
-		if (!$validate_ok) {
-			if ($extra['on_validate_error']) {
-				$func = $extra['on_validate_error'];
-				$func($data, $table, $fields, $type, $extra);
+		$func = function($table, $fields, $type, $extra, $_this) {
+			if (!$table || !$type || empty($_POST)) {
+				return $_this;
 			}
-			return $this;
-		}
-		$data = array();
-		foreach ((array)$fields as $k => $name) {
-			// Example $fields = array('login','email');
-			if (is_numeric($k)) {
-				$db_field_name = $name;
-			// Example $fields = array('pswd' => 'password');
-			} else {
-				$db_field_name = $name;
-				$name = $k;
+			$validate_ok = ($_this->_validate_ok || $extra['force']);
+			if (!$validate_ok) {
+				return $_this;
 			}
-			if (isset($this->_validated_fields[$name])) {
-				$data[$db_field_name] = $this->_validated_fields[$name];
+			$data = array();
+			foreach ((array)$fields as $k => $name) {
+				// Example $fields = array('login','email');
+				if (is_numeric($k)) {
+					$db_field_name = $name;
+				// Example $fields = array('pswd' => 'password');
+				} else {
+					$db_field_name = $name;
+					$name = $k;
+				}
+				if (isset($_this->_validated_fields[$name])) {
+					$data[$db_field_name] = $_this->_validated_fields[$name];
+				}
 			}
-		}
-		// This is non-validated list of fields to add to the insert array
-		foreach ((array)$extra['add_fields'] as $db_field_name => $value) {
-			$data[$db_field_name] = $value;
-		}
-		// Callback/hook function implementation
-		if ($data && $table && $extra['on_before_update']) {
-			$func = $extra['on_before_update'];
-			$func($data, $table, $fields, $type, $extra);
-		}
-		if ($data && $table) {
-			if ($type == 'update') {
-				db()->update($table, db()->es($data), $extra['where_id']);
-			} elseif ($type == 'insert') {
-				db()->insert($table, db()->es($data));
+			// This is non-validated list of fields to add to the insert array
+			foreach ((array)$extra['add_fields'] as $db_field_name => $value) {
+				$data[$db_field_name] = $value;
 			}
 			// Callback/hook function implementation
-			if ($extra['on_after_update']) {
-				$func = $extra['on_after_update'];
-				$func($data, $table, $fields, $type, $extra);
+			$on_before_update = isset($extra['on_before_update']) ? $extra['on_before_update'] : $_this->_on['on_before_update'];
+			if ($data && $table && is_callable($on_before_update)) {
+				$on_before_update($data, $table, $fields, $type, $extra);
 			}
-			if ($extra['on_success_text']) {
-				common()->set_notice($extra['on_success_text']);
+			if ($data && $table) {
+				if ($type == 'update') {
+					db()->update($table, db()->es($data), $extra['where_id']);
+				} elseif ($type == 'insert') {
+					db()->insert($table, db()->es($data));
+				}
+				// Callback/hook function implementation
+				$on_after_update = isset($extra['on_after_update']) ? $extra['on_after_update'] : $_this->_on['on_after_update'];
+				if (is_callable($on_after_update)) {
+					$on_after_update($data, $table, $fields, $type, $extra);
+				}
+				if ($extra['on_success_text']) {
+					common()->set_notice($extra['on_success_text']);
+				}
+				$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : ($_this->_replace['redirect_link'] ? $_this->_replace['redirect_link'] : $_this->_replace['back_link']);
+				if (!$redirect_link) {
+					$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : '');
+				}
+				if (!$extra['no_redirect']) {
+					js_redirect($redirect_link);
+				}
 			}
-			$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : ($this->_replace['redirect_link'] ? $this->_replace['redirect_link'] : $this->_replace['back_link']);
-			if (!$redirect_link) {
-				$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : '');
-			}
-			if (!$extra['no_redirect']) {
-				js_redirect($redirect_link);
-			}
+		};
+		if ($this->_chained_mode) {
+			$this->_db_change_if_ok = array(
+				'func'		=> $func,
+				'table'		=> $table,
+				'fields'	=> $fields,
+				'type'		=> $type,
+				'extra'		=> $extra,
+			);
+			return $this;
 		}
 		return $this;
 	}
 
 	/**
 	*/
-	function on_post() {
-// TODO: intended to be used when main()->is_post() detected
+	function on_post($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
 	}
 
 	/**
 	*/
-	function on_before_validate() {
-// TODO
+	function on_before_render($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
 	}
 
 	/**
 	*/
-	function on_after_validate() {
-// TODO
+	function on_after_render($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
 	}
 
 	/**
 	*/
-	function on_validate_error() {
-// TODO
+	function on_before_validate($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
 	}
 
 	/**
 	*/
-	function on_before_update() {
-// TODO
+	function on_after_validate($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
 	}
 
 	/**
 	*/
-	function on_after_update() {
-// TODO
+	function on_validate_error($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
 	}
 
 	/**
 	*/
-	function on_before_render() {
-// TODO
+	function on_before_update($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
 	}
 
 	/**
 	*/
-	function on_after_render() {
-// TODO
+	function on_after_update($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
 	}
 }
