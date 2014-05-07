@@ -151,10 +151,7 @@ class yf_forum_stats {
 		$NEED_UPDATE_FILE	= false;
 		$NEED_UPDATE_DB		= false;
 		$online_users_num = count(module('forum')->online_array);
-		// Get forum most number of users
-		if (main()->USE_SYSTEM_CACHE) {
-			$cache = cache_get('forum_most_users');
-		}
+		$cache = cache_get('forum_most_users');
 		if (!empty($cache)) {
 			$forum_most_users = $cache;
 		} else {
@@ -180,11 +177,8 @@ class yf_forum_stats {
 			'num_most_users'=> $num_most_users,
 			'most_date'		=> $most_date,
 		);
-		// Do update file cache
-		if (main()->USE_SYSTEM_CACHE) {
-			if (empty($cache) || $NEED_UPDATE_FILE) {
-				cache_set('forum_most_users', $forum_most_users);
-			}
+		if (empty($cache) || $NEED_UPDATE_FILE) {
+			cache_set('forum_most_users', $forum_most_users);
 		}
 		// Do update db cache
 		if ($NEED_UPDATE_DB || $NEED_UPDATE_FILE) {

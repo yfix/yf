@@ -36,7 +36,7 @@ class yf_forum_user {
 	*/
 	function _view_profile () {
 		$_GET['id'] = intval($_GET['id']);
-		if (/*module('forum')->SETTINGS['USE_GLOBAL_USERS'] || */(!module('forum')->USER_RIGHTS['view_member_info'] && FORUM_USER_ID != $_GET['id'])) {
+		if (!module('forum')->USER_RIGHTS['view_member_info'] && FORUM_USER_ID != $_GET['id']) {
 // TODO: need to turn on in globals mode
 //			return module('forum')->_show_error('Disabled by the site admin!');
 		}
@@ -127,11 +127,9 @@ class yf_forum_user {
 			return module('forum')->_show_error('No such user!');
 		}
 		$reg_date = $user_info['user_regdate'];
-		if (module('forum')->SETTINGS['USE_GLOBAL_USERS']) {
-			$global_user_info = user(FORUM_USER_ID);
-			if (!empty($global_user_info)) {
-				$reg_date = $global_user_info['add_date'];
-			}
+		$global_user_info = user(FORUM_USER_ID);
+		if (!empty($global_user_info)) {
+			$reg_date = $global_user_info['add_date'];
 		}
 		// Process template
 		$replace = array(
@@ -230,7 +228,7 @@ class yf_forum_user {
 				'user_msnm'			=> _prepare_html($user_info['user_msnm']),
 				'user_location'		=> _prepare_html($user_info['user_location']),
 				'user_interests'	=> _prepare_html($user_info['user_interests']),
-				'avatar_src'		=> !module('forum')->SETTINGS['USE_GLOBAL_USERS'] && !empty($user_info['user_avatar']) ? WEB_PATH. module('forum')->SETTINGS['AVATARS_DIR']. $user_info['user_avatar'] : '',
+				'avatar_src'		=> '',
 				'avatar_max_x'		=> intval(module('forum')->SETTINGS['AVATAR_MAX_X']),
 				'avatar_max_y'		=> intval(module('forum')->SETTINGS['AVATAR_MAX_Y']),
 				'avatar_max_bytes'	=> intval(module('forum')->SETTINGS['AVATAR_MAX_BYTES']),

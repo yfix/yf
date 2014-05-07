@@ -223,12 +223,6 @@ class yf_forum_utils {
 	* Update number of users posts for all users
 	*/
 	function _update_users_number_posts () {
-// TODO: need to check
-/*
-		if (module('forum')->SETTINGS['USE_GLOBAL_USERS']) {
-			return false;
-		}
-*/
 		$Q = db()->query('SELECT * FROM '.db('forum_users').' WHERE status="a"');
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_posts = db()->query_num_rows('SELECT id FROM '.db('forum_posts').' WHERE user_id='.intval($A['id']));

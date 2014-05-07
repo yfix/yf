@@ -26,20 +26,18 @@ class yf_forum_sync {
 		$this->_update_forums_last_posts();
 		$this->_update_all_users();
 		$this->_fix_subforums();
-		// Refresh caches
-		if (main()->USE_SYSTEM_CACHE) {
-			cache_del('forum_categories');
-			cache_del('forum_forums');
-			cache_del('forum_user_ranks');
-			cache_del('forum_home_page_posts');
-			cache_del('forum_announces');
-			cache_del('user_skins');
-			cache_del('smilies');
-			if (module('forum')->SETTINGS['SEO_KEYWORDS']) {
-				cache_del('search_engines');
-			}
-			$this->_refresh_board_totals();
-		}
+
+		cache_del('forum_categories');
+		cache_del('forum_forums');
+		cache_del('forum_user_ranks');
+		cache_del('forum_home_page_posts');
+		cache_del('forum_announces');
+		cache_del('user_skins');
+		cache_del('smilies');
+		cache_del('search_engines');
+
+		$this->_refresh_board_totals();
+
 		return !$INNER_CALL ? js_redirect($_SERVER['HTTP_REFERER']) : true;
 	}
 	
@@ -61,12 +59,12 @@ class yf_forum_sync {
 		$this->_update_topics_last_posts($forum_id);
 		$this->_update_forums_num_topics_and_replies($forum_id);
 		$this->_fix_subforums();
-		// Refresh caches
-		if (main()->USE_SYSTEM_CACHE) {
-			cache_del('forum_forums');
-			cache_del('forum_home_page_posts');
-			$this->_refresh_board_totals();
-		}
+
+		cache_del('forum_forums');
+		cache_del('forum_home_page_posts');
+
+		$this->_refresh_board_totals();
+
 		return !$INNER_CALL ? js_redirect($_SERVER['HTTP_REFERER']) : false;
 	}
 
@@ -77,30 +75,13 @@ class yf_forum_sync {
 		if (!main()->USE_SYSTEM_CACHE) {
 			return false;
 		}
-		list($total_posts) = db()->query_fetch(
-			'SELECT COUNT(*) AS `0` FROM '.db('forum_posts').' WHERE status="a"'
+		$total_posts = db()->get_one('SELECT COUNT(*) FROM '.db('forum_posts').' WHERE status="a"');
+		$total_users = db()->get_one('SELECT COUNT(*) FROM '.db('user').' WHERE active=1');
+		list($last_user_id, $last_user_login) = db()->get(
+			'SELECT id AS `0`,nick AS 1 FROM '.db('user').' WHERE id=( 
+				SELECT MAX(id) FROM '.db('user').' WHERE active=1
+			) LIMIT 1'
 		);
-		if (module('forum')->SETTINGS['USE_GLOBAL_USERS']) {
-			list($total_users) = db()->query_fetch(
-				'SELECT COUNT(*) AS `0` FROM '.db('user').' WHERE active=1'
-			);
-			list($last_user_id, $last_user_login) = db()->query_fetch(
-				'SELECT id AS `0`,nick AS 1 FROM '.db('user').' WHERE id=( 
-					SELECT MAX(id) FROM '.db('user').' WHERE active=1
-				) LIMIT 1'
-			);
-		} else {
-			list($total_users) = db()->query_fetch(
-				'SELECT COUNT(id) AS `0` FROM '.db('forum_users').' WHERE status="a"'
-			);
-			list($last_user_id, $last_user_login) = db()->query_fetch(
-				'SELECT id AS `0`,name AS 1 
-				FROM '.db('forum_users').' 
-				WHERE status="a" 
-				ORDER BY id DESC 
-				LIMIT 1'
-			);
-		}
 		$forum_totals = array(
 			'total_posts'		=> $total_posts,
 			'total_users'		=> $total_users,
@@ -319,11 +300,9 @@ class yf_forum_sync {
 				last_poster_name	= "'._es($A['user_name']).'"
 			WHERE id='.intval($topic_id);
 		db()->query($sql);
-		// Refresh caches
-		if (main()->USE_SYSTEM_CACHE && $cache_refresh) {
-			cache_del('forum_home_page_posts');
-			$this->_refresh_board_totals();
-		}
+
+		cache_del('forum_home_page_posts');
+		$this->_refresh_board_totals();
 	}
 
 	/**
@@ -363,12 +342,10 @@ class yf_forum_sync {
 				last_post_date	= '.intval($A['created']).'
 			WHERE id='.intval($forum_id);
 		db()->query($sql);
-		// Refresh caches
-		if (main()->USE_SYSTEM_CACHE && $cache_refresh) {
-			cache_del('forum_forums');
-			cache_del('forum_home_page_posts');
-			$this->_refresh_board_totals();
-		}
+
+		cache_del('forum_forums');
+		cache_del('forum_home_page_posts');
+		$this->_refresh_board_totals();
 	}
 
 	/**

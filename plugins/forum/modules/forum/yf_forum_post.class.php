@@ -232,7 +232,7 @@ class yf_forum_post {
 		}
 		$as_image = 0;
 		if (module('forum')->SETTINGS['SMILIES_IMAGES']) {
-			$as_image = FORUM_USER_ID && (!module('forum')->USER_SETTINGS['VIEW_IMAGES'] && !module('forum')->SETTINGS['USE_GLOBAL_USERS']) ? 0 : 1;
+			$as_image = 1;
 		}
 		// Process smilies
 		foreach ((array)$this->_smiles_array as $smile_info) {
@@ -555,10 +555,7 @@ class yf_forum_post {
 					'icon_id'	=> intval($_POST['iconid']),
 				), 'id='.intval($topic_info['id']));
 			}
-			// Refresh caches
-			if (main()->USE_SYSTEM_CACHE) {
-				cache_del('forum_home_page_posts');
-			}
+			cache_del('forum_home_page_posts');
 		}
 		// Get post id
 		$POST_ID = $post_info['id'] ? $post_info['id'] : $new_post_id;
