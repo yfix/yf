@@ -63,8 +63,8 @@ class yf_manage_forum_manage_future {
 				'forum_name'	=> _prepare_html($_forum_info['name']),
 				'topic_link'	=> $_topic_info ? './?object='.$_GET['object'].'&action=view_topic&id='.intval($A['topic_id']) : '',
 				'topic_name'	=> $_topic_info ? _prepare_html($_topic_info['name']) : '',
-				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_future_post&id='.intval($A['id'])._add_get(array('id')),
-				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_future_post&id='.intval($A['id'])._add_get(array('id')),
+				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_future_post&id='.intval($A['id']),
+				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_future_post&id='.intval($A['id']),
 			);
 			$items .= tpl()->parse('manage_forum/future_posts_item', $replace2);
 		}
@@ -73,8 +73,8 @@ class yf_manage_forum_manage_future {
 			'pages'				=> $pages,
 			'total'				=> intval($total),
 			'filter'			=> $this->USE_FILTER ? $this->_show_filter('posts') : '',
-			'future_topic_link'	=> './?object='.$_GET['object'].'&action=add_future_topic&id='.$_GET['id']._add_get(array('id')),
-			'mass_delete_action'=> './?object='.$_GET['object'].'&action=delete_future_post&id='.$_GET['id']._add_get(array('id')),
+			'future_topic_link'	=> './?object='.$_GET['object'].'&action=add_future_topic&id='.$_GET['id'],
+			'mass_delete_action'=> './?object='.$_GET['object'].'&action=delete_future_post&id='.$_GET['id'],
 		);
 		return tpl()->parse('manage_forum/future_posts_main', $replace);
 	}
@@ -128,7 +128,7 @@ class yf_manage_forum_manage_future {
 		}
 		$_parents_array = module('forum')->_prepare_parents_for_select();
 		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'error_message'	=> _e(),
 			'name'			=> _prepare_html($_POST['name']),
 			'desc'			=> _prepare_html($_POST['desc']),
@@ -199,26 +199,26 @@ class yf_manage_forum_manage_future {
 					'active'			=> 1,
 				));
 			}
-			return js_redirect('./?object='.$_GET['object'].'&action=view_topic&id='.$_GET['id']._add_get(array('id')));
+			return js_redirect('./?object='.$_GET['object'].'&action=view_topic&id='.$_GET['id']);
 		}
 		if (empty($_POST['date'])) {
 			$_POST['date'] = time() + rand($this->NEXT_DATE_MIN, $this->NEXT_DATE_MAX);
 		}
 		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'error_message'	=> _e(),
 			'cat_name'		=> _prepare_html($cat_name),
 			'forum_name'	=> _prepare_html($forum_name),
 			'topic_name'	=> _prepare_html($topic_name),
-			'cat_link'		=> './?object='.$_GET['object']._add_get(array('id')),
-			'forum_link'	=> './?object='.$_GET['object'].'&action=view_forum&id='.$topic_info['forum']._add_get(array('id')),
-			'topic_link'	=> './?object='.$_GET['object'].'&action=view_topic&id='.$_GET['id']._add_get(array('id')),
+			'cat_link'		=> './?object='.$_GET['object'],
+			'forum_link'	=> './?object='.$_GET['object'].'&action=view_forum&id='.$topic_info['forum'],
+			'topic_link'	=> './?object='.$_GET['object'].'&action=view_topic&id='.$_GET['id'],
 			'subject'		=> 'Re:'._prepare_html($topic_info['name']),
 			'text'			=> _prepare_html($_POST['text']),
 			'users_box'		=> common()->select_box('user_id[]', $_users_array, $_POST['user_id'], false),
 			'date'			=> date('Y-m-d H:i:s', !is_numeric($_POST['date']) ? strtotime($_POST['date']) : $_POST['date']),
 			'time'			=> (!is_numeric($_POST['date']) ? strtotime($_POST['date']) : $_POST['date']),
-			'back'			=> back('./?object='.$_GET['object'].'&action=view_topic&id='.$_GET['id']._add_get(array('id'))),
+			'back'			=> back('./?object='.$_GET['object'].'&action=view_topic&id='.$_GET['id']),
 			'next_date_min'	=> intval($this->NEXT_DATE_MIN),
 			'next_date_max'	=> intval($this->NEXT_DATE_MAX),
 		);
@@ -270,22 +270,22 @@ class yf_manage_forum_manage_future {
 		}
 		$_parents_array = module('forum')->_prepare_parents_for_select();
 		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'is_new_topic'	=> $is_new_topic,
 			'error_message'	=> _e(),
 			'cat_name'		=> _prepare_html($cat_name),
 			'forum_name'	=> _prepare_html($forum_name),
 			'topic_name'	=> _prepare_html($topic_name),
-			'cat_link'		=> './?object='.$_GET['object']._add_get(array('id')),
-			'forum_link'	=> './?object='.$_GET['object'].'&action=view_forum&id='.$topic_info['forum']._add_get(array('id')),
-			'topic_link'	=> !$is_new_topic ? './?object='.$_GET['object'].'&action=view_topic&id='.$_GET['id']._add_get(array('id')) : '',
+			'cat_link'		=> './?object='.$_GET['object'],
+			'forum_link'	=> './?object='.$_GET['object'].'&action=view_forum&id='.$topic_info['forum'],
+			'topic_link'	=> !$is_new_topic ? './?object='.$_GET['object'].'&action=view_topic&id='.$_GET['id'] : '',
 			'name'			=> _prepare_html($post_info['topic_title']),
 			'subject'		=> _prepare_html($post_info['subject']),
 			'text'			=> _prepare_html($post_info['text']),
 			'forum_box'		=> common()->select_box('forum', $_parents_array, $post_info['forum_id'], false),
 			'users_box'		=> common()->select_box('user_id', $_users_array, $post_info['user_id'], false),
 			'date'			=> date('Y-m-d H:i:s', !is_numeric($post_info['date']) ? strtotime($post_info['date']) : $post_info['date']),
-			'back'			=> back('./?object='.$_GET['object'].'&action=show_future_posts'._add_get(array('id'))),
+			'back'			=> back('./?object='.$_GET['object'].'&action=show_future_posts'),
 		);
 		return tpl()->parse($_GET['object'].'/admin/future_edit_post', $replace);
 	}
@@ -350,8 +350,8 @@ class yf_manage_forum_manage_future {
 				'user_name'		=> _prepare_html($A['first_name'].' '.$A['last_name']),
 				'users_array'	=> $users_array,
 				'start_date'	=> _format_date($A['add_date']),
-				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_forum_poster&id='.intval($A['id'])._add_get(array('id')),
-				'stats_link'	=> './?object='.$_GET['object'].'&action=show_poster_stats&id='.intval($A['id'])._add_get(array('id')),
+				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_forum_poster&id='.intval($A['id']),
+				'stats_link'	=> './?object='.$_GET['object'].'&action=show_poster_stats&id='.intval($A['id']),
 				'delete_link'	=> './?object=admin',
 			);
 			$items .= tpl()->parse('manage_forum/forum_posters_item', $replace2);
@@ -456,14 +456,14 @@ class yf_manage_forum_manage_future {
 			'others_themes_length'	=> round($symbols_total ? $others_themes_length / $symbols_total : 0, 2),
 		);
 		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'users_ids'		=> implode(',', $users_ids),
 			'poster_id'		=> intval($poster_info['id']),
 			'poster_name'	=> _prepare_html($poster_info['first_name'].' '.$poster_info['last_name']),
 			'filter'		=> $this->USE_FILTER ? $this->_show_filter('stats') : '',
 			'start_date'	=> _format_date($START_DATE),
 			'work_days'		=> intval($WORK_DAYS),
-			'back'			=> back('./?object='.$_GET['object'].'&action=show_future_posts'._add_get(array('id'))),
+			'back'			=> back('./?object='.$_GET['object'].'&action=show_future_posts'),
 		);
 		foreach ((array)$stats as $k => $v) {
 			$replace[$k] = $v;
@@ -548,11 +548,11 @@ class yf_manage_forum_manage_future {
 			return js_redirect('./?object='.$_GET['object'].'&action=show_forum_posters');
 		}
 		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'users_ids'		=> implode(',', $users_ids),
 			'poster_id'		=> intval($poster_info['id']),
 			'poster_name'	=> _prepare_html($poster_info['first_name'].' '.$poster_info['last_name']),
-			'back'			=> back('./?object='.$_GET['object'].'&action=show_forum_posters'._add_get(array('id'))),
+			'back'			=> back('./?object='.$_GET['object'].'&action=show_forum_posters'),
 		);
 		return tpl()->parse('manage_forum/edit_forum_poster', $replace);
 	}

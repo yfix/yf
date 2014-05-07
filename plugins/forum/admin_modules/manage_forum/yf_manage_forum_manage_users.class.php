@@ -34,8 +34,8 @@ class yf_manage_forum_manage_users {
 				'group_name'	=> _prepare_html($group_name),
 				'num_posts'		=> intval($_info['user_posts']),
 				'last_visit'	=> _format_date($_info['last_visit']),
-				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_user&id='.intval($_id)._add_get(array('id')),
-				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_user&id='.intval($_id)._add_get(array('id')),
+				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_user&id='.intval($_id),
+				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_user&id='.intval($_id),
 			);
 		}
 		$replace = array(
@@ -65,7 +65,7 @@ class yf_manage_forum_manage_users {
 			}
 			if (!common()->_error_exists()) {
 				db()->UPDATE('forum_users', array('group' => intval($_POST['group'])), 'id='.intval($_GET['id']));
-				return js_redirect('./?object='.$_GET['object'].'&action=manage_users'._add_get(array('id')));
+				return js_redirect('./?object='.$_GET['object'].'&action=manage_users');
 			}
 		}
 		$DATA = $forum_user_info;
@@ -80,8 +80,8 @@ class yf_manage_forum_manage_users {
 		}
 		$replace = array(
 			'is_for_edit'	=> 1,
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('id')),
-			'back_link'		=> './?object='.$_GET['object'].'&action=manage_users'._add_get(array('id')),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'back_link'		=> './?object='.$_GET['object'].'&action=manage_users',
 			'error_message'	=> _e(),
 			'user_id'		=> intval($_GET['id']),
 			'user_name'		=> _prepare_html(strlen($forum_user_info['name']) ? $forum_user_info['name'] : _display_name($user_info)),
@@ -107,16 +107,16 @@ class yf_manage_forum_manage_users {
 				'is_admin'		=> intval((bool)$_group_info['is_admin']),
 				'is_mod'		=> intval((bool)$_group_info['is_moderator']),
 				'num_users'		=> intval($users_by_groups[$_group_id]),
-				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_group&id='.intval($_group_id)._add_get(array('id')),
-				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_group&id='.intval($_group_id)._add_get(array('id')),
-				'clone_link'	=> './?object='.$_GET['object'].'&action=clone_group&id='.intval($_group_id)._add_get(array('id')),
+				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_group&id='.intval($_group_id),
+				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_group&id='.intval($_group_id),
+				'clone_link'	=> './?object='.$_GET['object'].'&action=clone_group&id='.intval($_group_id),
 			);
 			$items .= tpl()->parse($_GET['object'].'/admin/manage_groups_item', $replace2);
 		}
 		$replace = array(
 			'items'		=> $items,
 			'total'		=> count(module('forum')->_forum_groups),
-			'add_link'	=> './?object='.$_GET['object'].'&action=add_group'._add_get(array('id')),
+			'add_link'	=> './?object='.$_GET['object'].'&action=add_group',
 		);
 		$body = tpl()->parse($_GET['object'].'/admin/manage_groups_main', $replace);
 		return module('forum')->_show_main_tpl($body);
@@ -145,7 +145,7 @@ class yf_manage_forum_manage_users {
 				}
 				db()->UPDATE('forum_groups', $sql_array, 'id='.intval($_GET['id']));
 				cache_del('forum_groups');
-				return js_redirect('./?object='.$_GET['object'].'&action=manage_groups'._add_get(array('id')));
+				return js_redirect('./?object='.$_GET['object'].'&action=manage_groups');
 			}
 		}
 		$DATA = $group_info;
@@ -162,8 +162,8 @@ class yf_manage_forum_manage_users {
 		}
 		$replace = array(
 			'is_for_edit'	=> 1,
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('id')),
-			'back_link'		=> './?object='.$_GET['object'].'&action=manage_groups'._add_get(array('id')),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'back_link'		=> './?object='.$_GET['object'].'&action=manage_groups',
 			'error_message'	=> _e(),
 			'title'			=> _prepare_html($DATA['title']),
 			'group_triggers'=> $group_triggers,
@@ -190,7 +190,7 @@ class yf_manage_forum_manage_users {
 				}
 				db()->INSERT('forum_groups', $sql_array);
 				cache_del('forum_groups');
-				return js_redirect('./?object='.$_GET['object'].'&action=manage_groups'._add_get(array('id')));
+				return js_redirect('./?object='.$_GET['object'].'&action=manage_groups');
 			}
 		}
 		$DATA = $_POST;
@@ -202,8 +202,8 @@ class yf_manage_forum_manage_users {
 		}
 		$replace = array(
 			'is_for_edit'	=> 0,
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action']._add_get(array('id')),
-			'back_link'		=> './?object='.$_GET['object'].'&action=manage_groups'._add_get(array('id')),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
+			'back_link'		=> './?object='.$_GET['object'].'&action=manage_groups',
 			'error_message'	=> _e(),
 			'title'			=> _prepare_html($DATA['title']),
 			'group_triggers'=> $group_triggers,
@@ -221,7 +221,7 @@ class yf_manage_forum_manage_users {
 		}
 		db()->query('DELETE FROM '.db('forum_groups').' WHERE id='.intval($_GET['id']));
 		cache_del('forum_groups');
-		return js_redirect('./?object='.$_GET['object'].'&action=manage_groups'._add_get(array('id')));
+		return js_redirect('./?object='.$_GET['object'].'&action=manage_groups');
 	}
 
 	/**
@@ -239,7 +239,7 @@ class yf_manage_forum_manage_users {
 		$NEW_GROUP_ID = db()->INSERT_ID();
 
 		cache_del('forum_groups');
-		return js_redirect('./?object='.$_GET['object'].'&action=manage_groups'._add_get(array('id')));
+		return js_redirect('./?object='.$_GET['object'].'&action=manage_groups');
 	}
 
 	/**
@@ -251,7 +251,7 @@ class yf_manage_forum_manage_users {
 			foreach (explode(',', $_mod_info['forums_list']) as $_forum_id) {
 				$forums_array[$_forum_id] = array(
 					'name'	=> _prepare_html(module('forum')->_forums_array[$_forum_id]['name']),
-					'link'	=> './?object='.$_GET['object'].'&action=view_forum&id='.intval($_forum_id)._add_get(array('id')),
+					'link'	=> './?object='.$_GET['object'].'&action=view_forum&id='.intval($_forum_id),
 				);
 			}
 			$replace2 = array(
@@ -260,15 +260,15 @@ class yf_manage_forum_manage_users {
 				'user_name'		=> _prepare_html($_mod_info['member_name']),
 				'profile_link'	=> module('forum')->_user_profile_link(array('user_id' => $_mod_info['member_id'], 'user_name' => $_mod_info['member_name'])),
 				'forums_array'	=> $forums_array,
-				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_moderator&id='.intval($_mod_id)._add_get(array('id')),
-				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_moderator&id='.intval($_mod_id)._add_get(array('id')),
+				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_moderator&id='.intval($_mod_id),
+				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_moderator&id='.intval($_mod_id),
 			);
 			$items .= tpl()->parse($_GET['object'].'/admin/manage_mods_item', $replace2);
 		}
 		$replace = array(
 			'items'		=> $items,
 			'total'		=> count(module('forum')->_forum_moderators),
-			'add_link'	=> './?object='.$_GET['object'].'&action=add_moderator'._add_get(array('id')),
+			'add_link'	=> './?object='.$_GET['object'].'&action=add_moderator',
 		);
 		$body = tpl()->parse($_GET['object'].'/admin/manage_mods_main', $replace);
 		return module('forum')->_show_main_tpl($body);
@@ -324,7 +324,7 @@ class yf_manage_forum_manage_users {
 					db()->UPDATE('forum_users', array('group' => 2), 'id='.intval($mod_info['member_id']));
 				}
 				cache_del('forum_moderators');
-				return js_redirect('./?object='.$_GET['object'].'&action=manage_moderators'._add_get(array('id')));
+				return js_redirect('./?object='.$_GET['object'].'&action=manage_moderators');
 			}
 		}
 		$DATA = $mod_info;
@@ -346,8 +346,8 @@ class yf_manage_forum_manage_users {
 		}
 		$replace = array(
 			'is_for_edit'		=> 1,
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('id')),
-			'back_link'			=> './?object='.$_GET['object'].'&action=manage_moderators'._add_get(array('id')),
+			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'back_link'			=> './?object='.$_GET['object'].'&action=manage_moderators',
 			'error_message'		=> _e(),
 			'user_id'			=> intval($DATA['member_id']),
 			'profile_link'		=> module('forum')->_user_profile_link(array('user_id' => $DATA['member_id'], 'user_name' => $DATA['member_name'])),
@@ -444,7 +444,7 @@ class yf_manage_forum_manage_users {
 					db()->UPDATE('forum_users', array('group' => 2), 'id='.intval($mod_info['member_id']));
 				}
 				cache_del('forum_moderators');
-				return js_redirect('./?object='.$_GET['object'].'&action=manage_moderators'._add_get(array('id')));
+				return js_redirect('./?object='.$_GET['object'].'&action=manage_moderators');
 			}
 		}
 		$DATA = $def_mod_rights;
@@ -466,8 +466,8 @@ class yf_manage_forum_manage_users {
 		}
 		$replace = array(
 			'is_for_edit'		=> 0,
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action']._add_get(array('id')),
-			'back_link'			=> './?object='.$_GET['object'].'&action=manage_moderators'._add_get(array('id')),
+			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
+			'back_link'			=> './?object='.$_GET['object'].'&action=manage_moderators',
 			'error_message'		=> _e(),
 			'user_id'			=> intval($DATA['member_id']),
 			'forums_list'		=> $DATA['forums_list'],
@@ -487,6 +487,6 @@ class yf_manage_forum_manage_users {
 		}
 		db()->query('DELETE FROM '.db('forum_moderators').' WHERE id='.intval($_GET['id']));
 		cache_del('forum_moderators');
-		return js_redirect('./?object='.$_GET['object'].'&action=manage_moderators'._add_get(array('id')));
+		return js_redirect('./?object='.$_GET['object'].'&action=manage_moderators');
 	}
 }

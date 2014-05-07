@@ -30,7 +30,7 @@ class yf_manage_forum_manage_main {
 		}
 		$replace = array(
 			'header_text'	=> t('edit_category'),
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'name'			=> stripslashes($cat_info['name']),
 			'display_order'	=> intval($cat_info['order']),
 			'description'	=> stripslashes($cat_info['desc']),
@@ -40,28 +40,22 @@ class yf_manage_forum_manage_main {
 		return tpl()->parse('manage_forum/category_form', $replace);
 	}
 
-	// Admin: add category
+	/**
+	*/
 	function _add_category () {
-		if (main()->is_post()) {
-			db()->insert_safe('forum_categories', array(
-				'name'	=> $_POST['name'],
-				'desc'	=> $_POST['description'],
-				'status'=> $_POST['activity'],
-				'order'	=> $_POST['display_order'],
-			));
-			cache_del('forum_categories');
-			return js_redirect('./?object='.$_GET['object']);
-		}
-		$replace = array(
-			'header_text'	=> t('add_category'),
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action']._add_get(),
-			'name'			=> '',
-			'display_order'	=> '0',
-			'description'	=> '',
-			'activity'		=> common()->radio_box('activity', module('forum')->_active_select, 'a'),
-			'back'			=> back('./?object='.$_GET['object']),
-		);
-		return tpl()->parse('manage_forum/category_form', $replace);
+		return form((array)$_POST)
+			->text('name')
+			->textarea('desc', 'Description')
+			->number('order')
+			->active_box('status')
+			->validate(array(
+				'name'	=> 'trim|required',
+			))
+			->db_insert_if_ok('forum_categories', array('name','desc','order','status'))
+			->on_after_update(function(){
+				cache_del('forum_categories');
+			})
+			->save();
 	}
 
 	// Delete category
@@ -158,7 +152,7 @@ class yf_manage_forum_manage_main {
 		$_parents_array = module('forum')->_prepare_parents_for_select($_GET['id']);
 		$replace = array(
 			'header_text'		=> t('edit_forum'),
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
+			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'name'				=> stripslashes($forum_info['name']),
 			'category_box'		=> common()->select_box('category',	$categories,		$forum_info['category'], false),
 			'parent_box'		=> common()->select_box('forum',		$_parents_array,	$forum_info['parent'] ? $forum_info['parent'] : 'c_'.$forum_info['category'], false),
@@ -208,7 +202,7 @@ class yf_manage_forum_manage_main {
 		}
 		$replace = array(
 			'header_text'		=> t('add_forum'),
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action']._add_get(),
+			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
 			'name'				=> '',
 			'category_box'		=> common()->select_box('category',	$categories,	$_GET['id'], false),
 			'parent_box'		=> common()->select_box('forum',		$_parents_array,'c_'.$_GET['id'], false),
@@ -309,7 +303,7 @@ class yf_manage_forum_manage_main {
 		list($text) = db()->query_fetch('SELECT text AS `0` FROM '.db('forum_posts').' WHERE id='.$topic_info['first_post_id']);
 		$replace = array(
 			'header_text'	=> t('edit_topic'),
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
+			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'name'			=> stripslashes($topic_info['name']),
 			'text'			=> stripslashes($text),
 			'forum'			=> common()->select_box('forum', $forums_with_cats, $topic_info['forum'], false),

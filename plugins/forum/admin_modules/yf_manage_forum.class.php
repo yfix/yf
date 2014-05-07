@@ -128,15 +128,13 @@ class yf_manage_forum {
 		if (!strlen($this->salt)) {
 			$this->salt = substr(md5($_SERVER['HTTP_HOST'].'123456'), 0, 8);
 		}
-		$this->_forum_cats_array	= main()->get_data('forum_categories');
-		$this->_forums_array		= main()->get_data('forum_forums');
-		$this->_forum_groups		= main()->get_data('forum_groups');
-		$this->_forum_moderators	= main()->get_data('forum_moderators');
+		$this->_forum_cats_array	= (array)main()->get_data('forum_categories');
+		$this->_forums_array		= (array)main()->get_data('forum_forums');
+		$this->_forum_groups		= (array)main()->get_data('forum_groups');
+		$this->_forum_moderators	= (array)main()->get_data('forum_moderators');
 		$this->_verify_session_vars();
 		if ($this->BB_CODE) {
 			$this->BB_OBJ = _class('bb_codes');
-		}
-		if ($this->BB_CODE && in_array($_GET['action'], array('view_topic'))) {
 			$this->smiles = main()->get_data('smilies');
 		}
 		if ($this->SHOW_USER_RANKS && in_array($_GET['action'], array('view_topic'))) {
@@ -182,12 +180,11 @@ class yf_manage_forum {
 				$body = $this->_show_category_contents($cat_info['id']);
 			}
 		} else {
-			if (count($this->_forum_cats_array)) {
-				foreach ((array)$this->_forum_cats_array as $_cat_info) {
-					$body .= $this->_show_category_contents($_cat_info['id']);
+			foreach ((array)$this->_forum_cats_array as $_cat_info) {
+				if (!$_cat_info) {
+					continue;
 				}
-			} else {
-				$body = $this->_show_error(t('no_categories'));
+				$body .= $this->_show_category_contents($_cat_info['id']);
 			}
 		}
 		$body .= tpl()->parse('manage_forum/button_add_category');
@@ -209,7 +206,7 @@ class yf_manage_forum {
 		$cat_details = $this->_forum_cats_array[$cat_id];
 		$replace = array(
 			'cat_name'			=> $this->_forum_cats_array[$cat_id]['name'],
-			'cat_link'			=> './?object='.$_GET['object'].'&id='.$cat_id._add_get(array('id')),
+			'cat_link'			=> './?object='.$_GET['object'].'&id='.$cat_id,
 			'forums'			=> $forums,
 			'activity'			=> $this->_active_select[$cat_details['status']],
 			'is_active'			=> $cat_details['status'] == 'a' ? 1 : 0,
@@ -271,12 +268,12 @@ class yf_manage_forum {
 			'items'				=> $items,
 			'version'			=> $this->VERSION,
 			'totals'			=> '',
-			'manage_groups_link'=> './?object='.$_GET['object'].'&action=manage_groups'._add_get(array('id')),
-			'manage_mods_link'	=> './?object='.$_GET['object'].'&action=manage_moderators'._add_get(array('id')),
-			'forum_users_link'	=> './?object='.$_GET['object'].'&action=manage_users'._add_get(array('id')),
-			'forum_posters_link'=> './?object='.$_GET['object'].'&action=show_forum_posters'._add_get(array('id')),
-			'future_posts_link'	=> './?object='.$_GET['object'].'&action=show_future_posts'._add_get(array('id')),
-			'sync_board_link'	=> FORUM_IS_ADMIN == 1 ? './?object='.$_GET['object'].'&action=sync_board'._add_get(array('id')) : '',
+			'manage_groups_link'=> './?object='.$_GET['object'].'&action=manage_groups',
+			'manage_mods_link'	=> './?object='.$_GET['object'].'&action=manage_moderators',
+			'forum_users_link'	=> './?object='.$_GET['object'].'&action=manage_users',
+			'forum_posters_link'=> './?object='.$_GET['object'].'&action=show_forum_posters',
+			'future_posts_link'	=> './?object='.$_GET['object'].'&action=show_future_posts',
+			'sync_board_link'	=> FORUM_IS_ADMIN == 1 ? './?object='.$_GET['object'].'&action=sync_board' : '',
 		);
 		return tpl()->parse('forum/main', $replace);
 	}
@@ -327,8 +324,8 @@ class yf_manage_forum {
 					'profile_link'	=> $this->_user_profile_link($post_info),
 					'time'			=> date($this->format['time'], $post_info['created']),
 					'date'			=> date($this->format['date'], $post_info['created']),
-					'topic'			=> '<a href="./?object='.$_GET['object'].'&action=view_topic&id='.$post_info['topic']._add_get(array('id')).'">'.(_substr($post_info['subject'], 0, 33).'...').'</a>'.PHP_EOL,
-					'post'			=> '<a href="./?object='.$_GET['object'].'&action=view_topic&id='.$post_info['topic']._add_get(array('id')).'">'.(_substr($post_info['subject'], 0, 33).'...').'</a>'.PHP_EOL,
+					'topic'			=> '<a href="./?object='.$_GET['object'].'&action=view_topic&id='.$post_info['topic'].'">'.(_substr($post_info['subject'], 0, 33).'...').'</a>'.PHP_EOL,
+					'post'			=> '<a href="./?object='.$_GET['object'].'&action=view_topic&id='.$post_info['topic'].'">'.(_substr($post_info['subject'], 0, 33).'...').'</a>'.PHP_EOL,
 				);
 				$this->last_posts[$post_info['id']] = tpl()->parse('manage_forum/last_post_'.$type, $replace);
 			}
@@ -518,175 +515,175 @@ class yf_manage_forum {
 	* Admin: edit category
 	*/
 	function edit_category () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_edit_category();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_edit_category();
 	}
 
 	/**
 	* Admin: add category
 	*/
 	function add_category () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_add_category();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_add_category();
 	}
 
 	/**
 	* Delete category
 	*/
 	function delete_category () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_delete_category();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_delete_category();
 	}
 
 	/**
 	* Admin: edit forum
 	*/
 	function edit_forum () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_edit_forum();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_edit_forum();
 	}
 
 	/**
 	* Admin: add forum
 	*/
 	function add_forum () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_add_forum();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_add_forum();
 	}
 
 	/**
 	* Admin: delete forum
 	*/
 	function delete_forum () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_delete_forum();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_delete_forum();
 	}
 
 	/**
 	* Admin: edit topic
 	*/
 	function edit_topic () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_edit_topic();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_edit_topic();
 	}
 
 	/**
 	* Admin: delete topic
 	*/
 	function delete_topic () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_delete_topic();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_delete_topic();
 	}
 
 	/**
 	* Admin: edit post
 	*/
 	function edit_post () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_edit_post();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_edit_post();
 	}
 
 	/**
 	* Admin: delete post
 	*/
 	function delete_post () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_delete_post();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_delete_post();
 	}
 
 	/**
 	* Admin: manage users
 	*/
 	function manage_users () {
-		return _class('forum_manage_users', 'admin_modules/manage_forum/')->_manage_users();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_manage_users();
 	}
 
 	/**
 	* Admin: edit user
 	*/
 	function edit_user () {
-		return _class('forum_manage_users', 'admin_modules/manage_forum/')->_edit_user();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_edit_user();
 	}
 
 	/**
 	* Admin: manage group
 	*/
 	function manage_groups () {
-		return _class('forum_manage_users', 'admin_modules/manage_forum/')->_manage_groups();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_manage_groups();
 	}
 
 	/**
 	* Admin: edit group
 	*/
 	function edit_group () {
-		return _class('forum_manage_users', 'admin_modules/manage_forum/')->_edit_group();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_edit_group();
 	}
 
 	/**
 	* Admin: add group
 	*/
 	function add_group () {
-		return _class('forum_manage_users', 'admin_modules/manage_forum/')->_add_group();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_add_group();
 	}
 
 	/**
 	* Admin: delete group
 	*/
 	function delete_group () {
-		return _class('forum_manage_users', 'admin_modules/manage_forum/')->_delete_group();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_delete_group();
 	}
 
 	/**
 	* Admin: clone group
 	*/
 	function clone_group () {
-		return _class('forum_manage_users', 'admin_modules/manage_forum/')->_clone_group();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_clone_group();
 	}
 
 	/**
 	* Admin: manage moderators
 	*/
 	function manage_moderators () {
-		return _class('forum_manage_users', 'admin_modules/manage_forum/')->_manage_moderators();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_manage_moderators();
 	}
 
 	/**
 	* Admin: edit moderator
 	*/
 	function edit_moderator () {
-		return _class('forum_manage_users', 'admin_modules/manage_forum/')->_edit_moderator();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_edit_moderator();
 	}
 
 	/**
 	* Admin: add moderator
 	*/
 	function add_moderator () {
-		return _class('forum_manage_users', 'admin_modules/manage_forum/')->_add_moderator();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_add_moderator();
 	}
 
 	/**
 	* Admin: delete moderator
 	*/
 	function delete_moderator () {
-		return _class('forum_manage_users', 'admin_modules/manage_forum/')->_delete_moderator();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_delete_moderator();
 	}
 
 	/**
 	* Change activity status
 	*/
 	function change_category_activity () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_change_category_activity();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_change_category_activity();
 	}
 
 	/**
 	* Change activity status
 	*/
 	function change_forum_activity () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_change_forum_activity();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_change_forum_activity();
 	}
 
 	/**
 	* Change activity status
 	*/
 	function change_topic_activity () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_change_topic_activity();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_change_topic_activity();
 	}
 
 	/**
 	* Change activity status
 	*/
 	function change_post_activity () {
-		return _class('forum_manage_main', 'admin_modules/manage_forum/')->_change_post_activity();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_change_post_activity();
 	}
 
 	/**
@@ -722,67 +719,67 @@ class yf_manage_forum {
 	/**
 	*/
 	function show_future_posts() {
-		return _class('forum_manage_future', 'admin_modules/manage_forum/')->_show_future_posts();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_show_future_posts();
 	}
 
 	/**
 	*/
 	function add_future_topic() {
-		return _class('forum_manage_future', 'admin_modules/manage_forum/')->_add_topic();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_add_topic();
 	}
 
 	/**
 	*/
 	function add_future_post() {
-		return _class('forum_manage_future', 'admin_modules/manage_forum/')->_add_post();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_add_post();
 	}
 
 	/**
 	*/
 	function edit_future_post() {
-		return _class('forum_manage_future', 'admin_modules/manage_forum/')->_edit_future_post();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_edit_future_post();
 	}
 
 	/**
 	*/
 	function delete_future_post() {
-		return _class('forum_manage_future', 'admin_modules/manage_forum/')->_delete_future_post();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_delete_future_post();
 	}
 
 	/**
 	*/
 	function show_forum_posters() {
-		return _class('forum_manage_future', 'admin_modules/manage_forum/')->_show_posters();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_show_posters();
 	}
 
 	/**
 	*/
 	function edit_forum_poster() {
-		return _class('forum_manage_future', 'admin_modules/manage_forum/')->_edit_poster();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_edit_poster();
 	}
 
 	/**
 	*/
 	function show_poster_stats() {
-		return _class('forum_manage_future', 'admin_modules/manage_forum/')->_show_poster_stats();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_show_poster_stats();
 	}
 
 	/**
 	*/
 	function future_save_filter() {
-		return _class('forum_manage_future', 'admin_modules/manage_forum/')->_save_filter();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_save_filter();
 	}
 
 	/**
 	*/
 	function future_clear_filter() {
-		return _class('forum_manage_future', 'admin_modules/manage_forum/')->_clear_filter();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_clear_filter();
 	}
 
 	/**
 	*/
 	function _future_posts_cron_job() {
-		return _class('forum_manage_future', 'admin_modules/manage_forum/')->_do_cron_job();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_do_cron_job();
 	}
 
 	/**
