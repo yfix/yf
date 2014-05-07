@@ -190,7 +190,7 @@ class yf_manage_forum {
 				$body = $this->_show_error(t('no_categories'));
 			}
 		}
-		$body .= tpl()->parse('forum/admin/button_add_category');
+		$body .= tpl()->parse('manage_forum/button_add_category');
 		return $this->_show_main_tpl($body);
 	}
 
@@ -219,7 +219,7 @@ class yf_manage_forum {
 			'active_link'		=> './?object='.$_GET['object'].'&action=change_category_activity&id='.$cat_id,
 			'future_topic_link'	=> module('forum')->ALLOW_FUTURE_POSTS ? './?object='.$_GET['object'].'&action=add_future_topic&id=c_'.$cat_id : '',
 		);
-		return tpl()->parse('forum/admin/category_main', $replace);
+		return tpl()->parse('manage_forum/category_main', $replace);
 	}
 
 	/**

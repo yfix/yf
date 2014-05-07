@@ -66,7 +66,7 @@ class yf_manage_forum_manage_future {
 				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_future_post&id='.intval($A['id'])._add_get(array('id')),
 				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_future_post&id='.intval($A['id'])._add_get(array('id')),
 			);
-			$items .= tpl()->parse('manage_forum/admin/future_posts_item', $replace2);
+			$items .= tpl()->parse('manage_forum/future_posts_item', $replace2);
 		}
 		$replace = array(
 			'items'				=> $items,
@@ -76,7 +76,7 @@ class yf_manage_forum_manage_future {
 			'future_topic_link'	=> './?object='.$_GET['object'].'&action=add_future_topic&id='.$_GET['id']._add_get(array('id')),
 			'mass_delete_action'=> './?object='.$_GET['object'].'&action=delete_future_post&id='.$_GET['id']._add_get(array('id')),
 		);
-		return tpl()->parse('manage_forum/admin/future_posts_main', $replace);
+		return tpl()->parse('manage_forum/future_posts_main', $replace);
 	}
 
 	/**
@@ -140,7 +140,7 @@ class yf_manage_forum_manage_future {
 			'next_date_min'	=> intval($this->NEXT_DATE_MIN),
 			'next_date_max'	=> intval($this->NEXT_DATE_MAX),
 		);
-		return tpl()->parse('manage_forum/admin/future_topic_form', $replace);
+		return tpl()->parse('manage_forum/future_topic_form', $replace);
 	}
 
 	/**
@@ -222,7 +222,7 @@ class yf_manage_forum_manage_future {
 			'next_date_min'	=> intval($this->NEXT_DATE_MIN),
 			'next_date_max'	=> intval($this->NEXT_DATE_MAX),
 		);
-		return tpl()->parse('manage_forum/admin/future_post_form', $replace);
+		return tpl()->parse('manage_forum/future_post_form', $replace);
 	}
 
 	/**
@@ -354,7 +354,7 @@ class yf_manage_forum_manage_future {
 				'stats_link'	=> './?object='.$_GET['object'].'&action=show_poster_stats&id='.intval($A['id'])._add_get(array('id')),
 				'delete_link'	=> './?object=admin',
 			);
-			$items .= tpl()->parse('manage_forum/admin/forum_posters_item', $replace2);
+			$items .= tpl()->parse('manage_forum/forum_posters_item', $replace2);
 		}
 		$replace = array(
 			'add_link'	=> './?object=admin&action=add',
@@ -363,7 +363,7 @@ class yf_manage_forum_manage_future {
 			'total'		=> intval($total),
 			'filter'	=> $this->USE_FILTER ? $this->_show_filter('stats') : '',
 		);
-		return tpl()->parse('manage_forum/admin/forum_posters_main', $replace);
+		return tpl()->parse('manage_forum/forum_posters_main', $replace);
 	}
 
 	/**
@@ -468,7 +468,7 @@ class yf_manage_forum_manage_future {
 		foreach ((array)$stats as $k => $v) {
 			$replace[$k] = $v;
 		}
-		return tpl()->parse('manage_forum/admin/forum_poster_stats', $replace);
+		return tpl()->parse('manage_forum/forum_poster_stats', $replace);
 	}
 
 	/**
@@ -554,7 +554,7 @@ class yf_manage_forum_manage_future {
 			'poster_name'	=> _prepare_html($poster_info['first_name'].' '.$poster_info['last_name']),
 			'back'			=> back('./?object='.$_GET['object'].'&action=show_forum_posters'._add_get(array('id'))),
 		);
-		return tpl()->parse('manage_forum/admin/edit_forum_poster', $replace);
+		return tpl()->parse('manage_forum/edit_forum_poster', $replace);
 	}
 
 	/**

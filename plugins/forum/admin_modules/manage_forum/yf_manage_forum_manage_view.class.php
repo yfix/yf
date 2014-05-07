@@ -59,7 +59,7 @@ class yf_manage_forum_manage_view {
 			'is_closed'		=> intval($forum_info['options'] == '2' ? 1 : 0),
 			'active_link'	=> './?object='.$_GET['object'].'&action=change_forum_activity&id='.$forum_info['id'],
 		);
-		return tpl()->parse('manage_forum/admin/forum_item', $replace);
+		return tpl()->parse('manage_forum/forum_item', $replace);
 	}
 
 	// Main function
@@ -107,7 +107,7 @@ class yf_manage_forum_manage_view {
 				'ban_popup_link'=> module('manage_auto_ban')->_popup_link(array('user_id' => intval($_topic_info['user_id']))),
 				'active_link'	=> './?object='.$_GET['object'].'&action=change_topic_activity&id='.$_topic_info['id'],
 			);
-			$topics .= tpl()->parse('manage_forum/admin/topic_item', $replace);
+			$topics .= tpl()->parse('manage_forum/topic_item', $replace);
 		}
 		$sub_forums = array();
 		module('forum')->_create_last_posts('forum');
@@ -141,7 +141,7 @@ class yf_manage_forum_manage_view {
 			'sub_forums_items'	=> $sub_forums_items,
 			'active_link'		=> './?object='.$_GET['object'].'&action=change_forum_activity&id='.$forum_info['id'],
 		);
-		return module('forum')->_show_main_tpl(tpl()->parse('manage_forum/admin/view_forum', $replace_f));
+		return module('forum')->_show_main_tpl(tpl()->parse('manage_forum/view_forum', $replace_f));
 	}
 
 	function _view_topic () {
@@ -211,7 +211,7 @@ class yf_manage_forum_manage_view {
 				'ban_popup_link'=> module('manage_auto_ban')->_popup_link(array('user_id' => intval($_post_info['user_id']))),
 				'active_link'	=> './?object='.$_GET['object'].'&action=change_post_activity&id='.$_post_info['id'],
 			);
-			$posts .= tpl()->parse('manage_forum/admin/post_item', $replace);
+			$posts .= tpl()->parse('manage_forum/post_item', $replace);
 		}
 		$parent_forums = array();
 		foreach ((array)module('forum')->_get_parent_forums_ids($topic_info['forum']) as $_parent_id) {
@@ -241,7 +241,7 @@ class yf_manage_forum_manage_view {
 			'parent_forums'		=> !empty($parent_forums) ? $parent_forums : '',
 			'active_link'		=> './?object='.$_GET['object'].'&action=change_topic_activity&id='.$topic_info['id'],
 		);
-		return module('forum')->_show_main_tpl(tpl()->parse('manage_forum/admin/view_topic', $replace_t));
+		return module('forum')->_show_main_tpl(tpl()->parse('manage_forum/view_topic', $replace_t));
 	}
 
 	// New topic creation form
