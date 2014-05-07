@@ -2,25 +2,7 @@
 $data = array (
 	'fields' => 
 	array (
-		'key' => 
-		array (
-			'type' => 'varchar',
-			'length' => '64',
-			'attrib' => NULL,
-			'not_null' => 1,
-			'default' => '',
-			'auto_inc' => 0,
-		),
-		'value' => 
-		array (
-			'type' => 'longtext',
-			'length' => '',
-			'attrib' => NULL,
-			'not_null' => 1,
-			'default' => '',
-			'auto_inc' => 0,
-		),
-		'time' => 
+		'user_id' => 
 		array (
 			'type' => 'int',
 			'length' => '10',
@@ -29,14 +11,23 @@ $data = array (
 			'default' => '0',
 			'auto_inc' => 0,
 		),
+		'data' => 
+		array (
+			'type' => 'text',
+			'length' => '',
+			'attrib' => NULL,
+			'not_null' => 1,
+			'default' => '',
+			'auto_inc' => 0,
+		),
 	),
 	'keys' => 
 	array (
-		'key' => 
+		'user_id' => 
 		array (
 			'fields' => 
 			array (
-				0 => 'key',
+				0 => 'user_id',
 			),
 			'type' => 'primary',
 		),
