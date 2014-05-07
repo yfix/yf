@@ -837,7 +837,6 @@ class yf_form2 {
 	*/
 	function password($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'password';
-		$extra['prepend'] = '<i class="icon-key"></i>';
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -845,6 +844,7 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'password';
 		}
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="icon-key"></i>';
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
@@ -897,7 +897,6 @@ class yf_form2 {
 	*/
 	function email($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = 'email';
-		$extra['prepend'] = '@';
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -905,6 +904,7 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'email';
 		}
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '@';
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
