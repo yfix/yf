@@ -9,39 +9,25 @@
 */
 class yf_manage_forum_manage_future {
 
-	/** @var bool Filter on/off */
-	public $USE_FILTER		= true;
 	/** @var int Next auto-date lower limit (in seconds) */
 	public $NEXT_DATE_MIN	= 3600;
 	/** @var int Next auto-date higher limit (in seconds) */
 	public $NEXT_DATE_MAX	= 7200;
 
 	/**
-	* Framework constructor
-	*/
-	function _init() {
-		// Prepare filter data
-		if ($this->USE_FILTER) {
-			$this->_prepare_filter_data();
-		}
-	}
-
-	/**
-	* List of future posts
 	*/
 	function _show_future_posts() {
 		if (!in_array($_SESSION['admin_group'], array(1, 6))) {
 			return 'Access denied';
 		}
-		// Get forum posters
 		$Q = db()->query('SELECT * FROM '.db('admin').' /*WHERE `group`=6*/ ORDER BY first_name ASC');
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A['id']] = $A;
-		// Connect pager
+
 		$sql = 'SELECT * FROM '.db('forum_future_posts').' ';
 		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql('posts') : '';
 		$sql .= strlen($filter_sql) ? ' WHERE 1=1 '. $filter_sql : ' ORDER BY date ASC ';
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
-		// Get records
+
 		$Q = db()->query($sql.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
 			$future_posts[$A['id']]		= $A;
@@ -58,7 +44,6 @@ class yf_manage_forum_manage_future {
 			$Q = db()->query('SELECT * FROM '.db('forum_topics').' WHERE id IN('.implode(',', $topics_ids).')');
 			while ($A = db()->fetch_assoc($Q)) $topics_infos[$A['id']] = $A;
 		}
-		// Process records
 		foreach ((array)$future_posts as $A) {
 			$poster_info	= $forum_posters[$A['poster_id']];
 			$user_info		= $users_infos[$A['user_id']];
@@ -83,7 +68,6 @@ class yf_manage_forum_manage_future {
 			);
 			$items .= tpl()->parse('manage_forum/admin/future_posts_item', $replace2);
 		}
-		// Prepare template
 		$replace = array(
 			'items'				=> $items,
 			'pages'				=> $pages,
@@ -110,7 +94,6 @@ class yf_manage_forum_manage_future {
 		if (empty($_users_array)) {
 			return _e('No user accounts specified for you.');
 		}
-		// Save data
 		if (main()->is_post()) {
 			$_POST['user_id'] = intval($_POST['user_id']);
 			if (empty($_POST['user_id']) || !isset($_users_array[$_POST['user_id']])) {
@@ -144,7 +127,6 @@ class yf_manage_forum_manage_future {
 			$_POST['date'] = time() + rand($this->NEXT_DATE_MIN, $this->NEXT_DATE_MAX);
 		}
 		$_parents_array = module('forum')->_prepare_parents_for_select();
-		// Prepare template
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
 			'error_message'	=> _e(),
@@ -187,9 +169,7 @@ class yf_manage_forum_manage_future {
 		$forum_name = module('forum')->_forums_array[$topic_info['forum']]['name'];
 		$topic_name = $topic_info['name'];
 		$cat_name	= $topic_info['category'] ? module('forum')->_forum_cats_array[$topic_info['category']]['name'] : module('forum')->_forum_cats_array[module('forum')->_forums_array[$topic_info['forum']]['category']]['name'];
-		// Save data
 		if (main()->is_post()) {
-			// Process multi-add
 			foreach ((array)$_POST['text'] as $_item_id => $_tmp) {
 				$DATA = array(
 					'user_id'	=> $_POST['user_id'][$_item_id],
@@ -224,7 +204,6 @@ class yf_manage_forum_manage_future {
 		if (empty($_POST['date'])) {
 			$_POST['date'] = time() + rand($this->NEXT_DATE_MIN, $this->NEXT_DATE_MAX);
 		}
-		// Prepare template
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
 			'error_message'	=> _e(),
@@ -247,13 +226,11 @@ class yf_manage_forum_manage_future {
 	}
 
 	/**
-	* Edit future post
 	*/
 	function _edit_future_post() {
 		if (!in_array($_SESSION['admin_group'], array(1, 6))) {
 			return 'Access denied';
 		}
-// TODO: add checking for owner
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
 			$post_info = db()->query_fetch('SELECT * FROM '.db('forum_future_posts').' WHERE id='.intval($_GET['id']));
@@ -261,7 +238,6 @@ class yf_manage_forum_manage_future {
 		if (empty($post_info)) {
 			return 'No such post';
 		}
-		// Get child accouts for the current poster
 		$all_posters_users = main()->get_data('forum_posters_users', 3600);
 		$_users_array = $all_posters_users[$_SESSION['admin_id']];
 		unset($all_posters_users);
@@ -276,10 +252,10 @@ class yf_manage_forum_manage_future {
 			$topic_info = db()->query_fetch('SELECT * FROM '.db('forum_topics').' WHERE id='.$post_info['topic_id'].' LIMIT 1');
 			$topic_name = $topic_info['name'];
 		}
-		// Get forum posters
+
 		$Q = db()->query('SELECT * FROM '.db('admin').' ORDER BY first_name ASC');
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A['id']] = $A;
-		// Do save data
+
 		if (main()->is_post()) {
 			db()->UPDATE('forum_future_posts', array(
 				'forum_id'			=> intval($_POST['forum'] ? $_POST['forum'] : $post_info['forum_id']),
@@ -290,11 +266,9 @@ class yf_manage_forum_manage_future {
 				'text'				=> _es($_POST['text']),
 				'topic_title'		=> _es($_POST['name'] ? $_POST['name'] : $post_info['topic_title']),
 			), 'id='.intval($_GET['id']));
-			// Return user back
 			return js_redirect('./?object='.$_GET['object'].'&action=show_future_posts');
 		}
 		$_parents_array = module('forum')->_prepare_parents_for_select();
-		// Prepare template
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
 			'is_new_topic'	=> $is_new_topic,
@@ -317,29 +291,23 @@ class yf_manage_forum_manage_future {
 	}
 
 	/**
-	* Delete future post
 	*/
 	function _delete_future_post() {
 		if ($_SESSION['admin_group'] != 1) {
 			return 'Access denied';
 		}
-// TODO: add checking for owner
 		$_GET['id'] = intval($_GET['id']);
-		// Mass delete
 		if (isset($_POST['items'])) {
 			$ids_to_delete = array();
-			// Prepare ids to delete
 			foreach ((array)$_POST['items'] as $_cur_id) {
 				if (empty($_cur_id)) {
 					continue;
 				}
 				$ids_to_delete[$_cur_id] = $_cur_id;
 			}
-			// Do delete ids
 			if (!empty($ids_to_delete)) {
 				db()->query('DELETE FROM '.db('forum_future_posts').' WHERE id IN('.implode(',',$ids_to_delete).')');
 			}
-		// Single delete
 		} else {
 			if (!empty($_GET['id'])) {
 				$post_info = db()->query_fetch('SELECT * FROM '.db('forum_future_posts').' WHERE id='.intval($_GET['id']));
@@ -348,7 +316,6 @@ class yf_manage_forum_manage_future {
 				db()->query('DELETE FROM '.db('forum_future_posts').' WHERE id='.intval($_GET['id']));
 			}
 		}
-		// Return user back
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
@@ -358,20 +325,17 @@ class yf_manage_forum_manage_future {
 	}
 
 	/**
-	* Display posters list
 	*/
 	function _show_posters() {
-		// Only for the super-admin
 		if ($_SESSION['admin_group'] != 1) {
 			return 'Access denied';
 		}
 		$POSTER_ID = intval($_GET['id']);
-		// Get forum posters
+
 		$Q = db()->query('SELECT * FROM '.db('admin').' WHERE `group`=6 ORDER BY first_name ASC');
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A['id']] = $A;
-		// Get child accouts for the current poster
+
 		$all_posters_users = main()->get_data('forum_posters_users', 3600);
-		// Process records
 		foreach ((array)$forum_posters as $A) {
 			$users_array = array();
 			foreach ((array)$all_posters_users[$A['id']] as $_user_id => $_user_name) {
@@ -392,7 +356,6 @@ class yf_manage_forum_manage_future {
 			);
 			$items .= tpl()->parse('manage_forum/admin/forum_posters_item', $replace2);
 		}
-		// Prepare template
 		$replace = array(
 			'add_link'	=> './?object=admin&action=add',
 			'items'		=> $items,
@@ -404,47 +367,36 @@ class yf_manage_forum_manage_future {
 	}
 
 	/**
-	* Display poster stats
 	*/
 	function _show_poster_stats() {
-		// Only for the super-admin
 		if ($_SESSION['admin_group'] != 1) {
 			return 'Access denied';
 		}
 		$_GET['id'] = intval($_GET['id']);
 		$POSTER_ID = $_GET['id'];
-		// Get forum posters
+
 		$Q = db()->query('SELECT * FROM '.db('admin').' /*WHERE `group`=6*/ ORDER BY first_name ASC');
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A['id']] = $A;
-		// Check if such admin exists
+
 		$poster_info = $forum_posters[$POSTER_ID];
 		if (!isset($poster_info)) {
 			return 'No such poster';
 		}
-		// Get child accouts for the current poster
 		$all_posters_users = main()->get_data('forum_posters_users', 3600);
 		$users_ids = array();
 		foreach ((array)$all_posters_users[$POSTER_ID] as $_user_id => $_user_name) {
 			$users_ids[$_user_id] = $_user_id;
 		}
 		ksort($users_ids);
-// TODO: connect filter here
+
 		$START_DATE	= $poster_info['add_date'];
 		$WORK_DAYS	= floor((time() - $START_DATE) / 86400);
-		// Get number of posts and themes created by this poster
-		list($themes_total)	= db()->query_fetch(
-			'SELECT COUNT(*) AS `0` FROM '.db('forum_topics').' WHERE auto_poster_id='.intval($POSTER_ID)
-		);
-		list($posts_total)	= db()->query_fetch(
-			'SELECT COUNT(*) AS `0` FROM '.db('forum_posts').' WHERE new_topic != 1 AND auto_poster_id='.intval($POSTER_ID)
-		);
-		// Count number of words and symbols (without quotes)
+		list($themes_total)	= db()->query_fetch('SELECT COUNT(*) AS `0` FROM '.db('forum_topics').' WHERE auto_poster_id='.intval($POSTER_ID));
+		list($posts_total)	= db()->query_fetch('SELECT COUNT(*) AS `0` FROM '.db('forum_posts').' WHERE new_topic != 1 AND auto_poster_id='.intval($POSTER_ID));
 		$words_total	= 0;
 		$symbols_total	= 0;
-		// Get data from db
-		$Q = db()->query(
-			'SELECT text FROM '.db('forum_posts').' WHERE auto_poster_id='.intval($POSTER_ID)
-		);
+
+		$Q = db()->query('SELECT text FROM '.db('forum_posts').' WHERE auto_poster_id='.intval($POSTER_ID));
 		while ($A = db()->fetch_assoc($Q)) {
 			$cur_text = $this->_cleanup_text($A['text']);
 			$_cur_length = strlen($cur_text);
@@ -485,7 +437,6 @@ class yf_manage_forum_manage_future {
 			}
 			$others_themes_length += $_cur_length;
 		}
-		// Gather stats
 		$stats = array(
 			'themes_total'			=> intval($themes_total),
 			'themes_per_month'		=> round($WORK_DAYS ? ($themes_total / $WORK_DAYS * 30) : 0, 2),
@@ -504,7 +455,6 @@ class yf_manage_forum_manage_future {
 			'others_themes_posts'	=> round($posts_total ? $others_themes_posts / $posts_total : 0, 2),
 			'others_themes_length'	=> round($symbols_total ? $others_themes_length / $symbols_total : 0, 2),
 		);
-		// Prepare template
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
 			'users_ids'		=> implode(',', $users_ids),
@@ -522,7 +472,6 @@ class yf_manage_forum_manage_future {
 	}
 
 	/**
-	* 
 	*/
 	function _cleanup_text($cur_text = '') {
 		if (!strlen($cur_text)) {
@@ -535,33 +484,28 @@ class yf_manage_forum_manage_future {
 	}
 
 	/**
-	* Edit current poster
 	*/
 	function _edit_poster() {
-		// Only for the super-admin
 		if ($_SESSION['admin_group'] != 1) {
 			return 'Access denied';
 		}
 		$_GET['id'] = intval($_GET['id']);
 		$POSTER_ID = $_GET['id'];
-		// Get forum posters
+
 		$Q = db()->query('SELECT * FROM '.db('admin').' /*WHERE `group`=6*/ ORDER BY first_name ASC');
 		while ($A = db()->fetch_assoc($Q)) $forum_posters[$A['id']] = $A;
-		// Check if such admin exists
+
 		$poster_info = $forum_posters[$POSTER_ID];
 		if (!isset($poster_info)) {
 			return 'No such poster';
 		}
-		// Get child accouts for the current poster
 		$all_posters_users = main()->get_data('forum_posters_users', 5/* !Do not touch! */);
 		$users_ids = array();
 		foreach ((array)$all_posters_users[$POSTER_ID] as $_user_id => $_user_name) {
 			$users_ids[$_user_id] = $_user_id;
 		}
 		ksort($users_ids);
-		// Save data
 		if (main()->is_post()) {
-			// Cleanup posted ids
 			$new_users_ids = array();
 			foreach (explode(',', $_POST['users_ids']) as $_user_id) {
 				$_user_id = intval($_user_id);
@@ -570,7 +514,6 @@ class yf_manage_forum_manage_future {
 				}
 				$new_users_ids[$_user_id] = $_user_id;
 			}
-			// Get ids to delete poster_id
 			if (!empty($users_ids)) {
 				$ids_to_delete = array();
 				foreach ((array)$users_ids as $_user_id) {
@@ -582,12 +525,10 @@ class yf_manage_forum_manage_future {
 						$ids_to_delete[$_user_id] = $_user_id;
 					}
 				}
-				// Do remove this poster from old records
 				if (!empty($ids_to_delete)) {
 					db()->UPDATE('user', array('poster_id' => 0), 'id IN('.implode(',', $ids_to_delete).')');
 				}
 			}
-			// Get ids to add poster_id
 			if (!empty($new_users_ids)) {
 				$ids_to_add = array();
 				foreach ((array)$new_users_ids as $_user_id) {
@@ -599,19 +540,13 @@ class yf_manage_forum_manage_future {
 						$ids_to_add[$_user_id] = $_user_id;
 					}
 				}
-				// Do add this poster to the selected accounts
 				if (!empty($ids_to_add)) {
 					db()->UPDATE('user', array('poster_id' => $POSTER_ID), 'id IN('.implode(',', $ids_to_add).')');
 				}
 			}
-			// Refresh system cache
-			if (main()->USE_SYSTEM_CACHE)	{
-				cache_del('forum_posters_users');
-			}
-			// Return user back
+			cache_del('forum_posters_users');
 			return js_redirect('./?object='.$_GET['object'].'&action=show_forum_posters');
 		}
-		// Prepare template
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(),
 			'users_ids'		=> implode(',', $users_ids),
@@ -623,18 +558,14 @@ class yf_manage_forum_manage_future {
 	}
 
 	/**
-	* Do cron job for future posts
 	*/
 	function _do_cron_job() {
 		$ids_to_delete = array();
-		// Get future records to be inserted now
 		$Q = db()->query('SELECT * FROM '.db('forum_future_posts').' WHERE date < '.time().' AND active="1" ORDER BY date DESC');
 		while ($A = db()->fetch_assoc($Q)) {
 			$NEW_POST_ID	= 0;
 			$NEW_TOPIC_ID	= 0;
-			// Create topic
 			if ($A['new_topic']) {
-				// Pre-create topic
 				db()->INSERT('forum_topics', array(
 					'forum'				=> $A['forum_id'],
 					'status'			=> 'c',
@@ -643,7 +574,6 @@ class yf_manage_forum_manage_future {
 				if (empty($NEW_TOPIC_ID)) {
 					continue;
 				}
-				// Create new post
 				db()->INSERT('forum_posts', array(
 					'forum'			=> intval($A['forum_id']),
 					'topic'			=> intval($NEW_TOPIC_ID),
@@ -658,11 +588,9 @@ class yf_manage_forum_manage_future {
 				));
 				$NEW_POST_ID = db()->INSERT_ID();
 				if (empty($NEW_POST_ID)) {
-					// Cleanup if failed
 					db()->query('DELETE FROM '.db('forum_topics').' WHERE id='.intval($NEW_TOPIC_ID));
 					continue;
 				}
-				// Update all other info in the created topic
 				db()->UPDATE('forum_topics', array(
 					'forum'				=> intval($A['forum_id']),
 					'auto_poster_id'	=> intval($A['poster_id']),
@@ -678,7 +606,6 @@ class yf_manage_forum_manage_future {
 					'status'			=> 'a',
 					'approved'			=> 1,
 				), 'id='.intval($NEW_TOPIC_ID));
-			// Create new post
 			} else {
 				db()->INSERT('forum_posts', array(
 					'forum'			=> intval($A['forum_id']),
@@ -697,51 +624,40 @@ class yf_manage_forum_manage_future {
 					continue;
 				}
 			}
-			// Store id to delete later
 			$ids_to_delete[$A['id']] = $A['id'];
 		}
-		// Delete future post records
 		if (!empty($ids_to_delete)) {
-			db()->query(
-				'DELETE FROM '.db('forum_future_posts').' WHERE id IN('.implode(',', $ids_to_delete).')'
-			);
+			db()->query('DELETE FROM '.db('forum_future_posts').' WHERE id IN('.implode(',', $ids_to_delete).')');
 			_class('forum_sync', USER_MODULES_DIR.'forum/')->_sync_board(true);
 		}
 	}
 
 	/**
-	* Prepare required data for filter
 	*/
 	function _prepare_filter_data () {
-// TODO
 	}
 
 	/**
-	* Generate filter SQL query
 	*/
 	function _create_filter_sql ($filter_for = 'posts') {
 	}
 
 	/**
-	* Session - based filter
 	*/
 	function _show_filter ($filter_for = 'posts') {
 	}
 
 	/**
-	* Filter save method
 	*/
 	function _save_filter ($silent = false) {
 	}
 
 	/**
-	* Clear filter
 	*/
 	function _clear_filter ($silent = false) {
 	}
 
 	/**
-	* Process custom box
 	*/
 	function _box ($name = '', $selected = '') {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
