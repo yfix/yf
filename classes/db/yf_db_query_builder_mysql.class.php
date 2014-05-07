@@ -36,6 +36,24 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	}
 
 	/**
+	*/
+	function dump_sql () {
+// TODO
+	}
+
+	/**
+	*/
+	function dump_json () {
+// TODO
+	}
+
+	/**
+	*/
+	function dump_php () {
+// TODO
+	}
+
+	/**
 	* Alias
 	*/
 	function sql() {
@@ -111,6 +129,35 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get($sql, $use_cache);
+		}
+		return false;
+	}
+
+	/**
+	*/
+	function delete() {
+// TODO
+	}
+
+	/**
+	*/
+	function insert($data) {
+// TODO
+	}
+
+	/**
+	*/
+	function update($data) {
+// TODO
+	}
+
+	/**
+	* Render SQL and execute db->get_one()
+	*/
+	function get_one($use_cache = true) {
+		$sql = $this->sql();
+		if ($sql) {
+			return $this->db->get_one($sql, $use_cache);
 		}
 		return false;
 	}
