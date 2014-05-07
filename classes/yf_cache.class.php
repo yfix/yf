@@ -272,7 +272,7 @@ class yf_cache {
 					'name'			=> $name,
 					'name_real'		=> $key_name_ns,
 					'driver'		=> $this->DRIVER,
-					'time'			=> microtime(true) - $time_start,
+					'time'			=> round(microtime(true) - $time_start, 5),
 				));
 			}
 		}
