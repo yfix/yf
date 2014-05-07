@@ -205,8 +205,7 @@ class yf_forum_utils {
 			$need_del_post	= $need_del_topic || isset($_POST['delete_post'][$post_info['id']]);
 			// Delete topic if needed
 			if ($need_del_topic) {
-				$FORUM_ADMIN_OBJ = module('forum')->_load_sub_module('forum_admin');
-				$FORUM_ADMIN_OBJ->_topic_delete(true, $post_info['topic']);
+				_class('forum_admin', 'modules/forum/')->_topic_delete(true, $post_info['topic']);
 			// Delete post if needed
 			} elseif ($need_del_post) {
 				module('forum')->delete_post(true, $post_info['id']);
