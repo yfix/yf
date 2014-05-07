@@ -32,11 +32,6 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 
 	/**
 	*/
-	function _init () {
-	}
-
-	/**
-	*/
 	function dump_sql () {
 // TODO
 	}
@@ -44,13 +39,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	*/
 	function dump_json () {
-// TODO
-	}
-
-	/**
-	*/
-	function dump_php () {
-// TODO
+		return json_encode($this->exec());
 	}
 
 	/**
