@@ -181,8 +181,8 @@
 </table>
 </div>
 
+{{--
 <script type="text/javascript">
-<!--
 // JQuery on DOM ready
 /*
 $(function(){
@@ -196,12 +196,11 @@ $(function(){
 	$("a.topic_author").yf_tooltip();
 })
 */
--->
 </script>
+--}}
 
 
 {/if}{{--end of if forum_closed--}}
-
 
 {if("is_admin" eq 1)}
 	<br />

@@ -2,12 +2,12 @@
 
 <div id="forum">
 
-{if("manage_groups_link" ne "")} <a href="{manage_groups_link}" class="btn">Manage Forum Groups</a>{/if}
-{if("manage_mods_link" ne "")} <a href="{manage_mods_link}" class="btn">Manage Moderators</a>{/if}
-{if("sync_board_link" ne "")} <a href="{sync_board_link}" class="btn">Resynchronize Board</a>{/if}
-{if("forum_users_link" ne "")} <a href="{forum_users_link}" class="btn">Forum Users</a>{/if}
-{if("forum_posters_link" ne "")} <a href="{forum_posters_link}" class="btn">Forum Posters</a>{/if}
-{if("future_posts_link" ne "")} <a href="{future_posts_link}" class="btn">Future Posts</a>{/if}
+{if("manage_groups_link" ne "")} <a href="{manage_groups_link}" class="btn btn-mini btn-xs">Manage Forum Groups</a>{/if}
+{if("manage_mods_link" ne "")} <a href="{manage_mods_link}" class="btn btn-mini btn-xs">Manage Moderators</a>{/if}
+{if("sync_board_link" ne "")} <a href="{sync_board_link}" class="btn btn-mini btn-xs">Resynchronize Board</a>{/if}
+{if("forum_users_link" ne "")} <a href="{forum_users_link}" class="btn btn-mini btn-xs">Forum Users</a>{/if}
+{if("forum_posters_link" ne "")} <a href="{forum_posters_link}" class="btn btn-mini btn-xs">Forum Posters</a>{/if}
+{if("future_posts_link" ne "")} <a href="{future_posts_link}" class="btn btn-mini btn-xs">Future Posts</a>{/if}
 
 {items}
 {totals}
@@ -18,11 +18,10 @@
 
 </div>
 
-
+{{--
 <script type="text/javascript">
-<!--
 $(function(){
 	$("a.forum_profile_link").yf_tooltip();
 });
--->
 </script>
+--}}

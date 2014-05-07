@@ -1,3 +1,3 @@
 <?php
 
-$data = db()->get_all('SELECT * FROM '.db('forum_moderators'));
+$data = (array)db()->get_all('SELECT * FROM '.db('forum_moderators'));

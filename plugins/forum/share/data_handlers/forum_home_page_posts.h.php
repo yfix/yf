@@ -1,5 +1,6 @@
 <?php
 
+$data = array();
 $forums_array = main()->get_data('forum_forums');
 foreach ((array)$forums_array as $forum_info) {
 	if (empty($forum_info['last_post_id'])) {
