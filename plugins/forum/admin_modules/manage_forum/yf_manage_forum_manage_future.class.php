@@ -47,7 +47,7 @@ class yf_manage_forum_manage_future {
 		foreach ((array)$future_posts as $A) {
 			$poster_info	= $forum_posters[$A['poster_id']];
 			$user_info		= $users_infos[$A['user_id']];
-			$_forum_info	= module('forum')->_forums_array[$A['forum_id']];
+			$_forum_info	= module('manage_forum')->_forums_array[$A['forum_id']];
 			$_topic_info	= $A['topic_id'] ? $topics_infos[$A['topic_id']] : false;
 			$replace2 = array(
 				'bg_class'		=> $i++ % 2 ? 'bg1' : 'bg2',
@@ -126,7 +126,7 @@ class yf_manage_forum_manage_future {
 		if (empty($_POST['date'])) {
 			$_POST['date'] = time() + rand($this->NEXT_DATE_MIN, $this->NEXT_DATE_MAX);
 		}
-		$_parents_array = module('forum')->_prepare_parents_for_select();
+		$_parents_array = module('manage_forum')->_prepare_parents_for_select();
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'error_message'	=> _e(),
@@ -156,7 +156,7 @@ class yf_manage_forum_manage_future {
 			$topic_info = db()->query_fetch('SELECT * FROM '.db('forum_topics').' WHERE id='.$_GET['id'].' LIMIT 1');
 		}
 		if (empty($topic_info['id'])) {
-			return module('forum')->_show_error('No such topic');
+			return module('manage_forum')->_show_error('No such topic');
 		}
 		// Get child accouts for the current poster
 		$all_posters_users = main()->get_data('forum_posters_users', 3600);
@@ -165,10 +165,10 @@ class yf_manage_forum_manage_future {
 		if (empty($_users_array)) {
 			return _e('No user accounts specified for you.');
 		}
-		$parent_forum_id = module('forum')->_forums_array[$topic_info['forum']]['parent'];
-		$forum_name = module('forum')->_forums_array[$topic_info['forum']]['name'];
+		$parent_forum_id = module('manage_forum')->_forums_array[$topic_info['forum']]['parent'];
+		$forum_name = module('manage_forum')->_forums_array[$topic_info['forum']]['name'];
 		$topic_name = $topic_info['name'];
-		$cat_name	= $topic_info['category'] ? module('forum')->_forum_cats_array[$topic_info['category']]['name'] : module('forum')->_forum_cats_array[module('forum')->_forums_array[$topic_info['forum']]['category']]['name'];
+		$cat_name	= $topic_info['category'] ? module('manage_forum')->_forum_cats_array[$topic_info['category']]['name'] : module('manage_forum')->_forum_cats_array[module('manage_forum')->_forums_array[$topic_info['forum']]['category']]['name'];
 		if (main()->is_post()) {
 			foreach ((array)$_POST['text'] as $_item_id => $_tmp) {
 				$DATA = array(
@@ -245,9 +245,9 @@ class yf_manage_forum_manage_future {
 			return _e('No user accounts specified for you.');
 		}
 		$is_new_topic = $post_info['new_topic'] ? 1 : 0;
-		$_forum_info = module('forum')->_forums_array[$post_info['forum_id']];
+		$_forum_info = module('manage_forum')->_forums_array[$post_info['forum_id']];
 		$forum_name = $_forum_info['name'];
-		$cat_name	= module('forum')->_forum_cats_array[$_forum_info['category']]['name'];
+		$cat_name	= module('manage_forum')->_forum_cats_array[$_forum_info['category']]['name'];
 		if (!$is_new_topic) {
 			$topic_info = db()->query_fetch('SELECT * FROM '.db('forum_topics').' WHERE id='.$post_info['topic_id'].' LIMIT 1');
 			$topic_name = $topic_info['name'];
@@ -268,7 +268,7 @@ class yf_manage_forum_manage_future {
 			), 'id='.intval($_GET['id']));
 			return js_redirect('./?object='.$_GET['object'].'&action=show_future_posts');
 		}
-		$_parents_array = module('forum')->_prepare_parents_for_select();
+		$_parents_array = module('manage_forum')->_prepare_parents_for_select();
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
 			'is_new_topic'	=> $is_new_topic,

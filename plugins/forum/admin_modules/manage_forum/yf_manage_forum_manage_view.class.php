@@ -11,8 +11,8 @@ class yf_manage_forum_manage_view {
 
 	function _show_forum_item ($forum_info = array()) {
 		$sub_forums = array();
-		foreach ((array)module('forum')->_get_sub_forums_ids($forum_info['id'], 1) as $_sub_id) {
-			$_sub_info = module('forum')->_forums_array[$_sub_id];
+		foreach ((array)module('manage_forum')->_get_sub_forums_ids($forum_info['id'], 1) as $_sub_id) {
+			$_sub_info = module('manage_forum')->_forums_array[$_sub_id];
 			$sub_forums[$_sub_id] = array(
 				'forum_id'		=> intval($_sub_id),
 				'name'			=> $_sub_info['name'],
@@ -20,7 +20,7 @@ class yf_manage_forum_manage_view {
 				'num_topics'	=> $_sub_info['num_topics'],
 				'num_posts'		=> $_sub_info['num_posts'],
 				'num_views'		=> $_sub_info['num_views'],
-				'activity'		=> module('forum')->_active_select[$_sub_info['status']],
+				'activity'		=> module('manage_forum')->_active_select[$_sub_info['status']],
 				'is_active'		=> $_sub_info['status'] == 'a' ? 1 : 0,
 				'is_closed'		=> intval($_sub_info['options'] == '2' ? 1 : 0),
 				'view_link'		=> './?object='.$_GET['object'].'&action=view_forum&id='.$_sub_info['id'],
@@ -29,11 +29,11 @@ class yf_manage_forum_manage_view {
 				'active_link'	=> './?object='.$_GET['object'].'&action=change_forum_activity&id='.$_sub_id,
 			);
 		}
-		foreach ((array)module('forum')->_forum_moderators as $_mod_info) {
+		foreach ((array)module('manage_forum')->_forum_moderators as $_mod_info) {
 			if (!in_array($forum_info['id'], explode(',', $_mod_info['forums_list']))) {
 				continue;
 			}
-			$mods_array[$_mod_info['member_id']] = module('forum')->_user_profile_link(array(
+			$mods_array[$_mod_info['member_id']] = module('manage_forum')->_user_profile_link(array(
 				'user_id'	=> $_mod_info['member_id'],
 				'user_name'	=> $_mod_info['member_name'],
 			));
@@ -44,12 +44,12 @@ class yf_manage_forum_manage_view {
 			'link'			=> './?object='.$_GET['object'].'&action=view_forum&id='.$forum_info['id'],
 			'name'			=> $forum_info['name'],
 			'desc'			=> $forum_info['desc'],
-			'td_class'		=> !(module('forum')->_i++ % 2) ? module('forum')->css['show1'] : module('forum')->css['show2'],
-			'last_post'		=> module('forum')->last_posts[$forum_info['last_post_id']],
+			'td_class'		=> !(module('manage_forum')->_i++ % 2) ? module('manage_forum')->css['show1'] : module('manage_forum')->css['show2'],
+			'last_post'		=> module('manage_forum')->last_posts[$forum_info['last_post_id']],
 			'num_topics'	=> $forum_info['num_topics'],
 			'num_posts'		=> $forum_info['num_posts'],
 			'num_views'		=> $forum_info['num_views'],
-			'activity'		=> module('forum')->_active_select[$forum_info['status']],
+			'activity'		=> module('manage_forum')->_active_select[$forum_info['status']],
 			'is_active'		=> $forum_info['status'] == 'a' ? 1 : 0,
 			'edit_link'		=> './?object='.$_GET['object'].'&action=edit_forum&id='.$forum_info['id'],
 			'delete_link'	=> './?object='.$_GET['object'].'&action=delete_forum&id='.$forum_info['id'],
@@ -67,10 +67,10 @@ class yf_manage_forum_manage_view {
 		$_GET['id'] = intval($_GET['id']);
 		$forum_info = db()->query_fetch('SELECT * FROM '.db('forum_forums').' WHERE id='.$_GET['id'].' LIMIT 1');
 		if (empty($forum_info['id'])) {
-			return module('forum')->_show_error('No such forum');
+			return module('manage_forum')->_show_error('No such forum');
 		}
-		$forum_name = module('forum')->_forums_array[$forum_info['id']]['name'];
-		$cat_name = $forum_info['category'] ? module('forum')->_forum_cats_array[$forum_info['category']]['name'] : '';
+		$forum_name = module('manage_forum')->_forums_array[$forum_info['id']]['name'];
+		$cat_name = $forum_info['category'] ? module('manage_forum')->_forum_cats_array[$forum_info['category']]['name'] : '';
 		
 		$order_by = ' ORDER BY created DESC, num_posts DESC ';
 		$sql = 'SELECT * FROM '.db('forum_topics').' WHERE forum='.$_GET['id'];
@@ -79,28 +79,28 @@ class yf_manage_forum_manage_view {
 		
 		$Q = db()->query($sql.$order_by.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
-			module('forum')->topics[$A['id']] = $A;
+			module('manage_forum')->topics[$A['id']] = $A;
 		}
-		module('forum')->_create_last_posts('topic');
-		foreach ((array)module('forum')->topics as $_topic_info) {
+		module('manage_forum')->_create_last_posts('topic');
+		foreach ((array)module('manage_forum')->topics as $_topic_info) {
 			$topic_pages = '';
-			if (module('forum')->SHOW_TOPIC_PAGES && ($_topic_info['num_posts'] > module('forum')->posts_on_page)) {
+			if (module('manage_forum')->SHOW_TOPIC_PAGES && ($_topic_info['num_posts'] > module('manage_forum')->posts_on_page)) {
 				$sql = 'SELECT * FROM '.db('forum_posts').' WHERE topic='.$_topic_info['id'].' ORDER BY created DESC ';
 				$path = './?object='.$_GET['object'].'&action=view_topic&id='.$_topic_info['id'];
 				list(,$topic_pages,) = common()->divide_pages($sql, $path, 'topic_pages');
 			}
-			$author = module('forum')->_user_profile_link($_topic_info);
+			$author = module('manage_forum')->_user_profile_link($_topic_info);
 			$replace = array(
-				'new_msg'		=> module('forum')->_topic_new_msg($_topic_info['id']),
+				'new_msg'		=> module('manage_forum')->_topic_new_msg($_topic_info['id']),
 				'link'			=> './?object='.$_GET['object'].'&action=view_topic&id='.$_topic_info['id'],
-				'td_class'		=> !($i++ % 2) ? module('forum')->css['show1'] : module('forum')->css['show2'],
+				'td_class'		=> !($i++ % 2) ? module('manage_forum')->css['show1'] : module('manage_forum')->css['show2'],
 				'topic_name'	=> $_topic_info['name'],
 				'topic_pages'	=> $topic_pages,
 				'author'		=> $author,
 				'num_posts'		=> $_topic_info['num_posts'],
 				'num_views'		=> $_topic_info['num_views'],
-				'last_post'		=> module('forum')->last_posts[$_topic_info['last_post_id']],
-				'activity'		=> module('forum')->_active_select[$_topic_info['status']],
+				'last_post'		=> module('manage_forum')->last_posts[$_topic_info['last_post_id']],
+				'activity'		=> module('manage_forum')->_active_select[$_topic_info['status']],
 				'is_active'		=> $_topic_info['status'] == 'a' ? 1 : 0,
 				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_topic&id='.$_topic_info['id'],
 				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_topic&id='.$_topic_info['id'],
@@ -110,30 +110,30 @@ class yf_manage_forum_manage_view {
 			$topics .= tpl()->parse('manage_forum/topic_item', $replace);
 		}
 		$sub_forums = array();
-		module('forum')->_create_last_posts('forum');
-		foreach ((array)module('forum')->_get_sub_forums_ids($forum_info['id'], 1) as $_sub_id) {
-			$sub_forums_items .= module('forum')->_show_forum_item(module('forum')->_forums_array[$_sub_id]);
+		module('manage_forum')->_create_last_posts('forum');
+		foreach ((array)module('manage_forum')->_get_sub_forums_ids($forum_info['id'], 1) as $_sub_id) {
+			$sub_forums_items .= module('manage_forum')->_show_forum_item(module('manage_forum')->_forums_array[$_sub_id]);
 		}
 		$parent_forums = array();
-		foreach ((array)module('forum')->_get_parent_forums_ids($forum_info['id']) as $_parent_id) {
+		foreach ((array)module('manage_forum')->_get_parent_forums_ids($forum_info['id']) as $_parent_id) {
 			$parent_forums[$_parent_id] = array(
 				'id'	=> $_parent_id,
-				'name'	=> _prepare_html(module('forum')->_forums_array[$_parent_id]['name']),
+				'name'	=> _prepare_html(module('manage_forum')->_forums_array[$_parent_id]['name']),
 				'link'	=> './?object='.$_GET['object'].'&action=view_forum&id='.$_parent_id,
 			);
 		}
 		$replace_f = array(
 			'cat_link'			=> './?object='.$_GET['object'],
 			'add_link'			=> './?object='.$_GET['object'].'&action=new_topic&id='.$_GET['id'],
-			'future_topic_link'	=> module('forum')->ALLOW_FUTURE_POSTS ? './?object='.$_GET['object'].'&action=add_future_topic&id='.$_GET['id'] : '',
+			'future_topic_link'	=> module('manage_forum')->ALLOW_FUTURE_POSTS ? './?object='.$_GET['object'].'&action=add_future_topic&id='.$_GET['id'] : '',
 			'cat_name'			=> $cat_name,
 			'forum_name'		=> $forum_name,
-			'td_class'			=> !($i++ % 2) ? module('forum')->css['show1'] : module('forum')->css['show2'],
+			'td_class'			=> !($i++ % 2) ? module('manage_forum')->css['show1'] : module('manage_forum')->css['show2'],
 			'num_posts'			=> $num_posts,
 			'pages'				=> $pages,
 			'topics'			=> $topics,
 			'show_filter'		=> '',
-			'activity'			=> module('forum')->_active_select[$forum_info['status']],
+			'activity'			=> module('manage_forum')->_active_select[$forum_info['status']],
 			'is_active'			=> $forum_info['status'] == 'a' ? 1 : 0,
 			'edit_link'			=> './?object='.$_GET['object'].'&action=edit_forum&id='.$forum_info['id'],
 			'delete_link'		=> './?object='.$_GET['object'].'&action=delete_forum&id='.$forum_info['id'],
@@ -141,19 +141,19 @@ class yf_manage_forum_manage_view {
 			'sub_forums_items'	=> $sub_forums_items,
 			'active_link'		=> './?object='.$_GET['object'].'&action=change_forum_activity&id='.$forum_info['id'],
 		);
-		return module('forum')->_show_main_tpl(tpl()->parse('manage_forum/view_forum', $replace_f));
+		return module('manage_forum')->_show_main_tpl(tpl()->parse('manage_forum/view_forum', $replace_f));
 	}
 
 	function _view_topic () {
 		$_GET['id'] = intval($_GET['id']);
 		$topic_info = db()->query_fetch('SELECT * FROM '.db('forum_topics').' WHERE id='.$_GET['id'].' LIMIT 1');
 		if (empty($topic_info['id'])) {
-			return module('forum')->_show_error('No such topic');
+			return module('manage_forum')->_show_error('No such topic');
 		}
-		module('forum')->_add_topic_view($topic_info);
+		module('manage_forum')->_add_topic_view($topic_info);
 		
-		$forum_name = $topic_info['forum'] ? module('forum')->_forums_array[$topic_info['forum']]['name'] : '';
-		$cat_name	= module('forum')->_forum_cats_array[module('forum')->_forums_array[$topic_info['forum']]['category']]['name'];
+		$forum_name = $topic_info['forum'] ? module('manage_forum')->_forums_array[$topic_info['forum']]['name'] : '';
+		$cat_name	= module('manage_forum')->_forum_cats_array[module('manage_forum')->_forums_array[$topic_info['forum']]['category']]['name'];
 		$topic_name = $topic_info['name'];
 		
 		$order_by = ' ORDER BY created ASC ';
@@ -163,48 +163,48 @@ class yf_manage_forum_manage_view {
 
 		$Q = db()->query($sql.$order_by.$add_sql);
 		while ($A = db()->fetch_assoc($Q)) {
-			module('forum')->posts[$A['id']] = $A;
+			module('manage_forum')->posts[$A['id']] = $A;
 		}
 
-		$num_ranks = count(module('forum')->user_ranks);
-		module('forum')->_get_topic_users();
+		$num_ranks = count(module('manage_forum')->user_ranks);
+		module('manage_forum')->_get_topic_users();
 
-		foreach ((array)module('forum')->posts as $_post_info) {
-			if (module('forum')->HIDE_USERS_INFO) {
+		foreach ((array)module('manage_forum')->posts as $_post_info) {
+			if (module('manage_forum')->HIDE_USERS_INFO) {
 				$user_name = $_post_info['user_id'] ? (strlen($_post_info['user_name']) ? $_post_info['user_name'] : $_post_info['user_id']) : (strlen($_post_info['user_name']) ? $_post_info['user_name'] : t('Anonymous'));
 			} else {
-				$user_name = module('forum')->_user_profile_link($_post_info);
+				$user_name = module('manage_forum')->_user_profile_link($_post_info);
 			}
-			if (strlen(module('forum')->users[$_post_info['user_id']]['user_avatar'])) {
-				$avatar = _show_avatar($_post_info['user_id'], module('forum')->users[$_post_info['user_id']], 1);
+			if (strlen(module('manage_forum')->users[$_post_info['user_id']]['user_avatar'])) {
+				$avatar = _show_avatar($_post_info['user_id'], module('manage_forum')->users[$_post_info['user_id']], 1);
 			} else {
 				$avatar = '';
 			}
-			$user_posts = module('forum')->users[$_post_info['user_id']]['user_posts'];
+			$user_posts = module('manage_forum')->users[$_post_info['user_id']]['user_posts'];
 			if ($_post_info['user_id']) {
-				$rank = module('forum')->user_ranks[module('forum')->users[$_post_info['user_id']]['user_rank']]['title'];
+				$rank = module('manage_forum')->user_ranks[module('manage_forum')->users[$_post_info['user_id']]['user_rank']]['title'];
 				if (!strlen($rank)) $rank = t('member');
 			} else {
 				$rank = t('guest');
 			}
-			$user_from = module('forum')->users[$_post_info['user_id']]['user_from'];
-			$reg_date = strlen(module('forum')->users[$_post_info['user_id']]['user_regdate']) ? date(module('forum')->format['date'], module('forum')->users[$_post_info['user_id']]['user_regdate']) : '';
+			$user_from = module('manage_forum')->users[$_post_info['user_id']]['user_from'];
+			$reg_date = strlen(module('manage_forum')->users[$_post_info['user_id']]['user_regdate']) ? date(module('manage_forum')->format['date'], module('manage_forum')->users[$_post_info['user_id']]['user_regdate']) : '';
 			$replace = array(
-				'td_class'		=> !($i++ % 2) ? module('forum')->css['show1'] : module('forum')->css['show2'],
+				'td_class'		=> !($i++ % 2) ? module('manage_forum')->css['show1'] : module('manage_forum')->css['show2'],
 				'user_name'		=> $user_name,
-				'profile_link'	=> module('forum')->_user_profile_link($_post_info),
-				'date'			=> date(module('forum')->format['date'], $_post_info['created']),
-				'time'			=> date(module('forum')->format['time'], $_post_info['created']),
-				'text'			=> module('forum')->BB_OBJ->_process_text($_post_info['text']),
+				'profile_link'	=> module('manage_forum')->_user_profile_link($_post_info),
+				'date'			=> date(module('manage_forum')->format['date'], $_post_info['created']),
+				'time'			=> date(module('manage_forum')->format['time'], $_post_info['created']),
+				'text'			=> module('manage_forum')->BB_OBJ->_process_text($_post_info['text']),
 				'post_id'		=> $_post_info['id'],
 				'avatar'		=> $avatar,
 				'rank'			=> $rank,
 				'user_posts'	=> $user_posts ? t('user_posts').': '.$user_posts : '',
 				'location'		=> strlen($user_from) ? t('from').': '.$user_from : '',
 				'register_date'	=> $reg_date ? t('register').': '.$reg_date : '',
-				'user_sig'		=> module('forum')->BB_OBJ->_process_text(module('forum')->users[$_post_info['user_id']]['user_sig']),
+				'user_sig'		=> module('manage_forum')->BB_OBJ->_process_text(module('manage_forum')->users[$_post_info['user_id']]['user_sig']),
 				'quote_link'	=> './?object='.$_GET['object'].'&action=reply&id='.$_GET['id'].'&msg_id='.$_post_info['id'],
-				'activity'		=> module('forum')->_active_select[$_post_info['status']],
+				'activity'		=> module('manage_forum')->_active_select[$_post_info['status']],
 				'is_active'		=> $_post_info['status'] == 'a' ? 1 : 0,
 				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_post&id='.$_GET['id'].'&msg_id='.$_post_info['id'],
 				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_post&id='.$_GET['id'].'&msg_id='.$_post_info['id'],
@@ -214,10 +214,10 @@ class yf_manage_forum_manage_view {
 			$posts .= tpl()->parse('manage_forum/post_item', $replace);
 		}
 		$parent_forums = array();
-		foreach ((array)module('forum')->_get_parent_forums_ids($topic_info['forum']) as $_parent_id) {
+		foreach ((array)module('manage_forum')->_get_parent_forums_ids($topic_info['forum']) as $_parent_id) {
 			$parent_forums[$_parent_id] = array(
 				'id'	=> $_parent_id,
-				'name'	=> _prepare_html(module('forum')->_forums_array[$_parent_id]['name']),
+				'name'	=> _prepare_html(module('manage_forum')->_forums_array[$_parent_id]['name']),
 				'link'	=> './?object='.$_GET['object'].'&action=view_forum&id='.$_parent_id,
 			);
 		}
@@ -226,22 +226,22 @@ class yf_manage_forum_manage_view {
 			'forum_link'		=> './?object='.$_GET['object'].'&action=view_forum&id='.$topic_info['forum'],
 			'new_topic_link'	=> './?object='.$_GET['object'].'&action=new_topic&id='.$topic_info['forum'],
 			'add_link'			=> './?object='.$_GET['object'].'&action=reply&id='.$_GET['id'],
-			'future_topic_link'	=> module('forum')->ALLOW_FUTURE_POSTS ? './?object='.$_GET['object'].'&action=add_future_topic&id='.$topic_info['forum'] : '',
-			'future_post_link'	=> module('forum')->ALLOW_FUTURE_POSTS ? './?object='.$_GET['object'].'&action=add_future_post&id='.$topic_info['id'] : '',
+			'future_topic_link'	=> module('manage_forum')->ALLOW_FUTURE_POSTS ? './?object='.$_GET['object'].'&action=add_future_topic&id='.$topic_info['forum'] : '',
+			'future_post_link'	=> module('manage_forum')->ALLOW_FUTURE_POSTS ? './?object='.$_GET['object'].'&action=add_future_post&id='.$topic_info['id'] : '',
 			'cat_name'			=> $cat_name,
 			'forum_name'		=> $forum_name,
 			'topic_name'		=> $topic_name,
-			'td_class'			=> !($i++ % 2) ? module('forum')->css['show1'] : module('forum')->css['show2'],
+			'td_class'			=> !($i++ % 2) ? module('manage_forum')->css['show1'] : module('manage_forum')->css['show2'],
 			'pages'				=> $pages,
 			'posts'				=> $posts,
-			'activity'			=> module('forum')->_active_select[$topic_info['status']],
+			'activity'			=> module('manage_forum')->_active_select[$topic_info['status']],
 			'is_active'			=> $topic_info['status'] == 'a' ? 1 : 0,
 			'edit_link'			=> './?object='.$_GET['object'].'&action=edit_topic&id='.$topic_info['id'],
 			'delete_link'		=> './?object='.$_GET['object'].'&action=delete_topic&id='.$topic_info['id'],
 			'parent_forums'		=> !empty($parent_forums) ? $parent_forums : '',
 			'active_link'		=> './?object='.$_GET['object'].'&action=change_topic_activity&id='.$topic_info['id'],
 		);
-		return module('forum')->_show_main_tpl(tpl()->parse('manage_forum/view_topic', $replace_t));
+		return module('manage_forum')->_show_main_tpl(tpl()->parse('manage_forum/view_topic', $replace_t));
 	}
 
 	// New topic creation form
@@ -250,21 +250,21 @@ class yf_manage_forum_manage_view {
 		$forum_info = db()->query_fetch('SELECT * FROM '.db('forum_forums').' WHERE id='.$_GET['id'].' LIMIT 1');
 		$parent_forum_id = $forum_info['parent'];
 		if (empty($forum_info['id'])) {
-			return module('forum')->_show_error('No such forum');
+			return module('manage_forum')->_show_error('No such forum');
 		}
-		$forum_name = module('forum')->_forums_array[$forum_info['id']]['name'];
-		$cat_name	= $forum_info['category'] ? module('forum')->_forum_cats_array[$forum_info['category']]['name'] : module('forum')->_forum_cats_array[module('forum')->_forums_array[$forum_info['forum']]['category']]['name'];
+		$forum_name = module('manage_forum')->_forums_array[$forum_info['id']]['name'];
+		$cat_name	= $forum_info['category'] ? module('manage_forum')->_forum_cats_array[$forum_info['category']]['name'] : module('manage_forum')->_forum_cats_array[module('manage_forum')->_forums_array[$forum_info['forum']]['category']]['name'];
 		if (main()->is_post()) {
-			//db()->query_num_rows('SELECT id FROM '.db('forum_posts').' WHERE created>'.(time() - module('forum')->ANTISPAM_TIME).' AND poster_ip=''.common()->get_ip().'' LIMIT 1');
+			//db()->query_num_rows('SELECT id FROM '.db('forum_posts').' WHERE created>'.(time() - module('manage_forum')->ANTISPAM_TIME).' AND poster_ip=''.common()->get_ip().'' LIMIT 1');
 			$SPAM_EXISTS = false;
 			if (!$SPAM_EXISTS) {
 				db()->insert_safe('forum_topics', array(
 					'forum'		=> $forum_info['id'],
 					'name'		=> $_POST['title'],
 					'user_id'	=> 0,
-					'user_name'	=> module('forum')->USER_NAME,
+					'user_name'	=> module('manage_forum')->USER_NAME,
 					'created'	=> time(),
-					'status'	=> module('forum')->APPROVE ? 'n' : 'a',
+					'status'	=> module('manage_forum')->APPROVE ? 'n' : 'a',
 				));
 				$new_topic_id = db()->insert_id();
 
@@ -275,14 +275,14 @@ class yf_manage_forum_manage_view {
 					'subject'	=> $_POST['title'],
 					'text'		=> $_POST['text'],
 					'user_id'	=> 0,
-					'user_name'	=> module('forum')->USER_NAME,
+					'user_name'	=> module('manage_forum')->USER_NAME,
 					'created'	=> time(),
 					'poster_ip'	=> common()->get_ip(),
-					'status'	=> module('forum')->APPROVE ? 'n' : 'a',
+					'status'	=> module('manage_forum')->APPROVE ? 'n' : 'a',
 				));
 				$new_post_id = db()->insert_id();
 				// Update forum, topic, topic_watch, user tables
-				if (!module('forum')->APPROVE) {
+				if (!module('manage_forum')->APPROVE) {
 					$sql = 'UPDATE '.db('forum_topics').' SET 
 								num_posts = num_posts + 1,
 								first_post_id = '.intval($new_post_id).',
@@ -303,10 +303,10 @@ class yf_manage_forum_manage_view {
 			return js_redirect('./?object='.$_GET['object'].'&action=view_forum&id='.$_GET['id']);
 		}
 		$parent_forums = array();
-		foreach ((array)module('forum')->_get_parent_forums_ids($forum_info['id']) as $_parent_id) {
+		foreach ((array)module('manage_forum')->_get_parent_forums_ids($forum_info['id']) as $_parent_id) {
 			$parent_forums[$_parent_id] = array(
 				'id'	=> $_parent_id,
-				'name'	=> _prepare_html(module('forum')->_forums_array[$_parent_id]['name']),
+				'name'	=> _prepare_html(module('manage_forum')->_forums_array[$_parent_id]['name']),
 				'link'	=> './?object='.$_GET['object'].'&action=view_forum&id='.$_parent_id,
 			);
 		}
@@ -317,29 +317,29 @@ class yf_manage_forum_manage_view {
 			'cat_link'			=> './?object='.$_GET['object'],
 			'forum_link'		=> './?object='.$_GET['object'].'&action=view_forum&id='.$_GET['id'],
 			'title'				=> '',
-			'user_name'			=> module('forum')->USER_NAME,
+			'user_name'			=> module('manage_forum')->USER_NAME,
 			'parent_forums'		=> !empty($parent_forums) ? $parent_forums : '',
 		);
-		return module('forum')->_show_main_tpl(tpl()->parse('manage_forum/new_topic', $replace));
+		return module('manage_forum')->_show_main_tpl(tpl()->parse('manage_forum/new_topic', $replace));
 	}
 
 	// Reply to the existing topic (post message)
 	function _reply () {
 		$_GET['id'] = intval($_GET['id']);
 		$topic_info = db()->query_fetch('SELECT * FROM '.db('forum_topics').' WHERE id='.$_GET['id'].' LIMIT 1');
-		$parent_forum_id = module('forum')->_forums_array[$topic_info['forum']]['parent'];
+		$parent_forum_id = module('manage_forum')->_forums_array[$topic_info['forum']]['parent'];
 		if (empty($topic_info['id'])) {
-			return module('forum')->_show_error();
+			return module('manage_forum')->_show_error();
 		}
-		$forum_name = module('forum')->_forums_array[$topic_info['forum']]['name'];
+		$forum_name = module('manage_forum')->_forums_array[$topic_info['forum']]['name'];
 		$topic_name = $topic_info['name'];
-		$cat_name	= $topic_info['category'] ? module('forum')->_forum_cats_array[$topic_info['category']]['name'] : module('forum')->_forum_cats_array[module('forum')->_forums_array[$topic_info['forum']]['category']]['name'];
+		$cat_name	= $topic_info['category'] ? module('manage_forum')->_forum_cats_array[$topic_info['category']]['name'] : module('manage_forum')->_forum_cats_array[module('manage_forum')->_forums_array[$topic_info['forum']]['category']]['name'];
 		if ($_GET['msg_id']) {
 			$post_info = db()->query_fetch('SELECT text, user_name FROM '.db('forum_posts').' WHERE id='.intval($_GET['msg_id']));
 			$text = '[quote=\''.$post_info['user_name'].'\']'.$post_info['text'].'[/quote]';
 		}
 		if (main()->is_post()) {
-			$SPAM_EXISTS = false;//db()->query_num_rows('SELECT id FROM '.db('forum_posts').' WHERE created>'.(time() - module('forum')->ANTISPAM_TIME).' AND poster_ip=''.common()->get_ip().'' LIMIT 1');
+			$SPAM_EXISTS = false;//db()->query_num_rows('SELECT id FROM '.db('forum_posts').' WHERE created>'.(time() - module('manage_forum')->ANTISPAM_TIME).' AND poster_ip=''.common()->get_ip().'' LIMIT 1');
 			if ($topic_info['id'] && !$SPAM_EXISTS) {
 				db()->INSERT('forum_posts', array(
 					'parent'	=> intval($parent),
@@ -348,13 +348,13 @@ class yf_manage_forum_manage_view {
 					'subject'	=> _es($_POST['subject']),
 					'text'		=> _es($_POST['text']),
 					'user_id'	=> 0,
-					'user_name'	=> _es(module('forum')->USER_NAME),
+					'user_name'	=> _es(module('manage_forum')->USER_NAME),
 					'created'	=> time(),
 					'poster_ip'	=> common()->get_ip(),
-					'status'	=> (module('forum')->APPROVE ? 'n' : 'a'),
+					'status'	=> (module('manage_forum')->APPROVE ? 'n' : 'a'),
 				));
 				$new_post_id = db()->insert_id();
-				if (!module('forum')->APPROVE) {
+				if (!module('manage_forum')->APPROVE) {
 					db()->query('UPDATE '.db('forum_topics').' SET num_posts = num_posts + 1, last_post_id = '.(int)$new_post_id.' WHERE id='.(int)$_GET['id']);
 					db()->query('UPDATE '.db('forum_forums').' SET num_posts = num_posts + 1, last_post_id = '.(int)$new_post_id.' WHERE id='.(int)$topic_info['forum']);
 				}
@@ -365,10 +365,10 @@ class yf_manage_forum_manage_view {
 			return js_redirect('./?object='.$_GET['object'].'&action=view_topic&id='.$_GET['id']);
 		}
 		$parent_forums = array();
-		foreach ((array)module('forum')->_get_parent_forums_ids($topic_info['forum']) as $_parent_id) {
+		foreach ((array)module('manage_forum')->_get_parent_forums_ids($topic_info['forum']) as $_parent_id) {
 			$parent_forums[$_parent_id] = array(
 				'id'	=> $_parent_id,
-				'name'	=> _prepare_html(module('forum')->_forums_array[$_parent_id]['name']),
+				'name'	=> _prepare_html(module('manage_forum')->_forums_array[$_parent_id]['name']),
 				'link'	=> './?object='.$_GET['object'].'&action=view_forum&id='.$_parent_id,
 			);
 		}
@@ -381,11 +381,11 @@ class yf_manage_forum_manage_view {
 			'forum_link'		=> './?object='.$_GET['object'].'&action=view_forum&id='.$topic_info['forum'],
 			'topic_link'		=> './?object='.$_GET['object'].'&action=view_topic&id='.$_GET['id'],
 			'subject'			=> 'Re:'.$topic_info['name'],
-			'user_name'			=> module('forum')->USER_NAME,
+			'user_name'			=> module('manage_forum')->USER_NAME,
 			'text'				=> stripslashes($text),
 			'iframe'			=> '',
 			'parent_forums'		=> !empty($parent_forums) ? $parent_forums : '',
 		);
-		return module('forum')->_show_main_tpl(tpl()->parse('manage_forum/reply', $replace));
+		return module('manage_forum')->_show_main_tpl(tpl()->parse('manage_forum/reply', $replace));
 	}
 }

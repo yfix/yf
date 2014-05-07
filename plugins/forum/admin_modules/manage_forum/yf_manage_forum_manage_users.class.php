@@ -24,7 +24,7 @@ class yf_manage_forum_manage_users {
 		}
 		foreach ((array)$forum_users as $_id => $_info) {
 			$user_name = strlen($_info['name']) ? $_info['name'] : _display_name($users_infos[$_id]);
-			$group_name = module('forum')->_forum_groups[$_info['group']]['title'];
+			$group_name = module('manage_forum')->_forum_groups[$_info['group']]['title'];
 
 			$items[$_id] = array(
 				'bg_class'		=> $i++ % 2 ? 'bg1' : 'bg2',
@@ -44,7 +44,7 @@ class yf_manage_forum_manage_users {
 			'total'		=> $total,
 		);
 		$body = tpl()->parse($_GET['object'].'/admin/manage_users_main', $replace);
-		return module('forum')->_show_main_tpl($body);
+		return module('manage_forum')->_show_main_tpl($body);
 	}
 
 	/**
@@ -60,7 +60,7 @@ class yf_manage_forum_manage_users {
 		}
 		$user_info = user($_GET['id']);
 		if (main()->is_post()) {
-			if (!isset(module('forum')->_forum_groups[$_POST['group']])) {
+			if (!isset(module('manage_forum')->_forum_groups[$_POST['group']])) {
 				_re('Wrong group');
 			}
 			if (!common()->_error_exists()) {
@@ -75,7 +75,7 @@ class yf_manage_forum_manage_users {
 			}
 		}
 		$groups = array();
-		foreach ((array)module('forum')->_forum_groups as $_group_id => $_group_info) {
+		foreach ((array)module('manage_forum')->_forum_groups as $_group_id => $_group_info) {
 			$groups[$_group_id] = _prepare_html($_group_info['title']);
 		}
 		$replace = array(
@@ -88,7 +88,7 @@ class yf_manage_forum_manage_users {
 			'group_box'		=> common()->select_box('group', $groups, $DATA['group'], false, 2, '', false),
 		);
 		$body = tpl()->parse($_GET['object'].'/admin/edit_user_form', $replace);
-		return module('forum')->_show_main_tpl($body);
+		return module('manage_forum')->_show_main_tpl($body);
 	}
 
 	/**
@@ -99,7 +99,7 @@ class yf_manage_forum_manage_users {
 		while ($A = db()->fetch_assoc($Q)) {
 			$users_by_groups[$A['group']] = $A['num'];
 		}
-		foreach ((array)module('forum')->_forum_groups as $_group_id => $_group_info) {
+		foreach ((array)module('manage_forum')->_forum_groups as $_group_id => $_group_info) {
 			$replace2 = array(
 				'bg_class'		=> $i++ % 2 ? 'bg1' : 'bg2',
 				'id'			=> intval($_group_id),
@@ -115,11 +115,11 @@ class yf_manage_forum_manage_users {
 		}
 		$replace = array(
 			'items'		=> $items,
-			'total'		=> count(module('forum')->_forum_groups),
+			'total'		=> count(module('manage_forum')->_forum_groups),
 			'add_link'	=> './?object='.$_GET['object'].'&action=add_group',
 		);
 		$body = tpl()->parse($_GET['object'].'/admin/manage_groups_main', $replace);
-		return module('forum')->_show_main_tpl($body);
+		return module('manage_forum')->_show_main_tpl($body);
 	}
 
 	/**
@@ -127,17 +127,17 @@ class yf_manage_forum_manage_users {
 	*/
 	function _edit_group () {
 		$_GET['id'] = intval($_GET['id']);
-		if (!isset(module('forum')->_forum_groups[$_GET['id']])) {
+		if (!isset(module('manage_forum')->_forum_groups[$_GET['id']])) {
 			return _e('No such group');
 		}
-		$group_info = module('forum')->_forum_groups[$_GET['id']];
+		$group_info = module('manage_forum')->_forum_groups[$_GET['id']];
 		if (main()->is_post()) {
 			if (empty($_POST['title'])) {
 				_re('Title is required');
 			}
 			if (!common()->_error_exists()) {
 				$sql_array['title'] = $_POST['title'];
-				foreach ((array)module('forum')->_group_triggers as $_name => $_desc) {
+				foreach ((array)module('manage_forum')->_group_triggers as $_name => $_desc) {
 					if ($_POST[$_name] == $group_info[$_name]) {
 						continue;
 					}
@@ -154,10 +154,10 @@ class yf_manage_forum_manage_users {
 				$DATA[$k] = $v;
 			}
 		}
-		foreach ((array)module('forum')->_group_triggers as $_name => $_desc) {
+		foreach ((array)module('manage_forum')->_group_triggers as $_name => $_desc) {
 			$group_triggers[$_name] = array(
 				'desc'	=> _prepare_html($_desc),
-				'box'	=> common()->radio_box($_name, module('forum')->_std_trigger, $DATA[$_name], false, 2, '', false),
+				'box'	=> common()->radio_box($_name, module('manage_forum')->_std_trigger, $DATA[$_name], false, 2, '', false),
 			);
 		}
 		$replace = array(
@@ -169,7 +169,7 @@ class yf_manage_forum_manage_users {
 			'group_triggers'=> $group_triggers,
 		);
 		$body = tpl()->parse($_GET['object'].'/admin/edit_group_form', $replace);
-		return module('forum')->_show_main_tpl($body);
+		return module('manage_forum')->_show_main_tpl($body);
 	}
 
 	/**
@@ -182,7 +182,7 @@ class yf_manage_forum_manage_users {
 			}
 			if (!common()->_error_exists()) {
 				$sql_array['title'] = $_POST['title'];
-				foreach ((array)module('forum')->_group_triggers as $_name => $_desc) {
+				foreach ((array)module('manage_forum')->_group_triggers as $_name => $_desc) {
 					if ($_POST[$_name] == $group_info[$_name]) {
 						continue;
 					}
@@ -194,10 +194,10 @@ class yf_manage_forum_manage_users {
 			}
 		}
 		$DATA = $_POST;
-		foreach ((array)module('forum')->_group_triggers as $_name => $_desc) {
+		foreach ((array)module('manage_forum')->_group_triggers as $_name => $_desc) {
 			$group_triggers[$_name] = array(
 				'desc'	=> _prepare_html($_desc),
-				'box'	=> common()->radio_box($_name, module('forum')->_std_trigger, $DATA[$_name], false, 2, '', false),
+				'box'	=> common()->radio_box($_name, module('manage_forum')->_std_trigger, $DATA[$_name], false, 2, '', false),
 			);
 		}
 		$replace = array(
@@ -209,14 +209,14 @@ class yf_manage_forum_manage_users {
 			'group_triggers'=> $group_triggers,
 		);
 		$body = tpl()->parse($_GET['object'].'/admin/edit_group_form', $replace);
-		return module('forum')->_show_main_tpl($body);
+		return module('manage_forum')->_show_main_tpl($body);
 	}
 
 	/**
 	* delete group
 	*/
 	function _delete_group () {
-		if (!isset(module('forum')->_forum_groups[$_GET['id']])) {
+		if (!isset(module('manage_forum')->_forum_groups[$_GET['id']])) {
 			return _e('No such group');
 		}
 		db()->query('DELETE FROM '.db('forum_groups').' WHERE id='.intval($_GET['id']));
@@ -228,10 +228,10 @@ class yf_manage_forum_manage_users {
 	* Clone group
 	*/
 	function _clone_group () {
-		if (!isset(module('forum')->_forum_groups[$_GET['id']])) {
+		if (!isset(module('manage_forum')->_forum_groups[$_GET['id']])) {
 			return _e('No such group');
 		}
-		$group_info = module('forum')->_forum_groups[$_GET['id']];
+		$group_info = module('manage_forum')->_forum_groups[$_GET['id']];
 		$sql = $group_info;
 		unset($sql['id']);
 		$sql['title'] = $sql['title'].'_clone';
@@ -246,11 +246,11 @@ class yf_manage_forum_manage_users {
 	* manage moderators
 	*/
 	function _manage_moderators () {
-		foreach ((array)module('forum')->_forum_moderators as $_mod_id => $_mod_info) {
+		foreach ((array)module('manage_forum')->_forum_moderators as $_mod_id => $_mod_info) {
 			$forums_array = array();
 			foreach (explode(',', $_mod_info['forums_list']) as $_forum_id) {
 				$forums_array[$_forum_id] = array(
-					'name'	=> _prepare_html(module('forum')->_forums_array[$_forum_id]['name']),
+					'name'	=> _prepare_html(module('manage_forum')->_forums_array[$_forum_id]['name']),
 					'link'	=> './?object='.$_GET['object'].'&action=view_forum&id='.intval($_forum_id),
 				);
 			}
@@ -258,7 +258,7 @@ class yf_manage_forum_manage_users {
 				'bg_class'		=> $i++ % 2 ? 'bg1' : 'bg2',
 				'user_id'		=> intval($_mod_id),
 				'user_name'		=> _prepare_html($_mod_info['member_name']),
-				'profile_link'	=> module('forum')->_user_profile_link(array('user_id' => $_mod_info['member_id'], 'user_name' => $_mod_info['member_name'])),
+				'profile_link'	=> module('manage_forum')->_user_profile_link(array('user_id' => $_mod_info['member_id'], 'user_name' => $_mod_info['member_name'])),
 				'forums_array'	=> $forums_array,
 				'edit_link'		=> './?object='.$_GET['object'].'&action=edit_moderator&id='.intval($_mod_id),
 				'delete_link'	=> './?object='.$_GET['object'].'&action=delete_moderator&id='.intval($_mod_id),
@@ -267,11 +267,11 @@ class yf_manage_forum_manage_users {
 		}
 		$replace = array(
 			'items'		=> $items,
-			'total'		=> count(module('forum')->_forum_moderators),
+			'total'		=> count(module('manage_forum')->_forum_moderators),
 			'add_link'	=> './?object='.$_GET['object'].'&action=add_moderator',
 		);
 		$body = tpl()->parse($_GET['object'].'/admin/manage_mods_main', $replace);
-		return module('forum')->_show_main_tpl($body);
+		return module('manage_forum')->_show_main_tpl($body);
 	}
 
 	/**
@@ -279,17 +279,17 @@ class yf_manage_forum_manage_users {
 	*/
 	function _edit_moderator () {
 		$_GET['id'] = intval($_GET['id']);
-		if (!isset(module('forum')->_forum_groups[$_GET['id']])) {
+		if (!isset(module('manage_forum')->_forum_groups[$_GET['id']])) {
 			return _e('No such moderator');
 		}
-		$mod_info = module('forum')->_forum_moderators[$_GET['id']];
+		$mod_info = module('manage_forum')->_forum_moderators[$_GET['id']];
 		if (main()->is_post()) {
 			if (!empty($_POST['forums_list'])) {
 				$_tmp_forums_list = array();
 				$_tmp_array = is_array($_POST['forums_list']) ? $_POST['forums_list'] : explode(',', $_POST['forums_list']);
 				foreach ((array)$_tmp_array as $_forum_id) {
 					$_forum_id = intval($_forum_id);
-					if (empty($_forum_id) || !isset(module('forum')->_forums_array[$_forum_id])) {
+					if (empty($_forum_id) || !isset(module('manage_forum')->_forums_array[$_forum_id])) {
 						continue;
 					}
 					$_tmp_forums_list[$_forum_id] = $_forum_id;
@@ -301,7 +301,7 @@ class yf_manage_forum_manage_users {
 			}
 			if (!common()->_error_exists()) {
 				$sql_array['forums_list'] = $_POST['forums_list'];
-				foreach ((array)module('forum')->_moderator_triggers as $_name => $_desc) {
+				foreach ((array)module('manage_forum')->_moderator_triggers as $_name => $_desc) {
 					if ($_POST[$_name] == $mod_info[$_name]) {
 						continue;
 					}
@@ -333,10 +333,10 @@ class yf_manage_forum_manage_users {
 				$DATA[$k] = $v;
 			}
 		}
-		foreach ((array)module('forum')->_moderator_triggers as $_name => $_desc) {
+		foreach ((array)module('manage_forum')->_moderator_triggers as $_name => $_desc) {
 			$moderator_triggers[$_name] = array(
 				'desc'	=> _prepare_html($_desc),
-				'box'	=> common()->radio_box($_name, module('forum')->_std_trigger, $DATA[$_name], false, 2, '', false),
+				'box'	=> common()->radio_box($_name, module('manage_forum')->_std_trigger, $DATA[$_name], false, 2, '', false),
 			);
 		}
 		$_forums_for_box = $this->_prepare_forums_for_mods_select();
@@ -350,13 +350,13 @@ class yf_manage_forum_manage_users {
 			'back_link'			=> './?object='.$_GET['object'].'&action=manage_moderators',
 			'error_message'		=> _e(),
 			'user_id'			=> intval($DATA['member_id']),
-			'profile_link'		=> module('forum')->_user_profile_link(array('user_id' => $DATA['member_id'], 'user_name' => $DATA['member_name'])),
+			'profile_link'		=> module('manage_forum')->_user_profile_link(array('user_id' => $DATA['member_id'], 'user_name' => $DATA['member_name'])),
 			'forums_list'		=> $DATA['forums_list'],
 			'forums_box'		=> common()->multi_select('forums_list', $_forums_for_box, $selected_forums, false, 2, ' size=7 class=small_for_select ', false),
 			'moderator_triggers'=> $moderator_triggers,
 		);
 		$body = tpl()->parse($_GET['object'].'/admin/edit_moderator_form', $replace);
-		return module('forum')->_show_main_tpl($body);
+		return module('manage_forum')->_show_main_tpl($body);
 	}
 
 	/** 
@@ -364,10 +364,10 @@ class yf_manage_forum_manage_users {
 	*/
 	function _prepare_forums_for_mods_select () {
 		$cats = array();
-		foreach ((array)module('forum')->_forum_cats_array as $_cat_id => $_cat_info) {
+		foreach ((array)module('manage_forum')->_forum_cats_array as $_cat_id => $_cat_info) {
 			$_cat_name = $_cat_info['name'];
 			$forums = array();
-			foreach ((array)module('forum')->_prepare_forums_for_select($skip_id, $_cat_id) as $k => $v) {
+			foreach ((array)module('manage_forum')->_prepare_forums_for_select($skip_id, $_cat_id) as $k => $v) {
 				$forums[$k] = $v;
 			}
 			$cats['######## '. $_cat_name] = $forums;
@@ -380,14 +380,14 @@ class yf_manage_forum_manage_users {
 	*/
 	function _add_moderator () {
 		$def_mod_rights = array();
-		foreach ((array)module('forum')->_forum_groups as $_group_id => $_group_info) {
+		foreach ((array)module('manage_forum')->_forum_groups as $_group_id => $_group_info) {
 			if ($_group_info['is_moderator']) {
 				$MOD_GROUP = $_group_id;
 				break;
 			}
 		}
-		foreach ((array)module('forum')->_forum_groups[$MOD_GROUP] as $_name => $_value) {
-			if (!isset(module('forum')->_moderator_triggers[$_name])) {
+		foreach ((array)module('manage_forum')->_forum_groups[$MOD_GROUP] as $_name => $_value) {
+			if (!isset(module('manage_forum')->_moderator_triggers[$_name])) {
 				continue;
 			}
 			$def_mod_rights[$_name] = $_value;
@@ -406,7 +406,7 @@ class yf_manage_forum_manage_users {
 				$_tmp_array = is_array($_POST['forums_list']) ? $_POST['forums_list'] : explode(',', $_POST['forums_list']);
 				foreach ((array)$_tmp_array as $_forum_id) {
 					$_forum_id = intval($_forum_id);
-					if (empty($_forum_id) || !isset(module('forum')->_forums_array[$_forum_id])) {
+					if (empty($_forum_id) || !isset(module('manage_forum')->_forums_array[$_forum_id])) {
 						continue;
 					}
 					$_tmp_forums_list[$_forum_id] = $_forum_id;
@@ -420,7 +420,7 @@ class yf_manage_forum_manage_users {
 				$sql_array['forums_list']	= $_POST['forums_list'];
 				$sql_array['member_id']		= $_POST['user_id'];
 				$sql_array['member_name']	= _display_name($member_info);
-				foreach ((array)module('forum')->_moderator_triggers as $_name => $_desc) {
+				foreach ((array)module('manage_forum')->_moderator_triggers as $_name => $_desc) {
 					if ($_POST[$_name] == $mod_info[$_name]) {
 						continue;
 					}
@@ -453,10 +453,10 @@ class yf_manage_forum_manage_users {
 				$DATA[$k] = $v;
 			}
 		}
-		foreach ((array)module('forum')->_moderator_triggers as $_name => $_desc) {
+		foreach ((array)module('manage_forum')->_moderator_triggers as $_name => $_desc) {
 			$moderator_triggers[$_name] = array(
 				'desc'	=> _prepare_html($_desc),
-				'box'	=> common()->radio_box($_name, module('forum')->_std_trigger, $DATA[$_name], false, 2, '', false),
+				'box'	=> common()->radio_box($_name, module('manage_forum')->_std_trigger, $DATA[$_name], false, 2, '', false),
 			);
 		}
 		$_forums_for_box = $this->_prepare_forums_for_mods_select();
@@ -475,14 +475,14 @@ class yf_manage_forum_manage_users {
 			'moderator_triggers'=> $moderator_triggers,
 		);
 		$body = tpl()->parse($_GET['object'].'/admin/edit_moderator_form', $replace);
-		return module('forum')->_show_main_tpl($body);
+		return module('manage_forum')->_show_main_tpl($body);
 	}
 
 	/**
 	* delete moderator
 	*/
 	function _delete_moderator () {
-		if (!isset(module('forum')->_forum_moderators[$_GET['id']])) {
+		if (!isset(module('manage_forum')->_forum_moderators[$_GET['id']])) {
 			return _e('No such moderator');
 		}
 		db()->query('DELETE FROM '.db('forum_moderators').' WHERE id='.intval($_GET['id']));

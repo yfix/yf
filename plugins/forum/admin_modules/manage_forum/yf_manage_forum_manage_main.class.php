@@ -11,7 +11,7 @@ class yf_manage_forum_manage_main {
 
 	/**
 	*/
-	function _edit_category () {
+	function edit_category () {
 		$_GET['id'] = intval($_GET['id']);
 		$a = db()->from('forum_categories')->whereid($_GET['id'])->get();
 		if (!$a) {
@@ -34,7 +34,7 @@ class yf_manage_forum_manage_main {
 
 	/**
 	*/
-	function _add_category () {
+	function add_category () {
 		return form((array)$_POST)
 			->text('name')
 			->textarea('desc', 'Description')
@@ -52,7 +52,7 @@ class yf_manage_forum_manage_main {
 
 	/**
 	*/
-	function _delete_category () {
+	function delete_category () {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
 			$cat_info = db()->query_fetch('SELECT * FROM '.db('forum_categories').' WHERE id='.$_GET['id']);
@@ -66,12 +66,13 @@ class yf_manage_forum_manage_main {
 				db()->query('DELETE FROM '.db('forum_topics').' WHERE forum='.$forum_info['id']);
 			}
 			db()->query('DELETE FROM '.db('forum_forums').' WHERE category='.$_GET['id']);
+			cache_del(array(
+				'forum_categories',
+				'forum_forums',
+				'forum_totals',
+				'forum_home_page_posts',
+			));
 		}
-		cache_del('forum_categories');
-		cache_del('forum_forums');
-		cache_del('forum_totals');
-		cache_del('forum_home_page_posts');
-
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
@@ -80,16 +81,15 @@ class yf_manage_forum_manage_main {
 		}
 	}
 
-	// Admin: edit forum
-	function _edit_forum () {
+	/**
+	*/
+	function edit_forum () {
 		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
-			return _e('No forum id');
-		}
-		$forum_info = db()->query_fetch('SELECT * FROM '.db('forum_forums').' WHERE id='.$_GET['id']);
+		$forum_info = db()->query_fetch('SELECT * FROM '.db('forum_forums').' WHERE id='.(int)$_GET['id']);
 		if (empty($forum_info)) {
 			return _e('No such forum');
 		}
+/*
 		if (main()->is_post()) {
 			$_parent_forum_id = intval($_POST['forum']);
 			if (substr($_POST['forum'], 0, 2) == 'c_') {
@@ -103,7 +103,7 @@ class yf_manage_forum_manage_main {
 				$_tmp_array = is_array($_POST['user_groups']) ? $_POST['user_groups'] : explode(',', $_POST['user_groups']);
 				foreach ((array)$_tmp_array as $_group_id) {
 					$_group_id = intval($_group_id);
-					if (empty($_group_id) || !isset(module('forum')->_forum_groups[$_group_id])) {
+					if (empty($_group_id) || !isset(module('manage_forum')->_forum_groups[$_group_id])) {
 						continue;
 					}
 					$_tmp_user_groups[$_group_id] = $_group_id;
@@ -132,17 +132,17 @@ class yf_manage_forum_manage_main {
 			}
 		}
 		$groups_select = array();
-		foreach ((array)module('forum')->_forum_groups as $_group_id => $_group_info) {
+		foreach ((array)module('manage_forum')->_forum_groups as $_group_id => $_group_info) {
 			$groups_select[$_group_id] = _prepare_html($_group_info['title']);
 		}
 		$groups_selected = array();
 		foreach ((array)explode(',', $DATA['user_groups']) as $_group_id) {
 			$groups_selected[$_group_id] = $_group_id;
 		}
-		foreach ((array)module('forum')->_forum_cats_array as $_cat_info) {
+		foreach ((array)module('manage_forum')->_forum_cats_array as $_cat_info) {
 			$categories[$_cat_info['id']] = $_cat_info['name'];
 		}
-		$_parents_array = module('forum')->_prepare_parents_for_select($_GET['id']);
+		$_parents_array = module('manage_forum')->_prepare_parents_for_select($_GET['id']);
 		$replace = array(
 			'header_text'		=> t('edit_forum'),
 			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
@@ -151,17 +151,39 @@ class yf_manage_forum_manage_main {
 			'parent_box'		=> common()->select_box('forum',		$_parents_array,	$forum_info['parent'] ? $forum_info['parent'] : 'c_'.$forum_info['category'], false),
 			'display_order'		=> intval($forum_info['order']),
 			'description'		=> stripslashes($forum_info['desc']),
-			'activity_box'		=> common()->radio_box('activity', module('forum')->_active_select, $forum_info['status']),
-			'postings_box'		=> common()->radio_box('postings', module('forum')->_postings_select, $forum_info['options'] == '2'),
+			'activity_box'		=> common()->radio_box('activity', module('manage_forum')->_active_select, $forum_info['status']),
+			'postings_box'		=> common()->radio_box('postings', module('manage_forum')->_postings_select, $forum_info['options'] == '2'),
 			'user_groups_box'	=> common()->multi_select('user_groups', $groups_select, $groups_selected, false, 2, ' size=7 class=small_for_select ', false),
 			'back'				=> back('./?object='.$_GET['object']),
 		);
 		return tpl()->parse('manage_forum/forum_form', $replace);
+*/
 	}
 
-	// Admin: add forum
-	function _add_forum () {
+	/**
+	*/
+	function add_forum () {
 		$_GET['id'] = intval($_GET['id']);
+		$cat = db()->from('forum_categories')->whereid($_GET['id'])->get();
+		if (!$cat) {
+			return _e('Wrong category id');
+		}
+		return form((array)$_POST)
+			->text('name')
+			->textarea('desc', 'Description')
+			->select_box('parent', module('manage_forum')->_prepare_parents_for_select())
+			->number('order')
+			->active_box('status')
+#			->active_box('options')
+			->validate(array(
+				'name'	=> 'trim|required',
+			))
+			->db_insert_if_ok('forum_forums', array('name','desc','status','order','category','parent','options'))
+			->on_after_update(function(){
+				cache_del('forum_forums');
+			})
+			->save();
+/*
 		if (main()->is_post()) {
 			$_parent_forum_id = intval($_POST['forum']);
 			if (substr($_POST['forum'], 0, 2) == 'c_') {
@@ -184,13 +206,13 @@ class yf_manage_forum_manage_main {
 			cache_del('forum_forums');
 			return js_redirect('./?object='.$_GET['object']);
 		}
-		foreach ((array)module('forum')->_forum_cats_array as $_cat_info) {
+		foreach ((array)module('manage_forum')->_forum_cats_array as $_cat_info) {
 			$categories[$_cat_info['id']] = $_cat_info['name'];
 		}
-		$_parents_array = module('forum')->_prepare_parents_for_select();
+		$_parents_array = module('manage_forum')->_prepare_parents_for_select();
 		
 		$groups_select = array();
-		foreach ((array)module('forum')->_forum_groups as $_group_id => $_group_info) {
+		foreach ((array)module('manage_forum')->_forum_groups as $_group_id => $_group_info) {
 			$groups_select[$_group_id] = _prepare_html($_group_info['title']);
 		}
 		$replace = array(
@@ -201,16 +223,17 @@ class yf_manage_forum_manage_main {
 			'parent_box'		=> common()->select_box('forum',		$_parents_array,'c_'.$_GET['id'], false),
 			'display_order'		=> '0',
 			'description'		=> '',
-			'activity_box'		=> common()->radio_box('activity', module('forum')->_active_select, 'a'),
-			'postings_box'		=> common()->radio_box('postings', module('forum')->_postings_select, $forum_info['options']),
+			'activity_box'		=> common()->radio_box('activity', module('manage_forum')->_active_select, 'a'),
+			'postings_box'		=> common()->radio_box('postings', module('manage_forum')->_postings_select, $forum_info['options']),
 			'back'				=> back('./?object='.$_GET['object']),
 			'user_groups_box'	=> common()->multi_select('user_groups', $groups_select, $groups_selected, false, 2, ' size=7 class=small_for_select ', false),
 		);
 		return tpl()->parse('manage_forum/forum_form', $replace);
+*/
 	}
 
 	// Admin: delete forum
-	function _delete_forum () {
+	function delete_forum () {
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
 			$forum_info = db()->query_fetch('SELECT * FROM '.db('forum_forums').' WHERE id='.$_GET['id']);
@@ -234,7 +257,7 @@ class yf_manage_forum_manage_main {
 	}
 
 	// Admin: edit topic
-	function _edit_topic () {
+	function edit_topic () {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
 			return _e('No topic id');
@@ -271,7 +294,7 @@ class yf_manage_forum_manage_main {
 				$update_flag = false;
 				if ($_POST['forum'] != $topic_info['forum']) {
 					db()->update_safe('forum_posts', array('forum' => $_POST['forum']), 'topic='.$_GET['id']);
-					module('forum')->_update_forum_record($topic_info['forum']);
+					module('manage_forum')->_update_forum_record($topic_info['forum']);
 					$update_flag = true;
 				}
 				if ($_POST['activity'] != $topic_info['status']) {
@@ -279,7 +302,7 @@ class yf_manage_forum_manage_main {
 					$update_flag = true;
 				}
 				if ($update_flag) {
-					module('forum')->_update_forum_record($_POST['forum']);
+					module('manage_forum')->_update_forum_record($_POST['forum']);
 				}
 				cache_del('forum_forums');
 				cache_del('forum_totals');
@@ -287,10 +310,10 @@ class yf_manage_forum_manage_main {
 				return js_redirect('./?object='.$_GET['object'].'&action=view_forum&id='.$_POST['forum']);
 			}
 		}
-		foreach ((array)module('forum')->_forum_cats_array as $_cat_info) {
+		foreach ((array)module('manage_forum')->_forum_cats_array as $_cat_info) {
 			$categories[$_cat_info['id']] = $_cat_info['name'];
 		}
-		foreach ((array)module('forum')->_forums_array as $_forum_info) {
+		foreach ((array)module('manage_forum')->_forums_array as $_forum_info) {
 			$forums_with_cats[$_forum_info['id']] = $categories[$_forum_info['category']].' / '.$_forum_info['name'];
 		}
 		list($text) = db()->query_fetch('SELECT text AS `0` FROM '.db('forum_posts').' WHERE id='.$topic_info['first_post_id']);
@@ -303,14 +326,14 @@ class yf_manage_forum_manage_main {
 			'user_name'		=> stripslashes($topic_info['user_name']),
 			'user_id'		=> $topic_info['user_id'],
 			'created'		=> date('Y-m-d H:i:s', $topic_info['created']),
-			'activity'		=> common()->radio_box('activity', module('forum')->_active_select, $topic_info['status']),
+			'activity'		=> common()->radio_box('activity', module('manage_forum')->_active_select, $topic_info['status']),
 			'back'			=> back('./?object='.$_GET['object'].'&action=view_forum&id='.$topic_info['forum']),
 		);
 		return tpl()->parse('manage_forum/topic_form', $replace);
 	}
 
 	// Admin: delete topic
-	function _delete_topic () {
+	function delete_topic () {
 		$_GET['id'] = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
 			$topic_info = db()->query_fetch('SELECT * FROM '.db('forum_topics').' WHERE id='.$_GET['id']);
@@ -323,7 +346,7 @@ class yf_manage_forum_manage_main {
 			db()->query('DELETE FROM '.db('forum_posts').' WHERE topic='.$topic_info['id']);
 			db()->query('DELETE FROM '.db('forum_topics').' WHERE id='.$topic_info['id']);
 
-			module('forum')->_update_forum_record($topic_info['forum']);
+			module('manage_forum')->_update_forum_record($topic_info['forum']);
 		}
 		cache_del('forum_forums');
 		cache_del('forum_totals');
@@ -337,7 +360,7 @@ class yf_manage_forum_manage_main {
 	}
 
 	// Admin: edit post
-	function _edit_post () {
+	function edit_post () {
 		$_GET['id']		= intval($_GET['id']);
 		if (isset($_GET['msg_id'])) {
 			$_GET['msg_id'] = intval($_GET['msg_id']);
@@ -365,8 +388,8 @@ class yf_manage_forum_manage_main {
 				'created'	=> strtotime($_POST['created']),
 			), $post_info['id']);
 			if ($_POST['activity'] != $post_info['status']) {
-				module('forum')->_update_forum_record($post_info['forum']);
-				module('forum')->_update_topic_record($post_info['topic']);
+				module('manage_forum')->_update_forum_record($post_info['forum']);
+				module('manage_forum')->_update_topic_record($post_info['topic']);
 			}
 			cache_del('forum_forums');
 			cache_del('forum_totals');
@@ -382,21 +405,21 @@ class yf_manage_forum_manage_main {
 			'user_id'		=> $post_info['user_id'],
 			'poster_ip'		=> $post_info['poster_ip'],
 			'created'		=> date('Y-m-d H:i:s', $post_info['created']),
-			'activity'		=> common()->radio_box('activity', module('forum')->_active_select, $post_info['status']),
+			'activity'		=> common()->radio_box('activity', module('manage_forum')->_active_select, $post_info['status']),
 			'back'			=> back('./?object='.$_GET['object'].'&action=view_topic&id='.$post_info['topic']),
 		);
 		return tpl()->parse('manage_forum/post_form', $replace);
 	}
 
 	// Admin: delete post
-	function _delete_post () {
+	function delete_post () {
 		$_GET['id'] = intval($_GET['id']);
 		$_GET['msg_id'] = intval($_GET['msg_id']);
 		if ($_GET['id'] && $_GET['msg_id']) {
 			$post_info = db()->query_fetch('SELECT * FROM '.db('forum_posts').' WHERE id='.$_GET['msg_id']);
 			db()->query('DELETE FROM '.db('forum_posts').' WHERE id='.$_GET['msg_id']);
-			module('forum')->_update_forum_record($post_info['forum']);
-			module('forum')->_update_topic_record($post_info['topic']);
+			module('manage_forum')->_update_forum_record($post_info['forum']);
+			module('manage_forum')->_update_topic_record($post_info['topic']);
 			common()->_remove_activity_points($post_info['user_id'], 'forum_post', $_GET['msg_id']);
 		}
 		cache_del('forum_forums');
@@ -464,7 +487,7 @@ class yf_manage_forum_manage_main {
 		if (!empty($topic_info)) {
 			db()->UPDATE('forum_topics', array('status' => $topic_info['status'] == 'a' ? 'p' : 'a'), 'id='.intval($topic_info['id']));
 			db()->UPDATE('forum_posts', array('status' => $topic_info['status'] == 'a' ? 'p' : 'a'), 'topic='.intval($topic_info['id']));
-			module('forum')->_update_forum_record($topic_info['forum']);
+			module('manage_forum')->_update_forum_record($topic_info['forum']);
 			cache_del('forum_forums');
 			cache_del('forum_totals');
 			cache_del('forum_home_page_posts');
@@ -486,8 +509,8 @@ class yf_manage_forum_manage_main {
 		}
 		if (!empty($post_info)) {
 			db()->UPDATE('forum_posts', array('status' => $post_info['status'] == 'a' ? 'p' : 'a'), 'id='.intval($post_info['id']));
-			module('forum')->_update_forum_record($post_info['forum']);
-			module('forum')->_update_topic_record($post_info['topic']);
+			module('manage_forum')->_update_forum_record($post_info['forum']);
+			module('manage_forum')->_update_topic_record($post_info['topic']);
 			cache_del('forum_forums');
 			cache_del('forum_totals');
 			cache_del('forum_home_page_posts');

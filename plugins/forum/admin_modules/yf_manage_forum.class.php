@@ -512,70 +512,70 @@ class yf_manage_forum {
 	* Admin: edit category
 	*/
 	function edit_category () {
-		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_edit_category();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->edit_category();
 	}
 
 	/**
 	* Admin: add category
 	*/
 	function add_category () {
-		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_add_category();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->add_category();
 	}
 
 	/**
 	* Delete category
 	*/
 	function delete_category () {
-		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_delete_category();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->delete_category();
 	}
 
 	/**
 	* Admin: edit forum
 	*/
 	function edit_forum () {
-		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_edit_forum();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->edit_forum();
 	}
 
 	/**
 	* Admin: add forum
 	*/
 	function add_forum () {
-		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_add_forum();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->add_forum();
 	}
 
 	/**
 	* Admin: delete forum
 	*/
 	function delete_forum () {
-		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_delete_forum();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->delete_forum();
 	}
 
 	/**
 	* Admin: edit topic
 	*/
 	function edit_topic () {
-		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_edit_topic();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->edit_topic();
 	}
 
 	/**
 	* Admin: delete topic
 	*/
 	function delete_topic () {
-		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_delete_topic();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->delete_topic();
 	}
 
 	/**
 	* Admin: edit post
 	*/
 	function edit_post () {
-		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_edit_post();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->edit_post();
 	}
 
 	/**
 	* Admin: delete post
 	*/
 	function delete_post () {
-		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_delete_post();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->delete_post();
 	}
 
 	/**
