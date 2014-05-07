@@ -128,20 +128,17 @@ class yf_manage_forum {
 		if (!strlen($this->salt)) {
 			$this->salt = substr(md5($_SERVER['HTTP_HOST'].'123456'), 0, 8);
 		}
-		$this->_forum_cats_array	= (array)main()->get_data('forum_categories');
-		$this->_forums_array		= (array)main()->get_data('forum_forums');
-		$this->_forum_groups		= (array)main()->get_data('forum_groups');
-		$this->_forum_moderators	= (array)main()->get_data('forum_moderators');
+		$this->_forum_cats_array	= (array)db()->from('forum_categories')->get_all();
+		$this->_forums_array		= (array)db()->from('forum_forums')->get_all();
+		$this->_forum_groups		= (array)db()->from('forum_groups')->get_all();
+		$this->_forum_moderators	= (array)db()->from('forum_moderators')->get_all();
 		$this->_verify_session_vars();
 		if ($this->BB_CODE) {
 			$this->BB_OBJ = _class('bb_codes');
 			$this->smiles = main()->get_data('smilies');
 		}
 		if ($this->SHOW_USER_RANKS && in_array($_GET['action'], array('view_topic'))) {
-			$Q = db()->query('SELECT * FROM '.db('forum_ranks').'');// WHERE special=0
-			while($A = db()->fetch_assoc($Q)) {
-				$this->user_ranks[$A['id']] = $A;
-			}
+			$this->user_ranks = (array)db()->from('forum_ranks')->get_all();
 		}
 		$this->_std_trigger = array(
 			'1' => '<span class=positive>'.t('YES').'</span>',

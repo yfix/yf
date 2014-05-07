@@ -9,35 +9,27 @@
 */
 class yf_manage_forum_manage_main {
 
-	// Admin: edit category
+	/**
+	*/
 	function _edit_category () {
 		$_GET['id'] = intval($_GET['id']);
-		if ($_GET['id']) {
-			$cat_info = db()->query_fetch('SELECT * FROM '.db('forum_categories').' WHERE id='.$_GET['id']);
+		$a = db()->from('forum_categories')->whereid($_GET['id'])->get();
+		if (!$a) {
+			return _e('Wrong id');
 		}
-		if (empty($cat_info)) {
-			return _e('No such category');
-		}
-		if (main()->is_post()) {
-			db()->update_safe('forum_categories', array(
-				'name'	=> $_POST['name'],
-				'desc'	=> $_POST['description'],
-				'status'=> $_POST['activity'],
-				'order'	=> $_POST['display_order'],
-			), $_GET['id']);
-			cache_del('forum_categories');
-			return js_redirect('./?object='.$_GET['object']);
-		}
-		$replace = array(
-			'header_text'	=> t('edit_category'),
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'name'			=> stripslashes($cat_info['name']),
-			'display_order'	=> intval($cat_info['order']),
-			'description'	=> stripslashes($cat_info['desc']),
-			'activity'		=> common()->radio_box('activity', module('forum')->_active_select, $cat_info['status']),
-			'back'			=> back('./?object='.$_GET['object']),
-		);
-		return tpl()->parse('manage_forum/category_form', $replace);
+		return form((array)$_POST + (array)$a)
+			->text('name')
+			->textarea('desc', 'Description')
+			->number('order')
+			->active_box('status')
+			->validate(array(
+				'name'	=> 'trim|required',
+			))
+			->db_update_if_ok('forum_categories', array('name','desc','order','status'), $a['id'])
+			->on_after_update(function(){
+				cache_del('forum_categories');
+			})
+			->save();
 	}
 
 	/**
@@ -58,7 +50,8 @@ class yf_manage_forum_manage_main {
 			->save();
 	}
 
-	// Delete category
+	/**
+	*/
 	function _delete_category () {
 		$_GET['id'] = intval($_GET['id']);
 		if ($_GET['id']) {
