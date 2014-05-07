@@ -42,7 +42,7 @@ class yf_manage_forum_manage_view {
 		}
 		$replace = array(
 			"forum_id"		=> intval($forum_info['id']),
-			"new_msg"		=> module("forum")->_forum_new_msg($forum_info['id']),
+			"new_msg"		=> module("manage_forum")->_forum_new_msg($forum_info['id']),
 			"link"			=> "./?object=".$_GET["object"]."&action=view_forum&id=".$forum_info['id']._add_get(array("id")),
 			"name"			=> $forum_info["name"],
 			"desc"			=> $forum_info["desc"],
