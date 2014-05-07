@@ -75,10 +75,11 @@ class yf_category_editor {
 				'name'	=> 'trim|required|is_unique[categories.name]',
 				'type'	=> 'trim|required',
 			))
-			->db_insert_if_ok('categories', array('type','name','desc','stpl_name','method_name','custom_fields','active'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('categories', array('type','name','desc','stpl_name','method_name','custom_fields','active'), array())
+			->on_after_update(function() {
 				common()->admin_wall_add(array('category added: '.$_POST['name'], db()->insert_id()));
 				module('category_editor')->_purge_category_caches();
-			}))
+			})
 			->radio_box('type', array('user' => 'User', 'admin' => 'Admin'))
 			->text('name')
 			->text('desc', 'Description')
@@ -102,10 +103,11 @@ class yf_category_editor {
 			->validate(array(
 				'name'	=> 'trim|required',
 			))
-			->db_update_if_ok('categories', array('name','desc','stpl_name','method_name','custom_fields','active'), 'id='.$id, array('on_after_update' => function() {
+			->db_update_if_ok('categories', array('name','desc','stpl_name','method_name','custom_fields','active'), 'id='.$id)
+			->on_after_update(function() {
 				common()->admin_wall_add(array('category updated: '.$a['name'], $id));
 				module('category_editor')->_purge_category_caches();
-			}))
+			})
 			->info('type')
 			->text('name')
 			->text('desc', 'Description')
@@ -551,12 +553,11 @@ class yf_category_editor {
 			->validate(array(
 				'name'	=> 'trim|required',
 			))
-			->db_insert_if_ok('category_items', array(
-				'parent_id','name','desc','meta_keywords','meta_desc','url','icon','featured','active','other_info'
-			), array('cat_id' => $cat_info['id']), array('on_after_update' => function() use ($cat_info) {
+			->db_insert_if_ok('category_items', array('parent_id','name','desc','meta_keywords','meta_desc','url','icon','featured','active','other_info'), array('cat_id' => $cat_info['id']))
+			->on_after_update(function() use ($cat_info) {
 				common()->admin_wall_add(array('category item added: '.$cat_info['name'], $cat_info['id']));
 				module('category_editor')->_purge_category_caches($cat_info);
-			}))
+			})
 			->select_box('parent_id', $this->_get_parents_for_select($cat_info['id']), array('desc' => 'Parent item'))
 			->text('name')
 			->textarea('desc', 'Description')
@@ -601,12 +602,11 @@ class yf_category_editor {
 			->validate(array(
 				'name'	=> 'trim|required',
 			))
-			->db_update_if_ok('category_items', array(
-				'parent_id','name','desc','meta_keywords','meta_desc','url','icon','featured','active','other_info'
-			), 'id='.$item_info['id'], array('on_after_update' => function() use ($cat_info) {
+			->db_update_if_ok('category_items', array('parent_id','name','desc','meta_keywords','meta_desc','url','icon','featured','active','other_info'), 'id='.$item_info['id'])
+			->on_after_update(function() use ($cat_info) {
 				common()->admin_wall_add(array('category item updated: '.$cat_info['name'], $cat_info['id']));
 				module('category_editor')->_purge_category_caches($cat_info);
-			}))
+			})
 			->select_box('parent_id', $this->_get_parents_for_select($cat_info['id']), array('desc' => 'Parent item'))
 			->text('name')
 			->textarea('desc', 'Description')

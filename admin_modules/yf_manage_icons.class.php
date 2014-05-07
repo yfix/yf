@@ -34,10 +34,11 @@ class yf_manage_icons {
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_update_if_ok('icons', array('name','active'), 'id='.$a['id'], array('on_after_update' => function() {
+			->db_update_if_ok('icons', array('name','active'), 'id='.$a['id'])
+			->on_after_update(function() {
 				cache_del(array('icons'));
 				common()->admin_wall_add(array('icon updated: '.$_POST['name'].'', $a['id']));
-			}))
+			})
 			->text('name')
 			->active_box()
 			->save_and_back();
@@ -49,10 +50,11 @@ class yf_manage_icons {
 		$a = $_POST;
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_insert_if_ok('icons', array('name','active'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('icons', array('name','active'), array())
+			->on_after_update(function() {
 				cache_del(array('icons'));
 				common()->admin_wall_add(array('icon added: '.$_POST['name'].'', db()->insert_id()));
-			}))
+			})
 			->text('name')
 			->active_box()
 			->save_and_back();

@@ -75,10 +75,11 @@ class yf_blocks {
 				'name'	=> 'trim|required|alpha_dash', //|is_unique[blocks.name]
 				'type'	=> 'trim|required',
 			))
-			->db_insert_if_ok('blocks', array('type','name','desc','stpl_name','method_name','active'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('blocks', array('type','name','desc','stpl_name','method_name','active'), array())
+			->on_after_update(function() {
 				common()->admin_wall_add(array('block added: '.$_POST['name'].'', db()->insert_id()));
 				module('blocks')->_cache_purge();
-			}))
+			})
 			->radio_box('type', array('admin' => 'admin', 'user' => 'user'))
 			->text('name','Block name')
 			->text('desc','Block Description')
@@ -98,10 +99,11 @@ class yf_blocks {
 			->validate(array(
 				'name'	=> 'trim|required|alpha_dash',
 			))
-			->db_update_if_ok('blocks', array('name','desc','stpl_name','method_name','active'), 'id='.$_GET['id'], array('on_after_update' => function() {
+			->db_update_if_ok('blocks', array('name','desc','stpl_name','method_name','active'), 'id='.$_GET['id'])
+			->on_after_update(function() {
 				common()->admin_wall_add(array('block updated: '.$_POST['name'].'', $id));
 				module('blocks')->_cache_purge();
-			}))
+			})
 			->text('name','Block name')
 			->text('desc','Block Description')
 			->text('stpl_name', 'Custom template')
@@ -239,11 +241,12 @@ class yf_blocks {
 				'rule_type'	=> 'trim|required',
 			))
 			->db_insert_if_ok('block_rules', array('rule_type','methods','user_groups','themes','locales','site_ids','server_ids','order','active'), array('block_id' => $block_info['id']), array(
-				'on_after_update' => function() {
-					common()->admin_wall_add(array('block rule added for '.$block_info['name'], $_GET['id']));
-					module('blocks')->_cache_purge();
-				}, 'redirect_link' => './?object=blocks&action=show_rules&id='.$block_info['id'],
+				'redirect_link' => './?object=blocks&action=show_rules&id='.$block_info['id'],
 			))
+			->on_after_update(function() {
+				common()->admin_wall_add(array('block rule added for '.$block_info['name'], $_GET['id']));
+				module('blocks')->_cache_purge();
+			})
 			->info('type')
 			->allow_deny_box('rule_type')
 			->multi_select_box('methods', $this->_methods[$block_info['type']], array('edit_link' => './?object='.$block_info['type'].'_modules'))
@@ -290,11 +293,12 @@ class yf_blocks {
 				'rule_type'	=> 'trim|required',
 			))
 			->db_update_if_ok('block_rules', array('rule_type','methods','user_groups','themes','locales','site_ids','server_ids','order','active'), 'id='.$rule_info['id'], array(
-				'on_after_update' => function() {
-					common()->admin_wall_add(array('block rule updated for: '.$block_info['name'], $_GET['id']));
-					module('blocks')->_cache_purge();
-				}, 'redirect_link' => './?object=blocks&action=show_rules&id='.$a['block_id'],
+				'redirect_link' => './?object=blocks&action=show_rules&id='.$a['block_id'],
 			))
+			->on_after_update(function() {
+				common()->admin_wall_add(array('block rule updated for: '.$block_info['name'], $_GET['id']));
+				module('blocks')->_cache_purge();
+			})
 			->info('type')
 			->allow_deny_box('rule_type')
 			->multi_select_box('methods', $this->_methods[$block_info['type']], array('edit_link' => './?object='.$block_info['type'].'_modules'))

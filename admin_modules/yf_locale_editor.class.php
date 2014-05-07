@@ -179,10 +179,11 @@ class yf_locale_editor {
 				'name' => 'trim|required|is_unique_without[locale_langs.name.'.$id.']',
 				'charset' => 'trim|required',
 			))
-			->db_update_if_ok('locale_langs', array('name','charset'), 'id='.$id, array('on_after_update' => function() {
+			->db_update_if_ok('locale_langs', array('name','charset'), 'id='.$id)
+			->on_after_update(function() {
 				cache_del('locale_langs');
 				common()->admin_wall_add(array('locale lang updated: '.$_POST['name'].'', $id));
-			}))
+			})
 			->info('locale')
 			->text('name')
 			->text('charset')

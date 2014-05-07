@@ -45,10 +45,11 @@ class yf_user_groups {
 			->validate(array(
 				'name' => 'trim|required|alpha_numeric|is_unique[admin_groups.name]'
 			))
-			->db_insert_if_ok('user_groups', array('name','go_after_login','active'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('user_groups', array('name','go_after_login','active'), array())
+			->on_after_update(function() {
 				cache_del(array('user_groups', 'user_groups_details'));
 				common()->admin_wall_add(array('user group added: '.$_POST['name'].'', db()->insert_id()));
-			}))
+			})
 			->text('name','Group name')
 			->text('go_after_login','Url after login')
 			->active_box()
@@ -68,10 +69,11 @@ class yf_user_groups {
 			->validate(array(
 				'name' => 'trim|required|alpha_numeric|is_unique[admin_groups.name]'
 			))
-			->db_update_if_ok('user_groups', array('name','go_after_login'), 'id='.$id, array('on_after_update' => function() {
+			->db_update_if_ok('user_groups', array('name','go_after_login'), 'id='.$id)
+			->on_after_update(function() {
 				cache_del(array('user_groups', 'user_groups_details'));
 				common()->admin_wall_add(array('user group edited: '.$_POST['name'].'', $id));
-			}))
+			})
 			->text('name','Group name')
 			->text('go_after_login','Url after login')
 			->save_and_back();

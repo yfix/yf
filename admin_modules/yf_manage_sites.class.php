@@ -34,10 +34,11 @@ class yf_manage_sites {
 			->validate(array(
 				'name' => 'trim|required',
 			))
-			->db_update_if_ok('sites', array('name','web_path','real_path'), 'id='.$a['id'], array('on_after_update' => function() {
+			->db_update_if_ok('sites', array('name','web_path','real_path'), 'id='.$a['id'])
+			->on_after_update(function() {
 				cache_del(array('sites'));
 				common()->admin_wall_add(array('site updated: '.$_POST['name'].'', $a['id']));
-			}))
+			})
 			->text('name')
 			->text('web_path')
 			->text('real_path')
@@ -52,10 +53,11 @@ class yf_manage_sites {
 			->validate(array(
 				'name' => 'trim|required',
 			))
-			->db_insert_if_ok('sites', array('name','web_path','real_path'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('sites', array('name','web_path','real_path'), array())
+			->on_after_update(function() {
 				cache_del(array('sites'));
 				common()->admin_wall_add(array('site added: '.$_POST['name'].'', db()->insert_id()));
-			}))
+			})
 			->text('name')
 			->text('web_path')
 			->text('real_path')

@@ -41,10 +41,11 @@ class yf_manage_regions {
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
 			->validate(array('name' => 'trim|required'))
-			->db_update_if_ok('regions', array('name','active'), 'id='.$a['id'], array('on_after_update' => function() {
+			->db_update_if_ok('regions', array('name','active'), 'id='.$a['id'])
+			->on_after_update(function() {
 				cache_del(array('regions'));
 				common()->admin_wall_add(array('region updated: '.$_POST['name'].'', $a['id']));
-			}))
+			})
 			->text('name')
 			->text('country')
 			->info('code')
@@ -61,10 +62,11 @@ class yf_manage_regions {
 		$a = $_POST;
 		return form($a)
 			->validate(array('name' => 'trim|required'))
-			->db_insert_if_ok('regions', array('name','active'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('regions', array('name','active'), array())
+			->on_after_update(function() {
 				cache_del(array('regions'));
 				common()->admin_wall_add(array('region added: '.$_POST['name'].'', db()->insert_id()));
-			}))
+			})
 			->text('name')
 			->text('country')
 			->info('code')
