@@ -21,44 +21,6 @@ class yf_core_blocks {
 	}
 
 	/**
-	* Display main 'center' block contents
-	*/
-	function show_center () {
-		$graphics = _class('graphics');
-		if ($graphics->USE_SE_KEYWORDS) {
-			$graphics->_set_se_keywords();
-		}
-		if ($graphics->IFRAME_CENTER) {
-			if (false !== strpos($_SERVER['QUERY_STRING'], 'center_area=1')) {
-				main()->NO_GRAPHICS = true;
-				$replace = array(
-					'css'	=> '<link rel="stylesheet" type="text/css" href="'.$graphics->MEDIA_PATH. tpl()->TPL_PATH. 'style.css">',
-					'text'	=> $graphics->tasks(1),
-				);
-				$body = tpl()->parse('system/empty_page', $replace);
-				echo module('rewrite')->_replace_links_for_iframe($body);
-			} else {
-				$replace = array(
-					'src'	=> WEB_PATH.'?'.(strlen($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'].'&' : '').'center_area=1',
-				);
-				$body .= tpl()->parse('system/iframe', $replace);
-			}
-		} else {
-			if (false !== strpos($_SERVER['QUERY_STRING'], 'center_area=1')) {
-				main()->NO_GRAPHICS = true;
-				$replace = array(
-					'css'	=> '<link rel="stylesheet" type="text/css" href="'.$graphics->MEDIA_PATH. tpl()->TPL_PATH.'style.css">',
-					'text'	=> $graphics->tasks(1),
-				);
-				echo tpl()->parse('system/empty_page', $replace);
-			} else {
-				$body = $graphics->tasks(1);
-			}
-		}
-		return $body;
-	}
-
-	/**
 	* Alias for the '_show_block'
 	*/
 	function show_block ($params = array()) {
@@ -114,10 +76,7 @@ class yf_core_blocks {
 			return false;
 		}
 		if (!$this->_check_block_rights($block_id, $_GET['object'], $_GET['action'])) {
-			return _class('graphics')->_action_on_block_denied($block_name);
-		}
-		if (MAIN_TYPE_USER && $block_name == 'center_area' && _class('graphics')->USE_SE_KEYWORDS) {
-			_class('graphics')->_set_se_keywords();
+			return $this->_action_on_block_denied($block_name);
 		}
 		$cur_block_info = $this->_blocks_infos[$block_id];
 		// 	If special object method specified - then call it
@@ -342,20 +301,30 @@ class yf_core_blocks {
 		if (!$this->_check_block_rights($block_id, $_GET['object'], $_GET['action'])) {
 			return _class('graphics')->_action_on_block_denied($block_name);
 		}
-		return _class('graphics')->tasks(1);
+		return $this->tasks($allowed_check = true);
+	}
+
+	/**
+	* Display main 'center' block contents
+	*/
+	function show_center () {
+		return $this->tasks($allowed_check = true);
 	}
 
 	/**
 	* Main $_GET tasks handler
 	*/
-	function tasks($CHECK_IF_ALLOWED = false) {
+	function tasks($allowed_check = false) {
+		if (main()->is_console() || main()->is_ajax()) {
+			main()->NO_GRAPHICS = true;
+		}
 		// Singleton
 		$_center_result = tpl()->_CENTER_RESULT;
 		if (isset($_center_result)) {
 			return $_center_result;
 		}
-		$NOT_FOUND		= false;
-		$ACCESS_DENIED	= false;
+		$not_found		= false;
+		$access_denied	= false;
 		$custom_handler_exists = false;
 
 		_class('graphics')->_route_request();
@@ -363,23 +332,23 @@ class yf_core_blocks {
 		// Also we protect here core classes that can be instantinated before this method and can be allowed by mistake
 		// Use other module names, think about this list as "reserved" words
 		if (substr($_GET['action'], 0, 1) == '_' || in_array($_GET['object'], array('main','common','db','graphics','cache','form2','table2','tpl'))) {
-			$ACCESS_DENIED = true;
+			$access_denied = true;
 		}
-		if (!$ACCESS_DENIED) {
+		if (!$access_denied) {
 			$obj = module($_GET['object']);
 			if (!is_object($obj)) {
-				$NOT_FOUND = true;
+				$not_found = true;
 			}
-			if (!$NOT_FOUND && !method_exists($obj, $_GET['action'])) {
-				$NOT_FOUND = true;
+			if (!$not_found && !method_exists($obj, $_GET['action'])) {
+				$not_found = true;
 			}
 			// Check if we have custom action handler in module (catch all requests to module methods)
 			if (method_exists($obj, main()->MODULE_CUSTOM_HANDLER)) {
 				$custom_handler_exists = true;
 			}
-			if (!$NOT_FOUND || $custom_handler_exists) {
+			if (!$not_found || $custom_handler_exists) {
 				if ($custom_handler_exists) {
-					$NOT_FOUND = false;
+					$not_found = false;
 					$body = $obj->{main()->MODULE_CUSTOM_HANDLER}($_GET['action']);
 				} else {
 					$is_banned = false;
@@ -405,7 +374,7 @@ class yf_core_blocks {
 				redirect($redir_url, 1, tpl()->parse('system/error_not_found'));
 			}
 		};
-		if ($NOT_FOUND) {
+		if ($not_found) {
 			if ($this->TASK_NOT_FOUND_404_HEADER) {
 				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 404 Not Found');
 			}
@@ -424,14 +393,14 @@ class yf_core_blocks {
 						$body = _class_safe($u['object'], $u['path'])->$action();
 					} elseif (isset($u['stpl'])) {
 						main()->NO_GRAPHICS = true;
-						echo tpl()->parse($u['stpl']);
+						print tpl()->parse($u['stpl']);
 					}
 				} else {
 					$redirect_func($u);
 				}
 				$GLOBALS['task_not_found'] = true;
 			}
-		} elseif ($CHECK_IF_ALLOWED && $ACCESS_DENIED) {
+		} elseif ($allowed_check && $access_denied) {
 			if ($this->TASK_DENIED_403_HEADER) {
 				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
 			}
@@ -441,11 +410,10 @@ class yf_core_blocks {
 				$GLOBALS['task_denied'] = true;
 			}
 		}
-		// Do not touch !!!
+		// Singleton
 		tpl()->_CENTER_RESULT = (string)$body;
 		// Output only center content, when we are inside AJAX_MODE
-		if (conf('IS_AJAX')) {
-			main()->NO_GRAPHICS = true;
+		if (main()->is_ajax()) {
 			print $body;
 		}
 		return $body;
