@@ -766,9 +766,9 @@ class yf_html {
 		if (!$values) {
 			return false;
 		}
-		$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$selected = strval($selected);
 		foreach ((array)$values as $value => $val_name) {
+			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 			if ($this->BOXES_USE_STPL) { 
 				$_what_compare = strval($type == 1 ? $val_name : $value);
 				$replace = array(
