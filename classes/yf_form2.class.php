@@ -389,11 +389,11 @@ class yf_form2 {
 			}
 			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
-			$body = '<form'.$_this->_attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate')).'>'.PHP_EOL;
+			$body = '<form'._attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate')).'>'.PHP_EOL;
 // TODO: use unified fieldset_start() method
 // Fieldset hardcode here needed to avoid strange bug with recursion
 			$_this->_fieldset_mode_on = true;
-			$body .= '<fieldset'.$_this->_attrs($extra['fieldset'], array('class','style','id','name')).'>';
+			$body .= '<fieldset'._attrs($extra['fieldset'], array('class','style','id','name')).'>';
 			if ($extra['legend']) {
 				$body .= PHP_EOL.'<legend>'._htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
 			}
@@ -442,7 +442,7 @@ class yf_form2 {
 			} else {
 				$_this->_fieldset_mode_on = true;
 			}
-			$body .= '<fieldset'.$_this->_attrs($extra, array('class','style','id','name')).'>';
+			$body .= '<fieldset'._attrs($extra, array('class','style','id','name')).'>';
 			if ($extra['legend']) {
 				$body .= PHP_EOL.'<legend>'._htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
 			}
@@ -544,49 +544,6 @@ class yf_form2 {
 			return $this;
 		}
 		return $func((array)$extra + (array)$this->_extra, (array)$replace + (array)$this->_replace, $this);
-	}
-
-	/**
-	*/
-	function _attrs($extra = array(), $names = array()) {
-		$body = array();
-		// Try to find and allow all data-* and ng-* attributes automatically
-		foreach ((array)$extra as $k => $v) {
-			if (strpos($k, 'data-') === 0 || strpos($k, 'ng-') === 0) {
-				$names[] = $k;
-			}
-		}
-		foreach ((array)$names as $name) {
-			if (!$name || !isset($extra[$name])) {
-				continue;
-			}
-			$val = $extra[$name];
-			if (is_array($val)) {
-				$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
-			} else {
-				if (!strlen($val)) {
-					continue;
-				}
-				$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
-			}
-		}
-		// Custom html attributes forced with sub-array "attr"
-		if (is_array($extra['attr'])) {
-			foreach ((array)$extra['attr'] as $name => $val) {
-				if (!$name || !isset($val)) {
-					continue;
-				}
-				if (is_array($val)) {
-					$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
-				} else {
-					if (!strlen($val)) {
-						continue;
-					}
-					$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
-				}
-			}
-		}
-		return $body ? ' '.implode(' ', $body) : '';
 	}
 
 	/**
@@ -701,7 +658,7 @@ class yf_form2 {
 			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
 
 			$attrs_names = array('id','contenteditable','style','class','title');
-			return $_this->_row_html(isset($extra['ckeditor']) ? '<div'.$_this->_attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
+			return $_this->_row_html(isset($extra['ckeditor']) ? '<div'._attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -752,7 +709,7 @@ class yf_form2 {
 			}
 			$extra = $_this->_input_assign_params_from_validate($extra);
 			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title');
-			return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
+			return $_this->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -792,7 +749,7 @@ class yf_form2 {
 			}
 			$extra = $_this->_input_assign_params_from_validate($extra);
 			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required');
-			return $_this->_row_html('<textarea'.$_this->_attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($value) : $value).'</textarea>', $extra, $r);
+			return $_this->_row_html('<textarea'._attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($value) : $value).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -841,7 +798,7 @@ class yf_form2 {
 			$extra['type'] = 'hidden';
 
 			$attrs_names = array('type','id','name','value','data');
-			return '<input'.$_this->_attrs($extra, $attrs_names).'>';
+			return '<input'._attrs($extra, $attrs_names).'>';
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -1197,7 +1154,7 @@ class yf_form2 {
 			if (isset($_this->_params['selected'])) {
 				$extra['selected'] = $_this->_params['selected'][$extra['name']];
 			}
-			return $_this->_row_html(_class('html_controls')->radio_box($extra), $extra, $r);
+			return $_this->_row_html(_class('html')->radio_box($extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -1260,9 +1217,9 @@ class yf_form2 {
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
 				$value = (!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']);
-				return $_this->_row_html('<button'.$_this->_attrs($extra, $attrs_names).'>'.$icon. $value.'</button>', $extra, $r);
+				return $_this->_row_html('<button'._attrs($extra, $attrs_names).'>'.$icon. $value.'</button>', $extra, $r);
 			} else {
-				return $_this->_row_html('<input'.$_this->_attrs($extra, $attrs_names).'>', $extra, $r);
+				return $_this->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
 			}
 		};
 		if ($this->_chained_mode) {
@@ -1371,7 +1328,7 @@ class yf_form2 {
 				$extra['href'] = $extra['link'];
 				$extra['title'] = $extra['title'] ?: $extra['desc'] ?: $extra['name'];
 				$attrs_names = array('href','name','class','style','disabled','target','alt','title');
-				$content = '<a'.$_this->_attrs($extra, $attrs_names).'>'.$icon. $value.'</a>';
+				$content = '<a'._attrs($extra, $attrs_names).'>'.$icon. $value.'</a>';
 			} else {
 				$extra['class'] = $extra['class'] ?: 'label label-info';
 				$content = '<span class="'.$_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$icon. $value.'</span>';
@@ -1466,7 +1423,7 @@ class yf_form2 {
 			$extra['id'] = $extra['name'];
 
 			$func = $extra['func_html_control'];
-			$content = _class('html_controls')->$func($extra);
+			$content = _class('html')->$func($extra);
 			if ($extra['no_label'] || $_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
@@ -1778,7 +1735,7 @@ class yf_form2 {
 			$extra['id'] = $extra['name'];
 			$extra['required'] = true;
 			$extra['value'] = $r['captcha'];
-			$extra['input_attrs'] = $_this->_attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value'));
+			$extra['input_attrs'] = _attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value'));
 			return $_this->_row_html(_class('captcha')->show_block('./?object=dynamic&action=captcha_image', $extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -1836,7 +1793,7 @@ class yf_form2 {
 				if (empty($field_name)) {
 					continue;
 				}
-				$str = _class('html_controls')->input(array(
+				$str = _class('html')->input(array(
 					'id'	=> 'custom_'.$field_name.'_'.$r['id'],
 					'name'	=> $sub_array_name.'['.$field_name.']', // Example: custom[color]
 					'desc'	=> $field_name,
