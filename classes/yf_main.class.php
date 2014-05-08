@@ -1130,12 +1130,9 @@ class yf_main {
 	/**
 	* Main $_GET tasks handler
 	*/
-	function tasks($CHECK_IF_ALLOWED = false) {
+	function tasks($allowed_check = false) {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		if ($this->CONSOLE_MODE) {
-			$this->NO_GRAPHICS = true;
-		}
-		return $this->init_class('graphics', 'classes/')->tasks($CHECK_IF_ALLOWED);
+		return $this->init_class('core_blocks', 'classes/')->tasks($allowed_check);
 	}
 
 	/**
@@ -1840,6 +1837,13 @@ class yf_main {
 	*/
 	function is_ajax() {
 		return conf('IS_AJAX');
+	}
+
+	/**
+	* Checks whether current page was requested from console
+	*/
+	function is_console() {
+		return $this->CONSOLE_MODE;
 	}
 
 	/**
