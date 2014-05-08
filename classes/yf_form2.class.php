@@ -1932,7 +1932,7 @@ class yf_form2 {
 				$_this->_validate_ok = true;
 			} else {
 				$_this->_validate_ok = false;
-				$on_validate_error = isset($extra['on_validate_error']) ? $extra['on_validate_error'] : $this->_on['on_validate_error'];
+				$on_validate_error = isset($extra['on_validate_error']) ? $extra['on_validate_error'] : $_this->_on['on_validate_error'];
 				if (is_callable($on_validate_error)) {
 					$on_validate_error($_this->_validate_rules, $data, $extra);
 				}
