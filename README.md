@@ -1,5 +1,5 @@
 #YF: yfix framework
-http://yfix.github.io/yf/
+http://yfix.net/
 
 [![Travis Status](https://travis-ci.org/yfix/yf.png?branch=master)](https://travis-ci.org/yfix/yf)
 [![Latest Stable Version](https://poser.pugx.org/yfix/yf/v/stable.png)](https://packagist.org/packages/yfix/yf)
