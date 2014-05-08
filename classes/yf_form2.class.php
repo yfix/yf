@@ -1875,44 +1875,12 @@ class yf_form2 {
 	* Here we have special rule, called __form_id__ , it is used to track which form need to be validated from $_POST.
 	*/
 	function validate($validate_rules = array(), $post = array(), $extra = array()) {
+		$this->_validate_prepare($validate_rules, $extra);
+
 		$func = function($validate_rules, $post, $extra, $_this) {
-			$form_global_validate = isset($_this->_params['validate']) ? $_this->_params['validate'] : (isset($_this->_replace['validate']) ? $_this->_replace['validate'] : array());
-			foreach ((array)$form_global_validate as $name => $rules) {
-				$_this->_validate_rules[$name] = $rules;
-			}
-			foreach ((array)$_this->_body as $v) {
-				$_extra = $v['extra'];
-				if (isset($_extra['validate']) && isset($_extra['name'])) {
-					$_this->_validate_rules[$_extra['name']] = $_extra['validate'];
-				}
-			}
-			foreach ((array)$validate_rules as $name => $rules) {
-				$_this->_validate_rules[$name] = $rules;
-			}
-			$form_id = '';
-			$form_id_field = '__form_id__';
-			if (isset($_this->_validate_rules[$form_id_field])) {
-				$form_id = $_this->_validate_rules[$form_id_field];
-				unset($_this->_validate_rules[$form_id_field]);
-			} elseif (isset($_this->_params[$form_id_field])) {
-				$form_id = $_this->_params[$form_id_field];
-				unset($_this->_params[$form_id_field]);
-			}
-			if ($form_id) {
-				$_this->_form_id = $form_id;
-				$_this->hidden($form_id_field, array('value' => $form_id));
-			}
-			$_this->_validate_rules = $_this->_validate_rules_cleanup($_this->_validate_rules);
-			// Prepare array of rules by form method for quick access
-			if ($_this->_validate_rules) {
-				foreach ((array)$_this->_validate_rules as $item => $rules) {
-					foreach ((array)$rules as $rule) {
-						if (is_string($rule[0])) {
-							$_this->_validate_rules_names[$item][$rule[0]] = $rule[1] ?: true;
-						}
-					}
-				}
-			}
+			$_this->_validate_prepare($validate_rules, $extra);
+			$form_id = $_this->_form_id;
+			$form_id_field = $_this->_form_id_field;
 			// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
 			$data = (array)(!empty($post) ? $post : $_POST);
 			if (empty($data)) {
@@ -1953,6 +1921,50 @@ class yf_form2 {
 			return $this;
 		}
 		return $this;
+	}
+
+	/**
+	*/
+	function _validate_prepare($validate_rules = array(), $extra = array()) {
+		$form_global_validate = isset($this->_params['validate']) ? $this->_params['validate'] : (isset($this->_replace['validate']) ? $this->_replace['validate'] : array());
+		foreach ((array)$form_global_validate as $name => $rules) {
+			$this->_validate_rules[$name] = $rules;
+		}
+		foreach ((array)$this->_body as $v) {
+			$_extra = $v['extra'];
+			if (isset($_extra['validate']) && isset($_extra['name'])) {
+				$this->_validate_rules[$_extra['name']] = $_extra['validate'];
+			}
+		}
+		foreach ((array)$validate_rules as $name => $rules) {
+			$this->_validate_rules[$name] = $rules;
+		}
+		$form_id = '';
+		$form_id_field = '__form_id__';
+		if (isset($this->_validate_rules[$form_id_field])) {
+			$form_id = $this->_validate_rules[$form_id_field];
+			unset($this->_validate_rules[$form_id_field]);
+		} elseif (isset($this->_params[$form_id_field])) {
+			$form_id = $this->_params[$form_id_field];
+			unset($this->_params[$form_id_field]);
+		}
+		if ($form_id) {
+			$this->_form_id = $form_id;
+			$this->_form_id_field = $form_id_field;
+			$this->hidden($form_id_field, array('value' => $form_id));
+		}
+		$this->_validate_rules = $this->_validate_rules_cleanup($this->_validate_rules);
+		// Prepare array of rules by form method for quick access
+		if ($this->_validate_rules) {
+			foreach ((array)$this->_validate_rules as $item => $rules) {
+				foreach ((array)$rules as $rule) {
+					if (is_string($rule[0])) {
+						$this->_validate_rules_names[$item][$rule[0]] = $rule[1] ?: true;
+					}
+				}
+			}
+		}
+		return ;
 	}
 
 	/**
@@ -2101,8 +2113,9 @@ class yf_form2 {
 				if (is_callable($on_after_update)) {
 					$on_after_update($data, $table, $fields, $type, $extra);
 				}
-				if ($extra['on_success_text']) {
-					common()->set_notice($extra['on_success_text']);
+				$on_success_text = isset($extra['on_success_text']) ? $extra['on_success_text'] : $_this->_on['on_success_text'];
+				if ($on_success_text) {
+					common()->set_notice($on_success_text);
 				}
 				$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : ($_this->_replace['redirect_link'] ? $_this->_replace['redirect_link'] : $_this->_replace['back_link']);
 				if (!$redirect_link) {
@@ -2164,6 +2177,13 @@ class yf_form2 {
 	/**
 	*/
 	function on_validate_error($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
+	}
+
+	/**
+	*/
+	function on_success_text($func) {
 		$this->_on[__FUNCTION__] = $func;
 		return $this;
 	}
