@@ -9,24 +9,10 @@
 */
 class yf_common {
 
-	/** @var bool Defines use or not templates for the boxes */
-	public $BOXES_USE_STPL			= true;
-	/** @var string Path to the boxes templates */
-	public $BOXES_STPL_BASE		= 'system/common/';
 	/** @var bool Store user-level errors */
 	public $TRACK_USER_ERRORS		= false;
 	/** @var bool Display debug info for the empty page */
 	public $EMPTY_PAGE_DEBUG_INFO	= true;
-	/** @var string
-	*	Default value. Cloud creates in alphabetic text order
-	*	available values - 'text' or 'num'
-	*	(For cloud creaion)
-	*/
-	public $CLOUD_ORDER = 'text';
-	/** @var int Maximum fontsize for cloud (in 'em') */
-	public $CLOUD_MAX_FSIZE = 2;
-	/** @var int Minimum fontsize for cloud (in 'em') */
-	public $CLOUD_MIN_FSIZE = 0.9;
 	/** @var string Translit from encoding */
 	public $TRANSLIT_FROM	= 'cp1251';
 	/** @var string Required for the compatibility with old main class */
@@ -172,14 +158,14 @@ class yf_common {
 	* This function generate select box with tree hierarhy inside
 	*/
 	function select_box ($name, $values = array(), $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
-		return _class('html_controls')->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level);
+		return _class('html')->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level);
 	}
 
 	/**
 	* Generate multi-select box
 	*/
 	function multi_select ($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
-		return _class('html_controls')->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
+		return _class('html')->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
 
 	/**
@@ -193,51 +179,51 @@ class yf_common {
 	* Processing radio buttons
 	*/
 	function radio_box ($box_name, $values = array(), $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
-		return _class('html_controls')->radio_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate);
+		return _class('html')->radio_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate);
 	}
 
 	/**
 	* Simple check box
 	*/
 	function check_box ($box_name, $values = array(), $selected = '', $add_str = '') {
-		return _class('html_controls')->check_box($box_name, $values, $selected, $add_str);
+		return _class('html')->check_box($box_name, $values, $selected, $add_str);
 	}
 
 	/**
 	* Processing many checkboxes at one time
 	*/
 	function multi_check_box ($box_name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
-		return _class('html_controls')->multi_check_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array);
+		return _class('html')->multi_check_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array);
 	}
 
 	/**
 	*/
 	function date_box ($selected_date = '', $years = '', $name_postfix = '', $add_str = '', $order = 'ymd', $show_text = 1, $translate = 1) {
-		return _class('html_controls')->date_box($selected_date, $years, $name_postfix, $add_str, $order, $show_text, $translate);
+		return _class('html')->date_box($selected_date, $years, $name_postfix, $add_str, $order, $show_text, $translate);
 	}
 
 	/**
 	*/
 	function time_box ($selected_time = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1) {
-		return _class('html_controls')->time_box($selected_time, $name_postfix, $add_str, $show_text, $translate);
+		return _class('html')->time_box($selected_time, $name_postfix, $add_str, $show_text, $translate);
 	}
 
 	/**
 	*/
 	function date_box2 ($name = '', $selected = '', $range = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
-		return _class('html_controls')->date_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
+		return _class('html')->date_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
 	}
 
 	/**
 	*/
 	function datetime_box2 ($name = '', $selected = '', $range = '', $add_str = '', $show_what = 'ymdhis', $show_text = 1, $translate = 1) {
-		return _class('html_controls')->datetime_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
+		return _class('html')->datetime_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
 	}
 
 	/**
 	*/
 	function time_box2 ($name = '', $selected = '', $add_str = '', $show_text = 1, $translate = 1) {
-		return _class('html_controls')->time_box2($name, $selected, $add_str, $show_text, $translate);
+		return _class('html')->time_box2($name, $selected, $add_str, $show_text, $translate);
 	}
 
 	/**
@@ -757,11 +743,9 @@ class yf_common {
 
 	/**
 	* Creates tags cloud
-	* //$cloud_data - array like (key => array(text, num))
-	* $cloud_data - array like (text => num)
 	*/
 	function _create_cloud($cloud_data = array(), $params = array()) {
-		return _class('other_common', 'classes/common/')->_create_cloud($cloud_data, $params);
+		return _class('common_tags_cloud', 'classes/common/')->create($cloud_data, $params);
 	}
 
 	/**
@@ -1069,7 +1053,7 @@ class yf_common {
 	/**
 	*/
 	function date_picker($name, $cur_date = '') {
-		return _class('html_controls')->date_picker($name, $cur_date);
+		return _class('html')->date_picker($name, $cur_date);
 	}
 
 	/**
