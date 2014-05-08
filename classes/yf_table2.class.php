@@ -184,7 +184,7 @@ class yf_table2 {
 			if (!$params['no_header'] && !$params['rotate_table']) {
 				$thead_attrs = '';
 				if (isset($params['thead'])) {
-					$thead_attrs = is_array($params['thead']) ? $this->_attrs($params['thead'], array('class', 'id')) : ' '.$params['thead'];
+					$thead_attrs = is_array($params['thead']) ? _attrs($params['thead'], array('class', 'id')) : ' '.$params['thead'];
 				}
 				$body .= '<thead'.$thead_attrs.'>'.PHP_EOL;
 				$data1row = current($data);
@@ -462,7 +462,7 @@ class yf_table2 {
 	function _render_table_contents($data, $params = array(), $to_hide = array()) {
 		$tbody_attrs = '';
 		if (isset($params['tbody'])) {
-			$tbody_attrs = is_array($params['tbody']) ? $this->_attrs($params['tbody'], array('class', 'id')) : ' '.$params['tbody'];
+			$tbody_attrs = is_array($params['tbody']) ? _attrs($params['tbody'], array('class', 'id')) : ' '.$params['tbody'];
 		}
 		$body .= '<tbody'.$tbody_attrs.'>'.PHP_EOL;
 		foreach ((array)$data as $_id => $row) {
@@ -669,55 +669,12 @@ class yf_table2 {
 
 	/**
 	*/
-	function _attrs($extra = array(), $names = array()) {
-		$body = array();
-		// Try to find and allow all data-* attributes automatically
-		foreach ((array)$extra as $k => $v) {
-			if (strpos($k, 'data-') === 0 || strpos($k, 'ng-') === 0) {
-				$names[] = $k;
-			}
-		}
-		foreach ((array)$names as $name) {
-			if (!$name || !isset($extra[$name])) {
-				continue;
-			}
-			$val = $extra[$name];
-			if (is_array($val)) {
-				$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
-			} else {
-				if (!strlen($val)) {
-					continue;
-				}
-				$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
-			}
-		}
-		// Custom html attributes forced with sub-array "attr"
-		if (is_array($extra['attr'])) {
-			foreach ((array)$extra['attr'] as $name => $val) {
-				if (!$name || !isset($val)) {
-					continue;
-				}
-				if (is_array($val)) {
-					$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
-				} else {
-					if (!strlen($val)) {
-						continue;
-					}
-					$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
-				}
-			}
-		}
-		return $body ? ' '.implode(' ', $body) : '';
-	}
-
-	/**
-	*/
 	function _get_attrs_string_from_params($params, $_id, $row) {
 		if (is_callable($params)) {
 			$attrs = $params($row, $_id);
 		} elseif (is_array($params)) {
 			if (is_array($params[$_id])) {
-				$attrs = isset($params[$_id]) ? $this->_attrs($params[$_id], array('class', 'style')) : '';
+				$attrs = isset($params[$_id]) ? _attrs($params[$_id], array('class', 'style')) : '';
 			} elseif (is_string($params[$_id])) {
 				$attrs = $params[$_id];
 			}
