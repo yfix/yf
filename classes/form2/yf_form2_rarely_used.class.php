@@ -72,7 +72,7 @@ class yf_form2_rarely_used {
 		}
 		$data = array();
 		$row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
-		foreach ((array)main()->get_data('countries_new') as $v) {
+		foreach ((array)main()->get_data('geo_countries') as $v) {
 			$r = array(
 				'%icon'	=> '<i class="bfh-flag-'.strtoupper($v['code']).'"></i>',
 				'%name'	=> $v['name'],
@@ -103,7 +103,7 @@ class yf_form2_rarely_used {
 		}
 		$data = array();
 		$row_tpl = $extra['row_tpl'] ?: '%name %code';
-		foreach ((array)main()->get_data('regions_new') as $v) {
+		foreach ((array)main()->get_data('geo_regions') as $v) {
 			$r = array(
 				'%name'	=> $v['name'],
 				'%code'	=> '['.$v['code'].']',
