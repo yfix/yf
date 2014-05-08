@@ -70,9 +70,14 @@ class yf_manage_shop_product_sets {
 		$a = db()->from('shop_product_sets')->whereid($product_set_id)->get();
 
 		if (main()->is_post()) {
-			// var_dump( $_FILES );
-			echo json_encode( array( 'status' => true ) );
-			exit;
+			// save image
+			if( $_FILES ) {
+				$result = true;
+				if( main()->is_ajax() ) {
+					echo json_encode( array( 'status' => $result ) );
+					exit;
+				}
+			}
 // TODO: upload image or show already uploaded
 			$up = array();
 			// Add products to current set

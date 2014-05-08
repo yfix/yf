@@ -85,6 +85,7 @@ $( function() {
 				.removeClass( 'bar-danger progress-bar-danger' )
 				.addClass( 'bar-success progress-bar-success' )
 			;
+			context.upload.show().text( 'Загрузить' );
 		}
 	}).on('fileuploadprogressall', function( e, data ) {
 		var progress       = parseInt( data.loaded / data.total * 100, 10 );
@@ -99,13 +100,14 @@ $( function() {
 		var index = data.index;
 		var $this = $( this );
 		var context = data.context || _handler( $this );
-		context.upload.hide().text( 'Загрузить' );
+		context.upload.hide();
 		context.progress.hide();
 		if( context.handler && data.status == true ) {
 			context.status.text( 'успешно' );
+			context.status.removeClass().addClass( 'text-success' ).text( 'успешно' );
 			context.progress_title.text( 'успешно загружено' );
 		} else {
-			context.status.text( 'ошибка при загрузке' );
+			context.status.removeClass().addClass( 'text-error' ).text( 'ошибка при загрузке' );
 			context.progress_title.text( 'ошибка при загрузке' );
 		}
     }).on('fileuploadfail', function (e, data) {
@@ -117,9 +119,9 @@ $( function() {
 				.removeClass( 'bar-success progress-bar-success' )
 				.addClass( 'bar-danger progress-bar-danger' )
 			;
-			context.status.text( 'ошибка при загрузке' );
+			context.status.removeClass().addClass( 'text-error' ).text( 'ошибка при загрузке' );
 			context.progress_title.text( 'ошибка при загрузке' );
-			context.upload.hide().text( 'Загрузить' );
+			context.upload.hide();
 			context.progress.hide();
 		}
 	});
