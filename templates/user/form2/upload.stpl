@@ -1,0 +1,128 @@
+
+<div id="{option.name}_{item.id}">
+	<span class="btn btn-success fileinput-button">
+		<i class="glyphicon glyphicon-plus"></i>
+		<span>Выбрать файл...</span>
+		<input type="file" title="{option.desc}" name="{option.name}">
+	</span>
+	<div class="handler" style="display: none">
+		<div class="status"></div>
+		<div class="image"></div>
+		<div class="progress" style="display: none">
+			<div class="bar bar-success progress-bar progress-bar-success">
+				<span class="sr-only progress-text"></span>
+			</div>
+		</div>
+		<button type="submit" class="upload btn btn-default">Загрузить</button>
+	</div>
+</div>
+
+<script>
+$( function() {
+	var _handler = function( $this ) {
+		var $handler        = $this.find( '.handler' );
+		var $status         = $handler.find( '.status' );
+		var $image          = $handler.find( '.image' );
+		var $upload         = $handler.find( '.upload' );
+		var $progress       = $handler.find( '.progress' );
+		var $progress_bar   = $handler.find( '.progress-bar' );
+		var $progress_title = $progress.find( '.progress-text' );
+		var context = {
+			  'handler'        : $handler
+			, 'status'         : $status
+			, 'image'          : $image
+			, 'upload'         : $upload
+			, 'progress'       : $progress
+			, 'progress_bar'   : $progress_bar
+			, 'progress_title' : $progress_title
+		};
+		return( context );
+	}
+	$( '#{option.name}_{item.id}' ).fileupload({
+		  dataType         : 'json'
+		, autoUpload       : false
+		, acceptFileTypes  : /(\.|\/)(gif|jpe?g|png)$/i
+		, loadImageFileTypes  : /(\.|\/)(gif|jpe?g|png)$/i
+        , disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator.userAgent)
+		, previewMaxWidth  : 100
+		, previewMaxHeight : 100
+		, previewCrop      : true
+	}).on('fileuploadadd', function( e, data ) {
+		var progress_text = '0%';
+		var $this = $( this );
+		var context = _handler( $this );
+		context.progress_bar.css( 'width', progress_text );
+		context.progress_title.text( progress_text );
+		context.upload.on( 'click', function( e ) {
+			e.preventDefault();
+			var $this = $( this );
+			var data = $this.data();
+			$this.off('click').text( 'Отмена' ).on( 'click', function ( e ) {
+				e.preventDefault();
+				{{-- $this.hide(); --}}
+				data.abort();
+			});
+			data.submit().always( function () {
+				{{-- $this.hide(); --}}
+			});
+		}).data( data );
+		context.handler.show();
+		data.context = context;
+	}).on('fileuploadstart', function (e, data) {
+		var $this   = $( this );
+		var context = data.context || _handler( $this );
+		if( context.handler ) {
+			context.progress.show();
+		}
+	}).on('fileuploadprocessalways', function (e, data) {
+		var index   = data.index;
+		var file    = data.files[index];
+		var $this   = $( this );
+		var context = data.context || _handler( $this );
+		if( context.handler && file.preview ) {
+			context.image.empty().append(file.preview);
+			context.progress_bar
+				.removeClass( 'bar-danger progress-bar-danger' )
+				.addClass( 'bar-success progress-bar-success' )
+			;
+		}
+	}).on('fileuploadprogressall', function( e, data ) {
+		var progress       = parseInt( data.loaded / data.total * 100, 10 );
+		var progress_text  = progress + '%';
+		var $this = $( this );
+		var context = data.context || _handler( $this );
+		if( context.handler ) {
+			context.progress_bar.css( 'width', progress_text );
+			context.progress_title.text( progress_text );
+		}
+	}).on('fileuploaddone', function( e, data ) {
+		var index = data.index;
+		var $this = $( this );
+		var context = data.context || _handler( $this );
+		context.upload.hide().text( 'Загрузить' );
+		context.progress.hide();
+		if( context.handler && data.status == true ) {
+			context.status.text( 'успешно' );
+			context.progress_title.text( 'успешно загружено' );
+		} else {
+			context.status.text( 'ошибка при загрузке' );
+			context.progress_title.text( 'ошибка при загрузке' );
+		}
+    }).on('fileuploadfail', function (e, data) {
+		var index = data.index;
+		var $this = $( this );
+		var context = data.context || _handler( $this );
+		if( context.handler ) {
+			context.progress_bar
+				.removeClass( 'bar-success progress-bar-success' )
+				.addClass( 'bar-danger progress-bar-danger' )
+			;
+			context.status.text( 'ошибка при загрузке' );
+			context.progress_title.text( 'ошибка при загрузке' );
+			context.upload.hide().text( 'Загрузить' );
+			context.progress.hide();
+		}
+	});
+});
+</script>
+

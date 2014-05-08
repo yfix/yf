@@ -19,7 +19,7 @@ class yf_manage_shop_product_sets {
 			'back_link' => './?object='.main()->_get('object').'&action=product_sets',
 		);
 
-		$this->_sql_sets_prices_total = 
+		$this->_sql_sets_prices_total =
 			'SELECT product_set_id, SUM(qprice) AS total
 			FROM (
 				SELECT i.product_set_id, p.price * i.quantity AS qprice, p.price, i.quantity
@@ -28,7 +28,7 @@ class yf_manage_shop_product_sets {
 			) AS tmp
 			GROUP BY product_set_id';
 
-		$this->_sql_set_list_products = 
+		$this->_sql_set_list_products =
 			'SELECT psi.product_id AS id, psi.product_id, p.active, p.image, p.name, psi.quantity, p.price
 			FROM '.db('shop_product_sets_items').' AS psi
 			LEFT JOIN '.db('shop_products').' AS p ON p.id = psi.product_id
@@ -70,6 +70,9 @@ class yf_manage_shop_product_sets {
 		$a = db()->from('shop_product_sets')->whereid($product_set_id)->get();
 
 		if (main()->is_post()) {
+			// var_dump( $_FILES );
+			echo json_encode( array( 'status' => true ) );
+			exit;
 // TODO: upload image or show already uploaded
 			$up = array();
 			// Add products to current set
@@ -155,6 +158,7 @@ class yf_manage_shop_product_sets {
 				$path = 'uploads/shop/product_sets/'.$r['id'].'.jpg';
 				return file_exists(PROJECT_PATH. $path) ? $_this->_row_html('<img src="'.WEB_PATH. $path.'" />', $extra, $r) : '';
 			}, array('desc' => t('Image')))
+			->upload('image', 'Изображение')
 			->text('name')
 			->textarea('description')
 			->text('price', array('class' => 'input-mini')) // TODO: float() input type
