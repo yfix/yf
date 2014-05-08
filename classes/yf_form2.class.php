@@ -1574,6 +1574,18 @@ class yf_form2 {
 
 	/**
 	*/
+	function button_split_box($name, $values, $extra = array(), $replace = array()) {
+		return $this->_html_control($name, $values, $extra, $replace, 'button_split_box');
+	}
+
+	/**
+	*/
+	function select2_box($name, $values, $extra = array(), $replace = array()) {
+		return $this->_html_control($name, $values, $extra, $replace, 'select2_box');
+	}
+
+	/**
+	*/
 	function date_box($name = '', $values = array(), $extra = array(), $replace = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
