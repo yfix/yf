@@ -132,19 +132,26 @@ class yf_form2_rarely_used {
 			$name = 'city';
 		}
 		$data = array();
-// TODO
-		$row_tpl = $extra['row_tpl'] ?: '%name %code';
-		foreach ((array)main()->get_data('cities_new') as $v) {
+
+		$row_tpl = $extra['row_tpl'] ?: '%name';
+		foreach ((array)main()->get_data('geo_regions') as $v) {
+			$data[$v['name']] = array();
+			$region_names[$v['id']] = $v['name'];
+		}
+		foreach ((array)main()->get_data('geo_cities') as $v) {
+			$region_name = $region_names[$v['region_id']];
+			if (!$region_name) {
+				continue;
+			}
 			$r = array(
 				'%name'	=> $v['name'],
-				'%code'	=> '['.$v['code'].']',
 			);
-			$data[$v['code']] = str_replace(array_keys($r), array_values($r), $row_tpl);
+			$data[$region_name][$v['id']] = str_replace(array_keys($r), array_values($r), $row_tpl);
 		}
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = './?object=manage_cities';
 		}
-		$renderer = $extra['renderer'] ?: 'list_box';
+		$renderer = $extra['renderer'] ?: 'select2_box';
 		return $__this->$renderer($name, $data, $extra, $replace);
 	}
 
