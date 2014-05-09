@@ -638,7 +638,7 @@ class yf_html {
 			return false;
 		}
 		if ($level == 0) {
-			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			$id = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 			$body = PHP_EOL.'<select name="'.$name.'"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$id.'"' : '').$add_str.">".PHP_EOL;
 		}
 		$selected = strval($selected);
@@ -708,7 +708,7 @@ class yf_html {
 			$disabled = '';
 		}
 		if ($level == 0) {
-			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			$id = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 			$body = PHP_EOL.'<select '.$disabled.' multiple name="'.$name.'[]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$id.'"' : '').$add_str.'>'.PHP_EOL;
 		}
 		if ($show_text && $level == 0) {
@@ -1068,42 +1068,44 @@ class yf_html {
 	function select2_box ($name, $values = array(), $selected = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
-			$name = $extra['name'];
-			$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
-			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-			if ($extra['no_translate']) {
-				$translate = 0;
-			}
-			$selected = $extra['selected'] ?: $selected;
+		} else {
+			$extra['name'] = $name;
 		}
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		if (!$values) {
-			return false;
+#		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$extra['id'] = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+
+		css('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.css');
+		js('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.js');
+		$js_options = (array)$extra['js_options'] + array(
+			'width'			=> 'element',
+			'placeholder'	=> $extra['desc'],
+#			'multiple'		=> $extra['mulitple'],
+			// put default js options here
+		);
+		js('$(function() { $("#'.addslashes($extra['id']).'").select2('.json_encode($js_options).'); });');
+		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
+		return $this->$func($extra, $values, $selected);
+	}
+
+	/**
+	*/
+	function chosen_box ($name, $values = array(), $selected = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+		} else {
+			$extra['name'] = $name;
 		}
-// TODO: allow deep customization of its layout
-// TODO: require here js, css of the select2 plugin
-/*
-		$selected = strval($selected);
-		$body .= '<div class="bfh-selectbox" id="'.$extra['id'].'">'
-					.'<input type="hidden" name="'.$name.'" value="'.$selected.'">'
-					.'<a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">'
-						.'<span class="bfh-selectbox-option bfh-selectbox-medium" data-option="'.$selected.'">'.$values[$selected].'</span>'
-						.'<b class="caret"></b>'
-					.'</a>'
-					.'<div class="bfh-selectbox-options">'
-						.'<input type="text" class="bfh-selectbox-filter">'
-						.'<div role="listbox">'
-							.'<ul role="option">';
-		foreach ((array)$values as $key => $cur_value) {
-			$body .= '<li><a tabindex="-1" href="#" data-option="'.$key.'">'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
-		}
-		$body .= 			'</ul>'
-						.'</div>'
-					.'</div>'
-				.'</div>';
-		return $body;
-*/
+#		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$extra['id'] = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+
+		css('//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.css');
+		js('//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.jquery.min.js');
+		$js_options = (array)$extra['js_options'] + array(
+			// put default js options here
+		);
+		js('$(function() { $("#'.addslashes($extra['id']).'").chosen('.json_encode($js_options).'); });');
+		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
+		return $this->$func($extra, $values, $selected);
 	}
 
 	/**
