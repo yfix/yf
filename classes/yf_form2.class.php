@@ -137,33 +137,7 @@ class yf_form2 {
 	* Enable automatic fields parsing mode
 	*/
 	function auto($table = '', $id = '', $params = array()) {
-		if ($params['links_add']) {
-			$this->_params['links_add'] = $params['links_add'];
-		}
-		if ($table && $id) {
-			$columns = db()->meta_columns($table);
-			$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
-			if (!is_array($this->_replace)) {
-				$this->_replace = array();
-			}
-			foreach ((array)$info as $k => $v) {
-				$this->_replace[$k] = $v;
-			}
-			foreach((array)$columns as $name => $details) {
-				$type = strtoupper($details['type']);
-				if (strpos($type, 'TEXT') !== false) {
-					$this->textarea($name);
-				} else {
-					$this->text($name);
-				}
-			}
-		} elseif ($this->_sql && $this->_replace) {
-			foreach((array)$this->_replace as $name => $v) {
-				$this->container($v, $name);
-			}
-		}
-		$this->save_and_back();
-		return $this;
+		return _class('form2_auto', 'classes/form2/')->auto($table, $id, $params, $this);
 	}
 
 	/**
