@@ -195,7 +195,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$selected = 'k2';
 		$this->assertEquals('<li class="dropdown" style="list-style-type:none;" id="mydiv"><a class="dropdown-toggle" data-toggle="dropdown">Mydiv&nbsp;<span class="caret"></span></a><ul class="dropdown-menu"><li class="dropdown"><a data-value="k1" >v1</a></li><li class="dropdown"><a data-value="k2" >v2</a></li></ul></li>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->div_box('mydiv', $data))) );
-		$this->assertEquals('<li class="dropdown" style="list-style-type:none;" id="mydiv"><a class="dropdown-toggle" data-toggle="dropdown">v2&nbsp;<span class="caret"></span></a><ul class="dropdown-menu"><li class="dropdown"><a data-value="k1" >v1</a></li><li class="dropdown"><a data-value="k2" data-selected="selected">v2</a></li></ul></li>'
+		$this->assertEquals('<li class="dropdown" style="list-style-type:none;" id="mydiv"><a class="dropdown-toggle" data-toggle="dropdown">v2&nbsp;<span class="caret"></span></a><ul class="dropdown-menu"><li class="dropdown"><a data-value="k1" >v1</a></li><li class="dropdown active"><a data-value="k2" data-selected="selected">v2</a></li></ul></li>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->div_box('mydiv', $data, array('selected' => $selected)))) );
 	}
 	public function test_list_box() {
