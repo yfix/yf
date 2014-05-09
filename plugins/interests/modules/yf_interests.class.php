@@ -118,7 +118,7 @@ class yf_interests {
 			return _error_need_login();
 		}
 		// Array of keywords
-		$this->_activities	= main()->get_data("locale:activities");
+		$this->_activities	= main()->get_data("activities", 0, array('lang' => conf('language')));
 		// Get activities
 		$act_info = db()->query_fetch("SELECT * FROM ".db('prof_keywords')." WHERE user_id=".intval($USER_ID));
 		if (empty($act_info)) {

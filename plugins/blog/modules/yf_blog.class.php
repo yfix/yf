@@ -162,7 +162,7 @@ class yf_blog extends yf_module {
 		$this->_blog_cats	= _class('cats')->_get_items_names('blog'."_cats");
 		$this->_blog_cats2	= _class('cats')->_prepare_for_box('blog'."_cats");
 		// Get moods
-		$this->_moods = main()->get_data("locale:moods");
+		$this->_moods = main()->get_data("moods", 0, array('lang' => conf('language')));
 		// Check total id mode
 		$this->HIDE_TOTAL_ID = main()->HIDE_TOTAL_ID;
 		if ($this->HIDE_TOTAL_ID && (
