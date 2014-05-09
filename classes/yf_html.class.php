@@ -638,7 +638,8 @@ class yf_html {
 			return false;
 		}
 		if ($level == 0) {
-			$id = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			$extra['force_id'] && $id = $extra['force_id'];
+			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 			$body = PHP_EOL.'<select name="'.$name.'"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$id.'"' : '').$add_str.">".PHP_EOL;
 		}
 		$selected = strval($selected);
@@ -658,13 +659,6 @@ class yf_html {
 		}
 		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
 		return $body;
-	}
-
-	/**
-	* Alias
-	*/
-	function multi_select_box($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
-		return $this->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
 
 	/**
@@ -708,7 +702,8 @@ class yf_html {
 			$disabled = '';
 		}
 		if ($level == 0) {
-			$id = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			$extra['force_id'] && $id = $extra['force_id'];
+			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 			$body = PHP_EOL.'<select '.$disabled.' multiple name="'.$name.'[]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$id.'"' : '').$add_str.'>'.PHP_EOL;
 		}
 		if ($show_text && $level == 0) {
@@ -739,6 +734,13 @@ class yf_html {
 		}
 		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
 		return $body;
+	}
+
+	/**
+	* Alias
+	*/
+	function multi_select_box($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+		return $this->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
 
 	/**
@@ -800,7 +802,6 @@ class yf_html {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
-#			$value = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -1071,18 +1072,16 @@ class yf_html {
 		} else {
 			$extra['name'] = $name;
 		}
-#		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$extra['id'] = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 
 		css('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.css');
 		js('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.js');
 		$js_options = (array)$extra['js_options'] + array(
 			'width'			=> 'element',
 			'placeholder'	=> $extra['desc'],
-#			'multiple'		=> $extra['mulitple'],
 			// put default js options here
 		);
-		js('$(function() { $("#'.addslashes($extra['id']).'").select2('.json_encode($js_options).'); });');
+		js('$(function() { $("#'.addslashes($extra['force_id']).'").select2('.json_encode($js_options).'); });');
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
 		return $this->$func($extra, $values, $selected);
 	}
@@ -1095,15 +1094,14 @@ class yf_html {
 		} else {
 			$extra['name'] = $name;
 		}
-#		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$extra['id'] = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 
 		css('//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.css');
 		js('//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.jquery.min.js');
 		$js_options = (array)$extra['js_options'] + array(
 			// put default js options here
 		);
-		js('$(function() { $("#'.addslashes($extra['id']).'").chosen('.json_encode($js_options).'); });');
+		js('$(function() { $("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options).'); });');
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
 		return $this->$func($extra, $values, $selected);
 	}
@@ -1121,8 +1119,8 @@ class yf_html {
 			'jquery-ui',
 			'//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery.ui.datepicker.min.css',
 		));
-// TODO: use input() unified control
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+// TODO: use input() unified control
 		return '<input type="text" name="'.$name.'" class="datepicker" value="'.$cur_date.'" style="width:80px" readonly="true" id="'.$extra['id'].'" />';
 	}
 
