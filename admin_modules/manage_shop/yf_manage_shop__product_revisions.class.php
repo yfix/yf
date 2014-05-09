@@ -225,7 +225,7 @@ class yf_manage_shop__product_revisions {
 				$before = json_decode($before[$extra['name']], true);
 				$origin = var_export($origin, true);
 				$before = var_export($before, true);
-				return _class('diff')->get_diff($before, $origin);
+				return common()->get_diff($before, $origin);
 			})
 		->tab_end()
 		->tab_start('New_version')
@@ -428,7 +428,7 @@ class yf_manage_shop__product_revisions {
 				$before = json_decode($before[$extra['name']], true);
 				$origin = var_export($origin, true);
 				$before = var_export($before, true);
-				return _class('diff')->get_diff($before, $origin);
+				return common()->get_diff($before, $origin);
 			})
 		->tab_end()
 		->tab_start('New_version')

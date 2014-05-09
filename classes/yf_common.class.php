@@ -1002,6 +1002,12 @@ class yf_common {
 
 	/**
 	*/
+	function get_diff($str1, $str2, $type = 'side_by_side') {
+		return _class('diff', 'classes/common/')->get_diff($str1, $str2, $type);
+	}
+
+	/**
+	*/
 	function show_left_filter(){
 		$obj = module_safe($_GET['object']);
 		$method = '_show_filter';
