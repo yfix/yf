@@ -1109,16 +1109,12 @@ class yf_html {
 	/**
 	*/
 	function date_picker ($name, $cur_date = '') {
-		require_js(array(
-			'jquery-ui',
-			'$(function() {
-				$( ".datepicker" ).datepicker({ dateFormat: "yy-mm-dd" });
-			});',
-		));
-		require_css(array(
-			'jquery-ui',
-			'//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery.ui.datepicker.min.css',
-		));
+		js('jquery-ui');
+		css('jquery-ui');
+
+		js('$(function() { $( ".datepicker" ).datepicker({ dateFormat: "yy-mm-dd" }); });');
+		css('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery.ui.datepicker.min.css');
+
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 // TODO: use input() unified control
 		return '<input type="text" name="'.$name.'" class="datepicker" value="'.$cur_date.'" style="width:80px" readonly="true" id="'.$extra['id'].'" />';
