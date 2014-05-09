@@ -16,9 +16,6 @@ class form2_new_controls {
 			->timezone_box(array('selected' => 'UTC', 'row_tpl' => '%name %code %offset', 'renderer' => 'div_box'))
 
 			->country_box(array('selected' => 'US'))
-			->country_box(array('selected' => 'US', 'renderer' => 'div_box'))
-			->country_box(array('selected' => 'US', 'renderer' => 'button_box'))
-			->country_box(array('selected' => 'US', 'renderer' => 'button_split_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'select2_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'select2_box', 'multiple' => 1, 'js_options' => array('width' => '400px', 'allowClear' => 'true')))
 			->country_box(array('selected' => 'US', 'renderer' => 'chosen_box'))
@@ -28,6 +25,9 @@ class form2_new_controls {
 			->country_box(array('selected' => 'US', 'renderer' => 'multi_check_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'radio_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'radio_box', 'row_tpl' => '%name %icon'))
+			->country_box(array('selected' => 'US', 'renderer' => 'div_box'))
+			->country_box(array('selected' => 'US', 'renderer' => 'button_box'))
+			->country_box(array('selected' => 'US', 'renderer' => 'button_split_box'))
 
 			->check_box( 'restricted_view', 'Ограничить просмотр (категорий +21)' )
 			->check_box( 'restricted_view', '', array( 'desc' => 'Ограничить просмотр (категорий +21)', 'no_label' => true ) )
