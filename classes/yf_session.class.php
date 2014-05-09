@@ -19,10 +19,10 @@ class yf_session {
 	public $SESSION_COOKIE_HTTPONLY	= false;
 	/** @var string */
 	public $SESSION_REFERER_CHECK	= ''; // WEB_PATH
-	/** @var string */
+	/** @var bool */
 	public $SESSION_DESTROY_EXPIRED	= false;
-	/** @var string Custom session name */
-	public $USE_UNIQUE_SESSION_NAME	= true;
+	/** @var bool Custom session name */
+	public $SESSION_UNIQUE_NAME		= true;
 
 	/**
 	*/
@@ -39,7 +39,7 @@ class yf_session {
 		}
 */
 		// Set custom session name
-		if ($this->USE_UNIQUE_SESSION_NAME) {
+		if ($this->SESSION_UNIQUE_NAME) {
 			$force_name_path = conf('_SESSION_FORCE_NAME_PATH');
 			$_name_path = isset($force_name_path) ? $force_name_path : (MAIN_TYPE_ADMIN ? ADMIN_SITE_PATH : SITE_PATH);
 			$_name_path = str_replace("\\", '/', OS_WINDOWS ? strtolower($_name_path) : $_name_path);
