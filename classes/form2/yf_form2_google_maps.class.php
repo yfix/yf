@@ -11,7 +11,7 @@ class yf_form2_google_maps {
 			$extra = array();
 		}
 		
-		require_js("http://maps.google.com/maps/api/js?sensor=false");
+		js("http://maps.google.com/maps/api/js?sensor=false");
 		$extra['name'] = $extra['name'] ?: ($name ?: 'map');
 		$extra['markers_limit'] = $extra['markers_limit'] ?: 5;
 		$extra['start_zoom'] = $extra['start_zoom'] ?: 5;		
