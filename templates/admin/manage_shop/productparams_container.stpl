@@ -1,4 +1,4 @@
-<a class="btn btn-mini addparams"><span>{t(Add Params)}</span></a><br />
+<a class="btn btn-mini btn-xs addparams"><span>{t(Add Params)}</span></a><br />
 <div id="productparams_container">
 </div>
 <script>

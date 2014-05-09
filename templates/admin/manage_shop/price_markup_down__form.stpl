@@ -14,7 +14,7 @@
 	<tr ng-repeat="i in products" class="am-slide-top">
 		<td>{{i.text}}</td>
 		<td>
-			<span ng-click="remove_product_id( i.id )" class="btn btn-mini btn-warning"><i class=" icon-trash"></i> Удалить</span>
+			<span ng-click="remove_product_id( i.id )" class="btn btn-mini btn-xs btn-warning"><i class=" icon-trash"></i> Удалить</span>
 		</td>
 	</tr>
 	<tr>
@@ -25,7 +25,7 @@
 				ng-options  = "data as data.text for data in search_product_id( $viewValue )"
 				placeholder = "добавить товар"
 			>
-			<span ng-show="products.length > 1" ng-click="clear_product_id()" class="btn btn-mini btn-danger pull-right"><i class=" icon-trash"></i> Очистить список</span>
+			<span ng-show="products.length > 1" ng-click="clear_product_id()" class="btn btn-mini btn-xs btn-danger pull-right"><i class=" icon-trash"></i> Очистить список</span>
 		</th>
 	</tr>
 </table>
@@ -35,7 +35,7 @@
 	<tr ng-repeat="i in categories" class="am-slide-top">
 		<td>{{i.text}}</td>
 		<td>
-			<span ng-click="remove_category_id( i.id )" class="btn btn-mini btn-warning pull-right"><i class=" icon-trash"></i> Удалить</span>
+			<span ng-click="remove_category_id( i.id )" class="btn btn-mini btn-xs btn-warning pull-right"><i class=" icon-trash"></i> Удалить</span>
 		</td>
 	</tr>
 	<tr>
@@ -46,7 +46,7 @@
 				ng-options  = "data as data.text for data in search_category_id( $viewValue )"
 				placeholder = "добавить категорию"
 			>
-			<span ng-show="categories.length > 1" ng-click="clear_category_id()" class="btn btn-mini btn-danger"><i class=" icon-trash"></i> Очистить список</span>
+			<span ng-show="categories.length > 1" ng-click="clear_category_id()" class="btn btn-mini btn-xs btn-danger"><i class=" icon-trash"></i> Очистить список</span>
 		</th>
 	</tr>
 </table>

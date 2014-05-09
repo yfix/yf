@@ -29,12 +29,12 @@
 			{if("image" ne "")}
 			{image}
 			{/if}
-			<a class="btn btn-mini" onclick="addImage();"><span>{t(Add Image)}</span></a>
+			<a class="btn btn-mini btn-xs" onclick="addImage();"><span>{t(Add Image)}</span></a>
 			<div id="images"></div>		
 			
 			{if("search_url" ne "")}
 			<br />
-			<a href="{search_url}" class="btn btn-mini btn-success">{t(Search images)}</a>
+			<a href="{search_url}" class="btn btn-mini btn-xs btn-success">{t(Search images)}</a>
 			<br />
 			{/if}
 		</div>
@@ -56,7 +56,7 @@
 	<div class="control-group form-group">
 		<label for="set_main_image" class="control-label col-lg-2">{t(Set main image)}</label>
 		<div class="controls col-lg-4">
-		<a class="btn btn-mini btn-xs ajax_edit" href="{set_main_image_url}">{t(Set main image)}</a>
+		<a class="btn btn-mini btn-xs btn-xs ajax_edit" href="{set_main_image_url}">{t(Set main image)}</a>
 		</div>
 	</div>
 
