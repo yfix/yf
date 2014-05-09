@@ -952,7 +952,7 @@ class yf_html {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
 			$is_selected = $_what_compare == $selected;
 			$val = ($translate ? t($cur_value) : $cur_value);
-			$items[] = '<li class="dropdown"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
 			if ($is_selected) {
 				$selected_val = $val;
 			}
@@ -992,7 +992,7 @@ class yf_html {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
 			$is_selected = $_what_compare == $selected;
 			$val = $translate ? t($cur_value) : $cur_value;
-			$items[] = '<li class="dropdown"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
 			if ($is_selected) {
 				$selected_val = $val;
 			}
@@ -1055,7 +1055,7 @@ class yf_html {
 						.'<div role="listbox">'
 							.'<ul role="option">';
 		foreach ((array)$values as $key => $cur_value) {
-			$body .= '<li><a tabindex="-1" href="#" data-option="'.$key.'">'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
+			$body .= '<li'.($is_selected ? ' class="active"' : '').'><a tabindex="-1" href="#" data-option="'.$key.'">'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
 		}
 		$body .= 			'</ul>'
 						.'</div>'
