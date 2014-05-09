@@ -39,7 +39,7 @@ class yf_form2_ckeditor {
 			return '';
 		}
 		// Main ckeditor script
-#		require_js($web_ck_path);
+#		js($web_ck_path);
 		$body .= '<script src="'.$web_ck_path.'" type="text/javascript"></script>'.PHP_EOL;
 
 		// Theme-wide ckeditor config inside stpl (so any engine vars can be processed or included there)
@@ -48,7 +48,7 @@ class yf_form2_ckeditor {
 			$replace['content_id'] = $content_id;
 		}
 		$config_js .= tpl()->_stpl_exists($stpl_name) ? tpl()->parse($stpl_name, (array)$extra + (array)$replace ) : '';
-#		require_js($config_js);
+#		js($config_js);
 		$body .= $config_js;
 
 		$content_id = $extra['id'] ? $extra['id'] : 'content_editable';
@@ -63,7 +63,7 @@ class yf_form2_ckeditor {
 				})
 			})
 			</script>';
-#		require_js($js);
+#		js($js);
 		$body .= $js;
 
 		// Avoid including ckeditor scripts several times on same page
