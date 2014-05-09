@@ -324,7 +324,7 @@ class yf_dynamic {
 				), "name='".$_POST["name"]."' AND locale='".$CUR_LOCALE."'");
 			}
 		}
-		cache_del('locale:tips');
+		cache_del('tips');
 		echo 'Saved successfully';
 	}
 
