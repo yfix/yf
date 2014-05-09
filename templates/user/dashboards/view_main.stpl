@@ -18,5 +18,5 @@
 </div>
 
 {if(edit_link ne "")}
-	<a href="{edit_link}" class="btn btn-mini"><i class="icon-edit"></i> {t(Edit)}</a>
+	<a href="{edit_link}" class="btn btn-mini btn-xs"><i class="icon-edit"></i> {t(Edit)}</a>
 {/if}
