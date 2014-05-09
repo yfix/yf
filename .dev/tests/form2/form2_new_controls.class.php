@@ -17,9 +17,12 @@ class form2_new_controls {
 
 			->country_box(array('selected' => 'US'))
 			->country_box(array('selected' => 'US', 'renderer' => 'div_box'))
-			->country_box(array('selected' => 'US', 'renderer' => 'select2_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'button_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'button_split_box'))
+			->country_box(array('selected' => 'US', 'renderer' => 'select2_box'))
+			->country_box(array('selected' => 'US', 'renderer' => 'select2_box', 'multiple' => 1, 'js_options' => array('width' => '400px', 'allowClear' => 'true')))
+			->country_box(array('selected' => 'US', 'renderer' => 'chosen_box'))
+			->country_box(array('selected' => 'US', 'renderer' => 'chosen_box', 'multiple' => 1))
 			->country_box(array('selected' => 'US', 'renderer' => 'select_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'multi_select_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'multi_check_box'))
