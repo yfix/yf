@@ -17,7 +17,7 @@ class form2_new_controls {
 
 			->country_box(array('selected' => 'US'))
 			->country_box(array('selected' => 'US', 'renderer' => 'select2_box'))
-			->country_box(array('selected' => 'US', 'renderer' => 'select2_box', 'multiple' => 1, 'js_options' => array('width' => '400px', 'allowClear' => 'true')))
+			->country_box(array('selected' => array('US'=>'US','ES'=>'ES'), 'renderer' => 'select2_box', 'multiple' => 1, 'js_options' => array('width' => '400px', 'allowClear' => 'true')))
 			->country_box(array('selected' => 'US', 'renderer' => 'chosen_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'chosen_box', 'multiple' => 1))
 			->country_box(array('selected' => 'US', 'renderer' => 'select_box'))
@@ -32,7 +32,8 @@ class form2_new_controls {
 			->check_box( 'restricted_view', 'Ограничить просмотр (категорий +21)' )
 			->check_box( 'restricted_view', '', array( 'desc' => 'Ограничить просмотр (категорий +21)', 'no_label' => true ) )
 
-			->region_box() // TODO
+			->region_box()
+			->city_box()
 			->image()
 
 			->datetime_select('add_date')
