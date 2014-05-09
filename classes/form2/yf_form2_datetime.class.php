@@ -52,39 +52,37 @@ class yf_form2_datetime {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			// js lib
-			require_js('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js');
-			require_js('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment-with-langs.min.js');
-			require_js('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js');
-			require_css('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/css/bootstrap-datetimepicker.min.css');
-			$body = "
-<style>
-.bootstrap-datetimepicker-widget .picker-switch {
-	width: 90%;
-}
-</style>
-<div id=\"{$extra['name']}\" data-date-format=\"$_format_js\" class=\"input-append datetimepicker\">
-<div class=\"input-group\">
-    <input name=\"{$extra['name']}\" value=\"{$extra['value']}\" type=\"text\" class=\"input-medium form-control\" placeholder=\"{$extra['placeholder']}\"></input>
-    <span class=\"add-on input-group-addon\">
-		<i class=\"fa fa-calendar\"></i>
+			js('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment-with-langs.min.js');
+			js('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js');
+			css('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/css/bootstrap-datetimepicker.min.css');
+
+			css('.bootstrap-datetimepicker-widget .picker-switch { width: 90%; }');
+
+			$body = '
+<div id="'.$extra['name'].'" data-date-format="'.$_format_js.'" class="input-append datetimepicker">
+<div class="input-group">
+    <input name="'.$extra['name'].'" value="'.$extra['value'].'" type="text" class="input-medium form-control" placeholder="'.$extra['placeholder'].'"></input>
+    <span class="add-on input-group-addon">
+		<i class="icon icon-calendar fa fa-calendar"></i>
     </span>
 </div>
 </div>
-";
-			require_js("<script type=\"text/javascript\">
+';
+			js('
 $(function() {
-	$('#{$extra['name']}').datetimepicker({
-		language: 'ru'
+	$("#'.$extra['name'].'").datetimepicker({
+		language: "ru"
 		, icons: {
-			time: 'fa fa-clock-o',
-			date: 'fa fa-calendar',
-			up:   'fa fa-arrow-up',
-			down: 'fa fa-arrow-down'
+			time: "icon icon-time fa fa-clock-o",
+			date: "icon icon-calendar fa fa-calendar",
+			up:   "icon icon-arrow-up fa fa-arrow-up",
+			down: "icon icon-arrow-down fa fa-arrow-down"
 		}
-		".($extra['no_time']==1 ? ", pickTime: false" : "")."".($extra['no_date']==1 ? ", pickDate: false" : "")."
+		'.($extra['no_time'] == 1 ? ', pickTime: false' : '')
+		. ($extra['no_date'] == 1 ? ', pickDate: false' : '')
+		.'
 	});
-});
-</script>");
+});');
 			return $__this->_row_html($body, $extra, $r);
 		};
 		if ($__this->_chained_mode) {
