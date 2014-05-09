@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Core ProEngine class
+* Core main class
 *
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -27,8 +27,6 @@ class yf_main {
 	public $USE_TASK_MANAGER		= false;
 	/** @var bool Output caching on/off */
 	public $OUTPUT_CACHING			= false;
-	/** @var bool GZIP compression for output buffer on/off */
-	public $OUTPUT_GZIP_COMPRESS	= false;
 	/** @var bool Send no-cache headers */
 	public $NO_CACHE_HEADERS		= true;
 	/** @var bool Strict init modules check (if turned on - then module need to be installed not only found) */
@@ -89,8 +87,6 @@ class yf_main {
 	public $HTTPS_ENABLED_FOR		= array( /* 'object=shop', */ );
 	/** @var bool Track user last visit */
 	public $TRACK_USER_PAGE_VIEWS	= false;
-	/** @var bool Auto-pack PHP code and use it @experimental */
-	public $AUTO_PACK_PHP_CODE		= false;
 	/** @var bool Paid options global switch used by lot of other code @experimental */
 	public $ALLOW_PAID_OPTIONS		= false;
 	/** @var bool Allow cache control from url modifiers */
@@ -117,8 +113,6 @@ class yf_main {
 	public $USER_GROUP				= 0;
 	/** @var array @conf_skip Current user session info */
 	public $USER_INFO				= null;
-	/** @var array */
-	public $_auto_info_skip_modules = array('user_data','db','cache','errors','spider_detect','user_profile');
 	/** @var array List of objects/actions for which no db connection is required. @example: 'object' => array('action1', 'action2') */
 	public $NO_DB_FOR				= array('internal' => array(), 'dynamic' => array('php_func'));
 	/** @var int Error reporting level for production/non-debug mode (int from built-in constants) */
@@ -201,10 +195,8 @@ class yf_main {
 				$this->init_auth();
 				$this->tpl->init_graphics();
 			}
-			// Add framework destructor functionality (allows to execute custom code before shutdown)
 			register_shutdown_function(array($this, '_framework_destruct'));
 		} catch (Exception $e) {
-// TODO: show pretty html message with Exception contents
 			$msg = 'MAIN: Caught exception: '.print_r($e->getMessage(), 1). PHP_EOL. '<pre>'.$e->getTraceAsString().'</pre>';
 			trigger_error($msg, E_USER_WARNING);
 		}
@@ -487,8 +479,8 @@ class yf_main {
 	function init_error_reporting() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if ($this->USE_CUSTOM_ERRORS) {
-			$this->init_class('errors', 'classes/');
-			$this->error_handler =& $this->modules['errors'];
+			$this->init_class('core_errors', 'classes/');
+			$this->error_handler =& $this->modules['core_errors'];
 		}
 		if ($this->ERROR_LOG_PATH) {
 			$replace = array(
@@ -522,14 +514,12 @@ class yf_main {
 	}
 
 	/**
-	* FirePHP connection
 	*/
 	function init_firephp () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (!$this->FIREPHP_ENABLE) {
 			return false;
 		}
-		// Already initialized earlier
 		if (function_exists('fb') && class_exists('FirePHP')) {
 			return true;
 		}
@@ -540,7 +530,6 @@ class yf_main {
 	}
 
 	/**
-	* Try to detect spider
 	*/
 	function spider_detection () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
@@ -565,7 +554,6 @@ class yf_main {
 	}
 
 	/**
-	* Initialize session
 	*/
 	function init_session () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
@@ -638,7 +626,6 @@ class yf_main {
 			}
 			$this->session = new $session_loaded_class_name();
 			$this->_set_module_conf($session_class_name, $this->session);
-			// Change the save_handler to use the class functions
 			session_set_save_handler (
 				array($this->session, 'open'),
 				array($this->session, 'close'),
@@ -678,49 +665,16 @@ class yf_main {
 	*/
 	function init_settings() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		$this->set_default_settings();
-		// Overriding default settings with the values stored in database
-#		foreach ((array)$this->get_data('conf') as $k => $v) {
-#			conf($k, $v);
-#		}
-		$output_caching = conf('output_caching');
-		if (isset($output_caching)) {
-			$this->OUTPUT_CACHING = $output_caching;
-		}
-		$gzip_compress = conf('gzip_compress');
-		if (isset($gzip_compress)) {
-			$this->OUTPUT_GZIP_COMPRESS = $gzip_compress;
-		}
-		if ($this->OUTPUT_GZIP_COMPRESS) {
-			if (version_compare( phpversion(), '5.2.4' ) >= 0) {
-				if (ini_get('display_errors')) {
-					ini_set('display_errors', 'stderr');
-				}
-			}
-			if (!extension_loaded('zlib') ||
-				strpos($this->_server('HTTP_ACCEPT_ENCODING'), 'gzip') === false ||
-				(bool)ini_get('zlib.output_compression') ||
-				(bool)ini_get('zend_accelerator.compress_all') ||
-				ini_get('output_handler') == 'ob_gzhandler'
-			) {
-				$this->OUTPUT_GZIP_COMPRESS = false;
-			} else {
-				ini_set('zlib.output_compression_level', 3);
-			}
-		}
-	}
-
-	/**
-	* Default settings container
-	*/
-	function set_default_settings() {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$lang = 'en'; // default lang
 		if (defined('DEFAULT_LANG') && DEFAULT_LANG != '') {
 			$lang = DEFAULT_LANG;
 		}
-		conf('language',	$lang);
-		conf('charset',		'utf-8');
+		conf('language', $lang);
+		conf('charset',	 'utf-8');
+		$output_caching = conf('output_caching');
+		if (isset($output_caching)) {
+			$this->OUTPUT_CACHING = $output_caching;
+		}
 	}
 
 	/**
@@ -781,7 +735,7 @@ class yf_main {
 	}
 
 	/**
-	* Starting language engine
+	* Starting localization engine
 	*/
 	function init_locale () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
@@ -799,7 +753,6 @@ class yf_main {
 		if (defined('SITE_DEFAULT_PAGE')) {
 			conf('SITE_DEFAULT_PAGE', SITE_DEFAULT_PAGE);
 		}
-		// Stop here if needed
 		if (conf('no_internal_auth')) {
 			$def_page = conf('SITE_DEFAULT_PAGE');
 			if ($def_page) {
@@ -810,12 +763,7 @@ class yf_main {
 			}
 			return false;
 		}
-		// Do not use auth for the spiders
 		if ($this->SPIDERS_DETECTION && conf('IS_SPIDER')) {
-			return false;
-		}
-		// Default stop-list
-		if (in_array($this->_get('object'), array('site_links'))) {
 			return false;
 		}
 		$auth_module_name = 'auth_'.(MAIN_TYPE_ADMIN ? 'admin' : 'user');
@@ -834,7 +782,6 @@ class yf_main {
 	* Include module file
 	*/
 	function include_module($path_to_module = '', $is_required = false) {
-#		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
@@ -852,18 +799,21 @@ class yf_main {
 		// Here we do not want any errors if file is missing
 		} elseif ($file_exists) {
 			include_once ($path_to_module);
-		} else {
-// TODO: log E_USER_NOTICE when module not found
 		}
 		if (DEBUG_MODE) {
-			$path_prepared = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', str_replace("\\", '/', $path_to_module)));
-			debug('include_files_exec_time::'.$path_prepared, round(microtime(true) - $_time_start, 5));
-			debug('include_files_trace::'.$path_prepared, $this->trace_string());
+			debug('included_files[]', array(
+				'path'		=> $path_to_module,
+				'exists'	=> (int)$file_exists,
+				'required'	=> (int)$is_required,
+				'size'		=> $file_exists ? filesize($path_to_module) : '',
+				'time'		=> round(microtime(true) - $_time_start, 5),
+				'trace'		=> $this->trace_string(),
+			));
 		}
 	}
 
 	/**
-	* Module class loader
+	* Module(class) loader, based on singleton pattern
 	* Initialize new class object or return reference to existing one
 	*/
 	function &init_class ($class_name, $custom_path = '', $params = '') {
@@ -873,7 +823,6 @@ class yf_main {
 		if (!isset($this->modules)) {
 			$this->modules = array();
 		}
-		// Return reference to the module object
 		if ($class_name == 'main') {
 			return $this;
 		}
@@ -890,7 +839,6 @@ class yf_main {
 				$skip_array = array(
 					'rewrite',
 				);
-				// Check if given module name is installed correctly
 				if (!in_array($class_name, $skip_array) && !isset($this->installed_user_modules[$class_name])) {
 					return false;
 				}
@@ -899,21 +847,16 @@ class yf_main {
 					$this->installed_admin_modules = $this->get_data('admin_modules');
 				}
 				$skip_array = array();
-				// Check if given module name is installed correctly
 				if (!in_array($class_name, $skip_array)	&& !isset($this->installed_admin_modules[$class_name]) && !isset($this->installed_user_modules[$class_name])) {
 					return false;
 				}
 			}
 		}
 		$class_name_to_load = $this->load_class_file($class_name, $custom_path);
-		// Try to create instance of the class
 		if ($class_name_to_load) {
 			$this->modules[$class_name] = new $class_name_to_load($params);
-			// make this usable only for main() to save resources
-#			$this->_init_cur_user_info($this->modules[$class_name]);
 			$this->_set_module_conf($class_name, $this->modules[$class_name], $params);
 		}
-		// Return reference to the module object
 		if (is_object($this->modules[$class_name])) {
 			return $this->modules[$class_name];
 		} else {
@@ -965,7 +908,6 @@ class yf_main {
 			return false;
 		}
 		$cur_hook_prefix = MAIN_TYPE_ADMIN ? YF_ADMIN_CLS_PREFIX : YF_SITE_CLS_PREFIX;
-		// By default thinking that class not exists
 		$loaded_class_name	= false;
 		// Site loaded class have top priority
 		$site_class_name = $cur_hook_prefix. $class_name;
@@ -984,7 +926,6 @@ class yf_main {
 		if (substr($class_name, 0, strlen(YF_PREFIX)) === YF_PREFIX) {
 			$class_name = substr($class_name, strlen(YF_PREFIX));
 		}
-#		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
@@ -1155,7 +1096,6 @@ class yf_main {
 	* Try to return class method output
 	*/
 	function call_class_method ($class_name = '', $custom_path = '', $method_name = '', $method_params = '', $tpl_name = '', $silent = false, $use_cache = false, $cache_ttl = -1, $cache_key_override = '') {
-		// Check required params
 		if (!strlen($class_name) || !strlen($method_name)) {
 			return false;
 		}
@@ -1174,20 +1114,19 @@ class yf_main {
 				return $cached[0];
 			}
 		}
-		// Try to get object for the given $class_name
 		if ($class_name == 'main') {
-			$OBJ = $this;
+			$obj = $this;
 		} else {
-			$OBJ = $this->init_class($class_name, $custom_path, $method_params);
+			$obj = $this->init_class($class_name, $custom_path, $method_params);
 		}
-		if (!is_object($OBJ)) {
+		if (!is_object($obj)) {
 			if (!$silent) {
 				trigger_error('MAIN: module "'.$class_name.'" init failed'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'"'.$this->modules['tpl']->_search_stpl_line($class_name, $method_name, $method_params, $tpl_name).')' : ''), E_USER_WARNING);
 			}
 			return false;
 		}
 		// Try to find given class method
-		if (!method_exists($OBJ, $method_name)) {
+		if (!method_exists($obj, $method_name)) {
 			if (!$silent) {
 				trigger_error('MAIN: no method "'.$method_name.'" in module "'.$class_name.'"'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'"'.$this->modules['tpl']->_search_stpl_line($class_name, $method_name, $method_params, $tpl_name).')' : ''), E_USER_WARNING);
 			}
@@ -1197,7 +1136,7 @@ class yf_main {
 		if (is_string($method_params) && strlen($method_params)) {
 			$method_params	= (array)_attrs_string2array($method_params);
 		}
-		$result = $OBJ->$method_name($method_params);
+		$result = $obj->$method_name($method_params);
 		if ($use_cache) {
 			$this->modules['cache']->set($cache_name, array($result));
 		}
@@ -1691,33 +1630,24 @@ class yf_main {
 	}
 
 	/**
-	* Init user info
 	*/
-// TODO: make this usable only for main() to save resources
-	function _init_cur_user_info(&$OBJ) {
+	function _init_cur_user_info(&$obj) {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), array());
-		if (in_array($this->_get('object'), (array)$this->_auto_info_skip_modules)) {
-			return false;
-		}
-		if (in_array(str_replace('yf_', '', get_class($OBJ)), (array)$this->_auto_info_skip_modules)) {
-			return false;
-		}
 		if (MAIN_TYPE_ADMIN) {
-			$OBJ->USER_ID		= $this->_get('user_id');
-			$OBJ->ADMIN_ID		= (int)$this->_session('admin_id');
-			$OBJ->ADMIN_GROUP	= (int)$this->_session('admin_group');
+			$obj->USER_ID		= $this->_get('user_id');
+			$obj->ADMIN_ID		= (int)$this->_session('admin_id');
+			$obj->ADMIN_GROUP	= (int)$this->_session('admin_group');
 		} elseif (MAIN_TYPE_USER) {
-			$OBJ->USER_ID		= (int)$this->_session('user_id');
-			$OBJ->USER_GROUP	= (int)$this->_session('user_group');
+			$obj->USER_ID		= (int)$this->_session('user_id');
+			$obj->USER_GROUP	= (int)$this->_session('user_group');
 		}
-		// Select user details
-		if (isset($OBJ->USER_ID) && !empty($OBJ->USER_ID)) {
+		if (isset($obj->USER_ID) && !empty($obj->USER_ID)) {
 			if (!isset($this->_current_user_info)) {
-				$this->_current_user_info = user($OBJ->USER_ID);
+				$this->_current_user_info = user($obj->USER_ID);
 			}
-			$OBJ->_user_info = &$this->_current_user_info;
-			if (!$OBJ->USER_GROUP) {
-				$OBJ->USER_GROUP = $this->_current_user_info['group'];
+			$obj->_user_info = &$this->_current_user_info;
+			if (!$obj->USER_GROUP) {
+				$obj->USER_GROUP = $this->_current_user_info['group'];
 			}
 		}
 	}
@@ -1745,7 +1675,7 @@ class yf_main {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		// Restore startup working directory
 		chdir($this->_CWD);
-		// Currently disabled by default
+
 		if ($this->CATCH_FATAL_ERRORS) {
 			$error = error_get_last();
 			if (in_array($error, array(E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING, E_USER_ERROR, E_RECOVERABLE_ERROR))) {
@@ -1754,21 +1684,9 @@ class yf_main {
 				echo $info;
 			}
 		}
-#		$this->_pack_php_code();
-#		foreach ((array)$this->_SHUTDOWN_CODE_ARRAY as $_cur_code) {
-#			eval($_cur_code);
-#		}
-	}
-
-	/**
-	* PHP code compression
-	*/
-	function _pack_php_code () {
-		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		if (!$this->AUTO_PACK_PHP_CODE || MAIN_TYPE_ADMIN) {
-			return false;
+		foreach ((array)$this->_SHUTDOWN_CODE_ARRAY as $_cur_code) {
+			call_user_func($_cur_code);
 		}
-		$OBJ = $this->init_class('project_packer', 'classes/');
 	}
 
 # TODO: in DEBUG_MODE log/cleanup/catch reads/writes to these methods
