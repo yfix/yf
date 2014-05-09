@@ -1266,11 +1266,14 @@ class yf_main {
 		}
 		$no_cache = false;
 		if (empty($data_to_return) && !is_array($data_to_return)) {
-			$locale_special_name = '';
-			$lang = conf('language');
-			if (strpos($name, 'locale:') === 0) {
-				$name = substr($name, 7);
-				$locale_special_name = $name.'___'.$lang;
+			$name_to_save = $name;
+			$params_to_eval = '';
+			// Example: geo_regions, array(country => UA)  will be saved as geo_regions_countryUA
+			if (!empty($params) && is_array($params)) {
+				foreach ((array)$params as $k => $v) {
+					$name_to_save .= '_'.$k. $v;
+					$params_to_eval .= '$'.$k.' = '.var_export($v, 1).';'.PHP_EOL;
+				}
 			}
 			if (!conf('data_handlers')) {
 				$this->_load_data_handlers();
@@ -1279,7 +1282,7 @@ class yf_main {
 			if (!empty($handler_php_source)) {
 				if (is_string($handler_php_source)) {
 // TODO: convert eval() into closure function() {}
-					$data_to_return = eval( ($locale_special_name ? '$locale="'.$lang.'";' : ''). $handler_php_source. '; return isset($data) ? $data : null;' );
+					$data_to_return = eval( $params_to_eval. $handler_php_source. '; return isset($data) ? $data : null;' );
 				} elseif (is_callable($handler_php_source)) {
 					$data_to_return = $handler_php_source($name, $params);
 				}
@@ -1292,12 +1295,13 @@ class yf_main {
 				$no_cache = true;
 			}
 			if ($this->USE_SYSTEM_CACHE && !$no_cache && $cache_obj_available) {
-				$this->modules['cache']->set($locale_special_name ?: $name, $data_to_return);
+				$this->modules['cache']->set($name_to_save, $data_to_return);
 			}
 		}
 		if (DEBUG_MODE) {
 			debug('main_get_data[]', array(
 				'name'		=> $name,
+				'real_name'	=> $name_to_save,
 				'data'		=> $data_to_return,
 				'params'	=> $params,
 				'force_ttl'	=> $force_ttl,
