@@ -20,7 +20,6 @@ class yf_debug {
 	public $_SHOW_RESIZED_IMAGES_LOG	= 1;
 	public $_SHOW_INCLUDED_FILES		= 1;
 	public $_SHOW_LOADED_MODULES		= 1;
-	public $_INCLUDED_SKIP_CACHE		= 0;
 	public $_SHOW_MEMCACHED_INFO		= 1;
 	public $_SHOW_EACCELERATOR_INFO		= 1;
 	public $_SHOW_XCACHE_INFO			= 1;
@@ -868,28 +867,19 @@ class yf_debug {
 		if (!$this->_SHOW_INCLUDED_FILES) {
 			return '';
 		}
-		$exec_times = $this->_get_debug_data('include_files_exec_time');
-		$traces = $this->_get_debug_data('include_files_trace');
-		$items = array();
-		foreach (get_included_files() as $file_name) {
-			if ($this->_INCLUDED_SKIP_CACHE && false !== strpos($file_name, 'core_cache')) {
+		$items = (array)$this->_get_debug_data('included_files');
+		foreach ($items as $k => &$v) {
+			if (!$v['exists']) {
+				unset($items[$k]);
 				continue;
 			}
-			$cur_size = file_exists($file_name) ? filesize($file_name) : '';
-			$_fname = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', $file_name));
-			$items[] = array(
-				'id'	=> ++$counter,
-				'name'	=> $this->_admin_link('edit_file', $file_name),
-				'size'	=> $cur_size,
-				'time'	=> round($exec_times[$file_name], 4),
-				'trace'	=> strval($traces[$file_name]),
-			);
-			$total_size += $cur_size;
+			$v['path'] = $this->_admin_link('edit_file', $v['path']);
+			$v = array('id' => ++$i) + $v;
+			$total_size += $v['size'];
 		}
 		$items = $this->_time_count_changes($items);
-
 		$body .= 'total size: '.$total_size;
-		return $body. $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		return $body. $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'path')));
 	}
 
 	/**
