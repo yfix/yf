@@ -7,7 +7,7 @@
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
 */
-class yf_errors {
+class yf_core_errors {
 
 	/** @var bool Log errors to the error file? */
 	public $LOG_ERRORS_TO_FILE		= false;
