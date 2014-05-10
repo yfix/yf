@@ -53,13 +53,12 @@ class yf_form2_auto {
 			foreach ((array)$info as $k => $v) {
 				$__this->_replace[$k] = $v;
 			}
-			foreach((array)$columns as $name => $details) {
-#var_dump($details);
-				$type = $this->_field_type($details['type']);
-				$length = intval($details['max_length']);
-// TODO: detect numeric like time: 1234567890
-// TODO: detect YYYY-mm-dd as date, YYYY-mm-dd HH:ii:ss as datetime, HH:ii:ss as time
-// TODO: detect enum/set as radio_box
+			foreach((array)$columns as $name => $a) {
+				$_extra = array();
+				$values = array();
+#var_dump($a);
+				$type = $this->_field_type($a['type']);
+				$length = intval($a['max_length']);
 // TODO: detect field length and apply it as atribute
 // TODO: detect signed/unsigned field for int/float/double length and apply it as atribute
 // TODO: detect foreign keys as select box by constraint
@@ -73,10 +72,13 @@ class yf_form2_auto {
 					$func = 'phone';
 				} elseif ($name == 'active') {
 					$func = 'active_box';
-#				} elseif (strpos($type, 'enum') !== false) {
-#					$func = 'radio_box';
-#				} elseif (strpos($type, 'set') !== false) {
-#					$func = 'radio_box';
+				} elseif (in_array($type, array('enum','set'))) {
+					if ($a['values'] == array(0,1)) {
+						$func = 'yes_no_box';
+					} else {
+						$func = 'radio_box';
+						$values = $a['values'];
+					}
 				} elseif ($type == 'datetime') {
 					$func = 'datetime_select';
 				} elseif ($type == 'date') {
@@ -100,10 +102,20 @@ class yf_form2_auto {
 				} else {
 					$func = 'text';
 				}
-				$__this->$func($name);
+#				if (in_array($type, array('int','char'))) {
+#					$_extra['max_length'] = $length;
+#				}
+				if (false !== strpos($func, '_box')) {
+					$_extra['name'] = $name;
+					$__this->$func($name, $values, $_extra);
+				} else {
+					$__this->$func($name, $_extra);
+				}
 			}
 		} elseif ($__this->_sql && $__this->_replace) {
 			foreach((array)$__this->_replace as $name => $v) {
+// TODO: detect numeric like time: 1234567890
+// TODO: detect YYYY-mm-dd as date, YYYY-mm-dd HH:ii:ss as datetime, HH:ii:ss as time
 				$__this->container($v, $name);
 			}
 		}
