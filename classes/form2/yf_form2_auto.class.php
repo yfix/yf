@@ -59,8 +59,6 @@ class yf_form2_auto {
 #var_dump($a);
 				$type = $this->_field_type($a['type']);
 				$length = intval($a['max_length']);
-// TODO: detect field length and apply it as atribute
-// TODO: detect signed/unsigned field for int/float/double length and apply it as atribute
 // TODO: detect foreign keys as select box by constraint
 				if ($name == 'id') {
 					$func = 'info';
@@ -102,9 +100,16 @@ class yf_form2_auto {
 				} else {
 					$func = 'text';
 				}
-#				if (in_array($type, array('int','char'))) {
-#					$_extra['max_length'] = $length;
-#				}
+				if (in_array($type, array('int','char'))) {
+					$_extra['maxlength'] = $length;
+					$type == 'int' && $_extra['max'] = pow(8, $length);
+				}
+				if (in_array($type, array('int','float','double','decimal')) && $a['unsigned']) {
+					$_extra['min'] = 0;
+				}
+				if (!$a['has_default'] && $a['no_null']) {
+					$_extra['required'] = 1;
+				}
 				if (false !== strpos($func, '_box')) {
 					$_extra['name'] = $name;
 					$__this->$func($name, $values, $_extra);
@@ -116,6 +121,7 @@ class yf_form2_auto {
 			foreach((array)$__this->_replace as $name => $v) {
 // TODO: detect numeric like time: 1234567890
 // TODO: detect YYYY-mm-dd as date, YYYY-mm-dd HH:ii:ss as datetime, HH:ii:ss as time
+// TODO: all other detect rules from code above
 				$__this->container($v, $name);
 			}
 		}
