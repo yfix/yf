@@ -613,26 +613,24 @@ class yf_html {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
-			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-			if ($extra['no_translate']) {
-				$translate = 0;
-			}
-			$selected = $extra['selected'];
-			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
-			$type = isset($extra['type']) ? $extra['type'] : 2;
-			$level = isset($extra['level']) ? $extra['level'] : 0;
-			// (example: $add_str = 'size=6')
-			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-			$extra['class'] .= ' form-control';
-			if ($extra['class']) {
-				$add_str .= ' class="'.$extra['class'].'" ';
-			}
-			if ($extra['style']) {
-				$add_str .= ' style="'.$extra['style'].'" ';
-			}
-		} else {
-			$add_str .= ' class="form-control" ';
+		}
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : $translate;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : $show_text;
+		$type = isset($extra['type']) ? $extra['type'] : $type;
+		$level = isset($extra['level']) ? $extra['level'] : $level;
+		// (example: $add_str = 'size=6')
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
+		$extra['class'] .= ' form-control';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
 		}
 		if (!$values) {
 			return false;
@@ -668,27 +666,25 @@ class yf_html {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
-			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-			if ($extra['no_translate']) {
-				$translate = 0;
-			}
-			$selected = $extra['selected'];
-			$show_text = isset($extra['show_text']) ? $extra['show_text'] : 0;
-			$type = isset($extra['type']) ? $extra['type'] : 2;
-			$level = isset($extra['level']) ? $extra['level'] : 0;
-			$disabled = isset($extra['disabled']) ? $extra['disabled'] : false;
-			// (example: $add_str = 'size=6') disabled
-			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-			$extra['class'] .= ' form-control';
-			if ($extra['class']) {
-				$add_str .= ' class="'.$extra['class'].'" ';
-			}
-			if ($extra['style']) {
-				$add_str .= ' style="'.$extra['style'].'" ';
-			}
-		} else {
-			$add_str .= ' class="form-control" ';
+		}
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : $translate;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : $show_text;
+		$type = isset($extra['type']) ? $extra['type'] : $type;
+		$level = isset($extra['level']) ? $extra['level'] : $level;
+		$disabled = isset($extra['disabled']) ? $extra['disabled'] : $disabled;
+		// (example: $add_str = 'size=6') disabled
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
+		$extra['class'] .= ' form-control';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
 		}
 		if (!$values) {
 			return false;
@@ -749,21 +745,21 @@ class yf_html {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
-			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-			if ($extra['no_translate']) {
-				$translate = 0;
-			}
-			$selected = $extra['selected'] ? $extra['selected'] : $selected;
-			$type = isset($extra['type']) ? $extra['type'] : 2;
-			$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
-			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-			if ($extra['class']) {
-				$add_str .= ' class="'.$extra['class'].'" ';
-			}
-			if ($extra['style']) {
-				$add_str .= ' style="'.$extra['style'].'" ';
-			}
+		}
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : $translate;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
+		$type = isset($extra['type']) ? $extra['type'] : $type;
+		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : $flow_vertical;
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
 		}
 		if (!$values) {
 			return false;
@@ -806,15 +802,15 @@ class yf_html {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$name = $extra['name'] ? $extra['name'] : 'checkbox';
-		$value = $extra['value'] ? $extra['value'] : (strlen($value) ? $value : '1');
-		$selected = $extra['selected'] ? $extra['selected'] : $selected;
+		$name = isset($extra['name']) ? $extra['name'] : 'checkbox';
+		$value = $extra['value'] ?: (strlen($value) ? $value : '1');
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
 		if (isset($extra['checked'])) {
 			$selected = $extra['checked'];
 		}
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
-		$translate = $extra['translate'] ? $extra['translate'] : true;
+		$translate = $extra['translate'] ? $extra['translate'] : $translate;
 		$add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
 		if ($extra['class']) {
 			$add_str .= ' class="'.$extra['class'].'" ';
@@ -839,22 +835,22 @@ class yf_html {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
-			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-			if ($extra['no_translate']) {
-				$translate = 0;
-			}
-			$selected = $extra['selected'];
-			$type = isset($extra['type']) ? $extra['type'] : 2;
-			$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
-			$name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
-			$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
-			if ($extra['class']) {
-				$add_str .= ' class="'.$extra['class'].'" ';
-			}
-			if ($extra['style']) {
-				$add_str .= ' style="'.$extra['style'].'" ';
-			}
+		}
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = $extra['selected'];
+		$type = isset($extra['type']) ? $extra['type'] : 2;
+		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
+		$name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
 		}
 		if (!$values) {
 			return false;
@@ -909,7 +905,7 @@ class yf_html {
 	function input ($name = '', $value = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
-			$name = '';
+			$name = $extra['name'];
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -932,14 +928,14 @@ class yf_html {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
-			$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
-			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-			if ($extra['no_translate']) {
-				$translate = 0;
-			}
-			$selected = $extra['selected'] ?: $selected;
 		}
+		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = $extra['selected'] ?: $selected;
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (!$values) {
 			return false;
@@ -972,14 +968,14 @@ class yf_html {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
-			$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
-			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-			if ($extra['no_translate']) {
-				$translate = 0;
-			}
-			$selected = $extra['selected'] ?: $selected;
 		}
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (!$values) {
 			return false;
@@ -1029,14 +1025,14 @@ class yf_html {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
-			$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
-			$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			$translate = isset($extra['translate']) ? $extra['translate'] : 0;
-			if ($extra['no_translate']) {
-				$translate = 0;
-			}
-			$selected = $extra['selected'] ?: $selected;
 		}
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (!$values) {
 			return false;
