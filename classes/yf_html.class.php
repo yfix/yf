@@ -608,7 +608,7 @@ class yf_html {
 
 	/**
 	*/
-	function select_box ($name, $values = array(), $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
+	function select_box ($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0) {
 		// Passing params as array
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
@@ -620,8 +620,8 @@ class yf_html {
 			$translate = 0;
 		}
 		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
-		$show_text = isset($extra['show_text']) ? $extra['show_text'] : $show_text;
-		$type = isset($extra['type']) ? $extra['type'] : $type;
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : (!is_null($show_text) ? $show_text : false);
+		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
 		$level = isset($extra['level']) ? $extra['level'] : $level;
 		// (example: $add_str = 'size=6')
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
@@ -673,8 +673,8 @@ class yf_html {
 			$translate = 0;
 		}
 		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
-		$show_text = isset($extra['show_text']) ? $extra['show_text'] : $show_text;
-		$type = isset($extra['type']) ? $extra['type'] : $type;
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : (!is_null($show_text) ? $show_text : false);
+		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
 		$level = isset($extra['level']) ? $extra['level'] : $level;
 		$disabled = isset($extra['disabled']) ? $extra['disabled'] : $disabled;
 		// (example: $add_str = 'size=6') disabled
@@ -752,7 +752,7 @@ class yf_html {
 			$translate = 0;
 		}
 		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
-		$type = isset($extra['type']) ? $extra['type'] : $type;
+		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
 		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : $flow_vertical;
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		if ($extra['class']) {
@@ -842,7 +842,7 @@ class yf_html {
 			$translate = 0;
 		}
 		$selected = $extra['selected'];
-		$type = isset($extra['type']) ? $extra['type'] : 2;
+		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
 		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
 		$name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
