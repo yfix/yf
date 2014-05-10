@@ -3,6 +3,40 @@
 class yf_form2_auto {
 
 	/**
+	*/
+	function _field_type($type = '') {
+		$type = trim(strtolower($type));
+		if (strpos($type, 'int') !== false) {
+			$type = 'int';
+		} elseif (strpos($type, 'datetime') !== false) {
+			$type = 'datetime';
+		} elseif (strpos($type, 'date') !== false) {
+			$type = 'date';
+		} elseif (strpos($type, 'time') !== false) {
+			$type = 'time';
+		} elseif (strpos($type, 'float') !== false) {
+			$type = 'float';
+		} elseif (strpos($type, 'double') !== false) {
+			$type = 'double';
+		} elseif (strpos($type, 'decimal') !== false) {
+			$type = 'decimal';
+		} elseif (strpos($type, 'text') !== false) {
+			$type = 'text';
+		} elseif (strpos($type, 'char') !== false) {
+			$type = 'char';
+		} elseif (strpos($type, 'blob') !== false) {
+			$type = 'blob';
+		} elseif (strpos($type, 'enum') !== false) {
+			$type = 'enum';
+		} elseif (strpos($type, 'set') !== false) {
+			$type = 'set';
+		} else {
+			$type = '';
+		}
+		return $type;
+	}
+
+	/**
 	* Enable automatic fields parsing mode
 	*/
 	function auto($table = '', $id = '', $params = array(), $__this) {
@@ -20,27 +54,53 @@ class yf_form2_auto {
 				$__this->_replace[$k] = $v;
 			}
 			foreach((array)$columns as $name => $details) {
-				$type = strtoupper($details['type']);
+#var_dump($details);
+				$type = $this->_field_type($details['type']);
+				$length = intval($details['max_length']);
 // TODO: detect numeric like time: 1234567890
 // TODO: detect YYYY-mm-dd as date, YYYY-mm-dd HH:ii:ss as datetime, HH:ii:ss as time
-// TODO: detect email field
-// TODO: detect phone field
-// TODO: detect password/pswd field
-// TODO: detect decimal as float
-// TODO: detect float/double as float
-// TODO: detect int as numeric
-// TODO: detect text/longtext as textarea
-// TODO: detect active as active_box
 // TODO: detect enum/set as radio_box
-// TODO: detect id as info (not editable)
 // TODO: detect field length and apply it as atribute
-// TODO: detect signed/unsigned field for int/float/doublelength and apply it as atribute
+// TODO: detect signed/unsigned field for int/float/double length and apply it as atribute
 // TODO: detect foreign keys as select box by constraint
-				if (strpos($type, 'TEXT') !== false) {
-					$__this->textarea($name);
+				if ($name == 'id') {
+					$func = 'info';
+				} elseif ($name == 'login') {
+					$func = 'login';
+				} elseif ($name == 'email') {
+					$func = 'email';
+				} elseif ($name == 'phone') {
+					$func = 'phone';
+				} elseif ($name == 'active') {
+					$func = 'active_box';
+#				} elseif (strpos($type, 'enum') !== false) {
+#					$func = 'radio_box';
+#				} elseif (strpos($type, 'set') !== false) {
+#					$func = 'radio_box';
+				} elseif ($type == 'datetime') {
+					$func = 'datetime_select';
+				} elseif ($type == 'date') {
+					$func = 'datetime_select';
+				} elseif ($type == 'time') {
+					$func = 'datetime_select';
+				} elseif ($type == 'int') {
+					if ((strpos($name, 'date') !== false || strpos($name, 'time') !== false) && in_array($length, array(10,11))) {
+						$func = 'datetime_select';
+					} else {
+						$func = 'number';
+					}
+				} elseif ($type == 'float') {
+					$func = 'float';
+				} elseif ($type == 'double') {
+					$func = 'float';
+				} elseif ($type == 'decimal') {
+					$func = 'float';
+				} elseif ($type == 'text') {
+					$func = 'textarea';
 				} else {
-					$__this->text($name);
+					$func = 'text';
 				}
+				$__this->$func($name);
 			}
 		} elseif ($__this->_sql && $__this->_replace) {
 			foreach((array)$__this->_replace as $name => $v) {
