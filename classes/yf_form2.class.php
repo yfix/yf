@@ -682,7 +682,7 @@ class yf_form2 {
 				$extra['desc'] = '';
 			}
 			$extra = $_this->_input_assign_params_from_validate($extra);
-			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title');
+			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step');
 			return $_this->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -870,18 +870,6 @@ class yf_form2 {
 		$extra['type'] = 'number';
 		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
 		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '10';
-		if ($extra['min']) {
-			$extra['attr']['min'] = $extra['min'];
-			unset($extra['min']);
-		}
-		if ($extra['max']) {
-			$extra['attr']['max'] = $extra['max'];
-			unset($extra['max']);
-		}
-		if ($extra['step']) {
-			$extra['attr']['step'] = $extra['step'];
-			unset($extra['step']);
-		}
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
