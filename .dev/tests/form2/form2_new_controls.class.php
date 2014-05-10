@@ -7,7 +7,7 @@ class form2_new_controls {
 			->hidden('hdn')
 
 			->icon_select_box(array('selected' => 'icon-anchor'))
-			->icon_select_box(array('selected' => 'icon-anchor', 'row_tpl' => '%name %icon', 'renderer' => 'div_box'))
+			->icon_select_box(array('selected' => 'icon-anchor', 'row_tpl' => '%name %icon'))
 			->currency_box(array('selected' => 'RUB'))
 			->currency_box(array('selected' => 'RUB', 'row_tpl' => '%code %name %sign', 'renderer' => 'div_box'))
 			->language_box(array('selected' => 'uk'))
