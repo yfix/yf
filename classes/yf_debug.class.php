@@ -724,32 +724,15 @@ class yf_debug {
 		if (!$this->_SHOW_I18N_VARS) {
 			return '';
 		}
-// TODO: unify into one table, when translated/called/not translated will be as status
-		$lang = conf('language');
-		$i18n_vars = (array)_class('i18n')->_I18N_VARS;
-// TODO: show translations on other languages here too: print_r($i18n_vars)
-// TODO: previous todo seems means multi-language translation debug support
-		if ($i18n_vars[$lang]) {
-			ksort($i18n_vars[$lang]);
+		$calls = _class('i18n')->_calls;
+		$items = (array)$this->_get_debug_data('i18n');
+		foreach ($items as $k => &$v) {
+			$v['name'] = $this->_admin_link('edit_i18n', $v['name']);
+			$v['calls'] = (int)$calls[$v['name_orig']];
+			$items[$k] = array('id' => ++$i) + $v;
 		}
-		$data = array();
-		$data['vars'] = array();
-		foreach ((array)$i18n_vars[$lang] as $k => $v) {
-			$data['vars'][$this->_admin_link('edit_i18n', $k)] = $v;
-		}
-		$data['calls'] = array();
-		$tr_time	= _class('i18n')->_tr_time;
-		$tr_calls	= _class('i18n')->_tr_calls;
-		foreach ((array)$tr_time[$lang] as $k => $v) {
-			$data['calls'][$this->_admin_link('edit_i18n', $k)] = $tr_calls[$lang][$k].'|'.round($v, 4);
-		}
-		$data['not_translated'] = (array)_class('i18n')->_NOT_TRANSLATED[$lang];
-
-		$body .= t('translate time').': '.round(_class('i18n')->_tr_total_time, 4).' sec<br>';
-		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6 col-lg-6">'.$name.'<br>'.$this->_show_key_val_table(_prepare_html($_data), array('no_total' => 1, 'no_escape' => 1)).'</div>';
-		}
-		return $body;
+		$items = $this->_time_count_changes($items);
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name', 'data' => 'name')));
 	}
 	
 	/**
