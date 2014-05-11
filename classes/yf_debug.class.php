@@ -78,9 +78,6 @@ class yf_debug {
 		if ($_SESSION['hide_debug_console'] || $_GET['hide_debug_console']) {
 			return '';
 		}
-		$body .= '<div id="debug_console">';
-		$body .= common()->_show_execution_time();
-
 		$debug_timings = array();
 		$methods = array();
 		$class_name = get_class($this);
@@ -98,45 +95,31 @@ class yf_debug {
 			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' secs';
 			$debug_contents[$name] = $content;
 		}
-
-		$i = 0;
-		$cookie_active_tab = substr($_COOKIE['debug_tabs_active'], strlen('debug_item_'));
-		// This is needed to show default tab if saved tab not existing now for any reason
-		if (!isset($debug_contents[$cookie_active_tab])) {
-			$cookie_active_tab = '';
-		}
-		$links = array();
-		$contents = array();
 		foreach ((array)$debug_contents as $name => $content) {
 			if (empty($content)) {
 				continue;
 			}
-			$is_first = (++$i == 1);
-			$is_active = $cookie_active_tab ? ($cookie_active_tab == $name) : $is_first;
-			$contents[$name] = '  <div class="tab-pane fade in'.($is_active ? ' active' : '').'" id="debug_item_'.$name.'">'.$content.'</div>';
-			$links[$name] = '  <li'.($is_active ? ' class="active"' : '').'><a href="#debug_item_'.$name.'" data-toggle="tab" class="">'.$name.'</a></li>';
+			$data[$name] = $content;
 		}
-
 		$debug_time = round(microtime(true) - $ts, 5);
-		$body .= 'debug console rendering: '
+
+		$body[] = common()->_show_execution_time();
+		$body[] = 'debug console rendering: '
 				.' <a href="javascript:void(0)" class="btn btn-default btn-mini btn-xs btn-toggle" data-hidden-toggle="debug-timings">'.$debug_time.' secs</a>'
 				.'<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>';
 
-		$body .= '<ul class="nav nav-tabs">';
-		$body .= implode(PHP_EOL, $links);
-		$body .= '</ul>';
-
-		$body .= '<div class="tab-content">';
-		$body .= implode(PHP_EOL, $contents);
-		$body .= '</div>';
-
-// TODO: convert into _class('html')->tabs()
-
-		// DO NOT REMOVE!!! Needed to correct display template tags in debug output
-		$body = str_replace(array('{', '}'), array('&#123;', '&#125;'), $body);
-
-		$body .= '</div>';
-		return $body;
+		$links_prefix = 'debug_item_';
+		$cookie_active_tab = substr($_COOKIE['debug_tabs_active'], strlen($links_prefix));
+		// Show default tab if saved tab not existing now for any reason
+		if (!isset($data[$cookie_active_tab])) {
+			$cookie_active_tab = '';
+		}
+		$body[] = _class('html')->tabs($data, array(
+			'selected'		=> $cookie_active_tab ?: key($data),
+			'no_auto_desc'	=> 1,
+			'links_prefix'	=> $links_prefix,
+		));
+		return '<div id="debug_console">'.implode(PHP_EOL, $body).'</div>';
 	}
 
 	/**
