@@ -149,6 +149,29 @@ class yf_debug {
 
 	/**
 	*/
+	function _get_request_headers() {
+		// function_exists('apache_request_headers') ? apache_request_headers() : '', // From PHP5.4+ it works also with fastcgi, not only apache
+		$arh = array();
+		$rx_http = '/\AHTTP_/';
+		foreach((array)$_SERVER as $key => $val) {
+			if ( preg_match($rx_http, $key) ) {
+				$arh_key = preg_replace($rx_http, '', $key);
+				$rx_matches = array();
+				$rx_matches = explode('_', $arh_key);
+				if ( count($rx_matches) > 0 and strlen($arh_key) > 2 ) {
+					foreach($rx_matches as $ak_key => $ak_val) {
+						$rx_matches[$ak_key] = ucfirst($ak_val);
+					}
+					$arh_key = implode('-', $rx_matches);
+				}
+				$arh[$arh_key] = $val;
+			}
+		}
+		return $arh;
+	}
+
+	/**
+	*/
 	function _debug_DEBUG_YF (&$params = array()) {
 		if (!$this->_SHOW_SETTINGS) {
 			return '';
@@ -192,7 +215,7 @@ class yf_debug {
 			'NO_GRAPHICS'		=> (int)main()->NO_GRAPHICS,
 			'OUTPUT_CACHING'	=> (int)main()->OUTPUT_CACHING,
 			'NO_CACHE_HEADERS'	=> (int)main()->NO_CACHE_HEADERS,
-#			'HTTP_IN_HEADERS'	=> function_exists('apache_request_headers') ? apache_request_headers() : '', // From PHP5.4+ it works also with fastcgi, not only apache
+			'HTTP_IN_HEADERS'	=> $this->_get_request_headers(),
 			'HTTP_OUT_HEADERS'	=> headers_list(),
 		);
 		foreach ((array)$this->_get_debug_data('_DEBUG_META') as $k => $v) {
