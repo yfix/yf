@@ -1726,14 +1726,21 @@ class yf_main {
 	* Checks whether current page was requested with AJAX
 	*/
 	function is_ajax() {
-		return conf('IS_AJAX');
+		return (bool)conf('IS_AJAX');
 	}
 
 	/**
 	* Checks whether current page was requested from console
 	*/
 	function is_console() {
-		return $this->CONSOLE_MODE;
+		return (bool)$this->CONSOLE_MODE;
+	}
+
+	/**
+	* Checks whether current page is a redirect
+	*/
+	function is_redirect() {
+		return (bool)$this->_IS_REDIRECTING;
 	}
 
 	/**
