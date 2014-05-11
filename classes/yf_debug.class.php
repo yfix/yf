@@ -123,7 +123,7 @@ class yf_debug {
 			$cookie_active_tab = '';
 		}
 		$body[] = _class('html')->tabs($data, array(
-			'selected'		=> $cookie_active_tab ?: key(next($data)),
+			'selected'		=> $cookie_active_tab ?: 'DEBUG_YF',
 			'no_auto_desc'	=> 1,
 			'links_prefix'	=> $links_prefix,
 		));
