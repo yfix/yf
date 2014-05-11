@@ -339,6 +339,9 @@ class yf_i18n {
 			return $input_string;
 		}
 		$input_string = trim($input_string);
+
+		DEBUG_MODE && $this->_calls[$input_string]++;
+
 		if ($this->USE_TRANSLATE_CACHE && empty($args)) {
 			$CACHE_NAME = $lang.'#____#'.$input_string;
 			if (isset($this->_LOCALE_CACHE[$CACHE_NAME])) {
@@ -403,19 +406,16 @@ class yf_i18n {
 				}
 			}
 		}
-		// Force replace underscore '_' chars into spaces ' ' (only if string not translated)
 		if ($this->REPLACE_UNDERSCORE && !$is_translated) {
 			$output_string = str_replace('_', ' ', $_source);
 			if ($_prefix_length) {
 				$output_string = substr($output_string, $_prefix_length);
 			}
 		}
-		// Replace with arguments
 		if (!empty($args) && is_array($args)) {
 			$output_string = $this->_process_sub_patterns($output_string, $args);
 			$output_string = strtr($output_string, $args);
 		}
-		// Try to change translation case according to original
 		if ($this->TRACK_FIRST_LETTER_CASE && $is_translated) {
 			$input = $this->VARS_IGNORE_CASE ? $first_input_string : $input_string;
 
@@ -429,7 +429,6 @@ class yf_i18n {
 		}
 		if (DEBUG_MODE) {
 			if ($this->TRACK_TRANSLATED) {
-				$this->_I18N_VARS[$lang][$_source] = $output_string;
 				if (main()->INLINE_EDIT_LOCALE && !main()->_IS_REDIRECTING) {
 					$r = array(
 						' ' => '%20',
@@ -441,13 +440,16 @@ class yf_i18n {
 					$output_string = '<span class=locale_tr s_var='.$s_var.'>'.$output_string.'</span>';
 				}
 			}
-			$this->_tr_total_time += (microtime(true) - $_start_time);
-			if (!isset($this->_tr_time[$lang])) {
-				$this->_tr_time[$lang] = array();
-			}
-			$this->_tr_time[$lang][$input_string] += (microtime(true) - $_start_time);
-			$this->_tr_calls[$lang][$input_string]++;
-
+			debug('i18n[]', array(
+				'name_orig'	=> $_source,
+				'name'		=> $input_string,
+				'out'		=> $output_string,
+				'lang'		=> $lang,
+				'args'		=> $args ?: '',
+				'translated'=> (int)$is_translated,
+				'time'		=> round(microtime(true) - $_start_time, 5),
+				'trace'		=> main()->trace_string(),
+			));
 		}
 		// Put to cache
 		if ($this->USE_TRANSLATE_CACHE && empty($args)) {
