@@ -103,8 +103,8 @@ class yf_debug {
 			'class_head'=> 'tab_info_compact',
 			'disabled'	=> 1,
 			'desc_raw'	=> '
-				<span title="'.t('Page generation time in seconds').'"><i class="icon icon-time"></i>&nbsp;'.$exec_time.'</span>
-				<span title="'.t('Database queries').'">&nbsp;<i class="icon icon-table"></i>&nbsp;'.intval(db()->NUM_QUERIES).'</span><br />
+				<span title="'.t('Page generation time in seconds').'"><i class="icon icon-time fa fa-clock-o"></i>&nbsp;'.$exec_time.'</span>
+				<span title="'.t('Database queries').'">&nbsp;<i class="icon icon-table fa fa-table"></i>&nbsp;'.intval(db()->NUM_QUERIES).'</span><br />
 				<span title="'.t('Debug console generation time in seconds').'"><small>D&nbsp;'.$debug_time.'</small></span>',
 #				<a href="javascript:void(0)" data-hidden-toggle="debug-timings"><small>D&nbsp;'.$debug_time.'</small></a></span>
 #				<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>
@@ -196,6 +196,8 @@ class yf_debug {
 			'USER_ROLE'			=> main()->USER_ROLE,
 			'IS_POST'			=> (int)main()->is_post(),
 			'IS_AJAX'			=> (int)main()->is_ajax(),
+			'IS_CONSOLE'		=> (int)main()->is_console(),
+			'IS_REDIRECT'		=> (int)main()->is_redirect(),
 			'IS_SPIDER'			=> (int)conf('IS_SPIDER'),
 			'NO_GRAPHICS'		=> (int)main()->NO_GRAPHICS,
 			'OUTPUT_CACHING'	=> (int)main()->OUTPUT_CACHING,
