@@ -178,6 +178,8 @@ class yf_html {
 		$items = array();
 		$links_prefix = $extra['links_prefix'] ?: 'tab_';
 		foreach ((array)$tabs as $k => $v) {
+			$desc_raw = null;
+			$disabled = null;
 			if (!is_array($v)) {
 				$content = $v;
 				$v = array();
