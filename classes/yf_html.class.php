@@ -183,6 +183,8 @@ class yf_html {
 				$v = array();
 			} else {
 				$content = $v['content'];
+				$desc_raw = $v['desc_raw'];
+				$disabled = $v['disabled'];
 			}
 			if ($extra['hide_empty'] && !strlen($content)) {
 				continue;
@@ -202,7 +204,10 @@ class yf_html {
 			$class_head = $v['class_head'] ?: $extra['class_head'];
 			$class_body = $v['class_body'] ?: $extra['class_body'];
 			if (!$extra['no_headers']) {
-				$headers[] = '<li class="'.($is_active ? 'active' : ''). ($class_head ? ' '.$class_head : '').'"><a href="#'.$id.'" data-toggle="tab">'.t($desc).'</a></li>';
+				$headers[] = 
+					'<li class="'.($is_active ? 'active' : ''). ($class_head ? ' '.$class_head : '').'">
+						<a '.(!$disabled ? 'href="#'.$id.'" ' : '').'data-toggle="tab">'.($desc_raw ?: t($desc)).'</a>
+					</li>';
 			}
 			$items[] = '<div class="tab-pane '.$css_class. ($class_body ? ' '.$class_body : '').'" id="'.$id.'">'.$content.'</div>';
 		}
