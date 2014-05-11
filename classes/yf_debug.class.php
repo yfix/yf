@@ -288,9 +288,9 @@ class yf_debug {
 			}
 			$name = $db->DB_TYPE.' | '.$db->DB_USER.' | '.$db->DB_HOST. ($db->DB_PORT ? ':'.$db->DB_PORT : '').' | '.$db->DB_NAME;
 			$items[$name] = $this->_do_debug_db_connection_queries($db, $connect_trace);
+			$items['db_shutdown_queries_'.$name] = $this->_show_db_shutdown_queries($db);
+			$items['db_stats_'.$name] = $this->_show_db_stats($db);
 		}
-		$items['db_shutdown_queries'] = $this->_show_db_shutdown_queries();
-		$items['db_stats'] = $this->_show_db_stats();
 		return _class('html')->tabs($items, array('hide_empty' => 1));
 	}
 
@@ -397,23 +397,21 @@ class yf_debug {
 
 	/**
 	*/
-	function _show_db_shutdown_queries () {
+	function _show_db_shutdown_queries ($db) {
 		if (!$this->_SHOW_DB_QUERY_LOG) {
 			return '';
 		}
-		return $this->_show_key_val_table(db()->_SHUTDOWN_QUERIES);
+		return $this->_show_key_val_table($db->_SHUTDOWN_QUERIES);
 	}
 
 	/**
 	*/
-	function _show_db_stats () {
+	function _show_db_stats ($db) {
 		if (!$this->_SHOW_DB_STATS) {
 			return '';
 		}
-// TODO: add support for multiple instances and multiple drivers
-// TODO: use subtabs here for different db instances
-		$data['stats'] = db()->get_2d('SHOW SESSION STATUS');
-		$data['vars'] = db()->get_2d('SHOW VARIABLES');
+		$data['stats'] = $db->get_2d('SHOW SESSION STATUS');
+		$data['vars'] = $db->get_2d('SHOW VARIABLES');
 		foreach ($data as $name => $_data) {
 			$body .= '<div class="span10 col-lg-10">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
 		}
@@ -472,7 +470,7 @@ class yf_debug {
 			}
 			$stpl_inline_edit = '';
 			if (tpl()->ALLOW_INLINE_DEBUG) {
-				$stpl_inline_edit = ' stpl_name=\''.$k.'\' ';
+				$stpl_inline_edit = ' stpl_name=\''._prepare_html($k).'\' ';
 			}
 			$cur_size = strlen($v['string']);
 			$total_size += $cur_size;
@@ -783,7 +781,6 @@ class yf_debug {
 		}
 		$items = $this->_time_count_changes($items);
 
-#		$body .= '<i>'.t('Total time').': '.round($total_time, 4).' secs';
 		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'query', 'meta' => 'count', 'describe' => 'count', 'results' => 'count')));
 		$body .= $sphinx_connect_debug ? '<pre>'._prepare_html(var_export($sphinx_connect_debug, 1)).'</pre>' : '';
 		$body .= $this->_show_key_val_table(_class('sphinxsearch')->_get_server_status());
@@ -1250,35 +1247,29 @@ class yf_debug {
 // TODO: JS full rewrite needed, as was done for i18n inline editor
 		// !!! Needed to be on the bottom of the page
 		$i18n_vars = _class('i18n')->_I18N_VARS;
-		if ($this->_SHOW_I18N_VARS && !empty($i18n_vars)) {
-			// Prepare JS array
-			$body .= "<script type='text/javascript'>";
-
-			$body .= "var _i18n_for_page = {";
-			ksort($i18n_vars);
-			foreach ((array)$i18n_vars as $_var_name => $_var_value) {
-				$_var_name	= strtolower($_var_name);
-				$_var_name	= str_replace("_", " ", $_var_name);
-				$_var_name	= str_replace(array("\"","",""), array("\\\"","",""), $_var_name);
-				$_var_value	= str_replace(array("\"","",""), array("\\\"","",""), $_var_value);
-				$body .= "\""._prepare_html($_var_name)."\":\""._prepare_html($_var_value)."\",";
-			}
-			$body .= "__dummy:null};";
-
-			$not_translated = _class('i18n')->_NOT_TRANSLATED;
-			if (!empty($not_translated)) {
-				ksort($not_translated);
-				$body .= "var _i18n_not_translated = {";
-				foreach ((array)$not_translated as $_var_name => $_hits) {
-					$_var_name	= strtolower($_var_name);
-					$_var_name	= str_replace("_", " ", $_var_name);
-					$_var_name = str_replace(array("\"","",""), array("\\\"","",""), $_var_name);
-					$body .= "\""._prepare_html($_var_name)."\":\"".intval($_hits)."\",";
-				}
-				$body .= "__dummy:null};";
-			}
-			$body .= "</script>";
+		if (!$this->_SHOW_I18N_VARS || empty($i18n_vars)) {
+			return false;
 		}
-		return $body;
+		ksort($i18n_vars);
+		$js_vars1 = array();
+		foreach ((array)$i18n_vars as $name => $value) {
+			$name = str_replace("_", " ", strtolower($name));
+			$js_vars1[$name] = $value;
+		}
+		$body .= 'var _i18n_for_page = '.json_encode($js_vars1);
+
+		$not_translated = _class('i18n')->_NOT_TRANSLATED;
+		if (!empty($not_translated)) {
+			ksort($not_translated);
+			$js_vars2 = array();
+			foreach ((array)$not_translated as $name => $hits) {
+				$name = str_replace("_", " ", strtolower($name));
+				$js_vars2[$name] = (int)$hits;
+			}
+			$body .= 'var _i18n_not_translated = '.json_encode($js_vars2);
+		}
+
+		$body .= 'var _i18n_for_page = '.json_encode($js_vars);
+		return '<script type="text/javascript">'.$body.'</script>';
 	}
 }
