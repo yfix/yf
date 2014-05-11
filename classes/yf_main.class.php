@@ -703,14 +703,27 @@ class yf_main {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$servers = $this->get_data('servers');
 		$this->SERVER_ID = 0;
-		if (!conf('SERVER_ID')) {
+		if (!conf('SERVER_ID') && ($servers || DEBUG_MODE)) {
+			$self_ips = explode(' ', exec('hostname --all-ip-addresses'));
+			if ($self_ips) {
+				$self_ips = array_combine($self_ips, $self_ips);
+				$this->_server_self_ips = $self_ips;
+			}
 			foreach ((array)$servers as $server) {
-// TODO: try to also get server id from console: "hostname --all-ip-addresses"
-// TODO: this need to be cached to not fork exec on every request
-#		$ips = exec('hostname --all-ip-addresses');
 				if ($server['hostname'] == $this->HOSTNAME) {
 					$this->SERVER_ID = (int)$server['id'];
 					break;
+				}
+				$server_ips = array();
+				if ($self_ips) {
+					foreach (explode(',', str_replace(array(',',';',PHP_EOL,"\t",' '), ',', trim($server['ip']))) as $v) {
+						$v = trim($v);
+						$v && $server_ips[$v] = $v; 
+					}
+					if ($server_ips && array_intersect($self_ips, $server_ips)) {
+						$this->SERVER_ID = (int)$server['id'];
+						break;
+					}
 				}
 			}
 		}
@@ -1125,7 +1138,6 @@ class yf_main {
 			}
 			return false;
 		}
-		// Try to find given class method
 		if (!method_exists($obj, $method_name)) {
 			if (!$silent) {
 				trigger_error('MAIN: no method "'.$method_name.'" in module "'.$class_name.'"'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'"'.$this->modules['tpl']->_search_stpl_line($class_name, $method_name, $method_params, $tpl_name).')' : ''), E_USER_WARNING);
@@ -1150,45 +1162,8 @@ class yf_main {
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
-		$body = '';
-/*
-		// Special widgets processing
-		$widget_name = false;
-		if (substr($method_name, 0, 8) == '_widget_') {
-			$widget_name = 'widget_'.conf('language').'_'. $class_name. '_'. substr($method_name, 8);
-			// Get widget params
-			if ($this->USE_SYSTEM_CACHE) {
-				if (!isset($this->widgets_params)) {
-					// Available params: allow_cache, cache_ttl, object, action
-					$this->widgets_params = $this->get_data('widgets_params');
-				}
-				$_cur_params = $this->widgets_params[$class_name][$method_name];
-			} else {
-				$_cur_params = $this->call_class_method($class_name, 'modules/', $method_name, array('describe' => '1'), $use_cache, $cache_ttl, $cache_key_override);
-			}
-			// First check if widget is for special _GET['object']
-			if (isset($_cur_params['object']) && $_cur_params['object'] && !in_array($this->_get('object'), explode(',', $_cur_params['object']))) {
-				return false;
-			}
-			if (isset($_cur_params['action']) && $_cur_params['action'] && !in_array($this->_get('action'), explode(',', $_cur_params['action']))) {
-				return false;
-			}
-		}
-		if ($widget_name && $this->USE_SYSTEM_CACHE) {
-			$cache_ttl = isset($_cur_params['cache_ttl']) && $_cur_params['cache_ttl'] ? (int)$_cur_params['cache_ttl'] : 0;
-			// Check if we allow to cache this widget
-			if ( ! (isset($_cur_params['allow_cache']) && !$_cur_params['allow_cache'])) {
-				$body = $this->modules['cache']->get($widget_name, $cache_ttl);
-				$body = $body[0];
-			}
-		}
-*/
-		if (empty($body)) {
-			$body = $this->call_class_method($class_name, in_array($class_name, array('graphics')) ? 'classes/' : '', $method_name, $method_params, $tpl_name, $silent, $use_cache, $cache_ttl, $cache_key_override);
-			if ($widget_name && $this->USE_SYSTEM_CACHE) {
-				$this->modules['cache']->set($widget_name, $body);
-			}
-		}
+		$path = in_array($class_name, array('graphics')) ? 'classes/' : '';
+		$body = $this->call_class_method($class_name, $path, $method_name, $method_params, $tpl_name, $silent, $use_cache, $cache_ttl, $cache_key_override);
 		if (DEBUG_MODE) {
 			debug('main_execute_block_time[]', array(
 				'class'		=> $class_name,
