@@ -1256,7 +1256,6 @@ class yf_main {
 			$handler_php_source = conf('data_handlers::'.$name);
 			if (!empty($handler_php_source)) {
 				if (is_string($handler_php_source)) {
-// TODO: convert eval() into closure function() {}
 					$data_to_return = eval( $params_to_eval. $handler_php_source. '; return isset($data) ? $data : null;' );
 				} elseif (is_callable($handler_php_source)) {
 					$data_to_return = $handler_php_source($name, $params);
@@ -1451,15 +1450,13 @@ class yf_main {
 				}
 			}
 		}
+		define('OS_WINDOWS', substr(PHP_OS, 0, 3) == 'WIN');
+
 		if (defined('DEV_MODE')) {
 			conf('DEV_MODE', DEV_MODE);
 		}
 		$this->DEV_MODE = conf('DEV_MODE');
 		$this->HOSTNAME = php_uname('n');
-		// Check if we are running in 'server' or 'cmd line' (or 'cli') mode
-		define('IS_CLI', php_sapi_name() == 'cli' || !$this->_server('PHP_SELF') ? 1 : 0);
-		// Get server OS
-		define('OS_WINDOWS', substr(PHP_OS, 0, 3) == 'WIN');
 		// Check required params
 		if (!defined('INCLUDE_PATH')) {
 			if ($this->CONSOLE_MODE) {
@@ -1487,10 +1484,6 @@ class yf_main {
 		// Define default framework path
 		if (!defined('YF_PATH')) {
 			define('YF_PATH', dirname(PROJECT_PATH).'/yf/');
-		}
-		// Alias
-		if (!defined('YF_PATH')) {
-			define('YF_PATH', YF_PATH);
 		}
 		// Set WEB_PATH (if not done yet)
 		if (!defined('WEB_PATH'))	{
