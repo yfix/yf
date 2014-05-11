@@ -176,6 +176,7 @@ class yf_html {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$headers = array();
 		$items = array();
+		$links_prefix = $extra['links_prefix'] ?: 'tab_';
 		foreach ((array)$tabs as $k => $v) {
 			if (!is_array($v)) {
 				$content = $v;
@@ -187,8 +188,8 @@ class yf_html {
 				continue;
 			}
 			$name = $v['name'] ?: $k;
-			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
-			$id = preg_replace('~[^a-z0-9_-]+~', '', $v['id'] ?: 'tab_'.$k);
+			$desc = $v['desc'] ?: (!$extra['no_auto_desc'] ? ucfirst(str_replace('_', ' ', $name)) : $name);
+			$id = preg_replace('~[^a-z0-9_-]+~i', '', $v['id'] ?: $links_prefix. $k);
 			if (isset($extra['selected'])) {
 				$is_active = ($extra['selected'] == $k);
 			} else {
