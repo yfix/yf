@@ -78,6 +78,9 @@ class yf_debug {
 		if ($_SESSION['hide_debug_console'] || $_GET['hide_debug_console']) {
 			return '';
 		}
+		$exec_time = round(microtime(true) - main()->_time_start, 4);
+		$main_exec_time = common()->_show_execution_time();
+
 		$debug_timings = array();
 		$methods = array();
 		$class_name = get_class($this);
@@ -95,19 +98,24 @@ class yf_debug {
 			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' secs';
 			$debug_contents[$name] = $content;
 		}
+		$debug_time = round(microtime(true) - $ts, 4);
+		$data['debug_info'] = array(
+			'class_head'=> 'tab_info_compact',
+			'disabled'	=> 1,
+			'desc_raw'	=> '
+				<span title="'.t('Page generation time in seconds').'"><i class="icon icon-time"></i>&nbsp;'.$exec_time.'</span>
+				<span title="'.t('Database queries').'">&nbsp;<i class="icon icon-table"></i>&nbsp;'.intval(db()->NUM_QUERIES).'</span><br />
+				<span title="'.t('Debug console generation time in seconds').'"><small>D&nbsp;'.$debug_time.'</small></span>',
+#				<a href="javascript:void(0)" data-hidden-toggle="debug-timings"><small>D&nbsp;'.$debug_time.'</small></a></span>
+#				<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>
+		);
+		$body[] = '<style>#debug_console .nav li.tab_info_compact a { padding: 2px 5px; line-height:normal; }</style>';
 		foreach ((array)$debug_contents as $name => $content) {
 			if (empty($content)) {
 				continue;
 			}
 			$data[$name] = $content;
 		}
-		$debug_time = round(microtime(true) - $ts, 5);
-
-		$body[] = common()->_show_execution_time();
-		$body[] = 'debug console rendering: '
-				.' <a href="javascript:void(0)" class="btn btn-default btn-mini btn-xs btn-toggle" data-hidden-toggle="debug-timings">'.$debug_time.' secs</a>'
-				.'<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>';
-
 		$links_prefix = 'debug_item_';
 		$cookie_active_tab = substr($_COOKIE['debug_tabs_active'], strlen($links_prefix));
 		// Show default tab if saved tab not existing now for any reason
@@ -115,7 +123,7 @@ class yf_debug {
 			$cookie_active_tab = '';
 		}
 		$body[] = _class('html')->tabs($data, array(
-			'selected'		=> $cookie_active_tab ?: key($data),
+			'selected'		=> $cookie_active_tab ?: key(next($data)),
 			'no_auto_desc'	=> 1,
 			'links_prefix'	=> $links_prefix,
 		));
@@ -521,7 +529,7 @@ class yf_debug {
 
 	/*
 	*/
-	function _debug_force_get_url (&$params = array()) {
+	function _debug_url (&$params = array()) {
 		if (!$this->_SHOW_REWRITE_INFO) {
 			return '';
 		}
@@ -570,7 +578,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_main_get_data (&$params = array()) {
+	function _debug_get_data (&$params = array()) {
 		if (!$this->_SHOW_MAIN_GET_DATA) {
 			return '';
 		}
@@ -866,7 +874,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_included_files (&$params = array()) {
+	function _debug_included (&$params = array()) {
 		if (!$this->_SHOW_INCLUDED_FILES) {
 			return '';
 		}
