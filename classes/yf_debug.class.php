@@ -43,16 +43,8 @@ class yf_debug {
 	public $_SHOW_FORM2					= 1;
 	public $_SHOW_TABLE2				= 1;
 	public $_SHOW_DD_TABLE				= 1;
-	public $LOG_QUERIES_TO_FILE			= 0;
-	public $LOG_SLOW_QUERIES_TO_FILE	= 0;
-	public $LOG_QUERIES_FILE_NAME		= 'db_queries.log';
-	public $LOG_SLOW_QUERIES_FILE_NAME	= 'slow_queries.log';
-	public $SLOW_QUERIES_TIME_LIMIT		= 0.2;
 	public $SORT_TEMPLATES_BY_NAME		= 1;
 	public $ADD_ADMIN_LINKS				= true;
-	public $_NOT_TRANSLATED_FILE		= '';
-	public $_file_prefix				= 'logs/not_translated_';
-	public $_file_ext					= '.php';
 	public $ADMIN_PATHS				= array(
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={{THEME}}&name={{ID}}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={{ID}}',
@@ -74,7 +66,7 @@ class yf_debug {
 	* Constructor
 	*/
 	function _init () {
-		$this->_NOT_TRANSLATED_FILE = PROJECT_PATH. $this->_file_prefix. conf('language'). $this->_file_ext;
+		$this->_NOT_TRANSLATED_FILE = PROJECT_PATH. 'logs/not_translated_'. conf('language'). '.php';
 	}
 
 	/**
@@ -211,6 +203,8 @@ class yf_debug {
 			'USER_ID'			=> (int)main()->USER_ID,
 			'USER_GROUP'		=> (int)main()->USER_GROUP,
 			'USER_ROLE'			=> main()->USER_ROLE,
+			'IS_POST'			=> (int)main()->is_post(),
+			'IS_AJAX'			=> (int)main()->is_ajax(),
 			'IS_SPIDER'			=> (int)conf('IS_SPIDER'),
 			'NO_GRAPHICS'		=> (int)main()->NO_GRAPHICS,
 			'OUTPUT_CACHING'	=> (int)main()->OUTPUT_CACHING,
