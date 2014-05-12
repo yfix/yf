@@ -109,7 +109,7 @@ class yf_debug {
 #				<a href="javascript:void(0)" data-hidden-toggle="debug-timings"><small>D&nbsp;'.$debug_time.'</small></a></span>
 #				<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>
 		);
-		$body[] = '<style>#debug_console .nav li.tab_info_compact a { padding: 2px 5px; line-height:normal; }</style>';
+		$body[] = '<style type="text/css" class="yf_core">#debug_console .nav li.tab_info_compact a { padding: 2px 5px; line-height:normal; }</style>';
 		foreach ((array)$debug_contents as $name => $content) {
 			if (empty($content)) {
 				continue;
