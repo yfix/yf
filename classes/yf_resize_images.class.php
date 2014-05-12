@@ -2,7 +2,7 @@
 
 /**
 * Image resizing class
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -46,7 +46,9 @@ class yf_resize_images {
 	);
 	/** @var bool */
 	public $SILENT_MODE	= false;
- 
+	/** @var array */
+	public $BACKGROUND_COLOR = array( 255, 255, 255 );
+
 	/**
 	*/
 	function __construct ($img_file = '') {
@@ -54,7 +56,7 @@ class yf_resize_images {
 			$this->set_source($img_file);
 		}
 	}
- 
+
 	/**
 	* Set source file for processing
 	*/
@@ -102,8 +104,8 @@ class yf_resize_images {
 			return false;
 		}
 		return true;
-	} 
- 
+	}
+
 	/**
 	* Set new limits for processing image
 	*/
@@ -115,8 +117,8 @@ class yf_resize_images {
 		} else {
 			return false;
 		}
-	} 
- 
+	}
+
 	/**
 	* Save processed image into specified location
 	*/
@@ -130,8 +132,8 @@ class yf_resize_images {
 		$this->_set_new_size_auto();
 		// Detect if need to resize image (if something has changed)
 		if (
-			$this->output_width != $this->source_width 
-			|| $this->output_height != $this->source_height 
+			$this->output_width != $this->source_width
+			|| $this->output_height != $this->source_height
 			|| $this->output_type != $this->source_type
 			|| $this->force_process
 		) {
@@ -139,6 +141,14 @@ class yf_resize_images {
 			$this->tmp_resampled = imagecreatetruecolor($this->output_width, $this->output_height);
 			if (!$this->tmp_resampled) {
 				return false;
+			}
+			// png transparency
+			if( $this->source_type == 'png' && $this->output_type == 'jpeg' ) {
+				$bg_img = imagecreatetruecolor( $this->source_width, $this->source_height );
+				$bg = imagecolorallocate( $bg_img, $this->BACKGROUND_COLOR[0], $this->BACKGROUND_COLOR[1], $this->BACKGROUND_COLOR[2] );
+				imagefilledrectangle( $bg_img, 0, 0, $this->source_width, $this->source_height, $bg );
+				imagecopy( $bg_img, $this->tmp_img, 0, 0, 0, 0, $this->source_width, $this->source_height );
+				$this->tmp_img = $bg_img;
 			}
 			imagecopyresampled ($this->tmp_resampled, $this->tmp_img, 0, 0, 0, 0, $this->output_width, $this->output_height, $this->source_width, $this->source_height);
 			$func_name = 'image'.$this->output_type;
@@ -154,7 +164,7 @@ class yf_resize_images {
 			}
 		}
 		return true;
-	} 
+	}
 
 	/**
 	* Show image (resample on the fly) NOTE: Expensive for the server CPU usage
@@ -169,7 +179,7 @@ class yf_resize_images {
 		header('Content-Type: image/'.$this->output_type);
 		$this->_set_new_size_auto();
 		if ($this->output_width != $this->source_width || $this->output_height != $this->source_height || $this->output_type != $this->source_type) {
-			$this->tmp_resampled = imagecreatetruecolor($this->output_width, $this->output_height); 
+			$this->tmp_resampled = imagecreatetruecolor($this->output_width, $this->output_height);
 			imagecopyresampled ($this->tmp_resampled, $this->tmp_img, 0, 0, 0, 0, $this->output_width, $this->output_height, $this->source_width, $this->source_height);
 		}
 		$func_name = 'image'.$this->output_type;
@@ -210,7 +220,7 @@ class yf_resize_images {
 		}
 		return true;
 	}
- 
+
 	/**
 	* Clean all data
 	*/
@@ -229,4 +239,4 @@ class yf_resize_images {
 		$this->tmp_resampled	= null;
 		return true;
 	}
-} 
+}

@@ -2,7 +2,7 @@
 
 /**
 * Generating thumbs from images handler
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -353,7 +353,7 @@ class yf_make_thumb {
 			}
 		}
 		return $resize_success;
-	} 
+	}
 
 	/**
 	*/
@@ -374,7 +374,7 @@ class yf_make_thumb {
 
         $watermarkwidth = imagesx($watermark);
         $watermarkheight = imagesy($watermark);
-		if(($watermarkwidth > $watermarkheight && $width_orig > $height_orig) 
+		if(($watermarkwidth > $watermarkheight && $width_orig > $height_orig)
 		|| ($watermarkwidth < $watermarkheight && $width_orig < $height_orig)){
 	        $thumb_watermark_w = intval($width_orig / 1.2);
 	        $thumb_watermark_h = intval(($thumb_watermark_w / $watermarkwidth) * $watermarkheight);
@@ -477,14 +477,15 @@ class yf_make_thumb {
 		if ($_source_image_info["type"] == "gif") {
 			 $this->_is_gif_animated_imagick($source_file_path) ? $add_cmd = " -coalesce " : $add_cmd = " -composite ";
 		}
-		$imagick_cmd	= $PATH_TO_IMAGICK."convert ".$source_file_path." ".$add_cmd." ".(!empty($resize_cmd) ? "-thumbnail \"".$resize_cmd.">\"" : "")." ".(defined("THUMB_QUALITY") ? " -quality \"".intval(THUMB_QUALITY)."\"" : "")." ".$dest_file_path;
+		$bg = ' -background white -flatten ';
+		$imagick_cmd	= $PATH_TO_IMAGICK."convert ".$source_file_path." ".$add_cmd." ".(!empty($resize_cmd) ? "-thumbnail \"".$resize_cmd.">\"" : "")." ".(defined("THUMB_QUALITY") ? " -quality \"".intval(THUMB_QUALITY)."\"" : "").$bg." ".$dest_file_path;
 		$output = exec($imagick_cmd);
 		// Check resize result
 		$_dest_image_info = $this->_image_info_imagick($dest_file_path);
 		if ($_dest_image_info && (
-			!$_dest_image_info["width"] || 
-			!$_dest_image_info["height"] || 
-			($LIMIT_X > 0 && $_dest_image_info["width"] > $LIMIT_X) || 
+			!$_dest_image_info["width"] ||
+			!$_dest_image_info["height"] ||
+			($LIMIT_X > 0 && $_dest_image_info["width"] > $LIMIT_X) ||
 			($LIMIT_Y > 0 && $_dest_image_info["height"] > $LIMIT_Y)
 		)) {
 			unlink($dest_file_path);
