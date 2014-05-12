@@ -169,7 +169,7 @@ class yf_debug {
 			'CACHE_NO_CACHE'	=> (int)cache()->NO_CACHE,
 			'CACHE_DRIVER'		=> cache()->DRIVER,
 			'CACHE_NS'			=> cache()->CACHE_NS,
-			'CACHE_TTL'			=> (int)cache()->FILES_TTL,
+			'CACHE_TTL'			=> (int)cache()->TTL,
 			'SITE_PATH'			=> SITE_PATH,
 			'PROJECT_PATH'		=> PROJECT_PATH,
 			'YF_PATH'			=> YF_PATH,
