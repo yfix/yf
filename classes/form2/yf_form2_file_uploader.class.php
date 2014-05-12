@@ -26,13 +26,13 @@ class yf_form2_file_uploader {
 // TODO: use this CDN for JS and CSS: http://cdnjs.com/libraries/blueimp-file-upload/
 			
 			// todo: move sources to repository
-			require_css(array(
+			css(array(
 #				'http://blueimp.github.io/Gallery/css/blueimp-gallery.min.css',
 				'//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.2/css/jquery.fileupload.min.css',
 				'//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.2/css/jquery.fileupload-ui.min.css',
 			));
 			
-			require_js(array(
+			js(array(
 #				'http://localhost/fileupload_tmp/js/vendor/jquery.ui.widget.js',
 #				'http://blueimp.github.io/JavaScript-Load-Image/js/load-image.min.js',
 #				'http://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js',
@@ -49,11 +49,11 @@ class yf_form2_file_uploader {
 
 /*
 			$body = '<input id="fileupload" type="file" name="files[]" data-url="server/php/" multiple>';
-			require_js(array(
+			js(array(
 				'//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.2/jquery.iframe-transport.min.js',
 				'//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.2/jquery.fileupload.min.js',
 			));
-			require_js(
+			js(
 				'$(function(){
 					$("#fileupload").fileupload({
 						dataType: "json",

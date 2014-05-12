@@ -203,6 +203,7 @@ if (!function_exists('object_to_array')) {
 		}
 	}
 }
+// TODO: unit tests
 if (!function_exists('obj2arr')) {
 	// Much faster (10x) implementation of object_to_array()
 	function obj2arr(&$obj) {
@@ -288,10 +289,10 @@ if (!function_exists('_attrs_string2array')) {
 	}
 }
 
+// TODO: unit tests
 // We need this to avoid encoding & => &amp; by standard htmlspecialchars()
 if (!function_exists('_htmlchars')) {
 	function _htmlchars($str = '') {
-// TODO: unit tests
 		if (is_array($str)) {
 			foreach ((array)$str as $k => $v) {
 				$str[$k] = _htmlchars($v);
@@ -305,6 +306,51 @@ if (!function_exists('_htmlchars')) {
 			'>'	=> '&gt;',
 		);
 		return str_replace(array_keys($replace), array_values($replace), $str);
+	}
+}
+
+// TODO: unit tests
+// Build string of html attributes, used by high-level html generators like form, table, html
+if (!function_exists('_attrs')) {
+	function _attrs($extra = array(), $names = array()) {
+		$body = array();
+		// Try to find and allow all data-* and ng-* attributes automatically
+		foreach ((array)$extra as $k => $v) {
+			if (strpos($k, 'data-') === 0 || strpos($k, 'ng-') === 0) {
+				$names[] = $k;
+			}
+		}
+		foreach ((array)$names as $name) {
+			if (!$name || !isset($extra[$name])) {
+				continue;
+			}
+			$val = $extra[$name];
+			if (is_array($val)) {
+				$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
+			} else {
+				if (!strlen($val)) {
+					continue;
+				}
+				$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
+			}
+		}
+		// Custom html attributes forced with sub-array "attr"
+		if (is_array($extra['attr'])) {
+			foreach ((array)$extra['attr'] as $name => $val) {
+				if (!$name || !isset($val)) {
+					continue;
+				}
+				if (is_array($val)) {
+					$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
+				} else {
+					if (!strlen($val)) {
+						continue;
+					}
+					$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
+				}
+			}
+		}
+		return $body ? ' '.implode(' ', $body) : '';
 	}
 }
 

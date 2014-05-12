@@ -64,11 +64,10 @@ class yf_admin {
 				'password'		=> 'password_update',
 				'group'			=> 'required|exists[admin_groups.id]',
 			))
-			->db_update_if_ok('admin', array(
-				'login','email','first_name','last_name','go_after_login','password','group'
-			), 'id='.$id, array('on_after_update' => function() {
+			->db_update_if_ok('admin', array('login','email','first_name','last_name','go_after_login','password','group'), 'id='.$id)
+			->on_after_update(function() {
 				common()->admin_wall_add(array(t('admin account edited: %login', array('%login' => $_POST['login'])), $id));
-			}))
+			})
 			->login()
 			->email()
 			->password(array('value' => ''))
@@ -101,11 +100,10 @@ class yf_admin {
 				'password'		=> 'required|md5',
 				'group'			=> 'required|exists[admin_groups.id]',
 			))
-			->db_insert_if_ok('admin', array(
-				'login','email','first_name','last_name','go_after_login','password','group','active'
-			), array('add_date' => time()), array('on_after_update' => function() {
+			->db_insert_if_ok('admin', array('login','email','first_name','last_name','go_after_login','password','group','active'), array('add_date' => time()))
+			->on_after_update(function() {
 				common()->admin_wall_add(array('admin account added: '.$_POST['login'].'', main()->ADMIN_ID));
-			}))
+			})
 			->login()
 			->email()
 			->password(array('value' => ''))

@@ -1,8 +1,8 @@
 <li class="dropdown">
-	<a class="dropdown-toggle" data-toggle="dropdown"><i class="icon-eye-open fa-eye"></i> {t(Select theme)} <b class="caret"></b></a>
+	<a class="dropdown-toggle" data-toggle="dropdown"><i class="icon-eye-open fa-eye"></i> {if(cur_theme eq "")}{t(Select theme)}{else}{t("Theme:")}{cur_theme}{/if} <b class="caret"></b></a>
 	<ul class="dropdown-menu theme-selector">
 {foreach("themes")}
-		<li><a href="#" id="theme_id_{_val}">{_val}</a></li>
+		<li{if(_val eq #cur_theme)} class="disabled active"{/if}><a href="#" id="theme_id_{_val}">{_val}</a></li>
 {/foreach}
 	</ul>
 </li>

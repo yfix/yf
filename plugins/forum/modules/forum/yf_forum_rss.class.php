@@ -22,7 +22,7 @@ class yf_forum_rss {
 		while ($A = db()->fetch_assoc($Q)) {
 			$data[] = array(
 				'title'			=> _prepare_html($A['subject'], 0),
-				'link'			=> process_url('./?object='.'forum'.'&action=view_post&id='.$A['id']),
+				'link'			=> process_url('./?object=forum&action=view_post&id='.$A['id']),
 				'description'	=> _prepare_html(module('forum')->_cut_bb_codes($A['text']), 0),
 				'date'			=> $A['created'],
 				'author'		=> _prepare_html($A['user_name'], 0),
@@ -57,7 +57,7 @@ class yf_forum_rss {
 		while ($A = db()->fetch_assoc($Q)) {
 			$data[] = array(
 				'title'			=> _prepare_html($A['subject'], 0),
-				'link'			=> process_url('./?object='.'forum'.'&action=view_post&id='.$A['id']),
+				'link'			=> process_url('./?object=forum&action=view_post&id='.$A['id']),
 				'description'	=> _prepare_html(module('forum')->_cut_bb_codes($A['text']), 0),
 				'date'			=> $A['created'],
 				'author'		=> _prepare_html($A['user_name'], 0),
@@ -99,7 +99,7 @@ class yf_forum_rss {
 		while ($A = db()->fetch_assoc($Q)) {
 			$data[] = array(
 				'title'			=> _prepare_html($A['subject'], 0),
-				'link'			=> process_url('./?object='.'forum'.'&action=view_post&id='.$A['id']),
+				'link'			=> process_url('./?object=forum&action=view_post&id='.$A['id']),
 				'description'	=> _prepare_html(module('forum')->_cut_bb_codes($A['text']), 0),
 				'date'			=> $A['created'],
 				'author'		=> _prepare_html($A['user_name'], 0),
@@ -111,7 +111,7 @@ class yf_forum_rss {
 			'feed_file_name'	=> 'feed_topic_'.$topic_info['id'],
 			'feed_title'		=> 'Latest posts inside topic: '._prepare_html($topic_info['name'], 0),
 			'feed_desc'			=> _prepare_html($topic_info['desc'], 0),
-			'feed_url'			=> process_url('./?object='.'forum'.'&action=view_topic&id='.intval($topic_info['id'])),
+			'feed_url'			=> process_url('./?object=forum&action=view_topic&id='.intval($topic_info['id'])),
 		);
 		return common()->rss_page($data, $params);
 	}

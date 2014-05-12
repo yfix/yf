@@ -8,6 +8,7 @@ $data = '
 	`user_name` varchar(255) NOT NULL default \'\',
 	`created` int(10) unsigned NOT NULL default \'0\',
 	`status` char(1) NOT NULL default \'a\',
+	`active` tinyint(1) NOT NULL default \'1\',
 	`num_views` int(10) unsigned NOT NULL default \'0\',
 	`num_posts` int(10) unsigned NOT NULL default \'0\',
 	`first_post_id` int(10) unsigned NOT NULL default \'0\',

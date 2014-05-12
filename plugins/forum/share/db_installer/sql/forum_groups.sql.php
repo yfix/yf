@@ -2,6 +2,7 @@
 $data = '
 	`id` int(3) unsigned NOT NULL auto_increment,
 	`title` varchar(32) NOT NULL default \'\',
+	`active` tinyint(1) NOT NULL default \'1\',
 	`icon` varchar(250) default \'\',
 	`prefix` varchar(250) default \'\',
 	`suffix` varchar(250) default \'\',

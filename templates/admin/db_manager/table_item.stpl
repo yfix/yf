@@ -2,7 +2,7 @@
 	<td>
 		<input class="group_action" type="checkbox" name="item[]" value="{name}">
 	</td>
-	<td width="90%"><a href="{view_link}" class="btn btn-mini">{name}</a></td>
+	<td width="90%"><a href="{view_link}" class="btn btn-mini btn-xs">{name}</a></td>
 	<td>{engine}</td>
 	<td>{collation}</td>
 	<td>{num_rows}</td>

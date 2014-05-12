@@ -7,6 +7,7 @@ $data = '
 	`desc` varchar(255) NOT NULL default \'\',
 	`created` int(10) unsigned NOT NULL default \'0\',
 	`status` char(1) NOT NULL default \'a\',
+	`active` tinyint(1) NOT NULL default \'1\',
 	`icon` varchar(255) NOT NULL default \'\',
 	`order` int(10) unsigned NOT NULL default \'0\',
 	`num_views` int(10) unsigned NOT NULL default \'0\',

@@ -41,9 +41,10 @@ class yf_manage_users {
 				'login' => 'trim|required|alpha_numeric|is_unique[user.login]',
 				'email' => 'trim|required|valid_email|is_unique[user.email]',
 			))
-			->db_insert_if_ok('user', array('login','email','name','active'), array('add_date' => time()), array('on_after_update' => function() {
+			->db_insert_if_ok('user', array('login','email','name','active'), array('add_date' => time()))
+			->on_after_update(function() {
 				common()->admin_wall_add(array('user added: '.$_POST['login'].'', db()->insert_id()));
-			}))
+			})
 			->login()
 			->email()
 			->text('name')
@@ -66,9 +67,10 @@ class yf_manage_users {
 				'login' => 'trim|alpha_numeric|is_unique_without[user.login.'.$id.']',
 				'email' => 'trim|required|valid_email|is_unique_without[user.email.'.$id.']',
 			))
-			->db_update_if_ok('user', array('login','email','name','active', 'birthday'), 'id='.$id, array('on_after_update' => function() {
+			->db_update_if_ok('user', array('login','email','name','active', 'birthday'), 'id='.$id)
+			->on_after_update(function() {
 				common()->admin_wall_add(array('user updated: '.$_POST['login'].'', $id));
-			}))
+			})
 			->login()
 			->email()
 			->text('name')

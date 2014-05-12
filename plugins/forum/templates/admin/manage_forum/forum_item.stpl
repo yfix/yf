@@ -1,0 +1,30 @@
+<tr> 
+	<td>{forum_id}</td>
+	<td>
+		<a href="{link}" class="btn btn-mini btn-xs btn-info">{name}</a>{if("is_closed" eq 1)}<b class="label label-disabled">(closed)</b>{/if}<br />
+		<span class="small_font">{desc}</span>
+{if("has_sub_forums" ne "")}
+		<br />
+		<small>
+			<b>Sub-forums:</b> 
+	{foreach("sub_forums")}
+			<a href="{#.view_link}" class="btn btn-mini btn-xs btn-info">{#.name}</a> {if("#.is_closed" eq 1)}<b class="label label-error">(closed)</b>{/if}
+			<i class="icon-edit" style="width:15px;" onclick="window.location.href='{#.edit_link}'"></i>
+			<i class="icon-trash" onclick="if (confirm('{t(are_you_sure)}?')) window.location.href='{#.delete_link}'"></i>
+	{/foreach}
+		</small>
+{/if}
+{if("moderators" ne "")}
+		<br />
+		<small><b>Moderating:</b> {moderators}</small>
+{/if}
+	</td>
+	<td>{num_posts}</td>
+	<td>{num_topics}</td>
+	<td>{last_post}</td>
+	<td nowrap>
+		<a href="{active_link}" class="change_active btn btn-mini btn-xs {if("is_active" eq 1)}btn-success{else}btn-warning{/if}">{if("is_active" eq 1)}{t(ACTIVE)}{else}{t(INACTIVE)}{/if}</a>
+		<a href="{edit_link}" class="btn btn-mini btn-xs"><i class="icon-edit"></i> {t(Edit)}</a>
+		<a href="{delete_link}" class="btn btn-mini btn-xs"><i class="icon-trash" onclick="return confirm('{t(are_you_sure)}?')"></i> {t(Delete)}</a>
+	</td>
+</tr>

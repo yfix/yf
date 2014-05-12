@@ -36,7 +36,7 @@ class yf_forum_user {
 	*/
 	function _view_profile () {
 		$_GET['id'] = intval($_GET['id']);
-		if (/*module('forum')->SETTINGS['USE_GLOBAL_USERS'] || */(!module('forum')->USER_RIGHTS['view_member_info'] && FORUM_USER_ID != $_GET['id'])) {
+		if (!module('forum')->USER_RIGHTS['view_member_info'] && FORUM_USER_ID != $_GET['id']) {
 // TODO: need to turn on in globals mode
 //			return module('forum')->_show_error('Disabled by the site admin!');
 		}
@@ -73,14 +73,14 @@ class yf_forum_user {
 				'is_my_info'			=> $is_my_info,
 				'user_name'				=> _prepare_html($user_info['name']),
 				'user_details'			=> module('forum')->_show_user_details($user_info, $user_is_online, $user_info['name']),
-				'find_user_posts_link'	=> FORUM_USER_ID ? './?object='.'forum'.'&action=search&result_type=posts&user_id='.$user_info['id'].'&q=results'._add_get(array('page')) : '',
-				'find_user_topics_link'	=> FORUM_USER_ID ? './?object='.'forum'.'&action=search&result_type=topics&user_id='.$user_info['id'].'&q=results'._add_get(array('page')) : '',
+				'find_user_posts_link'	=> FORUM_USER_ID ? './?object=forum&action=search&result_type=posts&user_id='.$user_info['id'].'&q=results'._add_get(array('page')) : '',
+				'find_user_topics_link'	=> FORUM_USER_ID ? './?object=forum&action=search&result_type=topics&user_id='.$user_info['id'].'&q=results'._add_get(array('page')) : '',
 // FIXME
-				'send_pm_link'			=> /*FORUM_USER_ID ? './?object='.'forum'.'&action=send_pm&id='.$user_info['id']._add_get(array('page')) : */'',
-				'send_email_link'		=> FORUM_USER_ID ? './?object='.'forum'.'&action=email_user&id='.$user_info['id']._add_get(array('page')) : '',
-				'edit_profile_link'		=> $is_my_info ? './?object='.'forum'.'&action=edit_profile'._add_get(array('page')) : '',
-				'edit_user_link'		=> FORUM_IS_ADMIN ? './?object='.'forum'.'&action=edit_profile&id='.$user_info['id']._add_get(array('page')) : '',
-				'delete_user_link'		=> FORUM_IS_ADMIN && $user_info['group'] != 1 ? './?object='.'forum'.'&action=delete_profile&id='.$user_info['id']._add_get(array('page')) : '',
+				'send_pm_link'			=> /*FORUM_USER_ID ? './?object=forum&action=send_pm&id='.$user_info['id']._add_get(array('page')) : */'',
+				'send_email_link'		=> FORUM_USER_ID ? './?object=forum&action=email_user&id='.$user_info['id']._add_get(array('page')) : '',
+				'edit_profile_link'		=> $is_my_info ? './?object=forum&action=edit_profile'._add_get(array('page')) : '',
+				'edit_user_link'		=> FORUM_IS_ADMIN ? './?object=forum&action=edit_profile&id='.$user_info['id']._add_get(array('page')) : '',
+				'delete_user_link'		=> FORUM_IS_ADMIN && $user_info['group'] != 1 ? './?object=forum&action=delete_profile&id='.$user_info['id']._add_get(array('page')) : '',
 				'user_total_posts'		=> intval($user_info['user_posts']),
 				'posts_per_day'			=> floatval($posts_per_day),
 				'posts_percent'			=> floatval($posts_percent),
@@ -127,11 +127,9 @@ class yf_forum_user {
 			return module('forum')->_show_error('No such user!');
 		}
 		$reg_date = $user_info['user_regdate'];
-		if (module('forum')->SETTINGS['USE_GLOBAL_USERS']) {
-			$global_user_info = user(FORUM_USER_ID);
-			if (!empty($global_user_info)) {
-				$reg_date = $global_user_info['add_date'];
-			}
+		$global_user_info = user(FORUM_USER_ID);
+		if (!empty($global_user_info)) {
+			$reg_date = $global_user_info['add_date'];
 		}
 		// Process template
 		$replace = array(
@@ -221,7 +219,7 @@ class yf_forum_user {
 			return js_redirect(getenv('HTTP_REFERER'), false);
 		} else {
 			$replace = array(
-				'form_action'		=> './?object='.'forum'.'&action='.$_GET['action']._add_get(array('page')),
+				'form_action'		=> './?object=forum&action='.$_GET['action']._add_get(array('page')),
 				'birth_date_box'	=> $this->_box('user_birth', $user_info['user_birth']),
 				'user_website'		=> _prepare_html($user_info['user_website']),
 				'user_icq'			=> _prepare_html($user_info['user_icq']),
@@ -230,14 +228,14 @@ class yf_forum_user {
 				'user_msnm'			=> _prepare_html($user_info['user_msnm']),
 				'user_location'		=> _prepare_html($user_info['user_location']),
 				'user_interests'	=> _prepare_html($user_info['user_interests']),
-				'avatar_src'		=> !module('forum')->SETTINGS['USE_GLOBAL_USERS'] && !empty($user_info['user_avatar']) ? WEB_PATH. module('forum')->SETTINGS['AVATARS_DIR']. $user_info['user_avatar'] : '',
+				'avatar_src'		=> '',
 				'avatar_max_x'		=> intval(module('forum')->SETTINGS['AVATAR_MAX_X']),
 				'avatar_max_y'		=> intval(module('forum')->SETTINGS['AVATAR_MAX_Y']),
 				'avatar_max_bytes'	=> intval(module('forum')->SETTINGS['AVATAR_MAX_BYTES']),
 				'avatar_image_types'=> module('forum')->SETTINGS['AVATAR_IMAGE_TYPES'],
 				'user_sig_with_bb'	=> _class('bb_codes')->_process_text($user_info['user_sig']),
 				'user_sig'			=> _prepare_html($user_info['user_sig']),
-				'delete_avatar_link'=> './?object='.'forum'.'&action=delete_avatar'._add_get(array('page')),
+				'delete_avatar_link'=> './?object=forum&action=delete_avatar'._add_get(array('page')),
 				'global_users_mode'	=> (int)(module('forum')->SETTINGS['USE_GLOBAL_USERS']),
 				'max_sig_length'	=> intval(module('forum')->SETTINGS['MAX_SIG_LENGTH']),
 			);
@@ -292,7 +290,7 @@ class yf_forum_user {
 		// Show form
 		} else {
 			$replace = array(
-				'form_action'			=> './?object='.'forum'.'&action='.$_GET['action']._add_get(array('page')),
+				'form_action'			=> './?object=forum&action='.$_GET['action']._add_get(array('page')),
 				'time_zone_box'			=> is_object($TIME_ZONE_OBJ) ? $TIME_ZONE_OBJ->_time_zone_box('time_zone', $user_info['user_timezone']) : '',
 				'dst_status'			=> intval($user_info['dst_status']),
 				'view_sig_box'			=> $this->_box('view_sig',			$user_info['view_sig']),
@@ -314,12 +312,12 @@ class yf_forum_user {
 	function _user_cp_menu () {
 		// Process template
 		$replace = array(
-			'edit_info_link'		=> './?object='.'forum'.'&action=edit_profile'._add_get(array('page')),
-			'board_settings_link'	=> './?object='.'forum'.'&action=edit_settings'._add_get(array('page')),
-			'subscr_topics_link'	=> module('forum')->SETTINGS['ALLOW_TRACK_TOPIC'] ? './?object='.'forum'.'&action=tracker_manage_topics'._add_get(array('page')) : '',
-			'subscr_forums_link'	=> module('forum')->SETTINGS['ALLOW_TRACK_FORUM'] ? './?object='.'forum'.'&action=tracker_manage_forums'._add_get(array('page')) : '',
+			'edit_info_link'		=> './?object=forum&action=edit_profile'._add_get(array('page')),
+			'board_settings_link'	=> './?object=forum&action=edit_settings'._add_get(array('page')),
+			'subscr_topics_link'	=> module('forum')->SETTINGS['ALLOW_TRACK_TOPIC'] ? './?object=forum&action=tracker_manage_topics'._add_get(array('page')) : '',
+			'subscr_forums_link'	=> module('forum')->SETTINGS['ALLOW_TRACK_FORUM'] ? './?object=forum&action=tracker_manage_forums'._add_get(array('page')) : '',
 			'need_subscr_block'		=> (int)(module('forum')->SETTINGS['ALLOW_TRACK_TOPIC'] || module('forum')->SETTINGS['ALLOW_TRACK_FORUM']),
-			'announce_link'			=> FORUM_IS_ADMIN && module('forum')->SETTINGS['ALLOW_ANNOUNCES'] ? './?object='.'forum'.'&action=edit_announces'._add_get(array('page')) : '',
+			'announce_link'			=> FORUM_IS_ADMIN && module('forum')->SETTINGS['ALLOW_ANNOUNCES'] ? './?object=forum&action=edit_announces'._add_get(array('page')) : '',
 		);
 		return tpl()->parse('forum'.'/user_cp/menu', $replace);
 	}
@@ -406,7 +404,7 @@ class yf_forum_user {
 					'last_post_author_link'	=> $post_info['user_id'] ? module('forum')->_user_profile_link($post_info['user_id']) : '',
 					'last_post_subject'		=> _prepare_html($subject),
 					'last_post_date'		=> module('forum')->_show_date($post_info['created'], 'last_post_date'),
-					'last_post_link'		=> './?object='.'forum'.'&action=view_topic&id='.$post_info['topic']._add_get(array('page')),
+					'last_post_link'		=> './?object=forum&action=view_topic&id='.$post_info['topic']._add_get(array('page')),
 				);
 				$last_posts[$post_info['topic']] = tpl()->parse('forum'.'/view_forum_last_posts', $replace3);
 			}
@@ -415,7 +413,7 @@ class yf_forum_user {
 		if (module('forum')->SETTINGS['SHOW_TOPIC_PAGES'] && !empty($topic_pages_ids)) {
 			$topic_pages = array();
 			foreach ((array)$topic_pages_ids as $topic_id => $topic_num_posts) {
-				list(,$topic_pages[$topic_id],) = common()->divide_pages('', './?object='.'forum'.'&action=view_topic&id='.$topic_id, null, module('forum')->SETTINGS['NUM_POSTS_ON_PAGE'], $topic_num_posts, 'forum'.'/pages_2/');
+				list(,$topic_pages[$topic_id],) = common()->divide_pages('', './?object=forum&action=view_topic&id='.$topic_id, null, module('forum')->SETTINGS['NUM_POSTS_ON_PAGE'], $topic_num_posts, 'forum'.'/pages_2/');
 			}
 		}
 		return array($last_posts, $topic_pages);
@@ -554,9 +552,9 @@ class yf_forum_user {
 		// Show form
 		} else {
 			$replace = array(
-				'form_action'	=> './?object='.'forum'.'&action='.$_GET['action'],
+				'form_action'	=> './?object=forum&action='.$_GET['action'],
 				'use_captcha'	=> intval($use_captcha),
-				'captcha_image'	=> $use_captcha ? module('forum')->CAPTCHA->show_html('./?object='.'forum'.'&action=show_captcha_image') : '',
+				'captcha_image'	=> $use_captcha ? module('forum')->CAPTCHA->show_html('./?object=forum&action=show_captcha_image') : '',
 				'captcha_hash'	=> /*$use_captcha ? $_SESSION[module('forum')->CAPTCHA->var_name] : */'',
 			);
 			$body .= tpl()->parse('forum'.'/send_pswd/main_form', $replace);
@@ -605,7 +603,7 @@ class yf_forum_user {
 					$confirm_string = $E->_safe_encrypt_with_base64(time().'##'.$_POST['email'].'##'.$_POST['login'].'##'.$_POST['pswd']);
 					// Get message template
 					$replace2 = array(
-						'link' => process_url('./?object='.'forum'.'&action=confirm_register&key='.$confirm_string),
+						'link' => process_url('./?object=forum&action=confirm_register&key='.$confirm_string),
 					);
 					$text = tpl()->parse('forum'.'/register/confirm_email', $replace2);
 					// Send confirmation email
@@ -634,10 +632,10 @@ class yf_forum_user {
 		// Show form
 		} else {
 			$replace = array(
-				'form_action'	=> './?object='.'forum'.'&action='.$_GET['action'],
+				'form_action'	=> './?object=forum&action='.$_GET['action'],
 				'time_zone_box'	=> is_object($TIME_ZONE_OBJ) ? $TIME_ZONE_OBJ->_time_zone_box('time_zone', $user_info['user_timezone']) : '',
 				'use_captcha'	=> intval($use_captcha),
-				'captcha_image'	=> $use_captcha ? module('forum')->CAPTCHA->show_html('./?object='.'forum'.'&action=show_captcha_image') : '',
+				'captcha_image'	=> $use_captcha ? module('forum')->CAPTCHA->show_html('./?object=forum&action=show_captcha_image') : '',
 				'captcha_hash'	=> /*$use_captcha ? $_SESSION[module('forum')->CAPTCHA->var_name] : */'',
 			);
 			$body = tpl()->parse('forum'.'/register/main_form', $replace);

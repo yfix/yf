@@ -1,6 +1,7 @@
 <?php
 $data = '
 	`id` int(10) unsigned NOT NULL auto_increment,
+	`active` tinyint(1) NOT NULL default \'1\',
 	`status` char(1) default \'a\',
 	`name` varchar(24) NOT NULL default \'\',
 	`pswd` varchar(32) NOT NULL default \'\',

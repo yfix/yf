@@ -423,7 +423,7 @@ class yf_help extends yf_module {
 		// Try to get tip id
 		$TIP_ID = substr($_REQUEST["id"], strlen("help_"));
 		if (!empty($TIP_ID)) {
-			$tips_array = main()->get_data("locale:tips");
+			$tips_array = main()->get_data("tips", 0, array('lang' => conf('language')));
 			$tip_info = $tips_array[$TIP_ID];
 		}
 		$body = "";

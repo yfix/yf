@@ -20,7 +20,6 @@ class yf_debug {
 	public $_SHOW_RESIZED_IMAGES_LOG	= 1;
 	public $_SHOW_INCLUDED_FILES		= 1;
 	public $_SHOW_LOADED_MODULES		= 1;
-	public $_INCLUDED_SKIP_CACHE		= 0;
 	public $_SHOW_MEMCACHED_INFO		= 1;
 	public $_SHOW_EACCELERATOR_INFO		= 1;
 	public $_SHOW_XCACHE_INFO			= 1;
@@ -44,16 +43,8 @@ class yf_debug {
 	public $_SHOW_FORM2					= 1;
 	public $_SHOW_TABLE2				= 1;
 	public $_SHOW_DD_TABLE				= 1;
-	public $LOG_QUERIES_TO_FILE			= 0;
-	public $LOG_SLOW_QUERIES_TO_FILE	= 0;
-	public $LOG_QUERIES_FILE_NAME		= 'db_queries.log';
-	public $LOG_SLOW_QUERIES_FILE_NAME	= 'slow_queries.log';
-	public $SLOW_QUERIES_TIME_LIMIT		= 0.2;
 	public $SORT_TEMPLATES_BY_NAME		= 1;
 	public $ADD_ADMIN_LINKS				= true;
-	public $_NOT_TRANSLATED_FILE		= '';
-	public $_file_prefix				= 'logs/not_translated_';
-	public $_file_ext					= '.php';
 	public $ADMIN_PATHS				= array(
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={{THEME}}&name={{ID}}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={{ID}}',
@@ -75,7 +66,7 @@ class yf_debug {
 	* Constructor
 	*/
 	function _init () {
-		$this->_NOT_TRANSLATED_FILE = PROJECT_PATH. $this->_file_prefix. conf('language'). $this->_file_ext;
+		$this->_NOT_TRANSLATED_FILE = PROJECT_PATH. 'logs/not_translated_'. conf('language'). '.php';
 	}
 
 	/**
@@ -87,8 +78,8 @@ class yf_debug {
 		if ($_SESSION['hide_debug_console'] || $_GET['hide_debug_console']) {
 			return '';
 		}
-		$body .= '<div id="debug_console">';
-		$body .= common()->_show_execution_time();
+		$exec_time = round(microtime(true) - main()->_time_start, 4);
+		$main_exec_time = common()->_show_execution_time();
 
 		$debug_timings = array();
 		$methods = array();
@@ -107,45 +98,59 @@ class yf_debug {
 			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' secs';
 			$debug_contents[$name] = $content;
 		}
-
-		$i = 0;
-		$cookie_active_tab = substr($_COOKIE['debug_tabs_active'], strlen('debug_item_'));
-		// This is needed to show default tab if saved tab not existing now for any reason
-		if (!isset($debug_contents[$cookie_active_tab])) {
-			$cookie_active_tab = '';
-		}
-		$links = array();
-		$contents = array();
+		$debug_time = round(microtime(true) - $ts, 4);
+		$data['debug_info'] = array(
+			'class_head'=> 'tab_info_compact',
+			'disabled'	=> 1,
+			'desc_raw'	=> '
+				<span title="'.t('Page generation time in seconds').'"><i class="icon icon-time fa fa-clock-o"></i>&nbsp;'.$exec_time.'</span>
+				<span title="'.t('Database queries').'">&nbsp;<i class="icon icon-table fa fa-table"></i>&nbsp;'.intval(db()->NUM_QUERIES).'</span><br />
+				<span title="'.t('Debug console generation time in seconds').'"><small>D&nbsp;'.$debug_time.'</small></span>',
+#				<a href="javascript:void(0)" data-hidden-toggle="debug-timings"><small>D&nbsp;'.$debug_time.'</small></a></span>
+#				<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>
+		);
+		$body[] = '<style>#debug_console .nav li.tab_info_compact a { padding: 2px 5px; line-height:normal; }</style>';
 		foreach ((array)$debug_contents as $name => $content) {
 			if (empty($content)) {
 				continue;
 			}
-			$is_first = (++$i == 1);
-			$is_active = $cookie_active_tab ? ($cookie_active_tab == $name) : $is_first;
-			$contents[$name] = '  <div class="tab-pane fade in'.($is_active ? ' active' : '').'" id="debug_item_'.$name.'">'.$content.'</div>';
-			$links[$name] = '  <li'.($is_active ? ' class="active"' : '').'><a href="#debug_item_'.$name.'" data-toggle="tab" class="">'.$name.'</a></li>';
+			$data[$name] = $content;
 		}
+		$links_prefix = 'debug_item_';
+		$cookie_active_tab = substr($_COOKIE['debug_tabs_active'], strlen($links_prefix));
+		// Show default tab if saved tab not existing now for any reason
+		if (!isset($data[$cookie_active_tab])) {
+			$cookie_active_tab = '';
+		}
+		$body[] = _class('html')->tabs($data, array(
+			'selected'		=> $cookie_active_tab ?: 'DEBUG_YF',
+			'no_auto_desc'	=> 1,
+			'links_prefix'	=> $links_prefix,
+		));
+		return '<div id="debug_console">'.implode(PHP_EOL, $body).'</div>';
+	}
 
-		$debug_time = round(microtime(true) - $ts, 5);
-		$body .= 'debug console rendering: '
-				.' <a href="javascript:void(0)" class="btn btn-default btn-mini btn-xs btn-toggle" data-hidden-toggle="debug-timings">'.$debug_time.' secs</a>'
-				.'<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>';
-
-		$body .= '<ul class="nav nav-tabs">';
-		$body .= implode(PHP_EOL, $links);
-		$body .= '</ul>';
-
-		$body .= '<div class="tab-content">';
-		$body .= implode(PHP_EOL, $contents);
-		$body .= '</div>';
-
-// TODO: convert into _class('html')->tabs()
-
-		// DO NOT REMOVE!!! Needed to correct display template tags in debug output
-		$body = str_replace(array('{', '}'), array('&#123;', '&#125;'), $body);
-
-		$body .= '</div>';
-		return $body;
+	/**
+	*/
+	function _get_request_headers() {
+		// function_exists('apache_request_headers') ? apache_request_headers() : '', // From PHP5.4+ it works also with fastcgi, not only apache
+		$arh = array();
+		$rx_http = '/\AHTTP_/';
+		foreach((array)$_SERVER as $key => $val) {
+			if ( preg_match($rx_http, $key) ) {
+				$arh_key = preg_replace($rx_http, '', $key);
+				$rx_matches = array();
+				$rx_matches = explode('_', $arh_key);
+				if ( count($rx_matches) > 0 and strlen($arh_key) > 2 ) {
+					foreach($rx_matches as $ak_key => $ak_val) {
+						$rx_matches[$ak_key] = ucfirst($ak_val);
+					}
+					$arh_key = implode('-', $rx_matches);
+				}
+				$arh[$arh_key] = $val;
+			}
+		}
+		return $arh;
 	}
 
 	/**
@@ -172,6 +177,8 @@ class yf_debug {
 			'MEDIA_PATH'		=> MEDIA_PATH,
 			'ADMIN_WEB_PATH'	=> ADMIN_WEB_PATH,
 			'ADMIN_SITE_PATH'	=> ADMIN_SITE_PATH,
+			'CSS_FRAMEWORK'		=> conf('css_framework') ?: 'bs2',
+			'BOOTSTRAP_THEME'	=> $_COOKIE['yf_theme'] ?: conf('DEF_BOOTSTRAP_THEME'),
 			'TPL_DRIVER'		=> tpl()->DRIVER_NAME,
 			'TPL_COMPILE'		=> (int)tpl()->COMPILE_TEMPLATES,
 			'TPL_THEMES_PATH'	=> tpl()->_THEMES_PATH,
@@ -183,14 +190,19 @@ class yf_debug {
 			'SITE_ID'			=> (int)conf('SITE_ID'),
 			'SERVER_ID'			=> (int)conf('SERVER_ID'),
 			'SERVER_ROLE'		=> _prepare_html(conf('SERVER_ROLE')),
+			'SERVER_SELF_IPS'	=> implode(', ', (array)main()->_server_self_ips),
 			'USER_ID'			=> (int)main()->USER_ID,
 			'USER_GROUP'		=> (int)main()->USER_GROUP,
 			'USER_ROLE'			=> main()->USER_ROLE,
+			'IS_POST'			=> (int)main()->is_post(),
+			'IS_AJAX'			=> (int)main()->is_ajax(),
+			'IS_CONSOLE'		=> (int)main()->is_console(),
+			'IS_REDIRECT'		=> (int)main()->is_redirect(),
 			'IS_SPIDER'			=> (int)conf('IS_SPIDER'),
 			'NO_GRAPHICS'		=> (int)main()->NO_GRAPHICS,
 			'OUTPUT_CACHING'	=> (int)main()->OUTPUT_CACHING,
 			'NO_CACHE_HEADERS'	=> (int)main()->NO_CACHE_HEADERS,
-#			'HTTP_IN_HEADERS'	=> function_exists('apache_request_headers') ? apache_request_headers() : '', // From PHP5.4+ it works also with fastcgi, not only apache
+			'HTTP_IN_HEADERS'	=> $this->_get_request_headers(),
 			'HTTP_OUT_HEADERS'	=> headers_list(),
 		);
 		foreach ((array)$this->_get_debug_data('_DEBUG_META') as $k => $v) {
@@ -278,9 +290,9 @@ class yf_debug {
 			}
 			$name = $db->DB_TYPE.' | '.$db->DB_USER.' | '.$db->DB_HOST. ($db->DB_PORT ? ':'.$db->DB_PORT : '').' | '.$db->DB_NAME;
 			$items[$name] = $this->_do_debug_db_connection_queries($db, $connect_trace);
+			$items['db_shutdown_queries_'.$name] = $this->_show_db_shutdown_queries($db);
+			$items['db_stats_'.$name] = $this->_show_db_stats($db);
 		}
-		$items['db_shutdown_queries'] = $this->_show_db_shutdown_queries();
-		$items['db_stats'] = $this->_show_db_stats();
 		return _class('html')->tabs($items, array('hide_empty' => 1));
 	}
 
@@ -387,23 +399,21 @@ class yf_debug {
 
 	/**
 	*/
-	function _show_db_shutdown_queries () {
+	function _show_db_shutdown_queries ($db) {
 		if (!$this->_SHOW_DB_QUERY_LOG) {
 			return '';
 		}
-		return $this->_show_key_val_table(db()->_SHUTDOWN_QUERIES);
+		return $this->_show_key_val_table($db->_SHUTDOWN_QUERIES);
 	}
 
 	/**
 	*/
-	function _show_db_stats () {
+	function _show_db_stats ($db) {
 		if (!$this->_SHOW_DB_STATS) {
 			return '';
 		}
-// TODO: add support for multiple instances and multiple drivers
-// TODO: use subtabs here for different db instances
-		$data['stats'] = db()->get_2d('SHOW SESSION STATUS');
-		$data['vars'] = db()->get_2d('SHOW VARIABLES');
+		$data['stats'] = $db->get_2d('SHOW SESSION STATUS');
+		$data['vars'] = $db->get_2d('SHOW VARIABLES');
 		foreach ($data as $name => $_data) {
 			$body .= '<div class="span10 col-lg-10">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
 		}
@@ -462,7 +472,7 @@ class yf_debug {
 			}
 			$stpl_inline_edit = '';
 			if (tpl()->ALLOW_INLINE_DEBUG) {
-				$stpl_inline_edit = ' stpl_name=\''.$k.'\' ';
+				$stpl_inline_edit = ' stpl_name=\''._prepare_html($k).'\' ';
 			}
 			$cur_size = strlen($v['string']);
 			$total_size += $cur_size;
@@ -519,7 +529,7 @@ class yf_debug {
 
 	/*
 	*/
-	function _debug_force_get_url (&$params = array()) {
+	function _debug_url (&$params = array()) {
 		if (!$this->_SHOW_REWRITE_INFO) {
 			return '';
 		}
@@ -568,7 +578,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_main_get_data (&$params = array()) {
+	function _debug_get_data (&$params = array()) {
 		if (!$this->_SHOW_MAIN_GET_DATA) {
 			return '';
 		}
@@ -716,32 +726,15 @@ class yf_debug {
 		if (!$this->_SHOW_I18N_VARS) {
 			return '';
 		}
-// TODO: unify into one table, when translated/called/not translated will be as status
-		$lang = conf('language');
-		$i18n_vars = (array)_class('i18n')->_I18N_VARS;
-// TODO: show translations on other languages here too: print_r($i18n_vars)
-// TODO: previous todo seems means multi-language translation debug support
-		if ($i18n_vars[$lang]) {
-			ksort($i18n_vars[$lang]);
+		$calls = _class('i18n')->_calls;
+		$items = (array)$this->_get_debug_data('i18n');
+		foreach ($items as $k => &$v) {
+			$v['name'] = $this->_admin_link('edit_i18n', $v['name']);
+			$v['calls'] = (int)$calls[$v['name_orig']];
+			$items[$k] = array('id' => ++$i) + $v;
 		}
-		$data = array();
-		$data['vars'] = array();
-		foreach ((array)$i18n_vars[$lang] as $k => $v) {
-			$data['vars'][$this->_admin_link('edit_i18n', $k)] = $v;
-		}
-		$data['calls'] = array();
-		$tr_time	= _class('i18n')->_tr_time;
-		$tr_calls	= _class('i18n')->_tr_calls;
-		foreach ((array)$tr_time[$lang] as $k => $v) {
-			$data['calls'][$this->_admin_link('edit_i18n', $k)] = $tr_calls[$lang][$k].'|'.round($v, 4);
-		}
-		$data['not_translated'] = (array)_class('i18n')->_NOT_TRANSLATED[$lang];
-
-		$body .= t('translate time').': '.round(_class('i18n')->_tr_total_time, 4).' sec<br>';
-		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6 col-lg-6">'.$name.'<br>'.$this->_show_key_val_table(_prepare_html($_data), array('no_total' => 1, 'no_escape' => 1)).'</div>';
-		}
-		return $body;
+		$items = $this->_time_count_changes($items);
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name', 'data' => 'name')));
 	}
 	
 	/**
@@ -773,7 +766,6 @@ class yf_debug {
 		}
 		$items = $this->_time_count_changes($items);
 
-#		$body .= '<i>'.t('Total time').': '.round($total_time, 4).' secs';
 		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'query', 'meta' => 'count', 'describe' => 'count', 'results' => 'count')));
 		$body .= $sphinx_connect_debug ? '<pre>'._prepare_html(var_export($sphinx_connect_debug, 1)).'</pre>' : '';
 		$body .= $this->_show_key_val_table(_class('sphinxsearch')->_get_server_status());
@@ -864,32 +856,23 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_included_files (&$params = array()) {
+	function _debug_included (&$params = array()) {
 		if (!$this->_SHOW_INCLUDED_FILES) {
 			return '';
 		}
-		$exec_times = $this->_get_debug_data('include_files_exec_time');
-		$traces = $this->_get_debug_data('include_files_trace');
-		$items = array();
-		foreach (get_included_files() as $file_name) {
-			if ($this->_INCLUDED_SKIP_CACHE && false !== strpos($file_name, 'core_cache')) {
+		$items = (array)$this->_get_debug_data('included_files');
+		foreach ($items as $k => &$v) {
+			if (!$v['exists']) {
+				unset($items[$k]);
 				continue;
 			}
-			$cur_size = file_exists($file_name) ? filesize($file_name) : '';
-			$_fname = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', $file_name));
-			$items[] = array(
-				'id'	=> ++$counter,
-				'name'	=> $this->_admin_link('edit_file', $file_name),
-				'size'	=> $cur_size,
-				'time'	=> round($exec_times[$file_name], 4),
-				'trace'	=> strval($traces[$file_name]),
-			);
-			$total_size += $cur_size;
+			$v['path'] = $this->_admin_link('edit_file', $v['path']);
+			$v = array('id' => ++$i) + $v;
+			$total_size += $v['size'];
 		}
 		$items = $this->_time_count_changes($items);
-
 		$body .= 'total size: '.$total_size;
-		return $body. $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		return $body. $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'path')));
 	}
 
 	/**
@@ -1249,35 +1232,29 @@ class yf_debug {
 // TODO: JS full rewrite needed, as was done for i18n inline editor
 		// !!! Needed to be on the bottom of the page
 		$i18n_vars = _class('i18n')->_I18N_VARS;
-		if ($this->_SHOW_I18N_VARS && !empty($i18n_vars)) {
-			// Prepare JS array
-			$body .= "<script type='text/javascript'>";
-
-			$body .= "var _i18n_for_page = {";
-			ksort($i18n_vars);
-			foreach ((array)$i18n_vars as $_var_name => $_var_value) {
-				$_var_name	= strtolower($_var_name);
-				$_var_name	= str_replace("_", " ", $_var_name);
-				$_var_name	= str_replace(array("\"","",""), array("\\\"","",""), $_var_name);
-				$_var_value	= str_replace(array("\"","",""), array("\\\"","",""), $_var_value);
-				$body .= "\""._prepare_html($_var_name)."\":\""._prepare_html($_var_value)."\",";
-			}
-			$body .= "__dummy:null};";
-
-			$not_translated = _class('i18n')->_NOT_TRANSLATED;
-			if (!empty($not_translated)) {
-				ksort($not_translated);
-				$body .= "var _i18n_not_translated = {";
-				foreach ((array)$not_translated as $_var_name => $_hits) {
-					$_var_name	= strtolower($_var_name);
-					$_var_name	= str_replace("_", " ", $_var_name);
-					$_var_name = str_replace(array("\"","",""), array("\\\"","",""), $_var_name);
-					$body .= "\""._prepare_html($_var_name)."\":\"".intval($_hits)."\",";
-				}
-				$body .= "__dummy:null};";
-			}
-			$body .= "</script>";
+		if (!$this->_SHOW_I18N_VARS || empty($i18n_vars)) {
+			return false;
 		}
-		return $body;
+		ksort($i18n_vars);
+		$js_vars1 = array();
+		foreach ((array)$i18n_vars as $name => $value) {
+			$name = str_replace("_", " ", strtolower($name));
+			$js_vars1[$name] = $value;
+		}
+		$body .= 'var _i18n_for_page = '.json_encode($js_vars1);
+
+		$not_translated = _class('i18n')->_NOT_TRANSLATED;
+		if (!empty($not_translated)) {
+			ksort($not_translated);
+			$js_vars2 = array();
+			foreach ((array)$not_translated as $name => $hits) {
+				$name = str_replace("_", " ", strtolower($name));
+				$js_vars2[$name] = (int)$hits;
+			}
+			$body .= 'var _i18n_not_translated = '.json_encode($js_vars2);
+		}
+
+		$body .= 'var _i18n_for_page = '.json_encode($js_vars);
+		return '<script type="text/javascript">'.$body.'</script>';
 	}
 }

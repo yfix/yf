@@ -96,7 +96,7 @@ class yf_forum_online_users {
 		}
 		// Show template
 		$replace = array(
-			'form_action'	=> './?object='.'forum'.'&action='.$_GET['action']._add_get(array('page')),
+			'form_action'	=> './?object=forum&action='.$_GET['action']._add_get(array('page')),
 			'use_filter'	=> intval($this->USE_FILTER),
 			'filter'		=> $this->USE_FILTER ? $this->_show_filter() : '',
 			'items'			=> $items,
@@ -137,7 +137,7 @@ class yf_forum_online_users {
 			if ($code_action == 'view_forum') $text = module('forum')->_forums_array[$id]['name'];
 			else $text = $this->_topic_names[$id];
 			$replace = array(
-				'link'	=> './?object='.'forum'.'&action='.$code_action.'&id='.$id._add_get(array('page')),
+				'link'	=> './?object=forum&action='.$code_action.'&id='.$id._add_get(array('page')),
 				'text'	=> _prepare_html($text),
 			);
 			$add_text = !empty($text) ? tpl()->parse('forum'.'/online_users/add_text', $replace) : '';
@@ -150,7 +150,7 @@ class yf_forum_online_users {
 	*/
 	function _show_filter () {
 		$replace = array(
-			'save_action'	=> './?object='.'forum'.'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
+			'save_action'	=> './?object=forum&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
 		);
 		// Process boxes
 		foreach ((array)$this->_boxes as $item_name => $v) {
@@ -167,7 +167,7 @@ class yf_forum_online_users {
 			foreach ((array)$this->_fields_in_filter as $name) $_SESSION[$this->_filter_name][$name] = $_POST[$name];
 		}
 		if (!$silent) {
-			js_redirect('./?object='.'forum'.'&action='.$_GET['action'].'&id='.$_GET['id']._add_get());
+			js_redirect('./?object=forum&action='.$_GET['action'].'&id='.$_GET['id']._add_get());
 		}
 	}
 
@@ -179,7 +179,7 @@ class yf_forum_online_users {
 			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
 		}
 		if (!$silent) {
-			js_redirect('./?object='.'forum'.'&action='.$_GET['action'].'&id='.$_GET['id']._add_get());
+			js_redirect('./?object=forum&action='.$_GET['action'].'&id='.$_GET['id']._add_get());
 		}
 	}
 

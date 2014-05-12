@@ -1,6 +1,6 @@
 <div class="portlets-side-column">
 	<form action="{save_link}" method="post" id="yf_save_layout">
-		<h4 align="center">Available widgets <input type="submit" class="btn btn-mini" value="{t(Save layout)}"></h4>
+		<h4 align="center">Available widgets <input type="submit" class="btn btn-mini btn-xs" value="{t(Save layout)}"></h4>
 	</form>
 	<div class="column span4">
 {foreach("items")}

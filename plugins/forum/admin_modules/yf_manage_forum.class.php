@@ -29,49 +29,25 @@ class yf_manage_forum {
 	/** @var array Folder where avatars are storing */
 	public $avatars_dir = 'uploads/avatars/';
 	/** @var bool Approve posts and topics creation */
-	public $APPROVE			= false;
+	public $APPROVE				= false;
 	/** @var bool Confirm registration with email */
 	public $CONFIRM_REGISTER	= true;
 	/** @var bool Tree mode */
 	public $TREE_MODE			= false;
 	/** @var bool BB Codes */
-	public $BB_CODE			= true;
+	public $BB_CODE				= true;
 	/** @var bool Show smilies images or CSS based boxes (works only if smilies are allowed) */
 	public $SMILIES_IMAGES		= false;
 	/** @var bool Show user ranks */
-	public $SHOW_USER_RANKS	= true;
+	public $SHOW_USER_RANKS		= true;
 	/** @var bool Show totals */
-	public $SHOW_TOTALS		= false;
+	public $SHOW_TOTALS			= false;
 	/** @var bool Show direct links to pages inside forum */
 	public $SHOW_TOPIC_PAGES	= true;
 	/** @var bool Use global user accounts or only forum internals */
 	public $USE_GLOBAL_USERS	= true;
 	/** @var bool Hide some links (for using as separate discussion boards for different objects) */
-	public $HIDE_USERS_INFO	= true;
-	/** @var int @conf_skip user ID (if exists one) */
-	public $USER_ID			= null;
-	/** @var int @conf_skip group ID (if exists one) */
-	public $GROUP_ID			= null;
-	/** @var string @conf_skip */
-	public $USER_NAME			= null;
-	/** @var array @conf_skip (for internal use only) */
-	public $forum_cats			= null;
-	/** @var array @conf_skip (for internal use only) */
-	public $forums				= null;
-	/** @var array @conf_skip (for internal use only) */
-	public $last_posts			= null;
-	/** @var array @conf_skip (for internal use only) */
-	public $topics				= null;
-	/** @var array @conf_skip (for internal use only) */
-	public $posts				= null;
-	/** @var array @conf_skip (for internal use only) */
-	public $smilies			= null;
-	/** @var array @conf_skip (for internal use only) */
-	public $users				= null;
-	/** @var array @conf_skip (for internal use only) */
-	public $user_ranks			= null;
-	/** @var array @conf_skip (for internal use only) */
-	public $topic_watch		= null;
+	public $HIDE_USERS_INFO		= true;
 	/** @var string @conf_skip Unique for each installation identifier (you can set it manually here) */
 	public $salt				= '';
 	/** @var int Minimal time between posts (posts from IP address with less time period are denied) */
@@ -111,9 +87,9 @@ class yf_manage_forum {
 		'use_search'			=> 'Allow to use search',
 		'make_polls'			=> 'Allow to create Polls',
 		'vote_polls'			=> 'Allow to vote in Polls',
-		//'hide_from_list'		=> 'Hide from online users list',
-		//'avatar_upload'		=> 'Allow uploading avatar',
-		//'use_pm'				=> 'Allow to use Private Messages',
+//		'hide_from_list'		=> 'Hide from online users list',
+//		'avatar_upload'			=> 'Allow uploading avatar',
+//		'use_pm'				=> 'Allow to use Private Messages',
 		'is_admin'				=> 'Apply all other Admin rights (IS_ADMIN)',
 		'is_moderator'			=> 'Apply all other Moderator rights (IS_MODERATOR)',
 	);
@@ -148,46 +124,24 @@ class yf_manage_forum {
 	* Framework constructor
 	*/
 	function _init () {
-		// Init required constants
 		define('FORUM_IS_ADMIN', 1);
-		// Set unique identifier (if is empty)
 		if (!strlen($this->salt)) {
 			$this->salt = substr(md5($_SERVER['HTTP_HOST'].'123456'), 0, 8);
 		}
-		// Get all forum categories
-		$this->_forum_cats_array	= main()->get_data('forum_categories');
-		// Get all forums
-		$this->_forums_array		= main()->get_data('forum_forums');
-		// Get all user groups
-		$this->_forum_groups		= main()->get_data('forum_groups');
-		// Get all moderators
-		$this->_forum_moderators	= main()->get_data('forum_moderators');
-		// Try to insert correct user ID from session
+		$this->_forum_cats_array	= (array)db()->from('forum_categories')->get_all();
+		$this->_forums_array		= (array)db()->from('forum_forums')->get_all();
+		$this->_forum_groups		= (array)db()->from('forum_groups')->get_all();
+		$this->_forum_moderators	= (array)db()->from('forum_moderators')->get_all();
 		$this->_verify_session_vars();
-		// Init bb codes module
 		if ($this->BB_CODE) {
 			$this->BB_OBJ = _class('bb_codes');
-		}
-		// Get all smilies into array
-		if ($this->BB_CODE && in_array($_GET['action'], array('view_topic'))) {
 			$this->smiles = main()->get_data('smilies');
 		}
-		// Get all ranks into array
 		if ($this->SHOW_USER_RANKS && in_array($_GET['action'], array('view_topic'))) {
-			$Q = db()->query('SELECT * FROM '.db('forum_ranks').'');// WHERE special=0
-			while($A = db()->fetch_assoc($Q)) {
-				$this->user_ranks[$A['id']] = $A;
-			}
+			$this->user_ranks = (array)db()->from('forum_ranks')->get_all();
 		}
-		// Prepare some admin arrays
-		$this->_std_trigger = array(
-			'1' => '<span class=positive>'.t('YES').'</span>',
-			'0' => '<span class=negative>'.t('NO').'</span>',
-		);
-		$this->_active_select = array(
-			'a' => '<b style="color:green;">'.t('Active').'</b>',
-			'c' => '<b style="color:red;">'.t('Inactive').'</b>',
-		);
+		$this->_std_trigger = main()->get_data('pair_yes_no');
+		$this->_active_select = main()->get_data('pair_active');
 		$this->_postings_select = array(
 			'' => '<b style="color:green;">'.t('Open').'</b>',
 			'2' => '<b style="color:red;">'.t('Closed').'</b>',
@@ -206,40 +160,29 @@ class yf_manage_forum {
 	}
 
 	/**
-	* Try to load forum sub_module
-	*/
-	function _load ($module_name = '') {
-		return _class($module_name, 'admin_modules/manage_forum/');
-	}
-
-	/**
 	* Show forum layout (default function)
 	*/
 	function show () {
 		$last_posts	= $this->_create_last_posts('forum');
 		$_GET['id'] = intval($_GET['id']);
-		// If ID specified - then show only one category
 		if ($_GET['id']) {
 			$cat_info = db()->query_fetch('SELECT * FROM '.db('forum_categories').' WHERE id='.$_GET['id'].' ORDER BY `order`');
 			if ($cat_info['id']) {
 				$body = $this->_show_category_contents($cat_info['id']);
 			}
-		// Collect categories
 		} else {
-			if (count($this->_forum_cats_array)) {
-				foreach ((array)$this->_forum_cats_array as $_cat_info) {
-					$body .= $this->_show_category_contents($_cat_info['id']);
+			foreach ((array)$this->_forum_cats_array as $_cat_info) {
+				if (!$_cat_info) {
+					continue;
 				}
-			} else {
-				$body = $this->_show_error(t('no_categories'));
+				$body .= $this->_show_category_contents($_cat_info['id']);
 			}
 		}
-		$body .= tpl()->parse('forum/admin/button_add_category');
+		$body .= tpl()->parse('manage_forum/button_add_category');
 		return $this->_show_main_tpl($body);
 	}
 
 	/**
-	* Show category contents
 	*/
 	function _show_category_contents ($cat_id = 0) {
 		foreach ((array)$this->_forums_array as $_forum_info) {
@@ -251,61 +194,53 @@ class yf_manage_forum {
 			}
 			$forums .= $this->_show_forum_item($_forum_info);
 		}
-		// Try to find detailed info about current category
 		$cat_details = $this->_forum_cats_array[$cat_id];
-		// Prepare template
 		$replace = array(
 			'cat_name'			=> $this->_forum_cats_array[$cat_id]['name'],
-			'cat_link'			=> './?object='.$_GET['object'].'&id='.$cat_id._add_get(array('id')),
+			'cat_link'			=> './?object='.$_GET['object'].'&id='.$cat_id,
 			'forums'			=> $forums,
-			'activity'			=> $this->_active_select[$cat_details['status']],
-			'is_active'			=> $cat_details['status'] == 'a' ? 1 : 0,
+			'activity'			=> $this->_active_select[$cat_details['active']],
+			'is_active'			=> (int)$cat_details['active'],
 			'edit_link'			=> './?object='.$_GET['object'].'&action=edit_category&id='.$cat_id,
 			'delete_link'		=> './?object='.$_GET['object'].'&action=delete_category&id='.$cat_id,
 			'add_link'			=> './?object='.$_GET['object'].'&action=add_forum&id='.$cat_id,
 			'active_link'		=> './?object='.$_GET['object'].'&action=change_category_activity&id='.$cat_id,
 			'future_topic_link'	=> module('forum')->ALLOW_FUTURE_POSTS ? './?object='.$_GET['object'].'&action=add_future_topic&id=c_'.$cat_id : '',
 		);
-		return tpl()->parse('forum/admin/category_main', $replace);
+		return tpl()->parse('manage_forum/category_main', $replace);
 	}
 
 	/**
-	* 
 	*/
 	function _show_forum_item ($forum_info = array()) {
-		return $this->_load('manage_forum_manage_view')->_show_forum_item($forum_info);
+		return _class('manage_forum_manage_view', 'admin_modules/manage_forum/')->_show_forum_item($forum_info);
 	}
 
 	/**
-	* Main function
 	*/
 	function view_forum () {
-		return $this->_load('manage_forum_manage_view')->_view_forum();
+		return _class('manage_forum_manage_view', 'admin_modules/manage_forum/')->_view_forum();
 	}
 
 	/**
-	* Process template
 	*/
 	function view_topic () {
-		return $this->_load('manage_forum_manage_view')->_view_topic();
+		return _class('manage_forum_manage_view', 'admin_modules/manage_forum/')->_view_topic();
 	}
 
 	/**
-	* New topic creation form
 	*/
 	function new_topic () {
-		return $this->_load('manage_forum_manage_view')->_new_topic();
+		return _class('manage_forum_manage_view', 'admin_modules/manage_forum/')->_new_topic();
 	}
 
 	/**
-	* Reply to the existing topic (post message)
 	*/
 	function reply () {
-		return $this->_load('manage_forum_manage_view')->_reply();
+		return _class('manage_forum_manage_view', 'admin_modules/manage_forum/')->_reply();
 	}
 
 	/**
-	* Searching current forum
 	*/
 	function search () {
 		return $this->_show_main_tpl(tpl()->parse('forum/search_form'));
@@ -318,19 +253,18 @@ class yf_manage_forum {
 		if ($_GET['action'] == 'show') 				$type = 'main';
 		elseif ($_GET['action'] == 'view_forum')	$type = 'forum';
 		elseif ($_GET['action'] == 'view_topic')	$type = 'topic';
-		// Prepare template
 		$replace = array(
 			'user_name'			=> main()->USER_ID ? $this->USER_NAME : t('Guest'),
 			'menu'				=> tpl()->parse('forum/menu_member'),
 			'items'				=> $items,
 			'version'			=> $this->VERSION,
 			'totals'			=> '',
-			'manage_groups_link'=> './?object='.$_GET['object'].'&action=manage_groups'._add_get(array('id')),
-			'manage_mods_link'	=> './?object='.$_GET['object'].'&action=manage_moderators'._add_get(array('id')),
-			'forum_users_link'	=> './?object='.$_GET['object'].'&action=manage_users'._add_get(array('id')),
-			'forum_posters_link'=> './?object='.$_GET['object'].'&action=show_forum_posters'._add_get(array('id')),
-			'future_posts_link'	=> './?object='.$_GET['object'].'&action=show_future_posts'._add_get(array('id')),
-			'sync_board_link'	=> FORUM_IS_ADMIN == 1 ? './?object='.$_GET['object'].'&action=sync_board'._add_get(array('id')) : '',
+			'manage_groups_link'=> './?object='.$_GET['object'].'&action=manage_groups',
+			'manage_mods_link'	=> './?object='.$_GET['object'].'&action=manage_moderators',
+			'forum_users_link'	=> './?object='.$_GET['object'].'&action=manage_users',
+			'forum_posters_link'=> './?object='.$_GET['object'].'&action=show_forum_posters',
+			'future_posts_link'	=> './?object='.$_GET['object'].'&action=show_future_posts',
+			'sync_board_link'	=> FORUM_IS_ADMIN == 1 ? './?object='.$_GET['object'].'&action=sync_board' : '',
 		);
 		return tpl()->parse('forum/main', $replace);
 	}
@@ -349,8 +283,8 @@ class yf_manage_forum {
 	* Count topic view
 	*/
 	function _add_topic_view($topic_array = array()) {
-		db()->query('UPDATE '.db('forum_topics').' SET num_views=num_views+1 WHERE id='.intval($topic_array['id']));
-		db()->query('UPDATE '.db('forum_forums').' SET num_views=num_views+1 WHERE id='.intval($topic_array['forum']));
+		db()->query('UPDATE '.db('forum_topics').' SET num_views = num_views + 1 WHERE id='.intval($topic_array['id']));
+		db()->query('UPDATE '.db('forum_forums').' SET num_views = num_views + 1 WHERE id='.intval($topic_array['forum']));
 	}
 
 	/**
@@ -358,18 +292,14 @@ class yf_manage_forum {
 	*/
 	function _create_last_posts ($type = 'forum') {
 		if ($type == 'forum') {
-			// Collect posts IDs
 			foreach ((array)$this->_forums_array as $_forum_info) {
-				// Default value (can be overriden later)
 				$this->last_posts[$_forum_info['id']] = t('no_posts');
 				if ($_forum_info['last_post_id']) {
 					$add_sql .= $_forum_info['last_post_id'].',';
 				}
 			}
 		} elseif ($type == 'topic') {
-			// Collect posts IDs
 			foreach ((array)$this->topics as $_topic_info) {
-				// Default value (can be overriden later)
 				$this->last_posts[$_topic_info['id']] = t('no_posts');
 				if ($_topic_info['last_post_id']) {
 					$add_sql .= $_topic_info['last_post_id'].',';
@@ -385,8 +315,8 @@ class yf_manage_forum {
 					'profile_link'	=> $this->_user_profile_link($post_info),
 					'time'			=> date($this->format['time'], $post_info['created']),
 					'date'			=> date($this->format['date'], $post_info['created']),
-					'topic'			=> '<a href="./?object='.$_GET['object'].'&action=view_topic&id='.$post_info['topic']._add_get(array('id')).'">'.(_substr($post_info['subject'], 0, 33).'...').'</a>'.PHP_EOL,
-					'post'			=> '<a href="./?object='.$_GET['object'].'&action=view_topic&id='.$post_info['topic']._add_get(array('id')).'">'.(_substr($post_info['subject'], 0, 33).'...').'</a>'.PHP_EOL,
+					'topic'			=> '<a href="./?object='.$_GET['object'].'&action=view_topic&id='.$post_info['topic'].'">'.(_substr($post_info['subject'], 0, 33).'...').'</a>'.PHP_EOL,
+					'post'			=> '<a href="./?object='.$_GET['object'].'&action=view_topic&id='.$post_info['topic'].'">'.(_substr($post_info['subject'], 0, 33).'...').'</a>'.PHP_EOL,
 				);
 				$this->last_posts[$post_info['id']] = tpl()->parse('manage_forum/last_post_'.$type, $replace);
 			}
@@ -397,11 +327,9 @@ class yf_manage_forum {
 	* Get unique users for the current topic
 	*/
 	function _get_topic_users () {
-		// Create unique users
 		foreach ((array)$this->posts as $k => $v) {
 			$this->users[$v['user_id']] = 1;
 		}
-		// Process users
 		foreach ((array)$this->users as $k => $v) {
 			$add_sql .= $k.',';
 		}
@@ -417,7 +345,6 @@ class yf_manage_forum {
 	* Show icon for new messages if exists some
 	*/
 	function _forum_new_msg ($forum_id) {
-// TODO: convert into new 'track new msgs' system
 		return main()->USER_ID ? (is_array($this->topic_watch) && in_array($forum_id, $this->topic_watch) ? 'N' : '-') : '-';
 	}
 
@@ -425,12 +352,10 @@ class yf_manage_forum {
 	* Show icon for new messages if exists some
 	*/
 	function _topic_new_msg ($topic_id) {
-// TODO: convert into new 'track new msgs' system
 		return main()->USER_ID ? (is_array($this->topic_watch) && array_key_exists($topic_id, $this->topic_watch) ? 'N' : '-') : '-';
 	}
 
 	/**
-	* Verify session variables
 	*/
 	function _verify_session_vars () {
 		main()->USER_ID	= $_SESSION['admin_id'];
@@ -444,20 +369,16 @@ class yf_manage_forum {
 	}
 
 	/**
-	* 
 	*/
 	function _update_forum_record ($forum_id = 0) {
 		if (!$forum_id) {
 			return false;
 		}
-		// Count number of topics
-		$num_topics = intval(db()->query_num_rows('SELECT id FROM '.db('forum_topics').' WHERE forum='.$forum_id.' AND status="a"'));
-		// Count number of posts
-		$num_posts = intval(db()->query_num_rows('SELECT id FROM '.db('forum_posts').' WHERE forum='.$forum_id.' AND status="a"'));
-		// Determine last post ID
-		list($last_post_id) = db()->query_fetch('SELECT id AS `0` FROM '.db('forum_posts').' WHERE forum='.$forum_id.' AND status="a" ORDER BY created DESC LIMIT 1');
-		// Update forum table
-		db()->query('UPDATE '.db('forum_forums').' SET num_topics='.$num_topics.',num_posts='.$num_posts.',last_post_id='.intval($last_post_id).' WHERE id='.$forum_id);
+		db()->update_safe('forum_forums', array(
+			'num_topics'	=> (int)db()->get_one('SELECT COUNT(id) FROM '.db('forum_topics').' WHERE forum='.(int)$forum_id.' AND active="1"'),
+			'num_posts'		=> (int)db()->get_one('SELECT COUNT(id) FROM '.db('forum_posts').' WHERE forum='.(int)$forum_id.' AND active="1"'),
+			'last_post_id'	=> (int)db()->get_one('SELECT id FROM '.db('forum_posts').' WHERE forum='.(int)$forum_id.' AND active="1" ORDER BY created DESC LIMIT 1'),
+		), (int)$forum_id);
 	}
 
 	/**
@@ -467,24 +388,24 @@ class yf_manage_forum {
 		if (!$topic_id) {
 			return false;
 		}
-		// Prepare data for the topic record
-		$num_posts = intval(db()->query_num_rows('SELECT id FROM '.db('forum_posts').' WHERE topic='.$topic_id.' AND status="a"'));
-		list($last_post_id) = db()->query_fetch("SELECT id AS `0` FROM ".db('forum_posts')." WHERE topic=".$topic_id." AND status='a' ORDER BY created DESC LIMIT 1");
-		// Update topic record
-		db()->query("UPDATE ".db('forum_topics')." SET num_posts=".$num_posts.",last_post_id=".intval($topic_last_post_id)."	WHERE id=".$topic_id);
+		db()->update_safe('forum_topics', array(
+			'num_posts'		=> db()->get_one('SELECT COUNT(id) FROM '.db('forum_posts').' WHERE topic='.(int)$topic_id.' AND active="1"'),
+			'last_post_id'	=> db()->get_one('SELECT id FROM '.db('forum_posts').' WHERE topic='.(int)$topic_id.' AND active="1" ORDER BY created DESC LIMIT 1'),
+		), (int)$topic_id);
 	}
 
 	/**
 	* Prepare link to user's profile
 	*/
-	function _user_profile_link ($user_info = "", $user_name = "") {
+	function _user_profile_link ($user_info = '', $user_name = '') {
 		if (is_array($user_info)) {
-			$user_id	= intval($user_info["user_id"]);
-			$user_name	= $user_info["user_name"];
+			$user_id	= intval($user_info['user_id']);
+			$user_name	= $user_info['user_name'];
 		} else {
 			$user_id	= intval($user_info);
 		}
-		return $user_id ? "<a class=\"forum_profile_link\" yf:user_id=\"".$user_id."\" href=\"./?object=".$_GET["object"]."&action=view_profile&id=".$user_id."\" target=\"_blank\">".(strlen($user_name) ? $user_name : $user_id)."</a>" : (strlen($user_name) ? $user_name : t("Anonymous"));
+		$url = './?object='.$_GET['object'].'&action=view_profile&id='.$user_id;
+		return $user_id ? '<a class="forum_profile_link" yf:user_id="'.$user_id.'" href="'.$url.'" target="_blank">'.(strlen($user_name) ? $user_name : $user_id).'</a>' : (strlen($user_name) ? $user_name : t('Anonymous'));
 	}
 
 	/**
@@ -496,12 +417,12 @@ class yf_manage_forum {
 			return $sub_ids;
 		}
 		foreach ((array)$this->_forums_array as $_info) {
-			if ($_info["parent"] != $parent_id) {
+			if ($_info['parent'] != $parent_id) {
 				continue;
 			}
-			$sub_ids[$_info["id"]] = $_info["id"];
+			$sub_ids[$_info['id']] = $_info['id'];
 			if (!$only_first_level) {
-				$sub_ids = array_merge($sub_ids, (array)$this->_get_sub_forums_ids($_info["id"]));
+				$sub_ids = array_merge($sub_ids, (array)$this->_get_sub_forums_ids($_info['id']));
 			}
 		}
 		return $sub_ids;
@@ -515,7 +436,7 @@ class yf_manage_forum {
 		if (empty($cur_id) || empty($this->_forums_array[$cur_id])) {
 			return $forums_ids;
 		}
-		foreach ((array)$this->_get_parent_forums_ids($this->_forums_array[$cur_id]["parent"], $level + 1) as $_parent_id) {
+		foreach ((array)$this->_get_parent_forums_ids($this->_forums_array[$cur_id]['parent'], $level + 1) as $_parent_id) {
 			$forums_ids[$_parent_id] = $_parent_id;
 		}
 		if ($level > 0) {
@@ -529,15 +450,15 @@ class yf_manage_forum {
 	*/
 	function view_profile () {
 		$_GET['id'] = intval($_GET['id']);
-		$user_info = db()->query_fetch("SELECT * FROM ".db('forum_users')." WHERE id=".$_GET['id']);
+		$user_info = db()->query_fetch('SELECT * FROM '.db('forum_users').' WHERE id='.$_GET['id']);
 		if ($user_info['id'] && !$this->HIDE_USERS_INFO) {
 			$replace = $user_info;
-			$replace["user_regdate"] = date($this->format["date"], $replace["user_regdate"]);
+			$replace['user_regdate'] = date($this->format['date'], $replace['user_regdate']);
 			// Send Private message link
-			$replace["pm_link"] = "";
-			$body .= tpl()->parse("forum/view_profile", $replace);
+			$replace['pm_link'] = '';
+			$body .= tpl()->parse('forum/view_profile', $replace);
 		} else {
-			$body .= $this->_show_error(t("no_such_user"));
+			$body .= $this->_show_error(t('no_such_user'));
 		}
 		return $this->_show_main_tpl($body);
 	}
@@ -545,15 +466,12 @@ class yf_manage_forum {
 	//################# ADMINISTRATION METHODS #################//
 
 	/**
-	* Info usually for select box
 	*/
 	function _prepare_parents_for_select ($skip_id = 0) {
 		$forums = array();
 		foreach ((array)$this->_forum_cats_array as $_cat_id => $_cat_info) {
-			$_cat_name = $_cat_info["name"];
-			// Add category (with prefix: "c_")
-			$forums["c_".$_cat_id] = "######## ". $_cat_name;
-			// Get forums inside this category
+			$_cat_name = $_cat_info['name'];
+			$forums['c_'.$_cat_id] = '######## '. $_cat_name;
 			foreach ((array)$this->_prepare_forums_for_select($skip_id, $_cat_id) as $k => $v) {
 				$forums[$k] = $v;
 			}
@@ -562,26 +480,22 @@ class yf_manage_forum {
 	}
 
 	/**
-	* Recursive sub-method for "_prepare_parents_for_select"
 	*/
 	function _prepare_forums_for_select ($skip_id = 0, $cat_id = 0, $parent_id = 0, $level = 0) {
 		$forums = array();
 		$func_name = __FUNCTION__;
-		// Prepare categories for select box
-		foreach ((array)module("forum")->_forums_array as $_info) {
-			if ($_info["id"] == $skip_id) {
+		foreach ((array)module('forum')->_forums_array as $_info) {
+			if ($_info['id'] == $skip_id) {
 				continue;
 			}
-			if ($_info["parent"] != $parent_id) {
+			if ($_info['parent'] != $parent_id) {
 				continue;
 			}
 			if ($cat_id && $cat_id != $_info['category']) {
 				continue;
 			}
-			// Add current forum
-			$forums[$_info['id']] = str_repeat("&nbsp;", $level * 4). "&#0124;---". $_info["name"];
-			// Try to find sub-forums
-			foreach ((array)$this->$func_name($skip_id, $cat_id, $_info["id"], $level + 1) as $_sub_id => $_sub_name) {
+			$forums[$_info['id']] = str_repeat('&nbsp;', $level * 4). '&#0124;---'. $_info['name'];
+			foreach ((array)$this->$func_name($skip_id, $cat_id, $_info['id'], $level + 1) as $_sub_id => $_sub_name) {
 				$forums[$_sub_id] = $_sub_name;
 			}
 		}
@@ -592,201 +506,201 @@ class yf_manage_forum {
 	* Admin: edit category
 	*/
 	function edit_category () {
-		return $this->_load("forum_manage_main")->_edit_category();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->edit_category();
 	}
 
 	/**
 	* Admin: add category
 	*/
 	function add_category () {
-		return $this->_load("forum_manage_main")->_add_category();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->add_category();
 	}
 
 	/**
 	* Delete category
 	*/
 	function delete_category () {
-		return $this->_load("forum_manage_main")->_delete_category();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->delete_category();
 	}
 
 	/**
 	* Admin: edit forum
 	*/
 	function edit_forum () {
-		return $this->_load("forum_manage_main")->_edit_forum();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->edit_forum();
 	}
 
 	/**
 	* Admin: add forum
 	*/
 	function add_forum () {
-		return $this->_load("forum_manage_main")->_add_forum();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->add_forum();
 	}
 
 	/**
 	* Admin: delete forum
 	*/
 	function delete_forum () {
-		return $this->_load("forum_manage_main")->_delete_forum();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->delete_forum();
 	}
 
 	/**
 	* Admin: edit topic
 	*/
 	function edit_topic () {
-		return $this->_load("forum_manage_main")->_edit_topic();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->edit_topic();
 	}
 
 	/**
 	* Admin: delete topic
 	*/
 	function delete_topic () {
-		return $this->_load("forum_manage_main")->_delete_topic();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->delete_topic();
 	}
 
 	/**
 	* Admin: edit post
 	*/
 	function edit_post () {
-		return $this->_load("forum_manage_main")->_edit_post();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->edit_post();
 	}
 
 	/**
 	* Admin: delete post
 	*/
 	function delete_post () {
-		return $this->_load("forum_manage_main")->_delete_post();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->delete_post();
 	}
 
 	/**
 	* Admin: manage users
 	*/
 	function manage_users () {
-		return $this->_load("forum_manage_users")->_manage_users();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_manage_users();
 	}
 
 	/**
 	* Admin: edit user
 	*/
 	function edit_user () {
-		return $this->_load("forum_manage_users")->_edit_user();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_edit_user();
 	}
 
 	/**
 	* Admin: manage group
 	*/
 	function manage_groups () {
-		return $this->_load("forum_manage_users")->_manage_groups();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_manage_groups();
 	}
 
 	/**
 	* Admin: edit group
 	*/
 	function edit_group () {
-		return $this->_load("forum_manage_users")->_edit_group();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_edit_group();
 	}
 
 	/**
 	* Admin: add group
 	*/
 	function add_group () {
-		return $this->_load("forum_manage_users")->_add_group();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_add_group();
 	}
 
 	/**
 	* Admin: delete group
 	*/
 	function delete_group () {
-		return $this->_load("forum_manage_users")->_delete_group();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_delete_group();
 	}
 
 	/**
 	* Admin: clone group
 	*/
 	function clone_group () {
-		return $this->_load("forum_manage_users")->_clone_group();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_clone_group();
 	}
 
 	/**
 	* Admin: manage moderators
 	*/
 	function manage_moderators () {
-		return $this->_load("forum_manage_users")->_manage_moderators();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_manage_moderators();
 	}
 
 	/**
 	* Admin: edit moderator
 	*/
 	function edit_moderator () {
-		return $this->_load("forum_manage_users")->_edit_moderator();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_edit_moderator();
 	}
 
 	/**
 	* Admin: add moderator
 	*/
 	function add_moderator () {
-		return $this->_load("forum_manage_users")->_add_moderator();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_add_moderator();
 	}
 
 	/**
 	* Admin: delete moderator
 	*/
 	function delete_moderator () {
-		return $this->_load("forum_manage_users")->_delete_moderator();
+		return _class('manage_forum_manage_users', 'admin_modules/manage_forum/')->_delete_moderator();
 	}
 
 	/**
 	* Change activity status
 	*/
 	function change_category_activity () {
-		return $this->_load("forum_manage_main")->_change_category_activity();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_change_category_activity();
 	}
 
 	/**
 	* Change activity status
 	*/
 	function change_forum_activity () {
-		return $this->_load("forum_manage_main")->_change_forum_activity();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_change_forum_activity();
 	}
 
 	/**
 	* Change activity status
 	*/
 	function change_topic_activity () {
-		return $this->_load("forum_manage_main")->_change_topic_activity();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_change_topic_activity();
 	}
 
 	/**
 	* Change activity status
 	*/
 	function change_post_activity () {
-		return $this->_load("forum_manage_main")->_change_post_activity();
+		return _class('manage_forum_manage_main', 'admin_modules/manage_forum/')->_change_post_activity();
 	}
 
 	/**
 	* Admin: synchronize board
 	*/
 	function sync_board () {
-		return _class("forum_sync", USER_MODULES_DIR."forum/")->_sync_board(true);
+		return _class('forum_sync', 'modules/forum/')->_sync_board(true);
 	}
 
 	/**
 	* Check permissions (return false if denied, true if allowed)
 	*/
-	function _check_acl($action = "") {
-		$GID = $_SESSION["admin_group"];
+	function _check_acl($action = '') {
+		$GID = $_SESSION['admin_group'];
 		// Admin allowed to do anything
 		if ($GID == 1) {
 			return true;
 		}
 		// Forum poster allowed actions
 		if ($GID == 6 && !in_array($action, array(
-			"edit_post",
-			"new_topic",
-			"reply",
-			"show",
-			"view_forum",
-			"view_topic",
+			'edit_post',
+			'new_topic',
+			'reply',
+			'show',
+			'view_forum',
+			'view_topic',
 		))) {
 			return false;
 		}
@@ -794,87 +708,76 @@ class yf_manage_forum {
 	}
 
 	/**
-	* Future posts
 	*/
 	function show_future_posts() {
-		return $this->_load("forum_manage_future")->_show_future_posts();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_show_future_posts();
 	}
 
 	/**
-	* Future posts
 	*/
 	function add_future_topic() {
-		return $this->_load("forum_manage_future")->_add_topic();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_add_topic();
 	}
 
 	/**
-	* Future posts
 	*/
 	function add_future_post() {
-		return $this->_load("forum_manage_future")->_add_post();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_add_post();
 	}
 
 	/**
-	* Future posts
 	*/
 	function edit_future_post() {
-		return $this->_load("forum_manage_future")->_edit_future_post();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_edit_future_post();
 	}
 
 	/**
-	* Future posts
 	*/
 	function delete_future_post() {
-		return $this->_load("forum_manage_future")->_delete_future_post();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_delete_future_post();
 	}
 
 	/**
-	* Future posts
 	*/
 	function show_forum_posters() {
-		return $this->_load("forum_manage_future")->_show_posters();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_show_posters();
 	}
 
 	/**
-	* Future posts
 	*/
 	function edit_forum_poster() {
-		return $this->_load("forum_manage_future")->_edit_poster();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_edit_poster();
 	}
 
 	/**
-	* Future posts
 	*/
 	function show_poster_stats() {
-		return $this->_load("forum_manage_future")->_show_poster_stats();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_show_poster_stats();
 	}
 
 	/**
-	* Future posts
 	*/
 	function future_save_filter() {
-		return $this->_load("forum_manage_future")->_save_filter();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_save_filter();
 	}
 
 	/**
-	* Future posts
 	*/
 	function future_clear_filter() {
-		return $this->_load("forum_manage_future")->_clear_filter();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_clear_filter();
 	}
 
 	/**
-	* Do cron job for future posts
 	*/
 	function _future_posts_cron_job() {
-		return $this->_load("forum_manage_future")->_do_cron_job();
+		return _class('manage_forum_manage_future', 'admin_modules/manage_forum/')->_do_cron_job();
 	}
 
 	/**
 	* Placeholder for compatibility with user section
 	*/
 	function _for_user_profile() {
-		return "";
+		return '';
 	}
 
 	/**
@@ -883,65 +786,39 @@ class yf_manage_forum {
 	function _quick_menu () {
 		$menu = array(
 			array(
-				"name"	=> ucfirst($_GET["object"])." main",
-				"url"	=> "./?object=".$_GET["object"],
+				'name'	=> ucfirst($_GET['object']).' main',
+				'url'	=> './?object='.$_GET['object'],
 			),
 			array(
-				"name"	=> "Manage forum groups",
-				"url"	=> "./?object=".$_GET["object"]."&action=manage_groups",
+				'name'	=> 'Manage forum groups',
+				'url'	=> './?object='.$_GET['object'].'&action=manage_groups',
 			),
 			array(
-				"name"	=> "Manage moderators",
-				"url"	=> "./?object=".$_GET["object"]."&action=manage_moderators",
+				'name'	=> 'Manage moderators',
+				'url'	=> './?object='.$_GET['object'].'&action=manage_moderators',
 			),
 			array(
-				"name"	=> "Resynchronize Board",
-				"url"	=> "./?object=".$_GET["object"]."&action=sync_board",
+				'name'	=> 'Resynchronize Board',
+				'url'	=> './?object='.$_GET['object'].'&action=sync_board',
 			),
 			array(
-				"name"	=> "Forum Posters",
-				"url"	=> "./?object=".$_GET["object"]."&action=show_forum_posters",
+				'name'	=> 'Forum Posters',
+				'url'	=> './?object='.$_GET['object'].'&action=show_forum_posters',
 			),
 			array(
-				"name"	=> "Future Posts",
-				"url"	=> "./?object=".$_GET["object"]."&action=show_future_posts",
+				'name'	=> 'Future Posts',
+				'url'	=> './?object='.$_GET['object'].'&action=show_future_posts',
 			),
 			array(
-				"name"	=> "Add category",
-				"url"	=> "./?object=".$_GET["object"]."&action=add_category",
+				'name'	=> 'Add category',
+				'url'	=> './?object='.$_GET['object'].'&action=add_category',
 			),
 			array(
-				"name"	=> "",
-				"url"	=> "./?object=".$_GET["object"],
+				'name'	=> '',
+				'url'	=> './?object='.$_GET['object'],
 			),
 		);
 		return $menu;	
-	}
-
-	/**
-	* Page header hook
-	*/
-	function _show_header() {
-		$pheader = t("Forum");
-		// Default subheader get from action name
-		$subheader = _ucwords(str_replace("_", " ", $_GET["action"]));
-
-		// Array of replacements
-		$cases = array (
-			//$_GET["action"] => {string to replace}
-			"show"				=> "",
-			"show_forum_posters"=> "Manage forum posters",
-			"show_future_posts"	=> "Manage_future_posts",
-		);			  		
-		if (isset($cases[$_GET["action"]])) {
-			// Rewrite default subheader
-			$subheader = $cases[$_GET["action"]];
-		}
-
-		return array(
-			"header"	=> $pheader,
-			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
-		);
 	}
 
 	function _hook_widget__forum_stats ($params = array()) {

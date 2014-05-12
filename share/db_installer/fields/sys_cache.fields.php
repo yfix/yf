@@ -13,7 +13,7 @@ $data = array (
 		),
 		'value' => 
 		array (
-			'type' => 'text',
+			'type' => 'longtext',
 			'length' => '',
 			'attrib' => NULL,
 			'not_null' => 1,

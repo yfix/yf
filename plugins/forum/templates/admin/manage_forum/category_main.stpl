@@ -1,0 +1,21 @@
+<table class="table table-bordered table-striped table-hover">
+	<tr> 
+		<td colspan="6">
+			<a href="{cat_link}" class="btn btn-mini btn-xs btn-info">{cat_name}</a>
+			<a href="{active_link}" class="change_active btn btn-mini btn-xs {if("is_active" eq 1)}btn-success{else}btn-warning{/if}">{if("is_active" eq 1)}{t(ACTIVE)}{else}{t(INACTIVE)}{/if}</a>
+			<a href="{edit_link}" class="btn btn-mini btn-xs"><i class="icon-edit"></i> {t(Edit)}</a>
+			<a href="{delete_link}" class="btn btn-mini btn-xs"><i class="icon-trash" onclick="return confirm('{t(are_you_sure)}?')"></i> {t(Delete)}</a>
+			<a href="{add_link}" class="btn btn-mini btn-xs"><i class="icon-plus"></i> {t(add_forum)}</a>
+{if("future_topic_link" ne "")}<a href="{future_topic_link}" class="btn btn-mini btn-xs"><i class="icon-plus"></i> {t(add_future_topic)}</a>{/if}
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>{t(Forum_name)}</td>
+		<td>{t(Posts)}&nbsp;</td>
+		<td>{t(Topics)}&nbsp;</td>
+		<td>{t(Last post)}</td>
+		<td></td>
+	</tr>
+	{forums}
+</table>

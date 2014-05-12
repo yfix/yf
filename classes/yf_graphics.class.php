@@ -9,34 +9,10 @@
 */
 class yf_graphics {
 
-	/** @var bool Insert css styleshhet contents into every page or link it as separate file */
-	public $EMBED_CSS				= false;
-	/** @var bool Cache CSS file in project from framework (works only if EMBED_CSS is off) */
-	public $CACHE_CSS				= false;
-	/** @var int */
-	public $CACHE_CSS_TTL			= 3600;
-	/** @var bool */
-	public $CSS_FIXES_FOR_IE		= true;
-	/** @var bool Try to use 'link' tag for CSS */
-	public $CSS_USE_LINK_TAG		= true;
-	/** @var bool Only one file for CSS */
-	public $CSS_USE_ONE_FILE		= true;
-	/** @var bool */
-	public $CSS_ADD_RESET			= false;
-	/** @var bool */
-	public $CSS_ADD_BASE			= false;
-	/** @var bool Cache Javascript files */
-	public $CACHE_JAVASCRIPT		= false;
-	/** @var int */
-	public $CACHE_JS_TTL			= 3600;
 	/** @var bool Add pages names to the title */
-	public $ADD_TITLE_PAGES		= true;
+	public $ADD_TITLE_PAGES			= true;
 	/** @var bool Show auto-parsed (and tried to translate) task name */
-	public $SHOW_AUTO_TASK_NAME	= false;
-	/** @var bool IFRAME in the center */
-	public $IFRAME_CENTER			= false;
-	/** @var bool Use Search Engine based keywords block */
-	public $USE_SE_KEYWORDS		= false;
+	public $SHOW_AUTO_TASK_NAME		= false;
 	/** @var string Sub-modules dir */
 	public $SUB_MODULES_PATH		= 'classes/graphics/';
 	/** @var string Path to icons */
@@ -49,20 +25,16 @@ class yf_graphics {
 	public $META_DESCRIPTION		= '';
 	/** @var bool Enable quick menu */
 	public $QUICK_MENU_ENABLED		= true;
-	/** @var bool Use Firebug-Lite javascript debug library */
-	public $USE_FIREBUG_LITE		= false;
 	/** @var bool Menu hide links to disabled modules */
 	public $MENU_HIDE_INACTIVE_MODULES	= false;
 	/** @var bool */
-	public $NOT_FOUND_RAISE_WARNING= true;
+	public $NOT_FOUND_RAISE_WARNING	= true;
 	/** @var bool */
 	public $HEADER_POWERED_BY		= true;
 	/** @var bool */
 	public $JS_CONSOLE_ALLOW		= true;
 	/** @var string Required for the compatibility with old main class */
 	public $MEDIA_PATH				= '';
-	/** @var */
-	public $_css_loaded_from		= array();
 
 	/**
 	* Catch missing method call
@@ -81,21 +53,9 @@ class yf_graphics {
 			$_SESSION['user_group'] = 1;
 		}
 		// Try to assign class properties from global settings
-		$embed_css = conf('embed_css');
-		if (isset($embed_css)) {
-			$this->EMBED_CSS = $embed_css;
-		}
 		$add_title_pages = conf('add_title_pages');
 		if (isset($add_title_pages)) {
 			$this->ADD_TITLE_PAGES = $add_title_pages;
-		}
-		$iframe_center = conf('iframe_center');
-		if (isset($iframe_center)) {
-			$this->IFRAME_CENTER = $iframe_center;
-		}
-		// Overload protection
-		if (conf('HIGH_CPU_LOAD') == 1) {
-			$this->USE_SE_KEYWORDS = false;
 		}
 		// Force hide inactive menu items inside admin section
 		if (MAIN_TYPE_ADMIN) {
@@ -282,8 +242,8 @@ class yf_graphics {
 	/**
 	* Main $_GET tasks handler
 	*/
-	function tasks($CHECK_IF_ALLOWED = false) {
-		return _class('core_blocks')->tasks($CHECK_IF_ALLOWED);
+	function tasks($allowed_check = false) {
+		return _class('core_blocks')->tasks($allowed_check);
 	}
 
 	/**
@@ -348,21 +308,17 @@ class yf_graphics {
 	}
 
 	/**
+	* @deprecated
 	*/
 	function _show_se_keywords ($input = '') {
-		if (!$this->USE_SE_KEYWORDS) {
-			return false;
-		}
-		return _class('se_keywords')->_show_search_keywords($input);
+		return false;
 	}
 
 	/**
+	* @deprecated
 	*/
 	function _set_se_keywords () {
-		if (!$this->USE_SE_KEYWORDS) {
-			return false;
-		}
-		return _class('se_keywords')->_set_search_keywords();
+		return false;
 	}
 
 	/**
@@ -421,16 +377,6 @@ class yf_graphics {
 	function _show_inline_tip ($params = array()) {
 		$params['tip_id'] = $params['text'];
 		return $this->_show_help_tip($params);
-/*
-		$text = isset($params['text']) ? $params['text'] : strval($params);
-		if (empty($text)) {
-			return false;
-		}
-		$r = $params['replace'];
-		return tpl()->parse('system/inline_tip', array(
-			'text'	=> $text,
-		));
-*/
 	}
 
 	/**
@@ -439,17 +385,12 @@ class yf_graphics {
 	function show_help(){
 		$module_name = $_GET['object'];
 		$action_name = $_GET['action'];
-
 		$replace = array(
 			'action'	=> $action_name,
 		);
-
 		$STPL_NAME = $module_name.'/help';
 		if (tpl()->_stpl_exists($STPL_NAME)) {
 			$body = tpl()->parse($STPL_NAME, $replace);
-		} else {
-# TODO
-			$body = '';
 		}
 		return tpl()->parse('system/help_wrapper', array('body' => nl2br(trim($body))));
 	}
@@ -472,33 +413,26 @@ class yf_graphics {
 	* Send main headers
 	*/
 	function _send_main_headers($content_length = 0) {
-		// Stop if some headers are sent
 		if (headers_sent() || conf('no_headers')) {
 			return false;
 		}
-		// Replace images paths with their absolute ones
 		if ($this->HEADER_POWERED_BY) {
 			header('X-Powered-By: YF');
 		}
 		header('Content-Type:text/html; charset='.conf('charset'));
 		header('Content-language: '.conf('language'));
-		// Switch between caching on/off
 		if (tpl()->REWRITE_MODE && MAIN_TYPE_USER && !main()->NO_CACHE_HEADERS) {
 			// To emulate static pages need these headers (Tells that page is modified only one time per day)
 			header('Last-Modified: '. gmdate('D, d M Y 00:01:01') . ' GMT');
 			header('Content-Length: '.intval($content_length));
 		} else {
-			// Date in the past
-			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-			// always modified
-			header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-			// HTTP/1.1
-			header('Cache-Control: no-store, no-cache, must-revalidate');
-			header('Cache-Control: post-check=0, pre-check=0', false);
-			// HTTP/1.0
-			header('Pragma: no-cache');
+			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+			header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+			header('Cache-Control: no-store, no-cache, must-revalidate'); // HTTP/1.1
+			header('Cache-Control: post-check=0, pre-check=0', false); // HTTP/1.1
+			header('Pragma: no-cache'); // HTTP/1.0
 		}
-		if (conf('IS_AJAX')/* || main()->is_post()*/) {
+		if (main()->is_ajax()/* || main()->is_post()*/) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
 		}
 		$this->_send_custom_http_headers();

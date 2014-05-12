@@ -45,10 +45,11 @@ class yf_manage_countries {
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
 			->validate(array('name' => 'trim|required'))
-			->db_update_if_ok('countries', array('name','active'), 'code="'._es($a['code']).'"', array('on_after_update' => function() {
+			->db_update_if_ok('countries', array('name','active'), 'code="'._es($a['code']).'"')
+			->on_after_update(function() {
 				cache_del(array('countries'));
 				common()->admin_wall_add(array('country updated: '.$_POST['name'].'', $a['code']));
-			}))
+			})
 			->info('code')
 			->text('name')
 			->active_box()
@@ -61,10 +62,11 @@ class yf_manage_countries {
 		$a = $_POST;
 		return form($a)
 			->validate(array('name' => 'trim|required'))
-			->db_insert_if_ok('countries', array('name','code','active'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('countries', array('name','code','active'), array())
+			->on_after_update(function() {
 				cache_del(array('countries'));
 				common()->admin_wall_add(array('country added: '.$_POST['name'].'', db()->insert_id()));
-			}))
+			})
 			->text('code')
 			->text('name')
 			->active_box()

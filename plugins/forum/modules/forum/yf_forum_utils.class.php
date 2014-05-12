@@ -98,7 +98,7 @@ class yf_forum_utils {
 		}
 		$replace = array(
 			'post_id'			=> intval($_GET['id']),
-			'form_action'		=> process_url('./?object='.'forum'.'&action='.$_GET['action'])
+			'form_action'		=> process_url('./?object=forum&action='.$_GET['action'])
 		);
 
 		$body = common()->show_empty_page(tpl()->parse('forum'.'/report_post', $replace));
@@ -117,7 +117,7 @@ class yf_forum_utils {
 		$_reports_per_page = 10;
 		$sql = 'SELECT * FROM '.db('forum_reports').'';
 		$order_by = ' WHERE active=1 ORDER BY id ASC ';
-		$url = './?object='.'forum'.'&action='.$_GET['action'].'&id=all';
+		$url = './?object=forum&action='.$_GET['action'].'&id=all';
 		list($add_sql, $pages, $total) = common()->divide_pages($sql, $url, null, $_reports_per_page);
 
 		$BB_OBJ = _class('bb_codes');
@@ -175,12 +175,12 @@ class yf_forum_utils {
 				'post_text'			=> $BB_OBJ->_process_text($reported_post_info['text']),
 				'time'				=> _format_date($A['time'], 'long'),
 				'text'				=> $BB_OBJ->_process_text($A['text']),
-				'button_action'		=> process_url('./?object='.'forum'.'&action=close_reports&id='.$A['post_id']),
+				'button_action'		=> process_url('./?object=forum&action=close_reports&id='.$A['post_id']),
 				'forum_link'		=> module('forum')->_link_to_forum($reported_post_info['forum']),
 				'forum_name'		=> _prepare_html(module('forum')->_forums_array[$reported_post_info['forum']]['name']),
 				'topic_id'			=> intval($reported_post_info['topic']),
 				'topic_name'		=> _prepare_html($reported_topic_info['name']),
-				'topic_link'		=> './?object='.'forum'.'&action=view_topic&id='.$reported_post_info['topic'],
+				'topic_link'		=> './?object=forum&action=view_topic&id='.$reported_post_info['topic'],
 			);
 		}
 		$replace = array(
@@ -205,8 +205,7 @@ class yf_forum_utils {
 			$need_del_post	= $need_del_topic || isset($_POST['delete_post'][$post_info['id']]);
 			// Delete topic if needed
 			if ($need_del_topic) {
-				$FORUM_ADMIN_OBJ = module('forum')->_load_sub_module('forum_admin');
-				$FORUM_ADMIN_OBJ->_topic_delete(true, $post_info['topic']);
+				_class('forum_admin', 'modules/forum/')->_topic_delete(true, $post_info['topic']);
 			// Delete post if needed
 			} elseif ($need_del_post) {
 				module('forum')->delete_post(true, $post_info['id']);
@@ -217,19 +216,13 @@ class yf_forum_utils {
 			'active' => 0
 		), 'post_id='.intval($_GET['id']));
 		// Return user back
-		return js_redirect('./?object='.'forum'.'&action=view_reports');
+		return js_redirect('./?object=forum&action=view_reports');
 	}
 
 	/**
 	* Update number of users posts for all users
 	*/
 	function _update_users_number_posts () {
-// TODO: need to check
-/*
-		if (module('forum')->SETTINGS['USE_GLOBAL_USERS']) {
-			return false;
-		}
-*/
 		$Q = db()->query('SELECT * FROM '.db('forum_users').' WHERE status="a"');
 		while ($A = db()->fetch_assoc($Q)) {
 			$num_posts = db()->query_num_rows('SELECT id FROM '.db('forum_posts').' WHERE user_id='.intval($A['id']));

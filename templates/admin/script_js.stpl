@@ -18,10 +18,10 @@ $(function(){
 	var _t_yes = "{t(Yes)}";
 	var _t_no = "{t(No)}";
 	var _t_are_you_sure = "{t(Are you sure)}?";
-	var _btn_active = '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> ' + _t_active + '</button>';
-	var _btn_inactive = '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '+ _t_inactive + '</button>';
-	var _btn_yes = '<button class="btn btn-mini btn-success"><i class="icon-ok"></i> ' + _t_yes + '</button>';
-	var _btn_no = '<button class="btn btn-mini btn-warning"><i class="icon-ban-circle"></i> '+ _t_no + '</button>';
+	var _btn_active = '<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok"></i> ' + _t_active + '</button>';
+	var _btn_inactive = '<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> '+ _t_inactive + '</button>';
+	var _btn_yes = '<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok"></i> ' + _t_yes + '</button>';
+	var _btn_no = '<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> '+ _t_no + '</button>';
 
 	// Change activity status of different elements without page refresh
 	$(document).on("click", ".change_active", function(){

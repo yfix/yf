@@ -6,7 +6,7 @@ require __DIR__.'/github_api_funcs.php';
 $user = 'yfix';
 include __DIR__.'/data/'.$user.'_repos.php';
 
-$d = '/home/www/github_forks/';
+$d = '/var/yf/github_forks/';
 !file_exists($d) && mkdir($d, 1);
 
 function get_repo_info($user, $name) {

@@ -1,14 +1,18 @@
 <?php
 
 /**
-* Absttraction layer over HTML5/CSS frameworks.
-* Planned support for these plugins: 
-*	Bootstrap 2		http://twbs.github.io/bootstrap/2.3.2/
-*	Bootstrap 3		http://twbs.github.io/bootstrap/3
-*	Zurb Foundation	http://foundation.zurb.com/
-*	Pure CSS		http://purecss.io/
+* HTML high-level controls collection
+*
+* @package		YF
+* @author		YFix Team <yfix.dev@gmail.com>
+* @version		1.0
 */
 class yf_html {
+
+	/** @var bool */
+	public $AUTO_ASSIGN_IDS = true;
+	/** @var bool */
+	public $BOXES_USE_STPL	= true;
 
 	/**
 	* Catch missing method call
@@ -23,7 +27,9 @@ class yf_html {
 	*/
 	function __clone() {
 		foreach ((array)get_object_vars($this) as $k => $v) {
-			$this->$k = null;
+			if ($k[0] == '_') {
+				$this->$k = null;
+			}
 		}
 	}
 
@@ -37,8 +43,8 @@ class yf_html {
 	/**
 	*/
 	function _init() {
-		$this->is_bs3 = (conf('css_framework') == 'bs3');
-		$this->rnd = substr(md5(microtime()), 0, 8);
+		$this->_is_bs3 = (conf('css_framework') == 'bs3');
+#		$this->_rnd = substr(md5(microtime()), 0, 8);
 	}
 
 	/**
@@ -90,6 +96,7 @@ class yf_html {
 	/**
 	*/
 	function dd_table($replace = array(), $field_types = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (DEBUG_MODE) {
 			$ts = microtime(true);
 		}
@@ -139,16 +146,17 @@ class yf_html {
 				'trace'			=> main()->trace_string(),
 			));
 		}
-		return '<div class="row-fluid">'.$legend.'<div class="'.$div_class.'">'.$form.'</div></div>';
+		return '<div class="row-fluid" id="'.$extra['id'].'">'.$legend.'<div class="'.$div_class.'">'.$form.'</div></div>';
 	}
 
 	/**
 	*/
 	function modal ($extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$def_style = $extra['inline'] ? 'position: relative; top: auto; left: auto; right: auto; bottom: auto; margin: 0 auto 20px; z-index: 1; max-width: 100%; display: block; overflow-y: auto;' : '';
 		$extra['style'] = $extra['style'] ?: $def_style;
 		return '
-			<div class="modal" style="'.$extra['style'].'">
+			<div class="modal" style="'.$extra['style'].'" id="'.$extra['id'].'">
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">'
@@ -165,21 +173,27 @@ class yf_html {
 	/**
 	*/
 	function tabs ($tabs = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$headers = array();
 		$items = array();
+		$links_prefix = $extra['links_prefix'] ?: 'tab_';
 		foreach ((array)$tabs as $k => $v) {
+			$desc_raw = null;
+			$disabled = null;
 			if (!is_array($v)) {
 				$content = $v;
 				$v = array();
 			} else {
 				$content = $v['content'];
+				$desc_raw = $v['desc_raw'];
+				$disabled = $v['disabled'];
 			}
 			if ($extra['hide_empty'] && !strlen($content)) {
 				continue;
 			}
 			$name = $v['name'] ?: $k;
-			$desc = $v['desc'] ?: ucfirst(str_replace('_', ' ', $name));
-			$id = preg_replace('~[^a-z0-9_-]+~', '', $v['id'] ?: 'tab_'.$k);
+			$desc = $v['desc'] ?: (!$extra['no_auto_desc'] ? ucfirst(str_replace('_', ' ', $name)) : $name);
+			$id = preg_replace('~[^a-z0-9_-]+~i', '', $v['id'] ?: $links_prefix. $k);
 			if (isset($extra['selected'])) {
 				$is_active = ($extra['selected'] == $k);
 			} else {
@@ -192,11 +206,13 @@ class yf_html {
 			$class_head = $v['class_head'] ?: $extra['class_head'];
 			$class_body = $v['class_body'] ?: $extra['class_body'];
 			if (!$extra['no_headers']) {
-				$headers[] = '<li class="'.($is_active ? 'active' : ''). ($class_head ? ' '.$class_head : '').'"><a href="#'.$id.'" data-toggle="tab">'.t($desc).'</a></li>';
+				$headers[] = 
+					'<li class="'.($is_active ? 'active' : ''). ($class_head ? ' '.$class_head : '').'">
+						<a '.(!$disabled ? 'href="#'.$id.'" ' : '').'data-toggle="tab">'.($desc_raw ?: t($desc)).'</a>
+					</li>';
 			}
 			$items[] = '<div class="tab-pane '.$css_class. ($class_body ? ' '.$class_body : '').'" id="'.$id.'">'.$content.'</div>';
 		}
-		$extra['id'] = $extra['id'] ?: 'tabs_'.$this->rnd;
 		$body .= $headers ? '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL : '';
 		$body .= '<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$items).'</div>';
 		return $body;
@@ -205,8 +221,8 @@ class yf_html {
 	/**
 	*/
 	function accordion ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$content = $v;
@@ -229,9 +245,9 @@ class yf_html {
 			$items[] = 
 				'<div class="accordion-group panel panel-default'.($class_group ? ' '.$class_group : '').'">
 					<div class="accordion-heading panel-heading'.($class_head ? ' '.$class_head : '').'">
-						'.($this->is_bs3 ? '<h4 class="panel-title">' : '').'
+						'.($this->_is_bs3 ? '<h4 class="panel-title">' : '').'
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$extra['id'].'" href="#'.$id.'">'.$desc.'</a>
-						'.($this->is_bs3 ? '</h4>' : '').'
+						'.($this->_is_bs3 ? '</h4>' : '').'
 					</div>
 					<div id="'.$id.'" class="accordion-body panel-collapse collapse'.($is_selected ? ' in' : ''). ($class_body ? ' '.$class_body : '').'">
 						<div class="accordion-inner panel-body">'.$content.'</div>
@@ -244,9 +260,9 @@ class yf_html {
 	/**
 	*/
 	function carousel ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
 		$headers = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$img_src = $v;
@@ -286,6 +302,7 @@ class yf_html {
 	/**
 	*/
 	function alert ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$close_btn = (!$extra['no_close'] && !$data['no_close']) ? '<button type="button" class="close" data-dismiss="alert">×</button>' : '';
 		$head = is_array($data) ? $data['head'] : '';
 		$body = is_array($data) ? $data['body'] : $data;
@@ -294,7 +311,7 @@ class yf_html {
 			$alert_type = 'error';
 		}
 		return '
-			<div class="alert alert-block alert-'.$alert_type.' fade in'.($extra['class'] ? ' '.$extra['class'] : '').'">
+			<div class="alert alert-block alert-'.$alert_type.' fade in'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
 				'.$close_btn.'
 				'.($head ? '<h4 class="alert-heading">'.$head.'</h4>' : '').'
 				'.$body.'
@@ -304,8 +321,8 @@ class yf_html {
 	/**
 	*/
 	function navbar ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$brand = '';
 		if (isset($data['brand'])) {
 			$b = $data['brand'];
@@ -334,8 +351,8 @@ class yf_html {
 	/**
 	*/
 	function breadcrumbs ($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
 		$divider = $extra['divider'] ?: '/';
 		$len = count($data);
 		$data = _prepare_html($data);
@@ -344,11 +361,11 @@ class yf_html {
 			$class_item = $v['class_item'] ?: $extra['class_item'];
 			$items[] = '<li class="'.($is_last ? ' active' : ''). ($class_item ? ' '.$class_item : '').'">
 				'.(($is_last || !$v['link']) ? $v['name'] 
-					: '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a>'.(!$this->is_bs3 ? ' <span class="divider">'.$divider.'</span>' : '')
+					: '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a>'.(!$this->_is_bs3 ? ' <span class="divider">'.$divider.'</span>' : '')
 				).'
 			</li>';
 		}
-		$tag = $this->is_bs3 ? 'ol' : 'ul';
+		$tag = $this->_is_bs3 ? 'ol' : 'ul';
 		return '<'.$tag.' class="breadcrumb'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"">'.implode(PHP_EOL, (array)$items).'</'.$tag.'>';
 	}
 
@@ -366,7 +383,7 @@ class yf_html {
 				$img_src = $v['img'];
 			}
 			$class_item = $v['class_item'] ?: $extra['class_item'];
-			$tag = $this->is_bs3 ? 'div' : 'li';
+			$tag = $this->_is_bs3 ? 'div' : 'li';
 			$items[] = 
 				'<'.$tag.' class="'.$row_class. ($class_item ? ' '.$class_item : ''). ($v['style'] ? ' style="'.$v['style'].'"' : '').'">
 					<div class="thumbnail">
@@ -376,9 +393,10 @@ class yf_html {
 				</'.$tag.'>';
 		}
 		$body = array();
-		$tag = $this->is_bs3 ? 'div' : 'ul';
+		$tag = $this->_is_bs3 ? 'div' : 'ul';
 		foreach (array_chunk($items, $columns) as $_items) {
-			$body[] = '<'.$tag.' class="thumbnails'.($extra['class'] ? ' '.$extra['class'] : '').'">'.implode(PHP_EOL, (array)$_items).'</'.$tag.'>';
+			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			$body[] = '<'.$tag.' class="thumbnails'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$id.'">'.implode(PHP_EOL, (array)$_items).'</'.$tag.'>';
 		}
 		return implode(PHP_EOL, $body);
 	}
@@ -386,7 +404,7 @@ class yf_html {
 	/**
 	*/
 	function progress_bar ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
 		foreach ((array)$data as $v) {
 			if (!is_array($v)) {
@@ -406,7 +424,7 @@ class yf_html {
 	/**
 	*/
 	function pagination ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (isset($data['prev'])) {
 			$prev = $data['prev'];
 			unset($data['prev']);
@@ -426,7 +444,7 @@ class yf_html {
 		if ($next) {
 			$items[] = '<li><a href="'.$next.'">'.t('Next').'</a></li>';
 		}
-		if ($this->is_bs3) {
+		if ($this->_is_bs3) {
 			return '<div><ul class="pagination'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, $items).'</ul></div>';
 		} else {
 			return '<div class="pagination'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><ul>'.implode(PHP_EOL, $items).'</ul></div>';
@@ -436,7 +454,7 @@ class yf_html {
 	/**
 	*/
 	function panel ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		return 
 			'<div class="panel panel-primary'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
 				<div class="panel-heading">
@@ -449,14 +467,14 @@ class yf_html {
 	/**
 	*/
 	function jumbotron ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		return '<div class="jumbotron'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><h1>'.$data['head'].'</h1>'.$data['body'].'</div>';
 	}
 
 	/**
 	*/
 	function well ($body = '', $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (!$extra['class']) {
 			$extra['class'] = 'well-lg';
 		}
@@ -466,7 +484,7 @@ class yf_html {
 	/**
 	*/
 	function list_group ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
 		foreach ((array)$data as $v) {
 			if (!is_array($v)) {
@@ -485,7 +503,7 @@ class yf_html {
 	/**
 	*/
 	function media_objects ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
 		}
@@ -522,7 +540,7 @@ class yf_html {
 	/**
 	*/
 	function menu ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
 		}
@@ -573,7 +591,7 @@ class yf_html {
 	/**
 	*/
 	function grid ($data = array(), $extra = array()) {
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.$this->rnd;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$rows = array();
 		$ul_opened = false;
 		foreach ((array)$data as $id => $row) {
@@ -594,5 +612,546 @@ class yf_html {
 			$rows[] = '<div class="row-fluid show-grid">'.implode(PHP_EOL, $items).'</div>';
 		}
 		return '<div class="grid'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$rows).'</div>';
+	}
+
+	/**
+	*/
+	function select_box ($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0) {
+		// Passing params as array
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : $translate;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : (!is_null($show_text) ? $show_text : false);
+		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
+		$level = isset($extra['level']) ? $extra['level'] : $level;
+		// (example: $add_str = 'size=6')
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
+		$extra['class'] .= ' form-control';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
+		if (!$values) {
+			return false;
+		}
+		if ($level == 0) {
+			$extra['force_id'] && $id = $extra['force_id'];
+			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			$body = PHP_EOL.'<select name="'.$name.'"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$id.'"' : '').$add_str.">".PHP_EOL;
+		}
+		$selected = strval($selected);
+		if ($show_text && $level == 0) {
+			$body .= '<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>'.PHP_EOL;
+		}
+		$self_func = __FUNCTION__;
+		foreach ((array)$values as $key => $cur_value) {
+			if (is_array($cur_value)) {
+				$body .= '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">'.PHP_EOL;
+				$body .= $this->$self_func($name, $cur_value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
+				$body .= '</optgroup>'.PHP_EOL;
+			} else {
+				$_what_compare = strval($type == 1 ? $cur_value : $key);
+				$body .= '<option value="'.$key.'" '.($_what_compare == $selected ? 'selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</option>'.PHP_EOL;
+			}
+		}
+		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
+		return $body;
+	}
+
+	/**
+	*/
+	function multi_select($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+		// Passing params as array
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : $translate;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
+		$show_text = isset($extra['show_text']) ? $extra['show_text'] : (!is_null($show_text) ? $show_text : false);
+		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
+		$level = isset($extra['level']) ? $extra['level'] : $level;
+		$disabled = isset($extra['disabled']) ? $extra['disabled'] : $disabled;
+		// (example: $add_str = 'size=6') disabled
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
+		$extra['class'] .= ' form-control';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
+		if (!$values) {
+			return false;
+		}
+		if (!is_array($selected)) {
+			$selected = strval($selected);
+		}
+		if ($disabled  == 1) {
+			$disabled = 'disabled';
+		} else {
+			$disabled = '';
+		}
+		if ($level == 0) {
+			$extra['force_id'] && $id = $extra['force_id'];
+			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			$body = PHP_EOL.'<select '.$disabled.' multiple name="'.$name.'[]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$id.'"' : '').$add_str.'>'.PHP_EOL;
+		}
+		if ($show_text && $level == 0) {
+			$body .= '<option value="">-'.t('select').' '.t($name).'-</option>'.PHP_EOL;
+		}
+		$self_func = __FUNCTION__;
+		foreach ((array)$values as $key => $value) {
+			if (is_array($value)) {
+				$body .= '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">'.PHP_EOL;
+				$body .= $this->$self_func($name, $value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
+				$body .= '</optgroup>'.PHP_EOL;
+			} else {
+				// Selected value could be an array
+				if (is_array($selected)) {
+					if ($type == 1) {
+						$sel_text = in_array($value, $selected) ? 'selected="selected"' : '';
+					} else {
+						$sel_text = isset($selected[$key]) ? 'selected="selected"' : '';
+					}
+				} elseif (strlen($selected)) {
+					$_what_compare = strval($type == 1 ? $value : $key);
+					$sel_text = $_what_compare == $selected ? 'selected="selected"' : '';
+				} else {
+					$sel_text = '';
+				}
+				$body .= '<option value="'.$key.'" '.$sel_text.'>'.($translate ? t($value) : $value).'</option>'.PHP_EOL;
+			}
+		}
+		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
+		return $body;
+	}
+
+	/**
+	* Alias
+	*/
+	function multi_select_box($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+		return $this->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
+	}
+
+	/**
+	*/
+	function radio_box ($name, $values = array(), $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : $translate;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
+		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
+		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : $flow_vertical;
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
+		if (!$values) {
+			return false;
+		}
+		$selected = strval($selected);
+		foreach ((array)$values as $value => $val_name) {
+			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			if ($this->BOXES_USE_STPL) { 
+				$_what_compare = strval($type == 1 ? $val_name : $value);
+				$replace = array(
+					'name'			=> $name,
+					'value'			=> $value,
+					'selected'		=> $_what_compare == $selected ? 'checked="true"' : '',
+					'add_str'		=> $add_str,
+					'label'			=> $translate ? t($val_name) : $val_name,
+					'divider'		=> $flow_vertical ? '<br />' : '&nbsp;',
+					'horizontal'	=> $extra['horizontal'] ? 1 : 0,
+					'id'			=> $id,
+				);
+				$body .= tpl()->parse('system/common/radio_box_item', $replace);
+			} else {
+				$body .= 
+					'<label class="radio'.($extra['horizontal'] ? ' radio-horizontal' : '').'">'
+						.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'" '.$add_str.' '.((strval($value) == $selected) ? 'checked' : '').'>'
+						.t($val_name)
+					.'</label>'.PHP_EOL;
+			}
+		}
+		return $body;
+	}
+
+	/**
+	* Simple check box
+	*/
+	function check_box ($name = '', $value = '', $selected = '', $add_str = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$name = isset($extra['name']) ? $extra['name'] : 'checkbox';
+		$value = $extra['value'] ?: (strlen($value) ? $value : '1');
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
+		if (isset($extra['checked'])) {
+			$selected = $extra['checked'];
+		}
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+		$translate = $extra['translate'] ? $extra['translate'] : $translate;
+		$add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
+
+		return '<label class="checkbox">'
+				.'<input type="checkbox" name="'.$name.'" id="'.$extra['id'].'" value="'.$value.'"'
+					.($selected ? ' checked="checked"' : '')
+					.($add_str ? ' '.$add_str : '')
+				.'> &nbsp;' // Please do not remove this whitespace :)
+				.($translate ? t($extra['desc']) : $extra['desc'])
+			.'</label>';
+	}
+
+	/**
+	* Processing many checkboxes at one time
+	*/
+	function multi_check_box ($name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = $extra['selected'];
+		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
+		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
+		$name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
+		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
+		if ($extra['class']) {
+			$add_str .= ' class="'.$extra['class'].'" ';
+		}
+		if ($extra['style']) {
+			$add_str .= ' style="'.$extra['style'].'" ';
+		}
+		if (!$values) {
+			return false;
+		}
+		if (!is_array($selected)) {
+			$selected = strval($selected);
+		}
+		foreach ((array)$values as $key => $value) {
+			$sel_text = '';
+			// Selected value could be an array
+			if (is_array($selected)) {
+				if ($type == 1) {
+					$sel_text = in_array($value, $selected) ? 'checked' : '';
+				} else {
+					$sel_text = isset($selected[$key]) ? 'checked' : '';
+				}
+			} elseif (strlen($selected)) {
+				$_what_compare = strval($type == 1 ? $value : $key);
+				$sel_text = $_what_compare == $selected ? 'checked="true"' : '';
+			} else {
+				$sel_text = '';
+			}
+			if ($name_as_array) {
+				$val_name = $name.'['.$key.']';
+			} else {
+				$val_name = $name.'_'.$key;
+			}
+			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			if ($this->BOXES_USE_STPL) {
+				$replace = array(
+					'name'		=> $val_name,
+					'value'		=> $key,
+					'selected'	=> $sel_text,
+					'add_str'	=> $add_str,
+					'label'		=> $translate ? t($value) : $value,
+					'divider'	=> $flow_vertical ? '<br />' : '&nbsp;',
+					'id'		=> $id,
+				);
+				$body .= tpl()->parse('system/common/check_box_item', $replace);
+			} else {
+				$body .= '<input type="checkbox" name="'.$val_name.'" class="check" value="'.$key.'" '.$sel_text.' '.$add_str.' id="'.$id.'">'
+					.($translate ? t($value) : $value)
+					.($flow_vertical ? '<br />' : '&nbsp;'). PHP_EOL;
+			}
+		}
+		return $body;
+	}
+
+	/**
+	* Simple input form control
+	*/
+	function input ($name = '', $value = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['name'] = $extra['name'] ?: ($name ?: 'text');
+		$extra['value'] = $extra['value'] ?: $value;
+#		$extra['id'] = $extra['id'] ?: $extra['name'];
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
+		$extra['type'] = $extra['type'] ?: 'text';
+		$extra['placeholder'] = $extra['desc'];
+
+		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete');
+		return '<input'._attrs($extra, $attrs_names).'>';
+	}
+
+	/**
+	*/
+	function div_box ($name, $values = array(), $selected = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = $extra['selected'] ?: $selected;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		if (!$values) {
+			return false;
+		}
+		$selected = strval($selected);
+
+		$items = array();
+		$selected_val = '';
+		foreach ((array)$values as $key => $cur_value) {
+			$_what_compare = strval($type == 1 ? $cur_value : $key);
+			$is_selected = $_what_compare == $selected;
+			$val = ($translate ? t($cur_value) : $cur_value);
+			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			if ($is_selected) {
+				$selected_val = $val;
+			}
+		}
+		$body .= '<li class="dropdown" style="list-style-type:none;" id="'.$extra['id'].'">';
+		$body .= '<a class="dropdown-toggle" data-toggle="dropdown">'.($selected_val ?: $desc).'&nbsp;<span class="caret"></span></a>';
+		$body .= '<ul class="dropdown-menu">';
+		$body .= implode(PHP_EOL, $items);
+		$body .= '</ul>';
+		$body .= '</li>';
+		return $body;
+	}
+
+	/**
+	*/
+	function button_box ($name, $values = array(), $selected = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		if (!$values) {
+			return false;
+		}
+		$selected = strval($selected);
+
+		$items = array();
+		$selected_val = '';
+		foreach ((array)$values as $key => $cur_value) {
+			$_what_compare = strval($type == 1 ? $cur_value : $key);
+			$is_selected = $_what_compare == $selected;
+			$val = $translate ? t($cur_value) : $cur_value;
+			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			if ($is_selected) {
+				$selected_val = $val;
+			}
+		}
+		$class = $extra['class'] ?: 'btn dropdown-toggle';
+		$extra['class_add'] && $class .= ' '.$extra['class_add'];
+		$text = $selected_val ?: $desc;
+
+		$body = array();
+		$body[] = '<div class="btn-group" id="'.$extra['id'].'">';
+		if ($extra['button_split']) {
+			$body[] = '<button class="btn">'.$text.'</button>'.PHP_EOL;
+			$body[] = '<button class="'.$class.'" data-toggle="dropdown"><span class="caret"></span></button>';
+		} else {
+			$body[] = '<button class="'.$class.'" data-toggle="dropdown">'.$text.'&nbsp;<span class="caret"></span></button>';
+		}
+		$body[] = '<ul class="dropdown-menu">';
+		$body[] = implode(PHP_EOL, $items);
+		$body[] = '</ul>';
+		$body[] = '</div>';
+		return implode(PHP_EOL, $body);
+	}
+
+	/**
+	*/
+	function button_split_box ($name, $values = array(), $selected = '', $extra = array()) {
+		$extra['button_split'] = true;
+		return $this->button_box ($name, $values, $selected, $extra);
+	}
+
+	/**
+	*/
+	function list_box ($name, $values = array(), $selected = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
+		$values = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
+		$translate = isset($extra['translate']) ? $extra['translate'] : 0;
+		if ($extra['no_translate']) {
+			$translate = 0;
+		}
+		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		if (!$values) {
+			return false;
+		}
+// TODO: allow deep customization of its layout
+// TODO: require here js, css of the bfh-selectbox plugin
+		$selected = strval($selected);
+		$body .= '<div class="bfh-selectbox" id="'.$extra['id'].'">'
+					.'<input type="hidden" name="'.$name.'" value="'.$selected.'">'
+					.'<a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">'
+						.'<span class="bfh-selectbox-option bfh-selectbox-medium" data-option="'.$selected.'">'.$values[$selected].'</span>'
+						.'<b class="caret"></b>'
+					.'</a>'
+					.'<div class="bfh-selectbox-options">'
+						.'<input type="text" class="bfh-selectbox-filter">'
+						.'<div role="listbox">'
+							.'<ul role="option">';
+		foreach ((array)$values as $key => $cur_value) {
+			$body .= '<li'.($is_selected ? ' class="active"' : '').'><a tabindex="-1" href="#" data-option="'.$key.'">'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
+		}
+		$body .= 			'</ul>'
+						.'</div>'
+					.'</div>'
+				.'</div>';
+		return $body;
+	}
+
+	/**
+	*/
+	function select2_box ($name, $values = array(), $selected = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+		} else {
+			$extra['name'] = $name;
+		}
+		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+
+		css('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.css');
+		js('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.js');
+		$js_options = (array)$extra['js_options'] + array(
+			'width'			=> 'element',
+			'placeholder'	=> $extra['desc'],
+			// put default js options here
+		);
+		js('$(function() { $("#'.addslashes($extra['force_id']).'").select2('.json_encode($js_options).'); });');
+		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
+		return $this->$func($extra, $values, $selected);
+	}
+
+	/**
+	*/
+	function chosen_box ($name, $values = array(), $selected = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+		} else {
+			$extra['name'] = $name;
+		}
+		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+
+		css('//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.css');
+		js('//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.jquery.min.js');
+		$js_options = (array)$extra['js_options'] + array(
+			// put default js options here
+		);
+		js('$(function() { $("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options).'); });');
+		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
+		return $this->$func($extra, $values, $selected);
+	}
+
+	/**
+	*/
+	function date_picker ($name, $cur_date = '') {
+		js('jquery-ui');
+		css('jquery-ui');
+
+		js('$(function() { $( ".datepicker" ).datepicker({ dateFormat: "yy-mm-dd" }); });');
+		css('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery.ui.datepicker.min.css');
+
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+// TODO: use input() unified control
+		return '<input type="text" name="'.$name.'" class="datepicker" value="'.$cur_date.'" style="width:80px" readonly="true" id="'.$extra['id'].'" />';
+	}
+
+	/**
+	*/
+	function date_box ($selected = '', $years = '', $name_postfix = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
+		return _class('html_datetime', 'classes/html/')->date_box($selected, $years, $name_postfix, $add_str, $show_what, $show_text, $translate);
+	}
+
+	/**
+	*/
+	function time_box ($selected = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1) {
+		return _class('html_datetime', 'classes/html/')->time_box ($selected, $name_postfix, $add_str, $show_text, $translate);
+	}
+
+	/**
+	*/
+	function date_box2 ($name, $selected = '', $years = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
+		return _class('html_datetime', 'classes/html/')->date_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate);
+	}
+
+	/**
+	*/
+	function time_box2 ($name, $selected = '', $add_str = '', $show_text = 1, $translate = 1) {
+		return _class('html_datetime', 'classes/html/')->time_box2 ($name, $selected, $add_str, $show_text, $translate);
+	}
+
+	/**
+	*/
+	function datetime_box2 ($name, $selected = '', $years = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
+#		return call_user_func_array(array(_class('html_datetime', 'classes/html/'), __FUNCTION__), func_get_args());
+		return _class('html_datetime', 'classes/html/')->datetime_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate);
 	}
 }

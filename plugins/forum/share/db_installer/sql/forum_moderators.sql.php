@@ -1,6 +1,7 @@
 <?php
 $data = '
 	`id` mediumint(8) unsigned NOT NULL auto_increment,
+	`active` tinyint(1) NOT NULL default \'1\',
 	`forums_list` text NOT NULL,
 	`member_name` varchar(32) NOT NULL default \'\',
 	`member_id` mediumint(8) unsigned NOT NULL default \'0\',

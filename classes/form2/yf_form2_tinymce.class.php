@@ -34,7 +34,7 @@ class yf_form2_tinymce {
 		$hidden_id = $params['hidden_id'] ? $params['hidden_id'] : '';
 
 		$body .= '<script src="'.$web_path.'" type="text/javascript"></script>'.PHP_EOL;
-#		require_js($web_path);
+#		js($web_path);
 
 /*
 			$(function(){
@@ -64,7 +64,7 @@ tinymce.init({
 			$replace['content_id'] = $content_id;
 		}
 		$config_js .= tpl()->_stpl_exists($stpl_name) ? tpl()->parse($stpl_name, (array)$extra + (array)$replace ) : '';
-#		require_js($config_js);
+#		js($config_js);
 		$body .= $config_js;
 */
 		// Avoid including tinymce scripts several times on same page

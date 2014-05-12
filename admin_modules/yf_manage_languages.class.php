@@ -46,10 +46,11 @@ class yf_manage_languages {
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_update_if_ok('languages', array('name','native','active'), 'code="'._es($a['code']).'"', array('on_after_update' => function() {
+			->db_update_if_ok('languages', array('name','native','active'), 'code="'._es($a['code']).'"')
+			->on_after_update(function() {
 				cache_del(array('languages'));
 				common()->admin_wall_add(array('language updated: '.$_POST['name'].'', $a['code']));
-			}))
+			})
 			->text('name')
 			->text('native')
 			->active_box()
@@ -62,10 +63,11 @@ class yf_manage_languages {
 		$a = $_POST;
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_insert_if_ok('languages', array('name','code','native','active'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('languages', array('name','code','native','active'), array())
+			->on_after_update(function() {
 				cache_del(array('languages'));
 				common()->admin_wall_add(array('language added: '.$_POST['name'].'', db()->insert_id()));
-			}))
+			})
 			->text('code')
 			->text('name')
 			->text('native')

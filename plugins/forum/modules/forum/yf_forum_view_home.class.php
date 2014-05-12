@@ -69,7 +69,7 @@ class yf_forum_view_home {
 					'last_post_author_link'	=> $post_info['user_id'] ? module('forum')->_user_profile_link($post_info['user_id']) : '',
 					'last_post_subject'		=> _prepare_html($subject),
 					'last_post_date'		=> module('forum')->_show_date($post_info['created'], 'last_post_date'),
-					'last_post_link'		=> './?object='.'forum'.'&action=view_topic&id='.$post_info['topic'].($_num_pages > 1 ? '&page='.$_num_pages : '').'#last_post',
+					'last_post_link'		=> './?object=forum&action=view_topic&id='.$post_info['topic'].($_num_pages > 1 ? '&page='.$_num_pages : '').'#last_post',
 					'user_id'				=> intval($post_info['user_id']),
 				);
 				$this->_last_posts[$post_info['forum']] = tpl()->parse('forum'.'/view_home_last_posts', $replace3);
@@ -109,7 +109,7 @@ class yf_forum_view_home {
 			$replace2 = array(
 				'cat_id'			=> _prepare_html($cat_info['id']),
 				'cat_name'			=> _prepare_html($cat_info['name']),
-				'cat_link'			=> './?object='.'forum'.'&id='.$cat_info['id']._add_get(array('id')),
+				'cat_link'			=> './?object=forum&id='.$cat_info['id']._add_get(array('id')),
 				'forums'			=> $forums,
 				'show_cat_contents'	=> module('forum')->SETTINGS['SHOW_EMPTY_CATS'] ? 1 : (empty($forums) ? 0 : 1),
 			);
@@ -120,11 +120,11 @@ class yf_forum_view_home {
 			'is_admin'			=> intval(FORUM_IS_ADMIN),
 			'logged_in'			=> intval(FORUM_USER_ID),
 			'last_visit_date'	=> FORUM_USER_ID && FORUM_USER_LAST_VISIT ? module('forum')->_show_date(FORUM_USER_LAST_VISIT, 'user_last_visit') : '',
-			'search_form_action'=> './?object='.'forum'.'&action=search'. _add_get(),
-			'login_form_action'	=> './?object='.'forum'.'&action=login'. _add_get(),
+			'search_form_action'=> './?object=forum&action=search'. _add_get(),
+			'login_form_action'	=> './?object=forum&action=login'. _add_get(),
 			'cats'				=> $forum_cats,
-			'rss_board_button'	=> module('forum')->_show_rss_link('./?object='.'forum'.'&action=rss_board', 'RSS feed for board'),
-			'sync_board_link'	=> FORUM_IS_ADMIN ? './?object='.'forum'.'&action=sync_board'. _add_get() : '',
+			'rss_board_button'	=> module('forum')->_show_rss_link('./?object=forum&action=rss_board', 'RSS feed for board'),
+			'sync_board_link'	=> FORUM_IS_ADMIN ? './?object=forum&action=sync_board'. _add_get() : '',
 		);
 		return !empty($forum_cats) ? module('forum')->_show_main_tpl(tpl()->parse('forum'.'/view_home_main', $replace)) : module('forum')->_show_error($_GET['id'] ? t('No such category') : t('no_active_categories'));
 	}
@@ -161,7 +161,7 @@ class yf_forum_view_home {
 			'forum_num_topics'	=> $forum_info['num_topics'],
 			'forum_num_posts'	=> $forum_info['num_posts'],
 			'moderators_list'	=> $this->_moderators_by_forums[$forum_info['id']],
-			'rss_forum_button'	=> module('forum')->_show_rss_link('./?object='.'forum'.'&action=rss_forum&id='.$forum_info['id'], 'RSS feed for forum: '.$forum_info['name']),
+			'rss_forum_button'	=> module('forum')->_show_rss_link('./?object=forum&action=rss_forum&id='.$forum_info['id'], 'RSS feed for forum: '.$forum_info['name']),
 			'sub_forums'		=> $sub_forums,
 			'has_sub_forums'	=> empty($sub_forums) ? 0 : 1,
 			'is_private'		=> intval((bool)$is_private),

@@ -236,7 +236,7 @@ class yf_db_driver_mysql41 extends yf_db_driver {
 
 	/**
 	*/
-	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = false) {
+	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = true) {
 		$retarr = array();
 
 		$Q = $this->query(sprintf($this->META_COLUMNS_SQL, $table));
@@ -259,16 +259,24 @@ class yf_db_driver_mysql41 extends yf_db_driver {
 			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
 				$fld['type'] = $query_array[1];
 				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-			} elseif (preg_match('/^(enum)\((.*)\)$/i', $type, $query_array)) {
+			} elseif (preg_match('/^(enum|set)\((.*)\)$/i', $type, $query_array)) {
 				$fld['type'] = $query_array[1];
 				$fld['max_length'] = max(array_map('strlen',explode(',',$query_array[2]))) - 2; // PHP >= 4.0.6
 				$fld['max_length'] = ($fld['max_length'] == 0 ? 1 : $fld['max_length']);
+				$values = array();
+				foreach (explode(',', $query_array[2]) as $v) {
+					$v = trim(trim($v), '\'"');
+					if (strlen($v)) {
+						$values[$v] = $v;
+					}
+				}
+				$fld['values'] = $values;
 			} else {
 				$fld['type'] = $type;
 				$fld['max_length'] = -1;
 			}
 
-			if ($FULL_INFO) {
+#			if ($FULL_INFO) {
 				$fld['not_null']		= ($A[2] != 'YES');
 				$fld['primary_key']		= ($A[3] == 'PRI');
 				$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
@@ -283,7 +291,7 @@ class yf_db_driver_mysql41 extends yf_db_driver {
 						$fld['has_default'] = false;
 					}
 				}
-			}
+#			}
 
 			if ($KEYS_NUMERIC) {
 				$retarr[] = $fld;

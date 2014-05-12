@@ -30,7 +30,7 @@ class yf_form2_tbl_funcs {
 			$extra['href'] = $link_url;
 			$extra['class'] = $extra['class'] ?: 'btn btn-default btn-mini btn-xs'. ($extra['class_add'] ? ' '.$extra['class_add'] : '');
 			$attrs_names = array('id','name','href','class','style','target','alt','title');
-			return ' <a'.$_this->_attrs($extra, $attrs_names).'><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
+			return ' <a'._attrs($extra, $attrs_names).'><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
 		};
 		if ($__this->_chained_mode) {
 			$__this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);

@@ -46,10 +46,11 @@ class yf_manage_timezones {
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_update_if_ok('timezones', array('name','active'), 'code="'._es($a['code']).'"', array('on_after_update' => function() {
+			->db_update_if_ok('timezones', array('name','active'), 'code="'._es($a['code']).'"')
+			->on_after_update(function() {
 				cache_del(array('timezones'));
 				common()->admin_wall_add(array('timezone updated: '.$_POST['name'].'', $a['code']));
-			}))
+			})
 			->text('name')
 			->active_box()
 			->save_and_back();
@@ -61,10 +62,11 @@ class yf_manage_timezones {
 		$a = $_POST;
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_insert_if_ok('timezones', array('name','code','offset','active'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('timezones', array('name','code','offset','active'), array())
+			->on_after_update(function() {
 				cache_del(array('timezones'));
 				common()->admin_wall_add(array('timezone added: '.$_POST['name'].'', db()->insert_id()));
-			}))
+			})
 			->text('code')
 			->text('name')
 			->text('offset')

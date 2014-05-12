@@ -65,7 +65,7 @@ class yf_forum_integration {
 				'author'		=> _prepare_html($A['user_name']),
 				'reply_link'	=> './?object=forum&action=view_topic&id='.$A['topic'],
 				'created'		=> _format_date($A['created']),
-				'profile_url'	=> './?object='.'forum'.'&action=show&id='.$A['user_id'],
+				'profile_url'	=> './?object=forum&action=show&id='.$A['user_id'],
 			);
 			$items .= tpl()->parse('forum'.'/for_profile_forum_item', $replace2);
 		}
@@ -178,8 +178,7 @@ class yf_forum_integration {
 		$items[]	= $NAV_BAR_OBJ->_nav_item('Home', './');
 		$items[]	= $NAV_BAR_OBJ->_nav_item('Forum', './?object='.'forum');
 		// Get pregenerated forum items
-		$OBJ = module('forum')->_load_sub_module('forum_main_tpl');
-		$_FORUM_ITEMS = $OBJ->_show_navigation(true);
+		$_FORUM_ITEMS = _class('forum_main_tpl', 'modules/forum/')->_show_navigation(true);
 		// Prepare links
 		foreach ((array)$_FORUM_ITEMS['items_links'] as $_item) {
 			$items[]	= $NAV_BAR_OBJ->_nav_item($_item['name'], $_item['link']);

@@ -128,8 +128,8 @@ class yf_forum_announce {
 			}
 			$replace2 = array(
 				'css_class_1'		=> module('forum')->_CSS['topic_'.($A['active'] ? 'a' : 'u').'_1'],
-				'form_action'		=> './?object='.'forum'.'&action='.$_GET['action'].'&id='.$A['id']._add_get(array('page')),
-				'view_announce_link'=> './?object='.'forum'.'&action=view_announce&id='.$A['id']._add_get(array('page')),
+				'form_action'		=> './?object=forum&action='.$_GET['action'].'&id='.$A['id']._add_get(array('page')),
+				'view_announce_link'=> './?object=forum&action=view_announce&id='.$A['id']._add_get(array('page')),
 				'announce_id'		=> $A['id'],
 				'announce_title'	=> $A['title'],
 				'creator_name'		=> $users_names[$A['author_id']],
@@ -141,7 +141,7 @@ class yf_forum_announce {
 			$items .= tpl()->parse('forum'.'/user_cp/announces_list_item', $replace2);
 		}
 		$replace = array(
-			'form_action'	=> './?object='.'forum'.'&action='.$_GET['action']._add_get(array('page')),
+			'form_action'	=> './?object=forum&action='.$_GET['action']._add_get(array('page')),
 			'items'			=> $items,
 		);
 		return tpl()->parse('forum'.'/user_cp/announces_list_main', $replace);
@@ -167,10 +167,10 @@ class yf_forum_announce {
 				'active'	=> intval($_POST['announce_active']),
 			));
 			cache_del('forum_announces');
-			return js_redirect('./?object='.'forum'.'&action=edit_announces'._add_get(array('page')));
+			return js_redirect('./?object=forum&action=edit_announces'._add_get(array('page')));
 		}
 		$replace = array(
-			'form_action'		=> './?object='.'forum'.'&action='.$_GET['action']._add_get(array('page')),
+			'form_action'		=> './?object=forum&action='.$_GET['action']._add_get(array('page')),
 			'announce_title'	=> '',
 			'announce_start'	=> '',
 			'announce_end'		=> '',
@@ -203,7 +203,7 @@ class yf_forum_announce {
 				'active'	=> intval($_POST['announce_active']),
 			)), 'id='.intval($_GET['id']));
 			cache_del('forum_announces');
-			return js_redirect('./?object='.'forum'.'&action=edit_announces'._add_get(array('page')));
+			return js_redirect('./?object=forum&action=edit_announces'._add_get(array('page')));
 		}
 		$announce_info = db()->query_fetch('SELECT * FROM '.db('forum_announce').' WHERE id='.$_GET['id'].' LIMIT 1');
 		$forum_selected = array();
@@ -214,7 +214,7 @@ class yf_forum_announce {
 			}
 		}
 		$replace = array(
-			'form_action'		=> './?object='.'forum'.'&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
+			'form_action'		=> './?object=forum&action='.$_GET['action'].'&id='.$_GET['id']._add_get(array('page')),
 			'announce_id'		=> $announce_info['id'],
 			'announce_title'	=> $announce_info['title'],
 			'announce_start'	=> $announce_info['start_time'] ? date('Y-m-d', $announce_info['start_time']) : '',
@@ -234,7 +234,7 @@ class yf_forum_announce {
 			db()->query('DELETE FROM '.db('forum_announce').' WHERE id='.intval($_GET['id']));
 		}
 		cache_del('forum_announces');
-		return js_redirect('./?object='.'forum'.'&action=edit_announces'._add_get(array('page')));
+		return js_redirect('./?object=forum&action=edit_announces'._add_get(array('page')));
 	}
 	
 	/**

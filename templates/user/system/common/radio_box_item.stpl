@@ -1,4 +1,4 @@
 <label class="radio{if(horizontal eq 1)} radio-horizontal{/if}">
-	<input type="radio" name="{name}" value="{value}" {add_str} {selected}>
+	<input type="radio" name="{name}" value="{value}" id="{id}" {add_str} {selected}>
 	{label}{divider}
 </label>

@@ -37,10 +37,11 @@ class yf_manage_currencies {
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_update_if_ok('currencies', array('name','sign','active'), 'id="'._es($a['id']).'"', array('on_after_update' => function() {
+			->db_update_if_ok('currencies', array('name','sign','active'), 'id="'._es($a['id']).'"')
+			->on_after_update(function() {
 				cache_del(array('currencies'));
 				common()->admin_wall_add(array('icon updated: '.$_POST['name'].'', $a['id']));
-			}))
+			})
 			->text('name')
 			->text('sign')
 			->active_box()
@@ -53,10 +54,11 @@ class yf_manage_currencies {
 		$a = $_POST;
 		return form($a)
 			->validate(array('name' => 'trim|required|alpha-dash'))
-			->db_insert_if_ok('currencies', array('name','id','sign','active'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('currencies', array('name','id','sign','active'), array())
+			->on_after_update(function() {
 				cache_del(array('currencies'));
 				common()->admin_wall_add(array('icon added: '.$_POST['name'].'', db()->insert_id()));
-			}))
+			})
 			->text('id')
 			->text('name')
 			->text('sign')

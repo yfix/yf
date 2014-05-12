@@ -49,8 +49,8 @@ $data = array (
 		),
 		'active' => 
 		array (
-			'type' => 'int',
-			'length' => '11',
+			'type' => 'tinyint',
+			'length' => '1',
 			'attrib' => NULL,
 			'not_null' => 1,
 			'default' => '1',

@@ -33,13 +33,13 @@ class yf_forum_help {
 			$Q = db()->query('SELECT * FROM '.db('faq').' ORDER BY title ASC');
 			while ($A = db()->fetch_assoc($Q)) {
 				$items[$A['id']] = array(
-					'topic_link'	=> './?object='.'forum'.'&action='.$_GET['action'].'&id='.$A['id'],
+					'topic_link'	=> './?object=forum&action='.$_GET['action'].'&id='.$A['id'],
 					'topic_name'	=> $A['title'],
 					'desc'			=> $A['description'],
 				);
 			}
 			$replace = array(
-				'form_action'	=> './?object='.'forum'.'&action='.$_GET['action']._add_get(array('page')),
+				'form_action'	=> './?object=forum&action='.$_GET['action']._add_get(array('page')),
 				'items'			=> $items,
 			);
 			$body = tpl()->parse('forum'.'/help_main', $replace);

@@ -20,6 +20,15 @@ $data = array (
 			'default' => '',
 			'auto_inc' => 0,
 		),
+		'active' => 
+		array (
+			'type' => 'tinyint',
+			'length' => '1',
+			'attrib' => NULL,
+			'not_null' => 1,
+			'default' => '1',
+			'auto_inc' => 0,
+		),
 		'icon' => 
 		array (
 			'type' => 'varchar',

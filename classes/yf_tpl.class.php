@@ -266,7 +266,12 @@ class yf_tpl {
 				conf('inline_js_edit', true);
 			}
 			if (!$skip_prefetch) {
-				$this->prefetch_center();
+				if (main()->CONSOLE_MODE) {
+					// Skip security checks for console mode
+					_class('core_blocks')->tasks(false);
+				} else {
+					_class('core_blocks')->prefetch_center();
+				}
 			}
 		}
 		if (!main()->NO_GRAPHICS) {
@@ -346,17 +351,6 @@ class yf_tpl {
 		if ($this->EXIT_AFTER_ECHO) {
 			exit();
 		}
-	}
-
-	/**
-	* Try to run center block module/method if allowed
-	*/
-	function prefetch_center ($CHECK_IF_ALLOWED = false) {
-		// Skip security checks for console mode
-		if (main()->CONSOLE_MODE) {
-			return main()->tasks($CHECK_IF_ALLOWED);
-		}
-		return _class('graphics')->prefetch_center($CHECK_IF_ALLOWED);
 	}
 
 	/**

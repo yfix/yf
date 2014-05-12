@@ -34,10 +34,11 @@ class yf_manage_servers {
 		$a = $_POST ? $a + $_POST : $a;
 		return form($a)
 			->validate(array('ip' => 'trim|required|valid_ip'))
-			->db_update_if_ok('core_servers', array('ip','role','name','hostname','comment'), 'id='.$a['id'], array('on_after_update' => function() {
+			->db_update_if_ok('core_servers', array('ip','role','name','hostname','comment'), 'id='.$a['id'])
+			->on_after_update(function() {
 				cache_del(array('servers','server_roles'));
 				common()->admin_wall_add(array('server updated: '.$_POST['ip'].'', $a['id']));
-			}))
+			})
 			->text('ip')
 			->text('role')
 			->text('name')
@@ -53,10 +54,11 @@ class yf_manage_servers {
 		$a = $_POST;
 		return form($a)
 			->validate(array('ip' => 'trim|required|valid_ip|is_unique[core_servers.ip]'))
-			->db_insert_if_ok('core_servers', array('ip','role','name','hostname','comment'), array(), array('on_after_update' => function() {
+			->db_insert_if_ok('core_servers', array('ip','role','name','hostname','comment'), array())
+			->on_after_update(function() {
 				cache_del(array('servers','server_roles'));
 				common()->admin_wall_add(array('server added: '.$_POST['ip'].'', db()->insert_id()));
-			}))
+			})
 			->text('ip')
 			->text('role')
 			->text('name')
