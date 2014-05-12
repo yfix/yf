@@ -156,7 +156,7 @@ class yf_locale_editor {
 		}
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
-// TODO: replace this with _class('html_controls')->list_box()
+// TODO: replace this with _class('html')->list_box()
 			'langs_box'		=> $this->_box('lang_code',	-1),
 			'back_link'		=> './?object='.$_GET['object'],
 			'error_message'	=> _e(),
