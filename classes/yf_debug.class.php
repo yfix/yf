@@ -162,9 +162,10 @@ class yf_debug {
 		$data['yf'] = array(
 			'MAIN_TYPE'			=> MAIN_TYPE,
 			'LANG'				=> conf('language'),
-			'DEBUG_MODE'		=> DEBUG_MODE,
+			'DEBUG_MODE'		=> (int)DEBUG_MODE,
 			'DEV_MODE'			=> (int)conf('DEV_MODE'),
 			'REWRITE_MODE'		=> (int)tpl()->REWRITE_MODE,
+			'DEBUG_CONSOLE_POPUP'=> (int)conf('DEBUG_CONSOLE_POPUP'),
 			'CACHE_USE'			=> (int)((main()->USE_SYSTEM_CACHE || conf('USE_CACHE')) && !cache()->NO_CACHE),
 			'CACHE_NO_CACHE'	=> (int)cache()->NO_CACHE,
 			'CACHE_DRIVER'		=> cache()->DRIVER,
