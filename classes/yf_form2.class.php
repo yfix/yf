@@ -648,6 +648,28 @@ class yf_form2 {
 	}
 
 	/**
+	*/
+	function _prepare_id(&$extra) {
+		return $extra['id'] ?: $extra['name'];
+	}
+
+	/**
+	*/
+	function _prepare_value(&$extra, &$replace, &$params) {
+		$name = $extra['name']
+		$value = isset($extra['value']) ? $extra['value'] : $replace[$name];
+		// Compatibility with filter
+		if (!strlen($value)) {
+			if (isset($extra['selected'])) {
+				$value = $extra['selected'];
+			} elseif (isset($params['selected'])) {
+				$value = $params['selected'][$name];
+			}
+		}
+		return $value;
+	}
+
+	/**
 	* General input
 	*/
 	function input($name, $desc = '', $extra = array(), $replace = array()) {
@@ -659,17 +681,9 @@ class yf_form2 {
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $_this) {
 			$extra['errors'] = common()->_get_error_messages();
-			$extra['id'] = $extra['id'] ?: $extra['name'];
+			$extra['id'] = $_this->_prepare_id($extra);
 			$extra['placeholder'] = t($extra['placeholder'] ?: $extra['desc']);
-			$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$extra['name']];
-			// Compatibility with filter
-			if (!strlen($extra['value'])) {
-				if (isset($extra['selected'])) {
-					$extra['value'] = $extra['selected'];
-				} elseif (isset($_this->_params['selected'])) {
-					$extra['value'] = $_this->_params['selected'][$extra['name']];
-				}
-			}
+			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
 			$extra['type'] = $extra['type'] ?: 'text';
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
@@ -703,17 +717,9 @@ class yf_form2 {
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function($extra, $r, $_this) {
 			$extra['errors'] = common()->_get_error_messages();
-			$extra['id'] = $extra['id'] ? $extra['id'] : $extra['name'];
+			$extra['id'] = $_this->_prepare_id($extra);
 			$extra['placeholder'] = t(isset($extra['placeholder']) ? $extra['placeholder'] : $extra['desc']);
-			$value = isset($extra['value']) ? $extra['value'] : $r[$extra['name']];
-			// Compatibility with filter
-			if (!strlen($value)) {
-				if (isset($extra['selected'])) {
-					$value = $extra['selected'];
-				} elseif (isset($_this->_params['selected'])) {
-					$value = $_this->_params['selected'][$extra['name']];
-				}
-			}
+			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
@@ -723,7 +729,7 @@ class yf_form2 {
 			}
 			$extra = $_this->_input_assign_params_from_validate($extra);
 			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required');
-			return $_this->_row_html('<textarea'._attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($value) : $value).'</textarea>', $extra, $r);
+			return $_this->_row_html('<textarea'._attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -767,7 +773,7 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $_this) {
-			$extra['id'] = $extra['id'] ? $extra['id'] : $extra['name'];
+			$extra['id'] = $_this->_prepare_id($extra);
 			$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$extra['name']];
 			$extra['type'] = 'hidden';
 
@@ -1121,7 +1127,7 @@ class yf_form2 {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
-			$extra['id'] = $extra['name'];
+			$extra['id'] = $_this->_prepare_id($extra);
 			if (!isset($extra['horizontal'])) {
 				$extra['horizontal'] = true;
 			}
