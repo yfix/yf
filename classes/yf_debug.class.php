@@ -109,7 +109,7 @@ class yf_debug {
 #				<a href="javascript:void(0)" data-hidden-toggle="debug-timings"><small>D&nbsp;'.$debug_time.'</small></a></span>
 #				<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>
 		);
-		$body[] = '<style>#debug_console .nav li.tab_info_compact a { padding: 2px 5px; line-height:normal; }</style>';
+		$body[] = '<style type="text/css" class="yf_core">#debug_console .nav li.tab_info_compact a { padding: 2px 5px; line-height:normal; }</style>';
 		foreach ((array)$debug_contents as $name => $content) {
 			if (empty($content)) {
 				continue;
@@ -162,14 +162,15 @@ class yf_debug {
 		$data['yf'] = array(
 			'MAIN_TYPE'			=> MAIN_TYPE,
 			'LANG'				=> conf('language'),
-			'DEBUG_MODE'		=> DEBUG_MODE,
+			'DEBUG_MODE'		=> (int)DEBUG_MODE,
 			'DEV_MODE'			=> (int)conf('DEV_MODE'),
 			'REWRITE_MODE'		=> (int)tpl()->REWRITE_MODE,
+			'DEBUG_CONSOLE_POPUP'=> (int)conf('DEBUG_CONSOLE_POPUP'),
 			'CACHE_USE'			=> (int)((main()->USE_SYSTEM_CACHE || conf('USE_CACHE')) && !cache()->NO_CACHE),
 			'CACHE_NO_CACHE'	=> (int)cache()->NO_CACHE,
 			'CACHE_DRIVER'		=> cache()->DRIVER,
 			'CACHE_NS'			=> cache()->CACHE_NS,
-			'CACHE_TTL'			=> (int)cache()->FILES_TTL,
+			'CACHE_TTL'			=> (int)cache()->TTL,
 			'SITE_PATH'			=> SITE_PATH,
 			'PROJECT_PATH'		=> PROJECT_PATH,
 			'YF_PATH'			=> YF_PATH,

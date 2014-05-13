@@ -240,6 +240,7 @@ class yf_cache {
 					'name_real'	=> $key_name_ns,
 					'data'		=> $data,
 					'driver'	=> $this->DRIVER,
+					'ttl'		=> $ttl,
 					'time'		=> round(microtime(true) - $time_start, 5),
 					'trace'		=> main()->trace_string(),
 				));

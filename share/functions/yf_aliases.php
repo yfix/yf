@@ -68,7 +68,7 @@ if (!function_exists('cache')) {
 	function cache($silent = false) { return $GLOBALS['cache'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
 }
 if (!function_exists('cache_set')) {
-	function cache_set($name, $data, $ttl = 3600) { return cache()->set($name, $data, $ttl); }
+	function cache_set($name, $data, $ttl = 0) { return cache()->set($name, $data, $ttl); }
 }
 if (!function_exists('cache_get')) {
 	function cache_get($name) { return cache()->get($name); }

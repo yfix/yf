@@ -1428,7 +1428,7 @@ class yf_table2 {
 			if ($extra['propose_url_from'] && !strlen($value)) {
 				$value = common()->_propose_url_from_name($row[$extra['propose_url_from']]);
 			}
-			return $padding. _class('html_controls')->input(array(
+			return $padding. _class('html')->input(array(
 				'id'	=> 'input_'.$params['name'].'_'.$row['id'],
 				'name'	=> $params['name'].'['.$row['id'].']',
 				'desc'	=> $params['name'],
@@ -1485,7 +1485,7 @@ class yf_table2 {
 				$extra['name'] .= '['.$field.']';
 			}
 			$extra['id'] = 'checkbox_'.$field;
-			return _class('html_controls')->check_box($extra);
+			return _class('html')->check_box($extra);
 		}, $extra);
 	}
 
@@ -1505,7 +1505,7 @@ class yf_table2 {
 				$extra['name'] .= '['.$field.']';
 			}
 			$extra['id'] = 'radiobox_'.$field;
-			return _class('html_controls')->radio_box($extra);
+			return _class('html')->radio_box($extra);
 		}, $extra);
 	}
 
@@ -1525,7 +1525,7 @@ class yf_table2 {
 				$extra['name'] .= '['.$field.']';
 			}
 			$extra['id'] = 'selectbox_'.$field;
-			return _class('html_controls')->select_box($extra);
+			return _class('html')->select_box($extra);
 		}, $extra);
 	}
 
