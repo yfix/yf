@@ -9,22 +9,39 @@
 */
 class yf_core_events {
 
-	/**
-	*/
-	function event_subscribe($name, $func, $params = array()) {
 // TODO: events system
+
+	/**
+	* Listen to fired events by name, second argument is closure function
+	*/
+	function listen($name, $func, $params = array()) {
+// TODO
+	}
+
+	/**
+	* Fire named event
+	*/
+	function fire($name, $extra = array()) {
+// TODO
+	}
+
+	/**
+	* Put item to queue, instead of firing it in this process
+	*/
+	function queue($name, $func, $params = array()) {
+// TODO
+	}
+
+	/**
+	* Flush queued event
+	*/
+	function flush($name, $extra = array()) {
+// TODO
 	}
 
 	/**
 	*/
-	function event_fire($name, $extra = array()) {
-// TODO: events system
-	}
-
-	/**
-	*/
-	function event_find_hooks() {
+	function _find_hooks() {
 // TODO: will search through active modules for _event_hook() methods, where class/method can subscribe to any events
-// TODO: events system
 	}
 }
