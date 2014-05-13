@@ -882,7 +882,14 @@ class yf_form2 {
 	/**
 	*/
 	function float($name, $desc = '', $extra = array(), $replace = array()) {
- // TODO: float() input type
+		return $this->decimal($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function decimal($name, $desc = '', $extra = array(), $replace = array()) {
+		$extra['step'] = $extra['step'] ?: '0.01';
+		return $this->number($name, $desc, $extra, $replace);
 	}
 
 	/**
@@ -892,12 +899,18 @@ class yf_form2 {
 			$extra = (array)$extra + $desc;
 			$desc = '';
 		}
-		$extra['type'] = 'text';
 		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : ($this->_params['currency'] ?: '$');
 		$extra['append'] = isset($extra['append']) ? $extra['append'] : ''; // '.00';
 		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
 		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '8';
-		return $this->input($name, $desc, $extra, $replace);
+		return $this->decimal($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function price($name, $desc = '', $extra = array(), $replace = array()) {
+		$extra['min'] = $extra['min'] ?: '0';
+		return $this->money($name, $desc, $extra, $replace);
 	}
 
 	/**
