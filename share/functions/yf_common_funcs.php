@@ -312,19 +312,27 @@ if (!function_exists('_htmlchars')) {
 // TODO: unit tests
 // Build string of html attributes, used by high-level html generators like form, table, html
 if (!function_exists('_attrs')) {
-	function _attrs($extra = array(), $names = array()) {
+	function _attrs($extra, $names) {
 		$body = array();
-		// Try to find and allow all data-* and ng-* attributes automatically
-		foreach ((array)$extra as $k => $v) {
-			if (strpos($k, 'data-') === 0 || strpos($k, 'ng-') === 0) {
-				$names[] = $k;
+		$a = array();
+		foreach ((array)$names as $name) {
+			if (strlen($name) && isset($extra[$name])) {
+				$a[$name] = $extra[$name];
 			}
 		}
-		foreach ((array)$names as $name) {
-			if (!$name || !isset($extra[$name])) {
-				continue;
+		// Try to find and allow all data-* and ng-* attributes automatically
+		foreach ((array)$extra as $name => $val) {
+			if (strpos($name, 'data-') === 0 || strpos($name, 'ng-') === 0) {
+				$a[$name] = $val;
 			}
-			$val = $extra[$name];
+		}
+		// Custom html attributes forced with sub-array "attr"
+		if (is_array($extra['attr'])) {
+			foreach ($extra['attr'] as $name => $val) {
+				$a[$name] = $extra[$name];
+			}
+		}
+		foreach ($a as $name => $val) {
 			if (is_array($val)) {
 				$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
 			} else {
@@ -332,22 +340,6 @@ if (!function_exists('_attrs')) {
 					continue;
 				}
 				$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
-			}
-		}
-		// Custom html attributes forced with sub-array "attr"
-		if (is_array($extra['attr'])) {
-			foreach ((array)$extra['attr'] as $name => $val) {
-				if (!$name || !isset($val)) {
-					continue;
-				}
-				if (is_array($val)) {
-					$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
-				} else {
-					if (!strlen($val)) {
-						continue;
-					}
-					$body[$name] = _htmlchars($name).'="'._htmlchars($val).'"';
-				}
 			}
 		}
 		return $body ? ' '.implode(' ', $body) : '';
