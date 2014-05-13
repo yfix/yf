@@ -15,7 +15,8 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 	public $_connected_ok = false;
 	/** @var mixed @conf_skip */
 	public $_memcache_new_extension = null;
-// TODO: create setting which extension to use (memcache|memcached)
+	/** @var mixed Will force wich extension to use (old "memcache" or new "memcached") */
+	public $FORCE_EXT = '';
 
 	/**
 	* Catch missing method call
@@ -41,9 +42,13 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 			$this->DEFAULT['port'] = $conf_mc_port;
 		}
 		$this->_connected_ok = false;
-		if (class_exists('Memcached')) {
+
+		$ext_old_allowed = $this->FORCE_EXT ? in_array($this->FORCE_EXT, array('old','memcache')) : true;
+		$ext_new_allowed = $this->FORCE_EXT ? in_array($this->FORCE_EXT, array('new','memcached')) : true;
+
+		if ($ext_new_allowed && class_exists('Memcached')) {
 			$this->_connection = new Memcached;
-		} elseif (class_exists('Memcache')) {
+		} elseif ($ext_old_allowed && class_exists('Memcache')) {
 			$this->_connection = new Memcache;
 		}
 		if (is_object($this->_connection)) {
@@ -58,7 +63,6 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 				}
 				$server['port'] = isset($server['port']) ? (int)$server['port'] : 11211;
 				$server['persistent'] = isset($server['persistent']) ? (bool) $server['persistent'] : true;
-#				if ($this->_connection->addServer($server['host'], $server['port'], $server['persistent'])) {
 				if ($this->_connection->addServer($server['host'], $server['port'], $server['persistent'])) {
 					$failed = false;
 					break;
@@ -159,7 +163,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 			}
 			return $result;
 		}
-// TODO: maybe use this one?: http://ua1.php.net/manual/en/memcached.getmultibykey.php
+		// maybe use this one?: http://ua1.php.net/manual/en/memcached.getmultibykey.php
 		return $this->_connection->getMulti($names);
 	}
 
@@ -175,7 +179,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 			}
 			return $result;
 		}
-// TODO: maybe use this one?: http://ua1.php.net/manual/en/memcached.setmultibykey.php
+		// maybe use this one?: http://ua1.php.net/manual/en/memcached.setmultibykey.php
 		return $this->_connection->setMulti($data, $ttl);
 	}
 
@@ -185,14 +189,14 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-// WTF??? deleteMulti in Memcached extension exists only starting from version 2.0 in PECL
-#		if (!$this->_memcache_new_extension) {
+		// PHPWTF!! deleteMulti in Memcached extension exists only starting from version 2.0 in PECL
+		if (!method_exists($this->_connection, 'deleteMulti')) {
 			foreach ((array)$names as $name) {
 				$result[$name] = $res;
 			}
 			return $result;
-#		}
-// TODO: maybe use this one?: http://ua1.php.net/manual/en/memcached.deletemultibykey.php
-#		return $this->_connection->deleteMulti($names);
+		}
+		// maybe use this one?: http://ua1.php.net/manual/en/memcached.deletemultibykey.php
+		return $this->_connection->deleteMulti($names);
 	}
 }
