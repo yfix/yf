@@ -656,7 +656,7 @@ class yf_form2 {
 	/**
 	*/
 	function _prepare_value(&$extra, &$replace, &$params) {
-		$name = $extra['name']
+		$name = $extra['name'];
 		$value = isset($extra['value']) ? $extra['value'] : $replace[$name];
 		// Compatibility with filter
 		if (!strlen($value)) {
