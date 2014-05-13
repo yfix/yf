@@ -47,13 +47,12 @@ class yf_manage_shop_filter{
 					$order_fields[$v] = $v;
 				};
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
-//					->number('id')
 					->container( _class('manage_shop_filter')->_product_search_widget('id', $_SESSION[$filter_name]['id'], true), 'Id')
 					->text('name')
 					->text('articul')
 					->row_start(array('desc' => 'price'))
-						->number('price')
-						->number('price__and')
+						->price('price', array('prepend' => ''))
+						->price('price__and', array('prepend' => ''))
 					->row_end()
 					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
 					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
@@ -73,7 +72,7 @@ class yf_manage_shop_filter{
 					$order_fields[$v] = $v;
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
-					->number('id', array('class' => 'span1'))
+					->number('id', array('class' => 'span1', 'min' => 0))
 					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
 					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
 					->text('name')
@@ -91,8 +90,8 @@ class yf_manage_shop_filter{
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->row_start(array('desc' => 'id'))
-						->number('id')
-						->number('id__and')
+						->number('id', array('min' => 0))
+						->number('id__and', array('min' => 0))
 					->row_end()
 					->datetime_select('date',      null, array( 'with_time' => 1 ) )
 					->datetime_select('date__and', null, array( 'with_time' => 1 ) )
@@ -101,8 +100,8 @@ class yf_manage_shop_filter{
 					->text('email')
 					->number('user_id')
 					->row_start(array('desc' => 'total_sum'))
-						->number('total_sum')
-						->number('total_sum__and')
+						->price('total_sum', array('prepend' => ''))
+						->price('total_sum__and', array('prepend' => ''))
 					->row_end()
 					->select_box('status', common()->get_static_conf('order_status'), array('show_text' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
@@ -160,7 +159,7 @@ class yf_manage_shop_filter{
 					$order_fields[$v] = $v;
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
-					->number('id', array('class' => 'span1'))
+					->number('id', array('class' => 'span1', 'min' => 0))
 					->container(_class('manage_shop_filter')->_product_search_widget('product_id',$_SESSION[$filter_name]['product_id']),'product_id')
 					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
 					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
