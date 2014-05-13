@@ -341,7 +341,7 @@ class yf_cats {
 			}
 			$sub_children = array();
 			if ($get_sub_children) {
-				$sub_children = $this->$cur_func_name($cur_item_info['id'], $cat_items, $get_sub_children);
+				$sub_children = $this->$cur_func_name($cur_item_info['id'], $cat_items, $get_sub_children, $return_array);
 			}
 			if ($return_array) {
 				$children_ids[$cur_item_info['id']] = $cur_item_info['id'];
