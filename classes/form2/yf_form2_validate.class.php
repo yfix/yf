@@ -6,6 +6,10 @@ class yf_form2_validate {
 	*/
 	function _input_assign_params_from_validate($extra = array(), $__this) {
 		$name = $extra['name'];
+		$is_html_array = (false !== strpos($name, '['));
+		if ($is_html_array) {
+			$name = str_replace(array('[',']'), array('.',''), trim($name,']['));
+		}
 		$vr = &$__this->_validate_rules_names[$name];
 /*
 // TODO: move this into _class('validate')
