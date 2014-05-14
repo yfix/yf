@@ -5,7 +5,8 @@ class yf_form2_validate {
 	/**
 	*/
 	function _input_assign_params_from_validate($extra = array(), $__this) {
-		$vr = &$__this->_validate_rules_names[$extra['name']];
+		$name = $extra['name'];
+		$vr = &$__this->_validate_rules_names[$name];
 /*
 // TODO: move this into _class('validate')
 		if ($vr['min_length']) {
