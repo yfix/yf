@@ -612,45 +612,15 @@ class yf_form2 {
 	}
 
 	/**
-	* Bootstrap-compatible html wrapper for any custom content inside.
-	* Can be used for inline rich editor editing with ckeditor, enable with: $extra = array('ckeditor' => true)
 	*/
-	function container($text, $desc = '', $extra = array(), $replace = array()) {
-		if (is_array($desc)) {
-			$extra = (array)$extra + $desc;
-			$desc = '';
-		}
-		$text = strval($text);
-		$extra['text'] = $text;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: '');
-
-		$func = function($extra, $r, $_this) {
-			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-			$extra['contenteditable'] = isset($extra['ckeditor']) ? 'true' : 'false';
-			$extra['id'] = $extra['id'] ?: 'content_editable';
-			$extra['name'] = $name;
-			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
-
-			$attrs_names = array('id','contenteditable','style','class','title');
-			return $_this->_row_html(isset($extra['ckeditor']) ? '<div'._attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
-		};
-		if ($this->_chained_mode) {
-			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $this;
-		}
-		return $func((array)$extra + (array)$this->_extra, (array)$replace + (array)$this->_replace, $this);
+	function _prepare_id(&$extra, $default = '') {
+		return $extra['id'] ?: ($extra['name'] ?: $default);
 	}
 
 	/**
 	*/
-	function _input_assign_params_from_validate($extra = array()) {
-		return _class('form2_validate', 'classes/form2/')->_input_assign_params_from_validate($extra, $this);
-	}
-
-	/**
-	*/
-	function _prepare_id(&$extra) {
-		return $extra['id'] ?: $extra['name'];
+	function _prepare_desc(&$extra, $input = '') {
+		return $extra['desc'] ?: ($input ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 	}
 
 	/**
@@ -670,6 +640,47 @@ class yf_form2 {
 	}
 
 	/**
+	*/
+	function _prepare_selected($name, $extra, $r) {
+		$selected = $r[$name];
+		if (isset($extra['selected'])) {
+			$selected = $extra['selected'];
+		} elseif (isset($this->_params['selected'])) {
+			$selected = $this->_params['selected'][$name];
+		}
+		return $selected;
+	}
+
+	/**
+	* Bootstrap-compatible html wrapper for any custom content inside.
+	* Can be used for inline rich editor editing with ckeditor, enable with: $extra = array('ckeditor' => true)
+	*/
+	function container($text, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
+		$text = strval($text);
+		$extra['text'] = $text;
+		$extra['desc'] = $this->_prepare_desc($extra, $desc);
+
+		$func = function($extra, $r, $_this) {
+			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
+			$extra['contenteditable'] = isset($extra['ckeditor']) ? 'true' : 'false';
+			$extra['id'] = $_this->_prepare_id($extra, 'content_editable');
+			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
+
+			$attrs_names = array('id','contenteditable','style','class','title');
+			return $_this->_row_html(isset($extra['ckeditor']) ? '<div'._attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func((array)$extra + (array)$this->_extra, (array)$replace + (array)$this->_replace, $this);
+	}
+
+	/**
 	* General input
 	*/
 	function input($name, $desc = '', $extra = array(), $replace = array()) {
@@ -678,7 +689,7 @@ class yf_form2 {
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['id'] = $_this->_prepare_id($extra);
@@ -714,7 +725,7 @@ class yf_form2 {
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['id'] = $_this->_prepare_id($extra);
@@ -1115,7 +1126,7 @@ class yf_form2 {
 			$extra = array();
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 			if (!$extra['items']) {
 				if (!isset($_this->_pair_active)) {
@@ -1271,7 +1282,7 @@ class yf_form2 {
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
@@ -1379,28 +1390,16 @@ class yf_form2 {
 
 	/**
 	*/
-	function _get_selected($name, $extra, $r) {
-		$selected = $r[$name];
-		if (isset($extra['selected'])) {
-			$selected = $extra['selected'];
-		} elseif (isset($this->_params['selected'])) {
-			$selected = $this->_params['selected'][$name];
-		}
-		return $selected;
-	}
-
-	/**
-	*/
 	function _html_control($name, $values, $extra = array(), $replace = array(), $func_html_control = '') {
 		$extra['name'] = $extra['name'] ?: $name;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$extra['func_html_control'] = $extra['func_html_control'] ?: $func_html_control;
 		$func = function($extra, $r, $_this) {
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
-			$extra['selected'] = $_this->_get_selected($extra['name'], $extra, $r);
+			$extra['selected'] = $_this->_prepare_selected($extra['name'], $extra, $r);
 			$extra['id'] = $extra['name'];
 
 			$func = $extra['func_html_control'];
@@ -1428,14 +1427,14 @@ class yf_form2 {
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			$extra['selected'] = $_this->_get_selected($extra['name'], $extra, $r);
-			$extra['id'] = $extra['name'];
+			$extra['selected'] = $_this->_prepare_selected($extra['name'], $extra, $r);
+			$extra['id'] = $_this->_prepare_id($extra);
 
 			return $_this->_row_html($r[$extra['name']], $extra, $r);
 		};
@@ -1715,11 +1714,11 @@ class yf_form2 {
 			$extra = array();
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'captcha');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 			$extra['errors'] = common()->_get_error_messages();
 			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
-			$extra['id'] = $extra['name'];
+			$extra['id'] = $_this->_prepare_id($extra);
 			$extra['required'] = true;
 			$extra['value'] = $r['captcha'];
 			$extra['input_attrs'] = _attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value'));
@@ -1756,7 +1755,7 @@ class yf_form2 {
 			}
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', ' ', $extra['name']));
+		$extra['desc'] = $this->_prepare_desc($extra);
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
 			return $this;
@@ -2039,6 +2038,12 @@ class yf_form2 {
 	function _validate_rules_array_from_raw($raw = '') {
 		$func = __FUNCTION__;
 		return _class('validate')->$func($raw);
+	}
+
+	/**
+	*/
+	function _input_assign_params_from_validate($extra = array()) {
+		return _class('form2_validate', 'classes/form2/')->_input_assign_params_from_validate($extra, $this);
 	}
 
 	/**
