@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__FILE__).'/yf_aliases.php';
+require_once dirname(__FILE__).'/yf_array_funcs.php';
 
 if (!function_exists('show_text')) {
 	function show_text ($text = '') { return _class('utils')->show_text($text); }
