@@ -113,7 +113,7 @@ class yf_form2_tbl_funcs {
 	function tbl_link_active($name = '', $link = '', $extra = array(), $replace = array(), $__this) {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
 		$extra['link'] = $extra['link'] ?: $link;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 			$link = $extra['link'];
 			if (!$link) {

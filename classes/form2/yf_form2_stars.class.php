@@ -13,7 +13,7 @@ class yf_form2_stars {
 			$extra = array();
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 			$extra['id'] = $extra['name'];
 			$color_ok = $extra['color_ok'] ?: 'yellow';
@@ -56,7 +56,7 @@ class yf_form2_stars {
 			$extra = array();
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 			$max = $extra['max'] ?: 5;
 			$stars = $extra['stars'] ?: 5;

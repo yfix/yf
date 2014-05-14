@@ -15,9 +15,9 @@ class yf_form2_datetime {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
+
 		$func = function($extra, $r, $__this) {
 			$format = $format_php = $placeholder = array();
 			$extra['no_time'] = $extra['with_time'] ? !$extra['with_time'] : $extra['no_time'];

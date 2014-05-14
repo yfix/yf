@@ -12,7 +12,7 @@ class yf_form2_file_uploader {
 		}
 		
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 
 			$replace = array(

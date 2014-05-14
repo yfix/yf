@@ -10,7 +10,7 @@ class yf_form2_ui_range {
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 // TODO: upgrade look and feel and connect $field__and for filter
 			$body = '
