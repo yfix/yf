@@ -17,6 +17,7 @@ class yf_form2_google_maps {
 		$extra['start_zoom'] = $extra['start_zoom'] ?: 5;		
 		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
+			$_this->_prepare_inline_error($extra);
 			// Compatibility with filter			
 			$start_lat = 49;
 			$start_lng = 32;

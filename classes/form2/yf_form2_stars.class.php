@@ -58,6 +58,7 @@ class yf_form2_stars {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'stars');
 		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
+			$_this->_prepare_inline_error($extra);
 			$max = $extra['max'] ?: 5;
 			$stars = $extra['stars'] ?: 5;
 			$class = $extra['class'] ?: 'star';

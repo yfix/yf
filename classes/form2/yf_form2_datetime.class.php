@@ -18,17 +18,17 @@ class yf_form2_datetime {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
 		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
 
-		$func = function($extra, $r, $__this) {
+		$func = function($extra, $r, $_this) {
 			$_this->_prepare_inline_error($extra);
 			$format = $format_php = $placeholder = array();
 			$extra['no_time'] = $extra['with_time'] ? !$extra['with_time'] : $extra['no_time'];
 			$extra['no_time'] = isset( $extra['no_time'] ) ? $extra['no_time'] : 1;
-			if ($extra['no_date']!=1) {
+			if ($extra['no_date'] != 1) {
 				$format_js[]      = 'DD.MM.YYYY';
 				$format_php[]  = 'd.m.Y';
 				$placeholder[] = 'ДД.ММ.ГГГГ';
 			}
-			if ($extra['no_time']!=1) {
+			if ($extra['no_time'] != 1) {
 				$format_js[]      = 'HH:mm';
 				$format_php[]  = 'H:i';
 				$placeholder[] = 'ЧЧ:ММ';
@@ -41,10 +41,10 @@ class yf_form2_datetime {
 			if (!strlen($extra['value'])) {
 				if (isset($extra['selected'])) {
 					$value = $extra['selected'];
-				} elseif (isset($__this->_params['selected'])) {
-					$value = $__this->_params['selected'][$extra['name']];
-				} elseif (isset($__this->_replace[$extra['name']])) {
-					$value = $__this->_replace[$extra['name']];
+				} elseif (isset($_this->_params['selected'])) {
+					$value = $_this->_params['selected'][$extra['name']];
+				} elseif (isset($_this->_replace[$extra['name']])) {
+					$value = $_this->_replace[$extra['name']];
 				}
 				$extra['value'] = empty( $value ) || $value == '0000-00-00 00:00:00' ? null : strtotime( $value );
 			}
@@ -81,7 +81,7 @@ $(function() {
 		.'
 	});
 });');
-			return $__this->_row_html($body, $extra, $r);
+			return $_this->_row_html($body, $extra, $r);
 		};
 		if ($__this->_chained_mode) {
 			$__this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
