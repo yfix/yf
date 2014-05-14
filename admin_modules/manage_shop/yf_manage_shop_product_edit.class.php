@@ -171,7 +171,7 @@ class yf_manage_shop_product_edit {
 			->price('price_promo')
 			->price('price_partner')
 			->price('price_raw')
-			->number('quantity')
+			->number('quantity', array('min' => 0))
 			->active_box('active')
 			->save_and_back()
 		->tab_end()
