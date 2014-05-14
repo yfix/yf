@@ -456,7 +456,7 @@ class yf_form2 {
 				$_this->row_end();
 			}
 			$_this->_stacked_mode_on = true;
-			$extra['errors'] = common()->_get_error_messages();
+			$_this->_prepare_inline_error($extra);
 			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
@@ -580,7 +580,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function _prepare_css_class($default_class = '', $value = '', $extra = array()) {
+	function _prepare_css_class($default_class = '', $value = '', &$extra) {
 		$css_class = $default_class;
 		if ($extra['badge']) {
 			$badge = is_array($extra['badge']) && isset($extra['badge'][$value]) ? $extra['badge'][$value] : $extra['badge'];
@@ -669,7 +669,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function _prepare_selected($name, $extra, $r) {
+	function _prepare_selected($name, &$extra, &$r) {
 		$selected = $r[$name];
 		if (isset($extra['selected'])) {
 			$selected = $extra['selected'];
@@ -677,6 +677,21 @@ class yf_form2 {
 			$selected = $this->_params['selected'][$name];
 		}
 		return $selected;
+	}
+
+	/**
+	*/
+	function _prepare_inline_error(&$extra, $name = '') {
+		$name = $name ?: $extra['name'];
+		$is_html_array = (false !== strpos($name, '['));
+		if ($is_html_array) {
+			$name_orig = $name;
+			$name = str_replace(array('[',']'), array('.',''), trim($name,']['));
+		}
+		$extra['errors'] = common()->_get_error_messages();
+		if (isset($extra['errors'][$name])) {
+			$extra['inline_help'] = $extra['errors'][$name];
+		}
 	}
 
 	/**
@@ -719,13 +734,12 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
-			$extra['errors'] = common()->_get_error_messages();
+			$_this->_prepare_inline_error($extra);
 			$extra['id'] = $_this->_prepare_id($extra);
 			$extra['placeholder'] = t($extra['placeholder'] ?: $extra['desc']);
 			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
 			$extra['type'] = $extra['type'] ?: 'text';
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['class'] = 'form-control'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			// Supported: mini, small, medium, large, xlarge, xxlarge
 			if ($extra['sizing']) {
@@ -755,12 +769,11 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
-			$extra['errors'] = common()->_get_error_messages();
+			$_this->_prepare_inline_error($extra);
 			$extra['id'] = $_this->_prepare_id($extra);
 			$extra['placeholder'] = t(isset($extra['placeholder']) ? $extra['placeholder'] : $extra['desc']);
 			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
 			$extra['class'] = 'ckeditor form-control'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			if ($_this->_params['no_label']) {
@@ -813,7 +826,7 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $_this) {
 			$extra['id'] = $_this->_prepare_id($extra);
-			$extra['value'] = isset($extra['value']) ? $extra['value'] : $r[$extra['name']];
+			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
 			$extra['type'] = 'hidden';
 
 			$attrs_names = array('type','id','name','value','data');
@@ -1156,6 +1169,7 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
+			$_this->_prepare_inline_error($extra);
 			if (!$extra['items']) {
 				if (!isset($_this->_pair_active)) {
 					$_this->_pair_active = main()->get_data('pair_active');
@@ -1163,8 +1177,6 @@ class yf_form2 {
 				$extra['items'] = $_this->_pair_active;
 			}
 			$extra['values'] = $extra['items'];
-			$extra['errors'] = common()->_get_error_messages();
-			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
 			$extra['id'] = $_this->_prepare_id($extra);
 			if (!isset($extra['horizontal'])) {
@@ -1220,7 +1232,7 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['value'] = isset($extra['value']) ? $extra['value'] : ($value ?: 'Save');
 		$func = function($extra, $r, $_this) {
-			$extra['errors'] = common()->_get_error_messages();
+			$_this->_prepare_inline_error($extra);
 			$extra['id'] = $extra['id'] ?: ($extra['name'] ?: strtolower($extra['value']));
 			$extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
 			if (preg_match('~^[a-z0-9_-]+$~ims', $extra['link_url'])) {
@@ -1228,7 +1240,6 @@ class yf_form2 {
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
 			$extra['class'] = $extra['class'] ?: 'btn btn-default btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
-			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['value'] = t($extra['value']);
 			$extra['desc'] = ''; // We do not need label here
 			$extra['type'] = 'submit';
@@ -1312,8 +1323,7 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
-			$extra['errors'] = common()->_get_error_messages();
-			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$_this->_prepare_inline_error($extra);
 			$extra['desc'] = !$extra['no_label'] && !$_this->_params['no_label'] ? $extra['desc'] : '';
 
 			$value = $r[$extra['name']] ?: $extra['value'];
@@ -1365,13 +1375,13 @@ class yf_form2 {
 	/**
 	*/
 	function user_info($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_info', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
 	*/
 	function admin_info($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_info', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
@@ -1424,9 +1434,8 @@ class yf_form2 {
 		$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$extra['func_html_control'] = $extra['func_html_control'] ?: $func_html_control;
 		$func = function($extra, $r, $_this) {
+			$_this->_prepare_inline_error($extra);
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-			$extra['errors'] = common()->_get_error_messages();
-			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['selected'] = $_this->_prepare_selected($extra['name'], $extra, $r);
 			$extra['id'] = $extra['name'];
 
@@ -1457,9 +1466,8 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
+			$_this->_prepare_inline_error($extra);
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-			$extra['errors'] = common()->_get_error_messages();
-			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 			$extra['selected'] = $_this->_prepare_selected($extra['name'], $extra, $r);
 			$extra['id'] = $_this->_prepare_id($extra);
@@ -1613,49 +1621,49 @@ class yf_form2 {
 	/**
 	*/
 	function country_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
 	*/
 	function region_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
 	*/
 	function city_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
 	*/
 	function currency_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
 	*/
 	function language_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
 	*/
 	function timezone_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
 	*/
 	function icon_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
 	*/
 	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
@@ -1675,7 +1683,7 @@ class yf_form2 {
 	/**
 	*/
 	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
@@ -1695,7 +1703,7 @@ class yf_form2 {
 	/**
 	*/
 	function location_select_box($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_rarely_used', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**
@@ -1744,8 +1752,7 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'captcha');
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
-			$extra['errors'] = common()->_get_error_messages();
-			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$_this->_prepare_inline_error($extra);
 			$extra['id'] = $_this->_prepare_id($extra);
 			$extra['required'] = true;
 			$extra['value'] = $r['captcha'];
@@ -1897,6 +1904,8 @@ class yf_form2 {
 			$form_id_field = $_this->_form_id_field;
 			// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
 			$data = (array)(!empty($post) ? $post : $_POST);
+			// Convert multi-dimensional arrays into single-dimensional array dot notation: array('k1' => array('k2' => 'v2'))  ==>  array('k1.k2' => 'v2')
+			$data = array_dot($data);
 			if (empty($data)) {
 				return $_this;
 			}
