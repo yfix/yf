@@ -17,7 +17,7 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 			_class('dir')->delete_dir('./core_cache/', $delete_start_dir = true);
 		}
 	}
-	public function _get_driver_name() {
+	public static function _get_driver_name() {
 		$called = strtolower(get_called_class());
 		if (false !== strpos($called, '_files')) {
 			return 'files';
