@@ -617,7 +617,8 @@ class yf_form2 {
 		$out = $extra['id'];
 		if (!$out) {
 			$out = $extra['name'];
-			if (false !== strpos($out, '[')) {
+			$is_html_array = (false !== strpos($out, '['));
+			if ($is_html_array) {
 				$out = str_replace(array('[',']'), array('_',''), trim($out,']['));
 			}
 		}
@@ -632,7 +633,8 @@ class yf_form2 {
 		!$out && $out = $input;
 		if (!$out) {
 			$out = ucfirst(str_replace('_', ' ', $extra['name']));
-			if (false !== strpos($out, '[')) {
+			$is_html_array = (false !== strpos($out, '['));
+			if ($is_html_array) {
 				$out = str_replace(array('[',']'), array('.',''), trim($out,']['));
 			}
 		}
@@ -643,14 +645,24 @@ class yf_form2 {
 	*/
 	function _prepare_value(&$extra, &$replace, &$params) {
 		$name = $extra['name'];
-		$value = isset($extra['value']) ? $extra['value'] : $replace[$name];
-		// Compatibility with filter
-		if (!strlen($value)) {
-			if (isset($extra['selected'])) {
-				$value = $extra['selected'];
-			} elseif (isset($params['selected'])) {
-				$value = $params['selected'][$name];
-			}
+		$is_html_array = (false !== strpos($name, '['));
+		if ($is_html_array) {
+			$name_dots = str_replace(array('[',']'), array('.',''), trim($name,']['));
+			$replace_dots = array_dot($replace);
+		}
+		$value = '';
+		if ($extra['value']) {
+			$value = $extra['value'];
+		} elseif ($replace[$name]) {
+			$value = $replace[$name];
+		} elseif ($is_html_array && $replace_dots[$name_dots]) {
+			$value = $replace_dots[$name_dots];
+		} elseif ($extra['selected']) {
+			$value = $extra['selected'];
+		} elseif ($params['selected'][$name]) {
+			$value = $params['selected'][$name];
+		} elseif ($is_html_array && $params['selected'][$name_dots]) {
+			$value = $params['selected'][$name_dots];
 		}
 		return $value;
 	}
