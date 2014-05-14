@@ -522,58 +522,6 @@ class yf_form2 {
 
 	/**
 	*/
-	function _prepare_custom_attr($attr = array()) {
-		$body = array();
-		foreach ((array)$attr as $k => $v) {
-			$body[] = _htmlchars($k).'="'._htmlchars($v).'"';
-		}
-		return implode(" ", $body);
-	}
-
-	/**
-	*/
-	function _show_tip($value = '', $extra = array(), $replace = array()) {
-		return _class('graphics')->_show_help_tip(array(
-			'tip_id'	=> $value,
-			'replace'	=> $replace,
-		));
-	}
-
-	/**
-	*/
-	function _prepare_css_class($default_class = '', $value = '', $extra = array()) {
-		$css_class = $default_class;
-		if ($extra['badge']) {
-			$badge = is_array($extra['badge']) && isset($extra['badge'][$value]) ? $extra['badge'][$value] : $extra['badge'];
-			if ($badge) {
-				$css_class = 'badge badge-'.$badge;
-			}
-		} elseif ($extra['label']) {
-			$label = is_array($extra['label']) && isset($extra['label'][$value]) ? $extra['label'][$value] : $extra['label'];
-			if ($label) {
-				$css_class = 'label label-'.$label;
-			}
-		} elseif ($extra['class']) {
-			$_css_class = is_array($extra['class']) && isset($extra['class'][$value]) ? $extra['class'][$value] : $extra['class'];
-			if ($_css_class) {
-				$css_class = $_css_class;
-			}
-		}
-		// Needed to not modify original class of element (sometimes complex), but just add css class there
-		if (isset($extra['class_add'])) {
-			$_css_class_add = is_array($extra['class_add']) && isset($extra['class_add'][$value]) ? $extra['class_add'][$value] : $extra['class_add'];
-			if ($_css_class_add) {
-				$css_class .= ' '.$_css_class_add;
-			}
-		}
-		if ($this->_params['big_labels']) {
-			$css_class .= ' labels-big';
-		}
-		return $css_class ? ' '.$css_class : '';
-	}
-
-	/**
-	*/
 	function _row_html($content, $extra = array(), $replace = array()) {
 		if (!strlen($content) && ($extra['hide_empty'] || $this->_params['hide_empty'])) {
 			return '';
@@ -613,14 +561,82 @@ class yf_form2 {
 
 	/**
 	*/
+	function _show_tip($value = '', $extra = array(), $replace = array()) {
+		return _class('graphics')->_show_help_tip(array(
+			'tip_id'	=> $value,
+			'replace'	=> $replace,
+		));
+	}
+
+	/**
+	*/
+	function _prepare_custom_attr($attr = array()) {
+		$body = array();
+		foreach ((array)$attr as $k => $v) {
+			$body[] = _htmlchars($k).'="'._htmlchars($v).'"';
+		}
+		return implode(" ", $body);
+	}
+
+	/**
+	*/
+	function _prepare_css_class($default_class = '', $value = '', $extra = array()) {
+		$css_class = $default_class;
+		if ($extra['badge']) {
+			$badge = is_array($extra['badge']) && isset($extra['badge'][$value]) ? $extra['badge'][$value] : $extra['badge'];
+			if ($badge) {
+				$css_class = 'badge badge-'.$badge;
+			}
+		} elseif ($extra['label']) {
+			$label = is_array($extra['label']) && isset($extra['label'][$value]) ? $extra['label'][$value] : $extra['label'];
+			if ($label) {
+				$css_class = 'label label-'.$label;
+			}
+		} elseif ($extra['class']) {
+			$_css_class = is_array($extra['class']) && isset($extra['class'][$value]) ? $extra['class'][$value] : $extra['class'];
+			if ($_css_class) {
+				$css_class = $_css_class;
+			}
+		}
+		// Needed to not modify original class of element (sometimes complex), but just add css class there
+		if (isset($extra['class_add'])) {
+			$_css_class_add = is_array($extra['class_add']) && isset($extra['class_add'][$value]) ? $extra['class_add'][$value] : $extra['class_add'];
+			if ($_css_class_add) {
+				$css_class .= ' '.$_css_class_add;
+			}
+		}
+		if ($this->_params['big_labels']) {
+			$css_class .= ' labels-big';
+		}
+		return $css_class ? ' '.$css_class : '';
+	}
+
+	/**
+	*/
 	function _prepare_id(&$extra, $default = '') {
-		return $extra['id'] ?: ($extra['name'] ?: $default);
+		$out = $extra['id'];
+		if (!$out) {
+			$out = $extra['name'];
+			if (false !== strpos($out, '[')) {
+				$out = str_replace(array('[',']'), array('_',''), trim($out,']['));
+			}
+		}
+		!$out && $out = $default;
+		return $out;
 	}
 
 	/**
 	*/
 	function _prepare_desc(&$extra, $input = '') {
-		return $extra['desc'] ?: ($input ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$out = $extra['desc'];
+		!$out && $out = $input;
+		if (!$out) {
+			$out = ucfirst(str_replace('_', ' ', $extra['name']));
+			if (false !== strpos($out, '[')) {
+				$out = str_replace(array('[',']'), array('.',''), trim($out,']['));
+			}
+		}
+		return $out;
 	}
 
 	/**
