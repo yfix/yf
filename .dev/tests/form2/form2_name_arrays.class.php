@@ -7,9 +7,13 @@ class form2_name_arrays {
 				'key1'	=> 'v1',
 			),
 		);
-		return form($a)
+		return form((array)$_POST + $a)
+			->validate(array(
+				'name[key1]'	=> 'trim|required',
+				'name[key2]'	=> 'trim|required',
+			))
 			->on_post(function(){
-var_dump($_POST);
+				//var_dump($_POST);
 			})
 			->text('name[]')
 			->text('name[]')
