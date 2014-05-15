@@ -1671,6 +1671,14 @@ class yf_main {
 		if (!is_null($val)) {
 			$_GET[$key] = $val;
 		}
+		if (DEBUG_MODE) {
+			debug(__FUNCTION__.'[]', array(
+				'name'	=> $key,
+				'val'	=> $val,
+				'op'	=> $val !== null ? 'set' : 'get',
+				'trace'	=> $this->trace_string(),
+			));
+		}
 		return $key === null ? $_GET : $_GET[$key];
 	}
 
@@ -1680,6 +1688,14 @@ class yf_main {
 	function _post($key = null, $val = null) {
 		if (!is_null($val)) {
 			$_POST[$key] = $val;
+		}
+		if (DEBUG_MODE) {
+			debug(__FUNCTION__.'[]', array(
+				'name'	=> $key,
+				'val'	=> $val,
+				'op'	=> $val !== null ? 'set' : 'get',
+				'trace'	=> $this->trace_string(),
+			));
 		}
 		return $key === null ? $_POST : $_POST[$key];
 	}
@@ -1691,6 +1707,14 @@ class yf_main {
 		if (!is_null($val)) {
 			$_SESSION[$key] = $val;
 		}
+		if (DEBUG_MODE) {
+			debug(__FUNCTION__.'[]', array(
+				'name'	=> $key,
+				'val'	=> $val,
+				'op'	=> $val !== null ? 'set' : 'get',
+				'trace'	=> $this->trace_string(),
+			));
+		}
 		return $key === null ? $_SESSION : $_SESSION[$key];
 	}
 
@@ -1700,6 +1724,14 @@ class yf_main {
 	function _server($key = null, $val = null) {
 		if (!is_null($val)) {
 			$_SERVER[$key] = $val;
+		}
+		if (DEBUG_MODE && function_exists('debug')) {
+			debug(__FUNCTION__.'[]', array(
+				'name'	=> $key,
+				'val'	=> $val,
+				'op'	=> $val !== null ? 'set' : 'get',
+				'trace'	=> $this->trace_string(),
+			));
 		}
 		return $key === null ? $_SERVER : $_SERVER[$key];
 	}
@@ -1712,7 +1744,33 @@ class yf_main {
 # TODO: check and use main() settings for cookies
 			setcookie($key, $val);
 		}
+		if (DEBUG_MODE) {
+			debug(__FUNCTION__.'[]', array(
+				'name'	=> $key,
+				'val'	=> $val,
+				'op'	=> $val !== null ? 'set' : 'get',
+				'trace'	=> $this->trace_string(),
+			));
+		}
 		return $key === null ? $_COOKIE : $_COOKIE[$key];
+	}
+
+	/**
+	* Helper to get/set ENV vars
+	*/
+	function _env($key = null, $val = null) {
+		if (!is_null($val)) {
+			$_ENV[$key] = $val;
+		}
+		if (DEBUG_MODE) {
+			debug(__FUNCTION__.'[]', array(
+				'name'	=> $key,
+				'val'	=> $val,
+				'op'	=> $val !== null ? 'set' : 'get',
+				'trace'	=> $this->trace_string(),
+			));
+		}
+		return $key === null ? $_ENV : $_ENV[$key];
 	}
 
 	/**
