@@ -63,6 +63,9 @@ if (!function_exists('tpl')) {
 if (!function_exists('common')) {
 	function common($silent = false) { return $GLOBALS['common'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
 }
+if (!function_exists('input')) {
+	function input($silent = false) { return _class('input') ?: new my_missing_method_handler(__FUNCTION__, $silent); }
+}
 // example: cache()->put()
 if (!function_exists('cache')) {
 	function cache($silent = false) { return $GLOBALS['cache'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
