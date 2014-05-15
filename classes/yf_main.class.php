@@ -1671,7 +1671,7 @@ class yf_main {
 		if (!is_null($val)) {
 			$_GET[$key] = $val;
 		}
-		if (DEBUG_MODE) {
+		if (DEBUG_MODE && function_exists('debug')) {
 			debug(__FUNCTION__.'[]', array(
 				'name'	=> $key,
 				'val'	=> $val,
@@ -1689,7 +1689,7 @@ class yf_main {
 		if (!is_null($val)) {
 			$_POST[$key] = $val;
 		}
-		if (DEBUG_MODE) {
+		if (DEBUG_MODE && function_exists('debug')) {
 			debug(__FUNCTION__.'[]', array(
 				'name'	=> $key,
 				'val'	=> $val,
@@ -1707,7 +1707,7 @@ class yf_main {
 		if (!is_null($val)) {
 			$_SESSION[$key] = $val;
 		}
-		if (DEBUG_MODE) {
+		if (DEBUG_MODE && function_exists('debug')) {
 			debug(__FUNCTION__.'[]', array(
 				'name'	=> $key,
 				'val'	=> $val,
@@ -1744,7 +1744,7 @@ class yf_main {
 # TODO: check and use main() settings for cookies
 			setcookie($key, $val);
 		}
-		if (DEBUG_MODE) {
+		if (DEBUG_MODE && function_exists('debug')) {
 			debug(__FUNCTION__.'[]', array(
 				'name'	=> $key,
 				'val'	=> $val,
@@ -1762,7 +1762,7 @@ class yf_main {
 		if (!is_null($val)) {
 			$_ENV[$key] = $val;
 		}
-		if (DEBUG_MODE) {
+		if (DEBUG_MODE && function_exists('debug')) {
 			debug(__FUNCTION__.'[]', array(
 				'name'	=> $key,
 				'val'	=> $val,
