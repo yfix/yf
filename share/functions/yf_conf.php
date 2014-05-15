@@ -157,8 +157,15 @@ if (!function_exists('module_conf')) {
 // debug(array('key2' => 'v2','key3' => 'v3')); => set debug data array
 // debug('key2[]', 'v20'); => set debug data with auto-increment
 if (!function_exists('debug')) {
-	function debug ($name = null, $new_value = null) {
-		return conf($name, $new_value, 'DEBUG');
+	function debug ($name = null, $new_value = null, $max_items = 500) {
+		$arr_name = 'DEBUG';
+		if ($max_items && !is_null($new_value) && substr($name, -2) == '[]') {
+			$v = conf(substr($name, 0, -2), null, $arr_name);
+			if (is_array($v) && count($v) >= $max_items) {
+				return false;
+			}
+		}
+		return conf($name, $new_value, $arr_name);
 	}
 }
 
@@ -166,11 +173,11 @@ if (!function_exists('debug')) {
 * Helper for concatenating string values
 */
 if (!function_exists('conf_add')) {
-	function conf_add($name = null, $new_value = null, $separator = ';') {
+	function conf_add($name = null, $new_value = null, $separator = ';', $arr_name = '') {
 		$actual_value = null;
 		if (!is_null($new_value)) {
 			$actual_value = conf($name);
 		}
-		return conf($name, ($actual_value ? $actual_value. $separator : ''). $new_value);
+		return conf($name, ($actual_value ? $actual_value. $separator : ''). $new_value, $arr_name);
 	}		
 }		
