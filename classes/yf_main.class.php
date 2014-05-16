@@ -1661,13 +1661,13 @@ class yf_main {
 	/**
 	*/
 	function _get($key = null, $val = null) {
-#		return $this->init_class('input', 'classes/')->get($key, $val);
+		return $this->init_class('input', 'classes/')->get($key, $val);
 	}
 
 	/**
 	*/
 	function _post($key = null, $val = null) {
-#		return $this->init_class('input', 'classes/')->post($key, $val);
+		return $this->init_class('input', 'classes/')->post($key, $val);
 	}
 
 	/**
@@ -1685,13 +1685,13 @@ class yf_main {
 	/**
 	*/
 	function _cookie($key = null, $val = null) {
-#		return $this->init_class('input', 'classes/')->cookie($key, $val);
+		return $this->init_class('input', 'classes/')->cookie($key, $val);
 	}
 
 	/**
 	*/
 	function _env($key = null, $val = null) {
-#		return $this->init_class('input', 'classes/')->env($key, $val);
+		return $this->init_class('input', 'classes/')->env($key, $val);
 	}
 
 	/**
