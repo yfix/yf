@@ -35,10 +35,15 @@ class form2_2forms {
 				'on_success_text' => t('Your request has been sent successfully!'), 
 				'force'           => true,
 				'add_fields'      => array('cancel_time' => time(), 'status' => $request_types),
-				'on_after_update' => function($data, $table, $fields, $type, $extra) {
-#					_class('rating')->_log_rating_points('creditor_requests_add', db()->insert_id());
-				})
-			)
+			))
+			->on_after_update(function($data, $table, $fields, $type, $extra) {
+				common()->message_success('All ok');
+			})
+			->on_after_render(function($extra, $r, $_this) {
+				if (main()->is_post()) {
+					$_this->_rendered = '';
+				}
+			})
 			->submit('cancel', false, array('value' => $request_owner == false ? 'Reject' : 'Cancel', 'class' => 'btn-danger'));
 
 		return implode(PHP_EOL, $body);
