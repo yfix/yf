@@ -17,6 +17,25 @@ class yf_manage_pages {
 	`content_type` tinyint(2) unsigned NOT NULL default \'1\',
 	`active` enum(\'1\',\'0\') NOT NULL default \'1\',
 */
+
+	/**
+	*/
+	function _init() {
+/*
+		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
+		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
+		require_js('<script>hljs.initHighlightingOnLoad();</script>');
+		require_css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
+		require_css('section.page-contents pre, pre.prettyprint {
+			background-color: transparent;
+			border: 0;
+			font-family: inherit;
+			font-size: inherit;
+			font-weight: bold;
+		}');
+*/
+	}
+
 	/**
 	*/
 	function show() {
@@ -193,7 +212,7 @@ class yf_manage_pages {
 		);
 		return form($replace)
 			->container('<h1>'._prepare_html($a['title']).'</h1>')
-			->container($body, '', array(
+			->container('<section class="page-contents">'.$body.'</section>', '', array(
 				'id'	=> 'content_editable',
 				'wide'	=> 1,
 				'ckeditor' => array(
