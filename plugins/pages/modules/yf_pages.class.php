@@ -46,6 +46,22 @@ class yf_pages {
 	}
 
 	/**
+	*/
+	function _init() {
+		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
+		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
+		require_js('<script>hljs.initHighlightingOnLoad();</script>');
+		require_css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
+		require_css('section.page-contents pre, pre.prettyprint {
+			background-color: transparent;
+			border: 0;
+			font-family: inherit;
+			font-size: inherit;
+			font-weight: bold;
+		}');
+	}
+
+	/**
 	* Get page from database
 	*/
 	function _get_page_from_db ($id = null) {
@@ -93,7 +109,7 @@ class yf_pages {
 		$r = array();
 		return form($r, array('no_form' => 1))
 			->container('<h1>'._prepare_html($a['title']).'</h1>')
-			->container($body, array('wide'	=> 1))
+			->container('<section class="page-contents">'.$body.'</section>', array('wide' => 1))
 		;
 	}
 
