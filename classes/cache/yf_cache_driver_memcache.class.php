@@ -145,6 +145,9 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
+		if (!method_exists($this->_connection, 'getAllKeys')) {
+			return false;
+		}
 		return $this->_connection->getAllKeys();
 	}
 
