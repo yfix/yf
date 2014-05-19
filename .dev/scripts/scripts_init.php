@@ -43,7 +43,7 @@ function db_geonames($tbl_name = '') {
 	if (is_null($_instance)) {
 		$db_class = load_db_class();
 		if ($db_class) {
-			$_instance = new $db_class('mysql5', 1, DB_PREFIX_GEONAMES);
+			$_instance = new $db_class('mysql5', DB_PREFIX_GEONAMES);
 			$_instance->DB_PREFIX = DB_PREFIX_GEONAMES;
 			$_instance->connect(DB_HOST_GEONAMES, DB_USER_GEONAMES, DB_PSWD_GEONAMES, DB_NAME_GEONAMES, true);
 		} else {

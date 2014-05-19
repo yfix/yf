@@ -29,9 +29,8 @@ function db_t2($tbl_name = '') {
 	if (is_null($_instance)) {
 		$db_class = load_db_class();
 		if ($db_class) {
-			$_instance = new $db_class('mysql5', 1, DB_PREFIX_T2);
+			$_instance = new $db_class('mysql5', DB_PREFIX_T2);
 			$_instance->connect(DB_HOST_T2, DB_USER_T2, DB_PSWD_T2, DB_NAME_T2, true);
-			$_instance->_parse_tables();
 		} else {
 			$_instance = false;
 		}
@@ -46,9 +45,8 @@ function db_pf($tbl_name = '') {
 	if (is_null($_instance)) {
 		$db_class = load_db_class();
 		if ($db_class) {
-			$_instance = new $db_class('mysql5', 1, DB_PREFIX_PF);
+			$_instance = new $db_class('mysql5', DB_PREFIX_PF);
 			$_instance->connect(DB_HOST_PF, DB_USER_PF, DB_PSWD_PF, DB_NAME_PF, true);
-			$_instance->_parse_tables();
 		} else {
 			$_instance = false;
 		}
@@ -79,9 +77,8 @@ function db_cr($tbl_name = '') {
 	if (is_null($_instance)) {
 		$db_class = load_db_class();
 		if ($db_class) {
-			$_instance = new $db_class('mysql5', 1, DB_PREFIX_CR);
+			$_instance = new $db_class('mysql5', DB_PREFIX_CR);
 			$_instance->connect(DB_HOST_CR, DB_USER_CR, DB_PSWD_CR, DB_NAME_CR, true);
-			$_instance->_parse_tables();
 		} else {
 			$_instance = false;
 		}
@@ -96,9 +93,8 @@ function db_m3($tbl_name = '') {
 	if (is_null($_instance)) {
 		$db_class = load_db_class();
 		if ($db_class) {
-			$_instance = new $db_class('mysql5', 1, DB_PREFIX_MASTER);
+			$_instance = new $db_class('mysql5', DB_PREFIX_MASTER);
 			$_instance->connect(DB_HOST_MASTER, DB_USER_MASTER, DB_PSWD_MASTER, DB_NAME_MASTER, true);
-			$_instance->_parse_tables();
 		} else {
 			$_instance = false;
 		}
