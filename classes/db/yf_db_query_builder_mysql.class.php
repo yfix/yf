@@ -184,7 +184,6 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 		return false;
 	}
 
-// TODO: correct fields escaping
 // TODO: optionally check available fields and tables with db_installer sql data
 	/**
 	* Examples:
@@ -196,7 +195,6 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	*	->group_by('id')
 	*	->limit(10)
 	*/
-// TODO: add support for syntax: select('a.id')  select('a.id as aid')
 	function select() {
 		$sql = '';
 		$fields = func_get_args();
@@ -212,19 +210,25 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					$v = trim($v);
-					$a[] = $this->_escape_key($v);
+					// support for syntax: select('a.id as aid')
+					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v, $m)) {
+						$a[] = $this->_escape_key($m[1]).' AS '.$this->_escape_key($m[2]);
+					} else {
+						$a[] = $this->_escape_key($v);
+					}
 				} elseif (is_callable($v)) {
 					$a[] = $v($fields, $this);
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $k2 => $v2) {
-						if (!is_string($k2) || !is_string($v2)) {
-							continue;
-						}
 						$k2 = trim($k2);
 						$v2 = trim($v2);
 						if (strlen($k2) && strlen($v2)) {
-							$a[] = $this->_escape_key($k2).' AS '.$this->_escape_key($v2);
+							// support for syntax: select('a.id as aid')
+							if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v2, $m)) {
+								$a[] = $this->_escape_key($m[1]).' AS '.$this->_escape_key($m[2]);
+							} else {
+								$a[] = $this->_escape_key($k2).' AS '.$this->_escape_key($v2);
+							}
 						}
 					}
 				}
@@ -242,7 +246,6 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	* Examples: from('users'), from(array('users' => 'u', 'suppliers' => 's'))
 	*/
-// TODO: add support for syntax: from('users as u') from('users as u, messages as m')
 	function from() {
 		$sql = '';
 		$tables = func_get_args();
@@ -256,19 +259,25 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					$v = trim($v);
-					$a[] = $this->_escape_key($this->db->_real_name($v));
+					// support for syntax: from('users as u') from('users as u', 'messages as m')
+					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v, $m)) {
+						$a[] = $this->_escape_key($this->db->_real_name($m[1])).' AS '.$this->_escape_key($m[2]);
+					} else {
+						$a[] = $this->_escape_key($this->db->_real_name($v));
+					}
 				} elseif (is_callable($v)) {
 					$a[] = $v($tables, $this);
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $k2 => $v2) {
-						if (!is_string($k2) || !is_string($v2)) {
-							continue;
-						}
 						$k2 = trim($k2);
 						$v2 = trim($v2);
 						if (strlen($k2) && strlen($v2)) {
-							$a[] = $this->_escape_key($this->db->_real_name($k2)).' AS '.$this->_escape_key($v2);
+							// support for syntax: from('users as u') from('users as u', 'messages as m')
+							if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v2, $m)) {
+								$a[] = $this->_escape_key($this->db->_real_name($m[1])).' AS '.$this->_escape_key($m[2]);
+							} else {
+								$a[] = $this->_escape_key($this->db->_real_name($k2)).' AS '.$this->_escape_key($v2);
+							}
 						}
 					}
 				}
