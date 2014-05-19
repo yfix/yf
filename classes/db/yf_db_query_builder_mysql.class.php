@@ -65,27 +65,32 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 		if (!empty($this->_sql['having']) && empty($this->_sql['group_by'])) {
 			unset($this->_sql['having']);
 		}
-		$separators = array(
-			'select'		=> ',',
-			'from'			=> ',',
-			'join'			=> '',
-			'where'			=> 'AND',
-			'where_or'		=> 'OR',
-			'group_by'		=> ',',
-			'having'		=> ',',
-			'order_by'		=> ',',
+		$opts = array(
+			'select'		=> array('separator' => ',', 'operator' => 'SELECT'),
+			'from'			=> array('separator' => ',', 'operator' => 'FROM'),
+			'join'			=> array('separator' => 'JOIN', 'operator' => 'JOIN'),
+			'left_join'		=> array('separator' => 'LEFT JOIN', 'operator' => 'LEFT JOIN'),
+			'right_join'	=> array('separator' => 'RIGHT JOIN', 'operator' => 'RIGHT JOIN'),
+			'inner_join'	=> array('separator' => 'INNER JOIN', 'operator' => 'INNER JOIN'),
+			'where'			=> array('separator' => 'AND', 'operator' => 'WHERE'),
+			'where_or'		=> array('separator' => 'OR', 'operator' => 'OR'),
+			'group_by'		=> array('separator' => ',', 'operator' => 'GROUP BY'),
+			'having'		=> array('separator' => ',', 'operator' => 'HAVING'),
+			'order_by'		=> array('separator' => ',', 'operator' => 'ORDER BY'),
+			'limit'			=> array(/* 'operator' => 'LIMIT' */),
 		);
 		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
-		foreach (array('select','from','join','where','where_or','group_by','having','order_by','limit') as $name) {
+		foreach ($opts as $name => $opt) {
 			if (empty($this->_sql[$name])) {
 				continue;
 			}
+			$operator = $opt['operator'];
 			if (is_array($this->_sql[$name])) {
-				if (isset($separators[$name])) {
-					$a[] = implode(' '.$separators[$name].' ', $this->_sql[$name]);
+				if (isset($opt['separator'])) {
+					$a[] = $operator.' '.implode(' '.$opt['separator'].' ', $this->_sql[$name]);
 				}
 			} else {
-				$a[] = $this->_sql[$name];
+				$a[] = ($operator ? $operator.' ' : ''). $this->_sql[$name];
 			}
 		}
 		if ($a) {
@@ -202,7 +207,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			$fields = $fields[0]['__args__'];
 		}
 		if (!count($fields) || $fields === array(array())) {
-			$sql = 'SELECT *';
+			$sql = '*';
 		} else {
 			$a = array();
 			foreach ((array)$fields as $k => $v) {
@@ -234,7 +239,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
-				$sql = 'SELECT '.implode(', ', $a);
+				$sql = implode(', ', $a);
 			}
 		}
 		if ($sql) {
@@ -283,7 +288,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
-				$sql = 'FROM '.implode(', ', $a);
+				$sql = implode(', ', $a);
 			}
 		}
 		if ($sql) {
@@ -305,12 +310,12 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				$v && $ids[$v] = $v;
 			}
 			if ($ids) {
-				$sql = 'WHERE '.$this->_escape_key($pk).' IN('.implode(',', $ids).')';
+				$sql = $this->_escape_key($pk).' IN('.implode(',', $ids).')';
 			}
 		} elseif (is_callable($id)) {
-			$sql = 'WHERE '.$id();
+			$sql = $id();
 		} else {
-			$sql = 'WHERE '.$this->_escape_key($pk).'='.$this->_escape_val(intval($id));
+			$sql = $this->_escape_key($pk).'='.$this->_escape_val(intval($id));
 		}
 		if ($sql) {
 			$this->_sql['where'][] = $sql;
@@ -337,13 +342,12 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	*/
 	function _process_where(array $where, $func_name = 'where') {
-// TODO: support for binding params (':field' => $val)
 		$sql = '';
 		if (isset($where[0]) && is_array($where[0]) && isset($where[0]['__args__'])) {
 			$where = $where[0]['__args__'];
 		}
 		if (count($where) == 3 && is_string($where[0]) && is_string($where[1])) {
-			$sql = 'WHERE '.$this->_escape_key($where[0]). $where[1]. $this->_escape_val($where[2]);
+			$sql = $this->_escape_key($where[0]). $where[1]. $this->_escape_val($where[2]);
 		} elseif (count($where)) {
 			$a = array();
 			foreach ((array)$where as $k => $v) {
@@ -367,7 +371,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
-				$sql = 'WHERE '.implode(' ', $a);
+				$sql = implode(' ', $a);
 			}
 		}
 		if ($sql) {
@@ -378,17 +382,14 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	* Examples: join('suppliers', array('u.supplier_id' => 's.id'))
 	*/
-	function join($table, $on, $join_type = 'JOIN') {
-		$joins_shortcuts = array(
-			'left'	=> 'LEFT JOIN',
-			'right'	=> 'RIGHT JOIN',
-			'inner'	=> 'INNER JOIN',
+	function join($table, $on, $join_type = '') {
+		$join_types = array(
+			'left',
+			'right',
+			'inner',
 		);
-		if (!$join_type) {
-			$join_type = 'JOIN';
-		}
-		if (isset($joins_shortcuts[$join_type])) {
-			$join_type = $joins_shortcuts[$join_type];
+		if (!in_array($join_type, $join_types)) {
+			$join_type = '';
 		}
 		$as = '';
 		if (is_array($table)) {
@@ -417,10 +418,10 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 		}
 		$sql = '';
 		if (is_string($table) && !empty($_on)) {
-			$sql = strtoupper($join_type).' '.$this->_escape_key($this->db->_real_name($table)). ($as ? ' AS '.$this->_escape_key($as) : '').' ON '.implode(',', $_on);
+			$sql = $this->_escape_key($this->db->_real_name($table)). ($as ? ' AS '.$this->_escape_key($as) : '').' ON '.implode(',', $_on);
 		}
 		if ($sql) {
-			$this->_sql[__FUNCTION__][] = $sql;
+			$this->_sql[($join_type ? $join_type.'_' : '').__FUNCTION__][] = $sql;
 		}
 		return $this;
 	}
@@ -428,19 +429,19 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	*/
 	function left_join($table, $on) {
-		return $this->join($table, $on, 'LEFT JOIN');
+		return $this->join($table, $on, 'left');
 	}
 
 	/**
 	*/
 	function right_join($table, $on) {
-		return $this->join($table, $on, 'RIGHT JOIN');
+		return $this->join($table, $on, 'right');
 	}
 
 	/**
 	*/
 	function inner_join($table, $on) {
-		return $this->join($table, $on, 'INNER JOIN');
+		return $this->join($table, $on, 'inner');
 	}
 
 	/**
@@ -472,7 +473,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
-				$sql = 'GROUP BY '.implode(', ', $a);
+				$sql = implode(', ', $a);
 			}
 		}
 		if ($sql) {
@@ -484,7 +485,6 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	* Examples: having(array('COUNT(*)','>','1'))
 	*/
-// TODO: add support for syntax: having('count(*) > 1') having('count(id) > 1', 'count(num) > 2')
 	function having() {
 		$sql = '';
 		$where = func_get_args();
@@ -495,9 +495,13 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					$v = strtoupper(trim($v));
-					if (in_array($v, array('AND','OR','XOR'))) {
-						$a[] = $v;
+					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]*(=|!=|<>|<|>|>=|<=)[\s\t]*([a-z0-9_\.]+)$~ims', $v, $m)) {
+						$a[] = $this->_escape_key($m[1]). $m[2]. $this->_escape_val($m[3]);
+					} else {
+						$v = strtoupper(trim($v));
+						if (in_array($v, array('AND','OR','XOR'))) {
+							$a[] = $v;
+						}
 					}
 				// array('field', 'condition', 'value'), example: array('id','>','1')
 				} elseif (is_array($v) && count($v) == 3) {
@@ -507,7 +511,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
-				$sql = 'HAVING '.implode(' ', $a);
+				$sql = implode(', ', $a);
 			}
 		}
 		if ($sql) {
@@ -519,7 +523,6 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	* Examples: order_by('user_group'), order_by(array('supplier' => 'DESC','manufacturer' => ASC))
 	*/
-// TODO: add support for syntax: order_by('user_group') order_by('user_group asc') order_by('user_group asc', 'u.id desc')
 	function order_by() {
 		$sql = '';
 		$items = func_get_args();
@@ -530,7 +533,11 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					$a[] = $this->_escape_key($v).' ASC';
+					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+(asc|desc)$~ims', $v, $m)) {
+						$a[] = $this->_escape_key($m[1]).' '.strtoupper($m[2]);
+					} else {
+						$a[] = $this->_escape_key($v).' ASC';
+					}
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $k2 => $v2) {
 						if (!is_string($v2)) {
@@ -551,7 +558,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
-				$sql = 'ORDER BY '.implode(', ', $a);
+				$sql = implode(', ', $a);
 			}
 		}
 		if ($sql) {
@@ -581,6 +588,8 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			$out = $this->db->escape_key($key);
 		} else {
 // TODO: split by "." and escape each value
+			if (false !== strpos($key, '.')) {
+			}
 			$out = $key;
 		}
 		return $out;
@@ -589,6 +598,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	*/
 	function _escape_val($val = '') {
+// TODO: support for binding params (':field' => $val)
 		return $this->db->escape_val($val);
 	}
 }
