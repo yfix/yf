@@ -80,57 +80,93 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_where() {
 		$this->assertFalse( self::qb()->where()->sql() );
+		$this->assertFalse( self::qb()->from()->where()->sql() );
 		$this->assertFalse( self::qb()->select()->from()->where()->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\'', self::qb()->select()->from('user')->where('id','=','1')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\'', self::qb()->select()->from('user')->where(array('id','=',1))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`, `'.DB_PREFIX.'articles` WHERE u.id=\'1\'', self::qb()->select()->from('user','articles')->where(array('u.id','=',1))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\'', self::qb()->select()->from(array('user' => 'u'))->where(array('u.id','=',1))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\'', self::qb()->from('user')->where('id','=','1')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\'', self::qb()->from('user')->where(array('id','=',1))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`, `'.DB_PREFIX.'articles` WHERE u.id=\'1\'', self::qb()->from('user','articles')->where(array('u.id','=',1))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\'', self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\' AND u.gid=\'4\'', 
-			self::qb()->select()->from(array('user' => 'u'))->where(array('u.id','=','1'),'and',array('u.gid','=','4'))->sql() );
+			self::qb()->from(array('user' => 'u'))->where(array('u.id','=','1'),'and',array('u.gid','=','4'))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\' OR u.gid=\'4\'', 
-			self::qb()->select()->from(array('user' => 'u'))->where(array('u.id','=','1'),'or',array('u.gid','=','4'))->sql() );
+			self::qb()->from(array('user' => 'u'))->where(array('u.id','=','1'),'or',array('u.gid','=','4'))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\' XOR u.gid=\'4\'', 
-			self::qb()->select()->from(array('user' => 'u'))->where(array('u.id','=','1'),'xor',array('u.gid','=','4'))->sql() );
+			self::qb()->from(array('user' => 'u'))->where(array('u.id','=','1'),'xor',array('u.gid','=','4'))->sql() );
+	}
+	public function test_where_simple_syntax() {
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\'', self::qb()->from('user as u')->where('u.id = 1')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id>\'1\'', self::qb()->from('user as u')->where('u.id > 1')->sql() );
+	}
+	public function test_where_or() {
+#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\' OR u.gid=\'4\'', self::qb()->from('user as u')->where('u.id = 1')->where_or('u.gid = 4')->sql() );
+	}
+	public function test_whereid() {
+		$this->assertFalse( self::qb()->whereid()->sql() );
+		$this->assertFalse( self::qb()->from()->whereid()->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\'', self::qb()->from('user')->whereid(1)->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\'', self::qb()->from('user')->whereid(1, '')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid`=\'1\'', self::qb()->from('user')->whereid(1, 'uid')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE u.id=\'1\'', self::qb()->from('user')->whereid(1, 'u.id')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'uid')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE u.id IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'u.id')->sql() );
+	}
+	public function test_join() {
+		$this->assertFalse( self::qb()->join()->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id`=`a`.`id`',
+			self::qb()->select()->from('user as u')->join(array('articles' => 'a'), array('u.id' => 'a.id'))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` JOIN `'.DB_PREFIX.'articles` AS `a` ON u.id=a.id', 
+			self::qb()->select()->from('user as u')->join('articles as a', 'u.id = a.id')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` LEFT JOIN `'.DB_PREFIX.'articles` AS `a` ON u.id=a.id', 
+			self::qb()->select()->from('user as u')->left_join('articles as a', 'u.id = a.id')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` RIGHT JOIN `'.DB_PREFIX.'articles` AS `a` ON u.id=a.id', 
+			self::qb()->select()->from('user as u')->right_join('articles as a', 'u.id = a.id')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON u.id=a.id', 
+			self::qb()->select()->from('user as u')->inner_join('articles as a', 'u.id = a.id')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON u.id=a.id', 
+			self::qb()->select()->from('user as u')->join('articles as a', 'u.id = a.id', 'inner')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON u.id=a.id  INNER JOIN `'.DB_PREFIX.'blogs` AS `b` ON u.id=b.id', 
+			self::qb()->select()->from('user as u')->inner_join('articles as a', 'u.id = a.id')->inner_join('blogs as b', 'u.id = b.id')->sql() );
 	}
 	public function test_group_by() {
 		$this->assertFalse( self::qb()->group_by()->sql() );
-		$this->assertFalse( self::qb()->select()->from()->where()->group_by()->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\' GROUP BY `gid`', 
-			self::qb()->select()->from('user')->where(array('id','=',1))->group_by('gid')->sql() );
+		$this->assertFalse( self::qb()->from()->where()->group_by()->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\' GROUP BY `gid`', self::qb()->from('user')->where(array('id','=',1))->group_by('gid')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `id`=\'1\' GROUP BY u.id', self::qb()->from('user as u')->whereid(1)->group_by('u.id')->sql() );
 	}
 	public function test_having() {
 		$this->assertFalse( self::qb()->having()->sql() );
-		$this->assertFalse( self::qb()->select()->from()->where()->group_by()->having()->sql() );
+		$this->assertFalse( self::qb()->from()->where()->group_by()->having()->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\' GROUP BY `gid` HAVING `gid`=\'4\'', 
-			self::qb()->select()->from('user')->where(array('id','=',1))->group_by('gid')->having(array('gid','=',4))->sql() );
+			self::qb()->from('user')->where(array('id','=',1))->group_by('gid')->having(array('gid','=',4))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\' GROUP BY u.gid HAVING u.gid=\'4\'', 
-			self::qb()->select()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->sql() );
+			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->sql() );
 	}
 	public function test_order_by() {
 		$this->assertFalse( self::qb()->order_by()->sql() );
-		$this->assertFalse( self::qb()->select()->from()->where()->having()->group_by()->order_by()->sql() );
+		$this->assertFalse( self::qb()->from()->where()->having()->group_by()->order_by()->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\' GROUP BY `gid` HAVING `gid`=\'4\' ORDER BY `id` DESC', 
-			self::qb()->select()->from('user')->where(array('id','=',1))->group_by('gid')->having(array('gid','=',4))->order_by(array('id' => 'desc'))->sql() );
+			self::qb()->from('user')->where(array('id','=',1))->group_by('gid')->having(array('gid','=',4))->order_by(array('id' => 'desc'))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\' GROUP BY u.gid HAVING u.gid=\'4\' ORDER BY u.id ASC', 
-			self::qb()->select()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->sql() );
+			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->sql() );
 	}
 	public function test_limit() {
 		$this->assertFalse( self::qb()->limit()->sql() );
-		$this->assertFalse( self::qb()->select()->limit()->sql() );
-		$this->assertFalse( self::qb()->select()->from()->limit()->sql() );
-		$this->assertFalse( self::qb()->select()->from()->where()->having()->group_by()->order_by()->limit()->sql() );
+		$this->assertFalse( self::qb()->limit()->sql() );
+		$this->assertFalse( self::qb()->from()->limit()->sql() );
+		$this->assertFalse( self::qb()->from()->where()->having()->group_by()->order_by()->limit()->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\' GROUP BY `gid` HAVING `gid`=\'4\' ORDER BY `id` DESC LIMIT 10', 
-			self::qb()->select()->from('user')->where(array('id','=',1))->group_by('gid')->having(array('gid','=',4))->order_by(array('id' => 'desc'))->limit(10)->sql() );
+			self::qb()->from('user')->where(array('id','=',1))->group_by('gid')->having(array('gid','=',4))->order_by(array('id' => 'desc'))->limit(10)->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\' GROUP BY u.gid HAVING u.gid=\'4\' ORDER BY u.id ASC LIMIT 20, 5', 
-			self::qb()->select()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->limit(5, 20)->sql() );
+			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->limit(5, 20)->sql() );
 	}
 	// Testign that changing order of method calls not changing result SQL
 	public function test_complex() {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\' GROUP BY u.gid HAVING u.gid=\'4\' ORDER BY u.id ASC LIMIT 20, 5', 
-			self::qb()->select()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->limit(5, 20)->sql() );
+			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->limit(5, 20)->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\' GROUP BY u.gid HAVING u.gid=\'4\' ORDER BY u.id ASC LIMIT 20, 5', 
-			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->limit(5, 20)->select()->sql() );
+			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->limit(5, 20)->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\' GROUP BY u.gid HAVING u.gid=\'4\' ORDER BY u.id ASC LIMIT 20, 5', 
-			self::qb()->group_by('u.gid')->where(array('u.id','=',1))->select()->order_by('u.id')->limit(5, 20)->from(array('user' => 'u'))->having(array('u.gid','=',4))->sql() );
+			self::qb()->group_by('u.gid')->where(array('u.id','=',1))->order_by('u.id')->limit(5, 20)->from(array('user' => 'u'))->having(array('u.gid','=',4))->sql() );
 	}
 }
