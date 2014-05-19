@@ -348,7 +348,8 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	* Example: whereid(1)
 	*/
 // TODO: unit tests for it
-	function whereid($id) {
+	function whereid($id, $pk = 'id') {
+		!$pk && $pk = 'id';
 		$sql = '';
 		if (is_array($id)) {
 			$ids = array();
@@ -357,12 +358,12 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				$v && $ids[$v] = $v;
 			}
 			if ($ids) {
-				$sql = 'WHERE id IN('.implode(',', $ids).')';
+				$sql = 'WHERE '.$this->_escape_key($pk).' IN('.implode(',', $ids).')';
 			}
 		} elseif (is_callable($id)) {
 			$sql = 'WHERE '.$id();
 		} else {
-			$sql = 'WHERE id = '.intval($id);
+			$sql = 'WHERE '.$this->_escape_key($pk).'='.$this->_escape_val(intval($id));
 		}
 		if ($sql) {
 			$this->_sql['where'][] = $sql;
