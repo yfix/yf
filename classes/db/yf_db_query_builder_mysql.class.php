@@ -165,22 +165,26 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	/**
 	*/
 	function update(array $data, $pk = 'id') {
-// TODO
 		!$pk && $pk = 'id';
 		$a = $this->_sql_to_array();
-		if ($a) {
-			$table = $a['from'];
-			$to_leave = array('where','where_or');
-			foreach ($a as $k => $v) {
-				if (!in_array($k, $to_leave)) {
-					unset($a[$k]);
-				}
+		if (!$a) {
+			return false;
+		}
+		$table = $a['from'];
+		$to_leave = array('where','where_or');
+		foreach ($a as $k => $v) {
+			if (!in_array($k, $to_leave)) {
+				unset($a[$k]);
 			}
-			if ($a && $table) {
-#				$result = $this->db->get($this->sql());
-#				$this->db->update($table, $data, implode(' ', $a));
-#				$this->db->update_batch($table, $data, $pk);
+		}
+		if ($a && $table) {
+			$sql = $this->sql();
+			$where = implode(' ', $a);
+			if (strtoupper(substr($where, 0, strlen('WHERE'))) == 'WHERE') {
+				$where = trim(substr($where, strlen('WHERE')));
 			}
+#			$result = $this->db->get($this->sql());
+#			return $this->db->update_batch($table, $data, $pk);
 		}
 	}
 
