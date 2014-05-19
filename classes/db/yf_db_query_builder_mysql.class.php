@@ -293,28 +293,127 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	}
 
 	/**
+	* Example: whereid(1)
+	*/
+	function whereid($id, $pk = 'id') {
+		!$pk && $pk = 'id';
+		$sql = '';
+		if (is_array($id)) {
+			$ids = array();
+			foreach ((array)$id as $v) {
+				$v = intval($v);
+				$v && $ids[$v] = $v;
+			}
+			if ($ids) {
+				$sql = 'WHERE '.$this->_escape_key($pk).' IN('.implode(',', $ids).')';
+			}
+		} elseif (is_callable($id)) {
+			$sql = 'WHERE '.$id();
+		} else {
+			$sql = 'WHERE '.$this->_escape_key($pk).'='.$this->_escape_val(intval($id));
+		}
+		if ($sql) {
+			$this->_sql['where'][] = $sql;
+		}
+		return $this;
+	}
+
+	/**
+	* Example: where(array('id','>','1'),'and',array('name','!=','peter'))
+	*/
+	function where() {
+		$this->_process_where(func_get_args(), __FUNCTION__);
+		return $this;
+	}
+
+	/**
+	* Example: where_or(array('id','>','1'))
+	*/
+	function where_or() {
+		$this->_process_where(func_get_args(), __FUNCTION__);
+		return $this;
+	}
+
+	/**
+	*/
+	function _process_where(array $where, $func_name = 'where') {
+// TODO: support for binding params (':field' => $val)
+		$sql = '';
+		if (isset($where[0]) && is_array($where[0]) && isset($where[0]['__args__'])) {
+			$where = $where[0]['__args__'];
+		}
+		if (count($where) == 3 && is_string($where[0]) && is_string($where[1])) {
+			$sql = 'WHERE '.$this->_escape_key($where[0]). $where[1]. $this->_escape_val($where[2]);
+		} elseif (count($where)) {
+			$a = array();
+			foreach ((array)$where as $k => $v) {
+				if (is_string($v)) {
+					$v = trim($v);
+				}
+				if (is_string($v) && strlen($v) && !empty($v)) {
+					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]*(=|!=|<>|<|>|>=|<=)[\s\t]*([a-z0-9_\.]+)$~ims', $v, $m)) {
+						$a[] = $this->_escape_key($m[1]). $m[2]. $this->_escape_val($m[3]);
+					} else {
+						$v = strtoupper(trim($v));
+						if (in_array($v, array('AND','OR','XOR'))) {
+							$a[] = $v;
+						}
+					}
+				// array('field', 'condition', 'value'), example: array('id','>','1')
+				} elseif (is_array($v) && count($v) == 3) {
+					$a[] = $this->_escape_key($v[0]). $v[1]. $this->_escape_val($v[2]);
+				} elseif (is_callable($v)) {
+					$a[] = $v($where, $this);
+				}
+			}
+			if ($a) {
+				$sql = 'WHERE '.implode(' ', $a);
+			}
+		}
+		if ($sql) {
+			$this->_sql[$func_name][] = $sql;
+		}
+	}
+
+	/**
 	* Examples: join('suppliers', array('u.supplier_id' => 's.id'))
 	*/
-// TODO: add support for syntax: join('users as u')
-// TODO: add support for simpler join type: left|right|inner
 	function join($table, $on, $join_type = 'JOIN') {
+		$joins_shortcuts = array(
+			'left'	=> 'LEFT JOIN',
+			'right'	=> 'RIGHT JOIN',
+			'inner'	=> 'INNER JOIN',
+		);
 		if (!$join_type) {
 			$join_type = 'JOIN';
+		}
+		if (isset($joins_shortcuts[$join_type])) {
+			$join_type = $joins_shortcuts[$join_type];
+		}
+		$as = '';
+		if (is_array($table)) {
+			$as = current($table);
+			$table = key($table);
+		} elseif (is_string($table)) {
+			// support for syntax: join('users as u', 'u.id = s.id')
+			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $table, $m)) {
+				$table = $m[1];
+				$as = $m[2];
+			}
 		}
 		$_on = array();
 		if (is_array($on)) {
 			foreach ((array)$on as $k => $v) {
 				list($t1_as, $t1_field) = explode('.', $k);
 				list($t2_as, $t2_field) = explode('.', $v);
-				$_on[] = $this->_escape_key($t1_as).'.'.$this->_escape_key($t1_field).' = '.$this->_escape_key($t2_as).'.'.$this->_escape_key($t2_field);
+				$_on[] = $this->_escape_key($t1_as).'.'.$this->_escape_key($t1_field).'='.$this->_escape_key($t2_as).'.'.$this->_escape_key($t2_field);
 			}
 		} elseif (is_callable($on)) {
 			$_on = $on($table, $this);
-		}
-		$as = '';
-		if (is_array($table)) {
-			$as = current($table);
-			$table = key($table);
+		} elseif (is_string($on)) {
+			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]*(=|!=|<>|<|>|>=|<=)[\s\t]*([a-z0-9_\.]+)$~ims', $on, $m)) {
+				$_on[] = $this->_escape_key($m[1]). $m[2]. $this->_escape_key($m[3]);
+			}
 		}
 		$sql = '';
 		if (is_string($table) && !empty($_on)) {
@@ -345,95 +444,8 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	}
 
 	/**
-	* Example: whereid(1)
-	*/
-// TODO: unit tests for it
-	function whereid($id, $pk = 'id') {
-		!$pk && $pk = 'id';
-		$sql = '';
-		if (is_array($id)) {
-			$ids = array();
-			foreach ((array)$id as $v) {
-				$v = intval($v);
-				$v && $ids[$v] = $v;
-			}
-			if ($ids) {
-				$sql = 'WHERE '.$this->_escape_key($pk).' IN('.implode(',', $ids).')';
-			}
-		} elseif (is_callable($id)) {
-			$sql = 'WHERE '.$id();
-		} else {
-			$sql = 'WHERE '.$this->_escape_key($pk).'='.$this->_escape_val(intval($id));
-		}
-		if ($sql) {
-			$this->_sql['where'][] = $sql;
-		}
-		return $this;
-	}
-
-	/**
-	* Example: where(array('id','>','1'),'and',array('name','!=','peter'))
-	*/
-// TODO: add support for syntax: where('u.id', 1)  where('u.id = 1')  where('u.id > 1')
-// TODO: support for binding params (':field' => $val)
-	function where() {
-		$this->_process_where(func_get_args(), __FUNCTION__);
-		return $this;
-	}
-
-	/**
-	* Example: where_or(array('id','>','1'))
-	*/
-// TODO: add support for syntax: where_or('u.id', 1)  where_or('u.id = 1')  where_or('u.id > 1')
-// TODO: support for binding params (':field' => $val)
-// TODO: unit tests for it
-	function where_or() {
-		$this->_process_where(func_get_args(), __FUNCTION__);
-		return $this;
-	}
-
-	/**
-	*/
-	function _process_where(array $where, $func_name = 'where') {
-// TODO: add support for syntax: where('u.id', 1)  where('u.id = 1')  where('u.id > 1')
-// TODO: support for binding params (':field' => $val)
-		$sql = '';
-		if (isset($where[0]) && is_array($where[0]) && isset($where[0]['__args__'])) {
-			$where = $where[0]['__args__'];
-		}
-		if (count($where) == 3 && is_string($where[0]) && is_string($where[1])) {
-			$sql = 'WHERE '.$this->_escape_key($where[0]). $where[1]. $this->_escape_val($where[2]);
-		} elseif (count($where)) {
-			$a = array();
-			foreach ((array)$where as $k => $v) {
-				if (is_string($v)) {
-					$v = trim($v);
-				}
-				if (is_string($v) && strlen($v) && !empty($v)) {
-					$v = strtoupper(trim($v));
-					if (in_array($v, array('AND','OR','XOR'))) {
-						$a[] = $v;
-					}
-				// array('field', 'condition', 'value'), example: array('id','>','1')
-				} elseif (is_array($v) && count($v) == 3) {
-					$a[] = $this->_escape_key($v[0]). $v[1]. $this->_escape_val($v[2]);
-				} elseif (is_callable($v)) {
-					$a[] = $v($where, $this);
-				}
-			}
-			if ($a) {
-				$sql = 'WHERE '.implode(' ', $a);
-			}
-		}
-		if ($sql) {
-			$this->_sql[$func_name][] = $sql;
-		}
-	}
-
-	/**
 	* Examples: group_by('user_group'), group_by(array('supplier','manufacturer'))
 	*/
-// TODO: add support for syntax: group_by('user_group')  group_by('u.id', 'm.id')
 	function group_by() {
 		$sql = '';
 		$items = func_get_args();
