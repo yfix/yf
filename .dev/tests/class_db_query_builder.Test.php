@@ -59,6 +59,11 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 #		$this->assertEquals( 'SELECT u.id, a.id, b.id', self::qb()->select(array('u.id', 'a.id', 'b.id'))->_sql['select'][0] );
 #		$this->assertEquals( 'SELECT `id id`', self::qb()->select('id id')->_sql['select'][0] );
 	}
+	public function test_select_string_as() {
+		$this->assertEquals( 'SELECT s.id AS `sid`', self::qb()->select('s.id as sid')->_sql['select'][0] );
+		$this->assertEquals( 'SELECT s.id AS `sid`, u.id AS `uid`', self::qb()->select('s.id as sid', 'u.id as uid')->_sql['select'][0] );
+		$this->assertEquals( 'SELECT u.id AS `uid`', self::qb()->select(array('u.id as uid'))->_sql['select'][0] );
+	}
 	public function test_from() {
 		$this->assertFalse( self::qb()->from()->sql() );
 		$this->assertFalse( self::qb()->select()->from()->sql() );
@@ -68,6 +73,10 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->select()->from(array('user' => 'u'))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`, `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from(array('user' => 'u', 'articles' => 'a'))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`, `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from(array('user' => 'u'), array('articles' => 'a'))->sql() );
+	}
+	public function test_from_string_as() {
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->select()->from('user as u')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`, `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from('user as u', 'articles as a')->sql() );
 	}
 	public function test_where() {
 		$this->assertFalse( self::qb()->where()->sql() );
