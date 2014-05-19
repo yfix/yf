@@ -358,7 +358,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 		} elseif (is_callable($id)) {
 			$sql = $id();
 		} else {
-			$sql = $this->_escape_key($pk).'='.$this->_escape_val(intval($id));
+			$sql = $this->_escape_key($pk).' = '.$this->_escape_val(intval($id));
 		}
 		if ($sql) {
 			$this->_sql['where'][] = $sql;
@@ -390,7 +390,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			$where = $where[0]['__args__'];
 		}
 		if (count($where) == 3 && is_string($where[0]) && is_string($where[1])) {
-			$sql = $this->_escape_key($where[0]). $where[1]. $this->_escape_val($where[2]);
+			$sql = $this->_escape_key($where[0]). ' '. $where[1]. ' '. $this->_escape_val($where[2]);
 		} elseif (count($where)) {
 			$a = array();
 			foreach ((array)$where as $k => $v) {
@@ -399,7 +399,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]*(=|!=|<>|<|>|>=|<=)[\s\t]*([a-z0-9_\.]+)$~ims', $v, $m)) {
-						$a[] = $this->_escape_key($m[1]). $m[2]. $this->_escape_val($m[3]);
+						$a[] = $this->_escape_key($m[1]). ' '.$m[2]. ' '. $this->_escape_val($m[3]);
 					} else {
 						$v = strtoupper(trim($v));
 						if (in_array($v, array('AND','OR','XOR'))) {
@@ -408,7 +408,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 					}
 				// array('field', 'condition', 'value'), example: array('id','>','1')
 				} elseif (is_array($v) && count($v) == 3) {
-					$a[] = $this->_escape_key($v[0]). $v[1]. $this->_escape_val($v[2]);
+					$a[] = $this->_escape_key($v[0]). ' '. $v[1]. ' '. $this->_escape_val($v[2]);
 				} elseif (is_callable($v)) {
 					$a[] = $v($where, $this);
 				}
@@ -450,13 +450,13 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			foreach ((array)$on as $k => $v) {
 				list($t1_as, $t1_field) = explode('.', $k);
 				list($t2_as, $t2_field) = explode('.', $v);
-				$_on[] = $this->_escape_key($t1_as).'.'.$this->_escape_key($t1_field).'='.$this->_escape_key($t2_as).'.'.$this->_escape_key($t2_field);
+				$_on[] = $this->_escape_key($t1_as).'.'.$this->_escape_key($t1_field).' = '.$this->_escape_key($t2_as).'.'.$this->_escape_key($t2_field);
 			}
 		} elseif (is_callable($on)) {
 			$_on = $on($table, $this);
 		} elseif (is_string($on)) {
 			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]*(=|!=|<>|<|>|>=|<=)[\s\t]*([a-z0-9_\.]+)$~ims', $on, $m)) {
-				$_on[] = $this->_escape_key($m[1]). $m[2]. $this->_escape_key($m[3]);
+				$_on[] = $this->_escape_key($m[1]). ' '. $m[2]. ' '. $this->_escape_key($m[3]);
 			}
 		}
 		$sql = '';
@@ -539,7 +539,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]*(=|!=|<>|<|>|>=|<=)[\s\t]*([a-z0-9_\.]+)$~ims', $v, $m)) {
-						$a[] = $this->_escape_key($m[1]). $m[2]. $this->_escape_val($m[3]);
+						$a[] = $this->_escape_key($m[1]). ' '. $m[2]. ' '. $this->_escape_val($m[3]);
 					} else {
 						$v = strtoupper(trim($v));
 						if (in_array($v, array('AND','OR','XOR'))) {
@@ -548,7 +548,7 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 					}
 				// array('field', 'condition', 'value'), example: array('id','>','1')
 				} elseif (is_array($v) && count($v) == 3) {
-					$a[] = $this->_escape_key($v[0]). $v[1]. $this->_escape_val($v[2]);
+					$a[] = $this->_escape_key($v[0]). ' '. $v[1]. ' '. $this->_escape_val($v[2]);
 				} elseif (is_callable($v)) {
 					$a[] = $v($where, $this);
 				}
@@ -630,10 +630,16 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 		if ($key != '*' && false === strpos($key, '.') && false === strpos($key, '(')) {
 			$out = $this->db->escape_key($key);
 		} else {
-// TODO: split by "." and escape each value
-			if (false !== strpos($key, '.')) {
+			// split by "." and escape each value
+			if (false !== strpos($key, '.') && false === strpos($key, '(') && false === strpos($key, ' ')) {
+				$tmp = array();
+				foreach (explode('.', $key) as $v) {
+					$tmp[] = $this->db->escape_key($v);
+				}
+				$out = implode('.', $tmp);
+			} else {
+				$out = $key;
 			}
-			$out = $key;
 		}
 		return $out;
 	}
