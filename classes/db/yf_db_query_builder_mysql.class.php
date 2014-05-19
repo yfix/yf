@@ -53,13 +53,28 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 	* Create text SQL from params
 	*/
 	function render() {
+		$sql = '';
+		$a = $this->_sql_to_array();
+		if ($a) {
+			$sql = implode(' ', $a);
+		}
+		if (empty($sql)) {
+			return false;
+		}
+		return $sql;
+	}
+
+	/**
+	* Create text SQL from params
+	*/
+	function _sql_to_array() {
 		$a = array();
 		// Save 1 call of select()
 		if (empty($this->_sql['select']) && !empty($this->_sql['from'])) {
 			$this->select();
 		}
 		if (empty($this->_sql['select']) || empty($this->_sql['from'])) {
-			return false;
+			return array();
 		}
 		// HAVING without GROUP BY makes no sense
 		if (!empty($this->_sql['having']) && empty($this->_sql['group_by'])) {
@@ -87,25 +102,19 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 			$operator = $opt['operator'];
 			if (is_array($this->_sql[$name])) {
 				if (isset($opt['separator'])) {
-					$a[] = $operator.' '.implode(' '.$opt['separator'].' ', $this->_sql[$name]);
+					$a[$name] = $operator.' '.implode(' '.$opt['separator'].' ', $this->_sql[$name]);
 				}
 			} else {
-				$a[] = ($operator ? $operator.' ' : ''). $this->_sql[$name];
+				$a[$name] = ($operator ? $operator.' ' : ''). $this->_sql[$name];
 			}
 		}
-		if ($a) {
-			$sql = implode(' ', $a);
-		}
-		if (empty($sql)) {
-			return false;
-		}
-		return $sql;
+		return $a;
 	}
 
 	/**
 	* Execute generated query
 	*/
-	function exec($as_sql = true) {
+	function exec($as_sql = false) {
 		$sql = $this->render();
 		if ($as_sql) {
 			return $sql;
@@ -129,20 +138,40 @@ class yf_db_query_builder_mysql extends yf_db_query_builder_driver {
 
 	/**
 	*/
-	function delete() {
-// TODO
+	function delete($as_sql = false) {
+		$sql = false;
+		$a = $this->_sql_to_array();
+		if ($a) {
+			$to_leave = array('from','where','where_or');
+			foreach ($a as $k => $v) {
+				if (!in_array($k, $to_leave)) {
+					unset($a[$k]);
+				}
+			}
+			if ($a && isset($a['from'])) {
+				$a = array('delete' => 'DELETE') + $a;
+				$sql = implode(' ', $a);
+			}
+		}
+		if ($as_sql) {
+			return $sql;
+		}
+		if ($sql) {
+			return $this->db->query($sql);
+		}
+		return false;
 	}
 
 	/**
 	*/
-	function insert($data) {
+	function update($data, $pk = 'id') {
 // TODO
-	}
-
-	/**
-	*/
-	function update($data) {
-// TODO
+#		!$pk && $pk = 'id';
+#		$sql = $this->sql();
+#		if ($sql) {
+#			$a = $this->db->get($sql, $use_cache);
+#		}
+#		return $this;
 	}
 
 	/**
