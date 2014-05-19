@@ -177,7 +177,6 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_limit() {
 		$this->assertFalse( self::qb()->limit()->sql() );
-		$this->assertFalse( self::qb()->limit()->sql() );
 		$this->assertFalse( self::qb()->from()->limit()->sql() );
 		$this->assertFalse( self::qb()->from()->where()->having()->group_by()->order_by()->limit()->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\' GROUP BY `gid` HAVING `gid`=\'4\' ORDER BY `id` DESC LIMIT 10', 
@@ -193,5 +192,21 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->limit(5, 20)->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id=\'1\' GROUP BY u.gid HAVING u.gid=\'4\' ORDER BY u.id ASC LIMIT 20, 5', 
 			self::qb()->group_by('u.gid')->where(array('u.id','=',1))->order_by('u.id')->limit(5, 20)->from(array('user' => 'u'))->having(array('u.gid','=',4))->sql() );
+	}
+	public function test_delete() {
+		$this->assertFalse( self::qb()->delete() );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->delete($as_sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id`=\'1\'', self::qb()->from('user')->whereid(1)->delete($as_sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3))->delete($as_sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'uid')->delete($as_sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` AS `u` WHERE u.id IN(1,2,3)', self::qb()->from('user as u')->whereid(array(1,2,3), 'u.id')->delete($as_sql = true) );
+	}
+	public function test_update() {
+#		$this->assertFalse( self::qb()->update(array()) );
+#		$data = array(
+#			1 => array('name' => 'name1'),
+#			2 => array('name' => 'name2'),
+#		);
+#		$this->assertEquals( '', self::qb()->from('user')->whereid(array(1,2,3))->update($data)->sql() );
 	}
 }
