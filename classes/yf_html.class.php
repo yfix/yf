@@ -636,6 +636,7 @@ class yf_html {
 	/**
 	*/
 	function tree($data = array(), $extra = array()) {
+		return _class('html_tree', 'classes/html/')->tree($data, $extra);
 	}
 
 	/**
