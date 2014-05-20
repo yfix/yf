@@ -124,6 +124,7 @@ class test_html {
 			'media_objects'	=> $this->media_objects(),
 			'carousel'		=> $this->carousel(),
 			'menu'			=> '<div style="min-height:200px;">'.$this->menu().'</div>',
+			'2trees'		=> '<div class="span4">'.$this->tree().'</div>'.'<div class="span4">'.$this->tree().'</div>',
 			'dd_table'		=> $this->dd_table(),
 			'accordion'		=> _class('html')->accordion(array(
 				'modal'			=> $this->modal(),
