@@ -616,6 +616,25 @@ class yf_html {
 
 	/**
 	*/
+	function navlist($data = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$items = array();
+		foreach ((array)$data as $v) {
+			if (!is_array($v)) {
+				$name = $v;
+				$v = array();
+			} else {
+				$name = $v['name'];
+			}
+			$link = $v['link'];
+			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"><a href="'.$link.'"><i class="icon-chevron-right"></i> '.t($name).'</a></li>';
+		}
+		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</ul></div>';
+	}
+
+	/**
+	*/
 	function select_box ($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0) {
 		// Passing params as array
 		if (is_array($name)) {
