@@ -3,17 +3,6 @@
 class test_html {
 
 	/***/
-	public $data = array(
-		'first' 	=> 'first text',
-		'second'	=> 'second text',
-		'third'		=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. 
-			Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
-			Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
-			Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
-		'fourth'	=> '44444',
-	);
-
-	/***/
 	function _hook_side_column() {
 		$items = array();
 		$url = process_url('./?object='.$_GET['object']);
@@ -23,9 +12,12 @@ class test_html {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$items[] = '<li><a href="#head_'.$name.'"><i class="icon-chevron-right"></i> '.t($name).'</a></li>';
+			$items[] = array(
+				'name'	=> $name,
+				'link'	=> '#head_'.$name,
+			);
 		}
-		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav">'.implode(PHP_EOL, $items).'</ul></div>';
+		return _class('html')->navlist($items);
 	}
 
 	/***/
@@ -134,28 +126,52 @@ class test_html {
 
 	/***/
 	function dd_table() {
-		return _class('html')->dd_table($this->data, array());
+		$data = array(
+			'first' 	=> 'first text',
+			'second'	=> 'second text',
+			'third'		=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. 
+				Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
+				Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
+				Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
+			'fourth'	=> '44444',
+		);
+		return _class('html')->dd_table($data, array());
 	}
 
 	/***/
 	function accordion() {
-		$data = $this->data;
-		$data['first'] = array(
-			'body'	=> $data['first'],
-			'class_group'	=> 'panel-info',
-			'class_head'	=> 'alert-info',
-		);
-		$data['second'] = array(
-			'body'	=> $data['second'],
-			'class_group'	=> 'panel-danger',
-			'class_head'	=> 'alert-error',
+		$data = array(
+			'first' 	=> array(
+				'body'			=> 'first',
+				'class_group'	=> 'panel-info',
+				'class_head'	=> 'alert-info',
+			),
+			'second'	=> array(
+				'body'			=> 'second',
+				'class_group'	=> 'panel-danger',
+				'class_head'	=> 'alert-error',
+			),
+			'third'		=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. 
+				Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
+				Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
+				Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
+			'fourth'	=> '44444',
 		);
 		return _class('html')->accordion($data, array('selected' => 'third', 'class' => 'span4 col-lg-4'));
 	}
 
 	/***/
 	function tabs() {
-		return _class('html')->tabs($this->data, array('selected' => 'third'));
+		$data = array(
+			'first' 	=> 'first text',
+			'second'	=> 'second text',
+			'third'		=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. 
+				Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
+				Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
+				Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
+			'fourth'	=> '44444',
+		);
+		return _class('html')->tabs($data, array('selected' => 'third'));
 	}
 
 	/***/
@@ -193,6 +209,28 @@ class test_html {
 	/***/
 	function navbar() {
 		return _class('html')->navbar(array(
+			'brand'	=> array(
+				'link'	=> './',
+				'name'	=> 'Title',
+			),
+			array(
+				'link'	=> './?object=home',
+				'name'	=> 'Home',
+			),
+			array(
+				'link'	=> './?object=link1',
+				'name'	=> 'Link1',
+			),
+			array(
+				'link'	=> './?object=link2',
+				'name'	=> 'Link2',
+			),
+		));
+	}
+
+	/***/
+	function navlist() {
+		return _class('html')->navlist(array(
 			'brand'	=> array(
 				'link'	=> './',
 				'name'	=> 'Title',
