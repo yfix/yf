@@ -8,8 +8,8 @@ class form2_hide {
 				if ($_this->_validate_ok) {
 					common()->message_success('ok');
 					common()->message_warning('warn');
-#					common()->message_error('error');
-#					common()->message_info('info');
+					common()->message_error('error');
+					common()->message_info('info');
 					$_this->_rendered = '';
 				}
 			})
