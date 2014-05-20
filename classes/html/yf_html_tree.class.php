@@ -29,7 +29,7 @@ class yf_html_tree {
 #		$btn_back	= $r['back_link'] ? '<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-large icon-backward"></i> '.t('Go Back').'</a>' : '';
 #		$btn_add	= $r['add_link'] ? '<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-large icon-plus-sign"></i> '.t('Add').'</a>' : '';
 		$btn_expand = '<a href="javascript:void(0);" class="btn btn-mini btn-xs draggable-menu-expand-all"><i class="icon-large icon-expand-alt fa-expand"></i> '.t('Expand').'</a>';
-		return '<form action="'.$r['form_action'].'" method="post" class="draggable_form span4">
+		return '<form action="'.$r['form_action'].'" method="post" class="draggable_form">
 				<div class="controls">'
 					. $btn_save
 					. $btn_back
