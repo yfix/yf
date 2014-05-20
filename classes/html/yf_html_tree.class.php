@@ -17,8 +17,43 @@ class yf_html_tree {
 		if ($data) {
 			$data = $this->_parent->_recursive_sort_items($data);
 		}
-#return _var_dump($data);
-/*
+		$this->_css();
+		$this->_js();
+		$items = implode(PHP_EOL, (array)$this->_tree_items($data, $extra));
+		$r = array(
+			'form_action'	=> $extra['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
+			'add_link'		=> $extra['add_link'] ?: './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
+			'back_link'		=> $extra['back_link'] ?: './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
+		);
+#		$btn_save	= '<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="icon-save"></i> '.t('Save').'</button>';
+#		$btn_back	= $r['back_link'] ? '<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-backward"></i> '.t('Go Back').'</a>' : '';
+#		$btn_add	= $r['add_link'] ? '<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-plus-sign"></i> '.t('Add').'</a>' : '';
+		$btn_expand = '<a href="javascript:void(0);" class="btn btn-mini btn-xs draggable-menu-expand-all"><i class="icon-expand-alt fa-expand"></i> '.t('Expand').'</a>';
+		return '<form action="'.$r['form_action'].'" method="post" class="draggable_form span4">
+				<div class="controls">'
+					. $btn_save
+					. $btn_back
+					. $btn_add
+					. $btn_expand
+				.'</div>
+				<ul class="draggable_menu">'.$items.'</ul>
+			</form>';
+	}
+
+	/**
+	* This pure-php method needed to greatly speedup page rendering time for 100+ items
+	*/
+	function _tree_items(&$data, $extra = array()) {
+		if ($extra['show_controls']) {
+			$r = array(
+				'edit_link'		=> $extra['edit_link'] ?: './?object='.$_GET['object'].'&action=edit_item&id=%d',
+				'delete_link'	=> $extra['delete_link'] ?: './?object='.$_GET['object'].'&action=delete_item&id=%d',
+				'clone_link'	=> $extra['clone_link'] ?: './?object='.$_GET['object'].'&action=clone_item&id=%d',
+			);
+			$form_controls = form_item($r)->tbl_link_edit()
+				. form_item($r)->tbl_link_delete()
+				. form_item($r)->tbl_link_clone();
+		}
 		$keys = array_keys($data);
 		$keys_counter = array_flip($keys);
 		$items = array();
@@ -37,13 +72,28 @@ class yf_html_tree {
 					$close_li = 0;
 				}
 			}
+			$expander_icon = '';
+			if ($has_children) {
+				$expander_icon = $item['level'] >= 1 ? 'icon-caret-right' : 'icon-caret-down';
+			}
+			$content = ($item['icon_class'] ? '<i class="'.$item['icon_class'].'"></i>' : ''). $item['name'];
+			if ($item['link']) {
+				$content = '<a href="'.$item['link'].'">'.$content. '</a>';
+			}
+			$controls = $extra['show_controls'] ? str_replace('%d', $id, $form_controls) : '';
 			$items[] = '
-				<li class="dropdown">
-					<a href="'.$item['link'].'" class="dropdown-toggle">'. $item['name']. ($has_children ? ' <b class="caret"></b>' : ''). '</a>'
+				<li id="item_'.$id.'">
+					<div class="dropzone"></div>
+					<dl>
+						<a href="'.$item['link'].'" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
+						.$content
+						.'&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>
+						<div style="float:right;display:none;" class="controls_over">'.$controls.'</div>
+					</dl>'
 				;
 			if ($has_children) {
 				$ul_opened = true;
-				$items[] = PHP_EOL. '<ul class="dropdown-menu sub-menu">'. PHP_EOL;
+				$items[] = PHP_EOL. '<ul class="'.($item['level'] >= 1 ? 'closed' : '').'">'. PHP_EOL;
 			} elseif ($close_li) {
 				if ($ul_opened && !$has_children && $item['level'] != $next_item['level']) {
 					$ul_opened = false;
@@ -56,103 +106,7 @@ class yf_html_tree {
 				$items[] = $tmp;
 			}
 		}
-		return '<div class="navbar navbar-default'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
-					<div class="navbar-inner navbar-header">
-						<ul class="nav navbar-nav">'.implode(PHP_EOL, (array)$items).'</ul>
-					</div>
-				</div>';
-*/
-		return $this->_drag_tpl_main($data);
-	}
-
-	/**
-	* This pure-php method needed to greatly speedup page rendering time for 100+ items
-	*/
-	function _drag_tpl_main(&$data) {
-		$this->_css();
-		$this->_js();
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
-			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
-		);
-		return '<form action="'.$r['form_action'].'" method="post" id="draggable_form">
-				<div class="controls">
-<!--
-					<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="icon-save"></i> '.t('Save').'</button>
-					<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-backward"></i> '.t('Go Back').'</a>
-					<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-plus-sign"></i> '.t('Add').'</a>
--->
-					<a href="javascript:void(0);" class="btn btn-mini btn-xs" id="draggable-menu-expand-all"><i class="icon-expand-alt fa-expand"></i> '.t('Expand').'</a>
-				</div>
-				<ul class="draggable_menu">'.implode(PHP_EOL, (array)$this->_drag_tpl_items($data)).'</ul>
-			</form>';
-	}
-
-	/**
-	* This pure-php method needed to greatly speedup page rendering time for 100+ items
-	*/
-	function _drag_tpl_items(&$data) {
-		$body = array();
-
-		$form = _class('form2');
-		$replace = array(
-			'edit_link'		=> './?object='.$_GET['object'].'&action=edit_item&id=%d',
-			'delete_link'	=> './?object='.$_GET['object'].'&action=delete_item&id=%d',
-			'clone_link'	=> './?object='.$_GET['object'].'&action=clone_item&id=%d',
-		);
-		$form_controls =
-			$form->tpl_row('tbl_link_edit', $replace, '', '', '')
-			.$form->tpl_row('tbl_link_delete', $replace, '', '', '')
-			.$form->tpl_row('tbl_link_clone', $replace, '', '', '')
-		;
-		$keys = array_keys($data);
-		$keys_counter = array_flip($keys);
-#		$items = array();
-#		$ul_opened = false;
-		foreach ((array)$data as $id => $item) {
-			if (!$id) {
-				continue;
-			}
-			$next_item = $data[ $keys[$keys_counter[$id] + 1] ];
-			$has_children = false;
-			if ($next_item) {
-				if ($next_item['level'] > $item['level']) {
-					$has_children = true;
-				}
-#				$close_li = $item['level'] - $next_item['level'] + 1;
-#				if ($close_li < 0) {
-#					$close_li = 0;
-#				}
-			}
-			$expander_icon = '';
-			if ($has_children) {
-				$expander_icon = $item['level'] >= 1 ? 'icon-caret-right' : 'icon-caret-down';
-			}
-			$content = ($item['icon_class'] ? '<i class="'.$item['icon_class'].'"></i>' : ''). $item['name'];
-			if ($item['link']) {
-				$content = '<a href="'.$item['link'].'">'.$content. '</a>';
-			}
-			if ($has_children) {
-				$footer = '<ul class="'.($item['level'] >= 1 ? 'closed' : '').'">';
-			} else {
-				$footer = '</li>'.str_repeat('</ul>'.PHP_EOL, $item['next_level_diff']);
-			}
-			$body[] = '
-				<li id="item_'.$id.'">
-					<div class="dropzone"></div>
-					<dl>
-						<a href="#" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
-						.$content
-						.'&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>
-						<div style="float:right;display:none;" class="controls_over">'
-						.str_replace('%d', $id, $form_controls)
-						.'</div>
-					</dl>'
-				.$footer
-			;
-		}
-		return $body;
+		return $items;
 	}
 
 	/**
@@ -178,7 +132,7 @@ class yf_html_tree {
 	function _js() {
 		js(
 '$(function(){
-	$("#draggable_form").on("submit", function(){
+	$(".draggable_form").on("submit", function(){
 		var _form = $(this);
 		var items = { };
 		var i = 0;
@@ -197,7 +151,7 @@ class yf_html_tree {
 	var caret_class_opened = "icon-caret-down";
 	var caret_class_closed = "icon-caret-right";
 
-	$("#draggable-menu-expand-all").on("click", function() {
+	$(".draggable-menu-expand-all").on("click", function() {
 		var _this = $(this);
 		var _context = ".draggable_menu";
 		var i = $(".expander i", _context).filter("." + caret_class_opened + ", ." + caret_class_closed);
