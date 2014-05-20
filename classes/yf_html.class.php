@@ -616,7 +616,7 @@ class yf_html {
 
 	/**
 	*/
-	function navlist($data = array()) {
+	function navlist($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
 		foreach ((array)$data as $v) {
@@ -631,6 +631,11 @@ class yf_html {
 			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"><a href="'.$link.'"><i class="icon-chevron-right"></i> '.t($name).'</a></li>';
 		}
 		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</ul></div>';
+	}
+
+	/**
+	*/
+	function tree($data = array(), $extra = array()) {
 	}
 
 	/**
