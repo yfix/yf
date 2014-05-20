@@ -515,6 +515,80 @@ class test_html {
 	}
 
 	/***/
+	function tree() {
+		return _class('html')->tree(array(
+			11 => array(
+				'name'	=> 'Tools',
+			),
+			22 => array(
+				'link'		=> './?object=blocks',
+				'name'		=> 'Blocks editor',
+				'parent_id'	=> 11,
+			),
+			33 => array(
+				'link'		=> './?object=file_manager',
+				'name'		=> 'File manager',
+				'parent_id'	=> 11,
+			),
+			44 => array(
+				'name'		=> 'Administration',
+			),
+			55 => array(
+				'link'		=> './?object=admin',
+				'name'		=> 'Admin accounts',
+				'parent_id'	=> 44,
+			),
+			66 => array(
+				'link'		=> './?object=admin_groups',
+				'name'		=> 'Admin groups',
+				'parent_id'	=> 44,
+			),
+			77 => array(
+				'link'		=> './?object=admin_modules',
+				'name'		=> 'Admin modules',
+				'parent_id'	=> 44,
+			),
+			88 => array(
+				'name'		=> 'Users',
+				'parent_id'	=> 44,
+			),
+			99 => array(
+				'link'		=> './?object=manage_users',
+				'name'		=> 'User accounts',
+				'parent_id'	=> 88,
+			),
+			101 => array(
+				'link'		=> './?object=user_groups',
+				'name'		=> 'User groups',
+				'parent_id'	=> 88,
+			),
+			102 => array(
+				'link'		=> './?object=user_modules',
+				'name'		=> 'User modules',
+				'parent_id'	=> 88,
+			),
+			103 => array(
+				'name'		=> 'Content',
+			),
+			104 => array(
+				'link'		=> './?object=static_pages',
+				'name'		=> 'Static pages',
+				'parent_id'	=> 103,
+			),
+			105 => array(
+				'link'		=> './?object=manage_news',
+				'name'		=> 'News',
+				'parent_id'	=> 103,
+			),
+			106 => array(
+				'link'		=> './?object=manage_comments',
+				'name'		=> 'Comments',
+				'parent_id'	=> 103,
+			),
+		));
+	}
+
+	/***/
 	function grid() {
 		return _class('html')->grid(array(
 			array(
