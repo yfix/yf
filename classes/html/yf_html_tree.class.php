@@ -14,10 +14,10 @@ class yf_html_tree {
 	*/
 	function tree($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-#		if ($data) {
-#			$data = $this->_recursive_sort_items($data);
-#		}
-return _var_dump($data);
+		if ($data) {
+			$data = $this->_parent->_recursive_sort_items($data);
+		}
+#return _var_dump($data);
 /*
 		$keys = array_keys($data);
 		$keys_counter = array_flip($keys);
@@ -62,12 +62,13 @@ return _var_dump($data);
 					</div>
 				</div>';
 */
+		return $this->_drag_tpl_main($data);
 	}
 
 	/**
 	* This pure-php method needed to greatly speedup page rendering time for 100+ items
 	*/
-	function _drag_tpl_main(&$items) {
+	function _drag_tpl_main(&$data) {
 		$this->_css();
 		$this->_js();
 		$r = array(
@@ -77,19 +78,21 @@ return _var_dump($data);
 		);
 		return '<form action="'.$r['form_action'].'" method="post" id="draggable_form">
 				<div class="controls">
+<!--
 					<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="icon-save"></i> '.t('Save').'</button>
 					<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-backward"></i> '.t('Go Back').'</a>
 					<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-plus-sign"></i> '.t('Add').'</a>
+-->
 					<a href="javascript:void(0);" class="btn btn-mini btn-xs" id="draggable-menu-expand-all"><i class="icon-expand-alt fa-expand"></i> '.t('Expand').'</a>
 				</div>
-				<ul class="draggable_menu">'.implode(PHP_EOL, (array)$this->_drag_tpl_items($items)).'</ul>
+				<ul class="draggable_menu">'.implode(PHP_EOL, (array)$this->_drag_tpl_items($data)).'</ul>
 			</form>';
 	}
 
 	/**
 	* This pure-php method needed to greatly speedup page rendering time for 100+ items
 	*/
-	function _drag_tpl_items(&$items) {
+	function _drag_tpl_items(&$data) {
 		$body = array();
 
 		$form = _class('form2');
@@ -103,20 +106,35 @@ return _var_dump($data);
 			.$form->tpl_row('tbl_link_delete', $replace, '', '', '')
 			.$form->tpl_row('tbl_link_clone', $replace, '', '', '')
 		;
-		foreach ((array)$items as $id => $item) {
+		$keys = array_keys($data);
+		$keys_counter = array_flip($keys);
+#		$items = array();
+#		$ul_opened = false;
+		foreach ((array)$data as $id => $item) {
 			if (!$id) {
 				continue;
 			}
+			$next_item = $data[ $keys[$keys_counter[$id] + 1] ];
+			$has_children = false;
+			if ($next_item) {
+				if ($next_item['level'] > $item['level']) {
+					$has_children = true;
+				}
+#				$close_li = $item['level'] - $next_item['level'] + 1;
+#				if ($close_li < 0) {
+#					$close_li = 0;
+#				}
+			}
 			$expander_icon = '';
-			if ($item['have_children']) {
-				$expander_icon = $item['level_num'] >= 1 ? 'icon-caret-right' : 'icon-caret-down';
+			if ($has_children) {
+				$expander_icon = $item['level'] >= 1 ? 'icon-caret-right' : 'icon-caret-down';
 			}
 			$content = ($item['icon_class'] ? '<i class="'.$item['icon_class'].'"></i>' : ''). $item['name'];
 			if ($item['link']) {
 				$content = '<a href="'.$item['link'].'">'.$content. '</a>';
 			}
-			if ($item['have_children']) {
-				$footer = '<ul class="'.($item['level_num'] >= 1 ? 'closed' : '').'">';
+			if ($has_children) {
+				$footer = '<ul class="'.($item['level'] >= 1 ? 'closed' : '').'">';
 			} else {
 				$footer = '</li>'.str_repeat('</ul>'.PHP_EOL, $item['next_level_diff']);
 			}
@@ -140,8 +158,8 @@ return _var_dump($data);
 	/**
 	*/
 	function _css() {
-		css('
-			.draggable_menu { width:70%; }
+		css(
+			'.draggable_menu { width:70%; }
 			.draggable_menu li { list-style-type: none; }
 			.draggable_menu dl { font-weight:bold; position: relative; display: block; margin:0; border-top: 1px solid #444; }
 			.draggable_menu dl.over { background-color: #ccc !important; }
@@ -151,15 +169,15 @@ return _var_dump($data);
 			.draggable_menu ul { display: block; }
 			.draggable_menu ul.closed { display: none; }
 			.draggable_menu .controls_over { display: none; }
-			.draggable_menu .icon-move { cursor: move; }
-		');
+			.draggable_menu .icon-move { cursor: move; }'
+		);
 	}
 
 	/**
 	*/
 	function _js() {
-		js('
-$(function(){
+		js(
+'$(function(){
 	$("#draggable_form").on("submit", function(){
 		var _form = $(this);
 		var items = { };
@@ -207,7 +225,7 @@ $(function(){
 		}
 		return false;
 	});
-})
+});
 
 //init functions
 $(function() {
@@ -266,6 +284,7 @@ $(function() {
 		$(this).find(".controls_over").hide();
 	});
 });
+
 var draggable_history = {
 	stack: new Array(),
 	temp: null,
@@ -292,7 +311,7 @@ var draggable_history = {
 		$(".draggable_menu li.opened").not(":has(li)").removeClass("opened");
 		$(".draggable_menu li:has(ul li):not(.closed)").addClass("opened");
 	}
-}
-		');
+}'
+		);
 	}
 }
