@@ -22,7 +22,8 @@ class test_html {
 
 	/***/
 	function _get_method_docs($cls, $method, $params = array()) {
-		$dir = YF_PATH.'.dev/docs/';
+		$lang = 'en';
+		$dir = YF_PATH.'.dev/docs/'.$lang.'/';
 		$tpl = $dir. $cls. '/'. $method.'.stpl';
 		$name = 'docs/'.$cls.'/'.$method;
 		return file_exists($tpl) ? tpl()->parse_string(file_get_contents($tpl), $params, $name) : '';
@@ -109,7 +110,7 @@ class test_html {
 					</h1>
 					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($self_source['body'])).'</code></pre></div>
 					'.($target_source['body'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['body'])).'</code></pre></div>' : '').'
-					'.($target_docs ? '<div id="func_target_docs_'.$name.'" class="collapse out">'.$target_docs.'</div>' : '').'
+					'.($target_docs ? '<div id="func_target_docs_'.$name.'" class="collapse out">'._class('html')->well(nl2br($target_docs)).'</div>' : '').'
 					<div id="func_out_'.$name.'" class="row well well-lg" style="margin-left:0;">'.$this->$name().'</div>
 				</div>';
 		}
