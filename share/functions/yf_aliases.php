@@ -134,6 +134,9 @@ if (!function_exists('js')) {
 if (!function_exists('require_js')) {
 	function require_js($content, $type = 'auto', $params = array()) { return _class('core_js')->add($content, $type, $params); }
 }
+if (!function_exists('jquery')) {
+	function jquery($content, $params = array()) { return _class('core_js')->add('$(function(){'.PHP_EOL. $content. PHP_EOL.'})', 'inline', $params); }
+}
 if (!function_exists('css')) {
 	function css($content, $type = 'auto', $params = array()) { return _class('core_css')->add($content, $type, $params); }
 }
