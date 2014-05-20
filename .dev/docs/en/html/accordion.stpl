@@ -2,3 +2,5 @@ Accordion widget based on bootstrap html markup.
 It accepts 2 arguments:
 * array of items
 * array of params
+
+<a href="http://getbootstrap.com/javascript/#collapse">http://getbootstrap.com/javascript/#collapse</a>
