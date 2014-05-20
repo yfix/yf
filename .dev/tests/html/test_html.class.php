@@ -21,6 +21,14 @@ class test_html {
 	}
 
 	/***/
+	function _get_method_docs($cls, $method, $params = array()) {
+		$dir = YF_PATH.'.dev/docs/';
+		$tpl = $dir. $cls. '/'. $method.'.stpl';
+		$name = 'docs/'.$cls.'/'.$method;
+		return file_exists($tpl) ? tpl()->parse_string(file_get_contents($tpl), $params, $name) : '';
+	}
+
+	/***/
 	function _get_method_source($cls, $method) {
 		if (is_object($cls)) {
 			$cls = get_class($cls);
@@ -90,15 +98,18 @@ class test_html {
 			}
 			$self_source = $this->_get_method_source(__CLASS__, $name);
 			$target_source = $this->_get_method_source(_class('html'), $name);
+			$target_docs = $this->_get_method_docs('html', $name);
 			$items[] = 
 				'<div id="head_'.$name.'" style="margin-bottom: 30px;">
 					<h1>'.$name.'
 						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button>
 						'.($target_source['body'] ? '<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("html")-&gt;'.$name.'() source</button>' : '').'
 						'.($target_source['body'] ? '<a target="_blank" class="btn btn-primary btn-small btn-sm" href="https://github.com/yfix/yf/tree/master/'.substr($target_source['file'], strlen(YF_PATH)).'#L'.$target_source['line_start'].'">Github <i class="icon icon-github"></i></a>' : '').'
+						'.($target_docs ? '<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_docs_'.$name.'">html::'.$name.' docs</button>' : '').'
 					</h1>
 					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($self_source['body'])).'</code></pre></div>
 					'.($target_source['body'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['body'])).'</code></pre></div>' : '').'
+					'.($target_docs ? '<div id="func_target_docs_'.$name.'" class="collapse out">'.$target_docs.'</div>' : '').'
 					<div id="func_out_'.$name.'" class="row well well-lg" style="margin-left:0;">'.$this->$name().'</div>
 				</div>';
 		}
