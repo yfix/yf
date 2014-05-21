@@ -3,6 +3,18 @@
 class yf_docs {
 
 	/**
+	* Catch all methods calls
+	*/
+	function _module_action_handler($name) {
+		if (method_exists($this, $name)) {
+			return $this->$name();
+		} else {
+			$_GET['id'] = $name;
+			return $this->view();
+		}
+	}
+
+	/**
 	*/
 	function _init() {
 		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
@@ -55,7 +67,7 @@ class yf_docs {
 		foreach (glob($this->docs_dir.'*.stpl') as $path) {
 			$f = basename($path);
 			$name = substr($f, 0, -strlen('.stpl'));
-			$body[] = '<li><a href="./?object='.$_GET['object'].'&action=view&id='.$name.'">'.$name.'</a></li>';
+			$body[] = '<li><a href="./?object='.$_GET['object'].'&action=show&id='.$name.'">'.$name.'</a></li>';
 		}
 		return implode(PHP_EOL, $body);
 	}
