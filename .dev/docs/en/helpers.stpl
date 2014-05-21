@@ -1,4 +1,5 @@
 <h3>array_add</h3>
+{github(array_add)}
 <p>The&nbsp;<code>array_add</code>&nbsp;function adds a given key / value pair to the array if the given key doesn't already exist in the array.</p>
 <pre><code>
 $array = array('foo' =&gt; 'bar');
