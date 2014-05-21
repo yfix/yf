@@ -56,7 +56,7 @@ if (!function_exists('xsb_decode')) {
 if (!function_exists('process_url')) {
 	function process_url($url = '', $force_rewrite = false, $for_site_id = false) {
 		if (tpl()->REWRITE_MODE) {
-			module('rewrite')->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+			$url = module('rewrite')->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
 		} elseif (substr($url, 0, 3) == './?') {
 			$url = WEB_PATH. substr($url, 2);
 		}
