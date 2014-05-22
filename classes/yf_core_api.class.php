@@ -56,4 +56,10 @@ class yf_core_api {
 	function get_libs() {
 // TODO
 	}
+	function get_models() {
+// TODO
+	}
+	function get_migrations() {
+// TODO
+	}
 }
