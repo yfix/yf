@@ -225,7 +225,7 @@ class yf_core_errors {
 		if (!$IP) {
 			$IP = $_SERVER['REMOTE_ADDR'];
 		}
-		$trace = implode(PHP_EOL, array_slice(explode(PHP_EOL, main()->trace_string()), 1, 5));
+		$trace = array_slice(explode(PHP_EOL, main()->trace_string()), 1, 5);
 		if ($save_log || $send_mail) {
 			$DIVIDER = PHP_EOL;
 			if ($this->USE_COMPACT_FORMAT) {
