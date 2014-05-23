@@ -5,13 +5,33 @@
 */
 class yf_core_api {
 // TODO
-	function get_classes() {
+	/**
+	*/
+	function get_classes($extra = array()) {
 // TODO
 	}
+
+	/**
+	*/
+	function get_class_source() {
+// TODO
+	}
+
+	/**
+	*/
 	function get_methods() {
 // TODO
 	}
+	function get_method_source() {
+// TODO
+	}
+	function get_github_link() {
+// TODO
+	}
 	function get_templates() {
+// TODO
+	}
+	function get_template_source() {
 // TODO
 	}
 	function get_langs() {
@@ -20,7 +40,13 @@ class yf_core_api {
 	function get_sites() {
 // TODO
 	}
+	function get_site_info() {
+// TODO
+	}
 	function get_servers() {
+// TODO
+	}
+	function get_server_info() {
 // TODO
 	}
 	function get_user_roles() {
@@ -54,6 +80,9 @@ class yf_core_api {
 // TODO
 	}
 	function get_libs() {
+// TODO
+	}
+	function get_widgets() {
 // TODO
 	}
 	function get_models() {
