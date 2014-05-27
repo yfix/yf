@@ -274,7 +274,7 @@ class test_core_api {
 		}
 		$info = _class('core_api')->get_function_source($name);
 		$info['is_func'] = true;
-		return $this->_show_source($info);
+		return _class('core_api')->show_docs($info);
 	}
 
 	/**
@@ -289,37 +289,6 @@ class test_core_api {
 		}
 		$info = _class('core_api')->get_method_source($module, $method, $section);
 		$info['is_module'] = $module.'-'.$method;
-		return $this->_show_source($info);
-	}
-
-	/**
-	*/
-	function _show_source(array $info) {
-		$tests = '';
-		if ($info['is_func']) {
-			$tests = _class('core_api')->get_function_tests($info['name']);
-		} elseif ($info['is_module']) {
-			list($module, $method) = explode('-', $info['is_module']);
-			$tests = _class('core_api')->get_module_tests($module);
-		}
-		$docs = '';
-		if ($info['is_func']) {
-			$docs = _class('core_api')->get_function_docs($info['name']);
-		} elseif ($info['is_module']) {
-			list($module, $method) = explode('-', $info['is_module']);
-			$docs = _class('core_api')->get_method_docs($module, $method);
-			if (!$docs) {
-				$docs = _class('core_api')->get_module_docs($module);
-			}
-		}
-		return '
-			<h3>'.$info['name'].'</h3>
-			<h4>'.$info['file'].':'.$info['line_start'].' '._class('core_api')->get_github_link($info).'</h4>
-			<section class="page-contents">
-				<pre><code>'.($info['comment'] ? _prepare_html($info['comment'], $strip = false).PHP_EOL : ''). _prepare_html($info['source'], $strip = false).'</code></pre>
-				'.($tests ? '<h4>Unit tests</h4><pre><code>'._prepare_html($tests, $strip = false).'</code></pre>' : '').'
-				'.($docs ? '<h4>Documentation</h4>'.nl2br($docs) : '').'
-			</section>
-		';
+		return _class('core_api')->show_docs($info);
 	}
 }
