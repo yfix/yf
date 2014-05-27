@@ -46,7 +46,7 @@ class yf_docs {
 		foreach (glob($this->docs_dir.'*.stpl') as $path) {
 			$f = basename($path);
 			$name = substr($f, 0, -strlen('.stpl'));
-			$data[] = array(
+			$data[++$i] = array(
 				'name'	=> $name,
 				'link'	=> './?object='.$_GET['object'].'&action=show&id='.$name,
 			);
