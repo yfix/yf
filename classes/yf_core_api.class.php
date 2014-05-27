@@ -10,6 +10,8 @@ class yf_core_api {
 		'user'	=> 'modules/',
 		'admin'	=> 'admin_modules/',
 	);
+	/** @security Project code needed to be defended from easy traversing */
+	var $SOURCE_ONLY_FRAMEWORK = false;
 
 	/**
 	* This method will search and call all found hook methods from active modules
@@ -73,6 +75,23 @@ class yf_core_api {
 			ksort($hooks);
 		}
 		return $hooks;
+	}
+
+	/**
+	*/
+	function get_widgets() {
+		$prefix = 'widget_';
+		$prefix_len = strlen($prefix);
+		$data = array();
+		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
+			foreach ((array)$_hooks as $name => $method_name) {
+				if (substr($name, 0, $prefix_len) != $prefix) {
+					continue;
+				}
+				$data[$name][$module] = $method_name;
+			}
+		}
+		return $data;
 	}
 
 	/**
@@ -148,6 +167,10 @@ class yf_core_api {
 			if ($section != 'all' && $section != $_section) {
 				continue;
 			}
+			// Currently I do not want to analyze submodules from core
+			if ($_section == 'core') {
+				continue;
+			}
 			$_data = array();
 			$paths = array();
 			$this->_get_classes_by_params(array('folder' => $folder.'*/'), $paths);
@@ -190,17 +213,6 @@ class yf_core_api {
 		);
 		$info['source'] = $this->_get_file_slice($info['file'], $info['line_start'], $info['line_end']);
 		return $info;
-	}
-
-	/***/
-	function _get_file_slice($file, $line_start, $line_end) {
-		$source = $this->_cache[__FUNCTION__][$file];
-		if (is_null($source)) {
-			$source = file($file);
-			$this->_cache[__FUNCTION__][$file] = $source;
-		}
-		$offset = $line_end - $line_start;
-		return implode(array_slice($source, $line_start - 1, $offset + 1));
 	}
 
 	/**
@@ -246,25 +258,40 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_module_tests() {
+	function get_module_tests($module) {
+		$tests_dir = YF_PATH.'.dev/tests/';
+		$path = $tests_dir.'class_'.$module.'.Test.php';
+		if (file_exists($path)) {
+			return file_get_contents($path);
+		}
+		return false;
+	}
+
+	/**
+	*/
+	function get_function_tests($name) {
+		$tests_dir = YF_PATH.'.dev/tests/';
+		$path = $tests_dir.'func_'.$name.'.Test.php';
+		if (file_exists($path)) {
+			return file_get_contents($path);
+		} else {
+			$path = $tests_dir.'func_'.ltrim($name, '_').'.Test.php';
+			if (file_exists($path)) {
+				return file_get_contents($path);
+			}
+		}
+		return false;
+	}
+
+	/**
+	*/
+	function get_callbacks() {
 // TODO
 	}
 
 	/**
 	*/
-	function get_function_tests() {
-// TODO
-	}
-
-	/**
-	*/
-	function get_templates() {
-// TODO
-	}
-
-	/**
-	*/
-	function get_template_source() {
+	function get_events() {
 // TODO
 	}
 
@@ -324,25 +351,19 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_callbacks() {
+	function get_templates() {
 // TODO
 	}
 
 	/**
 	*/
-	function get_events() {
+	function get_template_source() {
 // TODO
 	}
 
 	/**
 	*/
 	function get_libs() {
-// TODO
-	}
-
-	/**
-	*/
-	function get_widgets() {
 // TODO
 	}
 
@@ -411,14 +432,17 @@ class yf_core_api {
 		$prefix = isset($extra['prefix']) ? $extra['prefix'] : YF_PREFIX;
 		$suffix = isset($extra['suffix']) ? $extra['suffix'] : YF_CLS_EXT;
 		$folder = isset($extra['folder']) ? $extra['folder'] : $this->section_paths['core'];
-		$globs = array(
-			'project'			=> PROJECT_PATH. $folder.'*'.$suffix,
-			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'.$folder.'*'.$suffix,
-			'framework'			=> YF_PATH. $folder.'*'.$suffix,
-			'framework_plugins'	=> YF_PATH. 'plugins/*/'.$folder.'*'.$suffix,
+
+		$globs = array();
+		if (!$this->SOURCE_ONLY_FRAMEWORK) {
+			$globs['project']			= PROJECT_PATH. $folder.'*'.$suffix;
+			$globs['project_plugins']	= PROJECT_PATH. 'plugins/*/'.$folder.'*'.$suffix;
+		}
+		$globs['framework']			= YF_PATH. $folder.'*'.$suffix;
+		$globs['framework_plugins']	= YF_PATH. 'plugins/*/'.$folder.'*'.$suffix;
 // TODO: enable it, but test and cleanup before
-#			'framework_p2'		=> YF_PATH. 'priority2/'.$folder.'*'.$suffix,
-		);
+#		$globs['framework_p2']		= YF_PATH. 'priority2/'.$folder.'*'.$suffix;
+
 		$prefix_len = strlen($prefix);
 		$suffix_len = strlen($suffix);
 		$classes = array();
@@ -436,6 +460,17 @@ class yf_core_api {
 			ksort($classes);
 		}
 		return $classes;
+	}
+
+	/***/
+	function _get_file_slice($file, $line_start, $line_end) {
+		$source = $this->_cache[__FUNCTION__][$file];
+		if (is_null($source)) {
+			$source = file($file);
+			$this->_cache[__FUNCTION__][$file] = $source;
+		}
+		$offset = $line_end - $line_start;
+		return implode(array_slice($source, $line_start - 1, $offset + 1));
 	}
 
 	/***/
