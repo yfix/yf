@@ -217,7 +217,7 @@ class test_core_api {
 	*/
 	function get_widgets() {
 // TODO
-/*
+
 		$data = array();
 		foreach (_class('core_api')->get_widgets() as $module => $hooks) {
 			$i++;
@@ -240,7 +240,7 @@ class test_core_api {
 			'opened_levels'	=> 0,
 			'draggable'		=> false,
 		));
-*/
+
 	}
 
 	/**
