@@ -508,8 +508,28 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_libs() {
-		$folder = 'libs/';
+	function get_plugins() {
+		$folder = '';
+		$suffix = '/';
+		$libs = array();
+		foreach ($this->_get_globs($folder, $suffix) as $gname => $glob) {
+			if (false === strpos($gname, '_plugins')) {
+				continue;
+			}
+			foreach (glob($glob) as $path) {
+				$name = basename($path);
+				$libs[$name] = $name;
+			}
+		}
+		if (is_array($libs)) {
+			ksort($libs);
+		}
+		return $libs;
+	}
+
+	/**
+	*/
+	function get_libs($folder = 'libs/') {
 		$libs = array();
 		foreach ($this->_get_globs($folder, $suffix) as $glob) {
 			foreach (glob($glob) as $path) {
