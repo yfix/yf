@@ -152,11 +152,19 @@ class test_core_api {
 		$submodule = preg_replace('~[^a-z0-9_]~ims', '', $submodule);
 		if (!$section || !$module || !$submodule) {
 			return _e('Missing required params');
-#			return js_redirect('./?object='.__CLASS__.'&action=get_submodules');
 		}
-		$all = _class('core_api')->get_submodules_methods();
-// TODO
-		return _var_dump( $all );
+		$methods = _class('core_api')->get_submodule_methods($module, $submodule, $section);
+		$data = array();
+		foreach ($methods as $name => $info) {
+			$data[++$i] = array(
+				'name'	=> $name,
+				'link'	=> './?object='.__CLASS__.'&action=get_sub_method_source&id=all.'.$module.'.'.$submodule.'.'.$name,
+			);
+		}
+		return _class('html')->tree($data, array(
+			'opened_levels'	=> 1,
+			'draggable'		=> false,
+		));
 	}
 
 	/**
@@ -216,8 +224,6 @@ class test_core_api {
 	/**
 	*/
 	function get_widgets() {
-// TODO
-
 		$data = array();
 		foreach (_class('core_api')->get_widgets() as $module => $hooks) {
 			$i++;
