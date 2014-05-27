@@ -202,7 +202,8 @@ class yf_core_api {
 	*/
 	function get_method_source($module, $method, $section = 'all') {
 		$obj = $this->get_class_instance($module, $section);
-		return $this->_get_method_source($obj, $method);
+		$source = $this->_get_method_source($obj, $method);
+		return $source;
 	}
 
 	/**
@@ -536,9 +537,6 @@ class yf_core_api {
 		$class = new ReflectionClass($cls);
 		foreach ($class->getMethods() as $v) {
 			$name = $v->name;
-			if ($name == 'show' || substr($name, 0, 1) == '_') {
-				continue;
-			}
 			$r = new ReflectionMethod($cls, $name);
 			$info = array(
 				'name'		=> $name,
