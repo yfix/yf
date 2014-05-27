@@ -408,14 +408,6 @@ class yf_file_manager {
 		}
 		$new_zip_name = $dir_name."/".$_POST['new_zip_name'].".zip";
 
-		main()->load_class_file("pclzip", "classes/");
-		if (class_exists("pclzip")) {
-			$this->ZIP_OBJ = new pclzip($new_zip_name);
-		}
-		if (!is_object($this->ZIP_OBJ)) {
-			trigger_error("FILE_MANAGER: Cant init PclZip module", E_USER_ERROR);
-			return false;
-		}
 		$_old_dir_name	= str_replace("\\", "/", getcwd());
 		chdir($dir_name);
 
@@ -432,7 +424,8 @@ class yf_file_manager {
 		}
 		$_old_dir_name	= str_replace("\\", "/", getcwd());
 		chdir($_old_dir_name);
-		$this->ZIP_OBJ->create($item_list);
+// TODO: check or replace pclzip
+		_class_safe('pclzip', 'classes/common/')->create($item_list);
 		return js_redirect("./?object=".$_GET["object"]."&dir_name=".$_POST['dir_name']._add_get(array("dir_name")));
 	}
 
@@ -450,21 +443,13 @@ class yf_file_manager {
 			if ($ext != "zip") continue;
 
 			$file_name	= str_replace("\\", "/", $dir_name."/".$name);
-			main()->load_class_file("pclzip", "classes/");
-			if (class_exists("pclzip")) {
-				$this->ZIP_OBJ = new pclzip($file_name);
-			}
-			if (!is_object($this->ZIP_OBJ)) {
-				trigger_error("FILE_MANAGER: Cant init PclZip module", E_USER_ERROR);
-				return false;
-			}
-			$this->ZIP_OBJ->pclzip($file_name);
 			$extraction_dir = $dir_name."/".substr($name, 0, -4);
 			if (!file_exists($extraction_dir)) {
 				mkdir($extraction_dir, 0777);
 			}
 			chdir($extraction_dir);
-			$this->ZIP_OBJ->extract();
+// TODO: check or replace pclzip
+			_class_safe('pclzip', 'classes/common/')->extract();
 		}
 		chdir($_old_dir_name);
 		return js_redirect("./?object=".$_GET["object"]."&dir_name=".$_POST['dir_name']._add_get(array("dir_name")));
