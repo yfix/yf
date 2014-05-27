@@ -4,11 +4,176 @@
 * Core API
 */
 class yf_core_api {
-// TODO
+
+	/**
+	* This method will search and call all found hook methods from active modules
+	*/
+	function call_hooks($hook_name, &$params = array(), $section = 'all') {
+		$data = array();
+		foreach ((array)$this->get_hooks($hook_name) as $module => $methods) {
+			foreach ((array)$methods as $method) {
+				$obj = $this->get_class_instance($module, $section);
+				$data[$module.'__'.$method] = $obj->$method($params);
+			}
+		}
+		return $data;
+	}
+
+	/**
+	* This method will search for hooks alongside active modules
+	*/
+	function get_hooks($hook_name, $section = 'all') {
+		$hooks = array();
+		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
+			foreach ((array)$_hooks as $name => $method_name) {
+				if ($name == $hook_name) {
+					$hooks[$module][$name] = $method_name;
+				}
+			}
+		}
+		return $hooks;
+	}
+
+	/**
+	* This method will search for hooks alongside active modules
+	*/
+	function get_all_hooks($section = 'all') {
+		$hooks = array();
+		$hooks_prefix = '_hook_';
+		$hooks_pl = strlen($hooks_prefix);
+		foreach ((array)$this->get_private_methods($section) as $module => $methods) {
+			foreach ((array)$methods as $method) {
+				if (substr($method, 0, $hooks_pl) != $hooks_prefix) {
+					continue;
+				}
+				$hooks[$module][substr($method, $hooks_pl)] = $method;
+			}
+			if (is_array($hooks[$module])) {
+				ksort($hooks[$module]);
+			}
+		}
+		if (is_array($hooks)) {
+			ksort($hooks);
+		}
+		return $hooks;
+	}
+
 	/**
 	*/
-	function get_classes($extra = array()) {
-// TODO
+	function get_private_methods($section = 'all') {
+		$methods = array();
+		foreach ((array)$this->get_methods($section) as $module => $method) {
+			if ($method[0] == '_') {
+				$methods[$module][$method] = $method;
+			}
+		}
+		return $methods;
+	}
+
+	/**
+	*/
+	function get_public_methods($section = 'all') {
+		$methods = array();
+		foreach ((array)$this->get_methods($section) as $module => $method) {
+			if ($method[0] != '_') {
+				$methods[$module][$method] = $method;
+			}
+		}
+		return $methods;
+	}
+
+	/**
+	*/
+	function get_methods($section = 'all') {
+		$methods = array();
+		foreach ((array)$this->get_classes($section) as $_section => $modules) {
+			foreach ((array)$modules as $module) {
+				$obj = $this->get_class_instance($module, $_section);
+				foreach ((array)get_class_methods($obj) as $method) {
+					$methods[$module][$method] = $method;
+				}
+			}
+		}
+		foreach ((array)$methods as $module => $_methods) {
+			ksort($methods[$module]);
+		}
+		return $methods;
+	}
+
+	/**
+	*/
+	function get_class_instance($name, $section) {
+		if ($section == 'core') {
+			$path = 'classes/';
+		} elseif ($section == 'user') {
+			$path = 'modules/';
+		} elseif ($section == 'admin') {
+			$path = 'admin_modules/';
+		}
+		return _class($name, $path);
+	}
+
+	/**
+	* This method will search for hooks alongside active modules
+	*/
+	function get_classes($section = 'all') {
+		if (!in_array($section, array('all', 'user', 'admin', 'core'))) {
+			$section = 'all';
+		}
+		$modules = array();
+		if (in_array($section, array('all', 'core'))) {
+			$modules['core'] = $this->get_core_classes();
+		}
+		if (in_array($section, array('all', 'user'))) {
+			$modules['user'] = $this->get_user_modules();
+		}
+#		if (in_array($section, array('all', 'admin'))) {
+#			$modules['admin'] = $this->get_admin_modules();
+#		}
+		return $modules;
+	}
+
+	/**
+	*/
+	function get_core_classes(&$paths = array()) {
+		$prefix = YF_PREFIX;
+		$suffix = YF_CLS_EXT;
+		$globs = array(
+			'project'			=> PROJECT_PATH.'classes/*'.$suffix,
+			'project_plugins'	=> PROJECT_PATH.'plugins/*/classes/*'.$suffix,
+			'framework'			=> YF_PATH.'classes/*'.$suffix,
+			'framework_plugins'	=> YF_PATH.'plugins/*/classes/*'.$suffix,
+#			'framework_p2'		=> YF_PATH.'priority2/classes/*'.$suffix,
+		);
+		$prefix_len = strlen($prefix);
+		$suffix_len = strlen($suffix);
+		$classes = array();
+		foreach ($globs as $glob) {
+			foreach (glob($glob) as $path) {
+				$name = substr(basename($path), 0, -$suffix_len);
+				if (substr($name, 0, $prefix_len) == $prefix) {
+					$name = substr($name, $prefix_len);
+				}
+				$classes[$name] = $name;
+				$paths[$name][$path] = $path;
+			}
+		}
+		if (is_array($classes)) {
+			ksort($classes);
+		}
+		return $classes;
+	}
+
+	/**
+	*/
+	function get_user_modules() {
+#		return _class('user_modules', 'admin_modules/')->_get_modules(array('with_sub_modules' => 1));
+	}
+
+	/**
+	*/
+	function get_admin_modules() {
+#		return _class('admin_modules', 'admin_modules/')->_get_modules(array('with_sub_modules' => 1));
 	}
 
 	/**
@@ -17,20 +182,18 @@ class yf_core_api {
 // TODO
 	}
 
-	/**
-	*/
-	function get_methods() {
-// TODO
-	}
 	function get_method_source() {
 // TODO
 	}
+
 	function get_github_link() {
 // TODO
 	}
+
 	function get_templates() {
 // TODO
 	}
+
 	function get_template_source() {
 // TODO
 	}
@@ -61,9 +224,6 @@ class yf_core_api {
 	function get_admin_groups() {
 // TODO
 	}
-	function get_hooks() {
-// TODO
-	}
 	function get_hook_types() {
 // TODO
 	}
@@ -91,119 +251,13 @@ class yf_core_api {
 	function get_migrations() {
 // TODO
 	}
-
-	/**
-	* This method will search and call all found hook methods from active modules
-	*/
-	function call_hooks($hook_name, &$params = array(), $section = 'all') {
-		$data = array();
-		foreach ((array)$this->find_hooks($hook_name) as $module => $methods) {
-			foreach ((array)$methods as $method) {
-				$data[$module.'__'.$method] = module($module)->$method($params);
-			}
-		}
-		return $data;
+	function get_blocks() {
+// TODO
 	}
-
-	/**
-	* This method will search for hooks alongside active modules
-	*/
-	function find_hooks($hook_name, $section = 'all') {
-		$hooks = array();
-		foreach ((array)$this->find_all_hooks($section) as $module => $_hooks) {
-			foreach ((array)$_hooks as $name => $method_name) {
-				if ($name == $hook_name) {
-					$hooks[$module][$name] = $method_name;
-				}
-			}
-		}
-		return $hooks;
+	function get_categories() {
+// TODO
 	}
-
-	/**
-	* This method will search for hooks alongside active modules
-	*/
-	function find_all_hooks($section = 'all') {
-		if (!in_array($section, array('all', 'user', 'admin'))) {
-			$section = 'all';
-		}
-		$cache_name = __FUNCTION__.'__'.$section;
-		$data = cache_get($cache_name);
-		if ($data) {
-			return $data;
-		}
-#		if (isset($this->cache[$cache_name])) {
-#			return $this->cache[$cache_name];
-#		}
-		$hooks_prefix = '_hook_';
-		$hooks_pl = strlen($hooks_prefix);
-
-		$modules = $this->find_active_modules($section);
-		$user_modules = $modules['user'];
-		foreach ((array)$user_modules as $module) {
-			foreach ((array)get_class_methods(module($module)) as $method) {
-				if (substr($method, 0, $hooks_pl) != $hooks_prefix) {
-					continue;
-				}
-				$hooks[$module][substr($method, $hooks_pl)] = $method;
-			}
-			if (is_array($hooks[$module])) {
-				ksort($hooks[$module]);
-			}
-		}
-		$admin_modules = $modules['admin'];
-		foreach ((array)$admin_modules as $module) {
-			foreach ((array)get_class_methods(module($module)) as $method) {
-				if (substr($method, 0, $hooks_pl) != $hooks_prefix) {
-					continue;
-				}
-				$hooks[$module][substr($method, $hooks_pl)] = $method;
-			}
-			if (is_array($hooks[$module])) {
-				ksort($hooks[$module]);
-			}
-		}
-		if (is_array($hooks)) {
-			ksort($hooks);
-		}
-#		$this->cache[$cache_name] = $hooks;
-		cache_set($cache_name, $hooks);
-		return $hooks;
-	}
-
-	/**
-	* This method will search for hooks alongside active modules
-	*/
-	function find_active_modules($section = 'all') {
-		if (!in_array($section, array('all', 'user', 'admin'))) {
-			$section = 'all';
-		}
-		$cache_name = __FUNCTION__.'__'.$section;
-		$data = cache_get($cache_name);
-		if ($data) {
-			return $data;
-		}
-#		if (isset($this->cache[$cache_name])) {
-#			return $this->cache[$cache_name];
-#		}
-		if (in_array($section, array('all', 'user'))) {
-			$user_modules = module('user_modules')->_get_modules(array('with_sub_modules' => 1));
-		}
-		if (in_array($section, array('all', 'admin'))) {
-			$admin_modules_prefix = 'admin:';
-			foreach ((array)module('admin_modules')->_get_modules(array('with_sub_modules' => 1)) as $module_name) {
-				$admin_modules[$admin_modules_prefix. $module_name] = $module_name;
-			}
-		}
-		$modules = array();
-		if (!empty($admin_modules)) {
-			$modules['admin'] = $admin_modules;
-		}
-		if (!empty($user_modules)) {
-			$modules['user'] = $user_modules;
-		}
-#		$this->cache[$cache_name] = $modules;
-		cache_set($cache_name, $hooks);
-		return $modules;
+	function get_menus() {
+// TODO
 	}
 }
