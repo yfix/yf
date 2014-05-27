@@ -301,7 +301,10 @@ class test_core_api {
 			$docs = _class('core_api')->get_function_docs($info['name']);
 		} elseif ($info['is_module']) {
 			list($module, $method) = explode('-', $info['is_module']);
-			$docs = _class('core_api')->get_module_docs($module);
+			$docs = _class('core_api')->get_method_docs($module, $method);
+			if (!$docs) {
+				$docs = _class('core_api')->get_module_docs($module);
+			}
 		}
 		return '
 			<h3>'.$info['name'].'</h3>
@@ -309,7 +312,7 @@ class test_core_api {
 			<section class="page-contents">
 				<pre><code>'.($info['comment'] ? _prepare_html($info['comment'], $strip = false).PHP_EOL : ''). _prepare_html($info['source'], $strip = false).'</code></pre>
 				'.($tests ? '<h4>Unit tests</h4><pre><code>'._prepare_html($tests, $strip = false).'</code></pre>' : '').'
-				'.($docs ? '<h4>Documentation</h4><pre><code>'._prepare_html($docs, $strip = false).'</code></pre>' : '').'
+				'.($docs ? '<h4>Documentation</h4>'.nl2br($docs) : '').'
 			</section>
 		';
 	}
