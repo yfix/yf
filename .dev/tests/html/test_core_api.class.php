@@ -53,47 +53,6 @@ class test_core_api {
 
 	/**
 	*/
-	function get_modules_core() {
-		return $this->get_all_classes('core');
-	}
-
-	/**
-	*/
-	function get_modules_user() {
-		return $this->get_all_classes('user');
-	}
-
-	/**
-	*/
-	function get_modules_admin() {
-		return $this->get_all_classes('admin');
-	}
-
-	/**
-	*/
-	function get_methods() {
-		list($section, $module) = explode('.', $_GET['id']);
-		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
-		$module = preg_replace('~[^a-z0-9_]~ims', '', $module);
-		if (!$section || !$module) {
-			return js_redirect('./?object='.__CLASS__.'&action=get_all_methods');
-		}
-		$all_methods = _class('core_api')->get_methods($section);
-		$data = array();
-		foreach ((array)$all_methods[$module] as $method) {
-			$data[] = array(
-				'name'	=> $method,
-				'link'	=> './?object='.__CLASS__.'&action=get_method_source&id='.$section.'.'.$module.'.'.$method,
-			);
-		}
-		return _class('html')->tree($data, array(
-			'opened_levels'	=> 0,
-			'draggable'		=> false,
-		));
-	}
-
-	/**
-	*/
 	function get_all_methods($section = 'all') {
 		$data = array();
 		foreach (_class('core_api')->get_methods($section) as $module => $methods) {
@@ -121,20 +80,25 @@ class test_core_api {
 
 	/**
 	*/
-	function get_methods_core() {
-		return $this->get_all_methods('core');
-	}
-
-	/**
-	*/
-	function get_user_methods() {
-		return $this->get_all_methods('user');
-	}
-
-	/**
-	*/
-	function get_admin_methods() {
-		return $this->get_all_methods('admin');
+	function get_methods() {
+		list($section, $module) = explode('.', $_GET['id']);
+		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
+		$module = preg_replace('~[^a-z0-9_]~ims', '', $module);
+		if (!$section || !$module) {
+			return js_redirect('./?object='.__CLASS__.'&action=get_all_methods');
+		}
+		$all_methods = _class('core_api')->get_methods($section);
+		$data = array();
+		foreach ((array)$all_methods[$module] as $method) {
+			$data[] = array(
+				'name'	=> $method,
+				'link'	=> './?object='.__CLASS__.'&action=get_method_source&id='.$section.'.'.$module.'.'.$method,
+			);
+		}
+		return _class('html')->tree($data, array(
+			'opened_levels'	=> 0,
+			'draggable'		=> false,
+		));
 	}
 
 	/**
@@ -175,33 +139,83 @@ class test_core_api {
 
 	/**
 	*/
-	function get_submodules_core() {
-		return $this->get_all_submodules('core');
-	}
-
-	/**
-	*/
-	function get_submodules_user() {
-		return $this->get_all_submodules('user');
-	}
-
-	/**
-	*/
-	function get_submodules_admin() {
-		return $this->get_all_submodules('admin');
-	}
-
-	/**
-	*/
-	function get_method_source() {
-		list($section, $module, $method) = explode('.', $_GET['id']);
-		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
-		$module = preg_replace('~[^a-z0-9_]~ims', '', $module);
-		$method = preg_replace('~[^a-z0-9_]~ims', '', $method);
-		if (!$section || !$module || !$method) {
-			return js_redirect('./?object='.__CLASS__.'&action=get_all_methods');
+	function get_available_hooks() {
+		$data = array();
+		foreach (_class('core_api')->get_available_hooks() as $name => $hooks) {
+			$i++;
+			$hook_id = $i;
+			$data[$hook_id] = array(
+				'name'	=> $name,
+				'link'	=> './?object='.__CLASS__.'&action=get_methods&id=all.'.$module,
+			);
+			foreach ((array)$hooks as $module => $method) {
+				$i++;
+				$method_id = $i;
+				$data[$method_id] = array(
+					'name'		=> $module.'.'.$method,
+					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'.'.$method,
+					'parent_id'	=> $hook_id,
+				);
+			}
 		}
-// TODO
+		return _class('html')->tree($data, array(
+			'opened_levels'	=> 1,
+			'draggable'		=> false,
+		));
+	}
+
+	/**
+	*/
+	function get_hooks() {
+		$data = array();
+		foreach (_class('core_api')->get_all_hooks() as $module => $hooks) {
+			$i++;
+			$module_id = $i;
+			$data[$module_id] = array(
+				'name'	=> $module,
+				'link'	=> './?object='.__CLASS__.'&action=get_methods&id=all.'.$module,
+			);
+			foreach ((array)$hooks as $name => $method) {
+				$i++;
+				$method_id = $i;
+				$data[$method_id] = array(
+					'name'		=> $method,
+					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'.'.$method,
+					'parent_id'	=> $module_id,
+				);
+			}
+		}
+		return _class('html')->tree($data, array(
+			'opened_levels'	=> 0,
+			'draggable'		=> false,
+		));
+	}
+
+	/**
+	*/
+	function get_functions() {
+		$data = array();
+		foreach (_class('core_api')->get_functions() as $name) {
+			$data[] = array(
+				'name'	=> $name,
+				'link'	=> './?object='.__CLASS__.'&action=get_function_source&id='.$name,
+			);
+		}
+		return _class('html')->tree($data, array(
+			'opened_levels'	=> 0,
+			'draggable'		=> false,
+		));
+	}
+
+	/**
+	*/
+	function get_function_source() {
+		$name = preg_replace('~[^a-z0-9_]~ims', '', $_GET['id']);
+		if (!$name) {
+			return js_redirect('./?object='.__CLASS__.'&action=get_functions');
+		}
+		$info = _class('core_api')->get_function_source($name);
+		return _var_dump($info);
 	}
 
 	/**
@@ -213,6 +227,19 @@ class test_core_api {
 		$submodule = preg_replace('~[^a-z0-9_]~ims', '', $submodule);
 		if (!$section || !$module || !$submodule) {
 			return js_redirect('./?object='.__CLASS__.'&action=get_submodules');
+		}
+// TODO
+	}
+
+	/**
+	*/
+	function get_method_source() {
+		list($section, $module, $method) = explode('.', $_GET['id']);
+		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
+		$module = preg_replace('~[^a-z0-9_]~ims', '', $module);
+		$method = preg_replace('~[^a-z0-9_]~ims', '', $method);
+		if (!$section || !$module || !$method) {
+			return js_redirect('./?object='.__CLASS__.'&action=get_all_methods');
 		}
 // TODO
 	}
