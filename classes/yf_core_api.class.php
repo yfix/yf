@@ -451,6 +451,9 @@ class yf_core_api {
 	/**
 	*/
 	function add_syntax_highlighter() {
+#		js('//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js?autoload=true&amp;skin=desert');
+#		css('<style>pre.prettyprint { font-weight: bold; }</style>');
+
 		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
 		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
 		require_js('<script>hljs.initHighlightingOnLoad();</script>');
