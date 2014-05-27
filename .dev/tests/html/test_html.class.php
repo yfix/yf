@@ -34,8 +34,8 @@ class test_html {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$self_source	= _class('core_api')->_get_method_source(__CLASS__, $name);
-			$target_source	= _class('core_api')->_get_method_source(_class('html'), $name);
+			$self_source	= _class('core_api')->get_method_source(__CLASS__, $name);
+			$target_source	= _class('core_api')->get_method_source(_class('html'), $name);
 			$target_docs	= _class('core_api')->get_method_docs('html', $name);
 
 			$items[] = 
