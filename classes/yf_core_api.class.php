@@ -246,7 +246,11 @@ class yf_core_api {
 	/**
 	*/
 	function get_method_source($module, $method, $section = 'all') {
-		$cls = $this->get_class_instance($module, $section);
+		if (!is_object($module)) {
+			$cls = $this->get_class_instance($module, $section);
+		} else {
+			$cls = $module;
+		}
 		if (is_object($cls)) {
 			$cls = get_class($cls);
 		}
