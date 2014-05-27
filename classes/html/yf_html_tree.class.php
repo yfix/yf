@@ -17,8 +17,9 @@ class yf_html_tree {
 		if ($data) {
 			$data = $this->_parent->_recursive_sort_items($data);
 		}
-		$this->_css();
-		$this->_js();
+		$this->_css($extra);
+		$this->_js($extra);
+
 		$items = implode(PHP_EOL, (array)$this->_tree_items($data, $extra));
 		$r = array(
 			'form_action'	=> $extra['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
@@ -54,6 +55,7 @@ class yf_html_tree {
 				. form_item($r)->tbl_link_delete()
 				. form_item($r)->tbl_link_clone();
 		}
+		$opened_levels = isset($extra['opened_levels']) ? $extra['opened_levels'] : 1;
 		$keys = array_keys($data);
 		$keys_counter = array_flip($keys);
 		$items = array();
@@ -74,7 +76,7 @@ class yf_html_tree {
 			}
 			$expander_icon = '';
 			if ($has_children) {
-				$expander_icon = $item['level'] >= 1 ? 'icon-caret-right' : 'icon-caret-down';
+				$expander_icon = $item['level'] >= $opened_levels ? 'icon-caret-right' : 'icon-caret-down';
 			}
 			$content = ($item['icon_class'] ? '<i class="'.$item['icon_class'].'"></i>' : ''). $item['name'];
 			if ($item['link']) {
@@ -93,7 +95,7 @@ class yf_html_tree {
 				;
 			if ($has_children) {
 				$ul_opened = true;
-				$items[] = PHP_EOL. '<ul class="'.($item['level'] >= 1 ? 'closed' : '').'">'. PHP_EOL;
+				$items[] = PHP_EOL. '<ul class="'.($item['level'] >= $opened_levels ? 'closed' : '').'">'. PHP_EOL;
 			} elseif ($close_li) {
 				if ($ul_opened && !$has_children && $item['level'] != $next_item['level']) {
 					$ul_opened = false;
@@ -111,7 +113,7 @@ class yf_html_tree {
 
 	/**
 	*/
-	function _css() {
+	function _css($extra = array()) {
 		css(
 			'.draggable_menu { width:70%; }
 			.draggable_menu li { list-style-type: none; }
@@ -129,7 +131,7 @@ class yf_html_tree {
 
 	/**
 	*/
-	function _js() {
+	function _js($extra = array()) {
 		js(
 '$(function(){
 	$(".draggable_form").on("submit", function(){
