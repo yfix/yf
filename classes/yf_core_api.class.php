@@ -176,7 +176,7 @@ class yf_core_api {
 			$_data = array();
 			$paths = array();
 			$this->_get_classes_by_params(array('folder' => $folder.'*/'), $paths);
-			foreach ($paths as $name => $_paths) {
+			foreach ((array)$paths as $name => $_paths) {
 				if (!is_array($_paths)) {
 					continue;
 				}
@@ -189,7 +189,7 @@ class yf_core_api {
 			}
 			$data[$_section] = $_data;
 		}
-		return $section == 'all' ? $data : current($data);
+		return $data;
 	}
 
 	/**
