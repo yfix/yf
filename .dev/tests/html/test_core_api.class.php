@@ -158,7 +158,7 @@ class test_core_api {
 		foreach ($methods as $name => $info) {
 			$data[++$i] = array(
 				'name'	=> $name,
-				'link'	=> './?object='.__CLASS__.'&action=get_sub_method_source&id=all.'.$module.'.'.$submodule.'.'.$name,
+				'link'	=> './?object='.__CLASS__.'&action=get_sub_method_source&id=all.'.$module.'-'.$submodule.'-'.$name,
 			);
 		}
 		return _class('html')->tree($data, array(
