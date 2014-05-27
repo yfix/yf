@@ -4,6 +4,12 @@ class test_core_api {
 
 	/**
 	*/
+	function _init() {
+		_class('core_api')->add_syntax_highlighter();
+	}
+
+	/**
+	*/
 	function _hook_side_column() {
 		$methods = array();
 		foreach (get_class_methods($this) as $name) {
@@ -12,7 +18,6 @@ class test_core_api {
 			}
 			$methods[$name] = array(
 				'name'	=> $name,
-#				'link'	=> url('/'.__CLASS__.'/'.$name),
 				'link'	=> './?object='.__CLASS__.'&action='.$name,
 			);
 		}
@@ -85,7 +90,7 @@ class test_core_api {
 		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
 		$module = preg_replace('~[^a-z0-9_]~ims', '', $module);
 		if (!$section || !$module) {
-			return js_redirect('./?object='.__CLASS__.'&action=get_all_methods');
+			return _e('Missing required params');
 		}
 		$all_methods = _class('core_api')->get_methods($section);
 		$data = array();
@@ -135,6 +140,22 @@ class test_core_api {
 			'opened_levels'	=> 1,
 			'draggable'		=> false,
 		));
+	}
+
+	/**
+	*/
+	function get_submodule_methods() {
+		list($section, $module, $submodule) = explode('.', $_GET['id']);
+		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
+		$module = preg_replace('~[^a-z0-9_]~ims', '', $module);
+		$submodule = preg_replace('~[^a-z0-9_]~ims', '', $submodule);
+		if (!$section || !$module || !$submodule) {
+			return _e('Missing required params');
+#			return js_redirect('./?object='.__CLASS__.'&action=get_submodules');
+		}
+		$all = _class('core_api')->get_submodules_methods();
+// TODO
+		return _var_dump( $all );
 	}
 
 	/**
@@ -212,23 +233,11 @@ class test_core_api {
 	function get_function_source() {
 		$name = preg_replace('~[^a-z0-9_]~ims', '', $_GET['id']);
 		if (!$name) {
-			return js_redirect('./?object='.__CLASS__.'&action=get_functions');
+			return _e('Missing required params');
 		}
 		$info = _class('core_api')->get_function_source($name);
-		return _var_dump($info);
-	}
-
-	/**
-	*/
-	function get_submodule_methods() {
-		list($section, $module, $submodule) = explode('.', $_GET['id']);
-		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
-		$module = preg_replace('~[^a-z0-9_]~ims', '', $module);
-		$submodule = preg_replace('~[^a-z0-9_]~ims', '', $submodule);
-		if (!$section || !$module || !$submodule) {
-			return js_redirect('./?object='.__CLASS__.'&action=get_submodules');
-		}
-// TODO
+		$info['is_func'] = true;
+		return $this->_show_source($info);
 	}
 
 	/**
@@ -239,8 +248,20 @@ class test_core_api {
 		$module = preg_replace('~[^a-z0-9_]~ims', '', $module);
 		$method = preg_replace('~[^a-z0-9_]~ims', '', $method);
 		if (!$section || !$module || !$method) {
-			return js_redirect('./?object='.__CLASS__.'&action=get_all_methods');
+			return _e('Missing required params');
 		}
-// TODO
+		$info = _class('core_api')->get_method_source($module, $method, $section);
+		$info['is_module'] = $module.'.'.$method;
+		return $this->_show_source($info);
+	}
+
+	/**
+	*/
+	function _show_source(array $info) {
+		return '
+			<h3>'.$info['name'].'</h3>
+			<h4>'.$info['file'].':'.$info['line_start'].' '._class('core_api')->get_github_link($info).'</h4>
+			<section class="page-contents"><pre><code>'.($info['comment'] ? $info['comment'].PHP_EOL : ''). $info['source'].'</code></pre></section>
+		';
 	}
 }
