@@ -79,23 +79,6 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_widgets() {
-		$prefix = 'widget_';
-		$prefix_len = strlen($prefix);
-		$data = array();
-		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
-			foreach ((array)$_hooks as $name => $method_name) {
-				if (substr($name, 0, $prefix_len) != $prefix) {
-					continue;
-				}
-				$data[$name][$module] = $method_name;
-			}
-		}
-		return $data;
-	}
-
-	/**
-	*/
 	function get_private_methods($section = 'all') {
 		$data = array();
 		foreach ((array)$this->get_methods($section) as $module => $methods) {
@@ -285,6 +268,39 @@ class yf_core_api {
 
 	/**
 	*/
+	function get_module_docs($name) {
+		$docs_dir = YF_PATH.'.dev/docs/en/';
+		$f = $this->docs_dir. $name. '.stpl';
+		if (file_exists($f)) {
+			return '<section class="page-contents">'.tpl()->parse_string(file_get_contents($f), $replace, 'doc_'.$name).'</section>';
+		}
+		return false;
+	}
+
+	/**
+	*/
+	function get_method_docs($name, $method) {
+		$docs_dir = YF_PATH.'.dev/docs/en/';
+		$f = $this->docs_dir. $name. '/'.$method.'.stpl';
+		if (file_exists($f)) {
+			return '<section class="page-contents">'.tpl()->parse_string(file_get_contents($f), $replace, 'doc_'.$name.'.'.$method).'</section>';
+		}
+		return false;
+	}
+
+	/**
+	*/
+	function get_function_docs($name) {
+		$docs_dir = YF_PATH.'.dev/docs/en/';
+		$f = $this->docs_dir. $name. '.stpl';
+		if (file_exists($f)) {
+			return '<section class="page-contents">'.tpl()->parse_string(file_get_contents($f), $replace, 'doc_'.$name).'</section>';
+		}
+		return false;
+	}
+
+	/**
+	*/
 	function get_callbacks() {
 // TODO
 	}
@@ -377,6 +393,26 @@ class yf_core_api {
 	*/
 	function get_migrations() {
 // TODO
+	}
+
+	/**
+	*/
+	function get_widgets() {
+// TODO
+/*
+		$prefix = 'widget_';
+		$prefix_len = strlen($prefix);
+		$data = array();
+		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
+			foreach ((array)$_hooks as $name => $method_name) {
+				if (substr($name, 0, $prefix_len) != $prefix) {
+					continue;
+				}
+				$data[$name][$module] = $method_name;
+			}
+		}
+		return $data;
+*/
 	}
 
 	/**
