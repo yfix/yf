@@ -5,6 +5,7 @@ class test_core_api {
 	/**
 	*/
 	function _init() {
+		_class('core_api')->SOURCE_ONLY_FRAMEWORK = true;
 		_class('core_api')->add_syntax_highlighter();
 	}
 
@@ -214,6 +215,36 @@ class test_core_api {
 
 	/**
 	*/
+	function get_widgets() {
+// TODO
+/*
+		$data = array();
+		foreach (_class('core_api')->get_widgets() as $module => $hooks) {
+			$i++;
+			$module_id = $i;
+			$data[$module_id] = array(
+				'name'	=> $module,
+				'link'	=> './?object='.__CLASS__.'&action=get_methods&id=all.'.$module,
+			);
+			foreach ((array)$hooks as $name => $method) {
+				$i++;
+				$method_id = $i;
+				$data[$method_id] = array(
+					'name'		=> $method,
+					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'.'.$method,
+					'parent_id'	=> $module_id,
+				);
+			}
+		}
+		return _class('html')->tree($data, array(
+			'opened_levels'	=> 0,
+			'draggable'		=> false,
+		));
+*/
+	}
+
+	/**
+	*/
 	function get_functions() {
 		$data = array();
 		foreach (_class('core_api')->get_functions() as $name) {
@@ -258,10 +289,20 @@ class test_core_api {
 	/**
 	*/
 	function _show_source(array $info) {
+		$tests = '';
+		if ($info['is_func']) {
+			$tests = _class('core_api')->get_function_tests($info['name']);
+		} elseif ($info['is_module']) {
+			list($module, $method) = explode('.', $info['is_module']);
+			$tests = _class('core_api')->get_module_tests($module);
+		}
 		return '
 			<h3>'.$info['name'].'</h3>
 			<h4>'.$info['file'].':'.$info['line_start'].' '._class('core_api')->get_github_link($info).'</h4>
-			<section class="page-contents"><pre><code>'.($info['comment'] ? $info['comment'].PHP_EOL : ''). $info['source'].'</code></pre></section>
+			<section class="page-contents">
+				<pre><code>'.($info['comment'] ? _prepare_html($info['comment'], $strip = false).PHP_EOL : ''). _prepare_html($info['source'], $strip = false).'</code></pre>
+				'.($tests ? '<h4>Unit tests</h4><pre><code>'._prepare_html($tests, $strip = false).'</code></pre>' : '').'
+			</section>
 		';
 	}
 }
