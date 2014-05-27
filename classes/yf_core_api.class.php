@@ -213,6 +213,7 @@ class yf_core_api {
 		$is_func	= false;
 		if (is_array($input)) {
 			if ($input['is_module']) {
+				$input['is_module'] = str_replace('-', '.', $input['is_module']);
 				list($module, $method) = explode('.', $input['is_module']);
 				if (!$module || !$method) {
 					return '';
@@ -222,6 +223,7 @@ class yf_core_api {
 				$is_func = $input['name'];
 			}
 		} elseif (false !== strpos($input, '.')) {
+			$input = str_replace('-', '.', $input);
 			list($module, $method) = explode('.', $input);
 			if (!$module || !$method) {
 				return '';
