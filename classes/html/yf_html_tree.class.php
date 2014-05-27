@@ -56,6 +56,7 @@ class yf_html_tree {
 				. form_item($r)->tbl_link_clone();
 		}
 		$opened_levels = isset($extra['opened_levels']) ? $extra['opened_levels'] : 1;
+		$is_draggable = isset($extra['draggable']) ? $extra['draggable'] : true;
 		$keys = array_keys($data);
 		$keys_counter = array_flip($keys);
 		$items = array();
@@ -89,9 +90,9 @@ class yf_html_tree {
 					<dl>
 						<a href="'.$item['link'].'" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
 						.$content
-						.'&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>
-						<div style="float:right;display:none;" class="controls_over">'.$controls.'</div>
-					</dl>'
+						.($is_draggable ? '&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>' : '')
+						.($controls ? '<div style="float:right;display:none;" class="controls_over">'.$controls.'</div>' : '')
+					.'</dl>'
 				;
 			if ($has_children) {
 				$ul_opened = true;
