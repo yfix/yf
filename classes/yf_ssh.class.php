@@ -71,9 +71,8 @@ class yf_ssh {
 		} else {
 			$this->_INIT_OK = true;
 		}
-
 		if ($this->_INIT_OK && $this->DRIVER == 'phpseclib') {
-			set_include_path (YF_PATH.'libs/phpseclib/'. PATH_SEPARATOR. get_include_path());
+			set_include_path (YF_PATH.'libs/phpseclib/phpseclib/'. PATH_SEPARATOR. get_include_path());
 			require_once('Crypt/RSA.php');
 			require_once('Net/SSH2.php');
 		}
