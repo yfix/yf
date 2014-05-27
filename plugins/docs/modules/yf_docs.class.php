@@ -22,19 +22,7 @@ class yf_docs {
 		$this->docs_dir = YF_PATH.'.dev/docs/en/';
 
 		tpl()->add_pattern_callback('/\{github\(\s*["\']{0,1}([a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/i', function($m, $r, $name, $_this) {
-			$body = trim($m[1]);
-// TODO: find correct line
-// TODO: find correct path
-			if (false !== strpos($body, '.')) {
-				list($class, $method) = explode('.', $body);
-				$line = 100;
-				$path = 'classes/yf_'.$class.'.php#L'.$line;
-			} else {
-				$line = 100;
-				// Function, maybe inside common_funcs...
-				$path = 'share/functions/yf_common_funcs.php#L'.$line;
-			}
-			return '<a href="https://github.com/yfix/yf'.$path.'" class="btn btn-mini btn-xs btn-primary pull-right"><i class="icon icon-github icon-large"></i></a>';
+			return _class('core_api')->get_github_link($m[1]);
 		});
 	}
 
@@ -58,9 +46,12 @@ class yf_docs {
 		foreach (glob($this->docs_dir.'*.stpl') as $path) {
 			$f = basename($path);
 			$name = substr($f, 0, -strlen('.stpl'));
-			$body[] = '<li><a href="./?object='.$_GET['object'].'&action=show&id='.$name.'">'.$name.'</a></li>';
+			$data[] = array(
+				'name'	=> $name,
+				'link'	=> './?object='.$_GET['object'].'&action=show&id='.$name,
+			);
 		}
-		return implode(PHP_EOL, $body);
+		return _class('html')->tree($data, array('draggable' => false));
 	}
 
 	/***/
