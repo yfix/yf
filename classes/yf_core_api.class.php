@@ -192,6 +192,14 @@ class yf_core_api {
 
 	/**
 	*/
+	function get_submodule_methods($module, $submodule, $section = 'all') {
+		$obj = $this->get_class_instance($submodule, $section, $this->section_paths[$section]. $module. '/');
+		$methods = $this->_get_methods_source($obj);
+		return $methods;
+	}
+
+	/**
+	*/
 	function get_functions() {
 		$all = get_defined_functions();
 		$funcs = array_combine($all['user'], $all['user']);
@@ -417,27 +425,6 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_submodules_methods($section = 'all') {
-		$methods = array();
-		foreach ((array)$this->get_submodules($section) as $_section => $modules) {
-			foreach ((array)$modules as $module => $submodules) {
-				foreach ((array)$submodules as $submodule) {
-// TODO: need to solve several troubles with instantinating submodules at once
-#					$obj = $this->get_class_instance($submodule, $_section, $this->section_paths[$_section].$module.'/');
-					foreach ((array)get_class_methods($obj) as $method) {
-						$methods[$submodule][$method] = $method;
-					}
-				}
-			}
-		}
-		foreach ((array)$methods as $module => $_methods) {
-			ksort($methods[$module]);
-		}
-		return $methods;
-	}
-
-	/**
-	*/
 	function get_class_instance($name, $section, $force_path = '') {
 		$path = $this->section_paths[$section];
 		if ($force_path) {
@@ -479,7 +466,6 @@ class yf_core_api {
 		}
 		$globs['framework']			= YF_PATH. $folder.'*'.$suffix;
 		$globs['framework_plugins']	= YF_PATH. 'plugins/*/'.$folder.'*'.$suffix;
-// TODO: enable it, but test and cleanup before
 		$globs['framework_p2']		= YF_PATH. 'priority2/'.$folder.'*'.$suffix;
 
 		$prefix_len = strlen($prefix);
