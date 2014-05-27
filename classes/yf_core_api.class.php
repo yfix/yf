@@ -21,7 +21,6 @@ class yf_core_api {
 	}
 
 	/**
-	* This method will search for hooks alongside active modules
 	*/
 	function get_hooks($hook_name, $section = 'all') {
 		$hooks = array();
@@ -36,7 +35,18 @@ class yf_core_api {
 	}
 
 	/**
-	* This method will search for hooks alongside active modules
+	*/
+	function get_available_hooks($section = 'all') {
+		$avail_hooks = array();
+		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
+			foreach ((array)$_hooks as $name => $method_name) {
+				$avail_hooks[$name][$module] = $method_name;
+			}
+		}
+		return $avail_hooks;
+	}
+
+	/**
 	*/
 	function get_all_hooks($section = 'all') {
 		$hooks = array();
@@ -62,25 +72,29 @@ class yf_core_api {
 	/**
 	*/
 	function get_private_methods($section = 'all') {
-		$methods = array();
-		foreach ((array)$this->get_methods($section) as $module => $method) {
-			if ($method[0] == '_') {
-				$methods[$module][$method] = $method;
+		$data = array();
+		foreach ((array)$this->get_methods($section) as $module => $methods) {
+			foreach ((array)$methods as $method) {
+				if ($method[0] == '_') {
+					$data[$module][$method] = $method;
+				}
 			}
 		}
-		return $methods;
+		return $data;
 	}
 
 	/**
 	*/
 	function get_public_methods($section = 'all') {
-		$methods = array();
+		$data = array();
 		foreach ((array)$this->get_methods($section) as $module => $method) {
-			if ($method[0] != '_') {
-				$methods[$module][$method] = $method;
+			foreach ((array)$methods as $method) {
+				if ($method[0] != '_') {
+					$data[$module][$method] = $method;
+				}
 			}
 		}
-		return $methods;
+		return $data;
 	}
 
 	/**
@@ -230,19 +244,15 @@ class yf_core_api {
 	function get_class_source() {
 // TODO
 	}
-
 	function get_method_source() {
 // TODO
 	}
-
 	function get_github_link() {
 // TODO
 	}
-
 	function get_templates() {
 // TODO
 	}
-
 	function get_template_source() {
 // TODO
 	}
@@ -273,19 +283,16 @@ class yf_core_api {
 	function get_admin_groups() {
 // TODO
 	}
-	function get_hook_types() {
-// TODO
-	}
 	function get_callbacks() {
-// TODO
-	}
-	function get_callback_types() {
 // TODO
 	}
 	function get_events() {
 // TODO
 	}
 	function get_functions() {
+// TODO
+	}
+	function get_function_source() {
 // TODO
 	}
 	function get_libs() {
@@ -298,15 +305,6 @@ class yf_core_api {
 // TODO
 	}
 	function get_migrations() {
-// TODO
-	}
-	function get_blocks() {
-// TODO
-	}
-	function get_categories() {
-// TODO
-	}
-	function get_menus() {
 // TODO
 	}
 }
