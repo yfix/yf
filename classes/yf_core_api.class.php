@@ -79,6 +79,23 @@ class yf_core_api {
 
 	/**
 	*/
+	function get_widgets($section = 'all') {
+		$prefix = 'widget__';
+		$prefix_len = strlen($prefix);
+		$data = array();
+		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
+			foreach ((array)$_hooks as $name => $method_name) {
+				if (substr($name, 0, $prefix_len) != $prefix) {
+					continue;
+				}
+				$data[$module][$name] = $method_name;
+			}
+		}
+		return $data;
+	}
+
+	/**
+	*/
 	function get_private_methods($section = 'all') {
 		$data = array();
 		foreach ((array)$this->get_methods($section) as $module => $methods) {
@@ -137,7 +154,7 @@ class yf_core_api {
 			$modules['user'] = $this->_get_classes_by_params(array('folder' => $this->section_paths['user']));
 		}
 		if (in_array($section, array('all', 'admin'))) {
-			$modules['admin'] = $this->_get_classes_by_params(array('folder' => $this->section_paths['core']));
+			$modules['admin'] = $this->_get_classes_by_params(array('folder' => $this->section_paths['admin']));
 		}
 		return $modules;
 	}
@@ -400,26 +417,6 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_widgets() {
-// TODO
-/*
-		$prefix = 'widget_';
-		$prefix_len = strlen($prefix);
-		$data = array();
-		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
-			foreach ((array)$_hooks as $name => $method_name) {
-				if (substr($name, 0, $prefix_len) != $prefix) {
-					continue;
-				}
-				$data[$name][$module] = $method_name;
-			}
-		}
-		return $data;
-*/
-	}
-
-	/**
-	*/
 	function get_submodules_methods($section = 'all') {
 		$methods = array();
 		foreach ((array)$this->get_submodules($section) as $_section => $modules) {
@@ -483,7 +480,7 @@ class yf_core_api {
 		$globs['framework']			= YF_PATH. $folder.'*'.$suffix;
 		$globs['framework_plugins']	= YF_PATH. 'plugins/*/'.$folder.'*'.$suffix;
 // TODO: enable it, but test and cleanup before
-#		$globs['framework_p2']		= YF_PATH. 'priority2/'.$folder.'*'.$suffix;
+		$globs['framework_p2']		= YF_PATH. 'priority2/'.$folder.'*'.$suffix;
 
 		$prefix_len = strlen($prefix);
 		$suffix_len = strlen($suffix);
