@@ -7,6 +7,7 @@ class yf_core_api {
 
 	/**
 	* This method will search and call all found hook methods from active modules
+	* @example: call_hooks('settings', $params)
 	*/
 	function call_hooks($hook_name, &$params = array(), $section = 'all') {
 		$data = array();
@@ -127,23 +128,83 @@ class yf_core_api {
 		if (in_array($section, array('all', 'user'))) {
 			$modules['user'] = $this->get_user_modules();
 		}
-#		if (in_array($section, array('all', 'admin'))) {
-#			$modules['admin'] = $this->get_admin_modules();
-#		}
+		if (in_array($section, array('all', 'admin'))) {
+			$modules['admin'] = $this->get_admin_modules();
+		}
 		return $modules;
 	}
 
 	/**
 	*/
-	function get_core_classes(&$paths = array()) {
-		$prefix = YF_PREFIX;
-		$suffix = YF_CLS_EXT;
+	function get_core_classes() {
+		return $this->_get_classes_by_params(array(
+			'folder'	=> 'classes/',
+		));
+	}
+
+	/**
+	*/
+	function get_user_modules() {
+		return $this->_get_classes_by_params(array(
+			'folder'	=> 'modules/',
+		));
+#		return _class('core_api_user_modules', 'classes/core_api/')->_get_modules(array('with_sub_modules' => 1));
+	}
+
+	/**
+	*/
+	function get_admin_modules() {
+		return $this->_get_classes_by_params(array(
+			'folder'	=> 'admin_modules/',
+		));
+#		return _class('core_api_admin_modules', 'classes/core_api/')->_get_modules(array('with_sub_modules' => 1));
+	}
+
+	/**
+	*/
+	function get_submodules($section = 'all') {
+		$folders = array(
+			'core'	=> 'classes/',
+			'user'	=> 'modules/',
+			'admin'	=> 'admin_modules/',
+		);
+		$data = array();
+		foreach ($folders as $_section => $folder) {
+			if ($section != 'all' && $section != $_section) {
+				continue;
+			}
+			$_data = array();
+			$paths = array();
+			$this->_get_classes_by_params(array('folder' => $folder.'*/'), $paths);
+			foreach ($paths as $name => $_paths) {
+				if (!is_array($_paths)) {
+					continue;
+				}
+				$path = current($_paths);
+				$subdir = basename(dirname($path));
+				$_data[$subdir][$name] = $name;
+			}
+			if (is_array($_data)) {
+				ksort($_data);
+			}
+			$data[$_section] = $_data;
+		}
+		return $section == 'all' ? $data : current($data);
+	}
+
+	/**
+	*/
+	function _get_classes_by_params($extra = array(), &$paths = array()) {
+		$prefix = isset($extra['prefix']) ? $extra['prefix'] : YF_PREFIX;
+		$suffix = isset($extra['suffix']) ? $extra['suffix'] : YF_CLS_EXT;
+		$folder = isset($extra['folder']) ? $extra['folder'] : 'classes/';
 		$globs = array(
-			'project'			=> PROJECT_PATH.'classes/*'.$suffix,
-			'project_plugins'	=> PROJECT_PATH.'plugins/*/classes/*'.$suffix,
-			'framework'			=> YF_PATH.'classes/*'.$suffix,
-			'framework_plugins'	=> YF_PATH.'plugins/*/classes/*'.$suffix,
-#			'framework_p2'		=> YF_PATH.'priority2/classes/*'.$suffix,
+			'project'			=> PROJECT_PATH. $folder.'*'.$suffix,
+			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'.$folder.'*'.$suffix,
+			'framework'			=> YF_PATH. $folder.'*'.$suffix,
+			'framework_plugins'	=> YF_PATH. 'plugins/*/'.$folder.'*'.$suffix,
+// TODO: enable it, but test and cleanup before
+#			'framework_p2'		=> YF_PATH. 'priority2/'.$folder.'*'.$suffix,
 		);
 		$prefix_len = strlen($prefix);
 		$suffix_len = strlen($suffix);
@@ -162,18 +223,6 @@ class yf_core_api {
 			ksort($classes);
 		}
 		return $classes;
-	}
-
-	/**
-	*/
-	function get_user_modules() {
-#		return _class('user_modules', 'admin_modules/')->_get_modules(array('with_sub_modules' => 1));
-	}
-
-	/**
-	*/
-	function get_admin_modules() {
-#		return _class('admin_modules', 'admin_modules/')->_get_modules(array('with_sub_modules' => 1));
 	}
 
 	/**
