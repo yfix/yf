@@ -46,7 +46,7 @@ class test_core_api {
 				$module_id = $i;
 				$data[$module_id] = array(
 					'name'		=> $module,
-					'link'		=> './?object='.__CLASS__.'&action=get_methods&id='.$_section.'.'.$module,
+					'link'		=> './?object='.__CLASS__.'&action=get_methods&id='.$_section.'-'.$module,
 					'parent_id'	=> $section_id,
 				);
 			}
@@ -66,14 +66,14 @@ class test_core_api {
 			$module_id = $i;
 			$data[$module_id] = array(
 				'name'	=> $module,
-				'link'	=> './?object='.__CLASS__.'&action=get_methods&id='.$section.'.'.$module,
+				'link'	=> './?object='.__CLASS__.'&action=get_methods&id='.$section.'-'.$module,
 			);
 			foreach ((array)$methods as $method) {
 				$i++;
 				$method_id = $i;
 				$data[$method_id] = array(
 					'name'		=> $method,
-					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id='.$section.'.'.$module.'.'.$method,
+					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id='.$section.'-'.$module.'-'.$method,
 					'parent_id'	=> $module_id,
 				);
 			}
@@ -87,7 +87,7 @@ class test_core_api {
 	/**
 	*/
 	function get_methods() {
-		list($section, $module) = explode('.', $_GET['id']);
+		list($section, $module) = explode('-', $_GET['id']);
 		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
 		$module = preg_replace('~[^a-z0-9_]~ims', '', $module);
 		if (!$section || !$module) {
@@ -98,7 +98,7 @@ class test_core_api {
 		foreach ((array)$all_methods[$module] as $method) {
 			$data[] = array(
 				'name'	=> $method,
-				'link'	=> './?object='.__CLASS__.'&action=get_method_source&id='.$section.'.'.$module.'.'.$method,
+				'link'	=> './?object='.__CLASS__.'&action=get_method_source&id='.$section.'-'.$module.'-'.$method,
 			);
 		}
 		return _class('html')->tree($data, array(
@@ -123,7 +123,7 @@ class test_core_api {
 				$module_id = $i;
 				$data[$module_id] = array(
 					'name'		=> $module,
-					'link'		=> './?object='.__CLASS__.'&action=get_methods&id='.$_section.'.'.$module,
+					'link'		=> './?object='.__CLASS__.'&action=get_methods&id='.$_section.'-'.$module,
 					'parent_id'	=> $section_id,
 				);
 				foreach ((array)$submodules as $submodule) {
@@ -131,7 +131,7 @@ class test_core_api {
 					$submodule_id = $i;
 					$data[$submodule_id] = array(
 						'name'		=> $submodule,
-						'link'		=> './?object='.__CLASS__.'&action=get_submodule_methods&id='.$_section.'.'.$module.'.'.$submodule,
+						'link'		=> './?object='.__CLASS__.'&action=get_submodule_methods&id='.$_section.'-'.$module.'-'.$submodule,
 						'parent_id'	=> $module_id,
 					);
 				}
@@ -146,7 +146,7 @@ class test_core_api {
 	/**
 	*/
 	function get_submodule_methods() {
-		list($section, $module, $submodule) = explode('.', $_GET['id']);
+		list($section, $module, $submodule) = explode('-', $_GET['id']);
 		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
 		$module = preg_replace('~[^a-z0-9_]~ims', '', $module);
 		$submodule = preg_replace('~[^a-z0-9_]~ims', '', $submodule);
@@ -174,8 +174,8 @@ class test_core_api {
 				$i++;
 				$method_id = $i;
 				$data[$method_id] = array(
-					'name'		=> $module.'.'.$method,
-					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'.'.$method,
+					'name'		=> $module.'-'.$method,
+					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'-'.$method,
 					'parent_id'	=> $hook_id,
 				);
 			}
@@ -202,7 +202,7 @@ class test_core_api {
 				$method_id = $i;
 				$data[$method_id] = array(
 					'name'		=> $method,
-					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'.'.$method,
+					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'-'.$method,
 					'parent_id'	=> $module_id,
 				);
 			}
@@ -231,7 +231,7 @@ class test_core_api {
 				$method_id = $i;
 				$data[$method_id] = array(
 					'name'		=> $method,
-					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'.'.$method,
+					'link'		=> './?object='.__CLASS__.'&action=get_method_source&id=all.'.$module.'-'.$method,
 					'parent_id'	=> $module_id,
 				);
 			}
@@ -274,7 +274,7 @@ class test_core_api {
 	/**
 	*/
 	function get_method_source() {
-		list($section, $module, $method) = explode('.', $_GET['id']);
+		list($section, $module, $method) = explode('-', $_GET['id']);
 		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
 		$module = preg_replace('~[^a-z0-9_]~ims', '', $module);
 		$method = preg_replace('~[^a-z0-9_]~ims', '', $method);
@@ -282,7 +282,7 @@ class test_core_api {
 			return _e('Missing required params');
 		}
 		$info = _class('core_api')->get_method_source($module, $method, $section);
-		$info['is_module'] = $module.'.'.$method;
+		$info['is_module'] = $module.'-'.$method;
 		return $this->_show_source($info);
 	}
 
@@ -293,8 +293,15 @@ class test_core_api {
 		if ($info['is_func']) {
 			$tests = _class('core_api')->get_function_tests($info['name']);
 		} elseif ($info['is_module']) {
-			list($module, $method) = explode('.', $info['is_module']);
+			list($module, $method) = explode('-', $info['is_module']);
 			$tests = _class('core_api')->get_module_tests($module);
+		}
+		$docs = '';
+		if ($info['is_func']) {
+			$docs = _class('core_api')->get_function_docs($info['name']);
+		} elseif ($info['is_module']) {
+			list($module, $method) = explode('-', $info['is_module']);
+			$docs = _class('core_api')->get_module_docs($module);
 		}
 		return '
 			<h3>'.$info['name'].'</h3>
@@ -302,6 +309,7 @@ class test_core_api {
 			<section class="page-contents">
 				<pre><code>'.($info['comment'] ? _prepare_html($info['comment'], $strip = false).PHP_EOL : ''). _prepare_html($info['source'], $strip = false).'</code></pre>
 				'.($tests ? '<h4>Unit tests</h4><pre><code>'._prepare_html($tests, $strip = false).'</code></pre>' : '').'
+				'.($docs ? '<h4>Documentation</h4><pre><code>'._prepare_html($docs, $strip = false).'</code></pre>' : '').'
 			</section>
 		';
 	}
