@@ -140,41 +140,33 @@ class yf_core_api {
 		}
 		$modules = array();
 		if (in_array($section, array('all', 'core'))) {
-			$modules['core'] = $this->get_core_classes();
+			$modules['core'] = $this->get_modules_core();
 		}
 		if (in_array($section, array('all', 'user'))) {
-			$modules['user'] = $this->get_user_modules();
+			$modules['user'] = $this->get_modules_user();
 		}
 		if (in_array($section, array('all', 'admin'))) {
-			$modules['admin'] = $this->get_admin_modules();
+			$modules['admin'] = $this->get_modules_admin();
 		}
 		return $modules;
 	}
 
 	/**
 	*/
-	function get_core_classes() {
-		return $this->_get_classes_by_params(array(
-			'folder'	=> 'classes/',
-		));
+	function get_modules_core() {
+		return $this->_get_classes_by_params(array('folder' => $this->section_paths['core']));
 	}
 
 	/**
 	*/
-	function get_user_modules() {
-		return $this->_get_classes_by_params(array(
-			'folder'	=> 'modules/',
-		));
-#		return _class('core_api_user_modules', 'classes/core_api/')->_get_modules(array('with_sub_modules' => 1));
+	function get_modules_user() {
+		return $this->_get_classes_by_params(array('folder' => $this->section_paths['user']));
 	}
 
 	/**
 	*/
-	function get_admin_modules() {
-		return $this->_get_classes_by_params(array(
-			'folder'	=> 'admin_modules/',
-		));
-#		return _class('core_api_admin_modules', 'classes/core_api/')->_get_modules(array('with_sub_modules' => 1));
+	function get_modules_admin() {
+		return $this->_get_classes_by_params(array('folder' => $this->section_paths['core']));
 	}
 
 	/**
@@ -257,6 +249,46 @@ class yf_core_api {
 
 	/**
 	*/
+	function get_functions() {
+		$all = get_defined_functions();
+		$funcs = array_combine($all['user'], $all['user']);
+		is_array($funcs) && ksort($funcs);
+		return $funcs;
+	}
+
+	/**
+	*/
+	function get_function_source($name) {
+		$func = new ReflectionFunction($name);
+		$info = array(
+			'name'		=> $func->getName(),
+			'file'		=> $func->getFileName(),
+			'line_start'=> $func->getStartLine(),
+			'line_end' 	=> $func->getEndline(),
+#			'params'	=> $func->getParameters(),
+			'comment'	=> $func->getDocComment(),
+		);
+		$info['source'] = $this->_get_file_slice($info['file'], $info['line_start'], $info['line_end']);
+		return $info;
+	}
+
+	/***/
+	function _get_file_slice($file, $line_start, $line_end) {
+		$source = $this->_cache[__FUNCTION__][$file];
+		if (is_null($source)) {
+			$source = file($file);
+			$this->_cache[__FUNCTION__][$file] = $source;
+		}
+		$offset = $line_end - $line_start;
+#		if (!$offset) {
+#			$line_start--;
+#			$offset = 1;
+#		}
+		return implode(array_slice($source, $line_start - 1, $offset + 1));
+	}
+
+	/**
+	*/
 	function get_class_source() {
 // TODO
 	}
@@ -303,12 +335,6 @@ class yf_core_api {
 // TODO
 	}
 	function get_events() {
-// TODO
-	}
-	function get_functions() {
-// TODO
-	}
-	function get_function_source() {
 // TODO
 	}
 	function get_libs() {
