@@ -3,6 +3,11 @@
 class test_html {
 
 	/***/
+	function _init() {
+		_class('core_api')->add_syntax_highlighter();
+	}
+
+	/***/
 	function _hook_side_column() {
 		$items = array();
 		$url = process_url('./?object='.$_GET['object']);
@@ -22,15 +27,6 @@ class test_html {
 
 	/***/
 	function show() {
-#		js('//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js?autoload=true&amp;skin=desert');
-#		css('<style>pre.prettyprint { font-weight: bold; }</style>');
-
-		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
-		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
-		js('<script>hljs.initHighlightingOnLoad();</script>');
-		css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
-		css('<style>pre.prettyprint { background-color: transparent; border: 0;} pre.prettyprint code { font-family: monospace; }</style>');
-
 		$url = process_url('./?object='.$_GET['object']);
 		$methods = get_class_methods($this);
 		sort($methods);
