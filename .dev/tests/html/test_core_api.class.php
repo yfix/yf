@@ -96,7 +96,7 @@ class test_core_api {
 		$all_methods = _class('core_api')->get_methods($section);
 		$data = array();
 		foreach ((array)$all_methods[$module] as $method) {
-			$data[] = array(
+			$data[++$i] = array(
 				'name'	=> $method,
 				'link'	=> './?object='.__CLASS__.'&action=get_method_source&id='.$section.'-'.$module.'-'.$method,
 			);
@@ -248,7 +248,7 @@ class test_core_api {
 	function get_functions() {
 		$data = array();
 		foreach (_class('core_api')->get_functions() as $name) {
-			$data[] = array(
+			$data[++$i] = array(
 				'name'	=> $name,
 				'link'	=> './?object='.__CLASS__.'&action=get_function_source&id='.$name,
 			);
