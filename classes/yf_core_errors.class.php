@@ -225,32 +225,31 @@ class yf_core_errors {
 		if (!$IP) {
 			$IP = $_SERVER['REMOTE_ADDR'];
 		}
-		// Create log message if needed
+		$trace = array_slice(explode(PHP_EOL, main()->trace_string()), 1, 5);
 		if ($save_log || $send_mail) {
 			$DIVIDER = PHP_EOL;
 			if ($this->USE_COMPACT_FORMAT) {
 				$DIVIDER = '#@#';
 			}
-			// Create logging message
-			$msg  = date('Y-m-d H:i:s'). $DIVIDER;
-			$msg .= $this->error_types[$error_type]. $DIVIDER;
-			$msg .= str_replace(array("\r",PHP_EOL), '', $error_msg).';'.$DIVIDER;
-#			$msg .= 'SOURCE='.$error_file.' on line '.$error_line. $DIVIDER;
-			$msg .= 'SOURCE='.implode(';', array_slice(explode(PHP_EOL, main()->trace_string()), 1, 5)). $DIVIDER;
-			$msg .= 'SITE_ID='.conf('SITE_ID'). $DIVIDER;
-			$msg .= 'IP='.$IP. $DIVIDER;
-			$msg .= 'QUERY_STRING='.WEB_PATH. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : ''). $DIVIDER;
-			$msg .= 'URL=http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']. $DIVIDER;
-			$msg .= 'REFERER='.$_SERVER['HTTP_REFERER']. $DIVIDER;
-			$msg .= $this->_log_display_array('GET'). $DIVIDER;
-			$msg .= $this->_log_display_array('POST'). $DIVIDER;
-			$msg .= $this->_log_display_array('FILES'). $DIVIDER;
-			$msg .= $this->_log_display_array('COOKIE'). $DIVIDER;
-			$msg .= $this->_log_display_array('SESSION');
-			$msg .= 'USER_AGENT='.$_SERVER['HTTP_USER_AGENT']. $DIVIDER;
-			$msg .= PHP_EOL;
+			$msg = array(
+				date('Y-m-d H:i:s'),
+				$this->error_types[$error_type],
+				str_replace(array("\r",PHP_EOL), '', $error_msg).';',
+				'SOURCE='.implode(';', $trace),
+				'SID='.conf('SITE_ID'),
+				'IP='.$IP,
+				'QS='.WEB_PATH. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : ''),
+				'URL=http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'],
+				'REF='.$_SERVER['HTTP_REFERER'],
+				$this->_log_display_array('GET'),
+				$this->_log_display_array('POST'),
+				$this->_log_display_array('FILES'),
+				$this->_log_display_array('COOKIE'),
+				$this->_log_display_array('SESSION'),
+				'UA='.$_SERVER['HTTP_USER_AGENT'],
+			);
+			$msg = implode($DIVIDER, $msg). PHP_EOL;
 		}
-		// Save log message if needed
 		if ($save_log) {
 			if (!$this->_LOG_STARTED) {
 				if ($this->_SHOW_BORDERS) {
@@ -260,36 +259,32 @@ class yf_core_errors {
 			}
 			$this->_do_save_log_info($msg);
 		}
-		// Send mail notification if needed
 		if ($send_mail) {
 			$this->mail_buffer .= $msg;
 		}
-		// Do store message into database (also check if that possible)
 		if ($save_in_db && is_object(db()) && !empty(db()->_connected)) {
-			// Prepare SQL
-// TODO: add full trace here
-			$sql = db()->INSERT('log_core_errors', array(
+			$sql = db()->insert_safe('log_core_errors', array(
 				'error_level'	=> intval($error_type),
-				'error_text'	=> _es($error_msg),
-				'source_file'	=> _es($error_file),
+				'error_text'	=> $error_msg,
+				'source_file'	=> $error_file,
 				'source_line'	=> intval($error_line),
 				'date'			=> time(),
 				'site_id'		=> (int)conf('SITE_ID'),
 				'user_id'		=> intval($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id']),
 				'user_group'	=> intval($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group']),
 				'is_admin'		=> MAIN_TYPE_ADMIN ? 1 : 0,
-				'ip'			=> _es($IP),
-				'query_string'	=> _es(WEB_PATH. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : '')),
-				'user_agent'	=> _es($_SERVER['HTTP_USER_AGENT']),
-				'referer'		=> _es($_SERVER['HTTP_REFERER']),
-				'request_uri'	=> _es($_SERVER['REQUEST_URI']),
-				'env_data'		=> $this->DB_LOG_ENV ? _es($this->_prepare_env()) : '',
-				'object'		=> _es($_GET['object']),
-				'action'		=> _es($_GET['action']),
+				'ip'			=> $IP,
+				'query_string'	=> WEB_PATH. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : ''),
+				'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
+				'referer'		=> $_SERVER['HTTP_REFERER'],
+				'request_uri'	=> $_SERVER['REQUEST_URI'],
+				'env_data'		=> $this->DB_LOG_ENV ? $this->_prepare_env() : '',
+				'object'		=> $_GET['object'],
+				'action'		=> $_GET['action'],
+				'trace'			=> implode(PHP_EOL, $trace),
 			), true);
 			db()->_add_shutdown_query($sql);
 		}
-		// Check if need to show error message to the user
 		if (DEBUG_MODE && ($this->ERROR_REPORTING & $error_type) && strlen($msg)) {
 			echo '<b>'.$this->error_types[$error_type].'</b>: '. $error_msg.' (<i>'.$error_file.' on line '.$error_line.'</i>)<pre>'.main()->trace_string().'</pre><br />'.PHP_EOL;
 		}

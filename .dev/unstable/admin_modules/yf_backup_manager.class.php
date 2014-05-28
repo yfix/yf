@@ -35,13 +35,7 @@ class yf_backup_manager {
 	* Constructor
 	*/
 	function _init () {
-
-		// Init dir class
-		$this->DIR_OBJ = _class("dir");
-		$this->DB_MGR = main()->init_class("db_manager", "admin_modules/");
-
 		$this->backup_folder_path = INCLUDE_PATH. $this->BACKUP_PATH;
-		
 		$paths = array(
 			"@@YF_PATH@@"			=> YF_PATH,
 			"@@PROJECT_PATH@@"		=> PROJECT_PATH,
@@ -56,7 +50,7 @@ class yf_backup_manager {
 	function show () {
 
 		// Find all backups in backup folder
-		$backup_files = $this->DIR_OBJ->scan_dir($this->backup_folder_path, true, "/\.(tar|tgz|gz)$/i");
+		$backup_files = _class('dir')->scan_dir($this->backup_folder_path, true, "/\.(tar|tgz|gz)$/i");
 
 		if ($_FILES['import_file']['tmp_name']){
 			$import_data = file_get_contents($_FILES['import_file']['tmp_name']);
@@ -111,14 +105,14 @@ class yf_backup_manager {
 
 		if ($this->BACKUP_SQL){
 			// Make db backup
-			$db_backup_path = $this->DB_MGR->backup(true); 
+			$db_backup_path = module('db_manager')->backup(true); 
 			$this->files_list[] = $db_backup_path;
 		}
 
 		$this->_tar($this->files_list, $this->backup_folder_path);
 
 		// Garbage collect
-		$files = $this->DIR_OBJ->scan_dir($this->backup_folder_path, true, "/\.(tar|gz|tgz)$/i");
+		$files = _class('dir')->scan_dir($this->backup_folder_path, true, "/\.(tar|gz|tgz)$/i");
 		foreach ((array)$files as $item_name) {
 			$mtimes[filemtime($item_name)] = $item_name;						
 		}
@@ -298,7 +292,7 @@ class yf_backup_manager {
 				continue;
 			}
 			if (is_dir($fpath)) {
-				$folder_files_array = $this->DIR_OBJ->scan_dir($fpath, true);
+				$folder_files_array = _class('dir')->scan_dir($fpath, true);
 				$this->STRING .= $this->_md5sum_list($folder_files_array, $this->STRING);
 			} else {
 				$this->STRING .= $fpath."\t".md5_file($fpath)."\n";

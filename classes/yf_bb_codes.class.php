@@ -128,8 +128,8 @@ class yf_bb_codes {
 				}
 				$body = preg_replace(array_keys($this->_preg_bb_codes), array_values($this->_preg_bb_codes), $body);
 				if ($this->USE_HIGHLIGHT) {
-					$body = preg_replace('/\[sql\](.*?)\[\/sql\]/imse',		'_class_safe("text_highlight")->_regex_sql_tag(stripslashes("\1"))', $body);
-					$body = preg_replace('/\[html\](.*?)\[\/html\]/imse',	'_class_safe("text_highlight")->_regex_html_tag(stripslashes("\1"))', $body);
+					$body = preg_replace('/\[sql\](.*?)\[\/sql\]/imse',		'_class_safe("text_highlight", "classes/common/")->_regex_sql_tag(stripslashes("\1"))', $body);
+					$body = preg_replace('/\[html\](.*?)\[\/html\]/imse',	'_class_safe("text_highlight", "classes/common/")->_regex_html_tag(stripslashes("\1"))', $body);
 				}
 				$body = preg_replace('/\[csv\](.*?)\[\/csv\]/imse',	'$this->_parse_csv_bb_code("\1")', $body);
 			}

@@ -1,16 +1,9 @@
 <?php
 
 /**
-* Admin modules list handler
-* 
-* @package		YF
-* @author		YFix Team <yfix.dev@gmail.com>
-* @version		1.0
 */
-class yf_admin_modules {
+class yf_core_api_admin_modules {
 
-	/** @var array */
-	public $_MODULES_TO_SKIP	= array();
 	/** @var string @conf_skip Pattern for files */
 	public $_include_pattern	= array('', '#\.(php|stpl)$#');
 	/** @var string @conf_skip Description file pattern */
@@ -23,167 +16,6 @@ class yf_admin_modules {
 	public $PARSE_YF_MODULE	= false;
 
 	/**
-	* Framework constructor
-	*/
-	function _init () {
-#		$this->_modules = $this->_get_modules();
-#		unset($this->_modules['']);
-	}
-
-	/**
-	* Default method
-	*/
-	function show () {
-		$this->refresh_modules_list($silent = true);
-
-		if (main()->is_post()) {
-			if (is_array($_POST['name']) && !empty($_POST['name'])) {
-				$where = 'name IN("'.implode('","', _es(array_keys($_POST['name']))).'")';
-			}
-			if ($_POST['activate_selected']) {
-				$active = 1;
-			} elseif ($_POST['disable_selected']) {
-				$active = 0;
-			}
-			if (isset($active) && $where) {
-				db()->update('admin_modules', array('active' => $active), $where);
-				cache_del('admin_modules');
-			}
-			return js_redirect('./?object='.$_GET['object']);
-		}
-
-		if (!isset($this->_yf_plugins)) {
-			$this->_yf_plugins = main()->_preload_plugins_list();
-			$this->_yf_plugins_classes = main()->_plugins_classes;
-		}
-		$items = array();
-		foreach ((array)db()->get_all('SELECT * FROM '.db('admin_modules').' ORDER BY name ASC') as $a) {
-			$name = $a['name'];
-			$plugin_name = '';
-			if (isset($this->_yf_plugins_classes[$name])) {
-				$plugin_name = $this->_yf_plugins_classes[$name];
-			}
-			$locations = array();
-			$d = ADMIN_SITE_PATH. ADMIN_MODULES_DIR;
-			$f = $name. YF_CLS_EXT;
-			if (file_exists($d. $f)) {
-				$locations['project'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
-			}
-			$d = ADMIN_SITE_PATH. 'priority2/'. ADMIN_MODULES_DIR;
-			$f = $name. YF_CLS_EXT;
-			if (file_exists($d. $f)) {
-				$locations['project_p2'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
-			}
-			$d = YF_PATH. ADMIN_MODULES_DIR;
-			$f = YF_PREFIX. $name. YF_CLS_EXT;
-			if (file_exists($d. $f)) {
-				$locations['framework'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
-			}
-			$d = YF_PATH. 'priority2/'. ADMIN_MODULES_DIR;
-			$f = YF_PREFIX. $name. YF_CLS_EXT;
-			if (file_exists($d. $f)) {
-				$locations['framework_p2'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
-			}
-			$d = YF_PATH. 'plugins/'. $plugin_name. '/'. ADMIN_MODULES_DIR;
-			$f = YF_PREFIX. $name. YF_CLS_EXT;
-			if ($plugin_name && file_exists($d. $f)) {
-				$locations['framework_plugin'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
-			}
-			$items[] = array(
-				'name'		=> $a['name'],
-				'active'	=> $a['active'],
-				'locations'	=> $locations,
-			);
-		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		return table($items, array(
-				'condensed' => 1,
-				'pager_records_on_page' => 10000,
-				'filter' => $_SESSION[$filter_name],
-				'filter_params' => array(
-					'name' => 'like',
-				),
-			))
-			->form()
-			->check_box('name', array('field_desc' => '#', 'width' => '1%'))
-			->text('name')
-			->func('locations', function($field, $params, $row) {
-				foreach ((array)$field as $loc => $link) {
-					$out[] = '<a href="'.$link.'" class="btn btn-mini btn-xs">'.$loc.'</a>';
-				}
-				return implode(PHP_EOL, (array)$out);
-			})
-			->btn('conf', './?object=conf_editor&action=admin_modules&id=%d', array('id' => 'name'))
-			->btn_active(array('id' => 'name'))
-			->footer_submit(array('value' => 'activate selected'))
-			->footer_submit(array('value' => 'disable selected'))
-			->footer_link('Refresh list', './?object='.$_GET['object'].'&action=refresh_modules_list', array('icon' => 'icon-refresh'))
-		;
-	}
-
-	/**
-	*/
-	function active () {
-		if (!empty($_GET['id'])) {
-			$module_info = db()->query_fetch('SELECT * FROM '.db('admin_modules').' WHERE name="'._es($_GET['id']).'" LIMIT 1');
-		}
-		if (!empty($module_info)) {
-			db()->UPDATE('admin_modules', array('active' => (int)!$module_info['active']), 'id='.intval($module_info['id']));
-		}
-		cache_del('admin_modules');
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
-			echo ($module_info['active'] ? 0 : 1);
-		} else {
-			return js_redirect('./?object='.$_GET['object']);
-		}
-	}
-
-	/**
-	*/
-	function refresh_modules_list ($silent = false) {
-		// Cleanup duplicate records
-		$q = db()->query('SELECT name, COUNT(*) AS num FROM '.db('admin_modules').' GROUP BY name HAVING num > 1');
-		while ($a = db()->fetch_assoc($q)) {
-			db()->query('DELETE FROM '.db('admin_modules').' WHERE name="'._es($a['name']).'" LIMIT '.intval($a['num'] - 1));
-		}
-		$q = db()->query('SELECT * FROM '.db('admin_modules').'');
-		while ($a = db()->fetch_assoc($q)) {
-			$all_admin_modules_array[$a['name']] = $a['name'];
-		}
-
-		$refreshed_modules = $this->_get_modules_from_files($include_framework = true, $with_sub_modules = false);
-
-		$insert_data = array();
-		foreach ((array)$refreshed_modules as $cur_module_name) {
-			if (isset($all_admin_modules_array[$cur_module_name])) {
-				continue;
-			}
-			$insert_data[$cur_module_name] = array(
-				'name'   => $cur_module_name,
-				'active' => 0,
-			);
-		}
-		if ($insert_data) {
-			db()->insert('admin_modules', db()->es($insert_data));
-		}
-		// Check for missing modules
-		$delete_names = array();
-		foreach ((array)$all_admin_modules_array as $cur_module_name) {
-			if (!isset($refreshed_modules[$cur_module_name])) {
-				$delete_names[$cur_module_name] = $cur_module_name;
-			}
-		}
-		if ($delete_names) {
-			db()->query('DELETE FROM '.db('admin_modules').' WHERE name IN("'.implode('","', _es($delete_names)).'")');
-		}
-		cache_del(array('admin_modules','admin_modules_for_select'));
-		if (!$silent) {
-			return js_redirect('./?object='.$_GET['object']);
-		}
-	}
-
-	/**
 	* Get available modules
 	*/
 	function _get_modules ($params = array()) {
@@ -191,13 +23,8 @@ class yf_admin_modules {
 		if (isset($this->_admin_modules_array)) {
 			return $this->_admin_modules_array;
 		}
-		$with_all			= isset($params['with_all']) ? $params['with_all'] : 1;
 		$with_sub_modules	= isset($params['with_sub_modules']) ? $params['with_sub_modules'] : 0;
 		$admin_modules_array	= array();
-		// Insert value for all modules
-		if ($with_all) {
-			$admin_modules_array[''] = t('-- ALL --');
-		}
 		$Q = db()->query('SELECT * FROM '.db('admin_modules').' WHERE active="1"');
 		while ($A = db()->fetch_assoc($Q)) {
 			$admin_modules_array[$A['name']] = $A['name'];
@@ -538,78 +365,5 @@ class yf_admin_modules {
 		}
 		ksort($methods);
 		return $methods;
-	}
-
-	/**
-	* Get methods names for usage inside select boxes
-	*/
-	function _get_methods_for_select ($params = array()) {
-		$cache_name = 'admin_modules_for_select';
-		$data = cache_get($cache_name);
-		if (!$data) {
-			$data = array('' => '-- All --');
-			foreach ((array)$this->_get_methods($params) as $module_name => $module_methods) {
-				$data[$module_name] = $module_name.' -> *';
-				foreach ((array)$module_methods as $method_name) {
-					if ($method_name == $module_name) {
-						continue;
-					}
-					$data[$module_name.'.'.$method_name] = $module_name.' -> '.$method_name;
-				}
-			}
-			cache_set($cache_name, $data);
-		}
-		return $data;
-	}
-
-	/**
-	*/
-	function filter_save() {
-		return _class('admin_methods')->filter_save();
-	}
-
-	/**
-	*/
-	function _show_filter() {
-		if (!in_array($_GET['action'], array('show'))) {
-			return false;
-		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
-		$order_fields = array();
-		foreach (explode('|', 'name|active') as $f) {
-			$order_fields[$f] = $f;
-		}
-		$locations = array();
-		foreach (explode('|', 'framework|framework_p2|framework_plugin|project|project_p2|site') as $f) {
-			$locations[$f] = $f;
-		}
-		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-			))
-			->text('name')
-			->select_box('locations', $locations, array('show_text' => 1))
-			->radio_box('active', main()->get_data('pair_active'))
-			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
-			->save_and_clear();
-		;
-	}
-
-	/**
-	*/
-	function _hook_widget__admin_modules ($params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	function _hook_settings(&$selected = array()) {
-#		return array(
-#			array('yes_no_box', 'admin_home__DISPLAY_STATS'),
-#		);
 	}
 }

@@ -19,7 +19,6 @@ class yf_admin_home {
 	/**
 	*/
 	function _init () {
-		$this->_admin_modules = module("admin_modules")->_get_modules();
 	}
 
 	/**
@@ -140,11 +139,12 @@ class yf_admin_home {
 	/**
 	*/
 	function _show_suggesting_messages () {
+		$admin_modules = module("admin_modules")->_get_modules();
 		$user_modules_methods = module("admin_modules")->_get_methods(array("private" => "1")); 
 
 		$suggests = array();
 		foreach ((array)$user_modules_methods as $module_name => $module_methods) {
-			if (!isset($this->_admin_modules[$module_name])) {
+			if (!isset($admin_modules[$module_name])) {
 				continue;
 			}
 			foreach ((array)$module_methods as $method_name) {

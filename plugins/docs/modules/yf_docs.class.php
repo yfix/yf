@@ -3,35 +3,26 @@
 class yf_docs {
 
 	/**
+	* Catch all methods calls
+	*/
+	function _module_action_handler($name) {
+		if (method_exists($this, $name)) {
+			return $this->$name();
+		} else {
+			$_GET['id'] = $name;
+			return $this->view();
+		}
+	}
+
+	/**
 	*/
 	function _init() {
-		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
-		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
-		require_js('<script>hljs.initHighlightingOnLoad();</script>');
-		require_css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
-		require_css('section.page-contents pre, pre.prettyprint {
-			background-color: transparent;
-			border: 0;
-			font-family: inherit;
-			font-size: inherit;
-			font-weight: bold;
-		}');
+		_class('core_api')->add_syntax_highlighter();
+
 		$this->docs_dir = YF_PATH.'.dev/docs/en/';
 
 		tpl()->add_pattern_callback('/\{github\(\s*["\']{0,1}([a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/i', function($m, $r, $name, $_this) {
-			$body = trim($m[1]);
-// TODO: find correct line
-// TODO: find correct path
-			if (false !== strpos($body, '.')) {
-				list($class, $method) = explode('.', $body);
-				$line = 100;
-				$path = 'classes/yf_'.$class.'.php#L'.$line;
-			} else {
-				$line = 100;
-				// Function, maybe inside common_funcs...
-				$path = 'share/functions/yf_common_funcs.php#L'.$line;
-			}
-			return '<a href="https://github.com/yfix/yf'.$path.'" class="btn btn-mini btn-xs btn-primary pull-right"><i class="icon icon-github icon-large"></i></a>';
+			return _class('core_api')->get_github_link($m[1]);
 		});
 	}
 
@@ -55,9 +46,12 @@ class yf_docs {
 		foreach (glob($this->docs_dir.'*.stpl') as $path) {
 			$f = basename($path);
 			$name = substr($f, 0, -strlen('.stpl'));
-			$body[] = '<li><a href="./?object='.$_GET['object'].'&action=view&id='.$name.'">'.$name.'</a></li>';
+			$data[++$i] = array(
+				'name'	=> $name,
+				'link'	=> './?object='.$_GET['object'].'&action=show&id='.$name,
+			);
 		}
-		return implode(PHP_EOL, $body);
+		return _class('html')->tree($data, array('draggable' => false));
 	}
 
 	/***/

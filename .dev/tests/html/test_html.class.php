@@ -3,6 +3,11 @@
 class test_html {
 
 	/***/
+	function _init() {
+		_class('core_api')->add_syntax_highlighter();
+	}
+
+	/***/
 	function _hook_side_column() {
 		$items = array();
 		$url = process_url('./?object='.$_GET['object']);
@@ -21,75 +26,7 @@ class test_html {
 	}
 
 	/***/
-	function _get_method_docs($cls, $method, $params = array()) {
-		$lang = 'en';
-		$dir = YF_PATH.'.dev/docs/'.$lang.'/';
-		$tpl = $dir. $cls. '/'. $method.'.stpl';
-		$name = 'docs/'.$cls.'/'.$method;
-		return file_exists($tpl) ? tpl()->parse_string(file_get_contents($tpl), $params, $name) : '';
-	}
-
-	/***/
-	function _get_method_source($cls, $method) {
-		if (is_object($cls)) {
-			$cls = get_class($cls);
-		}
-		$methods = $this->_cache[__FUNCTION__][$cls];
-		if (is_null($methods)) {
-			$methods = $this->_get_methods_source($cls);
-			$this->_cache[__FUNCTION__][$cls] = $methods;
-		}
-		return $methods[$method];
-	}
-
-	/***/
-	function _get_methods_source($cls) {
-		if (is_object($cls)) {
-			$cls = get_class($cls);
-		}
-		$data = array();
-		$class = new ReflectionClass($cls);
-		foreach ($class->getMethods() as $v) {
-			$name = $v->name;
-			if ($name == 'show' || substr($name, 0, 1) == '_') {
-				continue;
-			}
-			preg_match('~@@\s+(?P<file>.+?)\s+(?P<line1>[0-9]+)\s+-\s+(?P<line2>[0-9]+)$~ims', ReflectionMethod::export($cls, $name, 1), $m);
-			$file = trim($m['file']);
-			$line_start = intval($m['line1'] - 1);
-			$line_end = intval($m['line2'] + 1);
-			$data[$name] = array(
-				'body'		=> $this->_get_file_slice($file, $line_start, $line_end),
-				'file'		=> $file,
-				'line_start'=> $line_start,
-				'line_end'	=> $line_end,
-			);
-		}
-		return $data;
-	}
-
-	/***/
-	function _get_file_slice($file, $line_start, $line_end) {
-		$source = $this->_cache[__FUNCTION__][$file];
-		if (is_null($source)) {
-			$source = file($file);
-			$this->_cache[__FUNCTION__][$file] = $source;
-		}
-		$offset = $line_end - $line_start;
-		return implode(array_slice($source, $line_start, $offset));
-	}
-
-	/***/
 	function show() {
-#		require_js('//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js?autoload=true&amp;skin=desert');
-#		require_css('<style>pre.prettyprint { font-weight: bold; }</style>');
-
-		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
-		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
-		require_js('<script>hljs.initHighlightingOnLoad();</script>');
-		require_css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
-		require_css('<style>pre.prettyprint { background-color: transparent; border: 0;} pre.prettyprint code { font-family: monospace; }</style>');
-
 		$url = process_url('./?object='.$_GET['object']);
 		$methods = get_class_methods($this);
 		sort($methods);
@@ -97,21 +34,22 @@ class test_html {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$self_source = $this->_get_method_source(__CLASS__, $name);
-			$target_source = $this->_get_method_source(_class('html'), $name);
-			$target_docs = $this->_get_method_docs('html', $name);
+			$self_source	= _class('core_api')->get_method_source(__CLASS__, $name);
+			$target_source	= _class('core_api')->get_method_source(_class('html'), $name);
+			$target_docs	= _class('core_api')->get_method_docs('html', $name);
+
 			$items[] = 
 				'<div id="head_'.$name.'" style="margin-bottom: 30px;">
 					<h1>'.$name.'
-						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button>
-						'.($target_source['body'] ? '<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("html")-&gt;'.$name.'() source</button>' : '').'
-						'.($target_source['body'] ? '<a target="_blank" class="btn btn-primary btn-small btn-sm" href="https://github.com/yfix/yf/tree/master/'.substr($target_source['file'], strlen(YF_PATH)).'#L'.$target_source['line_start'].'">Github <i class="icon icon-github"></i></a>' : '').'
-						'.($target_docs ? '<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_docs_'.$name.'">html::'.$name.' docs</button>' : '').'
-					</h1>
-					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($self_source['body'])).'</code></pre></div>
-					'.($target_source['body'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['body'])).'</code></pre></div>' : '').'
-					'.($target_docs ? '<div id="func_target_docs_'.$name.'" class="collapse out">'._class('html')->well(nl2br($target_docs)).'</div>' : '').'
-					<div id="func_out_'.$name.'" class="row well well-lg" style="margin-left:0;">'.$this->$name().'</div>
+						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button> '
+						.($target_source['source'] ? ' <button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("html")-&gt;'.$name.'() source</button> ' : '')
+						._class('core_api')->get_github_link('html.'.$name)
+						.($target_docs ? ' <button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_docs_'.$name.'">html::'.$name.' docs</button> ' : '')
+					.'</h1>
+					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'._prepare_html($self_source['source']).'</code></pre></div> '
+					.($target_source['source'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['source'])).'</code></pre></div> ' : '')
+					.($target_docs ? '<div id="func_target_docs_'.$name.'" class="collapse out">'._class('html')->well(nl2br($target_docs)).'</div> ' : '')
+					.'<div id="func_out_'.$name.'" class="row well well-lg" style="margin-left:0;">'.$this->$name().'</div>
 				</div>';
 		}
 		return implode(PHP_EOL, $items);

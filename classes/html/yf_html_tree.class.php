@@ -17,8 +17,9 @@ class yf_html_tree {
 		if ($data) {
 			$data = $this->_parent->_recursive_sort_items($data);
 		}
-		$this->_css();
-		$this->_js();
+		$this->_css($extra);
+		$this->_js($extra);
+
 		$items = implode(PHP_EOL, (array)$this->_tree_items($data, $extra));
 		$r = array(
 			'form_action'	=> $extra['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
@@ -54,6 +55,8 @@ class yf_html_tree {
 				. form_item($r)->tbl_link_delete()
 				. form_item($r)->tbl_link_clone();
 		}
+		$opened_levels = isset($extra['opened_levels']) ? $extra['opened_levels'] : 1;
+		$is_draggable = isset($extra['draggable']) ? $extra['draggable'] : true;
 		$keys = array_keys($data);
 		$keys_counter = array_flip($keys);
 		$items = array();
@@ -74,7 +77,7 @@ class yf_html_tree {
 			}
 			$expander_icon = '';
 			if ($has_children) {
-				$expander_icon = $item['level'] >= 1 ? 'icon-caret-right' : 'icon-caret-down';
+				$expander_icon = $item['level'] >= $opened_levels ? 'icon-caret-right' : 'icon-caret-down';
 			}
 			$content = ($item['icon_class'] ? '<i class="'.$item['icon_class'].'"></i>' : ''). $item['name'];
 			if ($item['link']) {
@@ -82,18 +85,18 @@ class yf_html_tree {
 			}
 			$controls = $extra['show_controls'] ? str_replace('%d', $id, $form_controls) : '';
 			$items[] = '
-				<li id="item_'.$id.'">
+				<li id="item_'.$id.'"'.(!$is_draggable ? ' class="not_draggable"' : '').'>
 					<div class="dropzone"></div>
 					<dl>
 						<a href="'.$item['link'].'" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
 						.$content
-						.'&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>
-						<div style="float:right;display:none;" class="controls_over">'.$controls.'</div>
-					</dl>'
+						.($is_draggable ? '&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>' : '')
+						.($controls ? '<div style="float:right;display:none;" class="controls_over">'.$controls.'</div>' : '')
+					.'</dl>'
 				;
 			if ($has_children) {
 				$ul_opened = true;
-				$items[] = PHP_EOL. '<ul class="'.($item['level'] >= 1 ? 'closed' : '').'">'. PHP_EOL;
+				$items[] = PHP_EOL. '<ul class="'.($item['level'] >= $opened_levels ? 'closed' : '').'">'. PHP_EOL;
 			} elseif ($close_li) {
 				if ($ul_opened && !$has_children && $item['level'] != $next_item['level']) {
 					$ul_opened = false;
@@ -111,7 +114,7 @@ class yf_html_tree {
 
 	/**
 	*/
-	function _css() {
+	function _css($extra = array()) {
 		css(
 			'.draggable_menu { width:70%; }
 			.draggable_menu li { list-style-type: none; }
@@ -129,7 +132,7 @@ class yf_html_tree {
 
 	/**
 	*/
-	function _js() {
+	function _js($extra = array()) {
 		js(
 '$(function(){
 	$(".draggable_form").on("submit", function(){
@@ -209,7 +212,7 @@ class yf_html_tree {
 			_set_dl_colors()
 		}
 	});
-	$("li",".draggable_menu").draggable({
+	$("li",".draggable_menu").not(".not_draggable").draggable({
 		handle: " > dl",
 		opacity: .8,
 		addClasses: false,

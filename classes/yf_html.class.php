@@ -63,7 +63,7 @@ class yf_html {
 		$new_items = array();
 		foreach ((array)$ids as $id => $level) {
 			$new_items[$id] = $items[$id] + array('level' => $level);
-		}		
+		}
 		return $new_items;
 	}
 
@@ -628,9 +628,27 @@ class yf_html {
 			}
 			$link = $v['link'];
 			$class_item = $v['class_item'] ?: $extra['class_item'];
-			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"><a href="'.$link.'"><i class="icon-chevron-right"></i> '.t($name).'</a></li>';
+			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"><a href="'.$link.'"><i class="icon-chevron-right"></i> '.t($name). '</a></li>';
 		}
 		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</ul></div>';
+	}
+
+	/**
+	*/
+	function li($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$items = array();
+		foreach ((array)$data as $v) {
+			if (!is_array($v)) {
+				$body = $v;
+				$v = array();
+			} else {
+				$body = $v['body'];
+			}
+			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'">'.($v['link'] ? '<a href="'.$v['link'].'">'.$body.'</a>' : $body).'</li>';
+		}
+		return '<ul class="'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</ul>';
 	}
 
 	/**

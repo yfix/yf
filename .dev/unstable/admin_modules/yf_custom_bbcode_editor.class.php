@@ -13,27 +13,7 @@ class yf_custom_bbcode_editor {
 	public $string_cut_limit = 30;
 
 	/**
-	* Constructor (PHP 4.x)
-	*/
-	function yf_log_image_resize_viewer () {
-		return $this->__construct();
-	}
-
-	/**
-	* Constructor (PHP 5.x)
-	*/
-	function __construct () {
-		main()->USER_ID = $_GET['user_id'];
-		// Try to get info about sites vars
-		$this->_sites_info = _class("sites_info");
-	}
-
-	/**
 	* Default method
-	* 
-	* @access
-	* @param
-	* @return
 	*/
 	function show () {
 		// Get data from database

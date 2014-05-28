@@ -1,6 +1,6 @@
 <?php
 
-class manage_shop_manufacturers{
+class yf_manage_shop_manufacturers{
 
 	function _purge_caches() {
 		_class( '_shop_manufacturers', 'modules/shop/' )->_refresh_cache();
