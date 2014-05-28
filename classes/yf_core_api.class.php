@@ -132,11 +132,11 @@ class yf_core_api {
 	*/
 	function get_public_methods($section = 'all') {
 		$data = array();
-		foreach ((array)$this->get_methods($section) as $module => $method) {
+		foreach ((array)$this->get_methods($section) as $module => $methods) {
 			foreach ((array)$methods as $method) {
-#				if ($method[0] != '_') {
+				if ($method[0] != '_') {
 					$data[$module][$method] = $method;
-#				}
+				}
 			}
 		}
 		return $data;
