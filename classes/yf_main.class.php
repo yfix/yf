@@ -1721,4 +1721,10 @@ class yf_main {
 	function is_redirect() {
 		return (bool)$this->_IS_REDIRECTING;
 	}
+
+	/**
+	*/
+	function extend($module, $name, $func) {
+		$this->_extend[$module][$name] = $func;
+	}
 }
