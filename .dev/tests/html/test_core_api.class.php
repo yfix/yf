@@ -12,9 +12,15 @@ class test_core_api {
 	/**
 	*/
 	function _hook_side_column() {
+		$skip_list = array(
+			'get_methods',
+			'get_function_source',
+			'get_method_source',
+			'get_submodule_methods',
+		);
 		$methods = array();
 		foreach (get_class_methods($this) as $name) {
-			if ($name[0] == '_' || $name == 'show') {
+			if ($name[0] == '_' || $name == 'show' || in_array($name, $skip_list)) {
 				continue;
 			}
 			$methods[$name] = array(
@@ -59,9 +65,15 @@ class test_core_api {
 
 	/**
 	*/
-	function get_all_methods($section = 'all') {
+	function get_all_methods($section = 'all', $privacy = '') {
 		$data = array();
-		foreach (_class('core_api')->get_methods($section) as $module => $methods) {
+		$func = 'get_methods';
+		if ($privacy == 'public') {
+			$func = 'get_public_methods';
+		} elseif ($privacy == 'private') {
+			$func = 'get_private_methods';
+		}
+		foreach (_class('core_api')->$func($section) as $module => $methods) {
 			$i++;
 			$module_id = $i;
 			$data[$module_id] = array(
@@ -82,6 +94,18 @@ class test_core_api {
 			'opened_levels'	=> 0,
 			'draggable'		=> false,
 		));
+	}
+
+	/**
+	*/
+	function get_all_public_methods($section = 'all') {
+		return $this->get_all_methods($section, 'public');
+	}
+
+	/**
+	*/
+	function get_all_private_methods($section = 'all') {
+		return $this->get_all_methods($section, 'private');
 	}
 
 	/**
