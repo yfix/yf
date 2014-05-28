@@ -6,6 +6,25 @@
 class yf_common_admin {
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		$self = 'common_admin';
+		$func = null;
+		if (isset( $this->_extend[$name] )) {
+			$func = $this->_extend[$name];
+		} elseif (isset( main()->_extend[$self][$name] )) {
+			$func = main()->_extend[$self][$name];
+		}
+		if ($func) {
+			return $func($args[0], $args[1], $args[2], $args[3], $this);
+		}
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
+		return false;
+	}
+
+
+	/**
 	*/
 	function _init() {
 		$this->USER_ID		= main()->USER_ID;
