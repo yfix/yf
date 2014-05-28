@@ -27,9 +27,29 @@ class yf_locale_editor {
 	public $VARS_IGNORE_CASE		= true;
 
 	/**
-	* Framework constructor
+	*/
+	function __get ($name) {
+		if (!$this->_preload_complete) {
+			$this->_preload_data();
+		}
+	}
+
+	/**
+	*/
+	function __set ($name, $value) {
+		if (!$this->_preload_complete) {
+			$this->_preload_data();
+		}
+	}
+
+	/**
 	*/
 	function _init () {
+	}
+
+	/**
+	*/
+	function _preload_data () {
 		$this->_boxes = array(
 			'lang_code'		=> 'select_box("lang_code",		$this->_langs,			$selected, false, 2, "", false)',
 			'cur_langs'		=> 'select_box("lang_code",		$this->_cur_langs,		$selected, false, 2, "", false)',
@@ -79,6 +99,8 @@ class yf_locale_editor {
 			1	=> t('Strings in the uploaded file replace existing ones, new ones are added'),
 			2	=> t('Existing strings are kept, only new strings are added'),
 		);
+
+		$this->_preload_complete = true;
 	}
 
 	/**
