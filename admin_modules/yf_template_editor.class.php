@@ -12,9 +12,24 @@ class yf_template_editor {
 	public $CACHE_NAME = 'themes_num_stpls';
 
 	/**
-	* Framework constructor
 	*/
-	function _init () {
+	function __get ($name) {
+		if (!$this->_preload_complete) {
+			$this->_preload_data();
+		}
+	}
+
+	/**
+	*/
+	function __set ($name, $value) {
+		if (!$this->_preload_complete) {
+			$this->_preload_data();
+		}
+	}
+
+	/**
+	*/
+	function _preload_data () {
 		$this->_dir_array = array(
 			'framework'			=> YF_PATH. tpl()->_THEMES_PATH,
 			'project'			=> INCLUDE_PATH. tpl()->_THEMES_PATH,
@@ -25,6 +40,7 @@ class yf_template_editor {
 		foreach ((array)_class('sites_info')->info as $site_dir_array) {
 			$this->_dir_array[$site_dir_array['name']] = $site_dir_array['REAL_PATH'].'templates/';		
 		}
+		$this->_preload_complete = true;
 	}
 
 	/**
