@@ -315,4 +315,113 @@ class test_core_api {
 		$info['is_module'] = $module.'-'.$method;
 		return _class('core_api')->show_docs($info);
 	}
+
+	/**
+	*/
+	function get_plugins() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_events() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_callbacks() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_data_handlers() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_tables_fields() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_fast_init() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_libs() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_sites() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_servers() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_langs() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_user_groups() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_admin_groups() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_cron_jobs() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_models() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_migrations() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function _api_call($func) {
+		$data = array();
+		foreach (_class('core_api')->$func() as $name) {
+			$data[++$i] = array(
+				'name'	=> is_array($name) ? print_r($name, 1) : $name,
+			);
+		}
+		if (!$data) {
+			common()->message_info('Empty data');
+			return false;
+		}
+		return _class('html')->tree($data, array(
+			'opened_levels'	=> 0,
+			'draggable'		=> false,
+		));
+	}
 }
