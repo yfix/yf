@@ -11,7 +11,23 @@ class yf_blocks {
 
 	/**
 	*/
-	function _init () {
+	function __get ($name) {
+		if (!$this->_preload_complete) {
+			$this->_preload_data();
+		}
+	}
+
+	/**
+	*/
+	function __set ($name, $value) {
+		if (!$this->_preload_complete) {
+			$this->_preload_data();
+		}
+	}
+
+	/**
+	*/
+	function _preload_data () {
 		$array_all = array('' => '--All--');
 		$this->_methods['user'] = $array_all + (array)module('user_modules')->_get_methods_for_select();
 		$this->_methods['admin'] = $array_all + (array)module('admin_modules')->_get_methods_for_select();
@@ -22,6 +38,8 @@ class yf_blocks {
 		$this->_sites = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('sites').' WHERE active="1"');
 		$this->_servers = $array_all + (array)db()->get_2d('SELECT id,name FROM '.db('core_servers').' WHERE active="1"');
 		$this->_server_roles = $array_all + (array)db()->get_2d('SELECT role,role FROM '.db('core_servers').' WHERE active="1" AND role !="" GROUP BY role');
+
+		$this->_preload_complete = true;
 	}
 
 	/**
