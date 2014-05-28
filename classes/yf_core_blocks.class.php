@@ -327,7 +327,7 @@ class yf_core_blocks {
 		$access_denied	= false;
 		$custom_handler_exists = false;
 
-		_class('graphics')->_route_request();
+		_class('router')->_route_request();
 		// Check if called class method is 'private' - then do not use it
 		// Also we protect here core classes that can be instantinated before this method and can be allowed by mistake
 		// Use other module names, think about this list as "reserved" words
@@ -417,38 +417,5 @@ class yf_core_blocks {
 			print $body;
 		}
 		return $body;
-	}
-
-	/**
-	* Method that allows to change standard tasks mapping (if needed)
-	*/
-	function _route_request() {
-		/* // Map example
-		if ($_GET['object'] == 'forum') {
-			$_GET = array();
-			$_GET['object'] = 'gallery';
-			$_GET['action'] = 'show';
-		}
-		*/
-		// Custom routing for static pages (eq. for URL like /terms/ instead of /static_pages/show/terms/)
-		if (!main()->STATIC_PAGES_ROUTE_TOP || MAIN_TYPE_ADMIN) {
-			return false;
-		}
-		$_user_modules = main()->get_data('user_modules');
-		// Do not override existing modules
-		if (isset($_user_modules[$_GET['object']])) {
-			return false;
-		}
-		$static_pages_names = main()->get_data('static_pages_names');
-		$replaced_obj = str_replace('_', '-', $_GET['object']);
-		if (in_array($_GET['object'], (array)$static_pages_names)) {
-			$_GET['id']		= $_GET['object'];
-			$_GET['object'] = 'static_pages';
-			$_GET['action'] = 'show';
-		} elseif (in_array($replaced_obj, (array)$static_pages_names)) {
-			$_GET['id']		= $replaced_obj;
-			$_GET['object'] = 'static_pages';
-			$_GET['action'] = 'show';
-		}
 	}
 }
