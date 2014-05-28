@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Table2, using bootstrap html/css framework
+* Table2 high-level generator, mostly using bootstrap html/css framework
 *
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -29,11 +29,12 @@ class yf_table2 {
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
+		$self = 'table2';
 		$func = null;
-		if (isset($this->_extend[$name]) && is_callable($this->_extend[$name])) {
+		if (isset( $this->_extend[$name] )) {
 			$func = $this->_extend[$name];
-		} elseif (isset(main()->_extend['table2']) && is_callable(main()->_extend['table2'][$name])) {
-			$func = main()->_extend['form2'][$name];
+		} elseif (isset( main()->_extend[$self][$name] )) {
+			$func = main()->_extend[$self][$name];
 		}
 		if ($func) {
 			$func($args[0], $args[1], $args[2], $args[3], $this);
