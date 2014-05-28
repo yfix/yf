@@ -39,7 +39,17 @@ class yf_graphics {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $arguments) {
+	function __call($name, $args) {
+		$self = 'graphics';
+		$func = null;
+		if (isset( $this->_extend[$name] )) {
+			$func = $this->_extend[$name];
+		} elseif (isset( main()->_extend[$self][$name] )) {
+			$func = main()->_extend[$self][$name];
+		}
+		if ($func) {
+			return $func($args[0], $args[1], $args[2], $args[3], $this);
+		}
 		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
 	}
@@ -250,7 +260,7 @@ class yf_graphics {
 	* Method that allows to change standard tasks mapping (if needed)
 	*/
 	function _route_request() {
-		return _class('core_blocks')->_route_request();
+		return _class('router')->_route_request();
 	}
 
 	/**
