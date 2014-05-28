@@ -15,19 +15,20 @@ class yf_form2_datetime {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
-		$func = function($extra, $r, $__this) {
+		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
+
+		$func = function($extra, $r, $_this) {
+			$_this->_prepare_inline_error($extra);
 			$format = $format_php = $placeholder = array();
 			$extra['no_time'] = $extra['with_time'] ? !$extra['with_time'] : $extra['no_time'];
 			$extra['no_time'] = isset( $extra['no_time'] ) ? $extra['no_time'] : 1;
-			if ($extra['no_date']!=1) {
+			if ($extra['no_date'] != 1) {
 				$format_js[]      = 'DD.MM.YYYY';
 				$format_php[]  = 'd.m.Y';
 				$placeholder[] = 'ДД.ММ.ГГГГ';
 			}
-			if ($extra['no_time']!=1) {
+			if ($extra['no_time'] != 1) {
 				$format_js[]      = 'HH:mm';
 				$format_php[]  = 'H:i';
 				$placeholder[] = 'ЧЧ:ММ';
@@ -40,17 +41,14 @@ class yf_form2_datetime {
 			if (!strlen($extra['value'])) {
 				if (isset($extra['selected'])) {
 					$value = $extra['selected'];
-				} elseif (isset($__this->_params['selected'])) {
-					$value = $__this->_params['selected'][$extra['name']];
-				} elseif (isset($__this->_replace[$extra['name']])) {
-					$value = $__this->_replace[$extra['name']];
+				} elseif (isset($_this->_params['selected'])) {
+					$value = $_this->_params['selected'][$extra['name']];
+				} elseif (isset($_this->_replace[$extra['name']])) {
+					$value = $_this->_replace[$extra['name']];
 				}
 				$extra['value'] = empty( $value ) || $value == '0000-00-00 00:00:00' ? null : strtotime( $value );
 			}
 			$extra['value'] = empty( $extra['value'] ) ? '' : date( $_format_php, $extra['value'] );
-			// error
-			$extra['errors'] = common()->_get_error_messages();
-			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
 			// js lib
 			js('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment-with-langs.min.js');
 			js('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js');
@@ -83,7 +81,7 @@ $(function() {
 		.'
 	});
 });');
-			return $__this->_row_html($body, $extra, $r);
+			return $_this->_row_html($body, $extra, $r);
 		};
 		if ($__this->_chained_mode) {
 			$__this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);

@@ -12,11 +12,10 @@ class yf_form2_image {
 		}
 // TODO: show already uploaded image, link to delete it, input to upload new
 		$extra['name'] = $extra['name'] ?: ($name ?: 'image');
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 /*
-			$extra['errors'] = common()->_get_error_messages();
-			$extra['inline_help'] = isset($extra['errors'][$extra['name']]) ? $extra['errors'][$extra['name']] : $extra['inline_help'];
+			$_this->_prepare_inline_error($extra);
 			$extra['id'] = $extra['name'];
 */
 			return $_this->_row_html('<input type="file">', $extra, $r);

@@ -14,6 +14,11 @@ class yf_html5_framework_bs2 {
 	/**
 	*/
 	function form_row ($content, $extra = array(), $replace = array(), $obj) {
+		$name = $extra['name'];
+		$is_html_array = (false !== strpos($name, '['));
+		if ($is_html_array) {
+			$name_dotted = str_replace(array('[',']'), array('.',''), trim($name,']['));
+		}
 		$no_label = false;
 		if (isset($obj->_params['no_label'])) {
 			$no_label = $obj->_params['no_label'];
@@ -28,7 +33,7 @@ class yf_html5_framework_bs2 {
 			'infos'		=> 'info',
 		);
 		foreach ($_css_group_map as $_a => $_css_class) {
-			if (isset($extra[$_a][$extra['name']])) {
+			if (isset($extra[$_a][$name]) || ($is_html_array && isset($extra[$_a][$name_dotted]))) {
 				$extra['class_add_form_group'] .= ' '.$_css_class;
 				break;
 			}

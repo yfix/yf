@@ -67,9 +67,9 @@ class yf_manage_shop_novaposhta_ua {
 		$info      = null;
 		if( empty( $data ) ) { return( array( $address, $branch_no, $info ) ); }
 		// info
-		if( preg_match( '#^(.*)\((.+)\)(.*)$#', $data, $match ) ) {
-			$info = $match[ 2 ];
-			$data = $match[ 1 ] . $match[ 3 ];
+		if( preg_match_all( '#([^\(\)]*)\(([^\)]+)\)([^\(\)]*)#', $data, $match ) ) {
+			$info = implode( '; ', array_reverse( $match[ 2 ] ) );
+			$data = implode( '', $match[ 1 ] ) . implode( '', $match[ 3 ] );
 		}
 		// branch_no
 		if( preg_match( '#^[^\d]+(\d*)\s*:(.*)$#', $data, $match )
@@ -83,7 +83,13 @@ class yf_manage_shop_novaposhta_ua {
 		$filter = array(
 			'#\s*Відділення\s*#' => '',
 			'#Отделение,\s*#'    => '',
+			'#^\s*:\s*#'         => '',
 		);
+		// add info
+		if( preg_match( '#^\s*[:,]\s*([^:]+)\s*[:]\s*(.+)$#', $data, $match ) ) {
+			$info = $match[ 1 ] . ( empty( $info ) ? '' : '; ' . $info );
+			$data = $match[ 2 ];
+		}
 		$data = preg_replace( array_keys( $filter ), array_values( $filter ), $data );
 		$address = trim( $data );
 		$result = array( $address, $branch_no, $info );
@@ -92,6 +98,8 @@ class yf_manage_shop_novaposhta_ua {
 
 	function novaposhta_ua__import() {
 		// get data
+		// $file = '/tmp/warenhouses_ru.xls';
+		// $content = file_get_contents( $file );
 		$url = 'http://novaposhta.ua/public/files/xls/warenhouses_ru.xls';
 		$content = common()->get_remote_page( $url );
 		// save to temp file

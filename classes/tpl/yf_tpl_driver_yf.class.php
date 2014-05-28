@@ -435,6 +435,11 @@ class yf_tpl_driver_yf {
 			return $_this->tpl->_process_var_filters($replace[$m[1]][$m[2]], $m[3]);
 		}, $string);
 
+		// Custom patterns support (intended to be used inside modules/plugins)
+		foreach ((array)$_this->tpl->_custom_patterns as $pattern => $func) {
+			$string = preg_replace_callback($pattern, function($m) use ($replace, $name, $_this, $func) { return $func($m, $replace, $name, $_this); }, $string);
+		}
+
 		// Evaluate custom PHP code pattern. Examples: {eval_code(print_r(_class('forum')))}
 		if ($this->tpl->ALLOW_EVAL_PHP_CODE) {
 			$string = preg_replace_callback('/(\{eval_code\()([^\}]+?)(\)\})/i', function($m) {

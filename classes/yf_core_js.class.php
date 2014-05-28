@@ -213,8 +213,8 @@ class yf_core_js {
 			$type = 'asset';
 		} elseif (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content)) {
 			$type = 'url';
-// TODO: file allowed to begin with PROJECT_PATH, SITE_PATH or YF_PATH
 		} elseif (preg_match('~^/[a-z0-9\./_-]+\.js$~ims', $content) && file_exists($content)) {
+// TODO: file allowed to begin with PROJECT_PATH, SITE_PATH or YF_PATH
 			$type = 'file';
 		} elseif (preg_match('~^(<script|[$;#\*/])~ims', $content) || strpos($content, PHP_EOL) !== false) {
 			$type = 'inline';

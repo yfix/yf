@@ -3,17 +3,6 @@
 class test_html {
 
 	/***/
-	public $data = array(
-		'first' 	=> 'first text',
-		'second'	=> 'second text',
-		'third'		=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. 
-			Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
-			Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
-			Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
-		'fourth'	=> '44444',
-	);
-
-	/***/
 	function _hook_side_column() {
 		$items = array();
 		$url = process_url('./?object='.$_GET['object']);
@@ -23,9 +12,21 @@ class test_html {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
 				continue;
 			}
-			$items[] = '<li><a href="#head_'.$name.'"><i class="icon-chevron-right"></i> '.t($name).'</a></li>';
+			$items[] = array(
+				'name'	=> $name,
+				'link'	=> '#head_'.$name,
+			);
 		}
-		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav">'.implode(PHP_EOL, $items).'</ul></div>';
+		return _class('html')->navlist($items);
+	}
+
+	/***/
+	function _get_method_docs($cls, $method, $params = array()) {
+		$lang = 'en';
+		$dir = YF_PATH.'.dev/docs/'.$lang.'/';
+		$tpl = $dir. $cls. '/'. $method.'.stpl';
+		$name = 'docs/'.$cls.'/'.$method;
+		return file_exists($tpl) ? tpl()->parse_string(file_get_contents($tpl), $params, $name) : '';
 	}
 
 	/***/
@@ -80,14 +81,14 @@ class test_html {
 
 	/***/
 	function show() {
-#		require_js('//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js?autoload=true&amp;skin=desert');
-#		require_css('<style>pre.prettyprint { font-weight: bold; }</style>');
+#		js('//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js?autoload=true&amp;skin=desert');
+#		css('<style>pre.prettyprint { font-weight: bold; }</style>');
 
-		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
-		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
-		require_js('<script>hljs.initHighlightingOnLoad();</script>');
-		require_css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
-		require_css('<style>pre.prettyprint { background-color: transparent; border: 0;} pre.prettyprint code { font-family: monospace; }</style>');
+		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
+		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
+		js('<script>hljs.initHighlightingOnLoad();</script>');
+		css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
+		css('<style>pre.prettyprint { background-color: transparent; border: 0;} pre.prettyprint code { font-family: monospace; }</style>');
 
 		$url = process_url('./?object='.$_GET['object']);
 		$methods = get_class_methods($this);
@@ -98,15 +99,18 @@ class test_html {
 			}
 			$self_source = $this->_get_method_source(__CLASS__, $name);
 			$target_source = $this->_get_method_source(_class('html'), $name);
+			$target_docs = $this->_get_method_docs('html', $name);
 			$items[] = 
 				'<div id="head_'.$name.'" style="margin-bottom: 30px;">
 					<h1>'.$name.'
 						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button>
 						'.($target_source['body'] ? '<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("html")-&gt;'.$name.'() source</button>' : '').'
 						'.($target_source['body'] ? '<a target="_blank" class="btn btn-primary btn-small btn-sm" href="https://github.com/yfix/yf/tree/master/'.substr($target_source['file'], strlen(YF_PATH)).'#L'.$target_source['line_start'].'">Github <i class="icon icon-github"></i></a>' : '').'
+						'.($target_docs ? '<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_docs_'.$name.'">html::'.$name.' docs</button>' : '').'
 					</h1>
 					<div id="func_self_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($self_source['body'])).'</code></pre></div>
 					'.($target_source['body'] ? '<div id="func_target_source_'.$name.'" class="collapse out"><pre class="prettyprint lang-php"><code>'.(_prepare_html($target_source['body'])).'</code></pre></div>' : '').'
+					'.($target_docs ? '<div id="func_target_docs_'.$name.'" class="collapse out">'._class('html')->well(nl2br($target_docs)).'</div>' : '').'
 					<div id="func_out_'.$name.'" class="row well well-lg" style="margin-left:0;">'.$this->$name().'</div>
 				</div>';
 		}
@@ -120,6 +124,7 @@ class test_html {
 			'media_objects'	=> $this->media_objects(),
 			'carousel'		=> $this->carousel(),
 			'menu'			=> '<div style="min-height:200px;">'.$this->menu().'</div>',
+			'2trees'		=> '<div class="span4">'.$this->tree().'</div>'.'<div class="span4">'.$this->tree().'</div>',
 			'dd_table'		=> $this->dd_table(),
 			'accordion'		=> _class('html')->accordion(array(
 				'modal'			=> $this->modal(),
@@ -134,28 +139,52 @@ class test_html {
 
 	/***/
 	function dd_table() {
-		return _class('html')->dd_table($this->data, array());
+		$data = array(
+			'first' 	=> 'first text',
+			'second'	=> 'second text',
+			'third'		=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. 
+				Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
+				Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
+				Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
+			'fourth'	=> '44444',
+		);
+		return _class('html')->dd_table($data, array());
 	}
 
 	/***/
 	function accordion() {
-		$data = $this->data;
-		$data['first'] = array(
-			'body'	=> $data['first'],
-			'class_group'	=> 'panel-info',
-			'class_head'	=> 'alert-info',
-		);
-		$data['second'] = array(
-			'body'	=> $data['second'],
-			'class_group'	=> 'panel-danger',
-			'class_head'	=> 'alert-error',
+		$data = array(
+			'first' 	=> array(
+				'body'			=> 'first',
+				'class_group'	=> 'panel-info',
+				'class_head'	=> 'alert-info',
+			),
+			'second'	=> array(
+				'body'			=> 'second',
+				'class_group'	=> 'panel-danger',
+				'class_head'	=> 'alert-error',
+			),
+			'third'		=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. 
+				Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
+				Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
+				Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
+			'fourth'	=> '44444',
 		);
 		return _class('html')->accordion($data, array('selected' => 'third', 'class' => 'span4 col-lg-4'));
 	}
 
 	/***/
 	function tabs() {
-		return _class('html')->tabs($this->data, array('selected' => 'third'));
+		$data = array(
+			'first' 	=> 'first text',
+			'second'	=> 'second text',
+			'third'		=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. 
+				Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
+				Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
+				Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
+			'fourth'	=> '44444',
+		);
+		return _class('html')->tabs($data, array('selected' => 'third'));
 	}
 
 	/***/
@@ -193,6 +222,28 @@ class test_html {
 	/***/
 	function navbar() {
 		return _class('html')->navbar(array(
+			'brand'	=> array(
+				'link'	=> './',
+				'name'	=> 'Title',
+			),
+			array(
+				'link'	=> './?object=home',
+				'name'	=> 'Home',
+			),
+			array(
+				'link'	=> './?object=link1',
+				'name'	=> 'Link1',
+			),
+			array(
+				'link'	=> './?object=link2',
+				'name'	=> 'Link2',
+			),
+		));
+	}
+
+	/***/
+	function navlist() {
+		return _class('html')->navlist(array(
 			'brand'	=> array(
 				'link'	=> './',
 				'name'	=> 'Title',
@@ -393,6 +444,80 @@ class test_html {
 	/***/
 	function menu() {
 		return _class('html')->menu(array(
+			11 => array(
+				'name'	=> 'Tools',
+			),
+			22 => array(
+				'link'		=> './?object=blocks',
+				'name'		=> 'Blocks editor',
+				'parent_id'	=> 11,
+			),
+			33 => array(
+				'link'		=> './?object=file_manager',
+				'name'		=> 'File manager',
+				'parent_id'	=> 11,
+			),
+			44 => array(
+				'name'		=> 'Administration',
+			),
+			55 => array(
+				'link'		=> './?object=admin',
+				'name'		=> 'Admin accounts',
+				'parent_id'	=> 44,
+			),
+			66 => array(
+				'link'		=> './?object=admin_groups',
+				'name'		=> 'Admin groups',
+				'parent_id'	=> 44,
+			),
+			77 => array(
+				'link'		=> './?object=admin_modules',
+				'name'		=> 'Admin modules',
+				'parent_id'	=> 44,
+			),
+			88 => array(
+				'name'		=> 'Users',
+				'parent_id'	=> 44,
+			),
+			99 => array(
+				'link'		=> './?object=manage_users',
+				'name'		=> 'User accounts',
+				'parent_id'	=> 88,
+			),
+			101 => array(
+				'link'		=> './?object=user_groups',
+				'name'		=> 'User groups',
+				'parent_id'	=> 88,
+			),
+			102 => array(
+				'link'		=> './?object=user_modules',
+				'name'		=> 'User modules',
+				'parent_id'	=> 88,
+			),
+			103 => array(
+				'name'		=> 'Content',
+			),
+			104 => array(
+				'link'		=> './?object=static_pages',
+				'name'		=> 'Static pages',
+				'parent_id'	=> 103,
+			),
+			105 => array(
+				'link'		=> './?object=manage_news',
+				'name'		=> 'News',
+				'parent_id'	=> 103,
+			),
+			106 => array(
+				'link'		=> './?object=manage_comments',
+				'name'		=> 'Comments',
+				'parent_id'	=> 103,
+			),
+		));
+	}
+
+	/***/
+	function tree() {
+		return _class('html')->tree(array(
 			11 => array(
 				'name'	=> 'Tools',
 			),

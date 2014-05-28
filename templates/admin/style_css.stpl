@@ -42,9 +42,11 @@ fieldset.well { padding-bottom: 0; }
 fieldset.well legend { margin-bottom:0; padding: 0 0.5em; width: auto; line-height: 1.5em; background: inherit; }
 legend+.control-group { margin-top: 0; }
 
-.bs-docs-sidenav { width: 250px; margin: 0; padding: 0; }
+.bs-docs-sidenav { width: 200px; margin: 0; padding: 0; z-index: 1000; }
+.bs-docs-sidenav [class*="span"] { margin-left: 0; }
 .bs-docs-sidenav > li > a { display: block; margin: 0; padding: 5px 15px; /*  border: 1px solid #555;*/ }
 .bs-docs-sidenav .icon-chevron-right { float: right; margin-top: 0; margin-right: -5px; opacity: .25; }
+/*.left_area .bs-docs-sidenav, .right_area .bs-docs-sidenav { position:fixed; }*/
 
 .controls>.radio:first-child { padding-top:inherit; }
 .form-inline .radio:first-child { padding-left: 5px; }

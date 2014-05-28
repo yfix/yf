@@ -92,9 +92,19 @@ class yf_table2 {
 		$params = $tmp;
 		unset($tmp);
 
+		$on_before_render = isset($params['on_before_render']) ? $params['on_before_render'] : $this->_on['on_before_render'];
+		if (is_callable($on_before_render)) {
+			$on_before_render($params, $this);
+		}
 		$a = $this->_render_get_data($params);
 		$data	= &$a['data'];
 		$ids	= &$a['ids'];
+		if (main()->is_post()) {
+			$on_post = isset($params['on_post']) ? $params['on_post'] : $this->_on['on_post'];
+			if (is_callable($on_post)) {
+				$on_post($params, $a, $this);
+			}
+		}
 		// Automatically get fields from results
 		if ($params['auto'] && $data) {
 			$this->_render_auto($params, $data);
@@ -120,6 +130,10 @@ class yf_table2 {
 			$body = $this->_render_as_json($params, $a, $to_hide);
 		} else {
 			$body = $this->_render_as_html($params, $a, $to_hide);
+		}
+		$on_after_render = isset($params['on_after_render']) ? $params['on_after_render'] : $this->_on['on_after_render'];
+		if (is_callable($on_after_render)) {
+			$on_after_render($params, $a, $body, $this);
 		}
 		if (DEBUG_MODE) {
 			$this->_render_debug_info($params, $ts, main()->trace_string());
@@ -1531,19 +1545,22 @@ class yf_table2 {
 
 	/**
 	*/
-	function on_post() {
-// TODO: intended to be used when main()->is_post() detected
+	function on_post($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
 	}
 
 	/**
 	*/
-	function on_before_render() {
-// TODO
+	function on_before_render($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
 	}
 
 	/**
 	*/
-	function on_after_render() {
-// TODO
+	function on_after_render($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
 	}
 }

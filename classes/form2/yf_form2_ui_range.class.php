@@ -10,9 +10,10 @@ class yf_form2_ui_range {
 			$desc = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
 // TODO: upgrade look and feel and connect $field__and for filter
+			$_this->_prepare_inline_error($extra);
 			$body = '
 				<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 				<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>

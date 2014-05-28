@@ -957,4 +957,10 @@ class yf_tpl {
 		}
 		return $text;
 	}
+
+	/**
+	*/
+	function add_pattern_callback($pattern, $func) {
+		$this->_custom_patterns[$pattern] = $func;
+	}
 }

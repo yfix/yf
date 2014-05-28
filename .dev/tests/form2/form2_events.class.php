@@ -7,28 +7,28 @@ class form2_events {
 		);
 		return form((array)$_POST + $a)
 			->on_post(function(){
-				echo 'on post<br />'.PHP_EOL;
+				common()->message_info('on post');
 			})
 			->on_before_render(function(){
-				echo 'on before render<br />'.PHP_EOL;
+				common()->message_info('on before render');
 			})
 			->on_after_render(function(){
-				echo 'on after render<br />'.PHP_EOL;
+				common()->message_info('on after render');
 			})
 			->on_validate_error(function(){
-				echo 'on validate error<br />'.PHP_EOL;
+				common()->message_info('on validate error');
 			})
 			->on_before_validate(function(){
-				echo 'on before validate<br />'.PHP_EOL;
+				common()->message_info('on before validate');
 			})
 			->on_after_validate(function(){
-				echo 'on after validate<br />'.PHP_EOL;
+				common()->message_info('on after validate');
 			})
 			->on_before_update(function(){
-				echo 'on before update<br />'.PHP_EOL;
+				common()->message_info('on before update');
 			})
 			->on_after_update(function(){
-				echo 'on after update<br />'.PHP_EOL;
+				common()->message_info('on after update');
 				cache_del('forum_categories');
 			})
 			->validate(array(

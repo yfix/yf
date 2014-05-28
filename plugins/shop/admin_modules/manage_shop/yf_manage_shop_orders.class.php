@@ -284,7 +284,7 @@ class yf_manage_shop_orders{
 			->text('intercom')
 			->info('comment')
 			->info('delivery_time')
-			->text('delivery_price')
+			->price('delivery_price')
 			->user_info('user_id')
 			->info('payment', 'Payment method')
 			->container(

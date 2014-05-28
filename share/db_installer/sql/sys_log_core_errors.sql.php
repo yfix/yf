@@ -19,6 +19,7 @@ $data = '
 	`referer` varchar(255) NOT NULL DEFAULT \'\',
 	`object` varchar(255) NOT NULL DEFAULT \'\',
 	`action` varchar(255) NOT NULL DEFAULT \'\',
+	`trace` varchar(1024) NOT NULL DEFAULT \'\',
 	PRIMARY KEY (`id`),
 	KEY `error_level` (`error_level`),
 	KEY `date` (`date`)

@@ -4,7 +4,13 @@ class table2_new_controls {
 	function show() {
 		$values = array('', 'k1' => 'v1', 'k2' => 'v2');
 
-		return table('SELECT *, "4" AS stars, "20" AS stars_big, "" AS test FROM '.db('shop_products'))
+		$f = __DIR__.'/products_data.json';
+		$data = json_decode(file_get_contents($f), true);
+		foreach ($data as $k => $v) {
+			$data[$k]['stars'] = rand(1,5);
+			$data[$k]['stars_big'] = rand(10,40);
+		}
+		return table($data)
 			->stars('stars')
 			->stars('stars_big', array('stars' => 5, 'max' => 100))
 

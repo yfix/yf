@@ -23,8 +23,6 @@ class yf_cache {
 	public $RANDOM_TTL_ADD		= true;
 	/** @var bool Force cache class to generate unique namespace, based on project_path. Usually needed to separate projects within same cache storage (memcached as example) */
 	public $AUTO_CACHE_NS		= false;
-	/** @var int Max number of items to log when DEBUG_MODE is enabled, this limit needed to prevent stealing all RAM when we have high number of cache entries at once. */
-	public $LOG_MAX_ITEMS		= 500;
 
 	/**
 	* Catch missing method call
@@ -184,23 +182,16 @@ class yf_cache {
 
 		$result = $this->_driver->get($key_name_ns, $force_ttl, $params);
 
-		if (DEBUG_MODE) {
-			$all_debug = debug('cache_get');
-			$debug_index = count($all_debug);
-// TODO: move debug items limiting into debug() itself
-			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				debug('cache_'.__FUNCTION__.'::'.$debug_index, array(
-					'name'		=> $name,
-					'name_real'	=> $key_name_ns,
-					'data'		=> $result,
-					'driver'	=> $this->DRIVER,
-					'params'	=> $params,
-					'force_ttl'	=> $force_ttl,
-					'time'		=> round(microtime(true) - $time_start, 5),
-					'trace'		=> main()->trace_string(),
-				));
-			}
-		}
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+			'name'		=> $name,
+			'name_real'	=> $key_name_ns,
+			'data'		=> $result,
+			'driver'	=> $this->DRIVER,
+			'params'	=> $params,
+			'force_ttl'	=> $force_ttl,
+			'time'		=> round(microtime(true) - $time_start, 5),
+			'trace'		=> main()->trace_string(),
+		));
 // TODO: add DEBUG_MODE checking here to not allow refresh_cache attacks, maybe add check for: conf('cache_refresh_token', 'something_random')
 		if ($_GET['refresh_cache']) {
 			return false;
@@ -231,21 +222,15 @@ class yf_cache {
 		$key_name_ns = $this->CACHE_NS. $name;
 		$result = $this->_driver->set($key_name_ns, $data, $ttl);
 
-		if (DEBUG_MODE) {
-			$all_debug = debug('cache_set');
-			$debug_index = count($all_debug);
-			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				debug('cache_'.__FUNCTION__.'::'.$debug_index, array(
-					'name'		=> $name,
-					'name_real'	=> $key_name_ns,
-					'data'		=> $data,
-					'driver'	=> $this->DRIVER,
-					'ttl'		=> $ttl,
-					'time'		=> round(microtime(true) - $time_start, 5),
-					'trace'		=> main()->trace_string(),
-				));
-			}
-		}
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+			'name'		=> $name,
+			'name_real'	=> $key_name_ns,
+			'data'		=> $data,
+			'driver'	=> $this->DRIVER,
+			'ttl'		=> $ttl,
+			'time'		=> round(microtime(true) - $time_start, 5),
+			'trace'		=> main()->trace_string(),
+		));
 		return $result;
 	}
 
@@ -265,18 +250,12 @@ class yf_cache {
 		$key_name_ns = $this->CACHE_NS. $name;
 		$result = $this->_driver->del($key_name_ns);
 
-		if (DEBUG_MODE) {
-			$all_debug = debug('cache_del');
-			$debug_index = count($all_debug);
-			if ($debug_index < $this->LOG_MAX_ITEMS) {
-				debug('cache_'.__FUNCTION__.'::'.$debug_index, array(
-					'name'			=> $name,
-					'name_real'		=> $key_name_ns,
-					'driver'		=> $this->DRIVER,
-					'time'			=> round(microtime(true) - $time_start, 5),
-				));
-			}
-		}
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+			'name'			=> $name,
+			'name_real'		=> $key_name_ns,
+			'driver'		=> $this->DRIVER,
+			'time'			=> round(microtime(true) - $time_start, 5),
+		));
 		return $result;
 	}
 
@@ -319,13 +298,11 @@ class yf_cache {
 			$time_start = microtime(true);
 		}
 		$result = $this->_driver->flush();
-		if (DEBUG_MODE) {
-			debug('cache_'.__FUNCTION__.'[]', array(
-				'data'		=> $result,
-				'driver'	=> $this->DRIVER,
-				'time'		=> microtime(true) - $time_start,
-			));
-		}
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+			'data'		=> $result,
+			'driver'	=> $this->DRIVER,
+			'time'		=> microtime(true) - $time_start,
+		));
 		return $result;
 	}
 
@@ -388,14 +365,12 @@ class yf_cache {
 				}
 			}
 		}
-		if (DEBUG_MODE) {
-			debug('cache_'.__FUNCTION__.'[]', array(
-				'names'		=> $names,
-				'data'		=> $result,
-				'driver'	=> $this->DRIVER,
-				'time'		=> microtime(true) - $time_start,
-			));
-		}
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+			'names'		=> $names,
+			'data'		=> $result,
+			'driver'	=> $this->DRIVER,
+			'time'		=> microtime(true) - $time_start,
+		));
 		return $result;
 	}
 
@@ -427,13 +402,11 @@ class yf_cache {
 				$result[$name] = $this->set($name, $_data, $ttl);
 			}
 		}
-		if (DEBUG_MODE) {
-			debug('cache_'.__FUNCTION__.'[]', array(
-				'data'		=> $data,
-				'driver'	=> $this->DRIVER,
-				'time'		=> microtime(true) - $time_start,
-			));
-		}
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+			'data'		=> $data,
+			'driver'	=> $this->DRIVER,
+			'time'		=> microtime(true) - $time_start,
+		));
 		return $result;
 	}
 
@@ -455,14 +428,12 @@ class yf_cache {
 				$result[$name] = $this->del($name);
 			}
 		}
-		if (DEBUG_MODE) {
-			debug('cache_'.__FUNCTION__.'[]', array(
-				'names'		=> $names,
-				'data'		=> $result,
-				'driver'	=> $this->DRIVER,
-				'time'		=> microtime(true) - $time_start,
-			));
-		}
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+			'names'		=> $names,
+			'data'		=> $result,
+			'driver'	=> $this->DRIVER,
+			'time'		=> microtime(true) - $time_start,
+		));
 		return $result;
 	}
 
@@ -491,13 +462,11 @@ class yf_cache {
 			asort($result);
 			$result = array_values($result);
 		}
-		if (DEBUG_MODE) {
-			debug('cache_'.__FUNCTION__.'[]', array(
-				'data'		=> $result,
-				'driver'	=> $this->DRIVER,
-				'time'		=> microtime(true) - $time_start,
-			));
-		}
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+			'data'		=> $result,
+			'driver'	=> $this->DRIVER,
+			'time'		=> microtime(true) - $time_start,
+		));
 		return $result;
 	}
 
@@ -521,14 +490,12 @@ class yf_cache {
 			}
 			$result && $this->multi_del($result);
 		}
-		if (DEBUG_MODE) {
-			debug('cache_'.__FUNCTION__.'[]', array(
-				'prefix'	=> $prefix,
-				'data'		=> $result,
-				'driver'	=> $this->DRIVER,
-				'time'		=> microtime(true) - $time_start,
-			));
-		}
+		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
+			'prefix'	=> $prefix,
+			'data'		=> $result,
+			'driver'	=> $this->DRIVER,
+			'time'		=> microtime(true) - $time_start,
+		));
 		return $result;
 	}
 }

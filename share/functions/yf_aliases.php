@@ -63,6 +63,9 @@ if (!function_exists('tpl')) {
 if (!function_exists('common')) {
 	function common($silent = false) { return $GLOBALS['common'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
 }
+if (!function_exists('input')) {
+	function input($silent = false) { return _class('input') ?: new my_missing_method_handler(__FUNCTION__, $silent); }
+}
 // example: cache()->put()
 if (!function_exists('cache')) {
 	function cache($silent = false) { return $GLOBALS['cache'] ?: new my_missing_method_handler(__FUNCTION__, $silent); }
@@ -130,6 +133,9 @@ if (!function_exists('js')) {
 }
 if (!function_exists('require_js')) {
 	function require_js($content, $type = 'auto', $params = array()) { return _class('core_js')->add($content, $type, $params); }
+}
+if (!function_exists('jquery')) {
+	function jquery($content, $params = array()) { return _class('core_js')->add('$(function(){'.PHP_EOL. $content. PHP_EOL.'})', 'inline', $params); }
 }
 if (!function_exists('css')) {
 	function css($content, $type = 'auto', $params = array()) { return _class('core_css')->add($content, $type, $params); }

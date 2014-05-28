@@ -19,9 +19,9 @@ class yf_manage_shop_hook_widgets {
 		$config = $params;
 		$sql = 'SELECT * FROM '.db('shop_products').' ORDER BY add_date DESC';
 		return table($sql, array(
-				'no_header' => 1, 
-				'btn_no_text' => 1, 
-				'no_records_simple' => 1, 
+				'no_header' => 1,
+				'btn_no_text' => 1,
+				'no_records_simple' => 1,
 				'no_pages' => 1,
 				'pager_sql_callback' => function($sql) { return preg_replace('/^SELECT.*FROM/ims', 'SELECT COUNT(*) FROM', ltrim($sql)); }
 			))
@@ -45,7 +45,7 @@ class yf_manage_shop_hook_widgets {
 			return $meta;
 		}
 		$config = $params;
-		$sql = 'SELECT p.* FROM '.db('shop_products').' AS p 
+		$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
 			INNER JOIN '.db('shop_order_items').' AS i ON i.product_id = p.id
 			INNER JOIN '.db('shop_orders').' AS o ON o.id = i.order_id
 			GROUP BY p.id
@@ -78,7 +78,7 @@ class yf_manage_shop_hook_widgets {
 			return $meta;
 		}
 		$config = $params;
-		$sql = 'SELECT p.*, COUNT(*) AS num FROM '.db('shop_products').' AS p 
+		$sql = 'SELECT p.*, COUNT(*) AS num FROM '.db('shop_products').' AS p
 			INNER JOIN '.db('shop_order_items').' AS i ON i.product_id = p.id
 			INNER JOIN '.db('shop_orders').' AS o ON o.id = i.order_id
 			GROUP BY p.id

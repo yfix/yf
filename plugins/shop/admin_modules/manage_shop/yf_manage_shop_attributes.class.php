@@ -10,31 +10,31 @@ class yf_manage_shop_attributes{
 		while ($A = db()->fetch_assoc($R)) {
 			$A1 = db()->get_2d('SELECT `id`,`title` FROM `'.db('shop_productparams_options').'` WHERE `productparams_id`='.$A['id'].' ORDER BY `title`');
 			$items[$A['id']] = $A;
-			$items[$A['id']]['options'] = trim(implode(' | ',$A1));
+			$items[$A['id']]['options'] = trim(implode(' | ',(array)$A1));
 		}
 // TODO: rewrite this into pure table() with custom func to support filter
 		return table($items, array(
 				'filter' => $_SESSION[$_GET['object'].'__attributes']
 			))
 			->text('title')
-			->text('options')				
+			->text('options')
 			->btn_edit('', './?object='.main()->_get('object').'&action=attribute_edit&id=%d',array('no_ajax' => 1))
 			->btn_delete('', './?object='.main()->_get('object').'&action=attribute_delete&id=%d')
 			->footer_add('','./?object='.main()->_get('object').'&action=attribute_add')
 		;
-	}	
+	}
 
 	/**
 	*/
 	function attribute_add () {
-		
-		if (main()->is_post()) {			
+
+		if (main()->is_post()) {
 			if (empty($_POST['title'])) {
 				_re('Title is required');
 			}
 			if (empty($_POST['value_list'])) {
 				_re('Values list is required');
-			}			
+			}
 			if (!common()->_error_exists()) {
 				$value_list = array();
 				foreach ((array)explode("\n", $_POST['value_list']) as $val){
@@ -116,12 +116,12 @@ class yf_manage_shop_attributes{
 					// options not found - delete these
 					db()->query('DELETE FROM `'.db('shop_productparams_options').'` WHERE `id` IN ('.implode(',',$options_list).') AND `productparams_id`='.$_GET['id']);
 				}
-				
+
 				db()->UPDATE('shop_productparams', db()->es(array(
 					'title'			=> $_POST['title'],
-				)), 'id='.$_GET['id']); 
+				)), 'id='.$_GET['id']);
 				common()->admin_wall_add(array('shop product attribute updated: '.$_POST['title'], $_GET['id']));
-				return js_redirect('./?object='.main()->_get('object').'&action=attributes'); 
+				return js_redirect('./?object='.main()->_get('object').'&action=attributes');
 			}
 		}
 		$replace = array(
@@ -188,10 +188,10 @@ class yf_manage_shop_attributes{
 			return array();
 		}
 		$Q = db()->query(
-			'SELECT field_id,value,add_value 
+			'SELECT field_id,value,add_value
 			FROM '.db('shop_product_attributes_values').'
-			WHERE category_id = '.intval($category_id).' 
-				AND object_id = '.intval($object_id).' 
+			WHERE category_id = '.intval($category_id).'
+				AND object_id = '.intval($object_id).'
 				AND field_id IN('.implode(',', $fields_ids).')');
 		while ($A = db()->fetch_assoc($Q)) {
 			$fields_values[$A['field_id']] = array(

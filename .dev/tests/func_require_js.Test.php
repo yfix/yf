@@ -13,6 +13,9 @@ class func_require_js_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('inline', _class('core_js')->_detect_content('$(function(){
 			$("#element").on("click", function(){})
 		})'));
+		$this->assertEquals('inline', _class('core_js')->_detect_content('$(function(){
+			var url="http://www.google.com/";
+		})'));
 		$this->assertEquals('inline', _class('core_js')->_detect_content('$(function(){})'));
 
 		$f = '/tmp/yf_unit_tests_empty_script.js';

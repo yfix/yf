@@ -173,6 +173,15 @@ $data = array (
 			'default' => '',
 			'auto_inc' => 0,
 		),
+		'trace' => 
+		array (
+			'type' => 'varchar',
+			'length' => '1024',
+			'attrib' => NULL,
+			'not_null' => 1,
+			'default' => '',
+			'auto_inc' => 0,
+		),
 	),
 	'keys' => 
 	array (

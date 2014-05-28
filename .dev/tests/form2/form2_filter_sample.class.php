@@ -22,8 +22,6 @@ class form2_filter_sample {
 		return form($replace, array(
 				'selected' => $_SESSION[$filter_name],
 				'class' => 'form-inline',
-// TODO
-//				'class_for_all' => 'span2',
 			))
 			->text('title', array('class' => 'input-medium', 'tip' => 'Title field helping description'))
 			->select_box('type', $offer_types, array('show_text' => 1, 'class' => 'input-medium'))
@@ -42,10 +40,6 @@ class form2_filter_sample {
 			->row_start(array('desc' => 'per'))
 				->select_box('split_period', $split_period, array('show_text' => 1, 'class' => 'input-medium'))
 			->row_end()
-			/*
-			->number('duration')
-			->number('duration__and')
-			*/
 			->select_box('order_by', $order_fields, array('show_text' => 1, 'class' => 'input-medium'))
 			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending')/*, array('selected' => 'asc')*/)
 			->save_and_clear();

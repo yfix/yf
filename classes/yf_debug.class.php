@@ -33,11 +33,10 @@ class yf_debug {
 	public $_SHOW_GET_DATA				= 1;
 	public $_SHOW_POST_DATA				= 1;
 	public $_SHOW_COOKIE_DATA			= 1;
-	public $_SHOW_REQUEST_DATA			= 0;
 	public $_SHOW_SESSION_DATA			= 1;
 	public $_SHOW_FILES_DATA			= 1;
 	public $_SHOW_SERVER_DATA			= 1;
-	public $_SHOW_ENV_DATA				= 0;
+	public $_SHOW_ENV_DATA				= 1;
 	public $_SHOW_SETTINGS				= 1;
 	public $_SHOW_CURL_REQUESTS			= 1;
 	public $_SHOW_FORM2					= 1;
@@ -647,7 +646,10 @@ class yf_debug {
 		if (!$this->_SHOW_GET_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_GET);
+		$out = $this->_show_key_val_table($_GET);
+		$items = $this->_get_debug_data('input_get');
+		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		return $out;
 	}
 
 	/**
@@ -656,7 +658,10 @@ class yf_debug {
 		if (!$this->_SHOW_POST_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_POST);
+		$out = $this->_show_key_val_table($_POST);
+		$items = $this->_get_debug_data('input_post');
+		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		return $out;
 	}
 
 	/**
@@ -666,16 +671,10 @@ class yf_debug {
 			return '';
 		}
 // TODO: add link to delete cookie (inside browser)
-		return $this->_show_key_val_table($_COOKIE);
-	}
-
-	/**
-	*/
-	function _debug__request (&$params = array()) {
-		if (!$this->_SHOW_REQUEST_DATA) {
-			return '';
-		}
-		return $this->_show_key_val_table($_REQUEST);
+		$out = $this->_show_key_val_table($_COOKIE);
+		$items = $this->_get_debug_data('input_cookie');
+		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		return $out;
 	}
 
 	/**
@@ -700,7 +699,11 @@ class yf_debug {
 				'value' => '<pre>'._prepare_html(var_export($v, 1)).'</pre>',
 			);
 		}
-		return $this->_show_auto_table($items, array('first_col_width' => '1%'));
+		$out = $this->_show_auto_table($items, array('first_col_width' => '1%'));
+
+		$items = $this->_get_debug_data('input_session');
+		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		return $out;
 	}
 
 	/**
@@ -709,7 +712,10 @@ class yf_debug {
 		if (!$this->_SHOW_SERVER_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_SERVER);
+		$out = $this->_show_key_val_table($_SERVER);
+		$items = $this->_get_debug_data('input_server');
+		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		return $out;
 	}
 
 	/**
@@ -718,7 +724,10 @@ class yf_debug {
 		if (!$this->_SHOW_ENV_DATA) {
 			return '';
 		}
-		return $this->_show_key_val_table($_ENV);
+		$out = $this->_show_key_val_table($_ENV);
+		$items = $this->_get_debug_data('input_env');
+		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
+		return $out;
 	}
 
 	/**

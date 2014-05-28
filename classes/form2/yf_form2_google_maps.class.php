@@ -15,8 +15,9 @@ class yf_form2_google_maps {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'map');
 		$extra['markers_limit'] = $extra['markers_limit'] ?: 5;
 		$extra['start_zoom'] = $extra['start_zoom'] ?: 5;		
-		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
+		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $_this) {
+			$_this->_prepare_inline_error($extra);
 			// Compatibility with filter			
 			$start_lat = 49;
 			$start_lng = 32;

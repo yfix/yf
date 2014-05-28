@@ -38,9 +38,7 @@ class yf_db {
 	/** @var bool Use locking for reconnects or not */
 	public $RECONNECT_USE_LOCKING	= 0;
 	/** @var array List of mysql error codes to use for reconnect tries. See also http://dev.mysql.com/doc/refman/5.0/en/error-messages-client.html */
-	public $RECONNECT_MYSQL_ERRORS	= array(
-		1053, 1317, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055
-	);
+	public $RECONNECT_MYSQL_ERRORS	= array(1053, 1317, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055);
 	/** @var string */
 	public $RECONNECT_LOCK_FILE_NAME	= 'db_cannot_connect_[DB_HOST]_[DB_NAME]_[DB_USER]_[DB_PORT].lock';
 	/** @var int Time in seconds between unlock reconnect */
@@ -107,8 +105,6 @@ class yf_db {
 	public $QUERY_REVISIONS			= false;
 	/** @var bool update_safe, insert_safe, update_batch_safe: use additional checking for exising table fields */
 	public $FIX_DATA_SAFE			= true;
-	/** @var array List of tables inside current database */
-	public $_PARSED_TABLES			= array();
 	/** @var array Filled automatically from generated file */
 	public $_need_sys_prefix		= array();
 
@@ -123,9 +119,8 @@ class yf_db {
 	/**
 	* Constructor
 	*/
-	function __construct($db_type = '', $no_parse_tables = 0, $db_prefix = null, $db_replication_slave = null) {
+	function __construct($db_type = '', $db_prefix = null, $db_replication_slave = null) {
 		$this->_load_tables_with_sys_prefix();
-		$this->_no_parse_tables = $no_parse_tables;
 		// Type/driver of database server
 		$this->DB_TYPE = !empty($db_type) ? $db_type : DB_TYPE;
 		if (!defined('DB_PREFIX') && empty($db_prefix)) {
@@ -1197,16 +1192,6 @@ class yf_db {
 		if ($this->DB_PREFIX && substr($name, 0, strlen($this->DB_PREFIX)) == $this->DB_PREFIX) {
 			$name_wo_db_prefix = substr($name, strlen($this->DB_PREFIX));
 		}
-/*
-// TODO: implement overrides here
-			// If non-empty - apply override of table names (useful for pre-release or development on same database as production)
-			if (isset($GLOBALS['_OVERRIDES']['DB_TABLE_NAMES'][$this->DB_NAME])) {
-				$override_table_names = $GLOBALS['_OVERRIDES']['DB_TABLE_NAMES'][$this->DB_NAME];
-				foreach ((array)$override_table_names as $cur_name => $use_name) {
-					$this->_PARSED_TABLES[$cur_name] = $use_name;
-				}
-			}
-*/
 		return $this->DB_PREFIX. (in_array($name_wo_db_prefix, $this->_need_sys_prefix) ? 'sys_' : ''). $name_wo_db_prefix;
 	}
 
@@ -1509,29 +1494,6 @@ class yf_db {
 		);
 		$sql = $this->insert_safe('sys_db_revisions', $to_insert, $only_sql = true);
 		$this->_add_shutdown_query($sql);
-	}
-
-	/**
-	* !!! DEPRECATED !!! and should not be used from now on.
-	*/
-	function _parse_tables() {
-		if ($this->_already_parsed_tables) {
-			return true;
-		}
-		if (!is_object($this->db)) {
-			$this->connect();
-		}
-		if (empty($included)) {
-			$tmp_tables = $this->meta_tables();
-			// Clean up tables from system prefixes
-			$this->_PARSED_TABLES = array();
-			foreach ((array)$tmp_tables as $table_name) {
-				$short_name = substr(str_replace('sys_','',$table_name), strlen($this->DB_PREFIX));
-				$this->_PARSED_TABLES[$short_name] = $table_name;
-			}
-			ksort($this->_PARSED_TABLES);
-		}
-		$this->_already_parsed_tables = true;
 	}
 
 	/**

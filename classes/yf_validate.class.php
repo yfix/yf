@@ -158,6 +158,10 @@ class yf_validate {
 
 		$out = array();
 		foreach ((array)$validate_rules as $name => $raw) {
+			$is_html_array = (false !== strpos($name, '['));
+			if ($is_html_array) {
+				$name = str_replace(array('[',']'), array('.',''), trim($name,']['));
+			}
 			$rules = (array)$this->_validate_rules_array_from_raw($raw);
 			if ($all_before) {
 				$tmp = $all_before;
