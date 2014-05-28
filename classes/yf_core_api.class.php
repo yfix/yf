@@ -300,7 +300,7 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_tests($name) {
+	function get_item_tests($name) {
 		$out = $this->get_module_tests($name);
 		if (!$out) {
 			$out = $this->get_function_tests($name);
@@ -337,7 +337,7 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_docs($name) {
+	function get_item_docs($name) {
 		$out = $this->get_module_docs($name);
 		if (!$out) {
 			$out = $this->get_method_docs($name);
@@ -516,11 +516,17 @@ class yf_core_api {
 		$folder = '';
 		$suffix = '/';
 		$libs = array();
-		foreach ($this->_get_globs($folder, $suffix) as $gname => $glob) {
+		foreach ($this->get_globs($folder, $suffix) as $gname => $glob) {
 			if (false === strpos($gname, '_plugins')) {
 				continue;
 			}
+			if (substr($glob, -4) == '*/*/') {
+				$glob = substr($glob, 0, -2);
+			}
 			foreach (glob($glob) as $path) {
+				if (!is_dir($path)) {
+					continue;
+				}
 				$name = basename($path);
 				$libs[$name] = $name;
 			}
@@ -535,8 +541,12 @@ class yf_core_api {
 	*/
 	function get_libs($folder = 'libs/') {
 		$libs = array();
-		foreach ($this->_get_globs($folder, $suffix) as $glob) {
+		$suffix = '/';
+		foreach ($this->get_globs($folder, $suffix) as $glob) {
 			foreach (glob($glob) as $path) {
+				if (!is_dir($path)) {
+					continue;
+				}
 				$name = basename($path);
 				$libs[$name] = $name;
 			}
