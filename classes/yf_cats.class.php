@@ -25,6 +25,25 @@ class yf_cats {
 	public $BOX_LEVEL_MARKER	= '&#0124;-- ';
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		$self = 'cats';
+		$func = null;
+		if (isset( $this->_extend[$name] )) {
+			$func = $this->_extend[$name];
+		} elseif (isset( main()->_extend[$self][$name] )) {
+			$func = main()->_extend[$self][$name];
+		}
+		if ($func) {
+			return $func($args[0], $args[1], $args[2], $args[3], $this);
+		}
+		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
+		return false;
+	}
+
+
+	/**
 	*/
 	function _init () {
 		$this->_category_sets = main()->get_data('category_sets');
