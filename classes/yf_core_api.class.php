@@ -134,9 +134,9 @@ class yf_core_api {
 		$data = array();
 		foreach ((array)$this->get_methods($section) as $module => $method) {
 			foreach ((array)$methods as $method) {
-				if ($method[0] != '_') {
+#				if ($method[0] != '_') {
 					$data[$module][$method] = $method;
-				}
+#				}
 			}
 		}
 		return $data;
