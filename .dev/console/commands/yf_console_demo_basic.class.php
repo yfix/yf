@@ -6,11 +6,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class yf_console_commands extends Command {
+class yf_console_demo_basic extends Command {
 	protected function configure() {
 		$this
-			->setName('demo:greet')
-			->setDescription('Greet someone')
+			->setName('demo:basic')
+			->setDescription('Demo basic')
 			->addArgument('name', InputArgument::OPTIONAL, 'Who do you want to greet?')
 			->addOption('yell', null, InputOption::VALUE_NONE, 'If set, the task will yell in uppercase letters')
 		;

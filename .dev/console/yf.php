@@ -8,16 +8,23 @@
 * # curl -sS https://getcomposer.org/installer | php
 * # composer self-update
 * # composer global require symfony/console:~2.4
+* Add symlink for "yf" into /usr/local/bin/yf
 */
 
 use Symfony\Component\Console\Application;
 
+require '/usr/local/share/composer/vendor/autoload.php';
+
+if (!defined('YF_PATH')) {
+	define('YF_PATH', dirname(dirname(dirname(__FILE__))).'/');
+}
+// TODO
+#if (!defined('PROJECT_PATH')) {
+#	define('PROJECT_PATH', __DIR__.'/');
+#}
 function init_yf() {
 	if (function_exists('main')) {
 		return true;
-	}
-	if (!defined('YF_PATH')) {
-		define('YF_PATH', dirname(dirname(dirname(__FILE__))).'/');
 	}
 	require YF_PATH.'classes/yf_main.class.php';
 	new yf_main('admin', $no_db_connect = false, $auto_init_all = false);
@@ -26,10 +33,41 @@ function init_yf() {
 	ini_set('display_errors', 'on');
 	error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
 }
+function get_yf_console_commands() {
+	$cmds = array();
+	$subfolder = 'commands/';
+	$prefix_project = 'console_';
+	$prefix_framework = 'yf_'.$prefix_project;
+	$ext = '.class.php';
+	$globs = array(
+		'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $subfolder. $prefix_project. '*'. $ext,
+		'project_main'		=> PROJECT_PATH. $subfolder. $prefix_project. '*'. $ext,
+		'framework_plugins'	=> YF_PATH. 'plugins/*/'. $subfolder. $prefix_framework. '*'. $ext,
+		'framework_main'	=> __DIR__. '/'. $subfolder. $prefix_framework. '*'. $ext,
+	);
+	foreach ($globs as $gname => $glob) {
+		foreach (glob($glob) as $path) {
+			$name = '';
+			$file = basename($path);
+			$inside_project = false;
+			if (strpos($file, $prefix_framework) === 0) {
+				$name = substr($file, strlen($prefix_framework), -strlen($ext));
+			} elseif (strpos($file, $prefix_project) === 0) {
+				$name = substr($file, strlen($prefix_project), -strlen($ext));
+				$inside_project = true;
+			}
+			if ($name && !isset($cmds[$name])) {
+				require_once $path;
+				$class_name = ($is_project ? $prefix_project : $prefix_framework). $name;
+				if (class_exists($class_name)) {
+					$cmds[$name] = new $class_name;
+				}
+			}
+		}
+	}
+	return $cmds;
+}
 
-require '/usr/local/share/composer/vendor/autoload.php';
-require __DIR__.'/yf_console_commands.class.php';
-
-$application = new Application();
-$application->add(new yf_console_commands);
-$application->run();
+$app = new Application('yf', '1.0 (stable)');
+$app->addCommands(get_yf_console_commands());
+$app->run();
