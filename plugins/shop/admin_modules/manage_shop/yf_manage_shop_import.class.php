@@ -8,7 +8,7 @@ class yf_manage_shop_import {
 			'talisman' => 'talisman',
 			'fortuna' => 'fortuna',
 			'zakaz_ua' => 'zakaz_ua [update only]',
-			'obraz' => 'obraz',			
+			'oblik' => 'oblik',
 		);
 		$this->_modes = array(
 			'validate' => 'validate',
@@ -215,7 +215,7 @@ class yf_manage_shop_import {
 		return $this->table_format($result);
 	}
 	
-	function process_items_obraz($items, $mode = 'process') { // process/validate
+	function process_items_oblik($items, $mode = 'process') { // process/validate
 		$supplier_id = 113;
 		$products = $this->get_products_by_supplier($supplier_id);
 		$result = array();
