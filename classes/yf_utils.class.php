@@ -3,6 +3,13 @@
 class yf_utils {
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	* Encode given address to prevent spam-bots harvesting
 	*
 	*	Output: the email address as a mailto link, with each character

@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Table2, using bootstrap html/css framework
+* Table2 high-level generator, mostly using bootstrap html/css framework
 *
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -28,9 +28,14 @@ class yf_table2 {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args, $return_obj = true);
+	}
+
+	/**
+	*/
+	function _extend($name, $func) {
+		$this->_extend[$name] = $func;
 	}
 
 	/**

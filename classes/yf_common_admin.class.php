@@ -6,6 +6,13 @@
 class yf_common_admin {
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function _init() {
 		$this->USER_ID		= main()->USER_ID;

@@ -33,6 +33,13 @@ class yf_encryption {
 	public $_iv			= null;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function __construct () {
 		$crypto_use_mcrypt = conf('crypto_use_mcrypt');

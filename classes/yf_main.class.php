@@ -205,9 +205,8 @@ class yf_main {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+	function __call($name, $args) {
+		return $this->extend_call($this, $name, $args);
 	}
 
 	/**
@@ -830,6 +829,7 @@ class yf_main {
 	* Initialize new class object or return reference to existing one
 	*/
 	function &init_class ($class_name, $custom_path = '', $params = '') {
+		$class_name = $this->get_class_name($class_name);
 		if (isset($this->modules[$class_name]) && is_object($this->modules[$class_name])) {
 			return $this->modules[$class_name];
 		}
@@ -1720,5 +1720,48 @@ class yf_main {
 	*/
 	function is_redirect() {
 		return (bool)$this->_IS_REDIRECTING;
+	}
+
+	/**
+	* Return class name of the object, stripping all YF-related prefixes
+	* Needed to ensure singleton pattern and extending classes with same name
+	*/
+	function get_class_name($name) {
+		if (is_object($name)) {
+			$name = get_class($name);
+		}
+		if (strpos($name, YF_PREFIX) === 0) {
+			$name = substr($name, strlen(YF_PREFIX));
+		} elseif (strpos($name, YF_ADMIN_CLS_PREFIX) === 0) {
+			$name = substr($name, strlen(YF_ADMIN_CLS_PREFIX));
+		} elseif (strpos($name, YF_SITE_CLS_PREFIX) === 0) {
+			$name = substr($name, strlen(YF_SITE_CLS_PREFIX));
+		}
+		return $name;
+	}
+
+	/**
+	*/
+	function extend($module, $name, $func) {
+		$module = $this->get_class_name($module);
+		$this->_extend[$module][$name] = $func;
+	}
+
+	/**
+	*/
+	function extend_call($that, $name, $args, $return_obj = false) {
+		$module = $this->get_class_name($that);
+		$func = null;
+		if (isset( $that->_extend[$name] )) {
+			$func = $that->_extend[$name];
+		} elseif (isset( $this->_extend[$module][$name] )) {
+			$func = $this->_extend[$module][$name];
+		}
+		if ($func) {
+			$out = $func($args[0], $args[1], $args[2], $args[3], $that);
+			return $return_obj ? $that : $out;
+		}
+		trigger_error($module.': No method '.$name, E_USER_WARNING);
+		return $return_obj ? $that : false;
 	}
 }

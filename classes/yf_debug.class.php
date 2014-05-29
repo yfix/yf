@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Show debug info
+* Debug console
 * 
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -56,9 +56,8 @@ class yf_debug {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
 	}
 
 	/**

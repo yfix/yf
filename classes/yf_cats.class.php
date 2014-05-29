@@ -25,6 +25,13 @@ class yf_cats {
 	public $BOX_LEVEL_MARKER	= '&#0124;-- ';
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function _init () {
 		$this->_category_sets = main()->get_data('category_sets');

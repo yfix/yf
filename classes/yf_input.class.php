@@ -10,6 +10,13 @@
 class yf_input {
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	* Helper to get/set GET vars
 	*/
 	function get($key = null, $val = null) {

@@ -33,6 +33,13 @@ class yf_sphinxsearch {
 	private $CACHE_TTL = 300;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function _init () {
 		// SPHINX_HOST can contain port or not, both variants supported

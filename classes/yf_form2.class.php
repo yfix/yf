@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Form2, using bootstrap html/css framework
+* Form2 high-level generator and handler, mostly using bootstrap html/css framework
 *
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -12,9 +12,14 @@ class yf_form2 {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args, $this->_chained_mode);
+	}
+
+	/**
+	*/
+	function _extend($name, $func) {
+		$this->_extend[$name] = $func;
 	}
 
 	/**

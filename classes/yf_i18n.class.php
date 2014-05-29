@@ -44,6 +44,13 @@ class yf_i18n {
 	public $USE_TRANSLATE_CACHE		= true;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	* Framework constructor
 	*/
 	function _init() {
@@ -85,14 +92,6 @@ class yf_i18n {
 				ksort($this->TR_ALL_VARS);
 			}
 		}
-	}
-
-	/**
-	* Catch missing method call
-	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
 	}
 
 	/**

@@ -25,6 +25,13 @@ class yf_session {
 	public $SESSION_UNIQUE_NAME		= true;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function init_session () {
 /*

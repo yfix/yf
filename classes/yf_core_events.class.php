@@ -27,6 +27,14 @@ class yf_core_events {
 	protected $wildcards = array();
 	protected $sorted = array();
 	protected $firing = array();
+
+	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
 	/**
 	 * Register an event listener with the dispatcher.
 	 *

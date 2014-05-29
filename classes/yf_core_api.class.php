@@ -14,6 +14,13 @@ class yf_core_api {
 	var $SOURCE_ONLY_FRAMEWORK = false;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function get_class_instance($name, $section, $force_path = '') {
 		$path = $this->section_paths[$section];
