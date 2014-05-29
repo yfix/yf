@@ -840,6 +840,7 @@ class yf_main {
 	* Initialize new class object or return reference to existing one
 	*/
 	function &init_class ($class_name, $custom_path = '', $params = '') {
+		$class_name = $this->get_class_name($class_name);
 		if (isset($this->modules[$class_name]) && is_object($this->modules[$class_name])) {
 			return $this->modules[$class_name];
 		}
@@ -1733,8 +1734,27 @@ class yf_main {
 	}
 
 	/**
+	* Return class name of the object, stripping all YF-related prefixes
+	* Needed to ensure singleton pattern and extending classes with same name
+	*/
+	function get_class_name($name) {
+		if (is_object($name)) {
+			$name = get_class($name);
+		}
+		if (strpos($name, YF_PREFIX) === 0) {
+			$name = substr($name, strlen(YF_PREFIX));
+		} elseif (strpos($name, YF_ADMIN_CLS_PREFIX) === 0) {
+			$name = substr($name, strlen(YF_ADMIN_CLS_PREFIX));
+		} elseif (strpos($name, YF_SITE_CLS_PREFIX) === 0) {
+			$name = substr($name, strlen(YF_SITE_CLS_PREFIX));
+		}
+		return $name;
+	}
+
+	/**
 	*/
 	function extend($module, $name, $func) {
+		$module = $this->get_class_name($module);
 		$this->_extend[$module][$name] = $func;
 	}
 }
