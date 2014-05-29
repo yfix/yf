@@ -13,19 +13,7 @@ class yf_form2 {
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
-		$self = 'form2';
-		$func = null;
-		if (isset( $this->_extend[$name] )) {
-			$func = $this->_extend[$name];
-		} elseif (isset( main()->_extend[$self][$name] )) {
-			$func = main()->_extend[$self][$name];
-		}
-		if ($func) {
-			$out = $func($args[0], $args[1], $args[2], $args[3], $this);
-			return $this->_chained_mode ? $out : $this;
-		}
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+		return main()->extend_call($this, $name, $args, $this->_chained_mode);
 	}
 
 	/**

@@ -206,18 +206,7 @@ class yf_main {
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
-		$self = 'main';
-		$func = null;
-		if (isset( $this->_extend[$name] )) {
-			$func = $this->_extend[$name];
-		} elseif (isset( main()->_extend[$self][$name] )) {
-			$func = main()->_extend[$self][$name];
-		}
-		if ($func) {
-			return $func($args[0], $args[1], $args[2], $args[3], $this);
-		}
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+		return $this->extend_call($this, $name, $args);
 	}
 
 	/**
@@ -1756,5 +1745,23 @@ class yf_main {
 	function extend($module, $name, $func) {
 		$module = $this->get_class_name($module);
 		$this->_extend[$module][$name] = $func;
+	}
+
+	/**
+	*/
+	function extend_call($that, $name, $args, $return_obj = false) {
+		$module = $this->get_class_name($that);
+		$func = null;
+		if (isset( $that->_extend[$name] )) {
+			$func = $that->_extend[$name];
+		} elseif (isset( $this->_extend[$module][$name] )) {
+			$func = $this->_extend[$module][$name];
+		}
+		if ($func) {
+			$out = $func($args[0], $args[1], $args[2], $args[3], $that);
+			return $return_obj ? $that : $out;
+		}
+		trigger_error($module.': No method '.$name, E_USER_WARNING);
+		return $return_obj ? $that : false;
 	}
 }

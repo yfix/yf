@@ -81,6 +81,13 @@ class yf_security {
 	);
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	* YF constructor
 	*/
 	public function _init() {

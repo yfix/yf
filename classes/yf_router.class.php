@@ -10,6 +10,13 @@
 class yf_router {
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	* Method that allows to change standard tasks mapping (if needed)
 	*/
 	function _route_request() {

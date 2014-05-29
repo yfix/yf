@@ -15,6 +15,13 @@ class yf_core_js {
 #		'html5shiv'	=> '<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js" class="yf_core"></script><![endif]-->',
 	);
 
+	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
 	public function _init() {
 		// Main JS from theme stpl
 		$main_script_js = trim(tpl()->parse_if_exists('script_js'));
