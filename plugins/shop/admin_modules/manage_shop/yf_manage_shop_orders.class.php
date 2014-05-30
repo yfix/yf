@@ -186,10 +186,10 @@ class yf_manage_shop_orders{
 		foreach ((array)$order_items as $_info) {
 			$_product = $products_infos[$_info['product_id']];
 			if(intval($_info['type']) == 1){
-				$images[0]['thumb'] = _class( '_shop_products', 'modules/shop/' )->_product_set_image($_info["product_id"], $_product[ 'cat_id' ], 'thumb' );
+				$images[0]['thumb'] = _class( '_shop_products', 'modules/shop/' )->_product_set_image($_info["product_id"], $_product[ 'cat_id' ], 'thumb', false );
 				$link = './?object='.main()->_get('object').'&action=product_set_edit&id='.$_info[ 'product_id' ];
 			}else{
-				$images = _class( '_shop_products', 'modules/shop/' )->_product_image($_info["product_id"],false);
+				$images = _class( '_shop_products', 'modules/shop/' )->_product_image($_info["product_id"],false,false);
 				$link = './?object='.main()->_get('object').'&action=product_edit&id='.$_info[ 'product_id' ];
 			}
 			$image = $images[ 0 ][ 'thumb' ] ?: _class( '_shop_categories', 'modules/shop/' )->get_icon_url( $_product[ 'cat_id' ], 'item' );
