@@ -43,7 +43,7 @@ class yf_manage_shop_product_sets {
 					'products_price' => $this->_sql_sets_prices_total,
 				),
 			))
-			->image('id', 'uploads/shop/product_sets/%d.jpg', array('width' => '50px'))
+			->image('id', 'uploads/shop/product_sets/%d_thumb.jpg', array('width' => '50px'))
 			->text('name')
 			->text('price')
 			->text('products_price')
@@ -114,7 +114,6 @@ class yf_manage_shop_product_sets {
 					exit;
 				}
 			}
-// TODO: upload image or show already uploaded
 			$up = array();
 			// Add products to current set
 			if ($_POST['products_ids']) {
@@ -192,7 +191,7 @@ class yf_manage_shop_product_sets {
 		$a['form_action'] = './?object='.main()->_get('object').'&action=product_set_edit&id='.$product_set_id;
 		$a['back_link'] = './?object='.main()->_get('object').'&action=product_sets';
 		$a['products_price'] = $product_prices[$product_set_id];
-		$image = WEB_PATH . 'uploads/shop/product_sets/'.$product_set_id.'_thumb.jpg';
+		$image = _class( '_shop_products', 'modules/shop/' )->_product_set_image( $product_set_id, $a[ 'cat_id' ], 'thumb' );
 		return form($a)
 			->upload( 'image', 'Изображение', array( 'preview' => $image ) )
 		. form($a)
