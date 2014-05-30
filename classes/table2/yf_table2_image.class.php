@@ -36,7 +36,7 @@ class yf_table2_image {
 				$extra = $params['extra'];
 				$id = $row['id'];
 				$fs_path = $extra['fs_path'] ?: PROJECT_PATH;
-				$web_path = $extra['web_path'] ?: WEB_PATH;
+				$web_path = isset( $extra['web_path'] ) ? $extra['web_path'] : WEB_PATH;
 				// Make 3-level dir path
 				$d = sprintf('%09s', $id);
 				$replace = array(
