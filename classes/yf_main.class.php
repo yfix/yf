@@ -779,7 +779,7 @@ class yf_main {
 			return false;
 		}
 		$auth_module_name = 'auth_'.(MAIN_TYPE_ADMIN ? 'admin' : 'user');
-		$auth_loaded_module_name = $this->load_class_file($auth_module_name, AUTH_MODULES_DIR);
+		$auth_loaded_module_name = $this->load_class_file($auth_module_name, 'classes/auth/');
 		if ($auth_loaded_module_name) {
 			$this->auth = new $auth_loaded_module_name();
 			$this->_set_module_conf($auth_module_name, $this->auth);
@@ -1548,7 +1548,6 @@ class yf_main {
 
 		define('USER_MODULES_DIR', 'modules/');
 		define('ADMIN_MODULES_DIR', 'admin_modules/');
-		define('AUTH_MODULES_DIR', 'classes/auth/');
 		// Set console-specific options
 		if ($this->CONSOLE_MODE) {
 			ini_set('memory_limit', -1);
