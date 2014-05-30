@@ -1232,14 +1232,14 @@ class yf_main {
 			return null;
 		}
 		$cache_used = false;
-		$data_to_return = null;
+		$data = null;
 		$cache_obj_available = is_object($this->modules['cache']);
 		if (!empty($this->USE_SYSTEM_CACHE) && $cache_obj_available) {
-			$data_to_return = $this->modules['cache']->get($name, $force_ttl, $params);
+			$data = $this->modules['cache']->get($name, $force_ttl, $params);
 			$cache_used = true;
 		}
 		$no_cache = false;
-		if (empty($data_to_return) && !is_array($data_to_return)) {
+		if (empty($data) && !is_array($data)) {
 			if (!$this->_data_handlers_loaded) {
 				$this->_load_data_handlers();
 			}
@@ -1251,26 +1251,33 @@ class yf_main {
 					$name_to_save .= '_'.$k. $v;
 				}
 			}
-			$handler_file = conf('data_handlers::'.$name);
-			if (!empty($handler_file)) {
-				$data_to_return = include $handler_file;
-				if (!$data_to_return) {
-					$data_to_return = array();
+			$handler = conf('data_handlers::'.$name);
+			if (!empty($handler)) {
+				if (is_string($handler)) {
+					$data = include $handler;
+					if (is_callable($data)) {
+						$data = $data($params);
+					}
+				} elseif (is_callable($data)) {
+					$data = $data($params);
+				}
+				if (!$data) {
+					$data = array();
 				}
 			}
 			// Do not put empty data if database could not connected (not hiding mistakes with empty get_data)
-			if (empty($data_to_return) && is_object($this->db) && !$this->db->_connected) {
+			if (empty($data) && is_object($this->db) && !$this->db->_connected) {
 				$no_cache = true;
 			}
 			if ($this->USE_SYSTEM_CACHE && !$no_cache && $cache_obj_available) {
-				$this->modules['cache']->set($name_to_save, $data_to_return);
+				$this->modules['cache']->set($name_to_save, $data);
 			}
 		}
 		if (DEBUG_MODE) {
 			debug('main_get_data[]', array(
 				'name'		=> $name,
 				'real_name'	=> $name_to_save,
-				'data'		=> $data_to_return,
+				'data'		=> $data,
 				'params'	=> $params,
 				'cache_used'=> (int)$cache_used,
 				'force_ttl'	=> $force_ttl,
@@ -1278,7 +1285,7 @@ class yf_main {
 				'trace'		=> $this->trace_string(),
 			));
 		}
-		return $data_to_return;
+		return $data;
 	}
 
 	/**
