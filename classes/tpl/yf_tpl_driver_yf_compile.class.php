@@ -101,7 +101,7 @@ class yf_tpl_driver_yf_compile {
 				=> $_php_start. 'echo $2;'. $_php_end,
 
 			'/\{catch\(\s*["\']{0,1}([a-z0-9_]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims'
-				=> $_php_start. 'ob_start();'. $_php_end. '$2'. $_php_start. '$replace["$1"] = ob_get_contents(); ob_end_clean();'. $_php_end,
+				=> $_php_start. 'ob_start();'. $_php_end. '$2'. $_php_start. '$replace["$1"] = ob_get_clean();'. $_php_end,
 
 			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims'
 				=> $_php_start. 'echo trim(str_replace(array("\r","\n","\t"),"",stripslashes(\'$1\')));'. $_php_end,

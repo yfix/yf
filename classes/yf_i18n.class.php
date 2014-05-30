@@ -564,8 +564,7 @@ class yf_i18n {
 	function _list_system_locales() {
 		ob_start();
 		system('locale -a'); 
-		$str = ob_get_contents();
-		ob_end_clean();
+		$str = ob_get_clean();
 		return split("\\n", trim($str));
 	}
 }

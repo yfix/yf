@@ -439,8 +439,7 @@ class yf_utils {
 	function printr($var, $do_not_echo = false) {
 		ob_start();
 		print_r($var);
-		$code =  htmlentities(ob_get_contents());
-		ob_clean();
+		$code =  htmlentities(ob_get_clean());
 		if (!$do_not_echo) {
 			echo '<pre>'.$code.'</pre>';
 		}
