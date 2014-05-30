@@ -299,7 +299,7 @@ class yf_manage_shop_orders{
 			->info('payment', 'Payment method')
 			->container(
 				table2($products)
-					->image('product_id', array('width' => '50px', 'web_path' => '', 'img_path_callback' => function($_p1, $_p2, $row) {
+					->image('product_id', array('width' => '50px', 'no_link' => true, 'web_path' => '', 'img_path_callback' => function($_p1, $_p2, $row) {
 						return $row['image'];
     	    	    }))
 					->func('link',function($f, $p, $row){
