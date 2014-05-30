@@ -19,3 +19,4 @@ while ($A = db()->fetch_assoc($Q)) {
 		$data[$A['object'].($A['action'] ? '->'.$A['action'] : '')] = $cols_data;
 	}
 }
+return $data;

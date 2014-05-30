@@ -1228,35 +1228,32 @@ class yf_main {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		$data_to_return = null;
 		if (empty($name)) {
-			return $data_to_return;
+			return null;
 		}
+		$cache_used = false;
+		$data_to_return = null;
 		$cache_obj_available = is_object($this->modules['cache']);
 		if (!empty($this->USE_SYSTEM_CACHE) && $cache_obj_available) {
 			$data_to_return = $this->modules['cache']->get($name, $force_ttl, $params);
+			$cache_used = true;
 		}
 		$no_cache = false;
 		if (empty($data_to_return) && !is_array($data_to_return)) {
+			if (!$this->_data_handlers_loaded) {
+				$this->_load_data_handlers();
+			}
 			$name_to_save = $name;
 			$params_to_eval = '';
 			// Example: geo_regions, array(country => UA)  will be saved as geo_regions_countryUA
 			if (!empty($params) && is_array($params)) {
 				foreach ((array)$params as $k => $v) {
 					$name_to_save .= '_'.$k. $v;
-					$params_to_eval .= '$'.$k.' = '.var_export($v, 1).';'.PHP_EOL;
 				}
 			}
-			if (!conf('data_handlers')) {
-				$this->_load_data_handlers();
-			}
-			$handler_php_source = conf('data_handlers::'.$name);
-			if (!empty($handler_php_source)) {
-				if (is_string($handler_php_source)) {
-					$data_to_return = eval( $params_to_eval. $handler_php_source. '; return isset($data) ? $data : null;' );
-				} elseif (is_callable($handler_php_source)) {
-					$data_to_return = $handler_php_source($name, $params);
-				}
+			$handler_file = conf('data_handlers::'.$name);
+			if (!empty($handler_file)) {
+				$data_to_return = include $handler_file;
 				if (!$data_to_return) {
 					$data_to_return = array();
 				}
@@ -1275,6 +1272,7 @@ class yf_main {
 				'real_name'	=> $name_to_save,
 				'data'		=> $data_to_return,
 				'params'	=> $params,
+				'cache_used'=> (int)$cache_used,
 				'force_ttl'	=> $force_ttl,
 				'time'		=> round(microtime(true) - $time_start, 5),
 				'trace'		=> $this->trace_string(),
@@ -1316,6 +1314,7 @@ class yf_main {
 		if (file_exists($rules_file_path)) {
 			include ($rules_file_path);
 		}
+		$this->_data_handlers_loaded = true;
 	}
 
 	/**

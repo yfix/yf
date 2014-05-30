@@ -5,3 +5,4 @@ $Q = db()->query('SELECT * FROM '.db('tips').' WHERE active="1" '.($locale ? ' A
 while ($A = db()->fetch_assoc($Q)) {
 	$data[$A['name']] = $A;
 }
+return $data;

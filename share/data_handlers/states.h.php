@@ -1,3 +1,3 @@
 <?php
 
-$data = array(' ' => 'Non US') + db()->get_2d('SELECT code, name FROM '.db('states'));
+return array(' ' => 'Non US') + db()->get_2d('SELECT code, name FROM '.db('states'));
