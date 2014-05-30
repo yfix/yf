@@ -9,6 +9,7 @@ class yf_manage_shop_import {
 			'fortuna' => 'fortuna',
 			'zakaz_ua' => 'zakaz_ua [update only]',
 			'oblik' => 'oblik',
+			'dobra_hata' => 'dobra hata',
 		);
 		$this->_modes = array(
 			'validate' => 'validate',
@@ -255,6 +256,46 @@ class yf_manage_shop_import {
 		}
 		return $this->table_format($result);
 	}
+
+	function process_items_dobra_hata($items, $mode = 'process') { // process/validate
+		$supplier_id = 115;
+		$products = $this->get_products_by_supplier($supplier_id);
+		$result = array();
+		foreach ($items as $item) {
+			if (intval($item[0]) == 0 || intval($item[2]) == 0) continue;
+			$v = $this->format_data($item[1],$item[0],$item[2],$supplier_id);
+			$cat_id = array_search($item[4],module('manage_shop')->_category_names);
+			$v['category'] = $item[4] . " - ".$cat_id;
+			$v['description'] = $item[3];
+			$A = db()->get("SELECT `id` FROM `".s_shop_manufacturers."` WHERE `name`='".$item[5]."'");
+			$man_id = $A['id'];
+			
+			//todo:cats
+			if (empty($products[$v['articul']])) {
+				$v['is_new'] = 'new';
+				$v1 = $v;
+				unset($v1['is_new']);
+				unset($v1['category']);
+				
+				$v1['add_date'] = time();												
+				$v1['cat_id'] = intval($cat_id);
+				if ($mode == 'process') db()->insert(db('shop_products'), _es($v1));
+			} else {
+				$v['is_new'] = 'upd';
+				$v1 = array(
+					'price' => $v['price'],
+					'price_raw' => $v['price_raw'],
+					'update_date' => time(),
+					'cat_id' => intval($cat_id),
+					'description' => $v['description'],
+				);
+				if ($mode == 'process') db()->update(db('shop_products'), _es($v1),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'");
+			}
+			$result[] = $this->add_result($v);			
+		}
+		return $this->table_format($result);
+	}
+
 	
 	function table_format($result) {
 		return table($result, array(
