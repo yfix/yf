@@ -1484,9 +1484,29 @@ class yf_main {
 		if (!defined('REAL_PATH')) {
 			define('REAL_PATH', SITE_PATH);
 		}
-		// Define default framework path
+		// Framework root filesystem path
 		if (!defined('YF_PATH')) {
 			define('YF_PATH', dirname(PROJECT_PATH).'/yf/');
+		}
+		// Project-level application path, where will be other important subfolders like: APP_PATH.'www/', APP_PATH.'docs/', APP_PATH.'tests/',
+		if (!defined('APP_PATH')) {
+			define('APP_PATH', dirname(PROJECT_PATH).'/');
+		}
+		// Filesystem path for configuration files, including db_setup.php and so on
+		if (!defined('CONFIG_PATH')) {
+			define('CONFIG_PATH', APP_PATH.'config/');
+		}
+		// Filesystem path for various storage needs: logs, sessions, other files that should not be accessible from WEB
+		if (!defined('STORAGE_PATH')) {
+			define('STORAGE_PATH', APP_PATH.'storage/');
+		}
+		// Filesystem path to logs, usually should be at least one level up from WEB_PATH to be not accessible from web server
+		if (!defined('LOGS_PATH')) {
+			define('LOGS_PATH', STORAGE_PATH.'logs/');
+		}
+		// Uploads path should be used for various uploaded content accessible from WEB_PATH
+		if (!defined('UPLOADS_PATH')) {
+			define('UPLOADS_PATH', PROJECT_PATH.'uploads/');
 		}
 		// Set WEB_PATH (if not done yet)
 		if (!defined('WEB_PATH'))	{
