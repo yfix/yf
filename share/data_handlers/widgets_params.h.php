@@ -10,3 +10,4 @@ foreach ((array)$_user_modules_methods as $module_name => $module_methods) {
 		$data[$module_name][$method_name] = _class($module_name, 'modules/')->$method_name(array('describe' => '1'));
 	}
 }
+return $data;

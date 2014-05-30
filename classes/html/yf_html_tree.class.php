@@ -85,7 +85,7 @@ class yf_html_tree {
 			}
 			$controls = $extra['show_controls'] ? str_replace('%d', $id, $form_controls) : '';
 			$items[] = '
-				<li id="item_'.$id.'">
+				<li id="item_'.$id.'"'.(!$is_draggable ? ' class="not_draggable"' : '').'>
 					<div class="dropzone"></div>
 					<dl>
 						<a href="'.$item['link'].'" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
@@ -212,7 +212,7 @@ class yf_html_tree {
 			_set_dl_colors()
 		}
 	});
-	$("li",".draggable_menu").draggable({
+	$("li",".draggable_menu").not(".not_draggable").draggable({
 		handle: " > dl",
 		opacity: .8,
 		addClasses: false,

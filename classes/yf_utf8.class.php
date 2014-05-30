@@ -19,6 +19,13 @@ class yf_utf8 {
 	public $UNICODE_MULTIBYTE = 1;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	* Constructor
 	*
 	* @access	public
@@ -26,14 +33,6 @@ class yf_utf8 {
 	*/
 	function __construct () {
 		list($this->MULTIBYTE) = $this->unicode_check();
-	}
-
-	/**
-	* Catch missing method call
-	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
 	}
 
 	/**

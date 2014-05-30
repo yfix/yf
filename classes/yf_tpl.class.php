@@ -101,9 +101,8 @@ class yf_tpl {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
 	}
 
 	/**
@@ -297,8 +296,7 @@ class yf_tpl {
 
 			if (main()->OUTPUT_GZIP_COMPRESS && !conf('no_gzip')) {
 				if ($this->_OB_CATCH_CONTENT && ob_get_level()) {
-					$old_content = ob_get_contents();
-					ob_end_clean();
+					$old_content = ob_get_clean();
 				}
 				ob_start('ob_gzhandler');
 				conf('GZIP_ENABLED', true);
@@ -341,7 +339,7 @@ class yf_tpl {
 		}
 		// Output cache for 'no graphics' content
 		if (main()->NO_GRAPHICS && main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
-			_class('output_cache')->_put_page_to_output_cache(ob_get_contents());
+			_class('output_cache')->_put_page_to_output_cache(ob_get_clean());
 		}
 		if (main()->LOG_EXEC || $this->LOG_EXEC_INFO) {
 			_class('logs')->log_exec();

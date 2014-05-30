@@ -9,8 +9,6 @@
 */
 class yf_check_multi_accounts {
 
-	/** @var bool Filter on/off */
-	public $USE_FILTER				= true;
 	/** @var array @conf_skip */
 	public $_skip_users_ids = array(
 //		1,
@@ -35,37 +33,16 @@ class yf_check_multi_accounts {
 	public $SHOW_ONLY_COOKIE_MATCH	= 0;
 	/** @var array IPs to ignore */
 	public $IGNORE_IPS = array(
-/*
-		"205.188.116.*",
-		"195.93.21.*",
-		"152.163.100.*",
-		"64.12.116.*",
-*/
 	);
 	/** @var int */
 	public $LIMIT_MATCHED_USERS	= 15;
-
-	/**
-	* Constructor
-	*/
-	function yf_check_multi_accounts() {
-		ini_set("memory_limit", "192M");
-	}
 
 	/**
 	* Framework constructor
 	*/
 	function _init() {
 		define("CHECK_MULTI_ACCOUNTS_CLASS", "check_multi_accounts");
-		// Get current account types
 		$this->_account_types	= main()->get_data("account_types");
-		// Array of boxes
-		$this->_boxes = array(
-		);
-		// Prepare filter data
-		if ($this->USE_FILTER) {
-			$this->_prepare_filter_data();
-		}
 	}
 
 	/**
@@ -78,7 +55,6 @@ class yf_check_multi_accounts {
 		$ips_array = array();
 		// Connect pager
 		$sql = "SELECT * FROM ".db('check_multi_accounts')." WHERE 1=1 ";
-		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
 		if ($this->HIDE_NON_MATCHED_USERS) {
 			$sql .= " AND (ip_match = '1' OR cookie_match = '1') ";
 		}
@@ -317,7 +293,6 @@ class yf_check_multi_accounts {
 			"items"			=> $items,
 			"pages"			=> $pages,
 			"total"			=> intval($total),
-			"filter"		=> $this->USE_FILTER ? $this->_show_filter() : "",
 		);
 		return tpl()->parse($_GET["object"]."/main", $replace);
 	}
@@ -499,118 +474,6 @@ class yf_check_multi_accounts {
 		return js_redirect($_SERVER["HTTP_REFERER"], 0);
 	}
 
-	// Prepare required data for filter
-	function _prepare_filter_data () {
-		// Filter session array name
-		$this->_filter_name	= $_GET["object"]."_filter";
-		// Prepare boxes
-		$this->_boxes = array_merge((array)$this->_boxes, array(
-			"active"		=> 'select_box("active",		$this->_active_statuses,$selected, 0, 2, "", false)',
-			"account_type"	=> 'select_box("account_type",	$this->_account_types2,	$selected, 0, 2, "", false)',
-			"sort_by"		=> 'select_box("sort_by",		$this->_sort_by,		$selected, 0, 2, "", false)',
-			"sort_order"	=> 'select_box("sort_order",	$this->_sort_orders,	$selected, 0, 2, "", false)',
-		));
-		// Connect common used arrays
-		if (file_exists(INCLUDE_PATH."common_code.php")) {
-			include (INCLUDE_PATH."common_code.php");
-		}
-		// Get user account type
-		$this->_account_types2[" "]	= t("-- All --");
-		foreach ((array)$this->_account_types as $k => $v) {
-			$this->_account_types2[$k]	= $v;
-		}
-		// Sort orders
-		$this->_sort_orders = array("DESC" => "Descending", "ASC" => "Ascending");
-		// Sort fields
-		$this->_sort_by = array(
-			"",
-			"user_id",
-			"last_update",
-			"num_m_ips",
-			"cookie_match",
-			"ip_match",
-		);
-		// Fields in the filter
-		$this->_fields_in_filter = array(
-			"nick",
-			"user_id",
-			"account_type",
-			"ip",
-			"sort_by",
-			"sort_order",
-			"cookie_match",
-		);
-	}
-
-	// Generate filter SQL query
-	function _create_filter_sql () {
-		$SF = &$_SESSION[$this->_filter_name];
-		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
-		// Generate filter for the common fileds
-		if ($SF["user_id"])			$sql .= " AND user_id = ".intval($SF["user_id"])." \r\n";
-		if ($SF["ip"])				$sql .= " AND matching_ips LIKE '%"._es($SF["ip"])."%' \r\n";
-
-		if ($SF["account_type"])	$users_sql .= " AND `group` = ".intval($SF["account_type"])." \r\n";
-		if (strlen($SF["nick"]))	$users_sql .= " AND nick LIKE'"._es($SF["nick"])."' \r\n";
-		// Add subquery to users table
-		if (!empty($users_sql)) {
-			$sql .= " AND user_id IN( SELECT id FROM ".db('user')." WHERE 1=1 ".$users_sql.") \r\n";
-		}
-		if (isset($SF["cookie_match"])) {
-			$this->SHOW_ONLY_COOKIE_MATCH = $SF["cookie_match"];
-		}
-		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
-		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
-		return substr($sql, 0, -3);
-	}
-
-	// Session - based filter
-	function _show_filter () {
-		$replace = array(
-			"save_action"	=> "./?object=".$_GET["object"]."&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=".$_GET["object"]."&action=clear_filter"._add_get(),
-		);
-		foreach ((array)$this->_fields_in_filter as $name) {
-			$replace[$name] = $_SESSION[$this->_filter_name][$name];
-		}
-		// Process boxes
-		foreach ((array)$this->_boxes as $item_name => $v) {
-			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
-		}
-		return tpl()->parse($_GET["object"]."/filter", $replace);
-	}
-
-	// Filter save method
-	function save_filter ($silent = false) {
-		// Process featured countries
-		if (FEATURED_COUNTRY_SELECT && !empty($_POST["country"]) && substr($_POST["country"], 0, 2) == "f_") {
-			$_POST["country"] = substr($_POST["country"], 2);
-		}
-		if (is_array($this->_fields_in_filter)) {
-			foreach ((array)$this->_fields_in_filter as $name) $_SESSION[$this->_filter_name][$name] = $_POST[$name];
-		}
-		if (!$silent) {
-			js_redirect($_SERVER["HTTP_REFERER"]);
-		}
-	}
-
-	// Clear filter
-	function clear_filter ($silent = false) {
-		if (is_array($_SESSION[$this->_filter_name])) {
-			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
-		}
-		if (!$silent) {
-			js_redirect("./?object=".$_GET["object"]._add_get());
-		}
-	}
-
-	// Process custom box
-	function _box ($name = "", $selected = "") {
-		if (empty($name) || empty($this->_boxes[$name])) return false;
-		else return eval("return common()->".$this->_boxes[$name].";");
-	}
-
 	/**
 	* Try to detect if current user have multi-accounts hack
 	*/
@@ -790,30 +653,6 @@ class yf_check_multi_accounts {
 				user_id , 
 				(SELECT GROUP_CONCAT(matching_users) FROM ".db('check_multi_ips').")
 			) > 0"
-		);
-	}
-
-	/**
-	* Page header hook
-	*/
-	function _show_header() {
-		$pheader = t("Check multi-accounts");
-		// Default subheader get from action name
-		$subheader = _ucwords(str_replace("_", " ", $_GET["action"]));
-
-		// Array of replacements
-		$cases = array (
-			//$_GET["action"] => {string to replace}
-			"show"					=> "",
-		);			  		
-		if (isset($cases[$_GET["action"]])) {
-			// Rewrite default subheader
-			$subheader = $cases[$_GET["action"]];
-		}
-
-		return array(
-			"header"	=> $pheader,
-			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
 		);
 	}
 }

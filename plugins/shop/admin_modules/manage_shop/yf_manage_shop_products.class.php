@@ -24,6 +24,12 @@ class yf_manage_shop_products{
 	/**
 	*/
 	function _init () {
+		if (empty($_SESSION['manage_shop__products'])) {
+			$_SESSION['manage_shop__products'] = array(		
+			  'order_by' => 'id',
+			  'order_direction' => 'desc',
+			);
+		}
 		// This is needed, as it is currently impossible to set callback function inside class variable
 		$this->_filter_params['cat_id'] = function($a) {
 			$top_cat_id = (int)$a['value'];

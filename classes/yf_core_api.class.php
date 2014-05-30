@@ -14,6 +14,23 @@ class yf_core_api {
 	var $SOURCE_ONLY_FRAMEWORK = false;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
+	*/
+	function get_class_instance($name, $section, $force_path = '') {
+		$path = $this->section_paths[$section];
+		if ($force_path) {
+			$path = $force_path;
+		}
+		return _class($name, $path);
+	}
+
+	/**
 	* This method will search and call all found hook methods from active modules
 	* @example: call_hooks('settings', $params)
 	*/
@@ -56,10 +73,9 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_all_hooks($section = 'all') {
-		$hooks = array();
-		$hooks_prefix = '_hook_';
+	function get_all_hooks($section = 'all', $hooks_prefix = '_hook_') {
 		$hooks_pl = strlen($hooks_prefix);
+		$hooks = array();
 		foreach ((array)$this->get_private_methods($section) as $module => $methods) {
 			foreach ((array)$methods as $method) {
 				if (substr($method, 0, $hooks_pl) != $hooks_prefix) {
@@ -75,6 +91,34 @@ class yf_core_api {
 			ksort($hooks);
 		}
 		return $hooks;
+	}
+
+	/**
+	*/
+	function get_widgets($section = 'all', $prefix = 'widget__') {
+		$prefix_len = strlen($prefix);
+		$data = array();
+		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
+			foreach ((array)$_hooks as $name => $method_name) {
+				if (substr($name, 0, $prefix_len) != $prefix) {
+					continue;
+				}
+				$data[$module][$name] = $method_name;
+			}
+		}
+		return $data;
+	}
+
+	/**
+	*/
+	function get_callbacks($section = 'all') {
+		return $this->get_all_hooks($section, '_callback_');
+	}
+
+	/**
+	*/
+	function get_events($section = 'all') {
+		return $this->get_all_hooks($section, '_event_');
 	}
 
 	/**
@@ -95,7 +139,7 @@ class yf_core_api {
 	*/
 	function get_public_methods($section = 'all') {
 		$data = array();
-		foreach ((array)$this->get_methods($section) as $module => $method) {
+		foreach ((array)$this->get_methods($section) as $module => $methods) {
 			foreach ((array)$methods as $method) {
 				if ($method[0] != '_') {
 					$data[$module][$method] = $method;
@@ -131,13 +175,13 @@ class yf_core_api {
 		}
 		$modules = array();
 		if (in_array($section, array('all', 'core'))) {
-			$modules['core'] = $this->_get_classes_by_params(array('folder' => $this->section_paths['core']));
+			$modules['core'] = $this->get_classes_by_params(array('folder' => $this->section_paths['core']));
 		}
 		if (in_array($section, array('all', 'user'))) {
-			$modules['user'] = $this->_get_classes_by_params(array('folder' => $this->section_paths['user']));
+			$modules['user'] = $this->get_classes_by_params(array('folder' => $this->section_paths['user']));
 		}
 		if (in_array($section, array('all', 'admin'))) {
-			$modules['admin'] = $this->_get_classes_by_params(array('folder' => $this->section_paths['core']));
+			$modules['admin'] = $this->get_classes_by_params(array('folder' => $this->section_paths['admin']));
 		}
 		return $modules;
 	}
@@ -156,7 +200,7 @@ class yf_core_api {
 			}
 			$_data = array();
 			$paths = array();
-			$this->_get_classes_by_params(array('folder' => $folder.'*/'), $paths);
+			$this->get_classes_by_params(array('folder' => $folder.'*/'), $paths);
 			foreach ((array)$paths as $name => $_paths) {
 				if (!is_array($_paths)) {
 					continue;
@@ -171,6 +215,14 @@ class yf_core_api {
 			$data[$_section] = $_data;
 		}
 		return $data;
+	}
+
+	/**
+	*/
+	function get_submodule_methods($module, $submodule, $section = 'all') {
+		$obj = $this->get_class_instance($submodule, $section, $this->section_paths[$section]. $module. '/');
+		$methods = $this->get_methods_sources($obj);
+		return $methods;
 	}
 
 	/**
@@ -194,15 +246,27 @@ class yf_core_api {
 			'params'	=> $r->getParameters(),
 			'comment'	=> $r->getDocComment(),
 		);
-		$info['source'] = $this->_get_file_slice($info['file'], $info['line_start'], $info['line_end']);
+		$info['source'] = $this->get_file_slice($info['file'], $info['line_start'], $info['line_end']);
 		return $info;
 	}
 
 	/**
 	*/
 	function get_method_source($module, $method, $section = 'all') {
-		$obj = $this->get_class_instance($module, $section);
-		return $this->_get_method_source($obj, $method);
+		if (!is_object($module)) {
+			$cls = $this->get_class_instance($module, $section);
+		} else {
+			$cls = $module;
+		}
+		if (is_object($cls)) {
+			$cls = get_class($cls);
+		}
+		$methods = $this->_cache[__FUNCTION__][$cls];
+		if (is_null($methods)) {
+			$methods = $this->get_methods_sources($cls);
+			$this->_cache[__FUNCTION__][$cls] = $methods;
+		}
+		return $methods[$method];
 	}
 
 	/**
@@ -237,8 +301,18 @@ class yf_core_api {
 		} elseif ($is_func) {
 			$info = $this->get_function_source($is_func);
 		}
-		$gh_url = $info ? 'https://github.com/yfix/yf/tree/master/'.substr($info['file'], strlen(YF_PATH)).'#L'.$info['line_start'] : '';
+		$gh_url = $info ? 'https://github.com/yfix/yf/tree/master/'.ltrim(substr(realpath($info['file']), strlen(realpath(YF_PATH))), '/').'#L'.$info['line_start'] : '';
 		return $gh_url ? '<a target="_blank" class="btn btn-primary btn-small btn-sm" href="'.$gh_url.'">Github <i class="icon icon-github"></i></a>': '';
+	}
+
+	/**
+	*/
+	function get_item_tests($name) {
+		$out = $this->get_module_tests($name);
+		if (!$out) {
+			$out = $this->get_function_tests($name);
+		}
+		return $out;
 	}
 
 	/**
@@ -270,9 +344,22 @@ class yf_core_api {
 
 	/**
 	*/
+	function get_item_docs($name) {
+		$out = $this->get_module_docs($name);
+		if (!$out) {
+			$out = $this->get_method_docs($name);
+		}
+		if (!$out) {
+			$out = $this->get_function_docs($name);
+		}
+		return $out;
+	}
+
+	/**
+	*/
 	function get_module_docs($name) {
 		$docs_dir = YF_PATH.'.dev/docs/en/';
-		$f = $this->docs_dir. $name. '.stpl';
+		$f = $docs_dir. $name. '.stpl';
 		if (file_exists($f)) {
 			return '<section class="page-contents">'.tpl()->parse_string(file_get_contents($f), $replace, 'doc_'.$name).'</section>';
 		}
@@ -281,9 +368,12 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_method_docs($name, $method) {
+	function get_method_docs($name, $method = '') {
 		$docs_dir = YF_PATH.'.dev/docs/en/';
-		$f = $this->docs_dir. $name. '/'.$method.'.stpl';
+		if (false !== strpos($name, '.')) {
+			list($name, $method) = explode('.', $name);
+		}
+		$f = $docs_dir. $name. '/'.$method.'.stpl';
 		if (file_exists($f)) {
 			return '<section class="page-contents">'.tpl()->parse_string(file_get_contents($f), $replace, 'doc_'.$name.'.'.$method).'</section>';
 		}
@@ -294,7 +384,7 @@ class yf_core_api {
 	*/
 	function get_function_docs($name) {
 		$docs_dir = YF_PATH.'.dev/docs/en/';
-		$f = $this->docs_dir. $name. '.stpl';
+		$f = $docs_dir. $name. '.stpl';
 		if (file_exists($f)) {
 			return '<section class="page-contents">'.tpl()->parse_string(file_get_contents($f), $replace, 'doc_'.$name).'</section>';
 		}
@@ -303,188 +393,188 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_callbacks() {
+	function get_sites() {
+		return main()->get_data('sites');
+	}
+
+	/**
+	*/
+	function get_site_info() {
+		$sites = $this->get_sites();
+		return $sites[main()->SITE_ID];
+	}
+
+	/**
+	*/
+	function get_servers() {
+		return main()->get_data('servers');
+	}
+
+	/**
+	*/
+	function get_server_info() {
+		$sites = $this->get_servers();
+		return $servers[main()->SERVER_ID];
+	}
+
+	/**
+	*/
+	function get_user_roles() {
+		return main()->get_data('user_roles');
+	}
+
+	/**
+	*/
+	function get_user_groups() {
+		return main()->get_data('user_groups');
+	}
+
+	/**
+	*/
+	function get_admin_roles() {
+		return main()->get_data('admin_roles');
+	}
+
+	/**
+	*/
+	function get_admin_groups() {
+		return main()->get_data('admin_groups');
+	}
+
+	/**
+	*/
+	function get_templates() {
+		$folder = 'templates/user/';
+		$folder = 'templates/admin/';
 // TODO
 	}
 
 	/**
 	*/
-	function get_events() {
+	function get_tpl_themes() {
+		$folder = 'templates/';
+// TODO
+	}
+
+	/**
+	*/
+	function get_template_source($name, $section = 'all') {
 // TODO
 	}
 
 	/**
 	*/
 	function get_langs() {
+		return main()->get_data('locale_langs');
+	}
+
+	/**
+	*/
+	function get_translations() {
+		$folder = 'share/langs/';
 // TODO
 	}
 
 	/**
 	*/
-	function get_sites() {
-// TODO
+	function get_cron_jobs() {
+		$folder = 'share/tasks_to_run/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
 	}
 
 	/**
 	*/
-	function get_site_info() {
-// TODO
+	function get_fast_init() {
+		$folder = 'share/fast_init/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php', 'prefix' => 'func__fast_'));
 	}
 
 	/**
 	*/
-	function get_servers() {
-// TODO
+	function get_data_handlers() {
+		$folder = 'share/data_handlers/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.h.php'));
 	}
 
 	/**
 	*/
-	function get_server_info() {
-// TODO
-	}
-
-	/**
-	*/
-	function get_user_roles() {
-// TODO
-	}
-
-	/**
-	*/
-	function get_user_groups() {
-// TODO
-	}
-
-	/**
-	*/
-	function get_admin_roles() {
-// TODO
-	}
-
-	/**
-	*/
-	function get_admin_groups() {
-// TODO
-	}
-
-	/**
-	*/
-	function get_templates() {
-// TODO
-	}
-
-	/**
-	*/
-	function get_template_source() {
-// TODO
-	}
-
-	/**
-	*/
-	function get_libs() {
-// TODO
-	}
-
-	/**
-	*/
-	function get_models() {
-// TODO
+	function get_tables_fields() {
+		$folder = 'share/db_installer/fields/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.fields.php'));
 	}
 
 	/**
 	*/
 	function get_migrations() {
-// TODO
+		$folder = 'share/migrations/';
+		return $this->get_classes_by_params(array('folder' => $folder));
 	}
 
 	/**
 	*/
-	function get_widgets() {
-// TODO
-/*
-		$prefix = 'widget_';
-		$prefix_len = strlen($prefix);
-		$data = array();
-		foreach ((array)$this->get_all_hooks($section) as $module => $_hooks) {
-			foreach ((array)$_hooks as $name => $method_name) {
-				if (substr($name, 0, $prefix_len) != $prefix) {
+	function get_models() {
+		$folder = 'share/models/';
+		return $this->get_classes_by_params(array('folder' => $folder));
+	}
+
+	/**
+	*/
+	function get_plugins() {
+		$folder = '';
+		$suffix = '/';
+		$libs = array();
+		foreach ($this->get_globs($folder, $suffix) as $gname => $glob) {
+			if (false === strpos($gname, '_plugins')) {
+				continue;
+			}
+			if (substr($glob, -4) == '*/*/') {
+				$glob = substr($glob, 0, -2);
+			}
+			foreach (glob($glob) as $path) {
+				if (!is_dir($path)) {
 					continue;
 				}
-				$data[$name][$module] = $method_name;
+				$name = basename($path);
+				$libs[$name] = $name;
 			}
 		}
-		return $data;
-*/
+		if (is_array($libs)) {
+			ksort($libs);
+		}
+		return $libs;
 	}
 
 	/**
 	*/
-	function get_submodules_methods($section = 'all') {
-		$methods = array();
-		foreach ((array)$this->get_submodules($section) as $_section => $modules) {
-			foreach ((array)$modules as $module => $submodules) {
-				foreach ((array)$submodules as $submodule) {
-// TODO: need to solve several troubles with instantinating submodules at once
-#					$obj = $this->get_class_instance($submodule, $_section, $this->section_paths[$_section].$module.'/');
-					foreach ((array)get_class_methods($obj) as $method) {
-						$methods[$submodule][$method] = $method;
-					}
+	function get_libs($folder = 'libs/') {
+		$libs = array();
+		$suffix = '/';
+		foreach ($this->get_globs($folder, $suffix) as $glob) {
+			foreach (glob($glob) as $path) {
+				if (!is_dir($path)) {
+					continue;
 				}
+				$name = basename($path);
+				$libs[$name] = $name;
 			}
 		}
-		foreach ((array)$methods as $module => $_methods) {
-			ksort($methods[$module]);
+		if (is_array($libs)) {
+			ksort($libs);
 		}
-		return $methods;
+		return $libs;
 	}
 
 	/**
 	*/
-	function get_class_instance($name, $section, $force_path) {
-		$path = $this->section_paths[$section];
-		if ($force_path) {
-			$path = $force_path;
-		}
-		return _class($name, $path);
-	}
-
-	/**
-	*/
-	function add_syntax_highlighter() {
-		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
-		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
-		require_js('<script>hljs.initHighlightingOnLoad();</script>');
-		require_css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
-		require_css('section.page-contents pre, pre.prettyprint {
-			background-color: transparent;
-			border: 0;
-			font-family: inherit;
-			font-size: inherit;
-			font-weight: bold;
-		}');
-	}
-
-	/**
-	*/
-	function _get_classes_by_params($extra = array(), &$paths = array()) {
+	function get_classes_by_params($extra = array(), &$paths = array()) {
 		$prefix = isset($extra['prefix']) ? $extra['prefix'] : YF_PREFIX;
 		$suffix = isset($extra['suffix']) ? $extra['suffix'] : YF_CLS_EXT;
 		$folder = isset($extra['folder']) ? $extra['folder'] : $this->section_paths['core'];
 
-		$globs = array();
-		if (!$this->SOURCE_ONLY_FRAMEWORK) {
-			$globs['project']			= PROJECT_PATH. $folder.'*'.$suffix;
-			$globs['project_plugins']	= PROJECT_PATH. 'plugins/*/'.$folder.'*'.$suffix;
-		}
-		$globs['framework']			= YF_PATH. $folder.'*'.$suffix;
-		$globs['framework_plugins']	= YF_PATH. 'plugins/*/'.$folder.'*'.$suffix;
-// TODO: enable it, but test and cleanup before
-#		$globs['framework_p2']		= YF_PATH. 'priority2/'.$folder.'*'.$suffix;
-
 		$prefix_len = strlen($prefix);
 		$suffix_len = strlen($suffix);
 		$classes = array();
-		foreach ($globs as $glob) {
+		foreach ($this->get_globs($folder, $suffix) as $glob) {
 			foreach (glob($glob) as $path) {
 				$name = substr(basename($path), 0, -$suffix_len);
 				if (substr($name, 0, $prefix_len) == $prefix) {
@@ -500,8 +590,24 @@ class yf_core_api {
 		return $classes;
 	}
 
+	/**
+	*/
+	function get_globs($folder, $suffix = '') {
+		$suffix = $suffix ?: YF_CLS_EXT;
+
+		$globs = array();
+		if (!$this->SOURCE_ONLY_FRAMEWORK) {
+			$globs['project']			= PROJECT_PATH. $folder.'*'.$suffix;
+			$globs['project_plugins']	= PROJECT_PATH. 'plugins/*/'.$folder.'*'.$suffix;
+		}
+		$globs['framework']			= YF_PATH. $folder.'*'.$suffix;
+		$globs['framework_plugins']	= YF_PATH. 'plugins/*/'.$folder.'*'.$suffix;
+		$globs['framework_p2']		= YF_PATH. 'priority2/'.$folder.'*'.$suffix;
+		return $globs;
+	}
+
 	/***/
-	function _get_file_slice($file, $line_start, $line_end) {
+	function get_file_slice($file, $line_start, $line_end) {
 		$source = $this->_cache[__FUNCTION__][$file];
 		if (is_null($source)) {
 			$source = file($file);
@@ -512,20 +618,7 @@ class yf_core_api {
 	}
 
 	/***/
-	function _get_method_source($cls, $method) {
-		if (is_object($cls)) {
-			$cls = get_class($cls);
-		}
-		$methods = $this->_cache[__FUNCTION__][$cls];
-		if (is_null($methods)) {
-			$methods = $this->_get_methods_source($cls);
-			$this->_cache[__FUNCTION__][$cls] = $methods;
-		}
-		return $methods[$method];
-	}
-
-	/***/
-	function _get_methods_source($cls) {
+	function get_methods_sources($cls) {
 		if (is_object($cls)) {
 			$cls = get_class($cls);
 		}
@@ -533,9 +626,6 @@ class yf_core_api {
 		$class = new ReflectionClass($cls);
 		foreach ($class->getMethods() as $v) {
 			$name = $v->name;
-			if ($name == 'show' || substr($name, 0, 1) == '_') {
-				continue;
-			}
 			$r = new ReflectionMethod($cls, $name);
 			$info = array(
 				'name'		=> $name,
@@ -545,9 +635,56 @@ class yf_core_api {
 				'params'	=> $r->getParameters(),
 				'comment'	=> $r->getDocComment(),
 			);
-			$info['source'] = $this->_get_file_slice($info['file'], $info['line_start'], $info['line_end']);
+			$info['source'] = $this->get_file_slice($info['file'], $info['line_start'], $info['line_end']);
 			$data[$name] = $info;
 		}
 		return $data;
+	}
+
+	/**
+	*/
+	function add_syntax_highlighter() {
+		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
+		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
+		js('<script>hljs.initHighlightingOnLoad();</script>');
+		css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
+		css('section.page-contents pre, pre.prettyprint {
+			background-color: transparent;
+			border: 0;
+			font-family: inherit;
+			font-size: inherit;
+			font-weight: bold;
+		}');
+	}
+
+	/**
+	*/
+	function show_docs(array $info) {
+		$tests = '';
+		if ($info['is_func']) {
+			$tests = _class('core_api')->get_function_tests($info['name']);
+		} elseif ($info['is_module']) {
+			list($module, $method) = explode('-', $info['is_module']);
+			$tests = _class('core_api')->get_module_tests($module);
+		}
+		$docs = '';
+		if ($info['is_func']) {
+			$docs = _class('core_api')->get_function_docs($info['name']);
+		} elseif ($info['is_module']) {
+			list($module, $method) = explode('-', $info['is_module']);
+			$docs = _class('core_api')->get_method_docs($module, $method);
+			if (!$docs) {
+				$docs = _class('core_api')->get_module_docs($module);
+			}
+		}
+		return '
+			<h3>'.$info['name'].'</h3>
+			<h4>'.$info['file'].':'.$info['line_start'].' '._class('core_api')->get_github_link($info).'</h4>
+			<section class="page-contents">
+				<pre><code>'.($info['comment'] ? _prepare_html($info['comment'], $strip = false).PHP_EOL : ''). _prepare_html($info['source'], $strip = false).'</code></pre>
+				'.($tests ? '<h4>Unit tests</h4><pre><code>'._prepare_html($tests, $strip = false).'</code></pre>' : '').'
+				'.($docs ? '<h4>Documentation</h4>'.nl2br($docs) : '').'
+			</section>
+		';
 	}
 }

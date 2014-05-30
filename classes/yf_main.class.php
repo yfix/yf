@@ -205,9 +205,8 @@ class yf_main {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+	function __call($name, $args) {
+		return $this->extend_call($this, $name, $args);
 	}
 
 	/**
@@ -377,6 +376,7 @@ class yf_main {
 		$include_files = array();
 		$required_files = array();
 		if ($this->NO_DB_CONNECT == 0) {
+			$include_files[] = CONFIG_PATH. 'db_setup.php';
 			$include_files[] = PROJECT_PATH. 'db_setup.php';
 		}
 		foreach ((array)conf('include_files::'.MAIN_TYPE) as $path) {
@@ -780,7 +780,7 @@ class yf_main {
 			return false;
 		}
 		$auth_module_name = 'auth_'.(MAIN_TYPE_ADMIN ? 'admin' : 'user');
-		$auth_loaded_module_name = $this->load_class_file($auth_module_name, AUTH_MODULES_DIR);
+		$auth_loaded_module_name = $this->load_class_file($auth_module_name, 'classes/auth/');
 		if ($auth_loaded_module_name) {
 			$this->auth = new $auth_loaded_module_name();
 			$this->_set_module_conf($auth_module_name, $this->auth);
@@ -830,6 +830,7 @@ class yf_main {
 	* Initialize new class object or return reference to existing one
 	*/
 	function &init_class ($class_name, $custom_path = '', $params = '') {
+		$class_name = $this->get_class_name($class_name);
 		if (isset($this->modules[$class_name]) && is_object($this->modules[$class_name])) {
 			return $this->modules[$class_name];
 		}
@@ -1228,59 +1229,64 @@ class yf_main {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		$data_to_return = null;
 		if (empty($name)) {
-			return $data_to_return;
+			return null;
 		}
+		$cache_used = false;
+		$data = null;
 		$cache_obj_available = is_object($this->modules['cache']);
 		if (!empty($this->USE_SYSTEM_CACHE) && $cache_obj_available) {
-			$data_to_return = $this->modules['cache']->get($name, $force_ttl, $params);
+			$data = $this->modules['cache']->get($name, $force_ttl, $params);
+			$cache_used = true;
 		}
 		$no_cache = false;
-		if (empty($data_to_return) && !is_array($data_to_return)) {
+		if (empty($data) && !is_array($data)) {
+			if (!$this->_data_handlers_loaded) {
+				$this->_load_data_handlers();
+			}
 			$name_to_save = $name;
 			$params_to_eval = '';
 			// Example: geo_regions, array(country => UA)  will be saved as geo_regions_countryUA
 			if (!empty($params) && is_array($params)) {
 				foreach ((array)$params as $k => $v) {
 					$name_to_save .= '_'.$k. $v;
-					$params_to_eval .= '$'.$k.' = '.var_export($v, 1).';'.PHP_EOL;
 				}
 			}
-			if (!conf('data_handlers')) {
-				$this->_load_data_handlers();
-			}
-			$handler_php_source = conf('data_handlers::'.$name);
-			if (!empty($handler_php_source)) {
-				if (is_string($handler_php_source)) {
-					$data_to_return = eval( $params_to_eval. $handler_php_source. '; return isset($data) ? $data : null;' );
-				} elseif (is_callable($handler_php_source)) {
-					$data_to_return = $handler_php_source($name, $params);
+			$handler = conf('data_handlers::'.$name);
+			if (!empty($handler)) {
+				if (is_string($handler)) {
+					$data = include $handler;
+					if (is_callable($data)) {
+						$data = $data($params);
+					}
+				} elseif (is_callable($data)) {
+					$data = $data($params);
 				}
-				if (!$data_to_return) {
-					$data_to_return = array();
+				if (!$data) {
+					$data = array();
 				}
 			}
 			// Do not put empty data if database could not connected (not hiding mistakes with empty get_data)
-			if (empty($data_to_return) && is_object($this->db) && !$this->db->_connected) {
+			if (empty($data) && is_object($this->db) && !$this->db->_connected) {
 				$no_cache = true;
 			}
 			if ($this->USE_SYSTEM_CACHE && !$no_cache && $cache_obj_available) {
-				$this->modules['cache']->set($name_to_save, $data_to_return);
+				$this->modules['cache']->set($name_to_save, $data);
 			}
 		}
 		if (DEBUG_MODE) {
 			debug('main_get_data[]', array(
 				'name'		=> $name,
 				'real_name'	=> $name_to_save,
-				'data'		=> $data_to_return,
+				'data'		=> $data,
 				'params'	=> $params,
+				'cache_used'=> (int)$cache_used,
 				'force_ttl'	=> $force_ttl,
 				'time'		=> round(microtime(true) - $time_start, 5),
 				'trace'		=> $this->trace_string(),
 			));
 		}
-		return $data_to_return;
+		return $data;
 	}
 
 	/**
@@ -1316,6 +1322,7 @@ class yf_main {
 		if (file_exists($rules_file_path)) {
 			include ($rules_file_path);
 		}
+		$this->_data_handlers_loaded = true;
 	}
 
 	/**
@@ -1478,9 +1485,29 @@ class yf_main {
 		if (!defined('REAL_PATH')) {
 			define('REAL_PATH', SITE_PATH);
 		}
-		// Define default framework path
+		// Framework root filesystem path
 		if (!defined('YF_PATH')) {
 			define('YF_PATH', dirname(PROJECT_PATH).'/yf/');
+		}
+		// Project-level application path, where will be other important subfolders like: APP_PATH.'www/', APP_PATH.'docs/', APP_PATH.'tests/',
+		if (!defined('APP_PATH')) {
+			define('APP_PATH', dirname(PROJECT_PATH).'/');
+		}
+		// Filesystem path for configuration files, including db_setup.php and so on
+		if (!defined('CONFIG_PATH')) {
+			define('CONFIG_PATH', APP_PATH.'config/');
+		}
+		// Filesystem path for various storage needs: logs, sessions, other files that should not be accessible from WEB
+		if (!defined('STORAGE_PATH')) {
+			define('STORAGE_PATH', APP_PATH.'storage/');
+		}
+		// Filesystem path to logs, usually should be at least one level up from WEB_PATH to be not accessible from web server
+		if (!defined('LOGS_PATH')) {
+			define('LOGS_PATH', STORAGE_PATH.'logs/');
+		}
+		// Uploads path should be used for various uploaded content accessible from WEB_PATH
+		if (!defined('UPLOADS_PATH')) {
+			define('UPLOADS_PATH', PROJECT_PATH.'uploads/');
 		}
 		// Set WEB_PATH (if not done yet)
 		if (!defined('WEB_PATH'))	{
@@ -1522,7 +1549,6 @@ class yf_main {
 
 		define('USER_MODULES_DIR', 'modules/');
 		define('ADMIN_MODULES_DIR', 'admin_modules/');
-		define('AUTH_MODULES_DIR', 'classes/auth/');
 		// Set console-specific options
 		if ($this->CONSOLE_MODE) {
 			ini_set('memory_limit', -1);
@@ -1720,5 +1746,48 @@ class yf_main {
 	*/
 	function is_redirect() {
 		return (bool)$this->_IS_REDIRECTING;
+	}
+
+	/**
+	* Return class name of the object, stripping all YF-related prefixes
+	* Needed to ensure singleton pattern and extending classes with same name
+	*/
+	function get_class_name($name) {
+		if (is_object($name)) {
+			$name = get_class($name);
+		}
+		if (strpos($name, YF_PREFIX) === 0) {
+			$name = substr($name, strlen(YF_PREFIX));
+		} elseif (strpos($name, YF_ADMIN_CLS_PREFIX) === 0) {
+			$name = substr($name, strlen(YF_ADMIN_CLS_PREFIX));
+		} elseif (strpos($name, YF_SITE_CLS_PREFIX) === 0) {
+			$name = substr($name, strlen(YF_SITE_CLS_PREFIX));
+		}
+		return $name;
+	}
+
+	/**
+	*/
+	function extend($module, $name, $func) {
+		$module = $this->get_class_name($module);
+		$this->_extend[$module][$name] = $func;
+	}
+
+	/**
+	*/
+	function extend_call($that, $name, $args, $return_obj = false) {
+		$module = $this->get_class_name($that);
+		$func = null;
+		if (isset( $that->_extend[$name] )) {
+			$func = $that->_extend[$name];
+		} elseif (isset( $this->_extend[$module][$name] )) {
+			$func = $this->_extend[$module][$name];
+		}
+		if ($func) {
+			$out = $func($args[0], $args[1], $args[2], $args[3], $that);
+			return $return_obj ? $that : $out;
+		}
+		trigger_error($module.': No method '.$name, E_USER_WARNING);
+		return $return_obj ? $that : false;
 	}
 }

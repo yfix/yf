@@ -147,8 +147,7 @@ class yf_core_install {
 </body>
 </html>
 <?php
-		$html = ob_get_contents();
-		ob_end_clean();
+		$html = ob_get_clean();
 		$replace = array();
 		foreach ((array)$vars as $k => $v) {
 			$replace['{'.$k.'}'] = htmlspecialchars($v, ENT_QUOTES);

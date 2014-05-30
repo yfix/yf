@@ -17,9 +17,8 @@ class yf_html {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
 	}
 
 	/**
@@ -63,7 +62,7 @@ class yf_html {
 		$new_items = array();
 		foreach ((array)$ids as $id => $level) {
 			$new_items[$id] = $items[$id] + array('level' => $level);
-		}		
+		}
 		return $new_items;
 	}
 

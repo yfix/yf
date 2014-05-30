@@ -12,9 +12,15 @@ class test_core_api {
 	/**
 	*/
 	function _hook_side_column() {
+		$skip_list = array(
+			'get_methods',
+			'get_function_source',
+			'get_method_source',
+			'get_submodule_methods',
+		);
 		$methods = array();
 		foreach (get_class_methods($this) as $name) {
-			if ($name[0] == '_' || $name == 'show') {
+			if ($name[0] == '_' || $name == 'show' || in_array($name, $skip_list)) {
 				continue;
 			}
 			$methods[$name] = array(
@@ -59,9 +65,15 @@ class test_core_api {
 
 	/**
 	*/
-	function get_all_methods($section = 'all') {
+	function get_all_methods($section = 'all', $privacy = '') {
 		$data = array();
-		foreach (_class('core_api')->get_methods($section) as $module => $methods) {
+		$func = 'get_methods';
+		if ($privacy == 'public') {
+			$func = 'get_public_methods';
+		} elseif ($privacy == 'private') {
+			$func = 'get_private_methods';
+		}
+		foreach (_class('core_api')->$func($section) as $module => $methods) {
 			$i++;
 			$module_id = $i;
 			$data[$module_id] = array(
@@ -86,6 +98,18 @@ class test_core_api {
 
 	/**
 	*/
+	function get_all_public_methods($section = 'all') {
+		return $this->get_all_methods($section, 'public');
+	}
+
+	/**
+	*/
+	function get_all_private_methods($section = 'all') {
+		return $this->get_all_methods($section, 'private');
+	}
+
+	/**
+	*/
 	function get_methods() {
 		list($section, $module) = explode('-', $_GET['id']);
 		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
@@ -96,7 +120,7 @@ class test_core_api {
 		$all_methods = _class('core_api')->get_methods($section);
 		$data = array();
 		foreach ((array)$all_methods[$module] as $method) {
-			$data[] = array(
+			$data[++$i] = array(
 				'name'	=> $method,
 				'link'	=> './?object='.__CLASS__.'&action=get_method_source&id='.$section.'-'.$module.'-'.$method,
 			);
@@ -152,11 +176,19 @@ class test_core_api {
 		$submodule = preg_replace('~[^a-z0-9_]~ims', '', $submodule);
 		if (!$section || !$module || !$submodule) {
 			return _e('Missing required params');
-#			return js_redirect('./?object='.__CLASS__.'&action=get_submodules');
 		}
-		$all = _class('core_api')->get_submodules_methods();
-// TODO
-		return _var_dump( $all );
+		$methods = _class('core_api')->get_submodule_methods($module, $submodule, $section);
+		$data = array();
+		foreach ($methods as $name => $info) {
+			$data[++$i] = array(
+				'name'	=> $name,
+				'link'	=> './?object='.__CLASS__.'&action=get_sub_method_source&id=all.'.$module.'-'.$submodule.'-'.$name,
+			);
+		}
+		return _class('html')->tree($data, array(
+			'opened_levels'	=> 1,
+			'draggable'		=> false,
+		));
 	}
 
 	/**
@@ -216,8 +248,6 @@ class test_core_api {
 	/**
 	*/
 	function get_widgets() {
-// TODO
-/*
 		$data = array();
 		foreach (_class('core_api')->get_widgets() as $module => $hooks) {
 			$i++;
@@ -240,7 +270,7 @@ class test_core_api {
 			'opened_levels'	=> 0,
 			'draggable'		=> false,
 		));
-*/
+
 	}
 
 	/**
@@ -248,7 +278,7 @@ class test_core_api {
 	function get_functions() {
 		$data = array();
 		foreach (_class('core_api')->get_functions() as $name) {
-			$data[] = array(
+			$data[++$i] = array(
 				'name'	=> $name,
 				'link'	=> './?object='.__CLASS__.'&action=get_function_source&id='.$name,
 			);
@@ -268,7 +298,7 @@ class test_core_api {
 		}
 		$info = _class('core_api')->get_function_source($name);
 		$info['is_func'] = true;
-		return $this->_show_source($info);
+		return _class('core_api')->show_docs($info);
 	}
 
 	/**
@@ -283,34 +313,115 @@ class test_core_api {
 		}
 		$info = _class('core_api')->get_method_source($module, $method, $section);
 		$info['is_module'] = $module.'-'.$method;
-		return $this->_show_source($info);
+		return _class('core_api')->show_docs($info);
 	}
 
 	/**
 	*/
-	function _show_source(array $info) {
-		$tests = '';
-		if ($info['is_func']) {
-			$tests = _class('core_api')->get_function_tests($info['name']);
-		} elseif ($info['is_module']) {
-			list($module, $method) = explode('-', $info['is_module']);
-			$tests = _class('core_api')->get_module_tests($module);
+	function get_plugins() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_events() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_callbacks() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_data_handlers() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_tables_fields() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_fast_init() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_libs() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_sites() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_servers() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_langs() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_user_groups() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_admin_groups() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_cron_jobs() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_models() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function get_migrations() {
+		return $this->_api_call(__FUNCTION__);
+	}
+
+	/**
+	*/
+	function _api_call($func) {
+		$data = array();
+		foreach (_class('core_api')->$func() as $name) {
+			$data[++$i] = array(
+				'name'	=> is_array($name) ? print_r($name, 1) : $name,
+			);
 		}
-		$docs = '';
-		if ($info['is_func']) {
-			$docs = _class('core_api')->get_function_docs($info['name']);
-		} elseif ($info['is_module']) {
-			list($module, $method) = explode('-', $info['is_module']);
-			$docs = _class('core_api')->get_module_docs($module);
+		if (!$data) {
+			common()->message_info('Empty data');
+			return false;
 		}
-		return '
-			<h3>'.$info['name'].'</h3>
-			<h4>'.$info['file'].':'.$info['line_start'].' '._class('core_api')->get_github_link($info).'</h4>
-			<section class="page-contents">
-				<pre><code>'.($info['comment'] ? _prepare_html($info['comment'], $strip = false).PHP_EOL : ''). _prepare_html($info['source'], $strip = false).'</code></pre>
-				'.($tests ? '<h4>Unit tests</h4><pre><code>'._prepare_html($tests, $strip = false).'</code></pre>' : '').'
-				'.($docs ? '<h4>Documentation</h4><pre><code>'._prepare_html($docs, $strip = false).'</code></pre>' : '').'
-			</section>
-		';
+		return _class('html')->tree($data, array(
+			'opened_levels'	=> 0,
+			'draggable'		=> false,
+		));
 	}
 }

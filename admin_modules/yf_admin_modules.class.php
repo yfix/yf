@@ -26,8 +26,8 @@ class yf_admin_modules {
 	* Framework constructor
 	*/
 	function _init () {
-		$this->_modules = $this->_get_modules();
-		unset($this->_modules['']);
+#		$this->_modules = $this->_get_modules();
+#		unset($this->_modules['']);
 	}
 
 	/**

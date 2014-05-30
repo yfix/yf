@@ -6,6 +6,13 @@ class yf_oauth {
 	private $_providers = array();
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function _init() {
 		conf('USE_CURL_DEBUG', true);

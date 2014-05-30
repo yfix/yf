@@ -44,6 +44,13 @@ class yf_i18n {
 	public $USE_TRANSLATE_CACHE		= true;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	* Framework constructor
 	*/
 	function _init() {
@@ -85,14 +92,6 @@ class yf_i18n {
 				ksort($this->TR_ALL_VARS);
 			}
 		}
-	}
-
-	/**
-	* Catch missing method call
-	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
 	}
 
 	/**
@@ -230,6 +229,7 @@ class yf_i18n {
 			$dirs = array(
 				'yf_main'			=> YF_PATH.'share/langs/'.$lang.'/',
 				'yf_plugins'		=> YF_PATH.'plugins/*/share/langs/'.$lang.'/',
+				'project_config'	=> CONFIG_PATH.'share/langs/'.$lang.'/',
 				'project_main'		=> PROJECT_PATH.'share/langs/'.$lang.'/',
 				'project_plugins'	=> PROJECT_PATH.'plugins/*/share/langs/'.$lang.'/',
 			);
@@ -565,8 +565,7 @@ class yf_i18n {
 	function _list_system_locales() {
 		ob_start();
 		system('locale -a'); 
-		$str = ob_get_contents();
-		ob_end_clean();
+		$str = ob_get_clean();
 		return split("\\n", trim($str));
 	}
 }

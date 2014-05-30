@@ -59,9 +59,18 @@ class yf_bb_codes {
 	public $_avail_codes = '(b|i|u|code|quote|color|size|url|img|sql|html|media|swf|email|imgurl|sub|sup|csv|li|hr|youtube|spoiler)';
 
 	/**
-	* Framework constructor
+	* Catch missing method call
 	*/
-	function _init () {
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
+	*/
+	function _preload_data () {
+		if ($this->_preload_complete) {
+			return true;
+		}
 		if ($this->ENABLE_BB_CODES && $this->ENABLE_SMILIES && !isset($GLOBALS['_smiles_array'])) {
 			$GLOBALS['_smiles_array'] = main()->get_data('smilies');
 		}
@@ -101,6 +110,8 @@ class yf_bb_codes {
 		}
 		krsort($tmp_codes);
 		$this->_avail_codes = '('.implode('|', $tmp_codes).')';
+
+		$this->_preload_complete = true;
 	}
 
 	/**
@@ -110,6 +121,7 @@ class yf_bb_codes {
 		if (empty($body)) {
 			return '';
 		}
+		$this->_preload_data();
 		$body = str_replace(array('<','>'), array('&lt;','&gt;'), $body);
 		if ($this->FILTER_BAD_WORDS) {
 			if (!isset($GLOBALS['BAD_WORDS_ARRAY'])) {
@@ -128,8 +140,8 @@ class yf_bb_codes {
 				}
 				$body = preg_replace(array_keys($this->_preg_bb_codes), array_values($this->_preg_bb_codes), $body);
 				if ($this->USE_HIGHLIGHT) {
-					$body = preg_replace('/\[sql\](.*?)\[\/sql\]/imse',		'_class_safe("text_highlight")->_regex_sql_tag(stripslashes("\1"))', $body);
-					$body = preg_replace('/\[html\](.*?)\[\/html\]/imse',	'_class_safe("text_highlight")->_regex_html_tag(stripslashes("\1"))', $body);
+					$body = preg_replace('/\[sql\](.*?)\[\/sql\]/imse',		'_class_safe("text_highlight", "classes/common/")->_regex_sql_tag(stripslashes("\1"))', $body);
+					$body = preg_replace('/\[html\](.*?)\[\/html\]/imse',	'_class_safe("text_highlight", "classes/common/")->_regex_html_tag(stripslashes("\1"))', $body);
 				}
 				$body = preg_replace('/\[csv\](.*?)\[\/csv\]/imse',	'$this->_parse_csv_bb_code("\1")', $body);
 			}
@@ -171,6 +183,7 @@ class yf_bb_codes {
 	/**
 	*/
 	function _display_buttons ($input = array()) {
+		$this->_preload_data();
 		$STPL_NAME = isset($input['stpl_name']) ? $input['stpl_name'] : __CLASS__.'/buttons';
 		$js_vars_code = '';
 		if (!$GLOBALS['_bb_codes_calls']++) {
@@ -199,6 +212,7 @@ class yf_bb_codes {
 	* Force to close bb codes in given text (prevent design bugging)
 	*/
 	function _force_close_bb_codes ($text = '') {
+		$this->_preload_data();
 		$add_text = '';
 		$opened_codes = $closed_codes = array();
 		// Try to find unclosed codes

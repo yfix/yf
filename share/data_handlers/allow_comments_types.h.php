@@ -29,3 +29,4 @@ if ($lang == 'ru') {
 		9	=> 'Disabled (No one can post comments)',
 	);
 }
+return $data;

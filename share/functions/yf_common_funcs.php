@@ -399,8 +399,6 @@ if (!function_exists('_var_dump')) {
 function _var_dump($data) {
 	ob_start();
 	var_dump($data);
-	$data = ob_get_contents();
-	ob_end_clean();
-	return $data;
+	return ob_get_clean();
 }
 }

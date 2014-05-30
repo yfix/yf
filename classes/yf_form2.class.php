@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Form2, using bootstrap html/css framework
+* Form2 high-level generator and handler, mostly using bootstrap html/css framework
 *
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -12,9 +12,14 @@ class yf_form2 {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args, $this->_chained_mode);
+	}
+
+	/**
+	*/
+	function _extend($name, $func) {
+		$this->_extend[$name] = $func;
 	}
 
 	/**
@@ -156,10 +161,13 @@ class yf_form2 {
 		$paths = array(
 			'yf_main'			=> YF_PATH. 'share/form/'.$suffix,
 			'yf_plugins'		=> YF_PATH. 'plugins/*/share/form/'.$suffix,
+			'project_config'	=> CONFIG_PATH. 'share/form/'.$suffix,
 			'project_main'		=> PROJECT_PATH. 'share/form/'.$suffix,
 			'project_plugins'	=> PROJECT_PATH. 'plugins/*/share/form/'.$suffix,
-#			'site_main'			=> SITE_PATH. 'share/form/'.$suffix,
 		);
+		if (SITE_PATH != PROJECT_PATH) {
+			$paths['site_main'] = SITE_PATH. 'share/form/'.$suffix;
+		}
 		foreach ((array)$paths as $glob) {
 			foreach (glob($glob) as $f) {
 				include $f;

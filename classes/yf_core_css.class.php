@@ -14,6 +14,13 @@ class yf_core_css {
 		'bs3'		=> '//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css',
 	);
 
+	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
 	public function _init() {
 		// Main CSS from theme stpl
 		$main_style_css = trim(tpl()->parse_if_exists('style_css'));

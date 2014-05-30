@@ -39,9 +39,8 @@ class yf_graphics {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
 	}
 
 	/**
@@ -250,7 +249,7 @@ class yf_graphics {
 	* Method that allows to change standard tasks mapping (if needed)
 	*/
 	function _route_request() {
-		return _class('core_blocks')->_route_request();
+		return _class('router')->_route_request();
 	}
 
 	/**

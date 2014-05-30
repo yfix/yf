@@ -42,14 +42,7 @@ class yf_log_core_errors_viewer {
 	* Constructor
 	*/
 	function _init () {
-		main()->USER_ID = $_GET['user_id'];
-		// Get current account types
 		$this->_account_types	= main()->get_data("account_types");
-		// Prepare filter data
-		if ($this->USE_FILTER) {
-			$this->_prepare_filter_data();
-		}
-		// Try to get info about sites vars
 		$this->_sites_info = _class("sites_info");
 	}
 
@@ -59,7 +52,6 @@ class yf_log_core_errors_viewer {
 	function show () {
 		// Prepare pager
 		$sql = "SELECT * FROM ".db('log_core_errors')."";
-		$filter_sql = $this->USE_FILTER ? $this->_create_filter_sql() : "";
 		$sql .= strlen($filter_sql) ? " WHERE 1=1 ". $filter_sql : " ORDER BY date DESC ";
 		list($add_sql, $pages, $total) = common()->divide_pages($sql);
 		// Get records from db
@@ -302,170 +294,10 @@ class yf_log_core_errors_viewer {
 		return tpl()->parse($_GET["object"]."/main_top", $replace);
 	}
 
-	// Prepare required data for filter
-	function _prepare_filter_data () {
-		// Filter session array name
-		$this->_filter_name	= $_GET["object"]."_filter";
-		// Prepare boxes
-		$this->_boxes = array_merge((array)$this->_boxes, array(
-			"account_type"	=> 'select_box("account_type",	$this->_account_types2,		$selected, 0, 2, "", false)',
-			"sort_by"		=> 'select_box("sort_by",		$this->_sort_by,			$selected, 0, 2, "", false)',
-			"sort_order"	=> 'select_box("sort_order",	$this->_sort_orders,		$selected, 0, 2, "", false)',
-		));
-		// Connect common used arrays
-		if (file_exists(INCLUDE_PATH."common_code.php")) {
-			include (INCLUDE_PATH."common_code.php");
-		}
-		// Get user account type
-		$this->_account_types2[" "]	= t("-- All --");
-		foreach ((array)$this->_account_types as $k => $v) {
-			$this->_account_types2[$k]	= $v;
-		}
-		// Sort orders
-		$this->_sort_orders = array("DESC" => "Descending", "ASC" => "Ascending");
-		// Sort fields
-		$this->_sort_by = array(
-			"",
-			"user_id",
-			"date",
-			"ip",
-		);
-		// Fields in the filter
-		$this->_fields_in_filter = array(
-			"user_id",
-			"account_type",
-			"ip",
-			"error_text",
-			"user_agent",
-			"referer",
-			"sort_by",
-			"sort_order",
-		);
-	}
-
-	// Generate filter SQL query
-	function _create_filter_sql () {
-		$SF = &$_SESSION[$this->_filter_name];
-		foreach ((array)$SF as $k => $v) $SF[$k] = trim($v);
-		// Generate filter for the common fileds
-		if ($SF["date_min"]) 			$sql .= " AND date >= ".strtotime($SF["date_min"])." \r\n";
-		if ($SF["date_max"])			$sql .= " AND date <= ".strtotime($SF["date_max"])." \r\n";
-		if ($SF["user_id"])			 	$sql .= " AND user_id = ".intval($SF["user_id"])." \r\n";
-		if (strlen($SF["ip"]))			$sql .= " AND ip LIKE '"._es($SF["ip"])."%' \r\n";
-		if (strlen($SF["user_agent"]))	$sql .= " AND user_agent LIKE '"._es($SF["user_agent"])."%' \r\n";
-		if (strlen($SF["referer"]))		$sql .= " AND referer LIKE '"._es($SF["referer"])."%' \r\n";
-		if (strlen($SF["error_text"]))	$sql .= " AND error_text LIKE '%"._es($SF["error_text"])."%' \r\n";
-		// Sorting here
-		if ($SF["sort_by"])			 	$sql .= " ORDER BY ".$this->_sort_by[$SF["sort_by"]]." \r\n";
-		if ($SF["sort_by"] && strlen($SF["sort_order"])) 	$sql .= " ".$SF["sort_order"]." \r\n";
-		return substr($sql, 0, -3);
-	}
-
-	// Session - based filter
-	function _show_filter () {
-		$replace = array(
-			"save_action"	=> "./?object=".$_GET["object"]."&action=save_filter"._add_get(),
-			"clear_url"		=> "./?object=".$_GET["object"]."&action=clear_filter"._add_get(),
-			"delete_sel"	=> "./?object=".$_GET["object"]."&action=delete_all_filtered"._add_get(),
-		);
-		foreach ((array)$this->_fields_in_filter as $name) {
-			$replace[$name] = _prepare_html($_SESSION[$this->_filter_name][$name]);
-		}
-		// Process boxes
-		foreach ((array)$this->_boxes as $item_name => $v) {
-			$replace[$item_name."_box"] = $this->_box($item_name, $_SESSION[$this->_filter_name][$item_name]);
-		}
-		return tpl()->parse($_GET["object"]."/filter", $replace);
-	}
-
-	// Filter save method
-	function save_filter ($silent = false) {
-		// Process featured countries
-		if (FEATURED_COUNTRY_SELECT && !empty($_REQUEST["country"]) && substr($_REQUEST["country"], 0, 2) == "f_") {
-			$_REQUEST["country"] = substr($_REQUEST["country"], 2);
-		}
-		if (is_array($this->_fields_in_filter)) {
-			foreach ((array)$this->_fields_in_filter as $name) {
-				$_SESSION[$this->_filter_name][$name] = $_REQUEST[$name];
-			}
-		}
-		if (!$silent) {
-			if (!empty($_POST["delete_by_filter"])) {
-				$sql = "DELETE FROM ".db('log_core_errors')." WHERE 1=1 ".$this->_create_filter_sql();
-				$sql = preg_replace("/(ORDER BY)(.)+/ims", "", $sql);
-				$result = db()->query($sql);
-				$this->clear_filter(1);
-				return js_redirect("./?object=".$_GET["object"]."&action=top_of_errors");
-			}
-			if (!empty($_REQUEST["go_home"])) {
-				return js_redirect("./?object=".$_GET["object"]);
-			}
-			return js_redirect($_SERVER["HTTP_REFERER"], 0);
-		}
-	}
-
-	// Clear filter
-	function clear_filter ($silent = false) {
-		if (is_array($_SESSION[$this->_filter_name])) {
-			foreach ((array)$_SESSION[$this->_filter_name] as $name) unset($_SESSION[$this->_filter_name]);
-		}
-		if (!$silent) {
-			if (!empty($_REQUEST["go_home"])) {
-				return js_redirect("./?object=".$_GET["object"]);
-			}
-			return js_redirect("./?object=".$_GET["object"]._add_get());
-		}
-	}
-
 	// Process custom box
 	function _box ($name = "", $selected = "") {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
 		else return eval("return common()->".$this->_boxes[$name].";");
-	}
-
-	/**
-	* Quick menu auto create
-	*/
-	function _quick_menu () {
-		$menu = array(
-			array(
-				"name"	=> ucfirst($_GET["object"])." main",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-			array(
-				"name"	=> "Top of errors",			  
-				"url"	=> "./?object=".$_GET["object"]."&action=top_of_errors",
-			),
-			array(
-				"name"	=> "",
-				"url"	=> "./?object=".$_GET["object"],
-			),
-		);
-		return $menu;	
-	}
-
-	/**
-	* Page header hook
-	*/
-	function _show_header() {
-		$pheader = t("Core errors viewer");
-		// Default subheader get from action name
-		$subheader = _ucwords(str_replace("_", " ", $_GET["action"]));
-
-		// Array of replacements
-		$cases = array (
-			//$_GET["action"] => {string to replace}
-			"show"				=> "",
-		);			  		
-		if (isset($cases[$_GET["action"]])) {
-			// Rewrite default subheader
-			$subheader = $cases[$_GET["action"]];
-		}
-
-		return array(
-			"header"	=> $pheader,
-			"subheader"	=> $subheader ? _prepare_html($subheader) : "",
-		);
 	}
 
 	function _hook_widget__core_errors_log ($params = array()) {

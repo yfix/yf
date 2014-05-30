@@ -35,6 +35,13 @@ class yf_validate {
 		# $extra['title'] is used in html5 validation suggesting messages
 */
 
+	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
 	/***/
 	function _init() {
 		$this->MB_ENABLED = _class('utf8')->MULTIBYTE;

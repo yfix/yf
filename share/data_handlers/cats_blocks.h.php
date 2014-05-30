@@ -1,3 +1,3 @@
 <?php
 
-$data = (array)db()->get_all('SELECT * FROM '.db('categories'));
+return (array)db()->get_all('SELECT * FROM '.db('categories'));

@@ -28,3 +28,4 @@ if (!empty($_topics_ids)) {
 		$data[$_post_info['forum']]['total_posts'] = $topics_total_posts[$_post_info['topic']];
 	}
 }
+return $data;

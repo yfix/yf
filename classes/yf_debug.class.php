@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Show debug info
+* Debug console
 * 
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -56,9 +56,8 @@ class yf_debug {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $arguments) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
 	}
 
 	/**
@@ -177,6 +176,11 @@ class yf_debug {
 			'MEDIA_PATH'		=> MEDIA_PATH,
 			'ADMIN_WEB_PATH'	=> ADMIN_WEB_PATH,
 			'ADMIN_SITE_PATH'	=> ADMIN_SITE_PATH,
+			'APP_PATH'			=> APP_PATH,
+			'CONFIG_PATH'		=> CONFIG_PATH,
+			'STORAGE_PATH'		=> STORAGE_PATH,
+			'LOGS_PATH'			=> LOGS_PATH,
+			'UPLOADS_PATH'		=> UPLOADS_PATH,
 			'CSS_FRAMEWORK'		=> conf('css_framework') ?: 'bs2',
 			'BOOTSTRAP_THEME'	=> $_COOKIE['yf_theme'] ?: conf('DEF_BOOTSTRAP_THEME'),
 			'TPL_DRIVER'		=> tpl()->DRIVER_NAME,

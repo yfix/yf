@@ -46,6 +46,7 @@ class yf_server_file_manager {
 	* Constructor
 	*/
 	function _init () {
+/*
 		$this->SERVER_ID = intval($_GET["id"]);
 		$this->_server_info = db()->query_fetch("SELECT * FROM ".db('servers')." WHERE id=".intval($_GET["id"]));
 		
@@ -63,6 +64,7 @@ class yf_server_file_manager {
 			list($ext_name) = explode(".", basename($filename));
 			$this->ext_images[$ext_name] = basename($filename);
 		}
+*/
 	}
 
 	/**

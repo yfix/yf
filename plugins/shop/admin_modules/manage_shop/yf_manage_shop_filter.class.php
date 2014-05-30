@@ -60,7 +60,7 @@ class yf_manage_shop_filter{
 					->select_box('supplier_id', _class('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'no_translate' => 1, 'hide_empty' => 1))
 					->select_box('manufacturer_id', _class('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'no_translate' => 1))
 					->active_box('active', array('horizontal' => 1))
-					->select_box('status', _class('manage_shop')->_products_statuses, array('desc' => 'Status', 'no_translate' => 0, 'hide_empty' => 1))
+					->select_box('status', _class('manage_shop')->_products_statuses, array('desc' => 'Status', 'no_translate' => 0, 'hide_empty' => 1, 'show_text' => 1))
 					->yes_no_box('image', array('horizontal' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 
