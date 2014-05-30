@@ -56,7 +56,8 @@ class yf_table2_image {
 				if (!$img_path) {
 					return '';
 				}
-				if (!file_exists($fs_path. $img_path)) {
+				$extra[ 'img_path_check' ] = isset( $extra[ 'img_path_check' ] ) ? (bool)$extra[ 'img_path_check' ] : true;
+				if ($extra[ 'img_path_check' ] && !file_exists($fs_path. $img_path)) {
 					return '';
 				}
 				if (isset($extra['link_callback']) && is_callable($extra['link_callback'])) {
