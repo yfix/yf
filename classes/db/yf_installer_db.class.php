@@ -129,6 +129,7 @@ abstract class yf_installer_db {
 		$globs_sql = array(
 			'yf_main'			=> YF_PATH.'share/db_installer/sql/*.sql.php',
 			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
+			'project_config'	=> CONFIG_PATH.'share/db_installer/sql/*.sql.php',
 			'project_main'		=> PROJECT_PATH.'share/db_installer/sql/*.sql.php',
 			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
 		);
@@ -142,6 +143,7 @@ abstract class yf_installer_db {
 		$globs_data = array(
 			'yf_main'			=> YF_PATH.'share/db_installer/data/*.data.php',
 			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/data/*.data.php',
+			'project_config'	=> CONFIG_PATH.'share/db_installer/data/*.data.php',
 			'project_main'		=> PROJECT_PATH.'share/db_installer/data/*.data.php',
 			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/data/*.data.php',
 		);

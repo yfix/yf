@@ -61,7 +61,11 @@ class yf_settings {
 			$to_save = $this->_prepare_to_save($_POST);
 			if ($to_save) {
 				$saved_settings_content = '<'.'?php'.PHP_EOL.implode(PHP_EOL, $to_save).PHP_EOL;
-				$saved_settings_file = PROJECT_PATH.'saved_settings.php';
+				if (defined('CONFIG_PATH') && file_exists(CONFIG_PATH)) {
+					$saved_settings_file = CONFIG_PATH.'saved_settings.php';
+				} else {
+					$saved_settings_file = PROJECT_PATH.'saved_settings.php';
+				}
 				common()->message_info('Saved settings file contents ('.$saved_settings_file.') <pre>'.str_replace('_', '&#95;', _prepare_html($saved_settings_content)).'</pre>');
 				file_put_contents($saved_settings_file, $saved_settings_content);
 				return js_redirect('./?object='.$_GET['object']);

@@ -161,10 +161,13 @@ class yf_form2 {
 		$paths = array(
 			'yf_main'			=> YF_PATH. 'share/form/'.$suffix,
 			'yf_plugins'		=> YF_PATH. 'plugins/*/share/form/'.$suffix,
+			'project_config'	=> CONFIG_PATH. 'share/form/'.$suffix,
 			'project_main'		=> PROJECT_PATH. 'share/form/'.$suffix,
 			'project_plugins'	=> PROJECT_PATH. 'plugins/*/share/form/'.$suffix,
-#			'site_main'			=> SITE_PATH. 'share/form/'.$suffix,
 		);
+		if (SITE_PATH != PROJECT_PATH) {
+			$paths['site_main'] = SITE_PATH. 'share/form/'.$suffix;
+		}
 		foreach ((array)$paths as $glob) {
 			foreach (glob($glob) as $f) {
 				include $f;

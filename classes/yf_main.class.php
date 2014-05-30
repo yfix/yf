@@ -376,6 +376,7 @@ class yf_main {
 		$include_files = array();
 		$required_files = array();
 		if ($this->NO_DB_CONNECT == 0) {
+			$include_files[] = CONFIG_PATH. 'db_setup.php';
 			$include_files[] = PROJECT_PATH. 'db_setup.php';
 		}
 		foreach ((array)conf('include_files::'.MAIN_TYPE) as $path) {
