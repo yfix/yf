@@ -563,8 +563,14 @@ class yf_tpl {
 			if ($this->_INHERITED_SKIN2) {
 				$storages['inherit_project2']= PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
 			}
-			if (MAIN_TYPE_ADMIN) {
-				$storages['project_admin_user']	   = PROJECT_PATH. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
+			// in admin mode: not include main, style_css, script_js templates from project place
+			if (MAIN_TYPE_ADMIN && !(
+				$file_name == 'main'.$this->_STPL_EXT
+				|| $file_name == 'style_css'.$this->_STPL_EXT
+				|| $file_name == 'script_js'.$this->_STPL_EXT
+				)
+			) {
+				$storages['project_admin_user'] = PROJECT_PATH. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
 			}
 			// Load template from plugins. Should stay in subdir like this:
 			// YF_PATH.'plugins/news/templates/user/news/main.stpl' => tpl()->parse('news/main')
