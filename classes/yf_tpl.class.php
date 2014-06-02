@@ -655,7 +655,7 @@ class yf_tpl {
 			$this->_def_user_theme = $FIRST_SITE_INFO['DEFAULT_SKIN'];
 		}
 		if (empty($this->_def_user_theme)) {
-			$this->_def_user_theme = 'new_1';
+			$this->_def_user_theme = 'user';
 		}
 		return $this->_def_user_theme;
 	}
