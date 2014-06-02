@@ -45,21 +45,6 @@ class tpl_driver_fenom_test extends tpl_abstract {
 		{$a_variable}
 	</body>
 </html>';
-/*
-		$expected = 
-'<!DOCTYPE html>
-<html>
-	<head><title>My Webpage</title></head>
-	<body>
-		<ul id="navigation">
-			<li><a href="http://yfix.net/">Yf website</a></li>
-			<li><a href="http://google.com/">Google</a></li>
-		</ul>
-		<h1>My Webpage</h1>
-		var_value
-	</body>
-</html>';
-*/
 		$expected = 
 '<!DOCTYPE html>
 <html>
