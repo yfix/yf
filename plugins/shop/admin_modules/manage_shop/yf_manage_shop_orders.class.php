@@ -284,8 +284,8 @@ class yf_manage_shop_orders{
 			->info('phone')
 			->container('<a href="./?object='.main()->_get('object').'&action=send_sms&phone='.urlencode($replace["phone"]).'" class="btn">Send SMS</a><br /><br />')
 			->select_box('delivery_type', _class( '_shop_delivery', 'modules/shop/' )->_get_types(), array( 'desc' => 'Тип доставки' ) )
-			->select_box('delivery_id', _class( '_shop_delivery', 'modules/shop/' )->_get_locations_by_type( $replace[ 'delivery_type' ] ), array( 'id' => 'delivery_id', 'desc' => 'Отделение' ) )
-			->text('delivery_location', 'Отделение доставки')
+			->select_box('delivery_id', _class( '_shop_delivery', 'modules/shop/' )->_get_locations_by_type( $replace[ 'delivery_type' ] ), array( 'class' => 'delivery_id', 'desc' => 'Отделение' ) )
+			->text('delivery_location', 'Отделение доставки', array( 'class' => 'delivery_location' ))
 			->text('address')
 			->text('house')
 			->text('apartment')
@@ -344,9 +344,9 @@ class yf_manage_shop_orders{
 		$out .= '
 			<script>
 			$(function() {
-				$("#delivery_id_box").on( "change", function( event ) {
+				$(".delivery_id").on( "change", function( event ) {
 					var location =  $(this).find( "option:selected" ).text();
-					$("#delivery_location").val( location );
+					$(".delivery_location").val( location );
 				});
 			});
 			</script>
