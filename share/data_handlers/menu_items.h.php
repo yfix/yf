@@ -13,3 +13,4 @@ foreach ((array)$data as $menu_id => $items) {
 		$data[$menu_id][$parent_id]['have_children']++;
 	}
 }
+return $data;

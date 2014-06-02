@@ -95,6 +95,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 		$globs = array(
 			PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
 			PROJECT_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
+			CONFIG_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
 			YF_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
 			YF_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
 		);

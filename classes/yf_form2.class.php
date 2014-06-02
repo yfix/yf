@@ -161,10 +161,13 @@ class yf_form2 {
 		$paths = array(
 			'yf_main'			=> YF_PATH. 'share/form/'.$suffix,
 			'yf_plugins'		=> YF_PATH. 'plugins/*/share/form/'.$suffix,
+			'project_config'	=> CONFIG_PATH. 'share/form/'.$suffix,
 			'project_main'		=> PROJECT_PATH. 'share/form/'.$suffix,
 			'project_plugins'	=> PROJECT_PATH. 'plugins/*/share/form/'.$suffix,
-#			'site_main'			=> SITE_PATH. 'share/form/'.$suffix,
 		);
+		if (SITE_PATH != PROJECT_PATH) {
+			$paths['site_main'] = SITE_PATH. 'share/form/'.$suffix;
+		}
 		foreach ((array)$paths as $glob) {
 			foreach (glob($glob) as $f) {
 				include $f;
@@ -1731,17 +1734,21 @@ class yf_form2 {
 	function image($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return _class('form2_image', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
-	
+
 	/**
 	*/
 	function google_maps($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return _class('form2_google_maps', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
-	
+
 	/**
 	*/
 	function file_uploader($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return _class('form2_file_uploader', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+	}
+
+	function upload($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return _class('form2_upload', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
 	/**

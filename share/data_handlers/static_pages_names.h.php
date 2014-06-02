@@ -8,3 +8,4 @@ while ($A = db()->fetch_assoc($Q)) {
 		$data[$_name] = $_name;
 	}
 }
+return $data;

@@ -8,3 +8,4 @@ while ($a = db()->fetch_assoc($q)) {
 		'replace'	=> $a['replace']
 	);
 }
+return $data;

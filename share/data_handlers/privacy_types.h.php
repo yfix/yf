@@ -29,3 +29,4 @@ if ($lang == 'ru') {
 		9	=> 'Diary (only for me)',
 	);
 }
+return $data;

@@ -156,7 +156,7 @@ class yf_output_cache extends yf_cache {
 		}
 */
 /*
-		$output = ob_get_contents();
+		$output = ob_get_clean();
 		if (DEBUG_MODE) {
 			debug('output_cache::exec_time', microtime(true) - $time_start);
 		}

@@ -185,6 +185,14 @@ class yf_manage_shop_orders{
 		$price_total = 0;
 		foreach ((array)$order_items as $_info) {
 			$_product = $products_infos[$_info['product_id']];
+			if(intval($_info['type']) == 1){
+				$images[0]['thumb'] = _class( '_shop_products', 'modules/shop/' )->_product_set_image($_info["product_id"], $_product[ 'cat_id' ], 'thumb', false );
+				$link = './?object='.main()->_get('object').'&action=product_set_edit&id='.$_info[ 'product_id' ];
+			}else{
+				$images = _class( '_shop_products', 'modules/shop/' )->_product_image($_info["product_id"],false,false);
+				$link = './?object='.main()->_get('object').'&action=product_edit&id='.$_info[ 'product_id' ];
+			}
+			$image = $images[ 0 ][ 'thumb' ] ?: _class( '_shop_categories', 'modules/shop/' )->get_icon_url( $_product[ 'cat_id' ], 'item' );
 			$dynamic_atts = array();
 			if (strlen($_info['attributes']) > 3) {
 				foreach ((array)unserialize($_info['attributes']) as $_attr_id) {
@@ -201,6 +209,8 @@ class yf_manage_shop_orders{
 				'param_id'     => intval($_info['param_id']),
 				'param_name'   => _class( '_shop_product_params', 'modules/shop/' )->_get_name_by_option_id($_info['param_id']),
 				'name'         => _prepare_html($_product['name']),
+				'image'        => $image,
+				'link'         => $link,
 				'price_unit'   => $price_one,
 				'price'        => $price_item,
 				'currency'     => _prepare_html(module('manage_shop')->CURRENCY),
@@ -289,11 +299,19 @@ class yf_manage_shop_orders{
 			->info('payment', 'Payment method')
 			->container(
 				table2($products)
-					->image('product_id', array('width' => '50px', 'no_link' => 1, 'img_path_callback' => function($_p1, $_p2, $row) {
-						$image = common()->shop_get_images($row['product_id']);
-						return $image[0]['thumb'];
-    	    	    }))
-					->link('product_id', './?object='.main()->_get('object').'&action=product_edit&id=%d')
+					->image('product_id', array(
+						'width'               => '50px'
+						, 'no_link'           => true
+						, 'web_path'          => ''
+						, 'img_path_check'    => false
+						, 'img_path_callback' => function($_p1, $_p2, $row) {
+							return $row['image'];
+						}
+					))
+					->func('link',function($f, $p, $row){
+						$result = "<a class='btn' href='{$row[link]}'>{$row[product_id]}</a>";
+						return $result;
+					})
 					->func('quantity',function($f, $p, $row){
 						$row['quantity'] = "<input type='text' name='qty[".$row['product_id']."_".$row['param_id']."]' value='".intval($row['quantity'])."' style='width:50px;'>";
 						return $row['quantity'];

@@ -1,3 +1,3 @@
 <?php
 
-$data = (array)db()->get_all('SELECT * FROM '.db('category_items').' WHERE active="1" ORDER BY `order` ASC');
+return (array)db()->get_all('SELECT * FROM '.db('category_items').' WHERE active="1" ORDER BY `order` ASC');

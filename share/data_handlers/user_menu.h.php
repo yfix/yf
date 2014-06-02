@@ -5,3 +5,4 @@ $q = db()->query('SELECT * FROM '.db('user_menu').' WHERE `order` > 0 ORDER BY `
 while ($a = db()->fetch_assoc($q)) {
 	$data[$a['group']][$a['id']] = $a;
 }
+return $data;

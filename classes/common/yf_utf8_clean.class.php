@@ -115,8 +115,7 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 			}
 			$str = substr($str,strlen($matches[0]));
 		}
-		$result = ob_get_contents();
-		ob_end_clean();
+		$result = ob_get_clean();
 		return $result;
 	}
 
@@ -141,8 +140,7 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 			}
 			$str = substr($str, strlen($matches[0]));
 		}
-		$result = ob_get_contents();
-		ob_end_clean();
+		$result = ob_get_clean();
 		return $result;
 	}
 

@@ -21,30 +21,30 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
 				mapTypeControlOptions: {
 					style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-					position: google.maps.ControlPosition.TOP_CENTER							
+					position: google.maps.ControlPosition.TOP_CENTER
 				}
             };
             map = new google.maps.Map($('#'+container_id)[0], myOptions);
-			markers_cnt = loadMarkers();			
+			markers_cnt = loadMarkers();
             google.maps.event.addListener(map, "click", function(event) {
 				placeMarker(event.latLng,"");
             });
-			
+
 			$($('#'+container_id)).on('click','.marker_delete',function() {
 				var index= $(this).attr('data_marker_id');
 				deleteMarker(index);
 				saveMarkers();
-				updateMarkersCnt();				
+				updateMarkersCnt();
 				return false;
 			});
-			
-			$($('#'+container_id)).on('change','.marker_description',function() {				
+
+			$($('#'+container_id)).on('change','.marker_description',function() {
 				descriptionsArray[$(this).attr('data_id')] = $(this).val();
 //				markersArray[$(this).attr('data_id')].setTitle($(this).val());
 				saveMarkers();
 				return false;
 			});
-			
+
 			zoomtoAllMarkers();
 
 			$($('.all_marker_delete')).on('click',function() {
@@ -58,13 +58,13 @@
 				saveMarkers();
 				return false;
 			});
-			
+
 			$($('.all_marker_show')).on('click',function() {
 				zoomtoAllMarkers();
 				return false;
 			});
         }
-		
+
 		function zoomtoAllMarkers() {
 			var bounds = new google.maps.LatLngBounds();
 			var num_markers = 0;
@@ -78,13 +78,13 @@
 			}
 			if (num_markers > 0) map.fitBounds(bounds);
 		}
-		
+
 		function isinfowindowOpen(infowindow){
 			var map = infowindow.getMap();
 			return (map !== null && typeof map !== "undefined");
 		}
 
-		
+
         function placeMarker(location,description) {
 			marker_index = 0;
 			while (markersArray[marker_index]) marker_index++;
@@ -93,8 +93,8 @@
 				alert("{t('markers limit reached')}");
 			} else {
 				var marker = new google.maps.Marker({
-					position: location, 
-					draggable:true,	
+					position: location,
+					draggable:true,
 					clickable: true,
 //					title: description,
 					map: map
@@ -103,27 +103,27 @@
 				descriptionsArray[marker_index] = description;
 				var infowindow = new google.maps.InfoWindow({
 					content: '<input type="text" data_id="'+marker_index+'" class="marker_description form-control" placeholder="description" value="'+description+'"><br />' +
-							'<p align="right"><a data_marker_id="'+marker_index+'" class="btn btn-default btn-mini btn-xs marker_delete">{t('delete marker')}</a></p>', 
+							'<p align="right"><a data_marker_id="'+marker_index+'" class="btn btn-default btn-mini btn-xs marker_delete">{t('delete marker')}</a></p>',
 				});
 				google.maps.event.addListener(marker, 'click', function() {
 					if (isinfowindowOpen(infowindow)){
 						infowindow.close(map,marker);
 					} else {
 						infowindow.open(map,marker);
-						
+
 						$(".marker_description").each(function() {
 							$(this).val(descriptionsArray[$(this).attr('data_id')]);
 						});
-					}					
+					}
 				});
-				google.maps.event.addListener(marker, 'dragend', function() { 
+				google.maps.event.addListener(marker, 'dragend', function() {
 					saveMarkers();
 				});
 				saveMarkers();
 				updateMarkersCnt();
 			}
         }
-		
+
 		function saveMarkers() {
 			var out_array = {};
 			marker_index = 0;
@@ -138,9 +138,9 @@
 			}
 			var json = JSON.stringify(out_array);
 			$('#markers_data').val(json);
-			
+
 		}
-		
+
 		function loadMarkers() {
 		    try {
 				result = JSON.parse($('#markers_data').val());
@@ -149,11 +149,11 @@
 			}
 			marker_index_load = 0;
 			while (marker_index_load <= markers_limit) {
-				if (result[marker_index_load]) placeMarker(new google.maps.LatLng(result[marker_index_load]['lat'], result[marker_index_load]['lng']),result[marker_index_load]['dsc']);					
+				if (result[marker_index_load]) placeMarker(new google.maps.LatLng(result[marker_index_load]['lat'], result[marker_index_load]['lng']),result[marker_index_load]['dsc']);
 				marker_index_load++;
 			}
 		}
-		
+
 		function updateMarkersCnt() {
 			var markers_cnt = 0;
 			var marker_index_cnt = 0;
@@ -163,22 +163,22 @@
 			}
 			$('#markers_cnt').html(markers_cnt);
 		}
-		
+
 		function deleteMarker(index) {
 			markersArray[index].setMap(null);
 			markersArray[index] = false;
-			updateMarkersCnt();			
+			updateMarkersCnt();
 		}
-			
-		
+
+
 		$(function() {
 			initMap('map_canvas');
 		});
-		
+
     </script>
     <div id="map_canvas"></div>
 	<input type="hidden" name='{name}' id="markers_data" value='{value}'>
 	<b>{t('Markers set')}: <span id="markers_cnt">0</span>/{markers_limit}</b>
 	<a class="btn btn-default btn-mini btn-xs all_marker_show"> {t('zoom to show all markers')} </a>
 	<a class="btn btn-default btn-mini btn-xs all_marker_delete"> {t('delete all markers')} </a>
-	
+

@@ -229,6 +229,7 @@ class yf_i18n {
 			$dirs = array(
 				'yf_main'			=> YF_PATH.'share/langs/'.$lang.'/',
 				'yf_plugins'		=> YF_PATH.'plugins/*/share/langs/'.$lang.'/',
+				'project_config'	=> CONFIG_PATH.'share/langs/'.$lang.'/',
 				'project_main'		=> PROJECT_PATH.'share/langs/'.$lang.'/',
 				'project_plugins'	=> PROJECT_PATH.'plugins/*/share/langs/'.$lang.'/',
 			);
@@ -564,8 +565,7 @@ class yf_i18n {
 	function _list_system_locales() {
 		ob_start();
 		system('locale -a'); 
-		$str = ob_get_contents();
-		ob_end_clean();
+		$str = ob_get_clean();
 		return split("\\n", trim($str));
 	}
 }

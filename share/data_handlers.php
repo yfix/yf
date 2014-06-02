@@ -11,9 +11,9 @@ $h_suffix = '.h.php';
 $strlen_suffix = strlen($h_suffix);
 foreach ($handlers_dirs as $handlers_dir) {
 	$strlen_dir = strlen($handlers_dir);
-	foreach(glob($handlers_dir.'*'.$h_suffix) as $f) {
-		$name = substr($f, $strlen_dir, -$strlen_suffix);
-		$handlers[$name] = 'include("'.$f.'");';
+	foreach(glob($handlers_dir.'*'.$h_suffix) as $path) {
+		$name = substr($path, $strlen_dir, -$strlen_suffix);
+		$handlers[$name] = $path;
 	}
 }
 $handlers_aliases = array(

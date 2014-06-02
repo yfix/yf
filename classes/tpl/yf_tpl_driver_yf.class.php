@@ -129,8 +129,7 @@ class yf_tpl_driver_yf {
 
 		ob_start();
 		include ($path);
-		$string = ob_get_contents();
-		ob_end_clean();
+		$string = ob_get_clean();
 
 		$this->_set_cache_details($name, $string, $stpl_time_start);
 		return $string;
@@ -161,8 +160,7 @@ class yf_tpl_driver_yf {
 
 			ob_start();
 			include ($compiled_path);
-			$string = ob_get_contents();
-			ob_end_clean();
+			$string = ob_get_clean();
 
 			if ($this->tpl->COMPILE_CHECK_STPL_CHANGED) {
 				$stpl_path = $this->tpl->_get_template_file($name, $params['get_from_db'], 0, 1);
@@ -549,8 +547,7 @@ class yf_tpl_driver_yf {
 
 		ob_start();
 		$result = eval('?>'.$string.'<'.'?p'.'hp return 1;');
-		$string = ob_get_contents();
-		ob_clean();
+		$string = ob_get_clean();
 
 		if (!$result) {
 			trigger_error('STPL: ERROR: wrong condition in template "'.$stpl_name.'"', E_USER_WARNING);

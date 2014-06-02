@@ -8,3 +8,4 @@ while ($a = db()->fetch_assoc($q)) {
 if (is_array($data)) {
 	ksort($data);
 }
+return $data;

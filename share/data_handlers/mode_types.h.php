@@ -23,3 +23,4 @@ if ($lang == 'ru') {
 		4	=> 'Playing (Video Games)',
 	);
 }
+return $data;

@@ -36,7 +36,7 @@ class yf_table2_image {
 				$extra = $params['extra'];
 				$id = $row['id'];
 				$fs_path = $extra['fs_path'] ?: PROJECT_PATH;
-				$web_path = $extra['web_path'] ?: WEB_PATH;
+				$web_path = isset( $extra['web_path'] ) ? $extra['web_path'] : WEB_PATH;
 				// Make 3-level dir path
 				$d = sprintf('%09s', $id);
 				$replace = array(
@@ -56,7 +56,8 @@ class yf_table2_image {
 				if (!$img_path) {
 					return '';
 				}
-				if (!file_exists($fs_path. $img_path)) {
+				$extra[ 'img_path_check' ] = isset( $extra[ 'img_path_check' ] ) ? (bool)$extra[ 'img_path_check' ] : true;
+				if ($extra[ 'img_path_check' ] && !file_exists($fs_path. $img_path)) {
 					return '';
 				}
 				if (isset($extra['link_callback']) && is_callable($extra['link_callback'])) {

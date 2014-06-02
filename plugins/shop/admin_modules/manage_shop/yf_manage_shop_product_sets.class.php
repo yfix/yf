@@ -19,7 +19,7 @@ class yf_manage_shop_product_sets {
 			'back_link' => './?object='.main()->_get('object').'&action=product_sets',
 		);
 
-		$this->_sql_sets_prices_total = 
+		$this->_sql_sets_prices_total =
 			'SELECT product_set_id, SUM(qprice) AS total
 			FROM (
 				SELECT i.product_set_id, p.price * i.quantity AS qprice, p.price, i.quantity
@@ -28,7 +28,7 @@ class yf_manage_shop_product_sets {
 			) AS tmp
 			GROUP BY product_set_id';
 
-		$this->_sql_set_list_products = 
+		$this->_sql_set_list_products =
 			'SELECT psi.product_id AS id, psi.product_id, p.active, p.image, p.name, psi.quantity, p.price
 			FROM '.db('shop_product_sets_items').' AS psi
 			LEFT JOIN '.db('shop_products').' AS p ON p.id = psi.product_id
@@ -43,7 +43,7 @@ class yf_manage_shop_product_sets {
 					'products_price' => $this->_sql_sets_prices_total,
 				),
 			))
-			->image('id', 'uploads/shop/product_sets/%d.jpg', array('width' => '50px'))
+			->image('id', 'uploads/shop/product_sets/%d_thumb.jpg', array('width' => '50px'))
 			->text('name')
 			->text('price')
 			->text('products_price')
@@ -69,8 +69,51 @@ class yf_manage_shop_product_sets {
 		$product_set_id = (int)$_GET['id'];
 		$a = db()->from('shop_product_sets')->whereid($product_set_id)->get();
 
-		if (main()->is_post()) {
-// TODO: upload image or show already uploaded
+		if (input()->is_post()) {
+			// save image
+			if( $_FILES ) {
+				$result = true;
+				if( main()->is_ajax() ) {
+					// prepare file options
+					$file_path = PROJECT_PATH . 'uploads/shop/product_sets/';
+					$file_original = $file_path . $product_set_id . '.jpg';
+					$file_big      = $file_path . $product_set_id . '_big.jpg';
+					$file_thumb    = $file_path . $product_set_id . '_thumb.jpg';
+					$file_watermark = PROJECT_PATH . SITE_WATERMARK_FILE;
+					$max_width  = module( 'manage_shop' )->BIG_X;
+					$max_height = module( 'manage_shop' )->BIG_Y;
+					// processing upload
+					$upload_handler = _class( 'upload_handler' );
+					$upload_handler->options( 'param_name', 'image' );
+					$result = $upload_handler->post_handler( array(
+						'image_versions' => array(
+							'image' => array(
+								'original' => array(
+									'file'       => $file_original
+								),
+								'big' => array(
+									'max_width'  => $max_width,
+									'max_height' => $max_height,
+									'file'       => $file_big,
+									'watermark'  => $file_watermark,
+								),
+								'thumbnail' => array(
+									'max_width'  => 324,
+									'max_height' => 216,
+									'file'       => $file_thumb,
+								),
+							)
+						),
+						// 'upload_remove' => false,
+					));
+					$status = false;
+					if( !empty( $result[ 'versions' ] ) ) {
+						$status = true;
+					}
+					echo json_encode( array( 'status' => $status ) );
+					exit;
+				}
+			}
 			$up = array();
 			// Add products to current set
 			if ($_POST['products_ids']) {
@@ -148,13 +191,10 @@ class yf_manage_shop_product_sets {
 		$a['form_action'] = './?object='.main()->_get('object').'&action=product_set_edit&id='.$product_set_id;
 		$a['back_link'] = './?object='.main()->_get('object').'&action=product_sets';
 		$a['products_price'] = $product_prices[$product_set_id];
-
+		$image = _class( '_shop_products', 'modules/shop/' )->_product_set_image( $product_set_id, $a[ 'cat_id' ], 'thumb' );
 		return form($a)
-// TODO: upload image
-			->func('id', function($extra, $r, $_this) {
-				$path = 'uploads/shop/product_sets/'.$r['id'].'.jpg';
-				return file_exists(PROJECT_PATH. $path) ? $_this->_row_html('<img src="'.WEB_PATH. $path.'" />', $extra, $r) : '';
-			}, array('desc' => t('Image')))
+			->upload( 'image', 'Изображение', array( 'preview' => $image ) )
+		. form($a)
 			->text('name')
 			->textarea('description')
 			->text('price', array('class' => 'input-mini')) // TODO: float() input type

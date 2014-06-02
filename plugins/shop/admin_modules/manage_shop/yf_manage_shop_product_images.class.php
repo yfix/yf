@@ -16,8 +16,8 @@ class yf_manage_shop_product_images{
 		if (empty($_GET['key'])) {
 			return _e('Empty image key!');
 		}
-		$A = db()->get_all('SELECT * FROM '.db('shop_product_images').' 
-							WHERE product_id='.intval($_GET['id']).' 
+		$A = db()->get_all('SELECT * FROM '.db('shop_product_images').'
+							WHERE product_id='.intval($_GET['id']).'
 								AND id='.intval($_GET['key']).'
 								AND active=1');
 		if (count($A) == 0){
@@ -68,7 +68,7 @@ class yf_manage_shop_product_images{
 			}
 			$base_url = WEB_PATH;
 			$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
-			if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }		
+			if( !empty( $media_host ) ) { $base_url = '//' . $media_host . '/'; }
 			foreach((array)$images as $A) {
 				$items[] = array(
 					'img_path' 		=> $base_url . $A['big'],
@@ -80,7 +80,7 @@ class yf_manage_shop_product_images{
 			$replace = array(
 				'form_action'=> $form_action,
 				'items'		=> $items,
-			);	
+			);
 			return tpl()->parse($_GET['object'].'/set_image_items', $replace);
 		}
 	}
@@ -106,7 +106,7 @@ class yf_manage_shop_product_images{
 
 	/**
 	 */
-	function _product_image_upload ($product_id) {		
+	function _product_image_upload ($product_id) {
 		$products_images_dir = module('manage_shop')->products_img_dir;
 
 		$d = sprintf('%09s', $product_id);
@@ -143,14 +143,14 @@ class yf_manage_shop_product_images{
 			if (empty($img_properties) || !$product_id) {
 				return false;
 			}
-			$img_path = PROJECT_PATH.str_replace('%i', $i, $clean_image_url);
-			$img_path_big = PROJECT_PATH. str_replace('%i', $i, str_replace('%s','big',$url));
-			$img_path_thumb = PROJECT_PATH. str_replace('%i', $i, str_replace('%s','thumb',$url));
+			$img_path       = PROJECT_PATH.str_replace('%i', $i, $clean_image_url);
+			$img_path_big   = PROJECT_PATH.str_replace('%i', $i, str_replace('%s','big',$url));
+			$img_path_thumb = PROJECT_PATH.str_replace('%i', $i, str_replace('%s','thumb',$url));
 			$watermark_path = PROJECT_PATH.SITE_WATERMARK_FILE;
 
-			common()->make_thumb($v, $img_path, module('manage_shop')->BIG_X, module('manage_shop')->BIG_Y);
-			common()->make_thumb($v, $img_path_thumb, module('manage_shop')->THUMB_X, module('manage_shop')->THUMB_Y);
-			common()->make_thumb($v, $img_path_big, module('manage_shop')->BIG_X, module('manage_shop')->BIG_Y, $watermark_path); 
+			common()->make_thumb( $v, $img_path,       module( 'manage_shop' )->BIG_X,   module( 'manage_shop' )->BIG_Y                  );
+			common()->make_thumb( $v, $img_path_thumb, module( 'manage_shop' )->THUMB_X, module( 'manage_shop' )->THUMB_Y                );
+			common()->make_thumb( $v, $img_path_big,   module( 'manage_shop' )->BIG_X,   module( 'manage_shop' )->BIG_Y, $watermark_path );
 
 			$A = db()->query_fetch('SELECT COUNT(*) AS `cnt` FROM '.db('shop_product_images').' WHERE product_id='.intval($product_id).' AND is_default=1 AND active=1');
 			if ($A['cnt'] == 0) {
@@ -160,9 +160,9 @@ class yf_manage_shop_product_images{
 			db()->query('UPDATE '.db('shop_products').' SET `image`=1 WHERE `id`='.$product_id);
 			db()->commit();
 			module('manage_shop')->_product_images_add_revision('uploaded', $product_id, $i);
-		} 
+		}
 		return $i;
-	}	
+	}
 
 	/**
 	*/
@@ -199,7 +199,7 @@ class yf_manage_shop_product_images{
 			if (!empty($tmp_file)) {
 				@unlink($tmp_file);
 			}
-		} 
+		}
 		$images = common()->shop_get_images($product_info['id']);
 		$base_url = WEB_PATH;
 		$media_host = ( defined( 'MEDIA_HOST' ) ? MEDIA_HOST : false );
@@ -238,5 +238,5 @@ class yf_manage_shop_product_images{
 			'product_url'    => './?object='.main()->_get('object').'&action=product_edit&id='.$product_info['id'],
 		);
 		return tpl()->parse($_GET['object'].'/product_image_search', $replace);
-	} 
+	}
 }
