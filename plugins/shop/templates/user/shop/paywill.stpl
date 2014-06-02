@@ -5,16 +5,10 @@
 					<div style="    background-size: 135px 42px; margin-bottom: 16px; position: relative; text-align: left;">
 						<ul style="    margin: 0; padding: 0;">
 							<li style="list-style: none outside none;margin-bottom: 5px;"><b>ПОСТАВЩИК:</b>
-								УКРАЇНА<br />
-								ТОВ «КУПУЙ ВСЕ»<br />
-								69095, м. Запоріжжя, вул. Щаслива 5а<br />
-								тел.: 095-829-66-11, 096-829-66-11, 093-829-66-11
+{include( shop/_supplier_contacts )}
 							</li>
 							<li style="list-style: none outside none;margin-bottom: 5px;"><b>РЕКВИЗИТЫ ПОСТАВЩИКА:</b>
-								ЄДРПОУ 38909273<br />
-								р/р 5169330501572850 <br />
-								в ПрАТ «Приват Банк»<br />
-								МФО 313939<br />
+{include( shop/_supplier_bank )}
 							</li>
 						</ul>
 						<div style="position: absolute;	top:0px;right: 0px;	width: 165px;height: 52px;">
