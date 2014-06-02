@@ -70,8 +70,6 @@ class yf_tpl {
 	public $COMPILE_CHECK_STPL_CHANGED = false;
 	/** @var bool Allow pure php templates */
 	public $ALLOW_PHP_TEMPLATES		= false;
-	/** @var bool Use paths cache (check and save what stpl files we have and where) */
-	public $USE_PATHS_CACHE			= false;
 	/** @var bool */
 	public $DEBUG_STPL_VARS			= false;
 	/** @var string @conf_skip */
@@ -169,9 +167,6 @@ class yf_tpl {
 		}
 		$this->_init_global_tags();
 
-		if ($this->USE_PATHS_CACHE) {
-			$this->_prepare_paths_cache();
-		}
 		if (DEBUG_MODE) {
 			$this->register_output_filter(array($this, '_debug_mode_callback'), 'debug_mode');
 		}
@@ -312,9 +307,6 @@ class yf_tpl {
 			if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
 				_class('output_cache')->_put_page_to_output_cache($body);
 			}
-#			if (DEBUG_MODE || conf('exec_time')) {
-#				$body['exec_time'] = common()->_show_execution_time();
-#			}
 			if (DEBUG_MODE && !main()->CONSOLE_MODE && !main()->is_ajax()) {
 				$body['debug_info'] = common()->show_debug_info();
 				if ($this->ALLOW_INLINE_DEBUG || main()->INLINE_EDIT_LOCALE) {
@@ -334,7 +326,6 @@ class yf_tpl {
 			echo $output;
 		}
 		if (DEBUG_MODE && main()->NO_GRAPHICS && !main()->CONSOLE_MODE && !main()->is_ajax()) {
-#			echo common()->_show_execution_time();
 			echo common()->show_debug_info();
 		}
 		// Output cache for 'no graphics' content
@@ -618,7 +609,6 @@ class yf_tpl {
 			// Last try from cache (preloaded templates)
 			if ($string === false) {
 				$compiled_stpl = conf('_compiled_stpls::'.$stpl_name);
-// TODO: maybe move this uppper to have much more inheritance priority
 				if ($compiled_stpl) {
 					$string	 = $compiled_stpl;
 					$storage = 'compiled_cache';
@@ -666,62 +656,7 @@ class yf_tpl {
 	* Check if given template exists
 	*/
 	function _stpl_path_exists ($file_name = '', $stpl_name = '', $location = '') {
-		if ($this->USE_PATHS_CACHE) {
-			if ($this->_stpls_paths_cache[$stpl_name] & $this->_stpl_loc_codes[$location]) {
-				return true;
-			}
-			return false;
-		} else {
-			return file_exists($file_name);
-		}
-	}
-
-	/**
-	* Prepare paths cache
-	*/
-	function _prepare_paths_cache () {
-		if (!$this->USE_PATHS_CACHE || $this->_stpls_paths_cache) {
-			return false;
-		}
-		$stpls_paths = array();
-		$CACHE_NAME = 'stpls_paths_'.(MAIN_TYPE_ADMIN ? 'admin' : 'site_'.conf('SITE_ID'));
-		$stpls_paths = cache_get($CACHE_NAME);
-		// Create full array (cache is empty or turned off)
-		if (empty($stpls_paths)) {
-			if (MAIN_TYPE_ADMIN) {
-				$def_user_theme = $this->_get_def_user_theme();
-				$paths = array(
-					'framework'	 	=> YF_PATH. $this->_THEMES_PATH. 'admin'. '/',
-					'framework_user'=> YF_PATH. $this->_THEMES_PATH. 'user'. '/',
-					'user_section'  => INLCUDE_PATH. $this->_THEMES_PATH. $def_user_theme. '/',
-				);
-			} else {
-				$paths = array(
-					'site'		 		=> SITE_PATH. $this->_THEMES_PATH. conf('theme'). '/',
-					'project'	  		=> PROJECT_PATH. $this->_THEMES_PATH. conf('theme'). '/',
-					'framework'		 	=> YF_PATH. $this->_THEMES_PATH. 'user'. '/',
-					'inherit_project'	=> $this->_INHERITED_SKIN ? PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name : '',
-					'inherit_project2'	=> $this->_INHERITED_SKIN2 ? PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name : '',
-				);
-			}
-			$ext_length = strlen($this->_STPL_EXT);
-			// Process paths
-			foreach ((array)$paths as $_location => $_path) {
-				if (empty($_path)) {
-					continue;
-				}
-				$_path_length = strlen($_path);
-				foreach ((array)_class('dir')->scan_dir($_path, 1, array('', '/\.stpl$/i'), '/(svn|git)/') as $_cur_path) {
-					$_cur_path = substr($_cur_path, $_path_length, -$ext_length);
-					if ($_cur_path) {
-						$stpls_paths[$_cur_path] += $this->_stpl_loc_codes[$_location];
-					}
-				}
-			}
-			ksort($stpls_paths);
-			cache_set($CACHE_NAME, $stpls_paths);
-		}
-		$this->_stpls_paths_cache = $stpls_paths;
+		return file_exists($file_name);
 	}
 
 	/**
