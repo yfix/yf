@@ -101,11 +101,14 @@ class yf_cache {
 
 	/**
 	* Callback that can be overriden to ensure security when allowing url params like no_cache, refresh_cache
-	* We can add DEBUG_MODE checking here to not allow refresh_cache attacks, maybe add check for: conf('cache_refresh_token', 'something_random')
+	* We can add DEBUG_MODE checking here to not allow refresh_cache attacks, maybe add check for: conf('cache_refresh_token', 'something_random'), main()->CACHE_CONTROL_FROM_URL
 	*/
 	function _url_action_allowed ($action = '') {
 		$actions = array('no_cache', 'refresh_cache');
-		// TODO: add auth checking like debug auth or DEBUG_MODE checking to not allow no_cache attacks, main()->CACHE_CONTROL_FROM_URL
+		$callback = conf('cache_url_action_allowed');
+		if (is_callable($callback)) {
+			return (bool)$callback($action);
+		}
 		return true;
 	}
 
