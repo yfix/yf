@@ -572,14 +572,6 @@ class yf_tpl {
 			if ($this->_INHERITED_SKIN2) {
 				$storages['inherit_project2']= PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
 			}
-			$storages['framework']		  = YF_PATH. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
-			$storages['framework_p2']	   = YF_PATH. 'priority2/'. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
-			// user section within admin
-			if (MAIN_TYPE_ADMIN) {
-				$storages['user_section']	   = PROJECT_PATH. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
-				$storages['framework_user']	 = YF_PATH. $this->_THEMES_PATH. 'user/'. $file_name;
-				$storages['framework_user_p2']  = YF_PATH. 'priority2/'. $this->_THEMES_PATH. 'user/'. $file_name;
-			}
 			// Load template from plugins. Should stay in subdir like this:  
 			// YF_PATH.'plugins/news/templates/user/news/main.stpl' => tpl()->parse('news/main')
 			if ($class_name && (isset($this->_yf_plugins[$class_name]) || isset($this->_yf_plugins_classes[$class_name]))) {
@@ -600,6 +592,14 @@ class yf_tpl {
 					$storages['plugins_user_section']	 = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
 					$storages['plugins_framework_user']	 = YF_PATH. $plugin_subdir. $this->_THEMES_PATH. 'user/'. $file_name;
 				}
+			}
+			$storages['framework']		  = YF_PATH. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
+			$storages['framework_p2']	   = YF_PATH. 'priority2/'. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
+			// user section within admin
+			if (MAIN_TYPE_ADMIN) {
+				$storages['user_section']	   = PROJECT_PATH. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
+				$storages['framework_user']	 = YF_PATH. $this->_THEMES_PATH. 'user/'. $file_name;
+				$storages['framework_user_p2']  = YF_PATH. 'priority2/'. $this->_THEMES_PATH. 'user/'. $file_name;
 			}
 			// Try storages one-by-one in inheritance `order`, stop when found
 			$storage = '';
