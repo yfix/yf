@@ -169,6 +169,24 @@ class yf_core_api {
 
 	/**
 	*/
+	function get_properties($section = 'all') {
+		$props = array();
+		foreach ((array)$this->get_classes($section) as $_section => $modules) {
+			foreach ((array)$modules as $module) {
+				$obj = $this->get_class_instance($module, $_section);
+				foreach ((array)get_object_vars($obj) as $key => $val) {
+					$props[$module][$key] = $val;
+				}
+			}
+		}
+		foreach ((array)$props as $module => $_props) {
+			ksort($props[$module]);
+		}
+		return $props;
+	}
+
+	/**
+	*/
 	function get_classes($section = 'all') {
 		if (!in_array($section, array('all', 'user', 'admin', 'core'))) {
 			$section = 'all';
