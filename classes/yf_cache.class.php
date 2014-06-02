@@ -90,14 +90,23 @@ class yf_cache {
 		if (!main()->USE_SYSTEM_CACHE) {
 			$this->NO_CACHE = true;
 		}
-// TODO: add auth checking like debug auth or DEBUG_MODE checking to not allow no_cache attacks, main()->CACHE_CONTROL_FROM_URL
-		if ($_GET['no_core_cache'] || $_GET['no_cache']) {
+		if (($_GET['no_core_cache'] || $_GET['no_cache']) && $this->_url_action_allowed('no_cache')) {
 			$this->NO_CACHE = true;
 		}
-		if ($_GET['refresh_cache'] || $_GET['rebuild_core_cache']) {
+		if (($_GET['refresh_cache'] || $_GET['rebuild_core_cache']) && $this->_url_action_allowed('refresh_cache')) {
 			$this->FORCE_REBUILD_CACHE = true;
 		}
 		$this->FORCE_REBUILD_CACHE = false;
+	}
+
+	/**
+	* Callback that can be overriden to ensure security when allowing url params like no_cache, refresh_cache
+	* We can add DEBUG_MODE checking here to not allow refresh_cache attacks, maybe add check for: conf('cache_refresh_token', 'something_random')
+	*/
+	function _url_action_allowed ($action = '') {
+		$actions = array('no_cache', 'refresh_cache');
+		// TODO: add auth checking like debug auth or DEBUG_MODE checking to not allow no_cache attacks, main()->CACHE_CONTROL_FROM_URL
+		return true;
 	}
 
 	/**
@@ -202,8 +211,7 @@ class yf_cache {
 			'time'		=> round(microtime(true) - $time_start, 5),
 			'trace'		=> main()->trace_string(),
 		));
-// TODO: add DEBUG_MODE checking here to not allow refresh_cache attacks, maybe add check for: conf('cache_refresh_token', 'something_random')
-		if ($_GET['refresh_cache']) {
+		if ($_GET['refresh_cache'] && $this->_url_action_allowed('refresh_cache')) {
 			return false;
 		}
 		return $result;
