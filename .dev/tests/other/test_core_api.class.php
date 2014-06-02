@@ -110,6 +110,35 @@ class test_core_api {
 
 	/**
 	*/
+	function get_all_properties($section = 'all') {
+		$data = array();
+		foreach (_class('core_api')->get_properties($section) as $module => $props) {
+			$i++;
+			$module_id = $i;
+			$data[$module_id] = array(
+				'name'	=> $module,
+#				'link'	=> './?object='.__CLASS__.'&action=get_properties&id='.$section.'-'.$module,
+			);
+			foreach ((array)$props as $key => $val) {
+				$i++;
+				$prop_id = $i;
+				if (is_object($val) || is_callable($val) || is_resource($val)) {
+					$val = '['.gettype($val).']';
+				}
+				$data[$prop_id] = array(
+					'name'		=> $key/*.' = '.$val*/,
+					'parent_id'	=> $module_id,
+				);
+			}
+		}
+		return _class('html')->tree($data, array(
+			'opened_levels'	=> 0,
+			'draggable'		=> false,
+		));
+	}
+
+	/**
+	*/
 	function get_methods() {
 		list($section, $module) = explode('-', $_GET['id']);
 		$section = preg_replace('~[^a-z0-9_]~ims', '', $section);
