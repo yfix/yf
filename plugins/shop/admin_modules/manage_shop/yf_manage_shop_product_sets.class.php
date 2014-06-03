@@ -75,10 +75,13 @@ class yf_manage_shop_product_sets {
 				$result = true;
 				if( main()->is_ajax() ) {
 					// prepare file options
-					$file_path = PROJECT_PATH . 'uploads/shop/product_sets/';
+					$path      = 'uploads/shop/product_sets/';
+					$file_path = PROJECT_PATH . $path;
+					$uri_path  = WEB_PATH     . $path;
 					$file_original = $file_path . $product_set_id . '.jpg';
 					$file_big      = $file_path . $product_set_id . '_big.jpg';
 					$file_thumb    = $file_path . $product_set_id . '_thumb.jpg';
+					$url_thumb     = $uri_path  . $product_set_id . '_thumb.jpg';
 					$file_watermark = PROJECT_PATH . SITE_WATERMARK_FILE;
 					$max_width  = module( 'manage_shop' )->BIG_X;
 					$max_height = module( 'manage_shop' )->BIG_Y;
@@ -106,11 +109,16 @@ class yf_manage_shop_product_sets {
 						),
 						// 'upload_remove' => false,
 					));
-					$status = false;
-					if( !empty( $result[ 'versions' ] ) ) {
+					if( empty( $result[ 'versions' ] ) ) {
+						$status    = false;
+						$url_thumb = false;
+					} else {
 						$status = true;
 					}
-					echo json_encode( array( 'status' => $status ) );
+					echo json_encode( array(
+						'status' => $status,
+						'image'  => $url_thumb,
+					));
 					exit;
 				}
 			}

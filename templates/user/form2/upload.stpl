@@ -51,7 +51,6 @@ $( function() {
         , disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator.userAgent)
 		, previewMaxWidth  : 100
 		, previewMaxHeight : 100
-		, previewCrop      : true
 	}).on('fileuploadadd', function( e, data ) {
 		var progress_text = '0%';
 		var $this = $( this );
@@ -107,16 +106,24 @@ $( function() {
 		var context = data.context || _handler( $this );
 		{{-- console.log( 'data', data ); --}}
 		if( context.handler && data.result.status == true ) {
-			context.status.removeClass().addClass( 'text-success' ).text( 'успешно' ).fadeOut( 500 );
+			context.status.removeClass( 'text-error' ).addClass( 'text-success' ).text( 'успешно' ).fadeOut( 500 );
 			context.progress_title.text( 'успешно загружено' );
 			context.image.hide();
 			// refresh preview
-			var preview_url = context.preview.attr('src');
-			var preview_url_base = preview_url.split( '?' )[ 0 ];
-			var preview_url_refresh = preview_url_base + '?' + Math.random();
-			context.preview.attr( 'src', preview_url_refresh );
+			var preview_url = data.result[ data.paramName ] || false;
+			if( preview_url ) {
+				preview_url = preview_url + '?' + Math.random();
+				context.preview.attr( 'src', preview_url );
+			} else {
+				preview_url = context.preview.attr('src');
+				preview_url = preview_url.split( '?' )[ 0 ];
+				if( preview_url ) {
+					preview_url = preview_url + '?' + Math.random();
+					context.preview.attr( 'src', preview_url );
+				}
+			}
 		} else {
-			context.status.removeClass().addClass( 'text-error' ).text( 'ошибка при загрузке' );
+			context.status.removeClass( 'text-success' ).addClass( 'text-error' ).text( 'ошибка при загрузке' );
 			context.progress_title.text( 'ошибка при загрузке' );
 		}
 		context.upload.fadeOut( 300 );
@@ -130,7 +137,7 @@ $( function() {
 				.removeClass( 'bar-success progress-bar-success' )
 				.addClass( 'bar-danger progress-bar-danger' )
 			;
-			context.status.removeClass().addClass( 'text-error' ).text( 'ошибка при загрузке' );
+			context.status.removeClass( 'text-success' ).addClass( 'text-error' ).text( 'ошибка при загрузке' );
 			context.progress_title.text( 'ошибка при загрузке' );
 			context.upload.hide();
 			context.progress.hide();
