@@ -463,6 +463,7 @@ class yf_debug {
 			return '';
 		}
 		$data = _class('tpl')->driver->CACHE;
+		$debug = _class('tpl')->driver->debug;
 		if ($this->SORT_TEMPLATES_BY_NAME && !empty($data)) {
 			ksort($data);
 		}
@@ -486,7 +487,8 @@ class yf_debug {
 				'id'		=> ++$counter,
 // TODO: add link to inline stpl edit
 				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $v['storage'])),
-				'storage'	=> strval($v['storage']),
+				'storage'	=> strval($debug[$k]['storage']),
+				'storages'	=> '<pre>'._prepare_html(var_export($debug[$k]['storages'], 1)).'</pre>',
 				'calls'		=> strval($v['calls']),
 				'size'		=> strval($cur_size),
 				'time'		=> round($v['exec_time'], 4),
@@ -501,7 +503,7 @@ class yf_debug {
 		$body .= t('tpl_driver').': '.tpl()->DRIVER_NAME.' | '.t('compile_mode').': '.(int)tpl()->COMPILE_TEMPLATES.' | ';
 		$body .= t('used_templates_size').': '.$total_size.' bytes';
 		$body .= ' | '.t('total_exec_time').': '.round($total_stpls_exec_time, 4).' seconds';
-		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'name', 'vars' => 'name')));
+		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'name', 'vars' => 'name', 'storages' => 'name')));
 		return $body;
 	}
 
