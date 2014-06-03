@@ -546,30 +546,25 @@ class yf_tpl {
 			// Developer overrides
 			if (conf('DEV_MODE')) {
 				if ($site_path && $site_path != PROJECT_PATH) {
-					$storages['dev_site']   = $site_path. $dev_path. $this->TPL_PATH. $file_name;
+					$storages['dev_site'] = $site_path. $dev_path. $this->TPL_PATH. $file_name;
 				}
-				$storages['dev_project']	= PROJECT_PATH. $dev_path. $this->TPL_PATH. $file_name;
+				$storages['dev_project'] = PROJECT_PATH. $dev_path. $this->TPL_PATH. $file_name;
 			}
 			if ($this->ALLOW_LANG_BASED_STPLS) {
-				$storages['lang_project']   = $this->_lang_theme_path. $file_name;
+				$storages['lang_project'] = $this->_lang_theme_path. $file_name;
 			}
 			if ($site_path && $site_path != PROJECT_PATH) {
-				$storages['site']		   = $site_path. $this->TPL_PATH. $file_name;
+				$storages['site'] = $site_path. $this->TPL_PATH. $file_name;
 			}
-			$storages['project']			= PROJECT_PATH. $this->TPL_PATH. $file_name;
+			$storages['project'] = PROJECT_PATH. $this->TPL_PATH. $file_name;
 			if ($this->_INHERITED_SKIN) {
-				$storages['inherit_project']= PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
+				$storages['inherit_project'] = PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
 			}
 			if ($this->_INHERITED_SKIN2) {
-				$storages['inherit_project2']= PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
+				$storages['inherit_project2'] = PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
 			}
 			// in admin mode: not include main, style_css, script_js templates from project place
-			if (MAIN_TYPE_ADMIN && !(
-				$file_name == 'main'.$this->_STPL_EXT
-				|| $file_name == 'style_css'.$this->_STPL_EXT
-				|| $file_name == 'script_js'.$this->_STPL_EXT
-				)
-			) {
+			if (MAIN_TYPE_ADMIN && !in_array($stpl_name, array('main'/*, 'style_css', 'script_js'*/))) {
 				$storages['project_admin_user'] = PROJECT_PATH. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
 			}
 			// Load template from plugins. Should stay in subdir like this:
@@ -589,16 +584,16 @@ class yf_tpl {
 				}
 				$storages['plugins_framework'] = YF_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
 				if (MAIN_TYPE_ADMIN) {
-					$storages['plugins_user_section']	 = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
-					$storages['plugins_framework_user']	 = YF_PATH. $plugin_subdir. $this->_THEMES_PATH. 'user/'. $file_name;
+					$storages['plugins_user_section'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
+					$storages['plugins_framework_user']	= YF_PATH. $plugin_subdir. $this->_THEMES_PATH. 'user/'. $file_name;
 				}
 			}
-			$storages['framework']		  = YF_PATH. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
-			$storages['framework_p2']	   = YF_PATH. 'priority2/'. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
+			$storages['framework'] = YF_PATH. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
+			$storages['framework_p2'] = YF_PATH. 'priority2/'. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
 			// user section within admin
 			if (MAIN_TYPE_ADMIN) {
-				$storages['framework_user']	 = YF_PATH. $this->_THEMES_PATH. 'user/'. $file_name;
-				$storages['framework_user_p2']  = YF_PATH. 'priority2/'. $this->_THEMES_PATH. 'user/'. $file_name;
+				$storages['framework_user']	= YF_PATH. $this->_THEMES_PATH. 'user/'. $file_name;
+				$storages['framework_user_p2'] = YF_PATH. 'priority2/'. $this->_THEMES_PATH. 'user/'. $file_name;
 			}
 			// Try storages one-by-one in inheritance `order`, stop when found
 			$storage = '';
@@ -624,6 +619,10 @@ class yf_tpl {
 				$NOT_FOUND = true;
 			}
 		}
+		if (DEBUG_MODE) {
+			$this->driver->debug[$stpl_name]['storage'] = $storage;
+			$this->driver->debug[$stpl_name]['storages'] = $storages;
+		}
 		if ($RETURN_TEMPLATE_PATH) {
 			return $file_path;
 		}
@@ -634,8 +633,6 @@ class yf_tpl {
 		// Log error message if template file was not found
 		if ($NOT_FOUND) {
 			trigger_error('STPL: template "'.$file_name.'" in theme "'.conf('theme').'" not found.', E_USER_WARNING);
-		} else {
-			$this->driver->CACHE[str_replace($this->_STPL_EXT, '', $file_name)]['storage'] = $storage;
 		}
 		return $string;
 	}
