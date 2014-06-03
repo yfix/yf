@@ -33,10 +33,14 @@ function get_paths() {
 		'*/*/config/',
 		'*/*/*/',
 		'*/*/*/config/',
+		'../',
 		'../config/',
 		'../*/',
 		'../*/config/',
 		'../../*/',
+		'../../*/config/',
+		'../../../*/',
+		'../../../*/config/',
 	);
 	foreach ($globs as $g) {
 		$files = glob($paths['called_path']. $g. 'db_setup.php');
@@ -67,12 +71,6 @@ function get_paths() {
 		}
 	}
 	return $paths;
-}
-$paths = get_paths();
-print_r($paths);
-
-if (!defined('YF_PATH')) {
-	define('YF_PATH', $paths['yf_path']);
 }
 function init_yf() {
 	if (function_exists('main')) {
@@ -119,6 +117,13 @@ function get_yf_console_commands() {
 	}
 	return $cmds;
 }
+
+$yf_paths = get_paths();
+if (!defined('YF_PATH')) {
+	define('YF_PATH', $yf_paths['yf_path']);
+}
+
+print_r($yf_paths);
 
 $app = new Application('yf', '1.0 (stable)');
 $app->addCommands(get_yf_console_commands());
