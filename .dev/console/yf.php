@@ -15,13 +15,63 @@ use Symfony\Component\Console\Application;
 
 require '/usr/local/share/composer/vendor/autoload.php';
 
-if (!defined('YF_PATH')) {
-	define('YF_PATH', dirname(dirname(dirname(__FILE__))).'/');
+function get_paths() {
+	$paths = array(
+		'called_path'	=> rtrim(getcwd(), '/').'/',
+		'yf_path'		=> dirname(dirname(dirname(__FILE__))).'/',
+		'app_path'		=> '',
+		'project_path'	=> '',
+		'config_path'	=> '',
+		'db_setup_path'	=> '',
+	);
+	$globs = array(
+		'',
+		'config/',
+		'*/',
+		'*/config/',
+		'*/*/',
+		'*/*/config/',
+		'*/*/*/',
+		'*/*/*/config/',
+		'../',
+		'../config/',
+		'../*/',
+		'../*/config/',
+		'../../*/',
+		'../../*/config/',
+		'../../../*/',
+		'../../../*/config/',
+	);
+	foreach ($globs as $g) {
+		$files = glob($paths['called_path']. $g. 'db_setup.php');
+		if (!$files || !isset($files[0])) {
+			continue;
+		}
+		$fp = $files[0];
+		if ($fp && file_exists($fp)) {
+			$paths['db_setup_path'] = realpath($fp);
+			break;
+		}
+	}
+	if ($paths['db_setup_path']) {
+		if (basename(dirname($paths['db_setup_path'])) == 'config') {
+			$paths['app_path'] = dirname(dirname($paths['db_setup_path'])).'/';
+		} else {
+			$paths['app_path'] = dirname($paths['db_setup_path']).'/';
+		}
+	}
+	if ($paths['app_path']) {
+		$paths['config_path'] = $paths['app_path'].'config/';
+		$files = glob($paths['app_path']. '*/'. 'index.php');
+		if ($files && isset($files[0])) {
+			$fp = $files[0];
+			if ($fp && file_exists($fp)) {
+				$paths['project_path'] = dirname($fp).'/';
+			}
+		}
+	}
+	return $paths;
 }
-// TODO
-#if (!defined('PROJECT_PATH')) {
-#	define('PROJECT_PATH', __DIR__.'/');
-#}
 function init_yf() {
 	if (function_exists('main')) {
 		return true;
@@ -67,6 +117,13 @@ function get_yf_console_commands() {
 	}
 	return $cmds;
 }
+
+$yf_paths = get_paths();
+if (!defined('YF_PATH')) {
+	define('YF_PATH', $yf_paths['yf_path']);
+}
+
+print_r($yf_paths);
 
 $app = new Application('yf', '1.0 (stable)');
 $app->addCommands(get_yf_console_commands());
