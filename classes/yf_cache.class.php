@@ -473,9 +473,11 @@ class yf_cache {
 		$result = $this->_driver->list_keys();
 		if ($this->CACHE_NS && $result) {
 			$ns_len = strlen($this->CACHE_NS);
-			foreach ($result as &$v) {
+			foreach ($result as $k => $v) {
 				if (substr($v, 0, $ns_len) != $this->CACHE_NS) {
-					unset($v);
+					unset($result[$k]);
+				} else {
+					$result[$k] = substr($v, $ns_len);
 				}
 			}
 		}
