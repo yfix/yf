@@ -157,7 +157,6 @@ class yf_form2 {
 		$extra_override = $all_attrs_override[$form_id];
 		// Search for override params inside shared files
 		$suffix = $form_id.'.form.php';
-// TODO: optimize this to avoid searching filesystem on each this function call
 		$paths = array(
 			'yf_main'			=> YF_PATH. 'share/form/'.$suffix,
 			'yf_plugins'		=> YF_PATH. 'plugins/*/share/form/'.$suffix,
@@ -372,8 +371,6 @@ class yf_form2 {
 			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
 			$body = '<form'._attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate')).'>'.PHP_EOL;
-// TODO: use unified fieldset_start() method
-// Fieldset hardcode here needed to avoid strange bug with recursion
 			$_this->_fieldset_mode_on = true;
 			$body .= '<fieldset'._attrs($extra['fieldset'], array('class','style','id','name')).'>';
 			if ($extra['legend']) {
@@ -395,8 +392,6 @@ class yf_form2 {
 			$extra = array();
 		}
 		$func = function($extra, $r, $_this) {
-// TODO: use unified fieldset_start() method
-// Fieldset hardcode here needed to avoid strange bug with recursion
 			$_this->_fieldset_mode_on = false;
 			$body .= '</fieldset>'.PHP_EOL;
 			$body .= '</form>'.PHP_EOL;
