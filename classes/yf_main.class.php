@@ -132,9 +132,9 @@ class yf_main {
 	/** @var string @conf_skip Multi-server mode option */
 	public $SERVER_ROLE				= null;
 	/** @var bool */
-	public $ALLOW_DEBUG_PROFILING	= 0;
+	public $ALLOW_DEBUG_PROFILING	= false;
 	/** @var bool @conf_skip */
-	public $PROFILING				= 0;
+	public $PROFILING				= false;
 
 	/**
 	* Engine constructor
@@ -169,7 +169,7 @@ class yf_main {
 			$this->_before_init_hook();
 			$this->fix_required_constants();
 			$this->set_required_php_params();
-			$this->_set_module_conf('main', $this); // // Load project config for self
+			$this->set_module_conf('main', $this); // // Load project config for self
 			$this->init_firephp();
 			$this->init_server_health();
 			$this->try_fast_init();
@@ -435,7 +435,7 @@ class yf_main {
 			$this->init_class('db', 'classes/');
 			$GLOBALS['db'] =& $this->modules['db'];
 		} else {
-			$this->_set_module_conf('db', $this->modules['db']);
+			$this->set_module_conf('db', $this->modules['db']);
 		}
 		$this->db =& $this->modules['db'];
 	}
@@ -625,7 +625,7 @@ class yf_main {
 				return false;
 			}
 			$this->session = new $session_loaded_class_name();
-			$this->_set_module_conf($session_class_name, $this->session);
+			$this->set_module_conf($session_class_name, $this->session);
 			session_set_save_handler (
 				array($this->session, 'open'),
 				array($this->session, 'close'),
@@ -783,7 +783,7 @@ class yf_main {
 		$auth_loaded_module_name = $this->load_class_file($auth_module_name, 'classes/auth/');
 		if ($auth_loaded_module_name) {
 			$this->auth = new $auth_loaded_module_name();
-			$this->_set_module_conf($auth_module_name, $this->auth);
+			$this->set_module_conf($auth_module_name, $this->auth);
 			$this->auth->init();
 		}
 		if (!is_object($this->auth)) {
@@ -866,7 +866,7 @@ class yf_main {
 		$class_name_to_load = $this->load_class_file($class_name, $custom_path);
 		if ($class_name_to_load) {
 			$this->modules[$class_name] = new $class_name_to_load($params);
-			$this->_set_module_conf($class_name, $this->modules[$class_name], $params);
+			$this->set_module_conf($class_name, $this->modules[$class_name], $params);
 		}
 		if (is_object($this->modules[$class_name])) {
 			return $this->modules[$class_name];
@@ -1129,22 +1129,26 @@ class yf_main {
 			$obj = $this;
 		} else {
 			$obj = $this->init_class($class_name, $custom_path, $method_params);
+			if (!is_object($obj) && !$custom_path) {
+				$custom_path = 'classes/';
+				$obj = $this->init_class($class_name, $custom_path, $method_params);
+			}
 		}
 		if (!is_object($obj)) {
 			if (!$silent) {
-				trigger_error('MAIN: module "'.$class_name.'" init failed'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'"'.$this->modules['tpl']->_search_stpl_line($class_name, $method_name, $method_params, $tpl_name).')' : ''), E_USER_WARNING);
+				trigger_error('MAIN: module "'.$class_name.'" init failed'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'"' : ''), E_USER_WARNING);
 			}
 			return false;
 		}
 		if (!method_exists($obj, $method_name)) {
 			if (!$silent) {
-				trigger_error('MAIN: no method "'.$method_name.'" in module "'.$class_name.'"'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'"'.$this->modules['tpl']->_search_stpl_line($class_name, $method_name, $method_params, $tpl_name).')' : ''), E_USER_WARNING);
+				trigger_error('MAIN: no method "'.$method_name.'" in module "'.$class_name.'"'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'")' : ''), E_USER_WARNING);
 			}
 			return false;
 		}
 		// Try to process method params (string like attrib1=value1;attrib2=value2)
 		if (is_string($method_params) && strlen($method_params)) {
-			$method_params	= (array)_attrs_string2array($method_params);
+			$method_params = (array)_attrs_string2array($method_params);
 		}
 		$result = $obj->$method_name($method_params);
 		if ($use_cache) {
@@ -1160,7 +1164,6 @@ class yf_main {
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
-		$path = in_array($class_name, array('graphics')) ? 'classes/' : '';
 		$body = $this->call_class_method($class_name, $path, $method_name, $method_params, $tpl_name, $silent, $use_cache, $cache_ttl, $cache_key_override);
 		if (DEBUG_MODE) {
 			debug('main_execute_block_time[]', array(
@@ -1169,6 +1172,7 @@ class yf_main {
 				'params'	=> $method_params,
 				'tpl_name'	=> $tpl_name,
 				'silent'	=> (int)$silent,
+				'size'		=> strlen($body),
 				'time'		=> round(microtime(true) - $_time_start, 5),
 				'trace'		=> $this->trace_string(),
 			));
@@ -1193,7 +1197,7 @@ class yf_main {
 	/**
 	* Set module properties from project conf array
 	*/
-	function _set_module_conf($module_name = '', &$MODULE_OBJ, $params = '') {
+	function set_module_conf($module_name = '', &$MODULE_OBJ, $params = '') {
 		// Stop here if project config not set or some other things missing
 		if (empty($module_name)	|| !is_object($MODULE_OBJ)) {
 			return false;
