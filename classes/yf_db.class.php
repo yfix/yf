@@ -301,9 +301,6 @@ class yf_db {
 				}
 			}
 		}
-// TODO: if query with 1 or more joined tables and all of them not exists 
-//		- then we need to try several times, checking that error changing
-//      as mysql will not tell all missing tables at once, only one-by-one
 		if (!$result && $query_allowed && $db_error && $this->ERROR_AUTO_REPAIR) {
 			$result = $this->_repair_table($sql, $db_error);
 		}
@@ -1301,22 +1298,34 @@ class yf_db {
 	/**
 	* Helper
 	*/
-	function delete($table, $where) {
+	function delete($table, $where, $as_sql = false) {
 		// Do not allow wide deletes, to prevent awful mistakes, use plain db()->query('DELETE ...') instead
 		if (!$where) {
 			return false;
 		}
-		$cond = 'id='.$this->escape_val($where);
-// TODO: connect query builder's where() for $where, also supporting wherein() and passing number as whereid()
-// TODO: add support for several fields in where
-		if (is_array($where)) {
-			$cond = key($where).'='.$this->escape_val(current($where));
+		$where_func = 'where';
+		if (is_numeric($where)) {
+			$where_func = 'whereid';
+		} elseif (is_array($where)) {
+			$is_all_numeric = true;
+			foreach ($where as $k => $v) {
+				if (!is_numeric($k) || !is_numeric($v)) {
+					$is_all_numeric = false;
+					break;
+				}
+			}
+			if ($is_all_numeric) {
+				$where_func = 'whereid';
+			}
 		}
-		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
+		$sql = $this->from($table)->$where_func($where)->delete($_as_sql = true);
+		if (false === strpos(strtoupper($sql), 'WHERE')) {
+			return false;
+		}
+		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS && !$as_sql) {
 			$this->_save_query_revision(__FUNCTION__, $table, array('where' => $where, 'cond' => $cond));
 		}
-		$sql = 'DELETE FROM '.$this->_real_name($table).' WHERE '.$cond;
-		return $this->query($sql);
+		return $as_sql ? $sql : $this->query($sql);
 	}
 
 	/**
@@ -1474,13 +1483,11 @@ class yf_db {
 			'get_id'		=> $_GET['id'],
 			'trace'			=> $trace,
 		);
-// TODO: data_old usign SELECT by $where
-// TODO: data_diff = diff data_new vs data_old
 		$to_insert = array(
 			'date'			=> date('Y-m-d H:i:s'),
 			'data_new'		=> $params['data'] ? json_encode($params['data']) : '',
-#			'data_old'		=> 
-#			'data_diff'		=> 
+			'data_old'		=> $params['data_old'],
+			'data_diff'		=> $params['data_diff'],
 			'user_id'		=> main()->ADMIN_ID,
 			'user_group'	=> main()->ADMIN_GROUP,
 			'site_id'		=> conf('SITE_ID'),
