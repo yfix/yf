@@ -43,7 +43,6 @@ class yf_html {
 	*/
 	function _init() {
 		$this->_is_bs3 = (conf('css_framework') == 'bs3');
-#		$this->_rnd = substr(md5(microtime()), 0, 8);
 	}
 
 	/**
@@ -1193,7 +1192,6 @@ class yf_html {
 	/**
 	*/
 	function datetime_box2 ($name, $selected = '', $years = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
-#		return call_user_func_array(array(_class('html_datetime', 'classes/html/'), __FUNCTION__), func_get_args());
 		return _class('html_datetime', 'classes/html/')->datetime_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate);
 	}
 }
