@@ -282,7 +282,12 @@ class yf_core_css {
 	/**
 	*/
 	public function _strip_style_tags ($text) {
+/*
 // TODO: add support for extracting url from <link rel="stylesheet" href="path.to/style.css">
+//		preg_replace_callback('~<link[\s\t]+rel="stylesheet"[\s\t]+href="([^"]+)"[\s\t]*[/]?>~ims', function($m) use (&$text) {
+//			return $m[1];
+//		});
+*/
 		for ($i = 0; $i < 10; $i++) {
 			if (strpos($text, 'style') === false) {
 				break;
