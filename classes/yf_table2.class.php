@@ -1097,7 +1097,7 @@ class yf_table2 {
 				if (isset($instance_params['id'])) {
 					$override_id = $instance_params['id'];
 				}
-				if ($instance_params['btn_no_text']) {
+				if ($instance_params['btn_no_text'] || $extra['btn_no_text']) {
 					$no_text = 1;
 				}
 				$id = $override_id ? $override_id : 'id';
@@ -1108,7 +1108,7 @@ class yf_table2 {
 				if ($extra['target']) {
 					$attrs .= ' target="'.$extra['target'].'"';
 				}
-				$title = $extra['title'] ?: $extra['desc'] ?: $extra['name'];
+				$title = $params['name'] ?: $extra['title'] ?: $extra['desc'];
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$link = trim(str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add']);
 				if (strlen($link) && !$_this->_is_link_allowed($link)) {
@@ -1291,7 +1291,7 @@ class yf_table2 {
 				}
 				$values = $_this->_pair_active;
 				$val = $values[intval((bool)$row['active'])];
-				return !$extra['disabled'] ? '<a href="'.$link.'" class="change_active">'. $val. '</a> ' : $val;
+				return !$extra['disabled'] ? '<a href="'.$link.'" title="'.$params['name'].'" class="change_active">'. $val. '</a> ' : $val;
 			},
 		);
 		return $this;
