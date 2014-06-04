@@ -806,23 +806,6 @@ class yf_tpl {
 	}
 
 	/**
-	* Search template for the string that caused an error
-	*/
-	function _search_stpl_line ($class_name, $method_name, $method_params = '', $tpl_name) {
-		$stpl_file	= SITE_PATH. tpl()->TPL_PATH. $tpl_name;
-		if (!file_exists($stpl_file)) {
-			$stpl_file = PROJECT_PATH. tpl()->TPL_PATH. $tpl_name;
-		}
-		if (!file_exists($stpl_file)) {
-			$stpl_file = YF_PATH. tpl()->TPL_PATH. $tpl_name;
-		}
-		if (file_exists($stpl_file)) {
-			$line_search = preg_grep("/\{execute\([\"']*".$class_name.','.$method_name.(!empty($method_params) ? ','.$method_params : '')."[\"']*\)\}/i", @file($stpl_file));
-			return ' on line '.intval(array_shift(array_keys($line_search)) + 1);
-		}
-	}
-
-	/**
 	* Wrapper around '_generate_url' function, called like this inside templates:
 	* {url(object=home_page;action=test)}
 	*/
