@@ -9,41 +9,41 @@
 */
 class yf_debug {
 
-	public $_SHOW_DB_QUERY_LOG			= 1;
-	public $_SHOW_DB_STATS				= 1;
-	public $_SHOW_DB_EXPLAIN_QUERY		= 1;
-	public $_SHOW_SPHINX				= 1;
-	public $_SHOW_SSH					= 1;
-	public $_SHOW_STPLS					= 1;
-	public $_SHOW_REWRITE_INFO			= 1;
-	public $_SHOW_OUTPUT_CACHE_INFO		= 1;
-	public $_SHOW_RESIZED_IMAGES_LOG	= 1;
-	public $_SHOW_INCLUDED_FILES		= 1;
-	public $_SHOW_LOADED_MODULES		= 1;
-	public $_SHOW_MEMCACHED_INFO		= 1;
-	public $_SHOW_EACCELERATOR_INFO		= 1;
-	public $_SHOW_XCACHE_INFO			= 1;
-	public $_SHOW_APC_INFO				= 1;
-	public $_SHOW_MAIN_GET_DATA			= 1;
-	public $_SHOW_CORE_CACHE			= 1;
-	public $_SHOW_MAIN_EXECUTE			= 1;
-	public $_SHOW_GLOBALS				= 1;
-	public $_SHOW_NOT_TRANSLATED		= 1;
-	public $_SHOW_I18N_VARS				= 1;
-	public $_SHOW_GET_DATA				= 1;
-	public $_SHOW_POST_DATA				= 1;
-	public $_SHOW_COOKIE_DATA			= 1;
-	public $_SHOW_SESSION_DATA			= 1;
-	public $_SHOW_FILES_DATA			= 1;
-	public $_SHOW_SERVER_DATA			= 1;
-	public $_SHOW_ENV_DATA				= 1;
-	public $_SHOW_SETTINGS				= 1;
-	public $_SHOW_CURL_REQUESTS			= 1;
-	public $_SHOW_FORM2					= 1;
-	public $_SHOW_TABLE2				= 1;
-	public $_SHOW_DD_TABLE				= 1;
-	public $SORT_TEMPLATES_BY_NAME		= 1;
-	public $ADD_ADMIN_LINKS				= true;
+	public $SHOW_DB_QUERY_LOG		= 1;
+	public $SHOW_DB_STATS			= 1;
+	public $SHOW_DB_EXPLAIN_QUERY	= 1;
+	public $SHOW_SPHINX				= 1;
+	public $SHOW_SSH				= 1;
+	public $SHOW_STPLS				= 1;
+	public $SHOW_REWRITE_INFO		= 1;
+	public $SHOW_OUTPUT_CACHE_INFO	= 1;
+	public $SHOW_RESIZED_IMAGES_LOG	= 1;
+	public $SHOW_INCLUDED_FILES		= 1;
+	public $SHOW_LOADED_MODULES		= 1;
+	public $SHOW_MEMCACHED_INFO		= 1;
+	public $SHOW_EACCELERATOR_INFO	= 1;
+	public $SHOW_XCACHE_INFO		= 1;
+	public $SHOW_APC_INFO			= 1;
+	public $SHOW_MAIN_GET_DATA		= 1;
+	public $SHOW_CORE_CACHE			= 1;
+	public $SHOW_MAIN_EXECUTE		= 1;
+	public $SHOW_GLOBALS			= 1;
+	public $SHOW_NOT_TRANSLATED		= 1;
+	public $SHOW_I18N_VARS			= 1;
+	public $SHOW_GET_DATA			= 1;
+	public $SHOW_POST_DATA			= 1;
+	public $SHOW_COOKIE_DATA		= 1;
+	public $SHOW_SESSION_DATA		= 1;
+	public $SHOW_FILES_DATA			= 1;
+	public $SHOW_SERVER_DATA		= 1;
+	public $SHOW_ENV_DATA			= 1;
+	public $SHOW_SETTINGS			= 1;
+	public $SHOW_CURL_REQUESTS		= 1;
+	public $SHOW_FORM2				= 1;
+	public $SHOW_TABLE2				= 1;
+	public $SHOW_DD_TABLE			= 1;
+	public $SORT_TEMPLATES_BY_NAME	= 1;
+	public $ADD_ADMIN_LINKS			= 1;
 	public $ADMIN_PATHS				= array(
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={{THEME}}&name={{ID}}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={{ID}}',
@@ -90,7 +90,6 @@ class yf_debug {
 			$ts2 = microtime(true);
 			$content = $this->$method($method_params);
 			if ($method_params) {
-// TODO: support for callback params (title, desc, style, class, etc..)
 				$debug_params[$method] = $method_params;
 			}
 			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' secs';
@@ -154,7 +153,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_DEBUG_YF (&$params = array()) {
-		if (!$this->_SHOW_SETTINGS) {
+		if (!$this->SHOW_SETTINGS) {
 			return '';
 		}
 		$data['yf'] = array(
@@ -282,7 +281,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_db (&$params = array()) {
-		if (!$this->_SHOW_DB_QUERY_LOG) {
+		if (!$this->SHOW_DB_QUERY_LOG) {
 			return false;
 		}
 		$items = array();
@@ -303,7 +302,7 @@ class yf_debug {
 	/**
 	*/
 	function _do_debug_db_connection_queries ($db, $connect_trace = array()) {
-		if (!$this->_SHOW_DB_QUERY_LOG) {
+		if (!$this->SHOW_DB_QUERY_LOG) {
 			return '';
 		}
 		if (!is_object($db) || !is_array($db->_LOG) || !$db->_tried_to_connect) {
@@ -311,7 +310,7 @@ class yf_debug {
 		}
 		$items = array();
 		$db_queries_list = $db->_LOG;
-		if ($this->_SHOW_DB_EXPLAIN_QUERY && !empty($db_queries_list) && substr($db->DB_TYPE, 0, 5) == 'mysql') {
+		if ($this->SHOW_DB_EXPLAIN_QUERY && !empty($db_queries_list) && substr($db->DB_TYPE, 0, 5) == 'mysql') {
 			foreach ((array)$db_queries_list as $id => $log) {
 				if ($log['error']) {
 					continue;
@@ -404,7 +403,7 @@ class yf_debug {
 	/**
 	*/
 	function _show_db_shutdown_queries ($db) {
-		if (!$this->_SHOW_DB_QUERY_LOG) {
+		if (!$this->SHOW_DB_QUERY_LOG) {
 			return '';
 		}
 		return $this->_show_key_val_table($db->_SHUTDOWN_QUERIES);
@@ -413,7 +412,7 @@ class yf_debug {
 	/**
 	*/
 	function _show_db_stats ($db) {
-		if (!$this->_SHOW_DB_STATS) {
+		if (!$this->SHOW_DB_STATS) {
 			return '';
 		}
 		$data['stats'] = $db->get_2d('SHOW SESSION STATUS');
@@ -427,7 +426,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_memcached (&$params = array()) {
-		if (!$this->_SHOW_MEMCACHED_INFO) {
+		if (!$this->SHOW_MEMCACHED_INFO) {
 			return '';
 		}
 		if (strpos(strtolower(cache()->DRIVER), 'memcache') === false) {
@@ -459,7 +458,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_stpls (&$params = array()) {
-		if (!$this->_SHOW_STPLS) {
+		if (!$this->SHOW_STPLS) {
 			return '';
 		}
 		$data = _class('tpl')->driver->CACHE;
@@ -485,7 +484,7 @@ class yf_debug {
 
 			$items[$counter] = array(
 				'id'		=> ++$counter,
-// TODO: add link to inline stpl edit
+				// TODO: add link to inline stpl edit
 				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $v['storage'])),
 				'storage'	=> strval($debug[$k]['storage']),
 				'storages'	=> '<pre>'._prepare_html(var_export($debug[$k]['storages'], 1)).'</pre>',
@@ -510,7 +509,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_rewrite (&$params = array()) {
-		if (!$this->_SHOW_REWRITE_INFO) {
+		if (!$this->SHOW_REWRITE_INFO) {
 			return '';
 		}
 		$data = $this->_get_debug_data('rewrite');
@@ -536,7 +535,7 @@ class yf_debug {
 	/*
 	*/
 	function _debug_url (&$params = array()) {
-		if (!$this->_SHOW_REWRITE_INFO) {
+		if (!$this->SHOW_REWRITE_INFO) {
 			return '';
 		}
 		$items = $this->_get_debug_data('_force_get_url');
@@ -551,7 +550,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_modules (&$params = array()) {
-		if (!$this->_SHOW_LOADED_MODULES) {
+		if (!$this->SHOW_LOADED_MODULES) {
 			return '';
 		}
 		$items = array();
@@ -574,7 +573,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_execute (&$params = array()) {
-		if (!$this->_SHOW_MAIN_EXECUTE) {
+		if (!$this->SHOW_MAIN_EXECUTE) {
 			return '';
 		}
 		$items = $this->_get_debug_data('main_execute_block_time');
@@ -585,7 +584,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_get_data (&$params = array()) {
-		if (!$this->_SHOW_MAIN_GET_DATA) {
+		if (!$this->SHOW_MAIN_GET_DATA) {
 			return '';
 		}
 		$items = (array)$this->_get_debug_data('main_get_data');
@@ -602,7 +601,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_cache_get (&$params = array()) {
-		if (!$this->_SHOW_CORE_CACHE) {
+		if (!$this->SHOW_CORE_CACHE) {
 			return '';
 		}
 // TODO + add admin link to purge cache
@@ -621,7 +620,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_cache_set (&$params = array()) {
-		if (!$this->_SHOW_CORE_CACHE) {
+		if (!$this->SHOW_CORE_CACHE) {
 			return '';
 		}
 		$items = (array)$this->_get_debug_data('cache_set');
@@ -638,7 +637,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_cache_del (&$params = array()) {
-		if (!$this->_SHOW_CORE_CACHE) {
+		if (!$this->SHOW_CORE_CACHE) {
 			return '';
 		}
 		$items = $this->_get_debug_data('cache_del');
@@ -649,7 +648,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug__get (&$params = array()) {
-		if (!$this->_SHOW_GET_DATA) {
+		if (!$this->SHOW_GET_DATA) {
 			return '';
 		}
 		$out = $this->_show_key_val_table($_GET);
@@ -661,7 +660,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug__post (&$params = array()) {
-		if (!$this->_SHOW_POST_DATA) {
+		if (!$this->SHOW_POST_DATA) {
 			return '';
 		}
 		$out = $this->_show_key_val_table($_POST);
@@ -673,10 +672,9 @@ class yf_debug {
 	/**
 	*/
 	function _debug__cookie (&$params = array()) {
-		if (!$this->_SHOW_COOKIE_DATA) {
+		if (!$this->SHOW_COOKIE_DATA) {
 			return '';
 		}
-// TODO: add link to delete cookie (inside browser)
 		$out = $this->_show_key_val_table($_COOKIE);
 		$items = $this->_get_debug_data('input_cookie');
 		$items && $out .= $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name')));
@@ -686,7 +684,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug__files (&$params = array()) {
-		if (!$this->_SHOW_FILES_DATA) {
+		if (!$this->SHOW_FILES_DATA) {
 			return '';
 		}
 		return $this->_show_key_val_table($_FILES);
@@ -695,7 +693,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug__session (&$params = array()) {
-		if (!$this->_SHOW_SESSION_DATA) {
+		if (!$this->SHOW_SESSION_DATA) {
 			return '';
 		}
 		$items = $_SESSION;
@@ -715,7 +713,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug__server (&$params = array()) {
-		if (!$this->_SHOW_SERVER_DATA) {
+		if (!$this->SHOW_SERVER_DATA) {
 			return '';
 		}
 		$out = $this->_show_key_val_table($_SERVER);
@@ -727,7 +725,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug__env (&$params = array()) {
-		if (!$this->_SHOW_ENV_DATA) {
+		if (!$this->SHOW_ENV_DATA) {
 			return '';
 		}
 		$out = $this->_show_key_val_table($_ENV);
@@ -739,7 +737,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_i18n (&$params = array()) {
-		if (!$this->_SHOW_I18N_VARS) {
+		if (!$this->SHOW_I18N_VARS) {
 			return '';
 		}
 		$calls = _class('i18n')->_calls;
@@ -756,7 +754,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_sphinxsearch (&$params = array()) {
-		if (!$this->_SHOW_SPHINX) {
+		if (!$this->SHOW_SPHINX) {
 			return "";
 		}
 		$sphinx_debug = $this->_get_debug_data('sphinxsearch');
@@ -791,10 +789,9 @@ class yf_debug {
 	/**
 	*/
 	function _debug_ssh (&$params = array()) {
-		if (!$this->_SHOW_SSH) {
+		if (!$this->SHOW_SSH) {
 			return '';
 		}
-// TODO: add link to webshell of that server
 		// Need to enable only when ssh was used
 		if (!isset(main()->modules['ssh'])) {
 			return '';
@@ -805,7 +802,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_eaccelerator (&$params = array()) {
-		if (!$this->_SHOW_EACCELERATOR_INFO || !function_exists('eaccelerator_info')) {
+		if (!$this->SHOW_EACCELERATOR_INFO || !function_exists('eaccelerator_info')) {
 			return '';
 		}
 		$eaccel_stats = eaccelerator_info();
@@ -818,7 +815,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_apc (&$params = array()) {
-		if (!$this->_SHOW_APC_INFO || !function_exists('apc_cache_info')) {
+		if (!$this->SHOW_APC_INFO || !function_exists('apc_cache_info')) {
 			return '';
 		}
 		$data = apc_cache_info();
@@ -831,7 +828,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_xcache (&$params = array()) {
-		if (!$this->_SHOW_XCACHE_INFO || !function_exists('xcache_get')) {
+		if (!$this->SHOW_XCACHE_INFO || !function_exists('xcache_get')) {
 			return '';
 		}
 		foreach ((array)ini_get_all('xcache') as $_k => $_v) {
@@ -843,7 +840,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_resize_images (&$params = array()) {
-		if (!$this->_SHOW_RESIZED_IMAGES_LOG || empty($GLOBALS['_RESIZED_IMAGES_LOG'])) {
+		if (!$this->SHOW_RESIZED_IMAGES_LOG || empty($GLOBALS['_RESIZED_IMAGES_LOG'])) {
 			return '';
 		}
 		return $this->_show_auto_table($GLOBALS['_RESIZED_IMAGES_LOG']);
@@ -852,7 +849,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_globals (&$params = array()) {
-		if (!$this->_SHOW_GLOBALS) {
+		if (!$this->SHOW_GLOBALS) {
 			return '';
 		}
 		$data['constants'] = get_defined_constants(true);
@@ -873,7 +870,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_included (&$params = array()) {
-		if (!$this->_SHOW_INCLUDED_FILES) {
+		if (!$this->SHOW_INCLUDED_FILES) {
 			return '';
 		}
 		$items = (array)$this->_get_debug_data('included_files');
@@ -894,7 +891,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_curl_requests (&$params = array()) {
-		if (!$this->_SHOW_CURL_REQUESTS) {
+		if (!$this->SHOW_CURL_REQUESTS) {
 			return '';
 		}
 		$items = $this->_get_debug_data('curl_get_remote_page');
@@ -912,7 +909,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_form2 (&$params = array()) {
-		if (!$this->_SHOW_FORM2) {
+		if (!$this->SHOW_FORM2) {
 			return '';
 		}
 		$items = $this->_get_debug_data('form2');
@@ -928,7 +925,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_table2 (&$params = array()) {
-		if (!$this->_SHOW_TABLE2) {
+		if (!$this->SHOW_TABLE2) {
 			return '';
 		}
 		$items = $this->_get_debug_data('table2');
@@ -951,7 +948,7 @@ class yf_debug {
 	/**
 	*/
 	function _debug_dd_table (&$params = array()) {
-		if (!$this->_SHOW_DD_TABLE) {
+		if (!$this->SHOW_DD_TABLE) {
 			return '';
 		}
 		$items = $this->_get_debug_data('dd_table');
@@ -1104,12 +1101,10 @@ class yf_debug {
 			$items = array();
 		}
 		$items = $this->_format_trace_in_items($items);
-#		$items = _prepare_html($items);
 		$total_time = 0.0;
 		foreach ($items as &$item) {
 			foreach ($item as $k => &$v) {
 				if (is_array($v)) {
-// TODO: add auto-escape here, but need to test before
 					$v = !empty($v) ? var_export($v, 1) : '';
 					if (!$params['no_escape']) {
 						$v = _prepare_html($v);
@@ -1128,8 +1123,6 @@ class yf_debug {
 			'auto_no_buttons' 	=> 1,
 			'pager_records_on_page' => 10000,
 			'hidden_map'		=> $params['hidden_map'],
-// Temporary disabled, as somehow borwser renders table with width=100% if first col width provided, why???
-#			'first_col_width'	=> $params['first_col_width'],
 			'tr'				=> $params['tr'],
 			'td'				=> $params['td'],
 		))->auto();
@@ -1248,7 +1241,7 @@ class yf_debug {
 // TODO: JS full rewrite needed, as was done for i18n inline editor
 		// !!! Needed to be on the bottom of the page
 		$i18n_vars = _class('i18n')->_I18N_VARS;
-		if (!$this->_SHOW_I18N_VARS || empty($i18n_vars)) {
+		if (!$this->SHOW_I18N_VARS || empty($i18n_vars)) {
 			return false;
 		}
 		ksort($i18n_vars);
