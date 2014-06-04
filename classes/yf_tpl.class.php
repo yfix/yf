@@ -386,7 +386,7 @@ class yf_tpl {
 		$string = $params['string'] ?: false;
 		$params['replace_images'] = $params['replace_images'] ?: true;
 		$params['no_cache'] = $params['no_cache'] ?: false;
-		$params['get_from_db'] = $params['get_from_db'] ?: false;
+		$params['force_storage'] = $params['force_storage'] ?: '';
 		$params['no_include'] = $params['no_include'] ?: false;
 		if (DEBUG_MODE) {
 			$stpl_time_start = microtime(true);
@@ -479,28 +479,28 @@ class yf_tpl {
 	/**
 	* Alias
 	*/
-	function exists ($stpl_name = '', $get_from_db = false) {
-		return (bool)$this->_stpl_exists($stpl_name, $get_from_db);
+	function exists ($stpl_name = '', $force_storage = '') {
+		return (bool)$this->_stpl_exists($stpl_name, $force_storage);
 	}
 
 	/**
 	* Check if template exists (simple wrapper for the '_get_template_file')
 	*/
-	function _stpl_exists ($stpl_name = '', $get_from_db = false) {
-		return (bool)$this->_get_template_file($stpl_name, $get_from_db, 1);
+	function _stpl_exists ($stpl_name = '', $force_storage = '') {
+		return (bool)$this->_get_template_file($stpl_name, $force_storage, 1);
 	}
 
 	/**
 	* Alias
 	*/
-	function get ($file_name = '', $get_from_db = false, $JUST_CHECK_IF_EXISTS = false, $RETURN_TEMPLATE_PATH = false) {
-		return $this->_get_template_file($file_name, $get_from_db, $JUST_CHECK_IF_EXISTS, $RETURN_TEMPLATE_PATH);
+	function get ($file_name = '', $force_storage = '', $JUST_CHECK_IF_EXISTS = false, $RETURN_TEMPLATE_PATH = false) {
+		return $this->_get_template_file($file_name, $force_storage, $JUST_CHECK_IF_EXISTS, $RETURN_TEMPLATE_PATH);
 	}
 
 	/**
 	* Read template file contents (or get it from DB)
 	*/
-	function _get_template_file ($file_name = '', $get_from_db = false, $JUST_CHECK_IF_EXISTS = false, $RETURN_TEMPLATE_PATH = false) {
+	function _get_template_file ($file_name = '', $force_storage = '', $JUST_CHECK_IF_EXISTS = false, $RETURN_TEMPLATE_PATH = false) {
 		$string	 = false;
 		$NOT_FOUND  = false;
 		$storage	= 'inline';
@@ -517,7 +517,7 @@ class yf_tpl {
 		// Fix double extesion
 		$file_name  = str_replace($this->_STPL_EXT.$this->_STPL_EXT, $this->_STPL_EXT, $file_name);
 		$stpl_name  = str_replace($this->_STPL_EXT, '', $file_name);
-		if ($this->GET_STPLS_FROM_DB || $get_from_db) {
+		if ($this->GET_STPLS_FROM_DB || $force_storage == 'db') {
 			if ($this->FROM_DB_GET_ALL) {
 				if (!empty($this->_TMP_FROM_DB[$stpl_name])) {
 					$string = $this->_TMP_FROM_DB[$stpl_name];
@@ -598,7 +598,10 @@ class yf_tpl {
 			// Try storages one-by-one in inheritance `order`, stop when found
 			$storage = '';
 			foreach ((array)$storages as $_storage => $file_path) {
-				if (!$this->_stpl_path_exists($file_path, $stpl_name, $_storage)) {
+				if ($force_storage && $force_storage != $_storage) {
+					continue;
+				}
+				if (!$this->_stpl_path_exists($file_path)) {
 					continue;
 				}
 				$string = file_get_contents($file_path);
@@ -658,7 +661,7 @@ class yf_tpl {
 	/**
 	* Check if given template exists
 	*/
-	function _stpl_path_exists ($file_name = '', $stpl_name = '', $location = '') {
+	function _stpl_path_exists ($file_name) {
 		return file_exists($file_name);
 	}
 

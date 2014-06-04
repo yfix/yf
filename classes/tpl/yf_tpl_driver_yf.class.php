@@ -77,8 +77,8 @@ class yf_tpl_driver_yf {
 	/**
 	* Compile given template into pure PHP code
 	*/
-	function _compile($name, $replace = array(), $string = '') {
-		return _class('tpl_driver_yf_compile', 'classes/tpl/')->_compile($name, $replace, $string);
+	function _compile($name, $replace = array(), $string = '', $params = array()) {
+		return _class('tpl_driver_yf_compile', 'classes/tpl/')->_compile($name, $replace, $string, $params);
 	}
 
 	/**
@@ -163,7 +163,7 @@ class yf_tpl_driver_yf {
 			$string = ob_get_clean();
 
 			if ($this->tpl->COMPILE_CHECK_STPL_CHANGED) {
-				$stpl_path = $this->tpl->_get_template_file($name, $params['get_from_db'], 0, 1);
+				$stpl_path = $this->tpl->_get_template_file($name, $params['force_storage'], 0, 1);
 				if ($stpl_path) {
 					$source_mtime = filemtime($stpl_path);
 				}
@@ -198,7 +198,8 @@ class yf_tpl_driver_yf {
 	/**
 	*/
 	function _parse_get_cached($name, $replace = array(), $params = array(), $string = false) {
-		if (isset($this->CACHE[$name]) && !$params['no_cache']) {
+		$force_storage = $params['force_storage'];
+		if (isset($this->CACHE[$name]) && !$params['no_cache'] && !$force_storage) {
 			$string = $this->CACHE[$name]['string'];
 			$this->CACHE[$name]['calls']++;
 			if (DEBUG_MODE) {
@@ -206,18 +207,18 @@ class yf_tpl_driver_yf {
 			}
 		} else {
 			if (empty($string) && !isset($params['string'])) {
-				$string = $this->tpl->_get_template_file($name, $params['get_from_db']);
+				$string = $this->tpl->_get_template_file($name, $params['force_storage']);
 			}
 			if ($string === false) {
 				return false;
 			}
 			$string = preg_replace($this->_PATTERN_COMMENT, '', $string);
 			if ($this->tpl->COMPILE_TEMPLATES) {
-				$this->_compile($name, $replace, $string);
+				$this->_compile($name, $replace, $string, $params);
 			}
 			if (isset($params['no_cache']) && !$params['no_cache']) {
-				$this->CACHE[$name]['string']   = $string;
-				$this->CACHE[$name]['calls']	= 1;
+				$this->CACHE[$force_storage. $name]['string']   = $string;
+				$this->CACHE[$force_storage. $name]['calls']	= 1;
 			}
 		}
 		return $string;
@@ -227,14 +228,25 @@ class yf_tpl_driver_yf {
 	*/
 	function _process_includes($string, $replace = array(), $name = '') {
 		$_this = $this;
-		$pattern = '/\{(include|include_if_exists)\(\s*["\']{0,1}\s*([\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*["\']{0,1}\s*\)\}/i';
+		$pattern = '/\{(include|include_if_exists)\(\s*["\']{0,1}\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*["\']{0,1}\s*\)\}/i';
 		$extra = array();
 		$func = function($m) use ($replace, $name, $_this, $extra) {
 			$if_exists = ($m[1] == 'include_if_exists');
 			$stpl_name = $m[2];
 			$_replace = $m[3];
-			if ($if_exists && !tpl()->exists($stpl_name)) {
+			$force_storage = '';
+			// Force to include template from special storage, example: @framework:script_js
+			if ($stpl_name[0] == '@') {
+				list($force_storage, $stpl_name) = explode(':', substr($stpl_name, 1));
+			}
+			if ($if_exists && !tpl()->exists($stpl_name, $force_storage)) {
 				return false;
+			}
+			$prevent_name = $name.'__'.$m[0];
+			if (isset($_this->_include_recursion_prevent[$prevent_name])) {
+				return false;
+			} else {
+				$_this->_include_recursion_prevent[$prevent_name] = true;
 			}
 			// Here we merge/override incoming $replace with parsed params, to be passed to included template
 			foreach ((array)explode(';', str_replace(array('\'','"'), '', $_replace)) as $v) {
@@ -244,7 +256,7 @@ class yf_tpl_driver_yf {
 					$replace[$a_name] = trim($a_val);
 				}
 			}
-			return $_this->parse($stpl_name, $replace);
+			return $_this->parse($stpl_name, $replace, array('force_storage' => $force_storage));
 		};
 		return preg_replace_callback($pattern, $func, $string);
 	}
