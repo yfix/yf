@@ -663,9 +663,9 @@ class yf_tpl {
 	}
 
 	/**
+	* If content need to be cleaned from unused tags - do that
 	*/
 	function _process_clear_unused($string, $replace = array(), $name = '') {
-		// If content need to be cleaned from unused tags - do that
 		return preg_replace('/\{[\w_]+\}/i', '', $string);
 	}
 
@@ -731,11 +731,9 @@ class yf_tpl {
 		if (!class_exists('tidy') || !extension_loaded('tidy')) {
 			return $text;
 		}
-		// Tidy
 		$tidy = new tidy;
 		$tidy->parseString($text, $this->_TIDY_CONFIG, conf('charset'));
 		$tidy->cleanRepair();
-		// Output
 		return $tidy;
 	}
 
@@ -745,10 +743,7 @@ class yf_tpl {
 		if (!DEBUG_MODE) {
 			return $text;
 		}
-		$p = "<span class='locale_tr' s_var='[^\']+?'>([^<]+?)<\/span>";
-		$text = preg_replace("/(<title>)(.*?)(<\/title>)/imse", "'\\1'.strip_tags('\\2').'\\3'", $text);
-		// Output
-		return $text;
+		return preg_replace_callback('~(<title>)(.*?)(</title>)~ims', function($m) { return $m[1]. strip_tags($m[2]). $m[3]; }, $text);
 	}
 
 	/**
@@ -784,7 +779,6 @@ class yf_tpl {
 			}
 			$text_to_translate = $m['text'];
 		} else {
-			// Easy case that just needs to be translated
 			$text_to_translate = $input;
 		}
 		$output = t($text_to_translate, $args);
@@ -805,7 +799,6 @@ class yf_tpl {
 	*/
 	function _translate_for_stpl ($string = '', $args_from_tpl = '', $lang = '') {
 		$args = array();
-		// Try to convert args
 		if (is_string($args_from_tpl) && strlen($args_from_tpl)) {
 			$args = _attrs_string2array($args_from_tpl);
 		}
@@ -816,13 +809,10 @@ class yf_tpl {
 	* Search template for the string that caused an error
 	*/
 	function _search_stpl_line ($class_name, $method_name, $method_params = '', $tpl_name) {
-		// Search in site
 		$stpl_file	= SITE_PATH. tpl()->TPL_PATH. $tpl_name;
-		// Search in project
 		if (!file_exists($stpl_file)) {
 			$stpl_file = PROJECT_PATH. tpl()->TPL_PATH. $tpl_name;
 		}
-		// Search in framework
 		if (!file_exists($stpl_file)) {
 			$stpl_file = YF_PATH. tpl()->TPL_PATH. $tpl_name;
 		}
