@@ -17,7 +17,6 @@ class yf_encryption {
 	public $_avail_ciphers	= array(
 		4	=> 'CAST_256',
 		0	=> 'CAST_128',
-#		99	=> 'rijndael-256',
 	);
 	/** @var string Secret key */
 	public $_secret_key	= 'secret__13457890'; // Padded for 16 bytes
@@ -68,7 +67,6 @@ class yf_encryption {
 			$cipher_id_to_name = array(
 				0	=>	PHP_Crypt\PHP_Crypt::CIPHER_CAST_128,
 				4	=>	PHP_Crypt\PHP_Crypt::CIPHER_CAST_256,
-#				99	=>	PHP_Crypt\PHP_Crypt::CIPHER_RIJNDAEL_256,
 			);
 			$this->_cur_cipher = new PHP_Crypt\PHP_Crypt($this->_secret_key, $cipher_id_to_name[$this->USE_CIPHER], PHP_Crypt\PHP_Crypt::MODE_CBC);
 		}
