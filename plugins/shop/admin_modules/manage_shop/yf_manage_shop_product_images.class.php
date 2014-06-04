@@ -230,7 +230,7 @@ class yf_manage_shop_product_images{
 			cache_set($cache_key, $search_results);
 		}
 		$replace = array(
-			'form_action'    => '',
+			'form_action'    => './?object=manage_shop&action=product_image_search&id='.$product_info['id'],
 			'search_url'     => $search_url,
 			'search_results' => json_encode($search_results),
 			'product_info'   => $product_info,

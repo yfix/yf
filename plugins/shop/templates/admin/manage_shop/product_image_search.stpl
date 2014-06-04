@@ -120,7 +120,7 @@
 					}
 
 					if (exist_url) {
-						image_HTML = '<div class="span'+ span_size +'">'+
+						image_HTML = '<div class="span'+ span_size +' col-md-'+ span_size +'">'+
 							'<img class="img-polaroid '+ style +'" src="'+ exist_url +'" data-width="'+ width +'" data-height="'+ height +'"/>'+
 							'<p class="text-center text-'+ style +'"><b>'+ width +'х'+ height +'</b></p>'+
 							'</div>';
@@ -147,7 +147,7 @@
 
 <style>
 	#found_images {padding-top: 30px;}
-	#found_images img {cursor: pointer;}
+	#found_images img {cursor: pointer;max-width: 100%;}
 	#found_images img.success {border: solid 3px #468847;}
 	#found_images img.error {border: solid 3px #b94a48;}
 	.crop_container {overflow: auto;max-height: 600px;}
