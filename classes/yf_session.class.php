@@ -104,7 +104,7 @@ class yf_session {
 				return false;
 			}
 			$this->session = new $session_loaded_class_name();
-			$this->_set_module_conf($session_class_name, $this->session);
+			main()->set_module_conf($session_class_name, $this->session);
 			// Change the save_handler to use the class functions
 			session_set_save_handler (
 				array($this->session, 'open'),
