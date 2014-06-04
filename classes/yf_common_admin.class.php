@@ -61,10 +61,6 @@ class yf_common_admin {
 	/**
 	*/
 	function admin_wall_add($data = array()) {
-# TODO: check this and enable
-#		if (!is_array($data)) {
-#			$data = func_get_args();
-#		}
 		return db()->insert_safe('admin_walls', array(
 			'message'	=> isset($data['message']) ? $data['message'] : (isset($data[0]) ? $data[0] : ''),
 			'object_id'	=> isset($data['object_id']) ? $data['object_id'] : (isset($data[1]) ? $data[1] : ''),
@@ -120,9 +116,6 @@ class yf_common_admin {
 		if ($data) {
 			return $data;
 		}
-#		if (isset($this->cache[$cache_name])) {
-#			return $this->cache[$cache_name];
-#		}
 		$hooks_prefix = '_hook_';
 		$hooks_pl = strlen($hooks_prefix);
 
@@ -154,7 +147,6 @@ class yf_common_admin {
 		if (is_array($hooks)) {
 			ksort($hooks);
 		}
-#		$this->cache[$cache_name] = $hooks;
 		cache_set($cache_name, $hooks);
 		return $hooks;
 	}
@@ -171,9 +163,6 @@ class yf_common_admin {
 		if ($data) {
 			return $data;
 		}
-#		if (isset($this->cache[$cache_name])) {
-#			return $this->cache[$cache_name];
-#		}
 		if (in_array($section, array('all', 'user'))) {
 			$user_modules = module('user_modules')->_get_modules(array('with_sub_modules' => 1));
 		}
@@ -190,7 +179,6 @@ class yf_common_admin {
 		if (!empty($user_modules)) {
 			$modules['user'] = $user_modules;
 		}
-#		$this->cache[$cache_name] = $modules;
 		cache_set($cache_name, $hooks);
 		return $modules;
 	}
