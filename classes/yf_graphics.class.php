@@ -398,14 +398,14 @@ class yf_graphics {
 	* Get html code for external bookmarking (Yahoo, Digg, etc)
 	*/
 	function _show_bookmarks_button($title = '', $url = '', $only_links = 1) {
-#		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_bookmarks_button($title, $url, $only_links);
+		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_bookmarks_button($title, $url, $only_links);
 	}
 
 	/**
 	* Get html code for external bookmarking (Yahoo, Digg, etc)
 	*/
 	function _show_rss_button($feed_name = '', $feed_link = '', $only_links = 1) {
-#		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_rss_button($feed_name, $feed_link, $only_links);
+		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_rss_button($feed_name, $feed_link, $only_links);
 	}
 
 	/**
