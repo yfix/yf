@@ -50,6 +50,7 @@ class yf_form2_datetime {
 			}
 			$extra['value'] = empty( $extra['value'] ) ? '' : date( $_format_php, $extra['value'] );
 			// js lib
+			js('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js'); // need for datetimepicker transitions
 			js('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment-with-langs.min.js');
 			js('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js');
 			css('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/css/bootstrap-datetimepicker.min.css');
