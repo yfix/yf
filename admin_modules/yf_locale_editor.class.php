@@ -9,6 +9,8 @@
 */
 class yf_locale_editor {
 
+	/***/
+	private	$_preload_complete = false;
 	/** @var string @conf_skip PHP files to parse */
 	public $_include_php_pattern	= array('#\/(admin_modules|classes|functions|modules)#', '#\.php$#');
 	/** @var string @conf_skip STPL Files to parse */
@@ -53,6 +55,9 @@ class yf_locale_editor {
 	/**
 	*/
 	function _preload_data () {
+		if ($this->_preload_complete) {
+			return true;
+		}
 		$this->_preload_complete = true;
 
 		$this->_boxes = array(
@@ -67,17 +72,15 @@ class yf_locale_editor {
 
 		$this->_modules = _class('common_admin')->find_active_modules();
 
+		$langs = array();
 		foreach ((array)$this->_get_iso639_list() as $lang_code => $lang_params) {
-			$this->_langs[$lang_code] = t($lang_params[0]).(!empty($lang_params[1]) ? ' ('.$lang_params[1].') ' : '');
+			$langs[$lang_code] = t($lang_params[0]).(!empty($lang_params[1]) ? ' ('.$lang_params[1].') ' : '');
 		}
+		$this->_langs = $langs;
 
-		$Q = db()->query('SELECT * FROM '.db('locale_langs').' ORDER BY is_default DESC, locale ASC');
-		while ($A = db()->fetch_assoc($Q)) {
-			$this->_cur_langs_array[$A['id']] = $A;
-		}
-
+		$this->_cur_langs_array = db()->get_all('SELECT * FROM '.db('locale_langs').' ORDER BY is_default DESC, locale ASC');
 		if (empty($this->_cur_langs_array)) {
-			db()->INSERT('locale_langs', array(
+			db()->insert_safe('locale_langs', array(
 				'locale'	=> 'en',
 				'name'		=> t('English'),
 				'charset'	=> 'utf-8',
@@ -87,11 +90,13 @@ class yf_locale_editor {
 			js_redirect('./?object='.$_GET['object'].'&action='.$_GET['action']);
 		}
 
-		$this->_langs_for_search[''] = t('All languages');
+		$langs_for_search[''] = t('All languages');
 		foreach ((array)$this->_cur_langs_array as $A) {
-			$this->_langs_for_search[$A['locale']] = t($A['name']);
-			$this->_cur_langs[$A['locale']] = t($A['name']);
+			$langs_for_search[$A['locale']] = t($A['name']);
+			$cur_langs[$A['locale']] = t($A['name']);
 		}
+		$this->_langs_for_search = $langs_for_search;
+		$this->_cur_langs = $cur_langs;
 // TODO: add support for these file formats for import/export:
 // * JSON
 // * PHP
