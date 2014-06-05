@@ -9,6 +9,9 @@
 */
 class yf_template_editor {
 
+	/***/
+	private	$_preload_complete = false;
+	/***/
 	public $CACHE_NAME = 'themes_num_stpls';
 
 	/**
@@ -33,6 +36,9 @@ class yf_template_editor {
 	/**
 	*/
 	function _preload_data () {
+		if ($this->_preload_complete) {
+			return true;
+		}
 		$this->_preload_complete = true;
 		$this->_dir_array = array(
 			'framework'			=> YF_PATH. tpl()->_THEMES_PATH,
