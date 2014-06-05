@@ -549,7 +549,7 @@ class yf_category_editor {
 			}
 		}
 
-		$a = $_POST;
+		$a = (array)$_POST;
 		$a['redirect_link'] = './?object='.$_GET['object'].'&action=show_items&id='.$cat_info['id'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
@@ -598,7 +598,7 @@ class yf_category_editor {
 			}
 		}
 
-		$a = $item_info + $_POST;
+		$a = $item_info + (array)$_POST;
 		$a['redirect_link'] = './?object='.$_GET['object'].'&action=show_items&id='.$cat_info['id'];
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
