@@ -98,7 +98,7 @@ class yf_manage_shop_price_update {
 		// compile sql chunk
 		if( !empty( $fields ) ) { $sql_fields = implode( ', ', $fields ); }
 		if( !empty( $where  ) ) { $sql_where  = 'WHERE '    . implode( ', ', $where  ); }
-		if( !empty( $order  ) ) { $sql_order  = 'ORDER BY ' . implode( ', ', $order  ); }
+		if( !empty( $order  ) ) { $sql_order  = implode( ', ', $order  ); }
 		// compile sql
 		$sql = sprintf( 'SELECT %s FROM %s as p %s %s'
 			, $sql_fields
