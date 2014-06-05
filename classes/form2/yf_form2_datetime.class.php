@@ -24,14 +24,14 @@ class yf_form2_datetime {
 			$extra['no_time'] = $extra['with_time'] ? !$extra['with_time'] : $extra['no_time'];
 			$extra['no_time'] = isset( $extra['no_time'] ) ? $extra['no_time'] : 1;
 			if ($extra['no_date'] != 1) {
-				$format_js[]      = 'DD.MM.YYYY';
-				$format_php[]  = 'd.m.Y';
-				$placeholder[] = 'ДД.ММ.ГГГГ';
+				$format_js[]   = !empty($extra['date_format_js']) ? $extra['date_format_js'] : 'DD.MM.YYYY';
+				$format_php[]  = !empty($extra['date_format_php']) ? $extra['date_format_php'] : 'd.m.Y';
+				$placeholder[] = !empty($extra['date_placeholder']) ? $extra['date_placeholder'] : 'ДД.ММ.ГГГГ';
 			}
 			if ($extra['no_time'] != 1) {
-				$format_js[]      = 'HH:mm';
-				$format_php[]  = 'H:i';
-				$placeholder[] = 'ЧЧ:ММ';
+				$format_js[]   = !empty($extra['time_format_js']) ? $extra['time_format_js'] : 'HH:mm';
+				$format_php[]  = !empty($extra['time_format_php']) ? $extra['time_format_php'] : 'H:i';
+				$placeholder[] = !empty($extra['time_placeholder']) ? $extra['time_placeholder'] : 'ЧЧ:ММ';
 			}
 			$_format_js      = implode(' ',$format_js);
 			$_format_php  = implode(' ',$format_php);
