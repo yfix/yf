@@ -13,7 +13,8 @@ class yf_admin_account {
 	*/
 	function show() {
 		$a = db()->get('SELECT * FROM '.db('admin').' WHERE id='.(int)main()->ADMIN_ID);
-		return form($a, array('autocomplete' => 'off'))
+		$a['password'] = '';
+		return form($a + (array)$_POST, array('autocomplete' => 'off'))
 			->validate(array(
 				'__before__'	=> 'trim',
 				'email'			=> 'required|valid_email|is_unique_without[admin.email.'.main()->ADMIN_ID.']',
