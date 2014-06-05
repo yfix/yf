@@ -17,6 +17,7 @@ class yf_template_editor {
 		if (!$this->_preload_complete) {
 			$this->_preload_data();
 		}
+		return $this->$name;
 	}
 
 	/**
@@ -25,11 +26,14 @@ class yf_template_editor {
 		if (!$this->_preload_complete) {
 			$this->_preload_data();
 		}
+		$this->$name = $value;
+		return $this->$name;
 	}
 
 	/**
 	*/
 	function _preload_data () {
+		$this->_preload_complete = true;
 		$this->_dir_array = array(
 			'framework'			=> YF_PATH. tpl()->_THEMES_PATH,
 			'project'			=> INCLUDE_PATH. tpl()->_THEMES_PATH,
@@ -40,7 +44,6 @@ class yf_template_editor {
 		foreach ((array)_class('sites_info')->info as $site_dir_array) {
 			$this->_dir_array[$site_dir_array['name']] = $site_dir_array['REAL_PATH'].'templates/';		
 		}
-		$this->_preload_complete = true;
 	}
 
 	/**
