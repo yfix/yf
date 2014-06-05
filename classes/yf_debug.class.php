@@ -9,41 +9,41 @@
 */
 class yf_debug {
 
-	public $SHOW_DB_QUERY_LOG		= 1;
-	public $SHOW_DB_STATS			= 1;
-	public $SHOW_DB_EXPLAIN_QUERY	= 1;
-	public $SHOW_SPHINX				= 1;
-	public $SHOW_SSH				= 1;
-	public $SHOW_STPLS				= 1;
-	public $SHOW_REWRITE_INFO		= 1;
-	public $SHOW_OUTPUT_CACHE_INFO	= 1;
-	public $SHOW_RESIZED_IMAGES_LOG	= 1;
-	public $SHOW_INCLUDED_FILES		= 1;
-	public $SHOW_LOADED_MODULES		= 1;
-	public $SHOW_MEMCACHED_INFO		= 1;
-	public $SHOW_EACCELERATOR_INFO	= 1;
-	public $SHOW_XCACHE_INFO		= 1;
-	public $SHOW_APC_INFO			= 1;
-	public $SHOW_MAIN_GET_DATA		= 1;
-	public $SHOW_CORE_CACHE			= 1;
-	public $SHOW_MAIN_EXECUTE		= 1;
-	public $SHOW_GLOBALS			= 1;
-	public $SHOW_NOT_TRANSLATED		= 1;
-	public $SHOW_I18N_VARS			= 1;
-	public $SHOW_GET_DATA			= 1;
-	public $SHOW_POST_DATA			= 1;
-	public $SHOW_COOKIE_DATA		= 1;
-	public $SHOW_SESSION_DATA		= 1;
-	public $SHOW_FILES_DATA			= 1;
-	public $SHOW_SERVER_DATA		= 1;
-	public $SHOW_ENV_DATA			= 1;
-	public $SHOW_SETTINGS			= 1;
-	public $SHOW_CURL_REQUESTS		= 1;
-	public $SHOW_FORM2				= 1;
-	public $SHOW_TABLE2				= 1;
-	public $SHOW_DD_TABLE			= 1;
-	public $SORT_TEMPLATES_BY_NAME	= 1;
-	public $ADD_ADMIN_LINKS			= 1;
+	public $SHOW_DB_QUERY_LOG		= true;
+	public $SHOW_DB_STATS			= true;
+	public $SHOW_DB_EXPLAIN_QUERY	= true;
+	public $SHOW_SPHINX				= true;
+	public $SHOW_SSH				= true;
+	public $SHOW_STPLS				= true;
+	public $SHOW_REWRITE_INFO		= true;
+	public $SHOW_OUTPUT_CACHE_INFO	= true;
+	public $SHOW_RESIZED_IMAGES_LOG	= true;
+	public $SHOW_INCLUDED_FILES		= true;
+	public $SHOW_LOADED_MODULES		= true;
+	public $SHOW_MEMCACHED_INFO		= true;
+	public $SHOW_EACCELERATOR_INFO	= true;
+	public $SHOW_XCACHE_INFO		= true;
+	public $SHOW_APC_INFO			= true;
+	public $SHOW_MAIN_GET_DATA		= true;
+	public $SHOW_CORE_CACHE			= true;
+	public $SHOW_MAIN_EXECUTE		= true;
+	public $SHOW_GLOBALS			= true;
+	public $SHOW_NOT_TRANSLATED		= true;
+	public $SHOW_I18N_VARS			= true;
+	public $SHOW_GET_DATA			= true;
+	public $SHOW_POST_DATA			= true;
+	public $SHOW_COOKIE_DATA		= true;
+	public $SHOW_SESSION_DATA		= true;
+	public $SHOW_FILES_DATA			= true;
+	public $SHOW_SERVER_DATA		= true;
+	public $SHOW_ENV_DATA			= true;
+	public $SHOW_SETTINGS			= true;
+	public $SHOW_CURL_REQUESTS		= true;
+	public $SHOW_FORM2				= true;
+	public $SHOW_TABLE2				= true;
+	public $SHOW_DD_TABLE			= true;
+	public $SORT_TEMPLATES_BY_NAME	= true;
+	public $ADD_ADMIN_LINKS			= true;
 	public $ADMIN_PATHS				= array(
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={{THEME}}&name={{ID}}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={{ID}}',
@@ -78,6 +78,7 @@ class yf_debug {
 		}
 		$exec_time = round(microtime(true) - main()->_time_start, 4);
 		$main_exec_time = common()->_show_execution_time();
+		$num_db_queries = db()->NUM_QUERIES;
 
 		$debug_timings = array();
 		$methods = array();
@@ -101,7 +102,7 @@ class yf_debug {
 			'disabled'	=> 1,
 			'desc_raw'	=> '
 				<span title="'.t('Page generation time in seconds').'"><i class="icon icon-time fa fa-clock-o"></i>&nbsp;'.$exec_time.'</span>
-				<span title="'.t('Database queries').'">&nbsp;<i class="icon icon-table fa fa-table"></i>&nbsp;'.intval(db()->NUM_QUERIES).'</span><br />
+				<span title="'.t('Database queries').'">&nbsp;<i class="icon icon-table fa fa-table"></i>&nbsp;'.intval($num_db_queries).'</span><br />
 				<span title="'.t('Debug console generation time in seconds').'"><small>D&nbsp;'.$debug_time.'</small></span>',
 #				<a href="javascript:void(0)" data-hidden-toggle="debug-timings"><small>D&nbsp;'.$debug_time.'</small></a></span>
 #				<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>
