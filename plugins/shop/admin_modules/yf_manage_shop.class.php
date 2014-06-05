@@ -427,7 +427,7 @@ class yf_manage_shop {
 	}
 
 	function categories() {
-		return js_redirect('./?object=category_editor&action=show_items&id=shop_cats');
+		return js_redirect('./?object=category_editor&action=drag_items&id=shop_cats');
 	}
 
 	function config() {
