@@ -51,9 +51,11 @@ class yf_admin {
 		$func = function($row) use ($admin_id) {
 			return !($row['id'] == $admin_id);
 		};
-		$a = db()->get('SELECT * FROM '.db('admin').' WHERE id='.$id);
+		$a = (array)db()->get('SELECT * FROM '.db('admin').' WHERE id='.$id);
 		$a['back_link'] = './?object='.$_GET['object'];
 		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['password'] = '';
+		$a = (array)$_POST + $a;
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'__before__'	=> 'trim',
@@ -70,7 +72,7 @@ class yf_admin {
 			})
 			->login()
 			->email()
-			->password(array('value' => ''))
+			->password()
 			->text('first_name')
 			->text('last_name')
 			->text('go_after_login', 'Url after login')
