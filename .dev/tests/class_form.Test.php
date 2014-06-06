@@ -14,15 +14,11 @@ require dirname(__FILE__).'/yf_unit_tests_setup.php';
 */
 
 class class_form_test extends PHPUnit_Framework_TestCase {
-	private static $_bak_settings = array();
 	public static function setUpBeforeClass() {
 		$_GET['object'] = 'dynamic';
 		$_GET['action'] = 'unit_test_form';
-		self::$_bak_settings['REWRITE_MODE'] = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
-		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
 	}
 	public static function tearDownAfterClass() {
-		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = self::$_bak_settings['REWRITE_MODE'];
 	}
 	private function form_no_chain($r = array()) {
 		return form($r, array('no_form' => 1, 'only_content' => 1, 'no_chained_mode' => 1));
@@ -399,20 +395,5 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$r['active_link'] = './?object=someobject&action=someaction';
 		$this->assertEquals('<a href="./?object=someobject&action=someaction" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</button></a>'
 			, trim(self::form_no_chain($r)->tbl_link_active('test')) );
-	}
-	public function test_rewrite_form_url() {
-		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
-		$this->assertEquals(  
-'<form method="post" action="http:///dynamic/unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
-<fieldset>
-</fieldset>
-</form>', trim(form()) );
-		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;
-		$this->assertEquals(
-'<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
-<fieldset>
-</fieldset>
-</form>', trim(form()) );
-
 	}
 }
