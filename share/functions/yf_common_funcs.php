@@ -55,7 +55,9 @@ if (!function_exists('xsb_decode')) {
 }
 if (!function_exists('process_url')) {
 	function process_url($url = '', $force_rewrite = false, $for_site_id = false) {
-		return module('rewrite')->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+		$url = module('rewrite')->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+		$url = str_replace(array("http:///", "https:///"), "./", $url); // fix for rewrite tests
+		return $url;
 	}
 }
 if (!function_exists('_display_name')) {
