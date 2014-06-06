@@ -69,8 +69,8 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/////////////something') );
 	}
 	public function test_rewrite_simple() {
-		$this->assertEquals('http:///test', process_url('./?object=test'));
+		$this->assertEquals('./test', process_url('./?object=test'));
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = self::$_bak_settings['REWRITE_MODE'];
-		$this->assertEquals('http:///?object=test', process_url('./?object=test'));
+		$this->assertEquals('./?object=test', process_url('./?object=test'));
 	}
 }
