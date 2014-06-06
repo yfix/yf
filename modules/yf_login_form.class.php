@@ -151,7 +151,7 @@ class yf_login_form {
 			if ($name[0] == '_') {
 				continue;
 			}
-			$href = './?object='.$_GET['object'].'&action='.__FUNCTION__.'&id='.$name;
+			$href = process_url('./?object='.$_GET['object'].'&action='.__FUNCTION__.'&id='.$name, true);
 			$img_web_path = 'https://s3-eu-west-1.amazonaws.com/yfix/oauth/providers/'.$name.'.png';
 			$body[] = '<a href="'.$href.'">'.'<img src="'.$img_web_path.'" style="height:32px;padding-right:2px;">'. (!$params['only_icons'] ? ' '.$name : '').'</a>';
 		}
