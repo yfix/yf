@@ -284,8 +284,8 @@ class yf_table2 {
 		if ($params['rotate_table']) {
 			$default_per_page = 10;
 		}
-		$pager_path = $params['pager_path'] ?: '';
-		$pager_type = $params['pager_type'] ?: 'blocks';
+		$pager_path = $params['pager_path'];
+		$pager_type = $params['pager_type'];
 		$pager_records_on_page = $params['pager_records_on_page'] ?: $default_per_page;
 		$pager_num_records = $params['pager_num_records'] ?: 0;
 		$pager_stpl_path = $params['pager_stpl_path'] ?: '';
