@@ -126,10 +126,10 @@ class yf_common {
 	/**
 	* This function generate dividing table contents per pages
 	*/
-	function divide_pages ($input_data = '', $path = '', $type = 'blocks', $records_on_page = 0, $num_records = 0, $TPLS_PATH = '', $add_get_vars = 1, $extra = array()) {
+	function divide_pages ($input_data = '', $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = array()) {
 		// Override default method for input array
 		$method = is_array($input_data) ? 'go_with_array' : 'go';
-		return _class('divide_pages', 'classes/common/')->$method($input_data, $path, $type, $records_on_page, $num_records, $TPLS_PATH, $add_get_vars, $extra);
+		return _class('divide_pages', 'classes/common/')->$method($input_data, $url_path, $render_type, $records_on_page, $num_records, $tpls_path, $add_get_vars, $extra);
 	}
 
 	/**
