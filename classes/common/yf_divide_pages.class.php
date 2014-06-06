@@ -271,7 +271,10 @@ class yf_divide_pages {
 			$first = 0;
 		} else {
 			$half = ceil($pages_per_block / 2);
-			$start_page = ($cur_page - $half) > 0 ? ($cur_page - $half) : 1;
+			$start_page = $cur_page - $half + 1;
+			if ($start_page <= 0) {
+				$start_page = 1;
+			}
 			$end_page = $start_page + $pages_per_block;
 			if ($end_page > $total_pages) {
 				$end_page = $total_pages + 1;
