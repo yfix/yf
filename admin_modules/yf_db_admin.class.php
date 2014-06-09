@@ -2,24 +2,67 @@
 
 class yf_db_admin {
 
-	private $tree_params = array(
-		'opened_levels'	=> 0,
-		'draggable'		=> false,
-		'no_expand'		=> 1,
-		'form_class'	=> 'span4 col-xs-4',
+	private $table_params = array(
+		'pager_records_on_page' => 1000,
+		'id' => 'name',
 	);
 
 	function show() {
-		return $this->list_databases();
+		return $this->databases_list();
 	}
 
-	function list_databases() {
+	function databases_list() {
 		foreach ((array)db()->utils()->list_databases() as $name) {
-			$data[$i++] = array(
+			$data[$name] = array(
 				'name'	=> $name,
-				'link'	=> './?object='.$_GET['object'].'&action=show_database&id='.$name,
 			);
 		}
-		return _class('html')->tree($data, $this->tree_params);
+		return table($data, $this->table_params)
+			->link('name', './?object='.$_GET['object'].'&action=database_show&id=%d', array(), array('class' => ' '))
+			->btn_edit('', './?object='.$_GET['object'].'&action=database_edit&id=%d')
+			->btn_delete('', './?object='.$_GET['object'].'&action=database_delete&id=%d')
+			->header_add('Add database', './?object='.$_GET['object'].'&action=database_add')
+		;
 	}
+
+	function _db_custom_connection($db_name) {
+		if (isset($this->_connections[$db_name])) {
+			return $this->_connections[$db_name];
+		}
+		$instance = null;
+		$db_class = load_db_class();
+		if ($db_class) {
+			$instance = new $db_class('mysql5');
+			$instance->connect(array(
+				'name'	=> $db_name,
+				'prefix'=> '',
+			));
+		}
+		$this->_connections[$db_name] = $instance;
+		return $instance;
+	}
+
+	function _database_name() {
+		return preg_replace('~[^a-z0-9_]~ims', '', $_GET['id']);
+	}
+
+	function database_show() {
+		$db_name = $this->_database_name();
+		if (!$db_name) {
+			return _e('Wrong name');
+		}
+		$db = $this->_db_custom_connection($db_name);
+		foreach ((array)$db->utils()->list_tables() as $name) {
+			$data[$i++] = array(
+				'name'	=> $name,
+			);
+		}
+		return table($data, $this->table_params)
+			->link('name', './?object='.$_GET['object'].'&action=database_show&id=%d', array(), array('class' => ' '))
+			->btn_edit('', './?object='.$_GET['object'].'&action=database_edit&id=%d')
+			->btn_delete('', './?object='.$_GET['object'].'&action=database_delete&id=%d')
+			->header_add('Add database', './?object='.$_GET['object'].'&action=database_add')
+		;
+	}
+
 }
