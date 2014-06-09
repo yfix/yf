@@ -110,7 +110,7 @@ class yf_rewrite {
 		if (!isset($params['host'])) {
 			$params['host'] = !empty($host) ? $host : $_SERVER['HTTP_HOST'];
 		}
-		if ($GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] == 1){
+		if ($GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] == 1) {
 			$link = $this->REWRITE_PATTERNS['yf']->_get($params);
 		} else {
 			foreach ((array)$params as $k => $v) {
@@ -166,5 +166,36 @@ class yf_rewrite {
 			}
 		}
 		return $unique;
+	}
+
+	/**
+	*/
+	function _process_url ($url = '', $force_rewrite = false, $for_site_id = false) {
+		$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+		// fix for rewrite tests
+		return str_replace(array('http:///', 'https:///'), '/', $url);
+	}
+
+	/**
+	*/
+	function _url ($params = array(), $host = '', $url_str = '') {
+		return $this->_force_get_url($params, $host, $url_str);
+	}
+
+	/**
+	*/
+	function _url_admin ($params = array(), $host = '', $url_str = '') {
+// TODO
+	}
+
+	/**
+	*/
+	function _url_user ($params = array(), $host = '', $url_str = '') {
+// TODO
+	}
+
+	/***/
+	function _generate_url($params = array(), $host = '') {
+// TODO
 	}
 }
