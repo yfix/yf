@@ -65,19 +65,19 @@ class yf_db_admin {
 		}
 		return _class('html')->tabs(array(
 			'tables' => table($tables, $this->table_params)
-				->link('name', './?object='.$_GET['object'].'&action=table_show&id=%d', array(), array('class' => ' '))
-				->btn_edit('', './?object='.$_GET['object'].'&action=table_edit&id=%d')
-				->btn_delete('', './?object='.$_GET['object'].'&action=table_delete&id=%d')
-				->header_add('Add database', './?object='.$_GET['object'].'&action=table_add')
+				->link('name', url_admin('/@object/table_show/%d/'), array(), array('class' => ' '))
+				->btn_edit('', url_admin('/@object/table_edit/%d/')
+				->btn_delete('', url_admin('/@object/table_delete/%d/'))
+				->header_add('Add database', url_admin('/@object/table_add/'))
 			,
 			'views' => table($views, $this->table_params)
-				->link('name', './?object='.$_GET['object'].'&action=view_show&id=%d', array(), array('class' => ' '))
+				->link('name', url_admin('/@object/view_show/%d/'), array(), array('class' => ' '))
 			,
 			'triggers' => table($views, $this->table_params)
-				->link('name', './?object='.$_GET['object'].'&action=trigger_show&id=%d', array(), array('class' => ' '))
+				->link('name', url_admin('/@object/trigger_show/%d/'), array(), array('class' => ' '))
 			,
 			'events' => table($views, $this->table_params)
-				->link('name', './?object='.$_GET['object'].'&action=event_show&id=%d', array(), array('class' => ' '))
+				->link('name', url_admin('/@object/event_show/%d/'), array(), array('class' => ' '))
 		));
 	}
 
