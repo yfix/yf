@@ -44,10 +44,10 @@ class yf_db_admin {
 			);
 		}
 		return table($data, $this->table_params)
-			->link('name', url('/@object/database_show/%d/'), array(), array('class' => ' '))
-			->btn_edit('', url('/@object/database_edit/%d/'))
-			->btn_delete('', url('/@object/database_delete/%d/'))
-			->header_add('Add database', url('/@object/database_add/'))
+			->link('name', url_admin('/@object/database_show/%d/'), array(), array('class' => ' '))
+			->btn_edit('', url_admin('/@object/database_edit/%d/'))
+			->btn_delete('', url_admin('/@object/database_delete/%d/'))
+			->header_add('Add database', url_admin('/@object/database_add/'))
 		;
 	}
 
