@@ -105,13 +105,22 @@ if (!function_exists('t')) {
 	function t($string, $args = 0, $lang = '') { return _class('i18n')->translate_string($string, $args, $lang); }
 }
 if (!function_exists('url')) {
-	function url($params = array(), $host = '', $url_str = '') { return module('rewrite')->_force_get_url($params, $host, $url_str); }
+	function url($params = array(), $host = '', $url_str = '') { return module('rewrite')->_url($params, $host, $url_str); }
+}
+if (!function_exists('url_user')) {
+	function url_user($params = array(), $host = '', $url_str = '') { return module('rewrite')->_url_user($params, $host, $url_str); }
+}
+if (!function_exists('url_admin')) {
+	function url_admin($params = array(), $host = '', $url_str = '') { return module('rewrite')->_url_admin($params, $host, $url_str); }
 }
 if (!function_exists('_force_get_url')) {
 	function _force_get_url($params = array(), $host = '', $url_str = '') { return module('rewrite')->_force_get_url($params, $host, $url_str); }
 }
 if (!function_exists('_generate_url')) {
 	function _generate_url($params = array(), $host = '') { return module('rewrite')->_generate_url($params, $host); }
+}
+if (!function_exists('process_url')) {
+	function process_url($url = '', $force_rewrite = false, $for_site_id = false) { return module('rewrite')->_process_url($url, $force_rewrite, $for_site_id); }
 }
 if (!function_exists('form')) {
 	function form($replace = array(), $params = array()) { $form = clone _class('form2'); return $form->chained_wrapper($replace, $params); }
