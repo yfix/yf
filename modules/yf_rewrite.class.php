@@ -32,6 +32,9 @@ class yf_rewrite {
 			foreach ($links as $v) {
 				$url = parse_url($v);
 				parse_str($url['query'], $arr);
+				if (MAIN_TYPE_ADMIN && in_array($arr['task'], array('login','logout'))) {
+					continue;
+				}
 				$replace = $this->_force_get_url($arr, $_SERVER['HTTP_HOST']);
 				$r_array[$v] = $replace;
 			}
@@ -66,12 +69,13 @@ class yf_rewrite {
 
 	/**
 	*/
-	function _force_get_url ($params = array(), $host = '', $url_str = '', $gen_cache = true) {
+	function _force_get_url ($params = array(), $host = '', $url_str = '', $gen_cache = true, $for_section = false) {
 		if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
 			$time_start = microtime(true);
 		}
 		if (!is_array($params) && is_string($params)) {
 			$url_str = trim($params);
+			$orig_url_str = $url_str;
 			$params = array();
 			if (preg_match('~[a-z0-9_\./]+~ims', $url_str)) {
 				if ($url_str[0] == '/') {
@@ -90,18 +94,31 @@ class yf_rewrite {
 		if (!is_array($params) && empty($url_str)) {
 			return false;
 		}
-		if (isset($_GET['debug']) || isset($_GET['no_cache']) || isset($_GET['no_core_cache'])){
+		$params = array_reverse($params);
+		if (isset($_GET['debug']) || isset($_GET['no_cache']) || isset($_GET['no_core_cache'])) {
 			$params['debug'] = $_GET['debug'];
 			$params['no_cache'] = isset($_GET['no_cache']) ? 'y' : '';
 			$params['no_core_cache'] = isset($_GET['no_core_cache']) ? 'y' : '';
 		}
-		if (empty($url_str)){
-			if (isset($params['action']) && empty($params['action'])){
+		if (empty($url_str)) {
+			if (isset($params['action']) && empty($params['action'])) {
 				$params['action'] = 'show';
 			}
 		}
-		foreach ((array)$params as $k => $v){
-			if (empty($v) && ($v !== '0')){
+		if ($params['object'] == '@object') {
+			$params['object'] = $_GET['object'];
+		}
+		if ($params['action'] == '@action') {
+			$params['action'] = $_GET['action'];
+		}
+		if ($params['id'] == '@id') {
+			$params['id'] = $_GET['id'];
+		}
+		if ($params['page'] == '@page') {
+			$params['page'] = $_GET['page'];
+		}
+		foreach ((array)$params as $k => $v) {
+			if (empty($v) && ($v !== '0')) {
 				unset($params[$k]);
 				continue;
 			}
@@ -110,7 +127,8 @@ class yf_rewrite {
 		if (!isset($params['host'])) {
 			$params['host'] = !empty($host) ? $host : $_SERVER['HTTP_HOST'];
 		}
-		if ($GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] == 1) {
+		$REWRITE_ENABLED = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
+		if ($REWRITE_ENABLED && $for_section != 'admin') {
 			$link = $this->REWRITE_PATTERNS['yf']->_get($params);
 		} else {
 			foreach ((array)$params as $k => $v) {
@@ -120,9 +138,13 @@ class yf_rewrite {
 				$arr_out[] = $k.'='.$v;
 			}
 			if (!empty($arr_out)) {
-				$u .= '?'.implode('&',$arr_out);
+				$u .= '?'.implode('&', $arr_out);
 			}
-			$link = $this->_correct_protocol('http://'.$params['host'].'/'.$u);
+			if ($for_section == 'admin') {
+				$link = ADMIN_WEB_PATH. $u;
+			} else {
+				$link = $this->_correct_protocol('http://'.$params['host'].'/'.$u);
+			}
 		}
         if (DEBUG_MODE) {
 			debug(__FUNCTION__.'[]', array(
@@ -139,11 +161,11 @@ class yf_rewrite {
 
 	/**
 	*/
-	function _correct_protocol($url){
-		if (empty($url)){
+	function _correct_protocol($url) {
+		if (empty($url)) {
 			return false;
 		}
-		if (empty(main()->HTTPS_ENABLED_FOR)){
+		if (empty(main()->HTTPS_ENABLED_FOR)) {
 			return $url;
 		}
 		// Return links to the http protocol
@@ -171,9 +193,13 @@ class yf_rewrite {
 	/**
 	*/
 	function _process_url ($url = '', $force_rewrite = false, $for_site_id = false) {
-		$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+		if (tpl()->REWRITE_MODE) {
+			$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+		} elseif (substr($url, 0, 3) == './?') {
+			$url = WEB_PATH. substr($url, 2);
+		}
 		// fix for rewrite tests
-		return str_replace(array('http:///', 'https:///'), '/', $url);
+		return str_replace(array('http:///', 'https:///'), './', $url);
 	}
 
 	/**
@@ -183,18 +209,21 @@ class yf_rewrite {
 	}
 
 	/**
+	* Generate url for admin section, no matter from where was called
 	*/
 	function _url_admin ($params = array(), $host = '', $url_str = '') {
-// TODO
+		return $this->_force_get_url($params, $host, $url_str, true, $for_section = 'admin');
+	}
+
+	/**
+	* Generate url for user section, no matter from where was called
+	*/
+	function _url_user ($params = array(), $host = '', $url_str = '') {
+		return $this->_force_get_url($params, $host, $url_str, true, $for_section = 'user');
 	}
 
 	/**
 	*/
-	function _url_user ($params = array(), $host = '', $url_str = '') {
-// TODO
-	}
-
-	/***/
 	function _generate_url($params = array(), $host = '') {
 // TODO
 	}
