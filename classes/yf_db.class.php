@@ -183,23 +183,40 @@ class yf_db {
 	* Connect db driver and then connect to db
 	*/
 	function connect($db_host = '', $db_user = '', $db_pswd = null, $db_name = '', $force = false, $db_ssl = false, $db_port = '', $db_socket = '', $db_charset = '', $allow_auto_create_db = null) {
+		if (is_array($db_host)) {
+			$params = $db_host;
+			$db_host = '';
+		}
+		if (!is_array($params)) {
+			$params = array();
+		}
+		if ($params['reconnect']) {
+			$force = true;
+		}
 		if (!empty($this->_tried_to_connect) && !$force) {
 			return $this->_connected;
 		}
 		$this->_connect_start_time = microtime(true);
+		if (!$params['reconnect']) {
+			$this->DB_HOST = ($params['host'] ?: $db_host) ?: (defined('DB_HOST') ? DB_HOST : 'localhost');
+			$this->DB_USER = ($params['user'] ?: $db_user) ?: (defined('DB_USER') ? DB_USER : 'root');
+			$this->DB_PSWD = ($params['pswd'] ?: $db_pswd) ?: (defined('DB_PSWD') ? DB_PSWD : '');
+			$this->DB_NAME = ($params['name'] ?: $db_name) ?: (defined('DB_NAME') ? DB_NAME : '');
+			$this->DB_PORT = ($params['port'] ?: $db_port) ?: (defined('DB_PORT') ? DB_PORT : 3306);
+			$this->DB_SOCKET = ($params['socket'] ?: $db_socket) ?: (defined('DB_SOCKET') ? DB_SOCKET : '');
+			$this->DB_SSL = ($params['ssl'] ?: $db_ssl) ?: (defined('DB_SSL') ? DB_SSL : false);
+			$this->DB_CHARSET = ($params['charset'] ?: $db_charset) ?: (defined('DB_CHARSET') ? DB_CHARSET : '');
+			if (isset($params['prefix'])) {
+				$this->DB_PREFIX = $params['prefix'];
+			}
+			$allow_auto_create_db = isset($params['auto_create_db']) ? $params['auto_create_db'] : $allow_auto_create_db;
+			if (!is_null($allow_auto_create_db)) {
+				$this->ALLOW_AUTO_CREATE_DB	= $allow_auto_create_db;
+			}
+		}
 		$driver_class_name = main()->load_class_file('db_driver_'. $this->DB_TYPE, $this->DB_DRIVERS_DIR);
-		$this->DB_HOST		= !empty($db_host)		? $db_host		: DB_HOST;
-		$this->DB_USER		= !empty($db_user)		? $db_user		: DB_USER;
-		$this->DB_PSWD		= !is_null($db_pswd)	? $db_pswd		: (defined('DB_PSWD') ? DB_PSWD : '');
-		$this->DB_NAME		= !empty($db_name)		? $db_name		: DB_NAME;
-		$this->DB_PORT		= !empty($db_port)		? $db_port		: (defined('DB_PORT') ? DB_PORT : '');
-		$this->DB_SOCKET	= !empty($db_socket)	? $db_socket	: (defined('DB_SOCKET') ? DB_SOCKET : '');
-		$this->DB_SSL		= !empty($db_ssl)		? $db_ssl		: (defined('DB_SSL') ? DB_SSL : false);
-		$this->DB_CHARSET	= !empty($db_charset)	? $db_charset	: (defined('DB_CHARSET') ? DB_CHARSET : '');
-		$this->ALLOW_AUTO_CREATE_DB	= !is_null($allow_auto_create_db) ? $allow_auto_create_db : $this->ALLOW_AUTO_CREATE_DB;
 		// Create new instanse of the driver class
 		if (!empty($driver_class_name) && class_exists($driver_class_name) && !is_object($this->db)) {
-			// Set lock file
 			if ($this->RECONNECT_USE_LOCKING) {
 				$lock_file = $this->_get_reconnect_lock_path($this->DB_HOST, $this->DB_USER, $this->DB_NAME, $this->DB_PORT);
 				clearstatcache();
@@ -295,7 +312,7 @@ class yf_db {
 			// Try to reconnect if we see some these errors: http://dev.mysql.com/doc/refman/5.0/en/error-messages-client.html
 			if (false !== strpos($this->DB_TYPE, 'mysql') && in_array($db_error['code'], $this->RECONNECT_MYSQL_ERRORS)) {
 				$this->db = null;
-				$reconnect_successful = $this->connect($this->DB_HOST, $this->DB_USER, $this->DB_PSWD, $this->DB_NAME, true, $this->DB_SSL, $this->DB_PORT, $this->DB_SOCKET, $this->DB_CHARSET, $this->ALLOW_AUTO_CREATE_DB);
+				$reconnect_successful = $this->connect(array('reconnect' => true));
 				if ($reconnect_successful) {
 					$result = $this->db->query($sql);
 				}
