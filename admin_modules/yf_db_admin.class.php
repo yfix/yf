@@ -66,7 +66,7 @@ class yf_db_admin {
 		return _class('html')->tabs(array(
 			'tables' => table($tables, $this->table_params)
 				->link('name', url_admin('/@object/table_show/%d/'), array(), array('class' => ' '))
-				->btn_edit('', url_admin('/@object/table_edit/%d/')
+				->btn_edit('', url_admin('/@object/table_edit/%d/'))
 				->btn_delete('', url_admin('/@object/table_delete/%d/'))
 				->header_add('Add database', url_admin('/@object/table_add/'))
 			,
