@@ -838,14 +838,17 @@ class yf_table2 {
 					if (!isset($extra['nowrap']) || $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
-					$a_class = $extra['a_class'];
+					$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
+					if ($extra['class_add']) {
+						$class .= ' '.$extra['class_add'];
+					}
 					$link_trim_width = conf('link_trim_width') ?: 100;
 					if (isset($extra['link_trim_width'])) {
 						$link_trim_width = $extra['link_trim_width'];
 					}
 					$link_text = strlen($text) ? mb_strimwidth($text, 0, $link_trim_width, '...') : t('link');
-					$attrs .= ' title="'._prepare_html($text).'"';
-					$body .= '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs"'.($a_class ? ' '._prepare_html(trim($a_class)) : ''). $attrs. '>'._prepare_html($link_text).'</a>';
+					$attrs .= ' title="'._prepare_html(trim($text)).'"';
+					$body .= '<a href="'.trim($link).'" class="'.trim($class).'"'. $attrs. '>'._prepare_html($link_text).'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
@@ -1101,7 +1104,10 @@ class yf_table2 {
 					$no_text = 1;
 				}
 				$id = $override_id ? $override_id : 'id';
-				$class = $extra['class'] ?: $extra['a_class'];
+				$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
+				if ($extra['class_add']) {
+					$class .= ' '.$extra['class_add'];
+				}
 				if ($extra['hidden_toggle']) {
 					$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
 				}
@@ -1109,6 +1115,9 @@ class yf_table2 {
 					$attrs .= ' target="'.$extra['target'].'"';
 				}
 				$title = $params['name'] ?: $extra['title'] ?: $extra['desc'];
+				if ($title) {
+					$attrs .= ' title="' . $title;
+				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
 				$link = trim(str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add']);
 				if (strlen($link) && !$_this->_is_link_allowed($link)) {
@@ -1119,9 +1128,9 @@ class yf_table2 {
 				}
 				$renderer = $extra['renderer'] ?: 'a';
 				if ($renderer == 'a') {
-					$body = '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.' title="' . $title . '"><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+					$body = '<a href="'.$link.'" class="'.trim($class).'"'.$attrs.'"><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 				} elseif ($renderer == 'button') {
-					$body = '<button class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"'.$attrs.'><i class="'.$icon.'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</button> ';
+					$body = '<button class="'.trim($class).'"'.$attrs.'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</button> ';
 				}
 
 				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
@@ -1168,7 +1177,7 @@ class yf_table2 {
 			$extra = array();
 		}
 		if (!$extra['no_ajax']) {
-			$extra['a_class'] .= ' ajax_edit';
+			$extra['class_add'] .= ' ajax_edit';
 		}
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = 'icon-edit';
@@ -1193,7 +1202,7 @@ class yf_table2 {
 			$extra = array();
 		}
 		if (!$extra['no_ajax']) {
-			$extra['a_class'] .= ' ajax_delete btn-danger';
+			$extra['class_add'] .= ' ajax_delete btn-danger';
 		}
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = 'icon-trash';
@@ -1218,7 +1227,7 @@ class yf_table2 {
 			$extra = array();
 		}
 		if (!$extra['no_ajax']) {
-			$extra['a_class'] .= ' ajax_clone';
+			$extra['class_add'] .= ' ajax_clone';
 		}
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = 'icon-code-fork';
@@ -1243,7 +1252,7 @@ class yf_table2 {
 			$extra = array();
 		}
 		if (!$extra['no_ajax']) {
-			$extra['a_class'] .= ' ajax_view';
+			$extra['class_add'] .= ' ajax_view';
 		}
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = 'icon-eye-open';
@@ -1323,8 +1332,11 @@ class yf_table2 {
 					$link = url($link);
 				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
-				$class = $extra['class'] ?: $extra['a_class'];
-				return '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
+				$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
+				if ($extra['class_add']) {
+					$class .= ' '.$extra['class_add'];
+				}
+				return '<a href="'.trim($link).'" class="'.trim($class).'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);
 		if (!$extra['display_in']) {
@@ -1362,7 +1374,7 @@ class yf_table2 {
 			$extra = array();
 		}
 		if (!$extra['no_ajax']) {
-			$extra['a_class'] .= ' ajax_add';
+			$extra['class_add'] .= ' ajax_add';
 		}
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = 'icon-plus';
@@ -1394,9 +1406,9 @@ class yf_table2 {
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-save');
-				$class = $extra['class'] ?: $extra['a_class'];
+				$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
 
-				return '<button type="submit" name="'.$value.'" class="btn btn-default btn-mini btn-xs'.($class ? ' '.trim($class) : '').'"><i class="'.$icon.'"></i> '. t($value).'</button>';
+				return '<button type="submit" name="'.trim($value).'" class="'.trim($class).'"><i class="'.trim($icon).'"></i> '. t($value).'</button>';
 			}
 		);
 		if (!$extra['display_in']) {
