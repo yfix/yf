@@ -73,17 +73,6 @@ if (!function_exists('_prepare_phone')) {
 if (!function_exists('smart_htmlspecialchars')) {
 	function smart_htmlspecialchars($html_text = '') { return _class('utils')->smart_htmlspecialchars($html_text); }
 }
-if (!function_exists('array_replace_recursive')) {
-	function array_replace_recursive($array_1, $array_2) {
-		if (!is_array($array_1) or !is_array($array_2)) {
-			return $array_2;
-		}
-		foreach ((array)$array_2 as $key_2 => $value_2) {
-			$array_1[$key_2] = array_replace_recursive(@$array_1[$key_2], $value_2);
-		}
-		return $array_1;
-	}
-}
 if (!function_exists('format_bbcode_text')) {
 	function format_bbcode_text ($body = '') { return $body ? _class('bb_codes')->_process_text($body) : ''; }
 }
