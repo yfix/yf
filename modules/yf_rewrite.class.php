@@ -94,7 +94,19 @@ class yf_rewrite {
 		if (!is_array($params) && empty($url_str)) {
 			return false;
 		}
-		$params = array_reverse($params);
+		// Ensure correct order of params
+		$p = array();
+		foreach (array('object','action','id','page') as $name) {
+			if (isset($params[$name])) {
+				$p[$name] = $params[$name];
+			}
+		}
+		foreach ((array)$params as $k => $v) {
+			$p[$k] = $v;
+		}
+		$params = $p;
+		unset($p);
+		// Add built-in url params, if needed
 		if (isset($_GET['debug']) || isset($_GET['no_cache']) || isset($_GET['no_core_cache'])) {
 			$params['debug'] = $_GET['debug'];
 			$params['no_cache'] = isset($_GET['no_cache']) ? 'y' : '';
@@ -193,11 +205,11 @@ class yf_rewrite {
 	/**
 	*/
 	function _process_url ($url = '', $force_rewrite = false, $for_site_id = false) {
-		if (tpl()->REWRITE_MODE) {
+#		if (tpl()->REWRITE_MODE) {
 			$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
-		} elseif (substr($url, 0, 3) == './?') {
-			$url = WEB_PATH. substr($url, 2);
-		}
+#		} elseif (substr($url, 0, 3) == './?') {
+#			$url = WEB_PATH. substr($url, 2);
+#		}
 		// fix for rewrite tests
 		return str_replace(array('http:///', 'https:///'), './', $url);
 	}
