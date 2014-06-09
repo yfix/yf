@@ -53,13 +53,6 @@ if (!function_exists('xsb_encode')) {
 if (!function_exists('xsb_decode')) {
 	function xsb_decode($string) { return _class('utils')->xsb_decode($string); }
 }
-if (!function_exists('process_url')) {
-	function process_url($url = '', $force_rewrite = false, $for_site_id = false) {
-		$url = module('rewrite')->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
-		$url = str_replace(array("http:///", "https:///"), "./", $url); // fix for rewrite tests
-		return $url;
-	}
-}
 if (!function_exists('_display_name')) {
 	function _display_name ($user_info = array()) {
 		if (is_string($user_info)) {
