@@ -7,6 +7,7 @@ class yf_rewrite {
 	*/
 	function _init () {
 		$this->REWRITE_PATTERNS = array('yf' => _class('pattern_yf', 'modules/rewrite_patterns/'));
+		$this->DEFAULT_HOST = defined('WEB_DOMAIN') ? WEB_DOMAIN : $_SERVER['HTTP_HOST'];
 	}
 
 	/**
@@ -28,7 +29,7 @@ class yf_rewrite {
 				if (MAIN_TYPE_ADMIN && in_array($arr['task'], array('login','logout'))) {
 					continue;
 				}
-				$replace = $this->_force_get_url($arr, $_SERVER['HTTP_HOST']);
+				$replace = $this->_force_get_url($arr);
 				$r_array[$v] = $replace;
 			}
 			// Fix for bug with similar shorter links, sort by length DESC
@@ -58,6 +59,23 @@ class yf_rewrite {
 			debug('rewrite_exec_time', debug('rewrite_exec_time') + $exec_time);
 		}
 		return $body;
+	}
+
+	/**
+	*/
+	function _is_our_url ($url) {
+		$result = parse_url($url);
+		$host = $result['host'];
+		$u = preg_replace('/\.htm.*/', '', $result['path']);
+		$u = trim($u, '/');
+		$u_arr = explode('/', $u);
+		parse_str($result['query'], $s_arr);
+
+		$arr = module('rewrite')->REWRITE_PATTERNS['yf']->_parse($host,(array)$u_arr,(array)$s_arr,$url);
+
+		$new_url = $this->_force_get_url($arr,WEB_DOMAIN);
+
+		return $url == $new_url;
 	}
 
 	/**
@@ -100,8 +118,9 @@ class yf_rewrite {
 		$params = $p;
 		unset($p);
 		// Add built-in url params, if needed
-		if (isset($_GET['debug']) || isset($_GET['no_cache']) || isset($_GET['no_core_cache'])) {
+		if (isset($_GET['debug']) || isset($_GET['no_cache']) || isset($_GET['no_core_cache']) || isset($_GET['host'])) {
 			$params['debug'] = $_GET['debug'];
+			$params['get_host'] = $_GET['host'];
 			$params['no_cache'] = isset($_GET['no_cache']) ? 'y' : '';
 			$params['no_core_cache'] = isset($_GET['no_core_cache']) ? 'y' : '';
 		}
@@ -129,8 +148,8 @@ class yf_rewrite {
 			}
 		}
 		// patterns support here
-		if (!isset($params['host'])) {
-			$params['host'] = !empty($host) ? $host : $_SERVER['HTTP_HOST'];
+		if (empty($params['host'])) {
+			$params['host'] = !empty($host) ? $host : $this->DEFAULT_HOST;
 		}
 		$REWRITE_ENABLED = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		if ($REWRITE_ENABLED && $for_section != 'admin') {
