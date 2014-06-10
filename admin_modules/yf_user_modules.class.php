@@ -560,7 +560,7 @@ class yf_user_modules {
 		}
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		$r = array(
-			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name)
+			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
 			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
 		);
 		$order_fields = array();
