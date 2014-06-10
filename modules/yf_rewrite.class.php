@@ -2,11 +2,6 @@
 
 class yf_rewrite {
 
-	/** @var string @conf_skip Links pattern */
-	var	$_links_pattern			= '/(action|location|href|src)[\s]{0,1}=[\s]{0,1}["\']?(\.\/\?[^"\'\>\s]+|\.\/)["\']?/ims';
-	/** @var string @conf_skip Pattern for iframe links */
-	var	$_iframe_pattern		= '/(action|location|href)[\s]{0,1}=[\s]{0,1}["\']+\.\/\?([^"\'>\s]*)["\']+/ims';
-
 	/**
 	* YF module constructor
 	*/
@@ -24,9 +19,7 @@ class yf_rewrite {
 		if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
 			$this->_time_start = microtime(true);
 		}
-		// Try to get links from the output page
 		$links = $standalone ? array($body) : $this->_get_unique_links($body);
-		// Process links (if exists ones)
 		if (!empty($links) && is_array($links)) {
 			$r_array = array();
 			foreach ($links as $v) {
@@ -231,7 +224,8 @@ class yf_rewrite {
 	*/
 	function _get_unique_links ($text = '', $for_iframe = false) {
 		$unique = array();
-		preg_match_all($for_iframe ? $this->_iframe_pattern : $this->_links_pattern, $text, $matches);
+		$pattern = '/(action|location|href|src)[\s]{0,1}=[\s]{0,1}["\']?(\.\/\?[^"\'\>\s]+|\.\/)["\']?/ims';
+		preg_match_all($pattern, $text, $matches);
 		foreach ((array)$matches['2'] as $k => $v) {
 			if (strlen($v) && !in_array($v, $unique)) {
 				$unique[] = $v;
