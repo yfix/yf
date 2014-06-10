@@ -280,7 +280,12 @@ class yf_main {
 		if (!$https_needed) {
 			$query_string = $this->_server('QUERY_STRING');
 			foreach ((array)$this->HTTPS_ENABLED_FOR as $item) {
-				if (preg_match('@'.$item.'@ims', $query_string)) {
+				if (is_callable($item)) {
+					if ($item($query_string)) {
+						$https_needed = true;
+						break;
+					}
+				} elseif (preg_match('@'.$item.'@ims', $query_string)) {
 					$https_needed = true;
 					break;
 				}
