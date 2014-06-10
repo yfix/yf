@@ -155,7 +155,7 @@ class yf_rewrite {
 			if ($for_section == 'admin') {
 				$link = ADMIN_WEB_PATH. $u;
 			} else {
-				$link = $this->_correct_protocol('http://'.$params['host'].'/'.$u);
+				$link = $this->_correct_protocol((main()->USE_ONLY_HTTPS ? 'https' : 'http').'://'.$params['host'].'/'.$u);
 			}
 		}
         if (DEBUG_MODE) {
@@ -174,17 +174,55 @@ class yf_rewrite {
 	/**
 	*/
 	function _correct_protocol($url) {
-		if (empty($url)) {
+		if (!strlen($url)) {
 			return false;
 		}
-		if (empty(main()->HTTPS_ENABLED_FOR)) {
-			return $url;
+		$main = main();
+		$is_http = false;
+		$is_https = false;
+		$change_to_http = false;
+		$change_to_https = false;
+		$matched = false;
+		if ($main->HTTPS_ENABLED_FOR) {
+			foreach ((array)$main->HTTPS_ENABLED_FOR as $item) {
+				if (is_callable($item)) {
+					if ($item($url)) {
+						$matched = true;
+						break;
+					}
+				} elseif (preg_match('@'.$item.'@ims', $url)) {
+					$matched = true;
+					break;
+				}
+			}
 		}
 		// Return links to the http protocol
-		if (substr($url, 0, 8) == 'https://' && !main()->USE_ONLY_HTTPS) {
-			$url = str_replace('https://', 'http://', $url);
-		} else {
+		if (substr($url, 0, 8) == 'https://') {
+			$is_https = true;
+			if ($main->HTTPS_ENABLED_FOR) {
+				if (!$matched) {
+					$change_to_http = true;
+				}
+			} elseif (!$main->USE_ONLY_HTTPS) {
+				$change_to_http = true;
+			}
+		} elseif (substr($url, 0, 7) == 'http://') {
+			$is_http = true;
+			if ($main->USE_ONLY_HTTPS) {
+				$change_to_https = true;
+			} elseif ($main->HTTPS_ENABLED_FOR) {
+				if ($matched) {
+					$change_to_https = true;
+				}
+			}
+			if ($https_needed) {
+				$url = str_replace('http://', 'https://', $url);
+			}
+		}
+		if ($is_http && $change_to_https) {
 			$url = str_replace('http://', 'https://', $url);
+		} elseif ($is_https && $change_to_http) {
+			$url = str_replace('https://', 'http://', $url);
 		}
 		return $url;
 	}
@@ -205,11 +243,7 @@ class yf_rewrite {
 	/**
 	*/
 	function _process_url ($url = '', $force_rewrite = false, $for_site_id = false) {
-#		if (tpl()->REWRITE_MODE) {
-			$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
-#		} elseif (substr($url, 0, 3) == './?') {
-#			$url = WEB_PATH. substr($url, 2);
-#		}
+		$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
 		// fix for rewrite tests
 		return str_replace(array('http:///', 'https:///'), './', $url);
 	}
