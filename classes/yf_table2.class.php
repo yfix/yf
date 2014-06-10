@@ -305,7 +305,9 @@ class yf_table2 {
 			if ($sql_is_object) {
 				$data = obj2arr($sql);
 			} elseif ($sql_is_callable) {
-				$data = $sql($params);
+				$data = (array)$sql($params);
+			} else {
+				$data = $sql;
 			}
 			unset($sql);
 			if ($params['filter']) {
