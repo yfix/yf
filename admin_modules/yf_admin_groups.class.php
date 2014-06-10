@@ -34,9 +34,9 @@ class yf_admin_groups {
 			->btn_delete(array('display_func' => $func))
 			->btn_active(array('display_func' => $func))
 			->footer_add()
-			->footer_link('Blocks', './?object=blocks&action=show_rules&id='.$admin_center_id)
-			->footer_link('Menu', './?object=menus_editor&action=show_items&id='.$menu_id)
-			->footer_link('Auth fails', './?object=log_admin_auth_fails')
+			->footer_link('Blocks', url_admin('/blocks/show_rules/'.$admin_center_id))
+			->footer_link('Menu', url_admin('/menus_editor/show_items/'.$menu_id))
+			->footer_link('Auth fails', url_admin('/log_admin_auth_fails'))
 		;
 	}
 
@@ -44,7 +44,7 @@ class yf_admin_groups {
 	*/
 	function add() {
 		$a = $_POST;
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url_admin('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name' => 'trim|required|alpha_dash|is_unique[admin_groups.name]'
@@ -69,7 +69,7 @@ class yf_admin_groups {
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('admin_groups').' WHERE id='.intval($_GET['id']));
 		$a = (array)$_POST + (array)$a;
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url_admin('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name' => 'trim|required|alpha_dash|is_unique_without[admin_groups.name.'.$id.']'
@@ -100,7 +100,7 @@ class yf_admin_groups {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -123,7 +123,7 @@ class yf_admin_groups {
 			main()->NO_GRAPHICS = true;
 			echo ($group_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -131,7 +131,7 @@ class yf_admin_groups {
 	*/
 	function _hook_wall_link($msg = array()) {
 		$action = $msg['action'] == 'delete' ? 'show' : 'edit';
-		return './?object=admin_groups&action='.$action.'&id='.$msg['object_id'];
+		return url_admin('/admin_groups/'.$action.'/'.$msg['object_id']);
 	}
 
 	function _hook_widget__admin_groups ($params = array()) {
