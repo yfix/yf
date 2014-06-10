@@ -14,7 +14,7 @@ class yf_site_nav_bar {
 
 		} else {
 			if (!in_array($_GET['action'], array('', 'show'))) {
-				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['object']), './?object='.$_GET['object']);
+				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['object']), url_admin('/@object'));
 				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['action']));
 			} else {
 				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['object']));

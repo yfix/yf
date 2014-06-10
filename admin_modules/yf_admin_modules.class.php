@@ -49,7 +49,7 @@ class yf_admin_modules {
 				db()->update('admin_modules', array('active' => $active), $where);
 				cache_del('admin_modules');
 			}
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 
 		if (!isset($this->_yf_plugins)) {
@@ -135,7 +135,7 @@ class yf_admin_modules {
 			main()->NO_GRAPHICS = true;
 			echo ($module_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -179,7 +179,7 @@ class yf_admin_modules {
 		}
 		cache_del(array('admin_modules','admin_modules_for_select'));
 		if (!$silent) {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 

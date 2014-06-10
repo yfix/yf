@@ -120,7 +120,7 @@ class yf_template_editor {
 			if ($_GET['theme'] != $new_theme_name) {
 				rename($this->_dir_array[$_GET['location']]. $_GET['theme'], $this->_dir_array[$_GET['location']]. $new_theme_name);
 			}
-			return js_redirect('./?object='.$_GET['object'].'&action=show');
+			return js_redirect(url_admin('/@object'));
 		}
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&theme='.$_GET['theme'].'&location='.$_GET['location'],
@@ -147,7 +147,7 @@ class yf_template_editor {
 			'pages'			=> $pages,
 			'total'			=> intval($total),
 			'theme_name'	=> $this->theme_name,
-			'back_url'		=> './?object='.$_GET['object'].'&action=show',
+			'back_url'		=> url_admin('/@object'),
 			'form_action'	=> './?object='.$_GET['object'].'&action=save_stpl&theme='.$this->theme_name.'&location='.$_GET['location'],
 			'location'		=> $_GET['location'],
 		);
