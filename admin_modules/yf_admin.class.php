@@ -26,7 +26,7 @@ class yf_admin {
 			))
 			->text('login')
 			->text('email')
-			->link('group', './?object=admin_groups&action=edit&id=%d', main()->get_data('admin_groups'))
+			->link('group', url_admin('/admin_groups/edit/%d'), main()->get_data('admin_groups'))
 			->text('first_name')
 			->text('last_name')
 			->text('go_after_login')
@@ -34,9 +34,9 @@ class yf_admin {
 			->btn_active(array('display_func' => $func))
 			->btn_edit()
 			->btn_delete(array('display_func' => $func))
-			->btn('log_auth', './?object=log_admin_auth&action=show_for_admin&id=%d')
-			->btn('login', './?object='.$_GET['object'].'&action=login_as&id=%d', array('display_func' => $func))
-			->footer_link('Failed auth log', './?object=log_admin_auth_fails')
+			->btn('log_auth', url_admin('/log_admin_auth/show_for_admin/%d'))
+			->btn('login', url_admin('/@object/login_as/%d'), array('display_func' => $func))
+			->footer_link('Failed auth log', url_admin('/log_admin_auth_fails'))
 			->footer_add();
 	}
 
@@ -52,8 +52,8 @@ class yf_admin {
 			return !($row['id'] == $admin_id);
 		};
 		$a = (array)db()->get('SELECT * FROM '.db('admin').' WHERE id='.$id);
-		$a['back_link'] = './?object='.$_GET['object'];
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['back_link'] = url_admin('/@object');
+		$a['redirect_link'] = url_admin('/@object');
 		$a['password'] = '';
 		$a = (array)$_POST + $a;
 		return form($a, array('autocomplete' => 'off'))
@@ -81,8 +81,8 @@ class yf_admin {
 			->info_date('add_date','Added')
 			->row_start()
 				->save_and_back()
-				->link('log auth', './?object=log_admin_auth&action=show_for_admin&id='.$a['id'])
-				->link('login as', './?object='.$_GET['object'].'&action=login_as&id='.$a['id'], array('display_func' => $func))
+				->link('log auth', url_admin('/log_admin_auth/show_for_admin/'.$a['id']))
+				->link('login as', url_admin('/@object/login_as/'.$a['id']), array('display_func' => $func))
 			->row_end()
 		;
 	}
@@ -91,7 +91,7 @@ class yf_admin {
 	*/
 	function add() {
 		$a = $_POST;
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url_admin('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'__before__'	=> 'trim',
@@ -130,7 +130,7 @@ class yf_admin {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
-			return js_redirect('./?object='.$_GET['object']. _add_get());
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -149,7 +149,7 @@ class yf_admin {
 			main()->NO_GRAPHICS = true;
 			echo ($admin_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -195,8 +195,8 @@ class yf_admin {
 		}
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
+			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
 		);
 		$order_fields = array();
 		foreach (explode('|', 'login|email|group|first_name|last_name|add_date|last_login|num_logins|active') as $f) {
