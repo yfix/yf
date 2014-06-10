@@ -560,15 +560,15 @@ class yf_user_modules {
 		}
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name)
+			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
 		);
 		$order_fields = array();
 		foreach (explode('|', 'name|active') as $f) {
 			$order_fields[$f] = $f;
 		}
 		$locations = array();
-		foreach (explode('|', 'framework|framework_p2|framework_plugin|project|project_p2|site') as $f) {
+		foreach (explode('|', 'framework|framework_p2|framework_plugin|project|project_p2|project_plugin|site') as $f) {
 			$locations[$f] = $f;
 		}
 		return form($r, array(
