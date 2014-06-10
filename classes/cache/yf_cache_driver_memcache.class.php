@@ -189,15 +189,9 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 	/**
 	*/
 	function multi_del(array $names) {
-		if (!$this->is_ready()) {
-			return null;
-		}
 		// PHPWTF!! deleteMulti in Memcached extension exists only starting from version 2.0 in PECL
-		if (!method_exists($this->_connection, 'deleteMulti')) {
-			foreach ((array)$names as $name) {
-				$result[$name] = $res;
-			}
-			return $result;
+		if (!$this->is_ready() || !method_exists($this->_connection, 'deleteMulti')) {
+			return null;
 		}
 		// maybe use this one?: http://ua1.php.net/manual/en/memcached.deletemultibykey.php
 		return $this->_connection->deleteMulti($names);

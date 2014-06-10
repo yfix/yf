@@ -2,7 +2,7 @@
 
 /**
 * Caching layer
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -441,9 +441,8 @@ class yf_cache {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		if ($this->_driver->implemented['multi_del']) {
-			$result = $this->_driver->multi_del($names);
-		} else {
+		$result = ($this->_driver->implemented['multi_del'] && !is_null($this->_driver->multi_del($names)));
+		if( !$result ) {
 			$result = array();
 			foreach ((array)$names as $name) {
 				$result[$name] = $this->del($name);
