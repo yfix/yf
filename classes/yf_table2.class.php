@@ -295,7 +295,20 @@ class yf_table2 {
 		$sql = $this->_sql;
 		$ids = array();
 		if (is_array($sql)) {
-			$data = $sql;
+			$sql_is_array = true;
+		} elseif (is_callable($sql)) {
+			$sql_is_callable = true;
+		} elseif (is_object($sql)) {
+			$sql_is_object = true;
+		}
+		if ($sql_is_array || $sql_is_object || $sql_is_callable) {
+			if ($sql_is_object) {
+				$data = obj2arr($sql);
+			} elseif ($sql_is_callable) {
+				$data = (array)$sql($params);
+			} else {
+				$data = $sql;
+			}
 			unset($sql);
 			if ($params['filter']) {
 				$this->_filter_array($data, $params['filter'], $params['filter_params']);

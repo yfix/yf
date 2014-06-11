@@ -87,7 +87,7 @@ class yf_static_pages {
 				common()->admin_wall_add(array('statis page updated: '.$page_info['name'], $page_info['id']));
 			}
 			cache_del('static_pages_names');
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 		$DATA = $page_info;
 		foreach ((array)$_POST as $k => $v) {
@@ -102,7 +102,7 @@ class yf_static_pages {
 			'meta_keywords'	=> $DATA['meta_keywords'],
 			'meta_desc'		=> $DATA['meta_desc'],
 			'active'		=> $DATA['active'],
-			'back_url'		=> './?object='.$_GET['object'],
+			'back_url'		=> url_admin('/@object'),
 		);
 		return form($replace)
 			->text('name')
@@ -127,7 +127,7 @@ class yf_static_pages {
 			main()->NO_GRAPHICS = true;
 			echo $page_name;
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -146,7 +146,7 @@ class yf_static_pages {
 			main()->NO_GRAPHICS = true;
 			echo ($page_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -162,7 +162,7 @@ class yf_static_pages {
 		$body = stripslashes($page_info['text']);
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action=edit&id='.$page_info['id'],
-			'back_link'		=> './?object='.$_GET['object'],
+			'back_link'		=> url_admin('/@object'),
 			'body'			=> $body,
 		);
 		return form($replace)

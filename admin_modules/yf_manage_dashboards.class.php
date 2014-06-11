@@ -84,7 +84,7 @@ class yf_manage_dashboards {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -102,7 +102,7 @@ class yf_manage_dashboards {
 		$sql['name'] = $sql['name'].'_clone';
 		db()->insert('dashboards', $sql);
 		common()->admin_wall_add( array('dashboard cloned: '.$ds_info['name'], db()->insert_id() ));
-		return js_redirect('./?object='.$_GET['object']);
+		return js_redirect(url_admin('/@object'));
 	}
 
 	/**
@@ -120,7 +120,7 @@ class yf_manage_dashboards {
 			main()->NO_GRAPHICS = true;
 			echo ($ds_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -141,7 +141,7 @@ class yf_manage_dashboards {
 		}
 		$replace = array(
 			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
-			'back_link'		=> './?object='.$_GET['object'],
+			'back_link'		=> url_admin('/@object'),
 		);
 		return form2($replace)
 			->text('name')

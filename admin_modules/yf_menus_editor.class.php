@@ -97,7 +97,7 @@ class yf_menus_editor {
 			return _e('No id');
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']));
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url_admin('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required',
@@ -187,7 +187,7 @@ class yf_menus_editor {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -207,7 +207,7 @@ class yf_menus_editor {
 			main()->NO_GRAPHICS = true;
 			echo ($menu_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -763,7 +763,7 @@ class yf_menus_editor {
 		$EXPORTED_SQL = module('db_manager')->export($params);
 		$replace = array(
 			'sql_text'	=> _prepare_html($EXPORTED_SQL, 0),
-			'back_link'	=> './?object='.$_GET['object'],
+			'back_link'	=> url_admin('/@object'),
 		);
 		return tpl()->parse('db_manager/export_text_result', $replace);
 	}

@@ -40,7 +40,7 @@ class yf_user_groups {
 	*/
 	function add() {
 		$a = $_POST;
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url_admin('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name' => 'trim|required|alpha_numeric|is_unique[admin_groups.name]'
@@ -64,7 +64,7 @@ class yf_user_groups {
 			return _e('No id');
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('user_groups').' WHERE id='.intval($_GET['id']));
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url_admin('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name' => 'trim|required|alpha_numeric|is_unique[admin_groups.name]'
@@ -92,7 +92,7 @@ class yf_user_groups {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -114,7 +114,7 @@ class yf_user_groups {
 			main()->NO_GRAPHICS = true;
 			echo ($group_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 

@@ -51,7 +51,7 @@ class yf_user_modules {
 				db()->update('user_modules', array('active' => $active), $where);
 				cache_del(array('user_modules','user_modules_for_select'));
 			}
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 
 		if (!isset($this->_yf_plugins)) {
@@ -142,7 +142,7 @@ class yf_user_modules {
 			main()->NO_GRAPHICS = true;
 			echo ($module_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -187,7 +187,7 @@ class yf_user_modules {
 		}
 		cache_del(array('user_modules','user_modules_for_select'));
 		if (!$silent) {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -560,15 +560,15 @@ class yf_user_modules {
 		}
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
+			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
 		);
 		$order_fields = array();
 		foreach (explode('|', 'name|active') as $f) {
 			$order_fields[$f] = $f;
 		}
 		$locations = array();
-		foreach (explode('|', 'framework|framework_p2|framework_plugin|project|project_p2|site') as $f) {
+		foreach (explode('|', 'framework|framework_p2|framework_plugin|project|project_p2|project_plugin|site') as $f) {
 			$locations[$f] = $f;
 		}
 		return form($r, array(

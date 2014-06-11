@@ -99,7 +99,7 @@ class yf_blocks {
 	*/
 	function add () {
 		$a = $_POST;
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url_admin('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required|alpha_dash', //|is_unique[blocks.name]
@@ -124,7 +124,7 @@ class yf_blocks {
 	function edit () {
 		$a = db()->get('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']).' OR name="'._es($_GET['id']).'"');
 		$_GET['id'] = $a['id'];
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url_admin('/@object');
 		return form($a)
 			->validate(array(
 				'name'	=> 'trim|required|alpha_dash',
@@ -167,7 +167,7 @@ class yf_blocks {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -197,7 +197,7 @@ class yf_blocks {
 		}
 		common()->admin_wall_add(array('block cloned: '.$_info['name'].' from '.$block_info['name'], $NEW_ITEM_ID));
 		module('blocks')->_cache_purge();
-		return js_redirect('./?object='.$_GET['object']);
+		return js_redirect(url_admin('/@object'));
 	}
 
 	/**
@@ -216,7 +216,7 @@ class yf_blocks {
 			main()->NO_GRAPHICS = true;
 			echo ($block_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
@@ -264,7 +264,7 @@ class yf_blocks {
 				$_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
 			}
 		}
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url_admin('/@object');
 		$a['type'] = $block_info['type'];
 		return form($a)
 			->validate(array(
@@ -316,7 +316,7 @@ class yf_blocks {
 				$a[$k] = $this->_multi_db_to_html($a[$k]);
 			}
 		}
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url_admin('/@object');
 		$a['type'] = $block_info['type'];
 		return form($a)
 			->validate(array(

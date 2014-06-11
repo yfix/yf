@@ -35,7 +35,7 @@ class yf_manage_users {
 	*/
 	function add() {
 		$a = $_POST;
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url_admin('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'login' => 'trim|required|alpha_numeric|is_unique[user.login]',
@@ -60,8 +60,8 @@ class yf_manage_users {
 			return _e('No id');
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('user').' WHERE id='.intval($_GET['id']));
-		$a['back_link'] = './?object='.$_GET['object'];
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['back_link'] = url_admin('/@object');
+		$a['redirect_link'] = url_admin('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'login' => 'trim|alpha_numeric|is_unique_without[user.login.'.$id.']',
@@ -97,7 +97,7 @@ class yf_manage_users {
 			main()->NO_GRAPHICS = true;
 			echo ($user_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect(url_admin('/@object'));
 		}
 	}
 
