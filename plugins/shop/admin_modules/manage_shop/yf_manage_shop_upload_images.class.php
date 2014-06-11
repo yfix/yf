@@ -109,7 +109,6 @@ class yf_manage_shop_upload_images {
 
                 $filename = basename($folder);
                 $ext = pathinfo($filename, PATHINFO_EXTENSION);
-
                 $filename = ltrim($filename, ' .-_+=/\|,!@#%~&*()');
                 if(strpos($filename,'_')){
                         $articul = explode('_', $filename);
@@ -121,7 +120,7 @@ class yf_manage_shop_upload_images {
                 if(!empty($articul[0])){
                         $articul = _es(strip_tags($articul[0]));
                         $sql = 'SELECT id FROM '.db('shop_products').'
-                                WHERE articul IN ("'.$articul.'","'.$filename.'") 
+                                WHERE articul IN ("'.$articul.'","'.pathinfo($filename, PATHINFO_FILENAME).'") 
                                     AND supplier_id='.$supplier_id;
 /*
                         $sql = 'SELECT id FROM '.db('shop_products').'
