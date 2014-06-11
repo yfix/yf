@@ -303,6 +303,7 @@ class yf_manage_shop_import {
 				$v1 = array(
 					'price' => $v['price'],
 					'price_raw' => $v['price_raw'],
+					'name' => $v['name'],                                    
 					'update_date' => time(),
 					'cat_id' => intval($cat_id),
 					'manufacturer_id' => intval($man_id),					
@@ -343,7 +344,8 @@ class yf_manage_shop_import {
 				$v1 = array(
 					'price' => $v['price'],
 					'price_raw' => $v['price_raw'],
-					'update_date' => time(),
+					'name' => $v['name'],
+                                        'update_date' => time(),
 					'cat_id' => intval($cat_id),
 					'description' => $v['description'],
 				);
