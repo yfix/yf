@@ -3,7 +3,7 @@
 /**
 * Default YF rewrite pattern
 */
-class yf_pattern_yf {
+class yf_rewrite_pattern_yf {
 	function _get($a) {
 		if ($a['task'] == 'login' || $a['task'] == 'logout') {
 			$u = $a['task'];
@@ -52,10 +52,11 @@ class yf_pattern_yf {
 		if (!empty($arr_out)) {
 			$u .= '?'.implode('&',$arr_out);
 		}
-		if (!module('rewrite')->USE_WEB_PATH) {
-			return module('rewrite')->_correct_protocol('http://'.$a['host'].'/'.$u);
+		$class_rewrite = _class('rewrite');
+		if (!$class_rewrite->USE_WEB_PATH) {
+			return $class_rewrite->_correct_protocol('http://'.$a['host'].'/'.$u);
 		} else {
-			return module('rewrite')->_correct_protocol(WEB_PATH. $u);
+			return $class_rewrite->_correct_protocol(WEB_PATH. $u);
 		}
 	}
 
