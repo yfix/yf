@@ -6,7 +6,9 @@ class yf_rewrite {
 	* YF module constructor
 	*/
 	function _init () {
-		$this->REWRITE_PATTERNS = array('yf' => _class('pattern_yf', 'modules/rewrite_patterns/'));
+		$this->REWRITE_PATTERNS = array(
+			'yf' => _class('rewrite_pattern_yf', 'classes/rewrite/'),
+		);
 		$this->DEFAULT_HOST = defined('WEB_DOMAIN') ? WEB_DOMAIN : $_SERVER['HTTP_HOST'];
 	}
 
@@ -71,7 +73,7 @@ class yf_rewrite {
 		$u_arr = explode('/', $u);
 		parse_str($result['query'], $s_arr);
 
-		$arr = module('rewrite')->REWRITE_PATTERNS['yf']->_parse($host,(array)$u_arr,(array)$s_arr,$url);
+		$arr = $this->REWRITE_PATTERNS['yf']->_parse($host,(array)$u_arr,(array)$s_arr,$url);
 
 		$new_url = $this->_force_get_url($arr,WEB_DOMAIN);
 
