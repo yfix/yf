@@ -15,13 +15,13 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = self::$_bak_settings['REWRITE_MODE'];
 	}
 	public function test_rewrite_enabled() {
-		$this->assertEquals('http://'.self::$host.'/', module('rewrite')->_force_get_url() );
-		$this->assertEquals('http://'.self::$host.'/', module('rewrite')->_force_get_url('') );
-		$this->assertEquals('http://'.self::$host.'/', module('rewrite')->_force_get_url('', '') );
-		$this->assertEquals('http://'.self::$host.'/', module('rewrite')->_force_get_url('', self::$host) );
+		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_force_get_url() );
+		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_force_get_url('') );
+		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_force_get_url('', '') );
+		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_force_get_url('', self::$host) );
 	}
 	public function test_rewrite_compatibility() {
-		$this->assertEquals('http://'.self::$host.'/test', module('rewrite')->_force_get_url(array('object' => 'test'), self::$host) );
+		$this->assertEquals('http://'.self::$host.'/test', _class('rewrite')->_force_get_url(array('object' => 'test'), self::$host) );
 		$this->assertEquals('http://'.self::$host.'/test', _force_get_url(array('object' => 'test'), self::$host) );
 		$this->assertEquals('http://'.self::$host.'/test', url(array('object' => 'test'), self::$host) );
 	}
@@ -126,7 +126,7 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 			'./?object=form&action=method',
 			'./?object=obj&action=act&id=1&page=1',
 		);
-		$this->assertEquals($links, module('rewrite')->_get_unique_links($html) );
+		$this->assertEquals($links, _class('rewrite')->_get_unique_links($html) );
 	}
 	public function test_rewrite_replace_links() {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
@@ -141,7 +141,7 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 			<form action="http://test.dev/form/method">
 			<a href="http://test.dev/obj/act/1/1">
 			</body>';
-		$this->assertEquals($out, module('rewrite')->_rewrite_replace_links($in) );
+		$this->assertEquals($out, _class('rewrite')->_rewrite_replace_links($in) );
 
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;
 		$out2 = '<body><a href="http://google.com/">
@@ -149,35 +149,35 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 			<form action="http://test.dev/?object=form&action=method">
 			<a href="http://test.dev/?object=obj&action=act&id=1&page=1">
 			</body>';
-		$this->assertEquals($out2, module('rewrite')->_rewrite_replace_links($in) );
+		$this->assertEquals($out2, _class('rewrite')->_rewrite_replace_links($in) );
 	}
 	public function test_correct_protocol() {
 		$old = main()->USE_ONLY_HTTPS;
 		main()->USE_ONLY_HTTPS = true;
 
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
-		$this->assertEquals('https://test.dev/?object=obj&action=act', module('rewrite')->_correct_protocol('http://test.dev/?object=obj&action=act') );
-		$this->assertEquals('https://test.dev/?object=obj&action=act', module('rewrite')->_correct_protocol('https://test.dev/?object=obj&action=act') );
-		$this->assertEquals('https://test.dev/obj/act', module('rewrite')->_correct_protocol('http://test.dev/obj/act') );
-		$this->assertEquals('https://test.dev/obj/act', module('rewrite')->_correct_protocol('https://test.dev/obj/act') );
+		$this->assertEquals('https://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('http://test.dev/?object=obj&action=act') );
+		$this->assertEquals('https://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('https://test.dev/?object=obj&action=act') );
+		$this->assertEquals('https://test.dev/obj/act', _class('rewrite')->_correct_protocol('http://test.dev/obj/act') );
+		$this->assertEquals('https://test.dev/obj/act', _class('rewrite')->_correct_protocol('https://test.dev/obj/act') );
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;
-		$this->assertEquals('https://test.dev/?object=obj&action=act', module('rewrite')->_correct_protocol('http://test.dev/?object=obj&action=act') );
-		$this->assertEquals('https://test.dev/?object=obj&action=act', module('rewrite')->_correct_protocol('https://test.dev/?object=obj&action=act') );
-		$this->assertEquals('https://test.dev/obj/act', module('rewrite')->_correct_protocol('http://test.dev/obj/act') );
-		$this->assertEquals('https://test.dev/obj/act', module('rewrite')->_correct_protocol('https://test.dev/obj/act') );
+		$this->assertEquals('https://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('http://test.dev/?object=obj&action=act') );
+		$this->assertEquals('https://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('https://test.dev/?object=obj&action=act') );
+		$this->assertEquals('https://test.dev/obj/act', _class('rewrite')->_correct_protocol('http://test.dev/obj/act') );
+		$this->assertEquals('https://test.dev/obj/act', _class('rewrite')->_correct_protocol('https://test.dev/obj/act') );
 
 		main()->USE_ONLY_HTTPS = false;
 
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
-		$this->assertEquals('http://test.dev/?object=obj&action=act', module('rewrite')->_correct_protocol('http://test.dev/?object=obj&action=act') );
-		$this->assertEquals('http://test.dev/?object=obj&action=act', module('rewrite')->_correct_protocol('https://test.dev/?object=obj&action=act') );
-		$this->assertEquals('http://test.dev/obj/act', module('rewrite')->_correct_protocol('http://test.dev/obj/act') );
-		$this->assertEquals('http://test.dev/obj/act', module('rewrite')->_correct_protocol('https://test.dev/obj/act') );
+		$this->assertEquals('http://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('http://test.dev/?object=obj&action=act') );
+		$this->assertEquals('http://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('https://test.dev/?object=obj&action=act') );
+		$this->assertEquals('http://test.dev/obj/act', _class('rewrite')->_correct_protocol('http://test.dev/obj/act') );
+		$this->assertEquals('http://test.dev/obj/act', _class('rewrite')->_correct_protocol('https://test.dev/obj/act') );
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;
-		$this->assertEquals('http://test.dev/?object=obj&action=act', module('rewrite')->_correct_protocol('http://test.dev/?object=obj&action=act') );
-		$this->assertEquals('http://test.dev/?object=obj&action=act', module('rewrite')->_correct_protocol('https://test.dev/?object=obj&action=act') );
-		$this->assertEquals('http://test.dev/obj/act', module('rewrite')->_correct_protocol('http://test.dev/obj/act') );
-		$this->assertEquals('http://test.dev/obj/act', module('rewrite')->_correct_protocol('https://test.dev/obj/act') );
+		$this->assertEquals('http://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('http://test.dev/?object=obj&action=act') );
+		$this->assertEquals('http://test.dev/?object=obj&action=act', _class('rewrite')->_correct_protocol('https://test.dev/?object=obj&action=act') );
+		$this->assertEquals('http://test.dev/obj/act', _class('rewrite')->_correct_protocol('http://test.dev/obj/act') );
+		$this->assertEquals('http://test.dev/obj/act', _class('rewrite')->_correct_protocol('https://test.dev/obj/act') );
 
 		main()->USE_ONLY_HTTPS = $old;
 	}
@@ -219,23 +219,23 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 			'/other',
 		);
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
-		$this->assertEquals('http://'.self::$host.'/?object=sslme', module('rewrite')->_correct_protocol('http://'.self::$host.'/?object=sslme') );
-		$this->assertEquals('http://'.self::$host.'/?object=sslme', module('rewrite')->_correct_protocol('https://'.self::$host.'/?object=sslme') );
-		$this->assertEquals('https://'.self::$host.'/?object=sslme&action=hello', module('rewrite')->_correct_protocol('http://'.self::$host.'/?object=sslme&action=hello') );
-		$this->assertEquals('https://'.self::$host.'/?object=sslme&action=hello', module('rewrite')->_correct_protocol('https://'.self::$host.'/?object=sslme&action=hello') );
-		$this->assertEquals('https://'.self::$host.'/?object=sslme&action=hello&id=1&page=2', module('rewrite')->_correct_protocol('http://'.self::$host.'/?object=sslme&action=hello&id=1&page=2') );
-		$this->assertEquals('https://'.self::$host.'/?object=sslme&action=hello&id=1&page=2', module('rewrite')->_correct_protocol('https://'.self::$host.'/?object=sslme&action=hello&id=1&page=2') );
-		$this->assertEquals('http://'.self::$host.'/?object=not_https', module('rewrite')->_correct_protocol('http://'.self::$host.'/?object=not_https') );
-		$this->assertEquals('http://'.self::$host.'/?object=not_https', module('rewrite')->_correct_protocol('https://'.self::$host.'/?object=not_https') );
-		$this->assertEquals('http://'.self::$host.'/?object=not_https&action=hello', module('rewrite')->_correct_protocol('http://'.self::$host.'/?object=not_https&action=hello') );
-		$this->assertEquals('http://'.self::$host.'/?object=not_https&action=hello', module('rewrite')->_correct_protocol('https://'.self::$host.'/?object=not_https&action=hello') );
+		$this->assertEquals('http://'.self::$host.'/?object=sslme', _class('rewrite')->_correct_protocol('http://'.self::$host.'/?object=sslme') );
+		$this->assertEquals('http://'.self::$host.'/?object=sslme', _class('rewrite')->_correct_protocol('https://'.self::$host.'/?object=sslme') );
+		$this->assertEquals('https://'.self::$host.'/?object=sslme&action=hello', _class('rewrite')->_correct_protocol('http://'.self::$host.'/?object=sslme&action=hello') );
+		$this->assertEquals('https://'.self::$host.'/?object=sslme&action=hello', _class('rewrite')->_correct_protocol('https://'.self::$host.'/?object=sslme&action=hello') );
+		$this->assertEquals('https://'.self::$host.'/?object=sslme&action=hello&id=1&page=2', _class('rewrite')->_correct_protocol('http://'.self::$host.'/?object=sslme&action=hello&id=1&page=2') );
+		$this->assertEquals('https://'.self::$host.'/?object=sslme&action=hello&id=1&page=2', _class('rewrite')->_correct_protocol('https://'.self::$host.'/?object=sslme&action=hello&id=1&page=2') );
+		$this->assertEquals('http://'.self::$host.'/?object=not_https', _class('rewrite')->_correct_protocol('http://'.self::$host.'/?object=not_https') );
+		$this->assertEquals('http://'.self::$host.'/?object=not_https', _class('rewrite')->_correct_protocol('https://'.self::$host.'/?object=not_https') );
+		$this->assertEquals('http://'.self::$host.'/?object=not_https&action=hello', _class('rewrite')->_correct_protocol('http://'.self::$host.'/?object=not_https&action=hello') );
+		$this->assertEquals('http://'.self::$host.'/?object=not_https&action=hello', _class('rewrite')->_correct_protocol('https://'.self::$host.'/?object=not_https&action=hello') );
 
-		$this->assertEquals('http://'.self::$host.'/sslme', module('rewrite')->_correct_protocol('http://'.self::$host.'/sslme') );
-		$this->assertEquals('https://'.self::$host.'/sslme/hello', module('rewrite')->_correct_protocol('http://'.self::$host.'/sslme/hello') );
-		$this->assertEquals('https://'.self::$host.'/sslme/hello/1', module('rewrite')->_correct_protocol('http://'.self::$host.'/sslme/hello/1') );
-		$this->assertEquals('https://'.self::$host.'/sslme/hello/1/2', module('rewrite')->_correct_protocol('http://'.self::$host.'/sslme/hello/1/2') );
-		$this->assertEquals('http://'.self::$host.'/not_https', module('rewrite')->_correct_protocol('http://'.self::$host.'/not_https') );
-		$this->assertEquals('http://'.self::$host.'/not_https/hello', module('rewrite')->_correct_protocol('http://'.self::$host.'/not_https/hello') );
+		$this->assertEquals('http://'.self::$host.'/sslme', _class('rewrite')->_correct_protocol('http://'.self::$host.'/sslme') );
+		$this->assertEquals('https://'.self::$host.'/sslme/hello', _class('rewrite')->_correct_protocol('http://'.self::$host.'/sslme/hello') );
+		$this->assertEquals('https://'.self::$host.'/sslme/hello/1', _class('rewrite')->_correct_protocol('http://'.self::$host.'/sslme/hello/1') );
+		$this->assertEquals('https://'.self::$host.'/sslme/hello/1/2', _class('rewrite')->_correct_protocol('http://'.self::$host.'/sslme/hello/1/2') );
+		$this->assertEquals('http://'.self::$host.'/not_https', _class('rewrite')->_correct_protocol('http://'.self::$host.'/not_https') );
+		$this->assertEquals('http://'.self::$host.'/not_https/hello', _class('rewrite')->_correct_protocol('http://'.self::$host.'/not_https/hello') );
 
 		$this->assertEquals('http://'.self::$host.'/sslme', process_url('./?object=sslme') );
 		$this->assertEquals('https://'.self::$host.'/sslme/hello', process_url('./?object=sslme&action=hello') );
