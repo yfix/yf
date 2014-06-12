@@ -54,7 +54,7 @@ class yf_forum_low {
 		} elseif ($TYPE == 'topic')	{
 			$body = $this->_show_topic($ID);
 		}
-		$RW = module('rewrite');
+		$RW = _class('rewrite');
 		// Replace relative links to their full paths
 		if (is_object($RW)) {
 			$body = $RW->_rewrite_replace_links($body);
