@@ -395,7 +395,7 @@ class yf_site_map {
 		$text = file_get_contents($_path);
 		// Process URLs
 		if ($this->ALLOW_REWRITE) {
-			$RW = module('rewrite');
+			$RW = _class('rewrite');
 			$RW->FORCE_NO_DEBUG = true;
 			// Save old pattern
 			$old_pattern = $RW->_links_pattern;
