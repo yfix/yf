@@ -52,7 +52,7 @@ class yf_redirect {
 				. ($_GET['page'] ? '&page='.$_GET['page'] : '');
 		}
 		if ($rewrite && tpl()->REWRITE_MODE && MAIN_TYPE_USER) {
-			$location = module('rewrite')->_rewrite_replace_links($location, true);
+			$location = _class('rewrite')->_rewrite_replace_links($location, true);
 		}
 		$location = str_replace('??', '?', $location);
 		if ($location == './?') {
