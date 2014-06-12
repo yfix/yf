@@ -717,14 +717,14 @@ class yf_tpl {
 	* Replace method for 'IFRAME in center' mode
 	*/
 	function _replace_for_iframe_callback ($text = '') {
-		return module('rewrite')->_replace_links_for_iframe($text);
+		return _class('rewrite')->_replace_links_for_iframe($text);
 	}
 
 	/**
 	* Rewrite links callback method
 	*/
 	function _rewrite_links_callback ($text = '') {
-		return module('rewrite')->_rewrite_replace_links($text);
+		return _class('rewrite')->_rewrite_replace_links($text);
 	}
 
 	/**
