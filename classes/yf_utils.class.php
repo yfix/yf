@@ -103,12 +103,7 @@ class yf_utils {
 
 	// Process URL (making rewrite if needed)
 	function process_url($url = '', $force_rewrite = false, $for_site_id = false) {
-		if (tpl()->REWRITE_MODE) {
-			module('rewrite')->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
-		} elseif (substr($url, 0, 3) == './?') {
-			$url = WEB_PATH. substr($url, 2);
-		}
-		return $url;
+		return _class('rewrite')->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
 	}
 
 	// Highlight given text (case-insensetive)
