@@ -7,11 +7,19 @@ class yf_core_js {
 	public $content = array();
 	/** @array List of pre-defined assets */
 	public $assets = array(
-// TODO: add support for sub-arrays and params
 		'jquery'	=> '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js',
-		'jquery-ui'	=> '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js',
-		'bs2'		=> '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js',
-		'bs3'		=> '//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js',
+		'jquery-ui'	=> array(
+			'url' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js',
+			'require' => 'jquery',
+		),
+		'bs2'		=> array(
+			'url' => '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js',
+			'require' => 'jquery',
+		),
+		'bs3'		=> array(
+			'url' => '//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js',
+			'require' => 'jquery',
+		),
 #		'html5shiv'	=> '<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js" class="yf_core"></script><![endif]-->',
 	);
 
@@ -22,6 +30,8 @@ class yf_core_js {
 		return main()->extend_call($this, $name, $args);
 	}
 
+	/**
+	*/
 	public function _init() {
 		// Main JS from theme stpl
 		$main_script_js = trim(tpl()->parse_if_exists('script_js'));
@@ -133,7 +143,15 @@ class yf_core_js {
 					'params'=> $params,
 				);
 			} elseif ($type == 'asset') {
-				$url = $this->assets[$_content];
+				$info = $this->assets[$_content];
+				if (is_array($url)) {
+					$url = $info['url'];
+					if ($info['require']) {
+						$this->add($info['require'], 'asset');
+					}
+				} else {
+					$url = $info;
+				}
 				$md5 = md5($url);
 				$this->content[$md5] = array(
 					'type'	=> 'url',
@@ -213,15 +231,11 @@ class yf_core_js {
 	public function _detect_content($content = '') {
 		$content = trim($content);
 		$type = false;
-// TODO: domain.com/script.js
-// TODO: /script.js
-// TODO: script.js
 		if (isset($this->assets[$content])) {
 			$type = 'asset';
 		} elseif (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content)) {
 			$type = 'url';
 		} elseif (preg_match('~^/[a-z0-9\./_-]+\.js$~ims', $content) && file_exists($content)) {
-// TODO: file allowed to begin with PROJECT_PATH, SITE_PATH or YF_PATH
 			$type = 'file';
 		} elseif (preg_match('~^(<script|[$;#\*/])~ims', $content) || strpos($content, PHP_EOL) !== false) {
 			$type = 'inline';
