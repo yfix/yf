@@ -272,7 +272,7 @@ class yf_manage_shop_import {
 				$cat_id = $A['id'];
 				$cat_ids[$item[6]] = $cat_id;
 			} else {
-				$cat_ids = $cat_ids[$item[6]];
+				$cat_id = $cat_ids[$item[6]];
 			}
 			$v['category'] = $item[6] . " - ".$cat_id;
 			$A = db()->get("SELECT `id` FROM `".db('shop_manufacturers')."` WHERE `name`='".trim($item[5])."' OR `url`='".common()->_propose_url_from_name(trim($item[5]))."'");
