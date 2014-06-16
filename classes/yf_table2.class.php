@@ -322,7 +322,12 @@ class yf_table2 {
 			$total = count($data);
 			$ids = array_keys($data);
 		} elseif (strlen($sql)) {
-			$db = is_object($params['db']) ? $params['db'] : db();
+			if (is_object($params['db'])) {
+				$db = $params['db'];
+				$pager_extra['db'] = $db;
+			} else {
+				$db = db();
+			}
 			if ($params['filter']) {
 				list($filter_sql, $order_sql) = $this->_filter_sql_prepare($params['filter'], $params['filter_params'], $sql);
 				// These 2 arrays needed to be able to use filter parts somehow inside methods
@@ -418,6 +423,7 @@ class yf_table2 {
 	*/
 	function _render_add_custom_fields(&$params, &$data, &$ids) {
 		if ($data && $ids && $params['custom_fields']) {
+			$db = is_object($params['db']) ? $params['db'] : db();
 			$ids_sql = implode(',', $ids);
 			$custom_foreign_fields = array();
 			foreach ((array)$params['custom_fields'] as $custom_name => $custom_sql) {
@@ -436,9 +442,9 @@ class yf_table2 {
 						$_ids_sql = implode(',', $_ids);
 					}
 					$custom_foreign_fields[$custom_name] = $foreign_field;
-					$this->_data_sql_names[$custom_name] = db()->get_2d(str_replace('%ids', $_ids_sql, $custom_sql));
+					$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $_ids_sql, $custom_sql));
 				} else {
-					$this->_data_sql_names[$custom_name] = db()->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
+					$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
 				}
 			}
 			foreach ((array)$data as $_id => $row) {
