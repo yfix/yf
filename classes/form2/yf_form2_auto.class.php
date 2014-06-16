@@ -39,19 +39,20 @@ class yf_form2_auto {
 	/**
 	* Enable automatic fields parsing mode
 	*/
-	function auto($table = '', $id = '', $params = array(), $__this) {
+	function auto($table = '', $id = '', $params = array(), $_this) {
 		if ($params['links_add']) {
-			$__this->_params['links_add'] = $params['links_add'];
+			$_this->_params['links_add'] = $params['links_add'];
 		}
 		if ($table && $id) {
+			$db = ($_this->_params['db'] ?: $params['db']) ?: db();
 // TODO: use db_installer/fields/  info
-			$columns = db()->meta_columns($table);
-			$info = db()->get('SELECT * FROM '.db()->es($table).' WHERE id='.intval($id));
-			if (!is_array($__this->_replace)) {
-				$__this->_replace = array();
+			$columns = $db->meta_columns($table);
+			$info = $db->get('SELECT * FROM '.$db->es($table).' WHERE id='.intval($id));
+			if (!is_array($_this->_replace)) {
+				$_this->_replace = array();
 			}
 			foreach ((array)$info as $k => $v) {
-				$__this->_replace[$k] = $v;
+				$_this->_replace[$k] = $v;
 			}
 			foreach((array)$columns as $name => $a) {
 				$_extra = array();
@@ -112,20 +113,20 @@ class yf_form2_auto {
 				}
 				if (false !== strpos($func, '_box')) {
 					$_extra['name'] = $name;
-					$__this->$func($name, $values, $_extra);
+					$_this->$func($name, $values, $_extra);
 				} else {
-					$__this->$func($name, $_extra);
+					$_this->$func($name, $_extra);
 				}
 			}
-		} elseif ($__this->_sql && $__this->_replace) {
-			foreach((array)$__this->_replace as $name => $v) {
+		} elseif ($_this->_sql && $_this->_replace) {
+			foreach((array)$_this->_replace as $name => $v) {
 // TODO: detect numeric like time: 1234567890
 // TODO: detect YYYY-mm-dd as date, YYYY-mm-dd HH:ii:ss as datetime, HH:ii:ss as time
 // TODO: all other detect rules from code above
-				$__this->container($v, $name);
+				$_this->container($v, $name);
 			}
 		}
-		$__this->save_and_back();
-		return $__this;
+		$_this->save_and_back();
+		return $_this;
 	}
 }
