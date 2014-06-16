@@ -338,10 +338,10 @@ class yf_db {
 		if (empty($db_error) || empty($db_error['message'])) {
 			$db_error = $old_db_error;
 		}
-		$msg = 'DB: QUERY ERROR: '.$sql.'<br />'.PHP_EOL.'<b>CAUSE</b>: '.$db_error['message']
+		$msg = 'DB: QUERY ERROR: '.$sql. ';'. PHP_EOL. 'CAUSE: '.$db_error['message']
 			. ($db_error['code'] ? ' (code:'.$db_error['code'].')' : '')
 			. ($db_error['offset'] ? ' (offset:'.$db_error['offset'].')' : '')
-			. (main()->USE_CUSTOM_ERRORS ? '' : $_trace.'<br />'.PHP_EOL)
+			. (main()->USE_CUSTOM_ERRORS ? '' : $_trace. PHP_EOL)
 		;
 		trigger_error($msg, E_USER_WARNING);
 	}
