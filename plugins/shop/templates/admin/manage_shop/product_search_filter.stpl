@@ -11,7 +11,7 @@ $( document ).ready( function() {
 	$("#" + ajax_search_input + "_search").select2({
 		placeholder: "",
 		minimumInputLength: 2,
-		multiple: {multiple},
+		multiple: {if( multiple eq '' )}false{else}true{/if},
 		ajax: {
 		    url: ajax_search_url,
 		    dataType: 'json',
