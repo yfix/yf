@@ -177,8 +177,9 @@ class yf_db_admin {
 			'back_link'	=> url_admin('/@object/table_show/'.$db_name.'.'.$table),
 			'db'		=> $db,
 		));
-		return form2($replace)->auto($db->_fix_table_name($table), $id, array(
+		return form($replace)->auto($db->_fix_table_name($table), $id, array(
 			'links_add' => '&table='.$table,
+			'db'		=> $db,
 		));
 	}
 
@@ -197,8 +198,9 @@ class yf_db_admin {
 			'back_link'	=> url_admin('/@object/table_show/'.$db_name.'.'.$table),
 			'db'		=> $db,
 		));
-		return form2($replace)->auto($db->_fix_table_name($table), $id, array(
+		return form($replace)->auto($db->_fix_table_name($table), $id, array(
 			'links_add' => '&table='.$table,
+			'db'		=> $db,
 		));
 	}
 
