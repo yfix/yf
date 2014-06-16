@@ -10,7 +10,7 @@
 class yf_table2 {
 
 	/* Example:
-		return table2('SELECT * FROM '.db('admin'))
+		return table('SELECT * FROM '.db('admin'))
 			->text('login')
 			->text('first_name')
 			->text('last_name')
@@ -329,7 +329,7 @@ class yf_table2 {
 				$db = db();
 			}
 			if ($params['filter']) {
-				list($filter_sql, $order_sql) = $this->_filter_sql_prepare($params['filter'], $params['filter_params'], $sql);
+				list($filter_sql, $order_sql) = $this->_filter_sql_prepare($params['filter'], $params['filter_params'], $sql, $this);
 				// These 2 arrays needed to be able to use filter parts somehow inside methods
 				$this->_filter_data = $params['filter'];
 				$this->_filter_params = $params['filter_params'];
