@@ -10,6 +10,9 @@ class yf_db_admin {
 
 	/***/
 	function _db_custom_connection($db_name) {
+		if (!$db_name) {
+			return false;
+		}
 		if (isset($this->_connections[$db_name])) {
 			return $this->_connections[$db_name];
 		}
@@ -27,8 +30,14 @@ class yf_db_admin {
 	}
 
 	/***/
-	function _database_name() {
-		return preg_replace('~[^a-z0-9_]~ims', '', $_GET['id']);
+	function _database_name($db_name) {
+		return preg_replace('~[^a-z0-9_]~ims', '', $db_name);
+	}
+
+	/**
+	*/
+	function _table_name($table) {
+		return preg_replace('/[^a-z0-9_]+/ims', '', $table);
 	}
 
 	/***/
@@ -45,15 +54,15 @@ class yf_db_admin {
 		}
 		return table($data, $this->table_params)
 			->link('name', url_admin('/@object/database_show/%d/'), array(), array('class' => ' '))
-			->btn_edit('', url_admin('/@object/database_edit/%d/'))
-			->btn_delete('', url_admin('/@object/database_delete/%d/'))
-			->header_add('Add database', url_admin('/@object/database_add/'))
+			->btn_edit('', url_admin('/@object/database_alter/%d/'))
+			->btn_delete('', url_admin('/@object/database_drop/%d/'))
+			->header_add('Add database', url_admin('/@object/database_create/'))
 		;
 	}
 
 	/***/
 	function database_show() {
-		$db_name = $this->_database_name();
+		$db_name = $this->_database_name($_GET['id']);
 		if (!$db_name) {
 			return _e('Wrong name');
 		}
@@ -66,10 +75,10 @@ class yf_db_admin {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
 				}, $this->table_params)
-				->link('name', url_admin('/@object/table_show/%d/'), array(), array('class' => ' '))
-				->btn_edit('', url_admin('/@object/table_edit/%d/'))
-				->btn_delete('', url_admin('/@object/table_delete/%d/'))
-				->header_add('Add database', url_admin('/@object/table_add/'))
+				->link('name', url_admin('/@object/table_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->btn_edit('', url_admin('/@object/table_alter/'.$db_name.'.%d/'))
+				->btn_delete('', url_admin('/@object/table_drop/'.$db_name.'.%d/'))
+				->header_add('Add database', url_admin('/@object/table_create/'.$db_name.'/'))
 			,
 			'views' => table(
 				function() use ($db) {
@@ -77,7 +86,7 @@ class yf_db_admin {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
 				}, $this->table_params)
-				->link('name', url_admin('/@object/view_show/%d/'), array(), array('class' => ' '))
+				->link('name', url_admin('/@object/view_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
 			,
 			'triggers' => table(
 				function() use ($db) {
@@ -85,7 +94,7 @@ class yf_db_admin {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
 				}, $this->table_params)
-				->link('name', url_admin('/@object/trigger_show/%d/'), array(), array('class' => ' '))
+				->link('name', url_admin('/@object/trigger_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
 			,
 			'procedures' => table(
 				function() use ($db) {
@@ -93,7 +102,7 @@ class yf_db_admin {
 #						$data[$name] = array('name'	=> $name);
 #					}; return $data;
 				}, $this->table_params)
-				->link('name', url_admin('/@object/procedure_show/%d/'), array(), array('class' => ' '))
+				->link('name', url_admin('/@object/procedure_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
 			,
 			'functions' => table(
 				function() use ($db) {
@@ -101,7 +110,7 @@ class yf_db_admin {
 #						$data[$name] = array('name'	=> $name);
 #					}; return $data;
 				}, $this->table_params)
-				->link('name', url_admin('/@object/function_show/%d/'), array(), array('class' => ' '))
+				->link('name', url_admin('/@object/function_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
 			,
 			'events' => table(
 				function() use ($db) {
@@ -109,9 +118,123 @@ class yf_db_admin {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
 				}, $this->table_params)
-				->link('name', url_admin('/@object/event_show/%d/'), array(), array('class' => ' '))
+				->link('name', url_admin('/@object/event_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
 			,
 		));
 	}
 
+	/**
+	*/
+	function database_alter() {
+// TODO
+	}
+
+	/**
+	*/
+	function database_create() {
+// TODO
+	}
+
+	/**
+	*/
+	function database_drop() {
+// TODO
+	}
+
+	/**
+	*/
+	function table_show() {
+		list($db_name, $table) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+		return table2('SELECT * FROM '.$table, array(
+				'auto_no_buttons' => 1,
+				'db' => $db,
+			))
+			->btn_edit('', url_admin('/@object/table_edit/'.$db_name.'.'.$table.'.%d'))
+			->btn_delete('', url_admin('/@object/table_delete/'.$db_name.'.'.$table.'.%d'))
+			->footer_add('', url_admin('/@object/table_add/'.$db_name.'.'.$table))
+			->auto();
+	}
+
+	/**
+	*/
+	function table_edit() {
+		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		$id = intval($id);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table || !$id) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+		$replace = _class('admin_methods')->edit(array(
+			'table' 	=> $table,
+			'back_link'	=> url_admin('/@object/table_show/'.$db_name.'.'.$table),
+			'db'		=> $db,
+		));
+		return form2($replace)->auto($db->_fix_table_name($table), $id, array(
+			'links_add' => '&table='.$table,
+		));
+	}
+
+	/**
+	*/
+	function table_add() {
+		list($db_name, $table) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+		$replace = _class('admin_methods')->add(array(
+			'table' 	=> $table,
+			'back_link'	=> url_admin('/@object/table_show/'.$db_name.'.'.$table),
+			'db'		=> $db,
+		));
+		return form2($replace)->auto($db->_fix_table_name($table), $id, array(
+			'links_add' => '&table='.$table,
+		));
+	}
+
+	/**
+	*/
+	function table_delete() {
+		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		$id = intval($id);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table || !$id) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+		return _class('admin_methods')->delete(array(
+			'table'		=> $table,
+			'back_link'	=> url_admin('/@object/table_show/'.$db_name.'.'.$table),
+			'db'		=> $db,
+		));
+	}
+
+	/**
+	*/
+	function table_alter() {
+// TODO
+	}
+
+	/**
+	*/
+	function table_create() {
+// TODO
+	}
+
+	/**
+	*/
+	function table_drop() {
+// TODO
+	}
 }
