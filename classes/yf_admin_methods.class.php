@@ -27,14 +27,15 @@ class yf_admin_methods {
 		if (!is_array($params)) {
 			$params = array();
 		}
-		$table = db($params['table']);
+		$db = is_object($params['db']) ? $params['db'] : db();
+		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
 			return false;
 		}
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 		if (!$fields) {
-			$columns = db()->meta_columns($table);
+			$columns = $db->meta_columns($table);
 			if (isset($columns[$primary_field])) {
 				unset($columns[$primary_field]);
 			}
@@ -52,15 +53,17 @@ class yf_admin_methods {
 					$params['on_before_update']($sql);
 				}
 
-				db()->insert($table, db()->es($sql));
-				$NEW_ID = db()->insert_id();
+				$db->insert($table, $db->es($sql));
+				$NEW_ID = $db->insert_id();
 				common()->admin_wall_add(array($_GET['object'].': added record into table '.$table, $NEW_ID));
 
 				if (is_callable($params['on_after_update'])) {
 					$params['on_after_update']($sql, $NEW_ID);
 				}
-				$form_action = $params['form_action'] ?: './?object='.$_GET['object'] . '&action='.$_GET['action'] . $params['links_add'];
-				if( $NEW_ID ) { $form_action .= '&id=' . $NEW_ID; }
+				$form_action = $params['form_action'] ?: url_admin('/@object/@action/'. $params['links_add']);
+				if ($NEW_ID) {
+					$form_action .= '&id=' . $NEW_ID;
+				}
 				$form_action = str_replace( array( 'add', '_add' ), array( 'edit', '_edit' ), $form_action );
 				return js_redirect( $form_action );
 			} else {
@@ -77,8 +80,8 @@ class yf_admin_methods {
 			$DATA = _prepare_html($DATA);
 		}
 		$replace = array(
-			'form_action'	=> $params['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action']. $params['links_add'],
-			'back_link'		=> $params['back_link'] ?: './?object='.$_GET['object']. $params['links_add'],
+			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'. $params['links_add']),
+			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
 		);
 		foreach ((array)$fields as $f) {
 			$replace[$f] = $DATA[$f];
@@ -97,20 +100,21 @@ class yf_admin_methods {
 		if (!is_array($params)) {
 			$params = array();
 		}
-		$table = db($params['table']);
+		$db = is_object($params['db']) ? $params['db'] : db();
+		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
 			return false;
 		}
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 		if (!$fields) {
-			$columns = db()->meta_columns($table);
+			$columns = $db->meta_columns($table);
 			if (isset($columns[$primary_field])) {
 				unset($columns[$primary_field]);
 			}
 			$fields = array_keys($columns);
 		}
-		$a = db()->get('SELECT * FROM '.db()->es($table).' WHERE `'.db()->es($primary_field).'`="'.db()->es($_GET['id']).'"');
+		$a = $db->get('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'"');
 		if (!$a) {
 			return _e('Wrong id');
 		}
@@ -126,13 +130,13 @@ class yf_admin_methods {
 					$params['on_before_update']($sql);
 				}
 
-				db()->update($table, db()->es($sql), '`'.db()->es($primary_field).'`="'.db()->es($_GET['id']).'"');
+				$db->update($table, $db->es($sql), '`'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'"');
 				common()->admin_wall_add(array($_GET['object'].': updated record in table '.$table, $_GET['id']));
 
 				if (is_callable($params['on_after_update'])) {
 					$params['on_after_update']($sql);
 				}
-				$form_action = $params['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.urlencode($_GET['id']). $params['links_add'];
+				$form_action = $params['form_action'] ?: url_admin('/@object/@action/'.urlencode($_GET['id']). '/'. $params['links_add']);
 				return js_redirect( $form_action );
 			} else {
 				if (is_callable($params['on_error'])) {
@@ -145,8 +149,8 @@ class yf_admin_methods {
 			$params['on_before_show']($DATA);
 		}
 		$replace = array(
-			'form_action'	=> $params['form_action'] ?: './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.urlencode($_GET['id']). $params['links_add'],
-			'back_link'		=> $params['back_link'] ?: './?object='.$_GET['object']. $params['links_add'],
+			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'.urlencode($_GET['id']). '/'. $params['links_add']),
+			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
 		);
 		foreach ((array)$a as $k => $v) {
 			if (!isset($replace[$k])) {
@@ -167,7 +171,8 @@ class yf_admin_methods {
 		if (!is_array($params)) {
 			$params = array();
 		}
-		$table = db($params['table']);
+		$db = is_object($params['db']) ? $params['db'] : db();
+		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
 			return false;
 		}
@@ -179,7 +184,7 @@ class yf_admin_methods {
 				$params['on_before_update']($_GET['id']);
 			}
 
-			db()->query('DELETE FROM '.db()->es($table).' WHERE `'.db()->es($primary_field).'`="'.db()->es($_GET['id']).'" LIMIT 1');
+			$db->query('DELETE FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'" LIMIT 1');
 
 			common()->admin_wall_add(array($_GET['object'].': deleted record from table '.$table, $_GET['id']));
 
@@ -190,7 +195,7 @@ class yf_admin_methods {
 		if (conf('IS_AJAX')) {
 			echo $_GET['id'];
 		} else {
-			return js_redirect('./?object='.$_GET['object']. _add_get(). $params['links_add']);
+			return js_redirect(url_admin('/@object/'. _add_get(). $params['links_add']));
 		}
 	}
 
@@ -205,7 +210,8 @@ class yf_admin_methods {
 		if (!is_array($params)) {
 			$params = array();
 		}
-		$table = db($params['table']);
+		$db = is_object($params['db']) ? $params['db'] : db();
+		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
 			return false;
 		}
@@ -213,17 +219,13 @@ class yf_admin_methods {
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 
 		if (!empty($_GET['id'])) {
-			$info = db()->query_fetch('SELECT * FROM '.db()->es($table).' WHERE `'.db()->es($primary_field).'`="'.db()->es($_GET['id']).'" LIMIT 1');
+			$info = $db->query_fetch('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'" LIMIT 1');
 		}
 		if ($info) {
 			if (is_callable($params['on_before_update'])) {
 				$params['on_before_update']($info);
 			}
-
-			db()->update($table, array(
-				'active' => (int)!$info['active'],
-			), db()->es($primary_field).'="'.db()->es($_GET['id']).'"');
-
+			$db->update($table, array('active' => (int)!$info['active']), $db->es($primary_field).'="'.$db->es($_GET['id']).'"');
 			common()->admin_wall_add(array($_GET['object'].': item in table '.$table.' '.($info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 
 			if (is_callable($params['on_after_update'])) {
@@ -233,7 +235,7 @@ class yf_admin_methods {
 		if (conf('IS_AJAX')) {
 			echo ($info['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']. _add_get(). $params['links_add']);
+			return js_redirect(url_admin('/@object/'. _add_get(). $params['links_add']));
 		}
 	}
 
@@ -248,7 +250,8 @@ class yf_admin_methods {
 		if (!is_array($params)) {
 			$params = array();
 		}
-		$table = db($params['table']);
+		$db = is_object($params['db']) ? $params['db'] : db();
+		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
 			return false;
 		}
@@ -256,7 +259,7 @@ class yf_admin_methods {
 		$primary_field = $params['id'] ? $params['id'] : 'id';
 
 		if (!empty($_GET['id'])) {
-			$info = db()->query_fetch('SELECT * FROM '.db()->es($table).' WHERE `'.db()->es($primary_field).'`="'.db()->es($_GET['id']).'" LIMIT 1');
+			$info = $db->query_fetch('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'" LIMIT 1');
 		}
 		if ($info) {
 			$sql = $info;
@@ -266,8 +269,8 @@ class yf_admin_methods {
 				$params['on_before_update']($sql);
 			}
 
-			db()->insert($table, db()->es($sql));
-			$new_id = db()->insert_id();
+			$db->insert($table, $db->es($sql));
+			$new_id = $db->insert_id();
 
 			common()->admin_wall_add(array($_GET['object'].': item cloned in table '.$table, $new_id));
 
@@ -278,7 +281,7 @@ class yf_admin_methods {
 		if (conf('IS_AJAX')) {
 			echo ($new_id ? 1 : 0);
 		} else {
-			return js_redirect('./?object='.$_GET['object']. _add_get(). $params['links_add']);
+			return js_redirect(url_admin('/@object/'. _add_get(). $params['links_add']));
 		}
 	}
 
@@ -308,7 +311,7 @@ class yf_admin_methods {
 				}
 			}
 		}
-		$redrect_url = $params['redirect_url'] ?: './?object='.$_GET['object'].'&action='. str_replace ($_GET['object'].'__', '', $filter_name);
+		$redrect_url = $params['redirect_url'] ?: url_admin('/@object/'. str_replace($_GET['object'].'__', '', $filter_name) );
 		return js_redirect($redrect_url);
 	}
 
@@ -320,8 +323,8 @@ class yf_admin_methods {
 		}
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
+			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
 		);
 		$order_fields = array();
 		foreach (explode('|', 'admin_id|login|group|date|ip|user_agent|referer') as $f) {
@@ -329,6 +332,7 @@ class yf_admin_methods {
 		}
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
+				'db'		=> $params['db'],
 			))
 			->number('admin_id')
 			->text('ip')
