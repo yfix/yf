@@ -9,7 +9,13 @@ class yf_rewrite {
 		$this->REWRITE_PATTERNS = array(
 			'yf' => _class('rewrite_pattern_yf', 'classes/rewrite/'),
 		);
-		$this->DEFAULT_HOST = defined('WEB_DOMAIN') ? WEB_DOMAIN : $_SERVER['HTTP_HOST'];
+	//	$this->DEFAULT_HOST = defined('WEB_DOMAIN') ? WEB_DOMAIN : $_SERVER['HTTP_HOST'];
+		$this->DEFAULT_HOST = defined('WEB_DOMAIN') ? WEB_DOMAIN : $_SERVER['SERVER_NAME'];
+		//if the host had an underscore 
+		//underline will be removed
+		//example $host = http://bla_bla.host.com
+		//$_SERVER['HTTP_HOST'] will be == blabla.host.com
+			
 	}
 
 	/**
