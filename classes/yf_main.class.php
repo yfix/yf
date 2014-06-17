@@ -200,7 +200,7 @@ class yf_main {
 			$this->_after_init_hook();
 			if ($auto_init_all) {
 				$this->init_auth();
-				$this->tpl->init_graphics();
+				$this->init_content();
 			}
 			register_shutdown_function(array($this, '_framework_destruct'));
 		} catch (Exception $e) {
@@ -476,6 +476,14 @@ class yf_main {
 		$this->init_class('tpl', 'classes/');
 		$this->tpl =& $this->modules['tpl'];
 		$GLOBALS['tpl'] =& $this->modules['tpl'];
+	}
+
+	/**
+	*/
+	function init_content () {
+#		_class('core_events')->fire('main.before_content');
+		$this->tpl->init_graphics();
+#		_class('core_events')->fire('main.after_content');
 	}
 
 	/**
