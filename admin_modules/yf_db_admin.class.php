@@ -59,8 +59,8 @@ class yf_db_admin {
 		}
 		return table($data, $this->table_params)
 			->link('name', url_admin('/@object/database_show/%d/'), array(), array('class' => ' '))
-			->btn_edit('', url_admin('/@object/database_alter/%d/'))
-			->btn_delete('', url_admin('/@object/database_drop/%d/'))
+			->btn_edit('Alter', url_admin('/@object/database_alter/%d/'))
+			->btn_delete('Drop', url_admin('/@object/database_drop/%d/'))
 			->header_add('Add database', url_admin('/@object/database_create/'))
 		;
 	}
@@ -81,8 +81,8 @@ class yf_db_admin {
 					}; return $data;
 				}, $this->table_params)
 				->link('name', url_admin('/@object/table_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
-				->btn_edit('', url_admin('/@object/table_alter/'.$db_name.'.%d/'))
-				->btn_delete('', url_admin('/@object/table_drop/'.$db_name.'.%d/'))
+				->btn_edit('Alter', url_admin('/@object/table_alter/'.$db_name.'.%d/'))
+				->btn_delete('Drop', url_admin('/@object/table_drop/'.$db_name.'.%d/'))
 				->header_add('Add database', url_admin('/@object/table_create/'.$db_name.'/'))
 			,
 			'views' => table(
@@ -162,7 +162,7 @@ class yf_db_admin {
 			))
 			->btn_edit('', url_admin('/@object/table_edit/'.$db_name.'.'.$table.'.%d'))
 			->btn_delete('', url_admin('/@object/table_delete/'.$db_name.'.'.$table.'.%d'))
-			->footer_add('', url_admin('/@object/table_add/'.$db_name.'.'.$table))
+			->footer_add('Insert', url_admin('/@object/table_add/'.$db_name.'.'.$table))
 			->auto();
 	}
 
