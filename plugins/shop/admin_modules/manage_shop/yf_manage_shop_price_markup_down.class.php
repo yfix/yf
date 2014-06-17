@@ -64,10 +64,6 @@ class yf_manage_shop_price_markup_down {
 		return( $table );
 	}
 
-	function price_markup_down_active() {
-		return _class( 'admin_methods' )->active( $this->_table );
-	}
-
 	function _select_box__type() {
 		$_class_price = $this->_class_price;
 		$types = $_class_price->types;
@@ -180,8 +176,12 @@ class yf_manage_shop_price_markup_down {
 	}
 
 	function price_markup_down_delete() {
-		$replace = _class( 'admin_methods' )->delete( $this->_table );
-		return( $this->_form( $replace ) );
+		return( _class( 'admin_methods' )->delete( $this->_table ) );
 	}
+
+	function price_markup_down_active() {
+		return( _class( 'admin_methods' )->active( $this->_table ) );
+	}
+
 
 }
