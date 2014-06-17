@@ -240,7 +240,8 @@ class yf_manage_shop_product_sets {
 			$result = db()->query( 'DELETE FROM '.db('shop_product_sets_items').' WHERE product_set_id = '.(int)$_GET['id'].' AND product_id = '.(int)$_GET['product_id'] );
 			return $result;
 		} else {
-			return _class('admin_methods')->delete($this->_table);
+			$result = db()->query( 'DELETE FROM '.db('shop_product_sets_items').' WHERE product_set_id = '.(int)$_GET['id'] );
+			return $result && _class('admin_methods')->delete($this->_table) || 0;
 		}
 	}
 }
