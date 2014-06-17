@@ -27,10 +27,14 @@ class yf_admin_methods {
 		if (!is_array($params)) {
 			$params = array();
 		}
+		$replace = array(
+			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'. $params['links_add']),
+			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
+		);
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
-			return false;
+			return $replace;
 		}
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
@@ -79,10 +83,6 @@ class yf_admin_methods {
 		if (!$params['no_escape']) {
 			$DATA = _prepare_html($DATA);
 		}
-		$replace = array(
-			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'. $params['links_add']),
-			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
-		);
 		foreach ((array)$fields as $f) {
 			$replace[$f] = $DATA[$f];
 		}
@@ -100,10 +100,14 @@ class yf_admin_methods {
 		if (!is_array($params)) {
 			$params = array();
 		}
+		$replace = array(
+			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'.urlencode($_GET['id']). '/'. $params['links_add']),
+			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
+		);
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
-			return false;
+			return $replace;
 		}
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
@@ -114,10 +118,6 @@ class yf_admin_methods {
 			}
 			$fields = array_keys($columns);
 		}
-		$replace = array(
-			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'.urlencode($_GET['id']). '/'. $params['links_add']),
-			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
-		);
 		$a = $db->get('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'"');
 		if (!$a) {
 			_re('Wrong id');
@@ -186,7 +186,6 @@ class yf_admin_methods {
 			}
 
 			$db->query('DELETE FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'" LIMIT 1');
-
 			common()->admin_wall_add(array($_GET['object'].': deleted record from table '.$table, $_GET['id']));
 
 			if (is_callable($params['on_after_update'])) {
