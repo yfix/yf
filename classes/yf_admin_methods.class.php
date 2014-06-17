@@ -214,14 +214,14 @@ class yf_admin_methods {
 
 		if (!empty($id)) {
 			if (is_callable($params['on_before_update'])) {
-				$params['on_before_update']($id);
+				$params['on_before_update']($fields);
 			}
 
 			$db->query('DELETE FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($id).'" LIMIT 1');
 			common()->admin_wall_add(array($_GET['object'].': deleted record from table '.$table, $id));
 
 			if (is_callable($params['on_after_update'])) {
-				$params['on_after_update']($id);
+				$params['on_after_update']($fields);
 			}
 		}
 		if (conf('IS_AJAX')) {
