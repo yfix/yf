@@ -48,7 +48,7 @@ class yf_manage_shop_product_sets {
 			->text('price')
 			->text('products_price')
 			->text('products_items')
-			->link('cat_id', './?object=category_editor&action=show_items&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
+			->link('cat_id', './?object=category_editor&action=edit_item&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
 			->btn_active('', './?object='.main()->_get('object').'&action=product_set_active&id=%d')
 			->btn_edit( '','./?object='.main()->_get('object').'&action=product_set_edit&id=%d', array( 'no_ajax' => true ) )
 			->btn_delete('','./?object='.main()->_get('object').'&action=product_set_delete&id=%d')
