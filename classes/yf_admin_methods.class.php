@@ -114,9 +114,14 @@ class yf_admin_methods {
 			}
 			$fields = array_keys($columns);
 		}
+		$replace = array(
+			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'.urlencode($_GET['id']). '/'. $params['links_add']),
+			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
+		);
 		$a = $db->get('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'"');
 		if (!$a) {
-			return _e('Wrong id');
+			_re('Wrong id');
+			return $replace;
 		}
 		if (main()->is_post()) {
 			if (!common()->_error_exists()) {
@@ -148,10 +153,6 @@ class yf_admin_methods {
 		if (is_callable($params['on_before_show'])) {
 			$params['on_before_show']($DATA);
 		}
-		$replace = array(
-			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'.urlencode($_GET['id']). '/'. $params['links_add']),
-			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
-		);
 		foreach ((array)$a as $k => $v) {
 			if (!isset($replace[$k])) {
 				$replace[$k] = $DATA[$k];
