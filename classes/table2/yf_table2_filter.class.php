@@ -7,10 +7,11 @@ class yf_table2_filter {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '') {
+	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $_this) {
 		if (!$filter_data) {
 			return '';
 		}
+		$db = is_object($_this->_params['db']) ? $_this->_params['db'] : db();
 		$special_fields = array(
 			'order_by',
 			'order_direction',
@@ -110,7 +111,7 @@ class yf_table2_filter {
 				}
 			}
 			if (!strlen($left_part)) {
-				$left_part = '`'.str_replace('.', '`.`', db()->es($field)).'`';
+				$left_part = '`'.str_replace('.', '`.`', $db->es($field)).'`';
 			}
 			if ($part_on_the_right) {
 				$sql[] = trim($left_part). ' '. trim($part_on_the_right);
@@ -129,7 +130,7 @@ class yf_table2_filter {
 					$order_by_field = $field_params[1];
 				}
 			}
-			$order_sql = ' ORDER BY `'.str_replace('.', '`.`', db()->es($order_by_field)).'` ';
+			$order_sql = ' ORDER BY `'.str_replace('.', '`.`', $db->es($order_by_field)).'` ';
 			if ($filter_data['order_direction']) {
 				$direction = strtoupper($filter_data['order_direction']);
 			}

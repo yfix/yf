@@ -147,7 +147,13 @@ class yf_divide_pages {
 				// Simple speed optimization by removing ORDER BY ... from SQL when counting total records
 				$modified_sql = preg_replace('/\sORDER BY .*? (ASC|DESC)$/i', '', $modified_sql);
 			}
-			$db = !empty($this->OVERRIDE_DB_OBJECT) ? $this->OVERRIDE_DB_OBJECT : db();
+			if (isset($extra['db'])) {
+				$db = $extra['db'];
+			} elseif (is_object($this->OVERRIDE_DB_OBJECT)) {
+				$db = $this->OVERRIDE_DB_OBJECT;
+			} else {
+				$db = db();
+			}
 			$total_records = intval($_need_std_num_rows ? $db->query_num_rows($sql) : $db->get_one($modified_sql));
 		} else {
 			$total_records = $num_records;

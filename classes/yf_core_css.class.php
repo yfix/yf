@@ -7,7 +7,6 @@ class yf_core_css {
 	public $content = array();
 	/** @array List of pre-defined assets */
 	public $assets = array(
-// TODO: add support for sub-arrays and params
 		'jquery-ui'	=> '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css',
 		'angular-ui'=> '//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.css',
 		'bs2'		=> '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css',
@@ -21,6 +20,8 @@ class yf_core_css {
 		return main()->extend_call($this, $name, $args);
 	}
 
+	/**
+	*/
 	public function _init() {
 		// Main CSS from theme stpl
 		$main_style_css = trim(tpl()->parse_if_exists('style_css'));
@@ -184,7 +185,15 @@ class yf_core_css {
 					'params'=> $params,
 				);
 			} elseif ($type == 'asset') {
-				$url = $this->assets[$_content];
+				$info = $this->assets[$_content];
+				if (is_array($url)) {
+					$url = $info['url'];
+					if ($info['require']) {
+						$this->add($info['require'], 'asset');
+					}
+				} else {
+					$url = $info;
+				}
 				$md5 = md5($url);
 				$this->content[$md5] = array(
 					'type'	=> 'url',
@@ -263,14 +272,10 @@ class yf_core_css {
 	public function _detect_content($content = '') {
 		$content = trim($content);
 		$type = false;
-// TODO: domain.com/style.css
-// TODO: /style.css
-// TODO: style.css
 		if (isset($this->assets[$content])) {
 			$type = 'asset';
 		} elseif (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content)) {
 			$type = 'url';
-// TODO: file allowed to begin with PROJECT_PATH, SITE_PATH or YF_PATH
 		} elseif (preg_match('~^/[a-z0-9\./_-]+\.css$~ims', $content) && file_exists($content)) {
 			$type = 'file';
 		} elseif (preg_match('~^(<style|[$;#\.@/\*])~ims', $content) || strpos($content, PHP_EOL) !== false) {

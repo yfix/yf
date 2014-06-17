@@ -6,11 +6,13 @@ class yf_form2_info {
 
 	/**
 	*/
-	function user_info($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function user_info($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		$name = 'user_name';
-		$user_id = $__this->_replace['user_id'];
+		$user_id = $_this->_replace['user_id'];
 
-		$user_info = db()->get('SELECT login,email,phone,nick,id AS user_name FROM '.db('user').' WHERE id='.intval($user_id));
+		$db = ($_this->_params['db'] ?: $extra['db']) ?: db();
+
+		$user_info = $db->get('SELECT login,email,phone,nick,id AS user_name FROM '.$db->_fix_table_name('user').' WHERE id='.intval($user_id));
 		$user_name = array();
 // TODO: add tpl param
 		if ($user_info) {
@@ -28,19 +30,21 @@ class yf_form2_info {
 				$user_name[] = $user_info['nick'];
 			}
 		}
-		$__this->_replace[$name] = implode('; ', $user_name);
+		$_this->_replace[$name] = implode('; ', $user_name);
 
 		$extra['link'] = './?object=members&action=edit&id='.$user_id;
-		return $__this->info($name, $desc, $extra, $replace);
+		return $_this->info($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
-	function admin_info($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function admin_info($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		$name = 'admin_name';
-		$user_id = $__this->_replace['user_id'];
+		$user_id = $_this->_replace['user_id'];
 
-		$user_info = db()->get('SELECT login,id AS user_name FROM '.db('admin').' WHERE id='.intval($user_id));
+		$db = ($_this->_params['db'] ?: $extra['db']) ?: db();
+
+		$user_info = $db->get('SELECT login,id AS user_name FROM '.$db->_fix_table_name('admin').' WHERE id='.intval($user_id));
 // TODO: add tpl param
 		$user_name = array();
 		if ($user_info) {
@@ -51,8 +55,8 @@ class yf_form2_info {
 				$user_name[] = $user_info['login'];
 			}
 		}
-		$__this->_replace[$name] = implode('; ', $user_name);
+		$_this->_replace[$name] = implode('; ', $user_name);
 		$extra['link'] = './?object=admin&action=edit&id='.$user_id;
-		return $__this->info($name, $desc, $extra, $replace);
+		return $_this->info($name, $desc, $extra, $replace);
 	}
 }

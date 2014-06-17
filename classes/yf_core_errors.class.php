@@ -162,7 +162,7 @@ class yf_core_errors {
 		error_log($msg);
 
 		if (DEBUG_MODE) {
-			echo '<pre>'.$msg.'</pre>';
+			echo '<pre>'._prepare_html($msg).'</pre>';
 		}
 	}
 
@@ -283,11 +283,11 @@ class yf_core_errors {
 			db()->_add_shutdown_query($sql);
 		}
 		if (DEBUG_MODE && ($this->ERROR_REPORTING & $error_type) && strlen($msg)) {
-			echo '<b>'.$this->error_types[$error_type].'</b>: '. $error_msg.' (<i>'.$error_file.' on line '.$error_line.'</i>)<pre>'.main()->trace_string().'</pre><br />'.PHP_EOL;
+			echo '<b>'.$this->error_types[$error_type].'</b>: '. _prepare_html($error_msg).' (<i>'.$error_file.' on line '.$error_line.'</i>)<pre>'._prepare_html(main()->trace_string()).'</pre><br />'.PHP_EOL;
 		}
 		// For critical errors stop execution here
 		if ($error_type == E_ERROR || $error_type == E_USER_ERROR) {
-			exit('Fatal error: '.($error_type == E_USER_ERROR ? '<br>'. $error_msg : ''));
+			exit('Fatal error: '.($error_type == E_USER_ERROR ? '<br>'. _prepare_html($error_msg) : ''));
 		}
 		return true; 
 	}

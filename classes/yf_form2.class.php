@@ -41,7 +41,7 @@ class yf_form2 {
 	/**
 	* Wrapper for template engine
 	* Example:
-	*	return form2($replace)
+	*	return form($replace)
 	*		->text('login','Login')
 	*		->text('password','Password')
 	*		->text('first_name','First Name')
@@ -55,7 +55,8 @@ class yf_form2 {
 		if ($replace && is_string($replace)) {
 			$sql = $replace;
 			$this->_sql = $sql;
-			$replace = db()->get_2d($sql);
+			$db = is_object($params['db']) ? $params['db'] : db();
+			$replace = $db->get_2d($sql);
 		}
 		if (!$params['no_chained_mode']) {
 			$this->_chained_mode = true;
@@ -2142,10 +2143,11 @@ class yf_form2 {
 				$on_before_update($data, $table, $fields, $type, $extra);
 			}
 			if ($data && $table) {
+				$db = is_object($_this->_params['db']) ? $_this->_params['db'] : db();
 				if ($type == 'update') {
-					db()->update($table, db()->es($data), $extra['where_id']);
+					$db->update($table, $db->es($data), $extra['where_id']);
 				} elseif ($type == 'insert') {
-					db()->insert($table, db()->es($data));
+					$db->insert($table, $db->es($data));
 				}
 				// Callback/hook function implementation
 				$on_after_update = isset($extra['on_after_update']) ? $extra['on_after_update'] : $_this->_on['on_after_update'];

@@ -5,13 +5,11 @@
 //		_class('core_events')->listen('class.*',function() { return 'event #0 wildcarded'; });
 		_class('core_events')->listen('class.action',function($args) { return 'event # 1'.$args; },1);
 //		_class('core_events')->listen('class.action',function() { return 'event # 2'; },2);
-	_class('core_events')->listen('class.action',function() { return 1; });
+		_class('core_events')->listen('class.action',function() { return 1; });
 		_class('core_events')->listen('class.*',function() { return 2; },5);
 		_class('core_events')->listen('class.action2',function() { return 1; });
 		_class('core_events')->listen('class2.action',function() { return 1; }); 
-
-
-		
+	
 		$r = "<pre>".print_r(_class('core_events')->fire('class.action','test'),1)."</pre>";
 */
 
@@ -204,18 +202,17 @@ class yf_core_events {
 		}
 	}
 
-	
-	function _find_hooks() {
-		// todo
-	}
-
+	/**
+	*/
 	protected function _str_contains($haystack, $needles) {
 		foreach ((array) $needles as $needle) {
 			if ($needle != '' && strpos($haystack, $needle) !== false) return true;
 		}
 		return false;
 	}
-	
+
+	/**
+	*/
 	protected function _str_is($pattern, $value) {
 		if ($pattern == $value) return true;
 		$pattern = preg_quote($pattern, '#');
@@ -225,6 +222,8 @@ class yf_core_events {
 		$pattern = str_replace('\*', '.*', $pattern).'\z';
 		return (bool) preg_match('#^'.$pattern.'#', $value);
 	}
-	
-}
 
+	function _find_hooks() {
+// TODO
+	}
+}

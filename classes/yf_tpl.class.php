@@ -10,60 +10,39 @@
 class yf_tpl {
 
 	/** @var string @conf_skip Path to the templates (including current theme path) */
-	public $TPL_PATH			   = '';
+	public $TPL_PATH				= '';
 	/** @var bool Compressing output by cutting '\t','\r','\n','  ','   ' */
-	public $COMPRESS_OUTPUT		= false;
+	public $COMPRESS_OUTPUT			= false;
 	/** @var bool Using SEO - friendly URLs (All links need to be absolute) */
-	public $REWRITE_MODE		   = false;
+	public $REWRITE_MODE			= false;
 	/** @var bool Custom meta information (customizable for every page) : page titles, meta keywords, description */
-	public $CUSTOM_META_INFO	   = false;
+	public $CUSTOM_META_INFO		= false;
 	/** @var bool Exit after sending main content */
-	public $EXIT_AFTER_ECHO		= false;
+	public $EXIT_AFTER_ECHO			= false;
 	/** @var bool Use database to store templates */
-	public $GET_STPLS_FROM_DB	  = false;
+	public $GET_STPLS_FROM_DB		= false;
 	/** @var bool SECURITY: allow or not eval php code (with _PATTERN_INCLUDE) */
-	public $ALLOW_EVAL_PHP_CODE	= true;
-	/** @var array @conf_skip
-		For '_process_conditions',
-		Will be availiable in conditions with such form: {if('get.object' eq 'login_form')} Hello from login form {/if}
-	*/
-	public $_avail_arrays	  = array(
-		'get'	   => '_GET',
-		'post'	  => '_POST',
-	);
-	/** @var bool Get all templates from db or not (1 query or multiple)
-	*   (NOTE: If true - Slow PHP processing but just 1 db query)
-	*/
-	public $FROM_DB_GET_ALL		= false;
-	/** @var array @conf_skip Temporary storage for all templates parsed from db */
-	public $_TMP_FROM_DB	   = null;
-	/** @var array @conf_skip Array of output filters (will be called just before throwing output to user) */
-	public $_OUTPUT_FILTERS	= array();
+	public $ALLOW_EVAL_PHP_CODE		= true;
+	/** @var bool Get all templates from db or not (1 query or multiple)  (NOTE: If true - Slow PHP processing but just 1 db query) */
+	public $FROM_DB_GET_ALL			= false;
 	/** @var bool Catch any output before gzipped content (works only with GZIP) */
-	public $_OB_CATCH_CONTENT  = true;
+	public $OB_CATCH_CONTENT		= true;
 	/** @var bool Use or not Tidy to cleanup output */
-	public $TIDY_OUTPUT		= false;
-	/** @var array Configuration for Tidy */
-	public $_TIDY_CONFIG	   = array(
-		'alt-text'	  => '',
-		'output-xhtml'  => true,
-	);
+	public $TIDY_OUTPUT				= false;
 	/** @var bool Use backtrace to get STPLs source (where called from) FOR DEBUG_MODE ONLY ! */
-	public $USE_SOURCE_BACKTRACE	   = true;
+	public $USE_SOURCE_BACKTRACE	= true;
 	/** @var bool If available - use packed STPLs without checking if some exists in project */
-	public $AUTO_LOAD_PACKED_STPLS	 = false;
+	public $AUTO_LOAD_PACKED_STPLS	= false;
 	/** @var bool Allow custom filter for all parsed stpls */
 	public $ALLOW_CUSTOM_FILTER		= false;
 	/** @var bool Allow language-based special stpls */
-	public $ALLOW_LANG_BASED_STPLS	 = false;
+	public $ALLOW_LANG_BASED_STPLS	= false;
 	/** @var bool Allow inline debug */
-	public $ALLOW_INLINE_DEBUG		 = false;
+	public $ALLOW_INLINE_DEBUG		= false;
 	/** @var bool Allow skin inheritance (only one level used) */
-	public $ALLOW_SKIN_INHERITANCE	 = true;
+	public $ALLOW_SKIN_INHERITANCE	= true;
 	/** @var bool Allow to compile templates */
-	public $COMPILE_TEMPLATES		  = false;
-	/** @var bool Compile templates folder */
-	public $COMPILED_DIR			   = 'stpls_compiled/';
+	public $COMPILE_TEMPLATES		= false;
 	/** @var bool TTL for compiled stpls */
 	public $COMPILE_TTL				= 3600;
 	/** @var bool TTL for compiled stpls */
@@ -72,29 +51,25 @@ class yf_tpl {
 	public $ALLOW_PHP_TEMPLATES		= false;
 	/** @var bool */
 	public $DEBUG_STPL_VARS			= false;
+	/** @var bool Compile templates folder */
+	public $COMPILED_DIR			= 'stpls_compiled/';
 	/** @var string @conf_skip */
-	public $_STPL_EXT		  = '.stpl';
+	public $_STPL_EXT				= '.stpl';
 	/** @var string @conf_skip */
-	public $_THEMES_PATH	   = 'templates/';
+	public $_THEMES_PATH			= 'templates/';
 	/** @var string @conf_skip */
-	public $_IMAGES_PATH	   = 'images/';
+	public $_IMAGES_PATH			= 'images/';
 	/** @var string @conf_skip */
-	public $_UPLOADS_PATH	  = 'uploads/';
-	/** @var array Global scope tags (included in any parsed template) */
-	public $_global_tags	   = array();
-	/** @var STPL location codes (binary for less memory) */
-	public $_stpl_loc_codes = array(
-		'site'				=> 1,
-		'project'			=> 2,
-		'framework'			=> 4,
-		'framework_user'	=> 8,
-		'user_section'		=> 16,
-		'inherit_project'   => 32,
-		'lang_project'		=> 64,
-		'inherit_project2'	=> 128,
-	);
+	public $_UPLOADS_PATH			= 'uploads/';
 	/** @var string Current tempalte engine dirver to use */
-	public $DRIVER_NAME = 'yf';
+	public $DRIVER_NAME				= 'yf';
+	/** @var array Global scope tags (included in any parsed template) */
+	public $_global_tags			= array();
+	/** @var array @conf_skip  For '_process_conditions', Will be availiable in conditions with such form: {if('get.object' eq 'login_form')} Hello from login form {/if} */
+	public $_avail_arrays = array(
+		'get' => '_GET',
+		'post' => '_POST',
+	);
 
 	/**
 	* Catch missing method call
@@ -171,7 +146,7 @@ class yf_tpl {
 			$this->register_output_filter(array($this, '_debug_mode_callback'), 'debug_mode');
 		}
 		if (main()->CONSOLE_MODE) {
-			$this->_OB_CATCH_CONTENT = false;
+			$this->OB_CATCH_CONTENT = false;
 		}
 		$this->_set_default_driver($this->DRIVER_NAME);
 	}
@@ -223,7 +198,7 @@ class yf_tpl {
 			_class('output_cache')->_process_output_cache();
 		}
 		if (!main()->NO_GRAPHICS) {
-			if ($this->_OB_CATCH_CONTENT) {
+			if ($this->OB_CATCH_CONTENT) {
 				ob_start();
 			}
 			// Trying to get default task
@@ -290,12 +265,12 @@ class yf_tpl {
 			$body['content'] = $this->_apply_output_filters($body['content']);
 
 			if (main()->OUTPUT_GZIP_COMPRESS && !conf('no_gzip')) {
-				if ($this->_OB_CATCH_CONTENT && ob_get_level()) {
+				if ($this->OB_CATCH_CONTENT && ob_get_level()) {
 					$old_content = ob_get_clean();
 				}
 				ob_start('ob_gzhandler');
 				conf('GZIP_ENABLED', true);
-				if ($this->_OB_CATCH_CONTENT) {
+				if ($this->OB_CATCH_CONTENT) {
 					$body['content'] = $old_content.$body['content'];
 				}
 				// Count number of compressed bytes (not exactly accurate)
@@ -734,8 +709,12 @@ class yf_tpl {
 		if (!class_exists('tidy') || !extension_loaded('tidy')) {
 			return $text;
 		}
+		$tidy_default_config = array(
+			'alt-text' => '',
+			'output-xhtml' => true,
+		);
 		$tidy = new tidy;
-		$tidy->parseString($text, $this->_TIDY_CONFIG, conf('charset'));
+		$tidy->parseString($text, $this->_TIDY_CONFIG ?: $tidy_default_config, conf('charset'));
 		$tidy->cleanRepair();
 		return $tidy;
 	}

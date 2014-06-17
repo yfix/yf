@@ -338,10 +338,10 @@ class yf_db {
 		if (empty($db_error) || empty($db_error['message'])) {
 			$db_error = $old_db_error;
 		}
-		$msg = 'DB: QUERY ERROR: '.$sql.'<br />'.PHP_EOL.'<b>CAUSE</b>: '.$db_error['message']
+		$msg = 'DB: QUERY ERROR: '.$sql. ';'. PHP_EOL. 'CAUSE: '.$db_error['message']
 			. ($db_error['code'] ? ' (code:'.$db_error['code'].')' : '')
 			. ($db_error['offset'] ? ' (offset:'.$db_error['offset'].')' : '')
-			. (main()->USE_CUSTOM_ERRORS ? '' : $_trace.'<br />'.PHP_EOL)
+			. (main()->USE_CUSTOM_ERRORS ? '' : $_trace. PHP_EOL)
 		;
 		trigger_error($msg, E_USER_WARNING);
 	}
@@ -617,26 +617,26 @@ class yf_db {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
-		$CACHE_CONTAINER = &$this->_db_results_cache;
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($CACHE_CONTAINER[$query])) {
-			return $CACHE_CONTAINER[$query];
+		$storage = &$this->_db_results_cache;
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($storage[$query])) {
+			return $storage[$query];
 		}
-		$Q = $this->query($query);
-		if ($Q) {
+		$q = $this->query($query);
+		if ($q) {
 			if ($assoc) {
-				$data = @$this->db->fetch_assoc($Q);
+				$data = @$this->db->fetch_assoc($q);
 			} else {
-				$data = @$this->db->fetch_row($Q);
+				$data = @$this->db->fetch_row($q);
 			}
 		}
-		$this->free_result($Q);
+		$this->free_result($q);
 		// Store result in variable cache
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($CACHE_CONTAINER[$query])) {
-			$CACHE_CONTAINER[$query] = $data;
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($storage[$query])) {
+			$storage[$query] = $data;
 			// Permanently turn off queries cache (and free some memory) if case of limit reached
-			if ($this->CACHE_QUERIES_LIMIT && count($CACHE_CONTAINER) > $this->CACHE_QUERIES_LIMIT) {
-				$this->ALLOW_CACHE_QUERIES	= false;
-				$CACHE_CONTAINER			= null;
+			if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
+				$this->ALLOW_CACHE_QUERIES = false;
+				$storage = null;
 			}
 		}
 		return $data;
@@ -751,32 +751,32 @@ class yf_db {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
-		$CACHE_CONTAINER = &$this->_db_results_cache;
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($CACHE_CONTAINER[$query])) {
-			return $CACHE_CONTAINER[$query];
+		$storage = &$this->_db_results_cache;
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($storage[$query])) {
+			return $storage[$query];
 		}
 		$data = null;
-		$Q = $this->query($query);
-		if ($Q) {
+		$q = $this->query($query);
+		if ($q) {
 			// If $key_name is specified - then save to $data using it as key
-			while ($A = @$this->db->fetch_assoc($Q)) {
+			while ($a = @$this->db->fetch_assoc($q)) {
 				if ($key_name != null && $key_name != '-1') {
-					$data[$A[$key_name]] = $A;
-				} elseif (isset($A['id']) && $key_name != '-1') {
-					$data[$A['id']] = $A;
+					$data[$a[$key_name]] = $a;
+				} elseif (isset($a['id']) && $key_name != '-1') {
+					$data[$a['id']] = $a;
 				} else {
-					$data[] = $A;
+					$data[] = $a;
 				}
 			}
-			@$this->free_result($Q);
+			@$this->free_result($q);
 		}
 		// Store result in variable cache
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($CACHE_CONTAINER[$query])) {
-			$CACHE_CONTAINER[$query] = $data;
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($storage[$query])) {
+			$storage[$query] = $data;
 			// Permanently turn off queries cache (and free some memory) if case of limit reached
-			if ($this->CACHE_QUERIES_LIMIT && count($CACHE_CONTAINER) > $this->CACHE_QUERIES_LIMIT) {
-				$this->ALLOW_CACHE_QUERIES	= false;
-				$CACHE_CONTAINER			= null;
+			if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
+				$this->ALLOW_CACHE_QUERIES = false;
+				$storage = null;
 			}
 		}
 		return $data;

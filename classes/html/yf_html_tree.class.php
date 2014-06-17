@@ -84,12 +84,14 @@ class yf_html_tree {
 				$content = '<a href="'.$item['link'].'">'.$content. '</a>';
 			}
 			$controls = $extra['show_controls'] ? str_replace('%d', $id, $form_controls) : '';
+			$badge = $item['badge'] ? ' <sup class="badge badge-'.($item['class_badge'] ?: 'info').'">'.$item['badge'].'</sup>' : ''; 
 			$items[] = '
 				<li id="item_'.$id.'"'.(!$is_draggable ? ' class="not_draggable"' : '').'>
 					<div class="dropzone"></div>
 					<dl>
 						<a href="'.$item['link'].'" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
 						.$content
+						.$badge
 						.($is_draggable ? '&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>' : '')
 						.($controls ? '<div style="float:right;display:none;" class="controls_over">'.$controls.'</div>' : '')
 					.'</dl>'
