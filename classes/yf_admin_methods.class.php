@@ -34,7 +34,13 @@ class yf_admin_methods {
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
-			return $replace;
+			$error = 'Wrong table name';
+			if ($params['return_form']) {
+				return _e($error);
+			} else {
+				_re($error);
+				return $replace;
+			}
 		}
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
@@ -86,6 +92,12 @@ class yf_admin_methods {
 		foreach ((array)$fields as $f) {
 			$replace[$f] = $DATA[$f];
 		}
+		if ($params['return_form']) {
+			return form($replace)->auto($table, $id, array(
+				'links_add' => $params['links_add'],
+				'db'		=> $db,
+			));
+		}
 		return $replace;
 	}
 
@@ -107,10 +119,17 @@ class yf_admin_methods {
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
-			return $replace;
+			$error = 'Wrong table name';
+			if ($params['return_form']) {
+				return _e($error);
+			} else {
+				_re($error);
+				return $replace;
+			}
 		}
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
+		$id = isset($params['input_'.$primary_field]) ? $params['input_'.$primary_field] : $_GET['id'];
 		if (!$fields) {
 			$columns = $db->meta_columns($table);
 			if (isset($columns[$primary_field])) {
@@ -118,10 +137,15 @@ class yf_admin_methods {
 			}
 			$fields = array_keys($columns);
 		}
-		$a = $db->get('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'"');
+		$a = $db->get('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($id).'"');
 		if (!$a) {
-			_re('Wrong id');
-			return $replace;
+			$error = 'Wrong id';
+			if ($params['return_form']) {
+				return _e($error);
+			} else {
+				_re($error);
+				return $replace;
+			}
 		}
 		if (main()->is_post()) {
 			if (!common()->_error_exists()) {
@@ -135,14 +159,13 @@ class yf_admin_methods {
 					$params['on_before_update']($sql);
 				}
 
-				$db->update($table, $db->es($sql), '`'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'"');
-				common()->admin_wall_add(array($_GET['object'].': updated record in table '.$table, $_GET['id']));
+				$db->update($table, $db->es($sql), '`'.$db->es($primary_field).'`="'.$db->es($id).'"');
+				common()->admin_wall_add(array($_GET['object'].': updated record in table '.$table, $id));
 
 				if (is_callable($params['on_after_update'])) {
 					$params['on_after_update']($sql);
 				}
-				$form_action = $params['form_action'] ?: url_admin('/@object/@action/'.urlencode($_GET['id']). '/'. $params['links_add']);
-				return js_redirect( $form_action );
+				return js_redirect( $replace['form_action'] );
 			} else {
 				if (is_callable($params['on_error'])) {
 					$params['on_error']();
@@ -158,7 +181,14 @@ class yf_admin_methods {
 				$replace[$k] = $DATA[$k];
 			}
 		}
-		return $replace;
+		if ($params['return_form']) {
+			return form($replace)->auto($table, $id, array(
+				'links_add' => $params['links_add'],
+				'db'		=> $db,
+			));
+		} else {
+			return $replace;
+		}
 	}
 
 	/**
@@ -175,21 +205,23 @@ class yf_admin_methods {
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
+			_re('Wrong table name');
 			return false;
 		}
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
+		$id = isset($params['input_'.$primary_field]) ? $params['input_'.$primary_field] : $_GET['id'];
 
-		if (!empty($_GET['id'])) {
+		if (!empty($id)) {
 			if (is_callable($params['on_before_update'])) {
-				$params['on_before_update']($_GET['id']);
+				$params['on_before_update']($id);
 			}
 
-			$db->query('DELETE FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'" LIMIT 1');
-			common()->admin_wall_add(array($_GET['object'].': deleted record from table '.$table, $_GET['id']));
+			$db->query('DELETE FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($id).'" LIMIT 1');
+			common()->admin_wall_add(array($_GET['object'].': deleted record from table '.$table, $id));
 
 			if (is_callable($params['on_after_update'])) {
-				$params['on_after_update']($_GET['id']);
+				$params['on_after_update']($id);
 			}
 		}
 		if (conf('IS_AJAX')) {
@@ -213,20 +245,22 @@ class yf_admin_methods {
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
+			_re('Wrong table name');
 			return false;
 		}
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
+		$id = isset($params['input_'.$primary_field]) ? $params['input_'.$primary_field] : $_GET['id'];
 
-		if (!empty($_GET['id'])) {
-			$info = $db->query_fetch('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'" LIMIT 1');
+		if (!empty($id)) {
+			$info = $db->query_fetch('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($id).'" LIMIT 1');
 		}
 		if ($info) {
 			if (is_callable($params['on_before_update'])) {
 				$params['on_before_update']($info);
 			}
-			$db->update($table, array('active' => (int)!$info['active']), $db->es($primary_field).'="'.$db->es($_GET['id']).'"');
-			common()->admin_wall_add(array($_GET['object'].': item in table '.$table.' '.($info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
+			$db->update($table, array('active' => (int)!$info['active']), $db->es($primary_field).'="'.$db->es($id).'"');
+			common()->admin_wall_add(array($_GET['object'].': item in table '.$table.' '.($info['active'] ? 'inactivated' : 'activated'), $id));
 
 			if (is_callable($params['on_after_update'])) {
 				$params['on_after_update']($info);
@@ -257,9 +291,10 @@ class yf_admin_methods {
 		}
 		$fields	= $params['fields'];
 		$primary_field = $params['id'] ? $params['id'] : 'id';
+		$id = isset($params['input_'.$primary_field]) ? $params['input_'.$primary_field] : $_GET['id'];
 
-		if (!empty($_GET['id'])) {
-			$info = $db->query_fetch('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($_GET['id']).'" LIMIT 1');
+		if (!empty($id)) {
+			$info = $db->query_fetch('SELECT * FROM '.$db->es($table).' WHERE `'.$db->es($primary_field).'`="'.$db->es($id).'" LIMIT 1');
 		}
 		if ($info) {
 			$sql = $info;
