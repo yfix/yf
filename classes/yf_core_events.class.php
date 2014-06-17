@@ -21,6 +21,7 @@
 * @version		1.0
 */
 class yf_core_events {
+
 	protected $listeners = array();
 	protected $wildcards = array();
 	protected $sorted = array();
@@ -43,7 +44,9 @@ class yf_core_events {
 	 */
 	public function listen($events, $listener, $priority = 0) {
 		foreach ((array) $events as $event) {
-			if ($this->_str_contains($event, '*')) return $this->_setup_wildcard_listen($event, $listener);
+			if ($this->_str_contains($event, '*')) {
+				return $this->_setup_wildcard_listen($event, $listener);
+			}
 			$this->listeners[$event][$priority][] = $listener;
 			unset($this->sorted[$event]);
 		}
@@ -87,7 +90,9 @@ class yf_core_events {
 		// If an array is not given to us as the payload, we will turn it into one so
 		// we can easily use call_user_func_array on the listeners, passing in the
 		// payload to each of them so that they receive each of these arguments.
-		if ( ! is_array($payload)) $payload = array($payload);
+		if ( ! is_array($payload)) {
+			$payload = array($payload);
+		}
 		$this->firing[] = $event;
 		foreach ($this->get_listeners($event) as $listener) {
 			$response = call_user_func_array($listener, $payload);
@@ -101,7 +106,9 @@ class yf_core_events {
 			// If a boolean false is returned from a listener, we will stop propagating
 			// the event to any further listeners down in the chain, else we keep on
 			// looping through the listeners and firing every one in our sequence.
-			if ($response === false) break;
+			if ($response === false) {
+				break;
+			}
 			$responses[] = $response;
 		}
 		array_pop($this->firing);
@@ -127,6 +134,7 @@ class yf_core_events {
 	public function has_listeners($event_name) {
 		return isset($this->listeners[$event_name]);
 	}
+
 	/**
 	 * Fire an event until the first non-null response is returned.
 	 *
@@ -180,7 +188,9 @@ class yf_core_events {
 	protected function _get_wildcard_listeners($event_name) {
 		$wildcards = array();
 		foreach ($this->wildcards as $key => $listeners) {
-			if ($this->_str_is($key, $event_name)) $wildcards = array_merge($wildcards, $listeners);
+			if ($this->_str_is($key, $event_name)) {
+				$wildcards = array_merge($wildcards, $listeners);
+			}
 		}
 		return $wildcards;
 	}
@@ -206,7 +216,9 @@ class yf_core_events {
 	*/
 	protected function _str_contains($haystack, $needles) {
 		foreach ((array) $needles as $needle) {
-			if ($needle != '' && strpos($haystack, $needle) !== false) return true;
+			if ($needle != '' && strpos($haystack, $needle) !== false) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -214,16 +226,14 @@ class yf_core_events {
 	/**
 	*/
 	protected function _str_is($pattern, $value) {
-		if ($pattern == $value) return true;
+		if ($pattern == $value) {
+			return true;
+		}
 		$pattern = preg_quote($pattern, '#');
 		// Asterisks are translated into zero-or-more regular expression wildcards
 		// to make it convenient to check if the strings starts with the given
 		// pattern such as "library/*", making any string check convenient.
 		$pattern = str_replace('\*', '.*', $pattern).'\z';
 		return (bool) preg_match('#^'.$pattern.'#', $value);
-	}
-
-	function _find_hooks() {
-// TODO
 	}
 }
