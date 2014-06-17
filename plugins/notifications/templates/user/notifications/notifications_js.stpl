@@ -1,0 +1,38 @@
+var notifications_shown = {};
+var url_check = "{url_check}";
+var url_read = "{url_read}";
+
+$( document ).ready( function() {
+	notifications_check();	
+	setInterval(function() {
+		notifications_check();
+	}, 1000 * 10); // 10 seconds
+
+});
+
+function notifications_check() {
+	$.getJSON(url_check, function( data ) {
+		$.each(data, function(id, notification) {
+			if (notifications_shown[id] != id) {
+				new PNotify({
+					title: notification.title,
+					text: "<input type='hidden' value='"+notification.id+"'></div>" + notification.content,
+					buttons: {
+						   sticker: false
+					},
+					after_close: function(PNotify) {
+							html = $.parseHTML(PNotify.options.text);
+							$.each(html, function( i, el ) {
+								if(el.nodeName == 'INPUT') {
+									id = $(el).val();
+									$.post(url_read, {"id": id});
+								}
+							});	
+						},
+					hide: false
+				});			
+				notifications_shown[id] = id;
+			}
+		});
+	});	
+}

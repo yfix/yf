@@ -87,7 +87,14 @@ class yf_main {
 	public $HTTPS_ENABLED_FOR		= array( /* 'object=shop', */ );
 	/** @var bool Track user last visit */
 	public $TRACK_USER_PAGE_VIEWS	= false;
-	/** @var bool Paid options global switch used by lot of other code @experimental */
+	/** @var bool Track online status */
+	public $TRACK_ONLINE_STATUS     = false;
+	/** @var bool Track details (online status=true is needed too) */
+	public $TRACK_ONLINE_DETAILS	= false;
+	/** @var bool Enable notifications module for user/admin */
+	public $ENABLE_NOTIFICATIONS_USER	= false;
+	public $ENABLE_NOTIFICATIONS_ADMIN	= false;
+    /** @var bool Paid options global switch used by lot of other code @experimental */
 	public $ALLOW_PAID_OPTIONS		= false;
 	/** @var bool Allow cache control from url modifiers */
 	public $CACHE_CONTROL_FROM_URL	= false;
@@ -263,6 +270,13 @@ class yf_main {
 		$this->_check_site_maintenance();
 
 		$this->_do_rewrite();
+        
+        if ($this->TRACK_ONLINE_STATUS) _class('online_users', 'classes/')->process();	
+		if ($this->type == 'admin') {
+            if ($this->ENABLE_NOTIFICATIONS_ADMIN) _class('notifications', 'modules/')->_prepare();
+        } else {
+            if ($this->ENABLE_NOTIFICATIONS_USER) _class('notifications', 'modules/')->_prepare();
+        }
 
 		$this->_init_cur_user_info($this);
 
