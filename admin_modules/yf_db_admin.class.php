@@ -172,14 +172,12 @@ class yf_db_admin {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
-		$replace = _class('admin_methods')->edit(array(
-			'table' 	=> $table,
-			'back_link'	=> url_admin('/@object/table_show/'.$db_name.'.'.$table),
-			'db'		=> $db,
-		));
-		return form($replace)->auto($db->_fix_table_name($table), $id, array(
-			'links_add' => '&table='.$table,
-			'db'		=> $db,
+		return _class('admin_methods')->edit(array(
+			'table' 		=> $table,
+			'back_link'		=> url_admin('/@object/table_show/'.$db_name.'.'.$table),
+			'db'			=> $db,
+			'return_form'	=> true,
+			'input_id'		=> $id,
 		));
 	}
 
@@ -193,14 +191,11 @@ class yf_db_admin {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
-		$replace = _class('admin_methods')->add(array(
-			'table' 	=> $table,
-			'back_link'	=> url_admin('/@object/table_show/'.$db_name.'.'.$table),
-			'db'		=> $db,
-		));
-		return form($replace)->auto($db->_fix_table_name($table), $id, array(
-			'links_add' => '&table='.$table,
-			'db'		=> $db,
+		return _class('admin_methods')->add(array(
+			'table' 		=> $table,
+			'back_link'		=> url_admin('/@object/table_show/'.$db_name.'.'.$table),
+			'db'			=> $db,
+			'return_form'	=> true,
 		));
 	}
 
@@ -219,6 +214,7 @@ class yf_db_admin {
 			'table'		=> $table,
 			'back_link'	=> url_admin('/@object/table_show/'.$db_name.'.'.$table),
 			'db'		=> $db,
+			'input_id'	=> $id,
 		));
 	}
 
