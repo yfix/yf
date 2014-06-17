@@ -9,6 +9,11 @@ class yf_db_admin {
 	);
 
 	/***/
+	function _init() {
+// TODO: navbar + left_area called through main hooks/events :before :after init graphics
+	}
+
+	/***/
 	function _db_custom_connection($db_name) {
 		if (!$db_name) {
 			return false;
