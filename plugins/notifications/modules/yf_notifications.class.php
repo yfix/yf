@@ -37,7 +37,7 @@ class yf_notifications {
 	}
     
 	function _prepare () {
-		$tpl = file_get_contents(INCLUDE_PATH."templates/user/notifications/notifications_js.stpl");
+		$tpl = file_get_contents(pathinfo(__FILE__,PATHINFO_DIRNAME)."/../templates/user/notifications/notifications_js.stpl");
 		$func_name = "url_".main()->type;
 		$obj_name = main()->type == 'admin' ? 'notifications_admin' : 'notifications';
 		$replace = array(
@@ -45,8 +45,8 @@ class yf_notifications {
 			"url_read" => $func_name("/{$obj_name}/read"),
 		);
 		require_js(tpl()->parse_string($tpl, $replace));		
-		require_css(INCLUDE_PATH."js/pnotify.custom.min.css");
-		require_js(INCLUDE_PATH."js/pnotify.custom.min.js");
+		require_css("//cdnjs.cloudflare.com/ajax/libs/pnotify/2.0.0/pnotify.all.min.css");
+		require_js("//cdnjs.cloudflare.com/ajax/libs/pnotify/2.0.0/pnotify.all.min.js");
 	}
 	
 }
