@@ -495,7 +495,14 @@ class yf_main {
 	function init_content () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->events->fire('main.before_content');
+
 		$this->tpl->init_graphics();
+
+		$this->is_post() && $this->events->fire('main.on_post');
+		$this->is_ajax() && $this->events->fire('main.on_ajax');
+		$this->is_console() && $this->events->fire('main.on_console');
+		$this->is_redirect() && $this->events->fire('main.on_redirect');
+
 		$this->events->fire('main.after_content');
 	}
 
