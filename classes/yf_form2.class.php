@@ -190,6 +190,7 @@ class yf_form2 {
 		if (DEBUG_MODE) {
 			$ts = microtime(true);
 		}
+		_class('core_events')->fire('form.before_render', array($extra, $replace, $this));
 		$on_before_render = isset($extra['on_before_render']) ? $extra['on_before_render'] : $this->_on['on_before_render'];
 		if (is_callable($on_before_render)) {
 			$on_before_render($extra, $replace, $this);
@@ -322,6 +323,7 @@ class yf_form2 {
 		if (is_callable($on_after_render)) {
 			$on_after_render($extra, $replace, $this);
 		}
+		_class('core_events')->fire('form.after_render', array($extra, $replace, $this));
 		if (DEBUG_MODE) {
 			debug('form2[]', array(
 				'params'	=> $this->_params,
@@ -1928,6 +1930,7 @@ class yf_form2 {
 			if (is_callable($on_before_validate)) {
 				$on_before_validate($_this->_validate_rules, $data);
 			}
+			_class('core_events')->fire('form.before_validate', array($_this->_validate_rules, $data));
 			// Processing of prepared rules
 			$validate_ok = $_this->_validate_rules_process($_this->_validate_rules, $data, $extra);
 			if ($validate_ok) {
@@ -1938,11 +1941,13 @@ class yf_form2 {
 				if (is_callable($on_validate_error)) {
 					$on_validate_error($_this->_validate_rules, $data, $extra);
 				}
+				_class('core_events')->fire('form.validate_error', array($_this->_validate_rules, $data, $extra));
 			}
 			$on_after_validate = isset($extra['on_after_validate']) ? $extra['on_after_validate'] : $_this->_on['on_after_validate'];
 			if (is_callable($on_after_validate)) {
 				$on_after_validate($_this->_validate_ok, $_this->_validate_rules, $data, $extra);
 			}
+			_class('core_events')->fire('form.after_validate', array($_this->_validate_ok, $_this->_validate_rules, $data, $extra));
 			$_this->_validated_fields = $data;
 		};
 		if ($this->_chained_mode) {
@@ -2142,6 +2147,7 @@ class yf_form2 {
 			if ($data && $table && is_callable($on_before_update)) {
 				$on_before_update($data, $table, $fields, $type, $extra);
 			}
+			_class('core_events')->fire('form.before_update', array($data, $table, $fields, $type, $extra));
 			if ($data && $table) {
 				$db = is_object($_this->_params['db']) ? $_this->_params['db'] : db();
 				if ($type == 'update') {
@@ -2154,6 +2160,7 @@ class yf_form2 {
 				if (is_callable($on_after_update)) {
 					$on_after_update($data, $table, $fields, $type, $extra);
 				}
+				_class('core_events')->fire('form.after_update', array($data, $table, $fields, $type, $extra));
 				$on_success_text = isset($extra['on_success_text']) ? $extra['on_success_text'] : $_this->_on['on_success_text'];
 				if ($on_success_text) {
 					common()->set_notice($on_success_text);
