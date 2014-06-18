@@ -177,6 +177,7 @@ class yf_main {
 			$this->fix_required_constants();
 			$this->set_required_php_params();
 			$this->set_module_conf('main', $this); // // Load project config for self
+			$this->init_events();
 			$this->init_firephp();
 			$this->init_server_health();
 			$this->try_fast_init();
@@ -462,28 +463,34 @@ class yf_main {
 
 	/**
 	*/
+	function init_events () {
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->events = &$this->init_class('core_events', 'classes/');
+	}
+
+	/**
+	*/
 	function init_common() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		$this->init_class('common', 'classes/');
-		$this->common =& $this->modules['common'];
-		$GLOBALS['common'] =& $this->modules['common'];
+		$this->common = &$this->init_class('common', 'classes/');
+		$GLOBALS['common'] = &$this->common;
 	}
 
 	/**
 	*/
 	function init_tpl() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		$this->init_class('tpl', 'classes/');
-		$this->tpl =& $this->modules['tpl'];
-		$GLOBALS['tpl'] =& $this->modules['tpl'];
+		$this->tpl = &$this->init_class('tpl', 'classes/');
+		$GLOBALS['tpl'] = &$this->tpl;
 	}
 
 	/**
 	*/
 	function init_content () {
-#		_class('core_events')->fire('main.before_content');
+		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
+		$this->events->fire('main.before_content');
 		$this->tpl->init_graphics();
-#		_class('core_events')->fire('main.after_content');
+		$this->events->fire('main.after_content');
 	}
 
 	/**
