@@ -177,12 +177,12 @@ class yf_main {
 			$this->init_constants();
 			$this->init_php_params();
 			$this->set_module_conf('main', $this); // // Load project config for self
-			$this->init_events();
 			$this->init_firephp();
 			$this->init_server_health();
 			$this->try_fast_init();
 			$this->init_modules_base();
 			$this->init_main_functions();
+			$this->init_events();
 			$this->init_cache();
 			$this->init_files();
 			$this->init_db();
@@ -225,7 +225,6 @@ class yf_main {
 		if (!$this->ALLOW_FAST_INIT) {
 			return false;
 		}
-		$this->events->fire('main.before_fast_init');
 		$fast_init_file = PROJECT_PATH.'share/fast_init.php';
 		if (file_exists($fast_init_file)) {
 			include ($fast_init_file);
@@ -470,6 +469,19 @@ class yf_main {
 	function init_events () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->events = &$this->init_class('core_events', 'classes/');
+		// Load event listeners from supported locations
+		$ext = '.listener.php';
+		$globs = array(
+			'yf_core'			=> YF_PATH. 'share/events/*'.$ext,
+			'yf_plugins'		=> YF_PATH. 'plugins/*/share/events/*'.$ext,
+			'project_core'		=> PROJECT_PATH. 'share/events/*'.$ext,
+			'project_plugins'	=> PROJECT_PATH. 'plugins/*/share/events/*'.$ext,
+		);
+		foreach ($globs as $glob) {
+			foreach (glob($glob) as $path) {
+				require_once $path;
+			}
+		}
 	}
 
 	/**
