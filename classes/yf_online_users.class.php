@@ -33,21 +33,21 @@ class yf_online_users {
 				'user_type' => $this->online_user_type,
 				'time' => $_SERVER['REQUEST_TIME'],
 			));
-            if (main()->TRACK_ONLINE_DETAILS) {
-                db()->replace(db('users_online_details'),array(
-                    'user_id' => $this->online_user_id,
-                    'user_type' => $this->online_user_type,
-                    'time' => $_SERVER['REQUEST_TIME'],
-                    'session_id' => session_id(),
-                    'url' => "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'],
-                    'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-                    'ip' => $_SERVER['REMOTE_ADDR'],
-                ));
-                
-            }
-            
-			cache()->set($cache_name,'OK',$this->_CACHE_UPDATE_TTL);
-		}
+			cache()->set($cache_name,'OK',$this->_CACHE_UPDATE_TTL);            
+        }
+        // details not cached for current url to be shown
+        if (main()->TRACK_ONLINE_DETAILS && !(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' || !empty($_GET['ajax_mode']))) {
+            db()->replace(db('users_online_details'),array(
+                'user_id' => $this->online_user_id,
+                'user_type' => $this->online_user_type,
+                'time' => $_SERVER['REQUEST_TIME'],
+                'session_id' => session_id(),
+                'url' => "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'],
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+                'ip' => $_SERVER['REMOTE_ADDR'],
+            ));
+
+        }
 	}
 
 	function _cleanup() {
@@ -56,7 +56,7 @@ class yf_online_users {
 		if (cache()->get($cache_name) != 'OK') {
 			$time = $_SERVER['REQUEST_TIME'] - $this->_ONLINE_TTL;
 			db()->query("DELETE FROM `".db('users_online')."` WHERE `time`<".$time);
-            if ($this->STORE_DETAILS) db()->query("DELETE FROM `".db('users_online_details')."` WHERE `time`<".$time);
+            if (main()->TRACK_ONLINE_DETAILS) db()->query("DELETE FROM `".db('users_online_details')."` WHERE `time`<".$time);
 			cache()->set($cache_name,'OK',$this->_CACHE_CLEANUP_TTL);
 		}
 	}
