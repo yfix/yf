@@ -12,7 +12,7 @@ class yf_db_admin {
 	function _init() {
 // TODO: navbar + left_area called through main hooks/events :before :after init graphics
 		_class('core_events')->listen('block.prepend[center_area]', function(){
-/*
+
 			return _class('html')->breadcrumbs(array(
 				array(
 					'link'	=> './?object=home',
@@ -26,7 +26,7 @@ class yf_db_admin {
 #					'name'	=> 'Data',
 #				),
 			));
-*/
+
 		});
 	}
 
