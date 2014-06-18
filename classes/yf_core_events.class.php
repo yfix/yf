@@ -1,20 +1,17 @@
 <?php
-/*
- * events sample
- * 
-//		_class('core_events')->listen('class.*',function() { return 'event #0 wildcarded'; });
-		_class('core_events')->listen('class.action',function($args) { return 'event # 1'.$args; },1);
-//		_class('core_events')->listen('class.action',function() { return 'event # 2'; },2);
-		_class('core_events')->listen('class.action',function() { return 1; });
-		_class('core_events')->listen('class.*',function() { return 2; },5);
-		_class('core_events')->listen('class.action2',function() { return 1; });
-		_class('core_events')->listen('class2.action',function() { return 1; }); 
-	
-		$r = "<pre>".print_r(_class('core_events')->fire('class.action','test'),1)."</pre>";
-*/
 
 /**
 * Core events/observer handler
+*
+* Examples of usage:
+*	_class('core_events')->listen('class.*',function() { return 'event #0 wildcarded'; });
+*	_class('core_events')->listen('class.action',function($args) { return 'event # 1'.$args; },1);
+*	_class('core_events')->listen('class.action',function() { return 'event # 2'; },2);
+*	_class('core_events')->listen('class.action',function() { return 1; });
+*	_class('core_events')->listen('class.*',function() { return 2; },5);
+*	_class('core_events')->listen('class.action2',function() { return 1; });
+*	_class('core_events')->listen('class2.action',function() { return 1; }); 
+*	$r = "<pre>".print_r(_class('core_events')->fire('class.action','test'),1)."</pre>";
 *
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -125,6 +122,7 @@ class yf_core_events {
 	protected function _setup_wildcard_listen($event, $listener) {
 		$this->wildcards[$event][] = $listener;
 	}
+
 	/**
 	 * Determine if a given event has listeners.
 	 *
