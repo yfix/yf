@@ -16,7 +16,6 @@ class yf_manage_notifications {
 	/**
 	*/
 	function show () {
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		return table('SELECT * FROM '.db('notifications'))
 			->text('id')
 			->text('title')
