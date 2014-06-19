@@ -85,6 +85,9 @@ if (!function_exists('cache_tmp')) {
 if (!function_exists('cache_files')) {
 	function cache_files() { static $cache; if (!isset($cache)) { $cache = clone _class('cache'); $cache->_init(array('driver' => 'files')); } return $cache; }
 }
+if (!function_exists('trace')) {
+	function trace() { $e = new Exception(); return implode(PHP_EOL, array_slice(explode(PHP_EOL, $e->getTraceAsString()), 1, -1)); }
+}
 // example: db()->query()
 // example of getting real table name: db('user') should return DB_PREFIX.'user' value;
 if (!function_exists('db')) {
