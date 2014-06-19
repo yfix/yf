@@ -250,4 +250,7 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		main()->HTTPS_ENABLED_FOR = $old1;
 		main()->USE_ONLY_HTTPS = $old2;
 	}
+	public function test_process_url() {
+		$this->assertEquals('http://google.com/some_url', process_url('http://google.com/some_url') );
+	}
 }

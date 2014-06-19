@@ -392,14 +392,19 @@ class yf_debug {
 		foreach ((array)$items as $k => $v) {
 			unset($items[$k]['time']);
 		}
-		$body .= ' | '.t('total_exec_time').': '.round($total_queries_exec_time, 4).'<span> sec';
-		$body .= ' | '.t('connect_time').': '.round($db->_connection_time, 4).'<span> sec';
-		$body .= $this->_show_auto_table($items, array(
+		return $this->_show_auto_table($items, array(
 			'first_col_width' => '1%',
-			'hidden_map' => array('explain' => 'sql', 'trace' => 'sql', 'error' => 'sql'),
-			'tr' => function($row, $id) { return $row['error'] ? ' class="error"' : '';}
+			'tr' => function($row, $id) { return $row['error'] ? ' class="error"' : ''; },
+			'caption' => array(
+				'total_exec_time'	=> round($total_queries_exec_time, 4),
+				'connect_time'		=> round($db->_connection_time, 4),
+			),
+			'hidden_map' => array(
+				'explain'	=> 'sql',
+				'trace'		=> 'sql',
+				'error'		=> 'sql'
+			),
 		));
-		return $body;
 	}
 
 	/**
@@ -486,7 +491,7 @@ class yf_debug {
 
 			$items[$counter] = array(
 				'id'		=> ++$counter,
-				// TODO: add link to inline stpl edit
+// TODO: add link to inline stpl edit
 				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $v['storage'])),
 				'storage'	=> strval($debug[$k]['storage']),
 				'storages'	=> '<pre>'._prepare_html(var_export($debug[$k]['storages'], 1)).'</pre>',
@@ -500,12 +505,19 @@ class yf_debug {
 			}
 		}
 		$items = $this->_time_count_changes($items);
-
-		$body .= t('tpl_driver').': '.tpl()->DRIVER_NAME.' | '.t('compile_mode').': '.(int)tpl()->COMPILE_TEMPLATES.' | ';
-		$body .= t('used_templates_size').': '.$total_size.' bytes';
-		$body .= ' | '.t('total_exec_time').': '.round($total_stpls_exec_time, 4).' seconds';
-		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'name', 'vars' => 'name', 'storages' => 'name')));
-		return $body;
+		return $this->_show_auto_table($items, array(
+			'first_col_width' => '1%',
+			'caption' => array(
+				'tpl_driver'	=> tpl()->DRIVER_NAME,
+				'compile_mode'	=> (int)tpl()->COMPILE_TEMPLATES,
+				'templates_size'=> $total_size.' bytes',
+			),
+			'hidden_map' => array(
+				'trace'		=> 'name',
+				'vars'		=> 'name',
+				'storages'	=> 'name',
+			),
+		));
 	}
 
 	/**
@@ -529,9 +541,15 @@ class yf_debug {
 			);
 		}
 		$items = $this->_time_count_changes($items);
-		$body .= t('Rewrite processing time').': '.round($this->_get_debug_data('rewrite_exec_time'), 4).' <span>sec</span>';
-		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'source')));
-		return $body;
+		return $this->_show_auto_table($items, array(
+			'first_col_width' => '1%',
+			'caption' => array(
+				'Rewrite processing time' => round($this->_get_debug_data('rewrite_exec_time'), 4),
+			),
+			'hidden_map' => array(
+				'trace' => 'source'
+			),
+		));
 	}
 
 	/*
@@ -886,8 +904,7 @@ class yf_debug {
 			$total_size += $v['size'];
 		}
 		$items = $this->_time_count_changes($items);
-		$body .= 'total size: '.$total_size;
-		return $body. $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'path')));
+		return $body. $this->_show_auto_table($items, array('caption' => array('total_size' => $total_size), 'hidden_map' => array('trace' => 'path')));
 	}
 
 	/**
@@ -1007,20 +1024,6 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_hooks (&$params = array()) {
-		$items = array();
-		$hook_name = '_hook_debug';
-		foreach (main()->modules as $module_name => $module_obj) {
-			if (!method_exists($module_obj, $hook_name)) {
-				continue;
-			}
-			$items[$module_name] = $module_obj->$hook_name($this);
-		}
-		return $this->_show_key_val_table($items);
-	}
-
-	/**
-	*/
 	function _debug_css (&$params = array()) {
 		$items = $this->_get_debug_data('core_css');
 		foreach ((array)$items as $k => $v) {
@@ -1045,6 +1048,38 @@ class yf_debug {
 			$items[$k] = array('id' => ++$i) + $v;
 		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
+	}
+
+	/**
+	*/
+	function _debug_events (&$params = array()) {
+		$main_ts = main()->_time_start;
+		$items = array();
+		foreach (array('listen','fire','queue') as $name) {
+			$data = $this->_get_debug_data('events_'.$name);
+			if (!$data) {
+				continue;
+			}
+			foreach ((array)$data as $k => $v) {
+				$data[$k]['time_offset'] = round($data[$k]['time_offset'] - $main_ts, 5);
+			}
+			$items[$name] = $this->_show_auto_table($data, array('header' => $name, 'no_total_time' => 1, 'hidden_map' => array('trace' => 'name')));
+		}
+		return _class('html')->tabs($items, array('hide_empty' => 1, 'show_all' => 1, 'no_headers' => 1));
+	}
+
+	/**
+	*/
+	function _debug_hooks (&$params = array()) {
+		$items = array();
+		$hook_name = '_hook_debug';
+		foreach (main()->modules as $module_name => $module_obj) {
+			if (!method_exists($module_obj, $hook_name)) {
+				continue;
+			}
+			$items[$module_name] = $module_obj->$hook_name($this);
+		}
+		return $this->_show_key_val_table($items);
 	}
 
 	/**
@@ -1120,6 +1155,17 @@ class yf_debug {
 		if (!$items) {
 			return false;
 		}
+		$caption = $params['header'] ? '<b class="btn btn-default disabled">'.$params['header'].'</b>' : '';
+		if (!$params['no_total']) {
+			if (!is_array($params['caption'])) {
+				$params['caption'] = array();
+			}
+			count($items) && $params['caption']['items'] = count($items);
+			$total_time && $params['caption']['total_time'] = round($total_time, 4);
+			foreach ((array)$params['caption'] as $k => $v) {
+				$caption .= ' <span class="label label-info">'.$k.': '.$v.'</span>'.PHP_EOL;
+			}
+		}
 		$table = table((array)$items, array(
 			'table_class' 		=> 'debug_item table-condensed', 
 			'auto_no_buttons' 	=> 1,
@@ -1127,15 +1173,13 @@ class yf_debug {
 			'hidden_map'		=> $params['hidden_map'],
 			'tr'				=> $params['tr'],
 			'td'				=> $params['td'],
+			'no_total'			=> true,
+			'caption'			=> $caption ? '<div class="pull-left">'.$caption.'</div>' : '',
 		))->auto();
-
 		foreach ((array)$params['hidden_map'] as $name => $to) {
 			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name, 'display_func' => function($row, $info, $params) use($name) { return (bool)strlen($row[$name]); }));
 		}
-		if (!$params['no_total']) {
-			$body .= ' | items: '.count($items). ($total_time ? ' | total time: '.round($total_time, 4) : '');
-		}
-		return $body. $table;
+		return (string)$table;
 	}
 
 	/**

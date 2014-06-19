@@ -368,7 +368,9 @@ class yf_form2 {
 				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $_this->_params['links_add'];
 			}
 			if (MAIN_TYPE_USER) {
-				$extra['action'] = process_url($extra['action'], true);
+				if (strpos($extra['action'], 'http://') === false && strpos($extra['action'], 'https://') !== 0) {
+					$extra['action'] = process_url($extra['action'], true);
+				}
 			}
 			$extra['class'] = $extra['class'] ?: 'form-horizontal';// col-md-6';
 			if ($extra['class_add']) {
