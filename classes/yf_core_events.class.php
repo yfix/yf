@@ -40,6 +40,15 @@ class yf_core_events {
 	 * @return void
 	 */
 	public function listen($events, $listener, $priority = 0) {
+		if (DEBUG_MODE) {
+			debug('events_'.__FUNCTION__.'[]', array(
+				'name'			=> $events,
+				'listener'		=> is_callable($listener) ? 'Closure' : $listener,
+				'priority'		=> $priority,
+				'time_offset'	=> microtime(true),
+				'trace'			=> trace(),
+			));
+		}
 		foreach ((array) $events as $event) {
 			if ($this->_str_contains($event, '*')) {
 				return $this->_setup_wildcard_listen($event, $listener);
@@ -58,6 +67,14 @@ class yf_core_events {
 	 * @return void
 	 */
 	public function queue($event, $payload = array()) {
+		if (DEBUG_MODE) {
+			debug('events_'.__FUNCTION__.'[]', array(
+				'name'			=> $event,
+				'payload_len'	=> count($payload).' items',
+				'time_offset'	=> microtime(true),
+				'trace'			=> trace(),
+			));
+		}
 		$this->listen($event.'_queue', function() use ($event, $payload) {
 			$this->fire($event, $payload);
 		});
@@ -83,6 +100,15 @@ class yf_core_events {
 	 * @return array|null
 	 */
 	public function fire($event, $payload = array(), $halt = false) {
+		if (DEBUG_MODE) {
+			debug('events_'.__FUNCTION__.'[]', array(
+				'name'			=> $event,
+				'payload_len'	=> count($payload).' items',
+				'halt'			=> $halt,
+				'time_offset'	=> microtime(true),
+				'trace'			=> trace(),
+			));
+		}
 		$responses = array();
 		// If an array is not given to us as the payload, we will turn it into one so
 		// we can easily use call_user_func_array on the listeners, passing in the
