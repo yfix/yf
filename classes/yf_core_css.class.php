@@ -186,7 +186,7 @@ class yf_core_css {
 				);
 			} elseif ($type == 'asset') {
 				$info = $this->assets[$_content];
-				if (is_array($url)) {
+				if (is_array($info)) {
 					$url = $info['url'];
 					if ($info['require']) {
 						$this->add($info['require'], 'asset');
@@ -212,6 +212,7 @@ class yf_core_css {
 				));
 			}
 		}
+		return $this; // Chaining
 	}
 
 	/**
