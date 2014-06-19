@@ -36,7 +36,7 @@ class yf_online_users {
 			cache()->set($cache_name,'OK',$this->_CACHE_UPDATE_TTL);            
         }
         // details not cached for current url to be shown
-        if (main()->TRACK_ONLINE_DETAILS && !(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' || !empty($_GET['ajax_mode']))) {
+        if (main()->TRACK_ONLINE_DETAILS && !(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' || !empty($_GET['ajax_mode'])) && intval($this->online_user_id)!=0) {
             db()->replace(db('users_online_details'),array(
                 'user_id' => $this->online_user_id,
                 'user_type' => $this->online_user_type,
