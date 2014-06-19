@@ -1007,20 +1007,6 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_hooks (&$params = array()) {
-		$items = array();
-		$hook_name = '_hook_debug';
-		foreach (main()->modules as $module_name => $module_obj) {
-			if (!method_exists($module_obj, $hook_name)) {
-				continue;
-			}
-			$items[$module_name] = $module_obj->$hook_name($this);
-		}
-		return $this->_show_key_val_table($items);
-	}
-
-	/**
-	*/
 	function _debug_css (&$params = array()) {
 		$items = $this->_get_debug_data('core_css');
 		foreach ((array)$items as $k => $v) {
@@ -1050,18 +1036,33 @@ class yf_debug {
 	/**
 	*/
 	function _debug_events (&$params = array()) {
-#		var_dump(_class('core_events')->_debug_get('firing'));
-#		$items = $this->_get_debug_data('core_events');
-/*
-		foreach ((array)$items as $k => $v) {
-			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
-			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
-			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
-			unset($v['is_added']);
-			$items[$k] = array('id' => ++$i) + $v;
+		$main_ts = main()->_time_start;
+		$items = array();
+		foreach (array('listen','fire','queue') as $name) {
+			$data = $this->_get_debug_data('events_'.$name);
+			if (!$data) {
+				continue;
+			}
+			foreach ((array)$data as $k => $v) {
+				$data[$k]['time_offset'] = round($data[$k]['time_offset'] - $main_ts, 5);
+			}
+			$items[$name] = $this->_show_auto_table($data, array('header' => $name, 'no_total_time' => 1, 'hidden_map' => array('trace' => 'name')));
 		}
-*/
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
+		return _class('html')->tabs($items, array('hide_empty' => 1, 'show_all' => 1, 'no_headers' => 1));
+	}
+
+	/**
+	*/
+	function _debug_hooks (&$params = array()) {
+		$items = array();
+		$hook_name = '_hook_debug';
+		foreach (main()->modules as $module_name => $module_obj) {
+			if (!method_exists($module_obj, $hook_name)) {
+				continue;
+			}
+			$items[$module_name] = $module_obj->$hook_name($this);
+		}
+		return $this->_show_key_val_table($items);
 	}
 
 	/**
@@ -1137,6 +1138,11 @@ class yf_debug {
 		if (!$items) {
 			return false;
 		}
+		$caption = $params['header'] ? '<b class="btn btn-default disabled">'.$params['header'].'</b>' : '';
+		if (!$params['no_total']) {
+			$caption .= ' <span class="label label-info">items: '.count($items).'</span>'.PHP_EOL
+				. (($total_time && !$params['no_total_time']) ? ' <span class="label label-info">total time: '.round($total_time, 4).'</span>' : '');
+		}
 		$table = table((array)$items, array(
 			'table_class' 		=> 'debug_item table-condensed', 
 			'auto_no_buttons' 	=> 1,
@@ -1144,15 +1150,13 @@ class yf_debug {
 			'hidden_map'		=> $params['hidden_map'],
 			'tr'				=> $params['tr'],
 			'td'				=> $params['td'],
+			'no_total'			=> true,
+			'caption'			=> $caption ? '<div class="pull-left">'.$caption.'</div>' : '',
 		))->auto();
-
 		foreach ((array)$params['hidden_map'] as $name => $to) {
 			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name, 'display_func' => function($row, $info, $params) use($name) { return (bool)strlen($row[$name]); }));
 		}
-		if (!$params['no_total']) {
-			$body .= ' | items: '.count($items). ($total_time ? ' | total time: '.round($total_time, 4) : '');
-		}
-		return $body. $table;
+		return (string)$table;
 	}
 
 	/**
