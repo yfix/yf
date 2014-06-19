@@ -758,7 +758,7 @@ class yf_table2 {
 				continue;
 			}
 			// Linking data from row element, example: %explain
-			if ($data[0] == '%') {
+			if (substr($data, 0, 1) == '%') {
 				$name = substr($data, 1);
 				$data = isset($row[$name]) ? $row[$name] : $data;
 			} else {
@@ -828,8 +828,9 @@ class yf_table2 {
 						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
 					}
 				}
+				$text = strval($text);
 				// Example of overriding data using field from same row: text('id', array('link' => '/shop/products/%d', 'rewrite' => 1, 'data' => '@name'));
-				if ($text[0] == '@') {
+				if (substr($text, 0, 1) == '@') {
 					$text = $row[substr($text, 1)];
 				}
 				if ($extra['translate']) {
