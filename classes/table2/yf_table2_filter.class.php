@@ -144,7 +144,7 @@ class yf_table2_filter {
 	/**
 	* Simple filtering of the given array. Need to support table() raw array data with filtering
 	*/
-	function _filter_array(&$data, $filter = array(), $filter_params = array()) {
+	function _filter_array(&$data, $filter = array(), $filter_params = array(), $_this) {
 		if (!$data || !$filter) {
 			return false;
 		}
