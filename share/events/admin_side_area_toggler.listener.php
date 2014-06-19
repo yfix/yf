@@ -43,9 +43,11 @@ MAIN_TYPE_ADMIN && _class('core_events')->listen('block.prepend[center_area]', f
 				side_area_close()
 			}
 			try {
-				$.cookie(cookie_name, is_hidden, {path: "/"});
+				$.cookie(cookie_name, is_hidden ? 1 : 0, {path: "/"});
 			} catch(e) { }
 		})
 	');
-	return '<a class="btn btn-default btn-small" id="'.$id.'" style="position:fixed; top:45px; left:5px;"><i class="'.($is_hidden ? $icons['closed'] : $icons['open']).'"></i></a>';
+	return '<a class="btn btn-default btn-small" id="'.$id.'" style="position:fixed; top:45px; left:5px;">
+		<i class="'.($is_hidden ? $icons['closed'] : $icons['open']).'"></i></a>'
+		.($is_hidden ? '<style type="text/css">.left_area {display:none;}</style>' : '');
 });
