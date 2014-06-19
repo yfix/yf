@@ -240,6 +240,12 @@ class yf_core_css {
 
 	/**
 	*/
+	public function add_asset($content, $params = array()) {
+		return $this->add($content, 'asset', $params);
+	}
+
+	/**
+	*/
 	public function _find_module_css($module = '') {
 		if (!$module) {
 			$module = $_GET['object'];
