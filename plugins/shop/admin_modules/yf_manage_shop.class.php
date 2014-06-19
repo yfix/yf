@@ -229,6 +229,21 @@ class yf_manage_shop {
 		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
+	// revision: category
+	function _add_revision($type, $action = false, $ids = false) {
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}($type, $action, $ids);
+	}
+	function category_revisions() {
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+	function category_revisions_view() {
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+	function category_revision_checkout() {
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+	// end revision: category
+
 	function checkout_images_revision() {
 		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}

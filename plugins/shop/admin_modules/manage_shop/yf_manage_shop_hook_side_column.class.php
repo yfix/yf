@@ -62,7 +62,7 @@ class yf_manage_shop_hook_side_column {
 				$dir1 = substr($dirs, -6, 3);
 				$m_path = $dir1.'/'.$dir2.'/';
 				$image = SITE_IMAGES_DIR.$m_path.'product_'.$row['product_id'].'_'.$row['image_id'].'.jpg';
-				return $image; 
+				return $image;
             }))
 */
 			->text('action')
@@ -164,5 +164,31 @@ class yf_manage_shop_hook_side_column {
 			->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d&page='.$_GET['page'])
 		;
 	}
+
+	/***/
+	function _revisions( $type ) {
+		$id = intval($_GET['id']);
+		$db = $_class_revision->get_db( $type );
+		$info = db()->get('SELECT * FROM '.$db.' WHERE id='.$id);
+		if (empty($info)) {
+			return _e('No such revision: '.$id);
+		}
+		$_class_revision = _class('manage_shop__product_revisions', 'admin_modules/manage_shop/');
+		$db_revision = $_class_revision->get_revision_db( $type );
+		$sql = 'SELECT * FROM '.db('shop_order_revisions').' WHERE item_id='.intval($order_id).' AND action !=\'\' ORDER BY id DESC';
+		return table($sql, array(
+				'caption' => t('Order revisions'),
+				'no_records_html' => '',
+				'pager_records_on_page' => 5,
+				'no_pages'	=> true,
+			))
+			->date('add_date', array('format' => 'full', 'nowrap' => 1))
+			->admin('user_id', array('desc' => 'admin'))
+			->text('action')
+			->btn_view('', './?object=manage_shop&action=order_revisions_view&id=%d')
+			->footer_link('All orders revisions', './?object=manage_shop&action=order_revisions')
+		;
+	}
+
 
 }
