@@ -12,6 +12,10 @@ class yf_core_js {
 			'url' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js',
 			'require' => 'jquery',
 		),
+		'jquery-cookie' => array(
+			'url' => '//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js',
+			'require' => 'jquery',
+		),
 		'bs2'		=> array(
 			'url' => '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js',
 			'require' => 'jquery',
