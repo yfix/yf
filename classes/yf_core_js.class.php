@@ -185,7 +185,7 @@ class yf_core_js {
 				));
 			}
 		}
-		return $this; // Chaining
+#		return $this; // Chaining
 	}
 
 	/**

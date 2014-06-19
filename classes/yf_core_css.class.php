@@ -212,7 +212,7 @@ class yf_core_css {
 				));
 			}
 		}
-		return $this; // Chaining
+#		return $this; // Chaining
 	}
 
 	/**
