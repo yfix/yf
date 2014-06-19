@@ -653,11 +653,11 @@ class yf_table2 {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '') {
+	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $_this = null) {
 		if (!$filter_data) {
 			return '';
 		}
-		return _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_data, $filter_params, $__sql);
+		return _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_data, $filter_params, $__sql, $_this);
 	}
 
 	/**
