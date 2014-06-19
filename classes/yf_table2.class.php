@@ -329,7 +329,7 @@ class yf_table2 {
 				$db = db();
 			}
 			if ($params['filter']) {
-				list($filter_sql, $order_sql) = $this->_filter_sql_prepare($params['filter'], $params['filter_params'], $sql, $this);
+				list($filter_sql, $order_sql) = $this->_filter_sql_prepare($params['filter'], $params['filter_params'], $sql);
 				// These 2 arrays needed to be able to use filter parts somehow inside methods
 				$this->_filter_data = $params['filter'];
 				$this->_filter_params = $params['filter_params'];
@@ -653,11 +653,11 @@ class yf_table2 {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '') {
+	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $sql = '') {
 		if (!$filter_data) {
 			return '';
 		}
-		return _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_data, $filter_params, $__sql);
+		return _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_data, $filter_params, $sql, $this);
 	}
 
 	/**
@@ -667,7 +667,7 @@ class yf_table2 {
 		if (!$data || !$filter) {
 			return false;
 		}
-		return _class('table2_filter', 'classes/table2/')->_filter_array($data, $filter, $filter_params);
+		return _class('table2_filter', 'classes/table2/')->_filter_array($data, $filter, $filter_params, $this);
 	}
 
 	/**
