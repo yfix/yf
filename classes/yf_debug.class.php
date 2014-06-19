@@ -392,14 +392,19 @@ class yf_debug {
 		foreach ((array)$items as $k => $v) {
 			unset($items[$k]['time']);
 		}
-		$body .= ' | '.t('total_exec_time').': '.round($total_queries_exec_time, 4).'<span> sec';
-		$body .= ' | '.t('connect_time').': '.round($db->_connection_time, 4).'<span> sec';
-		$body .= $this->_show_auto_table($items, array(
+		return $this->_show_auto_table($items, array(
 			'first_col_width' => '1%',
-			'hidden_map' => array('explain' => 'sql', 'trace' => 'sql', 'error' => 'sql'),
-			'tr' => function($row, $id) { return $row['error'] ? ' class="error"' : '';}
+			'tr' => function($row, $id) { return $row['error'] ? ' class="error"' : ''; },
+			'caption' => array(
+				'total_exec_time'	=> round($total_queries_exec_time, 4),
+				'connect_time'		=> round($db->_connection_time, 4),
+			),
+			'hidden_map' => array(
+				'explain'	=> 'sql',
+				'trace'		=> 'sql',
+				'error'		=> 'sql'
+			),
 		));
-		return $body;
 	}
 
 	/**
@@ -486,7 +491,7 @@ class yf_debug {
 
 			$items[$counter] = array(
 				'id'		=> ++$counter,
-				// TODO: add link to inline stpl edit
+// TODO: add link to inline stpl edit
 				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $v['storage'])),
 				'storage'	=> strval($debug[$k]['storage']),
 				'storages'	=> '<pre>'._prepare_html(var_export($debug[$k]['storages'], 1)).'</pre>',
@@ -500,12 +505,19 @@ class yf_debug {
 			}
 		}
 		$items = $this->_time_count_changes($items);
-
-		$body .= t('tpl_driver').': '.tpl()->DRIVER_NAME.' | '.t('compile_mode').': '.(int)tpl()->COMPILE_TEMPLATES.' | ';
-		$body .= t('used_templates_size').': '.$total_size.' bytes';
-		$body .= ' | '.t('total_exec_time').': '.round($total_stpls_exec_time, 4).' seconds';
-		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'name', 'vars' => 'name', 'storages' => 'name')));
-		return $body;
+		return $this->_show_auto_table($items, array(
+			'first_col_width' => '1%',
+			'caption' => array(
+				'tpl_driver'	=> tpl()->DRIVER_NAME,
+				'compile_mode'	=> (int)tpl()->COMPILE_TEMPLATES,
+				'templates_size'=> $total_size.' bytes',
+			),
+			'hidden_map' => array(
+				'trace'		=> 'name',
+				'vars'		=> 'name',
+				'storages'	=> 'name',
+			),
+		));
 	}
 
 	/**
@@ -529,9 +541,15 @@ class yf_debug {
 			);
 		}
 		$items = $this->_time_count_changes($items);
-		$body .= t('Rewrite processing time').': '.round($this->_get_debug_data('rewrite_exec_time'), 4).' <span>sec</span>';
-		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'source')));
-		return $body;
+		return $this->_show_auto_table($items, array(
+			'first_col_width' => '1%',
+			'caption' => array(
+				'Rewrite processing time' => round($this->_get_debug_data('rewrite_exec_time'), 4),
+			),
+			'hidden_map' => array(
+				'trace' => 'source'
+			),
+		));
 	}
 
 	/*
@@ -886,8 +904,7 @@ class yf_debug {
 			$total_size += $v['size'];
 		}
 		$items = $this->_time_count_changes($items);
-		$body .= 'total size: '.$total_size;
-		return $body. $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'path')));
+		return $body. $this->_show_auto_table($items, array('caption' => array('total_size' => $total_size), 'hidden_map' => array('trace' => 'path')));
 	}
 
 	/**
@@ -1140,8 +1157,14 @@ class yf_debug {
 		}
 		$caption = $params['header'] ? '<b class="btn btn-default disabled">'.$params['header'].'</b>' : '';
 		if (!$params['no_total']) {
-			$caption .= ' <span class="label label-info">items: '.count($items).'</span>'.PHP_EOL
-				. (($total_time && !$params['no_total_time']) ? ' <span class="label label-info">total time: '.round($total_time, 4).'</span>' : '');
+			if (!is_array($params['caption'])) {
+				$params['caption'] = array();
+			}
+			count($items) && $params['caption']['items'] = count($items);
+			$total_time && $params['caption']['total_time'] = round($total_time, 4);
+			foreach ((array)$params['caption'] as $k => $v) {
+				$caption .= ' <span class="label label-info">'.$k.': '.$v.'</span>'.PHP_EOL;
+			}
 		}
 		$table = table((array)$items, array(
 			'table_class' 		=> 'debug_item table-condensed', 
