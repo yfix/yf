@@ -1049,6 +1049,23 @@ class yf_debug {
 
 	/**
 	*/
+	function _debug_events (&$params = array()) {
+#		var_dump(_class('core_events')->_debug_get('firing'));
+#		$items = $this->_get_debug_data('core_events');
+/*
+		foreach ((array)$items as $k => $v) {
+			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
+			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
+			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
+			unset($v['is_added']);
+			$items[$k] = array('id' => ++$i) + $v;
+		}
+*/
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
+	}
+
+	/**
+	*/
 	function _debug_other (&$params = array()) {
 		$items = array();
 		foreach (debug() as $k => $v) {
