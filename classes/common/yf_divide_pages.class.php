@@ -285,6 +285,12 @@ class yf_divide_pages {
 			if ($end_page > $total_pages) {
 				$end_page = $total_pages + 1;
 			}
+			if ($pages_per_block > ($end_page - $start_page)) {
+				$start_page -= $pages_per_block - ($end_page - $start_page);
+				if ($start_page <= 0) {
+					$start_page = 1;
+				}
+			}
 			// Show link to first page
 			if ($cur_page > 1) {
 				$items['page_first'] = tpl()->parse($tpls_path.'page_first', array(
