@@ -270,7 +270,9 @@ class yf_rewrite {
 	/**
 	*/
 	function _process_url ($url = '', $force_rewrite = false, $for_site_id = false) {
-		$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+		if (strpos($url, 'http://') === false && strpos($url, 'https://') !== 0) {
+			$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+		}
 		// fix for rewrite tests
 		return str_replace(array('http:///', 'https:///'), './', $url);
 	}
