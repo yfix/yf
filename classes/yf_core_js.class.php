@@ -87,6 +87,17 @@ class yf_core_js {
 	}
 
 	/**
+	* Special code for jquery on document ready
+	*/
+	function jquery($content, $params = array()) {
+		if (!$this->_jquery_requried) {
+			$this->add_asset('jquery');
+			$this->_jquery_requried = true;
+		}
+		return $this->add('$(function(){'.PHP_EOL. $content. PHP_EOL.'})', 'inline', $params);
+	}
+
+	/**
 	* $content: string/array
 	* $type: = auto|asset|url|file|inline|raw
 	*/
@@ -194,6 +205,12 @@ class yf_core_js {
 	*/
 	public function add_raw($content, $params = array()) {
 		return $this->add($content, 'raw');
+	}
+
+	/**
+	*/
+	public function add_asset($content, $params = array()) {
+		return $this->add($content, 'asset');
 	}
 
 	/**
