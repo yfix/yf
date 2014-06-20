@@ -96,6 +96,13 @@ class yf_debug {
 			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' secs';
 			$debug_contents[$name] = $content;
 		}
+		$debug_add = array();
+		_class('core_events')->fire('debug.render', $debug_add);
+		if ($debug_add) {
+			foreach((array)$debug_add as $k => $v) {
+				$debug_contents[$k] = $v;
+			}
+		}
 		$debug_time = round(microtime(true) - $ts, 4);
 		$data['debug_info'] = array(
 			'class_head'=> 'tab_info_compact',

@@ -57,6 +57,13 @@ class yf_core_js {
 		if ($module_js_path) {
 			$this->add_file($module_js_path);
 		}
+		if ($params['packed']) {
+			$packed = $this->_show_packed_content($params);
+			// Degrade gracefully
+			if (strlen($packed)) {
+				return $packed;
+			}
+		}
 		$out = array();
 		// Process previously added content, depending on its type
 		foreach ((array)$this->content as $md5 => $v) {
@@ -81,6 +88,60 @@ class yf_core_js {
 		}
 		$this->content = array();
 		return implode(PHP_EOL, $out);
+	}
+
+	/**
+	*/
+	public function _show_packed_content($params = array()) {
+		$packed_file = $this->_pack_content($params);
+		if (!$packed_file || !file_exists($packed_file)) {
+			return false;
+		}
+		$css_class = $params['class'] ? ' class="'.$params['class'].'"' : '';
+		return '<script type="text/javascript" src="'.$packed_file.'"'.$css_class.'></script>';
+	}
+
+	/**
+	*/
+	public function _pack_content($params = array()) {
+// TODO
+		$packed_file = INCLUDE_PATH. 'uploads/js/packed_'.md5($_SERVER['HTTP_HOST']).'.js';
+		if (file_exists($packed_file) && filemtime($packed_file) > (time() - 3600)) {
+			return $packed_file;
+		}
+		$packed_dir = dirname($packed_file);
+		if (!file_exists($packed_dir)) {
+			mkdir($packed_dir, 0755, true);
+		}
+		_class('core_errors')->fire('js.before_pack', array(
+			'fiie'		=> $packed_file,
+			'content'	=> $this->content,
+			'params'	=> $params,
+		));
+		$out = array();
+		foreach ((array)$this->content as $md5 => $v) {
+			$type = $v['type'];
+			$text = $v['text'];
+			if ($type == 'url') {
+				$out[$md5] = file_get_contents($text);
+			} elseif ($type == 'file') {
+				$out[$md5] = file_get_contents($text);
+			} elseif ($type == 'inline') {
+				$text = $this->_strip_script_tags($text);
+				$out[$md5] = $text;
+			} elseif ($type == 'raw') {
+				$out[$md5] = $text;
+			}
+		}
+// TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
+		file_put_contents($packed_file, implode(PHP_EOL, $out));
+
+		_class('core_errors')->fire('js.after_pack', array(
+			'fiie'		=> $packed_file,
+			'content'	=> $out,
+			'params'	=> $params,
+		));
+		return $packed_file;
 	}
 
 	/**

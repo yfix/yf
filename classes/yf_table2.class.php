@@ -101,6 +101,7 @@ class yf_table2 {
 		if (is_callable($on_before_render)) {
 			$on_before_render($params, $this);
 		}
+		_class('core_events')->fire('table.before_render', array('this' => $this));
 		$a = $this->_render_get_data($params);
 		$data	= &$a['data'];
 		$ids	= &$a['ids'];
@@ -143,6 +144,7 @@ class yf_table2 {
 		if (DEBUG_MODE) {
 			$this->_render_debug_info($params, $ts, main()->trace_string());
 		}
+		_class('core_events')->fire('table.after_render', array('this' => $this));
 		return $body;
 	}
 
