@@ -264,7 +264,7 @@ class yf_category_editor {
 		if (main()->is_post()) {
 			$cur_items = $this->_auto_update_items_orders($cat_info['id']);
 			$batch = array();
-			foreach ((array)$_POST['items'] as $order_id => $info) {
+			foreach ((array)json_decode((string)$_POST['items'], $assoc = true) as $order_id => $info) {
 				$item_id = (int)$info['item_id'];
 				if (!$item_id || !isset($items[$item_id])) {
 					continue;
