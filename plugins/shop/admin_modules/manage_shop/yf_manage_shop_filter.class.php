@@ -2,7 +2,7 @@
 
 class yf_manage_shop_filter{
 
-	public $_avail_filters = array('products','users','orders','suppliers','manufacturers','product_sets','attributes','feedback','product_revisions', 'order_revisions', 'product_images_revisions');
+	public $_avail_filters = array('products','users','orders','suppliers','manufacturers','product_sets','attributes','feedback','product_revisions', 'order_revisions', 'category_revisions', 'product_images_revisions');
 
 	/**
 	*/
@@ -199,6 +199,19 @@ class yf_manage_shop_filter{
 					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
 					->select_box('action', common()->get_static_conf('order_revisions',false,false), array('show_text' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
+			},
+			'category_revisions'	=> function($filter_name, $replace) {
+				$fields = array('user_id', 'add_date', 'item_id', 'action');
+					$fields = array_combine( array_values( $fields ), array_values( $fields ) );
+				$action = array( 'first', 'edit', 'delete' );
+					$action = array_combine( array_values( $action ), array_values( $action ) );
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+					->text('item_id','item id')
+					->text('user_id', 'Admin')
+					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
+					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
+					->select_box('action',   $action, array('show_text' => 1, 'translate' => 1))
+					->select_box('order_by', $fields, array('show_text' => 1, 'translate' => 1));
 			},
 			'product_images_revisions'	=> function($filter_name, $replace) {
 				$fields = array('user_id', 'add_date', 'product_id', 'action');

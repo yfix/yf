@@ -116,7 +116,18 @@ class yf_manage_shop__product_revisions {
 			}
 		}
 		$add_rev_date = time();
+		$insert_array = array();
 		foreach ($ids as $id) {
+			if( $action == 'delete' ) {
+				$insert_array[] = array(
+					'user_id'  => intval(main()->ADMIN_ID)?:intval($_GET['admin_id']),
+					'add_date' => $add_rev_date,
+					'action'   => $action,
+					'item_id'  => $id,
+					'data'     => '',
+				);
+				continue;
+			}
 			if(!isset($all_data[$id])){
 				continue;
 			}
@@ -142,7 +153,6 @@ class yf_manage_shop__product_revisions {
 				'data'     => $new_revision ? : '',
 			);
 		}
-
 		if (!empty($insert_array)) {
 //			$insert_array = array_chunk($insert_array, 100);
 			foreach ($insert_array as $insert_item) {
@@ -159,7 +169,7 @@ class yf_manage_shop__product_revisions {
 		$action = 'edit_item';
 		$db_revision = $this->get_revision_db( $type );
 		return table('SELECT * FROM '.$db_revision, array(
-				'filter' => $_SESSION[$_GET['object'].'__'.$type.'_revisions'],
+				'filter' => $_SESSION[$_GET['object'].'__'.$_GET[ 'action' ]],
 				'filter_params' => array(
 					'action'	=> array('eq','action'),
 					'user_id'	=> array('eq','user_id'),
@@ -182,10 +192,13 @@ class yf_manage_shop__product_revisions {
 		$id = (int)$_GET['id'];
 		$sql = 'SELECT * FROM '.$db_revision.' WHERE id='.$id;
 		$a = db()->get($sql);
+		$info = array();
 		$db = $this->get_db( $type );
 		$info = db()->get('SELECT * FROM '.$db.' WHERE id='.$a['item_id']);
-		if (empty($info)) {
-			return _e('No such revision');
+		if( empty( $info ) ) {
+			// return _e('No such revision');
+			$info[ 'item_id' ] = $a[ 'item_id' ];
+			$info[ 'name' ] = 'удаленный элемент';
 		}
 		return form($a, array(
 			'dd_mode' => 1,
@@ -226,29 +239,39 @@ class yf_manage_shop__product_revisions {
 		if (empty($revision_data)) {
 			return _e('Revision not found');
 		}
-		$item_id = $revision_data['item_id'];
-		$data_stamp = json_decode($revision_data['data'], true);
-
-		$db = $this->get_db( $type );
 		db()->begin();
-		foreach($data_stamp as $name => $array){
-			$table = $this->all_queries[$type][$name]['table'];
-			$field = $this->all_queries[$type][$name]['field'];
-			$multi = $this->all_queries[$type][$name]['multi'];
-			if(!$multi){
-				db()->update_safe($table, $array, $field.'='.$array['id']);
-			}else{
-				db()->query('DELETE FROM '.db($table).' WHERE '.$field.'='.$item_id);
-				if(!empty($array))
-					db()->insert_safe($table, $array);
+		$item_id = $revision_data[ 'item_id' ];
+		if( $revision_data[ 'action' ] == 'delete' ) {
+			foreach( $this->all_queries[ $type ] as $name => $item ) {
+				$table = $item[ 'table' ];
+				$field = $item[ 'field' ];
+				db()->query( 'DELETE FROM ' . db( $table ) . ' WHERE '.$field . '=' . $item_id );
 			}
+			$object = 'manage_shop';
+			$action = 'category_revisions';
+			$url = './?object='.$object.'&action='.$action;
+		} else {
+			$data_stamp = json_decode($revision_data['data'], true);
+			$db = $this->get_db( $type );
+			foreach($data_stamp as $name => $array){
+				$table = $this->all_queries[$type][$name]['table'];
+				$field = $this->all_queries[$type][$name]['field'];
+				$multi = $this->all_queries[$type][$name]['multi'];
+				if(!$multi){
+					db()->replace_safe($table, $array);
+				}else{
+					db()->query('DELETE FROM '.db($table).' WHERE '.$field.'='.$item_id);
+					if(!empty($array))
+						db()->replace_safe($table, $array);
+				}
+			}
+			$url = './?object='.$object.'&action='.$action.'&id='.$item_id;
 		}
-		module('manage_shop')->_order_add_revision('rollback', $item_id);
 		db()->commit();
 
 		common()->message_success("Revision retrieved");
-		common()->admin_wall_add(array('checkout revision '.$type.': '.$id, $item_id));
-		return js_redirect('./?object='.$object.'&action='.$action.'&id='.$item_id);
+		common()->admin_wall_add(array('checkout revision '.$type.': '.$id.', item: '.$item_id, $id));
+		return js_redirect( $url );
 	}
 
 	/**
