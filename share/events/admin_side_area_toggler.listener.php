@@ -1,5 +1,6 @@
 <?php
 
+/*
 MAIN_TYPE_ADMIN && _class('core_events')->listen('block.prepend[center_area]', function() {
 	if (!main()->is_common_page()) {
 		return ;
@@ -51,3 +52,4 @@ MAIN_TYPE_ADMIN && _class('core_events')->listen('block.prepend[center_area]', f
 		<i class="'.($is_hidden ? $icons['closed'] : $icons['open']).'"></i></a>'
 		.($is_hidden ? '<style type="text/css">.left_area {display:none;}</style>' : '');
 });
+*/
