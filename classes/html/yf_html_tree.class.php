@@ -137,7 +137,15 @@ class yf_html_tree {
 	function _js($extra = array()) {
 		js(
 '$(function(){
-	$(".draggable_form").on("submit", function(){
+	var orig_items = { };
+	var i = 0;
+	$("li", ".draggable_menu").each(function(){
+		orig_items[++i] = {
+			"item_id" : +$(this).attr("id").substring("item_".length),
+			"parent_id" : +($(this).closest("ul").not(".draggable_menu").parent("li").attr("id") || "").substring("item_".length)
+		}
+	})
+	$("#draggable_form").on("submit", function(){
 		var _form = $(this);
 		var items = { };
 		var i = 0;
@@ -146,10 +154,17 @@ class yf_html_tree {
 				"item_id" : +$(this).attr("id").substring("item_".length),
 				"parent_id" : +($(this).closest("ul").not(".draggable_menu").parent("li").attr("id") || "").substring("item_".length)
 			}
+			if (orig_items[i] && orig_items[i]["item_id"] == items[i]["item_id"] && orig_items[i]["parent_id"] == items[i]["parent_id"]) {
+				delete items[i];
+			} else {
+				orig_items[i] = items[i];
+			}
 		})
-		$.post(_form.attr("action"), {"items" : JSON.stringify(items)}, function(data){
-//			window.location.reload();
-		})
+		if (items) {
+			$.post(_form.attr("action"), {"items" : JSON.stringify(items)}, function(data){
+//				window.location.reload();
+			})
+		}
 		return false;
 	})
 
