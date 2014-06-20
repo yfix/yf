@@ -147,7 +147,7 @@ class yf_html_tree {
 				"parent_id" : +($(this).closest("ul").not(".draggable_menu").parent("li").attr("id") || "").substring("item_".length)
 			}
 		})
-		$.post(_form.attr("action"), {"items" : items}, function(data){
+		$.post(_form.attr("action"), {"items" : JSON.stringify(items)}, function(data){
 //			window.location.reload();
 		})
 		return false;
