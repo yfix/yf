@@ -1826,6 +1826,13 @@ class yf_main {
 	}
 
 	/**
+	* Checks whether current page is not a special page (no ajax, no redirects, no console, no post, etc)
+	*/
+	function is_common_page() {
+		return !($this->is_post() || $this->is_ajax() || $this->is_redirect() || $this->is_console());
+	}
+
+	/**
 	* Return class name of the object, stripping all YF-related prefixes
 	* Needed to ensure singleton pattern and extending classes with same name
 	*/

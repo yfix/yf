@@ -12,6 +12,10 @@ class yf_core_js {
 			'url' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js',
 			'require' => 'jquery',
 		),
+		'jquery-cookie' => array(
+			'url' => '//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js',
+			'require' => 'jquery',
+		),
 		'bs2'		=> array(
 			'url' => '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js',
 			'require' => 'jquery',
@@ -87,6 +91,17 @@ class yf_core_js {
 	}
 
 	/**
+	* Special code for jquery on document ready
+	*/
+	function jquery($content, $params = array()) {
+		if (!$this->_jquery_requried) {
+			$this->add_asset('jquery');
+			$this->_jquery_requried = true;
+		}
+		return $this->add('$(function(){'.PHP_EOL. $content. PHP_EOL.'})', 'inline', $params);
+	}
+
+	/**
 	* $content: string/array
 	* $type: = auto|asset|url|file|inline|raw
 	*/
@@ -144,7 +159,7 @@ class yf_core_js {
 				);
 			} elseif ($type == 'asset') {
 				$info = $this->assets[$_content];
-				if (is_array($url)) {
+				if (is_array($info)) {
 					$url = $info['url'];
 					if ($info['require']) {
 						$this->add($info['require'], 'asset');
@@ -170,6 +185,7 @@ class yf_core_js {
 				));
 			}
 		}
+#		return $this; // Chaining
 	}
 
 	/**
@@ -194,6 +210,12 @@ class yf_core_js {
 	*/
 	public function add_raw($content, $params = array()) {
 		return $this->add($content, 'raw');
+	}
+
+	/**
+	*/
+	public function add_asset($content, $params = array()) {
+		return $this->add($content, 'asset');
 	}
 
 	/**
