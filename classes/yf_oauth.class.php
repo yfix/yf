@@ -24,6 +24,10 @@ class yf_oauth {
 		if (!$provider) {
 			return false;
 		}
+		_class('core_events')->fire('oauth.before_login', array(
+			'provider'	=> $provider,
+			'params'	=> $params,
+		));
 		$normalized_info = array();
 		$driver = _class('oauth_driver_'.$provider, 'classes/oauth/');
 		$oauth_user_info = $driver->login($params);
@@ -50,6 +54,12 @@ class yf_oauth {
 				if ($oauth_user_id) {
 					$oauth_registration = db()->get('SELECT * FROM '.db('oauth_users').' WHERE provider="'._es($provider).'" AND provider_uid="'._es($normalized_info['user_id']).'" AND id='.intval($oauth_user_id));
 				}
+				_class('core_events')->fire('oauth.insert', array(
+					'provider'	=> $provider,
+					'params'	=> $params,
+					'oauth_id'	=> $oauth_user_id,
+					'oauth_info'=> $oauth_registration,
+				));
 			}
 			$sys_user_info = array();
 			// merge oauth if user is logged in
@@ -93,6 +103,13 @@ class yf_oauth {
 					if ($sys_user_id) {
 						$sys_user_info = db()->get('SELECT * FROM '.db('user').' WHERE id='.intval($sys_user_id));
 					}
+					_class('core_events')->fire('oauth.user_added', array(
+						'provider'	=> $provider,
+						'params'	=> $params,
+						'oauth_info'=> $oauth_registration,
+						'user_id'	=> $sys_user_id,
+						'user_info'	=> $sys_user_info,
+					));
 				}
 				// Link oauth record with system user account
 				if ($sys_user_info['id']) {
