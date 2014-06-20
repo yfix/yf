@@ -42,10 +42,10 @@ class yf_core_menu {
 	*		4 => 'Divider',
 	*	);
 	*/
-	function _show_menu ($input = array()) {
-		$RETURN_ARRAY	= isset($input['return_array']) ? $input['return_array'] : false;
-		$force_stpl_name= isset($input['force_stpl_name']) ? $input['force_stpl_name'] : false;
-		$menu_name		= $input['name'];
+	function _show_menu ($params = array()) {
+		$return_array	= isset($params['return_array']) ? $params['return_array'] : false;
+		$force_stpl_name= isset($params['force_stpl_name']) ? $params['force_stpl_name'] : false;
+		$menu_name		= $params['name'];
 		if (empty($menu_name)) {
 			trigger_error(__CLASS__.': Given empty menu name to display', E_USER_WARNING);
 			return false;
@@ -54,13 +54,18 @@ class yf_core_menu {
 		if (!$cur_menu_info['active']) {
 			return false;
 		}
+		_class('core_events')->fire('core.before_menu', array(
+			'name'		=> $menu_name,
+			'info'		=> $cur_menu_info,
+			'params'	=> $params,
+		));
 		if ($force_stpl_name) {
 			$cur_menu_info['stpl_name'] = $force_stpl_name;
 		}
-		$STPL_MENU_ITEM		= !empty($cur_menu_info['stpl_name']) ? $cur_menu_info['stpl_name'].'_item' : 'system/menu_item';
-		$STPL_MENU_MAIN 	= !empty($cur_menu_info['stpl_name']) ? $cur_menu_info['stpl_name'] : 'system/menu_main';
-		$STPL_MENU_PAD		= !empty($cur_menu_info['stpl_name']) ? $cur_menu_info['stpl_name'].'_pad' : 'system/menu_pad';
-		$level_pad_text		= tpl()->parse($STPL_MENU_PAD);
+		$stpl_item		= !empty($cur_menu_info['stpl_name']) ? $cur_menu_info['stpl_name'].'_item' : 'system/menu_item';
+		$stpl_main 		= !empty($cur_menu_info['stpl_name']) ? $cur_menu_info['stpl_name'] : 'system/menu_main';
+		$stpl_pad		= !empty($cur_menu_info['stpl_name']) ? $cur_menu_info['stpl_name'].'_pad' : 'system/menu_pad';
+		$level_pad_text	= tpl()->parse($stpl_pad);
 
 		$menu_items = $this->_get_menu_items($cur_menu_info);
 		if (empty($menu_items)) {
@@ -70,7 +75,7 @@ class yf_core_menu {
 		$_prev_level = 0;
 		$_next_level = 0;
 		$item_counter = 0;
-		$IN_OUTPUT_CACHE = main()->_IN_OUTPUT_CACHE;
+		$in_output_cache = main()->_IN_OUTPUT_CACHE;
 		$ICONS_DIR = _class('graphics')->ICONS_PATH;
 		$MEDIA_PATH = _class('graphics')->MEDIA_PATH;
 
@@ -108,7 +113,7 @@ class yf_core_menu {
 				'item_id'		=> intval($item['id']),
 				'parent_id'		=> intval($item['parent_id']),
 				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
-				'link'			=> !empty($IN_OUTPUT_CACHE) ? process_url($item_link) : $item_link,
+				'link'			=> !empty($in_output_cache) ? process_url($item_link) : $item_link,
 				'name'			=> _prepare_html(t($item['name'])),
 				'level_pad'		=> str_repeat($level_pad_text, $item['level']),
 				'level_num'		=> intval($item['level']),
@@ -126,13 +131,18 @@ class yf_core_menu {
 			// Save current level for the next iteration
 			$_prev_level = $item['level'];
 		}
-		if ($RETURN_ARRAY) {
+		_class('core_events')->fire('core.after_menu', array(
+			'name'		=> $menu_name,
+			'items'		=> $items,
+			'params'	=> $params,
+		));
+		if ($return_array) {
 			return $items;
 		}
 		foreach ((array)$items as $id => $item) {
-			$items[$id] = tpl()->parse($STPL_MENU_ITEM, $item);
+			$items[$id] = tpl()->parse($stpl_item, $item);
 		}
-		return tpl()->parse($STPL_MENU_MAIN, array(
+		return tpl()->parse($stpl_main, array(
 			'items' => implode(PHP_EOL, (array)$items),
 		));
 	}
