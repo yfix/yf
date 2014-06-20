@@ -101,6 +101,11 @@ class yf_core_css {
 		if (!file_exists($packed_dir)) {
 			mkdir($packed_dir, 0755, true);
 		}
+		_class('core_errors')->fire('css.before_pack', array(
+			'fiie'		=> $packed_file,
+			'content'	=> $this->content,
+			'params'	=> $params,
+		));
 		$out = array();
 		foreach ((array)$this->content as $md5 => $v) {
 			$type = $v['type'];
@@ -118,6 +123,12 @@ class yf_core_css {
 		}
 // TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
 		file_put_contents($packed_file, implode(PHP_EOL, $out));
+
+		_class('core_errors')->fire('css.after_pack', array(
+			'fiie'		=> $packed_file,
+			'content'	=> $out,
+			'params'	=> $params,
+		));
 		return $packed_file;
 	}
 
