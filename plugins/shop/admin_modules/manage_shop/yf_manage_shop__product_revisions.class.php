@@ -68,7 +68,8 @@ class yf_manage_shop__product_revisions {
 	}
 
 	function get_db ($type) {
-		return db(current( $this->all_queries[ $type ] )[ 'table' ]);
+		$result = current( $this->all_queries[ $type ] );
+		return db( $result[ 'table' ] );
 	}
 
 	function get_revision_db ($type) {
