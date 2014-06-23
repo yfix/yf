@@ -73,6 +73,11 @@ abstract class yf_installer_db {
 	*	);
 	*/
 	function create_table_pre_hook($full_table_name, $table_struct, $db) {
+		_class('core_events')->fire('db.before_create_table', array(
+			'table'		=> $full_table_name,
+			'struct'	=> $table_struct,
+			'db'		=> $db,
+		));
 		foreach ((array)$this->create_table_pre_callbacks as $regex => $func) {
 			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
 				continue;
@@ -86,6 +91,11 @@ abstract class yf_installer_db {
 	* This method can be inherited in project with custom rules inside.
 	*/
 	function create_table_post_hook($full_table_name, $table_struct, $db) {
+		_class('core_events')->fire('db.after_create_table', array(
+			'table'		=> $full_table_name,
+			'struct'	=> $table_struct,
+			'db'		=> $db,
+		));
 		foreach ((array)$this->create_table_post_callbacks as $regex => $func) {
 			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
 				continue;
@@ -99,6 +109,12 @@ abstract class yf_installer_db {
 	* This method can be inherited in project with custom rules inside
 	*/
 	function alter_table_pre_hook($table_name, $column_name, $table_struct, $db) {
+		_class('core_events')->fire('db.before_alter_table', array(
+			'table'		=> $table_name,
+			'column'	=> $column_name,
+			'struct'	=> $table_struct,
+			'db'		=> $db,
+		));
 		foreach ((array)$this->alter_table_pre_callbacks as $table_regex => $func) {
 			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
 				continue;
@@ -112,6 +128,12 @@ abstract class yf_installer_db {
 	* This method can be inherited in project with custom rules inside
 	*/
 	function alter_table_post_hook($table_name, $column_name, $table_struct, $db) {
+		_class('core_events')->fire('db.after_alter_table', array(
+			'table'		=> $table_name,
+			'column'	=> $column_name,
+			'struct'	=> $table_struct,
+			'db'		=> $db,
+		));
 		foreach ((array)$this->alter_table_post_callbacks as $table_regex => $func) {
 			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
 				continue;
