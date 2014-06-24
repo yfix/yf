@@ -279,6 +279,7 @@ class yf_remote_files {
 		// Get lot of details about connections done
 		$info = curl_getinfo($ch);
 		if ($url_options['curl_verbose'] || $this->DEBUG) {
+echo 1;
 			$response_header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 			$response_header = substr($result, 0, $response_header_size);
 			$result = substr($result, $response_header_size);
@@ -631,6 +632,12 @@ class yf_remote_files {
 		// Cookie string
 		if ($url_options['cookie']) {
 			$curl_opts[CURLOPT_COOKIE]		= $url_options['cookie'];
+		}
+		if ($url_options['cookie_file']) {
+			$curl_opts[CURLOPT_COOKIEFILE]	= $url_options['cookie_file'];
+		}
+		if ($url_options['cookie_jar']) {
+			$curl_opts[CURLOPT_COOKIEJAR]	= $url_options['cookie_jar'];
 		}
 		// If we need to get target url where remote server redirects us
 		if ($url_options['get_redirected_url']) {

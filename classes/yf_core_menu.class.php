@@ -225,6 +225,7 @@ class yf_core_menu {
 		}
 		if ($this->USE_DYNAMIC_ATTS && $custom_fields) {
 			foreach ((array)$menu_items as $item_id => $item_info) {
+				$custom_attrs = array();
 				if (!strlen($item_info['other_info'])) {
 					continue;
 				}
