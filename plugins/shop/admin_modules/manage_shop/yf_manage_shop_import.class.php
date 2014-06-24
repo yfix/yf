@@ -365,7 +365,7 @@ class yf_manage_shop_import {
 		foreach ($items as $item) {
 			if (intval($item[0]) == 0 || intval($item[2]) == 0) continue;
 			$v = $this->format_data($item[1],$item[0],$item[2],$supplier_id);
-			$v['description'] = trim($item[3]) == '' ? '' : '<b>Мощность: </b>'.$item[3]."<b>Размер: </b>".trim($item[4]);
+			$v['description'] = trim($item[3]) == '' ? '' : '<b>Мощность: </b>'.$item[3]."<br /><b>Размер: </b>".trim($item[4]);
 			//todo:cats
 			if (empty($products[$v['articul']])) {
 				$v['is_new'] = 'new';
