@@ -287,7 +287,6 @@ class yf_remote_files {
 				$info['CURL_RESPONSE_BODY'] = $result;
 			}
 			rewind($verbose_stream);
-# TODO: need to test this
 			$info['CURL_STDERR'] = stream_get_contents($verbose_stream);
 			if (main()->CONSOLE_MODE) {
 				echo $info['CURL_STDERR'];
