@@ -18,7 +18,7 @@ class yf_watch_online_users{
             $_SESSION[$filter_name]['user_type'] = 'user_id';
 		}
         if (main()->TRACK_ONLINE_DETAILS) {
-            return table('SELECT * FROM '.db('users_online_details'), array(
+            return table('SELECT *,`user_id` AS `id` FROM '.db('users_online_details'), array(
                     'filter' => $_SESSION[$filter_name],
                 ))
                 ->text('user_id')
@@ -27,13 +27,15 @@ class yf_watch_online_users{
                 ->text('session_id')
                 ->text('user_agent')
                 ->date('time', array('format' => 'full', 'nowrap' => 1))
-            ;             
+                ->btn('send notification', './?object=manage_notifications&action=add&receiver_id=%d&receiver_type='.$_SESSION[$filter_name]['user_type'])
+            ;
         } else {
-            return table('SELECT * FROM '.db('users_online'), array(
+            return table('SELECT *,`user_id` AS `id`  FROM '.db('users_online'), array(
                     'filter' => $_SESSION[$filter_name],
                 ))
                 ->text('user_id')
                 ->date('time', array('format' => 'full', 'nowrap' => 1))
+                ->btn('send notification', './?object=manage_notifications&action=add&receiver_id=%d&receiver_type='.$_SESSION[$filter_name]['user_type'])
             ;             
         }
     }

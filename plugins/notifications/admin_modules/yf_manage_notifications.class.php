@@ -32,20 +32,39 @@ class yf_manage_notifications {
 	*/
 	function add() {
 		$a = $_POST;
+        if(intval($_GET['receiver_id']) != 0) $a['receiver_id'] = $_GET['receiver_id'];
+        $receiver_type_options = array();
+        if(in_array($_GET['receiver_type'],array_keys($this->RECEIVER_TYPES))) {
+            $a['receiver_type'] = $_GET['receiver_type'];
+        }
 		$a['redirect_link'] = './?object='.$_GET['object'];
-		return form($a, array('autocomplete' => 'off'))
+		$form = form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'title' => 'trim|required',
 				'content' => 'trim|required',
 			))
 			->db_insert_if_ok('notifications', array('title', 'content', 'receiver_type'), array('add_date' => time()))
 			->on_after_update(function() {
-				// todo: receivers
+                if (intval($_POST['receiver_id']) !=0) {
+                    db()->insert(db('notifications_receivers'), array(
+                        'notification_id' => db()->insert_id(),
+                        'receiver_id' => intval($_POST['receiver_id']),
+                        'receiver_type' => _es($_POST['receiver_type']),
+                        'is_read' => 0,
+                    ));
+                }
 			})
 			->text('title')
-			->textarea('content')
-			->select_box('receiver_type', $this->RECEIVER_TYPES)
-			->save_and_back();
+			->textarea('content');
+            if(in_array($_GET['receiver_type'],array_keys($this->RECEIVER_TYPES))) {
+                $form = $form->hidden('receiver_type');
+            } else {
+                $form = $form->select_box('receiver_type', $this->RECEIVER_TYPES);                
+            }
+                    
+            $form = $form->hidden('receiver_id')
+                ->save_and_back();
+        return $form;
 	}
 	
 	function view() {
