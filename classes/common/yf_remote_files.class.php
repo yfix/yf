@@ -34,7 +34,7 @@ class yf_remote_files {
 	/** @var int @conf_skip */
 	public $CURL_DEF_HEADER		= '';
 	/** @var bool */
-	public $CURL_DEBUG		= false;
+	public $DEBUG		= false;
 	/** @var bool */
 	public $_is_avail_setopt_array = false;
 
@@ -565,7 +565,7 @@ class yf_remote_files {
 		if (!isset($this->_curlopt_id_consts)) {
 			$all_consts = get_defined_constants(true);
 			foreach ((array)$all_consts['curl'] as $name => $id) {
-				if (substr($name, 0, 8) != 'CURLOPT_') {
+				if (substr($name, 0, 8) != 'CURLOPT_' && substr($name, 0, 9) != 'CURLINFO_') {
 					continue;
 				}
 				$this->_curlopt_id_consts[$id] = $name;
@@ -678,6 +678,12 @@ class yf_remote_files {
 			$curl_opts[CURLOPT_VERBOSE] 	= true;
 			$curl_opts[CURLINFO_HEADER_OUT] = true;
 			$curl_opts[CURLOPT_HEADER]		= true;
+		}
+		// Ability to override any other curl option
+		if ($url_options['curl_opts']) {
+			foreach ((array)$url_options['curl_opts'] as $k => $v) {
+				$curl_opts[$k] = $v;
+			}
 		}
 		if ($this->DEBUG && main()->CONSOLE_MODE) {
 			print_r($this->pretty_dump_curl_opts($curl_opts));
