@@ -68,6 +68,7 @@ class yf_cats {
 				}
 				// Try to parse 'dynamic' attributes for the item
 				if ($this->USE_DYNAMIC_ATTS && $custom_fields) {
+					$custom_attrs = array();
 					if ($a['other_info']) {
 						$custom_attrs = (array)_attrs_string2array($a['other_info']);
 					}
@@ -115,7 +116,7 @@ class yf_cats {
 		$new_items = array();
 		foreach ((array)$ids as $id => $level) {
 			$new_items[$id] = $items[$id] + array('level' => $level);
-		}		
+		}
 		return $new_items;
 	}
 
