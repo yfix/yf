@@ -279,7 +279,6 @@ class yf_remote_files {
 		// Get lot of details about connections done
 		$info = curl_getinfo($ch);
 		if ($url_options['curl_verbose'] || $this->DEBUG) {
-echo 1;
 			$response_header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 			$response_header = substr($result, 0, $response_header_size);
 			$result = substr($result, $response_header_size);
