@@ -11,7 +11,8 @@ class yf_manage_shop_import {
 			'oblik' => 'oblik',
 			'dobra_hata' => 'dobra hata',
 			'velika_kishenya' => 'velika kishenya',
-			'ekanevidal' => 'eka nevidal'
+			'ekanevidal' => 'eka nevidal',
+			'electrolux' => 'electrolux'
 		);
 		$this->_modes = array(
 			'validate' => 'validate',
@@ -355,7 +356,42 @@ class yf_manage_shop_import {
 		}
 		return $this->table_format($result);
 	}
-
+    
+	function process_items_electrolux($items, $mode = 'process') { // process/validate
+		$supplier_id = 120;
+		$cat_id = 64911;
+		$products = $this->get_products_by_supplier($supplier_id);
+		$result = array();
+		foreach ($items as $item) {
+			if (intval($item[0]) == 0 || intval($item[2]) == 0) continue;
+			$v = $this->format_data($item[1],$item[0],$item[2],$supplier_id);
+			$v['description'] = trim($item[3]) == '' ? '' : '<b>Мощность: </b>'.$item[3]."<br /><b>Размер: </b>".trim($item[4]);
+			//todo:cats
+			if (empty($products[$v['articul']])) {
+				$v['is_new'] = 'new';
+				$v1 = $v;
+				unset($v1['is_new']);
+				unset($v1['category']);
+				
+				$v1['add_date'] = time();												
+				$v1['cat_id'] = intval($cat_id);
+				if ($mode == 'process') db()->insert(db('shop_products'), _es($v1));
+			} else {
+				$v['is_new'] = 'upd';
+				$v1 = array(
+					'price' => $v['price'],
+					'price_raw' => $v['price_raw'],
+					'name' => $v['name'],
+                                        'update_date' => time(),
+					'cat_id' => intval($cat_id),
+					'description' => $v['description'],
+				);
+				if ($mode == 'process') db()->update(db('shop_products'), _es($v1),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'");
+			}
+			$result[] = $this->add_result($v);			
+		}
+		return $this->table_format($result);
+	}
 
 	function process_items_ekanevidal($items, $mode = 'process') { // process/validate
 		$supplier_id = 118;
