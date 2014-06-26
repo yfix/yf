@@ -13,6 +13,11 @@ class yf_watch_online_users{
     
 	function show(){
         if (!main()->TRACK_ONLINE_STATUS) return t('online users tracking is disabled');
+        _class('core_js')->add("$( document ).ready(function() {
+            setTimeout(function(){
+                window.location.reload(1);
+            }, 60000);
+        });");      
 		$filter_name = $_GET['object'];
 		if (!$_SESSION[$filter_name]['user_type']) {
             $_SESSION[$filter_name]['user_type'] = 'user_id';
@@ -72,7 +77,7 @@ class yf_watch_online_users{
 				}
 			}
 		}
-		$redirect_url = "./?object=".__CLASS__;
+		$redirect_url = "./?object=".$_GET['object'];
 		return js_redirect($redirect_url);
 	}
     

@@ -33,7 +33,7 @@ class yf_manage_notifications {
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))				
 			->btn('manage receivers', './?object='.$_GET['object'].'&action=view&id=%d')
 			->btn_delete()
-			->footer_add('add', "./?object=".__CLASS__."&action=add", array('no_ajax' => 1))				
+			->footer_add('add', "./?object=".$_GET['object']."&action=add", array('no_ajax' => 1))				
 		;
 	}	
 
@@ -89,7 +89,7 @@ class yf_manage_notifications {
 			$table = table('SELECT * FROM '.db('notifications_receivers').' WHERE `notification_id`='.intval($_GET['id']))
 				->text('receiver_id')
 				->text('is_read')
-				->footer_add('add_receivers', "./?object=".__CLASS__."&action=add_receivers&id=".intval($_GET['id']), array('no_ajax' => 1))				
+				->footer_add('add_receivers', "./?object=".$_GET['object']."&action=add_receivers&id=".intval($_GET['id']), array('no_ajax' => 1))				
 			;
 		} elseif ($A['receiver_type'] == 'user_id') {
 			$table = table('SELECT * FROM '.db('notifications_receivers').' WHERE `notification_id`='.intval($_GET['id']))
@@ -97,14 +97,14 @@ class yf_manage_notifications {
 				->text('is_read')
 					
 				->date('add_date', array('format' => 'full', 'nowrap' => 1))				
-				->footer_add('add_receivers', "./?object=".__CLASS__."&action=add_receivers&id=".intval($_GET['id']), array('no_ajax' => 1))				
+				->footer_add('add_receivers', "./?object=".$_GET['object']."&action=add_receivers&id=".intval($_GET['id']), array('no_ajax' => 1))				
 			;
 		} else {
 			$table = table('SELECT * FROM '.db('notifications_receivers').' WHERE `notification_id`='.intval($_GET['id']))
 				->text('receiver_id')
 				->text('is_read')
 				->date('add_date', array('format' => 'full', 'nowrap' => 1))				
-				->footer_add('add_receivers', "./?object=".__CLASS__."&action=add_receivers&id=".intval($_GET['id']), array('no_ajax' => 1))				
+				->footer_add('add_receivers', "./?object=".$_GET['object']."&action=add_receivers&id=".intval($_GET['id']), array('no_ajax' => 1))				
 			;			
 		}
 		$r = array(
@@ -126,7 +126,7 @@ class yf_manage_notifications {
 	function add_receivers() {
 		$A = $this->_get_notification($_GET['id']);
 		$method_name = "_add_receivers_".$A['receiver_type'];		
-		if (!method_exists($this,$method_name) || !method_exists($this,$method_name."_process")) js_redirect("./?object=".__CLASS__);		
+		if (!method_exists($this,$method_name) || !method_exists($this,$method_name."_process")) js_redirect("./?object=".$_GET['object']);		
 		if(main()->is_post()) {
 			$method_name_process = $method_name."_process";
 			$sql = $this->$method_name_process($_GET['id']);
@@ -140,14 +140,14 @@ class yf_manage_notifications {
 			if (count($sql_arr)>0) {
 				db()->query("REPLACE INTO `".db('notifications_receivers')."` (`notification_id`,`receiver_type`,`receiver_id`,`is_read`) VALUES ".implode(",",$sql_arr));
 			}
-			js_redirect("./?object=".__CLASS__."&action=view&id=".$_GET['id']);
+			js_redirect("./?object=".$_GET['object']."&action=view&id=".$_GET['id']);
 		}
 
 		$replace = array(
 			'table' => $this->$method_name($_GET['id']),
 			'show_add_selected' => $A['receiver_type'] != 'user_id_tmp' ? 1 : 0,
 		);
-		return tpl()->parse(__CLASS__."/".__FUNCTION__,$replace);
+		return tpl()->parse($_GET['object']."/".__FUNCTION__,$replace);
 	}
 
 	function _add_receivers_user_id_process() {
@@ -280,7 +280,7 @@ class yf_manage_notifications {
 		$receiver_type = $A['receiver_type'];
 		
 		$method_name = "_show_filter_".$A['receiver_type'];
-		if (!method_exists($this,$method_name)) js_redirect("./?object=".__CLASS__);
+		if (!method_exists($this,$method_name)) js_redirect("./?object=".$_GET['object']);
 		return $this->$method_name();
 		
 	}
@@ -367,7 +367,7 @@ class yf_manage_notifications {
 	function _get_notification($id) {
 		if (!empty($this->notifications[$id])) return $this->notifications[$id];
 		$A = db()->query_fetch("SELECT * FROM `".db('notifications')."` WHERE `id`=".intval($id));
-		if (empty($A)) js_redirect("./?object=".__CLASS__);
+		if (empty($A)) js_redirect("./?object=".$_GET['object']);
 		$this->notifications[$id] = $A;
 		return $A;
 	}
