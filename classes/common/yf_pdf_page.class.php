@@ -25,6 +25,9 @@ class yf_pdf_page {
 			require_once (PROJECT_PATH.$path);
 		}
 		$this->_LC_NUMERIC = localeconv();
+			// params:
+			// coding, format, font size, font name
+			// margin left margin right, margin top, margin bottom, margin head, margin footer
 			$this->pdf_obj = new mPDF('utf-8', 'A4','10');
 		$this->_LC_NUMERIC_MPDF = localeconv();
 		setlocale( LC_NUMERIC, $this->_LC_NUMERIC );

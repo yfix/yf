@@ -285,9 +285,11 @@ class yf_category_editor {
 				}
 			}
 			if ($batch) {
-				db()->update_batch('category_items', db()->es($batch));
-				common()->admin_wall_add(array('category items dragged and saved: '.$cat_info['name'], $cat_info['id']));
-				module('category_editor')->_purge_category_caches($cat_info);
+				_class( 'core_events' )->fire( 'category_editor.drag_items.before', array( array_keys( $batch ) ) );
+					db()->update_batch('category_items', db()->es($batch));
+					common()->admin_wall_add(array('category items dragged and saved: '.$cat_info['name'], $cat_info['id']));
+					module('category_editor')->_purge_category_caches($cat_info);
+				_class( 'core_events' )->fire( 'category_editor.drag_items.after', array( array_keys( $batch ) ) );
 			}
 			main()->NO_GRAPHICS = true;
 			return false;

@@ -54,7 +54,10 @@
 								<tr>
 									<td colspan="3"></td>
 									<td style="width: 140px;text-align: right;padding: 0 15px ;"><b>Итого</b></td>
-									<td style="width: 140px;text-align: right;padding: 0 15px ;"><h4>{total_sum}</h4></td>
+									<td style="width: 140px;text-align: right;padding: 0 15px;"><h4>{total_sum}</h4></td>
+								</tr>
+								<tr>
+									<td colspan="5" style="padding: 15px 15px;"></td>
 								</tr>
 
 							</table>

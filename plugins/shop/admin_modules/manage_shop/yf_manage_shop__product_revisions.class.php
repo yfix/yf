@@ -52,6 +52,12 @@ class yf_manage_shop__product_revisions {
 		return $this->_add_revision('order', $action, $ids);
 	}
 
+	// new version
+	function _add_revision_group($type, $action ='edit' , $ids = false){
+		return $this->_add_revision($type, $action, $ids);
+	}
+
+	// old version (only for batch rename products)
 	function _add_group_revision($action = false, $ids = false, $group_id = false){
 		$revision_db = $this->get_revision_db($action);
 		$admin_id = main()->ADMIN_ID?:intval($_GET['admin_id']);
