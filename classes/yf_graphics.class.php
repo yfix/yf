@@ -566,4 +566,3 @@ class yf_graphics {
 		return tpl()->parse('system/quick_menu_main', $replace);
 	}
 }
-
