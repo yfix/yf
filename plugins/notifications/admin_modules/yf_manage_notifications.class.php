@@ -16,7 +16,16 @@ class yf_manage_notifications {
 	/**
 	*/
 	function show () {
-		return table('SELECT * FROM '.db('notifications'))
+		return table('SELECT * FROM '.db('notifications'), array(
+				'filter' => $_SESSION[$_GET['object']],
+				'filter_params' => array(
+					'id'		=> 'like',		
+                    'title'     => 'like',
+					'content'	=> 'like',
+					'add_date'	=> 'dt_between',
+                    'receiver_type' => 'eq',
+				),
+			))
 			->text('id')
 			->text('title')
 			->text('content')
@@ -240,6 +249,30 @@ class yf_manage_notifications {
 	/**
 	*/
 	function _show_filter() {
+        if (in_array($_GET['action'],array('show',''))) {
+            $filter_name = $_GET['object'];
+            $r = array(
+                'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
+                'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+            );
+            $order_fields = array();
+            foreach (explode('|', 'id|add_date|receiver_type|title|content') as $f) {
+                $order_fields[$f] = $f;
+            }
+            return form($r, array(
+                    'selected'	=> $_SESSION[$filter_name],
+                ))
+                ->number('id', array('class' => 'span1', 'min' => 0))
+                ->text('title', array('class' => 'input-medium'))
+                ->text('content', array('class' => 'input-medium'))
+				->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
+				->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )                    
+                ->select_box('receiver_type', $this->RECEIVER_TYPES, array('show_text' => 1))
+                ->select_box('order_by', $order_fields, array('show_text' => 1))
+                ->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+                ->save_and_clear();
+            ;
+        }
 		if (!in_array($_GET['action'], array('add_receivers'))) {
 			return false;
 		}
@@ -311,7 +344,7 @@ class yf_manage_notifications {
 	function filter_save() {
 		$A = $this->_get_notification($_POST['notification_id']);
 		
-		$filter_name = $_GET['object'].'__add_receivers__'.$A['receiver_type'];
+		$filter_name = $_GET['id'] == 'manage_notifications' ? 'manage_notifications' : ($_GET['object'].'__add_receivers__'.$A['receiver_type']);
 		if ($_GET['page'] == 'clear') {
 			$_SESSION[$filter_name] = array();
 		} else {
@@ -322,7 +355,11 @@ class yf_manage_notifications {
 				}
 			}
 		}
-		$redirect_url = "./?object=".__CLASS__."&action=add_receivers&id=".$_POST['notification_id'];
+        if ($_GET['id'] == 'manage_notifications') {
+            $redirect_url = "./?object=".$_GET['object'];
+        } else {
+            $redirect_url = "./?object=".$_GET['object']."&action=add_receivers&id=".$_POST['notification_id'];
+        }
 		return js_redirect($redirect_url);
 	}
 	
