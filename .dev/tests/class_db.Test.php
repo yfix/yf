@@ -5,6 +5,9 @@ require dirname(__FILE__).'/db_setup.php';
 
 // TODO: automatically create and populate database yf_unit_tests with sample data to test db and related methods
 
+/**
+ * @requires extension mysql
+ */
 class class_db_test extends PHPUnit_Framework_TestCase {
 	public $data_safe = array(
 		'user_id'	=> 1,
