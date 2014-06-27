@@ -7,14 +7,7 @@ class yf_core_install {
 
 	/**
 	*/
-	function show_html($page = 'form', $vars = array(), $errors = array()) {
-		if (php_sapi_name() == 'cli' || !$_SERVER['PHP_SELF']) {
-			return print '__CONSOLE_INSTALL__'.PHP_EOL;
-		}
-		$cur_dir = realpath('./');
-		if (!is_writable($cur_dir)) {
-			$error = 'Current dir: '.$cur_dir.' is not writable, please fix filesystem permissions.';
-		}
+	function main_layout_html($body = '') {
 		ob_start();
 ?>
 <!DOCTYPE html>
@@ -56,9 +49,9 @@ class yf_core_install {
 					<a class="dropdown-toggle" data-toggle="dropdown">Select theme <b class="caret"></b></a>
 					<ul class="dropdown-menu theme-selector">
 <?php
-			foreach ((array)installer()->bs_get_avail_themes() as $theme) {
-				echo '<li><a href="#" id="theme_id_'.$theme.'">'.$theme.'</a></li>';
-			}
+		foreach ((array)installer()->bs_get_avail_themes() as $theme) {
+			echo '<li><a href="#" id="theme_id_'.$theme.'">'.$theme.'</a></li>'.PHP_EOL;
+		}
 ?>
 					</ul>
 				</li>
@@ -66,9 +59,25 @@ class yf_core_install {
 		</div>
 	</div>
 <?php
-		if ($error) {
-			echo '<div class="alert alert-danger">'.$error.'</div>';
+		echo $body;
+?>
+</body>
+</html>
+<?php
+		return ob_get_clean();
+	}
+
+	/**
+	*/
+	function show_html($page = 'form', $vars = array(), $errors = array()) {
+		if (php_sapi_name() == 'cli' || !$_SERVER['PHP_SELF']) {
+			return print '__CONSOLE_INSTALL__'.PHP_EOL;
 		}
+		$cur_dir = realpath('./');
+		if (!is_writable($cur_dir)) {
+			$error = 'Current dir: '.$cur_dir.' is not writable, please fix filesystem permissions.';
+		}
+		ob_start();
 		if ($page == 'form') {
 ?>
 	<header>
@@ -135,16 +144,17 @@ class yf_core_install {
 	</div>
 <?php
 		}
-?>
-</body>
-</html>
-<?php
 		$html = ob_get_clean();
+		$body = '';
+		if ($error) {
+			$body .= '<div class="alert alert-danger">'.$error.'</div>';
+		}
+		$body .= installer()->main_layout_html($html);
 		$replace = array();
 		foreach ((array)$vars as $k => $v) {
 			$replace['{'.$k.'}'] = htmlspecialchars($v, ENT_QUOTES);
 		}
-		echo str_replace(array_keys($replace), array_values($replace), $html);
+		echo str_replace(array_keys($replace), array_values($replace), $body);
 		return installer();
 	}
 
