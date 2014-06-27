@@ -259,6 +259,18 @@ class yf_core_install {
 
 	/**
 	*/
+	function pre_init_yf_core($vars = array()) {
+		if (defined('YF_PATH')) {
+			return false;
+		}
+		!$vars && $vars = installer()->prepare_vars();
+		define('YF_PATH', $vars['install_yf_path']);
+		require YF_PATH. 'classes/yf_main.class.php';
+		return new yf_main('user', $no_db_connect = true, $auto_init_all = false);
+	}
+
+	/**
+	*/
 	function init_yf_core() {
 		define('DB_TYPE',	'mysql5');
 		define('DB_HOST',	$_POST['install_db_host']);
@@ -521,6 +533,34 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		_class('dir')->copy_dir(INSTALLER_PATH.'skel/', PROJECT_PATH, '', '/\.(svn|git)/');
 		return installer();
 	}
+
+	/**
+	*/
+	function show_form() {
+		$vars = installer()->prepare_vars();
+		installer()->pre_init_yf_core($vars);
+		$form_items = array();
+		$validate_rules = array();
+		foreach (installer()->get_form_keys() as $id => $desc) {
+			$type = 'text';
+			if (strpos($id, '_checkbox_') !== false) {
+				$type = 'check_box';
+			}
+			$form_items[$id] = array($type, $id, $desc);
+			$validate_rules[$id] = 'trim|required';
+		}
+		$defaults = installer()->get_form_defaults();
+		$form = form($defaults)
+			->validate($validate_rules)
+			->array_to_form($form_items)
+			->save('', 'Install')
+		;
+#		print _class('html')->layout(array(
+#			'nav_bar'	=> _class('html')->nav_bar(),
+#			'body'		=> $form,
+#		));
+		print $form;
+	}
 }
 
 /**
@@ -533,8 +573,11 @@ function installer() {
 	return $installer;
 }
 /////////////////////////////
+
+
 $errors = array();
 if (empty($_POST)) { // Initial page
+#	installer()->show_form();
 	installer()->show_html('form', installer()->prepare_vars());
 	exit();
 }
