@@ -16,5 +16,7 @@ class func_json extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $a, json_decode($json, $assoc = true) );
 		$this->assertEquals( $a, json_decode(json_encode($a), $assoc = true) );
 		$this->assertEquals( $json, json_encode(json_decode($json, $assoc = true)) );
+		$this->assertEquals( json_encode($json), json_encode(json_encode($a)) );
+		$this->assertEquals( json_encode(json_encode($json)), json_encode(json_encode(json_encode($a))) );
 	}
 }
