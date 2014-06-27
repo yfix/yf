@@ -2,6 +2,9 @@
 
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
+/**
+ * @requires extension mbstring
+ */
 class class_utf8_test extends PHPUnit_Framework_TestCase {
 	public function test_main() {
 		$str = 'Mutual Friends (пользователь должен быть у Вас в друзьях а Вы у него)';
