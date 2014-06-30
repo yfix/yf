@@ -276,7 +276,7 @@ class yf_table2 {
 			$params['pages_on_bottom'] = true;
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_bottom'] ? $a['pages'] : '').PHP_EOL;
-		return $body;
+		return trim($body);
 	}
 
 	/**
