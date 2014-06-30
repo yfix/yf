@@ -3,14 +3,25 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 require dirname(__FILE__).'/db_setup.php';
 
+/**
+ * @requires extension mysql
+ */
 class class_db_utils_test extends PHPUnit_Framework_TestCase {
 	public static $_er = array();
+	public static $_no_db_connect = null;
+	public static $db_name = '';
 	public static function setUpBeforeClass() {
 		self::$_er = error_reporting();
+		self::$db_name = 'yf_for_unit_tests_'.substr(md5(microtime()), 0, 4);
 		error_reporting(0);
+#		self::$_no_db_connect = main()->NO_DB_CONNECT;
+#		main()->NO_DB_CONNECT = false;
+#		main()->init_db();
+#		db()->connect();
 	}
 	public static function tearDownAfterClass() {
 		error_reporting(self::$_er);
+#		main()->NO_DB_CONNECT = self::$_no_db_connect;
 	}
 	private function utils() {
 		return _class('db')->utils();
@@ -19,7 +30,8 @@ class class_db_utils_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'SHOW DATABASES', self::utils()->list_databases(array('sql' => 1)) );
 	}
 	public function test_create_database() {
-#		$this->assertEquals( self::utils()-> );
+#		$this->assertEquals( true, self::utils()->create_database(self::$db_name) );
+#		$this->assertEquals(array(), self::utils()->list_databases());
 	}
 	public function test_drop_database() {
 #		$this->assertEquals( self::utils()-> );
