@@ -32,7 +32,7 @@ function get_table_create_sql($table) {
 }
 
 mkdir('./data/', 0755, true);
-foreach (glob(dirname(dirname(dirname(__FILE__))).'/__INSTALL/install/sql/*.sql') as $f) {
+foreach (glob(dirname(dirname(dirname(__FILE__))).'/install/install/sql/*.sql') as $f) {
 	$fname = basename($f);
 	$table = substr($fname, 0, -strlen('.sql'));
 	$tname = DB_PREFIX. $table;
