@@ -112,8 +112,8 @@ class class_db_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'name\\\'', self::db()->real_escape_string('name\''));
 	}
 	public function test_escape_key() {
-#		$this->assertEquals( '``', self::db()->escape_key(false));
-#		$this->assertEquals( '``', self::db()->escape_key(''));
+		$this->assertEquals( '``', self::db()->escape_key(false));
+		$this->assertEquals( '``', self::db()->escape_key(''));
 		$this->assertEquals( '`name`', self::db()->escape_key('name'));
 	}
 	public function test_escape_val() {
