@@ -107,7 +107,7 @@ class yf_db_admin {
 					foreach ((array)$db->utils()->list_views() as $name) {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
-				}, $this->table_params)
+				}, $this->table_params + array('no_records_html' => ''))
 				->link('name', url_admin('/@object/view_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
 			,
 			'triggers' => table(
@@ -115,7 +115,7 @@ class yf_db_admin {
 					foreach ((array)$db->utils()->list_triggers() as $name) {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
-				}, $this->table_params)
+				}, $this->table_params + array('no_records_html' => ''))
 				->link('name', url_admin('/@object/trigger_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
 			,
 			'procedures' => table(
@@ -123,7 +123,7 @@ class yf_db_admin {
 #					foreach ((array)$db->utils()->list_procedures() as $name) {
 #						$data[$name] = array('name'	=> $name);
 #					}; return $data;
-				}, $this->table_params)
+				}, $this->table_params + array('no_records_html' => ''))
 				->link('name', url_admin('/@object/procedure_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
 			,
 			'functions' => table(
@@ -131,7 +131,7 @@ class yf_db_admin {
 #					foreach ((array)$db->utils()->list_functions() as $name) {
 #						$data[$name] = array('name'	=> $name);
 #					}; return $data;
-				}, $this->table_params)
+				}, $this->table_params + array('no_records_html' => ''))
 				->link('name', url_admin('/@object/function_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
 			,
 			'events' => table(
@@ -139,10 +139,10 @@ class yf_db_admin {
 					foreach ((array)$db->utils()->list_events() as $name) {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
-				}, $this->table_params)
+				}, $this->table_params + array('no_records_html' => ''))
 				->link('name', url_admin('/@object/event_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
 			,
-		));
+		), array('hide_empty' => 1));
 	}
 
 	/**
