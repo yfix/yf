@@ -3,6 +3,9 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 require dirname(__FILE__).'/db_setup.php';
 
+/**
+ * @requires extension mysql
+ */
 class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 	public static $_er = array();
 	public static function setUpBeforeClass() {
@@ -184,7 +187,7 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' GROUP BY `u`.`gid` HAVING `u`.`gid` = \'4\' ORDER BY `u`.`id` ASC LIMIT 20, 5', 
 			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->limit(5, 20)->sql() );
 	}
-	// Testign that changing order of method calls not changing result SQL
+	// Testing that changing order of method calls not changing result SQL
 	public function test_calls_ordering() {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' GROUP BY `u`.`gid` HAVING `u`.`gid` = \'4\' ORDER BY `u`.`id` ASC LIMIT 20, 5', 
 			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->limit(5, 20)->sql() );
@@ -202,7 +205,7 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user as u')->whereid(array(1,2,3), 'u.id')->delete($as_sql = true) );
 	}
 	public function test_update() {
-#		$this->assertFalse( self::qb()->update(array()) );
+		$this->assertFalse( self::qb()->update(array()) );
 #		$data = array(
 #			1 => array('name' => 'name1'),
 #			2 => array('name' => 'name2'),
