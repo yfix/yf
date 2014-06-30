@@ -186,6 +186,7 @@ class yf_html {
 				$desc_raw = $v['desc_raw'];
 				$disabled = $v['disabled'];
 			}
+			$content = trim($content);
 			if ($extra['hide_empty'] && !strlen($content)) {
 				continue;
 			}
