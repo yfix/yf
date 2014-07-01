@@ -96,6 +96,8 @@ class yf_db_admin {
 					}; return $data;
 				}, $this->table_params + array('feedback' => &$totals['views']))
 				->link('name', url_admin('/@object/view_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->btn_edit('Alter', url_admin('/@object/view_alter/'.$db_name.'.%d/'))
+				->btn_delete('Drop', url_admin('/@object/view_drop/'.$db_name.'.%d/'))
 				->header_add('Create view', url_admin('/@object/view_create/'.$db_name.'/', $this->btn_params))
 			,
 			'triggers' => table(
@@ -105,6 +107,8 @@ class yf_db_admin {
 					}; return $data;
 				}, $this->table_params + array('feedback' => &$totals['triggers']))
 				->link('name', url_admin('/@object/trigger_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->btn_edit('Alter', url_admin('/@object/trigger_alter/'.$db_name.'.%d/'))
+				->btn_delete('Drop', url_admin('/@object/trigger_drop/'.$db_name.'.%d/'))
 				->header_add('Create trigger', url_admin('/@object/trigger_create/'.$db_name.'/'))
 			,
 			'procedures' => table(
@@ -114,6 +118,8 @@ class yf_db_admin {
 #					}; return $data;
 				}, $this->table_params + array('feedback' => &$totals['procedures']))
 				->link('name', url_admin('/@object/procedure_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->btn_edit('Alter', url_admin('/@object/procedure_alter/'.$db_name.'.%d/'))
+				->btn_delete('Drop', url_admin('/@object/procedure_drop/'.$db_name.'.%d/'))
 				->header_add('Create procedure', url_admin('/@object/procedure_create/'.$db_name.'/'))
 			,
 			'functions' => table(
@@ -123,15 +129,19 @@ class yf_db_admin {
 #					}; return $data;
 				}, $this->table_params + array('feedback' => &$totals['functions']))
 				->link('name', url_admin('/@object/function_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->btn_edit('Alter', url_admin('/@object/function_alter/'.$db_name.'.%d/'))
+				->btn_delete('Drop', url_admin('/@object/function_drop/'.$db_name.'.%d/'))
 				->header_add('Create function', url_admin('/@object/function_create/'.$db_name.'/'))
 			,
 			'events' => table(
 				function() use ($db) {
-					foreach ((array)$db->utils()->list_events() as $name) {
+					foreach ((array)$db->utils()->list_events( as $name) {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
 				}, $this->table_params + array('feedback' => &$totals['events']))
 				->link('name', url_admin('/@object/event_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->btn_edit('Alter', url_admin('/@object/event_alter/'.$db_name.'.%d/'))
+				->btn_delete('Drop', url_admin('/@object/event_drop/'.$db_name.'.%d/'))
 				->header_add('Create event', url_admin('/@object/event_create/'.$db_name.'/'))
 			,
 		), array('hide_empty' => 0, 'totals' => $totals));
@@ -140,18 +150,28 @@ class yf_db_admin {
 	/**
 	*/
 	function database_alter() {
+		list($db_name, $table) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
 // TODO
+#		return form();
 	}
 
 	/**
 	*/
 	function database_create() {
+		list($db_name, $table) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
 // TODO
 	}
 
 	/**
 	*/
 	function database_drop() {
+		list($db_name, $table) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
 // TODO
 	}
 
@@ -235,138 +255,207 @@ class yf_db_admin {
 	/**
 	*/
 	function table_alter() {
+		list($db_name, $table) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
 // TODO
 	}
 
 	/**
 	*/
 	function table_create() {
+		list($db_name, $table) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
 // TODO
 	}
 
 	/**
 	*/
 	function table_drop() {
+		list($db_name, $table) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
 // TODO
 	}
 
 	/**
 	*/
 	function view_show() {
+		list($db_name, $db_view) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_view = $this->_table_name($db_view);
 // TODO
 	}
 
 	/**
 	*/
 	function view_alter() {
+		list($db_name, $db_view) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_view = $this->_table_name($db_view);
 // TODO
 	}
 
 	/**
 	*/
 	function view_create() {
+		list($db_name, $db_view) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_view = $this->_table_name($db_view);
 // TODO
 	}
 
 	/**
 	*/
 	function view_drop() {
+		list($db_name, $db_view) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_view = $this->_table_name($db_view);
 // TODO
 	}
 
 	/**
 	*/
 	function trigger_show() {
+		list($db_name, $db_trigger) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_trigger = $this->_table_name($db_trigger);
 // TODO
 	}
 
 	/**
 	*/
 	function trigger_alter() {
+		list($db_name, $db_trigger) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_trigger = $this->_table_name($db_trigger);
 // TODO
 	}
 
 	/**
 	*/
 	function trigger_create() {
+		list($db_name, $db_trigger) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_trigger = $this->_table_name($db_trigger);
 // TODO
 	}
 
 	/**
 	*/
 	function trigger_drop() {
+		list($db_name, $db_trigger) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_trigger = $this->_table_name($db_trigger);
 // TODO
 	}
 
 	/**
 	*/
 	function procedure_show() {
+		list($db_name, $db_procedure) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_procedure = $this->_table_name($db_procedure);
 // TODO
 	}
 
 	/**
 	*/
 	function procedure_alter() {
+		list($db_name, $db_procedure) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_procedure = $this->_table_name($db_procedure);
 // TODO
 	}
 
 	/**
 	*/
 	function procedure_create() {
+		list($db_name, $db_procedure) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_procedure = $this->_table_name($db_procedure);
 // TODO
 	}
 
 	/**
 	*/
 	function procedure_drop() {
+		list($db_name, $db_procedure) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_procedure = $this->_table_name($db_procedure);
 // TODO
 	}
 
 	/**
 	*/
 	function function_show() {
+		list($db_name, $db_function) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_function = $this->_table_name($db_function);
 // TODO
 	}
 
 	/**
 	*/
 	function function_alter() {
+		list($db_name, $db_function) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_function = $this->_table_name($db_function);
 // TODO
 	}
 
 	/**
 	*/
 	function function_create() {
+		list($db_name, $db_function) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_function = $this->_table_name($db_function);
 // TODO
 	}
 
 	/**
 	*/
 	function function_drop() {
+		list($db_name, $db_function) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_function = $this->_table_name($db_function);
 // TODO
 	}
 
 	/**
 	*/
 	function event_show() {
+		list($db_name, $db_event) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_event = $this->_table_name($db_event);
 // TODO
 	}
 
 	/**
 	*/
 	function event_alter() {
+		list($db_name, $db_event) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_event = $this->_table_name($db_event);
 // TODO
 	}
 
 	/**
 	*/
 	function event_create() {
+		list($db_name, $db_event) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_event = $this->_table_name($db_event);
 // TODO
 	}
 
 	/**
 	*/
 	function event_drop() {
+		list($db_name, $db_event) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_event = $this->_table_name($db_event);
 // TODO
 	}
 
