@@ -10,6 +10,11 @@ class yf_db_admin {
 		'no_ajax'	=> 1,
 		'no_records_html' => '',
 	);
+	private	$guarded_databases = array(
+		'information_schema',
+		'performance_schema',
+		'mysql',
+	);
 
 	/***/
 	function _init() {
@@ -19,7 +24,7 @@ class yf_db_admin {
 	}
 
 	/***/
-	function _db_custom_connection($db_name) {
+	function _db_custom_connection($db_name, $params = array()) {
 		if (!$db_name) {
 			return false;
 		}
@@ -33,7 +38,7 @@ class yf_db_admin {
 			$instance->connect(array(
 				'name'	=> $db_name,
 				'prefix'=> '',
-			));
+			) + (array)$params);
 		}
 		$this->_connections[$db_name] = $instance;
 		return $instance;
@@ -68,6 +73,63 @@ class yf_db_admin {
 			->btn_delete('Drop', url_admin('/@object/database_drop/%d/'))
 			->header_add('Add database', url_admin('/@object/database_create/'))
 		;
+	}
+
+	/**
+	*/
+	function database_alter() {
+		$db_name = $this->_database_name($_GET['id']);
+		if (!$db_name) {
+			return _e('Wrong name');
+		}
+		$all_databases = db()->utils()->list_databases();
+		$all_databases = array_combine($all_databases, $all_databases);
+		if (!isset($all_databases[$db_name])) {
+			return _e('Database not exists');
+		}
+		if (in_array($db_name, $this->guarded_databases)) {
+			return _e('Database is read-only');
+		}
+		$a = array(
+			'name'		=> $db_name,
+			'back_link'	=> url_admin('/@object/databases_list/'),
+		);
+		$_this = $this; // PHP <5.4 compat
+		return form($a + (array)$_POST)
+			->validate(array('name' => 'trim|required|alpha_dash'))
+			->on_validate_ok(function($data) use ($db_name, $_this) {
+				$db = $_this->_db_custom_connection($data['name'], array('auto_create_db' => 1));
+				$db->utils()->rename_database($db_name, $data['name']);
+				return js_redirect(url_admin('/@object/@action/'.$data['name']));
+			})
+			->text('name')
+			->save_and_back();
+	}
+
+	/**
+	*/
+	function database_create() {
+		$db_name = $this->_database_name($_GET['id']);
+		if (!$db_name) {
+			return _e('Wrong name');
+		}
+		list($db_name, $table) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+// TODO
+	}
+
+	/**
+	*/
+	function database_drop() {
+		$db_name = $this->_database_name($_GET['id']);
+		if (!$db_name) {
+			return _e('Wrong name');
+		}
+		list($db_name, $table) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+// TODO
 	}
 
 	/***/
@@ -153,34 +215,6 @@ class yf_db_admin {
 				->header_add('Create event', url_admin('/@object/event_create/'.$db_name.'/'))
 			,
 		), array('hide_empty' => 0, 'totals' => $totals));
-	}
-
-	/**
-	*/
-	function database_alter() {
-		list($db_name, $table) = explode('.', $_GET['id']);
-		$db_name = $this->_database_name($db_name);
-		$table = $this->_table_name($table);
-// TODO
-#		return form();
-	}
-
-	/**
-	*/
-	function database_create() {
-		list($db_name, $table) = explode('.', $_GET['id']);
-		$db_name = $this->_database_name($db_name);
-		$table = $this->_table_name($table);
-// TODO
-	}
-
-	/**
-	*/
-	function database_drop() {
-		list($db_name, $table) = explode('.', $_GET['id']);
-		$db_name = $this->_database_name($db_name);
-		$table = $this->_table_name($table);
-// TODO
 	}
 
 	/**
