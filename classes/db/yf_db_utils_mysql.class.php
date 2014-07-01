@@ -25,9 +25,19 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
+	function database_exists($name, $extra = array(), &$error = false) {
+		if (!$name) {
+			$error = 'name is empty';
+			return false;
+		}
+		return (bool)in_array($name, (array)$this->list_databases());
+	}
+
+	/**
+	*/
 	function list_databases($extra = array()) {
 		$sql = 'SHOW DATABASES';
-		return $extra['sql'] ? $sql : $this->db->get_2d($sql);
+		return $extra['sql'] ? $sql : (array)$this->db->get_2d($sql);
 	}
 
 	/**
@@ -37,8 +47,14 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'CREATE DATABASE '.($extra['if_not_exists'] ? 'IF NOT EXISTS ' : '').''.$this->db->_es($name).'';
-		return $extra['sql'] ? $sql : $this->db->query($sql);
+		if (!isset($extra['if_not_exists'])) {
+			$extra['if_not_exists'] = true;
+		}
+		if (!$extra['sql'] && $this->database_exists($name)) {
+			return true;
+		}
+		$sql = 'CREATE DATABASE '.($extra['if_not_exists'] ? 'IF NOT EXISTS ' : ''). $this->_escape_key($name);
+		return $extra['sql'] ? $sql : (bool)$this->db->query($sql);
 	}
 
 	/**
@@ -48,9 +64,22 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-// TODO: list tables and drop them on-by-one before dropping whole database
-		$sql = 'DROP DATABASE '.($extra['if_exists'] ? 'IF EXISTS ' : '').''.$this->db->_es($name).'';
-		return $extra['sql'] ? $sql : $this->db->query($sql);
+		if (!isset($extra['if_exists'])) {
+			$extra['if_exists'] = true;
+		}
+		if (!$extra['sql'] && !$this->database_exists($name)) {
+			return true;
+		}
+		foreach ((array)$this->list_tables($name) as $t) {
+			$t = trim($t);
+			if (!strlen($t)) {
+				continue;
+			}
+			$sql[] = $this->drop_table($name.'.'.$t, $extra);
+		}
+		$_sql = 'DROP DATABASE '.($extra['if_exists'] ? 'IF EXISTS ' : ''). $this->_escape_key($name);
+		$sql[] = $extra['sql'] ? $_sql : $this->db->query($_sql);
+		return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
 	}
 
 	/**
@@ -60,10 +89,13 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
+		if (!$extra['sql'] && !$this->database_exists($name)) {
+			return false;
+		}
 		foreach ((array)$extra as $k => $v) {
 			$params[$k] = $k.' = '.$v;
 		}
-		$sql = 'ALTER DATABASE '.$this->db->_es($name).' '.implode(' ', $params);
+		$sql = 'ALTER DATABASE '.$this->_escape_key($name).' '.implode(' ', $params);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -74,8 +106,15 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
+		if (!$extra['sql'] && !$this->database_exists($name)) {
+			return false;
+		}
 		$sql[] = $this->create_database($new_name, $extra);
 		foreach ((array)$this->list_tables($name) as $t) {
+			$t = trim($t);
+			if (!strlen($t)) {
+				continue;
+			}
 			$sql[] = $this->rename_table($name.'.'.$t, $new_name.'.'.$t, $extra);
 		}
 		$sql[] = $this->drop_database($name, $extra);
@@ -84,9 +123,10 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
-	function list_tables($extra = array(), &$error = false) {
-		$tables = $this->db->get_2d('show tables');
-		return $tables ? array_combine($tables, $tables) : false;
+	function list_tables($name = '', $extra = array(), &$error = false) {
+		$name = trim($name);
+		$tables = (array)$this->db->get_2d('SHOW TABLES'. (strlen($name) ? ' FROM '.$this->_escape_key($name) : ''));
+		return $tables ? array_combine($tables, $tables) : array();
 	}
 
 	/**
@@ -157,7 +197,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 		foreach ((array)$extra as $k => $v) {
 			$params[$k] = $k.' = '.$v;
 		}
-		$sql = 'ALTER TABLE '.$this->db->_es($name).' '.implode(' ', $params);
+		$sql = 'ALTER TABLE '.$this->_escape_key($name).' '.implode(' ', $params);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -168,7 +208,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'RENAME TABLE '.$this->db->_es($name).' TO '.$this->db->_es($new_name);
+		$sql = 'RENAME TABLE '.$this->_escape_key($name).' TO '.$this->_escape_key($new_name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -179,7 +219,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'TRUNCATE TABLE '.$this->db->_es($name).'';
+		$sql = 'TRUNCATE TABLE '.$this->_escape_key($name).'';
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -190,7 +230,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'TRUNCATE TABLE '.$this->db->_es($name).'';
+		$sql = 'TRUNCATE TABLE '.$this->_escape_key($name).'';
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -201,7 +241,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'OPTIMIZE TABLE '.$this->db->_es($name).'';
+		$sql = 'OPTIMIZE TABLE '.$this->_escape_key($name).'';
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -212,7 +252,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'REPAIR TABLE '.$this->db->_es($name);
+		$sql = 'REPAIR TABLE '.$this->_escape_key($name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -679,6 +719,44 @@ DO INSERT INTO test.totals VALUES (NOW());
 			$ret[] = array('query' => $sql, 'empty' => $nothing);
 		}
 		return TRUE;
+	}
+
+	/**
+	*/
+	function _escape_key($key = '') {
+// TODO: unit tests
+		$out = '';
+		if ($key != '*' && false === strpos($key, '.') && false === strpos($key, '(')) {
+			$out = is_object($this->db) ? $this->db->escape_key($key) : '`'.addslashes($key).'`';
+		} else {
+			// split by "." and escape each value
+			if (false !== strpos($key, '.') && false === strpos($key, '(') && false === strpos($key, ' ')) {
+				$tmp = array();
+				foreach (explode('.', $key) as $v) {
+					$tmp[] = is_object($this->db) ? $this->db->escape_key($v) : '`'.addslashes($v).'`';
+				}
+				$out = implode('.', $tmp);
+			} else {
+				$out = $key;
+			}
+		}
+		return $out;
+	}
+
+	/**
+	*/
+	function _escape_val($val = '') {
+// TODO: unit tests
+// TODO: support for binding params (':field' => $val)
+		return is_object($this->db) ? $this->db->escape_val($val) : '\''.addslashes($val).'\'';
+	}
+
+	/**
+	*/
+	function _es($val = '') {
+// TODO: unit tests
+// TODO: support for binding params (':field' => $val)
+		return is_object($this->db) && method_exists($this->db, '_es') ? $this->db->_es($val) : addslashes($val);
 	}
 
 	/**
