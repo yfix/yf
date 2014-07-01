@@ -158,11 +158,9 @@ if (!function_exists('require_css')) {
 if (!function_exists('getmicrotime')) {
 	function getmicrotime() { return microtime(true); }
 }
-// Redirect using JS
 if (!function_exists('js_redirect')) {
 	function js_redirect ($location, $rewrite = true, $text = '', $ttl = 0) { return common()->redirect($location, $rewrite, 'js', $text, $ttl); }
 }
-// Redirect using Meta tags
 if (!function_exists('redirect')) {
 	function redirect ($location, $rewrite = true, $text = '', $ttl = 3) { return common()->redirect($location, $rewrite, 'html', $text, $ttl); }
 }
@@ -216,7 +214,6 @@ if (!function_exists('_add_get')) {
 if (!function_exists('l')) {
 	function l($name = '', $data = '', $lang = '') { return common()->l($name, $data, $lang); }
 }
-// shortcut for $db_driver_real_escape_string()
 if (!function_exists('_es')) {
 	function _es($text = '') { return db()->es($text); }
 }
@@ -235,6 +232,9 @@ if (!function_exists('db_get_all')) {
 if (!function_exists('db_get_one')) {
 	function db_get_one($sql = '', $use_cache = true) { return db()->get_one($sql, $use_cache); }
 }
+if (!function_exists('model')) {
+	function model($name, $params = array()) { return db()->model($name, $params); }
+}
 // current GMT time
 if (!function_exists('gmtime')) {
 	function gmtime () { return common()->gmtime(); }
@@ -251,7 +251,6 @@ if (!function_exists('html')) {
 if (!function_exists('validate')) {
 	function validate($input = '', $rules = array()) { return _class('validate')->_input_is_valid($input, $rules); }
 }
-// Check user banned or not
 if (!function_exists('_check_user_ban')) {
 	function _check_user_ban ($info = array(), $user_info = array()) { return common()->check_user_ban($info, $user_info); }
 }
