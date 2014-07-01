@@ -141,6 +141,9 @@ class yf_table2 {
 		if (is_callable($on_after_render)) {
 			$on_after_render($params, $a, $body, $this);
 		}
+		if (array_key_exists('feedback', $params)) {
+			$params['feedback']['total'] = count($data);
+		}
 		if (DEBUG_MODE) {
 			$this->_render_debug_info($params, $ts, main()->trace_string());
 		}
@@ -181,16 +184,16 @@ class yf_table2 {
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_top'] ? $a['pages'] : '').PHP_EOL;
 
+		$header_links = array();
+		foreach ((array)$this->_header_links as $info) {
+			$name = $info['name'];
+			$func = &$info['func'];
+			$header_links[] = $func($info, $params, $this).PHP_EOL;
+		}
 		$data = &$a['data'];
 		if ($data) {
 			if ($this->_form_params) {
 				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
-			}
-			$header_links = array();
-			foreach ((array)$this->_header_links as $info) {
-				$name = $info['name'];
-				$func = &$info['func'];
-				$header_links[] = $func($info, $params, $this).PHP_EOL;
 			}
 			if ($header_links) {
 				$body .= '<div class="controls">'.implode(PHP_EOL, $header_links).'</div>';
@@ -254,6 +257,9 @@ class yf_table2 {
 			}
 			$body .= '</table>'.PHP_EOL;
 		} else {
+			if ($header_links) {
+				$body .= '<div class="controls">'.implode(PHP_EOL, $header_links).'</div>';
+			}
 			if (isset($params['no_records_html'])) {
 				$body .= $params['no_records_html'].PHP_EOL;
 			} else {
