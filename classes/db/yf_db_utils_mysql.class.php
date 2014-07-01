@@ -125,7 +125,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	*/
 	function list_tables($name = '', $extra = array(), &$error = false) {
 		$name = trim($name);
-		$tables = (array)$this->db->get_2d('SHOW TABLES'. (strlen($name) ? ' FROM '.$this->_escape_key($name) : ''));
+		$tables = $this->db->get_2d('SHOW TABLES'. (strlen($name) ? ' FROM '.$this->_escape_key($name) : ''));
 		return $tables ? array_combine($tables, $tables) : array();
 	}
 
@@ -270,7 +270,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			AND REFERENCED_COLUMN_NAME IS NULL
 		");*/
 		$indexes = array();
-		foreach ($this->db->get_all('SHOW INDEX FROM ' . $this->db->_fix_table_name($table)) as $row) {
+		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->db->_fix_table_name($table)) as $row) {
 			$indexes[$row['Key_name']] = array(
 				'name'		=> $row['Key_name'],
 				'unique'	=> !$row['Non_unique'],
@@ -317,7 +317,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			WHERE TABLE_SCHEMA = DATABASE() 
 				AND REFERENCED_TABLE_NAME IS NOT NULL 
 				AND TABLE_NAME = '. $this->db->_fix_table_name($table);
-		foreach ($this->db->get_all($sql) as $id => $row) {
+		foreach ((array)$this->db->get_all($sql) as $id => $row) {
 			$keys[$id] = array(
 				'name'		=> $row['CONSTRAINT_NAME'], // foreign key name
 				'local'		=> $row['COLUMN_NAME'], // local columns
@@ -370,7 +370,7 @@ ALTER TABLE tbl_name
 			WHERE TABLE_NAME = {$this->db->_fix_table_name($table)} AND TABLE_SCHEMA = DATABASE()
 		");*/
 		$columns = array();
-		foreach ($this->db->get_all('SHOW FULL COLUMNS FROM '. $this->db->_fix_table_name($table)) as $row) {
+		foreach ((array)$this->db->get_all('SHOW FULL COLUMNS FROM '. $this->db->_fix_table_name($table)) as $row) {
 			$type = explode('(', $row['Type']);
 			$columns[$row['Field']] = array(
 				'name'		=> $row['Field'],
@@ -441,7 +441,7 @@ ALTER TABLE tbl_name
 			WHERE TABLE_SCHEMA = DATABASE()
 		");*/
 		$tables = array();
-		foreach ($this->db->get_2d('SHOW FULL TABLES') as $name => $type) {
+		foreach ((array)$this->db->get_2d('SHOW FULL TABLES') as $name => $type) {
 			if ($type != 'VIEW') {
 				continue;
 			}
