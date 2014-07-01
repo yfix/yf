@@ -175,13 +175,14 @@ class yf_db_admin {
 				->btn_delete('Drop', url_admin('/@object/view_drop/'.$db_name.'.%d/'))
 				->header_add('Create view', url_admin('/@object/view_create/'.$db_name.'/', $this->btn_params))
 			,
+// TODO: triggers need to be shown for table, not for database
 			'triggers' => table(
 				function() use ($db) {
 					foreach ((array)$db->utils()->list_triggers() as $name) {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
 				}, $this->table_params + array('feedback' => &$totals['triggers']))
-				->link('name', url_admin('/@object/trigger_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->link('name', url_admin('/@object/triggers/'.$db_name.'.%d/'), array(), array('class' => ' '))
 				->btn_edit('Alter', url_admin('/@object/trigger_alter/'.$db_name.'.%d/'))
 				->btn_delete('Drop', url_admin('/@object/trigger_drop/'.$db_name.'.%d/'))
 				->header_add('Create trigger', url_admin('/@object/trigger_create/'.$db_name.'/'))
@@ -348,38 +349,37 @@ class yf_db_admin {
 	/**
 	*/
 	function indexes() {
-		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		list($db_name, $table) = explode('.', $_GET['id']);
 		$id = intval($id);
 		$db_name = $this->_database_name($db_name);
 		$table = $this->_table_name($table);
-		if (!$db_name || !$table || !$id) {
+		if (!$db_name || !$table) {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
-// TODO
-/*
-		foreach ((array)db()->utils()->table_indexes() as $name) {
-			$data[$name] = array(
-				'name'	=> $name,
-			);
+		$data = array();
+		foreach ((array)db()->utils()->list_indexes($table) as $name => $info) {
+			$info['columns'] = implode(',', $info['columns']);
+			$data[$name] = $info;
 		}
-		return table($data, $this->table_params)
-			->link('name', url_admin('/@object/database_show/%d/'), array(), array('class' => ' '))
-			->btn_edit('Alter', url_admin('/@object/database_alter/%d/'))
-			->btn_delete('Drop', url_admin('/@object/database_drop/%d/'))
-			->header_add('Add index', url_admin('/@object/table_index_create/'))
-		;
-*/
+		return table2($data, $this->table_params + array(
+				'auto_no_buttons' => 1,
+				'db' => $db,
+				'id' => 'name',
+			))
+			->btn_edit('', url_admin('/@object/index_alter/'.$db_name.'.'.$table.'.%d'))
+			->btn_delete('', url_admin('/@object/index_drop/'.$db_name.'.'.$table.'.%d'))
+			->footer_add('Add index', url_admin('/@object/index_create/'.$db_name.'.'.$table))
+			->auto();
 	}
 
 	/**
 	*/
 	function index_create() {
-		list($db_name, $table, $id) = explode('.', $_GET['id']);
-		$id = intval($id);
+		list($db_name, $table) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$table = $this->_table_name($table);
-		if (!$db_name || !$table || !$id) {
+		if (!$db_name || !$table) {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
@@ -390,9 +390,9 @@ class yf_db_admin {
 	*/
 	function index_alter() {
 		list($db_name, $table, $id) = explode('.', $_GET['id']);
-		$id = intval($id);
 		$db_name = $this->_database_name($db_name);
 		$table = $this->_table_name($table);
+		$id = $this->_table_name($id);
 		if (!$db_name || !$table || !$id) {
 			return _e('Wrong params');
 		}
@@ -404,9 +404,9 @@ class yf_db_admin {
 	*/
 	function index_drop() {
 		list($db_name, $table, $id) = explode('.', $_GET['id']);
-		$id = intval($id);
 		$db_name = $this->_database_name($db_name);
 		$table = $this->_table_name($table);
+		$id = $this->_table_name($id);
 		if (!$db_name || !$table || !$id) {
 			return _e('Wrong params');
 		}
@@ -417,25 +417,35 @@ class yf_db_admin {
 	/**
 	*/
 	function foreign_keys() {
-		list($db_name, $table, $id) = explode('.', $_GET['id']);
-		$id = intval($id);
+		list($db_name, $table) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$table = $this->_table_name($table);
-		if (!$db_name || !$table || !$id) {
+		if (!$db_name || !$table) {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
-// TODO
+		$data = array();
+		foreach ((array)db()->utils()->list_foreign_keys($table) as $name => $info) {
+			$info['columns'] = implode(',', $info['columns']);
+			$data[$name] = $info;
+		}
+		return table2($data, $this->table_params + array(
+				'auto_no_buttons' => 1,
+				'db' => $db,
+			))
+			->btn_edit('', url_admin('/@object/foreign_key_alter/'.$db_name.'.'.$table.'.%d'))
+			->btn_delete('', url_admin('/@object/foreign_key_drop/'.$db_name.'.'.$table.'.%d'))
+			->footer_add('Add foreign key', url_admin('/@object/foreign_key_create/'.$db_name.'.'.$table))
+			->auto();
 	}
 
 	/**
 	*/
 	function foreign_key_create() {
-		list($db_name, $table, $id) = explode('.', $_GET['id']);
-		$id = intval($id);
+		list($db_name, $table) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$table = $this->_table_name($table);
-		if (!$db_name || !$table || !$id) {
+		if (!$db_name || !$table) {
 			return _e('Wrong params');
 		}
 		$db = $this->_db_custom_connection($db_name);
@@ -446,9 +456,9 @@ class yf_db_admin {
 	*/
 	function foreign_key_alter() {
 		list($db_name, $table, $id) = explode('.', $_GET['id']);
-		$id = intval($id);
 		$db_name = $this->_database_name($db_name);
 		$table = $this->_table_name($table);
+		$id = $this->_table_name($id);
 		if (!$db_name || !$table || !$id) {
 			return _e('Wrong params');
 		}
@@ -460,12 +470,52 @@ class yf_db_admin {
 	*/
 	function foreign_key_drop() {
 		list($db_name, $table, $id) = explode('.', $_GET['id']);
-		$id = intval($id);
 		$db_name = $this->_database_name($db_name);
 		$table = $this->_table_name($table);
+		$id = $this->_table_name($id);
 		if (!$db_name || !$table || !$id) {
 			return _e('Wrong params');
 		}
+		$db = $this->_db_custom_connection($db_name);
+// TODO
+	}
+
+	/**
+	*/
+	function triggers() {
+		list($db_name, $db_trigger) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_trigger = $this->_table_name($db_trigger);
+		$db = $this->_db_custom_connection($db_name);
+// TODO
+	}
+
+	/**
+	*/
+	function trigger_alter() {
+		list($db_name, $db_trigger) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_trigger = $this->_table_name($db_trigger);
+		$db = $this->_db_custom_connection($db_name);
+// TODO
+	}
+
+	/**
+	*/
+	function trigger_create() {
+		list($db_name, $db_trigger) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_trigger = $this->_table_name($db_trigger);
+		$db = $this->_db_custom_connection($db_name);
+// TODO
+	}
+
+	/**
+	*/
+	function trigger_drop() {
+		list($db_name, $db_trigger) = explode('.', $_GET['id']);
+		$db_name = $this->_database_name($db_name);
+		$db_trigger = $this->_table_name($db_trigger);
 		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
@@ -476,6 +526,7 @@ class yf_db_admin {
 		list($db_name, $db_view) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_view = $this->_table_name($db_view);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -485,6 +536,7 @@ class yf_db_admin {
 		list($db_name, $db_view) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_view = $this->_table_name($db_view);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -494,6 +546,7 @@ class yf_db_admin {
 		list($db_name, $db_view) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_view = $this->_table_name($db_view);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -503,42 +556,7 @@ class yf_db_admin {
 		list($db_name, $db_view) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_view = $this->_table_name($db_view);
-// TODO
-	}
-
-	/**
-	*/
-	function trigger_show() {
-		list($db_name, $db_trigger) = explode('.', $_GET['id']);
-		$db_name = $this->_database_name($db_name);
-		$db_trigger = $this->_table_name($db_trigger);
-// TODO
-	}
-
-	/**
-	*/
-	function trigger_alter() {
-		list($db_name, $db_trigger) = explode('.', $_GET['id']);
-		$db_name = $this->_database_name($db_name);
-		$db_trigger = $this->_table_name($db_trigger);
-// TODO
-	}
-
-	/**
-	*/
-	function trigger_create() {
-		list($db_name, $db_trigger) = explode('.', $_GET['id']);
-		$db_name = $this->_database_name($db_name);
-		$db_trigger = $this->_table_name($db_trigger);
-// TODO
-	}
-
-	/**
-	*/
-	function trigger_drop() {
-		list($db_name, $db_trigger) = explode('.', $_GET['id']);
-		$db_name = $this->_database_name($db_name);
-		$db_trigger = $this->_table_name($db_trigger);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -548,6 +566,7 @@ class yf_db_admin {
 		list($db_name, $db_procedure) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_procedure = $this->_table_name($db_procedure);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -557,6 +576,7 @@ class yf_db_admin {
 		list($db_name, $db_procedure) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_procedure = $this->_table_name($db_procedure);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -566,6 +586,7 @@ class yf_db_admin {
 		list($db_name, $db_procedure) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_procedure = $this->_table_name($db_procedure);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -575,6 +596,7 @@ class yf_db_admin {
 		list($db_name, $db_procedure) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_procedure = $this->_table_name($db_procedure);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -584,6 +606,7 @@ class yf_db_admin {
 		list($db_name, $db_function) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_function = $this->_table_name($db_function);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -593,6 +616,7 @@ class yf_db_admin {
 		list($db_name, $db_function) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_function = $this->_table_name($db_function);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -602,6 +626,7 @@ class yf_db_admin {
 		list($db_name, $db_function) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_function = $this->_table_name($db_function);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -611,6 +636,7 @@ class yf_db_admin {
 		list($db_name, $db_function) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_function = $this->_table_name($db_function);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -620,6 +646,7 @@ class yf_db_admin {
 		list($db_name, $db_event) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_event = $this->_table_name($db_event);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -629,6 +656,7 @@ class yf_db_admin {
 		list($db_name, $db_event) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_event = $this->_table_name($db_event);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -638,6 +666,7 @@ class yf_db_admin {
 		list($db_name, $db_event) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_event = $this->_table_name($db_event);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
@@ -647,6 +676,7 @@ class yf_db_admin {
 		list($db_name, $db_event) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
 		$db_event = $this->_table_name($db_event);
+		$db = $this->_db_custom_connection($db_name);
 // TODO
 	}
 
