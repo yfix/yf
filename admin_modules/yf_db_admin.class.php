@@ -14,6 +14,7 @@ class yf_db_admin {
 		'information_schema',
 		'performance_schema',
 		'mysql',
+		'sys',
 	);
 
 	/***/
