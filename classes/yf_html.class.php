@@ -204,7 +204,10 @@ class yf_html {
 			}
 			$class_head = $v['class_head'] ?: $extra['class_head'];
 			$class_body = $v['class_body'] ?: $extra['class_body'];
-			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : ''; 
+			if (isset($extra['totals'][$name])) {
+				$v['badge'] = intval( isset($extra['totals'][$name]['total']) ? $extra['totals'][$name]['total'] : $extra['totals'][$name] );
+			}
+			$badge = isset($v['badge']) ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : ''; 
 			if (!$extra['no_headers']) {
 				$headers[] = 
 					'<li class="'.($is_active ? 'active' : ''). ($class_head ? ' '.$class_head : '').'">
