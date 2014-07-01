@@ -106,14 +106,19 @@ class yf_db_admin {
 	/**
 	*/
 	function database_create() {
-		$db_name = $this->_database_name($_GET['id']);
-		if (!$db_name) {
-			return _e('Wrong name');
-		}
-		list($db_name, $table) = explode('.', $_GET['id']);
-		$db_name = $this->_database_name($db_name);
-		$table = $this->_table_name($table);
-// TODO
+		$a = array(
+			'name'		=> '',
+			'back_link'	=> url_admin('/@object/databases_list/'),
+		);
+		return form((array)$_POST + $a)
+			->validate(array('name' => 'trim|required|alpha_dash'))
+			->on_validate_ok(function($data) {
+				db()->utils()->create_database($data['name']);
+				common()->message_success('Database was successfully created: '.$data['name']);
+				return js_redirect(url_admin('/@object/database_show/'.$data['name']));
+			})
+			->text('name')
+			->save_and_back();
 	}
 
 	/**
@@ -123,10 +128,17 @@ class yf_db_admin {
 		if (!$db_name) {
 			return _e('Wrong name');
 		}
-		list($db_name, $table) = explode('.', $_GET['id']);
-		$db_name = $this->_database_name($db_name);
-		$table = $this->_table_name($table);
-// TODO
+		$a = array(
+			'back_link'	=> url_admin('/@object/databases_list/'),
+		);
+		return form($a)
+			->on_post(function($data) use ($db_name) {
+				db()->utils()->drop_database($db_name);
+				common()->message_success('Database was successfully dropped: '.$db_name);
+				return js_redirect(url_admin('/@object/databases_list/'));
+			})
+			->info('Are you sure?')
+			->save_and_back();
 	}
 
 	/***/
@@ -149,7 +161,7 @@ class yf_db_admin {
 				->btn_edit('Foreign keys', url_admin('/@object/table_foreign_keys/'.$db_name.'.%d/'))
 				->btn_edit('Alter table', url_admin('/@object/table_alter/'.$db_name.'.%d/'))
 				->btn_delete('Drop', url_admin('/@object/table_drop/'.$db_name.'.%d/'))
-				->header_add('Create database', url_admin('/@object/table_create/'.$db_name.'/'))
+				->header_add('Create table', url_admin('/@object/table_create/'.$db_name.'/'))
 			,
 			'views' => table(
 				function() use ($db) {
