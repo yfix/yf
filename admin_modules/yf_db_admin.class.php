@@ -6,8 +6,9 @@ class yf_db_admin {
 		'pager_records_on_page' => 1000,
 		'id' => 'name',
 		'condensed' => 1,
-		'show_total' => 0,
-		'no_records_html' => '', 
+		'no_total' => 1,
+		'no_records_html' => '',
+		'no_ajax' => 1,
 	);
 
 	/***/
@@ -95,7 +96,7 @@ class yf_db_admin {
 					}; return $data;
 				}, $this->table_params + array('feedback' => &$totals['views']))
 				->link('name', url_admin('/@object/view_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
-				->header_add('Create view', url_admin('/@object/view_create/'.$db_name.'/'))
+				->header_add('Create view', url_admin('/@object/view_create/'.$db_name.'/', $this->btn_params))
 			,
 			'triggers' => table(
 				function() use ($db) {
