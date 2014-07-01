@@ -98,8 +98,9 @@ class yf_db_admin {
 		return form($a + (array)$_POST)
 			->validate(array('name' => 'trim|required|alpha_dash'))
 			->on_validate_ok(function($data) use ($db_name, $_this) {
-				$db = $_this->_db_custom_connection($data['name'], array('auto_create_db' => 1));
-				$db->utils()->rename_database($db_name, $data['name']);
+#				$db = $_this->_db_custom_connection($data['name'], array('auto_create_db' => 1));
+#				$db->utils()->rename_database($db_name, $data['name']);
+				db()->utils()->rename_database($db_name, $data['name']);
 				return js_redirect(url_admin('/@object/@action/'.$data['name']));
 			})
 			->text('name')
