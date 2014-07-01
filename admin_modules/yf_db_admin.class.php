@@ -6,28 +6,15 @@ class yf_db_admin {
 		'pager_records_on_page' => 1000,
 		'id' => 'name',
 		'condensed' => 1,
+		'show_total' => 0,
+		'no_records_html' => '', 
 	);
 
 	/***/
 	function _init() {
-// TODO: navbar + left_area called through main hooks/events :before :after init graphics
-		_class('core_events')->listen('block.prepend[center_area]', function(){
-
-			return _class('html')->breadcrumbs(array(
-				array(
-					'link'	=> './?object=home',
-					'name'	=> 'Home',
-				),
-				array(
-					'link'	=> './?object='.$_GET['object'],
-					'name'	=> 'Db admin',
-				),
-#				array(
-#					'name'	=> 'Data',
-#				),
-			));
-
-		});
+		if (main()->is_common_page()) {
+			$this->_add_custom_navbar();
+		}
 	}
 
 	/***/
@@ -89,60 +76,64 @@ class yf_db_admin {
 			return _e('Wrong name');
 		}
 		$db = $this->_db_custom_connection($db_name);
-
 		return _class('html')->tabs(array(
 			'tables' => table(
 				function() use ($db) {
 					foreach ((array)$db->utils()->list_tables() as $name) {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
-				}, $this->table_params)
+				}, $this->table_params + array('feedback' => &$totals['tables']))
 				->link('name', url_admin('/@object/table_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
 				->btn_edit('Alter', url_admin('/@object/table_alter/'.$db_name.'.%d/'))
 				->btn_delete('Drop', url_admin('/@object/table_drop/'.$db_name.'.%d/'))
-				->header_add('Add database', url_admin('/@object/table_create/'.$db_name.'/'))
+				->header_add('Create database', url_admin('/@object/table_create/'.$db_name.'/'))
 			,
 			'views' => table(
 				function() use ($db) {
 					foreach ((array)$db->utils()->list_views() as $name) {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
-				}, $this->table_params + array('no_records_html' => ''))
+				}, $this->table_params + array('feedback' => &$totals['views']))
 				->link('name', url_admin('/@object/view_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->header_add('Create view', url_admin('/@object/view_create/'.$db_name.'/'))
 			,
 			'triggers' => table(
 				function() use ($db) {
 					foreach ((array)$db->utils()->list_triggers() as $name) {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
-				}, $this->table_params + array('no_records_html' => ''))
+				}, $this->table_params + array('feedback' => &$totals['triggers']))
 				->link('name', url_admin('/@object/trigger_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->header_add('Create trigger', url_admin('/@object/trigger_create/'.$db_name.'/'))
 			,
 			'procedures' => table(
 				function() use ($db) {
 #					foreach ((array)$db->utils()->list_procedures() as $name) {
 #						$data[$name] = array('name'	=> $name);
 #					}; return $data;
-				}, $this->table_params + array('no_records_html' => ''))
+				}, $this->table_params + array('feedback' => &$totals['procedures']))
 				->link('name', url_admin('/@object/procedure_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->header_add('Create procedure', url_admin('/@object/procedure_create/'.$db_name.'/'))
 			,
 			'functions' => table(
 				function() use ($db) {
 #					foreach ((array)$db->utils()->list_functions() as $name) {
 #						$data[$name] = array('name'	=> $name);
 #					}; return $data;
-				}, $this->table_params + array('no_records_html' => ''))
+				}, $this->table_params + array('feedback' => &$totals['functions']))
 				->link('name', url_admin('/@object/function_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->header_add('Create function', url_admin('/@object/function_create/'.$db_name.'/'))
 			,
 			'events' => table(
 				function() use ($db) {
 					foreach ((array)$db->utils()->list_events() as $name) {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
-				}, $this->table_params + array('no_records_html' => ''))
+				}, $this->table_params + array('feedback' => &$totals['events']))
 				->link('name', url_admin('/@object/event_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->header_add('Create event', url_admin('/@object/event_create/'.$db_name.'/'))
 			,
-		), array('hide_empty' => 1));
+		), array('hide_empty' => 0, 'totals' => $totals));
 	}
 
 	/**
@@ -256,5 +247,138 @@ class yf_db_admin {
 	*/
 	function table_drop() {
 // TODO
+	}
+
+	/**
+	*/
+	function view_show() {
+// TODO
+	}
+
+	/**
+	*/
+	function view_alter() {
+// TODO
+	}
+
+	/**
+	*/
+	function view_create() {
+// TODO
+	}
+
+	/**
+	*/
+	function view_drop() {
+// TODO
+	}
+
+	/**
+	*/
+	function trigger_show() {
+// TODO
+	}
+
+	/**
+	*/
+	function trigger_alter() {
+// TODO
+	}
+
+	/**
+	*/
+	function trigger_create() {
+// TODO
+	}
+
+	/**
+	*/
+	function trigger_drop() {
+// TODO
+	}
+
+	/**
+	*/
+	function procedure_show() {
+// TODO
+	}
+
+	/**
+	*/
+	function procedure_alter() {
+// TODO
+	}
+
+	/**
+	*/
+	function procedure_create() {
+// TODO
+	}
+
+	/**
+	*/
+	function procedure_drop() {
+// TODO
+	}
+
+	/**
+	*/
+	function function_show() {
+// TODO
+	}
+
+	/**
+	*/
+	function function_alter() {
+// TODO
+	}
+
+	/**
+	*/
+	function function_create() {
+// TODO
+	}
+
+	/**
+	*/
+	function function_drop() {
+// TODO
+	}
+
+	/**
+	*/
+	function event_show() {
+// TODO
+	}
+
+	/**
+	*/
+	function event_alter() {
+// TODO
+	}
+
+	/**
+	*/
+	function event_create() {
+// TODO
+	}
+
+	/**
+	*/
+	function event_drop() {
+// TODO
+	}
+
+	/**
+	*/
+	function _add_custom_navbar() {
+		_class('core_events')->listen('block.prepend[center_area]', function(){
+			$a = array(
+				array('link' => url('/home_page'), 'name' => 'Home'),
+				array('link' => url('/@object'), 'name' => 'Db admin'),
+			);
+// TODO: add custom navbar items depending on current page
+			return _class('html')->breadcrumbs($a);
+		});
 	}
 }
