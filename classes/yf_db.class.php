@@ -1490,6 +1490,23 @@ class yf_db {
 	}
 
 	/**
+	* ORM shortcut
+	*/
+	function model($name, $params = array()) {
+		if (strpos($this->DB_TYPE, 'mysql') !== false) {
+			$driver = 'mysql';
+		} else {
+			$driver = $this->DB_TYPE;
+		}
+		$cname = 'db_orm_'.$driver;
+		$obj = clone _class($cname, 'classes/db/');
+		$obj->db = $this;
+		$obj->_load_model($name);
+		$params && $obj->_set_params($params);
+		return $obj;
+	}
+
+	/**
 	*/
 	function _save_query_revision($method, $table, $params = array()) {
 		$trace = main()->trace_string();
