@@ -78,7 +78,7 @@ $(function(){
 	$(document).on("click", ".ajax_edit, .ajax_add", function(){
 		var _obj = $(this);
 		// Avoid AJAX edit form
-		if (document.skip_ajax_pressed) {
+		if (document.skip_ajax_pressed || _obj.hasClass('no_ajax')) {
 			return true;
 		}
 		$.get(_obj.attr("href"), function(data) {
