@@ -18,9 +18,7 @@ class yf_db_admin {
 
 	/***/
 	function _init() {
-		if (main()->is_common_page()) {
-			$this->_add_custom_navbar();
-		}
+		$this->_add_custom_navbar();
 	}
 
 	/***/
@@ -94,14 +92,12 @@ class yf_db_admin {
 			'name'		=> $db_name,
 			'back_link'	=> url_admin('/@object/databases_list/'),
 		);
-		$_this = $this; // PHP <5.4 compat
-		return form($a + (array)$_POST)
+		return form((array)$_POST + $a)
 			->validate(array('name' => 'trim|required|alpha_dash'))
-			->on_validate_ok(function($data) use ($db_name, $_this) {
-#				$db = $_this->_db_custom_connection($data['name'], array('auto_create_db' => 1));
-#				$db->utils()->rename_database($db_name, $data['name']);
+			->on_validate_ok(function($data) use ($db_name) {
 				db()->utils()->rename_database($db_name, $data['name']);
-				return js_redirect(url_admin('/@object/@action/'.$data['name']));
+				common()->message_success('Database was successfully renamed: '.$db_name.' => '.$data['name']);
+				return js_redirect(url_admin('/@object/databases_list/'));
 			})
 			->text('name')
 			->save_and_back();
@@ -617,6 +613,9 @@ class yf_db_admin {
 	/**
 	*/
 	function _add_custom_navbar() {
+		if (main()->is_redirect() || main()->is_console() || main()->is_ajax()) {
+			return false;
+		}
 		_class('core_events')->listen('block.prepend[center_area]', function(){
 			$a = array(
 				array('link' => url_admin('/home_page/'), 'name' => 'Home'),
