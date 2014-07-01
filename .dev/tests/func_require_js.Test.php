@@ -47,4 +47,10 @@ class func_require_js_test extends PHPUnit_Framework_TestCase {
 		require_js('//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js', array('class' => 'yf_core'));
 		$this->assertEquals('<script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js" type="text/javascript" class="yf_core"></script>', _class('core_js')->show());
 	}
+	public function test_jquery() {
+		jquery('var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });');
+		$this->assertEquals('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" type="text/javascript"></script>'.PHP_EOL
+			.'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });'.PHP_EOL.'})'.PHP_EOL
+			.'</script>', _class('core_js')->show());
+	}
 }
