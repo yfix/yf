@@ -156,6 +156,16 @@ class yf_manage_shop_orders{
 						$order_info[ 'discount_add' ] = $discount;
 						$sql[ 'discount_add' ] = $discount;
 					}
+					if( $f == 'delivery_id' ) {
+						$value = (int)$sql[ $f ];
+						$value = $value > 0 ? $value : $order_info[ $f ];
+						$sql[ $f ] = $value;
+					}
+					if( $f == 'delivery_type' ) {
+						$value = (int)$sql[ $f ];
+						$order_info[ 'payment' ] = $value;
+						$sql[ 'payment' ] = $value;
+					}
 				}
 			}
 			if (count($sql)>0) {
