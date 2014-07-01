@@ -1136,6 +1136,9 @@ class yf_table2 {
 				if ($extra['class_add']) {
 					$class .= ' '.$extra['class_add'];
 				}
+				if ($extra['no_ajax'] || $instance_params['no_ajax']) {
+					$class .= ' no_ajax';
+				}
 				if ($extra['hidden_toggle']) {
 					$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
 				}
@@ -1363,6 +1366,9 @@ class yf_table2 {
 				$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
 				if ($extra['class_add']) {
 					$class .= ' '.$extra['class_add'];
+				}
+				if ($extra['no_ajax'] || $instance_params['no_ajax']) {
+					$class .= ' no_ajax';
 				}
 				return '<a href="'.trim($link).'" class="'.trim($class).'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
