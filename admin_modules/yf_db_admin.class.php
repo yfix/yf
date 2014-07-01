@@ -85,7 +85,9 @@ class yf_db_admin {
 					}; return $data;
 				}, $this->table_params + array('feedback' => &$totals['tables']))
 				->link('name', url_admin('/@object/table_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
-				->btn_edit('Alter', url_admin('/@object/table_alter/'.$db_name.'.%d/'))
+				->btn_edit('Indexes', url_admin('/@object/table_indexes/'.$db_name.'.%d/'))
+				->btn_edit('Foreign keys', url_admin('/@object/table_foreign/'.$db_name.'.%d/'))
+				->btn_edit('Alter table', url_admin('/@object/table_alter/'.$db_name.'.%d/'))
 				->btn_delete('Drop', url_admin('/@object/table_drop/'.$db_name.'.%d/'))
 				->header_add('Create database', url_admin('/@object/table_create/'.$db_name.'/'))
 			,
@@ -135,7 +137,7 @@ class yf_db_admin {
 			,
 			'events' => table(
 				function() use ($db) {
-					foreach ((array)$db->utils()->list_events( as $name) {
+					foreach ((array)$db->utils()->list_events() as $name) {
 						$data[$name] = array('name'	=> $name);
 					}; return $data;
 				}, $this->table_params + array('feedback' => &$totals['events']))
@@ -193,6 +195,118 @@ class yf_db_admin {
 			->btn_delete('', url_admin('/@object/table_delete/'.$db_name.'.'.$table.'.%d'))
 			->footer_add('Insert', url_admin('/@object/table_add/'.$db_name.'.'.$table))
 			->auto();
+	}
+
+	/**
+	*/
+	function table_indexes() {
+		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		$id = intval($id);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table || !$id) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+// TODO
+	}
+
+	/**
+	*/
+	function table_index_create() {
+		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		$id = intval($id);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table || !$id) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+// TODO
+	}
+
+	/**
+	*/
+	function table_index_alter() {
+		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		$id = intval($id);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table || !$id) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+// TODO
+	}
+
+	/**
+	*/
+	function table_index_drop() {
+		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		$id = intval($id);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table || !$id) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+// TODO
+	}
+
+	/**
+	*/
+	function table_foreign_keys() {
+		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		$id = intval($id);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table || !$id) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+// TODO
+	}
+
+	/**
+	*/
+	function table_foreign_key_create() {
+		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		$id = intval($id);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table || !$id) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+// TODO
+	}
+
+	/**
+	*/
+	function table_foreign_key_alter() {
+		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		$id = intval($id);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table || !$id) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+// TODO
+	}
+
+	/**
+	*/
+	function table_foreign_key_drop() {
+		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		$id = intval($id);
+		$db_name = $this->_database_name($db_name);
+		$table = $this->_table_name($table);
+		if (!$db_name || !$table || !$id) {
+			return _e('Wrong params');
+		}
+		$db = $this->_db_custom_connection($db_name);
+// TODO
 	}
 
 	/**
@@ -464,8 +578,8 @@ class yf_db_admin {
 	function _add_custom_navbar() {
 		_class('core_events')->listen('block.prepend[center_area]', function(){
 			$a = array(
-				array('link' => url('/home_page'), 'name' => 'Home'),
-				array('link' => url('/@object'), 'name' => 'Db admin'),
+				array('link' => url_admin('/home_page'), 'name' => 'Home'),
+				array('link' => url_admin('/@object'), 'name' => 'Db admin'),
 			);
 // TODO: add custom navbar items depending on current page
 			return _class('html')->breadcrumbs($a);
