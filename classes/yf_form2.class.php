@@ -1937,11 +1937,16 @@ class yf_form2 {
 			$validate_ok = $_this->_validate_rules_process($_this->_validate_rules, $data, $extra);
 			if ($validate_ok) {
 				$_this->_validate_ok = true;
+				$on_validate_ok = isset($extra['on_validate_ok']) ? $extra['on_validate_ok'] : $_this->_on['on_validate_ok'];
+				if (is_callable($on_validate_ok)) {
+					$on_validate_ok($data, $extra, $_this->_validate_rules);
+				}
+				_class('core_events')->fire('form.validate_ok', array($_this->_validate_rules, $data, $extra));
 			} else {
 				$_this->_validate_ok = false;
 				$on_validate_error = isset($extra['on_validate_error']) ? $extra['on_validate_error'] : $_this->_on['on_validate_error'];
 				if (is_callable($on_validate_error)) {
-					$on_validate_error($_this->_validate_rules, $data, $extra);
+					$on_validate_error($data, $extra, $_this->_validate_rules);
 				}
 				_class('core_events')->fire('form.validate_error', array($_this->_validate_rules, $data, $extra));
 			}
@@ -2220,6 +2225,13 @@ class yf_form2 {
 	/**
 	*/
 	function on_after_validate($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
+	}
+
+	/**
+	*/
+	function on_validate_ok($func) {
 		$this->_on[__FUNCTION__] = $func;
 		return $this;
 	}
