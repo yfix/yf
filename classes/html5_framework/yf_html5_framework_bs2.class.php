@@ -96,8 +96,16 @@ class yf_html5_framework_bs2 {
 	function form_dd_row($content, $extra = array(), $replace = array(), $obj) {
 		$dd_class = $obj->_params['dd_class'] ?: 'span6';
 
-		$row_start = !$extra['wide'] ? '<dl class="dl-horizontal">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL : '';
-		$before_content_html = '<dd>';
+		$class_wrapper = $extra['class_wrapper'] ?: 'dl-horizontal';
+		if ($extra['class_add_wrapper']) {
+			$class_wrapper .= ' '.$extra['class_add_wrapper'];
+		}
+		$class_dd = $extra['class_dd'] ?: '';
+		if ($extra['class_add_dd']) {
+			$class_dd .= ' '.$extra['class_add_dd'];
+		}
+		$row_start = !$extra['wide'] ? '<dl class="'.$class_wrapper.'">'.PHP_EOL.'<dt>'.t($extra['desc']).'</dt>'.PHP_EOL : '';
+		$before_content_html = '<dd'.($class_dd ? ' class="'.$class_dd.'"' : '').'>';
 		$after_content_html = '</dd>';
 		$row_end = '</dl>'.PHP_EOL;
 
