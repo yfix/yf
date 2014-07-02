@@ -156,7 +156,10 @@ class yf_db_admin {
 		$db = $this->_db_custom_connection($db_name);
 		return _class('html')->tabs(array(
 			'tables' => table(
-				function() use ($db) {
+				function() use ($db, $db_name) {
+					$all_indexes	= $db->utils()->list_all_indexes($db_name);
+					$all_foreign	= $db->utils()->list_all_foreign_keys($db_name);
+					$all_triggers	= $db->utils()->list_all_triggers($db_name);
 					foreach ((array)$db->utils()->list_tables_details() as $name => $a) {
 						$data[$name] = array(
 							'name'			=> $name,
@@ -164,13 +167,13 @@ class yf_db_admin {
 							'collation'		=> $a['collation'],
 							'rows'			=> $a['rows'],
 							'data_size'		=> $a['data_size'],
-							'indexes'		=> 0,
-							'foreign_keys'	=> 0,
-							'triggers'		=> 0,
+							'indexes'		=> count($all_indexes[$name]),
+							'foreign_keys'	=> count($all_foreign[$name]),
+							'triggers'		=> count($all_triggers[$name]),
 						);
 					}; return $data;
 				}, $this->table_params + array('feedback' => &$totals['tables']))
-#				->check_box('name', array('th_desc' => '#'))
+				->check_box('name', array('th_desc' => '#'))
 				->link('name', url_admin('/@object/table_show/'.$db_name.'.%d/'))
 				->text('engine')
 				->text('collation')
