@@ -168,30 +168,35 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 		if (strlen($this->db->DB_PREFIX) && substr($name, 0, strlen($this->db->DB_PREFIX)) == $this->db->DB_PREFIX) {
 			$name = substr($name, strlen($this->db->DB_PREFIX));
 		}
-		$globs = array(
-			PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
-			PROJECT_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
-			CONFIG_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
-			YF_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
-			YF_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
-		);
-		$path = '';
-		foreach ($globs as $glob) {
-			foreach (glob($glob) as $f) {
-				$path = $f;
-				break 2;
+		$data = $extra['sql'];
+		$engine = $extra['engine'] ?: 'InnoDB';
+		$charset = $extra['charset'] ?: 'utf8';
+		if (!$data) {
+			$globs = array(
+				PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
+				PROJECT_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
+				CONFIG_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
+				YF_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
+				YF_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
+			);
+			$path = '';
+			foreach ($globs as $glob) {
+				foreach (glob($glob) as $f) {
+					$path = $f;
+					break 2;
+				}
 			}
+			if (!file_exists($path)) {
+				$error = 'file not exists: '.$path;
+				return false;
+			}
+			include $path;
 		}
-		if (!file_exists($path)) {
-			$error = 'file not exists: '.$path;
-			return false;
-		}
-		include $path;
 		if (!$data) {
 			$error = 'data is empty';
 			return false;
 		}
-		$sql = 'CREATE TABLE IF NOT EXISTS '.$this->db->_fix_table_name($name).' ('. PHP_EOL. $data. PHP_EOL. ') ENGINE=InnoDB DEFAULT CHARSET=utf8;'. PHP_EOL;
+		$sql = 'CREATE TABLE IF NOT EXISTS '.$this->db->_fix_table_name($name).' ('. PHP_EOL. $data. PHP_EOL. ') ENGINE='.$engine.' DEFAULT CHARSET='.$charset.';'. PHP_EOL;
 		return $extra['sql'] ? $sql : $this->db->query($sql) && $error = $this->db->error();
 	}
 
