@@ -131,6 +131,25 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
+	function list_tables_details($name = '', $extra = array(), &$error = false) {
+		$name = trim($name);
+		$tables = array();
+		$q = $this->db->query('SHOW TABLE STATUS'. (strlen($name) ? ' FROM '.$this->_escape_key($name) : ''));
+		while ($a = $this->db->fetch_assoc($q)) {
+			$name = $a['Name'];
+			$tables[$name] = array(
+				'name'		=> $name,
+				'engine'	=> $a['Engine'],
+				'rows'		=> $a['Rows'],
+				'data_size'	=> $a['Data_length'],
+				'collation'	=> $a['Collation'],
+			);
+		}
+		return $tables;
+	}
+
+	/**
+	*/
 	function table_exists($name, $extra = array(), &$error = false) {
 		if (!$name) {
 			$error = 'name is empty';
