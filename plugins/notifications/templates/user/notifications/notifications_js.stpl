@@ -20,6 +20,11 @@ function notifications_check() {
 					buttons: {
 						   sticker: false
 					},
+                    after_open: function(PNotify) {
+                            $('.glyphicon').addClass('icon');
+                            $('.glyphicon-exclamation-sign').addClass('icon-exclamation-sign');
+                            $('.glyphicon-remove').addClass('icon-remove');
+                        },
 					after_close: function(PNotify) {
 							html = $.parseHTML(PNotify.options.text);
 							$.each(html, function( i, el ) {
