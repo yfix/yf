@@ -7,8 +7,8 @@ class yf_online_users {
 	var $_COOKIE_TTL = 3600;
 	
 	function process() {
-        if (main()->TRACK_ONLINE_STATUS) {
-            list($this->online_user_id,$this->online_user_type) = $this->_set_user_id();
+        list($this->online_user_id,$this->online_user_type) = $this->_set_user_id();
+        if (main()->TRACK_ONLINE_STATUS) {        
             $this->_update();
             $this->_cleanup();
         }
