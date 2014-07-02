@@ -148,6 +148,32 @@ class yf_db_admin {
 	}
 
 	/***/
+	function database_show_ajax() {
+		main()->NO_GRAPHICS = true;
+		$db_name = $this->_database_name($_GET['id']);
+		if (!$db_name) {
+			return false;
+		}
+		$db = $this->_db_custom_connection($db_name);
+		$data = array(
+			'indexes'		=> (array)$db->utils()->list_all_indexes($db_name),
+			'foreign_keys'	=> (array)$db->utils()->list_all_foreign_keys($db_name),
+			'triggers'		=> (array)$db->utils()->list_all_triggers($db_name),
+		);
+		foreach ((array)$data as $k => $v) {
+			foreach ((array)$v as $table => $info) {
+				$data[$k][$table] = count($info);
+			}
+			if (empty($data[$k])) {
+				unset($data[$k]);
+			}
+		}
+		header('Content-type: text/json', $replace = true);
+		print json_encode($data);
+		exit();
+	}
+
+	/***/
 	function database_show() {
 		$db_name = $this->_database_name($_GET['id']);
 		if (!$db_name) {
@@ -157,9 +183,11 @@ class yf_db_admin {
 		return _class('html')->tabs(array(
 			'tables' => table(
 				function() use ($db, $db_name) {
+/*
 					$all_indexes	= $db->utils()->list_all_indexes($db_name);
 					$all_foreign	= $db->utils()->list_all_foreign_keys($db_name);
 					$all_triggers	= $db->utils()->list_all_triggers($db_name);
+*/
 					foreach ((array)$db->utils()->list_tables_details() as $name => $a) {
 						$data[$name] = array(
 							'name'			=> $name,
