@@ -7,6 +7,8 @@ class yf_common_num2string {
 	/**
 	* Returns the sum in words (for money)
 	*/
+// TODO: translation (RU, UK, EN)
+// TODO: currencies (UAH, RUB USD, EUR)
 	function num2str($num) {
 		$num = (float)$num;
 		$nul = 'ноль';
