@@ -10,35 +10,35 @@ class yf_db_driver_oracle extends yf_db_driver {
 	/** @var @conf_skip */
 	public $in_transaction		= 0;
 	/** @var @conf_skip */
-	public $row				= array();
+	public $row					= array();
 	/** @var @conf_skip */
 	public $rowset				= array();
 	/** @var @conf_skip */
-	public $num_queries		= 0;
+	public $num_queries			= 0;
 	/** @var @conf_skip */
-	public $last_query_text	= '';
+	public $last_query_text		= '';
 	/** @var @conf_skip */
 	public $replace_quote		= "''";
 	/** @var @conf_skip */
-	public $no_null_strings	= 1;
-
+	public $no_null_strings		= 1;
 	/** @var @conf_skip */
-	public $META_TABLES_SQL	= "select table_name,table_type from cat where table_type in (\'TABLE\',\'VIEW\')";
+	public $META_TABLES_SQL		= 'select table_name,table_type from cat where table_type in (\'TABLE\',\'VIEW\')';
 	/** @var @conf_skip */
-	public $META_COLUMNS_SQL	= "select cname,coltype,width from col where tname='%s' order by colno";
+	public $META_COLUMNS_SQL	= 'select cname,coltype,width from col where tname=\'%s\' order by colno';
 	/** @var @conf_skip */
-	public $META_DATABASES_SQL	= "SELECT USERNAME FROM ALL_USERS WHERE USERNAME NOT IN ('SYS','SYSTEM','DBSNMP','OUTLN') ORDER BY 1";
+	public $META_DATABASES_SQL	= 'SELECT USERNAME FROM ALL_USERS WHERE USERNAME NOT IN (\'SYS\',\'SYSTEM\',\'DBSNMP\',\'OUTLN\') ORDER BY 1';
 	/** @var @conf_skip */
 	public $_genIDSQL			= 'SELECT (%s.nextval) FROM DUAL';
 
 	/**
 	* Constructor
 	*/
-	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false) {
+	function __construct(array $params) {
 		if (!function_exists('OCINLogon')) {
 			trigger_error('Oracle db driver require missing php extension OCI', E_USER_ERROR);
 			return false;
 		}
+/*
 		$this->persistency = $persistency;
 		$this->user = $user;
 		$this->password = $password;
@@ -54,6 +54,7 @@ class yf_db_driver_oracle extends yf_db_driver {
 		} else {
 			return false;
 		}
+*/
 	}
 
 	/**
