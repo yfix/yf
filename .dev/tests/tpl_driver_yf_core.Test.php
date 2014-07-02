@@ -11,6 +11,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals(YF_PATH, self::_tpl( '{const( YF_PATH )}' ));
 		$this->assertEquals(YF_PATH, self::_tpl( '{const( YF_PATH )}' ));
 		$this->assertEquals(YF_PATH, self::_tpl( '{const(      YF_PATH         )}' ));
+		$this->assertEquals(YF_PATH.YF_PATH.YF_PATH, self::_tpl( '{const(YF_PATH)}{const(YF_PATH)}{const(YF_PATH)}' ));
 		$this->assertEquals('{const(WRONG-CONST)}', self::_tpl( '{const(WRONG-CONST)}' ));
 		$this->assertEquals('{const( WRONG-CONST)}', self::_tpl( '{const( WRONG-CONST)}' ));
 		$this->assertEquals('{const( WRONG-CONST )}', self::_tpl( '{const( WRONG-CONST )}' ));
@@ -47,6 +48,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	}
 	public function test_execute() {
 		$this->assertEquals('true', self::_tpl( '{execute(test,true_for_unittest)}' ));
+		$this->assertEquals('truetrue', self::_tpl( '{execute(test,true_for_unittest)}{execute(test,true_for_unittest)}' ));
 		$this->assertEquals('{ execute(test,true_for_unittest)}', self::_tpl( '{ execute(test,true_for_unittest)}' ));
 		$this->assertEquals('{execute(test,true_for_unittest) }', self::_tpl( '{execute(test,true_for_unittest) }' ));
 		$this->assertEquals('{ execute(test,true_for_unittest) }', self::_tpl( '{ execute(test,true_for_unittest) }' ));
@@ -99,8 +101,10 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	}
 	public function test_comment() {
 		$this->assertEquals('', self::_tpl( '{{--STPL COMMENT--}}' ));
+		$this->assertEquals('', self::_tpl( '{{--STPL COMMENT--}}{{--STPL COMMENT--}}' ));
 		$this->assertEquals('<!---->', self::_tpl( '<!--{{--STPL COMMENT--}}-->' ));
 		$this->assertEquals('TEXT', self::_tpl( '{{--<!----}}TEXT{{---->--}}' ));
+		$this->assertEquals('TEXTTEXT', self::_tpl( '{{--<!----}}TEXT{{---->--}}{{--<!----}}TEXT{{---->--}}' ));
 	}
 	public function test_if() {
 		$this->assertEquals('GOOD', self::_tpl( '{if("key1" eq "val1")}GOOD{/if}', array('key1' => 'val1') ));
@@ -128,6 +132,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	}
 	public function test_foreach() {
 		$this->assertEquals('1111111111', self::_tpl( '{foreach(10)}1{/foreach}' ));
+		$this->assertEquals('111111111122222222221111111111', self::_tpl( '{foreach(10)}1{/foreach}{foreach(10)}2{/foreach}{foreach(10)}1{/foreach}' ));
 		$this->assertEquals(' 1  2  3  4 ', self::_tpl( '{foreach("testarray")} {_val} {/foreach}', array('testarray' => array(1,2,3,4)) ));
 		$this->assertEquals(' 0  1  2  3 ', self::_tpl( '{foreach("testarray")} {_key} {/foreach}', array('testarray' => array(1,2,3,4)) ));
 		$this->assertEquals(' 4  4  4  4 ', self::_tpl( '{foreach("testarray")} {_total} {/foreach}', array('testarray' => array(1,2,3,4)) ));
