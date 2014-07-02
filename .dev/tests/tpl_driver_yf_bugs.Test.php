@@ -62,4 +62,10 @@ class tpl_driver_yf_bugs_test extends tpl_abstract {
 		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap.min.js"></script>'
 			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs3', 'debug_mode' => 0))) );
 	}
+	public function test_bug_07() {
+		self::_tpl( 'Hello1', array(), 'unittest_include1' );
+		self::_tpl( 'Hello2', array(), 'unittest_include2' );
+		self::_tpl( 'Hello3', array(), 'unittest_include3' );
+		$this->assertEquals('Hello1 Hello1 Hello1', self::_tpl( '{include("unittest_include1")} {include("unittest_include1")} {include("unittest_include1")}' ));
+	}
 }
