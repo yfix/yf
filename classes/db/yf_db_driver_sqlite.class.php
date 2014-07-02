@@ -7,19 +7,19 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	public $db_connect_id		= null;
 	/** @var @conf_skip */
 	public $query_result		= null;
-
 	/** @var @conf_skip */
-	public $META_TABLES_SQL	= '';	
+	public $META_TABLES_SQL		= '';	
 	/** @var @conf_skip */
 	public $META_COLUMNS_SQL	= '';
 
 	/**
 	*/
-	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false) {
+	function __construct(array $params) {
 		if (!function_exists('sqlite_open')) {
 			trigger_error('SQLite db driver require missing php extension sqlite', E_USER_ERROR);
 			return false;
 		}
+/*
 		$this->persistency = $persistency;
 		$this->user = $user;
 		$this->server = $server . (($port) ? ':' . $port : '');
@@ -32,6 +32,7 @@ class yf_db_driver_sqlite extends yf_db_driver {
 			@sqlite_query('PRAGMA short_column_names = 1', $this->db_connect_id);
 		}
 		return ($this->db_connect_id) ? true : array('message' => $error);
+*/
 	}
 
 	/**

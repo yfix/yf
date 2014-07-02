@@ -4,7 +4,7 @@
 * YF db driver abstract class
 */
 abstract class yf_db_driver {
-	abstract protected function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false);
+	abstract protected function __construct(array $params);
 	abstract protected function affected_rows();
 	abstract protected function begin();
 	abstract protected function connect();

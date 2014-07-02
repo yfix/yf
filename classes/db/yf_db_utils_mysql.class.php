@@ -131,6 +131,25 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
+	function list_tables_details($name = '', $extra = array(), &$error = false) {
+		$name = trim($name);
+		$tables = array();
+		$q = $this->db->query('SHOW TABLE STATUS'. (strlen($name) ? ' FROM '.$this->_escape_key($name) : ''));
+		while ($a = $this->db->fetch_assoc($q)) {
+			$name = $a['Name'];
+			$tables[$name] = array(
+				'name'		=> $name,
+				'engine'	=> $a['Engine'],
+				'rows'		=> $a['Rows'],
+				'data_size'	=> $a['Data_length'],
+				'collation'	=> $a['Collation'],
+			);
+		}
+		return $tables;
+	}
+
+	/**
+	*/
 	function table_exists($name, $extra = array(), &$error = false) {
 		if (!$name) {
 			$error = 'name is empty';
@@ -149,30 +168,35 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 		if (strlen($this->db->DB_PREFIX) && substr($name, 0, strlen($this->db->DB_PREFIX)) == $this->db->DB_PREFIX) {
 			$name = substr($name, strlen($this->db->DB_PREFIX));
 		}
-		$globs = array(
-			PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
-			PROJECT_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
-			CONFIG_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
-			YF_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
-			YF_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
-		);
-		$path = '';
-		foreach ($globs as $glob) {
-			foreach (glob($glob) as $f) {
-				$path = $f;
-				break 2;
+		$data = $extra['sql'];
+		$engine = $extra['engine'] ?: 'InnoDB';
+		$charset = $extra['charset'] ?: 'utf8';
+		if (!$data) {
+			$globs = array(
+				PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
+				PROJECT_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
+				CONFIG_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
+				YF_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
+				YF_PATH. 'share/db_installer/sql/'.$name.'.sql.php',
+			);
+			$path = '';
+			foreach ($globs as $glob) {
+				foreach (glob($glob) as $f) {
+					$path = $f;
+					break 2;
+				}
 			}
+			if (!file_exists($path)) {
+				$error = 'file not exists: '.$path;
+				return false;
+			}
+			include $path;
 		}
-		if (!file_exists($path)) {
-			$error = 'file not exists: '.$path;
-			return false;
-		}
-		include $path;
 		if (!$data) {
 			$error = 'data is empty';
 			return false;
 		}
-		$sql = 'CREATE TABLE IF NOT EXISTS '.$this->db->_fix_table_name($name).' ('. PHP_EOL. $data. PHP_EOL. ') ENGINE=InnoDB DEFAULT CHARSET=utf8;'. PHP_EOL;
+		$sql = 'CREATE TABLE IF NOT EXISTS '.$this->db->_fix_table_name($name).' ('. PHP_EOL. $data. PHP_EOL. ') ENGINE='.$engine.' DEFAULT CHARSET='.$charset.';'. PHP_EOL;
 		return $extra['sql'] ? $sql : $this->db->query($sql) && $error = $this->db->error();
 	}
 
@@ -263,12 +287,6 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$error = 'table name is empty';
 			return false;
 		}
-		/*$this->db->query("
-			SELECT *
-			FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-			WHERE TABLE_NAME = {$this->db->_fix_table_name($table)} AND TABLE_SCHEMA = DATABASE()
-			AND REFERENCED_COLUMN_NAME IS NULL
-		");*/
 		$indexes = array();
 		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->db->_fix_table_name($table)) as $row) {
 			$indexes[$row['Key_name']] = array(
@@ -277,6 +295,54 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 				'primary'	=> $row['Key_name'] === 'PRIMARY',
 			);
 			$indexes[$row['Key_name']]['columns'][$row['Seq_in_index'] - 1] = $row['Column_name'];
+		}
+		return $indexes;
+	}
+
+	/**
+	*/
+	function list_all_indexes($name, $extra = array()) {
+		if (!strlen($name)) {
+			$error = 'name is empty';
+			return false;
+		}
+		$sql = 
+			'SELECT a.table_schema,
+				a.table_name,
+				a.constraint_name, 
+				a.constraint_type,
+				CONVERT(GROUP_CONCAT(DISTINCT b.column_name ORDER BY b.ordinal_position SEPARATOR ", "), char) as column_list,
+				b.referenced_table_name,
+				b.referenced_column_name
+			FROM information_schema.table_constraints a
+			INNER JOIN information_schema.key_column_usage b ON a.constraint_name = b.constraint_name AND a.table_schema = b.table_schema AND a.table_name = b.table_name
+			WHERE a.table_schema = '.$this->_escape_val($name).'
+			GROUP BY a.table_schema, a.table_name, a.constraint_name, 
+				a.constraint_type, b.referenced_table_name, 
+				b.referenced_column_name
+			UNION
+			SELECT table_schema,
+				table_name,
+				index_name as constraint_name,
+				if(index_type="FULLTEXT", "FULLTEXT", "NON UNIQUE") as constraint_type,
+				CONVERT(GROUP_CONCAT(column_name ORDER BY seq_in_index separator ", "), char) as column_list,
+				null as referenced_table_name,
+				null as referenced_column_name
+			FROM information_schema.statistics
+			WHERE non_unique = 1 AND table_schema = '.$this->_escape_val($name).'
+			GROUP BY table_schema, table_name, constraint_name, constraint_type, referenced_table_name, referenced_column_name
+			ORDER BY table_schema, table_name, constraint_name'
+		;
+		$indexes = array();
+		foreach ((array)$this->db->get_all($sql) as $a) {
+			$table = $a['table_name'];
+			$name = $a['constraint_name'];
+			$indexes[$table][$name] = array(
+				'name'		=> $name,
+				'unique'	=> $a['constraint_type'] === 'UNIQUE',
+				'primary'	=> $a['constraint_type'] === 'PRIMARY KEY',
+				'columns'	=> explode(', ', $a['column_list']),
+			);
 		}
 		return $indexes;
 	}
@@ -330,6 +396,12 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
+	function list_all_foreign_keys($name, $extra = array()) {
+// TODO
+	}
+
+	/**
+	*/
 	function add_foreign_key($table, $fields, $extra = array()) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
@@ -337,11 +409,11 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 		}
 /*
 ALTER TABLE tbl_name
-    ADD [CONSTRAINT [symbol]] FOREIGN KEY
-    [index_name] (index_col_name, ...)
-    REFERENCES tbl_name (index_col_name,...)
-    [ON DELETE reference_option]
-    [ON UPDATE reference_option]
+	ADD [CONSTRAINT [symbol]] FOREIGN KEY
+	[index_name] (index_col_name, ...)
+	REFERENCES tbl_name (index_col_name,...)
+	[ON DELETE reference_option]
+	[ON UPDATE reference_option]
 */
 // TODO
 	}
@@ -495,7 +567,7 @@ ALTER TABLE tbl_name
 // https://dev.mysql.com/doc/refman/5.5/en/create-procedure.html
 # CREATE PROCEDURE simpleproc (OUT param1 INT)
 # BEGIN
-#    SELECT COUNT(*) INTO param1 FROM t;
+#	SELECT COUNT(*) INTO param1 FROM t;
 # END//
 // TODO
 	}
@@ -555,13 +627,19 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
+	function list_all_triggers($name, $extra = array()) {
+// TODO
+	}
+
+	/**
+	*/
 	function create_trigger($name, $data, $extra = array()) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
 		}
 // https://dev.mysql.com/doc/refman/5.5/en/create-trigger.html
-# CREATE    [DEFINER = { user | CURRENT_USER }]    TRIGGER trigger_name    trigger_time trigger_event     ON tbl_name FOR EACH ROW    trigger_body
+# CREATE	[DEFINER = { user | CURRENT_USER }]	TRIGGER trigger_name	trigger_time trigger_event	 ON tbl_name FOR EACH ROW	trigger_body
 // TODO
 	}
 

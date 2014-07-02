@@ -24,23 +24,17 @@ class yf_db_driver_mysqli extends yf_db_driver {
 
 	/**
 	*/
-	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false) {
+	function __construct(array $params) {
 		if (!function_exists('mysqli_init')) {
 			trigger_error('MySQLi db driver require missing php extension mysql', E_USER_ERROR);
 			return false;
 		}
-		$this->persistency	= $persistency;
-		$this->user			= $user;
-		$this->password		= $password;
-		$this->server		= $server;
-		$this->dbname		= $database;
-		$this->port			= $port ? $port : $DEF_PORT;
-		$this->socket		= $socket;
-		if (!file_exists($socket)) {
-			$this->socket = '';
+		$params['port'] = $params['port'] ?: $this->DEF_PORT;
+		if ($params['socket'] && !file_exists($params['socket'])) {
+			$params['socket'] = '';
 		}
-		$this->ALLOW_AUTO_CREATE_DB	= $allow_auto_create_db;
-#		ini_set('mysqli.reconnect', true);
+		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET);
+		$this->params = $params;
 
 		$this->connect();
 
@@ -48,11 +42,8 @@ class yf_db_driver_mysqli extends yf_db_driver {
 			conf_add('http_headers::X-Details','ME=(-1) MySqli connection error');
 			return false;
 		}
-		if (empty($charset)) {
-			$charset = defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET;
-		}
 		if ($charset) {
-			$this->query('SET NAMES '. $charset);
+			$this->query('SET NAMES '. $params['charset']);
 		}
 		return $this->db_connect_id;
 	}
@@ -65,26 +56,26 @@ class yf_db_driver_mysqli extends yf_db_driver {
 			$this->db_connect_id = null;
 			return false;
 		}
-		if ($this->socket) {
-			$connect_host = $this->socket;
+		if ($this->params['socket']) {
+			$connect_host = $this->params['socket'];
 		} else {
-			$connect_port = $this->port && $this->port != $this->DEF_PORT ? $this->port : '';
-			$connect_host = ($this->persistency ? 'p:' : '').$this->server. ($connect_port ? ':'.$connect_port : '');
+			$connect_port = $this->params['port'] && $this->params['port'] != $this->DEF_PORT ? $this->params['port'] : '';
+			$connect_host = ($this->params['persist'] ? 'p:' : '').$this->params['server']. ($connect_port ? ':'.$connect_port : '');
 		}
 		mysqli_options($this->db_connect_id, MYSQLI_OPT_CONNECT_TIMEOUT, 2);
-		$is_connected = mysqli_real_connect($this->db_connect_id, $this->server, $this->user, $this->password, '', $this->port, $this->socket, $use_ssl ? MYSQLI_CLIENT_SSL : 0);
+		$is_connected = mysqli_real_connect($this->db_connect_id, $this->params['server'], $this->params['user'], $this->params['pswd'], '', $this->params['port'], $this->params['socket'], $this->params['ssl'] ? MYSQLI_CLIENT_SSL : 0);
 		if (!$is_connected) {
 			$this->_connect_error = true;
 			$this->db_connect_id = null;
 			return false;
 		}
-		if ($this->dbname != '') {
-			$dbselect = mysqli_select_db($this->db_connect_id, $this->dbname);
+		if ($this->params['name'] != '') {
+			$dbselect = mysqli_select_db($this->db_connect_id, $this->params['name']);
 			// Try to create database, if not exists and if allowed
-			if (!$dbselect && $this->ALLOW_AUTO_CREATE_DB && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->dbname)) {
-				mysqli_query('CREATE DATABASE IF NOT EXISTS '.$this->dbname, $this->db_connect_id);
+			if (!$dbselect && $this->ALLOW_AUTO_CREATE_DB && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->params['name'])) {
+				mysqli_query('CREATE DATABASE IF NOT EXISTS '.$this->params['name'], $this->db_connect_id);
 			}
-			$dbselect = mysqli_select_db($this->db_connect_id, $this->dbname);
+			$dbselect = mysqli_select_db($this->db_connect_id, $this->params['name']);
 			if (!$dbselect) {
 				mysqli_close($this->db_connect_id);
 			}

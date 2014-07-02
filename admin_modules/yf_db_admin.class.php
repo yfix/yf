@@ -1,7 +1,18 @@
 <?php
 
+/**
+* Database administration tool
+*/
 class yf_db_admin {
 
+	/***/
+	private	$guarded_databases = array(
+		'information_schema',
+		'performance_schema',
+		'mysql',
+		'sys',
+	);
+	/***/
 	private $table_params = array(
 		'pager_records_on_page' => 1000,
 		'id'		=> 'name',
@@ -9,12 +20,6 @@ class yf_db_admin {
 		'no_total'	=> 1,
 		'no_ajax'	=> 1,
 		'no_records_html' => '',
-	);
-	private	$guarded_databases = array(
-		'information_schema',
-		'performance_schema',
-		'mysql',
-		'sys',
 	);
 
 	/***/
@@ -143,6 +148,32 @@ class yf_db_admin {
 	}
 
 	/***/
+	function database_show_ajax() {
+		main()->NO_GRAPHICS = true;
+		$db_name = $this->_database_name($_GET['id']);
+		if (!$db_name) {
+			return false;
+		}
+		$db = $this->_db_custom_connection($db_name);
+		$data = array(
+			'indexes'		=> (array)$db->utils()->list_all_indexes($db_name),
+			'foreign_keys'	=> (array)$db->utils()->list_all_foreign_keys($db_name),
+			'triggers'		=> (array)$db->utils()->list_all_triggers($db_name),
+		);
+		foreach ((array)$data as $k => $v) {
+			foreach ((array)$v as $table => $info) {
+				$data[$k][$table] = count($info);
+			}
+			if (empty($data[$k])) {
+				unset($data[$k]);
+			}
+		}
+		header('Content-type: text/json', $replace = true);
+		print json_encode($data);
+		exit();
+	}
+
+	/***/
 	function database_show() {
 		$db_name = $this->_database_name($_GET['id']);
 		if (!$db_name) {
@@ -151,17 +182,36 @@ class yf_db_admin {
 		$db = $this->_db_custom_connection($db_name);
 		return _class('html')->tabs(array(
 			'tables' => table(
-				function() use ($db) {
-					foreach ((array)$db->utils()->list_tables() as $name) {
-						$data[$name] = array('name'	=> $name);
+				function() use ($db, $db_name) {
+/*
+					$all_indexes	= $db->utils()->list_all_indexes($db_name);
+					$all_foreign	= $db->utils()->list_all_foreign_keys($db_name);
+					$all_triggers	= $db->utils()->list_all_triggers($db_name);
+*/
+					foreach ((array)$db->utils()->list_tables_details() as $name => $a) {
+						$data[$name] = array(
+							'name'			=> $name,
+							'engine'		=> $a['engine'],
+							'collation'		=> $a['collation'],
+							'rows'			=> $a['rows'],
+							'data_size'		=> $a['data_size'],
+							'indexes'		=> count($all_indexes[$name]),
+							'foreign_keys'	=> count($all_foreign[$name]),
+							'triggers'		=> count($all_triggers[$name]),
+						);
 					}; return $data;
 				}, $this->table_params + array('feedback' => &$totals['tables']))
-#				->check_box('name', array('th_desc' => '#'))
-				->link('name', url_admin('/@object/table_show/'.$db_name.'.%d/'), array(), array('class' => ' '))
-				->btn_edit('Indexes', url_admin('/@object/indexes/'.$db_name.'.%d/'))
-				->btn_edit('Foreign keys', url_admin('/@object/foreign_keys/'.$db_name.'.%d/'))
-				->btn_edit('Alter table', url_admin('/@object/table_alter/'.$db_name.'.%d/'))
-				->btn_delete('Drop', url_admin('/@object/table_drop/'.$db_name.'.%d/'))
+				->check_box('name', array('th_desc' => '#'))
+				->link('name', url_admin('/@object/table_show/'.$db_name.'.%d/'))
+				->text('engine')
+				->text('collation')
+				->text('rows')
+				->text('data_size')
+				->link('indexes', url_admin('/@object/indexes/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter indexes'))
+				->link('foreign_keys', url_admin('/@object/foreign_keys/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter foreign keys'))
+				->link('triggers', url_admin('/@object/triggers/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter triggers'))
+				->btn_edit('Alter table', url_admin('/@object/table_alter/'.$db_name.'.%d/'), array('btn_no_text' => 1))
+				->btn_delete('Drop', url_admin('/@object/table_drop/'.$db_name.'.%d/'), array('btn_no_text' => 1))
 				->header_add('Create table', url_admin('/@object/table_create/'.$db_name.'/'))
 			,
 			'views' => table(
@@ -174,18 +224,6 @@ class yf_db_admin {
 				->btn_edit('Alter', url_admin('/@object/view_alter/'.$db_name.'.%d/'))
 				->btn_delete('Drop', url_admin('/@object/view_drop/'.$db_name.'.%d/'))
 				->header_add('Create view', url_admin('/@object/view_create/'.$db_name.'/', $this->btn_params))
-			,
-// TODO: triggers need to be shown for table, not for database
-			'triggers' => table(
-				function() use ($db) {
-					foreach ((array)$db->utils()->list_triggers() as $name) {
-						$data[$name] = array('name'	=> $name);
-					}; return $data;
-				}, $this->table_params + array('feedback' => &$totals['triggers']))
-				->link('name', url_admin('/@object/triggers/'.$db_name.'.%d/'), array(), array('class' => ' '))
-				->btn_edit('Alter', url_admin('/@object/trigger_alter/'.$db_name.'.%d/'))
-				->btn_delete('Drop', url_admin('/@object/trigger_drop/'.$db_name.'.%d/'))
-				->header_add('Create trigger', url_admin('/@object/trigger_create/'.$db_name.'/'))
 			,
 			'procedures' => table(
 				function() use ($db) {
@@ -483,11 +521,25 @@ class yf_db_admin {
 	/**
 	*/
 	function triggers() {
-		list($db_name, $db_trigger) = explode('.', $_GET['id']);
+		list($db_name, $table) = explode('.', $_GET['id']);
 		$db_name = $this->_database_name($db_name);
-		$db_trigger = $this->_table_name($db_trigger);
+		$table = $this->_table_name($table);
 		$db = $this->_db_custom_connection($db_name);
 // TODO
+/*
+// TODO: triggers need to be shown for table, not for database
+			'triggers' => table(
+				function() use ($db) {
+					foreach ((array)$db->utils()->list_triggers() as $name) {
+						$data[$name] = array('name'	=> $name);
+					}; return $data;
+				}, $this->table_params + array('feedback' => &$totals['triggers']))
+				->link('name', url_admin('/@object/triggers/'.$db_name.'.%d/'), array(), array('class' => ' '))
+				->btn_edit('Alter', url_admin('/@object/trigger_alter/'.$db_name.'.%d/'))
+				->btn_delete('Drop', url_admin('/@object/trigger_drop/'.$db_name.'.%d/'))
+				->header_add('Create trigger', url_admin('/@object/trigger_create/'.$db_name.'/'))
+			,
+*/
 	}
 
 	/**

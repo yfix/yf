@@ -228,7 +228,7 @@ class yf_tpl_driver_yf {
 	*/
 	function _process_includes($string, $replace = array(), $name = '') {
 		$_this = $this;
-		$pattern = '/\{(include|include_if_exists)\(\s*["\']{0,1}\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*["\']{0,1}\s*\)\}/i';
+		$pattern = '/\{(include|include_if_exists)\(\s*["\']{0,1}\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*["\']{0,1}\s*\)\}/ims';
 		$extra = array();
 		$func = function($m) use ($replace, $name, $_this, $extra) {
 			$if_exists = ($m[1] == 'include_if_exists');
@@ -243,11 +243,11 @@ class yf_tpl_driver_yf {
 				return false;
 			}
 			$prevent_name = $name.'__'.$m[0];
-			if (isset($_this->_include_recursion_prevent[$prevent_name])) {
-				return false;
-			} else {
-				$_this->_include_recursion_prevent[$prevent_name] = true;
-			}
+#			if (isset($_this->_include_recursion_prevent[$prevent_name])) {
+#				return false;
+#			} else {
+#				$_this->_include_recursion_prevent[$prevent_name] = true;
+#			}
 			// Here we merge/override incoming $replace with parsed params, to be passed to included template
 			foreach ((array)explode(';', str_replace(array('\'','"'), '', $_replace)) as $v) {
 				list($a_name, $a_val) = explode('=', trim($v));
@@ -259,6 +259,17 @@ class yf_tpl_driver_yf {
 			return $_this->parse($stpl_name, $replace, array('force_storage' => $force_storage));
 		};
 		return preg_replace_callback($pattern, $func, $string);
+/*
+		preg_match_all($pattern, $string, $m);
+		foreach ($m[0] as $k1 => $v1) {
+			$single_m = array();
+			foreach ($m as $k2 => $v2) {
+				$single_m[$k2] = &$m[$k2][$k1];
+			}
+			$string = str_replace($v1, $func($single_m), $string);
+		}
+		return $string;
+*/
 	}
 
 	/**
