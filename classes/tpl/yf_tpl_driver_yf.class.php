@@ -259,17 +259,6 @@ class yf_tpl_driver_yf {
 			return $_this->parse($stpl_name, $replace, array('force_storage' => $force_storage));
 		};
 		return preg_replace_callback($pattern, $func, $string);
-/*
-		preg_match_all($pattern, $string, $m);
-		foreach ($m[0] as $k1 => $v1) {
-			$single_m = array();
-			foreach ($m as $k2 => $v2) {
-				$single_m[$k2] = &$m[$k2][$k1];
-			}
-			$string = str_replace($v1, $func($single_m), $string);
-		}
-		return $string;
-*/
 	}
 
 	/**
