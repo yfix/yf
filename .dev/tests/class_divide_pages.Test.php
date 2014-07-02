@@ -18,7 +18,7 @@ class class_divide_pages_test extends PHPUnit_Framework_TestCase {
 	public function _cleanup_html($html) {
 		return preg_replace('/[\t\s\n]+/ims', ' ', $html);
 	}
-	public function test_simple() {
+	public function test_complex() {
 		$per_page = 10;
 		conf('per_page', $per_page);
 		$this->assertEquals( $per_page, conf('per_page') );
