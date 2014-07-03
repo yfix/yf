@@ -1,8 +1,7 @@
 .invoice {
 	margin    : 0 auto;
-	max-width : 1000px;
 	font-family : Arial, sans-serif;
-	font-size   : 10pt;
+	font-size   : 9pt;
 }
 
 .invoice__border {
@@ -45,14 +44,15 @@
 }
 
 .invoice__table tr.invoice__table_total_sum td {
-	padding: 1em 0;
+	padding: 1em 0 0;
 	border-top : 1.5pt solid #ddd;
 	font-size: 1.2em;
 }
 
 {{---------------------- details -------------------------}}
 .invoice__details {
-	margin: 0 0 2em;
+	margin    : 0 0 2em;
+	font-size : 0.9em;
 }
 .invoice__details p {
 	margin: 0 0 0.5em;
@@ -69,6 +69,10 @@ h1.invoice__header {
 
 {{---------------------- screen --------------------------}}
 @media screen {
+
+.invoice {
+	max-width : 900px;
+}
 
 .invoice__border {
 	margin : 2em;
