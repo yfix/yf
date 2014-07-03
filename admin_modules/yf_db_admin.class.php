@@ -195,6 +195,7 @@ class yf_db_admin {
 							'collation'		=> $a['collation'],
 							'rows'			=> $a['rows'],
 							'data_size'		=> $a['data_size'],
+// TODO: load these heavy details from AJAX
 							'indexes'		=> count($all_indexes[$name]),
 							'foreign_keys'	=> count($all_foreign[$name]),
 							'triggers'		=> count($all_triggers[$name]),
