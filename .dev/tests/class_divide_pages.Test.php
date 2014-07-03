@@ -44,7 +44,7 @@ class class_divide_pages_test extends PHPUnit_Framework_TestCase {
 			'per_page'		=> $per_page,
 			'requested_page'=> 0,
 		));
-		$result = common()->divide_pages($sql, '', '', '', $num_records = count($data));
+		$result = common()->divide_pages($sql, $href, '', '', $num_records = count($data));
 		$result[1] = $this->_cleanup_html($result[1]);
 		$this->assertEquals( $expect_for_sql, $result );
 
@@ -58,10 +58,6 @@ class class_divide_pages_test extends PHPUnit_Framework_TestCase {
 			'per_page'		=> $per_page,
 			'requested_page'=> 0,
 		));
-
-		$result = common()->divide_pages($data);
-		$result[1] = $this->_cleanup_html($result[1]);
-		$this->assertEquals( $expect_for_array, $result );
 
 		$result = common()->divide_pages($data, $href);
 		$result[1] = $this->_cleanup_html($result[1]);
