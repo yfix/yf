@@ -25,6 +25,7 @@ class class_divide_pages_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 0, conf('user_per_page') );
 		$this->assertEquals( 0, conf('admin_per_page') );
 
+		$_GET = array();
 		$_GET['object'] = __CLASS__;
 		$_GET['action'] = __FUNCTION__;
 		$_GET['id'] = 12345678;
