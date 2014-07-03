@@ -123,6 +123,18 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 
 	/**
 	*/
+	function list_collations($extra = array()) {
+		return $this->db->get_all('SHOW COLLATION');
+	}
+
+	/**
+	*/
+	function list_charsets($extra = array()) {
+		return $this->db->get_all('SHOW CHARACTER SET');
+	}
+
+	/**
+	*/
 	function list_tables($name = '', $extra = array(), &$error = false) {
 		$name = trim($name);
 		$tables = $this->db->get_2d('SHOW TABLES'. (strlen($name) ? ' FROM '.$this->_escape_key($name) : ''));
