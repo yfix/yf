@@ -739,20 +739,69 @@ class yf_db_admin {
 		if (main()->is_redirect() || main()->is_console() || main()->is_ajax()) {
 			return false;
 		}
-		_class('core_events')->listen('block.prepend[center_area]', function(){
+		list($db_name, $table, $id) = explode('.', $_GET['id']);
+		$patterns = array(
+			'^/@object/(show|list_databases)' => 'Databases',
+			'^/@object/database_([a-z0-9_]+)' => function($m) use($db_name) {
+				$name = ucwords(str_replace('_', ' ', $m[1]));
+				return array(
+					array('Database: '.$db_name, url_admin('/@object/database_show/'.$db_name)),
+					array($name),
+				);
+			},
+			'^/@object/table_([a-z0-9_]+)' => function($m) use($db_name, $table) {
+				$name = ucwords(str_replace('_', ' ', $m[1]));
+				return array(
+					array('Database: '.$db_name, url_admin('/@object/database_show/'.$db_name)),
+					array('Table: '.$table, url_admin('/@object/table_show/'.$db_name.'.'.$table)),
+					array($name),
+				);
+			},
+			'^/@object/((?P<name1>indexes|triggers|foreign_keys)|(index|trigger|foreign_key)_(?P<name>[a-z0-9_]+))' => function($m) use($db_name, $table) {
+				$name = ucwords(str_replace('_', ' ', $m['name'] ?: $m[1]));
+				$name1 = $m['name1'] ? ucwords(str_replace('_', ' ', $m['name1'])) : '';
+				return array(
+					array('Database: '.$db_name, url_admin('/@object/database_show/'.$db_name)),
+					array('Table: '.$table, url_admin('/@object/table_show/'.$db_name.'.'.$table)),
+					$name1 ? array($name1, url_admin('/@object/'.$m['name1'].'/'.$db_name.'.'.$table)) : '',
+					array($name),
+				);
+			},
+		);
+		_class('core_events')->listen('block.prepend[center_area]', function() use ($patterns) {
 			$a = array(
-				array('link' => url_admin('/home_page/'), 'name' => 'Home'),
-				array('link' => url_admin('/@object/'), 'name' => 'Db admin'),
-#				array('link' => url_admin('/@object/'), 'name' => 'Database'),
+				array(
+					'name' => 'Home',
+					'link' => url_admin('/home_page/'),
+				),
+				array(
+					'name' => 'Db admin',
+					'link' => url_admin('/@object/'),
+				),
 			);
-/*
-		$db_name = $this->_database_name($_GET['id']);
-			$map = array(
-				'database_show' => array('name' => $this->_database_name($_GET['id'])),
-				'database_*' => array('link' => url_admin('/@object/'), 'name' => 'Home'),
-			);
-*/
-// TODO: add custom navbar items depending on current page
+			$cur_url = '/@object/'.$_GET['action'].'/'.$_GET['id'];
+			foreach ($patterns as $pattern => $val) {
+				if (!preg_match('~'.$pattern.'~is', $cur_url, $m)) {
+					continue;
+				}
+				if (is_array($val)) {
+					foreach ($val as $item) {
+						$a[] = array(
+							'name' => $item[0] ?: $item['name'],
+							'link' => $item[1] ?: $item['link'],
+						);
+					}
+				} elseif (is_callable($val)) {
+					foreach ($val($m) as $item) {
+						$a[] = array(
+							'name' => $item[0] ?: $item['name'],
+							'link' => $item[1] ?: $item['link'],
+						);
+					}
+				} elseif (is_string($val)) {
+					$a[] = array('name' => $val);
+				}
+			}
 			return _class('html')->breadcrumbs($a);
 		});
 	}
