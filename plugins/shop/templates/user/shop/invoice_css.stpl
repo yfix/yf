@@ -1,0 +1,98 @@
+.invoice {
+	margin    : 0 auto;
+	max-width : 1000px;
+	font-family : Arial, sans-serif;
+	font-size   : 10pt;
+}
+
+.invoice__border {
+	padding : 10pt;
+	border  : 1.5pt solid #ddd;
+}
+
+{{---------------------- table ---------------------------}}
+.invoice__table {
+	width           : 100%;
+	border-collapse : collapse;
+	font-size       : 0.9em;
+	font-family     : Arial, sans-serif;
+}
+
+.invoice__table_header {
+	background-color : #ddd;
+}
+.invoice__table_header th,
+.invoice__table tr.grid {
+	border : 1pt solid #ddd;
+}
+
+.invoice__table th.right,
+.invoice__table td.right {
+	text-align: right;
+}
+
+.invoice__table td,
+.invoice__table th {
+	padding    : 1em;
+	text-align : left;
+}
+.invoice__table .invoice__table_add td {
+	padding : 0.5em 1em 0;
+}
+
+.invoice__table .invoice__table_total td {
+	padding : 0.5em 1em 1.5em;
+}
+
+.invoice__table tr.invoice__table_total_sum td {
+	padding: 1em 0;
+	border-top : 1.5pt solid #ddd;
+	font-size: 1.2em;
+}
+
+{{---------------------- details -------------------------}}
+.invoice__details {
+	margin: 0 0 2em;
+}
+.invoice__details p {
+	margin: 0 0 0.5em;
+}
+
+{{---------------------- header --------------------------}}
+h1.invoice__header {
+	margin      : 0 0 2em;
+	text-align  : center;
+	font-weight : bold;
+	font-size   : 1.2em;
+	line-height : 1.3em;
+}
+
+{{---------------------- screen --------------------------}}
+@media screen {
+
+.invoice__border {
+	margin : 2em;
+	border : 2px solid #ddd;
+}
+
+.invoice__table_header th,
+.invoice__table tr.grid {
+	border : 1px solid #ddd;
+}
+
+.invoice__table tr.invoice__table_total_sum td {
+	border-top : 2px solid #ddd;
+}
+
+}
+
+{{---------------------- mpdf ----------------------------}}
+@media print {
+
+.invoice {
+	max-width : 100%;
+}
+
+}
+
+{{ vim: ft=css }}

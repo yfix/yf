@@ -1,0 +1,81 @@
+<div class="invoice">
+
+{{---------------------- border --------------------------}}
+	<div class="invoice__border">
+
+{{---------------------- details -------------------------}}
+	<div class="invoice__details">
+		<p>
+			<b>ПОСТАВЩИК:</b>
+			<br>
+{include( shop/_supplier_contacts )}
+		</p>
+		<p>
+			<b>РЕКВИЗИТЫ ПОСТАВЩИКА:</b>
+			<br>
+{include( shop/_supplier_bank )}
+		</p>
+	</div>
+
+{{---------------------- header --------------------------}}
+	<h1 class="invoice__header">
+		Счет-фактура № {id}
+		<br>
+		от {date}
+	</h1>
+
+{{---------------------- payer ---------------------------}}
+	<p>
+		<b>ПЛАТЕЛЬЩИК:</b>
+		<br>
+		{user_address}
+		<br>
+		Город: Запорожье
+	</p>
+
+{{---------------------- payment -------------------------}}
+{if( payment ne "" )}
+	<p><b>ФОРМА ОПЛАТЫ:</b> {payment}</p>
+{/if}
+
+{{---------------------- delivery ------------------------}}
+{if( delivery_type gt 1 and delivery_location ne '' )}
+	<p><b>ДОСТАВКА:</b> {delivery_name}, {delivery_location}</p>
+{/if}
+
+{{---------------------- table ---------------------------}}
+	<table class="invoice__table">
+		<tr class="invoice__table_header">
+			<th style="width: 60%;">Название</th>
+			<th style="width:  3%;">Ед.&nbsp;изм.</th>
+			<th style="width: 15%;" class="right">Цена</th>
+			<th style="width:  2%;" class="right">Количество</th>
+			<th style="width: 15%;" class="right">Сумма</th>
+		</tr>
+{foreach('products')}
+		<tr class="grid">
+			<td>{#.product_name}</td>
+			<td>{#.product_units}</td>
+			<td class="right">{#.product_price_one}</td>
+			<td class="right">{#.product_quantity}</td>
+			<td class="right">{#.product_item_price}</td>
+		</tr>
+{/foreach}
+		<tr class="invoice__table_add">
+			<td colspan="4" class="right"><b>Скидка</b></td>
+			<td class="right">{discount}</td>
+		</tr>
+		<tr class="invoice__table_add">
+			<td colspan="4" class="right"><b>Доставка</b></td>
+			<td class="right">{delivery}</td>
+		</tr>
+		<tr class="invoice__table_total">
+			<td colspan="4" class="right"><b>Итого</b></td>
+			<td class="right"><b>{total_sum}</b></td>
+		</tr>
+		<tr class="invoice__table_total_sum"><td colspan="5">Сумма: <b>{total_sum}</b> ({num_to_str})</td></tr>
+	</table>
+
+	</div>
+
+</div>

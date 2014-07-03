@@ -56,7 +56,7 @@ class yf_divide_pages {
 		$records_on_page = abs(intval($extra['records_on_page'] ?: $records_on_page));
 		$per_page = $records_on_page ?: (MAIN_TYPE_ADMIN ? conf('admin_per_page') : conf('user_per_page'));
 		if (!$per_page) {
-			$per_page = $this->DEFAULT_PER_PAGE;
+			$per_page = conf('per_page') ?: $this->DEFAULT_PER_PAGE;
 		}
 		$num_records	= abs(intval($extra['num_records'] ?: $num_records));
 		$tpls_path		= $extra['tpls_path'] ?: $tpls_path;
@@ -98,6 +98,8 @@ class yf_divide_pages {
 			'first_record'	=> intval($rendered['first']), // Counter start value for the current page
 			'total_pages'	=> intval($total_pages),
 			'limited_pages' => intval($limited_pages),
+			'per_page'		=> intval($per_page),
+			'requested_page'=> intval($requested_page),
 		);
 		return array_values($result); // Needed for compatibility with tons of legacy code, that using list(...) = divide_pages(...)
 	}
@@ -105,23 +107,15 @@ class yf_divide_pages {
 	/**
 	* Divide pages using given array
 	*/
-	function go_with_array ($items_array = array(), $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1) {
-		$total = count($items_array);
-		// Number of records to show on one page
-		$records_on_page = intval($records_on_page);
-		$per_page = $records_on_page ?: (MAIN_TYPE_ADMIN ? conf('admin_per_page') : conf('user_per_page'));
-		if (empty($per_page)) {
-			$per_page = $this->DEFAULT_PER_PAGE;
-		}
-		list(, $pages, ) = $this->go(null, $url_path, $render_type, $per_page, $total);
+	function go_with_array ($items_array = array(), $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = array()) {
+		$result = $this->go(null, $url_path, $render_type, $records_on_page, $num_records ?: count($items_array), $tpls_path, $add_get_vars, $extra);
+		$per_page = $result[6];
+		$requested_page = $result[7];
 		if (count($items_array) > $per_page) {
-			$items_array = array_slice($items_array, (empty($_GET['page']) ? 0 : intval($_GET['page']) - 1) * $per_page, $per_page, true);
+			$items_array = array_slice($items_array, (empty($requested_page) ? 0 : $requested_page - 1) * $per_page, $per_page, true);
 		}
-		return array(
-			$items_array,
-			trim($pages),
-			intval($total)
-		);
+		$result[0] = $items_array;
+		return $result;
 	}
 
 	/**
