@@ -154,7 +154,11 @@ class yf_manage_shop_paywill{
 			'date'			=> _format_date($order_info['date'], '%d.%m.%Y г.'),
 //			'payment'		=> common()->get_static_conf('payment_methods', $order_info['payment']),
 			'products'		=> $out['products'],
-			'delivery'		=> ($order_info['delivery_price'] !== '')? $_class_shop->_format_price(floatval($order_info['delivery_price'])) : 'не расчитана',
+			'delivery'		=>
+				// empty( $order_info[ 'delivery_price' ] ) ?
+					// '&mdash;' :
+					// $_class_shop->_format_price(0) :
+					$_class_shop->_format_price(floatval($order_info['delivery_price'])) ,
 			'delivery_id'       => $delivery_id,
 			'delivery_type'     => $delivery_type,
 			'delivery_name'     => $delivery_name,
