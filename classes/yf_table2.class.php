@@ -875,7 +875,7 @@ class yf_table2 {
 						$link_trim_width = $extra['link_trim_width'];
 					}
 					$link_text = strlen($text) ? mb_strimwidth($text, 0, $link_trim_width, '...') : t('link');
-					$attrs .= ' title="'._prepare_html(trim($text)).'"';
+					$attrs .= ' title="'._prepare_html(trim($extra['link_title']) ?: trim($text)).'"';
 					$body .= '<a href="'.trim($link).'" class="'.trim($class).'"'. $attrs. '>'._prepare_html($link_text).'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {

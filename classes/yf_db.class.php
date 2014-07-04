@@ -229,9 +229,21 @@ class yf_db {
 					}
 				}
 			}
+			$driver_params = array(
+				'host'		=> $this->DB_HOST,
+				'user'		=> $this->DB_USER,
+				'pswd'		=> $this->DB_PSWD,
+				'name'		=> $this->DB_NAME,
+				'persist'	=> $this->DB_PERSIST,
+				'ssl'		=> $this->DB_SSL,
+				'port'		=> $this->DB_PORT,
+				'socket'	=> $this->DB_SOCKET,
+				'charset'	=> $this->DB_CHARSET,
+				'allow_auto_create_db' => $this->ALLOW_AUTO_CREATE_DB,
+			);
 			// Try to connect several times
 			for ($i = 1; $i <= $this->RECONNECT_NUM_TRIES; $i++) {
-				$this->db = new $driver_class_name($this->DB_HOST, $this->DB_USER, $this->DB_PSWD, $this->DB_NAME, $this->DB_PERSIST, $this->DB_SSL, $this->DB_PORT, $this->DB_SOCKET, $this->DB_CHARSET, $this->ALLOW_AUTO_CREATE_DB);
+				$this->db = new $driver_class_name($driver_params);
 				if (!is_object($this->db) || !($this->db instanceof yf_db_driver)) {
 					trigger_error('DB: Wrong driver', $this->CONNECTION_REQUIRED ? E_USER_ERROR : E_USER_WARNING);
 					break;
@@ -1487,6 +1499,23 @@ class yf_db {
 	*/
 	function from() {
 		return $this->query_builder()->from(array('__args__' => func_get_args()));
+	}
+
+	/**
+	* ORM shortcut
+	*/
+	function model($name, $params = array()) {
+		if (strpos($this->DB_TYPE, 'mysql') !== false) {
+			$driver = 'mysql';
+		} else {
+			$driver = $this->DB_TYPE;
+		}
+		$cname = 'db_orm_'.$driver;
+		$obj = clone _class($cname, 'classes/db/');
+		$obj->db = $this;
+		$obj->_load_model($name);
+		$params && $obj->_set_params($params);
+		return $obj;
 	}
 
 	/**

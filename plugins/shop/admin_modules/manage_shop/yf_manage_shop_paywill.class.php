@@ -29,15 +29,30 @@ class yf_manage_shop_paywill{
 		$this->_class_shop       = module( 'shop' );
 	}
 
-	function paywill(){
-		$_GET['id'] = intval($_GET['id']);
-		$replace = $this->_prepare_paywill_body($_GET['id']);
-		$html = db()->get_one('SELECT text FROM '.db('static_pages').' WHERE `name`= "paywill"');
-		$out = str_replace('__PAYWILL_BODY__', $replace, $html);
-		if($_GET['pdf']){
-			common()->pdf_page($out, $_GET['id']);
-		}else{
-			echo $out;
+	function paywill() {
+		$id = (int)$_GET[ 'id' ];
+		$_GET[ 'id' ] = $id;
+		list( $css, $html ) = $this->_prepare_paywill_body( $id );
+		$tpl = db()->get_one('SELECT text FROM '.db('static_pages').' WHERE `name`= "paywill"');
+		if( $_GET[ 'pdf' ] ) {
+			if( !empty( $tpl ) ) {
+				$html_page = str_replace( '__PAYWILL_BODY__', $html, $tpl );
+			}
+			common()->pdf_page( array(
+				'css'  => $css,
+				'html' => $html_page,
+				'file' => $id,
+			));
+		} else {
+			$body = sprintf(
+				'<style>%s</style>%s'
+				, $css
+				, $html
+			);
+			if( !empty( $tpl ) ) {
+				$body = str_replace( '__PAYWILL_BODY__', $body, $tpl );
+			}
+			echo $body;
 		}
 		exit;
 	}
@@ -139,7 +154,11 @@ class yf_manage_shop_paywill{
 			'date'			=> _format_date($order_info['date'], '%d.%m.%Y г.'),
 //			'payment'		=> common()->get_static_conf('payment_methods', $order_info['payment']),
 			'products'		=> $out['products'],
-			'delivery'		=> ($order_info['delivery_price'] !== '')? $_class_shop->_format_price(floatval($order_info['delivery_price'])) : 'не расчитана',
+			'delivery'		=>
+				// empty( $order_info[ 'delivery_price' ] ) ?
+					// '&mdash;' :
+					// $_class_shop->_format_price(0) :
+					$_class_shop->_format_price(floatval($order_info['delivery_price'])) ,
 			'delivery_id'       => $delivery_id,
 			'delivery_type'     => $delivery_type,
 			'delivery_name'     => $delivery_name,
@@ -147,7 +166,10 @@ class yf_manage_shop_paywill{
 			'discount'		=> $_class_shop->_format_price( $discount_price ),
 			'num_to_str'	=> $num_to_str,
 		);
-		return tpl()->parse('shop/paywill', $replace);
+		return( array(
+			tpl()->parse('shop/invoice_css',  $replace),
+			tpl()->parse('shop/invoice_html', $replace),
+		));
 	}
 
 }

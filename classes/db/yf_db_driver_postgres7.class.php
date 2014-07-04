@@ -33,11 +33,12 @@ class yf_db_driver_postgres7 extends yf_db_driver {
 
 	/**
 	*/
-	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false) {
+	function __construct(array $params) {
 		if (!function_exists('pg_connect')) {
 			trigger_error('Postgres db driver require missing php extension pgsql', E_USER_ERROR);
 			return false;
 		}
+/*
 		$this->connect_string = '';
 		if (strlen($user)) {
 			$this->connect_string .= 'user='.$user.' ';
@@ -60,6 +61,7 @@ class yf_db_driver_postgres7 extends yf_db_driver {
 		$this->persistency = $persistency;
 		$this->db_connect_id = $this->persistency ? pg_pconnect($this->connect_string) : pg_connect($this->connect_string);
 		return $this->db_connect_id ? $this->db_connect_id : false;
+*/
 	}
 
 	/**

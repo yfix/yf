@@ -156,6 +156,16 @@ class yf_manage_shop_orders{
 						$order_info[ 'discount_add' ] = $discount;
 						$sql[ 'discount_add' ] = $discount;
 					}
+					if( $f == 'delivery_id' ) {
+						$value = (int)$sql[ $f ];
+						$value = $value > 0 ? $value : $order_info[ $f ];
+						$sql[ $f ] = $value;
+					}
+					if( $f == 'delivery_type' ) {
+						$value = (int)$sql[ $f ];
+						$order_info[ 'payment' ] = $value;
+						$sql[ 'payment' ] = $value;
+					}
 				}
 			}
 			if (count($sql)>0) {
@@ -283,9 +293,9 @@ class yf_manage_shop_orders{
 			->email('email')
 			->info('phone')
 			->container('<a href="./?object='.main()->_get('object').'&action=send_sms&phone='.urlencode($replace["phone"]).'" class="btn">Send SMS</a><br /><br />')
-			->select_box('delivery_type', _class( '_shop_delivery', 'modules/shop/' )->_get_types(), array( 'desc' => 'Тип доставки' ) )
-			->select_box('delivery_id', _class( '_shop_delivery', 'modules/shop/' )->_get_locations_by_type( $replace[ 'delivery_type' ] ), array( 'class' => 'delivery_id', 'desc' => 'Отделение' ) )
-			->text('delivery_location', 'Отделение доставки', array( 'class' => 'delivery_location' ))
+			->select_box('delivery_type', _class( '_shop_delivery', 'modules/shop/' )->_get_types(), array( 'desc' => 'Тип доставки', 'class_add_wrapper' => 'delivery_type_wrap' ) )
+			->select_box('delivery_id', _class( '_shop_delivery', 'modules/shop/' )->_get_locations_by_type( $replace[ 'delivery_type' ] ), array( 'class' => 'delivery_id', 'class_add_wrapper' => 'delivery_id_wrap', 'desc' => 'Отделение' ) )
+			->text('delivery_location', 'Отделение доставки', array( 'class' => 'delivery_location', 'class_add_wrapper' => 'delivery_location_wrap' ))
 			->text('address')
 			->text('house')
 			->text('apartment')
@@ -347,6 +357,24 @@ class yf_manage_shop_orders{
 				$(".delivery_id").on( "change", function( event ) {
 					var location =  $(this).find( "option:selected" ).text();
 					$(".delivery_location").val( location );
+				});
+				var delivery_type__on_change = function( target ) {
+					var value = +$(target).find( "option:selected" ).val();
+					if( value == 1 ) {
+						$(".delivery_id_wrap").hide();
+						$(".delivery_location_wrap").hide();
+					} else if( value == 2 ) {
+						var count = +$(".delivery_id_wrap").find( "option" ).length;
+						if( count > 1 ) {
+							$(".delivery_id_wrap").show();
+							$(".delivery_location_wrap").show();
+						}
+					}
+console.log( "count", count );
+				}
+				delivery_type__on_change( $(".delivery_type_wrap") );
+				$(".delivery_type_wrap").on( "change", function( event ) {
+					delivery_type__on_change( event.target );
 				});
 			});
 			</script>

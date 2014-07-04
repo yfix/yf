@@ -37,4 +37,12 @@ class tpl_driver_yf_include_test extends tpl_abstract {
 		$this->assertEquals('__ok__|', self::_tpl( '{catch(cond1)}{if(k1 eq 5)}__ok__{/if}{/catch}{catch(cond2)}{if(k2 eq 4)}__ok2__{/if}{/catch}{include("unittest_include_catch")}', array('k1' => '5') ));
 		$this->assertEquals('__ok__|', self::_tpl( '{catch(cond1)}{if("k1" eq "5")}__ok__{/if}{/catch}{catch(cond2)}{if("k2" eq "4")}__ok2__{/if}{/catch}{cond1}|{cond2}', array('k1' => '5') ));
 	}
+	public function test_multi_include() {
+		self::_tpl( 'Hello1', array(), 'unittest_include1' );
+		self::_tpl( 'Hello2', array(), 'unittest_include2' );
+		self::_tpl( 'Hello3', array(), 'unittest_include3' );
+		$this->assertEquals('Hello1 Hello1 Hello1', self::_tpl( '{include("unittest_include1")} {include("unittest_include1")} {include("unittest_include1")}' ));
+		$this->assertEquals('Hello1 Hello2 Hello3', self::_tpl( '{include("unittest_include1")} {include("unittest_include2")} {include("unittest_include3")}' ));
+		$this->assertEquals('Hello1 Hello2 Hello1 Hello2', self::_tpl( '{include("unittest_include1")} {include("unittest_include2")} {include("unittest_include1")} {include("unittest_include2")}' ));
+	}
 }
