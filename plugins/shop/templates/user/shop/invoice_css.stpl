@@ -99,4 +99,4 @@ h1.invoice__header {
 
 }
 
-{{ vim: ft=css }}
+{{-- vim: ft=css --}}
