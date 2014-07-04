@@ -757,13 +757,13 @@ class yf_db_admin {
 					array($name),
 				);
 			},
-			'^/@object/((?P<name1>indexes|triggers|foreign_keys)|(index|trigger|foreign_key)_(?P<name>[a-z0-9_]+))' => function($m) use($db_name, $table) {
+			'^/@object/((?P<name2>indexes|triggers|foreign_keys)|(index|trigger|foreign_key)_(?P<name>[a-z0-9_]+))' => function($m) use($db_name, $table) {
 				$name = ucwords(str_replace('_', ' ', $m['name'] ?: $m[1]));
-				$name1 = $m['name1'] ? ucwords(str_replace('_', ' ', $m['name1'])) : '';
+				$name2 = $m['name2'] ? ucwords(str_replace('_', ' ', $m['name2'])) : '';
 				return array(
 					array('Database: '.$db_name, url_admin('/@object/database_show/'.$db_name)),
 					array('Table: '.$table, url_admin('/@object/table_show/'.$db_name.'.'.$table)),
-					$name1 ? array($name1, url_admin('/@object/'.$m['name1'].'/'.$db_name.'.'.$table)) : '',
+					$name2 ? array($name2, url_admin('/@object/'.$m['name2'].'/'.$db_name.'.'.$table)) : '',
 					array($name),
 				);
 			},
