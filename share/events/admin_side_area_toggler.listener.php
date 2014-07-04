@@ -1,6 +1,5 @@
 <?php
 
-/*
 MAIN_TYPE_ADMIN && _class('core_events')->listen('block.prepend[center_area]', function() {
 	if (!main()->is_common_page()) {
 		return ;
@@ -12,9 +11,8 @@ MAIN_TYPE_ADMIN && _class('core_events')->listen('block.prepend[center_area]', f
 	$id = 'yf_side_panel_toggler';
 	$cookie_name = 'yf_side_panel_hidden';
 	$is_hidden = (bool)$_COOKIE[$cookie_name];
-	css('.center_area_wide { margin-left:1%; margin-right:1%; width:98%; }');
-	js('jquery-cookie');
-	jquery('
+
+	$jquery = '
 		var icons = '.json_encode($icons).'
 			, id = "'.$id.'"
 			, cookie_name = "'.$cookie_name.'"
@@ -47,9 +45,21 @@ MAIN_TYPE_ADMIN && _class('core_events')->listen('block.prepend[center_area]', f
 				$.cookie(cookie_name, is_hidden ? 1 : 0, {path: "/"});
 			} catch(e) { }
 		})
-	');
-	return '<a class="btn btn-default btn-small" id="'.$id.'" style="position:fixed; top:45px; left:5px;">
+	';
+	$css = '.center_area_wide { margin-left:1%; margin-right:1%; width:98%; }';
+
+	$js .= '<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>'.PHP_EOL;
+	$js .= '<script type="text/javascript">'.PHP_EOL.'$(function(){'. PHP_EOL. $jquery. PHP_EOL. '})'.PHP_EOL.'</script>'.PHP_EOL;
+	_class('core_events')->listen('show_js.append', function() use ($js,$css) {
+		return $js. '<style type="text/css">'.$css.'</style>'.PHP_EOL;
+	});
+/*
+	css($css);
+	js('jquery-cookie');
+	jquery($jquery);
+*/
+	$body .= '<a class="btn btn-default btn-small" id="'.$id.'" style="position:fixed; top:45px; left:5px;">
 		<i class="'.($is_hidden ? $icons['closed'] : $icons['open']).'"></i></a>'
 		.($is_hidden ? '<style type="text/css">.left_area {display:none;}</style>' : '');
+	return $body;
 });
-*/
