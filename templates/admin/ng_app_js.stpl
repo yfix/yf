@@ -1,5 +1,5 @@
-
-	<script>
+	<script type="text/javascript">
+	try {
 		var ng_app_admin = angular.module( '{ng_app}', [
 			'ngAnimate'
 			, 'ngSanitize'
@@ -16,4 +16,5 @@
 				, startView: 2
 			});
 		});
+	} catch (e) { console.error(e); }
 	</script>
