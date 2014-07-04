@@ -64,6 +64,7 @@ class yf_core_js {
 				return $packed;
 			}
 		}
+		$prepend = _class('core_events')->fire('show_js.prepend');
 		$out = array();
 		// Process previously added content, depending on its type
 		foreach ((array)$this->content as $md5 => $v) {
@@ -86,8 +87,9 @@ class yf_core_js {
 				$out[$md5] = $text;
 			}
 		}
+		$append = _class('core_events')->fire('show_js.append', array('out' => &$out));
 		$this->content = array();
-		return implode(PHP_EOL, $out);
+		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
 	}
 
 	/**
