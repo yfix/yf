@@ -59,7 +59,7 @@ class yf_db_driver_mysql41 extends yf_db_driver {
 			$connect_host = $this->params['socket'];
 		} else {
 			$connect_port = $this->params['port'] && $this->params['port'] != $this->DEF_PORT ? $this->params['port'] : '';
-			$connect_host = $this->params['server']. ($connect_port ? ':'.$connect_port : '');
+			$connect_host = $this->params['host']. ($connect_port ? ':'.$connect_port : '');
 		}
 		$this->db_connect_id = $this->params['persist'] 
 			? mysql_pconnect($connect_host, $this->params['user'], $this->params['pswd'], $this->params['ssl'] ? MYSQL_CLIENT_SSL : 0) 

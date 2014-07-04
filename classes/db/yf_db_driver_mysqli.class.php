@@ -60,10 +60,10 @@ class yf_db_driver_mysqli extends yf_db_driver {
 			$connect_host = $this->params['socket'];
 		} else {
 			$connect_port = $this->params['port'] && $this->params['port'] != $this->DEF_PORT ? $this->params['port'] : '';
-			$connect_host = ($this->params['persist'] ? 'p:' : '').$this->params['server']. ($connect_port ? ':'.$connect_port : '');
+			$connect_host = ($this->params['persist'] ? 'p:' : '').$this->params['host']. ($connect_port ? ':'.$connect_port : '');
 		}
 		mysqli_options($this->db_connect_id, MYSQLI_OPT_CONNECT_TIMEOUT, 2);
-		$is_connected = mysqli_real_connect($this->db_connect_id, $this->params['server'], $this->params['user'], $this->params['pswd'], '', $this->params['port'], $this->params['socket'], $this->params['ssl'] ? MYSQLI_CLIENT_SSL : 0);
+		$is_connected = mysqli_real_connect($this->db_connect_id, $this->params['host'], $this->params['user'], $this->params['pswd'], '', $this->params['port'], $this->params['socket'], $this->params['ssl'] ? MYSQLI_CLIENT_SSL : 0);
 		if (!$is_connected) {
 			$this->_connect_error = true;
 			$this->db_connect_id = null;
