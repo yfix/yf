@@ -201,7 +201,7 @@ class yf_db_admin {
 							'triggers'		=> count($all_triggers[$name]),
 						);
 					}; return $data;
-				}, $this->table_params + array('feedback' => &$totals['tables']))
+				}, $this->table_params + array('feedback' => &$totals['tables'], 'ajax_data_callback' => url_admin('/@object/database_show_ajax/'.$db_name.'/')))
 				->check_box('name', array('th_desc' => '#'))
 				->link('name', url_admin('/@object/table_show/'.$db_name.'.%d/'))
 				->text('engine')
