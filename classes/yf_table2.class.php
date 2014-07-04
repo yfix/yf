@@ -201,9 +201,13 @@ class yf_table2 {
 			if ($params['condensed']) {
 				$params['table_class'] .= ' table-condensed';
 			}
-			$body .= '<table class="table table-bordered table-striped table-hover'
-				.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'
-				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
+// TODO: convert code, using this into "table_class_add" instead of "table_class"
+#			$table_class = $params['table_class'] ?: 'table table-bordered table-striped table-hover';
+			$table_class = trim('table table-bordered table-striped table-hover '.$params['table_class']);
+			$table_class .= ' '.$params['table_class_add'];
+
+			$table_attrs = (isset($params['table_attr']) ? ' '.$params['table_attr'] : '');
+			$body .= '<table class="'.trim($table_class).'"'.$table_attrs.'>'.PHP_EOL;
 
 			if (!$params['no_header'] && !$params['rotate_table']) {
 				$thead_attrs = '';
