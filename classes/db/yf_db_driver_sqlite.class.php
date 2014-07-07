@@ -19,20 +19,15 @@ class yf_db_driver_sqlite extends yf_db_driver {
 			trigger_error('SQLite db driver require missing php extension sqlite', E_USER_ERROR);
 			return false;
 		}
-/*
-		$this->persistency = $persistency;
-		$this->user = $user;
-		$this->server = $server . (($port) ? ':' . $port : '');
-		$this->dbname = $database;
+		$this->params = $params;
+		$server = $this->params['host'] . (($this->params['port']) ? ':' . $this->params['port'] : '');
 
 		$error = '';
-		$this->db_connect_id = ($this->persistency) ? @sqlite_popen($this->server, 0666, $error) : @sqlite_open($this->server, 0666, $error);
-
+		$this->db_connect_id = ($this->persistency) ? @sqlite_popen($server, 0666, $error) : @sqlite_open($server, 0666, $error);
 		if ($this->db_connect_id) {
 			@sqlite_query('PRAGMA short_column_names = 1', $this->db_connect_id);
 		}
 		return ($this->db_connect_id) ? true : array('message' => $error);
-*/
 	}
 
 	/**

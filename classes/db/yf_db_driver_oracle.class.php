@@ -38,23 +38,17 @@ class yf_db_driver_oracle extends yf_db_driver {
 			trigger_error('Oracle db driver require missing php extension OCI', E_USER_ERROR);
 			return false;
 		}
-/*
-		$this->persistency = $persistency;
-		$this->user = $user;
-		$this->password = $password;
-		$this->server = $server;
-		$this->dbname = $database;
-		if ($this->persistency) {
-			$this->db_connect_id = @OCIPLogon($this->user, $this->password, $this->server);
+		$this->params = $params;
+		if ($this->params['persistency']) {
+			$this->db_connect_id = @OCIPLogon($this->params['user'], $this->params['pswd'], $this->params['host']);
 		} else {
-			$this->db_connect_id = @OCINLogon($this->user, $this->password, $this->server);
+			$this->db_connect_id = @OCINLogon($this->params['user'], $this->params['pswd'], $this->params['host']);
 		}
 		if ($this->db_connect_id) {
 			return $this->db_connect_id;
 		} else {
 			return false;
 		}
-*/
 	}
 
 	/**

@@ -180,6 +180,24 @@ class yf_db_admin {
 			return _e('Wrong name');
 		}
 		$db = $this->_db_custom_connection($db_name);
+
+		$jquery = '
+			$("table[data-ajax-table-url]").each(function(){
+				var table = $(this)
+					, url = table.data("ajax-table-url")
+					, rows = table.data("ajax-table-rows")
+
+				console.log(table, url, rows);
+
+				$.post(url, function(data){
+					console.log(data);
+				})
+			})
+		';
+		_class('core_events')->listen('show_js.append', function() use ($jquery) {
+			return '<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.$jquery.PHP_EOL.'})'.PHP_EOL.'</script>'.PHP_EOL;
+		});
+
 		return _class('html')->tabs(array(
 			'tables' => table(
 				function() use ($db, $db_name) {
@@ -201,7 +219,12 @@ class yf_db_admin {
 							'triggers'		=> count($all_triggers[$name]),
 						);
 					}; return $data;
-				}, $this->table_params + array('feedback' => &$totals['tables']))
+				}, $this->table_params + array(
+					'feedback' => &$totals['tables'],
+#					'ajax_data_callback' => url_admin('/@object/database_show_ajax/'.$db_name.'/'),
+#					'table_class_add' => 'table_data_ajax',
+					'table_attr' => 'data-ajax-table-url="'._prepare_html(url_admin('/@object/database_show_ajax/'.$db_name.'/')).'" data-ajax-table-rows="indexes,foreign_keys,triggers"'
+				))
 				->check_box('name', array('th_desc' => '#'))
 				->link('name', url_admin('/@object/table_show/'.$db_name.'.%d/'))
 				->text('engine')
@@ -757,13 +780,13 @@ class yf_db_admin {
 					array($name),
 				);
 			},
-			'^/@object/((?P<name1>indexes|triggers|foreign_keys)|(index|trigger|foreign_key)_(?P<name>[a-z0-9_]+))' => function($m) use($db_name, $table) {
+			'^/@object/((?P<name2>indexes|triggers|foreign_keys)|(index|trigger|foreign_key)_(?P<name>[a-z0-9_]+))' => function($m) use($db_name, $table) {
 				$name = ucwords(str_replace('_', ' ', $m['name'] ?: $m[1]));
-				$name1 = $m['name1'] ? ucwords(str_replace('_', ' ', $m['name1'])) : '';
+				$name2 = $m['name2'] ? ucwords(str_replace('_', ' ', $m['name2'])) : '';
 				return array(
 					array('Database: '.$db_name, url_admin('/@object/database_show/'.$db_name)),
 					array('Table: '.$table, url_admin('/@object/table_show/'.$db_name.'.'.$table)),
-					$name1 ? array($name1, url_admin('/@object/'.$m['name1'].'/'.$db_name.'.'.$table)) : '',
+					$name2 ? array($name2, url_admin('/@object/'.$m['name2'].'/'.$db_name.'.'.$table)) : '',
 					array($name),
 				);
 			},

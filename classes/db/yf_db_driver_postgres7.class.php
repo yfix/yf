@@ -38,6 +38,7 @@ class yf_db_driver_postgres7 extends yf_db_driver {
 			trigger_error('Postgres db driver require missing php extension pgsql', E_USER_ERROR);
 			return false;
 		}
+		$this->params = $params;
 /*
 		$this->connect_string = '';
 		if (strlen($user)) {
