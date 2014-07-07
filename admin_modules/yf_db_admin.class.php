@@ -189,8 +189,11 @@ class yf_db_admin {
 
 				console.log(table, url, rows);
 
-				$.post(url, function(data){
+				$.post(url, function(data) {
 					console.log(data);
+					for (key1 in data) {
+						console.log(key1, data[key1]);
+					}
 				})
 			})
 		';
@@ -231,9 +234,9 @@ class yf_db_admin {
 				->text('collation')
 				->text('rows')
 				->text('data_size')
-				->link('indexes', url_admin('/@object/indexes/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter indexes'))
-				->link('foreign_keys', url_admin('/@object/foreign_keys/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter foreign keys'))
-				->link('triggers', url_admin('/@object/triggers/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter triggers'))
+				->link('indexes', url_admin('/@object/indexes/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter indexes', 'th_id' => 'th_indexes'))
+				->link('foreign_keys', url_admin('/@object/foreign_keys/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter foreign keys', 'th_id' => 'th_foreign_keys'))
+				->link('triggers', url_admin('/@object/triggers/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter triggers', 'th_id' => 'th_triggers'))
 				->btn_edit('Alter table', url_admin('/@object/table_alter/'.$db_name.'.%d/'), array('btn_no_text' => 1))
 				->btn_delete('Drop', url_admin('/@object/table_drop/'.$db_name.'.%d/'), array('btn_no_text' => 1))
 				->header_add('Create table', url_admin('/@object/table_create/'.$db_name.'/'))
