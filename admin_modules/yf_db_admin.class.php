@@ -261,6 +261,9 @@ class yf_db_admin {
 					'tr' => function($row, $_id) {
 						return ' id="tr_'.$_id.'"';
 					},
+#					'th' => function($_id) {
+#						return ' id="th_'.$_id.'"';
+#					},
 				))
 				->check_box('name', array('th_desc' => '#'))
 				->link('name', url_admin('/@object/table_show/'.$db_name.'.%d/'))
