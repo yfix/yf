@@ -155,6 +155,9 @@ if (!function_exists('css')) {
 if (!function_exists('require_css')) {
 	function require_css($content, $type = 'auto', $params = array()) { return _class('core_css')->add($content, $type, $params); }
 }
+if (!function_exists('events')) {
+	function events() { return _class('core_events'); }
+}
 if (!function_exists('getmicrotime')) {
 	function getmicrotime() { return microtime(true); }
 }

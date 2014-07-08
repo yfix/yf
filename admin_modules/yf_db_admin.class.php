@@ -185,12 +185,43 @@ class yf_db_admin {
 			$("table[data-ajax-table-url]").each(function(){
 				var table = $(this)
 					, url = table.data("ajax-table-url")
-					, rows = table.data("ajax-table-rows")
-
-				console.log(table, url, rows);
-
-				$.post(url, function(data){
-					console.log(data);
+					, tr_id_key = "name"
+					, spinner = table.before("<i class=\"icon icon-spinner icon-2x icon-spin fa fa-spinner fa-2x fa-spin\" id=\"table_ajax_spinner\" style=\"position:fixed;\"></i>").prev()
+					, th_positions = { }
+				;
+				table.find("th").each(function(i) {
+					var th_id = $(this).attr("id");
+					if (th_id && th_id.substring(0, 3) == "th_") {
+						th_positions[th_id.substring(3)] = i;
+					}
+				})
+				var _process_ajax_data = function(data) {
+					var tr_id_key_len = tr_id_key.length + 1
+					table.find("tr").each(function(i) {
+						var tr = $(this);
+						var tr_id = tr.find(":checkbox").attr("name");
+						if (tr_id) {
+							// name[test_user] => user
+							tr_id = tr_id.substring(tr_id_key_len, tr_id.length - 1);
+						}
+						if (!tr_id) {
+							return;
+						}
+						for (key1 in data) {
+							var td = tr.find("td").eq(th_positions[key1])
+							var ajax_arr = data[key1][tr_id];
+							var td_a = td.find("a");
+							if (td_a) {
+								td_a.text(ajax_arr)
+							} else {
+								td.text(ajax_arr)
+							}
+						}
+					})
+					spinner.remove();
+				}
+				$.post(url, function(data) {
+					_process_ajax_data(data);
 				})
 			})
 		';
@@ -201,11 +232,6 @@ class yf_db_admin {
 		return _class('html')->tabs(array(
 			'tables' => table(
 				function() use ($db, $db_name) {
-/*
-					$all_indexes	= $db->utils()->list_all_indexes($db_name);
-					$all_foreign	= $db->utils()->list_all_foreign_keys($db_name);
-					$all_triggers	= $db->utils()->list_all_triggers($db_name);
-*/
 					foreach ((array)$db->utils()->list_tables_details() as $name => $a) {
 						$data[$name] = array(
 							'name'			=> $name,
@@ -213,7 +239,6 @@ class yf_db_admin {
 							'collation'		=> $a['collation'],
 							'rows'			=> $a['rows'],
 							'data_size'		=> $a['data_size'],
-// TODO: load these heavy details from AJAX
 							'indexes'		=> count($all_indexes[$name]),
 							'foreign_keys'	=> count($all_foreign[$name]),
 							'triggers'		=> count($all_triggers[$name]),
@@ -221,9 +246,7 @@ class yf_db_admin {
 					}; return $data;
 				}, $this->table_params + array(
 					'feedback' => &$totals['tables'],
-#					'ajax_data_callback' => url_admin('/@object/database_show_ajax/'.$db_name.'/'),
-#					'table_class_add' => 'table_data_ajax',
-					'table_attr' => 'data-ajax-table-url="'._prepare_html(url_admin('/@object/database_show_ajax/'.$db_name.'/')).'" data-ajax-table-rows="indexes,foreign_keys,triggers"'
+					'table_attr' => 'data-ajax-table-url="'._prepare_html(url_admin('/@object/database_show_ajax/'.$db_name.'/')).'"'
 				))
 				->check_box('name', array('th_desc' => '#'))
 				->link('name', url_admin('/@object/table_show/'.$db_name.'.%d/'))
@@ -231,9 +254,9 @@ class yf_db_admin {
 				->text('collation')
 				->text('rows')
 				->text('data_size')
-				->link('indexes', url_admin('/@object/indexes/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter indexes'))
-				->link('foreign_keys', url_admin('/@object/foreign_keys/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter foreign keys'))
-				->link('triggers', url_admin('/@object/triggers/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter triggers'))
+				->link('indexes', url_admin('/@object/indexes/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter indexes', 'th_id' => 'th_indexes'))
+				->link('foreign_keys', url_admin('/@object/foreign_keys/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter foreign keys', 'th_id' => 'th_foreign_keys'))
+				->link('triggers', url_admin('/@object/triggers/'.$db_name.'.%d/'), array(), array('link_field_name' => 'name', 'link_title' => 'Alter triggers', 'th_id' => 'th_triggers'))
 				->btn_edit('Alter table', url_admin('/@object/table_alter/'.$db_name.'.%d/'), array('btn_no_text' => 1))
 				->btn_delete('Drop', url_admin('/@object/table_drop/'.$db_name.'.%d/'), array('btn_no_text' => 1))
 				->header_add('Create table', url_admin('/@object/table_create/'.$db_name.'/'))

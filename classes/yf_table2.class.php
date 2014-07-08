@@ -232,12 +232,14 @@ class yf_table2 {
 					if (++$counter2 == 1 && $this->_params['first_col_width']) {
 						$info['extra']['width'] = $this->_params['first_col_width'];
 					}
-					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
+					$th_attrs = '';
+					$th_attrs .= ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
+					$th_attrs .= ($info['extra']['th_id'] ? ' id="'.$info['extra']['th_id'].'"' : '');
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
 					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip'], $name) : '';
 					$title = isset($info['extra']['th_desc']) ? $info['extra']['th_desc'] : $info['desc'];
-					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
+					$body .= '<th'.$th_attrs.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
 					$body .= '<th>'.(isset($params['actions_desc']) ? t($params['actions_desc']) : t('Actions')).'</th>'.PHP_EOL;
