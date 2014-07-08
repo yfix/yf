@@ -1429,11 +1429,19 @@ class yf_main {
 		if (empty($sites_dir)) {
 			$sites_dir = PROJECT_PATH.'sites/';
 		}
-		if (!file_exists($sites_dir)) {
-			return '';
+		if (is_array($sites_dir)) {
+			$dirs = $sites_dir;
+		} else {
+			if (!file_exists($sites_dir)) {
+				return '';
+			}
+			$dirs = array_merge(
+				glob($sites_dir.'*', GLOB_ONLYDIR),
+				glob($sites_dir.'.*', GLOB_ONLYDIR)
+			);
 		}
 		$sites = $sites1 = $sites2 = array();
-		foreach(array_merge(glob($sites_dir.'*', GLOB_ONLYDIR), glob($sites_dir.'.*', GLOB_ONLYDIR)) as $v) {
+		foreach((array)$dirs as $v) {
 			$v = strtolower(basename($v));
 			if ($v == '.' || $v == '..') {
 				continue;
@@ -1467,7 +1475,7 @@ class yf_main {
 			$server_ip.':'.$server_port,
 			$server_ip,
 			$sip[0].'.'.$sip[1].'.'.$sip[2].'.:'.$server_port,
-			$sip[0].'.'.$sip[1].'.'.$sip[2],
+			$sip[0].'.'.$sip[1].'.'.$sip[2].'.',
 			$sip[0].'.'.$sip[1].'.:'.$server_port,
 			$sip[0].'.'.$sip[1].'.',
 			$sip[0].'.:'.$server_port,
