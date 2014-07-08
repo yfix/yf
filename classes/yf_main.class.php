@@ -1452,11 +1452,11 @@ class yf_main {
 				$sites2[$v] = $v;
 			}
 		}
-		function _sort_by_length($a, $b) {
+		$sort_by_length = function($a, $b) {
 			return (strlen($a) < strlen($b)) ? +1 : -1;
-		}
-		uksort($sites1, _sort_by_length);
-		uksort($sites2, _sort_by_length);
+		};
+		uksort($sites1, $sort_by_length);
+		uksort($sites2, $sort_by_length);
 		$sites = $sites1 + $sites2;
 		$found_site = $this->_find_site_path_best_match($sites, $_SERVER['SERVER_ADDR'], $_SERVER['SERVER_PORT'], $_SERVER['HTTP_HOST']);
 		return $found_site;
