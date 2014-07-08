@@ -97,6 +97,11 @@ class yf_table2 {
 		$params = $tmp;
 		unset($tmp);
 
+		if (isset($params['data-postload-url'])) {
+			_class('table2_postload', 'classes/table2/')->postload($params['postload_params'], $this);
+			$params['table_attr'] = trim($params['table_attr'].' data-postload-url="'._prepare_html($params['data-postload-url']).'"');
+		}
+
 		$on_before_render = isset($params['on_before_render']) ? $params['on_before_render'] : $this->_on['on_before_render'];
 		if (is_callable($on_before_render)) {
 			$on_before_render($params, $this);
