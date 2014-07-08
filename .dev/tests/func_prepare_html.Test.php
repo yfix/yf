@@ -3,7 +3,7 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 class func_prepare_html_test extends PHPUnit_Framework_TestCase {
-	public function test_1() {
+	public function test_prepare_html() {
 		$this->assertEquals('test', _prepare_html('test'));
 		$this->assertEquals('test'.PHP_EOL.'test', _prepare_html('test'.PHP_EOL.'test'));
 		$this->assertEquals('&#123;', _prepare_html('{'));
