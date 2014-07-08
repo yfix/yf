@@ -270,7 +270,6 @@ if (!function_exists('_attrs_string2array')) {
 	}
 }
 
-// TODO: unit tests
 // We need this to avoid encoding & => &amp; by standard htmlspecialchars()
 if (!function_exists('_htmlchars')) {
 	function _htmlchars($str = '') {
