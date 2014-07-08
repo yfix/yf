@@ -3,12 +3,12 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 class class_main_test extends PHPUnit_Framework_TestCase {
-	private $test_defaults = array(
+	public $test_defaults = array(
 		'ip'	=> '192.168.111.222',
 		'port'	=> '80',
 		'host'	=> 'www.unit-test.dev',
 	);
-	private function _get__find_site_path_best_match() {
+	public function _get__find_site_path_best_match() {
 		$_this = $this;
 		return function($sites, $server_ip = '', $server_port = '', $server_host = '') use ($_this) {
 			$server_ip = $server_ip ?: $_this->test_defaults['ip'];
@@ -17,7 +17,7 @@ class class_main_test extends PHPUnit_Framework_TestCase {
 			return main()->_find_site_path_best_match($sites, $server_ip, $server_port, $server_host);
 		};
 	}
-	private function _get__find_site() {
+	public function _get__find_site() {
 		$_this = $this;
 		return function($sites_dir, $server_ip = '', $server_port = '', $server_host = '') use ($_this) {
 			$_SERVER['SERVER_ADDR'] = $server_ip ?: $_this->test_defaults['ip'];
