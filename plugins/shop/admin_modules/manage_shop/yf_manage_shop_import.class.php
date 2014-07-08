@@ -12,7 +12,8 @@ class yf_manage_shop_import {
 			'dobra_hata' => 'dobra hata',
 			'velika_kishenya' => 'velika kishenya',
 			'ekanevidal' => 'eka nevidal',
-			'electrolux' => 'electrolux'
+			'electrolux' => 'electrolux',
+			'promozp' => 'promoZP'            
 		);
 		$this->_modes = array(
 			'validate' => 'validate',
@@ -315,9 +316,9 @@ class yf_manage_shop_import {
 		}
 		return $this->table_format($result);
 	}
+    
 
-
-	function process_items_dobra_hata($items, $mode = 'process') { // process/validate
+    function process_items_dobra_hata($items, $mode = 'process') { // process/validate
 		$supplier_id = 115;
 		$products = $this->get_products_by_supplier($supplier_id);
 		$result = array();
@@ -349,6 +350,44 @@ class yf_manage_shop_import {
                                         'update_date' => time(),
 					'cat_id' => intval($cat_id),
 					'description' => $v['description'],
+				);
+				if ($mode == 'process') db()->update(db('shop_products'), _es($v1),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'");
+			}
+			$result[] = $this->add_result($v);			
+		}
+		return $this->table_format($result);
+	}
+    
+	function process_items_promozp($items, $mode = 'process') { // process/validate
+		$supplier_id = 121;
+		$products = $this->get_products_by_supplier($supplier_id);
+		$result = array();
+		foreach ($items as $item) {
+			if (intval($item[0]) == 0 || intval($item[2]) == 0) continue;
+			$v = $this->format_data($item[1],$item[0],$item[3],$supplier_id,$item[2]);
+			$cat_id = array_search($item[6],module('manage_shop')->_category_names);
+			$v['category'] = $item[6] . " - ".$cat_id;
+			$A = db()->get("SELECT `id` FROM `".s_shop_manufacturers."` WHERE `name`='".$item[5]."'");
+			$man_id = $A['id'];
+			
+			//todo:cats
+			if (empty($products[$v['articul']])) {
+				$v['is_new'] = 'new';
+				$v1 = $v;
+				unset($v1['is_new']);
+				unset($v1['category']);
+				
+				$v1['add_date'] = time();												
+				$v1['cat_id'] = intval($cat_id);
+				if ($mode == 'process') db()->insert(db('shop_products'), _es($v1));
+			} else {
+				$v['is_new'] = 'upd';
+				$v1 = array(
+					'price' => $v['price'],
+					'price_raw' => $v['price_raw'],
+					'name' => $v['name'],
+                    'update_date' => time(),
+					'cat_id' => intval($cat_id),
 				);
 				if ($mode == 'process') db()->update(db('shop_products'), _es($v1),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'");
 			}
