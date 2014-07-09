@@ -209,6 +209,7 @@ class yf_manage_shop_import {
 			} else {
 				$v['is_new'] = 'upd';		
 				$v1 = array(
+					'name' => $v['name'],
 					'price' => $v['price'],
 					'price_raw' => $v['price_raw'],
 					'update_date' => time(),
