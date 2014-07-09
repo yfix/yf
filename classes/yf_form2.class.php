@@ -747,7 +747,7 @@ class yf_form2 {
 		$func = function($extra, $r, $_this) {
 			$_this->_prepare_inline_error($extra);
 			$extra['id'] = $_this->_prepare_id($extra);
-			$extra['placeholder'] = t($extra['placeholder'] ?: $extra['desc']);
+			$extra['placeholder'] = t(isset($extra['placeholder']) ? $extra['placeholder'] : $extra['desc']);
 			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
 			$extra['type'] = $extra['type'] ?: 'text';
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
@@ -905,7 +905,7 @@ class yf_form2 {
 	*/
 	function login($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = $extra['type'] ?: 'text';
-		$extra['prepend'] = '<i class="icon-user"></i>';
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="icon-user"></i>';
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
