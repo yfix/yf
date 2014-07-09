@@ -238,8 +238,12 @@ class yf_table2 {
 						$info['extra']['width'] = $this->_params['first_col_width'];
 					}
 					$th_attrs = '';
-					$th_attrs .= ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
-					$th_attrs .= ($info['extra']['th_id'] ? ' id="'.$info['extra']['th_id'].'"' : '');
+					if (isset($info['extra']['th'])) {
+						$th_attrs .= is_array($info['extra']['th']) ? ' '._attrs($info['extra']['th'], array('class','id','width')) : ' '.$info['extra']['th'];
+					} elseif (isset($info['extra']['th_id'])) {
+						$th_attrs .= $info['extra']['th_id'] ? ' id="'.$info['extra']['th_id'].'"' : '';
+					}
+					$th_attrs .= $info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '';
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
 					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip'], $name) : '';
