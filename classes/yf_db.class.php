@@ -1476,7 +1476,7 @@ class yf_db {
 	/**
 	*/
 	function query_builder() {
-		if (strpos($this->DB_TYPE, 'mysql') !== false) {
+		if (strpos($this->DB_TYPE, 'mysql') !== false || $this->DB_TYPE == 'DB_TYPE') {
 			$driver = 'mysql';
 		} else {
 			$driver = $this->DB_TYPE;
@@ -1505,7 +1505,7 @@ class yf_db {
 	* ORM shortcut
 	*/
 	function model($name, $params = array()) {
-		if (strpos($this->DB_TYPE, 'mysql') !== false) {
+		if (strpos($this->DB_TYPE, 'mysql') !== false || $this->DB_TYPE == 'DB_TYPE') {
 			$driver = 'mysql';
 		} else {
 			$driver = $this->DB_TYPE;

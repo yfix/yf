@@ -1,6 +1,6 @@
 <?php
 
-function _fast_search_autocomplete () {
+return function() {
 	if (empty($WHAT)) {
 		$WHAT = trim($_GET['id']);
 	}
@@ -77,4 +77,4 @@ function _fast_search_autocomplete () {
 	main()->_no_fast_init_debug = true;
 
 	return true; // Means success
-}
+};

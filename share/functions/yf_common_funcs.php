@@ -162,9 +162,11 @@ if (!function_exists('my_explode')) {
 			$v = trim($v);
 			if (!strlen($v)) {
 				unset($result[$k]);
+			} else {
+				$result[$k] = $v;
 			}
 		}
-		return $result;
+		return array_values($result);
 	}
 }
 if (!function_exists('_exec_in_background')) {
@@ -183,7 +185,6 @@ if (!function_exists('object_to_array')) {
 		}
 	}
 }
-// TODO: unit tests
 if (!function_exists('obj2arr')) {
 	// Much faster (10x) implementation of object_to_array()
 	function obj2arr(&$obj) {
@@ -269,7 +270,6 @@ if (!function_exists('_attrs_string2array')) {
 	}
 }
 
-// TODO: unit tests
 // We need this to avoid encoding & => &amp; by standard htmlspecialchars()
 if (!function_exists('_htmlchars')) {
 	function _htmlchars($str = '') {
@@ -289,7 +289,6 @@ if (!function_exists('_htmlchars')) {
 	}
 }
 
-// TODO: unit tests
 // Build string of html attributes, used by high-level html generators like form, table, html
 if (!function_exists('_attrs')) {
 	function _attrs($extra, $names) {
@@ -309,7 +308,9 @@ if (!function_exists('_attrs')) {
 		// Custom html attributes forced with sub-array "attr"
 		if (is_array($extra['attr'])) {
 			foreach ($extra['attr'] as $name => $val) {
-				$a[$name] = $extra[$name];
+				if (strlen($name)) {
+					$a[$name] = $val;
+				}
 			}
 		}
 		foreach ($a as $name => $val) {
