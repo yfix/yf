@@ -25,14 +25,6 @@ class yf_user_modules {
 	public $PARSE_YF_MODULE	= 0;
 
 	/**
-	* Framework constructor
-	*/
-	function _init () {
-#		$this->_modules = $this->_get_modules();
-#		unset($this->_modules['']);
-	}
-
-	/**
 	* Default method
 	*/
 	function show () {

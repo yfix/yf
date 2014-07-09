@@ -1,7 +1,7 @@
 <?php
 
 // Fast throw output cache page
-function _fast_output_cache () {
+return function() {
 	$MODULE_CONF = module_conf('output_cache');
 	if (!conf('language')) {
 		conf('language', 'en');
@@ -143,4 +143,4 @@ function _fast_output_cache () {
 	@file_put_contents(INCLUDE_PATH.'logs/query_log/query.log', $t, FILE_APPEND);
 
 	return true; // Means success
-}
+};

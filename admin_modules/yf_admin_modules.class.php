@@ -23,14 +23,6 @@ class yf_admin_modules {
 	public $PARSE_YF_MODULE	= false;
 
 	/**
-	* Framework constructor
-	*/
-	function _init () {
-#		$this->_modules = $this->_get_modules();
-#		unset($this->_modules['']);
-	}
-
-	/**
 	* Default method
 	*/
 	function show () {

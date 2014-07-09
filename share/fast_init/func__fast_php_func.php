@@ -1,7 +1,7 @@
 <?php
 
 // Fast execute php function (specially for the threaded execution)
-function _fast_php_func () {
+return function() {
 	main()->NO_GRAPHICS = true;
 	// Check if console mode
 	if ( ! (!empty($_SERVER['argc']) && !array_key_exists('REQUEST_METHOD', $_SERVER) ) ) {
@@ -23,4 +23,4 @@ function _fast_php_func () {
 	}
 	main()->_no_fast_init_debug = true;
 	return true; // Means success
-}
+};

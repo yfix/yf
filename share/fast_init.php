@@ -24,8 +24,8 @@ function _call_fast_func ($f_name) {
 	$f_name = '_fast_'.$f_name;
 	$fwork_fast_path = YF_PATH.'share/fast_init/';
 	$path = $fwork_fast_path.'func_'.$f_name.'.php';
-	include ($path);
-	return $f_name();
+	$func = include ($path);
+	return is_callable($func) ? $func() : $func;
 }
 
 // Switch between fast actions (place your custom code below):

@@ -1,7 +1,7 @@
 <?php
 
 // Fast process dynamic image
-function _fast_dynamic_image () {
+return function() {
 	main()->NO_GRAPHICS = true;
 	$c = 'yf_dynamic';
 	include (YF_PATH.'modules/'.$c.'.class.php');
@@ -10,4 +10,4 @@ function _fast_dynamic_image () {
 		$obj->image();
 	}
 	return true; // Means success
-}
+};
