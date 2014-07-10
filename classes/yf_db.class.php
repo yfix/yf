@@ -2,7 +2,7 @@
 
 /**
  * Database abstraction layer
- * 
+ *
  * @package		YF
  * @author		YFix Team <yfix.dev@gmail.com>
  * @version		1.0
@@ -677,7 +677,7 @@ class yf_db {
 	}
 
 	/**
-	* Alias, return 2d array, where key is first field and value is the second, 
+	* Alias, return 2d array, where key is first field and value is the second,
 	* Example: 'SELECT id, name FROM p_static_pages' => array('1' => 'page1', '2' => 'page2')
 	* Example: 'SELECT name FROM p_static_pages' => array('page1', 'page2')
 	*/
@@ -703,7 +703,7 @@ class yf_db {
 
 	/**
 	* Generate multi-level (up to 4) array from incoming query, useful to save some code on generating this often.
-	* Example: get_deep_array('SELECT department_id, user_id, name FROM t_personal', 2)  => 
+	* Example: get_deep_array('SELECT department_id, user_id, name FROM t_personal', 2)  =>
 	*	[ 25 => [ 654 => [
 	*		'department_id' => 25,
 	*		'user_id' => 654,
@@ -996,7 +996,7 @@ class yf_db {
 	* Free result assosiated with a given query resource
 	*/
 	function free_result($result) {
-		if (!$this->_connected && !$this->connect()) {
+		if (!$this->_connected && !$this->connect() && !is_resource($result)) {
 			return false;
 		}
 		return $this->db->free_result($result);
@@ -1254,7 +1254,7 @@ class yf_db {
 	}
 
 	/**
-	* Print nice 
+	* Print nice
 	*/
 	function _trace_string() {
 		$e = new Exception();
@@ -1313,9 +1313,9 @@ class yf_db {
 			foreach ((array)$keys as $x => $key) {
 				$val = $this->_get_debug_item($key);
 				if($val) {
-					$val = str_replace(array("\t","\n","\0"), '', $val); 
+					$val = str_replace(array("\t","\n","\0"), '', $val);
 					// all other chars are safe in comments
-					$key = strtolower(str_replace(array(': ',"\t","\n","\0"), '', $key)); 
+					$key = strtolower(str_replace(array(': ',"\t","\n","\0"), '', $key));
 					// Add the requested instrumentation keys
 					$query_header .= "\t".$key.': '.$val;
 				}
@@ -1550,13 +1550,13 @@ class yf_db {
 
 	/**
 	*/
-	function _mysql_escape_mimic($inp) { 
+	function _mysql_escape_mimic($inp) {
 		if (is_array($inp)) {
 	        return array_map(array($this, __FUNCTION__), $inp);
 		}
 		if (!empty($inp) && is_string($inp)) {
 	        return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $inp);
 		}
-	    return $inp; 
-	}	
+	    return $inp;
+	}
 }
