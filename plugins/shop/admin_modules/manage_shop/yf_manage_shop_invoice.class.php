@@ -36,10 +36,23 @@ class yf_manage_shop_invoice{
 		$_GET[ 'id' ] = $id;
 		list( $css, $html ) = $this->_prepare_invoice_body( $id );
 		$tpl = db()->get_one('SELECT text FROM '.db('static_pages').' WHERE `name`= "invoice"');
+		if( empty( $tpl ) ) {
+			$tpl = '
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+
+__INVOICE__
+
+</body>
+</html>
+';
+		}
 		if( $_GET[ 'pdf' ] ) {
-			if( !empty( $tpl ) ) {
-				$html_page = str_replace( '__INVOICE__', $html, $tpl );
-			}
+			$html_page = str_replace( '__INVOICE__', $html, $tpl );
 			common()->pdf_page( array(
 				'css'  => $css,
 				'html' => $html_page,
@@ -51,9 +64,7 @@ class yf_manage_shop_invoice{
 				, $css
 				, $html
 			);
-			if( !empty( $tpl ) ) {
-				$body = str_replace( '__INVOICE__', $body, $tpl );
-			}
+			$body = str_replace( '__INVOICE__', $body, $tpl );
 			echo $body;
 		}
 		exit;
