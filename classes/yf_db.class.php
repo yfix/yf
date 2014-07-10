@@ -633,22 +633,23 @@ class yf_db {
 		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($storage[$query])) {
 			return $storage[$query];
 		}
+		$data = null;
 		$q = $this->query($query);
-		if ($q) {
+		if (is_resource( $q )) {
 			if ($assoc) {
 				$data = @$this->db->fetch_assoc($q);
 			} else {
 				$data = @$this->db->fetch_row($q);
 			}
-		}
-		$this->free_result($q);
-		// Store result in variable cache
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($storage[$query])) {
-			$storage[$query] = $data;
-			// Permanently turn off queries cache (and free some memory) if case of limit reached
-			if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
-				$this->ALLOW_CACHE_QUERIES = false;
-				$storage = null;
+			$this->free_result($q);
+			// Store result in variable cache
+			if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($storage[$query])) {
+				$storage[$query] = $data;
+				// Permanently turn off queries cache (and free some memory) if case of limit reached
+				if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
+					$this->ALLOW_CACHE_QUERIES = false;
+					$storage = null;
+				}
 			}
 		}
 		return $data;
