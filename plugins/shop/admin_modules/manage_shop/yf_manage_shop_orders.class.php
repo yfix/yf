@@ -269,6 +269,8 @@ class yf_manage_shop_orders{
 		$link_invoice_add     = $link_invoice     . '&with_discount_add=y';
 		$link_pdf_invoice     = $link_invoice     . '&pdf=y';
 		$link_pdf_invoice_add = $link_invoice_add . '&pdf=y';
+		$region = _class( '_shop_region', 'modules/shop/' )->_get_list();
+		array_unshift( $region, '- регион не выбран -' );
 		$out = form2($replace, array('dd_mode' => 1, 'big_labels' => true))
 			->info('id')
 			->info('price_total_info', array( 'desc' => 'Сумма' ) )
@@ -291,7 +293,7 @@ class yf_manage_shop_orders{
 			->email('email')
 			->info('phone')
 			->container('<a href="./?object='.main()->_get('object').'&action=send_sms&phone='.urlencode($replace["phone"]).'" class="btn">Send SMS</a><br /><br />')
-			->select_box('region', _class( '_shop_region', 'modules/shop/' )->_get_list(), array( 'desc' => 'Регион доставки', 'class_add_wrapper' => 'region_type_wrap' ) )
+			->select_box('region', $region, array( 'desc' => 'Регион доставки', 'class_add_wrapper' => 'region_type_wrap' ) )
 			->select_box('delivery_type', _class( '_shop_delivery', 'modules/shop/' )->_get_types(), array( 'desc' => 'Тип доставки', 'class_add_wrapper' => 'delivery_type_wrap' ) )
 			->select_box('delivery_id', _class( '_shop_delivery', 'modules/shop/' )->_get_locations_by_type( $replace[ 'delivery_type' ] ), array( 'class' => 'delivery_id', 'class_add_wrapper' => 'delivery_id_wrap', 'desc' => 'Отделение' ) )
 			->text('delivery_location', 'Отделение доставки', array( 'class' => 'delivery_location', 'class_add_wrapper' => 'delivery_location_wrap' ))
