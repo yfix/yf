@@ -505,12 +505,12 @@ class yf_manage_shop {
 		return _class('manage_shop_express', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
-	function paywill() {
-		return _class('manage_shop_paywill', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	function invoice() {
+		return _class('manage_shop_invoice', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
-	function _prepare_paywill_body($params = false) {
-		return _class('manage_shop_paywill', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
+	function _prepare_invoice_body($params = false) {
+		return _class('manage_shop_invoice', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function express_pdf($params = array()) {

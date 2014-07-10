@@ -36,7 +36,7 @@ class yf_manage_shop_orders{
 			$filter['order_by'] = 'id';
 			$filter['order_direction'] = 'desc';
 		}
-		$link_invoice         = './?object=manage_shop&action=paywill&id=%d';
+		$link_invoice         = './?object=manage_shop&action=invoice&id=%d';
 		$link_invoice_add     = $link_invoice     . '&with_discount_add=y';
 		$link_pdf_invoice     = $link_invoice     . '&pdf=y';
 		$link_pdf_invoice_add = $link_invoice_add . '&pdf=y';
@@ -66,11 +66,9 @@ class yf_manage_shop_orders{
 				return common()->get_static_conf('order_status', $field);
 			}, array('nowrap' => 1))
 			->btn_edit('', './?object='.main()->_get('object').'&action=view_order&id=%d',array('no_ajax' => 1))
-			// ->btn('Paywill', './?object=manage_shop&action=paywill&id=%d',array('no_ajax' => 1, 'target' => '_blank'))
-			// ->btn('PDF', './?object=manage_shop&action=paywill&id=%d&pdf=y',array('no_ajax' => 1, 'target' => '_blank'))
-				->btn( 'Paywill'           , $link_invoice        , array( 'title' => 'Накладная без учета добавочной скидки'    , 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
+				->btn( 'Invoice'           , $link_invoice        , array( 'title' => 'Накладная без учета добавочной скидки'    , 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
 				->btn( 'PDF'               , $link_pdf_invoice    , array( 'title' => 'Накладная PDF без учета добавочной скидки', 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
-				->btn( t( 'Paywill' ) . '+', $link_invoice_add    , array( 'title' => 'Накладная с учетом добавочной скидки'     , 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
+				->btn( t( 'Invoice' ) . '+', $link_invoice_add    , array( 'title' => 'Накладная с учетом добавочной скидки'     , 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
 				->btn( t( 'PDF' ) . '+'    , $link_pdf_invoice_add, array( 'title' => 'Накладная PDF с учетом добавочной скидки' , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
 		;
 	}
@@ -136,7 +134,7 @@ class yf_manage_shop_orders{
 			}
 
 			$sql = array();
-			foreach (array('address','phone','address','house','apartment','floor','porch','intercom','delivery_price','status','discount','discount_add','delivery_type','delivery_id','delivery_location') as $f) {
+			foreach (array('address','phone','address','house','apartment','floor','porch','intercom','delivery_price','status','region','discount','discount_add','delivery_type','delivery_id','delivery_location') as $f) {
 				if (isset($_POST[$f])) {
 					$sql[$f] = $_POST[$f];
 					if (($f == 'delivery_price') && ($_POST['delivery_price'] != $order_info['delivery_price'])) {
@@ -267,7 +265,7 @@ class yf_manage_shop_orders{
 			'payment'                 => common()->get_static_conf('payment_methods', $order_info['payment']),
 		));
 
-		$link_invoice         = './?object=manage_shop&action=paywill&id=' . $replace[ 'id' ];
+		$link_invoice         = './?object=manage_shop&action=invoice&id=' . $replace[ 'id' ];
 		$link_invoice_add     = $link_invoice     . '&with_discount_add=y';
 		$link_pdf_invoice     = $link_invoice     . '&pdf=y';
 		$link_pdf_invoice_add = $link_invoice_add . '&pdf=y';
@@ -277,13 +275,13 @@ class yf_manage_shop_orders{
 			->row_start( array( 'desc' => 'Скидка, %' ) )
 				->number( 'discount',  array( 'desc' => 'Скидка, %' ) )
 				->info( 'discount_price_info' )
-				->link( 'Paywill', $link_invoice    , array( 'title' => 'Накладная без учета добавочной скидки'    , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
+				->link( 'Invoice', $link_invoice    , array( 'title' => 'Накладная без учета добавочной скидки'    , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
 				->link( 'PDF'    , $link_pdf_invoice, array( 'title' => 'Накладная PDF без учета добавочной скидки', 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
 			->row_end()
 			->row_start( array( 'desc' => 'Скидка добавочная, %' ) )
 				->number( 'discount_add', array( 'desc' => 'Скидка добавочная, %' ) )
 				->info( 'discount_add_price_info', array( 'desc' => ' ' )  )
-				->link( t( 'Paywill' ) . '+', $link_invoice_add    , array( 'title' => 'Накладная с учетом добавочной скидки'    , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
+				->link( t( 'Invoice' ) . '+', $link_invoice_add    , array( 'title' => 'Накладная с учетом добавочной скидки'    , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
 				->link( t( 'PDF' ) . '+'    , $link_pdf_invoice_add, array( 'title' => 'Накладная PDF с учетом добавочной скидки', 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
 			->row_end()
 			->info('delivery_info', array( 'desc' => 'Доставка' ) )
@@ -293,6 +291,7 @@ class yf_manage_shop_orders{
 			->email('email')
 			->info('phone')
 			->container('<a href="./?object='.main()->_get('object').'&action=send_sms&phone='.urlencode($replace["phone"]).'" class="btn">Send SMS</a><br /><br />')
+			->select_box('region', _class( '_shop_region', 'modules/shop/' )->_get_list(), array( 'desc' => 'Регион доставки', 'class_add_wrapper' => 'region_type_wrap' ) )
 			->select_box('delivery_type', _class( '_shop_delivery', 'modules/shop/' )->_get_types(), array( 'desc' => 'Тип доставки', 'class_add_wrapper' => 'delivery_type_wrap' ) )
 			->select_box('delivery_id', _class( '_shop_delivery', 'modules/shop/' )->_get_locations_by_type( $replace[ 'delivery_type' ] ), array( 'class' => 'delivery_id', 'class_add_wrapper' => 'delivery_id_wrap', 'desc' => 'Отделение' ) )
 			->text('delivery_location', 'Отделение доставки', array( 'class' => 'delivery_location', 'class_add_wrapper' => 'delivery_location_wrap' ))
