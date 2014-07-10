@@ -19,13 +19,13 @@ class yf_tpl_driver_yf {
 	/** @var string @conf_skip Cycle pattern */
 	// Examples: {foreach ("var")}<li>{var.value1}</li>{/foreach}
 	public $_PATTERN_FOREACH = '/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
-	/** @var array @conf_skip For "_process_conditions" */
+	/** @var array @conf_skip For "_process_ifs" */
 	public $_cond_operators	= array('eq'=>'==','ne'=>'!=','gt'=>'>','lt'=>'<','ge'=>'>=','le'=>'<=','mod'=>'%');
-	/** @var array @conf_skip For '_process_conditions' */
+	/** @var array @conf_skip For '_process_ifs' */
 	public $_math_operators	= array('and'=>'&&','xor'=>'xor','or'=>'||','+'=>'+','-'=>'-');
 	/** @var int Safe limit number of replacements (to avoid dead cycles) (type "-1" for unlimited number) */
 	public $STPL_REPLACE_LIMIT	 = -1;
-	/** @var int Cycles and conditions max recurse level (how deeply could be nested template constructs like "if") */
+	/** @var int "foreach" and "if" max recurse level (how deeply could be nested template constructs like "if") */
 	public $_MAX_RECURSE_LEVEL = 4;
 	/** @var @conf_skip */
 	public $CACHE = array();
@@ -39,7 +39,7 @@ class yf_tpl_driver_yf {
 	* YF constructor
 	*/
 	function _init () {
-		$this->tpl = _class('tpl');
+		$this->tpl = &_class('tpl');
 		if (!function_exists('preg_match_all')) {
 			trigger_error('STPL: PCRE Extension is REQUIRED for the template engine', E_USER_ERROR);
 		}
@@ -102,8 +102,8 @@ class yf_tpl_driver_yf {
 		$string = $this->_process_executes($string, $replace, $name);
 		$string = $this->_process_catches($string, $replace, $name);
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
-		$string = $this->_process_cycles($string, $replace, $name);
-		$string = $this->_process_conditions($string, $replace, $name);
+		$string = $this->_process_foreaches($string, $replace, $name);
+		$string = $this->_process_ifs($string, $replace, $name);
 		if (!$params['no_include']) {
 			$string = $this->_process_includes($string, $replace, $name);
 			$string = $this->_process_executes($string, $replace, $name);
@@ -243,11 +243,6 @@ class yf_tpl_driver_yf {
 				return false;
 			}
 			$prevent_name = $name.'__'.$m[0];
-#			if (isset($_this->_include_recursion_prevent[$prevent_name])) {
-#				return false;
-#			} else {
-#				$_this->_include_recursion_prevent[$prevent_name] = true;
-#			}
 			// Here we merge/override incoming $replace with parsed params, to be passed to included template
 			foreach ((array)explode(';', str_replace(array('\'','"'), '', $_replace)) as $v) {
 				list($a_name, $a_val) = explode('=', trim($v));
@@ -264,17 +259,45 @@ class yf_tpl_driver_yf {
 	/**
 	*/
 	function _process_replaces($string, $replace = array(), $name = '') {
-		// Replace given items (if exists ones)
+		if (!strlen($string) || false === strpos($string, '{')) {
+			return $string;
+		}
+		// Need to optimize complex replace arrays and templates not containing sub replaces
+		$has_sub_pairs = preg_match('~\{[a-z0-9_-]+\.[a-z0-9_-]+\}~ims', $string);
+		// Prepare pairs array of simple string replaces
+		$pairs = array();
 		foreach ((array)$replace as $item => $value) {
-			if (!is_array($value)) {
-				$string = str_replace('{'.$item.'}', $value, $string);
-			}
 			// Allow to replace simple 1-dimensional array items (some speed loss, but might be useful)
-			if (is_array($value) && !is_array(current($value))) {
+			if (is_array($value)) {
+				if (!$has_sub_pairs) {
+					continue;
+				}
+				// 2+ levels deep detected, but not supported
+				if (is_array(current($value))) {
+					continue;
+				}
 				foreach ((array)$value as $_sub_key => $_sub_val) {
-					$string = str_replace('{'.$item.'.'.$_sub_key.'}', $_sub_val, $string);
+					$pairs['{'.$item.'.'.$_sub_key.'}'] = $_sub_val;
+				}
+			// Simple key=val replace
+			} else {
+				$pairs['{'.$item.'}'] = $value;
+			}
+		}
+		if ($has_sub_pairs) {
+			$avail_arrays = $this->tpl->_avail_arrays; // ('get' => '_GET')
+			foreach ((array)$avail_arrays as $short => $v) {
+				$v = eval('return $'.$v.';'); // !! Do not blindly change to $$v, need to figure out before why it does not work
+				foreach ((array)$v as $key => $val) {
+					if (is_array($val)) {
+						continue;
+					}
+					$pairs['{'.$short.'.'.$key.'}'] = $val;
 				}
 			}
+		}
+		if ($pairs) {
+			$string = str_replace(array_keys($pairs), array_values($pairs), $string);
 		}
 		return $string;
 	}
@@ -488,8 +511,8 @@ class yf_tpl_driver_yf {
 			if (!empty($catched_name)) {
 				if (strlen($catched_string) && strpos($catched_string, '{') !== false) {
 					$catched_string = $this->_replace_std_patterns($catched_string, $stpl_name, $replace);
-					$catched_string = $this->_process_cycles($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_conditions($catched_string, $replace, $stpl_name);
+					$catched_string = $this->_process_foreaches($catched_string, $replace, $stpl_name);
+					$catched_string = $this->_process_ifs($catched_string, $replace, $stpl_name);
 					$catched_string = $this->_process_replaces($catched_string, $replace, $stpl_name);
 					$catched_string = $this->_process_js_css($catched_string, $replace, $stpl_name);
 					$catched_string = $this->_process_includes($catched_string, $replace, $stpl_name);
@@ -504,7 +527,7 @@ class yf_tpl_driver_yf {
 	/**
 	* Conditional execution
 	*/
-	function _process_conditions ($string = '', $replace = array(), $stpl_name = '') {
+	function _process_ifs ($string = '', $replace = array(), $stpl_name = '') {
 		if (false === strpos($string, '{/if}') || empty($string)) {
 			return $string;
 		}
@@ -590,7 +613,7 @@ class yf_tpl_driver_yf {
 	}
 
 	/**
-	* Prepare text for '_process_conditions' method
+	* Prepare text for '_process_ifs' method
 	*/
 	function _prepare_cond_text ($cond_text = '', $replace = array(), $stpl_name = '') {
 		$prepared_array = array();
@@ -647,9 +670,9 @@ class yf_tpl_driver_yf {
 	}
 
 	/**
-	* Cycled execution
+	* Foreach patterns processing
 	*/
-	function _process_cycles ($string = '', $replace = array(), $stpl_name = '') {
+	function _process_foreaches ($string = '', $replace = array(), $stpl_name = '') {
 		if (false === strpos($string, '{/foreach}') || empty($string)) {
 			return $string;
 		}
@@ -678,18 +701,39 @@ class yf_tpl_driver_yf {
 			if (empty($key_to_cycle)) {
 				continue;
 			}
-			// Standard iteration by array
-			if (isset($replace[$key_to_cycle])) {
-				if (is_array($replace[$key_to_cycle])) {
-					$sub_array  = $replace[$key_to_cycle];
-				} elseif (is_numeric($replace[$key_to_cycle])) {
-					$sub_array = range(1, $replace[$key_to_cycle]);
+			$data = null;
+			// Sub array like this: {foreach(post.somekey)} or {foreach(data.sub)}
+			if (false !== strpos($key_to_cycle, '.')) {
+				list($sub_key1, $sub_key2) = explode('.', $key_to_cycle);
+				if (!$sub_key1 || !$sub_key2) {
+					continue;
 				}
-			// Simple iteration within template
-			} else {
-				if (is_numeric($key_to_cycle)) {
-					$sub_array = range(1, $key_to_cycle);
+				$data = &$replace[$sub_key1][$sub_key2];
+				if (isset($data)) {
+					if (is_array($data)) {
+						$sub_array = $data;
+					}
+				} else {
+					$avail_arrays = &$this->tpl->_avail_arrays;
+					if (isset($avail_arrays[$sub_key1])) {
+						$v = eval('return $'.$avail_arrays[$sub_key1].';'); // !! Do not blindly replace this with $$v, because somehow it does not work
+						if (isset($v[$sub_key2])) {
+							$sub_array = $v[$sub_key2];
+						}
+					}
 				}
+			// Standard iteration by array, example: {foreach(myarray)}
+			} elseif (isset($replace[$key_to_cycle])) {
+				$data = &$replace[$key_to_cycle];
+				if (is_array($data)) {
+					$sub_array = $data;
+				}
+			// Simple iteration within template, example: {foreach(10)}
+			} elseif (is_numeric($key_to_cycle)) {
+				$sub_array = range(1, $key_to_cycle);
+			}
+			if ($sub_array && is_numeric($sub_array)) {
+				$sub_array = range(1, $sub_array);
 			}
 			if (empty($sub_array)) {
 				continue;
@@ -745,7 +789,7 @@ class yf_tpl_driver_yf {
 					$tmp_array['_key']   = $sub_k;
 					$tmp_array['_val']   = is_array($sub_v) ? strval($sub_v) : $sub_v;
 					// Try to process conditions in every cycle
-					$output .= $this->_process_conditions($cur_output, $tmp_array, $stpl_name);
+					$output .= $this->_process_ifs($cur_output, $tmp_array, $stpl_name);
 				}
 			}
 			// Create array element to replace whole cycle
