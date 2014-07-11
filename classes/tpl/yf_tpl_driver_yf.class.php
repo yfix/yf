@@ -718,7 +718,7 @@ class yf_tpl_driver_yf {
 				if (!$sub_key1 || !$sub_key2) {
 					continue;
 				}
-				$data = &$replace[$sub_key1][$sub_key2];
+				$data = $replace[$sub_key1][$sub_key2];
 				if (isset($data)) {
 					if (is_array($data)) {
 						$sub_array = $data;
@@ -727,7 +727,7 @@ class yf_tpl_driver_yf {
 						$sub_array = $this->_range_foreach($data);
 					}
 				} else {
-					$avail_arrays = &$this->tpl->_avail_arrays;
+					$avail_arrays = $this->tpl->_avail_arrays;
 					if (isset($avail_arrays[$sub_key1])) {
 						$v = eval('return $'.$avail_arrays[$sub_key1].';'); // !! Do not blindly replace this with $$v, because somehow it does not work
 						if (isset($v[$sub_key2])) {
@@ -741,7 +741,7 @@ class yf_tpl_driver_yf {
 				}
 			// Standard iteration by array, example: {foreach(myarray)}
 			} elseif (isset($replace[$key_to_cycle])) {
-				$data = &$replace[$key_to_cycle];
+				$data = $replace[$key_to_cycle];
 				if (is_array($data)) {
 					$sub_array = $data;
 				// Iteration by numberic var value, example: {foreach(number)}, number == 3
