@@ -2032,7 +2032,7 @@ class yf_form2 {
 				$param = $rule[1];
 				// PHP pure function, from core or user
 				if (is_string($func) && function_exists($func)) {
-					$data[$name] = $func($data[$name]);
+					$data[$name] = $this->_apply_existing_func($func, $data[$name]);
 				} elseif (is_callable($func)) {
 					$is_ok = $func($data[$name], null, $data);
 				} else {
@@ -2059,6 +2059,19 @@ class yf_form2 {
 			}
 		}
 		return $validate_ok;
+	}
+
+	/**
+	*/
+	function _apply_existing_func($func, $data) {
+		if (is_array($data)) {
+			$self = __FUNCTION__;
+			foreach ($data as $k => $v) {
+				$data[$k] = $this->$self($func, $v);
+			}
+			return $data;
+		}
+		return $func($data);
 	}
 
 	/**
