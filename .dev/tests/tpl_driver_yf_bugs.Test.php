@@ -68,4 +68,22 @@ class tpl_driver_yf_bugs_test extends tpl_abstract {
 		self::_tpl( 'Hello3', array(), 'unittest_include3' );
 		$this->assertEquals('Hello1 Hello1 Hello1', self::_tpl( '{include("unittest_include1")} {include("unittest_include1")} {include("unittest_include1")}' ));
 	}
+	public function test_bug_08() {
+		$this->assertEquals('', self::_tpl('{foreach(0)}</ul>{/foreach}') );
+		$this->assertEquals('</ul>', self::_tpl('{foreach(1)}</ul>{/foreach}') );
+		$this->assertEquals('</ul></ul>', self::_tpl('{foreach(2)}</ul>{/foreach}') );
+		$this->assertEquals('</ul></ul></ul>', self::_tpl('{foreach(3)}</ul>{/foreach}') );
+		$this->assertEquals('</ul></ul></ul>', self::_tpl('{foreach( 3 )}</ul>{/foreach}') );
+		$this->assertEquals(str_repeat('</ul>', 100), self::_tpl('{foreach(100)}</ul>{/foreach}') );
+
+		$this->assertEquals('', self::_tpl('{foreach(next_level_diff)}</ul>{/foreach}') );
+		$this->assertEquals('', self::_tpl('{foreach(next_level_diff)}</ul>{/foreach}', array('next_level_diff' => 0)) );
+		$this->assertEquals('</ul>', self::_tpl('{foreach(next_level_diff)}</ul>{/foreach}', array('next_level_diff' => 1)) );
+		$this->assertEquals('</ul></ul>', self::_tpl('{foreach(next_level_diff)}</ul>{/foreach}', array('next_level_diff' => 2)) );
+		$this->assertEquals('</ul></ul></ul>', self::_tpl('{foreach("next_level_diff")}</ul>{/foreach}', array('next_level_diff' => 3)) );
+		$this->assertEquals('</ul></ul></ul>', self::_tpl('{foreach( "next_level_diff" )}</ul>{/foreach}', array('next_level_diff' => 3)) );
+		$this->assertEquals('</ul></ul></ul>', self::_tpl('{foreach(next_level_diff)}</ul>{/foreach}', array('next_level_diff' => 3)) );
+		$this->assertEquals(str_repeat('</ul>',100), self::_tpl('{foreach(next_level_diff)}</ul>{/foreach}', array('next_level_diff' => 100)) );
+		$this->assertEquals('</ul></ul></ul>', self::_tpl('{foreach(data.next_level_diff)}</ul>{/foreach}', array('data' => array('next_level_diff' => 3))) );
+	}
 }
