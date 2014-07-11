@@ -531,4 +531,40 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 	public function test_credit_card() {
 // TODO: from kohana: credit_card Returns FALSE if credit card is not validcredit_card[mastercard]
 	}
+	public function test_input_is_valid() {
+		$this->assertTrue( _class('validate')->_input_is_valid(array(), array('key' => 'trim')) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => 'val'), array('key' => 'required')) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => 'val'), array('key' => 'trim|required')) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => array('val1','val2')), array('key' => 'required')) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => array('val1','val2')), array('key' => 'required', 'other_key' => 'trim', )) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => array('val1','val2')), array('key' => 'trim|required')) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => array('val1','val2'), 'key2' => 'v2'), array('key' => 'trim|required', 'key2' => 'required')) );
+
+		$this->assertFalse( _class('validate')->_input_is_valid(array(), array('key' => 'required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array(), array('key' => 'trim|required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => ''), array('key' => 'trim|required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => ' '), array('key' => 'trim|required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => array()), array('key' => 'trim|required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => array()), array('key' => 'trim|required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => array('val1','val2'), 'key2' => ''), array('key' => 'trim|required', 'key2' => 'required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => array('val1','val2'), 'key2' => ' '), array('key' => 'trim|required', 'key2' => 'required')) );
+	}
+	public function test_func_validate() {
+		$this->assertTrue( validate(array(), array('key' => 'trim')) );
+		$this->assertTrue( validate(array('key' => 'val'), array('key' => 'required')) );
+		$this->assertTrue( validate(array('key' => 'val'), array('key' => 'trim|required')) );
+		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'required')) );
+		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'required', 'other_key' => 'trim', )) );
+		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'trim|required')) );
+		$this->assertTrue( validate(array('key' => array('val1','val2'), 'key2' => 'v2'), array('key' => 'trim|required', 'key2' => 'required')) );
+
+		$this->assertFalse( validate(array(), array('key' => 'required')) );
+		$this->assertFalse( validate(array(), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => ''), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => ' '), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => array()), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => array()), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ''), array('key' => 'trim|required', 'key2' => 'required')) );
+		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ' '), array('key' => 'trim|required', 'key2' => 'required')) );
+	}
 }
