@@ -86,4 +86,20 @@ class tpl_driver_yf_bugs_test extends tpl_abstract {
 		$this->assertEquals(str_repeat('</ul>',100), self::_tpl('{foreach(next_level_diff)}</ul>{/foreach}', array('next_level_diff' => 100)) );
 		$this->assertEquals('</ul></ul></ul>', self::_tpl('{foreach(data.next_level_diff)}</ul>{/foreach}', array('data' => array('next_level_diff' => 3))) );
 	}
+	public function test_bug_09() {
+		$this->assertEquals('{foreach()}1{/foreach}', self::_tpl('{foreach()}1{/foreach}') );
+		$this->assertEquals('', self::_tpl('{foreach(items)}1{/foreach}') );
+		$this->assertEquals('', self::_tpl('{foreach(items)}1{/foreach}', array('items' => 0)) );
+		$this->assertEquals('', self::_tpl('{foreach(items)}1{/foreach}', array('items' => array())) );
+		$this->assertEquals('111', self::_tpl('{foreach(items)}1{/foreach}', array('items' => 3)) );
+		$this->assertEquals('111', self::_tpl('{foreach(items)}1{/foreach}', array('items' => array(0,1,2))) );
+		$this->assertEquals('111', self::_tpl('{foreach(items)}1{/foreach}', array('items' => array(1,2,3))) );
+		$this->assertEquals('111', self::_tpl('{foreach(items)}1{/foreach}', array('items' => range(1,3))) );
+		$this->assertEquals('111', self::_tpl('{foreach(items)}1{/foreach}', array('items' => array(array('k'=>'v'),array('k'=>'v'),array('k'=>'v')))) );
+
+		$this->assertEquals('111,222', self::_tpl('{foreach(items)}1{/foreach},{foreach(items)}2{/foreach}', array('items' => range(1,3))) );
+		$this->assertEquals('111,222,333', self::_tpl('{foreach(items)}1{/foreach},{foreach(items)}2{/foreach},{foreach(items)}3{/foreach}', array('items' => range(1,3))) );
+		$this->assertEquals('1111,2222,3333', self::_tpl('{foreach(items)}1{/foreach},{foreach(items)}2{/foreach},{foreach(items)}3{/foreach}', array('items' => range(1,4))) );
+		$this->assertEquals('1111,2222,1111', self::_tpl('{foreach(items)}1{/foreach},{foreach(items)}2{/foreach},{foreach(items)}1{/foreach}', array('items' => range(1,4))) );
+	}
 }
