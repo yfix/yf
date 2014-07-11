@@ -41,11 +41,6 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('myjs(){ var i = 0; {js-var }; }', self::_tpl( 'myjs(){ {js-var}; {js-var }; }', array('js-var' => 'var i = 0') ));
 		$this->assertEquals('myjs(){ var i = 0; { js-var }; }', self::_tpl( 'myjs(){ {js-var}; { js-var }; }', array('js-var' => 'var i = 0') ));
 	}
-	public function test_replace_subarray() {
-		$this->assertEquals('{get.test}', self::_tpl( '{get.test}' ));
-		$this->assertEquals('{ get.test }', self::_tpl( '{ get.test }' ));
-		$this->assertEquals('val1,val2,val3', self::_tpl( '{sub.key1},{sub.key2},{sub.key3}', array('sub' => array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3')) ));
-	}
 	public function test_execute() {
 		$this->assertEquals('true', self::_tpl( '{execute(test,true_for_unittest)}' ));
 		$this->assertEquals('truetrue', self::_tpl( '{execute(test,true_for_unittest)}{execute(test,true_for_unittest)}' ));
@@ -309,11 +304,19 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		self::_tpl( '{css(class=yf_core,other=param)}//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css{/css}' );
 		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css" rel="stylesheet" class="yf_core" />', _class('core_css')->show() );
 	}
+	public function test_replace_subarray() {
+		$this->assertEquals('', self::_tpl( '{get.test}' ));
+		$this->assertEquals('{ get.test }', self::_tpl( '{ get.test }' ));
+		$this->assertEquals('val1,val2,val3', self::_tpl( '{sub.key1},{sub.key2},{sub.key3}', array('sub' => array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3')) ));
+	}
 	public function test_avail_arrays() {
 		$old = tpl()->_avail_arrays;
 		$_GET['mytestvar'] = 'mytestvalue';
 		tpl()->_avail_arrays = array('get' => '_GET');
+
+		$this->assertEquals('', self::_tpl( '{get.not_exists}' ));
 		$this->assertEquals('mytestvalue', self::_tpl( '{get.mytestvar}' ));
+
 		$this->assertEquals('good', self::_tpl( '{if(get.mytestvar eq mytestvalue)}good{else}bad{/if}' ));
 		$this->assertEquals('good', self::_tpl( '{if(get.mytestvar ne "")}good{else}bad{/if}' ));
 		$this->assertEquals('good', self::_tpl( '{if(get.mytestvar ne something_else)}good{else}bad{/if}' ));
@@ -333,6 +336,33 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('k1=v1', self::_tpl( '{foreach(get.myarray)}{if(_key eq k1)}{_key}={_val}{/if}{/foreach}' ));
 		$this->assertEquals('k2=v2', self::_tpl( '{foreach(get.myarray)}{if(_key eq k2)}{_key}={_val}{/if}{/foreach}' ));
 		$this->assertEquals('k3=v3', self::_tpl( '{foreach(get.myarray)}{if(_key eq k3)}{_key}={_val}{/if}{/foreach}' ));
+
 		tpl()->_avail_arrays = $old;
+	}
+	public function test_deep_vars_avail_arrays() {
+		$old = tpl()->_avail_arrays;
+		tpl()->_avail_arrays = array('get' => '_GET');
+		$_GET['some']['deep']['var']['key'] = 'mytestvalue2';
+
+// TODO
+#		$this->assertEquals('mytestvalue2', self::_tpl( '{get.some.deep.var.key}' ));
+
+		tpl()->_avail_arrays = $old;
+	}
+	public function test_object_vars() {
+		$data = new stdClass();
+		$data->key1 = 'val1';
+		$data->key2 = 'val2';
+		$data->key3 = 'val3';
+
+// TODO
+#		$this->assertEquals('val1', self::_tpl('{data.key1}', array('data' => $data)));
+#		$this->assertEquals('val1,val2', self::_tpl('{data.key1},{data.key2}', array('data' => $data)));
+#		$this->assertEquals('val1,val2,val3', self::_tpl('{data.key1},{data.key2},{data.key3}', array('data' => $data)));
+#		$this->assertEquals('good', self::_tpl('{if(data.key1 eq val1)}{/if}', array('data' => $data)));
+#		$this->assertEquals('good', self::_tpl('{if(data.key1 ne fsdfsfsd)}{/if}', array('data' => $data)));
+#		$this->assertEquals(' key1=val1  key2=val2  key3=val3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
+		$data->key4 = array(1,2,3);
+#		$this->assertEquals(' key1=val1  key2=val2  key3=val3  key4=1,2,3', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
 	}
 }
