@@ -42,10 +42,14 @@ class yf_template_editor {
 		$this->_preload_complete = true;
 		$this->_dir_array = array(
 			'framework'			=> YF_PATH. tpl()->_THEMES_PATH,
-			'project'			=> INCLUDE_PATH. tpl()->_THEMES_PATH,
+			'project'			=> PROJECT_PATH. tpl()->_THEMES_PATH,
 #			'framework_p2'		=> YF_PATH. 'priority2/'. tpl()->_THEMES_PATH,
-#			'project_p2'		=> INCLUDE_PATH. 'priority2/'. tpl()->_THEMES_PATH,
-#			'framework_user'	=> YF_PATH. 'templates/user/',
+#			'project_p2'		=> PROJECT_PATH. 'priority2/'. tpl()->_THEMES_PATH,
+			'framework_user'	=> YF_PATH. 'templates/',
+			'plugins_framework' => YF_PATH. 'plugins/*/'.tpl()->_THEMES_PATH,
+			'plugins_project'	=> PROJECT_PATH. 'plugins/*/'.tpl()->_THEMES_PATH,
+			'plugins_framework_user' => YF_PATH. 'plugins/*/templates/',
+			'plugins_user_section' => YF_PATH. 'plugins/*/templates/',
 		);
 		foreach ((array)_class('sites_info')->info as $site_dir_array) {
 			$this->_dir_array[$site_dir_array['name']] = $site_dir_array['REAL_PATH'].'templates/';		
@@ -275,6 +279,10 @@ class yf_template_editor {
 				return $this->_framework_warning();
 			}
 			$lib_stpl_path	= $this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT;
+			foreach (glob($lib_stpl_path) as $path) {
+				$lib_stpl_path = $path;
+				break;
+			}
 			$text = $_POST['stpl_text'] ?: $_POST['stpl_text_hidden'];
 			if (!file_exists($lib_stpl_path)) {
 				_mkdir_m(dirname($lib_stpl_path));
@@ -282,9 +290,13 @@ class yf_template_editor {
 			file_put_contents($lib_stpl_path, $text);
 			return js_redirect('./?object='.$_GET['object'].'&action=show_stpls_in_theme&theme='.$theme_name.'&location='.$_GET['location']);
 		}
+		if (substr($_GET['location'], -strlen('_user')) == '_user' && $theme_name == 'admin') {
+			$theme_name = 'user';
+		}
 		$stpl_path = $this->_dir_array[$_GET['location']]. $theme_name. '/'. $stpl_name. tpl()->_STPL_EXT;
-		if ($_GET['location'] == 'framework_user') {
-			$stpl_path = YF_PATH. 'templates/user/'. $stpl_name. tpl()->_STPL_EXT;
+		foreach (glob($stpl_path) as $path) {
+			$stpl_path = $path;
+			break;
 		}
 		if (!file_exists($stpl_path)) {
 			return _e('Cannot find template: '.$stpl_path);
