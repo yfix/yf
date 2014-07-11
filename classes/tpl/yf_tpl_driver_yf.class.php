@@ -266,6 +266,7 @@ class yf_tpl_driver_yf {
 		$has_sub_pairs = preg_match('~\{[a-z0-9_-]+\.[a-z0-9_-]+\}~ims', $string);
 		// Prepare pairs array of simple string replaces
 		$pairs = array();
+		$cleanup_keys = array();
 		foreach ((array)$replace as $item => $value) {
 			// Allow to replace simple 1-dimensional array items (some speed loss, but might be useful)
 			if (is_array($value)) {
@@ -279,6 +280,7 @@ class yf_tpl_driver_yf {
 				foreach ((array)$value as $_sub_key => $_sub_val) {
 					$pairs['{'.$item.'.'.$_sub_key.'}'] = $_sub_val;
 				}
+				$cleanup_keys[$item] = '';
 			// Simple key=val replace
 			} else {
 				$pairs['{'.$item.'}'] = $value;
@@ -294,10 +296,19 @@ class yf_tpl_driver_yf {
 					}
 					$pairs['{'.$short.'.'.$key.'}'] = $val;
 				}
+				$cleanup_keys[$short] = '';
 			}
 		}
 		if ($pairs) {
 			$string = str_replace(array_keys($pairs), array_values($pairs), $string);
+		}
+		// Cleanup, using regex pairs
+		if ($cleanup_keys) {
+			$regex_pairs = array();
+			foreach ($cleanup_keys as $k => $v) {
+				$regex_pairs['~\{'.preg_quote($k, '~').'\.[a-z0-9_-]+\}~i'] = '';
+			}
+			$string = preg_replace(array_keys($regex_pairs), '', $string);
 		}
 		return $string;
 	}
