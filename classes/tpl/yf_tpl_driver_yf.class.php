@@ -670,6 +670,16 @@ class yf_tpl_driver_yf {
 	}
 
 	/**
+	*/
+	function _range_foreach ($max) {
+		$max = intval($max);
+		if ($max < 1) {
+			return array();
+		}
+		return range(1, $max);
+	}
+
+	/**
 	* Foreach patterns processing
 	*/
 	function _process_foreaches ($string = '', $replace = array(), $stpl_name = '') {
@@ -712,6 +722,9 @@ class yf_tpl_driver_yf {
 				if (isset($data)) {
 					if (is_array($data)) {
 						$sub_array = $data;
+					// Iteration by numberic var value, example: {foreach(data.number)}, number == 3
+					} elseif (is_numeric($data)) {
+						$sub_array = $this->_range_foreach($data);
 					}
 				} else {
 					$avail_arrays = &$this->tpl->_avail_arrays;
@@ -719,6 +732,10 @@ class yf_tpl_driver_yf {
 						$v = eval('return $'.$avail_arrays[$sub_key1].';'); // !! Do not blindly replace this with $$v, because somehow it does not work
 						if (isset($v[$sub_key2])) {
 							$sub_array = $v[$sub_key2];
+							// Iteration by numberic var value, example: {foreach(number)}, number == 3
+							if ($sub_array && is_numeric($sub_array)) {
+								$sub_array = $this->_range_foreach($sub_array);
+							}
 						}
 					}
 				}
@@ -727,13 +744,13 @@ class yf_tpl_driver_yf {
 				$data = &$replace[$key_to_cycle];
 				if (is_array($data)) {
 					$sub_array = $data;
+				// Iteration by numberic var value, example: {foreach(number)}, number == 3
+				} elseif (is_numeric($data)) {
+					$sub_array = $this->_range_foreach($data);
 				}
 			// Simple iteration within template, example: {foreach(10)}
 			} elseif (is_numeric($key_to_cycle)) {
-				$sub_array = range(1, $key_to_cycle);
-			}
-			if ($sub_array && is_numeric($sub_array)) {
-				$sub_array = range(1, $sub_array);
+				$sub_array = $this->_range_foreach($key_to_cycle);
 			}
 			if (empty($sub_array)) {
 				continue;
