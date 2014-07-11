@@ -499,7 +499,7 @@ class yf_debug {
 			$items[$counter] = array(
 				'id'		=> ++$counter,
 // TODO: add link to inline stpl edit
-				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $v['storage'])),
+				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $debug[$k]['storage'])),
 				'storage'	=> strval($debug[$k]['storage']),
 				'storages'	=> '<pre>'._prepare_html(var_export($debug[$k]['storages'], 1)).'</pre>',
 				'calls'		=> strval($v['calls']),
