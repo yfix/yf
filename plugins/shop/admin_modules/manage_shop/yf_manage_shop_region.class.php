@@ -76,7 +76,7 @@ class yf_manage_shop_region {
 
 	function _on_after_update( &$fields ) {
 		$_class_region = $this->_class_region;
-		$_class_region->_refresh_cache();
+		$_class_region->_cache_refresh();
 	}
 
 	function region() {
@@ -87,6 +87,7 @@ class yf_manage_shop_region {
 		);
 
 		$table = table( 'SELECT * FROM ' . db( 'shop_regions' ), $filter )
+			->text( 'id' )
 			->text( 'value' )
 			->btn_active( '', $this->_uri[ 'active' ] )
 			->btn_edit(   '', $this->_uri[ 'edit'   ], array( 'no_ajax' => 1 ) )
