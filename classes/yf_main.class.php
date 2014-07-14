@@ -748,7 +748,7 @@ class yf_main {
 		if (!conf('SITE_ID')) {
 			$site_id = 1;
 			foreach ((array)$this->get_data('sites') as $site) {
-				if ($site['name'] == $_SERVER['HOST_NAME']) {
+				if ($site['name'] == $_SERVER['HTTP_HOST']) {
 					$site_id = $site['id'];
 					break;
 				}

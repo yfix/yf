@@ -69,6 +69,8 @@ class yf_tpl {
 	public $_avail_arrays = array(
 		'get' => '_GET',
 		'post' => '_POST',
+		'server' => '_SERVER',
+		'env' => '_ENV',
 	);
 
 	/**
