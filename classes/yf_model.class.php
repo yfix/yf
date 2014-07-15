@@ -22,7 +22,8 @@ class yf_model {
 		}
 	}
 
-	/***/
+	/**
+	*/
 	public function _get_table_name($name = '') {
 		if (!$name) {
 			$name = $this->_table;
@@ -48,7 +49,8 @@ class yf_model {
 		return $db->_found_tables[$name];
 	}
 
-	/***/
+	/**
+	*/
 	public function count() {
 #		$cache_name = __FUNCTION__.$this->__changed;
 #		if (isset($this->__cache[$cache_name])) {
@@ -60,15 +62,31 @@ class yf_model {
 		return $result;
 	}
 
-	/***/
+	/**
+	*/
 	public function find() {
 		$db = &$this->_db;
 		return $db->from($this->_get_table_name())->where(array('__args__' => func_get_args()))->get_all(array('as_object' => true));
 	}
 
-	/***/
+	/**
+	*/
 	public function first() {
 		$db = &$this->_db;
 		return (object) $db->from($this->_get_table_name())->where(array('__args__' => func_get_args()))->get();
+	}
+
+	/**
+	* Determine if the model or a given attribute has been modified.
+	*/
+	public function is_dirty($attr = null) {
+// TODO
+	}
+
+	/**
+	* Get the attributes that have been changed since last sync.
+	*/
+	public function get_dirty($attr = null) {
+// TODO
 	}
 }
