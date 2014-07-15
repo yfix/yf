@@ -443,9 +443,11 @@ abstract class yf_db_query_builder_driver {
 				$op = 'NOT LIKE';
 			} elseif ($op == 'rlike') {
 				$op = 'RLIKE';
+			} elseif ($op == 'not rlike') {
+				$op = 'NOT RLIKE';
 			}
 		}
-		return $this->_escape_key($left). ' '. $op. ' '. $this->_escape_val($right);
+		return $this->_escape_key($left). ' '. strtoupper($op). ' '. $this->_escape_val($right);
 	}
 
 	/**
