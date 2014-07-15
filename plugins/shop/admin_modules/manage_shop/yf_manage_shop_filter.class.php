@@ -2,7 +2,7 @@
 
 class yf_manage_shop_filter{
 
-	public $_avail_filters = array('products','users','orders','suppliers','manufacturers','product_sets','attributes','feedback','product_revisions', 'order_revisions', 'category_revisions', 'product_images_revisions');
+	public $_avail_filters = array('products','users','orders','suppliers','manufacturers','product_sets','attributes','feedback','product_revisions', 'order_revisions', 'category_revisions', 'product_images_revisions', 'region');
 
 	/**
 	*/
@@ -200,6 +200,19 @@ class yf_manage_shop_filter{
 					->select_box('action', common()->get_static_conf('order_revisions',false,false), array('show_text' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 			},
+			'product_images_revisions'	=> function($filter_name, $replace) {
+				$fields = array('user_id', 'add_date', 'product_id', 'action');
+				foreach ((array)$fields as $v) {
+					$order_fields[$v] = $v;
+				}
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+					->container(_class('manage_shop_filter')->_product_search_widget('product_id',$_SESSION[$filter_name]['product_id']),'Product id')
+					->text('user_id', 'Admin')
+					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
+					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
+					->select_box('action', common()->get_static_conf('images_revisions',false,false), array('show_text' => 1))
+					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
+			},
 			'category_revisions'	=> function($filter_name, $replace) {
 				$fields = array('user_id', 'add_date', 'item_id', 'action');
 					$fields = array_combine( array_values( $fields ), array_values( $fields ) );
@@ -213,18 +226,12 @@ class yf_manage_shop_filter{
 					->select_box('action',   $action, array('show_text' => 1, 'translate' => 1))
 					->select_box('order_by', $fields, array('show_text' => 1, 'translate' => 1));
 			},
-			'product_images_revisions'	=> function($filter_name, $replace) {
-				$fields = array('user_id', 'add_date', 'product_id', 'action');
-				foreach ((array)$fields as $v) {
-					$order_fields[$v] = $v;
-				}
+			'region'	=> function($filter_name, $replace) {
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
-					->container(_class('manage_shop_filter')->_product_search_widget('product_id',$_SESSION[$filter_name]['product_id']),'Product id')
-					->text('user_id', 'Admin')
-					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
-					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
-					->select_box('action', common()->get_static_conf('images_revisions',false,false), array('show_text' => 1))
-					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
+					->text( 'id',    'Номер'    )
+					->text( 'value', 'Название' )
+					->active_box( 'active', array( 'horizontal' => 1 ) )
+				;
 			},
 		);
 		$action = $_GET['action'];
