@@ -106,6 +106,24 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 			self::qb()->from(array('user' => 'u'))->where(array('u.id','=','1'),'or',array('u.gid','=','4'))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' XOR `u`.`gid` = \'4\'', 
 			self::qb()->from(array('user' => 'u'))->where(array('u.id','=','1'),'xor',array('u.gid','=','4'))->sql() );
+
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `id` = \'1\' AND `gid` = \'4\'', 
+			self::qb()->from(array('user' => 'u'))->where(array('id' => '1', 'gid' => '4'))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' AND `u`.`gid` = \'4\'', 
+			self::qb()->from(array('user' => 'u'))->where(array('u.id' => '1', 'u.gid' => '4'))->sql() );
+	}
+	public function test_where_like() {
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` LIKE \'test\'', self::qb()->from('user')->where('name','like','test')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` LIKE \'test\'', self::qb()->from('user')->where('name','LIKE','test')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` LIKE \'test%\'', self::qb()->from('user')->where('name','like','test%')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` LIKE \'test%\'', self::qb()->from('user')->where('name','like','test*')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` NOT LIKE \'test%\'', self::qb()->from('user')->where('name','not like','test*')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` RLIKE \'(test|other)\'', self::qb()->from('user')->where('name','rlike','(test|other)')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` NOT RLIKE \'(test|other)\'', self::qb()->from('user')->where('name','not rlike','(test|other)')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` LIKE \'1%\' AND `u`.`gid` LIKE \'%4\'', 
+			self::qb()->from(array('user' => 'u'))->where(array('u.id' => '1*', 'u.gid' => '*4'))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` LIKE \'%1%\' XOR `u`.`gid` NOT LIKE \'%4%\'', 
+			self::qb()->from(array('user' => 'u'))->where(array('u.id','like','%1%'),'xor',array('u.gid','not like','%4%'))->sql() );
 	}
 	public function test_where_simple_syntax() {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\'', self::qb()->from('user as u')->where('u.id = 1')->sql() );
