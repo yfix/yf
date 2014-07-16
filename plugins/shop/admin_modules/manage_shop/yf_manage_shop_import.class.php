@@ -447,7 +447,7 @@ class yf_manage_shop_import {
 				$cat_id = $A['id'];
 				$cat_ids[$item[5]] = $cat_id;
 			} else {
-				$cat_ids = $cat_ids[$item[5]];
+				$cat_id = $cat_ids[$item[5]];
 			}
 			$v['category'] = $item[5] . " - ".$cat_id;
 			$A = db()->get("SELECT `id` FROM `".db('shop_manufacturers')."` WHERE `name`='".trim($item[4])."' OR `url`='".common()->_propose_url_from_name(trim($item[4]))."'");
@@ -509,7 +509,7 @@ class yf_manage_shop_import {
 				$cat_id = $A['id'];
 				$cat_ids[$item[8]] = $cat_id;
 			} else {
-				$cat_ids = $cat_ids[$item[8]];
+				$cat_id = $cat_ids[$item[8]];
 			}
 			$v['category'] = $item[8] . " - ".$cat_id;
 			$A = db()->get("SELECT `id` FROM `".db('shop_manufacturers')."` WHERE `name`='".trim($item[0])."' OR `url`='".common()->_propose_url_from_name(trim($item[0]))."'");
