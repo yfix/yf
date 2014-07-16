@@ -51,4 +51,9 @@ class tpl_driver_yf_include_test extends tpl_abstract {
 		$this->assertEquals('Hello1 Hello2 Hello3', self::_tpl( '{include("'.$name.'_1")} {include("'.$name.'_2")} {include("'.$name.'_3")}' ));
 		$this->assertEquals('Hello1 Hello2 Hello1 Hello2', self::_tpl( '{include("'.$name.'_1")} {include("'.$name.'_2")} {include("'.$name.'_1")} {include("'.$name.'_2")}' ));
 	}
+	public function test_include_if_exists() {
+		$name = 'unittest/'.__CLASS__.'/'.__FUNCTION__;
+		self::_tpl( 'Hello1', array(), $name.'_1' );
+		$this->assertEquals('Hello1  ', self::_tpl( '{include_if_exists("'.$name.'_1")} {include_if_exists("'.$name.'_2")} {include_if_exists("'.$name.'_3")}' ));
+	}
 }
