@@ -294,6 +294,18 @@ class yf_validate {
 	}
 
 	/**
+	* Returns true when selected other passed field will be non-empty
+	* Examples: required_if[other_field]
+	*/
+	function required_if($in, $params = array(), $fields = array()) {
+		$param = trim(is_array($params) ? $params['param'] : $params);
+		if ($param && !empty($fields[$param])) {
+			return is_array($in) ? (bool) count($in) : (trim($in) !== '');
+		}
+		return true;
+	}
+
+	/**
 	* Returns true when _ANY_ of passed fields will be non-empty
 	* Examples: required_any[duration_*] or required_any[duration_day,duration_week,duration_month]
 	*/
