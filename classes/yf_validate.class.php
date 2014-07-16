@@ -196,11 +196,16 @@ class yf_validate {
 				}
 				$val = trim($rule[0]);
 				$param = null;
+				// Parsing these: min_length:6, matches:form_item, is_unique:table.field
+				if (strpos($val, ':') !== false && substr($val, -1) != ']') {
+					list($_val, $param) = explode(':', $val);
+					$param = trim($param);
+					$val = trim($_val);
 				// Parsing these: min_length[6], matches[form_item], is_unique[table.field]
-				$pos = strpos($val, '[');
-				if ($pos !== false) {
-					$param = trim(trim(substr($val, $pos), ']['));
-					$val = trim(substr($val, 0, $pos));
+				} elseif (strpos($val, '[') !== false) {
+					list($_val, $param) = explode('[', $val);
+					$param = trim(trim(trim($param), ']['));
+					$val = trim($_val);
 				}
 				if (!is_callable($val) && empty($val)) {
 					unset($rules[$k]);
@@ -446,6 +451,15 @@ class yf_validate {
 	/**
 	* Returns TRUE if given field value is unique inside given database table.field
 	* Examples: is_unique[user.login]
+	* Alias
+	*/
+	function unique($in, $params = array()) {
+		return $this->is_unique($in, $params);
+	}
+
+	/**
+	* Returns TRUE if given field value is unique inside given database table.field
+	* Examples: is_unique[user.login]
 	*/
 	function is_unique($in, $params = array()) {
 		if (!$in) {
@@ -510,6 +524,15 @@ class yf_validate {
 	/**
 	* Custom regex matching.
 	* Example: regex_match[/^[a-z0-9]+$/]
+	* Alias
+	*/
+	function regex($in, $params = array()) {
+		return $this->regex_match($in, $params);
+	}
+
+	/**
+	* Custom regex matching.
+	* Example: regex_match[/^[a-z0-9]+$/]
 	*/
 	function regex_match($in, $params = array()) {
 		$regex = is_array($params) ? $params['param'] : $params;
@@ -523,6 +546,13 @@ class yf_validate {
 	function differs($in, $params = array(), $fields = array()) {
 		$field = is_array($params) ? $params['param'] : $params;
 		return ! (isset($fields[$field]) && $_POST[$field] === $in);
+	}
+
+	/**
+	* Alias
+	*/
+	function host($in) {
+		return $this->valid_hostname($in);
 	}
 
 	/**
@@ -550,6 +580,14 @@ class yf_validate {
 
 	/**
 	* Returns TRUE if given field contains valid url. Checking is done in combination of regexp and php built-in filter_val() to ensure most correct results
+	* Alias
+	*/
+	function url($in, $params = array()) {
+		return $this->valid_url($in, $params);
+	}
+
+	/**
+	* Returns TRUE if given field contains valid url. Checking is done in combination of regexp and php built-in filter_val() to ensure most correct results
 	*/
 	function valid_url($in, $params = array()) {
 		if (empty($in)) {
@@ -564,6 +602,13 @@ class yf_validate {
 		}
 		$in = 'http://'.$in;
 		return (filter_var($in, FILTER_VALIDATE_URL) !== false);
+	}
+
+	/**
+	* Returns TRUE if given field contains valid email address. Alias
+	*/
+	function email($in) {
+		return $this->valid_email($in);
 	}
 
 	/**
