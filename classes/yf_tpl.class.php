@@ -464,6 +464,10 @@ class yf_tpl {
 	* Check if template exists (simple wrapper for the '_get_template_file')
 	*/
 	function _stpl_exists ($stpl_name = '', $force_storage = '') {
+		// Exists in cache
+		if (!$force_storage && isset($this->driver->CACHE[$stpl_name])) {
+			return true;
+		}
 		return (bool)$this->_get_template_file($stpl_name, $force_storage, 1);
 	}
 
