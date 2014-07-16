@@ -7,7 +7,7 @@ class yf_table2_filter {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $_this) {
+	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $_this = null) {
 		if (!$filter_data) {
 			return '';
 		}
@@ -144,7 +144,7 @@ class yf_table2_filter {
 	/**
 	* Simple filtering of the given array. Need to support table() raw array data with filtering
 	*/
-	function _filter_array(&$data, $filter = array(), $filter_params = array(), $_this) {
+	function _filter_array(&$data, $filter = array(), $filter_params = array(), $_this = null) {
 		if (!$data || !$filter) {
 			return false;
 		}

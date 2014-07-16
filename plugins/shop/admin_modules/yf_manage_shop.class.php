@@ -341,6 +341,26 @@ class yf_manage_shop {
 		return _class('manage_shop_units', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
+	function region() {
+		return _class('manage_shop_region', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
+	function region_active() {
+		return _class('manage_shop_region', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
+	function region_edit() {
+		return _class('manage_shop_region', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
+	function region_add() {
+		return _class('manage_shop_region', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
+	function region_delete() {
+		return _class('manage_shop_region', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
 	function price_markup_down() {
 		return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}

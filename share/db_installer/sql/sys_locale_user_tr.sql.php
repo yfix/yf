@@ -10,3 +10,6 @@ $data = '
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `locale_var_user_id` (`user_id`,`var`,`locale`)
 ';
+/*
+, FOREIGN KEY (`locale`) REFERENCES `{db_prefix}sys_locale_langs` (`locale`) ON DELETE CASCADE ON UPDATE NO ACTION
+*/

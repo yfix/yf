@@ -764,8 +764,16 @@ class yf_db {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
+		$params = array();
+		if (is_array($use_cache)) {
+			$params = $use_cache;
+			$use_cache = isset($params['use_cache']) ? $params['use_cache'] : true;
+		}
 		$storage = &$this->_db_results_cache;
 		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($storage[$query])) {
+			if ($params['as_object']) {
+				return array_to_object($storage[$query]);
+			}
 			return $storage[$query];
 		}
 		$data = null;
@@ -791,6 +799,9 @@ class yf_db {
 				$this->ALLOW_CACHE_QUERIES = false;
 				$storage = null;
 			}
+		}
+		if ($params['as_object']) {
+			return array_to_object($data);
 		}
 		return $data;
 	}
@@ -1186,6 +1197,9 @@ class yf_db {
 	* Get real table name from its short variant
 	*/
 	function _real_name ($name) {
+		if (isset($this->_found_tables[$name])) {
+			return $this->_found_tables[$name];
+		}
 		return $this->DB_PREFIX. (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
 	}
 
@@ -1506,17 +1520,68 @@ class yf_db {
 	* ORM shortcut
 	*/
 	function model($name, $params = array()) {
-		if (strpos($this->DB_TYPE, 'mysql') !== false || $this->DB_TYPE == 'DB_TYPE') {
-			$driver = 'mysql';
-		} else {
-			$driver = $this->DB_TYPE;
+		$model = $this->_model_load($name);
+		$params && $model->_set_params($params);
+		return $model;
+	}
+
+	/**
+	* Load new model object
+	*/
+	function _model_load($name) {
+		if (!$this->_models_preloaded) {
+			$this->_models_preload();
 		}
-		$cname = 'db_orm_'.$driver;
-		$obj = clone _class($cname, 'classes/db/');
-		$obj->db = $this;
-		$obj->_load_model($name);
-		$params && $obj->_set_params($params);
-		return $obj;
+		$model_class = $name.'_model';
+		$main_modules = &main()->modules;
+		if (isset($main_modules[$model_class])) {
+			return $main_modules[$model_class];
+		}
+		$avail_models = &$this->_models_preloaded;
+		$model_path = $avail_models[$name];
+		if (!isset($avail_models[$name])) {
+			throw new Exception('Not able to load model: '.$name);
+			return false;
+		}
+		if (!class_exists($model_class)) {
+			require_once $model_path;
+			if (!class_exists($model_class)) {
+				throw new Exception('Not able to find model class: '.$model_class.' by path: '.$model_path);
+				return false;
+			}
+		}
+		$model_obj = _class($model_class);
+		$model_obj->_db = $this;
+		return $model_obj;
+	}
+
+	/**
+	* Preload models for ORM
+	*/
+	function _models_preload() {
+		if ($this->_models_preloaded) {
+			return true;
+		}
+		load('model', 'framework', 'classes/');
+		$suffix = '_model'.YF_CLS_EXT;
+		$s_len = strlen($suffix);
+		$globs = array(
+			'yf'				=> YF_PATH.'share/models/*'.$suffix,
+			'yf_plugins'		=> YF_PATH.'plugins/*/share/models/*'.$suffix,
+			'project'			=> PROJECT_PATH.'share/models/*'.$suffix,
+			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/models/*'.$suffix,
+			'project_app_path'	=> APP_PATH.'models/*'.$suffix,
+		);
+		$models = array();
+		foreach($globs as $glob) {
+			foreach (glob($glob) as $path) {
+				$name = trim(substr(basename($path), 0, -$s_len));
+				if ($name) {
+					$models[$name] = $path;
+				}
+			}
+		}
+		$this->_models_preloaded = $models;
 	}
 
 	/**
