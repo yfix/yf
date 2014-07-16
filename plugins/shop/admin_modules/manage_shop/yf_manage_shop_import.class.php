@@ -497,21 +497,21 @@ class yf_manage_shop_import {
 		$result = array();
 		$cat_ids = array();
 		foreach ($items as $item) {
-			if (intval($item[5]) == 0 || intval($item[3]) == 0) continue;
+			if (intval($item[6]) == 0 || intval($item[4]) == 0) continue;
             
             
 //            ($name,$articul,$price,$supplier_id,$price_raw = 0)
-			$v = $this->format_data($item[2],$item[5],$item[3],$supplier_id,$item[4]);
+			$v = $this->format_data($item[2],$item[6],$item[4],$supplier_id,$item[5]);
             
             
-			if (intval($cat_ids[$item[5]]) == 0) {
-				$A = db()->get("SELECT `id` FROM `".db('sys_category_items')."` WHERE `name`='".$item[7]."'");
+			if (intval($cat_ids[$item[8]]) == 0) {
+				$A = db()->get("SELECT `id` FROM `".db('sys_category_items')."` WHERE `name`='".$item[8]."'");
 				$cat_id = $A['id'];
-				$cat_ids[$item[7]] = $cat_id;
+				$cat_ids[$item[8]] = $cat_id;
 			} else {
-				$cat_ids = $cat_ids[$item[7]];
+				$cat_ids = $cat_ids[$item[8]];
 			}
-			$v['category'] = $item[7] . " - ".$cat_id;
+			$v['category'] = $item[8] . " - ".$cat_id;
 			$A = db()->get("SELECT `id` FROM `".db('shop_manufacturers')."` WHERE `name`='".trim($item[0])."' OR `url`='".common()->_propose_url_from_name(trim($item[0]))."'");
 			$man_id = $A['id'];
 			if (intval($man_id) == 0 && trim($item[0]) != '') {
@@ -522,7 +522,7 @@ class yf_manage_shop_import {
 				$man_id = db()->insert_id();
 			}
 			$v['manufacturer'] = $item[0]." - ".$man_id;
-            $v['origin_url'] = trim($item[6]);
+            $v['origin_url'] = trim($item[7]);
 			
 			//todo:cats
 			if (empty($products[$v['articul']])) {
