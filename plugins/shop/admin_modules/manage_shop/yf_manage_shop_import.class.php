@@ -13,7 +13,8 @@ class yf_manage_shop_import {
 			'velika_kishenya' => 'velika kishenya',
 			'ekanevidal' => 'eka nevidal',
 			'electrolux' => 'electrolux',
-			'promozp' => 'promoZP'            
+			'promozp' => 'promoZP',
+			'zoobonus' => 'zoobonus'            
 		);
 		$this->_modes = array(
 			'validate' => 'validate',
@@ -489,6 +490,69 @@ class yf_manage_shop_import {
 		return $this->table_format($result);
 	}
 
+    
+	function process_items_zoobonus($items, $mode = 'process') { // process/validate
+		$supplier_id = 122;
+		$products = $this->get_products_by_supplier($supplier_id);
+		$result = array();
+		$cat_ids = array();
+		foreach ($items as $item) {
+			if (intval($item[5]) == 0 || intval($item[3]) == 0) continue;
+            
+            
+//            ($name,$articul,$price,$supplier_id,$price_raw = 0)
+			$v = $this->format_data($item[2],$item[5],$item[3],$supplier_id,$item[4]);
+            
+            
+			if (intval($cat_ids[$item[5]]) == 0) {
+				$A = db()->get("SELECT `id` FROM `".db('sys_category_items')."` WHERE `name`='".$item[7]."'");
+				$cat_id = $A['id'];
+				$cat_ids[$item[7]] = $cat_id;
+			} else {
+				$cat_ids = $cat_ids[$item[7]];
+			}
+			$v['category'] = $item[7] . " - ".$cat_id;
+			$A = db()->get("SELECT `id` FROM `".db('shop_manufacturers')."` WHERE `name`='".trim($item[0])."' OR `url`='".common()->_propose_url_from_name(trim($item[0]))."'");
+			$man_id = $A['id'];
+			if (intval($man_id) == 0 && trim($item[0]) != '') {
+				db()->insert(db('shop_manufacturers'),array(
+					'name' => trim($item[0]),
+					'url' => common()->_propose_url_from_name(trim($item[0])),
+				));
+				$man_id = db()->insert_id();
+			}
+			$v['manufacturer'] = $item[0]." - ".$man_id;
+            $v['origin_url'] = trim($item[6]);
+			
+			//todo:cats
+			if (empty($products[$v['articul']])) {
+				$v['is_new'] = 'new';
+				$v1 = $v;
+				unset($v1['is_new']);
+				unset($v1['category']);
+				unset($v1['manufacturer']);
+				
+                
+				$v1['add_date'] = time();												
+				$v1['cat_id'] = intval($cat_id);
+				$v1['manufacturer_id'] = intval($man_id);
+				if ($mode == 'process') db()->insert(db('shop_products'), _es($v1));
+			} else {
+				$v['is_new'] = 'upd';
+				$v1 = array(
+					'price' => $v['price'],
+					'price_raw' => $v['price_raw'],
+					'name' => $v['name'],
+					'update_date' => time(),
+					'cat_id' => intval($cat_id),
+					'manufacturer_id' => intval($man_id),					
+				);
+				if ($mode == 'process') db()->update(db('shop_products'), _es($v1),"`supplier_id`='".$supplier_id."' AND `articul`='".$v['articul']."'");
+			}
+			$result[] = $this->add_result($v);			
+		}
+		return $this->table_format($result);
+	}
 	
 	function table_format($result) {
 		return table($result, array(
