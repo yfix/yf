@@ -128,12 +128,4 @@ class class_core_events_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(array('3_Hello_3'), $result);
 		events()->forget('testme');
 	}
-/*
-	public function test_queue() {
-		events()->queue('testme', array('111'));
-		events()->flush('testme');
-		events()->forget('testme');
-		$this->assertEquals('3_Hello_3', $result);
-	}
-*/
 }
