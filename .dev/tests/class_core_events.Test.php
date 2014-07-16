@@ -96,4 +96,44 @@ class class_core_events_test extends PHPUnit_Framework_TestCase {
 		events()->forget('testme');
 		$this->assertEquals(array('1_Hello_1','2_Hello_2','3_Hello_3'), $result);
 	}
+	public function test_wildcard() {
+		events()->listen('testme.1', function() { return '111'; });
+		events()->listen('testme.*', function() { return '222'; });
+		events()->listen('testme.3', function() { return '333'; });
+		$result = events()->fire('testme.1', array('Hello'));
+		events()->forget('testme');
+		$this->assertEquals(array('111','222'), $result);
+	}
+	public function test_until() {
+		events()->listen('testme', function($in) { });
+		events()->listen('testme', function($in) { return ; });
+		events()->listen('testme', function($in) { return null; });
+		events()->listen('testme', function($in) { return '3_'.$in.'_3'; });
+		events()->listen('testme', function($in) { return '4_'.$in.'_4'; }); // This should not be called
+		$result = events()->until('testme', array('Hello'));
+		events()->forget('testme');
+		$this->assertEquals('3_Hello_3', $result);
+	}
+	public function test_firing() {
+		events()->listen('testme.*', function($in) {
+			if (events()->firing() == 'testme.3') {
+				return '3_'.$in.'_3';
+			}
+		});
+		$result = events()->fire('testme.1', array('Hello'));
+		$this->assertEquals(array(null), $result);
+		$result = events()->fire('testme.2', array('Hello'));
+		$this->assertEquals(array(null), $result);
+		$result = events()->fire('testme.3', array('Hello'));
+		$this->assertEquals(array('3_Hello_3'), $result);
+		events()->forget('testme');
+	}
+/*
+	public function test_queue() {
+		events()->queue('testme', array('111'));
+		events()->flush('testme');
+		events()->forget('testme');
+		$this->assertEquals('3_Hello_3', $result);
+	}
+*/
 }
