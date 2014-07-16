@@ -29,10 +29,18 @@ class yf_tpl_driver_yf {
 	public $_MAX_RECURSE_LEVEL = 4;
 	/** @var @conf_skip */
 	public $CACHE = array();
-/*
-// TODO
+
+/* // TODO
 {ife(is_logged_in)}  {/ife}
 {ifne(is_logged_in)}  {/ifne}
+*/
+
+/* // TODO
+{foreach(items)}
+  {_key} = {_val}
+{elseforeach}
+  No records
+{/foreach}
 */
 
 	/**
@@ -386,16 +394,8 @@ class yf_tpl_driver_yf {
 	*/
 	function _process_js_css($string, $replace = array(), $name = '') {
 		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css)}, {catch(tpl_var)}.some_css_class {} {/catch} {require_css(tpl_var)}
-		$string = preg_replace_callback('/\{(css|require_css)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(css|require_css)\}/ims', function($m) use ($_this) {
-			$func = $m[1];
-			if (substr($func, 0, strlen('require_')) != 'require_') {
-				$func = 'require_'.$func;
-			}
-			return $func($m[3], _attrs_string2array($m[2]));
-		}, $string);
-
 		// JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
-		$string = preg_replace_callback('/\{(js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(js|require_js)\}/ims', function($m) use ($_this) {
+		$string = preg_replace_callback('/\{(css|require_css|js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims', function($m) use ($_this) {
 			$func = $m[1];
 			if (substr($func, 0, strlen('require_')) != 'require_') {
 				$func = 'require_'.$func;
@@ -869,9 +869,17 @@ class yf_tpl_driver_yf {
 	/**
 	* Wrapper for '_PATTERN_INCLUDE', allows you to include stpl, optionally pass $replace params to it
 	*/
-	function _include_stpl ($stpl_name = '', $params = '', $replace = array()) {
+	function _include_stpl ($stpl_name = '', $params = '', $replace = array(), $if_exists = false) {
 		if (!is_array($replace)) {
 			$replace = array();
+		}
+		$force_storage = '';
+		// Force to include template from special storage, example: @framework:script_js
+		if ($stpl_name[0] == '@') {
+			list($force_storage, $stpl_name) = explode(':', substr($stpl_name, 1));
+		}
+		if ($if_exists && !tpl()->exists($stpl_name, $force_storage)) {
+			return false;
 		}
 		$replace = (array)_attrs_string2array($params) + (array)$replace;
 		return $this->parse($stpl_name, $replace);
