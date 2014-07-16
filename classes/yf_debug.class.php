@@ -21,6 +21,7 @@ class yf_debug {
 	public $SHOW_INCLUDED_FILES		= true;
 	public $SHOW_LOADED_MODULES		= true;
 	public $SHOW_MEMCACHED_INFO		= true;
+	public $SHOW_DASHBOARD_INFO		= true;
 	public $SHOW_EACCELERATOR_INFO	= true;
 	public $SHOW_XCACHE_INFO		= true;
 	public $SHOW_APC_INFO			= true;
@@ -1318,5 +1319,27 @@ class yf_debug {
 
 		$body .= 'var _i18n_for_page = '.json_encode($js_vars);
 		return '<script type="text/javascript">'.$body.'</script>';
+	}
+
+	/**
+		*
+		*     */
+
+	function _debug_dashboards () {
+		if (!$this->SHOW_DB_STATS) {
+			return '';
+		}
+
+		$items = $this->_get_debug_data('dashboard');
+
+		$_items = $items['widgets'];
+		$_items = $this->_time_count_changes($_items);
+
+		$data  = '<div class="span4 col-lg-4">dashboard name: <b>'.$items['name'].'</b><br /><br />';
+		$data .= 'Total time: <b>'.$items['total_time'].'</b><br /><br />';
+		$data .= $this->_show_auto_table($_items, array('hidden_map' => array()));
+		$data .= '</div>';
+
+		return $data;
 	}
 }
