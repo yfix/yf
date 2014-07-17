@@ -1258,6 +1258,7 @@ class yf_debug {
 	function _get_debug_data ($name) {
 		$this->_used_debug_datas[$name]++;
 		$data = debug($name);
+		$this->backup_debug_data[$name] = $data;
 		debug($name, false);
 		return $data;
 	}
@@ -1330,9 +1331,24 @@ class yf_debug {
 			return '';
 		}
 
+		$loaded_modules = $this->backup_debug_data['main_load_class'];
+
 		$items = $this->_get_debug_data('dashboard');
 
-		$_items = $items['widgets'];
+		//	print_r($_items);
+		foreach ($items['widgets'] as $key => $value){
+			$_items[$key]['class_name'] = $value['class_name'];
+			$_items[$key]['action'] = $value['action'];
+			foreach ($loaded_modules as $k => $v) {
+				if (($value['class_name'] == $v['class_name'])){
+					$_items[$key]['loaded_class_name'] = $v['loaded_class_name'];
+					$_items[$key]['storage'] = $v['storage'];
+					$_items[$key]['loaded_path'] = $v['loaded_path'];
+					break;
+				}
+			}
+			$_items[$key]['time'] = $value['time'];
+		}
 		$_items = $this->_time_count_changes($_items);
 
 		$data  = '<div class="span4 col-lg-4">dashboard name: <b>'.$items['name'].'</b><br /><br />';
