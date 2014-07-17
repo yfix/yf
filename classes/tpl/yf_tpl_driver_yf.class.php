@@ -144,7 +144,7 @@ class yf_tpl_driver_yf {
 	*/
 	function _fix_replace(array &$replace, $name) {
 		foreach ($replace as $item => $value) {
-			if (is_object($value)) {
+			if (is_object($value) && !method_exists($value, 'render')) {
 				$replace[$item] = obj2arr($value);
 			}
 		}
@@ -304,7 +304,7 @@ class yf_tpl_driver_yf {
 		$pairs = array();
 		$cleanup_keys = array();
 		foreach ((array)$replace as $item => $value) {
-			if (is_object($value)) {
+			if (is_object($value) && !method_exists($value, 'render')) {
 				$replace[$item] = obj2arr($value);
 				$value = $replace[$item];
 			}
@@ -671,7 +671,7 @@ class yf_tpl_driver_yf {
 			$res_v = '';
 			// Value from $replace array (DO NOT replace 'array_key_exists()' with 'isset()' !!!)
 			if (array_key_exists($tmp_v, $replace)) {
-				if (is_object($replace[$tmp_v])) {
+				if (is_object($replace[$tmp_v]) && !method_exists($replace[$tmp_v], 'render')) {
 					$res_v = get_object_vars($replace[$tmp_v]);
 				}
 				if (is_array($replace[$tmp_v])) {
