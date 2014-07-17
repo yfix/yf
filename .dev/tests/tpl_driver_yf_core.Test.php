@@ -349,6 +349,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$data->key2 = 'val2';
 		$data->key3 = 'val3';
 
+		$this->assertEquals('val1 val2 val3', self::_tpl('{key1} {key2} {key3}', $data));
 		$this->assertEquals('val1', self::_tpl('{data.key1}', array('data' => $data)));
 		$this->assertEquals('val1,val2', self::_tpl('{data.key1},{data.key2}', array('data' => $data)));
 		$this->assertEquals('val1,val2,val3', self::_tpl('{data.key1},{data.key2},{data.key3}', array('data' => $data)));
