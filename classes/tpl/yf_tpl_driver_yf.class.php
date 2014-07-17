@@ -816,17 +816,15 @@ class yf_tpl_driver_yf {
 				}
 				// Add output and replace template keys with array values
 				if (!empty($sub_replace)) {
-					// Process output for this iteration
 					$cur_output = $sub_template;
 					$cur_output = str_replace($sub_replace, is_array($sub_v) ? array_values($sub_v) : $sub_v, $cur_output);
-					$cur_output = str_replace(array('{_num}','{_total}'), array($_i, $_total), $cur_output);
-					// For 2-dimensional arrays
-					if (is_array($sub_v)) {
-						$cur_output = str_replace('{_key}', $sub_k, $cur_output);
-					// For 1-dimensional arrays
-					} else {
-						$cur_output = str_replace(array('{_key}', '{_val}') , array($sub_k, $sub_v), $cur_output);
-					}
+					$sub_replace_simple = array(
+						'{_num}'	=> $_i,
+						'{_total}'	=> $_total,
+						'{_key}'	=> $sub_k,
+						'{_val}'	=> is_array($sub_v) ? implode(',', $sub_v) : $sub_v,
+					);
+					$cur_output = str_replace(array_keys($sub_replace_simple), array_values($sub_replace_simple), $cur_output);
 					// Apply var filtering pattern, in case if such constructions found on the upper level
 					if ($has_var_filters) {
 						$cur_output = preg_replace_callback($var_filter_pattern, function($m) use ($replace, $sub_k) {
@@ -845,7 +843,7 @@ class yf_tpl_driver_yf {
 					$tmp_array['_even']  = $_is_odd;
 					$tmp_array['_odd']   = $_is_even;
 					$tmp_array['_key']   = $sub_k;
-					$tmp_array['_val']   = is_array($sub_v) ? strval($sub_v) : $sub_v;
+					$tmp_array['_val']   = is_array($sub_v) ? implode(',', $sub_v) : $sub_v;
 					// Try to process conditions in every cycle
 					$output .= $this->_process_ifs($cur_output, $tmp_array, $stpl_name);
 				}
