@@ -1129,7 +1129,6 @@ class yf_html {
 			$extra['name'] = $name;
 		}
 		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-
 		css('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.css');
 		js('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.js');
 		$js_options = (array)$extra['js_options'] + array(

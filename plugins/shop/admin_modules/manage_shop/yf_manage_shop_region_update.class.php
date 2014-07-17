@@ -43,16 +43,28 @@ class yf_manage_shop_region_update {
 	}
 
 	function _data() {
-		$region = _class( '_shop_region', 'modules/shop/' )->_get_list();
+		$_region = _class( '_shop_region', 'modules/shop/' )->_get_list();
 		// array_unshift( $region, '- регион не выбран -' );
+			$region = array_values( (array)$_POST[ 'region' ] );
+			$region = array_combine( $region, $region );
+				$is_region = true;
+				foreach( $region as $id ) {
+					if( $id === '0' || !isset( $_region[ $id ] ) ) {
+						$is_region = false;
+						break;
+					}
+				}
 		// -----
-		$sub_action = array(
+		$_sub_action = array(
+			'0'  => '- не выбрано -',
 			'1'  => 'добавить',
 			'-1' => 'удалить',
 		);
+			$sub_action = $_POST[ 'sub_action' ];
+				$is_sub_action = $sub_action !== '0' && isset( $_sub_action[ $sub_action ] );
 		// init sql
 		$sql_table   = db( 'shop_products' );
-		$sql_table_r = db( 'shop_product_to_region' );
+		$sql_table_action = db( 'shop_product_to_region' );
 		$_fields = $this->_fields_show;
 		$fields = array(); $sql_fields = '*';
 		$where  = array(); $sql_where = '';
@@ -73,13 +85,7 @@ class yf_manage_shop_region_update {
 		if( !empty( $where  ) ) { $sql_where  = 'WHERE '    . implode( ', ', $where  ); }
 		if( !empty( $order  ) ) { $sql_order  = implode( ', ', $order  ); }
 		// compile sql
-		$sql = sprintf( 'SELECT %s FROM %s as p %s %s'
-			, $sql_fields
-			, $sql_table
-			, $sql_where
-			, $sql_order
-		);
-		$sql_filter = sprintf( 'SELECT * FROM %s as p %s %s'
+		$sql_filter = sprintf( 'SELECT p.id FROM %s as p %s %s'
 			, $sql_table
 			, $sql_where
 			, $sql_order
@@ -89,12 +95,34 @@ class yf_manage_shop_region_update {
 			, $sql_where
 			, $sql_order
 		);
-		$total = db()->get_one( $sql_count );
+		$total = (int)db()->get_one( $sql_count );
+		// update
+		$apply   = $_POST[ 'apply'   ];
+		$confirm = $_POST[ 'confirm' ];
+		$is_update = $this->is_post && $is_sub_action && $is_region && isset( $apply ) && isset( $confirm ) ? true : false;
+		if( $is_update ) {
+			// prepare data
+			$data = array();
+			$ids  = db()->get_2d( $sql_filter );
+			foreach( $ids as $id ) {
+				foreach( $region as $r_id ) {
+					$data[] = array( 'product_id' => $id, 'region_id' => $r_id );
+				}
+			}
+			db_query( 'START TRANSACTION' );
+				// db()->insert_on_duplicate_key_update( $sql_table_action, $data );
+			db_query( 'COMMIT' );
+			$sql = db()->delete( $sql_table_action, array( array( 'product_id', 'in', $ids ) ), true );
+			var_dump( $sql );
+			exit;
+		}
 		// -----
 		$result = array(
-			'total'      => $total,
-			'region'     => $region,
-			'sub_action' => $sub_action,
+			'total'       => $total,
+			'_region'     => $_region,
+				'region'     => $region,
+			'_sub_action' => $_sub_action,
+				'sub_action' => $sub_action,
 		);
 		return( $result );
 	}
@@ -107,14 +135,16 @@ class yf_manage_shop_region_update {
 				->info( 'total' )
 				->link( 'Back', $link_back , array( 'title' => 'Вернуться в к фильтру продуктов', 'icon' => 'fa fa-arrow-circle-left' ))
 			->row_end()
-			->select_box( 'sub_action', $data[ 'sub_action' ], array(
-				'selected' => (int)$_POST[ 'sub_action' ],
-				'desc' => 'Действие',
+			->select2_box( array(
+				'desc'     => 'Действие',
+				'name'     => 'sub_action',
+				'values'   => $data[ '_sub_action' ],
 			))
-			->multi_select_box( 'region', $data[ 'region' ], array(
-				'selected' => (array)$_POST[ 'region' ],
+			->select2_box( array(
 				'desc'     => 'Регион',
-				'force_id' => 'regs'
+				'name'     => 'region',
+				'multiple' => true,
+				'values'   => $data[ '_region' ],
 			))
 			->row_start( array( 'desc' => '' ) )
 				->submit( 'apply', 'Выполнить' )

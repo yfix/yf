@@ -1440,7 +1440,11 @@ class yf_form2 {
 	/**
 	*/
 	function _html_control($name, $values, $extra = array(), $replace = array(), $func_html_control = '') {
-		$extra['name'] = $extra['name'] ?: $name;
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+		} else {
+			$extra['name'] = $name;
+		}
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$extra['func_html_control'] = $extra['func_html_control'] ?: $func_html_control;
@@ -1564,7 +1568,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function select2_box($name, $values, $extra = array(), $replace = array()) {
+	function select2_box($name, $values = null, $extra = array(), $replace = array()) {
 		return $this->_html_control($name, $values, $extra, $replace, 'select2_box');
 	}
 
