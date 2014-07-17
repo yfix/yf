@@ -15,6 +15,11 @@ class yf_tpl_driver_yf {
 	public $_PATTERN_MULTI_COND = '/["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s#-]*)["\']{0,1}/ims';
 	/** @var string @conf_skip Cycle pattern. Examples: {foreach ("var")}<li>{var.value1}</li>{/foreach} */
 	public $_PATTERN_FOREACH = '/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
+
+// TODO
+	/** @var string @conf_skip Shortcuts for conditional patterns. // Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if} */
+	public $_PATTERN_IF_SHORTCUTS = '/\{if_(?P<func>[a-z0-9_]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
+
 	/** @var int Safe limit number of replacements (to avoid dead cycles) (type "-1" for unlimited number) */
 	public $STPL_REPLACE_LIMIT	 = -1;
 	/** @var int "foreach" and "if" max recurse level (how deeply could be nested template constructs like "if") */
@@ -41,8 +46,8 @@ class yf_tpl_driver_yf {
 	public $CACHE = array();
 
 /* // TODO
-{ife(is_logged_in)}  {/ife}
-{ifne(is_logged_in)}  {/ifne}
+{if_empty(is_logged_in)}  {/ife}
+{if_not_empty(is_logged_in)}  {/ifne}
 */
 
 /* // TODO
