@@ -1330,12 +1330,11 @@ class yf_debug {
 		if (!$this->SHOW_DB_STATS) {
 			return '';
 		}
-
-		$loaded_modules = $this->backup_debug_data['main_load_class'];
-
 		$items = $this->_get_debug_data('dashboard');
-
-		//	print_r($_items);
+		if(!isset($items)) {
+			return false ;
+		}
+		$loaded_modules = $this->backup_debug_data['main_load_class'];
 		foreach ($items['widgets'] as $key => $value){
 			$_items[$key]['class_name'] = $value['class_name'];
 			$_items[$key]['action'] = $value['action'];
