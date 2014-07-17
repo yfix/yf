@@ -339,6 +339,25 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 
 		tpl()->_avail_arrays = $old;
 	}
+	public function test_foreach_val_array() {
+		$data = array('k1' => 'v1', 'k4' => array(1,2,3));
+		$this->assertEquals(' k1=v1  k4=1,2,3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
+	}
+	public function test_object_vars() {
+		$data = new stdClass();
+		$data->key1 = 'val1';
+		$data->key2 = 'val2';
+		$data->key3 = 'val3';
+
+		$this->assertEquals('val1', self::_tpl('{data.key1}', array('data' => $data)));
+		$this->assertEquals('val1,val2', self::_tpl('{data.key1},{data.key2}', array('data' => $data)));
+		$this->assertEquals('val1,val2,val3', self::_tpl('{data.key1},{data.key2},{data.key3}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if(data.key1 eq val1)}good{else}bad{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if(data.key1 ne fsdfsfsd)}good{else}bad{/if}', array('data' => $data)));
+		$this->assertEquals(' key1=val1  key2=val2  key3=val3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
+		$data->key4 = array(1,2,3);
+		$this->assertEquals(' key1=val1  key2=val2  key3=val3  key4=1,2,3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
+	}
 	public function test_deep_vars_avail_arrays() {
 		$old = tpl()->_avail_arrays;
 		tpl()->_avail_arrays = array('get' => '_GET');
@@ -348,20 +367,5 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 #		$this->assertEquals('mytestvalue2', self::_tpl( '{get.some.deep.var.key}' ));
 
 		tpl()->_avail_arrays = $old;
-	}
-	public function test_object_vars() {
-		$data = new stdClass();
-		$data->key1 = 'val1';
-		$data->key2 = 'val2';
-		$data->key3 = 'val3';
-
-#		$this->assertEquals('val1', self::_tpl('{data.key1}', array('data' => $data)));
-#		$this->assertEquals('val1,val2', self::_tpl('{data.key1},{data.key2}', array('data' => $data)));
-#		$this->assertEquals('val1,val2,val3', self::_tpl('{data.key1},{data.key2},{data.key3}', array('data' => $data)));
-		$this->assertEquals('good', self::_tpl('{if(data.key1 eq val1)}good{else}bad{/if}', array('data' => $data)));
-#		$this->assertEquals('good', self::_tpl('{if(data.key1 ne fsdfsfsd)}{/if}', array('data' => $data)));
-#		$this->assertEquals(' key1=val1  key2=val2  key3=val3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
-		$data->key4 = array(1,2,3);
-#		$this->assertEquals(' key1=val1  key2=val2  key3=val3  key4=1,2,3', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
 	}
 }
