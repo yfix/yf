@@ -368,4 +368,49 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 
 		tpl()->_avail_arrays = $old;
 	}
+	public function test_if_funcs() {
+		$data = array('name1' => '', 'name2' => 'something');
+// TODO
+#		$this->assertEquals('good', self::_tpl('{if_empty(name1)}good{else}{/if}', $data));
+#		$this->assertEquals('good ok', self::_tpl('{if_empty(name1)}good{else}{/if} {if_not_empty(name2)}ok{else}{/if}', $data));
+#		$this->assertEquals('good', self::_tpl('{if_not_empty(name2)}good{else}{/if}', $data));
+#		$this->assertEquals('good', self::_tpl('{if_not_isset(name3)}good{else}{/if}', $data));
+
+#		$this->assertEquals('good', self::_tpl('{if_empty(data)}good{else}{/if}', array('data' => $data)));
+#		$this->assertEquals('good', self::_tpl('{if_not_empty(name2)}good{else}{/if}', array('data' => $data)));
+#		$this->assertEquals('good', self::_tpl('{if_not_isset(name3)}good{else}{/if}', array('data' => $data)));
+	}
+	public function test_elseforeach() {
+		$data = array('k1' => 'v1', 'k2' => 'v2');
+#		$this->assertEquals('no rows', self::_tpl('{foreach(data)} {_key}={_val} {elseforeach}no rows{/foreach}', array()));
+#		$this->assertEquals(' k1=v1  k2=v2 ', self::_tpl('{foreach(data)} {_key}={_val} {elseforeach}no rows{/foreach}', array('data' => $data)));
+#		$this->assertEquals('no rows', self::_tpl('{foreach(data.sub)} {_key}={_val} {elseforeach}no rows{/foreach}', array()));
+#		$this->assertEquals(' k1=v1  k2=v2 ', self::_tpl('{foreach(data.sub)} {_key}={_val} {elseforeach}no rows{/foreach}', array('data' => array('sub' => $data))));
+/*
+{foreach(items)}
+  {_key} = {_val}
+{elseforeach}
+  No records
+{/foreach}
+*/
+// TODO
+	}
+	public function test_global_tags() {
+/**
+{if_empty(is_logged_in)}  {/ife}
+{if_not_empty(is_logged_in)}  {/ifne}
+*/
+/*
+		$data = array(
+			'is_logged_in'  => intval((bool) main()->USER_ID),
+			'is_spider'     => (int)conf('IS_SPIDER'),
+			'is_https'      => isset($_SERVER['HTTPS']) || isset($_SERVER['SSL_PROTOCOL']) ? 1 : 0,
+			'site_id'       => (int)conf('SITE_ID'),
+			'lang_id'       => conf('language'),
+			'debug_mode'    => (int)((bool)DEBUG_MODE),
+			'tpl_path'      => MEDIA_PATH. $this->TPL_PATH,
+		);
+*/
+// TODO
+	}
 }
