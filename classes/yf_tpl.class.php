@@ -464,6 +464,10 @@ class yf_tpl {
 	* Check if template exists (simple wrapper for the '_get_template_file')
 	*/
 	function _stpl_exists ($stpl_name = '', $force_storage = '') {
+		// Exists in cache
+		if (!$force_storage && isset($this->driver->CACHE[$stpl_name])) {
+			return true;
+		}
 		return (bool)$this->_get_template_file($stpl_name, $force_storage, 1);
 	}
 
@@ -652,8 +656,7 @@ class yf_tpl {
 	/**
 	*/
 	function _process_eval_string($string, $replace = array(), $name = '') {
-		eval('$string = "'.str_replace('"', '\"', $string).'";');
-		return $string;
+		return eval('return "'.str_replace('"', '\"', $string).'";');
 	}
 
 	/**
@@ -675,7 +678,7 @@ class yf_tpl {
 		}
 		$text = str_replace(array("\r","\n","\t"), '', $text);
 		$text = preg_replace('#[\s]{2,}#ms', ' ', $text);
-		// Remove comments
+		// Remove html comments
 		$text = preg_replace('#<\!--[\w\s\-\/]*?-->#ms', '', $text);
 		if (DEBUG_MODE) {
 			debug('compress_output::size_compressed', strlen($text));
@@ -736,8 +739,8 @@ class yf_tpl {
 	function _custom_filter ($stpl_name = '', &$replace) {
 		if ($stpl_name == 'home_page/main') {
 			// example only:
-			//print_r($replace);
-			//$replace['recent_ads'] = '';
+			// print_r($replace);
+			// $replace['recent_ads'] = '';
 		}
 	}
 
@@ -823,13 +826,12 @@ class yf_tpl {
 	function _replace_images_paths ($string = '') {
 		$images_path  = (MAIN_TYPE_USER ? $this->MEDIA_PATH : ADMIN_WEB_PATH). $this->TPL_PATH. $this->_IMAGES_PATH;
 		$uploads_path = $this->MEDIA_PATH. $this->_UPLOADS_PATH;
-
 		$r = array(
 			'"images/'		=> '"'.$images_path,
-			"'images/"		=> "'".$images_path,
+			'\'images/'		=> '\''.$images_path,
 			'src="uploads/'	=> 'src="'.$uploads_path,
 			'"uploads/'		=> '"'.$uploads_path,
-			"'uploads/"		=> "'".$uploads_path,
+			'\'uploads/'	=> '\''.$uploads_path,
 		);
 		return str_replace(array_keys($r), array_values($r), $string);
 	}

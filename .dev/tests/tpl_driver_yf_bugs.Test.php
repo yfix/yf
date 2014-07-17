@@ -102,4 +102,27 @@ class tpl_driver_yf_bugs_test extends tpl_abstract {
 		$this->assertEquals('1111,2222,3333', self::_tpl('{foreach(items)}1{/foreach},{foreach(items)}2{/foreach},{foreach(items)}3{/foreach}', array('items' => range(1,4))) );
 		$this->assertEquals('1111,2222,1111', self::_tpl('{foreach(items)}1{/foreach},{foreach(items)}2{/foreach},{foreach(items)}1{/foreach}', array('items' => range(1,4))) );
 	}
+	public function test_bug_10() {
+		$data = array(
+			array('k1' => 'v1'),
+			array('k1' => 'v2'),
+			array('k2' => 'v22'),
+			array('k3' => 'v33'),
+		);
+		$this->assertEquals(' 0=v1 _v1_  1=v2 _v2_  2=v22   3=v33  ', self::_tpl('{foreach(data)} {_key}={_val} {if(#.k1 ne "")}_{#.k1}_{/if} {/foreach}', array('data' => $data)) );
+	}
+	public function test_bug_11() {
+		$this->assertEquals('{form}', self::_tpl('{form}', array()));
+		$data = array( 'form' => form(array('name' => 'val'))->text('name') );
+		$this->assertNotEquals('{form}', self::_tpl('{form}', $data));
+		$this->assertGreaterThan( 100, strlen(self::_tpl('{form}', $data)) );
+
+		$data = new stdClass();
+		$data->key1 = 'val1';
+		$data->form = form()->text('name');
+
+		$this->assertEquals('{data.form}', self::_tpl('{data.form}', array()));
+		$this->assertNotEquals('{data.form}', self::_tpl('{data.form}', array('data' => $data)));
+		$this->assertGreaterThan( 100, strlen(self::_tpl('{data.form}', array('data' => $data))) );
+	}
 }

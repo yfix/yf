@@ -222,6 +222,18 @@ class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'uid')->delete($as_sql = true) );
 		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user as u')->whereid(array(1,2,3), 'u.id')->delete($as_sql = true) );
 	}
+	public function test_where_in() {
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(1,2,3)', self::qb()->from('user')->where('product_id', 'in', array(1,2,3))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(1,2,3)', self::qb()->from('user')->where('product_id', 'IN', array(1,2,3))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` NOT IN(1,2,3)', self::qb()->from('user')->where('product_id', 'NOT IN', array(1,2,3))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(1)', self::qb()->from('user')->where('product_id', 'IN', array(1))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(1)', self::qb()->from('user')->where('product_id', 'IN', 1)->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(0)', self::qb()->from('user')->where('product_id', 'IN', 0)->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(\'0\')', self::qb()->from('user')->where('product_id', 'IN', '0')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(\'`\')', self::qb()->from('user')->where('product_id', 'IN', '`')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->where('product_id', 'in', '')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->where('product_id', 'in', array('','',''))->sql() );
+	}
 	public function test_update() {
 		$this->assertFalse( self::qb()->update(array()) );
 #		$data = array(

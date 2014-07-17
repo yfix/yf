@@ -17,6 +17,9 @@ abstract class tpl_abstract extends PHPUnit_Framework_TestCase {
 		}
 	}
 	public function _tpl($stpl_text = '', $replace = array(), $name = '', $params = array()) {
+		if (!$name) {
+			$name = 'auto__'.get_called_class().'__'.substr(md5($stpl_text), 0, 16);
+		}
 		return tpl()->parse_string($stpl_text, $replace, $name, $params);
 	}
 }
