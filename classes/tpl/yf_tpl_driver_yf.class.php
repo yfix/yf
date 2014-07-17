@@ -18,7 +18,7 @@ class yf_tpl_driver_yf {
 
 // TODO
 	/** @var string @conf_skip Shortcuts for conditional patterns. // Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if} */
-	public $_PATTERN_IF_SHORTCUTS = '/\{if_(?P<func>[a-z0-9_]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
+	public $_PATTERN_IF_FUNCS = '/\{if_(?P<func>[a-z0-9_]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
 
 	/** @var int Safe limit number of replacements (to avoid dead cycles) (type "-1" for unlimited number) */
 	public $STPL_REPLACE_LIMIT	 = -1;
@@ -574,12 +574,14 @@ class yf_tpl_driver_yf {
 		if (false === strpos($string, '{/if}') || empty($string)) {
 			return $string;
 		}
-		if (!preg_match_all($this->_PATTERN_IF, $string, $m)) {
+		$matched_ifs = preg_match_all($this->_PATTERN_IF, $string, $m);
+		$matched_if_funcs = preg_match_all($this->_PATTERN_IF_FUNCS, $string, $m_funcs);
+		if (!$matched_ifs && !$matched_if_funcs) {
 			return $string;
 		}
 		// Important!
 		$string = str_replace(array('<'.'?', '?'.'>'), array('&lt;?', '?&gt;'), $string);
-		// Process matches
+		// Process common ifs matches
 		foreach ((array)$m[0] as $k => $v) {
 			$part_left	  = $this->_prepare_cond_text($m[1][$k], $replace, $stpl_name);
 			$cur_operator = $this->_cond_operators[strtolower($m[2][$k])];
@@ -619,6 +621,11 @@ class yf_tpl_driver_yf {
 			}
 			$new_code	= '<'.'?p'.'hp if('.$part_left.' '.$cur_operator.' '.$part_right.$part_other.') { ?>';
 			$string		= str_replace($v, $new_code, $string);
+		}
+		// Process if_funcs matches
+		foreach ((array)$m_funcs[0] as $k => $v) {
+#			$part_left	  = $this->_prepare_cond_text($m_funcs[2][$k], $replace, $stpl_name);
+#			$func_string = trim();
 		}
 		$string = str_replace('{else}', '<'.'?p'.'hp } else { ?'.'>', $string);
 		$string = str_replace('{/if}', '<'.'?p'.'hp } ?'.'>', $string);
