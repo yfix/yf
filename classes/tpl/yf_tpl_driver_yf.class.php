@@ -717,6 +717,10 @@ class yf_tpl_driver_yf {
 		if ($max < 1) {
 			return array();
 		}
+		$limit = 10000; // Mostly for security (prevent buffer overflows) and for avoid mistakes
+		if ($max > $limit) {
+			$max = $limit;
+		}
 		return range(1, $max);
 	}
 
@@ -804,49 +808,44 @@ class yf_tpl_driver_yf {
 				$_is_last   = (int)($_i == $_total);
 				$_is_odd	= (int)($_i % 2);
 				$_is_even   = (int)(!$_is_odd);
-				// Try to get sub keys to replace (exec only one time per one 'foreach')
-				if (empty($sub_replace)) {
-					if (is_array($sub_v)) {
-						foreach ((array)$sub_v as $k3 => $v3) {
-							$sub_replace[] = '{'.$key_to_cycle.'.'.$k3.'}';
-						}
-					} else {
-						$sub_replace = '{'.$key_to_cycle.'.'.$key_to_cycle.'}';
+				$_sub_val = is_array($sub_v) ? implode(',', $sub_v) : $sub_v;
+
+				$cur_output = $sub_template;
+				$sub_replace = array(
+					'{_num}'	=> $_i,
+					'{_total}'	=> $_total,
+					'{_key}'	=> $sub_k,
+					'{_val}'	=> $_sub_val,
+					'{'.$key_to_cycle.'.'.$key_to_cycle.'}' => $_sub_val,
+				);
+				if (is_array($sub_v)) {
+					foreach ((array)$sub_v as $k3 => $v3) {
+						$sub_replace['{'.$key_to_cycle.'.'.$k3.'}'] = $v3;
 					}
 				}
-				// Add output and replace template keys with array values
-				if (!empty($sub_replace)) {
-					$cur_output = $sub_template;
-					$cur_output = str_replace($sub_replace, is_array($sub_v) ? array_values($sub_v) : $sub_v, $cur_output);
-					$sub_replace_simple = array(
-						'{_num}'	=> $_i,
-						'{_total}'	=> $_total,
-						'{_key}'	=> $sub_k,
-						'{_val}'	=> is_array($sub_v) ? implode(',', $sub_v) : $sub_v,
-					);
-					$cur_output = str_replace(array_keys($sub_replace_simple), array_values($sub_replace_simple), $cur_output);
-					// Apply var filtering pattern, in case if such constructions found on the upper level
-					if ($has_var_filters) {
-						$cur_output = preg_replace_callback($var_filter_pattern, function($m) use ($replace, $sub_k) {
-							return _class('tpl')->_process_var_filters($replace[$m[1]][$sub_k][$m[2]], $m[3]);
-						}, $cur_output);
-					}
-					// Prepare items for condition
-					$tmp_array = $non_array_replace;
-					foreach ((array)$sub_v as $k6 => $v6) {
-						$tmp_array[$key_to_cycle.'.'.$k6] = $v6;
-					}
-					$tmp_array['_num']   = $_i;
-					$tmp_array['_total'] = $_total;
-					$tmp_array['_first'] = $_is_first;
-					$tmp_array['_last']  = $_is_last;
-					$tmp_array['_even']  = $_is_odd;
-					$tmp_array['_odd']   = $_is_even;
-					$tmp_array['_key']   = $sub_k;
-					$tmp_array['_val']   = is_array($sub_v) ? implode(',', $sub_v) : $sub_v;
-					// Try to process conditions in every cycle
-					$output .= $this->_process_ifs($cur_output, $tmp_array, $stpl_name);
+				$cur_output = str_replace(array_keys($sub_replace), array_values($sub_replace), $cur_output);
+				// Apply var filtering pattern, in case if such constructions found on the upper level
+				if ($has_var_filters) {
+					$cur_output = preg_replace_callback($var_filter_pattern, function($m) use ($replace, $sub_k) {
+						return _class('tpl')->_process_var_filters($replace[$m[1]][$sub_k][$m[2]], $m[3]);
+					}, $cur_output);
 				}
+				// Prepare items for condition
+				$tmp_array = (array)$non_array_replace + array(
+					'_num'   => $_i,
+					'_total' => $_total,
+					'_first' => $_is_first,
+					'_last'  => $_is_last,
+					'_even'  => $_is_odd,
+					'_odd'   => $_is_even,
+					'_key'   => $sub_k,
+					'_val'   => $_sub_val,
+				);
+				foreach ((array)$sub_v as $k6 => $v6) {
+					$tmp_array[$key_to_cycle.'.'.$k6] = $v6;
+				}
+				// Try to process conditions in every cycle
+				$output .= $this->_process_ifs($cur_output, $tmp_array, $stpl_name);
 			}
 			// Create array element to replace whole cycle
 			$a_for[$matched_string] = $output;
