@@ -15,11 +15,8 @@ class yf_tpl_driver_yf {
 	public $_PATTERN_MULTI_COND = '/["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s#-]*)["\']{0,1}/ims';
 	/** @var string @conf_skip Cycle pattern. Examples: {foreach ("var")}<li>{var.value1}</li>{/foreach} */
 	public $_PATTERN_FOREACH = '/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
-
-// TODO
 	/** @var string @conf_skip Shortcuts for conditional patterns. // Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if} */
-	public $_PATTERN_IF_FUNCS = '/\{if_(?P<func>[a-z0-9_]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
-
+	public $_PATTERN_IF_FUNCS = '/\{if_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
 	/** @var int Safe limit number of replacements (to avoid dead cycles) (type "-1" for unlimited number) */
 	public $STPL_REPLACE_LIMIT	 = -1;
 	/** @var int "foreach" and "if" max recurse level (how deeply could be nested template constructs like "if") */
@@ -44,19 +41,6 @@ class yf_tpl_driver_yf {
 	);
 	/** @var @conf_skip */
 	public $CACHE = array();
-
-/* // TODO
-{if_empty(is_logged_in)}  {/ife}
-{if_not_empty(is_logged_in)}  {/ifne}
-*/
-
-/* // TODO
-{foreach(items)}
-  {_key} = {_val}
-{elseforeach}
-  No records
-{/foreach}
-*/
 
 	/**
 	* YF constructor
@@ -624,8 +608,27 @@ class yf_tpl_driver_yf {
 		}
 		// Process if_funcs matches
 		foreach ((array)$m_funcs[0] as $k => $v) {
-#			$part_left	  = $this->_prepare_cond_text($m_funcs[2][$k], $replace, $stpl_name);
-#			$func_string = trim();
+			$part_left = $this->_prepare_cond_text($m_funcs[2][$k], $replace, $stpl_name);
+			$func = trim($m_funcs['func'][$k]);
+			$negate = false;
+			if (substr($func, 0, 4) == 'not_') {
+				$func = substr($func, 4);
+				$negate = true;
+			}
+			// Example of supported class: {if_validate:is_natural_no_zero(data)} good {/if}
+			if (false !== strpos($func, ':')) {
+				list($class_name, $_func) = explode(':', $func);
+				if (in_array($class_name, array('validate'))/* && substr($func, 0, 1) != '_' && preg_match('~^[a-z0-9_]+$~ims', $func)*/) {
+					$func = '_class_safe("'.$class_name.'")->'.$_func;
+				} else {
+					continue;
+				}
+			// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if} 
+			} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
+				continue;
+			}
+			$new_code = '<'.'?p'.'hp if('.($negate ? '!' : '').$func.'('.(strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]').')) { ?>';
+			$string	= str_replace($v, $new_code, $string);
 		}
 		$string = str_replace('{else}', '<'.'?p'.'hp } else { ?'.'>', $string);
 		$string = str_replace('{/if}', '<'.'?p'.'hp } ?'.'>', $string);
@@ -740,6 +743,14 @@ class yf_tpl_driver_yf {
 	* Foreach patterns processing
 	*/
 	function _process_foreaches ($string = '', $replace = array(), $stpl_name = '') {
+
+/* // TODO
+{foreach(items)}
+  {_key} = {_val}
+{elseforeach}
+  No records
+{/foreach}
+*/
 		if (false === strpos($string, '{/foreach}') || empty($string)) {
 			return $string;
 		}
