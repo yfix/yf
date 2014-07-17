@@ -95,7 +95,9 @@ class yf_tpl_driver_yf_compile {
 
 			'/(\{include\(\s*["\']{0,1})\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/i'
 				=> $_php_start. 'echo $this->_include_stpl(\'$2\',\'$3\',$replace);'. $_php_end,
-// TODO: add support for {include_if_exists()}
+
+			'/(\{include_if_exists\(\s*["\']{0,1})\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/i'
+				=> $_php_start. 'echo $this->_include_stpl(\'$2\',\'$3\',$replace,true);'. $_php_end,
 
 			'/(\{eval_code\()([^\}]+?)(\)\})/i'
 				=> $_php_start. 'echo $2;'. $_php_end,
@@ -115,16 +117,11 @@ class yf_tpl_driver_yf_compile {
 			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9_-]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims'
 				=> $_php_start. 'echo _class("form2")->tpl_row(\'$1\',$replace,\'$3\',\'$5\',\'$7\');'. $_php_end,
 
-#			'/\{(require_css|require_js|js|css)\(\s*["\']{0,1}([^"\'\)\}]+)["\']{0,1}\s*\)\}/ims'
-#				=> $_php_start. 'echo $1(\'$2\');'. $_php_end,
-
-#			'/\{(require_js|js)\(\s*\)\}(.*?)\{\/(require_js|js)\}/ims'
-#				=> $_php_start. 'echo $1(\'$2\');'. $_php_end,
-
-#			'/\{require_css\(\s*\)\}(.*?)\{\/require_css\}/ims'
-#				=> $_php_start. 'echo $1(\'$2\');'. $_php_end,
+			'/\{(css|require_css|js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims'
+				=> $_php_start. 'echo $1(\'$3\', _attrs_string2array(\'$2\'));'. $_php_end,
 
 // TODO: this code needed to be executed last, but if compiled - this will be hard to achieve
+// TODO: convert this into events after center block was processed
 			'/(\{exec_last|execute_shutdown\(\s*["\']{0,1})\s*([\w-]+)\s*[,;]\s*([\w-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i'
 				=> $_php_start.'echo main()->_execute(\'$2\',\'$3\',\'$4\',\''.$name.'\',0,false);'.$_php_end,
 
