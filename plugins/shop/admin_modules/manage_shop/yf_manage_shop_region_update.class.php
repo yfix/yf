@@ -44,7 +44,7 @@ class yf_manage_shop_region_update {
 
 	function _data() {
 		$region = _class( '_shop_region', 'modules/shop/' )->_get_list();
-		array_unshift( $region, '- регион не выбран -' );
+		// array_unshift( $region, '- регион не выбран -' );
 		// -----
 		$sub_action = array(
 			'1'  => 'добавить',
@@ -107,11 +107,14 @@ class yf_manage_shop_region_update {
 				->info( 'total' )
 				->link( 'Back', $link_back , array( 'title' => 'Вернуться в к фильтру продуктов', 'icon' => 'fa fa-arrow-circle-left' ))
 			->row_end()
-			->select_box( 'sub_action', $sub_action, array(
+			->select_box( 'sub_action', $data[ 'sub_action' ], array(
+				'selected' => (int)$_POST[ 'sub_action' ],
 				'desc' => 'Действие',
 			))
-			->multi_select_box( 'region', $region, array(
-				'desc' => 'Регион',
+			->multi_select_box( 'region', $data[ 'region' ], array(
+				'selected' => (array)$_POST[ 'region' ],
+				'desc'     => 'Регион',
+				'force_id' => 'regs'
 			))
 			->row_start( array( 'desc' => '' ) )
 				->submit( 'apply', 'Выполнить' )
