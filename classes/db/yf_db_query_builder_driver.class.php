@@ -339,19 +339,31 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	*/
+	function _ids_sql_from_array(array $ids) {
+		foreach ((array)$ids as $v) {
+			if (!is_int($v)) {
+				$v = (string)$v;
+				if (!strlen($v)) {
+					continue;
+				}
+				$v = $this->_escape_val($v);
+			}
+			$out[$v] = $v;
+		}
+		return implode(',', $out);
+	}
+
+	/**
 	* Example: whereid(1)
 	*/
-	function whereid($id, $pk = 'id') {
+	function whereid($id, $pk = '') {
 		!$pk && $pk = 'id';
 		$sql = '';
 		if (is_array($id)) {
-			$ids = array();
-			foreach ((array)$id as $v) {
-				$v = intval($v);
-				$v && $ids[$v] = $v;
-			}
+			$ids = $this->_ids_sql_from_array($id);
 			if ($ids) {
-				$sql = $this->_escape_key($pk).' IN('.implode(',', $ids).')';
+				$sql = $this->_escape_key($pk).' IN('.$ids.')';
 			}
 		} elseif (is_callable($id)) {
 			$sql = $id();
@@ -433,21 +445,28 @@ abstract class yf_db_query_builder_driver {
 	*/
 	function _process_where_cond($left, $op, $right) {
 		!$op && $op = '=';
-		$left = strtolower($left);
-		$op = strtolower($op);
-		$right = str_replace('*', '%', $right);
-		if (false !== strpos($right, '%')) {
-			if ($op == '=' || $op == 'like') {
-				$op = 'LIKE';
-			} elseif ($op == '!=' || $op == 'not like') {
-				$op = 'NOT LIKE';
-			} elseif ($op == 'rlike') {
-				$op = 'RLIKE';
-			} elseif ($op == 'not rlike') {
-				$op = 'NOT RLIKE';
+		$left = trim(strtolower($left));
+		$op = trim(strtolower($op));
+		$right_generated = '';
+		if (false !== strpos($right, '%') || false !== strpos($right, '*')) {
+			if ($op == '=') {
+				$op = 'like';
+			} elseif ($op == '!=') {
+				$op = 'not like';
 			}
 		}
-		return $this->_escape_key($left). ' '. strtoupper($op). ' '. $this->_escape_val($right);
+		if ($op == 'like' || $op == 'not like') {
+			$right = str_replace('*', '%', $right);
+		} elseif ($op == 'in' || $op == 'not in') {
+			$right_generated = $this->_ids_sql_from_array((array)$right);
+			if (strlen($right_generated)) {
+				$right_generated = '('.$right_generated.')';
+			}
+		}
+		if (!strlen($right) && !strlen($right_generated)) {
+			return '';
+		}
+		return $this->_escape_key($left). ' '. strtoupper($op). ($right_generated ?: ' '.$this->_escape_val($right));
 	}
 
 	/**
