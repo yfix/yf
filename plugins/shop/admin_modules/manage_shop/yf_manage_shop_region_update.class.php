@@ -56,15 +56,15 @@ class yf_manage_shop_region_update {
 				}
 		// -----
 		$_sub_action = array(
-			'0'  => '- не выбрано -',
-			'1'  => 'добавить',
-			'-1' => 'удалить',
+			'0'      => '- не выбрано -',
+			'add'    => 'добавить',
+			'delete' => 'удалить',
 		);
 			$sub_action = $_POST[ 'sub_action' ];
 				$is_sub_action = $sub_action !== '0' && isset( $_sub_action[ $sub_action ] );
 		// init sql
 		$sql_table   = db( 'shop_products' );
-		$sql_table_action = db( 'shop_product_to_region' );
+		$sql_table_action = 'shop_product_to_region';
 		$_fields = $this->_fields_show;
 		$fields = array(); $sql_fields = '*';
 		$where  = array(); $sql_where = '';
@@ -102,27 +102,42 @@ class yf_manage_shop_region_update {
 		$is_update = $this->is_post && $is_sub_action && $is_region && isset( $apply ) && isset( $confirm ) ? true : false;
 		if( $is_update ) {
 			// prepare data
-			$data = array();
+			$data             = array();
+			$sub_action_count = null;
 			$ids  = db()->get_2d( $sql_filter );
-			foreach( $ids as $id ) {
-				foreach( $region as $r_id ) {
-					$data[] = array( 'product_id' => $id, 'region_id' => $r_id );
+			// ----- add regions to products
+			if( $sub_action == 'add' ) {
+				foreach( $ids as $id ) {
+					foreach( $region as $r_id ) {
+						$data[] = array( 'product_id' => $id, 'region_id' => $r_id );
+					}
 				}
+				db_query( 'START TRANSACTION' );
+					db()->insert_on_duplicate_key_update( $sql_table_action, $data );
+					$sub_action_count = db()->affected_rows();
+				db_query( 'COMMIT' );
+			// ----- delete regions to products
+			} elseif( $sub_action == 'delete' ) {
+				$data = array( '__args__' => array(
+					array( 'product_id', 'in', $ids ),
+					'and',
+					array( 'region_id', 'in', $region )
+				));
+				db_query( 'START TRANSACTION' );
+					db()->delete( $sql_table_action, $data );
+					$sub_action_count = db()->affected_rows();
+				db_query( 'COMMIT' );
 			}
-			db_query( 'START TRANSACTION' );
-				// db()->insert_on_duplicate_key_update( $sql_table_action, $data );
-			db_query( 'COMMIT' );
-			$sql = db()->delete( $sql_table_action, array( array( 'product_id', 'in', $ids ) ), true );
-			var_dump( $sql );
-			exit;
+			$sub_action = null;
+			$region     = null;
 		}
 		// -----
 		$result = array(
 			'total'       => $total,
-			'_region'     => $_region,
-				'region'     => $region,
 			'_sub_action' => $_sub_action,
 				'sub_action' => $sub_action,
+			'_region'     => $_region,
+				'region'     => $region,
 		);
 		return( $result );
 	}

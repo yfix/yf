@@ -1342,7 +1342,7 @@ class yf_db {
 	/**
 	* Helper
 	*/
-	function delete($table, $where, $as_sql = false, $id_key = '') {
+	function delete($table, $where, $as_sql = false) {
 		// Do not allow wide deletes, to prevent awful mistakes, use plain db()->query('DELETE ...') instead
 		if (!$where) {
 			return false;
@@ -1362,7 +1362,7 @@ class yf_db {
 				$where_func = 'whereid';
 			}
 		}
-		$sql = $this->from($table)->$where_func($where, $id_key)->delete($_as_sql = true);
+		$sql = $this->from($table)->$where_func($where)->delete($_as_sql = true);
 		if (false === strpos(strtoupper($sql), 'WHERE')) {
 			return false;
 		}
