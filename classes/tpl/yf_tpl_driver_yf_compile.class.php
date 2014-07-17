@@ -161,7 +161,7 @@ class yf_tpl_driver_yf_compile {
 		$_my_replace = array(
 			// Special tags for foreach
 			'{_key}'	=> $_php_start. 'echo $_k;'. $_php_end,
-			'{_val}'	=> $_php_start. 'echo $_v;'. $_php_end,
+			'{_val}'	=> $_php_start. 'echo (is_array($_v) ? implode(",", $_v) : $_v);'. $_php_end,
 		);
 		$string = str_replace(array_keys($_my_replace), array_values($_my_replace), $string);
 		$string = preg_replace(array_keys($this->_patterns), array_values($this->_patterns), $string);
