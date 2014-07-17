@@ -355,11 +355,10 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$data->key2 = 'val2';
 		$data->key3 = 'val3';
 
-// TODO
 #		$this->assertEquals('val1', self::_tpl('{data.key1}', array('data' => $data)));
 #		$this->assertEquals('val1,val2', self::_tpl('{data.key1},{data.key2}', array('data' => $data)));
 #		$this->assertEquals('val1,val2,val3', self::_tpl('{data.key1},{data.key2},{data.key3}', array('data' => $data)));
-#		$this->assertEquals('good', self::_tpl('{if(data.key1 eq val1)}{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if(data.key1 eq val1)}good{else}bad{/if}', array('data' => $data)));
 #		$this->assertEquals('good', self::_tpl('{if(data.key1 ne fsdfsfsd)}{/if}', array('data' => $data)));
 #		$this->assertEquals(' key1=val1  key2=val2  key3=val3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
 		$data->key4 = array(1,2,3);
