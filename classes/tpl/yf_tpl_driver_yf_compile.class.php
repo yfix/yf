@@ -170,11 +170,11 @@ class yf_tpl_driver_yf_compile {
 		$web_path		= MAIN_TYPE_USER ? 'MEDIA_PATH' : 'ADMIN_WEB_PATH';
 		$images_path	= $web_path. '._class(\'tpl\')->TPL_PATH. _class(\'tpl\')->_IMAGES_PATH';
 		$to_replace = array(
-			"\"images/"			=> '"'.$_php_start. 'echo '.$images_path.';'. $_php_end,
-			"'images/"			=> '\''.$_php_start. 'echo '.$images_path.';'. $_php_end,
-			"\"uploads/"		=> '"'.$_php_start. 'echo MEDIA_PATH. _class(\'tpl\')->_UPLOADS_PATH;'. $_php_end,
-			"'uploads/"			=> '\''.$_php_start. 'echo MEDIA_PATH. _class(\'tpl\')->_UPLOADS_PATH;'. $_php_end,
-			"src=\"uploads/"	=> 'src="'.$_php_start. 'echo '.$web_path.'._class(\'tpl\')->_UPLOADS_PATH;'. $_php_end,
+			'"images/'		=> '"'.$_php_start. 'echo '.$images_path.';'. $_php_end,
+			'\'images/'		=> '\''.$_php_start. 'echo '.$images_path.';'. $_php_end,
+			'"uploads/'		=> '"'.$_php_start. 'echo MEDIA_PATH. _class(\'tpl\')->_UPLOADS_PATH;'. $_php_end,
+			'\'uploads/'	=> '\''.$_php_start. 'echo MEDIA_PATH. _class(\'tpl\')->_UPLOADS_PATH;'. $_php_end,
+			'src="uploads/'	=> 'src="'.$_php_start. 'echo '.$web_path.'._class(\'tpl\')->_UPLOADS_PATH;'. $_php_end,
 		);
 		$string = str_replace(array_keys($to_replace), array_values($to_replace), $string);
 
