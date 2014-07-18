@@ -35,6 +35,8 @@ class tpl_driver_yf_include_test extends tpl_abstract {
 		$this->assertEquals('Hello from include', self::_tpl( '{include( '.$name.'_simple)}' ));
 		$this->assertEquals('Hello from include', self::_tpl( '{include('.$name.'_simple )}' ));
 		$this->assertEquals('Hello from include', self::_tpl( '{include( '.$name.'_simple )}' ));
+
+		$this->assertEquals('{include()}', self::_tpl( '{include()}' ));
 	}
 	public function test_include_and_catch() {
 		$name = 'unittest/'.__CLASS__.'/'.__FUNCTION__;
