@@ -129,6 +129,7 @@ class yf_manage_shop_region_update {
 			}
 			if( $sub_action_count ) {
 				common()->message_success( 'Операция выполнена успешно.' );
+				_class( '_shop_region', 'modules/shop/' )->_cache_refresh();
 			} else {
 				common()->message_warning( 'Данная операция выполнена ранее.' );
 			}
