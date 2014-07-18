@@ -558,19 +558,15 @@ class yf_tpl_driver_yf {
 		if (false === strpos($string, '{/if}') || empty($string)) {
 			return $string;
 		}
-// TODO: replace code with preg_replace_callback, should improve speed, security and stability
-		$matched_ifs = preg_match_all($this->_PATTERN_IF, $string, $m);
-		$matched_if_funcs = preg_match_all($this->_PATTERN_IF_FUNCS, $string, $m_funcs);
-		if (!$matched_ifs && !$matched_if_funcs) {
-			return $string;
-		}
 		// Important!
 		$string = str_replace(array('<'.'?', '?'.'>'), array('&lt;?', '?&gt;'), $string);
+		$_this = &$this;
 		// Process common ifs matches
-		foreach ((array)$m[0] as $k => $v) {
-			$part_left	  = $this->_prepare_cond_text($m[1][$k], $replace, $stpl_name);
-			$cur_operator = $this->_cond_operators[strtolower($m[2][$k])];
-			$part_right	 = trim($m[3][$k]);
+		$func_ifs = function($m) use ($_this, $replace, $stpl_name) {
+			$part_left = $_this->_prepare_cond_text($m[1], $replace, $stpl_name);
+			$cur_operator = $_this->_cond_operators[strtolower($m[2])];
+			$part_right = trim($m[3]);
+			$part_multi_conds = $m[4];
 			if (strlen($part_right) && $part_right{0} == '#') {
 				$part_right = $replace[ltrim($part_right, '#')];
 			}
@@ -582,13 +578,13 @@ class yf_tpl_driver_yf {
 			}
 			$part_other	 = '';
 			// Possible multi-part condition found
-			if ($m[4][$k]) {
-				$_tmp_parts = preg_split("/[\s\t]+(and|xor|or)[\s\t]+/ims", $m[4][$k], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+			if ($part_multi_conds) {
+				$_tmp_parts = preg_split("/[\s\t]+(and|xor|or)[\s\t]+/ims", $part_multi_conds, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 				if ($_tmp_parts) {
 					$_tmp_count = count($_tmp_parts);
 				}
-				for ($i = 1; $i < $_tmp_count; $i+=2) {
-					$_tmp_parts[$i] = $this->_process_multi_conds($_tmp_parts[$i], $replace, $stpl_name);
+				for ($i = 1; $i < $_tmp_count; $i += 2) {
+					$_tmp_parts[$i] = $_this->_process_multi_conds($_tmp_parts[$i], $replace, $stpl_name);
 					if (!strlen($_tmp_parts[$i])) {
 						unset($_tmp_parts[$i]);
 						unset($_tmp_parts[$i - 1]);
@@ -598,19 +594,17 @@ class yf_tpl_driver_yf {
 					$part_other = ' '. implode(' ', (array)$_tmp_parts);
 				}
 			}
-			// Special case for "mod". 
-			// Examples: {if("id" mod 4)} content {/if}
+			// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
 			if ($cur_operator == '%') {
 				$part_left = '!('.$part_left;
 				$part_right = $part_right.')';
 			}
-			$new_code	= '<'.'?p'.'hp if('.$part_left.' '.$cur_operator.' '.$part_right.$part_other.') { ?>';
-			$string		= str_replace($v, $new_code, $string);
-		}
+			return '<'.'?p'.'hp if('. $part_left. ' '. $cur_operator. ' '. $part_right. $part_other. ') { ?>';
+		};
 		// Process if_funcs matches
-		foreach ((array)$m_funcs[0] as $k => $v) {
-			$part_left = $this->_prepare_cond_text($m_funcs[2][$k], $replace, $stpl_name);
-			$func = trim($m_funcs['func'][$k]);
+		$func_if_funcs = function($m) use ($_this, $replace, $stpl_name) {
+			$part_left = $_this->_prepare_cond_text($m[2], $replace, $stpl_name);
+			$func = trim($m['func']);
 			$negate = false;
 			if (substr($func, 0, 4) == 'not_') {
 				$func = substr($func, 4);
@@ -619,29 +613,34 @@ class yf_tpl_driver_yf {
 			// Example of supported class: {if_validate:is_natural_no_zero(data)} good {/if}
 			if (false !== strpos($func, ':')) {
 				list($class_name, $_func) = explode(':', $func);
-				if (in_array($class_name, array('validate'))/* && substr($func, 0, 1) != '_' && preg_match('~^[a-z0-9_]+$~ims', $func)*/) {
+				if (in_array($class_name, array('validate'))) {
 					$func = '_class_safe("'.$class_name.'")->'.$_func;
 				} else {
-					continue;
+					return '';
 				}
 			// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if} 
 			} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
-				continue;
+				return '';
 			}
-			$new_code = '<'.'?p'.'hp if('.($negate ? '!' : '').$func.'('.(strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]').')) { ?>';
-			$string	= str_replace($v, $new_code, $string);
-		}
+			return '<'.'?p'.'hp if('. ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')) { ?>';
+		};
+		$string = preg_replace_callback($this->_PATTERN_IF, $func_ifs, $string);
+		$string = preg_replace_callback($this->_PATTERN_IF_FUNCS, $func_if_funcs, $string);
 		$string = str_replace('{else}', '<'.'?p'.'hp } else { ?'.'>', $string);
 		$string = str_replace('{/if}', '<'.'?p'.'hp } ?'.'>', $string);
 
 		ob_start();
 		$result = eval('?>'.$string.'<'.'?p'.'hp return 1;');
-		$string = ob_get_clean();
+		$new_string = ob_get_clean();
 
 		if (!$result) {
-			trigger_error('STPL: ERROR: wrong condition in template "'.$stpl_name.'"', E_USER_WARNING);
+			$error_msg = 'STPL: ERROR: wrong condition in template "'.$stpl_name.'"';
+			if (DEBUG_MODE) {
+				$error_msg .= PHP_EOL.'<pre>'.PHP_EOL. _prepare_html(var_export($string, 1)). PHP_EOL.'</pre>'.PHP_EOL;
+			}
+			trigger_error($error_msg, E_USER_WARNING);
 		}
-		return $string;
+		return $new_string;
 	}
 
 	/**
