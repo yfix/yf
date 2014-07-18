@@ -385,6 +385,10 @@ class yf_manage_shop {
 		return _class('manage_shop_price_update', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
+	function products_region_update() {
+		return _class('manage_shop_region_update', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
 	function novaposhta_ua() {
 		return _class('manage_shop_novaposhta_ua', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}

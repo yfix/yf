@@ -25,7 +25,7 @@ class yf_manage_shop_products{
 	*/
 	function _init () {
 		if (empty($_SESSION['manage_shop__products'])) {
-			$_SESSION['manage_shop__products'] = array(		
+			$_SESSION['manage_shop__products'] = array(
 			  'order_by' => 'id',
 			  'order_direction' => 'desc',
 			);
@@ -78,7 +78,9 @@ class yf_manage_shop_products{
 			->footer_link('Categories', './?object=category_editor&action=show_items&id=shop_cats')
 			->footer_link('Orders', './?object='.main()->_get('object').'&action=show_orders')
 			->footer_link('XLS Export', './?object='.main()->_get('object').'&action=products_xls_export')
-			->footer_link('Обновление цен', './?object='.main()->_get('object').'&action=products_price_update&init=1&filter=' . main()->_get( 'action' ));
+			->footer_link('Обновление цен', './?object='.main()->_get('object').'&action=products_price_update&init=1&filter=' . main()->_get( 'action' ))
+			->footer_link('Обновление регионов', './?object='.main()->_get('object').'&action=products_region_update&init=1&filter=' . main()->_get( 'action' ))
+		;
 	}
 
 

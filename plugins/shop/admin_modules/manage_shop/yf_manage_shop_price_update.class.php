@@ -100,12 +100,6 @@ class yf_manage_shop_price_update {
 		if( !empty( $where  ) ) { $sql_where  = 'WHERE '    . implode( ', ', $where  ); }
 		if( !empty( $order  ) ) { $sql_order  = implode( ', ', $order  ); }
 		// compile sql
-		$sql = sprintf( 'SELECT %s FROM %s as p %s %s'
-			, $sql_fields
-			, $sql_table
-			, $sql_where
-			, $sql_order
-		);
 		$sql_filter = sprintf( 'SELECT * FROM %s as p %s %s'
 			, $sql_table
 			, $sql_where
