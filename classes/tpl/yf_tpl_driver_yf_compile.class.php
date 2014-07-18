@@ -9,10 +9,16 @@
 */
 class yf_tpl_driver_yf_compile {
 
-	/** @var string @conf_skip pattern for multi-conditions */
-	public $_PATTERN_MULTI_COND= '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
 	/** @var array @conf_skip For "_process_conditions" */
-	public $_cond_operators	= array('eq'=>'==','ne'=>'!=','gt'=>'>','lt'=>'<','ge'=>'>=','le'=>'<=','mod'=>'%');
+	public $_cond_operators	= array(
+		'eq' => '==',
+		'ne' => '!=',
+		'gt' => '>',
+		'lt' => '<',
+		'ge' => '>=',
+		'le' => '<=',
+		'mod' => '%',
+	);
 
 	/**
 	*/
@@ -206,8 +212,9 @@ class yf_tpl_driver_yf_compile {
 			if ($_tmp_parts) {
 				$_tmp_count = count($_tmp_parts);
 			}
+			$pattern = '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
 			for ($i = 1; $i < $_tmp_count; $i+=2) {
-				if (preg_match($this->_PATTERN_MULTI_COND, stripslashes($_tmp_parts[$i]), $m)) {
+				if (preg_match($pattern, stripslashes($_tmp_parts[$i]), $m)) {
 					$a_part_left	= $this->_compile_prepare_left($m[1]);
 					$a_cur_operator	= $this->_cond_operators[strtolower($m[2])];
 					$a_part_right	= $m[3];
