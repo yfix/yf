@@ -3,21 +3,27 @@
 class yf_manage_shop_product_edit {
 
 	function product_edit () {
-		$_GET['id'] = intval($_GET['id']);
-		if (empty($_GET['id'])) {
+		$id = (int)$_GET[ 'id' ];
+		$_GET[ 'id' ] = $id;
+		if (empty($id)) {
 			return _e('Empty id');
 		}
-		$product_info = module('manage_shop')->_product_get_info($_GET['id']);
+		$product_info = module('manage_shop')->_product_get_info($id);
 		if (empty($product_info['id'])) {
 			return _e('Product not found');
 		}
+		// prepare region
+		$_region = _class( '_shop_region', 'modules/shop/' )->_get_list();
+		$region = _class( '_shop_region', 'modules/shop/' )->_get_by_product_ids( $id );
+			$region = $region[ $id ];
+		// -----
 		if (main()->is_post()) {
 // TODO: use validation from form2()
 			if (!$_POST['name']) {
 				_re('Product name must be filled', 'name');
 			}
 			if (!common()->_error_exists()) {
-				module('manage_shop')->_product_check_first_revision('product', $_GET['id']);
+				module('manage_shop')->_product_check_first_revision('product', $id);
 				$sql = array(
 					'url'				=> $_POST['url'] ?: common()->_propose_url_from_name($_POST['name']),
 					'active'			=> intval((bool)$_POST['active']),
@@ -33,22 +39,22 @@ class yf_manage_shop_product_edit {
 						$sql[$k] = number_format($_POST[$k], 2, '.', '');
 					}
 				}
-				db()->update_safe(db('shop_products'), $sql, 'id='.$_GET['id']);
+				db()->update_safe(db('shop_products'), $sql, 'id='.$id);
 
 				if (!empty($_FILES)) {
-					module('manage_shop')->_product_image_upload($_GET['id']);
+					module('manage_shop')->_product_image_upload($id);
 				}
 
 				$params_to_insert = array();
 				foreach ((array)$_POST['productparams'] as $param_id) {
-					db()->query('DELETE FROM '.db('shop_products_productparams').' WHERE product_id='.intval($_GET['id']));
+					db()->query('DELETE FROM '.db('shop_products_productparams').' WHERE product_id='.$id);
 					$param_id = intval($param_id);
 					if (!$param_id) {
 						continue;
 					}
 					foreach ((array)$_POST['productparams_options_' . $param_id] as $v) {
 						$params_to_insert[] = array(
-							'product_id' => $_GET['id'],
+							'product_id' => $id,
 							'productparam_id' => $param_id,
 							'value'	=> $v,
 						);
@@ -65,12 +71,12 @@ class yf_manage_shop_product_edit {
 						continue;
 					}
 					$product_to_category_insert[] = array(
-						'product_id' => $_GET['id'],
+						'product_id' => $id,
 						'category_id' => $_cat_id,
 					);
 				}
 				if ($product_to_category_insert) {
-					db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.intval($_GET['id']));
+					db()->query('DELETE FROM '.db('shop_product_to_category').' WHERE product_id='.$id);
 					db()->insert_safe(db('shop_product_to_category'), $product_to_category_insert);
 				}
 
@@ -81,24 +87,54 @@ class yf_manage_shop_product_edit {
 						continue;
 					}
 					$product_related_insert[] = array(
-						'product_id' => $_GET['id'],
+						'product_id' => $id,
 						'related_id' => $related_id,
 					);
 				}
 				if ($product_related_insert) {
-					db()->query('DELETE FROM '.db('shop_product_related').' WHERE product_id='.intval($_GET['id']));
+					db()->query('DELETE FROM '.db('shop_product_related').' WHERE product_id='.$id);
 					db()->insert_safe(db('shop_product_related'), $product_related_insert);
 				}
 
+				// update region
+				$_table  = 'shop_product_to_region';
+				$_post   = _class( '_shop_region', 'modules/shop/' )->_check_by_product_id( $_POST[ 'region' ] );
+				$_insert = array_diff( $_post, $region );
+				$_delete = array_diff( $region, $_post );
+				// insert
+				if( !empty( $_insert ) ) {
+					$_data = array();
+					foreach( $_insert as $_id ) {
+						$_data[] = array( 'product_id' => $id, 'region_id' => $_id );
+					}
+					db_query( 'START TRANSACTION' );
+						db()->insert_on_duplicate_key_update( $_table, $_data );
+					db_query( 'COMMIT' );
+				}
+				// delete
+				if( !empty( $_delete ) ) {
+					$_data = array( '__args__' => array(
+						array( 'product_id', 'in', $id ),
+						'and',
+						array( 'region_id',  'in', $_delete ),
+					));
+					db_query( 'START TRANSACTION' );
+						db()->delete( $_table, $_data );
+					db_query( 'COMMIT' );
+				}
+				$region = _class( '_shop_region', 'modules/shop/' )->_get_by_product_ids( $id, true );
+					$region = $region[ $id ];
+				// -----
+
 				$product_to_unit_insert = array();
 				foreach ((array)$_POST['units'] as $_unit_id) {
-					db()->query('DELETE FROM '.db('shop_product_to_unit').' WHERE product_id='.intval($_GET['id']));
+					db()->query('DELETE FROM '.db('shop_product_to_unit').' WHERE product_id='.$id);
 					$_unit_id = intval($_unit_id);
 					if (!$_unit_id) {
 						continue;
 					}
 					$product_to_unit_insert[] = array(
-						'product_id' => $_GET['id'],
+						'product_id' => $id,
 						'unit_id' => $_unit_id,
 					);
 				}
@@ -106,15 +142,15 @@ class yf_manage_shop_product_edit {
 					db()->insert_safe(db('shop_product_to_unit'), $product_to_unit_insert);
 				}
 
-				module('manage_shop')->_attributes_save($_GET['id']);
-				module('manage_shop')->_product_add_revision('edit',$_GET['id']);
-				module('manage_shop')->_product_cache_purge($_GET['id']);
-				common()->admin_wall_add(array('shop product updated: '.$_POST['name'], $_GET['id']));
+				module('manage_shop')->_attributes_save($id);
+				module('manage_shop')->_product_add_revision('edit',$id);
+				module('manage_shop')->_product_cache_purge($id);
+				common()->admin_wall_add(array('shop product updated: '.$_POST['name'], $id));
 				// sphinx reindex by flag file
 				exec( 'touch /tmp/sphinx/indexer-kupi' );
 				exec( 'touch /tmp/sphinx/indexer-kupi_dev' );
 			}
-			return js_redirect('./?object='.main()->_get('object').'&action=product_edit&id='.$_GET['id']);
+			return js_redirect('./?object='.main()->_get('object').'&action=product_edit&id='.$id);
 		}
 
 		$media_host = defined('MEDIA_HOST') ? MEDIA_HOST : false;
@@ -132,11 +168,11 @@ class yf_manage_shop_product_edit {
 			));
 		}
 		$products_to_category = array();
-		foreach ((array)db()->get_all('SELECT category_id FROM '.db('shop_product_to_category').' WHERE product_id='.intval($_GET['id'])) as $a) {
+		foreach ((array)db()->get_all('SELECT category_id FROM '.db('shop_product_to_category').' WHERE product_id='.$id) as $a) {
 			$products_to_category[$a['category_id']] = $a['category_id'];
 		}
 		$products_to_unit = array();
-		foreach ((array)db()->get_all('SELECT unit_id FROM '.db('shop_product_to_unit').' WHERE product_id='.intval($_GET['id'])) as $a) {
+		foreach ((array)db()->get_all('SELECT unit_id FROM '.db('shop_product_to_unit').' WHERE product_id='.$id) as $a) {
 			$products_to_unit[$a['unit_id']] = $a['unit_id'];
 		}
 		$replace = $product_info + array(
@@ -165,6 +201,14 @@ class yf_manage_shop_product_edit {
 #			->multi_select('category', module('manage_shop')->_cats_for_select, array('desc' => 'Secondary categories', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'selected' => $products_to_category, 'translate' => 0))
 			->select_box('manufacturer_id', module('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'edit_link' => './?object='.main()->_get('object').'&action=manufacturers', 'translate' => 0))
 			->select_box('supplier_id', module('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'edit_link' => './?object='.main()->_get('object').'&action=suppliers'))
+			->select2_box( array(
+				'desc'      => 'Регион',
+				'name'      => 'region',
+				'multiple'  => true,
+				'values'    => $_region,
+				'selected'  => $region,
+				'edit_link' => url( './?object=manage_shop&action=region' ),
+			))
 			->textarea('description')
 			->price('old_price')
 			->price('price')
@@ -186,7 +230,7 @@ class yf_manage_shop_product_edit {
 				'class_add' => 'ajax_edit',
 				'display_func' => function() use ($images_items) { return (is_array($images_items) && count($images_items) > 1); }
 			))
-			->container(module('manage_shop')->_productparams_container($_GET['id']), array('desc' => 'Product params'/*, 'edit_link' => './?object='.main()->_get('object').'&action=attributes'*/))
+			->container(module('manage_shop')->_productparams_container($id), array('desc' => 'Product params'/*, 'edit_link' => './?object='.main()->_get('object').'&action=attributes'*/))
 // TODO: replace with similar JS container as for params and images
 #			->container(module('manage_shop')->related_products($product_info['id']), array('desc' => 'Related products'))
 			->multi_select_box('units', module('manage_shop')->_units_for_select, array('desc' => 'Units', 'edit_link' => './?object='.main()->_get('object').'&action=units', 'show_text' => 1))
