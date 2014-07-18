@@ -13,7 +13,7 @@ class yf_tpl_driver_yf {
 	public $_PATTERN_IF	= '/\{if\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w#-]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
 	/** @var string @conf_skip pattern for multi-conditions */
 	public $_PATTERN_MULTI_COND = '/["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s#-]*)["\']{0,1}/ims';
-	/** @var string @conf_skip Cycle pattern. Examples: {foreach ("var")}<li>{var.value1}</li>{/foreach} */
+	/** @var string @conf_skip Cycle pattern. Examples: {foreach("var")}<li>{#.value1}</li>{/foreach} */
 	public $_PATTERN_FOREACH = '/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
 	/** @var string @conf_skip Shortcuts for conditional patterns. // Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if} */
 	public $_PATTERN_IF_FUNCS = '/\{if_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
@@ -324,7 +324,7 @@ class yf_tpl_driver_yf {
 			}
 		}
 		if ($pairs) {
-			$string = str_replace(array_keys($pairs), array_values($pairs), $string);
+			$string = str_replace(array_keys($pairs), $pairs, $string);
 		}
 		// Cleanup, using regex pairs
 		if ($cleanup_keys) {
@@ -527,28 +527,24 @@ class yf_tpl_driver_yf {
 		if (false === strpos($string, '{/catch}') || empty($string)) {
 			return $string;
 		}
-		if (!preg_match_all($this->_PATTERN_CATCH, $string, $m)) {
-			return $string;
-		}
-		foreach ((array)$m[0] as $k => $v) {
-			$string = str_replace($v, '', $string);
-			// Add replace var
-			$catched_name	= $m[1][$k];
-			$catched_string	= $m[2][$k];
+		$_this = $this;
+		return preg_replace_callback($this->_PATTERN_CATCH, function($m) use ($_this, &$replace, $stpl_name) {
+			$catched_name	= $m[1];
+			$catched_string	= $m[2];
 			if (!empty($catched_name)) {
 				if (strlen($catched_string) && strpos($catched_string, '{') !== false) {
-					$catched_string = $this->_replace_std_patterns($catched_string, $stpl_name, $replace);
-					$catched_string = $this->_process_foreaches($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_ifs($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_replaces($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_js_css($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_includes($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_executes($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_replace_std_patterns($catched_string, $stpl_name, $replace);
+					$catched_string = $_this->_process_foreaches($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_ifs($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_replaces($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_js_css($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_includes($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_executes($catched_string, $replace, $stpl_name);
 				}
 				$replace[$catched_name] = trim($catched_string);
 			}
-		}
-		return $string;
+			return '';
+		}, $string);
 	}
 
 	/**
@@ -558,18 +554,15 @@ class yf_tpl_driver_yf {
 		if (false === strpos($string, '{/if}') || empty($string)) {
 			return $string;
 		}
-		$matched_ifs = preg_match_all($this->_PATTERN_IF, $string, $m);
-		$matched_if_funcs = preg_match_all($this->_PATTERN_IF_FUNCS, $string, $m_funcs);
-		if (!$matched_ifs && !$matched_if_funcs) {
-			return $string;
-		}
 		// Important!
 		$string = str_replace(array('<'.'?', '?'.'>'), array('&lt;?', '?&gt;'), $string);
+		$_this = $this;
 		// Process common ifs matches
-		foreach ((array)$m[0] as $k => $v) {
-			$part_left	  = $this->_prepare_cond_text($m[1][$k], $replace, $stpl_name);
-			$cur_operator = $this->_cond_operators[strtolower($m[2][$k])];
-			$part_right	 = trim($m[3][$k]);
+		$func_ifs = function($m) use ($_this, $replace, $stpl_name) {
+			$part_left = $_this->_prepare_cond_text($m[1], $replace, $stpl_name);
+			$cur_operator = $_this->_cond_operators[strtolower($m[2])];
+			$part_right = trim($m[3]);
+			$part_multi_conds = $m[4];
 			if (strlen($part_right) && $part_right{0} == '#') {
 				$part_right = $replace[ltrim($part_right, '#')];
 			}
@@ -581,13 +574,13 @@ class yf_tpl_driver_yf {
 			}
 			$part_other	 = '';
 			// Possible multi-part condition found
-			if ($m[4][$k]) {
-				$_tmp_parts = preg_split("/[\s\t]+(and|xor|or)[\s\t]+/ims", $m[4][$k], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+			if ($part_multi_conds) {
+				$_tmp_parts = preg_split("/[\s\t]+(and|xor|or)[\s\t]+/ims", $part_multi_conds, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 				if ($_tmp_parts) {
 					$_tmp_count = count($_tmp_parts);
 				}
-				for ($i = 1; $i < $_tmp_count; $i+=2) {
-					$_tmp_parts[$i] = $this->_process_multi_conds($_tmp_parts[$i], $replace, $stpl_name);
+				for ($i = 1; $i < $_tmp_count; $i += 2) {
+					$_tmp_parts[$i] = $_this->_process_multi_conds($_tmp_parts[$i], $replace, $stpl_name);
 					if (!strlen($_tmp_parts[$i])) {
 						unset($_tmp_parts[$i]);
 						unset($_tmp_parts[$i - 1]);
@@ -597,19 +590,17 @@ class yf_tpl_driver_yf {
 					$part_other = ' '. implode(' ', (array)$_tmp_parts);
 				}
 			}
-			// Special case for "mod". 
-			// Examples: {if("id" mod 4)} content {/if}
+			// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
 			if ($cur_operator == '%') {
 				$part_left = '!('.$part_left;
 				$part_right = $part_right.')';
 			}
-			$new_code	= '<'.'?p'.'hp if('.$part_left.' '.$cur_operator.' '.$part_right.$part_other.') { ?>';
-			$string		= str_replace($v, $new_code, $string);
-		}
+			return '<'.'?p'.'hp if('. $part_left. ' '. $cur_operator. ' '. $part_right. $part_other. ') { ?>';
+		};
 		// Process if_funcs matches
-		foreach ((array)$m_funcs[0] as $k => $v) {
-			$part_left = $this->_prepare_cond_text($m_funcs[2][$k], $replace, $stpl_name);
-			$func = trim($m_funcs['func'][$k]);
+		$func_if_funcs = function($m) use ($_this, $replace, $stpl_name) {
+			$part_left = $_this->_prepare_cond_text($m[2], $replace, $stpl_name);
+			$func = trim($m['func']);
 			$negate = false;
 			if (substr($func, 0, 4) == 'not_') {
 				$func = substr($func, 4);
@@ -618,51 +609,62 @@ class yf_tpl_driver_yf {
 			// Example of supported class: {if_validate:is_natural_no_zero(data)} good {/if}
 			if (false !== strpos($func, ':')) {
 				list($class_name, $_func) = explode(':', $func);
-				if (in_array($class_name, array('validate'))/* && substr($func, 0, 1) != '_' && preg_match('~^[a-z0-9_]+$~ims', $func)*/) {
+				if (in_array($class_name, array('validate'))) {
 					$func = '_class_safe("'.$class_name.'")->'.$_func;
 				} else {
-					continue;
+					return '';
 				}
 			// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if} 
 			} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
-				continue;
+				return '';
 			}
-			$new_code = '<'.'?p'.'hp if('.($negate ? '!' : '').$func.'('.(strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]').')) { ?>';
-			$string	= str_replace($v, $new_code, $string);
-		}
+			// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
+			if ($func == 'empty') {
+				$func = '_empty';
+			} elseif ($func == 'isset') {
+				$func = '_isset';
+			}
+			return '<'.'?p'.'hp if('. ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')) { ?>';
+		};
+		$string = preg_replace_callback($this->_PATTERN_IF, $func_ifs, $string);
+		$string = preg_replace_callback($this->_PATTERN_IF_FUNCS, $func_if_funcs, $string);
 		$string = str_replace('{else}', '<'.'?p'.'hp } else { ?'.'>', $string);
 		$string = str_replace('{/if}', '<'.'?p'.'hp } ?'.'>', $string);
 
 		ob_start();
 		$result = eval('?>'.$string.'<'.'?p'.'hp return 1;');
-		$string = ob_get_clean();
+		$new_string = ob_get_clean();
 
 		if (!$result) {
-			trigger_error('STPL: ERROR: wrong condition in template "'.$stpl_name.'"', E_USER_WARNING);
+			$error_msg = 'STPL: ERROR: wrong condition in template "'.$stpl_name.'"';
+			if (DEBUG_MODE) {
+				$error_msg .= PHP_EOL.'<pre>'.PHP_EOL. _prepare_html(var_export($string, 1)). PHP_EOL.'</pre>'.PHP_EOL;
+			}
+			trigger_error($error_msg, E_USER_WARNING);
 		}
-		return $string;
+		return $new_string;
 	}
 
 	/**
 	* Multi-condition special parser
 	*/
 	function _process_multi_conds ($cond_text = '', $replace = array(), $stpl_name = '') {
-		if (!preg_match($this->_PATTERN_MULTI_COND, $cond_text, $m)) {
-			return '';
-		}
-		$part_left		= $this->_prepare_cond_text($m[1], $replace, $stpl_name);
-		$cur_operator	= $this->_cond_operators[strtolower($m[2])];
-		$part_right		= strval($m[3]);
-		if (strlen($part_right) && $part_right{0} == '#') {
-			$part_right = $replace[ltrim($part_right, '#')];
-		}
-		if (!is_numeric($part_right)) {
-			$part_right = '"'.$part_right.'"';
-		}
-		if (empty($part_left)) {
-			$part_left = '""';
-		}
-		return $part_left.' '.$cur_operator.' '.$part_right;
+		$_this = $this;
+		return preg_replace_callback($this->_PATTERN_MULTI_COND, function($m) use ($_this, $replace, $stpl_name) {
+			$part_left		= $_this->_prepare_cond_text($m[1], $replace, $stpl_name);
+			$cur_operator	= $_this->_cond_operators[strtolower($m[2])];
+			$part_right		= strval($m[3]);
+			if (strlen($part_right) && $part_right{0} == '#') {
+				$part_right = $replace[ltrim($part_right, '#')];
+			}
+			if (!is_numeric($part_right)) {
+				$part_right = '"'.$part_right.'"';
+			}
+			if (empty($part_left)) {
+				$part_left = '""';
+			}
+			return $part_left.' '.$cur_operator.' '.$part_right;
+		}, $cond_text);
 	}
 
 	/**
@@ -743,48 +745,35 @@ class yf_tpl_driver_yf {
 	* Foreach patterns processing
 	*/
 	function _process_foreaches ($string = '', $replace = array(), $stpl_name = '') {
-
-/* // TODO
-{foreach(items)}
-  {_key} = {_val}
-{elseforeach}
-  No records
-{/foreach}
-*/
 		if (false === strpos($string, '{/foreach}') || empty($string)) {
 			return $string;
 		}
-		if (!preg_match_all($this->_PATTERN_FOREACH, $string, $m)) {
-			return $string;
-		}
-		$a_for = array();
-		// Prepare non-array replace values
-		foreach ((array)$replace as $k5 => $v5) {
-			if (is_array($v5)) {
-				continue;
+		$_this = $this;
+		$func = function($m) use ($_this, $replace, $stpl_name) {
+			$matched_string = $m[0];
+			$key_to_cycle = trim($m[1]);
+			if (empty($key_to_cycle)) {
+				return '';
 			}
-			$non_array_replace[$k5] = $v5;
-		}
-		foreach ((array)$m[0] as $match_id => $matched_string) {
-			$output       = '';
-			$sub_array    = array();
-			$sub_replace  = array();
-			$key_to_cycle = trim($m[1][$match_id]);
-			$sub_template = $m[2][$match_id];
-			$sub_template = str_replace('#.', $key_to_cycle.'.', $sub_template);
+			$sub_template = str_replace('#.', $key_to_cycle.'.', $m[2]);
+
+			// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
+			$no_rows_text = '';
+			$else_tag = '{elseforeach}';
+			if (false !== strpos($sub_template, $else_tag)) {
+				list($else_before, $no_rows_text) = explode($else_tag, $sub_template);
+				$sub_template = str_replace($else_tag. $no_rows_text, '', $sub_template);
+			}
 			$var_filter_pattern = '/\{('.preg_quote($key_to_cycle, '/').')\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims'; // Example: {testarray.key1|trim}
 			$has_var_filters = preg_match($var_filter_pattern, $sub_template);
-			// Needed here for graceful quick exit from cycle
-			$a_for[$matched_string] = '';
-			if (empty($key_to_cycle)) {
-				continue;
-			}
+
 			$data = null;
+			$sub_array = array();
 			// Sub array like this: {foreach(post.somekey)} or {foreach(data.sub)}
 			if (false !== strpos($key_to_cycle, '.')) {
 				list($sub_key1, $sub_key2) = explode('.', $key_to_cycle);
 				if (!$sub_key1 || !$sub_key2) {
-					continue;
+					return '';
 				}
 				$data = $replace[$sub_key1][$sub_key2];
 				if (isset($data)) {
@@ -792,17 +781,17 @@ class yf_tpl_driver_yf {
 						$sub_array = $data;
 					// Iteration by numberic var value, example: {foreach(data.number)}, number == 3
 					} elseif (is_numeric($data)) {
-						$sub_array = $this->_range_foreach($data);
+						$sub_array = $_this->_range_foreach($data);
 					}
 				} else {
-					$avail_arrays = $this->tpl->_avail_arrays;
+					$avail_arrays = $_this->tpl->_avail_arrays;
 					if (isset($avail_arrays[$sub_key1])) {
 						$v = eval('return $'.$avail_arrays[$sub_key1].';'); // !! Do not blindly replace this with $$v, because somehow it does not work
 						if (isset($v[$sub_key2])) {
 							$sub_array = $v[$sub_key2];
-							// Iteration by numberic var value, example: {foreach(number)}, number == 3
+							// Iteration by numeric var value, example: {foreach(number)}, number == 3
 							if ($sub_array && is_numeric($sub_array)) {
-								$sub_array = $this->_range_foreach($sub_array);
+								$sub_array = $_this->_range_foreach($sub_array);
 							}
 						}
 					}
@@ -814,70 +803,61 @@ class yf_tpl_driver_yf {
 					$sub_array = $data;
 				// Iteration by numberic var value, example: {foreach(number)}, number == 3
 				} elseif (is_numeric($data)) {
-					$sub_array = $this->_range_foreach($data);
+					$sub_array = $_this->_range_foreach($data);
 				}
 			// Simple iteration within template, example: {foreach(10)}
 			} elseif (is_numeric($key_to_cycle)) {
-				$sub_array = $this->_range_foreach($key_to_cycle);
+				$sub_array = $_this->_range_foreach($key_to_cycle);
 			}
 			if (empty($sub_array)) {
-				continue;
+				return $no_rows_text;
 			}
 			// Process sub template (only cycle within correct keys)
 			$_total = (int)count($sub_array);
 			$_i = 0;
+			$output = array();
+			$sub_replace  = array();
 			foreach ((array)$sub_array as $sub_k => $sub_v) {
+				$cur_output = $sub_template;
 				$_is_first  = (int)(++$_i == 1);
 				$_is_last   = (int)($_i == $_total);
 				$_is_odd	= (int)($_i % 2);
 				$_is_even   = (int)(!$_is_odd);
-				$_sub_val = is_array($sub_v) ? implode(',', $sub_v) : $sub_v;
-
-				$cur_output = $sub_template;
 				$sub_replace = array(
-					'{_num}'	=> $_i,
-					'{_total}'	=> $_total,
-					'{_key}'	=> $sub_k,
-					'{_val}'	=> $_sub_val,
-					'{'.$key_to_cycle.'.'.$key_to_cycle.'}' => $_sub_val,
-				);
-				if (is_array($sub_v)) {
-					foreach ((array)$sub_v as $k3 => $v3) {
-						$sub_replace['{'.$key_to_cycle.'.'.$k3.'}'] = $v3;
-					}
-				}
-				$cur_output = str_replace(array_keys($sub_replace), array_values($sub_replace), $cur_output);
-				// Apply var filtering pattern, in case if such constructions found on the upper level
-				if ($has_var_filters) {
-					$cur_output = preg_replace_callback($var_filter_pattern, function($m) use ($replace, $sub_k) {
-						return _class('tpl')->_process_var_filters($replace[$m[1]][$sub_k][$m[2]], $m[3]);
-					}, $cur_output);
-				}
-				// Prepare items for condition
-				$tmp_array = (array)$non_array_replace + array(
 					'_num'   => $_i,
 					'_total' => $_total,
+					'_key'   => $sub_k,
+					'_val'   => is_array($sub_v) ? implode(',', $sub_v) : $sub_v,
 					'_first' => $_is_first,
 					'_last'  => $_is_last,
 					'_even'  => $_is_odd,
 					'_odd'   => $_is_even,
-					'_key'   => $sub_k,
-					'_val'   => $_sub_val,
 				);
-				foreach ((array)$sub_v as $k6 => $v6) {
-					$tmp_array[$key_to_cycle.'.'.$k6] = $v6;
+				if (is_array($sub_v)) {
+					foreach ($sub_v as $k => $v) {
+						$sub_replace[$key_to_cycle.'.'.$k] = $v;
+					}
 				}
+				$sub_tpl_replace = array();
+				foreach ($sub_replace as $k => $v) {
+					$sub_tpl_replace['{'.$k.'}'] = $v;
+				}
+				$cur_output = str_replace(array_keys($sub_tpl_replace), $sub_tpl_replace, $cur_output);
+				unset($sub_tpl_replace);
+				// Apply var filtering pattern, in case if such constructions found on the upper level
+				if ($has_var_filters) {
+					$cur_output = preg_replace_callback($var_filter_pattern, function($_m) use ($sub_v) {
+						return _class('tpl')->_process_var_filters($sub_v[$_m[2]], $_m[3]);
+					}, $cur_output);
+				}
+
 				// Try to process conditions in every cycle
-				$output .= $this->_process_ifs($cur_output, $tmp_array, $stpl_name);
+				$sub_replace += $replace;
+				$output[] = $_this->_process_ifs($cur_output, $sub_replace, $stpl_name);
 			}
-			// Create array element to replace whole cycle
-			$a_for[$matched_string] = $output;
-		}
-		// Replace all found template cycles with values
-		if (count($a_for)) {
-			$string = str_replace(array_keys($a_for), array_values($a_for), $string);
-		}
-		return $string;
+			return implode($output);
+		};
+		return preg_replace_callback($this->_PATTERN_FOREACH, $func, $string);
 	}
 
 	/**

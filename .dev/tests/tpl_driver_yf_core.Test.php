@@ -359,16 +359,6 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$data->key4 = array(1,2,3);
 		$this->assertEquals(' key1=val1  key2=val2  key3=val3  key4=1,2,3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
 	}
-	public function test_deep_vars_avail_arrays() {
-		$old = tpl()->_avail_arrays;
-		tpl()->_avail_arrays = array('get' => '_GET');
-		$_GET['some']['deep']['var']['key'] = 'mytestvalue2';
-
-// TODO
-#		$this->assertEquals('mytestvalue2', self::_tpl( '{get.some.deep.var.key}' ));
-
-		tpl()->_avail_arrays = $old;
-	}
 	public function test_if_funcs() {
 		$data = array('name1' => '', 'name2' => 'something');
 
@@ -391,35 +381,36 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	}
 	public function test_elseforeach() {
 		$data = array('k1' => 'v1', 'k2' => 'v2');
-#		$this->assertEquals('no rows', self::_tpl('{foreach(data)} {_key}={_val} {elseforeach}no rows{/foreach}', array()));
-#		$this->assertEquals(' k1=v1  k2=v2 ', self::_tpl('{foreach(data)} {_key}={_val} {elseforeach}no rows{/foreach}', array('data' => $data)));
-#		$this->assertEquals('no rows', self::_tpl('{foreach(data.sub)} {_key}={_val} {elseforeach}no rows{/foreach}', array()));
-#		$this->assertEquals(' k1=v1  k2=v2 ', self::_tpl('{foreach(data.sub)} {_key}={_val} {elseforeach}no rows{/foreach}', array('data' => array('sub' => $data))));
-/*
-{foreach(items)}
-  {_key} = {_val}
-{elseforeach}
-  No records
-{/foreach}
-*/
-// TODO
+		$this->assertEquals('no rows', self::_tpl('{foreach(data)} {_key}={_val} {elseforeach}no rows{/foreach}', array()));
+		$this->assertEquals(' k1=v1  k2=v2 ', self::_tpl('{foreach(data)} {_key}={_val} {elseforeach}no rows{/foreach}', array('data' => $data)));
+		$this->assertEquals('no rows', self::_tpl('{foreach(data.sub)} {_key}={_val} {elseforeach}no rows{/foreach}', array()));
+		$this->assertEquals(' k1=v1  k2=v2 ', self::_tpl('{foreach(data.sub)} {_key}={_val} {elseforeach}no rows{/foreach}', array('data' => array('sub' => $data))));
+		$this->assertEquals('k1k2 k1k2', self::_tpl('{foreach(data.sub)}{_key}{elseforeach}no rows{/foreach} {foreach(data.sub)}{_key}{elseforeach}no rows{/foreach}', array('data' => array('sub' => $data))));
+		$data = array('k1' => ' v1 ', 'k2' => ' v2 ');
 	}
 	public function test_global_tags() {
-/**
-{if_empty(is_logged_in)}  {/ife}
-{if_not_empty(is_logged_in)}  {/ifne}
-*/
-/*
-		$data = array(
-			'is_logged_in'  => intval((bool) main()->USER_ID),
-			'is_spider'     => (int)conf('IS_SPIDER'),
-			'is_https'      => isset($_SERVER['HTTPS']) || isset($_SERVER['SSL_PROTOCOL']) ? 1 : 0,
-			'site_id'       => (int)conf('SITE_ID'),
-			'lang_id'       => conf('language'),
-			'debug_mode'    => (int)((bool)DEBUG_MODE),
-			'tpl_path'      => MEDIA_PATH. $this->TPL_PATH,
+		$old = tpl()->_global_tags;
+		tpl()->_global_tags = array();
+		$this->assertEquals('{some_global_tag1}', self::_tpl('{some_global_tag1}'));
+		tpl()->_global_tags = array(
+			'some_global_tag1'	=> ' val1 ',
+			'some_global_tag2'	=> ' val2 ',
+			'some_global_tag3'	=> ' val3 ',
 		);
-*/
+		$this->assertEquals(' val1 ', self::_tpl('{some_global_tag1}'));
+		$this->assertEquals(' val1   val1   val1 ', self::_tpl('{some_global_tag1} {some_global_tag1} {some_global_tag1}'));
+		$this->assertEquals(' val1   val2   val3 ', self::_tpl('{some_global_tag1} {some_global_tag2} {some_global_tag3}'));
+		$this->assertEquals('val1  val2   val3 ', self::_tpl('{some_global_tag1|trim} {some_global_tag2} {some_global_tag3}'));
+		tpl()->_global_tags = $old;
+	}
+	public function test_deep_vars_avail_arrays() {
+		$old = tpl()->_avail_arrays;
+		tpl()->_avail_arrays = array('get' => '_GET');
+		$_GET['some']['deep']['var']['key'] = 'mytestvalue2';
+
 // TODO
+#		$this->assertEquals('mytestvalue2', self::_tpl( '{get.some.deep.var.key}' ));
+
+		tpl()->_avail_arrays = $old;
 	}
 }
