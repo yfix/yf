@@ -8,7 +8,6 @@ require dirname(__FILE__).'/yf_unit_tests_setup.php';
 * row_start()
 * _attrs()
 * _htmlchars()
-* clone (__clone)
 * _dd_row_html()
 * _input_assing_params_from_validate()
 */
@@ -399,5 +398,10 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$r['active_link'] = './?object=someobject&action=someaction';
 		$this->assertEquals('<a href="./?object=someobject&action=someaction" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</button></a>'
 			, trim(self::form_no_chain($r)->tbl_link_active('test')) );
+	}
+	public function test_form_clone() {
+		$form1 = form(array('k'=>'v'))->text('k');
+		$form2 = form(array('k'=>'v'))->text('k');
+		$this->assertNotSame( $form1, $form2 );
 	}
 }
