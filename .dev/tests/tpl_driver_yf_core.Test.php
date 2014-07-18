@@ -152,6 +152,8 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 				7 => array('name' => 'name3', 'age' => 23),
 			),
 		) ));
+		$this->assertEquals('', self::_tpl( '{foreach( not_existing_key )}{/foreach}' ));
+		$this->assertEquals('', self::_tpl( '{foreach( not_existing_key )} {if("_total" eq "3")}1{else}0{/if} {/foreach}' ));
 	}
 	public function test_if_sub() {
 		$this->assertEquals('GOOD', self::_tpl( '{if("sub.key1" eq "val1")}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1')) ));
