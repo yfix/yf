@@ -13,7 +13,7 @@ class yf_tpl_driver_yf {
 	public $_PATTERN_IF	= '/\{if\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w#-]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
 	/** @var string @conf_skip pattern for multi-conditions */
 	public $_PATTERN_MULTI_COND = '/["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s#-]*)["\']{0,1}/ims';
-	/** @var string @conf_skip Cycle pattern. Examples: {foreach ("var")}<li>{var.value1}</li>{/foreach} */
+	/** @var string @conf_skip Cycle pattern. Examples: {foreach("var")}<li>{#.value1}</li>{/foreach} */
 	public $_PATTERN_FOREACH = '/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
 	/** @var string @conf_skip Shortcuts for conditional patterns. // Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if} */
 	public $_PATTERN_IF_FUNCS = '/\{if_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
@@ -755,7 +755,7 @@ class yf_tpl_driver_yf {
 			$non_array_replace[$k5] = $v5;
 		}
 		$_this = &$this;
-		return preg_replace_callback($this->_PATTERN_FOREACH, function($m) use ($_this, $replace, $stpl_name, $non_array_replace) {
+		$func = function($m) use ($_this, $replace, $stpl_name, $non_array_replace) {
 			$output       = '';
 			$sub_array    = array();
 			$sub_replace  = array();
@@ -768,17 +768,13 @@ class yf_tpl_driver_yf {
 			$var_filter_pattern = '/\{('.preg_quote($key_to_cycle, '/').')\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims'; // Example: {testarray.key1|trim}
 			$has_var_filters = preg_match($var_filter_pattern, $sub_template);
 
+			// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
+			$no_rows_text = '';
 			$else_tag = '{elseforeach}';
 			if (false !== strpos($matched_string, $else_tag)) {
-				list($first, $second) = explode($else_tag, $matched_string);
+				list($else_before, $no_rows_text) = explode($else_tag, $sub_template);
+				$sub_template = substr($sub_template, -strlen($else_tag. $no_rows_text));
 			}
-/* // TODO
-{foreach(items)}
-  {_key} = {_val}
-{elseforeach}
-  No records
-{/foreach}
-*/
 			$data = null;
 			// Sub array like this: {foreach(post.somekey)} or {foreach(data.sub)}
 			if (false !== strpos($key_to_cycle, '.')) {
@@ -800,7 +796,7 @@ class yf_tpl_driver_yf {
 						$v = eval('return $'.$avail_arrays[$sub_key1].';'); // !! Do not blindly replace this with $$v, because somehow it does not work
 						if (isset($v[$sub_key2])) {
 							$sub_array = $v[$sub_key2];
-							// Iteration by numberic var value, example: {foreach(number)}, number == 3
+							// Iteration by numeric var value, example: {foreach(number)}, number == 3
 							if ($sub_array && is_numeric($sub_array)) {
 								$sub_array = $_this->_range_foreach($sub_array);
 							}
@@ -821,7 +817,7 @@ class yf_tpl_driver_yf {
 				$sub_array = $_this->_range_foreach($key_to_cycle);
 			}
 			if (empty($sub_array)) {
-				return '';
+				return $no_rows_text;
 			}
 			// Process sub template (only cycle within correct keys)
 			$_total = (int)count($sub_array);
@@ -832,7 +828,7 @@ class yf_tpl_driver_yf {
 				$_is_last   = (int)($_i == $_total);
 				$_is_odd	= (int)($_i % 2);
 				$_is_even   = (int)(!$_is_odd);
-				$_sub_val = is_array($sub_v) ? implode(',', $sub_v) : $sub_v;
+				$_sub_val	= is_array($sub_v) ? implode(',', $sub_v) : $sub_v;
 				$sub_replace = array(
 					'{_num}'	=> $_i,
 					'{_total}'	=> $_total,
@@ -870,7 +866,8 @@ class yf_tpl_driver_yf {
 				$output .= $_this->_process_ifs($cur_output, $tmp_array, $stpl_name);
 			}
 			return $output;
-		}, $string);
+		};
+		return preg_replace_callback($this->_PATTERN_FOREACH, $func, $string);
 	}
 
 	/**
