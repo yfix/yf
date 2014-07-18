@@ -163,8 +163,8 @@ class yf_tpl_driver_yf_compile {
 			'{_key}'	=> $_php_start. 'echo $_k;'. $_php_end,
 			'{_val}'	=> $_php_start. 'echo (is_array($_v) ? implode(",", $_v) : $_v);'. $_php_end,
 		);
-		$string = str_replace(array_keys($_my_replace), array_values($_my_replace), $string);
-		$string = preg_replace(array_keys($this->_patterns), array_values($this->_patterns), $string);
+		$string = str_replace(array_keys($_my_replace), $_my_replace, $string);
+		$string = preg_replace(array_keys($this->_patterns), $this->_patterns, $string);
 
 		// Images and uploads paths compile
 		$web_path		= MAIN_TYPE_USER ? 'MEDIA_PATH' : 'ADMIN_WEB_PATH';
@@ -176,7 +176,7 @@ class yf_tpl_driver_yf_compile {
 			'\'uploads/'	=> '\''.$_php_start. 'echo MEDIA_PATH. _class(\'tpl\')->_UPLOADS_PATH;'. $_php_end,
 			'src="uploads/'	=> 'src="'.$_php_start. 'echo '.$web_path.'._class(\'tpl\')->_UPLOADS_PATH;'. $_php_end,
 		);
-		$string = str_replace(array_keys($to_replace), array_values($to_replace), $string);
+		$string = str_replace(array_keys($to_replace), $to_replace, $string);
 
 		$string = '<'.'?p'.'hp if(!defined(\'YF_PATH\')) exit(); /* '.
 			'date: '.gmdate('Y-m-d H:i:s').' GMT; '.
@@ -281,7 +281,7 @@ class yf_tpl_driver_yf_compile {
 		} elseif (false !== strpos($part_left, '.')) {
 			list($k, $v) = explode('.', $part_left);
 			$avail_arrays = (array)_class('tpl')->_avail_arrays;
-			$part_left = '$'.str_replace(array_keys($avail_arrays), array_values($avail_arrays), $k).'[\''.$v.'\']';
+			$part_left = '$'.str_replace(array_keys($avail_arrays), $avail_arrays, $k).'[\''.$v.'\']';
 		// Simple number or string, started with '%'
 		} elseif ($part_left{0} == '%' && strlen($part_left) > 1) {
 			$part_left = '"'.str_replace('"', '\"', substr($part_left, 1)).'"';
