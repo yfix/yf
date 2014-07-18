@@ -757,16 +757,17 @@ class yf_tpl_driver_yf {
 		$_this = &$this;
 		return preg_replace_callback($this->_PATTERN_FOREACH, function($m) use ($_this, $replace, $stpl_name, $non_array_replace) {
 			$output       = '';
-			$matched_string = $m[0];
 			$sub_array    = array();
 			$sub_replace  = array();
+			$matched_string = $m[0];
 			$key_to_cycle = trim($m[1]);
-			$sub_template = $m[2];
-			$sub_template = str_replace('#.', $key_to_cycle.'.', $sub_template);
+			if (empty($key_to_cycle)) {
+				return '';
+			}
+			$sub_template = str_replace('#.', $key_to_cycle.'.', $m[2]);
 			$var_filter_pattern = '/\{('.preg_quote($key_to_cycle, '/').')\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims'; // Example: {testarray.key1|trim}
 			$has_var_filters = preg_match($var_filter_pattern, $sub_template);
-			// Needed here for graceful quick exit from cycle
-			$a_for[$matched_string] = '';
+
 			$else_tag = '{elseforeach}';
 			if (false !== strpos($matched_string, $else_tag)) {
 				list($first, $second) = explode($else_tag, $matched_string);
@@ -778,9 +779,6 @@ class yf_tpl_driver_yf {
   No records
 {/foreach}
 */
-			if (empty($key_to_cycle)) {
-				return '';
-			}
 			$data = null;
 			// Sub array like this: {foreach(post.somekey)} or {foreach(data.sub)}
 			if (false !== strpos($key_to_cycle, '.')) {
