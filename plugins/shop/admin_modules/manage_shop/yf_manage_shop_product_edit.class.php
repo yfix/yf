@@ -207,7 +207,7 @@ class yf_manage_shop_product_edit {
 				'multiple'  => true,
 				'values'    => $_region,
 				'selected'  => $region,
-				'edit_link' => url( './?object=manage_shop&action=region' ),
+				'edit_link' => url_admin( '/manage_shop/region' ),
 			))
 			->textarea('description')
 			->price('old_price')
