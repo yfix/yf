@@ -463,7 +463,7 @@ abstract class yf_db_query_builder_driver {
 				$right_generated = '('.$right_generated.')';
 			}
 		}
-		if (is_string($right) && !strlen($right) && !strlen($right_generated)) {
+		if ((empty($right) || !strlen($right)) && !strlen($right_generated)) {
 			return '';
 		}
 		return $this->_escape_key($left). ' '. strtoupper($op). ($right_generated ?: ' '.$this->_escape_val($right));
