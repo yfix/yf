@@ -747,35 +747,27 @@ class yf_tpl_driver_yf {
 		if (false === strpos($string, '{/foreach}') || empty($string)) {
 			return $string;
 		}
-		// Prepare non-array replace values
-		foreach ((array)$replace as $k5 => $v5) {
-			if (is_array($v5)) {
-				continue;
-			}
-			$non_array_replace[$k5] = $v5;
-		}
 		$_this = &$this;
-		$func = function($m) use ($_this, $replace, $stpl_name, $non_array_replace) {
-			$output       = '';
-			$sub_array    = array();
-			$sub_replace  = array();
+		$func = function($m) use ($_this, $replace, $stpl_name) {
 			$matched_string = $m[0];
 			$key_to_cycle = trim($m[1]);
 			if (empty($key_to_cycle)) {
 				return '';
 			}
 			$sub_template = str_replace('#.', $key_to_cycle.'.', $m[2]);
-			$var_filter_pattern = '/\{('.preg_quote($key_to_cycle, '/').')\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims'; // Example: {testarray.key1|trim}
-			$has_var_filters = preg_match($var_filter_pattern, $sub_template);
 
 			// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
 			$no_rows_text = '';
 			$else_tag = '{elseforeach}';
-			if (false !== strpos($matched_string, $else_tag)) {
+			if (false !== strpos($sub_template, $else_tag)) {
 				list($else_before, $no_rows_text) = explode($else_tag, $sub_template);
-				$sub_template = substr($sub_template, -strlen($else_tag. $no_rows_text));
+				$sub_template = str_replace($else_tag. $no_rows_text, '', $sub_template);
 			}
+			$var_filter_pattern = '/\{('.preg_quote($key_to_cycle, '/').')\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims'; // Example: {testarray.key1|trim}
+			$has_var_filters = preg_match($var_filter_pattern, $sub_template);
+
 			$data = null;
+			$sub_array = array();
 			// Sub array like this: {foreach(post.somekey)} or {foreach(data.sub)}
 			if (false !== strpos($key_to_cycle, '.')) {
 				list($sub_key1, $sub_key2) = explode('.', $key_to_cycle);
@@ -822,50 +814,47 @@ class yf_tpl_driver_yf {
 			// Process sub template (only cycle within correct keys)
 			$_total = (int)count($sub_array);
 			$_i = 0;
+			$output = array();
+			$sub_replace  = array();
 			foreach ((array)$sub_array as $sub_k => $sub_v) {
 				$cur_output = $sub_template;
 				$_is_first  = (int)(++$_i == 1);
 				$_is_last   = (int)($_i == $_total);
 				$_is_odd	= (int)($_i % 2);
 				$_is_even   = (int)(!$_is_odd);
-				$_sub_val	= is_array($sub_v) ? implode(',', $sub_v) : $sub_v;
 				$sub_replace = array(
-					'{_num}'	=> $_i,
-					'{_total}'	=> $_total,
-					'{_key}'	=> $sub_k,
-					'{_val}'	=> $_sub_val,
-					'{'.$key_to_cycle.'.'.$key_to_cycle.'}' => $_sub_val,
-				);
-				if (is_array($sub_v)) {
-					foreach ((array)$sub_v as $k3 => $v3) {
-						$sub_replace['{'.$key_to_cycle.'.'.$k3.'}'] = $v3;
-					}
-				}
-				$cur_output = str_replace(array_keys($sub_replace), array_values($sub_replace), $cur_output);
-				// Apply var filtering pattern, in case if such constructions found on the upper level
-				if ($has_var_filters) {
-					$cur_output = preg_replace_callback($var_filter_pattern, function($m) use ($replace, $sub_k) {
-						return _class('tpl')->_process_var_filters($replace[$m[1]][$sub_k][$m[2]], $m[3]);
-					}, $cur_output);
-				}
-				// Prepare items for condition
-				$tmp_array = (array)$non_array_replace + array(
 					'_num'   => $_i,
 					'_total' => $_total,
+					'_key'   => $sub_k,
+					'_val'   => is_array($sub_v) ? implode(',', $sub_v) : $sub_v,
 					'_first' => $_is_first,
 					'_last'  => $_is_last,
 					'_even'  => $_is_odd,
 					'_odd'   => $_is_even,
-					'_key'   => $sub_k,
-					'_val'   => $_sub_val,
 				);
-				foreach ((array)$sub_v as $k6 => $v6) {
-					$tmp_array[$key_to_cycle.'.'.$k6] = $v6;
+				if (is_array($sub_v)) {
+					foreach ($sub_v as $k => $v) {
+						$sub_replace[$key_to_cycle.'.'.$k] = $v;
+					}
 				}
+				$sub_tpl_replace = array();
+				foreach ($sub_replace as $k => $v) {
+					$sub_tpl_replace['{'.$k.'}'] = $v;
+				}
+				$cur_output = str_replace(array_keys($sub_tpl_replace), $sub_tpl_replace, $cur_output);
+				unset($sub_tpl_replace);
+				// Apply var filtering pattern, in case if such constructions found on the upper level
+				if ($has_var_filters) {
+					$cur_output = preg_replace_callback($var_filter_pattern, function($_m) use ($sub_v) {
+						return _class('tpl')->_process_var_filters($sub_v[$_m[2]], $_m[3]);
+					}, $cur_output);
+				}
+
 				// Try to process conditions in every cycle
-				$output .= $_this->_process_ifs($cur_output, $tmp_array, $stpl_name);
+				$sub_replace += $replace;
+				$output[] = $_this->_process_ifs($cur_output, $sub_replace, $stpl_name);
 			}
-			return $output;
+			return implode($output);
 		};
 		return preg_replace_callback($this->_PATTERN_FOREACH, $func, $string);
 	}
