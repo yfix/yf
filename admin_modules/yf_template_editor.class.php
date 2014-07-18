@@ -345,26 +345,12 @@ class yf_template_editor {
 	*/
 	function _get_themes () {
 		$themes = array();
-		foreach ((array)$this->_dir_array as $k => $d){
-			$dh = opendir($d);
-// TODO: convert into _class('dir')
-			while (false !== ($f = readdir($dh))) {
-				$dir_name = $d.$f;
-				if (false !== strpos($dir_name, '.svn')) {
-					continue;
+		foreach ((array)$this->_dir_array as $glob_name => $glob) {
+			foreach (glob($glob.'*/', GLOB_ONLYDIR) as $path) {
+				$dir = basename($path);
+				if ($dir) {
+					$themes[$glob_name][$path] = $dir;
 				}
-				if (false !== strpos($dir_name, '.git')) {
-					continue;
-				}
-				if (is_dir($dir_name) && $f != '.' && $f != '..') {
-					$themes[$k][$d. $f. '/'] = $f;
-				}
-			}
-			if ($dh) {
-				closedir($dh);
-			}
-			if (is_array($themes[$k])) {
-				ksort($themes[$k]);
 			}
 		}
 		return $themes;
