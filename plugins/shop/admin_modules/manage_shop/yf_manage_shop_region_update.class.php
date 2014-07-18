@@ -2,26 +2,13 @@
 
 class yf_manage_shop_region_update {
 
-	private $_fields_show = array(
-		'name',
-		'price_raw',
-		'price',
-		'old_price',
-	);
-	private $_fields_update = array(
-		'price_raw' => 'price_raw',
-		'price'     => 'price',
-		'old_price' => 'old_price',
-	);
 	private $_filter        = false;
 	private $_filter_params = false;
 
 	private $_instance             = false;
-	private $_class_price          = false;
 	private $_class_admin_products = false;
 
 	function _init() {
-		// $this->_class_price          = _class( '_shop_price',          'modules/shop/'              );
 		$this->_class_admin_products = _class( 'manage_shop_products', 'admin_modules/manage_shop/' );
 		$this->is_post = input()->is_post();
 		$this->is_init = (bool)input()->get( 'init' );
@@ -43,34 +30,37 @@ class yf_manage_shop_region_update {
 	}
 
 	function _data() {
-		$_region = _class( '_shop_region', 'modules/shop/' )->_get_list();
-		// array_unshift( $region, '- регион не выбран -' );
-			$region = array_values( (array)$_POST[ 'region' ] );
-			$region = array_combine( $region, $region );
-				$is_region = true;
-				foreach( $region as $id ) {
-					if( $id === '0' || !isset( $_region[ $id ] ) ) {
-						$is_region = false;
-						break;
-					}
-				}
-		// -----
 		$_sub_action = array(
 			'0'      => '- не выбрано -',
 			'add'    => 'добавить',
 			'delete' => 'удалить',
+			'clean'  => 'очистить',
 		);
 			$sub_action = $_POST[ 'sub_action' ];
 				$is_sub_action = $sub_action !== '0' && isset( $_sub_action[ $sub_action ] );
+		// -----
+		$_region = _class( '_shop_region', 'modules/shop/' )->_get_list();
+		// array_unshift( $region, '- регион не выбран -' );
+			if( $sub_action == 'clean' ) {
+				$is_region = true;
+			} else {
+				$region = array_values( (array)$_POST[ 'region' ] );
+				$is_region = false;
+				if( !empty( $region ) ) {
+					$region = array_combine( $region, $region );
+						$count = 0;
+						foreach( $region as $id ) {
+							if( $id === '0' || !isset( $_region[ $id ] ) ) { break; }
+							$count++;
+						}
+						$count == count( $region ) && $is_region = true;
+				}
+			}
 		// init sql
-		$sql_table   = db( 'shop_products' );
+		$sql_table = db( 'shop_products' );
 		$sql_table_action = 'shop_product_to_region';
-		$_fields = $this->_fields_show;
-		$fields = array(); $sql_fields = '*';
 		$where  = array(); $sql_where = '';
 		$order  = array(); $sql_order = '';
-		// prepare sql fields
-		$fields[] = implode( ', ', $_fields );
 		// prepare supplier
 		$supplier = (int)module( 'manage_shop' )->SUPPLIER_ID;
 		if( $supplier > 0 ) {
@@ -81,7 +71,6 @@ class yf_manage_shop_region_update {
 		if( !empty( $_where ) ) { $where[] = '1' . $_where; }
 		if( !empty( $_order ) ) { $order[] = $_order; }
 		// compile sql chunk
-		if( !empty( $fields ) ) { $sql_fields = implode( ', ', $fields ); }
 		if( !empty( $where  ) ) { $sql_where  = 'WHERE '    . implode( ', ', $where  ); }
 		if( !empty( $order  ) ) { $sql_order  = implode( ', ', $order  ); }
 		// compile sql
@@ -99,7 +88,9 @@ class yf_manage_shop_region_update {
 		// update
 		$apply   = $_POST[ 'apply'   ];
 		$confirm = $_POST[ 'confirm' ];
-		$is_update = $this->is_post && $is_sub_action && $is_region && isset( $apply ) && isset( $confirm ) ? true : false;
+		$is_action  = $this->is_post && $is_sub_action && $is_region && isset( $apply ) ? true : false;
+		$is_update  = $is_action &&  isset( $confirm ) ? true : false;
+		$no_confirm = $is_action && !isset( $confirm ) ? true : false;
 		if( $is_update ) {
 			// prepare data
 			$data             = array();
@@ -117,19 +108,35 @@ class yf_manage_shop_region_update {
 					$sub_action_count = db()->affected_rows();
 				db_query( 'COMMIT' );
 			// ----- delete regions to products
-			} elseif( $sub_action == 'delete' ) {
-				$data = array( '__args__' => array(
-					array( 'product_id', 'in', $ids ),
-					'and',
-					array( 'region_id', 'in', $region )
-				));
+			} elseif( $sub_action == 'delete' ||  $sub_action == 'clean' ) {
+				$sql_product_ids = array( 'product_id', 'in', $ids    );
+				if( $sub_action == 'clean' ) {
+					$data = array( '__args__' => array(
+						$sql_product_ids,
+					));
+				} else {
+					$sql_region_ids  = array( 'region_id',  'in', $region );
+					$data = array( '__args__' => array(
+						$sql_product_ids,
+						'and',
+						$sql_region_ids,
+					));
+				}
 				db_query( 'START TRANSACTION' );
 					db()->delete( $sql_table_action, $data );
 					$sub_action_count = db()->affected_rows();
 				db_query( 'COMMIT' );
 			}
+			if( $sub_action_count ) {
+				common()->message_success( 'Операция выполнена успешно.' );
+			} else {
+				common()->message_warning( 'Данная операция выполнена ранее.' );
+			}
 			$sub_action = null;
 			$region     = null;
+		}
+		if( $no_confirm ) {
+			common()->message_warning( 'Требуется подтверждение.' );
 		}
 		// -----
 		$result = array(
@@ -168,117 +175,5 @@ class yf_manage_shop_region_update {
 		;
 		return( $_form );
 	}
-
-
-// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-	function __init() {
-		$this->_class_price          = _class( '_shop_price',          'modules/shop/'              );
-		$this->_class_admin_products = _class( 'manage_shop_products', 'admin_modules/manage_shop/' );
-		$this->is_post = main()->is_post();
-		$this->is_init = (int)main()->_get( 'init' );
-		// get filter
-		$_object             = main()->_get( 'object' );
-		$_action             = main()->_get( 'action' );
-		$_action_parent      = main()->_get( 'filter' );
-		$_session_parent_key = $_object . '__' . $_action_parent;
-		$_session_key        = $_object . '__' . $_action;
-		if( $this->is_init ) { $_SESSION[ $_session_key ] = $_SESSION[ $_session_parent_key ]; }
-		$this->_filter = $_SESSION[ $_session_key ];
-		$this->_filter_params = $this->_class_admin_products->_filter_params;
-	}
-
-
-	function __data() {
-		$_class_price = $this->_class_price;
-		// init sql
-		$sql_table   = db( 'shop_products' );
-		$sql_table_t = $sql_table . '_tmp';
-		$_fields = $this->_fields_show;
-		$fields = array(); $sql_fields = '*';
-		$where  = array(); $sql_where = '';
-		$order  = array(); $sql_order = '';
-		// prepare sql fields
-		$fields[] = implode( ', ', $_fields );
-		// prepare supplier
-		$supplier = (int)module( 'manage_shop' )->SUPPLIER_ID;
-		if( $supplier > 0 ) {
-			$where[] = 'supplier_id = ' . $supplier;
-		}
-		// prepare filter
-		list( $_where, $_order ) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare( $this->_filter, $this->_filter_params );
-		if( !empty( $_where ) ) { $where[] = '1' . $_where; }
-		if( !empty( $_order ) ) { $order[] = $_order; }
-		// compile sql chunk
-		if( !empty( $fields ) ) { $sql_fields = implode( ', ', $fields ); }
-		if( !empty( $where  ) ) { $sql_where  = 'WHERE '    . implode( ', ', $where  ); }
-		if( !empty( $order  ) ) { $sql_order  = implode( ', ', $order  ); }
-		// compile sql
-		$sql = sprintf( 'SELECT %s FROM %s as p %s %s'
-			, $sql_fields
-			, $sql_table
-			, $sql_where
-			, $sql_order
-		);
-		$sql_filter = sprintf( 'SELECT * FROM %s as p %s %s'
-			, $sql_table
-			, $sql_where
-			, $sql_order
-		);
-		$sql_count = sprintf( 'SELECT COUNT(*) FROM %s as p %s %s'
-			, $sql_table
-			, $sql_where
-			, $sql_order
-		);
-		$count = db()->get_one( $sql_count );
-		// build temp data
-		// prepare percent
-		$_percent = $_class_price->_number_float( $_POST[ 'percent' ] );
-		$percent = 1 + $_percent / 100;
-		$percent = $_class_price->_number_mysql( $percent, 4 );
-		// prepare add
-		$_add = $_class_price->_number_float( $_POST[ 'add' ] );
-		$add  = $_class_price->_number_mysql( $_add   );
-		// prepare to field
-		$_fields  = $this->_fields_update;
-		$to_field = $_POST[ 'to_field' ];
-		// to field error
-		if( !empty( $to_field ) && !isset( $_fields[ $to_field ] ) ) { return( js_redirect( './', true, 'error to field' ) ); }
-		$apply   = $_POST[ 'apply'   ];
-		$confirm = $_POST[ 'confirm' ];
-		$is_update = isset( $_fields[ $to_field ] ) && isset( $apply ) && isset( $confirm ) ? true : false;
-		$to_field = $to_field ?: $_fields[ 'price_raw' ];
-		$sql_price_update = "$to_field = ( IF( price_raw > 0, price_raw, price ) * $percent + $add )";
-		$css_field[ $to_field ] = 'text-success';
-		$limit = 5;
-		// preview
-		// db_query( "DROP TABLE IF EXISTS $sql_table_t" );
-		db_query( "CREATE TEMPORARY TABLE $sql_table_t LIKE $sql_table" );
-		db_query( "INSERT INTO $sql_table_t $sql_filter LIMIT $limit" );
-		db_query( "UPDATE $sql_table_t SET $sql_price_update LIMIT $limit" );
-		$result = db_get_all( "SELECT $sql_fields FROM $sql_table_t as p $sql_order LIMIT $limit" );
-		$result_t = table( $result, array( 'no_total' => true ) )
-			->text( 'name' )
-			->text( 'price_raw', array( 'class' => $css_field[ 'price_raw' ] ) )
-			->text( 'price',     array( 'class' => $css_field[ 'price'     ] ) )
-			->text( 'old_price', array( 'class' => $css_field[ 'old_price' ] ) )
-		;
-		$result_t = _class('html')->panel( array( 'title' => 'Предпросмотр', 'body' => $result_t ) );
-		$result = array( $count, $result_t );
-		// apply
-		if( $is_update ) {
-			db_query( "UPDATE $sql_table as p SET $sql_price_update $sql_where" );
-			$info = '';
-			if( !empty( $this->_filter ) ) {
-				foreach( $this->_filter as $key => $value ) {
-					if( strlen( $value ) < 1 ) { continue; }
-					$info .= "$key: $value; ";
-				}
-				$info = " ( $info )";
-			}
-			common()->admin_wall_add( array( "shop price update: percent = $_percent%; add = $_add" . $_class_price->CURRENCY . $info ) );
-		}
-		return( $result );
-	}
-
 
 }
