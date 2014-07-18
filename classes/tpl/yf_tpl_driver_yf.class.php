@@ -527,18 +527,19 @@ class yf_tpl_driver_yf {
 		if (false === strpos($string, '{/catch}') || empty($string)) {
 			return $string;
 		}
-		return preg_replace_callback($this->_PATTERN_CATCH, function($m) use (&$replace, $stpl_name) {
+		$_this = $this;
+		return preg_replace_callback($this->_PATTERN_CATCH, function($m) use ($_this, &$replace, $stpl_name) {
 			$catched_name	= $m[1];
 			$catched_string	= $m[2];
 			if (!empty($catched_name)) {
 				if (strlen($catched_string) && strpos($catched_string, '{') !== false) {
-					$catched_string = $this->_replace_std_patterns($catched_string, $stpl_name, $replace);
-					$catched_string = $this->_process_foreaches($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_ifs($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_replaces($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_js_css($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_includes($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_executes($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_replace_std_patterns($catched_string, $stpl_name, $replace);
+					$catched_string = $_this->_process_foreaches($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_ifs($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_replaces($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_js_css($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_includes($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_executes($catched_string, $replace, $stpl_name);
 				}
 				$replace[$catched_name] = trim($catched_string);
 			}
