@@ -618,6 +618,12 @@ class yf_tpl_driver_yf {
 			} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
 				return '';
 			}
+			// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
+			if ($func == 'empty') {
+				$func = '_empty';
+			} elseif ($func == 'isset') {
+				$func = '_isset';
+			}
 			return '<'.'?p'.'hp if('. ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')) { ?>';
 		};
 		$string = preg_replace_callback($this->_PATTERN_IF, $func_ifs, $string);
