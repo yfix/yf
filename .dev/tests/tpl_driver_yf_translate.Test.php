@@ -16,6 +16,8 @@ class tpl_driver_yf_translate_test extends tpl_abstract {
 		$this->assertEquals('my translate', self::_tpl( '{t( my translate)}' ));
 		$this->assertEquals('my translate', self::_tpl( '{t(my translate )}' ));
 		$this->assertEquals('my translate', self::_tpl( '{t( my translate )}' ));
+		$this->assertEquals('', self::_tpl( '{t()}' ));
+		$this->assertEquals('', self::_tpl( '{t(   )}' ));
 	}
 	public function test_namespace() {
 		$this->assertEquals('my translate', self::_tpl( '{t("::test::my translate")}' ));
