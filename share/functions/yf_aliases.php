@@ -257,6 +257,14 @@ if (!function_exists('validate')) {
 if (!function_exists('_check_user_ban')) {
 	function _check_user_ban ($info = array(), $user_info = array()) { return common()->check_user_ban($info, $user_info); }
 }
+// Wrapper for tpl generated php code for PHP 5.3 compatibility
+if (!function_exists('_empty')) {
+	function _empty($in = null) { return empty($in); }
+}
+// Wrapper for tpl generated php code for PHP 5.3 compatibility
+if (!function_exists('_isset')) {
+	function _isset($in = null) { return isset($in); }
+}
 // FirePHP shortcut in case if not exists
 if (!function_exists('fb')) {
 	function fb() { return false; }
