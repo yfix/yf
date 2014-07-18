@@ -324,7 +324,7 @@ class yf_tpl_driver_yf {
 			}
 		}
 		if ($pairs) {
-			$string = str_replace(array_keys($pairs), array_values($pairs), $string);
+			$string = str_replace(array_keys($pairs), $pairs, $string);
 		}
 		// Cleanup, using regex pairs
 		if ($cleanup_keys) {
@@ -527,14 +527,9 @@ class yf_tpl_driver_yf {
 		if (false === strpos($string, '{/catch}') || empty($string)) {
 			return $string;
 		}
-		if (!preg_match_all($this->_PATTERN_CATCH, $string, $m)) {
-			return $string;
-		}
-		foreach ((array)$m[0] as $k => $v) {
-			$string = str_replace($v, '', $string);
-			// Add replace var
-			$catched_name	= $m[1][$k];
-			$catched_string	= $m[2][$k];
+		return preg_replace_callback($this->_PATTERN_CATCH, function($m) use (&$replace, $stpl_name) {
+			$catched_name	= $m[1];
+			$catched_string	= $m[2];
 			if (!empty($catched_name)) {
 				if (strlen($catched_string) && strpos($catched_string, '{') !== false) {
 					$catched_string = $this->_replace_std_patterns($catched_string, $stpl_name, $replace);
@@ -547,8 +542,8 @@ class yf_tpl_driver_yf {
 				}
 				$replace[$catched_name] = trim($catched_string);
 			}
-		}
-		return $string;
+			return '';
+		}, $string);
 	}
 
 	/**
@@ -560,7 +555,7 @@ class yf_tpl_driver_yf {
 		}
 		// Important!
 		$string = str_replace(array('<'.'?', '?'.'>'), array('&lt;?', '?&gt;'), $string);
-		$_this = &$this;
+		$_this = $this;
 		// Process common ifs matches
 		$func_ifs = function($m) use ($_this, $replace, $stpl_name) {
 			$part_left = $_this->_prepare_cond_text($m[1], $replace, $stpl_name);
@@ -647,7 +642,7 @@ class yf_tpl_driver_yf {
 	* Multi-condition special parser
 	*/
 	function _process_multi_conds ($cond_text = '', $replace = array(), $stpl_name = '') {
-		$_this = &$this;
+		$_this = $this;
 		return preg_replace_callback($this->_PATTERN_MULTI_COND, function($m) use ($_this, $replace, $stpl_name) {
 			$part_left		= $_this->_prepare_cond_text($m[1], $replace, $stpl_name);
 			$cur_operator	= $_this->_cond_operators[strtolower($m[2])];
@@ -746,7 +741,7 @@ class yf_tpl_driver_yf {
 		if (false === strpos($string, '{/foreach}') || empty($string)) {
 			return $string;
 		}
-		$_this = &$this;
+		$_this = $this;
 		$func = function($m) use ($_this, $replace, $stpl_name) {
 			$matched_string = $m[0];
 			$key_to_cycle = trim($m[1]);
