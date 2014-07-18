@@ -5,22 +5,6 @@
 */
 class yf_tpl_driver_yf {
 
-	/** @var array @conf_skip Catch dynamic content into variable. // Examples: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch} */
-	public $_PATTERN_CATCH = '/\{catch\([\s\t]*["\']{0,1}([\w_-]+?)["\']{0,1}[\s\t]*\)\}(.*?)\{\/catch\}/ims';
-	/** @var array @conf_skip STPL internal comment pattern. // Examples: {{-- some content you want to comment inside template only --}} */
-	public $_PATTERN_COMMENT = '/(\{\{--.*?--\}\})/ims';
-	/** @var string @conf_skip Conditional pattern. // Examples: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if} */
-	public $_PATTERN_IF	= '/\{if\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w#-]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
-	/** @var string @conf_skip pattern for multi-conditions */
-	public $_PATTERN_MULTI_COND = '/["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s#-]*)["\']{0,1}/ims';
-	/** @var string @conf_skip Cycle pattern. Examples: {foreach("var")}<li>{#.value1}</li>{/foreach} */
-	public $_PATTERN_FOREACH = '/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
-	/** @var string @conf_skip Shortcuts for conditional patterns. // Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if} */
-	public $_PATTERN_IF_FUNCS = '/\{if_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
-	/** @var int Safe limit number of replacements (to avoid dead cycles) (type "-1" for unlimited number) */
-	public $STPL_REPLACE_LIMIT	 = -1;
-	/** @var int "foreach" and "if" max recurse level (how deeply could be nested template constructs like "if") */
-	public $_MAX_RECURSE_LEVEL = 4;
 	/** @var array @conf_skip For "_process_ifs" */
 	public $_cond_operators	= array(
 		'eq' => '==',
@@ -69,8 +53,10 @@ class yf_tpl_driver_yf {
 	}
 
 	/**
+	* Place your custom code in this method or inside ocverriden class inside project
 	*/
 	function _init_patterns () {
+		// currently empty
 	}
 
 	/**
@@ -231,7 +217,8 @@ class yf_tpl_driver_yf {
 			if ($string === false) {
 				return false;
 			}
-			$string = preg_replace($this->_PATTERN_COMMENT, '', $string);
+			// STPL internal comment pattern. Examples: {{-- some content you want to comment inside template only --}}
+			$string = preg_replace('/(\{\{--.*?--\}\})/ims', '', $string);
 			if ($this->tpl->COMPILE_TEMPLATES) {
 				$this->_compile($name, $replace, $string, $params);
 			}
@@ -528,7 +515,9 @@ class yf_tpl_driver_yf {
 			return $string;
 		}
 		$_this = $this;
-		return preg_replace_callback($this->_PATTERN_CATCH, function($m) use ($_this, &$replace, $stpl_name) {
+		// Catch dynamic content into variable. Examples: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
+		$pattern = '/\{catch\([\s\t]*["\']{0,1}([\w_-]+?)["\']{0,1}[\s\t]*\)\}(.*?)\{\/catch\}/ims';
+		return preg_replace_callback($pattern, function($m) use ($_this, &$replace, $stpl_name) {
 			$catched_name	= $m[1];
 			$catched_string	= $m[2];
 			if (!empty($catched_name)) {
@@ -557,8 +546,10 @@ class yf_tpl_driver_yf {
 		// Important!
 		$string = str_replace(array('<'.'?', '?'.'>'), array('&lt;?', '?&gt;'), $string);
 		$_this = $this;
-		// Process common ifs matches
-		$func_ifs = function($m) use ($_this, $replace, $stpl_name) {
+
+		// Process common ifs matches. Examples: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
+		$pattern = '/\{if\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w#-]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
+		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$part_left = $_this->_prepare_cond_text($m[1], $replace, $stpl_name);
 			$cur_operator = $_this->_cond_operators[strtolower($m[2])];
 			$part_right = trim($m[3]);
@@ -596,9 +587,11 @@ class yf_tpl_driver_yf {
 				$part_right = $part_right.')';
 			}
 			return '<'.'?p'.'hp if('. $part_left. ' '. $cur_operator. ' '. $part_right. $part_other. ') { ?>';
-		};
-		// Process if_funcs matches
-		$func_if_funcs = function($m) use ($_this, $replace, $stpl_name) {
+		}, $string);
+
+		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}
+		$pattern = '/\{if_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
+		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$part_left = $_this->_prepare_cond_text($m[2], $replace, $stpl_name);
 			$func = trim($m['func']);
 			$negate = false;
@@ -625,9 +618,8 @@ class yf_tpl_driver_yf {
 				$func = '_isset';
 			}
 			return '<'.'?p'.'hp if('. ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')) { ?>';
-		};
-		$string = preg_replace_callback($this->_PATTERN_IF, $func_ifs, $string);
-		$string = preg_replace_callback($this->_PATTERN_IF_FUNCS, $func_if_funcs, $string);
+		}, $string);
+
 		$string = str_replace('{else}', '<'.'?p'.'hp } else { ?'.'>', $string);
 		$string = str_replace('{/if}', '<'.'?p'.'hp } ?'.'>', $string);
 
@@ -650,7 +642,8 @@ class yf_tpl_driver_yf {
 	*/
 	function _process_multi_conds ($cond_text = '', $replace = array(), $stpl_name = '') {
 		$_this = $this;
-		return preg_replace_callback($this->_PATTERN_MULTI_COND, function($m) use ($_this, $replace, $stpl_name) {
+		$pattern = '/["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s#-]*)["\']{0,1}/ims';
+		return preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$part_left		= $_this->_prepare_cond_text($m[1], $replace, $stpl_name);
 			$cur_operator	= $_this->_cond_operators[strtolower($m[2])];
 			$part_right		= strval($m[3]);
@@ -857,7 +850,8 @@ class yf_tpl_driver_yf {
 			}
 			return implode($output);
 		};
-		return preg_replace_callback($this->_PATTERN_FOREACH, $func, $string);
+		// foreach processing pattern. Examples: {foreach("var")}<li>{#.value1}</li>{/foreach}
+		return preg_replace_callback('/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is', $func, $string);
 	}
 
 	/**
