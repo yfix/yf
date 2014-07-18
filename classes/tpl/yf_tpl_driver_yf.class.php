@@ -647,22 +647,22 @@ class yf_tpl_driver_yf {
 	* Multi-condition special parser
 	*/
 	function _process_multi_conds ($cond_text = '', $replace = array(), $stpl_name = '') {
-		if (!preg_match($this->_PATTERN_MULTI_COND, $cond_text, $m)) {
-			return '';
-		}
-		$part_left		= $this->_prepare_cond_text($m[1], $replace, $stpl_name);
-		$cur_operator	= $this->_cond_operators[strtolower($m[2])];
-		$part_right		= strval($m[3]);
-		if (strlen($part_right) && $part_right{0} == '#') {
-			$part_right = $replace[ltrim($part_right, '#')];
-		}
-		if (!is_numeric($part_right)) {
-			$part_right = '"'.$part_right.'"';
-		}
-		if (empty($part_left)) {
-			$part_left = '""';
-		}
-		return $part_left.' '.$cur_operator.' '.$part_right;
+		$_this = &$this;
+		return preg_replace_callback($this->_PATTERN_MULTI_COND, function($m) use ($_this, $replace, $stpl_name) {
+			$part_left		= $_this->_prepare_cond_text($m[1], $replace, $stpl_name);
+			$cur_operator	= $_this->_cond_operators[strtolower($m[2])];
+			$part_right		= strval($m[3]);
+			if (strlen($part_right) && $part_right{0} == '#') {
+				$part_right = $replace[ltrim($part_right, '#')];
+			}
+			if (!is_numeric($part_right)) {
+				$part_right = '"'.$part_right.'"';
+			}
+			if (empty($part_left)) {
+				$part_left = '""';
+			}
+			return $part_left.' '.$cur_operator.' '.$part_right;
+		}, $cond_text);
 	}
 
 	/**
