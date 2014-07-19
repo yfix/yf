@@ -150,7 +150,7 @@ class yf_tpl_driver_yf {
 
 # TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
 		$compiled_path = PROJECT_PATH. $this->tpl->COMPILED_DIR.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
-		if (!file_exists($compiled_path)) {
+		if (!file_exists($compiled_path)/* && !$this->tpl->INSIDE_UNIT_TESTS*/) {
 			return null;
 		}
 		$compiled_ok = false;
@@ -177,6 +177,7 @@ class yf_tpl_driver_yf {
 					$string = false;
 				}
 			}
+
 			if ($compiled_ok) {
 				$this->_set_cache_details($name, $string, $stpl_time_start);
 				return $string;
