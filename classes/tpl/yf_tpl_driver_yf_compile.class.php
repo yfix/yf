@@ -253,8 +253,8 @@ class yf_tpl_driver_yf_compile {
 			'_total'=> '$__f_total',
 			'_first'=> '($__f_counter == 1)',
 			'_last'	=> '($__f_counter == $__f_total)',
-			'_even'	=> '(!($__f_counter % 2))',
-			'_odd'	=> '($__f_counter % 2)',
+			'_even'	=> '($__f_counter % 2)',
+			'_odd'	=> '(!($__f_counter % 2))',
 		);
 		// Array item
 		if (substr($part_left, 0, 2) == '#.') {
@@ -350,9 +350,9 @@ class yf_tpl_driver_yf_compile {
 
 		return '$__foreach_data = is_array($replace[\''.$foreach_arr_name.'\']) ? $replace[\''.$foreach_arr_name.'\'] : $this->_range_foreach(intval(\''.$foreach_arr_name.'\')); '. PHP_EOL
 			.'$__f_total = count($__foreach_data); $__f_counter = 0;'. PHP_EOL
-			.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) {'. PHP_EOL
+			.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) { $__f_counter++; '. PHP_EOL
 			.$end. $foreach_body. $start. PHP_EOL
-			.'$__f_counter++; }'.PHP_EOL.'} else {'.PHP_EOL.$end. $no_rows_text. $start.'}';
+			.'}'.PHP_EOL.'} else {'.PHP_EOL.$end. $no_rows_text. $start.'}';
 	}
 
 	/**
