@@ -731,7 +731,9 @@ class yf_tpl_driver_yf {
 			return $string;
 		}
 		$_this = $this;
-		$func = function($m) use ($_this, $replace, $stpl_name) {
+		// foreach processing pattern. Examples: {foreach("var")}<li>{#.value1}</li>{/foreach}
+		$pattern = '/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
+		return preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$matched_string = $m[0];
 			$key_to_cycle = trim($m[1]);
 			if (empty($key_to_cycle)) {
@@ -838,9 +840,7 @@ class yf_tpl_driver_yf {
 				$output[] = $_this->_process_ifs($cur_output, $sub_replace, $stpl_name);
 			}
 			return implode($output);
-		};
-		// foreach processing pattern. Examples: {foreach("var")}<li>{#.value1}</li>{/foreach}
-		return preg_replace_callback('/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is', $func, $string);
+		}, $string);
 	}
 
 	/**
