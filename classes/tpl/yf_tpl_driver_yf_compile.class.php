@@ -23,13 +23,20 @@ class yf_tpl_driver_yf_compile {
 	/**
 	*/
 	function _init() {
+	}
+
+	/**
+	*/
+	function _process_patterns($name, array $replace, $string) {
+		$_this = $this;
+
 		$start = '<'.'?p'.'hp ';
 		$end = ' ?'.'>';
 
-		$_this = $this;
-
-		// Patterns replaces
-		$this->_patterns = array(
+		$patterns = array(
+			'/\{catch\(\s*["\']{0,1}([a-z0-9_]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims' => function($m) use ($start, $end) {
+				return $start. 'ob_start();'. $end. $m[2]. $start. '$replace["'.$m[1].'"] = ob_get_clean();'. $end;
+			},
 			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
 // TODO: better execute some wrapper that will convert this into simple call t('changeme %num', array('%num' => 5), 'ru')
 				return $start. 'echo _class(\'tpl\')->_i18n_wrapper(\''.$m[2].'\', $replace);'. $end;
@@ -75,7 +82,10 @@ class yf_tpl_driver_yf_compile {
 			// !!! This is a completely written from scratch pattern for compilation only
 // TODO: elseforeach
 			'/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}/is' => function($m) use ($start, $end) {
-				return $start.'$__f_total = count($replace[\''.$m[1].'\']); foreach (is_array($replace[\''.$m[1].'\']) ? $replace[\''.$m[1].'\'] : range(1, (int)$replace[\''.$m[1].'\']) as $_k => $_v) {$__f_counter++;'.$end;
+// TODO: use _range_foreach
+				return $start.'$__f_total = count($replace[\''.$m[1].'\']);'
+					.'foreach (is_array($replace[\''.$m[1].'\']) ? $replace[\''.$m[1].'\'] : range(1, (int)$replace[\''.$m[1].'\']) as $_k => $_v) {'
+					.'$__f_counter++;'.$end;
 			},
 			// vars inside foreach
 			'/\{\#\.([a-z0-9_-]+)\}/i' => function($m) use ($start, $end) {
@@ -85,16 +95,11 @@ class yf_tpl_driver_yf_compile {
 			'/\{\/(if|foreach)\}/i' => function($m) use ($start, $end) {
 				return $start. '}'. $end;
 			},
-			'/(\{execute\(\s*["\']{0,1})\s*([\w-]+)\s*[,;]\s*([\w-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end) {
-// TODO: $name
-				return $start.'echo main()->_execute(\''.$m[2].'\',\''.$m[3].'\',\''.$m[4].'\',\''.$name.'\',0,false);'.$end;
+			'/(\{(execute|exec_cached)\(\s*["\']{0,1})\s*([\w-]+)\s*[,;]\s*([\w-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end, $name) {
+				$is_cached = (false !== strpos($m[1], '_cached'));
+				return $start.'echo main()->_execute(\''.$m[3].'\',\''.$m[4].'\',\''.$m[5].'\',\''.$name.'\',0,'.($is_cached ? 'true' : 'false').');'.$end;
 			},
-			'/(\{exec_cached\(\s*["\']{0,1})\s*([\w-]+)\s*[,;]\s*([\w-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end) {
-// TODO: $name
-				return $start.'echo main()->_execute(\''.$m[2].'\',\''.$m[3].'\',\''.$m[4].'\',\''.$name.'\',0,true);'.$end;
-			},
-			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
-// TODO: $name
+			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end, $name) {
 				return $start.'echo main()->_execute(\'graphics\',\'_show_block\',\'name='.$m[1].';'.$m[2].'\',\''.$name.'\',0,false);'.$end;
 			},
 			'/\{tip\(\s*["\']{0,1}([\w\.#-]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
@@ -106,17 +111,12 @@ class yf_tpl_driver_yf_compile {
 			'/\{(e|user_error)\(\s*["\']{0,1}([\w\.-]+)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
 				return $start.'echo common()->_show_error_inline(\''.$m[2].'\');'.$end;
 			},
-			'/(\{include\(\s*["\']{0,1})\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end) {
-				return $start. 'echo $this->_include_stpl(\''.$m[2].'\',\''.$m[3].'\',$replace);'. $end;
-			},
-			'/(\{include_if_exists\(\s*["\']{0,1})\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end) {
-				return $start. 'echo $this->_include_stpl(\''.$m[2].'\',\''.$m[3].'\',$replace,true);'. $end;
+			'/(\{(include|include_if_exists)\(\s*["\']{0,1})\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end) {
+				$if_exists = (false !== strpos($m[1], '_if_exists'));
+				return $start. 'echo $this->_include_stpl(\''.$m[3].'\',\''.$m[4].'\',$replace,'.($if_exists ? 'true' : 'false').');'. $end;
 			},
 			'/(\{eval_code\()([^\}]+?)(\)\})/i' => function($m) use ($start, $end) {
 				return $start. 'echo '.$m[2].';'. $end;
-			},
-			'/\{catch\(\s*["\']{0,1}([a-z0-9_]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims' => function($m) use ($start, $end) {
-				return $start. 'ob_start();'. $end. $m[2]. $start. '$replace["'.$m[1].'"] = ob_get_clean();'. $end;
 			},
 			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo trim(str_replace(array("\r","\n","\t"),"",stripslashes(\''.$m[1].'\')));'. $end;
@@ -146,6 +146,9 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'echo $this->_debug_get_vars($string);'. $end;
 			},
 		);
+		foreach ((array)$patterns as $pattern => $callback) {
+			$string = preg_replace_callback($pattern, $callback, $string);
+		}
 	}
 
 	/**
@@ -178,9 +181,6 @@ class yf_tpl_driver_yf_compile {
 		);
 		$string = str_replace(array_keys($_my_replace), $_my_replace, $string);
 
-		foreach ((array)$this->_patterns as $pattern => $callback) {
-			$string = preg_replace_callback($pattern, $callback, $string);
-		}
 
 		// Images and uploads paths compile
 		$web_path		= MAIN_TYPE_USER ? 'MEDIA_PATH' : 'ADMIN_WEB_PATH';
