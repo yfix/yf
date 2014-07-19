@@ -74,7 +74,7 @@ class yf_tpl_driver_yf_compile {
 				$foreach_body = preg_replace_callback('/\{\#\.([a-z0-9_-]+)\}/i', function($m) use ($start, $end) {
 					return $start. 'echo $_v[\''.$m[1].'\'];'. $end;
 				}, $foreach_body);
-				return $start. '$__foreach_data = is_array($replace[\''.$foreach_arr_name.'\']) ? $replace[\''.$foreach_arr_name.'\'] : $this->_range_foreach($replace[\''.$foreach_arr_name.'\']); '. PHP_EOL
+				return $start. '$__foreach_data = is_array($replace[\''.$foreach_arr_name.'\']) ? $replace[\''.$foreach_arr_name.'\'] : $this->_range_foreach(intval(\''.$foreach_arr_name.'\')); '. PHP_EOL
 					.'$__f_total = count($__foreach_data);'. PHP_EOL
 					.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) { $__f_counter++;'. PHP_EOL
 					.$end. $foreach_body. $start. PHP_EOL
