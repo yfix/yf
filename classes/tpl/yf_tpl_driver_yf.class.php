@@ -802,8 +802,9 @@ class yf_tpl_driver_yf {
 			$output = array();
 			$sub_replace  = array();
 			foreach ((array)$sub_array as $sub_k => $sub_v) {
+				$_i++;
 				$cur_output = $sub_template;
-				$_is_first  = (int)(++$_i == 1);
+				$_is_first  = (int)($_i == 1);
 				$_is_last   = (int)($_i == $_total);
 				$_is_odd	= (int)($_i % 2);
 				$_is_even   = (int)(!$_is_odd);
