@@ -57,12 +57,12 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('true', self::_tpl( '{execute(test;true_for_unittest)}' ));
 		$this->assertEquals('true', self::_tpl( '{execute( test;true_for_unittest )}' ));
 		$this->assertEquals('true', self::_tpl( '{execute( test ; true_for_unittest )}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test;true_for_unittest;param1=val1)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test,true_for_unittest,param1=val1)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute( test , true_for_unittest , param1=val1 )}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2;param3=val3)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute( test , true_for_unittest , param1=val1 ; param2=val2 )}' ));
+		$this->assertEquals('val1', self::_tpl( '{execute(test;true_for_unittest;param1=val1)}' ));
+		$this->assertEquals('val1', self::_tpl( '{execute(test,true_for_unittest,param1=val1)}' ));
+		$this->assertEquals('val1', self::_tpl( '{execute( test , true_for_unittest , param1=val1 )}' ));
+		$this->assertEquals('val1,val2', self::_tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2)}' ));
+		$this->assertEquals('val1,val2,val3', self::_tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2;param3=val3)}' ));
+		$this->assertEquals('val1,val2', self::_tpl( '{execute( test , true_for_unittest , param1=val1 ; param2=val2 )}' ));
 		$this->assertNotEquals('tru', self::_tpl( '{execute(test,true_for_unittest)}' ));
 	}
 	public function test_catch() {
@@ -415,5 +415,35 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 #		$this->assertEquals('mytestvalue2', self::_tpl( '{get.some.deep.var.key}' ));
 
 		tpl()->_avail_arrays = $old;
+	}
+	public function _callme(array $a) {
+		if (!is_array($this->_callme_results)) {
+			$this->_callme_results = array();
+		}
+		$this->_callme_results += $a;
+	}
+	public function test_exec_last() {
+		// Some magick here with DI container, we link to this class :-)
+		main()->modules['unittest1'] = $this;
+		_class('unittest1')->_callme(array('k3' => 'v3'));
+		$this->assertSame(array('k3'=>'v3'), $this->_callme_results);
+
+		$this->_callme_results = array();
+		$this->assertEquals(array(), $this->_callme_results);
+		$this->assertEquals('', self::_tpl('{execute(unittest1,_callme;k1=v1)}'));
+		$this->assertSame(array('k1'=>'v1'), $this->_callme_results);
+
+		$this->_callme_results = array();
+		$this->assertEquals('', self::_tpl('{execute(unittest1,_callme;k2=v2)}{execute(unittest1,_callme;k1=v1)}'));
+		$this->assertSame(array('k2'=>'v2','k1'=>'v1'), $this->_callme_results);
+
+		// Here we ensure that exec_last will be executed after common execute calls
+		$this->_callme_results = array();
+		$this->assertEquals('', self::_tpl('{exec_last(unittest1,_callme;k2=v2)}{execute(unittest1,_callme;k1=v1)}'));
+		$this->assertSame(array('k1'=>'v1','k2'=>'v2'), $this->_callme_results);
+
+		$this->_callme_results = array();
+		$this->assertEquals('', self::_tpl('{execute(unittest1,_callme;k1=v1)}{exec_last(unittest1,_callme;k2=v2)}'));
+		$this->assertSame(array('k1'=>'v1','k2'=>'v2'), $this->_callme_results);
 	}
 }
