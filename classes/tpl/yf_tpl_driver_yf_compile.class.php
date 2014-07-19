@@ -30,18 +30,20 @@ class yf_tpl_driver_yf_compile {
 			'/\{(else)\}/i' => function($m) use ($start, $end) {
 				return $start. '} else {'. $end;
 			},
-			'/\{catch\(\s*["\']{0,1}([a-z0-9_]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims' => function($m) use ($start, $end) {
-				return $start. 'ob_start();'. $end. $m[2]. $start. '$replace[\''.$m[1].'\'] = ob_get_clean();'. $end;
+			'/\{catch\([\s\t]*["\']{0,1}([\w_-]+?)["\']{0,1}[\s\t]*\)\}(.*?)\{\/catch\}/ims' => function($m) use ($start, $end) {
+				return $start. 'ob_start();'. $end. $m[2]. $start. '$replace[\''.$m[1].'\'] = trim(ob_get_clean());'. $end;
 			},
 			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
-// TODO: better execute some wrapper that will convert this into simple call t('changeme %num', array('%num' => 5), 'ru')
-				return $start. 'echo _class(\'tpl\')->_i18n_wrapper(\''.$m[2].'\', $replace);'. $end;
+				$str = addslashes($m[2]);
+				$str = preg_replace('/\{([a-z0-9_-]+)\}/i', '\'.$replace[\'\1\'].\'', $str);
+				return $start. 'echo _class(\'tpl\')->_i18n_wrapper(stripslashes(\''.$str.'\'), $replace);'. $end;
 			},
-			'/(\{const\(\s*["\']{0,1})([a-z_][a-z0-9_]+?)(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end) {
-				return $start. 'echo (defined(\''.$m[2].'\') ? '.$m[2].' : \'\');'. $end;
+			'/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
+				$m[1] = trim($m[1]);
+				return $start. 'echo (strlen(\''.$m[1].'\') && defined(\''.$m[1].'\') ? constant(\''.$m[1].'\') : \'\');'. $end;
 			},
-			'/(\{conf\(\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end) {
-				return $start. 'echo conf(\''.$m[2].'\');'. $end;
+			'/\{conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
+				return $start. 'echo conf(\''.$m[1].'\');'. $end;
 			},
 			'/\{module_conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*,\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
 				return $start. 'echo module_conf(\''.$m[1].'\',\''.$m[2].'\');'. $end;
@@ -114,7 +116,7 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'echo module_safe("advertising")->_show(array("ad"=>\''.$m[1].'\'));'. $end;
 			},
 			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
-				return $start. 'echo _class(\'tp\')->_generate_url_wrapper(\''.$m[1].'\');'. $end;
+				return $start. 'echo _class(\'tpl\')->_generate_url_wrapper(\''.$m[1].'\');'. $end;
 			},
 			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9_-]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo _class("form2")->tpl_row(\''.$m[1].'\',$replace,\''.$m[3].'\',\''.$m[5].'\',\''.$m[7].'\');'. $end;
@@ -184,6 +186,8 @@ class yf_tpl_driver_yf_compile {
 			'?'.'>'. PHP_EOL. $string;
 
 		file_put_contents($file_name, $string);
+
+		return $string;
 	}
 
 	/**
