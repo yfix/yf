@@ -22,11 +22,6 @@ class yf_tpl_driver_yf_compile {
 
 	/**
 	*/
-	function _init() {
-	}
-
-	/**
-	*/
 	function _process_patterns($name, array $replace, $string) {
 		$_this = $this;
 
@@ -34,6 +29,10 @@ class yf_tpl_driver_yf_compile {
 		$end = ' ?'.'>';
 
 		$patterns = array(
+			// !! Keep this pattern on top
+			'/\{(else)\}/i' => function($m) use ($start, $end) {
+				return $start. '} else {'. $end;
+			},
 			'/\{catch\(\s*["\']{0,1}([a-z0-9_]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims' => function($m) use ($start, $end) {
 				return $start. 'ob_start();'. $end. $m[2]. $start. '$replace["'.$m[1].'"] = ob_get_clean();'. $end;
 			},
@@ -50,6 +49,41 @@ class yf_tpl_driver_yf_compile {
 			'/(\{module_conf\(\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*,\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end) {
 				return $start. 'echo module_conf(\''.$m[2].'\',\''.$m[3].'\');'. $end;
 			},
+			// ifs compiling. NOTE: pattern differs from original adding \#\. symbols, etc
+			'/\{if\(\s*["\']{0,1}([\w\s\.+%#-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims' => function($m) use ($start, $end, $_this) {
+				return $start. 'if ('.$_this->_compile_prepare_condition($m[1], $m[2], $m[3], $m[4]).') {'. $end;
+			},
+			// if_funcs compiling
+			'/\{if_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims' => function($m) use ($start, $end, $_this) {
+				return $start. 'if ('.$_this->_compile_if_func_condition($m).') {'. $end;
+			},
+			// foreach pattern compilation
+			'/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is' => function($m) use ($start, $end) {
+				$foreach_arr_name = &$m[1];
+				$foreach_body = &$m[2];
+				// Support for deep arrays as main array
+				$foreach_arr_name = str_replace('.', '\'][\'', $foreach_arr_name);
+				// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
+				$no_rows_text = '';
+				$else_tag = '{elseforeach}';
+				if (false !== strpos($foreach_body, $else_tag)) {
+					list($else_before, $no_rows_text) = explode($else_tag, $foreach_body);
+					$foreach_body = str_replace($else_tag. $no_rows_text, '', $foreach_body);
+				}
+				// vars inside foreach
+				$foreach_body = preg_replace_callback('/\{\#\.([a-z0-9_-]+)\}/i', function($m) use ($start, $end) {
+					return $start. 'echo $_v[\''.$m[1].'\'];'. $end;
+				}, $foreach_body);
+				return $start. '$__foreach_data = is_array($replace[\''.$foreach_arr_name.'\']) ? $replace[\''.$foreach_arr_name.'\'] : $this->_range_foreach($replace[\''.$foreach_arr_name.'\']); '. PHP_EOL
+					.'$__f_total = count($__foreach_data);'. PHP_EOL
+					.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) { $__f_counter++;'. PHP_EOL
+					.$end. $foreach_body. $start. PHP_EOL
+					.'}'.PHP_EOL.'} else {'.PHP_EOL.$end. $no_rows_text. $start.'}'.$end;
+			},
+			// if ending tag
+			'/\{\/if\}/i' => function($m) use ($start, $end) {
+				return $start. '}'. $end;
+			},
 			// Common replace vars
 			'/\{([a-z0-9_-]+)\}/i' => function($m) use ($start, $end) {
 				return $start. 'echo $replace[\''.$m[1].'\'];'. $end;
@@ -58,8 +92,7 @@ class yf_tpl_driver_yf_compile {
 			'/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\}/i' => function($m) use ($start, $end) {
 				return $start. 'echo $replace[\''.$m[1].'\'][\''.$m[2].'\'];'. $end;
 			},
-			// Variable filtering like in Smarty/Twig
-			// Examples:	 {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}   {sub1.var1|trim}
+			// Variable filtering like in Smarty/Twig. Examples: {var1|trim} {var1|urlencode|trim} {var1|_prepare_html} {var1|my_func} {sub1.var1|trim}
 			'/\{([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function($m) use ($start, $end) {
 				return $start. 'echo _class(\'tpl\')->_process_var_filters($replace[\''.$m[1].'\'],\''.$m[2].'\');'. $end;
 			},
@@ -70,30 +103,6 @@ class yf_tpl_driver_yf_compile {
 			// Vars inside foreach with filters
 			'/\{\#\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function($m) use ($start, $end) {
 				return $start. 'echo _class(\'tpl\')->_process_var_filters($_v[\''.$m[1].'\'],\''.$m[2].'\');'. $end;
-			},
-			'/\{(else)\}/i' => function($m) use ($start, $end) {
-				return $start. '} else {'. $end;
-			},
-			// !!! This pattern also differs from original adding \#\. symbols
-// TODO: if funcs
-			'/\{if\(\s*["\']{0,1}([\w\s\.+%#-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims' => function($m) use ($start, $end) {
-				return $start. 'if ('.$this->_compile_prepare_condition($m[1], $m[2], $m[3], $m[4]).') {'. $end;
-			},
-			// !!! This is a completely written from scratch pattern for compilation only
-// TODO: elseforeach
-			'/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}/is' => function($m) use ($start, $end) {
-// TODO: use _range_foreach
-				return $start.'$__f_total = count($replace[\''.$m[1].'\']);'
-					.'foreach (is_array($replace[\''.$m[1].'\']) ? $replace[\''.$m[1].'\'] : range(1, (int)$replace[\''.$m[1].'\']) as $_k => $_v) {'
-					.'$__f_counter++;'.$end;
-			},
-			// vars inside foreach
-			'/\{\#\.([a-z0-9_-]+)\}/i' => function($m) use ($start, $end) {
-				return $start. 'echo $_v[\''.$m[1].'\'];'. $end;
-			},
-			// Just closing foreach tags
-			'/\{\/(if|foreach)\}/i' => function($m) use ($start, $end) {
-				return $start. '}'. $end;
 			},
 			'/(\{(execute|exec_cached)\(\s*["\']{0,1})\s*([\w-]+)\s*[,;]\s*([\w-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end, $name) {
 				$is_cached = (false !== strpos($m[1], '_cached'));
@@ -119,7 +128,7 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'echo '.$m[2].';'. $end;
 			},
 			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims' => function($m) use ($start, $end) {
-				return $start. 'echo trim(str_replace(array("\r","\n","\t"),"",stripslashes(\''.$m[1].'\')));'. $end;
+				return $start. 'ob_start();'. $end. $m[1]. $start. '$__content_to_clean = ob_get_clean(); echo trim(str_replace(array("\r","\n","\t"),"",stripslashes($__content_to_clean))); '. $end;
 			},
    			'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo module_safe("advertising")->_show(array("ad"=>\''.$m[1].'\'));'. $end;
@@ -149,6 +158,7 @@ class yf_tpl_driver_yf_compile {
 		foreach ((array)$patterns as $pattern => $callback) {
 			$string = preg_replace_callback($pattern, $callback, $string);
 		}
+		return $string;
 	}
 
 	/**
@@ -167,7 +177,6 @@ class yf_tpl_driver_yf_compile {
 			_mkdir_m($compiled_dir);
 			$this->_stpl_compile_dir_check = true;
 		}
-
 		$file_name = $compiled_dir.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
 
 		$start = '<'.'?p'.'hp ';
@@ -181,6 +190,7 @@ class yf_tpl_driver_yf_compile {
 		);
 		$string = str_replace(array_keys($_my_replace), $_my_replace, $string);
 
+		$string = $this->_process_patterns($name, $replace, $string);
 
 		// Images and uploads paths compile
 		$web_path		= MAIN_TYPE_USER ? 'MEDIA_PATH' : 'ADMIN_WEB_PATH';
@@ -306,6 +316,37 @@ class yf_tpl_driver_yf_compile {
 			$part_left = '$replace[\''.$part_left.'\']';
 		}
 		return $part_left;
+	}
+
+	/**
+	*/
+	function _compile_if_func_condition($m) {
+		$part_left = $this->_compile_prepare_left($m[2]);
+		$func = trim($m['func']);
+		$negate = false;
+		if (substr($func, 0, 4) == 'not_') {
+			$func = substr($func, 4);
+			$negate = true;
+		}
+		// Example of supported class: {if_validate:is_natural_no_zero(data)} good {/if}
+		if (false !== strpos($func, ':')) {
+			list($class_name, $_func) = explode(':', $func);
+			if (in_array($class_name, array('validate'))) {
+				$func = '_class_safe("'.$class_name.'")->'.$_func;
+			} else {
+				return '';
+			}
+		// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if} 
+		} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
+			return '';
+		}
+		// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
+		if ($func == 'empty') {
+			$func = '_empty';
+		} elseif ($func == 'isset') {
+			$func = '_isset';
+		}
+		return ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')';
 	}
 
 	/**
