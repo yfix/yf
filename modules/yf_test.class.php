@@ -5,7 +5,7 @@ class yf_test {
 	/**
 	*/
 	function true_for_unittest ($out = '') {
-		return $out ?: 'true';
+		return $out ? (is_array($out) ? implode(',', $out) : $out) : 'true';
 	}
 	
 	/**
