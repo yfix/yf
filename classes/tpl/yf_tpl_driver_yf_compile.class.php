@@ -86,9 +86,12 @@ class yf_tpl_driver_yf_compile {
 			'/\{\#\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function($m) use ($start, $end) {
 				return $start. 'echo _class(\'tpl\')->_process_var_filters($_v[\''.$m[1].'\'],\''.$m[2].'\');'. $end;
 			},
-			'/(\{(execute|exec_cached)\(\s*["\']{0,1})\s*([\w-]+)\s*[,;]\s*([\w-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end, $name) {
+			'/\{(execute|exec_cached)\(\s*["\']{0,1}\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end, $name) {
 				$is_cached = (false !== strpos($m[1], '_cached'));
-				return $start.'echo main()->_execute(\''.$m[3].'\',\''.$m[4].'\',\''.$m[5].'\',\''.$name.'\',0,'.($is_cached ? 'true' : 'false').');'.$end;
+				return $start.'echo main()->_execute(\''.$m[2].'\',\''.$m[3].'\',\''.$m[4].'\',\''.$name.'\',0,'.($is_cached ? 'true' : 'false').');'.$end;
+			},
+			'/\{(exec_last|execute_shutdown)\(\s*["\']{0,1}\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
+				return $start.'/*exec_last_start*/echo main()->_execute(\''.$m[2].'\',\''.$m[3].'\',\''.$m[4].'\',\''.$name.'\',0,false);/*exec_last_end*/'.$end;
 			},
 			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end, $name) {
 				return $start.'echo main()->_execute(\'graphics\',\'_show_block\',\'name='.$m[1].';'.$m[2].'\',\''.$name.'\',0,false);'.$end;
@@ -124,11 +127,6 @@ class yf_tpl_driver_yf_compile {
 			'/\{(css|require_css|js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo '.$m[1].'(\''.$m[3].'\', _attrs_string2array(\''.$m[2].'\'));'. $end;
 			},
-			'/(\{exec_last|execute_shutdown\(\s*["\']{0,1})\s*([\w-]+)\s*[,;]\s*([\w-]+)\s*[,;]{0,1}([^"\'\)\}]*)(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end) {
-// TODO: this code needed to be executed last, but if compiled - this will be hard to achieve
-// TODO: convert this into events after center block was processed
-				return $start.'echo main()->_execute(\''.$m[2].'\',\''.$m[3].'\',\''.$m[4].'\',\''.$name.'\',0,false);'.$end;
-			},
 			// DEBUG_MODE patterns
 			'/(\{_debug_get_replace\(\)\})/i' => function($m) use ($start, $end) {
 				return $start. 'echo (DEBUG_MODE && is_array($replace) ? "<pre>".print_r(array_keys($replace),1)."</pre>" : "");'. $end;
@@ -139,6 +137,18 @@ class yf_tpl_driver_yf_compile {
 		);
 		foreach ((array)$patterns as $pattern => $callback) {
 			$string = preg_replace_callback($pattern, $callback, $string);
+		}
+		// Move exec_last into very bottom of the template
+		if (false !== strpos($string, '/*exec_last_start*/')) {
+			$exec_lasts = array();
+			$string = preg_replace_callback('~/\*exec_last_start\*/(.+?)/\*exec_last_end\*/~', function($m) use (&$exec_lasts) {
+				$exec_lasts[] = $m[0];
+				return '';
+			}, $string);
+
+			if ($exec_lasts) {
+				$string .= $start. implode('', $exec_lasts). $end;
+			}
 		}
 		return $string;
 	}
@@ -394,14 +404,4 @@ class yf_tpl_driver_yf_compile {
 			.$end. $foreach_body. $start. PHP_EOL
 			.'}'.PHP_EOL.'} else {'.PHP_EOL.$end. $no_rows_text. $start.'}';
 	}
-
-	/**
-	* fix translation of the dynamic vars like: {t('num vars in {vertical}')}
-	*/
-#	function _prepare_translate2 ($string = '', $for_params = false) {
-#		if ($for_params) {
-#			$string = str_replace("'", '', $string);
-#		}
-#		return preg_replace('/\{([a-z0-9\-\_]+)\}/i', "'.\$replace['\\1'].'", $string);
-#	}
 }
