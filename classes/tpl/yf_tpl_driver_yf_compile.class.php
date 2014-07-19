@@ -349,10 +349,10 @@ class yf_tpl_driver_yf_compile {
 		$foreach_body = str_replace(array_keys($special_vars), $special_vars, $foreach_body);
 
 		return '$__foreach_data = is_array($replace[\''.$foreach_arr_name.'\']) ? $replace[\''.$foreach_arr_name.'\'] : $this->_range_foreach(intval(\''.$foreach_arr_name.'\')); '. PHP_EOL
-			.'$__f_total = count($__foreach_data);'. PHP_EOL
-			.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) { $__f_counter++;'. PHP_EOL
+			.'$__f_total = count($__foreach_data); $__f_counter = 0;'. PHP_EOL
+			.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) {'. PHP_EOL
 			.$end. $foreach_body. $start. PHP_EOL
-			.'}'.PHP_EOL.'} else {'.PHP_EOL.$end. $no_rows_text. $start.'}';
+			.'$__f_counter++; }'.PHP_EOL.'} else {'.PHP_EOL.$end. $no_rows_text. $start.'}';
 	}
 
 	/**
