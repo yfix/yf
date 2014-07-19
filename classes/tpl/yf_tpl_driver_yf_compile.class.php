@@ -58,27 +58,8 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'if ('.$_this->_compile_if_func_condition($m).') {'. $end;
 			},
 			// foreach pattern compilation
-			'/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is' => function($m) use ($start, $end) {
-				$foreach_arr_name = &$m[1];
-				$foreach_body = &$m[2];
-				// Support for deep arrays as main array
-				$foreach_arr_name = str_replace('.', '\'][\'', $foreach_arr_name);
-				// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
-				$no_rows_text = '';
-				$else_tag = '{elseforeach}';
-				if (false !== strpos($foreach_body, $else_tag)) {
-					list($else_before, $no_rows_text) = explode($else_tag, $foreach_body);
-					$foreach_body = str_replace($else_tag. $no_rows_text, '', $foreach_body);
-				}
-				// vars inside foreach
-				$foreach_body = preg_replace_callback('/\{\#\.([a-z0-9_-]+)\}/i', function($m) use ($start, $end) {
-					return $start. 'echo $_v[\''.$m[1].'\'];'. $end;
-				}, $foreach_body);
-				return $start. '$__foreach_data = is_array($replace[\''.$foreach_arr_name.'\']) ? $replace[\''.$foreach_arr_name.'\'] : $this->_range_foreach(intval(\''.$foreach_arr_name.'\')); '. PHP_EOL
-					.'$__f_total = count($__foreach_data);'. PHP_EOL
-					.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) { $__f_counter++;'. PHP_EOL
-					.$end. $foreach_body. $start. PHP_EOL
-					.'}'.PHP_EOL.'} else {'.PHP_EOL.$end. $no_rows_text. $start.'}'.$end;
+			'/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is' => function($m) use ($start, $end, $_this) {
+				return $start. $_this->_compile_foreach($m). $end;
 			},
 			// if ending tag
 			'/\{\/if\}/i' => function($m) use ($start, $end) {
@@ -182,14 +163,6 @@ class yf_tpl_driver_yf_compile {
 		$start = '<'.'?p'.'hp ';
 		$end	= ' ?'.'>';
 
-		// Simple replaces
-		$_my_replace = array(
-			// Special tags for foreach
-			'{_key}'	=> $start. 'echo $_k;'. $end,
-			'{_val}'	=> $start. 'echo (is_array($_v) ? implode(",", $_v) : $_v);'. $end,
-		);
-		$string = str_replace(array_keys($_my_replace), $_my_replace, $string);
-
 		$string = $this->_process_patterns($name, $replace, $string);
 
 		// Images and uploads paths compile
@@ -218,15 +191,12 @@ class yf_tpl_driver_yf_compile {
 	* Prepare condition for the compilation
 	*/
 	function _compile_prepare_condition ($part_left = '', $cond_operator = '', $part_right = '', $add_cond = '') {
-		// Left part processing
 		$part_left = $this->_compile_prepare_left($part_left);
-		// Right part processing
 		if ($part_right{0} == '#') {
 			$part_right = '$replace[\''.ltrim($part_right, '#').'\']';
 		} else {
 			$part_right = "'".$part_right."'";
 		}
-		// Additional condition
 		if ($add_cond) {
 			$_tmp_parts = preg_split("/[\s\t]+(and|xor|or)[\s\t]+/ims", $add_cond, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 			if ($_tmp_parts) {
@@ -277,15 +247,14 @@ class yf_tpl_driver_yf_compile {
 	*/
 	function _compile_prepare_left ($part_left = '') {
 		$_array_magick = array(
+			'_key'	=> '$_k',
+			'_val'	=> '$_v',
 			'_num'	=> '$__f_counter',
 			'_total'=> '$__f_total',
 			'_first'=> '($__f_counter == 1)',
 			'_last'	=> '($__f_counter == $__f_total)',
 			'_even'	=> '(!($__f_counter % 2))',
 			'_odd'	=> '($__f_counter % 2)',
-			'_total'=> '$__f_total',
-			'_key'	=> '$_k',
-			'_val'	=> '$_v',
 		);
 		// Array item
 		if (substr($part_left, 0, 2) == '#.') {
@@ -347,6 +316,43 @@ class yf_tpl_driver_yf_compile {
 			$func = '_isset';
 		}
 		return ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')';
+	}
+
+	/**
+	*/
+	function _compile_foreach ($m) {
+		$start = '<'.'?p'.'hp ';
+		$end	= ' ?'.'>';
+
+		$foreach_arr_name = &$m[1];
+		$foreach_body = &$m[2];
+		// Support for deep arrays as main array
+		$foreach_arr_name = str_replace('.', '\'][\'', $foreach_arr_name);
+		// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
+		$no_rows_text = '';
+		$else_tag = '{elseforeach}';
+		if (false !== strpos($foreach_body, $else_tag)) {
+			list($else_before, $no_rows_text) = explode($else_tag, $foreach_body);
+			$foreach_body = str_replace($else_tag. $no_rows_text, '', $foreach_body);
+		}
+		// vars inside foreach
+		$foreach_body = preg_replace_callback('/\{\#\.([a-z0-9_-]+)\}/i', function($m) use ($start, $end) {
+			return $start. 'echo $_v[\''.$m[1].'\'];'. $end;
+		}, $foreach_body);
+
+		$special_vars = array(
+			'{_key}'	=> $start. 'echo $_k;'. $end,
+			'{_val}'	=> $start. 'echo (is_array($_v) ? implode(",", $_v) : $_v);'. $end,
+			'{_num}'	=> $start. 'echo $__f_counter;'. $end,
+			'{_total}'	=> $start. 'echo $__f_total;'. $end,
+		);
+		$foreach_body = str_replace(array_keys($special_vars), $special_vars, $foreach_body);
+
+		return '$__foreach_data = is_array($replace[\''.$foreach_arr_name.'\']) ? $replace[\''.$foreach_arr_name.'\'] : $this->_range_foreach(intval(\''.$foreach_arr_name.'\')); '. PHP_EOL
+			.'$__f_total = count($__foreach_data);'. PHP_EOL
+			.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) { $__f_counter++;'. PHP_EOL
+			.$end. $foreach_body. $start. PHP_EOL
+			.'}'.PHP_EOL.'} else {'.PHP_EOL.$end. $no_rows_text. $start.'}';
 	}
 
 	/**
