@@ -346,10 +346,9 @@ class yf_tpl_driver_yf_compile {
 		$start = '<'.'?p'.'hp ';
 		$end	= ' ?'.'>';
 
-		$foreach_arr_name = &$m[1];
-		$foreach_body = &$m[2];
-		// Support for deep arrays as main array
-		$foreach_arr_name = trim(str_replace('.', '\'][\'', $foreach_arr_name));
+		$orig_arr_name = trim($m[1]);
+		$foreach_arr_name = $orig_arr_name;
+		$foreach_body = $m[2];
 		// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
 		$no_rows_text = '';
 		$else_tag = '{elseforeach}';
@@ -370,9 +369,22 @@ class yf_tpl_driver_yf_compile {
 		);
 		$foreach_body = str_replace(array_keys($special_vars), $special_vars, $foreach_body);
 
-		return '$__foreach_data = is_array($replace[\''.$foreach_arr_name.'\']) '
-				.' ? $replace[\''.$foreach_arr_name.'\'] '
-				.' : $this->_range_foreach('.(is_numeric($foreach_arr_name) ? intval($foreach_arr_name) : '$replace[\''.$foreach_arr_name.'\']').'); '. PHP_EOL
+		$foreach_arr_tag = '';
+		// Support for deep arrays as main array
+		if (false !== strpos($foreach_arr_name, '.')) {
+			list($v1, $v2) = explode('.', $foreach_arr_name);
+			$global_arrays = tpl()->_avail_arrays;
+			$is_global = is_array($global_arrays) && array_key_exists($v1, $global_arrays);
+			if ($is_global) {
+				$foreach_arr_tag = '$'.$global_arrays[$v1].'[\''.$v2.'\']';
+			} else {
+				$foreach_arr_name = trim(str_replace('.', '\'][\'', $foreach_arr_name));
+				$foreach_arr_tag = '$replace[\''.$foreach_arr_name.'\']';
+			}
+		} else {
+			$foreach_arr_tag = '$replace[\''.$foreach_arr_name.'\']';
+		}
+		return '$__foreach_data = is_array('.$foreach_arr_tag.') ? '.$foreach_arr_tag.' : $this->_range_foreach('.(is_numeric($foreach_arr_name) ? intval($foreach_arr_name) : $foreach_arr_tag).'); '. PHP_EOL
 			.'$__f_total = count($__foreach_data); $__f_counter = 0;'. PHP_EOL
 			.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) { $__f_counter++; '. PHP_EOL
 			.$end. $foreach_body. $start. PHP_EOL
