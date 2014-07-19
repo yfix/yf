@@ -9,16 +9,13 @@
 */
 class yf_tpl_driver_yf_compile {
 
-	/** @var array @conf_skip For "_process_conditions" */
-	public $_cond_operators	= array(
-		'eq' => '==',
-		'ne' => '!=',
-		'gt' => '>',
-		'lt' => '<',
-		'ge' => '>=',
-		'le' => '<=',
-		'mod' => '%',
-	);
+	/**
+	*/
+	function _init() {
+		$tpl_driver_yf = _class('tpl_driver_yf', 'classes/tpl/');
+		$this->_cond_operators = $tpl_driver_yf->_cond_operators;
+		$this->_math_operators = $tpl_driver_yf->_math_operators;
+	}
 
 	/**
 	*/
@@ -34,7 +31,7 @@ class yf_tpl_driver_yf_compile {
 				return $start. '} else {'. $end;
 			},
 			'/\{catch\(\s*["\']{0,1}([a-z0-9_]+?)["\']{0,1}\s*\)\}(.*?)\{\/catch\}/ims' => function($m) use ($start, $end) {
-				return $start. 'ob_start();'. $end. $m[2]. $start. '$replace["'.$m[1].'"] = ob_get_clean();'. $end;
+				return $start. 'ob_start();'. $end. $m[2]. $start. '$replace[\''.$m[1].'\'] = ob_get_clean();'. $end;
 			},
 			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
 // TODO: better execute some wrapper that will convert this into simple call t('changeme %num', array('%num' => 5), 'ru')
@@ -46,8 +43,8 @@ class yf_tpl_driver_yf_compile {
 			'/(\{conf\(\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end) {
 				return $start. 'echo conf(\''.$m[2].'\');'. $end;
 			},
-			'/(\{module_conf\(\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*,\s*["\']{0,1})([a-z_][a-z0-9_:]+?)(["\']{0,1}\s*\)\})/i' => function($m) use ($start, $end) {
-				return $start. 'echo module_conf(\''.$m[2].'\',\''.$m[3].'\');'. $end;
+			'/\{module_conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*,\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
+				return $start. 'echo module_conf(\''.$m[1].'\',\''.$m[2].'\');'. $end;
 			},
 			// ifs compiling. NOTE: pattern differs from original adding \#\. symbols, etc
 			'/\{if\(\s*["\']{0,1}([\w\s\.+%#-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims' => function($m) use ($start, $end, $_this) {
@@ -71,7 +68,9 @@ class yf_tpl_driver_yf_compile {
 			},
 			// Second level vars
 			'/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\}/i' => function($m) use ($start, $end) {
-				return $start. 'echo $replace[\''.$m[1].'\'][\''.$m[2].'\'];'. $end;
+				$global_arrays = tpl()->_avail_arrays;
+				$is_global = is_array($global_arrays) && array_key_exists($m[1], $global_arrays);
+				return $start. 'echo '.($is_global ? '$'.$global_arrays[$m[1]].'[\''.$m[2].'\']' : '$replace[\''.$m[1].'\'][\''.$m[2].'\']').';'. $end;
 			},
 			// Variable filtering like in Smarty/Twig. Examples: {var1|trim} {var1|urlencode|trim} {var1|_prepare_html} {var1|my_func} {sub1.var1|trim}
 			'/\{([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function($m) use ($start, $end) {
@@ -246,6 +245,7 @@ class yf_tpl_driver_yf_compile {
 	* Prepare left part of the condition
 	*/
 	function _compile_prepare_left ($part_left = '') {
+		$part_left = trim($part_left);
 		$_array_magick = array(
 			'_key'	=> '$_k',
 			'_val'	=> '$_v',
@@ -256,9 +256,24 @@ class yf_tpl_driver_yf_compile {
 			'_even'	=> '($__f_counter % 2)',
 			'_odd'	=> '(!($__f_counter % 2))',
 		);
+/*
+			// Value from $replace array (DO NOT replace 'array_key_exists()' with 'isset()' !!!)
+			if (array_key_exists($part_left, $replace)) {
+				if (is_object($replace[$part_left]) && !method_exists($replace[$part_left], 'render')) {
+					$res_v = get_object_vars($replace[$part_left]);
+				}
+				if (is_array($replace[$part_left])) {
+					$res_v = $replace[$part_left] ? '("1")' : '("")';
+				} else {
+					$res_v = '$replace["'.$part_left.'"]';
+				}
+*/
 		// Array item
 		if (substr($part_left, 0, 2) == '#.') {
 			$part_left = '$_v[\''.substr($part_left, 2).'\']';
+		// Arithmetic operators (currently we allow only '+' and '-')
+		} elseif (isset($this->_math_operators[$part_left])) {
+			$part_left = $this->_math_operators[$part_left];
 		// Array special magic keyword
 		} elseif (isset($_array_magick[$part_left])) {
 			$part_left = $_array_magick[$part_left];
@@ -273,11 +288,18 @@ class yf_tpl_driver_yf_compile {
 		} elseif (false !== strpos($part_left, 'const.')) {
 			$part_left = substr($part_left, strlen('const.'));
 			$part_left = '(defined(\''.$part_left.'\') ? '.$part_left.' : \'\')';
-		// Global array item in left part
+		// Global array element or sub array
 		} elseif (false !== strpos($part_left, '.')) {
-			list($k, $v) = explode('.', $part_left);
+			$try_elm = substr($part_left, 0, strpos($part_left, '.'));
+			$try_elm2 = '[\''.str_replace('.', '\'][\'', substr($part_left, strpos($part_left, '.') + 1)). '\']';
+			// Global array
 			$avail_arrays = (array)_class('tpl')->_avail_arrays;
-			$part_left = '$'.str_replace(array_keys($avail_arrays), $avail_arrays, $k).'[\''.$v.'\']';
+			if (isset($avail_arrays[$try_elm])) {
+				$part_left = '$'.$avail_arrays[$try_elm].$try_elm2;
+			// Sub array
+			} else {
+				$part_left = '$replace["'.$try_elm.'"]'.$try_elm2;
+			}
 		// Simple number or string, started with '%'
 		} elseif ($part_left{0} == '%' && strlen($part_left) > 1) {
 			$part_left = '"'.str_replace('"', '\"', substr($part_left, 1)).'"';
