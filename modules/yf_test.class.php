@@ -4,8 +4,8 @@ class yf_test {
 
 	/**
 	*/
-	function true_for_unittest () {
-		return 'true';
+	function true_for_unittest ($out = '') {
+		return $out ?: 'true';
 	}
 	
 	/**
