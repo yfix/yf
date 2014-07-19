@@ -327,7 +327,7 @@ class yf_tpl_driver_yf_compile {
 		$foreach_arr_name = &$m[1];
 		$foreach_body = &$m[2];
 		// Support for deep arrays as main array
-		$foreach_arr_name = str_replace('.', '\'][\'', $foreach_arr_name);
+		$foreach_arr_name = trim(str_replace('.', '\'][\'', $foreach_arr_name));
 		// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
 		$no_rows_text = '';
 		$else_tag = '{elseforeach}';
@@ -348,7 +348,9 @@ class yf_tpl_driver_yf_compile {
 		);
 		$foreach_body = str_replace(array_keys($special_vars), $special_vars, $foreach_body);
 
-		return '$__foreach_data = is_array($replace[\''.$foreach_arr_name.'\']) ? $replace[\''.$foreach_arr_name.'\'] : $this->_range_foreach(intval(\''.$foreach_arr_name.'\')); '. PHP_EOL
+		return '$__foreach_data = is_array($replace[\''.$foreach_arr_name.'\']) '
+				.' ? $replace[\''.$foreach_arr_name.'\'] '
+				.' : $this->_range_foreach('.(is_numeric($foreach_arr_name) ? intval($foreach_arr_name) : '$replace[\''.$foreach_arr_name.'\']').'); '. PHP_EOL
 			.'$__f_total = count($__foreach_data); $__f_counter = 0;'. PHP_EOL
 			.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) { $__f_counter++; '. PHP_EOL
 			.$end. $foreach_body. $start. PHP_EOL
