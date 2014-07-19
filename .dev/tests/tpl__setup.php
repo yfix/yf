@@ -5,6 +5,7 @@ require dirname(__FILE__).'/yf_unit_tests_setup.php';
 abstract class tpl_abstract extends PHPUnit_Framework_TestCase {
 	public static $_bak = array();
 	public static function setUpBeforeClass() {
+		tpl()->INSIDE_UNIT_TESTS = true;
 		if (false !== strpos(strtolower(get_called_class()), 'compiled')) {
 			self::$_bak = tpl()->COMPILE_TEMPLATES;
 			tpl()->COMPILE_TEMPLATES = true;
