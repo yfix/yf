@@ -177,10 +177,10 @@ class yf_tpl_driver_yf_compile {
 			'{_val}'	=> $start. 'echo (is_array($_v) ? implode(",", $_v) : $_v);'. $end,
 		);
 		$string = str_replace(array_keys($_my_replace), $_my_replace, $string);
+
 		foreach ((array)$this->_patterns as $pattern => $callback) {
 			$string = preg_replace_callback($pattern, $callback, $string);
 		}
-#		$string = preg_replace(array_keys($this->_patterns), $this->_patterns, $string);
 
 		// Images and uploads paths compile
 		$web_path		= MAIN_TYPE_USER ? 'MEDIA_PATH' : 'ADMIN_WEB_PATH';
