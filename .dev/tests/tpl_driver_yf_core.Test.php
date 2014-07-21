@@ -380,6 +380,16 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('good', self::_tpl('{if_not_validate:alpha_spaces(data)}good{else}{/if}', array('data' => '1234567890')));
 		$this->assertEquals('good', self::_tpl('{if_validate:alpha_spaces(data)}good{else}{/if}', array('data' => 'abcd efgh ijkl mnop qrst uvwx yz')));
 	}
+	public function test_elseif_simple() {
+		$data = array('name1' => '', 'name2' => 'something');
+		$this->assertEquals('ok', self::_tpl('{if(name1 ne "")}bad{elseif(name2 ne "")}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if(name2 eq "")}bad{elseif(name1 eq "")}ok{/if}', $data));
+	}
+	public function test_elseif_funcs() {
+		$data = array('name1' => '', 'name2' => 'something');
+		$this->assertEquals('ok', self::_tpl('{if_empty(name2)}bad{elseif_empty(name1)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_not_empty(name1)}bad{elseif_not_empty(name2)}ok{/if}', $data));
+	}
 	public function test_elseforeach() {
 		$data = array('k1' => 'v1', 'k2' => 'v2');
 		$this->assertEquals('no rows', self::_tpl('{foreach(data)} {_key}={_val} {elseforeach}no rows{/foreach}', array()));
