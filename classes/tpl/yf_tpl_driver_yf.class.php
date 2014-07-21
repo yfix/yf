@@ -246,8 +246,8 @@ class yf_tpl_driver_yf {
 				return false;
 			}
 			if (isset($params['no_cache']) && !$params['no_cache']) {
-				$this->CACHE[$force_storage. $name]['string']   = $string;
-				$this->CACHE[$force_storage. $name]['calls']	= 1;
+				$this->CACHE[$force_storage. $name]['string'] = $string;
+				$this->CACHE[$force_storage. $name]['calls'] = 1;
 			}
 		}
 		return $string;
@@ -551,6 +551,7 @@ class yf_tpl_driver_yf {
 	/**
 	* Conditional execution
 	*/
+// TODO: support for {elseif( condition )}
 	function _process_ifs ($string = '', array &$replace, $stpl_name = '') {
 		if (false === strpos($string, '{/if}') || empty($string)) {
 			return $string;
@@ -560,12 +561,13 @@ class yf_tpl_driver_yf {
 		$_this = $this;
 
 		// Process common ifs matches. Examples: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
-		$pattern = '/\{if\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w#-]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
+		$pattern = '/\{(?P<cond>if|elseif)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w#-]*)["\']{0,1}(?P<multi_conds>[^\(\)\{\}\n]*)\s*\)\}/ims';
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
-			$part_left = $_this->_prepare_cond_text($m[1], $replace, $stpl_name);
-			$cur_operator = $_this->_cond_operators[strtolower($m[2])];
-			$part_right = trim($m[3]);
-			$part_multi_conds = $m[4];
+			$condition = trim($m['cond']); // if | elseif
+			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
+			$cur_operator = $_this->_cond_operators[strtolower($m['op'])];
+			$part_right = trim($m['right']);
+			$part_multi_conds = $m['multi_conds'];
 			if (strlen($part_right) && $part_right{0} == '#') {
 				$part_right = $replace[ltrim($part_right, '#')];
 			}
@@ -598,13 +600,17 @@ class yf_tpl_driver_yf {
 				$part_left = '!('.$part_left;
 				$part_right = $part_right.')';
 			}
-			return '<'.'?p'.'hp if('. $part_left. ' '. $cur_operator. ' '. $part_right. $part_other. ') { ?>';
+			if ($condition == 'elseif') {
+				$condition = '} '.$condition;
+			}
+			return '<'.'?p'.'hp '.$condition.'('. $part_left. ' '. $cur_operator. ' '. $part_right. $part_other. ') { ?>';
 		}, $string);
 
 		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}
-		$pattern = '/\{if_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
+		$pattern = '/\{(?P<cond>if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
-			$part_left = $_this->_prepare_cond_text($m[2], $replace, $stpl_name);
+			$condition = trim($m['cond']); // if | elseif
+			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
 			$func = trim($m['func']);
 			$negate = false;
 			if (substr($func, 0, 4) == 'not_') {
@@ -629,7 +635,10 @@ class yf_tpl_driver_yf {
 			} elseif ($func == 'isset') {
 				$func = '_isset';
 			}
-			return '<'.'?p'.'hp if('. ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')) { ?>';
+			if ($condition == 'elseif') {
+				$condition = '} '.$condition;
+			}
+			return '<'.'?p'.'hp '.$condition.'('. ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')) { ?>';
 		}, $string);
 
 		$string = str_replace('{else}', '<'.'?p'.'hp } else { ?'.'>', $string);
