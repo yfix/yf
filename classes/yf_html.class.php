@@ -775,7 +775,7 @@ class yf_html {
 				// Selected value could be an array
 				if (is_array($selected)) {
 					if ($type == 1) {
-						$sel_text = in_array($value, $selected) ? 'selected="selected"' : '';
+						$sel_text = in_array($key, $selected) ? 'selected="selected"' : '';
 					} else {
 						$sel_text = isset($selected[$key]) ? 'selected="selected"' : '';
 					}
@@ -1139,6 +1139,7 @@ class yf_html {
 		js('$(function() { $("#'.addslashes($extra['force_id']).'").select2('.json_encode($js_options).'); });');
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
 		$extra[ 'class' ] .= 'no-chosen';
+		$extra[ 'type' ] = 1;
 		return $this->$func($extra, $values, $selected);
 	}
 

@@ -831,8 +831,9 @@ class yf_form2 {
 	* Just hidden input
 	*/
 	function hidden($name, $extra = array(), $replace = array()) {
-		if (!is_array($extra)) {
-			$extra = array();
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $_this) {
