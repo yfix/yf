@@ -563,7 +563,7 @@ class yf_tpl_driver_yf {
 		// Process common ifs matches. Examples: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
 		$pattern = '/\{(?P<cond>if|elseif)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w#-]*)["\']{0,1}(?P<multi_conds>[^\(\)\{\}\n]*)\s*\)\}/ims';
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
-			$condition = trim($m['cond']); // if | elseif
+			$cond = trim($m['cond']); // if | elseif
 			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
 			$cur_operator = $_this->_cond_operators[strtolower($m['op'])];
 			$part_right = trim($m['right']);
@@ -600,16 +600,13 @@ class yf_tpl_driver_yf {
 				$part_left = '!('.$part_left;
 				$part_right = $part_right.')';
 			}
-			if ($condition == 'elseif') {
-				$condition = '} '.$condition;
-			}
-			return '<'.'?p'.'hp '.$condition.'('. $part_left. ' '. $cur_operator. ' '. $part_right. $part_other. ') { ?>';
+			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. $part_left. ' '. $cur_operator. ' '. $part_right. $part_other. ') { ?>';
 		}, $string);
 
 		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}
 		$pattern = '/\{(?P<cond>if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
-			$condition = trim($m['cond']); // if | elseif
+			$cond = trim($m['cond']); // if | elseif
 			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
 			$func = trim($m['func']);
 			$negate = false;
@@ -635,10 +632,7 @@ class yf_tpl_driver_yf {
 			} elseif ($func == 'isset') {
 				$func = '_isset';
 			}
-			if ($condition == 'elseif') {
-				$condition = '} '.$condition;
-			}
-			return '<'.'?p'.'hp '.$condition.'('. ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')) { ?>';
+			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')) { ?>';
 		}, $string);
 
 		$string = str_replace('{else}', '<'.'?p'.'hp } else { ?'.'>', $string);
