@@ -43,9 +43,7 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'echo _class(\'tpl\')->_i18n_wrapper(stripslashes(\''.$str.'\'), $replace);'. $end;
 			},
 			'/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
-				$m[1] = trim($m[1]);
-#				return $start. 'echo (strlen(\''.$m[1].'\') && defined(\''.$m[1].'\') ? constant(\''.$m[1].'\') : \'\');'. $end;
-				return $start. 'echo constant(\''.$m[1].'\');'. $end;
+				return $start. 'echo constant(\''.trim($m[1]).'\');'. $end;
 			},
 			'/\{conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
 				return $start. 'echo conf(\''.$m[1].'\');'. $end;
