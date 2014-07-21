@@ -52,12 +52,14 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'echo module_conf(\''.$m[1].'\',\''.$m[2].'\');'. $end;
 			},
 			// ifs compiling. NOTE: pattern differs from original adding \#\. symbols, etc
-			'/\{if\(\s*["\']{0,1}([\w\s\.+%#-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\-\#]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims' => function($m) use ($start, $end, $_this) {
-				return $start. 'if ('.$_this->_compile_prepare_condition($m[1], $m[2], $m[3], $m[4]).') {'. $end;
+			'/\{(?P<cond>if|elseif)\(\s*["\']{0,1}(?P<left>[\w\s\.+%#-]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\-\#]*)["\']{0,1}(?P<multi_conds>[^\(\)\{\}\n]*)\s*\)\}/ims' => function($m) use ($start, $end, $_this) {
+				$cond = $m['cond'] == 'elseif' ? '} '.$m['cond'] : $m['cond'];
+				return $start. $cond.'('.$_this->_compile_prepare_ifs($m).') {'. $end;
 			},
 			// if_funcs compiling
-			'/\{if_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims' => function($m) use ($start, $end, $_this) {
-				return $start. 'if ('.$_this->_compile_if_func_condition($m).') {'. $end;
+			'/\{(?P<cond>if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims' => function($m) use ($start, $end, $_this) {
+				$cond = $m['cond'] == 'elseif' ? '} '.$m['cond'] : $m['cond'];
+				return $start. $cond.'('.$_this->_compile_if_funcs($m).') {'. $end;
 			},
 			// foreach pattern compilation
 			'/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is' => function($m) use ($start, $end, $_this) {
@@ -206,13 +208,16 @@ class yf_tpl_driver_yf_compile {
 	/**
 	* Prepare condition for the compilation
 	*/
-	function _compile_prepare_condition ($part_left = '', $cond_operator = '', $part_right = '', $add_cond = '') {
-		$part_left = $this->_compile_prepare_left($part_left);
+	function _compile_prepare_ifs (array $m) {
+		$part_left = $this->_compile_prepare_left($m['left']);
+		$cond_operator = trim($m['op']);
+		$part_right = trim($m['right']);
 		if ($part_right{0} == '#') {
 			$part_right = '$replace[\''.ltrim($part_right, '#').'\']';
 		} else {
 			$part_right = "'".$part_right."'";
 		}
+		$add_cond = trim($m['multi_conds']);
 		if ($add_cond) {
 			$_tmp_parts = preg_split("/[\s\t]+(and|xor|or)[\s\t]+/ims", $add_cond, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 			if ($_tmp_parts) {
@@ -328,8 +333,8 @@ class yf_tpl_driver_yf_compile {
 
 	/**
 	*/
-	function _compile_if_func_condition($m) {
-		$part_left = $this->_compile_prepare_left($m[2]);
+	function _compile_if_funcs(array $m) {
+		$part_left = $this->_compile_prepare_left($m['left']);
 		$func = trim($m['func']);
 		$negate = false;
 		if (substr($func, 0, 4) == 'not_') {
