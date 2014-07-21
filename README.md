@@ -1,5 +1,6 @@
 #YF: yfix framework
 http://yfix.net/
+http://blog.yfix.net/
 
 [![Travis Status](https://travis-ci.org/yfix/yf.png?branch=master)](https://travis-ci.org/yfix/yf)
 [![Drone Status](https://drone.io/github.com/yfix/yf/status.png)](https://drone.io/github.com/yfix/yf/latest)
