@@ -43,9 +43,9 @@ class yf_tpl_driver_yf {
 		if (conf('FRAMEWORK_IS_COMPILED') && $this->AUTO_LOAD_PACKED_STPLS) {
 			foreach ((array)conf('_compiled_stpls') as $_cur_name => $_cur_text) {
 				$this->CACHE[$_cur_name] = array(
-					'string'	=> $_cur_text,
-					'calls'		=> 0,
-					'storage'   => 'cache',
+					'string'		=> $_cur_text,
+					'calls'			=> 0,
+					'force_storage' => 'cache',
 				);
 			}
 		}
@@ -86,14 +86,17 @@ class yf_tpl_driver_yf {
 		if (isset($php_tpl)) {
 			return $php_tpl;
 		}
-		$compiled = $this->_parse_get_compiled($name, $replace, $params);
-		if (isset($compiled)) {
-			return $compiled;
+		if ($this->tpl->COMPILE_TEMPLATES) {
+			$compiled = $this->_parse_get_compiled($name, $replace, $params);
+			if (isset($compiled)) {
+				return $compiled;
+			}
 		}
 		$string = $this->_parse_get_cached($name, $replace, $params, $string);
 		if ($string === false) {
 			return false;
 		}
+		$string = $this->_process_comments($string, $name);
 		$string = $this->_process_executes($string, $replace, $name);
 		$string = $this->_process_catches($string, $replace, $name);
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
@@ -108,6 +111,13 @@ class yf_tpl_driver_yf {
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
 		$string = $this->_process_executes_last($string, $replace, $name);
 		return $string;
+	}
+
+	/**
+	* STPL internal comment pattern. Examples: {{-- some content you want to comment inside template only --}}
+	*/
+	function _process_comments($string, $name) {
+		return preg_replace('/(\{\{--.*?--\}\})/ims', '', $string);
 	}
 
 	/**
@@ -142,48 +152,63 @@ class yf_tpl_driver_yf {
 
 	/**
 	*/
+	function _get_compiled_string($name, $replace = array(), $params = array()) {
+		$compiled_string = null;
+# TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
+		$compiled_storage = 'files';
+		if ($compiled_storage == 'files') {
+			$compiled_cache_name = $name.'@'.$params['force_storage'].'@'.MAIN_TYPE;
+			if (isset($this->_compiled_cache[$compiled_cache_name])) {
+				list($compiled_string, $compiled_mtime) = $this->_compiled_cache[$compiled_cache_name];
+			} else {
+				$compiled_path = STORAGE_PATH. $this->tpl->COMPILED_DIR.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
+				if (file_exists($compiled_path)) {
+					$compiled_mtime = filemtime($compiled_path);
+					if ((time() - $compiled_mtime) < $this->tpl->COMPILE_TTL) {
+						$compiled_string = file_get_contents($compiled_path);
+						$this->_compiled_cache[$compiled_cache_name] = array($compiled_string, $compiled_mtime);
+					}
+				}
+			}
+		}
+		if (strlen($compiled_string) && $this->tpl->COMPILE_CHECK_STPL_CHANGED) {
+			$mtime_cache_name = $name.'@'.$params['force_storage'];
+			if (isset($this->_stpl_mtimes[$mtime_cache_name])) {
+				$source_mtime = $this->_stpl_mtimes[$mtime_cache_name];
+			} else {
+				$stpl_path = $this->tpl->_get_template_file($name, $params['force_storage'], 0, 1);
+				$source_mtime = $stpl_path ? filemtime($stpl_path) : 0;
+				$this->_stpl_mtimes[$mtime_cache_name] = $source_mtime;
+			}
+			if ($source_mtime > $compiled_mtime) {
+				$compiled_string = null;
+			}
+		}
+		if (!isset($compiled_string)) {
+			$string = isset($params['string']) ? $params['string'] : $this->tpl->_get_template_file($name, $params['force_storage']);
+			if (strlen($string)) {
+				$compiled_string = $this->_compile($name, $replace, $string, $params);
+			}
+		}
+		return $compiled_string;
+	}
+
+	/**
+	*/
 	function _parse_get_compiled($name, $replace = array(), $params = array()) {
 		if (!$this->tpl->COMPILE_TEMPLATES) {
 			return null;
 		}
 		$stpl_time_start = microtime(true);
-
-# TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
-		$compiled_path = PROJECT_PATH. $this->tpl->COMPILED_DIR.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
-		if (!file_exists($compiled_path)/* && !$this->tpl->INSIDE_UNIT_TESTS*/) {
+		$compiled_string = $this->_get_compiled_string($name, $replace, $params);
+		if (!isset($compiled_string)) {
 			return null;
 		}
-		$compiled_ok = false;
-		$compiled_mtime = filemtime($compiled_path);
-		if ((time() - $compiled_mtime) < $this->tpl->COMPILE_TTL) {
-			$compiled_ok = true;
-		}
-		if (!$compiled_ok) {
-			return null;
-		}
-		if ($compiled_ok) {
-
-			ob_start();
-			include ($compiled_path);
-			$string = ob_get_clean();
-
-			if ($this->tpl->COMPILE_CHECK_STPL_CHANGED) {
-				$stpl_path = $this->tpl->_get_template_file($name, $params['force_storage'], 0, 1);
-				if ($stpl_path) {
-					$source_mtime = filemtime($stpl_path);
-				}
-				if (!$stpl_path || $source_mtime > $compiled_mtime) {
-					$compiled_ok = false;
-					$string = false;
-				}
-			}
-
-			if ($compiled_ok) {
-				$this->_set_cache_details($name, $string, $stpl_time_start);
-				return $string;
-			}
-		}
-		return null;
+		ob_start();
+		eval('?>'.$compiled_string);
+		$string = ob_get_clean();
+		$this->_set_cache_details($name, $string, $stpl_time_start);
+		return $string;
 	}
 
 	/**
@@ -217,11 +242,6 @@ class yf_tpl_driver_yf {
 			}
 			if ($string === false) {
 				return false;
-			}
-			// STPL internal comment pattern. Examples: {{-- some content you want to comment inside template only --}}
-			$string = preg_replace('/(\{\{--.*?--\}\})/ims', '', $string);
-			if ($this->tpl->COMPILE_TEMPLATES) {
-				$this->_compile($name, $replace, $string, $params);
 			}
 			if (isset($params['no_cache']) && !$params['no_cache']) {
 				$this->CACHE[$force_storage. $name]['string']   = $string;
