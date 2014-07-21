@@ -248,6 +248,8 @@ class yf_tpl_driver_yf {
 			if (isset($params['no_cache']) && !$params['no_cache']) {
 				$this->CACHE[$force_storage. $name]['string'] = $string;
 				$this->CACHE[$force_storage. $name]['calls'] = 1;
+				$this->CACHE[$force_storage. $name]['driver'] = 'yf';
+				$this->CACHE[$force_storage. $name]['force_storage'] = $force_storage;
 			}
 		}
 		return $string;
