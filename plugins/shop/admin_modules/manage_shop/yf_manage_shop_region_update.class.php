@@ -74,13 +74,15 @@ class yf_manage_shop_region_update {
 		if( !empty( $where  ) ) { $sql_where  = 'WHERE '    . implode( ', ', $where  ); }
 		if( !empty( $order  ) ) { $sql_order  = implode( ', ', $order  ); }
 		// compile sql
-		$sql_filter = sprintf( 'SELECT p.id FROM %s as p %s %s'
+		$sql_filter = sprintf( 'SELECT DISTINCT p.id FROM %s as p %s %s %s'
 			, $sql_table
+			, ' LEFT JOIN ' . db( 'shop_product_to_region' ) . ' AS pr ON pr.product_id = p.id'
 			, $sql_where
 			, $sql_order
 		);
-		$sql_count = sprintf( 'SELECT COUNT(*) FROM %s as p %s %s'
+		$sql_count = sprintf( 'SELECT COUNT(*) FROM %s as p %s %s %s'
 			, $sql_table
+			, ' LEFT JOIN ' . db( 'shop_product_to_region' ) . ' AS pr ON pr.product_id = p.id'
 			, $sql_where
 			, $sql_order
 		);

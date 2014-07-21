@@ -100,13 +100,15 @@ class yf_manage_shop_price_update {
 		if( !empty( $where  ) ) { $sql_where  = 'WHERE '    . implode( ', ', $where  ); }
 		if( !empty( $order  ) ) { $sql_order  = implode( ', ', $order  ); }
 		// compile sql
-		$sql_filter = sprintf( 'SELECT * FROM %s as p %s %s'
+		$sql_filter = sprintf( 'SELECT DISTINCT p.* FROM %s as p %s %s %s'
 			, $sql_table
+			, ' LEFT JOIN ' . db( 'shop_product_to_region' ) . ' AS pr ON pr.product_id = p.id'
 			, $sql_where
 			, $sql_order
 		);
-		$sql_count = sprintf( 'SELECT COUNT(*) FROM %s as p %s %s'
+		$sql_count = sprintf( 'SELECT COUNT(*) FROM %s as p %s %s %s'
 			, $sql_table
+			, ' LEFT JOIN ' . db( 'shop_product_to_region' ) . ' AS pr ON pr.product_id = p.id'
 			, $sql_where
 			, $sql_order
 		);
@@ -147,10 +149,13 @@ class yf_manage_shop_price_update {
 		$result = array( $count, $result_t );
 		// apply
 		if( $is_update ) {
-			db_query( "UPDATE $sql_table as p SET $sql_price_update $sql_where" );
+			db_query( "UPDATE $sql_table as p"
+				. ' LEFT JOIN ' . db( 'shop_product_to_region' ) . ' AS pr ON pr.product_id = p.id'
+				." SET $sql_price_update $sql_where" );
 			$info = '';
 			if( !empty( $this->_filter ) ) {
 				foreach( $this->_filter as $key => $value ) {
+					if( is_array( $value ) ) { $value = implode( ', ', $value ); }
 					if( strlen( $value ) < 1 ) { continue; }
 					$info .= "$key: $value; ";
 				}

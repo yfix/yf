@@ -5,20 +5,20 @@
 class yf_manage_shop_products{
 
 	var $_filter_params = array(
-		'id'			=> array('in','p.id'),
-		'name'			=> array('like','p.name'),
-		'price' 		=> array('between','p.price'),
-		'articul'		=> array('like','p.articul'),
-//		'price'			=> array('eq','p.price'),
-		'supplier_id'	=> array('eq','p.supplier_id'),
+		'id'              => array('in','p.id'),
+		'name'            => array('like','p.name'),
+		'price'           => array('between','p.price'),
+		'articul'         => array('like','p.articul'),
+		//		'price'       => array('eq','p.price'),
+		'supplier_id'     => array('eq','p.supplier_id'),
 		'manufacturer_id' => array('eq','p.manufacturer_id'),
-		'active'		=> array('eq','p.active'),
-		'status'		=> array('eq','p.status'),
-		'image'			=> array('eq','p.image'),
-#		'cat_id'		=> array('field' => 'p.cat_id'),
-		'quantity'		=> array('field' => 'p.quantity'),
-		'add_date'		=> array('dt_between', 'p.add_date'),
-		'update_date'	=> array('field' => 'p.update_date'),
+		'active'          => array('eq','p.active'),
+		'status'          => array('eq','p.status'),
+		'image'           => array('eq','p.image'),
+		#		'cat_id'       => array('field' => 'p.cat_id'),
+		'quantity'        => array('field' => 'p.quantity'),
+		'add_date'        => array('dt_between', 'p.add_date'),
+		'update_date'     => array('field' => 'p.update_date'),
 	);
 
 	/**
@@ -39,18 +39,26 @@ class yf_manage_shop_products{
 			$cat_ids[$top_cat_id] = $top_cat_id;
 			return $cat_ids ? 'p.cat_id IN('.implode(',', $cat_ids).')' : '';
 		};
+		$this->_filter_params['region_id'] = function($a, $data) {
+			$result = implode( ',', (array)$data[ 'region' ] );
+			$result = $result ? 'pr.region_id IN(' . $result .  ')' : '';
+			return( $result );
+		};
 	}
 
 	/**
 	*/
 	function products () {
 		if (module('manage_shop')->SUPPLIER_ID) {
-			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
-					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id
-					WHERE
-						m.admin_id='.intval(main()->ADMIN_ID).'';
+			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p'
+					. ' LEFT JOIN ' . db( 'shop_product_to_region' ) . ' AS pr ON pr.product_id = p.id'
+					. ' INNER JOIN ' . db( 'shop_admin_to_supplier' ) . ' AS m ON m.supplier_id = p.supplier_id'
+					. ' WHERE'
+						. ' m.admin_id='.intval(main()->ADMIN_ID).'';
 		} else {
-			$sql = 'SELECT * FROM '.db('shop_products').' AS p';
+			$sql = 'SELECT * FROM '.db('shop_products').' AS p'
+					. ' LEFT JOIN ' . db( 'shop_product_to_region' ) . ' AS pr ON pr.product_id = p.id'
+					;
 		}
 
 		return table($sql, array(

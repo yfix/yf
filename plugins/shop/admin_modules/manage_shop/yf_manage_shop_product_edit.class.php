@@ -193,6 +193,7 @@ class yf_manage_shop_product_edit {
 			))
 		->tab_start('main')
 			->link('product_url_user', url('/shop/product/'.$product_info['id']), array('target' => '_blank'))
+			->info('id')
 			->text('name')
 			->text('articul')
 			->text('url')
