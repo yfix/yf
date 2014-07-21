@@ -15,7 +15,6 @@ abstract class tpl_abstract extends PHPUnit_Framework_TestCase {
 		if (false !== strpos(strtolower(get_called_class()), 'compiled')) {
 			tpl()->COMPILE_TEMPLATES = self::$_bak;
 			_class('dir')->delete_dir(STORAGE_PATH.'stpls_compiled/', $delete_start_dir = true);
-#			_class('dir')->delete_dir(STORAGE_PATH, $delete_start_dir = true);
 		}
 	}
 	public function _tpl($stpl_text = '', $replace = array(), $name = '', $params = array()) {
