@@ -171,7 +171,7 @@ class yf_tpl_driver_yf {
 				}
 			}
 		}
-		if (strlen($compiled_string) && $this->tpl->COMPILE_CHECK_STPL_CHANGED) {
+		if ($compiled_mtime && strlen($compiled_string) && $this->tpl->COMPILE_CHECK_STPL_CHANGED) {
 			$mtime_cache_name = $name.'@'.$params['force_storage'];
 			if (isset($this->_stpl_mtimes[$mtime_cache_name])) {
 				$source_mtime = $this->_stpl_mtimes[$mtime_cache_name];
