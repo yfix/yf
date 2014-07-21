@@ -207,16 +207,18 @@ class yf_tpl_driver_yf {
 		ob_start();
 		eval('?>'.$compiled_string);
 		$string = ob_get_clean();
-		$this->_set_cache_details($name, $string, $stpl_time_start);
+		$this->_set_cache_details($name, $string, $stpl_time_start, $is_compiled = true);
 		return $string;
 	}
 
 	/**
 	*/
-	function _set_cache_details($name, $string, $stpl_time_start) {
+	function _set_cache_details($name, $string, $stpl_time_start, $is_compiled = false) {
+		$this->CACHE[$name]['driver'] = 'yf';
+		$this->CACHE[$name]['is_compiled'] = (int)$is_compiled;
 		$this->CACHE[$name]['calls']++;
 		if (!isset($this->CACHE[$name]['string'])) {
-			$this->CACHE[$name]['string']   = $string;
+			$this->CACHE[$name]['string'] = $string;
 		}
 		if (!isset($this->CACHE[$name]['s_length'])) {
 			$this->CACHE[$name]['s_length'] = strlen($string);
