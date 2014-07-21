@@ -56,36 +56,19 @@ class yf_manage_shop_region_update {
 						$count == count( $region ) && $is_region = true;
 				}
 			}
-		// init sql
-		$sql_table = db( 'shop_products' );
-		$sql_table_action = 'shop_product_to_region';
-		$where  = array(); $sql_where = '';
-		$order  = array(); $sql_order = '';
-		// prepare supplier
-		$supplier = (int)module( 'manage_shop' )->SUPPLIER_ID;
-		if( $supplier > 0 ) {
-			$where[] = 'supplier_id = ' . $supplier;
-		}
 		// prepare filter
 		list( $_where, $_order ) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare( $this->_filter, $this->_filter_params );
-		if( !empty( $_where ) ) { $where[] = '1' . $_where; }
-		if( !empty( $_order ) ) { $order[] = $_order; }
-		// compile sql chunk
-		if( !empty( $where  ) ) { $sql_where  = 'WHERE '    . implode( ', ', $where  ); }
-		if( !empty( $order  ) ) { $sql_order  = implode( ', ', $order  ); }
 		// compile sql
-		$sql_filter = sprintf( 'SELECT DISTINCT p.id FROM %s as p %s %s %s'
-			, $sql_table
-			, ' LEFT JOIN ' . db( 'shop_product_to_region' ) . ' AS pr ON pr.product_id = p.id'
-			, $sql_where
-			, $sql_order
-		);
-		$sql_count = sprintf( 'SELECT COUNT(*) FROM %s as p %s %s %s'
-			, $sql_table
-			, ' LEFT JOIN ' . db( 'shop_product_to_region' ) . ' AS pr ON pr.product_id = p.id'
-			, $sql_where
-			, $sql_order
-		);
+		$sql_filter = $this->_class_admin_products->_sql( array(
+			'fields' => 'DISTINCT p.id',
+			'where'  => 1 . $_where,
+			'order'  => $_order,
+		));
+		$sql_count = $this->_class_admin_products->_sql( array(
+			'fields' => 'COUNT(p.id)',
+			'where'  => 1 . $_where,
+			'order'  => $_order,
+		));
 		$total = (int)db()->get_one( $sql_count );
 		// update
 		$apply   = $_POST[ 'apply'   ];
@@ -95,6 +78,7 @@ class yf_manage_shop_region_update {
 		$no_confirm = $is_action && !isset( $confirm ) ? true : false;
 		if( $is_update ) {
 			// prepare data
+			$sql_table_action = 'shop_product_to_region';
 			$data             = array();
 			$sub_action_count = null;
 			$ids  = db()->get_2d( $sql_filter );
