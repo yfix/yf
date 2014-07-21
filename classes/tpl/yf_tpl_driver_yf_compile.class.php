@@ -26,6 +26,10 @@ class yf_tpl_driver_yf_compile {
 		$end = ' ?'.'>';
 
 		$patterns = array(
+			// YF tpl comments
+			'/(\{\{--.*?--\}\})/ims' => function($m) use ($start, $end) {
+				return '';
+			},
 			// !! Keep this pattern on top
 			'/\{(else)\}/i' => function($m) use ($start, $end) {
 				return $start. '} else {'. $end;
@@ -40,7 +44,8 @@ class yf_tpl_driver_yf_compile {
 			},
 			'/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
 				$m[1] = trim($m[1]);
-				return $start. 'echo (strlen(\''.$m[1].'\') && defined(\''.$m[1].'\') ? constant(\''.$m[1].'\') : \'\');'. $end;
+#				return $start. 'echo (strlen(\''.$m[1].'\') && defined(\''.$m[1].'\') ? constant(\''.$m[1].'\') : \'\');'. $end;
+				return $start. 'echo constant(\''.$m[1].'\');'. $end;
 			},
 			'/\{conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
 				return $start. 'echo conf(\''.$m[1].'\');'. $end;
@@ -163,7 +168,7 @@ class yf_tpl_driver_yf_compile {
 		if (_class('tpl')->COMPILE_CHECK_STPL_CHANGED) {
 			$_md5_string = md5($string);
 		}
-		$compiled_dir = PROJECT_PATH. _class('tpl')->COMPILED_DIR;
+		$compiled_dir = STORAGE_PATH. _class('tpl')->COMPILED_DIR;
 		// Do not check dir existence twice
 		if (!isset($this->_stpl_compile_dir_check)) {
 			_mkdir_m($compiled_dir);
