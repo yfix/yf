@@ -501,7 +501,7 @@ class yf_debug {
 				'id'		=> ++$counter,
 // TODO: add link to inline stpl edit
 				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $debug[$k]['storage'])),
-				'storage'	=> strval($debug[$k]['storage']),
+				'storage'	=> strval($debug[$k]['force_storage']),
 				'storages'	=> '<pre>'._prepare_html(var_export($debug[$k]['storages'], 1)).'</pre>',
 				'calls'		=> strval($v['calls']),
 				'size'		=> strval($cur_size),
@@ -1323,9 +1323,7 @@ class yf_debug {
 	}
 
 	/**
-		*
-		*     */
-
+	*/
 	function _debug_dashboards () {
 		if (!$this->SHOW_DB_STATS) {
 			return '';
