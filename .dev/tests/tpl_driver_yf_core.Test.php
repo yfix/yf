@@ -363,22 +363,31 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	public function test_if_funcs() {
 		$data = array('name1' => '', 'name2' => 'something');
 
-		$this->assertEquals('good', self::_tpl('{if_empty(name1)}good{else}{/if}', $data));
-		$this->assertEquals('good ok', self::_tpl('{if_empty(name1)}good{else}{/if} {if_not_empty(name2)}ok{else}{/if}', $data));
-		$this->assertEquals('good', self::_tpl('{if_not_empty(name2)}good{else}{/if}', $data));
-		$this->assertEquals('good', self::_tpl('{if_isset(name1)}good{else}{/if}', $data));
-		$this->assertEquals('good', self::_tpl('{if_not_isset(name3)}good{else}{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_ok(name1)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_empty(name1)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_false(name1)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_true(name1)}good{/if}', $data));
 
-		$this->assertEquals('good', self::_tpl('{if_empty(data)}good{else}{/if}', array('data' => '')));
-		$this->assertEquals('good', self::_tpl('{if_empty(data)}good{else}{/if}', array('data' => array())));
-		$this->assertEquals('good', self::_tpl('{if_not_empty(data)}good{else}{/if}', array('data' => $data)));
-		$this->assertEquals('good', self::_tpl('{if_empty(data.name1)}good{else}{/if}', array('data' => $data)));
-		$this->assertEquals('good', self::_tpl('{if_not_empty(data.name2)}good{else}{/if}', array('data' => $data)));
-		$this->assertEquals('good', self::_tpl('{if_not_isset(data.name3)}good{else}{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if_ok(name2)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_empty(name2)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_true(name2)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_false(name2)}good{/if}', $data));
 
-		$this->assertEquals('good', self::_tpl('{if_validate:is_natural_no_zero(data)}good{else}{/if}', array('data' => '1234567890')));
-		$this->assertEquals('good', self::_tpl('{if_not_validate:alpha_spaces(data)}good{else}{/if}', array('data' => '1234567890')));
-		$this->assertEquals('good', self::_tpl('{if_validate:alpha_spaces(data)}good{else}{/if}', array('data' => 'abcd efgh ijkl mnop qrst uvwx yz')));
+		$this->assertEquals('good ok', self::_tpl('{if_empty(name1)}good{/if} {if_not_empty(name2)}ok{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_empty(name2)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_isset(name1)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_isset(name3)}good{/if}', $data));
+
+		$this->assertEquals('good', self::_tpl('{if_empty(data)}good{/if}', array('data' => '')));
+		$this->assertEquals('good', self::_tpl('{if_empty(data)}good{/if}', array('data' => array())));
+		$this->assertEquals('good', self::_tpl('{if_not_empty(data)}good{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if_empty(data.name1)}good{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if_not_empty(data.name2)}good{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if_not_isset(data.name3)}good{/if}', array('data' => $data)));
+
+		$this->assertEquals('good', self::_tpl('{if_validate:is_natural_no_zero(data)}good{/if}', array('data' => '1234567890')));
+		$this->assertEquals('good', self::_tpl('{if_not_validate:alpha_spaces(data)}good{/if}', array('data' => '1234567890')));
+		$this->assertEquals('good', self::_tpl('{if_validate:alpha_spaces(data)}good{/if}', array('data' => 'abcd efgh ijkl mnop qrst uvwx yz')));
 	}
 	public function test_elseif_simple() {
 		$data = array('name1' => '', 'name2' => 'something');
@@ -388,7 +397,14 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	public function test_elseif_funcs() {
 		$data = array('name1' => '', 'name2' => 'something');
 		$this->assertEquals('ok', self::_tpl('{if_empty(name2)}bad{elseif_empty(name1)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_empty(name2)}bad{elseif_not_ok(name1)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_empty(name2)}bad{elseif_false(name1)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_empty(name2)}bad{elseif_not_true(name1)}ok{/if}', $data));
+
+		$this->assertEquals('ok', self::_tpl('{if_not_empty(name1)}bad{elseif_ok(name2)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_not_empty(name1)}bad{elseif_true(name2)}ok{/if}', $data));
 		$this->assertEquals('ok', self::_tpl('{if_not_empty(name1)}bad{elseif_not_empty(name2)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_not_empty(name1)}bad{elseif_not_false(name2)}ok{/if}', $data));
 	}
 	public function test_elseforeach() {
 		$data = array('k1' => 'v1', 'k2' => 'v2');
