@@ -566,42 +566,48 @@ class yf_tpl_driver_yf {
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$cond = trim($m['cond']); // if | elseif
 			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
-			$cur_operator = $_this->_cond_operators[strtolower($m['op'])];
+			if (empty($part_left)) {
+				$part_left = '""';
+			}
 			$part_right = trim($m['right']);
-			$part_multi_conds = $m['multi_conds'];
 			if (strlen($part_right) && $part_right{0} == '#') {
 				$part_right = $replace[ltrim($part_right, '#')];
 			}
 			if (!is_numeric($part_right)) {
 				$part_right = '"'.$part_right.'"';
 			}
-			if (empty($part_left)) {
-				$part_left = '""';
-			}
-			$part_other	 = '';
-			// Possible multi-part condition found
-			if ($part_multi_conds) {
-				$_tmp_parts = preg_split("/[\s\t]+(and|xor|or)[\s\t]+/ims", $part_multi_conds, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-				if ($_tmp_parts) {
-					$_tmp_count = count($_tmp_parts);
-				}
-				for ($i = 1; $i < $_tmp_count; $i += 2) {
-					$_tmp_parts[$i] = $_this->_process_multi_conds($_tmp_parts[$i], $replace, $stpl_name);
-					if (!strlen($_tmp_parts[$i])) {
-						unset($_tmp_parts[$i]);
-						unset($_tmp_parts[$i - 1]);
-					}
-				}
-				if ($_tmp_parts) {
-					$part_other = ' '. implode(' ', (array)$_tmp_parts);
-				}
-			}
+			$cur_operator = $_this->_cond_operators[strtolower($m['op'])];
 			// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
 			if ($cur_operator == '%') {
 				$part_left = '!('.$part_left;
 				$part_right = $part_right.')';
 			}
-			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. $part_left. ' '. $cur_operator. ' '. $part_right. $part_other. ') { ?>';
+			$add_cond = trim($m['multi_conds']);
+			if ($add_cond) {
+				$pattern = '/[\s\t]*(?P<cond>and|xor|or)[\s\t]+["\']{0,1}(?P<left>[\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\s\-\#]*)["\']{0,1}/ims';
+				$add_cond = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
+					$a_cond	= trim($m['cond']);
+					$a_left	= $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
+					$a_op	= $_this->_cond_operators[strtolower(trim($m['op']))];
+					$a_right = trim($m['right']);
+					if (substr($a_right, 0, 1) == '#') {
+						$a_right = '$replace[\''.ltrim($a_right, '#').'\']';
+					}
+					if (!is_numeric($a_right)) {
+						$a_right = '\''.$a_right.'\'';
+					}
+					if (empty($a_left)) {
+						$a_left = '\'\'';
+					}
+					// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
+					if ($a_op == '%') {
+						$a_left = '!('.$a_left;
+						$a_right = $a_right.')';
+					}
+					return $a_cond.' ('.$a_left.' '.$a_op.' '.$a_right.') ';
+				}, $add_cond);
+			}
+			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. $part_left. ' '. $cur_operator. ' '. $part_right. $add_cond. ') { ?>';
 		}, $string);
 
 		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}
@@ -661,29 +667,6 @@ class yf_tpl_driver_yf {
 			trigger_error($error_msg, E_USER_WARNING);
 		}
 		return $new_string;
-	}
-
-	/**
-	* Multi-condition special parser
-	*/
-	function _process_multi_conds ($cond_text = '', $replace = array(), $stpl_name = '') {
-		$_this = $this;
-		$pattern = '/["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s#-]*)["\']{0,1}/ims';
-		return preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
-			$part_left		= $_this->_prepare_cond_text($m[1], $replace, $stpl_name);
-			$cur_operator	= $_this->_cond_operators[strtolower($m[2])];
-			$part_right		= strval($m[3]);
-			if (strlen($part_right) && $part_right{0} == '#') {
-				$part_right = $replace[ltrim($part_right, '#')];
-			}
-			if (!is_numeric($part_right)) {
-				$part_right = '"'.$part_right.'"';
-			}
-			if (empty($part_left)) {
-				$part_left = '""';
-			}
-			return $part_left.' '.$cur_operator.' '.$part_right;
-		}, $cond_text);
 	}
 
 	/**
