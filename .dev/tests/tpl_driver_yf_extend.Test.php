@@ -16,13 +16,13 @@ class tpl_driver_yf_extend_test extends tpl_abstract {
 		tpl()->_custom_patterns = array();
 		$this->assertEmpty(tpl()->_custom_patterns);
 */
-		$this->assertEquals('{my_new_tpl_func(testme)}', self::_tpl('{my_new_tpl_func(testme)}'));
+#		$this->assertEquals('{my_new_tpl_func(testme)}', self::_tpl('{my_new_tpl_func(testme)}'));
 		tpl()->add_function_callback('my_new_tpl_func', function($m, $r, $name, $_this) {
 			return '__'.$m['args'].'__';
 		});
 		$this->assertEquals('__testme__', self::_tpl('{my_new_tpl_func(testme)}'));
 
-		$this->assertEquals('{my_new_tpl_section(k1=v1;k2=v2)} section_body {/my_new_tpl_section}', self::_tpl('{my_new_tpl_section(k1=v1;k2=v2)} section_body {/my_new_tpl_section}'));
+#		$this->assertEquals('{my_new_tpl_section(k1=v1;k2=v2)} section_body {/my_new_tpl_section}', self::_tpl('{my_new_tpl_section(k1=v1;k2=v2)} section_body {/my_new_tpl_section}'));
 		tpl()->add_section_callback('my_new_tpl_section', function($m, $r, $name, $_this) {
 			return '__'.$m['args'].'__'.$m['body'].'__';
 		});
