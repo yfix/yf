@@ -857,6 +857,26 @@ class yf_tpl {
 
 	/**
 	*/
+	function add_function_callback($name, $func, $params = array()) {
+		$pattern = '/\{(?P<name>'.preg_quote($name).')\(\s*["\']{0,1}(?P<args>[a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/ims';
+		if ($params['only_pattern']) {
+			return $pattern;
+		}
+		$this->add_pattern_callback($pattern, $func);
+	}
+
+	/**
+	*/
+	function add_section_callback($name, $func, $params = array()) {
+		$pattern = '/\{(?P<name>'.preg_quote($name).')\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<body>.+?)\s*{\/(\1)\}/ims';
+		if ($params['only_pattern']) {
+			return $pattern;
+		}
+		$this->add_pattern_callback($pattern, $func);
+	}
+
+	/**
+	*/
 	function add_pattern_callback($pattern, $func) {
 		$this->_custom_patterns[$pattern] = $func;
 	}
