@@ -210,55 +210,43 @@ class yf_tpl_driver_yf_compile {
 	*/
 	function _compile_prepare_ifs (array $m) {
 		$part_left = $this->_compile_prepare_left($m['left']);
-		$cond_operator = trim($m['op']);
 		$part_right = trim($m['right']);
-		if ($part_right{0} == '#') {
+		if (substr($part_right, 0, 1) == '#') {
 			$part_right = '$replace[\''.ltrim($part_right, '#').'\']';
 		} else {
-			$part_right = "'".$part_right."'";
+			$part_right = '\''.$part_right.'\'';
 		}
-		$add_cond = trim($m['multi_conds']);
-		if ($add_cond) {
-			$_tmp_parts = preg_split("/[\s\t]+(and|xor|or)[\s\t]+/ims", $add_cond, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-			if ($_tmp_parts) {
-				$_tmp_count = count($_tmp_parts);
-			}
-			$pattern = '/["\']{0,1}([\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s\-\#]*)["\']{0,1}/ims';
-			for ($i = 1; $i < $_tmp_count; $i+=2) {
-				if (preg_match($pattern, stripslashes($_tmp_parts[$i]), $m)) {
-					$a_part_left	= $this->_compile_prepare_left($m[1]);
-					$a_cur_operator	= $this->_cond_operators[strtolower($m[2])];
-					$a_part_right	= $m[3];
-					if ($a_part_right{0} == '#') {
-						$a_part_right = '$replace[\''.ltrim($a_part_right, '#').'\']';
-					}
-					if (!is_numeric($a_part_right)) {
-						$a_part_right = "'".$a_part_right."'";
-					}
-					if (empty($a_part_left)) {
-						$a_part_left = "''";
-					}
-					$_tmp_parts[$i] = $a_part_left." ".$a_cur_operator." ".$a_part_right;
-				} else {
-					$_tmp_parts[$i] = '';
-				}
-				if (!strlen($_tmp_parts[$i])) {
-					unset($_tmp_parts[$i]);
-					unset($_tmp_parts[$i - 1]);
-				}
-			}
-			if ($_tmp_parts) {
-				$add_cond = implode(' ', (array)$_tmp_parts);
-			} else {
-				$add_cond = '';
-			}
-		}
-		$op = $this->_cond_operators[strtolower($cond_operator)];
-		// Special case for "mod". 
-		// Examples: {if("id" mod 4)} content {/if}
+		$op = $this->_cond_operators[strtolower(trim($m['op']))];
+		// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
 		if ($op == '%') {
 			$part_left = '!('.$part_left;
 			$part_right = $part_right.')';
+		}
+		$add_cond = trim($m['multi_conds']);
+		if ($add_cond) {
+			$_this = $this;
+			$pattern = '/[\s\t]*(?P<cond>and|xor|or)[\s\t]+["\']{0,1}(?P<left>[\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\s\-\#]*)["\']{0,1}/ims';
+			$add_cond = preg_replace_callback($pattern, function($m) use ($_this) {
+				$a_cond	= trim($m['cond']);
+				$a_left	= $_this->_compile_prepare_left($m['left']);
+				$a_op	= $_this->_cond_operators[strtolower(trim($m['op']))];
+				$a_right = trim($m['right']);
+				if (substr($a_right, 0, 1) == '#') {
+					$a_right = '$replace[\''.ltrim($a_right, '#').'\']';
+				}
+				if (!is_numeric($a_right)) {
+					$a_right = '\''.$a_right.'\'';
+				}
+				if (empty($a_left)) {
+					$a_left = '\'\'';
+				}
+				// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
+				if ($a_op == '%') {
+					$a_left = '!('.$a_left;
+					$a_right = $a_right.')';
+				}
+				return $a_cond.' ('.$a_left.' '.$a_op.' '.$a_right.') ';
+			}, $add_cond);
 		}
 		return trim($part_left.' '.$op.' '.$part_right.' '.$add_cond);
 	}
@@ -278,18 +266,6 @@ class yf_tpl_driver_yf_compile {
 			'_even'	=> '($__f_counter % 2)',
 			'_odd'	=> '(!($__f_counter % 2))',
 		);
-/*
-			// Value from $replace array (DO NOT replace 'array_key_exists()' with 'isset()' !!!)
-			if (array_key_exists($part_left, $replace)) {
-				if (is_object($replace[$part_left]) && !method_exists($replace[$part_left], 'render')) {
-					$res_v = get_object_vars($replace[$part_left]);
-				}
-				if (is_array($replace[$part_left])) {
-					$res_v = $replace[$part_left] ? '("1")' : '("")';
-				} else {
-					$res_v = '$replace["'.$part_left.'"]';
-				}
-*/
 		// Array item
 		if (substr($part_left, 0, 2) == '#.') {
 			$part_left = '$_v[\''.substr($part_left, 2).'\']';
@@ -307,9 +283,9 @@ class yf_tpl_driver_yf_compile {
 		} elseif (strpos($part_left, 'conf.') === 0) {
 			$part_left = 'conf(\''.substr($part_left, strlen('conf.')).'\')';
 		// Constant
-		} elseif (false !== strpos($part_left, 'const.')) {
+		} elseif (strpos($part_left, 'const.') === 0) {
 			$part_left = substr($part_left, strlen('const.'));
-			$part_left = '(defined(\''.$part_left.'\') ? '.$part_left.' : \'\')';
+			$part_left = '(defined(\''.$part_left.'\') ? constant(\''.$part_left.'\') : \'\')';
 		// Global array element or sub array
 		} elseif (false !== strpos($part_left, '.')) {
 			$try_elm = substr($part_left, 0, strpos($part_left, '.'));
