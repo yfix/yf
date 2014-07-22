@@ -503,7 +503,7 @@ class yf_tpl_driver_yf {
 			};
 		}
 		// Custom patterns support (intended to be used inside modules/plugins)
-		foreach ((array)$tpl->_custom_patterns as $pattern => $func) {
+		foreach ((array)$tpl->_custom_patterns_funcs as $pattern => $func) {
 			$patterns[$pattern] = function($m) use ($replace, $name, $_this, $func) { return $func($m, $replace, $name, $_this); };
 		}
 		if (DEBUG_MODE) {
@@ -927,7 +927,7 @@ class yf_tpl_driver_yf {
 		$tpl = tpl();
 		$pattern = $tpl->_custom_patterns_index[$crc32_or_name];
 		if (strlen($pattern)) {
-			$func = $tpl->_custom_patterns[$pattern];
+			$func = $tpl->_custom_patterns_funcs[$pattern];
 		}
 		if (!$func || !is_callable($func)) {
 			return $body;

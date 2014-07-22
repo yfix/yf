@@ -132,13 +132,6 @@ class yf_tpl_driver_yf_compile {
 			'/\{(css|require_css|js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo '.$m[1].'(\''.$m[3].'\', _attrs_string2array(\''.$m[2].'\'));'. $end;
 			},
-			// DEBUG_MODE patterns
-			'/(\{_debug_get_replace\(\)\})/i' => function($m) use ($start, $end) {
-				return $start. 'echo (DEBUG_MODE && is_array($replace) ? "<pre>".print_r(array_keys($replace),1)."</pre>" : "");'. $end;
-			},
-			'/(\{_debug_get_vars\(\)\})/i' => function($m) use ($start, $end) {
-				return $start. 'echo $this->_debug_get_vars($string);'. $end;
-			},
 			// Custom function (compatible with non-compile for extending tpl engine)
 			$pattern = '/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo $this->call_custom_pattern(\''.$m['name'].'\', \''.addslashes($m['args']).'\', null, $replace, $name);'. $end;
@@ -146,6 +139,13 @@ class yf_tpl_driver_yf_compile {
 			// Custom section (compatible with non-compile for extending tpl engine)
 			$pattern = '/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<body>.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo $this->call_custom_pattern(\''.$m['name'].'\', \''.addslashes($m['args']).'\', \''.addslashes($m['body']).'\', $replace, $name);'. $end;
+			},
+			// DEBUG_MODE patterns
+			'/(\{_debug_get_replace\(\)\})/i' => function($m) use ($start, $end) {
+				return $start. 'echo (DEBUG_MODE && is_array($replace) ? "<pre>".print_r(array_keys($replace),1)."</pre>" : "");'. $end;
+			},
+			'/(\{_debug_get_vars\(\)\})/i' => function($m) use ($start, $end) {
+				return $start. 'echo $this->_debug_get_vars($string);'. $end;
 			},
 		);
 		foreach ((array)$patterns as $pattern => $callback) {
