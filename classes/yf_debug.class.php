@@ -500,11 +500,11 @@ class yf_debug {
 			$items[$counter] = array(
 				'id'		=> ++$counter,
 // TODO: add link to inline stpl edit
-				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $debug[$k]['force_storage'])),
+				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $debug[$k]['storage'])),
 				'calls'		=> strval($v['calls']),
 				'driver'	=> strval($v['driver']),
 				'compiled'	=> (int)$v['is_compiled'],
-				'storage'	=> strval($debug[$k]['force_storage']),
+				'storage'	=> strval($debug[$k]['storage']),
 				'storages'	=> '<pre>'._prepare_html(var_export($debug[$k]['storages'], 1)).'</pre>',
 				'size'		=> strval($cur_size),
 				'time'		=> round($v['exec_time'], 4),
