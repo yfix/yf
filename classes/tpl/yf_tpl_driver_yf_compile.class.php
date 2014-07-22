@@ -336,6 +336,22 @@ class yf_tpl_driver_yf_compile {
 	function _compile_if_funcs(array $m) {
 		$part_left = $this->_compile_prepare_left($m['left']);
 		$func = trim($m['func']);
+		// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
+		$funcs_map = array(
+			'empty'		=> '_empty',
+			'not_ok'	=> '_empty',
+			'false' 	=> '_empty',
+			'not_true' 	=> '_empty',
+			'isset'		=> '_isset',
+			'not_isset'	=> 'not__isset',
+			'not_empty'	=> 'not__empty',
+			'ok'		=> 'not__empty',
+			'true'		=> 'not__empty',
+			'not_false'	=> 'not__empty',
+		);
+		if (isset($funcs_map[$func])) {
+			$func = $funcs_map[$func];
+		}
 		$negate = false;
 		if (substr($func, 0, 4) == 'not_') {
 			$func = substr($func, 4);
@@ -352,12 +368,6 @@ class yf_tpl_driver_yf_compile {
 		// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if} 
 		} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
 			return '';
-		}
-		// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
-		if ($func == 'empty') {
-			$func = '_empty';
-		} elseif ($func == 'isset') {
-			$func = '_isset';
 		}
 		return ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')';
 	}
