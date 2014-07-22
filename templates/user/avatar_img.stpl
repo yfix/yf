@@ -1,11 +1,11 @@
-<table class="avatar" {if("use_ajax" eq 1)}yf:user_id="{user_id}"{/if}>
+<table class="avatar" {if_true(use_ajax)}yf:user_id="{user_id}"{/if}>
 	<tr>
-		<td nowrap {if("photo_verified" eq 1)} style="background-image: url('images/verified.gif'); background-repeat:no-repeat; background-position: left bottom;"{/if}>
-{if("as_link" eq 1)}{if("user_profile_link" ne "")}<a href="{user_details_link}" border="0">{/if}{/if}
-{if('photo_src' ne '')}<img src="{photo_src}" border="0" hspace="0" vspace="0" alt="{user_name}">{/if}
-{if("as_link" eq 1)}{if("user_profile_link" ne "")}</a>{/if}{/if}
-{if('no_photo_middle' eq 1)}{t((No Photo)}{/if}
-{if('no_photo_small' eq 1)}{t(No Photo)}{/if}
+		<td nowrap {if_true(photo_verified)} style="background-image: url('images/verified.gif'); background-repeat:no-repeat; background-position: left bottom;"{/if}>
+{if_true(as_link)}{if_true(user_profile_link)}<a href="{user_details_link}" border="0">{/if}{/if}
+{if_true(photo_src)}<img src="{photo_src}" border="0" hspace="0" vspace="0" alt="{user_name}">{/if}
+{if_true(as_link)}{if_true(user_profile_link)}</a>{/if}{/if}
+{if_true(no_photo_middle)}{t((No Photo)}{/if}
+{if_true(no_photo_small)}{t(No Photo)}{/if}
 		</td>
 	</tr>
 </table>
