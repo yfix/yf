@@ -878,7 +878,7 @@ class yf_tpl {
 	/**
 	*/
 	function add_pattern_callback($pattern, $func, $pattern_name = '') {
-		$this->_custom_patterns[$pattern] = $func;
+		$this->_custom_patterns_funcs[$pattern] = $func;
 		$this->_custom_patterns_index[crc32($pattern)] = $pattern;
 		$pattern_name && $this->_custom_patterns_index[$pattern_name] = $pattern;
 	}
