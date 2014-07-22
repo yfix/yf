@@ -139,6 +139,14 @@ class yf_tpl_driver_yf_compile {
 			'/(\{_debug_get_vars\(\)\})/i' => function($m) use ($start, $end) {
 				return $start. 'echo $this->_debug_get_vars($string);'. $end;
 			},
+			// Custom function (compatible with non-compile for extending tpl engine)
+			$pattern = '/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
+				return $start. 'echo $this->call_custom_pattern(\''.$m['name'].'\', \''.addslashes($m['args']).'\', null, $replace, $name);'. $end;
+			},
+			// Custom section (compatible with non-compile for extending tpl engine)
+			$pattern = '/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<body>.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
+				return $start. 'echo $this->call_custom_pattern(\''.$m['name'].'\', \''.addslashes($m['args']).'\', \''.addslashes($m['body']).'\', $replace, $name);'. $end;
+			},
 		);
 		foreach ((array)$patterns as $pattern => $callback) {
 			$string = preg_replace_callback($pattern, $callback, $string);
