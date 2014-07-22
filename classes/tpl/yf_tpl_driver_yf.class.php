@@ -553,7 +553,6 @@ class yf_tpl_driver_yf {
 	/**
 	* Conditional execution
 	*/
-// TODO: support for {elseif( condition )}
 	function _process_ifs ($string = '', array &$replace, $stpl_name = '') {
 		if (false === strpos($string, '{/if}') || empty($string)) {
 			return $string;
@@ -611,6 +610,22 @@ class yf_tpl_driver_yf {
 			$cond = trim($m['cond']); // if | elseif
 			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
 			$func = trim($m['func']);
+			// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
+			$funcs_map = array(
+				'empty'		=> '_empty',
+				'not_ok'	=> '_empty',
+				'false' 	=> '_empty',
+				'not_true' 	=> '_empty',
+				'isset'		=> '_isset',
+				'not_isset'	=> 'not__isset',
+				'not_empty'	=> 'not__empty',
+				'ok'		=> 'not__empty',
+				'true'		=> 'not__empty',
+				'not_false'	=> 'not__empty',
+			);
+			if (isset($funcs_map[$func])) {
+				$func = $funcs_map[$func];
+			}
 			$negate = false;
 			if (substr($func, 0, 4) == 'not_') {
 				$func = substr($func, 4);
@@ -627,12 +642,6 @@ class yf_tpl_driver_yf {
 			// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if} 
 			} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
 				return '';
-			}
-			// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
-			if ($func == 'empty') {
-				$func = '_empty';
-			} elseif ($func == 'isset') {
-				$func = '_isset';
 			}
 			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')) { ?>';
 		}, $string);
