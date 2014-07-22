@@ -919,4 +919,19 @@ class yf_tpl_driver_yf {
 		$replace = (array)_attrs_string2array($params) + (array)$replace;
 		return $this->parse($stpl_name, $replace);
 	}
+
+	/**
+	* For compiled templates
+	*/
+	function call_custom_pattern($crc32_or_name, $args = '', $body = null, $replace = array(), $stpl_name = '') {
+		$tpl = tpl();
+		$pattern = $tpl->_custom_patterns_index[$crc32_or_name];
+		if (strlen($pattern)) {
+			$func = $tpl->_custom_patterns[$pattern];
+		}
+		if (!$func || !is_callable($func)) {
+			return $body;
+		}
+		return $func(array('args' => $args, 'body' => $body), $replace, $stpl_name, $this);
+	}
 }
