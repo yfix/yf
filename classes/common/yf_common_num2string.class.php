@@ -4,74 +4,117 @@
 */
 class yf_common_num2string {
 
+	protected $_currency_id = null;
+	// gender:  0 - male; 1 - female;
+	public $currency = array(
+		'UAH' => array( 'гривна', 'гривни',  'гривен',   1 ),
+		'RUB' => array( 'рубль',  'рубля',   'рублей',   0 ),
+		'USD' => array( 'доллар', 'доллара', 'долларов', 0 ),
+		'EUR' => array( 'евро',   'евро',    'евро',     0 ),
+	);
+	public $units = array(
+		array( 'копейка',  'копейки',  'копеек',     1 ),
+		array( 'гривна',   'гривни',   'гривен',     1 ),
+		array( 'тысяча',   'тысячи',   'тысяч',      1 ),
+		array( 'миллион',  'миллиона', 'миллионов',  0 ),
+		array( 'миллиард', 'милиарда', 'миллиардов', 0 ),
+	);
+	protected $_sign_force = false;
+	public $signs = array( 'плюс', 'минус' );
+	public $digits = array(
+		// 1-9
+		array(
+			array( null, 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять' ),
+			array( null, 'одна', 'две', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять' ),
+		),
+		// 10-19
+		array( 'десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать' , 'пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать' ),
+		// 20-99
+		array( null, null,  'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят' , 'восемьдесят', 'девяносто' ),
+		// 1xx-9xx
+		array( null, 'сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот' ),
+	);
+
+	function _init(){
+		$this->_currency_id = current( array_keys( $this->currency ) );
+	}
+
+	function sign( $force = null ){
+		if( is_null( $force ) ) { $result = $this->_sign_force; }
+		else {
+			$result = (bool)$force;
+			$this->_sign_force = $result;
+		}
+		return( $result );
+	}
+
+	function currency_id( $currency_id = null ){
+		if( empty( $currency_id ) ) { $result = $this->_currency_id; }
+		else {
+			$result = strtoupper( $currency_id );
+			$result = isset( $this->currency[ $result ] ) ? $result : $this->_currency_id;
+			$this->_currency_id = $result;
+		}
+		return( $result );
+	}
+
 	/**
 	* Returns the sum in words (for money)
 	*/
 // TODO: translation (RU, UK, EN)
-// TODO: currencies (UAH, RUB USD, EUR)
-	function num2str($num) {
+	function num2str( $num, $currency_id = null ){
 		$num = (float)$num;
 		$nul = 'ноль';
-		$ten = array(
-			array('','один','два','три','четыре','пять','шесть','семь', 'восемь','девять'),
-			array('','одна','две','три','четыре','пять','шесть','семь', 'восемь','девять'),
-		);
-		$a20 = array('десять','одиннадцать','двенадцать','тринадцать','четырнадцать' ,'пятнадцать','шестнадцать','семнадцать','восемнадцать','девятнадцать');
-		$tens = array(2 => 'двадцать','тридцать','сорок','пятьдесят','шестьдесят','семьдесят' ,'восемьдесят','девяносто');
-		$hundred = array('','сто','двести','триста','четыреста','пятьсот','шестьсот', 'семьсот','восемьсот','девятьсот');
-		$unit = array( // Units
-			array('копейка',  'копейки',  'копеек',	    1),
-			array('гривна',   'гривни',   'гривен',     0),
-			array('тысяча',   'тысячи',   'тысяч',      1),
-			array('миллион',  'миллиона', 'миллионов',  0),
-			array('миллиард', 'милиарда', 'миллиардов', 0),
-		);
+		$digits = $this->digits;
+		$signs = $this->signs; $sign_force = $this->sign();
+		$currency_id = $this->currency_id( $currency_id );
+		$units = $this->units; $units[ 1 ] = &$this->currency[ $currency_id ];
+		// separate float on integer and fractional
 		$number_format = localeconv();
 		$decimal_point = $number_format[ 'decimal_point' ];
-		list( $rub, $kop ) = explode( $decimal_point, sprintf( '%015.2f', $num ) );
+		list( $part1, $part2 ) = explode( $decimal_point, sprintf( '%015.2f', $num ) );
 		$out = array();
-		if (intval($rub) > 0) {
-			foreach (str_split($rub,3) as $uk => $v) { // by 3 symbols
-				if (!intval($v)) {
-					continue;
-				}
-				$uk = sizeof($unit) - $uk - 1; // unit key
-				$gender = $unit[$uk][3];
-				list($i1,$i2,$i3) = array_map('intval', str_split($v,1));
-				// mega-logic
-				$out[] = $hundred[$i1]; // 1xx-9xx
-				if ($i2 > 1) {
-					$out[] = $tens[$i2].' '.$ten[$gender][$i3]; // 20-99
-				} else {
-					$out[] = $i2 > 0 ? $a20[$i3] : $ten[$gender][$i3]; // 10-19 | 1-9
-				}
-				// units without rub & kop
-				if ($uk > 1) {
-					$out[] = $this->morph($v, $unit[$uk][0], $unit[$uk][1], $unit[$uk][2]);
-				}
+		$part1 < 0 && $out[] = $signs[ 1 ];
+		$part1 > 0 && $sign_force && $out[] = $signs[ 0 ];
+		// part1 - integer
+		if( (int)$part1 ) {
+			// separate by 3 digits
+			foreach( str_split( $part1, 3 ) as $unit => $digits3 ) {
+				if( !(int)$digits3 ) { continue; }
+				// get unit
+				$unit = sizeof($units) - $unit - 1;
+				$gender = $units[$unit][3];
+				// separate by 1 digit
+				list( $d3, $d2, $d1 ) = $digits3;
+				// 1xx-9xx
+				$d3 > 0  && $out[] = $digits[ 3 ][ $d3 ];
+				// 20-99
+				$d2 > 1  && $out[] = $digits[ 2 ][ $d2 ];
+				// 10-19
+				$d2 == 1 && $out[] = $digits[ 1 ][ $d1 ];
+				// 1-9
+				$d1 > 0 && $d2 != 1 && $out[] = $digits[ 0 ][ $gender ][ $d1 ];
+				$out[] = $this->morph( $digits3, $units[ $unit ] );
 			}
+		} else {
+			$out[] = $nul;
+			$out[] = $this->morph( $part1, $units[1] );
 		}
-		else $out[] = $nul;
-		$out[] = $this->morph(intval($rub), $unit[1][0],$unit[1][1],$unit[1][2]); // rub
-		$out[] = $kop.' '.$this->morph($kop, $unit[0][0], $unit[0][1], $unit[0][2]); // kop
-		return trim(preg_replace('/ {2,}/', ' ', join(' ', $out)));
+		// part2 - fractional
+		$out[] = (int)$part2.' '.$this->morph($part2, $units[0] );
+		$result = join( ' ', $out );
+		return( $result );
 	}
 
 	/**
 	* Bow word form
 	*/
-	function morph($n, $f1, $f2, $f5) {
-		$n = abs(intval($n)) % 100;
-		if ($n > 10 && $n < 20) {
-			return $f5;
-		}
+	protected function morph( $n, $unit ) {
+		$n = abs( (int)$n ) % 100;
+		if( $n > 10 && $n < 20 ) { return( $unit[2] ); }
 		$n = $n % 10;
-		if ($n > 1 && $n < 5) {
-			return $f2;
-		}
-		if ($n == 1) {
-			return $f1;
-		}
-		return $f5;
+		if( $n > 1 && $n < 5 ) { return( $unit[1] ); }
+		if( $n == 1 ) { return $unit[0]; }
+		return( $unit[2] );
 	}
 }
