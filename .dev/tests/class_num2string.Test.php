@@ -4,6 +4,8 @@ require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 class class_num2string_test extends PHPUnit_Framework_TestCase {
 	public function test_num2str_uah_ru() {
+		// $this->assertEquals( 'ноль гривен 0 копеек',   common()->num2str(-0) );
+		$this->assertEquals( 'минус одна гривна 0 копеек',   common()->num2str(-1) );
 		$this->assertEquals( 'ноль гривен 0 копеек',   common()->num2str(0) );
 		$this->assertEquals( 'ноль гривен 1 копейка',  common()->num2str(.01) );
 		$this->assertEquals( 'ноль гривен 2 копейки',  common()->num2str(.02) );
