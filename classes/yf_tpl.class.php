@@ -862,7 +862,7 @@ class yf_tpl {
 		if ($params['only_pattern']) {
 			return $pattern;
 		}
-		$this->add_pattern_callback($pattern, $func);
+		$this->add_pattern_callback($pattern, $func, $name);
 	}
 
 	/**
@@ -872,12 +872,14 @@ class yf_tpl {
 		if ($params['only_pattern']) {
 			return $pattern;
 		}
-		$this->add_pattern_callback($pattern, $func);
+		$this->add_pattern_callback($pattern, $func, $name);
 	}
 
 	/**
 	*/
-	function add_pattern_callback($pattern, $func) {
+	function add_pattern_callback($pattern, $func, $pattern_name = '') {
 		$this->_custom_patterns[$pattern] = $func;
+		$this->_custom_patterns_index[crc32($pattern)] = $pattern;
+		$pattern_name && $this->_custom_patterns_index[$pattern_name] = $pattern;
 	}
 }
