@@ -7,7 +7,7 @@ class tpl_driver_yf_extend_test extends tpl_abstract {
 		$old = tpl()->_custom_patterns;
 		tpl()->_custom_patterns = array();
 		$this->assertEmpty(tpl()->_custom_patterns);
-
+/*
 		$this->assertEquals('{my_new_tpl_func(testme)}', self::_tpl('{my_new_tpl_func(testme)}'));
 		tpl()->add_pattern_callback('/\{my_new_tpl_func\(\s*["\']{0,1}([a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/i', function($m, $r, $name, $_this) {
 			return '__'.$m[1].'__';
@@ -15,7 +15,7 @@ class tpl_driver_yf_extend_test extends tpl_abstract {
 		$this->assertEquals('__testme__', self::_tpl('{my_new_tpl_func(testme)}'));
 		tpl()->_custom_patterns = array();
 		$this->assertEmpty(tpl()->_custom_patterns);
-
+*/
 		$this->assertEquals('{my_new_tpl_func(testme)}', self::_tpl('{my_new_tpl_func(testme)}'));
 		tpl()->add_function_callback('my_new_tpl_func', function($m, $r, $name, $_this) {
 			return '__'.$m['args'].'__';
