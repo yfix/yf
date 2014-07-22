@@ -439,6 +439,7 @@ class yf_tpl_driver_yf {
 	*/
 	function _replace_std_patterns($string, $name = '', array &$replace, $params = array()) {
 		$_this = $this;
+		$tpl = tpl();
 
 		$patterns = array(
 			// Insert constant here (cutoff for eval_code). Examples: {const("SITE_NAME")}
@@ -454,8 +455,8 @@ class yf_tpl_driver_yf {
 				return module_conf($m[1], $m[2]);
 			},
 			// Translate some items if needed. Examples: {t("Welcome")}
-			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name, $_this) {
-				return $_this->tpl->_i18n_wrapper($m[2], $replace);
+			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name, $tpl) {
+				return $tpl->_i18n_wrapper($m[2], $replace);
 			},
 			// Trims whitespaces, removes. Examples: {cleanup()}some content here{/cleanup}
 			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims' => function($m) {
@@ -478,8 +479,8 @@ class yf_tpl_driver_yf {
 				return module_safe('advertising')->_show(array('ad' => $m[1]));
 			},
 			// Url generation with params. Examples: {url(object=home_page;action=test)}
-			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($_this) {
-				return $_this->tpl->_generate_url_wrapper($m[1]);
+			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($tpl) {
+				return $tpl->_generate_url_wrapper($m[1]);
 			},
 			// Form item/row. Examples: {form_row("text","password","New Password")}
 			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,'
@@ -487,22 +488,22 @@ class yf_tpl_driver_yf {
 				return _class('form2')->tpl_row($m[1], $replace, $m[3], $m[5], $m[7]);
 			},
 			// Variable filtering like in Smarty/Twig. Examples: {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}
-			'/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function($m) use ($replace, $name, $_this) {
-				return $_this->tpl->_process_var_filters($replace[$m[1]], $m[2]);
+			'/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function($m) use ($replace, $name, $tpl) {
+				return $tpl->_process_var_filters($replace[$m[1]], $m[2]);
 			},
 			// Second level variables with filters. Examples: {sub1.var1|trim}
-			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function($m) use ($replace, $name, $_this) {
-				return $_this->tpl->_process_var_filters($replace[$m[1]][$m[2]], $m[3]);
+			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function($m) use ($replace, $name, $tpl) {
+				return $tpl->_process_var_filters($replace[$m[1]][$m[2]], $m[3]);
 			},
 		);
 		// Evaluate custom PHP code pattern. Examples: {eval_code(print_r(_class('forum')))}
-		if ($this->tpl->ALLOW_EVAL_PHP_CODE) {
+		if ($tpl->ALLOW_EVAL_PHP_CODE) {
 			$patterns['/(\{eval_code\()([^\}]+?)(\)\})/i'] = function($m) {
 				return eval('return '.$m[2].' ;');
 			};
 		}
 		// Custom patterns support (intended to be used inside modules/plugins)
-		foreach ((array)$_this->tpl->_custom_patterns as $pattern => $func) {
+		foreach ((array)$tpl->_custom_patterns as $pattern => $func) {
 			$patterns[$pattern] = function($m) use ($replace, $name, $_this, $func) { return $func($m, $replace, $name, $_this); };
 		}
 		if (DEBUG_MODE) {
@@ -511,8 +512,8 @@ class yf_tpl_driver_yf {
 				return is_array($replace) ? '<pre>'.print_r(array_keys($replace), 1).'</pre>' : '';
 			};
 			// Evaluate custom PHP code pattern special for the DEBUG_MODE. Examples: {_debug_stpl_vars()}
-			$patterns['/(\{_debug_get_vars\(\)\})/i'] = function($m) use ($string, $_this) {
-				return $_this->tpl->_debug_get_vars($string);
+			$patterns['/(\{_debug_get_vars\(\)\})/i'] = function($m) use ($string, $tpl) {
+				return $tpl->_debug_get_vars($string);
 			};
 		}
 		foreach ((array)$patterns as $pattern => $callback) {

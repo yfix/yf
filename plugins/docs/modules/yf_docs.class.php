@@ -21,7 +21,7 @@ class yf_docs {
 
 		$this->docs_dir = YF_PATH.'.dev/docs/en/';
 
-		tpl()->add_pattern_callback('/\{github\(\s*["\']{0,1}([a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/i', function($m, $r, $name, $_this) {
+		tpl()->add_function_callback('github', function($m, $r, $name, $_this) {
 			return _class('core_api')->get_github_link($m[1]);
 		});
 	}
