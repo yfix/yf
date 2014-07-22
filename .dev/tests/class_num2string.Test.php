@@ -42,6 +42,17 @@ class class_num2string_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'двенадцать миллионов триста сорок пять тысяч шестьсот семьдесят восемь гривен 90 копеек', common()->num2str(12345678.90) );
 		$this->assertEquals( 'один миллиард двести тридцать четыре миллиона пятьсот шестьдесят семь тысяч восемьсот девяносто гривен 99 копеек', common()->num2str(1234567890.99) );
 		$this->assertEquals( 'три милиарда двести тридцать четыре миллиона пятьсот шестьдесят семь тысяч восемьсот девяносто гривен 99 копеек', common()->num2str(3234567890.99) );
+
+		$value = true;
+		$sign = _class( 'common_num2string', 'class/common' )->sign( $value );
+		$this->assertEquals( $value, $sign );
+		$this->assertEquals( 'плюс одна гривна 1 копейка',  common()->num2str(1.01) );
+		$this->assertEquals( 'минус одна гривна 1 копейка',  common()->num2str(-1.01) );
+		$value = false;
+		$sign = _class( 'common_num2string', 'class/common' )->sign( $value );
+		$this->assertEquals( $value, $sign );
+		$this->assertEquals( 'одна гривна 1 копейка',  common()->num2str(1.01) );
+		$this->assertEquals( 'минус одна гривна 1 копейка',  common()->num2str(-1.01) );
 	}
 	public function test_num2str_uah_uk() {
 // TODO
@@ -82,7 +93,12 @@ class class_num2string_test extends PHPUnit_Framework_TestCase {
 // TODO
 	}
 	public function test_num2str_eur_ru() {
-// TODO
+		$currency    = 'EUR';
+		$currency_id = _class( 'common_num2string', 'class/common' )->currency_id( $currency );
+		$this->assertEquals( $currency, $currency_id );
+
+		$this->assertEquals( 'ноль евро 1 копейка',  common()->num2str( 0.01 ) );
+		$this->assertEquals( 'двести двадцать две тысячи двести двадцать два евро 45 копеек', common()->num2str( 222222.45 ) );
 	}
 	public function test_num2str_eur_uk() {
 // TODO

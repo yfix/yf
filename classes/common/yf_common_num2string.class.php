@@ -10,6 +10,7 @@ class yf_common_num2string {
 		'UAH' => array( 'гривна', 'гривни',  'гривен',   1 ),
 		'RUB' => array( 'рубль',  'рубля',   'рублей',   0 ),
 		'USD' => array( 'доллар', 'доллара', 'долларов', 0 ),
+		'EUR' => array( 'евро',   'евро',    'евро',     0 ),
 	);
 	public $units = array(
 		array( 'копейка',  'копейки',  'копеек',     1 ),
@@ -18,6 +19,8 @@ class yf_common_num2string {
 		array( 'миллион',  'миллиона', 'миллионов',  0 ),
 		array( 'миллиард', 'милиарда', 'миллиардов', 0 ),
 	);
+	protected $_sign_force = false;
+	public $signs = array( 'плюс', 'минус' );
 	public $digits = array(
 		// 1-9
 		array(
@@ -36,6 +39,15 @@ class yf_common_num2string {
 		$this->_currency_id = current( array_keys( $this->currency ) );
 	}
 
+	function sign( $force = null ){
+		if( is_null( $force ) ) { $result = $this->_sign_force; }
+		else {
+			$result = (bool)$force;
+			$this->_sign_force = $result;
+		}
+		return( $result );
+	}
+
 	function currency_id( $currency_id = null ){
 		if( empty( $currency_id ) ) { $result = $this->_currency_id; }
 		else {
@@ -50,12 +62,11 @@ class yf_common_num2string {
 	* Returns the sum in words (for money)
 	*/
 // TODO: translation (RU, UK, EN)
-// TODO: currencies (UAH, RUB USD, EUR)
 	function num2str( $num, $currency_id = null ){
 		$num = (float)$num;
 		$nul = 'ноль';
 		$digits = $this->digits;
-		$sing = array( 'плюс', 'минус' ); $sing_force = false;
+		$signs = $this->signs; $sign_force = $this->sign();
 		$currency_id = $this->currency_id( $currency_id );
 		$units = $this->units; $units[ 1 ] = &$this->currency[ $currency_id ];
 		// separate float on integer and fractional
@@ -63,11 +74,10 @@ class yf_common_num2string {
 		$decimal_point = $number_format[ 'decimal_point' ];
 		list( $part1, $part2 ) = explode( $decimal_point, sprintf( '%015.2f', $num ) );
 		$out = array();
-		$part1 < 0 && $out[] = $sing[ 1 ];
-		$part1 > 0 && $sing_force && $out[] = $sing[ 0 ];
-		var_dump( $part1, $out );
+		$part1 < 0 && $out[] = $signs[ 1 ];
+		$part1 > 0 && $sign_force && $out[] = $signs[ 0 ];
 		// part1 - integer
-		if( abs( $part1 ) > 0 ) {
+		if( (int)$part1 ) {
 			// separate by 3 digits
 			foreach( str_split( $part1, 3 ) as $unit => $digits3 ) {
 				if( !(int)$digits3 ) { continue; }
@@ -93,7 +103,6 @@ class yf_common_num2string {
 		// part2 - fractional
 		$out[] = (int)$part2.' '.$this->morph($part2, $units[0] );
 		$result = join( ' ', $out );
-		var_dump( $num, $result );
 		return( $result );
 	}
 
