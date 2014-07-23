@@ -1174,6 +1174,8 @@ class yf_main {
 		if (!strlen($class_name) || !strlen($method_name)) {
 			return false;
 		}
+		$class_name === '@object' && $class_name = $_GET['object'];
+		$method_name === '@action' && $method_name = $_GET['action'];
 		if (!$this->USE_SYSTEM_CACHE) {
 			$use_cache = false;
 		}
