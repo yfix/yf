@@ -143,6 +143,7 @@ class yf_common_num2string {
 		$_lang_id     = &$this->_lang_id;
 		$_currency_id = &$this->_currency_id;
 		$words        = &$this->words;
+		// set as default: first lang, currency from words options
 		$_lang_id     = current( array_keys( $words ) );
 		$_currency_id = current( array_keys( $words[ $_lang_id ][ 'currency' ] ) );
 	}
