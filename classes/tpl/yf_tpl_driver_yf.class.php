@@ -748,12 +748,12 @@ class yf_tpl_driver_yf {
 	* Foreach patterns processing
 	*/
 	function _process_foreaches ($string = '', $replace = array(), $stpl_name = '') {
-		if (false === strpos($string, '{/foreach}') || empty($string)) {
+		if (false === strpos($string, '{/foreach') || empty($string)) {
 			return $string;
 		}
 		$_this = $this;
 		// foreach processing pattern. Examples: {foreach("var")}<li>{#.value1}</li>{/foreach} or {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
-		$pattern = '/\{(?P<func>foreach|foreach_exec)\(\s*["\']{0,1}(?P<key>[a-z0-9_\s\.,;=-]+)["\']{0,1}\s*\)\}(?P<body>(?![^\{]*?\{\1\(\s*["\']{0,1}?).*?)\{\/\1\}/is';
+		$pattern = '/\{(?P<func>foreach|foreach_exec)\(\s*["\']{0,1}(?P<key>[a-z0-9_\s\.,;=-]+)["\']{0,1}\s*\)\}(?P<body>(?![^\{]*?\{\1\(\s*["\']{0,1}?).*?)\{\/\1\}/ims';
 		return preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$func = trim($m['func']);
 			$key_to_cycle = trim($m['key']);
