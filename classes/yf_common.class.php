@@ -1096,8 +1096,8 @@ class yf_common {
 	/**
 	 * Returns the sum in words (for money)
 	 */
-	function num2str($num, $currency_id = null, $lang = null ) {
-		return _class('common_num2string', 'classes/common/')->num2str($num, $currency_id, $lang );
+	function num2str($number, $currency_id = null, $lang_id = null ) {
+		return _class('common_num2string', 'classes/common/')->num2str($number, $currency_id, $lang_id );
 	}
 
 	/**

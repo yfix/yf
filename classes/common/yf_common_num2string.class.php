@@ -4,39 +4,170 @@
 */
 class yf_common_num2string {
 
+	protected $_lang_id     = null;
 	protected $_currency_id = null;
 	// gender:  0 - male; 1 - female;
-	public $currency = array(
-		'UAH' => array( 'гривна', 'гривни',  'гривен',   1 ),
-		'RUB' => array( 'рубль',  'рубля',   'рублей',   0 ),
-		'USD' => array( 'доллар', 'доллара', 'долларов', 0 ),
-		'EUR' => array( 'евро',   'евро',    'евро',     0 ),
-	);
-	public $units = array(
-		array( 'копейка',  'копейки',  'копеек',     1 ),
-		array( 'гривна',   'гривни',   'гривен',     1 ),
-		array( 'тысяча',   'тысячи',   'тысяч',      1 ),
-		array( 'миллион',  'миллиона', 'миллионов',  0 ),
-		array( 'миллиард', 'милиарда', 'миллиардов', 0 ),
+	protected $words = array(
+		'RU' => array(
+			'currency' => array(
+				'UAH' => array(
+					array( 'копейка', 'копейки', 'копеек', 1 ),
+					array( 'гривна',  'гривни',  'гривен', 1 ),
+				),
+				'RUB' => array(
+					array( 'копейка', 'копейки', 'копеек', 1 ),
+					array( 'рубль',   'рубля',   'рублей', 0 ),
+				),
+				'USD' => array(
+					array( 'цент',   'цента',   'центов',   0 ),
+					array( 'доллар', 'доллара', 'долларов', 0 ),
+				),
+				'EUR' => array(
+					array( 'цент', 'цента', 'центов', 0 ),
+					array( 'евро', 'евро',  'евро',   0 ),
+				),
+			),
+			'units' => array(
+				array(),
+				array(),
+				array( 'тысяча',   'тысячи',   'тысяч',      1 ),
+				array( 'миллион',  'миллиона', 'миллионов',  0 ),
+				array( 'миллиард', 'милиарда', 'миллиардов', 0 ),
+			),
+			'zero'   => 'ноль',
+			'signs'  => array( 'плюс', 'минус' ),
+			'digits' => array(
+				// 1-9
+				array(
+					array( null, 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять' ),
+					array( null, 'одна', 'две', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять' ),
+				),
+				// 10-19
+				array( 'десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать' , 'пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать' ),
+				// 20-99
+				array( null, null,  'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят' , 'восемьдесят', 'девяносто' ),
+				// 1xx-9xx
+				array( null, 'сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот' ),
+			),
+		),
+		'UA' => array(
+			'currency' => array(
+				'UAH' => array(
+					array( 'копійка', 'копійки', 'копійок', 1 ),
+					array( 'гривня',  'гривні',  'гривень', 1 ),
+				),
+				'RUB' => array(
+					array( 'копійка', 'копійки', 'копійок', 1 ),
+					array( 'рубль',   'рубля',   'рублів',  0 ),
+				),
+				'USD' => array(
+					array( 'цент',  'цента',  'центів',  0 ),
+					array( 'долар', 'долара', 'доларів', 0 ),
+				),
+				'EUR' => array(
+					array( 'цент', 'цента', 'центів', 0 ),
+					array( 'євро', 'євро',  'євро',   0 ),
+				),
+			),
+			'units' => array(
+				array(),
+				array(),
+				array( 'тисяча',  'тисячі',   'тисяч',     1 ),
+				array( 'мільйон', 'мільйона', 'мільйонів', 0 ),
+				array( 'мільярд', 'мільярда', 'мільярдів', 0 ),
+			),
+			'zero'   => 'нуль',
+			'signs'  => array( 'плюс', 'мінус' ),
+			'digits' => array(
+				// 1-9
+				array(
+					array( null, 'один', 'два', 'три', 'чотири', 'п`ять', 'шість', 'сім', 'вісім', 'дев`ять' ),
+					array( null, 'одна', 'дві', 'три', 'чотири', 'п`ять', 'шість', 'сім', 'вісім', 'дев`ять' ),
+				),
+				// 10-19
+				array( 'десять', 'одиннадцять', 'дванадцать', 'тринадцать', 'чотирнадцать', 'п`ятнадцать', 'шістнадцять', 'сімнадцять', 'вісімнадцять', 'дев`ятнадцать' ),
+				// 20-99
+				array( null, null, 'двадцять', 'тридцять', 'сорок', 'п`ятьдесят', 'шістдесят', 'сімідесят' , 'вісімдесят', 'дев`яносто' ),
+				// 1xx-9xx
+				array( null, 'сто', 'двісті', 'триста', 'чотиреста', 'п`ятьсот', 'шістсот', 'сімсот', 'вісімсот', 'дев`ятсот' ),
+			),
+		),
+		'EN' => array(
+			'currency' => array(
+				'UAH' => array(
+					array( 'kopeck', 'kopecks', 'kopecks', 1 ),
+					array( 'grivna', 'grivnas', 'grivnas', 1 ),
+				),
+				'RUB' => array(
+					array( 'kopeck', 'kopecks', 'kopecks', 1 ),
+					array( 'rouble', 'roubles', 'roubles', 0 ),
+				),
+				'USD' => array(
+					array( 'cent',   'cents',   'cents',   0 ),
+					array( 'dollar', 'dollars', 'dollars', 0 ),
+				),
+				'EUR' => array(
+					array( 'cent', 'cents', 'cents', 0 ),
+					array( 'euro', 'euros', 'euros', 0 ),
+				),
+			),
+			'units' => array(
+				array(),
+				array(),
+				array( 'thousand', 'thousands', 'thousands', 1 ),
+				array( 'million',  'million',   'million',   0 ),
+				array( 'billion',  'milliard',  'billion',   0 ),
+			),
+			'zero'   => 'zero',
+			'signs'  => array( 'plus', 'minus' ),
+			'digits' => array(
+				// 1-9
+				array(
+					array( null, 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine' ),
+					array( null, 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine' ),
+				),
+				// 10-19
+				array( 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen' ),
+				// 20-99
+				array( null, null, 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety' ),
+				// 1xx-9xx
+				array( null, 'one hundred', 'two hundred', 'three hundred', 'four hundred', 'five hundred', 'six hundred', 'seven hundred', 'eight hundred', 'nine hundred' ),
+			),
+		),
 	);
 	protected $_sign_force = false;
-	public $signs = array( 'плюс', 'минус' );
-	public $digits = array(
-		// 1-9
-		array(
-			array( null, 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять' ),
-			array( null, 'одна', 'две', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять' ),
-		),
-		// 10-19
-		array( 'десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать' , 'пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать' ),
-		// 20-99
-		array( null, null,  'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят' , 'восемьдесят', 'девяносто' ),
-		// 1xx-9xx
-		array( null, 'сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот' ),
-	);
 
 	function _init(){
-		$this->_currency_id = current( array_keys( $this->currency ) );
+		$_lang_id     = &$this->_lang_id;
+		$_currency_id = &$this->_currency_id;
+		$words        = &$this->words;
+		$_lang_id     = current( array_keys( $words ) );
+		$_currency_id = current( array_keys( $words[ $_lang_id ][ 'currency' ] ) );
+	}
+
+	function lang_id( $lang_id = null, $set = true ) {
+		$_lang_id = &$this->_lang_id;
+		if( empty( $lang_id ) ) { $result = $_lang_id; }
+		else {
+			$words  = &$this->words;
+			$result = strtoupper( $lang_id );
+			$result = isset( $words[ $result ] ) ? $result : $_lang_id;
+			$set && $_lang_id = $result;
+		}
+		return( $result );
+	}
+
+	function currency_id( $currency_id = null, $set = true ) {
+		$_lang_id     = $this->lang_id();
+		$_currency_id = &$this->_currency_id;
+		$currency     = &$this->words[ $_lang_id ][ 'currency' ];
+		if( empty( $currency_id ) ) { $result = $_currency_id; }
+		else {
+			$result = strtoupper( $currency_id );
+			$result = isset( $currency[ $result ] ) ? $result : $_currency_id;
+			$set && $_currency_id = $result;
+		}
+		return( $result );
 	}
 
 	function sign( $force = null ){
@@ -48,31 +179,24 @@ class yf_common_num2string {
 		return( $result );
 	}
 
-	function currency_id( $currency_id = null ){
-		if( empty( $currency_id ) ) { $result = $this->_currency_id; }
-		else {
-			$result = strtoupper( $currency_id );
-			$result = isset( $this->currency[ $result ] ) ? $result : $this->_currency_id;
-			$this->_currency_id = $result;
-		}
-		return( $result );
-	}
-
 	/**
 	* Returns the sum in words (for money)
 	*/
-// TODO: translation (RU, UK, EN)
-	function num2str( $num, $currency_id = null ){
-		$num = (float)$num;
-		$nul = 'ноль';
-		$digits = $this->digits;
-		$signs = $this->signs; $sign_force = $this->sign();
-		$currency_id = $this->currency_id( $currency_id );
-		$units = $this->units; $units[ 1 ] = &$this->currency[ $currency_id ];
+	function num2str( $number, $currency_id = null, $lang_id = null, $set = false ){
+		$lang_id     = $this->lang_id(     $lang_id,     $set );
+		$currency_id = $this->currency_id( $currency_id, $set );
+		$words       = &$this->words[ $lang_id ];
+		$digits = &$words[ 'digits' ];
+		$signs  = &$words[ 'signs'  ];
+		$units  = &$words[ 'units'  ];
+			$sign_force = $this->sign();
+			$units[ 0 ] = &$words[ 'currency' ][ $currency_id ][ 0 ];
+			$units[ 1 ] = &$words[ 'currency' ][ $currency_id ][ 1 ];
 		// separate float on integer and fractional
+		$number = (float)$number;
 		$number_format = localeconv();
 		$decimal_point = $number_format[ 'decimal_point' ];
-		list( $part1, $part2 ) = explode( $decimal_point, sprintf( '%015.2f', $num ) );
+		list( $part1, $part2 ) = explode( $decimal_point, sprintf( '%015.2f', $number ) );
 		$out = array();
 		$part1 < 0 && $out[] = $signs[ 1 ];
 		$part1 > 0 && $sign_force && $out[] = $signs[ 0 ];
@@ -97,7 +221,7 @@ class yf_common_num2string {
 				$out[] = $this->morph( $digits3, $units[ $unit ] );
 			}
 		} else {
-			$out[] = $nul;
+			$out[] = $words[ 'zero' ];
 			$out[] = $this->morph( $part1, $units[1] );
 		}
 		// part2 - fractional
