@@ -3,6 +3,7 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 class class_num2string_test extends PHPUnit_Framework_TestCase {
+
 	public function test_num2str_uah_ru() {
 		$this->assertEquals( 'ноль гривен 0 копеек',       common()->num2str(-0) );
 		$this->assertEquals( 'минус одна гривна 0 копеек', common()->num2str(-1) );
@@ -43,18 +44,39 @@ class class_num2string_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'один миллиард двести тридцать четыре миллиона пятьсот шестьдесят семь тысяч восемьсот девяносто гривен 99 копеек', common()->num2str(1234567890.99) );
 		$this->assertEquals( 'три милиарда двести тридцать четыре миллиона пятьсот шестьдесят семь тысяч восемьсот девяносто гривен 99 копеек', common()->num2str(3234567890.99) );
 		$this->assertEquals( 'two hundred twenty two milliard two hundred twenty two million two hundred twenty two thousands two hundred twenty two euros 22 cents', common()->num2str( 222222222222.222, 'EUR', 'EN' ) );
-
+		// ----------------------
 		$value = true;
 		$sign = _class( 'common_num2string', 'class/common' )->sign( $value );
 		$this->assertEquals( $value, $sign );
 		$this->assertEquals( 'плюс одна гривна 1 копейка',  common()->num2str(1.01) );
 		$this->assertEquals( 'минус одна гривна 1 копейка',  common()->num2str(-1.01) );
+		// ----------------------
 		$value = false;
 		$sign = _class( 'common_num2string', 'class/common' )->sign( $value );
 		$this->assertEquals( $value, $sign );
 		$this->assertEquals( 'одна гривна 1 копейка',  common()->num2str(1.01) );
 		$this->assertEquals( 'минус одна гривна 1 копейка',  common()->num2str(-1.01) );
+		// ----------------------
+		$value_ok = false;
+		$value = _class( 'common_num2string', 'class/common' )->cent_number( $value_ok );
+		$this->assertEquals( $value_ok, $value );
+		$this->assertEquals( 'ноль гривен ноль копеек', common()->num2str(-0) );
+		$this->assertEquals( 'ноль гривен ноль копеек', common()->num2str(0) );
+		$this->assertEquals( 'ноль гривен ноль копеек', common()->num2str(+0.0) );
+		$this->assertEquals( 'ноль гривен двадцать три копейки', common()->num2str(0.23) );
+		$this->assertEquals( 'минус двенадцать гривен ноль копеек', common()->num2str(-12.0) );
+		_class( 'common_num2string', 'class/common' )->cent_number( true );
+		$this->assertEquals( 'ноль гривен 0 копеек',    common()->num2str(0) );
+		// ----------------------
+		$value_ok = false;
+		$value = _class( 'common_num2string', 'class/common' )->cent_zero( $value_ok );
+		$this->assertEquals( $value_ok, $value );
+		$this->assertEquals( 'ноль гривен', common()->num2str(-0) );
+		$this->assertEquals( 'минус двенадцать гривен', common()->num2str(-12.0) );
+		_class( 'common_num2string', 'class/common' )->cent_zero( true );
+		$this->assertEquals( 'ноль гривен 0 копеек',    common()->num2str(0) );
 	}
+
 	public function test_num2str_uah_ua() {
 		$value = 'UA';
 		$value_id = _class( 'common_num2string', 'class/common' )->lang_id( $value );

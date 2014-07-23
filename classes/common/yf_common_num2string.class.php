@@ -135,7 +135,9 @@ class yf_common_num2string {
 			),
 		),
 	);
-	protected $_sign_force = false;
+	protected $_sign_force        = false;
+	protected $_cent_zero_force   = true;
+	protected $_cent_number_force = true;
 
 	function _init(){
 		$_lang_id     = &$this->_lang_id;
@@ -179,6 +181,24 @@ class yf_common_num2string {
 		return( $result );
 	}
 
+	function cent_number( $force = null ){
+		if( is_null( $force ) ) { $result = $this->_cent_number_force; }
+		else {
+			$result = (bool)$force;
+			$this->_cent_number_force = $result;
+		}
+		return( $result );
+	}
+
+	function cent_zero( $force = null ){
+		if( is_null( $force ) ) { $result = $this->_cent_zero_force; }
+		else {
+			$result = (bool)$force;
+			$this->_cent_zero_force = $result;
+		}
+		return( $result );
+	}
+
 	/**
 	* Returns the sum in words (for money)
 	*/
@@ -189,43 +209,52 @@ class yf_common_num2string {
 		$digits = &$words[ 'digits' ];
 		$signs  = &$words[ 'signs'  ];
 		$units  = &$words[ 'units'  ];
-			$sign_force = $this->sign();
+			$sign_force        = $this->sign();
+			$cent_number_force = $this->cent_number();
+			$cent_zero_force   = $this->cent_zero();
 			$units[ 0 ] = &$words[ 'currency' ][ $currency_id ][ 0 ];
 			$units[ 1 ] = &$words[ 'currency' ][ $currency_id ][ 1 ];
+			$units_count = count( $units ) - 1;
 		// separate float on integer and fractional
 		$number = (float)$number;
 		$number_format = localeconv();
 		$decimal_point = $number_format[ 'decimal_point' ];
-		list( $part1, $part2 ) = explode( $decimal_point, sprintf( '%015.2f', $number ) );
+		list( $part1, $part2 ) = explode( $decimal_point, sprintf( '%+016.2f', $number ) );
 		$out = array();
+		// add sign word
 		$part1 < 0 && $out[] = $signs[ 1 ];
 		$part1 > 0 && $sign_force && $out[] = $signs[ 0 ];
-		// part1 - integer
-		if( (int)$part1 ) {
-			// separate by 3 digits
-			foreach( str_split( $part1, 3 ) as $unit => $digits3 ) {
-				if( !(int)$digits3 ) { continue; }
-				// get unit
-				$unit = sizeof($units) - $unit - 1;
-				$gender = $units[$unit][3];
-				// separate by 1 digit
-				list( $d3, $d2, $d1 ) = $digits3;
-				// 1xx-9xx
-				$d3 > 0  && $out[] = $digits[ 3 ][ $d3 ];
-				// 20-99
-				$d2 > 1  && $out[] = $digits[ 2 ][ $d2 ];
-				// 10-19
-				$d2 == 1 && $out[] = $digits[ 1 ][ $d1 ];
-				// 1-9
-				$d1 > 0 && $d2 != 1 && $out[] = $digits[ 0 ][ $gender ][ $d1 ];
-				$out[] = $this->morph( $digits3, $units[ $unit ] );
+		// remove sign
+		$part1 = substr( $part1, 1 );
+		// processing
+		$digits_array = str_split( $part1 . '0' . $part2, 3 );
+		foreach( $digits_array as $unit => $digits3 ) {
+			$unit = $units_count - $unit;
+			if( (int)$digits3 == 0 && ( $unit > 1 || !( $cent_zero_force || $unit ) ) ) { continue; }
+			if( $unit < 2 && !(int)$digits3 ) {
+				// zero cent
+				$out[] = $cent_number_force && !$unit ? 0 : $words[ 'zero' ];
+			} else {
+				if( $cent_number_force && !$unit ) {
+					// cent as int
+					$out[] = (int)$digits3;
+				} else {
+					// get unit
+					$gender = $units[ $unit ][ 3 ];
+					// separate by 1 digit
+					list( $d3, $d2, $d1 ) = $digits3;
+					// 1xx-9xx
+					$d3 > 0  && $out[] = $digits[ 3 ][ $d3 ];
+					// 20-99
+					$d2 > 1  && $out[] = $digits[ 2 ][ $d2 ];
+					// 10-19
+					$d2 == 1 && $out[] = $digits[ 1 ][ $d1 ];
+					// 1-9
+					$d1 > 0 && $d2 != 1 && $out[] = $digits[ 0 ][ $gender ][ $d1 ];
+				}
 			}
-		} else {
-			$out[] = $words[ 'zero' ];
-			$out[] = $this->morph( $part1, $units[1] );
+			$out[] = $this->morph( $digits3, $units[ $unit ] );
 		}
-		// part2 - fractional
-		$out[] = (int)$part2.' '.$this->morph($part2, $units[0] );
 		$result = join( ' ', $out );
 		return( $result );
 	}
