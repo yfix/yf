@@ -477,7 +477,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertSame(array('k1'=>'v1','k2'=>'v2'), $this->_callme_results);
 	}
 	public function _callme2($a) {
-		if (!is_array($this->_callme_results)) {
+		if (!is_array($this->_callme2_results)) {
 			$this->_callme2_results = array();
 		}
 		if (is_array($a)) {
@@ -489,11 +489,14 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		// Some magick here with DI container, we link to this class :-)
 		main()->modules['unittest2'] = $this;
 		$data = array('k1' => 'v1', 'k2' => 'v2');
-		$this->_callme_results = array();
 		$result = _class('unittest2')->_callme2($data);
 		$this->assertSame($result, $data);
 		$this->assertSame($result, $this->_callme2_results);
 
 		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(unittest2,_callme2)} _{_key}={_val}_ {/foreach_exec}'));
+
+		$result = _class('unittest2')->_callme2(array());
+		$this->assertSame($result, array());
+		$this->assertSame(' no rows ', self::_tpl('{foreach_exec(unittest2,_callme2)} _{_key}={_val}_ {elseforeach} no rows {/foreach_exec}'));
 	}
 }
