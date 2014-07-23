@@ -747,21 +747,20 @@ class yf_tpl_driver_yf {
 	/**
 	* Foreach patterns processing
 	*/
-// TODO: add ability to directly execute some class method and do foreach over it like {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
 	function _process_foreaches ($string = '', $replace = array(), $stpl_name = '') {
 		if (false === strpos($string, '{/foreach}') || empty($string)) {
 			return $string;
 		}
 		$_this = $this;
-		// foreach processing pattern. Examples: {foreach("var")}<li>{#.value1}</li>{/foreach}
-		$pattern = '/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
+		// foreach processing pattern. Examples: {foreach("var")}<li>{#.value1}</li>{/foreach} or {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
+		$pattern = '/\{(?P<func>foreach|foreach_exec)\(\s*["\']{0,1}(?P<key>[a-z0-9_\s\.,;=-]+)["\']{0,1}\s*\)\}(?P<body>(?![^\{]*?\{\1\(\s*["\']{0,1}?).*?)\{\/\1\}/is';
 		return preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
-			$matched_string = $m[0];
-			$key_to_cycle = trim($m[1]);
+			$func = trim($m['func']);
+			$key_to_cycle = trim($m['key']);
 			if (empty($key_to_cycle)) {
 				return '';
 			}
-			$sub_template = str_replace('#.', $key_to_cycle.'.', $m[2]);
+			$sub_template = str_replace('#.', $key_to_cycle.'.', $m['body']);
 
 			// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
 			$no_rows_text = '';
@@ -775,8 +774,15 @@ class yf_tpl_driver_yf {
 
 			$data = null;
 			$sub_array = array();
+			// Ability to directly execute some class method and do foreach over it like {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
+			if ($func == 'foreach_exec') {
+				if (preg_match('/(?P<object>[\w\-]+)\s*[,;]\s*(?P<action>[\w\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $key_to_cycle, $m_exec)) {
+					$sub_array = main()->_execute($m_exec['object'], $m_exec['action'], $m_exec['args'], $stpl_name. $_this->_STPL_EXT, 0, $use_cache = false);
+				} else {
+					return '';
+				}
 			// Sub array like this: {foreach(post.somekey)} or {foreach(data.sub)}
-			if (false !== strpos($key_to_cycle, '.')) {
+			} elseif (false !== strpos($key_to_cycle, '.')) {
 				list($sub_key1, $sub_key2) = explode('.', $key_to_cycle);
 				if (!$sub_key1 || !$sub_key2) {
 					return '';
