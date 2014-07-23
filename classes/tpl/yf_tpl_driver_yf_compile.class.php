@@ -62,7 +62,7 @@ class yf_tpl_driver_yf_compile {
 				return $start. $cond.'('.$_this->_compile_if_funcs($m).') {'. $end;
 			},
 			// foreach pattern compilation
-			'/\{(?P<func>foreach|foreach_exec)\(\s*["\']{0,1}(?P<key>[a-z0-9_\s\.,;=-]+)["\']{0,1}\s*\)\}(?P<body>(?![^\{]*?\{\1\(\s*["\']{0,1}?).*?)\{\/\1\}/ims' => function($m) use ($start, $end, $_this) {
+			'/\{(?P<func>foreach|foreach_exec)\(\s*["\']{0,1}(?P<key>[a-z0-9_\s\.,;=@-]+)["\']{0,1}\s*\)\}(?P<body>(?![^\{]*?\{\1\(\s*["\']{0,1}?).*?)\{\/\1\}/ims' => function($m) use ($start, $end, $_this) {
 				return $start. $_this->_compile_foreach($m). $end;
 			},
 			// if ending tag
@@ -91,11 +91,11 @@ class yf_tpl_driver_yf_compile {
 			'/\{\#\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function($m) use ($start, $end) {
 				return $start. 'echo _class(\'tpl\')->_process_var_filters($_v[\''.$m[1].'\'],\''.$m[2].'\');'. $end;
 			},
-			'/\{(execute|exec_cached)\(\s*["\']{0,1}\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end, $name) {
+			'/\{(execute|exec_cached)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end, $name) {
 				$is_cached = (false !== strpos($m[1], '_cached'));
 				return $start.'echo main()->_execute(\''.$m[2].'\',\''.$m[3].'\',\''.$m[4].'\',\''.$name.'\',0,'.($is_cached ? 'true' : 'false').');'.$end;
 			},
-			'/\{(exec_last|execute_shutdown)\(\s*["\']{0,1}\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
+			'/\{(exec_last|execute_shutdown)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
 				return $start.'/*exec_last_start*/echo main()->_execute(\''.$m[2].'\',\''.$m[3].'\',\''.$m[4].'\',\''.$name.'\',0,false);/*exec_last_end*/'.$end;
 			},
 			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end, $name) {
@@ -391,7 +391,7 @@ class yf_tpl_driver_yf_compile {
 		// Ability to directly execute some class method and do foreach over it like {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
 		if ($func == 'foreach_exec') {
 			$foreach_data_tag = 'array()';
-			if (preg_match('/(?P<object>[\w\-]+)\s*[,;]\s*(?P<action>[\w\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $foreach_arr_name, $m_exec)) {
+			if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $foreach_arr_name, $m_exec)) {
 				$foreach_data_tag = '(array)main()->_execute(\''.$m_exec['object'].'\', \''.$m_exec['action'].'\', \''.$m_exec['args'].'\', $name. $this->_STPL_EXT, 0, $use_cache = false)';
 			}
 		// Support for deep arrays as main array
