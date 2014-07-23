@@ -64,6 +64,10 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('val1,val2,val3', self::_tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2;param3=val3)}' ));
 		$this->assertEquals('val1,val2', self::_tpl( '{execute( test , true_for_unittest , param1=val1 ; param2=val2 )}' ));
 		$this->assertNotEquals('tru', self::_tpl( '{execute(test,true_for_unittest)}' ));
+		$_GET['object'] = 'test';
+		$this->assertEquals('true', self::_tpl( '{execute(@object,true_for_unittest)}' ));
+		$_GET['action'] = 'true_for_unittest';
+		$this->assertEquals('true', self::_tpl( '{execute(@object,@action)}' ));
 	}
 	public function test_catch() {
 		$this->assertEquals('  __true__', self::_tpl( '{catch( mytest1 )}{execute(test,true_for_unittest)}{/catch}  __{mytest1}__' ));
@@ -475,5 +479,37 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->_callme_results = array();
 		$this->assertEquals('', self::_tpl('{execute(unittest1,_callme;k1=v1)}{exec_last(unittest1,_callme;k2=v2)}'));
 		$this->assertSame(array('k1'=>'v1','k2'=>'v2'), $this->_callme_results);
+	}
+	public function _callme2($a) {
+		if (!is_array($this->_callme2_results)) {
+			$this->_callme2_results = array();
+		}
+		if (is_array($a)) {
+			$this->_callme2_results = $a;
+		}
+		return $this->_callme2_results;
+	}
+	public function callme2($a) {
+		return $this->_callme2($a);
+	}
+	public function test_foreach_exec() {
+		// Some magick here with DI container, we link to this class :-)
+		main()->modules['unittest2'] = $this;
+		$data = array('k1' => 'v1', 'k2' => 'v2');
+		$result = _class('unittest2')->_callme2($data);
+		$this->assertSame($result, $data);
+		$this->assertSame($result, $this->_callme2_results);
+
+		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(unittest2,_callme2)} _{_key}={_val}_ {/foreach_exec}'));
+		$_GET['object'] = 'unittest2';
+		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,_callme2)} _{_key}={_val}_ {/foreach_exec}'));
+		$_GET['action'] = '_callme2';
+		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,@action)} _{_key}={_val}_ {/foreach_exec}'));
+		$_GET['action'] = 'callme2';
+		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,@action)} _{_key}={_val}_ {/foreach_exec}'));
+
+		$result = _class('unittest2')->_callme2(array());
+		$this->assertSame($result, array());
+		$this->assertSame(' no rows ', self::_tpl('{foreach_exec(unittest2,_callme2)} _{_key}={_val}_ {elseforeach} no rows {/foreach_exec}'));
 	}
 }

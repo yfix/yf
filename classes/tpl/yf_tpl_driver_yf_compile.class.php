@@ -62,7 +62,7 @@ class yf_tpl_driver_yf_compile {
 				return $start. $cond.'('.$_this->_compile_if_funcs($m).') {'. $end;
 			},
 			// foreach pattern compilation
-			'/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is' => function($m) use ($start, $end, $_this) {
+			'/\{(?P<func>foreach|foreach_exec)\(\s*["\']{0,1}(?P<key>[a-z0-9_\s\.,;=@-]+)["\']{0,1}\s*\)\}(?P<body>(?![^\{]*?\{\1\(\s*["\']{0,1}?).*?)\{\/\1\}/ims' => function($m) use ($start, $end, $_this) {
 				return $start. $_this->_compile_foreach($m). $end;
 			},
 			// if ending tag
@@ -91,11 +91,11 @@ class yf_tpl_driver_yf_compile {
 			'/\{\#\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function($m) use ($start, $end) {
 				return $start. 'echo _class(\'tpl\')->_process_var_filters($_v[\''.$m[1].'\'],\''.$m[2].'\');'. $end;
 			},
-			'/\{(execute|exec_cached)\(\s*["\']{0,1}\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end, $name) {
+			'/\{(execute|exec_cached)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end, $name) {
 				$is_cached = (false !== strpos($m[1], '_cached'));
 				return $start.'echo main()->_execute(\''.$m[2].'\',\''.$m[3].'\',\''.$m[4].'\',\''.$name.'\',0,'.($is_cached ? 'true' : 'false').');'.$end;
 			},
-			'/\{(exec_last|execute_shutdown)\(\s*["\']{0,1}\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
+			'/\{(exec_last|execute_shutdown)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
 				return $start.'/*exec_last_start*/echo main()->_execute(\''.$m[2].'\',\''.$m[3].'\',\''.$m[4].'\',\''.$name.'\',0,false);/*exec_last_end*/'.$end;
 			},
 			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end, $name) {
@@ -362,9 +362,10 @@ class yf_tpl_driver_yf_compile {
 		$start = '<'.'?p'.'hp ';
 		$end	= ' ?'.'>';
 
-		$orig_arr_name = trim($m[1]);
+		$func = trim($m['func']);
+		$orig_arr_name = trim($m['key']);
 		$foreach_arr_name = $orig_arr_name;
-		$foreach_body = $m[2];
+		$foreach_body = $m['body'];
 		// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
 		$no_rows_text = '';
 		$else_tag = '{elseforeach}';
@@ -386,8 +387,15 @@ class yf_tpl_driver_yf_compile {
 		$foreach_body = str_replace(array_keys($special_vars), $special_vars, $foreach_body);
 
 		$foreach_arr_tag = '';
+		$foreach_data_tag = '';
+		// Ability to directly execute some class method and do foreach over it like {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
+		if ($func == 'foreach_exec') {
+			$foreach_data_tag = 'array()';
+			if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $foreach_arr_name, $m_exec)) {
+				$foreach_data_tag = '(array)main()->_execute(\''.$m_exec['object'].'\', \''.$m_exec['action'].'\', \''.$m_exec['args'].'\', $name. $this->_STPL_EXT, 0, $use_cache = false)';
+			}
 		// Support for deep arrays as main array
-		if (false !== strpos($foreach_arr_name, '.')) {
+		} elseif (false !== strpos($foreach_arr_name, '.')) {
 			list($v1, $v2) = explode('.', $foreach_arr_name);
 			$global_arrays = tpl()->_avail_arrays;
 			$is_global = is_array($global_arrays) && array_key_exists($v1, $global_arrays);
@@ -400,7 +408,10 @@ class yf_tpl_driver_yf_compile {
 		} else {
 			$foreach_arr_tag = '$replace[\''.$foreach_arr_name.'\']';
 		}
-		return '$__foreach_data = is_array('.$foreach_arr_tag.') ? '.$foreach_arr_tag.' : $this->_range_foreach('.(is_numeric($foreach_arr_name) ? intval($foreach_arr_name) : $foreach_arr_tag).'); '. PHP_EOL
+		if (!$foreach_data_tag) {
+			$foreach_data_tag = 'is_array('.$foreach_arr_tag.') ? '.$foreach_arr_tag.' : $this->_range_foreach('.(is_numeric($foreach_arr_name) ? intval($foreach_arr_name) : $foreach_arr_tag).')';
+		}
+		return '$__foreach_data = '.$foreach_data_tag.'; '. PHP_EOL
 			.'$__f_total = count($__foreach_data); $__f_counter = 0;'. PHP_EOL
 			.'if ($__foreach_data) {'.PHP_EOL.'foreach ($__foreach_data as $_k => $_v) { $__f_counter++; '. PHP_EOL
 			.$end. $foreach_body. $start. PHP_EOL
