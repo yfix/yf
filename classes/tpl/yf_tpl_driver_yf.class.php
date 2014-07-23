@@ -747,6 +747,7 @@ class yf_tpl_driver_yf {
 	/**
 	* Foreach patterns processing
 	*/
+// TODO: add ability to directly execute some class method and do foreach over it like {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
 	function _process_foreaches ($string = '', $replace = array(), $stpl_name = '') {
 		if (false === strpos($string, '{/foreach}') || empty($string)) {
 			return $string;
