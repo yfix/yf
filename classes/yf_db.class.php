@@ -1200,7 +1200,12 @@ class yf_db {
 		if (isset($this->_found_tables[$name])) {
 			return $this->_found_tables[$name];
 		}
-		return $this->DB_PREFIX. (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
+		$name = (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
+		if (strlen($this->DB_PREFIX) && substr($name, 0, strlen($this->DB_PREFIX)) != $this->DB_PREFIX) {
+			return $this->DB_PREFIX. $name;
+		} else {
+			return $name;
+		}
 	}
 
 	/**
