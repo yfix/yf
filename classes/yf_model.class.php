@@ -89,4 +89,37 @@ class yf_model {
 	public function get_dirty($attr = null) {
 // TODO
 	}
+
+	/**
+	* Linking with the table builder
+	*/
+	public function table($params = array()) {
+		$db = &$this->_db;
+		$sql = $db->from($this->_get_table_name())->sql();
+		$filter_name = $params['filter_name'] ?: ($this->_params['filter_name'] ?: $_GET['object'].'__'.$_GET['action']);
+		$params['filter'] = $params['filter'] ?: ($this->_params['filter'] ?: $_SESSION[$filter_name]);
+		return table($sql, $params);
+	}
+
+	/**
+	* Linking with the form builder
+	*/
+	public function form($whereid, $data = array(), $params = array()) {
+		$db = &$this->_db;
+		$a = (array)$db->from($this->_get_table_name())->whereid($whereid)->get();
+		return form($a + (array)$data, $params);
+	}
+
+	/**
+	* Linking with the form builder
+	*/
+	public function filter_form($data = array(), $params = array()) {
+		$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
+		$a = array(
+			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
+			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
+		);
+		$params['selected'] = $params['selected'] ?: $_SESSION[$filter_name];
+		return form($a + (array)$data, $params);
+	}
 }
