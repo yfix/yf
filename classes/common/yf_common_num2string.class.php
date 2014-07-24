@@ -30,9 +30,10 @@ class yf_common_num2string {
 			'units' => array(
 				array(),
 				array(),
-				array( 'тысяча',   'тысячи',   'тысяч',      1 ),
-				array( 'миллион',  'миллиона', 'миллионов',  0 ),
-				array( 'миллиард', 'милиарда', 'миллиардов', 0 ),
+				array( 'тысяча',   'тысячи',    'тысяч',      1 ),
+				array( 'миллион',  'миллиона',  'миллионов',  0 ),
+				array( 'миллиард', 'милиарда',  'миллиардов', 0 ),
+				array( 'триллион', 'триллиона', 'триллионов', 0 ),
 			),
 			'zero'   => 'ноль',
 			'signs'  => array( 'плюс', 'минус' ),
@@ -72,9 +73,10 @@ class yf_common_num2string {
 			'units' => array(
 				array(),
 				array(),
-				array( 'тисяча',  'тисячі',   'тисяч',     1 ),
-				array( 'мільйон', 'мільйона', 'мільйонів', 0 ),
-				array( 'мільярд', 'мільярда', 'мільярдів', 0 ),
+				array( 'тисяча',   'тисячі',    'тисяч',      1 ),
+				array( 'мільйон',  'мільйона',  'мільйонів',  0 ),
+				array( 'мільярд',  'мільярда',  'мільярдів',  0 ),
+				array( 'трильйон', 'трильйона', 'трильйонів', 0 ),
 			),
 			'zero'   => 'нуль',
 			'signs'  => array( 'плюс', 'мінус' ),
@@ -115,8 +117,9 @@ class yf_common_num2string {
 				array(),
 				array(),
 				array( 'thousand', 'thousands', 'thousands', 1 ),
-				array( 'million',  'million',   'million',   0 ),
-				array( 'billion',  'milliard',  'billion',   0 ),
+				array( 'million',  'millions',  'millions',  0 ),
+				array( 'billion',  'milliards', 'billions',  0 ),
+				array( 'trillion', 'trillions', 'trillions', 0 ),
 			),
 			'zero'   => 'zero',
 			'signs'  => array( 'plus', 'minus' ),
@@ -201,62 +204,74 @@ class yf_common_num2string {
 	}
 
 	/**
-	* Returns the sum in words (for money)
+	* Returns number to words for money (number spelling)
 	*/
-	function num2str( $number, $currency_id = null, $lang_id = null, $set = false ){
+	function num2str( $float, $currency_id = null, $lang_id = null, $set = false ){
 		$lang_id     = $this->lang_id(     $lang_id,     $set );
 		$currency_id = $this->currency_id( $currency_id, $set );
 		$words       = &$this->words[ $lang_id ];
 		$digits = &$words[ 'digits' ];
 		$signs  = &$words[ 'signs'  ];
 		$units  = &$words[ 'units'  ];
+			// prepare options
 			$sign_force        = $this->sign();
 			$cent_number_force = $this->cent_number();
 			$cent_zero_force   = $this->cent_zero();
 			$units[ 0 ] = &$words[ 'currency' ][ $currency_id ][ 0 ];
 			$units[ 1 ] = &$words[ 'currency' ][ $currency_id ][ 1 ];
-			$units_count = count( $units ) - 1;
-		// separate float on integer and fractional
-		$number = (float)$number;
+		// separate float on sign, integer, fractional
+		$result = array();
+		$number = trim( $float );
+		// trim fractional by 2 digits
 		$number_format = localeconv();
-		$decimal_point = $number_format[ 'decimal_point' ];
-		list( $part1, $part2 ) = explode( $decimal_point, sprintf( '%+016.2f', $number ) );
-		$out = array();
+			$decimal_point = $number_format[ 'decimal_point' ];
+			// $thousands_sep = $number_format[ 'thousands_sep' ];
+			$thousands_sep = array( ' ', '.', ',', "'", '`' );
+		list( $part1, $part2 ) = explode( $decimal_point, $number );
+		$part2 = substr( $part2 . '00', 0, 2 );
+		$number = str_replace( $thousands_sep, '', $part1 ) . '0' . $part2;
 		// add sign word
-		$part1 < 0 && $out[] = $signs[ 1 ];
-		$part1 > 0 && $sign_force && $out[] = $signs[ 0 ];
-		// remove sign
-		$part1 = substr( $part1, 1 );
-		// processing
-		$digits_array = str_split( $part1 . '0' . $part2, 3 );
+		$sign_minus = substr( $number, 0, 1 ) == '-';
+			// minus
+			$sign_minus && $result[] = $signs[ 1 ];
+			// plus
+			!$sign_minus > 0 && $sign_force && $result[] = $signs[ 0 ];
+			// remove sign
+			$sign_minus && $number = substr( $number, 1 );
+		// format number by 3 digits
+		while( strlen( $number ) % 3 ) { $number = '0' . $number; }
+		// processing number digits
+		$digits_array = str_split( $number, 3 );
+		$units_count = count( $digits_array ) - 1;
 		foreach( $digits_array as $unit => $digits3 ) {
 			$unit = $units_count - $unit;
+			// skip zero if not dollar or cent
 			if( (int)$digits3 == 0 && ( $unit > 1 || !( $cent_zero_force || $unit ) ) ) { continue; }
 			if( $unit < 2 && !(int)$digits3 ) {
-				// zero cent
-				$out[] = $cent_number_force && !$unit ? 0 : $words[ 'zero' ];
+				// zero if dollar or cent
+				$result[] = $cent_number_force && !$unit ? 0 : $words[ 'zero' ];
 			} else {
 				if( $cent_number_force && !$unit ) {
 					// cent as int
-					$out[] = (int)$digits3;
+					$result[] = (int)$digits3;
 				} else {
-					// get unit
-					$gender = $units[ $unit ][ 3 ];
 					// separate by 1 digit
 					list( $d3, $d2, $d1 ) = $digits3;
 					// 1xx-9xx
-					$d3 > 0  && $out[] = $digits[ 3 ][ $d3 ];
+					$d3 > 0  && $result[] = $digits[ 3 ][ $d3 ];
 					// 20-99
-					$d2 > 1  && $out[] = $digits[ 2 ][ $d2 ];
+					$d2 > 1  && $result[] = $digits[ 2 ][ $d2 ];
 					// 10-19
-					$d2 == 1 && $out[] = $digits[ 1 ][ $d1 ];
+					$d2 == 1 && $result[] = $digits[ 1 ][ $d1 ];
 					// 1-9
-					$d1 > 0 && $d2 != 1 && $out[] = $digits[ 0 ][ $gender ][ $d1 ];
+					$d1 > 0 && $d2 != 1
+						&& ( $gender = $units[ $unit ][ 3 ] ) > -1
+						&& $result[] = $digits[ 0 ][ $gender ][ $d1 ];
 				}
 			}
-			$out[] = $this->morph( $digits3, $units[ $unit ] );
+			$result[] = $this->morph( $digits3, $units[ $unit ] );
 		}
-		$result = join( ' ', $out );
+		$result = join( ' ', $result );
 		return( $result );
 	}
 
