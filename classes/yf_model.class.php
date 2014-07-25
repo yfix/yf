@@ -7,6 +7,12 @@
 class yf_model {
 
 	/**
+	* YF framework constructor
+	*/
+	public function _init() {
+	}
+
+	/**
 	* We cleanup object properties when cloning
 	*/
 	public function __clone() {
@@ -36,7 +42,7 @@ class yf_model {
 #		if (!$this->_preload_complete) {
 #			$this->_preload_data();
 #		}
-#		return $this->$name;
+		return $this->$name;
 	}
 
 	/**
@@ -46,8 +52,8 @@ class yf_model {
 #		if (!$this->_preload_complete) {
 #			$this->_preload_data();
 #		}
-#		$this->$name = $value;
-#		return $this->$name;
+		$this->$name = $value;
+		return $this->$name;
 	}
 
 	/**
