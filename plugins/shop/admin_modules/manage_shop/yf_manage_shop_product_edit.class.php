@@ -125,19 +125,16 @@ class yf_manage_shop_product_edit {
 				$region = _class( '_shop_region', 'modules/shop/' )->_get_by_product_ids( $id, true );
 					$region = $region[ $id ];
 				// -----
-
 				$product_to_unit_insert = array();
 				foreach ((array)$_POST['units'] as $_unit_id) {
-					db()->query('DELETE FROM '.db('shop_product_to_unit').' WHERE product_id='.$id);
-					$_unit_id = intval($_unit_id);
-					if (!$_unit_id) {
-						continue;
-					}
+					$_unit_id = (int)$_unit_id;
+					if( empty( $_unit_id ) ) { continue; }
 					$product_to_unit_insert[] = array(
 						'product_id' => $id,
-						'unit_id' => $_unit_id,
+						'unit_id'    => $_unit_id,
 					);
 				}
+				db()->query('DELETE FROM '.db('shop_product_to_unit').' WHERE product_id='.$id);
 				if ($product_to_unit_insert) {
 					db()->insert_safe(db('shop_product_to_unit'), $product_to_unit_insert);
 				}
@@ -176,9 +173,9 @@ class yf_manage_shop_product_edit {
 			$products_to_unit[$a['unit_id']] = $a['unit_id'];
 		}
 		$replace = $product_info + array(
-			'form_action'        => './?object='.main()->_get('object').'&action=product_edit&id='.$product_info['id'],
-			'back_url'           => './?object='.main()->_get('object').'&action=products',
-			'units'				=> $products_to_unit,
+			'form_action' => './?object='.main()->_get('object').'&action=product_edit&id='.$product_info['id'],
+			'back_url'    => './?object='.main()->_get('object').'&action=products',
+			'units'       => $products_to_unit,
 		);
 		return form($replace, array(
 // TODO: use validation
@@ -234,7 +231,14 @@ class yf_manage_shop_product_edit {
 			->container(module('manage_shop')->_productparams_container($id), array('desc' => 'Product params'/*, 'edit_link' => './?object='.main()->_get('object').'&action=attributes'*/))
 // TODO: replace with similar JS container as for params and images
 #			->container(module('manage_shop')->related_products($product_info['id']), array('desc' => 'Related products'))
-			->multi_select_box('units', module('manage_shop')->_units_for_select, array('desc' => 'Units', 'edit_link' => './?object='.main()->_get('object').'&action=units', 'show_text' => 1))
+			// ->multi_select2_box('units', module('manage_shop')->_units_for_select, array('desc' => 'Units', 'edit_link' => './?object='.main()->_get('object').'&action=units', 'show_text' => 1))
+			->select2_box( array(
+				'desc'      => 'Ед. измерения',
+				'name'      => 'units',
+				'multiple'  => true,
+				'values'    => module('manage_shop')->_units_for_select,
+				'edit_link' => url_admin( '/manage_shop/units' ),
+			))
 		->tab_end()
 			.tpl()->parse('manage_shop/product_edit_js');
 	}
