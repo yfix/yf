@@ -179,7 +179,7 @@ class yf_manage_shop_product_edit {
 			->link('Search images', './?object='.main()->_get('object').'&action=product_image_search&id='.$product_info['id'], array('class_add' => 'btn-success'))
 			->container(
 				($images_items ? implode(PHP_EOL, $images_items) : '').
-				'<a class="btn btn-default btn-mini btn-xs" onclick="addImage();"><span>'.t('Add Image').'</span></a> <div id="images"></div>'
+				'<a class="btn btn-default btn-mini btn-xs test_add_image" onclick="addImage();"><span>'.t('Add Image').'</span></a> <div id="images"></div>'
 				, array('desc' => 'Images')
 			)
 			->link('Set main image', './?object='.$_GET['object'].'&action=set_main_image&id='.$product_info['id'], array(
