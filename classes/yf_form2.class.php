@@ -41,7 +41,7 @@ class yf_form2 {
 	/**
 	* Wrapper for template engine
 	* Example:
-	*	return form2($replace)
+	*	return form($replace)
 	*		->text('login','Login')
 	*		->text('password','Password')
 	*		->text('first_name','First Name')
@@ -55,7 +55,8 @@ class yf_form2 {
 		if ($replace && is_string($replace)) {
 			$sql = $replace;
 			$this->_sql = $sql;
-			$replace = db()->get_2d($sql);
+			$db = is_object($params['db']) ? $params['db'] : db();
+			$replace = $db->get_2d($sql);
 		}
 		if (!$params['no_chained_mode']) {
 			$this->_chained_mode = true;
@@ -189,6 +190,7 @@ class yf_form2 {
 		if (DEBUG_MODE) {
 			$ts = microtime(true);
 		}
+		_class('core_events')->fire('form.before_render', array($extra, $replace, $this));
 		$on_before_render = isset($extra['on_before_render']) ? $extra['on_before_render'] : $this->_on['on_before_render'];
 		if (is_callable($on_before_render)) {
 			$on_before_render($extra, $replace, $this);
@@ -321,6 +323,7 @@ class yf_form2 {
 		if (is_callable($on_after_render)) {
 			$on_after_render($extra, $replace, $this);
 		}
+		_class('core_events')->fire('form.after_render', array($extra, $replace, $this));
 		if (DEBUG_MODE) {
 			debug('form2[]', array(
 				'params'	=> $this->_params,
@@ -365,7 +368,9 @@ class yf_form2 {
 				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $_this->_params['links_add'];
 			}
 			if (MAIN_TYPE_USER) {
-				$extra['action'] = process_url($extra['action'], true);
+				if (strpos($extra['action'], 'http://') === false && strpos($extra['action'], 'https://') !== 0) {
+					$extra['action'] = process_url($extra['action'], true);
+				}
 			}
 			$extra['class'] = $extra['class'] ?: 'form-horizontal';// col-md-6';
 			if ($extra['class_add']) {
@@ -742,7 +747,7 @@ class yf_form2 {
 		$func = function($extra, $r, $_this) {
 			$_this->_prepare_inline_error($extra);
 			$extra['id'] = $_this->_prepare_id($extra);
-			$extra['placeholder'] = t($extra['placeholder'] ?: $extra['desc']);
+			$extra['placeholder'] = t(isset($extra['placeholder']) ? $extra['placeholder'] : $extra['desc']);
 			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
 			$extra['type'] = $extra['type'] ?: 'text';
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
@@ -826,8 +831,9 @@ class yf_form2 {
 	* Just hidden input
 	*/
 	function hidden($name, $extra = array(), $replace = array()) {
-		if (!is_array($extra)) {
-			$extra = array();
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $_this) {
@@ -900,7 +906,7 @@ class yf_form2 {
 	*/
 	function login($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = $extra['type'] ?: 'text';
-		$extra['prepend'] = '<i class="icon-user"></i>';
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="icon-user"></i>';
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -1435,7 +1441,11 @@ class yf_form2 {
 	/**
 	*/
 	function _html_control($name, $values, $extra = array(), $replace = array(), $func_html_control = '') {
-		$extra['name'] = $extra['name'] ?: $name;
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+		} else {
+			$extra['name'] = $name;
+		}
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$extra['func_html_control'] = $extra['func_html_control'] ?: $func_html_control;
@@ -1559,7 +1569,7 @@ class yf_form2 {
 
 	/**
 	*/
-	function select2_box($name, $values, $extra = array(), $replace = array()) {
+	function select2_box($name, $values = null, $extra = array(), $replace = array()) {
 		return $this->_html_control($name, $values, $extra, $replace, 'select2_box');
 	}
 
@@ -1927,21 +1937,29 @@ class yf_form2 {
 			if (is_callable($on_before_validate)) {
 				$on_before_validate($_this->_validate_rules, $data);
 			}
+			_class('core_events')->fire('form.before_validate', array($_this->_validate_rules, $data));
 			// Processing of prepared rules
 			$validate_ok = $_this->_validate_rules_process($_this->_validate_rules, $data, $extra);
 			if ($validate_ok) {
 				$_this->_validate_ok = true;
+				$on_validate_ok = isset($extra['on_validate_ok']) ? $extra['on_validate_ok'] : $_this->_on['on_validate_ok'];
+				if (is_callable($on_validate_ok)) {
+					$on_validate_ok($data, $extra, $_this->_validate_rules);
+				}
+				_class('core_events')->fire('form.validate_ok', array($_this->_validate_rules, $data, $extra));
 			} else {
 				$_this->_validate_ok = false;
 				$on_validate_error = isset($extra['on_validate_error']) ? $extra['on_validate_error'] : $_this->_on['on_validate_error'];
 				if (is_callable($on_validate_error)) {
-					$on_validate_error($_this->_validate_rules, $data, $extra);
+					$on_validate_error($data, $extra, $_this->_validate_rules);
 				}
+				_class('core_events')->fire('form.validate_error', array($_this->_validate_rules, $data, $extra));
 			}
 			$on_after_validate = isset($extra['on_after_validate']) ? $extra['on_after_validate'] : $_this->_on['on_after_validate'];
 			if (is_callable($on_after_validate)) {
 				$on_after_validate($_this->_validate_ok, $_this->_validate_rules, $data, $extra);
 			}
+			_class('core_events')->fire('form.after_validate', array($_this->_validate_ok, $_this->_validate_rules, $data, $extra));
 			$_this->_validated_fields = $data;
 		};
 		if ($this->_chained_mode) {
@@ -2019,7 +2037,7 @@ class yf_form2 {
 				$param = $rule[1];
 				// PHP pure function, from core or user
 				if (is_string($func) && function_exists($func)) {
-					$data[$name] = $func($data[$name]);
+					$data[$name] = $this->_apply_existing_func($func, $data[$name]);
 				} elseif (is_callable($func)) {
 					$is_ok = $func($data[$name], null, $data);
 				} else {
@@ -2046,6 +2064,19 @@ class yf_form2 {
 			}
 		}
 		return $validate_ok;
+	}
+
+	/**
+	*/
+	function _apply_existing_func($func, $data) {
+		if (is_array($data)) {
+			$self = __FUNCTION__;
+			foreach ($data as $k => $v) {
+				$data[$k] = $this->$self($func, $v);
+			}
+			return $data;
+		}
+		return $func($data);
 	}
 
 	/**
@@ -2141,17 +2172,20 @@ class yf_form2 {
 			if ($data && $table && is_callable($on_before_update)) {
 				$on_before_update($data, $table, $fields, $type, $extra);
 			}
+			_class('core_events')->fire('form.before_update', array($data, $table, $fields, $type, $extra));
 			if ($data && $table) {
+				$db = is_object($_this->_params['db']) ? $_this->_params['db'] : db();
 				if ($type == 'update') {
-					db()->update($table, db()->es($data), $extra['where_id']);
+					$db->update($table, $db->es($data), $extra['where_id']);
 				} elseif ($type == 'insert') {
-					db()->insert($table, db()->es($data));
+					$db->insert($table, $db->es($data));
 				}
 				// Callback/hook function implementation
 				$on_after_update = isset($extra['on_after_update']) ? $extra['on_after_update'] : $_this->_on['on_after_update'];
 				if (is_callable($on_after_update)) {
 					$on_after_update($data, $table, $fields, $type, $extra);
 				}
+				_class('core_events')->fire('form.after_update', array($data, $table, $fields, $type, $extra));
 				$on_success_text = isset($extra['on_success_text']) ? $extra['on_success_text'] : $_this->_on['on_success_text'];
 				if ($on_success_text) {
 					common()->set_notice($on_success_text);
@@ -2209,6 +2243,13 @@ class yf_form2 {
 	/**
 	*/
 	function on_after_validate($func) {
+		$this->_on[__FUNCTION__] = $func;
+		return $this;
+	}
+
+	/**
+	*/
+	function on_validate_ok($func) {
 		$this->_on[__FUNCTION__] = $func;
 		return $this;
 	}

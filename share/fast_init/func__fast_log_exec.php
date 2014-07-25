@@ -1,7 +1,7 @@
 <?php
 
 // Fast log exec info
-function _fast_log_exec () {
+return function() {
 	$log_file_path	= INCLUDE_PATH. 'logs/log_exec/'. gmdate('Y-m-d').'.log';
 	$log_dir_path	= dirname($log_file_path);
 	if (!file_exists($log_dir_path)) {
@@ -25,4 +25,4 @@ function _fast_log_exec () {
 	@file_put_contents($log_file_path, $t, FILE_APPEND); // PHP5-only native function
 
 #	return true; // Means success
-}
+};

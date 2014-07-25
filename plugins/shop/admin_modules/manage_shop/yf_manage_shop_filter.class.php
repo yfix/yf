@@ -2,7 +2,7 @@
 
 class yf_manage_shop_filter{
 
-	public $_avail_filters = array('products','users','orders','suppliers','manufacturers','product_sets','attributes','feedback','product_revisions', 'order_revisions', 'product_images_revisions');
+	public $_avail_filters = array('products','users','orders','suppliers','manufacturers','product_sets','attributes','feedback','product_revisions', 'order_revisions', 'category_revisions', 'product_images_revisions', 'region');
 
 	/**
 	*/
@@ -42,10 +42,11 @@ class yf_manage_shop_filter{
 		$filters = array(
 			'products'	=> function($filter_name, $replace) {
 
-				$fields = array('id','name','cat_id','price','active','quantity','manufacturer_id','supplier_id','add_date','update_date');
+				$fields = array('id','name','cat_id','price','active','quantity','manufacturer_id','supplier_id','region_id','add_date','update_date');
 				foreach ((array)$fields as $v) {
 					$order_fields[$v] = $v;
 				};
+				$_region = _class( '_shop_region', 'modules/shop/' )->_get_list();
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->container( _class('manage_shop_filter')->_product_search_widget('id', $_SESSION[$filter_name]['id'], true), 'Id')
 					->text('name')
@@ -59,6 +60,13 @@ class yf_manage_shop_filter{
 					->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
 					->select_box('supplier_id', _class('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'no_translate' => 1, 'hide_empty' => 1))
 					->select_box('manufacturer_id', _class('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'no_translate' => 1))
+					->hidden( array( 'name' => 'region_id', 'value' => 1, ) )
+					->select2_box( array(
+						'desc'     => 'Регион',
+						'name'     => 'region',
+						'multiple' => true,
+						'values'   => $_region,
+					))
 					->active_box('active', array('horizontal' => 1))
 					->select_box('status', _class('manage_shop')->_products_statuses, array('desc' => 'Status', 'no_translate' => 0, 'hide_empty' => 1, 'show_text' => 1))
 					->yes_no_box('image', array('horizontal' => 1))
@@ -212,6 +220,26 @@ class yf_manage_shop_filter{
 					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
 					->select_box('action', common()->get_static_conf('images_revisions',false,false), array('show_text' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
+			},
+			'category_revisions'	=> function($filter_name, $replace) {
+				$fields = array('user_id', 'add_date', 'item_id', 'action');
+					$fields = array_combine( array_values( $fields ), array_values( $fields ) );
+				$action = array( 'first', 'edit', 'delete' );
+					$action = array_combine( array_values( $action ), array_values( $action ) );
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+					->text('item_id','item id')
+					->text('user_id', 'Admin')
+					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
+					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
+					->select_box('action',   $action, array('show_text' => 1, 'translate' => 1))
+					->select_box('order_by', $fields, array('show_text' => 1, 'translate' => 1));
+			},
+			'region'	=> function($filter_name, $replace) {
+				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+					->text( 'id',    'Номер'    )
+					->text( 'value', 'Название' )
+					->active_box( 'active', array( 'horizontal' => 1 ) )
+				;
 			},
 		);
 		$action = $_GET['action'];

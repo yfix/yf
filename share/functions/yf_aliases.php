@@ -85,6 +85,9 @@ if (!function_exists('cache_tmp')) {
 if (!function_exists('cache_files')) {
 	function cache_files() { static $cache; if (!isset($cache)) { $cache = clone _class('cache'); $cache->_init(array('driver' => 'files')); } return $cache; }
 }
+if (!function_exists('trace')) {
+	function trace() { $e = new Exception(); return implode(PHP_EOL, array_slice(explode(PHP_EOL, $e->getTraceAsString()), 1, -1)); }
+}
 // example: db()->query()
 // example of getting real table name: db('user') should return DB_PREFIX.'user' value;
 if (!function_exists('db')) {
@@ -144,7 +147,7 @@ if (!function_exists('require_js')) {
 	function require_js($content, $type = 'auto', $params = array()) { return _class('core_js')->add($content, $type, $params); }
 }
 if (!function_exists('jquery')) {
-	function jquery($content, $params = array()) { return _class('core_js')->add('$(function(){'.PHP_EOL. $content. PHP_EOL.'})', 'inline', $params); }
+	function jquery($content, $params = array()) { return _class('core_js')->jquery($content, $params); }
 }
 if (!function_exists('css')) {
 	function css($content, $type = 'auto', $params = array()) { return _class('core_css')->add($content, $type, $params); }
@@ -152,14 +155,15 @@ if (!function_exists('css')) {
 if (!function_exists('require_css')) {
 	function require_css($content, $type = 'auto', $params = array()) { return _class('core_css')->add($content, $type, $params); }
 }
+if (!function_exists('events')) {
+	function events() { return _class('core_events'); }
+}
 if (!function_exists('getmicrotime')) {
 	function getmicrotime() { return microtime(true); }
 }
-// Redirect using JS
 if (!function_exists('js_redirect')) {
 	function js_redirect ($location, $rewrite = true, $text = '', $ttl = 0) { return common()->redirect($location, $rewrite, 'js', $text, $ttl); }
 }
-// Redirect using Meta tags
 if (!function_exists('redirect')) {
 	function redirect ($location, $rewrite = true, $text = '', $ttl = 3) { return common()->redirect($location, $rewrite, 'html', $text, $ttl); }
 }
@@ -213,7 +217,6 @@ if (!function_exists('_add_get')) {
 if (!function_exists('l')) {
 	function l($name = '', $data = '', $lang = '') { return common()->l($name, $data, $lang); }
 }
-// shortcut for $db_driver_real_escape_string()
 if (!function_exists('_es')) {
 	function _es($text = '') { return db()->es($text); }
 }
@@ -232,6 +235,9 @@ if (!function_exists('db_get_all')) {
 if (!function_exists('db_get_one')) {
 	function db_get_one($sql = '', $use_cache = true) { return db()->get_one($sql, $use_cache); }
 }
+if (!function_exists('model')) {
+	function model($name, $params = array()) { return db()->model($name, $params); }
+}
 // current GMT time
 if (!function_exists('gmtime')) {
 	function gmtime () { return common()->gmtime(); }
@@ -248,9 +254,16 @@ if (!function_exists('html')) {
 if (!function_exists('validate')) {
 	function validate($input = '', $rules = array()) { return _class('validate')->_input_is_valid($input, $rules); }
 }
-// Check user banned or not
 if (!function_exists('_check_user_ban')) {
 	function _check_user_ban ($info = array(), $user_info = array()) { return common()->check_user_ban($info, $user_info); }
+}
+// Wrapper for tpl generated php code for PHP 5.3 compatibility
+if (!function_exists('_empty')) {
+	function _empty($in = null) { return empty($in); }
+}
+// Wrapper for tpl generated php code for PHP 5.3 compatibility
+if (!function_exists('_isset')) {
+	function _isset($in = null) { return isset($in); }
 }
 // FirePHP shortcut in case if not exists
 if (!function_exists('fb')) {

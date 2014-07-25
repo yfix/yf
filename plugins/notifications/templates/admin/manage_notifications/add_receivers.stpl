@@ -1,0 +1,25 @@
+
+<form method="POST" id="add_receivers_form">
+{table}
+<br />
+
+<div class="controls">
+	<input type="hidden" name="is_all" id="is_all" value="0">
+	{if("show_add_selected" eq "1")}<a class="btn btn-default btn-mini btn-xs" id="add_selected_url"><i class=" icon-plus"></i> {t('add selected')}</a>{/if}
+	<a class="btn btn-default btn-mini btn-xs" id="add_all_url"><i class=" icon-plus"></i> {t('add all matched')}</a> 
+</div>
+</form>
+<script>
+	$( document ).ready( function() {
+		$('#add_selected_url').click(function() {
+			$('#is_all').val(0);
+			$('#add_receivers_form').submit();
+			return false;
+		});
+		$('#add_all_url').click(function() {
+			$('#is_all').val(1);
+			$('#add_receivers_form').submit();
+			return false;
+		});
+	});
+</script>

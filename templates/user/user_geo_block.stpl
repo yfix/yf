@@ -4,12 +4,13 @@
 	<tr>
 		<td class="left_menu_body">
 			<small>
-{if("country_name" ne "")}
+{if_ok(country_name)}
 			<img src="uploads/flags/{country_code_lower}.gif">&nbsp;{country_name}
 	{if("region_name" ne "")},<br /> {region_name}{/if}
 	{if("city_name" ne "")},<br /> {city_name}{/if}
+{else}
+	Unknown location
 {/if}
-{if("country_name" eq "")}Unknown location{/if}
 				<br /><a href="{change_link}" class="btn btn-mini btn-xs">Change</a>
 			</small>
 		</td>

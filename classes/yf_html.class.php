@@ -186,6 +186,7 @@ class yf_html {
 				$desc_raw = $v['desc_raw'];
 				$disabled = $v['disabled'];
 			}
+			$content = trim($content);
 			if ($extra['hide_empty'] && !strlen($content)) {
 				continue;
 			}
@@ -203,10 +204,14 @@ class yf_html {
 			}
 			$class_head = $v['class_head'] ?: $extra['class_head'];
 			$class_body = $v['class_body'] ?: $extra['class_body'];
+			if (isset($extra['totals'][$name])) {
+				$v['badge'] = intval( isset($extra['totals'][$name]['total']) ? $extra['totals'][$name]['total'] : $extra['totals'][$name] );
+			}
+			$badge = isset($v['badge']) ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
 			if (!$extra['no_headers']) {
-				$headers[] = 
+				$headers[] =
 					'<li class="'.($is_active ? 'active' : ''). ($class_head ? ' '.$class_head : '').'">
-						<a '.(!$disabled ? 'href="#'.$id.'" ' : '').'data-toggle="tab">'.($desc_raw ?: t($desc)).'</a>
+						<a '.(!$disabled ? 'href="#'.$id.'" ' : '').'data-toggle="tab">'.($desc_raw ?: t($desc)). $badge. '</a>
 					</li>';
 			}
 			$items[] = '<div class="tab-pane '.$css_class. ($class_body ? ' '.$class_body : '').'" id="'.$id.'">'.$content.'</div>';
@@ -239,12 +244,13 @@ class yf_html {
 			$class_group = $v['class_group'] ?: $extra['class_group'];
 			$class_head = $v['class_head'] ?: $extra['class_head'];
 			$class_body = $v['class_body'] ?: $extra['class_body'];
+			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
 
-			$items[] = 
+			$items[] =
 				'<div class="accordion-group panel panel-default'.($class_group ? ' '.$class_group : '').'">
 					<div class="accordion-heading panel-heading'.($class_head ? ' '.$class_head : '').'">
 						'.($this->_is_bs3 ? '<h4 class="panel-title">' : '').'
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$extra['id'].'" href="#'.$id.'">'.$desc.'</a>
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#'.$extra['id'].'" href="#'.$id.'">'. $desc. $badge. '</a>
 						'.($this->_is_bs3 ? '</h4>' : '').'
 					</div>
 					<div id="'.$id.'" class="accordion-body panel-collapse collapse'.($is_selected ? ' in' : ''). ($class_body ? ' '.$class_body : '').'">
@@ -280,7 +286,7 @@ class yf_html {
 			$class_body = $v['class_body'] ?: $extra['class_body'];
 
 			$headers[] = '<li data-target="#'.$extra['id'].'" data-slide-to="'.($i - 1).'" class="'.($is_active ? 'active' : ''). ($class_head ? ' '.$class_head : '').'"></li>';
-			$items[] = 
+			$items[] =
 				'<div class="item'.($is_active ? ' active' : ''). ($class_body ? ' '.$class_body : '').'">
 					<img src="'.$img_src.'" alt="'.$alt.'">
 					'.($desc ? '<div class="carousel-caption">'.$desc.'</div>' : '').'
@@ -335,9 +341,10 @@ class yf_html {
 				$is_selected = (++$i == 1);
 			}
 			$class_item = $v['class_item'] ?: $extra['class_item'];
-			$items[] = '<li class="'.($is_selected ? ' active' : ''). ($class_item ? ' '.$class_item : '').'"><a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a></li>';
+			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
+			$items[] = '<li class="'.($is_selected ? ' active' : ''). ($class_item ? ' '.$class_item : '').'"><a href="'.$v['link'].'" title="'.$v['name'].'">'. $v['name']. $badge. '</a></li>';
 		}
-		return 
+		return
 			'<div class="navbar navbar-default'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
 				<div class="navbar-inner navbar-header">'
 					.$brand
@@ -357,9 +364,10 @@ class yf_html {
 		foreach ((array)$data as $k => $v) {
 			$is_last = (++$i == $len);
 			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
 			$items[] = '<li class="'.($is_last ? ' active' : ''). ($class_item ? ' '.$class_item : '').'">
-				'.(($is_last || !$v['link']) ? $v['name'] 
-					: '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name'].'</a>'.(!$this->_is_bs3 ? ' <span class="divider">'.$divider.'</span>' : '')
+				'.(($is_last || !$v['link']) ? $v['name']
+					: '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name']. $badge. '</a>'.(!$this->_is_bs3 ? ' <span class="divider">'.$divider.'</span>' : '')
 				).'
 			</li>';
 		}
@@ -382,7 +390,7 @@ class yf_html {
 			}
 			$class_item = $v['class_item'] ?: $extra['class_item'];
 			$tag = $this->_is_bs3 ? 'div' : 'li';
-			$items[] = 
+			$items[] =
 				'<'.$tag.' class="'.$row_class. ($class_item ? ' '.$class_item : ''). ($v['style'] ? ' style="'.$v['style'].'"' : '').'">
 					<div class="thumbnail">
 						<img alt="'._prepare_html($v['alt'] ?: $v['head']).'" src="'._prepare_html($img_src).'" />
@@ -453,7 +461,7 @@ class yf_html {
 	*/
 	function panel ($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		return 
+		return
 			'<div class="panel panel-primary'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
 				<div class="panel-heading">
 					<h3 class="panel-title">'.$data['title'].'</h3>
@@ -560,9 +568,10 @@ class yf_html {
 					$close_li = 0;
 				}
 			}
+			$badge = $item['badge'] ? ' <sup class="badge badge-'.($item['class_badge'] ?: 'info').'">'.$item['badge'].'</sup>' : '';
 			$items[] = '
 				<li class="dropdown">
-					<a href="'.$item['link'].'" class="dropdown-toggle">'. $item['name']. ($has_children ? ' <b class="caret"></b>' : ''). '</a>'
+					<a href="'.$item['link'].'" class="dropdown-toggle">'. $item['name']. $badge. ($has_children ? ' <b class="caret"></b>' : ''). '</a>'
 				;
 			if ($has_children) {
 				$ul_opened = true;
@@ -626,7 +635,8 @@ class yf_html {
 			}
 			$link = $v['link'];
 			$class_item = $v['class_item'] ?: $extra['class_item'];
-			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"><a href="'.$link.'"><i class="icon-chevron-right"></i> '.t($name). '</a></li>';
+			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
+			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"><a href="'.$link.'"><i class="icon-chevron-right"></i> '.t($name). $badge. '</a></li>';
 		}
 		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</ul></div>';
 	}
@@ -644,7 +654,8 @@ class yf_html {
 				$body = $v['body'];
 			}
 			$class_item = $v['class_item'] ?: $extra['class_item'];
-			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'">'.($v['link'] ? '<a href="'.$v['link'].'">'.$body.'</a>' : $body).'</li>';
+			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
+			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'">'. $badge. ($v['link'] ? '<a href="'.$v['link'].'">'.$body.'</a>' : $body).'</li>';
 		}
 		return '<ul class="'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</ul>';
 	}
@@ -764,7 +775,7 @@ class yf_html {
 				// Selected value could be an array
 				if (is_array($selected)) {
 					if ($type == 1) {
-						$sel_text = in_array($value, $selected) ? 'selected="selected"' : '';
+						$sel_text = in_array($key, $selected) ? 'selected="selected"' : '';
 					} else {
 						$sel_text = isset($selected[$key]) ? 'selected="selected"' : '';
 					}
@@ -816,7 +827,7 @@ class yf_html {
 		$selected = strval($selected);
 		foreach ((array)$values as $value => $val_name) {
 			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-			if ($this->BOXES_USE_STPL) { 
+			if ($this->BOXES_USE_STPL) {
 				$_what_compare = strval($type == 1 ? $val_name : $value);
 				$replace = array(
 					'name'			=> $name,
@@ -830,7 +841,7 @@ class yf_html {
 				);
 				$body .= tpl()->parse('system/common/radio_box_item', $replace);
 			} else {
-				$body .= 
+				$body .=
 					'<label class="radio'.($extra['horizontal'] ? ' radio-horizontal' : '').'">'
 						.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'" '.$add_str.' '.((strval($value) == $selected) ? 'checked' : '').'>'
 						.t($val_name)
@@ -1118,7 +1129,6 @@ class yf_html {
 			$extra['name'] = $name;
 		}
 		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-
 		css('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.css');
 		js('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.js');
 		$js_options = (array)$extra['js_options'] + array(
@@ -1128,6 +1138,8 @@ class yf_html {
 		);
 		js('$(function() { $("#'.addslashes($extra['force_id']).'").select2('.json_encode($js_options).'); });');
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
+		$extra[ 'class' ] .= 'no-chosen';
+		$extra[ 'type' ] = 1;
 		return $this->$func($extra, $values, $selected);
 	}
 

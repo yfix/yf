@@ -115,6 +115,9 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(ADMIN_WEB_PATH.'?object='.$_GET['object'].'&action=testme&id=4', url_admin('/@object/testme/4') );
 		$_GET['object'] = 'testobj2';
 		$this->assertEquals(ADMIN_WEB_PATH.'?object='.$_GET['object'].'&action=testme&id=4', url_admin('/@object/testme/4') );
+		$this->assertEquals(ADMIN_WEB_PATH.'?object='.$_GET['object'].'&action=testme&id=4&page=2', url_admin('/@object/testme/4/2') );
+		$this->assertEquals(ADMIN_WEB_PATH.'?object='.$_GET['object'].'&action=testme&id=4&page=2&table=ttt', url_admin('/@object/testme/4/2/&table=ttt') );
+		$this->assertEquals(ADMIN_WEB_PATH.'?object='.$_GET['object'].'&action=testme&id=4&page=2&k5=v5&k6=v6&k7=v7&k8=v8', url_admin('/@object/testme/4/2/&k5=v5&k6=v6&k7=v7&k8=v8') );
 	}
 	public function test_get_unique_links() {
 		$html = '<a href="http://google.com/">
@@ -246,5 +249,8 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 
 		main()->HTTPS_ENABLED_FOR = $old1;
 		main()->USE_ONLY_HTTPS = $old2;
+	}
+	public function test_process_url() {
+		$this->assertEquals('http://google.com/some_url', process_url('http://google.com/some_url') );
 	}
 }

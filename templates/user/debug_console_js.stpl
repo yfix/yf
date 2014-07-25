@@ -50,13 +50,13 @@ $(function(){
 });
 </script>
 
-{if(conf.DEBUG_CONSOLE_POPUP eq 1)}
+{if_true(conf.DEBUG_CONSOLE_POPUP)}
 <style type="text/css">#debug_console{display:none;}</style>
 <script type="text/javascript">
 $(function(){
 	var debug_window_name = "yf_debug_frame"
 	var debug_console_use_iframe = false;
-	var debug_console_head = [];
+	var debug_console_head = [ ];
 	// Allow to override JS, CSS as array of html elements strings
 	if (typeof debug_console_override_head == "object") {
 		$.each(debug_console_override_head, function(i, _html){

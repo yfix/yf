@@ -43,7 +43,6 @@ class yf_category_editor {
 				'cats__prepare_for_box__'.$cat_info['name'].'_1_0',
 			));
 		}
-		_class( '_shop_categories', 'modules/shop/' )->_refresh_cache();
 	}
 
 	/**
@@ -264,7 +263,7 @@ class yf_category_editor {
 		if (main()->is_post()) {
 			$cur_items = $this->_auto_update_items_orders($cat_info['id']);
 			$batch = array();
-			foreach ((array)$_POST['items'] as $order_id => $info) {
+			foreach ((array)json_decode((string)$_POST['items'], $assoc = true) as $order_id => $info) {
 				$item_id = (int)$info['item_id'];
 				if (!$item_id || !isset($items[$item_id])) {
 					continue;
@@ -286,9 +285,11 @@ class yf_category_editor {
 				}
 			}
 			if ($batch) {
-				db()->update_batch('category_items', db()->es($batch));
-				common()->admin_wall_add(array('category items dragged and saved: '.$cat_info['name'], $cat_info['id']));
-				module('category_editor')->_purge_category_caches($cat_info);
+				_class( 'core_events' )->fire( 'category_editor.drag_items.before', array( array_keys( $batch ) ) );
+					db()->update_batch('category_items', db()->es($batch));
+					common()->admin_wall_add(array('category items dragged and saved: '.$cat_info['name'], $cat_info['id']));
+					module('category_editor')->_purge_category_caches($cat_info);
+				_class( 'core_events' )->fire( 'category_editor.drag_items.after', array( array_keys( $batch ) ) );
 			}
 			main()->NO_GRAPHICS = true;
 			return false;
@@ -658,15 +659,21 @@ class yf_category_editor {
 	/**
 	*/
 	function delete_item() {
-		$_GET['id'] = intval($_GET['id']);
-		if (!empty($_GET['id'])) {
-			$item_info = db()->query_fetch('SELECT * FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
-		}
-		if (!empty($item_info)) {
-			$cat_info = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($item_info['cat_id']));
-			db()->query('DELETE FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
-			common()->admin_wall_add(array('category item deleted: '.$item_info['id'], $_GET['id']));
-			module('category_editor')->_purge_category_caches($cat_info);
+		$id = (int)$_GET['id']; $_GET['id'] = $id;
+		$object = $_GET[ 'object' ];
+		$action = $_GET[ 'action' ];
+		if( $id < 1 ) { return js_redirect( './?object='.$object, 'item id < 1' ); }
+		$db_item   = db( 'category_items' );
+		$item_info = db()->query_fetch( 'SELECT * FROM ' . $db_item . ' WHERE id = ' . $id );
+		if( !empty( $item_info ) ) {
+			$db       = db( 'categories' );
+			$cats_id = $item_info[ 'cat_id' ];
+			$cat_info = db()->query_fetch( 'SELECT * FROM ' . $db . ' WHERE id = ' . (int)$cats_id );
+			_class( 'core_events' )->fire( 'category_editor.delete_item.before', array( $id, $cats_id ) );
+				db()->query('DELETE FROM '.db('category_items').' WHERE id='.intval($_GET['id']));
+				common()->admin_wall_add(array('category item deleted: '.$item_info['id'], $_GET['id']));
+				$this->_purge_category_caches( $cat_info );
+			_class( 'core_events' )->fire( 'category_editor.delete_item.after', array( $id, $cats_id ) );
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;

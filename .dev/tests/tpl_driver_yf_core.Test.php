@@ -11,6 +11,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals(YF_PATH, self::_tpl( '{const( YF_PATH )}' ));
 		$this->assertEquals(YF_PATH, self::_tpl( '{const( YF_PATH )}' ));
 		$this->assertEquals(YF_PATH, self::_tpl( '{const(      YF_PATH         )}' ));
+		$this->assertEquals(YF_PATH.YF_PATH.YF_PATH, self::_tpl( '{const(YF_PATH)}{const(YF_PATH)}{const(YF_PATH)}' ));
 		$this->assertEquals('{const(WRONG-CONST)}', self::_tpl( '{const(WRONG-CONST)}' ));
 		$this->assertEquals('{const( WRONG-CONST)}', self::_tpl( '{const( WRONG-CONST)}' ));
 		$this->assertEquals('{const( WRONG-CONST )}', self::_tpl( '{const( WRONG-CONST )}' ));
@@ -40,13 +41,9 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('myjs(){ var i = 0; {js-var }; }', self::_tpl( 'myjs(){ {js-var}; {js-var }; }', array('js-var' => 'var i = 0') ));
 		$this->assertEquals('myjs(){ var i = 0; { js-var }; }', self::_tpl( 'myjs(){ {js-var}; { js-var }; }', array('js-var' => 'var i = 0') ));
 	}
-	public function test_replace_subarray() {
-		$this->assertEquals('{get.test}', self::_tpl( '{get.test}' ));
-		$this->assertEquals('{ get.test }', self::_tpl( '{ get.test }' ));
-		$this->assertEquals('val1,val2,val3', self::_tpl( '{sub.key1},{sub.key2},{sub.key3}', array('sub' => array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3')) ));
-	}
 	public function test_execute() {
 		$this->assertEquals('true', self::_tpl( '{execute(test,true_for_unittest)}' ));
+		$this->assertEquals('truetrue', self::_tpl( '{execute(test,true_for_unittest)}{execute(test,true_for_unittest)}' ));
 		$this->assertEquals('{ execute(test,true_for_unittest)}', self::_tpl( '{ execute(test,true_for_unittest)}' ));
 		$this->assertEquals('{execute(test,true_for_unittest) }', self::_tpl( '{execute(test,true_for_unittest) }' ));
 		$this->assertEquals('{ execute(test,true_for_unittest) }', self::_tpl( '{ execute(test,true_for_unittest) }' ));
@@ -60,13 +57,17 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('true', self::_tpl( '{execute(test;true_for_unittest)}' ));
 		$this->assertEquals('true', self::_tpl( '{execute( test;true_for_unittest )}' ));
 		$this->assertEquals('true', self::_tpl( '{execute( test ; true_for_unittest )}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test;true_for_unittest;param1=val1)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test,true_for_unittest,param1=val1)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute( test , true_for_unittest , param1=val1 )}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2;param3=val3)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute( test , true_for_unittest , param1=val1 ; param2=val2 )}' ));
+		$this->assertEquals('val1', self::_tpl( '{execute(test;true_for_unittest;param1=val1)}' ));
+		$this->assertEquals('val1', self::_tpl( '{execute(test,true_for_unittest,param1=val1)}' ));
+		$this->assertEquals('val1', self::_tpl( '{execute( test , true_for_unittest , param1=val1 )}' ));
+		$this->assertEquals('val1,val2', self::_tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2)}' ));
+		$this->assertEquals('val1,val2,val3', self::_tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2;param3=val3)}' ));
+		$this->assertEquals('val1,val2', self::_tpl( '{execute( test , true_for_unittest , param1=val1 ; param2=val2 )}' ));
 		$this->assertNotEquals('tru', self::_tpl( '{execute(test,true_for_unittest)}' ));
+		$_GET['object'] = 'test';
+		$this->assertEquals('true', self::_tpl( '{execute(@object,true_for_unittest)}' ));
+		$_GET['action'] = 'true_for_unittest';
+		$this->assertEquals('true', self::_tpl( '{execute(@object,@action)}' ));
 	}
 	public function test_catch() {
 		$this->assertEquals('  __true__', self::_tpl( '{catch( mytest1 )}{execute(test,true_for_unittest)}{/catch}  __{mytest1}__' ));
@@ -99,8 +100,10 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	}
 	public function test_comment() {
 		$this->assertEquals('', self::_tpl( '{{--STPL COMMENT--}}' ));
+		$this->assertEquals('', self::_tpl( '{{--STPL COMMENT--}}{{--STPL COMMENT--}}' ));
 		$this->assertEquals('<!---->', self::_tpl( '<!--{{--STPL COMMENT--}}-->' ));
 		$this->assertEquals('TEXT', self::_tpl( '{{--<!----}}TEXT{{---->--}}' ));
+		$this->assertEquals('TEXTTEXT', self::_tpl( '{{--<!----}}TEXT{{---->--}}{{--<!----}}TEXT{{---->--}}' ));
 	}
 	public function test_if() {
 		$this->assertEquals('GOOD', self::_tpl( '{if("key1" eq "val1")}GOOD{/if}', array('key1' => 'val1') ));
@@ -127,7 +130,13 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('GOOD', self::_tpl( '{if("key1" eq "1" and "key2" eq "2" and "key3" eq "3" and "key4" eq "4" and "key5" eq "5")}GOOD{/if}', array('key1' => '1', 'key2' => '2', 'key3' => '3', 'key4' => '4', 'key5' => '5') ));
 	}
 	public function test_foreach() {
+		$data2 = array(
+			5 => array('name' => 'name1', 'age' => 21),
+			6 => array('name' => 'name2', 'age' => 22),
+			7 => array('name' => 'name3', 'age' => 23),
+		);
 		$this->assertEquals('1111111111', self::_tpl( '{foreach(10)}1{/foreach}' ));
+		$this->assertEquals('111111111122222222221111111111', self::_tpl( '{foreach(10)}1{/foreach}{foreach(10)}2{/foreach}{foreach(10)}1{/foreach}' ));
 		$this->assertEquals(' 1  2  3  4 ', self::_tpl( '{foreach("testarray")} {_val} {/foreach}', array('testarray' => array(1,2,3,4)) ));
 		$this->assertEquals(' 0  1  2  3 ', self::_tpl( '{foreach("testarray")} {_key} {/foreach}', array('testarray' => array(1,2,3,4)) ));
 		$this->assertEquals(' 4  4  4  4 ', self::_tpl( '{foreach("testarray")} {_total} {/foreach}', array('testarray' => array(1,2,3,4)) ));
@@ -145,13 +154,9 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals(' 1  1  1 ', self::_tpl( '{foreach( \'testarray\' )} {if("_total" eq "3")}1{else}0{/if} {/foreach}', array('testarray' => array(5,6,7)) ));
 		$this->assertEquals(' 1  1  1 ', self::_tpl( '{foreach(testarray)} {if("_total" eq "3")}1{else}0{/if} {/foreach}', array('testarray' => array(5,6,7)) ));
 		$this->assertEquals(' 1  1  1 ', self::_tpl( '{foreach( testarray )} {if("_total" eq "3")}1{else}0{/if} {/foreach}', array('testarray' => array(5,6,7)) ));
-		$this->assertEquals(' name1:21  name2:22  name3:23 ', self::_tpl( '{foreach("testarray")} {#.name}:{#.age} {/foreach}', array(
-			'testarray' => array(
-				5 => array('name' => 'name1', 'age' => 21),
-				6 => array('name' => 'name2', 'age' => 22),
-				7 => array('name' => 'name3', 'age' => 23),
-			),
-		) ));
+		$this->assertEquals(' name1:21  name2:22  name3:23 ', self::_tpl( '{foreach("testarray")} {#.name}:{#.age} {/foreach}', array('testarray' => $data2) ));
+		$this->assertEquals('', self::_tpl( '{foreach( not_existing_key )}{/foreach}' ));
+		$this->assertEquals('', self::_tpl( '{foreach( not_existing_key )} {if("_total" eq "3")}1{else}0{/if} {/foreach}' ));
 	}
 	public function test_if_sub() {
 		$this->assertEquals('GOOD', self::_tpl( '{if("sub.key1" eq "val1")}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1')) ));
@@ -163,7 +168,11 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	public function test_if_const_and_sub() {
 		define('MY_TEST_CONST_1', '42');
 		$this->assertEquals('GOOD', self::_tpl( '{if("sub.key1" eq "val1" and "const.MY_TEST_CONST_1" eq "42")}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1')) ));
+		$this->assertEquals('GOOD', self::_tpl( '{if("sub.key1" eq "val1" and "const.MY_TEST_CONST_1" eq "43")}BAD{else}GOOD{/if}', array('sub' => array('key1' => 'val1')) ));
 		$this->assertEquals('GOOD', self::_tpl( '{if("sub.key1" eq "val1" and "const.MY_NOT_EXISTING_CONST" eq "1")}BAD{else}GOOD{/if}', array('sub' => array('key1' => 'val1')) ));
+		$this->assertEquals('GOOD', self::_tpl( '{if("sub.key1" eq "val1" and "sub.key2" ne "1" and "const.MY_TEST_CONST_1" ne "43")}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1', 'key2' => 'val2')) ));
+		$this->assertEquals('GOOD', self::_tpl( '{if("sub.key1" ne "val1" or "sub.key2" ne "val2" or "sub.key3" ne "val3")}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1', 'key2' => 'val2')) ));
+		$this->assertEquals('GOOD', self::_tpl( '{if("sub.key1" ne "val1" or "sub.key2" ne "val2" or "sub.key3" ne "val3" or "sub.key4" ne "val4" or "sub.key5" ne "val5")}GOOD{else}BAD{/if}', array('sub' => array('key1' => 'val1', 'key2' => 'val2')) ));
 	}
 	public function test_if_string() {
 		$this->assertEquals('GOOD', self::_tpl( '{if("%string" eq "string")}GOOD{else}BAD{/if}' ));
@@ -303,5 +312,204 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css" rel="stylesheet" class="yf_core" />', _class('core_css')->show() );
 		self::_tpl( '{css(class=yf_core,other=param)}//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css{/css}' );
 		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css" rel="stylesheet" class="yf_core" />', _class('core_css')->show() );
+	}
+	public function test_replace_subarray() {
+		$this->assertEquals('', self::_tpl( '{get.test}' ));
+		$this->assertEquals('{ get.test }', self::_tpl( '{ get.test }' ));
+		$this->assertEquals('val1,val2,val3', self::_tpl( '{sub.key1},{sub.key2},{sub.key3}', array('sub' => array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3')) ));
+	}
+	public function test_avail_arrays() {
+		$old = tpl()->_avail_arrays;
+		$_GET['mytestvar'] = 'mytestvalue';
+		tpl()->_avail_arrays = array('get' => '_GET');
+
+		$this->assertEquals('', self::_tpl( '{get.not_exists}' ));
+		$this->assertEquals('_mytestvalue_', self::_tpl( '_{get.mytestvar}_' ));
+		$this->assertEquals('good', self::_tpl( '{if(get.mytestvar eq mytestvalue)}good{else}bad{/if}' ));
+		$this->assertEquals('good', self::_tpl( '{if(get.mytestvar ne "")}good{else}bad{/if}' ));
+		$this->assertEquals('good', self::_tpl( '{if(get.mytestvar ne something_else)}good{else}bad{/if}' ));
+
+		$data = array(
+			'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3',
+		);
+		$_GET['myarray'] = $data;
+
+		$this->assertEquals(' k1=v1  k2=v2  k3=v3 ', self::_tpl( '{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data) ));
+		$this->assertEquals(' k1=v1  k2=v2  k3=v3 ', self::_tpl( '{foreach(data.myarray)} {_key}={_val} {/foreach}', array('data' => array('myarray' => $data)) ));
+		$this->assertEquals('', self::_tpl( '{foreach(data.not_exists)} {_key}={_val} {/foreach}', array('data' => array('myarray' => $data)) ));
+		$this->assertEquals('k1=v1', self::_tpl( '{foreach(data.myarray)}{if(_key eq k1)}{_key}={_val}{/if}{/foreach}', array('data' => array('myarray' => $data)) ));
+		$this->assertEquals('k2=v2', self::_tpl( '{foreach(data.myarray)}{if(_key eq k2)}{_key}={_val}{/if}{/foreach}', array('data' => array('myarray' => $data)) ));
+		$this->assertEquals('k3=v3', self::_tpl( '{foreach(data.myarray)}{if(_key eq k3)}{_key}={_val}{/if}{/foreach}', array('data' => array('myarray' => $data)) ));
+		$this->assertEquals(' k1=v1  k2=v2  k3=v3 ', self::_tpl( '{foreach(get.myarray)} {_key}={_val} {/foreach}' ));
+		$this->assertEquals('', self::_tpl( '{foreach(get.not_exists)} {_key}={_val} {/foreach}' ));
+		$this->assertEquals('k1=v1', self::_tpl( '{foreach(get.myarray)}{if(_key eq k1)}{_key}={_val}{/if}{/foreach}' ));
+		$this->assertEquals('k2=v2', self::_tpl( '{foreach(get.myarray)}{if(_key eq k2)}{_key}={_val}{/if}{/foreach}' ));
+		$this->assertEquals('k3=v3', self::_tpl( '{foreach(get.myarray)}{if(_key eq k3)}{_key}={_val}{/if}{/foreach}' ));
+
+		tpl()->_avail_arrays = $old;
+	}
+	public function test_foreach_val_array() {
+		$data = array('k1' => 'v1', 'k4' => array(1,2,3));
+		$this->assertEquals(' k1=v1  k4=1,2,3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
+	}
+	public function test_object_vars() {
+		$data = new stdClass();
+		$data->key1 = 'val1';
+		$data->key2 = 'val2';
+		$data->key3 = 'val3';
+
+		$this->assertEquals('val1 val2 val3', self::_tpl('{key1} {key2} {key3}', $data));
+		$this->assertEquals('val1', self::_tpl('{data.key1}', array('data' => $data)));
+		$this->assertEquals('val1,val2', self::_tpl('{data.key1},{data.key2}', array('data' => $data)));
+		$this->assertEquals('val1,val2,val3', self::_tpl('{data.key1},{data.key2},{data.key3}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if(data.key1 eq val1)}good{else}bad{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if(data.key1 ne fsdfsfsd)}good{else}bad{/if}', array('data' => $data)));
+		$this->assertEquals(' key1=val1  key2=val2  key3=val3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
+		$data->key4 = array(1,2,3);
+		$this->assertEquals(' key1=val1  key2=val2  key3=val3  key4=1,2,3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
+	}
+	public function test_if_funcs() {
+		$data = array('name1' => '', 'name2' => 'something');
+
+		$this->assertEquals('good', self::_tpl('{if_not_ok(name1)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_empty(name1)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_false(name1)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_true(name1)}good{/if}', $data));
+
+		$this->assertEquals('good', self::_tpl('{if_ok(name2)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_empty(name2)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_true(name2)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_false(name2)}good{/if}', $data));
+
+		$this->assertEquals('good ok', self::_tpl('{if_empty(name1)}good{/if} {if_not_empty(name2)}ok{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_empty(name2)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_isset(name1)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_isset(name3)}good{/if}', $data));
+
+		$this->assertEquals('good', self::_tpl('{if_empty(data)}good{/if}', array('data' => '')));
+		$this->assertEquals('good', self::_tpl('{if_empty(data)}good{/if}', array('data' => array())));
+		$this->assertEquals('good', self::_tpl('{if_not_empty(data)}good{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if_empty(data.name1)}good{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if_not_empty(data.name2)}good{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if_not_isset(data.name3)}good{/if}', array('data' => $data)));
+
+		$this->assertEquals('good', self::_tpl('{if_validate:is_natural_no_zero(data)}good{/if}', array('data' => '1234567890')));
+		$this->assertEquals('good', self::_tpl('{if_not_validate:alpha_spaces(data)}good{/if}', array('data' => '1234567890')));
+		$this->assertEquals('good', self::_tpl('{if_validate:alpha_spaces(data)}good{/if}', array('data' => 'abcd efgh ijkl mnop qrst uvwx yz')));
+	}
+	public function test_elseif_simple() {
+		$data = array('name1' => '', 'name2' => 'something');
+		$this->assertEquals('ok', self::_tpl('{if(name1 ne "")}bad{elseif(name2 ne "")}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if(name2 eq "")}bad{elseif(name1 eq "")}ok{/if}', $data));
+	}
+	public function test_elseif_funcs() {
+		$data = array('name1' => '', 'name2' => 'something');
+		$this->assertEquals('ok', self::_tpl('{if_empty(name2)}bad{elseif_empty(name1)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_empty(name2)}bad{elseif_not_ok(name1)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_empty(name2)}bad{elseif_false(name1)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_empty(name2)}bad{elseif_not_true(name1)}ok{/if}', $data));
+
+		$this->assertEquals('ok', self::_tpl('{if_not_empty(name1)}bad{elseif_ok(name2)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_not_empty(name1)}bad{elseif_true(name2)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_not_empty(name1)}bad{elseif_not_empty(name2)}ok{/if}', $data));
+		$this->assertEquals('ok', self::_tpl('{if_not_empty(name1)}bad{elseif_not_false(name2)}ok{/if}', $data));
+	}
+	public function test_elseforeach() {
+		$data = array('k1' => 'v1', 'k2' => 'v2');
+		$this->assertEquals('no rows', self::_tpl('{foreach(data)} {_key}={_val} {elseforeach}no rows{/foreach}', array()));
+		$this->assertEquals(' k1=v1  k2=v2 ', self::_tpl('{foreach(data)} {_key}={_val} {elseforeach}no rows{/foreach}', array('data' => $data)));
+		$this->assertEquals('no rows', self::_tpl('{foreach(data.sub)} {_key}={_val} {elseforeach}no rows{/foreach}', array()));
+		$this->assertEquals(' k1=v1  k2=v2 ', self::_tpl('{foreach(data.sub)} {_key}={_val} {elseforeach}no rows{/foreach}', array('data' => array('sub' => $data))));
+		$this->assertEquals('k1k2 k1k2', self::_tpl('{foreach(data.sub)}{_key}{elseforeach}no rows{/foreach} {foreach(data.sub)}{_key}{elseforeach}no rows{/foreach}', array('data' => array('sub' => $data))));
+		$data = array('k1' => ' v1 ', 'k2' => ' v2 ');
+	}
+	public function test_global_tags() {
+		$old = tpl()->_global_tags;
+		tpl()->_global_tags = array();
+#		$this->assertEquals('{some_global_tag1}', self::_tpl('{some_global_tag1}'));
+
+		tpl()->_global_tags = array(
+			'some_global_tag1'	=> ' val1 ',
+			'some_global_tag2'	=> ' val2 ',
+			'some_global_tag3'	=> ' val3 ',
+		);
+		$this->assertEquals(' val1 ', self::_tpl('{some_global_tag1}'));
+		$this->assertEquals(' val1   val1   val1 ', self::_tpl('{some_global_tag1} {some_global_tag1} {some_global_tag1}'));
+		$this->assertEquals(' val1   val2   val3 ', self::_tpl('{some_global_tag1} {some_global_tag2} {some_global_tag3}'));
+		$this->assertEquals('val1  val2   val3 ', self::_tpl('{some_global_tag1|trim} {some_global_tag2} {some_global_tag3}'));
+
+		tpl()->_global_tags = $old;
+	}
+	public function test_deep_vars_avail_arrays() {
+		$old = tpl()->_avail_arrays;
+		tpl()->_avail_arrays = array('get' => '_GET');
+		$_GET['some']['deep']['var']['key'] = 'mytestvalue2';
+
+// TODO
+#		$this->assertEquals('mytestvalue2', self::_tpl( '{get.some.deep.var.key}' ));
+
+		tpl()->_avail_arrays = $old;
+	}
+	public function _callme(array $a) {
+		if (!is_array($this->_callme_results)) {
+			$this->_callme_results = array();
+		}
+		$this->_callme_results += $a;
+	}
+	public function test_exec_last() {
+		// Some magick here with DI container, we link to this class :-)
+		main()->modules['unittest1'] = $this;
+		_class('unittest1')->_callme(array('k3' => 'v3'));
+		$this->assertSame(array('k3'=>'v3'), $this->_callme_results);
+
+		$this->_callme_results = array();
+		$this->assertEquals(array(), $this->_callme_results);
+		$this->assertEquals('', self::_tpl('{execute(unittest1,_callme;k1=v1)}'));
+		$this->assertSame(array('k1'=>'v1'), $this->_callme_results);
+
+		$this->_callme_results = array();
+		$this->assertEquals('', self::_tpl('{execute(unittest1,_callme;k2=v2)}{execute(unittest1,_callme;k1=v1)}'));
+		$this->assertSame(array('k2'=>'v2','k1'=>'v1'), $this->_callme_results);
+
+		// Here we ensure that exec_last will be executed after common execute calls
+		$this->_callme_results = array();
+		$this->assertEquals('', self::_tpl('{exec_last(unittest1,_callme;k2=v2)}{execute(unittest1,_callme;k1=v1)}'));
+		$this->assertSame(array('k1'=>'v1','k2'=>'v2'), $this->_callme_results);
+
+		$this->_callme_results = array();
+		$this->assertEquals('', self::_tpl('{execute(unittest1,_callme;k1=v1)}{exec_last(unittest1,_callme;k2=v2)}'));
+		$this->assertSame(array('k1'=>'v1','k2'=>'v2'), $this->_callme_results);
+	}
+	public function _callme2($a) {
+		if (!is_array($this->_callme2_results)) {
+			$this->_callme2_results = array();
+		}
+		if (is_array($a)) {
+			$this->_callme2_results = $a;
+		}
+		return $this->_callme2_results;
+	}
+	public function callme2($a) {
+		return $this->_callme2($a);
+	}
+	public function test_foreach_exec() {
+		// Some magick here with DI container, we link to this class :-)
+		main()->modules['unittest2'] = $this;
+		$data = array('k1' => 'v1', 'k2' => 'v2');
+		$result = _class('unittest2')->_callme2($data);
+		$this->assertSame($result, $data);
+		$this->assertSame($result, $this->_callme2_results);
+
+		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(unittest2,_callme2)} _{_key}={_val}_ {/foreach_exec}'));
+		$_GET['object'] = 'unittest2';
+		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,_callme2)} _{_key}={_val}_ {/foreach_exec}'));
+		$_GET['action'] = '_callme2';
+		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,@action)} _{_key}={_val}_ {/foreach_exec}'));
+		$_GET['action'] = 'callme2';
+		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,@action)} _{_key}={_val}_ {/foreach_exec}'));
+
+		$result = _class('unittest2')->_callme2(array());
+		$this->assertSame($result, array());
+		$this->assertSame(' no rows ', self::_tpl('{foreach_exec(unittest2,_callme2)} _{_key}={_val}_ {elseforeach} no rows {/foreach_exec}'));
 	}
 }

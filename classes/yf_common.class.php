@@ -411,8 +411,8 @@ class yf_common {
 	/**
 	* Create PDF 'on the fly' from the given content
 	*/
-	function pdf_page ($text = '', $name = '', $destination = 'I') {
-		return _class('pdf_page', 'classes/common/')->go($text, $name, $destination);
+	function pdf_page ($html = '', $file = '', $type = 'I') {
+		return _class('pdf_page', 'classes/common/')->go($html, $file, $type);
 	}
 
 	/**
@@ -1096,8 +1096,8 @@ class yf_common {
 	/**
 	 * Returns the sum in words (for money)
 	 */
-	function num2str($num) {
-		return _class('common_num2string', 'classes/common/')->num2str($num);
+	function num2str($number, $currency_id = null, $lang_id = null ) {
+		return _class('common_num2string', 'classes/common/')->num2str($number, $currency_id, $lang_id );
 	}
 
 	/**

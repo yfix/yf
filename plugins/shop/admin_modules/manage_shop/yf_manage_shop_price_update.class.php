@@ -80,42 +80,19 @@ class yf_manage_shop_price_update {
 		// init sql
 		$sql_table   = db( 'shop_products' );
 		$sql_table_t = $sql_table . '_tmp';
-		$_fields = $this->_fields_show;
-		$fields = array(); $sql_fields = '*';
-		$where  = array(); $sql_where = '';
-		$order  = array(); $sql_order = '';
-		// prepare sql fields
-		$fields[] = implode( ', ', $_fields );
-		// prepare supplier
-		$supplier = (int)module( 'manage_shop' )->SUPPLIER_ID;
-		if( $supplier > 0 ) {
-			$where[] = 'supplier_id = ' . $supplier;
-		}
 		// prepare filter
 		list( $_where, $_order ) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare( $this->_filter, $this->_filter_params );
-		if( !empty( $_where ) ) { $where[] = '1' . $_where; }
-		if( !empty( $_order ) ) { $order[] = $_order; }
-		// compile sql chunk
-		if( !empty( $fields ) ) { $sql_fields = implode( ', ', $fields ); }
-		if( !empty( $where  ) ) { $sql_where  = 'WHERE '    . implode( ', ', $where  ); }
-		if( !empty( $order  ) ) { $sql_order  = implode( ', ', $order  ); }
 		// compile sql
-		$sql = sprintf( 'SELECT %s FROM %s as p %s %s'
-			, $sql_fields
-			, $sql_table
-			, $sql_where
-			, $sql_order
-		);
-		$sql_filter = sprintf( 'SELECT * FROM %s as p %s %s'
-			, $sql_table
-			, $sql_where
-			, $sql_order
-		);
-		$sql_count = sprintf( 'SELECT COUNT(*) FROM %s as p %s %s'
-			, $sql_table
-			, $sql_where
-			, $sql_order
-		);
+		$sql_filter = $this->_class_admin_products->_sql( array(
+			'fields' => 'DISTINCT p.*',
+			'where'  => 1 . $_where,
+			'order'  => $_order,
+		));
+		$sql_count = $this->_class_admin_products->_sql( array(
+			'fields' => 'COUNT(p.id)',
+			'where'  => 1 . $_where,
+			'order'  => $_order,
+		));
 		$count = db()->get_one( $sql_count );
 		// build temp data
 		// prepare percent
@@ -138,11 +115,11 @@ class yf_manage_shop_price_update {
 		$css_field[ $to_field ] = 'text-success';
 		$limit = 5;
 		// preview
-		// db_query( "DROP TABLE IF EXISTS $sql_table_t" );
+		$sql_fields = implode( ', ', $this->_fields_show );
 		db_query( "CREATE TEMPORARY TABLE $sql_table_t LIKE $sql_table" );
 		db_query( "INSERT INTO $sql_table_t $sql_filter LIMIT $limit" );
 		db_query( "UPDATE $sql_table_t SET $sql_price_update LIMIT $limit" );
-		$result = db_get_all( "SELECT $sql_fields FROM $sql_table_t as p $sql_order LIMIT $limit" );
+		$result = db_get_all( "SELECT $sql_fields FROM $sql_table_t as p $_order LIMIT $limit" );
 		$result_t = table( $result, array( 'no_total' => true ) )
 			->text( 'name' )
 			->text( 'price_raw', array( 'class' => $css_field[ 'price_raw' ] ) )
@@ -153,10 +130,13 @@ class yf_manage_shop_price_update {
 		$result = array( $count, $result_t );
 		// apply
 		if( $is_update ) {
-			db_query( "UPDATE $sql_table as p SET $sql_price_update $sql_where" );
+			db_query( "UPDATE $sql_table as p"
+				. ' LEFT JOIN ' . db( 'shop_product_to_region' ) . ' AS pr ON pr.product_id = p.id'
+				." SET $sql_price_update WHERE 1 $_where" );
 			$info = '';
 			if( !empty( $this->_filter ) ) {
 				foreach( $this->_filter as $key => $value ) {
+					if( is_array( $value ) ) { $value = implode( ', ', $value ); }
 					if( strlen( $value ) < 1 ) { continue; }
 					$info .= "$key: $value; ";
 				}

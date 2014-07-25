@@ -5,6 +5,9 @@ require dirname(__FILE__).'/db_setup.php';
 
 // TODO: automatically create and populate database yf_unit_tests with sample data to test db and related methods
 
+/**
+ * @requires extension mysql
+ */
 class class_db_test extends PHPUnit_Framework_TestCase {
 	public $data_safe = array(
 		'user_id'	=> 1,
@@ -109,8 +112,8 @@ class class_db_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'name\\\'', self::db()->real_escape_string('name\''));
 	}
 	public function test_escape_key() {
-#		$this->assertEquals( '``', self::db()->escape_key(false));
-#		$this->assertEquals( '``', self::db()->escape_key(''));
+		$this->assertEquals( '``', self::db()->escape_key(false));
+		$this->assertEquals( '``', self::db()->escape_key(''));
 		$this->assertEquals( '`name`', self::db()->escape_key('name'));
 	}
 	public function test_escape_val() {

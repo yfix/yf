@@ -1,6 +1,6 @@
 <?php
 $data = array (
-  1 => 
+  1 =>
   array (
     'id' => '1',
     'block_id' => '1',
@@ -16,7 +16,7 @@ $data = array (
     'server_ids' => '',
     'server_roles' => '',
   ),
-  2 => 
+  2 =>
   array (
     'id' => '2',
     'block_id' => '4',
@@ -32,7 +32,7 @@ $data = array (
     'server_ids' => '',
     'server_roles' => '',
   ),
-  3 => 
+  3 =>
   array (
     'id' => '3',
     'block_id' => '2',
@@ -48,7 +48,7 @@ $data = array (
     'server_ids' => '',
     'server_roles' => '',
   ),
-  4 => 
+  4 =>
   array (
     'id' => '4',
     'block_id' => '3',
@@ -64,7 +64,7 @@ $data = array (
     'server_ids' => '',
     'server_roles' => '',
   ),
-  5 => 
+  5 =>
   array (
     'id' => '5',
     'block_id' => '3',
@@ -80,7 +80,7 @@ $data = array (
     'server_ids' => '',
     'server_roles' => '',
   ),
-  6 => 
+  6 =>
   array (
     'id' => '6',
     'block_id' => '6',
@@ -96,7 +96,7 @@ $data = array (
     'server_ids' => '',
     'server_roles' => '',
   ),
-  7 => 
+  7 =>
   array (
     'id' => '7',
     'block_id' => '7',
@@ -112,7 +112,7 @@ $data = array (
     'server_ids' => '',
     'server_roles' => '',
   ),
-  8 => 
+  8 =>
   array (
     'id' => '8',
     'block_id' => '8',
@@ -128,7 +128,7 @@ $data = array (
     'server_ids' => '',
     'server_roles' => '',
   ),
-  9 => 
+  9 =>
   array (
     'id' => '9',
     'block_id' => '9',
@@ -144,7 +144,7 @@ $data = array (
     'server_ids' => '',
     'server_roles' => '',
   ),
-  10 => 
+  10 =>
   array (
     'id' => '10',
     'block_id' => '10',
@@ -160,7 +160,7 @@ $data = array (
     'server_ids' => '',
     'server_roles' => '',
   ),
-  13 => 
+  13 =>
   array (
     'id' => '13',
     'block_id' => '4',
@@ -192,7 +192,7 @@ shop_supplier_panel,',
     'server_ids' => '',
     'server_roles' => '',
   ),
-  14 => 
+  14 =>
   array (
     'id' => '14',
     'block_id' => '12',
@@ -208,7 +208,7 @@ shop_supplier_panel,',
     'server_ids' => '',
     'server_roles' => '',
   ),
-  15 => 
+  15 =>
   array (
     'id' => '15',
     'block_id' => '13',
@@ -224,7 +224,7 @@ shop_supplier_panel,',
     'server_ids' => '',
     'server_roles' => '',
   ),
-  16 => 
+  16 =>
   array (
     'id' => '16',
     'block_id' => '14',
@@ -240,7 +240,7 @@ shop_supplier_panel,',
     'server_ids' => '',
     'server_roles' => '',
   ),
-  18 => 
+  18 =>
   array (
     'id' => '18',
     'block_id' => '6',
@@ -256,7 +256,7 @@ shop_supplier_panel,',
     'server_ids' => '',
     'server_roles' => '',
   ),
-  19 => 
+  19 =>
   array (
     'id' => '19',
     'block_id' => '15',
@@ -272,7 +272,7 @@ shop_supplier_panel,',
     'server_ids' => '',
     'server_roles' => '',
   ),
-  23 => 
+  23 =>
   array (
     'id' => '23',
     'block_id' => '20',
@@ -288,7 +288,7 @@ shop_supplier_panel,',
     'server_ids' => '',
     'server_roles' => '',
   ),
-  24 => 
+  24 =>
   array (
     'id' => '24',
     'block_id' => '16',
@@ -304,7 +304,7 @@ shop_supplier_panel,',
     'server_ids' => '',
     'server_roles' => '',
   ),
-  25 => 
+  25 =>
   array (
     'id' => '25',
     'block_id' => '21',
@@ -320,7 +320,7 @@ shop_supplier_panel,',
     'server_ids' => '',
     'server_roles' => '',
   ),
-  27 => 
+  27 =>
   array (
     'id' => '27',
     'block_id' => '6',
@@ -336,7 +336,7 @@ shop_supplier_panel,',
     'server_ids' => '',
     'server_roles' => '',
   ),
-  28 => 
+  28 =>
   array (
     'id' => '28',
     'block_id' => '4',
@@ -354,7 +354,7 @@ manage_shop.products,
 manage_shop.send_sms,
 manage_shop.show_orders,
 manage_shop.view_order,
-paywill,',
+invoice,',
     'themes' => '',
     'locales' => '',
     'others' => '',
@@ -364,7 +364,7 @@ paywill,',
     'server_ids' => '',
     'server_roles' => '',
   ),
-  34 => 
+  34 =>
   array (
     'id' => '34',
     'block_id' => '4',
@@ -399,7 +399,7 @@ manage_shop.set_main_image,
     'server_ids' => '',
     'server_roles' => '',
   ),
-  35 => 
+  35 =>
   array (
     'id' => '35',
     'block_id' => '6',
@@ -415,7 +415,7 @@ manage_shop.set_main_image,
     'server_ids' => '',
     'server_roles' => '',
   ),
-  36 => 
+  36 =>
   array (
     'id' => '36',
     'block_id' => '22',

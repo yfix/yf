@@ -11,7 +11,7 @@ $(function(){
 $(function(){
 	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
 	var yf_ajax_link_validate = '{url(dynamic,ajax_validate)}';
-	var yf_ajax_validate_cache = {};
+	var yf_ajax_validate_cache = { };
 	$('input[data-ajax-validate]', 'form').on('blur', function(i){
 		var _this = $(this);
 		var _val = _this.val();
@@ -75,7 +75,7 @@ $(function(){
 })
 </script>
 
-{if(const.DEBUG_MODE eq 1)}
+{if_ok(const.DEBUG_MODE)}
 	{include("debug_console_js")}
 {/if}
 <!-- /main_js.stpl --> {{-- Do not remove this line! --}}

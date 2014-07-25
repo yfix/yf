@@ -34,7 +34,7 @@ class yf_remote_files {
 	/** @var int @conf_skip */
 	public $CURL_DEF_HEADER		= '';
 	/** @var bool */
-	public $CURL_DEBUG		= false;
+	public $DEBUG		= false;
 	/** @var bool */
 	public $_is_avail_setopt_array = false;
 
@@ -287,7 +287,6 @@ class yf_remote_files {
 				$info['CURL_RESPONSE_BODY'] = $result;
 			}
 			rewind($verbose_stream);
-# TODO: need to test this
 			$info['CURL_STDERR'] = stream_get_contents($verbose_stream);
 			if (main()->CONSOLE_MODE) {
 				echo $info['CURL_STDERR'];
@@ -562,18 +561,23 @@ class yf_remote_files {
 	* Useful for debugging array of alredy set options
 	*/
 	function pretty_dump_curl_opts($curl_opts = array()) {
-		if (!isset($this->_curlopt_id_consts)) {
+		if (!isset($this->_curlopt_consts)) {
 			$all_consts = get_defined_constants(true);
 			foreach ((array)$all_consts['curl'] as $name => $id) {
-				if (substr($name, 0, 8) != 'CURLOPT_') {
-					continue;
+				if (substr($name, 0, 8) == 'CURLOPT_') {
+					$this->_curlopt_consts[$id] = $name;
+				} elseif (substr($name, 0, 9) == 'CURLINFO_') {
+					$this->_curlinfo_consts[$id] = $name;
 				}
-				$this->_curlopt_id_consts[$id] = $name;
 			}
 		}
 		$dump = array();
 		foreach ((array)$curl_opts as $k => $v) {
-			$dump[$this->_curlopt_id_consts[$k]] = $v;
+			if (isset($this->_curlopt_consts[$k])) {
+				$dump[$this->_curlopt_consts[$k]] = $v;
+			} elseif (isset($this->_curlinfo_consts[$k])) {
+				$dump[$this->_curlinfo_consts[$k]] = $v;
+			}
 		}
 		return $dump;
 	}
@@ -632,6 +636,12 @@ class yf_remote_files {
 		if ($url_options['cookie']) {
 			$curl_opts[CURLOPT_COOKIE]		= $url_options['cookie'];
 		}
+		if ($url_options['cookie_file']) {
+			$curl_opts[CURLOPT_COOKIEFILE]	= $url_options['cookie_file'];
+		}
+		if ($url_options['cookie_jar']) {
+			$curl_opts[CURLOPT_COOKIEJAR]	= $url_options['cookie_jar'];
+		}
 		// If we need to get target url where remote server redirects us
 		if ($url_options['get_redirected_url']) {
 			$curl_opts[CURLOPT_NOBODY]		= 1;
@@ -670,8 +680,19 @@ class yf_remote_files {
 		// Enable verbose debug output (usually into STDERR)
 		if ($url_options['curl_verbose'] || $this->DEBUG) {
 			$curl_opts[CURLOPT_VERBOSE] 	= true;
-			$curl_opts[CURLINFO_HEADER_OUT] = true;
-			$curl_opts[CURLOPT_HEADER]		= true;
+			if (main()->CONSOLE_MODE && $url_options['interactive']) {
+				$interactive_console = true;
+			}
+			if (!$interactive_console) {
+				$curl_opts[CURLINFO_HEADER_OUT] = true;
+				$curl_opts[CURLOPT_HEADER]		= true;
+			}
+		}
+		// Ability to override any other curl option
+		if ($url_options['curl_opts']) {
+			foreach ((array)$url_options['curl_opts'] as $k => $v) {
+				$curl_opts[$k] = $v;
+			}
 		}
 		if ($this->DEBUG && main()->CONSOLE_MODE) {
 			print_r($this->pretty_dump_curl_opts($curl_opts));

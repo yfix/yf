@@ -7,11 +7,23 @@ class yf_core_js {
 	public $content = array();
 	/** @array List of pre-defined assets */
 	public $assets = array(
-// TODO: add support for sub-arrays and params
 		'jquery'	=> '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js',
-		'jquery-ui'	=> '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js',
-		'bs2'		=> '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js',
-		'bs3'		=> '//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js',
+		'jquery-ui'	=> array(
+			'url' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js',
+			'require' => 'jquery',
+		),
+		'jquery-cookie' => array(
+			'url' => '//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js',
+			'require' => 'jquery',
+		),
+		'bs2'		=> array(
+			'url' => '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js',
+			'require' => 'jquery',
+		),
+		'bs3'		=> array(
+			'url' => '//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js',
+			'require' => 'jquery',
+		),
 #		'html5shiv'	=> '<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js" class="yf_core"></script><![endif]-->',
 	);
 
@@ -22,6 +34,8 @@ class yf_core_js {
 		return main()->extend_call($this, $name, $args);
 	}
 
+	/**
+	*/
 	public function _init() {
 		// Main JS from theme stpl
 		$main_script_js = trim(tpl()->parse_if_exists('script_js'));
@@ -43,6 +57,14 @@ class yf_core_js {
 		if ($module_js_path) {
 			$this->add_file($module_js_path);
 		}
+		if ($params['packed']) {
+			$packed = $this->_show_packed_content($params);
+			// Degrade gracefully
+			if (strlen($packed)) {
+				return $packed;
+			}
+		}
+		$prepend = _class('core_events')->fire('show_js.prepend');
 		$out = array();
 		// Process previously added content, depending on its type
 		foreach ((array)$this->content as $md5 => $v) {
@@ -65,8 +87,63 @@ class yf_core_js {
 				$out[$md5] = $text;
 			}
 		}
+		$append = _class('core_events')->fire('show_js.append', array('out' => &$out));
 		$this->content = array();
-		return implode(PHP_EOL, $out);
+		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
+	}
+
+	/**
+	*/
+	public function _show_packed_content($params = array()) {
+		$packed_file = $this->_pack_content($params);
+		if (!$packed_file || !file_exists($packed_file)) {
+			return false;
+		}
+		$css_class = $params['class'] ? ' class="'.$params['class'].'"' : '';
+		return '<script type="text/javascript" src="'.$packed_file.'"'.$css_class.'></script>';
+	}
+
+	/**
+	*/
+	public function _pack_content($params = array()) {
+// TODO
+		$packed_file = INCLUDE_PATH. 'uploads/js/packed_'.md5($_SERVER['HTTP_HOST']).'.js';
+		if (file_exists($packed_file) && filemtime($packed_file) > (time() - 3600)) {
+			return $packed_file;
+		}
+		$packed_dir = dirname($packed_file);
+		if (!file_exists($packed_dir)) {
+			mkdir($packed_dir, 0755, true);
+		}
+		_class('core_errors')->fire('js.before_pack', array(
+			'fiie'		=> $packed_file,
+			'content'	=> $this->content,
+			'params'	=> $params,
+		));
+		$out = array();
+		foreach ((array)$this->content as $md5 => $v) {
+			$type = $v['type'];
+			$text = $v['text'];
+			if ($type == 'url') {
+				$out[$md5] = file_get_contents($text);
+			} elseif ($type == 'file') {
+				$out[$md5] = file_get_contents($text);
+			} elseif ($type == 'inline') {
+				$text = $this->_strip_script_tags($text);
+				$out[$md5] = $text;
+			} elseif ($type == 'raw') {
+				$out[$md5] = $text;
+			}
+		}
+// TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
+		file_put_contents($packed_file, implode(PHP_EOL, $out));
+
+		_class('core_errors')->fire('js.after_pack', array(
+			'fiie'		=> $packed_file,
+			'content'	=> $out,
+			'params'	=> $params,
+		));
+		return $packed_file;
 	}
 
 	/**
@@ -74,6 +151,17 @@ class yf_core_js {
 	*/
 	public function show_js($params = array()) {
 		return $this->show($params);
+	}
+
+	/**
+	* Special code for jquery on document ready
+	*/
+	function jquery($content, $params = array()) {
+		if (!$this->_jquery_requried) {
+			$this->add_asset('jquery');
+			$this->_jquery_requried = true;
+		}
+		return $this->add('$(function(){'.PHP_EOL. $content. PHP_EOL.'})', 'inline', $params);
 	}
 
 	/**
@@ -133,7 +221,15 @@ class yf_core_js {
 					'params'=> $params,
 				);
 			} elseif ($type == 'asset') {
-				$url = $this->assets[$_content];
+				$info = $this->assets[$_content];
+				if (is_array($info)) {
+					$url = $info['url'];
+					if ($info['require']) {
+						$this->add($info['require'], 'asset');
+					}
+				} else {
+					$url = $info;
+				}
 				$md5 = md5($url);
 				$this->content[$md5] = array(
 					'type'	=> 'url',
@@ -152,6 +248,7 @@ class yf_core_js {
 				));
 			}
 		}
+#		return $this; // Chaining
 	}
 
 	/**
@@ -176,6 +273,12 @@ class yf_core_js {
 	*/
 	public function add_raw($content, $params = array()) {
 		return $this->add($content, 'raw');
+	}
+
+	/**
+	*/
+	public function add_asset($content, $params = array()) {
+		return $this->add($content, 'asset');
 	}
 
 	/**
@@ -213,15 +316,11 @@ class yf_core_js {
 	public function _detect_content($content = '') {
 		$content = trim($content);
 		$type = false;
-// TODO: domain.com/script.js
-// TODO: /script.js
-// TODO: script.js
 		if (isset($this->assets[$content])) {
 			$type = 'asset';
 		} elseif (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content)) {
 			$type = 'url';
 		} elseif (preg_match('~^/[a-z0-9\./_-]+\.js$~ims', $content) && file_exists($content)) {
-// TODO: file allowed to begin with PROJECT_PATH, SITE_PATH or YF_PATH
 			$type = 'file';
 		} elseif (preg_match('~^(<script|[$;#\*/])~ims', $content) || strpos($content, PHP_EOL) !== false) {
 			$type = 'inline';

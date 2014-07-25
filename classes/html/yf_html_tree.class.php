@@ -84,12 +84,14 @@ class yf_html_tree {
 				$content = '<a href="'.$item['link'].'">'.$content. '</a>';
 			}
 			$controls = $extra['show_controls'] ? str_replace('%d', $id, $form_controls) : '';
+			$badge = $item['badge'] ? ' <sup class="badge badge-'.($item['class_badge'] ?: 'info').'">'.$item['badge'].'</sup>' : ''; 
 			$items[] = '
 				<li id="item_'.$id.'"'.(!$is_draggable ? ' class="not_draggable"' : '').'>
 					<div class="dropzone"></div>
 					<dl>
 						<a href="'.$item['link'].'" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
 						.$content
+						.$badge
 						.($is_draggable ? '&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>' : '')
 						.($controls ? '<div style="float:right;display:none;" class="controls_over">'.$controls.'</div>' : '')
 					.'</dl>'
@@ -135,7 +137,15 @@ class yf_html_tree {
 	function _js($extra = array()) {
 		js(
 '$(function(){
-	$(".draggable_form").on("submit", function(){
+	var orig_items = { };
+	var i = 0;
+	$("li", ".draggable_menu").each(function(){
+		orig_items[++i] = {
+			"item_id" : +$(this).attr("id").substring("item_".length),
+			"parent_id" : +($(this).closest("ul").not(".draggable_menu").parent("li").attr("id") || "").substring("item_".length)
+		}
+	})
+	$("#draggable_form").on("submit", function(){
 		var _form = $(this);
 		var items = { };
 		var i = 0;
@@ -144,10 +154,17 @@ class yf_html_tree {
 				"item_id" : +$(this).attr("id").substring("item_".length),
 				"parent_id" : +($(this).closest("ul").not(".draggable_menu").parent("li").attr("id") || "").substring("item_".length)
 			}
+			if (orig_items[i] && orig_items[i]["item_id"] == items[i]["item_id"] && orig_items[i]["parent_id"] == items[i]["parent_id"]) {
+				delete items[i];
+			} else {
+				orig_items[i] = items[i];
+			}
 		})
-		$.post(_form.attr("action"), {"items" : items}, function(data){
-//			window.location.reload();
-		})
+		if (items) {
+			$.post(_form.attr("action"), {"items" : JSON.stringify(items)}, function(data){
+//				window.location.reload();
+			})
+		}
 		return false;
 	})
 

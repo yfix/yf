@@ -2,7 +2,7 @@
 
 /**
  * Database abstraction layer
- * 
+ *
  * @package		YF
  * @author		YFix Team <yfix.dev@gmail.com>
  * @version		1.0
@@ -229,9 +229,21 @@ class yf_db {
 					}
 				}
 			}
+			$driver_params = array(
+				'host'		=> $this->DB_HOST,
+				'user'		=> $this->DB_USER,
+				'pswd'		=> $this->DB_PSWD,
+				'name'		=> $this->DB_NAME,
+				'persist'	=> $this->DB_PERSIST,
+				'ssl'		=> $this->DB_SSL,
+				'port'		=> $this->DB_PORT,
+				'socket'	=> $this->DB_SOCKET,
+				'charset'	=> $this->DB_CHARSET,
+				'allow_auto_create_db' => $this->ALLOW_AUTO_CREATE_DB,
+			);
 			// Try to connect several times
 			for ($i = 1; $i <= $this->RECONNECT_NUM_TRIES; $i++) {
-				$this->db = new $driver_class_name($this->DB_HOST, $this->DB_USER, $this->DB_PSWD, $this->DB_NAME, $this->DB_PERSIST, $this->DB_SSL, $this->DB_PORT, $this->DB_SOCKET, $this->DB_CHARSET, $this->ALLOW_AUTO_CREATE_DB);
+				$this->db = new $driver_class_name($driver_params);
 				if (!is_object($this->db) || !($this->db instanceof yf_db_driver)) {
 					trigger_error('DB: Wrong driver', $this->CONNECTION_REQUIRED ? E_USER_ERROR : E_USER_WARNING);
 					break;
@@ -338,10 +350,10 @@ class yf_db {
 		if (empty($db_error) || empty($db_error['message'])) {
 			$db_error = $old_db_error;
 		}
-		$msg = 'DB: QUERY ERROR: '.$sql.'<br />'.PHP_EOL.'<b>CAUSE</b>: '.$db_error['message']
+		$msg = 'DB: QUERY ERROR: '.$sql. ';'. PHP_EOL. 'CAUSE: '.$db_error['message']
 			. ($db_error['code'] ? ' (code:'.$db_error['code'].')' : '')
 			. ($db_error['offset'] ? ' (offset:'.$db_error['offset'].')' : '')
-			. (main()->USE_CUSTOM_ERRORS ? '' : $_trace.'<br />'.PHP_EOL)
+			. (main()->USE_CUSTOM_ERRORS ? '' : $_trace. PHP_EOL)
 		;
 		trigger_error($msg, E_USER_WARNING);
 	}
@@ -617,26 +629,27 @@ class yf_db {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
-		$CACHE_CONTAINER = &$this->_db_results_cache;
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($CACHE_CONTAINER[$query])) {
-			return $CACHE_CONTAINER[$query];
+		$storage = &$this->_db_results_cache;
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($storage[$query])) {
+			return $storage[$query];
 		}
-		$Q = $this->query($query);
-		if ($Q) {
+		$data = null;
+		$q = $this->query($query);
+		if (is_resource( $q )) {
 			if ($assoc) {
-				$data = @$this->db->fetch_assoc($Q);
+				$data = @$this->db->fetch_assoc($q);
 			} else {
-				$data = @$this->db->fetch_row($Q);
+				$data = @$this->db->fetch_row($q);
 			}
-		}
-		$this->free_result($Q);
-		// Store result in variable cache
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($CACHE_CONTAINER[$query])) {
-			$CACHE_CONTAINER[$query] = $data;
-			// Permanently turn off queries cache (and free some memory) if case of limit reached
-			if ($this->CACHE_QUERIES_LIMIT && count($CACHE_CONTAINER) > $this->CACHE_QUERIES_LIMIT) {
-				$this->ALLOW_CACHE_QUERIES	= false;
-				$CACHE_CONTAINER			= null;
+			$this->free_result($q);
+			// Store result in variable cache
+			if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($storage[$query])) {
+				$storage[$query] = $data;
+				// Permanently turn off queries cache (and free some memory) if case of limit reached
+				if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
+					$this->ALLOW_CACHE_QUERIES = false;
+					$storage = null;
+				}
 			}
 		}
 		return $data;
@@ -665,7 +678,7 @@ class yf_db {
 	}
 
 	/**
-	* Alias, return 2d array, where key is first field and value is the second, 
+	* Alias, return 2d array, where key is first field and value is the second,
 	* Example: 'SELECT id, name FROM p_static_pages' => array('1' => 'page1', '2' => 'page2')
 	* Example: 'SELECT name FROM p_static_pages' => array('page1', 'page2')
 	*/
@@ -691,7 +704,7 @@ class yf_db {
 
 	/**
 	* Generate multi-level (up to 4) array from incoming query, useful to save some code on generating this often.
-	* Example: get_deep_array('SELECT department_id, user_id, name FROM t_personal', 2)  => 
+	* Example: get_deep_array('SELECT department_id, user_id, name FROM t_personal', 2)  =>
 	*	[ 25 => [ 654 => [
 	*		'department_id' => 25,
 	*		'user_id' => 654,
@@ -751,33 +764,44 @@ class yf_db {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
-		$CACHE_CONTAINER = &$this->_db_results_cache;
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($CACHE_CONTAINER[$query])) {
-			return $CACHE_CONTAINER[$query];
+		$params = array();
+		if (is_array($use_cache)) {
+			$params = $use_cache;
+			$use_cache = isset($params['use_cache']) ? $params['use_cache'] : true;
+		}
+		$storage = &$this->_db_results_cache;
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($storage[$query])) {
+			if ($params['as_object']) {
+				return array_to_object($storage[$query]);
+			}
+			return $storage[$query];
 		}
 		$data = null;
-		$Q = $this->query($query);
-		if ($Q) {
+		$q = $this->query($query);
+		if ($q) {
 			// If $key_name is specified - then save to $data using it as key
-			while ($A = @$this->db->fetch_assoc($Q)) {
+			while ($a = @$this->db->fetch_assoc($q)) {
 				if ($key_name != null && $key_name != '-1') {
-					$data[$A[$key_name]] = $A;
-				} elseif (isset($A['id']) && $key_name != '-1') {
-					$data[$A['id']] = $A;
+					$data[$a[$key_name]] = $a;
+				} elseif (isset($a['id']) && $key_name != '-1') {
+					$data[$a['id']] = $a;
 				} else {
-					$data[] = $A;
+					$data[] = $a;
 				}
 			}
-			@$this->free_result($Q);
+			@$this->free_result($q);
 		}
 		// Store result in variable cache
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($CACHE_CONTAINER[$query])) {
-			$CACHE_CONTAINER[$query] = $data;
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($storage[$query])) {
+			$storage[$query] = $data;
 			// Permanently turn off queries cache (and free some memory) if case of limit reached
-			if ($this->CACHE_QUERIES_LIMIT && count($CACHE_CONTAINER) > $this->CACHE_QUERIES_LIMIT) {
-				$this->ALLOW_CACHE_QUERIES	= false;
-				$CACHE_CONTAINER			= null;
+			if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
+				$this->ALLOW_CACHE_QUERIES = false;
+				$storage = null;
 			}
+		}
+		if ($params['as_object']) {
+			return array_to_object($data);
 		}
 		return $data;
 	}
@@ -984,7 +1008,7 @@ class yf_db {
 	* Free result assosiated with a given query resource
 	*/
 	function free_result($result) {
-		if (!$this->_connected && !$this->connect()) {
+		if (!$this->_connected && !$this->connect() && !is_resource($result)) {
 			return false;
 		}
 		return $this->db->free_result($result);
@@ -1173,7 +1197,15 @@ class yf_db {
 	* Get real table name from its short variant
 	*/
 	function _real_name ($name) {
-		return $this->DB_PREFIX. (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
+		if (isset($this->_found_tables[$name])) {
+			return $this->_found_tables[$name];
+		}
+		$name = (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
+		if (strlen($this->DB_PREFIX) && substr($name, 0, strlen($this->DB_PREFIX)) != $this->DB_PREFIX) {
+			return $this->DB_PREFIX. $name;
+		} else {
+			return $name;
+		}
 	}
 
 	/**
@@ -1242,7 +1274,7 @@ class yf_db {
 	}
 
 	/**
-	* Print nice 
+	* Print nice
 	*/
 	function _trace_string() {
 		$e = new Exception();
@@ -1301,9 +1333,9 @@ class yf_db {
 			foreach ((array)$keys as $x => $key) {
 				$val = $this->_get_debug_item($key);
 				if($val) {
-					$val = str_replace(array("\t","\n","\0"), '', $val); 
+					$val = str_replace(array("\t","\n","\0"), '', $val);
 					// all other chars are safe in comments
-					$key = strtolower(str_replace(array(': ',"\t","\n","\0"), '', $key)); 
+					$key = strtolower(str_replace(array(': ',"\t","\n","\0"), '', $key));
 					// Add the requested instrumentation keys
 					$query_header .= "\t".$key.': '.$val;
 				}
@@ -1464,7 +1496,7 @@ class yf_db {
 	/**
 	*/
 	function query_builder() {
-		if (strpos($this->DB_TYPE, 'mysql') !== false) {
+		if (strpos($this->DB_TYPE, 'mysql') !== false || $this->DB_TYPE == 'DB_TYPE') {
 			$driver = 'mysql';
 		} else {
 			$driver = $this->DB_TYPE;
@@ -1487,6 +1519,74 @@ class yf_db {
 	*/
 	function from() {
 		return $this->query_builder()->from(array('__args__' => func_get_args()));
+	}
+
+	/**
+	* ORM shortcut
+	*/
+	function model($name, $params = array()) {
+		$model = $this->_model_load($name);
+		$params && $model->_set_params($params);
+		return $model;
+	}
+
+	/**
+	* Load new model object
+	*/
+	function _model_load($name) {
+		if (!$this->_models_preloaded) {
+			$this->_models_preload();
+		}
+		$model_class = $name.'_model';
+		$main_modules = &main()->modules;
+		if (isset($main_modules[$model_class])) {
+			return $main_modules[$model_class];
+		}
+		$avail_models = &$this->_models_preloaded;
+		$model_path = $avail_models[$name];
+		if (!isset($avail_models[$name])) {
+			throw new Exception('Not able to load model: '.$name);
+			return false;
+		}
+		if (!class_exists($model_class)) {
+			require_once $model_path;
+			if (!class_exists($model_class)) {
+				throw new Exception('Not able to find model class: '.$model_class.' by path: '.$model_path);
+				return false;
+			}
+		}
+		$model_obj = _class($model_class);
+		$model_obj->_db = $this;
+		return $model_obj;
+	}
+
+	/**
+	* Preload models for ORM
+	*/
+	function _models_preload() {
+		if ($this->_models_preloaded) {
+			return true;
+		}
+		load('model', 'framework', 'classes/');
+		$suffix = '_model'.YF_CLS_EXT;
+		$s_len = strlen($suffix);
+		$globs = array(
+			'yf'				=> YF_PATH.'share/models/*'.$suffix,
+			'yf_plugins'		=> YF_PATH.'plugins/*/share/models/*'.$suffix,
+			'project'			=> PROJECT_PATH.'share/models/*'.$suffix,
+			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/models/*'.$suffix,
+			'project_app_path'	=> APP_PATH.'models/*'.$suffix,
+		);
+		$models = array();
+		foreach($globs as $glob) {
+			foreach (glob($glob) as $path) {
+				$name = trim(substr(basename($path), 0, -$s_len));
+				if ($name) {
+					$models[$name] = $path;
+				}
+			}
+		}
+		$this->_models_preloaded = $models;
 	}
 
 	/**
@@ -1521,13 +1621,13 @@ class yf_db {
 
 	/**
 	*/
-	function _mysql_escape_mimic($inp) { 
+	function _mysql_escape_mimic($inp) {
 		if (is_array($inp)) {
 	        return array_map(array($this, __FUNCTION__), $inp);
 		}
 		if (!empty($inp) && is_string($inp)) {
 	        return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $inp);
 		}
-	    return $inp; 
-	}	
+	    return $inp;
+	}
 }

@@ -5,41 +5,32 @@
 */
 class yf_tpl_driver_yf {
 
-	/** @var array @conf_skip Catch dynamic content into variable */
-	// Examples: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
-	public $_PATTERN_CATCH = '/\{catch\([\s\t]*["\']{0,1}([\w_-]+?)["\']{0,1}[\s\t]*\)\}(.*?)\{\/catch\}/ims';
-	/** @var array @conf_skip STPL internal comment pattern */
-	// Examples: {{-- some content you want to comment inside template only --}}
-	public $_PATTERN_COMMENT = '/(\{\{--.*?--\}\})/ims';
-	/** @var string @conf_skip Conditional pattern */
-	// Examples: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
-	public $_PATTERN_IF	= '/\{if\(\s*["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w#-]*)["\']{0,1}([^\(\)\{\}\n]*)\s*\)\}/ims';
-	/** @var string @conf_skip pattern for multi-conditions */
-	public $_PATTERN_MULTI_COND = '/["\']{0,1}([\w\s\.+%-]+?)["\']{0,1}[\s\t]+(eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}([\w\s#-]*)["\']{0,1}/ims';
-	/** @var string @conf_skip Cycle pattern */
-	// Examples: {foreach ("var")}<li>{var.value1}</li>{/foreach}
-	public $_PATTERN_FOREACH = '/\{foreach\(\s*["\']{0,1}([\w\s\.-]+)["\']{0,1}\s*\)\}((?![^\{]*?\{foreach\(\s*["\']{0,1}?).*?)\{\/foreach\}/is';
-	/** @var array @conf_skip For "_process_conditions" */
-	public $_cond_operators	= array('eq'=>'==','ne'=>'!=','gt'=>'>','lt'=>'<','ge'=>'>=','le'=>'<=','mod'=>'%');
-	/** @var array @conf_skip For '_process_conditions' */
-	public $_math_operators	= array('and'=>'&&','xor'=>'xor','or'=>'||','+'=>'+','-'=>'-');
-	/** @var int Safe limit number of replacements (to avoid dead cycles) (type "-1" for unlimited number) */
-	public $STPL_REPLACE_LIMIT	 = -1;
-	/** @var int Cycles and conditions max recurse level (how deeply could be nested template constructs like "if") */
-	public $_MAX_RECURSE_LEVEL = 4;
+	/** @var array @conf_skip For "_process_ifs" */
+	public $_cond_operators	= array(
+		'eq' => '==',
+		'ne' => '!=',
+		'gt' => '>',
+		'lt' => '<',
+		'ge' => '>=',
+		'le' => '<=',
+		'mod'=> '%',
+	);
+	/** @var array @conf_skip For '_process_ifs' */
+	public $_math_operators	= array(
+		'and' => '&&',
+		'xor' => 'xor',
+		'or'  => '||',
+		'+'   => '+',
+		'-'   => '-'
+	);
 	/** @var @conf_skip */
 	public $CACHE = array();
-/*
-// TODO
-{ife(is_logged_in)}  {/ife}
-{ifne(is_logged_in)}  {/ifne}
-*/
 
 	/**
 	* YF constructor
 	*/
 	function _init () {
-		$this->tpl = _class('tpl');
+		$this->tpl = &_class('tpl');
 		if (!function_exists('preg_match_all')) {
 			trigger_error('STPL: PCRE Extension is REQUIRED for the template engine', E_USER_ERROR);
 		}
@@ -52,9 +43,9 @@ class yf_tpl_driver_yf {
 		if (conf('FRAMEWORK_IS_COMPILED') && $this->AUTO_LOAD_PACKED_STPLS) {
 			foreach ((array)conf('_compiled_stpls') as $_cur_name => $_cur_text) {
 				$this->CACHE[$_cur_name] = array(
-					'string'	=> $_cur_text,
-					'calls'		=> 0,
-					'storage'   => 'cache',
+					'string'		=> $_cur_text,
+					'calls'			=> 0,
+					'force_storage' => 'cache',
 				);
 			}
 		}
@@ -62,8 +53,10 @@ class yf_tpl_driver_yf {
 	}
 
 	/**
+	* Place your custom code in this method or inside ocverriden class inside project
 	*/
 	function _init_patterns () {
+		// currently empty
 	}
 
 	/**
@@ -87,23 +80,28 @@ class yf_tpl_driver_yf {
 	function parse($name, $replace = array(), $params = array()) {
 		$string = $params['string'] ?: false;
 
+		$this->_fix_replace($replace, $name);
+
 		$php_tpl = $this->_parse_get_php_tpl($name, $replace, $params);
 		if (isset($php_tpl)) {
 			return $php_tpl;
 		}
-		$compiled = $this->_parse_get_compiled($name, $replace, $params);
-		if (isset($compiled)) {
-			return $compiled;
+		if ($this->tpl->COMPILE_TEMPLATES) {
+			$compiled = $this->_parse_get_compiled($name, $replace, $params);
+			if (isset($compiled)) {
+				return $compiled;
+			}
 		}
 		$string = $this->_parse_get_cached($name, $replace, $params, $string);
 		if ($string === false) {
 			return false;
 		}
+		$string = $this->_process_comments($string, $name);
 		$string = $this->_process_executes($string, $replace, $name);
 		$string = $this->_process_catches($string, $replace, $name);
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
-		$string = $this->_process_cycles($string, $replace, $name);
-		$string = $this->_process_conditions($string, $replace, $name);
+		$string = $this->_process_foreaches($string, $replace, $name);
+		$string = $this->_process_ifs($string, $replace, $name);
 		if (!$params['no_include']) {
 			$string = $this->_process_includes($string, $replace, $name);
 			$string = $this->_process_executes($string, $replace, $name);
@@ -113,6 +111,23 @@ class yf_tpl_driver_yf {
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
 		$string = $this->_process_executes_last($string, $replace, $name);
 		return $string;
+	}
+
+	/**
+	* STPL internal comment pattern. Examples: {{-- some content you want to comment inside template only --}}
+	*/
+	function _process_comments($string, $name) {
+		return preg_replace('/(\{\{--.*?--\}\})/ims', '', $string);
+	}
+
+	/**
+	*/
+	function _fix_replace(array &$replace, $name) {
+		foreach ($replace as $item => $value) {
+			if (is_object($value) && !method_exists($value, 'render')) {
+				$replace[$item] = obj2arr($value);
+			}
+		}
 	}
 
 	/**
@@ -137,55 +152,73 @@ class yf_tpl_driver_yf {
 
 	/**
 	*/
+	function _get_compiled_string($name, $replace = array(), $params = array()) {
+		$compiled_string = null;
+# TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
+		$compiled_storage = 'files';
+		if ($compiled_storage == 'files') {
+			$compiled_cache_name = $name.'@'.$params['force_storage'].'@'.MAIN_TYPE;
+			if (isset($this->_compiled_cache[$compiled_cache_name])) {
+				list($compiled_string, $compiled_mtime) = $this->_compiled_cache[$compiled_cache_name];
+			} else {
+				$compiled_path = STORAGE_PATH. $this->tpl->COMPILED_DIR.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
+				if (file_exists($compiled_path)) {
+					$compiled_mtime = filemtime($compiled_path);
+					if ((time() - $compiled_mtime) < $this->tpl->COMPILE_TTL) {
+						$compiled_string = file_get_contents($compiled_path);
+						$this->_compiled_cache[$compiled_cache_name] = array($compiled_string, $compiled_mtime);
+					}
+				}
+			}
+		}
+		if ($compiled_mtime && strlen($compiled_string) && $this->tpl->COMPILE_CHECK_STPL_CHANGED) {
+			$mtime_cache_name = $name.'@'.$params['force_storage'];
+			if (isset($this->_stpl_mtimes[$mtime_cache_name])) {
+				$source_mtime = $this->_stpl_mtimes[$mtime_cache_name];
+			} else {
+				$stpl_path = $this->tpl->_get_template_file($name, $params['force_storage'], 0, 1);
+				$source_mtime = $stpl_path ? filemtime($stpl_path) : 0;
+				$this->_stpl_mtimes[$mtime_cache_name] = $source_mtime;
+			}
+			if ($source_mtime > $compiled_mtime) {
+				$compiled_string = null;
+			}
+		}
+		if (!isset($compiled_string)) {
+			$string = isset($params['string']) ? $params['string'] : $this->tpl->_get_template_file($name, $params['force_storage']);
+			if (strlen($string)) {
+				$compiled_string = $this->_compile($name, $replace, $string, $params);
+			}
+		}
+		return $compiled_string;
+	}
+
+	/**
+	*/
 	function _parse_get_compiled($name, $replace = array(), $params = array()) {
 		if (!$this->tpl->COMPILE_TEMPLATES) {
 			return null;
 		}
 		$stpl_time_start = microtime(true);
-
-# TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
-		$compiled_path = PROJECT_PATH. $this->tpl->COMPILED_DIR.'c_'.MAIN_TYPE.'_'.urlencode($name).'.php';
-		if (!file_exists($compiled_path)) {
+		$compiled_string = $this->_get_compiled_string($name, $replace, $params);
+		if (!isset($compiled_string)) {
 			return null;
 		}
-		$compiled_ok = false;
-		$compiled_mtime = filemtime($compiled_path);
-		if ((time() - $compiled_mtime) < $this->tpl->COMPILE_TTL) {
-			$compiled_ok = true;
-		}
-		if (!$compiled_ok) {
-			return null;
-		}
-		if ($compiled_ok) {
-
-			ob_start();
-			include ($compiled_path);
-			$string = ob_get_clean();
-
-			if ($this->tpl->COMPILE_CHECK_STPL_CHANGED) {
-				$stpl_path = $this->tpl->_get_template_file($name, $params['force_storage'], 0, 1);
-				if ($stpl_path) {
-					$source_mtime = filemtime($stpl_path);
-				}
-				if (!$stpl_path || $source_mtime > $compiled_mtime) {
-					$compiled_ok = false;
-					$string = false;
-				}
-			}
-			if ($compiled_ok) {
-				$this->_set_cache_details($name, $string, $stpl_time_start);
-				return $string;
-			}
-		}
-		return null;
+		ob_start();
+		eval('?>'.$compiled_string);
+		$string = ob_get_clean();
+		$this->_set_cache_details($name, $string, $stpl_time_start, $is_compiled = true);
+		return $string;
 	}
 
 	/**
 	*/
-	function _set_cache_details($name, $string, $stpl_time_start) {
+	function _set_cache_details($name, $string, $stpl_time_start, $is_compiled = false) {
+		$this->CACHE[$name]['driver'] = 'yf';
+		$this->CACHE[$name]['is_compiled'] = (int)$is_compiled;
 		$this->CACHE[$name]['calls']++;
 		if (!isset($this->CACHE[$name]['string'])) {
-			$this->CACHE[$name]['string']   = $string;
+			$this->CACHE[$name]['string'] = $string;
 		}
 		if (!isset($this->CACHE[$name]['s_length'])) {
 			$this->CACHE[$name]['s_length'] = strlen($string);
@@ -197,7 +230,7 @@ class yf_tpl_driver_yf {
 
 	/**
 	*/
-	function _parse_get_cached($name, $replace = array(), $params = array(), $string = false) {
+	function _parse_get_cached($name, array &$replace, $params = array(), $string = false) {
 		$force_storage = $params['force_storage'];
 		if (isset($this->CACHE[$name]) && !$params['no_cache'] && !$force_storage) {
 			$string = $this->CACHE[$name]['string'];
@@ -212,13 +245,11 @@ class yf_tpl_driver_yf {
 			if ($string === false) {
 				return false;
 			}
-			$string = preg_replace($this->_PATTERN_COMMENT, '', $string);
-			if ($this->tpl->COMPILE_TEMPLATES) {
-				$this->_compile($name, $replace, $string, $params);
-			}
 			if (isset($params['no_cache']) && !$params['no_cache']) {
-				$this->CACHE[$force_storage. $name]['string']   = $string;
-				$this->CACHE[$force_storage. $name]['calls']	= 1;
+				$this->CACHE[$force_storage. $name]['string'] = $string;
+				$this->CACHE[$force_storage. $name]['calls'] = 1;
+				$this->CACHE[$force_storage. $name]['driver'] = 'yf';
+				$this->CACHE[$force_storage. $name]['force_storage'] = $force_storage;
 			}
 		}
 		return $string;
@@ -228,7 +259,7 @@ class yf_tpl_driver_yf {
 	*/
 	function _process_includes($string, $replace = array(), $name = '') {
 		$_this = $this;
-		$pattern = '/\{(include|include_if_exists)\(\s*["\']{0,1}\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*["\']{0,1}\s*\)\}/i';
+		$pattern = '/\{(include|include_if_exists)\(\s*["\']{0,1}\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*["\']{0,1}\s*\)\}/ims';
 		$extra = array();
 		$func = function($m) use ($replace, $name, $_this, $extra) {
 			$if_exists = ($m[1] == 'include_if_exists');
@@ -243,11 +274,6 @@ class yf_tpl_driver_yf {
 				return false;
 			}
 			$prevent_name = $name.'__'.$m[0];
-			if (isset($_this->_include_recursion_prevent[$prevent_name])) {
-				return false;
-			} else {
-				$_this->_include_recursion_prevent[$prevent_name] = true;
-			}
 			// Here we merge/override incoming $replace with parsed params, to be passed to included template
 			foreach ((array)explode(';', str_replace(array('\'','"'), '', $_replace)) as $v) {
 				list($a_name, $a_val) = explode('=', trim($v));
@@ -262,41 +288,85 @@ class yf_tpl_driver_yf {
 	}
 
 	/**
+	* Simple key=val replace processing with sub arrays too
 	*/
-	function _process_replaces($string, $replace = array(), $name = '') {
-		// Replace given items (if exists ones)
+	function _process_replaces($string, array &$replace, $name = '') {
+		if (!strlen($string) || false === strpos($string, '{')) {
+			return $string;
+		}
+		// Need to optimize complex replace arrays and templates not containing sub replaces
+		$has_sub_pairs = preg_match('~\{[a-z0-9_-]+\.[a-z0-9_-]+\}~ims', $string);
+		// Prepare pairs array of simple string replaces
+		$pairs = array();
+		$cleanup_keys = array();
 		foreach ((array)$replace as $item => $value) {
-			if (!is_array($value)) {
-				$string = str_replace('{'.$item.'}', $value, $string);
+			if (is_object($value) && !method_exists($value, 'render')) {
+				$replace[$item] = obj2arr($value);
+				$value = $replace[$item];
 			}
 			// Allow to replace simple 1-dimensional array items (some speed loss, but might be useful)
-			if (is_array($value) && !is_array(current($value))) {
-				foreach ((array)$value as $_sub_key => $_sub_val) {
-					$string = str_replace('{'.$item.'.'.$_sub_key.'}', $_sub_val, $string);
+			if (is_array($value)) {
+				if (!$has_sub_pairs) {
+					continue;
 				}
+				// 2+ levels deep detected, but not supported
+				if (is_array(current($value))) {
+					continue;
+				}
+				foreach ((array)$value as $_sub_key => $_sub_val) {
+					$pairs['{'.$item.'.'.$_sub_key.'}'] = $_sub_val;
+				}
+				$cleanup_keys[$item] = '';
+			// Simple key=val replace
+			} else {
+				$pairs['{'.$item.'}'] = $value;
 			}
+		}
+		if ($has_sub_pairs) {
+			$avail_arrays = $this->tpl->_avail_arrays; // ('get' => '_GET')
+			foreach ((array)$avail_arrays as $short => $v) {
+				$v = eval('return $'.$v.';'); // !! Do not blindly change to $$v, need to figure out before why it does not work
+				foreach ((array)$v as $key => $val) {
+					if (is_array($val)) {
+						continue;
+					}
+					$pairs['{'.$short.'.'.$key.'}'] = $val;
+				}
+				$cleanup_keys[$short] = '';
+			}
+		}
+		if ($pairs) {
+			$string = str_replace(array_keys($pairs), $pairs, $string);
+		}
+		// Cleanup, using regex pairs
+		if ($cleanup_keys) {
+			$regex_pairs = array();
+			foreach ($cleanup_keys as $k => $v) {
+				$regex_pairs['~\{'.preg_quote($k, '~').'\.[a-z0-9_-]+\}~i'] = '';
+			}
+			$string = preg_replace(array_keys($regex_pairs), '', $string);
 		}
 		return $string;
 	}
 
 	/**
+	* If content need to be cleaned from unused tags - do that
 	*/
-	function _process_clear_unused($string, $replace = array(), $name = '') {
-		// If content need to be cleaned from unused tags - do that
+	function _process_clear_unused($string, array &$replace, $name = '') {
 		return preg_replace('/\{[\w_]+\}/i', '', $string);
 	}
 
 	/**
+	* Evaluate given string as php code
 	*/
-	function _process_eval_string($string, $replace = array(), $name = '') {
-		eval('$string = "'.str_replace('"', '\"', $string).'";');
-		return $string;
+	function _process_eval_string($string, array &$replace, $name = '') {
+		return eval('return "'.str_replace('"', '\"', $string).'";');
 	}
 
 	/**
 	* Replace '{execute' patterns
 	*/
-	function _process_executes($string, $replace = array(), $name = '', $params = array()) {
+	function _process_executes($string, array &$replace, $name = '', $params = array()) {
 		if (empty($string)) {
 			return $string;
 		}
@@ -304,7 +374,7 @@ class yf_tpl_driver_yf {
 		// Examples: {execute(graphics, translate, value = blabla; extra = strtoupper)
 		if (strpos($string, '{exec') !== false) {
 			$string = preg_replace_callback(
-				'/\{(execute|exec_cached)\(\s*["\']{0,1}\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i', 
+				'/\{(execute|exec_cached)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i', 
 				function($m) use ($replace, $name, $_this) {
 					$use_cache = false;
 					if ($m[1] == 'exec_cached') {
@@ -330,7 +400,7 @@ class yf_tpl_driver_yf {
 	* Replace '{exec_last' patterns
 	* This code block needed to be executed inside template after all other patterns
 	*/
-	function _process_executes_last($string, $replace = array(), $name = '', $params = array()) {
+	function _process_executes_last($string, array &$replace, $name = '', $params = array()) {
 		if (empty($string)) {
 			return $string;
 		}
@@ -338,7 +408,7 @@ class yf_tpl_driver_yf {
 		// Examples: {exec_last(graphics, translate, value = blabla; extra = strtoupper)
 		if (strpos($string, '{exec_last') !== false || strpos($string, '{execute_shutdown') !== false) {
 			$string = preg_replace_callback(
-				'/\{(exec_last|execute_shutdown)\(\s*["\']{0,1}\s*([\w\-]+)\s*[,;]\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i', 
+				'/\{(exec_last|execute_shutdown)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i', 
 				function($m) use ($replace, $name, $_this) {
 					return main()->_execute($m[2], $m[3], $m[4], $name. $_this->_STPL_EXT, 0, $use_cache = false);
 				}
@@ -352,16 +422,8 @@ class yf_tpl_driver_yf {
 	*/
 	function _process_js_css($string, $replace = array(), $name = '') {
 		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css)}, {catch(tpl_var)}.some_css_class {} {/catch} {require_css(tpl_var)}
-		$string = preg_replace_callback('/\{(css|require_css)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(css|require_css)\}/ims', function($m) use ($_this) {
-			$func = $m[1];
-			if (substr($func, 0, strlen('require_')) != 'require_') {
-				$func = 'require_'.$func;
-			}
-			return $func($m[3], _attrs_string2array($m[2]));
-		}, $string);
-
 		// JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
-		$string = preg_replace_callback('/\{(js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(js|require_js)\}/ims', function($m) use ($_this) {
+		$string = preg_replace_callback('/\{(css|require_css|js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims', function($m) use ($_this) {
 			$func = $m[1];
 			if (substr($func, 0, strlen('require_')) != 'require_') {
 				$func = 'require_'.$func;
@@ -375,97 +437,87 @@ class yf_tpl_driver_yf {
 	/**
 	* Replace standard patterns
 	*/
-	function _replace_std_patterns($string, $name = '', $replace = array(), $params = array()) {
+	function _replace_std_patterns($string, $name = '', array &$replace, $params = array()) {
 		$_this = $this;
+		$tpl = tpl();
 
-		// Insert constant here (cutoff for eval_code). Examples: {const("SITE_NAME")}
-		$string = preg_replace_callback('/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i', function($m) {
-			return defined($m[1]) ? constant($m[1]) : '';
-		}, $string);
-
-		// Configuration item. Examples: {conf("TEST_DOMAIN")}
-		$string = preg_replace_callback('/\{conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i', function($m) {
-			return conf($m[1]);
-		}, $string);
-
-		// Module Config item. Examples: {module_conf(gallery,MAX_SIZE)}
-		$string = preg_replace_callback('/\{module_conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*,\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i', function($m) {
-			return module_conf($m[1], $m[2]);
-		}, $string);
-
-		// Translate some items if needed. Examples: {t("Welcome")}
-		$string = preg_replace_callback('/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims', function($m) use ($replace, $name, $_this) {
-			return $_this->tpl->_i18n_wrapper($m[2], $replace);
-		}, $string);
-
-		// Trims whitespaces, removes. Examples: {cleanup()}some content here{/cleanup}
-		$string = preg_replace_callback('/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims', function($m) {
-			return trim(str_replace(array("\r","\n","\t"), '', stripslashes($m[1])));
-		}, $string);
-
-		// Display help tooltip. Examples: {tip('register.login')} or {tip('form.some_field',2)}
-		$string = preg_replace_callback('/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims', function($m) use ($replace, $name) {
-			return _class_safe('graphics')->_show_help_tip(array('tip_id' => $m[1], 'tip_type' => $m[2], 'replace' => $replace));
-		}, $string);
-
-		// Display help tooltip inline. Examples: {itip('register.login')}
-		$string = preg_replace_callback('/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims', function($m) use ($replace, $name) {
-			return _class_safe('graphics')->_show_inline_tip(array('text' => $m[1], 'replace' => $replace));
-		}, $string);
-
-		// Display user level single (inline) error message by its name (keyword). Examples: {e('login')} or {user_error('name_field')}
-		$string = preg_replace_callback('/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims', function($m) {
-			return common()->_show_error_inline($m[2]);
-		}, $string);
-
-		// Advertising. Examples: {ad('AD_ID')}
-		$string = preg_replace_callback('/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims', function($m) {
-			return module_safe('advertising')->_show(array('ad' => $m[1]));
-		}, $string);
-
-		// Url generation with params. Examples: {url(object=home_page;action=test)}
-		$string = preg_replace_callback('/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims', function($m) use ($_this) {
-			return $_this->tpl->_generate_url_wrapper($m[1]);
-		}, $string);
-
-		// Form item/row. Examples: {form_row("text","password","New Password")}
-		$string = preg_replace_callback('/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,'
-			.'[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims', function($m) use ($replace, $name) {
-			return _class('form2')->tpl_row($m[1], $replace, $m[3], $m[5], $m[7]);
-		}
-		, $string);
-
-		// Variable filtering like in Smarty/Twig. Examples: {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}
-		$string = preg_replace_callback('/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims', function($m) use ($replace, $name, $_this) {
-			return $_this->tpl->_process_var_filters($replace[$m[1]], $m[2]);
-		}, $string);
-
-		// Second level variables with filters. Examples: {sub1.var1|trim}
-		$string = preg_replace_callback('/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims', function($m) use ($replace, $name, $_this) {
-			return $_this->tpl->_process_var_filters($replace[$m[1]][$m[2]], $m[3]);
-		}, $string);
-
-		// Custom patterns support (intended to be used inside modules/plugins)
-		foreach ((array)$_this->tpl->_custom_patterns as $pattern => $func) {
-			$string = preg_replace_callback($pattern, function($m) use ($replace, $name, $_this, $func) { return $func($m, $replace, $name, $_this); }, $string);
-		}
-
+		$patterns = array(
+			// Insert constant here (cutoff for eval_code). Examples: {const("SITE_NAME")}
+			'/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i' => function($m) {
+				return defined($m[1]) ? constant($m[1]) : '';
+			},
+			// Configuration item. Examples: {conf("TEST_DOMAIN")}
+			'/\{conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i' => function($m) {
+				return conf($m[1]);
+			},
+			// Module Config item. Examples: {module_conf(gallery,MAX_SIZE)}
+			'/\{module_conf\(\s*["\']{0,1}([a-z_@][a-z0-9_:]+?)["\']{0,1}\s*,\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i' => function($m) {
+				return module_conf($m[1], $m[2]);
+			},
+			// Translate some items if needed. Examples: {t("Welcome")}
+			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name, $tpl) {
+				return $tpl->_i18n_wrapper($m[2], $replace);
+			},
+			// Trims whitespaces, removes. Examples: {cleanup()}some content here{/cleanup}
+			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims' => function($m) {
+				return trim(str_replace(array("\r","\n","\t"), '', stripslashes($m[1])));
+			},
+			// Display help tooltip. Examples: {tip('register.login')} or {tip('form.some_field',2)}
+			'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name) {
+				return _class_safe('graphics')->_show_help_tip(array('tip_id' => $m[1], 'tip_type' => $m[2], 'replace' => $replace));
+			},
+			// Display help tooltip inline. Examples: {itip('register.login')}
+			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name) {
+				return _class_safe('graphics')->_show_inline_tip(array('text' => $m[1], 'replace' => $replace));
+			},
+			// Display user level single (inline) error message by its name (keyword). Examples: {e('login')} or {user_error('name_field')}
+			'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims' => function($m) {
+				return common()->_show_error_inline($m[2]);
+			},
+			// Advertising. Examples: {ad('AD_ID')}
+			'/\{ad\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) {
+				return module_safe('advertising')->_show(array('ad' => $m[1]));
+			},
+			// Url generation with params. Examples: {url(object=home_page;action=test)}
+			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($tpl) {
+				return $tpl->_generate_url_wrapper($m[1]);
+			},
+			// Form item/row. Examples: {form_row("text","password","New Password")}
+			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9\-_]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,'
+				.'[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims' => function($m) use ($replace, $name) {
+				return _class('form2')->tpl_row($m[1], $replace, $m[3], $m[5], $m[7]);
+			},
+			// Variable filtering like in Smarty/Twig. Examples: {var1|trim}    {var1|urlencode|trim}   {var1|_prepare_html}   {var1|my_func}
+			'/\{([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function($m) use ($replace, $name, $tpl) {
+				return $tpl->_process_var_filters($replace[$m[1]], $m[2]);
+			},
+			// Second level variables with filters. Examples: {sub1.var1|trim}
+			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function($m) use ($replace, $name, $tpl) {
+				return $tpl->_process_var_filters($replace[$m[1]][$m[2]], $m[3]);
+			},
+		);
 		// Evaluate custom PHP code pattern. Examples: {eval_code(print_r(_class('forum')))}
-		if ($this->tpl->ALLOW_EVAL_PHP_CODE) {
-			$string = preg_replace_callback('/(\{eval_code\()([^\}]+?)(\)\})/i', function($m) {
+		if ($tpl->ALLOW_EVAL_PHP_CODE) {
+			$patterns['/(\{eval_code\()([^\}]+?)(\)\})/i'] = function($m) {
 				return eval('return '.$m[2].' ;');
-			}, $string);
+			};
+		}
+		// Custom patterns support (intended to be used inside modules/plugins)
+		foreach ((array)$tpl->_custom_patterns_funcs as $pattern => $func) {
+			$patterns[$pattern] = function($m) use ($replace, $name, $_this, $func) { return $func($m, $replace, $name, $_this); };
 		}
 		if (DEBUG_MODE) {
 			// Evaluate custom PHP code pattern special for the DEBUG_MODE. Examples: {_debug_get_replace()}
-			$string = preg_replace_callback('/(\{_debug_get_replace\(\)\})/i', function($m) use ($replace, $name) {
+			$patterns['/(\{_debug_get_replace\(\)\})/i'] = function($m) use ($replace, $name) {
 				return is_array($replace) ? '<pre>'.print_r(array_keys($replace), 1).'</pre>' : '';
-			}, $string);
-
+			};
 			// Evaluate custom PHP code pattern special for the DEBUG_MODE. Examples: {_debug_stpl_vars()}
-			$string = preg_replace_callback('/(\{_debug_get_vars\(\)\})/i', function($m) use ($string, $_this) {
-				return $_this->tpl->_debug_get_vars($string);
-			}, $string);
+			$patterns['/(\{_debug_get_vars\(\)\})/i'] = function($m) use ($string, $tpl) {
+				return $tpl->_debug_get_vars($string);
+			};
+		}
+		foreach ((array)$patterns as $pattern => $callback) {
+			$string = preg_replace_callback($pattern, $callback, $string);
 		}
 		return $string;
 	}
@@ -473,124 +525,153 @@ class yf_tpl_driver_yf {
 	/**
 	* Process 'catch' template statements
 	*/
-	function _process_catches ($string = '', &$replace, $stpl_name = '') {
+	function _process_catches ($string = '', array &$replace, $stpl_name = '') {
 		if (false === strpos($string, '{/catch}') || empty($string)) {
 			return $string;
 		}
-		if (!preg_match_all($this->_PATTERN_CATCH, $string, $m)) {
-			return $string;
-		}
-		foreach ((array)$m[0] as $k => $v) {
-			$string = str_replace($v, '', $string);
-			// Add replace var
-			$catched_name	= $m[1][$k];
-			$catched_string	= $m[2][$k];
+		$_this = $this;
+		// Catch dynamic content into variable. Examples: {catch("widget_blog_last_post")} {execute(blog,_widget_last_post)} {/catch}
+		$pattern = '/\{catch\([\s\t]*["\']{0,1}([\w_-]+?)["\']{0,1}[\s\t]*\)\}(.*?)\{\/catch\}/ims';
+		return preg_replace_callback($pattern, function($m) use ($_this, &$replace, $stpl_name) {
+			$catched_name	= $m[1];
+			$catched_string	= $m[2];
 			if (!empty($catched_name)) {
 				if (strlen($catched_string) && strpos($catched_string, '{') !== false) {
-					$catched_string = $this->_replace_std_patterns($catched_string, $stpl_name, $replace);
-					$catched_string = $this->_process_cycles($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_conditions($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_replaces($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_js_css($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_includes($catched_string, $replace, $stpl_name);
-					$catched_string = $this->_process_executes($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_replace_std_patterns($catched_string, $stpl_name, $replace);
+					$catched_string = $_this->_process_foreaches($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_ifs($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_replaces($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_js_css($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_includes($catched_string, $replace, $stpl_name);
+					$catched_string = $_this->_process_executes($catched_string, $replace, $stpl_name);
 				}
 				$replace[$catched_name] = trim($catched_string);
 			}
-		}
-		return $string;
+			return '';
+		}, $string);
 	}
 
 	/**
 	* Conditional execution
 	*/
-	function _process_conditions ($string = '', $replace = array(), $stpl_name = '') {
+	function _process_ifs ($string = '', array &$replace, $stpl_name = '') {
 		if (false === strpos($string, '{/if}') || empty($string)) {
-			return $string;
-		}
-		if (!preg_match_all($this->_PATTERN_IF, $string, $m)) {
 			return $string;
 		}
 		// Important!
 		$string = str_replace(array('<'.'?', '?'.'>'), array('&lt;?', '?&gt;'), $string);
-		// Process matches
-		foreach ((array)$m[0] as $k => $v) {
-			$part_left	  = $this->_prepare_cond_text($m[1][$k], $replace, $stpl_name);
-			$cur_operator = $this->_cond_operators[strtolower($m[2][$k])];
-			$part_right	 = trim($m[3][$k]);
+		$_this = $this;
+
+		// Process common ifs matches. Examples: {if("name" eq "New")}<h1 style="color: white;">NEW</h1>{/if}
+		$pattern = '/\{(?P<cond>if|elseif)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w#-]*)["\']{0,1}(?P<multi_conds>[^\(\)\{\}\n]*)\s*\)\}/ims';
+		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
+			$cond = trim($m['cond']); // if | elseif
+			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
+			if (empty($part_left)) {
+				$part_left = '""';
+			}
+			$part_right = trim($m['right']);
 			if (strlen($part_right) && $part_right{0} == '#') {
 				$part_right = $replace[ltrim($part_right, '#')];
 			}
 			if (!is_numeric($part_right)) {
 				$part_right = '"'.$part_right.'"';
 			}
-			if (empty($part_left)) {
-				$part_left = '""';
-			}
-			$part_other	 = '';
-			// Possible multi-part condition found
-			if ($m[4][$k]) {
-				$_tmp_parts = preg_split("/[\s\t]+(and|xor|or)[\s\t]+/ims", $m[4][$k], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-				if ($_tmp_parts) {
-					$_tmp_count = count($_tmp_parts);
-				}
-				for ($i = 1; $i < $_tmp_count; $i+=2) {
-					$_tmp_parts[$i] = $this->_process_multi_conds($_tmp_parts[$i], $replace, $stpl_name);
-					if (!strlen($_tmp_parts[$i])) {
-						unset($_tmp_parts[$i]);
-						unset($_tmp_parts[$i - 1]);
-					}
-				}
-				if ($_tmp_parts) {
-					$part_other = ' '. implode(' ', (array)$_tmp_parts);
-				}
-			}
-			// Special case for "mod". 
-			// Examples: {if("id" mod 4)} content {/if}
+			$cur_operator = $_this->_cond_operators[strtolower($m['op'])];
+			// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
 			if ($cur_operator == '%') {
 				$part_left = '!('.$part_left;
 				$part_right = $part_right.')';
 			}
-			$new_code	= '<'.'?p'.'hp if('.$part_left.' '.$cur_operator.' '.$part_right.$part_other.') { ?>';
-			$string		= str_replace($v, $new_code, $string);
-		}
+			$add_cond = trim($m['multi_conds']);
+			if ($add_cond) {
+				$pattern = '/[\s\t]*(?P<cond>and|xor|or)[\s\t]+["\']{0,1}(?P<left>[\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\s\-\#]*)["\']{0,1}/ims';
+				$add_cond = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
+					$a_cond	= trim($m['cond']);
+					$a_left	= $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
+					$a_op	= $_this->_cond_operators[strtolower(trim($m['op']))];
+					$a_right = trim($m['right']);
+					if (substr($a_right, 0, 1) == '#') {
+						$a_right = '$replace[\''.ltrim($a_right, '#').'\']';
+					}
+					if (!is_numeric($a_right)) {
+						$a_right = '\''.$a_right.'\'';
+					}
+					if (empty($a_left)) {
+						$a_left = '\'\'';
+					}
+					// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
+					if ($a_op == '%') {
+						$a_left = '!('.$a_left;
+						$a_right = $a_right.')';
+					}
+					return $a_cond.' ('.$a_left.' '.$a_op.' '.$a_right.') ';
+				}, $add_cond);
+			}
+			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. $part_left. ' '. $cur_operator. ' '. $part_right. $add_cond. ') { ?>';
+		}, $string);
+
+		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}
+		$pattern = '/\{(?P<cond>if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
+		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
+			$cond = trim($m['cond']); // if | elseif
+			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
+			$func = trim($m['func']);
+			// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
+			$funcs_map = array(
+				'empty'		=> '_empty',
+				'not_ok'	=> '_empty',
+				'false' 	=> '_empty',
+				'not_true' 	=> '_empty',
+				'isset'		=> '_isset',
+				'not_isset'	=> 'not__isset',
+				'not_empty'	=> 'not__empty',
+				'ok'		=> 'not__empty',
+				'true'		=> 'not__empty',
+				'not_false'	=> 'not__empty',
+			);
+			if (isset($funcs_map[$func])) {
+				$func = $funcs_map[$func];
+			}
+			$negate = false;
+			if (substr($func, 0, 4) == 'not_') {
+				$func = substr($func, 4);
+				$negate = true;
+			}
+			// Example of supported class: {if_validate:is_natural_no_zero(data)} good {/if}
+			if (false !== strpos($func, ':')) {
+				list($class_name, $_func) = explode(':', $func);
+				if (in_array($class_name, array('validate'))) {
+					$func = '_class_safe("'.$class_name.'")->'.$_func;
+				} else {
+					return '';
+				}
+			// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if} 
+			} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
+				return '';
+			}
+			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')) { ?>';
+		}, $string);
+
 		$string = str_replace('{else}', '<'.'?p'.'hp } else { ?'.'>', $string);
 		$string = str_replace('{/if}', '<'.'?p'.'hp } ?'.'>', $string);
 
 		ob_start();
 		$result = eval('?>'.$string.'<'.'?p'.'hp return 1;');
-		$string = ob_get_clean();
+		$new_string = ob_get_clean();
 
 		if (!$result) {
-			trigger_error('STPL: ERROR: wrong condition in template "'.$stpl_name.'"', E_USER_WARNING);
+			$error_msg = 'STPL: ERROR: wrong condition in template "'.$stpl_name.'"';
+			if (DEBUG_MODE) {
+				$error_msg .= PHP_EOL.'<pre>'.PHP_EOL. _prepare_html(var_export($string, 1)). PHP_EOL.'</pre>'.PHP_EOL;
+			}
+			trigger_error($error_msg, E_USER_WARNING);
 		}
-		return $string;
+		return $new_string;
 	}
 
 	/**
-	* Multi-condition special parser
-	*/
-	function _process_multi_conds ($cond_text = '', $replace = array(), $stpl_name = '') {
-		if (!preg_match($this->_PATTERN_MULTI_COND, $cond_text, $m)) {
-			return '';
-		}
-		$part_left		= $this->_prepare_cond_text($m[1], $replace, $stpl_name);
-		$cur_operator	= $this->_cond_operators[strtolower($m[2])];
-		$part_right		= strval($m[3]);
-		if (strlen($part_right) && $part_right{0} == '#') {
-			$part_right = $replace[ltrim($part_right, '#')];
-		}
-		if (!is_numeric($part_right)) {
-			$part_right = '"'.$part_right.'"';
-		}
-		if (empty($part_left)) {
-			$part_left = '""';
-		}
-		return $part_left.' '.$cur_operator.' '.$part_right;
-	}
-
-	/**
-	* Prepare text for '_process_conditions' method
+	* Prepare text for '_process_ifs' method
 	*/
 	function _prepare_cond_text ($cond_text = '', $replace = array(), $stpl_name = '') {
 		$prepared_array = array();
@@ -598,6 +679,9 @@ class yf_tpl_driver_yf {
 			$res_v = '';
 			// Value from $replace array (DO NOT replace 'array_key_exists()' with 'isset()' !!!)
 			if (array_key_exists($tmp_v, $replace)) {
+				if (is_object($replace[$tmp_v]) && !method_exists($replace[$tmp_v], 'render')) {
+					$res_v = get_object_vars($replace[$tmp_v]);
+				}
 				if (is_array($replace[$tmp_v])) {
 					$res_v = $replace[$tmp_v] ? '("1")' : '("")';
 				} else {
@@ -647,115 +731,145 @@ class yf_tpl_driver_yf {
 	}
 
 	/**
-	* Cycled execution
 	*/
-	function _process_cycles ($string = '', $replace = array(), $stpl_name = '') {
-		if (false === strpos($string, '{/foreach}') || empty($string)) {
+	function _range_foreach ($max) {
+		$max = intval($max);
+		if ($max < 1) {
+			return array();
+		}
+		$limit = 10000; // Mostly for security (prevent buffer overflows) and for avoid mistakes
+		if ($max > $limit) {
+			$max = $limit;
+		}
+		return range(1, $max);
+	}
+
+	/**
+	* Foreach patterns processing
+	*/
+	function _process_foreaches ($string = '', $replace = array(), $stpl_name = '') {
+		if (false === strpos($string, '{/foreach') || empty($string)) {
 			return $string;
 		}
-		if (!preg_match_all($this->_PATTERN_FOREACH, $string, $m)) {
-			return $string;
-		}
-		$a_for = array();
-		// Prepare non-array replace values
-		foreach ((array)$replace as $k5 => $v5) {
-			if (is_array($v5)) {
-				continue;
+		$_this = $this;
+		// foreach processing pattern. Examples: {foreach("var")}<li>{#.value1}</li>{/foreach} or {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
+		$pattern = '/\{(?P<func>foreach|foreach_exec)\(\s*["\']{0,1}(?P<key>[a-z0-9_\s\.,;=@-]+)["\']{0,1}\s*\)\}(?P<body>(?![^\{]*?\{\1\(\s*["\']{0,1}?).*?)\{\/\1\}/ims';
+		return preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
+			$func = trim($m['func']);
+			$key_to_cycle = trim($m['key']);
+			if (empty($key_to_cycle)) {
+				return '';
 			}
-			$non_array_replace[$k5] = $v5;
-		}
-		foreach ((array)$m[0] as $match_id => $matched_string) {
-			$output       = '';
-			$sub_array    = array();
-			$sub_replace  = array();
-			$key_to_cycle = trim($m[1][$match_id]);
-			$sub_template = $m[2][$match_id];
-			$sub_template = str_replace('#.', $key_to_cycle.'.', $sub_template);
+			$sub_template = str_replace('#.', $key_to_cycle.'.', $m['body']);
+
+			// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
+			$no_rows_text = '';
+			$else_tag = '{elseforeach}';
+			if (false !== strpos($sub_template, $else_tag)) {
+				list($else_before, $no_rows_text) = explode($else_tag, $sub_template);
+				$sub_template = str_replace($else_tag. $no_rows_text, '', $sub_template);
+			}
 			$var_filter_pattern = '/\{('.preg_quote($key_to_cycle, '/').')\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims'; // Example: {testarray.key1|trim}
 			$has_var_filters = preg_match($var_filter_pattern, $sub_template);
-			// Needed here for graceful quick exit from cycle
-			$a_for[$matched_string] = '';
-			if (empty($key_to_cycle)) {
-				continue;
-			}
-			// Standard iteration by array
-			if (isset($replace[$key_to_cycle])) {
-				if (is_array($replace[$key_to_cycle])) {
-					$sub_array  = $replace[$key_to_cycle];
-				} elseif (is_numeric($replace[$key_to_cycle])) {
-					$sub_array = range(1, $replace[$key_to_cycle]);
+
+			$data = null;
+			$sub_array = array();
+			// Ability to directly execute some class method and do foreach over it like {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
+			if ($func == 'foreach_exec') {
+				if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $key_to_cycle, $m_exec)) {
+					$sub_array = main()->_execute($m_exec['object'], $m_exec['action'], $m_exec['args'], $stpl_name. $_this->_STPL_EXT, 0, $use_cache = false);
+				} else {
+					return '';
 				}
-			// Simple iteration within template
-			} else {
-				if (is_numeric($key_to_cycle)) {
-					$sub_array = range(1, $key_to_cycle);
+			// Sub array like this: {foreach(post.somekey)} or {foreach(data.sub)}
+			} elseif (false !== strpos($key_to_cycle, '.')) {
+				list($sub_key1, $sub_key2) = explode('.', $key_to_cycle);
+				if (!$sub_key1 || !$sub_key2) {
+					return '';
 				}
+				$data = $replace[$sub_key1][$sub_key2];
+				if (isset($data)) {
+					if (is_array($data)) {
+						$sub_array = $data;
+					// Iteration by numberic var value, example: {foreach(data.number)}, number == 3
+					} elseif (is_numeric($data)) {
+						$sub_array = $_this->_range_foreach($data);
+					}
+				} else {
+					$avail_arrays = $_this->tpl->_avail_arrays;
+					if (isset($avail_arrays[$sub_key1])) {
+						$v = eval('return $'.$avail_arrays[$sub_key1].';'); // !! Do not blindly replace this with $$v, because somehow it does not work
+						if (isset($v[$sub_key2])) {
+							$sub_array = $v[$sub_key2];
+							// Iteration by numeric var value, example: {foreach(number)}, number == 3
+							if ($sub_array && is_numeric($sub_array)) {
+								$sub_array = $_this->_range_foreach($sub_array);
+							}
+						}
+					}
+				}
+			// Standard iteration by array, example: {foreach(myarray)}
+			} elseif (isset($replace[$key_to_cycle])) {
+				$data = $replace[$key_to_cycle];
+				if (is_array($data)) {
+					$sub_array = $data;
+				// Iteration by numberic var value, example: {foreach(number)}, number == 3
+				} elseif (is_numeric($data)) {
+					$sub_array = $_this->_range_foreach($data);
+				}
+			// Simple iteration within template, example: {foreach(10)}
+			} elseif (is_numeric($key_to_cycle)) {
+				$sub_array = $_this->_range_foreach($key_to_cycle);
 			}
 			if (empty($sub_array)) {
-				continue;
+				return $no_rows_text;
 			}
 			// Process sub template (only cycle within correct keys)
 			$_total = (int)count($sub_array);
 			$_i = 0;
+			$output = array();
+			$sub_replace  = array();
 			foreach ((array)$sub_array as $sub_k => $sub_v) {
-				$_is_first  = (int)(++$_i == 1);
+				$_i++;
+				$cur_output = $sub_template;
+				$_is_first  = (int)($_i == 1);
 				$_is_last   = (int)($_i == $_total);
 				$_is_odd	= (int)($_i % 2);
 				$_is_even   = (int)(!$_is_odd);
-				// Try to get sub keys to replace (exec only one time per one 'foreach')
-				if (empty($sub_replace)) {
-					if (is_array($sub_v)) {
-						foreach ((array)$sub_v as $k3 => $v3) {
-							$sub_replace[] = '{'.$key_to_cycle.'.'.$k3.'}';
-						}
-					} else {
-						$sub_replace = '{'.$key_to_cycle.'.'.$key_to_cycle.'}';
+				$sub_replace = array(
+					'_num'   => $_i,
+					'_total' => $_total,
+					'_key'   => $sub_k,
+					'_val'   => is_array($sub_v) ? implode(',', $sub_v) : $sub_v,
+					'_first' => $_is_first,
+					'_last'  => $_is_last,
+					'_even'  => $_is_odd,
+					'_odd'   => $_is_even,
+				);
+				if (is_array($sub_v)) {
+					foreach ($sub_v as $k => $v) {
+						$sub_replace[$key_to_cycle.'.'.$k] = $v;
 					}
 				}
-				// Add output and replace template keys with array values
-				if (!empty($sub_replace)) {
-					// Process output for this iteration
-					$cur_output = $sub_template;
-					$cur_output = str_replace($sub_replace, is_array($sub_v) ? array_values($sub_v) : $sub_v, $cur_output);
-					$cur_output = str_replace(array('{_num}','{_total}'), array($_i, $_total), $cur_output);
-					// For 2-dimensional arrays
-					if (is_array($sub_v)) {
-						$cur_output = str_replace('{_key}', $sub_k, $cur_output);
-					// For 1-dimensional arrays
-					} else {
-						$cur_output = str_replace(array('{_key}', '{_val}') , array($sub_k, $sub_v), $cur_output);
-					}
-					// Apply var filtering pattern, in case if such constructions found on the upper level
-					if ($has_var_filters) {
-						$cur_output = preg_replace_callback($var_filter_pattern, function($m) use ($replace, $sub_k) {
-							return _class('tpl')->_process_var_filters($replace[$m[1]][$sub_k][$m[2]], $m[3]);
-						}, $cur_output);
-					}
-					// Prepare items for condition
-					$tmp_array = $non_array_replace;
-					foreach ((array)$sub_v as $k6 => $v6) {
-						$tmp_array[$key_to_cycle.'.'.$k6] = $v6;
-					}
-					$tmp_array['_num']   = $_i;
-					$tmp_array['_total'] = $_total;
-					$tmp_array['_first'] = $_is_first;
-					$tmp_array['_last']  = $_is_last;
-					$tmp_array['_even']  = $_is_odd;
-					$tmp_array['_odd']   = $_is_even;
-					$tmp_array['_key']   = $sub_k;
-					$tmp_array['_val']   = is_array($sub_v) ? strval($sub_v) : $sub_v;
-					// Try to process conditions in every cycle
-					$output .= $this->_process_conditions($cur_output, $tmp_array, $stpl_name);
+				$sub_tpl_replace = array();
+				foreach ($sub_replace as $k => $v) {
+					$sub_tpl_replace['{'.$k.'}'] = $v;
 				}
+				$cur_output = str_replace(array_keys($sub_tpl_replace), $sub_tpl_replace, $cur_output);
+				unset($sub_tpl_replace);
+				// Apply var filtering pattern, in case if such constructions found on the upper level
+				if ($has_var_filters) {
+					$cur_output = preg_replace_callback($var_filter_pattern, function($_m) use ($sub_v) {
+						return _class('tpl')->_process_var_filters($sub_v[$_m[2]], $_m[3]);
+					}, $cur_output);
+				}
+
+				// Try to process conditions in every cycle
+				$sub_replace += $replace;
+				$output[] = $_this->_process_ifs($cur_output, $sub_replace, $stpl_name);
 			}
-			// Create array element to replace whole cycle
-			$a_for[$matched_string] = $output;
-		}
-		// Replace all found template cycles with values
-		if (count($a_for)) {
-			$string = str_replace(array_keys($a_for), array_values($a_for), $string);
-		}
-		return $string;
+			return implode($output);
+		}, $string);
 	}
 
 	/**
@@ -797,11 +911,34 @@ class yf_tpl_driver_yf {
 	/**
 	* Wrapper for '_PATTERN_INCLUDE', allows you to include stpl, optionally pass $replace params to it
 	*/
-	function _include_stpl ($stpl_name = '', $params = '', $replace = array()) {
+	function _include_stpl ($stpl_name = '', $params = '', $replace = array(), $if_exists = false) {
 		if (!is_array($replace)) {
 			$replace = array();
 		}
+		$force_storage = '';
+		// Force to include template from special storage, example: @framework:script_js
+		if ($stpl_name[0] == '@') {
+			list($force_storage, $stpl_name) = explode(':', substr($stpl_name, 1));
+		}
+		if ($if_exists && !tpl()->exists($stpl_name, $force_storage)) {
+			return false;
+		}
 		$replace = (array)_attrs_string2array($params) + (array)$replace;
 		return $this->parse($stpl_name, $replace);
+	}
+
+	/**
+	* For compiled templates
+	*/
+	function call_custom_pattern($crc32_or_name, $args = '', $body = null, $replace = array(), $stpl_name = '') {
+		$tpl = tpl();
+		$pattern = $tpl->_custom_patterns_index[$crc32_or_name];
+		if (strlen($pattern)) {
+			$func = $tpl->_custom_patterns_funcs[$pattern];
+		}
+		if (!$func || !is_callable($func)) {
+			return $body;
+		}
+		return $func(array('args' => $args, 'body' => $body), $replace, $stpl_name, $this);
 	}
 }

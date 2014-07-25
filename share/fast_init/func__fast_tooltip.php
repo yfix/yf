@@ -1,7 +1,7 @@
 <?php
 
 // Fast process help tooltip
-function _fast_tooltip () {
+return function() {
 	$tip_info = array();
 	// Try to get tip id
 	$TIP_ID = substr($_REQUEST['id'], strlen('help_'));
@@ -39,4 +39,4 @@ function _fast_tooltip () {
 	echo $body;
 
 	return true; // Means success
-}
+};

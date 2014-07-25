@@ -67,66 +67,69 @@ class yf_validate {
 	function _input_is_valid($input, $validate_rules = array()) {
 		$rules = array();
 		$global_rules = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
-		foreach ((array)$global_rules as $name => $rules) {
-			$rules[$name] = $rules;
+		foreach ((array)$global_rules as $name => $_rules) {
+			$rules[$name] = $_rules;
 		}
-		foreach ((array)$validate_rules as $name => $rules) {
-			$rules[$name] = $rules;
+		foreach ((array)$validate_rules as $name => $_rules) {
+			$rules[$name] = $_rules;
 		}
 		$rules = $this->_validate_rules_cleanup($rules);
-		$ok = true;
-		if (is_array($input)) {
-			foreach ((array)$input as $k => $_input) {
-				if (!$this->_do_check_data_is_valid($rules, $_input)) {
-					$ok = false;
-					break;
-				}
-			}
-		} else {
-			$ok = $this->_do_check_data_is_valid($rules, $input);
-		}
+		$ok = $this->_do_check_data_is_valid($rules, $input);
 		return (bool)$ok;
 	}
 
 	/**
 	*/
-	function _do_check_data_is_valid($validate_rules = array(), &$data) {
+	function _apply_existing_func($func, $data) {
+		if (is_array($data)) {
+			$self = __FUNCTION__;
+			foreach ($data as $k => $v) {
+				$data[$k] = $this->$self($func, $v);
+			}
+			return $data;
+		}
+		return $func($data);
+	}
+
+	/**
+	*/
+	function _do_check_data_is_valid($rules = array(), &$data) {
 		$validate_ok = true;
-		foreach ((array)$validate_rules as $rules) {
+		foreach ((array)$rules as $name => $_rules) {
 			$is_required = false;
-			foreach ((array)$rules as $rule) {
+			foreach ((array)$_rules as $rule) {
 				if ($rule[0] == 'required') {
 					$is_required = true;
 					break;
 				}
 			}
-			foreach ((array)$rules as $rule) {
+			foreach ((array)$_rules as $rule) {
 				$is_ok = true;
 				$error_msg = '';
 				$func = $rule[0];
 				$param = $rule[1];
 				// PHP pure function, from core or user
 				if (is_string($func) && function_exists($func)) {
-					$data = $func($data);
+					$data[$name] = $this->_apply_existing_func($func, $data[$name]);
 				} elseif (is_callable($func)) {
-					$is_ok = $func($data, null, $data);
+					$is_ok = $func($data[$name], null, $data);
 				} else {
-					$is_ok = _class('validate')->$func($data, array('param' => $param), $data, $error_msg);
+					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
 					if (!$is_ok && empty($error_msg)) {
-						$error_msg = t('form_validate_'.$func, array('%field' => '', '%param' => $param));
+						$error_msg = t('form_validate_'.$func, array('%field' => $name, '%param' => $param));
 					}
 				}
 				// In this case we do not track error if field is empty and not required
-				if (!$is_ok && !$is_required && !strlen($data)) {
+				if (!$is_ok && !$is_required && !strlen($data[$name])) {
 					$is_ok = true;
 					$error_msg = '';
 				}
 				if (!$is_ok) {
 					$validate_ok = false;
 					if (!$error_msg) {
-						$error_msg = 'Wrong value';
+						$error_msg = 'Wrong field '.$name;
 					}
-					_re($error_msg);
+					_re($error_msg, $name);
 					// In case when we see any validation rule is not OK - we stop checking further for this field
 					continue 2;
 				}
@@ -193,19 +196,24 @@ class yf_validate {
 				}
 				$val = trim($rule[0]);
 				$param = null;
+				// Parsing these: min_length:6, matches:form_item, is_unique:table.field
+				if (strpos($val, ':') !== false && substr($val, -1) != ']') {
+					list($_val, $param) = explode(':', $val);
+					$param = trim($param);
+					$val = trim($_val);
 				// Parsing these: min_length[6], matches[form_item], is_unique[table.field]
-				$pos = strpos($val, '[');
-				if ($pos !== false) {
-					$param = trim(trim(substr($val, $pos), ']['));
-					$val = trim(substr($val, 0, $pos));
+				} elseif (strpos($val, '[') !== false) {
+					list($_val, $param) = explode('[', $val);
+					$param = trim(trim(trim($param), ']['));
+					$val = trim($_val);
 				}
 				if (!is_callable($val) && empty($val)) {
 					unset($rules[$k]);
 					continue;
 				}
 				$rules[$k] = array(
-					0	=> $val,
-					1	=> $param,
+					0 => $val,
+					1 => $param,
 				);
 			}
 			if ($rules) {
@@ -283,6 +291,18 @@ class yf_validate {
 	*/
 	function required($in) {
 		return is_array($in) ? (bool) count($in) : (trim($in) !== '');
+	}
+
+	/**
+	* Returns true when selected other passed field will be non-empty
+	* Examples: required_if[other_field]
+	*/
+	function required_if($in, $params = array(), $fields = array()) {
+		$param = trim(is_array($params) ? $params['param'] : $params);
+		if ($param && !empty($fields[$param])) {
+			return is_array($in) ? (bool) count($in) : (trim($in) !== '');
+		}
+		return true;
 	}
 
 	/**
@@ -443,6 +463,15 @@ class yf_validate {
 	/**
 	* Returns TRUE if given field value is unique inside given database table.field
 	* Examples: is_unique[user.login]
+	* Alias
+	*/
+	function unique($in, $params = array()) {
+		return $this->is_unique($in, $params);
+	}
+
+	/**
+	* Returns TRUE if given field value is unique inside given database table.field
+	* Examples: is_unique[user.login]
 	*/
 	function is_unique($in, $params = array()) {
 		if (!$in) {
@@ -507,6 +536,15 @@ class yf_validate {
 	/**
 	* Custom regex matching.
 	* Example: regex_match[/^[a-z0-9]+$/]
+	* Alias
+	*/
+	function regex($in, $params = array()) {
+		return $this->regex_match($in, $params);
+	}
+
+	/**
+	* Custom regex matching.
+	* Example: regex_match[/^[a-z0-9]+$/]
 	*/
 	function regex_match($in, $params = array()) {
 		$regex = is_array($params) ? $params['param'] : $params;
@@ -520,6 +558,13 @@ class yf_validate {
 	function differs($in, $params = array(), $fields = array()) {
 		$field = is_array($params) ? $params['param'] : $params;
 		return ! (isset($fields[$field]) && $_POST[$field] === $in);
+	}
+
+	/**
+	* Alias
+	*/
+	function host($in) {
+		return $this->valid_hostname($in);
 	}
 
 	/**
@@ -547,6 +592,14 @@ class yf_validate {
 
 	/**
 	* Returns TRUE if given field contains valid url. Checking is done in combination of regexp and php built-in filter_val() to ensure most correct results
+	* Alias
+	*/
+	function url($in, $params = array()) {
+		return $this->valid_url($in, $params);
+	}
+
+	/**
+	* Returns TRUE if given field contains valid url. Checking is done in combination of regexp and php built-in filter_val() to ensure most correct results
 	*/
 	function valid_url($in, $params = array()) {
 		if (empty($in)) {
@@ -561,6 +614,13 @@ class yf_validate {
 		}
 		$in = 'http://'.$in;
 		return (filter_var($in, FILTER_VALIDATE_URL) !== false);
+	}
+
+	/**
+	* Returns TRUE if given field contains valid email address. Alias
+	*/
+	function email($in) {
+		return $this->valid_email($in);
 	}
 
 	/**

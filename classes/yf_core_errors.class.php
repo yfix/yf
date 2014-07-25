@@ -162,8 +162,9 @@ class yf_core_errors {
 		error_log($msg);
 
 		if (DEBUG_MODE) {
-			echo '<pre>'.$msg.'</pre>';
+			echo '<pre>'._prepare_html($msg).'</pre>';
 		}
+		_class('core_events')->fire('core.exception', $exception);
 	}
 
 	/**
@@ -259,35 +260,37 @@ class yf_core_errors {
 		if ($send_mail) {
 			$this->mail_buffer .= $msg;
 		}
+		$data = array(
+			'error_level'	=> intval($error_type),
+			'error_text'	=> $error_msg,
+			'source_file'	=> $error_file,
+			'source_line'	=> intval($error_line),
+			'date'			=> time(),
+			'site_id'		=> (int)conf('SITE_ID'),
+			'user_id'		=> intval($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id']),
+			'user_group'	=> intval($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group']),
+			'is_admin'		=> MAIN_TYPE_ADMIN ? 1 : 0,
+			'ip'			=> $IP,
+			'query_string'	=> WEB_PATH. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : ''),
+			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
+			'referer'		=> $_SERVER['HTTP_REFERER'],
+			'request_uri'	=> $_SERVER['REQUEST_URI'],
+			'env_data'		=> $this->DB_LOG_ENV ? $this->_prepare_env() : '',
+			'object'		=> $_GET['object'],
+			'action'		=> $_GET['action'],
+			'trace'			=> implode(PHP_EOL, $trace),
+		);
 		if ($save_in_db && is_object(db()) && !empty(db()->_connected)) {
-			$sql = db()->insert_safe('log_core_errors', array(
-				'error_level'	=> intval($error_type),
-				'error_text'	=> $error_msg,
-				'source_file'	=> $error_file,
-				'source_line'	=> intval($error_line),
-				'date'			=> time(),
-				'site_id'		=> (int)conf('SITE_ID'),
-				'user_id'		=> intval($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id']),
-				'user_group'	=> intval($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group']),
-				'is_admin'		=> MAIN_TYPE_ADMIN ? 1 : 0,
-				'ip'			=> $IP,
-				'query_string'	=> WEB_PATH. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : ''),
-				'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
-				'referer'		=> $_SERVER['HTTP_REFERER'],
-				'request_uri'	=> $_SERVER['REQUEST_URI'],
-				'env_data'		=> $this->DB_LOG_ENV ? $this->_prepare_env() : '',
-				'object'		=> $_GET['object'],
-				'action'		=> $_GET['action'],
-				'trace'			=> implode(PHP_EOL, $trace),
-			), true);
+			$sql = db()->insert_safe('log_core_errors', $data, true);
 			db()->_add_shutdown_query($sql);
 		}
 		if (DEBUG_MODE && ($this->ERROR_REPORTING & $error_type) && strlen($msg)) {
-			echo '<b>'.$this->error_types[$error_type].'</b>: '. $error_msg.' (<i>'.$error_file.' on line '.$error_line.'</i>)<pre>'.main()->trace_string().'</pre><br />'.PHP_EOL;
+			echo '<b>'.$this->error_types[$error_type].'</b>: '. _prepare_html($error_msg).' (<i>'.$error_file.' on line '.$error_line.'</i>)<pre>'._prepare_html(main()->trace_string()).'</pre><br />'.PHP_EOL;
 		}
+		_class('core_events')->fire('core.error', $data);
 		// For critical errors stop execution here
 		if ($error_type == E_ERROR || $error_type == E_USER_ERROR) {
-			exit('Fatal error: '.($error_type == E_USER_ERROR ? '<br>'. $error_msg : ''));
+			exit('Fatal error: '.($error_type == E_USER_ERROR ? '<br>'. _prepare_html($error_msg) : ''));
 		}
 		return true; 
 	}

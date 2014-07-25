@@ -1,7 +1,7 @@
 <?php
 
 // Fast process forum low skin
-function _fast_forum_low () {
+return function() {
 
 	// Internal function
 	function _get_cache ($cache_name = '') {
@@ -95,4 +95,4 @@ function _fast_forum_low () {
 	echo $body;
 
 	return true; // Means success
-}
+};

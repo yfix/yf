@@ -441,9 +441,15 @@ class yf_graphics {
 	*/
 	function _send_custom_http_headers() {
 		// Override headers
-		if (conf('http_headers')) {
-			foreach (conf('http_headers') as $_name => $_value) {
-				header($_name.': '.$_value, true);
+		$conf_headers = conf('http_headers');
+		if (is_array($conf_headers)) {
+			foreach ($conf_headers as $name => $value) {
+				$name = trim($name);
+				if (!$name) {
+					continue;
+				}
+				$value = str_replace(PHP_EOL, ' ', trim($value));
+				header($name.': '.$value, true);
 			}
 		}
 	}
@@ -560,4 +566,3 @@ class yf_graphics {
 		return tpl()->parse('system/quick_menu_main', $replace);
 	}
 }
-

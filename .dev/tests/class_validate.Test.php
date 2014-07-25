@@ -3,6 +3,12 @@
 require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 class class_validate_test extends PHPUnit_Framework_TestCase {
+	public function test_unique() {
+// TODO: require database mocking
+		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
+		// $this->assertFalse( _class('validate')->unqiue('testme@yfix.net', array('param' => 'user.email')) );
+		// $this->assertTrue( _class('validate')->unqiue('notexists@yfix.net', array('param' => 'user.email')) );
+	}
 	public function test_is_unique() {
 // TODO: require database mocking
 		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
@@ -363,6 +369,17 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->valid_email('testme@yfix.net') );
 		$this->assertFalse( _class('validate')->valid_email('testme.something.wrong.yfix.net') );
 	}
+	public function test_email() {
+		$this->assertFalse( _class('validate')->email('') );
+		$this->assertFalse( _class('validate')->email(null) );
+		$this->assertFalse( _class('validate')->email(false) );
+		$this->assertFalse( _class('validate')->email(array()) );
+		$this->assertFalse( _class('validate')->email(' ') );
+		$this->assertFalse( _class('validate')->email(PHP_EOL) );
+#		$this->assertTrue( _class('validate')->email('testme@localhost') );
+		$this->assertTrue( _class('validate')->email('testme@yfix.net') );
+		$this->assertFalse( _class('validate')->email('testme.something.wrong.yfix.net') );
+	}
 	public function test_valid_emails() {
 		$this->assertFalse( _class('validate')->valid_emails('') );
 		$this->assertFalse( _class('validate')->valid_emails(null) );
@@ -530,5 +547,352 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_credit_card() {
 // TODO: from kohana: credit_card Returns FALSE if credit card is not validcredit_card[mastercard]
+	}
+	public function test_cleanup_10() {
+		$rules_raw = array(
+			'name' => 'trim',
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL)
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_11() {
+		$rules_raw = array(
+			'name' => array('trim'),
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL)
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_12() {
+		$rules_raw = array(
+			'name' => array('trim', new stdClass, null, '', ' ', false, "\t\t"),
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL)
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_13() {
+		$rules_raw = array(
+			'name' => 'trim||||||||||||',
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL)
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_14() {
+		$rules_raw = array(
+			'name' => array('trim||||||||||||',false,null,' | '),
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL)
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_15() {
+		$rules_raw = array(
+			'name' => array(' trim | ',false,null,' | '),
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL)
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_22() {
+		$rules_raw = array(
+			'name' => 'trim|required',
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL),
+				array('required', NULL),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_23() {
+		$rules_raw = array(
+			'name' => array('trim','required'),
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL),
+				array('required', NULL),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_24() {
+		$rules_raw = array(
+			'captcha' => 'trim|captcha',
+		);
+		$rules_cleaned = array(
+			'captcha' => array(
+				array('trim', NULL),
+				array('captcha', NULL),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_25() {
+		$rules_raw = array(
+			'name' => array( 'trim|required|min_length[2]|max_length[12]|is_unique[user.login]|xss_clean' ),
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('min_length', '2'),
+				array('max_length', '12'),
+				array('is_unique', 'user.login'),
+				array('xss_clean', NULL),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_26_1() {
+		$closure = function($in){ return module('register')->_login_not_exists($in); };
+		$rules_raw = array(
+			'name' => array( 'trim|required|min_length[2]|max_length[12]|is_unique[user.login]|xss_clean', $closure ),
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('min_length', '2'),
+				array('max_length', '12'),
+				array('is_unique', 'user.login'),
+				array('xss_clean', NULL),
+				array($closure, NULL),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_26_2() {
+		$closure = function($in){ return module('register')->_login_not_exists($in); };
+		$rules_raw = array(
+			'name' => array( 'trim|required|min_length:2|max_length:12|is_unique:user.login|xss_clean', $closure ),
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('min_length', '2'),
+				array('max_length', '12'),
+				array('is_unique', 'user.login'),
+				array('xss_clean', NULL),
+				array($closure, NULL),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_27() {
+		$closure = function($in){ return module('register')->_login_not_exists($in); };
+		$rules_raw = array(
+			'name' => array( 'trim|required', 'min_length[2]|max_length[12]|is_unique[user.login]', 'xss_clean', $closure ),
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('min_length', '2'),
+				array('max_length', '12'),
+				array('is_unique', 'user.login'),
+				array('xss_clean', NULL),
+				array($closure, NULL),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_31() {
+		$closure = function($in){ return module('register')->_login_not_exists($in); };
+		$rules_raw = array(
+			'name' => array( 'trim|required', 'min_length[2]|max_length[12]|is_unique[user.login]', 'xss_clean', $closure ),
+			'captcha' => 'trim|captcha',
+			'content' => 'trim|required',
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('min_length', '2'),
+				array('max_length', '12'),
+				array('is_unique', 'user.login'),
+				array('xss_clean', NULL),
+				array($closure, NULL),
+			),
+			'captcha' => array(
+				array('trim', NULL),
+				array('captcha', NULL),
+			),
+			'content' => array(
+				array('trim', NULL),
+				array('required', NULL),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_32() {
+		$closure = function($in){ return module('register')->_login_not_exists($in); };
+		$rules_raw = array(
+			'__before__' => 'trim',
+			'name' => array( 'required', 'min_length[2]|max_length[12]|is_unique[user.login]', 'xss_clean', $closure ),
+			'captcha' => 'captcha',
+			'content' => 'required',
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('min_length', '2'),
+				array('max_length', '12'),
+				array('is_unique', 'user.login'),
+				array('xss_clean', NULL),
+				array($closure, NULL),
+			),
+			'captcha' => array(
+				array('trim', NULL),
+				array('captcha', NULL),
+			),
+			'content' => array(
+				array('trim', NULL),
+				array('required', NULL),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_33_1() {
+		$closure = function($in){ return module('register')->_login_not_exists($in); };
+		$rules_raw = array(
+			'__before__' => array('trim','required'),
+			'__after__' => 'md5',
+			'name' => array( 'min_length[2]', 'max_length[12]|is_unique[user.login]', 'xss_clean', $closure ),
+			'captcha' => 'captcha',
+			'content' => '',
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('min_length', '2'),
+				array('max_length', '12'),
+				array('is_unique', 'user.login'),
+				array('xss_clean', NULL),
+				array($closure, NULL),
+				array('md5', NULL),
+			),
+			'captcha' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('captcha', NULL),
+				array('md5', NULL),
+			),
+			'content' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('md5', NULL),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_33_2() {
+		$closure = function($in){ return module('register')->_login_not_exists($in); };
+		$rules_raw = array(
+			'__before__' => array('trim','required'),
+			'__after__' => 'md5',
+			'name' => array( 'min_length:2', 'max_length:12|is_unique:user.login', 'xss_clean', $closure ),
+			'captcha' => 'captcha',
+			'content' => '',
+		);
+		$rules_cleaned = array(
+			'name' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('min_length', '2'),
+				array('max_length', '12'),
+				array('is_unique', 'user.login'),
+				array('xss_clean', NULL),
+				array($closure, NULL),
+				array('md5', NULL),
+			),
+			'captcha' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('captcha', NULL),
+				array('md5', NULL),
+			),
+			'content' => array(
+				array('trim', NULL),
+				array('required', NULL),
+				array('md5', NULL),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_cleanup_34() {
+		$rules_raw = array('test' => 'min_length:2|max_length:12|is_unique:user.login|between:1,10|chars:a,b,c,d|regex:[a-z0-9]+');
+		$rules_cleaned = array(
+			'test' => array(
+				array('min_length', '2'),
+				array('max_length', '12'),
+				array('is_unique', 'user.login'),
+				array('between', '1,10'),
+				array('chars', 'a,b,c,d'),
+				array('regex', '[a-z0-9]+'),
+			),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
+	public function test_input_is_valid() {
+		$this->assertTrue( _class('validate')->_input_is_valid(array(), array('key' => 'trim')) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => 'val'), array('key' => 'required')) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => 'val'), array('key' => 'trim|required')) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => array('val1','val2')), array('key' => 'required')) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => array('val1','val2')), array('key' => 'required', 'other_key' => 'trim', )) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => array('val1','val2')), array('key' => 'trim|required')) );
+		$this->assertTrue( _class('validate')->_input_is_valid(array('key' => array('val1','val2'), 'key2' => 'v2'), array('key' => 'trim|required', 'key2' => 'required')) );
+
+		$this->assertFalse( _class('validate')->_input_is_valid(array(), array('key' => 'required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array(), array('key' => 'trim|required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => ''), array('key' => 'trim|required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => ' '), array('key' => 'trim|required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => array()), array('key' => 'trim|required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => array()), array('key' => 'trim|required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => array('val1','val2'), 'key2' => ''), array('key' => 'trim|required', 'key2' => 'required')) );
+		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => array('val1','val2'), 'key2' => ' '), array('key' => 'trim|required', 'key2' => 'required')) );
+	}
+	public function test_func_validate() {
+		$this->assertTrue( validate(array(), array('key' => 'trim')) );
+		$this->assertTrue( validate(array('key' => 'val'), array('key' => 'required')) );
+		$this->assertTrue( validate(array('key' => 'val'), array('key' => 'trim|required')) );
+		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'required')) );
+		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'required', 'other_key' => 'trim', )) );
+		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'trim|required')) );
+		$this->assertTrue( validate(array('key' => array('val1','val2'), 'key2' => 'v2'), array('key' => 'trim|required', 'key2' => 'required')) );
+
+		$this->assertFalse( validate(array(), array('key' => 'required')) );
+		$this->assertFalse( validate(array(), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => ''), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => ' '), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => array()), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => array()), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ''), array('key' => 'trim|required', 'key2' => 'required')) );
+		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ' '), array('key' => 'trim|required', 'key2' => 'required')) );
 	}
 }

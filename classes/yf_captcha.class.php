@@ -248,7 +248,7 @@ class yf_captcha {
 	/**
 	* Show image with text
 	*/
-	function show_image() {
+	function show_image($no_header = false) {
 		if (function_exists('main')) {
 			main()->NO_GRAPHICS = true;
 		}
@@ -293,7 +293,7 @@ class yf_captcha {
 			$_SESSION[$this->var_name] = $hash;
 		}
 		// Throw image to the user
-		header('Content-type: image/png');
+		!$no_header && header('Content-type: image/png');
 		imagepng($image);
 		// Cleanup
 		imagedestroy($image);

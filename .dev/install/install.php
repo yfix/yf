@@ -4,25 +4,10 @@
 // TODO: add language selector $_POST['install_project_lang']
 
 class yf_core_install {
-	function bs_get_avail_themes() {
-		return array('amelia','cerulean','cosmo','cyborg','flatly','journal','readable','simplex','slate','spacelab','spruce','superhero','united');
-	}
-	function bs_current_theme() {
-		$theme = 'slate'; // Default
-		$avail_themes = installer()->bs_get_avail_themes();
-		if ($_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
-			$theme = $_COOKIE['yf_theme'];
-		}
-		return $theme;
-	}
-	function show_html($page = 'form', $vars = array(), $errors = array()) {
-		if (php_sapi_name() == 'cli' || !$_SERVER['PHP_SELF']) {
-			return print '__CONSOLE_INSTALL__'.PHP_EOL;
-		}
-		$cur_dir = realpath('./');
-		if (!is_writable($cur_dir)) {
-			$error = 'Current dir: '.$cur_dir.' is not writable, please fix filesystem permissions.';
-		}
+
+	/**
+	*/
+	function main_layout_html($body = '') {
 		ob_start();
 ?>
 <!DOCTYPE html>
@@ -64,9 +49,9 @@ class yf_core_install {
 					<a class="dropdown-toggle" data-toggle="dropdown">Select theme <b class="caret"></b></a>
 					<ul class="dropdown-menu theme-selector">
 <?php
-			foreach ((array)installer()->bs_get_avail_themes() as $theme) {
-				echo '<li><a href="#" id="theme_id_'.$theme.'">'.$theme.'</a></li>';
-			}
+		foreach ((array)installer()->bs_get_avail_themes() as $theme) {
+			echo '<li><a href="#" id="theme_id_'.$theme.'">'.$theme.'</a></li>'.PHP_EOL;
+		}
 ?>
 					</ul>
 				</li>
@@ -74,9 +59,25 @@ class yf_core_install {
 		</div>
 	</div>
 <?php
-		if ($error) {
-			echo '<div class="alert alert-danger">'.$error.'</div>';
+		echo $body;
+?>
+</body>
+</html>
+<?php
+		return ob_get_clean();
+	}
+
+	/**
+	*/
+	function show_html($page = 'form', $vars = array(), $errors = array()) {
+		if (php_sapi_name() == 'cli' || !$_SERVER['PHP_SELF']) {
+			return print '__CONSOLE_INSTALL__'.PHP_EOL;
 		}
+		$cur_dir = realpath('./');
+		if (!is_writable($cur_dir)) {
+			$error = 'Current dir: '.$cur_dir.' is not writable, please fix filesystem permissions.';
+		}
+		ob_start();
 		if ($page == 'form') {
 ?>
 	<header>
@@ -143,18 +144,39 @@ class yf_core_install {
 	</div>
 <?php
 		}
-?>
-</body>
-</html>
-<?php
 		$html = ob_get_clean();
+		$body = '';
+		if ($error) {
+			$body .= '<div class="alert alert-danger">'.$error.'</div>';
+		}
+		$body .= installer()->main_layout_html($html);
 		$replace = array();
 		foreach ((array)$vars as $k => $v) {
 			$replace['{'.$k.'}'] = htmlspecialchars($v, ENT_QUOTES);
 		}
-		echo str_replace(array_keys($replace), array_values($replace), $html);
+		echo str_replace(array_keys($replace), array_values($replace), $body);
 		return installer();
 	}
+
+	/**
+	*/
+	function bs_get_avail_themes() {
+		return array('amelia','cerulean','cosmo','cyborg','flatly','journal','readable','simplex','slate','spacelab','spruce','superhero','united');
+	}
+
+	/**
+	*/
+	function bs_current_theme() {
+		$theme = 'slate'; // Default
+		$avail_themes = installer()->bs_get_avail_themes();
+		if ($_COOKIE['yf_theme'] && in_array($_COOKIE['yf_theme'], $avail_themes)) {
+			$theme = $_COOKIE['yf_theme'];
+		}
+		return $theme;
+	}
+
+	/**
+	*/
 	function get_form_keys() {
 		return array(
 			'install_yf_path'					=> 'Filesystem path to YF',
@@ -175,6 +197,9 @@ class yf_core_install {
 			'install_checkbox_debug_info'		=> 'Show Debug Info',
 		);
 	}
+
+	/**
+	*/
 	function get_form_defaults() {
 		return array(
 			'install_yf_path'					=> dirname(dirname(dirname(__FILE__))).'/',
@@ -195,14 +220,23 @@ class yf_core_install {
 			'install_checkbox_debug_info'		=> '',
 		);
 	}
+
+	/**
+	*/
 	function get_default_web_path() {
 		$request_uri	= $_SERVER['REQUEST_URI'];
 		$cur_web_path	= $request_uri[strlen($request_uri) - 1] == '/' ? substr($request_uri, 0, -1) : dirname($request_uri);
 		return '//'.$_SERVER['HTTP_HOST'].str_replace(array("\\",'//'), '/', $cur_web_path.'/');
 	}
+
+	/**
+	*/
 	function get_default_rewrite_base() {
 		return dirname($_SERVER['REQUEST_URI']) != '/' ? dirname($_SERVER['REQUEST_URI']) .'/' : '/';
 	}
+
+	/**
+	*/
 	function prepare_vars() {
 		$vars = array(
 			'FORM_ACTION'	=> $_SERVER['PHP_SELF'],
@@ -217,6 +251,9 @@ class yf_core_install {
 		}
 		return $vars;
 	}
+
+	/**
+	*/
 	function set_php_conf() {
 		define('PROJECT_PATH', $_POST['install_project_path'] ?: realpath('./').'/');
 		define('INCLUDE_PATH', PROJECT_PATH);
@@ -229,6 +266,21 @@ class yf_core_install {
 		error_reporting(E_ALL ^E_NOTICE);
 		return installer();
 	}
+
+	/**
+	*/
+	function pre_init_yf_core($vars = array()) {
+		if (defined('YF_PATH')) {
+			return false;
+		}
+		!$vars && $vars = installer()->prepare_vars();
+		define('YF_PATH', $vars['install_yf_path']);
+		require YF_PATH. 'classes/yf_main.class.php';
+		return new yf_main('user', $no_db_connect = true, $auto_init_all = false);
+	}
+
+	/**
+	*/
 	function init_yf_core() {
 		define('DB_TYPE',	'mysql5');
 		define('DB_HOST',	$_POST['install_db_host']);
@@ -239,7 +291,6 @@ class yf_core_install {
 		define('DB_CHARSET','utf8');
 
 		define('DEBUG_MODE', (int)$_POST['install_checkbox_debug_info']);
-#		define('DEBUG_MODE', 1);
 
 		define('DB_PREFIX', $_POST['install_db_prefix']);
 		if (!defined('YF_PATH')) {
@@ -248,9 +299,12 @@ class yf_core_install {
 			new yf_main('user', $no_db_connect = false, $auto_init_all = false);
 		}
 
-		define('INSTALLER_PATH', YF_PATH.'.dev/__INSTALL/');
+		define('INSTALLER_PATH', YF_PATH.'.dev/'.basename(__DIR__).'/');
 		return installer();
 	}
+
+	/**
+	*/
 	function test_db_connection() {
 		$test = db()->query('SHOW TABLES');
 		if (!$test && !db()->db_connect_id) {
@@ -261,6 +315,9 @@ class yf_core_install {
 		}
 		return !installer()->cannot_connect_to_db;
 	}
+
+	/**
+	*/
 	function write_db_setup() {
 		$db_setup_file_content = '<?php
 define(\'DB_TYPE\',	\'mysql5\');
@@ -280,6 +337,9 @@ define(\'DB_CHARSET\',\'utf8\');';
 		}
 		return installer();
 	}
+
+	/**
+	*/
 	function write_user_index_php($rewrite_enabled = true) {
 		$index_file_content = '<?php
 $dev_settings = dirname(dirname(__FILE__)).\'/.dev/override.php\';
@@ -309,6 +369,9 @@ new yf_main(\'user\', $no_db_connect = false, $auto_init_all = true);';
 		}
 		return installer();
 	}
+
+	/**
+	*/
 	function write_admin_index_php($rewrite_enabled = true) {
 		$admin_index_file_content = '<?php
 $dev_settings = dirname(dirname(dirname(__FILE__))).\'/.dev/override.php\';
@@ -340,6 +403,9 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		}
 		return installer();
 	}
+
+	/**
+	*/
 	function import_table_data ($table, $dir = '') {
 		if (!$dir) {
 			$dir = INSTALLER_PATH.'install/data/';
@@ -354,6 +420,9 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		}
 		return db()->replace_safe(DB_PREFIX.$table, $data);
 	}
+
+	/**
+	*/
 	function import_base_db_structure() {
 		$import_tables = array(
 			'static_pages',
@@ -393,13 +462,17 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		}
 		foreach ((array)$import_tables as $table) {
 // TODO: replace with direct CREATE TABLE from _class('db_installer')
-			db()->query('SELECT * FROM '.db($table).' LIMIT 1');
+			//db()->query('SELECT * FROM '.db($table).' LIMIT 1');
+			db()->utils()->create_table($table);
 		}
 		foreach ((array)$import_tables as $table) {
 			$this->import_table_data($table);
 		}
 		return installer();
 	}
+
+	/**
+	*/
 	function import_demo_data() {
 		$lang = $_POST['install_project_lang'];
 
@@ -432,14 +505,12 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 				$this->import_table_data($_table, $dir);
 			}
 		}
-#		ob_start();
-#		module('forum')->_init();
-#		_class('forum_sync', 'modules/forum/')->_sync_board();
-#		ob_end_clean();
-
-#		db()->update_safe('sys_menu_items', array('active' => 1), '1=1');
+		db()->update_safe('sys_menu_items', array('active' => 1), '1=1');
 		return installer();
 	}
+
+	/**
+	*/
 	function write_htaccess($rewrite_enabled = true) {
 		if ($rewrite_enabled) {
 			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'install/htaccess.txt');
@@ -450,6 +521,9 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		file_put_contents(PROJECT_PATH.'.htaccess', str_replace('%%%#path#%%%', $_POST['install_rw_base'], $htaccess_file_content));
 		return installer();
 	}
+
+	/**
+	*/
 	function set_admin_login_pswd() {
 		db()->replace_safe('sys_admin', array(
 			'id'		=> 1,
@@ -462,11 +536,45 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		));
 		return installer();
 	}
+
+	/**
+	*/
 	function copy_project_skeleton() {
 		_class('dir')->copy_dir(INSTALLER_PATH.'skel/', PROJECT_PATH, '', '/\.(svn|git)/');
 		return installer();
 	}
+
+	/**
+	*/
+	function show_form() {
+		$vars = installer()->prepare_vars();
+		installer()->pre_init_yf_core($vars);
+		$form_items = array();
+		$validate_rules = array();
+		foreach (installer()->get_form_keys() as $id => $desc) {
+			$type = 'text';
+			if (strpos($id, '_checkbox_') !== false) {
+				$type = 'check_box';
+			}
+			$form_items[$id] = array($type, $id, $desc);
+			$validate_rules[$id] = 'trim|required';
+		}
+		$defaults = installer()->get_form_defaults();
+		$form = form($defaults)
+			->validate($validate_rules)
+			->array_to_form($form_items)
+			->save('', 'Install')
+		;
+#		print _class('html')->layout(array(
+#			'nav_bar'	=> _class('html')->nav_bar(),
+#			'body'		=> $form,
+#		));
+		print $form;
+	}
 }
+
+/**
+*/
 function installer() {
 	static $installer;
 	if (!is_object($installer)) {
@@ -475,8 +583,11 @@ function installer() {
 	return $installer;
 }
 /////////////////////////////
+
+
 $errors = array();
 if (empty($_POST)) { // Initial page
+#	installer()->show_form();
 	installer()->show_html('form', installer()->prepare_vars());
 	exit();
 }

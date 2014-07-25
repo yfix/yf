@@ -10,7 +10,7 @@
 class yf_table2 {
 
 	/* Example:
-		return table2('SELECT * FROM '.db('admin'))
+		return table('SELECT * FROM '.db('admin'))
 			->text('login')
 			->text('first_name')
 			->text('last_name')
@@ -97,10 +97,16 @@ class yf_table2 {
 		$params = $tmp;
 		unset($tmp);
 
+		if (isset($params['data-postload-url'])) {
+			_class('table2_postload', 'classes/table2/')->postload($params['postload_params'], $this);
+			$params['table_attr'] = trim($params['table_attr'].' data-postload-url="'._prepare_html($params['data-postload-url']).'"');
+		}
+
 		$on_before_render = isset($params['on_before_render']) ? $params['on_before_render'] : $this->_on['on_before_render'];
 		if (is_callable($on_before_render)) {
 			$on_before_render($params, $this);
 		}
+		_class('core_events')->fire('table.before_render', array('this' => $this));
 		$a = $this->_render_get_data($params);
 		$data	= &$a['data'];
 		$ids	= &$a['ids'];
@@ -140,9 +146,13 @@ class yf_table2 {
 		if (is_callable($on_after_render)) {
 			$on_after_render($params, $a, $body, $this);
 		}
+		if (array_key_exists('feedback', $params)) {
+			$params['feedback']['total'] = count($data);
+		}
 		if (DEBUG_MODE) {
 			$this->_render_debug_info($params, $ts, main()->trace_string());
 		}
+		_class('core_events')->fire('table.after_render', array('this' => $this));
 		return $body;
 	}
 
@@ -179,16 +189,16 @@ class yf_table2 {
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_top'] ? $a['pages'] : '').PHP_EOL;
 
+		$header_links = array();
+		foreach ((array)$this->_header_links as $info) {
+			$name = $info['name'];
+			$func = &$info['func'];
+			$header_links[] = $func($info, $params, $this).PHP_EOL;
+		}
 		$data = &$a['data'];
 		if ($data) {
 			if ($this->_form_params) {
 				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
-			}
-			$header_links = array();
-			foreach ((array)$this->_header_links as $info) {
-				$name = $info['name'];
-				$func = &$info['func'];
-				$header_links[] = $func($info, $params, $this).PHP_EOL;
 			}
 			if ($header_links) {
 				$body .= '<div class="controls">'.implode(PHP_EOL, $header_links).'</div>';
@@ -196,9 +206,13 @@ class yf_table2 {
 			if ($params['condensed']) {
 				$params['table_class'] .= ' table-condensed';
 			}
-			$body .= '<table class="table table-bordered table-striped table-hover'
-				.(isset($params['table_class']) ? ' '.$params['table_class'] : '').'"'
-				.(isset($params['table_attr']) ? ' '.$params['table_attr'] : '').'>'.PHP_EOL;
+// TODO: convert code, using this into "table_class_add" instead of "table_class"
+#			$table_class = $params['table_class'] ?: 'table table-bordered table-striped table-hover';
+			$table_class = trim('table table-bordered table-striped table-hover '.$params['table_class']);
+			$table_class .= ' '.$params['table_class_add'];
+
+			$table_attrs = (isset($params['table_attr']) ? ' '.$params['table_attr'] : '');
+			$body .= '<table class="'.trim($table_class).'"'.$table_attrs.'>'.PHP_EOL;
 
 			if (!$params['no_header'] && !$params['rotate_table']) {
 				$thead_attrs = '';
@@ -223,15 +237,21 @@ class yf_table2 {
 					if (++$counter2 == 1 && $this->_params['first_col_width']) {
 						$info['extra']['width'] = $this->_params['first_col_width'];
 					}
-					$th_width = ($info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '');
+					$th_attrs = '';
+					if (isset($info['extra']['th'])) {
+						$th_attrs .= is_array($info['extra']['th']) ? ' '._attrs($info['extra']['th'], array('class','id','width')) : ' '.$info['extra']['th'];
+					} elseif (isset($info['extra']['th_id'])) {
+						$th_attrs .= $info['extra']['th_id'] ? ' id="'.$info['extra']['th_id'].'"' : '';
+					}
+					$th_attrs .= $info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '';
 					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
 					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
 					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip'], $name) : '';
 					$title = isset($info['extra']['th_desc']) ? $info['extra']['th_desc'] : $info['desc'];
-					$body .= '<th'.$th_width.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
+					$body .= '<th'.$th_attrs.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
 				}
 				if ($this->_buttons) {
-					$body .= '<th>'.(isset($params['actions_desc']) ? t($params[actions_desc]) : t('Actions')).'</th>'.PHP_EOL;
+					$body .= '<th>'.(isset($params['actions_desc']) ? t($params['actions_desc']) : t('Actions')).'</th>'.PHP_EOL;
 				}
 				$body .= '</thead>'.PHP_EOL;
 			}
@@ -252,6 +272,9 @@ class yf_table2 {
 			}
 			$body .= '</table>'.PHP_EOL;
 		} else {
+			if ($header_links) {
+				$body .= '<div class="controls">'.implode(PHP_EOL, $header_links).'</div>';
+			}
 			if (isset($params['no_records_html'])) {
 				$body .= $params['no_records_html'].PHP_EOL;
 			} else {
@@ -274,7 +297,7 @@ class yf_table2 {
 			$params['pages_on_bottom'] = true;
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_bottom'] ? $a['pages'] : '').PHP_EOL;
-		return $body;
+		return trim($body);
 	}
 
 	/**
@@ -322,7 +345,12 @@ class yf_table2 {
 			$total = count($data);
 			$ids = array_keys($data);
 		} elseif (strlen($sql)) {
-			$db = is_object($params['db']) ? $params['db'] : db();
+			if (is_object($params['db'])) {
+				$db = $params['db'];
+				$pager_extra['db'] = $db;
+			} else {
+				$db = db();
+			}
 			if ($params['filter']) {
 				list($filter_sql, $order_sql) = $this->_filter_sql_prepare($params['filter'], $params['filter_params'], $sql);
 				// These 2 arrays needed to be able to use filter parts somehow inside methods
@@ -418,6 +446,7 @@ class yf_table2 {
 	*/
 	function _render_add_custom_fields(&$params, &$data, &$ids) {
 		if ($data && $ids && $params['custom_fields']) {
+			$db = is_object($params['db']) ? $params['db'] : db();
 			$ids_sql = implode(',', $ids);
 			$custom_foreign_fields = array();
 			foreach ((array)$params['custom_fields'] as $custom_name => $custom_sql) {
@@ -436,9 +465,9 @@ class yf_table2 {
 						$_ids_sql = implode(',', $_ids);
 					}
 					$custom_foreign_fields[$custom_name] = $foreign_field;
-					$this->_data_sql_names[$custom_name] = db()->get_2d(str_replace('%ids', $_ids_sql, $custom_sql));
+					$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $_ids_sql, $custom_sql));
 				} else {
-					$this->_data_sql_names[$custom_name] = db()->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
+					$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
 				}
 			}
 			foreach ((array)$data as $_id => $row) {
@@ -647,11 +676,11 @@ class yf_table2 {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '') {
+	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $_this = null) {
 		if (!$filter_data) {
 			return '';
 		}
-		return _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_data, $filter_params, $__sql);
+		return _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_data, $filter_params, $__sql, $_this);
 	}
 
 	/**
@@ -661,7 +690,7 @@ class yf_table2 {
 		if (!$data || !$filter) {
 			return false;
 		}
-		return _class('table2_filter', 'classes/table2/')->_filter_array($data, $filter, $filter_params);
+		return _class('table2_filter', 'classes/table2/')->_filter_array($data, $filter, $filter_params, $this);
 	}
 
 	/**
@@ -752,7 +781,7 @@ class yf_table2 {
 				continue;
 			}
 			// Linking data from row element, example: %explain
-			if ($data[0] == '%') {
+			if (substr($data, 0, 1) == '%') {
 				$name = substr($data, 1);
 				$data = isset($row[$name]) ? $row[$name] : $data;
 			} else {
@@ -822,8 +851,9 @@ class yf_table2 {
 						$text = (isset($params['data'][$field]) ? $params['data'][$field] : $field);
 					}
 				}
+				$text = strval($text);
 				// Example of overriding data using field from same row: text('id', array('link' => '/shop/products/%d', 'rewrite' => 1, 'data' => '@name'));
-				if ($text[0] == '@') {
+				if (substr($text, 0, 1) == '@') {
 					$text = $row[substr($text, 1)];
 				}
 				if ($extra['translate']) {
@@ -860,7 +890,7 @@ class yf_table2 {
 						$link_trim_width = $extra['link_trim_width'];
 					}
 					$link_text = strlen($text) ? mb_strimwidth($text, 0, $link_trim_width, '...') : t('link');
-					$attrs .= ' title="'._prepare_html(trim($text)).'"';
+					$attrs .= ' title="'._prepare_html(trim($extra['link_title']) ?: trim($text)).'"';
 					$body .= '<a href="'.trim($link).'" class="'.trim($class).'"'. $attrs. '>'._prepare_html($link_text).'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
@@ -874,7 +904,6 @@ class yf_table2 {
 		);
 		return $this;
 	}
-
 
 	/**
 	*/
@@ -1121,6 +1150,9 @@ class yf_table2 {
 				if ($extra['class_add']) {
 					$class .= ' '.$extra['class_add'];
 				}
+				if ($extra['no_ajax'] || $instance_params['no_ajax']) {
+					$class .= ' no_ajax';
+				}
 				if ($extra['hidden_toggle']) {
 					$attrs .= ' data-hidden-toggle="'.$extra['hidden_toggle'].'"';
 				}
@@ -1348,6 +1380,9 @@ class yf_table2 {
 				$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
 				if ($extra['class_add']) {
 					$class .= ' '.$extra['class_add'];
+				}
+				if ($extra['no_ajax'] || $instance_params['no_ajax']) {
+					$class .= ' no_ajax';
 				}
 				return '<a href="'.trim($link).'" class="'.trim($class).'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}

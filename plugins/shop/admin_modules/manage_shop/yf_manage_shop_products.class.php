@@ -5,27 +5,25 @@
 class yf_manage_shop_products{
 
 	var $_filter_params = array(
-		'id'			=> array('in','p.id'),
-		'name'			=> array('like','p.name'),
-		'price' 		=> array('between','p.price'),
-		'articul'		=> array('like','p.articul'),
-//		'price'			=> array('eq','p.price'),
-		'supplier_id'	=> array('eq','p.supplier_id'),
+		'id'              => array('in','p.id'),
+		'name'            => array('like','p.name'),
+		'price'           => array('between','p.price'),
+		'articul'         => array('like','p.articul'),
+		'supplier_id'     => array('eq','p.supplier_id'),
 		'manufacturer_id' => array('eq','p.manufacturer_id'),
-		'active'		=> array('eq','p.active'),
-		'status'		=> array('eq','p.status'),
-		'image'			=> array('eq','p.image'),
-#		'cat_id'		=> array('field' => 'p.cat_id'),
-		'quantity'		=> array('field' => 'p.quantity'),
-		'add_date'		=> array('dt_between', 'p.add_date'),
-		'update_date'	=> array('field' => 'p.update_date'),
+		'active'          => array('eq','p.active'),
+		'status'          => array('eq','p.status'),
+		'image'           => array('eq','p.image'),
+		'quantity'        => array('field' => 'p.quantity'),
+		'add_date'        => array('dt_between', 'p.add_date'),
+		'update_date'     => array('field' => 'p.update_date'),
 	);
 
 	/**
 	*/
 	function _init () {
 		if (empty($_SESSION['manage_shop__products'])) {
-			$_SESSION['manage_shop__products'] = array(		
+			$_SESSION['manage_shop__products'] = array(
 			  'order_by' => 'id',
 			  'order_direction' => 'desc',
 			);
@@ -39,19 +37,46 @@ class yf_manage_shop_products{
 			$cat_ids[$top_cat_id] = $top_cat_id;
 			return $cat_ids ? 'p.cat_id IN('.implode(',', $cat_ids).')' : '';
 		};
+		$this->_filter_params['region_id'] = function($a, $data) {
+			$result = implode( ',', (array)$data[ 'region' ] );
+			$result = $result ? 'pr.region_id IN(' . $result .  ')' : '';
+			return( $result );
+		};
 	}
 
-	/**
-	*/
+	function _sql( $options = array() ) {
+		// get options
+		$_ = &$options;
+			$fields = (array)$_[ 'fields' ] ?: array();
+			$where  = (array)$_[ 'where'  ] ?: array();
+			$order  = (array)$_[ 'order'  ] ?: array();
+		// init
+		$sql_fields = '*';
+		$sql_where = '';
+		$sql_order = '';
+		// add supplier
+		$supplier = (int)module( 'manage_shop' )->SUPPLIER_ID;
+		if( $supplier > 0 ) { $where[] = 'supplier_id = ' . $supplier; }
+		// compile sql chunk
+		if( !empty( $fields ) ) { $sql_fields = implode( ', ', $fields ); }
+		if( !empty( $where  ) ) { $sql_where  = 'WHERE '    . implode( ', ', $where  ); }
+		if( !empty( $order  ) ) { $sql_order  = implode( ', ', $order  ); }
+		$result = sprintf( '
+			SELECT %s FROM %s AS p
+			LEFT JOIN %s AS pr ON pr.product_id = p.id
+			%s %s
+			'
+			, $sql_fields
+			, db( 'shop_products' )
+			, db( 'shop_product_to_region' )
+			, $sql_where
+			, $sql_order
+		);
+		return( $result );
+	}
+
 	function products () {
-		if (module('manage_shop')->SUPPLIER_ID) {
-			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
-					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id
-					WHERE
-						m.admin_id='.intval(main()->ADMIN_ID).'';
-		} else {
-			$sql = 'SELECT * FROM '.db('shop_products').' AS p';
-		}
+		$sql = $this->_sql();
 
 		return table($sql, array(
 				'filter' => $_SESSION[$_GET['object'].'__products'],
@@ -78,7 +103,9 @@ class yf_manage_shop_products{
 			->footer_link('Categories', './?object=category_editor&action=show_items&id=shop_cats')
 			->footer_link('Orders', './?object='.main()->_get('object').'&action=show_orders')
 			->footer_link('XLS Export', './?object='.main()->_get('object').'&action=products_xls_export')
-			->footer_link('Обновление цен', './?object='.main()->_get('object').'&action=products_price_update&init=1&filter=' . main()->_get( 'action' ));
+			->footer_link('Обновление цен', './?object='.main()->_get('object').'&action=products_price_update&init=1&filter=' . main()->_get( 'action' ))
+			->footer_link('Обновление регионов', './?object='.main()->_get('object').'&action=products_region_update&init=1&filter=' . main()->_get( 'action' ))
+		;
 	}
 
 
@@ -87,22 +114,13 @@ class yf_manage_shop_products{
 	function products_xls_export () {
 		$old_supplier_id = '';
 		ini_set("memory_limit","1024M");
-		if (module('manage_shop')->SUPPLIER_ID) {
-			$sql = 'SELECT `p`.`id`,`p`.`articul`,`p`.`name`,`p`.`price` FROM '.db('shop_products').' AS p
-					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id
-					WHERE
-						m.admin_id='.intval(main()->ADMIN_ID).'';
-		} else {
-			$sql = 'SELECT `p`.`id`,`p`.`articul`,`p`.`name`,`p`.`price` FROM '.db('shop_products').' AS p';
-		}
+		$sql = $this->_sql();
 		$filter_arr = main()->is_post() ? array('supplier_id' => intval($_POST['supplier_id'])) : $_SESSION[$_GET['object'].'__products'];
-		list($filter_sql,$order_sql) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_arr, $this->_filter_params, $sql);
-		if ($filter_sql || $order_sql) {
-			$sql .= ' WHERE 1 '.$filter_sql;
-			if ($order_sql) {
-				$sql .= ' '.$order_sql;
-			}
-		}
+		list( $_where, $_order ) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_arr, $this->_filter_params, $sql);
+		$sql = $this->_sql( array(
+			'where'  => 1 . $_where,
+			'order'  => $_order,
+		));
 
 		if (file_exists(YF_PATH."libs/phpexcel/PHPExcel.php")) {
 			require_once(YF_PATH."libs/phpexcel/PHPExcel.php");
@@ -141,16 +159,11 @@ class yf_manage_shop_products{
 
 	/**
 	*/
-	function _get_product($pid) {
-		if (module('manage_shop')->SUPPLIER_ID) {
-			$sql = 'SELECT p.* FROM '.db('shop_products').' AS p
-					INNER JOIN '.db('shop_admin_to_supplier').' AS m ON m.supplier_id = p.supplier_id
-					WHERE
-						p.id='.intval($pid).'
-						AND m.admin_id='.intval(main()->ADMIN_ID).'';
-		} else {
-			$sql = 'SELECT * FROM '.db('shop_products').' WHERE id='.intval($pid);
-		}
+	function _get_product( $id ) {
+		$id = (int)$id;
+		$sql = $this->_sql( array(
+			'where'  => 'p.id=' . $id,
+		));
 		return db()->get($sql);
 	}
 

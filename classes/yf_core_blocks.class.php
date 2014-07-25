@@ -103,11 +103,16 @@ class yf_core_blocks {
 				}
 			}
 		}
-		$stpl_name = $cur_block_info['stpl_name'] ?: $block_name;
-		return tpl()->parse($stpl_name, array(
+		$prepend = _class('core_events')->fire('block.prepend['.$block_name.']');
+
+		$body = tpl()->parse($cur_block_info['stpl_name'] ?: $block_name, array(
 			'block_name'=> $block_name,
 			'block_id'	=> $block_id,
 		));
+
+		$append = _class('core_events')->fire('block.append['.$block_name.']', array(&$body));
+
+		return ($prepend ? implode(PHP_EOL, $prepend) : ''). $body. ($append ? implode(PHP_EOL, $append) : '');
 	}
 
 	/**
@@ -409,6 +414,10 @@ class yf_core_blocks {
 				$GLOBALS['task_denied'] = true;
 			}
 		}
+		$block_name = 'center_area';
+		$prepend = _class('core_events')->fire('block.prepend['.$block_name.']');
+		$append = _class('core_events')->fire('block.append['.$block_name.']', array(&$body));
+		$body = ($prepend ? implode(PHP_EOL, $prepend) : ''). $body. ($append ? implode(PHP_EOL, $append) : '');
 		// Singleton
 		tpl()->_CENTER_RESULT = (string)$body;
 		// Output only center content, when we are inside AJAX_MODE

@@ -229,6 +229,21 @@ class yf_manage_shop {
 		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
+	// revision: category
+	function _add_revision($type, $action = false, $ids = false) {
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}($type, $action, $ids);
+	}
+	function category_revisions() {
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+	function category_revisions_view() {
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+	function category_revision_checkout() {
+		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+	// end revision: category
+
 	function checkout_images_revision() {
 		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
@@ -326,6 +341,26 @@ class yf_manage_shop {
 		return _class('manage_shop_units', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
+	function region() {
+		return _class('manage_shop_region', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
+	function region_active() {
+		return _class('manage_shop_region', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
+	function region_edit() {
+		return _class('manage_shop_region', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
+	function region_add() {
+		return _class('manage_shop_region', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
+	function region_delete() {
+		return _class('manage_shop_region', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
 	function price_markup_down() {
 		return _class('manage_shop_price_markup_down', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
@@ -348,6 +383,10 @@ class yf_manage_shop {
 
 	function products_price_update() {
 		return _class('manage_shop_price_update', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
+
+	function products_region_update() {
+		return _class('manage_shop_region_update', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
 	function novaposhta_ua() {
@@ -490,12 +529,12 @@ class yf_manage_shop {
 		return _class('manage_shop_express', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
-	function paywill() {
-		return _class('manage_shop_paywill', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	function invoice() {
+		return _class('manage_shop_invoice', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
 
-	function _prepare_paywill_body($params = false) {
-		return _class('manage_shop_paywill', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
+	function _prepare_invoice_body($params = false) {
+		return _class('manage_shop_invoice', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
 
 	function express_pdf($params = array()) {

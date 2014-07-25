@@ -23,3 +23,8 @@ $data = '
 	`force_wo_image` tinyint(3) unsigned NOT NULL DEFAULT \'0\',
 	PRIMARY KEY (`id`)
 ';
+/*
+,
+	FOREIGN KEY (`cat_id`) REFERENCES `{db_prefix}sys_categories` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+	FOREIGN KEY (`parent_id`) REFERENCES `{db_prefix}sys_category_items` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+*/

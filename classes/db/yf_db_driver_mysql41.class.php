@@ -26,28 +26,17 @@ class yf_db_driver_mysql41 extends yf_db_driver {
 
 	/**
 	*/
-	function __construct($server, $user, $password, $database, $persistency = false, $use_ssl = false, $port = '', $socket = '', $charset = '', $allow_auto_create_db = false) {
+	function __construct(array $params) {
 		if (!function_exists('mysql_connect')) {
 			trigger_error('MySQL db driver require missing php extension mysql', E_USER_ERROR);
 			return false;
 		}
-		if (is_array($server)) {
-			$params = $server;
-			$server = '';
+		$params['port'] = $params['port'] ?: $this->DEF_PORT;
+		if ($params['socket'] && !file_exists($params['socket'])) {
+			$params['socket'] = '';
 		}
-		$this->server		= $params['host'] ?: $server;
-		$this->user			= $params['user'] ?: $user;
-		$this->password		= $params['pswd'] ?: $password;
-		$this->dbname		= $params['name'] ?: $database;
-		$this->persistency	= isset($params['persist']) ? $params['persist'] : $persistency;
-		$this->ssl			= isset($params['ssl']) ? $params['ssl'] : $use_ssl;
-		$this->port			= ($params['port'] ?: $port) ?: $this->DEF_PORT;
-		$this->socket		= $params['socket'] ?: $socket;
-		if (!file_exists($this->socket)) {
-			$this->socket = '';
-		}
-		$this->charset		= ($params['charset'] ?: $charset) ?: (defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET);
-		$this->ALLOW_AUTO_CREATE_DB	= isset($params['allow_auto_create_db']) ? $params['allow_auto_create_db'] : $allow_auto_create_db;
+		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET);
+		$this->params = $params;
 
 		ini_set('mysql.connect_timeout', 2);
 
@@ -57,8 +46,8 @@ class yf_db_driver_mysql41 extends yf_db_driver {
 			conf_add('http_headers::X-Details','ME=(-1) MySql connection error');
 			return false;
 		}
-		if ($this->charset) {
-			$this->query('SET NAMES '. $this->charset);
+		if ($this->params['charset']) {
+			$this->query('SET NAMES '. $this->params['charset']);
 		}
 		return $this->db_connect_id;
 	}
@@ -66,27 +55,27 @@ class yf_db_driver_mysql41 extends yf_db_driver {
 	/**
 	*/
 	function connect() {
-		if ($this->socket) {
-			$connect_host = $this->socket;
+		if ($this->params['socket']) {
+			$connect_host = $this->params['socket'];
 		} else {
-			$connect_port = $this->port && $this->port != $this->DEF_PORT ? $this->port : '';
-			$connect_host = $this->server. ($connect_port ? ':'.$connect_port : '');
+			$connect_port = $this->params['port'] && $this->params['port'] != $this->DEF_PORT ? $this->params['port'] : '';
+			$connect_host = $this->params['host']. ($connect_port ? ':'.$connect_port : '');
 		}
-		$this->db_connect_id = $this->persistency 
-			? mysql_pconnect($connect_host, $this->user, $this->password, $use_ssl ? MYSQL_CLIENT_SSL : 0) 
-			: mysql_connect($connect_host, $this->user, $this->password, true, $use_ssl ? MYSQL_CLIENT_SSL : 0);
+		$this->db_connect_id = $this->params['persist'] 
+			? mysql_pconnect($connect_host, $this->params['user'], $this->params['pswd'], $this->params['ssl'] ? MYSQL_CLIENT_SSL : 0) 
+			: mysql_connect($connect_host, $this->params['user'], $this->params['pswd'], true, $this->params['ssl'] ? MYSQL_CLIENT_SSL : 0);
 
 		if (!$this->db_connect_id) {
 			$this->_connect_error = true;
 			return false;
 		}
-		if ($this->dbname != '') {
-			$dbselect = mysql_select_db($this->dbname, $this->db_connect_id);
+		if ($this->params['name'] != '') {
+			$dbselect = mysql_select_db($this->params['name'], $this->db_connect_id);
 			// Try to create database, if not exists and if allowed
-			if (!$dbselect && $this->ALLOW_AUTO_CREATE_DB && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->dbname)) {
-				mysql_query('CREATE DATABASE IF NOT EXISTS '.$this->dbname, $this->db_connect_id);
+			if (!$dbselect && $this->ALLOW_AUTO_CREATE_DB && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->params['name'])) {
+				mysql_query('CREATE DATABASE IF NOT EXISTS '.$this->params['name'], $this->db_connect_id);
 			}
-			$dbselect = mysql_select_db($this->dbname, $this->db_connect_id);
+			$dbselect = mysql_select_db($this->params['name'], $this->db_connect_id);
 			if (!$dbselect) {
 				mysql_close($this->db_connect_id);
 				$this->db_connect_id = $dbselect;
@@ -279,24 +268,20 @@ class yf_db_driver_mysql41 extends yf_db_driver {
 				$fld['type'] = $type;
 				$fld['max_length'] = -1;
 			}
-
-#			if ($FULL_INFO) {
-				$fld['not_null']		= ($A[2] != 'YES');
-				$fld['primary_key']		= ($A[3] == 'PRI');
-				$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
-				$fld['binary']			= (strpos($type,'blob') !== false);
-				$fld['unsigned']		= (strpos($type,'unsigned') !== false);
-				if (!$fld['binary']) {
-					$d = $A[4];
-					if ($d != '' && $d != 'NULL') {
-						$fld['has_default'] = true;
-						$fld['default_value'] = $d;
-					} else {
-						$fld['has_default'] = false;
-					}
+			$fld['not_null']		= ($A[2] != 'YES');
+			$fld['primary_key']		= ($A[3] == 'PRI');
+			$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
+			$fld['binary']			= (strpos($type,'blob') !== false);
+			$fld['unsigned']		= (strpos($type,'unsigned') !== false);
+			if (!$fld['binary']) {
+				$d = $A[4];
+				if ($d != '' && $d != 'NULL') {
+					$fld['has_default'] = true;
+					$fld['default_value'] = $d;
+				} else {
+					$fld['has_default'] = false;
 				}
-#			}
-
+			}
 			if ($KEYS_NUMERIC) {
 				$retarr[] = $fld;
 			} else {

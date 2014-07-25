@@ -93,10 +93,10 @@ class yf_rewrite {
 			if (preg_match('~[a-z0-9_\./]+~ims', $url_str)) {
 				if ($url_str[0] == '/') {
 					// Example: /test/oauth/github => object=test, action=oauth, id=github
-					list(,$params['object'], $params['action'], $params['id'], $params['page']/*, $params['other']*/) = explode('/', $url_str);
+					list(,$params['object'], $params['action'], $params['id'], $params['page'], $params['_other']) = explode('/', $url_str);
 				} else {
 					// Example: test2.dev/test/oauth/github => host=test2.dev, object=test, action=oauth, id=github
-					list($params['host'], $params['object'], $params['action'], $params['id'], $params['page']/*, $params['other']*/) = explode('/', $url_str);
+					list($params['host'], $params['object'], $params['action'], $params['id'], $params['page'], $params['_other']) = explode('/', $url_str);
 				}
 			}
 			if (is_array($host)) {
@@ -106,6 +106,18 @@ class yf_rewrite {
 		}
 		if (!is_array($params) && empty($url_str)) {
 			return false;
+		}
+		// Support for other params passed by http encoded string (&k1=v1&k2=v2)
+		if (isset($params['_other'])) {
+			parse_str($params['_other'], $tmp);
+			foreach ((array)$tmp as $k => $v) {
+				$k = trim($k);
+				$v = trim($v);
+				if (strlen($k) && strlen($v)) {
+					$params[$k] = $v;
+				}
+			}
+			unset($params['_other']);
 		}
 		// Ensure correct order of params
 		$p = array();
@@ -258,7 +270,9 @@ class yf_rewrite {
 	/**
 	*/
 	function _process_url ($url = '', $force_rewrite = false, $for_site_id = false) {
-		$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+		if (strpos($url, 'http://') === false && strpos($url, 'https://') !== 0) {
+			$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+		}
 		// fix for rewrite tests
 		return str_replace(array('http:///', 'https:///'), './', $url);
 	}

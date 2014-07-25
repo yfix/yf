@@ -15,3 +15,4 @@ $data = '
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `login` (`login`)
 ';
+//	,FOREIGN KEY (`group`) REFERENCES `{db_prefix}sys_admin_groups` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
