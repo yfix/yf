@@ -9,6 +9,9 @@
 */
 class yf_admin_methods {
 
+	/***/
+	public $params = array();
+
 	/**
 	* Catch missing method call
 	*/
@@ -18,15 +21,36 @@ class yf_admin_methods {
 
 	/**
 	*/
-	function add($params = array()) {
+	function show($params = array()) {
 		if (is_string($params)) {
-			$params = array(
-				'table' => $params,
-			);
+			$params = array('table' => $params);
 		}
 		if (!is_array($params)) {
 			$params = array();
 		}
+		$params += (array)$this->params;
+
+		$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
+		$db = is_object($params['db']) ? $params['db'] : db();
+		$table = $db->_fix_table_name($params['table']);
+		return table('SELECT * FROM '.$db->es($table), array(
+				'id'			=> $params['id'] ?: 'id',
+				'filter'		=> $_SESSION[$filter_name],
+				'filter_params' => $params['filter_params'],
+			))->auto();
+	}
+
+	/**
+	*/
+	function add($params = array()) {
+		if (is_string($params)) {
+			$params = array('table' => $params);
+		}
+		if (!is_array($params)) {
+			$params = array();
+		}
+		$params += (array)$this->params;
+
 		$replace = array(
 			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'. $params['links_add']),
 			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
@@ -105,13 +129,13 @@ class yf_admin_methods {
 	*/
 	function edit($params = array()) {
 		if (is_string($params)) {
-			$params = array(
-				'table' => $params,
-			);
+			$params = array('table' => $params);
 		}
 		if (!is_array($params)) {
 			$params = array();
 		}
+		$params += (array)$this->params;
+
 		$replace = array(
 			'form_action'	=> $params['form_action'] ?: url_admin('/@object/@action/'.urlencode($_GET['id']). '/'. $params['links_add']),
 			'back_link'		=> $params['back_link'] ?: url_admin('/@object/'. $params['links_add']),
@@ -202,6 +226,8 @@ class yf_admin_methods {
 		if (!is_array($params)) {
 			$params = array();
 		}
+		$params += (array)$this->params;
+
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
@@ -242,6 +268,8 @@ class yf_admin_methods {
 		if (!is_array($params)) {
 			$params = array();
 		}
+		$params += (array)$this->params;
+
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
@@ -284,6 +312,8 @@ class yf_admin_methods {
 		if (!is_array($params)) {
 			$params = array();
 		}
+		$params += (array)$this->params;
+
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$table = $db->_fix_table_name($params['table']);
 		if (!$table) {
@@ -323,6 +353,8 @@ class yf_admin_methods {
 	/**
 	*/
 	function filter_save($params = array()) {
+		$params += (array)$this->params;
+
 		$filter_name = $params['filter_name'] ?: $this->_params['filter_name'];
 		if (!$filter_name) {
 			$filter_name = $_GET['object'].'__show';
@@ -353,6 +385,8 @@ class yf_admin_methods {
 	/**
 	*/
 	function _show_filter($params = array()) {
+		$params += (array)$this->params;
+
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
