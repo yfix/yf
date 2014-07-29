@@ -150,7 +150,7 @@ class yf_manage_shop_upload_images {
         /**
         */
         function resize_and_save_image($img, $id, $md5){
-			ini_set( 'memory_limit', '100M' );
+			ini_set( 'memory_limit', '200M' );
                 $dirs = sprintf('%06s',$id);
                 $dir2 = substr($dirs,-3,3);
                 $dir1 = substr($dirs,-6,3);
