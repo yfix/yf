@@ -565,6 +565,10 @@ class yf_manage_shop {
 		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}($action, $item_id);
 	}
 
+	function import2( $options = array() ) {
+		return _class( 'manage_shop_import2', 'admin_modules/manage_shop/' )->{__FUNCTION__}( $options );
+	}
+
 	function import_xls($params = array()) {
 		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
