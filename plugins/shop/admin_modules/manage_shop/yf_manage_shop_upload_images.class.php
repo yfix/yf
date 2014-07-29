@@ -9,7 +9,7 @@ class yf_manage_shop_upload_images {
             'application/x-gzip'=> 'gz',
     );
         public $MAX_IMAGE_SIZE = 8196;
-        
+
         function _init(){
                 $this->ARCHIVE_FOLDER = PROJECT_PATH."uploads/tmp/";
 //                $this->SAVE_PATH = PROJECT_PATH."uploads/tmp/";
@@ -95,7 +95,7 @@ class yf_manage_shop_upload_images {
                 }
                 $replace =array(
                         "items" => $items,
-                );        
+                );
                 _class('dir')->delete_dir($EXTRACT_PATH, true);
                 unlink($this->ARCHIVE_FOLDER.$new_name);
                 common()->admin_wall_add(array('archive with images uploaded by '.$SUPPLIER_INFO['name'].' '.$ADMIN_INFO['first_name'].' '.$ADMIN_INFO['last_name']));
@@ -120,7 +120,7 @@ class yf_manage_shop_upload_images {
                 if(!empty($articul[0])){
                         $articul = _es(strip_tags($articul[0]));
                         $sql = 'SELECT id FROM '.db('shop_products').'
-                                WHERE articul IN ("'.$articul.'","'.pathinfo($filename, PATHINFO_FILENAME).'") 
+                                WHERE articul IN ("'.$articul.'","'.pathinfo($filename, PATHINFO_FILENAME).'")
                                     AND supplier_id='.$supplier_id;
 /*
                         $sql = 'SELECT id FROM '.db('shop_products').'
@@ -150,6 +150,7 @@ class yf_manage_shop_upload_images {
         /**
         */
         function resize_and_save_image($img, $id, $md5){
+			ini_set( 'memory_limit', '100M' );
                 $dirs = sprintf('%06s',$id);
                 $dir2 = substr($dirs,-3,3);
                 $dir1 = substr($dirs,-6,3);
@@ -179,7 +180,7 @@ class yf_manage_shop_upload_images {
                 if ($A['cnt'] == 0) {
                         $A = db()->query_fetch("SELECT id FROM ".db('shop_product_images')." WHERE product_id=".$id." ORDER BY id DESC");
                         db()->query("UPDATE ".db('shop_product_images')." SET is_default=1 WHERE id=".$A['id']);
-                }                        
+                }
                 db()->query("UPDATE `".db('shop_products')."` SET `image`='1' WHERE `id`=".$id);
                 db()->commit();
                 module('manage_shop')->_product_images_add_revision('import', $id, $i);
