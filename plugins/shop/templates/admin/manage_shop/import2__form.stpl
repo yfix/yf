@@ -1,0 +1,5 @@
+<div class="ng-cloak">
+
+	<input type="file" file-change="upload">
+
+</div>

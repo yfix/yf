@@ -8,7 +8,7 @@ class yf_manage_shop_import2 {
 	private $_instance             = false;
 	private $_class_admin_products = false;
 
-	function _init() {
+	function __init() {
 		$this->_class_admin_products = _class( 'manage_shop_products', 'admin_modules/manage_shop/' );
 		$this->is_post = input()->is_post();
 		$this->is_init = (bool)input()->get( 'init' );
@@ -23,7 +23,55 @@ class yf_manage_shop_import2 {
 		$this->_filter_params = $this->_class_admin_products->_filter_params;
 	}
 
-	function products_region_update() {
+	protected function _api_upload() {
+		if( empty( $_FILES[ 'file' ] ) ) {
+			header( 'Status: 503 Service Unavailable' );
+			die( 'Service Unavailable' );
+		}
+		var_dump( $_FILES, $_POST, $_GET );
+		exit;
+	}
+
+
+	// api call
+	protected function _reject() {
+		header( 'Status: 503 Service Unavailable' );
+		die( 'Service Unavailable' );
+	}
+
+	protected function _firewall( $class = null, $class_path = null, $method = null, $options = array() ) {
+		if( $class && $class_path ) {
+			$_class  = _class_safe( $class, $class_path );
+		} else {
+			$_class = $this;
+		}
+		empty( $method ) && $method = $_GET[ 'api' ];
+		$_method = '_api_' . $method;
+		$_status = method_exists( $_class, $_method );
+		if( !$_status ) { $this->_reject(); }
+		return( $_class->$_method( $options ) );
+	}
+
+	protected function _call( $class = null, $class_path = null, $method = null, $options = array() ) {
+		main()->NO_GRAPHICS = true;
+		$result = $this->_firewall( $class, $class_path, $method, $options );
+		$json = json_encode( $result );
+		$response = &$json;
+		// check jsonp
+		$type = 'json';
+		if( isset( $_GET[ 'callback' ] ) ) {
+			$jsonp_callback = $_GET[ 'callback' ];
+			$response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
+			$type = 'javascript';
+		}
+		header( "Content-Type: application/$type; charset=UTF-8" );
+		echo( $response );
+		// without debug info
+		exit( 0 );
+	}
+
+	function import2() {
+		if( !empty( $_GET[ 'api' ] ) ) { return( $this->_call() ); }
 		$data   = $this->_data();
 		$form   = $this->_form( $data );
 		return( $form );
@@ -32,86 +80,26 @@ class yf_manage_shop_import2 {
 	function _data() {
 		$_sub_action = array(
 			'0'      => '- не выбрано -',
-			'add'    => 'добавить',
+			'load'   => 'загрузить',
+			'import' => 'импортировать',
 			'delete' => 'удалить',
-			'clean'  => 'очистить',
 		);
 			$sub_action = $_POST[ 'sub_action' ];
 				$is_sub_action = $sub_action !== '0' && isset( $_sub_action[ $sub_action ] );
 		// -----
-		$_region = _class( '_shop_region', 'modules/shop/' )->_get_list();
-		// array_unshift( $region, '- регион не выбран -' );
-			if( $sub_action == 'clean' ) {
-				$is_region = true;
-			} else {
-				$region = array_values( (array)$_POST[ 'region' ] );
-				$is_region = false;
-				if( !empty( $region ) ) {
-					$region = array_combine( $region, $region );
-						$count = 0;
-						foreach( $region as $id ) {
-							if( $id === '0' || !isset( $_region[ $id ] ) ) { break; }
-							$count++;
-						}
-						$count == count( $region ) && $is_region = true;
-				}
-			}
-		// prepare filter
-		list( $_where, $_order ) = _class('table2_filter', 'classes/table2/')->_filter_sql_prepare( $this->_filter, $this->_filter_params );
-		// compile sql
-		$sql_filter = $this->_class_admin_products->_sql( array(
-			'fields' => 'DISTINCT p.id',
-			'where'  => 1 . $_where,
-			'order'  => $_order,
-		));
-		$sql_count = $this->_class_admin_products->_sql( array(
-			'fields' => 'COUNT(p.id)',
-			'where'  => 1 . $_where,
-			'order'  => $_order,
-		));
-		$total = (int)db()->get_one( $sql_count );
+		$_supplier = _class('manage_shop')->_suppliers_for_select;
+			$supplier = (int)$_POST[ 'supplier' ];
+				$is_supplier = $supplier != 0 && isset( $_supplier[ $supplier ] );
+		// -----
 		// update
 		$apply   = $_POST[ 'apply'   ];
 		$confirm = $_POST[ 'confirm' ];
-		$is_action  = $this->is_post && $is_sub_action && $is_region && isset( $apply ) ? true : false;
+		$is_action  = $this->is_post && $is_sub_action && $is_supplier && isset( $apply ) ? true : false;
 		$is_update  = $is_action &&  isset( $confirm ) ? true : false;
 		$no_confirm = $is_action && !isset( $confirm ) ? true : false;
 		if( $is_update ) {
-			// prepare data
-			$sql_table_action = 'shop_product_to_region';
-			$data             = array();
-			$sub_action_count = null;
-			$ids  = db()->get_2d( $sql_filter );
-			// ----- add regions to products
 			if( $sub_action == 'add' ) {
-				foreach( $ids as $id ) {
-					foreach( $region as $r_id ) {
-						$data[] = array( 'product_id' => $id, 'region_id' => $r_id );
-					}
-				}
-				db_query( 'START TRANSACTION' );
-					db()->insert_on_duplicate_key_update( $sql_table_action, $data );
-					$sub_action_count = db()->affected_rows();
-				db_query( 'COMMIT' );
-			// ----- delete regions to products
-			} elseif( $sub_action == 'delete' ||  $sub_action == 'clean' ) {
-				$sql_product_ids = array( 'product_id', 'in', $ids    );
-				if( $sub_action == 'clean' ) {
-					$data = array( '__args__' => array(
-						$sql_product_ids,
-					));
-				} else {
-					$sql_region_ids  = array( 'region_id',  'in', $region );
-					$data = array( '__args__' => array(
-						$sql_product_ids,
-						'and',
-						$sql_region_ids,
-					));
-				}
-				db_query( 'START TRANSACTION' );
-					db()->delete( $sql_table_action, $data );
-					$sub_action_count = db()->affected_rows();
-				db_query( 'COMMIT' );
+			} elseif( $sub_action == 'delete' ) {
 			}
 			if( $sub_action_count ) {
 				common()->message_success( 'Операция выполнена успешно.' );
@@ -127,40 +115,62 @@ class yf_manage_shop_import2 {
 		}
 		// -----
 		$result = array(
-			'total'       => $total,
-			'_sub_action' => $_sub_action,
-				'sub_action' => $sub_action,
-			'_region'     => $_region,
-				'region'     => $region,
+			'_ng_controller' => 'import2',
+			'_sub_action'    => $_sub_action,
+				'sub_action'     => $sub_action,
+			'_supplier'      => $_supplier,
+				'supplier'       => $supplier,
 		);
 		return( $result );
 	}
 
 	function _form( $data ) {
+		// prepare form
+		$data = (array)$data;
+		// prepare ng-app
+		$_ng_controller = 'ctrl.import2';
+		$data[ '_ng_controller' ] = $_ng_controller;
+		$data[ '_url_upload' ] = url_admin( '//manage_shop/import2/&api=upload' );
+		$_form_tpl = tpl()->parse( 'manage_shop/import2__form', $data );
 		// create form
-		$link_back = './?object=manage_shop&action=products';
-		$_form = form( $data )
-			->row_start( array( 'desc' => 'Всего выбрано' ) )
-				->info( 'total' )
-				->link( 'Back', $link_back , array( 'title' => 'Вернуться в к фильтру продуктов', 'icon' => 'fa fa-arrow-circle-left' ))
-			->row_end()
+		$_form = form( $data, array( 'ng-controller' => $_ng_controller ) )
 			->select2_box( array(
 				'desc'     => 'Действие',
 				'name'     => 'sub_action',
 				'values'   => $data[ '_sub_action' ],
 			))
 			->select2_box( array(
-				'desc'     => 'Регион',
-				'name'     => 'region',
-				'multiple' => true,
-				'values'   => $data[ '_region' ],
+				'desc'     => 'Поставщик',
+				'name'     => 'supplier',
+				'values'   => $data[ '_supplier' ],
 			))
-			->row_start( array( 'desc' => '' ) )
-				->submit( 'apply', 'Выполнить' )
-				->check_box( 'confirm', false, array( 'desc' => 'подтверждение', 'no_label' => true ) )
-			->row_end()
+			->fieldset_start()
+				->container( $_form_tpl, 'Данные' )
+			->fieldset_end()
+		// $link_back = './?object=manage_shop&action=products';
+		// $_form = form( $data )
+			// ->row_start( array( 'desc' => 'Всего выбрано' ) )
+				// ->info( 'total' )
+				// ->link( 'Back', $link_back , array( 'title' => 'Вернуться в к фильтру продуктов', 'icon' => 'fa fa-arrow-circle-left' ))
+			// ->row_end()
+			// ->select2_box( array(
+				// 'desc'     => 'Действие',
+				// 'name'     => 'sub_action',
+				// 'values'   => $data[ '_sub_action' ],
+			// ))
+			// ->select2_box( array(
+				// 'desc'     => 'Регион',
+				// 'name'     => 'region',
+				// 'multiple' => true,
+				// 'values'   => $data[ '_region' ],
+			// ))
+			// ->row_start( array( 'desc' => '' ) )
+				// ->submit( 'apply', 'Выполнить' )
+				// ->check_box( 'confirm', false, array( 'desc' => 'подтверждение', 'no_label' => true ) )
+			// ->row_end()
 		;
-		return( $_form );
+		$_form_ctrl = tpl()->parse( 'manage_shop/import2__ctrl', $data );
+		return( $_form_ctrl . $_form );
 	}
 
 }

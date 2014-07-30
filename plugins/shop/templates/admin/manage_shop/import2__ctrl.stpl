@@ -1,0 +1,65 @@
+<script>
+
+ng_app_admin.factory( 'Uploader', function( $q, $rootScope, $log ) {
+	this.upload = function( options ) {
+		var url  = options.url  || '{_url_upload}';
+		var name = options.name || 'file';
+		var file = options.file;
+$log.log( 'uploader', file, name, url );
+		var deferred = $q.defer(),
+		xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function( r ) {
+			if( 4 === this.readyState ) {
+				if( xhr.status == 200 ) {
+					$rootScope.$apply(function() {
+						deferred.resolve( xhr );
+					});
+				} else {
+					$rootScope.$apply(function() {
+						deferred.reject( xhr );
+					});
+				}
+			}
+		}
+		formdata = new FormData(),
+			formdata.append( name, file );
+		xhr.open( 'POST', url, true );
+		xhr.send( formdata );
+		return( deferred.promise );
+	};
+	return( this );
+});
+
+ng_app_admin.directive( 'fileChange', function( $log ) {
+	return {
+		restrict: 'A',
+		link: function( $scope, element, attrs ) {
+			element.bind( 'change', function( event ) {
+				{{-- var files = event.target.files; --}}
+				var files = element[ 0 ].files;
+				var name  = attrs[ 'name' ] || 'file';
+				$scope.$apply( function() {
+					$scope[ attrs[ 'fileChange' ] ]({ 'files': files, 'name': name });
+				})
+			})
+		},
+	}
+});
+
+ng_app_admin.controller( '{_ng_controller}', function( Uploader, $scope, $log ) {
+	$log.log( 'ctrl', 'init' );
+	$scope.upload = function( options ) {
+		options = options || {};
+			options.file = options.files[0];
+		var r = Uploader.upload( options );
+		r.then(
+			function( r ) {
+$log.log( 'file uploaded', r );
+			},
+			function( r ) {
+$log.log( 'file not uploaded', r );
+			});
+	}
+});
+
+</script>
