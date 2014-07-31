@@ -32,9 +32,9 @@ class yf_manage_shop_suppliers{
 			if (!common()->_error_exists()) {
 				$sql_array = array(
 					'name'			=> $_POST['name'],
-					'url'			=> common()->_propose_url_from_name($_POST['name']),
+					'url'			=> $_POST['url']?:common()->_propose_url_from_name($_POST['name']),
 					'desc'			=> $_POST['desc'],
-					'sort_order'	=> intval($_POST['featured']),
+					'sort_order'	=> intval($_POST['sort_order']),
 				);
 				db()->insert(db('shop_suppliers'), db()->es($sql_array));
 				module('manage_revisions')->new_revision(__FUNCTION__, db()->insert_id(), 'shop_suppliers');
@@ -86,10 +86,12 @@ class yf_manage_shop_suppliers{
 			}
 			if (!common()->_error_exists()) {
 				$sql_array = array(
-					'name'		=> $_POST['name'],
-					'url'		=> common()->_propose_url_from_name($_POST['name']),
-					'desc'		=> $_POST['desc'],
-					'sort_order'=> intval($_POST['featured']),
+					'name'          => $_POST['name'],
+					'url'           => $_POST['url']? : common()->_propose_url_from_name($_POST['name']),
+					'desc'          => $_POST['desc'],
+					'meta_keywords' => $_POST['meta_keywords'],
+					'meta_desc'     => $_POST['meta_desc'],
+					'sort_order'=> intval($_POST['sort_order']),
 				);
 				module('manage_revisions')->check_revision(__FUNCTION__, $_GET['id'], 'shop_suppliers');
 				db()->update('shop_suppliers', db()->es($sql_array), 'id='.$_GET['id']);

@@ -9,5 +9,8 @@ $data = '
   `image` int(10) unsigned NOT NULL,
   `sort_order` int(3) NOT NULL,
   `admin_id` int(3) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
+  UNIQUE KEY `url` (`url`)
+
 ';
