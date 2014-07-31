@@ -624,7 +624,7 @@ class yf_manage_shop {
 		cache_del('_shop_products|_product_image|'.$product_id);
 		cache_del('_shop_product_params|_product_image|'.$product_id);
 		cache_del('_shop_product_params|_get_params_by_product|'.$product_id);
-		cache_del('pattern_yf|_get_shop_product_details|'.$product_id);
+		cache_del('rewrite_pattern_yf|_get_shop_product_details|'.$product_id);
 		_class( '_shop_categories', 'modules/shop/' )->_refresh_cache();
 	}
 
