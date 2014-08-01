@@ -1,34 +1,25 @@
 <?php
 
-load('installer_db', 'framework', 'classes/db/');
-class yf_installer_db_postgres extends yf_installer_db {
+load('db_installer', 'framework', 'classes/db/');
+class yf_db_installer_oracle extends yf_db_installer {
 
 	/**
 	* Trying to repair given table structure (and possibly data)
 	*/
-	function _auto_repair_table($sql, $db_error) {
-
-echo $sql."<br />";
-print_r($db_error);
-echo "<br />";
-
-		// Try to refresh tables names cache (error #942 means "table or view does not exist")
-/*
-		// (error #1054 means "Unknown column %s")
-		if (!in_array($db_error['code'], array(1146, 1054))) {
+	function _auto_repair_table($sql, $db_error, $DB_CONNECTION) {
+		// Check allowed errors
+		if (!in_array($db_error['code'], array(942))) {
 			return false;
 		}
-*/
-		// TEMPORARY, NEED TO BE REPLACED WITH REAL PGSQL error code
-		if (substr($db_error["message"], -strlen("does not exist")) == "does not exist") {
+		// Try to refresh tables names cache (error #942 means "table or view does not exist")
+		if ($db_error['code'] == 942) {
 			// Try to get table name from error message
-			preg_match("#relation \"dbt_([a-z0-9\_]+)\" does not exist#ims", $db_error['message'], $m);
+			preg_match("#[\s\t\.]+dbt_([a-z0-9\_]+)#ims", str_replace("\"", "", $db_error['sqltext']), $m);
 			$item_to_repair = trim($m[1]);
 			// Try to repair table
 			if (!empty($item_to_repair)) {
 				$this->create_table($item_to_repair);
 			}
-
 /*
 		} elseif ($db_error['code'] == 1054) {
 			// Try to get column name from error message
@@ -41,37 +32,35 @@ $item_to_repair = $m[1];
 				$installer_result = _class_safe("installer")->_alter_table(array("table_name" => str_replace($DB_CONNECTION->DB_PREFIX, "", $m2[2]), "column_name" => $item_to_repair));
 			}
 */
-
 		}
 		// Refresh tables cache
-		if (file_exists(db()->_cache_tables_file)) {
-			unlink(db()->_cache_tables_file);
+		if (file_exists($DB_CONNECTION->_cache_tables_file)) {
+			unlink($DB_CONNECTION->_cache_tables_file);
 		}
 		$result = false;
 		// Try to repair query
-		if (substr($db_error["message"], -strlen("does not exist")) == "does not exist") {
+		if ($db_error['code'] == 942) {
 			if (!empty($item_to_repair) && defined($item_to_repair)) {
 				$sql = str_replace($item_to_repair, eval("return ".$item_to_repair.";"), $sql);
-				$result = db()->query($sql);
+//$DB_CONNECTION->close();
+//$DB_CONNECTION->connect(DB_HOST, DB_USER, DB_PSWD, DB_NAME);
+				$result = $DB_CONNECTION->query($sql);
 			}
-
 /*
 
 		} elseif ($db_error['code'] == 1054) {
 			if (!empty($installer_result)) {
-				$result = db()->query($sql);
+				$result = $DB_CONNECTION->query($sql);
 			}
 */
-
 		}
-
 		return $result;
 	}
 
 	/**
 	* Do create table
 	*/
-	function _do_create_table ($full_table_name = "", $TABLE_STRUCTURE = "") {
+	function _do_create_table ($full_table_name = "", $TABLE_STRUCTURE = "", $DB_CONNECTION) {
 		// We do not need mysql-based able structure
 		$TABLE_STRUCTURE = "";
 		$table_name = substr($full_table_name, strlen($DB_CONNECTION->DB_PREFIX));
@@ -101,13 +90,18 @@ $item_to_repair = $m[1];
 			// Convert type
 			if (in_array($field_atts["type"], array("int", "tinyint","smallint","mediumint","bigint"))) {
 
-				$table_struct[$field_name]["type"] = "INT4";
+				$table_struct[$field_name]["type"] = "INTEGER";
 				unset($table_struct[$field_name]["length"]);
+
+			} elseif (in_array($field_atts["type"], array("float","double"))) {
+
+				$table_struct[$field_name]["type"] = "NUMBER";
+				$table_struct[$field_name]["length"] = $table_struct[$field_name]["length"].",16";
 
 			} elseif (in_array($field_atts["type"], array("char","varchar","text","tinytext","mediumtext","longtext","blob","mediumblob","longblob"))) {
 
-				$table_struct[$field_name]["type"] = "TEXT";
-				unset($table_struct[$field_name]["length"]);
+				$table_struct[$field_name]["type"] = "VARCHAR2";
+				$table_struct[$field_name]["length"] = "4000";
 
 			} elseif ($field_atts["type"] == "date") {
 
@@ -116,44 +110,65 @@ $item_to_repair = $m[1];
 
 			} elseif ($field_atts["type"] == "time") {
 
-				$table_struct[$field_name]["type"] = "CHAR";
+				$table_struct[$field_name]["type"] = "VARCHAR2";
 				$table_struct[$field_name]["length"] = "8";
 
 			} elseif ($field_atts["type"] == "datetime") {
 
-				$table_struct[$field_name]["type"] = "CHAR";
+				$table_struct[$field_name]["type"] = "VARCHAR2";
 				$table_struct[$field_name]["length"] = "19";
 
-			} elseif (in_array($field_atts["type"], array("enum","set"))) {
+			} elseif (in_array($field_atts["type"], array("enum", "set"))) {
 
-				$table_struct[$field_name]["type"] = "CHAR";
+				$table_struct[$field_name]["type"] = "VARCHAR2";
 				$table_struct[$field_name]["length"] = "50";
 
 			}
 		}
 		// Generate query
 		foreach ((array)$table_struct as $field_name => $field_atts) {
-			$tmp_struct[] = db()->enclose_field_name($field_name).
-				" ".strtoupper(!empty($field_atts["auto_inc"]) ? "SERIAL" : $field_atts["type"]).
+			$tmp_struct[] = $DB_CONNECTION->enclose_field_name($field_name).
+				" ".strtoupper($field_atts["type"]).
 				(!empty($field_atts["length"]) ? "(".$field_atts["length"].")" : "").
 				(!empty($field_atts["default"]) ? " default '".$field_atts["default"]."'" : "").
 //				(!empty($field_atts["not_null"]) ? " NOT NULL" : "").
+				" NULL".
 				(!empty($field_atts["auto_inc"]) ? " PRIMARY KEY" : "").
 				"";
 		}
 		$TABLE_STRUCTURE = implode(",\r\n", $tmp_struct);
 		// Try to execute query
-		$sql = "CREATE TABLE ".db()->enclose_field_name($full_table_name)." (\r\n".$TABLE_STRUCTURE.")";
-echo "<br>"."<br>".$sql."<br>"."<br>";
-		$result = db()->query($sql);
+		$sql = "CREATE TABLE ".$DB_CONNECTION->enclose_field_name($full_table_name)." (\r\n".$TABLE_STRUCTURE.")";
+		$result = $DB_CONNECTION->query($sql);
+		// Prepare sequence data
+		$_SEQUENCE_NAME		= substr("seq_".$table_name, 0, 30);	// Max length for oracle
+		$_TRIGGER_NAME		= substr("trig_".$table_name, 0, 30);	// Max length for oracle
+		$_AUTO_INC_FIELD	= "\"id\"";
+		// Drop old sequence
+  		$sql1 = "DROP SEQUENCE ".$DB_CONNECTION->enclose_field_name($_SEQUENCE_NAME);
+		$DB_CONNECTION->query($sql1);
 		// Generate sequence SQL (emulate auto_increment)
-		return $result;
+		$sql2 = "CREATE SEQUENCE ".$DB_CONNECTION->enclose_field_name($_SEQUENCE_NAME);
+		$DB_CONNECTION->query($sql2);
+		// Create trigger
+		$sql3 = "CREATE OR REPLACE TRIGGER ".$DB_CONNECTION->enclose_field_name($_TRIGGER_NAME)." 
+				BEFORE 
+				insert ON ".$DB_CONNECTION->enclose_field_name($full_table_name)." 
+				FOR EACH ROW 
+				WHEN (new.".($_AUTO_INC_FIELD)." IS NULL OR new.".($_AUTO_INC_FIELD)." = 0) 
+				BEGIN
+					select ".$DB_CONNECTION->enclose_field_name($_SEQUENCE_NAME).".nextval 
+					into :new.".($_AUTO_INC_FIELD)." from dual;
+				END;";
+		$DB_CONNECTION->query($sql3);
+//		return $result;
+		return true;
 	}
 
 	/**
 	* Do alter table structure
 	*/
-	function _do_alter_table ($table_name = "", $column_name = "", $table_struct = array()) {
+	function _do_alter_table ($table_name = "", $column_name = "", $table_struct = array(), $DB_CONNECTION) {
 		// Shorthand for the column structure
 		$column_struct = $table_struct[$column_name];
 // TODO
@@ -172,7 +187,7 @@ echo "<br>"."<br>".$sql."<br>"."<br>";
 			(!empty($column_struct["auto_inc"])	? " AUTO_INCREMENT" : "").
 			";";
 		// Do execute generated query
-		return db()->query($sql);
+		return $DB_CONNECTION->query($sql);
 */
 	}
 }
