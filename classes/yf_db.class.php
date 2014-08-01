@@ -1255,7 +1255,7 @@ class yf_db {
 		} elseif (in_array($this->DB_TYPE, array('pgsql','postgre','postgres','postgres7','postgres8'))) {
 			$db_type = 'postgres';
 		}
-		return _class('installer_db_'.$db_type, 'classes/db/')->_auto_repair_table($sql, $db_error, $this);
+		return _class('db_installer_'.$db_type, 'classes/db/')->_auto_repair_table($sql, $db_error, $this);
 	}
 
 	/**
