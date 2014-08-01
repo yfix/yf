@@ -1,7 +1,7 @@
 <?php
 
-load('installer_db', 'framework', 'classes/db/');
-class yf_installer_db_mysql extends yf_installer_db {
+load('db_installer', 'framework', 'classes/db/');
+class yf_db_installer_mysql extends yf_db_installer {
 
 	/** @var int */
 	public $NUM_RETRIES = 3;

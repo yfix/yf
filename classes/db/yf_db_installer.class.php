@@ -3,7 +3,7 @@
 /**
 * Database structure installer core
 */
-abstract class yf_installer_db {
+abstract class yf_db_installer {
 
 	/** @var array */
 	public $TABLES_SQL				= array();
@@ -33,7 +33,7 @@ abstract class yf_installer_db {
 	/** @var int */
 	public $LOCK_TIMEOUT			= 600;
 	/** @var string */
-	public $LOCK_FILE_NAME			= 'installer_db.lock';
+	public $LOCK_FILE_NAME			= 'db_installer.lock';
 	/** @var bool */
 	public $RESTORE_FULLTEXT_INDEX	= true;
 	/** @var bool */
