@@ -37,3 +37,6 @@
 [submodule "libs/php_sql_parser"]
 	path = libs/php_sql_parser
 	url = https://github.com/yfix/PHP-SQL-Parser.git
+[submodule "libs/symfony_class_loader"]
+	path = libs/symfony_class_loader
+	url = https://github.com/yfix/ClassLoader.git
