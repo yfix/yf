@@ -1,0 +1,20 @@
+UPDATE geo_alternate_name SET name = 'Винница' WHERE geoname_id = 689558 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Макеевка' WHERE geoname_id = 702320 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Рубежное' WHERE geoname_id = 695274 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Новая Каховка' WHERE geoname_id = 699839 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Шепетовка' WHERE geoname_id = 694216 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Стрый' WHERE geoname_id = 692372 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Красный Луч' WHERE geoname_id = 704202 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Коростышев' WHERE geoname_id = 704885 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Сарны' WHERE geoname_id = 694792 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Здолбунов' WHERE geoname_id = 687432 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Рени' WHERE geoname_id = 695670 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Днепрорудное' WHERE geoname_id = 709960 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Красилов' WHERE geoname_id = 704492 AND language_code = 'ru';
+
+UPDATE geo_alternate_name SET name = 'Червоноград' WHERE geoname_id = 710554 AND language_code = 'uk';
+UPDATE geo_alternate_name SET name = 'Нижньогірський' WHERE geoname_id = 700019 AND language_code = 'uk';
+UPDATE geo_alternate_name SET name = 'Котовськ' WHERE geoname_id = 704679 AND language_code = 'uk';
+UPDATE geo_alternate_name SET name = 'Кролевець' WHERE geoname_id = 704000 AND language_code = 'uk';
+UPDATE geo_alternate_name SET name = 'Тульчин' WHERE geoname_id = 691016 AND language_code = 'uk';
+UPDATE geo_alternate_name SET name = 'Коцюбинське' WHERE geoname_id = 704670 AND language_code = 'uk';
