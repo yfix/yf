@@ -11,6 +11,7 @@ UPDATE geo_alternate_name SET name = 'Здолбунов' WHERE geoname_id = 687
 UPDATE geo_alternate_name SET name = 'Рени' WHERE geoname_id = 695670 AND language_code = 'ru';
 UPDATE geo_alternate_name SET name = 'Днепрорудное' WHERE geoname_id = 709960 AND language_code = 'ru';
 UPDATE geo_alternate_name SET name = 'Красилов' WHERE geoname_id = 704492 AND language_code = 'ru';
+UPDATE geo_alternate_name SET name = 'Нетешин' WHERE geoname_id = 700261 AND language_code = 'ru';
 
 UPDATE geo_alternate_name SET name = 'Червоноград' WHERE geoname_id = 710554 AND language_code = 'uk';
 UPDATE geo_alternate_name SET name = 'Нижньогірський' WHERE geoname_id = 700019 AND language_code = 'uk';
