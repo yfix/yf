@@ -674,7 +674,7 @@ class yf_validate {
 		} else {
 			$val = (int) $val;
 		}
-		return ($this->MB_ENABLED === true) ? ($val <= mb_strlen($in)) : ($val <= strlen($in));
+		return ($this->MB_ENABLED == 1) ? ($val <= mb_strlen($in)) : ($val <= strlen($in));
 	}
 
 	/**
@@ -688,7 +688,7 @@ class yf_validate {
 		} else {
 			$val = (int) $val;
 		}
-		return ($this->MB_ENABLED === true) ? ($val >= mb_strlen($in)) : ($val >= strlen($in));
+		return ($this->MB_ENABLED == 1) ? ($val >= mb_strlen($in)) : ($val >= strlen($in));
 	}
 
 	/**
@@ -702,7 +702,7 @@ class yf_validate {
 		} else {
 			$val = (int) $val;
 		}
-		return ($this->MB_ENABLED === true) ? (mb_strlen($in) === $val) : (strlen($in) === $val);
+		return ($this->MB_ENABLED == 1) ? (mb_strlen($in) === $val) : (strlen($in) === $val);
 	}
 
 	/**
