@@ -913,6 +913,7 @@ class yf_validate {
 	}
 
 	/**
+	* Cleanup input phone to match international notation. Examples good: +380631234567, 063 123 45 67. See more valid examples inside unit tests.
 	*/
 	public function phone_cleanup($in, $params = array(), $fields = array(), &$error = '') {
 		$error = false;
@@ -937,6 +938,7 @@ class yf_validate {
 	}
 
 	/**
+	* Ensures input phone has valid international format.
 	*/
 	public function valid_phone($in, $params = array(), $fields = array(), &$error = '') {
 		$phone = $this->phone_cleanup($in, $params, $fields, $error);
