@@ -38,17 +38,17 @@ class yf_validate {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $args) {
+	public function __call($name, $args) {
 		return main()->extend_call($this, $name, $args);
 	}
 
 	/***/
-	function _init() {
+	public function _init() {
 		$this->MB_ENABLED = _class('utf8')->MULTIBYTE;
 	}
 
 	/***/
-	function _prepare_reserved_words() {
+	public function _prepare_reserved_words() {
 		if ($this->_reserved_words_prepared) {
 			return $this->reserved_words;
 		}
@@ -64,7 +64,7 @@ class yf_validate {
 	/**
 	* Method by form-less checking of any custom data for validity
 	*/
-	function _input_is_valid($input, $validate_rules = array()) {
+	public function _input_is_valid($input, $validate_rules = array()) {
 		$rules = array();
 		$global_rules = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
 		foreach ((array)$global_rules as $name => $_rules) {
@@ -80,7 +80,7 @@ class yf_validate {
 
 	/**
 	*/
-	function _apply_existing_func($func, $data) {
+	public function _apply_existing_func($func, $data) {
 		if (is_array($data)) {
 			$self = __FUNCTION__;
 			foreach ($data as $k => $v) {
@@ -93,7 +93,7 @@ class yf_validate {
 
 	/**
 	*/
-	function _do_check_data_is_valid($rules = array(), &$data) {
+	public function _do_check_data_is_valid($rules = array(), &$data) {
 		$validate_ok = true;
 		foreach ((array)$rules as $name => $_rules) {
 			$is_required = false;
@@ -148,7 +148,7 @@ class yf_validate {
 	* 	'__before__' => 'trim',
 	* 	'__after__' => 'some_method2|some_method3',
 	*/
-	function _validate_rules_cleanup($validate_rules = array()) {
+	public function _validate_rules_cleanup($validate_rules = array()) {
 		// Add these rules to all validation rules, before them
 		$_name = '__before__';
 		$all_before = array();
@@ -226,7 +226,7 @@ class yf_validate {
 	/**
 	* This method used by validate() function to do standalone validation processing
 	*/
-	function _validate_rules_array_from_raw($raw = '') {
+	public function _validate_rules_array_from_raw($raw = '') {
 		$rules = array();
 		// At first, we merging all rules sets variants into one array
 		if (is_string($raw)) {
@@ -253,7 +253,7 @@ class yf_validate {
 	* Returns md5() from input string, or null. Usually used to update password inside admin panel or not change it if new value not passed.
 	* Example: ["password" => 'trim|min_length[6]|max_length[32]|password_update']
 	*/
-	function password_update(&$in) {
+	public function password_update(&$in) {
 		if (!strlen($in)) {
 			$in = null; // Somehow unset($in) not working here...
 		} else {
@@ -266,7 +266,7 @@ class yf_validate {
 	* Returns md5() from given input string, only if not empty. 
 	* Example usage: ["password" => 'trim|min_length[6]|max_length[32]|md5_not_empty']
 	*/
-	function md5_not_empty(&$in) {
+	public function md5_not_empty(&$in) {
 		if (strlen($in)) {
 			$in = md5($in);
 		}
@@ -278,7 +278,7 @@ class yf_validate {
 	* Most popular are: md5 sha1 sha224 sha256 sha384 sha512 ripemd128 ripemd160 ripemd256 ripemd320 gost crc32
 	* Example usage: ["password" => 'trim|min_length[6]|max_length[32]|hash_not_empty[sha256]']
 	*/
-	function hash_not_empty(&$in, $params = array()) {
+	public function hash_not_empty(&$in, $params = array()) {
 		$hash_name = is_array($params) ? $params['param'] : $params;
 		if (strlen($in) && $hash_name) {
 			$in = hash($hash_name, $in);
@@ -289,7 +289,7 @@ class yf_validate {
 	/**
 	* Returns FALSE if form field is empty.
 	*/
-	function required($in) {
+	public function required($in) {
 		return is_array($in) ? (bool) count($in) : (trim($in) !== '');
 	}
 
@@ -297,7 +297,7 @@ class yf_validate {
 	* Returns true when selected other passed field will be non-empty
 	* Examples: required_if[other_field]
 	*/
-	function required_if($in, $params = array(), $fields = array()) {
+	public function required_if($in, $params = array(), $fields = array()) {
 		$param = trim(is_array($params) ? $params['param'] : $params);
 		if ($param && !empty($fields[$param])) {
 			return is_array($in) ? (bool) count($in) : (trim($in) !== '');
@@ -309,7 +309,7 @@ class yf_validate {
 	* Returns true when _ANY_ of passed fields will be non-empty
 	* Examples: required_any[duration_*] or required_any[duration_day,duration_week,duration_month]
 	*/
-	function required_any($in, $params = array(), $fields = array()) {
+	public function required_any($in, $params = array(), $fields = array()) {
 		$param = trim(is_array($params) ? $params['param'] : $params);
 		// Example: duration_*
 		if (false !== strpos($param, '*')) {
@@ -339,7 +339,7 @@ class yf_validate {
 	* Returns FALSE if field does not match field(s) in parameter. 
 	* Example: matches[password_again]
 	*/
-	function matches($in, $params = array(), $fields = array()) {
+	public function matches($in, $params = array(), $fields = array()) {
 		$field = is_array($params) ? $params['param'] : $params;
 		return isset($fields[$field], $_POST[$field]) ? ($in === $_POST[$field]) : false;
 	}
@@ -348,7 +348,7 @@ class yf_validate {
 	* Returns FALSE if form field(s) defined in parameter are not filled in. 
 	* Example: depends_on[field_name]
 	*/
-	function depends_on($in, $params = array(), $fields = array()) {
+	public function depends_on($in, $params = array(), $fields = array()) {
 		$field = is_array($params) ? $params['param'] : $params;
 		return isset($fields[$field], $_POST[$field]);
 	}
@@ -356,7 +356,7 @@ class yf_validate {
 	/**
 	* The field under validation must be a valid URL according to the checkdnsrr PHP function.
 	*/
-	function active_url($in) {
+	public function active_url($in) {
 		return checkdnsrr(str_replace(array('http://', 'https://', 'ftp://'), '', strtolower($in)));
 	}
 
@@ -364,7 +364,7 @@ class yf_validate {
 	* The field under validation must be a value after a given date. The dates will be passed into the PHP strtotime function. 
 	* Examples: after_date[2012-01-01], after_date[day ago]
 	*/
-	function after_date($in, $params = array()) {
+	public function after_date($in, $params = array()) {
 		$param = is_array($params) ? $params['param'] : $params;
 		if (!$param) {
 			return false;
@@ -384,7 +384,7 @@ class yf_validate {
 	* The field under validation must be a value preceding the given date. The dates will be passed into the PHP strtotime function. 
 	* Example: before_date[2020-12-31], after_date[+1 day]
 	*/
-	function before_date($in, $params = array()) {
+	public function before_date($in, $params = array()) {
 		$param = is_array($params) ? $params['param'] : $params;
 		if (!$param) {
 			return false;
@@ -403,7 +403,7 @@ class yf_validate {
 	/**
 	* The field under validation must be a valid date according to the strtotime PHP function.
 	*/
-	function valid_date($in) {
+	public function valid_date($in) {
 		if ($in instanceof DateTime) {
 			return true;
 		}
@@ -417,7 +417,7 @@ class yf_validate {
 	/**
 	* The field under validation must match the format defined according to the date_parse_from_format PHP function.
 	*/
-	function valid_date_format($in, $params = array()) {
+	public function valid_date_format($in, $params = array()) {
 		$param = is_array($params) ? $params['param'] : $params;
 		$parsed = date_parse_from_format($param, $in);
 		return $parsed['error_count'] === 0 && $parsed['warning_count'] === 0;
@@ -426,7 +426,7 @@ class yf_validate {
 	/**
 	* Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)
 	*/
-	function standard_text($in) {
+	public function standard_text($in) {
 		return (bool) preg_match('~^[a-z0-9\s\t,\._-]+$~ims', $in);
 	}
 
@@ -434,7 +434,7 @@ class yf_validate {
 	* The field under validation must have a size between the given min and max. Strings, numerics, and files are evaluated in the same fashion as the size rule. 
 	* Examples: between[a,z]  between[44,99]
 	*/
-	function between($in, $params = array()) {
+	public function between($in, $params = array()) {
 		$param = is_array($params) ? $params['param'] : $params;
 		list($min, $max) = explode(',', $param);
 		return $in >= $min && $in <= $max;
@@ -444,7 +444,7 @@ class yf_validate {
 	* Returns FALSE if field contains characters not in the parameter. 
 	* Example: chars[a,b,c,d,1,2,3,4]
 	*/
-	function chars($in, $params = array()) {
+	public function chars($in, $params = array()) {
 		$param = is_array($params) ? $params['param'] : $params;
 		$chars = array();
 		foreach (explode(',', trim($param)) as $char) {
@@ -465,7 +465,7 @@ class yf_validate {
 	* Examples: is_unique[user.login]
 	* Alias
 	*/
-	function unique($in, $params = array()) {
+	public function unique($in, $params = array()) {
 		return $this->is_unique($in, $params);
 	}
 
@@ -473,7 +473,7 @@ class yf_validate {
 	* Returns TRUE if given field value is unique inside given database table.field
 	* Examples: is_unique[user.login]
 	*/
-	function is_unique($in, $params = array()) {
+	public function is_unique($in, $params = array()) {
 		if (!$in) {
 			return true;
 		}
@@ -494,7 +494,7 @@ class yf_validate {
 	* Returns TRUE if given field value is unique inside given database table.field.pk_value
 	* Examples: is_unique_without[user.id.1]
 	*/
-	function is_unique_without($in, $params = array()) {
+	public function is_unique_without($in, $params = array()) {
 		if (!$in) {
 			return true;
 		}
@@ -516,7 +516,7 @@ class yf_validate {
 	* Returns TRUE if given field value exists inside database
 	* Examples: exists[user.email]
 	*/
-	function exists($in, $params = array()) {
+	public function exists($in, $params = array()) {
 		if (!$in) {
 			return false;
 		}
@@ -538,7 +538,7 @@ class yf_validate {
 	* Example: regex_match[/^[a-z0-9]+$/]
 	* Alias
 	*/
-	function regex($in, $params = array()) {
+	public function regex($in, $params = array()) {
 		return $this->regex_match($in, $params);
 	}
 
@@ -546,7 +546,7 @@ class yf_validate {
 	* Custom regex matching.
 	* Example: regex_match[/^[a-z0-9]+$/]
 	*/
-	function regex_match($in, $params = array()) {
+	public function regex_match($in, $params = array()) {
 		$regex = is_array($params) ? $params['param'] : $params;
 		return (bool) preg_match($regex, $in);
 	}
@@ -555,7 +555,7 @@ class yf_validate {
 	* Returns TRUE if given field value differs from compared field value
 	* Example: differs[address_2]
 	*/
-	function differs($in, $params = array(), $fields = array()) {
+	public function differs($in, $params = array(), $fields = array()) {
 		$field = is_array($params) ? $params['param'] : $params;
 		return ! (isset($fields[$field]) && $_POST[$field] === $in);
 	}
@@ -563,7 +563,7 @@ class yf_validate {
 	/**
 	* Alias
 	*/
-	function host($in) {
+	public function host($in) {
 		return $this->valid_hostname($in);
 	}
 
@@ -577,7 +577,7 @@ class yf_validate {
 	*    http://stackoverflow.com/questions/106179/regular-expression-to-match-hostname-or-ip-address
 	*    http://data.iana.org/TLD/tlds-alpha-by-domain.txt
 	*/
-	function valid_hostname ($in = '') {
+	public function valid_hostname ($in = '') {
 		$len = strlen($in);
 		if (!$len && $len > 255) {
 			return false;
@@ -594,14 +594,14 @@ class yf_validate {
 	* Returns TRUE if given field contains valid url. Checking is done in combination of regexp and php built-in filter_val() to ensure most correct results
 	* Alias
 	*/
-	function url($in, $params = array()) {
+	public function url($in, $params = array()) {
 		return $this->valid_url($in, $params);
 	}
 
 	/**
 	* Returns TRUE if given field contains valid url. Checking is done in combination of regexp and php built-in filter_val() to ensure most correct results
 	*/
-	function valid_url($in, $params = array()) {
+	public function valid_url($in, $params = array()) {
 		if (empty($in)) {
 			return false;
 		} elseif (preg_match('/^(?:([^:]*)\:)?\/\/(.+)$/', $in, $matches)) {
@@ -619,21 +619,21 @@ class yf_validate {
 	/**
 	* Returns TRUE if given field contains valid email address. Alias
 	*/
-	function email($in) {
+	public function email($in) {
 		return $this->valid_email($in);
 	}
 
 	/**
 	* Returns TRUE if given field contains valid email address
 	*/
-	function valid_email($in) {
+	public function valid_email($in) {
 		return (bool) filter_var($in, FILTER_VALIDATE_EMAIL);
 	}
 
 	/**
 	* Returns TRUE if given field contains several valid email addresses
 	*/
-	function valid_emails($in) {
+	public function valid_emails($in) {
 		if (!$in) {
 			return false;
 		}
@@ -651,14 +651,14 @@ class yf_validate {
 	/**
 	* Returns TRUE if given field contains correct base64-encoded string.
 	*/
-	function valid_base64($in) {
+	public function valid_base64($in) {
 		return strlen($in) && (base64_encode(base64_decode($in)) === $in);
 	}
 
 	/**
 	* Returns TRUE if given field contains valid IP address, ipv4 by default, ipv6 supported too
 	*/
-	function valid_ip($in, $params = array()) {
+	public function valid_ip($in, $params = array()) {
 		$which = is_array($params) ? $params['param'] : $params;
 		return $this->_valid_ip($in, $which);
 	}
@@ -667,7 +667,7 @@ class yf_validate {
 	* Returns TRUE if given field length is no more than specified, excluding exact length.
 	* Example: min_length[10]
 	*/
-	function min_length($in, $params = array()) {
+	public function min_length($in, $params = array()) {
 		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
@@ -681,7 +681,7 @@ class yf_validate {
 	* Returns TRUE if given field length is more than specified, including exact length.
 	* Example: max_length[10]
 	*/
-	function max_length($in, $params = array()) {
+	public function max_length($in, $params = array()) {
 		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
@@ -695,7 +695,7 @@ class yf_validate {
 	* Returns TRUE if given field length is more than specified, including exact length.
 	* Example: exact_length[10]
 	*/
-	function exact_length($in, $params = array()) {
+	public function exact_length($in, $params = array()) {
 		$val = is_array($params) ? $params['param'] : $params;
 		if ( ! is_numeric($val)) {
 			return false;
@@ -709,7 +709,7 @@ class yf_validate {
 	* Returns FALSE if the field is too long or too short. 
 	* Examples: length[1,30] - between 1 and 30 characters long. length[30] - exactly 30 characters long
 	*/
-	function length($in, $params = array()) {
+	public function length($in, $params = array()) {
 		$val = is_array($params) ? $params['param'] : $params;
 		if (false === strpos($val, ',')) {
 			return $this->exact_length($in, $params);
@@ -732,7 +732,7 @@ class yf_validate {
 	* Returns TRUE if given field value is a number and greater than specified, not including exact value
 	* Example: greater_than[10]
 	*/
-	function greater_than($in, $params = array()) {
+	public function greater_than($in, $params = array()) {
 		$min = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in > $min) : false;
 	}
@@ -741,7 +741,7 @@ class yf_validate {
 	* Returns TRUE if given field value is a number and less than specified, not including exact value
 	* Example: less_than[10]
 	*/
-	function less_than($in, $params = array()) {
+	public function less_than($in, $params = array()) {
 		$max = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in < $max) : false;
 	}
@@ -750,7 +750,7 @@ class yf_validate {
 	* Returns TRUE if given field value is a number and greater than specified, including exact value
 	* Example: greater_than_equal_to[10]
 	*/
-	function greater_than_equal_to($in, $params = array()) {
+	public function greater_than_equal_to($in, $params = array()) {
 		$min = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in >= $min) : false;
 	}
@@ -759,7 +759,7 @@ class yf_validate {
 	* Returns TRUE if given field value is a number and less than specified, including exact value
 	* Example: less_than_equal_to[10]
 	*/
-	function less_than_equal_to($in, $params = array()) {
+	public function less_than_equal_to($in, $params = array()) {
 		$max = is_array($params) ? $params['param'] : $params;
 		return is_numeric($in) ? ($in <= $max) : false;
 	}
@@ -767,112 +767,112 @@ class yf_validate {
 	/**
 	* Returns TRUE if given field value contains only latin1 letters, lower and uppercase allowed.
 	*/
-	function alpha($in) {
+	public function alpha($in) {
 		return ctype_alpha($in);
 	}
 
 	/**
 	* Returns TRUE if given field value contains only latin1 letters, lower and uppercase allowed, and digits.
 	*/
-	function alpha_numeric($in) {
+	public function alpha_numeric($in) {
 		return (is_array($in) || is_object($in) || is_callable($in)) ? false : ctype_alnum((string) $in);
 	}
 
 	/**
 	* Returns TRUE if given field value contains only latin1 letters, lower and uppercase allowed, and spaces.
 	*/
-	function alpha_spaces($in) {
+	public function alpha_spaces($in) {
 		return (bool) preg_match('/^[A-Z ]+$/i', $in);
 	}
 
 	/**
 	* Returns TRUE if given field value contains only latin1 letters, lower and uppercase allowed, and spaces and digits.
 	*/
-	function alpha_numeric_spaces($in) {
+	public function alpha_numeric_spaces($in) {
 		return (bool) preg_match('/^[A-Z0-9 ]+$/i', $in);
 	}
 
 	/**
 	* Returns TRUE if given field value contains only latin1 letters, lower and uppercase allowed, and dash and underscore symbols.
 	*/
-	function alpha_dash($in) {
+	public function alpha_dash($in) {
 		return (bool) preg_match('/^[a-z0-9_-]+$/i', $in);
 	}
 
 	/**
 	* Same as alpha(), but including unicode characters too
 	*/
-	function unicode_alpha($in) {
+	public function unicode_alpha($in) {
 		return (bool)preg_match('/^[\pL\pM]+$/u', $in);
 	}
 
 	/**
 	* Same as alpha_numeric(), but including unicode characters too
 	*/
-	function unicode_alpha_numeric($in) {
+	public function unicode_alpha_numeric($in) {
 		return (bool)preg_match('/^[\pL\pM\pN]+$/u', $in);
 	}
 
 	/**
 	* Same as alpha_spaces(), but including unicode characters too
 	*/
-	function unicode_alpha_spaces($in) {
+	public function unicode_alpha_spaces($in) {
 		return (bool)preg_match('/^[\pL\pM\s]+$/u', $in);
 	}
 
 	/**
 	* Same as alpha_numeric_spaces(), but including unicode characters too
 	*/
-	function unicode_alpha_numeric_spaces($in) {
+	public function unicode_alpha_numeric_spaces($in) {
 		return (bool)preg_match('/^[\pL\pM\pN\s]+$/u', $in);
 	}
 
 	/**
 	* Same as alpha_dash(), but including unicode characters too
 	*/
-	function unicode_alpha_dash($in) {
+	public function unicode_alpha_dash($in) {
 		return (bool)preg_match('/^[\pL\pM\pN_-]+$/u', $in);
 	}
 
 	/**
 	* Returns TRUE if given field value contains only numbers, including integers, floats and decimals.
 	*/
-	function numeric($in) {
+	public function numeric($in) {
 		return (bool) preg_match('/^[\-+]?[0-9]*\.?[0-9]+$/', $in);
 	}
 
 	/**
 	* Returns TRUE if given field value contains only integers.
 	*/
-	function integer($in) {
+	public function integer($in) {
 		return (bool) preg_match('/^[\-+]?[0-9]+$/', $in);
 	}
 
 	/**
 	* Returns TRUE if given field value contains only decimals.
 	*/
-	function decimal($in) {
+	public function decimal($in) {
 		return (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', $in);
 	}
 
 	/**
 	* Returns TRUE if given field value contains only numbers that are natural.
 	*/
-	function is_natural($in) {
+	public function is_natural($in) {
 		return ctype_digit((string) $in);
 	}
 
 	/**
 	* Returns TRUE if given field value contains only numbers that are natural except 0.
 	*/
-	function is_natural_no_zero($in) {
+	public function is_natural_no_zero($in) {
 		return ($in != 0 && ctype_digit((string) $in));
 	}
 
 	/**
 	* Do url preparation, not validates anything
 	*/
-	function prep_url($in) {
+	public function prep_url($in) {
 		if ($in === 'http://' OR $in === '') {
 			return '';
 		}
@@ -885,14 +885,14 @@ class yf_validate {
 	/**
 	* Returns TRUE is captcha user input value is valid
 	*/
-	function captcha($in) {
+	public function captcha($in) {
 		return _class('captcha')->check('captcha');
 	}
 
 	/**
 	* Clean string from possible XSS, using security class
 	*/
-	function xss_clean($in) {
+	public function xss_clean($in) {
 		return _class('security')->xss_clean($in);
 	}
 
@@ -913,9 +913,40 @@ class yf_validate {
 	}
 
 	/**
+	*/
+	public function phone_cleanup($in, $params = array(), $fields = array(), &$error = '') {
+		$error = false;
+		$country_prefix = $params['param'] ?: '38';
+		$phone = preg_replace('/[^0-9]+/ims', '', strip_tags($in));
+		if (strlen($phone) == 10) { // 063 123 45 67 (spaces here for example readability)
+			$phone = '+'.$country_prefix. $phone;
+		} elseif (strlen($phone) == 9) { // 63 123 45 67 (spaces here for example readability)
+			$phone = '+'.$country_prefix. '0'.$phone;
+		} elseif (strlen($phone) == 12) {
+			if (substr($phone, 0, 2) != $country_prefix) {
+				$error = 'phone error: incorrect country: '.$phone;
+			} else {
+				$phone = '+'.$phone;
+			}
+		} else {
+			$error = 'phone error: number is incorrect: '.$phone;
+			$phone = '';
+		}
+		$phone = $phone ? '+'.ltrim($phone, '+') : '';
+		return $phone;
+	}
+
+	/**
+	*/
+	public function valid_phone($in, $params = array(), $fields = array(), &$error = '') {
+		$phone = $this->phone_cleanup($in, $params, $fields, $error);
+		return empty($error) ? true : false;
+	}
+
+	/**
 	* Check user nick
 	*/
-	function _check_user_nick ($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'nick') {
+	public function _check_user_nick ($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'nick') {
 // TODO: rewrite me
 		$TEXT_TO_CHECK = $_POST[$name_in_form];
 		if (!is_null($force_value_to_check)) {
@@ -941,7 +972,7 @@ class yf_validate {
 	/**
 	* Check user profile url
 	*/
-	function _check_profile_url ($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'profile_url') {
+	public function _check_profile_url ($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'profile_url') {
 // TODO: rewrite me
 		$TEXT_TO_CHECK = $_POST[$name_in_form];
 		// Override value to check
@@ -968,7 +999,7 @@ class yf_validate {
 	/**
 	* Check user login
 	*/
-	function _check_login () {
+	public function _check_login () {
 // TODO: rewrite me
 		if ($_POST['login'] == '') {
 			_re('Login required');
@@ -980,7 +1011,7 @@ class yf_validate {
 	/**
 	* Check selected location (country, region, city)
 	*/
-	function _check_location ($cur_country = '', $cur_region = '', $cur_city = '') {
+	public function _check_location ($cur_country = '', $cur_region = '', $cur_city = '') {
 // TODO: rewrite me
 		if (FEATURED_COUNTRY_SELECT && !empty($_POST['country']) && substr($_POST['country'], 0, 2) == 'f_') {
 			$_POST['country'] = substr($_POST['country'], 2);
@@ -1019,7 +1050,7 @@ class yf_validate {
 	/**
 	* Check user birth date
 	*/
-	function _check_birth_date ($CUR_VALUE = '') {
+	public function _check_birth_date ($CUR_VALUE = '') {
 // TODO: rewrite me
 		$_POST['birth_date']	= $CUR_VALUE;
 
@@ -1046,42 +1077,42 @@ class yf_validate {
 	/**
 	* Internal method
 	*/
-	function _email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
+	public function _email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
 		return _class('remote_files', 'classes/common/')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
 	}
 
 	/**
 	* Internal method
 	*/
-	function _validate_url_by_http($url) {
+	public function _validate_url_by_http($url) {
 		return _class('remote_files', 'classes/common/')->_validate_url_by_http($url);
 	}
 	
 	/**
 	* Alias
 	*/
-	function _url_verify ($in = '') {
+	public function _url_verify ($in = '') {
 		return $this->valid_url($in);
 	}
 
 	/**
 	* Alias
 	*/
-	function valid_image($in, $params = array(), $fields = array()) {
+	public function valid_image($in, $params = array(), $fields = array()) {
 		return $this->image($in, $params, $fields);
 	}
 
 	/**
 	* The file under validation must be an image (jpeg, png, bmp, or gif)
 	*/
-	function image($in, $params = array(), $fields = array()) {
+	public function image($in, $params = array(), $fields = array()) {
 // TODO
 	}
 
 	/**
 	* The file under validation must have a MIME type corresponding to one of the listed extensions.  mime:jpeg,bmp,png
 	*/
-	function mime($in, $params = array(), $fields = array()) {
+	public function mime($in, $params = array(), $fields = array()) {
 // TODO
 	}
 
@@ -1089,54 +1120,28 @@ class yf_validate {
 	* Returns FALSE if credit card is not valid. 
 	* Examples: credit_card[mastercard]
 	*/
-	function credit_card($in, $params = array(), $fields = array()) {
+	public function credit_card($in, $params = array(), $fields = array()) {
 // TODO
 	}
 
 	/**
-	*/
-/*
-	function phone($in, $params = array()) {
-		$error = false;
-		$country_prefix = $params['param'] ?: '38';
-		$phone = preg_replace('/[^0-9]+/ims', '', strip_tags($in));
-		if (strlen($phone) == 10) { // 063 123 45 67 (spaces here for example readability)
-			$phone = '+'.$country_prefix. $phone;
-		} elseif (strlen($phone) == 9) { // 63 123 45 67 (spaces here for example readability)
-			$phone = '+'.$country_prefix. '0'.$phone;
-		} elseif (strlen($phone) == 12) {
-			if (substr($phone, 0, 2) != $country_prefix) {
-				$error = 'phone error: incorrect country: '.$phone;
-			} else {
-				$phone = '+'.$phone;
-			}
-		} else {
-			$error = 'phone error: number is incorrect: '.$phone;
-		}
-#		$phone = '+'.ltrim($phone, '+');
-#		return array($phone, $error);
-		return empty($error) ? true : false;
-	}
-*/
-
-	/**
 	* Same as is_unique(), but tells form validator to include ajax form checking
 	*/
-	function ajax_is_unique($in, $params = array(), $fields = array()) {
+	public function ajax_is_unique($in, $params = array(), $fields = array()) {
 		return $this->is_unique($in, $params, $fields);
 	}
 
 	/**
 	* Same as is_unique_without(), but tells form validator to include ajax form checking
 	*/
-	function ajax_is_unique_without($in, $params = array(), $fields = array()) {
+	public function ajax_is_unique_without($in, $params = array(), $fields = array()) {
 		return $this->is_unique_without($in, $params, $fields);
 	}
 
 	/**
 	* Same as exists(), but tells form validator to include ajax form checking
 	*/
-	function ajax_exists($in, $params = array(), $fields = array()) {
+	public function ajax_exists($in, $params = array(), $fields = array()) {
 		return $this->exists($in, $params, $fields);
 	}
 }
