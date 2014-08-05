@@ -365,6 +365,13 @@ class yf_model {
 	}
 
 	/**
+	* Model validation will be here
+	*/
+	public function validate($rules = array(), $params = array()) {
+// TODO
+	}
+
+	/**
 	* Linking with the table builder
 	*/
 	public function table($params = array()) {
