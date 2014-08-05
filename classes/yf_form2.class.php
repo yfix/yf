@@ -2044,7 +2044,8 @@ class yf_form2 {
 					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
 					if (!$is_ok && empty($error_msg)) {
 						$desc = $this->_find_field_desc($name) ?: $name;
-						$error_msg = t('form_validate_'.$func, array('%field' => $desc, '%param' => $param));
+						$error_param = $this->_find_field_desc($param) ?: $param;
+						$error_msg = t('form_validate_'.$func, array('%field' => $desc, '%param' => $error_param));
 					}
 				}
 				// In this case we do not track error if field is empty and not required

@@ -152,7 +152,11 @@ class yf_resize_images {
 			}
 			imagecopyresampled ($this->tmp_resampled, $this->tmp_img, 0, 0, 0, 0, $this->output_width, $this->output_height, $this->source_width, $this->source_height);
 			$func_name = 'image'.$this->output_type;
-			strlen($this->output_type) ? $func_name ($this->tmp_resampled, $output_file, defined('THUMB_QUALITY') ? THUMB_QUALITY : 85) : null;
+			$thumb_quality = defined('THUMB_QUALITY') ? THUMB_QUALITY : 85;
+			if ($this->output_type == 'png') {
+				$thumb_quality = $thumb_quality / 10;
+			}
+			strlen($this->output_type) ? $func_name ($this->tmp_resampled, $output_file, $thumb_quality) : null;
 			imagedestroy ($this->tmp_resampled);
 		} else {
 			if ($this->source_file != $output_file) {

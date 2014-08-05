@@ -16,3 +16,6 @@ $mysql --local-infile=1 $db_name < ./sql/geonames_import_data.sql
 
 echo "Creating indexes for $db_name..."
 $mysql $db_name < ./sql/geonames_add_indexes.sql
+
+echo "Patching data for $db_name..."
+$mysql $db_name < ./yf_geonames_db_patch.sql
