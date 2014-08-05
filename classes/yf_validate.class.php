@@ -1094,6 +1094,32 @@ class yf_validate {
 	}
 
 	/**
+	*/
+/*
+	function phone($in, $params = array()) {
+		$error = false;
+		$country_prefix = $params['param'] ?: '38';
+		$phone = preg_replace('/[^0-9]+/ims', '', strip_tags($in));
+		if (strlen($phone) == 10) { // 063 123 45 67 (spaces here for example readability)
+			$phone = '+'.$country_prefix. $phone;
+		} elseif (strlen($phone) == 9) { // 63 123 45 67 (spaces here for example readability)
+			$phone = '+'.$country_prefix. '0'.$phone;
+		} elseif (strlen($phone) == 12) {
+			if (substr($phone, 0, 2) != $country_prefix) {
+				$error = 'phone error: incorrect country: '.$phone;
+			} else {
+				$phone = '+'.$phone;
+			}
+		} else {
+			$error = 'phone error: number is incorrect: '.$phone;
+		}
+#		$phone = '+'.ltrim($phone, '+');
+#		return array($phone, $error);
+		return empty($error) ? true : false;
+	}
+*/
+
+	/**
 	* Same as is_unique(), but tells form validator to include ajax form checking
 	*/
 	function ajax_is_unique($in, $params = array(), $fields = array()) {
