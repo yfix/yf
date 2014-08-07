@@ -310,7 +310,7 @@ class yf_validate {
 	public function required_if($in, $params = array(), $fields = array()) {
 		$param = trim(is_array($params) ? $params['param'] : $params);
 		if ($param && !empty($fields[$param])) {
-			return is_array($in) ? (bool) count($in) : (trim($in) !== '');
+			return $this->required($in);
 		}
 		return true;
 	}
