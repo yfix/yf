@@ -338,7 +338,7 @@ class yf_validate {
 			if ($skip) {
 				continue;
 			}
-			if (is_array($v) ? (bool) count($v) : (trim($v) !== '')) {
+			if ($this->required($v)) {
 				return true;
 			}
 		}
