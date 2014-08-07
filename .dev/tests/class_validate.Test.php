@@ -47,11 +47,15 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->required(false) );
 		$this->assertFalse( _class('validate')->required(null) );
 		$this->assertFalse( _class('validate')->required(array()) );
+		$this->assertFalse( _class('validate')->required(array(' ')) );
+		$this->assertFalse( _class('validate')->required(array('','','')) );
+		$this->assertFalse( _class('validate')->required(array(array(),array())) );
+		$this->assertFalse( _class('validate')->required(array(array(array()),array())) );
+		$this->assertFalse( _class('validate')->required(array(array(array('','','')),array())) );
 
 		$this->assertTrue( _class('validate')->required('str') );
 		$this->assertTrue( _class('validate')->required(array('str')) );
 		$this->assertTrue( _class('validate')->required(array(1,2)) );
-		$this->assertTrue( _class('validate')->required(array(' ')) );
 	}
 	public function test_required_any() {
 		$this->assertFalse( @_class('validate')->required_any() );
