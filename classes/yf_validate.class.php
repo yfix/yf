@@ -290,7 +290,17 @@ class yf_validate {
 	* Returns FALSE if form field is empty.
 	*/
 	public function required($in) {
-		return is_array($in) ? (bool) count($in) : (trim($in) !== '');
+		if (is_array($in)) {
+			$func = __FUNCTION__;
+			foreach ($in as $v) {
+				$result = $this->$func($v);
+				if ($result) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return (trim($in) !== '');
 	}
 
 	/**
