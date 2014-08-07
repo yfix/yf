@@ -559,6 +559,9 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( '+150631234567', _class('validate')->phone_cleanup('631234567', array('param' => '15')) );
 		$this->assertEquals( '+150631234567', _class('validate')->phone_cleanup('0631234567', array('param' => '15')) );
 		$this->assertEquals( '+150631234567', _class('validate')->phone_cleanup('+150631234567', array('param' => '15')) );
+
+		$this->assertEquals( '+79090000000', _class('validate')->phone_cleanup('9090000000', array('param' => '7')) );
+		$this->assertEquals( '+79090000000', _class('validate')->phone_cleanup('+79090000000', array('param' => '7')) );
 	}
 	public function test_valid_phone() {
 		$this->assertFalse( _class('validate')->valid_phone('') );
