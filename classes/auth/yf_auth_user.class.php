@@ -317,7 +317,7 @@ class yf_auth_user {
 				}
 			}
 		}
-		$this->_save_login_in_session($user_info, $params['no_redirect']);
+		return $this->_save_login_in_session($user_info, $params['no_redirect']);
 	}
 
 	/**
@@ -470,6 +470,7 @@ class yf_auth_user {
 			if ($this->USER_INFO_IN_SESSION) {
 				$_SESSION[$this->VAR_USER_INFO] = $user_info;
 			}
+			return true;
 		}
 	}
 

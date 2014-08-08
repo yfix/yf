@@ -290,7 +290,17 @@ class yf_validate {
 	* Returns FALSE if form field is empty.
 	*/
 	public function required($in) {
-		return is_array($in) ? (bool) count($in) : (trim($in) !== '');
+		if (is_array($in)) {
+			$func = __FUNCTION__;
+			foreach ($in as $v) {
+				$result = $this->$func($v);
+				if ($result) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return (trim($in) !== '');
 	}
 
 	/**
@@ -300,7 +310,7 @@ class yf_validate {
 	public function required_if($in, $params = array(), $fields = array()) {
 		$param = trim(is_array($params) ? $params['param'] : $params);
 		if ($param && !empty($fields[$param])) {
-			return is_array($in) ? (bool) count($in) : (trim($in) !== '');
+			return $this->required($in);
 		}
 		return true;
 	}
@@ -328,7 +338,7 @@ class yf_validate {
 			if ($skip) {
 				continue;
 			}
-			if (is_array($v) ? (bool) count($v) : (trim($v) !== '')) {
+			if ($this->required($v)) {
 				return true;
 			}
 		}
@@ -918,13 +928,14 @@ class yf_validate {
 	public function phone_cleanup($in, $params = array(), $fields = array(), &$error = '') {
 		$error = false;
 		$country_prefix = $params['param'] ?: '38';
+		$p_len = strlen($country_prefix);
 		$phone = preg_replace('/[^0-9]+/ims', '', strip_tags($in));
 		if (strlen($phone) == 10) { // 063 123 45 67 (spaces here for example readability)
 			$phone = '+'.$country_prefix. $phone;
 		} elseif (strlen($phone) == 9) { // 63 123 45 67 (spaces here for example readability)
 			$phone = '+'.$country_prefix. '0'.$phone;
-		} elseif (strlen($phone) == 12) {
-			if (substr($phone, 0, 2) != $country_prefix) {
+		} elseif (strlen($phone) == (10 + $p_len)) {
+			if (substr($phone, 0, $p_len) != $country_prefix) {
 				$error = 'phone error: incorrect country: '.$phone;
 			} else {
 				$phone = '+'.$phone;

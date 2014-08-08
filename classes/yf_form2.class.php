@@ -2088,7 +2088,11 @@ class yf_form2 {
 		}
 		$desc = $name;
 		foreach ((array)$this->_body as $a) {
-			if (!isset($a['extra']) || $a['extra']['name'] != $name || !strlen($a['extra']['desc'])) {
+			if (!isset($a['extra']) || !strlen($a['extra']['desc'])) {
+				continue;
+			}
+			// Now we also support array elements descriptions searching
+			if ($a['extra']['name'] != $name && $a['extra']['name'] != $name.'[]') {
 				continue;
 			}
 			$desc = $a['extra']['desc'];

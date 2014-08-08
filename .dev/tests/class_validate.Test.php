@@ -47,11 +47,15 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->required(false) );
 		$this->assertFalse( _class('validate')->required(null) );
 		$this->assertFalse( _class('validate')->required(array()) );
+		$this->assertFalse( _class('validate')->required(array(' ')) );
+		$this->assertFalse( _class('validate')->required(array('','','')) );
+		$this->assertFalse( _class('validate')->required(array(array(),array())) );
+		$this->assertFalse( _class('validate')->required(array(array(array()),array())) );
+		$this->assertFalse( _class('validate')->required(array(array(array('','','')),array())) );
 
 		$this->assertTrue( _class('validate')->required('str') );
 		$this->assertTrue( _class('validate')->required(array('str')) );
 		$this->assertTrue( _class('validate')->required(array(1,2)) );
-		$this->assertTrue( _class('validate')->required(array(' ')) );
 	}
 	public function test_required_any() {
 		$this->assertFalse( @_class('validate')->required_any() );
@@ -555,6 +559,9 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( '+150631234567', _class('validate')->phone_cleanup('631234567', array('param' => '15')) );
 		$this->assertEquals( '+150631234567', _class('validate')->phone_cleanup('0631234567', array('param' => '15')) );
 		$this->assertEquals( '+150631234567', _class('validate')->phone_cleanup('+150631234567', array('param' => '15')) );
+
+		$this->assertEquals( '+79090000000', _class('validate')->phone_cleanup('9090000000', array('param' => '7')) );
+		$this->assertEquals( '+79090000000', _class('validate')->phone_cleanup('+79090000000', array('param' => '7')) );
 	}
 	public function test_valid_phone() {
 		$this->assertFalse( _class('validate')->valid_phone('') );

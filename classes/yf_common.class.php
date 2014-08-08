@@ -1155,7 +1155,7 @@ class yf_common {
 		if ($key) {
 			$_SESSION['permanent'][$level][$key] = $text;
 		} else {
-			$_SESSION['permanent'][$level][] = $text;
+			$_SESSION['permanent'][$level][$text] = $text;
 		}
 		return true;
 	}
