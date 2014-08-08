@@ -221,7 +221,7 @@ class yf_common_num2string {
 			$units[ 1 ] = &$words[ 'currency' ][ $currency_id ][ 1 ];
 		// separate float on sign, integer, fractional
 		$result = array();
-		$number = trim( $float );
+		$number = trim( (float)$float );
 		// trim fractional by 2 digits
 		$number_format = localeconv();
 			$decimal_point = $number_format[ 'decimal_point' ];
