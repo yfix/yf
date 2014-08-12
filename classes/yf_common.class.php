@@ -800,7 +800,7 @@ class yf_common {
 	/**
 	* Convert name into URL-friendly string
 	*/
-	function _propose_url_from_name ($name = '', $from_encoding = '') {
+	function _propose_url_from_name ($name = '', $from_encoding = '', $force_dashes = false) {
 		if (empty($name)) {
 			return '';
 		}
@@ -809,13 +809,17 @@ class yf_common {
 		}
 		$url = str_replace(array(';',',','.',':',' ','/'), '_', $name);
 		$url = preg_replace('/[_]{2,}/', '_', $url);
-		$url = trim(trim(trim($url), '_'));
+		$url = trim(trim(trim($url), '_-'));
 
 		$url = common()->make_translit($url, $from_encoding);
 
 		$url = preg_replace('/[_]{2,}/', '_', $url);
+		$url = preg_replace('/[_-]{2,}/', '-', $url);
 		$url = strtolower(preg_replace('/[^a-z0-9_-]+/i', '', $url));
-		$url = trim(trim(trim($url), '_'));
+		$url = trim(trim(trim($url), '_-'));
+		if ($force_dashes) {
+			$url = str_replace('_', '-', $url);
+		}
 		return $url;
 	}
 
