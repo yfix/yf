@@ -123,9 +123,10 @@ class yf_rss_data {
 		$feed_format		= isset($params["feed_format"]) && in_array($params["feed_format"], $this->avail_formats) ? $params["feed_format"] : "RSS2.0";
 		$feed_file_name		= $params["feed_file_name"];
 		if (!strlen($feed_file_name)) {
-			$feed_file_name = preg_replace(array("/[^0-9a-z_\-]/ims", "/[_]{2,}/"), array("_", "_"), $_SERVER["HTTP_HOST"]). "_". abs(crc32($rss->title. $rss->description. $this->self_link));
+			$feed_file_name = md5($_SERVER["HTTP_HOST"]. "_". $rss->title. $rss->description. $this->self_link);
 		}
-		$feed_cache_path	= $this->FEEDS_CACHE_PATH. $feed_file_name. ".xml";
+		$feed_file_name = common()->_propose_url_from_name($feed_file_name);
+		$feed_cache_path = $this->FEEDS_CACHE_PATH. $feed_file_name. ".xml";
 		$feed_cache_dir = dirname($feed_cache_path);
 		if (!file_exists($feed_cache_dir)) {
 			_mkdir_m($feed_cache_dir);
