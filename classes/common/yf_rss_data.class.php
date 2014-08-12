@@ -70,9 +70,9 @@ class yf_rss_data {
 		// optional feed params
 		$rss->descriptionTruncSize		= !empty($params['feed_trunc_size']) ? intval($params['item_trunc_size']) : 500;
 		$rss->descriptionHtmlSyndicated	= isset($params['feed_insert_html']) ? (bool)$params['feed_insert_html'] : true;
-		$rss->link						= _prepare_html(process_url(!empty($params['feed_url'])	?: './?object='.$_GET['object']));
+		$rss->link						= _prepare_html(process_url($params['feed_url'] ?: './?object='.$_GET['object']));
 		$this->self_link				= $rss->link;
-		$rss->syndicationURL			= _prepare_html(process_url(!empty($params['feed_source']) ?: './?object='.$_GET['object'].'&action='.$_GET['action'].(!empty($_GET['id']) ? '&id='.$_GET['id'] : '')));
+		$rss->syndicationURL			= _prepare_html(process_url($params['feed_source'] ?: './?object='.$_GET['object'].'&action='.$_GET['action'].(!empty($_GET['id']) ? '&id='.$_GET['id'] : '')));
 		if (!empty($this->SHOW_RSS_ENCODING)) {
 			$rss->encoding = $this->SHOW_RSS_ENCODING;
 		}
