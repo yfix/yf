@@ -48,9 +48,6 @@ class yf_intrusion_detection {
 					"__utmz",
 					"__utmc",
 				),
-				// PHPIDS should run with PHP 5.1.2 but this is untested - set 
-				// this value to force compatibilty with minor versions
-				"min_php_version"	=> "5.1.6",
 			),
 			// If you use the PHPIDS logger you can define specific configuration here
 			'Logging'	=> array(
