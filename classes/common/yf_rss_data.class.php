@@ -119,9 +119,14 @@ class yf_rss_data {
 		if (!file_exists($feed_cache_dir)) {
 			_mkdir_m($feed_cache_dir);
 		}
-		$body = $rss->saveFeed($feed_format, $feed_cache_path);
+		$feed_redirect = $params['return_feed_text'] ? false : true;
+		$body = $rss->saveFeed($feed_format, $feed_cache_path, $feed_redirect);
 		if (!empty($params['return_feed_text'])) {
-			return $body;
+			if ($body) {
+				return $body;
+			} elseif (file_exists($feed_cache_path)) {
+				return file_get_contents($feed_cache_path);
+			}
 		} else {
 			main()->NO_GRAPHICS = true;
 			echo $body;
