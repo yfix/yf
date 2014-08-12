@@ -49,28 +49,19 @@ class yf_rss_data {
 	* Framework constructor
 	*/
 	function _init () {
-		// Set paths
-		$this->FEEDS_CACHE_PATH	= INCLUDE_PATH. $this->FEEDS_CACHE_PATH;
-		$this->AGGR_CACHE_PATH	= INCLUDE_PATH. $this->AGGR_CACHE_PATH;
-		$this->DOMIT_RSS_PATH	= YF_PATH. $this->DOMIT_RSS_PATH;
-		// Do create cache dirs
-		if (!file_exists($this->FEEDS_CACHE_PATH)) {
-			_mkdir_m($this->FEEDS_CACHE_PATH);
-		}
-		if (!file_exists($this->AGGR_CACHE_PATH)) {
-			_mkdir_m($this->AGGR_CACHE_PATH);
-		}
+		$this->FEEDS_CACHE_PATH	= STORAGE_PATH. $this->FEEDS_CACHE_PATH;
+		!file_exists($this->FEEDS_CACHE_PATH) && _mkdir_m($this->FEEDS_CACHE_PATH);
+		$this->AGGR_CACHE_PATH = STORAGE_PATH. $this->AGGR_CACHE_PATH;
+		!file_exists($this->AGGR_CACHE_PATH) && _mkdir_m($this->AGGR_CACHE_PATH);
+		$this->DOMIT_RSS_PATH = YF_PATH. $this->DOMIT_RSS_PATH;
 	}
 
 	/**
 	* Show given array as RSS page
 	*/
 	function show_rss_page ($data = array(), $params = array()) {
-		// Connect ot the feed creator
 		require_once (YF_PATH.'libs/feedcreator/feedcreator.class.php');
-		// Instantinate it
 		$rss = new UniversalFeedCreator();
-		// use cached version if age < 1 hour
 		if (!isset($params['use_cached']) || !empty($params['use_cached'])) {
 			$rss->useCached();
 		}
@@ -85,14 +76,11 @@ class yf_rss_data {
 		if (!empty($this->SHOW_RSS_ENCODING)) {
 			$rss->encoding = $this->SHOW_RSS_ENCODING;
 		}
-		// Process feed items
 		foreach ((array)$data as $A) {
 			$item = new FeedItem();
-			// Special processing of date
 			if (isset($A['date'])) {
 				$A['date'] = intval($A['date']);
 			}
-			// Special processing of link (make path absolute)
 			if (isset($A['link'])) {
 				$A['link'] = process_url($A['link']);
 			}
@@ -131,9 +119,7 @@ class yf_rss_data {
 		if (!file_exists($feed_cache_dir)) {
 			_mkdir_m($feed_cache_dir);
 		}
-		// Do create
 		$body = $rss->saveFeed($feed_format, $feed_cache_path);
-		// Return feed contents or throw it here
 		if (!empty($params['return_feed_text'])) {
 			return $body;
 		} else {
