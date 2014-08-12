@@ -10,7 +10,7 @@ class func_common_rss_page extends PHPUnit_Framework_TestCase {
 	}
 	public function test_simple() {
 		$data = array();
-		$params = array('return_feed_text' => 1, 'use_cached' => 0);
+		$params = array('return_feed_text' => 1, 'use_cached' => 0, 'feed_url' => 'http://unit.dev/', 'feed_source' => 'http://unit.dev/', 'feed_desc' => 'my desc', 'feed_title' => 'my title');
 		$actual = common()->rss_page($data, $params);
 
 		$expected = '<?xml version="1.0" encoding="utf-8"?>
@@ -19,9 +19,9 @@ class func_common_rss_page extends PHPUnit_Framework_TestCase {
  xmlns:atom="http://www.w3.org/2005/Atom"
 >
 	<channel>
-		<title>Site feed title</title>
-		<description><![CDATA[Site feed description]]></description>
-		<link>./</link>
+		<title>my title</title>
+		<description><![CDATA[my desc]]></description>
+		<link>http://unit.dev/</link>
 		<lastBuildDate></lastBuildDate>
 	</channel>
 </rss>';
@@ -39,7 +39,7 @@ class func_common_rss_page extends PHPUnit_Framework_TestCase {
 				'link'	=> 'http://unit.dev/?object=unit_tests&action=testme&id=2',
 			),
 		);
-		$params = array('return_feed_text' => 1, 'use_cached' => 0);
+		$params = array('return_feed_text' => 1, 'use_cached' => 0, 'feed_url' => 'http://unit.dev/', 'feed_source' => 'http://unit.dev/', 'feed_desc' => 'my desc', 'feed_title' => 'my title');
 		$actual = common()->rss_page($data, $params);
 
 		$expected = '<?xml version="1.0" encoding="utf-8"?>
@@ -48,23 +48,23 @@ class func_common_rss_page extends PHPUnit_Framework_TestCase {
  xmlns:atom="http://www.w3.org/2005/Atom"
 >
 	<channel>
-		<title>Site feed title</title>
-		<description><![CDATA[Site feed description]]></description>
-		<link>./</link>
+		<title>my title</title>
+		<description><![CDATA[my desc]]></description>
+		<link>http://unit.dev/</link>
 		<lastBuildDate></lastBuildDate>
 		<item>
 			<title></title>
 			<link>http://unit.dev/?object=unit_tests&amp;action=testme&amp;id=1</link>
 			<description></description>
 			<pubDate>Tue, 12 Aug 2014 12:03:19</pubDate>
-			<guid isPermaLink="false">http://unit.dev/?object=unit_tests&amp;action=testme&amp;id=1#1cbc7597c5e24bf5cc3f7e453ff34b03</guid>
+			<guid isPermaLink="false">http://unit.dev/?object=unit_tests&amp;action=testme&amp;id=1#da98a1f3acd5e77d15336ec3dc3d1bac</guid>
 		</item>
 		<item>
 			<title></title>
 			<link>http://unit.dev/?object=unit_tests&amp;action=testme&amp;id=2</link>
 			<description></description>
 			<pubDate>Tue, 12 Aug 2014 12:03:20</pubDate>
-			<guid isPermaLink="false">http://unit.dev/?object=unit_tests&amp;action=testme&amp;id=2#168aa275eb4cf49613c1ab23f8e9b88d</guid>
+			<guid isPermaLink="false">http://unit.dev/?object=unit_tests&amp;action=testme&amp;id=2#403b486e7f8842b7c1e549d5cfaac5ca</guid>
 		</item>
 	</channel>
 </rss>';
@@ -98,7 +98,7 @@ class func_common_rss_page extends PHPUnit_Framework_TestCase {
 				),
 			),
 		);
-		$params = array('return_feed_text' => 1, 'use_cached' => 0);
+		$params = array('return_feed_text' => 1, 'use_cached' => 0, 'feed_url' => 'http://unit.dev/', 'feed_source' => 'http://unit.dev/', 'feed_desc' => 'my desc', 'feed_title' => 'my title');
 		$actual = common()->rss_page($data, $params);
 
 		$expected = '<?xml version="1.0" encoding="utf-8"?>
@@ -107,9 +107,9 @@ class func_common_rss_page extends PHPUnit_Framework_TestCase {
  xmlns:atom="http://www.w3.org/2005/Atom"
 >
 	<channel>
-		<title>Site feed title</title>
-		<description><![CDATA[Site feed description]]></description>
-		<link>./</link>
+		<title>my title</title>
+		<description><![CDATA[my desc]]></description>
+		<link>http://unit.dev/</link>
 		<lastBuildDate></lastBuildDate>
 		<item>
 			<title>test 1</title>
@@ -117,7 +117,7 @@ class func_common_rss_page extends PHPUnit_Framework_TestCase {
 			<description><![CDATA[my description 1]]></description>
 			<dc:creator>user 1</dc:creator>
 			<pubDate>Tue, 12 Aug 2014 12:03:19</pubDate>
-			<guid isPermaLink="false">http://unit.dev/?object=unit_tests&amp;action=testme&amp;id=1#66fc49122ca308e5fe6347c8b32ed803</guid>
+			<guid isPermaLink="false">http://unit.dev/?object=unit_tests&amp;action=testme&amp;id=1#ba27fd1444783d73c3ced7ac3580ab60</guid>
 			<enclosure url="http://lh3.ggpht.com/smoliarov/Rwygj8ucrbE/AAAAAAAABIA/UkNlwQ7eniw/_200708.jpg" length="65036" type="image/jpeg"/>
 		</item>
 		<item>
@@ -126,7 +126,7 @@ class func_common_rss_page extends PHPUnit_Framework_TestCase {
 			<description><![CDATA[my description 2]]></description>
 			<dc:creator>user 2</dc:creator>
 			<pubDate>Tue, 12 Aug 2014 12:03:20</pubDate>
-			<guid isPermaLink="false">http://unit.dev/?object=unit_tests&amp;action=testme&amp;id=2#98b97f2808a3744908b3fe1956f1c37b</guid>
+			<guid isPermaLink="false">http://unit.dev/?object=unit_tests&amp;action=testme&amp;id=2#4b2a78001ba5b3ef24031afc122c6aa7</guid>
 			<enclosure url="http://lh3.ggpht.com/smoliarov/Rwygj8ucrbE/AAAAAAAABIA/UkNlwQ7eniw/_200709.jpg" length="65036" type="image/jpeg"/>
 		</item>
 	</channel>
