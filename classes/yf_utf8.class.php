@@ -32,7 +32,10 @@ class yf_utf8 {
 	* @return	void
 	*/
 	function __construct () {
-		list($this->MULTIBYTE) = $this->unicode_check();
+		list($this->MULTIBYTE, $utf8_init_error) = $this->unicode_check();
+		if ($utf8_init_error) {
+			trigger_error(__CLASS__.':'.$utf8_init_error, E_USER_WARNING);
+		}
 	}
 
 	/**
@@ -66,16 +69,20 @@ class yf_utf8 {
 		if (ini_get('mbstring.func_overload') != 0) {
 			return array($this->UNICODE_ERROR, t('Multibyte string function overloading in PHP is active and must be disabled. Check the php.ini <em>mbstring.func_overload</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
 		}
-		if (ini_get('mbstring.encoding_translation') != 0) {
-			return array($this->UNICODE_ERROR, t('Multibyte string input conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.encoding_translation</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
-		}
-		if (ini_get('mbstring.http_input') != 'pass') {
-			return array($this->UNICODE_ERROR, t('Multibyte string input conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.http_input</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
-		}
-		if (ini_get('mbstring.http_output') != 'pass') {
-			return array($this->UNICODE_ERROR, t('Multibyte string output conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.http_output</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
-		}
+#		if (ini_get('mbstring.encoding_translation') != 0) {
+#			return array($this->UNICODE_ERROR, t('Multibyte string input conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.encoding_translation</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
+#		}
+#		if (ini_get('mbstring.http_input') != 'pass') {
+#			return array($this->UNICODE_ERROR, t('Multibyte string input conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.http_input</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
+#		}
+#		if (ini_get('mbstring.http_output') != 'pass') {
+#			return array($this->UNICODE_ERROR, t('Multibyte string output conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.http_output</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
+#		}
 		// Set appropriate configuration
+#		if (version_compare(PHP_VERSION, '5.6.0') >= 0) {
+#			ini_set('default_charset', 'UTF-8');
+#			ini_set('php.internal_encoding', 'UTF-8');
+#		}
 		mb_internal_encoding('utf-8');
 		mb_language('uni');
 		return array($this->UNICODE_MULTIBYTE, '');
