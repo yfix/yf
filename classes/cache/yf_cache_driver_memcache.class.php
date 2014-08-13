@@ -32,6 +32,13 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 
 	/**
 	*/
+	function __sleep() {
+		$this->_connection = null;
+		$this->_connected_ok = null;
+	}
+
+	/**
+	*/
 	function _init ($params = array()) {
 		$conf_mc_host = conf('MEMCACHED_HOST');
 		if ($conf_mc_host) {
@@ -51,6 +58,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		} elseif ($ext_old_allowed && class_exists('Memcache')) {
 			$this->_connection = new Memcache;
 		}
+
 		if (is_object($this->_connection)) {
 			$mc_params = array($this->DEFAULT);
 			if (isset($params['memcache']) && !empty($params['memcache'])) {
