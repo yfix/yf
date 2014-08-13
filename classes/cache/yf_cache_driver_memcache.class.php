@@ -58,7 +58,6 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		} elseif ($ext_old_allowed && class_exists('Memcache')) {
 			$this->_connection = new Memcache;
 		}
-
 		if (is_object($this->_connection)) {
 			$mc_params = array($this->DEFAULT);
 			if (isset($params['memcache']) && !empty($params['memcache'])) {
