@@ -1326,7 +1326,7 @@ class yf_main {
 					$name_to_save .= '_'.$k. $v;
 				}
 			}
-			$handler = conf('data_handlers::'.$name);
+			$handler = $this->data_handlers[$name];
 			if (!empty($handler)) {
 				if (is_string($handler)) {
 					$data = include $handler;
@@ -1381,9 +1381,10 @@ class yf_main {
 	*/
 	function _load_data_handlers () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		if (conf('data_handlers')) {
+		if ($this->_data_handlers_loaded) {
 			return false;
 		}
+		$this->data_handlers = array();
 		$this->events->fire('main.load_data_handlers');
 		$framework_rules_file_path = YF_PATH. 'share/data_handlers.php';
 		if (file_exists($framework_rules_file_path)) {
