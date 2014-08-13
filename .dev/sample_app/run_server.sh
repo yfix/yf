@@ -10,5 +10,9 @@ if [ $? != 0 ] ; then
     echo "Unable to find PHP"
     exit 1
 fi
- 
+
+if [ ! -f "$DOCROOT" ]; then
+	mkdir -p $DOCROOT;
+fi
+
 $PHP -S $HOST:$PORT -t $DOCROOT $ROUTER
