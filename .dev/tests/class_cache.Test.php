@@ -15,7 +15,10 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 	public static function tearDownAfterClass() {
 		$driver = self::_get_driver_name();
 		if ($driver == 'files') {
-			_class('dir')->delete_dir('./core_cache/', $delete_start_dir = true);
+			$cache_dir = self::_cache()->_driver->CACHE_DIR;
+			if ($cache_dir && file_exists($cache_dir)) {
+				_class('dir')->delete_dir($cache_dir, $delete_start_dir = true);
+			}
 		}
 	}
 	public static function _get_driver_name() {
@@ -51,8 +54,8 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 		self::_cache()->set('k1', 'val1');
 		$this->assertEquals('val1', self::_cache()->get('k1'));
 
-		self::_cache()->set('k1', false);
-		$this->assertFalse(self::_cache()->get('k1'));
+		self::_cache()->set('k11', false);
+		$this->assertFalse(self::_cache()->get('k11'));
 	}
 	public function test_set() {
 		self::_cache()->flush();
@@ -90,17 +93,17 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 	public function test_multi_set() {
 		$this->assertTrue(self::_cache()->flush());
 		$this->assertEquals(array(), self::_cache()->multi_get(array('k1', 'k2')));
-		$this->assertEquals(array('k1' => true, 'k2' => true), self::_cache()->multi_set(array('k1' => 'v1', 'k2' => 'v2')));
-		$this->assertEquals(array('k1' => 'v1', 'k2' => 'v2'), self::_cache()->multi_get(array('k1', 'k2')));
+		$this->assertEquals(array('k111' => true, 'k222' => true), self::_cache()->multi_set(array('k111' => 'v1', 'k222' => 'v2')));
+		$this->assertEquals(array('k111' => 'v1', 'k222' => 'v2'), self::_cache()->multi_get(array('k111', 'k222')));
 	}
 	public function test_multi_del() {
 		$this->assertTrue(self::_cache()->flush());
 		$this->assertEquals(array(), self::_cache()->multi_get(array('k1', 'k2')));
 		$this->assertEquals(array('k1' => true, 'k2' => true), self::_cache()->multi_set(array('k1' => 'v1', 'k2' => 'v2')));
-		$this->assertTrue(self::_cache()->set('k3', 'v3'));
-		self::_cache()->multi_del(array('k1', 'k2'));
-		$this->assertEquals(array(), self::_cache()->multi_get(array('k1', 'k2')));
-		$this->assertEquals('v3', self::_cache()->get('k3'));
+		$this->assertTrue(self::_cache()->set('k333', 'v3'));
+		self::_cache()->multi_del(array('k133', 'k233'));
+		$this->assertEquals(array(), self::_cache()->multi_get(array('k133', 'k233')));
+		$this->assertEquals('v3', self::_cache()->get('k333'));
 	}
 	public function test_del_by_prefix() {
 #		$this->assertTrue(self::_cache()->flush());
