@@ -7,13 +7,13 @@ class yf_cache_driver_xcache extends yf_cache_driver {
 	*/
 	function _init() {
 #		ini_set('xcache.admin.user', 'yf_xcache_admin');
-#		ini_set('xcache.admin.pass', 'yf_xcache_pass');
+#		ini_set('xcache.admin.pass', md5('yf_xcache_pass'));
 	}
 
 	/**
 	*/
 	function is_ready() {
-		return function_exists('xcache_get');
+		return function_exists('xcache_get') && ini_get('xcache.cacher');
 	}
 
 	/**
@@ -57,6 +57,6 @@ class yf_cache_driver_xcache extends yf_cache_driver {
 			return null;
 		}
 // Not available without admin settings
-#		return xcache_clear_cache();
+		return xcache_clear_cache();
 	}
 }
