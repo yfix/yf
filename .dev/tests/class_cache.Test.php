@@ -24,6 +24,10 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 			return 'files';
 		} elseif (false !== strpos($called, '_memcache')) {
 			return 'memcache';
+		} elseif (false !== strpos($called, '_xcache')) {
+			return 'xcache';
+		} elseif (false !== strpos($called, '_apc')) {
+			return 'apc';
 		} else {
 			return 'tmp';
 		}
