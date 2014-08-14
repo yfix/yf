@@ -113,7 +113,7 @@ class yf_debug {
 				<span title="'.t('Database queries').'">&nbsp;<i class="icon icon-table fa fa-table"></i>&nbsp;'.intval($num_db_queries).'</span><br />
 				<span title="'.t('Debug console generation time in seconds').'"><small>D&nbsp;'.$debug_time.'</small></span>',
 #				<a href="javascript:void(0)" data-hidden-toggle="debug-timings"><small>D&nbsp;'.$debug_time.'</small></a></span>
-#				<pre style="display:none;" id="debug-timings"><small>'._prepare_html(var_export($debug_timings, 1)).'</small></pre>
+#				<pre style="display:none;" id="debug-timings"><small>'._prepare_html($this->_var_export($debug_timings)).'</small></pre>
 		);
 		$body[] = '<style type="text/css" class="yf_core">#debug_console .nav li.tab_info_compact a { padding: 2px 5px; line-height:normal; }</style>';
 		foreach ((array)$debug_contents as $name => $content) {
@@ -389,7 +389,7 @@ class yf_debug {
 				'id'		=> $num,
 				'sql'		=> $sql,
 				'rows'		=> strval($log['rows']),
-				'error'		=> $log['error'] ? '<pre>'._prepare_html(var_export($log['error'], 1)).'</pre>' : '',
+				'error'		=> $log['error'] ? '<pre>'._prepare_html($this->_var_export($log['error'])).'</pre>' : '',
 				'exec_time'	=> strval($exec_time),
 				'time'		=> round($log['time'], 4),
 				'trace'		=> $_cur_trace,
@@ -505,13 +505,13 @@ class yf_debug {
 				'driver'	=> strval($v['driver']),
 				'compiled'	=> (int)$v['is_compiled'],
 				'storage'	=> strval($debug[$k]['storage']),
-				'storages'	=> '<pre>'._prepare_html(var_export($debug[$k]['storages'], 1)).'</pre>',
+				'storages'	=> '<pre>'._prepare_html($this->_var_export($debug[$k]['storages'])).'</pre>',
 				'size'		=> strval($cur_size),
 				'time'		=> round($v['exec_time'], 4),
 				'trace'		=> _prepare_html($stpl_traces[$k]),
 			);
 			if (isset($stpl_vars[$counter])) {
-				$items[$counter]['vars'] = '<pre><small>'._prepare_html(var_export($stpl_vars[$counter], 1)).'</small></pre>';
+				$items[$counter]['vars'] = '<pre><small>'._prepare_html($this->_var_export($stpl_vars[$counter])).'</small></pre>';
 			}
 		}
 		$items = $this->_time_count_changes($items);
@@ -618,11 +618,11 @@ class yf_debug {
 			return '';
 		}
 		$items = (array)$this->_get_debug_data('main_get_data');
-		foreach ($items as &$v) {
-			$data = var_export($v['data'], 1);
+		foreach ($items as $k => $v) {
+			$data = $this->_var_export($v['data']);
 			$size = strlen($data);
-			$v['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
-			$v['data_size'] = $size;
+			$items[$k]['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
+			$items[$k]['data_size'] = $size;
 		}
 		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
@@ -637,11 +637,11 @@ class yf_debug {
 // TODO + add admin link to purge cache
 // TODO + add link to inspect current cache contents if driver supports this
 		$items = (array)$this->_get_debug_data('cache_get');
-		foreach ($items as &$v) {
-			$data = var_export($v['data'], 1);
+		foreach ($items as $k => $v) {
+			$data = $this->_var_export($v['data']);
 			$size = strlen($data);
-			$v['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
-			$v['data_size'] = $size;
+			$items[$k]['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
+			$items[$k]['data_size'] = $size;
 		}
 		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'params', 'data' => 'name')));
@@ -654,11 +654,11 @@ class yf_debug {
 			return '';
 		}
 		$items = (array)$this->_get_debug_data('cache_set');
-		foreach ($items as &$v) {
-			$data = var_export($v['data'], 1);
+		foreach ($items as $k => $v) {
+			$data = $this->_var_export($v['data']);
 			$size = strlen($data);
-			$v['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
-			$v['data_size'] = $size;
+			$items[$k]['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
+			$items[$k]['data_size'] = $size;
 		}
 		$items = $this->_time_count_changes($items);
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'name', 'data' => 'name')));
@@ -730,7 +730,7 @@ class yf_debug {
 		foreach ((array)$items as $k => $v) {
 			$items[$k] = array(
 				'key' => $k,
-				'value' => '<pre>'._prepare_html(var_export($v, 1)).'</pre>',
+				'value' => '<pre>'._prepare_html($this->_var_export($v)).'</pre>',
 			);
 		}
 		$out = $this->_show_auto_table($items, array('first_col_width' => '1%'));
@@ -772,7 +772,7 @@ class yf_debug {
 		}
 		$calls = _class('i18n')->_calls;
 		$items = (array)$this->_get_debug_data('i18n');
-		foreach ($items as $k => &$v) {
+		foreach ($items as $k => $v) {
 			$v['name'] = $this->_admin_link('edit_i18n', $v['name']);
 			$v['calls'] = (int)$calls[$v['name_orig']];
 			$items[$k] = array('id' => ++$i) + $v;
@@ -787,15 +787,14 @@ class yf_debug {
 		if (!$this->SHOW_SPHINX) {
 			return "";
 		}
-		$sphinx_debug = $this->_get_debug_data('sphinxsearch');
-		if (!$sphinx_debug) {
+		$items = $this->_get_debug_data('sphinxsearch');
+		if (!$items) {
 			return '';
 		}
 		$body .= 'host: '. _class('sphinxsearch')->_get_host();
 		$body .= ', version: '._class('sphinxsearch')->_get_server_version();
 
 		$sphinx_connect_debug = array();
-		$items = &$sphinx_debug;
 		foreach ((array)$items as $id => $item) {
 			if ($item['query'] == 'sphinx connect') {
 				$sphinx_connect_debug = $item;
@@ -803,15 +802,15 @@ class yf_debug {
 				continue;
 			}
 			$item['time'] = round($item['time'], 4);
-			$item['results'] = '<pre>'._prepare_html(var_export($item['results'], 1)).'</pre>';
-			$item['meta'] = '<pre>'._prepare_html(var_export($item['meta'], 1)).'</pre>';
-			$item['describe'] = '<pre>'._prepare_html(var_export($item['describe'], 1)).'</pre>';
+			$item['results'] = '<pre>'._prepare_html($this->_var_export($item['results'])).'</pre>';
+			$item['meta'] = '<pre>'._prepare_html($this->_var_export($item['meta'])).'</pre>';
+			$item['describe'] = '<pre>'._prepare_html($this->_var_export($item['describe'])).'</pre>';
 			$items[$id] = array('id' => $id) + $item;
 		}
 		$items = $this->_time_count_changes($items);
 
 		$body .= $this->_show_auto_table($items, array('first_col_width' => '1%', 'hidden_map' => array('trace' => 'query', 'meta' => 'count', 'describe' => 'count', 'results' => 'count')));
-		$body .= $sphinx_connect_debug ? '<pre>'._prepare_html(var_export($sphinx_connect_debug, 1)).'</pre>' : '';
+		$body .= $sphinx_connect_debug ? '<pre>'._prepare_html($this->_var_export($sphinx_connect_debug)).'</pre>' : '';
 		$body .= $this->_show_key_val_table(_class('sphinxsearch')->_get_server_status());
 		return $body;
 	}
@@ -904,13 +903,13 @@ class yf_debug {
 			return '';
 		}
 		$items = (array)$this->_get_debug_data('included_files');
-		foreach ($items as $k => &$v) {
+		foreach ($items as $k => $v) {
 			if (!$v['exists']) {
 				unset($items[$k]);
 				continue;
 			}
 			$v['path'] = $this->_admin_link('edit_file', $v['path']);
-			$v = array('id' => ++$i) + $v;
+			$items[$k] = array('id' => ++$i) + $v;
 			$total_size += $v['size'];
 		}
 		$items = $this->_time_count_changes($items);
@@ -927,7 +926,7 @@ class yf_debug {
 		foreach ((array)$items as $k => $v) {
 			$items[$k] = array(
 				'id' => $k + 1,
-				'info' => '<pre>'._prepare_html(var_export($v['info'], 1)).'</pre>',
+				'info' => '<pre>'._prepare_html($this->_var_export($v['info'])).'</pre>',
 				'trace'	=> $v['trace'],
 			);
 		}
@@ -943,8 +942,8 @@ class yf_debug {
 		}
 		$items = $this->_get_debug_data('form2');
 		foreach ((array)$items as $k => $v) {
-			$v['params'] = '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>';
-			$v['fields'] = '<pre>'._prepare_html(var_export($v['fields'], 1)).'</pre>';
+			$v['params'] = '<pre>'._prepare_html($this->_var_export($v['params'] )).'</pre>';
+			$v['fields'] = '<pre>'._prepare_html($this->_var_export($v['fields'])).'</pre>';
 			$items[$k] = array('id' => ++$i) + $v;
 		}
 		$items = $this->_time_count_changes($items);
@@ -959,14 +958,14 @@ class yf_debug {
 		}
 		$items = $this->_get_debug_data('table2');
 		foreach ((array)$items as $k => $v) {
-			$v['params'] = '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>';
-			$v['fields'] = '<pre>'._prepare_html(var_export($v['fields'], 1)).'</pre>';
-			$v['buttons'] = '<pre>'._prepare_html(var_export($v['buttons'], 1)).'</pre>';
+			$v['params'] = '<pre>'._prepare_html($this->_var_export($v['params'])).'</pre>';
+			$v['fields'] = '<pre>'._prepare_html($this->_var_export($v['fields'])).'</pre>';
+			$v['buttons'] = '<pre>'._prepare_html($this->_var_export($v['buttons'])).'</pre>';
 			if ($v['header_links']) {
-				$v['header_links'] = '<pre>'._prepare_html(var_export($v['header_links'], 1)).'</pre>';
+				$v['header_links'] = '<pre>'._prepare_html($this->_var_export($v['header_links'])).'</pre>';
 			}
 			if ($v['footer_links']) {
-				$v['footer_links'] = '<pre>'._prepare_html(var_export($v['footer_links'], 1)).'</pre>';
+				$v['footer_links'] = '<pre>'._prepare_html($this->_var_export($v['footer_links'])).'</pre>';
 			}
 			$items[$k] = array('id' => ++$i) + $v;
 		}
@@ -982,10 +981,10 @@ class yf_debug {
 		}
 		$items = $this->_get_debug_data('dd_table');
 		foreach ((array)$items as $k => $v) {
-			$v['fields'] = '<pre>'._prepare_html(var_export($v['fields'], 1)).'</pre>';
-			$v['extra'] = '<pre>'._prepare_html(var_export($v['extra'], 1)).'</pre>';
+			$v['fields'] = '<pre>'._prepare_html($this->_var_export($v['fields'])).'</pre>';
+			$v['extra'] = '<pre>'._prepare_html($this->_var_export($v['extra'])).'</pre>';
 			if ($v['field_types']) {
-				$v['field_types'] = '<pre>'._prepare_html(var_export($v['field_types'], 1)).'</pre>';
+				$v['field_types'] = '<pre>'._prepare_html($this->_var_export($v['field_types'])).'</pre>';
 			}
 			$items[$k] = array('id' => ++$i) + $v;
 		}
@@ -1026,7 +1025,7 @@ class yf_debug {
 				'class'			=> $v[1],
 				'method'		=> $v[2],
 				'trace'			=> $v[3],
-				'args'			=> $v[4] ? _prepare_html(var_export($v[4], 1)) : '',
+				'args'			=> $v[4] ? _prepare_html($this->_var_export($v[4])) : '',
 			);
 		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'args')));
@@ -1038,8 +1037,8 @@ class yf_debug {
 		$items = $this->_get_debug_data('core_css');
 		foreach ((array)$items as $k => $v) {
 			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
-			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
-			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
+			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
+			$v['params'] = $v['params'] ? '<pre>'._prepare_html($this->_var_export($v['params'])).'</pre>' : '';
 			unset($v['is_added']);
 			$items[$k] = array('id' => ++$i) + $v;
 		}
@@ -1052,8 +1051,8 @@ class yf_debug {
 		$items = $this->_get_debug_data('core_js');
 		foreach ((array)$items as $k => $v) {
 			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
-			$v['content'] = '<pre>'._prepare_html(var_export($v['content'], 1)).'</pre>';
-			$v['params'] = $v['params'] ? '<pre>'._prepare_html(var_export($v['params'], 1)).'</pre>' : '';
+			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
+			$v['params'] = $v['params'] ? '<pre>'._prepare_html($this->_var_export($v['params'])).'</pre>' : '';
 			unset($v['is_added']);
 			$items[$k] = array('id' => ++$i) + $v;
 		}
@@ -1126,7 +1125,7 @@ class yf_debug {
 			if ($params['skip_empty_values'] && !$v) {
 				continue;
 			}
-			$v = is_array($v) ? var_export($v, 1) : $v;
+			$v = is_array($v) ? $this->_var_export($v) : $v;
 			$items[] = array(
 				'key'	=> $params['escape'] ? _prepare_html($k) : $k,
 				'value'	=> $params['escape'] && strlen($v) ? '<pre>'._prepare_html($v).'</pre>' : $v,
@@ -1149,13 +1148,17 @@ class yf_debug {
 		}
 		$items = $this->_format_trace_in_items($items);
 		$total_time = 0.0;
-		foreach ($items as &$item) {
-			foreach ($item as $k => &$v) {
+		foreach ($items as $k1 => $item) {
+			foreach ($item as $k => $v) {
 				if (is_array($v)) {
-					$v = !empty($v) ? var_export($v, 1) : '';
+					$v = !empty($v) ? $this->_var_export($v) : '';
 					if (!$params['no_escape']) {
-						$v = _prepare_html($v);
+						$v = !empty($v) ? _prepare_html($v) : '';
 					}
+					if (is_array($v)) {
+						$v = $this->_var_export($v);
+					}
+					$items[$k1][$k] = $v;
 				}
 				if ($k == 'time') {
 					$total_time += $v;
@@ -1356,5 +1359,15 @@ class yf_debug {
 		$data .= '</div>';
 
 		return $data;
+	}
+
+	/**
+	*/
+	function _var_export ($var) {
+		if (defined('HHVM_VERSION')) {
+			return is_array($var) ? print_r($var, 1) : $var;
+		} else {
+			return var_export($var, 1);
+		}
 	}
 }
