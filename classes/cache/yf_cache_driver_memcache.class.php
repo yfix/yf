@@ -32,6 +32,16 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 
 	/**
 	*/
+	function __clone() {
+		foreach ((array)get_object_vars($this) as $k => $v) {
+			if ($k[0] == '_') {
+				unset($this->$k);
+			}
+		}
+	}
+
+	/**
+	*/
 	function __sleep() {
 		$this->_connection = null;
 		$this->_connected_ok = null;
@@ -103,7 +113,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 				$result = $try_unpack;
 			}
 		}
-		return $result;
+		return $result === false ? null : $result;
 	}
 
 	/**
@@ -153,7 +163,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 			return null;
 		}
 		if (!method_exists($this->_connection, 'getAllKeys')) {
-			return false;
+			return null;
 		}
 		return $this->_connection->getAllKeys();
 	}
@@ -165,6 +175,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 			return null;
 		}
 		if (!$this->_memcache_new_extension) {
+			$result = array();
 			foreach ((array)$names as $name) {
 				$res = $this->get($name);
 				if (isset($res)) {
@@ -173,7 +184,6 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 			}
 			return $result;
 		}
-		// maybe use this one?: http://ua1.php.net/manual/en/memcached.getmultibykey.php
 		return $this->_connection->getMulti($names);
 	}
 
@@ -184,12 +194,15 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 			return null;
 		}
 		if (!$this->_memcache_new_extension) {
+			$failed = false;
 			foreach ((array)$data as $name => $_data) {
-				$result[$name] = $this->set($name, $_data);
+				$result = $this->set($name, $_data);
+				if (!$result) {
+					$failed++;
+				}
 			}
-			return $result;
+			return $failed ? false : true;
 		}
-		// maybe use this one?: http://ua1.php.net/manual/en/memcached.setmultibykey.php
 		return $this->_connection->setMulti($data, $ttl);
 	}
 
@@ -200,7 +213,6 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		if (!$this->is_ready() || !method_exists($this->_connection, 'deleteMulti')) {
 			return null;
 		}
-		// maybe use this one?: http://ua1.php.net/manual/en/memcached.deletemultibykey.php
 		return $this->_connection->deleteMulti($names);
 	}
 }
