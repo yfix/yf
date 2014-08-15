@@ -104,9 +104,9 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_multi_get() {
 		$this->assertTrue(self::_cache()->flush());
-		self::_cache()->set('k1', 'v1');
-		self::_cache()->set('k2', 'v2');
-		$this->assertEquals(array('k1' => 'v1', 'k2' => 'v2'), self::_cache()->multi_get(array('k1', 'k2')));
+		self::_cache()->set('k17', 'v1');
+		self::_cache()->set('k27', 'v2');
+		$this->assertEquals(array('k17' => 'v1', 'k27' => 'v2'), self::_cache()->multi_get(array('k17', 'k27')));
 	}
 	public function test_multi_set() {
 		$this->assertTrue(self::_cache()->flush());
@@ -128,13 +128,13 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 			return ;
 		}
 		$this->assertTrue(self::_cache()->flush());
-		self::_cache()->multi_set(array('k11' => 'v11', 'k21' => 'v21', 'k13' => 'v13'));
-		$this->assertEquals(array('k11' => 'v11', 'k21' => 'v21', 'k13' => 'v13'), self::_cache()->multi_get(array('k11', 'k21', 'k13')));
+		self::_cache()->multi_set(array('k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13'));
+		$this->assertEquals(array('k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13'), self::_cache()->multi_get(array('k118', 'k218', 'k138')));
 		self::_cache()->del_by_prefix('k1');
 		$list_keys_result = self::_cache()->list_keys();
 		if ($list_keys_result !== false && $list_keys_result !== null) {
-			$this->assertEquals('v21', self::_cache()->get('k21'));
-			$this->assertNull(self::_cache()->get('k13'));
+			$this->assertEquals('v21', self::_cache()->get('k218'));
+			$this->assertNull(self::_cache()->get('k138'));
 		}
 	}
 }
