@@ -102,7 +102,7 @@
 				markersArray[marker_index] = marker;
 				descriptionsArray[marker_index] = description;
 				var infowindow = new google.maps.InfoWindow({
-					content: '<input type="text" data_id="'+marker_index+'" class="marker_description form-control" placeholder="description" value="'+description+'"><br />' +
+content: '<input type="text" data_id="'+marker_index+'" class="marker_description form-control" placeholder="{t(description)}" value="'+description+'"><br />' +
 							'<p align="right"><a data_marker_id="'+marker_index+'" class="btn btn-default btn-mini btn-xs marker_delete">{t('delete marker')}</a></p>',
 				});
 				google.maps.event.addListener(marker, 'click', function() {
