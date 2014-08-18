@@ -936,12 +936,12 @@ class yf_validate {
 			$phone = '+'.$country_prefix. '0'.$phone;
 		} elseif (strlen($phone) == (10 + $p_len)) {
 			if (substr($phone, 0, $p_len) != $country_prefix) {
-				$error = 'phone error: incorrect country: '.$phone;
+				$error = t('phone error: incorrect country').': '.$phone;
 			} else {
 				$phone = '+'.$phone;
 			}
 		} else {
-			$error = 'phone error: number is incorrect: '.$phone;
+			$error = t('phone error: number is incorrect').': '.$phone;
 			$phone = '';
 		}
 		$phone = $phone ? '+'.ltrim($phone, '+') : '';
