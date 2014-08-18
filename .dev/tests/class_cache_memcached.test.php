@@ -2,16 +2,14 @@
 
 require_once dirname(__FILE__).'/class_cache.Test.php';
 
-
 /**
  * @requires extension memcached
  */
 class class_cache_memcached_test extends class_cache_test {
-// TODO: finish support for testing cache memcache under HHVM
-	protected function setUp() {
-		if (defined('HHVM_VERSION')) {
-			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
-			return ;
-    	}
-	}
+#	protected function setUp() {
+#		if (defined('HHVM_VERSION')) {
+#			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
+#			return ;
+#    	}
+#	}
 }
