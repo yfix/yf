@@ -4,7 +4,7 @@ require dirname(__FILE__).'/yf_unit_tests_setup.php';
 
 class class_cache_test extends PHPUnit_Framework_TestCase {
 	public static $_cache = array();
-	public static function setUpBeforeClass() {
+	public static function _cache_init() {
 		main()->modules['cache'] = null;
 		self::$_cache = clone _class('cache');
 		self::$_cache->_init(array('driver' => self::_get_driver_name()));
@@ -20,6 +20,16 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 		self::$_cache->NO_CACHE = false;
 		self::$_cache->CACHE_NS = 'unit_tests_';
 		self::$_cache->FORCE_REBUILD_CACHE = false;
+	}
+	public static function setUpBeforeClass() {
+		if (!defined('HHVM_VERSION') || self::_get_driver_name() != 'memcache') {
+			self::_cache_init();
+		}
+	}
+	protected function setUp() {
+		if (defined('HHVM_VERSION') && self::_get_driver_name() == 'memcache') {
+			self::_cache_init();
+		}
 	}
 	public static function tearDownAfterClass() {
 		$driver = self::_get_driver_name();
