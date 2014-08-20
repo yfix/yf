@@ -37,3 +37,6 @@
 [submodule "libs/symfony_class_loader"]
 	path = libs/symfony_class_loader
 	url = https://github.com/yfix/ClassLoader.git
+[submodule "libs/kcfinder"]
+	path = libs/kcfinder
+	url = https://github.com/yfix/kcfinder.git
