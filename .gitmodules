@@ -10,9 +10,6 @@
 [submodule "libs/phpseclib"]
 	path = libs/phpseclib
 	url = https://github.com/yfix/phpseclib.git
-[submodule "libs/kcfinder"]
-	path = libs/kcfinder
-	url = https://github.com/yfix/yf_kcfinder.git
 [submodule "libs/smarty"]
 	path = libs/smarty
 	url = https://github.com/yfix/smarty.git
