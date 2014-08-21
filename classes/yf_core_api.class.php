@@ -615,12 +615,13 @@ class yf_core_api {
 
 		$globs = array();
 		if (!$this->SOURCE_ONLY_FRAMEWORK) {
+			$globs['app']				= APP_PATH. $folder.'*'.$suffix;
+			$globs['app_plugins']		= APP_PATH. 'plugins/*/'.$folder.'*'.$suffix;
 			$globs['project']			= PROJECT_PATH. $folder.'*'.$suffix;
 			$globs['project_plugins']	= PROJECT_PATH. 'plugins/*/'.$folder.'*'.$suffix;
 		}
 		$globs['framework']			= YF_PATH. $folder.'*'.$suffix;
 		$globs['framework_plugins']	= YF_PATH. 'plugins/*/'.$folder.'*'.$suffix;
-		$globs['framework_p2']		= YF_PATH. 'priority2/'.$folder.'*'.$suffix;
 		return $globs;
 	}
 
