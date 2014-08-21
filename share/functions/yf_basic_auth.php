@@ -1,10 +1,9 @@
 <?php
 
 $debug_users = array(
-	'central_test' => 'central_5555_test',
+	'yf_test' => 'yf_test',
 );
 $debug_salt = '_5555_';
-// TODO: need to check exact robots meta tag/header contents for SEO (maybe use: noindex, follow ?)
 $robots_options = 'noindex, nofollow, noarchive, nosnippet';
 
 $console_mode = (!empty($_SERVER['argc']) && !array_key_exists('REQUEST_METHOD', $_SERVER));
