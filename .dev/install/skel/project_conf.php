@@ -78,12 +78,12 @@ $PROJECT_CONF = my_array_merge((array)$PROJECT_CONF, array(
 	),
 ));
 
-$OVERRIDE_CONF_FILE = dirname(dirname(__FILE__)).'/.dev/override_conf_after.php';
+$OVERRIDE_CONF_FILE = dirname(__DIR__).'/.dev/override_conf_after.php';
 if (file_exists($OVERRIDE_CONF_FILE)) {
 	include_once $OVERRIDE_CONF_FILE;
 }
 // Load auto-configured file
-$AUTO_CONF_FILE = dirname(__FILE__).'/_auto_conf.php';
+$AUTO_CONF_FILE = __DIR__.'/_auto_conf.php';
 if (file_exists($AUTO_CONF_FILE)) {
 	@eval('?>'.file_get_contents($AUTO_CONF_FILE));
 }
