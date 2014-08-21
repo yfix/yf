@@ -206,7 +206,7 @@ class yf_core_install {
 	*/
 	function get_form_defaults() {
 		return array(
-			'install_yf_path'					=> dirname(dirname(dirname(__FILE__))).'/',
+			'install_yf_path'					=> dirname(dirname(__DIR__)).'/',
 			'install_db_host'					=> 'localhost',
 			'install_db_name'					=> 'test_'.substr(md5(microtime()), 0, 6),
 			'install_db_user'					=> 'root',
@@ -346,11 +346,11 @@ define(\'DB_CHARSET\',\'utf8\');';
 	*/
 	function write_user_index_php($rewrite_enabled = true) {
 		$index_file_content = '<?php
-$dev_settings = dirname(dirname(__FILE__)).\'/.dev/override.php\';
+$dev_settings = dirname(__DIR__).\'/.dev/override.php\';
 if (file_exists($dev_settings)) {
     require_once $dev_settings;
 }
-$saved_settings = dirname(__FILE__).\'/saved_settings.php\';
+$saved_settings = __DIR__.\'/saved_settings.php\';
 if (file_exists($saved_settings)) {
     require_once $saved_settings;
 }
@@ -359,7 +359,7 @@ define(\'YF_PATH\', \''.YF_PATH.'\');
 define(\'WEB_PATH\', \''.rtrim($_POST['install_web_path'], '/').'/\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=home_page\');
 define(\'SITE_ADVERT_NAME\', \''.$_POST['install_web_name'].'\');
-require dirname(__FILE__).\'/project_conf.php\';'.PHP_EOL
+require __DIR__.\'/project_conf.php\';'.PHP_EOL
 .($rewrite_enabled ? '$PROJECT_CONF[\'tpl\'][\'REWRITE_MODE\'] = true;'.PHP_EOL : '')
 .'require YF_PATH.\'classes/yf_main.class.php\';
 new yf_main(\'user\', $no_db_connect = false, $auto_init_all = true);';
@@ -378,23 +378,23 @@ new yf_main(\'user\', $no_db_connect = false, $auto_init_all = true);';
 	*/
 	function write_admin_index_php($rewrite_enabled = true) {
 		$admin_index_file_content = '<?php
-$dev_settings = dirname(dirname(dirname(__FILE__))).\'/.dev/override.php\';
+$dev_settings = dirname(dirname(__DIR__)).\'/.dev/override.php\';
 if (file_exists($dev_settings)) {
     require_once $dev_settings;
 }
-$saved_settings = dirname(dirname(__FILE__)).\'/saved_settings.php\';
+$saved_settings = dirname(__DIR__).\'/saved_settings.php\';
 if (file_exists($saved_settings)) {
     require_once $saved_settings;
 }
 define(\'DEBUG_MODE\', false);
 define(\'YF_PATH\', \''.YF_PATH.'\');
 define(\'WEB_PATH\', \''.rtrim($_POST['install_web_path'], '/').'/\');
-define(\'ADMIN_WEB_PATH\', WEB_PATH. basename(dirname(__FILE__)).\'/\');
-//define(\'ADMIN_WEB_PATH\', \'//\'.$_SERVER[\'HTTP_HOST\'].\'/\'.basename(dirname(__FILE__)).\'/\');
-define(\'ADMIN_SITE_PATH\', dirname(__FILE__).\'/\');
+define(\'ADMIN_WEB_PATH\', WEB_PATH. basename(__DIR__).\'/\');
+//define(\'ADMIN_WEB_PATH\', \'//\'.$_SERVER[\'HTTP_HOST\'].\'/\'.basename(__DIR__).\'/\');
+define(\'ADMIN_SITE_PATH\', __DIR__.\'/\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=admin_home\');
 define(\'ADMIN_FRAMESET_MODE\', 1);
-require dirname(dirname(__FILE__)).\'/project_conf.php\';
+require dirname(__DIR__).\'/project_conf.php\';
 require YF_PATH.\'classes/yf_main.class.php\';
 new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		$fpath = PROJECT_PATH.'admin/index.php';
