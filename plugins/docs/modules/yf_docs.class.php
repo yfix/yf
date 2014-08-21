@@ -58,7 +58,7 @@ class yf_docs {
 	function _hook_side_column() {
 		$items = array();
 		$url = process_url('./?object='.$_GET['object']);
-		foreach ((array)glob(PROJECT_PATH.'modules/*.class.php') as $cls) {
+		foreach (array_merge((array)glob(APP_PATH.'modules/*.class.php'),(array)glob(PROJECT_PATH.'modules/*.class.php')) as $cls) {
 			$cls = basename($cls);
 			if ($cls == __CLASS__) {
 				continue;
