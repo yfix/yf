@@ -361,7 +361,7 @@ define(\'YF_PATH\', \''.YF_PATH.'\');
 define(\'WEB_PATH\', \''.rtrim($_POST['install_web_path'], '/').'/\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=home_page\');
 define(\'SITE_ADVERT_NAME\', \''.$_POST['install_web_name'].'\');
-require __DIR__.\'/project_conf.php\';'.PHP_EOL
+require dirname(__DIR__).\'/config/project_conf.php\';'.PHP_EOL
 .($rewrite_enabled ? '$PROJECT_CONF[\'tpl\'][\'REWRITE_MODE\'] = true;'.PHP_EOL : '')
 .'require YF_PATH.\'classes/yf_main.class.php\';
 new yf_main(\'user\', $no_db_connect = false, $auto_init_all = true);';
@@ -396,7 +396,7 @@ define(\'ADMIN_WEB_PATH\', WEB_PATH. basename(__DIR__).\'/\');
 define(\'ADMIN_SITE_PATH\', __DIR__.\'/\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=admin_home\');
 define(\'ADMIN_FRAMESET_MODE\', 1);
-require dirname(__DIR__).\'/project_conf.php\';
+require dirname(dirname(__DIR__)).\'/config/project_conf.php\';
 require YF_PATH.\'classes/yf_main.class.php\';
 new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		$fpath = PROJECT_PATH.'admin/index.php';
@@ -438,7 +438,6 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		$suffix_len = strlen($suffix);
 		$sql_paths = array(
 			'yf'		=> YF_PATH.'share/db_installer/sql/sys_*'.$suffix,
-			'yf_p2'		=> YF_PATH.'priority2/share/db_installer/sql/sys_*'.$suffix,
 			'yf_plugins'=> YF_PATH.'plugins/*/share/db_installer/sql/sys_*'.$suffix,
 			'yf_install'=> INSTALLER_PATH.'installer/data/*'.$suffix,
 		);
