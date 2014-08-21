@@ -46,12 +46,12 @@ class yf_debug {
 	public $SORT_TEMPLATES_BY_NAME	= true;
 	public $ADD_ADMIN_LINKS			= true;
 	public $ADMIN_PATHS				= array(
-		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={{THEME}}&name={{ID}}',
-		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={{ID}}',
-		'edit_file'		=> 'object=file_manager&action=edit_item&id={{ID}}',
-		'show_db_table'	=> 'object=db_manager&action=table_show&id={{ID}}',
-		'sql_query'		=> 'object=db_manager&action=import&id={{ID}}',
-		'link'			=> '{{ID}}',
+		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={THEME}&name={ID}',
+		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={ID}',
+		'edit_file'		=> 'object=file_manager&action=edit_item&id={ID}',
+		'show_db_table'	=> 'object=db_manager&action=table_show&id={ID}',
+		'sql_query'		=> 'object=db_manager&action=import&id={ID}',
+		'link'			=> '{ID}',
 	);
 
 	/**
@@ -1230,8 +1230,8 @@ class yf_debug {
 		}
 		$id = $text;
 		$replace += array(
-			'{{ID}}'	=> urlencode(str_replace("\\", '/', $id)),
-			'{{THEME}}'	=> conf('theme'),
+			'{ID}'	=> urlencode(str_replace("\\", '/', $id)),
+			'{THEME}'	=> conf('theme'),
 		);
 		$url = str_replace(array_keys($replace), array_values($replace), $this->ADMIN_PATHS[$type]);
 		$link = ADMIN_WEB_PATH. '?'. $url;
