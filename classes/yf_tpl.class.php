@@ -520,6 +520,7 @@ class yf_tpl {
 				$this->_yf_plugins = main()->_preload_plugins_list();
 				$this->_yf_plugins_classes = main()->_plugins_classes;
 			}
+			$def_theme = $this->_get_def_user_theme();
 			// Storages are defined in specially crafted `order`, so do not change it unless you have strong reason
 			$storages = array();
 			$site_path = (MAIN_TYPE_USER ? SITE_PATH : ADMIN_SITE_PATH);
@@ -529,6 +530,7 @@ class yf_tpl {
 				if ($site_path && $site_path != PROJECT_PATH) {
 					$storages['dev_site'] = $site_path. $dev_path. $this->TPL_PATH. $file_name;
 				}
+				$storages['dev_app'] = APP_PATH. $dev_path. $this->TPL_PATH. $file_name;
 				$storages['dev_project'] = PROJECT_PATH. $dev_path. $this->TPL_PATH. $file_name;
 			}
 			if ($this->ALLOW_LANG_BASED_STPLS) {
@@ -537,16 +539,20 @@ class yf_tpl {
 			if ($site_path && $site_path != PROJECT_PATH) {
 				$storages['site'] = $site_path. $this->TPL_PATH. $file_name;
 			}
+			$storages['app'] = APP_PATH. $this->TPL_PATH. $file_name;
 			$storages['project'] = PROJECT_PATH. $this->TPL_PATH. $file_name;
 			if ($this->_INHERITED_SKIN) {
+				$storages['inherit_app'] = APP_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
 				$storages['inherit_project'] = PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
 			}
 			if ($this->_INHERITED_SKIN2) {
+				$storages['inherit_app2'] = APP_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
 				$storages['inherit_project2'] = PROJECT_PATH. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
 			}
 			// in admin mode: not include main, style_css, script_js templates from project place
-			if (MAIN_TYPE_ADMIN && !in_array($stpl_name, array('main'/*, 'style_css', 'script_js'*/))) {
-				$storages['project_admin_user'] = PROJECT_PATH. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
+			if (MAIN_TYPE_ADMIN && !in_array($stpl_name, array('main'))) {
+				$storages['app_admin_user'] = APP_PATH. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
+				$storages['project_admin_user'] = PROJECT_PATH. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
 			}
 			// Load template from plugins. Should stay in subdir like this:
 			// YF_PATH.'plugins/news/templates/user/news/main.stpl' => tpl()->parse('news/main')
@@ -556,25 +562,27 @@ class yf_tpl {
 				} else {
 					$plugin_subdir = 'plugins/'.$this->_yf_plugins_classes[$class_name].'/';
 				}
+				$storages['plugins_app'] = APP_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
 				$storages['plugins_project'] = PROJECT_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
 				if ($this->_INHERITED_SKIN) {
+					$storages['plugins_inherit_app'] = APP_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
 					$storages['plugins_inherit_project'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN. '/'. $file_name;
 				}
 				if ($this->_INHERITED_SKIN2) {
+					$storages['plugins_inherit_app2'] = APP_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
 					$storages['plugins_inherit_project2'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
 				}
 				$storages['plugins_framework'] = YF_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
 				if (MAIN_TYPE_ADMIN) {
-					$storages['plugins_user_section'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_get_def_user_theme(). '/'. $file_name;
+					$storages['plugins_user_app'] = APP_PATH. $plugin_subdir. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
+					$storages['plugins_user_section'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
 					$storages['plugins_framework_user']	= YF_PATH. $plugin_subdir. $this->_THEMES_PATH. 'user/'. $file_name;
 				}
 			}
 			$storages['framework'] = YF_PATH. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
-			$storages['framework_p2'] = YF_PATH. 'priority2/'. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
 			// user section within admin
 			if (MAIN_TYPE_ADMIN) {
 				$storages['framework_user']	= YF_PATH. $this->_THEMES_PATH. 'user/'. $file_name;
-				$storages['framework_user_p2'] = YF_PATH. 'priority2/'. $this->_THEMES_PATH. 'user/'. $file_name;
 			}
 			// Try storages one-by-one in inheritance `order`, stop when found
 			$storage = '';
