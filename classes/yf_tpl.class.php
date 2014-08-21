@@ -636,11 +636,13 @@ class yf_tpl {
 		if (!empty($this->_def_user_theme)) {
 			return $this->_def_user_theme;
 		}
+/*
 		$SITES_INFO = _class('sites_info', 'classes/')->info;
 		$FIRST_SITE_INFO = array_shift($SITES_INFO);
 		if (file_exists(PROJECT_PATH. $this->_THEMES_PATH. $FIRST_SITE_INFO['DEFAULT_SKIN']. '/')) {
 			$this->_def_user_theme = $FIRST_SITE_INFO['DEFAULT_SKIN'];
 		}
+*/
 		if (empty($this->_def_user_theme)) {
 			$this->_def_user_theme = 'user';
 		}
