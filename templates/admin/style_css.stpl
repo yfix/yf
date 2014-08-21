@@ -62,9 +62,17 @@ body.cssfw-bs3 a.accordion-toggle { display: block; }
 /* override styles per bs theme here */
 .bs-theme-slate textarea, .bs-theme-slate select { color: #52575c; }
 </style>
+
 {if("conf.css_framework" eq "bs3")}
-	<style type="text/css">
-	/*input, textarea, select { max-width: 300px; }*/
-	</style>
+<style type="text/css">
+.container-fixed input, .container-fixed textarea, .container-fixed select { max-width: 300px; }
+.container-fixed .input-mini { width:60px !important }
+.container-fixed .input-small { width:90px !important }
+.container-fixed .input-medium { width:150px !important }
+.container-fixed .input-large { width:210px !important }
+.container-fixed .input-xlarge { width:270px !important }
+.container-fixed .input-xxlarge { width:530px !important }
+</style>
 {/if}
+
 <!-- /style_css.stpl --> {{-- Do not remove this line! --}}
