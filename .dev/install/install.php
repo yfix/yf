@@ -261,6 +261,8 @@ class yf_core_install {
 	function set_php_conf() {
 		define('PROJECT_PATH', $_POST['install_project_path'] ?: realpath('./').'/');
 		define('INCLUDE_PATH', PROJECT_PATH);
+		define('APP_PATH', dirname(PROJECT_PATH).'/');
+		define('CONFIG_PATH', APP_PATH.'/config/');
 		$GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
 		$GLOBALS['PROJECT_CONF']['main']['SESSION_OFF'] = 1;
 		$GLOBALS['PROJECT_CONF']['db']['ALLOW_AUTO_CREATE_DB'] = 1;
@@ -331,7 +333,7 @@ define(\'DB_USER\',	\''.$_POST['install_db_user'].'\');
 define(\'DB_PSWD\',	\''.$_POST['install_db_pswd'].'\');
 define(\'DB_PREFIX\',	\''.$_POST['install_db_prefix'].'\');
 define(\'DB_CHARSET\',\'utf8\');';
-		$fpath = PROJECT_PATH.'db_setup.php';
+		$fpath = CONFIG_PATH.'db_setup.php';
 		$d = dirname($fpath);
 		if (!file_exists($d)) {
 			mkdir($d, 0777, true);
@@ -544,7 +546,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	/**
 	*/
 	function copy_project_skeleton() {
-		_class('dir')->copy_dir(INSTALLER_PATH.'skel/', PROJECT_PATH, '', '/\.(svn|git)/');
+		_class('dir')->copy_dir(INSTALLER_PATH.'skel/', APP_PATH, '', '/\.(svn|git)/');
 		return installer();
 	}
 
@@ -623,7 +625,7 @@ installer()
 ;
 if ($_POST['install_checkbox_demo_data']) {
 	installer()->import_demo_data();
-	_class('dir')->copy_dir(INSTALLER_PATH.'install/demo_skel/', PROJECT_PATH, '', '/\.(svn|git)/');
+	_class('dir')->copy_dir(INSTALLER_PATH.'demo_skel/', APP_PATH, '', '/\.(svn|git)/');
 }
 $debug_info = $_POST['install_checkbox_debug_info'] ? tpl()->parse('debug_console_js'). common()->show_debug_info() : '';
 $vars = installer()->prepare_vars();
