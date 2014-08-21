@@ -14,7 +14,7 @@ class yf_manage_shop_product_edit {
 		}
 		// prepare region
 		$_region = _class( '_shop_region', 'modules/shop/' )->_get_list();
-		$region = _class( '_shop_region', 'modules/shop/' )->_get_by_product_ids( $id );
+		$region = _class( '_shop_region', 'modules/shop/' )->_get_by_product_ids( $id, $force = true );
 			$region = $region[ $id ];
 		// -----
 		if (main()->is_post()) {

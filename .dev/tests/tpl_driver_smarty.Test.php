@@ -4,6 +4,12 @@ require_once dirname(__FILE__).'/tpl__setup.php';
 
 class tpl_driver_smarty_test extends tpl_abstract {
 	public static $driver_bak = array();
+	protected function setUp() {
+		if (defined('HHVM_VERSION')) {
+			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
+			return ;
+	   	}
+	}
 	public static function setUpBeforeClass() {
 		self::$driver_bak = tpl()->DRIVER_NAME;
 		tpl()->_set_default_driver('smarty');

@@ -9,22 +9,20 @@
 */
 class yf_remote_files {
 
-	/** @var string SMTP host to verify emails from
-	*	Be sure to set this correctly! 
-	*/
-	public $SMTP_PROBE_HOST	= 'mx.test.com';
+	/** @var string SMTP host to verify emails from. Be sure to set this correctly! */
+	public $SMTP_PROBE_HOST			= 'mx.test.com';
 	/** @var string */
-	public $SMTP_PROBE_ADDRESS	= 'admin@test.com';
+	public $SMTP_PROBE_ADDRESS		= 'admin@test.com';
 	/** @var string @conf_skip */
-	public $DEF_USER_AGENT		= 'Mozilla/5.0 Firefox YF';
+	public $DEF_USER_AGENT			= 'Mozilla/5.0 Firefox YF';
 	/** @var bool @conf_skip */
-	public $REMOTE_ALLOW_CACHE	= true;
+	public $REMOTE_ALLOW_CACHE		= true;
 	/** @var string @conf_skip */
-	public $REMOTE_CACHE_DIR	= 'uploads/remote_cache/';
-	/** @var int @conf_skip */
-	public $CURL_DEF_CONNECT_TIMEOUT	= 15;
-	/** @var int @conf_skip */
-	public $CURL_DEF_TIMEOUT	= 30;
+	public $REMOTE_CACHE_DIR		= 'remote_cache/';
+	/** @var int @conf_skip In seconds */
+	public $CURL_DEF_CONNECT_TIMEOUT= 15;
+	/** @var int @conf_skip In seconds */
+	public $CURL_DEF_TIMEOUT		= 30;
 	/** @var int @conf_skip */
 	public $CURL_DEF_MAX_REDIRECTS	= 30;
 	/** @var int @conf_skip */
@@ -32,11 +30,11 @@ class yf_remote_files {
 	/** @var int @conf_skip */
 	public $CURL_DEF_INTERFACE		= '';
 	/** @var int @conf_skip */
-	public $CURL_DEF_HEADER		= '';
+	public $CURL_DEF_HEADER			= '';
 	/** @var bool */
-	public $DEBUG		= false;
+	public $DEBUG					= false;
 	/** @var bool */
-	public $_is_avail_setopt_array = false;
+	public $_is_avail_setopt_array	= false;
 
 	/**
 	*/
@@ -225,7 +223,7 @@ class yf_remote_files {
 		$result = '';
 		// Try to get from cache
 		if ($this->REMOTE_ALLOW_CACHE && $cache_ttl != -1) {
-			$cache_dir	= INCLUDE_PATH. $this->REMOTE_CACHE_DIR;
+			$cache_dir	= STORAGE_PATH. $this->REMOTE_CACHE_DIR;
 			$cache_name	= md5($url);
 			$cache_path	= $cache_dir.$cache_name[0].'/'.$cache_name[1].'/'.$cache_name;
 			if (file_exists($cache_path)) {
@@ -761,28 +759,17 @@ class yf_remote_files {
 
 	/**
 	* Perform an HTTP request.
+	* This is a flexible and powerful HTTP client implementation. Correctly handles GET, POST, PUT or any other HTTP requests. Handles redirects.
 	*
-	* This is a flexible and powerful HTTP client implementation. Correctly handles
-	* GET, POST, PUT or any other HTTP requests. Handles redirects.
-	*
-	* @param $url
-	*   A string containing a fully qualified URI.
-	* @param $headers
-	*   An array containing an HTTP header => value pair.
-	* @param $method
-	*   A string defining the HTTP request to use.
-	* @param $data
-	*   A string containing data to include in the request.
-	* @param $retry
-	*   An integer representing how many times to retry the request in case of a
-	*   redirect.
-	* @return
-	*   An object containing the HTTP request headers, response code, headers,
-	*   data, and redirect status.
+	* @param $url A string containing a fully qualified URI.
+	* @param $headers  An array containing an HTTP header => value pair.
+	* @param $method  A string defining the HTTP request to use.
+	* @param $data  A string containing data to include in the request.
+	* @param $retry  An integer representing how many times to retry the request in case of a redirect.
+	* @return An object containing the HTTP request headers, response code, headers, data, and redirect status.
 	*/
 	function http_request($url, $headers = array(), $method = 'GET', $data = NULL, $retry = 3) {
 		$result = new stdClass();
-	
 		// Parse the URL, and make sure we can handle the schema.
 		$uri = parse_url($url);
 		switch ($uri['scheme']) {
@@ -801,19 +788,16 @@ class yf_remote_files {
 				$result->error = 'invalid schema '. $uri['scheme'];
 				return $result;
 		}
-	
 		// Make sure the socket opened properly.
 		if (!$fp) {
 			$result->error = trim($errno .' '. $errstr);
 			return $result;
 		}
-	
 		// Construct the path to act on.
 		$path = isset($uri['path']) ? $this->_fix_url($uri['path']) : '/';
 		if (isset($uri['query'])) {
 			$path .= '?'. $uri['query'];
 		}
-	
 		// Create HTTP request.
 		$defaults = array(
 			// RFC 2616: 'non-standard ports MUST, default ports MAY be included'.
@@ -823,11 +807,9 @@ class yf_remote_files {
 			'User-Agent' => 'User-Agent: YF (+http://yfix.dev/)',
 			'Content-Length' => 'Content-Length: '. strlen($data)
 		);
-	
 		foreach ((array)$headers as $header => $value) {
 			$defaults[$header] = $header .': '. $value;
 		}
-	
 		$request = $method .' '. $path ." HTTP/1.0\r\n";
 		$request .= implode("\r\n", $defaults);
 		$request .= "\r\n\r\n";
@@ -837,7 +819,6 @@ class yf_remote_files {
 		$result->request = $request;
 	
 		fwrite($fp, $request);
-	
 		// Fetch response.
 		$response = '';
 		while (!feof($fp) && $chunk = fread($fp, 1024)) {
@@ -864,7 +845,6 @@ class yf_remote_files {
 				$result->headers[$header] = trim($value);
 			}
 		}
-	
 		$responses = array(
 			100 => 'Continue', 101 => 'Switching Protocols',
 			200 => 'OK', 201 => 'Created', 202 => 'Accepted', 203 => 'Non-Authoritative Information', 204 => 'No Content', 205 => 'Reset Content', 206 => 'Partial Content',
@@ -872,12 +852,10 @@ class yf_remote_files {
 			400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required', 403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed', 406 => 'Not Acceptable', 407 => 'Proxy Authentication Required', 408 => 'Request Time-out', 409 => 'Conflict', 410 => 'Gone', 411 => 'Length Required', 412 => 'Precondition Failed', 413 => 'Request Entity Too Large', 414 => 'Request-URI Too Large', 415 => 'Unsupported Media Type', 416 => 'Requested range not satisfiable', 417 => 'Expectation Failed',
 			500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable', 504 => 'Gateway Time-out', 505 => 'HTTP Version not supported'
 		);
-		// RFC 2616 states that all unknown HTTP codes must be treated the same as
-		// the base code in their class.
+		// RFC 2616 states that all unknown HTTP codes must be treated the same as the base code in their class.
 		if (!isset($responses[$code])) {
 			$code = floor($code / 100) * 100;
 		}
-	
 		switch ($code) {
 			case 200: // OK
 			case 304: // Not modified
@@ -897,7 +875,6 @@ class yf_remote_files {
 			default:
 				$result->error = $text;
 		}
-	
 		$result->code = $code;
 		return $result;
 	}

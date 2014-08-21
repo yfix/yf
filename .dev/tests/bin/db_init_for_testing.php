@@ -27,4 +27,4 @@ $_POST = array(
 	'install_checkbox_debug_info'		=> '',
 );
 
-require dirname(dirname(__FILE__)).'/install/install.php';
+require dirname(dirname(__DIR__)).'/install/install.php';

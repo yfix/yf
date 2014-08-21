@@ -153,7 +153,7 @@ __INVOICE__
 		$discount_price = $_class_price->apply_price( $price_total, $_discount );
 		$discount_price -= $price_total;
 		// total string
-		$total_sum	= $order_info[ 'total_sum' ];
+		$total_sum	= (float)$order_info[ 'total_sum' ];
 		$num_to_str	= common()->num2str( $total_sum );
 		// delivery
 		$_class_delivery = _class( '_shop_delivery', 'modules/shop/' );

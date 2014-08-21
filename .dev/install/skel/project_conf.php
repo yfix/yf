@@ -65,10 +65,6 @@ $PROJECT_CONF = my_array_merge((array)$PROJECT_CONF, array(
 	'i18n' => array(
 		'TRACK_TRANSLATED'  => 1,
 	),
-	'debug_info' => array(
-		'_SHOW_NOT_TRANSLATED'  => 1,
-		'_SHOW_I18N_VARS'   => 1,
-	),
 	'rewrite'	=> array(
 		'_rewrite_add_extension'	=> '/',
 	),
@@ -79,9 +75,6 @@ $PROJECT_CONF = my_array_merge((array)$PROJECT_CONF, array(
 		'_LOGGING'			=> 1,
 		'STORE_USER_AUTH'	=> 1,
 		'UPDATE_LAST_LOGIN'	=> 1,
-	),
-	'bb_codes'	=> array(
-		'SMILIES_DIR'	=> 'uploads/forum/smilies/',
 	),
 ));
 

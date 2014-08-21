@@ -2195,7 +2195,7 @@ class yf_form2 {
 				if ($on_success_text) {
 					common()->set_notice($on_success_text);
 				}
-				$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : ($_this->_replace['redirect_link'] ? $_this->_replace['redirect_link'] : $_this->_replace['back_link']);
+				$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : (!empty($_this->_replace['redirect_link']) ? $_this->_replace['redirect_link'] : !empty($_this->_replace['back_link']) ? $_this->_replace['back_link'] : '');
 				if (!$redirect_link) {
 					$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : '');
 				}

@@ -484,8 +484,8 @@ class yf_dir {
 		if (empty($dir_mode)) {
 			$dir_mode = 0777;
 		}
-		// Use native recursive function if availiable
-		if (version_compare(PHP_VERSION, '5.0.0', '>') && !$create_index_htmls) {
+		// Use native recursive function if applicable
+		if (!$create_index_htmls) {
 			if (file_exists($dir_name)) {
 				return true;
 			}

@@ -2,6 +2,10 @@
 
 // TODO: form validation
 // TODO: add language selector $_POST['install_project_lang']
+// TODO: webserver selection (write htaccess or not?)
+// TODO: storage path seletion and checking for writable
+// TODO: check for required extensions and functions (pcre, mbstring, iconv, date, ctype, sockets, Phar, SimpleXML, tokenizer, curl, json, mysql|mysqli, gd, imagettftext, memcache)
+// TODO: check for optional exts: (mcrypt, gmp, imagick, xcache, zip, memcached)
 
 class yf_core_install {
 

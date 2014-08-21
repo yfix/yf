@@ -19,7 +19,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 	/**
 	*/
 	function _init() {
-		$this->CACHE_DIR = PROJECT_PATH. 'core_cache/';
+		$this->CACHE_DIR = STORAGE_PATH. 'core_cache/';
 		if ($this->CREATE_DIRS && !file_exists($this->CACHE_DIR)) {
 			mkdir($this->CACHE_DIR, $this->DIR_CHMOD, true);
 		}
@@ -138,7 +138,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 			$_time_start = microtime(true);
 		}
 
-		include $path;
+		$data = include $path;
 
 		if (DEBUG_MODE) {
 			$_cf = strtolower(str_replace(DIRECTORY_SEPARATOR, '/', $path));
@@ -155,7 +155,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 			return false;
 		}
 		$str = str_replace(' => '.PHP_EOL.'array (', '=>array(', preg_replace('/^\s+/m', '', var_export($data, 1)));
-		$str = '<?'.'php'.PHP_EOL.'$data = '.$str.';'.PHP_EOL;
+		$str = '<?'.'php'.PHP_EOL.'return '.$str.';'.PHP_EOL;
 		return file_put_contents($path, $str);
 	}
 }

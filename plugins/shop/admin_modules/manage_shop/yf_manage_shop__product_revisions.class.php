@@ -360,6 +360,19 @@ class yf_manage_shop__product_revisions {
 				$origin = var_export($origin, true);
 				$before = var_export($before, true);
 				return common()->get_diff($before, $origin);
+/*
+				$compare = function($a, $b){
+					foreach($a as $name => $data){
+						foreach($data as $k => $v){
+						if($v != $b[$name][$k] || !isset($b[$name][$k])){
+							$out[$name][$k] = $v;
+						}
+					}
+					return $out;
+				};
+				$out = $compare($before, $origin);
+				return '<pre>'.print_r($out, true).'</pre>';
+*/
 			})
 		->tab_end()
 		->tab_start('New_version')

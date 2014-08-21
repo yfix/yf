@@ -23,6 +23,7 @@ class yf_send_mail {
 	public $MAIL_DEBUG				= false;
 	/** @var string */
 	public $DEBUG_TEST_ADDRESS		= '';
+	/** @var bool */
 	public $DEBUG_TEST_SEND_BULK	= true;
 	/** @var string */
 	public $DEFAULT_CHARSET		= 'windows-1251';
@@ -32,12 +33,6 @@ class yf_send_mail {
 	public $DB_LOG_ENV				= false;
 	/** @var bool */
 	public $ALLOW_ATTACHMENTS		= true;
-	/** @var array @conf_skip */
-	public $PEAR_MAILER_BACKENDS	= array(
-		'mail',
-		'sendmail',
-		'smtp',
-	);
 	/** @var bool Replaces 'From' with $this->SMTP_OPTIONS['from'] */
 	public $REPLACE_FIELD_FROM		= true;
 	/** @var string External SMTP config file */
@@ -57,11 +52,8 @@ class yf_send_mail {
 	* Module constructor
 	*/
 	function _init () {
-		// Path to mal logs from siple sender
 		define('LOG_MAIL_PATH', INCLUDE_PATH.'logs/email/');
-		// Prepare full path to the SMTP config file
 		$this->_smtp_config_file = INCLUDE_PATH. $this->_smtp_config_file;
-		// Apply some options
 		$mail_debug = conf('mail_debug');
 		if (isset($mail_debug)) {
 			$this->MAIL_DEBUG = $mail_debug;
@@ -74,16 +66,12 @@ class yf_send_mail {
 		if (!empty($log_emails)) {
 			$this->LOG_EMAILS = $log_emails;
 		}
-		// hide XPM4 errors
-		define('DISPLAY_XPM4_ERRORS',	false);
-		// log XPM4 errors
-		define('LOG_XPM4_ERRORS',		true);
 	}
 
 	/**
 	* Send emails with attachments with DEBUG ability
 	*/
-	function send ($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = array(), $priority = 3, $smtp = array()) {
+	function send ($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $_deprecated_param1 = '', $force_mta_opts = array(), $priority = 3, $smtp = array()) {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
@@ -101,7 +89,6 @@ class yf_send_mail {
 			$charset		= $params['charset'];
 			$force_mta_opts = $params['force_mta_opts'] ? $params['force_mta_opts'] : $force_mta_opts;
 			$priority		= $params['priority'] ? $params['priority'] : 3;
-			$pear_mailer_backend = $params['pear_mailer_backend'] ? $params['pear_mailer_backend'] : 'smtp';
 			$smtp			= $params['smtp'] ?: $smtp;
 		}
 		$_prev_num_errors = count((array)main()->_all_core_error_msgs);
@@ -136,7 +123,7 @@ class yf_send_mail {
 			}
 		}
 
-		// Load specific SMTP options (only for 'phpmailer', 'pear', 'xpm2', 'xpm4')
+		// Load specific SMTP options (only for 'phpmailer')
 		if ( !$this->MAIL_DEBUG && empty( $smtp ) && in_array($this->USE_MAILER, array('phpmailer'))) {
 			// Try to get specific SMTP settings
 			$this->SMTP_OPTIONS = $this->_process_smtp_config($email_to);

@@ -24,4 +24,4 @@ $handlers_aliases = array(
 foreach ((array)$handlers_aliases as $from => $to) {
 	$handlers[$from] = $handlers[$to];
 }
-conf('data_handlers', (array)conf('data_handlers') + $handlers);
+main()->data_handlers = (array)main()->data_handlers + $handlers;

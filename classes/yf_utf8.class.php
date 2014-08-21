@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Unicode methods (inspired by drupal 6.2)
+* Unicode methods
 * 
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
@@ -26,33 +26,24 @@ class yf_utf8 {
 	}
 
 	/**
-	* Constructor
-	*
-	* @access	public
-	* @return	void
 	*/
 	function __construct () {
-		list($this->MULTIBYTE) = $this->unicode_check();
+		list($this->MULTIBYTE, $utf8_init_error) = $this->unicode_check();
+		if ($utf8_init_error) {
+			trigger_error(__CLASS__.':'.$utf8_init_error, E_USER_WARNING);
+		}
 	}
 
 	/**
-	* Perform checks about Unicode support in PHP, and set the right settings if
-	* needed.
+	* Perform checks about Unicode support in PHP, and set the right settings if needed.
+	* It needs to be able to handle text in various encodings, we do not support mbstring function overloading. 
+	* HTTP input/output conversion must be disabled for similar reasons.
 	*
-	* needs to be able to handle text in various encodings, we do
-	* not support mbstring function overloading. HTTP input/output conversion must
-	* be disabled for similar reasons.
-	*
-	* @param $errors
-	*   Whether to report any fatal errors with form_set_error().
+	* @param $errors  Whether to report any fatal errors with form_set_error().
 	*/
 	function unicode_check() {
 		// Set the standard C locale to ensure consistent, ASCII-only string handling.
-		$is_dev = substr(PHP_OS, 0, 3) == 'WIN';
-		if (!$is_dev) {
-			setlocale(LC_CTYPE, 'C');
-		}
-
+		setlocale(LC_CTYPE, 'C');
 		// Check for outdated PCRE library
 		// Note: we check if U+E2 is in the range U+E0 - U+E1. This test returns TRUE on old PCRE versions.
 		if (preg_match('/[à-á]/u', 'â')) {
@@ -66,16 +57,6 @@ class yf_utf8 {
 		if (ini_get('mbstring.func_overload') != 0) {
 			return array($this->UNICODE_ERROR, t('Multibyte string function overloading in PHP is active and must be disabled. Check the php.ini <em>mbstring.func_overload</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
 		}
-		if (ini_get('mbstring.encoding_translation') != 0) {
-			return array($this->UNICODE_ERROR, t('Multibyte string input conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.encoding_translation</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
-		}
-		if (ini_get('mbstring.http_input') != 'pass') {
-			return array($this->UNICODE_ERROR, t('Multibyte string input conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.http_input</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
-		}
-		if (ini_get('mbstring.http_output') != 'pass') {
-			return array($this->UNICODE_ERROR, t('Multibyte string output conversion in PHP is active and must be disabled. Check the php.ini <em>mbstring.http_output</em> setting. Please refer to the <a href="@url">PHP mbstring documentation</a> for more information.', array('@url' => 'http://www.php.net/mbstring')));
-		}
-		// Set appropriate configuration
 		mb_internal_encoding('utf-8');
 		mb_language('uni');
 		return array($this->UNICODE_MULTIBYTE, '');
@@ -94,16 +75,13 @@ class yf_utf8 {
 	* This is also where unsupported encodings will be converted. Callers should
 	* take this into account: $data might have been changed after the call.
 	*
-	* @param &$data
-	*   The XML data which will be parsed later.
-	* @return
-	*   An XML parser object.
+	* @param &$data  The XML data which will be parsed later.
+	* @return  An XML parser object.
 	*/
 	function xml_parser_create(&$data) {
-		// Default XML encoding is UTF-8
+		// Default XML encoding
 		$encoding = 'utf-8';
 		$bom = FALSE;
-
 		// Check for UTF-8 byte order mark (PHP5's XML parser doesn't handle it).
 		if (!strncmp($data, '\xEF\xBB\xBF', 3)) {
 			$bom = TRUE;
@@ -125,7 +103,6 @@ class yf_utf8 {
 				return 0;
 			}
 		}
-
 		$xml_parser = xml_parser_create($encoding);
 		xml_parser_set_option($xml_parser, XML_OPTION_TARGET_ENCODING, 'utf-8');
 		return $xml_parser;
@@ -133,15 +110,11 @@ class yf_utf8 {
 
 	/**
 	* Convert data to UTF-8
-	*
 	* Requires the iconv, GNU recode or mbstring PHP extension.
 	*
-	* @param $data
-	*   The data to be converted.
-	* @param $encoding
-	*   The encoding that the data is in
-	* @return
-	*   Converted data or FALSE.
+	* @param $data The data to be converted.
+	* @param $encoding The encoding that the data is in
+	* @return  Converted data or FALSE.
 	*/
 	function convert_to_utf8($data, $encoding) {
 		if (function_exists('iconv')) {
@@ -168,12 +141,9 @@ class yf_utf8 {
 	* character boundary (e.g. after using strpos() or similar), you can safely use
 	* substr() instead.
 	*   
-	* @param $string
-	*   The string to truncate.
-	* @param $len
-	*   An upper limit on the returned string length.
-	* @return
-	*  	The truncated string.
+	* @param $string The string to truncate.
+	* @param $len An upper limit on the returned string length.
+	* @return The truncated string.
 	*/
 	function truncate_bytes($string, $len) {
 		if (strlen($string) <= $len) {
@@ -188,17 +158,11 @@ class yf_utf8 {
 
 	/**
 	* Truncate a UTF-8-encoded string safely to a number of characters.
-	*
-	* @param $string
-	*   The string to truncate.
-	* @param $len
-	*   An upper limit on the returned string length.
-	* @param $wordsafe
-	*   Flag to truncate at last space within the upper limit. Defaults to FALSE.
-	* @param $dots
-	*   Flag to add trailing dots. Defaults to FALSE.
-	* @return
-	*   The truncated string.
+	* @param $string  The string to truncate.
+	* @param $len  An upper limit on the returned string length.
+	* @param $wordsafe  Flag to truncate at last space within the upper limit. Defaults to FALSE.
+	* @param $dots  Flag to add trailing dots. Defaults to FALSE.
+	* @return  The truncated string.
 	*/
 	function truncate_utf8($string, $len, $wordsafe = FALSE, $dots = FALSE) {
 		if ($this->strlen($string) <= $len) {
@@ -225,12 +189,8 @@ class yf_utf8 {
 
 	/**
 	* Encodes MIME/HTTP header values that contain non-ASCII, UTF-8 encoded
-	* characters.
-	*
-	* For example, mime_header_encode('tést.txt') returns "=?UTF-8?B?dMOpc3QudHh0?=".
-	*
+	* characters. For example, mime_header_encode('tést.txt') returns "=?UTF-8?B?dMOpc3QudHh0?=".
 	* See http://www.rfc-editor.org/rfc/rfc2047.txt for more information.
-	*
 	* Notes:
 	* - Only encode strings that contain non-ASCII characters.
 	* - We progressively cut-off a chunk with truncate_utf8(). This is to ensure
@@ -284,11 +244,8 @@ class yf_utf8 {
 	* Decode all HTML entities (including numerical ones) to regular UTF-8 bytes.
 	* Double-escaped entities will only be decoded once ("&amp;lt;" becomes "&lt;", not "<").
 	*
-	* @param $text
-	*   The text to decode entities in.
-	* @param $exclude
-	*   An array of characters which should not be decoded. For example,
-	*   array('<', '&', '"'). This affects both named and numerical entities.
+	* @param $text The text to decode entities in.
+	* @param $exclude  An array of characters which should not be decoded. For example, array('<', '&', '"'). This affects both named and numerical entities.
 	*/
 	function decode_entities($text, $exclude = array()) {
 		static $table;
@@ -308,7 +265,6 @@ class yf_utf8 {
 			$table['&apos;'] = "'";
 		}
 		$newtable = array_diff($table, $exclude);
-
 		// Use a regexp to select all entities in one pass, to avoid decoding double-escaped entities twice.
 		return preg_replace('/&(#x?)?([A-Za-z0-9]+);/e', '$this->_decode_entities("$1", "$2", "$0", $newtable, $exclude)', $text);
 	}
@@ -361,17 +317,15 @@ class yf_utf8 {
 	}
 
 	/**
-	* Count the amount of characters in a UTF-8 string. This is less than or
-	* equal to the byte count.
+	* Count the amount of characters in a UTF-8 string. This is less than or equal to the byte count.
 	*/
 	function strlen($text) {
 		if ($this->MULTIBYTE == $this->UNICODE_MULTIBYTE) {
 			// fastest variant from all others
 			return mb_strlen($text);
-		} else {
-			// Do not count UTF-8 continuation bytes.
-			return strlen(preg_replace('/[\x80-\xBF]/', '', $text));
 		}
+		// Do not count UTF-8 continuation bytes.
+		return strlen(preg_replace('/[\x80-\xBF]/', '', $text));
 	}
 
 	/**
@@ -386,13 +340,12 @@ class yf_utf8 {
 		}
 		if ($this->MULTIBYTE == $this->UNICODE_MULTIBYTE) {
 			return mb_strtoupper($text);
-		} else {
-			// Use C-locale for ASCII-only uppercase
-			$text = strtoupper($text);
-			// Case flip Latin-1 accented letters
-			$text = preg_replace_callback('/\xC3[\xA0-\xB6\xB8-\xBE]/', array($this, '_unicode_caseflip'), $text);
-			return $text;
 		}
+		// Use C-locale for ASCII-only uppercase
+		$text = strtoupper($text);
+		// Case flip Latin-1 accented letters
+		$text = preg_replace_callback('/\xC3[\xA0-\xB6\xB8-\xBE]/', array($this, '_unicode_caseflip'), $text);
+		return $text;
 	}
 
 	/**
@@ -407,18 +360,16 @@ class yf_utf8 {
 		}
 		if ($this->MULTIBYTE == $this->UNICODE_MULTIBYTE) {
 			return mb_strtolower($text);
-		} else {
-			// Use C-locale for ASCII-only lowercase
-			$text = strtolower($text);
-			// Case flip Latin-1 accented letters
-			$text = preg_replace_callback('/\xC3[\x80-\x96\x98-\x9E]/', array($this, '_unicode_caseflip'), $text);
-			return $text;
 		}
+		// Use C-locale for ASCII-only lowercase
+		$text = strtolower($text);
+		// Case flip Latin-1 accented letters
+		$text = preg_replace_callback('/\xC3[\x80-\x96\x98-\x9E]/', array($this, '_unicode_caseflip'), $text);
+		return $text;
 	}
 
 	/**
-	* Helper function for case conversion of Latin-1.
-	* Used for flipping U+C0-U+DE to U+E0-U+FD and back.
+	* Helper function for case conversion of Latin-1. Used for flipping U+C0-U+DE to U+E0-U+FD and back.
 	*/
 	function _unicode_caseflip($matches) {
 		return $matches[0][0] . chr(ord($matches[0][1]) ^ 32);
@@ -426,6 +377,7 @@ class yf_utf8 {
 
 	/**
 	* Capitalize the first letter of a UTF-8 string.
+	* Note: no mbstring equivalent!
 	*/
 	function ucfirst($text) {
 		if (is_array($text)) {
@@ -434,12 +386,11 @@ class yf_utf8 {
 			}
 			return $text;
 		}
-		// Note: no mbstring equivalent!
 		return $this->strtoupper($this->substr($text, 0, 1)) . $this->substr($text, 1);
 	}
 
 	/**
-	* Capitalize the first letter in all words in a UTF-8 string.
+	* Capitalize the first letter in all words in a UTF-8 string. Note: no mbstring equivalent!
 	*/
 	function ucwords($text) {
 		if (is_array($text)) {
@@ -448,7 +399,6 @@ class yf_utf8 {
 			}
 			return $text;
 		}
-		// Note: no mbstring equivalent!
 		$words = preg_split('/([\x20\r\n\t]+|\xc2\xa0)/s', $text, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 		foreach ((array)$words as $k => $word) {
 			$words[$k] = $this->ucfirst($word);
@@ -457,82 +407,73 @@ class yf_utf8 {
 	}
 
 	/**
-	* Cut off a piece of a string based on character indices and counts. Follows
-	* the same behavior as PHP's own substr() function.
+	* Cut off a piece of a string based on character indices and counts. Follows the same behavior as PHP's own substr() function.
 	*
 	* Note that for cutting off a string at a known character/substring
-	* location, the usage of PHP's normal strpos/substr is safe and
-	* much faster.
+	* location, the usage of PHP's normal strpos/substr is safe and much faster.
 	*/
 	function substr($text, $start, $length = NULL) {
 		if ($this->MULTIBYTE == $this->UNICODE_MULTIBYTE) {
 			return $length === NULL ? mb_substr($text, $start) : mb_substr($text, $start, $length);
-		} else {
-			$strlen = strlen($text);
-			// Find the starting byte offset
-			$bytes = 0;
-			if ($start > 0) {
-				// Count all the continuation bytes from the start until we have found
-				// $start characters
-				$bytes = -1; $chars = -1;
-				while ($bytes < $strlen && $chars < $start) {
-					$bytes++;
-					$c = ord($text[$bytes]);
-					if ($c < 0x80 || $c >= 0xC0) {
-						$chars++;
-					}
-				}
-			} else if ($start < 0) {
-				// Count all the continuation bytes from the end until we have found
-				// abs($start) characters
-				$start = abs($start);
-				$bytes = $strlen; $chars = 0;
-				while ($bytes > 0 && $chars < $start) {
-					$bytes--;
-					$c = ord($text[$bytes]);
-					if ($c < 0x80 || $c >= 0xC0) {
-						$chars++;
-					}
+		}
+		$strlen = strlen($text);
+		// Find the starting byte offset
+		$bytes = 0;
+		if ($start > 0) {
+			// Count all the continuation bytes from the start until we have found $start characters
+			$bytes = -1; $chars = -1;
+			while ($bytes < $strlen && $chars < $start) {
+				$bytes++;
+				$c = ord($text[$bytes]);
+				if ($c < 0x80 || $c >= 0xC0) {
+					$chars++;
 				}
 			}
-			$istart = $bytes;
-
-			// Find the ending byte offset
-			if ($length === NULL) {
-				$bytes = $strlen - 1;
-			} else if ($length > 0) {
-				// Count all the continuation bytes from the starting index until we have
-				// found $length + 1 characters. Then backtrack one byte.
-				$bytes = $istart; $chars = 0;
-				while ($bytes < $strlen && $chars < $length) {
-					$bytes++;
-					$c = ord($text[$bytes]);
-					if ($c < 0x80 || $c >= 0xC0) {
-						$chars++;
-					}
+		} else if ($start < 0) {
+			// Count all the continuation bytes from the end until we have found abs($start) characters
+			$start = abs($start);
+			$bytes = $strlen; $chars = 0;
+			while ($bytes > 0 && $chars < $start) {
+				$bytes--;
+				$c = ord($text[$bytes]);
+				if ($c < 0x80 || $c >= 0xC0) {
+					$chars++;
+				}
+			}
+		}
+		$istart = $bytes;
+		// Find the ending byte offset
+		if ($length === NULL) {
+			$bytes = $strlen - 1;
+		} else if ($length > 0) {
+			// Count all the continuation bytes from the starting index until we have found $length + 1 characters. Then backtrack one byte.
+			$bytes = $istart; $chars = 0;
+			while ($bytes < $strlen && $chars < $length) {
+				$bytes++;
+				$c = ord($text[$bytes]);
+				if ($c < 0x80 || $c >= 0xC0) {
+					$chars++;
+				}
+			}
+			$bytes--;
+		} else if ($length < 0) {
+			// Count all the continuation bytes from the end until we have found abs($length) characters
+			$length = abs($length);
+			$bytes = $strlen - 1; $chars = 0;
+			while ($bytes >= 0 && $chars < $length) {
+				$c = ord($text[$bytes]);
+				if ($c < 0x80 || $c >= 0xC0) {
+					$chars++;
 				}
 				$bytes--;
-			} else if ($length < 0) {
-				// Count all the continuation bytes from the end until we have found
-				// abs($length) characters
-				$length = abs($length);
-				$bytes = $strlen - 1; $chars = 0;
-				while ($bytes >= 0 && $chars < $length) {
-					$c = ord($text[$bytes]);
-					if ($c < 0x80 || $c >= 0xC0) {
-						$chars++;
-					}
-					$bytes--;
-				}
 			}
-			$iend = $bytes;
-
-			return substr($text, $istart, max(0, $iend - $istart + 1));
 		}
+		$iend = $bytes;
+		return substr($text, $istart, max(0, $iend - $istart + 1));
 	}
 
 	/**
-	* UTF8 analog for built-in wordwrap
+	* UTF8 analog for built-in wordwrap. Note: no mbstring equivalent
 	*/
 	function wordwrap($str, $width = 75, $break = "\n", $cut = false) {
 		$splitedArray	= array();
@@ -551,7 +492,6 @@ class yf_utf8 {
 						$splitedArray[]	= $lineByWords;
 						$lineByWords	= '';
 					}
-
 					$newLineByWords			= $lineByWords.((strlen($lineByWords) !== 0) ? ' ' : '').$word;
 					$newLineByWordsLength	= strlen($newLineByWords);
 					if ($cut && $newLineByWordsLength > $width) {

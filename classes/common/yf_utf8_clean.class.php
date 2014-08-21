@@ -25,7 +25,7 @@ class yf_utf8_clean {
 	  'ÿ' => 'y', 'ũ' => 'u', 'ŭ' => 'u', 'ư' => 'u', 'ţ' => 't', 'ý' => 'y', 'ő' => 'o',
 	  'â' => 'a', 'ľ' => 'l', 'ẅ' => 'w', 'ż' => 'z', 'ī' => 'i', 'ã' => 'a', 'ġ' => 'g',
 	  'ṁ' => 'm', 'ō' => 'o', 'ĩ' => 'i', 'ù' => 'u', 'į' => 'i', 'ź' => 'z', 'á' => 'a',
-	  'û' => 'u', 'þ' => 'th', 'ð' => 'dh', 'æ' => 'ae', 'µ' => 'u', 'ĕ' => 'e', '€'=>'€','£'=>'£',' '=>' '/*,''=>''*/,'﻿'=>'﻿',
+	  'û' => 'u', 'þ' => 'th', 'ð' => 'dh', 'æ' => 'ae', 'µ' => 'u', 'ĕ' => 'e', '€'=>'€','£'=>'£',' '=>' ','﻿'=>'﻿',
 	);
 	/** @var @conf_skip */
 	public $UTF8_UPPER_ACCENTS = array(
@@ -65,9 +65,7 @@ class yf_utf8_clean {
 echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 		}
 */
-
 		$this->fss_exists = function_exists('fss_prep_replace');
-
 	}
 
 	/**
@@ -78,7 +76,6 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 			return '';
 		}
 		$text = utf8_strip_ascii_ctrl($text);
-// TODO: make the country be bassed as para to work from inside the admin section
 		if ((SEARCH_COUNTRY == 'ru' || $params['country'] == 'ru' || SEARCH_COUNTRY == 'ua' || $params['country'] == 'ua') && preg_match('/[а-яА-Я]/', $text)) {
 			$text = $this->_utf8_bad_for_rus_clean($text);
 		} else {
@@ -99,15 +96,15 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 	*/
 	function _utf8_bad_for_rus_clean($str) {
 		$UTF8_BAD =
-			'([\x00-\x7F]'.						  # ASCII (including control chars)
-			'|[\xC2-\xDF][\x80-\xBF]'.			   # non-overlong 2-byte
-			'|\xE0[\xA0-\xBF][\x80-\xBF]'.		   # excluding overlongs
-			'|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}'.	# straight 3-byte
-			'|\xED[\x80-\x9F][\x80-\xBF]'.		   # excluding surrogates
-			'|\xF0[\x90-\xBF][\x80-\xBF]{2}'.		# planes 1-3
-			'|[\xF1-\xF3][\x80-\xBF]{3}'.			# planes 4-15
-			'|\xF4[\x80-\x8F][\x80-\xBF]{2}'.		# plane 16
-			'|(.{1}))';							  # invalid byte
+			'([\x00-\x7F]'.						  // ASCII (including control chars)
+			'|[\xC2-\xDF][\x80-\xBF]'.			  // non-overlong 2-byte
+			'|\xE0[\xA0-\xBF][\x80-\xBF]'.		  // excluding overlongs
+			'|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}'. // straight 3-byte
+			'|\xED[\x80-\x9F][\x80-\xBF]'.		  // excluding surrogates
+			'|\xF0[\x90-\xBF][\x80-\xBF]{2}'.	  // planes 1-3
+			'|[\xF1-\xF3][\x80-\xBF]{3}'.		  // planes 4-15
+			'|\xF4[\x80-\x8F][\x80-\xBF]{2}'.	  // plane 16
+			'|(.{1}))';							  // invalid byte
 		ob_start();
 		while (preg_match('/'.$UTF8_BAD.'/S', $str, $matches)) {
 			if ( !isset($matches[2])) {
@@ -120,9 +117,7 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 	}
 
 	/**
-	* Strip out all non-7bit ASCII bytes
-	* If you need to transmit a string to system which you know can only
-	* support 7bit ASCII, you could use this function.
+	* Strip out all non-7bit ASCII bytes. If you need to transmit a string to system which you know can only support 7bit ASCII, you could use this function.
 	* @param string
 	* @return string with non ASCII bytes removed
 	*/
@@ -136,7 +131,6 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 				if (isset($this->UTF8_LOWER_ACCENTS[$matches[0]]) || isset($this->UTF8_UPPER_ACCENTS[$matches[0]])) {
 					echo $matches[0];
 				}
-//echo '<b> '.dechex(ord($matches[0]{0})).' '.dechex(ord($matches[0]{1})).' </b>';
 			}
 			$str = substr($str, strlen($matches[0]));
 		}
@@ -151,9 +145,7 @@ echo $k.' <b> '.dechex(ord($k{0})).' '.dechex(ord($k{1})).' </b><br />'.PHP_EOL;
 		if (!common()->is_utf8($str)) {
 			$str = utf8_encode($str);
 		}
-//return $this->_unaccent_test3($str);
 		if ($this->fss_exists && !$GLOBALS['force_strtr']) {
-// TODO: fss
 			if(!isset($GLOBALS['fss']['unaccent'])){
 				$s = array_merge($this->UTF8_UPPER_ACCENTS, $this->UTF8_LOWER_ACCENTS);
 				$GLOBALS['fss']['unaccent'] = fss_prep_replace($s);
