@@ -225,16 +225,18 @@ class yf_main {
 		if (!$this->ALLOW_FAST_INIT) {
 			return false;
 		}
-		$fast_init_file = PROJECT_PATH.'share/fast_init.php';
-		if (file_exists($fast_init_file)) {
-			include ($fast_init_file);
-			return true;
+		$paths = array(
+			'app'		=> APP_PATH.'share/fast_init.php',
+			'project'	=> PROJECT_PATH.'share/fast_init.php',
+			'yf'		=> YF_PATH.'share/fast_init.php',
+		);
+		foreach ($paths as $path) {
+			if (file_exists($path)) {
+				include $path;
+				return true;
+			}
 		}
-		$fast_init_file = YF_PATH.'share/fast_init.php';
-		if (file_exists($fast_init_file)) {
-			include ($fast_init_file);
-			return true;
-		}
+		return false;
 	}
 
 	/**
