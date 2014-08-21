@@ -37,8 +37,7 @@
 		</div>
 	</div>
 {block(left_area)}
-<!--style type="text/css">.container{ width: 970px !important; }</style-->
-	<div class="container center_area">
+	<div class="container container-fixed center_area">
 {execute(common,show_messages)}
 {block(center_area)}
 	</div>
