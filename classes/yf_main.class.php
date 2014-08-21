@@ -91,8 +91,9 @@ class yf_main {
 	public $TRACK_ONLINE_STATUS     = false;
 	/** @var bool Track details (online status=true is needed too) */
 	public $TRACK_ONLINE_DETAILS	= false;
-	/** @var bool Enable notifications module for user/admin */
+	/** @var bool Notify module setting */
 	public $ENABLE_NOTIFICATIONS_USER	= false;
+	/** @var bool Notify module setting */
 	public $ENABLE_NOTIFICATIONS_ADMIN	= false;
     /** @var bool Paid options global switch used by lot of other code @experimental */
 	public $ALLOW_PAID_OPTIONS		= false;
@@ -208,6 +209,7 @@ class yf_main {
 			$msg = 'MAIN: Caught exception: '.print_r($e->getMessage(), 1). PHP_EOL. '<pre>'.$e->getTraceAsString().'</pre>';
 			trigger_error($msg, E_USER_WARNING);
 		}
+		return true;
 	}
 
 	/**
@@ -416,19 +418,11 @@ class yf_main {
 		} elseif (file_exists($fwork_funcs_path)) {
 			$required_files[] = $fwork_funcs_path;
 		}
-		// Needed to have support for config vars inside paths
-		$replace = array(
-			'{SITE_PATH}'	=> SITE_PATH,
-			'{PROJECT_PATH}'=> PROJECT_PATH,
-			'{YF_PATH}'		=> YF_PATH,
-		);
 		foreach ((array)$include_files as $path) {
-			$path = str_replace(array_keys($replace), array_values($replace), $path);
-			$this->include_module($path, $_requried = false);
+			$this->include_module($this->_replace_core_paths($path), $_requried = false);
 		}
 		foreach ((array)$required_files as $path) {
-			$path = str_replace(array_keys($replace), array_values($replace), $path);
-			$this->include_module($path, $_requried = true);
+			$this->include_module($this->_replace_core_paths($path), $_requried = true);
 		}
 	}
 
@@ -545,12 +539,7 @@ class yf_main {
 			$this->error_handler = &$this->init_class('core_errors', 'classes/');
 		}
 		if ($this->ERROR_LOG_PATH) {
-			$replace = array(
-				'{YF_PATH}'		=> YF_PATH,
-				'{PROJECT_PATH}'=> PROJECT_PATH,
-				'{SITE_PATH}'	=> SITE_PATH,
-			);
-			ini_set('error_log', str_replace(array_keys($replace), array_values($replace), $this->ERROR_LOG_PATH));
+			ini_set('error_log', $this->_replace_core_paths($this->ERROR_LOG_PATH));
 		}
 	}
 
@@ -1733,6 +1722,42 @@ class yf_main {
 			}
 		}
 		$this->events->fire('main.user_info');
+	}
+
+	/**
+	* Unified method to replace core paths inside configuration directives. Examples: YF_PATH, {YF_PATH}, %YF_PATH%
+	*/
+	function _replace_core_paths($str) {
+		if (strpos($str, '_PATH') === false) {
+			return $str;
+		}
+		if (!isset($this->_paths_replace_pairs)) {
+			$pairs = array();
+			// Note: order matters
+			$path_names = array(
+				'ADMIN_WEB_PATH',
+				'ADMIN_SITE_PATH',
+				'UPLOADS_PATH',
+				'WEB_PATH',
+				'MEDIA_PATH',
+				'YF_PATH',
+				'APP_PATH',
+				'PROJECT_PATH',
+				'SITE_PATH',
+				'CONFIG_PATH',
+				'STORAGE_PATH',
+				'LOGS_PATH',
+			);
+			foreach ($path_names as $name) {
+				$val = constant($name);
+				$pairs[$name] = $val; // Example: YF_PATH
+				$pairs['{'.$name.'}'] = $val; // Example: {YF_PATH}
+				$pairs['%'.$name.'%'] = $val; // Example: %YF_PATH%
+			}
+			$this->_paths_replace_pairs = $pairs;
+			unset($pairs);
+		}
+		return str_replace(array_keys($this->_paths_replace_pairs), $this->_paths_replace_pairs, $str);
 	}
 
 	/**
