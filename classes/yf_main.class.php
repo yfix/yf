@@ -473,6 +473,8 @@ class yf_main {
 			'yf_plugins'		=> YF_PATH. 'plugins/*/share/events/*'.$ext,
 			'project_core'		=> PROJECT_PATH. 'share/events/*'.$ext,
 			'project_plugins'	=> PROJECT_PATH. 'plugins/*/share/events/*'.$ext,
+			'app_core'			=> APP_PATH. 'share/events/*'.$ext,
+			'app_plugins'		=> APP_PATH. 'plugins/*/share/events/*'.$ext,
 		);
 		foreach ($globs as $glob) {
 			foreach (glob($glob) as $path) {
@@ -575,7 +577,7 @@ class yf_main {
 		if (function_exists('fb') && class_exists('FirePHP')) {
 			return true;
 		}
-		$f = YF_PATH.'priority2/libs/firephp-core/lib/FirePHPCore/fb.php';
+		$f = YF_PATH.'libs/firephp-core/lib/FirePHPCore/fb.php';
 		if (file_exists($f)) {
 			include_once $f;
 		}
@@ -939,6 +941,7 @@ class yf_main {
 			return $this->_plugins;
 		}
 		$sets = array(
+			'app'		=> APP_PATH.'plugins/*/',
 			'project'	=> PROJECT_PATH.'plugins/*/',
 			'framework'	=> YF_PATH.'plugins/*/',
 		);
@@ -1008,16 +1011,16 @@ class yf_main {
 				$project_path		= USER_MODULES_DIR;
 				$project_path_dev	= $dev_path. USER_MODULES_DIR;
 				$fwork_path			= USER_MODULES_DIR;
-				$fwork_path2		= 'priority2/'. USER_MODULES_DIR;
-			} elseif (false === strpos($custom_path, SITE_PATH) && false === strpos($custom_path, PROJECT_PATH)) {
-				$site_path			= $custom_path;
-				$site_path_dev		= $dev_path. $custom_path;
-				$project_path		= $custom_path;
-				$project_path_dev	= $dev_path. $custom_path;
-				$fwork_path			= $custom_path;
-				$fwork_path2		= 'priority2/'. $custom_path;
 			} else {
-				$site_path			= $custom_path;
+				if (false === strpos($custom_path, SITE_PATH) && false === strpos($custom_path, PROJECT_PATH)) {
+					$site_path			= $custom_path;
+					$site_path_dev		= $dev_path. $custom_path;
+					$project_path		= $custom_path;
+					$project_path_dev	= $dev_path. $custom_path;
+					$fwork_path			= $custom_path;
+				} else {
+					$site_path			= $custom_path;
+				}
 			}
 		} elseif (MAIN_TYPE_ADMIN) {
 			if (empty($custom_path)) {
@@ -1026,17 +1029,16 @@ class yf_main {
 				$project_path		= ADMIN_MODULES_DIR;
 				$project_path_dev	= $dev_path. ADMIN_MODULES_DIR;
 				$fwork_path			= ADMIN_MODULES_DIR;
-				$fwork_path2		= 'priority2/'. ADMIN_MODULES_DIR;
-				$project_path2		= USER_MODULES_DIR;
-			} elseif (false === strpos($custom_path, SITE_PATH) && false === strpos($custom_path, PROJECT_PATH) && false === strpos($custom_path, ADMIN_SITE_PATH)) {
-				$site_path			= $custom_path;
-				$site_path_dev		= $dev_path. $custom_path;
-				$project_path		= $custom_path;
-				$project_path_dev	= $dev_path. $custom_path;
-				$fwork_path			= $custom_path;
-				$fwork_path2		= 'priority2/'. $custom_path;
 			} else {
-				$site_path			= $custom_path;
+				if (false === strpos($custom_path, SITE_PATH) && false === strpos($custom_path, PROJECT_PATH) && false === strpos($custom_path, ADMIN_SITE_PATH)) {
+					$site_path			= $custom_path;
+					$site_path_dev		= $dev_path. $custom_path;
+					$project_path		= $custom_path;
+					$project_path_dev	= $dev_path. $custom_path;
+					$fwork_path			= $custom_path;
+				} else {
+					$site_path			= $custom_path;
+				}
 			}
 		}
 		if (!isset($this->_plugins)) {
@@ -1049,20 +1051,22 @@ class yf_main {
 		$storages = array();
 		if (conf('DEV_MODE')) {
 			if ($site_path_dev && $site_path_dev != $project_path_dev) {
-				$storages['dev_site']	= array($SITE_PATH. $site_path_dev);
+				$storages['dev_site'] = array($SITE_PATH. $site_path_dev);
 			}
+			$storages['dev_app'] = array(APP_PATH. $project_path_dev);
 			$storages['dev_project'] = array(PROJECT_PATH. $project_path_dev);
 		}
 		if (strlen($SITE_PATH. $site_path) && ($SITE_PATH. $site_path) != (PROJECT_PATH. $project_path)) {
-			$storages['site'] 		= array($SITE_PATH. $site_path);
+			$storages['site'] = array($SITE_PATH. $site_path);
 		}
-		$storages['site_hook']		= array($SITE_PATH. $site_path, $cur_hook_prefix);
-		$storages['project']		= array(PROJECT_PATH. $project_path);
-		$storages['framework']		= array(YF_PATH. $fwork_path, YF_PREFIX);
-		$storages['framework_p2']	= array(YF_PATH. $fwork_path2, YF_PREFIX);
+		$storages['site_hook'] = array($SITE_PATH. $site_path, $cur_hook_prefix);
+		$storages['app'] = array(APP_PATH. $project_path);
+		$storages['project'] = array(PROJECT_PATH. $project_path);
+		$storages['framework'] = array(YF_PATH. $fwork_path, YF_PREFIX);
 		if (MAIN_TYPE_ADMIN) {
-			$storages['admin_user_project']		= array(PROJECT_PATH. $project_path2);
-			$storages['admin_user_framework']	= array(YF_PATH. USER_MODULES_DIR, YF_PREFIX);
+			$storages['admin_user_app']	= array(APP_PATH. $project_path2);
+			$storages['admin_user_project']	= array(PROJECT_PATH. $project_path2);
+			$storages['admin_user_framework'] = array(YF_PATH. USER_MODULES_DIR, YF_PREFIX);
 		}
 		if (isset($yf_plugins[$class_name]) || isset($yf_plugins_classes[$class_name])) {
 			if (isset($yf_plugins[$class_name])) {
@@ -1074,15 +1078,20 @@ class yf_main {
 			$plugin_subdir = 'plugins/'.$plugin_name.'/';
 
 			if ($site_path && $site_path != $project_path) {
-				$storages['plugins_site']	= array($SITE_PATH. $plugin_subdir. $site_path);
+				$storages['plugins_site'] = array($SITE_PATH. $plugin_subdir. $site_path);
 			}
-			if (isset($plugin_info['project'])) {
-				$storages['plugins_project']	= array(PROJECT_PATH. $plugin_subdir. $project_path);
+			if (isset($plugin_info['app'])) {
+				$storages['plugins_app'] = array(APP_PATH. $plugin_subdir. $project_path);
+				if (MAIN_TYPE_ADMIN) {
+					$storages['plugins_admin_user_app']	= array(APP_PATH. $plugin_subdir. $project_path2);
+				}
+			} elseif (isset($plugin_info['project'])) {
+				$storages['plugins_project'] = array(PROJECT_PATH. $plugin_subdir. $project_path);
 				if (MAIN_TYPE_ADMIN) {
 					$storages['plugins_admin_user_project']	= array(PROJECT_PATH. $plugin_subdir. $project_path2);
 				}
 			} elseif (isset($plugin_info['framework'])) {
-				$storages['plugins_framework']	= array(YF_PATH. $plugin_subdir. $fwork_path, YF_PREFIX);
+				$storages['plugins_framework'] = array(YF_PATH. $plugin_subdir. $fwork_path, YF_PREFIX);
 				if (MAIN_TYPE_ADMIN) {
 					$storages['plugins_admin_user_framework'] = array(YF_PATH. $plugin_subdir. USER_MODULES_DIR, YF_PREFIX);
 				}
@@ -1097,11 +1106,7 @@ class yf_main {
 				continue;
 			}
 			if ($force_storage && $force_storage != $_storage) {
-				if ($force_storage == 'framework' && $_storage == 'framework_p2') {
-					// Do nothing, need to try to load from framework priority2
-				} else {
-					continue;
-				}
+				continue;
 			}
 			$this->include_module($_path. $_prefix. $class_file);
 			if (class_exists($_prefix. $class_name)) {
