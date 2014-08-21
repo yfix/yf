@@ -414,7 +414,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	*/
 	function import_table_data ($table, $dir = '') {
 		if (!$dir) {
-			$dir = INSTALLER_PATH.'install/data/';
+			$dir = INSTALLER_PATH.'assets/data/';
 		}
 		$file = $dir. $table.'.data.php';
 		if (!file_exists($file)) {
@@ -483,9 +483,9 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 
 		$suffix = '.data.php';
 		$suffix_len = strlen($suffix);
-		$data_paths['en'] = INSTALLER_PATH.'install/data_en/*'.$suffix;
+		$data_paths['en'] = INSTALLER_PATH.'assets/data_en/*'.$suffix;
 		if ($lang && $lang != 'en') {
-			$data_paths[$lang] = INSTALLER_PATH.'install/data_'.$lang.'/*'.$suffix;
+			$data_paths[$lang] = INSTALLER_PATH.'assets/data_'.$lang.'/*'.$suffix;
 		}
 		$tables = array();
 		foreach ((array)$data_paths as $pattern) {
@@ -498,13 +498,13 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		foreach ((array)$tables as $table) {
 			db()->query('SELECT * FROM '.db($table).' LIMIT 1');
 		}
-		$dir = INSTALLER_PATH.'install/data_en/';
+		$dir = INSTALLER_PATH.'assets/data_en/';
 		foreach ((array)glob($dir.'*.data.php') as $f) {
 			$_table = substr(basename($f), 0, -strlen('.data.php'));
 			$this->import_table_data($_table, $dir);
 		}
 		if ($lang) {
-			$dir = INSTALLER_PATH.'install/data_'.$lang.'/';
+			$dir = INSTALLER_PATH.'assets/data_'.$lang.'/';
 			foreach ((array)glob($dir.'*.data.php') as $f) {
 				$_table = substr(basename($f), 0, -strlen('.data.php'));
 				$this->import_table_data($_table, $dir);
@@ -518,10 +518,10 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	*/
 	function write_htaccess($rewrite_enabled = true) {
 		if ($rewrite_enabled) {
-			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'install/htaccess.txt');
+			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'assets/htaccess.txt');
 			db()->update_safe('sys_settings', array('value' => 1), 'id=4');
 		} else {
-			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'install/htaccess2.txt');
+			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'assets/htaccess2.txt');
 		}
 		file_put_contents(PROJECT_PATH.'.htaccess', str_replace('%%%#path#%%%', $_POST['install_rw_base'], $htaccess_file_content));
 		return installer();
@@ -545,7 +545,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	/**
 	*/
 	function copy_project_skeleton() {
-		_class('dir')->copy_dir(INSTALLER_PATH.'skel/', APP_PATH, '', '/\.(svn|git)/');
+		_class('dir')->copy_dir(INSTALLER_PATH.'skel_basic/', APP_PATH, '', '/\.(svn|git)/');
 		return installer();
 	}
 
@@ -624,7 +624,7 @@ installer()
 ;
 if ($_POST['install_checkbox_demo_data']) {
 	installer()->import_demo_data();
-	_class('dir')->copy_dir(INSTALLER_PATH.'demo_skel/', APP_PATH, '', '/\.(svn|git)/');
+	_class('dir')->copy_dir(INSTALLER_PATH.'skel_demo/', APP_PATH, '', '/\.(svn|git)/');
 }
 $debug_info = $_POST['install_checkbox_debug_info'] ? tpl()->parse('debug_console_js'). common()->show_debug_info() : '';
 $vars = installer()->prepare_vars();
