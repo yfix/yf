@@ -1,1 +1,3 @@
-Events system extending files for the project should be stored inside this folder
+Events system extending files for the project should be stored inside this folder.
+Each file should be named like this:
+	some_name.listener.php

@@ -1,1 +1,2 @@
 Folder to store admin modules for the project, automatically accessible with web router.
+Each admin module should contain suffix ".class.php"

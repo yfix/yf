@@ -1,1 +1,3 @@
 Project level YF plugins should be stored here.
+First level - plugin name ([a-z0-9_-]+).
+Second level replicating YF core structure (classes/, modules/, admin_modules/, share/, and so on)

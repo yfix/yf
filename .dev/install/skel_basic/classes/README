@@ -1,2 +1,3 @@
 Folder to store modules, that should not be automatically accessible from web and can be used from both user and admin section.
 Also self-made libraries or utility classes stored here too.
+Each class should contain suffix ".class.php"

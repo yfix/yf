@@ -1,1 +1,2 @@
 Project level templates should be here.
+First level subfolder is theme name, it is skipped when we call tpl()->parse('tpl_name')

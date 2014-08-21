@@ -1,1 +1,4 @@
-YF cron jobs files storage place for the project
+YF cron jobs files storage place for the project.
+Examples:
+	blog_sync.cron.php
+	testme.cron.php

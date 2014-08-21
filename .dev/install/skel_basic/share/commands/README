@@ -1,1 +1,5 @@
-YF console extending commands for the project
+YF console extending commands for the project.
+Examples:
+	console_cmdname1.class.php
+	console_cmdname2.class.php
+	console_cmd_name3.class.php
