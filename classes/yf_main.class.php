@@ -276,13 +276,14 @@ class yf_main {
 
 		$this->_do_rewrite();
         
-        if ($this->TRACK_ONLINE_STATUS) _class('online_users', 'classes/')->process();	
-		if ($this->type == 'admin') {
-            if ($this->ENABLE_NOTIFICATIONS_ADMIN) _class('notifications', 'modules/')->_prepare();
-        } else {
-            if ($this->ENABLE_NOTIFICATIONS_USER) _class('notifications', 'modules/')->_prepare();
+        if ($this->TRACK_ONLINE_STATUS) {
+			_class('online_users', 'classes/')->process();
+		}
+		if ($this->type == 'admin' && $this->ENABLE_NOTIFICATIONS_ADMIN) {
+			_class('notifications', 'modules/')->_prepare();
+        } elseif ($this->type == 'user' && $this->ENABLE_NOTIFICATIONS_USER) {
+			_class('notifications', 'modules/')->_prepare();
         }
-
 		$this->_init_cur_user_info($this);
 
 		if ($this->TRACK_USER_PAGE_VIEWS && $this->USER_ID) {
