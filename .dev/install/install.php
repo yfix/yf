@@ -265,7 +265,6 @@ class yf_core_install {
 		define('CONFIG_PATH', APP_PATH.'/config/');
 		$GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
 		$GLOBALS['PROJECT_CONF']['main']['SESSION_OFF'] = 1;
-		$GLOBALS['PROJECT_CONF']['db']['ALLOW_AUTO_CREATE_DB'] = 1;
 		$GLOBALS['PROJECT_CONF']['db']['RECONNECT_NUM_TRIES'] = 1;
 		ini_set('display_errors', 'on');
 		ini_set('memory_limit', '512M');
@@ -448,6 +447,15 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		}
 		$import_tables = array_combine($import_tables, $import_tables);
 
+		$db_exists = db()->utils->database_exists(DB_NAME);
+		if ($_POST['install_checkbox_db_create'] && !$db_exists) {
+			db()->utils()->create_database(DB_NAME);
+			$db_exists = db()->utils->database_exists(DB_NAME);
+		}
+		if (!$db_exists) {
+			exit('Target database not exists or script cannot create it');
+		}
+
 		// delete or ignore already existed tables
 		$Q = db()->query('SHOW TABLES LIKE "'.DB_PREFIX.'%"');
 		while ($A = db()->fetch_row($Q)){
@@ -466,8 +474,6 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 			}
 		}
 		foreach ((array)$import_tables as $table) {
-// TODO: replace with direct CREATE TABLE from _class('db_installer')
-			//db()->query('SELECT * FROM '.db($table).' LIMIT 1');
 			db()->utils()->create_table($table);
 		}
 		foreach ((array)$import_tables as $table) {
