@@ -568,6 +568,10 @@ class yf_manage_shop {
 	function import_xls($params = array()) {
 		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
+    
+	function import_xls2($params = array()) {
+		return _class('manage_shop_import2', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
+	}    
 
 	function export_zakaz_start($params = array()) {
 		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
@@ -696,4 +700,8 @@ class yf_manage_shop {
 	function feedback_activate() {
 		return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
+    
+	function coupons() {
+		return _class('manage_shop_coupons', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}    
 }
