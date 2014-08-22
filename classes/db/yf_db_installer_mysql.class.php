@@ -56,10 +56,10 @@ class yf_db_installer_mysql extends yf_db_installer {
 	* Execute original query again safely
 	*/
 	function _db_query_safe($sql, $db) {
-		if ($this->_tries_by_sql[$sql] >= $this->NUM_RETRIES) {
+		if (isset($db->_repairs_by_sql[$sql]) && $db->_repairs_by_sql[$sql] >= $this->NUM_RETRIES) {
 			return false;
 		}
-#		$result = $db->db->query($sql);
+		$db->_repairs_by_sql[$sql]++;
 		$result = $db->query($sql);
 		if (!$result) {
 			if ($this->RETRY_DELAY) {
@@ -67,7 +67,6 @@ class yf_db_installer_mysql extends yf_db_installer {
 			}
 			$result = $this->_auto_repair_table($sql, $db_error, $db);
 		}
-		$this->_tries_by_sql[$sql]++;
 		return $result;
 	}
 
