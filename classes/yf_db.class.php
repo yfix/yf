@@ -29,8 +29,10 @@ class yf_db {
 	public $ERROR_AUTO_REPAIR		= true;
 	/** @var string Folder where databases drivers are stored */
 	public $DB_DRIVERS_DIR			= 'classes/db/';
-	/** @var int Num tries to reconnect (will be useful if db server is overloaded) (Set to '0' for disabling) */
-	public $RECONNECT_NUM_TRIES		= 1000;
+	/** @var int Num tries to reconnect in common mode (will be useful if db server is overloaded) (Set to '0' for disabling) */
+	public $RECONNECT_NUM_TRIES		= 3;
+	/** @var int Num tries to reconnect inside CONSOLE_MODE (will be useful if db server is overloaded and sometimes we lost connection to it) (Set to '0' for disabling) */
+	public $RECONNECT_CONSOLE_TRIES	= 1000;
 	/** @var int Time to wait between reconnects (in seconds) */
 	public $RECONNECT_DELAY			= 1;
 	/** @var bool Use logarithmic increase or reconnect time */
@@ -109,14 +111,6 @@ class yf_db {
 	public $_need_sys_prefix		= array();
 
 	/**
-	*/
-	function _load_tables_with_sys_prefix() {
-		include YF_PATH. 'share/db_sys_prefix_tables.php';
-		$this->_need_sys_prefix = $data;
-		return (array)$data;
-	}
-
-	/**
 	* Constructor
 	*/
 	function __construct($db_type = '', $db_prefix = null, $db_replication_slave = null) {
@@ -177,6 +171,23 @@ class yf_db {
 		if ($this->DB_REPLICATION_SLAVE) {
 			$this->ERROR_AUTO_REPAIR = false;
 		}
+	}
+
+	/**
+	*/
+	function _load_tables_with_sys_prefix() {
+		$paths = array(
+			'app'	=> APP_PATH. 'share/db_sys_prefix_tables.php',
+			'app'	=> YF_PATH. 'share/db_sys_prefix_tables.php',
+		);
+		$data = array();
+		foreach ($paths as $path) {
+			if (file_exists($path)) {
+				$data += require_once $path;
+			}
+		}
+		$this->_need_sys_prefix = $data;
+		return (array)$data;
 	}
 
 	/**
