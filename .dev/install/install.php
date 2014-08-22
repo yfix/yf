@@ -541,6 +541,8 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	/**
 	*/
 	function set_admin_login_pswd() {
+#		db()->_connected &&
+#		db()->utils()->table_exists('sys_admin') &&
 		db()->replace_safe('sys_admin', array(
 			'id'		=> 1,
 			'login'		=> $_POST['install_admin_login'],
