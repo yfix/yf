@@ -183,7 +183,10 @@ class yf_db {
 		$data = array();
 		foreach ($paths as $path) {
 			if (file_exists($path)) {
-				$data += require_once $path;
+				$_data = require_once $path;
+				if ($data && is_array($_data)) {
+					$data += $_data;
+				}
 			}
 		}
 		$this->_need_sys_prefix = $data;
