@@ -253,7 +253,11 @@ class yf_db {
 				'allow_auto_create_db' => $this->ALLOW_AUTO_CREATE_DB,
 			);
 			// Try to connect several times
-			for ($i = 1; $i <= $this->RECONNECT_NUM_TRIES; $i++) {
+			$tries = $this->RECONNECT_NUM_TRIES;
+			if (main()->is_console() && !main()->is_unit_test()) {
+				$tries = $this->RECONNECT_TRIES_CONSOLE;
+			}
+			for ($i = 1; $i <= $tries; $i++) {
 				$this->db = new $driver_class_name($driver_params);
 				if (!is_object($this->db) || !($this->db instanceof yf_db_driver)) {
 					trigger_error('DB: Wrong driver', $this->CONNECTION_REQUIRED ? E_USER_ERROR : E_USER_WARNING);
