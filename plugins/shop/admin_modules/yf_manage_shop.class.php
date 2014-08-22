@@ -704,4 +704,21 @@ class yf_manage_shop {
 	function coupons() {
 		return _class('manage_shop_coupons', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}    
+
+	function coupon_delete() {
+		return _class('manage_shop_coupons', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}  
+    
+	function coupon_add() {
+		return _class('manage_shop_coupons', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}  
+    
+	function coupon_edit() {
+		return _class('manage_shop_coupons', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}      
+
+	function coupon_view() {
+		return _class('manage_shop_coupons', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}      
+  
 }

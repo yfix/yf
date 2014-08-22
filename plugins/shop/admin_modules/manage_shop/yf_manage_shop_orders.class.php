@@ -308,6 +308,7 @@ class yf_manage_shop_orders{
 			->price('delivery_price')
 			->user_info('user_id')
 			->info('payment', 'Payment method')
+			->info('transaction_id', 'Transaction id')
 			->container(
 				table2($products)
 					->image('product_id', array(
