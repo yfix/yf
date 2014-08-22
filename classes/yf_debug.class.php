@@ -210,6 +210,8 @@ class yf_debug {
 			'IS_AJAX'			=> (int)main()->is_ajax(),
 			'IS_CONSOLE'		=> (int)main()->is_console(),
 			'IS_REDIRECT'		=> (int)main()->is_redirect(),
+			'IS_COMMON_PAGE'	=> (int)main()->is_common_page(),
+			'IS_UNIT_TEST'		=> (int)main()->is_unit_test(),
 			'IS_SPIDER'			=> (int)conf('IS_SPIDER'),
 			'NO_GRAPHICS'		=> (int)main()->NO_GRAPHICS,
 			'OUTPUT_CACHING'	=> (int)main()->OUTPUT_CACHING,
