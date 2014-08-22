@@ -4,9 +4,9 @@ load('db_installer', 'framework', 'classes/db/');
 class yf_db_installer_mysql extends yf_db_installer {
 
 	/** @var int */
-	public $NUM_RETRIES = 3;
+	public $NUM_RETRIES = 5;
 	/** @var int */
-	public $RETRY_DELAY = 1;
+	public $RETRY_DELAY = 0;
 	/** @var string */
 	public $DEFAULT_CHARSET = 'utf8';
 	/** @var array */
@@ -56,14 +56,18 @@ class yf_db_installer_mysql extends yf_db_installer {
 	* Execute original query again safely
 	*/
 	function _db_query_safe($sql, $db) {
-		for ($i = 0; $i <= $this->NUM_RETRIES; $i++) {
-			$result = $db->db->query($sql);
-			if (!empty($result)) {
-				break;
-			} else {
+		if ($this->_tries_by_sql[$sql] >= $this->NUM_RETRIES) {
+			return false;
+		}
+#		$result = $db->db->query($sql);
+		$result = $db->query($sql);
+		if (!$result) {
+			if ($this->RETRY_DELAY) {
 				sleep($this->RETRY_DELAY);
 			}
+			$result = $this->_auto_repair_table($sql, $db_error, $db);
 		}
+		$this->_tries_by_sql[$sql]++;
 		return $result;
 	}
 
