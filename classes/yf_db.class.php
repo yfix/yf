@@ -176,15 +176,18 @@ class yf_db {
 	/**
 	*/
 	function _load_tables_with_sys_prefix() {
+		if ($this->_need_sys_prefix) {
+			return $this->_need_sys_prefix;
+		}
 		$paths = array(
 			'app'	=> APP_PATH. 'share/db_sys_prefix_tables.php',
-			'app'	=> YF_PATH. 'share/db_sys_prefix_tables.php',
+			'yf'	=> YF_PATH. 'share/db_sys_prefix_tables.php',
 		);
 		$data = array();
 		foreach ($paths as $path) {
 			if (file_exists($path)) {
-				$_data = require_once $path;
-				if ($data && is_array($_data)) {
+				$_data = require $path;
+				if ($_data && is_array($_data)) {
 					$data += $_data;
 				}
 			}
