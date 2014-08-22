@@ -1,0 +1,10 @@
+Translations here. First level is locale name (ISO 2 letter), exactly like it is displayed in locale editor admin module.
+Examples:
+	en/
+		register_en.php
+		my_translate_pack1_en.php
+		my_translate_pack2_en.php
+	ru/
+		register_ru.php
+		my_translate_pack1_ru.php
+		my_translate_pack2_ru.php

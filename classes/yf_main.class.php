@@ -1029,6 +1029,7 @@ class yf_main {
 				$project_path		= ADMIN_MODULES_DIR;
 				$project_path_dev	= $dev_path. ADMIN_MODULES_DIR;
 				$fwork_path			= ADMIN_MODULES_DIR;
+				$project_path2		= USER_MODULES_DIR;
 			} else {
 				if (false === strpos($custom_path, SITE_PATH) && false === strpos($custom_path, PROJECT_PATH) && false === strpos($custom_path, ADMIN_SITE_PATH)) {
 					$site_path			= $custom_path;

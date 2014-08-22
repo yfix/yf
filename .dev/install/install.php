@@ -206,7 +206,7 @@ class yf_core_install {
 	*/
 	function get_form_defaults() {
 		return array(
-			'install_yf_path'					=> dirname(dirname(dirname(__FILE__))).'/',
+			'install_yf_path'					=> dirname(dirname(__DIR__)).'/',
 			'install_db_host'					=> 'localhost',
 			'install_db_name'					=> 'test_'.substr(md5(microtime()), 0, 6),
 			'install_db_user'					=> 'root',
@@ -261,9 +261,10 @@ class yf_core_install {
 	function set_php_conf() {
 		define('PROJECT_PATH', $_POST['install_project_path'] ?: realpath('./').'/');
 		define('INCLUDE_PATH', PROJECT_PATH);
+		define('APP_PATH', dirname(PROJECT_PATH).'/');
+		define('CONFIG_PATH', APP_PATH.'/config/');
 		$GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
 		$GLOBALS['PROJECT_CONF']['main']['SESSION_OFF'] = 1;
-		$GLOBALS['PROJECT_CONF']['db']['ALLOW_AUTO_CREATE_DB'] = 1;
 		$GLOBALS['PROJECT_CONF']['db']['RECONNECT_NUM_TRIES'] = 1;
 		ini_set('display_errors', 'on');
 		ini_set('memory_limit', '512M');
@@ -331,7 +332,7 @@ define(\'DB_USER\',	\''.$_POST['install_db_user'].'\');
 define(\'DB_PSWD\',	\''.$_POST['install_db_pswd'].'\');
 define(\'DB_PREFIX\',	\''.$_POST['install_db_prefix'].'\');
 define(\'DB_CHARSET\',\'utf8\');';
-		$fpath = PROJECT_PATH.'db_setup.php';
+		$fpath = CONFIG_PATH.'db_setup.php';
 		$d = dirname($fpath);
 		if (!file_exists($d)) {
 			mkdir($d, 0777, true);
@@ -346,11 +347,11 @@ define(\'DB_CHARSET\',\'utf8\');';
 	*/
 	function write_user_index_php($rewrite_enabled = true) {
 		$index_file_content = '<?php
-$dev_settings = dirname(dirname(__FILE__)).\'/.dev/override.php\';
+$dev_settings = dirname(__DIR__).\'/.dev/override.php\';
 if (file_exists($dev_settings)) {
     require_once $dev_settings;
 }
-$saved_settings = dirname(__FILE__).\'/saved_settings.php\';
+$saved_settings = __DIR__.\'/saved_settings.php\';
 if (file_exists($saved_settings)) {
     require_once $saved_settings;
 }
@@ -359,7 +360,7 @@ define(\'YF_PATH\', \''.YF_PATH.'\');
 define(\'WEB_PATH\', \''.rtrim($_POST['install_web_path'], '/').'/\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=home_page\');
 define(\'SITE_ADVERT_NAME\', \''.$_POST['install_web_name'].'\');
-require dirname(__FILE__).\'/project_conf.php\';'.PHP_EOL
+require dirname(__DIR__).\'/config/project_conf.php\';'.PHP_EOL
 .($rewrite_enabled ? '$PROJECT_CONF[\'tpl\'][\'REWRITE_MODE\'] = true;'.PHP_EOL : '')
 .'require YF_PATH.\'classes/yf_main.class.php\';
 new yf_main(\'user\', $no_db_connect = false, $auto_init_all = true);';
@@ -378,23 +379,23 @@ new yf_main(\'user\', $no_db_connect = false, $auto_init_all = true);';
 	*/
 	function write_admin_index_php($rewrite_enabled = true) {
 		$admin_index_file_content = '<?php
-$dev_settings = dirname(dirname(dirname(__FILE__))).\'/.dev/override.php\';
+$dev_settings = dirname(dirname(__DIR__)).\'/.dev/override.php\';
 if (file_exists($dev_settings)) {
     require_once $dev_settings;
 }
-$saved_settings = dirname(dirname(__FILE__)).\'/saved_settings.php\';
+$saved_settings = dirname(__DIR__).\'/saved_settings.php\';
 if (file_exists($saved_settings)) {
     require_once $saved_settings;
 }
 define(\'DEBUG_MODE\', false);
 define(\'YF_PATH\', \''.YF_PATH.'\');
 define(\'WEB_PATH\', \''.rtrim($_POST['install_web_path'], '/').'/\');
-define(\'ADMIN_WEB_PATH\', WEB_PATH. basename(dirname(__FILE__)).\'/\');
-//define(\'ADMIN_WEB_PATH\', \'//\'.$_SERVER[\'HTTP_HOST\'].\'/\'.basename(dirname(__FILE__)).\'/\');
-define(\'ADMIN_SITE_PATH\', dirname(__FILE__).\'/\');
+define(\'ADMIN_WEB_PATH\', WEB_PATH. basename(__DIR__).\'/\');
+//define(\'ADMIN_WEB_PATH\', \'//\'.$_SERVER[\'HTTP_HOST\'].\'/\'.basename(__DIR__).\'/\');
+define(\'ADMIN_SITE_PATH\', __DIR__.\'/\');
 define(\'SITE_DEFAULT_PAGE\', \'./?object=admin_home\');
 define(\'ADMIN_FRAMESET_MODE\', 1);
-require dirname(dirname(__FILE__)).\'/project_conf.php\';
+require dirname(dirname(__DIR__)).\'/config/project_conf.php\';
 require YF_PATH.\'classes/yf_main.class.php\';
 new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		$fpath = PROJECT_PATH.'admin/index.php';
@@ -412,7 +413,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	*/
 	function import_table_data ($table, $dir = '') {
 		if (!$dir) {
-			$dir = INSTALLER_PATH.'install/data/';
+			$dir = INSTALLER_PATH.'assets/data/';
 		}
 		$file = $dir. $table.'.data.php';
 		if (!file_exists($file)) {
@@ -436,7 +437,6 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		$suffix_len = strlen($suffix);
 		$sql_paths = array(
 			'yf'		=> YF_PATH.'share/db_installer/sql/sys_*'.$suffix,
-			'yf_p2'		=> YF_PATH.'priority2/share/db_installer/sql/sys_*'.$suffix,
 			'yf_plugins'=> YF_PATH.'plugins/*/share/db_installer/sql/sys_*'.$suffix,
 			'yf_install'=> INSTALLER_PATH.'installer/data/*'.$suffix,
 		);
@@ -446,6 +446,15 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 			}
 		}
 		$import_tables = array_combine($import_tables, $import_tables);
+
+		$db_exists = db()->utils->database_exists(DB_NAME);
+		if ($_POST['install_checkbox_db_create'] && !$db_exists) {
+			db()->utils()->create_database(DB_NAME);
+			$db_exists = db()->utils->database_exists(DB_NAME);
+		}
+		if (!$db_exists) {
+			exit('Target database not exists or script cannot create it');
+		}
 
 		// delete or ignore already existed tables
 		$Q = db()->query('SHOW TABLES LIKE "'.DB_PREFIX.'%"');
@@ -465,8 +474,6 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 			}
 		}
 		foreach ((array)$import_tables as $table) {
-// TODO: replace with direct CREATE TABLE from _class('db_installer')
-			//db()->query('SELECT * FROM '.db($table).' LIMIT 1');
 			db()->utils()->create_table($table);
 		}
 		foreach ((array)$import_tables as $table) {
@@ -482,9 +489,9 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 
 		$suffix = '.data.php';
 		$suffix_len = strlen($suffix);
-		$data_paths['en'] = INSTALLER_PATH.'install/data_en/*'.$suffix;
+		$data_paths['en'] = INSTALLER_PATH.'assets/data_en/*'.$suffix;
 		if ($lang && $lang != 'en') {
-			$data_paths[$lang] = INSTALLER_PATH.'install/data_'.$lang.'/*'.$suffix;
+			$data_paths[$lang] = INSTALLER_PATH.'assets/data_'.$lang.'/*'.$suffix;
 		}
 		$tables = array();
 		foreach ((array)$data_paths as $pattern) {
@@ -497,13 +504,13 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		foreach ((array)$tables as $table) {
 			db()->query('SELECT * FROM '.db($table).' LIMIT 1');
 		}
-		$dir = INSTALLER_PATH.'install/data_en/';
+		$dir = INSTALLER_PATH.'assets/data_en/';
 		foreach ((array)glob($dir.'*.data.php') as $f) {
 			$_table = substr(basename($f), 0, -strlen('.data.php'));
 			$this->import_table_data($_table, $dir);
 		}
 		if ($lang) {
-			$dir = INSTALLER_PATH.'install/data_'.$lang.'/';
+			$dir = INSTALLER_PATH.'assets/data_'.$lang.'/';
 			foreach ((array)glob($dir.'*.data.php') as $f) {
 				$_table = substr(basename($f), 0, -strlen('.data.php'));
 				$this->import_table_data($_table, $dir);
@@ -517,10 +524,10 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	*/
 	function write_htaccess($rewrite_enabled = true) {
 		if ($rewrite_enabled) {
-			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'install/htaccess.txt');
+			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'assets/htaccess.txt');
 			db()->update_safe('sys_settings', array('value' => 1), 'id=4');
 		} else {
-			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'install/htaccess2.txt');
+			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'assets/htaccess2.txt');
 		}
 		file_put_contents(PROJECT_PATH.'.htaccess', str_replace('%%%#path#%%%', $_POST['install_rw_base'], $htaccess_file_content));
 		return installer();
@@ -544,7 +551,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	/**
 	*/
 	function copy_project_skeleton() {
-		_class('dir')->copy_dir(INSTALLER_PATH.'skel/', PROJECT_PATH, '', '/\.(svn|git)/');
+		_class('dir')->copy_dir(INSTALLER_PATH.'skel_basic/', APP_PATH, '', '/\.(svn|git)/');
 		return installer();
 	}
 
@@ -623,7 +630,7 @@ installer()
 ;
 if ($_POST['install_checkbox_demo_data']) {
 	installer()->import_demo_data();
-	_class('dir')->copy_dir(INSTALLER_PATH.'install/demo_skel/', PROJECT_PATH, '', '/\.(svn|git)/');
+	_class('dir')->copy_dir(INSTALLER_PATH.'skel_demo/', APP_PATH, '', '/\.(svn|git)/');
 }
 $debug_info = $_POST['install_checkbox_debug_info'] ? tpl()->parse('debug_console_js'). common()->show_debug_info() : '';
 $vars = installer()->prepare_vars();
