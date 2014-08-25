@@ -123,6 +123,12 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
+	function database_info($name, $extra = array(), &$error = false) {
+// TODO: get info  name, collation, charset
+	}
+
+	/**
+	*/
 	function list_collations($extra = array()) {
 		return $this->db->get_all('SHOW COLLATION');
 	}
