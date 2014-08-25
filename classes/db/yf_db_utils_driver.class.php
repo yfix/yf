@@ -43,8 +43,8 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function create_database($db_name, $extra = array(), &$error = false) {
-		if (!strlen($name)) {
-			$error = 'name is empty';
+		if (!strlen($db_name)) {
+			$error = 'db_name is empty';
 			return false;
 		}
 		if (!isset($extra['if_not_exists'])) {
@@ -197,10 +197,50 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function create_table($table_name, $db_name, $extra = array(), &$error = false) {
+	function _compile_create_table($data, $extra = array(), &$error = false) {
+		$items = array();
+		foreach ($data as $v) {
+// TODO: add lot of strict checks
+			$name = $v['name'];
+			$type = strtoupper($v['type']);
+			$length = $v['length'];
+			$default = $v['default'];
+			$null = null;
+			if (isset($v['null'])) {
+				$null = (bool)$v['null'];
+			} elseif (isset($v['not_null'])) {
+				$null = (bool)(!$v['not_null']);
+			}
+			$auto_inc = $v['auto_inc'] || $v['auto_increment'];
+			$comment = $v['comment'];
+			if (isset($v['key'])) {
+				$items[] = $type.' KEY '.($name ? $this->_escape_key($name) : '').' ('.(is_array($v['key_cols']) ? implode(',', $v['key_cols']) : $v['key_cols']).')';
+			} else {
+				$items[$name] = $this->_escape_key($name)
+					. ' '.$type. ($length ? '('.$length.')' : '')
+					. (isset($null) ? ' '.($null ? 'NULL' : 'NOT NULL') : '')
+					. (isset($default) ? ' DEFAULT \''.addslashes($default).'\'' : '')
+					. ($auto_inc ? ' AUTO_INCREMENT' : '')
+					. (strlen($comment) ? ' COMMENT \''.addslashes($comment).'\'' : '')
+				;
+			}
+		}
+		return implode(','.PHP_EOL, $items);
+	}
+
+	/**
+	*/
+	function create_table($table_name, $db_name = '', $data = array(), $extra = array(), &$error = false) {
 		if (!$table_name) {
 			$error = 'table_name is empty';
 			return false;
+		}
+		if (is_array($db_name)) {
+			$data = $db_name;
+			$db_name = '';
+		}
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
 		}
 		if (!$db_name) {
 			$error = 'db_name is empty';
@@ -209,9 +249,12 @@ abstract class yf_db_utils_driver {
 		if (strlen($this->db->DB_PREFIX) && substr($table_name, 0, strlen($this->db->DB_PREFIX)) == $this->db->DB_PREFIX) {
 			$table_name = substr($table_name, strlen($this->db->DB_PREFIX));
 		}
-		$data = $extra['sql'];
+		$data = ($extra['sql'] ?: $extra['data']) ?: $data;
 		$engine = $extra['engine'] ?: 'InnoDB';
 		$charset = $extra['charset'] ?: 'utf8';
+		if (is_array($data)) {
+			$data = $this->_compile_create_table($data, $extra, $error);
+		}
 		if (!$data) {
 			$globs = array(
 				PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$name.'.sql.php',
