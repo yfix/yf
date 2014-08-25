@@ -27,6 +27,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		self::$server_version = self::$db->get_server_version();
 	}
 	public static function tearDownAfterClass() {
+		self::utils()->drop_database(self::$DB_NAME);
 	}
 	private function utils() {
 		return self::$db->utils();
