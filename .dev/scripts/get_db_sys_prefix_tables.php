@@ -7,7 +7,6 @@ define('YF_PATH', dirname(dirname(dirname(__FILE__))).'/');
 // TODO: glob(PROJECT_PATH.'plugins/*/share/db_installer/sql/sys_*.sql.php')
 $paths = array(
 	YF_PATH.'share/db_installer/sql/sys_*.sql.php',
-	YF_PATH.'priority2/share/db_installer/sql/sys_*.sql.php',
 	YF_PATH.'plugins/*/share/db_installer/sql/sys_*.sql.php',
 );
 $sys_tables = array();
