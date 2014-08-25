@@ -14,9 +14,7 @@ $modules_dir = "";
 $f = "";
 $paths = array(
 	"../../modules",
-	"../../priority2/modules",
 	"../../admin_modules",
-	"../../priority2/admin_modules",
 );
 foreach($paths as $path) {
 	$f = $path. "/". $module.".class.php";
