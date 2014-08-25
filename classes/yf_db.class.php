@@ -207,7 +207,7 @@ class yf_db {
 		if (!is_array($params)) {
 			$params = array();
 		}
-		if ($params['reconnect']) {
+		if ($params['reconnect'] || $params['force']) {
 			$force = true;
 		}
 		if (!empty($this->_tried_to_connect) && !$force) {
@@ -305,6 +305,20 @@ class yf_db {
 	function close() {
 		$this->_connected = false;
 		return $this->db->close();
+	}
+
+	/**
+	* Prepare statement to execute
+	*/
+	function prepare() {
+// TODO
+	}
+
+	/**
+	* Execute prepared statement
+	*/
+	function exec() {
+// TODO
 	}
 
 	/**
