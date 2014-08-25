@@ -69,11 +69,29 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$all_dbs = self::utils()->list_databases();
 		$this->assertTrue( in_array(self::$DB_NAME, $all_dbs) );
 	}
+	public function test_database_exists() {
+		$this->assertFalse( self::utils()->database_exists(self::$DB_NAME.'ggdfgdf') );
+		$this->assertTrue( self::utils()->database_exists(self::$DB_NAME) );
+	}
+	public function test_database_info() {
+#		$this->assertEquals( array(), self::utils()->database_info(self::$DB_NAME) );
+	}
 	public function test_alter_database() {
-#		$this->assertEquals( self::utils()-> );
+#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('character set' => 'utf8')) );
+#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('character set' => 'latin1')) );
+#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('collate' => 'utf8_general_ci')) );
+#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('collate' => 'utf8_bin')) );
 	}
 	public function test_rename_database() {
-#		$this->assertEquals( self::utils()-> );
+		$NEW_DB_NAME = self::$DB_NAME.'_new';
+		$this->assertTrue( self::utils()->database_exists(self::$DB_NAME) );
+		$this->assertFalse( self::utils()->database_exists($NEW_DB_NAME) );
+		$this->assertTrue( self::utils()->rename_database(self::$DB_NAME, $NEW_DB_NAME) );
+		$this->assertFalse( self::utils()->database_exists(self::$DB_NAME) );
+		$this->assertTrue( self::utils()->database_exists($NEW_DB_NAME) );
+		$this->assertTrue( self::utils()->rename_database($NEW_DB_NAME, self::$DB_NAME) );
+		$this->assertTrue( self::utils()->database_exists(self::$DB_NAME) );
+		$this->assertFalse( self::utils()->database_exists($NEW_DB_NAME) );
 	}
 	public function test_list_tables() {
 #		$this->assertEquals( self::utils()-> );
