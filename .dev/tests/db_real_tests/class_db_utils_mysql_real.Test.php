@@ -161,10 +161,10 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			array('key' => 'primary', 'key_cols' => 'id'),
 		);
 		$expected = 
-'`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-`name` VARCHAR(255) NOT NULL DEFAULT \'\',
-`active` ENUM(\'0\',\'1\') NOT NULL DEFAULT \'0\',
-PRIMARY KEY (id)';
+			'`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,'.PHP_EOL
+			.'`name` VARCHAR(255) NOT NULL DEFAULT \'\','.PHP_EOL
+			.'`active` ENUM(\'0\',\'1\') NOT NULL DEFAULT \'0\','.PHP_EOL
+			.'PRIMARY KEY (id)';
 		$this->assertEquals( $expected, self::utils()->_compile_create_table($in) );
 	}
 	public function test_create_table() {
@@ -221,9 +221,47 @@ PRIMARY KEY (id)';
 		$this->assertTrue( self::utils()->create_table($table, self::$DB_NAME, $data) );
 		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
 		$expected = array(
+			'id' => array(
+				'name' => 'id',
+				'type' => 'int',
+				'length' => '10',
+				'unsigned' => true,
+				'collation' => NULL,
+				'null' => false,
+				'default' => NULL,
+				'auto_inc' => true,
+				'is_primary' => true,
+				'is_unique' => false,
+				'type_raw' => 'int(10) unsigned',
+			),
+			'name' => array(
+				'name' => 'name',
+				'type' => 'varchar',
+				'length' => '255',
+				'unsigned' => false,
+				'collation' => 'utf8_general_ci',
+				'null' => false,
+				'default' => '',
+				'auto_inc' => false,
+				'is_primary' => false,
+				'is_unique' => false,
+				'type_raw' => 'varchar(255)',
+			),
+			'active' => array(
+				'name' => 'active',
+				'type' => 'enum',
+				'length' => '',
+				'unsigned' => false,
+				'collation' => 'utf8_general_ci',
+				'null' => false,
+				'default' => '0',
+				'auto_inc' => false,
+				'is_primary' => false,
+				'is_unique' => false,
+				'type_raw' => 'enum(\'0\',\'1\')',
+			),
 		);
-		var_export( self::utils()->table_get_columns($table, self::$DB_NAME) );
-#		$this->assertEquals( $expected, self::utils()->table_get_columns($table, self::$DB_NAME) );
+		$this->assertEquals( $expected, self::utils()->table_get_columns($table, self::$DB_NAME) );
 	}
 	public function test_table_info() {
 #		$this->assertEquals( array(), self::utils()->table_info(self::$DB_NAME, array()) );
