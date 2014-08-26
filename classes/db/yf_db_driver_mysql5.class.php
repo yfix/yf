@@ -6,10 +6,6 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/** @var @conf_skip */
 	public $db_connect_id		= null;
 	/** @var @conf_skip */
-	public $query_result		= null;
-	/** @var @conf_skip */
-	public $num_queries			= 0;
-	/** @var @conf_skip */
 	public $META_TABLES_SQL		= 'SHOW TABLES';	
 	/** @var @conf_skip */
 	public $META_COLUMNS_SQL	= 'SHOW COLUMNS FROM %s';
@@ -99,20 +95,16 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 		if (!$this->db_connect_id) {
 			return false;
 		}
-		// Remove any pre-existing queries
-		unset($this->query_result);
-		if ($query != '') {
-			$this->num_queries++;
-			$this->query_result = mysql_query($query, $this->db_connect_id);
-		}
-		if ($this->query_result) {
-			return $this->query_result;
-		} else {
+		$result = mysql_query($query, $this->db_connect_id);
+		if (!$result) {
 			$query_error_code = mysql_errno($this->db_connect_id);
 			$query_error = mysql_error($this->db_connect_id);
-			conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
+			if ($query_error_code) {
+				conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
+			}
 			return false;
 		}
+		return $result;
 	}
 
 	/**
@@ -135,9 +127,6 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function num_rows($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
-		}
 		return $query_id ? mysql_num_rows($query_id) : false;
 	}
 
@@ -156,9 +145,6 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function fetch_row($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
-		}
 		if ($query_id) {
 			return mysql_fetch_row($query_id);
 		}
@@ -168,9 +154,6 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function fetch_assoc($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
-		}
 		if ($query_id) {
 			return mysql_fetch_assoc($query_id);
 		}
@@ -180,9 +163,6 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function fetch_array($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
-		}
 		if ($query_id) {
 			return mysql_fetch_array($query_id);
 		}
@@ -201,9 +181,6 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function free_result($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
-		}
 		if ($query_id) {
 			mysql_free_result($query_id);
 			return true;
