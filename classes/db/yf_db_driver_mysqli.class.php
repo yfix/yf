@@ -256,9 +256,18 @@ if ($mysqli->multi_query($query)) {
 	* Error
 	*/
 	function error() {
-		$result['message'] = mysqli_error($this->db_connect_id);
-		$result['code'] = mysqli_errno($this->db_connect_id);
-		return $result;
+		if ($this->db_connect_id) {
+			return array(
+				'message'	=> mysqli_error($this->db_connect_id),
+				'code'		=> mysqli_errno($this->db_connect_id),
+			);
+		} elseif ($this->_connect_error) {
+			return array(
+				'message'	=> 'YF: Connect error: '.$this->_connect_error,
+				'code'		=> '9999',
+			);
+		}
+		return false;
 	}
 
 	/**
