@@ -68,9 +68,9 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		if (version_compare(self::$server_version, '5.5.0') >= 0) {
 			$this->assertTrue( in_array('performance_schema', $all_dbs) );
 		}
-#		if (version_compare(self::$server_version, '5.6.0') >= 0) {
-#			$this->assertTrue( in_array('sys', $all_dbs) );
-#		}
+		if (version_compare(self::$server_version, '5.6.0') >= 0) {
+			$this->assertTrue( in_array('sys', $all_dbs) );
+		}
 	}
 	public function test_drop_database() {
 		if (self::$CI_SERVER == 'DRONE') { return ; }
@@ -300,7 +300,16 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 #		$this->assertEquals( 'latin1_general_ci', $new_info['collation'] );
 	}
 	public function test_rename_table() {
-#		$this->assertEquals( self::utils()-> );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+		);
+		$this->assertTrue( self::utils()->create_table($table, self::$DB_NAME, $data) );
+		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
+		$new_table = $table.'_new';
+#		$this->assertTrue( self::utils()->rename_table($table, self::$DB_NAME, $new_name) );
+#		$this->assertFalse( self::utils()->table_exists($table, self::$DB_NAME) );
+#		$this->assertTrue( self::utils()->table_exists($new_table, self::$DB_NAME) );
 	}
 	public function test_truncate_table() {
 #		$this->assertEquals( self::utils()-> );
@@ -312,6 +321,21 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_repair_table() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_list_columns() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_add_column() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_rename_column() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_alter_column() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_drop_column() {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_list_indexes() {
@@ -330,21 +354,6 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_drop_foreign_key() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_list_columns() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_add_column() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_rename_column() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_alter_column() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_drop_column() {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_list_views() {
