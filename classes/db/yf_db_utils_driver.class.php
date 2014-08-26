@@ -75,7 +75,7 @@ abstract class yf_db_utils_driver {
 			if (!strlen($table)) {
 				continue;
 			}
-			$sql[] = $this->drop_table($db_name.'.'.$table, $extra);
+			$sql[] = $this->drop_table($table, $db_name, $extra);
 		}
 		$_sql = 'DROP DATABASE '.($extra['if_exists'] ? 'IF EXISTS ' : ''). $this->_escape_key($db_name);
 		$sql[] = $extra['sql'] ? $_sql : $this->db->query($_sql);
