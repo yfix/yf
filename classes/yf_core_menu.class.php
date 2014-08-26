@@ -10,7 +10,7 @@
 class yf_core_menu {
 
 	/** @conf_skip */
-	public $USE_DYNAMIC_ATTS = 1;
+	public $USE_DYNAMIC_ATTS = true;
 
 	/**
 	* Catch missing method call

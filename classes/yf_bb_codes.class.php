@@ -10,15 +10,15 @@
 class yf_bb_codes {
 
 	/** @var bool BB codes Enabled or not */
-	public $ENABLE_BB_CODES	= 1;
+	public $ENABLE_BB_CODES		= true;
 	/** @var bool Smilies in bb codes enabled or not */
-	public $ENABLE_SMILIES		= 1;
+	public $ENABLE_SMILIES		= true;
 	/** @var bool Smilies in bb codes are like images or only with special CSS class */
-	public $SMILIES_AS_IMAGES	= 1;
+	public $SMILIES_AS_IMAGES	= true;
 	/** @var string Smilies folder */
 	public $SMILIES_DIR		= 'images/smilies/';
 	/** @var bool Try to highlight special text (SQL or HTML) */
-	public $USE_HIGHLIGHT		= 1;
+	public $USE_HIGHLIGHT		= true;
 	/** @var array CSS classes names @conf_skip */
 	public $CSS_CLASSES = array(
 		'show1'		=> 'forum1',
@@ -34,11 +34,11 @@ class yf_bb_codes {
 		'post_u_1'	=> 'post2shaded',
 	);
 	/** @var bool Filter 'bad words' or not */
-	public $FILTER_BAD_WORDS	= 0;
+	public $FILTER_BAD_WORDS	= false;
 	/** @var bool Check for long words 'hacking' or not */
-	public $CHECK_WORDS_LENGTH = 0;
+	public $CHECK_WORDS_LENGTH = false;
 	/** @var bool Enable extra codes */
-	public $ENABLE_EXTRA_CODES = 0;
+	public $ENABLE_EXTRA_CODES = false;
 	/** @var array Default codes on/off */
 	public $DEFAULT_SHOW_CODES	= array(
 		'font_family'	=> 0,
@@ -50,7 +50,7 @@ class yf_bb_codes {
 		'youtube'		=> 0,
 	);
 	/** @var bool Check for unclosed bb codes every time when parsing */
-	public $CHECK_CODES_IF_CLOSED	= 0;
+	public $CHECK_CODES_IF_CLOSED	= false;
 	/** @var bool */
 	public $USE_NOFOLLOW_TAG		= false;
 	/** @var bool Use or not custom bb codes (from db) */
