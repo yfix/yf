@@ -37,7 +37,7 @@ abstract class yf_db_utils_driver {
 	*/
 	function list_databases($extra = array()) {
 		$sql = 'SHOW DATABASES';
-		return $extra['sql'] ? $sql : (array)$this->db->get_2d($sql);
+		return $extra['sql'] ? $sql : $this->db->get_2d($sql);
 	}
 
 	/**
