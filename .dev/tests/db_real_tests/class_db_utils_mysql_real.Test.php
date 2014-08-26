@@ -26,12 +26,13 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			'pswd'	=> DB_PSWD,
 			'force' => true,
 		));
+		self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
 		self::$server_version = self::$db->get_server_version();
 	}
 	public static function tearDownAfterClass() {
 		self::utils()->drop_database(self::$DB_NAME);
 	}
-	private function utils() {
+	private static function utils() {
 		return self::$db->utils();
 	}
 	public function test_connected() {
@@ -81,13 +82,21 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			'charset'	=> 'utf8',
 			'collation'	=> 'utf8_general_ci',
 		);
-#		$this->assertEquals( $expected, self::utils()->database_info(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->database_info(self::$DB_NAME) );
+		$this->assertTrue( self::utils()->db->query('ALTER DATABASE '.self::$DB_NAME.' CHARACTER SET "utf8" COLLATE "utf8_general_ci"') );
+		$this->assertEquals( $expected, self::utils()->database_info(self::$DB_NAME) );
 	}
 	public function test_alter_database() {
-#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('charset' => 'utf8')) );
-#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('charset' => 'latin1')) );
-#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('collation' => 'utf8_general_ci')) );
-#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('collation' => 'utf8_bin')) );
+		$expected = array(
+			'name'		=> self::$DB_NAME,
+			'charset'	=> 'utf8',
+			'collation'	=> 'utf8_general_ci',
+		);
+		$this->assertNotEmpty( self::utils()->database_info(self::$DB_NAME) );
+		$this->assertTrue( self::utils()->db->query('ALTER DATABASE '.self::$DB_NAME.' CHARACTER SET "latin1" COLLATE "latin1_general_ci"') );
+		$this->assertNotEquals( $expected, self::utils()->database_info(self::$DB_NAME) );
+		$this->assertTrue( self::utils()->alter_database(self::$DB_NAME, array('charset' => 'utf8','collation' => 'utf8_general_ci')) );
+		$this->assertEquals( $expected, self::utils()->database_info(self::$DB_NAME) );
 	}
 	public function test_rename_database() {
 		$NEW_DB_NAME = self::$DB_NAME.'_new';
@@ -102,9 +111,27 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_list_tables() {
 		$this->assertEquals( array(), self::utils()->list_tables(self::$DB_NAME) );
+		$table = 'testme1';
+		$this->assertTrue( self::utils()->db->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10))') );
+		$this->assertEquals( array($table => $table), self::utils()->list_tables(self::$DB_NAME) );
+		$this->assertTrue( self::utils()->db->query('DROP TABLE '.self::$DB_NAME.'.'.$table.'') );
+		$this->assertEquals( array(), self::utils()->list_tables(self::$DB_NAME) );
+	}
+	public function test_table_exists() {
+		$table = 'testme2';
+		$this->assertFalse( self::utils()->table_exists($table, self::$DB_NAME) );
+		$this->assertTrue( self::utils()->db->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10))') );
+		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
+		$this->assertTrue( self::utils()->db->query('DROP TABLE '.self::$DB_NAME.'.'.$table.'') );
+		$this->assertFalse( self::utils()->table_exists($table, self::$DB_NAME) );
 	}
 	public function test_drop_table() {
-#		$this->assertEquals( self::utils()-> );
+		$table = 'testme3';
+		$this->assertFalse( self::utils()->table_exists($table, self::$DB_NAME) );
+#		$this->assertTrue( self::utils()->db->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10))') );
+#		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
+#		$this->assertTrue( self::utils()->drop_table($table, self::$DB_NAME) );
+#		$this->assertFalse( self::utils()->table_exists($table, self::$DB_NAME) );
 	}
 	public function test_create_table() {
 		$table_name = 'my_test_table';
@@ -115,15 +142,21 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			array('key' => 'primary', 'key_cols' => 'id'),
 		);
 		$this->assertTrue( self::utils()->create_table($table_name, self::$DB_NAME, $data) );
-#		$this->assertEquals( array(), self::utils()->list_tables(self::$DB_NAME) );
+		$this->assertTrue( self::utils()->table_exists($table_name, self::$DB_NAME) );
+	}
+	public function test_table_get_columns() {
+// TODO
+	}
+	public function test__parse_column_type() {
+// TODO
+	}
+	public function test__compile_create_table() {
+// TODO
 	}
 	public function test_table_info() {
 #		$this->assertEquals( array(), self::utils()->table_info(self::$DB_NAME, array()) );
 	}
 	public function test_alter_table() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_table_exists() {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_rename_table() {
