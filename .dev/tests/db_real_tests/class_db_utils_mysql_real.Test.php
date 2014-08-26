@@ -15,16 +15,19 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		self::$DB_NAME = DB_NAME;
 		$db_class = load_db_class();
 		self::$db = new $db_class('mysql5');
-		self::$db->DB_PREFIX = DB_PREFIX;
+		self::$db->ALLOW_AUTO_CREATE_DB = true;
+		self::$db->NO_AUTO_CONNECT = true;
 		self::$db->RECONNECT_NUM_TRIES = 1;
 		self::$db->CACHE_TABLE_NAMES = false;
 		self::$db->ERROR_AUTO_REPAIR = false;
 		self::$db->FIX_DATA_SAFE = true;
-		self::$db->connect(array(
+		self::$db->_init();
+		$res = self::$db->connect(array(
 			'host'	=> 'localhost',
 			'name'	=> self::$DB_NAME,
 			'user'	=> DB_USER,
 			'pswd'	=> DB_PSWD,
+			'prefix'=> DB_PREFIX,
 			'force' => true,
 		));
 		self::$server_version = self::$db->get_server_version();
@@ -62,10 +65,12 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertNotEmpty( $all_dbs );
 		$this->assertTrue( in_array('mysql', $all_dbs) );
 		$this->assertTrue( in_array('information_schema', $all_dbs) );
-		if (version_compare(self::$server_version, '5.6.0') >= 0) {
+		if (version_compare(self::$server_version, '5.5.0') >= 0) {
 			$this->assertTrue( in_array('performance_schema', $all_dbs) );
-			$this->assertTrue( in_array('sys', $all_dbs) );
 		}
+#		if (version_compare(self::$server_version, '5.6.0') >= 0) {
+#			$this->assertTrue( in_array('sys', $all_dbs) );
+#		}
 	}
 	public function test_drop_database() {
 		if (self::$CI_SERVER == 'DRONE') { return ; }
