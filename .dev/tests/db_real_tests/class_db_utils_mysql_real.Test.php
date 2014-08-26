@@ -11,7 +11,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public static $server_version = '';
 	public static $DB_NAME = '';
 	public static function setUpBeforeClass() {
-		self::$DB_NAME = DB_NAME. '_tmp1';
+		self::$DB_NAME = DB_NAME;
 		$db_class = load_db_class();
 		self::$db = new $db_class('mysql5');
 		self::$db->DB_PREFIX = DB_PREFIX;
