@@ -264,11 +264,17 @@ abstract class yf_db_utils_driver {
 		$type = $length = $decimals = $values = null;
 		if (preg_match('~^(?P<type>[a-z]+)[\s\t]*\((?P<length>[^\)]+)\)~i', $str, $m)) {
 			$type = $m['type'];
-			$length = $m['type'];
+			$length = $m['length'];
 		} elseif (preg_match('~^(?P<type>[a-z]+)~i', $str, $m)) {
 			$type = $m['type'];
 		}
-		$types = array('bit','int','real','float','double','decimal','numeric','varchar','char','text','blob','varbinary','binary','timestamp','datetime','time','date','year','enum','set');
+		$types = array(
+			'bit','int','real','float','double','decimal','numeric',
+			'varchar','char','tinytext','mediumtext','longtext','text',
+			'tinyblob','mediumblob','longblob','blob','varbinary','binary',
+			'timestamp','datetime','time','date','year',
+			'enum','set',
+		);
 		$types = array_combine($types, $types);
 		if ($type) {
 			$type = strtolower($type);
@@ -281,7 +287,7 @@ abstract class yf_db_utils_driver {
 		}
 		if ($length && !is_numeric($length) && false !== strpos($length, ',')) {
 			if (in_array($type, array('real','double','float','decimal','numeric'))) {
-				list($length,$decimals) = explode(',',$length);
+				list($length, $decimals) = explode(',',$length);
 				$length = (int)trim($length);
 				$decimals = (int)trim($decimals);
 			} elseif (in_array($type, array('enum','set'))) {
@@ -492,9 +498,10 @@ WHERE CCSA.collation_name = T.table_collation
 			$error = 'db_name not exists';
 			return false;
 		}
-#		foreach ((array)$extra as $k => $v) {
-#			$params[$k] = $k.' = '.$v;
-#		}
+// TODO: implement allowed list of params and their shortcuts
+		foreach ((array)$extra as $k => $v) {
+			$params[$k] = $k.' = '.$v;
+		}
 		$sql = 'ALTER TABLE '.$this->_escape_key($db_name).'.'.$this->db->_fix_table_name($table_name). PHP_EOL. implode(' ', $params);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
