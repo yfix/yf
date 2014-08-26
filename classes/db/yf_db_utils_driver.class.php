@@ -511,24 +511,6 @@ WHERE CCSA.collation_name = T.table_collation
 
 	/**
 	*/
-	function table_update_columns($table, $db_name = '', array $cols, $extra = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	function table_add_columns($table, $db_name = '', array $cols, $extra = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	function table_delete_columns($table, $db_name = '', array $col_names, $extra = array()) {
-// TODO
-	}
-
-	/**
-	*/
 	function rename_table($table, $new_name, $db_name = '', $extra = array()) {
 		if (!$table || !$new_name) {
 			$error = 'table_name is empty';
@@ -659,7 +641,7 @@ WHERE CCSA.collation_name = T.table_collation
 
 	/**
 	*/
-	function add_column($table, $name, $data, $extra = array()) {
+	function add_column($table, $db_name, $col_name, $data, $extra = array()) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -670,7 +652,7 @@ WHERE CCSA.collation_name = T.table_collation
 
 	/**
 	*/
-	function rename_column($table, $name, $data, $extra = array()) {
+	function rename_column($table, $db_name, $col_name, $new_name, $extra = array()) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -681,7 +663,7 @@ WHERE CCSA.collation_name = T.table_collation
 
 	/**
 	*/
-	function alter_column($table, $name, $data, $extra = array()) {
+	function alter_column($table, $db_name, $col_name, $data, $extra = array()) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -692,7 +674,7 @@ WHERE CCSA.collation_name = T.table_collation
 
 	/**
 	*/
-	function drop_column($table, $name, $extra = array()) {
+	function drop_column($table, $db_name, $col_name, $extra = array()) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -703,7 +685,7 @@ WHERE CCSA.collation_name = T.table_collation
 
 	/**
 	*/
-	function column_exists($table, $name, $extra = array()) {
+	function column_exists($table, $db_name, $col_name, $extra = array()) {
 // TODO
 	}
 
@@ -728,9 +710,9 @@ WHERE CCSA.collation_name = T.table_collation
 
 	/**
 	*/
-	function list_all_indexes($name, $extra = array()) {
-		if (!strlen($name)) {
-			$error = 'name is empty';
+	function list_all_indexes($table, $db_name, $extra = array()) {
+		if (!strlen($table)) {
+			$error = 'table name is empty';
 			return false;
 		}
 		$sql = 
@@ -743,7 +725,7 @@ WHERE CCSA.collation_name = T.table_collation
 				b.referenced_column_name
 			FROM information_schema.table_constraints a
 			INNER JOIN information_schema.key_column_usage b ON a.constraint_name = b.constraint_name AND a.table_schema = b.table_schema AND a.table_name = b.table_name
-			WHERE a.table_schema = '.$this->_escape_val($name).'
+			WHERE a.table_schema = '.$this->_escape_val($db_name).'.'.$this->db->_fix_table_name($table).'
 			GROUP BY a.table_schema, a.table_name, a.constraint_name, 
 				a.constraint_type, b.referenced_table_name, 
 				b.referenced_column_name
@@ -756,7 +738,7 @@ WHERE CCSA.collation_name = T.table_collation
 				null as referenced_table_name,
 				null as referenced_column_name
 			FROM information_schema.statistics
-			WHERE non_unique = 1 AND table_schema = '.$this->_escape_val($name).'
+			WHERE non_unique = 1 AND table_schema = '.$this->_escape_val($db_name).'.'.$this->db->_fix_table_name($table).'
 			GROUP BY table_schema, table_name, constraint_name, constraint_type, referenced_table_name, referenced_column_name
 			ORDER BY table_schema, table_name, constraint_name'
 		;
