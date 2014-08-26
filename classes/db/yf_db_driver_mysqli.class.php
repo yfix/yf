@@ -62,19 +62,20 @@ class yf_db_driver_mysqli extends yf_db_driver {
 			$connect_host = ($this->params['persist'] ? 'p:' : '').$this->params['host']. ($connect_port ? ':'.$connect_port : '');
 		}
 		mysqli_options($this->db_connect_id, MYSQLI_OPT_CONNECT_TIMEOUT, 2);
-		$is_connected = mysqli_real_connect($this->db_connect_id, $this->params['host'], $this->params['user'], $this->params['pswd'], '', $this->params['port'], $this->params['socket'], $this->params['ssl'] ? MYSQLI_CLIENT_SSL : 0);
-		if (!$is_connected) {
+		$this->db_connect_id = mysqli_real_connect($this->db_connect_id, $this->params['host'], $this->params['user'], $this->params['pswd'], '', $this->params['port'], $this->params['socket'], $this->params['ssl'] ? MYSQLI_CLIENT_SSL : 0);
+		if (!$this->db_connect_id) {
 			$this->_connect_error = 'cannot_connect_to_server';
-			$this->db_connect_id = null;
-			return false;
+			return $this->db_connect_id;
 		}
 		if ($this->params['name'] != '') {
 			$dbselect = mysqli_select_db($this->db_connect_id, $this->params['name']);
 			// Try to create database, if not exists and if allowed
 			if (!$dbselect && $this->params['allow_auto_create_db'] && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->params['name'])) {
-				mysqli_query('CREATE DATABASE IF NOT EXISTS '.$this->params['name'], $this->db_connect_id);
+				$res = mysqli_query('CREATE DATABASE IF NOT EXISTS '.$this->params['name'], $this->db_connect_id);
+				if ($res) {
+					$dbselect = mysqli_select_db($this->db_connect_id, $this->params['name']);
+				}
 			}
-			$dbselect = mysqli_select_db($this->db_connect_id, $this->params['name']);
 			if (!$dbselect) {
 				$this->_connect_error = 'cannot_select_db';
 			}
