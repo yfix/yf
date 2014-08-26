@@ -373,7 +373,7 @@ class yf_db {
 			$result	= $this->_repair_table($sql, $db_error);
 		}
 		if (!$result && $db_error) {
-			$this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace_string() : array());
+			$this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace_string() : '');
 		}
 		// This part needed to update debug log after executing query, but ensure correct order of queries
 		if ($log_allowed && $log_id) {
