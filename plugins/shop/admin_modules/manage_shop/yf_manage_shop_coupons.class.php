@@ -4,6 +4,10 @@ class yf_manage_shop_coupons {
 	/**
 	*/
 	function _init() {
+        $this->_statuses = array(
+            '0' => 'not used',
+            '1' => 'used',
+        );
 	}
 
 	/**
@@ -19,7 +23,7 @@ class yf_manage_shop_coupons {
             ->date('time_end', array('format' => 'full', 'nowrap' => 1))
             ->link('cat_id', './?object=category_editor&action=edit_item&id=%d', _class('cats')->_get_items_names_cached('shop_cats'))
             ->link('order_id', './?object=manage_shop&action=view_order&id=%d')
-            ->text('status')
+            ->link('status', '', $this->_statuses)
 			->btn_edit('', './?object='.main()->_get('object').'&action=coupon_edit&id=%d',array('no_ajax' => 1))
 			->btn_view('', './?object='.main()->_get('object').'&action=coupon_view&id=%d',array('no_ajax' => 1))
 			->btn_delete('', './?object='.main()->_get('object').'&action=coupon_delete&id=%d')
@@ -85,8 +89,8 @@ class yf_manage_shop_coupons {
 			->text('code')
             ->integer('user_id')
             ->integer('sum')                
-            ->integer('status')
-            ->integer('cat_id')                
+            ->select_box('status', $this->_statuses)
+			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0))
             ->integer('order_id')
             ->datetime_select('time_start',      null, array( 'with_time' => 1 ) )
             ->datetime_select('time_end',        null, array( 'with_time' => 1 ) )
@@ -143,8 +147,8 @@ class yf_manage_shop_coupons {
 			->text('code')
             ->integer('user_id')
             ->integer('sum')                
-            ->integer('status')
-            ->integer('cat_id')                
+            ->select_box('status', $this->_statuses)
+			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0))
             ->integer('order_id')
             ->datetime_select('time_start',      null, array( 'with_time' => 1 ) )
             ->datetime_select('time_end',        null, array( 'with_time' => 1 ) )
@@ -159,6 +163,10 @@ class yf_manage_shop_coupons {
 		if (!empty($_GET['id'])) $info = db()->query_fetch('SELECT * FROM '.db('shop_coupons').' WHERE id='.intval($_GET['id']));
 		if (empty($info['id'])) return js_redirect('./?object='.main()->_get('object').'&action=coupons');
 		
+        $info['status'] = $this->_statuses[$info['status']];
+        $cats = _class('cats')->_get_items_names_cached('shop_cats');
+        $info['cat_id'] = $cats[$info['cat_id']];
+        
         $out = form2($info, array('dd_mode' => 1, 'big_labels' => true))
 			->info('code')
             ->user_info('user_id')                
