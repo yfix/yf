@@ -370,6 +370,7 @@ WHERE CCSA.collation_name = T.table_collation
 // TODO: add lot of strict checks
 			$name = $v['name'];
 			$type = strtoupper($v['type']);
+			$unsigned = $v['unsigned'];
 			$length = $v['length'];
 			$default = $v['default'];
 			$null = null;
@@ -379,12 +380,18 @@ WHERE CCSA.collation_name = T.table_collation
 				$null = (bool)(!$v['not_null']);
 			}
 			$auto_inc = $v['auto_inc'] || $v['auto_increment'];
+			if ($auto_inc) {
+				$null = false;
+				$unsigned = true;
+			}
 			$comment = $v['comment'];
 			if (isset($v['key'])) {
-				$items[] = strtoupper($v['key']).' KEY '.($name ? $this->_escape_key($name) : '').' ('.(is_array($v['key_cols']) ? implode(',', $v['key_cols']) : $v['key_cols']).')';
+				$items[] = strtoupper($v['key']).' KEY '.($name ? $this->_escape_key($name).' ' : '').'('.(is_array($v['key_cols']) ? implode(',', $v['key_cols']) : $v['key_cols']).')';
 			} else {
-				$items[$name] = $this->_escape_key($name)
-					. ' '.$type. ($length ? '('.$length.')' : '')
+				$items[$name] = $this->_escape_key($name).' '
+					.$type
+					. ($length ? '('.$length.')' : '')
+					. (isset($unsigned) ? ' UNSIGNED' : '')
 					. (isset($null) ? ' '.($null ? 'NULL' : 'NOT NULL') : '')
 					. (isset($default) ? ' DEFAULT \''.addslashes($default).'\'' : '')
 					. ($auto_inc ? ' AUTO_INCREMENT' : '')
