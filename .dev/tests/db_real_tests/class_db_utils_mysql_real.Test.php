@@ -153,6 +153,26 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 #		$this->assertTrue( self::utils()->drop_table($table, self::$DB_NAME) );
 #		$this->assertFalse( self::utils()->table_exists($table, self::$DB_NAME) );
 	}
+	public function test__compile_create_table() {
+		$in = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
+			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
+			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
+			array('key' => 'primary', 'key_cols' => 'id'),
+		);
+		$expected = 
+'`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+`name` VARCHAR(255) NOT NULL DEFAULT \'\',
+`active` ENUM(\'0\',\'1\') NOT NULL DEFAULT \'0\',
+PRIMARY KEY (id)';
+		$this->assertEquals( $expected, self::utils()->_compile_create_table($in) );
+	}
+	public function test_table_get_columns() {
+// TODO
+	}
+	public function test__parse_column_type() {
+// TODO
+	}
 	public function test_create_table() {
 		$table_name = 'my_test_table';
 		$data = array(
@@ -163,15 +183,6 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		);
 #		$this->assertTrue( self::utils()->create_table($table_name, self::$DB_NAME, $data) );
 #		$this->assertTrue( self::utils()->table_exists($table_name, self::$DB_NAME) );
-	}
-	public function test_table_get_columns() {
-// TODO
-	}
-	public function test__parse_column_type() {
-// TODO
-	}
-	public function test__compile_create_table() {
-// TODO
 	}
 	public function test_table_info() {
 #		$this->assertEquals( array(), self::utils()->table_info(self::$DB_NAME, array()) );
