@@ -97,7 +97,7 @@ abstract class yf_db_utils_driver {
 			'collation'	=> 'COLLATE',
 		);
 		foreach ((array)$extra as $k => $v) {
-			$v = preg_replace('~[^a-z0-9_]+~', '', $v);
+			$v = preg_replace('~[^a-z0-9_]+~i', '', $v);
 			if (isset($allowed[$k])) {
 				$params[$k] = $allowed[$k].' = '.$v;
 			} elseif (in_array($k, $allowed)) {
@@ -153,7 +153,7 @@ abstract class yf_db_utils_driver {
 			$error = 'db_name not exists';
 			return false;
 		}
-		$info = $this->db->get('SELECT * FROM information_schema.SCHEMATA AS S WHERE schema_name = "'.$this->_escape_key($db_name).'"');
+		$info = $this->db->get('SELECT * FROM information_schema.SCHEMATA WHERE schema_name = '.$this->_escape_val($db_name));
 		if (!$info) {
 			$error = 'db_name not exists';
 			return false;
@@ -180,6 +180,14 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function list_tables($db_name = '', $extra = array(), &$error = false) {
+		if (!strlen($db_name)) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		if (!$extra['sql'] && !$this->database_exists($db_name)) {
+			$error = 'db_name not exists';
+			return false;
+		}
 		$db_name = trim($db_name);
 		$tables = $this->db->get_2d('SHOW TABLES'. (strlen($db_name) ? ' FROM '.$this->_escape_key($db_name) : ''));
 		return $tables ? array_combine($tables, $tables) : array();
@@ -188,7 +196,14 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function list_tables_details($db_name = '', $extra = array(), &$error = false) {
-		$db_name = trim($db_name);
+		if (!strlen($db_name)) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		if (!$extra['sql'] && !$this->database_exists($db_name)) {
+			$error = 'db_name not exists';
+			return false;
+		}
 		$tables = array();
 		$q = $this->db->query('SHOW TABLE STATUS'. (strlen($db_name) ? ' FROM '.$this->_escape_key($db_name) : ''));
 		while ($a = $this->db->fetch_assoc($q)) {
@@ -206,8 +221,131 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
+	function table_get_columns($table_name, $db_name = '', $extra = array(), &$error = false) {
+		if (!strlen($db_name)) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		if (!$extra['sql'] && !$this->database_exists($db_name)) {
+			$error = 'db_name not exists';
+			return false;
+		}
+		if (!strlen($table_name)) {
+			$error = 'table_name is empty';
+			return false;
+		}
+		$cols = array();
+		$q = $this->db->query('SHOW FULL COLUMNS FROM '.$this->_escape_key($db_name).'.'.$this->_escape_key($table_name));
+		while ($a = $this->db->fetch_assoc($q)) {
+			$name = $a['Field'];
+			list($type, $length, $unsigned) = $this->_parse_column_type($a['Type']);
+			$cols[$name] = array(
+				'name'		=> $name,
+				'type'		=> $type,
+				'length'	=> $length,
+				'unsigned'	=> $unsigned,
+				'collation'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
+				'null'		=> $a['Null'] == 'NO' ? false : true,
+				'default'	=> $a['Default'] != 'NULL' ? $a['Default'] : null,
+				'auto_inc'	=> false !== strpos($a['Extra'], 'auto_increment') ? true : false,
+				'is_primary'=> $a['Key'] == 'PRI',
+				'is_unique'	=> $a['Key'] == 'UNI',
+				'type_raw'	=> $a['type'],
+			);
+		}
+		return $cols;
+	}
+
+	/**
+	* See http://dev.mysql.com/doc/refman/5.6/en/create-table.html
+	*/
+	function _parse_column_type($str) {
+		$str = trim($str);
+		$type = $length = $decimals = $values = null;
+		if (preg_match('~^(?P<type>[a-z]+)[\s\t]*\((?P<length>[^\)]+)\)~i', $str, $m)) {
+			$type = $m['type'];
+			$length = $m['type'];
+		} elseif (preg_match('~^(?P<type>[a-z]+)~i', $str, $m)) {
+			$type = $m['type'];
+		}
+		$types = array('bit','int','real','float','double','decimal','numeric','varchar','char','text','blob','varbinary','binary','timestamp','datetime','time','date','year','enum','set');
+		$types = array_combine($types, $types);
+		if ($type) {
+			$type = strtolower($type);
+			foreach ($types as $_type) {
+				if (false !== strpos($type, $_type)) {
+					$type = $_type;
+					break;
+				}
+			}
+		}
+		if ($length && !is_numeric($length) && false !== strpos($length, ',')) {
+			if (in_array($type, array('real','double','float','decimal','numeric'))) {
+				list($length,$decimals) = explode(',',$length);
+				$length = (int)trim($length);
+				$decimals = (int)trim($decimals);
+			} elseif (in_array($type, array('enum','set'))) {
+				$values = array();
+				foreach(explode(',', $length) as $v) {
+					$v = trim(trim(trim($v),'\'"'));
+					if (strlen($v)) {
+						$values[$v] = $v;
+					}
+				}
+				$length = '';
+			}
+		}
+		return array(
+			'type'		=> $type,
+			'length'	=> $length,
+			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, array('bit','int','real','double','float','decimal','numeric')) ? true : false,
+			'decimals'	=> $decimals,
+			'values'	=> $values,
+		);
+	}
+
+	/**
+	*/
 	function table_info($table_name, $db_name = '', $extra = array(), &$error = false) {
-// TODO
+		if (!strlen($db_name)) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		if (!$extra['sql'] && !$this->database_exists($db_name)) {
+			$error = 'db_name not exists';
+			return false;
+		}
+		if (!strlen($table_name)) {
+			$error = 'table_name is empty';
+			return false;
+		}
+		$info = $this->db->get('SHOW TABLE STATUS'. (strlen($db_name) ? ' FROM '.$this->_escape_key($db_name).' LIKE "'.$this->_escape_key($table_name).'"' : ''));
+		if (!$info) {
+			$error = 'table_name not exists';
+			return false;
+		}
+/**
+SELECT CCSA.character_set_name FROM information_schema.`TABLES` T,
+       information_schema.`COLLATION_CHARACTER_SET_APPLICABILITY` CCSA
+WHERE CCSA.collation_name = T.table_collation
+  AND T.table_schema = "schemaname"
+  AND T.table_name = "tablename";
+*/
+		return array(
+			'name'			=> $table_name,
+			'db_name'		=> $db_name,
+			'columns'		=> $this->table_get_columns($table_name, $db_name),
+			'row_format'	=> $info['Row_format'],
+#			'charset'		=> $info['']
+			'collation'		=> $info['Collation'],
+			'engine'		=> $info['Engine'],
+			'rows'			=> $info['Rows'],
+			'data_size'		=> $info['Data_length'],
+			'auto_inc'		=> $info['Auto_increment'],
+			'comment'		=> $info['Comment'],
+			'create_time'	=> $info['Create_time'],
+			'update_time'	=> $info['Update_time'],
+		);
 	}
 
 	/**
@@ -243,7 +381,7 @@ abstract class yf_db_utils_driver {
 			$auto_inc = $v['auto_inc'] || $v['auto_increment'];
 			$comment = $v['comment'];
 			if (isset($v['key'])) {
-				$items[] = $type.' KEY '.($name ? $this->_escape_key($name) : '').' ('.(is_array($v['key_cols']) ? implode(',', $v['key_cols']) : $v['key_cols']).')';
+				$items[] = strtoupper($v['key']).' KEY '.($name ? $this->_escape_key($name) : '').' ('.(is_array($v['key_cols']) ? implode(',', $v['key_cols']) : $v['key_cols']).')';
 			} else {
 				$items[$name] = $this->_escape_key($name)
 					. ' '.$type. ($length ? '('.$length.')' : '')
@@ -264,13 +402,13 @@ abstract class yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		if (is_array($db_name)) {
-			$data = $db_name;
-			$db_name = '';
-		}
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
+#		if (is_array($db_name)) {
+#			$data = $db_name;
+#			$db_name = '';
+#		}
+#		if (!$db_name) {
+#			$db_name = $this->db->DB_NAME;
+#		}
 		if (!$db_name) {
 			$error = 'db_name is empty';
 			return false;
@@ -310,17 +448,25 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$sql = 'CREATE TABLE IF NOT EXISTS '.$db_name.'.'.$this->db->_fix_table_name($table_name).' ('. PHP_EOL. $data. PHP_EOL. ') ENGINE='.$engine.' DEFAULT CHARSET='.$charset.';'. PHP_EOL;
-		return $extra['sql'] ? $sql : $this->db->query($sql) && $error = $this->db->error();
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
-	function drop_table($name, $extra = array(), &$error = false) {
-		if (!$name) {
-			$error = 'name is empty';
+	function drop_table($table_name, $db_name = '', $extra = array(), &$error = false) {
+		if (!$table_name) {
+			$error = 'table_name is empty';
 			return false;
 		}
-		$sql = 'DROP TABLE IF EXISTS '.$this->db->_fix_table_name($name).';'.PHP_EOL;
+		if (!strlen($db_name)) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		if (!$extra['sql'] && !$this->database_exists($db_name)) {
+			$error = 'db_name not exists';
+			return false;
+		}
+		$sql = 'DROP TABLE IF EXISTS '.$this->_escape_key($db_name).'.'.$this->db->_fix_table_name($table_name).';'.PHP_EOL;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
