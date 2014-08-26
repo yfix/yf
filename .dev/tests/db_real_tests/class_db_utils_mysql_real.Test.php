@@ -222,52 +222,77 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
 		$expected = array(
 			'id' => array(
-				'name' => 'id',
-				'type' => 'int',
-				'length' => '10',
-				'unsigned' => true,
-				'collation' => NULL,
-				'null' => false,
-				'default' => NULL,
-				'auto_inc' => true,
-				'is_primary' => true,
-				'is_unique' => false,
-				'type_raw' => 'int(10) unsigned',
+				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collation' => NULL,'null' => false,
+				'default' => NULL,'auto_inc' => true,'is_primary' => true,'is_unique' => false,'type_raw' => 'int(10) unsigned',
 			),
 			'name' => array(
-				'name' => 'name',
-				'type' => 'varchar',
-				'length' => '255',
-				'unsigned' => false,
-				'collation' => 'utf8_general_ci',
-				'null' => false,
-				'default' => '',
-				'auto_inc' => false,
-				'is_primary' => false,
-				'is_unique' => false,
-				'type_raw' => 'varchar(255)',
+				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
+				'default' => '','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'varchar(255)',
 			),
 			'active' => array(
-				'name' => 'active',
-				'type' => 'enum',
-				'length' => '',
-				'unsigned' => false,
-				'collation' => 'utf8_general_ci',
-				'null' => false,
-				'default' => '0',
-				'auto_inc' => false,
-				'is_primary' => false,
-				'is_unique' => false,
-				'type_raw' => 'enum(\'0\',\'1\')',
+				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
+				'default' => '0','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
 			),
 		);
 		$this->assertEquals( $expected, self::utils()->table_get_columns($table, self::$DB_NAME) );
 	}
 	public function test_table_info() {
-#		$this->assertEquals( array(), self::utils()->table_info(self::$DB_NAME, array()) );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
+			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
+			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
+			array('key' => 'primary', 'key_cols' => 'id'),
+		);
+		$this->assertTrue( self::utils()->create_table($table, self::$DB_NAME, $data) );
+		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
+		$expected_columns = array(
+			'id' => array(
+				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collation' => NULL,'null' => false,
+				'default' => NULL,'auto_inc' => true,'is_primary' => true,'is_unique' => false,'type_raw' => 'int(10) unsigned',
+			),
+			'name' => array(
+				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
+				'default' => '','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'varchar(255)',
+			),
+			'active' => array(
+				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
+				'default' => '0','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
+			),
+		);
+		$expected = array(
+			'name' => $table,
+			'db_name' => self::$DB_NAME,
+			'columns' => $expected_columns,
+			'row_format' => 'Compact',
+			'collation' => 'utf8_general_ci',
+			'engine' => 'InnoDB',
+			'rows' => '0',
+			'data_size' => '16384',
+			'auto_inc' => '1',
+			'comment' => '',
+			'create_time' => '2014-01-01 01:01:01',
+			'update_time' => null,
+		);
+		$received = self::utils()->table_info($table, self::$DB_NAME);
+		$received && $received['create_time'] = '2014-01-01 01:01:01';
+		$this->assertEquals( $expected, $received );
 	}
 	public function test_alter_table() {
-#		$this->assertEquals( self::utils()-> );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
+			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
+			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
+			array('key' => 'primary', 'key_cols' => 'id'),
+		);
+		$this->assertTrue( self::utils()->create_table($table, self::$DB_NAME, $data) );
+		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
+#		$old_info = self::utils()->table_info($table, self::$DB_NAME);
+#		$this->assertEquals( 'utf8_general_ci', $old_info['collation'] );
+#		$this->assertTrue( self::utils()->alter_table($table, self::$DB_NAME, array('collation' => 'latin1_general_ci')) );
+#		$new_info = self::utils()->table_info($table, self::$DB_NAME);
+#		$this->assertEquals( 'latin1_general_ci', $new_info['collation'] );
 	}
 	public function test_rename_table() {
 #		$this->assertEquals( self::utils()-> );
