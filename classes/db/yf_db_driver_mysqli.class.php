@@ -6,8 +6,6 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	/** @var @conf_skip */
 	public $db_connect_id		= null;
 	/** @var @conf_skip */
-	public $query_result		= null;
-	/** @var @conf_skip */
 	public $META_TABLES_SQL		= 'SHOW TABLES';	
 	/** @var @conf_skip */
 	public $META_COLUMNS_SQL	= 'SHOW COLUMNS FROM %s';
@@ -95,21 +93,19 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	* Base query method
 	*/
 	function query($query = '') {
-		// Remove any pre-existing queries
-		unset($this->query_result);
 		if (!$this->db_connect_id) {
 			return false;
 		}
-		if ($query == '') {
+		$result = mysqli_query($this->db_connect_id, $query);
+		if (!$result) {
+			$query_error = mysqli_error($this->db_connect_id);
+			$query_error_code = mysqli_errno($this->db_connect_id);
+			if ($query_error_code) {
+				conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
+			}
 			return false;
 		}
-		$this->query_result = mysqli_query($this->db_connect_id, $query);
-		$query_error = mysqli_error($this->db_connect_id);
-		if ($query_error) {
-			$query_error_code = mysqli_errno($this->db_connect_id);
-			conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
-		}
-		return $this->query_result;
+		return $result;
 	}
 
 	/**
