@@ -10,6 +10,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public static $db = null;
 	public static $server_version = '';
 	public static $DB_NAME = '';
+	public static $CI_SERVER = '';
 	public static function setUpBeforeClass() {
 		self::$DB_NAME = DB_NAME;
 		$db_class = load_db_class();
@@ -26,10 +27,16 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			'pswd'	=> DB_PSWD,
 			'force' => true,
 		));
-		self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
 		self::$server_version = self::$db->get_server_version();
+		if (getenv('CI') === 'true' && getenv('DRONE') === 'true') {
+			self::$CI_SERVER = 'DRONE';
+		}
+		if (self::$CI_SERVER != 'DRONE') {
+			self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
+		}
 	}
 	public static function tearDownAfterClass() {
+		if (self::$CI_SERVER == 'DRONE') { return ; }
 		self::utils()->drop_database(self::$DB_NAME);
 	}
 	private static function utils() {
@@ -43,6 +50,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( is_resource(self::$db->db->db_connect_id) );
 	}
 	public function test_list_databases() {
+		if (self::$CI_SERVER == 'DRONE') { return ; }
 		$all_dbs = self::utils()->list_databases();
 		$this->assertTrue( is_array($all_dbs) );
 		$this->assertNotEmpty( $all_dbs );
@@ -54,6 +62,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		}
 	}
 	public function test_drop_database() {
+		if (self::$CI_SERVER == 'DRONE') { return ; }
 		$all_dbs = self::utils()->list_databases();
 		if (in_array(self::$DB_NAME, $all_dbs)) {
 			self::utils()->drop_database(self::$DB_NAME);
@@ -62,6 +71,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( in_array(self::$DB_NAME, $all_dbs) );
 	}
 	public function test_create_database() {
+		if (self::$CI_SERVER == 'DRONE') { return ; }
 		$all_dbs = self::utils()->list_databases();
 		if (in_array(self::$DB_NAME, $all_dbs)) {
 			self::utils()->drop_database(self::$DB_NAME);
@@ -73,10 +83,12 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( in_array(self::$DB_NAME, $all_dbs) );
 	}
 	public function test_database_exists() {
+		if (self::$CI_SERVER == 'DRONE') { return ; }
 		$this->assertFalse( self::utils()->database_exists(self::$DB_NAME.'ggdfgdf') );
 		$this->assertTrue( self::utils()->database_exists(self::$DB_NAME) );
 	}
 	public function test_database_info() {
+		if (self::$CI_SERVER == 'DRONE') { return ; }
 		$expected = array(
 			'name'		=> self::$DB_NAME,
 			'charset'	=> 'utf8',
@@ -87,6 +99,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expected, self::utils()->database_info(self::$DB_NAME) );
 	}
 	public function test_alter_database() {
+		if (self::$CI_SERVER == 'DRONE') { return ; }
 		$expected = array(
 			'name'		=> self::$DB_NAME,
 			'charset'	=> 'utf8',
@@ -99,6 +112,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expected, self::utils()->database_info(self::$DB_NAME) );
 	}
 	public function test_rename_database() {
+		if (self::$CI_SERVER == 'DRONE') { return ; }
 		$NEW_DB_NAME = self::$DB_NAME.'_new';
 		$this->assertTrue( self::utils()->database_exists(self::$DB_NAME) );
 		$this->assertFalse( self::utils()->database_exists($NEW_DB_NAME) );
