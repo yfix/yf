@@ -76,13 +76,18 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->database_exists(self::$DB_NAME) );
 	}
 	public function test_database_info() {
-#		$this->assertEquals( array(), self::utils()->database_info(self::$DB_NAME) );
+		$expected = array(
+			'name'		=> self::$DB_NAME,
+			'charset'	=> 'utf8',
+			'collation'	=> 'utf8_general_ci',
+		);
+#		$this->assertEquals( $expected, self::utils()->database_info(self::$DB_NAME) );
 	}
 	public function test_alter_database() {
-#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('character set' => 'utf8')) );
-#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('character set' => 'latin1')) );
-#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('collate' => 'utf8_general_ci')) );
-#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('collate' => 'utf8_bin')) );
+#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('charset' => 'utf8')) );
+#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('charset' => 'latin1')) );
+#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('collation' => 'utf8_general_ci')) );
+#		$this->assertEquals( self::utils()->alter_database(self::$DB_NAME, array('collation' => 'utf8_bin')) );
 	}
 	public function test_rename_database() {
 		$NEW_DB_NAME = self::$DB_NAME.'_new';
