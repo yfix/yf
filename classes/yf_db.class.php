@@ -38,7 +38,7 @@ class yf_db {
 	/** @var bool Use logarithmic increase or reconnect time */
 	public $RECONNECT_DELAY_LOG_INC	= 1;
 	/** @var bool Use locking for reconnects or not */
-	public $RECONNECT_USE_LOCKING	= 0;
+	public $RECONNECT_USE_LOCKING	= false;
 	/** @var array List of mysql error codes to use for reconnect tries. See also http://dev.mysql.com/doc/refman/5.0/en/error-messages-client.html */
 	public $RECONNECT_MYSQL_ERRORS	= array(1053, 1317, 2000, 2002, 2003, 2004, 2005, 2006, 2008, 2012, 2013, 2020, 2027, 2055);
 	/** @var string */
@@ -46,11 +46,11 @@ class yf_db {
 	/** @var int Time in seconds between unlock reconnect */
 	public $RECONNECT_LOCK_TIMEOUT	= 30;
 	/** @var bool Connection required or not (else E_USER_WARNING will be thrown not E_USER_ERROR) */
-	public $CONNECTION_REQUIRED		= 0;
+	public $CONNECTION_REQUIRED		= false;
 	/** @var bool Allow to use shutdown queries or not */
-	public $USE_SHUTDOWN_QUERIES	= 1;
+	public $USE_SHUTDOWN_QUERIES	= true;
 	/** @var bool Allow to cache specified queries results */
-	public $ALLOW_CACHE_QUERIES		= 0;
+	public $ALLOW_CACHE_QUERIES		= false;
 	/** @var bool Max number of cached queries */
 	public $CACHE_QUERIES_LIMIT		= 100;
 	/** @var bool Max number of logged queries (set to 0 to unlimited) */
@@ -58,9 +58,9 @@ class yf_db {
 	/** @var bool Gather affected rows stats (will be used only when DEBUG_MODE is enabled) */
 	public $GATHER_AFFECTED_ROWS	= true;
 	/** @var bool Store db queries to file */
-	public $LOG_ALL_QUERIES			= 0;
+	public $LOG_ALL_QUERIES			= false;
 	/** @var bool Store db queries to file */
-	public $LOG_SLOW_QUERIES		= 0;
+	public $LOG_SLOW_QUERIES		= false;
 	/** @var string Log queries file name */
 	public $FILE_NAME_LOG_ALL		= 'db_queries.log';
 	/** @var string Log queries file name */
