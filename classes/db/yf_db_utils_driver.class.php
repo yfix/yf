@@ -238,7 +238,7 @@ abstract class yf_db_utils_driver {
 		$q = $this->db->query('SHOW FULL COLUMNS FROM '.$this->_escape_key($db_name).'.'.$this->_escape_key($table_name));
 		while ($a = $this->db->fetch_assoc($q)) {
 			$name = $a['Field'];
-			list($type, $length, $unsigned) = $this->_parse_column_type($a['Type']);
+			list($type, $length, $unsigned) = array_values($this->_parse_column_type($a['Type']));
 			$cols[$name] = array(
 				'name'		=> $name,
 				'type'		=> $type,
@@ -250,7 +250,7 @@ abstract class yf_db_utils_driver {
 				'auto_inc'	=> false !== strpos($a['Extra'], 'auto_increment') ? true : false,
 				'is_primary'=> $a['Key'] == 'PRI',
 				'is_unique'	=> $a['Key'] == 'UNI',
-				'type_raw'	=> $a['type'],
+				'type_raw'	=> $a['Type'],
 			);
 		}
 		return $cols;
