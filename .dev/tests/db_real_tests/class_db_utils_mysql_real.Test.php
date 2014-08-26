@@ -39,6 +39,12 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		if (self::$CI_SERVER == 'DRONE') { return ; }
 		self::utils()->drop_database(self::$DB_NAME);
 	}
+	protected function setUp() {
+		if (self::$CI_SERVER == 'DRONE') {
+			$this->markTestSkipped('Right now we skip this test, when running inside DRONE.IO.');
+			return false;
+		}
+	}
 	private static function utils() {
 		return self::$db->utils();
 	}
