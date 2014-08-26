@@ -153,7 +153,7 @@ class yf_db {
 	*/
 	function _init() {
 		// Perform auto-connection to db if needed
-		if ($this->AUTO_CONNECT || MAIN_TYPE == 'admin') {
+		if (($this->AUTO_CONNECT || MAIN_TYPE == 'admin') && !$this->NO_AUTO_CONNECT) {
 			$this->connect();
 		}
 		$this->_set_debug_items();
@@ -199,7 +199,7 @@ class yf_db {
 	/**
 	* Connect db driver and then connect to db
 	*/
-	function connect($db_host = '', $db_user = '', $db_pswd = null, $db_name = '', $force = false, $db_ssl = false, $db_port = '', $db_socket = '', $db_charset = '', $allow_auto_create_db = null) {
+	function connect($db_host = '', $db_user = '', $db_pswd = null, $db_name = null, $force = false, $db_ssl = false, $db_port = '', $db_socket = '', $db_charset = '', $allow_auto_create_db = null) {
 		if (is_array($db_host)) {
 			$params = $db_host;
 			$db_host = '';
@@ -217,8 +217,12 @@ class yf_db {
 		if (!$params['reconnect']) {
 			$this->DB_HOST = ($params['host'] ?: $db_host) ?: (defined('DB_HOST') ? DB_HOST : 'localhost');
 			$this->DB_USER = ($params['user'] ?: $db_user) ?: (defined('DB_USER') ? DB_USER : 'root');
-			$this->DB_PSWD = ($params['pswd'] ?: $db_pswd) ?: (defined('DB_PSWD') ? DB_PSWD : '');
-			$this->DB_NAME = ($params['name'] ?: $db_name) ?: (defined('DB_NAME') ? DB_NAME : '');
+			// db_pswd can be empty string
+			$_db_pswd = isset($params['pswd']) ? $params['pswd'] : $db_pswd;
+			$this->DB_PSWD = !is_null($_db_pswd) ? $_db_pswd : (defined('DB_PSWD') ? DB_PSWD : '');
+			// db_name can be empty string - means we working in special mode, just connecting to server
+			$_db_name = isset($params['name']) ? $params['name'] : $db_name;
+			$this->DB_NAME = !is_null($_db_name) ? $_db_name : (defined('DB_NAME') ? DB_NAME : '');
 			$this->DB_PORT = ($params['port'] ?: $db_port) ?: (defined('DB_PORT') ? DB_PORT : 3306);
 			$this->DB_SOCKET = ($params['socket'] ?: $db_socket) ?: (defined('DB_SOCKET') ? DB_SOCKET : '');
 			$this->DB_SSL = ($params['ssl'] ?: $db_ssl) ?: (defined('DB_SSL') ? DB_SSL : false);
