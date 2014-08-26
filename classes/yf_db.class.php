@@ -29,8 +29,10 @@ class yf_db {
 	public $ERROR_AUTO_REPAIR		= true;
 	/** @var string Folder where databases drivers are stored */
 	public $DB_DRIVERS_DIR			= 'classes/db/';
-	/** @var int Num tries to reconnect (will be useful if db server is overloaded) (Set to '0' for disabling) */
-	public $RECONNECT_NUM_TRIES		= 1000;
+	/** @var int Num tries to reconnect in common mode (will be useful if db server is overloaded) (Set to '0' for disabling) */
+	public $RECONNECT_NUM_TRIES		= 3;
+	/** @var int Num tries to reconnect inside CONSOLE_MODE (will be useful if db server is overloaded and sometimes we lost connection to it) (Set to '0' for disabling) */
+	public $RECONNECT_CONSOLE_TRIES	= 1000;
 	/** @var int Time to wait between reconnects (in seconds) */
 	public $RECONNECT_DELAY			= 1;
 	/** @var bool Use logarithmic increase or reconnect time */
@@ -109,14 +111,6 @@ class yf_db {
 	public $_need_sys_prefix		= array();
 
 	/**
-	*/
-	function _load_tables_with_sys_prefix() {
-		include YF_PATH. 'share/db_sys_prefix_tables.php';
-		$this->_need_sys_prefix = $data;
-		return (array)$data;
-	}
-
-	/**
 	* Constructor
 	*/
 	function __construct($db_type = '', $db_prefix = null, $db_replication_slave = null) {
@@ -180,6 +174,29 @@ class yf_db {
 	}
 
 	/**
+	*/
+	function _load_tables_with_sys_prefix() {
+		if ($this->_need_sys_prefix) {
+			return $this->_need_sys_prefix;
+		}
+		$paths = array(
+			'app'	=> APP_PATH. 'share/db_sys_prefix_tables.php',
+			'yf'	=> YF_PATH. 'share/db_sys_prefix_tables.php',
+		);
+		$data = array();
+		foreach ($paths as $path) {
+			if (file_exists($path)) {
+				$_data = require $path;
+				if ($_data && is_array($_data)) {
+					$data += $_data;
+				}
+			}
+		}
+		$this->_need_sys_prefix = $data;
+		return (array)$data;
+	}
+
+	/**
 	* Connect db driver and then connect to db
 	*/
 	function connect($db_host = '', $db_user = '', $db_pswd = null, $db_name = '', $force = false, $db_ssl = false, $db_port = '', $db_socket = '', $db_charset = '', $allow_auto_create_db = null) {
@@ -190,7 +207,7 @@ class yf_db {
 		if (!is_array($params)) {
 			$params = array();
 		}
-		if ($params['reconnect']) {
+		if ($params['reconnect'] || $params['force']) {
 			$force = true;
 		}
 		if (!empty($this->_tried_to_connect) && !$force) {
@@ -242,7 +259,11 @@ class yf_db {
 				'allow_auto_create_db' => $this->ALLOW_AUTO_CREATE_DB,
 			);
 			// Try to connect several times
-			for ($i = 1; $i <= $this->RECONNECT_NUM_TRIES; $i++) {
+			$tries = $this->RECONNECT_NUM_TRIES;
+			if (main()->is_console() && !main()->is_unit_test()) {
+				$tries = $this->RECONNECT_TRIES_CONSOLE;
+			}
+			for ($i = 1; $i <= $tries; $i++) {
 				$this->db = new $driver_class_name($driver_params);
 				if (!is_object($this->db) || !($this->db instanceof yf_db_driver)) {
 					trigger_error('DB: Wrong driver', $this->CONNECTION_REQUIRED ? E_USER_ERROR : E_USER_WARNING);
@@ -287,6 +308,20 @@ class yf_db {
 	}
 
 	/**
+	* Prepare statement to execute
+	*/
+	function prepare() {
+// TODO
+	}
+
+	/**
+	* Execute prepared statement
+	*/
+	function exec() {
+// TODO
+	}
+
+	/**
 	* Function return resource ID of the query
 	*/
 	function &query($sql) {
@@ -298,7 +333,7 @@ class yf_db {
 		}
 		$this->NUM_QUERIES++;
 		if (DEBUG_MODE) {
-			$this->_query_time_start = microtime(true);
+			$query_time_start = microtime(true);
 			if ($this->SQL_NO_CACHE && false !== strpos($this->DB_TYPE, 'mysql')) {
 				$q = strtoupper(substr(ltrim($sql), 0, 100));
 				if (substr($q, 0, 6) == 'SELECT' && false === strpos($q, 'SQL_NO_CACHE')) {
@@ -330,14 +365,19 @@ class yf_db {
 				}
 			}
 		}
+		$log_allowed = (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES);
+		if ($log_allowed) {
+			$log_id = $this->_query_log($sql, $this->USE_QUERY_BACKTRACE ? $this->_trace_string() : array(), $db_error);
+		}
 		if (!$result && $query_allowed && $db_error && $this->ERROR_AUTO_REPAIR) {
-			$result = $this->_repair_table($sql, $db_error);
+			$result	= $this->_repair_table($sql, $db_error);
 		}
 		if (!$result && $db_error) {
 			$this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace_string() : array());
 		}
-		if (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
-			$this->_query_log($sql, $this->USE_QUERY_BACKTRACE ? $this->_trace_string() : array(), $db_error);
+		// This part needed to update debug log after executing query, but ensure correct order of queries
+		if ($log_allowed && $log_id) {
+			$this->_update_query_log($log_id, $result, $query_time_start);
 		}
 		return $result;
 	}
@@ -361,13 +401,7 @@ class yf_db {
 	/**
 	*/
 	function _query_log($sql, $_trace = array(), $db_error = false) {
-		$_log_allowed = false;
-		if (DEBUG_MODE || $this->LOG_ALL_QUERIES || $this->LOG_SLOW_QUERIES) {
-			$_log_allowed = true;
-		}
-		if (!$_log_allowed) {
-			return false;
-		}
+		$_log_allowed = true;
 		// Save memory on high number of query log entries
 		if ($this->LOGGED_QUERIES_LIMIT && count($this->_LOG) >= $this->LOGGED_QUERIES_LIMIT) {
 			$_log_allowed = false;
@@ -375,8 +409,26 @@ class yf_db {
 		if (!$_log_allowed) {
 			return false;
 		}
-		$time = (float)microtime(true) - (float)$this->_query_time_start;
-		if ($this->GATHER_AFFECTED_ROWS) {
+		$this->_LOG[] = array(
+			'sql'	=> $sql,
+			'rows'	=> 0,
+			'error'	=> $db_error,
+			'time'	=> 0,
+			'trace'	=> $_trace,
+		);
+		return count($this->_LOG) - 1;
+	}
+
+	/**
+	*/
+	function _update_query_log($log_id, $result, $query_time_start = 0) {
+		if (!isset($this->_LOG[$log_id])) {
+			return false;
+		}
+		$log = &$this->_LOG[$log_id];
+		$time = (float)microtime(true) - (float)$query_time_start;
+		$sql = $log['sql'];
+		if ($this->GATHER_AFFECTED_ROWS && $result) {
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
 			$rows = null;
 			if (in_array($_sql_type, array('INSERT', 'UPDATE', 'REPLACE', 'DELETE'))) {
@@ -385,13 +437,8 @@ class yf_db {
 				$rows = $this->num_rows($result);
 			}
 		}
-		$this->_LOG[] = array(
-			'sql'	=> $sql,
-			'rows'	=> $rows,
-			'error'	=> $db_error,
-			'time'	=> $time,
-			'trace'	=> $_trace,
-		);
+		$log['time'] = $time;
+		$log['rows'] = $rows;
 	}
 
 	/**
@@ -440,7 +487,7 @@ class yf_db {
 			return false;
 		}
 		$table = $this->_fix_table_name($table);
-		if (!strlen($table)) {
+		if (!strlen($table) || !is_array($data)) {
 			return false;
 		}
 		if (is_string($replace)) {
@@ -464,7 +511,7 @@ class yf_db {
 				}
 				$values_array[] = '('.implode(', ', $this->escape_val($cur_values)).PHP_EOL.')';
 			}
-		} else {
+		} elseif (count($data)) {
 			$cols	= array_keys($data);
 			$values = array_values($data);
 			foreach ((array)$values as $k => $v) {
@@ -476,18 +523,26 @@ class yf_db {
 			unset($cols[$k]);
 			$cols[$v] = $this->escape_key($v);
 		}
-		$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '').' INTO '.$this->escape_key($table).PHP_EOL
-			.' ('.implode(', ', $cols).') VALUES '.PHP_EOL.implode(', ', $values_array);
-		if ($on_duplicate_key_update) {
-			$sql .= PHP_EOL.' ON DUPLICATE KEY UPDATE ';
-			$tmp = array();
-			foreach ((array)$cols as $col => $col_escaped) {
-				if ($col == 'id') {
-					continue;
+		$sql = '';
+		if (count($cols) && count($values_array)) {
+			$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '')
+				.' INTO '.$this->escape_key($table).PHP_EOL
+				.' ('.implode(', ', $cols).') VALUES '
+				.PHP_EOL.implode(', ', $values_array);
+			if ($on_duplicate_key_update) {
+				$sql .= PHP_EOL.' ON DUPLICATE KEY UPDATE ';
+				$tmp = array();
+				foreach ((array)$cols as $col => $col_escaped) {
+					if ($col == 'id') {
+						continue;
+					}
+					$tmp[] = $col_escaped.' = VALUES('.$col_escaped.')';
 				}
-				$tmp[] = $col_escaped.' = VALUES('.$col_escaped.')';
+				$sql .= implode(', ', $tmp);
 			}
-			$sql .= implode(', ', $tmp);
+		}
+		if (!$sql) {
+			return false;
 		}
 		if ($only_sql) {
 			return $sql;
@@ -612,7 +667,13 @@ class yf_db {
 			}
 			$tmp_data[$k] = $this->escape_key($k).' = '.$this->escape_val($v);
 		}
-		$sql = 'UPDATE '.$this->escape_key($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
+		$sql = '';
+		if (count($tmp_data)) {
+			$sql = 'UPDATE '.$this->escape_key($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
+		}
+		if (!$sql) {
+			return false;
+		}
 		if ($only_sql) {
 			return $sql;
 		}

@@ -33,9 +33,9 @@ if (!defined('YF_PATH')) {
 #####
 if (!defined('DB_NAME_GEONAMES')) {
 	define('DB_PREFIX_GEONAMES', '');
-	define('DB_HOST_GEONAMES', 'localhost');
-	define('DB_USER_GEONAMES', 'root');
-	define('DB_PSWD_GEONAMES', '123456');
+	define('DB_HOST_GEONAMES', getenv('YF_DB_HOST') ?: 'localhost');
+	define('DB_USER_GEONAMES', getenv('YF_DB_USER') ?: 'root');
+	define('DB_PSWD_GEONAMES', is_string(getenv('YF_DB_PSWD')) ? getenv('YF_DB_PSWD') : '123456');
 	define('DB_NAME_GEONAMES', 'geonames');
 }
 function db_geonames($tbl_name = '') {

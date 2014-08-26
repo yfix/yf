@@ -1878,6 +1878,13 @@ class yf_main {
 	}
 
 	/**
+	* Checks whether current page is in unit testing mode
+	*/
+	function is_unit_test() {
+		return (bool)defined('YF_IN_UNIT_TESTS');
+	}
+
+	/**
 	* Return class name of the object, stripping all YF-related prefixes
 	* Needed to ensure singleton pattern and extending classes with same name
 	*/

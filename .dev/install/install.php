@@ -259,6 +259,7 @@ class yf_core_install {
 	/**
 	*/
 	function set_php_conf() {
+		define('YF_IN_INSTALLER', true);
 		define('PROJECT_PATH', $_POST['install_project_path'] ?: realpath('./').'/');
 		define('INCLUDE_PATH', PROJECT_PATH);
 		define('APP_PATH', dirname(PROJECT_PATH).'/');
@@ -266,6 +267,7 @@ class yf_core_install {
 		$GLOBALS['PROJECT_CONF']['main']['USE_CUSTOM_ERRORS'] = 1;
 		$GLOBALS['PROJECT_CONF']['main']['SESSION_OFF'] = 1;
 		$GLOBALS['PROJECT_CONF']['db']['RECONNECT_NUM_TRIES'] = 1;
+		$GLOBALS['PROJECT_CONF']['db']['ALLOW_AUTO_CREATE_DB'] = 1;
 		ini_set('display_errors', 'on');
 		ini_set('memory_limit', '512M');
 		error_reporting(E_ALL ^E_NOTICE);
@@ -447,10 +449,13 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		}
 		$import_tables = array_combine($import_tables, $import_tables);
 
-		$db_exists = db()->utils->database_exists(DB_NAME);
+		// Typically missing database should be created automatically through this setting:
+		// $GLOBALS['PROJECT_CONF']['db']['ALLOW_AUTO_CREATE_DB'] = 1;
+		// But in case it was failed, we trying again with more high-level API of db utils
+		$db_exists = db()->utils()->database_exists(DB_NAME);
 		if ($_POST['install_checkbox_db_create'] && !$db_exists) {
 			db()->utils()->create_database(DB_NAME);
-			$db_exists = db()->utils->database_exists(DB_NAME);
+			$db_exists = db()->utils()->database_exists(DB_NAME);
 		}
 		if (!$db_exists) {
 			exit('Target database not exists or script cannot create it');
@@ -536,6 +541,8 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	/**
 	*/
 	function set_admin_login_pswd() {
+#		db()->_connected &&
+#		db()->utils()->table_exists('sys_admin') &&
 		db()->replace_safe('sys_admin', array(
 			'id'		=> 1,
 			'login'		=> $_POST['install_admin_login'],
