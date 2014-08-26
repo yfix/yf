@@ -221,7 +221,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 			);
 		} elseif ($this->_connect_error) {
 			return array(
-				'message'	=> 'YF: Connect error',
+				'message'	=> 'YF: Connect error: '.$this->_connect_error,
 				'code'		=> '9999',
 			);
 		}
