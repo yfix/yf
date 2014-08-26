@@ -92,10 +92,22 @@ abstract class yf_db_utils_driver {
 		if (!$extra['sql'] && !$this->database_exists($db_name)) {
 			return false;
 		}
+		$allowed = array(
+			'charset'	=> 'CHARACTER SET',
+			'collation'	=> 'COLLATE',
+		);
 		foreach ((array)$extra as $k => $v) {
-			$params[$k] = $k.' = '.$v;
+			$v = preg_replace('~[^a-z0-9_]+~', '', $v);
+			if (isset($allowed[$k])) {
+				$params[$k] = $allowed[$k].' = '.$v;
+			} elseif (in_array($k, $allowed)) {
+				$params[$k] = $k.' = '.$v;
+			}
 		}
-		$sql = 'ALTER DATABASE '.$this->_escape_key($db_name).' '.implode(' ', $params);
+		$sql = '';
+		if ($params) {
+			$sql = 'ALTER DATABASE '.$this->_escape_key($db_name).' '.implode(' ', $params);
+		}
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -133,7 +145,24 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function database_info($db_name, $extra = array(), &$error = false) {
-// TODO: get info  name, collation, charset
+		if (!strlen($db_name)) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		if (!$extra['sql'] && !$this->database_exists($db_name)) {
+			$error = 'db_name not exists';
+			return false;
+		}
+		$info = $this->db->get('SELECT * FROM information_schema.SCHEMATA AS S WHERE schema_name = "'.$this->_escape_key($db_name).'"');
+		if (!$info) {
+			$error = 'db_name not exists';
+			return false;
+		}
+		return array(
+			'name'		=> $db_name,
+			'charset'	=> $info['DEFAULT_CHARACTER_SET_NAME'],
+			'collation'	=> $info['DEFAULT_COLLATION_NAME'],
+		);
 	}
 
 	/**
