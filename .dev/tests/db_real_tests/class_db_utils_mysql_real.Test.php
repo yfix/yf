@@ -48,6 +48,10 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			$this->markTestSkipped('Right now we skip this test, when running inside DRONE.IO.');
 			return false;
 		}
+		if (defined('HHVM_VERSION')) {
+			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
+			return ;
+    	}
 	}
 	private static function utils() {
 		return self::$db->utils();
