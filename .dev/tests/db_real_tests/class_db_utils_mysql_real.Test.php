@@ -305,8 +305,8 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		);
 		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
-#		$old_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
-#		$this->assertEquals( 'utf8_general_ci', $old_info['collation'] );
+		$old_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
+		$this->assertEquals( 'utf8_general_ci', $old_info['collation'] );
 #		$this->assertTrue( self::utils()->alter_table(self::$DB_NAME.'.'.$table, array('collation' => 'latin1_general_ci')) );
 #		$new_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
 #		$this->assertEquals( 'latin1_general_ci', $new_info['collation'] );
@@ -319,21 +319,35 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 		$new_table = $table.'_new';
-#		$this->assertTrue( self::utils()->rename_table(self::$DB_NAME.'.'.$table, $new_name) );
-#		$this->assertFalse( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
-#		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$new_table, ) );
+		$this->assertTrue( self::utils()->rename_table(self::$DB_NAME.'.'.$table, self::$DB_NAME.'.'.$new_table) );
+		$this->assertFalse( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$new_table ) );
 	}
 	public function test_truncate_table() {
-#		$this->assertEquals( self::utils()-> );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->db->db->select_db(self::$DB_NAME) );
+		$to_insert = array(
+			1 => array('id' => 1),
+			2 => array('id' => 2),
+		);
+		$this->assertTrue( self::utils()->db->insert($table, $to_insert) );
+		$this->assertEquals( $to_insert, self::utils()->db->from($table)->get_all() );
+		$this->assertTrue( self::utils()->truncate_table($table) );
 	}
 	public function test_check_table() {
-#		$this->assertEquals( self::utils()-> );
+		$table = current(self::utils()->list_tables(self::$DB_NAME));
+		$this->assertNotEmpty( self::utils()->check_table($table) );
 	}
 	public function test_optimize_table() {
-#		$this->assertEquals( self::utils()-> );
+		$table = current(self::utils()->list_tables(self::$DB_NAME));
+		$this->assertNotEmpty( self::utils()->optimize_table($table) );
 	}
 	public function test_repair_table() {
-#		$this->assertEquals( self::utils()-> );
+		$table = current(self::utils()->list_tables(self::$DB_NAME));
+		$this->assertNotEmpty( self::utils()->repair_table($table) );
 	}
 	public function test_list_columns() {
 #		$this->assertEquals( self::utils()-> );
