@@ -397,6 +397,51 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('good', self::_tpl('{if_not_validate:alpha_spaces(data)}good{/if}', array('data' => '1234567890')));
 		$this->assertEquals('good', self::_tpl('{if_validate:alpha_spaces(data)}good{/if}', array('data' => 'abcd efgh ijkl mnop qrst uvwx yz')));
 	}
+	public function test_if_funcs_multiple() {
+		$data = array('name1' => '', 'name2' => 'something', 'name3' => '', 'name4' => 'other', 'name5' => '', 'name6' => 'gggggg');
+
+		$this->assertEquals('good', self::_tpl('{if_not_ok(name1,name3)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_ok(name1,name2)}bad{else}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_empty(name1,name3)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_empty(name1,name2)}bad{else}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_false(name1,name3)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_false(name1,name2)}bad{else}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_true(name1,name3,name5)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_true(name1,name3,name6)}bad{else}good{/if}', $data));
+
+		$this->assertEquals('good', self::_tpl('{if_ok(name2,name4,name6)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_and_ok(name2,name4,name6)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_or_ok(name1,name2)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_or_ok(name1,name2,name3,name4,name5,name6)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_or_ok(name1,name3,name5)}bad{else}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_ok(name1,name2,name3,name4,name5,name6)}bad{else}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_and_not_ok(name1,name2,name3,name4,name5,name6)}bad{else}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_or_not_ok(name1,name2,name3)}good{/if}', $data));
+
+		$this->assertEquals('good ok', self::_tpl('{if_empty(name1,name3,name5)}good{/if} {if_not_empty(name2,name4,name6)}ok{/if}', $data));
+		$this->assertEquals('good ok', self::_tpl('{if_and_empty(name1,name3,name5)}good{/if} {if_and_not_empty(name2,name4,name6)}ok{/if}', $data));
+		$this->assertEquals('good ok', self::_tpl('{if_or_empty(name1,name3,name5)}good{/if} {if_or_not_empty(name2,name4,name6)}ok{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_empty(name2,name4)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_isset(name1,name3,name5)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_and_isset(name1,name3,name5)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_or_isset(name1,name333,name555)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_not_isset(name777,name888,name999)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_and_not_isset(name777,name888,name999)}good{/if}', $data));
+#		$this->assertEquals('good', self::_tpl('{if_or_not_isset(name1,name2,name9999)}good{/if}', $data));
+// TODO: add more tests
+/*
+		$this->assertEquals('good', self::_tpl('{if_empty(data)}good{/if}', array('data' => '')));
+		$this->assertEquals('good', self::_tpl('{if_empty(data)}good{/if}', array('data' => array())));
+		$this->assertEquals('good', self::_tpl('{if_not_empty(data)}good{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if_empty(data.name1)}good{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if_not_empty(data.name2)}good{/if}', array('data' => $data)));
+		$this->assertEquals('good', self::_tpl('{if_not_isset(data.name3)}good{/if}', array('data' => $data)));
+
+		$this->assertEquals('good', self::_tpl('{if_validate:is_natural_no_zero(data)}good{/if}', array('data' => '1234567890')));
+		$this->assertEquals('good', self::_tpl('{if_not_validate:alpha_spaces(data)}good{/if}', array('data' => '1234567890')));
+		$this->assertEquals('good', self::_tpl('{if_validate:alpha_spaces(data)}good{/if}', array('data' => 'abcd efgh ijkl mnop qrst uvwx yz')));
+*/
+	}
 	public function test_elseif_simple() {
 		$data = array('name1' => '', 'name2' => 'something');
 		$this->assertEquals('ok', self::_tpl('{if(name1 ne "")}bad{elseif(name2 ne "")}ok{/if}', $data));
