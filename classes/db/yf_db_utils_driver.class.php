@@ -514,6 +514,10 @@ abstract class yf_db_utils_driver {
 			$error = 'table_name not exists';
 			return false;
 		}
+#		$allowed = array(
+#			'charset'	=> 'CHARACTER SET',
+#			'collation'	=> 'COLLATE',
+#		);
 #		$params = array();
 // TODO: implement allowed list of params and their shortcuts
 // TODO: implement adding columns (with "before" and "after")
