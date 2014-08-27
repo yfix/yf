@@ -68,12 +68,12 @@ class yf_db_driver_mysqli extends yf_db_driver {
 			return $this->db_connect_id;
 		}
 		if ($this->params['name'] != '') {
-			$dbselect = mysqli_select_db($this->db_connect_id, $this->params['name']);
+			$dbselect = $this->select_db($this->params['name']);
 			// Try to create database, if not exists and if allowed
 			if (!$dbselect && $this->params['allow_auto_create_db'] && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->params['name'])) {
 				$res = mysqli_query('CREATE DATABASE IF NOT EXISTS '.$this->params['name'], $this->db_connect_id);
 				if ($res) {
-					$dbselect = mysqli_select_db($this->db_connect_id, $this->params['name']);
+					$dbselect = $this->select_db($this->params['name']);
 				}
 			}
 			if (!$dbselect) {
@@ -81,6 +81,15 @@ class yf_db_driver_mysqli extends yf_db_driver {
 			}
 			return $dbselect;
 		}
+	}
+
+	/**
+	*/
+	function select_db($name) {
+		if (!$this->db_connect_id) {
+			return false;
+		}
+		return mysqli_select_db($this->db_connect_id, $name);
 	}
 
 	/**
