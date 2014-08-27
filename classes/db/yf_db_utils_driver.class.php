@@ -334,7 +334,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* See http://dev.mysql.com/doc/refman/5.6/en/create-table.html
 	*/
-	function _parse_column_type($str) {
+	function _parse_column_type($str, &$error = false) {
 		$str = trim($str);
 		$type = $length = $decimals = $values = null;
 		if (preg_match('~^(?P<type>[a-z]+)[\s\t]*\((?P<length>[^\)]+)\)~i', $str, $m)) {
@@ -505,7 +505,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function alter_table($table, $extra = array()) {
+	function alter_table($table, $params = array(), $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -522,16 +522,16 @@ abstract class yf_db_utils_driver {
 // TODO: implement allowed list of params and their shortcuts
 // TODO: implement adding columns (with "before" and "after")
 // TODO: implement 
-		foreach ((array)$extra as $k => $v) {
-			$params[$k] = $k.' = '.$v;
-		}
+#		foreach ((array)$extra as $k => $v) {
+#			$params[$k] = $k.' = '.$v;
+#		}
 		$sql = 'ALTER TABLE '.$this->_escape_table_name($table). PHP_EOL. implode(' ', $params);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
-	function rename_table($table, $new_name, $extra = array()) {
+	function rename_table($table, $new_name, $extra = array(), &$error = false) {
 		if (!$table || !$new_name) {
 			$error = 'table_name is empty';
 			return false;
@@ -542,7 +542,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function truncate_table($table, $extra = array()) {
+	function truncate_table($table, $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -553,7 +553,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function check_table($table, $extra = array()) {
+	function check_table($table, $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -564,7 +564,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function optimize_table($table, $extra = array()) {
+	function optimize_table($table, $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -575,7 +575,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function repair_table($table, $extra = array()) {
+	function repair_table($table, $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -586,38 +586,27 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_columns($table, $extra = array()) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-		/*$this->db->query("
-			SELECT *
-			FROM INFORMATION_SCHEMA.COLUMNS
-			WHERE TABLE_NAME = {$this->db->_fix_table_name($table)} AND TABLE_SCHEMA = DATABASE()
-		");*/
-		$columns = array();
-		foreach ((array)$this->db->get_all('SHOW FULL COLUMNS FROM '. $this->_escape_table_name($table)) as $row) {
-			$type = explode('(', $row['Type']);
-			$columns[$row['Field']] = array(
-				'name'		=> $row['Field'],
-				'table'		=> $table,
-				'nativetype'=> strtoupper($type[0]),
-				'size'		=> isset($type[1]) ? (int) $type[1] : NULL,
-				'unsigned'	=> (bool) strstr($row['Type'], 'unsigned'),
-				'nullable'	=> $row['Null'] === 'YES',
-				'default'	=> $row['Default'],
-				'autoincrement' => $row['Extra'] === 'auto_increment',
-				'primary'	=> $row['Key'] === 'PRI',
-				'vendor'	=> (array) $row,
-			);
-		}
-		return $columns;
+	function list_columns($table, $extra = array(), &$error = false) {
+		return $this->table_get_columns($table, $extra, $error);
 	}
 
 	/**
 	*/
-	function add_column($table, $col_name, $data, $extra = array()) {
+	function column_exists($table, $col_name, $extra = array(), &$error = false) {
+		$columns = $this->table_get_columns($table, $extra, $error);
+		return isset($columns[$col_name]);
+	}
+
+	/**
+	*/
+	function column_info($table, $col_name, $extra = array(), &$error = false) {
+		$columns = $this->table_get_columns($table, $extra, $error);
+		return $columns[$col_name];
+	}
+
+	/**
+	*/
+	function add_column($table, $col_name, $data, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -628,7 +617,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function rename_column($table, $col_name, $new_name, $extra = array()) {
+	function rename_column($table, $col_name, $new_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -639,7 +628,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function alter_column($table, $col_name, $data, $extra = array()) {
+	function alter_column($table, $col_name, $data, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -650,7 +639,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_column($table, $col_name, $extra = array()) {
+	function drop_column($table, $col_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -661,13 +650,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function column_exists($table, $col_name, $extra = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	function list_indexes($table, $extra = array()) {
+	function list_indexes($table, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -686,7 +669,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_all_indexes($table, $extra = array()) {
+	function list_all_indexes($table, $extra = array(), &$error = false) {
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -745,7 +728,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function add_index($table, $fields = array(), $extra = array()) {
+	function add_index($table, $fields = array(), $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -757,7 +740,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_index($table, $name) {
+	function drop_index($table, $name, &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -768,19 +751,19 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function update_index($table, $name) {
+	function update_index($table, $name, &$error = false) {
 // TODO
 	}
 
 	/**
 	*/
-	function index_exists($table, $name) {
+	function index_exists($table, $name, &$error = false) {
 // TODO
 	}
 
 	/**
 	*/
-	function list_foreign_keys($table, $extra = array()) {
+	function list_foreign_keys($table, $extra = array(), &$error = false) {
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -815,13 +798,13 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_all_foreign_keys($name, $extra = array()) {
+	function list_all_foreign_keys($name, $extra = array(), &$error = false) {
 // TODO
 	}
 
 	/**
 	*/
-	function add_foreign_key($table, $fields, $extra = array()) {
+	function add_foreign_key($table, $fields, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -839,7 +822,7 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function drop_foreign_key($table, $name, $extra = array()) {
+	function drop_foreign_key($table, $name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -850,13 +833,13 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function foreign_key_exists($table, $name, $extra = array()) {
+	function foreign_key_exists($table, $name, $extra = array(), &$error = false) {
 // TODO
 	}
 
 	/**
 	*/
-	function list_views($extra = array()) {
+	function list_views($db_name = '', $extra = array(), &$error = false) {
 		/*$this->connection->query("
 			SELECT TABLE_NAME as name, TABLE_TYPE = 'VIEW' as view
 			FROM INFORMATION_SCHEMA.TABLES
@@ -875,7 +858,7 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function create_view($name, $sql_as, $extra = array()) {
+	function create_view($name, $sql_as, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -886,7 +869,7 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function drop_view($name, $extra = array()) {
+	function drop_view($name, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -897,13 +880,13 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function view_exists($name, $extra = array()) {
+	function view_exists($name, $extra = array(), &$error = false) {
 // TODO
 	}
 
 	/**
 	*/
-	function list_procedures($extra = array()) {
+	function list_procedures($extra = array(), &$error = false) {
 		$data = array();
 		foreach ($this->db->get_all('SHOW PROCEDURE STATUS') as $v) {
 			$name = $v['Name'];
@@ -915,7 +898,7 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function create_procedure($name, $data, $extra = array()) {
+	function create_procedure($name, $data, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -930,7 +913,7 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function drop_procedure($name, $extra = array()) {
+	function drop_procedure($name, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -941,13 +924,13 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function procedure_exists($name, $extra = array()) {
+	function procedure_exists($name, $extra = array(), &$error = false) {
 // TODO
 	}
 
 	/**
 	*/
-	function list_functions($extra = array()) {
+	function list_functions($extra = array(), &$error = false) {
 		$data = array();
 		foreach ($this->db->get_all('SHOW FUNCTION STATUS') as $v) {
 			$name = $v['Name'];
@@ -959,7 +942,7 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function create_function($name, $data, $extra = array()) {
+	function create_function($name, $data, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -972,7 +955,7 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function drop_function($name, $extra = array()) {
+	function drop_function($name, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -983,25 +966,25 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function func_exists($name, $extra = array()) {
+	function func_exists($name, $extra = array(), &$error = false) {
 // TODO
 	}
 
 	/**
 	*/
-	function list_triggers($extra = array()) {
+	function list_triggers($extra = array(), &$error = false) {
 		return $this->db->get_all('SHOW TRIGGERS');
 	}
 
 	/**
 	*/
-	function list_all_triggers($name, $extra = array()) {
+	function list_all_triggers($name, $extra = array(), &$error = false) {
 // TODO
 	}
 
 	/**
 	*/
-	function create_trigger($name, $data, $extra = array()) {
+	function create_trigger($name, $data, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -1013,7 +996,7 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function drop_trigger($name, $extra = array()) {
+	function drop_trigger($name, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -1024,13 +1007,13 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function trigger_exists($name, $extra = array()) {
+	function trigger_exists($name, $extra = array(), &$error = false) {
 // TODO
 	}
 
 	/**
 	*/
-	function list_events($extra = array()) {
+	function list_events($extra = array(), &$error = false) {
 		// SHOW EVENTS
 		// SHOW CREATE EVENT
 // TODO
@@ -1038,7 +1021,7 @@ ALTER TABLE tbl_name
 
 	/**
 	*/
-	function create_event($name, $data, $extra = array()) {
+	function create_event($name, $data, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -1054,7 +1037,7 @@ DO INSERT INTO test.totals VALUES (NOW());
 
 	/**
 	*/
-	function drop_event($name, $data, $extra = array()) {
+	function drop_event($name, $data, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -1065,26 +1048,26 @@ DO INSERT INTO test.totals VALUES (NOW());
 
 	/**
 	*/
-	function event_exists($name, $extra = array()) {
+	function event_exists($name, $extra = array(), &$error = false) {
 // TODO
 	}
 
 	/**
 	*/
-	function list_users($extra = array()) {
+	function list_users($extra = array(), &$error = false) {
 		// SELECT * FROM mysql.user
 // TODO
 	}
 
 	/**
 	*/
-	function user_exists($name, $extra = array()) {
+	function user_exists($name, $extra = array(), &$error = false) {
 // TODO
 	}
 
 	/**
 	*/
-	function alter_user($name, $extra = array()) {
+	function alter_user($name, $extra = array(), &$error = false) {
 // TODO
 	}
 
