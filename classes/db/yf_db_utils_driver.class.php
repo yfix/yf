@@ -388,10 +388,20 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function _compile_create_table($data, $extra = array(), &$error = false) {
+		if (!is_array($data) || !count($data)) {
+			return false;
+		}
+		// 1-dimensional array detected, convert it into 2-dimensional
+		if (isset($data['name']) && is_string($data['name'])) {
+			$data = array($data);
+		}
 		$items = array();
 		foreach ($data as $v) {
 // TODO: add lot of strict checks
 			$name = $v['name'];
+			if (!$v['key'] && !$name && !$extra['no_name']) {
+				continue;
+			}
 			$type = strtoupper($v['type']);
 			$unsigned = $v['unsigned'];
 			$length = $v['length'];
@@ -411,7 +421,7 @@ abstract class yf_db_utils_driver {
 			if (isset($v['key'])) {
 				$items[] = strtoupper($v['key']).' KEY '.($name ? $this->_escape_key($name).' ' : '').'('.(is_array($v['key_cols']) ? implode(',', $v['key_cols']) : $v['key_cols']).')';
 			} else {
-				$items[$name] = $this->_escape_key($name).' '
+				$items[$name] = (!$extra['no_name'] ? $this->_escape_key($name).' ' : '')
 					.$type
 					. ($length ? '('.$length.')' : '')
 					. (isset($unsigned) ? ' UNSIGNED' : '')
@@ -505,6 +515,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
+/*
 	function alter_table($table, $params = array(), $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
@@ -528,6 +539,7 @@ abstract class yf_db_utils_driver {
 		$sql = 'ALTER TABLE '.$this->_escape_table_name($table). PHP_EOL. implode(' ', $params);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
+*/
 
 	/**
 	*/
@@ -601,40 +613,14 @@ abstract class yf_db_utils_driver {
 	*/
 	function column_info($table, $col_name, $extra = array(), &$error = false) {
 		$columns = $this->table_get_columns($table, $extra, $error);
-		return $columns[$col_name];
+		return isset($columns[$col_name]) ? $columns[$col_name] : false;
 	}
 
 	/**
 	*/
-	function add_column($table, $col_name, $data, $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-// TODO: serialize/unserizlialize sql<->array before implement this
-// TODO
-	}
-
-	/**
-	*/
-	function rename_column($table, $col_name, $new_name, $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-// TODO: serialize/unserizlialize sql<->array before implement this
-// TODO
-	}
-
-	/**
-	*/
-	function alter_column($table, $col_name, $data, $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-// TODO: serialize/unserizlialize sql<->array before implement this
-// TODO
+	function column_info_item($table, $col_name, $item_name, $extra = array(), &$error = false) {
+		$columns = $this->table_get_columns($table, $extra, $error);
+		return isset($columns[$col_name][$item_name]) ? $columns[$col_name][$item_name] : false;
 	}
 
 	/**
@@ -645,6 +631,56 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP COLUMN '.$this->db->escape_key($col_name);
+		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+
+	/**
+	*/
+	function add_column($table, $data, $extra = array(), &$error = false) {
+		if (!strlen($table)) {
+			$error = 'table name is empty';
+			return false;
+		}
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD COLUMN '.$this->_compile_create_table($data);
+		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+
+	/**
+	*/
+	function rename_column($table, $col_name, $new_name, $extra = array(), &$error = false) {
+		if (!strlen($table)) {
+			$error = 'table name is empty';
+			return false;
+		}
+		$col_info_str = $this->_compile_create_table($this->column_info($table, $col_name), array('no_name' => true));
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' CHANGE COLUMN '.$this->_escape_key($col_name).' '.$this->_escape_key($new_name).' '.$col_info_str;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+
+	/**
+	*/
+	function alter_column($table, $col_name, $data, $extra = array(), &$error = false) {
+		if (!strlen($table)) {
+			$error = 'table name is empty';
+			return false;
+		}
+		$col_info = $this->column_info($table, $col_name);
+		if (!$col_info) {
+			$error = 'column not exists';
+			return false;
+		}
+		foreach ($data as $k => $v) {
+			if (isset($col_info[$k])) {
+				$col_info[$k] = $v;
+			}
+		}
+		if (isset($data['first'])) {
+			$position_change = ' FIRST';
+		} elseif ($data['after']) {
+			$position_change = ' AFTER '.$this->_escape_key($data['after']);
+		}
+		$col_info_str = $this->_compile_create_table($col_info, array('no_name' => true));
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' MODIFY COLUMN '.$this->_escape_key($col_name).' '.$col_info_str. $position_change;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
