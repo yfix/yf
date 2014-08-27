@@ -714,7 +714,7 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$indexes = array();
-		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->db->_fix_table_name($table)) as $row) {
+		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->_escape_table_name($table)) as $row) {
 			$indexes[$row['Key_name']] = array(
 				'name'		=> $row['Key_name'],
 				'unique'	=> !$row['Non_unique'],
@@ -723,6 +723,17 @@ abstract class yf_db_utils_driver {
 			$indexes[$row['Key_name']]['columns'][$row['Seq_in_index'] - 1] = $row['Column_name'];
 		}
 		return $indexes;
+	}
+
+	/**
+	*/
+	function index_exists($table, $index_name, &$error = false) {
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$indexes = $this->list_indexes($table);
+		return isset($indexes[$index_name]);
 	}
 
 	/**
@@ -786,37 +797,49 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function add_index($table, $fields = array(), $extra = array(), &$error = false) {
+	function add_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
 		}
-		$name = $extra['name'] ?: implode('_', $fields);
-		$sql = 'CREATE INDEX '.$name.' ON '.$this->db->_fix_table_name($table).' ('.implode(',', $fields).')';
+// TODO: gemerate index name from columns names
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$index_name = $index_name ?: implode('_', $fields);
+		$sql = 'CREATE INDEX '.$index_name.' ON '.$this->_escape_table_name($table).' ('.implode(',', $fields).')';
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
-	function drop_index($table, $name, &$error = false) {
+	function drop_index($table, $index_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
 		}
-		$sql = 'DROP INDEX '.$name.' ON '.$this->db->_fix_table_name($table);
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$sql = 'DROP INDEX '.$index_name.' ON '.$this->_escape_table_name($table);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
-	function update_index($table, $name, &$error = false) {
-// TODO
-	}
-
-	/**
-	*/
-	function index_exists($table, $name, &$error = false) {
-// TODO
+	function update_index($table, $index_name, $fields = array(), $extra = array(), &$error = false) {
+		if (!strlen($table)) {
+			$error = 'table name is empty';
+			return false;
+		}
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$this->drop_index($table, $index_name);
+		return $this->add_index($table, $index_name, $fields);
 	}
 
 	/**
