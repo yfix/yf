@@ -612,10 +612,18 @@ class yf_tpl_driver_yf {
 		}, $string);
 
 		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}
-		$pattern = '/\{(?P<cond>if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
+		$pattern = '/\{(?P<cond>if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.,+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$cond = trim($m['cond']); // if | elseif
-			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
+			$is_multiple = (strpos($m['left'], ',') !== false);
+			if ($is_multiple) {
+				$part_left = array();
+				foreach (explode(',',trim($m['left'])) as $v) {
+					$part_left[] = $_this->_prepare_cond_text($v, $replace, $stpl_name);
+				}
+			} else {
+				$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
+			}
 			$func = trim($m['func']);
 			// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
 			$funcs_map = array(
@@ -650,7 +658,23 @@ class yf_tpl_driver_yf {
 			} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
 				return '';
 			}
-			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')) { ?>';
+			if ($is_multiple) {
+				$center_tmp = array();
+				foreach ($part_left as $v) {
+					$v = trim($v);
+					if (strlen($v)) {
+						$center_tmp[] = $func.'('.$v.')';
+					}
+				}
+				if (!count($center_tmp)) {
+					$center_cond = $func. '($replace["___not_existing_key__"])';
+				} else {
+					$center_cond = '('.implode(') AND (', $center_tmp).')';
+				}
+			} else {
+				$center_cond = $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')';
+			}
+			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. ($negate ? '!' : ''). $center_cond. ') { ?>';
 		}, $string);
 
 		$string = str_replace('{else}', '<'.'?p'.'hp } else { ?'.'>', $string);
@@ -675,7 +699,7 @@ class yf_tpl_driver_yf {
 	*/
 	function _prepare_cond_text ($cond_text = '', $replace = array(), $stpl_name = '') {
 		$prepared_array = array();
-		foreach (explode(' ', str_replace("\t",'',$cond_text)) as $tmp_k => $tmp_v) {
+		foreach (explode(' ', str_replace("\t",'',trim($cond_text))) as $tmp_k => $tmp_v) {
 			$res_v = '';
 			// Value from $replace array (DO NOT replace 'array_key_exists()' with 'isset()' !!!)
 			if (array_key_exists($tmp_v, $replace)) {
