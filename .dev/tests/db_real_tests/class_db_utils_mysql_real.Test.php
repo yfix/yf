@@ -419,12 +419,21 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( array('id', 'id2'), array_keys(self::utils()->table_get_columns(self::$DB_NAME.'.'.$table)) );
 	}
 	public function test_list_indexes() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_add_index() {
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
+			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
+			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
+			array('key' => 'primary', 'key_cols' => 'id'),
+		);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_drop_index() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_add_index() {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_list_foreign_keys() {
