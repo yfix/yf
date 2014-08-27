@@ -80,6 +80,8 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 		self::_cache()->flush();
 		$this->assertNotEmpty(self::_cache()->set('k2', 'some_data'));
 		$this->assertEquals('some_data', self::_cache()->get('k2'));
+		$this->assertNotEmpty(self::_cache()->set('k2_', array()));
+		$this->assertEquals(array(), self::_cache()->get('k2_'));
 	}
 	public function test_del() {
 		self::_cache()->flush();
