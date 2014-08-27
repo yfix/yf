@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require_once dirname(dirname(__FILE__)).'/scripts_utils.php';
+require_once dirname(__DIR__).'/scripts_utils.php';
 
 // TODO: try json api from wikipedia
 #$u = 'http://en.wikipedia.org/w/api.php?format=json&action=query&titles=ISO_3166-1&prop=langlinks';
@@ -11,7 +11,7 @@ require_once dirname(dirname(__FILE__)).'/scripts_utils.php';
 #$url = 'http://unstats.un.org/unsd/methods/m49/m49regin.htm';
 
 $url = $url ?: 'https://en.wikipedia.org/wiki/ISO_3166-1';
-$result_file = $result_file ?: dirname(__FILE__).'/countries.php';
+$result_file = $result_file ?: __DIR__.'/countries.php';
 $suffix = $suffix ?: '';
 $mtpl = $mtpl ?: array(
 	'id'	=> 1,
@@ -25,7 +25,7 @@ if (!function_exists('data_get_latest_countries')) {
 function data_get_latest_countries() {
 	global $url, $result_file, $suffix, $mtpl;
 
-	$f2 = dirname(__FILE__).'/'.basename($url).'.table'.$suffix.'.html';
+	$f2 = __DIR__.'/'.basename($url).'.table'.$suffix.'.html';
 	if (!file_exists($f2)) {
 		$html1 = file_get_contents($url);
 		$regex1 = '~<table[^>]*wikitable[^>]*>(.*?)</table>~ims';

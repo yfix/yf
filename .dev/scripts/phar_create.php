@@ -8,7 +8,7 @@ to package the framework into a single phar file.
 In the "index.php" of your application, assuming you placed the packaged framework under
 your application's "protected" folder, add the following line at the top:
 
-new Phar(dirname(__FILE__).'/protected/PF-1.1.9.r3527.phar');
+new Phar(__DIR__.'/protected/PF-1.1.9.r3527.phar');
 
 This makes the framework available via the phar:// stream-wrapper - when specifying the
 path to the PF framework, set it as "phar://PF".
@@ -16,7 +16,7 @@ path to the PF framework, set it as "phar://PF".
 
 // Configuration:
 
-$dir = dirname(__FILE__);
+$dir = __DIR__;
 
 ini_set("phar.readonly", 0); // Could be done in php.ini
 

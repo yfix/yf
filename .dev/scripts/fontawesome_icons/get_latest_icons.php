@@ -3,7 +3,7 @@
 
 function data_get_latest_icons() {
 	$url = 'http://fontawesome.io/cheatsheet/';
-	$f2 = dirname(__FILE__).'/'.basename($url);
+	$f2 = __DIR__.'/'.basename($url);
 	if (!file_exists($f2)) {
 		$html1 = file_get_contents($url);
 		$regex1 = '~<h2[^>]*page-header[^>]*>.*?</h2>[^>]*<div class="row">(.*?</div>)[^>]*</div>~ims';
@@ -36,7 +36,7 @@ function data_get_latest_icons() {
 	//	$data[$c]['active'] = 1;
 	//}
 
-	$f4 = dirname(__FILE__).'/fontawesome_icons.php';
+	$f4 = __DIR__.'/fontawesome_icons.php';
 	file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
 	print_r($data);
 }

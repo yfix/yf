@@ -2,7 +2,7 @@
 <?php
 
 $argv[1] = '/home/www/test2/';
-require dirname(dirname(__FILE__)).'/scripts_init.php';
+require dirname(__DIR__).'/scripts_init.php';
 
 function rsearch($folder, $pattern) {
     $dir = new RecursiveDirectoryIterator($folder);

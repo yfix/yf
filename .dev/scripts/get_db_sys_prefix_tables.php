@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-define('YF_PATH', dirname(dirname(dirname(__FILE__))).'/');
+define('YF_PATH', dirname(dirname(__DIR__)).'/');
 
 // TODO: glob(PROJECT_PATH.'share/db_installer/sql/sys_*.sql.php')
 // TODO: glob(PROJECT_PATH.'plugins/*/share/db_installer/sql/sys_*.sql.php')

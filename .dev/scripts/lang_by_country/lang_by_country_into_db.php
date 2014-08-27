@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require_once dirname(dirname(__FILE__)).'/scripts_init.php';
+require_once dirname(__DIR__).'/scripts_init.php';
 
 $data = array();
 foreach((array)db()->select('code','languages')->from('countries')->get_2d() as $code => $langs) {

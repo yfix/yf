@@ -4,11 +4,11 @@ exit('Script is temporary');
 
 ##############
 
-$d = dirname(__FILE__).'/db_table_sql/';
+$d = __DIR__.'/db_table_sql/';
 if (!file_exists($d)) {
 	mkdir($d, 0755, true);
 }
-foreach (glob(dirname(__FILE__).'/installer*_structs.php') as $_file) {
+foreach (glob(__DIR__.'/installer*_structs.php') as $_file) {
 	$data = array();
 	require_once $_file;
 	foreach ((array)$data as $k => $v) {
@@ -22,11 +22,11 @@ foreach (glob(dirname(__FILE__).'/installer*_structs.php') as $_file) {
 
 ###############
 
-$d = dirname(__FILE__).'/db_table_datas/';
+$d = __DIR__.'/db_table_datas/';
 if (!file_exists($d)) {
 	mkdir($d, 0755, true);
 }
-foreach (glob(dirname(__FILE__).'/installer*_datas.php') as $_file) {
+foreach (glob(__DIR__.'/installer*_datas.php') as $_file) {
 	$data = array();
 	require_once $_file;
 	foreach ((array)$data as $k => $v) {

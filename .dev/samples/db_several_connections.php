@@ -1,9 +1,9 @@
 <?php
 
-require dirname(__FILE__).'/db_setup.php';
-require dirname(__FILE__).'/db_funcs.php';
+require __DIR__.'/db_setup.php';
+require __DIR__.'/db_funcs.php';
 
-require dirname(__FILE__).'/yf_unit_tests_setup.php';
+require __DIR__.'/yf_unit_tests_setup.php';
 
 ######################
 echo 'db():'.PHP_EOL.			print_r( db()->get_one('SELECT COUNT(*) AS num from '.db('user').' ') , 1);

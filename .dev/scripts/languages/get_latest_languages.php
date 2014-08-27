@@ -1,12 +1,12 @@
 #!/usr/bin/php
 <?php
 
-require_once dirname(dirname(__FILE__)).'/scripts_utils.php';
+require_once dirname(__DIR__).'/scripts_utils.php';
 
 function data_get_latest_languages() {
 
 	$url = 'https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes';
-	$f2 = dirname(__FILE__).'/'.basename($url).'.table.html';
+	$f2 = __DIR__.'/'.basename($url).'.table.html';
 	if (!file_exists($f2)) {
 		$html1 = file_get_contents($url);
 		$regex1 = '~<table[^>]*wikitable[^>]*>(.*?)</table>~ims';
@@ -72,7 +72,7 @@ function data_get_latest_languages() {
 		$data[$lang]['country'] = $country;
 	}
 
-	$f4 = dirname(__FILE__).'/languages.php';
+	$f4 = __DIR__.'/languages.php';
 	file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
 	print_r($data);
 

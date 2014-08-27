@@ -2,7 +2,7 @@
 <?php
 
 $self = __FILE__;
-foreach(glob(dirname(dirname(__FILE__)).'/*/*get_latest*.php') as $path) {
+foreach(glob(dirname(__DIR__).'/*/*get_latest*.php') as $path) {
 	if ($path == $self) {
 		continue;
 	}

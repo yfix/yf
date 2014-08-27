@@ -1,19 +1,19 @@
 #!/usr/bin/php
 <?php
 
-require_once dirname(dirname(__FILE__)).'/scripts_utils.php';
+require_once dirname(__DIR__).'/scripts_utils.php';
 
 // TODO
 
 $url = $url ?: 'https://www.cia.gov/library/publications/the-world-factbook/fields/2098.html';
-$result_file = $result_file ?: dirname(__FILE__).'/countries.php';
+$result_file = $result_file ?: __DIR__.'/countries.php';
 $suffix = $suffix ?: '';
 
 if (!function_exists('data_get_latest_lang_by_country')) {
 function data_get_latest_lang_by_country() {
 	global $url, $result_file, $suffix;
 
-	$f2 = dirname(__FILE__).'/'.basename($url).'.table'.$suffix.'.html';
+	$f2 = __DIR__.'/'.basename($url).'.table'.$suffix.'.html';
 	if (!file_exists($f2)) {
 		$html1 = file_get_contents($url);
 		$regex1 = '~<article class="description-box">(.+?)</article>~ims';

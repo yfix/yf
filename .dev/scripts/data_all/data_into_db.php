@@ -1,10 +1,10 @@
 #!/usr/bin/php
 <?php
 
-require_once dirname(dirname(__FILE__)).'/scripts_init.php';
+require_once dirname(__DIR__).'/scripts_init.php';
 
 $self = __FILE__;
-foreach(glob(dirname(dirname(__FILE__)).'/*/*into_db*.php') as $path) {
+foreach(glob(dirname(__DIR__).'/*/*into_db*.php') as $path) {
 	if ($path == $self || false !== strpos($path, 'TODO')) {
 		continue;
 	}

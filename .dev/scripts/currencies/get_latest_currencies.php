@@ -4,7 +4,7 @@
 function data_get_latest_currencies() {
 
 	$url = 'http://www.currency-iso.org/dam/downloads/table_a1.xml';
-	$f = dirname(__FILE__).'/'.basename($url);
+	$f = __DIR__.'/'.basename($url);
 	if (!file_exists($f)) {
 		file_put_contents($f, file_get_contents($url));
 	}
@@ -30,7 +30,7 @@ function data_get_latest_currencies() {
 	}
 	///////////
 	$url2 = 'https://en.wikipedia.org/wiki/List_of_circulating_currencies';
-	$f3 = dirname(__FILE__).'/'.basename($url2).'.table.html';
+	$f3 = __DIR__.'/'.basename($url2).'.table.html';
 	if (!file_exists($f3)) {
 		$html2 = file_get_contents($url2);
 		$regex2 = '~<h2>[^<]*<span[^>]*id="List_of_circulating_currencies_by_country_or_territory"[^>]*>.*?</h2>[^<]*<table[^>]*>(.*?)</table>~ims';
@@ -76,7 +76,7 @@ function data_get_latest_currencies() {
 		$data[$c]['active'] = 1;
 	}
 
-	$f4 = dirname(__FILE__).'/currencies.php';
+	$f4 = __DIR__.'/currencies.php';
 	file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
 	print_r($data);
 

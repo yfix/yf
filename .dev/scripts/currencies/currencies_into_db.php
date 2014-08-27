@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-require_once dirname(dirname(__FILE__)).'/scripts_init.php';
+require_once dirname(__DIR__).'/scripts_init.php';
 
-require dirname(__FILE__).'/currencies.php';
+require __DIR__.'/currencies.php';
 if (!$data) {
 	exit('Error: $data is missing');
 }
