@@ -296,22 +296,6 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$received && $received['create_time'] = '2014-01-01 01:01:01';
 		$this->assertEquals( $expected, $received );
 	}
-	public function test_alter_table() {
-		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
-			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
-			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
-			array('key' => 'primary', 'key_cols' => 'id'),
-		);
-		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
-		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
-		$old_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
-		$this->assertEquals( 'utf8_general_ci', $old_info['collation'] );
-#		$this->assertTrue( self::utils()->alter_table(self::$DB_NAME.'.'.$table, array('collation' => 'latin1_general_ci')) );
-#		$new_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
-#		$this->assertEquals( 'latin1_general_ci', $new_info['collation'] );
-	}
 	public function test_rename_table() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
@@ -349,6 +333,22 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public function test_repair_table() {
 		$table = current(self::utils()->list_tables(self::$DB_NAME));
 		$this->assertNotEmpty( self::utils()->repair_table($table) );
+	}
+	public function test_alter_table() {
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
+			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
+			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
+			array('key' => 'primary', 'key_cols' => 'id'),
+		);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$old_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
+		$this->assertEquals( 'utf8_general_ci', $old_info['collation'] );
+#		$this->assertTrue( self::utils()->alter_table(self::$DB_NAME.'.'.$table, array('collation' => 'latin1_general_ci')) );
+#		$new_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
+#		$this->assertEquals( 'latin1_general_ci', $new_info['collation'] );
 	}
 	public function test_column_exists() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
@@ -477,9 +477,9 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_list_collations() {
-#		$this->assertEquals( self::utils()->list_collations() );
+		$this->assertNotEmpty( self::utils()->list_collations() );
 	}
 	public function test_list_charsets() {
-#		$this->assertEquals( self::utils()->list_charsets() );
+		$this->assertNotEmpty( self::utils()->list_charsets() );
 	}
 }
