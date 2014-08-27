@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__).'/class_cache.Test.php';
+require_once __DIR__.'/class_cache.Test.php';
 
 /**
  * @requires extension memcache

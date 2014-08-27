@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__).'/tpl__setup.php';
+require_once __DIR__.'/tpl__setup.php';
 
 class tpl_driver_fenom_test extends tpl_abstract {
 	public static $driver_bak = array();

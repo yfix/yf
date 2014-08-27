@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-#require dirname(__FILE__).'/yf_unit_tests_setup.php';
+#require __DIR__.'/yf_unit_tests_setup.php';
 #_class('db');
 
 $tmp_dir = '/tmp/yf_for_unit_tests/';
@@ -9,7 +9,7 @@ $tmp_dir = '/tmp/yf_for_unit_tests/';
 
 $_POST = array(
 	'install_project_path'				=> $tmp_dir,
-	'install_yf_path'					=> dirname(dirname(dirname(__FILE__))).'/',
+	'install_yf_path'					=> dirname(dirname(__DIR__)).'/',
 	'install_db_host'					=> 'localhost',
 	'install_db_name'					=> 'yf_for_unit_tests',
 	'install_db_user'					=> 'root',

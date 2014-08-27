@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__FILE__).'/yf_unit_tests_setup.php';
+require __DIR__.'/yf_unit_tests_setup.php';
 
 class func_my_explode extends PHPUnit_Framework_TestCase {
 	public function test_simple() {

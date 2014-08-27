@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__FILE__).'/yf_unit_tests_setup.php';
+require __DIR__.'/yf_unit_tests_setup.php';
 
 class func_require_js_test extends PHPUnit_Framework_TestCase {
 	public function test_detect_content_type() {

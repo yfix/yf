@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__).'/tpl__setup.php';
+require_once __DIR__.'/tpl__setup.php';
 
 class tpl_driver_yf_extend_test extends tpl_abstract {
 	public function test_extend() {

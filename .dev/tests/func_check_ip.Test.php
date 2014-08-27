@@ -1,6 +1,6 @@
 <?php  
 
-require dirname(__FILE__).'/yf_unit_tests_setup.php';
+require __DIR__.'/yf_unit_tests_setup.php';
 
 class func_check_ip_test extends PHPUnit_Framework_TestCase {
 
