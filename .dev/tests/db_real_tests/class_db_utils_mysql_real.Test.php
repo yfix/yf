@@ -334,6 +334,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$table = current(self::utils()->list_tables(self::$DB_NAME));
 		$this->assertNotEmpty( self::utils()->repair_table($table) );
 	}
+/*
 	public function test_alter_table() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
@@ -350,6 +351,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 #		$new_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
 #		$this->assertEquals( 'latin1_general_ci', $new_info['collation'] );
 	}
+*/
 	public function test_column_exists() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
@@ -368,20 +370,53 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		}
 	}
 	public function test_add_column() {
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
-#		$this->assertTrue( self::utils()->add_column(self::$DB_NAME.'.'.$table, 'id2', ) );
+		$col_info2 = array('name' => 'id2', 'type' => 'int', 'length' => 8);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, array($col_info)) );
+		$this->assertTrue( self::utils()->column_exists(self::$DB_NAME.'.'.$table, 'id') );
+		$this->assertFalse( self::utils()->column_exists(self::$DB_NAME.'.'.$table, 'id2') );
+		$this->assertFalse( self::utils()->column_info(self::$DB_NAME.'.'.$table, 'id2') );
+		$this->assertTrue( self::utils()->add_column(self::$DB_NAME.'.'.$table, $col_info2) );
+		$result = self::utils()->column_info(self::$DB_NAME.'.'.$table, 'id2');
+		foreach (array('name','type','length') as $f) {
+			$this->assertEquals( $col_info2[$f], $result[$f] );
+		}
 	}
 	public function test_drop_column() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-#		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
-#		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, array($col_info)) );
-#		$this->assertTrue( self::utils()->drop_column(self::$DB_NAME.'.'.$table, 'id2') );
+		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
+		$col_info2 = array('name' => 'id2', 'type' => 'int', 'length' => 8);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, array($col_info, $col_info2)) );
+		$this->assertTrue( self::utils()->column_exists(self::$DB_NAME.'.'.$table, 'id') );
+		$this->assertTrue( self::utils()->column_exists(self::$DB_NAME.'.'.$table, 'id2') );
+		$this->assertTrue( self::utils()->drop_column(self::$DB_NAME.'.'.$table, 'id2') );
+		$this->assertFalse( self::utils()->column_exists(self::$DB_NAME.'.'.$table, 'id2') );
 	}
 	public function test_rename_column() {
-#		$this->assertTrue( self::utils()->rename_column(self::$DB_NAME.'.'.$table, 'id2', 'id3') );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, array($col_info)) );
+		$this->assertTrue( self::utils()->column_exists(self::$DB_NAME.'.'.$table, 'id') );
+		$this->assertFalse( self::utils()->column_exists(self::$DB_NAME.'.'.$table, 'id2') );
+		$this->assertTrue( self::utils()->rename_column(self::$DB_NAME.'.'.$table, 'id', 'id2') );
+		$this->assertTrue( self::utils()->column_exists(self::$DB_NAME.'.'.$table, 'id2') );
 	}
 	public function test_alter_column() {
-#		$this->assertEquals( self::utils()->alter_column(self::$DB_NAME.'.'.$table, 'id2', array('first' => true)) );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
+		$col_info2 = array('name' => 'id2', 'type' => 'int', 'length' => 8);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, array($col_info, $col_info2)) );
+		$this->assertTrue( self::utils()->column_exists(self::$DB_NAME.'.'.$table, 'id') );
+		$this->assertEquals( '10', self::utils()->column_info_item(self::$DB_NAME.'.'.$table, 'id', 'length') );
+		$this->assertTrue( self::utils()->alter_column(self::$DB_NAME.'.'.$table, 'id', array('length' => 8)) );
+		$this->assertEquals( '8', self::utils()->column_info_item(self::$DB_NAME.'.'.$table, 'id', 'length') );
+
+		$this->assertEquals( array('id', 'id2'), array_keys(self::utils()->table_get_columns(self::$DB_NAME.'.'.$table)) );
+		$this->assertTrue( self::utils()->alter_column(self::$DB_NAME.'.'.$table, 'id2', array('first' => true)) );
+		$this->assertEquals( array('id2', 'id'), array_keys(self::utils()->table_get_columns(self::$DB_NAME.'.'.$table)) );
+		$this->assertTrue( self::utils()->alter_column(self::$DB_NAME.'.'.$table, 'id2', array('after' => 'id')) );
+		$this->assertEquals( array('id', 'id2'), array_keys(self::utils()->table_get_columns(self::$DB_NAME.'.'.$table)) );
 	}
 	public function test_list_indexes() {
 #		$this->assertEquals( self::utils()-> );
