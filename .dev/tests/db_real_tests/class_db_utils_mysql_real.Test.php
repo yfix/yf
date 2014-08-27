@@ -155,19 +155,19 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_table_exists() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$this->assertFalse( self::utils()->table_exists($table, self::$DB_NAME) );
+		$this->assertFalse( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 		$this->assertTrue( self::utils()->db->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10))') );
-		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 		$this->assertTrue( self::utils()->db->query('DROP TABLE '.self::$DB_NAME.'.'.$table.'') );
-		$this->assertFalse( self::utils()->table_exists($table, self::$DB_NAME) );
+		$this->assertFalse( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 	}
 	public function test_drop_table() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$this->assertFalse( self::utils()->table_exists($table, self::$DB_NAME) );
+		$this->assertFalse( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 		$this->assertTrue( self::utils()->db->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.' (id INT(10))') );
-		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
-		$this->assertTrue( self::utils()->drop_table($table, self::$DB_NAME) );
-		$this->assertFalse( self::utils()->table_exists($table, self::$DB_NAME) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->drop_table(self::$DB_NAME.'.'.$table) );
+		$this->assertFalse( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 	}
 	public function test__compile_create_table() {
 		$in = array(
@@ -191,8 +191,8 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
 			array('key' => 'primary', 'key_cols' => 'id'),
 		);
-		$this->assertTrue( self::utils()->create_table($table, self::$DB_NAME, $data) );
-		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 	}
 	public function test__parse_column_type() {
 		$this->assertEquals( array('type' => 'int','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('int') );
@@ -234,8 +234,8 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
 			array('key' => 'primary', 'key_cols' => 'id'),
 		);
-		$this->assertTrue( self::utils()->create_table($table, self::$DB_NAME, $data) );
-		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 		$expected = array(
 			'id' => array(
 				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collation' => NULL,'null' => false,
@@ -250,7 +250,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 				'default' => '0','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
 			),
 		);
-		$this->assertEquals( $expected, self::utils()->table_get_columns($table, self::$DB_NAME) );
+		$this->assertEquals( $expected, self::utils()->table_get_columns(self::$DB_NAME.'.'.$table) );
 	}
 	public function test_table_info() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
@@ -260,8 +260,8 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
 			array('key' => 'primary', 'key_cols' => 'id'),
 		);
-		$this->assertTrue( self::utils()->create_table($table, self::$DB_NAME, $data) );
-		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 		$expected_columns = array(
 			'id' => array(
 				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collation' => NULL,'null' => false,
@@ -289,8 +289,9 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			'comment' => '',
 			'create_time' => '2014-01-01 01:01:01',
 			'update_time' => null,
+			'charset' => 'utf8',
 		);
-		$received = self::utils()->table_info($table, self::$DB_NAME);
+		$received = self::utils()->table_info(self::$DB_NAME.'.'.$table);
 		$received && $received['create_time'] = '2014-01-01 01:01:01';
 		$this->assertEquals( $expected, $received );
 	}
@@ -302,12 +303,12 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
 			array('key' => 'primary', 'key_cols' => 'id'),
 		);
-		$this->assertTrue( self::utils()->create_table($table, self::$DB_NAME, $data) );
-		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
-#		$old_info = self::utils()->table_info($table, self::$DB_NAME);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+#		$old_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
 #		$this->assertEquals( 'utf8_general_ci', $old_info['collation'] );
-#		$this->assertTrue( self::utils()->alter_table($table, self::$DB_NAME, array('collation' => 'latin1_general_ci')) );
-#		$new_info = self::utils()->table_info($table, self::$DB_NAME);
+#		$this->assertTrue( self::utils()->alter_table(self::$DB_NAME.'.'.$table, array('collation' => 'latin1_general_ci')) );
+#		$new_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
 #		$this->assertEquals( 'latin1_general_ci', $new_info['collation'] );
 	}
 	public function test_rename_table() {
@@ -315,12 +316,12 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$data = array(
 			array('name' => 'id', 'type' => 'int', 'length' => 10),
 		);
-		$this->assertTrue( self::utils()->create_table($table, self::$DB_NAME, $data) );
-		$this->assertTrue( self::utils()->table_exists($table, self::$DB_NAME) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 		$new_table = $table.'_new';
-#		$this->assertTrue( self::utils()->rename_table($table, self::$DB_NAME, $new_name) );
-#		$this->assertFalse( self::utils()->table_exists($table, self::$DB_NAME) );
-#		$this->assertTrue( self::utils()->table_exists($new_table, self::$DB_NAME) );
+#		$this->assertTrue( self::utils()->rename_table(self::$DB_NAME.'.'.$table, $new_name) );
+#		$this->assertFalse( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+#		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$new_table, ) );
 	}
 	public function test_truncate_table() {
 #		$this->assertEquals( self::utils()-> );
