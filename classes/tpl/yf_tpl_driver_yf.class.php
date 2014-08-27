@@ -611,7 +611,7 @@ class yf_tpl_driver_yf {
 			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. $part_left. ' '. $cur_operator. ' '. $part_right. $add_cond. ') { ?>';
 		}, $string);
 
-		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}
+		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}  {if_empty(name1,name2,name3)}<h1 style="color: white;">NEW</h1>{/if}  
 		$pattern = '/\{(?P<cond>if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.,+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$cond = trim($m['cond']); // if | elseif
