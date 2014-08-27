@@ -8,6 +8,26 @@
 abstract class yf_db_utils_driver {
 
 	/**
+	*/
+	function _get_supported_field_types() {
+		return array(
+			'bit','int','real','float','double','decimal','numeric',
+			'varchar','char','tinytext','mediumtext','longtext','text',
+			'tinyblob','mediumblob','longblob','blob','varbinary','binary',
+			'timestamp','datetime','time','date','year',
+			'enum','set',
+		);
+	}
+
+	/**
+	*/
+	function _get_unsigned_field_types() {
+		return array(
+			'bit','int','real','double','float','decimal','numeric'
+		);
+	}
+
+	/**
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
@@ -343,13 +363,7 @@ abstract class yf_db_utils_driver {
 		} elseif (preg_match('~^(?P<type>[a-z]+)~i', $str, $m)) {
 			$type = $m['type'];
 		}
-		$types = array(
-			'bit','int','real','float','double','decimal','numeric',
-			'varchar','char','tinytext','mediumtext','longtext','text',
-			'tinyblob','mediumblob','longblob','blob','varbinary','binary',
-			'timestamp','datetime','time','date','year',
-			'enum','set',
-		);
+		$types = $this->_get_supported_field_types();
 		$types = array_combine($types, $types);
 		if ($type) {
 			$type = strtolower($type);
@@ -376,11 +390,10 @@ abstract class yf_db_utils_driver {
 				$length = '';
 			}
 		}
-		$unsigned_types = array('bit','int','real','double','float','decimal','numeric');
 		return array(
 			'type'		=> $type,
 			'length'	=> $length,
-			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, $unsigned_types) ? true : false,
+			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, $this->_get_unsigned_field_types()) ? true : false,
 			'decimals'	=> $decimals,
 			'values'	=> $values,
 		);
@@ -398,13 +411,18 @@ abstract class yf_db_utils_driver {
 		}
 		$items = array();
 		foreach ($data as $v) {
-// TODO: add lot of strict checks
 			$name = $v['name'];
 			if (!$v['key'] && !$name && !$extra['no_name']) {
 				continue;
 			}
-			$type = strtoupper($v['type']);
+			$type = strtolower($v['type']);
+			if (!isset($v['key']) && !in_array($type, $this->_get_supported_field_types())) {
+				continue;
+			}
 			$unsigned = $v['unsigned'];
+			if (!isset($v['key']) && $unsigned && !in_array($type, $this->_get_unsigned_field_types())) {
+				$unsigned = false;
+			}
 			$length = $v['length'];
 			$default = $v['default'];
 			$null = null;
@@ -414,6 +432,9 @@ abstract class yf_db_utils_driver {
 				$null = (bool)(!$v['not_null']);
 			}
 			$auto_inc = $v['auto_inc'] || $v['auto_increment'];
+			if ($auto_inc && $type != 'int') {
+				$auto_inc = false;
+			}
 			if ($auto_inc) {
 				$null = false;
 				$unsigned = true;
@@ -423,7 +444,7 @@ abstract class yf_db_utils_driver {
 				$items[] = strtoupper($v['key']).' KEY '.($name ? $this->_escape_key($name).' ' : '').'('.(is_array($v['key_cols']) ? implode(',', $v['key_cols']) : $v['key_cols']).')';
 			} else {
 				$items[$name] = (!$extra['no_name'] ? $this->_escape_key($name).' ' : '')
-					.$type
+					.strtoupper($type)
 					. ($length ? '('.$length.')' : '')
 					. (isset($unsigned) ? ' UNSIGNED' : '')
 					. (isset($null) ? ' '.($null ? 'NULL' : 'NOT NULL') : '')
