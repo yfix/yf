@@ -377,7 +377,7 @@ class yf_main {
 	*/
 	function init_conf_functions () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		$path = dirname(dirname(__FILE__)).'/share/functions/yf_conf.php';
+		$path = dirname(__DIR__).'/share/functions/yf_conf.php';
 		if (file_exists($path)) {
 			$this->include_module($path, 1);
 		}
@@ -388,7 +388,7 @@ class yf_main {
 	*/
 	function init_main_functions () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		$path = dirname(dirname(__FILE__)).'/share/functions/yf_aliases.php';
+		$path = dirname(__DIR__).'/share/functions/yf_aliases.php';
 		if (file_exists($path)) {
 			$this->include_module($path, 1);
 		}

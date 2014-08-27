@@ -1,7 +1,7 @@
 <?php
 
 if (!defined('PHP_TEXT_CACHE_INCLUDE_PATH')) {
-	define('PHP_TEXT_CACHE_INCLUDE_PATH', (dirname(__FILE__) . "/"));
+	define('PHP_TEXT_CACHE_INCLUDE_PATH', (__DIR__ . "/"));
 }
 
 class php_file_utilities {

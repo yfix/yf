@@ -22,7 +22,7 @@
  */
 
 /** */
-require_once dirname(__FILE__).'/UtfNormalUtil.php';
+require_once __DIR__.'/UtfNormalUtil.php';
 
 global $utfCombiningClass, $utfCanonicalComp, $utfCanonicalDecomp;
 $utfCombiningClass = NULL;
@@ -166,7 +166,7 @@ class UtfNormal {
 	static function loadData() {
 		global $utfCombiningClass;
 		if( !isset( $utfCombiningClass ) ) {
-			require_once( dirname(__FILE__) . '/UtfNormalData.inc' );
+			require_once( __DIR__ . '/UtfNormalData.inc' );
 		}
 	}
 

@@ -11,7 +11,7 @@
 **/
 
 if (!defined('PHP_TEXT_CACHE_INCLUDE_PATH')) {
-	define('PHP_TEXT_CACHE_INCLUDE_PATH', (dirname(__FILE__) . "/"));
+	define('PHP_TEXT_CACHE_INCLUDE_PATH', (__DIR__ . "/"));
 }
 
 require_once(PHP_TEXT_CACHE_INCLUDE_PATH . 'php_http_connector.php');
