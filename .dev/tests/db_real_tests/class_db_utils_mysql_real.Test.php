@@ -10,11 +10,12 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public static $db = null;
 	public static $server_version = '';
 	public static $DB_NAME = '';
+	public static $DB_DRIVER = 'mysql5';
 	public static $CI_SERVER = '';
 	public static function setUpBeforeClass() {
 		self::$DB_NAME = DB_NAME;
 		$db_class = load_db_class();
-		self::$db = new $db_class('mysql5');
+		self::$db = new $db_class(self::$DB_DRIVER);
 		self::$db->ALLOW_AUTO_CREATE_DB = true;
 		self::$db->NO_AUTO_CONNECT = true;
 		self::$db->RECONNECT_NUM_TRIES = 1;
@@ -57,6 +58,12 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::$db->_connected );
 		$this->assertTrue( is_object(self::$db->db) );
 		$this->assertTrue( is_resource(self::$db->db->db_connect_id) );
+	}
+	public function test_driver() {
+		$this->assertEquals( self::$DB_DRIVER, self::$db->DB_TYPE );
+		$this->assertEquals( self::$DB_DRIVER, self::utils()->db->DB_TYPE );
+		list(,$driver) = explode('_driver_', get_class(self::utils()->db->db));
+		$this->assertEquals( self::$DB_DRIVER, $driver );
 	}
 	public function test_list_databases() {
 		if (self::$CI_SERVER == 'DRONE') { return ; }
