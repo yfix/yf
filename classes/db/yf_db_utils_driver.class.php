@@ -376,10 +376,11 @@ abstract class yf_db_utils_driver {
 				$length = '';
 			}
 		}
+		$unsigned_types = array('bit','int','real','double','float','decimal','numeric');
 		return array(
 			'type'		=> $type,
 			'length'	=> $length,
-			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, array('bit','int','real','double','float','decimal','numeric')) ? true : false,
+			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, $unsigned_types) ? true : false,
 			'decimals'	=> $decimals,
 			'values'	=> $values,
 		);
