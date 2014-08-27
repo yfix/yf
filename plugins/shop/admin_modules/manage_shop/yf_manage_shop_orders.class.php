@@ -96,7 +96,9 @@ class yf_manage_shop_orders{
 			return _e('No such order');
 		}
 		$recount_price = false;
-		$_class_price  = _class( '_shop_price', 'modules/shop/' );
+		$_class_price  = _class( '_shop_price',         'modules/shop/' );
+		$_class_units  = _class( '_shop_product_units', 'modules/shop/' );
+		$_class_basket = _class( 'shop_basket',         'modules/shop/' );
 		if(main()->is_post()) {
 			module('manage_shop')->_product_check_first_revision('order', intval($_GET['id']));
 			foreach($_POST as $k => $v) {
@@ -124,9 +126,37 @@ class yf_manage_shop_orders{
 
 						$recount_price = true;
 					}
+				} elseif ($k=='unit') {
+					$order_id = (int)$_GET['id'];
+					foreach ($v as $k1 => $unit) {
+						$unit = (int)$unit;
+						list ($product_id,$param_id) = explode('_',$k1);
+						$product_id = (int)$product_id;
+						$param_id   = (int)$param_id;
+						$sql = 'SELECT unit FROM '. db( 'shop_order_items' ) . ' WHERE order_id='.$order_id.' AND product_id='.$product_id.' AND param_id='.$param_id;
+						$unit_old = (int)db_get_one( $sql );
+						if( $unit != $unit_old ) {
+							db()->UPDATE(db('shop_order_items'), array( 'unit' => $unit ), ' order_id='.$order_id.' AND product_id='.$product_id.' AND param_id='.$param_id);
+							$units = $_class_units->get_by_product_ids( $product_id );
+							if( isset( $units[ $product_id ][ $unit ] ) ) {
+								$products = db_get_all( 'SELECT * FROM ' . db('shop_products') . ' WHERE id = ' . $product_id );
+								$product = $products[ $product_id ];
+								list( $price ) = $_class_price->markup_down( $product[ 'price' ], $product_id, $product[ 'type' ] );
+								$item = array(
+									'price' => $price,
+									'unit'  => $unit,
+									'units' => $units[ $product_id ],
+								);
+								$price_one = $_class_basket->_get_price_one( $item );
+								$_POST[ 'price_unit' ][ $product_id . '_'. $param_id ] = $price_one;
+							}
+							$recount_price = true;
+						}
+					}
 				} elseif ($k=='price_unit') {
 					foreach ($v as $k1 => $price) {
 						list ($product_id,$param_id) = explode('_',$k1);
+						$price = $_POST[ 'price_unit' ][ $k1 ] != $price ? $_POST[ 'price_unit' ][ $k1 ] : $price;
 						db()->UPDATE(db('shop_order_items'), array('price'	=> todecimal($price)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
 						$recount_price = true;
 					}
@@ -199,6 +229,7 @@ class yf_manage_shop_orders{
 			}else{
 				$images = _class( '_shop_products', 'modules/shop/' )->_product_image($_info["product_id"],false,false);
 				$link = './?object='.main()->_get('object').'&action=product_edit&id='.$_info[ 'product_id' ];
+				$units = $_class_units->get_by_product_ids( $_info[ 'product_id' ] );
 			}
 			$image = $images[ 0 ][ 'thumb' ] ?: _class( '_shop_categories', 'modules/shop/' )->get_icon_url( $_product[ 'cat_id' ], 'item' );
 			$dynamic_atts = array();
@@ -219,6 +250,9 @@ class yf_manage_shop_orders{
 				'name'         => _prepare_html($_product['name']),
 				'image'        => $image,
 				'link'         => $link,
+				'unit'         => intval($_info['unit']),
+				'_unit'        => intval($_info['unit']),
+				'_units'       => $units[ intval($_info['product_id']) ],
 				'price_unit'   => $price_one,
 				'price'        => $price_item,
 				'currency'     => _prepare_html(module('manage_shop')->CURRENCY),
@@ -323,6 +357,22 @@ class yf_manage_shop_orders{
 					->func('link',function($f, $p, $row){
 						$result = "<a class='btn' href='{$row[link]}'>{$row[product_id]}</a>";
 						return $result;
+					})
+					->func( 'unit', function( $f, $p, $row ) {
+						$values = array();
+						if( !empty( $row[ '_units' ] ) ) {
+							foreach( $row[ '_units' ] as $id => $item ) {
+								$values[ $id ] = $item[ 'title' ];
+							}
+						}
+						$desc = 'Ед. измерения';
+						$result = _class( 'html' )->select2_box( array(
+							'desc'      => $desc,
+							'name'      => 'unit['.$row['product_id'].'_'.$row['param_id'].']',
+							'values'    => $values,
+							'selected'  => $row[ 'unit' ],
+						));
+						return( $result );
 					})
 					->func('quantity',function($f, $p, $row){
 						$row['quantity'] = "<input type='text' name='qty[".$row['product_id']."_".$row['param_id']."]' value='".intval($row['quantity'])."' style='width:50px;'>";

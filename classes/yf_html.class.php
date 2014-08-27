@@ -1139,7 +1139,6 @@ class yf_html {
 		js('$(function() { $("#'.addslashes($extra['force_id']).'").select2('.json_encode($js_options).'); });');
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
 		$extra[ 'class' ] .= 'no-chosen';
-		$extra[ 'type' ] = 1;
 		return $this->$func($extra, $values, $selected);
 	}
 
