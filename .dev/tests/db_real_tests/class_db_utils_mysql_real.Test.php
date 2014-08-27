@@ -371,14 +371,17 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
 #		$this->assertTrue( self::utils()->add_column(self::$DB_NAME.'.'.$table, 'id2', ) );
 	}
-	public function test_rename_column() {
-#		$this->assertTrue( self::utils()->rename_column() );
-	}
 	public function test_drop_column() {
-#		$this->assertTrue( self::utils()->drop_column() );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+#		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
+#		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, array($col_info)) );
+#		$this->assertTrue( self::utils()->drop_column(self::$DB_NAME.'.'.$table, 'id2') );
+	}
+	public function test_rename_column() {
+#		$this->assertTrue( self::utils()->rename_column(self::$DB_NAME.'.'.$table, 'id2', 'id3') );
 	}
 	public function test_alter_column() {
-#		$this->assertEquals( self::utils()->alter_column() );
+#		$this->assertEquals( self::utils()->alter_column(self::$DB_NAME.'.'.$table, 'id2', array('first' => true)) );
 	}
 	public function test_list_indexes() {
 #		$this->assertEquals( self::utils()-> );
