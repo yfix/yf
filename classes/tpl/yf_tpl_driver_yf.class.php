@@ -612,9 +612,18 @@ class yf_tpl_driver_yf {
 		}, $string);
 
 		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}  {if_empty(name1,name2,name3)}<h1 style="color: white;">NEW</h1>{/if}  
-		$pattern = '/\{(?P<cond>if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.,+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
+		$pattern = '/\{(?P<cond>if_or|if_and|elseif_or|elseif_and|if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.,+%-]+?)["\']{0,1}[\s\t]*\)\}/ims';
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$cond = trim($m['cond']); // if | elseif
+			$multiple_cond = 'AND';
+			if (in_array($cond, array('if_or','elseif_or'))) {
+				$multiple_cond = 'OR';
+			}
+			if (in_array($cond, array('if','if_or','if_and'))) {
+				$cond = 'if';
+			} elseif (in_array($cond, array('elseif','elseif_or','elseif_and'))) {
+				$cond = 'elseif';
+			}
 			$is_multiple = (strpos($m['left'], ',') !== false);
 			if ($is_multiple) {
 				$part_left = array();
@@ -663,18 +672,18 @@ class yf_tpl_driver_yf {
 				foreach ($part_left as $v) {
 					$v = trim($v);
 					if (strlen($v)) {
-						$center_tmp[] = $func.'('.$v.')';
+						$center_tmp[] = ($negate ? '!' : ''). $func.'('.$v.')';
 					}
 				}
 				if (!count($center_tmp)) {
-					$center_cond = $func. '($replace["___not_existing_key__"])';
+					$center_cond = ($negate ? '!' : ''). $func. '($replace["___not_existing_key__"])';
 				} else {
-					$center_cond = '('.implode(') AND (', $center_tmp).')';
+					$center_cond = '('.implode(') '.$multiple_cond.' (', $center_tmp).')';
 				}
 			} else {
-				$center_cond = $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')';
+				$center_cond = ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')';
 			}
-			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. ($negate ? '!' : ''). $center_cond. ') { ?>';
+			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. $center_cond. ') { ?>';
 		}, $string);
 
 		$string = str_replace('{else}', '<'.'?p'.'hp } else { ?'.'>', $string);
