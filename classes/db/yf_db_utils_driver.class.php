@@ -850,7 +850,11 @@ abstract class yf_db_utils_driver {
 			$error = 'index type is not supported';
 			return false;
 		}
-		$sql = 'CREATE '.strtoupper($supported_types[$index_type]).' '.$index_name.' ON '.$this->_escape_table_name($table).' ('.implode(',', $fields).')';
+		if ($index_name == 'PRIMARY' || $index_type == 'primary') {
+			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD PRIMARY KEY ('.implode(',', $this->_escape_fields($fields)).')';
+		} else {
+			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD '.strtoupper($supported_types[$index_type]).' '.$this->_escape_val($index_name).' ('.implode(',', $this->_escape_fields($fields)).')';
+		}
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -865,7 +869,11 @@ abstract class yf_db_utils_driver {
 			$error = 'index name is empty';
 			return false;
 		}
-		$sql = 'DROP INDEX '.$index_name.' ON '.$this->_escape_table_name($table);
+		if ($index_name == 'PRIMARY') {
+			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP PRIMARY KEY';
+		} else {
+			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP INDEX '.$this->_escape_key($index_name);
+		}
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -882,6 +890,12 @@ abstract class yf_db_utils_driver {
 		}
 		$this->drop_index($table, $index_name, $extra, $error);
 		return $this->add_index($table, $index_name, $fields, $extra, $error);
+	}
+
+	/**
+	*/
+	function list_all_database_foreign_keys($name, $extra = array(), &$error = false) {
+// TODO
 	}
 
 	/**
@@ -907,57 +921,105 @@ abstract class yf_db_utils_driver {
 			FROM information_schema.KEY_COLUMN_USAGE
 			WHERE TABLE_SCHEMA = '.$this->_escape_val($db_name).' 
 				AND REFERENCED_TABLE_NAME IS NOT NULL 
-				AND TABLE_NAME = '. $this->db->_fix_table_name($table);
+				AND TABLE_NAME = '. $this->_escape_val($this->db->_fix_table_name($table));
 		foreach ((array)$this->db->get_all($sql) as $id => $row) {
-			$keys[$id] = array(
+			$keys[$row['CONSTRAINT_NAME']] = array(
 				'name'		=> $row['CONSTRAINT_NAME'], // foreign key name
 				'local'		=> $row['COLUMN_NAME'], // local columns
 				'table'		=> $row['REFERENCED_TABLE_NAME'], // referenced table
 				'foreign' 	=> $row['REFERENCED_COLUMN_NAME'], // referenced columns
 			);
 		}
-		return array_values($keys);
+		return $keys;
 	}
 
 	/**
 	*/
-	function list_all_foreign_keys($name, $extra = array(), &$error = false) {
-// TODO
+	function foreign_key_info($table, $index_name, &$error = false) {
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$keys = $this->list_foreign_keys($table);
+		return isset($keys[$index_name]) ? $keys[$index_name] : false;
 	}
 
 	/**
 	*/
-	function add_foreign_key($table, $fields, $extra = array(), &$error = false) {
+	function foreign_key_exists($table, $index_name, &$error = false) {
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$keys = $this->list_foreign_keys($table);
+		return isset($keys[$index_name]);
+	}
+
+	/**
+	*/
+	function drop_foreign_key($table, $index_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
 		}
-/*
-ALTER TABLE tbl_name
-	ADD [CONSTRAINT [symbol]] FOREIGN KEY
-	[index_name] (index_col_name, ...)
-	REFERENCES tbl_name (index_col_name,...)
-	[ON DELETE reference_option]
-	[ON UPDATE reference_option]
-*/
-// TODO
-	}
-
-	/**
-	*/
-	function drop_foreign_key($table, $name, $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-		$sql = 'ALTER TABLE '.$this->db->_fix_table_name($table).' DROP FOREIGN KEY '.$name;
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP FOREIGN KEY '.$this->_escape_key($index_name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
-	function foreign_key_exists($table, $name, $extra = array(), &$error = false) {
-// TODO
+	function add_foreign_key($table, $index_name = '', array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+		if (!strlen($table)) {
+			$error = 'table name is empty';
+			return false;
+		}
+		if (empty($fields)) {
+			$error = 'fields are empty';
+			return false;
+		}
+		if (!strlen($ref_table)) {
+			$error = 'referenced table name is empty';
+			return false;
+		}
+		if (empty($ref_fields)) {
+			$error = 'referenced fields are empty';
+			return false;
+		}
+		if (empty($index_name)) {
+			$index_name = $ref_table.'_'.implode('_', $ref_fields);
+		}
+		$supported_ref_options = array(
+			'restrict'	=> 'RESTRICT',
+			'cascade'	=> 'CASCADE',
+			'set_null'	=> 'SET NULL',
+			'no_action'	=> 'NO ACTION',
+		);
+		$on_delete = isset($extra['on_delete']) && isset($supported_ref_options[$extra['on_delete']]) ? $supported_ref_options[$extra['on_delete']] : '';
+		$on_update = isset($extra['on_update']) && isset($supported_ref_options[$extra['on_update']]) ? $supported_ref_options[$extra['on_update']] : '';
+
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).PHP_EOL
+			. ' ADD CONSTRAINT '.$this->_escape_key($index_name).PHP_EOL
+			. ' FOREIGN KEY ('.implode(',', $this->_escape_fields($fields)).')'.PHP_EOL
+			. ' REFERENCES '.$this->_escape_key($ref_table).' ('.implode(',', $this->_escape_fields($ref_fields)).')'.PHP_EOL
+			. ($on_delete ? ' ON DELETE '.$on_delete : '').PHP_EOL
+			. ($on_update ? ' ON UPDATE '.$on_update : '')
+		;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+
+	/**
+	*/
+	function update_foreign_key($table, $index_name, array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+		if (!strlen($table)) {
+			$error = 'table name is empty';
+			return false;
+		}
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$this->drop_foreign_key($table, $index_name, $extra, $error);
+		return $this->add_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
 	}
 
 	/**
@@ -1353,6 +1415,16 @@ DO INSERT INTO test.totals VALUES (NOW());
 // TODO: unit tests
 // TODO: support for binding params (':field' => $val)
 		return is_object($this->db) ? $this->db->escape_val($val) : '\''.addslashes($val).'\'';
+	}
+
+	/**
+	*/
+	function _escape_fields(array $fields) {
+// TODO: unit tests
+		foreach ($fields as $k => $v) {
+			$fields[$k] = $this->_escape_key($v);
+		}
+		return $fields;
 	}
 
 	/**
