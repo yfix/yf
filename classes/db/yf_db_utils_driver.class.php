@@ -1078,7 +1078,7 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$data = array();
-		foreach ($this->db->get_all('SHOW FUNCTION STATUS') as $a) {
+		foreach ((array)$this->db->get_all('SHOW FUNCTION STATUS') as $a) {
 			$_a = array();
 			foreach ($a as $k => $v) {
 				$_a[strtolower($k)] = $v;
@@ -1111,7 +1111,7 @@ abstract class yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'DROP FUNCTION IF EXISTS '.$this->_escape_key($name);
+		$sql = 'DROP FUNCTION IF EXISTS '.$this->_escape_table_name($name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -1123,7 +1123,7 @@ abstract class yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = ' CREATE FUNCTION '.$this->_escape_key($name).' ('.$sql_params.')'. PHP_EOL
+		$sql = ' CREATE FUNCTION '.$this->_escape_table_name($name).' ('.$sql_params.')'. PHP_EOL
 			. 'RETURNS '.$sql_returns_type.' DETERMINISTIC'. PHP_EOL
 			. 'RETURN '.$sql_body;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
