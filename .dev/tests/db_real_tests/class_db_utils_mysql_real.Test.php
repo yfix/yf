@@ -1,7 +1,7 @@
 <?php
 
-require dirname(__DIR__).'/yf_unit_tests_setup.php';
-require dirname(__DIR__).'/db_setup.php';
+require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
+require_once dirname(__DIR__).'/db_setup.php';
 
 /**
  * @requires extension mysql

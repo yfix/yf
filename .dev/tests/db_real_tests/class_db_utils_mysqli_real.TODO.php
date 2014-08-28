@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__.'/class_db_utils_mysql_real.Test.php';
+require_once __DIR__.'/class_db_utils_mysql_real.Test.php';
 
 /**
  * @requires extension mysqli
