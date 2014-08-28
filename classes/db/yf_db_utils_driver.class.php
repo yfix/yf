@@ -387,7 +387,7 @@ abstract class yf_db_utils_driver {
 		$extra['charset'] = $extra['charset'] ?: 'utf8';
 
 		$table_options = array();
-		foreach ($this->_get_supported_table_options() as $name => $real_name) {
+		foreach ((array)$this->_get_supported_table_options() as $name => $real_name) {
 			if (isset($extra[$name]) && strlen($extra[$name])) {
 				$table_options[$name] = $real_name.'='.$extra[$name];
 			}
@@ -432,7 +432,7 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$table_options = array();
-		foreach ($this->_get_supported_table_options() as $name => $real_name) {
+		foreach ((array)$this->_get_supported_table_options() as $name => $real_name) {
 			if (isset($extra[$name]) && strlen($extra[$name])) {
 				$table_options[$name] = $real_name.'='.$extra[$name];
 			}
@@ -573,7 +573,7 @@ abstract class yf_db_utils_driver {
 			$error = 'column not exists';
 			return false;
 		}
-		foreach ($data as $k => $v) {
+		foreach ((array)$data as $k => $v) {
 			if (isset($col_info[$k])) {
 				$col_info[$k] = $v;
 			}
@@ -1001,9 +1001,9 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$data = array();
-		foreach ($this->db->get_all('SHOW PROCEDURE STATUS') as $a) {
+		foreach ((array)$this->db->get_all('SHOW PROCEDURE STATUS') as $a) {
 			$_a = array();
-			foreach ($a as $k => $v) {
+			foreach ((array)$a as $k => $v) {
 				$_a[strtolower($k)] = $v;
 			}
 			$a = $_a;
@@ -1073,7 +1073,7 @@ abstract class yf_db_utils_driver {
 		$data = array();
 		foreach ((array)$this->db->get_all('SHOW FUNCTION STATUS') as $a) {
 			$_a = array();
-			foreach ($a as $k => $v) {
+			foreach ((array)$a as $k => $v) {
 				$_a[strtolower($k)] = $v;
 			}
 			$a = $_a;
@@ -1167,7 +1167,7 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$triggers = array();
-		foreach ($this->db->get_all('SHOW TRIGGERS FROM '.$this->_escape_database_name($db_name)) as $a) {
+		foreach ((array)$this->db->get_all('SHOW TRIGGERS FROM '.$this->_escape_database_name($db_name)) as $a) {
 			$name = $a['Trigger'];
 			$triggers[$name] = array(
 				'name'		=> $name,
@@ -1298,7 +1298,7 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$events = array();
-		foreach ($this->db->get_all('SHOW EVENTS FROM '.$this->_escape_database_name($db_name)) as $a) {
+		foreach ((array)$this->db->get_all('SHOW EVENTS FROM '.$this->_escape_database_name($db_name)) as $a) {
 			$name = $a['Name'];
 			$events[$name] = array(
 				'name'			=> $name,
@@ -1362,7 +1362,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_event($name, $data, $extra = array(), &$error = false) {
+	function drop_event($name, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'event name is empty';
 			return false;
@@ -1414,9 +1414,9 @@ abstract class yf_db_utils_driver {
 	*/
 	function list_users($extra = array(), &$error = false) {
 		$users = array();
-		foreach ($this->db->get_all('SELECT * FROM mysql.user') as $a) {
+		foreach ((array)$this->db->get_all('SELECT * FROM mysql.user') as $a) {
 			$user = array();
-			foreach ($a as $k => $v) {
+			foreach ((array)$a as $k => $v) {
 				$user[strtolower($k)] = $v;
 			}
 			$name = $user['user'].'@'.$user['host'];
@@ -1514,7 +1514,7 @@ abstract class yf_db_utils_driver {
 		$types = array_combine($types, $types);
 		if ($type) {
 			$type = strtolower($type);
-			foreach ($types as $_type) {
+			foreach ((array)$types as $_type) {
 				if (false !== strpos($type, $_type)) {
 					$type = $_type;
 					break;
@@ -1558,7 +1558,7 @@ abstract class yf_db_utils_driver {
 			$data = array($data);
 		}
 		$items = array();
-		foreach ($data as $v) {
+		foreach ((array)$data as $v) {
 			$name = $v['name'];
 			if (!$v['key'] && !$name && !$extra['no_name']) {
 				continue;
@@ -1766,7 +1766,7 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function _escape_fields(array $fields) {
-		foreach ($fields as $k => $v) {
+		foreach ((array)$fields as $k => $v) {
 			$fields[$k] = $this->_escape_key($v);
 		}
 		return $fields;
