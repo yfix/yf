@@ -1419,7 +1419,7 @@ abstract class yf_db_utils_driver {
 			foreach ($a as $k => $v) {
 				$user[strtolower($k)] = $v;
 			}
-			$name = $user['host'].'@'.$user['user'];
+			$name = $user['user'].'@'.$user['host'];
 			$users[$name] = $user;
 		}
 		return $users;
