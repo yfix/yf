@@ -1091,6 +1091,7 @@ abstract class yf_db_utils_driver {
 				'event'		=> $a['Event'],
 				'timing'	=> $a['Timing'],
 				'statement'	=> $a['Statement'],
+				'definer'	=> $a['definer'],
 			);
 		}
 		return $triggers;
@@ -1191,23 +1192,74 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_events($extra = array(), &$error = false) {
-		// SHOW EVENTS
-		// SHOW CREATE EVENT
-// TODO
+	function list_events($db_name = '', $extra = array(), &$error = false) {
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		$events = array();
+		foreach ($this->db->get_all('SHOW EVENTS FROM '.$this->_escape_database_name($db_name)) as $a) {
+			$name = $a['Name'];
+			$events[$name] = array(
+				'name'			=> $name,
+				'db'			=> $a['Db'],
+				'definer'		=> $a['definer'],
+				'timezone'		=> $a['Time_zone'],
+				'type'			=> $a['Type'],
+				'execute_at'	=> $a['Execute_at'],
+				'interval_value'=> $a['Interval_value'],
+				'interval_field'=> $a['Interval_field'],
+				'starts'		=> $a['Starts'],
+				'ends'			=> $a['Ends'],
+				'status'		=> $a['Status'],
+				'originator'	=> $a['Originator'],
+			);
+		}
+		return $events;
 	}
 
 	/**
 	*/
 	function event_exists($name, $extra = array(), &$error = false) {
-		$events = $this->list_events($extra, $error);
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
+		if (!$name) {
+			$error = 'event name is empty';
+			return false;
+		}
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		$events = $this->list_events($db_name, $extra, $error);
 		return (bool)isset($events[$name]);
 	}
 
 	/**
 	*/
 	function event_info($name, $extra = array(), &$error = false) {
-		$events = $this->list_events($extra, $error);
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
+		if (!$name) {
+			$error = 'event name is empty';
+			return false;
+		}
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		$events = $this->list_events($db_name, $extra, $error);
 		return isset($events[$name]) ? $events[$name] : false;
 	}
 
@@ -1218,18 +1270,18 @@ abstract class yf_db_utils_driver {
 			$error = 'event name is empty';
 			return false;
 		}
-		$sql = 'DROP EVENT IF EXISTS '.$this->_escape_key($name);
+		$sql = 'DROP EVENT IF EXISTS '.$this->_escape_table_name($name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
+	* https://dev.mysql.com/doc/refman/5.6/en/create-event.html
 	*/
 	function create_event($name, $data, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
 		}
-// https://dev.mysql.com/doc/refman/5.5/en/create-event.html
 /*
 CREATE EVENT e_totals
 ON SCHEDULE AT '2006-02-10 23:59:00'
@@ -1243,20 +1295,49 @@ DO INSERT INTO test.totals VALUES (NOW());
 	/**
 	*/
 	function list_users($extra = array(), &$error = false) {
-		// SELECT * FROM mysql.user
+		$users = array();
+		foreach ($this->db->get_all('SELECT * FROM mysql.user') as $a) {
+			$name = $a['Name'];
+			$users[$name] = array(
 // TODO
+			);
+		}
+		return $users;
 	}
 
 	/**
 	*/
 	function user_exists($name, $extra = array(), &$error = false) {
-// TODO
+		$users = $this->list_users($extra, $error);
+		return (bool)isset($users[$name]);
 	}
 
 	/**
 	*/
-	function alter_user($name, $extra = array(), &$error = false) {
+	function user_info($name, $extra = array(), &$error = false) {
+		$users = $this->list_users($extra, $error);
+		return isset($users[$name]) ? $users[$name] : false;
+	}
+
+	/**
+	*/
+	function delete_user($name, $extra = array(), &$error = false) {
 // TODO
+		return $this->db->query('DELETE FROM mysql.user WHERE user='.$this->_escape_val($name));
+	}
+
+	/**
+	*/
+	function add_user($name, array $data, $extra = array(), &$error = false) {
+// TODO
+#		return $this->db->insert('mysql.user WHERE user='.$this->_escape_val($name));
+	}
+
+	/**
+	*/
+	function update_user($name, array $data, $extra = array(), &$error = false) {
+// TODO
+#		return $this->db->update('mysql.user WHERE user='.$this->_escape_val($name));
 	}
 
 	/**
