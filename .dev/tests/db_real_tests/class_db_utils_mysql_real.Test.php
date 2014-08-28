@@ -593,9 +593,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10),
-		);
+		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
 		$this->assertEmpty( self::utils()->list_views(self::$DB_NAME) );
 		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
@@ -607,16 +605,48 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expected, self::utils()->list_views(self::$DB_NAME) );
 	}
 	public function test_view_exists() {
-#		$this->assertEquals( self::utils()-> );
+		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$this->assertFalse( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->create_view(self::$DB_NAME.'.'.$view, 'SELECT * FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
 	}
 	public function test_view_info() {
-#		$this->assertEquals( self::utils()-> );
+		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$this->assertFalse( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->create_view(self::$DB_NAME.'.'.$view, 'SELECT * FROM '.self::$DB_NAME.'.'.$table) );
+		$expected = 'CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `'.self::$DB_NAME.'`.`'.$view.'`'
+			.' AS select `'.self::$DB_NAME.'`.`'.$table.'`.`id` AS `id` from `'.self::$DB_NAME.'`.`'.$table.'`';
+		$this->assertEquals( $expected, self::utils()->view_info(self::$DB_NAME.'.'.$view) );
 	}
 	public function test_drop_view() {
-#		$this->assertEquals( self::utils()-> );
+		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$this->assertFalse( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->create_view(self::$DB_NAME.'.'.$view, 'SELECT * FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertTrue( self::utils()->drop_view(self::$DB_NAME.'.'.$view) );
+		$this->assertFalse( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
 	}
 	public function test_create_view() {
-#		$this->assertEquals( self::utils()-> );
+		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$this->assertFalse( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->create_view(self::$DB_NAME.'.'.$view, 'SELECT * FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
 	}
 
 	public function test_list_procedures() {
