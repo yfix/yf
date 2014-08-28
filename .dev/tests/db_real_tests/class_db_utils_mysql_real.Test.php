@@ -775,22 +775,79 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_list_triggers() {
-#		$this->assertEquals( self::utils()-> );
+		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
+
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
+
+		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
+		$triggers = self::utils()->list_triggers(self::$DB_NAME);
+		if (empty($triggers)) {
+			$sql = 'CREATE TRIGGER '.self::$DB_NAME.'.'.$trg.' BEFORE INSERT ON '.self::$DB_NAME.'.'.$table.' FOR EACH ROW SET @sum = @sum + NEW.id';
+			$this->assertTrue( self::utils()->db->query($sql) );
+		}
+		$this->assertNotEmpty( self::utils()->list_triggers(self::$DB_NAME) );
 	}
 	public function test_trigger_exists() {
-#		$this->assertEquals( self::utils()-> );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
+		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->trigger_exists(self::$DB_NAME.'.'.$trg) );
+		$sql = 'CREATE TRIGGER '.self::$DB_NAME.'.'.$trg.' BEFORE INSERT ON '.self::$DB_NAME.'.'.$table.' FOR EACH ROW SET @sum = @sum + NEW.id';
+		$this->assertTrue( self::utils()->db->query($sql) );
+		$this->assertTrue( self::utils()->trigger_exists(self::$DB_NAME.'.'.$trg) );
 	}
 	public function test_trigger_info() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_create_trigger() {
-#		$this->assertEquals( self::utils()-> );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
+		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
+		$sql = 'CREATE TRIGGER '.self::$DB_NAME.'.'.$trg.' BEFORE INSERT ON '.self::$DB_NAME.'.'.$table.' FOR EACH ROW SET @sum = @sum + NEW.id';
+		$this->assertTrue( self::utils()->db->query($sql) );
+		$expected = array(
+			'name' => $trg,
+			'table' => $table,
+			'event' => 'INSERT',
+			'timing' => 'BEFORE',
+			'statement' => 'SET @sum = @sum + NEW.id',
+			'definer' => NULL,
+		);
+		$result = self::utils()->trigger_info(self::$DB_NAME.'.'.$trg);
+		foreach ($expected as $k => $_expected) {
+			$this->assertEquals( $_expected, $result[$k] );
+		}
 	}
 	public function test_drop_trigger() {
-#		$this->assertEquals( self::utils()-> );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
+		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->trigger_exists(self::$DB_NAME.'.'.$trg) );
+		$sql = 'CREATE TRIGGER '.self::$DB_NAME.'.'.$trg.' BEFORE INSERT ON '.self::$DB_NAME.'.'.$table.' FOR EACH ROW SET @sum = @sum + NEW.id';
+		$this->assertTrue( self::utils()->db->query($sql) );
+		$this->assertTrue( self::utils()->trigger_exists(self::$DB_NAME.'.'.$trg) );
+		$this->assertTrue( self::utils()->drop_trigger(self::$DB_NAME.'.'.$trg) );
+		$this->assertFalse( self::utils()->trigger_exists(self::$DB_NAME.'.'.$trg) );
+	}
+	public function test_create_trigger() {
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
+		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_trigger($trg, self::$DB_NAME.'.'.$table, 'before', 'insert', 'SET @sum = @sum + NEW.id') );
+		$expected = array(
+			'name' => $trg,
+			'table' => $table,
+			'event' => 'INSERT',
+			'timing' => 'BEFORE',
+			'statement' => 'SET @sum = @sum + NEW.id',
+			'definer' => NULL,
+		);
+		$result = self::utils()->trigger_info(self::$DB_NAME.'.'.$trg);
+		foreach ($expected as $k => $_expected) {
+			$this->assertEquals( $_expected, $result[$k] );
+		}
 	}
 
 	public function test_list_events() {
+		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_event_exists() {
@@ -807,6 +864,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_list_users() {
+		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_user_exists() {
