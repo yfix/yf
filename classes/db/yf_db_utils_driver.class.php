@@ -45,6 +45,25 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
+	function list_collations($extra = array()) {
+		return $this->db->get_all('SHOW COLLATION');
+	}
+
+	/**
+	*/
+	function list_charsets($extra = array()) {
+		return $this->db->get_all('SHOW CHARACTER SET');
+	}
+
+	/**
+	*/
+	function list_databases($extra = array()) {
+		$sql = 'SHOW DATABASES';
+		return $extra['sql'] ? $sql : $this->db->get_2d($sql);
+	}
+
+	/**
+	*/
 	function database_exists($db_name, $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$error = 'db_name is empty';
@@ -55,9 +74,21 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_databases($extra = array()) {
-		$sql = 'SHOW DATABASES';
-		return $extra['sql'] ? $sql : $this->db->get_2d($sql);
+	function database_info($db_name, $extra = array(), &$error = false) {
+		if (!strlen($db_name)) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		$info = $this->db->get('SELECT * FROM information_schema.SCHEMATA WHERE schema_name = '.$this->_escape_val($db_name));
+		if (!$info) {
+			$error = 'db_name not exists';
+			return false;
+		}
+		return array(
+			'name'		=> $db_name,
+			'charset'	=> $info['DEFAULT_CHARACTER_SET_NAME'],
+			'collation'	=> $info['DEFAULT_COLLATION_NAME'],
+		);
 	}
 
 	/**
@@ -154,37 +185,6 @@ abstract class yf_db_utils_driver {
 		}
 		$sql[] = $this->drop_database($db_name, $extra);
 		return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
-	}
-
-	/**
-	*/
-	function database_info($db_name, $extra = array(), &$error = false) {
-		if (!strlen($db_name)) {
-			$error = 'db_name is empty';
-			return false;
-		}
-		$info = $this->db->get('SELECT * FROM information_schema.SCHEMATA WHERE schema_name = '.$this->_escape_val($db_name));
-		if (!$info) {
-			$error = 'db_name not exists';
-			return false;
-		}
-		return array(
-			'name'		=> $db_name,
-			'charset'	=> $info['DEFAULT_CHARACTER_SET_NAME'],
-			'collation'	=> $info['DEFAULT_COLLATION_NAME'],
-		);
-	}
-
-	/**
-	*/
-	function list_collations($extra = array()) {
-		return $this->db->get_all('SHOW COLLATION');
-	}
-
-	/**
-	*/
-	function list_charsets($extra = array()) {
-		return $this->db->get_all('SHOW CHARACTER SET');
 	}
 
 	/**
@@ -349,112 +349,6 @@ abstract class yf_db_utils_driver {
 			'create_time'	=> $info['Create_time'],
 			'update_time'	=> $info['Update_time'],
 		);
-	}
-
-	/**
-	* See http://dev.mysql.com/doc/refman/5.6/en/create-table.html
-	*/
-	function _parse_column_type($str, &$error = false) {
-		$str = trim($str);
-		$type = $length = $decimals = $values = null;
-		if (preg_match('~^(?P<type>[a-z]+)[\s\t]*\((?P<length>[^\)]+)\)~i', $str, $m)) {
-			$type = $m['type'];
-			$length = $m['length'];
-		} elseif (preg_match('~^(?P<type>[a-z]+)~i', $str, $m)) {
-			$type = $m['type'];
-		}
-		$types = $this->_get_supported_field_types();
-		$types = array_combine($types, $types);
-		if ($type) {
-			$type = strtolower($type);
-			foreach ($types as $_type) {
-				if (false !== strpos($type, $_type)) {
-					$type = $_type;
-					break;
-				}
-			}
-		}
-		if ($length && !is_numeric($length) && false !== strpos($length, ',')) {
-			if (in_array($type, array('real','double','float','decimal','numeric'))) {
-				list($length, $decimals) = explode(',',$length);
-				$length = (int)trim($length);
-				$decimals = (int)trim($decimals);
-			} elseif (in_array($type, array('enum','set'))) {
-				$values = array();
-				foreach(explode(',', $length) as $v) {
-					$v = trim(trim(trim($v),'\'"'));
-					if (strlen($v)) {
-						$values[$v] = $v;
-					}
-				}
-				$length = '';
-			}
-		}
-		return array(
-			'type'		=> $type,
-			'length'	=> $length,
-			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, $this->_get_unsigned_field_types()) ? true : false,
-			'decimals'	=> $decimals,
-			'values'	=> $values,
-		);
-	}
-
-	/**
-	*/
-	function _compile_create_table($data, $extra = array(), &$error = false) {
-		if (!is_array($data) || !count($data)) {
-			return false;
-		}
-		// 1-dimensional array detected, convert it into 2-dimensional
-		if (isset($data['name']) && is_string($data['name'])) {
-			$data = array($data);
-		}
-		$items = array();
-		foreach ($data as $v) {
-			$name = $v['name'];
-			if (!$v['key'] && !$name && !$extra['no_name']) {
-				continue;
-			}
-			$type = strtolower($v['type']);
-			if (!isset($v['key']) && !in_array($type, $this->_get_supported_field_types())) {
-				continue;
-			}
-			$unsigned = $v['unsigned'];
-			if (!isset($v['key']) && $unsigned && !in_array($type, $this->_get_unsigned_field_types())) {
-				$unsigned = false;
-			}
-			$length = $v['length'];
-			$default = $v['default'];
-			$null = null;
-			if (isset($v['null'])) {
-				$null = (bool)$v['null'];
-			} elseif (isset($v['not_null'])) {
-				$null = (bool)(!$v['not_null']);
-			}
-			$auto_inc = $v['auto_inc'] || $v['auto_increment'];
-			if ($auto_inc && $type != 'int') {
-				$auto_inc = false;
-			}
-			if ($auto_inc) {
-				$null = false;
-				$unsigned = true;
-			}
-			$comment = $v['comment'];
-			if (isset($v['key'])) {
-				$items[] = strtoupper($v['key']).' KEY '.($name ? $this->_escape_key($name).' ' : '').'('.(is_array($v['key_cols']) ? implode(',', $v['key_cols']) : $v['key_cols']).')';
-			} else {
-				$items[$name] = (!$extra['no_name'] ? $this->_escape_key($name).' ' : '')
-					.strtoupper($type)
-					. ($length ? '('.$length.')' : '')
-					. (isset($unsigned) ? ' UNSIGNED' : '')
-					. (isset($null) ? ' '.($null ? 'NULL' : 'NOT NULL') : '')
-					. (isset($default) ? ' DEFAULT \''.addslashes($default).'\'' : '')
-					. ($auto_inc ? ' AUTO_INCREMENT' : '')
-					. (strlen($comment) ? ' COMMENT \''.addslashes($comment).'\'' : '')
-				;
-			}
-		}
-		return implode(','.PHP_EOL, $items);
 	}
 
 	/**
@@ -1025,48 +919,85 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function list_views($db_name = '', $extra = array(), &$error = false) {
-		/*$this->connection->query("
-			SELECT TABLE_NAME as name, TABLE_TYPE = 'VIEW' as view
-			FROM INFORMATION_SCHEMA.TABLES
-			WHERE TABLE_SCHEMA = DATABASE()
-		");*/
-		$tables = array();
-		foreach ((array)$this->db->get_2d('SHOW FULL TABLES') as $name => $type) {
-			if ($type != 'VIEW') {
-				continue;
-			}
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		$sql = 'SELECT table_name as name FROM information_schema.tables WHERE table_schema = '.$this->_escape_database_name($db_name). ' AND table_type = "VIEW"';
+		$views = array();
+		foreach ((array)$this->db->get_2d($sql) as $a) {
+			$name = $a['name'];
 			$create_view = !$extra['no_details'] ? $this->db->get('SHOW CREATE VIEW '.$name) : '';
-			$tables[$name] = is_array($create_view) ? $create_view['Create View'] : '';
+			$views[$name] = is_array($create_view) ? $create_view['Create View'] : '';
 		}
-		return $tables;
+		return $views;
 	}
 
 	/**
 	*/
-	function create_view($name, $sql_as, $extra = array(), &$error = false) {
-		if (!strlen($name)) {
-			$error = 'name is empty';
+	function view_exists($table, $extra = array(), &$error = false) {
+		if (strpos($table, '.') !== false) {
+			list($db_name, $table) = explode('.', trim($table));
+		}
+		if (!$table) {
+			$error = 'table_name is empty';
 			return false;
 		}
-		$sql = 'CREATE VIEW '.$this->db->_fix_table_name($name).' AS '.$sql_as;
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		return (bool)in_array($table, (array)$this->list_views($db_name));
+	}
+
+	/**
+	*/
+	function view_details($table, $extra = array(), &$error = false) {
+		if (strpos($table, '.') !== false) {
+			list($db_name, $table) = explode('.', trim($table));
+		}
+		if (!$table) {
+			$error = 'table_name is empty';
+			return false;
+		}
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		$views = $this->list_views($db_name);
+		return isset($views[$table]) ? $views[$table] : false;
+	}
+
+	/**
+	*/
+	function drop_view($table, $extra = array(), &$error = false) {
+		if (!strlen($table)) {
+			$error = 'view name is empty';
+			return false;
+		}
+		$sql = 'DROP VIEW '.$this->_escape_table_name($table);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
+	* See https://dev.mysql.com/doc/refman/5.6/en/create-view.html
 	*/
-	function drop_view($name, $extra = array(), &$error = false) {
+	function create_view($table, $sql_as, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'DROP VIEW '.$this->db->_fix_table_name($name);
+		$sql = 'CREATE VIEW '.$this->_escape_table_name($table).' AS '.$sql_as;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
-	}
-
-	/**
-	*/
-	function view_exists($name, $extra = array(), &$error = false) {
-// TODO
 	}
 
 	/**
@@ -1083,17 +1014,16 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function create_procedure($name, $data, $extra = array(), &$error = false) {
-		if (!strlen($name)) {
-			$error = 'name is empty';
-			return false;
-		}
-// https://dev.mysql.com/doc/refman/5.5/en/create-procedure.html
-# CREATE PROCEDURE simpleproc (OUT param1 INT)
-# BEGIN
-#	SELECT COUNT(*) INTO param1 FROM t;
-# END//
-// TODO
+	function procedure_exists($name, $extra = array(), &$error = false) {
+		$procedures = $this->list_procedures($extra, $error);
+		return (bool)isset($procedures[$name]);
+	}
+
+	/**
+	*/
+	function procedure_info($name, $extra = array(), &$error = false) {
+		$procedures = $this->list_procedures($extra, $error);
+		return isset($procedures[$name]) ? $procedures[$name] : false;
 	}
 
 	/**
@@ -1103,14 +1033,20 @@ abstract class yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'DROP PROCEDURE '.$name;
+		$sql = 'DROP PROCEDURE '.$this->_escape_key($name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
+	* See https://dev.mysql.com/doc/refman/5.6/en/create-procedure.html
 	*/
-	function procedure_exists($name, $extra = array(), &$error = false) {
-// TODO
+	function create_procedure($name, $sql_body, $sql_params, $extra = array(), &$error = false) {
+		if (!strlen($name)) {
+			$error = 'name is empty';
+			return false;
+		}
+		$sql = 'CREATE PROCEDURE '.$this->_escape_key($name).' ('.$sql_params.')'.PHP_EOL.'BEGIN'.PHP_EOL. $sql_body. PHP_EOL.'END';
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
@@ -1127,15 +1063,16 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function create_function($name, $data, $extra = array(), &$error = false) {
-		if (!strlen($name)) {
-			$error = 'name is empty';
-			return false;
-		}
-# CREATE FUNCTION hello (s CHAR(20))
-# RETURNS CHAR(50) DETERMINISTIC
-# RETURN CONCAT('Hello, ',s,'!');
-// TODO
+	function function_exists($name, $extra = array(), &$error = false) {
+		$funcs = $this->list_functions();
+		return (bool)isset($funcs[$name]);
+	}
+
+	/**
+	*/
+	function function_info($name, $extra = array(), &$error = false) {
+		$funcs = $this->list_functions();
+		return isset($funcs[$name]) ? $funcs[$name] : false;
 	}
 
 	/**
@@ -1145,13 +1082,21 @@ abstract class yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'DROP FUNCTION '.$name;
+		$sql = 'DROP FUNCTION '.$this->_escape_key($name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
+	* See https://dev.mysql.com/doc/refman/5.6/en/create-function.html
 	*/
-	function func_exists($name, $extra = array(), &$error = false) {
+	function create_function($name, $data, $extra = array(), &$error = false) {
+		if (!strlen($name)) {
+			$error = 'name is empty';
+			return false;
+		}
+# CREATE FUNCTION hello (s CHAR(20))
+# RETURNS CHAR(50) DETERMINISTIC
+# RETURN CONCAT('Hello, ',s,'!');
 // TODO
 	}
 
@@ -1257,6 +1202,114 @@ DO INSERT INTO test.totals VALUES (NOW());
 	}
 
 	/**
+	* See http://dev.mysql.com/doc/refman/5.6/en/create-table.html
+	*/
+	function _parse_column_type($str, &$error = false) {
+		$str = trim($str);
+		$type = $length = $decimals = $values = null;
+		if (preg_match('~^(?P<type>[a-z]+)[\s\t]*\((?P<length>[^\)]+)\)~i', $str, $m)) {
+			$type = $m['type'];
+			$length = $m['length'];
+		} elseif (preg_match('~^(?P<type>[a-z]+)~i', $str, $m)) {
+			$type = $m['type'];
+		}
+		$types = $this->_get_supported_field_types();
+		$types = array_combine($types, $types);
+		if ($type) {
+			$type = strtolower($type);
+			foreach ($types as $_type) {
+				if (false !== strpos($type, $_type)) {
+					$type = $_type;
+					break;
+				}
+			}
+		}
+		if ($length && !is_numeric($length) && false !== strpos($length, ',')) {
+			if (in_array($type, array('real','double','float','decimal','numeric'))) {
+				list($length, $decimals) = explode(',',$length);
+				$length = (int)trim($length);
+				$decimals = (int)trim($decimals);
+			} elseif (in_array($type, array('enum','set'))) {
+				$values = array();
+				foreach(explode(',', $length) as $v) {
+					$v = trim(trim(trim($v),'\'"'));
+					if (strlen($v)) {
+						$values[$v] = $v;
+					}
+				}
+				$length = '';
+			}
+		}
+		return array(
+			'type'		=> $type,
+			'length'	=> $length,
+			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, $this->_get_unsigned_field_types()) ? true : false,
+			'decimals'	=> $decimals,
+			'values'	=> $values,
+		);
+	}
+
+	/**
+	* Create part of SQL for "CREATE TABLE" from array of params
+	*/
+	function _compile_create_table($data, $extra = array(), &$error = false) {
+		if (!is_array($data) || !count($data)) {
+			return false;
+		}
+		// 1-dimensional array detected, convert it into 2-dimensional
+		if (isset($data['name']) && is_string($data['name'])) {
+			$data = array($data);
+		}
+		$items = array();
+		foreach ($data as $v) {
+			$name = $v['name'];
+			if (!$v['key'] && !$name && !$extra['no_name']) {
+				continue;
+			}
+			$type = strtolower($v['type']);
+			if (!isset($v['key']) && !in_array($type, $this->_get_supported_field_types())) {
+				continue;
+			}
+			$unsigned = $v['unsigned'];
+			if (!isset($v['key']) && $unsigned && !in_array($type, $this->_get_unsigned_field_types())) {
+				$unsigned = false;
+			}
+			$length = $v['length'];
+			$default = $v['default'];
+			$null = null;
+			if (isset($v['null'])) {
+				$null = (bool)$v['null'];
+			} elseif (isset($v['not_null'])) {
+				$null = (bool)(!$v['not_null']);
+			}
+			$auto_inc = $v['auto_inc'] || $v['auto_increment'];
+			if ($auto_inc && $type != 'int') {
+				$auto_inc = false;
+			}
+			if ($auto_inc) {
+				$null = false;
+				$unsigned = true;
+			}
+			$comment = $v['comment'];
+			if (isset($v['key'])) {
+				$items[] = strtoupper($v['key']).' KEY '.($name ? $this->_escape_key($name).' ' : '').'('.(is_array($v['key_cols']) ? implode(',', $v['key_cols']) : $v['key_cols']).')';
+			} else {
+				$items[$name] = (!$extra['no_name'] ? $this->_escape_key($name).' ' : '')
+					.strtoupper($type)
+					. ($length ? '('.$length.')' : '')
+					. (isset($unsigned) ? ' UNSIGNED' : '')
+					. (isset($null) ? ' '.($null ? 'NULL' : 'NOT NULL') : '')
+					. (isset($default) ? ' DEFAULT \''.addslashes($default).'\'' : '')
+					. ($auto_inc ? ' AUTO_INCREMENT' : '')
+					. (strlen($comment) ? ' COMMENT \''.addslashes($comment).'\'' : '')
+				;
+			}
+		}
+		return implode(','.PHP_EOL, $items);
+	}
+
+	/**
+	* Smart split long SQL into single queries. Usually to be able to execute them with php_mysql API functions
 	*/
 	function split_sql(&$ret, $sql) {
 		// do not trim
