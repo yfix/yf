@@ -441,8 +441,7 @@ abstract class yf_db_utils_driver {
 			$error = 'no supported table options provided';
 			return false;
 		}
-		$table_options = implode(' ', $table_options);
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table). PHP_EOL. implode(' ', $params);
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table). PHP_EOL. implode(' ', $table_options);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -991,13 +990,25 @@ abstract class yf_db_utils_driver {
 	}
 
 	/**
+	* Note: The 'SHOW PROCEDURE|FUNCTION CODE' feature is disabled; you need MySQL built with '--with-debug' to have it working (code:1289)
 	*/
-	function list_procedures($extra = array(), &$error = false) {
+	function list_procedures($db_name = '', $extra = array(), &$error = false) {
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
 		$data = array();
-		foreach ($this->db->get_all('SHOW PROCEDURE STATUS') as $v) {
-			$name = $v['Name'];
-			$source = $extra['show_code'] ? $this->db->get_all('SHOW PROCEDURE CODE '.$name) : '';
-			$data[$name] = $v + array('source' => $source);
+		foreach ($this->db->get_all('SHOW PROCEDURE STATUS') as $a) {
+			$_a = array();
+			foreach ($a as $k => $v) {
+				$_a[strtolower($k)] = $v;
+			}
+			$a = $_a;
+			$name = $a['name'];
+			$data[$name] = $a;
 		}
 		return $data;
 	}
@@ -1005,6 +1016,13 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function procedure_exists($name, $extra = array(), &$error = false) {
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
+		if (!$name) {
+			$error = 'trigger name is empty';
+			return false;
+		}
 		$procedures = $this->list_procedures($extra, $error);
 		return (bool)isset($procedures[$name]);
 	}
@@ -1012,6 +1030,13 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function procedure_info($name, $extra = array(), &$error = false) {
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
+		if (!$name) {
+			$error = 'trigger name is empty';
+			return false;
+		}
 		$procedures = $this->list_procedures($extra, $error);
 		return isset($procedures[$name]) ? $procedures[$name] : false;
 	}
@@ -1035,24 +1060,32 @@ abstract class yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'delimiter //'. PHP_EOL
-			. 'CREATE PROCEDURE '.$this->_escape_key($name).' ('.$sql_params.')'. PHP_EOL
-			. 'BEGIN'. PHP_EOL
-			. $sql_body. PHP_EOL
-			. 'END//'
-			. 'delimiter ;'. PHP_EOL
+		$sql = 'CREATE PROCEDURE '.$this->_escape_key($name).' ('.$sql_params.')'. PHP_EOL
+			. 'BEGIN'. PHP_EOL. $sql_body. PHP_EOL. 'END'
 		;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
+	* Note: // The 'SHOW PROCEDURE|FUNCTION CODE' feature is disabled; you need MySQL built with '--with-debug' to have it working (code:1289)
 	*/
-	function list_functions($extra = array(), &$error = false) {
+	function list_functions($db_name = '', $extra = array(), &$error = false) {
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
 		$data = array();
-		foreach ($this->db->get_all('SHOW FUNCTION STATUS') as $v) {
-			$name = $v['Name'];
-			$source = $extra['show_code'] ? $this->db->get_all('SHOW FUNCTION CODE '.$name) : '';
-			$data[$name] = $v + array('source' => $source);
+		foreach ($this->db->get_all('SHOW FUNCTION STATUS') as $a) {
+			$_a = array();
+			foreach ($a as $k => $v) {
+				$_a[strtolower($k)] = $v;
+			}
+			$a = $_a;
+			$name = $a['name'];
+			$data[$name] = $a;
 		}
 		return $data;
 	}
