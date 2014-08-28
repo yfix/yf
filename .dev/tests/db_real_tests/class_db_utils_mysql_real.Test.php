@@ -61,7 +61,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( is_object(self::$db) );
 		$this->assertTrue( self::$db->_connected );
 		$this->assertTrue( is_object(self::$db->db) );
-		$this->assertTrue( is_resource(self::$db->db->db_connect_id) );
+		$this->assertTrue( is_resource(self::$db->db->db_connect_id) || is_object(self::$db->db->db_connect_id));
 	}
 	public function test_driver() {
 		$this->assertEquals( self::$DB_DRIVER, self::$db->DB_TYPE );
