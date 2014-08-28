@@ -485,17 +485,101 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 		$this->assertTrue( self::utils()->add_index(self::$DB_NAME.'.'.$table, 'PRIMARY', array('id'), array('type' => 'primary')) );
 		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id')), self::utils()->index_info(self::$DB_NAME.'.'.$table, 'PRIMARY') );
-		$this->assertTrue( self::utils()->update_index(self::$DB_NAME.'.'.$table, 'PRIMARY', array('id','id2'), array('type' => 'primary')) );
-		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id','id2')), self::utils()->index_info(self::$DB_NAME.'.'.$table, 'PRIMARY') );
+		$this->assertTrue( self::utils()->update_index(self::$DB_NAME.'.'.$table, 'PRIMARY', array('id2'), array('type' => 'primary')) );
+		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id2')), self::utils()->index_info(self::$DB_NAME.'.'.$table, 'PRIMARY') );
 	}
 	public function test_list_foreign_keys() {
-#		$this->assertEquals( self::utils()-> );
+		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertEmpty( self::utils()->list_foreign_keys(self::$DB_NAME.'.'.$table1) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$expected = array(
+			$fkey => array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'),
+		);
+		$this->assertEquals( $expected, self::utils()->list_foreign_keys(self::$DB_NAME.'.'.$table1) );
 	}
-	public function test_add_foreign_key() {
-#		$this->assertEquals( self::utils()-> );
+	public function test_foreign_key_info() {
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertEmpty( self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$this->assertEquals( array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'), self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
+	}
+	public function test_foreign_key_exists() {
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertFalse( self::utils()->foreign_key_exists(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$this->assertTrue( self::utils()->foreign_key_exists(self::$DB_NAME.'.'.$table1, $fkey) );
 	}
 	public function test_drop_foreign_key() {
-#		$this->assertEquals( self::utils()-> );
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertFalse( self::utils()->foreign_key_exists(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$this->assertTrue( self::utils()->foreign_key_exists(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->drop_foreign_key(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertFalse( self::utils()->foreign_key_exists(self::$DB_NAME.'.'.$table1, $fkey) );
+	}
+	public function test_add_foreign_key() {
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertEmpty( self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$this->assertEquals( array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'), self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
+	}
+	public function test_update_foreign_key() {
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'id2', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			array('name' => 'unique', 'key' => 'unique', 'key_cols' => 'id2'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$this->assertEquals( array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'), self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->update_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id2'), self::$DB_NAME.'.'.$table2, array('id2')) );
+		$this->assertEquals( array('name' => $fkey, 'local' => 'id2', 'table' => $table2, 'foreign' => 'id2'), self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
 	}
 	public function test_list_views() {
 #		$this->assertEquals( self::utils()-> );
