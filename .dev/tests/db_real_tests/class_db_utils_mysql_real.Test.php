@@ -940,6 +940,37 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 #		$this->assertEquals( self::utils()-> );
 	}
 
+	public function test_escape_database_name() {
+		$this->assertEquals( '`test_db`', self::utils()->_escape_database_name('test_db') );
+	}
+	public function test_escape_table_name() {
+		$this->assertEquals( '', self::utils()->_escape_table_name('') );
+		$this->assertEquals( '`'.self::utils()->db->DB_PREFIX.'test_table`', self::utils()->_escape_table_name('test_table') );
+		$this->assertEquals( '`test_db`.`'.self::utils()->db->DB_PREFIX.'test_table`', self::utils()->_escape_table_name('test_db.test_table') );
+	}
+	public function test_escape_key() {
+		$this->assertEquals( '`test_key`', self::utils()->_escape_key('test_key') );
+	}
+	public function test_escape_val() {
+		$this->assertEquals( '\'test_val\'', self::utils()->_escape_val('test_val') );
+	}
+	public function test_escape_fields() {
+		$fields = array('id1','id2','test_field');
+		$expected = array('`id1`','`id2`','`test_field`');
+		$this->assertEquals( $expected, self::utils()->_escape_fields($fields) );
+	}
+	public function test__es() {
+		$this->assertEquals( 'hello world', self::utils()->_es('hello world') );
+		$this->assertEquals( 'hello\\\'world\\\'', self::utils()->_es('hello\'world\'') );
+	}
+
+	public function test_split_sql() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_get_table_structure_from_db_installer() {
+#		$this->assertEquals( self::utils()-> );
+	}
+
 	public function test_database() {
 #		$this->assertEquals( self::utils()-> );
 	}
@@ -959,32 +990,6 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_event() {
-#		$this->assertEquals( self::utils()-> );
-	}
-
-	public function test_escape_database_name() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_escape_table_name() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_escape_key() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_escape_val() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_escape_fields() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test__es() {
-#		$this->assertEquals( self::utils()-> );
-	}
-
-	public function test_split_sql() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_get_table_structure_from_db_installer() {
 #		$this->assertEquals( self::utils()-> );
 	}
 }
