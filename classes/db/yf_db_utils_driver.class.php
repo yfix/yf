@@ -1069,14 +1069,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* Note: // The 'SHOW PROCEDURE|FUNCTION CODE' feature is disabled; you need MySQL built with '--with-debug' to have it working (code:1289)
 	*/
-	function list_functions($db_name = '', $extra = array(), &$error = false) {
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!$db_name) {
-			$error = 'db_name is empty';
-			return false;
-		}
+	function list_functions($extra = array(), &$error = false) {
 		$data = array();
 		foreach ((array)$this->db->get_all('SHOW FUNCTION STATUS') as $a) {
 			$_a = array();
@@ -1093,6 +1086,13 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function function_exists($name, $extra = array(), &$error = false) {
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
+		if (!$name) {
+			$error = 'trigger name is empty';
+			return false;
+		}
 		$funcs = $this->list_functions();
 		return (bool)isset($funcs[$name]);
 	}
@@ -1100,6 +1100,13 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function function_info($name, $extra = array(), &$error = false) {
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
+		if (!$name) {
+			$error = 'trigger name is empty';
+			return false;
+		}
 		$funcs = $this->list_functions();
 		return isset($funcs[$name]) ? $funcs[$name] : false;
 	}
@@ -1107,11 +1114,21 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function drop_function($name, $extra = array(), &$error = false) {
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'DROP FUNCTION IF EXISTS '.$this->_escape_table_name($name);
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		$sql = 'DROP FUNCTION IF EXISTS '.$this->_escape_table_name($db_name.'.'.$name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -1119,11 +1136,21 @@ abstract class yf_db_utils_driver {
 	* See https://dev.mysql.com/doc/refman/5.6/en/create-function.html
 	*/
 	function create_function($name, $sql_body, $sql_returns_type, $sql_params = '', $extra = array(), &$error = false) {
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = ' CREATE FUNCTION '.$this->_escape_table_name($name).' ('.$sql_params.')'. PHP_EOL
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		$sql = ' CREATE FUNCTION '.$this->_escape_table_name($db_name.'.'.$name).' ('.$sql_params.')'. PHP_EOL
 			. 'RETURNS '.$sql_returns_type.' DETERMINISTIC'. PHP_EOL
 			. 'RETURN '.$sql_body;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
