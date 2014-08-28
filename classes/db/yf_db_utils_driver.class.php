@@ -28,6 +28,15 @@ abstract class yf_db_utils_driver {
 	}
 
 	/**
+	*/
+	function _get_supported_table_options() {
+		return array(
+			'engine'	=> 'ENGINE',
+			'charset'	=> 'DEFAULT CHARSET',
+		);
+	}
+
+	/**
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
@@ -373,39 +382,24 @@ abstract class yf_db_utils_driver {
 			$error = 'table_name already exists';
 			return false;
 		}
+		// Default table options
+		$extra['engine'] = $extra['engine'] ?: 'InnoDB';
+		$extra['charset'] = $extra['charset'] ?: 'utf8';
+
+		$table_options = array();
+		foreach ($this->_get_supported_table_options() as $name => $real_name) {
+			if (isset($extra[$name]) && strlen($extra[$name])) {
+				$table_options[$name] = $real_name.'='.$extra[$name];
+			}
+		}
+		$table_options = implode(' ', $table_options);
+
 		$data = ($extra['sql'] ?: $extra['data']) ?: $data;
-		$engine = $extra['engine'] ?: 'InnoDB';
-		$charset = $extra['charset'] ?: 'utf8';
-// TODO: implement full list of table options like in ALTER TABLE
-		$table_options = 'ENGINE='.$engine.' DEFAULT CHARSET='.$charset;
 		if (is_array($data)) {
 			$data = $this->_compile_create_table($data, $extra, $error);
 		}
 		if (!$data) {
-			if (strlen($this->db->DB_PREFIX) && substr($table, 0, strlen($this->db->DB_PREFIX)) == $this->db->DB_PREFIX) {
-				$search_table = substr($table, strlen($this->db->DB_PREFIX));
-			} else {
-				$search_table = $table;
-			}
-			$globs = array(
-				PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$search_table.'.sql.php',
-				PROJECT_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
-				CONFIG_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
-				YF_PATH. 'plugins/*/share/db_installer/sql/'.$search_table.'.sql.php',
-				YF_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
-			);
-			$path = '';
-			foreach ($globs as $glob) {
-				foreach (glob($glob) as $f) {
-					$path = $f;
-					break 2;
-				}
-			}
-			if (!file_exists($path)) {
-				$error = 'file not exists: '.$path;
-				return false;
-			}
-			include $path;
+			$data = $this->_get_table_structure_from_db_installer($table, $error);
 		}
 		if (!$data) {
 			$error = 'data is empty';
@@ -426,6 +420,29 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$sql = 'DROP TABLE IF EXISTS '.$this->_escape_table_name($table);
+		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+
+	/**
+	* Here we support only small subset of alter table options, mostly related to basic things like engine or charset
+	*/
+	function alter_table($table, $extra = array(), &$error = false) {
+		if (!$table) {
+			$error = 'table_name is empty';
+			return false;
+		}
+		$table_options = array();
+		foreach ($this->_get_supported_table_options() as $name => $real_name) {
+			if (isset($extra[$name]) && strlen($extra[$name])) {
+				$table_options[$name] = $real_name.'='.$extra[$name];
+			}
+		}
+		if (empty($table_options)) {
+			$error = 'no supported table options provided';
+			return false;
+		}
+		$table_options = implode(' ', $table_options);
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table). PHP_EOL. implode(' ', $params);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -1275,20 +1292,31 @@ abstract class yf_db_utils_driver {
 	}
 
 	/**
-	* https://dev.mysql.com/doc/refman/5.6/en/create-event.html
+	* See: https://dev.mysql.com/doc/refman/5.6/en/create-event.html
+	* Example: CREATE EVENT e_totals  ON SCHEDULE AT '2006-02-10 23:59:00'  DO INSERT INTO test.totals VALUES (NOW());
 	*/
-	function create_event($name, $data, $extra = array(), &$error = false) {
-		if (!strlen($name)) {
-			$error = 'name is empty';
+	function create_event($event_name, $event_shedule, $event_body, $extra = array(), &$error = false) {
+		if (!strlen($event_name)) {
+			$error = 'event name is empty';
 			return false;
 		}
-/*
-CREATE EVENT e_totals
-ON SCHEDULE AT '2006-02-10 23:59:00'
-DO INSERT INTO test.totals VALUES (NOW());
-*/
-// TODO
-#		$sql = '';
+		if (!strlen($event_shedule)) {
+			$error = 'event shedule is empty';
+			return false;
+		}
+		if (!strlen($event_body)) {
+			$error = 'event body is empty';
+			return false;
+		}
+		$supported_event_intervals = array(
+			'YEAR', 'QUARTER', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 
+			'WEEK', 'SECOND', 'YEAR_MONTH', 'DAY_HOUR', 'DAY_MINUTE', 'DAY_SECOND', 
+			'HOUR_MINUTE', 'HOUR_SECOND', 'MINUTE_SECOND',
+		);
+// TODO: implement strict shedule contents checks
+		$sql = 'CREATE EVENT IF NOT EXISTS '.$this->_escape_table_name($event_name).' '. PHP_EOL
+			. 'ON SCHEDULE '.$event_shedule. PHP_EOL
+			. 'DO '.$event_body;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -1297,10 +1325,12 @@ DO INSERT INTO test.totals VALUES (NOW());
 	function list_users($extra = array(), &$error = false) {
 		$users = array();
 		foreach ($this->db->get_all('SELECT * FROM mysql.user') as $a) {
-			$name = $a['Name'];
-			$users[$name] = array(
-// TODO
-			);
+			$user = array();
+			foreach ($a as $k => $v) {
+				$user[strtolower($k)] = $v;
+			}
+			$name = $user['host'].'@'.$user['user'];
+			$users[$name] = $user;
 		}
 		return $users;
 	}
@@ -1322,22 +1352,60 @@ DO INSERT INTO test.totals VALUES (NOW());
 	/**
 	*/
 	function delete_user($name, $extra = array(), &$error = false) {
-// TODO
-		return $this->db->query('DELETE FROM mysql.user WHERE user='.$this->_escape_val($name));
+		list($host, $user) = explode('@', $name);
+		$sql = 'DELETE FROM mysql.user WHERE host='.$this->_escape_val($host).' AND user='.$this->_escape_val($user);
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	function add_user($name, array $data, $extra = array(), &$error = false) {
-// TODO
+		list($host, $user) = explode('@', $name);
+// TODO: allow add only password in addition to host and user
 #		return $this->db->insert('mysql.user WHERE user='.$this->_escape_val($name));
+		$sql = '';
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	function update_user($name, array $data, $extra = array(), &$error = false) {
-// TODO
+		list($host, $user) = explode('@', $name);
+// TODO: allow update only password
 #		return $this->db->update('mysql.user WHERE user='.$this->_escape_val($name));
+		$sql = '';
+		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+
+	/**
+	* Use db installer repository to get table structure
+	*/
+	function _get_table_structure_from_db_installer($table, &$error = false) {
+		if (strlen($this->db->DB_PREFIX) && substr($table, 0, strlen($this->db->DB_PREFIX)) == $this->db->DB_PREFIX) {
+			$search_table = substr($table, strlen($this->db->DB_PREFIX));
+		} else {
+			$search_table = $table;
+		}
+		$globs = array(
+			PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$search_table.'.sql.php',
+			PROJECT_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
+			CONFIG_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
+			YF_PATH. 'plugins/*/share/db_installer/sql/'.$search_table.'.sql.php',
+			YF_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
+		);
+		$path = '';
+		foreach ($globs as $glob) {
+			foreach (glob($glob) as $f) {
+				$path = $f;
+				break 2;
+			}
+		}
+		if (!file_exists($path)) {
+			$error = 'file not exists: '.$path;
+			return false;
+		}
+		include $path;
+		return $data;
 	}
 
 	/**
@@ -1686,34 +1754,6 @@ DO INSERT INTO test.totals VALUES (NOW());
 // TODO
 		return _class('db_utils_event', 'classes/db/');
 	}
-
-	/**
-	*/
-/*
-	function alter_table($table, $params = array(), $extra = array(), &$error = false) {
-		if (!$table) {
-			$error = 'table_name is empty';
-			return false;
-		}
-		if (!$extra['sql'] && !$this->table_exists($table)) {
-			$error = 'table_name not exists';
-			return false;
-		}
-#		$allowed = array(
-#			'charset'	=> 'CHARACTER SET',
-#			'collation'	=> 'COLLATE',
-#		);
-#		$params = array();
-// TODO: implement allowed list of params and their shortcuts
-// TODO: implement adding columns (with "before" and "after")
-// TODO: implement 
-#		foreach ((array)$extra as $k => $v) {
-#			$params[$k] = $k.' = '.$v;
-#		}
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table). PHP_EOL. implode(' ', $params);
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-	}
-*/
 
 	/**
 	*/
