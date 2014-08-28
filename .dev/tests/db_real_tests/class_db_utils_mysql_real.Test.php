@@ -69,6 +69,12 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		list(,$driver) = explode('_driver_', get_class(self::utils()->db->db));
 		$this->assertEquals( self::$DB_DRIVER, $driver );
 	}
+	public function test_list_collations() {
+		$this->assertNotEmpty( self::utils()->list_collations() );
+	}
+	public function test_list_charsets() {
+		$this->assertNotEmpty( self::utils()->list_charsets() );
+	}
 	public function test_list_databases() {
 		if (self::$CI_SERVER == 'DRONE') { return ; }
 		$all_dbs = self::utils()->list_databases();
@@ -581,25 +587,47 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->update_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id2'), self::$DB_NAME.'.'.$table2, array('id2')) );
 		$this->assertEquals( array('name' => $fkey, 'local' => 'id2', 'table' => $table2, 'foreign' => 'id2'), self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
 	}
+
 	public function test_list_views() {
+		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
 #		$this->assertEquals( self::utils()-> );
 	}
-	public function test_create_view() {
+	public function test_view_exists() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_view_info() {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_drop_view() {
 #		$this->assertEquals( self::utils()-> );
 	}
+	public function test_create_view() {
+#		$this->assertEquals( self::utils()-> );
+	}
+
 	public function test_list_procedures() {
 #		$this->assertEquals( self::utils()-> );
 	}
-	public function test_create_procedure() {
+	public function test_procedure_exists() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_procedure_info() {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_drop_procedure() {
 #		$this->assertEquals( self::utils()-> );
 	}
+	public function test_create_procedure() {
+#		$this->assertEquals( self::utils()-> );
+	}
+
 	public function test_list_functions() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_function_exists() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_function_info() {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_create_function() {
@@ -608,7 +636,14 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public function test_drop_function() {
 #		$this->assertEquals( self::utils()-> );
 	}
+
 	public function test_list_triggers() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_trigger_exists() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_trigger_info() {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_create_trigger() {
@@ -617,7 +652,14 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public function test_drop_trigger() {
 #		$this->assertEquals( self::utils()-> );
 	}
+
 	public function test_list_events() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_event_exists() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_event_info() {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_create_event() {
@@ -626,7 +668,14 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public function test_drop_event() {
 #		$this->assertEquals( self::utils()-> );
 	}
+
 	public function test_list_users() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_user_exists() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_user_info() {
 #		$this->assertEquals( self::utils()-> );
 	}
 	public function test_create_user() {
@@ -635,9 +684,8 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public function test_drop_user() {
 #		$this->assertEquals( self::utils()-> );
 	}
-	public function test_split_sql() {
-#		$this->assertEquals( self::utils()-> );
-	}
+
+
 	public function test_database() {
 #		$this->assertEquals( self::utils()-> );
 	}
@@ -659,10 +707,27 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public function test_event() {
 #		$this->assertEquals( self::utils()-> );
 	}
-	public function test_list_collations() {
-		$this->assertNotEmpty( self::utils()->list_collations() );
+
+	public function test_escape_database_name() {
+#		$this->assertEquals( self::utils()-> );
 	}
-	public function test_list_charsets() {
-		$this->assertNotEmpty( self::utils()->list_charsets() );
+	public function test_escape_table_name() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_escape_key() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_escape_val() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test_escape_fields() {
+#		$this->assertEquals( self::utils()-> );
+	}
+	public function test__es() {
+#		$this->assertEquals( self::utils()-> );
+	}
+
+	public function test_split_sql() {
+#		$this->assertEquals( self::utils()-> );
 	}
 }
