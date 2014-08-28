@@ -419,22 +419,167 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( array('id', 'id2'), array_keys(self::utils()->table_get_columns(self::$DB_NAME.'.'.$table)) );
 	}
 	public function test_list_indexes() {
-#		$this->assertEquals( self::utils()-> );
+		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$expected = array(
+			'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary','columns' => array('id')),
+		);
+		$this->assertEquals( $expected, self::utils()->list_indexes(self::$DB_NAME.'.'.$table) );
 	}
-	public function test_add_index() {
-#		$this->assertEquals( self::utils()-> );
+	public function test_index_info() {
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id')), self::utils()->index_info(self::$DB_NAME.'.'.$table, 'PRIMARY') );
+	}
+	public function test_index_exists() {
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->index_exists(self::$DB_NAME.'.'.$table, 'PRIMARY') );
 	}
 	public function test_drop_index() {
-#		$this->assertEquals( self::utils()-> );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('key' => 'primary', 'key_cols' => 'id'),
+		);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->index_exists(self::$DB_NAME.'.'.$table, 'PRIMARY') );
+		$this->assertTrue( self::utils()->drop_index(self::$DB_NAME.'.'.$table, 'PRIMARY') );
+		$this->assertFalse( self::utils()->index_exists(self::$DB_NAME.'.'.$table, 'PRIMARY') );
+	}
+	public function test_add_index() {
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+		);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertFalse( self::utils()->index_exists(self::$DB_NAME.'.'.$table, 'PRIMARY') );
+		$this->assertTrue( self::utils()->add_index(self::$DB_NAME.'.'.$table, 'PRIMARY', array('id'), array('type' => 'primary')) );
+		$this->assertTrue( self::utils()->index_exists(self::$DB_NAME.'.'.$table, 'PRIMARY') );
+	}
+	public function test_update_index() {
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'id2', 'type' => 'int', 'length' => 10),
+		);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::utils()->add_index(self::$DB_NAME.'.'.$table, 'PRIMARY', array('id'), array('type' => 'primary')) );
+		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id')), self::utils()->index_info(self::$DB_NAME.'.'.$table, 'PRIMARY') );
+		$this->assertTrue( self::utils()->update_index(self::$DB_NAME.'.'.$table, 'PRIMARY', array('id2'), array('type' => 'primary')) );
+		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id2')), self::utils()->index_info(self::$DB_NAME.'.'.$table, 'PRIMARY') );
 	}
 	public function test_list_foreign_keys() {
-#		$this->assertEquals( self::utils()-> );
+		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertEmpty( self::utils()->list_foreign_keys(self::$DB_NAME.'.'.$table1) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$expected = array(
+			$fkey => array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'),
+		);
+		$this->assertEquals( $expected, self::utils()->list_foreign_keys(self::$DB_NAME.'.'.$table1) );
 	}
-	public function test_add_foreign_key() {
-#		$this->assertEquals( self::utils()-> );
+	public function test_foreign_key_info() {
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertEmpty( self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$this->assertEquals( array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'), self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
+	}
+	public function test_foreign_key_exists() {
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertFalse( self::utils()->foreign_key_exists(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$this->assertTrue( self::utils()->foreign_key_exists(self::$DB_NAME.'.'.$table1, $fkey) );
 	}
 	public function test_drop_foreign_key() {
-#		$this->assertEquals( self::utils()-> );
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertFalse( self::utils()->foreign_key_exists(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$this->assertTrue( self::utils()->foreign_key_exists(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->drop_foreign_key(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertFalse( self::utils()->foreign_key_exists(self::$DB_NAME.'.'.$table1, $fkey) );
+	}
+	public function test_add_foreign_key() {
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertEmpty( self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$this->assertEquals( array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'), self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
+	}
+	public function test_update_foreign_key() {
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'id2', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			array('name' => 'unique', 'key' => 'unique', 'key_cols' => 'id2'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table1, $data) );
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table2, $data) );
+		$this->assertTrue( self::utils()->add_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id'), self::$DB_NAME.'.'.$table2, array('id')) );
+		$this->assertEquals( array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'), self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
+		$this->assertTrue( self::utils()->update_foreign_key(self::$DB_NAME.'.'.$table1, $fkey, array('id2'), self::$DB_NAME.'.'.$table2, array('id2')) );
+		$this->assertEquals( array('name' => $fkey, 'local' => 'id2', 'table' => $table2, 'foreign' => 'id2'), self::utils()->foreign_key_info(self::$DB_NAME.'.'.$table1, $fkey) );
 	}
 	public function test_list_views() {
 #		$this->assertEquals( self::utils()-> );

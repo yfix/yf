@@ -8,6 +8,26 @@
 abstract class yf_db_utils_driver {
 
 	/**
+	*/
+	function _get_supported_field_types() {
+		return array(
+			'bit','int','real','float','double','decimal','numeric',
+			'varchar','char','tinytext','mediumtext','longtext','text',
+			'tinyblob','mediumblob','longblob','blob','varbinary','binary',
+			'timestamp','datetime','time','date','year',
+			'enum','set',
+		);
+	}
+
+	/**
+	*/
+	function _get_unsigned_field_types() {
+		return array(
+			'bit','int','real','double','float','decimal','numeric'
+		);
+	}
+
+	/**
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
@@ -343,13 +363,7 @@ abstract class yf_db_utils_driver {
 		} elseif (preg_match('~^(?P<type>[a-z]+)~i', $str, $m)) {
 			$type = $m['type'];
 		}
-		$types = array(
-			'bit','int','real','float','double','decimal','numeric',
-			'varchar','char','tinytext','mediumtext','longtext','text',
-			'tinyblob','mediumblob','longblob','blob','varbinary','binary',
-			'timestamp','datetime','time','date','year',
-			'enum','set',
-		);
+		$types = $this->_get_supported_field_types();
 		$types = array_combine($types, $types);
 		if ($type) {
 			$type = strtolower($type);
@@ -379,7 +393,7 @@ abstract class yf_db_utils_driver {
 		return array(
 			'type'		=> $type,
 			'length'	=> $length,
-			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, array('bit','int','real','double','float','decimal','numeric')) ? true : false,
+			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, $this->_get_unsigned_field_types()) ? true : false,
 			'decimals'	=> $decimals,
 			'values'	=> $values,
 		);
@@ -397,13 +411,18 @@ abstract class yf_db_utils_driver {
 		}
 		$items = array();
 		foreach ($data as $v) {
-// TODO: add lot of strict checks
 			$name = $v['name'];
 			if (!$v['key'] && !$name && !$extra['no_name']) {
 				continue;
 			}
-			$type = strtoupper($v['type']);
+			$type = strtolower($v['type']);
+			if (!isset($v['key']) && !in_array($type, $this->_get_supported_field_types())) {
+				continue;
+			}
 			$unsigned = $v['unsigned'];
+			if (!isset($v['key']) && $unsigned && !in_array($type, $this->_get_unsigned_field_types())) {
+				$unsigned = false;
+			}
 			$length = $v['length'];
 			$default = $v['default'];
 			$null = null;
@@ -413,6 +432,9 @@ abstract class yf_db_utils_driver {
 				$null = (bool)(!$v['not_null']);
 			}
 			$auto_inc = $v['auto_inc'] || $v['auto_increment'];
+			if ($auto_inc && $type != 'int') {
+				$auto_inc = false;
+			}
 			if ($auto_inc) {
 				$null = false;
 				$unsigned = true;
@@ -422,7 +444,7 @@ abstract class yf_db_utils_driver {
 				$items[] = strtoupper($v['key']).' KEY '.($name ? $this->_escape_key($name).' ' : '').'('.(is_array($v['key_cols']) ? implode(',', $v['key_cols']) : $v['key_cols']).')';
 			} else {
 				$items[$name] = (!$extra['no_name'] ? $this->_escape_key($name).' ' : '')
-					.$type
+					.strtoupper($type)
 					. ($length ? '('.$length.')' : '')
 					. (isset($unsigned) ? ' UNSIGNED' : '')
 					. (isset($null) ? ' '.($null ? 'NULL' : 'NOT NULL') : '')
@@ -685,35 +707,10 @@ abstract class yf_db_utils_driver {
 	}
 
 	/**
+	* Slow method, but returning all info about indexes for selected database at once.
+	* Useful for analytics and getting overall picture.
 	*/
-	function list_indexes($table, $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-		$indexes = array();
-		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->db->_fix_table_name($table)) as $row) {
-			$indexes[$row['Key_name']] = array(
-				'name'		=> $row['Key_name'],
-				'unique'	=> !$row['Non_unique'],
-				'primary'	=> $row['Key_name'] === 'PRIMARY',
-			);
-			$indexes[$row['Key_name']]['columns'][$row['Seq_in_index'] - 1] = $row['Column_name'];
-		}
-		return $indexes;
-	}
-
-	/**
-	*/
-	function list_all_indexes($table, $extra = array(), &$error = false) {
-		$orig_table = $table;
-		if (strpos($table, '.') !== false) {
-			list($db_name, $table) = explode('.', trim($table));
-		}
-		if (!$table) {
-			$error = 'table_name is empty';
-			return false;
-		}
+	function list_all_database_indexes($db_name = '', $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -731,7 +728,7 @@ abstract class yf_db_utils_driver {
 				b.referenced_column_name
 			FROM information_schema.table_constraints a
 			INNER JOIN information_schema.key_column_usage b ON a.constraint_name = b.constraint_name AND a.table_schema = b.table_schema AND a.table_name = b.table_name
-			WHERE a.table_schema = '.$this->_escape_val($db_name).'.'.$this->_escape_val($this->db->_fix_table_name($table)).'
+			WHERE a.table_schema = '.$this->_escape_val($db_name).'
 			GROUP BY a.table_schema, a.table_name, a.constraint_name, 
 				a.constraint_type, b.referenced_table_name, 
 				b.referenced_column_name
@@ -744,7 +741,7 @@ abstract class yf_db_utils_driver {
 				null as referenced_table_name,
 				null as referenced_column_name
 			FROM information_schema.statistics
-			WHERE non_unique = 1 AND table_schema = '.$this->_escape_val($db_name).'.'.$this->_escape_val($this->db->_fix_table_name($table)).'
+			WHERE non_unique = 1 AND table_schema = '.$this->_escape_val($db_name).'
 			GROUP BY table_schema, table_name, constraint_name, constraint_type, referenced_table_name, referenced_column_name
 			ORDER BY table_schema, table_name, constraint_name'
 		;
@@ -752,10 +749,17 @@ abstract class yf_db_utils_driver {
 		foreach ((array)$this->db->get_all($sql) as $a) {
 			$table = $a['table_name'];
 			$name = $a['constraint_name'];
+			$type = 'key';
+			if ($a['constraint_type'] === 'PRIMARY KEY') {
+				$type = 'primary';
+			} elseif ($a['constraint_type'] === 'UNIQUE') {
+				$type = 'unique';
+			} elseif ($a['constraint_type'] == 'FULLTEXT') {
+				$type = 'fulltext';
+			}
 			$indexes[$table][$name] = array(
 				'name'		=> $name,
-				'unique'	=> $a['constraint_type'] === 'UNIQUE',
-				'primary'	=> $a['constraint_type'] === 'PRIMARY KEY',
+				'type'		=> $type,
 				'columns'	=> explode(', ', $a['column_list']),
 			);
 		}
@@ -764,36 +768,133 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function add_index($table, $fields = array(), $extra = array(), &$error = false) {
+	function list_indexes($table, $extra = array(), &$error = false) {
+		if (!$table) {
+			$error = 'table_name is empty';
+			return false;
+		}
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		// Possible alternative query: SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test3' AND TABLE_NAME = 't_user' AND COLUMN_KEY = 'PRI';
+		$indexes = array();
+		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->_escape_table_name($table)) as $row) {
+			$type = 'key';
+			if ($row['Key_name'] === 'PRIMARY') {
+				$type = 'primary';
+			} elseif (!$row['Non_unique']) {
+				$type = 'unique';
+			} elseif ($row['Index_type'] == 'FULLTEXT') {
+				$type = 'fulltext';
+			}
+			$indexes[$row['Key_name']] = array(
+				'name'		=> $row['Key_name'],
+				'type'		=> $type,
+			);
+			$indexes[$row['Key_name']]['columns'][$row['Seq_in_index'] - 1] = $row['Column_name'];
+		}
+		return $indexes;
+	}
+
+	/**
+	*/
+	function index_info($table, $index_name, &$error = false) {
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$indexes = $this->list_indexes($table);
+		return isset($indexes[$index_name]) ? $indexes[$index_name] : false;
+	}
+
+	/**
+	*/
+	function index_exists($table, $index_name, &$error = false) {
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$indexes = $this->list_indexes($table);
+		return isset($indexes[$index_name]);
+	}
+
+	/**
+	*/
+	function add_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
 		}
-		$name = $extra['name'] ?: implode('_', $fields);
-		$sql = 'CREATE INDEX '.$name.' ON '.$this->db->_fix_table_name($table).' ('.implode(',', $fields).')';
+		if (empty($fields)) {
+			$error = 'fields are empty';
+			return false;
+		}
+		// gemerate index name from columns names
+		$index_name = $index_name ?: implode('_', $fields);
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$index_type = strtolower($extra['type'] ?: 'index');
+		$supported_types = array(
+			'index'		=> 'index',
+			'primary' 	=> 'primary key',
+			'unique' 	=> 'unique key',
+			'fulltext' 	=> 'fulltext key',
+		);
+		if (!isset($supported_types[$index_type])) {
+			$error = 'index type is not supported';
+			return false;
+		}
+		if ($index_name == 'PRIMARY' || $index_type == 'primary') {
+			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD PRIMARY KEY ('.implode(',', $this->_escape_fields($fields)).')';
+		} else {
+			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD '.strtoupper($supported_types[$index_type]).' '.$this->_escape_val($index_name).' ('.implode(',', $this->_escape_fields($fields)).')';
+		}
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
-	function drop_index($table, $name, &$error = false) {
+	function drop_index($table, $index_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
 		}
-		$sql = 'DROP INDEX '.$name.' ON '.$this->db->_fix_table_name($table);
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		if ($index_name == 'PRIMARY') {
+			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP PRIMARY KEY';
+		} else {
+			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP INDEX '.$this->_escape_key($index_name);
+		}
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
-	function update_index($table, $name, &$error = false) {
-// TODO
+	function update_index($table, $index_name, $fields = array(), $extra = array(), &$error = false) {
+		if (!strlen($table)) {
+			$error = 'table name is empty';
+			return false;
+		}
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$this->drop_index($table, $index_name, $extra, $error);
+		return $this->add_index($table, $index_name, $fields, $extra, $error);
 	}
 
 	/**
 	*/
-	function index_exists($table, $name, &$error = false) {
+	function list_all_database_foreign_keys($name, $extra = array(), &$error = false) {
 // TODO
 	}
 
@@ -820,57 +921,105 @@ abstract class yf_db_utils_driver {
 			FROM information_schema.KEY_COLUMN_USAGE
 			WHERE TABLE_SCHEMA = '.$this->_escape_val($db_name).' 
 				AND REFERENCED_TABLE_NAME IS NOT NULL 
-				AND TABLE_NAME = '. $this->db->_fix_table_name($table);
+				AND TABLE_NAME = '. $this->_escape_val($this->db->_fix_table_name($table));
 		foreach ((array)$this->db->get_all($sql) as $id => $row) {
-			$keys[$id] = array(
+			$keys[$row['CONSTRAINT_NAME']] = array(
 				'name'		=> $row['CONSTRAINT_NAME'], // foreign key name
 				'local'		=> $row['COLUMN_NAME'], // local columns
 				'table'		=> $row['REFERENCED_TABLE_NAME'], // referenced table
 				'foreign' 	=> $row['REFERENCED_COLUMN_NAME'], // referenced columns
 			);
 		}
-		return array_values($keys);
+		return $keys;
 	}
 
 	/**
 	*/
-	function list_all_foreign_keys($name, $extra = array(), &$error = false) {
-// TODO
+	function foreign_key_info($table, $index_name, &$error = false) {
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$keys = $this->list_foreign_keys($table);
+		return isset($keys[$index_name]) ? $keys[$index_name] : false;
 	}
 
 	/**
 	*/
-	function add_foreign_key($table, $fields, $extra = array(), &$error = false) {
+	function foreign_key_exists($table, $index_name, &$error = false) {
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$keys = $this->list_foreign_keys($table);
+		return isset($keys[$index_name]);
+	}
+
+	/**
+	*/
+	function drop_foreign_key($table, $index_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
 		}
-/*
-ALTER TABLE tbl_name
-	ADD [CONSTRAINT [symbol]] FOREIGN KEY
-	[index_name] (index_col_name, ...)
-	REFERENCES tbl_name (index_col_name,...)
-	[ON DELETE reference_option]
-	[ON UPDATE reference_option]
-*/
-// TODO
-	}
-
-	/**
-	*/
-	function drop_foreign_key($table, $name, $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-		$sql = 'ALTER TABLE '.$this->db->_fix_table_name($table).' DROP FOREIGN KEY '.$name;
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP FOREIGN KEY '.$this->_escape_key($index_name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
-	function foreign_key_exists($table, $name, $extra = array(), &$error = false) {
-// TODO
+	function add_foreign_key($table, $index_name = '', array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+		if (!strlen($table)) {
+			$error = 'table name is empty';
+			return false;
+		}
+		if (empty($fields)) {
+			$error = 'fields are empty';
+			return false;
+		}
+		if (!strlen($ref_table)) {
+			$error = 'referenced table name is empty';
+			return false;
+		}
+		if (empty($ref_fields)) {
+			$error = 'referenced fields are empty';
+			return false;
+		}
+		if (empty($index_name)) {
+			$index_name = $ref_table.'_'.implode('_', $ref_fields);
+		}
+		$supported_ref_options = array(
+			'restrict'	=> 'RESTRICT',
+			'cascade'	=> 'CASCADE',
+			'set_null'	=> 'SET NULL',
+			'no_action'	=> 'NO ACTION',
+		);
+		$on_delete = isset($extra['on_delete']) && isset($supported_ref_options[$extra['on_delete']]) ? $supported_ref_options[$extra['on_delete']] : '';
+		$on_update = isset($extra['on_update']) && isset($supported_ref_options[$extra['on_update']]) ? $supported_ref_options[$extra['on_update']] : '';
+
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).PHP_EOL
+			. ' ADD CONSTRAINT '.$this->_escape_key($index_name).PHP_EOL
+			. ' FOREIGN KEY ('.implode(',', $this->_escape_fields($fields)).')'.PHP_EOL
+			. ' REFERENCES '.$this->_escape_key($ref_table).' ('.implode(',', $this->_escape_fields($ref_fields)).')'.PHP_EOL
+			. ($on_delete ? ' ON DELETE '.$on_delete : '').PHP_EOL
+			. ($on_update ? ' ON UPDATE '.$on_update : '')
+		;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+
+	/**
+	*/
+	function update_foreign_key($table, $index_name, array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+		if (!strlen($table)) {
+			$error = 'table name is empty';
+			return false;
+		}
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$this->drop_foreign_key($table, $index_name, $extra, $error);
+		return $this->add_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
 	}
 
 	/**
@@ -1266,6 +1415,16 @@ DO INSERT INTO test.totals VALUES (NOW());
 // TODO: unit tests
 // TODO: support for binding params (':field' => $val)
 		return is_object($this->db) ? $this->db->escape_val($val) : '\''.addslashes($val).'\'';
+	}
+
+	/**
+	*/
+	function _escape_fields(array $fields) {
+// TODO: unit tests
+		foreach ($fields as $k => $v) {
+			$fields[$k] = $this->_escape_key($v);
+		}
+		return $fields;
 	}
 
 	/**
