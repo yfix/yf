@@ -769,12 +769,6 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function list_indexes($table, $extra = array(), &$error = false) {
-/*
-		$orig_table = $table;
-		if (strpos($table, '.') !== false) {
-			list($db_name, $table) = explode('.', trim($table));
-		}
-*/
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -786,40 +780,7 @@ abstract class yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-/*
-		$sql = 
-			'SELECT a.table_schema,
-				a.table_name,
-				a.constraint_name, 
-				a.constraint_type,
-				CONVERT(GROUP_CONCAT(DISTINCT b.column_name ORDER BY b.ordinal_position SEPARATOR ", "), char) as column_list,
-				b.referenced_table_name,
-				b.referenced_column_name
-			FROM information_schema.table_constraints a
-			INNER JOIN information_schema.key_column_usage b ON a.constraint_name = b.constraint_name AND a.table_schema = b.table_schema AND a.table_name = b.table_name
-			WHERE a.table_schema = '.$this->_escape_val($db_name).' AND a.table_name = '.$this->_escape_val($this->db->_fix_table_name($table)).'
-			GROUP BY a.table_schema, a.table_name, a.constraint_name, 
-				a.constraint_type, b.referenced_table_name, 
-				b.referenced_column_name
-			UNION
-			SELECT table_schema,
-				table_name,
-				index_name as constraint_name,
-				if(index_type="FULLTEXT", "FULLTEXT", "NON UNIQUE") as constraint_type,
-				CONVERT(GROUP_CONCAT(column_name ORDER BY seq_in_index separator ", "), char) as column_list,
-				null as referenced_table_name,
-				null as referenced_column_name
-			FROM information_schema.statistics
-			WHERE non_unique = 1 AND table_schema = '.$this->_escape_val($db_name).' AND table_name = '.$this->_escape_val($this->db->_fix_table_name($table)).'
-			GROUP BY table_schema, table_name, constraint_name, constraint_type, referenced_table_name, referenced_column_name
-			ORDER BY table_schema, table_name, constraint_name'
-		;
-		$a = $this->db->get_all($sql);
-*/
-/*
-SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test3' AND TABLE_NAME = 't_user' AND COLUMN_KEY = 'PRI';
-*/
-
+		// Possible alternative query: SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test3' AND TABLE_NAME = 't_user' AND COLUMN_KEY = 'PRI';
 		$indexes = array();
 		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->_escape_table_name($table)) as $row) {
 			$type = 'key';
@@ -841,6 +802,17 @@ SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test3' 
 
 	/**
 	*/
+	function index_info($table, $index_name, &$error = false) {
+		if (!strlen($index_name)) {
+			$error = 'index name is empty';
+			return false;
+		}
+		$indexes = $this->list_indexes($table);
+		return isset($indexes[$index_name]) ? $indexes[$index_name] : false;
+	}
+
+	/**
+	*/
 	function index_exists($table, $index_name, &$error = false) {
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
@@ -857,13 +829,28 @@ SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test3' 
 			$error = 'table name is empty';
 			return false;
 		}
-// TODO: gemerate index name from columns names
+		if (empty($fields)) {
+			$error = 'fields are empty';
+			return false;
+		}
+		// gemerate index name from columns names
+		$index_name = $index_name ?: implode('_', $fields);
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
 			return false;
 		}
-		$index_name = $index_name ?: implode('_', $fields);
-		$sql = 'CREATE INDEX '.$index_name.' ON '.$this->_escape_table_name($table).' ('.implode(',', $fields).')';
+		$index_type = strtolower($extra['type'] ?: 'index');
+		$supported_types = array(
+			'index'		=> 'index',
+			'primary' 	=> 'primary key',
+			'unique' 	=> 'unique key',
+			'fulltext' 	=> 'fulltext key',
+		);
+		if (!isset($supported_types[$index_type])) {
+			$error = 'index type is not supported';
+			return false;
+		}
+		$sql = 'CREATE '.strtoupper($supported_types[$index_type]).' '.$index_name.' ON '.$this->_escape_table_name($table).' ('.implode(',', $fields).')';
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -893,8 +880,8 @@ SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test3' 
 			$error = 'index name is empty';
 			return false;
 		}
-		$this->drop_index($table, $index_name);
-		return $this->add_index($table, $index_name, $fields);
+		$this->drop_index($table, $index_name, $extra, $error);
+		return $this->add_index($table, $index_name, $fields, $extra, $error);
 	}
 
 	/**
