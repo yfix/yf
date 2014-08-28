@@ -922,11 +922,10 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_list_users() {
-		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
-#		$this->assertEquals( self::utils()-> );
+		$this->assertNotEmpty( self::utils()->list_users() );
 	}
 	public function test_user_exists() {
-#		$this->assertEquals( self::utils()-> );
+		$this->assertTrue( self::utils()->user_exists('root@localhost') );
 	}
 	public function test_user_info() {
 #		$this->assertEquals( self::utils()-> );
