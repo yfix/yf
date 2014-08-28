@@ -69,12 +69,14 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		list(,$driver) = explode('_driver_', get_class(self::utils()->db->db));
 		$this->assertEquals( self::$DB_DRIVER, $driver );
 	}
+
 	public function test_list_collations() {
 		$this->assertNotEmpty( self::utils()->list_collations() );
 	}
 	public function test_list_charsets() {
 		$this->assertNotEmpty( self::utils()->list_charsets() );
 	}
+
 	public function test_list_databases() {
 		if (self::$CI_SERVER == 'DRONE') { return ; }
 		$all_dbs = self::utils()->list_databases();
@@ -151,7 +153,10 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->database_exists(self::$DB_NAME) );
 		$this->assertFalse( self::utils()->database_exists($NEW_DB_NAME) );
 	}
+
 	public function test_list_tables() {
+		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
+
 		$this->assertEquals( array(), self::utils()->list_tables(self::$DB_NAME) );
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertTrue( self::utils()->db->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10))') );
@@ -175,65 +180,9 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->drop_table(self::$DB_NAME.'.'.$table) );
 		$this->assertFalse( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 	}
-	public function test__compile_create_table() {
-		$in = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
-			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
-			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
-			array('key' => 'primary', 'key_cols' => 'id'),
-		);
-		$expected = 
-			'`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,'.PHP_EOL
-			.'`name` VARCHAR(255) NOT NULL DEFAULT \'\','.PHP_EOL
-			.'`active` ENUM(\'0\',\'1\') NOT NULL DEFAULT \'0\','.PHP_EOL
-			.'PRIMARY KEY (id)';
-		$this->assertEquals( $expected, self::utils()->_compile_create_table($in) );
-	}
-	public function test_create_table() {
-		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
-			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
-			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
-			array('key' => 'primary', 'key_cols' => 'id'),
-		);
-		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
-		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
-	}
-	public function test__parse_column_type() {
-		$this->assertEquals( array('type' => 'int','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('int') );
-		$this->assertEquals( array('type' => 'int','length' => 8,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('int(8)') );
-		$this->assertEquals( array('type' => 'int','length' => 11,'unsigned' => true,'decimals' => null,'values' => null), self::utils()->_parse_column_type('tinyint(11) unsigned') );
-		$this->assertEquals( array('type' => 'int','length' => 8,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('integer(8)') );
-		$this->assertEquals( array('type' => 'bit','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('bit') );
-		$this->assertEquals( array('type' => 'decimal','length' => 6,'unsigned' => false,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('decimal(6,2)') );
-		$this->assertEquals( array('type' => 'decimal','length' => 6,'unsigned' => true,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('decimal(6,2) unsigned') );
-		$this->assertEquals( array('type' => 'numeric','length' => 6,'unsigned' => true,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('numeric(6,2) unsigned') );
-		$this->assertEquals( array('type' => 'real','length' => 6,'unsigned' => true,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('real(6,2) unsigned') );
-		$this->assertEquals( array('type' => 'float','length' => 6,'unsigned' => true,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('float(6,2) unsigned') );
-		$this->assertEquals( array('type' => 'double','length' => 6,'unsigned' => true,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('double(6,2) unsigned') );
-		$this->assertEquals( array('type' => 'char','length' => 6,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('char(6)') );
-		$this->assertEquals( array('type' => 'varchar','length' => 256,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('varchar(256)') );
-		$this->assertEquals( array('type' => 'tinytext','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('tinytext') );
-		$this->assertEquals( array('type' => 'mediumtext','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('mediumtext') );
-		$this->assertEquals( array('type' => 'longtext','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('longtext') );
-		$this->assertEquals( array('type' => 'text','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('text') );
-		$this->assertEquals( array('type' => 'tinyblob','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('tinyblob') );
-		$this->assertEquals( array('type' => 'mediumblob','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('mediumblob') );
-		$this->assertEquals( array('type' => 'longblob','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('longblob') );
-		$this->assertEquals( array('type' => 'blob','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('blob') );
-		$this->assertEquals( array('type' => 'binary','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('binary') );
-		$this->assertEquals( array('type' => 'varbinary','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('varbinary') );
-		$this->assertEquals( array('type' => 'timestamp','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('timestamp') );
-		$this->assertEquals( array('type' => 'datetime','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('datetime') );
-		$this->assertEquals( array('type' => 'date','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('date') );
-		$this->assertEquals( array('type' => 'time','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('time') );
-		$this->assertEquals( array('type' => 'year','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('year') );
-		$this->assertEquals( array('type' => 'enum','length' => null,'unsigned' => false,'decimals' => null,'values' => array('0','1')), self::utils()->_parse_column_type('enum(\'0\',\'1\')') );
-		$this->assertEquals( array('type' => 'set','length' => null,'unsigned' => false,'decimals' => null,'values' => array('0','1')), self::utils()->_parse_column_type('set(\'0\',\'1\')') );
-	}
 	public function test_table_get_columns() {
 		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
+
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
 			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
@@ -340,7 +289,6 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$table = current(self::utils()->list_tables(self::$DB_NAME));
 		$this->assertNotEmpty( self::utils()->repair_table($table) );
 	}
-/*
 	public function test_alter_table() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
@@ -352,12 +300,70 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 		$old_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
-		$this->assertEquals( 'utf8_general_ci', $old_info['collation'] );
-#		$this->assertTrue( self::utils()->alter_table(self::$DB_NAME.'.'.$table, array('collation' => 'latin1_general_ci')) );
-#		$new_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
-#		$this->assertEquals( 'latin1_general_ci', $new_info['collation'] );
+		$this->assertEquals( 'InnoDB', $old_info['engine'] );
+		$this->assertTrue( self::utils()->alter_table(self::$DB_NAME.'.'.$table, array('engine' => 'ARCHIVE')) );
+		$new_info = self::utils()->table_info(self::$DB_NAME.'.'.$table);
+		$this->assertEquals( 'ARCHIVE', $new_info['engine'] );
 	}
-*/
+	public function test__compile_create_table() {
+		$in = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
+			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
+			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
+			array('key' => 'primary', 'key_cols' => 'id'),
+		);
+		$expected = 
+			'`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,'.PHP_EOL
+			.'`name` VARCHAR(255) NOT NULL DEFAULT \'\','.PHP_EOL
+			.'`active` ENUM(\'0\',\'1\') NOT NULL DEFAULT \'0\','.PHP_EOL
+			.'PRIMARY KEY (id)';
+		$this->assertEquals( $expected, self::utils()->_compile_create_table($in) );
+	}
+	public function test_create_table() {
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
+			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
+			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
+			array('key' => 'primary', 'key_cols' => 'id'),
+		);
+		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
+	}
+
+	public function test__parse_column_type() {
+		$this->assertEquals( array('type' => 'int','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('int') );
+		$this->assertEquals( array('type' => 'int','length' => 8,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('int(8)') );
+		$this->assertEquals( array('type' => 'int','length' => 11,'unsigned' => true,'decimals' => null,'values' => null), self::utils()->_parse_column_type('tinyint(11) unsigned') );
+		$this->assertEquals( array('type' => 'int','length' => 8,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('integer(8)') );
+		$this->assertEquals( array('type' => 'bit','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('bit') );
+		$this->assertEquals( array('type' => 'decimal','length' => 6,'unsigned' => false,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('decimal(6,2)') );
+		$this->assertEquals( array('type' => 'decimal','length' => 6,'unsigned' => true,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('decimal(6,2) unsigned') );
+		$this->assertEquals( array('type' => 'numeric','length' => 6,'unsigned' => true,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('numeric(6,2) unsigned') );
+		$this->assertEquals( array('type' => 'real','length' => 6,'unsigned' => true,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('real(6,2) unsigned') );
+		$this->assertEquals( array('type' => 'float','length' => 6,'unsigned' => true,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('float(6,2) unsigned') );
+		$this->assertEquals( array('type' => 'double','length' => 6,'unsigned' => true,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('double(6,2) unsigned') );
+		$this->assertEquals( array('type' => 'char','length' => 6,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('char(6)') );
+		$this->assertEquals( array('type' => 'varchar','length' => 256,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('varchar(256)') );
+		$this->assertEquals( array('type' => 'tinytext','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('tinytext') );
+		$this->assertEquals( array('type' => 'mediumtext','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('mediumtext') );
+		$this->assertEquals( array('type' => 'longtext','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('longtext') );
+		$this->assertEquals( array('type' => 'text','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('text') );
+		$this->assertEquals( array('type' => 'tinyblob','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('tinyblob') );
+		$this->assertEquals( array('type' => 'mediumblob','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('mediumblob') );
+		$this->assertEquals( array('type' => 'longblob','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('longblob') );
+		$this->assertEquals( array('type' => 'blob','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('blob') );
+		$this->assertEquals( array('type' => 'binary','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('binary') );
+		$this->assertEquals( array('type' => 'varbinary','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('varbinary') );
+		$this->assertEquals( array('type' => 'timestamp','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('timestamp') );
+		$this->assertEquals( array('type' => 'datetime','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('datetime') );
+		$this->assertEquals( array('type' => 'date','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('date') );
+		$this->assertEquals( array('type' => 'time','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('time') );
+		$this->assertEquals( array('type' => 'year','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('year') );
+		$this->assertEquals( array('type' => 'enum','length' => null,'unsigned' => false,'decimals' => null,'values' => array('0','1')), self::utils()->_parse_column_type('enum(\'0\',\'1\')') );
+		$this->assertEquals( array('type' => 'set','length' => null,'unsigned' => false,'decimals' => null,'values' => array('0','1')), self::utils()->_parse_column_type('set(\'0\',\'1\')') );
+	}
+
 	public function test_column_exists() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
@@ -424,6 +430,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->alter_column(self::$DB_NAME.'.'.$table, 'id2', array('after' => 'id')) );
 		$this->assertEquals( array('id', 'id2'), array_keys(self::utils()->table_get_columns(self::$DB_NAME.'.'.$table)) );
 	}
+
 	public function test_list_indexes() {
 		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
@@ -494,6 +501,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->update_index(self::$DB_NAME.'.'.$table, 'PRIMARY', array('id2'), array('type' => 'primary')) );
 		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id2')), self::utils()->index_info(self::$DB_NAME.'.'.$table, 'PRIMARY') );
 	}
+
 	public function test_list_foreign_keys() {
 		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
@@ -598,11 +606,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 		$this->assertTrue( self::utils()->create_view(self::$DB_NAME.'.'.$view, 'SELECT * FROM '.self::$DB_NAME.'.'.$table) );
-		$expected = array(
-			$view => 'CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `'.self::$DB_NAME.'`.`'.$view.'`'
-				.' AS select `'.self::$DB_NAME.'`.`'.$table.'`.`id` AS `id` from `'.self::$DB_NAME.'`.`'.$table.'`'
-		);
-		$this->assertEquals( $expected, self::utils()->list_views(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->list_views(self::$DB_NAME) );
 	}
 	public function test_view_exists() {
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
@@ -622,9 +626,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( self::utils()->create_table(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertTrue( self::utils()->table_exists(self::$DB_NAME.'.'.$table) );
 		$this->assertTrue( self::utils()->create_view(self::$DB_NAME.'.'.$view, 'SELECT * FROM '.self::$DB_NAME.'.'.$table) );
-		$expected = 'CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `'.self::$DB_NAME.'`.`'.$view.'`'
-			.' AS select `'.self::$DB_NAME.'`.`'.$table.'`.`id` AS `id` from `'.self::$DB_NAME.'`.`'.$table.'`';
-		$this->assertEquals( $expected, self::utils()->view_info(self::$DB_NAME.'.'.$view) );
+		$this->assertNotEmpty( self::utils()->view_info(self::$DB_NAME.'.'.$view) );
 	}
 	public function test_drop_view() {
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
@@ -650,19 +652,66 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_list_procedures() {
-#		$this->assertEquals( self::utils()-> );
+		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
+
+		$proc = self::utils()->db->DB_PREFIX. 'proc_'.__FUNCTION__;
+		$procedures = self::utils()->list_procedures();
+		if (empty($procedures)) {
+			$sql = 'CREATE PROCEDURE '.self::$DB_NAME.'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
+			$this->assertTrue( self::utils()->db->query($sql) );
+		}
+		$this->assertNotEmpty( self::utils()->list_procedures() );
 	}
 	public function test_procedure_exists() {
-#		$this->assertEquals( self::utils()-> );
+		$proc = self::utils()->db->DB_PREFIX. 'proc_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
+		$sql = 'CREATE PROCEDURE '.self::$DB_NAME.'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
+		$this->assertTrue( self::utils()->db->query($sql) );
+		$this->assertTrue( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
 	}
 	public function test_procedure_info() {
-#		$this->assertEquals( self::utils()-> );
+		$proc = self::utils()->db->DB_PREFIX. 'proc_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
+		$sql = 'CREATE PROCEDURE '.self::$DB_NAME.'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
+		$this->assertTrue( self::utils()->db->query($sql) );
+		$this->assertTrue( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
+		$expected = array(
+			'db' => self::$DB_NAME,
+			'name' => $proc,
+			'type' => 'PROCEDURE',
+			'security_type' => 'DEFINER',
+			'comment' => '',
+		);
+		$result = self::utils()->procedure_info(self::$DB_NAME.'.'.$proc);
+		foreach ($expected as $k => $_expected) {
+			$this->assertEquals( $_expected, $result[$k] );
+		}
 	}
 	public function test_drop_procedure() {
-#		$this->assertEquals( self::utils()-> );
+		$proc = self::utils()->db->DB_PREFIX. 'proc_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
+		$sql = 'CREATE PROCEDURE '.self::$DB_NAME.'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
+		$this->assertTrue( self::utils()->db->query($sql) );
+		$this->assertTrue( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
+		$this->assertTrue( self::utils()->drop_procedure(self::$DB_NAME.'.'.$proc) );
+		$this->assertFalse( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
 	}
 	public function test_create_procedure() {
-#		$this->assertEquals( self::utils()-> );
+		$proc = self::utils()->db->DB_PREFIX. 'proc_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
+		$this->assertTrue( self::utils()->create_procedure(self::$DB_NAME.'.'.$proc, 'SELECT COUNT(*) INTO param1 FROM t;', 'OUT param1 INT') );
+		$this->assertTrue( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
+		$expected = array(
+			'db' => self::$DB_NAME,
+			'name' => $proc,
+			'type' => 'PROCEDURE',
+			'security_type' => 'DEFINER',
+			'comment' => '',
+		);
+		$result = self::utils()->procedure_info(self::$DB_NAME.'.'.$proc);
+		foreach ($expected as $k => $_expected) {
+			$this->assertEquals( $_expected, $result[$k] );
+		}
 	}
 
 	public function test_list_functions() {
