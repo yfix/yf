@@ -848,19 +848,77 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 
 	public function test_list_events() {
 		$this->assertTrue( self::utils()->create_database(self::$DB_NAME) );
-#		$this->assertEquals( self::utils()-> );
+
+		$evt = self::utils()->db->DB_PREFIX. 'evt_'.__FUNCTION__;
+		$events = self::utils()->list_events(self::$DB_NAME);
+		if (empty($events)) {
+			$sql = 'CREATE EVENT '.self::$DB_NAME.'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.self::$DB_NAME.'.totals VALUES (NOW());';
+			$this->assertTrue( self::utils()->db->query($sql) );
+		}
+		$this->assertNotEmpty( self::utils()->list_events(self::$DB_NAME) );
 	}
 	public function test_event_exists() {
-#		$this->assertEquals( self::utils()-> );
+		$evt = self::utils()->db->DB_PREFIX. 'evt_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
+		$sql = 'CREATE EVENT '.self::$DB_NAME.'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.self::$DB_NAME.'.totals VALUES (NOW());';
+		$this->assertTrue( self::utils()->db->query($sql) );
+		$this->assertTrue( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
 	}
 	public function test_event_info() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_create_event() {
-#		$this->assertEquals( self::utils()-> );
+		$evt = self::utils()->db->DB_PREFIX. 'evt_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
+		$sql = 'CREATE EVENT '.self::$DB_NAME.'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.self::$DB_NAME.'.totals VALUES (NOW());';
+		$this->assertTrue( self::utils()->db->query($sql) );
+		$expected = array(
+			'name' => $evt,
+			'db' => self::$DB_NAME,
+			'definer' => NULL,
+			'timezone' => NULL,
+			'type' => 'ONE TIME',
+			'execute_at' => NULL,
+			'interval_value' => NULL,
+			'interval_field' => NULL,
+			'starts' => NULL,
+			'ends' => NULL,
+			'status' => 'ENABLED',
+			'originator' => '0',
+		);
+		$result = self::utils()->event_info(self::$DB_NAME.'.'.$evt);
+		foreach ($expected as $k => $_expected) {
+			$this->assertEquals( $_expected, $result[$k] );
+		}
 	}
 	public function test_drop_event() {
-#		$this->assertEquals( self::utils()-> );
+		$evt = self::utils()->db->DB_PREFIX. 'evt_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
+		$sql = 'CREATE EVENT '.self::$DB_NAME.'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.self::$DB_NAME.'.totals VALUES (NOW());';
+		$this->assertTrue( self::utils()->db->query($sql) );
+		$this->assertTrue( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
+		$this->assertTrue( self::utils()->drop_event(self::$DB_NAME.'.'.$evt) );
+		$this->assertFalse( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
+	}
+	public function test_create_event() {
+		$evt = self::utils()->db->DB_PREFIX. 'evt_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
+		$this->assertTrue( self::utils()->create_event(self::$DB_NAME.'.'.$evt, 'AT "2014-10-10 23:59:00"', 'INSERT INTO '.self::$DB_NAME.'.totals VALUES (NOW())') );
+		$expected = array(
+			'name' => $evt,
+			'db' => self::$DB_NAME,
+			'definer' => NULL,
+			'timezone' => NULL,
+			'type' => 'ONE TIME',
+			'execute_at' => NULL,
+			'interval_value' => NULL,
+			'interval_field' => NULL,
+			'starts' => NULL,
+			'ends' => NULL,
+			'status' => 'ENABLED',
+			'originator' => '0',
+		);
+		$result = self::utils()->event_info(self::$DB_NAME.'.'.$evt);
+		foreach ($expected as $k => $_expected) {
+			$this->assertEquals( $_expected, $result[$k] );
+		}
 	}
 
 	public function test_list_users() {
