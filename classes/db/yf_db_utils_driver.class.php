@@ -909,12 +909,18 @@ abstract class yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-		$sql = 'SELECT table_name as name FROM information_schema.tables WHERE table_schema = '.$this->_escape_database_name($db_name). ' AND table_type = "VIEW"';
+		$sql = 'SELECT table_name FROM information_schema.tables WHERE table_schema = '.$this->_escape_val($db_name). ' AND table_type = "VIEW"';
 		$views = array();
-		foreach ((array)$this->db->get_2d($sql) as $a) {
-			$name = $a['name'];
-			$create_view = !$extra['no_details'] ? $this->db->get('SHOW CREATE VIEW '.$name) : '';
-			$views[$name] = is_array($create_view) ? $create_view['Create View'] : '';
+		foreach ((array)$this->db->get_all($sql) as $a) {
+			$name = $a['table_name'];
+			$create_view = '';
+			if (!$extra['no_details']) {
+				$create_view = $this->db->get('SHOW CREATE VIEW '.$this->_escape_table_name($db_name.'.'.$name));
+				if (is_array($create_view)) {
+					$create_view = $create_view['Create View'];
+				}
+			}
+			$views[$name] = $create_view;
 		}
 		return $views;
 	}
@@ -975,8 +981,8 @@ abstract class yf_db_utils_driver {
 	* See https://dev.mysql.com/doc/refman/5.6/en/create-view.html
 	*/
 	function create_view($table, $sql_as, $extra = array(), &$error = false) {
-		if (!strlen($name)) {
-			$error = 'name is empty';
+		if (!strlen($table)) {
+			$error = 'table is empty';
 			return false;
 		}
 		$sql = 'CREATE VIEW '.$this->_escape_table_name($table).' AS '.$sql_as;
