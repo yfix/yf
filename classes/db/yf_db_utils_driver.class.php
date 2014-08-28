@@ -431,34 +431,6 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-/*
-	function alter_table($table, $params = array(), $extra = array(), &$error = false) {
-		if (!$table) {
-			$error = 'table_name is empty';
-			return false;
-		}
-		if (!$extra['sql'] && !$this->table_exists($table)) {
-			$error = 'table_name not exists';
-			return false;
-		}
-#		$allowed = array(
-#			'charset'	=> 'CHARACTER SET',
-#			'collation'	=> 'COLLATE',
-#		);
-#		$params = array();
-// TODO: implement allowed list of params and their shortcuts
-// TODO: implement adding columns (with "before" and "after")
-// TODO: implement 
-#		foreach ((array)$extra as $k => $v) {
-#			$params[$k] = $k.' = '.$v;
-#		}
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table). PHP_EOL. implode(' ', $params);
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-	}
-*/
-
-	/**
-	*/
 	function rename_table($table, $new_name, $extra = array(), &$error = false) {
 		if (!$table || !$new_name) {
 			$error = 'table_name is empty';
@@ -788,12 +760,6 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_all_database_foreign_keys($name, $extra = array(), &$error = false) {
-// TODO
-	}
-
-	/**
-	*/
 	function list_foreign_keys($table, $extra = array(), &$error = false) {
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
@@ -984,7 +950,7 @@ abstract class yf_db_utils_driver {
 			$error = 'view name is empty';
 			return false;
 		}
-		$sql = 'DROP VIEW '.$this->_escape_table_name($table);
+		$sql = 'DROP VIEW IF EXISTS '.$this->_escape_table_name($table);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -1033,19 +999,25 @@ abstract class yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'DROP PROCEDURE '.$this->_escape_key($name);
+		$sql = 'DROP PROCEDURE IF EXISTS '.$this->_escape_key($name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	* See https://dev.mysql.com/doc/refman/5.6/en/create-procedure.html
 	*/
-	function create_procedure($name, $sql_body, $sql_params, $extra = array(), &$error = false) {
+	function create_procedure($name, $sql_body, $sql_params = '', $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'CREATE PROCEDURE '.$this->_escape_key($name).' ('.$sql_params.')'.PHP_EOL.'BEGIN'.PHP_EOL. $sql_body. PHP_EOL.'END';
+		$sql = 'delimiter //'. PHP_EOL
+			. 'CREATE PROCEDURE '.$this->_escape_key($name).' ('.$sql_params.')'. PHP_EOL
+			. 'BEGIN'. PHP_EOL
+			. $sql_body. PHP_EOL
+			. 'END//'
+			. 'delimiter ;'. PHP_EOL
+		;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -1082,46 +1054,88 @@ abstract class yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'DROP FUNCTION '.$this->_escape_key($name);
+		$sql = 'DROP FUNCTION IF EXISTS '.$this->_escape_key($name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	* See https://dev.mysql.com/doc/refman/5.6/en/create-function.html
 	*/
-	function create_function($name, $data, $extra = array(), &$error = false) {
+	function create_function($name, $sql_body, $sql_returns_type, $sql_params = '', $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
 		}
-# CREATE FUNCTION hello (s CHAR(20))
-# RETURNS CHAR(50) DETERMINISTIC
-# RETURN CONCAT('Hello, ',s,'!');
-// TODO
+		$sql = ' CREATE FUNCTION '.$this->_escape_key($name).' ('.$sql_params.')'. PHP_EOL
+			. 'RETURNS '.$sql_returns_type.' DETERMINISTIC'. PHP_EOL
+			. 'RETURN '.$sql_body;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
-	function list_triggers($extra = array(), &$error = false) {
-		return $this->db->get_all('SHOW TRIGGERS');
-	}
-
-	/**
-	*/
-	function list_all_triggers($name, $extra = array(), &$error = false) {
-// TODO
-	}
-
-	/**
-	*/
-	function create_trigger($name, $data, $extra = array(), &$error = false) {
-		if (!strlen($name)) {
-			$error = 'name is empty';
+	function list_triggers($db_name = '', $extra = array(), &$error = false) {
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
 			return false;
 		}
-// https://dev.mysql.com/doc/refman/5.5/en/create-trigger.html
-# CREATE	[DEFINER = { user | CURRENT_USER }]	TRIGGER trigger_name	trigger_time trigger_event	 ON tbl_name FOR EACH ROW	trigger_body
-// TODO
+		$triggers = array();
+		foreach ($this->db->get_all('SHOW TRIGGERS FROM '.$this->_escape_database_name($db_name)) as $a) {
+			$name = $a['Trigger'];
+			$triggers[$name] = array(
+				'name'		=> $name,
+				'table'		=> $a['Table'],
+				'event'		=> $a['Event'],
+				'timing'	=> $a['Timing'],
+				'statement'	=> $a['Statement'],
+			);
+		}
+		return $triggers;
+	}
+
+	/**
+	*/
+	function trigger_exists($name, $extra = array(), &$error = false) {
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
+		if (!$name) {
+			$error = 'trigger name is empty';
+			return false;
+		}
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		$triggers = $this->list_triggers($db_name, $extra, $error);
+		return (bool)isset($triggers[$name]);
+	}
+
+	/**
+	*/
+	function trigger_info($name, $extra = array(), &$error = false) {
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
+		if (!$name) {
+			$error = 'trigger name is empty';
+			return false;
+		}
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		$triggers = $this->list_triggers($db_name, $extra, $error);
+		return isset($triggers[$name]) ? $triggers[$name] : false;
 	}
 
 	/**
@@ -1131,14 +1145,48 @@ abstract class yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-		$sql = 'DROP TRIGGER '.$name;
+		$sql = 'DROP TRIGGER IF EXISTS '.$this->_escape_table_name($name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
+	* See http://dev.mysql.com/doc/refman/5.6/en/create-trigger.html
 	*/
-	function trigger_exists($name, $extra = array(), &$error = false) {
-// TODO
+	function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = array(), &$error = false) {
+		if (!strlen($name)) {
+			$error = 'name is empty';
+			return false;
+		}
+		if (!strlen($table)) {
+			$error = 'trigger table is empty';
+			return false;
+		}
+		$supported_trigger_times = array(
+			'before',
+			'after'
+		);
+		if (!strlen($trigger_time) || !in_array(strtolower($trigger_time, $supported_trigger_times))) {
+			$error = 'trigger time is wrong';
+			return false;
+		}
+		$supported_trigger_events = array(
+			'insert',
+			'update',
+			'delete'
+		);
+		if (!strlen($trigger_event) || !in_array(strtolower($trigger_event, $supported_trigger_events))) {
+			$error = 'trigger event is wrong';
+			return false;
+		}
+		if (!strlen($trigger_body)) {
+			$error = 'trigger body is empty';
+			return false;
+		}
+		$sql = 'CREATE TRIGGER '.$this->_escape_key($name). PHP_EOL
+			. ' '.strtoupper($trigger_time). ' '.strtoupper($trigger_event). PHP_EOL
+			. ' ON '.$this->_escape_table_name($table).' FOR EACH ROW '
+			. $trigger_body;
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
@@ -1147,6 +1195,31 @@ abstract class yf_db_utils_driver {
 		// SHOW EVENTS
 		// SHOW CREATE EVENT
 // TODO
+	}
+
+	/**
+	*/
+	function event_exists($name, $extra = array(), &$error = false) {
+		$events = $this->list_events($extra, $error);
+		return (bool)isset($events[$name]);
+	}
+
+	/**
+	*/
+	function event_info($name, $extra = array(), &$error = false) {
+		$events = $this->list_events($extra, $error);
+		return isset($events[$name]) ? $events[$name] : false;
+	}
+
+	/**
+	*/
+	function drop_event($name, $data, $extra = array(), &$error = false) {
+		if (!strlen($name)) {
+			$error = 'event name is empty';
+			return false;
+		}
+		$sql = 'DROP EVENT IF EXISTS '.$this->_escape_key($name);
+		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
@@ -1163,23 +1236,8 @@ ON SCHEDULE AT '2006-02-10 23:59:00'
 DO INSERT INTO test.totals VALUES (NOW());
 */
 // TODO
-	}
-
-	/**
-	*/
-	function drop_event($name, $data, $extra = array(), &$error = false) {
-		if (!strlen($name)) {
-			$error = 'name is empty';
-			return false;
-		}
-		$sql = 'DROP EVENT '.$name;
+#		$sql = '';
 		return $extra['sql'] ? $sql : $this->db->query($sql);
-	}
-
-	/**
-	*/
-	function event_exists($name, $extra = array(), &$error = false) {
-// TODO
 	}
 
 	/**
@@ -1415,14 +1473,12 @@ DO INSERT INTO test.totals VALUES (NOW());
 	/**
 	*/
 	function _escape_database_name($name = '') {
-// TODO: unit tests
 		return is_object($this->db) ? $this->db->escape_key($name) : '`'.addslashes($name).'`';
 	}
 
 	/**
 	*/
 	function _escape_table_name($name = '') {
-// TODO: unit tests
 		$name = trim($name);
 		if (!strlen($name)) {
 			return false;
@@ -1443,7 +1499,6 @@ DO INSERT INTO test.totals VALUES (NOW());
 	/**
 	*/
 	function _escape_key($key = '') {
-// TODO: unit tests
 		$out = '';
 		if ($key != '*' && false === strpos($key, '.') && false === strpos($key, '(')) {
 			$out = is_object($this->db) ? $this->db->escape_key($key) : '`'.addslashes($key).'`';
@@ -1465,7 +1520,6 @@ DO INSERT INTO test.totals VALUES (NOW());
 	/**
 	*/
 	function _escape_val($val = '') {
-// TODO: unit tests
 // TODO: support for binding params (':field' => $val)
 		return is_object($this->db) ? $this->db->escape_val($val) : '\''.addslashes($val).'\'';
 	}
@@ -1473,7 +1527,6 @@ DO INSERT INTO test.totals VALUES (NOW());
 	/**
 	*/
 	function _escape_fields(array $fields) {
-// TODO: unit tests
 		foreach ($fields as $k => $v) {
 			$fields[$k] = $this->_escape_key($v);
 		}
@@ -1483,7 +1536,6 @@ DO INSERT INTO test.totals VALUES (NOW());
 	/**
 	*/
 	function _es($val = '') {
-// TODO: unit tests
 // TODO: support for binding params (':field' => $val)
 		return is_object($this->db) && method_exists($this->db, '_es') ? $this->db->_es($val) : addslashes($val);
 	}
@@ -1552,5 +1604,39 @@ DO INSERT INTO test.totals VALUES (NOW());
 	function event($name) {
 // TODO
 		return _class('db_utils_event', 'classes/db/');
+	}
+
+	/**
+	*/
+/*
+	function alter_table($table, $params = array(), $extra = array(), &$error = false) {
+		if (!$table) {
+			$error = 'table_name is empty';
+			return false;
+		}
+		if (!$extra['sql'] && !$this->table_exists($table)) {
+			$error = 'table_name not exists';
+			return false;
+		}
+#		$allowed = array(
+#			'charset'	=> 'CHARACTER SET',
+#			'collation'	=> 'COLLATE',
+#		);
+#		$params = array();
+// TODO: implement allowed list of params and their shortcuts
+// TODO: implement adding columns (with "before" and "after")
+// TODO: implement 
+#		foreach ((array)$extra as $k => $v) {
+#			$params[$k] = $k.' = '.$v;
+#		}
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table). PHP_EOL. implode(' ', $params);
+		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+*/
+
+	/**
+	*/
+	function list_all_database_foreign_keys($name, $extra = array(), &$error = false) {
+// TODO
 	}
 }
