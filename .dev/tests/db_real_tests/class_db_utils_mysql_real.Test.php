@@ -727,19 +727,51 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_function_exists() {
 		$func = self::utils()->db->DB_PREFIX. 'func_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->function_exists($func) );
+		$sql = 'CREATE FUNCTION '.self::$DB_NAME.'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
+		$this->assertTrue( self::utils()->db->query($sql) );
+		$this->assertTrue( self::utils()->function_exists($func) );
+	}
+	public function test_function_info() {
+		$func = self::utils()->db->DB_PREFIX. 'func_'.__FUNCTION__;
 		$this->assertFalse( self::utils()->function_exists(self::$DB_NAME.'.'.$func) );
 		$sql = 'CREATE FUNCTION '.self::$DB_NAME.'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
 		$this->assertTrue( self::utils()->db->query($sql) );
-#		$this->assertTrue( self::utils()->function_exists(self::$DB_NAME.'.'.$func) );
-	}
-	public function test_function_info() {
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_create_function() {
-#		$this->assertEquals( self::utils()-> );
+		$expected = array(
+			'db' => self::$DB_NAME,
+			'name' => $func,
+			'type' => 'FUNCTION',
+			'comment' => '',
+		);
+		$result = self::utils()->function_info(self::$DB_NAME.'.'.$func);
+		foreach ($expected as $k => $_expected) {
+			$this->assertEquals( $_expected, $result[$k] );
+		}
 	}
 	public function test_drop_function() {
-#		$this->assertEquals( self::utils()-> );
+		$func = self::utils()->db->DB_PREFIX. 'func_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->function_exists($func) );
+		$sql = 'CREATE FUNCTION '.self::$DB_NAME.'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
+		$this->assertTrue( self::utils()->db->query($sql) );
+		$this->assertTrue( self::utils()->function_exists($func) );
+		$this->assertTrue( self::utils()->drop_function($func) );
+		$this->assertFalse( self::utils()->function_exists($func) );
+	}
+	public function test_create_function() {
+		$func = self::utils()->db->DB_PREFIX. 'func_'.__FUNCTION__;
+		$this->assertFalse( self::utils()->function_exists($func) );
+		$this->assertTrue( self::utils()->create_function(self::$DB_NAME.'.'.$func, 'CONCAT("Hello, ",s,"!")', 'CHAR(50)', 's CHAR(20)') );
+		$this->assertTrue( self::utils()->function_exists($func) );
+		$expected = array(
+			'db' => self::$DB_NAME,
+			'name' => $func,
+			'type' => 'FUNCTION',
+			'comment' => '',
+		);
+		$result = self::utils()->function_info($func);
+		foreach ($expected as $k => $_expected) {
+			$this->assertEquals( $_expected, $result[$k] );
+		}
 	}
 
 	public function test_list_triggers() {
