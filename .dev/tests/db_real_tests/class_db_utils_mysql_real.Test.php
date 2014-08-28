@@ -720,7 +720,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$func = self::utils()->db->DB_PREFIX. 'func_'.__FUNCTION__;
 		$funcs = self::utils()->list_functions();
 		if (empty($funcs)) {
-			$sql = 'CREATE FUNCTION '.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
+			$sql = 'CREATE FUNCTION '.self::$DB_NAME.'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
 			$this->assertTrue( self::utils()->db->query($sql) );
 		}
 		$this->assertNotEmpty( self::utils()->list_functions() );
@@ -728,7 +728,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public function test_function_exists() {
 		$func = self::utils()->db->DB_PREFIX. 'func_'.__FUNCTION__;
 		$this->assertFalse( self::utils()->function_exists(self::$DB_NAME.'.'.$func) );
-		$sql = 'CREATE FUNCTION '.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
+		$sql = 'CREATE FUNCTION '.self::$DB_NAME.'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
 		$this->assertTrue( self::utils()->db->query($sql) );
 #		$this->assertTrue( self::utils()->function_exists(self::$DB_NAME.'.'.$func) );
 	}
