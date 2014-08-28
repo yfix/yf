@@ -1238,19 +1238,32 @@ abstract class yf_db_utils_driver {
 	* See http://dev.mysql.com/doc/refman/5.6/en/create-trigger.html
 	*/
 	function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = array(), &$error = false) {
-		if (!strlen($name)) {
-			$error = 'name is empty';
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
+		if (!$name) {
+			$error = 'trigger name is empty';
 			return false;
 		}
-		if (!strlen($table)) {
+		if (strpos($table, '.') !== false) {
+			list($db_name, $table) = explode('.', trim($table));
+		}
+		if (!$table) {
 			$error = 'trigger table is empty';
+			return false;
+		}
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
 			return false;
 		}
 		$supported_trigger_times = array(
 			'before',
 			'after'
 		);
-		if (!strlen($trigger_time) || !in_array(strtolower($trigger_time, $supported_trigger_times))) {
+		if (!strlen($trigger_time) || !in_array(strtolower($trigger_time), $supported_trigger_times)) {
 			$error = 'trigger time is wrong';
 			return false;
 		}
@@ -1259,7 +1272,7 @@ abstract class yf_db_utils_driver {
 			'update',
 			'delete'
 		);
-		if (!strlen($trigger_event) || !in_array(strtolower($trigger_event, $supported_trigger_events))) {
+		if (!strlen($trigger_event) || !in_array(strtolower($trigger_event), $supported_trigger_events)) {
 			$error = 'trigger event is wrong';
 			return false;
 		}
@@ -1267,9 +1280,9 @@ abstract class yf_db_utils_driver {
 			$error = 'trigger body is empty';
 			return false;
 		}
-		$sql = 'CREATE TRIGGER '.$this->_escape_key($name). PHP_EOL
+		$sql = 'CREATE TRIGGER '.$this->_escape_table_name($db_name.'.'.$name). PHP_EOL
 			. ' '.strtoupper($trigger_time). ' '.strtoupper($trigger_event). PHP_EOL
-			. ' ON '.$this->_escape_table_name($table).' FOR EACH ROW '
+			. ' ON '.$this->_escape_table_name($db_name.'.'.$table).' FOR EACH ROW '
 			. $trigger_body;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
