@@ -1375,9 +1375,19 @@ abstract class yf_db_utils_driver {
 	* See: https://dev.mysql.com/doc/refman/5.6/en/create-event.html
 	* Example: CREATE EVENT e_totals  ON SCHEDULE AT '2006-02-10 23:59:00'  DO INSERT INTO test.totals VALUES (NOW());
 	*/
-	function create_event($event_name, $event_shedule, $event_body, $extra = array(), &$error = false) {
-		if (!strlen($event_name)) {
+	function create_event($name, $event_shedule, $event_body, $extra = array(), &$error = false) {
+		if (strpos($name, '.') !== false) {
+			list($db_name, $name) = explode('.', trim($name));
+		}
+		if (!strlen($name)) {
 			$error = 'event name is empty';
+			return false;
+		}
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
+		if (!$db_name) {
+			$error = 'db_name is empty';
 			return false;
 		}
 		if (!strlen($event_shedule)) {
@@ -1394,7 +1404,7 @@ abstract class yf_db_utils_driver {
 			'HOUR_MINUTE', 'HOUR_SECOND', 'MINUTE_SECOND',
 		);
 // TODO: implement strict shedule contents checks
-		$sql = 'CREATE EVENT IF NOT EXISTS '.$this->_escape_table_name($event_name).' '. PHP_EOL
+		$sql = 'CREATE EVENT IF NOT EXISTS '.$this->_escape_table_name($db_name.'.'.$name).' '. PHP_EOL
 			. 'ON SCHEDULE '.$event_shedule. PHP_EOL
 			. 'DO '.$event_body;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
