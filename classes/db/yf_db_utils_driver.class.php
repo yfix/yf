@@ -942,12 +942,13 @@ abstract class yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-		return (bool)in_array($table, (array)$this->list_views($db_name));
+		$views = $this->list_views($db_name);
+		return (bool)isset($views[$table]);
 	}
 
 	/**
 	*/
-	function view_details($table, $extra = array(), &$error = false) {
+	function view_info($table, $extra = array(), &$error = false) {
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
 		}
