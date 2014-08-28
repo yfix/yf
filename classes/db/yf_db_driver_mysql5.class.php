@@ -70,7 +70,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 			$dbselect = $this->select_db($this->params['name']);
 			// Try to create database, if not exists and if allowed
 			if (!$dbselect && $this->params['allow_auto_create_db'] && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->params['name'])) {
-				$res = mysql_query('CREATE DATABASE IF NOT EXISTS '.$this->params['name'], $this->db_connect_id);
+				$res = $this->query('CREATE DATABASE IF NOT EXISTS '.$this->params['name']);
 				if ($res) {
 					$dbselect = $this->select_db($this->params['name']);
 				}
