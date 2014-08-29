@@ -13,24 +13,7 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public static $DB_DRIVER = 'mysql5';
 	public static $CI_SERVER = '';
 	public static function setUpBeforeClass() {
-		self::$DB_NAME = DB_NAME;
-		$db_class = load_db_class();
-		self::$db = new $db_class(self::$DB_DRIVER);
-		self::$db->ALLOW_AUTO_CREATE_DB = true;
-		self::$db->NO_AUTO_CONNECT = true;
-		self::$db->RECONNECT_NUM_TRIES = 1;
-		self::$db->CACHE_TABLE_NAMES = false;
-		self::$db->ERROR_AUTO_REPAIR = false;
-		self::$db->FIX_DATA_SAFE = true;
-		self::$db->_init();
-		$res = self::$db->connect(array(
-			'host'	=> 'localhost',
-			'name'	=> self::$DB_NAME,
-			'user'	=> DB_USER,
-			'pswd'	=> DB_PSWD,
-			'prefix'=> DB_PREFIX,
-			'force' => true,
-		));
+		self::_connect();
 		self::$server_version = self::$db->get_server_version();
 		if (getenv('CI') === 'true' && getenv('DRONE') === 'true') {
 			self::$CI_SERVER = 'DRONE';
@@ -58,6 +41,27 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 	private static function db() {
 		return self::$db;
 	}
+	public function _connect() {
+		self::$DB_NAME = DB_NAME;
+		$db_class = load_db_class();
+		self::$db = new $db_class(self::$DB_DRIVER);
+		self::$db->ALLOW_AUTO_CREATE_DB = true;
+		self::$db->NO_AUTO_CONNECT = true;
+		self::$db->RECONNECT_NUM_TRIES = 1;
+		self::$db->CACHE_TABLE_NAMES = false;
+		self::$db->ERROR_AUTO_REPAIR = false;
+		self::$db->FIX_DATA_SAFE = true;
+		self::$db->_init();
+		$res = self::$db->connect(array(
+			'host'	=> 'localhost',
+			'name'	=> self::$DB_NAME,
+			'user'	=> DB_USER,
+			'pswd'	=> DB_PSWD,
+			'prefix'=> DB_PREFIX,
+			'force' => true,
+		));
+		return !empty($res) ? true : false;
+	}
 	public function test_connected() {
 		$this->assertNotEmpty( self::$db );
 		$this->assertTrue( is_object(self::$db) );
@@ -71,11 +75,13 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		list(,$driver) = explode('_driver_', get_class(self::db()->db));
 		$this->assertEquals( self::$DB_DRIVER, $driver );
 	}
-	public function test_connect() {
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_close() {
-#		$this->assertEquals( $expected, self::db()-> );
+	public function test_disconnect_connect() {
+		$this->assertTrue( self::db()->close() );
+		$this->assertFalse( self::$db->_connected );
+		$this->assertFalse( is_resource(self::$db->db->db_connect_id) || is_object(self::$db->db->db_connect_id));
+		$this->assertTrue( self::_connect() );
+		$this->assertTrue( self::$db->_connected );
+		$this->assertTrue( is_resource(self::$db->db->db_connect_id) || is_object(self::$db->db->db_connect_id));
 	}
 	public function test_basic_queries_and_fetching() {
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
