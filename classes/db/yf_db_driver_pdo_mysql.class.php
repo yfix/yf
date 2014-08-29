@@ -207,21 +207,21 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	* Begin a transaction
 	*/
 	function begin() {
-		return $this->query('START TRANSACTION');
+		return $this->db_connect_id->beginTransaction();
 	}
 
 	/**
 	* End a transaction
 	*/
 	function commit() {
-		return $this->query('COMMIT');
+		return $this->db_connect_id->commit();
 	}
 
 	/**
 	* Rollback a transaction
 	*/
 	function rollback() {
-		return $this->query('ROLLBACK');
+		return $this->db_connect_id->rollBack();
 	}
 
 	/**
