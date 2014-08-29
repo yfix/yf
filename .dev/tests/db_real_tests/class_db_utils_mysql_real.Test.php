@@ -13,24 +13,7 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public static $DB_DRIVER = 'mysql5';
 	public static $CI_SERVER = '';
 	public static function setUpBeforeClass() {
-		self::$DB_NAME = DB_NAME;
-		$db_class = load_db_class();
-		self::$db = new $db_class(self::$DB_DRIVER);
-		self::$db->ALLOW_AUTO_CREATE_DB = true;
-		self::$db->NO_AUTO_CONNECT = true;
-		self::$db->RECONNECT_NUM_TRIES = 1;
-		self::$db->CACHE_TABLE_NAMES = false;
-		self::$db->ERROR_AUTO_REPAIR = false;
-		self::$db->FIX_DATA_SAFE = true;
-		self::$db->_init();
-		$res = self::$db->connect(array(
-			'host'	=> 'localhost',
-			'name'	=> self::$DB_NAME,
-			'user'	=> DB_USER,
-			'pswd'	=> DB_PSWD,
-			'prefix'=> DB_PREFIX,
-			'force' => true,
-		));
+		self::_connect();
 		self::$server_version = self::$db->get_server_version();
 		if (getenv('CI') === 'true' && getenv('DRONE') === 'true') {
 			self::$CI_SERVER = 'DRONE';
@@ -52,6 +35,27 @@ class class_db_utils_mysql_real_test extends PHPUnit_Framework_TestCase {
 			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
 			return ;
     	}
+	}
+	public function _connect() {
+		self::$DB_NAME = DB_NAME;
+		$db_class = load_db_class();
+		self::$db = new $db_class(self::$DB_DRIVER);
+		self::$db->ALLOW_AUTO_CREATE_DB = true;
+		self::$db->NO_AUTO_CONNECT = true;
+		self::$db->RECONNECT_NUM_TRIES = 1;
+		self::$db->CACHE_TABLE_NAMES = false;
+		self::$db->ERROR_AUTO_REPAIR = false;
+		self::$db->FIX_DATA_SAFE = true;
+		self::$db->_init();
+		$res = self::$db->connect(array(
+			'host'	=> 'localhost',
+			'name'	=> self::$DB_NAME,
+			'user'	=> DB_USER,
+			'pswd'	=> DB_PSWD,
+			'prefix'=> DB_PREFIX,
+			'force' => true,
+		));
+		return !empty($res) ? true : false;
 	}
 	private static function utils() {
 		return self::$db->utils();
