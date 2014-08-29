@@ -34,17 +34,11 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET);
 		$this->params = $params;
 
-		ini_set('mysql.connect_timeout', 2);
-
 		$this->connect();
 
 		if (!$this->db_connect_id) {
 			conf_add('http_headers::X-Details','ME=(-1) MySql connection error');
 			return $this->db_connect_id;
-		}
-		if ($this->params['charset']) {
-			// See http://php.net/manual/en/mysqlinfo.concepts.charset.php
-#			mysql_set_charset($this->params['charset']); // $this->query('SET NAMES '. $this->params['charset']);
 		}
 		return $this->db_connect_id;
 	}
@@ -52,15 +46,6 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function connect() {
-#		if ($this->params['socket']) {
-#			$connect_host = $this->params['socket'];
-#		} else {
-#			$connect_port = $this->params['port'] && $this->params['port'] != $this->DEF_PORT ? $this->params['port'] : '';
-#			$connect_host = $this->params['host']. ($connect_port ? ':'.$connect_port : '');
-#		}
-#		$this->db_connect_id = $this->params['persist'] 
-#			? mysql_pconnect($connect_host, $this->params['user'], $this->params['pswd'], $this->params['ssl'] ? MYSQL_CLIENT_SSL : 0) 
-#			: mysql_connect($connect_host, $this->params['user'], $this->params['pswd'], true, $this->params['ssl'] ? MYSQL_CLIENT_SSL : 0);
 		$dsn = 'mysql:host='.$params['host'];
 		if ($this->params['port'] && $this->params['port'] != $this->DEF_PORT) {
 			$dsn .= ';port='.$this->params['port'];
@@ -75,12 +60,14 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 			$dsn .= ';charset='.$this->params['charset'];
 		}
 		$attrs = array();
+		$attrs[PDO::ATTR_TIMEOUT] = 2;
 		if ($this->params['persist']) {
 			$attrs[PDO::ATTR_PERSISTENT] = true;
 		}
 		$this->db_connect_id = new PDO($dsn, $this->params['user'], $this->params['pswd'], $attrs);
 		$pdo = &$this->db_connect_id;
 		$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
+		$pdo->setAttribute(PDO::MYSQL_ATTR_DIRECT_QUERY, 0);
 		$pdo->setAttribute(PDO::MYSQL_ATTR_DIRECT_QUERY, 0);
 
 		if (!$this->db_connect_id) {
@@ -110,7 +97,7 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		if (!$this->db_connect_id) {
 			return false;
 		}
-		return $this->query('USE '.$name.';');
+		return $this->query('USE '.$name);
 	}
 
 	/**
@@ -130,9 +117,11 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 			return false;
 		}
 		$result = $this->db_connect_id->query($query);
+		$this->_last_query_id = $result;
 		if (!$result) {
-#			$query_error_code = mysql_errno($this->db_connect_id);
-#			$query_error = mysql_error($this->db_connect_id);
+			$error = $this->error();
+			$query_error_code = $error['code'];
+			$query_error = $error['message'];
 			if ($query_error_code) {
 				conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
 			}
@@ -144,19 +133,19 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function num_rows($query_id) {
-		return $query_id ? $query_id->columnCount() : false;
-	}
-
-	/**
-	*/
-	function affected_rows() {
 		return $query_id ? $query_id->rowCount() : false;
 	}
 
 	/**
 	*/
+	function affected_rows() {
+		return $this->_last_query_id ? $this->_last_query_id->rowCount() : false;
+	}
+
+	/**
+	*/
 	function insert_id() {
-#		return $this->db_connect_id ? mysql_insert_id($this->db_connect_id) : false;
+		return $this->db_connect_id->lastInsertId();
 	}
 
 	/**
@@ -186,28 +175,24 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function real_escape_string($string) {
-		if (!$this->db_connect_id) {
-			return addslashes($string);
-		}
-#		return mysql_real_escape_string($string, $this->db_connect_id);
+		return addslashes($string);
 	}
 
 	/**
 	*/
 	function free_result($query_id = 0) {
-		if ($query_id) {
-#			return mysql_free_result($query_id);
-		}
-		return false;
+		$query_id = null;
+		return true;
 	}
 
 	/**
 	*/
 	function error() {
 		if ($this->db_connect_id) {
+			$info = $this->db_connect_id->errorInfo();
 			return array(
-#				'message'	=> mysql_error($this->db_connect_id),
-#				'code'		=> mysql_errno($this->db_connect_id),
+				'message'	=> $info[2],
+				'code'		=> $info[1],
 			);
 		} elseif ($this->_connect_error) {
 			return array(
@@ -268,7 +253,7 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		if (!$this->db_connect_id) {
 			return false;
 		}
-#		return mysql_get_server_info($this->db_connect_id);
+		return $this->db_connect_id->getAttribute(PDO::ATTR_SERVER_VERSION);
 	}
 
 	/**
@@ -277,6 +262,6 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		if (!$this->db_connect_id) {
 			return false;
 		}
-#		return mysql_get_host_info($this->db_connect_id);
+		return $this->db_connect_id->getAttribute(PDO::ATTR_SERVER_INFO);
 	}
 }

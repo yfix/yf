@@ -108,8 +108,9 @@ class yf_db_driver_mysqli extends yf_db_driver {
 		}
 		$result = mysqli_query($this->db_connect_id, $query);
 		if (!$result) {
-			$query_error = mysqli_error($this->db_connect_id);
-			$query_error_code = mysqli_errno($this->db_connect_id);
+			$error = $this->error();
+			$query_error_code = $error['code'];
+			$query_error = $error['message'];
 			if ($query_error_code) {
 				conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
 			}

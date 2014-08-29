@@ -109,8 +109,9 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 		}
 		$result = mysql_query($query, $this->db_connect_id);
 		if (!$result) {
-			$query_error_code = mysql_errno($this->db_connect_id);
-			$query_error = mysql_error($this->db_connect_id);
+			$error = $this->error();
+			$query_error_code = $error['code'];
+			$query_error = $error['message'];
 			if ($query_error_code) {
 				conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
 			}
