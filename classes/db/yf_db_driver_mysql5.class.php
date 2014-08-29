@@ -183,6 +183,15 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 
 	/**
 	*/
+	function fetch_object($query_id = 0) {
+		if ($query_id) {
+			return mysql_fetch_object($query_id);
+		}
+		return false;
+	}
+
+	/**
+	*/
 	function real_escape_string($string) {
 		if (!$this->db_connect_id) {
 			return addslashes($string);
@@ -194,8 +203,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	*/
 	function free_result($query_id = 0) {
 		if ($query_id) {
-			mysql_free_result($query_id);
-			return true;
+			return mysql_free_result($query_id);
 		}
 		return false;
 	}
