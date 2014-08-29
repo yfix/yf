@@ -83,7 +83,10 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function database_info($db_name, $extra = array(), &$error = false) {
+	function database_info($db_name = '', $extra = array(), &$error = false) {
+		if (!$db_name) {
+			$db_name = $this->db->DB_NAME;
+		}
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
