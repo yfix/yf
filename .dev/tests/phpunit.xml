@@ -9,10 +9,25 @@
 	stopOnFailure="true"
 	syntaxCheck="false"
 	verbose="true"
-	strict="false">
-	<testsuite name="Application">
-		<directory>./</directory>
-	</testsuite>
+	strict="false"
+>
+	<testsuites>
+		<testsuite name="all-tests">
+			<directory>./</directory>
+		</testsuite>
+		<testsuite name="cache">
+			<directory>./cache/</directory>
+		</testsuite>
+		<testsuite name="db">
+			<directory>./db/</directory>
+		</testsuite>
+		<testsuite name="func">
+			<directory>./func/</directory>
+		</testsuite>
+		<testsuite name="tpl">
+			<directory>./tpl/</directory>
+		</testsuite>
+	</testsuites>
 	<!--logging>
 		<log type="coverage-clover" target="artifacts/phpunit/coverage/coverage.xml" />
 		<log type="junit" target="artifacts/phpunit/phpunit.xml" logIncompleteSkipped="true" />
