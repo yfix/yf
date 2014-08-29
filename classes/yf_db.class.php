@@ -308,7 +308,10 @@ class yf_db {
 	*/
 	function close() {
 		$this->_connected = false;
-		return $this->db->close();
+		$this->_tried_to_connect = false;
+		$result = $this->db->close();
+		unset($this->db);
+		return $result;
 	}
 
 	/**
