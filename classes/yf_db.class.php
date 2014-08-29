@@ -779,17 +779,18 @@ class yf_db {
 	*		'name' => 'Peter',
 	*	]]]
 	*/
-	function get_deep_array($query, $levels = 1, $use_cache = true) {
+	function get_deep_array($sql, $levels = 1, $use_cache = true) {
 		$out = array();
 		$q = $this->query($sql);
 		if (!$q) {
 			return false;
 		}
 		$row = $this->fetch_assoc($q);
-		if (!$row) {
+		if (!is_array($row) || !count($row)) {
 			return false;
 		}
-		$k = array_keys( $row );
+		$k = array_keys($row);
+		$a = array();
 		do {
 			if ($levels == 1) {
 				@$a[ $row[$k[0]] ] = $row;
@@ -801,7 +802,8 @@ class yf_db {
 				@$a[ $row[$k[0]] ][ $row[$k[1]] ][ $row[$k[2]] ][ $row[$k[3]] ] = $row;
 			}
 		} while ($row = $this->fetch_assoc($result));
-		return $out;
+var_export($a);
+		return $a;
 	}
 
 	/**
