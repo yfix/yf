@@ -395,8 +395,10 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_split_sql() {
-#		$expected = array();
-#		$this->assertEquals( $expected, self::db()->split_sql('SELECT 1; SELECT 2; SELECT 3') );
+		$expected = array('SELECT 1', 'SELECT 2', 'SELECT 3');
+		$this->assertEquals( $expected, self::db()->split_sql('SELECT 1; SELECT 2; SELECT 3') );
+		$this->assertEquals( $expected, self::db()->split_sql('SELECT 1;'.PHP_EOL.' SELECT 2;'.PHP_EOL.' SELECT 3') );
+		$this->assertEquals( $expected, self::db()->split_sql(';;SELECT 1;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 2;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 3;;;') );
 	}
 	public function test_utils() {
 #		$this->assertEquals( $expected, self::db()-> );
