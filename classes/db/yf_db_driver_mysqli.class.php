@@ -237,7 +237,9 @@ if ($mysqli->multi_query($query)) {
 	*/
 	function free_result($query_id = 0) {
 		if ($query_id) {
-			return mysqli_free_result($query_id);
+			mysqli_free_result($query_id);
+			// We need this for compatibility, because mysqli_free_result() returns "void"
+			return true;
 		}
 		return true;
 	}
