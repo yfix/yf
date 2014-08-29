@@ -88,46 +88,65 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_basic_queries_and_fetching() {
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$expected = array(
 			'Table' => $table,
 			'Create Table' => 'CREATE TABLE `'.$table.'` ('. PHP_EOL
-				. '  `id` int(10) DEFAULT NULL'. PHP_EOL
+				. '  `id` int(10) NOT NULL AUTO_INCREMENT,'. PHP_EOL
+				. '  PRIMARY KEY (`id`)'. PHP_EOL
 				. ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
 		);
 		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->query('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table)) );
+		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->unbuffered_query('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table)) );
 		$this->assertEquals( $expected, self::db()->query_fetch('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table) );
 		$this->assertEquals( $expected, self::db()->get('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table) );
 
 		$this->assertTrue( self::db()->query('INSERT INTO '.self::$DB_NAME.'.'.$table.' VALUES (1),(2),(3)') );
+		$this->assertEquals( 3, self::db()->affected_rows() );
+		$this->assertEquals( 3, self::db()->insert_id() );
 		$this->assertEquals( array('id' => 1), self::db()->get('SELECT * FROM '.self::$DB_NAME.'.'.$table) );
 		$this->assertEquals( array(1 => array('id' => 1), 2 => array('id' => 2), 3 => array('id' => 3)), self::db()->get_all('SELECT * FROM '.self::$DB_NAME.'.'.$table) );
 		$this->assertEquals( array(3 => array('id' => 3), 2 => array('id' => 2), 1 => array('id' => 1)), self::db()->get_all('SELECT * FROM '.self::$DB_NAME.'.'.$table.' ORDER BY id DESC') );
 		$this->assertEmpty( self::db()->get('SELECT * FROM '.self::$DB_NAME.'.'.$table.' WHERE id > 9999') );
 		$this->assertEmpty( self::db()->get_all('SELECT * FROM '.self::$DB_NAME.'.'.$table.' WHERE id > 9999') );
-// TODO: unbuffered_query
-// TODO: num_rows
-// TODO: query_num_rows
-// TODO: affected_rows
-// TODO: insert_id
-// TODO: fetch_row
-// TODO: fetch_object
-// TODO: real_escape_string and all its aliases: escape, escape_string, es
-// TODO: esf (escape with filter)
-// TODO: _mysql_escape_mimic
-// TODO: free_result
-// TODO: error
+
+		$this->assertEquals( 3, self::db()->num_rows(self::db()->query('SELECT * FROM '.self::$DB_NAME.'.'.$table)) );
+		$this->assertEquals( 3, self::db()->query_num_rows('SELECT * FROM '.self::$DB_NAME.'.'.$table) );
+
+		$q = self::db()->query('SELECT * FROM '.self::$DB_NAME.'.'.$table);
+		$this->assertEquals( 3, self::db()->num_rows($q) );
+		$this->assertEquals( array('id' => 1), self::db()->fetch_assoc($q) );
+		$this->assertTrue( self::db()->free_result($q) );
+
+		$this->assertEquals( array('message' => '', 'code' => 0), self::db()->error() );
+
+		$this->assertEquals( array(1), self::db()->fetch_row(self::db()->query('SELECT * FROM '.self::$DB_NAME.'.'.$table)) );
+		$obj = new stdClass();
+		$obj->id = 1;
+		$this->assertEquals( $obj, self::db()->fetch_object(self::db()->query('SELECT * FROM '.self::$DB_NAME.'.'.$table)) );
 	}
 	public function test_escape_key() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$this->assertEquals( '`mykey`', self::db()->escape_key('mykey') );
 	}
 	public function test_escape_val() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$this->assertEquals( '\'myval\'', self::db()->escape_val('myval') );
 	}
 	public function test_real_name() {
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_fix_table_name() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_escape_with_filter() {
+// TODO: esf (escape with filter)
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_real_escape_string() {
+// TODO: real_escape_string and all its aliases: escape, escape_string, es
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_mysql_escape_mimic() {
+// TODO: _mysql_escape_mimic
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_multi_query() {
