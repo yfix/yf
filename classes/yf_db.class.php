@@ -1025,14 +1025,6 @@ class yf_db {
 	}
 
 	/**
-	* Real escape string with _filter_text (quick alias)
-	*/
-	function esf($string, $length = 0) {
-		$string = _filter_text($string, $length);
-		return $this->real_escape_string($string);
-	}
-
-	/**
 	* Begin a transaction, or if a transaction has already started, continue it
 	*/
 	function begin() {
