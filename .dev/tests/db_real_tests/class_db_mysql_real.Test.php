@@ -38,9 +38,6 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 			return ;
     	}
 	}
-	private static function db() {
-		return self::$db;
-	}
 	public function _connect() {
 		self::$DB_NAME = DB_NAME;
 		$db_class = load_db_class();
@@ -62,6 +59,9 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		));
 		return !empty($res) ? true : false;
 	}
+	private static function db() {
+		return self::$db;
+	}
 	public function test_connected() {
 		$this->assertNotEmpty( self::$db );
 		$this->assertTrue( is_object(self::$db) );
@@ -78,10 +78,13 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public function test_disconnect_connect() {
 		$this->assertTrue( self::db()->close() );
 		$this->assertFalse( self::$db->_connected );
-		$this->assertFalse( is_resource(self::$db->db->db_connect_id) || is_object(self::$db->db->db_connect_id));
+		$this->assertFalse( self::$db->_tried_to_connect );
+		$this->assertNull( self::$db->db );
 		$this->assertTrue( self::_connect() );
 		$this->assertTrue( self::$db->_connected );
-		$this->assertTrue( is_resource(self::$db->db->db_connect_id) || is_object(self::$db->db->db_connect_id));
+		$this->assertTrue( self::$db->_tried_to_connect );
+		$this->assertTrue( is_object(self::$db->db) );
+		$this->assertTrue( !empty(self::$db->db->db_connect_id) );
 	}
 	public function test_basic_queries_and_fetching() {
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
