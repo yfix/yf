@@ -41,6 +41,9 @@ class class_db_query_builder_mysql_real_test extends PHPUnit_Framework_TestCase 
 	private static function db() {
 		return self::$db;
 	}
+	private function qb() {
+		return self::$db->query_builder();
+	}
 	public function _connect() {
 		self::$DB_NAME = DB_NAME;
 		$db_class = load_db_class();
