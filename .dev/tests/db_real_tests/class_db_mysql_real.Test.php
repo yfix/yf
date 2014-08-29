@@ -160,50 +160,96 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $table_sys, self::db()->_fix_table_name($table) );
 		$this->assertEquals( $table_sys, self::db()->_fix_table_name('dbt_'.$table) );
 	}
-	public function test_escape_with_filter() {
-// TODO: esf (escape with filter)
-#		$this->assertEquals( $expected, self::db()-> );
-	}
 	public function test_real_escape_string() {
-// TODO: real_escape_string and all its aliases: escape, escape_string, es
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_mysql_escape_mimic() {
-// TODO: _mysql_escape_mimic
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_multi_query() {
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_prepare_and_exec() {
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_get_cached() {
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_get_all_cached() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$input = 'He`llo\'_" wor`ld(){}*&^%#';
+		$expected = 'He`llo\\\'_\" wor`ld(){}*&^%#';
+		$this->assertSame( $expected, self::db()->real_escape_string($input) );
+		$this->assertSame( $expected, self::db()->escape_string($input) );
+		$this->assertSame( $expected, self::db()->escape($input) );
+		$this->assertSame( $expected, self::db()->es($input) );
+		$this->assertSame( $expected, self::db()->_mysql_escape_mimic($input) );
 	}
 	public function test_get_one() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$table = self::db()->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertTrue( self::db()->query('INSERT INTO '.self::$DB_NAME.'.'.$table.' VALUES (1),(2),(3)') );
+		$this->assertEquals( 1, self::db()->get_one('SELECT id FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertEquals( 1, self::db()->get_one('SELECT id FROM '.self::$DB_NAME.'.'.$table.' LIMIT 1') );
+		$this->assertEquals( 3, self::db()->get_one('SELECT id FROM '.self::$DB_NAME.'.'.$table.' ORDER BY id DESC') );
 	}
 	public function test_get_2d() {
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_get_deep_array() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$table = self::db()->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertTrue( self::db()->query('INSERT INTO '.self::$DB_NAME.'.'.$table.' VALUES (1,11),(2,22),(3,33)') );
+		$this->assertEquals( array(1 => '11', 2 => '22', '3' => 33), self::db()->get_2d('SELECT id, id2 FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertEquals( array(11 => '1', 22 => '2', '33' => 3), self::db()->get_2d('SELECT id2, id FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertEquals( array('33' => 3, 22 => '2', 11 => '1'), self::db()->get_2d('SELECT id2, id FROM '.self::$DB_NAME.'.'.$table.' ORDER BY id DESC') );
 	}
 	public function test_insert() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$table = self::db()->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertEmpty( self::db()->query_num_rows('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
+		$this->assertTrue( self::db()->insert($table, $data) );
+		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+
+		$this->assertTrue( self::db()->query('TRUNCATE TABLE '.self::$DB_NAME.'.'.$table) );
+		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$data = array(
+			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
+			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
+		);
+		$this->assertTrue( self::db()->insert($table, $data) );
+		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_insert_ignore() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$table = self::db()->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertTrue( self::db()->insert($table, array('id' => 1, 'id2' => 11, 'id3' => 111)) );
+		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
+		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::db()->insert_ignore($table, $data) );
+		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_insert_on_duplicate_key_update() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$table = self::db()->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertTrue( self::db()->insert($table, array('id' => 1, 'id2' => 11, 'id3' => 111)) );
+		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
+		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertTrue( self::db()->insert_on_duplicate_key_update($table, $data) );
+		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$new_data = array('id' => 1, 'id2' => 22, 'id3' => 333);
+		$this->assertTrue( self::db()->insert_on_duplicate_key_update($table, $new_data) );
+		$this->assertEquals( $new_data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_replace() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$table = self::db()->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertEmpty( self::db()->query_num_rows('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
+		$this->assertTrue( self::db()->replace($table, $data) );
+		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$data = array('id' => 1, 'id2' => 22, 'id3' => 333);
+		$this->assertTrue( self::db()->replace($table, $data) );
+		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+
+		$this->assertTrue( self::db()->query('TRUNCATE TABLE '.self::$DB_NAME.'.'.$table) );
+		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$data = array(
+			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
+			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
+		);
+		$this->assertTrue( self::db()->replace($table, $data) );
+		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$data = array(
+			1 => array('id' => 1, 'id2' => 115, 'id3' => 1115),
+			2 => array('id' => 2, 'id2' => 225, 'id3' => 2225),
+		);
+		$this->assertTrue( self::db()->replace($table, $data) );
+		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_update() {
 #		$this->assertEquals( $expected, self::db()-> );
@@ -267,6 +313,30 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_count() {
 #		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_multi_query() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_prepare_and_exec() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_get_cached() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_get_all_cached() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_get_deep_array() {
+#		$table = self::db()->DB_PREFIX. __FUNCTION__;
+#		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+#		$this->assertTrue( self::db()->query('INSERT INTO '.self::$DB_NAME.'.'.$table.' VALUES (1,11,111),(2,22,222),(3,33,333)') );
+#		$expected = array();
+#		$expected['1']['11']['111'] = array('id' => '1', 'id2' => '11', 'id3' => '111');
+#		$expected['2']['22']['111'] = array('id' => '2', 'id2' => '22', 'id3' => '222');
+#		$expected['3']['33']['111'] = array('id' => '3', 'id2' => '33', 'id3' => '333');
+#		$this->assertEquals( $expected, self::db()->get_deep_array('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table, $levels = 3) );
+##		$this->assertTrue( self::db()->query('TRUNCATE TABLE '.self::$DB_NAME.'.'.$table) );
+##		$this->assertTrue( self::db()->query('INSERT INTO '.self::$DB_NAME.'.'.$table.' VALUES (1,11,111),(1,11,222),(1,11,333)') );
 	}
 	public function test_transactions() {
 // TODO: begin
