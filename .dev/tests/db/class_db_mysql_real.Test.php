@@ -432,14 +432,14 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
 		);
-		$this->assertTrue( self::db()->replace($table, $data) );
-		$this->assertEquals( $new_data, self::db()->from($table)->get_all() );
+		$this->assertTrue( self::db()->insert($table, $data) );
+		$this->assertEquals( $data, self::db()->from($table)->get_all() );
 		$this->assertTrue( self::db()->delete($table, 1));
 		$new_data = array(2 => $data[2]);
 		$this->assertEquals( $new_data, self::db()->from($table)->get_all() );
 		$this->assertTrue( self::db()->replace($table, $data) );
 		$new_data = array(1 => $data[1]);
-		$this->assertTrue( self::db()->delete($table, 'id=1'));
+		$this->assertTrue( self::db()->delete($table, 'id=2'));
 		$this->assertEquals( $new_data, self::db()->from($table)->get_all() );
 	}
 	public function test_model() {
