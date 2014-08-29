@@ -74,7 +74,6 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public function test_query_and_fetch() {
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10))') );
-		$this->assertTrue( self::db()->query('INSERT INTO '.self::$DB_NAME.'.'.$table.' VALUES (1),(2),(3)') );
 		$expected = array(
 			'Table' => 't_test_query_and_fetch',
 			'Create Table' => 'CREATE TABLE `t_test_query_and_fetch` ('. PHP_EOL
@@ -84,5 +83,8 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->query('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table)) );
 		$this->assertEquals( $expected, self::db()->query_fetch('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table) );
 		$this->assertEquals( $expected, self::db()->get('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table) );
+
+		$this->assertTrue( self::db()->query('INSERT INTO '.self::$DB_NAME.'.'.$table.' VALUES (1),(2),(3)') );
+		$this->assertEquals( $expected, self::db()->get('SELECT * FROM '.self::$DB_NAME.'.'.$table) );
 	}
 }
