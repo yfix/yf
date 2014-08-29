@@ -71,20 +71,24 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		list(,$driver) = explode('_driver_', get_class(self::db()->db));
 		$this->assertEquals( self::$DB_DRIVER, $driver );
 	}
-	public function test_query_and_fetch() {
+	public function test_basic() {
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10))') );
+		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$expected = array(
-			'Table' => 't_test_query_and_fetch',
-			'Create Table' => 'CREATE TABLE `t_test_query_and_fetch` ('. PHP_EOL
+			'Table' => $table,
+			'Create Table' => 'CREATE TABLE `'.$table.'` ('. PHP_EOL
 				. '  `id` int(10) DEFAULT NULL'. PHP_EOL
-				. ') ENGINE=InnoDB DEFAULT CHARSET=latin1',
+				. ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
 		);
 		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->query('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table)) );
 		$this->assertEquals( $expected, self::db()->query_fetch('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table) );
 		$this->assertEquals( $expected, self::db()->get('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table) );
 
 		$this->assertTrue( self::db()->query('INSERT INTO '.self::$DB_NAME.'.'.$table.' VALUES (1),(2),(3)') );
-		$this->assertEquals( $expected, self::db()->get('SELECT * FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertEquals( array('id' => 1), self::db()->get('SELECT * FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertEquals( array(1 => array('id' => 1), 2 => array('id' => 2), 3 => array('id' => 3)), self::db()->get_all('SELECT * FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertEquals( array(3 => array('id' => 3), 2 => array('id' => 2), 1 => array('id' => 1)), self::db()->get_all('SELECT * FROM '.self::$DB_NAME.'.'.$table.' ORDER BY id DESC') );
+		$this->assertEmpty( self::db()->get('SELECT * FROM '.self::$DB_NAME.'.'.$table.' WHERE id > 9999') );
+		$this->assertEmpty( self::db()->get_all('SELECT * FROM '.self::$DB_NAME.'.'.$table.' WHERE id > 9999') );
 	}
 }
