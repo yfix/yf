@@ -169,7 +169,7 @@ if ($mysqli->multi_query($query)) {
 
 	/**
 	*/
-	function num_rows($query_id = 0) {
+	function num_rows($query_id) {
 		if ($query_id) {
 			return mysqli_num_rows($query_id);
 		}
@@ -190,7 +190,7 @@ if ($mysqli->multi_query($query)) {
 
 	/**
 	*/
-	function fetch_row($query_id = 0) {
+	function fetch_row($query_id) {
 		if ($query_id) {
 			return mysqli_fetch_row($query_id);
 		}
@@ -199,7 +199,7 @@ if ($mysqli->multi_query($query)) {
 
 	/**
 	*/
-	function fetch_assoc($query_id = 0) {
+	function fetch_assoc($query_id) {
 		if ($query_id) {
 			return mysqli_fetch_assoc($query_id);
 		}
@@ -208,7 +208,7 @@ if ($mysqli->multi_query($query)) {
 
 	/**
 	*/
-	function fetch_array($query_id = 0) {
+	function fetch_array($query_id) {
 		if ($query_id) {
 			return mysqli_fetch_array($query_id);
 		}
@@ -217,7 +217,7 @@ if ($mysqli->multi_query($query)) {
 
 	/**
 	*/
-	function fetch_object($query_id = 0) {
+	function fetch_object($query_id) {
 		if ($query_id) {
 			return mysqli_fetch_object($query_id);
 		}
