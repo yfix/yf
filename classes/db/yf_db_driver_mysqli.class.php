@@ -362,7 +362,7 @@ if ($mysqli->multi_query($query)) {
 	function limit($count, $offset) {
 		if ($count > 0) {
 			$offset = ($offset > 0) ? $offset : 0;
-			$sql .= 'LIMIT '.$offset.', '.$count;
+			$sql .= 'LIMIT '.($offset ? $offset.', ' : ''). $count;
 		}
 		return $sql;
 	}
