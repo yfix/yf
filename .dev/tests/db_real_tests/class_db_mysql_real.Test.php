@@ -71,7 +71,13 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		list(,$driver) = explode('_driver_', get_class(self::db()->db));
 		$this->assertEquals( self::$DB_DRIVER, $driver );
 	}
-	public function test_basic() {
+	public function test_connect() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_close() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_basic_queries_and_fetching() {
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$expected = array(
@@ -90,5 +96,131 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( array(3 => array('id' => 3), 2 => array('id' => 2), 1 => array('id' => 1)), self::db()->get_all('SELECT * FROM '.self::$DB_NAME.'.'.$table.' ORDER BY id DESC') );
 		$this->assertEmpty( self::db()->get('SELECT * FROM '.self::$DB_NAME.'.'.$table.' WHERE id > 9999') );
 		$this->assertEmpty( self::db()->get_all('SELECT * FROM '.self::$DB_NAME.'.'.$table.' WHERE id > 9999') );
+// TODO: unbuffered_query
+// TODO: num_rows
+// TODO: query_num_rows
+// TODO: affected_rows
+// TODO: insert_id
+// TODO: fetch_row
+// TODO: fetch_object
+// TODO: real_escape_string and all its aliases: escape, escape_string, es
+// TODO: esf (escape with filter)
+// TODO: _mysql_escape_mimic
+// TODO: free_result
+// TODO: error
+	}
+	public function test_escape_key() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_escape_val() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_real_name() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_fix_table_name() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_multi_query() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_prepare_and_exec() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_get_cached() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_get_all_cached() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_get_one() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_get_2d() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_get_deep_array() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_insert() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_insert_ignore() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_insert_on_duplicate_key_update() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_replace() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_update() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_update_batch() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_insert_safe() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_replace_safe() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_update_safe() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_update_batch_safe() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_meta_columns() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_meta_tables() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_get_server_version() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_get_host_info() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_shutdown_queries() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_repair_table() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_split_sql() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_utils() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_query_builder() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_model() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_select() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_from() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_delete() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_limit() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_count() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_transactions() {
+// TODO: begin
+// TODO: commit
+// TODO: rollback
+#		$this->assertEquals( $expected, self::db()-> );
 	}
 }
