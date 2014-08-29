@@ -132,10 +132,33 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( '\'myval\'', self::db()->escape_val('myval') );
 	}
 	public function test_real_name() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$table = self::db()->DB_PREFIX. __FUNCTION__;
+		$table_wo_prefix = 'tbl_'.__FUNCTION__;
+		$prefixed_table = 'prfx_'.$table;
+		$this->assertEquals( $table, self::db()->_real_name($table) );
+		self::db()->_found_tables = array($table => $prefixed_table);
+		$this->assertEquals( array($table => $prefixed_table), self::db()->_found_tables );
+		$this->assertEquals( $prefixed_table, self::db()->_real_name($table) );
+		$table_wo_prefix = 'tbl_'.__FUNCTION__;
+		$this->assertEquals( self::db()->DB_PREFIX.$table_wo_prefix, self::db()->_real_name($table_wo_prefix) );
+		$this->assertEquals( self::db()->DB_PREFIX.$table_wo_prefix, self::db()->_real_name(self::db()->DB_PREFIX.$table_wo_prefix) );
 	}
 	public function test_fix_table_name() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$table_wo_prefix = 'tbl_'.__FUNCTION__;
+		$table_sys = self::db()->DB_PREFIX. 'sys_'. $table_wo_prefix;
+		$table = self::db()->DB_PREFIX. $table_wo_prefix;
+		$this->assertEquals( $table, self::db()->_fix_table_name($table) );
+		$this->assertEquals( $table, self::db()->_fix_table_name('dbt_'.$table) );
+		$this->assertEquals( $table, self::db()->_fix_table_name($table_wo_prefix) );
+		$this->assertEquals( $table, self::db()->_fix_table_name('dbt_'.$table_wo_prefix) );
+		self::db()->_need_sys_prefix = array($table_wo_prefix);
+		$this->assertEquals( array($table_wo_prefix), self::db()->_need_sys_prefix );
+		$this->assertEquals( $table_sys, self::db()->_fix_table_name($table_wo_prefix) );
+		$this->assertEquals( $table_sys, self::db()->_fix_table_name('dbt_'.$table_wo_prefix) );
+		$this->assertEquals( $table_sys, self::db()->_fix_table_name($table_sys) );
+		$this->assertEquals( $table_sys, self::db()->_fix_table_name('dbt_'.$table_sys) );
+		$this->assertEquals( $table_sys, self::db()->_fix_table_name($table) );
+		$this->assertEquals( $table_sys, self::db()->_fix_table_name('dbt_'.$table) );
 	}
 	public function test_escape_with_filter() {
 // TODO: esf (escape with filter)
