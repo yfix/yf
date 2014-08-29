@@ -394,6 +394,12 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertNotEmpty( self::db()->update_batch_safe($table, $data_wrong) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
+	public function test_delete() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
+	public function test_limit() {
+#		$this->assertEquals( $expected, self::db()-> );
+	}
 	public function test_split_sql() {
 		$expected = array('SELECT 1', 'SELECT 2', 'SELECT 3');
 		$this->assertEquals( $expected, self::db()->split_sql('SELECT 1; SELECT 2; SELECT 3') );
@@ -401,13 +407,12 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expected, self::db()->split_sql(';;SELECT 1;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 2;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 3;;;') );
 	}
 	public function test_utils() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$this->assertTrue( is_object(self::db()->utils()) );
+		$this->assertTrue( is_object(self::db()->utils()->db) );
 	}
 	public function test_query_builder() {
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_model() {
-#		$this->assertEquals( $expected, self::db()-> );
+		$this->assertTrue( is_object(self::db()->query_builder()) );
+		$this->assertTrue( is_object(self::db()->query_builder()->db) );
 	}
 	public function test_select() {
 #		$this->assertEquals( $expected, self::db()-> );
@@ -415,11 +420,8 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 	public function test_from() {
 #		$this->assertEquals( $expected, self::db()-> );
 	}
-	public function test_delete() {
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_limit() {
-#		$this->assertEquals( $expected, self::db()-> );
+	public function test_model() {
+#		$this->assertTrue( is_object(self::db()->model()) );
 	}
 	public function test_count() {
 #		$this->assertEquals( $expected, self::db()-> );

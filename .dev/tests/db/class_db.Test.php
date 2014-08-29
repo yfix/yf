@@ -3,8 +3,6 @@
 require __DIR__.'/yf_unit_tests_setup.php';
 require __DIR__.'/db_setup.php';
 
-// TODO: automatically create and populate database yf_unit_tests with sample data to test db and related methods
-
 /**
  * @requires extension mysql
  */
