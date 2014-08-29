@@ -455,7 +455,7 @@ class yf_db {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
-		$this->query($sql);
+		return $this->query($sql);
 	}
 
 	/**
