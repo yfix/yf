@@ -802,7 +802,6 @@ class yf_db {
 				@$a[ $row[$k[0]] ][ $row[$k[1]] ][ $row[$k[2]] ][ $row[$k[3]] ] = $row;
 			}
 		} while ($row = $this->fetch_assoc($result));
-var_export($a);
 		return $a;
 	}
 
