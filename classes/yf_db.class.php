@@ -107,6 +107,8 @@ class yf_db {
 	public $QUERY_REVISIONS			= false;
 	/** @var bool update_safe, insert_safe, update_batch_safe: use additional checking for exising table fields */
 	public $FIX_DATA_SAFE			= true;
+	/** @var bool Trigger to act silently or not in *_safe methods */
+	public $FIX_DATA_SAFE_SILENT	= false;
 	/** @var array Filled automatically from generated file */
 	public $_need_sys_prefix		= array();
 
@@ -481,15 +483,15 @@ class yf_db {
 	/**
 	* Alias of insert() with auto-escaping of data
 	*/
-	function insert_safe($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false) {
-		$data = $this->_fix_data_safe($table, $data);
-		return $this->insert($table, $this->es($data), $only_sql, $replace, $ignore, $on_duplicate_key_update);
+	function insert_safe($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false, $extra = array()) {
+		$data = $this->_fix_data_safe($table, $data, $extra);
+		return $this->insert($table, $this->es($data), $only_sql, $replace, $ignore, $on_duplicate_key_update, $extra);
 	}
 
 	/**
 	* Insert array of values into table
 	*/
-	function insert($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false) {
+	function insert($table, $data, $only_sql = false, $replace = false, $ignore = false, $on_duplicate_key_update = false, $extra = array()) {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
 		}
@@ -563,22 +565,22 @@ class yf_db {
 	/**
 	* Alias, forced to add INSERT IGNORE
 	*/
-	function insert_ignore($table, $data, $only_sql = false, $replace = false) {
-		return $this->insert($table, $data, $only_sql, $replace, $ignore = true);
+	function insert_ignore($table, $data, $only_sql = false, $replace = false, $extra = array()) {
+		return $this->insert($table, $data, $only_sql, $replace, $ignore = true, $on_duplicate_key_update = false, $extra);
 	}
 
 	/**
 	* Alias, forced to add INSERT ... ON DUPLICATE KEY UPDATE
 	*/
-	function insert_on_duplicate_key_update($table, $data, $only_sql = false, $replace = false) {
-		return $this->insert($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update = true);
+	function insert_on_duplicate_key_update($table, $data, $only_sql = false, $replace = false, $extra = array()) {
+		return $this->insert($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update = true, $extra);
 	}
 
 	/**
 	* Alias of replace() with data auto-escape
 	*/
-	function replace_safe($table, $data, $only_sql = false) {
-		return $this->insert_safe($table, $data, $only_sql, true);
+	function replace_safe($table, $data, $only_sql = false, $extra = array()) {
+		return $this->insert_safe($table, $data, $only_sql, $replace = true, $ignore = false, $on_duplicate_key_update = false, $extra);
 	}
 
 	/**
@@ -602,7 +604,7 @@ class yf_db {
 
 	/**
 	*/
-	function _fix_data_safe($table, $data = array()) {
+	function _fix_data_safe($table, $data = array(), $extra = array()) {
 		if (!$this->FIX_DATA_SAFE) {
 			return $data;
 		}
@@ -610,7 +612,9 @@ class yf_db {
 		$cols = $this->get_table_columns_cached($table);
 		if (!$cols) {
 			$msg = __CLASS__.'->'.__FUNCTION__.': columns for table '.$table.' is empty, truncating data array';
-			trigger_error($msg, E_USER_WARNING);
+			if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
+				trigger_error($msg, E_USER_WARNING);
+			}
 			return false;
 		}
 		$is_data_3d = false;
@@ -639,7 +643,9 @@ class yf_db {
 		}
 		if ($not_existing_cols) {
 			$msg = __CLASS__.'->'.__FUNCTION__.': not existing columns for table '.$table.': '.implode(', ', $not_existing_cols);
-			trigger_error($msg, E_USER_WARNING);
+			if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
+				trigger_error($msg, E_USER_WARNING);
+			}
 		}
 		return $data;
 	}
@@ -647,15 +653,15 @@ class yf_db {
 	/**
 	* Alias of update() with data auto-escape
 	*/
-	function update_safe($table, $data, $where, $only_sql = false) {
-		$data = $this->_fix_data_safe($table, $data);
+	function update_safe($table, $data, $where, $only_sql = false, $extra = array()) {
+		$data = $this->_fix_data_safe($table, $data, $extra);
 		return $this->update($table, $this->es($data), $where, $only_sql);
 	}
 
 	/**
 	* Update table with given values
 	*/
-	function update($table, $data, $where, $only_sql = false) {
+	function update($table, $data, $where, $only_sql = false, $extra = array()) {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
 		}
