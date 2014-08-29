@@ -94,7 +94,6 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	}
 
 	/**
-	* Close connection
 	*/
 	function close() {
 		return mysqli_close($this->db_connect_id);
@@ -156,111 +155,94 @@ if ($mysqli->multi_query($query)) {
 	* Multi query method (specific for this driver)
 	*/
 	function _multi_query($query = '') {
-		if ($query == '') {
+		if (!$query) {
 			return false;
 		}
 		return mysqli_multi_query($this->db_connect_id, $query);
 	}
 
 	/**
-	* Unbuffered query method
 	*/
 	function unbuffered_query($query = '') {
 		mysqli_unbuffered_query($this->db_connect_id, $query);
 	}
 
 	/**
-	* Other query methods
 	*/
 	function num_rows($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
+		if ($query_id) {
+			return mysqli_num_rows($query_id);
 		}
-		if (!$query_id) {
-			return false;
-		}
-		return mysqli_num_rows($query_id);
+		return false;
 	}
 
 	/**
-	* Affected Rows
 	*/
 	function affected_rows() {
 		return $this->db_connect_id ? mysqli_affected_rows($this->db_connect_id) : false;
 	}
 
 	/**
-	* Insert Id
 	*/
 	function insert_id() {
 		return $this->db_connect_id ? mysqli_insert_id($this->db_connect_id) : false;
 	}
 
 	/**
-	* Fetch Row
 	*/
 	function fetch_row($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
+		if ($query_id) {
+			return mysqli_fetch_row($query_id);
 		}
-		if (!$query_id) {
-			return false;
-		}
-		return mysqli_fetch_row($query_id);
+		return false;
 	}
 
 	/**
-	* Fetch Assoc
 	*/
 	function fetch_assoc($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
+		if ($query_id) {
+			return mysqli_fetch_assoc($query_id);
 		}
-		if (!$query_id) {
-			return false;
-		}
-		return mysqli_fetch_assoc($query_id);
+		return false;
 	}
 
 	/**
-	* Fetch Array
 	*/
 	function fetch_array($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
+		if ($query_id) {
+			return mysqli_fetch_array($query_id);
 		}
-		if (!$query_id) {
-			return false;
-		}
-		return mysqli_fetch_array($query_id);
+		return false;
 	}
 
 	/**
-	* Real Escape String
+	*/
+	function fetch_object($query_id = 0) {
+		if ($query_id) {
+			return mysqli_fetch_object($query_id);
+		}
+		return false;
+	}
+
+	/**
 	*/
 	function real_escape_string($string) {
 		if (!$this->db_connect_id) {
-			return addcslashes($string);
+			return addslashes($string);
 		}
 		return mysqli_real_escape_string($this->db_connect_id, $string);
 	}
 
 	/**
-	* Free Result
 	*/
 	function free_result($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
+		if ($query_id) {
+			return mysqli_free_result($query_id);
 		}
-		if (!$query_id) {
-			return false;
-		}
-		mysqli_free_result($query_id);
 		return true;
 	}
 
 	/**
-	* Error
 	*/
 	function error() {
 		if ($this->db_connect_id) {
@@ -278,7 +260,6 @@ if ($mysqli->multi_query($query)) {
 	}
 
 	/**
-	* Meta Columns
 	*/
 	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = false) {
 		$retarr = array();
@@ -339,7 +320,6 @@ if ($mysqli->multi_query($query)) {
 	}
 
 	/**
-	* Meta Tables
 	*/
 	function meta_tables($DB_PREFIX = '') {
 		$Q = $this->query($this->META_TABLES_SQL);
