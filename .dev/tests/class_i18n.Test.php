@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__.'/yf_unit_tests_setup.php';
+require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_i18n_test extends PHPUnit_Framework_TestCase {
 	public static $no_cache = null;

@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__.'/yf_unit_tests_setup.php';
+require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_form_validate_test extends PHPUnit_Framework_TestCase {
 	function test_complex() {

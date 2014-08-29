@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__.'/yf_unit_tests_setup.php';
+require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_main_test extends PHPUnit_Framework_TestCase {
 	public $test_defaults = array(

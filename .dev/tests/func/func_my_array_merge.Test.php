@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__.'/yf_unit_tests_setup.php';
+require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
 class func_my_array_merge_test extends PHPUnit_Framework_TestCase {
 	public function test_simple() {

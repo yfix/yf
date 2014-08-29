@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__.'/yf_unit_tests_setup.php';
+require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
 class func_common_rss_page extends PHPUnit_Framework_TestCase {
 	public static function setUpBeforeClass() {

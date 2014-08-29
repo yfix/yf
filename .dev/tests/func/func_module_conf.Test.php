@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__.'/yf_unit_tests_setup.php';
+require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
 class func_module_conf_test extends PHPUnit_Framework_TestCase {
 	public static $_bak = array();

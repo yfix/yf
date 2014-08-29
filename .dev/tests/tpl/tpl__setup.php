@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__.'/yf_unit_tests_setup.php';
+require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
 abstract class tpl_abstract extends PHPUnit_Framework_TestCase {
 	public static $_bak = array();
