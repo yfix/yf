@@ -1566,8 +1566,15 @@ class yf_db {
 
 	/**
 	*/
-	function split_sql(&$ret, $sql) {
-		return $this->utils()->split_sql($ret, $sql);
+	function split_sql($sql) {
+		$this->utils()->split_sql($ret, $sql);
+		$out = array();
+		foreach ((array)$ret as $v) {
+			if (!$v['empty'] && strlen($v['query'])) {
+				$out[] = $v['query'];
+			}
+		}
+		return $out;
 	}
 
 	/**
