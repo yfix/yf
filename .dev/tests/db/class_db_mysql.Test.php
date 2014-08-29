@@ -6,7 +6,7 @@ require_once dirname(__DIR__).'/db_setup.php';
 /**
  * @requires extension mysql
  */
-class class_db_test extends PHPUnit_Framework_TestCase {
+class class_db_mysql_test extends PHPUnit_Framework_TestCase {
 	public $data_safe = array(
 		'user_id'	=> 1,
 		'date'		=> '1234567890',

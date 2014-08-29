@@ -394,17 +394,17 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertNotEmpty( self::db()->update_batch_safe($table, $data_wrong) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
-	public function test_delete() {
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_limit() {
-#		$this->assertEquals( $expected, self::db()-> );
-	}
 	public function test_split_sql() {
 		$expected = array('SELECT 1', 'SELECT 2', 'SELECT 3');
 		$this->assertEquals( $expected, self::db()->split_sql('SELECT 1; SELECT 2; SELECT 3') );
 		$this->assertEquals( $expected, self::db()->split_sql('SELECT 1;'.PHP_EOL.' SELECT 2;'.PHP_EOL.' SELECT 3') );
 		$this->assertEquals( $expected, self::db()->split_sql(';;SELECT 1;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 2;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 3;;;') );
+	}
+	public function test_limit() {
+		$this->assertEquals( 'LIMIT 1', self::db()->limit(1) );
+		$this->assertEquals( 'LIMIT 1, 1', self::db()->limit(1,1) );
+		$this->assertEquals( 'LIMIT 2, 1', self::db()->limit(1,2) );
+		$this->assertEquals( 'LIMIT 10, 5', self::db()->limit(5,10) );
 	}
 	public function test_utils() {
 		$this->assertTrue( is_object(self::db()->utils()) );
@@ -414,11 +414,33 @@ class class_db_mysql_real_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( is_object(self::db()->query_builder()) );
 		$this->assertTrue( is_object(self::db()->query_builder()->db) );
 	}
-	public function test_select() {
-#		$this->assertEquals( $expected, self::db()-> );
+	public function test_from_and_select() {
+		$table = self::db()->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
+		$this->assertTrue( self::db()->insert($table, $data) );
+		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertEquals( $data, self::db()->get('SELECT * FROM '.self::$DB_NAME.'.'.$table) );
+		$this->assertEquals( $data, self::db()->from($table)->get() );
+		$this->assertEquals( $data, self::db()->select()->from($table)->get() );
+		$this->assertEquals( $data, self::db()->select('*')->from($table)->get() );
 	}
-	public function test_from() {
-#		$this->assertEquals( $expected, self::db()-> );
+	public function test_delete() {
+		$table = self::db()->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$data = array(
+			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
+			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
+		);
+		$this->assertTrue( self::db()->replace($table, $data) );
+		$this->assertEquals( $new_data, self::db()->from($table)->get_all() );
+		$this->assertTrue( self::db()->delete($table, 1));
+		$new_data = array(2 => $data[2]);
+		$this->assertEquals( $new_data, self::db()->from($table)->get_all() );
+		$this->assertTrue( self::db()->replace($table, $data) );
+		$new_data = array(1 => $data[1]);
+		$this->assertTrue( self::db()->delete($table, 'id=1'));
+		$this->assertEquals( $new_data, self::db()->from($table)->get_all() );
 	}
 	public function test_model() {
 #		$this->assertTrue( is_object(self::db()->model()) );
