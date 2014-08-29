@@ -139,7 +139,7 @@ class yf_manage_shop_orders{
 								db()->UPDATE(db('shop_order_items'), array( 'unit' => $unit ), ' order_id='.$order_id.' AND product_id='.$product_id.' AND param_id='.$param_id);
 								$products = db_get_all( 'SELECT * FROM ' . db('shop_products') . ' WHERE id = ' . $product_id );
 								$product = $products[ $product_id ];
-								list( $price ) = $_class_price->markup_down( $product[ 'price' ], $product_id, $product[ 'type' ] );
+								list( $price ) = $_class_price->markup_down( $product[ 'price' ], $product_id );
 								$item = array(
 									'price' => $price,
 									'unit'  => $unit,
@@ -260,7 +260,7 @@ class yf_manage_shop_orders{
 			$unit_name = 'шт.';
 			if( $_units[ $product_id ] ) {
 				$units = $_units[ $product_id ];
-				$unit_name = $units[ $unit ][ 'title' ];
+				$units[ $unit ] && $unit_name = $units[ $unit ][ 'title' ];
 			}
 			$products[$_info['product_id'].'_'.$_info['param_id']] = array(
 				'product_id'   => intval($_info['product_id']),
