@@ -1453,6 +1453,10 @@ abstract class yf_db_utils_driver {
 		list($host, $user) = explode('@', $name);
 // TODO: allow add only password in addition to host and user
 #		return $this->db->insert('mysql.user WHERE user='.$this->_escape_val($name));
+		if (!strlen($host) || !strlen($name) || !strlen($data['pswd'])) {
+			$error = 'Missing required params';
+			return false;
+		}
 		$sql = '';
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
@@ -1463,6 +1467,10 @@ abstract class yf_db_utils_driver {
 		list($host, $user) = explode('@', $name);
 // TODO: allow update only password
 #		return $this->db->update('mysql.user WHERE user='.$this->_escape_val($name));
+		if (!strlen($host) || !strlen($name) || !strlen($data['pswd'])) {
+			$error = 'Missing required params';
+			return false;
+		}
 		$sql = '';
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
@@ -1712,6 +1720,10 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function _escape_database_name($name = '') {
+		$name = trim($name);
+		if (!strlen($name)) {
+			return false;
+		}
 		return is_object($this->db) ? $this->db->escape_key($name) : '`'.addslashes($name).'`';
 	}
 
@@ -1731,13 +1743,20 @@ abstract class yf_db_utils_driver {
 		} else {
 			$table = $name;
 		}
+		if (!strlen($table)) {
+			return false;
+		}
 		$table = $this->db->_fix_table_name($table);
-		return (strlen($db) ? $this->_escape_database_name($db).'.' : ''). (is_object($table) ? $this->db->escape_key($table) : '`'.addslashes($table).'`');
+		return (strlen($db) ? $this->_escape_database_name($db).'.' : ''). (is_object($this->db) ? $this->db->escape_key($table) : '`'.addslashes($table).'`');
 	}
 
 	/**
 	*/
 	function _escape_key($key = '') {
+		$key = trim($key);
+		if (!strlen($key)) {
+			return '';
+		}
 		$out = '';
 		if ($key != '*' && false === strpos($key, '.') && false === strpos($key, '(')) {
 			$out = is_object($this->db) ? $this->db->escape_key($key) : '`'.addslashes($key).'`';
@@ -1759,6 +1778,10 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function _escape_val($val = '') {
+		$val = trim($val);
+		if (!strlen($val)) {
+			return '';
+		}
 // TODO: support for binding params (':field' => $val)
 		return is_object($this->db) ? $this->db->escape_val($val) : '\''.addslashes($val).'\'';
 	}
@@ -1766,8 +1789,16 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function _escape_fields(array $fields) {
+		if (empty($fields)) {
+			return $fields;
+		}
+		$self = __FUNCTION__;
 		foreach ((array)$fields as $k => $v) {
-			$fields[$k] = $this->_escape_key($v);
+			if (is_array($v)) {
+				$fields[$k] = $this->$self($v);
+			} else {
+				$fields[$k] = $this->_escape_key($v);
+			}
 		}
 		return $fields;
 	}
@@ -1775,6 +1806,10 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	function _es($val = '') {
+		$val = trim($val);
+		if (!strlen($val)) {
+			return '';
+		}
 // TODO: support for binding params (':field' => $val)
 		return is_object($this->db) && method_exists($this->db, '_es') ? $this->db->_es($val) : addslashes($val);
 	}
