@@ -1272,6 +1272,20 @@ class yf_db {
 	}
 
 	/**
+	* Get reconnect lock file name
+	*/
+	function _get_reconnect_lock_path($db_host = '', $db_user = '', $db_name = '', $db_port = '') {
+		$params = array(
+			'[DB_HOST]'	=> $db_host ? $db_host : $this->DB_HOST,
+			'[DB_NAME]'	=> $db_name ? $db_name : $this->DB_NAME,
+			'[DB_USER]'	=> $db_user ? $db_user : $this->DB_USER,
+			'[DB_PORT]'	=> $db_port ? $db_port : $this->DB_PORT,
+		);
+		$file_name = str_replace(array_keys($params), array_values($params), $this->RECONNECT_LOCK_FILE_NAME);
+		return INCLUDE_PATH. $file_name;
+	}
+
+	/**
 	* Get real table name from its short variant
 	*/
 	function _real_name ($name) {
@@ -1284,20 +1298,6 @@ class yf_db {
 		} else {
 			return $name;
 		}
-	}
-
-	/**
-	* Get reconnect lock file name
-	*/
-	function _get_reconnect_lock_path($db_host = '', $db_user = '', $db_name = '', $db_port = '') {
-		$params = array(
-			'[DB_HOST]'	=> $db_host ? $db_host : $this->DB_HOST,
-			'[DB_NAME]'	=> $db_name ? $db_name : $this->DB_NAME,
-			'[DB_USER]'	=> $db_user ? $db_user : $this->DB_USER,
-			'[DB_PORT]'	=> $db_port ? $db_port : $this->DB_PORT,
-		);
-		$file_name = str_replace(array_keys($params), array_values($params), $this->RECONNECT_LOCK_FILE_NAME);
-		return INCLUDE_PATH. $file_name;
 	}
 
 	/**
