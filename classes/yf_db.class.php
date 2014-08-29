@@ -700,7 +700,7 @@ class yf_db {
 		}
 		$data = null;
 		$q = $this->query($query);
-		if (is_resource( $q )) {
+		if (!empty($q)) {
 			if ($assoc) {
 				$data = @$this->db->fetch_assoc($q);
 			} else {
@@ -1073,7 +1073,7 @@ class yf_db {
 	* Free result assosiated with a given query resource
 	*/
 	function free_result($result) {
-		if (!$this->_connected && !$this->connect() && !is_resource($result)) {
+		if (!$this->_connected && !$this->connect() && empty($result)) {
 			return false;
 		}
 		return $this->db->free_result($result);
