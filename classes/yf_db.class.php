@@ -967,6 +967,16 @@ class yf_db {
 	}
 
 	/**
+	* Function return fetched object with assoc var names
+	*/
+	function fetch_object($result) {
+		if (!$this->_connected && !$this->connect()) {
+			return false;
+		}
+		return $this->db->fetch_object($result);
+	}
+
+	/**
 	* Function return number of rows in the query
 	*/
 	function num_rows($result) {
