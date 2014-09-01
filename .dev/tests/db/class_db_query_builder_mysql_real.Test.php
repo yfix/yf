@@ -72,7 +72,7 @@ class class_db_query_builder_mysql_real_test extends db_real_abstract {
 		$this->assertEquals( $data[2], self::qb()->from(self::$DB_NAME.'.'.$table)->where('id3','rlike','(222|222222)')->get() );
 		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table)->where('id3','not rlike','(222|222222)')->get() );
 
-		$this->assertFalse( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where(array('t1.id2' => '1*', 't1.id3' => '2*'))->get() );
+		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where(array('t1.id2' => '1*', 't1.id3' => '2*'))->get() );
 		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where(array('t1.id2' => '1*', 't1.id3' => '1*'))->get() );
 		$this->assertEquals( $data[2], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where(array('t1.id2' => '2*', 't1.id3' => '2*'))->get() );
 
@@ -80,7 +80,7 @@ class class_db_query_builder_mysql_real_test extends db_real_abstract {
 		$this->assertEquals( $data[2], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where('t1.id > 1')->get() );
 		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where('id = 1')->where('id2 = 11')->where('id3 = 111')->get() );
 
-		$this->assertFalse( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where('t1.id = 789')->where_or('t1.id2 = 798')->where_or('t1.id3 = 888')->get() );
+		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where('t1.id = 789')->where_or('t1.id2 = 798')->where_or('t1.id3 = 888')->get() );
 		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where('t1.id = 789')->where_or('t1.id2 = 798')->where_or('t1.id3 = 111')->get() );
 
 		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(1)->get() );
