@@ -235,6 +235,15 @@ class class_db_query_builder_mysql_real_test extends db_real_abstract {
 #		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->get_all() );
 	}
 	public function test_update() {
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$data = array(
+			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
+			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
+			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
+			'4' => array('id' => '4', 'id2' => '22', 'id3' => '333'),
+		);
+		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table, $data) );
 /*
 		$this->assertFalse( self::qb()->update(array()) );
 #		$data = array(
