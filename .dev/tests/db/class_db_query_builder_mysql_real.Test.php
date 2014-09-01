@@ -129,27 +129,46 @@ class class_db_query_builder_mysql_real_test extends db_real_abstract {
 		$this->assertEquals( $expected, self::qb()->from(self::$DB_NAME.'.'.$table2.' as t2')->right_join(self::$DB_NAME.'.'.$table1.' as t1', 't1.id = t2.id')->get_all() );
 		$this->assertEquals( $expected, self::qb()->from(self::$DB_NAME.'.'.$table2.' as t2')->inner_join(self::$DB_NAME.'.'.$table1.' as t1', 't1.id = t2.id')->get_all() );
 	}
-/*
 	public function test_group_by() {
-		$this->assertFalse( self::qb()->group_by()->sql() );
-		$this->assertFalse( self::qb()->from()->where()->group_by()->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\' GROUP BY `gid`', self::qb()->from('user')->where(array('id','=',1))->group_by('gid')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `id` = \'1\' GROUP BY `u`.`id`', self::qb()->from('user as u')->whereid(1)->group_by('u.id')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `id` = \'1\' GROUP BY `u`.`id`, `u`.`gid`', self::qb()->from('user as u')->whereid(1)->group_by('u.id', 'u.gid')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `id` = \'1\' GROUP BY `u`.`id` , `u`.`gid`', self::qb()->from('user as u')->whereid(1)->group_by('u.id')->group_by('u.gid')->sql() );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$data = array(
+			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
+			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
+			3 => array('id' => 3, 'id2' => 11, 'id3' => 222),
+			4 => array('id' => 4, 'id2' => 22, 'id3' => 333),
+		);
+		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table, $data) );
+
+		$this->assertEquals( $data, self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->group_by('id')->get_all() );
+		$this->assertEquals( $data, self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->group_by('t1.id')->get_all() );
+		$this->assertEquals( $data, self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->group_by('t1.id2', 't1.id3')->get_all() );
+		$this->assertEquals( array(1 => $data[1], 2 => $data[2]), self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->group_by('t1.id2')->get_all() );
+		$expected = array(
+			1 => array('num' => 2) + $data[1],
+			2 => array('num' => 2) + $data[2],
+		);
+		$this->assertEquals( $expected, self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->select('*','COUNT(id2) as num')->group_by('t1.id2')->get_all() );
 	}
 	public function test_having() {
-		$this->assertFalse( self::qb()->having()->sql() );
-		$this->assertFalse( self::qb()->from()->where()->group_by()->having()->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\' GROUP BY `gid` HAVING `gid` = \'4\'', 
-			self::qb()->from('user')->where(array('id','=',1))->group_by('gid')->having(array('gid','=',4))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' GROUP BY `u`.`gid` HAVING `u`.`gid` = \'4\'', 
-			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' GROUP BY `u`.`gid` HAVING `u`.`gid` = \'4\', `u`.`visits` < \'4\'', 
-			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4),array('u.visits','<',4))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' GROUP BY `u`.`gid` HAVING `u`.`gid` = \'4\' , `u`.`visits` < \'4\'', 
-			self::qb()->from('user as u')->where('u.id = 1')->group_by('u.gid')->having('u.gid = 4')->having('u.visits < 4')->sql() );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$data = array(
+			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
+			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
+			3 => array('id' => 3, 'id2' => 11, 'id3' => 222),
+			4 => array('id' => 4, 'id2' => 22, 'id3' => 333),
+		);
+		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table, $data) );
+
+		$this->assertEquals( array(1 => $data[1], 2 => $data[2]), self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->group_by('t1.id2')->get_all() );
+		$this->assertEquals( array(2 => $data[2]), self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->group_by('t1.id2')->having(array('id3','=','222'))->get_all() );
+		$this->assertEquals( array(2 => $data[2]), self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->group_by('t1.id2')->having(array('t1.id3','=','222'))->get_all() );
+		$this->assertEquals( array(2 => $data[2]), self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->group_by('t1.id2')->having('id3 = 222')->get_all() );
+		$this->assertEquals( array(2 => $data[2]), self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->group_by('t1.id2')->having('t1.id3 = 222')->get_all() );
+		$this->assertEquals( array(2 => $data[2]), self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->group_by('t1.id2')->having('t1.id3 > 111')->get_all() );
 	}
+/*
 	public function test_order_by() {
 		$this->assertFalse( self::qb()->order_by()->sql() );
 		$this->assertFalse( self::qb()->from()->where()->having()->group_by()->order_by()->sql() );
