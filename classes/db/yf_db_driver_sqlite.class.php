@@ -15,17 +15,17 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	/**
 	*/
 	function __construct(array $params) {
-		if (!function_exists('sqlite_open')) {
-			trigger_error('SQLite db driver require missing php extension sqlite', E_USER_ERROR);
+		if (!class_exists('SQLite3')) {
+			trigger_error('SQLite db driver require missing php extension sqlite3', E_USER_ERROR);
 			return false;
 		}
 		$this->params = $params;
 		$server = $this->params['host'] . (($this->params['port']) ? ':' . $this->params['port'] : '');
 
 		$error = '';
-		$this->db_connect_id = ($this->persistency) ? @sqlite_popen($server, 0666, $error) : @sqlite_open($server, 0666, $error);
+#		$this->db_connect_id = ($this->persistency) ? @sqlite_popen($server, 0666, $error) : @sqlite_open($server, 0666, $error);
 		if ($this->db_connect_id) {
-			@sqlite_query('PRAGMA short_column_names = 1', $this->db_connect_id);
+#			@sqlite_query('PRAGMA short_column_names = 1', $this->db_connect_id);
 		}
 		return ($this->db_connect_id) ? true : array('message' => $error);
 	}
@@ -40,7 +40,7 @@ class yf_db_driver_sqlite extends yf_db_driver {
 		$this->sql_add_num_queries($this->query_result);
 
 		if (!$this->query_result) {
-			if (($this->query_result = @sqlite_query($query, $this->db_connect_id)) === false) {
+#			if (($this->query_result = @sqlite_query($query, $this->db_connect_id)) === false) {
 				$this->sql_error($query);
 			} elseif (strpos($query, 'SELECT') === 0 && $this->query_result) {
 				$this->open_queries[(int) $this->query_result] = $this->query_result;
@@ -52,7 +52,7 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	/**
 	*/
 	function close() {
-		return @sqlite_close($this->db_connect_id);
+#		return @sqlite_close($this->db_connect_id);
 	}
 
 	/**
@@ -81,14 +81,14 @@ class yf_db_driver_sqlite extends yf_db_driver {
 		if (!$query_id)	{
 			$query_id = $this->query_result;
 		}
-		return ($query_id) ? @sqlite_num_rows($query_id) : false;
+#		return ($query_id) ? @sqlite_num_rows($query_id) : false;
 	}
 
 	/**
 	* Return number of affected rows
 	*/
 	function affected_rows() {
-		return ($this->db_connect_id) ? @sqlite_changes($this->db_connect_id) : false;
+#		return ($this->db_connect_id) ? @sqlite_changes($this->db_connect_id) : false;
 	}
 
 	/**
@@ -98,7 +98,7 @@ class yf_db_driver_sqlite extends yf_db_driver {
 		if (!$query_id)	{
 			$query_id = $this->query_result;
 		}
-		return ($query_id) ? @sqlite_fetch_array($query_id, SQLITE_ASSOC) : false;
+#		return ($query_id) ? @sqlite_fetch_array($query_id, SQLITE_ASSOC) : false;
 	}
 
 	/**
@@ -111,10 +111,10 @@ class yf_db_driver_sqlite extends yf_db_driver {
 		}
 		if ($query_id) {
 			if ($rownum === false) {
-				return @sqlite_column($query_id, $field);
+#				return @sqlite_column($query_id, $field);
 			} else {
 				$this->sql_rowseek($rownum, $query_id);
-				return @sqlite_column($query_id, $field);
+#				return @sqlite_column($query_id, $field);
 			}
 		}
 		return false;
@@ -128,14 +128,14 @@ class yf_db_driver_sqlite extends yf_db_driver {
 		if (!$query_id)	{
 			$query_id = $this->query_result;
 		}
-		return ($query_id) ? @sqlite_seek($query_id, $rownum) : false;
+#		return ($query_id) ? @sqlite_seek($query_id, $rownum) : false;
 	}
 
 	/**
 	* Get last inserted id after insert statement
 	*/
 	function insert_id() {
-		return ($this->db_connect_id) ? @sqlite_last_insert_rowid($this->db_connect_id) : false;
+#		return ($this->db_connect_id) ? @sqlite_last_insert_rowid($this->db_connect_id) : false;
 	}
 
 	/**
@@ -149,7 +149,7 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	* Escape string used in sql query
 	*/
 	function real_escape_string($msg) {
-		return @sqlite_escape_string($msg);
+#		return @sqlite_escape_string($msg);
 	}
 
 	/**
@@ -158,8 +158,8 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	*/
 	function error() {
 		return array(
-			'message'	=> @sqlite_error_string(@sqlite_last_error($this->db_connect_id)),
-			'code'		=> @sqlite_last_error($this->db_connect_id)
+#			'message'	=> @sqlite_error_string(@sqlite_last_error($this->db_connect_id)),
+#			'code'		=> @sqlite_last_error($this->db_connect_id)
 		);
 	}
 
@@ -187,13 +187,13 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	function _sql_transaction($status = 'begin') {
 		switch ($status) {
 			case 'begin':
-				return @sqlite_query('BEGIN', $this->db_connect_id);
+#				return @sqlite_query('BEGIN', $this->db_connect_id);
 				break;
 			case 'commit':
-				return @sqlite_query('COMMIT', $this->db_connect_id);
+#				return @sqlite_query('COMMIT', $this->db_connect_id);
 				break;
 			case 'rollback':
-				return @sqlite_query('ROLLBACK', $this->db_connect_id);
+#				return @sqlite_query('ROLLBACK', $this->db_connect_id);
 				break;
 		}
 		return true;
@@ -285,7 +285,7 @@ class yf_db_driver_sqlite extends yf_db_driver {
 			$query_id = $this->query_result;
 		}
 		if ($query_id) {
-			return sqlite_fetch_array($query_id);
+#			return sqlite_fetch_array($query_id);
 		}
 		return false;
 	}
