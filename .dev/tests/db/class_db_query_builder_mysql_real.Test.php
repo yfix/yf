@@ -6,7 +6,7 @@ require_once __DIR__.'/db_real__setup.php';
  * @requires extension mysql
  */
 class class_db_query_builder_mysql_real_test extends db_real_abstract {
-	public function test_select_basic() {
+	public function test_selects_basic() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$data = array(
@@ -44,102 +44,58 @@ class class_db_query_builder_mysql_real_test extends db_real_abstract {
 		$this->assertEquals( '11', self::db()->select('MIN(id2)')->from(self::$DB_NAME.'.'.$table)->get_one() );
 		$this->assertEquals( '22', self::db()->select('MAX(id2)')->from(self::$DB_NAME.'.'.$table)->get_one() );
 		$this->assertEquals( '1.500', self::db()->select('AVG(id)')->from(self::$DB_NAME.'.'.$table)->get_one() );
-	}
-/*
-	public function test_select_advanced() {
-		$this->assertEquals( '`u`.`id`, `s`.`id`, `t`.`pid`', self::qb()->select('u.id', 's.id', 't.pid')->_sql['select'][0] );
-		$this->assertEquals( '`u`.`id` AS `user_id`', self::qb()->select(array('u.id' => 'user_id'))->_sql['select'][0] );
-		$this->assertEquals( '`u`.`id` AS `user_id`, `a`.`id` AS `article_id`, `b`.`id` AS `blog_id`', self::qb()->select(array('u.id' => 'user_id', 'a.id' => 'article_id', 'b.id' => 'blog_id'))->_sql['select'][0] );
-		$this->assertEquals( '`u`.`id` AS `user_id`, `a`.`id` AS `article_id`, `b`.`id` AS `blog_id`', self::qb()->select(array('u.id' => 'user_id'), array('a.id' => 'article_id'), array('b.id' => 'blog_id'))->_sql['select'][0] );
-		$this->assertEquals( 'COUNT(*) AS `num`', self::qb()->select(array('COUNT(*)' => 'num'))->_sql['select'][0] );
-		$this->assertEquals( 'COUNT(id) AS `num`', self::qb()->select(array('COUNT(id)' => 'num'))->_sql['select'][0] );
-		$this->assertEquals( 'COUNT(u.id) AS `num`', self::qb()->select(array('COUNT(u.id)' => 'num'))->_sql['select'][0] );
-		$this->assertEquals( 'DISTINCT u.id', self::qb()->select('DISTINCT u.id')->_sql['select'][0] );
-		$this->assertEquals( 'DISTINCT u.id AS `num`', self::qb()->select(array('DISTINCT u.id' => 'num'))->_sql['select'][0] );
-		$this->assertEquals( 'DISTINCT u.id AS `num`, a.id AS `article_id`', self::qb()->select( function(){return 'DISTINCT u.id AS `num`';}, function(){return 'a.id AS `article_id`';} )->_sql['select'][0] );
-#		$this->assertEquals( 'u.id, a.id, b.id', self::qb()->select(array('u.id', 'a.id', 'b.id'))->_sql['select'][0] );
-#		$this->assertEquals( '`id id`', self::qb()->select('id id')->_sql['select'][0] );
-	}
-	public function test_select_string_as() {
-		$this->assertEquals( '`s`.`id` AS `sid`', self::qb()->select('s.id as sid')->_sql['select'][0] );
-		$this->assertEquals( '`s`.`id` AS `sid`, `u`.`id` AS `uid`', self::qb()->select('s.id as sid', 'u.id as uid')->_sql['select'][0] );
-		$this->assertEquals( '`u`.`id` AS `uid`', self::qb()->select(array('u.id as uid'))->_sql['select'][0] );
-	}
-	public function test_select_complex() {
-		$this->assertEquals( 'SELECT `s`.`id` , `u`.`id` FROM `'.DB_PREFIX.'user`', self::qb()->select('s.id')->select('u.id')->from('user')->sql() );
-		$this->assertEquals( 'SELECT `s`.`id` AS `sid` , `u`.`id` AS `uid` FROM `'.DB_PREFIX.'user`', self::qb()->select('s.id as sid')->select('u.id as uid')->from('user')->sql() );
-	}
-	public function test_from() {
-		$this->assertFalse( self::qb()->from()->sql() );
-		$this->assertFalse( self::qb()->select()->from()->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`', self::qb()->select()->from('user')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`, `'.DB_PREFIX.'articles`', self::qb()->select()->from('user','articles')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->select()->from(array('user' => 'u'))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`, `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from(array('user' => 'u', 'articles' => 'a'))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`, `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from(array('user' => 'u'), array('articles' => 'a'))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` , `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from(array('user' => 'u'))->from(array('articles' => 'a'))->sql() );
-	}
-	public function test_from_string_as() {
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->select()->from('user as u')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`, `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from('user as u', 'articles as a')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` , `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from('user as u')->from('articles as a')->sql() );
+
+		$this->assertEquals( $data[1], self::db()->from(self::$DB_NAME.'.'.$table)->get() );
+		$this->assertEquals( $data[1], self::db()->from(self::$DB_NAME.'.'.$table.' as t1')->get() );
+		$this->assertEquals( $data[1], self::db()->from(array(self::$DB_NAME.'.'.$table => 't1'))->get() );
+		$this->assertEquals( $data[1], self::db()->select('t1.id, t1.id2, t1.id3')->from(self::$DB_NAME.'.'.$table.' as t1')->get() );
+		$this->assertEquals( $data[1], self::db()->select('t1.id','t1.id2','t1.id3')->from(self::$DB_NAME.'.'.$table.' as t1')->get() );
+		$this->assertEquals( $data[1], self::db()->select('t1.id as id','t1.id2 as id2','t1.id3 as id3')->from(self::$DB_NAME.'.'.$table.' as t1')->get() );
+		$this->assertEquals( $data[1], self::db()->select(array('t1.id' => 'id','t1.id2' => 'id2','t1.id3' => 'id3'))->from(self::$DB_NAME.'.'.$table.' as t1')->get() );
+		$this->assertEquals( array('fld1' => $data[1]['id']), self::db()->select('t1.id as fld1')->from(self::$DB_NAME.'.'.$table.' as t1')->get() );
 	}
 	public function test_where() {
-		$this->assertFalse( self::qb()->where()->sql() );
-		$this->assertFalse( self::qb()->from()->where()->sql() );
-		$this->assertFalse( self::qb()->select()->from()->where()->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->where('id','=','1')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->where(array('id','=',1))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`, `'.DB_PREFIX.'articles` WHERE `u`.`id` = \'1\'', self::qb()->from('user','articles')->where(array('u.id','=',1))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\'', self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' AND `u`.`gid` = \'4\'', 
-			self::qb()->from(array('user' => 'u'))->where(array('u.id','=','1'),'and',array('u.gid','=','4'))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' OR `u`.`gid` = \'4\'', 
-			self::qb()->from(array('user' => 'u'))->where(array('u.id','=','1'),'or',array('u.gid','=','4'))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' XOR `u`.`gid` = \'4\'', 
-			self::qb()->from(array('user' => 'u'))->where(array('u.id','=','1'),'xor',array('u.gid','=','4'))->sql() );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$data = array(
+			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
+			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
+		);
+		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table, $data) );
 
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `id` = \'1\' AND `gid` = \'4\'', 
-			self::qb()->from(array('user' => 'u'))->where(array('id' => '1', 'gid' => '4'))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' AND `u`.`gid` = \'4\'', 
-			self::qb()->from(array('user' => 'u'))->where(array('u.id' => '1', 'u.gid' => '4'))->sql() );
+		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table)->where('id','=','1')->get() );
+		$this->assertEquals( $data[2], self::qb()->from(self::$DB_NAME.'.'.$table)->where('id','=','2')->get() );
+		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table)->where('id','=','3')->get() );
+		$this->assertEquals( $data[2], self::qb()->from(self::$DB_NAME.'.'.$table)->where('id3','like','222')->get() );
+		$this->assertEquals( $data[2], self::qb()->from(self::$DB_NAME.'.'.$table)->where('id3','like','22%')->get() );
+		$this->assertEquals( $data[2], self::qb()->from(self::$DB_NAME.'.'.$table)->where('id3','like','22*')->get() );
+		$this->assertEquals( $data[2], self::qb()->from(self::$DB_NAME.'.'.$table)->where('id3','rlike','(222|222222)')->get() );
+		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table)->where('id3','not rlike','(222|222222)')->get() );
+
+		$this->assertFalse( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where(array('t1.id2' => '1*', 't1.id3' => '2*'))->get() );
+		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where(array('t1.id2' => '1*', 't1.id3' => '1*'))->get() );
+		$this->assertEquals( $data[2], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where(array('t1.id2' => '2*', 't1.id3' => '2*'))->get() );
+
+		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where('id = 1')->get() );
+		$this->assertEquals( $data[2], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where('t1.id > 1')->get() );
+		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where('id = 1')->where('id2 = 11')->where('id3 = 111')->get() );
+
+		$this->assertFalse( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where('t1.id = 789')->where_or('t1.id2 = 798')->where_or('t1.id3 = 888')->get() );
+		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where('t1.id = 789')->where_or('t1.id2 = 798')->where_or('t1.id3 = 111')->get() );
+
+		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(1)->get() );
+		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(1, 'id')->get() );
+		$this->assertEquals( $data[1], self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(1, 't1.id')->get() );
+
+		$this->assertEquals( $data, self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(array(1,2,3,4))->get_all() );
+		$this->assertEquals( $data, self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(array(1,2,3,4), 'id')->get_all() );
+		$this->assertEquals( $data, self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(array(1,2,3,4), 't1.id')->get_all() );
+
+		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(array(4,5,6))->get_all() );
+		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(array(4,5,6), 'id')->get_all() );
+		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(array(4,5,6), 't1.id')->get_all() );
 	}
-	public function test_where_like() {
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` LIKE \'test\'', self::qb()->from('user')->where('name','like','test')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` LIKE \'test\'', self::qb()->from('user')->where('name','LIKE','test')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` LIKE \'test%\'', self::qb()->from('user')->where('name','like','test%')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` LIKE \'test%\'', self::qb()->from('user')->where('name','like','test*')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` NOT LIKE \'test%\'', self::qb()->from('user')->where('name','not like','test*')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` RLIKE \'(test|other)\'', self::qb()->from('user')->where('name','rlike','(test|other)')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` NOT RLIKE \'(test|other)\'', self::qb()->from('user')->where('name','not rlike','(test|other)')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` LIKE \'1%\' AND `u`.`gid` LIKE \'%4\'', 
-			self::qb()->from(array('user' => 'u'))->where(array('u.id' => '1*', 'u.gid' => '*4'))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` LIKE \'%1%\' XOR `u`.`gid` NOT LIKE \'%4%\'', 
-			self::qb()->from(array('user' => 'u'))->where(array('u.id','like','%1%'),'xor',array('u.gid','not like','%4%'))->sql() );
-	}
-	public function test_where_simple_syntax() {
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\'', self::qb()->from('user as u')->where('u.id = 1')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\'', self::qb()->from('user as u')->where('u.id > 1')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\' AND `u`.`visits` < \'3\'', self::qb()->from('user as u')->where('u.id > 1')->where('u.visits < 3')->sql() );
-	}
-	public function test_where_or() {
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' OR `u`.`gid` = \'4\'',
-			self::qb()->from('user as u')->where('u.id = 1')->where_or('u.gid = 4')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' OR `u`.`gid` = \'4\' OR `u`.`visits` < \'4\'',
-			self::qb()->from('user as u')->where('u.id = 1')->where_or('u.gid = 4')->where_or('u.visits < 4')->sql() );
-	}
-	public function test_whereid() {
-		$this->assertFalse( self::qb()->whereid()->sql() );
-		$this->assertFalse( self::qb()->from()->whereid()->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->whereid(1)->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->whereid(1, '')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` = \'1\'', self::qb()->from('user')->whereid(1, 'uid')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` = \'1\'', self::qb()->from('user')->whereid(1, 'u.id')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'uid')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'u.id')->sql() );
-	}
+/*
 	public function test_join() {
 		$this->assertFalse( self::qb()->join()->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`',
