@@ -1,6 +1,6 @@
 <?php
 
-class yf_manage_shop_import2 {
+class yf_manage_shop_import_products2 {
 
 	private $_filter        = false;
 	private $_filter_params = false;
