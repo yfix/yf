@@ -495,7 +495,6 @@ class yf_db {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
 		}
-		$table = $this->_fix_table_name($table);
 		if (!strlen($table) || !is_array($data)) {
 			return false;
 		}
@@ -535,7 +534,7 @@ class yf_db {
 		$sql = '';
 		if (count($cols) && count($values_array)) {
 			$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '')
-				.' INTO '.$this->escape_key($table).PHP_EOL
+				.' INTO '.$this->_escape_table_name($table).PHP_EOL
 				.' ('.implode(', ', $cols).') VALUES '
 				.PHP_EOL.implode(', ', $values_array);
 			if ($on_duplicate_key_update) {
@@ -608,7 +607,6 @@ class yf_db {
 		if (!$this->FIX_DATA_SAFE) {
 			return $data;
 		}
-		$table = $this->_fix_table_name($table);
 		$cols = $this->get_table_columns_cached($table);
 		if (!$cols) {
 			$msg = __CLASS__.'->'.__FUNCTION__.': columns for table '.$table.' is empty, truncating data array';
@@ -665,7 +663,6 @@ class yf_db {
 		if ($this->DB_REPLICATION_SLAVE && !$only_sql) {
 			return false;
 		}
-		$table = $this->_fix_table_name($table);
 		if (empty($table) || empty($data) || empty($where)) {
 			return false;
 		}
@@ -682,7 +679,7 @@ class yf_db {
 		}
 		$sql = '';
 		if (count($tmp_data)) {
-			$sql = 'UPDATE '.$this->escape_key($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
+			$sql = 'UPDATE '.$this->_escape_table_name($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
 		}
 		if (!$sql) {
 			return false;
@@ -1068,6 +1065,10 @@ class yf_db {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
+		$table = $this->_escape_table_name($table);
+		if (!strlen($table)) {
+			return false;
+		}
 		return $this->db->meta_columns($table, $KEYS_NUMERIC, $FULL_INFO);
 	}
 
@@ -1076,6 +1077,10 @@ class yf_db {
 	*/
 	function meta_tables() {
 		if (!$this->_connected && !$this->connect()) {
+			return false;
+		}
+		$table = $this->_escape_table_name($table);
+		if (!strlen($table)) {
 			return false;
 		}
 		return $this->db->meta_tables($this->DB_PREFIX);
@@ -1473,7 +1478,6 @@ class yf_db {
 		if (!is_object($this->db)) {
 			return false;
 		}
-		$table = $this->_fix_table_name($table);
 		if (!$index) {
 			$index = 'id';
 		}
@@ -1523,7 +1527,7 @@ class yf_db {
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
 			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $values, 'index' => $index));
 		}
-		return 'UPDATE '.$this->escape_key($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
+		return 'UPDATE '.$this->_escape_table_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
 	}
 
 	/**
@@ -1701,6 +1705,29 @@ class yf_db {
 		);
 		$sql = $this->insert_safe('sys_db_revisions', $to_insert, $only_sql = true);
 		$this->_add_shutdown_query($sql);
+	}
+
+	/**
+	*/
+	function _escape_table_name($name = '') {
+		$name = trim($name);
+		if (!strlen($name)) {
+			return false;
+		}
+		$db = '';
+		$table = '';
+		if (strpos($name, '.') !== false) {
+			list($db, $table) = explode('.', $name);
+			$db = trim($db);
+			$table = trim($table);
+		} else {
+			$table = $name;
+		}
+		if (!strlen($table)) {
+			return false;
+		}
+		$table = $this->_fix_table_name($table);
+		return (strlen($db) ? $this->escape_key($db).'.' : ''). $this->escape_key($table);
 	}
 
 	/**
