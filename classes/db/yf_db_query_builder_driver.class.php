@@ -258,9 +258,9 @@ abstract class yf_db_query_builder_driver {
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					// support for syntax: select('a.id as aid')
 					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v, $m)) {
-						$a[] = $this->_escape_key($m[1]).' AS '.$this->_escape_key($m[2]);
+						$a[] = $this->_escape_expr($m[1]).' AS '.$this->_escape_key($m[2]);
 					} else {
-						$a[] = $this->_escape_key($v);
+						$a[] = $this->_escape_expr($v);
 					}
 				} elseif (is_callable($v)) {
 					$a[] = $v($fields, $this);
@@ -271,9 +271,9 @@ abstract class yf_db_query_builder_driver {
 						if (strlen($k2) && strlen($v2)) {
 							// support for syntax: select('a.id as aid')
 							if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v2, $m)) {
-								$a[] = $this->_escape_key($m[1]).' AS '.$this->_escape_key($m[2]);
+								$a[] = $this->_escape_expr($m[1]).' AS '.$this->_escape_key($m[2]);
 							} else {
-								$a[] = $this->_escape_key($k2).' AS '.$this->_escape_key($v2);
+								$a[] = $this->_escape_expr($k2).' AS '.$this->_escape_key($v2);
 							}
 						}
 					}
@@ -307,9 +307,9 @@ abstract class yf_db_query_builder_driver {
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					// support for syntax: from('users as u') from('users as u', 'messages as m')
 					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v, $m)) {
-						$a[] = $this->_escape_key($this->db->_real_name($m[1])).' AS '.$this->_escape_key($m[2]);
+						$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
 					} else {
-						$a[] = $this->_escape_key($this->db->_real_name($v));
+						$a[] = $this->_escape_table_name($v);
 					}
 				} elseif (is_callable($v)) {
 					$a[] = $v($tables, $this);
@@ -320,9 +320,9 @@ abstract class yf_db_query_builder_driver {
 						if (strlen($k2) && strlen($v2)) {
 							// support for syntax: from('users as u') from('users as u', 'messages as m')
 							if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v2, $m)) {
-								$a[] = $this->_escape_key($this->db->_real_name($m[1])).' AS '.$this->_escape_key($m[2]);
+								$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
 							} else {
-								$a[] = $this->_escape_key($this->db->_real_name($k2)).' AS '.$this->_escape_key($v2);
+								$a[] = $this->_escape_table_name($k2).' AS '.$this->_escape_key($v2);
 							}
 						}
 					}
@@ -363,7 +363,7 @@ abstract class yf_db_query_builder_driver {
 		if (is_array($id)) {
 			$ids = $this->_ids_sql_from_array($id);
 			if ($ids) {
-				$sql = $this->_escape_key($pk).' IN('.$ids.')';
+				$sql = $this->_escape_col_name($pk).' IN('.$ids.')';
 			}
 		} elseif (is_callable($id)) {
 			$sql = $id();
@@ -463,10 +463,10 @@ abstract class yf_db_query_builder_driver {
 				$right_generated = '('.$right_generated.')';
 			}
 		}
-		if ((empty($right) || !strlen(is_array($right)?'':$right)) && !strlen($right_generated)) {
+		if ((empty($right) || !strlen(is_array($right) ? '' : $right)) && !strlen($right_generated)) {
 			return '';
 		}
-		return $this->_escape_key($left). ' '. strtoupper($op). ($right_generated ?: ' '.$this->_escape_val($right));
+		return $this->_escape_expr($left). ' '. strtoupper($op). ($right_generated ?: ' '.$this->_escape_val($right));
 	}
 
 	/**
@@ -495,20 +495,18 @@ abstract class yf_db_query_builder_driver {
 		$_on = array();
 		if (is_array($on)) {
 			foreach ((array)$on as $k => $v) {
-				list($t1_as, $t1_field) = explode('.', $k);
-				list($t2_as, $t2_field) = explode('.', $v);
-				$_on[] = $this->_escape_key($t1_as).'.'.$this->_escape_key($t1_field).' = '.$this->_escape_key($t2_as).'.'.$this->_escape_key($t2_field);
+				$_on[] = $this->_escape_col_name($k).' = '.$this->_escape_col_name($v);
 			}
 		} elseif (is_callable($on)) {
 			$_on = $on($table, $this);
 		} elseif (is_string($on)) {
 			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]*(=|!=|<>|<|>|>=|<=)[\s\t]*([a-z0-9_\.]+)$~ims', $on, $m)) {
-				$_on[] = $this->_escape_key($m[1]). ' '. $m[2]. ' '. $this->_escape_key($m[3]);
+				$_on[] = $this->_escape_col_name($m[1]). ' '. $m[2]. ' '. $this->_escape_col_name($m[3]);
 			}
 		}
 		$sql = '';
 		if (is_string($table) && !empty($_on)) {
-			$sql = $this->_escape_key($this->db->_real_name($table)). ($as ? ' AS '.$this->_escape_key($as) : '').' ON '.implode(',', $_on);
+			$sql = $this->_escape_table_name($table). ($as ? ' AS '.$this->_escape_key($as) : '').' ON '.implode(',', $_on);
 		}
 		if ($sql) {
 			$this->_sql[($join_type ? $join_type.'_' : '').__FUNCTION__][] = $sql;
@@ -547,7 +545,7 @@ abstract class yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					$a[] = $this->_escape_key($v);
+					$a[] = $this->_escape_expr($v);
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $v2) {
 						if (!is_string($v2)) {
@@ -555,7 +553,7 @@ abstract class yf_db_query_builder_driver {
 						}
 						$v2 = trim($v2);
 						if ($v2) {
-							$a[] = $this->_escape_key($v2);
+							$a[] = $this->_escape_expr($v2);
 						}
 					}
 				} elseif (is_callable($v)) {
@@ -633,9 +631,9 @@ abstract class yf_db_query_builder_driver {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+(asc|desc)$~ims', $v, $m)) {
-						$a[] = $this->_escape_key($m[1]).' '.strtoupper($m[2]);
+						$a[] = $this->_escape_expr($m[1]).' '.strtoupper($m[2]);
 					} else {
-						$a[] = $this->_escape_key($v).' ASC';
+						$a[] = $this->_escape_expr($v).' ASC';
 					}
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $k2 => $v2) {
@@ -649,7 +647,7 @@ abstract class yf_db_query_builder_driver {
 							$v2 = trim($k2);
 						}
 						if ($v2) {
-							$a[] = $this->_escape_key($v2).' '.strtoupper($direction);
+							$a[] = $this->_escape_expr($v2).' '.strtoupper($direction);
 						}
 					}
 				} elseif (is_callable($items)) {
@@ -690,23 +688,81 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	function _escape_key($key = '') {
-		$out = '';
-		if ($key != '*' && false === strpos($key, '.') && false === strpos($key, '(')) {
-			$out = $this->db->escape_key($key);
-		} else {
-			// split by "." and escape each value
-			if (false !== strpos($key, '.') && false === strpos($key, '(') && false === strpos($key, ' ')) {
-				$tmp = array();
-				foreach (explode('.', $key) as $v) {
-					$tmp[] = $this->db->escape_key($v);
-				}
-				$out = implode('.', $tmp);
-			} else {
-				$out = $key;
-			}
+	function _escape_expr($expr = '') {
+		if ($expr === '*' || false !== strpos($expr, '(') || preg_match('~[^a-z0-9_\.]+~ims', $expr)) {
+			return $expr;
 		}
-		return $out;
+		return $this->_escape_col_name($expr);
+	}
+
+	/**
+	*/
+	function _escape_col_name($name = '') {
+		$name = trim($name);
+		if (!strlen($name)) {
+			return false;
+		}
+		$db = '';
+		$table = '';
+		$col = '';
+		if (strpos($name, '.') !== false) {
+			$parts = explode('.', $name);
+			$num_dots = substr_count($name, '.');
+			if ($num_dots >= 2) {
+				$db = trim($parts[0]);
+				$table = trim($parts[1]);
+				$col = trim($name[2]);
+			} else {
+				$table = trim($parts[0]);
+				$col = trim($parts[1]);
+			}
+		} else {
+			$col = $name;
+		}
+		if (!strlen($col)) {
+			return false;
+		}
+		if (strlen($table) && (!strlen($db) || $db == $this->db->DB_NAME)) {
+#			$table = $this->db->_real_name($table);
+		}
+		return (strlen($db) ? $this->_escape_key($db).'.' : '')
+			. (strlen($table) ? $this->_escape_key($table).'.' : '')
+			. $this->_escape_key($col)
+		;
+	}
+
+	/**
+	*/
+	function _escape_table_name($name = '') {
+		$name = trim($name);
+		if (!strlen($name)) {
+			return false;
+		}
+		$db = '';
+		$table = '';
+		if (strpos($name, '.') !== false) {
+			$parts = explode('.', $name);
+			$db = trim($parts[0]);
+			$table = trim($parts[1]);
+		} else {
+			$table = $name;
+		}
+		if (!strlen($table)) {
+			return false;
+		}
+		if (!strlen($db) || $db == $this->db->DB_NAME) {
+			$table = $this->db->_real_name($table);
+		}
+		return (strlen($db) ? $this->_escape_key($db).'.' : ''). $this->_escape_key($table);
+	}
+
+	/**
+	*/
+	function _escape_key($key = '') {
+		if ($key != '*' && false === strpos($key, '.') && false === strpos($key, '(')) {
+			return $this->db->escape_key($key);
+		}
+		return $key;
 	}
 
 	/**
