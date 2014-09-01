@@ -95,24 +95,31 @@ class class_db_query_builder_mysql_real_test extends db_real_abstract {
 		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(array(4,5,6), 'id')->get_all() );
 		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(array(4,5,6), 't1.id')->get_all() );
 	}
-/*
 	public function test_join() {
-		$this->assertFalse( self::qb()->join()->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`',
-			self::qb()->select()->from('user as u')->join(array('articles' => 'a'), array('u.id' => 'a.id'))->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`', 
-			self::qb()->select()->from('user as u')->join('articles as a', 'u.id = a.id')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` LEFT JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`', 
-			self::qb()->select()->from('user as u')->left_join('articles as a', 'u.id = a.id')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` RIGHT JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`', 
-			self::qb()->select()->from('user as u')->right_join('articles as a', 'u.id = a.id')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`', 
-			self::qb()->select()->from('user as u')->inner_join('articles as a', 'u.id = a.id')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`', 
-			self::qb()->select()->from('user as u')->join('articles as a', 'u.id = a.id', 'inner')->sql() );
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` INNER JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id` INNER JOIN `'.DB_PREFIX.'blogs` AS `b` ON `u`.`id` = `b`.`id`', 
-			self::qb()->select()->from('user as u')->inner_join('articles as a', 'u.id = a.id')->inner_join('blogs as b', 'u.id = b.id')->sql() );
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table1.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table2.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$data1 = array(
+			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
+			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
+		);
+		$data2 = array(
+			3 => array('id' => 3, 'id2' => 33, 'id3' => 333),
+			4 => array('id' => 4, 'id2' => 44, 'id3' => 444),
+		);
+		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table1, $data1) );
+		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table2, $data2) );
+
+		$this->assertEquals( $data1 + $data2, self::qb()->select()->from(self::$DB_NAME.'.'.$table1.' as t1')->join(self::$DB_NAME.'.'.$table2.' as t2', 't1.id = t2.id')->get_all() );
+#		$this->assertEquals( self::qb()->select()->from('user as u')->join('articles as a', 'u.id = a.id')->sql() );
+#		$this->assertEquals( self::qb()->select()->from('user as u')->left_join('articles as a', 'u.id = a.id')->sql() );
+#		$this->assertEquals( self::qb()->select()->from('user as u')->right_join('articles as a', 'u.id = a.id')->sql() );
+#		$this->assertEquals( self::qb()->select()->from('user as u')->inner_join('articles as a', 'u.id = a.id')->sql() );
+#		$this->assertEquals( self::qb()->select()->from('user as u')->join('articles as a', 'u.id = a.id', 'inner')->sql() );
+#		$this->assertEquals( self::qb()->select()->from('user as u')->inner_join('articles as a', 'u.id = a.id')->inner_join('blogs as b', 'u.id = b.id')->sql() );
 	}
+/*
 	public function test_group_by() {
 		$this->assertFalse( self::qb()->group_by()->sql() );
 		$this->assertFalse( self::qb()->from()->where()->group_by()->sql() );
