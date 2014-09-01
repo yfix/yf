@@ -122,7 +122,7 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$this->assertEmpty( self::db()->query_num_rows('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
-		$this->assertNotEmpty( self::db()->insert($table, $data) );
+		$this->assertNotEmpty( self::db()->insert(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 
 		$this->assertNotEmpty( self::db()->query('TRUNCATE TABLE '.self::$DB_NAME.'.'.$table) );
@@ -131,28 +131,28 @@ class class_db_mysql_real_test extends db_real_abstract {
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
 		);
-		$this->assertNotEmpty( self::db()->insert($table, $data) );
+		$this->assertNotEmpty( self::db()->insert(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_insert_ignore() {
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
-		$this->assertNotEmpty( self::db()->insert($table, array('id' => 1, 'id2' => 11, 'id3' => 111)) );
+		$this->assertNotEmpty( self::db()->insert(self::$DB_NAME.'.'.$table, array('id' => 1, 'id2' => 11, 'id3' => 111)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
-		$this->assertNotEmpty( self::db()->insert_ignore($table, $data) );
+		$this->assertNotEmpty( self::db()->insert_ignore(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_insert_on_duplicate_key_update() {
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
-		$this->assertNotEmpty( self::db()->insert($table, array('id' => 1, 'id2' => 11, 'id3' => 111)) );
+		$this->assertNotEmpty( self::db()->insert(self::$DB_NAME.'.'.$table, array('id' => 1, 'id2' => 11, 'id3' => 111)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
-		$this->assertNotEmpty( self::db()->insert_on_duplicate_key_update($table, $data) );
+		$this->assertNotEmpty( self::db()->insert_on_duplicate_key_update(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$new_data = array('id' => 1, 'id2' => 22, 'id3' => 333);
-		$this->assertNotEmpty( self::db()->insert_on_duplicate_key_update($table, $new_data) );
+		$this->assertNotEmpty( self::db()->insert_on_duplicate_key_update(self::$DB_NAME.'.'.$table, $new_data) );
 		$this->assertEquals( $new_data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_replace() {
@@ -160,10 +160,10 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
-		$this->assertNotEmpty( self::db()->replace($table, $data) );
+		$this->assertNotEmpty( self::db()->replace(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array('id' => 1, 'id2' => 22, 'id3' => 333);
-		$this->assertNotEmpty( self::db()->replace($table, $data) );
+		$this->assertNotEmpty( self::db()->replace(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 
 		$this->assertNotEmpty( self::db()->query('TRUNCATE TABLE '.self::$DB_NAME.'.'.$table) );
@@ -172,13 +172,13 @@ class class_db_mysql_real_test extends db_real_abstract {
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
 		);
-		$this->assertNotEmpty( self::db()->replace($table, $data) );
+		$this->assertNotEmpty( self::db()->replace(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array(
 			1 => array('id' => 1, 'id2' => 115, 'id3' => 1115),
 			2 => array('id' => 2, 'id2' => 225, 'id3' => 2225),
 		);
-		$this->assertNotEmpty( self::db()->replace($table, $data) );
+		$this->assertNotEmpty( self::db()->replace(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_update() {
@@ -186,10 +186,10 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
-		$this->assertNotEmpty( self::db()->insert($table, $data) );
+		$this->assertNotEmpty( self::db()->insert(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array('id' => 2, 'id2' => 22, 'id3' => 222);
-		$this->assertNotEmpty( self::db()->update($table, $data, 1) );
+		$this->assertNotEmpty( self::db()->update(self::$DB_NAME.'.'.$table, $data, 1) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_update_batch() {
@@ -200,13 +200,13 @@ class class_db_mysql_real_test extends db_real_abstract {
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
 		);
-		$this->assertNotEmpty( self::db()->insert($table, $data) );
+		$this->assertNotEmpty( self::db()->insert(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array(
 			1 => array('id' => 1, 'id2' => 116, 'id3' => 1116),
 			2 => array('id' => 2, 'id2' => 226, 'id3' => 2226),
 		);
-		$this->assertNotEmpty( self::db()->update_batch($table, $data) );
+		$this->assertNotEmpty( self::db()->update_batch(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_fix_data_safe() {
@@ -217,8 +217,8 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$data_wrong = $data + array('not_existing_col' => 1);
-		$this->assertEquals( $data, self::db()->_fix_data_safe($table, $data) );
-		$this->assertEquals( $data, self::db()->_fix_data_safe($table, $data_wrong) );
+		$this->assertEquals( $data, self::db()->_fix_data_safe(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertEquals( $data, self::db()->_fix_data_safe(self::$DB_NAME.'.'.$table, $data_wrong) );
 
 		$data = array(
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
@@ -227,8 +227,8 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$data_wrong = $data;
 		$data_wrong[1]['not_existing_col'] = 1;
 		$data_wrong[2]['not_existing_col'] = 2;
-		$this->assertEquals( $data, self::db()->_fix_data_safe($table, $data) );
-		$this->assertEquals( $data, self::db()->_fix_data_safe($table, $data_wrong) );
+		$this->assertEquals( $data, self::db()->_fix_data_safe(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertEquals( $data, self::db()->_fix_data_safe(self::$DB_NAME.'.'.$table, $data_wrong) );
 	}
 	public function test_insert_safe() {
 		self::db()->FIX_DATA_SAFE = true;
@@ -239,7 +239,7 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$this->assertEmpty( self::db()->query_num_rows('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
-		$this->assertNotEmpty( self::db()->insert_safe($table, $data + array('not_existing_column' => '1')) );
+		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table, $data + array('not_existing_column' => '1')) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 
 		$this->assertNotEmpty( self::db()->query('TRUNCATE TABLE '.self::$DB_NAME.'.'.$table) );
@@ -251,7 +251,7 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$data_wrong = $data;
 		$data_wrong[1]['not_existing_col'] = 1;
 		$data_wrong[2]['not_existing_col'] = 2;
-		$this->assertNotEmpty( self::db()->insert_safe($table, $data_wrong) );
+		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table, $data_wrong) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_replace_safe() {
@@ -262,11 +262,11 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
-		$this->assertNotEmpty( self::db()->replace_safe($table, $data) );
+		$this->assertNotEmpty( self::db()->replace_safe(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array('id' => 1, 'id2' => 22, 'id3' => 333);
 		$data_wrong = $data + array('not_existing_col' => 1);
-		$this->assertNotEmpty( self::db()->replace_safe($table, $data_wrong) );
+		$this->assertNotEmpty( self::db()->replace_safe(self::$DB_NAME.'.'.$table, $data_wrong) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 
 		$this->assertNotEmpty( self::db()->query('TRUNCATE TABLE '.self::$DB_NAME.'.'.$table) );
@@ -278,13 +278,13 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$data_wrong = $data;
 		$data_wrong[1]['not_existing_col'] = 1;
 		$data_wrong[2]['not_existing_col'] = 2;
-		$this->assertNotEmpty( self::db()->replace_safe($table, $data_wrong) );
+		$this->assertNotEmpty( self::db()->replace_safe(self::$DB_NAME.'.'.$table, $data_wrong) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array(
 			1 => array('id' => 1, 'id2' => 115, 'id3' => 1115),
 			2 => array('id' => 2, 'id2' => 225, 'id3' => 2225),
 		);
-		$this->assertNotEmpty( self::db()->replace_safe($table, $data) );
+		$this->assertNotEmpty( self::db()->replace_safe(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_update_safe() {
@@ -295,11 +295,11 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
-		$this->assertNotEmpty( self::db()->insert_safe($table, $data) );
+		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array('id' => 2, 'id2' => 22, 'id3' => 222);
 		$data_wrong = $data + array('not_existing_col' => 1);
-		$this->assertNotEmpty( self::db()->update_safe($table, $data_wrong, 1) );
+		$this->assertNotEmpty( self::db()->update_safe(self::$DB_NAME.'.'.$table, $data_wrong, 1) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_update_batch_safe() {
@@ -313,7 +313,7 @@ class class_db_mysql_real_test extends db_real_abstract {
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
 		);
-		$this->assertNotEmpty( self::db()->insert_safe($table, $data) );
+		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$data = array(
 			1 => array('id' => 1, 'id2' => 116, 'id3' => 1116),
@@ -322,7 +322,7 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$data_wrong = $data;
 		$data_wrong[1]['not_existing_col'] = 1;
 		$data_wrong[2]['not_existing_col'] = 2;
-		$this->assertNotEmpty( self::db()->update_batch_safe($table, $data_wrong) );
+		$this->assertNotEmpty( self::db()->update_batch_safe(self::$DB_NAME.'.'.$table, $data_wrong) );
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 	}
 	public function test_split_sql() {
@@ -349,12 +349,12 @@ class class_db_mysql_real_test extends db_real_abstract {
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
-		$this->assertNotEmpty( self::db()->insert($table, $data) );
+		$this->assertNotEmpty( self::db()->insert(self::$DB_NAME.'.'.$table, $data) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.self::$DB_NAME.'.'.$table) );
 		$this->assertEquals( $data, self::db()->get('SELECT * FROM '.self::$DB_NAME.'.'.$table) );
-		$this->assertEquals( $data, self::db()->from($table)->get() );
-		$this->assertEquals( $data, self::db()->select()->from($table)->get() );
-		$this->assertEquals( $data, self::db()->select('*')->from($table)->get() );
+		$this->assertEquals( $data, self::db()->from(self::$DB_NAME.'.'.$table)->get() );
+		$this->assertEquals( $data, self::db()->select()->from(self::$DB_NAME.'.'.$table)->get() );
+		$this->assertEquals( $data, self::db()->select('*')->from(self::$DB_NAME.'.'.$table)->get() );
 	}
 	public function test_delete() {
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
@@ -363,15 +363,15 @@ class class_db_mysql_real_test extends db_real_abstract {
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
 		);
-		$this->assertNotEmpty( self::db()->insert($table, $data) );
-		$this->assertEquals( $data, self::db()->from($table)->get_all() );
-		$this->assertNotEmpty( self::db()->delete($table, 1));
+		$this->assertNotEmpty( self::db()->insert(self::$DB_NAME.'.'.$table, $data) );
+		$this->assertEquals( $data, self::db()->from(self::$DB_NAME.'.'.$table)->get_all() );
+		$this->assertNotEmpty( self::db()->delete(self::$DB_NAME.'.'.$table, 1));
 		$new_data = array(2 => $data[2]);
-		$this->assertEquals( $new_data, self::db()->from($table)->get_all() );
-		$this->assertNotEmpty( self::db()->replace($table, $data) );
+		$this->assertEquals( $new_data, self::db()->from(self::$DB_NAME.'.'.$table)->get_all() );
+		$this->assertNotEmpty( self::db()->replace(self::$DB_NAME.'.'.$table, $data) );
 		$new_data = array(1 => $data[1]);
-		$this->assertNotEmpty( self::db()->delete($table, 'id=2'));
-		$this->assertEquals( $new_data, self::db()->from($table)->get_all() );
+		$this->assertNotEmpty( self::db()->delete(self::$DB_NAME.'.'.$table, 'id=2'));
+		$this->assertEquals( $new_data, self::db()->from(self::$DB_NAME.'.'.$table)->get_all() );
 	}
 	public function test_model() {
 #		$this->assertTrue( is_object(self::db()->model()) );
