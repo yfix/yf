@@ -572,6 +572,10 @@ class yf_manage_shop {
 	function import_xls($params = array()) {
 		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
 	}
+    
+	function import_xls2($params = array()) {
+		return _class('manage_shop_import2', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
+	}    
 
 	function export_zakaz_start($params = array()) {
 		return _class('manage_shop_import', 'admin_modules/manage_shop/')->{__FUNCTION__}($params);
@@ -628,7 +632,7 @@ class yf_manage_shop {
 		cache_del('_shop_products|_product_image|'.$product_id);
 		cache_del('_shop_product_params|_product_image|'.$product_id);
 		cache_del('_shop_product_params|_get_params_by_product|'.$product_id);
-		cache_del('pattern_yf|_get_shop_product_details|'.$product_id);
+		cache_del('rewrite_pattern_yf|_get_shop_product_details|'.$product_id);
 		_class( '_shop_categories', 'modules/shop/' )->_refresh_cache();
 	}
 
@@ -700,4 +704,25 @@ class yf_manage_shop {
 	function feedback_activate() {
 		return _class('manage_shop_feedback', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
+    
+	function coupons() {
+		return _class('manage_shop_coupons', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}    
+
+	function coupon_delete() {
+		return _class('manage_shop_coupons', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}  
+    
+	function coupon_add() {
+		return _class('manage_shop_coupons', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}  
+    
+	function coupon_edit() {
+		return _class('manage_shop_coupons', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}      
+
+	function coupon_view() {
+		return _class('manage_shop_coupons', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}      
+  
 }

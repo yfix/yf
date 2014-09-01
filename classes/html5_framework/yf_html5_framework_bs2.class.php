@@ -5,6 +5,13 @@
 */
 class yf_html5_framework_bs2 {
 
+	public $def_class = array(
+		'form_group'	=> 'control-group form-group',
+		'label'			=> 'control-label col-lg-4',
+		'controls'		=> 'controls',
+		'desc'			=> 'col-lg-8',
+	);
+
 	/**
 	*/
 	function form_render_out ($content, $extra = array(), $replace = array(), $obj) {
@@ -38,12 +45,12 @@ class yf_html5_framework_bs2 {
 				break;
 			}
 		}
-		$class_form_group = $extra['class_form_group'] ?: 'control-group form-group'. ($extra['class_add_form_group'] ? ' '.$extra['class_add_form_group'] : '');
+		$class_form_group = $extra['class_form_group'] ?: $this->def_class['form_group']. ($extra['class_add_form_group'] ? ' '.$extra['class_add_form_group'] : '');
 		if ($extra['class_add_wrapper']) {
 			$class_form_group .= ' '.$extra['class_add_wrapper'];
 		}
-		$class_label = $extra['class_label'] ?: 'control-label col-lg-4'. ($extra['class_add_label'] ? ' '.$extra['class_add_label'] : '');
-		$class_controls = $extra['class_controls'] ?: 'controls'. ($extra['desc'] && !$no_label ? ' col-lg-8' : ''/*' col-lg-offset-4'*/). ($extra['class_add_controls'] ? ' '.$extra['class_add_controls'] : '');
+		$class_label = $extra['class_label'] ?: $this->def_class['label']. ($extra['class_add_label'] ? ' '.$extra['class_add_label'] : '');
+		$class_controls = $extra['class_controls'] ?: $this->def_class['controls']. ($extra['desc'] && !$no_label ? ' '.$this->def_class['desc'] : ''). ($extra['class_add_controls'] ? ' '.$extra['class_add_controls'] : '');
 
 		$row_start =
 			'<div class="'.$class_form_group.'">'.PHP_EOL

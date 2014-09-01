@@ -183,7 +183,8 @@ class yf_manage_shop_product_images{
 		}
 		if (!empty($_POST['src'])) {
 			$tmp_file = '/tmp/search_image_'.$_GET['id'];
-			if (!copy($_POST['src'], $tmp_file)) {
+			exec('wget '.$_POST['src'].' -O '.$tmp_file);
+			if (!filesize($tmp_file)) {
 				_re("Error. Bad image.");
 			} else {
 				$_FILES['image']['tmp_name'][] = $tmp_file;

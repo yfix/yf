@@ -317,7 +317,7 @@ class yf_auth_user {
 				}
 			}
 		}
-		$this->_save_login_in_session($user_info, $params['no_redirect']);
+		return $this->_save_login_in_session($user_info, $params['no_redirect']);
 	}
 
 	/**
@@ -329,7 +329,7 @@ class yf_auth_user {
 			$this->_encrypted_error = 'GET_id is not like an encrypted string';
 			return false;
 		}
-		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.str_replace(array('http://', 'https://'), '//', WEB_PATH).'")) FROM '.db('admin').' WHERE id=1');
+		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.str_replace(array('http://', 'https://'), '//', INCLUDE_PATH).'")) FROM '.db('admin').' WHERE id=1');
 		if (!$secret_key) {
 			$this->_encrypted_error = 'secret key generation failed';
 			return false;
@@ -470,6 +470,7 @@ class yf_auth_user {
 			if ($this->USER_INFO_IN_SESSION) {
 				$_SESSION[$this->VAR_USER_INFO] = $user_info;
 			}
+			return true;
 		}
 	}
 

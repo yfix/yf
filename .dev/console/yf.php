@@ -18,7 +18,7 @@ require '/usr/local/share/composer/vendor/autoload.php';
 function get_paths() {
 	$paths = array(
 		'called_path'	=> rtrim(getcwd(), '/').'/',
-		'yf_path'		=> dirname(dirname(dirname(__FILE__))).'/',
+		'yf_path'		=> dirname(dirname(__DIR__)).'/',
 		'app_path'		=> '',
 		'project_path'	=> '',
 		'config_path'	=> '',

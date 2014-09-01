@@ -1,0 +1,2 @@
+Project modules, automatically accesible from web router.
+Each module should contain suffix ".class.php"

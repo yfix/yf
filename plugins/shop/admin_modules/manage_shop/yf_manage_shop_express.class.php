@@ -4,7 +4,7 @@ class yf_manage_shop_express{
 	public $alcohol_category = 4;
 
 	public $default_unit = "шт";
-	
+
 	function _init(){
 		$this->PATH_TO_PDF = PROJECT_PATH."uploads/pdf/";
 	}
@@ -16,9 +16,9 @@ class yf_manage_shop_express{
 		$orders_info = db()->query_fetch_all("SELECT * FROM ".db('shop_orders')." WHERE delivery_time LIKE '".$date."%' AND status = 1");
 		if(!empty($orders_info)){
 			$orders = array_keys($orders_info);
-			$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id 
+			$products = db()->query_fetch_all("SELECT o.*, p.name, p.price, p.cat_id
 											FROM ".db('shop_order_items')." as o
-											RIGHT JOIN ".db('shop_products')." as p ON o.product_id = p.id 
+											RIGHT JOIN ".db('shop_products')." as p ON o.product_id = p.id
 											WHERE o.order_id IN(".implode(",", $orders).") AND o.status = 1
 											ORDER BY o.order_id DESC");
 		}
@@ -81,7 +81,7 @@ class yf_manage_shop_express{
 		}
 		$products = db()->query_fetch_all("SELECT o.*, p.name, p.cat_id, u.title
 											FROM ".db('shop_order_items')." as o
-											RIGHT JOIN ".db('shop_products')." as p	ON o.product_id = p.id 
+											RIGHT JOIN ".db('shop_products')." as p	ON o.product_id = p.id
 											LEFT JOIN ".db('shop_product_units')." as u ON u.id = o.unit
 											WHERE o.order_id IN(".implode(",", $orders).")
 												AND o.status = 1");
@@ -125,7 +125,7 @@ class yf_manage_shop_express{
 	}
 
 	/**
-	*/	
+	*/
 	function _prepare_express_pdf($items = false){
 		if(empty($items))
 			return false;
@@ -139,14 +139,15 @@ class yf_manage_shop_express{
 				"product_item_price"=> module('shop')->_format_price($price_item),
 			);
 			$order_ids[] = $_info['order_id'];
-			$total_sum += $price_item; 
+			$total_sum += $price_item;
 		}
 		$order_ids = implode(",", array_unique($order_ids));
 		$delivery_times = db()->get_2d("SELECT delivery_time FROM ".db('shop_orders')." WHERE id IN(".$order_ids.")");
 
+		$total_sum = (float)$total_sum;
 		$replace = array(
 			'order_ids'		=> $order_ids,
-			'total_sum'		=> module('shop')->_format_price(floatval($total_sum)),
+			'total_sum'		=> module('shop')->_format_price($total_sum),
 			'date'			=> implode(",", array_unique($delivery_times)),
 			'products'		=> $out['products'],
 			'num_to_str'	=> common()->num2str($total_sum),
@@ -164,7 +165,7 @@ class yf_manage_shop_express{
 		$pdf = $this->express_pdf(true);
 		if(!$pdf['body']){
 			return false;
-		}	
+		}
 		common()->pdf_page($pdf['body'], $pdf['name'], "F");
 		$path_to_pdf = $this->PATH_TO_PDF.$pdf['name'].".pdf";
 		$path_to_pdf = file_exists($path_to_pdf) ? $path_to_pdf : '';

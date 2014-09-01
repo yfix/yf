@@ -13,7 +13,7 @@ exec('mysql -h '.escapeshellarg(DB_HOST).' -u '.escapeshellarg(DB_USER).' -p'.es
 
 define('YF_PATH', '/home/www/yf/');
 if (!defined('YF_PATH')) {
-	define('YF_PATH', dirname(dirname(dirname(dirname(__FILE__)))).'/');
+	define('YF_PATH', dirname(dirname(dirname(__DIR__))).'/');
 }
 if (!function_exists('main')) {
 	require YF_PATH.'classes/yf_main.class.php';
@@ -32,7 +32,7 @@ function get_table_create_sql($table) {
 }
 
 mkdir('./data/', 0755, true);
-foreach (glob(dirname(dirname(dirname(__FILE__))).'/install/install/sql/*.sql') as $f) {
+foreach (glob(dirname(dirname(__DIR__)).'/install/install/sql/*.sql') as $f) {
 	$fname = basename($f);
 	$table = substr($fname, 0, -strlen('.sql'));
 	$tname = DB_PREFIX. $table;

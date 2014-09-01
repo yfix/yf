@@ -15,12 +15,12 @@
 <hr />
 <?php
 
-	require(dirname(__FILE__)."/mime/mime_parser.php");
-	require(dirname(__FILE__)."/mime/rfc822_addresses.php");
-	require(dirname(__FILE__)."/pop3.php");
+	require(__DIR__."/mime/mime_parser.php");
+	require(__DIR__."/mime/rfc822_addresses.php");
+	require(__DIR__."/pop3.php");
 
   /* Uncomment when using SASL authentication mechanisms */
-	require(dirname(__FILE__)."/sasl/sasl.php");
+	require(__DIR__."/sasl/sasl.php");
 
 	stream_wrapper_register('pop3', 'pop3_stream');  /* Register the pop3 stream handler class */
 

@@ -10,7 +10,7 @@
 
 if (!defined('DOMIT_INCLUDE_PATH')) {
 	/* Path to DOMIT! files */
-	define('DOMIT_INCLUDE_PATH', (dirname(__FILE__) . "/"));
+	define('DOMIT_INCLUDE_PATH', (__DIR__ . "/"));
 }
 
 //Nodes

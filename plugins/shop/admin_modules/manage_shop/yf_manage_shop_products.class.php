@@ -221,7 +221,7 @@ class yf_manage_shop_products{
 		}
 		$sql = $a;
 		$old_product_id = $sql['id'];
-		unset($sql['id']);
+		unset($sql['id'], $sql['product_id'], $sql['region_id']);
 		$sql['name'] = 'Clone '.$sql['name'];
 		$sql['active'] = 0;
 

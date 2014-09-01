@@ -38,7 +38,7 @@ $PROJECT_CONF['db']['FIX_DATA_SAFE'] = 0;
 $_GET['object'] = 'not_exists';
 #####
 if (!defined('YF_PATH')) {
-	define('YF_PATH', dirname(dirname(dirname(dirname(__FILE__)))).'/');
+	define('YF_PATH', dirname(dirname(dirname(__DIR__))).'/');
 	require YF_PATH.'classes/yf_main.class.php';
 	new yf_main('admin', $no_db_connect = false, $auto_init_all = false);
 	date_default_timezone_set('Europe/Kiev');

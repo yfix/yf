@@ -15,7 +15,7 @@
 //*******************************************************************
 
 if (!defined('PHP_HTTP_TOOLS_INCLUDE_PATH')) {
-	define('PHP_HTTP_TOOLS_INCLUDE_PATH', (dirname(__FILE__) . "/"));
+	define('PHP_HTTP_TOOLS_INCLUDE_PATH', (__DIR__ . "/"));
 }
 
 define ('CRLF', "\r\n"); //end-of-line char as defined in HTTP spec

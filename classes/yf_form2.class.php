@@ -2044,7 +2044,8 @@ class yf_form2 {
 					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
 					if (!$is_ok && empty($error_msg)) {
 						$desc = $this->_find_field_desc($name) ?: $name;
-						$error_msg = t('form_validate_'.$func, array('%field' => $desc, '%param' => $param));
+						$error_param = $this->_find_field_desc($param) ?: $param;
+						$error_msg = t('form_validate_'.$func, array('%field' => $desc, '%param' => $error_param));
 					}
 				}
 				// In this case we do not track error if field is empty and not required
@@ -2087,7 +2088,11 @@ class yf_form2 {
 		}
 		$desc = $name;
 		foreach ((array)$this->_body as $a) {
-			if (!isset($a['extra']) || $a['extra']['name'] != $name || !strlen($a['extra']['desc'])) {
+			if (!isset($a['extra']) || !strlen($a['extra']['desc'])) {
+				continue;
+			}
+			// Now we also support array elements descriptions searching
+			if ($a['extra']['name'] != $name && $a['extra']['name'] != $name.'[]') {
 				continue;
 			}
 			$desc = $a['extra']['desc'];
@@ -2190,7 +2195,7 @@ class yf_form2 {
 				if ($on_success_text) {
 					common()->set_notice($on_success_text);
 				}
-				$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : ($_this->_replace['redirect_link'] ? $_this->_replace['redirect_link'] : $_this->_replace['back_link']);
+				$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : (!empty($_this->_replace['redirect_link']) ? $_this->_replace['redirect_link'] : !empty($_this->_replace['back_link']) ? $_this->_replace['back_link'] : '');
 				if (!$redirect_link) {
 					$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : '');
 				}

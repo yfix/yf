@@ -1,0 +1,2 @@
+Folder to store override settings. Copy files with ".example.php" extension into file names without ".example" and they will
+be automatically catched by used and admin sections.

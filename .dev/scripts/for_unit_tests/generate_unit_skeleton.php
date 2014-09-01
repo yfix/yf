@@ -5,7 +5,7 @@
 $path = $argv[2];
 $custom_path = $argv[3];
 
-require_once dirname(dirname(__FILE__)).'/scripts_init.php';
+require_once dirname(__DIR__).'/scripts_init.php';
 
 $name = basename($path);
 if (substr($name, 0, 3) == 'yf_') {
@@ -15,7 +15,7 @@ $name = substr($name, 0, -strlen('.class.php'));
 
 $out[] = '<?'.'php'.PHP_EOL
 	.PHP_EOL
-	.'require dirname(__FILE__).\'/yf_unit_tests_setup.php\';'.PHP_EOL
+	.'require __DIR__.\'/yf_unit_tests_setup.php\';'.PHP_EOL
 	.PHP_EOL
 	.'class class_'.$name.'_test extends PHPUnit_Framework_TestCase {'.PHP_EOL;
 

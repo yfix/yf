@@ -13,11 +13,11 @@
 <BODY>
 <?php
 
-	require (dirname(__FILE__)."/pop3.php");
+	require (__DIR__."/pop3.php");
 
   /* Uncomment when using SASL authentication mechanisms */
 	
-	require(dirname(__FILE__)."/sasl/sasl.php");
+	require(__DIR__."/sasl/sasl.php");
 
 	$pop3=new pop3_class;
 	$pop3->hostname="localhost";			 /* POP 3 server host name					  */

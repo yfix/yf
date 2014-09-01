@@ -199,7 +199,7 @@ class yf_related_content {
 
 			LIMIT ".$RECORDS_LIMIT;
 
-		// Special for the installer_db (allows to easily restore if not exists FULLTEXT INDEX on used fields)
+		// Special for the db_installer (allows to easily restore if not exists FULLTEXT INDEX on used fields)
 		$fulltext_needed_for = array();
 		if (strlen($keywords_text)) {
 			$fulltext_needed_for[] = $TABLE_NAME.".".$FIELD_TEXT;

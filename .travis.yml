@@ -7,18 +7,27 @@ php:
   - 5.6
   - hhvm
 
-#before_script:
+services:
+  - rabbitmq # will start rabbitmq-server
+  - memcached # will start memcached
+
+#env:
+#  - YF_DB_PSWD=
+
+before_script:
+  - mysql -e 'create database yf_for_unit_tests;'
 #  - composer self-update
 #  - composer install --prefer-source --no-interaction --dev
 
-script: cd .dev/tests/ && phpunit -d memory_limit=1024M --configuration phpunit.xml ./
+script: export YF_DB_PSWD=""; cd .dev/tests/bin/ && ./phpunit_run_all.sh
+# script: cd .dev/tests/ && phpunit -d memory_limit=1024M --configuration phpunit.xml ./
 #  - cd .dev/tests/ && phpunit --configuration phpunit.xml --coverage-text ./
 #  - cd .dev/tests/ && phpunit --configuration phpunit.xml ./
 
 matrix:
-  allow_failures:
-    - php: 5.6
-    - php: hhvm
+#  allow_failures:
+#    - php: 5.6
+#    - php: hhvm
   fast_finish: true
 
 #after_script:

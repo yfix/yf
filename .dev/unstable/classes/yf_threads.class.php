@@ -83,7 +83,7 @@ class yf_threads {
 
 	/**
 	* You should avoid './' or '../' in config paths for example '../project_conf.php'
-	* Need to be replaced into dirname(dirname(__FILE__)).'/project_conf.php'
+	* Need to be replaced into dirname(__DIR__).'/project_conf.php'
 	*/
 	function new_framework_thread($object = '', $action = '', $params = array()) {
 		return $this->new_thread(str_replace('/', DIRECTORY_SEPARATOR, INCLUDE_PATH.'admin/index.php').' --object='.$object.' --action='.$action, $params, true);

@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__FILE__).'/yf_unit_tests_setup.php';
+require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_form_validate_test extends PHPUnit_Framework_TestCase {
 	function test_complex() {
@@ -68,7 +68,17 @@ class class_form_validate_test extends PHPUnit_Framework_TestCase {
 			->text('name2')
 			->validate($rules = array('name1' => 'trim', 'name2' => 'matches:name1'))
 			->render();
-		$this->assertEquals(array('name2' => 'The Name2 field does not match the name1 field.'), common()->_get_error_messages());
+		$this->assertEquals(array('name2' => 'The Name2 field does not match the Name1 field.'), common()->_get_error_messages());
+
+		$_POST['name1'] = 'val';
+		$_POST['name2'] = 'other';
+
+		form($a)
+			->text('name1', 'Desc1')
+			->text('name2', 'Desc2')
+			->validate($rules = array('name1' => 'trim', 'name2' => 'matches:name1'))
+			->render();
+		$this->assertEquals(array('name2' => 'The Desc2 field does not match the Desc1 field.'), common()->_get_error_messages());
 
 		common()->_show_error_message($msg = '', $clear = true);
 		$this->assertEquals('', common()->_get_error_messages());

@@ -6,8 +6,6 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	/** @var @conf_skip */
 	public $db_connect_id		= null;
 	/** @var @conf_skip */
-	public $query_result		= null;
-	/** @var @conf_skip */
 	public $META_TABLES_SQL		= 'SHOW TABLES';	
 	/** @var @conf_skip */
 	public $META_COLUMNS_SQL	= 'SHOW COLUMNS FROM %s';
@@ -40,10 +38,11 @@ class yf_db_driver_mysqli extends yf_db_driver {
 
 		if (!$this->db_connect_id) {
 			conf_add('http_headers::X-Details','ME=(-1) MySqli connection error');
-			return false;
+			return $this->db_connect_id;
 		}
-		if ($charset) {
-			$this->query('SET NAMES '. $params['charset']);
+		if ($params['charset']) {
+			// See http://php.net/manual/en/mysqlinfo.concepts.charset.php
+			mysqli_set_charset($this->db_connect_id, 'utf8'); // $this->query('SET NAMES '. $params['charset']);
 		}
 		return $this->db_connect_id;
 	}
@@ -53,6 +52,7 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	function connect() {
 		$this->db_connect_id = mysqli_init();
 		if (!$this->db_connect_id) {
+			$this->_connect_error = 'cannot_connect_to_server';
 			$this->db_connect_id = null;
 			return false;
 		}
@@ -65,25 +65,35 @@ class yf_db_driver_mysqli extends yf_db_driver {
 		mysqli_options($this->db_connect_id, MYSQLI_OPT_CONNECT_TIMEOUT, 2);
 		$is_connected = mysqli_real_connect($this->db_connect_id, $this->params['host'], $this->params['user'], $this->params['pswd'], '', $this->params['port'], $this->params['socket'], $this->params['ssl'] ? MYSQLI_CLIENT_SSL : 0);
 		if (!$is_connected) {
-			$this->_connect_error = true;
-			$this->db_connect_id = null;
+			$this->_connect_error = 'cannot_connect_to_server';
 			return false;
 		}
 		if ($this->params['name'] != '') {
-			$dbselect = mysqli_select_db($this->db_connect_id, $this->params['name']);
+			$dbselect = $this->select_db($this->params['name']);
 			// Try to create database, if not exists and if allowed
-			if (!$dbselect && $this->ALLOW_AUTO_CREATE_DB && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->params['name'])) {
-				mysqli_query('CREATE DATABASE IF NOT EXISTS '.$this->params['name'], $this->db_connect_id);
+			if (!$dbselect && $this->params['allow_auto_create_db'] && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->params['name'])) {
+				$res = $this->query('CREATE DATABASE IF NOT EXISTS '.$this->params['name']);
+				if ($res) {
+					$dbselect = $this->select_db($this->params['name']);
+				}
 			}
-			$dbselect = mysqli_select_db($this->db_connect_id, $this->params['name']);
 			if (!$dbselect) {
-				mysqli_close($this->db_connect_id);
+				$this->_connect_error = 'cannot_select_db';
 			}
+			return $dbselect;
 		}
 	}
 
 	/**
-	* Close connection
+	*/
+	function select_db($name) {
+		if (!$this->db_connect_id) {
+			return false;
+		}
+		return mysqli_select_db($this->db_connect_id, $name);
+	}
+
+	/**
 	*/
 	function close() {
 		return mysqli_close($this->db_connect_id);
@@ -93,21 +103,20 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	* Base query method
 	*/
 	function query($query = '') {
-		// Remove any pre-existing queries
-		unset($this->query_result);
 		if (!$this->db_connect_id) {
 			return false;
 		}
-		if ($query == '') {
+		$result = mysqli_query($this->db_connect_id, $query);
+		if (!$result) {
+			$error = $this->error();
+			$query_error_code = $error['code'];
+			$query_error = $error['message'];
+			if ($query_error_code) {
+				conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
+			}
 			return false;
 		}
-		$this->query_result = mysqli_query($this->db_connect_id, $query);
-		$query_error = mysqli_error($this->db_connect_id);
-		if ($query_error) {
-			$query_error_code = mysqli_errno($this->db_connect_id);
-			conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
-		}
-		return $this->query_result;
+		return $result;
 	}
 
 	/**
@@ -147,120 +156,113 @@ if ($mysqli->multi_query($query)) {
 	* Multi query method (specific for this driver)
 	*/
 	function _multi_query($query = '') {
-		if ($query == '') {
+		if (!$query) {
 			return false;
 		}
 		return mysqli_multi_query($this->db_connect_id, $query);
 	}
 
 	/**
-	* Unbuffered query method
 	*/
 	function unbuffered_query($query = '') {
 		mysqli_unbuffered_query($this->db_connect_id, $query);
 	}
 
 	/**
-	* Other query methods
 	*/
-	function num_rows($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
+	function num_rows($query_id) {
+		if ($query_id) {
+			return mysqli_num_rows($query_id);
 		}
-		if (!$query_id) {
-			return false;
-		}
-		return mysqli_num_rows($query_id);
+		return false;
 	}
 
 	/**
-	* Affected Rows
 	*/
 	function affected_rows() {
 		return $this->db_connect_id ? mysqli_affected_rows($this->db_connect_id) : false;
 	}
 
 	/**
-	* Insert Id
 	*/
 	function insert_id() {
 		return $this->db_connect_id ? mysqli_insert_id($this->db_connect_id) : false;
 	}
 
 	/**
-	* Fetch Row
 	*/
-	function fetch_row($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
+	function fetch_row($query_id) {
+		if ($query_id) {
+			return mysqli_fetch_row($query_id);
 		}
-		if (!$query_id) {
-			return false;
-		}
-		return mysqli_fetch_row($query_id);
+		return false;
 	}
 
 	/**
-	* Fetch Assoc
 	*/
-	function fetch_assoc($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
+	function fetch_assoc($query_id) {
+		if ($query_id) {
+			return mysqli_fetch_assoc($query_id);
 		}
-		if (!$query_id) {
-			return false;
-		}
-		return mysqli_fetch_assoc($query_id);
+		return false;
 	}
 
 	/**
-	* Fetch Array
 	*/
-	function fetch_array($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
+	function fetch_array($query_id) {
+		if ($query_id) {
+			return mysqli_fetch_array($query_id);
 		}
-		if (!$query_id) {
-			return false;
-		}
-		return mysqli_fetch_array($query_id);
+		return false;
 	}
 
 	/**
-	* Real Escape String
+	*/
+	function fetch_object($query_id) {
+		if ($query_id) {
+			return mysqli_fetch_object($query_id);
+		}
+		return false;
+	}
+
+	/**
 	*/
 	function real_escape_string($string) {
 		if (!$this->db_connect_id) {
-			return addcslashes($string);
+			return addslashes($string);
 		}
 		return mysqli_real_escape_string($this->db_connect_id, $string);
 	}
 
 	/**
-	* Free Result
 	*/
 	function free_result($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
+		if ($query_id) {
+			mysqli_free_result($query_id);
+			// We need this for compatibility, because mysqli_free_result() returns "void"
+			return true;
 		}
-		if (!$query_id) {
-			return false;
-		}
-		mysqli_free_result($query_id);
 		return true;
 	}
 
 	/**
-	* Error
 	*/
 	function error() {
-		$result['message'] = mysqli_error($this->db_connect_id);
-		$result['code'] = mysqli_errno($this->db_connect_id);
-		return $result;
+		if ($this->db_connect_id) {
+			return array(
+				'message'	=> mysqli_error($this->db_connect_id),
+				'code'		=> mysqli_errno($this->db_connect_id),
+			);
+		} elseif ($this->_connect_error) {
+			return array(
+				'message'	=> 'YF: Connect error: '.$this->_connect_error,
+				'code'		=> '9999',
+			);
+		}
+		return false;
 	}
 
 	/**
-	* Meta Columns
 	*/
 	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = false) {
 		$retarr = array();
@@ -321,7 +323,6 @@ if ($mysqli->multi_query($query)) {
 	}
 
 	/**
-	* Meta Tables
 	*/
 	function meta_tables($DB_PREFIX = '') {
 		$Q = $this->query($this->META_TABLES_SQL);
@@ -362,7 +363,7 @@ if ($mysqli->multi_query($query)) {
 	function limit($count, $offset) {
 		if ($count > 0) {
 			$offset = ($offset > 0) ? $offset : 0;
-			$sql .= 'LIMIT '.$offset.', '.$count;
+			$sql .= 'LIMIT '.($offset ? $offset.', ' : ''). $count;
 		}
 		return $sql;
 	}

@@ -18,7 +18,7 @@ class yf_cats {
 	/** @var mixed @conf_skip */
 	public $_default_cats_block	= null;
 	/** @var bool */
-	public $USE_DYNAMIC_ATTS	= 1;
+	public $USE_DYNAMIC_ATTS	= true;
 	/** @var string */
 	public $BOX_LEVEL_SPACER	= '&nbsp;&nbsp;';
 	/** @var string */

@@ -155,7 +155,7 @@ class yf_manage_users {
 			return _e('Target user not found');
 		}
 		$t = time();
-		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.str_replace(array('http://', 'https://'), '//', WEB_PATH).'")) FROM '.db('admin').' WHERE id=1');
+		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.str_replace(array('http://', 'https://'), '//', INCLUDE_PATH).'")) FROM '.db('admin').' WHERE id=1');
 		$to_encode = 'userid-'.$a['id'].'-'.$t.'-'.md5($a['password']);
 		$integrity_hash = md5($to_encode);
 		$encrypted = _class('encryption')->_safe_encrypt_with_base64($to_encode.'-'.$integrity_hash, $secret_key);

@@ -1,0 +1,11 @@
+Sites level overrides should be stored here.
+First level subfolder is site name pattern, second level replicating project-level structure.
+Examples: 
+	*.dev/
+		classees/
+			main.class.php
+		modules/
+			register.class.php
+	test.dev/
+		modules/
+			register.class.php

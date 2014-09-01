@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require_once dirname(dirname(__FILE__)).'/scripts_init.php';
+require_once dirname(__DIR__).'/scripts_init.php';
 
 $globs_sql = array(
 	'yf_main'		=> YF_PATH.'share/db_installer/sql/*.sql.php',
@@ -30,7 +30,7 @@ foreach ($globs_sql as $glob) {
 			continue;
 		}
 
-		$a = _class('installer_db_mysql', 'classes/db/')->_db_table_struct_into_array($data);
+		$a = _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array($data);
 
 		if (!$a) {
 			echo '-- ERROR: empty fields'. PHP_EOL;

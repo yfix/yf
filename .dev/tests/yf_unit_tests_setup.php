@@ -2,6 +2,9 @@
 
 define('STORAGE_PATH', __DIR__.'/tests_tmp_storage/');
 if (!defined('YF_PATH')) {
+	$CONF['cache']['DRIVER'] = 'tmp';
+	$CONF['cache']['NO_CACHE'] = true;
+	define('YF_IN_UNIT_TESTS', true);
 	define('YF_PATH', dirname(dirname(__DIR__)).'/');
 	require YF_PATH.'classes/yf_main.class.php';
 	new yf_main('user', $no_db_connect = 1, $auto_init_all = 0);

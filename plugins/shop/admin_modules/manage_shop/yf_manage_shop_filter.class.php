@@ -66,6 +66,7 @@ class yf_manage_shop_filter{
 						'name'     => 'region',
 						'multiple' => true,
 						'values'   => $_region,
+						'type'     => 1,
 					))
 					->active_box('active', array('horizontal' => 1))
 					->select_box('status', _class('manage_shop')->_products_statuses, array('desc' => 'Status', 'no_translate' => 0, 'hide_empty' => 1, 'show_text' => 1))

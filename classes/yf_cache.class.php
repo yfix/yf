@@ -376,7 +376,17 @@ class yf_cache {
 			}
 		}
 		if ($this->_driver->implemented['multi_get']) {
+			// Fix names prefix
+			$p_len = strlen($this->CACHE_NS);
+			foreach ((array)$names as $k => $name) {
+				$names[$k] = $this->CACHE_NS. $name;
+			}
 			$result = $this->_driver->multi_get($names, $force_ttl, $params);
+			// Fix names prefix
+			foreach ((array)$result as $name => $val) {
+				$result[substr($name, $p_len)] = $val;
+				unset($result[$name]);
+			}
 		} else {
 			$result = array();
 			foreach ((array)$names as $name) {
@@ -416,12 +426,20 @@ class yf_cache {
 			}
 		}
 		if ($this->_driver->implemented['multi_set']) {
+			// Fix names prefix
+			foreach ((array)$data as $name => $_data) {
+				$data[$this->CACHE_NS. $name] = $_data;
+				unset($data[$name]);
+			}
 			$result = $this->_driver->multi_set($data, $ttl);
 		} else {
-			$result = array();
+			$failed = false;
 			foreach ((array)$data as $name => $_data) {
-				$result[$name] = $this->set($name, $_data, $ttl);
+				if (!$this->set($name, $_data, $ttl)) {
+					$failed = true;
+				}
 			}
+			$result = !$failed;
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
 			'data'		=> $data,
@@ -441,12 +459,26 @@ class yf_cache {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		$result = ($this->_driver->implemented['multi_del'] && !is_null($this->_driver->multi_del($names)));
-		if( !$result ) {
-			$result = array();
-			foreach ((array)$names as $name) {
-				$result[$name] = $this->del($name);
+		$old_names = $names;
+		$failed = false;
+		$implemented = $this->_driver->implemented['multi_del'];
+		if ($implemented) {
+			// Fix names prefix
+			foreach ((array)$names as $k => $name) {
+				$names[$k] = $this->CACHE_NS. $name;
 			}
+			$result = $this->_driver->multi_del($names);
+		}
+		if (!$implemented || $result === null) {
+			$names = $old_names;
+			foreach ((array)$names as $name) {
+				if (!$this->del($name)) {
+					$failed = true;
+				}
+			}
+		}
+		if ($failed) {
+			$result = false;
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
 			'names'		=> $names,
@@ -473,7 +505,7 @@ class yf_cache {
 		if ($this->CACHE_NS && $result) {
 			$ns_len = strlen($this->CACHE_NS);
 			foreach ($result as $k => $v) {
-				if (substr($v, 0, $ns_len) != $this->CACHE_NS) {
+				if (substr($v, 0, $ns_len) !== $this->CACHE_NS) {
 					unset($result[$k]);
 				} else {
 					$result[$k] = substr($v, $ns_len);
@@ -501,16 +533,23 @@ class yf_cache {
 		if (!strlen($prefix) || !is_string($prefix)) {
 			$result = $this->flush();
 		} else {
+			$result = false;
 			$prefix_len = strlen($prefix);
-			$result = $this->list_keys();
-			if ($result) {
-				foreach ($result as $k => $v) {
-					if (substr($v, 0, $prefix_len) != $prefix) {
-						unset($result[$k]);
+			$keys = $this->list_keys();
+			if ($keys === null) {
+				$result = $this->flush();
+			} elseif ($keys) {
+				foreach ($keys as $k => $v) {
+					if (substr($v, 0, $prefix_len) !== $prefix) {
+						unset($keys[$k]);
 					}
 				}
+				if ($keys) {
+					$result = $this->multi_del($keys);
+				} else {
+					$result = true;
+				}
 			}
-			$result && $this->multi_del($result);
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
 			'prefix'	=> $prefix,

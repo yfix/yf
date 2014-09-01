@@ -114,7 +114,7 @@ class yf_db_driver_oracle extends yf_db_driver {
 	/**
 	* Other query methods
 	*/
-	function num_rows($query_id = 0) {
+	function num_rows($query_id) {
 		if (!$query_id) {
 			$query_id = $this->query_result;
 		}
@@ -147,7 +147,7 @@ class yf_db_driver_oracle extends yf_db_driver {
 	/**
 	* Fetch Row
 	*/
-	function fetch_row($query_id = 0) {
+	function fetch_row($query_id) {
 		if (!$query_id) {
 			$query_id = $this->query_result;
 		}
@@ -170,7 +170,7 @@ class yf_db_driver_oracle extends yf_db_driver {
 	/**
 	* Fetch Assoc
 	*/
-	function fetch_assoc($query_id = 0) {
+	function fetch_assoc($query_id) {
 // TODO: need to separate results
 		return $this->fetch_row($query_id);
 	}
@@ -178,7 +178,7 @@ class yf_db_driver_oracle extends yf_db_driver {
 	/**
 	* Fetch Row
 	*/
-	function fetch_array($query_id = 0) {
+	function fetch_array($query_id) {
 // TODO: need to separate results
 		return $this->fetch_row($query_id);
 	}

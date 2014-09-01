@@ -398,7 +398,11 @@ class yf_common {
 	* Show print version of the given page
 	*/
 	function print_page ($text = '') {
-		return _class('print_page', 'classes/common/')->go($text);
+		main()->NO_GRAPHICS = true;
+		return print tpl()->parse('system/common/print_page', array(
+			'text'			=> $text,
+			'path_to_tpls'	=> WEB_PATH. tpl()->TPL_PATH,
+		));
 	}
 
 	/**
@@ -447,7 +451,19 @@ class yf_common {
 	* Show empty page (useful for popup windows, etc)
 	*/
 	function show_empty_page ($text = '', $params = array()) {
-		return _class('empty_page', 'classes/common/')->_show($text, $params);
+		main()->NO_GRAPHICS = true;
+		$CSS_FILE = !empty($params['css_file']) ? $params['css_file'] : 'style.css';
+		$output = '';
+		$output .= tpl()->parse('empty_page', array(
+			'css'			=> '<link rel="stylesheet" type="text/css" href="'.WEB_PATH. tpl()->TPL_PATH. $CSS_FILE.'">',
+			'text'			=> $text,
+			'title'			=> $params['title'],
+			'close_button'	=> (int)((bool)$params['close_button']),
+			'full_width'	=> (int)((bool)$params['full_width']),
+		));
+		$output = tpl()->_apply_output_filters($output);
+		main()->_send_main_headers(strlen($output));
+		return print $output;
 	}
 
 	/**
@@ -800,7 +816,7 @@ class yf_common {
 	/**
 	* Convert name into URL-friendly string
 	*/
-	function _propose_url_from_name ($name = '', $from_encoding = '') {
+	function _propose_url_from_name ($name = '', $from_encoding = '', $force_dashes = false) {
 		if (empty($name)) {
 			return '';
 		}
@@ -809,13 +825,17 @@ class yf_common {
 		}
 		$url = str_replace(array(';',',','.',':',' ','/'), '_', $name);
 		$url = preg_replace('/[_]{2,}/', '_', $url);
-		$url = trim(trim(trim($url), '_'));
+		$url = trim(trim(trim($url), '_-'));
 
 		$url = common()->make_translit($url, $from_encoding);
 
 		$url = preg_replace('/[_]{2,}/', '_', $url);
+		$url = preg_replace('/[_-]{2,}/', '-', $url);
 		$url = strtolower(preg_replace('/[^a-z0-9_-]+/i', '', $url));
-		$url = trim(trim(trim($url), '_'));
+		$url = trim(trim(trim($url), '_-'));
+		if ($force_dashes) {
+			$url = str_replace('_', '-', $url);
+		}
 		return $url;
 	}
 
@@ -1155,7 +1175,7 @@ class yf_common {
 		if ($key) {
 			$_SESSION['permanent'][$level][$key] = $text;
 		} else {
-			$_SESSION['permanent'][$level][] = $text;
+			$_SESSION['permanent'][$level][$text] = $text;
 		}
 		return true;
 	}

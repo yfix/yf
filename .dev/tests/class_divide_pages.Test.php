@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__FILE__).'/yf_unit_tests_setup.php';
+require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_divide_pages_test extends PHPUnit_Framework_TestCase {
 	public function _get_expected_html($href, $num_pages = 10, $next = 2) {

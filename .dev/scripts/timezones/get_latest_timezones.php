@@ -1,12 +1,12 @@
 #!/usr/bin/php
 <?php
 
-require_once dirname(dirname(__FILE__)).'/scripts_utils.php';
+require_once dirname(__DIR__).'/scripts_utils.php';
 
 function get_latest_timezones() {
 
 	$url = 'https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations';
-	$f2 = dirname(__FILE__).'/'.basename($url).'.table.html';
+	$f2 = __DIR__.'/'.basename($url).'.table.html';
 	if (!file_exists($f2)) {
 		$html1 = file_get_contents($url);
 		$regex1 = '~<table[^>]*wikitable[^>]*>(.*?)</table>~ims';
@@ -33,7 +33,7 @@ function get_latest_timezones() {
 	foreach (array('UTC','GMT','CET','EET','MSK') as $c) {
 		$data[$c]['active'] = 1;
 	}
-	$f4 = dirname(__FILE__).'/timezones.php';
+	$f4 = __DIR__.'/timezones.php';
 	file_put_contents($f4, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
 	print_r($data);
 

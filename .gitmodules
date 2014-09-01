@@ -10,9 +10,6 @@
 [submodule "libs/phpseclib"]
 	path = libs/phpseclib
 	url = https://github.com/yfix/phpseclib.git
-[submodule "libs/kcfinder"]
-	path = libs/kcfinder
-	url = https://github.com/yfix/yf_kcfinder.git
 [submodule "libs/smarty"]
 	path = libs/smarty
 	url = https://github.com/yfix/smarty.git
@@ -34,3 +31,12 @@
 [submodule "libs/geoip-api-php"]
 	path = libs/geoip-api-php
 	url = https://github.com/yfix/geoip-api-php.git
+[submodule "libs/php_sql_parser"]
+	path = libs/php_sql_parser
+	url = https://github.com/yfix/PHP-SQL-Parser.git
+[submodule "libs/symfony_class_loader"]
+	path = libs/symfony_class_loader
+	url = https://github.com/yfix/ClassLoader.git
+[submodule "libs/kcfinder"]
+	path = libs/kcfinder
+	url = https://github.com/yfix/kcfinder.git

@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__FILE__).'/yf_unit_tests_setup.php';
+require_once __DIR__.'/yf_unit_tests_setup.php';
 
 /**
  * @requires extension mcrypt

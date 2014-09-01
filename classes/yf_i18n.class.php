@@ -182,7 +182,7 @@ class yf_i18n {
 					AND t.value != "" 
 					AND t.value != v.value'
 			);
-			while ($a = db()->fetch_assoc($Q)) {
+			while ($a = db()->fetch_assoc($q)) {
 				$data[$a['source']] = $a['translation'];
 			}
 			cache_set($CACHE_NAME, $data);

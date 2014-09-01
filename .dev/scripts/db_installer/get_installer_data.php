@@ -26,7 +26,7 @@ if (!defined('DB_NAME')) {
 ###########
 
 if (!defined('YF_PATH')) {
-	define('YF_PATH', dirname(dirname(dirname(dirname(__FILE__)))).'/');
+	define('YF_PATH', dirname(dirname(dirname(__DIR__))).'/');
 }
 if (!function_exists('main')) {
 	require YF_PATH.'classes/yf_main.class.php';

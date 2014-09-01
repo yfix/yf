@@ -53,13 +53,11 @@ class yf_tpl_driver_yf_compile {
 			},
 			// ifs compiling. NOTE: pattern differs from original adding \#\. symbols, etc
 			'/\{(?P<cond>if|elseif)\(\s*["\']{0,1}(?P<left>[\w\s\.+%#-]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\-\#]*)["\']{0,1}(?P<multi_conds>[^\(\)\{\}\n]*)\s*\)\}/ims' => function($m) use ($start, $end, $_this) {
-				$cond = $m['cond'] == 'elseif' ? '} '.$m['cond'] : $m['cond'];
-				return $start. $cond.'('.$_this->_compile_prepare_ifs($m).') {'. $end;
+				return $start. $_this->_compile_prepare_ifs($m). $end;
 			},
 			// if_funcs compiling
-			'/\{(?P<cond>if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.+%-]+?)["\']{0,1}[\s\t]*\)\}/ims' => function($m) use ($start, $end, $_this) {
-				$cond = $m['cond'] == 'elseif' ? '} '.$m['cond'] : $m['cond'];
-				return $start. $cond.'('.$_this->_compile_if_funcs($m).') {'. $end;
+			'/\{(?P<cond>if_or|if_and|elseif_or|elseif_and|if|elseif)_(?P<func>[a-z0-9_:]+)\(\s*["\']{0,1}(?P<left>[\w\s\.,+%-]+?)["\']{0,1}[\s\t]*\)\}/ims' => function($m) use ($start, $end, $_this) {
+				return $start. $_this->_compile_if_funcs($m). $end;
 			},
 			// foreach pattern compilation
 			'/\{(?P<func>foreach|foreach_exec)\(\s*["\']{0,1}(?P<key>[a-z0-9_\s\.,;=@-]+)["\']{0,1}\s*\)\}(?P<body>(?![^\{]*?\{\1\(\s*["\']{0,1}?).*?)\{\/\1\}/ims' => function($m) use ($start, $end, $_this) {
@@ -217,6 +215,7 @@ class yf_tpl_driver_yf_compile {
 	* Prepare condition for the compilation
 	*/
 	function _compile_prepare_ifs (array $m) {
+		$cond = $m['cond'] == 'elseif' ? '} '.$m['cond'] : $m['cond'];
 		$part_left = $this->_compile_prepare_left($m['left']);
 		$part_right = trim($m['right']);
 		if (substr($part_right, 0, 1) == '#') {
@@ -256,7 +255,7 @@ class yf_tpl_driver_yf_compile {
 				return $a_cond.' ('.$a_left.' '.$a_op.' '.$a_right.') ';
 			}, $add_cond);
 		}
-		return trim($part_left.' '.$op.' '.$part_right.' '.$add_cond);
+		return $cond.'('.trim($part_left.' '.$op.' '.$part_right.' '.$add_cond).') {';
 	}
 
 	/**
@@ -318,7 +317,25 @@ class yf_tpl_driver_yf_compile {
 	/**
 	*/
 	function _compile_if_funcs(array $m) {
-		$part_left = $this->_compile_prepare_left($m['left']);
+		$cond = trim($m['cond']);
+		$multiple_cond = 'AND';
+		if (in_array($cond, array('if_or','elseif_or'))) {
+			$multiple_cond = 'OR';
+		}
+		if (in_array($cond, array('if','if_or','if_and'))) {
+			$cond = 'if';
+		} elseif (in_array($cond, array('elseif','elseif_or','elseif_and'))) {
+			$cond = 'elseif';
+		}
+		$is_multiple = (strpos($m['left'], ',') !== false);
+		if ($is_multiple) {
+			$part_left = array();
+			foreach (explode(',',trim($m['left'])) as $v) {
+				$part_left[] = $this->_compile_prepare_left($v);
+			}
+		} else {
+			$part_left = $this->_compile_prepare_left($m['left']);
+		}
 		$func = trim($m['func']);
 		// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
 		$funcs_map = array(
@@ -353,7 +370,23 @@ class yf_tpl_driver_yf_compile {
 		} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
 			return '';
 		}
-		return ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')';
+		if ($is_multiple) {
+			$center_tmp = array();
+			foreach ($part_left as $v) {
+				$v = trim($v);
+				if (strlen($v)) {
+					$center_tmp[] = ($negate ? '!' : ''). $func.'('.$v.')';
+				}
+			}
+			if (!count($center_tmp)) {
+				$center_cond = ($negate ? '!' : ''). $func. '($replace["___not_existing_key__"])';
+			} else {
+				$center_cond = '('.implode(') '.$multiple_cond.' (', $center_tmp).')';
+			}
+		} else {
+			$center_cond = ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')';
+		}
+		return ($cond == 'elseif' ? '} '.$cond : $cond).'('.$center_cond.') {';
 	}
 
 	/**

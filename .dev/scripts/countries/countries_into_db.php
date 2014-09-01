@@ -6,10 +6,10 @@ if (strlen($argv[2]) == 2) {
 	$lang = $argv[2];
 }
 
-require_once dirname(dirname(__FILE__)).'/scripts_init.php';
+require_once dirname(__DIR__).'/scripts_init.php';
 
 function load_data($lang) {
-	require dirname(__FILE__).'/countries'.($lang && $lang != 'en' ? '_'.$lang : '').'.php';
+	require __DIR__.'/countries'.($lang && $lang != 'en' ? '_'.$lang : '').'.php';
 	return $data;
 }
 $data = load_data($lang);

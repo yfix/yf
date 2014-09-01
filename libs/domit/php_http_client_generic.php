@@ -12,7 +12,7 @@
 **/
 
 if (!defined('PHP_HTTP_TOOLS_INCLUDE_PATH')) {
-	define('PHP_HTTP_TOOLS_INCLUDE_PATH', (dirname(__FILE__) . "/"));
+	define('PHP_HTTP_TOOLS_INCLUDE_PATH', (__DIR__ . "/"));
 }
 
 /** end-of-line character sequence as defined in HTTP spec */

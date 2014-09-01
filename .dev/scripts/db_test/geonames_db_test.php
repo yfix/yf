@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require_once dirname(__FILE__).'/geonames_db_init.php';
+require_once __DIR__.'/geonames_db_init.php';
 
 echo '== columns inside geo_geoname =='.PHP_EOL;
 print_r( db()->utils()->list_columns('geo_geoname') );

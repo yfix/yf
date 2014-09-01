@@ -96,9 +96,12 @@ class yf_manage_shop_orders{
 			return _e('No such order');
 		}
 		$recount_price = false;
-		$_class_price  = _class( '_shop_price', 'modules/shop/' );
+		$_class_price  = _class( '_shop_price',         'modules/shop/' );
+		$_class_units  = _class( '_shop_product_units', 'modules/shop/' );
+		$_class_basket = _class( 'shop_basket',         'modules/shop/' );
 		if(main()->is_post()) {
 			module('manage_shop')->_product_check_first_revision('order', intval($_GET['id']));
+			$order_id = (int)$_GET['id'];
 			foreach($_POST as $k => $v) {
 				if($k == 'status_item') {
 					foreach ($v as $k1 => $status) {
@@ -124,10 +127,45 @@ class yf_manage_shop_orders{
 
 						$recount_price = true;
 					}
+				} elseif ($k=='unit') {
+					foreach ($v as $k1 => $unit) {
+						$unit = (int)$unit;
+						list( $product_id, $param_id ) = explode( '_', $k1 );
+						$product_id = (int)$product_id;
+						$param_id   = (int)$param_id;
+						if( $unit > 0 ) {
+							$units = $_class_units->get_by_product_ids( $product_id );
+							if( isset( $units[ $product_id ][ $unit ] ) ) {
+								db()->UPDATE(db('shop_order_items'), array( 'unit' => $unit ), ' order_id='.$order_id.' AND product_id='.$product_id.' AND param_id='.$param_id);
+								$products = db_get_all( 'SELECT * FROM ' . db('shop_products') . ' WHERE id = ' . $product_id );
+								$product = $products[ $product_id ];
+								list( $price ) = $_class_price->markup_down( $product[ 'price' ], $product_id );
+								$item = array(
+									'price' => $price,
+									'unit'  => $unit,
+									'units' => $units[ $product_id ],
+								);
+								$price_one = $_class_basket->_get_price_one( $item );
+								$item = array(
+									'order_id'   => $order_id,
+									'product_id' => $product_id,
+									'param_id'   => $param_id,
+								);
+								$item_price = $item + array( 'price' => $price_one );
+								$this->_item_update_price_unit( $item_price );
+								$recount_price = true;
+							}
+						}
+					}
 				} elseif ($k=='price_unit') {
 					foreach ($v as $k1 => $price) {
-						list ($product_id,$param_id) = explode('_',$k1);
-						db()->UPDATE(db('shop_order_items'), array('price'	=> todecimal($price)), ' order_id='.$_GET['id'].' AND product_id='.intval($product_id).' AND param_id='.intval($param_id));
+						list( $product_id, $param_id ) = explode( '_', $k1 );
+						$this->_item_update_price_unit( array(
+							'price'      => $price,
+							'order_id'   => $order_id,
+							'product_id' => (int)$product_id,
+							'param_id'   => (int)$param_id,
+						));
 						$recount_price = true;
 					}
 				}
@@ -193,12 +231,14 @@ class yf_manage_shop_orders{
 		$price_total = 0;
 		foreach ((array)$order_items as $_info) {
 			$_product = $products_infos[$_info['product_id']];
+			$_units = array();
 			if(intval($_info['type']) == 1){
 				$images[0]['thumb'] = _class( '_shop_products', 'modules/shop/' )->_product_set_image($_info["product_id"], $_product[ 'cat_id' ], 'thumb', false );
 				$link = './?object='.main()->_get('object').'&action=product_set_edit&id='.$_info[ 'product_id' ];
 			}else{
 				$images = _class( '_shop_products', 'modules/shop/' )->_product_image($_info["product_id"],false,false);
 				$link = './?object='.main()->_get('object').'&action=product_edit&id='.$_info[ 'product_id' ];
+				$_units = $_class_units->get_by_product_ids( $_info[ 'product_id' ] );
 			}
 			$image = $images[ 0 ][ 'thumb' ] ?: _class( '_shop_categories', 'modules/shop/' )->get_icon_url( $_product[ 'cat_id' ], 'item' );
 			$dynamic_atts = array();
@@ -209,9 +249,19 @@ class yf_manage_shop_orders{
 					$price += $_attr_info['price'];
 				}
 			}
+			$product_id = (int)$_info[ 'product_id' ];
+			$param_id   = (int)$_info[ 'param_id' ];
 			$price_one  = tofloat($_info['price']);
 			$quantity   = (int)$_info['quantity'];
 			$price_item = $price_one * $quantity;
+			// product unit
+			$unit      = (int)$_info[ 'unit' ];
+			$units     = null;
+			$unit_name = 'шт.';
+			if( $_units[ $product_id ] ) {
+				$units = $_units[ $product_id ];
+				$units[ $unit ] && $unit_name = $units[ $unit ][ 'title' ];
+			}
 			$products[$_info['product_id'].'_'.$_info['param_id']] = array(
 				'product_id'   => intval($_info['product_id']),
 				'param_id'     => intval($_info['param_id']),
@@ -219,6 +269,9 @@ class yf_manage_shop_orders{
 				'name'         => _prepare_html($_product['name']),
 				'image'        => $image,
 				'link'         => $link,
+				'unit'         => $unit,
+				'unit_name'    => $unit_name,
+				'units'        => $units,
 				'price_unit'   => $price_one,
 				'price'        => $price_item,
 				'currency'     => _prepare_html(module('manage_shop')->CURRENCY),
@@ -308,6 +361,7 @@ class yf_manage_shop_orders{
 			->price('delivery_price')
 			->user_info('user_id')
 			->info('payment', 'Payment method')
+			->info('transaction_id', 'Transaction id')
 			->container(
 				table2($products)
 					->image('product_id', array(
@@ -323,6 +377,49 @@ class yf_manage_shop_orders{
 						$result = "<a class='btn' href='{$row[link]}'>{$row[product_id]}</a>";
 						return $result;
 					})
+					->func('name', function($f, $p, $row){
+						$row['name'] = $row['name'].($row['param_name']!='' ? "<br /><small>".$row['param_name']."</small>" : '');
+						return $row['name'];
+					})
+					->func( 'unit', function( $f, $p, $row ) {
+						$values = array();
+						if( !empty( $row[ 'units' ] ) ) {
+							$values[ 0 ] = ' - ';
+							foreach( $row[ 'units' ] as $id => $item ) {
+								$values[ $id ] = $item[ 'title' ];
+							}
+						}
+						$desc = 'Ед. измерения';
+						$width = '7em';
+						$result = sprintf( '
+									<style>
+										.unit_current {
+											width: %s;
+										}
+									</style>
+									<div class="unit_current">
+										%s
+										<span class="btn btn-mini unit_change">
+											<i class="icon-edit"></i>
+										</span>
+									</div>
+									'
+									, $width
+									, $row[ 'unit_name' ]
+								)
+							. _class( 'html' )->select2_box( array(
+								'desc'       => $desc,
+								'name'       => 'unit['.$row['product_id'].'_'.$row['param_id'].']',
+								'values'     => $values,
+								'js_options' => array(
+									'width'             => $width,
+									'containerCssClass' => 'select2_box',
+								),
+								// 'selected'   => $row[ 'unit' ],
+							))
+						;
+						return( $result );
+					})
 					->func('quantity',function($f, $p, $row){
 						$row['quantity'] = "<input type='text' name='qty[".$row['product_id']."_".$row['param_id']."]' value='".intval($row['quantity'])."' style='width:50px;'>";
 						return $row['quantity'];
@@ -332,10 +429,6 @@ class yf_manage_shop_orders{
 						return $row['price_unit'];
 					})
 					->text('price')
-					->func('name', function($f, $p, $row){
-						$row['name'] = $row['name'].($row['param_name']!='' ? "<br /><small>".$row['param_name']."</small>" : '');
-						return $row['name'];
-					})
 					->func('status', function($f, $p, $row){
 						$row['status'] = str_replace("status_item", "status_item[".$row['product_id']."_".$row['param_id']."]", $row['status']);
 						return $row['status'];
@@ -353,6 +446,19 @@ class yf_manage_shop_orders{
 
 		// misc handlers
 		$out .= '
+			<style>
+				.select2_box {
+					display: none;
+				}
+				.unit_current {
+					position : relative;
+				}
+				.btn.unit_change {
+					display  : none;
+					position : absolute;
+					right    : 0;
+				}
+			</style>
 			<script>
 			$(function() {
 				$(".delivery_id").on( "change", function( event ) {
@@ -371,11 +477,21 @@ class yf_manage_shop_orders{
 							$(".delivery_location_wrap").show();
 						}
 					}
-console.log( "count", count );
 				}
 				delivery_type__on_change( $(".delivery_type_wrap") );
 				$(".delivery_type_wrap").on( "change", function( event ) {
 					delivery_type__on_change( event.target );
+				});
+
+				$( ".unit_change" ).on( "click", function( event ) {
+					var $this = $( this );
+					var $select2 = $this.parent().next();
+					$select2.toggle()
+				}).each( function( i ) {
+					var $this = $( this );
+					if( $this.parent().next().length ) {
+						$this.show();
+					}
 				});
 			});
 			</script>
@@ -521,12 +637,38 @@ console.log( "count", count );
 		module('manage_shop')->_product_check_first_revision('order', $order_id);
 		$A = db()->get("SELECT * FROM `".db('shop_order_items')."` WHERE `order_id`=".$order_id." AND `product_id`=".$product_id);
 		if (empty($A)) {
+			$_class_price  = _class( '_shop_price',         'modules/shop/' );
+			$_class_units  = _class( '_shop_product_units', 'modules/shop/' );
+			$_class_basket = _class( 'shop_basket',         'modules/shop/' );
+			// units
+			$product = $_product_info;
+			$type    = 0;
+			$price_raw = (float)$product[ 'price_raw' ];
+			$price     = (float)$product[ 'price'     ];
+			$price_raw = $price_raw ?: $price;
+			$price     = $price     ?: $price_raw;
+			list( $price ) = $_class_price->markup_down( $price, $product_id, $type );
+			$units = $_class_units->get_by_product_ids( $product_id );
+			$unit  = 0;
+			if( !empty( $units[ $product_id ] ) ) {
+				$unit = current( $units[ $product_id ] );
+				$unit = $unit[ 'id' ];
+				$item = array(
+					'price' => $price,
+					'unit'  => $unit,
+					'units' => $units[ $product_id ],
+				);
+				$price = $_class_basket->_get_price_one( $item );
+			}
+			$price = $_class_price->_number_mysql( $price );
+			// add
 			db()->insert(db('shop_order_items'), array(
 				'order_id'   => $order_id,
 				'product_id' => $product_id,
 				'param_id'   => 0,
 				'quantity'   => intval($_POST['quantity']),
-				'price'      => number_format(module('shop')->_product_get_price($_product_info), 2, '.', ''),
+				'price'      => $price,
+				'unit'       => $unit,
 			));
 		} else {
 			db()->update(db('shop_order_items'), array(
@@ -537,6 +679,22 @@ console.log( "count", count );
 
 		module('manage_shop')->_order_add_revision('edit', $order_id);
 		return json_encode('ok');
+	}
+
+	function _item_update_price_unit( $options ) {
+		$_ = $options;
+		$price      = $_[ 'price'      ];
+		$order_id   = $_[ 'order_id'   ];
+		$product_id = $_[ 'product_id' ];
+		$param_id   = $_[ 'param_id'   ];
+		$result     = false;
+		if( is_null( $price ) || is_null( $order_id ) || is_null( $product_id ) || is_null( $param_id ) ) { return( $result ); }
+		$result = db()->UPDATE(
+			db( 'shop_order_items' )
+			, array( 'price' => todecimal( $price ) )
+			, sprintf( 'order_id=%u AND product_id=%u AND param_id=%u', $order_id, $product_id, $param_id )
+		);
+		return( $result );
 	}
 
 	function _order_recount_price($order_id, $order_info = array()) {

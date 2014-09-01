@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__FILE__).'/yf_unit_tests_setup.php';
+require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_validate_test extends PHPUnit_Framework_TestCase {
 	public function test_unique() {
@@ -47,11 +47,15 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->required(false) );
 		$this->assertFalse( _class('validate')->required(null) );
 		$this->assertFalse( _class('validate')->required(array()) );
+		$this->assertFalse( _class('validate')->required(array(' ')) );
+		$this->assertFalse( _class('validate')->required(array('','','')) );
+		$this->assertFalse( _class('validate')->required(array(array(),array())) );
+		$this->assertFalse( _class('validate')->required(array(array(array()),array())) );
+		$this->assertFalse( _class('validate')->required(array(array(array('','','')),array())) );
 
 		$this->assertTrue( _class('validate')->required('str') );
 		$this->assertTrue( _class('validate')->required(array('str')) );
 		$this->assertTrue( _class('validate')->required(array(1,2)) );
-		$this->assertTrue( _class('validate')->required(array(' ')) );
 	}
 	public function test_required_any() {
 		$this->assertFalse( @_class('validate')->required_any() );
@@ -532,6 +536,55 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->valid_date_format('2014-03-01', 'Y-m-d') );
 		$this->assertTrue( _class('validate')->valid_date_format('6.1.2009 13:00+01:00', 'j.n.Y H:iP') );
 		$this->assertFalse( _class('validate')->valid_date_format('6.1.2009', 'j.n.Y H:iP') );
+	}
+	public function test_phone_cleanup() {
+		$this->assertEquals( '', _class('validate')->phone_cleanup('') );
+		$this->assertEquals( '', _class('validate')->phone_cleanup('1') );
+		$this->assertEquals( '', _class('validate')->phone_cleanup('azvbbgggggdgdfs') );
+		$this->assertEquals( '', _class('validate')->phone_cleanup('123') );
+		$this->assertEquals( '', _class('validate')->phone_cleanup('123456') );
+		$this->assertEquals( '', _class('validate')->phone_cleanup('12345678') );
+
+		$this->assertEquals( '+380631234567', _class('validate')->phone_cleanup('631234567') );
+		$this->assertEquals( '+380631234567', _class('validate')->phone_cleanup('0631234567') );
+		$this->assertEquals( '+380631234567', _class('validate')->phone_cleanup('63-123-45-67') );
+		$this->assertEquals( '+380631234567', _class('validate')->phone_cleanup('063-123-45-67') );
+		$this->assertEquals( '+380631234567', _class('validate')->phone_cleanup('63 123 45 67') );
+		$this->assertEquals( '+380631234567', _class('validate')->phone_cleanup('063 123 45 67') );
+		$this->assertEquals( '+380631234567', _class('validate')->phone_cleanup(' 63 - 123 - 45 - 67 ') );
+		$this->assertEquals( '+380631234567', _class('validate')->phone_cleanup(' 063 - 123 - 45 - 67 ') );
+		$this->assertEquals( '+380631234567', _class('validate')->phone_cleanup(' +38 063 - 123 - 45 - 67 ') );
+		$this->assertEquals( '+380631234567', _class('validate')->phone_cleanup('+380631234567') );
+
+		$this->assertEquals( '+150631234567', _class('validate')->phone_cleanup('631234567', array('param' => '15')) );
+		$this->assertEquals( '+150631234567', _class('validate')->phone_cleanup('0631234567', array('param' => '15')) );
+		$this->assertEquals( '+150631234567', _class('validate')->phone_cleanup('+150631234567', array('param' => '15')) );
+
+		$this->assertEquals( '+79090000000', _class('validate')->phone_cleanup('9090000000', array('param' => '7')) );
+		$this->assertEquals( '+79090000000', _class('validate')->phone_cleanup('+79090000000', array('param' => '7')) );
+	}
+	public function test_valid_phone() {
+		$this->assertFalse( _class('validate')->valid_phone('') );
+		$this->assertFalse( _class('validate')->valid_phone('1') );
+		$this->assertFalse( _class('validate')->valid_phone('azvbbgggggdgdfs') );
+		$this->assertFalse( _class('validate')->valid_phone('123') );
+		$this->assertFalse( _class('validate')->valid_phone('123456') );
+		$this->assertFalse( _class('validate')->valid_phone('12345678') );
+
+		$this->assertTrue( _class('validate')->valid_phone('631234567') );
+		$this->assertTrue( _class('validate')->valid_phone('0631234567') );
+		$this->assertTrue( _class('validate')->valid_phone('63-123-45-67') );
+		$this->assertTrue( _class('validate')->valid_phone('063-123-45-67') );
+		$this->assertTrue( _class('validate')->valid_phone('63 123 45 67') );
+		$this->assertTrue( _class('validate')->valid_phone('063 123 45 67') );
+		$this->assertTrue( _class('validate')->valid_phone(' 63 - 123 - 45 - 67 ') );
+		$this->assertTrue( _class('validate')->valid_phone(' 063 - 123 - 45 - 67 ') );
+		$this->assertTrue( _class('validate')->valid_phone(' +38 063 - 123 - 45 - 67 ') );
+		$this->assertTrue( _class('validate')->valid_phone('+380631234567') );
+
+		$this->assertTrue( _class('validate')->valid_phone('631234567', array('param' => '15')) );
+		$this->assertTrue( _class('validate')->valid_phone('0631234567', array('param' => '15')) );
+		$this->assertTrue( _class('validate')->valid_phone('+150631234567', array('param' => '15')) );
 	}
 	public function test_standard_text() {
 // TODO: standard_text Returns FALSE if form field is not valid text (letters, numbers, whitespace, dashes, periods and underscores are allowed)

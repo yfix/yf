@@ -4,7 +4,7 @@
  *
  * Пример использования:
  *   #этот метод можно не вызывать, если в .htaccess путь уже прописан
- *   Func::add_include_path(dirname(__FILE__) . '/func/');
+ *   Func::add_include_path(__DIR__ . '/func/');
  *   ...
  *   $s = Func::call('html_optimize', $s);  # PHP < 5.3.0
  *   $s = Func::html_optimize($s);		  # PHP >= 5.3.0

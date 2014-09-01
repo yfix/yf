@@ -89,7 +89,8 @@ class yf_divide_pages {
 			'cur_page'			=> $cur_page,
 			'total_pages'		=> $total_pages,
 			'url_path'			=> $url_path. ($add_get_vars ? _add_get(array('page')) : ''),
-			'tpls_path'			=> $tpls_path,
+			'tpls_path'			=> $tpls_path,	
+			'pages_per_block'	=> $extra['pages_per_block']? : $this->PAGES_PER_BLOCK,
 		));
 		$result = array(
 			'limit_sql'		=> ' LIMIT '.intval($rendered['first']).', '.intval($per_page),
@@ -166,7 +167,7 @@ class yf_divide_pages {
 		$tpls_path		= $params['tpls_path'];
 		$total_pages	= $params['total_pages'];
 		$cur_page		= $params['cur_page'];
-		$pages_per_block= $this->PAGES_PER_BLOCK;
+		$pages_per_block= $params['pages_per_block']? : $this->PAGES_PER_BLOCK;
 
 		$items = array();
 		if ($total_records < $per_page) {
@@ -264,7 +265,7 @@ class yf_divide_pages {
 		$tpls_path		= $params['tpls_path'];
 		$total_pages	= $params['total_pages'];
 		$cur_page		= $params['cur_page'];
-		$pages_per_block= $this->PAGES_PER_BLOCK;
+		$pages_per_block= $params['pages_per_block']? : $this->PAGES_PER_BLOCK;
 
 		$items = array();
 		if ($total_records < $per_page) {
