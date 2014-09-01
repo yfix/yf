@@ -151,24 +151,36 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function fetch_row($query_id) {
+		if (!$query_id) {
+			return false;
+		}
 		return $query_id->fetch(PDO::FETCH_NUM);
 	}
 
 	/**
 	*/
 	function fetch_assoc($query_id) {
+		if (!$query_id) {
+			return false;
+		}
 		return $query_id->fetch(PDO::FETCH_ASSOC);
 	}
 
 	/**
 	*/
 	function fetch_array($query_id) {
+		if (!$query_id) {
+			return false;
+		}
 		return $query_id->fetch(PDO::FETCH_BOTH);
 	}
 
 	/**
 	*/
 	function fetch_object($query_id) {
+		if (!$query_id) {
+			return false;
+		}
 		return $query_id->fetch(PDO::FETCH_OBJ);
 	}
 
@@ -181,6 +193,9 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function free_result($query_id = 0) {
+		if (!$query_id) {
+			return false;
+		}
 		$query_id = null;
 		return true;
 	}
@@ -263,5 +278,83 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 			return false;
 		}
 		return $this->db_connect_id->getAttribute(PDO::ATTR_SERVER_INFO);
+	}
+
+	/**
+	*/
+	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = true) {
+		$retarr = array();
+
+		$Q = $this->query(sprintf($this->META_COLUMNS_SQL, $table));
+		while ($A = $this->fetch_row($Q)) {
+			$fld = array();
+
+			$fld['name']= $A[0];
+			$type		= $A[1];
+
+			// split type into type(length):
+			if ($FULL_INFO) {
+				$fld['scale'] = null;
+			}
+			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
+				if ($FULL_INFO) {
+					$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
+				}
+			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
+			} elseif (preg_match('/^(enum|set)\((.*)\)$/i', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = max(array_map('strlen',explode(',',$query_array[2]))) - 2; // PHP >= 4.0.6
+				$fld['max_length'] = ($fld['max_length'] == 0 ? 1 : $fld['max_length']);
+				$values = array();
+				foreach (explode(',', $query_array[2]) as $v) {
+					$v = trim(trim($v), '\'"');
+					if (strlen($v)) {
+						$values[$v] = $v;
+					}
+				}
+				$fld['values'] = $values;
+			} else {
+				$fld['type'] = $type;
+				$fld['max_length'] = -1;
+			}
+			$fld['not_null']		= ($A[2] != 'YES');
+			$fld['primary_key']		= ($A[3] == 'PRI');
+			$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
+			$fld['binary']			= (strpos($type,'blob') !== false);
+			$fld['unsigned']		= (strpos($type,'unsigned') !== false);
+			if (!$fld['binary']) {
+				$d = $A[4];
+				if ($d != '' && $d != 'NULL') {
+					$fld['has_default'] = true;
+					$fld['default_value'] = $d;
+				} else {
+					$fld['has_default'] = false;
+				}
+			}
+			if ($KEYS_NUMERIC) {
+				$retarr[] = $fld;
+			} else {
+				$retarr[strtolower($fld['name'])] = $fld;
+			}
+		}
+		return $retarr;
+	}
+
+	/**
+	*/
+	function meta_tables($DB_PREFIX = '') {
+		$Q = $this->query($this->META_TABLES_SQL);
+		while ($A = $this->fetch_row($Q)) {
+			// Skip tables without prefix of current connection
+			if (strlen($DB_PREFIX) && substr($A['0'], 0, strlen($DB_PREFIX)) != $DB_PREFIX) {
+				continue;
+			}
+			$tables[$A['0']] = $A['0'];
+		}
+		return $tables;
 	}
 }
