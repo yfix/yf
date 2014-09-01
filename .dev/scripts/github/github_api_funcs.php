@@ -2,7 +2,8 @@
 
 function get_data_from_url($path, $url, $sleep = 0) {
 	if (!file_exists($path) || (filemtime($path) + 86400) < time()) {
-		passthru('wget "'.$url.'" -O '.$path);
+#		passthru('wget "'.$url.'" -O '.$path);
+		passthru('curl -v "'.$url.'" > '.$path);
 		touch($path);
 		if ($sleep) {
 			sleep($sleep); // Need to avoid github rate limiting
