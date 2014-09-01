@@ -223,9 +223,9 @@ class class_db_query_builder_mysql_real_test extends db_real_abstract {
 		);
 		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table, $data) );
 
-		$this->assertTrue( self::qb()->from(self::$DB_NAME.'.'.$table)->where('id > 1')->delete() );
+		$this->assertNotEmpty( self::qb()->from(self::$DB_NAME.'.'.$table)->where('id > 1')->delete() );
 		$this->assertSame( array('1' => $data[1]), self::qb()->from(self::$DB_NAME.'.'.$table)->get_all() );
-		$this->assertTrue( self::qb()->from(self::$DB_NAME.'.'.$table)->whereid('1')->delete() );
+		$this->assertNotEmpty( self::qb()->from(self::$DB_NAME.'.'.$table)->whereid('1')->delete() );
 		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table)->get_all() );
 // TODO: fix DELETE with AS ... == not allowed
 #		$this->assertTrue( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->where('t1.id > 1')->delete() );
