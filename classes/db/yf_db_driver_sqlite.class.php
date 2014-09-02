@@ -5,12 +5,6 @@ class yf_db_driver_sqlite extends yf_db_driver {
 
 	/** @var @conf_skip */
 	public $db_connect_id		= null;
-	/** @var @conf_skip */
-	public $query_result		= null;
-	/** @var @conf_skip */
-	public $META_TABLES_SQL		= '';	
-	/** @var @conf_skip */
-	public $META_COLUMNS_SQL	= '';
 
 	/**
 	*/
@@ -19,277 +13,259 @@ class yf_db_driver_sqlite extends yf_db_driver {
 			trigger_error('SQLite db driver require missing php extension sqlite3', E_USER_ERROR);
 			return false;
 		}
+		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET);
 		$this->params = $params;
-		$server = $this->params['host'] . (($this->params['port']) ? ':' . $this->params['port'] : '');
 
-		$error = '';
-#		$this->db_connect_id = ($this->persistency) ? @sqlite_popen($server, 0666, $error) : @sqlite_open($server, 0666, $error);
-		if ($this->db_connect_id) {
-#			@sqlite_query('PRAGMA short_column_names = 1', $this->db_connect_id);
-		}
-		return ($this->db_connect_id) ? true : array('message' => $error);
-	}
+		$this->connect();
 
-	/**
-	* Base query method
-	*/
-	function query($query = '') {
-		if ($query == '') return false;
-
-		$this->query_result = false;
-		$this->sql_add_num_queries($this->query_result);
-
-		if (!$this->query_result) {
-#			if (($this->query_result = @sqlite_query($query, $this->db_connect_id)) === false) {
-				$this->sql_error($query);
-			} elseif (strpos($query, 'SELECT') === 0 && $this->query_result) {
-				$this->open_queries[(int) $this->query_result] = $this->query_result;
-			}
-		}
-		return ($this->query_result) ? $this->query_result : false;
-	}
-
-	/**
-	*/
-	function close() {
-#		return @sqlite_close($this->db_connect_id);
-	}
-
-	/**
-	* Very simple emulation of the mysqli multi_query
-	*/
-	function multi_query($queries = array()) {
-		$result = array();
-		foreach((array)$queries as $k => $sql) {
-			$result[$k] = $this->query($sql);
-		}
-		return $result;
-	}
-
-	/**
-	* Unbuffered query
-	*/
-	function unbuffered_query($query = '') {
-		return $this->query($query);
-	}
-
-	/**
-	* Return number of rows
-	* Not used within core code
-	*/
-	function num_rows($query_id = false) {
-		if (!$query_id)	{
-			$query_id = $this->query_result;
-		}
-#		return ($query_id) ? @sqlite_num_rows($query_id) : false;
-	}
-
-	/**
-	* Return number of affected rows
-	*/
-	function affected_rows() {
-#		return ($this->db_connect_id) ? @sqlite_changes($this->db_connect_id) : false;
-	}
-
-	/**
-	* Fetch current row
-	*/
-	function fetch_row($query_id = false) {
-		if (!$query_id)	{
-			$query_id = $this->query_result;
-		}
-#		return ($query_id) ? @sqlite_fetch_array($query_id, SQLITE_ASSOC) : false;
-	}
-
-	/**
-	* Fetch field
-	* if rownum is false, the current row is used, else it is pointing to the row (zero-based)
-	*/
-	function fetch_field($field, $rownum = false, $query_id = false)	{
-		if (!$query_id)	{
-			$query_id = $this->query_result;
-		}
-		if ($query_id) {
-			if ($rownum === false) {
-#				return @sqlite_column($query_id, $field);
-			} else {
-				$this->sql_rowseek($rownum, $query_id);
-#				return @sqlite_column($query_id, $field);
-			}
-		}
-		return false;
-	}
-
-	/**
-	* Seek to given row number
-	* rownum is zero-based
-	*/
-	function row_seek($rownum, $query_id = false) {
-		if (!$query_id)	{
-			$query_id = $this->query_result;
-		}
-#		return ($query_id) ? @sqlite_seek($query_id, $rownum) : false;
-	}
-
-	/**
-	* Get last inserted id after insert statement
-	*/
-	function insert_id() {
-#		return ($this->db_connect_id) ? @sqlite_last_insert_rowid($this->db_connect_id) : false;
-	}
-
-	/**
-	* Free sql result
-	*/
-	function free_result($query_id = false) {
-		return true;
-	}
-
-	/**
-	* Escape string used in sql query
-	*/
-	function real_escape_string($msg) {
-#		return @sqlite_escape_string($msg);
-	}
-
-	/**
-	* return sql error array
-	* @access: private
-	*/
-	function error() {
-		return array(
-#			'message'	=> @sqlite_error_string(@sqlite_last_error($this->db_connect_id)),
-#			'code'		=> @sqlite_last_error($this->db_connect_id)
-		);
-	}
-
-	/**
-	* Build LIMIT query
-	*/
-// TODO: convert to number of argumenets like in mysql
-	function limit($query, $total, $offset = 0, $cache_ttl = 0) {
-		if ($query == '') {
-			return false;
-		}
-		$this->query_result = false; 
-		// if $total is set to 0 we do not want to limit the number of rows
-		if ($total == 0) {
-			$total = -1;
-		}
-		$query .= PHP_EOL.' LIMIT ' . ((!empty($offset)) ? $offset . ', ' . $total : $total);
-		return $this->sql_query($query, $cache_ttl); 
-	}
-
-	/**
-	* SQL Transaction
-	* @access: private
-	*/
-	function _sql_transaction($status = 'begin') {
-		switch ($status) {
-			case 'begin':
-#				return @sqlite_query('BEGIN', $this->db_connect_id);
-				break;
-			case 'commit':
-#				return @sqlite_query('COMMIT', $this->db_connect_id);
-				break;
-			case 'rollback':
-#				return @sqlite_query('ROLLBACK', $this->db_connect_id);
-				break;
-		}
-		return true;
-	}
-
-	/**
-	* Build db-specific query data
-	* @access: private
-	*/
-	function _custom_build($stage, $data) {
-		return $data;
-	}
-
-	/**
-	*/
-	function get_server_version() {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-// TODO
-		return '';
-	}
-
-	/**
-	*/
-	function get_host_info() {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-// TODO
-		return '';
-	}
-
-	/**
-	*/
-	function ping() {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-// TODO
-		return '';
-	}
-
-	/**
-	*/
-	function begin() {
-// TODO
-	}
-
-	/**
-	*/
-	function commit() {
-// TODO
-	}
-
-	/**
-	*/
-	function rollback() {
-// TODO
+		return $this->db_connect_id;
 	}
 
 	/**
 	*/
 	function connect() {
-// TODO
+		$this->db_connect_id = new SQLite3($this->params['name']);
+		if (!$this->db_connect_id) {
+			$this->_connect_error = 'cannot_connect_to_server';
+		}
+		return $this->db_connect_id;
 	}
 
 	/**
 	*/
-	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = false) {
-// TODO
+	function select_db($name) {
+		return true;
+	}
+
+	/**
+	*/
+	function query($query) {
+		if (!$this->db_connect_id) {
+			return false;
+		}
+		$result = $this->db_connect_id->query($query);
+		$this->_last_query_id = $result;
+		if (!$result) {
+			$error = $this->error();
+			$query_error_code = $error['code'];
+			$query_error = $error['message'];
+			return false;
+		}
+		return $result;
+	}
+
+	/**
+	*/
+	function close() {
+		return $this->db_connect_id ? $this->db_connect_id->close() : false;
+	}
+
+	/**
+	*/
+	function num_rows($query_id) {
+		return $query_id ? $query_id->numColumns() : false;
+	}
+
+	/**
+	*/
+	function affected_rows() {
+		return $this->db_connect_id ? $this->db_connect_id->changes() : false;
+	}
+
+	/**
+	*/
+	function insert_id() {
+		return $this->db_connect_id ? $this->db_connect_id->lastInsertRowID() : false;
+	}
+
+	/**
+	*/
+	function fetch_row($query_id) {
+		return $query_id ? $query_id->fetchArray(SQLITE3_NUM) : false;
+	}
+
+	/**
+	*/
+	function fetch_assoc($query_id) {
+		return $query_id ? $query_id->fetchArray(SQLITE3_ASSOC) : false;
+	}
+
+	/**
+	*/
+	function fetch_array($query_id) {
+		return $query_id ? $query_id->fetchArray(SQLITE3_BOTH) : false;
+	}
+
+	/**
+	*/
+	function fetch_object($query_id) {
+		return $query_id ? array_to_object($query_id->fetchArray(SQLITE3_ASSOC)) : false;
+	}
+
+	/**
+	*/
+	function real_escape_string($string) {
+		return $this->db_connect_id ? $this->db_connect_id->escapeString($string) : false;
+	}
+
+	/**
+	*/
+	function free_result($query_id = 0) {
+		return $query_id ? $query_id->close() : false;
+	}
+
+	/**
+	*/
+	function error() {
+		if ($this->db_connect_id) {
+			return array(
+				'message'	=> $this->db_connect_id->lastErrorMsg(),
+				'code'		=> $this->db_connect_id->lastErrorCode(),
+			);
+		} elseif ($this->_connect_error) {
+			return array(
+				'message'	=> 'YF: Connect error: '.$this->_connect_error,
+				'code'		=> '9999',
+			);
+		}
+		return false;
+	}
+
+	/**
+	* Begin a transaction
+	*/
+	function begin() {
+		return $this->db_connect_id ? $this->db_connect_id->query('BEGIN') : false;
+	}
+
+	/**
+	* End a transaction
+	*/
+	function commit() {
+		return $this->db_connect_id ? $this->db_connect_id->query('COMMIT') : false;
+	}
+
+	/**
+	* Rollback a transaction
+	*/
+	function rollback() {
+		return $this->db_connect_id ? $this->db_connect_id->query('ROLLBACK') : false;
+	}
+
+	/**
+	* Return database-specific limit of returned rows
+	*/
+	function limit($count, $offset) {
+		if ($count > 0) {
+			$offset = ($offset > 0) ? $offset : 0;
+			$sql .= 'LIMIT '.($offset ? $offset.', ' : ''). $count;
+		}
+		return $sql;
+	}
+
+	/**
+	*/
+	function escape_key($data) {
+		return '`'.$data.'`';
+	}
+
+	/**
+	*/
+	function escape_val($data) {
+		return '\''.$data.'\'';
+	}
+
+	/**
+	*/
+	function get_server_version() {
+		return $this->db_connect_id ? $this->db_connect_id->version() : false;
+	}
+
+	/**
+	*/
+	function get_host_info() {
+		return $this->get_server_version();
+	}
+
+	/**
+	*/
+	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = true) {
+		$retarr = array();
+
+// TODO: check me, maybe need to remove or replace
+		$sql = 'SELECT sql FROM sqlite_master WHERE type = "table" AND name = "'.$table.'"';
+		$Q = $this->query($sql);
+		while ($A = $this->fetch_row($Q)) {
+			$fld = array();
+
+			$fld['name']= $A[0];
+			$type		= $A[1];
+
+			// split type into type(length):
+			if ($FULL_INFO) {
+				$fld['scale'] = null;
+			}
+			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
+				if ($FULL_INFO) {
+					$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
+				}
+			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
+			} elseif (preg_match('/^(enum|set)\((.*)\)$/i', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = max(array_map('strlen',explode(',',$query_array[2]))) - 2; // PHP >= 4.0.6
+				$fld['max_length'] = ($fld['max_length'] == 0 ? 1 : $fld['max_length']);
+				$values = array();
+				foreach (explode(',', $query_array[2]) as $v) {
+					$v = trim(trim($v), '\'"');
+					if (strlen($v)) {
+						$values[$v] = $v;
+					}
+				}
+				$fld['values'] = $values;
+			} else {
+				$fld['type'] = $type;
+				$fld['max_length'] = -1;
+			}
+			$fld['not_null']		= ($A[2] != 'YES');
+			$fld['primary_key']		= ($A[3] == 'PRI');
+			$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
+			$fld['binary']			= (strpos($type,'blob') !== false);
+			$fld['unsigned']		= (strpos($type,'unsigned') !== false);
+			if (!$fld['binary']) {
+				$d = $A[4];
+				if ($d != '' && $d != 'NULL') {
+					$fld['has_default'] = true;
+					$fld['default_value'] = $d;
+				} else {
+					$fld['has_default'] = false;
+				}
+			}
+			if ($KEYS_NUMERIC) {
+				$retarr[] = $fld;
+			} else {
+				$retarr[strtolower($fld['name'])] = $fld;
+			}
+		}
+		return $retarr;
 	}
 
 	/**
 	*/
 	function meta_tables($DB_PREFIX = '') {
-// TODO
-	}
-
-	function escape_key($data) {
-		return '"'.addslashes($data).'"';
-	}
-
-	function escape_val($data) {
-		return '"'.addslashes($data).'"';
-	}
-	function fetch_array($query_id = 0) {
-		if (!$query_id) {
-			$query_id = $this->query_result;
+		$sql = 'SELECT name	FROM sqlite_master WHERE type = "table"	AND name <> "sqlite_sequence"';
+		$q = $this->query($sql);
+		while ($a = $this->fetch_assoc($q)) {
+			$name = $a['name'];
+			// Skip tables without prefix of current connection
+			if (strlen($DB_PREFIX) && substr($name, 0, strlen($DB_PREFIX)) != $DB_PREFIX) {
+				continue;
+			}
+			$tables[$name] = $name;
 		}
-		if ($query_id) {
-#			return sqlite_fetch_array($query_id);
-		}
-		return false;
-	}
-	function fetch_assoc($query_id = 0) {
-		return $this->fetch_array($query_id);
+		return $tables;
 	}
 }

@@ -112,7 +112,7 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 
 	/**
 	*/
-	function query($query = '') {
+	function query($query) {
 		if (!$this->db_connect_id) {
 			return false;
 		}

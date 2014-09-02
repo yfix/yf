@@ -60,7 +60,7 @@ class yf_db_driver_pdo_sqlite extends yf_db_driver_pdo {
 
 	/**
 	*/
-	function query($query = '') {
+	function query($query) {
 		if (!$this->db_connect_id) {
 			return false;
 		}
@@ -230,6 +230,7 @@ class yf_db_driver_pdo_sqlite extends yf_db_driver_pdo {
 	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = true) {
 		$retarr = array();
 
+// TODO: check me
 		$sql = 'SELECT sql FROM sqlite_master WHERE type = "table" AND name = "'.$table.'"';
 		$Q = $this->query($sql);
 		while ($A = $this->fetch_row($Q)) {

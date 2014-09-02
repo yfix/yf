@@ -1818,69 +1818,55 @@ abstract class yf_db_utils_driver {
 	}
 
 	/**
-	* Will be like this: 
 	* db()->utils()->database('geonames')->create();
 	* db()->utils()->database('geonames')->drop();
 	* db()->utils()->database('geonames')->alter($params);
 	* db()->utils()->database('geonames')->rename($new_name);
 	*/
 	function database($name) {
-// TODO
-		return _class('db_utils_database', 'classes/db/');
+		$obj = clone _class('db_utils_helper_database', 'classes/db/');
+		$obj->db = $this->db;
+		$obj->utils = $this->utils;
+		$obj->name = $name;
+		return $obj;
 	}
 
 	/**
-	* Will be like this: 
 	* db()->utils()->database('geonames')->table('geo_city')->create();
 	* db()->utils()->database('geonames')->table('geo_city')->drop();
 	* db()->utils()->database('geonames')->table('geo_city')->alter($params);
 	* db()->utils()->database('geonames')->table('geo_city')->rename($new_name);
 	*/
 	function table($name) {
-// TODO
-		return _class('db_utils_table', 'classes/db/');
+		$obj = clone _class('db_utils_helper_table', 'classes/db/');
+		$obj->db = $this->db;
+		$obj->utils = $this->utils;
+		$obj->name = $name;
+		return $obj;
 	}
 
 	/**
-	* Will be like this: 
 	* db()->utils()->database('geonames')->table('geo_city')->column('name')->add();
 	* db()->utils()->database('geonames')->table('geo_city')->column('name')->drop();
 	*/
 	function column($name) {
-// TODO
-		return _class('db_utils_column', 'classes/db/');
+		$obj = clone _class('db_utils_helper_column', 'classes/db/');
+		$obj->db = $this->db;
+		$obj->utils = $this->utils;
+		$obj->name = $name;
+		return $obj;
 	}
 
 	/**
-	* db()->utils()->database('geonames')->view('test')->create();
+	* db()->utils()->database('geonames')->table('geo_city')->index('name', ('id', 'name'))->add();
+	* db()->utils()->database('geonames')->table('geo_city')->index('name')->drop();
 	*/
-	function view($name) {
-// TODO
-		return _class('db_utils_view', 'classes/db/');
-	}
-
-	/**
-	* db()->utils()->database('geonames')->procedure('test')->create();
-	*/
-	function procedure($name) {
-// TODO
-		return _class('db_utils_procedure', 'classes/db/');
-	}
-
-	/**
-	* db()->utils()->database('geonames')->trigger('test')->create();
-	*/
-	function trigger($name) {
-// TODO
-		return _class('db_utils_trigger', 'classes/db/');
-	}
-
-	/**
-	* db()->utils()->database('geonames')->event('test')->create();
-	*/
-	function event($name) {
-// TODO
-		return _class('db_utils_event', 'classes/db/');
+	function index($name) {
+		$obj = clone _class('db_utils_helper_index', 'classes/db/');
+		$obj->db = $this->db;
+		$obj->utils = $this->utils;
+		$obj->name = $name;
+		return $obj;
 	}
 
 	/**
