@@ -5,7 +5,7 @@ ng_app_admin.factory( 'Uploader', function( $q, $rootScope, $log ) {
 		var url  = options.url  || '{_url_upload}';
 		var name = options.name || 'file';
 		var file = options.file;
-$log.log( 'uploader', file, name, url );
+		if( !file ) { return( false ); }
 		var deferred = $q.defer(),
 		xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function( r ) {
@@ -21,8 +21,22 @@ $log.log( 'uploader', file, name, url );
 				}
 			}
 		}
-		formdata = new FormData(),
-			formdata.append( name, file );
+		xhr.onerror = function( r ) {
+			$rootScope.$apply(function() {
+				deferred.reject( xhr );
+			});
+		}
+		if( options.onprogress ) {
+			xhr.upload.onprogress = options.onprogress;
+		}
+		formdata = new FormData();
+		angular.forEach(item.formData, function(obj) {
+			angular.forEach(obj, function(value, key) {
+				form.append(key, value);
+			});
+		});
+		$log.log( 'title', name );
+			{{-- formdata.append( name, file, file.name ); --}}
 		xhr.open( 'POST', url, true );
 		xhr.send( formdata );
 		return( deferred.promise );
@@ -30,36 +44,83 @@ $log.log( 'uploader', file, name, url );
 	return( this );
 });
 
-ng_app_admin.directive( 'fileChange', function( $log ) {
+ng_app_admin.directive( 'file', function( Uploader, $log ) {
 	return {
-		restrict: 'A',
+		restrict: 'AE',
 		link: function( $scope, element, attrs ) {
-			element.bind( 'change', function( event ) {
-				{{-- var files = event.target.files; --}}
-				var files = element[ 0 ].files;
-				var name  = attrs[ 'name' ] || 'file';
-				$scope.$apply( function() {
-					$scope[ attrs[ 'fileChange' ] ]({ 'files': files, 'name': name });
-				})
-			})
+			// init vars
+			var text_select = attrs.placeholder || 'Выберете файл...';
+			var file_name = '';
+			var file_size = 0;
+			var file = {};
+			var $file = $( element ).find( '.file' ).first();
+			$scope.message = text_select;
+			// init events
+			var onChange = function( event ) {
+				var files = event.target.files;
+				if( files.length > 0 ) {
+					var name  = attrs.name;
+					$scope.$apply( function() {
+						onUpload({ 'files': files, 'name': name });
+					})
+				}
+			};
+			var onSelect = function( event ) {
+				$log.log( 'event', $( this ).closest( 'form' ) );
+				return;
+				$file.trigger( 'click' );
+			};
+			var onUpload = function( options ) {
+				options        = options || {};
+				options.file   = options.files[0];
+				file           = options.file;
+				file_name      = options.file.name;
+				file_size      = options.file.size;
+				$scope.message = 'Загрузка: ' + file_name;
+				// upload events
+				options.onprogress = function( event ) {
+					var progress = Math.round( event.lengthComputable ? event.loaded * 100 / event.total : 0 );
+					$scope.message = file_name + ' - ' + progress + '%';
+					$scope.onProgress({ progress: progress, event: event });
+				}
+				// upload
+				var r = Uploader.upload( options );
+				if( r ) {
+					r.then(
+						// file uploaded
+						function( r ) {
+							$scope.message = file_name + ' - загружен';
+							$scope.onSuccess({ file_name: file_name, size: file_size, file: file, response: r });
+						},
+						// file not uploaded
+						function( r ) {
+							$scope.message = file_name + ' - не загружен';
+							$scope.onFail({ file_name: file_name, size: file_size, file: file, response: r });
+						});
+				// file canceled
+				} else {
+					$scope.message = file_name + ' - отменен';
+					$scope.onCancel({ file_name: file_name, file: file });
+				}
+			}
+			element.find( '.file' ).bind( 'change', onChange );
+			element.find( '.btn'  ).bind( 'click',  onSelect );
 		},
+		scope: {
+			'onProgress' : '&',
+			'onSuccess'  : '&',
+			'onFail'     : '&',
+			'onCancel'   : '&',
+		},
+		template:
+			'<span class="btn btn-success" ng-bind="message"></span>'
+			+ '<input class="file" type="file" ng-hide="true">'
+		,
 	}
 });
 
-ng_app_admin.controller( '{_ng_controller}', function( Uploader, $scope, $log ) {
+ng_app_admin.controller( '{_ng_controller}', function( $scope, $log ) {
 	$log.log( 'ctrl', 'init' );
-	$scope.upload = function( options ) {
-		options = options || {};
-			options.file = options.files[0];
-		var r = Uploader.upload( options );
-		r.then(
-			function( r ) {
-$log.log( 'file uploaded', r );
-			},
-			function( r ) {
-$log.log( 'file not uploaded', r );
-			});
-	}
 });
 
 </script>

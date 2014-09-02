@@ -134,6 +134,9 @@ class yf_manage_shop_import_products2 {
 		$_form_tpl = tpl()->parse( 'manage_shop/import2__form', $data );
 		// create form
 		$_form = form( $data, array( 'ng-controller' => $_ng_controller ) )
+			->fieldset_start()
+				->container( $_form_tpl, 'Загрузка' )
+			->fieldset_end()
 			->select2_box( array(
 				'desc'     => 'Действие',
 				'name'     => 'sub_action',
@@ -144,9 +147,6 @@ class yf_manage_shop_import_products2 {
 				'name'     => 'supplier',
 				'values'   => $data[ '_supplier' ],
 			))
-			->fieldset_start()
-				->container( $_form_tpl, 'Данные' )
-			->fieldset_end()
 		// $link_back = './?object=manage_shop&action=products';
 		// $_form = form( $data )
 			// ->row_start( array( 'desc' => 'Всего выбрано' ) )
