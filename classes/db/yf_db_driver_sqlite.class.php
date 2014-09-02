@@ -63,7 +63,15 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	/**
 	*/
 	function num_rows($query_id) {
-		return $query_id ? $query_id->numColumns() : false;
+		if ($query_id) {
+			$num_rows = 0;
+			while ($a = $this->fetch_row($query_id)) {
+				$num_rows++;
+			}
+			$query_id->reset();
+			return $num_rows;
+		}
+		return false;
 	}
 
 	/**
@@ -110,8 +118,11 @@ class yf_db_driver_sqlite extends yf_db_driver {
 
 	/**
 	*/
-	function free_result($query_id = 0) {
-		return $query_id ? $query_id->close() : false;
+	function free_result($query_id) {
+		if ($query_id) {
+			$query_id = null;
+		}
+		return true;
 	}
 
 	/**
