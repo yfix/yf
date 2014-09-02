@@ -99,6 +99,7 @@ class class_num2string_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'two hundred twenty two thousands two hundred twenty two grivnas 45 kopecks', common()->num2str( 222222.45 ) );
 	}
 	public function test_num2str_rub_ru() {
+		_class( 'common_num2string', 'class/common' )->lang_id( 'ru' );
 		$currency_id__current = _class( 'common_num2string', 'class/common' )->currency_id();
 		$currency_id = _class( 'common_num2string', 'class/common' )->currency_id( 'not_exists' );
 		$this->assertEquals( $currency_id__current, $currency_id );
@@ -120,6 +121,7 @@ class class_num2string_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'two hundred twenty two thousands two hundred twenty two roubles 45 kopecks', common()->num2str( 222222.45 ) );
 	}
 	public function test_num2str_usd_ru() {
+		_class( 'common_num2string', 'class/common' )->lang_id( 'ru' );
 		$currency    = 'USD';
 		$currency_id = _class( 'common_num2string', 'class/common' )->currency_id( $currency );
 		$this->assertEquals( $currency, $currency_id );
@@ -140,6 +142,7 @@ class class_num2string_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( 'two hundred twenty two thousands two hundred twenty two dollars 45 cents', common()->num2str( 222222.45 ) );
 	}
 	public function test_num2str_eur_ru() {
+		_class( 'common_num2string', 'class/common' )->lang_id( 'ru' );
 		$currency    = 'EUR';
 		$currency_id = _class( 'common_num2string', 'class/common' )->currency_id( $currency );
 		$this->assertEquals( $currency, $currency_id );
