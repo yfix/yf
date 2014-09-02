@@ -9,6 +9,7 @@ abstract class tpl_abstract extends PHPUnit_Framework_TestCase {
 		if (false !== strpos(strtolower(get_called_class()), 'compiled')) {
 			self::$_bak = tpl()->COMPILE_TEMPLATES;
 			tpl()->COMPILE_TEMPLATES = true;
+			_class('dir')->mkdir(STORAGE_PATH.'stpls_compiled/');
 		}
 	}
 	public static function tearDownAfterClass() {
