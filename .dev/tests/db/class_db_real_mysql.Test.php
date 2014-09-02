@@ -27,10 +27,11 @@ class class_db_real_mysql_test extends db_real_abstract {
 				. '  PRIMARY KEY (`id`)'. PHP_EOL
 				. ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
 		);
-		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->query('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table)) );
-		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->unbuffered_query('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table)) );
-		$this->assertEquals( $expected, self::db()->query_fetch('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table) );
-		$this->assertEquals( $expected, self::db()->get('SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table) );
+		$sql = 'SHOW CREATE TABLE '.self::$DB_NAME.'.'.$table;
+		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->query($sql)) );
+		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->unbuffered_query($sql)) );
+		$this->assertEquals( $expected, self::db()->query_fetch($sql) );
+		$this->assertEquals( $expected, self::db()->get($sql) );
 
 		$this->assertNotEmpty( self::db()->query('INSERT INTO '.self::$DB_NAME.'.'.$table.' VALUES (1),(2),(3)') );
 		$this->assertEquals( 3, self::db()->affected_rows() );
