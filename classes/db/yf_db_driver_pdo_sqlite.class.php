@@ -227,68 +227,16 @@ class yf_db_driver_pdo_sqlite extends yf_db_driver_pdo {
 
 	/**
 	*/
-	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = true) {
-		$retarr = array();
-
-// TODO: check me
-		$sql = 'SELECT sql FROM sqlite_master WHERE type = "table" AND name = "'.$table.'"';
-		$Q = $this->query($sql);
-		while ($A = $this->fetch_row($Q)) {
-			$fld = array();
-
-			$fld['name']= $A[0];
-			$type		= $A[1];
-
-			// split type into type(length):
-			if ($FULL_INFO) {
-				$fld['scale'] = null;
-			}
-			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-				if ($FULL_INFO) {
-					$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
-				}
-			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-			} elseif (preg_match('/^(enum|set)\((.*)\)$/i', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = max(array_map('strlen',explode(',',$query_array[2]))) - 2; // PHP >= 4.0.6
-				$fld['max_length'] = ($fld['max_length'] == 0 ? 1 : $fld['max_length']);
-				$values = array();
-				foreach (explode(',', $query_array[2]) as $v) {
-					$v = trim(trim($v), '\'"');
-					if (strlen($v)) {
-						$values[$v] = $v;
-					}
-				}
-				$fld['values'] = $values;
-			} else {
-				$fld['type'] = $type;
-				$fld['max_length'] = -1;
-			}
-			$fld['not_null']		= ($A[2] != 'YES');
-			$fld['primary_key']		= ($A[3] == 'PRI');
-			$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
-			$fld['binary']			= (strpos($type,'blob') !== false);
-			$fld['unsigned']		= (strpos($type,'unsigned') !== false);
-			if (!$fld['binary']) {
-				$d = $A[4];
-				if ($d != '' && $d != 'NULL') {
-					$fld['has_default'] = true;
-					$fld['default_value'] = $d;
-				} else {
-					$fld['has_default'] = false;
-				}
-			}
-			if ($KEYS_NUMERIC) {
-				$retarr[] = $fld;
-			} else {
-				$retarr[strtolower($fld['name'])] = $fld;
-			}
+	function meta_columns($table) {
+		$cols = array();
+		$sql = 'PRAGMA table_info('.$table.')';
+		$q = $this->query($sql);
+		while ($a = $this->fetch_assoc($q)) {
+			$name = $a['name'];
+			$cols[$name] = $a;
 		}
-		return $retarr;
+		return $cols;
+		$retarr = array();
 	}
 
 	/**
