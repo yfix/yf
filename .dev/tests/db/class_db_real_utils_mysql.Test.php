@@ -1,11 +1,11 @@
 <?php
 
-require_once __DIR__.'/db_real__setup.php';
+require_once __DIR__.'/db_real_abstract.php';
 
 /**
  * @requires extension mysql
  */
-class class_db_utils_mysql_real_test extends db_real_abstract {
+class class_db_real_utils_mysql_test extends db_real_abstract {
 	public static function setUpBeforeClass() {
 		self::_connect();
 		self::$server_version = self::$db->get_server_version();

@@ -1,23 +1,11 @@
 <?php
 
-require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
-require_once dirname(__DIR__).'/db_setup.php';
+require_once __DIR__.'/db_offline_abstract.php';
 
 /**
  * @requires extension mysql
  */
-class class_db_query_builder_test extends PHPUnit_Framework_TestCase {
-	public static $_er = array();
-	public static function setUpBeforeClass() {
-		self::$_er = error_reporting();
-		error_reporting(0);
-	}
-	public static function tearDownAfterClass() {
-		error_reporting(self::$_er);
-	}
-	private function qb() {
-		return _class('db')->query_builder();
-	}
+class class_db_offline_query_builder_test extends db_offline_abstract {
 	public function test_select1() {
 		$this->assertEquals( '*', self::qb()->select()->_sql['select'][0] );
 		$this->assertEquals( '*', self::qb()->select('*')->_sql['select'][0] );

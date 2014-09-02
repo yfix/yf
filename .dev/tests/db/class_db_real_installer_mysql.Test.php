@@ -1,11 +1,11 @@
 <?php
 
-require_once __DIR__.'/db_real__setup.php';
+require_once __DIR__.'/db_real_abstract.php';
 
 /**
  * @requires extension mysql
  */
-class class_db_installer_mysql_real_test extends db_real_abstract {
+class class_db_real_installer_mysql_test extends db_real_abstract {
 
 	private $data_good = array(
 		'fields' => array(
