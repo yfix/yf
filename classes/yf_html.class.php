@@ -825,8 +825,11 @@ class yf_html {
 			return false;
 		}
 		$selected = strval($selected);
+		$id_prefix = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$extra['force_id'] && $id_prefix = $extra['force_id'];
+		$counter = 0;
 		foreach ((array)$values as $value => $val_name) {
-			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			$id = $id_prefix.'_'.++$counter;
 			if ($this->BOXES_USE_STPL) {
 				$_what_compare = strval($type == 1 ? $val_name : $value);
 				$replace = array(
