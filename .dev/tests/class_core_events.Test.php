@@ -3,6 +3,8 @@
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_core_events_test extends PHPUnit_Framework_TestCase {
+	protected function setUp() {
+	}
 	public function test_basic() {
 		$out = null;
 		$this->assertEquals(false, events()->has_listeners('testme'));
@@ -115,17 +117,17 @@ class class_core_events_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('3_Hello_3', $result);
 	}
 	public function test_firing() {
-		events()->listen('testme.*', function($in) {
-			if (events()->firing() == 'testme.3') {
+		events()->listen('testmefiring.*', function($in) {
+			if (events()->firing() == 'testmefiring.3') {
 				return '3_'.$in.'_3';
 			}
 		});
-		$result = events()->fire('testme.1', array('Hello'));
+		$result = events()->fire('testmefiring.1', array('Hello'));
 		$this->assertEquals(array(null), $result);
-		$result = events()->fire('testme.2', array('Hello'));
+		$result = events()->fire('testmefiring.2', array('Hello'));
 		$this->assertEquals(array(null), $result);
-		$result = events()->fire('testme.3', array('Hello'));
+		$result = events()->fire('testmefiring.3', array('Hello'));
 		$this->assertEquals(array('3_Hello_3'), $result);
-		events()->forget('testme');
+		events()->forget('testmefiring');
 	}
 }
