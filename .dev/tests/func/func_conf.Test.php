@@ -11,13 +11,18 @@ class func_conf_test extends PHPUnit_Framework_TestCase {
 	public static function tearDownAfterClass() {
 		$GLOBALS['CONF'] = self::$_bak;
 	}
+	protected function setUp() {
+		$GLOBALS['CONF'] = array();
+	}
 	public function test_12() {
-		$GLOBALS['CONF']['test'] = '55';
-		$this->assertEquals(conf('test'), '55');
+		$name = __FUNCTION__;
+		$GLOBALS['CONF'][$name] = '55';
+		$this->assertEquals(conf($name), '55');
 	}
 	public function test_13() {
-		$GLOBALS['CONF']['test']['sub'] = 'sub1';
-		$this->assertEquals(conf('test::sub'), 'sub1');
+		$name = __FUNCTION__;
+		$GLOBALS['CONF'][$name]['sub'] = 'sub1';
+		$this->assertEquals(conf($name.'::sub'), 'sub1');
 	}
 	public function test_14() {
 		conf(array(
