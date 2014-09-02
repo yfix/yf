@@ -200,7 +200,7 @@ class yf_db_driver_sqlite extends yf_db_driver {
 
 	/**
 	*/
-	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = true) {
+	function meta_columns($table) {
 		$cols = array();
 		$sql = 'PRAGMA table_info('.$table.')';
 		$q = $this->query($sql);
