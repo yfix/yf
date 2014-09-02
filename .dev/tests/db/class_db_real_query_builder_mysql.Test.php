@@ -6,6 +6,15 @@ require_once __DIR__.'/db_real_abstract.php';
  * @requires extension mysql
  */
 class class_db_real_query_builder_mysql_test extends db_real_abstract {
+#	public static function setUpBeforeClass() {
+#		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
+#		self::$DB_DRIVER = 'mysql5';
+#		parent::setUpBeforeClass();
+#	}
+#	public static function tearDownAfterClass() {
+#		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
+#		parent::tearDownAfterClass();
+#	}
 	public function test_selects_basic() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
@@ -54,6 +63,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertSame( $data[1], self::db()->select(array('t1.id' => 'id','t1.id2' => 'id2','t1.id3' => 'id3'))->from(self::$DB_NAME.'.'.$table.' as t1')->get() );
 		$this->assertSame( array('fld1' => $data[1]['id']), self::db()->select('t1.id as fld1')->from(self::$DB_NAME.'.'.$table.' as t1')->get() );
 	}
+/*
 	public function test_where() {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
@@ -244,13 +254,13 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 			'4' => array('id' => '4', 'id2' => '22', 'id3' => '333'),
 		);
 		$this->assertNotEmpty( self::db()->insert_safe(self::$DB_NAME.'.'.$table, $data) );
-/*
-		$this->assertFalse( self::qb()->update(array()) );
+
+#		$this->assertFalse( self::qb()->update(array()) );
 #		$data = array(
 #			1 => array('name' => 'name1'),
 #			2 => array('name' => 'name2'),
 #		);
 #		$this->assertEquals( '', self::qb()->from('user')->whereid(array(1,2,3))->update($data)->sql() );
-*/
 	}
+*/
 }

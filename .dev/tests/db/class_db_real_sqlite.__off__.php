@@ -7,25 +7,17 @@ require_once __DIR__.'/db_real_abstract.php';
  */
 class class_db_real_sqlite_test extends db_real_abstract {
 	public static function setUpBeforeClass() {
+		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'sqlite';
 		self::_connect();
 		self::$server_version = self::$db->get_server_version();
-#		if (getenv('CI') === 'true' && getenv('DRONE') === 'true') {
-#			self::$CI_SERVER = 'DRONE';
-#		}
-#		if (self::$CI_SERVER != 'DRONE') {
-#			// These actions needed to ensure database is empty
-#			self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
-#			self::$db->query('CREATE DATABASE IF NOT EXISTS '.self::$DB_NAME);
-#		}
 	}
 	public static function tearDownAfterClass() {
-#		if (self::$CI_SERVER == 'DRONE') { return ; }
-#		self::$db->utils()->drop_database(self::$DB_NAME);
 		$db_file = self::$DB_NAME.'.db';
 		if (file_exists($db_file)) {
 			unlink($db_file);
 		}
+		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 	public function _connect() {
 		self::$DB_NAME = DB_NAME;

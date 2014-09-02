@@ -7,6 +7,8 @@ require_once __DIR__.'/db_real_abstract.php';
  */
 class class_db_real_utils_mysql_test extends db_real_abstract {
 	public static function setUpBeforeClass() {
+#		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
+#		self::$DB_DRIVER = 'mysql5';
 		self::_connect();
 		self::$server_version = self::$db->get_server_version();
 		if (getenv('CI') === 'true' && getenv('DRONE') === 'true') {
@@ -15,6 +17,10 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if (self::$CI_SERVER != 'DRONE') {
 			self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
 		}
+	}
+	public static function tearDownAfterClass() {
+#		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
+		parent::tearDownAfterClass();
 	}
 
 	public function test_list_collations() {
@@ -88,6 +94,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertTrue( self::utils()->alter_database(self::$DB_NAME, array('charset' => 'utf8','collation' => 'utf8_general_ci')) );
 		$this->assertEquals( $expected, self::utils()->database_info(self::$DB_NAME) );
 	}
+/*
 	public function test_rename_database() {
 		if (self::$CI_SERVER == 'DRONE') { return ; }
 		$NEW_DB_NAME = self::$DB_NAME.'_new';
@@ -939,4 +946,5 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_event() {
 #		$this->assertEquals( self::utils()-> );
 	}
+*/
 }

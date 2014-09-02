@@ -9,6 +9,7 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 	public static $DB_NAME = '';
 	public static $DB_DRIVER = 'mysql5';
 	public static $CI_SERVER = '';
+	public static $_bak = array();
 	public static function setUpBeforeClass() {
 		self::_connect();
 		self::$server_version = self::$db->get_server_version();
@@ -38,6 +39,7 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 	public function _connect() {
 		self::$DB_NAME = DB_NAME;
 		$db_class = load_db_class();
+#echo PHP_EOL.self::$DB_DRIVER.'=='.__FILE__.'=='.get_called_class().PHP_EOL;
 		self::$db = new $db_class(self::$DB_DRIVER);
 		self::$db->ALLOW_AUTO_CREATE_DB = true;
 		self::$db->NO_AUTO_CONNECT = true;

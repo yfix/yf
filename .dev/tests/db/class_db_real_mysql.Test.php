@@ -6,6 +6,15 @@ require_once __DIR__.'/db_real_abstract.php';
  * @requires extension mysql
  */
 class class_db_real_mysql_test extends db_real_abstract {
+#	public static function setUpBeforeClass() {
+#		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
+#		self::$DB_DRIVER = 'mysql5';
+#		parent::setUpBeforeClass();
+#	}
+#	public static function tearDownAfterClass() {
+#		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
+#		parent::tearDownAfterClass();
+#	}
 	public function test_disconnect_connect() {
 		$this->assertTrue( self::db()->close() );
 		$this->assertFalse( self::$db->_connected );
@@ -17,6 +26,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 		$this->assertTrue( is_object(self::$db->db) );
 		$this->assertTrue( !empty(self::$db->db->db_connect_id) );
 	}
+/*
 	public function test_basic_queries_and_fetching() {
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
@@ -431,4 +441,5 @@ class class_db_real_mysql_test extends db_real_abstract {
 // TODO: rollback
 #		$this->assertEquals( $expected, self::db()-> );
 	}
+*/
 }
