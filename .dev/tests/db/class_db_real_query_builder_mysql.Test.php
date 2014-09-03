@@ -6,16 +6,22 @@ require_once __DIR__.'/db_real_abstract.php';
  * @requires extension mysql
  */
 class class_db_real_query_builder_mysql_test extends db_real_abstract {
-#	public static function setUpBeforeClass() {
-#		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
-#		self::$DB_DRIVER = 'mysql5';
-#		parent::setUpBeforeClass();
-#	}
-#	public static function tearDownAfterClass() {
-#		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
-#		parent::tearDownAfterClass();
-#	}
+	public static function setUpBeforeClass() {
+		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
+		self::$DB_DRIVER = 'mysql5';
+		self::_connect();
+		// These actions needed to ensure database is empty
+		self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
+		self::$db->query('CREATE DATABASE IF NOT EXISTS '.self::$DB_NAME);
+	}
+	public static function tearDownAfterClass() {
+		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
+	}
+	public function _need_skip_test($name) {
+		return false;
+	}
 	public function test_selects_basic() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$data = array(
@@ -65,6 +71,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 	}
 /*
 	public function test_where() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$data = array(
@@ -108,6 +115,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->whereid(array(4,5,6), 't1.id')->get_all() );
 	}
 	public function test_join() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table1.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
@@ -142,6 +150,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertSame( $expected, self::qb()->from(self::$DB_NAME.'.'.$table2.' as t2')->inner_join(self::$DB_NAME.'.'.$table1.' as t1', 't1.id = t2.id')->get_all() );
 	}
 	public function test_group_by() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$data = array(
@@ -173,6 +182,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertSame( $expected, self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->select('*','COUNT(id2) as num')->group_by('t1.id2')->get_all() );
 	}
 	public function test_having() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$data = array(
@@ -193,6 +203,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertSame( $expected, self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->group_by('t1.id2')->having('t1.id3 > 111')->get_all() );
 	}
 	public function test_order_by() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$data = array(
@@ -209,6 +220,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertSame( array_reverse($data, $preserve = true), self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->order_by('t1.id desc')->get_all() );
 	}
 	public function test_limit() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$data = array(
@@ -223,6 +235,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertSame( array('2' => $data[2]), self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->order_by('t1.id desc')->limit(1,2)->get_all() );
 	}
 	public function test_delete() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$data = array(
@@ -245,6 +258,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 #		$this->assertEmpty( self::qb()->from(self::$DB_NAME.'.'.$table.' as t1')->get_all() );
 	}
 	public function test_update() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.self::$DB_NAME.'.'.$table.'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
 		$data = array(

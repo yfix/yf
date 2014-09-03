@@ -16,6 +16,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 #		parent::tearDownAfterClass();
 #	}
 	public function test_select1() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( '*', self::qb()->select()->_sql['select'][0] );
 		$this->assertEquals( '*', self::qb()->select('*')->_sql['select'][0] );
 		$this->assertEquals( '*', self::qb()->select(' *')->_sql['select'][0] );
@@ -25,6 +26,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertFalse( self::qb()->select()->__toString() );
 	}
 	public function test_select2() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( '`id`', self::qb()->select('id')->_sql['select'][0] );
 		$this->assertFalse( self::qb()->select('id')->sql() );
 		$this->assertEquals( 'COUNT(id)', self::qb()->select('COUNT(id)')->_sql['select'][0] );
@@ -35,10 +37,12 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'COUNT(id) AS `num`', self::qb()->select('COUNT(id) as num')->_sql['select'][0] );
 	}
 	public function test_select3() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( '`id`, `name`', self::qb()->select('id','name')->_sql['select'][0] );
 		$this->assertFalse( self::qb()->select('id','name')->sql() );
 	}
 	public function test_select4() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertNull( self::qb()->select('')->_sql['select'][0] );
 		$this->assertNull( self::qb()->select(false)->_sql['select'][0] );
 		$this->assertNull( self::qb()->select(0)->_sql['select'][0] );
@@ -51,6 +55,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertFalse( self::qb()->select('0')->sql() );
 	}
 	public function test_select5() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( '`u`.`id`, `s`.`id`, `t`.`pid`', self::qb()->select('u.id', 's.id', 't.pid')->_sql['select'][0] );
 		$this->assertEquals( '`u`.`id` AS `user_id`', self::qb()->select(array('u.id' => 'user_id'))->_sql['select'][0] );
 		$this->assertEquals( '`u`.`id` AS `user_id`, `a`.`id` AS `article_id`, `b`.`id` AS `blog_id`', self::qb()->select(array('u.id' => 'user_id', 'a.id' => 'article_id', 'b.id' => 'blog_id'))->_sql['select'][0] );
@@ -65,15 +70,18 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 #		$this->assertEquals( '`id id`', self::qb()->select('id id')->_sql['select'][0] );
 	}
 	public function test_select_string_as() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( '`s`.`id` AS `sid`', self::qb()->select('s.id as sid')->_sql['select'][0] );
 		$this->assertEquals( '`s`.`id` AS `sid`, `u`.`id` AS `uid`', self::qb()->select('s.id as sid', 'u.id as uid')->_sql['select'][0] );
 		$this->assertEquals( '`u`.`id` AS `uid`', self::qb()->select(array('u.id as uid'))->_sql['select'][0] );
 	}
 	public function test_select_complex() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'SELECT `s`.`id` , `u`.`id` FROM `'.DB_PREFIX.'user`', self::qb()->select('s.id')->select('u.id')->from('user')->sql() );
 		$this->assertEquals( 'SELECT `s`.`id` AS `sid` , `u`.`id` AS `uid` FROM `'.DB_PREFIX.'user`', self::qb()->select('s.id as sid')->select('u.id as uid')->from('user')->sql() );
 	}
 	public function test_from() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->from()->sql() );
 		$this->assertFalse( self::qb()->select()->from()->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->sql() );
@@ -85,11 +93,13 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` , `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from(array('user' => 'u'))->from(array('articles' => 'a'))->sql() );
 	}
 	public function test_from_string_as() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->select()->from('user as u')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u`, `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from('user as u', 'articles as a')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` , `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from('user as u')->from('articles as a')->sql() );
 	}
 	public function test_where() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->where()->sql() );
 		$this->assertFalse( self::qb()->from()->where()->sql() );
 		$this->assertFalse( self::qb()->select()->from()->where()->sql() );
@@ -110,6 +120,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			self::qb()->from(array('user' => 'u'))->where(array('u.id' => '1', 'u.gid' => '4'))->sql() );
 	}
 	public function test_where_like() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` LIKE \'test\'', self::qb()->from('user')->where('name','like','test')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` LIKE \'test\'', self::qb()->from('user')->where('name','LIKE','test')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `name` LIKE \'test%\'', self::qb()->from('user')->where('name','like','test%')->sql() );
@@ -123,17 +134,20 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			self::qb()->from(array('user' => 'u'))->where(array('u.id','like','%1%'),'xor',array('u.gid','not like','%4%'))->sql() );
 	}
 	public function test_where_simple_syntax() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\'', self::qb()->from('user as u')->where('u.id = 1')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\'', self::qb()->from('user as u')->where('u.id > 1')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\' AND `u`.`visits` < \'3\'', self::qb()->from('user as u')->where('u.id > 1')->where('u.visits < 3')->sql() );
 	}
 	public function test_where_or() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' OR `u`.`gid` = \'4\'',
 			self::qb()->from('user as u')->where('u.id = 1')->where_or('u.gid = 4')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' OR `u`.`gid` = \'4\' OR `u`.`visits` < \'4\'',
 			self::qb()->from('user as u')->where('u.id = 1')->where_or('u.gid = 4')->where_or('u.visits < 4')->sql() );
 	}
 	public function test_whereid() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->whereid()->sql() );
 		$this->assertFalse( self::qb()->from()->whereid()->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->whereid(1)->sql() );
@@ -145,6 +159,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'u.id')->sql() );
 	}
 	public function test_join() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->join()->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` JOIN `'.DB_PREFIX.'articles` AS `a` ON `u`.`id` = `a`.`id`',
 			self::qb()->select()->from('user as u')->join(array('articles' => 'a'), array('u.id' => 'a.id'))->sql() );
@@ -162,6 +177,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			self::qb()->select()->from('user as u')->inner_join('articles as a', 'u.id = a.id')->inner_join('blogs as b', 'u.id = b.id')->sql() );
 	}
 	public function test_group_by() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->group_by()->sql() );
 		$this->assertFalse( self::qb()->from()->where()->group_by()->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\' GROUP BY `gid`', self::qb()->from('user')->where(array('id','=',1))->group_by('gid')->sql() );
@@ -170,6 +186,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `id` = \'1\' GROUP BY `u`.`id` , `u`.`gid`', self::qb()->from('user as u')->whereid(1)->group_by('u.id')->group_by('u.gid')->sql() );
 	}
 	public function test_having() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->having()->sql() );
 		$this->assertFalse( self::qb()->from()->where()->group_by()->having()->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\' GROUP BY `gid` HAVING `gid` = \'4\'', 
@@ -182,6 +199,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			self::qb()->from('user as u')->where('u.id = 1')->group_by('u.gid')->having('u.gid = 4')->having('u.visits < 4')->sql() );
 	}
 	public function test_order_by() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->order_by()->sql() );
 		$this->assertFalse( self::qb()->from()->where()->having()->group_by()->order_by()->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\' GROUP BY `gid` HAVING `gid` = \'4\' ORDER BY `id` DESC', 
@@ -194,6 +212,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			self::qb()->from('user as u')->where('u.id = 1')->group_by('u.gid')->having('u.gid = 4')->order_by('u.id')->order_by('u.gid desc')->sql() );
 	}
 	public function test_limit() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->limit()->sql() );
 		$this->assertFalse( self::qb()->from()->limit()->sql() );
 		$this->assertFalse( self::qb()->from()->where()->having()->group_by()->order_by()->limit()->sql() );
@@ -204,6 +223,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	}
 	// Testing that changing order of method calls not changing result SQL
 	public function test_calls_ordering() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' GROUP BY `u`.`gid` HAVING `u`.`gid` = \'4\' ORDER BY `u`.`id` ASC LIMIT 20, 5', 
 			self::qb()->from(array('user' => 'u'))->where(array('u.id','=',1))->group_by('u.gid')->having(array('u.gid','=',4))->order_by('u.id')->limit(5, 20)->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' GROUP BY `u`.`gid` HAVING `u`.`gid` = \'4\' ORDER BY `u`.`id` ASC LIMIT 20, 5', 
@@ -212,6 +232,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			self::qb()->group_by('u.gid')->where(array('u.id','=',1))->order_by('u.id')->limit(5, 20)->from(array('user' => 'u'))->having(array('u.gid','=',4))->sql() );
 	}
 	public function test_delete() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->delete() );
 		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->delete($as_sql = true) );
 		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->whereid(1)->delete($as_sql = true) );
@@ -220,6 +241,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user as u')->whereid(array(1,2,3), 'u.id')->delete($as_sql = true) );
 	}
 	public function test_where_in() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(1,2,3)', self::qb()->from('user')->where('product_id', 'in', array(1,2,3))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(1,2,3)', self::qb()->from('user')->where('product_id', 'IN', array(1,2,3))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` NOT IN(1,2,3)', self::qb()->from('user')->where('product_id', 'NOT IN', array(1,2,3))->sql() );
@@ -232,6 +254,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->where('product_id', 'in', array('','',''))->sql() );
 	}
 	public function test_update() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->update(array()) );
 #		$data = array(
 #			1 => array('name' => 'name1'),

@@ -12,10 +12,12 @@ class class_db_real_query_builder_pdo_sqlite_test extends class_db_real_query_bu
 	public static function setUpBeforeClass() {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'pdo_sqlite';
-		parent::setUpBeforeClass();
+		self::_connect();
 	}
 	public static function tearDownAfterClass() {
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
-		parent::tearDownAfterClass();
+	}
+	public function _need_skip_test($name) {
+		return false;
 	}
 }

@@ -10,7 +10,6 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'sqlite';
 		self::_connect();
-		self::$server_version = self::$db->get_server_version();
 	}
 	public static function tearDownAfterClass() {
 		$db_file = self::$DB_NAME.'.db';
@@ -19,7 +18,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		}
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
-	public function _connect() {
+	public static function _connect() {
 		self::$DB_NAME = DB_NAME;
 		$db_class = load_db_class();
 		self::$db = new $db_class(self::$DB_DRIVER);
