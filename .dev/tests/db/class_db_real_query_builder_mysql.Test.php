@@ -18,14 +18,18 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 	public function _need_skip_test($name) {
+		if (defined('HHVM_VERSION') && defined('TRAVIS') && defined('CONTINUOUS_INTEGRATION')) {
+			$this->markTestSkipped('Right now we skip this test, when running inside travis-ci HHVM.');
+			return true;
+		}
 		return false;
 	}
-	public function asertSame($a1, $a2, $comment = '') {
-		if (defined('HHVM_VERSION')) {
-			return parent::asertEquals($a1, $a2, $comment);
-		}
-		return parent::asertSame($a1, $a2, $comment);
-	}
+#	public function asertSame($a1, $a2, $comment = '') {
+#		if (defined('HHVM_VERSION')) {
+#			return parent::asertEquals($a1, $a2, $comment);
+#		}
+#		return parent::asertSame($a1, $a2, $comment);
+#	}
 	public function test_selects_basic() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
@@ -75,7 +79,6 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertSame( $data[1], self::db()->select(array('t1.id' => 'id','t1.id2' => 'id2','t1.id3' => 'id3'))->from(self::$DB_NAME.'.'.$table.' as t1')->get() );
 		$this->assertSame( array('fld1' => $data[1]['id']), self::db()->select('t1.id as fld1')->from(self::$DB_NAME.'.'.$table.' as t1')->get() );
 	}
-/*
 	public function test_where() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
@@ -282,5 +285,4 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 #		);
 #		$this->assertEquals( '', self::qb()->from('user')->whereid(array(1,2,3))->update($data)->sql() );
 	}
-*/
 }
