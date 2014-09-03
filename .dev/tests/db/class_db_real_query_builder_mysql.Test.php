@@ -18,7 +18,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 	public function _need_skip_test($name) {
-		if (defined('HHVM_VERSION') && defined('TRAVIS') && defined('CONTINUOUS_INTEGRATION')) {
+		if (defined('HHVM_VERSION') && getenv('TRAVIS') && getenv('CONTINUOUS_INTEGRATION')) {
 			$this->markTestSkipped('Right now we skip this test, when running inside travis-ci HHVM.');
 			return true;
 		}
