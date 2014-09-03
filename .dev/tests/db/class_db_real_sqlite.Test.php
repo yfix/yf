@@ -89,7 +89,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( array('id' => 1), self::db()->fetch_assoc($q) );
 		$this->assertTrue( self::db()->free_result($q) );
 
-		$this->assertEquals( array('message' => 'unknown error', 'code' => 100), self::db()->error() );
+		$this->assertEquals( array('message' => null, 'code' => null), self::db()->error() );
 
 		$this->assertEquals( array(1), self::db()->fetch_row(self::db()->query('SELECT * FROM '.$table)) );
 		$obj = new stdClass();
