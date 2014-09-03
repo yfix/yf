@@ -52,7 +52,7 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 		self::$db->FIX_DATA_SAFE = true;
 		self::$db->_init();
 		$res = self::$db->connect(array(
-			'host'	=> 'localhost',
+			'host'	=> '127.0.0.1',
 			'name'	=> self::$DB_NAME,
 			'user'	=> DB_USER,
 			'pswd'	=> DB_PSWD,
