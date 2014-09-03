@@ -1557,8 +1557,12 @@ class yf_db {
 	/**
 	*/
 	function utils() {
-		if (strpos($this->DB_TYPE, 'mysql') !== false) {
+		if (strpos($this->DB_TYPE, 'mysql') !== false || $this->DB_TYPE == 'DB_TYPE') {
 			$driver = 'mysql';
+		} elseif (strpos($this->DB_TYPE, 'sqlite') !== false) {
+			$driver = 'sqlite';
+		} elseif (strpos($this->DB_TYPE, 'pgsql') !== false) {
+			$driver = 'pgsql';
 		} else {
 			$driver = $this->DB_TYPE;
 		}
@@ -1586,6 +1590,10 @@ class yf_db {
 	function query_builder() {
 		if (strpos($this->DB_TYPE, 'mysql') !== false || $this->DB_TYPE == 'DB_TYPE') {
 			$driver = 'mysql';
+		} elseif (strpos($this->DB_TYPE, 'sqlite') !== false) {
+			$driver = 'sqlite';
+		} elseif (strpos($this->DB_TYPE, 'pgsql') !== false) {
+			$driver = 'pgsql';
 		} else {
 			$driver = $this->DB_TYPE;
 		}
