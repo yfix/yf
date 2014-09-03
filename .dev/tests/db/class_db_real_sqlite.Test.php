@@ -21,6 +21,11 @@ class class_db_real_sqlite_test extends db_real_abstract {
 	public function _need_skip_test($name) {
 		return false;
 	}
+	public function _need_single_inserts() {
+		$sqlite_version = self::db()->get_server_version();
+#		$this->assertTrue( true, 'SQLite version less than 3.7.11 detected. It does not support multiple rows in one INSERT stmt' );
+		return (bool)version_compare($sqlite_version['versionString'], '3.7.11', '<');
+	}
 	public static function _connect() {
 		self::$DB_NAME = DB_NAME;
 		$db_class = load_db_class();
@@ -72,8 +77,17 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $expected, self::db()->query_fetch($sql) );
 		$this->assertEquals( $expected, self::db()->get($sql) );
 
-		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1),(2),(3)') );
-		$this->assertEquals( 3, self::db()->affected_rows() );
+		if ($this->_need_single_inserts()) {
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1)') );
+			$this->assertEquals( 1, self::db()->affected_rows() );
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (2)') );
+			$this->assertEquals( 1, self::db()->affected_rows() );
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (3)') );
+			$this->assertEquals( 1, self::db()->affected_rows() );
+		} else {
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1),(2),(3)') );
+			$this->assertEquals( 3, self::db()->affected_rows() );
+		}
 		$this->assertEquals( 3, self::db()->insert_id() );
 		$this->assertEquals( array('id' => 1), self::db()->get('SELECT * FROM '.$table) );
 		$this->assertEquals( array(1 => array('id' => 1), 2 => array('id' => 2), 3 => array('id' => 3)), self::db()->get_all('SELECT * FROM '.$table) );
@@ -149,7 +163,13 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY)') );
-		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1),(2),(3)') );
+		if ($this->_need_single_inserts()) {
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1)') );
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (2)') );
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (3)') );
+		} else {
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1),(2),(3)') );
+		}
 		$this->assertEquals( 1, self::db()->get_one('SELECT id FROM '.$table) );
 		$this->assertEquals( 1, self::db()->get_one('SELECT id FROM '.$table.' LIMIT 1') );
 		$this->assertEquals( 3, self::db()->get_one('SELECT id FROM '.$table.' ORDER BY id DESC') );
@@ -158,7 +178,13 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER)') );
-		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1,11),(2,22),(3,33)') );
+		if ($this->_need_single_inserts()) {
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1,11)') );
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (2,22)') );
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (3,33)') );
+		} else {
+			$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1,11),(2,22),(3,33)') );
+		}
 		$this->assertEquals( array(1 => '11', 2 => '22', '3' => 33), self::db()->get_2d('SELECT id, id2 FROM '.$table) );
 		$this->assertEquals( array(11 => '1', 22 => '2', '33' => 3), self::db()->get_2d('SELECT id2, id FROM '.$table) );
 		$this->assertEquals( array('33' => 3, 22 => '2', 11 => '1'), self::db()->get_2d('SELECT id2, id FROM '.$table.' ORDER BY id DESC') );
@@ -179,7 +205,13 @@ class class_db_real_sqlite_test extends db_real_abstract {
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
 		);
-		$this->assertNotEmpty( self::db()->insert($table, $data) );
+		if ($this->_need_single_inserts()) {
+			foreach ($data as $v) {
+				$this->assertNotEmpty( self::db()->insert($table, $v) );
+			}
+		} else {
+			$this->assertNotEmpty( self::db()->insert($table, $data) );
+		}
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 	}
 #	public function test_insert_ignore() {
@@ -223,13 +255,25 @@ class class_db_real_sqlite_test extends db_real_abstract {
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
 		);
-		$this->assertNotEmpty( self::db()->replace($table, $data) );
+		if ($this->_need_single_inserts()) {
+			foreach ($data as $v) {
+				$this->assertNotEmpty( self::db()->replace($table, $v) );
+			}
+		} else {
+			$this->assertNotEmpty( self::db()->replace($table, $data) );
+		}
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 		$data = array(
 			1 => array('id' => 1, 'id2' => 115, 'id3' => 1115),
 			2 => array('id' => 2, 'id2' => 225, 'id3' => 2225),
 		);
-		$this->assertNotEmpty( self::db()->replace($table, $data) );
+		if ($this->_need_single_inserts()) {
+			foreach ($data as $v) {
+				$this->assertNotEmpty( self::db()->replace($table, $v) );
+			}
+		} else {
+			$this->assertNotEmpty( self::db()->replace($table, $data) );
+		}
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 	}
 	public function test_update() {
@@ -253,7 +297,13 @@ class class_db_real_sqlite_test extends db_real_abstract {
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
 		);
-		$this->assertNotEmpty( self::db()->insert($table, $data) );
+		if ($this->_need_single_inserts()) {
+			foreach ($data as $v) {
+				$this->assertNotEmpty( self::db()->insert($table, $v) );
+			}
+		} else {
+			$this->assertNotEmpty( self::db()->insert($table, $data) );
+		}
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 		$data = array(
 			1 => array('id' => 1, 'id2' => 116, 'id3' => 1116),
@@ -306,7 +356,13 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$data_wrong = $data;
 		$data_wrong[1]['not_existing_col'] = 1;
 		$data_wrong[2]['not_existing_col'] = 2;
-		$this->assertNotEmpty( self::db()->insert_safe($table, $data_wrong) );
+		if ($this->_need_single_inserts()) {
+			foreach ($data_wrong as $v) {
+				$this->assertNotEmpty( self::db()->insert_safe($table, $v) );
+			}
+		} else {
+			$this->assertNotEmpty( self::db()->insert_safe($table, $data_wrong) );
+		}
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 	}
 	public function test_replace_safe() {
@@ -334,13 +390,25 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$data_wrong = $data;
 		$data_wrong[1]['not_existing_col'] = 1;
 		$data_wrong[2]['not_existing_col'] = 2;
-		$this->assertNotEmpty( self::db()->replace_safe($table, $data_wrong) );
+		if ($this->_need_single_inserts()) {
+			foreach ($data_wrong as $v) {
+				$this->assertNotEmpty( self::db()->replace_safe($table, $v) );
+			}
+		} else {
+			$this->assertNotEmpty( self::db()->replace_safe($table, $data_wrong) );
+		}
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 		$data = array(
 			1 => array('id' => 1, 'id2' => 115, 'id3' => 1115),
 			2 => array('id' => 2, 'id2' => 225, 'id3' => 2225),
 		);
-		$this->assertNotEmpty( self::db()->replace_safe($table, $data) );
+		if ($this->_need_single_inserts()) {
+			foreach ($data as $v) {
+				$this->assertNotEmpty( self::db()->replace_safe($table, $v) );
+			}
+		} else {
+			$this->assertNotEmpty( self::db()->replace_safe($table, $data) );
+		}
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 	}
 	public function test_update_safe() {
@@ -371,7 +439,13 @@ class class_db_real_sqlite_test extends db_real_abstract {
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
 		);
-		$this->assertNotEmpty( self::db()->insert_safe($table, $data) );
+		if ($this->_need_single_inserts()) {
+			foreach ($data as $v) {
+				$this->assertNotEmpty( self::db()->insert_safe($table, $v) );
+			}
+		} else {
+			$this->assertNotEmpty( self::db()->insert_safe($table, $data) );
+		}
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 		$data = array(
 			1 => array('id' => 1, 'id2' => 116, 'id3' => 1116),
@@ -427,12 +501,24 @@ class class_db_real_sqlite_test extends db_real_abstract {
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
 		);
-		$this->assertNotEmpty( self::db()->insert($table, $data) );
+		if ($this->_need_single_inserts()) {
+			foreach ($data as $v) {
+				$this->assertNotEmpty( self::db()->insert_safe($table, $v) );
+			}
+		} else {
+			$this->assertNotEmpty( self::db()->insert_safe($table, $data) );
+		}
 		$this->assertEquals( $data, self::db()->from($table)->get_all() );
 		$this->assertNotEmpty( self::db()->delete($table, 1));
 		$new_data = array(2 => $data[2]);
 		$this->assertEquals( $new_data, self::db()->from($table)->get_all() );
-		$this->assertNotEmpty( self::db()->replace($table, $data) );
+		if ($this->_need_single_inserts()) {
+			foreach ($data as $v) {
+				$this->assertNotEmpty( self::db()->replace_safe($table, $v) );
+			}
+		} else {
+			$this->assertNotEmpty( self::db()->replace_safe($table, $data) );
+		}
 		$new_data = array(1 => $data[1]);
 		$this->assertNotEmpty( self::db()->delete($table, 'id=2'));
 		$this->assertEquals( $new_data, self::db()->from($table)->get_all() );
