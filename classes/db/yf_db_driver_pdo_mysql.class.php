@@ -66,9 +66,8 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		}
 		$this->db_connect_id = new PDO($dsn, $this->params['user'], $this->params['pswd'], $attrs);
 		$pdo = &$this->db_connect_id;
-		$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
-		$pdo->setAttribute(PDO::MYSQL_ATTR_DIRECT_QUERY, 0);
-		$pdo->setAttribute(PDO::MYSQL_ATTR_DIRECT_QUERY, 0);
+#		$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+		$pdo->setAttribute(PDO::MYSQL_ATTR_DIRECT_QUERY, true);
 
 		if (!$this->db_connect_id) {
 			$this->_connect_error = 'cannot_connect_to_server';
@@ -97,7 +96,7 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		if (!$this->db_connect_id) {
 			return false;
 		}
-		return $this->query('USE '.$name);
+		return (bool)$this->query('USE '.$name);
 	}
 
 	/**
