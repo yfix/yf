@@ -30,13 +30,13 @@ ng_app_admin.factory( 'Uploader', function( $q, $rootScope, $log ) {
 			xhr.upload.onprogress = options.onprogress;
 		}
 		formdata = new FormData();
-		angular.forEach(item.formData, function(obj) {
-			angular.forEach(obj, function(value, key) {
-				form.append(key, value);
-			});
-		});
+		{{-- angular.forEach(item.formData, function(obj) { --}}
+			{{-- angular.forEach(obj, function(value, key) { --}}
+				{{-- form.append(key, value); --}}
+			{{-- }); --}}
+		{{-- }); --}}
 		$log.log( 'title', name );
-			{{-- formdata.append( name, file, file.name ); --}}
+			formdata.append( name, file, file.name );
 		xhr.open( 'POST', url, true );
 		xhr.send( formdata );
 		return( deferred.promise );
@@ -66,8 +66,6 @@ ng_app_admin.directive( 'file', function( Uploader, $log ) {
 				}
 			};
 			var onSelect = function( event ) {
-				$log.log( 'event', $( this ).closest( 'form' ) );
-				return;
 				$file.trigger( 'click' );
 			};
 			var onUpload = function( options ) {

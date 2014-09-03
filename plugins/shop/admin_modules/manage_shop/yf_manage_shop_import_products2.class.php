@@ -8,10 +8,21 @@ class yf_manage_shop_import_products2 {
 	private $_instance             = false;
 	private $_class_admin_products = false;
 
-	function __init() {
+	public $upload_path            = null;
+	public $upload_list            = null;
+	public $upload_list__file_name = null;
+	public $upload_status          = array(
+		'upload' => 'загружен',
+		'import' => 'импортирован',
+	);
+
+	function _init() {
 		$this->_class_admin_products = _class( 'manage_shop_products', 'admin_modules/manage_shop/' );
 		$this->is_post = input()->is_post();
 		$this->is_init = (bool)input()->get( 'init' );
+		$this->upload_path = PROJECT_PATH . 'uploads/price/';
+		$this->upload_list__file_name = $this->upload_path . 'list.csv';
+		$this->_load_upload_list();
 		// get filter
 		$_object             = input()->get( 'object' );
 		$_action             = input()->get( 'action' );
@@ -23,15 +34,80 @@ class yf_manage_shop_import_products2 {
 		$this->_filter_params = $this->_class_admin_products->_filter_params;
 	}
 
+	protected function _load_upload_list() {
+		$upload_list__file_name = $this->upload_list__file_name;
+		$data = array();
+		if( is_readable( $upload_list__file_name ) && ( $file = fopen( $upload_list__file_name, 'r' ) ) !== FALSE ) {
+			while( ( $item = fgetcsv( $file, 1000, ';' ) ) !== FALSE ) {
+				$id = $item[ 0 ];
+				if( empty( $id ) ) { continue; }
+				$data[ $id ] = array(
+					'id'        => $id,
+					'file_name' => $item[ 1 ],
+					'file_size' => $item[ 2 ],
+					'status'    => $item[ 3 ],
+				);
+			}
+			fclose( $file );
+			$this->upload_list = $data;
+		}
+	}
+
+	protected function _save_upload_list( $data ) {
+		$upload_list__file_name = $this->upload_list__file_name;
+		$upload_list            = &$this->upload_list;
+		if( !empty( $data ) && !empty( $data[ 'id' ] ) ) {
+			$upload_list[ $data[ 'id' ] ] = $data;
+		}
+		if( ( $file = fopen( $upload_list__file_name, 'w' ) ) !== FALSE ) {
+			foreach( $upload_list as $id => $item ) {
+				$data = array(
+					$item[ 'id'        ],
+					$item[ 'file_name' ],
+					$item[ 'file_size' ],
+					$item[ 'status'    ],
+				);
+				fputcsv( $file, $data );
+			}
+			fclose( $file );
+			$result = true;
+		} else {
+			$result = false;
+		}
+		return( $result );
+	}
+
 	protected function _api_upload() {
-		if( empty( $_FILES[ 'file' ] ) ) {
+		$file = $_FILES[ 'file' ];
+		if( empty( $file ) || $file[ 'error' ] != UPLOAD_ERR_OK ) {
 			header( 'Status: 503 Service Unavailable' );
 			die( 'Service Unavailable' );
+		} else {
+			$upload_path = $this->upload_path;
+			$name = $file[ 'name' ];
+			$id   = md5( $name . time() );
+			$to   = $upload_path . $id;
+			$from = $file[ 'tmp_name' ];
+			if( move_uploaded_file( $from, $to) ) {
+				$data = array(
+					'id'        => $id,
+					'file_name' => $file[ 'name' ],
+					'file_size' => $file[ 'size' ],
+					'status'    => 'upload',
+				);
+				$result = $this->_save_upload_list( $data );
+				if( !$result ) {
+					header( 'Status: 503 Service Unavailable' );
+					die( 'save upload file data error' );
+				}
+			} else {
+				header( 'Status: 503 Service Unavailable' );
+				die( 'save upload file error' );
+			}
 		}
 		var_dump( $_FILES, $_POST, $_GET );
 		exit;
 	}
-
 
 	// api call
 	protected function _reject() {
