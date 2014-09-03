@@ -46,7 +46,7 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function connect() {
-		$dsn = 'mysql:host='.$params['host'];
+		$dsn = 'mysql:host='.$this->params['host'];
 		if ($this->params['port'] && $this->params['port'] != $this->DEF_PORT) {
 			$dsn .= ';port='.$this->params['port'];
 		}
