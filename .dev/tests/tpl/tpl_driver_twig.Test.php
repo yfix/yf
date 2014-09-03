@@ -13,6 +13,9 @@ class tpl_driver_twig_test extends tpl_abstract {
 		tpl()->_set_default_driver(self::$driver_bak);
 		parent::tearDownAfterClass();
 	}
+	public function test_ensure_driver() {
+		$this->assertEquals('twig', tpl()->DRIVER_NAME);
+	}
 	public function test_simple() {
 		$this->assertEquals('Hello world', self::_tpl( 'Hello world' ));
 	}
