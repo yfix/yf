@@ -3,8 +3,6 @@
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_core_events_test extends PHPUnit_Framework_TestCase {
-	protected function setUp() {
-	}
 	public function test_basic() {
 		$out = null;
 		$this->assertEquals(false, events()->has_listeners('testme'));
