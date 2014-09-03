@@ -1,7 +1,7 @@
 <?php
 
 load('db_driver', 'framework', 'classes/db/');
-class yf_db_driver_postgres extends yf_db_driver {
+class yf_db_driver_pqsql extends yf_db_driver {
 
 	/** @var @conf_skip */
 	public $db_connect_id		= null;
@@ -80,7 +80,7 @@ class yf_db_driver_postgres extends yf_db_driver {
 	/**
 	* Query method
 	*/
-	function query($query = '', $transaction = false) {
+	function query($query) {
 		// Remove any pre-existing queries
 		unset($this->query_result);
 		if ($query != '') {

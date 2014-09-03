@@ -10,8 +10,10 @@ class class_form_rewrite_test extends PHPUnit_Framework_TestCase {
 	private static $_bak_settings = array();
 
 	public static function setUpBeforeClass() {
-		$_GET['object'] = 'dynamic';
-		$_GET['action'] = 'unit_test_form';
+		$_GET = array(
+			'object' => 'dynamic',
+			'action' => 'unit_test_form',
+		);
 		self::$_bak_settings['REWRITE_MODE'] = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
 	}

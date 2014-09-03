@@ -73,7 +73,7 @@ class yf_db_driver_oracle extends yf_db_driver {
 	/**
 	* Base query method
 	*/
-	function query($query = '') {
+	function query($query) {
 		if (!$this->db_connect_id) {
 			return false;
 		}

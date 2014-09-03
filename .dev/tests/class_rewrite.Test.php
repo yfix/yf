@@ -9,7 +9,12 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 	public static function setUpBeforeClass() {
 		self::$_bak_settings['REWRITE_MODE'] = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
+		$_GET = array(
+			'object' => 'dynamic',
+			'action' => 'unit_test_form',
+		);
 		$_SERVER['HTTP_HOST'] = self::$host;
+		_class('rewrite')->DEFAULT_HOST = self::$host;
 	}
 	public static function tearDownAfterClass() {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = self::$_bak_settings['REWRITE_MODE'];

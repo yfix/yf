@@ -3,14 +3,14 @@
 require_once __DIR__.'/tpl__setup.php';
 
 class tpl_mixing_drivers_test extends tpl_abstract {
-	protected function setUp() {
-		if (defined('HHVM_VERSION')) {
-			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
-			return ;
-	   	}
-	}
+#	protected function setUp() {
+#		if (defined('HHVM_VERSION')) {
+#			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
+#			return ;
+#	   	}
+#	}
 	public static function tearDownAfterClass() {
-		_class('dir')->delete_dir('./templates_c/', $delete_start_dir = true);
+		_class('dir')->delete_dir(STORAGE_PATH.'templates_c/', $delete_start_dir = true);
 		parent::tearDownAfterClass();
 	}
 	public function test_main() {

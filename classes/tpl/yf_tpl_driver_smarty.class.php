@@ -11,9 +11,9 @@ class yf_tpl_driver_smarty {
 		require_once YF_PATH. 'libs/smarty/libs/Smarty.class.php';
 		$smarty = new Smarty();
 		$smarty->setTemplateDir(YF_PATH. tpl()->TPL_PATH);
-#		$smarty->setCompileDir('/web/www.example.com/guestbook/templates_c/');
-#		$smarty->setConfigDir('/web/www.example.com/guestbook/configs/');
-#		$smarty->setCacheDir('/web/www.example.com/guestbook/cache/');
+		$smarty->setCompileDir(STORAGE_PATH.'templates_c/');
+		$smarty->setCacheDir(STORAGE_PATH.'smarty_cache/');
+#		$smarty->setConfigDir(STORAGE_PATH.'smarty_configs/');
 		$this->smarty = $smarty;
 	}
 

@@ -103,7 +103,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 
 	/**
 	*/
-	function query($query = '') {
+	function query($query) {
 		if (!$this->db_connect_id) {
 			return false;
 		}

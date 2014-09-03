@@ -3,6 +3,9 @@
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_validate_test extends PHPUnit_Framework_TestCase {
+	public static function tearDownAfterClass() {
+		common()->USER_ERRORS = array();
+	}
 	public function test_unique() {
 // TODO: require database mocking
 		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))

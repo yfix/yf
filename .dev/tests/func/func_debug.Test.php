@@ -11,6 +11,9 @@ class func_debug_test extends PHPUnit_Framework_TestCase {
 	public static function tearDownAfterClass() {
 		$GLOBALS['DEBUG'] = self::$_bak;
 	}
+	protected function setUp() {
+		$GLOBALS['DEBUG'] = array();
+	}
 	public function test_22() {
 		$GLOBALS['DEBUG']['test'] = '55';
 		$this->assertEquals(debug('test'), '55');

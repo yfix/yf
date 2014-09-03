@@ -11,6 +11,9 @@ class func_module_conf_test extends PHPUnit_Framework_TestCase {
 	public static function tearDownAfterClass() {
 		$GLOBALS['PROJECT_CONF'] = self::$_bak;
 	}
+	protected function setUp() {
+		$GLOBALS['PROJECT_CONF'] = array();
+	}
 	public function test_2() {
 		$GLOBALS['PROJECT_CONF']['test']['test'] = '55';
 		$this->assertEquals(module_conf('test', 'test'), '55');

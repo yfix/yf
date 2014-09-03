@@ -20,7 +20,7 @@ abstract class yf_db_driver {
 	abstract protected function insert_id();
 	abstract protected function limit($count, $offset);
 	abstract protected function num_rows($query_id);
-	abstract protected function query($query = '');
+	abstract protected function query($query);
 	abstract protected function real_escape_string($string);
 	abstract protected function rollback();
 }

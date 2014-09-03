@@ -3,6 +3,9 @@
 require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_form_validate_test extends PHPUnit_Framework_TestCase {
+	public static function tearDownAfterClass() {
+		common()->USER_ERRORS = array();
+	}
 	function test_complex() {
 		$this->assertEquals('', common()->_get_error_messages());
 
