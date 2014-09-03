@@ -23,20 +23,20 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 		}
 	}
 	public static function tearDownAfterClass() {
-		if (self::$CI_SERVER == 'DRONE') { return ; }
-		self::$db->utils()->drop_database(self::$DB_NAME);
+#		if (self::$CI_SERVER == 'DRONE') { return ; }
+#		self::$db->utils()->drop_database(self::$DB_NAME);
 	}
 	protected function setUp() {
-		if (self::$CI_SERVER == 'DRONE') {
-			$this->markTestSkipped('Right now we skip this test, when running inside DRONE.IO.');
-			return false;
-		}
-		if (defined('HHVM_VERSION')) {
-			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
-			return ;
-    	}
+#		if (self::$CI_SERVER == 'DRONE') {
+#			$this->markTestSkipped('Right now we skip this test, when running inside DRONE.IO.');
+#			return false;
+#		}
+#		if (defined('HHVM_VERSION')) {
+#			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
+#			return ;
+#    	}
 	}
-	public function _connect() {
+	public static function _connect() {
 		self::$DB_NAME = DB_NAME;
 		$db_class = load_db_class();
 #echo PHP_EOL.self::$DB_DRIVER.'=='.__FILE__.'=='.get_called_class().PHP_EOL;
