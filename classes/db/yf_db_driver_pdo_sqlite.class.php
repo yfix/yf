@@ -24,7 +24,7 @@ class yf_db_driver_pdo_sqlite extends yf_db_driver_pdo {
 	/**
 	*/
 	function connect() {
-		$dsn = 'sqlite:'.$params['name'];
+		$dsn = 'sqlite:'.$this->params['name'];
 		$attrs = array();
 		$attrs[PDO::ATTR_TIMEOUT] = 2;
 		if ($this->params['persist']) {
