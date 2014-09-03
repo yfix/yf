@@ -29,7 +29,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 			$sqlite_version = '3.7.7.1';
 		}
 #		$this->assertTrue( true, 'SQLite version less than 3.7.11 detected. It does not support multiple rows in one INSERT stmt' );
-		return (bool)version_compare($sqlite_version['versionString'], '3.7.11', '<');
+		return (bool)version_compare($sqlite_version, '3.7.11', '<');
 	}
 	public static function _connect() {
 		self::$DB_NAME = DB_NAME;
