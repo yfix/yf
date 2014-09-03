@@ -29,7 +29,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 		$this->assertTrue( is_object(self::$db->db) );
 		$this->assertTrue( !empty(self::$db->db->db_connect_id) );
 	}
-/*
+
 	public function test_basic_queries_and_fetching() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
@@ -483,5 +483,4 @@ class class_db_real_mysql_test extends db_real_abstract {
 // TODO: rollback
 #		$this->assertEquals( $expected, self::db()-> );
 	}
-*/
 }

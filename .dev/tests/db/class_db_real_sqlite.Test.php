@@ -18,6 +18,9 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		}
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
+	public function _need_skip_test($name) {
+		return false;
+	}
 	public static function _connect() {
 		self::$DB_NAME = DB_NAME;
 		$db_class = load_db_class();
@@ -40,6 +43,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		return !empty($res) ? true : false;
 	}
 	public function test_disconnect_connect() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertTrue( self::db()->close() );
 		$this->assertFalse( self::$db->_connected );
 		$this->assertFalse( self::$db->_tried_to_connect );
@@ -51,6 +55,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertTrue( !empty(self::$db->db->db_connect_id) );
 	}
 	public function test_basic_queries_and_fetching() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE IF NOT EXISTS '.$table.'(id INTEGER PRIMARY KEY)') );
 		$expected = array(
@@ -92,12 +97,15 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $obj, self::db()->fetch_object(self::db()->query('SELECT * FROM '.$table)) );
 	}
 	public function test_escape_key() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( '`mykey`', self::db()->escape_key('mykey') );
 	}
 	public function test_escape_val() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( '\'myval\'', self::db()->escape_val('myval') );
 	}
 	public function test_real_name() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$table_wo_prefix = 'tbl_'.__FUNCTION__;
 		$prefixed_table = 'prfx_'.$table;
@@ -110,6 +118,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( self::db()->DB_PREFIX.$table_wo_prefix, self::db()->_real_name(self::db()->DB_PREFIX.$table_wo_prefix) );
 	}
 	public function test_fix_table_name() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table_wo_prefix = 'tbl_'.__FUNCTION__;
 		$table_sys = self::db()->DB_PREFIX. 'sys_'. $table_wo_prefix;
 		$table = self::db()->DB_PREFIX. $table_wo_prefix;
@@ -127,6 +136,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $table_sys, self::db()->_fix_table_name('dbt_'.$table) );
 	}
 	public function test_real_escape_string() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$input = 'He`llo\'_" wor`ld(){}*&^%#';
 		$expected = 'He`llo\'\'_" wor`ld(){}*&^%#';
 		$this->assertSame( $expected, self::db()->real_escape_string($input) );
@@ -136,6 +146,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 #		$this->assertSame( $expected, self::db()->_mysql_escape_mimic($input) );
 	}
 	public function test_get_one() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY)') );
 		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1),(2),(3)') );
@@ -144,6 +155,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( 3, self::db()->get_one('SELECT id FROM '.$table.' ORDER BY id DESC') );
 	}
 	public function test_get_2d() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER)') );
 		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1,11),(2,22),(3,33)') );
@@ -152,6 +164,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( array('33' => 3, 22 => '2', 11 => '1'), self::db()->get_2d('SELECT id2, id FROM '.$table.' ORDER BY id DESC') );
 	}
 	public function test_insert() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)') );
 		$this->assertEmpty( self::db()->query_num_rows('SELECT id, id2, id3 FROM '.$table) );
@@ -170,6 +183,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 	}
 #	public function test_insert_ignore() {
+#		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$table = self::db()->DB_PREFIX. __FUNCTION__;
 #		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)') );
 #		$this->assertNotEmpty( self::db()->insert($table, array('id' => 1, 'id2' => 11, 'id3' => 111)) );
@@ -179,6 +193,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 #		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.$table) );
 #	}
 #	public function test_insert_on_duplicate_key_update() {
+#		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$table = self::db()->DB_PREFIX. __FUNCTION__;
 #		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)') );
 #		$this->assertNotEmpty( self::db()->insert($table, array('id' => 1, 'id2' => 11, 'id3' => 111)) );
@@ -191,6 +206,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 #		$this->assertEquals( $new_data, self::db()->get('SELECT id, id2, id3 FROM '.$table) );
 #	}
 	public function test_replace() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)') );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.$table) );
@@ -217,6 +233,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 	}
 	public function test_update() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)') );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.$table) );
@@ -228,6 +245,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.$table) );
 	}
 	public function test_update_batch() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)') );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.$table) );
@@ -245,6 +263,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 	}
 	public function test_fix_data_safe() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		self::db()->FIX_DATA_SAFE = true;
 		self::db()->FIX_DATA_SAFE_SILENT = true;
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
@@ -266,6 +285,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $data, self::db()->_fix_data_safe($table, $data_wrong) );
 	}
 	public function test_insert_safe() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		self::db()->FIX_DATA_SAFE = true;
 		self::db()->FIX_DATA_SAFE_SILENT = true;
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
@@ -290,6 +310,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 	}
 	public function test_replace_safe() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		self::db()->FIX_DATA_SAFE = true;
 		self::db()->FIX_DATA_SAFE_SILENT = true;
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
@@ -323,6 +344,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 	}
 	public function test_update_safe() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		self::db()->FIX_DATA_SAFE = true;
 		self::db()->FIX_DATA_SAFE_SILENT = true;
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
@@ -338,6 +360,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.$table) );
 	}
 	public function test_update_batch_safe() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		self::db()->FIX_DATA_SAFE = true;
 		self::db()->FIX_DATA_SAFE_SILENT = true;
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
@@ -361,26 +384,31 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 	}
 	public function test_split_sql() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$expected = array('SELECT 1', 'SELECT 2', 'SELECT 3');
 		$this->assertEquals( $expected, self::db()->split_sql('SELECT 1; SELECT 2; SELECT 3') );
 		$this->assertEquals( $expected, self::db()->split_sql('SELECT 1;'.PHP_EOL.' SELECT 2;'.PHP_EOL.' SELECT 3') );
 		$this->assertEquals( $expected, self::db()->split_sql(';;SELECT 1;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 2;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 3;;;') );
 	}
 	public function test_limit() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'LIMIT 1', self::db()->limit(1) );
 		$this->assertEquals( 'LIMIT 1, 1', self::db()->limit(1,1) );
 		$this->assertEquals( 'LIMIT 2, 1', self::db()->limit(1,2) );
 		$this->assertEquals( 'LIMIT 10, 5', self::db()->limit(5,10) );
 	}
 	public function test_utils() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertTrue( is_object(self::db()->utils()) );
 		$this->assertTrue( is_object(self::db()->utils()->db) );
 	}
 	public function test_query_builder() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertTrue( is_object(self::db()->query_builder()) );
 		$this->assertTrue( is_object(self::db()->query_builder()->db) );
 	}
 	public function test_from_and_select() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)') );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
@@ -392,6 +420,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $data, self::db()->select('*')->from($table)->get() );
 	}
 	public function test_delete() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)') );
 		$data = array(
@@ -409,45 +438,58 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertEquals( $new_data, self::db()->from($table)->get_all() );
 	}
 	public function test_model() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertTrue( is_object(self::db()->model()) );
 	}
 	public function test_count() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_multi_query() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_prepare_and_exec() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_get_cached() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_get_all_cached() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_shutdown_queries() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO: add, check
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_repair_table() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_meta_columns() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO: maybe use utils() methods?
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_meta_tables() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO: maybe use utils() methods?
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_get_server_version() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_get_host_info() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( $expected, self::db()-> );
 	}
 	public function test_get_deep_array() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$table = self::db()->DB_PREFIX. __FUNCTION__;
 #		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)') );
 #		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1,11,111),(2,22,222),(3,33,333)') );
@@ -460,6 +502,7 @@ class class_db_real_sqlite_test extends db_real_abstract {
 ##		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$table.' VALUES (1,11,111),(1,11,222),(1,11,333)') );
 	}
 	public function test_transactions() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO: begin
 // TODO: commit
 // TODO: rollback

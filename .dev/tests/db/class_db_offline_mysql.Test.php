@@ -6,15 +6,6 @@ require_once __DIR__.'/db_offline_abstract.php';
  * @requires extension mysql
  */
 class class_db_offline_mysql_test extends db_offline_abstract {
-#	public static function setUpBeforeClass() {
-#		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
-#		self::$DB_DRIVER = 'mysql5';
-#		parent::setUpBeforeClass();
-#	}
-#	public static function tearDownAfterClass() {
-#		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
-#		parent::tearDownAfterClass();
-#	}
 	public $data_safe = array(
 		'user_id'	=> 1,
 		'date'		=> '1234567890',
