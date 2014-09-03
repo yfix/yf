@@ -1023,7 +1023,7 @@ abstract class yf_db_utils_driver {
 			list($db_name, $name) = explode('.', trim($name));
 		}
 		if (!$name) {
-			$error = 'trigger name is empty';
+			$error = 'procedure name is empty';
 			return false;
 		}
 		$procedures = $this->list_procedures($extra, $error);
@@ -1037,7 +1037,7 @@ abstract class yf_db_utils_driver {
 			list($db_name, $name) = explode('.', trim($name));
 		}
 		if (!$name) {
-			$error = 'trigger name is empty';
+			$error = 'procedure name is empty';
 			return false;
 		}
 		$procedures = $this->list_procedures($extra, $error);
@@ -1093,7 +1093,7 @@ abstract class yf_db_utils_driver {
 			list($db_name, $name) = explode('.', trim($name));
 		}
 		if (!$name) {
-			$error = 'trigger name is empty';
+			$error = 'function name is empty';
 			return false;
 		}
 		$funcs = $this->list_functions();
@@ -1107,7 +1107,7 @@ abstract class yf_db_utils_driver {
 			list($db_name, $name) = explode('.', trim($name));
 		}
 		if (!$name) {
-			$error = 'trigger name is empty';
+			$error = 'function name is empty';
 			return false;
 		}
 		$funcs = $this->list_functions();
