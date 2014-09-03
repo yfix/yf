@@ -24,12 +24,6 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		}
 		return false;
 	}
-#	public function asertSame($a1, $a2, $comment = '') {
-#		if (defined('HHVM_VERSION')) {
-#			return parent::asertEquals($a1, $a2, $comment);
-#		}
-#		return parent::asertSame($a1, $a2, $comment);
-#	}
 	public function test_selects_basic() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
