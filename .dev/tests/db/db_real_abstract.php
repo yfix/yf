@@ -39,10 +39,12 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 	public function _need_skip_test($name) {
 		return false;
 	}
-	public static function _connect() {
-		self::$DB_NAME = DB_NAME;
+	public static function _connect($params = array()) {
+		self::$DB_NAME = $params['name'] ?: DB_NAME;
+		if ($params['driver']) {
+			self::$DB_DRIVER = $params['driver'];
+		}
 		$db_class = load_db_class();
-#echo PHP_EOL.self::$DB_DRIVER.'=='.__FILE__.'=='.get_called_class().PHP_EOL;
 		self::$db = new $db_class(self::$DB_DRIVER);
 		self::$db->ALLOW_AUTO_CREATE_DB = true;
 		self::$db->NO_AUTO_CONNECT = true;
@@ -52,11 +54,11 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 		self::$db->FIX_DATA_SAFE = true;
 		self::$db->_init();
 		$res = self::$db->connect(array(
-			'host'	=> '127.0.0.1',
+			'host'	=> $params['host'] ?: '127.0.0.1',
 			'name'	=> self::$DB_NAME,
-			'user'	=> DB_USER,
-			'pswd'	=> DB_PSWD,
-			'prefix'=> DB_PREFIX,
+			'user'	=> $params['user'] ?: DB_USER,
+			'pswd'	=> $params['pswd'] ?: DB_PSWD,
+			'prefix'=> $params['prefix'] ?: DB_PREFIX,
 			'force' => true,
 		));
 		return !empty($res) ? true : false;
