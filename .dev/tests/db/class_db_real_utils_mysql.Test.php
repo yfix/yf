@@ -1009,31 +1009,31 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 #		$this->assertEquals( self::utils()-> );
 	}
 
-	public function test_database() {
+	public function test_helper_database() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertEquals( array(), self::utils()->database(self::db_name())->info() );
+	}
+	public function test_helper_table() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( self::utils()-> );
 	}
-	public function test_table() {
+	public function test_helper_column() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( self::utils()-> );
 	}
-	public function test_column() {
+	public function test_helper_view() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( self::utils()-> );
 	}
-	public function test_view() {
+	public function test_helper_procedure() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( self::utils()-> );
 	}
-	public function test_procedure() {
+	public function test_helper_trigger() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( self::utils()-> );
 	}
-	public function test_trigger() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_event() {
+	public function test_helper_event() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( self::utils()-> );
 	}
