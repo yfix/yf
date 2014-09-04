@@ -10,11 +10,10 @@ class class_db_real_pgsql_test extends db_real_abstract {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'pgsql';
 		self::_connect();
-		// These actions needed to ensure database is empty
-		self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
-		self::$db->query('CREATE DATABASE IF NOT EXISTS '.self::$DB_NAME);
+		self::utils()->truncate_database(self::db_name());
 	}
 	public static function tearDownAfterClass() {
+		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 }
