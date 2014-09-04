@@ -791,7 +791,7 @@ class yf_form2 {
 				$extra['desc'] = '';
 			}
 			$extra = $_this->_input_assign_params_from_validate($extra);
-			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required');
+			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required','size');
 			return $_this->_row_html('<textarea'._attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
