@@ -1861,6 +1861,7 @@ abstract class yf_db_utils_driver {
 	* db()->utils()->database('geonames')->table('geo_city')->drop();
 	* db()->utils()->database('geonames')->table('geo_city')->alter($params);
 	* db()->utils()->database('geonames')->table('geo_city')->rename($new_name);
+	* db()->utils()->table('geonames', 'geo_city')->rename($new_name);
 	*/
 	public function table($db_name, $table) {
 		$obj = clone _class('db_utils_helper_table', 'classes/db/');
@@ -1874,6 +1875,8 @@ abstract class yf_db_utils_driver {
 	}
 
 	/**
+	* db()->utils()->database('geonames')->view('geo_city_view')->create('SQL HERE');
+	* db()->utils()->view('geonames', 'geo_city_view')->create('SQL HERE');
 	*/
 	public function view($db_name, $view) {
 		$obj = clone _class('db_utils_helper_view', 'classes/db/');
@@ -1889,6 +1892,8 @@ abstract class yf_db_utils_driver {
 	/**
 	* db()->utils()->database('geonames')->table('geo_city')->column('name')->add();
 	* db()->utils()->database('geonames')->table('geo_city')->column('name')->drop();
+	* db()->utils()->table('geonames', 'geo_city')->column('name')->drop();
+	* db()->utils()->column('geonames', 'geo_city', 'name')->drop();
 	*/
 	public function column($db_name, $table, $col) {
 		$obj = clone _class('db_utils_helper_column', 'classes/db/');
@@ -1905,6 +1910,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* db()->utils()->database('geonames')->table('geo_city')->index('name', ('id', 'name'))->add();
 	* db()->utils()->database('geonames')->table('geo_city')->index('name')->drop();
+	* db()->utils()->index('geonames', 'geo_city', 'name')->drop();
 	*/
 	public function index($db_name, $table, $index) {
 		$obj = clone _class('db_utils_helper_index', 'classes/db/');
@@ -1919,6 +1925,8 @@ abstract class yf_db_utils_driver {
 	}
 
 	/**
+	* db()->utils()->database('geonames')->table('geo_city')->foreign_key('geo_city_fk')->create($params);
+	* db()->utils()->foreign_key('geonames', 'geo_city', 'geo_city_fk')->create($params);
 	*/
 	public function foreign_key($db_name, $table, $fk_name) {
 		$obj = clone _class('db_utils_helper_foreign_key', 'classes/db/');
