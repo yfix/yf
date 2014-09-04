@@ -12,11 +12,13 @@ class class_db_real_utils_pdo_sqlite_test extends class_db_real_utils_sqlite_tes
 	public static function setUpBeforeClass() {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'pdo_sqlite';
-		self::_connect();
-		// These actions needed to ensure database is empty
-		self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
+		self::_connect(array('name' => STORAGE_PATH. DB_NAME.'.db'));
 	}
 	public static function tearDownAfterClass() {
+		$db_file = STORAGE_PATH. DB_NAME.'.db';
+		if (file_exists($db_file)) {
+			unlink($db_file);
+		}
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 }
