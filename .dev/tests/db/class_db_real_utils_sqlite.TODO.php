@@ -33,7 +33,11 @@ class class_db_real_utils_sqlite_test extends class_db_real_utils_mysql_test {
 			'drop_database',
 			'alter_database',
 			'rename_database',
+			'truncate_database',
 		));
+	}
+	public static function db_name() {
+		return '';
 	}
 	public function table_name($name) {
 		return $name;
