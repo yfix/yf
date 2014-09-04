@@ -201,6 +201,29 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
+	function truncate_database($db_name, $extra = array(), &$error = false) {
+		if (!strlen($db_name)) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		if (!isset($extra['if_exists'])) {
+			$extra['if_exists'] = true;
+		}
+		if (!$extra['sql'] && !$this->database_exists($db_name)) {
+			return true;
+		}
+		foreach ((array)$this->list_tables($db_name) as $table) {
+			$table = trim($table);
+			if (!strlen($table)) {
+				continue;
+			}
+			$sql[] = $this->drop_table($db_name.'.'.$table, $extra);
+		}
+		return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
+	}
+
+	/**
+	*/
 	function list_tables($db_name = '', $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
