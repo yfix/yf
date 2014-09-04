@@ -231,8 +231,18 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			$error = 'table name is empty';
 			return false;
 		}
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP COLUMN '.$this->db->escape_key($col_name);
-		return $extra['sql'] ? $sql : $this->db->query($sql);
+#		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP COLUMN '.$this->db->escape_key($col_name);
+/*
+BEGIN TRANSACTION;
+CREATE TEMPORARY TABLE t1_backup(a,b);
+INSERT INTO t1_backup SELECT a,b FROM t1;
+DROP TABLE t1;
+CREATE TABLE t1(a,b);
+INSERT INTO t1 SELECT a,b FROM t1_backup;
+DROP TABLE t1_backup;
+COMMIT;
+*/
+#		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
@@ -253,36 +263,19 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			$error = 'table name is empty';
 			return false;
 		}
-		$col_info_str = $this->_compile_create_table($this->column_info($table, $col_name), array('no_name' => true));
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' CHANGE COLUMN '.$this->_escape_key($col_name).' '.$this->_escape_key($new_name).' '.$col_info_str;
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-	}
-
-	/**
-	*/
-	function alter_column($table, $col_name, $data, $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-		$col_info = $this->column_info($table, $col_name);
-		if (!$col_info) {
-			$error = 'column not exists';
-			return false;
-		}
-		foreach ((array)$data as $k => $v) {
-			if (isset($col_info[$k])) {
-				$col_info[$k] = $v;
-			}
-		}
-		if (isset($data['first'])) {
-			$position_change = ' FIRST';
-		} elseif ($data['after']) {
-			$position_change = ' AFTER '.$this->_escape_key($data['after']);
-		}
-		$col_info_str = $this->_compile_create_table($col_info, array('no_name' => true));
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' MODIFY COLUMN '.$this->_escape_key($col_name).' '.$col_info_str. $position_change;
-		return $extra['sql'] ? $sql : $this->db->query($sql);
+/*
+BEGIN TRANSACTION;
+CREATE TEMPORARY TABLE t1_backup(a,b);
+INSERT INTO t1_backup SELECT a,b FROM t1;
+DROP TABLE t1;
+CREATE TABLE t1(a,b);
+INSERT INTO t1 SELECT a,b FROM t1_backup;
+DROP TABLE t1_backup;
+COMMIT;
+*/
+#		$col_info_str = $this->_compile_create_table($this->column_info($table, $col_name), array('no_name' => true));
+#		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' CHANGE COLUMN '.$this->_escape_key($col_name).' '.$this->_escape_key($new_name).' '.$col_info_str;
+#		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
