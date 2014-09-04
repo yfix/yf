@@ -41,11 +41,13 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_basic_queries_and_fetching() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$expected = array(
 			'Table' => $table,
 			'Create Table' => 'CREATE TABLE `'.$table.'` ('. PHP_EOL
 				. '  `id` int(10) NOT NULL AUTO_INCREMENT,'. PHP_EOL
+				. '  `id2` int(10) DEFAULT NULL,'. PHP_EOL
+				. '  `id3` int(10) DEFAULT NULL,'. PHP_EOL
 				. '  PRIMARY KEY (`id`)'. PHP_EOL
 				. ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
 		);
@@ -55,29 +57,29 @@ class class_db_real_mysql_test extends db_real_abstract {
 		$this->assertEquals( $expected, self::db()->query_fetch($sql) );
 		$this->assertEquals( $expected, self::db()->get($sql) );
 
-		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1),(2),(3)') );
+		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1,1,1),(2,2,2),(3,3,3)') );
 		$this->assertEquals( 3, self::db()->affected_rows() );
 		$this->assertEquals( 3, self::db()->insert_id() );
-		$this->assertEquals( array('id' => 1), self::db()->get('SELECT * FROM '.$this->table_name($table)) );
-		$this->assertEquals( array(1 => array('id' => 1), 2 => array('id' => 2), 3 => array('id' => 3)), self::db()->get_all('SELECT * FROM '.$this->table_name($table)) );
-		$this->assertEquals( array(3 => array('id' => 3), 2 => array('id' => 2), 1 => array('id' => 1)), self::db()->get_all('SELECT * FROM '.$this->table_name($table).' ORDER BY id DESC') );
-		$this->assertEmpty( self::db()->get('SELECT * FROM '.$this->table_name($table).' WHERE id > 9999') );
-		$this->assertEmpty( self::db()->get_all('SELECT * FROM '.$this->table_name($table).' WHERE id > 9999') );
+		$this->assertEquals( array('id' => 1), self::db()->get('SELECT id FROM '.$this->table_name($table)) );
+		$this->assertEquals( array(1 => array('id' => 1), 2 => array('id' => 2), 3 => array('id' => 3)), self::db()->get_all('SELECT id FROM '.$this->table_name($table)) );
+		$this->assertEquals( array(3 => array('id' => 3), 2 => array('id' => 2), 1 => array('id' => 1)), self::db()->get_all('SELECT id FROM '.$this->table_name($table).' ORDER BY id DESC') );
+		$this->assertEmpty( self::db()->get('SELECT id FROM '.$this->table_name($table).' WHERE id > 9999') );
+		$this->assertEmpty( self::db()->get_all('SELECT id FROM '.$this->table_name($table).' WHERE id > 9999') );
 
-		$this->assertEquals( 3, self::db()->num_rows(self::db()->query('SELECT * FROM '.$this->table_name($table))) );
-		$this->assertEquals( 3, self::db()->query_num_rows('SELECT * FROM '.$this->table_name($table)) );
+		$this->assertEquals( 3, self::db()->num_rows(self::db()->query('SELECT id FROM '.$this->table_name($table))) );
+		$this->assertEquals( 3, self::db()->query_num_rows('SELECT id FROM '.$this->table_name($table)) );
 
-		$q = self::db()->query('SELECT * FROM '.$this->table_name($table));
+		$q = self::db()->query('SELECT id FROM '.$this->table_name($table));
 		$this->assertEquals( 3, self::db()->num_rows($q) );
 		$this->assertEquals( array('id' => 1), self::db()->fetch_assoc($q) );
 		$this->assertTrue( self::db()->free_result($q) );
 
 		$this->assertEquals( array('message' => '', 'code' => 0), self::db()->error() );
 
-		$this->assertEquals( array(1), self::db()->fetch_row(self::db()->query('SELECT * FROM '.$this->table_name($table))) );
+		$this->assertEquals( array(1), self::db()->fetch_row(self::db()->query('SELECT id FROM '.$this->table_name($table))) );
 		$obj = new stdClass();
 		$obj->id = 1;
-		$this->assertEquals( $obj, self::db()->fetch_object(self::db()->query('SELECT * FROM '.$this->table_name($table))) );
+		$this->assertEquals( $obj, self::db()->fetch_object(self::db()->query('SELECT id FROM '.$this->table_name($table))) );
 	}
 	public function test_escape_key() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -131,8 +133,8 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_get_one() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
-		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1),(2),(3)') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
+		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1,1,1),(2,2,2),(3,3,3)') );
 		$this->assertEquals( 1, self::db()->get_one('SELECT id FROM '.$this->table_name($table)) );
 		$this->assertEquals( 1, self::db()->get_one('SELECT id FROM '.$this->table_name($table).' LIMIT 1') );
 		$this->assertEquals( 3, self::db()->get_one('SELECT id FROM '.$this->table_name($table).' ORDER BY id DESC') );
@@ -140,8 +142,8 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_get_2d() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
-		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1,11),(2,22),(3,33)') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
+		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1,11,111),(2,22,222),(3,33,333)') );
 		$this->assertEquals( array(1 => '11', 2 => '22', '3' => 33), self::db()->get_2d('SELECT id, id2 FROM '.$this->table_name($table)) );
 		$this->assertEquals( array(11 => '1', 22 => '2', '33' => 3), self::db()->get_2d('SELECT id2, id FROM '.$this->table_name($table)) );
 		$this->assertEquals( array('33' => 3, 22 => '2', 11 => '1'), self::db()->get_2d('SELECT id2, id FROM '.$this->table_name($table).' ORDER BY id DESC') );
@@ -149,7 +151,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_insert() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$this->assertEmpty( self::db()->query_num_rows('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
@@ -168,7 +170,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_insert_ignore() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$this->assertNotEmpty( self::db()->insert($this->table_name($table), array('id' => 1, 'id2' => 11, 'id3' => 111)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
@@ -178,7 +180,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_insert_on_duplicate_key_update() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$this->assertNotEmpty( self::db()->insert($this->table_name($table), array('id' => 1, 'id2' => 11, 'id3' => 111)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
@@ -191,7 +193,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_replace() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$this->assertNotEmpty( self::db()->replace($this->table_name($table), $data) );
@@ -218,7 +220,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_update() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$this->assertNotEmpty( self::db()->insert($this->table_name($table), $data) );
@@ -230,7 +232,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_update_batch() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
 		$data = array(
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
@@ -251,7 +253,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 		self::db()->FIX_DATA_SAFE_SILENT = true;
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$data_wrong = $data + array('not_existing_col' => 1);
 		$this->assertEquals( $data, self::db()->_fix_data_safe($this->table_name($table), $data) );
@@ -273,7 +275,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 		self::db()->FIX_DATA_SAFE_SILENT = true;
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$this->assertEmpty( self::db()->query_num_rows('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
@@ -298,7 +300,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 		self::db()->FIX_DATA_SAFE_SILENT = true;
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$this->assertNotEmpty( self::db()->replace_safe($this->table_name($table), $data) );
@@ -332,7 +334,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 		self::db()->FIX_DATA_SAFE_SILENT = true;
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table), $data) );
@@ -348,7 +350,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 		self::db()->FIX_DATA_SAFE_SILENT = true;
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$this->assertEmpty( self::db()->get('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
 		$data = array(
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
@@ -393,7 +395,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_from_and_select() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$this->assertNotEmpty( self::db()->insert($this->table_name($table), $data) );
 		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.$this->table_name($table)) );
@@ -405,7 +407,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_delete() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$data = array(
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
 			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
@@ -474,7 +476,7 @@ class class_db_real_mysql_test extends db_real_abstract {
 	public function test_get_deep_array() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$table = self::db()->DB_PREFIX. __FUNCTION__;
-#		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8') );
+#		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 #		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1,11,111),(2,22,222),(3,33,333)') );
 #		$expected = array();
 #		$expected['1']['11']['111'] = array('id' => '1', 'id2' => '11', 'id3' => '111');
