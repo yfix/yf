@@ -9,11 +9,10 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 	*/
 	function _get_supported_field_types() {
 		return array(
-			'bit','int','real','float','double','decimal','numeric',
-			'varchar','char','tinytext','mediumtext','longtext','text',
-			'tinyblob','mediumblob','longblob','blob','varbinary','binary',
-			'timestamp','datetime','time','date','year',
-			'enum','set',
+			'int','int2','int8','integer','tinyint','smallint','mediumint','bigint','unsigned big int',
+			'real','float','double','double precision','decimal','numeric','boolean',
+			'varchar','character','text','varying character','nchar','native character','nvarchar','blob','clob',
+			'datetime','date',
 		);
 	}
 
@@ -21,29 +20,19 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 	*/
 	function _get_unsigned_field_types() {
 		return array(
-			'bit','int','real','double','float','decimal','numeric'
+			'unsigned big int',
 		);
 	}
 
 	/**
 	*/
 	function _get_supported_table_options() {
-		return array(
-			'engine'	=> 'ENGINE',
-			'charset'	=> 'DEFAULT CHARSET',
-		);
+		return array();
 	}
 
 	/**
 	*/
 	function list_tables($db_name = '', $extra = array(), &$error = false) {
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!strlen($db_name)) {
-			$error = 'db_name is empty';
-			return false;
-		}
 		$tables = $this->db->get_2d('SELECT name FROM sqlite_master WHERE type = "table" AND name <> "sqlite_sequence"');
 		return $tables ? array_combine($tables, $tables) : array();
 	}
@@ -51,26 +40,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 	/**
 	*/
 	function list_tables_details($db_name = '', $extra = array(), &$error = false) {
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!strlen($db_name)) {
-			$error = 'db_name is empty';
-			return false;
-		}
-		$tables = array();
-		$q = $this->db->query('SHOW TABLE STATUS'. (strlen($db_name) ? ' FROM '.$this->_escape_database_name($db_name) : ''));
-		while ($a = $this->db->fetch_assoc($q)) {
-			$table = $a['Name'];
-			$tables[$table] = array(
-				'name'		=> $table,
-				'engine'	=> $a['Engine'],
-				'rows'		=> $a['Rows'],
-				'data_size'	=> $a['Data_length'],
-				'collation'	=> $a['Collation'],
-			);
-		}
-		return $tables;
+		return $this->list_tables($db_name, $extra, $error);
 	}
 
 	/**
@@ -105,57 +75,32 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			return false;
 		}
 		$cols = array();
-		$q = $this->db->query('SHOW FULL COLUMNS FROM '.$this->_escape_table_name($table));
+		$q = $this->db->query('PRAGMA table_info('.$this->_escape_table_name($table).')');
 		while ($a = $this->db->fetch_assoc($q)) {
-			$name = $a['Field'];
-			list($type, $length, $unsigned) = array_values($this->_parse_column_type($a['Type']));
+			$name = $a['name'];
+			$type = strtolower($a['type']);
+			$unsigned = (false !== strpos($type, 'unsigned'));
+			if (false !== strpos($type, ' ')) {
+				list($type, $tmp) = explode(' ', $type);
+			}
+			$length = '';
+			$unsigned = false;
 			$cols[$name] = array(
 				'name'		=> $name,
 				'type'		=> $type,
 				'length'	=> $length,
 				'unsigned'	=> $unsigned,
-				'collation'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
-				'null'		=> $a['Null'] == 'NO' ? false : true,
-				'default'	=> $a['Default'] != 'NULL' ? $a['Default'] : null,
-				'auto_inc'	=> false !== strpos($a['Extra'], 'auto_increment') ? true : false,
-				'is_primary'=> $a['Key'] == 'PRI',
-				'is_unique'	=> $a['Key'] == 'UNI',
-				'type_raw'	=> $a['Type'],
+				'collation'	=> null,
+				'null'		=> !$a['notnull'],
+				'default'	=> $a['dflt_value'],
+				'auto_inc'	=> $a['pk'] == 1,
+				'is_primary'=> $a['pk'] == 1,
+// TODO: detect unique from indexes list
+				'is_unique'	=> $a['pk'] == 1,
+				'type_raw'	=> $a['type'],
 			);
 		}
 		return $cols;
-	}
-
-	/**
-	*/
-	function table_get_charset($table, $extra = array(), &$error = false) {
-		$orig_table = $table;
-		if (strpos($table, '.') !== false) {
-			list($db_name, $table) = explode('.', trim($table));
-		}
-		if (!strlen($table)) {
-			$error = 'table_name is empty';
-			return false;
-		}
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!strlen($db_name)) {
-			$error = 'db_name is empty';
-			return false;
-		}
-		$info = $this->db->get(
-			'SELECT CCSA.character_set_name
-			FROM information_schema.`TABLES` T, information_schema.`COLLATION_CHARACTER_SET_APPLICABILITY` CCSA
-			WHERE CCSA.collation_name = T.table_collation
-				AND T.table_schema = "'.$db_name.'"
-				AND T.table_name = "'.$this->db->_fix_table_name($table).'"'
-		);
-		if (!$info) {
-			$error = 'table_name not exists';
-			return false;
-		}
-		return $info['character_set_name'];
 	}
 
 	/**
@@ -169,32 +114,20 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!strlen($db_name)) {
-			$error = 'db_name is empty';
-			return false;
-		}
-		$info = $this->db->get('SHOW TABLE STATUS'. (strlen($db_name) ? ' FROM '.$this->_escape_database_name($db_name).' LIKE "'.$this->db->_fix_table_name($table).'"' : ''));
-		if (!$info) {
-			$error = 'table_name not exists';
-			return false;
-		}
 		return array(
 			'name'			=> $table,
-			'db_name'		=> $db_name,
+			'db_name'		=> null,
 			'columns'		=> $this->table_get_columns($orig_table),
-			'row_format'	=> $info['Row_format'],
-			'charset'		=> $this->table_get_charset($orig_table),
-			'collation'		=> $info['Collation'],
-			'engine'		=> $info['Engine'],
-			'rows'			=> $info['Rows'],
-			'data_size'		=> $info['Data_length'],
-			'auto_inc'		=> $info['Auto_increment'],
-			'comment'		=> $info['Comment'],
-			'create_time'	=> $info['Create_time'],
-			'update_time'	=> $info['Update_time'],
+			'row_format'	=> null,
+			'charset'		=> null,
+			'collation'		=> null,
+			'engine'		=> null,
+			'rows'			=> null,
+			'data_size'		=> null,
+			'auto_inc'		=> null,
+			'comment'		=> null,
+			'create_time'	=> null,
+			'update_time'	=> null,
 		);
 	}
 
@@ -209,29 +142,10 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!$db_name) {
-			$error = 'db_name is empty';
-			return false;
-		}
 		if (!$extra['sql'] && $this->table_exists($table, $db_name)) {
 			$error = 'table_name already exists';
 			return false;
 		}
-		// Default table options
-		$extra['engine'] = $extra['engine'] ?: 'InnoDB';
-		$extra['charset'] = $extra['charset'] ?: 'utf8';
-
-		$table_options = array();
-		foreach ((array)$this->_get_supported_table_options() as $name => $real_name) {
-			if (isset($extra[$name]) && strlen($extra[$name])) {
-				$table_options[$name] = $real_name.'='.$extra[$name];
-			}
-		}
-		$table_options = implode(' ', $table_options);
-
 		$data = ($extra['sql'] ?: $extra['data']) ?: $data;
 		if (is_array($data)) {
 			$data = $this->_compile_create_table($data, $extra, $error);
@@ -243,7 +157,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			$error = 'data is empty';
 			return false;
 		}
-		$sql = 'CREATE TABLE IF NOT EXISTS '.$this->_escape_table_name($db_name.'.'.$table).' ('
+		$sql = 'CREATE TABLE IF NOT EXISTS '.$this->_escape_table_name($table).' ('
 			. PHP_EOL. $data. PHP_EOL
 			. ')'.($table_options ? ' '.$table_options : '')
 			. ';'. PHP_EOL;
@@ -301,7 +215,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		$sql = 'TRUNCATE TABLE '.$this->_escape_table_name($table);
+		$sql = 'DELETE FROM '.$this->_escape_table_name($table);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -530,13 +444,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!$db_name) {
-			$error = 'db_name is empty';
-			return false;
-		}
 		$keys = array();
 		$sql = 'SELECT CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
 			FROM information_schema.KEY_COLUMN_USAGE
@@ -679,13 +586,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!$db_name) {
-			$error = 'db_name is empty';
-			return false;
-		}
 		$views = $this->list_views($db_name);
 		return (bool)isset($views[$table]);
 	}
@@ -698,13 +598,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 		}
 		if (!$table) {
 			$error = 'table_name is empty';
-			return false;
-		}
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!$db_name) {
-			$error = 'db_name is empty';
 			return false;
 		}
 		$views = $this->list_views($db_name);
@@ -723,7 +616,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 	}
 
 	/**
-	* See https://dev.mysql.com/doc/refman/5.6/en/create-view.html
 	*/
 	function create_view($table, $sql_as, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
@@ -737,13 +629,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 	/**
 	*/
 	function list_triggers($db_name = '', $extra = array(), &$error = false) {
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!$db_name) {
-			$error = 'db_name is empty';
-			return false;
-		}
 		$triggers = array();
 		foreach ((array)$this->db->get_all('SHOW TRIGGERS FROM '.$this->_escape_database_name($db_name)) as $a) {
 			$name = $a['Trigger'];
@@ -767,13 +652,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 		}
 		if (!$name) {
 			$error = 'trigger name is empty';
-			return false;
-		}
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!$db_name) {
-			$error = 'db_name is empty';
 			return false;
 		}
 		$triggers = $this->list_triggers($db_name, $extra, $error);
@@ -813,7 +691,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 	}
 
 	/**
-	* See http://dev.mysql.com/doc/refman/5.6/en/create-trigger.html
 	*/
 	function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
@@ -828,13 +705,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 		}
 		if (!$table) {
 			$error = 'trigger table is empty';
-			return false;
-		}
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!$db_name) {
-			$error = 'db_name is empty';
 			return false;
 		}
 		$supported_trigger_times = array(
@@ -866,7 +736,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 	}
 
 	/**
-	* See http://dev.mysql.com/doc/refman/5.6/en/create-table.html
+	* See: http://www.sqlite.org/datatype3.html
 	*/
 	function _parse_column_type($str, &$error = false) {
 		$str = trim($str);
@@ -893,15 +763,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 				list($length, $decimals) = explode(',',$length);
 				$length = (int)trim($length);
 				$decimals = (int)trim($decimals);
-			} elseif (in_array($type, array('enum','set'))) {
-				$values = array();
-				foreach(explode(',', $length) as $v) {
-					$v = trim(trim(trim($v),'\'"'));
-					if (strlen($v)) {
-						$values[$v] = $v;
-					}
-				}
-				$length = '';
 			}
 		}
 		return array(
@@ -909,7 +770,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			'length'	=> $length,
 			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, $this->_get_unsigned_field_types()) ? true : false,
 			'decimals'	=> $decimals,
-			'values'	=> $values,
+			'values'	=> null,
 		);
 	}
 
@@ -960,12 +821,10 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			} else {
 				$items[$name] = (!$extra['no_name'] ? $this->_escape_key($name).' ' : '')
 					.strtoupper($type)
-					. ($length ? '('.$length.')' : '')
 					. (isset($unsigned) ? ' UNSIGNED' : '')
 					. (isset($null) ? ' '.($null ? 'NULL' : 'NOT NULL') : '')
 					. (isset($default) ? ' DEFAULT \''.addslashes($default).'\'' : '')
-					. ($auto_inc ? ' AUTO_INCREMENT' : '')
-					. (strlen($comment) ? ' COMMENT \''.addslashes($comment).'\'' : '')
+					. ($auto_inc ? ' PRIMARY KEY' : '')
 				;
 			}
 		}
@@ -1002,7 +861,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			return false;
 		}
 		$table = $this->db->_fix_table_name($table);
-		return (strlen($db) ? $this->_escape_database_name($db).'.' : ''). (is_object($this->db) ? $this->db->escape_key($table) : '`'.addslashes($table).'`');
+		return is_object($this->db) ? $this->db->escape_key($table) : '`'.addslashes($table).'`';
 	}
 
 	/**
