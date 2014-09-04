@@ -34,6 +34,12 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
+	public function db_name() {
+		return self::$DB_NAME;
+	}
+	public function table_name($name) {
+		return self::db_name().'.'.$name;
+	}
 
 	public function test_sql_into_array_empty() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
