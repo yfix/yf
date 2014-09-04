@@ -2,7 +2,11 @@
 
 ng_app_admin.factory( 'Uploader', function( $q, $rootScope, $log ) {
 	this.upload = function( options ) {
-		var url  = options.url  || '{_url_upload}';
+		var url  = options.url;
+		if( !url ) {
+			$log.log( 'Uploader error: "url" is empty.' );
+			return( false );
+		}
 		var name = options.name || 'file';
 		var file = options.file;
 		if( !file ) { return( false ); }
@@ -11,31 +15,25 @@ ng_app_admin.factory( 'Uploader', function( $q, $rootScope, $log ) {
 		xhr.onreadystatechange = function( r ) {
 			if( 4 === this.readyState ) {
 				if( xhr.status == 200 ) {
-					$rootScope.$apply(function() {
+					$rootScope.$apply( function() {
 						deferred.resolve( xhr );
-					});
+					}, true );
 				} else {
-					$rootScope.$apply(function() {
+					$rootScope.$apply( function() {
 						deferred.reject( xhr );
-					});
+					}, true );
 				}
 			}
 		}
 		xhr.onerror = function( r ) {
-			$rootScope.$apply(function() {
+			$rootScope.$apply( function() {
 				deferred.reject( xhr );
-			});
+			}, true );
 		}
 		if( options.onprogress ) {
 			xhr.upload.onprogress = options.onprogress;
 		}
 		formdata = new FormData();
-		{{-- angular.forEach(item.formData, function(obj) { --}}
-			{{-- angular.forEach(obj, function(value, key) { --}}
-				{{-- form.append(key, value); --}}
-			{{-- }); --}}
-		{{-- }); --}}
-		$log.log( 'title', name );
 			formdata.append( name, file, file.name );
 		xhr.open( 'POST', url, true );
 		xhr.send( formdata );
@@ -44,29 +42,38 @@ ng_app_admin.factory( 'Uploader', function( $q, $rootScope, $log ) {
 	return( this );
 });
 
-ng_app_admin.directive( 'file', function( Uploader, $log ) {
+ng_app_admin.directive( 'fileUpload', function( Uploader, $rootScope, $compile, $window, $log ) {
 	return {
 		restrict: 'AE',
 		link: function( $scope, element, attrs ) {
 			// init vars
-			var text_select = attrs.placeholder || 'Выберете файл...';
-			var file_name = '';
-			var file_size = 0;
-			var file = {};
-			var $file = $( element ).find( '.file' ).first();
-			$scope.message = text_select;
+			var url          = attrs.url || $window.location.href;
+			var text_select  = attrs.placeholder || 'Выберете файл...';
+			var file_name    = '';
+			var file_size    = 0;
+			var file         = {};
+			var $file_upload = element.children( '.ngfu-upload-file'   ).first();
+			var $btn_upload  = element.children( '.ngfu-upload-button' ).first();
+			$scope.message   = text_select;
 			// init events
 			var onChange = function( event ) {
 				var files = event.target.files;
 				if( files.length > 0 ) {
 					var name  = attrs.name;
 					$scope.$apply( function() {
-						onUpload({ 'files': files, 'name': name });
+						onUpload({ 'url': url, 'files': files, 'name': name });
 					})
 				}
 			};
 			var onSelect = function( event ) {
-				$file.trigger( 'click' );
+				$file_upload.trigger( 'click' );
+			};
+			var _parse_response = function( json_text ) {
+				var result = angular.fromJson( json_text );
+				// update.data $scope.data
+				angular.forEach( result, function( item, idx ) {
+					this[ idx ] = item;
+				}, $scope );
 			};
 			var onUpload = function( options ) {
 				options        = options || {};
@@ -87,11 +94,14 @@ ng_app_admin.directive( 'file', function( Uploader, $log ) {
 					r.then(
 						// file uploaded
 						function( r ) {
-							$scope.message = file_name + ' - загружен';
+							_parse_response( r.response );
+							var message = $scope.action.upload.status_message || '';
+							$scope.message = file_name + message && ( ' - ' + message );
 							$scope.onSuccess({ file_name: file_name, size: file_size, file: file, response: r });
 						},
 						// file not uploaded
 						function( r ) {
+							_parse_response( r.response );
 							$scope.message = file_name + ' - не загружен';
 							$scope.onFail({ file_name: file_name, size: file_size, file: file, response: r });
 						});
@@ -101,8 +111,8 @@ ng_app_admin.directive( 'file', function( Uploader, $log ) {
 					$scope.onCancel({ file_name: file_name, file: file });
 				}
 			}
-			element.find( '.file' ).bind( 'change', onChange );
-			element.find( '.btn'  ).bind( 'click',  onSelect );
+			$file_upload.bind( 'change', onChange );
+			$btn_upload.bind( 'click',  onSelect );
 		},
 		scope: {
 			'onProgress' : '&',
@@ -111,14 +121,66 @@ ng_app_admin.directive( 'file', function( Uploader, $log ) {
 			'onCancel'   : '&',
 		},
 		template:
-			'<span class="btn btn-success" ng-bind="message"></span>'
-			+ '<input class="file" type="file" ng-hide="true">'
+			'<span class="ngfu-upload-button btn btn-success" ng-bind="message"></span>'
+			+ '<input class="ngfu-upload-file" type="file" ng-hide="true">'
 		,
 	}
 });
 
-ng_app_admin.controller( '{_ng_controller}', function( $scope, $log ) {
+ng_app_admin.filter( 'orderObjectBy', function( $log ) {
+	return function( items, options ) {
+		var filtered = [];
+		var filter  = this[ options.filter ] || '.*';
+		try {
+			regexp = new RegExp( filter, 'img' );
+		} catch( e ) {
+			this[ 'upload_list_filter__status' ] = false;
+			return( items );
+		}
+		this[ 'upload_list_filter__status' ] = true;
+		var order   = options.order;
+		var reverse = options.reverse;
+		angular.forEach( items, function( item ) {
+			var found = false;
+			angular.forEach( item, function( value ) {
+				var result = ( value+'' ).match( regexp );
+				if( result ) {
+					found = true;
+					return;
+				}
+			});
+			if( found ) { filtered.push( item ); }
+		});
+		filtered.sort(  function (a, b) {
+			var result = 0;
+			if( a[ order ] == b[ order ] ) {
+				result = 0;
+			} else {
+				result = a[ order ] > b[ order ] ? 1 : -1;
+			}
+			return( result );
+		});
+		if( reverse ) { filtered.reverse(); }
+		return( filtered );
+	};
+});
+
+ng_app_admin.controller( '{_ng_controller}', function( $scope, $filter, $log ) {
 	$log.log( 'ctrl', 'init' );
+	$scope.data = {_ng_data};
+	$scope.data_len = 0;
+	$scope.$watchCollection( 'data', function( _new, _old ) {
+		$scope.data_len = _new.length;
+	}, true );
+	// prerape upload list
+	angular.forEach( $scope.data._upload_list, function( item, idx ) {
+		var time = $filter( 'date' )( item.time * 1000, 'yyyy-MM-dd H:mm:ss' );
+		var status = $scope.data._upload_status[ item.status ];
+		item[ '_time'   ] = time;
+		item[ '_status' ] = status;
+	}, $scope.data._upload_list );
+	// debug
+	$log.log( 'data', $scope.data );
 });
 
 </script>

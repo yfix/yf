@@ -11,6 +11,13 @@ class yf_manage_shop_import_products2 {
 	public $upload_path            = null;
 	public $upload_list            = null;
 	public $upload_list__file_name = null;
+	public $upload_list__field     = array(
+		'id',
+		'file_name',
+		'file_size',
+		'time',
+		'status',
+	);
 	public $upload_status          = array(
 		'upload' => 'загружен',
 		'import' => 'импортирован',
@@ -36,38 +43,58 @@ class yf_manage_shop_import_products2 {
 
 	protected function _load_upload_list() {
 		$upload_list__file_name = $this->upload_list__file_name;
+		$upload_list__field     = $this->upload_list__field;
+		$upload_list            = &$this->upload_list;
 		$data = array();
 		if( is_readable( $upload_list__file_name ) && ( $file = fopen( $upload_list__file_name, 'r' ) ) !== FALSE ) {
 			while( ( $item = fgetcsv( $file, 1000, ';' ) ) !== FALSE ) {
 				$id = $item[ 0 ];
 				if( empty( $id ) ) { continue; }
-				$data[ $id ] = array(
-					'id'        => $id,
-					'file_name' => $item[ 1 ],
-					'file_size' => $item[ 2 ],
-					'status'    => $item[ 3 ],
-				);
+				$_data = array();
+				foreach( $upload_list__field as $idx => $field ) {
+					$_data[ $field ] = $item[ $idx ];
+				}
+				$data[ $id ] = $_data;
 			}
 			fclose( $file );
-			$this->upload_list = $data;
+			/* uasort( $data, function( $a, $b ) {
+				$_a = (int)$a[ 'time' ];
+				$_b = (int)$b[ 'time' ];
+				if( $_a == $_b )     { $result =  0; }
+				elseif( $_a >  $_b ) { $result =  1; }
+				else                 { $result = -1; }
+				return( $result );
+			}); */
+			$upload_list = $data;
 		}
 	}
 
 	protected function _save_upload_list( $data ) {
 		$upload_list__file_name = $this->upload_list__file_name;
+		$upload_list__field     = $this->upload_list__field;
 		$upload_list            = &$this->upload_list;
-		if( !empty( $data ) && !empty( $data[ 'id' ] ) ) {
-			$upload_list[ $data[ 'id' ] ] = $data;
+		// add item
+		if( !empty( $data  ) ) {
+			if( !empty( $data[ 0 ] ) && empty( $data[ 'id' ] ) ) {
+				$id = $data[ 0 ];
+				$item = array();
+				foreach( $upload_list__field as $idx => $field ) {
+					$item[ $field ] = $data[ $idx ];
+				}
+				$data = $item;
+			}
+			if( !empty( $data[ 'id' ] ) ) {
+				$upload_list[ $data[ 'id' ] ] = $data;
+			}
 		}
+		// save items
 		if( ( $file = fopen( $upload_list__file_name, 'w' ) ) !== FALSE ) {
 			foreach( $upload_list as $id => $item ) {
-				$data = array(
-					$item[ 'id'        ],
-					$item[ 'file_name' ],
-					$item[ 'file_size' ],
-					$item[ 'status'    ],
-				);
-				fputcsv( $file, $data );
+				$data = array();
+				foreach( $upload_list__field as $idx => $field ) {
+					$data[] = $item[ $field ];
+				}
+				fputcsv( $file, $data, ';' );
 			}
 			fclose( $file );
 			$result = true;
@@ -85,28 +112,38 @@ class yf_manage_shop_import_products2 {
 		} else {
 			$upload_path = $this->upload_path;
 			$name = $file[ 'name' ];
-			$id   = md5( $name . time() );
+			$time = time();
+			$id   = md5( $name . $time );
 			$to   = $upload_path . $id;
 			$from = $file[ 'tmp_name' ];
 			if( move_uploaded_file( $from, $to) ) {
 				$data = array(
-					'id'        => $id,
-					'file_name' => $file[ 'name' ],
-					'file_size' => $file[ 'size' ],
-					'status'    => 'upload',
+					$id,
+					$file[ 'name' ],
+					$file[ 'size' ],
+					$time,
+					'upload',
 				);
 				$result = $this->_save_upload_list( $data );
 				if( !$result ) {
 					header( 'Status: 503 Service Unavailable' );
 					die( 'save upload file data error' );
 				}
+				$result = array(
+					'data' => $this->_data_ng(),
+					'action' => array(
+						'upload' => array(
+							'status'         => true,
+							'status_message' => 'файл загружен',
+						),
+					),
+				);
 			} else {
 				header( 'Status: 503 Service Unavailable' );
 				die( 'save upload file error' );
 			}
 		}
-		var_dump( $_FILES, $_POST, $_GET );
-		exit;
+		return( $result );
 	}
 
 	// api call
@@ -131,7 +168,7 @@ class yf_manage_shop_import_products2 {
 	protected function _call( $class = null, $class_path = null, $method = null, $options = array() ) {
 		main()->NO_GRAPHICS = true;
 		$result = $this->_firewall( $class, $class_path, $method, $options );
-		$json = json_encode( $result );
+		$json = json_encode( $result, JSON_NUMERIC_CHECK );
 		$response = &$json;
 		// check jsonp
 		$type = 'json';
@@ -153,6 +190,19 @@ class yf_manage_shop_import_products2 {
 		return( $form );
 	}
 
+	function _data_ng( $json = false ) {
+		$_upload_list   = $this->upload_list;
+		$_upload_status = $this->upload_status;
+		$result = array(
+			'_upload_status' => $_upload_status,
+			'_upload_list'   => $_upload_list,
+		);
+		if( $json ) {
+			$result = json_encode( $result, JSON_NUMERIC_CHECK );
+		}
+		return( $result );
+	}
+
 	function _data() {
 		$_sub_action = array(
 			'0'      => '- не выбрано -',
@@ -166,6 +216,11 @@ class yf_manage_shop_import_products2 {
 		$_supplier = _class('manage_shop')->_suppliers_for_select;
 			$supplier = (int)$_POST[ 'supplier' ];
 				$is_supplier = $supplier != 0 && isset( $_supplier[ $supplier ] );
+		// prepare ng-app
+		$_ng_controller  = 'ctrl.import2';
+		$_api_url_upload = url_admin( '//manage_shop/import2/&api=upload' );
+		// -----
+		$_ng_data = $this->_data_ng( true );
 		// -----
 		// update
 		$apply   = $_POST[ 'apply'   ];
@@ -191,11 +246,13 @@ class yf_manage_shop_import_products2 {
 		}
 		// -----
 		$result = array(
-			'_ng_controller' => 'import2',
-			'_sub_action'    => $_sub_action,
-				'sub_action'     => $sub_action,
-			'_supplier'      => $_supplier,
-				'supplier'       => $supplier,
+			'_api_url_upload' => $_api_url_upload,
+			'_ng_controller'  => $_ng_controller,
+			'_ng_data'        => $_ng_data,
+			'_sub_action'     => $_sub_action,
+			'_supplier'       => $_supplier,
+				'sub_action' => $sub_action,
+				'supplier'   => $supplier,
 		);
 		return( $result );
 	}
@@ -203,26 +260,22 @@ class yf_manage_shop_import_products2 {
 	function _form( $data ) {
 		// prepare form
 		$data = (array)$data;
-		// prepare ng-app
-		$_ng_controller = 'ctrl.import2';
-		$data[ '_ng_controller' ] = $_ng_controller;
-		$data[ '_url_upload' ] = url_admin( '//manage_shop/import2/&api=upload' );
 		$_form_tpl = tpl()->parse( 'manage_shop/import2__form', $data );
 		// create form
-		$_form = form( $data, array( 'ng-controller' => $_ng_controller ) )
+		$_form = form( $data, array( 'ng-controller' => $data[ '_ng_controller' ] ) )
 			->fieldset_start()
 				->container( $_form_tpl, 'Загрузка' )
 			->fieldset_end()
-			->select2_box( array(
-				'desc'     => 'Действие',
-				'name'     => 'sub_action',
-				'values'   => $data[ '_sub_action' ],
-			))
-			->select2_box( array(
-				'desc'     => 'Поставщик',
-				'name'     => 'supplier',
-				'values'   => $data[ '_supplier' ],
-			))
+			// ->select2_box( array(
+				// 'desc'     => 'Действие',
+				// 'name'     => 'sub_action',
+				// 'values'   => $data[ '_sub_action' ],
+			// ))
+			// ->select2_box( array(
+				// 'desc'     => 'Поставщик',
+				// 'name'     => 'supplier',
+				// 'values'   => $data[ '_supplier' ],
+			// ))
 		// $link_back = './?object=manage_shop&action=products';
 		// $_form = form( $data )
 			// ->row_start( array( 'desc' => 'Всего выбрано' ) )

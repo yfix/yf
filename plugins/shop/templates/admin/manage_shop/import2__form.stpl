@@ -1,6 +1,36 @@
 <div class="ng-cloak">
 
-	<div file></div>
-	<div class="text-success" ng-bind="progress"></div>
+<div file-upload url="{_api_url_upload}"></div>
+<table class="upload_list table table-striped" ng-show="data._upload_list">
+	<tr>
+		<th colspan="4"><h2>Список загруженных файлов</h2></th>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<div class="form-group control-group"
+					ng-init="upload_list_filter__status = true"
+					ng-class="{ error: !upload_list_filter__status, 'has-error': !upload_list_filter__status }"
+					style="margin-bottom: 0;"
+					>
+				<label class="control-label" for="upload_list_filter">поиск:</label>
+				<div class="controls">
+					<input id="upload_list_filter" type="text" class="form-control" ng-model="upload_list_filter">
+				</div>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<th>имя</th>
+		<th>размер</th>
+		<th>время</th>
+		<th>статус</th>
+	</tr>
+	<tr ng-repeat="i in data._upload_list | orderObjectBy: { filter: 'upload_list_filter', order: 'time' }">
+		<td>{{i.file_name}}</td>
+		<td>{{i.file_size}}</td>
+		<td>{{i._time}}</td>
+		<td>{{i._status}}</td>
+	</tr>
+</table>
 
 </div>
