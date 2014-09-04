@@ -13,8 +13,10 @@ class class_db_real_query_builder_pdo_pgsql_test extends class_db_real_query_bui
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'pdo_pgsql';
 		self::_connect();
+		self::utils()->truncate_database(self::db_name());
 	}
 	public static function tearDownAfterClass() {
+		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 }

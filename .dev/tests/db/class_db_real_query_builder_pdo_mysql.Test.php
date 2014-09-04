@@ -13,11 +13,10 @@ class class_db_real_query_builder_pdo_mysql_test extends class_db_real_query_bui
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'pdo_mysql';
 		self::_connect();
-		// These actions needed to ensure database is empty
-		self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
-		self::$db->query('CREATE DATABASE IF NOT EXISTS '.self::$DB_NAME);
+		self::utils()->truncate_database(self::db_name());
 	}
 	public static function tearDownAfterClass() {
+		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 }
