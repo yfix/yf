@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/db_real_abstract.Test.php';
+require_once __DIR__.'/db_real_abstract.php';
 
 /**
  * @requires extension sqlite3
@@ -33,11 +33,27 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		return $name;
 	}
 
+
+/*
+	public function test_demo() {
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( (bool)self::utils()->db->query('CREATE TABLE '.$this->table_name($table).' (id INTEGER PRIMARY KEY, id2 INTEGER)') );
+		self::utils()->db->query('CREATE UNIQUE INDEX IF NOT EXISTS MyUniqueIndexName ON '.$table.' (id2)');
+
+#		$sql = 'SELECT * FROM sqlite_master WHERE type = "table" AND name <> "sqlite_sequence"';
+		$sql = 'PRAGMA table_info('.$table.')';
+		print_r(self::db()->get_all($sql));
+
+		$sql = 'PRAGMA index_list('.$table.')';
+		print_r(self::db()->get_all($sql));
+	}
+*/
+
 	public function test_list_tables() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( array(), self::utils()->list_tables($this->db_name()) );
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$this->assertTrue( (bool)self::utils()->db->query('CREATE TABLE '.$this->table_name($table).'(id INT(10))') );
+		$this->assertTrue( (bool)self::utils()->db->query('CREATE TABLE '.$this->table_name($table).'(id INTEGER PRIMARY KEY)') );
 		$this->assertEquals( array($table => $table), self::utils()->list_tables($this->db_name()) );
 		$this->assertNotEmpty( self::utils()->db->query('DROP TABLE '.$this->table_name($table).'') );
 		$this->assertEquals( array(), self::utils()->list_tables($this->db_name()) );
@@ -46,7 +62,7 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->db->query('CREATE TABLE '.$this->table_name($table).'(id INT(10))') );
+		$this->assertNotEmpty( self::utils()->db->query('CREATE TABLE '.$this->table_name($table).'(id INTEGER PRIMARY KEY)') );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$this->assertNotEmpty( self::utils()->db->query('DROP TABLE '.$this->table_name($table).'') );
 		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
@@ -55,7 +71,7 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->db->query('CREATE TABLE '.$this->table_name($table).' (id INT(10))') );
+		$this->assertNotEmpty( self::utils()->db->query('CREATE TABLE '.$this->table_name($table).' (id INTEGER PRIMARY KEY)') );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$this->assertNotEmpty( self::utils()->drop_table($this->table_name($table)) );
 		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
@@ -66,23 +82,17 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		$data = array(
 			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
 			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
-			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
-			array('key' => 'primary', 'key_cols' => 'id'),
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$expected = array(
 			'id' => array(
-				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collation' => NULL,'null' => false,
-				'default' => NULL,'auto_inc' => true,'is_primary' => true,'is_unique' => false,'type_raw' => 'int(10) unsigned',
+				'name' => 'id','type' => 'int','length' => '','unsigned' => false,'collation' => NULL,'null' => false,
+				'default' => NULL,'auto_inc' => true,'is_primary' => true,'is_unique' => true,'type_raw' => 'INT UNSIGNED',
 			),
 			'name' => array(
-				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
-				'default' => '','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'varchar(255)',
-			),
-			'active' => array(
-				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
-				'default' => '0','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
+				'name' => 'name','type' => 'varchar','length' => '','unsigned' => false,'collation' => null,'null' => false,
+				'default' => '\'\'','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'VARCHAR',
 			),
 		);
 		$this->assertEquals( $expected, self::utils()->table_get_columns($this->table_name($table)) );
@@ -93,42 +103,35 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		$data = array(
 			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
 			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
-			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
-			array('key' => 'primary', 'key_cols' => 'id'),
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$expected_columns = array(
 			'id' => array(
-				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collation' => NULL,'null' => false,
-				'default' => NULL,'auto_inc' => true,'is_primary' => true,'is_unique' => false,'type_raw' => 'int(10) unsigned',
+				'name' => 'id','type' => 'int','length' => '','unsigned' => false,'collation' => NULL,'null' => false,
+				'default' => NULL,'auto_inc' => true,'is_primary' => true,'is_unique' => true,'type_raw' => 'INT UNSIGNED',
 			),
 			'name' => array(
-				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
-				'default' => '','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'varchar(255)',
-			),
-			'active' => array(
-				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
-				'default' => '0','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
+				'name' => 'name','type' => 'varchar','length' => '','unsigned' => false,'collation' => null,'null' => false,
+				'default' => '\'\'','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'VARCHAR',
 			),
 		);
 		$expected = array(
 			'name' => $table,
-			'db_name' => $this->db_name(),
+			'db_name' => null,
 			'columns' => $expected_columns,
-			'row_format' => 'Compact',
-			'collation' => 'utf8_general_ci',
-			'engine' => 'InnoDB',
-			'rows' => '0',
-			'data_size' => '16384',
-			'auto_inc' => '1',
-			'comment' => '',
-			'create_time' => '2014-01-01 01:01:01',
+			'row_format' => null,
+			'collation' => null,
+			'engine' => null,
+			'rows' => null,
+			'data_size' => null,
+			'auto_inc' => null,
+			'comment' => null,
+			'create_time' => null,
 			'update_time' => null,
-			'charset' => 'utf8',
+			'charset' => null,
 		);
 		$received = self::utils()->table_info($this->table_name($table));
-		$received && $received['create_time'] = '2014-01-01 01:01:01';
 		$this->assertEquals( $expected, $received );
 	}
 	public function test_rename_table() {
@@ -150,7 +153,6 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-#		$this->assertTrue( self::utils()->db->db->select_db($this->db_name()) );
 		$to_insert = array(
 			1 => array('id' => 1),
 			2 => array('id' => 2),
