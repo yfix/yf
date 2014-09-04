@@ -1848,9 +1848,11 @@ abstract class yf_db_utils_driver {
 	*/
 	function database($name) {
 		$obj = clone _class('db_utils_helper_database', 'classes/db/');
-		$obj->db = $this->db;
-		$obj->utils = $this->utils;
-		$obj->name = $name;
+		$obj->_setup(array(
+			'db'		=> $this->db,
+			'utils'		=> $this->utils,
+			'db_name'	=> $db_name,
+		));
 		return $obj;
 	}
 
@@ -1860,11 +1862,27 @@ abstract class yf_db_utils_driver {
 	* db()->utils()->database('geonames')->table('geo_city')->alter($params);
 	* db()->utils()->database('geonames')->table('geo_city')->rename($new_name);
 	*/
-	function table($name) {
+	function table($db_name, $table) {
 		$obj = clone _class('db_utils_helper_table', 'classes/db/');
-		$obj->db = $this->db;
-		$obj->utils = $this->utils;
-		$obj->name = $name;
+		$obj->_setup(array(
+			'db'		=> $this->db,
+			'utils'		=> $this->utils,
+			'db_name'	=> $db_name,
+			'table'		=> $table,
+		));
+		return $obj;
+	}
+
+	/**
+	*/
+	function view($db_name, $view) {
+		$obj = clone _class('db_utils_helper_view', 'classes/db/');
+		$obj->_setup(array(
+			'db'		=> $this->db,
+			'utils'		=> $this->utils,
+			'db_name'	=> $db_name,
+			'view'		=> $view,
+		));
 		return $obj;
 	}
 
@@ -1872,11 +1890,15 @@ abstract class yf_db_utils_driver {
 	* db()->utils()->database('geonames')->table('geo_city')->column('name')->add();
 	* db()->utils()->database('geonames')->table('geo_city')->column('name')->drop();
 	*/
-	function column($name) {
+	function column($db_name, $table, $col) {
 		$obj = clone _class('db_utils_helper_column', 'classes/db/');
-		$obj->db = $this->db;
-		$obj->utils = $this->utils;
-		$obj->name = $name;
+		$obj->_setup(array(
+			'db'		=> $this->db,
+			'utils'		=> $this->utils,
+			'db_name'	=> $db_name,
+			'table'		=> $table,
+			'col'		=> $col,
+		));
 		return $obj;
 	}
 
@@ -1884,17 +1906,29 @@ abstract class yf_db_utils_driver {
 	* db()->utils()->database('geonames')->table('geo_city')->index('name', ('id', 'name'))->add();
 	* db()->utils()->database('geonames')->table('geo_city')->index('name')->drop();
 	*/
-	function index($name) {
+	function index($db_name, $table, $index) {
 		$obj = clone _class('db_utils_helper_index', 'classes/db/');
-		$obj->db = $this->db;
-		$obj->utils = $this->utils;
-		$obj->name = $name;
+		$obj->_setup(array(
+			'db'		=> $this->db,
+			'utils'		=> $this->utils,
+			'db_name'	=> $db_name,
+			'table'		=> $table,
+			'index'		=> $index,
+		));
 		return $obj;
 	}
 
 	/**
 	*/
-	function list_all_database_foreign_keys($name, $extra = array(), &$error = false) {
-// TODO
+	function foreign_key($db_name, $table, $fk_name) {
+		$obj = clone _class('db_utils_helper_foreign_key', 'classes/db/');
+		$obj->_setup(array(
+			'db'		=> $this->db,
+			'utils'		=> $this->utils,
+			'db_name'	=> $db_name,
+			'table'		=> $table,
+			'foreign_key'=> $fk_name,
+		));
+		return $obj;
 	}
 }
