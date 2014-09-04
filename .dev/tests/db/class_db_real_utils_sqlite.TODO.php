@@ -195,33 +195,34 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 	public function test_column_info() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
+		$col_info = array('name' => 'id', 'type' => 'int');
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array($col_info)) );
 		$result = self::utils()->column_info($this->table_name($table), 'id');
-		foreach (array('name','type','length') as $f) {
+		foreach (array('name','type') as $f) {
 			$this->assertEquals( $col_info[$f], $result[$f] );
 		}
 	}
 	public function test_add_column() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
-		$col_info2 = array('name' => 'id2', 'type' => 'int', 'length' => 8);
+		$col_info = array('name' => 'id', 'type' => 'int');
+		$col_info2 = array('name' => 'id2', 'type' => 'int');
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array($col_info)) );
 		$this->assertNotEmpty( self::utils()->column_exists($this->table_name($table), 'id') );
 		$this->assertFalse( self::utils()->column_exists($this->table_name($table), 'id2') );
 		$this->assertFalse( self::utils()->column_info($this->table_name($table), 'id2') );
 		$this->assertNotEmpty( self::utils()->add_column($this->table_name($table), $col_info2) );
 		$result = self::utils()->column_info($this->table_name($table), 'id2');
-		foreach (array('name','type','length') as $f) {
+		foreach (array('name','type') as $f) {
 			$this->assertEquals( $col_info2[$f], $result[$f] );
 		}
 	}
+/*
 	public function test_drop_column() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
-		$col_info2 = array('name' => 'id2', 'type' => 'int', 'length' => 8);
+		$col_info = array('name' => 'id', 'type' => 'int');
+		$col_info2 = array('name' => 'id2', 'type' => 'int');
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array($col_info, $col_info2)) );
 		$this->assertNotEmpty( self::utils()->column_exists($this->table_name($table), 'id') );
 		$this->assertNotEmpty( self::utils()->column_exists($this->table_name($table), 'id2') );
@@ -231,37 +232,19 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 	public function test_rename_column() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
+		$col_info = array('name' => 'id', 'type' => 'int');
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array($col_info)) );
 		$this->assertNotEmpty( self::utils()->column_exists($this->table_name($table), 'id') );
 		$this->assertFalse( self::utils()->column_exists($this->table_name($table), 'id2') );
 		$this->assertNotEmpty( self::utils()->rename_column($this->table_name($table), 'id', 'id2') );
 		$this->assertNotEmpty( self::utils()->column_exists($this->table_name($table), 'id2') );
 	}
-	public function test_alter_column() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
-		$col_info2 = array('name' => 'id2', 'type' => 'int', 'length' => 8);
-		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array($col_info, $col_info2)) );
-		$this->assertNotEmpty( self::utils()->column_exists($this->table_name($table), 'id') );
-		$this->assertEquals( '10', self::utils()->column_info_item($this->table_name($table), 'id', 'length') );
-		$this->assertNotEmpty( self::utils()->alter_column($this->table_name($table), 'id', array('length' => 8)) );
-		$this->assertEquals( '8', self::utils()->column_info_item($this->table_name($table), 'id', 'length') );
-
-		$this->assertEquals( array('id', 'id2'), array_keys(self::utils()->table_get_columns($this->table_name($table))) );
-		$this->assertNotEmpty( self::utils()->alter_column($this->table_name($table), 'id2', array('first' => true)) );
-		$this->assertEquals( array('id2', 'id'), array_keys(self::utils()->table_get_columns($this->table_name($table))) );
-		$this->assertNotEmpty( self::utils()->alter_column($this->table_name($table), 'id2', array('after' => 'id')) );
-		$this->assertEquals( array('id', 'id2'), array_keys(self::utils()->table_get_columns($this->table_name($table))) );
-	}
-
+*/
 	public function test_list_indexes() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			array('name' => 'id', 'type' => 'int', 'auto_inc' => true),
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
@@ -274,8 +257,7 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			array('name' => 'id', 'type' => 'int', 'auto_inc' => true),
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
