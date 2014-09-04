@@ -67,6 +67,13 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 	}
 
 	/**
+	* @not_supported
+	*/
+	function truncate_database($db_name, $extra = array(), &$error = false) {
+		return true;
+	}
+
+	/**
 	*/
 	function list_tables($db_name = '', $extra = array(), &$error = false) {
 		if (!$db_name) {
