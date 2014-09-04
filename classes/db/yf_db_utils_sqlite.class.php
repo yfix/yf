@@ -176,35 +176,13 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 	}
 
 	/**
-	* Here we support only small subset of alter table options, mostly related to basic things like engine or charset
-	*/
-	function alter_table($table, $extra = array(), &$error = false) {
-		if (!$table) {
-			$error = 'table_name is empty';
-			return false;
-		}
-		$table_options = array();
-		foreach ((array)$this->_get_supported_table_options() as $name => $real_name) {
-			if (isset($extra[$name]) && strlen($extra[$name])) {
-				$table_options[$name] = $real_name.'='.$extra[$name];
-			}
-		}
-		if (empty($table_options)) {
-			$error = 'no supported table options provided';
-			return false;
-		}
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table). PHP_EOL. implode(' ', $table_options);
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-	}
-
-	/**
 	*/
 	function rename_table($table, $new_name, $extra = array(), &$error = false) {
 		if (!$table || !$new_name) {
 			$error = 'table_name is empty';
 			return false;
 		}
-		$sql = 'RENAME TABLE '.$this->_escape_table_name($table).' TO '.$this->_escape_table_name($new_name);
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' RENAME TO '.$this->_escape_table_name($new_name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
