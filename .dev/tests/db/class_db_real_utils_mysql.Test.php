@@ -18,9 +18,11 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function _need_skip_test($name) {
 		return false;
 	}
-
+	public static function db_name() {
+		return self::$DB_NAME;
+	}
 	public function table_name($name) {
-		return self::$DB_NAME.'.'.$name;
+		return self::db_name().'.'.$name;
 	}
 
 	public function test_list_collations() {
@@ -49,77 +51,86 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_drop_database() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$all_dbs = self::utils()->list_databases();
-		if (in_array(self::$DB_NAME, $all_dbs)) {
-			self::utils()->drop_database(self::$DB_NAME);
+		if (in_array($this->db_name(), $all_dbs)) {
+			self::utils()->drop_database($this->db_name());
 			$all_dbs = self::utils()->list_databases();
 		}
-		$this->assertFalse( in_array(self::$DB_NAME, $all_dbs) );
+		$this->assertFalse( in_array($this->db_name(), $all_dbs) );
 	}
 	public function test_create_database() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$all_dbs = self::utils()->list_databases();
-		if (in_array(self::$DB_NAME, $all_dbs)) {
-			self::utils()->drop_database(self::$DB_NAME);
+		if (in_array($this->db_name(), $all_dbs)) {
+			self::utils()->drop_database($this->db_name());
 			$all_dbs = self::utils()->list_databases();
 		}
-		$this->assertFalse( in_array(self::$DB_NAME, $all_dbs) );
-		$this->assertNotEmpty( self::utils()->create_database(self::$DB_NAME) );
+		$this->assertFalse( in_array($this->db_name(), $all_dbs) );
+		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 		$all_dbs = self::utils()->list_databases();
-		$this->assertTrue( in_array(self::$DB_NAME, $all_dbs) );
+		$this->assertTrue( in_array($this->db_name(), $all_dbs) );
 	}
 	public function test_database_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertFalse( self::utils()->database_exists(self::$DB_NAME.'ggdfgdf') );
-		$this->assertNotEmpty( self::utils()->database_exists(self::$DB_NAME) );
+		$this->assertFalse( self::utils()->database_exists($this->db_name().'ggdfgdf') );
+		$this->assertNotEmpty( self::utils()->database_exists($this->db_name()) );
 	}
 	public function test_database_info() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$expected = array(
-			'name'		=> self::$DB_NAME,
+			'name'		=> $this->db_name(),
 			'charset'	=> 'utf8',
 			'collation'	=> 'utf8_general_ci',
 		);
-		$this->assertNotEmpty( self::utils()->database_info(self::$DB_NAME) );
-		$this->assertNotEmpty( self::utils()->db->query('ALTER DATABASE '.self::$DB_NAME.' CHARACTER SET "utf8" COLLATE "utf8_general_ci"') );
-		$this->assertEquals( $expected, self::utils()->database_info(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->database_info($this->db_name()) );
+		$this->assertNotEmpty( self::utils()->db->query('ALTER DATABASE '.$this->db_name().' CHARACTER SET "utf8" COLLATE "utf8_general_ci"') );
+		$this->assertEquals( $expected, self::utils()->database_info($this->db_name()) );
 	}
 	public function test_alter_database() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$expected = array(
-			'name'		=> self::$DB_NAME,
+			'name'		=> $this->db_name(),
 			'charset'	=> 'utf8',
 			'collation'	=> 'utf8_general_ci',
 		);
-		$this->assertNotEmpty( self::utils()->database_info(self::$DB_NAME) );
-		$this->assertNotEmpty( self::utils()->db->query('ALTER DATABASE '.self::$DB_NAME.' CHARACTER SET "latin1" COLLATE "latin1_general_ci"') );
-		$this->assertNotEquals( $expected, self::utils()->database_info(self::$DB_NAME) );
-		$this->assertNotEmpty( self::utils()->alter_database(self::$DB_NAME, array('charset' => 'utf8','collation' => 'utf8_general_ci')) );
-		$this->assertEquals( $expected, self::utils()->database_info(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->database_info($this->db_name()) );
+		$this->assertNotEmpty( self::utils()->db->query('ALTER DATABASE '.$this->db_name().' CHARACTER SET "latin1" COLLATE "latin1_general_ci"') );
+		$this->assertNotEquals( $expected, self::utils()->database_info($this->db_name()) );
+		$this->assertNotEmpty( self::utils()->alter_database($this->db_name(), array('charset' => 'utf8','collation' => 'utf8_general_ci')) );
+		$this->assertEquals( $expected, self::utils()->database_info($this->db_name()) );
 	}
-
 	public function test_rename_database() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$NEW_DB_NAME = self::$DB_NAME.'_new';
-		$this->assertNotEmpty( self::utils()->database_exists(self::$DB_NAME) );
+		$NEW_DB_NAME = $this->db_name().'_new';
+		$this->assertNotEmpty( self::utils()->database_exists($this->db_name()) );
 		$this->assertFalse( self::utils()->database_exists($NEW_DB_NAME) );
-		$this->assertNotEmpty( self::utils()->rename_database(self::$DB_NAME, $NEW_DB_NAME) );
-		$this->assertFalse( self::utils()->database_exists(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->rename_database($this->db_name(), $NEW_DB_NAME) );
+		$this->assertFalse( self::utils()->database_exists($this->db_name()) );
 		$this->assertNotEmpty( self::utils()->database_exists($NEW_DB_NAME) );
-		$this->assertNotEmpty( self::utils()->rename_database($NEW_DB_NAME, self::$DB_NAME) );
-		$this->assertNotEmpty( self::utils()->database_exists(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->rename_database($NEW_DB_NAME, $this->db_name()) );
+		$this->assertNotEmpty( self::utils()->database_exists($this->db_name()) );
 		$this->assertFalse( self::utils()->database_exists($NEW_DB_NAME) );
+	}
+	public function test_truncate_database() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
+		$this->assertNotEmpty( self::utils()->db->query('CREATE TABLE '.$this->table_name($table).'(id INT(10))') );
+		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
+		$this->assertNotEmpty( self::utils()->truncate_database($this->db_name()) );
+		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
+		$this->assertEquals( array(), self::utils()->list_tables($this->db_name()) );
 	}
 
 	public function test_list_tables() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertTrue( (bool)self::utils()->create_database(self::$DB_NAME) );
+		$this->assertTrue( (bool)self::utils()->create_database($this->db_name()) );
 
-		$this->assertEquals( array(), self::utils()->list_tables(self::$DB_NAME) );
+		$this->assertEquals( array(), self::utils()->list_tables($this->db_name()) );
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertTrue( (bool)self::utils()->db->query('CREATE TABLE '.$this->table_name($table).'(id INT(10))') );
-		$this->assertEquals( array($table => $table), self::utils()->list_tables(self::$DB_NAME) );
+		$this->assertEquals( array($table => $table), self::utils()->list_tables($this->db_name()) );
 		$this->assertNotEmpty( self::utils()->db->query('DROP TABLE '.$this->table_name($table).'') );
-		$this->assertEquals( array(), self::utils()->list_tables(self::$DB_NAME) );
+		$this->assertEquals( array(), self::utils()->list_tables($this->db_name()) );
 	}
 	public function test_table_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -141,7 +152,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	}
 	public function test_table_get_columns() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertNotEmpty( self::utils()->create_database(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
@@ -195,7 +206,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		);
 		$expected = array(
 			'name' => $table,
-			'db_name' => self::$DB_NAME,
+			'db_name' => $this->db_name(),
 			'columns' => $expected_columns,
 			'row_format' => 'Compact',
 			'collation' => 'utf8_general_ci',
@@ -221,9 +232,9 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$new_table = $table.'_new';
-		$this->assertNotEmpty( self::utils()->rename_table($this->table_name($table), self::$DB_NAME.'.'.$new_table) );
+		$this->assertNotEmpty( self::utils()->rename_table($this->table_name($table), $this->db_name().'.'.$new_table) );
 		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->table_exists(self::$DB_NAME.'.'.$new_table ) );
+		$this->assertNotEmpty( self::utils()->table_exists($this->db_name().'.'.$new_table ) );
 	}
 	public function test_truncate_table() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -231,7 +242,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-#		$this->assertTrue( self::utils()->db->db->select_db(self::$DB_NAME) );
+#		$this->assertTrue( self::utils()->db->db->select_db($this->db_name()) );
 		$to_insert = array(
 			1 => array('id' => 1),
 			2 => array('id' => 2),
@@ -242,17 +253,17 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	}
 	public function test_check_table() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$table = current(self::utils()->list_tables(self::$DB_NAME));
+		$table = current(self::utils()->list_tables($this->db_name()));
 		$this->assertNotEmpty( self::utils()->check_table($this->table_name($table)) );
 	}
 	public function test_optimize_table() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$table = current(self::utils()->list_tables(self::$DB_NAME));
+		$table = current(self::utils()->list_tables($this->db_name()));
 		$this->assertNotEmpty( self::utils()->optimize_table($this->table_name($table)) );
 	}
 	public function test_repair_table() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$table = current(self::utils()->list_tables(self::$DB_NAME));
+		$table = current(self::utils()->list_tables($this->db_name()));
 		$this->assertNotEmpty( self::utils()->repair_table($this->table_name($table)) );
 	}
 	public function test_alter_table() {
@@ -409,7 +420,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 
 	public function test_list_indexes() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertNotEmpty( self::utils()->create_database(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
 			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
@@ -486,7 +497,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 
 	public function test_list_foreign_keys() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertNotEmpty( self::utils()->create_database(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$data = array(
@@ -586,72 +597,72 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 
 	public function test_list_views() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertNotEmpty( self::utils()->create_database(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
-		$this->assertEmpty( self::utils()->list_views(self::$DB_NAME) );
+		$this->assertEmpty( self::utils()->list_views($this->db_name()) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->create_view(self::$DB_NAME.'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->list_views(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->create_view($this->db_name().'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
+		$this->assertNotEmpty( self::utils()->list_views($this->db_name()) );
 	}
 	public function test_view_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
-		$this->assertFalse( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertFalse( self::utils()->view_exists($this->db_name().'.'.$view) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->create_view(self::$DB_NAME.'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertNotEmpty( self::utils()->create_view($this->db_name().'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
+		$this->assertNotEmpty( self::utils()->view_exists($this->db_name().'.'.$view) );
 	}
 	public function test_view_info() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
-		$this->assertFalse( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertFalse( self::utils()->view_exists($this->db_name().'.'.$view) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->create_view(self::$DB_NAME.'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->view_info(self::$DB_NAME.'.'.$view) );
+		$this->assertNotEmpty( self::utils()->create_view($this->db_name().'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
+		$this->assertNotEmpty( self::utils()->view_info($this->db_name().'.'.$view) );
 	}
 	public function test_drop_view() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
-		$this->assertFalse( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertFalse( self::utils()->view_exists($this->db_name().'.'.$view) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->create_view(self::$DB_NAME.'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
-		$this->assertNotEmpty( self::utils()->drop_view(self::$DB_NAME.'.'.$view) );
-		$this->assertFalse( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertNotEmpty( self::utils()->create_view($this->db_name().'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
+		$this->assertNotEmpty( self::utils()->view_exists($this->db_name().'.'.$view) );
+		$this->assertNotEmpty( self::utils()->drop_view($this->db_name().'.'.$view) );
+		$this->assertFalse( self::utils()->view_exists($this->db_name().'.'.$view) );
 	}
 	public function test_create_view() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
-		$this->assertFalse( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertFalse( self::utils()->view_exists($this->db_name().'.'.$view) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->create_view(self::$DB_NAME.'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->view_exists(self::$DB_NAME.'.'.$view) );
+		$this->assertNotEmpty( self::utils()->create_view($this->db_name().'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
+		$this->assertNotEmpty( self::utils()->view_exists($this->db_name().'.'.$view) );
 	}
 
 	public function test_list_procedures() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertNotEmpty( self::utils()->create_database(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 
 		$proc = self::utils()->db->DB_PREFIX. 'proc_'.__FUNCTION__;
 		$procedures = self::utils()->list_procedures();
 		if (empty($procedures)) {
-			$sql = 'CREATE PROCEDURE '.self::$DB_NAME.'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
+			$sql = 'CREATE PROCEDURE '.$this->db_name().'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
 			$this->assertNotEmpty( self::utils()->db->query($sql) );
 		}
 		$this->assertNotEmpty( self::utils()->list_procedures() );
@@ -659,26 +670,26 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_procedure_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$proc = self::utils()->db->DB_PREFIX. 'proc_'.__FUNCTION__;
-		$this->assertFalse( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
-		$sql = 'CREATE PROCEDURE '.self::$DB_NAME.'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
+		$this->assertFalse( self::utils()->procedure_exists($this->db_name().'.'.$proc) );
+		$sql = 'CREATE PROCEDURE '.$this->db_name().'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
-		$this->assertNotEmpty( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
+		$this->assertNotEmpty( self::utils()->procedure_exists($this->db_name().'.'.$proc) );
 	}
 	public function test_procedure_info() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$proc = self::utils()->db->DB_PREFIX. 'proc_'.__FUNCTION__;
-		$this->assertFalse( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
-		$sql = 'CREATE PROCEDURE '.self::$DB_NAME.'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
+		$this->assertFalse( self::utils()->procedure_exists($this->db_name().'.'.$proc) );
+		$sql = 'CREATE PROCEDURE '.$this->db_name().'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
-		$this->assertNotEmpty( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
+		$this->assertNotEmpty( self::utils()->procedure_exists($this->db_name().'.'.$proc) );
 		$expected = array(
-			'db' => self::$DB_NAME,
+			'db' => $this->db_name(),
 			'name' => $proc,
 			'type' => 'PROCEDURE',
 			'security_type' => 'DEFINER',
 			'comment' => '',
 		);
-		$result = self::utils()->procedure_info(self::$DB_NAME.'.'.$proc);
+		$result = self::utils()->procedure_info($this->db_name().'.'.$proc);
 		foreach ($expected as $k => $_expected) {
 			$this->assertEquals( $_expected, $result[$k] );
 		}
@@ -686,27 +697,27 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_drop_procedure() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$proc = self::utils()->db->DB_PREFIX. 'proc_'.__FUNCTION__;
-		$this->assertFalse( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
-		$sql = 'CREATE PROCEDURE '.self::$DB_NAME.'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
+		$this->assertFalse( self::utils()->procedure_exists($this->db_name().'.'.$proc) );
+		$sql = 'CREATE PROCEDURE '.$this->db_name().'.'.$proc.' (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; END';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
-		$this->assertNotEmpty( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
-		$this->assertNotEmpty( self::utils()->drop_procedure(self::$DB_NAME.'.'.$proc) );
-		$this->assertFalse( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
+		$this->assertNotEmpty( self::utils()->procedure_exists($this->db_name().'.'.$proc) );
+		$this->assertNotEmpty( self::utils()->drop_procedure($this->db_name().'.'.$proc) );
+		$this->assertFalse( self::utils()->procedure_exists($this->db_name().'.'.$proc) );
 	}
 	public function test_create_procedure() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$proc = self::utils()->db->DB_PREFIX. 'proc_'.__FUNCTION__;
-		$this->assertFalse( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
-		$this->assertNotEmpty( self::utils()->create_procedure(self::$DB_NAME.'.'.$proc, 'SELECT COUNT(*) INTO param1 FROM t;', 'OUT param1 INT') );
-		$this->assertNotEmpty( self::utils()->procedure_exists(self::$DB_NAME.'.'.$proc) );
+		$this->assertFalse( self::utils()->procedure_exists($this->db_name().'.'.$proc) );
+		$this->assertNotEmpty( self::utils()->create_procedure($this->db_name().'.'.$proc, 'SELECT COUNT(*) INTO param1 FROM t;', 'OUT param1 INT') );
+		$this->assertNotEmpty( self::utils()->procedure_exists($this->db_name().'.'.$proc) );
 		$expected = array(
-			'db' => self::$DB_NAME,
+			'db' => $this->db_name(),
 			'name' => $proc,
 			'type' => 'PROCEDURE',
 			'security_type' => 'DEFINER',
 			'comment' => '',
 		);
-		$result = self::utils()->procedure_info(self::$DB_NAME.'.'.$proc);
+		$result = self::utils()->procedure_info($this->db_name().'.'.$proc);
 		foreach ($expected as $k => $_expected) {
 			$this->assertEquals( $_expected, $result[$k] );
 		}
@@ -714,12 +725,12 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 
 	public function test_list_functions() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertNotEmpty( self::utils()->create_database(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 
 		$func = self::utils()->db->DB_PREFIX. 'func_'.__FUNCTION__;
 		$funcs = self::utils()->list_functions();
 		if (empty($funcs)) {
-			$sql = 'CREATE FUNCTION '.self::$DB_NAME.'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
+			$sql = 'CREATE FUNCTION '.$this->db_name().'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
 			$this->assertNotEmpty( self::utils()->db->query($sql) );
 		}
 		$this->assertNotEmpty( self::utils()->list_functions() );
@@ -728,23 +739,23 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$func = self::utils()->db->DB_PREFIX. 'func_'.__FUNCTION__;
 		$this->assertFalse( self::utils()->function_exists($func) );
-		$sql = 'CREATE FUNCTION '.self::$DB_NAME.'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
+		$sql = 'CREATE FUNCTION '.$this->db_name().'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
 		$this->assertNotEmpty( self::utils()->function_exists($func) );
 	}
 	public function test_function_info() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$func = self::utils()->db->DB_PREFIX. 'func_'.__FUNCTION__;
-		$this->assertFalse( self::utils()->function_exists(self::$DB_NAME.'.'.$func) );
-		$sql = 'CREATE FUNCTION '.self::$DB_NAME.'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
+		$this->assertFalse( self::utils()->function_exists($this->db_name().'.'.$func) );
+		$sql = 'CREATE FUNCTION '.$this->db_name().'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
 		$expected = array(
-			'db' => self::$DB_NAME,
+			'db' => $this->db_name(),
 			'name' => $func,
 			'type' => 'FUNCTION',
 			'comment' => '',
 		);
-		$result = self::utils()->function_info(self::$DB_NAME.'.'.$func);
+		$result = self::utils()->function_info($this->db_name().'.'.$func);
 		foreach ($expected as $k => $_expected) {
 			$this->assertEquals( $_expected, $result[$k] );
 		}
@@ -753,7 +764,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$func = self::utils()->db->DB_PREFIX. 'func_'.__FUNCTION__;
 		$this->assertFalse( self::utils()->function_exists($func) );
-		$sql = 'CREATE FUNCTION '.self::$DB_NAME.'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
+		$sql = 'CREATE FUNCTION '.$this->db_name().'.'.$func.' (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT("Hello, ",s,"!");';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
 		$this->assertNotEmpty( self::utils()->function_exists($func) );
 		$this->assertNotEmpty( self::utils()->drop_function($func) );
@@ -763,10 +774,10 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$func = self::utils()->db->DB_PREFIX. 'func_'.__FUNCTION__;
 		$this->assertFalse( self::utils()->function_exists($func) );
-		$this->assertNotEmpty( self::utils()->create_function(self::$DB_NAME.'.'.$func, 'CONCAT("Hello, ",s,"!")', 'CHAR(50)', 's CHAR(20)') );
+		$this->assertNotEmpty( self::utils()->create_function($this->db_name().'.'.$func, 'CONCAT("Hello, ",s,"!")', 'CHAR(50)', 's CHAR(20)') );
 		$this->assertNotEmpty( self::utils()->function_exists($func) );
 		$expected = array(
-			'db' => self::$DB_NAME,
+			'db' => $this->db_name(),
 			'name' => $func,
 			'type' => 'FUNCTION',
 			'comment' => '',
@@ -779,35 +790,35 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 
 	public function test_list_triggers() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertNotEmpty( self::utils()->create_database(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
 
 		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
-		$triggers = self::utils()->list_triggers(self::$DB_NAME);
+		$triggers = self::utils()->list_triggers($this->db_name());
 		if (empty($triggers)) {
-			$sql = 'CREATE TRIGGER '.self::$DB_NAME.'.'.$trg.' BEFORE INSERT ON '.$this->table_name($table).' FOR EACH ROW SET @sum = @sum + NEW.id';
+			$sql = 'CREATE TRIGGER '.$this->db_name().'.'.$trg.' BEFORE INSERT ON '.$this->table_name($table).' FOR EACH ROW SET @sum = @sum + NEW.id';
 			$this->assertNotEmpty( self::utils()->db->query($sql) );
 		}
-		$this->assertNotEmpty( self::utils()->list_triggers(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->list_triggers($this->db_name()) );
 	}
 	public function test_trigger_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
 		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
-		$this->assertFalse( self::utils()->trigger_exists(self::$DB_NAME.'.'.$trg) );
-		$sql = 'CREATE TRIGGER '.self::$DB_NAME.'.'.$trg.' BEFORE INSERT ON '.$this->table_name($table).' FOR EACH ROW SET @sum = @sum + NEW.id';
+		$this->assertFalse( self::utils()->trigger_exists($this->db_name().'.'.$trg) );
+		$sql = 'CREATE TRIGGER '.$this->db_name().'.'.$trg.' BEFORE INSERT ON '.$this->table_name($table).' FOR EACH ROW SET @sum = @sum + NEW.id';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
-		$this->assertNotEmpty( self::utils()->trigger_exists(self::$DB_NAME.'.'.$trg) );
+		$this->assertNotEmpty( self::utils()->trigger_exists($this->db_name().'.'.$trg) );
 	}
 	public function test_trigger_info() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
 		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
-		$sql = 'CREATE TRIGGER '.self::$DB_NAME.'.'.$trg.' BEFORE INSERT ON '.$this->table_name($table).' FOR EACH ROW SET @sum = @sum + NEW.id';
+		$sql = 'CREATE TRIGGER '.$this->db_name().'.'.$trg.' BEFORE INSERT ON '.$this->table_name($table).' FOR EACH ROW SET @sum = @sum + NEW.id';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
 		$expected = array(
 			'name' => $trg,
@@ -817,7 +828,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 			'statement' => 'SET @sum = @sum + NEW.id',
 			'definer' => NULL,
 		);
-		$result = self::utils()->trigger_info(self::$DB_NAME.'.'.$trg);
+		$result = self::utils()->trigger_info($this->db_name().'.'.$trg);
 		foreach ($expected as $k => $_expected) {
 			$this->assertEquals( $_expected, $result[$k] );
 		}
@@ -827,12 +838,12 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
 		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
-		$this->assertFalse( self::utils()->trigger_exists(self::$DB_NAME.'.'.$trg) );
-		$sql = 'CREATE TRIGGER '.self::$DB_NAME.'.'.$trg.' BEFORE INSERT ON '.$this->table_name($table).' FOR EACH ROW SET @sum = @sum + NEW.id';
+		$this->assertFalse( self::utils()->trigger_exists($this->db_name().'.'.$trg) );
+		$sql = 'CREATE TRIGGER '.$this->db_name().'.'.$trg.' BEFORE INSERT ON '.$this->table_name($table).' FOR EACH ROW SET @sum = @sum + NEW.id';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
-		$this->assertNotEmpty( self::utils()->trigger_exists(self::$DB_NAME.'.'.$trg) );
-		$this->assertNotEmpty( self::utils()->drop_trigger(self::$DB_NAME.'.'.$trg) );
-		$this->assertFalse( self::utils()->trigger_exists(self::$DB_NAME.'.'.$trg) );
+		$this->assertNotEmpty( self::utils()->trigger_exists($this->db_name().'.'.$trg) );
+		$this->assertNotEmpty( self::utils()->drop_trigger($this->db_name().'.'.$trg) );
+		$this->assertFalse( self::utils()->trigger_exists($this->db_name().'.'.$trg) );
 	}
 	public function test_create_trigger() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -848,7 +859,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 			'statement' => 'SET @sum = @sum + NEW.id',
 			'definer' => NULL,
 		);
-		$result = self::utils()->trigger_info(self::$DB_NAME.'.'.$trg);
+		$result = self::utils()->trigger_info($this->db_name().'.'.$trg);
 		foreach ($expected as $k => $_expected) {
 			$this->assertEquals( $_expected, $result[$k] );
 		}
@@ -856,33 +867,33 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 
 	public function test_list_events() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertNotEmpty( self::utils()->create_database(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 
 		$evt = self::utils()->db->DB_PREFIX. 'evt_'.__FUNCTION__;
-		$events = self::utils()->list_events(self::$DB_NAME);
+		$events = self::utils()->list_events($this->db_name());
 		if (empty($events)) {
-			$sql = 'CREATE EVENT '.self::$DB_NAME.'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.self::$DB_NAME.'.totals VALUES (NOW());';
+			$sql = 'CREATE EVENT '.$this->db_name().'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.$this->db_name().'.totals VALUES (NOW());';
 			$this->assertNotEmpty( self::utils()->db->query($sql) );
 		}
-		$this->assertNotEmpty( self::utils()->list_events(self::$DB_NAME) );
+		$this->assertNotEmpty( self::utils()->list_events($this->db_name()) );
 	}
 	public function test_event_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$evt = self::utils()->db->DB_PREFIX. 'evt_'.__FUNCTION__;
-		$this->assertFalse( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
-		$sql = 'CREATE EVENT '.self::$DB_NAME.'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.self::$DB_NAME.'.totals VALUES (NOW());';
+		$this->assertFalse( self::utils()->event_exists($this->db_name().'.'.$evt) );
+		$sql = 'CREATE EVENT '.$this->db_name().'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.$this->db_name().'.totals VALUES (NOW());';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
-		$this->assertNotEmpty( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
+		$this->assertNotEmpty( self::utils()->event_exists($this->db_name().'.'.$evt) );
 	}
 	public function test_event_info() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$evt = self::utils()->db->DB_PREFIX. 'evt_'.__FUNCTION__;
-		$this->assertFalse( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
-		$sql = 'CREATE EVENT '.self::$DB_NAME.'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.self::$DB_NAME.'.totals VALUES (NOW());';
+		$this->assertFalse( self::utils()->event_exists($this->db_name().'.'.$evt) );
+		$sql = 'CREATE EVENT '.$this->db_name().'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.$this->db_name().'.totals VALUES (NOW());';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
 		$expected = array(
 			'name' => $evt,
-			'db' => self::$DB_NAME,
+			'db' => $this->db_name(),
 			'definer' => NULL,
 			'timezone' => NULL,
 			'type' => 'ONE TIME',
@@ -894,7 +905,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 			'status' => 'ENABLED',
 			'originator' => '0',
 		);
-		$result = self::utils()->event_info(self::$DB_NAME.'.'.$evt);
+		$result = self::utils()->event_info($this->db_name().'.'.$evt);
 		foreach ($expected as $k => $_expected) {
 			$this->assertEquals( $_expected, $result[$k] );
 		}
@@ -902,21 +913,21 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_drop_event() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$evt = self::utils()->db->DB_PREFIX. 'evt_'.__FUNCTION__;
-		$this->assertFalse( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
-		$sql = 'CREATE EVENT '.self::$DB_NAME.'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.self::$DB_NAME.'.totals VALUES (NOW());';
+		$this->assertFalse( self::utils()->event_exists($this->db_name().'.'.$evt) );
+		$sql = 'CREATE EVENT '.$this->db_name().'.'.$evt.'  ON SCHEDULE AT "2014-10-10 23:59:00"  DO INSERT INTO '.$this->db_name().'.totals VALUES (NOW());';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
-		$this->assertNotEmpty( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
-		$this->assertNotEmpty( self::utils()->drop_event(self::$DB_NAME.'.'.$evt) );
-		$this->assertFalse( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
+		$this->assertNotEmpty( self::utils()->event_exists($this->db_name().'.'.$evt) );
+		$this->assertNotEmpty( self::utils()->drop_event($this->db_name().'.'.$evt) );
+		$this->assertFalse( self::utils()->event_exists($this->db_name().'.'.$evt) );
 	}
 	public function test_create_event() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$evt = self::utils()->db->DB_PREFIX. 'evt_'.__FUNCTION__;
-		$this->assertFalse( self::utils()->event_exists(self::$DB_NAME.'.'.$evt) );
-		$this->assertNotEmpty( self::utils()->create_event(self::$DB_NAME.'.'.$evt, 'AT "2014-10-10 23:59:00"', 'INSERT INTO '.self::$DB_NAME.'.totals VALUES (NOW())') );
+		$this->assertFalse( self::utils()->event_exists($this->db_name().'.'.$evt) );
+		$this->assertNotEmpty( self::utils()->create_event($this->db_name().'.'.$evt, 'AT "2014-10-10 23:59:00"', 'INSERT INTO '.$this->db_name().'.totals VALUES (NOW())') );
 		$expected = array(
 			'name' => $evt,
-			'db' => self::$DB_NAME,
+			'db' => $this->db_name(),
 			'definer' => NULL,
 			'timezone' => NULL,
 			'type' => 'ONE TIME',
@@ -928,7 +939,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 			'status' => 'ENABLED',
 			'originator' => '0',
 		);
-		$result = self::utils()->event_info(self::$DB_NAME.'.'.$evt);
+		$result = self::utils()->event_info($this->db_name().'.'.$evt);
 		foreach ($expected as $k => $_expected) {
 			$this->assertEquals( $_expected, $result[$k] );
 		}
