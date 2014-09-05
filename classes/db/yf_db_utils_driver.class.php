@@ -1642,42 +1642,40 @@ abstract class yf_db_utils_driver {
 	/**
 	* Smart split long SQL into single queries. Usually to be able to execute them with php_mysql API functions
 	*/
-	public function split_sql(&$ret, $sql) {
+	public function split_sql($sql) {
+		$out = array();
 		// do not trim
-		$sql			= rtrim($sql, "\n\r");
-		$sql_len		= strlen($sql);
-		$char			= '';
-		$string_start	= '';
-		$in_string		= FALSE;
-		$nothing	 	= TRUE;
-		$time0			= time();
-		$is_headers_sent = headers_sent();
-
+		$sql = rtrim($sql, "\n\r");
+		$sql_len = strlen($sql);
+		$char = '';
+		$string_start = '';
+		$in_string = FALSE;
+		$nothing = TRUE;
 		for ($i = 0; $i < $sql_len; ++$i) {
 			$char = $sql[$i];
 			// We are in a string, check for not escaped end of strings except for
 			// backquotes that can't be escaped
 			if ($in_string) {
 				for (;;) {
-					$i		 = strpos($sql, $string_start, $i);
+					$i = strpos($sql, $string_start, $i);
 					// No end of string found -> add the current substring to the
 					// returned array
 					if (!$i) {
-						$ret[] = array('query' => $sql, 'empty' => $nothing);
-						return TRUE;
+						$out[] = $sql;
+						break 2;
 					}
 					// Backquotes or no backslashes before quotes: it's indeed the
 					// end of the string -> exit the loop
 					else if ($string_start == '`' || $sql[$i-1] != "\\") {
-						$string_start	  = '';
-						$in_string		 = FALSE;
+						$string_start = '';
+						$in_string = FALSE;
 						break;
 					}
 					// one or more Backslashes before the presumed end of string...
 					else {
 						// ... first checks for escaped backslashes
-						$j					 = 2;
-						$escaped_backslash	 = FALSE;
+						$j = 2;
+						$escaped_backslash = FALSE;
 						while ($i-$j > 0 && $sql[$i-$j] == "\\") {
 							$escaped_backslash = !$escaped_backslash;
 							$j++;
@@ -1685,8 +1683,8 @@ abstract class yf_db_utils_driver {
 						// ... if escaped backslashes: it's really the end of the
 						// string -> exit the loop
 						if ($escaped_backslash) {
-							$string_start  = '';
-							$in_string	 = FALSE;
+							$string_start = '';
+							$in_string = FALSE;
 							break;
 						}
 						// ... else loop
@@ -1697,50 +1695,52 @@ abstract class yf_db_utils_driver {
 				}
 			}
 			// lets skip comments (/*, -- and #)
-			else if (($char == '-' && $sql_len > $i + 2 && $sql[$i + 1] == '-' && $sql[$i + 2] <= ' ') || $char == '#' || ($char == '/' && $sql_len > $i + 1 && $sql[$i + 1] == '*')) {
+			else if (
+				($char == '-' && $sql_len > $i + 2 && $sql[$i + 1] == '-' && $sql[$i + 2] <= ' ')
+				 || $char == '#' || ($char == '/' && $sql_len > $i + 1 && $sql[$i + 1] == '*')
+			) {
 				$i = strpos($sql, $char == '/' ? '*/' : "\n", $i);
 				// didn't we hit end of string?
 				if ($i === FALSE) {
 					break;
 				}
-				if ($char == '/') $i++;
+				if ($char == '/') {
+					$i++;
+				}
 			}
 			// We are not in a string, first check for delimiter...
 			else if ($char == ';') {
 				// if delimiter found, add the parsed part to the returned array
-				$ret[]	  = array('query' => substr($sql, 0, $i), 'empty' => $nothing);
-				$nothing	= TRUE;
-				$sql		= ltrim(substr($sql, min($i + 1, $sql_len)));
-				$sql_len	= strlen($sql);
+				$out[] = substr($sql, 0, $i);
+				$nothing = TRUE;
+				$sql = ltrim(substr($sql, min($i + 1, $sql_len)));
+				$sql_len = strlen($sql);
 				if ($sql_len) {
-					$i	  = -1;
+					$i = -1;
 				} else {
 					// The submited statement(s) end(s) here
-					return TRUE;
+					break;
 				}
 			}
 			// ... then check for start of a string,...
 			else if (($char == '"') || ($char == '\'') || ($char == '`')) {
-				$in_string	= TRUE;
-				$nothing	  = FALSE;
+				$in_string = TRUE;
+				$nothing = FALSE;
 				$string_start = $char;
 			} elseif ($nothing) {
 				$nothing = FALSE;
 			}
-			// loic1: send a fake header each 30 sec. to bypass browser timeout
-			$time1	 = time();
-			if ($time1 >= $time0 + 30) {
-				$time0 = $time1;
-				if (!$is_headers_sent) {
-					header('X-YFPing: Pong');
-				}
-			}
 		}
 		// add any rest to the returned array
 		if (!empty($sql) && preg_match('@[^[:space:]]+@', $sql)) {
-			$ret[] = array('query' => $sql, 'empty' => $nothing);
+			$out[] = $sql;
 		}
-		return TRUE;
+		foreach ((array)$out as $k => $v) {
+			if (!strlen($v)) {
+				unset($out[$k]);
+			}
+		}
+		return array_values($out); // array_values needed here to make array indexes flat and properly incremented again
 	}
 
 	/**
