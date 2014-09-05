@@ -6,10 +6,6 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/** @var @conf_skip */
 	public $db_connect_id		= null;
 	/** @var @conf_skip */
-	public $META_TABLES_SQL		= 'SHOW TABLES';	
-	/** @var @conf_skip */
-	public $META_COLUMNS_SQL	= 'SHOW COLUMNS FROM %s';
-	/** @var @conf_skip */
 	public $DEF_CHARSET			= 'utf8';
 	/** @var @conf_skip */
 	public $DEF_PORT			= 3306;
@@ -17,8 +13,6 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	public $SQL_NO_CACHE		= false;
 	/** @var @conf_skip */
 	public $ALLOW_AUTO_CREATE_DB= false;
-	/** @var @conf_skip */
-	public $HAS_MULTI_QUERY		= false;
 
 	/**
 	* Catch missing method call
@@ -128,17 +122,6 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	}
 
 	/**
-	* Very simple emulation of the mysqli multi_query
-	*/
-	function multi_query($queries = array()) {
-		$result = array();
-		foreach((array)$queries as $k => $sql) {
-			$result[$k] = $this->query($sql);
-		}
-		return $result;
-	}
-
-	/**
 	*/
 	function unbuffered_query($query = '') {
 		mysql_unbuffered_query($query, $this->db_connect_id);
@@ -234,84 +217,6 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	}
 
 	/**
-	*/
-	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = true) {
-		$retarr = array();
-
-		$Q = $this->query(sprintf($this->META_COLUMNS_SQL, $table));
-		while ($A = $this->fetch_row($Q)) {
-			$fld = array();
-
-			$fld['name']= $A[0];
-			$type		= $A[1];
-
-			// split type into type(length):
-			if ($FULL_INFO) {
-				$fld['scale'] = null;
-			}
-			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-				if ($FULL_INFO) {
-					$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
-				}
-			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-			} elseif (preg_match('/^(enum|set)\((.*)\)$/i', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = max(array_map('strlen',explode(',',$query_array[2]))) - 2; // PHP >= 4.0.6
-				$fld['max_length'] = ($fld['max_length'] == 0 ? 1 : $fld['max_length']);
-				$values = array();
-				foreach (explode(',', $query_array[2]) as $v) {
-					$v = trim(trim($v), '\'"');
-					if (strlen($v)) {
-						$values[$v] = $v;
-					}
-				}
-				$fld['values'] = $values;
-			} else {
-				$fld['type'] = $type;
-				$fld['max_length'] = -1;
-			}
-			$fld['not_null']		= ($A[2] != 'YES');
-			$fld['primary_key']		= ($A[3] == 'PRI');
-			$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
-			$fld['binary']			= (strpos($type,'blob') !== false);
-			$fld['unsigned']		= (strpos($type,'unsigned') !== false);
-			if (!$fld['binary']) {
-				$d = $A[4];
-				if ($d != '' && $d != 'NULL') {
-					$fld['has_default'] = true;
-					$fld['default_value'] = $d;
-				} else {
-					$fld['has_default'] = false;
-				}
-			}
-			if ($KEYS_NUMERIC) {
-				$retarr[] = $fld;
-			} else {
-				$retarr[strtolower($fld['name'])] = $fld;
-			}
-		}
-		return $retarr;
-	}
-
-	/**
-	*/
-	function meta_tables($DB_PREFIX = '') {
-		$Q = $this->query($this->META_TABLES_SQL);
-		while ($A = $this->fetch_row($Q)) {
-			// Skip tables without prefix of current connection
-			if (strlen($DB_PREFIX) && substr($A['0'], 0, strlen($DB_PREFIX)) != $DB_PREFIX) {
-				continue;
-			}
-			$tables[$A['0']] = $A['0'];
-		}
-		return $tables;
-	}
-
-	/**
 	* Begin a transaction
 	*/
 	function begin() {
@@ -371,14 +276,5 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 			return false;
 		}
 		return mysql_get_host_info($this->db_connect_id);
-	}
-
-	/**
-	*/
-	function ping() {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-		return mysql_ping($this->db_connect_id);
 	}
 }

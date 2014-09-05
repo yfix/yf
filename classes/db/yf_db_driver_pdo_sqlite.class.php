@@ -239,34 +239,4 @@ class yf_db_driver_pdo_sqlite extends yf_db_driver_pdo {
 		}
 		return $this->db_connect_id->getAttribute(PDO::ATTR_SERVER_INFO);
 	}
-
-	/**
-	*/
-	function meta_columns($table) {
-		$cols = array();
-		$sql = 'PRAGMA table_info('.$table.')';
-		$q = $this->query($sql);
-		while ($a = $this->fetch_assoc($q)) {
-			$name = $a['name'];
-			$cols[$name] = $a;
-		}
-		return $cols;
-		$retarr = array();
-	}
-
-	/**
-	*/
-	function meta_tables($DB_PREFIX = '') {
-		$sql = 'SELECT name	FROM sqlite_master WHERE type = "table"	AND name <> "sqlite_sequence"';
-		$q = $this->query($sql);
-		while ($a = $this->fetch_assoc($q)) {
-			$name = $a['name'];
-			// Skip tables without prefix of current connection
-			if (strlen($DB_PREFIX) && substr($name, 0, strlen($DB_PREFIX)) != $DB_PREFIX) {
-				continue;
-			}
-			$tables[$name] = $name;
-		}
-		return $tables;
-	}
 }
