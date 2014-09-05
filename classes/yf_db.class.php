@@ -275,6 +275,13 @@ class yf_db {
 					trigger_error('DB: Wrong driver', $this->CONNECTION_REQUIRED ? E_USER_ERROR : E_USER_WARNING);
 					break;
 				}
+				$implemented = array();
+				foreach (get_class_methods($this->db) as $method) {
+					if ($method[0] != '_') {
+						$implemented[$method] = $method;
+					}
+				}
+				$this->db->implemented = $implemented;
 				// Stop after success
 				if (!empty($this->db->db_connect_id)) {
 					break;
