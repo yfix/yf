@@ -21,6 +21,13 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	public $HAS_MULTI_QUERY		= true;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function __construct(array $params) {
 		if (!function_exists('mysqli_init')) {

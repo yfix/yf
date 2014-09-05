@@ -21,6 +21,13 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	public $HAS_MULTI_QUERY		= false;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function __construct(array $params) {
 		if (!function_exists('mysql_connect')) {

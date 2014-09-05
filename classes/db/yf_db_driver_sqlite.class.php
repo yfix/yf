@@ -7,6 +7,13 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	public $db_connect_id		= null;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function __construct(array $params) {
 		if (!class_exists('SQLite3')) {

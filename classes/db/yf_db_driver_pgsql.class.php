@@ -32,6 +32,13 @@ class yf_db_driver_pqsql extends yf_db_driver {
 		AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	*/
 	function __construct(array $params) {
 		if (!function_exists('pg_connect')) {
