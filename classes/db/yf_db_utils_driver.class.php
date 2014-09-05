@@ -1846,11 +1846,10 @@ abstract class yf_db_utils_driver {
 	* db()->utils()->database('geonames')->alter($params);
 	* db()->utils()->database('geonames')->rename($new_name);
 	*/
-	public function database($name) {
+	public function database($db_name) {
 		$obj = clone _class('db_utils_helper_database', 'classes/db/');
 		$obj->_setup(array(
-			'db'		=> $this->db,
-			'utils'		=> $this->utils,
+			'utils'		=> $this,
 			'db_name'	=> $db_name,
 		));
 		return $obj;
@@ -1866,8 +1865,7 @@ abstract class yf_db_utils_driver {
 	public function table($db_name, $table) {
 		$obj = clone _class('db_utils_helper_table', 'classes/db/');
 		$obj->_setup(array(
-			'db'		=> $this->db,
-			'utils'		=> $this->utils,
+			'utils'		=> $this,
 			'db_name'	=> $db_name,
 			'table'		=> $table,
 		));
@@ -1881,8 +1879,7 @@ abstract class yf_db_utils_driver {
 	public function view($db_name, $view) {
 		$obj = clone _class('db_utils_helper_view', 'classes/db/');
 		$obj->_setup(array(
-			'db'		=> $this->db,
-			'utils'		=> $this->utils,
+			'utils'		=> $this,
 			'db_name'	=> $db_name,
 			'view'		=> $view,
 		));
@@ -1898,8 +1895,7 @@ abstract class yf_db_utils_driver {
 	public function column($db_name, $table, $col) {
 		$obj = clone _class('db_utils_helper_column', 'classes/db/');
 		$obj->_setup(array(
-			'db'		=> $this->db,
-			'utils'		=> $this->utils,
+			'utils'		=> $this,
 			'db_name'	=> $db_name,
 			'table'		=> $table,
 			'col'		=> $col,
@@ -1915,8 +1911,7 @@ abstract class yf_db_utils_driver {
 	public function index($db_name, $table, $index) {
 		$obj = clone _class('db_utils_helper_index', 'classes/db/');
 		$obj->_setup(array(
-			'db'		=> $this->db,
-			'utils'		=> $this->utils,
+			'utils'		=> $this,
 			'db_name'	=> $db_name,
 			'table'		=> $table,
 			'index'		=> $index,
@@ -1931,8 +1926,7 @@ abstract class yf_db_utils_driver {
 	public function foreign_key($db_name, $table, $fk_name) {
 		$obj = clone _class('db_utils_helper_foreign_key', 'classes/db/');
 		$obj->_setup(array(
-			'db'		=> $this->db,
-			'utils'		=> $this->utils,
+			'utils'		=> $this,
 			'db_name'	=> $db_name,
 			'table'		=> $table,
 			'foreign_key'=> $fk_name,
