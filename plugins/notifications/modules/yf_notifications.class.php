@@ -10,18 +10,14 @@ class yf_notifications {
 		$online_class = _class('online_users','classes/');
 		$online_class->process();
 		// user part
-//		$cache_name = __CLASS__.'|'.__FUNCTION__."|".$online_class->online_user_id."|".$online_class->online_user_type;
-//		if (true || cache()->get($cache_name) != 'OK') {
-			$R = db()->get_all("SELECT `notification_id` FROM `".db('notifications_receivers')."` WHERE `receiver_id`='".$online_class->online_user_id."' AND `receiver_type`='".$online_class->online_user_type."' AND `is_read`=0");
-			$notifications = array();
-			foreach ((array)$R as $A) {
-				$notifications[] = $A['notification_id'];
-			}
-			if (count($notifications) != 0) {
-				$out = db()->get_all("SELECT `id`,`title`,`content`,`add_date` FROM `".db('notifications')."` WHERE `id` IN (".implode(",",$notifications).")");
-			}
-//			cache()->set($cache_name,'OK',$this->_CACHE_CHECK_TTL);
-//		}
+        $R = db()->get_all("SELECT `notification_id` FROM `".db('notifications_receivers')."` WHERE `receiver_id`='".$online_class->online_user_id."' AND `receiver_type`='".$online_class->online_user_type."' AND `is_read`=0");
+        $notifications = array();
+        foreach ((array)$R as $A) {
+            $notifications[] = $A['notification_id'];
+        }
+        if (count($notifications) != 0) {
+            $out = db()->get_all("SELECT `id`,`title`,`content`,`add_date` FROM `".db('notifications')."` WHERE `id` IN (".implode(",",$notifications).")");
+        }
 		echo json_encode($out);
 		exit;
 	}
@@ -48,6 +44,24 @@ class yf_notifications {
 		require_css("//cdnjs.cloudflare.com/ajax/libs/pnotify/2.0.0/pnotify.all.min.css");
 		require_js("//cdnjs.cloudflare.com/ajax/libs/pnotify/2.0.0/pnotify.all.min.js");
 	}
+    
+    function _add_receiver_user($name, $user_id) {
+        $notification_id = db()->get_one("SELECT `id` FROM `".db('notifications')."` WHERE `id`='"._es($name)."' 
+                                        OR (`is_common_template`=1 AND `template_alias` = '"._es($name)."')");
+        if (intval($notification_id) == 0) return false;
+        db()->query("REPLACE INTO `".db('notifications_receivers')."` (
+                `notification_id`,
+                `receiver_type`,
+                `receiver_id`,
+                `is_read`
+            ) VALUES (
+                '".intval($notification_id)."',
+                'user_id',
+                '".intval($user_id)."',
+                0
+            );");
+        return true;
+    }
 	
 }
 
