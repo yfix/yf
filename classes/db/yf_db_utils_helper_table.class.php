@@ -4,7 +4,6 @@
 */
 class yf_db_utils_helper_table {
 
-	protected $db = null;
 	protected $utils = null;
 	protected $db_name = '';
 	protected $table = '';
@@ -102,8 +101,8 @@ class yf_db_utils_helper_table {
 
 	/**
 	*/
-	public function column($extra = array(), &$error = false) {
-		return $this->utils->column($this->db_name.'.'.$this->table, $extra, $error);
+	public function column($name, $extra = array(), &$error = false) {
+		return $this->utils->column($this->db_name, $this->table, $name, $extra, $error);
 	}
 
 	/**
@@ -114,8 +113,8 @@ class yf_db_utils_helper_table {
 
 	/**
 	*/
-	public function index($extra = array(), &$error = false) {
-		return $this->utils->index($this->db_name.'.'.$this->table, $extra, $error);
+	public function index($name, $extra = array(), &$error = false) {
+		return $this->utils->index($this->db_name, $this->table, $name, $extra, $error);
 	}
 
 	/**
@@ -126,7 +125,7 @@ class yf_db_utils_helper_table {
 
 	/**
 	*/
-	public function foreign_key($extra = array(), &$error = false) {
-		return $this->utils->foreign_key($this->db_name.'.'.$this->table, $extra, $error);
+	public function foreign_key($name, $extra = array(), &$error = false) {
+		return $this->utils->foreign_key($this->db_name, $this->table, $name, $extra, $error);
 	}
 }
