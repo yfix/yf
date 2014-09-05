@@ -242,7 +242,6 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-#		$this->assertTrue( self::utils()->db->db->select_db($this->db_name()) );
 		$to_insert = array(
 			1 => array('id' => 1),
 			2 => array('id' => 2),
@@ -953,22 +952,6 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertNotEmpty( self::utils()->user_exists('root@localhost') );
 	}
-	public function test_user_info() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_delete_user() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_add_user() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_update_user() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
 
 	public function test_escape_database_name() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -998,18 +981,6 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'hello world', self::utils()->_es('hello world') );
 		$this->assertEquals( 'hello\\\'world\\\'', self::utils()->_es('hello\'world\'') );
-	}
-
-	public function test_split_sql() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$expected = array('SELECT 1', 'SELECT 2', 'SELECT 3');
-		$this->assertEquals( $expected, self::utils()->split_sql('SELECT 1; SELECT 2; SELECT 3') );
-		$this->assertEquals( $expected, self::utils()->split_sql('SELECT 1;'.PHP_EOL.' SELECT 2;'.PHP_EOL.' SELECT 3') );
-		$this->assertEquals( $expected, self::utils()->split_sql(';;SELECT 1;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 2;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 3;;;') );
-	}
-	public function test_get_table_structure_from_db_installer() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
 	}
 
 	public function test_helper_database() {
@@ -1055,9 +1026,44 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	}
 	public function test_helper_index() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), $data) );
+		$this->assertTrue( (bool)self::utils()->add_index($this->table_name($table), 'PRIMARY', array('id'), array('type' => 'primary')) );
+		$this->assertTrue( (bool)self::utils()->index_exists($this->table_name($table), 'PRIMARY') );
+
+		$this->assertTrue( (bool)self::utils()->database($this->db_name())->table($table)->index('PRIMARY')->exists() );
+		$this->assertTrue( (bool)self::utils()->table($this->db_name(), $table)->index('PRIMARY')->exists() );
+		$this->assertTrue( (bool)self::utils()->index($this->db_name(), $table, 'PRIMARY')->exists() );
 	}
 	public function test_helper_foreign_key() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table1), $data) );
+		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table2), $data) );
+		$this->assertTrue( (bool)self::utils()->add_foreign_key($this->table_name($table1), $fkey, array('id'), $this->table_name($table2), array('id')) );
+		$info = array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id');
+		$this->assertEquals( $info, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+
+		$this->assertEquals( $info, self::utils()->database($this->db_name())->table($table1)->foreign_key($fkey)->info() );
+		$this->assertTrue( (bool)self::utils()->table($this->db_name(), $table1)->foreign_key($fkey)->info() );
+		$this->assertTrue( (bool)self::utils()->foreign_key($this->db_name(), $table1, $fkey)->info() );
+	}
+
+	public function test_split_sql() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$expected = array('SELECT 1', 'SELECT 2', 'SELECT 3');
+		$this->assertEquals( $expected, self::utils()->split_sql('SELECT 1; SELECT 2; SELECT 3') );
+		$this->assertEquals( $expected, self::utils()->split_sql('SELECT 1;'.PHP_EOL.' SELECT 2;'.PHP_EOL.' SELECT 3') );
+		$this->assertEquals( $expected, self::utils()->split_sql(';;SELECT 1;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 2;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 3;;;') );
+	}
+	public function test_get_table_structure_from_db_installer() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( self::utils()-> );
 	}
