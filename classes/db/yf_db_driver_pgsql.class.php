@@ -21,30 +21,58 @@ class yf_db_driver_pqsql extends yf_db_driver {
 			return false;
 		}
 		$this->params = $params;
+		$this->connect();
+		return $this->db_connect_id;
+	}
+
+	/**
+	*/
+	function connect() {
+		$dsn = 'host='.$this->params['host'].' '
+			. ($this->params['port'] ? ' port='.$this->params['port'].' ' : '');
+		if (strlen($this->params['user'])) {
+			$dsn .= ' user='.$this->params['user'].' ';
+		}
+		if (strlen($this->params['pswd'])) {
+			$dsn .= ' password='.$this->params['pswd'].' ';
+		}
+#user = postgres
+#pswd = ""
+#port = 5432
+#db = template1
+		$db_name = $this->params['name'] ?: 'template1';
+		$dsn .= ' dbname='.$db_name.' ';
+		$dsn .= ' connect_timeout=5 ';
+
+		$this->db_connect_id = $this->params['persist'] ? pg_pconnect($dsn) : pg_connect($dsn);
+		if (!$this->db_connect_id) {
+			$this->_connect_error = 'cannot_connect_to_server';
+			return $this->db_connect_id;
+		}
 /*
-		$this->connect_string = '';
-		if (strlen($user)) {
-			$this->connect_string .= 'user='.$user.' ';
-		}
-		if (strlen($password)) {
-			$this->connect_string .= 'password='.$password.' ';
-		}
-		if ($server) {
-			if (preg_match('#:#', $server)) {
-				list($server, $port) = split(':', $server);
-				$this->connect_string .= 'host='.$server.' port='.$port.' ';
-			} elseif ($server != 'localhost') {
-				$this->connect_string .= 'host='.$server.' ';
+		if ($this->params['name'] != '') {
+			$dbselect = $this->select_db($this->params['name']);
+			// Try to create database, if not exists and if allowed
+			if (!$dbselect && $this->params['allow_auto_create_db'] && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->params['name'])) {
+				$res = $this->query('CREATE DATABASE IF NOT EXISTS '.$this->params['name']);
+				if ($res) {
+					$dbselect = $this->select_db($this->params['name']);
+				}
 			}
+			if (!$dbselect) {
+				$this->_connect_error = 'cannot_select_db';
+			}
+			return $dbselect;
 		}
-		if ($database) {
-			$this->dbname = $database;
-			$this->connect_string .= 'dbname='.$database;
-		}
-		$this->persistency = $persistency;
-		$this->db_connect_id = $this->persistency ? pg_pconnect($this->connect_string) : pg_connect($this->connect_string);
-		return $this->db_connect_id ? $this->db_connect_id : false;
 */
+		return $this->db_connect_id;
+	}
+
+	/**
+	*/
+	function select_db($name) {
+// TODO
+		return true;
 	}
 
 	/**
