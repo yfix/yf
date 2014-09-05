@@ -4,7 +4,6 @@
 */
 class yf_db_utils_helper_column {
 
-	protected $db = null;
 	protected $utils = null;
 	protected $db_name = '';
 	protected $table = '';
