@@ -4,19 +4,7 @@ load('db_driver', 'framework', 'classes/db/');
 class yf_db_driver_pqsql extends yf_db_driver {
 
 	/** @var @conf_skip */
-	public $db_connect_id		= null;
-	/** @var @conf_skip */
-	public $query_result		= null;
-	/** @var @conf_skip */
-	public $in_transaction		= 0;
-	/** @var @conf_skip */
-	public $row				= array();
-	/** @var @conf_skip */
-	public $rowset				= array();
-	/** @var @conf_skip */
-	public $rownum				= array();
-	/** @var @conf_skip */
-	public $num_queries		= 0;
+	public $db_connect_id = null;
 
 	/**
 	* Catch missing method call

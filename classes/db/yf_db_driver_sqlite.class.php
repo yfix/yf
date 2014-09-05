@@ -4,7 +4,7 @@ load('db_driver', 'framework', 'classes/db/');
 class yf_db_driver_sqlite extends yf_db_driver {
 
 	/** @var @conf_skip */
-	public $db_connect_id		= null;
+	public $db_connect_id = null;
 
 	/**
 	* Catch missing method call
