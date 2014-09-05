@@ -10,14 +10,10 @@ class class_db_real_query_builder_mysqli_test extends class_db_real_query_builde
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'mysqli';
 		self::_connect();
-		// These actions needed to ensure database is empty
-		self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
-		self::$db->query('CREATE DATABASE IF NOT EXISTS '.self::$DB_NAME);
+		self::utils()->truncate_database(self::db_name());
 	}
 	public static function tearDownAfterClass() {
+		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
-	}
-	public function _need_skip_test($name) {
-		return false;
 	}
 }

@@ -129,9 +129,11 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	*/
 	function error() {
 		if ($this->db_connect_id) {
+			$code = $this->db_connect_id->lastErrorCode();
+			$msg = $this->db_connect_id->lastErrorMsg();
 			return array(
-				'message'	=> $this->db_connect_id->lastErrorMsg(),
-				'code'		=> $this->db_connect_id->lastErrorCode(),
+				'message'	=> $code && $code != 100 ? $msg : null,
+				'code'		=> $code && $code != 100 ? $code : null,
 			);
 		} elseif ($this->_connect_error) {
 			return array(

@@ -1,17 +1,14 @@
 <?php
 
-require_once __DIR__.'/class_db_real_query_builder_mysql.Test.php';
+require_once __DIR__.'/db_real_abstract.php';
 
 /**
- * @requires extension PDO
- * @requires extension pdo_mysql
- * @backupGlobals disabled
- * @backupStaticAttributes disabled
+ * @requires extension pgsql
  */
-class class_db_real_query_builder_pdo_mysql_test extends class_db_real_query_builder_mysql_test {
+class class_db_real_installer_pgsql_test extends db_real_abstract {
 	public static function setUpBeforeClass() {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
-		self::$DB_DRIVER = 'pdo_mysql';
+		self::$DB_DRIVER = 'pgsql';
 		self::_connect();
 		self::utils()->truncate_database(self::db_name());
 	}
@@ -19,4 +16,5 @@ class class_db_real_query_builder_pdo_mysql_test extends class_db_real_query_bui
 		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
+	// TODO
 }

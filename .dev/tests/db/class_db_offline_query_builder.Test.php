@@ -6,15 +6,6 @@ require_once __DIR__.'/db_offline_abstract.php';
  * @requires extension mysql
  */
 class class_db_offline_query_builder_test extends db_offline_abstract {
-#	public static function setUpBeforeClass() {
-#		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
-#		self::$DB_DRIVER = 'mysql5';
-#		parent::setUpBeforeClass();
-#	}
-#	public static function tearDownAfterClass() {
-#		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
-#		parent::tearDownAfterClass();
-#	}
 	public function test_select1() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( '*', self::qb()->select()->_sql['select'][0] );
@@ -66,8 +57,6 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'DISTINCT u.id', self::qb()->select('DISTINCT u.id')->_sql['select'][0] );
 		$this->assertEquals( 'DISTINCT u.id AS `num`', self::qb()->select(array('DISTINCT u.id' => 'num'))->_sql['select'][0] );
 		$this->assertEquals( 'DISTINCT u.id AS `num`, a.id AS `article_id`', self::qb()->select( function(){return 'DISTINCT u.id AS `num`';}, function(){return 'a.id AS `article_id`';} )->_sql['select'][0] );
-#		$this->assertEquals( 'u.id, a.id, b.id', self::qb()->select(array('u.id', 'a.id', 'b.id'))->_sql['select'][0] );
-#		$this->assertEquals( '`id id`', self::qb()->select('id id')->_sql['select'][0] );
 	}
 	public function test_select_string_as() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -252,14 +241,5 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(\'`\')', self::qb()->from('user')->where('product_id', 'IN', '`')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->where('product_id', 'in', '')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->where('product_id', 'in', array('','',''))->sql() );
-	}
-	public function test_update() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertFalse( self::qb()->update(array()) );
-#		$data = array(
-#			1 => array('name' => 'name1'),
-#			2 => array('name' => 'name2'),
-#		);
-#		$this->assertEquals( '', self::qb()->from('user')->whereid(array(1,2,3))->update($data)->sql() );
 	}
 }
