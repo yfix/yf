@@ -144,6 +144,23 @@ class yf_db {
 	}
 
 	/**
+	*/
+	function get_driver_family($db_type = '') {
+		$db_type = strtolower($db_type ?: $this->DB_TYPE);
+		// Get current abstract db type
+		if (in_array($db_type, array('db_type','mysql','mysqli','pdo_mysql','mysql5','mysql4','mysql41'))) {
+			$name = 'mysql';
+		} elseif (in_array($db_type, array('pgsql','pdo_pgsql','postgre','postgres','postgres7','postgres8','postgres9'))) {
+			$name = 'pgsql';
+		} elseif (in_array($db_type, array('sqlite','sqlite3','pdo_sqlite'))) {
+			$name = 'sqlite';
+		} else {
+			$name = $db_type;
+		}
+		return $name;
+	}
+
+	/**
 	* Catch missing method call
 	*/
 	function __call($name, $args) {
@@ -350,7 +367,7 @@ class yf_db {
 		$this->NUM_QUERIES++;
 		if (DEBUG_MODE) {
 			$query_time_start = microtime(true);
-			if ($this->SQL_NO_CACHE && false !== strpos($this->DB_TYPE, 'mysql')) {
+			if ($this->SQL_NO_CACHE && $this->get_driver_family() === 'mysql') {
 				$q = strtoupper(substr(ltrim($sql), 0, 100));
 				if (substr($q, 0, 6) == 'SELECT' && false === strpos($q, 'SQL_NO_CACHE')) {
 					$sql = preg_replace('/^[\s\t]*(SELECT)[\s\t]+/ims', '$1 SQL_NO_CACHE ', $sql);
@@ -373,7 +390,7 @@ class yf_db {
 		}
 		if (!$result && $query_allowed && $db_error) {
 			// Try to reconnect if we see some these errors: http://dev.mysql.com/doc/refman/5.0/en/error-messages-client.html
-			if (false !== strpos($this->DB_TYPE, 'mysql') && in_array($db_error['code'], $this->RECONNECT_MYSQL_ERRORS)) {
+			if ($this->get_driver_family() === 'mysql' && in_array($db_error['code'], $this->RECONNECT_MYSQL_ERRORS)) {
 				$this->db = null;
 				$reconnect_successful = $this->connect(array('reconnect' => true));
 				if ($reconnect_successful) {
@@ -1076,7 +1093,7 @@ class yf_db {
 		if (!strlen($table)) {
 			return false;
 		}
-		return $this->db->meta_columns($table, $KEYS_NUMERIC, $FULL_INFO);
+		return $this->utils()->meta_columns($table, $KEYS_NUMERIC, $FULL_INFO);
 	}
 
 	/**
@@ -1090,7 +1107,7 @@ class yf_db {
 		if (!strlen($table)) {
 			return false;
 		}
-		return $this->db->meta_tables($this->DB_PREFIX);
+		return $this->utils()->meta_tables($this->DB_PREFIX);
 	}
 
 	/**
@@ -1336,15 +1353,7 @@ class yf_db {
 		if (empty($db_error) || !$this->ERROR_AUTO_REPAIR) {
 			return false;
 		}
-		// Get current abstract db type
-		if (in_array($this->DB_TYPE, array('mysql','mysql4','mysql41','mysql5'))) {
-			$db_type = 'mysql';
-		} elseif (in_array($this->DB_TYPE, array('ora','oci8','oracle','oracle10'))) {
-			$db_type = 'oracle';
-		} elseif (in_array($this->DB_TYPE, array('pgsql','postgre','postgres','postgres7','postgres8'))) {
-			$db_type = 'postgres';
-		}
-		return _class('db_installer_'.$db_type, 'classes/db/')->_auto_repair_table($sql, $db_error, $this);
+		return _class('db_installer_'.$this->get_driver_family(), 'classes/db/')->_auto_repair_table($sql, $db_error, $this);
 	}
 
 	/**
@@ -1564,16 +1573,7 @@ class yf_db {
 	/**
 	*/
 	function utils() {
-		if (strpos($this->DB_TYPE, 'mysql') !== false || $this->DB_TYPE == 'DB_TYPE') {
-			$driver = 'mysql';
-		} elseif (strpos($this->DB_TYPE, 'sqlite') !== false) {
-			$driver = 'sqlite';
-		} elseif (strpos($this->DB_TYPE, 'pgsql') !== false) {
-			$driver = 'pgsql';
-		} else {
-			$driver = $this->DB_TYPE;
-		}
-		$cname = 'db_utils_'.$driver;
+		$cname = 'db_utils_'.$this->get_driver_family();
 		$obj = clone _class($cname, 'classes/db/');
 		$obj->db = $this;
 		return $obj;
@@ -1588,16 +1588,7 @@ class yf_db {
 	/**
 	*/
 	function query_builder() {
-		if (strpos($this->DB_TYPE, 'mysql') !== false || $this->DB_TYPE == 'DB_TYPE') {
-			$driver = 'mysql';
-		} elseif (strpos($this->DB_TYPE, 'sqlite') !== false) {
-			$driver = 'sqlite';
-		} elseif (strpos($this->DB_TYPE, 'pgsql') !== false) {
-			$driver = 'pgsql';
-		} else {
-			$driver = $this->DB_TYPE;
-		}
-		$cname = 'db_query_builder_'.$driver;
+		$cname = 'db_query_builder_'.$this->get_driver_family();
 		$obj = clone _class($cname, 'classes/db/');
 		$obj->db = $this;
 		return $obj;
