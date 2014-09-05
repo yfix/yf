@@ -141,7 +141,6 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		$this->assertSame( $expected, self::db()->escape_string($input) );
 		$this->assertSame( $expected, self::db()->escape($input) );
 		$this->assertSame( $expected, self::db()->es($input) );
-#		$this->assertSame( $expected, self::db()->_mysql_escape_mimic($input) );
 	}
 	public function test_get_one() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -198,29 +197,6 @@ class class_db_real_sqlite_test extends db_real_abstract {
 		}
 		$this->assertEquals( $data, self::db()->get_all('SELECT id, id2, id3 FROM '.$table) );
 	}
-#	public function test_insert_ignore() {
-#		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$table = self::db()->DB_PREFIX. __FUNCTION__;
-#		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)') );
-#		$this->assertNotEmpty( self::db()->insert($table, array('id' => 1, 'id2' => 11, 'id3' => 111)) );
-#		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
-#		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.$table) );
-#		$this->assertNotEmpty( self::db()->insert_ignore($table, $data) );
-#		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.$table) );
-#	}
-#	public function test_insert_on_duplicate_key_update() {
-#		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$table = self::db()->DB_PREFIX. __FUNCTION__;
-#		$this->assertNotEmpty( self::db()->query('CREATE TABLE '.$table.'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)') );
-#		$this->assertNotEmpty( self::db()->insert($table, array('id' => 1, 'id2' => 11, 'id3' => 111)) );
-#		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
-#		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.$table) );
-#		$this->assertNotEmpty( self::db()->insert_on_duplicate_key_update($table, $data) );
-#		$this->assertEquals( $data, self::db()->get('SELECT id, id2, id3 FROM '.$table) );
-#		$new_data = array('id' => 1, 'id2' => 22, 'id3' => 333);
-#		$this->assertNotEmpty( self::db()->insert_on_duplicate_key_update($table, $new_data) );
-#		$this->assertEquals( $new_data, self::db()->get('SELECT id, id2, id3 FROM '.$table) );
-#	}
 	public function test_replace() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
