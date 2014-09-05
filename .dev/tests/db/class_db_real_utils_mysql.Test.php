@@ -1002,7 +1002,10 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 
 	public function test_split_sql() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
+		$expected = array('SELECT 1', 'SELECT 2', 'SELECT 3');
+		$this->assertEquals( $expected, self::utils()->split_sql('SELECT 1; SELECT 2; SELECT 3') );
+		$this->assertEquals( $expected, self::utils()->split_sql('SELECT 1;'.PHP_EOL.' SELECT 2;'.PHP_EOL.' SELECT 3') );
+		$this->assertEquals( $expected, self::utils()->split_sql(';;SELECT 1;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 2;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 3;;;') );
 	}
 	public function test_get_table_structure_from_db_installer() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -1011,29 +1014,50 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 
 	public function test_helper_database() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertEquals( array(), self::utils()->database(self::db_name())->info() );
+		$this->assertTrue( (bool)self::utils()->create_database($this->db_name()) );
+		$this->assertTrue( (bool)self::utils()->database_exists(self::db_name()) );
+
+		$this->assertTrue( (bool)self::utils()->database(self::db_name())->exists() );
 	}
 	public function test_helper_table() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_helper_column() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), $data) );
+		$this->assertTrue( (bool)self::utils()->table_exists($this->db_name().'.'.$table) );
+
+		$this->assertTrue( (bool)self::utils()->database($this->db_name())->table($table)->exists() );
+		$this->assertTrue( (bool)self::utils()->table($this->db_name(), $table)->exists() );
 	}
 	public function test_helper_view() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
+		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$this->assertFalse( (bool)self::utils()->view_exists($this->db_name().'.'.$view) );
+		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), $data) );
+		$this->assertTrue( (bool)self::utils()->create_view($this->db_name().'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
+		$this->assertTrue( (bool)self::utils()->view_exists($this->db_name().'.'.$view) );
+
+		$this->assertTrue( (bool)self::utils()->database($this->db_name())->view($view)->exists() );
+		$this->assertTrue( (bool)self::utils()->view($this->db_name(), $view)->exists() );
 	}
-	public function test_helper_procedure() {
+	public function test_helper_column() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
+		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), array($col_info)) );
+		$this->assertTrue( (bool)self::utils()->column_exists($this->table_name($table), 'id') );
+
+		$this->assertTrue( (bool)self::utils()->database($this->db_name())->table($table)->column('id')->exists() );
+		$this->assertTrue( (bool)self::utils()->table($this->db_name(), $table)->column('id')->exists() );
+		$this->assertTrue( (bool)self::utils()->column($this->db_name(), $table, 'id')->exists() );
+	}
+	public function test_helper_index() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( self::utils()-> );
 	}
-	public function test_helper_trigger() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_helper_event() {
+	public function test_helper_foreign_key() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertEquals( self::utils()-> );
 	}
