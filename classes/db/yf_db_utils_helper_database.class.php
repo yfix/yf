@@ -4,7 +4,6 @@
 */
 class yf_db_utils_helper_database {
 
-	protected $db = null;
 	protected $utils = null;
 	protected $db_name = '';
 
@@ -84,7 +83,7 @@ class yf_db_utils_helper_database {
 	/**
 	*/
 	public function table($name, $extra = array(), &$error = false) {
-		return $this->utils->table($this->db_name.'.'.$name, $extra, $error);
+		return $this->utils->table($this->db_name, $name, $extra, $error);
 	}
 
 	/**
@@ -96,7 +95,7 @@ class yf_db_utils_helper_database {
 	/**
 	*/
 	public function view($name, $extra = array(), &$error = false) {
-		return $this->utils->view($this->db_name.'.'.$name, $extra, $error);
+		return $this->utils->view($this->db_name, $name, $extra, $error);
 	}
 
 	/**
@@ -108,7 +107,7 @@ class yf_db_utils_helper_database {
 	/**
 	*/
 	public function trigger($name, $extra = array(), &$error = false) {
-		return $this->utils->trigger($this->db_name.'.'.$name, $extra, $error);
+		return $this->utils->trigger($this->db_name, $name, $extra, $error);
 	}
 
 	/**
@@ -120,6 +119,6 @@ class yf_db_utils_helper_database {
 	/**
 	*/
 	public function event($name, $extra = array(), &$error = false) {
-		return $this->utils->event($this->db_name.'.'.$name, $extra, $error);
+		return $this->utils->event($this->db_name, $name, $extra, $error);
 	}
 }
