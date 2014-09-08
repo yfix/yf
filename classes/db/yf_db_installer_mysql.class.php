@@ -35,13 +35,6 @@ class yf_db_installer_mysql extends yf_db_installer {
 	);
 
 	/**
-	* Catch missing method call
-	*/
-	function __call($name, $args) {
-		return main()->extend_call($this, $name, $args);
-	}
-
-	/**
 	* Framework construct
 	*/
 	function _init() {
