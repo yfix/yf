@@ -1,7 +1,7 @@
 <?php
 
 load('db_driver', 'framework', 'classes/db/');
-class yf_db_driver_pqsql extends yf_db_driver {
+class yf_db_driver_pgsql extends yf_db_driver {
 
 	/** @var @conf_skip */
 	public $db_connect_id = null;
@@ -36,10 +36,6 @@ class yf_db_driver_pqsql extends yf_db_driver {
 		if (strlen($this->params['pswd'])) {
 			$dsn .= ' password='.$this->params['pswd'].' ';
 		}
-#user = postgres
-#pswd = ""
-#port = 5432
-#db = template1
 		$db_name = $this->params['name'] ?: 'template1';
 		$dsn .= ' dbname='.$db_name.' ';
 		$dsn .= ' connect_timeout=5 ';
@@ -80,11 +76,9 @@ class yf_db_driver_pqsql extends yf_db_driver {
 	*/
 	function close() {
 		if ($this->db_connect_id) {
-			// Commit any remaining transactions
-			if ($this->in_transaction) @pg_exec($this->db_connect_id, 'COMMIT');
-			if ($this->query_result) @pg_freeresult($this->query_result);
-			return @pg_close($this->db_connect_id);
-		} else return false;
+			return pg_close($this->db_connect_id);
+		}
+		return false;
 	}
 
 	/**
@@ -133,27 +127,30 @@ class yf_db_driver_pqsql extends yf_db_driver {
 	}
 
 	/**
-	* Very simple emulation of the mysqli multi_query
+	* Begin a transaction
 	*/
-	function multi_query($queries = array()) {
-		$result = array();
-		foreach((array)$queries as $k => $sql) {
-			$result[$k] = $this->query($sql);
-		}
-		return $result;
+	function begin() {
+		return $this->query('START TRANSACTION');
 	}
 
 	/**
-	* Unbuffered query method
+	* End a transaction
 	*/
-	function unbuffered_query($query = '') {
-		return $this->query($query);
+	function commit() {
+		return $this->query('COMMIT');
+	}
+
+	/**
+	* Rollback a transaction
+	*/
+	function rollback() {
+		return $this->query('ROLLBACK');
 	}
 
 	/**
 	* Other query methods
 	*/
-	function num_rows($query_id = 0) {
+	function num_rows($query_id) {
 		if (!$query_id) $query_id = $this->query_result;
 		return $query_id ? @pg_numrows($query_id) : false;
 	}
@@ -181,7 +178,7 @@ class yf_db_driver_pqsql extends yf_db_driver {
 	/**
 	* Fetch Assoc
 	*/
-	function fetch_assoc($query_id = 0) {
+	function fetch_assoc($query_id) {
 		if (!$query_id) $query_id = $this->query_result;
 /*
 		if (empty($this->rownum[$query_id])) {
@@ -196,6 +193,13 @@ class yf_db_driver_pqsql extends yf_db_driver {
 			}
 		}
 		return false;
+	}
+
+	/**
+	* Fetch array
+	*/
+	function fetch_array($query_id) {
+		return $this->fetch_assoc($query_id);
 	}
 
 	/**
