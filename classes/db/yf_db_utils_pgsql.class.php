@@ -39,7 +39,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 	/**
 	*/
 	public function list_databases($extra = array()) {
-		$sql = 'SELECT datname FROM pg_database WHERE datistemplate = false';
+		$sql = 'SELECT datname,datname FROM pg_database WHERE datistemplate = false';
 		return $extra['sql'] ? $sql : $this->db->get_2d($sql);
 	}
 
@@ -69,7 +69,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			return false;
 		}
 		return array(
-			'name'		=> $db_name,
+			'name'	=> $db_name,
 		);
 	}
 
@@ -182,7 +182,11 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-		$sql = 'SELECT table_schema,table_name FROM information_schema.tables WHERE table_catalog = '.$this->_escape_database_name($db_name).' ORDER BY table_schema,table_name';
+		$sql = 'SELECT table_name
+			FROM "information_schema"."tables"
+			WHERE "table_catalog" = '.$this->_escape_val($db_name).'
+				AND "table_schema" = \'public\'
+			ORDER BY table_schema,table_name';
 		$tables = $this->db->get_2d($sql);
 		return $tables ? array_combine($tables, $tables) : array();
 	}
