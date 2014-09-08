@@ -7,13 +7,6 @@ class yf_db_driver_pgsql extends yf_db_driver {
 	public $db_connect_id = null;
 
 	/**
-	* Catch missing method call
-	*/
-	function __call($name, $args) {
-		return main()->extend_call($this, $name, $args);
-	}
-
-	/**
 	*/
 	function __construct(array $params) {
 		if (!function_exists('pg_connect')) {
@@ -29,7 +22,7 @@ class yf_db_driver_pgsql extends yf_db_driver {
 	*/
 	function connect() {
 		$dsn = 'host='.$this->params['host'].' ';
-		if ($this->params['port']) {
+		if ($this->params['port']) { // Default is 5432
 			$dsn .= ' port='.$this->params['port'].' ';
 		}
 		if (strlen($this->params['user'])) {
