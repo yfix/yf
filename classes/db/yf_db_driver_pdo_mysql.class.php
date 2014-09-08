@@ -5,19 +5,6 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 
 	/** @var @conf_skip */
 	public $db_connect_id		= null;
-	/** @var @conf_skip */
-	public $DEF_CHARSET			= 'utf8';
-	/** @var @conf_skip */
-	public $DEF_PORT			= 3306;
-	/** @var @conf_skip */
-	public $ALLOW_AUTO_CREATE_DB= false;
-
-	/**
-	* Catch missing method call
-	*/
-	function __call($name, $args) {
-		return main()->extend_call($this, $name, $args);
-	}
 
 	/**
 	*/
@@ -26,11 +13,11 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 			trigger_error('YF PDO MySQL db driver missing php extension pdo_mysql', E_USER_ERROR);
 			return false;
 		}
-		$params['port'] = $params['port'] ?: $this->DEF_PORT;
+		$params['port'] = $params['port'] ?: 3306;
 		if ($params['socket'] && !file_exists($params['socket'])) {
 			$params['socket'] = '';
 		}
-		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET);
+		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : 'utf8');
 		$this->params = $params;
 		$this->connect();
 		return $this->db_connect_id;
