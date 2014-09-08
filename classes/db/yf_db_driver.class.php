@@ -4,6 +4,13 @@
 * YF db driver abstract class
 */
 abstract class yf_db_driver {
+
+	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
 	abstract protected function __construct(array $params);
 	abstract protected function connect();
 	abstract protected function close();
