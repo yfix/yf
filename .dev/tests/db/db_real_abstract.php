@@ -53,12 +53,36 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 		self::$db->ERROR_AUTO_REPAIR = false;
 		self::$db->FIX_DATA_SAFE = true;
 		self::$db->_init();
+		if (false !== strpos(self::$DB_DRIVER, 'mysql')) {
+			return self::_connect_mysql($params);
+		} elseif (false !== strpos(self::$DB_DRIVER, 'sqlite')) {
+			return self::_connect_sqlite($params);
+		} elseif (false !== strpos(self::$DB_DRIVER, 'pgsql')) {
+			return self::_connect_pgsql($params);
+		}
+	}
+	public static function _connect_mysql($params = array()) {
 		$res = self::$db->connect(array(
 			'host'	=> $params['host'] ?: '127.0.0.1',
 			'name'	=> self::$DB_NAME,
 			'user'	=> $params['user'] ?: DB_USER,
 			'pswd'	=> $params['pswd'] ?: DB_PSWD,
 			'prefix'=> $params['prefix'] ?: DB_PREFIX,
+			'force' => true,
+		));
+		return !empty($res) ? true : false;
+	}
+	public static function _connect_sqlite($params = array()) {
+		return self::_connect_mysql($params);
+	}
+	public static function _connect_pgsql($params = array()) {
+		self::$DB_NAME = $params['name'] ?: (is_string(getenv('YF_DB_PG_NAME')) ? getenv('YF_DB_PG_NAME') : DB_NAME);
+		$res = self::$db->connect(array(
+			'host'	=> $params['host'] ?: (is_string(getenv('YF_DB_PG_HOST')) ? getenv('YF_DB_PG_HOST') : '127.0.0.1'),
+			'name'	=> self::$DB_NAME,
+			'user'	=> $params['user'] ?: (is_string(getenv('YF_DB_PG_USER')) ? getenv('YF_DB_PG_USER') : 'yf'),
+			'pswd'	=> is_string($params['pswd']) ? $params['pswd'] : (is_string(getenv('YF_DB_PG_PSWD')) ? getenv('YF_DB_PG_PSWD') : DB_PSWD),
+			'prefix'=> $params['prefix'] ?: (is_string(getenv('YF_DB_PG_PREFIX')) ? getenv('YF_DB_PG_PREFIX') : DB_PREFIX),
 			'force' => true,
 		));
 		return !empty($res) ? true : false;
