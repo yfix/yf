@@ -17,7 +17,7 @@ class yf_db_driver_pgsql extends yf_db_driver {
 	*/
 	function __construct(array $params) {
 		if (!function_exists('pg_connect')) {
-			trigger_error('Postgres db driver require missing php extension pgsql', E_USER_ERROR);
+			trigger_error('YF PgSQL db driver require missing php extension pgsql', E_USER_ERROR);
 			return false;
 		}
 		$this->params = $params;
@@ -28,8 +28,10 @@ class yf_db_driver_pgsql extends yf_db_driver {
 	/**
 	*/
 	function connect() {
-		$dsn = 'host='.$this->params['host'].' '
-			. ($this->params['port'] ? ' port='.$this->params['port'].' ' : '');
+		$dsn = 'host='.$this->params['host'].' ';
+		if ($this->params['port']) {
+			$dsn .= ' port='.$this->params['port'].' ';
+		}
 		if (strlen($this->params['user'])) {
 			$dsn .= ' user='.$this->params['user'].' ';
 		}
@@ -39,247 +41,139 @@ class yf_db_driver_pgsql extends yf_db_driver {
 		$db_name = $this->params['name'] ?: 'template1';
 		$dsn .= ' dbname='.$db_name.' ';
 		$dsn .= ' connect_timeout=5 ';
-
 		$this->db_connect_id = $this->params['persist'] ? pg_pconnect($dsn) : pg_connect($dsn);
 		if (!$this->db_connect_id) {
 			$this->_connect_error = 'cannot_connect_to_server';
 			return $this->db_connect_id;
 		}
-/*
-		if ($this->params['name'] != '') {
-			$dbselect = $this->select_db($this->params['name']);
-			// Try to create database, if not exists and if allowed
-			if (!$dbselect && $this->params['allow_auto_create_db'] && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->params['name'])) {
-				$res = $this->query('CREATE DATABASE IF NOT EXISTS '.$this->params['name']);
-				if ($res) {
-					$dbselect = $this->select_db($this->params['name']);
-				}
-			}
-			if (!$dbselect) {
-				$this->_connect_error = 'cannot_select_db';
-			}
-			return $dbselect;
-		}
-*/
 		return $this->db_connect_id;
 	}
 
 	/**
 	*/
-	function select_db($name) {
-// TODO
-		return true;
+	function close() {
+		return $this->db_connect_id ? pg_close($this->db_connect_id) : false;
 	}
 
 	/**
-	* Other base methods
 	*/
-	function close() {
+	function query($query) {
+		return $this->db_connect_id && strlen($query) ? pg_query($this->db_connect_id, $query) : false;
+	}
+
+	/**
+	*/
+	function error() {
 		if ($this->db_connect_id) {
-			return pg_close($this->db_connect_id);
+			return array(
+				'message'	=> pg_last_error($this->db_connect_id),
+				'code'		=> '8888',
+			);
+		} elseif ($this->_connect_error) {
+			return array(
+				'message'	=> 'YF: Connect error: '.$this->_connect_error,
+				'code'		=> '9999',
+			);
 		}
 		return false;
 	}
 
 	/**
-	* Query method
-	*/
-	function query($query) {
-		// Remove any pre-existing queries
-		unset($this->query_result);
-		if ($query != '') {
-			$this->num_queries++;
-			$query = str_replace('`', '"', $query);
-			$query = preg_replace('/LIMIT ([0-9]+),([ 0-9]+)/', "LIMIT \\2 OFFSET \\1", $query);
-			if ($transaction == BEGIN_TRANSACTION && !$this->in_transaction) {
-				$this->in_transaction = TRUE;
-				if (!@pg_exec($this->db_connect_id, 'BEGIN')) return false;
-			}
-			$this->query_result = @pg_exec($this->db_connect_id, $query);
-			if ($this->query_result) {
-				if ($transaction == END_TRANSACTION)	{
-					$this->in_transaction = false;
-					if (!@pg_exec($this->db_connect_id, 'COMMIT')) {
-						@pg_exec($this->db_connect_id, 'ROLLBACK');
-						return false;
-					}
-				}
-				$this->last_query_text[$this->query_result] = $query;
-				$this->rownum[$this->query_result] = 0;
-				unset($this->row[$this->query_result]);
-				unset($this->rowset[$this->query_result]);
-				return $this->query_result;
-			} else {
-				if ($this->in_transaction) @pg_exec($this->db_connect_id, 'ROLLBACK');
-				$this->in_transaction = false;
-				return false;
-			}
-		} else {
-			if ($transaction == END_TRANSACTION && $this->in_transaction) {
-				$this->in_transaction = false;
-				if (!@pg_exec($this->db_connect_id, 'COMMIT')) {
-					@pg_exec($this->db_connect_id, 'ROLLBACK');
-					return false;
-				}
-			}
-			return true;
-		}
-	}
-
-	/**
-	* Begin a transaction
 	*/
 	function begin() {
 		return $this->query('START TRANSACTION');
 	}
 
 	/**
-	* End a transaction
 	*/
 	function commit() {
 		return $this->query('COMMIT');
 	}
 
 	/**
-	* Rollback a transaction
 	*/
 	function rollback() {
 		return $this->query('ROLLBACK');
 	}
 
 	/**
-	* Other query methods
 	*/
 	function num_rows($query_id) {
-		if (!$query_id) $query_id = $this->query_result;
-		return $query_id ? @pg_numrows($query_id) : false;
+		return $query_id ? pg_numrows($query_id) : false;
 	}
 
 	/**
-	* Fetch Row
 	*/
-	function fetch_row($query_id = 0) {
-		if (!$query_id) $query_id = $this->query_result;
-/*
-		if (empty($this->rownum[$query_id])) {
-			return false;
-		}
-*/
-		if ($query_id) {
-			$this->row = @pg_fetch_array($query_id/*, $this->rownum[$query_id]*/);
-			if ($this->row) {
-				$this->rownum[$query_id]++;
-				return $this->row;
-			}
-		}
-		return false;
+	function fetch_row($query_id) {
+		return $query_id ? pg_fetch_row($query_id) : false;
 	}
 
 	/**
-	* Fetch Assoc
 	*/
 	function fetch_assoc($query_id) {
-		if (!$query_id) $query_id = $this->query_result;
-/*
-		if (empty($this->rownum[$query_id])) {
-			return false;
-		}
-*/
-		if ($query_id) {
-			$this->row = @pg_fetch_assoc($query_id/*, $this->rownum[$query_id]*/);
-			if ($this->row) {
-				$this->rownum[$query_id]++;
-				return $this->row;
-			}
-		}
-		return false;
+		return $query_id ? pg_fetch_assoc($query_id) : false;
 	}
 
 	/**
-	* Fetch array
 	*/
 	function fetch_array($query_id) {
-		return $this->fetch_assoc($query_id);
+		return $query_id ? pg_fetch_array($query_id) : false;
 	}
 
 	/**
-	* Insert Id
 	*/
-	function insert_id() {
-		$query_id = $this->query_result;
-		if ($query_id && $this->last_query_text[$query_id] != '') {
-			if (preg_match("/^INSERT[\t\n ]+INTO[\t\n ]+([a-z0-9\_\-]+)/is", $this->last_query_text[$query_id], $tablename))	{
-				$query = "SELECT currval('" . $tablename[1] . "_id_seq') AS last_value";
-				$temp_q_id =  @pg_exec($this->db_connect_id, $query);
-				if (!$temp_q_id) return false;
-				$temp_result = @pg_fetch_array($temp_q_id, 0, PGSQL_ASSOC);
-				return ( $temp_result ) ? $temp_result['last_value'] : false;
-			}
+	function fetch_object($query_id) {
+		return $query_id ? pg_fetch_object($query_id) : false;
+	}
+
+	/**
+	*/
+	function insert_id($query_id = false) {
+		$q = $this->query('SELECT lastval()');
+		if ($q) {
+			list($insert_id) = (array)$this->fetch_row($q);
+			return $insert_id;
 		}
 		return false;
 	}
 
 	/**
-	* Affected Rows
 	*/
-	function affected_rows($query_id = 0) {
-		if (!$query_id) $query_id = $this->query_result;
-		return $query_id ? @pg_cmdtuples($query_id) : false;
+	function affected_rows($query_id = false) {
+		return $query_id ? pg_affected_rows($query_id) : false;
 	}
 
 	/**
-	* Real Escape String
 	*/
 	function real_escape_string($string) {
 		return pg_escape_string($string);
 	}
 
 	/**
-	* Free Result
 	*/
-	function free_result($query_id = 0) {
-		if (!$query_id) $query_id = $this->query_result;
-		return $query_id ? @pg_freeresult($query_id) : false;
+	function free_result($query_id = false) {
+		return $query_id ? pg_freeresult($query_id) : false;
 	}
 
 	/**
-	* Error
-	*/
-	function error($query_id = 0) {
-		if (!$query_id) $query_id = $this->query_result;
-		$result['message'] = @pg_errormessage($this->db_connect_id);
-		$result['code'] = -1;
-		return $result;
-	}
-
-	/**
-	* Return database-specific limit of returned rows
 	*/
 	function limit($count, $offset) {
-// TODO: make code cross-database
-/*
 		if ($count > 0) {
-			$offset = ($offset > 0) ? $offset : 0;
-			$sql .= 'LIMIT '.$offset.', '.$count;
+			return 'LIMIT '.$count. ($offset > 0 ? ' OFFSET '.$offset : '');
 		}
-		return $sql;
-*/
+		return false;
 	}
 
 	/**
-	* Enclose field names
 	*/
 	function escape_key($data) {
-		$data = '"'.$data.'"';
-		return $data;
+		return '"'.$data.'"';
 	}
 
 	/**
-	* Enclose field values
 	*/
 	function escape_val($data) {
-		$data = '\''.$data.'\'';
-		return $data;
+		return '\''.$data.'\'';
 	}
 
 	/**
@@ -288,17 +182,13 @@ class yf_db_driver_pgsql extends yf_db_driver {
 		if (!$this->db_connect_id) {
 			return false;
 		}
-		$version = pg_version();
+		$version = pg_version($this->db_connect_id);
 		return $version['server_version'];
 	}
 
 	/**
 	*/
 	function get_host_info() {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-// TODO
-		return '';
+		return $this->db_connect_id ? pg_host($this->db_connect_id) : false;
 	}
 }
