@@ -25,7 +25,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	*/
 	function __construct(array $params) {
 		if (!function_exists('mysql_connect')) {
-			trigger_error('MySQL db driver require missing php extension mysql', E_USER_ERROR);
+			trigger_error('YF MySQL db driver require missing php extension mysql', E_USER_ERROR);
 			return false;
 		}
 		$params['port'] = $params['port'] ?: $this->DEF_PORT;
@@ -34,18 +34,11 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 		}
 		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET);
 		$this->params = $params;
-
 		ini_set('mysql.connect_timeout', 2);
-
 		$this->connect();
-
-		if (!$this->db_connect_id) {
-			conf_add('http_headers::X-Details','ME=(-1) MySql connection error');
-			return $this->db_connect_id;
-		}
 		if ($this->params['charset']) {
 			// See http://php.net/manual/en/mysqlinfo.concepts.charset.php
-			mysql_set_charset($this->params['charset']); // $this->query('SET NAMES '. $this->params['charset']);
+			mysql_set_charset($this->params['charset']);
 		}
 		return $this->db_connect_id;
 	}
@@ -87,44 +80,19 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function select_db($name) {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-		return mysql_select_db($name, $this->db_connect_id);
+		return $this->db_connect_id ? mysql_select_db($name, $this->db_connect_id) : false;
 	}
 
 	/**
 	*/
 	function close() {
-		if ($this->db_connect_id) {
-			return mysql_close($this->db_connect_id);
-		}
-		return false;
+		return $this->db_connect_id ? mysql_close($this->db_connect_id) : false;
 	}
 
 	/**
 	*/
 	function query($query) {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-		$result = mysql_query($query, $this->db_connect_id);
-		if (!$result) {
-			$error = $this->error();
-			$query_error_code = $error['code'];
-			$query_error = $error['message'];
-			if ($query_error_code) {
-				conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
-			}
-			return false;
-		}
-		return $result;
-	}
-
-	/**
-	*/
-	function unbuffered_query($query = '') {
-		mysql_unbuffered_query($query, $this->db_connect_id);
+		return $this->db_connect_id && strlen($query) ? mysql_query($query, $this->db_connect_id) : false;
 	}
 
 	/**
@@ -135,13 +103,13 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 
 	/**
 	*/
-	function affected_rows() {
+	function affected_rows($query_id = false) {
 		return $this->db_connect_id ? mysql_affected_rows($this->db_connect_id) : false;
 	}
 
 	/**
 	*/
-	function insert_id() {
+	function insert_id($query_id = false) {
 		return $this->db_connect_id ? mysql_insert_id($this->db_connect_id) : false;
 	}
 
@@ -192,7 +160,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 
 	/**
 	*/
-	function free_result($query_id = 0) {
+	function free_result($query_id = false) {
 		if ($query_id) {
 			return mysql_free_result($query_id);
 		}
@@ -217,28 +185,24 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	}
 
 	/**
-	* Begin a transaction
 	*/
 	function begin() {
 		return $this->query('START TRANSACTION');
 	}
 
 	/**
-	* End a transaction
 	*/
 	function commit() {
 		return $this->query('COMMIT');
 	}
 
 	/**
-	* Rollback a transaction
 	*/
 	function rollback() {
 		return $this->query('ROLLBACK');
 	}
 
 	/**
-	* Return database-specific limit of returned rows
 	*/
 	function limit($count, $offset) {
 		if ($count > 0) {
