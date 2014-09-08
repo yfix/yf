@@ -9,7 +9,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function _get_supported_field_types() {
+	public function _get_supported_field_types() {
 		return array(
 			'bit','int','real','float','double','decimal','numeric',
 			'varchar','char','tinytext','mediumtext','longtext','text',
@@ -21,7 +21,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function _get_unsigned_field_types() {
+	public function _get_unsigned_field_types() {
 		return array(
 			'bit','int','real','double','float','decimal','numeric'
 		);
@@ -29,7 +29,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function _get_supported_table_options() {
+	public function _get_supported_table_options() {
 		return array(
 			'engine'	=> 'ENGINE',
 			'charset'	=> 'DEFAULT CHARSET',
@@ -39,14 +39,14 @@ abstract class yf_db_utils_driver {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $args) {
+	public function __call($name, $args) {
 		return main()->extend_call($this, $name, $args);
 	}
 
 	/**
 	* We cleanup object properties when cloning
 	*/
-	function __clone() {
+	public function __clone() {
 		foreach ((array)get_object_vars($this) as $k => $v) {
 			$this->$k = null;
 		}
@@ -54,26 +54,26 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_collations($extra = array()) {
+	public function list_collations($extra = array()) {
 		return $this->db->get_all('SHOW COLLATION');
 	}
 
 	/**
 	*/
-	function list_charsets($extra = array()) {
+	public function list_charsets($extra = array()) {
 		return $this->db->get_all('SHOW CHARACTER SET');
 	}
 
 	/**
 	*/
-	function list_databases($extra = array()) {
+	public function list_databases($extra = array()) {
 		$sql = 'SHOW DATABASES';
 		return $extra['sql'] ? $sql : $this->db->get_2d($sql);
 	}
 
 	/**
 	*/
-	function database_exists($db_name, $extra = array(), &$error = false) {
+	public function database_exists($db_name, $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$error = 'db_name is empty';
 			return false;
@@ -83,7 +83,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function database_info($db_name = '', $extra = array(), &$error = false) {
+	public function database_info($db_name = '', $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -105,7 +105,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function create_database($db_name, $extra = array(), &$error = false) {
+	public function create_database($db_name, $extra = array(), &$error = false) {
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
@@ -119,7 +119,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_database($db_name, $extra = array(), &$error = false) {
+	public function drop_database($db_name, $extra = array(), &$error = false) {
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
@@ -144,7 +144,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function alter_database($db_name, $extra = array(), &$error = false) {
+	public function alter_database($db_name, $extra = array(), &$error = false) {
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
@@ -170,7 +170,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function rename_database($db_name, $new_name, $extra = array(), &$error = false) {
+	public function rename_database($db_name, $new_name, $extra = array(), &$error = false) {
 		if (!strlen($db_name)) {
 			$error = 'db_name is empty';
 			return false;
@@ -201,7 +201,30 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_tables($db_name = '', $extra = array(), &$error = false) {
+	public function truncate_database($db_name, $extra = array(), &$error = false) {
+		if (!strlen($db_name)) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		if (!isset($extra['if_exists'])) {
+			$extra['if_exists'] = true;
+		}
+		if (!$extra['sql'] && !$this->database_exists($db_name)) {
+			return true;
+		}
+		foreach ((array)$this->list_tables($db_name) as $table) {
+			$table = trim($table);
+			if (!strlen($table)) {
+				continue;
+			}
+			$sql[] = $this->drop_table($db_name.'.'.$table, $extra);
+		}
+		return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
+	}
+
+	/**
+	*/
+	public function list_tables($db_name = '', $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -215,7 +238,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_tables_details($db_name = '', $extra = array(), &$error = false) {
+	public function list_tables_details($db_name = '', $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -240,7 +263,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function table_exists($table, $extra = array(), &$error = false) {
+	public function table_exists($table, $extra = array(), &$error = false) {
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
 		}
@@ -260,7 +283,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function table_get_columns($table, $extra = array(), &$error = false) {
+	public function table_get_columns($table, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table_name is empty';
 			return false;
@@ -293,7 +316,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function table_get_charset($table, $extra = array(), &$error = false) {
+	public function table_get_charset($table, $extra = array(), &$error = false) {
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -325,7 +348,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function table_info($table, $extra = array(), &$error = false) {
+	public function table_info($table, $extra = array(), &$error = false) {
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -365,7 +388,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function create_table($table, $data = array(), $extra = array(), &$error = false) {
+	public function create_table($table, $data = array(), $extra = array(), &$error = false) {
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -417,7 +440,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_table($table, $extra = array(), &$error = false) {
+	public function drop_table($table, $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -429,7 +452,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* Here we support only small subset of alter table options, mostly related to basic things like engine or charset
 	*/
-	function alter_table($table, $extra = array(), &$error = false) {
+	public function alter_table($table, $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -450,7 +473,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function rename_table($table, $new_name, $extra = array(), &$error = false) {
+	public function rename_table($table, $new_name, $extra = array(), &$error = false) {
 		if (!$table || !$new_name) {
 			$error = 'table_name is empty';
 			return false;
@@ -461,7 +484,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function truncate_table($table, $extra = array(), &$error = false) {
+	public function truncate_table($table, $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -472,7 +495,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function check_table($table, $extra = array(), &$error = false) {
+	public function check_table($table, $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -483,7 +506,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function optimize_table($table, $extra = array(), &$error = false) {
+	public function optimize_table($table, $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -494,7 +517,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function repair_table($table, $extra = array(), &$error = false) {
+	public function repair_table($table, $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -505,34 +528,34 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_columns($table, $extra = array(), &$error = false) {
+	public function list_columns($table, $extra = array(), &$error = false) {
 		return $this->table_get_columns($table, $extra, $error);
 	}
 
 	/**
 	*/
-	function column_exists($table, $col_name, $extra = array(), &$error = false) {
+	public function column_exists($table, $col_name, $extra = array(), &$error = false) {
 		$columns = $this->table_get_columns($table, $extra, $error);
 		return isset($columns[$col_name]);
 	}
 
 	/**
 	*/
-	function column_info($table, $col_name, $extra = array(), &$error = false) {
+	public function column_info($table, $col_name, $extra = array(), &$error = false) {
 		$columns = $this->table_get_columns($table, $extra, $error);
 		return isset($columns[$col_name]) ? $columns[$col_name] : false;
 	}
 
 	/**
 	*/
-	function column_info_item($table, $col_name, $item_name, $extra = array(), &$error = false) {
+	public function column_info_item($table, $col_name, $item_name, $extra = array(), &$error = false) {
 		$columns = $this->table_get_columns($table, $extra, $error);
 		return isset($columns[$col_name][$item_name]) ? $columns[$col_name][$item_name] : false;
 	}
 
 	/**
 	*/
-	function drop_column($table, $col_name, $extra = array(), &$error = false) {
+	public function drop_column($table, $col_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -543,7 +566,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function add_column($table, $data, $extra = array(), &$error = false) {
+	public function add_column($table, $data, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -554,7 +577,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function rename_column($table, $col_name, $new_name, $extra = array(), &$error = false) {
+	public function rename_column($table, $col_name, $new_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -566,7 +589,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function alter_column($table, $col_name, $data, $extra = array(), &$error = false) {
+	public function alter_column($table, $col_name, $data, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -595,7 +618,7 @@ abstract class yf_db_utils_driver {
 	* Slow method, but returning all info about indexes for selected database at once.
 	* Useful for analytics and getting overall picture.
 	*/
-	function list_all_database_indexes($db_name = '', $extra = array(), &$error = false) {
+	public function list_all_database_indexes($db_name = '', $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -653,7 +676,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_indexes($table, $extra = array(), &$error = false) {
+	public function list_indexes($table, $extra = array(), &$error = false) {
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -687,7 +710,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function index_info($table, $index_name, &$error = false) {
+	public function index_info($table, $index_name, &$error = false) {
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
 			return false;
@@ -698,7 +721,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function index_exists($table, $index_name, &$error = false) {
+	public function index_exists($table, $index_name, &$error = false) {
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
 			return false;
@@ -709,7 +732,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function add_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
+	public function add_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -745,7 +768,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_index($table, $index_name, $extra = array(), &$error = false) {
+	public function drop_index($table, $index_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -764,7 +787,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function update_index($table, $index_name, $fields = array(), $extra = array(), &$error = false) {
+	public function update_index($table, $index_name, $fields = array(), $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -779,7 +802,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_foreign_keys($table, $extra = array(), &$error = false) {
+	public function list_foreign_keys($table, $extra = array(), &$error = false) {
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -814,7 +837,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function foreign_key_info($table, $index_name, &$error = false) {
+	public function foreign_key_info($table, $index_name, &$error = false) {
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
 			return false;
@@ -825,7 +848,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function foreign_key_exists($table, $index_name, &$error = false) {
+	public function foreign_key_exists($table, $index_name, &$error = false) {
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
 			return false;
@@ -836,7 +859,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_foreign_key($table, $index_name, $extra = array(), &$error = false) {
+	public function drop_foreign_key($table, $index_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -847,7 +870,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function add_foreign_key($table, $index_name = '', array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+	public function add_foreign_key($table, $index_name = '', array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -888,7 +911,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function update_foreign_key($table, $index_name, array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+	public function update_foreign_key($table, $index_name, array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -903,7 +926,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_views($db_name = '', $extra = array(), &$error = false) {
+	public function list_views($db_name = '', $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -929,7 +952,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function view_exists($table, $extra = array(), &$error = false) {
+	public function view_exists($table, $extra = array(), &$error = false) {
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
 		}
@@ -950,7 +973,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function view_info($table, $extra = array(), &$error = false) {
+	public function view_info($table, $extra = array(), &$error = false) {
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
 		}
@@ -971,7 +994,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_view($table, $extra = array(), &$error = false) {
+	public function drop_view($table, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'view name is empty';
 			return false;
@@ -983,7 +1006,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* See https://dev.mysql.com/doc/refman/5.6/en/create-view.html
 	*/
-	function create_view($table, $sql_as, $extra = array(), &$error = false) {
+	public function create_view($table, $sql_as, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table is empty';
 			return false;
@@ -995,7 +1018,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* Note: The 'SHOW PROCEDURE|FUNCTION CODE' feature is disabled; you need MySQL built with '--with-debug' to have it working (code:1289)
 	*/
-	function list_procedures($db_name = '', $extra = array(), &$error = false) {
+	public function list_procedures($db_name = '', $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -1018,7 +1041,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function procedure_exists($name, $extra = array(), &$error = false) {
+	public function procedure_exists($name, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1032,7 +1055,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function procedure_info($name, $extra = array(), &$error = false) {
+	public function procedure_info($name, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1046,7 +1069,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_procedure($name, $extra = array(), &$error = false) {
+	public function drop_procedure($name, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -1058,7 +1081,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* See https://dev.mysql.com/doc/refman/5.6/en/create-procedure.html
 	*/
-	function create_procedure($name, $sql_body, $sql_params = '', $extra = array(), &$error = false) {
+	public function create_procedure($name, $sql_body, $sql_params = '', $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -1072,7 +1095,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* Note: // The 'SHOW PROCEDURE|FUNCTION CODE' feature is disabled; you need MySQL built with '--with-debug' to have it working (code:1289)
 	*/
-	function list_functions($extra = array(), &$error = false) {
+	public function list_functions($extra = array(), &$error = false) {
 		$data = array();
 		foreach ((array)$this->db->get_all('SHOW FUNCTION STATUS') as $a) {
 			$_a = array();
@@ -1088,7 +1111,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function function_exists($name, $extra = array(), &$error = false) {
+	public function function_exists($name, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1102,7 +1125,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function function_info($name, $extra = array(), &$error = false) {
+	public function function_info($name, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1116,7 +1139,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_function($name, $extra = array(), &$error = false) {
+	public function drop_function($name, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1138,7 +1161,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* See https://dev.mysql.com/doc/refman/5.6/en/create-function.html
 	*/
-	function create_function($name, $sql_body, $sql_returns_type, $sql_params = '', $extra = array(), &$error = false) {
+	public function create_function($name, $sql_body, $sql_returns_type, $sql_params = '', $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1161,7 +1184,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_triggers($db_name = '', $extra = array(), &$error = false) {
+	public function list_triggers($db_name = '', $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -1186,7 +1209,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function trigger_exists($name, $extra = array(), &$error = false) {
+	public function trigger_exists($name, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1207,7 +1230,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function trigger_info($name, $extra = array(), &$error = false) {
+	public function trigger_info($name, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1228,7 +1251,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_trigger($name, $extra = array(), &$error = false) {
+	public function drop_trigger($name, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'name is empty';
 			return false;
@@ -1240,7 +1263,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* See http://dev.mysql.com/doc/refman/5.6/en/create-trigger.html
 	*/
-	function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = array(), &$error = false) {
+	public function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1292,7 +1315,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_events($db_name = '', $extra = array(), &$error = false) {
+	public function list_events($db_name = '', $extra = array(), &$error = false) {
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -1323,7 +1346,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function event_exists($name, $extra = array(), &$error = false) {
+	public function event_exists($name, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1344,7 +1367,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function event_info($name, $extra = array(), &$error = false) {
+	public function event_info($name, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1365,7 +1388,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function drop_event($name, $extra = array(), &$error = false) {
+	public function drop_event($name, $extra = array(), &$error = false) {
 		if (!strlen($name)) {
 			$error = 'event name is empty';
 			return false;
@@ -1378,7 +1401,7 @@ abstract class yf_db_utils_driver {
 	* See: https://dev.mysql.com/doc/refman/5.6/en/create-event.html
 	* Example: CREATE EVENT e_totals  ON SCHEDULE AT '2006-02-10 23:59:00'  DO INSERT INTO test.totals VALUES (NOW());
 	*/
-	function create_event($name, $event_shedule, $event_body, $extra = array(), &$error = false) {
+	public function create_event($name, $event_shedule, $event_body, $extra = array(), &$error = false) {
 		if (strpos($name, '.') !== false) {
 			list($db_name, $name) = explode('.', trim($name));
 		}
@@ -1415,7 +1438,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function list_users($extra = array(), &$error = false) {
+	public function list_users($extra = array(), &$error = false) {
 		$users = array();
 		foreach ((array)$this->db->get_all('SELECT * FROM mysql.user') as $a) {
 			$user = array();
@@ -1430,21 +1453,21 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function user_exists($name, $extra = array(), &$error = false) {
+	public function user_exists($name, $extra = array(), &$error = false) {
 		$users = $this->list_users($extra, $error);
 		return (bool)isset($users[$name]);
 	}
 
 	/**
 	*/
-	function user_info($name, $extra = array(), &$error = false) {
+	public function user_info($name, $extra = array(), &$error = false) {
 		$users = $this->list_users($extra, $error);
 		return isset($users[$name]) ? $users[$name] : false;
 	}
 
 	/**
 	*/
-	function delete_user($name, $extra = array(), &$error = false) {
+	public function delete_user($name, $extra = array(), &$error = false) {
 		list($host, $user) = explode('@', $name);
 		$sql = 'DELETE FROM mysql.user WHERE host='.$this->_escape_val($host).' AND user='.$this->_escape_val($user);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
@@ -1452,7 +1475,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function add_user($name, array $data, $extra = array(), &$error = false) {
+	public function add_user($name, array $data, $extra = array(), &$error = false) {
 		list($host, $user) = explode('@', $name);
 // TODO: allow add only password in addition to host and user
 #		return $this->db->insert('mysql.user WHERE user='.$this->_escape_val($name));
@@ -1466,7 +1489,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function update_user($name, array $data, $extra = array(), &$error = false) {
+	public function update_user($name, array $data, $extra = array(), &$error = false) {
 		list($host, $user) = explode('@', $name);
 // TODO: allow update only password
 #		return $this->db->update('mysql.user WHERE user='.$this->_escape_val($name));
@@ -1481,7 +1504,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* Use db installer repository to get table structure
 	*/
-	function _get_table_structure_from_db_installer($table, &$error = false) {
+	public function _get_table_structure_from_db_installer($table, &$error = false) {
 		if (strlen($this->db->DB_PREFIX) && substr($table, 0, strlen($this->db->DB_PREFIX)) == $this->db->DB_PREFIX) {
 			$search_table = substr($table, strlen($this->db->DB_PREFIX));
 		} else {
@@ -1512,7 +1535,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* See http://dev.mysql.com/doc/refman/5.6/en/create-table.html
 	*/
-	function _parse_column_type($str, &$error = false) {
+	public function _parse_column_type($str, &$error = false) {
 		$str = trim($str);
 		$type = $length = $decimals = $values = null;
 		if (preg_match('~^(?P<type>[a-z]+)[\s\t]*\((?P<length>[^\)]+)\)~i', $str, $m)) {
@@ -1560,7 +1583,7 @@ abstract class yf_db_utils_driver {
 	/**
 	* Create part of SQL for "CREATE TABLE" from array of params
 	*/
-	function _compile_create_table($data, $extra = array(), &$error = false) {
+	public function _compile_create_table($data, $extra = array(), &$error = false) {
 		if (!is_array($data) || !count($data)) {
 			return false;
 		}
@@ -1619,42 +1642,40 @@ abstract class yf_db_utils_driver {
 	/**
 	* Smart split long SQL into single queries. Usually to be able to execute them with php_mysql API functions
 	*/
-	function split_sql(&$ret, $sql) {
+	public function split_sql($sql) {
+		$out = array();
 		// do not trim
-		$sql			= rtrim($sql, "\n\r");
-		$sql_len		= strlen($sql);
-		$char			= '';
-		$string_start	= '';
-		$in_string		= FALSE;
-		$nothing	 	= TRUE;
-		$time0			= time();
-		$is_headers_sent = headers_sent();
-
+		$sql = rtrim($sql, "\n\r");
+		$sql_len = strlen($sql);
+		$char = '';
+		$string_start = '';
+		$in_string = FALSE;
+		$nothing = TRUE;
 		for ($i = 0; $i < $sql_len; ++$i) {
 			$char = $sql[$i];
 			// We are in a string, check for not escaped end of strings except for
 			// backquotes that can't be escaped
 			if ($in_string) {
 				for (;;) {
-					$i		 = strpos($sql, $string_start, $i);
+					$i = strpos($sql, $string_start, $i);
 					// No end of string found -> add the current substring to the
 					// returned array
 					if (!$i) {
-						$ret[] = array('query' => $sql, 'empty' => $nothing);
-						return TRUE;
+						$out[] = $sql;
+						break 2;
 					}
 					// Backquotes or no backslashes before quotes: it's indeed the
 					// end of the string -> exit the loop
 					else if ($string_start == '`' || $sql[$i-1] != "\\") {
-						$string_start	  = '';
-						$in_string		 = FALSE;
+						$string_start = '';
+						$in_string = FALSE;
 						break;
 					}
 					// one or more Backslashes before the presumed end of string...
 					else {
 						// ... first checks for escaped backslashes
-						$j					 = 2;
-						$escaped_backslash	 = FALSE;
+						$j = 2;
+						$escaped_backslash = FALSE;
 						while ($i-$j > 0 && $sql[$i-$j] == "\\") {
 							$escaped_backslash = !$escaped_backslash;
 							$j++;
@@ -1662,8 +1683,8 @@ abstract class yf_db_utils_driver {
 						// ... if escaped backslashes: it's really the end of the
 						// string -> exit the loop
 						if ($escaped_backslash) {
-							$string_start  = '';
-							$in_string	 = FALSE;
+							$string_start = '';
+							$in_string = FALSE;
 							break;
 						}
 						// ... else loop
@@ -1674,55 +1695,57 @@ abstract class yf_db_utils_driver {
 				}
 			}
 			// lets skip comments (/*, -- and #)
-			else if (($char == '-' && $sql_len > $i + 2 && $sql[$i + 1] == '-' && $sql[$i + 2] <= ' ') || $char == '#' || ($char == '/' && $sql_len > $i + 1 && $sql[$i + 1] == '*')) {
+			else if (
+				($char == '-' && $sql_len > $i + 2 && $sql[$i + 1] == '-' && $sql[$i + 2] <= ' ')
+				 || $char == '#' || ($char == '/' && $sql_len > $i + 1 && $sql[$i + 1] == '*')
+			) {
 				$i = strpos($sql, $char == '/' ? '*/' : "\n", $i);
 				// didn't we hit end of string?
 				if ($i === FALSE) {
 					break;
 				}
-				if ($char == '/') $i++;
+				if ($char == '/') {
+					$i++;
+				}
 			}
 			// We are not in a string, first check for delimiter...
 			else if ($char == ';') {
 				// if delimiter found, add the parsed part to the returned array
-				$ret[]	  = array('query' => substr($sql, 0, $i), 'empty' => $nothing);
-				$nothing	= TRUE;
-				$sql		= ltrim(substr($sql, min($i + 1, $sql_len)));
-				$sql_len	= strlen($sql);
+				$out[] = substr($sql, 0, $i);
+				$nothing = TRUE;
+				$sql = ltrim(substr($sql, min($i + 1, $sql_len)));
+				$sql_len = strlen($sql);
 				if ($sql_len) {
-					$i	  = -1;
+					$i = -1;
 				} else {
 					// The submited statement(s) end(s) here
-					return TRUE;
+					break;
 				}
 			}
 			// ... then check for start of a string,...
 			else if (($char == '"') || ($char == '\'') || ($char == '`')) {
-				$in_string	= TRUE;
-				$nothing	  = FALSE;
+				$in_string = TRUE;
+				$nothing = FALSE;
 				$string_start = $char;
 			} elseif ($nothing) {
 				$nothing = FALSE;
 			}
-			// loic1: send a fake header each 30 sec. to bypass browser timeout
-			$time1	 = time();
-			if ($time1 >= $time0 + 30) {
-				$time0 = $time1;
-				if (!$is_headers_sent) {
-					header('X-YFPing: Pong');
-				}
-			}
 		}
 		// add any rest to the returned array
 		if (!empty($sql) && preg_match('@[^[:space:]]+@', $sql)) {
-			$ret[] = array('query' => $sql, 'empty' => $nothing);
+			$out[] = $sql;
 		}
-		return TRUE;
+		foreach ((array)$out as $k => $v) {
+			if (!strlen($v)) {
+				unset($out[$k]);
+			}
+		}
+		return array_values($out); // array_values needed here to make array indexes flat and properly incremented again
 	}
 
 	/**
 	*/
-	function _escape_database_name($name = '') {
+	public function _escape_database_name($name = '') {
 		$name = trim($name);
 		if (!strlen($name)) {
 			return false;
@@ -1732,7 +1755,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function _escape_table_name($name = '') {
+	public function _escape_table_name($name = '') {
 		$name = trim($name);
 		if (!strlen($name)) {
 			return false;
@@ -1755,7 +1778,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function _escape_key($key = '') {
+	public function _escape_key($key = '') {
 		$key = trim($key);
 		if (!strlen($key)) {
 			return '';
@@ -1780,7 +1803,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function _escape_val($val = '') {
+	public function _escape_val($val = '') {
 		$val = trim($val);
 		if (!strlen($val)) {
 			return '';
@@ -1791,7 +1814,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function _escape_fields(array $fields) {
+	public function _escape_fields(array $fields) {
 		if (empty($fields)) {
 			return $fields;
 		}
@@ -1808,7 +1831,7 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-	function _es($val = '') {
+	public function _es($val = '') {
 		$val = trim($val);
 		if (!strlen($val)) {
 			return '';
@@ -1823,11 +1846,12 @@ abstract class yf_db_utils_driver {
 	* db()->utils()->database('geonames')->alter($params);
 	* db()->utils()->database('geonames')->rename($new_name);
 	*/
-	function database($name) {
+	public function database($db_name) {
 		$obj = clone _class('db_utils_helper_database', 'classes/db/');
-		$obj->db = $this->db;
-		$obj->utils = $this->utils;
-		$obj->name = $name;
+		$obj->_setup(array(
+			'utils'		=> $this,
+			'db_name'	=> $db_name,
+		));
 		return $obj;
 	}
 
@@ -1836,42 +1860,158 @@ abstract class yf_db_utils_driver {
 	* db()->utils()->database('geonames')->table('geo_city')->drop();
 	* db()->utils()->database('geonames')->table('geo_city')->alter($params);
 	* db()->utils()->database('geonames')->table('geo_city')->rename($new_name);
+	* db()->utils()->table('geonames', 'geo_city')->rename($new_name);
 	*/
-	function table($name) {
+	public function table($db_name, $table) {
 		$obj = clone _class('db_utils_helper_table', 'classes/db/');
-		$obj->db = $this->db;
-		$obj->utils = $this->utils;
-		$obj->name = $name;
+		$obj->_setup(array(
+			'utils'		=> $this,
+			'db_name'	=> $db_name,
+			'table'		=> $table,
+		));
+		return $obj;
+	}
+
+	/**
+	* db()->utils()->database('geonames')->view('geo_city_view')->create('SQL HERE');
+	* db()->utils()->view('geonames', 'geo_city_view')->create('SQL HERE');
+	*/
+	public function view($db_name, $view) {
+		$obj = clone _class('db_utils_helper_view', 'classes/db/');
+		$obj->_setup(array(
+			'utils'		=> $this,
+			'db_name'	=> $db_name,
+			'view'		=> $view,
+		));
 		return $obj;
 	}
 
 	/**
 	* db()->utils()->database('geonames')->table('geo_city')->column('name')->add();
 	* db()->utils()->database('geonames')->table('geo_city')->column('name')->drop();
+	* db()->utils()->table('geonames', 'geo_city')->column('name')->drop();
+	* db()->utils()->column('geonames', 'geo_city', 'name')->drop();
 	*/
-	function column($name) {
+	public function column($db_name, $table, $col) {
 		$obj = clone _class('db_utils_helper_column', 'classes/db/');
-		$obj->db = $this->db;
-		$obj->utils = $this->utils;
-		$obj->name = $name;
+		$obj->_setup(array(
+			'utils'		=> $this,
+			'db_name'	=> $db_name,
+			'table'		=> $table,
+			'col'		=> $col,
+		));
 		return $obj;
 	}
 
 	/**
 	* db()->utils()->database('geonames')->table('geo_city')->index('name', ('id', 'name'))->add();
 	* db()->utils()->database('geonames')->table('geo_city')->index('name')->drop();
+	* db()->utils()->index('geonames', 'geo_city', 'name')->drop();
 	*/
-	function index($name) {
+	public function index($db_name, $table, $index) {
 		$obj = clone _class('db_utils_helper_index', 'classes/db/');
-		$obj->db = $this->db;
-		$obj->utils = $this->utils;
-		$obj->name = $name;
+		$obj->_setup(array(
+			'utils'		=> $this,
+			'db_name'	=> $db_name,
+			'table'		=> $table,
+			'index'		=> $index,
+		));
+		return $obj;
+	}
+
+	/**
+	* db()->utils()->database('geonames')->table('geo_city')->foreign_key('geo_city_fk')->create($params);
+	* db()->utils()->foreign_key('geonames', 'geo_city', 'geo_city_fk')->create($params);
+	*/
+	public function foreign_key($db_name, $table, $fk_name) {
+		$obj = clone _class('db_utils_helper_foreign_key', 'classes/db/');
+		$obj->_setup(array(
+			'utils'		=> $this,
+			'db_name'	=> $db_name,
+			'table'		=> $table,
+			'foreign_key'=> $fk_name,
+		));
 		return $obj;
 	}
 
 	/**
 	*/
-	function list_all_database_foreign_keys($name, $extra = array(), &$error = false) {
-// TODO
+// TODO: merge with existing funcs
+	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = true) {
+		$retarr = array();
+
+		$Q = $this->db->query(sprintf('SHOW COLUMNS FROM %s', $table));
+		while ($A = $this->db->fetch_row($Q)) {
+			$fld = array();
+
+			$fld['name']= $A[0];
+			$type		= $A[1];
+
+			// split type into type(length):
+			if ($FULL_INFO) {
+				$fld['scale'] = null;
+			}
+			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
+				if ($FULL_INFO) {
+					$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
+				}
+			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
+			} elseif (preg_match('/^(enum|set)\((.*)\)$/i', $type, $query_array)) {
+				$fld['type'] = $query_array[1];
+				$fld['max_length'] = max(array_map('strlen',explode(',',$query_array[2]))) - 2; // PHP >= 4.0.6
+				$fld['max_length'] = ($fld['max_length'] == 0 ? 1 : $fld['max_length']);
+				$values = array();
+				foreach (explode(',', $query_array[2]) as $v) {
+					$v = trim(trim($v), '\'"');
+					if (strlen($v)) {
+						$values[$v] = $v;
+					}
+				}
+				$fld['values'] = $values;
+			} else {
+				$fld['type'] = $type;
+				$fld['max_length'] = -1;
+			}
+			$fld['not_null']		= ($A[2] != 'YES');
+			$fld['primary_key']		= ($A[3] == 'PRI');
+			$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
+			$fld['binary']			= (strpos($type,'blob') !== false);
+			$fld['unsigned']		= (strpos($type,'unsigned') !== false);
+			if (!$fld['binary']) {
+				$d = $A[4];
+				if ($d != '' && $d != 'NULL') {
+					$fld['has_default'] = true;
+					$fld['default_value'] = $d;
+				} else {
+					$fld['has_default'] = false;
+				}
+			}
+			if ($KEYS_NUMERIC) {
+				$retarr[] = $fld;
+			} else {
+				$retarr[strtolower($fld['name'])] = $fld;
+			}
+		}
+		return $retarr;
+	}
+
+	/**
+	*/
+// TODO: merge with existing funcs
+	function meta_tables($DB_PREFIX = '') {
+		$q = $this->db->query('SHOW TABLES');
+		while ($a = $this->db->fetch_row($q)) {
+			$name = $a['0'];
+			// Skip tables without prefix of current connection
+			if (strlen($DB_PREFIX) && substr($name, 0, strlen($DB_PREFIX)) != $DB_PREFIX) {
+				continue;
+			}
+			$tables[$name] = $name;
+		}
+		return $tables;
 	}
 }

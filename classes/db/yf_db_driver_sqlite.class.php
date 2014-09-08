@@ -4,7 +4,14 @@ load('db_driver', 'framework', 'classes/db/');
 class yf_db_driver_sqlite extends yf_db_driver {
 
 	/** @var @conf_skip */
-	public $db_connect_id		= null;
+	public $db_connect_id = null;
+
+	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
 
 	/**
 	*/
@@ -198,34 +205,5 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	*/
 	function get_host_info() {
 		return $this->get_server_version();
-	}
-
-	/**
-	*/
-	function meta_columns($table) {
-		$cols = array();
-		$sql = 'PRAGMA table_info('.$table.')';
-		$q = $this->query($sql);
-		while ($a = $this->fetch_assoc($q)) {
-			$name = $a['name'];
-			$cols[$name] = $a;
-		}
-		return $cols;
-	}
-
-	/**
-	*/
-	function meta_tables($DB_PREFIX = '') {
-		$sql = 'SELECT name	FROM sqlite_master WHERE type = "table"	AND name <> "sqlite_sequence"';
-		$q = $this->query($sql);
-		while ($a = $this->fetch_assoc($q)) {
-			$name = $a['name'];
-			// Skip tables without prefix of current connection
-			if (strlen($DB_PREFIX) && substr($name, 0, strlen($DB_PREFIX)) != $DB_PREFIX) {
-				continue;
-			}
-			$tables[$name] = $name;
-		}
-		return $tables;
 	}
 }

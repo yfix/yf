@@ -12,8 +12,13 @@ class class_db_real_installer_pdo_sqlite_test extends class_db_real_installer_sq
 	public static function setUpBeforeClass() {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'pdo_sqlite';
+		self::_connect(array('name' => STORAGE_PATH. DB_NAME.'.db'));
 	}
 	public static function tearDownAfterClass() {
+		$db_file = STORAGE_PATH. DB_NAME.'.db';
+		if (file_exists($db_file)) {
+			unlink($db_file);
+		}
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 }

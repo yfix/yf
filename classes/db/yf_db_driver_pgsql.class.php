@@ -4,32 +4,14 @@ load('db_driver', 'framework', 'classes/db/');
 class yf_db_driver_pqsql extends yf_db_driver {
 
 	/** @var @conf_skip */
-	public $db_connect_id		= null;
-	/** @var @conf_skip */
-	public $query_result		= null;
-	/** @var @conf_skip */
-	public $in_transaction		= 0;
-	/** @var @conf_skip */
-	public $row				= array();
-	/** @var @conf_skip */
-	public $rowset				= array();
-	/** @var @conf_skip */
-	public $rownum				= array();
-	/** @var @conf_skip */
-	public $num_queries		= 0;
+	public $db_connect_id = null;
 
-	/** @var @conf_skip */
-	public $META_TABLES_SQL	= 
-		'SELECT tablename,\'T\' FROM pg_tables WHERE tablename NOT LIKE \'pg\_%\'
-			AND tablename NOT IN (\'sql_features\', \'sql_implementation_info\', \'sql_languages\', \'sql_packages\', \'sql_sizing\', \'sql_sizing_profiles\') 
-		UNION 
-			SELECT viewname,\'V\' FROM pg_views WHERE viewname NOT LIKE \'pg\_%\'';
-
-	/** @var @conf_skip */
-	public $META_COLUMNS_SQL	= "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum 
-		FROM pg_class c, pg_attribute a,pg_type t 
-		WHERE relkind IN ('r','v') AND (c.relname='%s' or c.relname = lower('%s')) AND a.attname NOT LIKE '....%%'
-		AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
+	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
 
 	/**
 	*/
@@ -39,30 +21,58 @@ class yf_db_driver_pqsql extends yf_db_driver {
 			return false;
 		}
 		$this->params = $params;
+		$this->connect();
+		return $this->db_connect_id;
+	}
+
+	/**
+	*/
+	function connect() {
+		$dsn = 'host='.$this->params['host'].' '
+			. ($this->params['port'] ? ' port='.$this->params['port'].' ' : '');
+		if (strlen($this->params['user'])) {
+			$dsn .= ' user='.$this->params['user'].' ';
+		}
+		if (strlen($this->params['pswd'])) {
+			$dsn .= ' password='.$this->params['pswd'].' ';
+		}
+#user = postgres
+#pswd = ""
+#port = 5432
+#db = template1
+		$db_name = $this->params['name'] ?: 'template1';
+		$dsn .= ' dbname='.$db_name.' ';
+		$dsn .= ' connect_timeout=5 ';
+
+		$this->db_connect_id = $this->params['persist'] ? pg_pconnect($dsn) : pg_connect($dsn);
+		if (!$this->db_connect_id) {
+			$this->_connect_error = 'cannot_connect_to_server';
+			return $this->db_connect_id;
+		}
 /*
-		$this->connect_string = '';
-		if (strlen($user)) {
-			$this->connect_string .= 'user='.$user.' ';
-		}
-		if (strlen($password)) {
-			$this->connect_string .= 'password='.$password.' ';
-		}
-		if ($server) {
-			if (preg_match('#:#', $server)) {
-				list($server, $port) = split(':', $server);
-				$this->connect_string .= 'host='.$server.' port='.$port.' ';
-			} elseif ($server != 'localhost') {
-				$this->connect_string .= 'host='.$server.' ';
+		if ($this->params['name'] != '') {
+			$dbselect = $this->select_db($this->params['name']);
+			// Try to create database, if not exists and if allowed
+			if (!$dbselect && $this->params['allow_auto_create_db'] && preg_match('/^[a-z0-9][a-z0-9_]+[a-z0-9]$/i', $this->params['name'])) {
+				$res = $this->query('CREATE DATABASE IF NOT EXISTS '.$this->params['name']);
+				if ($res) {
+					$dbselect = $this->select_db($this->params['name']);
+				}
 			}
+			if (!$dbselect) {
+				$this->_connect_error = 'cannot_select_db';
+			}
+			return $dbselect;
 		}
-		if ($database) {
-			$this->dbname = $database;
-			$this->connect_string .= 'dbname='.$database;
-		}
-		$this->persistency = $persistency;
-		$this->db_connect_id = $this->persistency ? pg_pconnect($this->connect_string) : pg_connect($this->connect_string);
-		return $this->db_connect_id ? $this->db_connect_id : false;
 */
+		return $this->db_connect_id;
+	}
+
+	/**
+	*/
+	function select_db($name) {
+// TODO
+		return true;
 	}
 
 	/**
@@ -239,82 +249,6 @@ class yf_db_driver_pqsql extends yf_db_driver {
 	}
 
 	/**
-	* Meta Columns
-	*/
-	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = false) {
-		$retarr = array();
-
-		$Q = $this->query(sprintf($this->META_COLUMNS_SQL, $table));
-		while ($A = $this->fetch_row($Q)) {
-			$fld = array();
-
-			$fld['name']= $A[0];
-			$type		= $A[1];
-
-			// split type into type(length):
-			if ($FULL_INFO) {
-				$fld['scale'] = null;
-			}
-			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-				if ($FULL_INFO) {
-					$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
-				}
-			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-			} elseif (preg_match('/^(enum)\((.*)\)$/i', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = max(array_map('strlen',explode(',',$query_array[2]))) - 2; // PHP >= 4.0.6
-				$fld['max_length'] = ($fld['max_length'] == 0 ? 1 : $fld['max_length']);
-			} else {
-				$fld['type'] = $type;
-				$fld['max_length'] = -1;
-			}
-
-			if ($FULL_INFO) {
-				$fld['not_null']		= ($A[2] != 'YES');
-				$fld['primary_key']		= ($A[3] == 'PRI');
-				$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
-				$fld['binary']			= (strpos($type,'blob') !== false);
-				$fld['unsigned']		= (strpos($type,'unsigned') !== false);
-				if (!$fld['binary']) {
-					$d = $A[4];
-					if ($d != '' && $d != 'NULL') {
-						$fld['has_default'] = true;
-						$fld['default_value'] = $d;
-					} else {
-						$fld['has_default'] = false;
-					}
-				}
-			}
-
-			if ($KEYS_NUMERIC) {
-				$retarr[] = $fld;
-			} else {
-				$retarr[strtolower($fld['name'])] = $fld;
-			}
-		}
-		return $retarr;
-	}
-
-	/**
-	* Meta Tables
-	*/
-	function meta_tables($DB_PREFIX = '') {
-		$Q = $this->query($this->META_TABLES_SQL);
-		while ($A = $this->fetch_row($Q)) {
-			// Skip tables without prefix of current connection
-			if (strlen($DB_PREFIX) && substr($A['0'], 0, strlen($DB_PREFIX)) != $DB_PREFIX) {
-				continue;
-			}
-			$tables[$A['0']] = $A['0'];
-		}
-		return $tables;
-	}
-
-	/**
 	* Return database-specific limit of returned rows
 	*/
 	function limit($count, $offset) {
@@ -357,16 +291,6 @@ class yf_db_driver_pqsql extends yf_db_driver {
 	/**
 	*/
 	function get_host_info() {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-// TODO
-		return '';
-	}
-
-	/**
-	*/
-	function ping() {
 		if (!$this->db_connect_id) {
 			return false;
 		}

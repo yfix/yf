@@ -19,16 +19,20 @@ class yf_manage_notifications {
 		return table('SELECT * FROM '.db('notifications'), array(
 				'filter' => $_SESSION[$_GET['object']],
 				'filter_params' => array(
-					'id'		=> 'like',		
-                    'title'     => 'like',
-					'content'	=> 'like',
-					'add_date'	=> 'dt_between',
-                    'receiver_type' => 'eq',
+					'id'                 => 'like',		
+                    'title'              => 'like',
+					'content'       	 => 'like',
+					'add_date'           => 'dt_between',
+                    'receiver_type'      => 'eq',
+                    'is_common_template' => 'eq',
+                    'template_alias'     => 'like',
 				),
 			))
 			->text('id')
 			->text('title')
 			->text('content')
+			->link('is_common_template', '', $this->_online_statuses)
+			->text('template_alias')                
 			->link('receiver_type', '', $this->RECEIVER_TYPES)
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))				
 			->btn('manage receivers', './?object='.$_GET['object'].'&action=view&id=%d')
@@ -46,13 +50,13 @@ class yf_manage_notifications {
         if(in_array($_GET['receiver_type'],array_keys($this->RECEIVER_TYPES))) {
             $a['receiver_type'] = $_GET['receiver_type'];
         }
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['back_link'] = './?object='.$_GET['object'];
 		$form = form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'title' => 'trim|required',
 				'content' => 'trim|required',
 			))
-			->db_insert_if_ok('notifications', array('title', 'content', 'receiver_type'), array('add_date' => time()))
+			->db_insert_if_ok('notifications', array('title', 'content', 'receiver_type','is_common_template','template_alias'), array('add_date' => time()))
 			->on_after_update(function() {
                 if (intval($_POST['receiver_id']) !=0) {
                     db()->insert(db('notifications_receivers'), array(
@@ -64,15 +68,19 @@ class yf_manage_notifications {
                 }
 			})
 			->text('title')
-			->textarea('content');
-            if(in_array($_GET['receiver_type'],array_keys($this->RECEIVER_TYPES))) {
-                $form = $form->hidden('receiver_type');
-            } else {
-                $form = $form->select_box('receiver_type', $this->RECEIVER_TYPES);                
-            }
-                    
-            $form = $form->hidden('receiver_id')
-                ->save_and_back();
+			->textarea('content')
+            ->select_box('is_common_template', $this->_online_statuses)
+			->text('template_alias')
+        ;
+            
+        if(in_array($_GET['receiver_type'],array_keys($this->RECEIVER_TYPES))) {
+            $form = $form->hidden('receiver_type');
+        } else {
+            $form = $form->select_box('receiver_type', $this->RECEIVER_TYPES);                
+        }
+
+        $form = $form->hidden('receiver_id')
+            ->save_and_back();
         return $form;
 	}
 	
@@ -81,7 +89,9 @@ class yf_manage_notifications {
 		$info = form($A)
 			->info('title')
 			->info('content')
-			->info('receiver_type')				
+			->info('receiver_type')
+			->info('is_common_template')
+			->info('template_alias')                   
 			->info_date('add_date', array('format' => 'full'));
 
 		
@@ -268,6 +278,8 @@ class yf_manage_notifications {
 				->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
 				->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )                    
                 ->select_box('receiver_type', $this->RECEIVER_TYPES, array('show_text' => 1))
+                ->select_box('is_common_template', $this->_online_statuses, array('show_text' => 1))                    
+                ->text('template_alias', array('class' => 'input-medium'))                    
                 ->select_box('order_by', $order_fields, array('show_text' => 1))
                 ->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
                 ->save_and_clear();
