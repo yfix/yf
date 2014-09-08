@@ -10,8 +10,10 @@ class class_db_real_utils_pgsql_test extends db_real_abstract {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'pgsql';
 		self::_connect();
+		self::utils()->truncate_database(self::db_name());
 	}
 	public static function tearDownAfterClass() {
+		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 	public static function _need_skip_test($name) {
@@ -24,20 +26,13 @@ class class_db_real_utils_pgsql_test extends db_real_abstract {
 #		return self::db_name().'.'.$name;
 		return $name;
 	}
-/*
+
 	public function test_list_databases() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$all_dbs = self::utils()->list_databases();
 		$this->assertTrue( is_array($all_dbs) );
 		$this->assertNotEmpty( $all_dbs );
-		$this->assertTrue( in_array('mysql', $all_dbs) );
-		$this->assertTrue( in_array('information_schema', $all_dbs) );
-		if (version_compare(self::$server_version, '5.5.0') >= 0) {
-			$this->assertTrue( in_array('performance_schema', $all_dbs) );
-		}
-		if (version_compare(self::$server_version, '5.6.0') >= 0) {
-			$this->assertTrue( in_array('sys', $all_dbs) );
-		}
+		$this->assertTrue( in_array('postgres', $all_dbs) );
 	}
 	public function test_database_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -46,32 +41,25 @@ class class_db_real_utils_pgsql_test extends db_real_abstract {
 	}
 	public function test_database_info() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$expected = array(
-			'name'		=> $this->db_name(),
-			'charset'	=> 'utf8',
-			'collation'	=> 'utf8_general_ci',
-		);
 		$this->assertNotEmpty( self::utils()->database_info($this->db_name()) );
-		$this->assertNotEmpty( self::utils()->db->query('ALTER DATABASE '.$this->db_name().' CHARACTER SET "utf8" COLLATE "utf8_general_ci"') );
-		$this->assertEquals( $expected, self::utils()->database_info($this->db_name()) );
 	}
 	public function test_truncate_database() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->db->query('CREATE TABLE '.$this->table_name($table).'(id INT(10))') );
+		$this->assertNotEmpty( self::utils()->db->query('CREATE TABLE '.$this->table_name($table).' (id serial NOT NULL)') );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$this->assertNotEmpty( self::utils()->truncate_database($this->db_name()) );
 		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
 		$this->assertEquals( array(), self::utils()->list_tables($this->db_name()) );
 	}
-*/
+
 	public function test_list_tables() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
 		$this->assertEquals( array(), self::utils()->list_tables($this->db_name()) );
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$this->assertTrue( (bool)self::utils()->db->query('CREATE TABLE '.$this->table_name($table).'(id INT(10))') );
+		$this->assertTrue( (bool)self::utils()->db->query('CREATE TABLE '.$this->table_name($table).' (id serial NOT NULL)') );
 		$this->assertEquals( array($table => $table), self::utils()->list_tables($this->db_name()) );
 		$this->assertNotEmpty( self::utils()->db->query('DROP TABLE '.$this->table_name($table).'') );
 		$this->assertEquals( array(), self::utils()->list_tables($this->db_name()) );
@@ -80,7 +68,7 @@ class class_db_real_utils_pgsql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->db->query('CREATE TABLE '.$this->table_name($table).'(id INT(10))') );
+		$this->assertNotEmpty( self::utils()->db->query('CREATE TABLE '.$this->table_name($table).' (id serial NOT NULL)') );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$this->assertNotEmpty( self::utils()->db->query('DROP TABLE '.$this->table_name($table).'') );
 		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
@@ -89,7 +77,7 @@ class class_db_real_utils_pgsql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->db->query('CREATE TABLE '.$this->table_name($table).' (id INT(10))') );
+		$this->assertNotEmpty( self::utils()->db->query('CREATE TABLE '.$this->table_name($table).' (id serial NOT NULL)') );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$this->assertNotEmpty( self::utils()->drop_table($this->table_name($table)) );
 		$this->assertFalse( self::utils()->table_exists($this->table_name($table)) );
