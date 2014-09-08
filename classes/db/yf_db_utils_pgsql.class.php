@@ -9,7 +9,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 	/**
 	* Meta Columns
 	*/
-	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = false) {
+	function meta_columns($table) {
 		$retarr = array();
 
 		$sql = "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum 
@@ -24,16 +24,11 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$fld['name']= $A[0];
 			$type		= $A[1];
 
-			// split type into type(length):
-			if ($FULL_INFO) {
-				$fld['scale'] = null;
-			}
+			$fld['scale'] = null;
 			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
 				$fld['type'] = $query_array[1];
 				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-				if ($FULL_INFO) {
-					$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
-				}
+				$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
 			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
 				$fld['type'] = $query_array[1];
 				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
@@ -45,29 +40,21 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 				$fld['type'] = $type;
 				$fld['max_length'] = -1;
 			}
-
-			if ($FULL_INFO) {
-				$fld['not_null']		= ($A[2] != 'YES');
-				$fld['primary_key']		= ($A[3] == 'PRI');
-				$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
-				$fld['binary']			= (strpos($type,'blob') !== false);
-				$fld['unsigned']		= (strpos($type,'unsigned') !== false);
-				if (!$fld['binary']) {
-					$d = $A[4];
-					if ($d != '' && $d != 'NULL') {
-						$fld['has_default'] = true;
-						$fld['default_value'] = $d;
-					} else {
-						$fld['has_default'] = false;
-					}
+			$fld['not_null']		= ($A[2] != 'YES');
+			$fld['primary_key']		= ($A[3] == 'PRI');
+			$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
+			$fld['binary']			= (strpos($type,'blob') !== false);
+			$fld['unsigned']		= (strpos($type,'unsigned') !== false);
+			if (!$fld['binary']) {
+				$d = $A[4];
+				if ($d != '' && $d != 'NULL') {
+					$fld['has_default'] = true;
+					$fld['default_value'] = $d;
+				} else {
+					$fld['has_default'] = false;
 				}
 			}
-
-			if ($KEYS_NUMERIC) {
-				$retarr[] = $fld;
-			} else {
-				$retarr[strtolower($fld['name'])] = $fld;
-			}
+			$retarr[strtolower($fld['name'])] = $fld;
 		}
 		return $retarr;
 	}
