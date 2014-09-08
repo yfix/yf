@@ -1,8 +1,15 @@
 <script>
 
-ng_app_admin.factory( 'Uploader', function( $q, $rootScope, $log ) {
-	this.upload = function( options ) {
-		var url  = options.url;
+ng_app_admin.factory( 'Uploader', function( ApiConfig, $q, $rootScope, $window, $log ) {
+	var service = {};
+	service.response = {};
+	var _parse_response = function( xhr ) {
+		var json_text    = xhr.responseText;
+		var result       = angular.fromJson( json_text );
+		service.response = result;
+	};
+	service.upload = function( options ) {
+		var url  = options.url || ApiConfig.url.upload || $window.location.href;
 		if( !url ) {
 			$log.log( 'Uploader error: "url" is empty.' );
 			return( false );
@@ -10,24 +17,27 @@ ng_app_admin.factory( 'Uploader', function( $q, $rootScope, $log ) {
 		var name = options.name || 'file';
 		var file = options.file;
 		if( !file ) { return( false ); }
+		var $scope = options.$scope;
 		var deferred = $q.defer(),
 		xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function( r ) {
+		xhr.onreadystatechange = function( result ) {
 			if( 4 === this.readyState ) {
 				if( xhr.status == 200 ) {
 					$rootScope.$apply( function() {
-						deferred.resolve( xhr );
+						_parse_response( xhr );
+						deferred.resolve({ options: options, xhr: xhr, response: service.response });
 					}, true );
 				} else {
 					$rootScope.$apply( function() {
-						deferred.reject( xhr );
+						deferred.reject({ options: options, xhr: xhr, response: service.response });
 					}, true );
 				}
 			}
 		}
 		xhr.onerror = function( r ) {
 			$rootScope.$apply( function() {
-				deferred.reject( xhr );
+				_parse_response( xhr );
+				deferred.reject({ options: options, xhr: xhr, response: service.response });
 			}, true );
 		}
 		if( options.onprogress ) {
@@ -39,15 +49,27 @@ ng_app_admin.factory( 'Uploader', function( $q, $rootScope, $log ) {
 		xhr.send( formdata );
 		return( deferred.promise );
 	};
-	return( this );
+	return( service );
 });
 
-ng_app_admin.directive( 'fileUpload', function( Uploader, $rootScope, $compile, $window, $log ) {
+ng_app_admin.factory( 'UploadList',  function( ApiConfig, $resource, $window, $log ) {
+	var service = {};
+	service.url = ApiConfig.url.upload_list || $window.location.href;
+	service.resource = $resource( service.url, {}, {
+		remove_all:  { method: 'POST', params: { sub_action: 'remove_all' } }
+	});
+	service.remove_all = function() {
+		return( service.resource.remove_all() );
+	};
+	return( service );
+});
+
+ng_app_admin.directive( 'fileUpload', function( ApiConfig, Uploader, $parse, $window, $log ) {
 	return {
 		restrict: 'AE',
 		link: function( $scope, element, attrs ) {
 			// init vars
-			var url          = attrs.url || $window.location.href;
+			var url          = ApiConfig.url.upload || $window.location.href;
 			var text_select  = attrs.placeholder || 'Выберете файл...';
 			var file_name    = '';
 			var file_size    = 0;
@@ -55,60 +77,65 @@ ng_app_admin.directive( 'fileUpload', function( Uploader, $rootScope, $compile, 
 			var $file_upload = element.children( '.ngfu-upload-file'   ).first();
 			var $btn_upload  = element.children( '.ngfu-upload-button' ).first();
 			$scope.message   = text_select;
+			// show message
+			$scope.show_message = function( message ) {
+				var show_status = $scope.$eval( attrs[ 'showStatus' ] ) || false;
+				if( show_status && message ) {
+					$scope.message = message;
+				}
+			};
 			// init events
 			var onChange = function( event ) {
-				var files = event.target.files;
+				var $this = event.target;
+				var files = $this.files;
 				if( files.length > 0 ) {
-					var name  = attrs.name;
+					$scope.show_message( files.name );
 					$scope.$apply( function() {
 						onUpload({ 'url': url, 'files': files, 'name': name });
 					})
 				}
+				$this.value = null;
 			};
 			var onSelect = function( event ) {
 				$file_upload.trigger( 'click' );
 			};
-			var _parse_response = function( json_text ) {
-				var result = angular.fromJson( json_text );
-				// update.data $scope.data
-				angular.forEach( result, function( item, idx ) {
-					this[ idx ] = item;
-				}, $scope );
-			};
 			var onUpload = function( options ) {
 				options        = options || {};
 				options.file   = options.files[0];
-				file           = options.file;
-				file_name      = options.file.name;
-				file_size      = options.file.size;
-				$scope.message = 'Загрузка: ' + file_name;
+				var file       = options.file;
+				var file_name  = file.name;
+				var file_size  = file.size;
+				$scope.show_message( 'Загрузка: ' + file_name );
 				// upload events
 				options.onprogress = function( event ) {
 					var progress = Math.round( event.lengthComputable ? event.loaded * 100 / event.total : 0 );
-					$scope.message = file_name + ' - ' + progress + '%';
+					$scope.show_message( file_name + ' - ' + progress + '%' );
 					$scope.onProgress({ progress: progress, event: event });
 				}
 				// upload
-				var r = Uploader.upload( options );
-				if( r ) {
-					r.then(
+				var response = Uploader.upload( options );
+				if( response ) {
+					response.then(
 						// file uploaded
-						function( r ) {
-							_parse_response( r.response );
-							var message = $scope.action.upload.status_message || '';
-							$scope.message = file_name + message && ( ' - ' + message );
-							$scope.onSuccess({ file_name: file_name, size: file_size, file: file, response: r });
+						function( result ) {
+							var file_name = result.options.file.name;
+							var message = result.response.action.status_message || '';
+								message = file_name + ( message && ( ' - ' + message ) );
+							$scope.show_message( message );
+							$scope.onSuccess({ result: result });
 						},
 						// file not uploaded
-						function( r ) {
-							_parse_response( r.response );
-							$scope.message = file_name + ' - не загружен';
-							$scope.onFail({ file_name: file_name, size: file_size, file: file, response: r });
+						function( result ) {
+							var file_name = result.options.file.name;
+							$scope.show_message( file_name + ' - не загружен' );
+							$scope.onFail({ result: result });
 						});
 				// file canceled
 				} else {
-					$scope.message = file_name + ' - отменен';
-					$scope.onCancel({ file_name: file_name, file: file });
+					var result = { options: options };
+					var file_name = result.options.file.name;
+					$scope.show_message( file_name + ' - отменен' );
+					$scope.onCancel({ result: result });
 				}
 			}
 			$file_upload.bind( 'change', onChange );
@@ -165,22 +192,50 @@ ng_app_admin.filter( 'orderObjectBy', function( $log ) {
 	};
 });
 
-ng_app_admin.controller( '{_ng_controller}', function( $scope, $filter, $log ) {
-	$log.log( 'ctrl', 'init' );
+ng_app_admin.controller( '{_ng_controller}', function( UploadList, $scope, $filter, $log ) {
 	$scope.data = {_ng_data};
-	$scope.data_len = 0;
-	$scope.$watchCollection( 'data', function( _new, _old ) {
-		$scope.data_len = _new.length;
-	}, true );
+	$scope._upload_list__count = 0;
+	$scope.UploadList = {
+		remove_all: function() {
+			var result = UploadList.remove_all();
+			result.$promise.then(
+				function( r ) {
+					$scope.upload_list__update({ response: r.response });
+				},
+				function( r ) {
+					$log.log( 'upload_list->remove_all', fail, r );
+				}
+			);
+		}
+	};
+	$scope.upload_list__update = function( result ) {
+		_prepare__upload_list( result.response );
+		angular.forEach( result.response, function( item, idx ) {
+			this[ idx ] = item;
+		}, $scope );
+	}
 	// prerape upload list
-	angular.forEach( $scope.data._upload_list, function( item, idx ) {
-		var time = $filter( 'date' )( item.time * 1000, 'yyyy-MM-dd H:mm:ss' );
-		var status = $scope.data._upload_status[ item.status ];
-		item[ '_time'   ] = time;
-		item[ '_status' ] = status;
-	}, $scope.data._upload_list );
-	// debug
-	$log.log( 'data', $scope.data );
+	var _prepare__upload_list = function( scope ) {
+		var count = 0;
+		angular.forEach( scope.data._upload_list, function( item, idx ) {
+			var time = $filter( 'date' )( item.time * 1000, 'yyyy-MM-dd H:mm:ss' );
+			var status = $scope.data._upload_status[ item.status ];
+			item[ '_time'   ] = time;
+			item[ '_status' ] = status;
+			++count;
+		});
+		$scope._upload_list__count = count;
+	};
+	// init
+	_prepare__upload_list( $scope );
+});
+
+// config
+ng_app_admin.constant( 'ApiConfig', {
+	url: {
+		upload      : '{_api_url_upload}',
+		upload_list : '{_api_url_upload_list}',
+	}
 });
 
 </script>

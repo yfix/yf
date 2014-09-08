@@ -1,9 +1,39 @@
 <div class="ng-cloak">
 
-<div file-upload url="{_api_url_upload}"></div>
+<div file-upload show-status="false" on-success="upload_list__update( result )"></div>
+
+{{-- notifications --}}
+<div ng-bind="action.status_message"
+	ng-click="action.status_message=null"
+	ng-show="action.status_message"
+	ng-class="{ 'text-success': action.status, 'text-error': !action.status }"
+	class="alert"
+></div>
+
+{{-- upload list --}}
+<style>
+.upload_list.ng-enter, .upload_list.ng-leave {
+	transition : 0.5s linear all;
+}
+{{-- remove item --}}
+.upload_list.ng-enter,
+.upload_list.ng-leave.ng-leave-active {
+	opacity : 0;
+}
+{{-- remove item --}}
+.upload_list.ng-leave,
+.upload_list.ng-enter.ng-enter-active {
+	opacity : 1;
+}
+</style>
 <table class="upload_list table table-striped" ng-show="data._upload_list">
 	<tr>
-		<th colspan="4"><h2>Список загруженных файлов</h2></th>
+		<th colspan="4">Список загруженных файлов ({{_upload_list__count}})</th>
+	</tr>
+	<tr>
+		<th colspan="4">
+			<span class="btn btn-danger" ng-click="UploadList.remove_all()">Удалить все</span>
+		</th>
 	</tr>
 	<tr>
 		<td colspan="4">
@@ -25,7 +55,7 @@
 		<th>время</th>
 		<th>статус</th>
 	</tr>
-	<tr ng-repeat="i in data._upload_list | orderObjectBy: { filter: 'upload_list_filter', order: 'time' }">
+	<tr ng-repeat="i in data._upload_list | orderObjectBy: { filter: 'upload_list_filter', order: 'time', reverse: 'true' }" class="upload_list">
 		<td>{{i.file_name}}</td>
 		<td>{{i.file_size}}</td>
 		<td>{{i._time}}</td>

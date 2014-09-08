@@ -57,19 +57,11 @@ class yf_manage_shop_import_products2 {
 				$data[ $id ] = $_data;
 			}
 			fclose( $file );
-			/* uasort( $data, function( $a, $b ) {
-				$_a = (int)$a[ 'time' ];
-				$_b = (int)$b[ 'time' ];
-				if( $_a == $_b )     { $result =  0; }
-				elseif( $_a >  $_b ) { $result =  1; }
-				else                 { $result = -1; }
-				return( $result );
-			}); */
 			$upload_list = $data;
 		}
 	}
 
-	protected function _save_upload_list( $data ) {
+	protected function _save_upload_list( $data = null ) {
 		$upload_list__file_name = $this->upload_list__file_name;
 		$upload_list__field     = $this->upload_list__field;
 		$upload_list            = &$this->upload_list;
@@ -132,10 +124,8 @@ class yf_manage_shop_import_products2 {
 				$result = array(
 					'data' => $this->_data_ng(),
 					'action' => array(
-						'upload' => array(
-							'status'         => true,
-							'status_message' => 'файл загружен',
-						),
+						'status'         => true,
+						'status_message' => 'файл загружен',
 					),
 				);
 			} else {
@@ -143,6 +133,44 @@ class yf_manage_shop_import_products2 {
 				die( 'save upload file error' );
 			}
 		}
+		return( $result );
+	}
+
+	protected function _api_upload_list() {
+		$sub_action = $_GET[ 'sub_action' ];
+		switch( $sub_action ) {
+			case 'remove_all':
+				$result = $this->_upload_list__remove_all();
+				break;
+		}
+		$result = array(
+			'response'   => array(
+				'data'   => $this->_data_ng(),
+				'action' => $result,
+			),
+		);
+		return( $result );
+	}
+
+	protected function _upload_list__remove_all() {
+		$upload_path = $this->upload_path;
+		$upload_list = &$this->upload_list;
+		foreach( $upload_list as $id => $item ) {
+			$file = $upload_path . $id;
+			if( file_exists( $file ) && false === @unlink( $file ) ) {
+				$result = array(
+					'status'         => false,
+					'status_message' => 'ошибка при удалении файла: ' . $item[ 'file_name' ],
+				);
+				return( $result );
+			}
+			unset( $upload_list[ $id ] );
+		}
+		$this->_save_upload_list();
+		$result = array(
+			'status'         => true,
+			'status_message' => 'все загруженные файлы удалены',
+		);
 		return( $result );
 	}
 
@@ -217,8 +245,9 @@ class yf_manage_shop_import_products2 {
 			$supplier = (int)$_POST[ 'supplier' ];
 				$is_supplier = $supplier != 0 && isset( $_supplier[ $supplier ] );
 		// prepare ng-app
-		$_ng_controller  = 'ctrl.import2';
-		$_api_url_upload = url_admin( '//manage_shop/import2/&api=upload' );
+		$_ng_controller       = 'ctrl.import2';
+		$_api_url_upload      = url_admin( '//manage_shop/import2/&api=upload' );
+		$_api_url_upload_list = url_admin( '//manage_shop/import2/&api=upload_list' );
 		// -----
 		$_ng_data = $this->_data_ng( true );
 		// -----
@@ -246,11 +275,12 @@ class yf_manage_shop_import_products2 {
 		}
 		// -----
 		$result = array(
-			'_api_url_upload' => $_api_url_upload,
-			'_ng_controller'  => $_ng_controller,
-			'_ng_data'        => $_ng_data,
-			'_sub_action'     => $_sub_action,
-			'_supplier'       => $_supplier,
+			'_api_url_upload'      => $_api_url_upload,
+			'_api_url_upload_list' => $_api_url_upload_list,
+			'_ng_controller'       => $_ng_controller,
+			'_ng_data'             => $_ng_data,
+			'_sub_action'          => $_sub_action,
+			'_supplier'            => $_supplier,
 				'sub_action' => $sub_action,
 				'supplier'   => $supplier,
 		);
