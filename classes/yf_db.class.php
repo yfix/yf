@@ -242,7 +242,7 @@ class yf_db {
 			// db_name can be empty string - means we working in special mode, just connecting to server
 			$_db_name = isset($params['name']) ? $params['name'] : $db_name;
 			$this->DB_NAME = !is_null($_db_name) ? $_db_name : (defined('DB_NAME') ? DB_NAME : '');
-			$this->DB_PORT = ($params['port'] ?: $db_port) ?: (defined('DB_PORT') ? DB_PORT : 3306);
+			$this->DB_PORT = ($params['port'] ?: $db_port) ?: (defined('DB_PORT') ? DB_PORT : '');
 			$this->DB_SOCKET = ($params['socket'] ?: $db_socket) ?: (defined('DB_SOCKET') ? DB_SOCKET : '');
 			$this->DB_SSL = ($params['ssl'] ?: $db_ssl) ?: (defined('DB_SSL') ? DB_SSL : false);
 			$this->DB_CHARSET = ($params['charset'] ?: $db_charset) ?: (defined('DB_CHARSET') ? DB_CHARSET : '');
