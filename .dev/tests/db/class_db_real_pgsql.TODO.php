@@ -10,14 +10,14 @@ class class_db_real_pgsql_test extends db_real_abstract {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'pgsql';
 		self::_connect();
-#		self::utils()->truncate_database(self::db_name());
+		self::utils()->truncate_database(self::db_name());
 	}
 	public static function tearDownAfterClass() {
-#		self::utils()->truncate_database(self::db_name());
+		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 	public static function _connect($params = array()) {
-		self::$DB_NAME = $params['name'] ?: is_string(getenv('YF_DB_PG_NAME')) ? getenv('YF_DB_PG_NAME') : DB_NAME);
+		self::$DB_NAME = $params['name'] ?: (is_string(getenv('YF_DB_PG_NAME')) ? getenv('YF_DB_PG_NAME') : DB_NAME);
 		if ($params['driver']) {
 			self::$DB_DRIVER = $params['driver'];
 		}
@@ -44,10 +44,11 @@ class class_db_real_pgsql_test extends db_real_abstract {
 		return self::$DB_NAME;
 	}
 	public static function table_name($name) {
-		return self::db_name().'.'.$name;
+#		return self::db_name().'.'.$name;
+		return $name;
 	}
 	public static function create_table_sql($table) {
-		return 'CREATE TABLE '.self::table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8';
+		return 'CREATE TABLE "'.self::table_name($table).'" ("id" serial NOT NULL, "id2" integer NOT NULL, "id3" integer NOT NULL)';
 	}
 
 	public function test_disconnect_connect() {
@@ -66,6 +67,7 @@ class class_db_real_pgsql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
+/*
 		$expected = array(
 			'Table' => $table,
 			'Create Table' => 'CREATE TABLE `'.$table.'` ('. PHP_EOL
@@ -73,14 +75,14 @@ class class_db_real_pgsql_test extends db_real_abstract {
 				. '  `id2` int(10) DEFAULT NULL,'. PHP_EOL
 				. '  `id3` int(10) DEFAULT NULL,'. PHP_EOL
 				. '  PRIMARY KEY (`id`)'. PHP_EOL
-				. ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
+				. ')',
 		);
 		$sql = 'SHOW CREATE TABLE '.$this->table_name($table);
 		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->query($sql)) );
 		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->unbuffered_query($sql)) );
 		$this->assertEquals( $expected, self::db()->query_fetch($sql) );
 		$this->assertEquals( $expected, self::db()->get($sql) );
-
+*/
 		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1,1,1),(2,2,2),(3,3,3)') );
 		$this->assertEquals( 3, self::db()->affected_rows() );
 		$this->assertEquals( 3, self::db()->insert_id() );
