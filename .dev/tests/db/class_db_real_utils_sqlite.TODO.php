@@ -33,22 +33,6 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		return $name;
 	}
 
-
-/*
-	public function test_demo() {
-		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$this->assertTrue( (bool)self::utils()->db->query('CREATE TABLE '.$this->table_name($table).' (id INTEGER PRIMARY KEY, id2 INTEGER)') );
-		self::utils()->db->query('CREATE UNIQUE INDEX IF NOT EXISTS MyUniqueIndexName ON '.$table.' (id2)');
-
-#		$sql = 'SELECT * FROM sqlite_master WHERE type = "table" AND name <> "sqlite_sequence"';
-		$sql = 'PRAGMA table_info('.$table.')';
-		print_r(self::db()->get_all($sql));
-
-		$sql = 'PRAGMA index_list('.$table.')';
-		print_r(self::db()->get_all($sql));
-	}
-*/
-
 	public function test_list_tables() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( array(), self::utils()->list_tables($this->db_name()) );
@@ -574,31 +558,5 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'hello world', self::utils()->_es('hello world') );
 		$this->assertEquals( 'hello\\\'world\\\'', self::utils()->_es('hello\'world\'') );
-	}
-
-	public function test_split_sql() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_get_table_structure_from_db_installer() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
-
-	public function test_table() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_column() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_view() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
-	}
-	public function test_trigger() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
 	}
 }
