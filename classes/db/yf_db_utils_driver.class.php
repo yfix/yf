@@ -1937,7 +1937,7 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 // TODO: merge with existing funcs
-	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = true) {
+	function meta_columns($table) {
 		$retarr = array();
 
 		$Q = $this->db->query(sprintf('SHOW COLUMNS FROM %s', $table));
@@ -1947,16 +1947,11 @@ abstract class yf_db_utils_driver {
 			$fld['name']= $A[0];
 			$type		= $A[1];
 
-			// split type into type(length):
-			if ($FULL_INFO) {
-				$fld['scale'] = null;
-			}
+			$fld['scale'] = null;
 			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
 				$fld['type'] = $query_array[1];
 				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-				if ($FULL_INFO) {
-					$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
-				}
+				$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
 			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
 				$fld['type'] = $query_array[1];
 				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
@@ -1990,11 +1985,7 @@ abstract class yf_db_utils_driver {
 					$fld['has_default'] = false;
 				}
 			}
-			if ($KEYS_NUMERIC) {
-				$retarr[] = $fld;
-			} else {
-				$retarr[strtolower($fld['name'])] = $fld;
-			}
+			$retarr[strtolower($fld['name'])] = $fld;
 		}
 		return $retarr;
 	}
