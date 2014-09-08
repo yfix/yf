@@ -10,35 +10,15 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 	public static $DB_DRIVER = '';
 	public static $CI_SERVER = '';
 	public static $_bak = array();
-#	public static function setUpBeforeClass() {
-#		self::_connect();
-#		self::$server_version = self::$db->get_server_version();
-#		if (getenv('CI') === 'true' && getenv('DRONE') === 'true') {
-#			self::$CI_SERVER = 'DRONE';
-#		}
-#		if (self::$CI_SERVER != 'DRONE') {
-#			// These actions needed to ensure database is empty
-#			self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
-#			self::$db->query('CREATE DATABASE IF NOT EXISTS '.self::$DB_NAME);
-#		}
-#	}
-#	public static function tearDownAfterClass() {
-#		if (self::$CI_SERVER == 'DRONE') { return ; }
-#		self::$db->utils()->drop_database(self::$DB_NAME);
-#	}
-#	protected function setUp() {
-#		if (self::$CI_SERVER == 'DRONE') {
-#			$this->markTestSkipped('Right now we skip this test, when running inside DRONE.IO.');
-#			return false;
-#		}
-#		if (defined('HHVM_VERSION')) {
-#			$this->markTestSkipped('Right now we skip this test, when running inside HHVM.');
-#			return ;
-#    	}
-#	}
+
+	/**
+	*/
 	public static function _need_skip_test($name) {
 		return false;
 	}
+
+	/**
+	*/
 	public static function _connect($params = array()) {
 		self::$DB_NAME = $params['name'] ?: DB_NAME;
 		if ($params['driver']) {
@@ -61,6 +41,9 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 			return self::_connect_pgsql($params);
 		}
 	}
+
+	/**
+	*/
 	public static function _connect_mysql($params = array()) {
 		$res = self::$db->connect(array(
 			'host'	=> $params['host'] ?: '127.0.0.1',
@@ -72,9 +55,15 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 		));
 		return !empty($res) ? true : false;
 	}
+
+	/**
+	*/
 	public static function _connect_sqlite($params = array()) {
 		return self::_connect_mysql($params);
 	}
+
+	/**
+	*/
 	public static function _connect_pgsql($params = array()) {
 		self::$DB_NAME = $params['name'] ?: (is_string(getenv('YF_DB_PG_NAME')) ? getenv('YF_DB_PG_NAME') : DB_NAME);
 		$res = self::$db->connect(array(
@@ -87,15 +76,27 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 		));
 		return !empty($res) ? true : false;
 	}
+
+	/**
+	*/
 	protected static function db() {
 		return self::$db;
 	}
+
+	/**
+	*/
 	protected static function utils() {
 		return self::$db->utils();
 	}
+
+	/**
+	*/
 	protected static function qb() {
 		return self::$db->query_builder();
 	}
+
+	/**
+	*/
 	public function test_connected() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertNotEmpty( self::$db );
@@ -104,6 +105,9 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( is_object(self::$db->db) );
 		$this->assertTrue( is_resource(self::$db->db->db_connect_id) || is_object(self::$db->db->db_connect_id));
 	}
+
+	/**
+	*/
 	public function test_driver() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( self::$DB_DRIVER, self::$db->DB_TYPE );
