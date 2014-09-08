@@ -16,21 +16,21 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
-	public function _need_skip_test($name) {
+	public static function _need_skip_test($name) {
 		if (defined('HHVM_VERSION') && getenv('TRAVIS') && getenv('CONTINUOUS_INTEGRATION')) {
-			$this->markTestSkipped('Right now we skip this test, when running inside travis-ci HHVM.');
+			self::markTestSkipped('Right now we skip this test, when running inside travis-ci HHVM.');
 			return true;
 		}
 		return false;
 	}
-	public function db_name() {
+	public static function db_name() {
 		return self::$DB_NAME;
 	}
-	public function table_name($name) {
+	public static function table_name($name) {
 		return self::db_name().'.'.$name;
 	}
-	public function create_table_sql($table) {
-		return 'CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8';
+	public static function create_table_sql($table) {
+		return 'CREATE TABLE '.self::table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8';
 	}
 	public function test_selects_basic() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }

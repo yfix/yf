@@ -18,7 +18,7 @@ class class_db_real_query_builder_sqlite_test extends db_real_abstract {
 		}
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
-	public function _need_skip_test($name) {
+	public static function _need_skip_test($name) {
 		return false;
 	}
 	public function _need_single_inserts() {
@@ -31,14 +31,14 @@ class class_db_real_query_builder_sqlite_test extends db_real_abstract {
 #		$this->assertTrue( true, 'SQLite version less than 3.7.11 detected. It does not support multiple rows in one INSERT stmt' );
 		return (bool)version_compare($sqlite_version, '3.7.11', '<');
 	}
-	public function db_name() {
+	public static function db_name() {
 		return '';
 	}
-	public function table_name($name) {
+	public static function table_name($name) {
 		return $name;
 	}
 	public function create_table_sql($table) {
-		return 'CREATE TABLE '.$this->table_name($table).'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)';
+		return 'CREATE TABLE '.self::table_name($table).'(id INTEGER PRIMARY KEY, id2 INTEGER, id3 INTEGER)';
 	}
 	public function insert_safe($table, $data) {
 		$is_data_3d = false;

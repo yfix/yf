@@ -18,7 +18,7 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		}
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
-	public function _need_skip_test($name) {
+	public static function _need_skip_test($name) {
 		if (substr($name, 0, 5) !== 'test_') {
 			return false;
 		}
@@ -29,7 +29,7 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 	public static function db_name() {
 		return '';
 	}
-	public function table_name($name) {
+	public static function table_name($name) {
 		return $name;
 	}
 

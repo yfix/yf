@@ -36,7 +36,7 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 #			return ;
 #    	}
 #	}
-	public function _need_skip_test($name) {
+	public static function _need_skip_test($name) {
 		return false;
 	}
 	public static function _connect($params = array()) {

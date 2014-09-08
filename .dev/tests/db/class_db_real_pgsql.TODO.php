@@ -40,14 +40,14 @@ class class_db_real_pgsql_test extends db_real_abstract {
 		));
 		return !empty($res) ? true : false;
 	}
-	public function db_name() {
+	public static function db_name() {
 		return self::$DB_NAME;
 	}
-	public function table_name($name) {
+	public static function table_name($name) {
 		return self::db_name().'.'.$name;
 	}
-	public function create_table_sql($table) {
-		return 'CREATE TABLE '.$this->table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8';
+	public static function create_table_sql($table) {
+		return 'CREATE TABLE '.self::table_name($table).'(id INT(10) AUTO_INCREMENT, id2 INT(10), id3 INT(10), PRIMARY KEY(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8';
 	}
 
 	public function test_disconnect_connect() {

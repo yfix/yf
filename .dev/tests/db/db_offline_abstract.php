@@ -15,7 +15,7 @@ abstract class db_offline_abstract extends PHPUnit_Framework_TestCase {
 	public static function tearDownAfterClass() {
 		error_reporting(self::$_er);
 	}
-	public function _need_skip_test($name) {
+	public static function _need_skip_test($name) {
 		return false;
 	}
 	protected static function db() {
