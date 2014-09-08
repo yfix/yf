@@ -16,30 +16,6 @@ class class_db_real_pgsql_test extends db_real_abstract {
 		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
-	public static function _connect($params = array()) {
-		self::$DB_NAME = $params['name'] ?: (is_string(getenv('YF_DB_PG_NAME')) ? getenv('YF_DB_PG_NAME') : DB_NAME);
-		if ($params['driver']) {
-			self::$DB_DRIVER = $params['driver'];
-		}
-		$db_class = load_db_class();
-		self::$db = new $db_class(self::$DB_DRIVER);
-		self::$db->ALLOW_AUTO_CREATE_DB = true;
-		self::$db->NO_AUTO_CONNECT = true;
-		self::$db->RECONNECT_NUM_TRIES = 1;
-		self::$db->CACHE_TABLE_NAMES = false;
-		self::$db->ERROR_AUTO_REPAIR = false;
-		self::$db->FIX_DATA_SAFE = true;
-		self::$db->_init();
-		$res = self::$db->connect(array(
-			'host'	=> $params['host'] ?: (is_string(getenv('YF_DB_PG_HOST')) ? getenv('YF_DB_PG_HOST') : '127.0.0.1'),
-			'name'	=> self::$DB_NAME,
-			'user'	=> $params['user'] ?: (is_string(getenv('YF_DB_PG_USER')) ? getenv('YF_DB_PG_USER') : 'yf'),
-			'pswd'	=> is_string($params['pswd']) ? $params['pswd'] : (is_string(getenv('YF_DB_PG_PSWD')) ? getenv('YF_DB_PG_PSWD') : DB_PSWD),
-			'prefix'=> $params['prefix'] ?: (is_string(getenv('YF_DB_PG_PREFIX')) ? getenv('YF_DB_PG_PREFIX') : DB_PREFIX),
-			'force' => true,
-		));
-		return !empty($res) ? true : false;
-	}
 	public static function db_name() {
 		return self::$DB_NAME;
 	}
