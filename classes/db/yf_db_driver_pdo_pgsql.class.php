@@ -7,28 +7,13 @@ class yf_db_driver_pdo_pgsql extends yf_db_driver_pdo {
 	public $db_connect_id		= null;
 
 	/**
-	* Catch missing method call
-	*/
-	function __call($name, $args) {
-		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
-		return false;
-	}
-
-	/**
-	* Catch missing method call
-	*/
-	function __call($name, $args) {
-		return main()->extend_call($this, $name, $args);
-	}
-
-	/**
 	*/
 	function __construct(array $params) {
 		if (!extension_loaded('pdo_pgsql')) {
 			trigger_error('YF PDO PgSQL db driver require missing php extension pdo_pgsql', E_USER_ERROR);
 			return false;
 		}
-		$params['port'] = $params['port'] ?: $this->DEF_PORT;
+		$params['port'] = $params['port'] ?: 5432;
 		$this->params = $params;
 		$this->connect();
 		return $this->db_connect_id;
