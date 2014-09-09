@@ -259,6 +259,7 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $scope, $filte
 			result.$promise.then(
 				function( r ) {
 					$scope.item__get({ response: r.response });
+					$scope.item_filter = '';
 				},
 				function( r ) {
 					$log.log( 'item->get is fail:', r );
