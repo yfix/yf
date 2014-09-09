@@ -5,42 +5,21 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 
 	/** @var @conf_skip */
 	public $db_connect_id		= null;
-	/** @var @conf_skip */
-	public $DEF_CHARSET			= 'utf8';
-	/** @var @conf_skip */
-	public $DEF_PORT			= 3306;
-	/** @var @conf_skip */
-	public $SQL_NO_CACHE		= false;
-	/** @var @conf_skip */
-	public $ALLOW_AUTO_CREATE_DB= false;
-
-	/**
-	* Catch missing method call
-	*/
-	function __call($name, $args) {
-		return main()->extend_call($this, $name, $args);
-	}
 
 	/**
 	*/
 	function __construct(array $params) {
-		if (!function_exists('mysql_connect')) {
-			trigger_error('MySQL db driver require missing php extension mysql', E_USER_ERROR);
+		if (!extension_loaded('pdo_mysql')) {
+			trigger_error('YF PDO MySQL db driver missing php extension pdo_mysql', E_USER_ERROR);
 			return false;
 		}
-		$params['port'] = $params['port'] ?: $this->DEF_PORT;
+		$params['port'] = $params['port'] ?: 3306;
 		if ($params['socket'] && !file_exists($params['socket'])) {
 			$params['socket'] = '';
 		}
-		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET);
+		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : 'utf8');
 		$this->params = $params;
-
 		$this->connect();
-
-		if (!$this->db_connect_id) {
-			conf_add('http_headers::X-Details','ME=(-1) MySql connection error');
-			return $this->db_connect_id;
-		}
 		return $this->db_connect_id;
 	}
 
@@ -51,9 +30,6 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		if ($this->params['port'] && $this->params['port'] != $this->DEF_PORT) {
 			$dsn .= ';port='.$this->params['port'];
 		}
-#		if ($this->params['name']) {
-#			$dsn .= ';dbname='.$this->params['name'];
-#		}
 		if ($this->params['socket']) {
 			$dsn .= ';unix_socket='.$this->params['socket'];
 		}
@@ -67,7 +43,6 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		}
 		$this->db_connect_id = new PDO($dsn, $this->params['user'], $this->params['pswd'], $attrs);
 		$pdo = &$this->db_connect_id;
-#		$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 		$pdo->setAttribute(PDO::MYSQL_ATTR_DIRECT_QUERY, true);
 
 		if (!$this->db_connect_id) {
@@ -94,10 +69,7 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function select_db($name) {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-		return (bool)$this->query('USE '.$name);
+		return $this->db_connect_id ? (bool)$this->query('USE '.$name) : false;
 	}
 
 	/**
@@ -118,15 +90,6 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		}
 		$result = $this->db_connect_id->query($query);
 		$this->_last_query_id = $result;
-		if (!$result) {
-			$error = $this->error();
-			$query_error_code = $error['code'];
-			$query_error = $error['message'];
-			if ($query_error_code) {
-				conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
-			}
-			return false;
-		}
 		return $result;
 	}
 
@@ -138,50 +101,38 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 
 	/**
 	*/
-	function affected_rows() {
+	function affected_rows($query_id = false) {
 		return $this->_last_query_id ? $this->_last_query_id->rowCount() : false;
 	}
 
 	/**
 	*/
-	function insert_id() {
+	function insert_id($query_id = false) {
 		return $this->db_connect_id->lastInsertId();
 	}
 
 	/**
 	*/
 	function fetch_row($query_id) {
-		if (!$query_id) {
-			return false;
-		}
-		return $query_id->fetch(PDO::FETCH_NUM);
+		return $query_id ? $query_id->fetch(PDO::FETCH_NUM) : false;
 	}
 
 	/**
 	*/
 	function fetch_assoc($query_id) {
-		if (!$query_id) {
-			return false;
-		}
-		return $query_id->fetch(PDO::FETCH_ASSOC);
+		return $query_id ? $query_id->fetch(PDO::FETCH_ASSOC) : false;
 	}
 
 	/**
 	*/
 	function fetch_array($query_id) {
-		if (!$query_id) {
-			return false;
-		}
-		return $query_id->fetch(PDO::FETCH_BOTH);
+		return $query_id ? $query_id->fetch(PDO::FETCH_BOTH) : false;
 	}
 
 	/**
 	*/
 	function fetch_object($query_id) {
-		if (!$query_id) {
-			return false;
-		}
-		return $query_id->fetch(PDO::FETCH_OBJ);
+		return $query_id ? $query_id->fetch(PDO::FETCH_OBJ) : false;
 	}
 
 	/**
@@ -192,7 +143,7 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 
 	/**
 	*/
-	function free_result($query_id = 0) {
+	function free_result($query_id = false) {
 		if (!$query_id) {
 			return false;
 		}
@@ -219,28 +170,24 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	}
 
 	/**
-	* Begin a transaction
 	*/
 	function begin() {
 		return $this->db_connect_id->beginTransaction();
 	}
 
 	/**
-	* End a transaction
 	*/
 	function commit() {
 		return $this->db_connect_id->commit();
 	}
 
 	/**
-	* Rollback a transaction
 	*/
 	function rollback() {
 		return $this->db_connect_id->rollBack();
 	}
 
 	/**
-	* Return database-specific limit of returned rows
 	*/
 	function limit($count, $offset) {
 		if ($count > 0) {
@@ -265,18 +212,12 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function get_server_version() {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-		return $this->db_connect_id->getAttribute(PDO::ATTR_SERVER_VERSION);
+		return $this->db_connect_id ? $this->db_connect_id->getAttribute(PDO::ATTR_SERVER_VERSION) : false;
 	}
 
 	/**
 	*/
 	function get_host_info() {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-		return $this->db_connect_id->getAttribute(PDO::ATTR_SERVER_INFO);
+		return $this->db_connect_id ? $this->db_connect_id->getAttribute(PDO::ATTR_SERVER_INFO) : false;
 	}
 }

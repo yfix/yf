@@ -44,6 +44,13 @@ abstract class yf_db_installer {
 	public $PARTITION_BY_DAY		= false;
 
 	/**
+	* Catch missing method call
+	*/
+	function __call($name, $args) {
+		return main()->extend_call($this, $name, $args);
+	}
+
+	/**
 	* Framework constructor
 	*/
 	function _init () {

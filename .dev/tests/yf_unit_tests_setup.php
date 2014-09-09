@@ -1,6 +1,6 @@
 <?php
 
-define('STORAGE_PATH', __DIR__.'/tests_tmp_storage/');
+define('STORAGE_PATH', __DIR__.'/_tmp/');
 if (!defined('YF_PATH')) {
 	$CONF['cache']['DRIVER'] = 'tmp';
 	$CONF['cache']['NO_CACHE'] = true;

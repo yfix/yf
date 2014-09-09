@@ -7,24 +7,14 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	public $db_connect_id = null;
 
 	/**
-	* Catch missing method call
-	*/
-	function __call($name, $args) {
-		return main()->extend_call($this, $name, $args);
-	}
-
-	/**
 	*/
 	function __construct(array $params) {
 		if (!class_exists('SQLite3')) {
-			trigger_error('SQLite db driver require missing php extension sqlite3', E_USER_ERROR);
+			trigger_error('YF SQLite db driver require missing php extension sqlite3', E_USER_ERROR);
 			return false;
 		}
-		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET);
 		$this->params = $params;
-
 		$this->connect();
-
 		return $this->db_connect_id;
 	}
 
@@ -52,12 +42,6 @@ class yf_db_driver_sqlite extends yf_db_driver {
 		}
 		$result = $this->db_connect_id->query($query);
 		$this->_last_query_id = $result;
-		if (!$result) {
-			$error = $this->error();
-			$query_error_code = $error['code'];
-			$query_error = $error['message'];
-			return false;
-		}
 		return $result;
 	}
 
@@ -83,13 +67,13 @@ class yf_db_driver_sqlite extends yf_db_driver {
 
 	/**
 	*/
-	function affected_rows() {
+	function affected_rows($query_id = false) {
 		return $this->db_connect_id ? $this->db_connect_id->changes() : false;
 	}
 
 	/**
 	*/
-	function insert_id() {
+	function insert_id($query_id = false) {
 		return $this->db_connect_id ? $this->db_connect_id->lastInsertRowID() : false;
 	}
 
@@ -125,7 +109,7 @@ class yf_db_driver_sqlite extends yf_db_driver {
 
 	/**
 	*/
-	function free_result($query_id) {
+	function free_result($query_id = false) {
 		if ($query_id) {
 			$query_id = null;
 		}
@@ -152,28 +136,24 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	}
 
 	/**
-	* Begin a transaction
 	*/
 	function begin() {
 		return $this->db_connect_id ? $this->db_connect_id->query('BEGIN') : false;
 	}
 
 	/**
-	* End a transaction
 	*/
 	function commit() {
 		return $this->db_connect_id ? $this->db_connect_id->query('COMMIT') : false;
 	}
 
 	/**
-	* Rollback a transaction
 	*/
 	function rollback() {
 		return $this->db_connect_id ? $this->db_connect_id->query('ROLLBACK') : false;
 	}
 
 	/**
-	* Return database-specific limit of returned rows
 	*/
 	function limit($count, $offset) {
 		if ($count > 0) {

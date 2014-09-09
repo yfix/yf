@@ -16,16 +16,16 @@
 			<directory>./</directory>
 		</testsuite>
 		<testsuite name="cache">
-			<directory>./cache/</directory>
+			<directory>./functional/cache/</directory>
 		</testsuite>
 		<testsuite name="database">
-			<directory>./db/</directory>
+			<directory>./functional/db/</directory>
 		</testsuite>
-		<testsuite name="func">
-			<directory>./func/</directory>
+		<testsuite name="functions">
+			<directory>./unit/functions/</directory>
 		</testsuite>
 		<testsuite name="tpl">
-			<directory>./tpl/</directory>
+			<directory>./unit/tpl/</directory>
 		</testsuite>
 	</testsuites>
 	<!--logging>

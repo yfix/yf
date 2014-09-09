@@ -5,45 +5,24 @@ class yf_db_driver_mysqli extends yf_db_driver {
 
 	/** @var @conf_skip */
 	public $db_connect_id		= null;
-	/** @var @conf_skip */
-	public $DEF_CHARSET			= 'utf8';
-	/** @var @conf_skip */
-	public $DEF_PORT			= 3306;
-	/** @var @conf_skip */
-	public $SQL_NO_CACHE		= false;
-	/** @var @conf_skip */
-	public $ALLOW_AUTO_CREATE_DB= false;
-
-	/**
-	* Catch missing method call
-	*/
-	function __call($name, $args) {
-		return main()->extend_call($this, $name, $args);
-	}
 
 	/**
 	*/
 	function __construct(array $params) {
 		if (!function_exists('mysqli_init')) {
-			trigger_error('MySQLi db driver require missing php extension mysql', E_USER_ERROR);
+			trigger_error('YF MySQLi db driver require missing php extension mysqli', E_USER_ERROR);
 			return false;
 		}
-		$params['port'] = $params['port'] ?: $this->DEF_PORT;
+		$params['port'] = $params['port'] ?: 3306;
 		if ($params['socket'] && !file_exists($params['socket'])) {
 			$params['socket'] = '';
 		}
-		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : $this->DEF_CHARSET);
+		$params['charset'] = $params['charset'] ?: (defined('DB_CHARSET') ? DB_CHARSET : 'utf8');
 		$this->params = $params;
-
 		$this->connect();
-
-		if (!$this->db_connect_id) {
-			conf_add('http_headers::X-Details','ME=(-1) MySqli connection error');
-			return $this->db_connect_id;
-		}
 		if ($params['charset']) {
 			// See http://php.net/manual/en/mysqlinfo.concepts.charset.php
-			mysqli_set_charset($this->db_connect_id, 'utf8'); // $this->query('SET NAMES '. $params['charset']);
+			mysqli_set_charset($this->db_connect_id, 'utf8');
 		}
 		return $this->db_connect_id;
 	}
@@ -88,10 +67,7 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	/**
 	*/
 	function select_db($name) {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-		return mysqli_select_db($this->db_connect_id, $name);
+		return $this->db_connect_id ? mysqli_select_db($this->db_connect_id, $name) : false;
 	}
 
 	/**
@@ -101,143 +77,62 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	}
 
 	/**
-	* Base query method
 	*/
 	function query($query) {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-		$result = mysqli_query($this->db_connect_id, $query);
-		if (!$result) {
-			$error = $this->error();
-			$query_error_code = $error['code'];
-			$query_error = $error['message'];
-			if ($query_error_code) {
-				conf_add('http_headers::X-Details','ME=('.$query_error_code.') '.$query_error);
-			}
-			return false;
-		}
-		return $result;
-	}
-
-	/**
-	* Very simple emulation of the mysqli multi_query
-	*/
-	function multi_query($queries = array()) {
-		if (is_string($queries)) {
-			return $this->_multi_query($queries);
-		}
-// TODO: check and implement this:
-/*
-$query  = 'SELECT CURRENT_USER();';
-$query .= 'SELECT Name FROM City ORDER BY ID LIMIT 20, 5';
-
-if ($mysqli->multi_query($query)) {
-    do {
-        if ($result = $mysqli->store_result()) {
-            while ($row = $result->fetch_row()) {
-                printf('%s\n', $row[0]);
-            }
-            $result->free();
-        }
-        if ($mysqli->more_results()) {
-            printf('-----------------\n');
-        }
-    } while ($mysqli->next_result());
-}
-*/
-		$result = array();
-		foreach((array)$queries as $k => $sql) {
-			$result[$k] = $this->query($sql);
-		}
-		return $result;
-	}
-
-	/**
-	* Multi query method (specific for this driver)
-	*/
-	function _multi_query($query = '') {
-		if (!$query) {
-			return false;
-		}
-		return mysqli_multi_query($this->db_connect_id, $query);
-	}
-
-	/**
-	*/
-	function unbuffered_query($query = '') {
-		mysqli_unbuffered_query($this->db_connect_id, $query);
+		return $this->db_connect_id && strlen($query) ? mysqli_query($this->db_connect_id, $query) : false;
 	}
 
 	/**
 	*/
 	function num_rows($query_id) {
-		if ($query_id) {
-			return mysqli_num_rows($query_id);
-		}
-		return false;
+		return $query_id ? mysqli_num_rows($query_id) : false;
 	}
 
 	/**
 	*/
-	function affected_rows() {
+	function affected_rows($query_id = false) {
 		return $this->db_connect_id ? mysqli_affected_rows($this->db_connect_id) : false;
 	}
 
 	/**
 	*/
-	function insert_id() {
+	function insert_id($query_id = false) {
 		return $this->db_connect_id ? mysqli_insert_id($this->db_connect_id) : false;
 	}
 
 	/**
 	*/
 	function fetch_row($query_id) {
-		if ($query_id) {
-			return mysqli_fetch_row($query_id);
-		}
-		return false;
+		return $query_id ? mysqli_fetch_row($query_id) : false;
 	}
 
 	/**
 	*/
 	function fetch_assoc($query_id) {
-		if ($query_id) {
-			return mysqli_fetch_assoc($query_id);
-		}
-		return false;
+		return $query_id ? mysqli_fetch_assoc($query_id) : false;
 	}
 
 	/**
 	*/
 	function fetch_array($query_id) {
-		if ($query_id) {
-			return mysqli_fetch_array($query_id);
-		}
-		return false;
+		return $query_id ? mysqli_fetch_array($query_id) : false;
 	}
 
 	/**
 	*/
 	function fetch_object($query_id) {
-		if ($query_id) {
-			return mysqli_fetch_object($query_id);
-		}
-		return false;
+		return $query_id ? mysqli_fetch_object($query_id) : false;
 	}
 
 	/**
 	*/
 	function real_escape_string($string) {
-		if (!$this->db_connect_id) {
-			return addslashes($string);
-		}
-		return mysqli_real_escape_string($this->db_connect_id, $string);
+		return $this->db_connect_id ? mysqli_real_escape_string($this->db_connect_id, $string) : addslashes($string);
 	}
 
 	/**
 	*/
-	function free_result($query_id = 0) {
+	function free_result($query_id) {
 		if ($query_id) {
 			mysqli_free_result($query_id);
 			// We need this for compatibility, because mysqli_free_result() returns "void"
@@ -264,28 +159,24 @@ if ($mysqli->multi_query($query)) {
 	}
 
 	/**
-	* Begin a transaction
 	*/
 	function begin() {
 		return $this->query('START TRANSACTION');
 	}
 
 	/**
-	* End a transaction
 	*/
 	function commit() {
 		return $this->query('COMMIT');
 	}
 
 	/**
-	* Rollback a transaction
 	*/
 	function rollback() {
 		return $this->query('ROLLBACK');
 	}
 
 	/**
-	* Return database-specific limit of returned rows
 	*/
 	function limit($count, $offset) {
 		if ($count > 0) {
@@ -296,14 +187,12 @@ if ($mysqli->multi_query($query)) {
 	}
 
 	/**
-	* Enclose field names
 	*/
 	function escape_key($data) {
 		return '`'.$data.'`';
 	}
 
 	/**
-	* Enclose field values
 	*/
 	function escape_val($data) {
 		return '\''.$data.'\'';
@@ -312,30 +201,22 @@ if ($mysqli->multi_query($query)) {
 	/**
 	*/
 	function get_server_version() {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-		return mysqli_get_server_info($this->db_connect_id);
+		return $this->db_connect_id ? mysqli_get_server_info($this->db_connect_id) : false;
 	}
 
 	/**
 	*/
 	function get_host_info() {
-		if (!$this->db_connect_id) {
-			return false;
-		}
-		return mysqli_get_host_info($this->db_connect_id);
+		return $this->db_connect_id ? mysqli_get_host_info($this->db_connect_id) : false;
 	}
 
 	/**
-	* Prepare statement
 	*/
 	function prepare($query) {
 		return mysqli_prepare($this->db_connect_id, $query);
 	}
 
 	/**
-	* Bind statement param
 	*/
 	function bind_params($stmt, $data = array()) {
 		foreach ((array)$data as $k => $v) {
@@ -348,7 +229,6 @@ if ($mysqli->multi_query($query)) {
 	}
 
 	/**
-	* Execute statement
 	*/
 	function execute($stmt) {
 		return mysqli_stmt_execute($stmt);
