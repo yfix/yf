@@ -1,0 +1,5 @@
+# git ignore
+
+# ignore folders
+tests/_output/
+tests/_tmp/
