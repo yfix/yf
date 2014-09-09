@@ -52,14 +52,23 @@ ng_app_admin.factory( 'Uploader', function( ApiConfig, $q, $rootScope, $window, 
 	return( service );
 });
 
-ng_app_admin.factory( 'UploadList',  function( ApiConfig, $resource, $window, $log ) {
+ng_app_admin.factory( 'UploadApi',  function( ApiConfig, $resource, $window, $log ) {
 	var service = {};
-	service.url = ApiConfig.url.upload_list || $window.location.href;
+	service.url_list = ApiConfig.url.upload_list || $window.location.href;
+	service.url_item = ApiConfig.url.upload_item || $window.location.href;
 	service.resource = $resource( service.url, {}, {
-		remove_all:  { method: 'POST', params: { sub_action: 'remove_all' } }
+		list__remove_all : { method : 'POST', url : service.url_list, params : { sub_action : 'remove_all' } },
+		item__get        : { method : 'GET',  url : service.url_item, params : { sub_action : 'get' } },
+		item__import     : { method : 'POST', url : service.url_item, params : { sub_action : 'import' } },
 	});
-	service.remove_all = function() {
-		return( service.resource.remove_all() );
+	service.list__remove_all = function() {
+		return( service.resource.list__remove_all() );
+	};
+	service.item__get = function( id ) {
+		return( service.resource.item__get({ id: id }) );
+	};
+	service.item__import = function( id ) {
+		return( service.resource.item__import({ data: data }) );
 	};
 	return( service );
 });
@@ -192,20 +201,53 @@ ng_app_admin.filter( 'orderObjectBy', function( $log ) {
 	};
 });
 
-ng_app_admin.controller( '{_ng_controller}', function( UploadList, $scope, $filter, $log ) {
+ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $scope, $filter, $log ) {
 	$scope.data = {_ng_data};
 	$scope._upload_list__count = 0;
-	$scope.UploadList = {
-		remove_all: function() {
-			var result = UploadList.remove_all();
+	$scope.UploadApi = {
+		item__get: function( item ) {
+			var result = UploadApi.item__get( item.id );
+			result.$promise.then(
+				function( r ) {
+					$scope.item__get({ response: r.response });
+				},
+				function( r ) {
+					$log.log( 'item->get is fail:', r );
+				}
+			);
+		},
+		item__import: function( item ) {
+			var result = UploadApi.item__import( $scope.item_data );
+			result.$promise.then(
+				function( r ) {
+					{{-- $scope.item__get({ response: r.response }); --}}
+					$log.log( 'item->import is ok:', r );
+				},
+				function( r ) {
+					$log.log( 'item->import is fail:', r );
+				}
+			);
+		},
+		list__remove_all: function() {
+			var result = UploadApi.list__remove_all();
 			result.$promise.then(
 				function( r ) {
 					$scope.upload_list__update({ response: r.response });
 				},
 				function( r ) {
-					$log.log( 'upload_list->remove_all', fail, r );
+					$log.log( 'upload_list->remove_all is fail:', r );
 				}
 			);
+		}
+	};
+	$scope.item__get = function( result ) {
+		$scope.upload_list__update( result );
+		if( result.response.action.status ) {
+			$scope.action.status_message = 'файл получен';
+			$scope.item_data = result.response.action.data;
+		} else {
+			$scope.action.status_message = 'файл не распознан';
+			$scope.item_data = null;
 		}
 	};
 	$scope.upload_list__update = function( result ) {
@@ -213,7 +255,28 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadList, $scope, $filt
 		angular.forEach( result.response, function( item, idx ) {
 			this[ idx ] = item;
 		}, $scope );
-	}
+	};
+	$scope.upload_list__fail = function( result ) {
+		var status = result.xhr.status;
+		if( status == 413 ) {
+			$scope.action = {
+				status         : status,
+				status_message : 'HTTP-сервер не позволяет загружать очень большие файлы'
+			}
+		}
+		else if( status == 500 ) {
+			$scope.action = {
+				status         : status,
+				status_message : 'PHP-сервер не позволяет загружать очень большие файлы'
+			}
+		}
+		else if( status == 503 ) {
+			$scope.action = {
+				status         : status,
+				status_message : 'PHP-сервер не позволяет выполнять данную операцию'
+			}
+		}
+	};
 	// prerape upload list
 	var _prepare__upload_list = function( scope ) {
 		var count = 0;
@@ -235,6 +298,7 @@ ng_app_admin.constant( 'ApiConfig', {
 	url: {
 		upload      : '{_api_url_upload}',
 		upload_list : '{_api_url_upload_list}',
+		upload_item : '{_api_url_upload_item}',
 	}
 });
 

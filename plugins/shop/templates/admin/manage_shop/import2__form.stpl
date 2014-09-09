@@ -1,6 +1,4 @@
-<div class="ng-cloak">
-
-<div file-upload show-status="false" on-success="upload_list__update( result )"></div>
+<div class="ng-cloak" ng-controller="{_ng_controller}">
 
 {{-- notifications --}}
 <div ng-bind="action.status_message"
@@ -9,6 +7,18 @@
 	ng-class="{ 'text-success': action.status, 'text-error': !action.status }"
 	class="alert"
 ></div>
+
+{{-- upload --}}
+<div>
+	Загрузить файл для импорта:&nbsp;
+	<span file-upload
+		show-status="false"
+		on-success="upload_list__update( result )"
+		on-fail="upload_list__fail( result )"
+		></span>
+</div>
+
+<hr>
 
 {{-- upload list --}}
 <style>
@@ -20,33 +30,30 @@
 .upload_list.ng-leave.ng-leave-active {
 	opacity : 0;
 }
-{{-- remove item --}}
+{{-- add item --}}
 .upload_list.ng-leave,
 .upload_list.ng-enter.ng-enter-active {
 	opacity : 1;
 }
+{{-- hover --}}
+.upload_list {
+	opacity : 0.9;
+}
+.upload_list_hover {
+	opacity : 1;
+	cursor: pointer;
+}
 </style>
 <table class="upload_list table table-striped" ng-show="data._upload_list">
 	<tr>
-		<th colspan="4">Список загруженных файлов ({{_upload_list__count}})</th>
-	</tr>
-	<tr>
 		<th colspan="4">
-			<span class="btn btn-danger" ng-click="UploadList.remove_all()">Удалить все</span>
+			Список загруженных файлов ({{_upload_list__count}})
+			<span class="btn btn-small btn-danger pull-right" ng-click="UploadApi.list__remove_all()">Удалить все</span>
 		</th>
 	</tr>
 	<tr>
 		<td colspan="4">
-			<div class="form-group control-group"
-					ng-init="upload_list_filter__status = true"
-					ng-class="{ error: !upload_list_filter__status, 'has-error': !upload_list_filter__status }"
-					style="margin-bottom: 0;"
-					>
-				<label class="control-label" for="upload_list_filter">поиск:</label>
-				<div class="controls">
-					<input id="upload_list_filter" type="text" class="form-control" ng-model="upload_list_filter">
-				</div>
-			</div>
+			<input type="text" ng-model="upload_list_filter">
 		</td>
 	</tr>
 	<tr>
@@ -55,11 +62,44 @@
 		<th>время</th>
 		<th>статус</th>
 	</tr>
-	<tr ng-repeat="i in data._upload_list | orderObjectBy: { filter: 'upload_list_filter', order: 'time', reverse: 'true' }" class="upload_list">
+	<tr
+		ng-repeat="i in data._upload_list | orderObjectBy: { filter: 'upload_list_filter', order: 'time', reverse: 'true' }"
+		class="upload_list"
+		ng-class="{ upload_list_hover: upload_list_hover, success: upload_list_hover }"
+		ng-mouseover="upload_list_hover=true"
+		ng-mouseleave="upload_list_hover=false"
+		ng-click="UploadApi.item__get( i )"
+	>
 		<td>{{i.file_name}}</td>
 		<td>{{i.file_size}}</td>
 		<td>{{i._time}}</td>
 		<td>{{i._status}}</td>
+	</tr>
+</table>
+
+<table class="item_data table table-striped" ng-show="item_data">
+	<tr>
+		<th colspan="{{item_data.cols}}">
+			Файл: {{item_data.file}} ({{item_data.rows}})
+			<span class="btn btn-small btn-success pull-right" ng-click="UploadApi.item__import()">Импортировать</span>
+		</th>
+	</tr>
+	<tr>
+		<td colspan="{{item_data.cols}}">
+			<input type="text" ng-model="item_filter">
+		</td>
+	</tr>
+	{{-- <tr>
+		<th>имя</th>
+		<th>размер</th>
+		<th>время</th>
+		<th>статус</th>
+	</tr> --}}
+	<tr
+		ng-repeat="item in item_data.items | filter: item_filter"
+		class="item"
+	>
+		<td ng-repeat="i in item">{{i}}</td>
 	</tr>
 </table>
 

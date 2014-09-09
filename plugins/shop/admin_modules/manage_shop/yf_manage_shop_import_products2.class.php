@@ -99,8 +99,7 @@ class yf_manage_shop_import_products2 {
 	protected function _api_upload() {
 		$file = $_FILES[ 'file' ];
 		if( empty( $file ) || $file[ 'error' ] != UPLOAD_ERR_OK ) {
-			header( 'Status: 503 Service Unavailable' );
-			die( 'Service Unavailable' );
+			$this->_reject( 'PHP: Entity Too Large', '500 Internal Server Error', 500 );
 		} else {
 			$upload_path = $this->upload_path;
 			$name = $file[ 'name' ];
@@ -118,8 +117,7 @@ class yf_manage_shop_import_products2 {
 				);
 				$result = $this->_save_upload_list( $data );
 				if( !$result ) {
-					header( 'Status: 503 Service Unavailable' );
-					die( 'save upload file data error' );
+					$this->_reject( 'save upload file data error' );
 				}
 				$result = array(
 					'data' => $this->_data_ng(),
@@ -129,8 +127,7 @@ class yf_manage_shop_import_products2 {
 					),
 				);
 			} else {
-				header( 'Status: 503 Service Unavailable' );
-				die( 'save upload file error' );
+				$this->_reject( 'save upload file error' );
 			}
 		}
 		return( $result );
@@ -141,6 +138,23 @@ class yf_manage_shop_import_products2 {
 		switch( $sub_action ) {
 			case 'remove_all':
 				$result = $this->_upload_list__remove_all();
+				break;
+		}
+		$result = array(
+			'response'   => array(
+				'data'   => $this->_data_ng(),
+				'action' => $result,
+			),
+		);
+		return( $result );
+	}
+
+	protected function _api_upload_item() {
+		$sub_action = $_GET[ 'sub_action' ];
+		switch( $sub_action ) {
+			case 'get':
+				$id = $_GET[ 'id' ];
+				$result = $this->_upload_item__get( $id );
 				break;
 		}
 		$result = array(
@@ -174,10 +188,55 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
+	protected function _upload_item__get( $id ) {
+		$result = array(
+			'status' => false,
+		);
+		$upload_path = $this->upload_path;
+		$upload_list = $this->upload_list;
+		$file = $upload_path . $id;
+		if( !empty( $upload_list[ $id ] ) && file_exists( $file ) ) {
+			$result = $this->_file_parse( $file, $upload_list[ $id ] );
+			$result = array(
+				'data'   => array(
+					'file'  => $upload_list[ $id ][ 'file_name' ],
+					'rows'  => count( $result ),
+					'cols'  => count( $result[ 0 ] ),
+					'items' => $result,
+				),
+				'status' => true,
+			);
+		}
+		return( $result );
+	}
+
+	protected function _file_parse( $file_name, $item ) {
+		// init Excel reader
+		if( file_exists( YF_PATH.'libs/phpexcel/PHPExcel.php' ) ) {
+			require_once( YF_PATH.'libs/phpexcel/PHPExcel.php' );
+		} else {
+			require_once( INCLUDE_PATH.'libs/phpexcel/PHPExcel.php' );
+		}
+		// parse file
+		$reader = PHPExcel_IOFactory::createReader( 'Excel5' );
+		$reader->setReadDataOnly( true );
+		try {
+			$excel = $reader->load( $file_name );
+			// $nullValue = null, $calculateFormulas = true, $formatData = true, $returnCellRef = false
+			$data = $excel->getActiveSheet()->toArray( null, false, false, false );
+		} catch ( Exception $e ) {
+			$data = null;
+		}
+		// free memory
+		unset( $excel, $reader );
+		return( $data );
+	}
+
 	// api call
-	protected function _reject() {
-		header( 'Status: 503 Service Unavailable' );
-		die( 'Service Unavailable' );
+	protected function _reject( $message = 'Service Unavailable', $header = 'Status: 503 Service Unavailable', $code = 503 ) {
+		http_response_code( $code );
+		header( $header );
+		die( $message );
 	}
 
 	protected function _firewall( $class = null, $class_path = null, $method = null, $options = array() ) {
@@ -248,6 +307,7 @@ class yf_manage_shop_import_products2 {
 		$_ng_controller       = 'ctrl.import2';
 		$_api_url_upload      = url_admin( '//manage_shop/import2/&api=upload' );
 		$_api_url_upload_list = url_admin( '//manage_shop/import2/&api=upload_list' );
+		$_api_url_upload_item = url_admin( '//manage_shop/import2/&api=upload_item' );
 		// -----
 		$_ng_data = $this->_data_ng( true );
 		// -----
@@ -277,6 +337,7 @@ class yf_manage_shop_import_products2 {
 		$result = array(
 			'_api_url_upload'      => $_api_url_upload,
 			'_api_url_upload_list' => $_api_url_upload_list,
+			'_api_url_upload_item' => $_api_url_upload_item,
 			'_ng_controller'       => $_ng_controller,
 			'_ng_data'             => $_ng_data,
 			'_sub_action'          => $_sub_action,
@@ -292,10 +353,11 @@ class yf_manage_shop_import_products2 {
 		$data = (array)$data;
 		$_form_tpl = tpl()->parse( 'manage_shop/import2__form', $data );
 		// create form
-		$_form = form( $data, array( 'ng-controller' => $data[ '_ng_controller' ] ) )
-			->fieldset_start()
-				->container( $_form_tpl, 'Загрузка' )
-			->fieldset_end()
+		$_form = $_form_tpl;
+		// $_form = form( $data, array( 'ng-controller' => $data[ '_ng_controller' ] ) )
+			// ->fieldset_start()
+				// ->container( $_form_tpl, 'Загрузка' )
+			// ->fieldset_end()
 			// ->select2_box( array(
 				// 'desc'     => 'Действие',
 				// 'name'     => 'sub_action',
