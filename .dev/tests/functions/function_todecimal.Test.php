@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class func_todecimal_test extends PHPUnit_Framework_TestCase {
+class function_todecimal_test extends PHPUnit_Framework_TestCase {
 	public function test_main() {
 		$this->assertEquals('0', todecimal(''));
 		$this->assertEquals('1', todecimal(1));

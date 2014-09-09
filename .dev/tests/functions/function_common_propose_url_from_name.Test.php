@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class func_common_propose_url_from_name_test extends PHPUnit_Framework_TestCase {
+class function_common_propose_url_from_name_test extends PHPUnit_Framework_TestCase {
 	public function test_simple() {
 		$this->assertEquals('', common()->_propose_url_from_name());
 		$this->assertEquals('', common()->_propose_url_from_name(false));

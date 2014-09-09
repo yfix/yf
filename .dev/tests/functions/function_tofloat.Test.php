@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class func_tofloat_test extends PHPUnit_Framework_TestCase {
+class function_tofloat_test extends PHPUnit_Framework_TestCase {
 	public function test_main() {
 		$this->assertEquals(0, tofloat(''));
 		$this->assertEquals(1, tofloat(1));

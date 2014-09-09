@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class func_check_ip_test extends PHPUnit_Framework_TestCase {
+class function_check_ip_test extends PHPUnit_Framework_TestCase {
 
 	public function test_1() {
 		$test_array = array(

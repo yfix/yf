@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class func_attrs_string2array_test extends PHPUnit_Framework_TestCase {
+class function_attrs_string2array_test extends PHPUnit_Framework_TestCase {
 	public function test_negative() {
 		$this->assertEquals(array(), _attrs_string2array());
 		$this->assertEquals(array(), _attrs_string2array(null));

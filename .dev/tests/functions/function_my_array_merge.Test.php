@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class func_my_array_merge_test extends PHPUnit_Framework_TestCase {
+class function_my_array_merge_test extends PHPUnit_Framework_TestCase {
 	public function test_simple() {
 		$this->assertEquals(my_array_merge(array('key1' => 1), array('key1' => 1)), array('key1' => 1));
 	}

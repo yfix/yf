@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class func_attrs_test extends PHPUnit_Framework_TestCase {
+class function_attrs_test extends PHPUnit_Framework_TestCase {
 	public function test_negative() {
 		$this->assertEquals('', @_attrs());
 		$this->assertEquals('', @_attrs(null));

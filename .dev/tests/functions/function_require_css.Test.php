@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class func_require_css_test extends PHPUnit_Framework_TestCase {
+class function_require_css_test extends PHPUnit_Framework_TestCase {
 	public function test_detect_content_type() {
 		$this->assertEquals('asset', _class('core_css')->_detect_content('jquery-ui'));
 		$this->assertEquals('url', _class('core_css')->_detect_content('http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.css'));

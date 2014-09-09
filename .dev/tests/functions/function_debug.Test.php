@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class func_debug_test extends PHPUnit_Framework_TestCase {
+class function_debug_test extends PHPUnit_Framework_TestCase {
 	public static $_bak = array();
 	public static function setUpBeforeClass() {
 		self::$_bak = $GLOBALS['DEBUG'];

@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class func_highlight_test extends PHPUnit_Framework_TestCase {
+class function_highlight_test extends PHPUnit_Framework_TestCase {
 
 	var	$LANGS_TEST = array(
 		'photoshop cs2 download' => '<b>photoshop</b> <b>cs2</b> <b>download</b>',//English
