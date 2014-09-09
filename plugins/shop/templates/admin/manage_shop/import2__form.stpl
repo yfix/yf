@@ -77,6 +77,11 @@
 	</tr>
 </table>
 
+<style>
+.page_item {
+	margin: auto 1em;
+}
+</style>
 <table class="item_data table table-striped" ng-show="item_data">
 	<tr>
 		<th colspan="{{item_data.cols}}">
@@ -87,6 +92,8 @@
 	<tr>
 		<td colspan="{{item_data.cols}}">
 			<input type="text" ng-model="item_filter">
+			<span class="btn" ng-click="item_filter=''"><i class="fa fa-times"></i></span>
+			<span>(<span ng-bind="Pagination.length"></span>)</span>
 		</td>
 	</tr>
 	{{-- <tr>
@@ -96,10 +103,24 @@
 		<th>статус</th>
 	</tr> --}}
 	<tr
-		ng-repeat="item in item_data.items | filter: item_filter"
+		ng-repeat="item in item_data.items | filter: item_filter | pagination: { controller: Pagination }"
 		class="item"
 	>
 		<td ng-repeat="i in item">{{i}}</td>
+	</tr>
+	<tr>
+		<td colspan="{{item_data.cols}}">
+			<label class="pull-left">
+				Страница:&nbsp;
+				<span class="btn" ng-click="Pagination.back()"><i class="fa fa-arrow-left"></i></span>
+					<input type="number" style="width: 5em; margin-bottom: 0;" maxlength="5" ng-model="Pagination.page" ng-chage="Pagination.calc()">
+				<span class="btn" ng-click="Pagination.next()"><i class="fa fa-arrow-right"></i></span>
+				<span class="page_item">из</span>
+				<span ng-bind="Pagination.pages"></span>
+					<span class="page_item"> по </span>
+					<input type="number" style="width: 3em; margin-bottom: 0;" maxlength="3" ng-model="Pagination.page_size" ng-chage="Pagination.calc()">
+			</label>
+		</td>
 	</tr>
 </table>
 

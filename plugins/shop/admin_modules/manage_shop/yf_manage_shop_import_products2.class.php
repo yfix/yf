@@ -45,20 +45,32 @@ class yf_manage_shop_import_products2 {
 		$upload_list__file_name = $this->upload_list__file_name;
 		$upload_list__field     = $this->upload_list__field;
 		$upload_list            = &$this->upload_list;
-		$data = array();
-		if( is_readable( $upload_list__file_name ) && ( $file = fopen( $upload_list__file_name, 'r' ) ) !== FALSE ) {
+		$data = $this->_load_csv( $upload_list__file_name );
+		$result = array();
+		foreach( $data as $item ) {
+			$id = $item[ 0 ];
+			if( empty( $id ) ) { continue; }
+			$_data = array();
+			foreach( $upload_list__field as $idx => $field ) {
+				$_data[ $field ] = $item[ $idx ];
+			}
+			$result[ $id ] = $_data;
+		}
+		$upload_list = $result;
+		return( $result );
+	}
+
+	protected function _load_csv( $file_name ) {
+		if( is_readable( $file_name ) && ( $file = fopen( $file_name, 'r' ) ) !== FALSE ) {
+			$result = array();
 			while( ( $item = fgetcsv( $file, 1000, ';' ) ) !== FALSE ) {
-				$id = $item[ 0 ];
-				if( empty( $id ) ) { continue; }
-				$_data = array();
-				foreach( $upload_list__field as $idx => $field ) {
-					$_data[ $field ] = $item[ $idx ];
-				}
-				$data[ $id ] = $_data;
+				$result[] = $item;
 			}
 			fclose( $file );
-			$upload_list = $data;
+		} else {
+			$result = false;
 		}
+		return( $result );
 	}
 
 	protected function _save_upload_list( $data = null ) {
@@ -80,13 +92,16 @@ class yf_manage_shop_import_products2 {
 			}
 		}
 		// save items
-		if( ( $file = fopen( $upload_list__file_name, 'w' ) ) !== FALSE ) {
-			foreach( $upload_list as $id => $item ) {
-				$data = array();
-				foreach( $upload_list__field as $idx => $field ) {
-					$data[] = $item[ $field ];
-				}
-				fputcsv( $file, $data, ';' );
+		$result = $this->_save_csv( $upload_list__file_name, $upload_list );
+		return( $result );
+	}
+
+	protected function _save_csv( $file_name, $data = null ) {
+		if( is_array( $data ) && ( $file = fopen( $file_name, 'w' ) ) !== FALSE ) {
+			foreach( $data as $id => $item ) {
+				$data = array_values( $item );
+				$result = fputcsv( $file, $data, ';' );
+				if( false === $result ) { return( $result ); }
 			}
 			fclose( $file );
 			$result = true;
@@ -210,7 +225,26 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
-	protected function _file_parse( $file_name, $item ) {
+	protected function _file_parse__get_cache( $file_name, $item ) {
+		$result = $this->_load_csv( $file_name . '.cache' );
+		return( $result );
+	}
+
+	protected function _file_parse__set_cache( $file_name, $item, $data ) {
+		$result = $this->_save_csv( $file_name . '.cache', $data );
+		return( $result );
+	}
+
+	protected function _file_parse( $file_name, $item, $force = false ) {
+		// cache
+		if( !$force ) {
+			$result = $this->_file_parse__get_cache( $file_name, $item );
+			if( false !== $result ) { return( $result ); }
+		}
+		// parse
+		ini_set( 'memory_limit', '1024M' );
+		$type           = pathinfo( $file_name, PATHINFO_EXTENSION );
+		$format_default = ( $type == 'xls' ? 'Excel5' : 'Excel2007' );
 		// init Excel reader
 		if( file_exists( YF_PATH.'libs/phpexcel/PHPExcel.php' ) ) {
 			require_once( YF_PATH.'libs/phpexcel/PHPExcel.php' );
@@ -218,18 +252,27 @@ class yf_manage_shop_import_products2 {
 			require_once( INCLUDE_PATH.'libs/phpexcel/PHPExcel.php' );
 		}
 		// parse file
-		$reader = PHPExcel_IOFactory::createReader( 'Excel5' );
+		$format = PHPExcel_IOFactory::identify( $file_name ) ?: $format_default;
+		$reader = PHPExcel_IOFactory::createReader( $format );
 		$reader->setReadDataOnly( true );
+		// $reader->setLoadAllSheets();
+		// for csv
+		$format == 'CSV' && $reader->setDelimiter( ';' );
+			// setEnclosure() | default is "
+			// setLineEnding() | default is PHP_EOL
+			// setInputEncoding() | default is UTF-8
 		try {
 			$excel = $reader->load( $file_name );
 			// $nullValue = null, $calculateFormulas = true, $formatData = true, $returnCellRef = false
-			$data = $excel->getActiveSheet()->toArray( null, false, false, false );
+			$result = $excel->getActiveSheet()->toArray( null, false, false, false );
 		} catch ( Exception $e ) {
-			$data = null;
+			$result = false;
 		}
 		// free memory
 		unset( $excel, $reader );
-		return( $data );
+		// cache
+		$this->_file_parse__set_cache( $file_name, $item, $result );
+		return( $result );
 	}
 
 	// api call

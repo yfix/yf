@@ -200,10 +200,59 @@ ng_app_admin.filter( 'orderObjectBy', function( $log ) {
 		return( filtered );
 	};
 });
-
+ng_app_admin.filter( 'pagination', function( $log ) {
+	return function( items, options ) {
+		if( !angular.isArray( items ) ) { return( items ); }
+		// calc pages
+		var $scope = this;
+		var pagination = options.controller;
+		var result = pagination.calc( items.length ) || false;
+		if( result === false ) { return( items ); }
+		result = items.slice( result.from, result.to );
+		return( result );
+	}
+});
 ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $scope, $filter, $log ) {
 	$scope.data = {_ng_data};
+	$scope.test = 111;
 	$scope._upload_list__count = 0;
+	$scope.Pagination = {
+		page      : 1,
+		page_size : 10,
+		pages     : 0,
+		from      : 0,
+		to        : 0,
+		next: function() {
+			++this.page;
+			this.calc();
+		},
+		back: function() {
+			--this.page;
+			this.calc();
+		},
+		calc: function( length ) {
+			this.length = length || this.length;
+			length      = length || this.length;
+			var page       = this.page;
+			this.page_size = this.page_size < 1 ? 1: this.page_size;
+			var page_size  = this.page_size;
+			// from
+			var result = ( page - 1 ) * page_size;
+			result = ( result < 0 ? 0: result );
+			this.from = result;
+			// to
+			result = result + page_size;
+			result = ( result > length ? length: result );
+			this.to = result;
+			// pages
+			this.pages = Math.ceil( length / page_size );
+			// page
+			this.page = this.page < 1          ? 1:          this.page;
+			this.page = this.page > this.pages ? this.pages: this.page;
+			result = { from: this.from, to: this.to };
+			return( result );
+		}
+	}
 	$scope.UploadApi = {
 		item__get: function( item ) {
 			var result = UploadApi.item__get( item.id );
@@ -280,14 +329,16 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $scope, $filte
 	// prerape upload list
 	var _prepare__upload_list = function( scope ) {
 		var count = 0;
-		angular.forEach( scope.data._upload_list, function( item, idx ) {
-			var time = $filter( 'date' )( item.time * 1000, 'yyyy-MM-dd H:mm:ss' );
-			var status = $scope.data._upload_status[ item.status ];
-			item[ '_time'   ] = time;
-			item[ '_status' ] = status;
-			++count;
-		});
-		$scope._upload_list__count = count;
+		if( scope.data ) {
+			angular.forEach( scope.data._upload_list, function( item, idx ) {
+				var time = $filter( 'date' )( item.time * 1000, 'yyyy-MM-dd H:mm:ss' );
+				var status = $scope.data._upload_status[ item.status ];
+				item[ '_time'   ] = time;
+				item[ '_status' ] = status;
+				++count;
+			});
+			$scope._upload_list__count = count;
+		}
 	};
 	// init
 	_prepare__upload_list( $scope );
