@@ -1,4 +1,5 @@
 <script>
+(function () { 'use strict';
 
 ng_app_admin.factory( 'Uploader', function( ApiConfig, $q, $rootScope, $window, $log ) {
 	var service = {};
@@ -43,7 +44,7 @@ ng_app_admin.factory( 'Uploader', function( ApiConfig, $q, $rootScope, $window, 
 		if( options.onprogress ) {
 			xhr.upload.onprogress = options.onprogress;
 		}
-		formdata = new FormData();
+		var formdata = new FormData();
 			formdata.append( name, file, file.name );
 		xhr.open( 'POST', url, true );
 		xhr.send( formdata );
@@ -73,12 +74,13 @@ ng_app_admin.factory( 'UploadApi',  function( ApiConfig, $resource, $window, $lo
 	return( service );
 });
 
-ng_app_admin.directive( 'fileUpload', function( ApiConfig, Uploader, $parse, $window, $log ) {
+ng_app_admin.directive( 'fileUpload', function( ApiConfig, Uploader, $alert, $timeout, $parse, $window, $log ) {
 	return {
 		restrict: 'AE',
 		link: function( $scope, element, attrs ) {
 			// init vars
 			var url          = ApiConfig.url.upload || $window.location.href;
+			var show_status = $scope.$eval( attrs[ 'showStatus' ] ) || false;
 			var text_select  = attrs.placeholder || 'Выберете файл...';
 			var file_name    = '';
 			var file_size    = 0;
@@ -87,9 +89,17 @@ ng_app_admin.directive( 'fileUpload', function( ApiConfig, Uploader, $parse, $wi
 			var $btn_upload  = element.children( '.ngfu-upload-button' ).first();
 			$scope.message   = text_select;
 			// show message
-			$scope.show_message = function( message ) {
-				var show_status = $scope.$eval( attrs[ 'showStatus' ] ) || false;
+			$scope.show_message_default = function( message ) {
+				var message = message || text_select;
+				$timeout( function() {
+					$scope.show_message( message )
+				}, 5000 );
+			};
+			$scope.show_message = function( message, error ) {
 				if( show_status && message ) {
+					$scope.action = {
+						error: !!error,
+					};
 					$scope.message = message;
 				}
 			};
@@ -131,19 +141,21 @@ ng_app_admin.directive( 'fileUpload', function( ApiConfig, Uploader, $parse, $wi
 							var message = result.response.action.status_message || '';
 								message = file_name + ( message && ( ' - ' + message ) );
 							$scope.show_message( message );
+							$scope.show_message_default();
 							$scope.onSuccess({ result: result });
 						},
 						// file not uploaded
 						function( result ) {
 							var file_name = result.options.file.name;
-							$scope.show_message( file_name + ' - не загружен' );
+							$scope.show_message( file_name + ' - не загружен', true );
+							$scope.show_message_default();
 							$scope.onFail({ result: result });
 						});
 				// file canceled
 				} else {
 					var result = { options: options };
 					var file_name = result.options.file.name;
-					$scope.show_message( file_name + ' - отменен' );
+					$scope.show_message( file_name + ' - отменен', true );
 					$scope.onCancel({ result: result });
 				}
 			}
@@ -157,7 +169,7 @@ ng_app_admin.directive( 'fileUpload', function( ApiConfig, Uploader, $parse, $wi
 			'onCancel'   : '&',
 		},
 		template:
-			'<span class="ngfu-upload-button btn btn-success" ng-bind="message"></span>'
+			'<span class="ngfu-upload-button btn btn-success" ng-class="{ \'btn-success\': !action.error, \'btn-warning\': action.error }" ng-bind="message"></span>'
 			+ '<input class="ngfu-upload-file" type="file" ng-hide="true">'
 		,
 	}
@@ -212,7 +224,7 @@ ng_app_admin.filter( 'pagination', function( $log ) {
 		return( result );
 	}
 });
-ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $scope, $filter, $log ) {
+ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $scope, $filter, $log ) {
 	$scope.data = {_ng_data};
 	$scope.test = 111;
 	$scope._upload_list__count = 0;
@@ -238,11 +250,11 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $scope, $filte
 			var page_size  = this.page_size;
 			// from
 			var result = ( page - 1 ) * page_size;
-			result = ( result < 0 ? 0: result );
-			this.from = result;
+			result     = ( result < 0 ? 0: result );
+			this.from  = result;
 			// to
-			result = result + page_size;
-			result = ( result > length ? length: result );
+			result  = result + page_size;
+			result  = ( result > length ? length: result );
 			this.to = result;
 			// pages
 			this.pages = Math.ceil( length / page_size );
@@ -282,21 +294,31 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $scope, $filte
 			var result = UploadApi.list__remove_all();
 			result.$promise.then(
 				function( r ) {
+					var title = r.response.action.status_message;
+					$scope.notifications( title );
 					$scope.upload_list__update({ response: r.response });
 				},
 				function( r ) {
+					var title = 'не удалось удалить все загруженные файлы';
+					$scope.notifications( title );
 					$log.log( 'upload_list->remove_all is fail:', r );
 				}
 			);
+			$scope.item_data = null;
 		}
 	};
 	$scope.item__get = function( result ) {
 		$scope.upload_list__update( result );
 		if( result.response.action.status ) {
-			$scope.action.status_message = 'файл получен';
+			var data    = result.response.action.data;
+			var title   = data.file + ' (' + data.rows + '):';
+			var content = 'файл получен';
+			$scope.notifications( title, content );
 			$scope.item_data = result.response.action.data;
 		} else {
-			$scope.action.status_message = 'файл не распознан';
+			var title   = $scope.item_data.file + ':';
+			var content = 'файл не распознан';
+			$scope.notifications( title, content, 'error' );
 			$scope.item_data = null;
 		}
 	};
@@ -306,31 +328,44 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $scope, $filte
 			this[ idx ] = item;
 		}, $scope );
 	};
+	$scope.notifications = function( title, content, type ) {
+		$alert({
+			title   : title   || '',
+			content : content || '',
+			type    : type    || 'info',
+		});
+	};
+	$scope.upload_list__success = function( result ) {
+		var file    = result.options.file.name;
+		var size    = ( result.options.file.size / 1024 / 1024 ).toFixed( 2 ) + 'MB';
+		var title   = result.options.file.name + ', ' + size + ':';
+		var content = result.response.action.status_message;
+		$scope.notifications( title, content );
+		$scope.upload_list__update( result );
+	};
 	$scope.upload_list__fail = function( result ) {
 		var status = result.xhr.status;
+		var error = function( message ) {
+			var file    = result.options.file.name;
+			var size    = ( result.options.file.size / 1024 / 1024 ).toFixed( 2 ) + 'MB';
+			var title   = result.options.file.name + ', ' + size + ':';
+			var content = message;
+			$scope.notifications( title, content, 'error' )
+		};
 		if( status == 413 ) {
-			$scope.action = {
-				status         : status,
-				status_message : 'HTTP-сервер не позволяет загружать очень большие файлы'
-			}
+			error( 'HTTP-сервер не позволяет загружать очень большие файлы' );
 		}
 		else if( status == 500 ) {
-			$scope.action = {
-				status         : status,
-				status_message : 'PHP-сервер не позволяет загружать очень большие файлы'
-			}
+			error( 'PHP-сервер не позволяет загружать очень большие файлы' );
 		}
 		else if( status == 503 ) {
-			$scope.action = {
-				status         : status,
-				status_message : 'PHP-сервер не позволяет выполнять данную операцию'
-			}
+			error( 'PHP-сервер не позволяет выполнять данную операцию' );
 		}
 	};
 	// prerape upload list
 	var _prepare__upload_list = function( scope ) {
 		var count = 0;
-		if( scope.data ) {
+		if( 'data' in scope ) {
 			angular.forEach( scope.data._upload_list, function( item, idx ) {
 				var time = $filter( 'date' )( item.time * 1000, 'yyyy-MM-dd H:mm:ss' );
 				var status = $scope.data._upload_status[ item.status ];
@@ -354,4 +389,14 @@ ng_app_admin.constant( 'ApiConfig', {
 	}
 });
 
+ng_app_admin.config( function( $alertProvider ) {
+	angular.extend( $alertProvider.defaults, {
+		container : '.notifications',
+		duration  : 5,
+		placement : 'top-left',
+		type      : 'info',
+	});
+});
+
+})();
 </script>

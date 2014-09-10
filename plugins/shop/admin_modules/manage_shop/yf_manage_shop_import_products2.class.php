@@ -185,7 +185,9 @@ class yf_manage_shop_import_products2 {
 		$upload_path = $this->upload_path;
 		$upload_list = &$this->upload_list;
 		foreach( $upload_list as $id => $item ) {
-			$file = $upload_path . $id;
+			$file       = $upload_path . $id;
+			$file_cache = $file . '.cache';
+				file_exists( $file_cache ) && @unlink( $file_cache );
 			if( file_exists( $file ) && false === @unlink( $file ) ) {
 				$result = array(
 					'status'         => false,
@@ -252,6 +254,7 @@ class yf_manage_shop_import_products2 {
 			require_once( INCLUDE_PATH.'libs/phpexcel/PHPExcel.php' );
 		}
 		// parse file
+		$format = PHPExcel_IOFactory::identify( $file_name );
 		$format = PHPExcel_IOFactory::identify( $file_name ) ?: $format_default;
 		$reader = PHPExcel_IOFactory::createReader( $format );
 		$reader->setReadDataOnly( true );
