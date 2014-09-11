@@ -65,10 +65,16 @@ class yf_validate {
 	* Method by form-less checking of any custom data for validity
 	*/
 	public function _input_is_valid($input, $validate_rules = array()) {
+		if (!is_array($input)) {
+			$input = array('input' => $input);
+		}
 		$rules = array();
 		$global_rules = isset($this->_params['validate']) ? $this->_params['validate'] : $this->_replace['validate'];
 		foreach ((array)$global_rules as $name => $_rules) {
 			$rules[$name] = $_rules;
+		}
+		if (!is_array($validate_rules)) {
+			$validate_rules = array('__before__' => $validate_rules);
 		}
 		foreach ((array)$validate_rules as $name => $_rules) {
 			$rules[$name] = $_rules;
@@ -95,6 +101,20 @@ class yf_validate {
 	*/
 	public function _do_check_data_is_valid($rules = array(), &$data) {
 		$validate_ok = true;
+		$_all = '__all__';
+		if (isset($rules[$_all])) {
+			$rules_for_all = $rules[$_all];
+			foreach ((array)$data as $name => $_tmp) {
+				if (isset($rules[$name])) {
+					foreach ((array)$rules_for_all as $_rule) {
+						$rules[$name][] = $_rule;
+					}
+				} else {
+					$rules[$name] = $rules_for_all;
+				}
+			}
+			unset($rules[$_all]);
+		}
 		foreach ((array)$rules as $name => $_rules) {
 			$is_required = false;
 			foreach ((array)$_rules as $rule) {
@@ -166,6 +186,10 @@ class yf_validate {
 		}
 		unset($_name);
 
+		// Special case when only __before__ or __after__ passed
+		if ((!empty($all_after) || !empty($all_before)) && empty($validate_rules)) {
+			$validate_rules = array('__all__' => '');
+		}
 		$out = array();
 		foreach ((array)$validate_rules as $name => $raw) {
 			$is_html_array = (false !== strpos($name, '['));
