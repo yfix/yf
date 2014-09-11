@@ -950,5 +950,10 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( validate(array('key' => array()), array('key' => 'trim|required')) );
 		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ''), array('key' => 'trim|required', 'key2' => 'required')) );
 		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ' '), array('key' => 'trim|required', 'key2' => 'required')) );
+
+		$this->assertTrue( validate(' test ', 'trim|required') );
+		$this->assertFalse( validate('  ', 'trim|required') );
+		$this->assertTrue( validate(array('key' => array('val1','val2'), 'key2' => 'v2'), 'trim|required') );
+		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ' '), 'trim|required') );
 	}
 }
