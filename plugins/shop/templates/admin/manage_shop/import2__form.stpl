@@ -76,6 +76,9 @@
 .page_item {
 	margin: auto 1em;
 }
+.item_data .item_head {
+	text-align: center;
+}
 .import_field {
 	width     : 100%;
 	min-width : 10em;
@@ -106,9 +109,10 @@
 			ng-repeat="item in item_data.items[ 0 ]"
 			class="item_head"
 		>
-		{{-- <span>{{ $index }}: </span> --}}
+		<span>№{{ $index }}</span>
 		<select class="import_field"
 			ng-model="item_data.fields[ $index ]"
+			ng-change="Import.field__change( $index )"
 			ng-options="key as value for ( key, value ) in data._import_field"
 			ui-select2
 		>

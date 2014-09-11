@@ -276,12 +276,25 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $scope
 			return( result );
 		}
 	}
+	$scope.Import = {
+		field__change: function( index ) {
+			var item = $scope.item_data.fields[ index ];
+			angular.forEach( $scope.item_data.fields, function( _item, _index ) {
+				if( item != 0 && index != _index && item == _item ) {
+					var title = $scope.data._import_field[ item ];
+					var content = '- данное поле уже используется в колонке №' + _index;
+					$scope.notifications( title, content, 'warning' );
+					this[ index ] = 0;
+					return( true );
+				}
+			}, $scope.item_data.fields );
+		}
+	};
 	$scope.UploadApi = {
 		item__get: function( item ) {
 			var result = UploadApi.item__get( item.id );
 			result.$promise.then(
 				function( r ) {
-				$log.log( 'get', r );
 					$scope.item__get({ response: r.response });
 					$scope.item_filter = '';
 				},

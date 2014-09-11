@@ -9,6 +9,7 @@ class yf_manage_shop_import_products2 {
 	private $_class_admin_products = false;
 
 	public $import_field = array(
+		0                   => 'не использовать (0)',
 		'id'                => 'идентификатор (id)',
 		'name'              => 'название (name)',
 		'price'             => 'цена (price)',
