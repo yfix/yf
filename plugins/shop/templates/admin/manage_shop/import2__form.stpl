@@ -66,7 +66,7 @@
 		ng-click      = "UploadApi.item__get( i )"
 	>
 		<td>{{i.file_name}}</td>
-		<td>{{i.file_size}}</td>
+		<td>{{i._file_size}}</td>
 		<td>{{i._time}}</td>
 		<td>{{i._status}}</td>
 	</tr>
@@ -75,6 +75,10 @@
 <style>
 .page_item {
 	margin: auto 1em;
+}
+.import_field {
+	width     : 100%;
+	min-width : 10em;
 }
 </style>
 <table class="item_data table table-striped" ng-show="item_data">
@@ -97,6 +101,20 @@
 		<th>время</th>
 		<th>статус</th>
 	</tr> --}}
+	<tr>
+		<th
+			ng-repeat="item in item_data.items[ 0 ]"
+			class="item_head"
+		>
+		{{-- <span>{{ $index }}: </span> --}}
+		<select class="import_field"
+			ng-model="item_data.fields[ $index ]"
+			ng-options="key as value for ( key, value ) in data._import_field"
+			ui-select2
+		>
+		</select>
+		</th>
+	</tr>
 	<tr
 		ng-repeat="item in item_data.items | filter: item_filter | pagination: { controller: Pagination }"
 		class="item"

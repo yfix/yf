@@ -1,4 +1,4 @@
-	<script type="text/javascript">
+	<script>
 	try {
 		var ng_app_admin = angular.module( '{ng_app}', [
 			'ngAnimate'
@@ -6,9 +6,9 @@
 			, 'ngResource'
 			, 'ngTouch'
 			, 'mgcrea.ngStrap'
-		])
-
-		.config( function( $datepickerProvider ) {
+			,'ui.select2'
+		]);
+		ng_app_admin.config( function( $datepickerProvider ) {
 			angular.extend( $datepickerProvider.defaults, {
 				dateFormat: 'dd.MM.yyyy'
 				, autoclose: 1
@@ -16,5 +16,6 @@
 				, startView: 2
 			});
 		});
+
 	} catch (e) { console.error(e); }
 	</script>

@@ -8,6 +8,19 @@ class yf_manage_shop_import_products2 {
 	private $_instance             = false;
 	private $_class_admin_products = false;
 
+	public $import_field = array(
+		'id'                => 'идентификатор (id)',
+		'name'              => 'название (name)',
+		'price'             => 'цена (price)',
+		'price_raw'         => 'себестоимость (price_raw)',
+		'articul'           => 'артикул (articul)',
+		'cat_id'            => 'категория: идентификатор (cat_id)',
+		'category.name'     => 'категория: название (category.name)',
+		'manufacturer_id'   => 'производитель: идентификатор (manufacturer_id)',
+		'manufacturer.name' => 'производитель: название (manufacturer.name)',
+		'supplier_id'       => 'поставщик: идентификатор (supplier_id)',
+		'supplier.name'     => 'поставщик: название (supplier.name)',
+	);
 	public $upload_path            = null;
 	public $upload_list            = null;
 	public $upload_list__file_name = null;
@@ -214,12 +227,20 @@ class yf_manage_shop_import_products2 {
 		$file = $upload_path . $id;
 		if( !empty( $upload_list[ $id ] ) && file_exists( $file ) ) {
 			$result = $this->_file_parse( $file, $upload_list[ $id ] );
+			$rows = count( $result );
+			$cols = count( $result[ 0 ] );
+			$fields = array();
+			for( $i = 0; $i < $cols; $i++ ) {
+				$fields[ $i ] = 0;
+			}
 			$result = array(
 				'data'   => array(
-					'file'  => $upload_list[ $id ][ 'file_name' ],
-					'rows'  => count( $result ),
-					'cols'  => count( $result[ 0 ] ),
-					'items' => $result,
+					'id'     => $id,
+					'file'   => $upload_list[ $id ][ 'file_name' ],
+					'rows'   => $rows,
+					'cols'   => $cols,
+					'items'  => $result,
+					'fields' => $fields,
 				),
 				'status' => true,
 			);
@@ -255,7 +276,7 @@ class yf_manage_shop_import_products2 {
 		}
 		// parse file
 		$format = PHPExcel_IOFactory::identify( $file_name );
-		$format = PHPExcel_IOFactory::identify( $file_name ) ?: $format_default;
+		$format = $format ?: $format_default;
 		$reader = PHPExcel_IOFactory::createReader( $format );
 		$reader->setReadDataOnly( true );
 		// $reader->setLoadAllSheets();
@@ -326,9 +347,11 @@ class yf_manage_shop_import_products2 {
 	function _data_ng( $json = false ) {
 		$_upload_list   = $this->upload_list;
 		$_upload_status = $this->upload_status;
+		$_import_field  = $this->import_field;
 		$result = array(
 			'_upload_status' => $_upload_status,
 			'_upload_list'   => $_upload_list,
+			'_import_field'  => $_import_field,
 		);
 		if( $json ) {
 			$result = json_encode( $result, JSON_NUMERIC_CHECK );
