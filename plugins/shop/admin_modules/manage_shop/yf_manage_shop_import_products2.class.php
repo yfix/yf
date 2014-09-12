@@ -16,11 +16,11 @@ class yf_manage_shop_import_products2 {
 		'price_raw'         => 'себестоимость (price_raw)',
 		'articul'           => 'артикул (articul)',
 		'cat_id'            => 'категория: идентификатор (cat_id)',
-		'category.name'     => 'категория: название (category.name)',
+		'category_name'     => 'категория: название (category_name)',
 		'manufacturer_id'   => 'производитель: идентификатор (manufacturer_id)',
-		'manufacturer.name' => 'производитель: название (manufacturer.name)',
+		'manufacturer_name' => 'производитель: название (manufacturer_name)',
 		'supplier_id'       => 'поставщик: идентификатор (supplier_id)',
-		'supplier.name'     => 'поставщик: название (supplier.name)',
+		'supplier_name'     => 'поставщик: название (supplier_name)',
 	);
 	public $upload_path            = null;
 	public $upload_list            = null;
@@ -36,6 +36,8 @@ class yf_manage_shop_import_products2 {
 		'upload' => 'загружен',
 		'import' => 'импортирован',
 	);
+	// cache
+	public $cache_products = array();
 
 	function _init() {
 		$this->_class_admin_products = _class( 'manage_shop_products', 'admin_modules/manage_shop/' );
@@ -297,10 +299,11 @@ class yf_manage_shop_import_products2 {
 			return( $result );
 		}
 		// save import options
-		$upload_path = $this->upload_path;
-		$file      = $upload_path . $id;
-		$file_name = $file . '.import';
-		$result    = $this->_save_json( $file_name, $post[ 'data' ] );
+		$upload_path   = $this->upload_path;
+		$file          = $upload_path . $id;
+		$file_name     = $file . '.import';
+		$import_fields = $post[ 'data' ];
+		$result    = $this->_save_json( $file_name, $import_fields );
 		if( FALSE === $result ) {
 			$result = array(
 				'status_message' => 'импорт - невозможно сохранить параметры',
@@ -308,13 +311,155 @@ class yf_manage_shop_import_products2 {
 			);
 			return( $result );
 		}
+		// test import items
+		$_upload_item__import_test = $this->_upload_item__import_test( $id, $import_fields );
 		$result = array(
 			'data'   => array(
-				'id' => $id,
-				'get' => $post,
+				'id'           => $id,
+				'_import_test' => $_upload_item__import_test,
 			),
 			'status' => false,
 		);
+		return( $result );
+	}
+
+	protected function _upload_item__import_test( $id, $import_fields ) {
+		$upload_list = $this->upload_list;
+		// load import data
+		$upload_path = $this->upload_path;
+		$file        = $upload_path . $id;
+		$items = $this->_file_parse( $file, $upload_list[ $id ] );
+		$import_fields_test = array();
+		// get import fields
+		foreach( $import_fields as $index => $field ) {
+			if( empty( $field ) ) { continue; }
+			$import_fields_test[ $index ] = $field;
+		}
+		$_import_field = $this->import_field;
+		$result = array();
+		foreach( $items as $index => $item ) {
+			$valid          = true;
+			$status         = true;
+			$exists         = null;
+			$status_message = array();
+			$exists_message = array();
+			$result[ $index ] = array(
+				'fields'         => array(),
+				'valid'          => $valid,
+				'exists'         => $exists,
+				'exists_message' => '',
+				'status'         => $status,
+				'status_message' => 'правильный формат',
+
+			);
+			foreach( $import_fields_test as $field_index => $field ) {
+				$value = $item[ $field_index ];
+				$test = $this->_field__test( $field, $value );
+				$result[ $index ][ 'fields' ][ $field_index ] = $test;
+				$status = $status && $test[ 'status' ];
+				if( $status === FALSE ) {
+					$status_message[] = $test[ 'status_message' ];
+				}
+				if( !is_null( $test[ 'exists' ] ) ) {
+					if( is_null( $exists ) ) {
+						$exists = $test[ 'exists' ];
+					} elseif( $exists != $test[ 'exists' ] ) {
+						// collision
+						$exists = -1;
+					}
+					$exists_message[] =
+						$_import_field[ $field ] . ' = ' . $value . ' - '
+						. ( $test[ 'exists' ] ? 'существует': 'не существует' );
+				}
+			}
+			$result[ $index ][ 'status' ] = $status;
+			$result[ $index ][ 'exists' ] = $exists;
+			!empty( $exists_message ) && ( $result[ $index ][ 'exists_message' ]
+				= implode( '; ', $exists_message ) );
+			!empty( $status_message ) && ( $result[ $index ][ 'status_message' ]
+				= implode( '; ', $status_message ) );
+		}
+		return( $result );
+	}
+
+	protected function _field__test( $field, $value ) {
+		$_class  = $this;
+		$_method = '_field_test__' . $field;
+		$_status = method_exists( $_class, $_method );
+		if( !$_status ) { return( false ); }
+		return( $_class->$_method( $value ) );
+	}
+
+	protected function _field_test__id( $value ) {
+		$value  = (int)$value;
+		$valid  = $value > 0;
+		$exists = $this->_product_exists( $value );
+		$status = $valid && $exists;
+		$status_message = $status ? 'товар уже существует' : 'товар не существует';
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
+	protected function _field_test__price( $value ) {
+		$value  = (float)$value;
+		$valid  = $value > 0;
+		$exists = null;
+		$status = $valid;
+		$status_message = $status ? 'цена больше нуля' : 'цена должна быть больше нуля';
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
+	function _product_exists( $id ) {
+		$products = &$this->cache_products;
+		if( !isset( $products[ $id ] ) ) {
+			$product = $this->_get_products( array(
+				'where' => array(
+					'id' => $id
+				),
+			));
+			// cache
+			$products[ $id ] = null;
+			if( isset( $product[ $id ] ) ) {
+				$products[ $id ] = $product[ $id ];
+			}
+		}
+		$result = !is_null( $products[ $id ] );
+		return( $result );
+	}
+
+	function _get_products( $options ) {
+		$_      = $options;
+		$_where = $_[ 'where' ];
+		$_key   = isset( $_[ 'key' ] ) ? $_[ 'key' ] : 'id';
+		// prepare where
+		$where  = array();
+		foreach( $_where as $field => $value ) {
+			if( isset( $value ) ) {
+				$value = (array)$value;
+				$where[] = $field . ' IN( ' . implode( ', ', _es( $value ) ) . ' )';
+			}
+		}
+		$sql_where = '';
+		if( !empty( $where ) ) {
+			$sql_where = 'WHERE ' . implode( ' AND ', $where );
+		}
+		$sql = sprintf(
+			'SELECT * FROM %s %s'
+			, db( 'shop_products' )
+			, $sql_where
+		);
+		$result = db_get_all( $sql, $_key );
 		return( $result );
 	}
 
