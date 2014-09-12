@@ -37,11 +37,15 @@ abstract class yf_db_installer {
 	/** @var bool */
 	public $RESTORE_FULLTEXT_INDEX	= true;
 	/** @var bool */
-	public $PARTITION_BY_COUNTRY	= false;
+	public $SHARDING_BY_YEAR		= false;
 	/** @var bool */
-	public $PARTITION_BY_MONTH		= false;
+	public $SHARDING_BY_MONTH		= false;
 	/** @var bool */
-	public $PARTITION_BY_DAY		= false;
+	public $SHARDING_BY_DAY			= false;
+	/** @var bool */
+	public $SHARDING_BY_COUNTRY		= false;
+	/** @var bool */
+	public $SHARDING_BY_LANG		= false;
 
 	/**
 	* Catch missing method call
@@ -220,73 +224,22 @@ abstract class yf_db_installer {
 			return false;
 		}
 		if (isset($this->TABLES_SQL[$table_name])) {
-			$table_found	= true;
+			$table_found = true;
 		} elseif (isset($this->TABLES_SQL['sys_'.$table_name])) {
-			$table_name		= 'sys_'.$table_name;
-			$table_found	= true;
+			$table_name	= 'sys_'.$table_name;
+			$table_found = true;
 		}
 		if ($table_found) {
-			$table_struct	= $this->TABLES_SQL[$table_name];
-			$table_data		= $this->TABLES_DATA[$table_name];
-			$full_table_name	= $db->DB_PREFIX. $table_name;
-		}
-		$p_table_name = '';
-		// Try sharding by year/month (example: db('stats_cars_2009_08'), db('stats_cars_2009_07'), db('stats_cars_2009_06') from db('stats_cars'))
-		if (!$table_found && $this->PARTITION_BY_MONTH) {
-			$_t_name = $p_table_name ? $p_table_name : $table_name;
-			$p_month	= (int)substr($_t_name, -2);
-			$p_year		= (int)substr($_t_name, -7, 4);
-			if ($p_year >= 1970 && $p_year <= 2050 && $p_month >= 1 && $p_month <= 12) {
-				$p_table_name	= substr($_t_name, 0, -8);
-			}
-		}
-		// Try sharding by year/month/day (example: db('currency_pairs_log_2013_07_01') from db('currency_pairs_log'))
-		if (!$table_found && $this->PARTITION_BY_DAY) {
-			$_t_name = $p_table_name ? $p_table_name : $table_name;
-			$p_day		= (int)substr($_t_name, -2);
-			$p_month	= (int)substr($_t_name, -5, 2);
-			$p_year		= (int)substr($_t_name, -10, 4);
-			if ($p_year >= 1970 && $p_year <= 2050 && $p_month >= 1 && $p_month <= 12 && $p_day >= 1 && $p_day <= 31) {
-				$p_table_name	= substr($_t_name, 0, -11);
-			}
-		}
-		if ($p_table_name) {
-			if (isset($this->TABLES_SQL[$p_table_name])) {
-				$table_found	= true;
-			} elseif (isset($this->TABLES_SQL['sys_'.$p_table_name])) {
-				$table_found	= true;
-				$p_table_name	= 'sys_'.$p_table_name;
-				$table_name		= 'sys_'.$table_name;
-			}
-			if ($table_found) {
-				$table_struct	= $this->TABLES_SQL[$p_table_name];
-				$table_data		= $this->TABLES_DATA[$table_name]; // No error in name!
-				$full_table_name	= $db->DB_PREFIX. $table_name;
-			}
-		}
-		// Try sharding by country (example: db('cars_es'), db('cars_uk'), db('cars_de') from db('cars'))
-		if (!$table_found && $this->PARTITION_BY_COUNTRY) {
-			$_t_name = $p_table_name ? $p_table_name : $table_name;
-			$p_country		= substr($_t_name, -3);
-			if ($p_country{0} == '_') {
-				$p_country		= substr($p_country, 1);
-			}
-			if (preg_match('/[a-z]{2}/', $p_country)) {
-				$p_table_name	= substr($_t_name, 0, -3);
-			}
-		}
-		if ($p_table_name) {
-			if (isset($this->TABLES_SQL[$p_table_name])) {
-				$table_found	= true;
-			} elseif (isset($this->TABLES_SQL['sys_'.$p_table_name])) {
-				$table_found	= true;
-				$p_table_name	= 'sys_'.$p_table_name;
-				$table_name		= 'sys_'.$table_name;
-			}
-			if ($table_found) {
-				$table_struct	= $this->TABLES_SQL[$p_table_name];
-				$table_data		= $this->TABLES_DATA[$table_name]; // No error in name!
-				$full_table_name	= $db->DB_PREFIX. $table_name;
+			$table_struct = $this->TABLES_SQL[$table_name];
+			$table_data	= $this->TABLES_DATA[$table_name];
+			$full_table_name = $db->DB_PREFIX. $table_name;
+		} else {
+			$shard = $this->_create_shard_table_struct($table_name, $data, $db);
+			if ($shard) {
+				$table_found = $shard['found'];
+				$table_struct = $shard['struct'];
+				$table_data	= $shard['data'];
+				$full_table_name = $shard['name'];
 			}
 		}
 		// Stop here if we do not know about given table name
@@ -305,6 +258,64 @@ abstract class yf_db_installer {
 		}
 		$this->_release_lock();
 		return $result;
+	}
+
+	/**
+	* Try to find table structure with sharding in mind
+	*/
+	function _create_shard_table_struct ($table_name, array $data, $db) {
+		$table_found = false;
+		$shard_table_name = '';
+		// Try sharding by year/month (example: db('stats_cars_2009_08'), db('stats_cars_2009_07'), db('stats_cars_2009_06') from db('stats_cars'))
+		if (!$table_found && $this->SHARDING_BY_MONTH) {
+			$_t_name = $shard_table_name ? $shard_table_name : $table_name;
+			$shard_month = (int)substr($_t_name, -2);
+			$shard_year	= (int)substr($_t_name, -7, 4);
+			if ($shard_year >= 1970 && $shard_year <= 2050 && $shard_month >= 1 && $shard_month <= 12) {
+				$shard_table_name = substr($_t_name, 0, -8);
+			}
+		}
+		// Try sharding by year/month/day (example: db('currency_pairs_log_2013_07_01') from db('currency_pairs_log'))
+		if (!$table_found && $this->SHARDING_BY_DAY) {
+			$_t_name = $shard_table_name ? $shard_table_name : $table_name;
+			$shard_day = (int)substr($_t_name, -2);
+			$shard_month = (int)substr($_t_name, -5, 2);
+			$shard_year	= (int)substr($_t_name, -10, 4);
+			if ($shard_year >= 1970 && $shard_year <= 2050 && $shard_month >= 1 && $shard_month <= 12 && $shard_day >= 1 && $shard_day <= 31) {
+				$shard_table_name = substr($_t_name, 0, -11);
+			}
+		}
+		// Try sharding by country (example: db('cars_es'), db('cars_uk'), db('cars_de') from db('cars'))
+		if (!$table_found && $this->SHARDING_BY_COUNTRY) {
+			$_t_name = $shard_table_name ? $shard_table_name : $table_name;
+			$shard_country = substr($_t_name, -3);
+			if ($shard_country{0} == '_') {
+				$shard_country = substr($shard_country, 1);
+			}
+			if (preg_match('/[a-z]{2}/', $shard_country)) {
+				$shard_table_name = substr($_t_name, 0, -3);
+			}
+		}
+		if ($shard_table_name) {
+			if (isset($this->TABLES_SQL[$shard_table_name])) {
+				$table_found = true;
+			} elseif (isset($this->TABLES_SQL['sys_'.$shard_table_name])) {
+				$table_found = true;
+				$shard_table_name = 'sys_'.$shard_table_name;
+				$table_name	= 'sys_'.$table_name;
+			}
+			if ($table_found) {
+				$table_struct = $this->TABLES_SQL[$shard_table_name];
+				$table_data	= $this->TABLES_DATA[$table_name]; // No error in name!
+				$full_table_name = $db->DB_PREFIX. $table_name;
+			}
+		}
+		return $table_found ? array(
+			'found'	=> $table_found,
+			'name'	=> $full_table_name,
+			'struct'=> $table_struct,
+			'data'	=> $table_data,
+		) : false;
 	}
 
 	/**
@@ -333,34 +344,7 @@ abstract class yf_db_installer {
 		$table_struct = $data['fields'];
 		// Possibly this is partitioned table
 		if (empty($table_struct)) {
-			$table_found = false;
-			// Try partition by country (example: db('cars_es'), db('cars_uk'), db('cars_de') from db('cars'))
-			$p_table_name	= '';
-			if (!$table_found && $this->PARTITION_BY_COUNTRY) {
-				$p_country		= substr($table_name, -3);
-				if ($p_country{0} == '_') {
-					$p_country		= substr($p_country, 1);
-				}
-				if (preg_match('/[a-z]{2}/', $p_country)) {
-					$p_table_name	= substr($table_name, 0, -3);
-				}
-				$table_struct = $data[$p_table_name]['fields'];
-				if ($table_struct) {
-					$table_found = true;
-				}
-			}
-			// Try partition by year/month (example: db('stats_cars_2009_08'), db('stats_cars_2009_07'), db('stats_cars_2009_06') from db('stats_cars'))
-			if (!$table_found && $this->PARTITION_BY_MONTH && !$p_table_name) {
-				$p_month	= (int)substr($table_name, -2);
-				$p_year		= (int)substr($table_name, -7, 4);
-				if ($p_year >= 1970 && $p_year <= 2050 && $p_month >= 1 && $p_month <= 12) {
-					$p_table_name	= substr($table_name, 0, -8);
-				}
-				$table_struct = $data[$p_table_name]['fields'];
-				if ($table_struct) {
-					$table_found = true;
-				}
-			}
+			$table_struct = $this->_alter_shard_table_struct($table_name, $data, $db);
 		}
 		// Check if we have such field in the current table structure
 		// (then probably we have a simple mistake)
@@ -372,6 +356,41 @@ abstract class yf_db_installer {
 		$this->alter_table_post_hook($table_name, $column_name, $table_struct, $db);
 		$this->_release_lock();
 		return $result;
+	}
+
+	/**
+	* Try to find table structure with sharding in mind
+	*/
+	function _alter_shard_table_struct ($table_name, array $data, $db) {
+		$table_found = false;
+		// Try partition by country (example: db('cars_es'), db('cars_uk'), db('cars_de') from db('cars'))
+		$shard_table_name = '';
+		if (!$table_found && $this->SHARDING_BY_COUNTRY) {
+			$shard_country = substr($table_name, -3);
+			if ($shard_country{0} == '_') {
+				$shard_country = substr($shard_country, 1);
+			}
+			if (preg_match('/[a-z]{2}/', $shard_country)) {
+				$shard_table_name	= substr($table_name, 0, -3);
+			}
+			$table_struct = $data[$shard_table_name]['fields'];
+			if ($table_struct) {
+				$table_found = true;
+			}
+		}
+		// Try partition by year/month (example: db('stats_cars_2009_08'), db('stats_cars_2009_07'), db('stats_cars_2009_06') from db('stats_cars'))
+		if (!$table_found && $this->SHARDING_BY_MONTH && !$shard_table_name) {
+			$shard_month = (int)substr($table_name, -2);
+			$shard_year = (int)substr($table_name, -7, 4);
+			if ($shard_year >= 1970 && $shard_year <= 2050 && $shard_month >= 1 && $shard_month <= 12) {
+				$shard_table_name = substr($table_name, 0, -8);
+			}
+			$table_struct = $data[$shard_table_name]['fields'];
+			if ($table_struct) {
+				$table_found = true;
+			}
+		}
+		return $table_struct;
 	}
 
 	/**
