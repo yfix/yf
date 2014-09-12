@@ -67,10 +67,10 @@ ng_app_admin.factory( 'UploadApi',  function( ApiConfig, $resource, $window, $lo
 	var service = {};
 	service.url_list = ApiConfig.url.upload_list || $window.location.href;
 	service.url_item = ApiConfig.url.upload_item || $window.location.href;
-	service.resource = $resource( service.url, {}, {
-		list__remove_all : { method : 'POST', url : service.url_list, params : { sub_action : 'remove_all' } },
-		item__get        : { method : 'GET',  url : service.url_item, params : { sub_action : 'get' } },
-		item__import     : { method : 'POST', url : service.url_item, params : { sub_action : 'import' } },
+	service.resource = $resource( null, null, {
+		list__remove_all : { method : 'POST', url : service.url_list, params : { sub_action : 'remove_all' }  } ,
+		item__get        : { method : 'GET',  url : service.url_item, params : { sub_action : 'get'        }  } ,
+		item__import     : { method : 'POST', url : service.url_item, params : { sub_action : 'import'     }  } ,
 	});
 	service.list__remove_all = function() {
 		return( service.resource.list__remove_all() );
@@ -307,8 +307,7 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $scope
 			var result = UploadApi.item__import( $scope.item_data.id, $scope.item_data.fields );
 			result.$promise.then(
 				function( r ) {
-					{{-- $scope.item__get({ response: r.response }); --}}
-					$log.log( 'item->import is ok:', r );
+					$scope.item__import({ response: r.response });
 				},
 				function( r ) {
 					$log.log( 'item->import is fail:', r );
@@ -346,6 +345,19 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $scope
 			$scope.notifications( title, content, 'error' );
 			$scope.item_data = null;
 		}
+	};
+	$scope.item__import = function( result ) {
+		$log.log( 'import', result );
+		$scope.upload_list__update( result );
+		var title   = $scope.item_data.file + ':';
+		var content = result.response.action.status_message;
+		var type    = 'info';
+		if( result.response.action.status ) {
+		} else {
+			type = 'error';
+			content = content || 'ошибка';
+		}
+		$scope.notifications( title, content, type );
 	};
 	$scope.upload_list__update = function( result ) {
 		_prepare__upload_list( result.response );

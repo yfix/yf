@@ -125,6 +125,27 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
+	protected function _load_json( $file_name ) {
+		$result = FALSE;
+		if( file_exists( $file_name ) && ( $file = @fopen( $file_name, 'r' ) ) !== FALSE ) {
+			if( ( $data = @fread( $file, filesize( $file_name ) ) ) !== FALSE ) {
+				$result = @json_decode( $data, true );
+			}
+			fclose( $file );
+		}
+		return( $result );
+	}
+
+	protected function _save_json( $file_name, $data = null ) {
+		if( is_array( $data ) && ( $file = @fopen( $file_name, 'w' ) ) !== FALSE ) {
+			$result = @fwrite( $file, @json_encode( $data, JSON_NUMERIC_CHECK ) );
+			fclose( $file );
+		} else {
+			$result = false;
+		}
+		return( $result );
+	}
+
 	protected function _api_upload() {
 		$file = $_FILES[ 'file' ];
 		if( empty( $file ) || $file[ 'error' ] != UPLOAD_ERR_OK ) {
@@ -180,10 +201,17 @@ class yf_manage_shop_import_products2 {
 
 	protected function _api_upload_item() {
 		$sub_action = $_GET[ 'sub_action' ];
+		if( $this->is_post ) {
+			$post = json_decode( file_get_contents( 'php://input' ), true );
+		}
 		switch( $sub_action ) {
 			case 'get':
-				$id = $_GET[ 'id' ];
+				$id = $_REQUEST[ 'id' ];
 				$result = $this->_upload_item__get( $id );
+				break;
+			case 'import':
+				$id = $post[ 'id' ];
+				$result = $this->_upload_item__import( $id, $post );
 				break;
 		}
 		$result = array(
@@ -227,12 +255,21 @@ class yf_manage_shop_import_products2 {
 		$upload_list = $this->upload_list;
 		$file = $upload_path . $id;
 		if( !empty( $upload_list[ $id ] ) && file_exists( $file ) ) {
-			$result = $this->_file_parse( $file, $upload_list[ $id ] );
-			$rows = count( $result );
-			$cols = count( $result[ 0 ] );
-			$fields = array();
-			for( $i = 0; $i < $cols; $i++ ) {
-				$fields[ $i ] = 0;
+			$items = $this->_file_parse( $file, $upload_list[ $id ] );
+			$rows  = count( $items );
+			$cols  = count( $items[ 0 ] );
+			// load import options
+			$upload_path = $this->upload_path;
+			$file      = $upload_path . $id;
+			$file_name = $file . '.import';
+			$result    = $this->_load_json( $file_name );
+			if( FALSE === $result ) {
+				$fields = array();
+				for( $i = 0; $i < $cols; $i++ ) {
+					$fields[ $i ] = 0;
+				}
+			} else {
+				$fields = $result;
 			}
 			$result = array(
 				'data'   => array(
@@ -240,12 +277,44 @@ class yf_manage_shop_import_products2 {
 					'file'   => $upload_list[ $id ][ 'file_name' ],
 					'rows'   => $rows,
 					'cols'   => $cols,
-					'items'  => $result,
+					'items'  => $items,
 					'fields' => $fields,
 				),
 				'status' => true,
 			);
 		}
+		return( $result );
+	}
+
+	protected function _upload_item__import( $id, $post ) {
+		$upload_list = $this->upload_list;
+		// item exists
+		if( !isset( $upload_list[ $id ] ) ) {
+			$result = array(
+				'status_message' => 'импорт - данная операция невозможна, данный файл отсутствует',
+				'status'         => false,
+			);
+			return( $result );
+		}
+		// save import options
+		$upload_path = $this->upload_path;
+		$file      = $upload_path . $id;
+		$file_name = $file . '.import';
+		$result    = $this->_save_json( $file_name, $post[ 'data' ] );
+		if( FALSE === $result ) {
+			$result = array(
+				'status_message' => 'импорт - невозможно сохранить параметры',
+				'status'         => false,
+			);
+			return( $result );
+		}
+		$result = array(
+			'data'   => array(
+				'id' => $id,
+				'get' => $post,
+			),
+			'status' => false,
+		);
 		return( $result );
 	}
 

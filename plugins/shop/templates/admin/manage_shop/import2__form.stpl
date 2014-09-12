@@ -42,14 +42,10 @@
 <table class="upload_list table table-striped" ng-show="data._upload_list">
 	<tr>
 		<th colspan="4">
-			Список загруженных файлов ({{_upload_list__count}})
+			<span>Список загруженных файлов ({{_upload_list__count}})</span>
+			<input style="width: 10em; margin: 0 2em;" type="text" ng-model="upload_list_filter">
 			<span class="btn btn-small btn-danger pull-right" ng-click="UploadApi.list__remove_all()">Удалить все</span>
 		</th>
-	</tr>
-	<tr>
-		<td colspan="4">
-			<input type="text" ng-model="upload_list_filter">
-		</td>
 	</tr>
 	<tr>
 		<th>имя</th>
@@ -87,23 +83,19 @@
 <table class="item_data table table-striped" ng-show="item_data">
 	<tr>
 		<th colspan="{{item_data.cols}}">
+			<span>
 			Файл: {{item_data.file}} ({{item_data.rows}})
+			</span>
+			<span style="width: 10em; margin: 0 2em;">
+				<input style="width: 10em; margin: 0;" type="text" ng-model="item_filter">
+				<span class="btn" ng-click="item_filter=''"><i class="fa fa-times"></i></span>
+				<span>(<span ng-bind="Pagination.length"></span>)</span>
+			</span>
 			<span class="btn btn-small btn-success pull-right" ng-click="UploadApi.item__import()">Импортировать</span>
 		</th>
 	</tr>
 	<tr>
-		<td colspan="{{item_data.cols}}">
-			<input type="text" ng-model="item_filter">
-			<span class="btn" ng-click="item_filter=''"><i class="fa fa-times"></i></span>
-			<span>(<span ng-bind="Pagination.length"></span>)</span>
-		</td>
 	</tr>
-	{{-- <tr>
-		<th>имя</th>
-		<th>размер</th>
-		<th>время</th>
-		<th>статус</th>
-	</tr> --}}
 	<tr>
 		<th
 			ng-repeat="item in item_data.items[ 0 ]"
