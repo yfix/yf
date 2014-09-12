@@ -10,7 +10,27 @@ abstract class yf_db_installer {
 	/** @var array */
 	public $TABLES_DATA				= array();
 	/** @var bool */
+	public $USE_CACHE				= true;
+	/** @var bool */
+	public $USE_LOCKING				= false;
+	/** @var int */
+	public $LOCK_TIMEOUT			= 600;
+	/** @var string */
+	public $LOCK_FILE_NAME			= 'db_installer.lock';
+	/** @var bool */
+	public $RESTORE_FULLTEXT_INDEX	= true;
+	/** @var bool */
 	public $USE_SQL_IF_NOT_EXISTS	= true;
+	/** @var bool */
+	public $SHARDING_BY_YEAR		= false;
+	/** @var bool */
+	public $SHARDING_BY_MONTH		= false;
+	/** @var bool */
+	public $SHARDING_BY_DAY			= false;
+	/** @var bool */
+	public $SHARDING_BY_COUNTRY		= false;
+	/** @var bool */
+	public $SHARDING_BY_LANG		= false;
 	/** @var array @conf_skip Required patterns */
 	public $_patterns	= array(
 		'table'		=> "/^CREATE[\s\t]*TABLE[\s\t]*[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]*\((.*)\)([^\(]*)\$/ims",
@@ -26,26 +46,6 @@ abstract class yf_db_installer {
 // TODO: support for foreign keys
 // TODO: support for partitions
 	);
-	/** @var int Lifetime for caches */
-	public $CACHE_TTL				= 86400; // 1*3600*24 = 1 day
-	/** @var bool */
-	public $USE_LOCKING				= false;
-	/** @var int */
-	public $LOCK_TIMEOUT			= 600;
-	/** @var string */
-	public $LOCK_FILE_NAME			= 'db_installer.lock';
-	/** @var bool */
-	public $RESTORE_FULLTEXT_INDEX	= true;
-	/** @var bool */
-	public $SHARDING_BY_YEAR		= false;
-	/** @var bool */
-	public $SHARDING_BY_MONTH		= false;
-	/** @var bool */
-	public $SHARDING_BY_DAY			= false;
-	/** @var bool */
-	public $SHARDING_BY_COUNTRY		= false;
-	/** @var bool */
-	public $SHARDING_BY_LANG		= false;
 
 	/**
 	* Catch missing method call
@@ -234,16 +234,15 @@ abstract class yf_db_installer {
 			$table_data	= $this->TABLES_DATA[$table_name];
 			$full_table_name = $db->DB_PREFIX. $table_name;
 		} else {
+			// Try if sharded table
 			$shard = $this->_shard_table_struct($table_name, $data, $db);
 			if ($shard) {
-				$table_found = $shard['found'];
 				$table_struct = $shard['struct'];
 				$table_data	= $shard['data'];
 				$full_table_name = $shard['name'];
 			}
 		}
-		// Stop here if we do not know about given table name
-		if (!$table_found || empty($table_struct)) {
+		if (empty($table_struct)) {
 			return false;
 		}
 		$table_struct = $this->create_table_pre_hook($full_table_name, $table_struct, $db);
@@ -275,7 +274,10 @@ abstract class yf_db_installer {
 			return false;
 		}
 		$cache_name = __CLASS__.'__'.__FUNCTION__.'__'.$table_name;
-		$data = cache_get($cache_name);
+		$data = array();
+		if ($this->USE_CACHE) {
+			$data = cache_get($cache_name);
+		}
 		if (!$data) {
 			$data = $this->_db_table_struct_into_array($this->TABLES_SQL[$table_name]);
 			cache_set($cache_name, $data);
@@ -284,15 +286,13 @@ abstract class yf_db_installer {
 			return false;
 		}
 		$table_struct = $data['fields'];
-		// Possibly this is sharded table
+		// Try if sharded table
 		if (empty($table_struct)) {
 			$shard = $this->_shard_table_struct($table_name, $data, $db);
 			if ($shard) {
 				$table_struct = $shard['struct'];
 			}
 		}
-		// Check if we have such field in the current table structure
-		// (then probably we have a simple mistake)
 		if (!isset($table_struct[$column_name])) {
 			return false;
 		}
@@ -357,7 +357,6 @@ abstract class yf_db_installer {
 				$shard_table_name = substr($name, 0, -strlen('_es'));
 			}
 		}
-		$table_found = false;
 		if ($shard_table_name) {
 			if (isset($this->TABLES_SQL[$shard_table_name])) {
 				$table_found = true;
@@ -372,8 +371,7 @@ abstract class yf_db_installer {
 				$full_table_name = $db->DB_PREFIX. $table_name;
 			}
 		}
-		return $table_found ? array(
-			'found'	=> $table_found,
+		return $table_struct ? array(
 			'name'	=> $full_table_name,
 			'struct'=> $table_struct,
 			'data'	=> $table_data,
