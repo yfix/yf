@@ -517,8 +517,7 @@ class yf_validate {
 			list($check_table, $check_field) = explode('.', $param);
 		}
 		if ($check_table && $check_field && $in) {
-// TODO: convert into query buidler
-			$exists = $this->db->get_one('SELECT `'.$this->db->es($check_field).'` FROM '.$this->db->_real_name($check_table).' WHERE `'.$this->db->es($check_field).'`="'.$this->db->es($in).'"');
+			$exists = $this->db->select($this->db->es($check_field))->from($check_table)->where($this->db->es($check_field), '=', $this->db->es($in))->get_one();
 			if ($exists == $in) {
 				return false;
 			}
@@ -540,8 +539,12 @@ class yf_validate {
 			list($check_table, $check_field, $check_id) = explode('.', $param);
 		}
 		if ($check_table && $check_field && $check_id && $in) {
-// TODO: convert into query buidler
-			$exists = $this->db->get_one('SELECT `'.$this->db->es($check_field).'` FROM '.$this->db->_real_name($check_table).' WHERE `'.$this->db->es($check_field).'`="'.$this->db->es($in).'" AND `'.$this->db->es($id_field).'` != "'.$this->db->es($check_id).'"');
+			$exists = $this->db
+				->select($this->db->es($check_field))
+				->from($check_table)
+				->where($this->db->es($check_field), '=', $this->db->es($in))
+				->where($this->db->es($id_field), '!=', $this->db->es($check_id))
+				->get_one();
 			if ($exists == $in) {
 				return false;
 			}
@@ -562,8 +565,11 @@ class yf_validate {
 			list($check_table, $check_field) = explode('.', $param);
 		}
 		if ($check_table && $check_field && $in) {
-// TODO: convert into query buidler
-			$exists = $this->db->get_one('SELECT `'.$this->db->es($check_field).'` FROM '.$this->db->_real_name($check_table).' WHERE `'.$this->db->es($check_field).'`="'.$this->db->es($in).'"');
+			$exists = $this->db
+				->select($this->db->es($check_field))
+				->from($check_table)
+				->where($this->db->es($check_field), '=', $this->db->es($in))
+				->get_one();
 			if ($exists == $in) {
 				return true;
 			}
