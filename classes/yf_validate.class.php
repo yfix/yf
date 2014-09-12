@@ -45,6 +45,7 @@ class yf_validate {
 	/***/
 	public function _init() {
 		$this->MB_ENABLED = _class('utf8')->MULTIBYTE;
+		$this->db = db();
 	}
 
 	/***/
@@ -516,7 +517,8 @@ class yf_validate {
 			list($check_table, $check_field) = explode('.', $param);
 		}
 		if ($check_table && $check_field && $in) {
-			$exists = db()->get_one('SELECT `'.db()->es($check_field).'` FROM '.db($check_table).' WHERE `'.db()->es($check_field).'`="'.db()->es($in).'"');
+// TODO: convert into query buidler
+			$exists = $this->db->get_one('SELECT `'.$this->db->es($check_field).'` FROM '.$this->db->_real_name($check_table).' WHERE `'.$this->db->es($check_field).'`="'.$this->db->es($in).'"');
 			if ($exists == $in) {
 				return false;
 			}
@@ -538,7 +540,8 @@ class yf_validate {
 			list($check_table, $check_field, $check_id) = explode('.', $param);
 		}
 		if ($check_table && $check_field && $check_id && $in) {
-			$exists = db()->get_one('SELECT `'.db()->es($check_field).'` FROM '.db($check_table).' WHERE `'.db()->es($check_field).'`="'.db()->es($in).'" AND `'.db()->es($id_field).'` != "'.db()->es($check_id).'"');
+// TODO: convert into query buidler
+			$exists = $this->db->get_one('SELECT `'.$this->db->es($check_field).'` FROM '.$this->db->_real_name($check_table).' WHERE `'.$this->db->es($check_field).'`="'.$this->db->es($in).'" AND `'.$this->db->es($id_field).'` != "'.$this->db->es($check_id).'"');
 			if ($exists == $in) {
 				return false;
 			}
@@ -559,7 +562,8 @@ class yf_validate {
 			list($check_table, $check_field) = explode('.', $param);
 		}
 		if ($check_table && $check_field && $in) {
-			$exists = db()->get_one('SELECT `'.db()->es($check_field).'` FROM '.db($check_table).' WHERE `'.db()->es($check_field).'`="'.db()->es($in).'"');
+// TODO: convert into query buidler
+			$exists = $this->db->get_one('SELECT `'.$this->db->es($check_field).'` FROM '.$this->db->_real_name($check_table).' WHERE `'.$this->db->es($check_field).'`="'.$this->db->es($in).'"');
 			if ($exists == $in) {
 				return true;
 			}
@@ -999,7 +1003,8 @@ class yf_validate {
 				$_POST[$name_in_form] = preg_replace('/[^'.$_nick_pattern.']+/iu', '', $_POST[$name_in_form]);
 			}
 		} elseif ($TEXT_TO_CHECK != $CUR_VALUE) {
-			$NICK_ALREADY_EXISTS = (db()->query_num_rows('SELECT id FROM '.db('user').' WHERE nick="'._es($TEXT_TO_CHECK).'"') >= 1);
+// TODO: convert into query buidler
+			$NICK_ALREADY_EXISTS = ($this->db->query_num_rows('SELECT id FROM '.$this->db->_real_name('user').' WHERE nick="'.$this->db->es($TEXT_TO_CHECK).'"') >= 1);
 			if ($NICK_ALREADY_EXISTS) {
 				_re(t('Nick "@name" is already reserved. Please try another one.', array('@name' => $TEXT_TO_CHECK)));
 			}
@@ -1028,7 +1033,8 @@ class yf_validate {
 			_re('Wrong Profile url format! Letters or numbers only with no spaces');
 		} elseif (in_array($TEXT_TO_CHECK, $this->reserved_words)) {
 			_re('This profile url ("'.$TEXT_TO_CHECK.'") is our site reserved name. Please try another one.');
-		} elseif (db()->query_num_rows('SELECT id FROM '.db('user').' WHERE profile_url="'._es($TEXT_TO_CHECK).'"') >= 1) {
+// TODO: convert into query buidler
+		} elseif ($this->db->query_num_rows('SELECT id FROM '.$this->db->_real_name('user').' WHERE profile_url="'.$this->db->es($TEXT_TO_CHECK).'"') >= 1) {
 			_re('This profile url ("'.$TEXT_TO_CHECK.'") has already been registered with us! Please try another one.');
 		}
 	}
@@ -1040,7 +1046,8 @@ class yf_validate {
 // TODO: rewrite me
 		if ($_POST['login'] == '') {
 			_re('Login required');
-		} elseif (db()->query_num_rows('SELECT id FROM '.db('user').' WHERE login="'._es($_POST['login']).'"') >= 1) {
+// TODO: convert into query buidler
+		} elseif ($this->db->query_num_rows('SELECT id FROM '.$this->db->_real_name('user').' WHERE login="'.$this->db->es($_POST['login']).'"') >= 1) {
 			_re('This login '.$_POST['login'].' has already been registered with us!');
 		}
 	}
@@ -1067,7 +1074,8 @@ class yf_validate {
 			}
 		}
 		if (!empty($_POST['region'])) {
-			$region_info = db()->query_fetch('SELECT * FROM '.db('geo_regions').' WHERE country = "'._es($_POST['country']).'" AND code="'._es($_POST['region']).'"');
+// TODO: convert into query buidler
+			$region_info = $this->db->query_fetch('SELECT * FROM '.$this->db->_real_name('geo_regions').' WHERE country = "'.$this->db->es($_POST['country']).'" AND code="'.$this->db->es($_POST['region']).'"');
 			if (empty($region_info)) {
 				$_POST['region']	= '';
 				$_POST['state']		= '';
@@ -1077,7 +1085,8 @@ class yf_validate {
 			}
 		}
 		if (!empty($_POST['city'])) {
-			$city_info = db()->query_fetch('SELECT * FROM '.db('geo_city_location').' WHERE region = "'._es($_POST['region']).'" AND country = "'._es($_POST['country']).'" AND city="'._es($_POST['city']).'"');
+// TODO: convert into query buidler
+			$city_info = $this->db->query_fetch('SELECT * FROM '.$this->db->_real_name('geo_city_location').' WHERE region = "'.$this->db->es($_POST['region']).'" AND country = "'.$this->db->es($_POST['country']).'" AND city="'.$this->db->es($_POST['city']).'"');
 			if (empty($city_info)) {
 				$_POST['city']		= '';
 			}
