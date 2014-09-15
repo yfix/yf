@@ -80,9 +80,12 @@
 	min-width : 10em;
 }
 </style>
+
+<div class="item_data_tooltip" ></div>
+
 <table class="item_data table table-striped" ng-show="item_data">
 	<tr>
-		<th colspan="{{item_data.cols}}">
+		<th colspan="{{item_data.cols+1}}">
 			<span>
 			Файл: {{item_data.file}} ({{item_data.rows}})
 			</span>
@@ -91,7 +94,8 @@
 				<span class="btn" ng-click="item_filter=''"><i class="fa fa-times"></i></span>
 				<span>(<span ng-bind="Pagination.length"></span>)</span>
 			</span>
-			<span class="btn btn-small btn-success pull-right" ng-click="UploadApi.item__import()">Импортировать</span>
+			<span class="btn btn-small btn-warning pull-right" ng-click="UploadApi.item__import()" ng-show="!item_data.test_status">Проверить</span>
+			<span class="btn btn-small btn-success pull-right" ng-click="UploadApi.item__import()" ng-show="item_data.test_status">Импортировать</span>
 		</th>
 	</tr>
 	<tr>
@@ -110,12 +114,31 @@
 		>
 		</select>
 		</th>
+		<th>
+			Статус
+			<div ng-show="item_data.test">
+				<label style="margin: 0;"><input style="margin: 0 0.5em 0 0;" type="radio" name="item_filter_status" ng-model="item_filter_status">все</label>
+				<label style="margin: 0;"><input style="margin: 0 0.5em 0 0;" type="radio" name="item_filter_status" value="true" ng-model="item_filter_status">правильные</label>
+				<label style="margin: 0;"><input style="margin: 0 0.5em 0 0;" type="radio" name="item_filter_status" value="false" ng-model="item_filter_status">ошибки</label>
+			</div>
+		</th>
 	</tr>
 	<tr
-		ng-repeat="item in item_data.items | filter: item_filter | pagination: { controller: Pagination }"
+		ng-repeat="item in item_data.items | filter: { status: item_filter_status } | filter: item_filter | pagination: { controller: Pagination }"
 		class="item"
+		ng-class="{ 'success': item.status === true, 'danger': item.status === false, 'error': item.status === false }"
 	>
 		<td ng-repeat="i in item">{{i}}</td>
+		<td>
+			<span class="btn btn-small"
+				data-trigger="hover"
+				data-placement="left"
+				bs-tooltip="{ title: item.status_message }"
+				ng-show="item.status_message"
+			>
+				<i class="fa fa-info-circle"></i>
+			</span>
+		</td>
 	</tr>
 	<tr>
 		<td colspan="{{item_data.cols}}">

@@ -210,10 +210,13 @@ class yf_manage_shop_import_products2 {
 			case 'get':
 				$id = $_REQUEST[ 'id' ];
 				$result = $this->_upload_item__get( $id );
+				$test = $this->_upload_item__import( $id, $result[ 'data' ][ 'fields' ] );
+				$result[ 'data' ][ 'test' ] = $test;
 				break;
 			case 'import':
 				$id = $post[ 'id' ];
-				$result = $this->_upload_item__import( $id, $post );
+				$import_fields = $post[ 'data' ];
+				$result = $this->_upload_item__import( $id, $import_fields );
 				break;
 		}
 		$result = array(
@@ -288,7 +291,7 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
-	protected function _upload_item__import( $id, $post ) {
+	protected function _upload_item__import( $id, $import_fields ) {
 		$upload_list = $this->upload_list;
 		// item exists
 		if( !isset( $upload_list[ $id ] ) ) {
@@ -302,7 +305,6 @@ class yf_manage_shop_import_products2 {
 		$upload_path   = $this->upload_path;
 		$file          = $upload_path . $id;
 		$file_name     = $file . '.import';
-		$import_fields = $post[ 'data' ];
 		$result    = $this->_save_json( $file_name, $import_fields );
 		if( FALSE === $result ) {
 			$result = array(
@@ -355,6 +357,7 @@ class yf_manage_shop_import_products2 {
 			foreach( $import_fields_test as $field_index => $field ) {
 				$value = $item[ $field_index ];
 				$test = $this->_field__test( $field, $value );
+				if( $test === FALSE ) { continue; }
 				$result[ $index ][ 'fields' ][ $field_index ] = $test;
 				$status = $status && $test[ 'status' ];
 				if( $status === FALSE ) {

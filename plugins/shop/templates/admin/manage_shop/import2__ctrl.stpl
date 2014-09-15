@@ -235,9 +235,11 @@ ng_app_admin.filter( 'pagination', function( $log ) {
 	}
 });
 
-ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $scope, $filter, $log ) {
+ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 	$scope.data = {_ng_data};
-	$scope.test = 111;
+	$scope.item_data_tooltip = {
+		title: ''
+	};
 	$scope._upload_list__count = 0;
 	$scope.Pagination = {
 		page      : 1,
@@ -338,7 +340,19 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $scope
 			var title   = data.file + ' (' + data.rows + '):';
 			var content = 'файл получен';
 			$scope.notifications( title, content );
+			// get test data
+			var test = result.response.action.data.test.data._import_test;
+			var test_status = result.response.action.data.test.data.status;
+			// get data
+			result.response.action.data.test = null;
 			$scope.item_data = result.response.action.data;
+			$scope.item_data.test        = test;
+			$scope.item_data.test_status = test_status;
+			// inject status
+			angular.forEach( $scope.item_data.test, function( item, index ) {
+				this[ index ][ 'status'         ] = item[ 'status'         ];
+				this[ index ][ 'status_message' ] = item[ 'status_message' ];
+			}, $scope.item_data.items );
 		} else {
 			var title   = $scope.item_data.file + ':';
 			var content = 'файл не распознан';
@@ -352,10 +366,18 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $scope
 		var title   = $scope.item_data.file + ':';
 		var content = result.response.action.status_message;
 		var type    = 'info';
+		var test = result.response.action;
+		$scope.item_data.test = test.data._import_test;
+		$scope.item_data.test_status = test.status;
+			angular.forEach( $scope.item_data.test, function( item, index ) {
+				this[ index ][ 'status'         ] = item[ 'status'         ];
+				this[ index ][ 'status_message' ] = item[ 'status_message' ];
+			}, $scope.item_data.items );
 		if( result.response.action.status ) {
+			content = content || 'ошибок не обнаружено';
 		} else {
 			type = 'error';
-			content = content || 'ошибка';
+			content = content || 'импорт невозможен, проверьте установленные поля';
 		}
 		$scope.notifications( title, content, type );
 	};
