@@ -9,4 +9,5 @@ abstract class yf_cache_driver {
 	abstract protected function set($name, $data, $ttl = 0);
 	abstract protected function del($name);
 	abstract protected function flush();
+	abstract protected function stats();
 }
