@@ -4,6 +4,8 @@ load('cache_driver', 'framework', 'classes/cache/');
 class yf_cache_driver_tmp extends yf_cache_driver {
 
 	public $storage = array();
+	protected $hits = 0;
+	protected $misses = 0;
 
 	/**
 	* Catch missing method call
@@ -28,6 +30,11 @@ class yf_cache_driver_tmp extends yf_cache_driver {
 	/**
 	*/
 	function get($name, $ttl = 0, $params = array()) {
+		if (isset($this->storage[$name])) {
+			$this->_hits++;
+		} else {
+			$this->_misses++;
+		}
 		return $this->storage[$name];
 	}
 
@@ -60,34 +67,13 @@ class yf_cache_driver_tmp extends yf_cache_driver {
 
 	/**
 	*/
-	function multi_get(array $names, $ttl = 0, $params = array()) {
-		$result = array();
-		foreach ($names as $name) {
-			if (!isset($this->storage[$name])) {
-				continue;
-			}
-			$result[$name] = $this->storage[$name];
-		}
-		return $result;
-	}
-
-	/**
-	*/
-	function multi_set(array $data, $ttl = 0) {
-		foreach ($data as $name => $_data) {
-			$this->storage[$name] = $_data;
-		}
-		return true;
-	}
-
-	/**
-	*/
-	function multi_del(array $names) {
-		foreach ($names as $name) {
-			if (isset($this->storage[$name])) {
-				unset($this->storage[$name]);
-			}
-		}
-		return true;
+	function stats() {
+		return array(
+			'hits'		=> $this->hits,
+			'misses'	=> $this->misses,
+			'uptime'	=> null,
+			'mem_usage'	=> memory_get_usage(),
+			'mem_avail'	=> null,
+		);
 	}
 }
