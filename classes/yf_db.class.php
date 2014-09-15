@@ -616,7 +616,7 @@ class yf_db {
 	* Alias of replace() with data auto-escape
 	*/
 	function replace_safe($table, $data, $only_sql = false, $extra = array()) {
-		$replace = true && ($this->get_driver_family() === 'mysql');
+		$replace = true && in_array($this->get_driver_family(), array('mysql','sqlite'));
 		return $this->insert_safe($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update = false, $extra);
 	}
 
@@ -624,7 +624,7 @@ class yf_db {
 	* Replace array of values into table
 	*/
 	function replace($table, $data, $only_sql = false) {
-		$replace = true && ($this->get_driver_family() === 'mysql');
+		$replace = true && in_array($this->get_driver_family(), array('mysql','sqlite'));
 		return $this->insert($table, $data, $only_sql, $replace);
 	}
 
