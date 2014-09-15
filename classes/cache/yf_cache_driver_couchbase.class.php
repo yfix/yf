@@ -3,6 +3,11 @@
 load('cache_driver', 'framework', 'classes/cache/');
 class yf_cache_driver_couchbase extends yf_cache_driver {
 
+	/** @var object internal @conf_skip */
+	public $_connection = null;
+	/** @var boo; internal @conf_skip */
+	public $_connected_ok = false;
+
 	/**
 	* Catch missing method call
 	*/
@@ -17,9 +22,14 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 
 	/**
 	*/
-	function is_ready() {
+	function _init() {
 // TODO
-		return false;
+	}
+
+	/**
+	*/
+	function is_ready() {
+		return isset($this->_connection) && $this->_connected_ok;
 	}
 
 	/**
@@ -28,7 +38,7 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-// TODO
+		return $this->_connection->get($name) ?: false;
 	}
 
 	/**
@@ -37,7 +47,10 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-// TODO
+		if ($ttl > 30 * 24 * 3600) {
+			$ttl = time() + $ttl;
+		}
+		return $this->_connection->set($name, $data, (int) $ttl);
 	}
 
 	/**
@@ -46,7 +59,7 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-// TODO
+		return $this->_connection->delete($name);
 	}
 
 	/**
@@ -55,6 +68,26 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-// TODO
+		return $this->_connection->flush();
+	}
+
+	/**
+	*/
+	function stats() {
+		if (!$this->is_ready()) {
+			return null;
+		}
+		$stats   = $this->_connection->getStats();
+		$servers = $this->_connection->getServers();
+		$server  = explode(":", $servers[0]);
+		$key	 = $server[0] . ":" . "11210";
+		$stats   = $stats[$key];
+		return array(
+			'hits'		=> $stats['get_hits'],
+			'misses'	=> $stats['get_misses'],
+			'uptime'	=> $stats['uptime'],
+			'mem_usage'	=> $stats['bytes'],
+			'mem_avail'	=> $stats['limit_maxbytes'],
+		);
 	}
 }
