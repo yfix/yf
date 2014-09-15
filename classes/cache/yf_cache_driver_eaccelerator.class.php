@@ -51,4 +51,14 @@ class yf_cache_driver_eaccelerator extends yf_cache_driver {
 		}
 		return eaccelerator_clear();
 	}
+
+	/**
+	*/
+	function stats() {
+		if (!$this->is_ready()) {
+			return null;
+		}
+// TODO
+		return array();
+	}
 }
