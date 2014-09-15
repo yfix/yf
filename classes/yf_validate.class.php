@@ -517,7 +517,11 @@ class yf_validate {
 			list($check_table, $check_field) = explode('.', $param);
 		}
 		if ($check_table && $check_field && $in) {
-			$exists = $this->db->select($this->db->es($check_field))->from($check_table)->where($this->db->es($check_field), '=', $this->db->es($in))->get_one();
+			$exists = $this->db
+				->select($this->db->es($check_field))
+				->from($check_table)
+				->where($this->db->es($check_field), '=', $this->db->es($in))
+				->get_one();
 			if ($exists == $in) {
 				return false;
 			}
