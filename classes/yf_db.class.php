@@ -218,7 +218,7 @@ class yf_db {
 	/**
 	* Connect db driver and then connect to db
 	*/
-	function connect($db_host = '', $db_user = '', $db_pswd = null, $db_name = null, $force = false, $db_ssl = false, $db_port = '', $db_socket = '', $db_charset = '', $allow_auto_create_db = null) {
+	function connect($db_host = '', $db_user = '', $db_pswd = null, $db_name = null, $force = false, $params = array()) {
 		if (is_array($db_host)) {
 			$params = $db_host;
 			$db_host = '';
@@ -343,15 +343,27 @@ class yf_db {
 	/**
 	* Prepare statement to execute
 	*/
-	function prepare() {
-// TODO
+	function prepare($sql, $params = array()) {
+		if (!$this->_connected && !$this->connect()) {
+			return false;
+		}
+		if (!is_object($this->db) || !$this->db->implemented['prepare']) {
+			return false;
+		}
+		return $this->db->prepare($sql, $params);
 	}
 
 	/**
 	* Execute prepared statement
 	*/
-	function exec() {
-// TODO
+	function execute($stmt, $params = array()) {
+		if (!$this->_connected && !$this->connect()) {
+			return false;
+		}
+		if (!is_object($this->db) || !$this->db->implemented['execute']) {
+			return false;
+		}
+		return $this->db->execute($stmt, $params);
 	}
 
 	/**
@@ -596,21 +608,24 @@ class yf_db {
 	* Alias, forced to add INSERT ... ON DUPLICATE KEY UPDATE
 	*/
 	function insert_on_duplicate_key_update($table, $data, $only_sql = false, $replace = false, $extra = array()) {
-		return $this->insert($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update = true, $extra);
+		$on_duplicate_key_update = true && ($this->get_driver_family() === 'mysql');
+		return $this->insert($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update, $extra);
 	}
 
 	/**
 	* Alias of replace() with data auto-escape
 	*/
 	function replace_safe($table, $data, $only_sql = false, $extra = array()) {
-		return $this->insert_safe($table, $data, $only_sql, $replace = true, $ignore = false, $on_duplicate_key_update = false, $extra);
+		$replace = true && ($this->get_driver_family() === 'mysql');
+		return $this->insert_safe($table, $data, $only_sql, $replace, $ignore = false, $on_duplicate_key_update = false, $extra);
 	}
 
 	/**
 	* Replace array of values into table
 	*/
 	function replace($table, $data, $only_sql = false) {
-		return $this->insert($table, $data, $only_sql, true);
+		$replace = true && ($this->get_driver_family() === 'mysql');
+		return $this->insert($table, $data, $only_sql, $replace);
 	}
 
 	/**
