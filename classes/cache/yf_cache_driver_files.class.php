@@ -158,4 +158,20 @@ class yf_cache_driver_files extends yf_cache_driver {
 		$str = '<?'.'php'.PHP_EOL.'return '.$str.';'.PHP_EOL;
 		return file_put_contents($path, $str);
 	}
+
+	/**
+	*/
+	function stats() {
+		$usage = 0;
+		foreach ($this->_get_all_files() as $file) {
+			$usage += filesize($file);
+		}
+		return array(
+			'hits'		=> null,
+			'misses'	=> null,
+			'uptime'	=> null,
+			'mem_usage'	=> $usage,
+			'mem_avail'	=> disk_free_space($this->CACHE_DIR),
+		);
+	}
 }
