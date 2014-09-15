@@ -124,17 +124,6 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Render SQL and execute db->get()
-	*/
-	function get($use_cache = true) {
-		$sql = $this->sql();
-		if ($sql) {
-			return $this->db->get($sql, $use_cache);
-		}
-		return false;
-	}
-
-	/**
 	*/
 	function delete($as_sql = false) {
 		$sql = false;
@@ -162,7 +151,20 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	function update(array $data, $pk = 'id') {
+	function insert($table, array $data, $params = array()) {
+// TODO
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
+	}
+
+	/**
+	*/
+	function update(array $data, $params = array()) {
+// TODO
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('last_activity' => time()))
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
+// TODO: be able to specify other table in params
+// TODO: where condition for update inside params
 		!$pk && $pk = 'id';
 		$a = $this->_sql_to_array();
 		if (!$a) {
@@ -187,6 +189,31 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Alias
+	*/
+	function first($use_cache = true) {
+		return $this->get($use_cache);
+	}
+
+	/**
+	* Render SQL and execute db->get()
+	*/
+	function get($use_cache = true) {
+		$sql = $this->sql();
+		if ($sql) {
+			return $this->db->get($sql, $use_cache);
+		}
+		return false;
+	}
+
+	/**
+	* Alias
+	*/
+	function one($use_cache = true) {
+		return $this->get_one($use_cache);
+	}
+
+	/**
 	* Render SQL and execute db->get_one()
 	*/
 	function get_one($use_cache = true) {
@@ -195,6 +222,13 @@ abstract class yf_db_query_builder_driver {
 			return $this->db->get_one($sql, $use_cache);
 		}
 		return false;
+	}
+
+	/**
+	* Alias
+	*/
+	function all($use_cache = true) {
+		return $this->get_all($use_cache);
 	}
 
 	/**

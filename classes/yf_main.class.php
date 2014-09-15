@@ -883,6 +883,7 @@ class yf_main {
 		}
 	}
 
+// TODO: implement spl_autoload_register ([ callable $autoload_function [, bool $throw = true [, bool $prepend = false ]]] )
 	/**
 	* Module(class) loader, based on singleton pattern
 	* Initialize new class object or return reference to existing one

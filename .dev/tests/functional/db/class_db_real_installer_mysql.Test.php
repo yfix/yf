@@ -47,6 +47,7 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 	}
 	public function test_sql_into_array() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+
 		$sql = '
 			`id` varchar(32) NOT NULL default \'\',
 			`user_id` int(10) unsigned NOT NULL,
@@ -77,8 +78,8 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 			KEY `user_id` (`user_id`)
 			/** ENGINE=MEMORY **/
 		';
-
 		$this->assertEquals( $this->data_good, _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array($sql) );
+
 		$sql = '
 			`id` varchar(32) NOT NULL default \'\',
 			`user_id` int(10) unsigned NOT NULL,
@@ -93,6 +94,8 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 			KEY `user_id` (`user_id`)
 		';
 		$this->assertEquals( $this->data_good, _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array($sql) );
+	}
+	public function test_sql_into_array2() {
 /*
 		$sql = '`id` varchar(32) NOT NULL default \'\', `user_id` int(10) unsigned NOT NULL, `user_group` int(10) unsigned NOT NULL, `time` int(10) unsigned NOT NULL default \'0\',
 			`type` enum(\'user\',\'admin\') NOT NULL, `ip` varchar(16) NOT NULL, `user_agent` varchar(255) NOT NULL, `query_string` varchar(255) NOT NULL,

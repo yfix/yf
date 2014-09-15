@@ -6,32 +6,6 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 	public static function tearDownAfterClass() {
 		common()->USER_ERRORS = array();
 	}
-	public function test_unique() {
-// TODO: require database mocking
-		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
-		// $this->assertFalse( _class('validate')->unqiue('testme@yfix.net', array('param' => 'user.email')) );
-		// $this->assertTrue( _class('validate')->unqiue('notexists@yfix.net', array('param' => 'user.email')) );
-	}
-	public function test_is_unique() {
-// TODO: require database mocking
-		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
-		// $this->assertFalse( _class('validate')->is_unqiue('testme@yfix.net', array('param' => 'user.email')) );
-		// $this->assertTrue( _class('validate')->is_unqiue('notexists@yfix.net', array('param' => 'user.email')) );
-	}
-	public function test_is_unique_without() {
-// TODO: require database mocking
-		// db()->insert('user', array('id' => 123456789, 'name' => 'testmeexisting'))
-		// $this->assertFalse( _class('validate')->is_unqiue_without('testmeexisting', array('param' => 'user.name.987654321')) );
-		// db()->insert('user', array('id' => 1234567890, 'name' => 'testme'))
-		// $this->assertTrue( _class('validate')->is_unqiue_without('testme', array('param' => 'user.name.1234567890')) );
-		// $this->assertTrue( _class('validate')->is_unqiue_without('notexists', array('param' => 'user.name.1234567890')) );
-	}
-	public function test_exists() {
-// TODO: require database mocking
-		// db()->insert('user', array('id' => 1234567890, 'email' => 'testme@yfix.net'))
-		// $this->assertTrue( _class('validate')->is_unqiue('testme@yfix.net', array('param' => 'user.email')) );
-		// $this->assertFalse( _class('validate')->is_unqiue('notexists@yfix.net', array('param' => 'user.email')) );
-	}
 	public function test_password_update() {
 		$var = ''; _class('validate')->password_update($var);
 		$this->assertEquals( null,  $var);
@@ -950,5 +924,10 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( validate(array('key' => array()), array('key' => 'trim|required')) );
 		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ''), array('key' => 'trim|required', 'key2' => 'required')) );
 		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ' '), array('key' => 'trim|required', 'key2' => 'required')) );
+
+		$this->assertTrue( validate(' test ', 'trim|required') );
+		$this->assertFalse( validate('  ', 'trim|required') );
+		$this->assertTrue( validate(array('key' => array('val1','val2'), 'key2' => 'v2'), 'trim|required') );
+		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ' '), 'trim|required') );
 	}
 }
