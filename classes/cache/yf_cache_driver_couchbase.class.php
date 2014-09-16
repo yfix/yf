@@ -79,8 +79,8 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 		}
 		$stats   = $this->_connection->getStats();
 		$servers = $this->_connection->getServers();
-		$server  = explode(":", $servers[0]);
-		$key	 = $server[0] . ":" . "11210";
+		$server  = explode(':', $servers[0]);
+		$key	 = $server[0] . ':' . '11210';
 		$stats   = $stats[$key];
 		return array(
 			'hits'		=> $stats['get_hits'],
