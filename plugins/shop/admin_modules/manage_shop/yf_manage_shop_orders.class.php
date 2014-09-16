@@ -289,6 +289,7 @@ class yf_manage_shop_orders{
 		$_discount       = $discount;
 		$discount_price  = $_class_price->apply_price( $price_total, $_discount );
 		$discount_price -= $price_total;
+		$discount_price  = $_class_price->_number_round( $discount_price );
 		$_discount           = $discount_add;
 		$discount_add_price  = $_class_price->apply_price( $price_total, $_discount );
 		$discount_add_price -= $price_total;
@@ -712,8 +713,9 @@ class yf_manage_shop_orders{
 		// $_class_discount = _class( '_shop_discount', 'modules/shop/' );
 		// $discount        = $_class_discount->calc_discount_global( $price_total, $discount );
 		$_class_price = _class( '_shop_price', 'modules/shop/' );
-		$discount_price = $_class_price->apply_price( $price_total, $discount );
+		$discount_price  = $_class_price->apply_price( $price_total, $discount );
 		$discount_price -= $price_total;
+		$discount_price  = $_class_price->_number_round( $discount_price );
 		if ($order_info['is_manual_delivery_price'] == 1) {
 			$delivery_price = $order_info['delivery_price'];
 		} else {

@@ -2,8 +2,12 @@
 
 class yf_manage_shop_units{
 
-	/**
-	*/
+	private $_class_price = false;
+
+	function _init() {
+		$this->_class_price = _class( '_shop_price', 'modules/shop/' );
+	}
+
 	function units () {
 		return table('SELECT * FROM '.db('shop_product_units'), array(
 				'filter' => $_SESSION[$_GET['object'].'__units'],
@@ -17,7 +21,7 @@ class yf_manage_shop_units{
 			->btn_delete('', './?object='.main()->_get('object').'&action=unit_delete&id=%d')
 			->footer_add('', './?object='.main()->_get('object').'&action=unit_add')
 		;
-	}	
+	}
 
 	/**
 	*/
@@ -53,7 +57,7 @@ class yf_manage_shop_units{
 			->text('step')
 			->text('k')
 			->save_and_back();
-	}	
+	}
 
 	/**
 	*/
@@ -72,9 +76,9 @@ class yf_manage_shop_units{
 					'title'			=> $_POST['title'],
 					'description'	=> $_POST['description'],
 					'step'			=> intval($_POST['step']),
-					'k'				=> floatval($_POST['k']),
+					'k'				=> tofloat($_POST['k']),
 				);
-				db()->update('shop_product_units', db()->es($sql_array), 'id='.$_GET['id']);
+				db()->update('shop_product_units', _es($sql_array), 'id='.$_GET['id']);
 				common()->admin_wall_add(array('shop product unit updated: '.$_POST['title'], $_GET['id']));
 			}
 			return js_redirect('./?object='.main()->_get('object').'&action=units');
@@ -93,7 +97,7 @@ class yf_manage_shop_units{
 			->text('step')
 			->text('k')
 			->save_and_back();
-	}	
+	}
 
 	/**
 	*/
@@ -112,5 +116,5 @@ class yf_manage_shop_units{
 		} else {
 			return js_redirect('./?object='.main()->_get('object').'&action=units');
 		}
-	}	
+	}
 }
