@@ -95,7 +95,10 @@ class class_db_offline_mysql_test extends db_offline_abstract {
 	}
 	public function test_es() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertEquals( '', self::db()->es(false));
+		$this->assertEquals( '0', self::db()->es(false));
+		$this->assertEquals( '1', self::db()->es(true));
+		$this->assertEquals( '11', self::db()->es(11));
+		$this->assertEquals( '11.11', self::db()->es(11.11));
 		$this->assertEquals( '', self::db()->es(''));
 		$this->assertEquals( 'name\\\'', self::db()->es('name\''));
 		$this->assertEquals( array('name1\\\'', 'name2\\\''), self::db()->es(array('name1\'','name2\'')));
