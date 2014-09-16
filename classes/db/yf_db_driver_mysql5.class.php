@@ -138,7 +138,14 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	*/
 	function real_escape_string($string) {
 		if (!$this->db_connect_id) {
-			return addslashes($string);
+			return _class('db')->_mysql_escape_mimic($string);
+		}
+		if (is_float($string)) {
+			return str_replace(',', '.', $string);
+		} elseif (is_int($string)) {
+			return $string;
+		} elseif (is_bool($string)) {
+			return (int)$string;
 		}
 		return mysql_real_escape_string($string, $this->db_connect_id);
 	}
