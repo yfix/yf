@@ -138,7 +138,14 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function real_escape_string($string) {
-		return addslashes($string);
+		if (is_float($string)) {
+			return str_replace(',', '.', $string);
+		} elseif (is_int($string)) {
+			return $string;
+		} elseif (is_bool($string)) {
+			return (int)$string;
+		}
+		return _class('db')->_mysql_escape_mimic($string);
 	}
 
 	/**
