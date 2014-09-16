@@ -1746,13 +1746,17 @@ class yf_db {
 
 	/**
 	*/
-	function _mysql_escape_mimic($inp) {
-		if (is_array($inp)) {
-	        return array_map(array($this, __FUNCTION__), $inp);
+	function _mysql_escape_mimic($string) {
+		if (is_array($string)) {
+	        return array_map(array($this, __FUNCTION__), $string);
 		}
-		if (!empty($inp) && is_string($inp)) {
-	        return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $inp);
+		if (is_float($string)) {
+			return str_replace(',', '.', $string);
+		} elseif (is_int($string)) {
+			return $string;
+		} elseif (is_bool($string)) {
+			return (int)$string;
 		}
-	    return $inp;
+        return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $string);
 	}
 }
