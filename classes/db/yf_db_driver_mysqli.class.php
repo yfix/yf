@@ -127,7 +127,17 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	/**
 	*/
 	function real_escape_string($string) {
-		return $this->db_connect_id ? mysqli_real_escape_string($this->db_connect_id, $string) : addslashes($string);
+		if (!$this->db_connect_id) {
+			return _class('db')->_mysql_escape_mimic($string);
+		}
+		if (is_float($string)) {
+			return str_replace(',', '.', $string);
+		} elseif (is_int($string)) {
+			return $string;
+		} elseif (is_bool($string)) {
+			return (int)$string;
+		}
+		return mysqli_real_escape_string($this->db_connect_id, $string);
 	}
 
 	/**
