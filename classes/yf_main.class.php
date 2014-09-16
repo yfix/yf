@@ -637,8 +637,9 @@ class yf_main {
 		@ini_set('session.use_trans_sid',	0); // We need @ here to avoid error when session already started
 		ini_set('url_rewriter.tags',		'');
 		if (!empty($this->SESSION_LIFE_TIME)) {
-			ini_set('session.gc_maxlifetime',	$this->SESSION_LIFE_TIME);
 			ini_set('session.cookie_lifetime',	$this->SESSION_LIFE_TIME);
+			ini_set('session.gc_probability',	0);
+			ini_set('session.gc_maxlifetime',	$this->SESSION_LIFE_TIME);
 		}
 		ini_set('session.use_cookies',		1);
 		ini_set('session.use_only_cookies',	1);
