@@ -1286,9 +1286,6 @@ class yf_db {
 	* Execute shutdown queries
 	*/
 	function _execute_shutdown_queries() {
-		// Restore startup working directory
-		@chdir(main()->_CWD);
-
 		if (!$this->USE_SHUTDOWN_QUERIES || $this->_shutdown_executed) {
 			return false;
 		}
