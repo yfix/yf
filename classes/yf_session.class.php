@@ -48,8 +48,8 @@ class yf_session {
 		// Import session settings from main class, but prefixed with "SESSION_"
 		$prefix = 'SESSION_';
 		$plen = strlen($prefix);
-		foreach ($main as $k => $v) {
-			if (substr($k, 0, $plen) !== $plen) {
+		foreach (get_object_vars($main) as $k => $v) {
+			if (substr($k, 0, $plen) !== $prefix) {
 				continue;
 			}
 			$name = substr($k, $plen);

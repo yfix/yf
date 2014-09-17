@@ -422,6 +422,53 @@ class class_db_real_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::db()->delete($this->table_name($table), 'id=2'));
 		$this->assertEquals( $new_data, self::db()->from($this->table_name($table))->get_all() );
 	}
+	public function test_get_server_version() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertNotEmpty( self::db()->get_server_version() );
+	}
+	public function test_get_host_info() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertNotEmpty( self::db()->get_host_info() );
+	}
+	public function test_get_deep_array() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$table = self::db()->DB_PREFIX. __FUNCTION__;
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
+		$data = array(
+			1 => array('id' => '1', 'id2' => '11', 'id3' => '111'),
+			2 => array('id' => '2', 'id2' => '22', 'id3' => '222'),
+			3 => array('id' => '3', 'id2' => '33', 'id3' => '333'),
+		);
+		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table), $data) );
+
+		$expected = array();
+		$expected['1']['11']['111'] = $data[1];
+		$expected['2']['22']['222'] = $data[2];
+		$expected['3']['33']['333'] = $data[3];
+		$received = self::db()->get_deep_array('SELECT id, id2, id3 FROM '.$this->table_name($table));
+		$this->assertEquals( $expected, $received );
+
+		$expected = array();
+		$expected['1']['11']['111'] = $data[1];
+		$expected['2']['22']['222'] = $data[2];
+		$expected['3']['33']['333'] = $data[3];
+		$received = self::db()->get_deep_array('SELECT id, id2, id3 FROM '.$this->table_name($table), $max_levels = 3);
+		$this->assertEquals( $expected, $received );
+
+		$expected = array();
+		$expected['1']['11'] = $data[1];
+		$expected['2']['22'] = $data[2];
+		$expected['3']['33'] = $data[3];
+		$received = self::db()->get_deep_array('SELECT id, id2, id3 FROM '.$this->table_name($table), $max_levels = 2);
+		$this->assertEquals( $expected, $received );
+
+		$expected = array();
+		$expected['1'] = $data[1];
+		$expected['2'] = $data[2];
+		$expected['3'] = $data[3];
+		$received = self::db()->get_deep_array('SELECT id, id2, id3 FROM '.$this->table_name($table), $max_levels = 1);
+		$this->assertEquals( $expected, $received );
+	}
 	public function test_model() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$this->assertTrue( is_object(self::db()->model()) );
@@ -464,27 +511,6 @@ class class_db_real_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO: maybe use utils() methods?
 #		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_get_server_version() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_get_host_info() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( $expected, self::db()-> );
-	}
-	public function test_get_deep_array() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$table = self::db()->DB_PREFIX. __FUNCTION__;
-#		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
-#		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1,11,111),(2,22,222),(3,33,333)') );
-#		$expected = array();
-#		$expected['1']['11']['111'] = array('id' => '1', 'id2' => '11', 'id3' => '111');
-#		$expected['2']['22']['111'] = array('id' => '2', 'id2' => '22', 'id3' => '222');
-#		$expected['3']['33']['111'] = array('id' => '3', 'id2' => '33', 'id3' => '333');
-#		$this->assertEquals( $expected, self::db()->get_deep_array('SELECT id, id2, id3 FROM '.$this->table_name($table), $levels = 3) );
-##		$this->assertNotEmpty( self::db()->query('TRUNCATE TABLE '.$this->table_name($table)) );
-##		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1,11,111),(1,11,222),(1,11,333)') );
 	}
 	public function test_transactions() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }

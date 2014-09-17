@@ -821,29 +821,36 @@ class yf_db {
 	*		'name' => 'Peter',
 	*	]]]
 	*/
-	function get_deep_array($sql, $levels = 1, $use_cache = true) {
+	function get_deep_array($sql, $max_levels = 0, $use_cache = true) {
+		if (!$max_levels || $max_levels > 4) {
+			$max_levels = 4;
+		}
 		$out = array();
 		$q = $this->query($sql);
 		if (!$q) {
 			return false;
 		}
 		$row = $this->fetch_assoc($q);
-		if (!is_array($row) || !count($row)) {
+		$levels = count($row);
+		if (!is_array($row) || !$levels) {
 			return false;
+		}
+		if ($levels > $max_levels) {
+			$levels = $max_levels;
 		}
 		$k = array_keys($row);
 		$a = array();
 		do {
 			if ($levels == 1) {
-				@$a[ $row[$k[0]] ] = $row;
+				$a[ $row[$k[0]] ] = $row;
 			} elseif ($levels == 2) {
-				@$a[ $row[$k[0]] ][ $row[$k[1]] ] = $row;
+				$a[ $row[$k[0]] ][ $row[$k[1]] ] = $row;
 			} elseif ($levels == 3) {
-				@$a[ $row[$k[0]] ][ $row[$k[1]] ][ $row[$k[2]] ] = $row;
+				$a[ $row[$k[0]] ][ $row[$k[1]] ][ $row[$k[2]] ] = $row;
 			} elseif ($levels == 4) {
-				@$a[ $row[$k[0]] ][ $row[$k[1]] ][ $row[$k[2]] ][ $row[$k[3]] ] = $row;
+				$a[ $row[$k[0]] ][ $row[$k[1]] ][ $row[$k[2]] ][ $row[$k[3]] ] = $row;
 			}
-		} while ($row = $this->fetch_assoc($result));
+		} while ($row = $this->fetch_assoc($q));
 		return $a;
 	}
 
@@ -1279,9 +1286,6 @@ class yf_db {
 	* Execute shutdown queries
 	*/
 	function _execute_shutdown_queries() {
-		// Restore startup working directory
-		@chdir(main()->_CWD);
-
 		if (!$this->USE_SHUTDOWN_QUERIES || $this->_shutdown_executed) {
 			return false;
 		}

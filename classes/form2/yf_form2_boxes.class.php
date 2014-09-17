@@ -6,7 +6,7 @@ class yf_form2_boxes {
 
 	/**
 	*/
-	function country_box($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function country_box($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -32,12 +32,12 @@ class yf_form2_boxes {
 			$extra['edit_link'] = './?object=manage_countries';
 		}
 		$renderer = $extra['renderer'] ?: 'list_box';
-		return $__this->$renderer($name, $data, $extra, $replace);
+		return $_this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
-	function region_box($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function region_box($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -62,12 +62,12 @@ class yf_form2_boxes {
 			$extra['edit_link'] = './?object=manage_regions';
 		}
 		$renderer = $extra['renderer'] ?: 'list_box';
-		return $__this->$renderer($name, $data, $extra, $replace);
+		return $_this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
-	function city_box($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function city_box($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -100,12 +100,12 @@ class yf_form2_boxes {
 			$extra['edit_link'] = './?object=manage_cities';
 		}
 		$renderer = $extra['renderer'] ?: 'select2_box';
-		return $__this->$renderer($name, $data, $extra, $replace);
+		return $_this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
-	function currency_box($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function currency_box($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -131,12 +131,12 @@ class yf_form2_boxes {
 			$extra['edit_link'] = './?object=manage_currencies';
 		}
 		$renderer = $extra['renderer'] ?: 'list_box';
-		return $__this->$renderer($name, $data, $extra, $replace);
+		return $_this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
-	function language_box($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function language_box($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -162,12 +162,12 @@ class yf_form2_boxes {
 			$extra['edit_link'] = './?object=manage_languages';
 		}
 		$renderer = $extra['renderer'] ?: 'list_box';
-		return $__this->$renderer($name, $data, $extra, $replace);
+		return $_this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
-	function timezone_box($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function timezone_box($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -193,12 +193,12 @@ class yf_form2_boxes {
 			$extra['edit_link'] = './?object=manage_timezones';
 		}
 		$renderer = $extra['renderer'] ?: 'list_box';
-		return $__this->$renderer($name, $data, $extra, $replace);
+		return $_this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
-	function icon_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function icon_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -223,12 +223,12 @@ class yf_form2_boxes {
 			$extra['edit_link'] = './?object=manage_icons';
 		}
 		$renderer = $extra['renderer'] ?: 'list_box';
-		return $__this->$renderer($name, $data, $extra, $replace);
+		return $_this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
-	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function method_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -250,12 +250,12 @@ class yf_form2_boxes {
 			$extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=admin_modules' : './?object=user_modules';
 		}
 		$renderer = $extra['renderer'] ?: 'list_box';
-		return $__this->$renderer($name, $data, $extra, $replace);
+		return $_this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
-	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function template_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -277,12 +277,12 @@ class yf_form2_boxes {
 			$extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=template_editor' : './?object=template_editor';
 		}
 		$renderer = $extra['renderer'] ?: 'list_box';
-		return $__this->$renderer($name, $data, $extra, $replace);
+		return $_this->$renderer($name, $data, $extra, $replace);
 	}
 
 	/**
 	*/
-	function location_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function location_select_box($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -295,7 +295,7 @@ class yf_form2_boxes {
 			$name = 'location';
 		}
 // TODO
-		return $__this->text($name, $data, $extra, $replace);
+		return $_this->text($name, $data, $extra, $replace);
 /*
 		$data = array();
 		if ($extra['for_type'] == 'admin') {
@@ -306,7 +306,7 @@ class yf_form2_boxes {
 			$extra['edit_link'] = $extra['for_type'] == 'admin' ? './?object=blocks' : './?object=blocks';
 		}
 		$renderer = $extra['renderer'] ?: 'list_box';
-		return $__this->$renderer($name, $data, $extra, $replace);
+		return $_this->$renderer($name, $data, $extra, $replace);
 */
 	}
 }
