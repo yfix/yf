@@ -11,6 +11,14 @@
 	<script src="//rawgit.com/mgcrea/angular-strap/v2.0.0-rc.4/dist/angular-strap.tpl{js_min}.js" class="yf_core"></script>
     <link href="//rawgit.com/mgcrea/angular-motion/v0.3.2/dist/angular-motion{js_min}.css" rel="stylesheet">
 
+	{{-- ng-lib select2 --}}
+	<script src="//rawgit.com/angular-ui/ui-select2/master/src/select2.js"></script>
+
+		{{-- jq-lib select2 (need for ng-lib select2) --}}
+		<link  href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min.css" rel="stylesheet">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2_locale_ru.min.js"></script>
+
 {{--
 	<script src="//rawgithub.com/mgcrea/angular-strap/master/dist/angular-strap{js_min}.js" class="yf_core"></script>
 	<script src="//rawgithub.com/mgcrea/angular-strap/master/dist/angular-strap.tpl{js_min}.js" class="yf_core"></script>
