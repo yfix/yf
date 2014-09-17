@@ -11,20 +11,20 @@ class yf_form2_upload {
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function( $_extra, $_replace, $_this ) {
 			require_css(array(
-				'//rawgithub.com/blueimp/jQuery-File-Upload/9.5.7/css/jquery.fileupload.css',
-				'//rawgithub.com/blueimp/jQuery-File-Upload/9.5.7/css/jquery.fileupload-ui.css',
+				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/css/jquery.fileupload.css',
+				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/css/jquery.fileupload-ui.css',
 			));
 			require_js( array(
 				'//blueimp.github.io/JavaScript-Load-Image/js/load-image.min.js',
 				'//blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js',
-				'//rawgithub.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.iframe-transport.js',
-				'//rawgithub.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload.js',
-				'//rawgithub.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-ui.js',
-				'//rawgithub.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-process.js',
-				'//rawgithub.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-image.js',
-				'//rawgithub.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-audio.js',
-				'//rawgithub.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-video.js',
-				'//rawgithub.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-validate.js',
+				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.iframe-transport.js',
+				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload.js',
+				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-ui.js',
+				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-process.js',
+				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-image.js',
+				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-audio.js',
+				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-video.js',
+				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-validate.js',
 			));
 
 			$r = array(

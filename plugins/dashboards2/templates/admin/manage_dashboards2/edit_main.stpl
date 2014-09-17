@@ -1,5 +1,5 @@
 {include("manage_dashboards2/ds_css")}
-<script src="https://rawgit.com/yfix/jquery-htmlclean/master/jquery.htmlClean.js" type="text/javascript"></script>
+<script src="//cdn.rawgit.com/yfix/jquery-htmlclean/master/jquery.htmlClean.js" type="text/javascript"></script>
 {include("manage_dashboards2/ds_edit_js")}
 
 <div class="edit" id="main_container">
