@@ -99,4 +99,21 @@ class yf_cache_driver_db extends yf_cache_driver {
 		}
 		return $data;
 	}
+
+	/**
+	*/
+	function stats() {
+		if (!$this->is_ready()) {
+			return null;
+		}
+// TODO: make this database-abstract, not bind hard into mysql SQL
+		$stats = db()->get_2d('SHOW GLOBAL STATUS');
+		return array(
+			'hits'		=> null,
+			'misses'	=> null,
+			'uptime'	=> $stats['Uptime'],
+			'mem_usage'	=> null,
+			'mem_avail'	=> null,
+		);
+	}
 }

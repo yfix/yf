@@ -56,7 +56,39 @@ class yf_cache_driver_xcache extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-// Not available without admin settings
-		return xcache_clear_cache();
+		if ($this->_check_xcache_auth()) {
+			xcache_clear_cache(XC_TYPE_VAR, 0);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	*/
+	function stats() {
+		if (!$this->is_ready()) {
+			return null;
+		}
+		if (!$this->_check_xcache_auth()) {
+			return false;
+		}
+		$info = xcache_info(XC_TYPE_VAR, 0);
+		return array(
+			'hits'		=> $info['hits'],
+			'misses'	=> $info['misses'],
+			'uptime'	=> null,
+			'mem_usage'	=> $info['size'],
+			'mem_avail'	=> $info['avail'],
+		);
+	}
+
+	/**
+	*/
+	protected function _check_xcache_auth() {
+		if (ini_get('xcache.admin.enable_auth')) {
+			throw new Exception('To use all features of Xcache cache, you must set "xcache.admin.enable_auth" to "Off" in your php.ini.');
+			return false;
+		}
+		return true;
 	}
 }

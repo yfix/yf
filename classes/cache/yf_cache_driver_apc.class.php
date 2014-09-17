@@ -49,6 +49,23 @@ class yf_cache_driver_apc extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return apc_clear_cache();
+		return apc_clear_cache() && apc_clear_cache('user');
+	}
+
+	/**
+	*/
+	function stats() {
+		if (!$this->is_ready()) {
+			return null;
+		}
+		$info = apc_cache_info();
+		$sma  = apc_sma_info();
+		return array(
+			'hits'		=> isset($info['num_hits'])   ? $info['num_hits']   : $info['nhits'],
+			'misses'	=> isset($info['num_misses']) ? $info['num_misses'] : $info['nmisses'],
+			'uptime'	=> isset($info['start_time']) ? $info['start_time'] : $info['stime'],
+			'mem_usage'	=> $info['mem_size'],
+			'mem_avail'	=> $sma['avail_mem'],
+		);
 	}
 }

@@ -215,4 +215,20 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		}
 		return $this->_connection->deleteMulti($names);
 	}
+
+	/**
+	*/
+	function stats() {
+		if (!$this->is_ready()) {
+			return null;
+		}
+		$stats = $this->_connection->getStats();
+		return array(
+			'hits'   	=> $stats['get_hits'],
+			'misses' 	=> $stats['get_misses'],
+			'uptime' 	=> $stats['uptime'],
+			'mem_usage'	=> $stats['bytes'],
+			'mem_avail'	=> $stats['limit_maxbytes'],
+		);
+	}
 }

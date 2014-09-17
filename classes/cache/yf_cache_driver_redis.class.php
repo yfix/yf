@@ -3,6 +3,11 @@
 load('cache_driver', 'framework', 'classes/cache/');
 class yf_cache_driver_redis extends yf_cache_driver {
 
+	/** @var object internal @conf_skip */
+	public $_connection = null;
+	/** @var boo; internal @conf_skip */
+	public $_connected_ok = false;
+
 	/**
 	* Catch missing method call
 	*/
@@ -13,6 +18,12 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		}
 		trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		return false;
+	}
+
+	/**
+	*/
+	function _init() {
+// TODO
 	}
 
 	/**
@@ -28,7 +39,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-// TODO
+		return $this->redis->get($name);
 	}
 
 	/**
@@ -37,7 +48,10 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-// TODO
+		if ($ttl > 0) {
+			return $this->redis->setex($name, $ttl, $data);
+		}
+		return $this->redis->set($name, $data);
 	}
 
 	/**
@@ -46,7 +60,7 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-// TODO
+		return $this->redis->delete($name) > 0;
 	}
 
 	/**
@@ -55,6 +69,33 @@ class yf_cache_driver_redis extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-// TODO
+		return $this->redis->flushDB();
+	}
+
+	/**
+	*/
+	protected function stats() {
+		if (!$this->is_ready()) {
+			return null;
+		}
+		$info = $this->redis->info();
+		return array(
+			'hits'		=> false,
+			'misses'	=> false,
+			'uptime'	=> $info['uptime_in_seconds'],
+			'mem_usage'	=> $info['used_memory'],
+			'mem_avail'	=> false,
+		);
+	}
+
+	/**
+	 * Returns the serializer constant to use. If Redis is compiled with
+	 * igbinary support, that is used. Otherwise the default PHP serializer is
+	 * used.
+	 *
+	 * @return integer One of the Redis::SERIALIZER_* constants
+	 */
+	protected function _get_serializer() {
+		return defined('Redis::SERIALIZER_IGBINARY') ? Redis::SERIALIZER_IGBINARY : Redis::SERIALIZER_PHP;
 	}
 }
