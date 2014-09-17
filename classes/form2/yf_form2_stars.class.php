@@ -68,7 +68,7 @@ class yf_form2_stars {
 			}
 			$body[] = '</span>';
 			$body[] = '<input type="hidden" name="'.$extra['name'].'" id='.$extra['name'].' value="0">';
-			
+
 			js('<script type="text/javascript">
 				$(function () {
 					$(".'.$class.'.'.$extra['name'].'").on("click",function() {
@@ -85,7 +85,7 @@ class yf_form2_stars {
 					});
 				});
 				</script>');
-			
+
 			return $_this->_row_html(implode('', $body), $extra, $r);
 		};
 		if ($__this->_chained_mode) {
