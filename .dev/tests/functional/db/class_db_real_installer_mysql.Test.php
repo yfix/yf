@@ -45,25 +45,22 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( array(), _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array('') );
 	}
-	public function test_sql_into_array() {
+/*
+	public function test_sql_into_array_basic() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
-		$sql = '
-			`id` varchar(32) NOT NULL default \'\',
-			`user_id` int(10) unsigned NOT NULL,
-			`user_group` int(10) unsigned NOT NULL,
-			`time` int(10) unsigned NOT NULL default \'0\',
-			`type` enum(\'user\',\'admin\') NOT NULL,
-			`ip` varchar(16) NOT NULL,
-			`user_agent` varchar(255) NOT NULL,
-			`query_string` varchar(255) NOT NULL,
-			`site_id` tinyint(3) unsigned NOT NULL,
-			PRIMARY KEY	(`id`),
-			KEY `user_id` (`user_id`)
-			/** ENGINE=MEMORY **/
-		';
-		$this->assertEquals( $this->data_good, _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array($sql) );
-
+		$sql = 'id varchar(32) NOT NULL default \'\'';
+		$expected = array(
+			'fields' => array(
+				'id' => array( 'type' => 'varchar', 'length' => '32', 'attrib' => null, 'not_null' => 1, 'default' => '', 'auto_inc' => 0 ),
+			),
+		);
+		$received = _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array($sql);
+		$this->assertSame( $expected, $received );
+	}
+*/
+	public function test_sql_into_array_complex() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$sql = '
 			`id` varchar(32) NOT NULL default \'\',
 			`user_id` int(10) unsigned NOT NULL,
