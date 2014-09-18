@@ -2,13 +2,15 @@
 
 namespace PHPSQLParser;
 
-#require_once '/home/www/TODO/_test_php_sql_parser/vendor/greenlion/php-sql-parser/src/PHPSQLParser/PHPSQLParser.php';
-#require_once '/home/www/TODO/_test_php_sql_parser/vendor/autoload.php';
 
-#spl_autoload_register();
-$parser_root = dirname(dirname(__DIR__)).'/libs/php_sql_parser/src/PHPSQLParser/';
+$libs_root = dirname(dirname(__DIR__)).'/libs';
+require_once $libs_root.'/symfony_class_loader/UniversalClassLoader.php';
+$loader = new \Symfony\Component\ClassLoader\UniversalClassLoader();
+$loader->registerNamespaces(array(
+	'PHPSQLParser' => $libs_root.'/php_sql_parser/src',
+));
+$loader->register();
 
-require_once $parser_root.'PHPSQLParser.php';
 
 $sql = <<<'EOD'
 CREATE TABLE `film` (
