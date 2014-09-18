@@ -1,8 +1,5 @@
 <?php
 
-namespace PHPSQLParser;
-
-
 $libs_root = dirname(dirname(__DIR__)).'/libs';
 require_once $libs_root.'/symfony_class_loader/UniversalClassLoader.php';
 $loader = new \Symfony\Component\ClassLoader\UniversalClassLoader();
@@ -11,7 +8,7 @@ $loader->registerNamespaces(array(
 ));
 $loader->register();
 
-
+/*
 $sql = <<<'EOD'
 CREATE TABLE `film` (
   `film_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
@@ -35,17 +32,20 @@ CREATE TABLE `film` (
   CONSTRAINT `fk_film_language_original` FOREIGN KEY (`original_language_id`) REFERENCES `language` (`language_id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 EOD;
-
+*/
 $sql = 'CREATE TABLE `film` (`id` int unsigned auto_increment, `t` timestamp, primary key(`id`))';
 
-$parser = new PHPSQLParser($sql);
+$parser = new \PHPSQLParser\PHPSQLParser($sql);
 $result = $parser->parsed;
 
 $table_name = $result['TABLE']['no_quotes']['parts'][0];
 $tmp_create_def = $result['TABLE']['create-def']['sub_tree'];
-$tmp_options = $result['TABLE']['options']['sub_tree'];
+$tmp_options = $result['TABLE']['options'];
 
-#var_export($tmp_create_def);
+var_export($result['TABLE']);
+#var_export(array_keys($result['CREATE']));
+#var_export($tmp_options);
+
 $struct = array(
 	'name'	=> $table_name,
 	'fields' => array(),
@@ -53,12 +53,14 @@ $struct = array(
 	'foreign_keys' => array(),
 	'options' => array(),
 );
-foreach ($tmp_create_def as $k => $v) {
-#	if () {
-#	} elseif () {
+foreach ($tmp_create_def as $v) {
+#	if ($v['expr_type'] == 'column-def') {
+#	} elseif ($v['expr_type'] == 'primary-key') {
+#	} elseif ($v['expr_type'] == 'index') {
+#	} elseif ($v['expr_type'] == 'foreign-key') {
 #	}
-#	print_r($v);
+#	echo $v['expr_type']. PHP_EOL;
+	print_r($v);
 }
-#$struct = array(
-#);
+
 print_r($struct);
