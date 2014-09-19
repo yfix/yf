@@ -2039,7 +2039,7 @@ class yf_form2 {
 				if (is_string($func) && function_exists($func)) {
 					$data[$name] = $this->_apply_existing_func($func, $data[$name]);
 				} elseif (is_callable($func)) {
-					$is_ok = $func($data[$name], null, $data);
+					$is_ok = $func($data[$name], null, $data, $error_msg);
 				} else {
 					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
 					if (!$is_ok && empty($error_msg)) {
