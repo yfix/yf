@@ -102,6 +102,7 @@ foreach ($tmp_create_def as $v) {
 			'name'		=> $name,
 			'type'		=> $type,
 			'length'	=> $length,
+			'decimals'	=> $decimals,
 			'unsigned'	=> $unsigned,
 			'nullable'	=> $nullable,
 			'default'	=> $default,
