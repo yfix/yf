@@ -42,10 +42,6 @@ $table_name = $result['TABLE']['no_quotes']['parts'][0];
 $tmp_create_def = $result['TABLE']['create-def']['sub_tree'];
 $tmp_options = $result['TABLE']['options'];
 
-#var_export($result['TABLE']);
-#var_export(array_keys($result['CREATE']));
-#var_export($tmp_options);
-
 $struct = array(
 	'name'	=> $table_name,
 	'fields' => array(),
@@ -53,34 +49,73 @@ $struct = array(
 	'foreign_keys' => array(),
 	'options' => array(),
 );
-foreach ($tmp_create_def as $v) {
-#	echo $v['expr_type']. PHP_EOL;
-#	print_r($v);
 
+foreach ($tmp_create_def as $v) {
 	if ($v['expr_type'] == 'column-def') {
-		$col_name = '';
-		$col_type = '';
+		$name = null;
+		$type = null;
+		$length = null;
+		$unsigned = null;
 		$nullable = false;
+		$default = null;
+		$auto_inc = null;
+		$primary = false;
+		$unique = false;
+		$decimals = null;
+		$values = null; // ENUM and SET
 		foreach ($v['sub_tree'] as $v2) {
 			if ($v2['expr_type'] == 'colref') {
-				$col_name = $v2['no_quotes']['parts'][0];
+				$name = $v2['no_quotes']['parts'][0];
 			} elseif ($v2['expr_type'] == 'column-type') {
 				foreach ($v2['sub_tree'] as $v3) {
+					if (isset($v3['unsigned'])) {
+						$unsigned = $v3['unsigned'];
+					}
 					if ($v3['expr_type'] == 'data-type') {
-						$col_type = $v3['base_expr'];
+						$type = $v3['base_expr'];
+						$length = $v3['length'];
+						$decimals = $v3['decimals'];
+					} elseif ($v3['expr_type'] == 'default-value') {
+						$default = trim($v3['base_expr'], '"\'');
+					} elseif ($v3['expr_type'] == 'reserved' && in_array($v3['base_expr'], array('enum', 'set'))) {
+						$type = $v3['base_expr'];
+						if ($v3['sub_tree']['expr_type'] != 'bracket_expression') {
+							continue;
+						}
+						$values = array();
+						foreach ($v3['sub_tree']['sub_tree'] as $v4) {
+							if ($v4['expr_type'] == 'const') {
+								$_val = trim($v4['base_expr'], '"\'');
+								$values[$_val] = $_val;
+							}
+						}
 					}
 				}
+				$nullable = $v2['nullable'];
+				$auto_inc = $v2['auto_inc'];
+				$primary = $v2['primary'];
+				$unique = $v2['unique'];
 			}
-			print_r($v2);
+#			print_r($v2);
 		}
-		$struct['fields'][$col_name] = array(
-			'name'		=> $col_name,
-			'type'		=> $col_type,
+		$struct['fields'][$name] = array(
+			'name'		=> $name,
+			'type'		=> $type,
+			'length'	=> $length,
+			'unsigned'	=> $unsigned,
 			'nullable'	=> $nullable,
+			'default'	=> $default,
+			'auto_inc'	=> $auto_inc,
+			'primary'	=> $primary,
+			'unique'	=> $unique,
+			'values'	=> !empty($values) ? $values : null,
 		);
 	} elseif ($v['expr_type'] == 'primary-key') {
+
 	} elseif ($v['expr_type'] == 'index') {
+
 	} elseif ($v['expr_type'] == 'foreign-key') {
+
 	}
 }
 foreach ($tmp_options as $v) {
@@ -102,4 +137,4 @@ foreach ($tmp_options as $v) {
 	$struct['options'][$name] = $val;
 }
 
-print_r($struct);
+var_export($struct);
