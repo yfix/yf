@@ -104,9 +104,6 @@ foreach ($tmp_create_def as $v) {
 		if ($auto_inc) {
 			$primary = true;
 		}
-#		if ($type == 'year' && !$length) {
-#			$length = 4;
-#		}
 		$struct['fields'][$name] = array(
 			'name'		=> $name,
 			'type'		=> $type,
@@ -141,15 +138,15 @@ foreach ($tmp_create_def as $v) {
 			'columns'	=> $columns,
 			'raw'		=> $v['base_expr'],
 		);
-	} elseif ($v['expr_type'] == 'index') {
+	} elseif ($v['expr_type'] == 'index' || $v['expr_type'] == 'fulltext-index' || $v['expr_type'] == 'spatial-index') {
 		$name = null;
 		$type = 'index';
 		$base = strtoupper(trim($v['base_expr']));
 		if (substr($base, 0, strlen('UNIQUE')) == 'UNIQUE') {
 			$type = 'unique';
-		} elseif (substr($base, 0, strlen('FULLTEXT')) == 'FULLTEXT') {
+		} elseif (substr($base, 0, strlen('FULLTEXT')) == 'FULLTEXT' || $v['expr_type'] == 'fulltext-index') {
 			$type = 'fulltext';
-		} elseif (substr($base, 0, strlen('SPATIAL')) == 'SPATIAL') {
+		} elseif (substr($base, 0, strlen('SPATIAL')) == 'SPATIAL' || $v['expr_type'] == 'spatial-index') {
 			$type = 'spatial';
 		}
 		$columns = array();
@@ -174,7 +171,6 @@ foreach ($tmp_create_def as $v) {
 			'columns'	=> $columns,
 			'raw'		=> $v['base_expr'],
 		);
-#print_r($v);
 	} elseif ($v['expr_type'] == 'foreign-key') {
 		$name = null;
 		$columns = array();
