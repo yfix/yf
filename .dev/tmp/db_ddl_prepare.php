@@ -25,7 +25,8 @@ CREATE TABLE `film` (
   `special_features` set('Trailers','Commentaries','Deleted Scenes','Behind the Scenes') DEFAULT NULL,
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`film_id`),
-  KEY `idx_title` (`title`),
+  UNIQUE KEY `idx_title` (`title`),
+  FULLTEXT KEY `idx_desc` (`description`),
   KEY `idx_fk_language_id` (`language_id`),
   KEY `idx_fk_original_language_id` (`original_language_id`),
   CONSTRAINT `fk_film_language` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`) ON UPDATE CASCADE,
@@ -52,6 +53,9 @@ $struct = array(
 
 foreach ($tmp_create_def as $v) {
 	if ($v['expr_type'] == 'column-def') {
+// http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
+// As of MySQL 5.6.5, TIMESTAMP and DATETIME columns can be automatically initializated and updated to the current date and time (that is, the current timestamp). 
+// Before 5.6.5, this is true only for TIMESTAMP, and for at most one TIMESTAMP column per table
 		$name = null;
 		$type = null;
 		$length = null;
@@ -96,8 +100,13 @@ foreach ($tmp_create_def as $v) {
 				$primary = $v2['primary'];
 				$unique = $v2['unique'];
 			}
-#			print_r($v2);
 		}
+		if ($auto_inc) {
+			$primary = true;
+		}
+#		if ($type == 'year' && !$length) {
+#			$length = 4;
+#		}
 		$struct['fields'][$name] = array(
 			'name'		=> $name,
 			'type'		=> $type,
@@ -110,13 +119,108 @@ foreach ($tmp_create_def as $v) {
 			'primary'	=> $primary,
 			'unique'	=> $unique,
 			'values'	=> !empty($values) ? $values : null,
+			'raw'		=> $v['base_expr'],
 		);
 	} elseif ($v['expr_type'] == 'primary-key') {
-
+		$name = 'PRIMARY';
+		$type = 'primary';
+		$columns = array();
+		foreach ($v['sub_tree'] as $v2) {
+			if ($v2['expr_type'] == 'column-list') {
+				foreach ($v2['sub_tree'] as $v3) {
+					if ($v3['expr_type'] == 'index-column') {
+						$index_col_name = $v3['no_quotes']['parts'][0];
+						$columns[$index_col_name] = $index_col_name;
+					}
+				}
+			}
+		}
+		$struct['indexes'][$name] = array(
+			'name'		=> $name,
+			'type'		=> $type,
+			'columns'	=> $columns,
+			'raw'		=> $v['base_expr'],
+		);
 	} elseif ($v['expr_type'] == 'index') {
-
+		$name = null;
+		$type = 'index';
+		$base = strtoupper(trim($v['base_expr']));
+		if (substr($base, 0, strlen('UNIQUE')) == 'UNIQUE') {
+			$type = 'unique';
+		} elseif (substr($base, 0, strlen('FULLTEXT')) == 'FULLTEXT') {
+			$type = 'fulltext';
+		} elseif (substr($base, 0, strlen('SPATIAL')) == 'SPATIAL') {
+			$type = 'spatial';
+		}
+		$columns = array();
+		foreach ($v['sub_tree'] as $v2) {
+			if ($v2['expr_type'] == 'const') {
+				$name = trim($v2['base_expr'], '"\'`');
+			} elseif ($v2['expr_type'] == 'column-list') {
+				foreach ($v2['sub_tree'] as $v3) {
+					if ($v3['expr_type'] == 'index-column') {
+						$index_col_name = $v3['no_quotes']['parts'][0];
+						$columns[$index_col_name] = $index_col_name;
+					}
+				}
+			}
+		}
+		if (!$name) {
+			$name = 'idx_'.(count($struct['indexes']) + 1);
+		}
+		$struct['indexes'][$name] = array(
+			'name'		=> $name,
+			'type'		=> $type,
+			'columns'	=> $columns,
+			'raw'		=> $v['base_expr'],
+		);
+#print_r($v);
 	} elseif ($v['expr_type'] == 'foreign-key') {
-
+		$name = null;
+		$columns = array();
+		$ref_table = null;
+		$ref_columns = array();
+		$on_update = null;
+		$on_delete = null;
+		foreach ($v['sub_tree'] as $v2) {
+			if ($v2['expr_type'] == 'constraint') {
+				$name = trim($v2['sub_tree']['base_expr'], '"\'`');
+			} elseif ($v2['expr_type'] == 'column-list') {
+				foreach ($v2['sub_tree'] as $v3) {
+					if ($v3['expr_type'] == 'index-column') {
+						$index_col_name = $v3['no_quotes']['parts'][0];
+						$columns[$index_col_name] = $index_col_name;
+					}
+				}
+			} elseif ($v2['expr_type'] == 'foreign-ref') {
+				foreach ($v2['sub_tree'] as $v3) {
+					if ($v3['expr_type'] == 'table') {
+						$ref_table = $v3['no_quotes']['parts'][0];
+					} elseif ($v3['expr_type'] == 'column-list') {
+						foreach ($v3['sub_tree'] as $v4) {
+							if ($v4['expr_type'] == 'index-column') {
+								$ref_col_name = $v4['no_quotes']['parts'][0];
+								$ref_columns[$ref_col_name] = $ref_col_name;
+							}
+						}
+					}
+				}
+				$on_update = $v2['on_update'];
+				$on_delete = $v2['on_delete'];
+			}
+		}
+		if (!$name) {
+			$name = 'fk_'.(count($struct['foreign_keys']) + 1);
+		}
+		$struct['foreign_keys'][$name] = array(
+			'name'			=> $name,
+			'columns'		=> $columns,
+			'ref_table'		=> $ref_table,
+			'ref_columns'	=> $ref_columns,
+			'on_update'		=> $on_update,
+			'on_delete'		=> $on_delete,
+			'raw'			=> $v['base_expr'],
+		);
 	}
 }
 foreach ($tmp_options as $v) {
@@ -138,4 +242,4 @@ foreach ($tmp_options as $v) {
 	$struct['options'][$name] = $val;
 }
 
-var_export($struct);
+print_r($struct);
