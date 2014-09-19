@@ -10,13 +10,13 @@ class yf_test {
 		$obj = _class('test_'.$name, 'modules/test/');
 		if (method_exists($obj, 'test')) {
 			return $obj->test($arguments);
-		} else { 
+		} else {
 			trigger_error(__CLASS__.': No method '.$name, E_USER_WARNING);
 		}
 		return false;
 	}
 
-	// 
+	//
 	function change_debug () {
 		// Save data
 		if (main()->is_post()) {
@@ -41,13 +41,13 @@ class yf_test {
 		);
 		return tpl()->parse(__CLASS__.'/'.__FUNCTION__, $replace);
 	}
-	
+
 	// Default function
 	function show () {
 		if(!DEBUG_MODE){
 			return;
 		}
-	
+
 		$methods = array();
 		$class_name = get_class($this);
 		foreach ((array)get_class_methods($class_name) as $_method_name) {
@@ -67,13 +67,13 @@ class yf_test {
 		);
 		return tpl()->parse(__CLASS__.'/main', $replace);
 	}
-	
-	// 
+
+	//
 	function ajax_login () {
 		return tpl()->parse(__CLASS__.'/test_ajax_login', $replace);
 	}
-	
-	// 
+
+	//
 	function poll () {
 		$POLL_OBJ = main()->init_class('poll');
 		$body .= $POLL_OBJ->show(array(
@@ -87,7 +87,7 @@ class yf_test {
 		));
 		return $body;
 	}
-	
+
 	// Test current project mailing system
 	function mail () {
 		// Only for members!
@@ -102,13 +102,13 @@ class yf_test {
 		// Display form
 		return '<form action="./?object='.$_GET['object'].'&action='.$_GET['action'].'" method="post"><input type="text" name="email"><input type="submit" name="go" value="SEND!"></form>';
 	}
-	
+
 	// test PHPMailer
 	function smtp_phpmailer () {
 		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
-	
-	// 
+
+	//
 	function send_mail () {
 		return common()->quick_send_mail('yfix.dev@gmail.com', 'test subject', 'blablabla');
 	}
@@ -117,7 +117,7 @@ class yf_test {
 	* PHPAmiler testing
 	*/
 	function phpmailer () {
-		require_once(YF_PATH.'libs/phpmailer/class.phpmailer.php');
+		require_once(YF_PATH.'libs/phpmailer/PHPMailerAutoload.php');
 		$mail			 = new PHPMailer(); // defaults to using php 'mail()'
 		$body			 = file_get_contents(INCLUDE_PATH. 'uploads/mail_test.html');
 		$mail->SetFrom('yuri.vysotskiy@gmail.com', 'YFix Team');
@@ -133,8 +133,8 @@ class yf_test {
 			return 'Message sent!';
 		}
 	}
-	
-	// 
+
+	//
 	function rate () {
 		$body .= '<img src="'.WEB_PATH.'uploads/gallery/medium/000/000/001/1_260512.jpg" /><br />';
 		$body .= module('rate')->_show_for_object(array(
@@ -143,20 +143,20 @@ class yf_test {
 		));
 		return $body;
 	}
-	
-	// 
+
+	//
 	function photo_rating () {
 		return _class('photo_rating')->_show_photo();
 	}
-	
-	// 
+
+	//
 	function diff () {
 		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
-	
-	// 
+
+	//
 	function geo_country () {
-		// UKRTELECOM ISP, Maxmind GeoCity does not recognize it, 
+		// UKRTELECOM ISP, Maxmind GeoCity does not recognize it,
 		// but it seems that Maxmind GeoCountry can get at least country
 		$cur_ip = '92.113.3.128';
 		$ip_data = common()->_get_geo_data_from_db($cur_ip);
@@ -164,13 +164,13 @@ class yf_test {
 		$body .= 'GEO DATA:<br /> <pre>'.($ip_data ? print_r($ip_data, 1) : 'Unknown... :-(').'</pre>';
 		return $body;
 	}
-	
+
 	// unicode functions
 	function unicode () {
 		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
-	
-	// 
+
+	//
 	function email_verify () {
 		if (empty($_GET['id'])) {
 			return 'Please specify email as $_GET["id"]';
@@ -187,8 +187,8 @@ class yf_test {
 		$body .= $GLOBALS['_email_verify_output'];
 		return $body;
 	}
-	
-	// 
+
+	//
 	function synonym () {
 		// NOTE: encoding = utf8
 		$source = '{сегодня|вчера|20 лет назад} [test|||test1] [te|s|t3|test4]#3# [te|s|t|5[te|s|t|5]#1,4#|t|e|s|t6]#6,4# {Жак Ив Кусто|Леонид Хрущев{ и его колеги|, а также родственники жены| в компании инопланетян}} {сообщил|утонул|занимался сексом c{ {Хилари Клинтон|Перис Хилтон|Надеждой Крупской|Мерлином Менсоном}}} {на %DEMO% Елисейских полях|на полях|в подезде|в ванной|в ванной с утятами|на унитазе|пьяным|%DEMO%|%DEMO%|}';
@@ -206,8 +206,8 @@ class yf_test {
 		);
 		return tpl()->parse(__CLASS__.'/'.__FUNCTION__, $replace);
 	}
-	
-	// 
+
+	//
 	function image_resize () {
 		$body .= '<h3>Testing image upload and resize</h3>';
 		$img_src = 'uploads/tmp/test_resized_image.jpg';
@@ -232,10 +232,10 @@ class yf_test {
 		$body .= "<form action='./?object=".$_GET["object"]."&action=".$_GET["action"]."' method='post' enctype='multipart/form-data'><input type='file' name='image'><input type='submit' name='go' value='GO'></form>";
 		return $body;
 	}
-	
-	// 
+
+	//
 	function spoiler (){
-		$head_text='Cool spoiler head';	
+		$head_text='Cool spoiler head';
 		$body_text='Here is a cool spoiler body text<br />';
 /*		'We can also put some spoilers into each other. Like this...'
 		.$this->_spoiler($head_text, $body_text);
@@ -246,13 +246,13 @@ class yf_test {
 		);
 		return tpl()->parse($_GET['object'].'/'.__FUNCTION__, $replace);
 	}
-	
-	// 
+
+	//
 	function redirect (){
 		return js_redirect('./?object='.$_GET['object'], true, 'Testing redirect', 3);
 	}
-	
-	// 
+
+	//
 	function filter_text (){
 		// Do process
 		if (main()->is_post()) {
@@ -273,8 +273,8 @@ class yf_test {
 		);
 		return tpl()->parse($_GET['object'].'/'.__FUNCTION__, $replace);
 	}
-	
-	// 
+
+	//
 	function notice () {
 		if (main()->is_post()) {
 			common()->set_notice($_POST['notice']);
@@ -284,8 +284,8 @@ class yf_test {
 		$body .= "<form action='./?object=".$_GET["object"]."&action=".$_GET["action"]."' method='post'>Set notice here:<br /><textarea name='notice'>Test notice text</textarea><br /><input type='submit'></form>";
 		return $body;
 	}
-	
-	// 
+
+	//
 	function lang () {
 		$OBJ = main()->init_class('dynamic');
 		return $OBJ->_change_lang_form();
@@ -310,7 +310,7 @@ class yf_test {
 		return _class('test_'.__FUNCTION__, 'modules/test/')->test();
 	}
 
-	// 
+	//
 	function threaded_exec () {
 		if (MAIN_TYPE_USER || !$_SESSION['admin_id']) {
 			exit('Only for admin');
