@@ -31,21 +31,6 @@ abstract class yf_db_installer {
 	public $SHARDING_BY_COUNTRY		= false;
 	/** @var bool */
 	public $SHARDING_BY_LANG		= false;
-	/** @var array @conf_skip Required patterns */
-	public $_patterns	= array(
-		'table'		=> "/^CREATE[\s\t]*TABLE[\s\t]*[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]*\((.*)\)([^\(]*)\$/ims",
-		'split'		=> "/[\n]+,?/",
-		'field'		=> "/[\`]{0,1}([^\s\t\`]+)[\`]{0,1}[\s\t]+?([^\s\t]+)(.*)/ims",
-// TODO: key could contain several fields
-		'key'		=> "/(PRIMARY|UNIQUE){0,1}[\s\t]*?KEY[\s\t]*?[\`]{0,1}([a-z\_]*)[\`]{0,1}[\s\t]*?\(([^\)]+)\)/ims",
-// TODO: character_set with collate
-		'collate'	=> "/collate[\s\t][\"\'][a-z\_][\"\']/i",
-		'default'	=> '/(,|unsigned|not null|null|zerofill|auto_increment|default)/i',
-		'type'		=> '/([a-z]+)[\(]*([^\)]*)[\)]*/ims',
-		'comment'	=> '#\/\*\*([^\*\/]+)\*\*\/$#i',
-// TODO: support for foreign keys
-// TODO: support for partitions
-	);
 
 	/**
 	* Catch missing method call
@@ -381,29 +366,42 @@ abstract class yf_db_installer {
 	/**
 	*/
 	function _db_table_struct_into_array ($raw_data) {
+
+// TODO: key could contain several fields
+
+// TODO: character_set with collate. CREATE TABLE t (c CHAR(20) CHARACTER SET utf8 COLLATE utf8_bin);
+// CREATE TABLE lookup  (id INT, INDEX USING BTREE (id))   ENGINE = MEMORY;
+
+// TODO: support for foreign keys
+// TODO: support for partitions
+
 // TODO: bug with parsed default values
 // TODO: write unit tests on parsing table structures
 		$struct_array	= array();
 		// Check if we have full table definition or cutted one
-		if (preg_match($this->_patterns['table'], $raw_data, $m9)) {
+		if (preg_match('/^CREATE[\s]*TABLE[\s]*[\`]{0,1}([^\s\`]+)[\`]{0,1}[\s]*\((.*)\)([^\(]*)$/ims', $raw_data, $m9)) {
 			$table_raw_data = $raw_data;
 			$table_name		= $m9[1];
 			$raw_data		= $m9[2];
 		}
 		// Cut off comments with params
-		if (preg_match($this->_patterns['comment'], trim($raw_data), $m)) {
+		if (preg_match('#\/\*\*([^\*\/]+)\*\*\/$#i', trim($raw_data), $m)) {
 			$raw_data = str_replace($m[0], '', $raw_data);
 		}
+		$pattern_field = '/[\`]{0,1}([^\s\`]+)[\`]{0,1}[\s]+?([^\s]+)(.*)/ims';
+		$pattern_key = '/(PRIMARY|UNIQUE){0,1}[\s\t]*?KEY[\s]*?[\`]{0,1}([a-z\_]*)[\`]{0,1}[\s]*?\(([^\)]+)\)/ims';
 		// Cleanup raw first
-		$cur_raw_lines = preg_split($this->_patterns['split'], trim(str_replace("\t", ' ', $raw_data)));
+		$pattern_split = "/[\n]+,?/";
+#		$pattern_split = '/,/';
+		$cur_raw_lines = preg_split($pattern_split, trim(str_replace("\t", ' ', $raw_data)));
 		foreach ((array)$cur_raw_lines as $cur_line) {
 			$m			= array();
 			$m_t		= array();
 			$def_value	= '';
 			// First we check if current line contains key or regular field
-			$IS_KEY = preg_match($this->_patterns['key'], $cur_line);
+			$IS_KEY = preg_match($pattern_key, $cur_line);
 			// Do parse
-			$res = preg_match($IS_KEY ? $this->_patterns['key'] : $this->_patterns['field'], $cur_line, $m);
+			$res = preg_match($IS_KEY ? $pattern_key : $pattern_field, $cur_line, $m);
 			if (empty($res)) {
 				continue;
 			}
@@ -420,16 +418,16 @@ abstract class yf_db_installer {
 				);
 			} else {
 				// Cut off collate string (if exists)
-				$m[3] = preg_replace($this->_patterns['collate'], '', $m[3]);
+				$m[3] = preg_replace('/collate[\s]["\'][a-z\_]["\']/i', '', $m[3]);
 				// Prepare field type
-				preg_match($this->_patterns['type'], $m[2], $m_t);
+				preg_match('/([a-z]+)[\(]*([^\)]*)[\)]*/ims', $m[2], $m_t);
 				// Prepare field params
 				$field_name		= $m[1];
 				$field_length	= $m_t[2];
 				$field_arrtib	= (false !== strpos(strtolower($m[3]), 'unsigned')) ? 'unsigned' : '';
 				$field_not_null	= (false !== strpos(strtolower($m[3]), 'not null')) ? 1 : 0;
 				$field_auto_inc	= (false !== strpos(strtolower($m[3]), 'auto_increment')) ? 1 : 0;
-				$field_default	= trim(str_replace(array('"', '\''), '', preg_replace($this->_patterns['default'], '', $m[3])));
+				$field_default	= trim(str_replace(array('"', '\''), '', preg_replace('/(,|unsigned|not null|null|zerofill|auto_increment|default)/i', '', $m[3])));
 				$field_type		= preg_replace('/[^a-z]/i', '', strtolower($m_t[1]));
 				// Fix default value
 				if (!strlen($field_default) && (false !== strpos($field_type, 'int') || in_array($field_type, array('float','double')))) {
