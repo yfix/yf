@@ -8,7 +8,7 @@ $loader->registerNamespaces(array(
 ));
 $loader->register();
 
-/*
+
 $sql = <<<'EOD'
 CREATE TABLE `film` (
   `film_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
@@ -32,8 +32,8 @@ CREATE TABLE `film` (
   CONSTRAINT `fk_film_language_original` FOREIGN KEY (`original_language_id`) REFERENCES `language` (`language_id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 EOD;
-*/
-$sql = 'CREATE TABLE `film` (`id` int unsigned auto_increment, `t` timestamp, primary key(`id`))';
+
+#$sql = 'CREATE TABLE `film` (`id` int unsigned auto_increment, `t` timestamp, primary key(`id`))';
 
 $parser = new \PHPSQLParser\PHPSQLParser($sql);
 $result = $parser->parsed;
@@ -42,7 +42,7 @@ $table_name = $result['TABLE']['no_quotes']['parts'][0];
 $tmp_create_def = $result['TABLE']['create-def']['sub_tree'];
 $tmp_options = $result['TABLE']['options'];
 
-var_export($result['TABLE']);
+#var_export($result['TABLE']);
 #var_export(array_keys($result['CREATE']));
 #var_export($tmp_options);
 
@@ -54,13 +54,52 @@ $struct = array(
 	'options' => array(),
 );
 foreach ($tmp_create_def as $v) {
-#	if ($v['expr_type'] == 'column-def') {
-#	} elseif ($v['expr_type'] == 'primary-key') {
-#	} elseif ($v['expr_type'] == 'index') {
-#	} elseif ($v['expr_type'] == 'foreign-key') {
-#	}
 #	echo $v['expr_type']. PHP_EOL;
-	print_r($v);
+#	print_r($v);
+
+	if ($v['expr_type'] == 'column-def') {
+		$col_name = '';
+		$col_type = '';
+		$nullable = false;
+		foreach ($v['sub_tree'] as $v2) {
+			if ($v2['expr_type'] == 'colref') {
+				$col_name = $v2['no_quotes']['parts'][0];
+			} elseif ($v2['expr_type'] == 'column-type') {
+				foreach ($v2['sub_tree'] as $v3) {
+					if ($v3['expr_type'] == 'data-type') {
+						$col_type = $v3['base_expr'];
+					}
+				}
+			}
+			print_r($v2);
+		}
+		$struct['fields'][$col_name] = array(
+			'name'		=> $col_name,
+			'type'		=> $col_type,
+			'nullable'	=> $nullable,
+		);
+	} elseif ($v['expr_type'] == 'primary-key') {
+	} elseif ($v['expr_type'] == 'index') {
+	} elseif ($v['expr_type'] == 'foreign-key') {
+	}
+}
+foreach ($tmp_options as $v) {
+	$name = array();
+	$val = '';
+	foreach ($v['sub_tree'] as $v2) {
+		if ($v2['expr_type'] == 'reserved') {
+			$name[] = $v2['base_expr'];
+		} elseif ($v2['expr_type'] == 'const') {
+			$val = $v2['base_expr'];
+		}
+	}
+	$name = strtolower(implode(' ', $name));
+	if (in_array($name, array('default charset', 'default character set', 'charset', 'character set'))) {
+		$name = 'charset';
+	} elseif (in_array($name, array('engine'))) {
+		$name = 'engine';
+	}
+	$struct['options'][$name] = $val;
 }
 
 print_r($struct);
