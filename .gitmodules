@@ -40,3 +40,6 @@
 [submodule "libs/kcfinder"]
 	path = libs/kcfinder
 	url = https://github.com/yfix/kcfinder.git
+[submodule "libs/yaml"]
+	path = libs/yaml
+	url = https://github.com/yfix/Yaml.git
