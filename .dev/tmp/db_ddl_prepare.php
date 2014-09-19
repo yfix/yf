@@ -160,6 +160,9 @@ foreach ($tmp_create_def as $v) {
 						$columns[$index_col_name] = $index_col_name;
 					}
 				}
+			} elseif ($v2['expr_type'] == 'colref') {
+				$index_col_name = $v2['no_quotes']['parts'][0];
+				$columns[$index_col_name] = $index_col_name;
 			}
 		}
 		if (!$name) {
