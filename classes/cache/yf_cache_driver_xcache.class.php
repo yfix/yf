@@ -28,6 +28,9 @@ class yf_cache_driver_xcache extends yf_cache_driver {
 			if ($try_unpack || substr($result, 0, 2) == 'a:') {
 				$result = $try_unpack;
 			}
+			if ($result === 'false') {
+				$result = false;
+			}
 		}
 		return $result;
 	}
@@ -37,6 +40,9 @@ class yf_cache_driver_xcache extends yf_cache_driver {
 	function set($name, $data, $ttl = 0) {
 		if (!$this->is_ready()) {
 			return null;
+		}
+		if ($data === false) {
+			$data = 'false';
 		}
 		return xcache_set($name, $data, $ttl);
 	}
