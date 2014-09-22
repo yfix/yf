@@ -48,7 +48,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 			return null;
 		}
 		$path = $this->_dir_by_name($name). $this->FILE_PREFIX. $name. $this->FILE_EXT;
-		return (bool)$this->_put_cache_file($data, $path);
+		return $this->_put_cache_file($data, $path) ?: null;
 	}
 
 	/**
@@ -61,7 +61,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 		if (file_exists($path)) {
 			unlink($path);
 		}
-		return !file_exists($path);
+		return !file_exists($path) ? true : null;
 	}
 
 	/**
@@ -156,7 +156,10 @@ class yf_cache_driver_files extends yf_cache_driver {
 		}
 		$str = str_replace(' => '.PHP_EOL.'array (', '=>array(', preg_replace('/^\s+/m', '', var_export($data, 1)));
 		$str = '<?'.'php'.PHP_EOL.'return '.$str.';'.PHP_EOL;
-		return file_put_contents($path, $str);
+
+		// http://php.net/manual/en/function.file-put-contents.php
+		// This function returns the number of bytes that were written to the file, or FALSE on failure.
+		return (bool)file_put_contents($path, $str);
 	}
 
 	/**
