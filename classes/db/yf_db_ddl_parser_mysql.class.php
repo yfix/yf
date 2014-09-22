@@ -44,12 +44,19 @@ class yf_db_ddl_parser_mysql {
 			if ($type == 'enum') {
 				$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
 			}
+			if ($v['default'] == 'NULL') {
+				$def = 'NULL';
+			} elseif ($v['type'] == 'timestamp') {
+				$def = $v['default'];
+			} elseif (strlen($v['default'])) {
+				$def = '\''.$v['default'].'\'';
+			}
 			$lines[] = $implode_line(array(
 				'name'		=> '`'.$name.'`',
 				'type'		=> $v['type']. $type_braces,
 				'unsigned'	=> $v['unsigned'] ? 'unsigned' : '',
 				'nullable'	=> !$v['nullable'] ? 'NOT NULL' : '',
-				'default'	=> $v['default'] ? 'DEFAULT '.($v['default'] == 'NULL' ? 'NULL' : '\''.$v['default'].'\'') : '',
+				'default'	=> $def ? 'DEFAULT '.$def : '',
 				'auto_inc'	=> $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
 			));
 		}
