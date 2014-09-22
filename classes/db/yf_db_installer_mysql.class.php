@@ -15,6 +15,8 @@ class yf_db_installer_mysql extends yf_db_installer {
 		'TYPE',
 		'AUTO_INCREMENT',
 		'AVG_ROW_LENGTH',
+		'CHARSET',
+		'DEFAULT CHARSET',
 		'CHARACTER SET',
 		'DEFAULT CHARACTER SET',
 		'CHECKSUM',
@@ -162,6 +164,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 		$TABLE_OPTIONS = $this->_DEF_TABLE_OPTIONS;
 
 // TODO: convert into db utils()
+// TODO: unify with latest db ddl parser
 
 		$_options_to_merge = array();
 		// Get table options from table structure
@@ -212,6 +215,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 			unset($column_struct['default']);
 		}
 // TODO: convert into db utils()
+// TODO: unify with latest db ddl parser
 		$sql = 'ALTER TABLE '.$db->DB_PREFIX. $table_name. PHP_EOL.
 			"\t".'ADD '._es($column_name).' '.strtoupper($column_struct['type']).
 			(!empty($column_struct['length'])	? '('.$column_struct['length'].')' : '').
