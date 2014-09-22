@@ -365,93 +365,71 @@ abstract class yf_db_installer {
 
 	/**
 	*/
-	function _db_table_struct_into_array ($raw_data) {
-
-// TODO: key could contain several fields
-
-// TODO: character_set with collate. CREATE TABLE t (c CHAR(20) CHARACTER SET utf8 COLLATE utf8_bin);
-// CREATE TABLE lookup  (id INT, INDEX USING BTREE (id))   ENGINE = MEMORY;
-
-// TODO: support for foreign keys
-// TODO: support for partitions
-
-// TODO: bug with parsed default values
-// TODO: write unit tests on parsing table structures
-		$struct_array	= array();
-		// Check if we have full table definition or cutted one
-		if (preg_match('/^CREATE[\s]*TABLE[\s]*[\`]{0,1}([^\s\`]+)[\`]{0,1}[\s]*\((.*)\)([^\(]*)$/ims', $raw_data, $m9)) {
-			$table_raw_data = $raw_data;
-			$table_name		= $m9[1];
-			$raw_data		= $m9[2];
+	function _db_table_struct_into_array ($sql) {
+		if (false !== strpos(strtoupper($sql), 'CREATE TABLE')) {
+			$tmp_name = 'tmp_name_not_exists';
+			$sql = 'CREATE TABLE `'.$tmp_name.'` ('.$sql.')';
 		}
-		// Cut off comments with params
-		if (preg_match('#\/\*\*([^\*\/]+)\*\*\/$#i', trim($raw_data), $m)) {
-			$raw_data = str_replace($m[0], '', $raw_data);
-		}
-		$pattern_field = '/[\`]{0,1}([^\s\`]+)[\`]{0,1}[\s]+?([^\s]+)(.*)/ims';
-		$pattern_key = '/(PRIMARY|UNIQUE){0,1}[\s\t]*?KEY[\s]*?[\`]{0,1}([a-z\_]*)[\`]{0,1}[\s]*?\(([^\)]+)\)/ims';
-		// Cleanup raw first
-		$pattern_split = "/[\n]+,?/";
-#		$pattern_split = '/,/';
-		$cur_raw_lines = preg_split($pattern_split, trim(str_replace("\t", ' ', $raw_data)));
-		foreach ((array)$cur_raw_lines as $cur_line) {
-			$m			= array();
-			$m_t		= array();
-			$def_value	= '';
-			// First we check if current line contains key or regular field
-			$IS_KEY = preg_match($pattern_key, $cur_line);
-			// Do parse
-			$res = preg_match($IS_KEY ? $pattern_key : $pattern_field, $cur_line, $m);
-			if (empty($res)) {
-				continue;
-			}
-			// Switch between processing key and regular field
-			if ($IS_KEY) {
-				// Prepare key params
-				$key_fields = explode(',', str_replace(array("`","'","\""), '', $m[3]));
-				$key_name	= !empty($m[2]) ? $m[2] : implode('_', $key_fields);
-				$key_type	= !empty($m[1]) ? strtolower($m[1]) : 'key';
-				// Prepare index definition array
-				$struct_array['keys'][$key_name] = array(
-					'fields'	=> $key_fields,
-					'type'		=> $key_type,
-				);
-			} else {
-				// Cut off collate string (if exists)
-				$m[3] = preg_replace('/collate[\s]["\'][a-z\_]["\']/i', '', $m[3]);
-				// Prepare field type
-				preg_match('/([a-z]+)[\(]*([^\)]*)[\)]*/ims', $m[2], $m_t);
-				// Prepare field params
-				$field_name		= $m[1];
-				$field_length	= $m_t[2];
-				$field_arrtib	= (false !== strpos(strtolower($m[3]), 'unsigned')) ? 'unsigned' : '';
-				$field_not_null	= (false !== strpos(strtolower($m[3]), 'not null')) ? 1 : 0;
-				$field_auto_inc	= (false !== strpos(strtolower($m[3]), 'auto_increment')) ? 1 : 0;
-				$field_default	= trim(str_replace(array('"', '\''), '', preg_replace('/(,|unsigned|not null|null|zerofill|auto_increment|default)/i', '', $m[3])));
-				$field_type		= preg_replace('/[^a-z]/i', '', strtolower($m_t[1]));
-				// Fix default value
-				if (!strlen($field_default) && (false !== strpos($field_type, 'int') || in_array($field_type, array('float','double')))) {
-					$field_default = '0';
+// TODO: support for commented params like this: /*Engine=InnoDB*/
+
+		// Get table options from table structure
+		// Example: /** ENGINE=MEMORY **/
+/*
+	public $_KNOWN_TABLE_OPTIONS = array(
+		'ENGINE',
+		'TYPE',
+		'AUTO_INCREMENT',
+		'AVG_ROW_LENGTH',
+		'CHARACTER SET',
+		'DEFAULT CHARACTER SET',
+		'CHECKSUM',
+		'COLLATE',
+		'DEFAULT COLLATE',
+		'COMMENT',
+		'CONNECTION',
+		'DATA DIRECTORY',
+		'DELAY_KEY_WRITE',
+		'INDEX DIRECTORY',
+		'INSERT_METHOD',
+		'MAX_ROWS',
+		'MIN_ROWS',
+		'PACK_KEYS',
+		'PASSWORD',
+		'ROW_FORMAT',
+		'UNION',
+	);
+		if (preg_match('#\/\*\*([^\*\/]+)\*\*\/$#i', trim($table_struct), $m)) {
+			// Cut comment with options from source table structure
+			// to prevent misunderstanding
+			$table_struct = str_replace($m[0], '', $table_struct);
+
+			$_raw_options = str_replace(array("\r","\n","\t"), array('','',' '), trim($m[1]));
+
+			$_pattern = '/('.implode('|', $this->_KNOWN_TABLE_OPTIONS).")[\s]{0,}=[\s]{0,}([\']{0,1}[^\'\,]+[\']{0,1})/ims";
+			if (preg_match_all($_pattern, $_raw_options, $m)) {
+				foreach ((array)$m[0] as $_id => $v) {
+					$_option_key = strtoupper(trim($m[1][$_id]));
+					$_option_val = trim($m[2][$_id]);
+					if (!in_array($_option_key, $this->_KNOWN_TABLE_OPTIONS)) {
+						continue;
+					}
+					$_options_to_merge[$_option_key] = $_option_val;
 				}
-				$struct_array['fields'][$field_name] = array(
-					'type'		=> $field_type,
-					'length'	=> $field_length,
-					'attrib'	=> $field_attrib,
-					'not_null'	=> $field_not_null,
-					'default'	=> $field_default,
-					'auto_inc'	=> $field_auto_inc,
-				);
 			}
 		}
-		return $struct_array;
+*/
+
+		$result = _class('db_ddl_parser_mysql', 'classes/db/')->parse($sql);
+		if ($result && $tmp_name) {
+			$result['name'] = $tmp_name;
+		}
+		return $result;
 	}
 
 	/**
 	*/
 	function _get_table_struct_array_by_name ($table_name, $db) {
-		$data2 = $db->query_fetch('SHOW CREATE TABLE `'.$table_name.'`');
-		$table_struct = $data2['Create Table'];
-		return $this->_db_table_struct_into_array($table_struct);
+		return $this->_db_table_struct_into_array( $db->get_one('SHOW CREATE TABLE `'.$table_name.'`') );
 	}
 
 	/**
