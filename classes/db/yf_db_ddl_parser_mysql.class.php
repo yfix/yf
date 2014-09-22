@@ -40,7 +40,7 @@ class yf_db_ddl_parser_mysql {
 // http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
 // As of MySQL 5.6.5, TIMESTAMP and DATETIME columns can be automatically initializated and updated to the current date and time (that is, the current timestamp). 
 // Before 5.6.5, this is true only for TIMESTAMP, and for at most one TIMESTAMP column per table
-		foreach ($tmp_create_def as $v) {
+		foreach ((array)$tmp_create_def as $v) {
 			if ($v['expr_type'] == 'column-def') {
 				$name = null;
 				$type = null;
@@ -53,11 +53,11 @@ class yf_db_ddl_parser_mysql {
 				$unique = false;
 				$decimals = null;
 				$values = null; // ENUM and SET
-				foreach ($v['sub_tree'] as $v2) {
+				foreach ((array)$v['sub_tree'] as $v2) {
 					if ($v2['expr_type'] == 'colref') {
 						$name = $v2['no_quotes']['parts'][0];
 					} elseif ($v2['expr_type'] == 'column-type') {
-						foreach ($v2['sub_tree'] as $v3) {
+						foreach ((array)$v2['sub_tree'] as $v3) {
 							if (isset($v3['unsigned'])) {
 								$unsigned = $v3['unsigned'];
 							}
@@ -73,7 +73,7 @@ class yf_db_ddl_parser_mysql {
 									continue;
 								}
 								$values = array();
-								foreach ($v3['sub_tree']['sub_tree'] as $v4) {
+								foreach ((array)$v3['sub_tree']['sub_tree'] as $v4) {
 									if ($v4['expr_type'] == 'const') {
 										$_val = trim($v4['base_expr'], '"\'');
 										$values[$_val] = $_val;
@@ -108,9 +108,9 @@ class yf_db_ddl_parser_mysql {
 				$name = 'PRIMARY';
 				$type = 'primary';
 				$columns = array();
-				foreach ($v['sub_tree'] as $v2) {
+				foreach ((array)$v['sub_tree'] as $v2) {
 					if ($v2['expr_type'] == 'column-list') {
-						foreach ($v2['sub_tree'] as $v3) {
+						foreach ((array)$v2['sub_tree'] as $v3) {
 							if ($v3['expr_type'] == 'index-column') {
 								$index_col_name = $v3['no_quotes']['parts'][0];
 								$columns[$index_col_name] = $index_col_name;
@@ -136,11 +136,11 @@ class yf_db_ddl_parser_mysql {
 					$type = 'spatial';
 				}
 				$columns = array();
-				foreach ($v['sub_tree'] as $v2) {
+				foreach ((array)$v['sub_tree'] as $v2) {
 					if ($v2['expr_type'] == 'const') {
 						$name = trim($v2['base_expr'], '"\'`');
 					} elseif ($v2['expr_type'] == 'column-list') {
-						foreach ($v2['sub_tree'] as $v3) {
+						foreach ((array)$v2['sub_tree'] as $v3) {
 							if ($v3['expr_type'] == 'index-column') {
 								$index_col_name = $v3['no_quotes']['parts'][0];
 								$columns[$index_col_name] = $index_col_name;
@@ -167,22 +167,22 @@ class yf_db_ddl_parser_mysql {
 				$ref_columns = array();
 				$on_update = null;
 				$on_delete = null;
-				foreach ($v['sub_tree'] as $v2) {
+				foreach ((array)$v['sub_tree'] as $v2) {
 					if ($v2['expr_type'] == 'constraint') {
 						$name = trim($v2['sub_tree']['base_expr'], '"\'`');
 					} elseif ($v2['expr_type'] == 'column-list') {
-						foreach ($v2['sub_tree'] as $v3) {
+						foreach ((array)$v2['sub_tree'] as $v3) {
 							if ($v3['expr_type'] == 'index-column') {
 								$index_col_name = $v3['no_quotes']['parts'][0];
 								$columns[$index_col_name] = $index_col_name;
 							}
 						}
 					} elseif ($v2['expr_type'] == 'foreign-ref') {
-						foreach ($v2['sub_tree'] as $v3) {
+						foreach ((array)$v2['sub_tree'] as $v3) {
 							if ($v3['expr_type'] == 'table') {
 								$ref_table = $v3['no_quotes']['parts'][0];
 							} elseif ($v3['expr_type'] == 'column-list') {
-								foreach ($v3['sub_tree'] as $v4) {
+								foreach ((array)$v3['sub_tree'] as $v4) {
 									if ($v4['expr_type'] == 'index-column') {
 										$ref_col_name = $v4['no_quotes']['parts'][0];
 										$ref_columns[$ref_col_name] = $ref_col_name;
@@ -208,10 +208,10 @@ class yf_db_ddl_parser_mysql {
 				);
 			}
 		}
-		foreach ($tmp_options as $v) {
+		foreach ((array)$tmp_options as $v) {
 			$name = array();
 			$val = '';
-			foreach ($v['sub_tree'] as $v2) {
+			foreach ((array)$v['sub_tree'] as $v2) {
 				if ($v2['expr_type'] == 'reserved') {
 					$name[] = $v2['base_expr'];
 				} elseif ($v2['expr_type'] == 'const') {
