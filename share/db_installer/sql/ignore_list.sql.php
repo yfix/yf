@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`user_id` int(10) unsigned NOT NULL default \'0\',
 	`target_user_id` int(10) unsigned NOT NULL default \'0\',
 	`add_date` int(10) unsigned NOT NULL default \'0\',

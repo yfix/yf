@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`country` char(2) NOT NULL,
 	`city` varchar(32) NOT NULL,
 	`region` char(3) NOT NULL,

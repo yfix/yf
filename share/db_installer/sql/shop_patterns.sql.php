@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `cat_id` int(11) NOT NULL,
   `search` varchar(255) NOT NULL,

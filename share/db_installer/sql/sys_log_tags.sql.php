@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` int(10) unsigned NOT NULL auto_increment,
 	`tag_id` int(10) unsigned NOT NULL,
 	`object_id` int(10) unsigned NOT NULL,

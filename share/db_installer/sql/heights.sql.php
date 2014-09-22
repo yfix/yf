@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` tinyint(4) NOT NULL default \'0\',
 	`height` varchar(50) NOT NULL default \'\',
 	PRIMARY KEY	(`id`),

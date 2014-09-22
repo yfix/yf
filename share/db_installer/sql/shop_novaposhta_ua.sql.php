@@ -1,5 +1,5 @@
 <?php
-$data = "
+return "
 	`id`          int(11)      NOT NULL  AUTO_INCREMENT,
 	`city_raw`    varchar(255) DEFAULT NULL,
 	`address_raw` varchar(255) DEFAULT NULL,

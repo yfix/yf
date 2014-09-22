@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `cat_ids` varchar(255) NOT NULL,
   `name` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT \'\',

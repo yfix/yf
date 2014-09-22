@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `cat_id` int(11) unsigned NOT NULL DEFAULT \'0\',
   `price` decimal(12,2) NOT NULL,

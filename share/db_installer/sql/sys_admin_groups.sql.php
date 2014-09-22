@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(255) NOT NULL DEFAULT \'\',
 	`active` enum(\'1\',\'0\') NOT NULL DEFAULT \'1\',

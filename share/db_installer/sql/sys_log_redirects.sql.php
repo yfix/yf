@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`url_from` varchar(1024) NOT NULL,
 	`url_to` varchar(1024) NOT NULL,

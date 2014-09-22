@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `event_id` int(10) unsigned NOT NULL,
   `from_email` varchar(254) DEFAULT NULL,

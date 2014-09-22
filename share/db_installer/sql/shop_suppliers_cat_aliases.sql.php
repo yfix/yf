@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
   `supplier_id` int(11) NOT NULL DEFAULT \'0\',
   `cat_id` int(11) NOT NULL DEFAULT \'0\',
   `name` varchar(255) NOT NULL DEFAULT \'\',

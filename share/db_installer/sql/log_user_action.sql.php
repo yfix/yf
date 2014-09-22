@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 	`owner_id` INT UNSIGNED NOT NULL ,
 	`action_name` VARCHAR( 255 ) NOT NULL ,

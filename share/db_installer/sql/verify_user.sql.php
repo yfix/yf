@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`user_id` int(10) unsigned NOT NULL auto_increment,
 	`verified_url_1` varchar(255) NOT NULL,
 	`verified_url_2` varchar(255) NOT NULL,

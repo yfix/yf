@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` mediumint(6) unsigned NOT NULL auto_increment,
 	`user_name` varchar(255) NOT NULL default \'\',
 	`email` varchar(255) NOT NULL default \'\',

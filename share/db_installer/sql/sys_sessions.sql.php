@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` varchar(32) NOT NULL default \'\',
 	`user_id` int(10) unsigned NOT NULL,
 	`user_group` int(10) unsigned NOT NULL,

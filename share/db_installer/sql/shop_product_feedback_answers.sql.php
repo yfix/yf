@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL DEFAULT \'0\',
   `product_id` int(11) NOT NULL DEFAULT \'0\',

@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` int(10) unsigned NOT NULL auto_increment,
 	`source_path` varchar(255) NOT NULL,
 	`source_file_size` int(10) unsigned NOT NULL,
