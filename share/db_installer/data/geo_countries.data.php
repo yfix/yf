@@ -1,5 +1,5 @@
 <?php
-$data = array (
+return array (
   0 => 
   array (
     'code' => 'AD',

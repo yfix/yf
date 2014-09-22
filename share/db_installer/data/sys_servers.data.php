@@ -1,5 +1,5 @@
 <?php
-$data = array (
+return array (
   9999 => 
   array (
     'name' => 'Main Server',
