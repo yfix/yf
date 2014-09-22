@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` mediumint(8) unsigned NOT NULL auto_increment,
 	`active` tinyint(1) NOT NULL default \'1\',
 	`forums_list` text NOT NULL,

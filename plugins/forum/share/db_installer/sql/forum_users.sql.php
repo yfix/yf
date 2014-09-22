@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` int(10) unsigned NOT NULL auto_increment,
 	`active` tinyint(1) NOT NULL default \'1\',
 	`status` char(1) default \'a\',
