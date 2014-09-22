@@ -503,6 +503,9 @@ class yf_cache {
 					$names[$k] = $this->CACHE_NS. $name;
 				}
 				$result = $this->_driver->multi_del($names);
+				if (!$result) {
+					$failed = true;
+				}
 			}
 			if (!$implemented || $result === null) {
 				$names = $old_names;
@@ -512,9 +515,7 @@ class yf_cache {
 					}
 				}
 			}
-			if ($failed) {
-				$result = null;
-			}
+			$result = $failed ? null : true;
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
 			'names'			=> $names,
