@@ -24,6 +24,64 @@ class yf_db_ddl_parser_mysql {
 
 	/**
 	*/
+	function create (array $data, $params = array()) {
+		if (!strlen($data['name']) || empty($data['fields'])) {
+			return false;
+		}
+		$table_name = $data['name'];
+		foreach ((array)$data['fields'] as $name => $v) {
+			$type_braces = (isset($v['length']) ? '('.$v['length']. (isset($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
+			if ($type == 'enum') {
+				$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
+			}
+			$lines[] = implode(' ', array_unique(array(' ',
+				'name'		=> '`'.$name.'`',
+				'type'		=> $v['type']. $type_braces,
+				'unsigned'	=> $v['unsigned'] ? 'unsigned' : '',
+				'nullable'	=> !$v['nullable'] ? 'NOT NULL' : '',
+				'default'	=> $v['default'] ? 'DEFAULT '.($v['default'] == 'NULL' ? 'NULL' : '\''.$v['default'].'\'') : '',
+				'auto_inc'	=> $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
+			)));
+		}
+		foreach ((array)$data['indexes'] as $name => $v) {
+			$type = 'KEY';
+			if ($v['type'] == 'primary') {
+				$type = 'PRIMARY KEY';
+			} elseif ($v['type'] == 'unique') {
+				$type = 'UNIQUE KEY';
+			} elseif ($v['type'] == 'fulltext') {
+				$type = 'FULLTEXT KEY';
+			} elseif ($v['type'] == 'spatial') {
+				$type = 'SPATIAL KEY';
+			}
+			$lines[] = implode(' ', array_unique(array(' ',
+				'type'		=> $type,
+				'name'		=> in_array($v['type'], array('index', 'fulltext', 'spatial')) ? '`'.$name.'`' : '',
+				'columns'	=> '(\''.implode('\',\'', $v['columns']).'\')',
+			)));
+		}
+		foreach ((array)$data['foreign_keys'] as $name => $v) {
+			$lines[] = implode(' ', array_unique(array(' ',
+				'begin'			=> 'CONSTRAINT',
+				'name'			=> '`'.$name.'`',
+				'fk'			=> 'FOREIGN KEY',
+				'columns'		=> '(\''.implode('\',\'', $v['columns']).'\')',
+				'ref'			=> 'REFERENCES',
+				'ref_table'		=> '`'.$v['ref_table'].'`',
+				'ref_columns'	=> '(\''.implode('\',\'', $v['ref_columns']).'\')',
+				'on_update'		=> $v['on_update'] ? 'ON UPDATE '.$v['on_update'] : '',
+				'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.$v['on_delete'] : '',
+			)));
+		}
+		$options = array();
+		foreach ((array)$data['options'] as $k => $v) {
+			$options[$k] = $k.'='.$v;
+		}
+		return 'CREATE TABLE `'.$table_name.'` ('.PHP_EOL. implode(','.PHP_EOL, $lines). PHP_EOL.')'. ($options ? ' '.implode(' ', $options) : '');
+	}
+
+	/**
+	*/
 	function parse ($sql) {
 		$parsed = $this->parser->parse($sql);
 
