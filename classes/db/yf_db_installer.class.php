@@ -154,7 +154,7 @@ abstract class yf_db_installer {
 		foreach ($globs_sql as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.sql.php'));
-				$this->TABLES_SQL[$t_name] = require_once $f; // $data should be loaded from file
+				$this->TABLES_SQL[$t_name] = include $f; // $data should be loaded from file
 			}
 		}
 		$globs_data = array(
@@ -167,7 +167,7 @@ abstract class yf_db_installer {
 		foreach ($globs_data as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.data.php'));
-				$this->TABLES_DATA[$t_name] = require_once $f; // $data should be loaded from file
+				$this->TABLES_DATA[$t_name] = include $f; // $data should be loaded from file
 			}
 		}
 		// Project has higher priority than framework (allow to change anything in project)
@@ -359,6 +359,13 @@ abstract class yf_db_installer {
 			'struct'=> $table_struct,
 			'data'	=> $table_data,
 		) : false;
+	}
+
+	/**
+	* Alias
+	*/
+	function create_table_sql_to_php ($sql) {
+		return $this->_db_table_struct_into_array($sql);
 	}
 
 	/**
