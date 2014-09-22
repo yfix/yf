@@ -53,7 +53,7 @@ class yf_cache_driver_riak extends yf_cache_driver {
 			$response = $this->bucket->get($name);
 			// No objects found
 			if ( ! $response->hasObject()) {
-				return false;
+				return null;
 			}
 			// Check for attempted siblings
 			$object = ($response->hasSiblings())
@@ -62,7 +62,7 @@ class yf_cache_driver_riak extends yf_cache_driver {
 			// Check for expired object
 			if ($this->is_expired($object)) {
 				$this->bucket->delete($object);
-				return false;
+				return null;
 			}
 			return unserialize($object->getContent());
 		} catch (Exception\RiakException $e) {
@@ -72,7 +72,7 @@ class yf_cache_driver_riak extends yf_cache_driver {
 			// - Riak\UnexpectedResponseException
 			// - Riak\NotFoundException
 		}
-		return false;
+		return null;
 	}
 
 	/**
@@ -111,7 +111,7 @@ class yf_cache_driver_riak extends yf_cache_driver {
 			// - Riak\Exception\CommunicationException
 			// - Riak\Exception\UnexpectedResponseException
 		}
-		return false;
+		return null;
 	}
 
 	/**
@@ -129,7 +129,7 @@ class yf_cache_driver_riak extends yf_cache_driver {
 		} catch (Exception\RiakException $e) {
 			// Do nothing
 		}
-		return false;
+		return null;
 	}
 
 	/**
