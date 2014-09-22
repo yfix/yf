@@ -28,20 +28,30 @@ class yf_db_ddl_parser_mysql {
 		if (!strlen($data['name']) || empty($data['fields'])) {
 			return false;
 		}
+		$implode_line = function($a) {
+			foreach ($a as $k => $v) {
+				$v = trim($v);
+				if (!strlen($v)) {
+					unset($a[$k]);
+				}
+			}
+			return '  '.implode(' ', $a);
+		};
+
 		$table_name = $data['name'];
 		foreach ((array)$data['fields'] as $name => $v) {
 			$type_braces = (isset($v['length']) ? '('.$v['length']. (isset($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
 			if ($type == 'enum') {
 				$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
 			}
-			$lines[] = implode(' ', array_unique(array(' ',
+			$lines[] = $implode_line(array(
 				'name'		=> '`'.$name.'`',
 				'type'		=> $v['type']. $type_braces,
 				'unsigned'	=> $v['unsigned'] ? 'unsigned' : '',
 				'nullable'	=> !$v['nullable'] ? 'NOT NULL' : '',
 				'default'	=> $v['default'] ? 'DEFAULT '.($v['default'] == 'NULL' ? 'NULL' : '\''.$v['default'].'\'') : '',
 				'auto_inc'	=> $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
-			)));
+			));
 		}
 		foreach ((array)$data['indexes'] as $name => $v) {
 			$type = 'KEY';
@@ -54,30 +64,33 @@ class yf_db_ddl_parser_mysql {
 			} elseif ($v['type'] == 'spatial') {
 				$type = 'SPATIAL KEY';
 			}
-			$lines[] = implode(' ', array_unique(array(' ',
+			$lines[] = $implode_line(array(
 				'type'		=> $type,
 				'name'		=> in_array($v['type'], array('index', 'fulltext', 'spatial')) ? '`'.$name.'`' : '',
-				'columns'	=> '(\''.implode('\',\'', $v['columns']).'\')',
-			)));
+				'columns'	=> '(`'.implode('`,`', $v['columns']).'`)',
+			));
 		}
 		foreach ((array)$data['foreign_keys'] as $name => $v) {
-			$lines[] = implode(' ', array_unique(array(' ',
+			$lines[] = $implode_line(array(
 				'begin'			=> 'CONSTRAINT',
 				'name'			=> '`'.$name.'`',
 				'fk'			=> 'FOREIGN KEY',
-				'columns'		=> '(\''.implode('\',\'', $v['columns']).'\')',
+				'columns'		=> '(`'.implode('`,`', $v['columns']).'`)',
 				'ref'			=> 'REFERENCES',
 				'ref_table'		=> '`'.$v['ref_table'].'`',
-				'ref_columns'	=> '(\''.implode('\',\'', $v['ref_columns']).'\')',
+				'ref_columns'	=> '(`'.implode('`,`', $v['ref_columns']).'`)',
 				'on_update'		=> $v['on_update'] ? 'ON UPDATE '.$v['on_update'] : '',
 				'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.$v['on_delete'] : '',
-			)));
+			));
 		}
 		$options = array();
 		foreach ((array)$data['options'] as $k => $v) {
-			$options[$k] = $k.'='.$v;
+			if ($k == 'charset') {
+				$k = 'DEFAULT CHARSET';
+			}
+			$options[$k] = strtoupper($k).'='.$v;
 		}
-		return 'CREATE TABLE `'.$table_name.'` ('.PHP_EOL. implode(','.PHP_EOL, $lines). PHP_EOL.')'. ($options ? ' '.implode(' ', $options) : '');
+		return 'CREATE TABLE `'.$table_name.'` ('.PHP_EOL. implode(','.PHP_EOL, $lines). PHP_EOL.')'. ($options ? ' '.implode(' ', $options) : '').';';
 	}
 
 	/**
