@@ -22,6 +22,10 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 #				file_put_contents($php_path, '<?php'.PHP_EOL.'return '.var_export($response, 1).';');
 #			}
 			$this->assertEquals($expected, $response);
+
+			// Check that without SQL newlines or pretty formatting code works the same
+			$response = _class('db_ddl_parser_mysql', 'classes/db/')->parse(str_replace(array("\r","\n"), ' ', $sql));
+			$this->assertEquals($expected, $response);
 		}
 	}
 }
