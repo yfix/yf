@@ -58,6 +58,7 @@ class yf_db_ddl_parser_mysql {
 				'nullable'	=> !$v['nullable'] ? 'NOT NULL' : '',
 				'default'	=> $def ? 'DEFAULT '.$def : '',
 				'auto_inc'	=> $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
+				'on_update'	=> $v['on_update'] ?: '',
 			));
 		}
 		foreach ((array)$data['indexes'] as $name => $v) {
@@ -134,6 +135,7 @@ class yf_db_ddl_parser_mysql {
 				$unique = false;
 				$decimals = null;
 				$values = null; // ENUM and SET
+				$on_update = null; // TIMESTAMP and DATETIME
 				foreach ((array)$v['sub_tree'] as $v2) {
 					if ($v2['expr_type'] == 'colref') {
 						$name = $v2['no_quotes']['parts'][0];
@@ -162,6 +164,12 @@ class yf_db_ddl_parser_mysql {
 								}
 							}
 						}
+						if (in_array($type, array('timestamp','datetime'))) {
+							$try = 'ON UPDATE CURRENT_TIMESTAMP';
+							if (strpos($v2['base_expr'], $try) !== false) {
+								$on_update = $try;
+							}
+						}
 						$nullable = $v2['nullable'];
 						$auto_inc = $v2['auto_inc'];
 						$primary = $v2['primary'];
@@ -184,6 +192,9 @@ class yf_db_ddl_parser_mysql {
 					'unique'	=> $unique,
 					'values'	=> !empty($values) ? $values : null,
 				);
+				if ($on_update) {
+					$struct['fields'][$name]['on_update'] = $on_update;
+				}
 				if ($this->RAW_IN_RESULTS) {
 					$struct['fields'][$name]['raw'] = $v['base_expr'];
 				}
