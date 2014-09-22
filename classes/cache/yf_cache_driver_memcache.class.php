@@ -113,7 +113,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 				$result = $try_unpack;
 			}
 		}
-		return $result === false ? null : $result;
+		return $result;
 	}
 
 	/**
@@ -201,7 +201,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 					$failed++;
 				}
 			}
-			return $failed ? false : true;
+			return $failed ? null : true;
 		}
 		return $this->_connection->setMulti($data, $ttl);
 	}
