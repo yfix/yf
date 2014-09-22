@@ -175,7 +175,7 @@ class yf_debug {
 			'DEBUG_CONSOLE_POPUP'=> (int)conf('DEBUG_CONSOLE_POPUP'),
 			'CACHE_USE'			=> (int)$cache_use,
 			'CACHE_NO_CACHE'	=> (int)cache()->NO_CACHE,
-			'CACHE_NO_WHY'		=> !$cache_use ? cache()->_NO_CACHE_WHY : '',
+			'CACHE_NO_WHY'		=> cache()->_NO_CACHE_WHY,
 			'CACHE_DRIVER'		=> cache()->DRIVER,
 			'CACHE_NS'			=> cache()->CACHE_NS,
 			'CACHE_TTL'			=> (int)cache()->TTL,
