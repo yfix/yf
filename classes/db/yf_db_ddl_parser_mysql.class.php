@@ -4,7 +4,10 @@
 */
 class yf_db_ddl_parser_mysql {
 
+	/***/
 	private $parser = null;
+	/***/
+	public $RAW_IN_RESULTS = false;
 
 	/**
 	*/
@@ -102,8 +105,10 @@ class yf_db_ddl_parser_mysql {
 					'primary'	=> $primary,
 					'unique'	=> $unique,
 					'values'	=> !empty($values) ? $values : null,
-					'raw'		=> $v['base_expr'],
 				);
+				if ($this->RAW_IN_RESULTS) {
+					$struct['fields'][$name]['raw'] = $v['base_expr'];
+				}
 			} elseif ($v['expr_type'] == 'primary-key') {
 				$name = 'PRIMARY';
 				$type = 'primary';
@@ -122,8 +127,10 @@ class yf_db_ddl_parser_mysql {
 					'name'		=> $name,
 					'type'		=> $type,
 					'columns'	=> $columns,
-					'raw'		=> $v['base_expr'],
 				);
+				if ($this->RAW_IN_RESULTS) {
+					$struct['indexes'][$name]['raw'] = $v['base_expr'];
+				}
 			} elseif ($v['expr_type'] == 'index' || $v['expr_type'] == 'fulltext-index' || $v['expr_type'] == 'spatial-index') {
 				$name = null;
 				$type = 'index';
@@ -158,8 +165,10 @@ class yf_db_ddl_parser_mysql {
 					'name'		=> $name,
 					'type'		=> $type,
 					'columns'	=> $columns,
-					'raw'		=> $v['base_expr'],
 				);
+				if ($this->RAW_IN_RESULTS) {
+					$struct['indexes'][$name]['raw'] = $v['base_expr'];
+				}
 			} elseif ($v['expr_type'] == 'foreign-key') {
 				$name = null;
 				$columns = array();
@@ -204,8 +213,10 @@ class yf_db_ddl_parser_mysql {
 					'ref_columns'	=> $ref_columns,
 					'on_update'		=> $on_update,
 					'on_delete'		=> $on_delete,
-					'raw'			=> $v['base_expr'],
 				);
+				if ($this->RAW_IN_RESULTS) {
+					$struct['foreign_keys'][$name]['raw'] = $v['base_expr'];
+				}
 			}
 		}
 		foreach ((array)$tmp_options as $v) {
