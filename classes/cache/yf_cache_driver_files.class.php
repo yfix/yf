@@ -152,7 +152,7 @@ class yf_cache_driver_files extends yf_cache_driver {
 	*/
 	function _put_cache_file ($data = array(), $path = '') {
 		if (empty($path)) {
-			return false;
+			return null;
 		}
 		$str = str_replace(' => '.PHP_EOL.'array (', '=>array(', preg_replace('/^\s+/m', '', var_export($data, 1)));
 		$str = '<?'.'php'.PHP_EOL.'return '.$str.';'.PHP_EOL;
