@@ -61,6 +61,7 @@ ng_app_admin.factory( 'UploadApi',  function( ApiConfig, $resource, $window, $lo
 	service.resource = $resource( null, null, {
 		list__remove_all : { method : 'POST', url : service.url_list, params : { sub_action : 'remove_all' }  } ,
 		item__get        : { method : 'GET',  url : service.url_item, params : { sub_action : 'get'        }  } ,
+		item__remove     : { method : 'POST', url : service.url_item, params : { sub_action : 'remove'     }  } ,
 		item__import     : { method : 'POST', url : service.url_item, params : { sub_action : 'import'     }  } ,
 	});
 	service.list__remove_all = function() {
@@ -68,6 +69,9 @@ ng_app_admin.factory( 'UploadApi',  function( ApiConfig, $resource, $window, $lo
 	};
 	service.item__get = function( id ) {
 		return( service.resource.item__get({ id: id }) );
+	};
+	service.item__remove = function( id ) {
+		return( service.resource.item__remove({ id: id }) );
 	};
 	service.item__import = function( id, data ) {
 		return( service.resource.item__import({ id: id, data: data }) );
@@ -178,21 +182,26 @@ ng_app_admin.directive( 'fileUpload', function( ApiConfig, Uploader, $alert, $ti
 
 ng_app_admin.filter( 'orderObjectBy', function( $log ) {
 	return function( items, options ) {
-		var filtered = [];
-		var filter  = this[ options.filter ] || '.*';
+		var $scope       = this;
+		var filtered     = [];
+		var filter       = $scope[ options.filter ] || '';
+		var status_model = $scope[ options.status ] || null;
+		var status       = true;
+		var regexp       = null;
+		// filter by regexp
 		try {
-			regexp = new RegExp( filter, 'img' );
+			RegExp.escape= function( s ) {
+				return( s.replace( /[-\/\\()|[\]]/g, '\\$&' ) );
+			};
+			regexp = new RegExp( RegExp.escape( '.*'+filter+'.*' ), 'img' );
 		} catch( e ) {
-			this[ 'upload_list_filter__status' ] = false;
-			return( items );
+			status = false;
 		}
-		this[ 'upload_list_filter__status' ] = true;
-		var order   = options.order;
-		var reverse = options.reverse;
+		$scope[ options.status ] = status;
 		angular.forEach( items, function( item ) {
 			var found = false;
 			angular.forEach( item, function( value ) {
-				var result = ( value+'' ).match( regexp );
+				var result = ( value+'' ).match( regexp ) || !status;
 				if( result ) {
 					found = true;
 					return;
@@ -200,6 +209,8 @@ ng_app_admin.filter( 'orderObjectBy', function( $log ) {
 			});
 			if( found ) { filtered.push( item ); }
 		});
+		// sort
+		var order   = options.order;
 		filtered.sort(  function (a, b) {
 			var result = 0;
 			if( a[ order ] == b[ order ] ) {
@@ -209,6 +220,7 @@ ng_app_admin.filter( 'orderObjectBy', function( $log ) {
 			}
 			return( result );
 		});
+		var reverse = options.reverse;
 		if( reverse ) { filtered.reverse(); }
 		return( filtered );
 	};
@@ -296,6 +308,17 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 				}
 			);
 		},
+		item__remove: function( item ) {
+			var result = UploadApi.item__remove( item.id );
+			result.$promise.then(
+				function( r ) {
+					$scope.item__remove({ item: item, response: r.response });
+				},
+				function( r ) {
+					$log.log( 'item->remove is fail:', r );
+				}
+			);
+		},
 		item__import: function( item ) {
 			var result = UploadApi.item__import( $scope.item_data.id, $scope.item_data.fields );
 			result.$promise.then(
@@ -351,8 +374,24 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 			$scope.item_data = null;
 		}
 	};
+	$scope.item__remove = function( result ) {
+		$scope.upload_list__update( result );
+		var data    = result.response.action.data;
+		var title   = result.item.file_name + ':';
+		var content = 'файл удален';
+		var status  = null;
+		if( result.response.action.status ) {
+			// clear data on remove file
+			if( $scope.item_data && $scope.item_data.id == result.item.id ) {
+				$scope.item_data = null;
+			}
+		} else {
+			content = 'файл не удален';
+			status = 'error';
+		}
+		$scope.notifications( title, content, status );
+	};
 	$scope.item__import = function( result ) {
-		$log.log( 'import', result );
 		$scope.upload_list__update( result );
 		var title   = $scope.item_data.file + ':';
 		var content = result.response.action.status_message;
@@ -391,7 +430,8 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 		var title   = result.options.file.name + ', ' + size + ':';
 		var content = result.response.action.status_message;
 		$scope.notifications( title, content );
-		$scope.upload_list__update( result );
+		var response = { response: result } ;
+		$scope.item__get( result );
 	};
 	$scope.upload_list__fail = function( result ) {
 		var status = result.xhr.status;

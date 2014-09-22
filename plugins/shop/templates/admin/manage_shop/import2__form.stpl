@@ -36,14 +36,26 @@
 }
 .upload_list_hover {
 	opacity : 1;
+}
+.upload_list_hover .action {
+	opacity : 1;
 	cursor: pointer;
 }
 </style>
 <table class="upload_list table table-striped" ng-show="data._upload_list">
 	<tr>
-		<th colspan="4">
+		<th colspan="5">
 			<span>Список загруженных файлов ({{_upload_list__count}})</span>
-			<input style="width: 10em; margin: 0 2em;" type="text" ng-model="upload_list_filter">
+			<span style="width: 10em; margin: 0 2em;" class="control-group" ng-class="{ error: upload_list_filter__status === false }">
+				<input style="width: 10em; margin: 0;" type="text"
+					ng-model="upload_list_filter"
+					bs-tooltip
+						data-title     = "Вы можете использовать регулярные выражения"
+						data-trigger   = "focus"
+						data-placement = "top"
+				>
+				<span class="btn" ng-click="upload_list_filter=''"><i class="fa fa-times"></i></span>
+			</span>
 			<span class="btn btn-small btn-danger pull-right" ng-click="UploadApi.list__remove_all()">Удалить все</span>
 		</th>
 	</tr>
@@ -52,19 +64,25 @@
 		<th>размер</th>
 		<th>время</th>
 		<th>статус</th>
+		<th>действия</th>
 	</tr>
 	<tr
-		ng-repeat     = "i in data._upload_list | orderObjectBy: { filter: 'upload_list_filter', order: 'time', reverse: 'true' }"
+		ng-repeat     = "i in data._upload_list | orderObjectBy: { status: 'upload_list_filter__status', filter: 'upload_list_filter', order: 'time', reverse: 'true' }"
 		class         = "upload_list"
 		ng-class      = "{ upload_list_hover: upload_list_hover, success: upload_list_hover }"
 		ng-mouseover  = "upload_list_hover=true"
 		ng-mouseleave = "upload_list_hover=false"
-		ng-click      = "UploadApi.item__get( i )"
 	>
-		<td>{{i.file_name}}</td>
+		<td class="action" ng-click = "UploadApi.item__get( i )">
+			{{i.file_name}}
+		</td>
 		<td>{{i._file_size}}</td>
 		<td>{{i._time}}</td>
 		<td>{{i._status}}</td>
+		<td>
+			<span class="btn btn-small btn-success" ng-click="UploadApi.item__get( i )">Получить</span>
+			<span class="btn btn-small btn-danger" ng-click="UploadApi.item__remove( i )">Удалить</span>
+		</td>
 	</tr>
 </table>
 
@@ -128,7 +146,7 @@
 		class="item"
 		ng-class="{ 'success': item.status === true, 'danger': item.status === false, 'error': item.status === false }"
 	>
-		<td ng-repeat="i in item">{{i}}</td>
+		<td ng-repeat="i in item track by $index">{{i}}</td>
 		<td>
 			<span class="btn btn-small"
 				data-trigger="hover"

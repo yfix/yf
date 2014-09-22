@@ -226,9 +226,13 @@ class yf_manage_shop_import_products2 {
 				if( !$result ) {
 					$this->_reject( 'save upload file data error' );
 				}
+				$result = $this->_upload_item__get( $id );
+					$test = $this->_upload_item__import( $id, $result[ 'data' ][ 'fields' ] );
+					$result[ 'data' ][ 'test' ] = $test;
 				$result = array(
 					'data' => $this->_data_ng(),
 					'action' => array(
+						'data'           => $result[ 'data' ],
 						'status'         => true,
 						'status_message' => 'файл загружен',
 					),
@@ -268,6 +272,10 @@ class yf_manage_shop_import_products2 {
 				$test = $this->_upload_item__import( $id, $result[ 'data' ][ 'fields' ] );
 				$result[ 'data' ][ 'test' ] = $test;
 				break;
+			case 'remove':
+				$id = $post[ 'id' ];
+				$result = $this->_upload_item__remove( $id );
+				break;
 			case 'import':
 				$id = $post[ 'id' ];
 				$import_fields = $post[ 'data' ];
@@ -283,21 +291,34 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
-	protected function _upload_list__remove_all() {
+	protected function _upload_list_item__remove( $id ) {
+		$result      = false;
+		$upload_list = &$this->upload_list;
 		$upload_path = $this->upload_path;
+		$file        = $upload_path . $id;
+		$file_cache  = $file . '.cache';
+		$file_import = $file . '.import';
+			file_exists( $file_cache  ) && @unlink( $file_cache  );
+			file_exists( $file_import ) && @unlink( $file_import );
+		if( file_exists( $file ) && false === @unlink( $file ) ) {
+			$result = false;
+		} else {
+			$result = true;
+			unset( $upload_list[ $id ] );
+		}
+		return( $result );
+	}
+
+	protected function _upload_list__remove_all() {
 		$upload_list = &$this->upload_list;
 		foreach( $upload_list as $id => $item ) {
-			$file       = $upload_path . $id;
-			$file_cache = $file . '.cache';
-				file_exists( $file_cache ) && @unlink( $file_cache );
-			if( file_exists( $file ) && false === @unlink( $file ) ) {
+			if( !$this->_upload_list_item__remove( $id ) ) {
 				$result = array(
 					'status'         => false,
 					'status_message' => 'ошибка при удалении файла: ' . $item[ 'file_name' ],
 				);
 				return( $result );
 			}
-			unset( $upload_list[ $id ] );
 		}
 		$this->_save_upload_list();
 		$result = array(
@@ -342,6 +363,17 @@ class yf_manage_shop_import_products2 {
 				),
 				'status' => true,
 			);
+		}
+		return( $result );
+	}
+
+	protected function _upload_item__remove( $id ) {
+		$result = array(
+			'status' => false,
+		);
+		if( $this->_upload_list_item__remove( $id ) ) {
+			$result[ 'status' ] = true;
+			$this->_save_upload_list();
 		}
 		return( $result );
 	}
@@ -561,7 +593,7 @@ class yf_manage_shop_import_products2 {
 		try {
 			$excel = $reader->load( $file_name );
 			// $nullValue = null, $calculateFormulas = true, $formatData = true, $returnCellRef = false
-			$result = $excel->getActiveSheet()->toArray( null, false, false, false );
+			$result = $excel->getActiveSheet()->toArray( null, true, true, false );
 		} catch ( Exception $e ) {
 			$result = false;
 		}
