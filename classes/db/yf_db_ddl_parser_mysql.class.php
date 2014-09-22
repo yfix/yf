@@ -56,6 +56,8 @@ class yf_db_ddl_parser_mysql {
 				'type'		=> $v['type']. $type_braces,
 				'unsigned'	=> $v['unsigned'] ? 'unsigned' : '',
 				'nullable'	=> !$v['nullable'] ? 'NOT NULL' : '',
+				'charset'	=> $v['charset'] ? 'CHARACTER SET '.$v['charset'] : '',
+				'collate'	=> $v['collate'] ? 'COLLATE '.$v['collate'] : '',
 				'default'	=> $def ? 'DEFAULT '.$def : '',
 				'auto_inc'	=> $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
 				'on_update'	=> $v['on_update'] ?: '',
@@ -129,6 +131,8 @@ class yf_db_ddl_parser_mysql {
 				$length = null;
 				$unsigned = null;
 				$nullable = false;
+				$charset = null;
+				$collate = null;
 				$default = null;
 				$auto_inc = null;
 				$primary = false;
@@ -137,10 +141,12 @@ class yf_db_ddl_parser_mysql {
 				$values = null; // ENUM and SET
 				$on_update = null; // TIMESTAMP and DATETIME
 				foreach ((array)$v['sub_tree'] as $v2) {
+#var_export($v2);
+#echo PHP_EOL;
 					if ($v2['expr_type'] == 'colref') {
 						$name = $v2['no_quotes']['parts'][0];
 					} elseif ($v2['expr_type'] == 'column-type') {
-						foreach ((array)$v2['sub_tree'] as $v3) {
+						foreach ((array)$v2['sub_tree'] as $k3 => $v3) {
 							if (isset($v3['unsigned'])) {
 								$unsigned = $v3['unsigned'];
 							}
@@ -160,6 +166,15 @@ class yf_db_ddl_parser_mysql {
 									if ($v4['expr_type'] == 'const') {
 										$_val = trim($v4['base_expr'], '"\'');
 										$values[$_val] = $_val;
+									}
+								}
+							} elseif ($v3['expr_type'] == 'reserved' && strtoupper($v3['base_expr']) === 'DEFAULT') {
+								$next1 = $v2['sub_tree'][$k3 + 1];
+								$next2 = $v2['sub_tree'][$k3 + 2];
+								if ($next1['expr_type'] == 'reserved') {
+									$default = strval($next1['base_expr']);
+									if ($next2['expr_type'] == 'reserved') {
+										$default .= ' '.strval($next2['base_expr']);
 									}
 								}
 							}
@@ -187,6 +202,8 @@ class yf_db_ddl_parser_mysql {
 					'unsigned'	=> $unsigned,
 					'nullable'	=> $nullable,
 					'default'	=> $default,
+					'charset'	=> $charset,
+					'collate'	=> $collate,
 					'auto_inc'	=> $auto_inc,
 					'primary'	=> $primary,
 					'unique'	=> $unique,
