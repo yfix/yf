@@ -67,7 +67,7 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_get() {
 		self::_cache()->flush();
-		$this->assertFalse(@self::_cache()->get());
+		$this->assertNull(@self::_cache()->get());
 		$this->assertNull(self::_cache()->get('k1'));
 
 		self::_cache()->set('k1', 'val1');
