@@ -8,7 +8,7 @@ require_once __DIR__.'/db_offline_abstract.php';
 class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 
 	/***/
-	public function test_sakila() {
+	public function test_sql_to_php_sakila() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
@@ -34,10 +34,34 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 		}
 	}
 
+	/***/
+	public function test_php_to_sql_sakila() {
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+
+		$fixtures_path = __DIR__.'/fixtures/';
+		foreach (glob($fixtures_path.'*.php') as $path) {
+			$php_create = include $path;
+			$sql_path = substr($path, 0, -strlen('.php')). '.sql';
+			if (!file_exists($sql_path)) {
+				continue;
+			}
+			$expected = file_get_contents($sql_path);
+			$response = $parser->create($php_create);
+
+#			$this->assertSame($expected, $response);
+break;
+		}
+	}
+
+	/***/
+	public function test_php_to_sql_db_installer() {
+// TODO
+	}
+
 	/**
 	* In this test we ensure that all generated sql_php files are up-to-date and can be easily reconstructed
 	*/
-	public function test_yf_db_installer() {
+	public function test_sql_to_php_db_installer() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
 		$db_installer = _class('db_installer_mysql', 'classes/db/');
