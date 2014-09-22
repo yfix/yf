@@ -83,13 +83,14 @@ class yf_cache {
 		if ($conf_cache_ns) {
 			$this->CACHE_NS = $conf_cache_ns;
 		}
+		$conf_no_cache = conf('NO_CACHE');
 		// backwards compatibility
 		if (defined('USE_CACHE')) {
 			if (! USE_CACHE) {
 				$this->NO_CACHE = true;
 				$this->_NO_CACHE_WHY = 'const NO_CACHE defined and false';
 			}
-		} elseif (!conf('NO_CACHE')) {
+		} elseif (!is_null($conf_no_cache) && $conf_no_cache) {
 			$this->NO_CACHE = true;
 			$this->_NO_CACHE_WHY = 'conf(NO_CACHE) is true';
 		} elseif (!main()->USE_SYSTEM_CACHE) {
@@ -99,6 +100,9 @@ class yf_cache {
 		if (($_GET['no_core_cache'] || $_GET['no_cache']) && $this->_url_action_allowed('no_cache')) {
 			$this->NO_CACHE = true;
 			$this->_NO_CACHE_WHY = '$_GET param no_cache';
+		}
+		if ($this->NO_CACHE && !$this->_NO_CACHE_WHY) {
+			$this->_NO_CACHE_WHY = 'cache()->NO_CACHE == true';
 		}
 		if (($_GET['refresh_cache'] || $_GET['rebuild_core_cache']) && $this->_url_action_allowed('refresh_cache')) {
 			$this->FORCE_REBUILD_CACHE = true;
