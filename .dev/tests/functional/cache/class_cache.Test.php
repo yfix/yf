@@ -58,7 +58,7 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 		return self::$_cache;
 	}
 	public function test_driver() {
-		$this->assertEquals(self::_get_driver_name(), self::_cache()->DRIVER);
+		$this->assertSame(self::_get_driver_name(), self::_cache()->DRIVER);
 	}
 	public function test_is_ready() {
 		$this->assertTrue(self::_cache()->_driver_ok);
@@ -66,109 +66,112 @@ class class_cache_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(self::_cache()->_driver->is_ready());
 	}
 	public function test_get() {
-		$this->assertNotEmpty(self::_cache()->flush());
+		$this->assertTrue(self::_cache()->flush());
 		$this->assertNull(@self::_cache()->get());
 		$this->assertNull(self::_cache()->get('k1'));
 
-		$this->assertNotEmpty(self::_cache()->set('k1', 'val1'));
-		$this->assertEquals('val1', self::_cache()->get('k1'));
+		$this->assertTrue(self::_cache()->set('k1', 'val1'));
+		$this->assertSame('val1', self::_cache()->get('k1'));
 
-		$this->assertNotEmpty(self::_cache()->set('k11', 0));
-		$this->assertEquals(0, self::_cache()->get('k11'));
+		$this->assertTrue(self::_cache()->set('k11', 0));
+		$this->assertSame(0, self::_cache()->get('k11'));
+
+		$this->assertTrue(self::_cache()->set('k11_', false));
+		$this->assertFalse(self::_cache()->get('k11_'));
 	}
 	public function test_set() {
-		$this->assertNotEmpty(self::_cache()->flush());
-		$this->assertNotEmpty(self::_cache()->set('k2', 'some_data'));
-		$this->assertEquals('some_data', self::_cache()->get('k2'));
-		$this->assertNotEmpty(self::_cache()->set('k2_', array()));
-		$this->assertEquals(array(), self::_cache()->get('k2_'));
-		$this->assertNotEmpty(self::_cache()->set('k3_', false));
+		$this->assertTrue(self::_cache()->flush());
+		$this->assertTrue(self::_cache()->set('k2', 'some_data'));
+		$this->assertSame('some_data', self::_cache()->get('k2'));
+		$this->assertTrue(self::_cache()->set('k2_', array()));
+		$this->assertSame(array(), self::_cache()->get('k2_'));
+		$this->assertTrue(self::_cache()->set('k3_', false));
 		$this->assertFalse(self::_cache()->get('k3_'));
 	}
 	public function test_del() {
-		$this->assertNotEmpty(self::_cache()->flush());
-		$this->assertNotEmpty(self::_cache()->set('k3', 'val3'));
-		$this->assertEquals('val3', self::_cache()->get('k3'));
+		$this->assertTrue(self::_cache()->flush());
+		$this->assertTrue(self::_cache()->set('k3', 'val3'));
+		$this->assertSame('val3', self::_cache()->get('k3'));
 		$this->assertTrue(self::_cache()->del('k3'));
 		$this->assertNull(self::_cache()->get('k3'));
 	}
 	public function test_flush() {
-		$this->assertNotEmpty(self::_cache()->flush());
-		$this->assertNotEmpty(self::_cache()->set('k4', 'val4'));
+		$this->assertTrue(self::_cache()->flush());
+		$this->assertTrue(self::_cache()->set('k4', 'val4'));
 		$this->assertTrue(self::_cache()->flush());
 		$this->assertNull(self::_cache()->get('k4'));
 		$list_keys_result = self::_cache()->list_keys();
 		if ($list_keys_result !== false && $list_keys_result !== null) {
-			$this->assertEquals(array(), self::_cache()->list_keys());
+			$this->assertSame(array(), self::_cache()->list_keys());
 		}
 	}
 	public function test_list_keys() {
 		if (!self::_cache()->_driver->implemented['list_keys']) {
 			return ;
 		}
-		$this->assertNotEmpty(self::_cache()->flush());
-		$this->assertNotEmpty(self::_cache()->set('k1', 'v1'));
-		$this->assertNotEmpty(self::_cache()->set('k2', 'v2'));
+		$this->assertTrue(self::_cache()->flush());
+		$this->assertTrue(self::_cache()->set('k1', 'v1'));
+		$this->assertTrue(self::_cache()->set('k2', 'v2'));
 		$list_keys_result = self::_cache()->list_keys();
 		if ($list_keys_result !== false && $list_keys_result !== null) {
-			$this->assertEquals(array('k1', 'k2'), self::_cache()->list_keys());
-			$this->assertNotEmpty(self::_cache()->set('k3', 'v3'));
-			$this->assertEquals(array('k1', 'k2', 'k3'), self::_cache()->list_keys());
+			$this->assertSame(array('k1', 'k2'), self::_cache()->list_keys());
+			$this->assertTrue(self::_cache()->set('k3', 'v3'));
+			$this->assertSame(array('k1', 'k2', 'k3'), self::_cache()->list_keys());
 		}
 	}
 	public function test_multi_get() {
-		$this->assertNotEmpty(self::_cache()->flush());
-		$this->assertNotEmpty(self::_cache()->set('k17', 'v1'));
-		$this->assertNotEmpty(self::_cache()->set('k27', 'v2'));
-		$this->assertEquals(array('k17' => 'v1', 'k27' => 'v2'), self::_cache()->multi_get(array('k17', 'k27')));
-		$this->assertEquals('v1', self::_cache()->get('k17'));
-		$this->assertEquals('v2', self::_cache()->get('k27'));
+		$this->assertTrue(self::_cache()->flush());
+		$this->assertTrue(self::_cache()->set('k17', 'v1'));
+		$this->assertTrue(self::_cache()->set('k27', 'v2'));
+		$this->assertSame(array('k17' => 'v1', 'k27' => 'v2'), self::_cache()->multi_get(array('k17', 'k27')));
+		$this->assertSame('v1', self::_cache()->get('k17'));
+		$this->assertSame('v2', self::_cache()->get('k27'));
 
-		$this->assertNotEmpty(self::_cache()->flush());
-		$this->assertNotEmpty(self::_cache()->set('k18', 'v1'));
-		$this->assertNotEmpty(self::_cache()->set('k28', false));
-		$this->assertEquals(array('k18' => 'v1', 'k28' => false), self::_cache()->multi_get(array('k18', 'k28')));
-		$this->assertEquals('v1', self::_cache()->get('k18'));
+		$this->assertTrue(self::_cache()->flush());
+		$this->assertTrue(self::_cache()->set('k18', 'v1'));
+		$this->assertTrue(self::_cache()->set('k28', false));
+		$this->assertSame(array('k18' => 'v1', 'k28' => false), self::_cache()->multi_get(array('k18', 'k28')));
+		$this->assertSame('v1', self::_cache()->get('k18'));
 		$this->assertFalse(self::_cache()->get('k28'));
 	}
 	public function test_multi_set() {
-		$this->assertNotEmpty(self::_cache()->flush());
-		$this->assertEquals(array(), self::_cache()->multi_get(array('k111', 'k222')));
+		$this->assertTrue(self::_cache()->flush());
+		$this->assertSame(array(), self::_cache()->multi_get(array('k111', 'k222')));
 		$this->assertTrue(self::_cache()->multi_set(array('k111' => 'v1', 'k222' => 'v2')));
-		$this->assertEquals(array('k111' => 'v1', 'k222' => 'v2'), self::_cache()->multi_get(array('k111', 'k222')));
+		$this->assertSame(array('k111' => 'v1', 'k222' => 'v2'), self::_cache()->multi_get(array('k111', 'k222')));
 
-		$this->assertNotEmpty(self::_cache()->flush());
-		$this->assertEquals(array(), self::_cache()->multi_get(array('k113', 'k223')));
+		$this->assertTrue(self::_cache()->flush());
+		$this->assertSame(array(), self::_cache()->multi_get(array('k113', 'k223')));
 		$this->assertTrue(self::_cache()->multi_set(array('k113' => 'v1', 'k223' => false)));
-		$this->assertEquals(array('k113' => 'v1', 'k223' => false), self::_cache()->multi_get(array('k113', 'k223')));
+		$this->assertSame(array('k113' => 'v1', 'k223' => false), self::_cache()->multi_get(array('k113', 'k223')));
 	}
 	public function test_multi_del() {
-		$this->assertNotEmpty(self::_cache()->flush());
-		$this->assertEquals(array(), self::_cache()->multi_get(array('k133', 'k233')));
+		$this->assertTrue(self::_cache()->flush());
+		$this->assertSame(array(), self::_cache()->multi_get(array('k133', 'k233')));
 
 		$this->assertTrue(self::_cache()->multi_set(array('k133' => 'v1', 'k233' => 'v2')));
-		$this->assertEquals(array('k133' => 'v1', 'k233' => 'v2'), self::_cache()->multi_get(array('k133', 'k233')));
+		$this->assertSame(array('k133' => 'v1', 'k233' => 'v2'), self::_cache()->multi_get(array('k133', 'k233')));
 
 		$this->assertTrue(self::_cache()->set('k333', 'v3'));
 		$this->assertTrue(self::_cache()->set('k444', false));
-		$this->assertEquals(array('k333' => 'v3', 'k444' => false), self::_cache()->multi_get(array('k333', 'k444')));
+		$this->assertSame(array('k333' => 'v3', 'k444' => false), self::_cache()->multi_get(array('k333', 'k444')));
 
 		$this->assertTrue(self::_cache()->multi_del(array('k133', 'k233')));
-		$this->assertEquals(array(), self::_cache()->multi_get(array('k133', 'k233')));
-		$this->assertEquals('v3', self::_cache()->get('k333'));
+		$this->assertSame(array(), self::_cache()->multi_get(array('k133', 'k233')));
+		$this->assertSame('v3', self::_cache()->get('k333'));
 		$this->assertFalse(self::_cache()->get('k444'));
 	}
 	public function test_del_by_prefix() {
 		if (!self::_cache()->_driver->implemented['list_keys']) {
 			return ;
 		}
-		$this->assertNotEmpty(self::_cache()->flush());
-		$this->assertNotEmpty(self::_cache()->multi_set(array('k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13')));
-		$this->assertEquals(array('k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13'), self::_cache()->multi_get(array('k118', 'k218', 'k138')));
-		$this->assertNotEmpty(self::_cache()->del_by_prefix('k1'));
+		$this->assertTrue(self::_cache()->flush());
+		$this->assertTrue(self::_cache()->multi_set(array('k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13')));
+		$this->assertSame(array('k118' => 'v11', 'k218' => 'v21', 'k138' => 'v13'), self::_cache()->multi_get(array('k118', 'k218', 'k138')));
+		$this->assertTrue(self::_cache()->del_by_prefix('k1'));
 		$list_keys_result = self::_cache()->list_keys();
 		if ($list_keys_result !== false && $list_keys_result !== null) {
-			$this->assertEquals('v21', self::_cache()->get('k218'));
+			$this->assertSame('v21', self::_cache()->get('k218'));
 			$this->assertNull(self::_cache()->get('k138'));
 		}
 	}
