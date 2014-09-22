@@ -83,15 +83,26 @@ class yf_cache {
 		if ($conf_cache_ns) {
 			$this->CACHE_NS = $conf_cache_ns;
 		}
+		$conf_no_cache = conf('NO_CACHE');
 		// backwards compatibility
-		if (defined('USE_CACHE') && ! USE_CACHE) {
+		if (defined('USE_CACHE')) {
+			if (! USE_CACHE) {
+				$this->NO_CACHE = true;
+				$this->_NO_CACHE_WHY = 'const NO_CACHE defined and false';
+			}
+		} elseif (!is_null($conf_no_cache) && $conf_no_cache) {
 			$this->NO_CACHE = true;
-		}
-		if (!main()->USE_SYSTEM_CACHE) {
+			$this->_NO_CACHE_WHY = 'conf(NO_CACHE) is true';
+		} elseif (!main()->USE_SYSTEM_CACHE) {
 			$this->NO_CACHE = true;
+			$this->_NO_CACHE_WHY = 'main()->USE_SYSTEM_CACHE == false';
 		}
 		if (($_GET['no_core_cache'] || $_GET['no_cache']) && $this->_url_action_allowed('no_cache')) {
 			$this->NO_CACHE = true;
+			$this->_NO_CACHE_WHY = '$_GET param no_cache';
+		}
+		if ($this->NO_CACHE && !$this->_NO_CACHE_WHY) {
+			$this->_NO_CACHE_WHY = 'cache()->NO_CACHE == true';
 		}
 		if (($_GET['refresh_cache'] || $_GET['rebuild_core_cache']) && $this->_url_action_allowed('refresh_cache')) {
 			$this->FORCE_REBUILD_CACHE = true;
@@ -116,7 +127,7 @@ class yf_cache {
 	*/
 	function _connect ($params = array()) {
 		if (!$this->DRIVER) {
-			return false;
+			return null;
 		}
 		if (isset($this->_tried_to_connect)) {
 			return $this->_driver;
@@ -187,35 +198,37 @@ class yf_cache {
 	* Get data from cache
 	*/
 	function get ($name, $force_ttl = 0, $params = array()) {
-		if (!$this->_driver_ok) {
-			return false;
-		}
-		if (empty($name) || $this->NO_CACHE) {
-			return false;
+		$do_real_work = true;
+		if (!$this->_driver_ok || empty($name) || $this->NO_CACHE) {
+			$do_real_work = false;
 		}
 		if ($this->FORCE_REBUILD_CACHE) {
 			$this->del($name, true);
-			return false;
+			$do_real_work = false;
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
 		$key_name_ns = $this->CACHE_NS. $name;
 
-		$result = $this->_driver->get($key_name_ns, $force_ttl, $params);
+		$result = null;
+		if ($do_real_work) {
+			$result = $this->_driver->get($key_name_ns, $force_ttl, $params);
+		}
 
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
-			'name'		=> $name,
-			'name_real'	=> $key_name_ns,
-			'data'		=> $result,
-			'driver'	=> $this->DRIVER,
-			'params'	=> $params,
-			'force_ttl'	=> $force_ttl,
-			'time'		=> round(microtime(true) - $time_start, 5),
-			'trace'		=> main()->trace_string(),
+			'name'			=> $name,
+			'name_real'		=> $key_name_ns,
+			'data'			=> $result,
+			'driver'		=> $this->DRIVER,
+			'params'		=> $params,
+			'force_ttl'		=> $force_ttl,
+			'time'			=> round(microtime(true) - $time_start, 5),
+			'trace'			=> main()->trace_string(),
+			'did_real_work'	=> (int)$do_real_work,
 		));
 		if ($_GET['refresh_cache'] && $this->_url_action_allowed('refresh_cache')) {
-			return false;
+			return null;
 		}
 		return $result;
 	}
@@ -224,11 +237,9 @@ class yf_cache {
 	* Set data into cache
 	*/
 	function set ($name, $data, $ttl = 0) {
-		if (!$this->_driver_ok) {
-			return false;
-		}
-		if ($this->NO_CACHE || $this->_no_cache[$name]) {
-			return false;
+		$do_real_work = true;
+		if (!$this->_driver_ok || $this->NO_CACHE || $this->_no_cache[$name]) {
+			$do_real_work = false;
 		}
 		if (is_array($name)) {
 			return $this->multi_set($name, $data);
@@ -241,16 +252,21 @@ class yf_cache {
 			$ttl += mt_rand(1, 15);
 		}
 		$key_name_ns = $this->CACHE_NS. $name;
-		$result = $this->_driver->set($key_name_ns, $data, $ttl);
+
+		$result = null;
+		if ($do_real_work) {
+			$result = $this->_driver->set($key_name_ns, $data, $ttl);
+		}
 
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
-			'name'		=> $name,
-			'name_real'	=> $key_name_ns,
-			'data'		=> $data,
-			'driver'	=> $this->DRIVER,
-			'ttl'		=> $ttl,
-			'time'		=> round(microtime(true) - $time_start, 5),
-			'trace'		=> main()->trace_string(),
+			'name'			=> $name,
+			'name_real'		=> $key_name_ns,
+			'data'			=> $data,
+			'driver'		=> $this->DRIVER,
+			'ttl'			=> $ttl,
+			'time'			=> round(microtime(true) - $time_start, 5),
+			'trace'			=> main()->trace_string(),
+			'did_real_work'	=> (int)$do_real_work,
 		));
 		return $result;
 	}
@@ -259,8 +275,9 @@ class yf_cache {
 	* Delete selected cache entry
 	*/
 	function del ($name) {
+		$do_real_work = true;
 		if (!$this->_driver_ok) {
-			return false;
+			$do_real_work = false;
 		}
 		if (is_array($name)) {
 			return $this->multi_del($name);
@@ -269,13 +286,18 @@ class yf_cache {
 			$time_start = microtime(true);
 		}
 		$key_name_ns = $this->CACHE_NS. $name;
-		$result = $this->_driver->del($key_name_ns);
+
+		$result = null;
+		if ($do_real_work) {
+			$result = $this->_driver->del($key_name_ns);
+		}
 
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
 			'name'			=> $name,
 			'name_real'		=> $key_name_ns,
 			'driver'		=> $this->DRIVER,
 			'time'			=> round(microtime(true) - $time_start, 5),
+			'did_real_work'	=> (int)$do_real_work,
 		));
 		return $result;
 	}
@@ -312,17 +334,23 @@ class yf_cache {
 	* Clean all cache entries
 	*/
 	function flush () {
+		$do_real_work = true;
 		if (!$this->_driver_ok) {
-			return false;
+			$do_real_work = false;
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		$result = $this->_driver->flush();
+
+		if ($do_real_work) {
+			$result = $this->_driver->flush();
+		}
+
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
-			'data'		=> $result,
-			'driver'	=> $this->DRIVER,
-			'time'		=> microtime(true) - $time_start,
+			'data'			=> $result,
+			'driver'		=> $this->DRIVER,
+			'time'			=> microtime(true) - $time_start,
+			'did_real_work'	=> (int)$do_real_work,
 		));
 		return $result;
 	}
@@ -359,11 +387,9 @@ class yf_cache {
 	* Get several cache entries at once
 	*/
 	function multi_get ($names = array(), $force_ttl = 0, $params = array()) {
-		if (!$this->_driver_ok) {
-			return false;
-		}
-		if ($this->NO_CACHE) {
-			return false;
+		$do_real_work = true;
+		if (!$this->_driver_ok || $this->NO_CACHE) {
+			$do_real_work = false;
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
@@ -375,32 +401,36 @@ class yf_cache {
 				}
 			}
 		}
-		if ($this->_driver->implemented['multi_get']) {
-			// Fix names prefix
-			$p_len = strlen($this->CACHE_NS);
-			foreach ((array)$names as $k => $name) {
-				$names[$k] = $this->CACHE_NS. $name;
-			}
-			$result = $this->_driver->multi_get($names, $force_ttl, $params);
-			// Fix names prefix
-			foreach ((array)$result as $name => $val) {
-				$result[substr($name, $p_len)] = $val;
-				unset($result[$name]);
-			}
-		} else {
-			$result = array();
-			foreach ((array)$names as $name) {
-				$res = $this->get($name, $force_ttl, $params);
-				if (isset($res)) {
-					$result[$name] = $res;
+		$result = null;
+		if ($do_real_work) {
+			if ($this->_driver->implemented['multi_get']) {
+				// Fix names prefix
+				$p_len = strlen($this->CACHE_NS);
+				foreach ((array)$names as $k => $name) {
+					$names[$k] = $this->CACHE_NS. $name;
+				}
+				$result = $this->_driver->multi_get($names, $force_ttl, $params);
+				// Fix names prefix
+				foreach ((array)$result as $name => $val) {
+					$result[substr($name, $p_len)] = $val;
+					unset($result[$name]);
+				}
+			} else {
+				$result = array();
+				foreach ((array)$names as $name) {
+					$res = $this->get($name, $force_ttl, $params);
+					if (isset($res)) {
+						$result[$name] = $res;
+					}
 				}
 			}
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
-			'names'		=> $names,
-			'data'		=> $result,
-			'driver'	=> $this->DRIVER,
-			'time'		=> microtime(true) - $time_start,
+			'names'			=> $names,
+			'data'			=> $result,
+			'driver'		=> $this->DRIVER,
+			'time'			=> microtime(true) - $time_start,
+			'did_real_work'	=> (int)$do_real_work,
 		));
 		return $result;
 	}
@@ -409,11 +439,9 @@ class yf_cache {
 	* Set several cache entries at once
 	*/
 	function multi_set ($data = array(), $ttl = 0) {
-		if (!$this->_driver_ok) {
-			return false;
-		}
-		if ($this->NO_CACHE) {
-			return false;
+		$do_real_work = true;
+		if (!$this->_driver_ok || $this->NO_CACHE) {
+			$do_real_work = false;
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
@@ -425,26 +453,30 @@ class yf_cache {
 				}
 			}
 		}
-		if ($this->_driver->implemented['multi_set']) {
-			// Fix names prefix
-			foreach ((array)$data as $name => $_data) {
-				$data[$this->CACHE_NS. $name] = $_data;
-				unset($data[$name]);
-			}
-			$result = $this->_driver->multi_set($data, $ttl);
-		} else {
-			$failed = false;
-			foreach ((array)$data as $name => $_data) {
-				if (!$this->set($name, $_data, $ttl)) {
-					$failed = true;
+		$result = null;
+		if ($do_real_work) {
+			if ($this->_driver->implemented['multi_set']) {
+				// Fix names prefix
+				foreach ((array)$data as $name => $_data) {
+					$data[$this->CACHE_NS. $name] = $_data;
+					unset($data[$name]);
 				}
+				$result = $this->_driver->multi_set($data, $ttl);
+			} else {
+				$failed = false;
+				foreach ((array)$data as $name => $_data) {
+					if (!$this->set($name, $_data, $ttl)) {
+						$failed = true;
+					}
+				}
+				$result = !$failed;
 			}
-			$result = !$failed;
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
-			'data'		=> $data,
-			'driver'	=> $this->DRIVER,
-			'time'		=> microtime(true) - $time_start,
+			'data'			=> $data,
+			'driver'		=> $this->DRIVER,
+			'time'			=> microtime(true) - $time_start,
+			'did_real_work'	=> (int)$do_real_work,
 		));
 		return $result;
 	}
@@ -453,38 +485,44 @@ class yf_cache {
 	* Del several cache entries at once
 	*/
 	function multi_del ($names = array()) {
+		$do_real_work = true;
 		if (!$this->_driver_ok) {
-			return false;
+			$do_real_work = false;
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		$old_names = $names;
-		$failed = false;
-		$implemented = $this->_driver->implemented['multi_del'];
-		if ($implemented) {
-			// Fix names prefix
-			foreach ((array)$names as $k => $name) {
-				$names[$k] = $this->CACHE_NS. $name;
-			}
-			$result = $this->_driver->multi_del($names);
-		}
-		if (!$implemented || $result === null) {
-			$names = $old_names;
-			foreach ((array)$names as $name) {
-				if (!$this->del($name)) {
+		$result = null;
+		if ($do_real_work) {
+			$old_names = $names;
+			$failed = false;
+			$implemented = $this->_driver->implemented['multi_del'];
+			if ($implemented) {
+				// Fix names prefix
+				foreach ((array)$names as $k => $name) {
+					$names[$k] = $this->CACHE_NS. $name;
+				}
+				$result = $this->_driver->multi_del($names);
+				if (!$result) {
 					$failed = true;
 				}
 			}
-		}
-		if ($failed) {
-			$result = false;
+			if (!$implemented || $result === null) {
+				$names = $old_names;
+				foreach ((array)$names as $name) {
+					if (!$this->del($name)) {
+						$failed = true;
+					}
+				}
+			}
+			$result = $failed ? null : true;
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
-			'names'		=> $names,
-			'data'		=> $result,
-			'driver'	=> $this->DRIVER,
-			'time'		=> microtime(true) - $time_start,
+			'names'			=> $names,
+			'data'			=> $result,
+			'driver'		=> $this->DRIVER,
+			'time'			=> microtime(true) - $time_start,
+			'did_real_work'	=> (int)$do_real_work,
 		));
 		return $result;
 	}
@@ -492,34 +530,39 @@ class yf_cache {
 	/**
 	*/
 	function list_keys () {
+		$do_real_work = true;
 		if (!$this->_driver_ok) {
-			return false;
+			$do_real_work = false;
 		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
 		if (!$this->_driver->implemented['list_keys']) {
-			return null;
+			$do_real_work = false;
 		}
-		$result = $this->_driver->list_keys();
-		if ($this->CACHE_NS && $result) {
-			$ns_len = strlen($this->CACHE_NS);
-			foreach ($result as $k => $v) {
-				if (substr($v, 0, $ns_len) !== $this->CACHE_NS) {
-					unset($result[$k]);
-				} else {
-					$result[$k] = substr($v, $ns_len);
+		$result = null;
+		if ($do_real_work) {
+			$result = $this->_driver->list_keys();
+			if ($this->CACHE_NS && $result) {
+				$ns_len = strlen($this->CACHE_NS);
+				foreach ($result as $k => $v) {
+					if (substr($v, 0, $ns_len) !== $this->CACHE_NS) {
+						unset($result[$k]);
+					} else {
+						$result[$k] = substr($v, $ns_len);
+					}
 				}
 			}
-		}
-		if ($result) {
-			asort($result);
-			$result = array_values($result);
+			if ($result) {
+				asort($result);
+				$result = array_values($result);
+			}
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
-			'data'		=> $result,
-			'driver'	=> $this->DRIVER,
-			'time'		=> microtime(true) - $time_start,
+			'data'			=> $result,
+			'driver'		=> $this->DRIVER,
+			'time'			=> microtime(true) - $time_start,
+			'did_real_work'	=> (int)$do_real_work,
 		));
 		return $result;
 	}
@@ -527,35 +570,43 @@ class yf_cache {
 	/**
 	*/
 	function del_by_prefix ($prefix = '') {
+		$do_real_work = true;
+		if (!$this->_driver_ok) {
+			$do_real_work = false;
+		}
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
-		if (!strlen($prefix) || !is_string($prefix)) {
-			$result = $this->flush();
-		} else {
-			$result = false;
-			$prefix_len = strlen($prefix);
-			$keys = $this->list_keys();
-			if ($keys === null) {
+		$result = null;
+		if ($do_real_work) {
+			if (!strlen($prefix) || !is_string($prefix)) {
 				$result = $this->flush();
-			} elseif ($keys) {
-				foreach ($keys as $k => $v) {
-					if (substr($v, 0, $prefix_len) !== $prefix) {
-						unset($keys[$k]);
+			} else {
+				$result = false;
+				$prefix_len = strlen($prefix);
+				$keys = $this->list_keys();
+				if ($keys === null) {
+					$result = $this->flush();
+				} elseif ($keys) {
+					foreach ($keys as $k => $v) {
+						if (substr($v, 0, $prefix_len) !== $prefix) {
+							unset($keys[$k]);
+						}
 					}
-				}
-				if ($keys) {
-					$result = $this->multi_del($keys);
-				} else {
-					$result = true;
+					if ($keys) {
+						$result = $this->multi_del($keys);
+					} else {
+						$result = true;
+					}
 				}
 			}
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
-			'prefix'	=> $prefix,
-			'data'		=> $result,
-			'driver'	=> $this->DRIVER,
-			'time'		=> microtime(true) - $time_start,
+			'prefix'		=> $prefix,
+			'data'			=> $result,
+			'driver'		=> $this->DRIVER,
+			'time'			=> microtime(true) - $time_start,
+			'did_real_work'	=> (int)$do_real_work,
 		));
 		return $result;
 	}

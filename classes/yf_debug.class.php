@@ -165,6 +165,7 @@ class yf_debug {
 		if (!$this->SHOW_SETTINGS) {
 			return '';
 		}
+		$cache_use = ((main()->USE_SYSTEM_CACHE || conf('USE_CACHE')) && !cache()->NO_CACHE);
 		$data['yf'] = array(
 			'MAIN_TYPE'			=> MAIN_TYPE,
 			'LANG'				=> conf('language'),
@@ -172,8 +173,9 @@ class yf_debug {
 			'DEV_MODE'			=> (int)conf('DEV_MODE'),
 			'REWRITE_MODE'		=> (int)tpl()->REWRITE_MODE,
 			'DEBUG_CONSOLE_POPUP'=> (int)conf('DEBUG_CONSOLE_POPUP'),
-			'CACHE_USE'			=> (int)((main()->USE_SYSTEM_CACHE || conf('USE_CACHE')) && !cache()->NO_CACHE),
+			'CACHE_USE'			=> (int)$cache_use,
 			'CACHE_NO_CACHE'	=> (int)cache()->NO_CACHE,
+			'CACHE_NO_WHY'		=> cache()->_NO_CACHE_WHY,
 			'CACHE_DRIVER'		=> cache()->DRIVER,
 			'CACHE_NS'			=> cache()->CACHE_NS,
 			'CACHE_TTL'			=> (int)cache()->TTL,
@@ -622,7 +624,7 @@ class yf_debug {
 		$items = (array)$this->_get_debug_data('main_get_data');
 		foreach ($items as $k => $v) {
 			$data = $this->_var_export($v['data']);
-			$size = strlen($data);
+			$size = $v['data'] === null ? 'NULL' : strlen($data);
 			$items[$k]['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
 			$items[$k]['data_size'] = $size;
 		}
@@ -641,7 +643,7 @@ class yf_debug {
 		$items = (array)$this->_get_debug_data('cache_get');
 		foreach ($items as $k => $v) {
 			$data = $this->_var_export($v['data']);
-			$size = strlen($data);
+			$size = $v['data'] === null ? 'NULL' : strlen($data);
 			$items[$k]['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
 			$items[$k]['data_size'] = $size;
 		}
@@ -658,7 +660,7 @@ class yf_debug {
 		$items = (array)$this->_get_debug_data('cache_set');
 		foreach ($items as $k => $v) {
 			$data = $this->_var_export($v['data']);
-			$size = strlen($data);
+			$size = $v['data'] === null ? 'NULL' : strlen($data);
 			$items[$k]['data'] = '<pre><small>'._prepare_html(substr($data, 0, 1000)).'</small></pre>';
 			$items[$k]['data_size'] = $size;
 		}

@@ -28,6 +28,9 @@ class yf_cache_driver_xcache extends yf_cache_driver {
 			if ($try_unpack || substr($result, 0, 2) == 'a:') {
 				$result = $try_unpack;
 			}
+			if ($result === 'false') {
+				$result = false;
+			}
 		}
 		return $result;
 	}
@@ -37,6 +40,9 @@ class yf_cache_driver_xcache extends yf_cache_driver {
 	function set($name, $data, $ttl = 0) {
 		if (!$this->is_ready()) {
 			return null;
+		}
+		if ($data === false) {
+			$data = 'false';
 		}
 		return xcache_set($name, $data, $ttl);
 	}
@@ -60,7 +66,7 @@ class yf_cache_driver_xcache extends yf_cache_driver {
 			xcache_clear_cache(XC_TYPE_VAR, 0);
 			return true;
 		}
-		return false;
+		return null;
 	}
 
 	/**
@@ -70,7 +76,7 @@ class yf_cache_driver_xcache extends yf_cache_driver {
 			return null;
 		}
 		if (!$this->_check_xcache_auth()) {
-			return false;
+			return null;
 		}
 		$info = xcache_info(XC_TYPE_VAR, 0);
 		return array(
@@ -87,7 +93,7 @@ class yf_cache_driver_xcache extends yf_cache_driver {
 	protected function _check_xcache_auth() {
 		if (ini_get('xcache.admin.enable_auth')) {
 			throw new Exception('To use all features of Xcache cache, you must set "xcache.admin.enable_auth" to "Off" in your php.ini.');
-			return false;
+			return null;
 		}
 		return true;
 	}

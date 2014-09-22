@@ -44,11 +44,11 @@ class yf_cache_driver_mongodb extends yf_cache_driver {
 		}
 		$document = $this->_connection->findOne(array('_id' => $name), array(self::DATA_FIELD, self::EXPIRATION_FIELD));
 		if ($document === null) {
-			return false;
+			return null;
 		}
 		if ($this->is_expired($document)) {
 			$this->del($name);
-			return false;
+			return null;
 		}
 		return unserialize($document[self::DATA_FIELD]->bin);
 	}

@@ -527,9 +527,6 @@ class yf_main {
 			conf('cache::DRIVER', $CACHE_DRIVER);
 		}
 		$this->cache = &$this->init_class('cache', 'classes/');
-		if (!$this->USE_SYSTEM_CACHE) {
-			$this->cache->NO_CACHE = true;
-		}
 		$GLOBALS['cache'] = &$this->cache;
 		$this->events->fire('main.after_cache');
 	}

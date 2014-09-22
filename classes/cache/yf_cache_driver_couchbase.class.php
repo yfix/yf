@@ -38,7 +38,7 @@ class yf_cache_driver_couchbase extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->_connection->get($name) ?: false;
+		return $this->_connection->get($name);
 	}
 
 	/**
