@@ -1,5 +1,5 @@
 <?php
-$data = array (
+return array (
   6 => 
   array (
     'id' => '6',

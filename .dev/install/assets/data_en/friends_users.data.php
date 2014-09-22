@@ -1,5 +1,5 @@
 <?php
-$data = array (
+return array (
   409 => 
   array (
     'id' => '409',

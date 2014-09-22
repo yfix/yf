@@ -1,6 +1,6 @@
 <?php
 
-$data = array(
+return array(
 	array('id' => 1, 'active'=> '1','name'	=> 'home_page'),
 	array('id' => 2, 'active'=> '1','name'	=> 'login_form'),
 	array('id' => 3, 'active'=> '1','name'	=> 'static_pages'),
