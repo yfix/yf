@@ -107,10 +107,16 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 			return null;
 		}
 		$result = $this->_connection->get($name);
+		if ($result === false) {
+			return null;
+		}
 		if (is_string($result)) {
 			$try_unpack = unserialize($result);
 			if ($try_unpack || substr($result, 0, 2) == 'a:') {
 				$result = $try_unpack;
+			}
+			if ($result === 'false') {
+				$result = false;
 			}
 		}
 		return $result;
@@ -123,6 +129,9 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 			return null;
 		}
 		$result = null;
+		if ($data === false) {
+			$data = 'false';
+		}
 		// Solved set() trouble with many servers. http://www.php.net/manual/ru/function.memcache-set.php#84032
 // TODO: test if really solved (not really checked before)
 		if ($this->_memcache_new_extension) {
@@ -135,7 +144,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 				$result = $this->_connection->set($name, $data, $flags, $ttl);
 			}
 		}
-		return $result;
+		return $result ?: null;
 	}
 
 	/**
@@ -144,7 +153,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->_connection->delete($name, 0);
+		return $this->_connection->delete($name, 0) ?: null;
 	}
 
 	/**
@@ -153,7 +162,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->_connection->flush();
+		return $this->_connection->flush() ?: null;
 	}
 
 	/**
@@ -165,7 +174,7 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		if (!method_exists($this->_connection, 'getAllKeys')) {
 			return null;
 		}
-		return $this->_connection->getAllKeys();
+		return $this->_connection->getAllKeys() ?: null;
 	}
 
 	/**
@@ -184,7 +193,16 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 			}
 			return $result;
 		}
-		return $this->_connection->getMulti($names);
+		$result = $this->_connection->getMulti($names);
+		if ($result === false) {
+			return null;
+		}
+		foreach ((array)$result as $k => $v) {
+			if ($v === 'false') {
+				$result[$k] = false;
+			}
+		}
+		return $result;
 	}
 
 	/**
@@ -203,17 +221,31 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 			}
 			return $failed ? null : true;
 		}
-		return $this->_connection->setMulti($data, $ttl);
+		foreach ((array)$data as $k => $v) {
+			if ($v === false) {
+				$data[$k] = 'false';
+			}
+		}
+		return $this->_connection->setMulti($data, $ttl) ?: null;
 	}
 
 	/**
 	*/
 	function multi_del(array $names) {
-		// PHPWTF!! deleteMulti in Memcached extension exists only starting from version 2.0 in PECL
-		if (!$this->is_ready() || !method_exists($this->_connection, 'deleteMulti')) {
+		if (!$this->is_ready()) {
 			return null;
 		}
-		return $this->_connection->deleteMulti($names);
+		// PHPWTF!! deleteMulti in Memcached extension exists only starting from version 2.0 in PECL
+		if (!method_exists($this->_connection, 'deleteMulti')) {
+			$failed = false;
+			foreach ((array)$names as $name) {
+				if (!$this->del($name)) {
+					$failed = true;
+				}
+			}
+			return $failed ? null : true;
+		}
+		return $this->_connection->deleteMulti($names) ?: null;
 	}
 
 	/**
