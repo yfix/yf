@@ -364,62 +364,25 @@ abstract class yf_db_installer {
 	/**
 	*/
 	function _db_table_struct_into_array ($sql) {
-		if (false !== strpos(strtoupper($sql), 'CREATE TABLE')) {
+		$options = '';
+		// Get table options from table structure. Example: /** ENGINE=MEMORY **/
+		if (preg_match('#\/\*\*(?P<raw_options>[^\*\/]+)\*\*\/#i', trim($sql), $m)) {
+			// Cut comment with options from source table structure to prevent misunderstanding
+			$sql = str_replace($m[0], '', $sql);
+			$options = $m['raw_options'];
+		}
+		$tmp_name = '';
+		if (false === strpos(strtoupper($sql), 'CREATE TABLE')) {
 			$tmp_name = 'tmp_name_not_exists';
 			$sql = 'CREATE TABLE `'.$tmp_name.'` ('.$sql.')';
 		}
-// TODO: support for commented params like this: /*Engine=InnoDB*/
-
-		// Get table options from table structure
-		// Example: /** ENGINE=MEMORY **/
-/*
-	public $_KNOWN_TABLE_OPTIONS = array(
-		'ENGINE',
-		'TYPE',
-		'AUTO_INCREMENT',
-		'AVG_ROW_LENGTH',
-		'CHARACTER SET',
-		'DEFAULT CHARACTER SET',
-		'CHECKSUM',
-		'COLLATE',
-		'DEFAULT COLLATE',
-		'COMMENT',
-		'CONNECTION',
-		'DATA DIRECTORY',
-		'DELAY_KEY_WRITE',
-		'INDEX DIRECTORY',
-		'INSERT_METHOD',
-		'MAX_ROWS',
-		'MIN_ROWS',
-		'PACK_KEYS',
-		'PASSWORD',
-		'ROW_FORMAT',
-		'UNION',
-	);
-		if (preg_match('#\/\*\*([^\*\/]+)\*\*\/$#i', trim($table_struct), $m)) {
-			// Cut comment with options from source table structure
-			// to prevent misunderstanding
-			$table_struct = str_replace($m[0], '', $table_struct);
-
-			$_raw_options = str_replace(array("\r","\n","\t"), array('','',' '), trim($m[1]));
-
-			$_pattern = '/('.implode('|', $this->_KNOWN_TABLE_OPTIONS).")[\s]{0,}=[\s]{0,}([\']{0,1}[^\'\,]+[\']{0,1})/ims";
-			if (preg_match_all($_pattern, $_raw_options, $m)) {
-				foreach ((array)$m[0] as $_id => $v) {
-					$_option_key = strtoupper(trim($m[1][$_id]));
-					$_option_val = trim($m[2][$_id]);
-					if (!in_array($_option_key, $this->_KNOWN_TABLE_OPTIONS)) {
-						continue;
-					}
-					$_options_to_merge[$_option_key] = $_option_val;
-				}
-			}
+		// Place them into the end of the DDL
+		if ($options) {
+			$sql = rtrim(rtrim(rtrim($sql), ';')).' '.$options;
 		}
-*/
-
 		$result = _class('db_ddl_parser_mysql', 'classes/db/')->parse($sql);
 		if ($result && $tmp_name) {
-			$result['name'] = $tmp_name;
+			$result['name'] = '';
 		}
 		return $result;
 	}
