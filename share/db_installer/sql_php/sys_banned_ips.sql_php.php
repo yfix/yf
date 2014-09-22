@@ -1,0 +1,70 @@
+<?php
+return array(
+	'fields' => array(
+		'ip' => array(
+			'name' => 'ip',
+			'type' => 'varchar',
+			'length' => '20',
+			'decimals' => NULL,
+			'unsigned' => NULL,
+			'nullable' => false,
+			'default' => '',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'admin_id' => array(
+			'name' => 'admin_id',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => false,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'time' => array(
+			'name' => 'time',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => false,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'ban_type' => array(
+			'name' => 'ban_type',
+			'type' => 'varchar',
+			'length' => '16',
+			'decimals' => NULL,
+			'unsigned' => NULL,
+			'nullable' => false,
+			'default' => '',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+	),
+	'indexes' => array(
+		'PRIMARY' => array(
+			'name' => 'PRIMARY',
+			'type' => 'primary',
+			'columns' => array(
+				'ip' => 'ip',
+			),
+		),
+	),
+	'foreign_keys' => array(
+	),
+	'options' => array(
+	),
+);

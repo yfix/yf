@@ -1,0 +1,70 @@
+<?php
+return array(
+	'fields' => array(
+		'id' => array(
+			'name' => 'id',
+			'type' => 'int',
+			'length' => '11',
+			'decimals' => NULL,
+			'unsigned' => false,
+			'nullable' => false,
+			'default' => NULL,
+			'auto_inc' => true,
+			'primary' => true,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'user_id' => array(
+			'name' => 'user_id',
+			'type' => 'int',
+			'length' => '11',
+			'decimals' => NULL,
+			'unsigned' => false,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'friend_id' => array(
+			'name' => 'friend_id',
+			'type' => 'int',
+			'length' => '11',
+			'decimals' => NULL,
+			'unsigned' => false,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'mask' => array(
+			'name' => 'mask',
+			'type' => 'int',
+			'length' => '11',
+			'decimals' => NULL,
+			'unsigned' => false,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+	),
+	'indexes' => array(
+		'PRIMARY' => array(
+			'name' => 'PRIMARY',
+			'type' => 'primary',
+			'columns' => array(
+				'id' => 'id',
+			),
+		),
+	),
+	'foreign_keys' => array(
+	),
+	'options' => array(
+	),
+);
