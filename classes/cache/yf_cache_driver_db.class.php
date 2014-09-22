@@ -44,7 +44,7 @@ class yf_cache_driver_db extends yf_cache_driver {
 		$ttl = intval($ttl ?: $this->_parent->TTL);
 		$data = db()->from($this->table)->where('key', '=', $name)->get();
 		if (!$data || $data['time'] < (time() - $ttl)) {
-			return false;
+			return null;
 		}
 		$val = $data['value'];
 		if ($val[0] == '[' || $val[0] == '{') {
@@ -92,7 +92,7 @@ class yf_cache_driver_db extends yf_cache_driver {
 		}
 		$data = db()->from($this->table)->get_2d();
 		if (!$data) {
-			return false;
+			return null;
 		}
 		foreach ($data as &$v) {
 			$v = json_decode($v, true);
