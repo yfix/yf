@@ -27,9 +27,9 @@ class yf_db_ddl_parser_mysql {
 	function parse ($sql) {
 		$parsed = $this->parser->parse($sql);
 
-		$table_name = $parsed['TABLE']['no_quotes']['parts'][0];
-		$tmp_create_def = $parsed['TABLE']['create-def']['sub_tree'];
-		$tmp_options = $parsed['TABLE']['options'];
+		$table_name = $parsed['TABLE']['no_quotes']['parts'][0] ?: '';
+		$tmp_create_def = $parsed['TABLE']['create-def']['sub_tree'] ?: array();
+		$tmp_options = $parsed['TABLE']['options'] ?: array();
 
 		$struct = array(
 			'name'	=> $table_name,
