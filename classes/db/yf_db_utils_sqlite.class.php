@@ -90,13 +90,13 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 				'type'		=> $type,
 				'length'	=> $length,
 				'unsigned'	=> $unsigned,
-				'collation'	=> null,
-				'null'		=> !$a['notnull'],
+				'collate'	=> null,
+				'nullable'	=> !$a['notnull'],
 				'default'	=> $a['dflt_value'],
 				'auto_inc'	=> $a['pk'] == 1,
-				'is_primary'=> $a['pk'] == 1,
+				'primary'	=> $a['pk'] == 1,
 // TODO: detect unique from indexes list
-				'is_unique'	=> $a['pk'] == 1,
+				'unique'	=> $a['pk'] == 1,
 				'type_raw'	=> $a['type'],
 			);
 		}
@@ -120,7 +120,7 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			'columns'		=> $this->table_get_columns($orig_table),
 			'row_format'	=> null,
 			'charset'		=> null,
-			'collation'		=> null,
+			'collate'		=> null,
 			'engine'		=> null,
 			'rows'			=> null,
 			'data_size'		=> null,
@@ -773,7 +773,9 @@ COMMIT;
 			$length = $v['length'];
 			$default = $v['default'];
 			$null = null;
-			if (isset($v['null'])) {
+			if (isset($v['nullable'])) {
+				$null = (bool)$v['nullable'];
+			} elseif (isset($v['null'])) {
 				$null = (bool)$v['null'];
 			} elseif (isset($v['not_null'])) {
 				$null = (bool)(!$v['not_null']);
