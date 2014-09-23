@@ -41,10 +41,11 @@ class yf_db_ddl_parser_mysql {
 		$table_name = $data['name'];
 		foreach ((array)$data['fields'] as $name => $v) {
 			$type_braces = (isset($v['length']) ? '('.$v['length']. (isset($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
-			if ($type == 'enum') {
+			if (in_array($v['type'], array('enum','set'))) {
 				$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
 			}
-			if ($v['default'] == 'NULL') {
+			$def = false;
+			if ($v['default'] === 'NULL') {
 				$def = 'NULL';
 			} elseif ($v['type'] == 'timestamp') {
 				$def = $v['default'];
@@ -76,7 +77,7 @@ class yf_db_ddl_parser_mysql {
 			}
 			$lines[] = $implode_line(array(
 				'type'		=> $type,
-				'name'		=> in_array($v['type'], array('index', 'fulltext', 'spatial')) ? '`'.$name.'`' : '',
+				'name'		=> strlen($name) && !is_numeric($name) && in_array($v['type'], array('index', 'unique', 'fulltext', 'spatial')) ? '`'.$name.'`' : '',
 				'columns'	=> '(`'.implode('`,`', $v['columns']).'`)',
 			));
 		}
@@ -89,8 +90,8 @@ class yf_db_ddl_parser_mysql {
 				'ref'			=> 'REFERENCES',
 				'ref_table'		=> '`'.$v['ref_table'].'`',
 				'ref_columns'	=> '(`'.implode('`,`', $v['ref_columns']).'`)',
-				'on_update'		=> $v['on_update'] ? 'ON UPDATE '.$v['on_update'] : '',
 				'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.$v['on_delete'] : '',
+				'on_update'		=> $v['on_update'] ? 'ON UPDATE '.$v['on_update'] : '',
 			));
 		}
 		$options = array();
@@ -120,10 +121,6 @@ class yf_db_ddl_parser_mysql {
 			'options' => array(),
 		);
 
-// TODO:
-// http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
-// As of MySQL 5.6.5, TIMESTAMP and DATETIME columns can be automatically initializated and updated to the current date and time (that is, the current timestamp). 
-// Before 5.6.5, this is true only for TIMESTAMP, and for at most one TIMESTAMP column per table
 		foreach ((array)$tmp_create_def as $v) {
 			if ($v['expr_type'] == 'column-def') {
 				$name = null;
@@ -141,7 +138,6 @@ class yf_db_ddl_parser_mysql {
 				$values = null; // ENUM and SET
 				$on_update = null; // TIMESTAMP and DATETIME
 				foreach ((array)$v['sub_tree'] as $v2) {
-#print_r($v2); echo PHP_EOL;
 					if ($v2['expr_type'] == 'colref') {
 						$name = $v2['no_quotes']['parts'][0];
 					} elseif ($v2['expr_type'] == 'column-type') {
@@ -178,6 +174,9 @@ class yf_db_ddl_parser_mysql {
 								}
 							}
 						}
+						// http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
+						// As of MySQL 5.6.5, TIMESTAMP and DATETIME columns can be automatically initializated and updated to the current date and time (that is, the current timestamp). 
+						// Before 5.6.5, this is true only for TIMESTAMP, and for at most one TIMESTAMP column per table
 						if (in_array($type, array('timestamp','datetime'))) {
 							$try = 'ON UPDATE CURRENT_TIMESTAMP';
 							if (strpos($v2['base_expr'], $try) !== false) {
@@ -188,6 +187,8 @@ class yf_db_ddl_parser_mysql {
 						$auto_inc = $v2['auto_inc'];
 						$primary = $v2['primary'];
 						$unique = $v2['unique'];
+						$charset = $v2['charset'];
+						$collate = $v2['collate'];
 					}
 				}
 				if ($auto_inc) {
