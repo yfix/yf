@@ -96,16 +96,16 @@ class class_db_real_utils_pgsql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$expected = array(
 			'id' => array(
-				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collation' => NULL,'null' => false,
-				'default' => NULL,'auto_inc' => true,'is_primary' => true,'is_unique' => false,'type_raw' => 'int(10) unsigned',
+				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collate' => NULL,'nullable' => false,
+				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned',
 			),
 			'name' => array(
-				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
-				'default' => '','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'varchar(255)',
+				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
+				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)',
 			),
 			'active' => array(
-				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
-				'default' => '0','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
+				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
+				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
 			),
 		);
 		$this->assertEquals( $expected, self::utils()->table_get_columns($this->table_name($table)) );
@@ -123,16 +123,16 @@ class class_db_real_utils_pgsql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$expected_columns = array(
 			'id' => array(
-				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collation' => NULL,'null' => false,
-				'default' => NULL,'auto_inc' => true,'is_primary' => true,'is_unique' => false,'type_raw' => 'int(10) unsigned',
+				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collate' => NULL,'nullable' => false,
+				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned',
 			),
 			'name' => array(
-				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
-				'default' => '','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'varchar(255)',
+				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
+				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)',
 			),
 			'active' => array(
-				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collation' => 'utf8_general_ci','null' => false,
-				'default' => '0','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
+				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
+				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
 			),
 		);
 		$expected = array(
@@ -140,7 +140,7 @@ class class_db_real_utils_pgsql_test extends db_real_abstract {
 			'db_name' => $this->db_name(),
 			'columns' => $expected_columns,
 			'row_format' => 'Compact',
-			'collation' => 'utf8_general_ci',
+			'collate' => 'utf8_general_ci',
 			'engine' => 'InnoDB',
 			'rows' => '0',
 			'data_size' => '16384',
