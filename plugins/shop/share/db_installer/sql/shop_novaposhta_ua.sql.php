@@ -15,7 +15,7 @@ return "
 	`time_out_1`  varchar(255) DEFAULT NULL,
 	`time_out_2`  varchar(255) DEFAULT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE `city_raw__address_raw` (`city_raw`,`address_raw`),
+	UNIQUE KEY `city_raw__address_raw` (`city_raw`,`address_raw`),
 	KEY `city`      (`city`),
 	KEY `branch_no` (`branch_no`),
 	KEY `address`   (`address`)
