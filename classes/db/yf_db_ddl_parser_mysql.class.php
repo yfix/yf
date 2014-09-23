@@ -205,7 +205,7 @@ class yf_db_ddl_parser_mysql {
 					$primary = true;
 				}
 				$name = strtolower($name);
-				$type = strtolower($type)
+				$type = strtolower($type);
 				if (strpos($type, 'int') !== false && !$length) {
 					$length = $this->_get_int_def_length($type);
 				}
