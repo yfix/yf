@@ -188,11 +188,13 @@ abstract class yf_db_utils_driver {
 			return true;
 		}
 		foreach ((array)$this->list_tables($db_name) as $table) {
-			$table = trim($table);
-			if (!strlen($table)) {
-				continue;
-			}
 			$sql[] = $this->drop_table($db_name.'.'.$table, $extra);
+		}
+		foreach ((array)$this->list_views($db_name) as $name => $tmp) {
+			$sql[] = $this->drop_view($db_name.'.'.$name, $extra);
+		}
+		foreach ((array)$this->list_triggers($db_name) as $name => $tmp) {
+			$sql[] = $this->drop_trigger($db_name.'.'.$name, $extra);
 		}
 		return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
 	}
