@@ -4,7 +4,7 @@ return array(
 		'start_ip' => array(
 			'name' => 'start_ip',
 			'type' => 'int',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'end_ip' => array(
 			'name' => 'end_ip',
 			'type' => 'int',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'loc_id' => array(
 			'name' => 'loc_id',
 			'type' => 'int',
-			'length' => '6',
+			'length' => 6,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

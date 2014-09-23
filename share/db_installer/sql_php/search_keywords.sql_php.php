@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'engine' => array(
 			'name' => 'engine',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'text' => array(
 			'name' => 'text',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'site_url' => array(
 			'name' => 'site_url',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'site_id' => array(
 			'name' => 'site_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'hits' => array(
 			'name' => 'hits',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'last_update' => array(
 			'name' => 'last_update',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

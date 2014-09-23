@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -52,7 +52,7 @@ return array(
 		'locale' => array(
 			'name' => 'locale',
 			'type' => 'char',
-			'length' => '7',
+			'length' => 7,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

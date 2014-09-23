@@ -4,7 +4,7 @@ return array(
 		'code' => array(
 			'name' => 'code',
 			'type' => 'char',
-			'length' => '6',
+			'length' => 6,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'name_eng' => array(
 			'name' => 'name_eng',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'offset' => array(
 			'name' => 'offset',
 			'type' => 'varchar',
-			'length' => '16',
+			'length' => 16,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

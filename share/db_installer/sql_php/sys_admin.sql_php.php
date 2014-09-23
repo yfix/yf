@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'first_name' => array(
 			'name' => 'first_name',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'last_name' => array(
 			'name' => 'last_name',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'login' => array(
 			'name' => 'login',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'password' => array(
 			'name' => 'password',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'group' => array(
 			'name' => 'group',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -112,7 +112,7 @@ return array(
 		'add_date' => array(
 			'name' => 'add_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -127,7 +127,7 @@ return array(
 		'last_login' => array(
 			'name' => 'last_login',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -142,7 +142,7 @@ return array(
 		'num_logins' => array(
 			'name' => 'num_logins',
 			'type' => 'smallint',
-			'length' => '6',
+			'length' => 6,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -157,7 +157,7 @@ return array(
 		'go_after_login' => array(
 			'name' => 'go_after_login',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -172,7 +172,7 @@ return array(
 		'email' => array(
 			'name' => 'email',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

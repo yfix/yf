@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'cat_id' => array(
 			'name' => 'cat_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'search' => array(
 			'name' => 'search',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'replace' => array(
 			'name' => 'replace',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'process' => array(
 			'name' => 'process',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

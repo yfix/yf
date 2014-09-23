@@ -4,7 +4,7 @@ return array(
 		'lang' => array(
 			'name' => 'lang',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'country' => array(
 			'name' => 'country',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'group_id' => array(
 			'name' => 'group_id',
 			'type' => 'smallint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'group_name' => array(
 			'name' => 'group_name',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'type' => array(
 			'name' => 'type',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -169,7 +169,7 @@ return array(
 		'position' => array(
 			'name' => 'position',
 			'type' => 'smallint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -184,7 +184,7 @@ return array(
 		'display' => array(
 			'name' => 'display',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

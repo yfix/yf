@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'block_id' => array(
 			'name' => 'block_id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -52,7 +52,7 @@ return array(
 		'user_groups' => array(
 			'name' => 'user_groups',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -145,7 +145,7 @@ return array(
 		'order' => array(
 			'name' => 'order',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -160,7 +160,7 @@ return array(
 		'site_ids' => array(
 			'name' => 'site_ids',
 			'type' => 'varchar',
-			'length' => '1000',
+			'length' => 1000,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -175,7 +175,7 @@ return array(
 		'server_ids' => array(
 			'name' => 'server_ids',
 			'type' => 'varchar',
-			'length' => '1000',
+			'length' => 1000,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -190,7 +190,7 @@ return array(
 		'server_roles' => array(
 			'name' => 'server_roles',
 			'type' => 'varchar',
-			'length' => '1000',
+			'length' => 1000,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

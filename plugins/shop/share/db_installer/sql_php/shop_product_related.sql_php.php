@@ -4,7 +4,7 @@ return array(
 		'product_id' => array(
 			'name' => 'product_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'related_id' => array(
 			'name' => 'related_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

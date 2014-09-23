@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'forum' => array(
 			'name' => 'forum',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'desc' => array(
 			'name' => 'desc',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'user_name' => array(
 			'name' => 'user_name',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'created' => array(
 			'name' => 'created',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'status' => array(
 			'name' => 'status',
 			'type' => 'char',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'active' => array(
 			'name' => 'active',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -139,7 +139,7 @@ return array(
 		'num_views' => array(
 			'name' => 'num_views',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -154,7 +154,7 @@ return array(
 		'num_posts' => array(
 			'name' => 'num_posts',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -169,7 +169,7 @@ return array(
 		'first_post_id' => array(
 			'name' => 'first_post_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -184,7 +184,7 @@ return array(
 		'last_post_id' => array(
 			'name' => 'last_post_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -199,7 +199,7 @@ return array(
 		'last_poster_id' => array(
 			'name' => 'last_poster_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -214,7 +214,7 @@ return array(
 		'last_poster_name' => array(
 			'name' => 'last_poster_name',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -229,7 +229,7 @@ return array(
 		'last_post_date' => array(
 			'name' => 'last_post_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -244,7 +244,7 @@ return array(
 		'icon_id' => array(
 			'name' => 'icon_id',
 			'type' => 'tinyint',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -259,7 +259,7 @@ return array(
 		'pinned' => array(
 			'name' => 'pinned',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -274,7 +274,7 @@ return array(
 		'moved_to' => array(
 			'name' => 'moved_to',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -289,7 +289,7 @@ return array(
 		'approved' => array(
 			'name' => 'approved',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -304,7 +304,7 @@ return array(
 		'language' => array(
 			'name' => 'language',
 			'type' => 'varchar',
-			'length' => '12',
+			'length' => 12,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

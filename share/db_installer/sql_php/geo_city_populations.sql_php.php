@@ -4,7 +4,7 @@ return array(
 		'country' => array(
 			'name' => 'country',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'city' => array(
 			'name' => 'city',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'region' => array(
 			'name' => 'region',
 			'type' => 'char',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'population' => array(
 			'name' => 'population',
 			'type' => 'int',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

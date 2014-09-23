@@ -4,7 +4,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'points' => array(
 			'name' => 'points',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'exchanged_act_points' => array(
 			'name' => 'exchanged_act_points',
 			'type' => 'int',
-			'length' => false,
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'last_update' => array(
 			'name' => 'last_update',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

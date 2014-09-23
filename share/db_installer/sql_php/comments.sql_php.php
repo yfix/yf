@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'object_name' => array(
 			'name' => 'object_name',
 			'type' => 'varchar',
-			'length' => '24',
+			'length' => 24,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'object_id' => array(
 			'name' => 'object_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'parent_id' => array(
 			'name' => 'parent_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'user_name' => array(
 			'name' => 'user_name',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -93,13 +93,13 @@ return array(
 		),
 		'user_email' => array(
 			'name' => 'user_email',
-			'type' => 'set',
-			'length' => '128',
+			'type' => 'varchar',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
 			'default' => '',
-			'charset' => 'utf8',
+			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
@@ -109,7 +109,7 @@ return array(
 		'add_date' => array(
 			'name' => 'add_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -139,7 +139,7 @@ return array(
 		'ip' => array(
 			'name' => 'ip',
 			'type' => 'varchar',
-			'length' => '15',
+			'length' => 15,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -154,7 +154,7 @@ return array(
 		'active' => array(
 			'name' => 'active',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -169,7 +169,7 @@ return array(
 		'activity' => array(
 			'name' => 'activity',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'target_user_id' => array(
 			'name' => 'target_user_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'add_date' => array(
 			'name' => 'add_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'voted' => array(
 			'name' => 'voted',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'ip' => array(
 			'name' => 'ip',
 			'type' => 'varchar',
-			'length' => '16',
+			'length' => 16,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'comment' => array(
 			'name' => 'comment',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -145,7 +145,7 @@ return array(
 		'counted' => array(
 			'name' => 'counted',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -160,7 +160,7 @@ return array(
 		'penalty' => array(
 			'name' => 'penalty',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -193,7 +193,7 @@ return array(
 		'activity' => array(
 			'name' => 'activity',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -208,7 +208,7 @@ return array(
 		'object_name' => array(
 			'name' => 'object_name',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -223,7 +223,7 @@ return array(
 		'object_id' => array(
 			'name' => 'object_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

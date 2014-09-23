@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'object_name' => array(
 			'name' => 'object_name',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'object_id' => array(
 			'name' => 'object_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'question' => array(
 			'name' => 'question',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'add_date' => array(
 			'name' => 'add_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'votes' => array(
 			'name' => 'votes',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

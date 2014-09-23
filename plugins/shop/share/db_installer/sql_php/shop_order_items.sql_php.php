@@ -4,7 +4,7 @@ return array(
 		'order_id' => array(
 			'name' => 'order_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'type' => array(
 			'name' => 'type',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'product_id' => array(
 			'name' => 'product_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'param_id' => array(
 			'name' => 'param_id',
 			'type' => 'varchar',
-			'length' => '128',
+			'length' => 128,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'quantity' => array(
 			'name' => 'quantity',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'price' => array(
 			'name' => 'price',
 			'type' => 'decimal',
-			'length' => '12',
+			'length' => 12,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'status' => array(
 			'name' => 'status',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

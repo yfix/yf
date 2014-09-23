@@ -4,7 +4,7 @@ return array(
 		'module_name' => array(
 			'name' => 'module_name',
 			'type' => 'varchar',
-			'length' => '30',
+			'length' => 30,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'object_id' => array(
 			'name' => 'object_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

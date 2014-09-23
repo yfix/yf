@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'title' => array(
 			'name' => 'title',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'author_id' => array(
 			'name' => 'author_id',
 			'type' => 'mediumint',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'html_enabled' => array(
 			'name' => 'html_enabled',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'views' => array(
 			'name' => 'views',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'start_time' => array(
 			'name' => 'start_time',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'end_time' => array(
 			'name' => 'end_time',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -139,7 +139,7 @@ return array(
 		'active' => array(
 			'name' => 'active',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

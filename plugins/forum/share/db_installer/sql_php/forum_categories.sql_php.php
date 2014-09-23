@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'parent' => array(
 			'name' => 'parent',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'desc' => array(
 			'name' => 'desc',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'status' => array(
 			'name' => 'status',
 			'type' => 'char',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'active' => array(
 			'name' => 'active',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'order' => array(
 			'name' => 'order',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'icon' => array(
 			'name' => 'icon',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'language' => array(
 			'name' => 'language',
 			'type' => 'varchar',
-			'length' => '12',
+			'length' => 12,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

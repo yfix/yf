@@ -4,7 +4,7 @@ return array(
 		'code' => array(
 			'name' => 'code',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '20',
+			'length' => 20,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -34,7 +34,7 @@ return array(
 		'name_eng' => array(
 			'name' => 'name_eng',
 			'type' => 'varchar',
-			'length' => '20',
+			'length' => 20,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -49,7 +49,7 @@ return array(
 		'geoname_id' => array(
 			'name' => 'geoname_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => true,

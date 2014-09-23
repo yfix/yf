@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'char',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'name_eng' => array(
 			'name' => 'name_eng',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'sign' => array(
 			'name' => 'sign',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'number' => array(
 			'name' => 'number',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'minor_units' => array(
 			'name' => 'minor_units',
 			'type' => 'int',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'country_name' => array(
 			'name' => 'country_name',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'country_code' => array(
 			'name' => 'country_code',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'continent_code' => array(
 			'name' => 'continent_code',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'theme_name' => array(
 			'name' => 'theme_name',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '128',
+			'length' => 128,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'site_id' => array(
 			'name' => 'site_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'language' => array(
 			'name' => 'language',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

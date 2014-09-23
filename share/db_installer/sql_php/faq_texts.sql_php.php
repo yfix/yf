@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'cat_id' => array(
 			'name' => 'cat_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'author_id' => array(
 			'name' => 'author_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -97,7 +97,7 @@ return array(
 		'priority' => array(
 			'name' => 'priority',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -112,7 +112,7 @@ return array(
 		'add_date' => array(
 			'name' => 'add_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -127,7 +127,7 @@ return array(
 		'edit_date' => array(
 			'name' => 'edit_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -142,7 +142,7 @@ return array(
 		'views' => array(
 			'name' => 'views',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

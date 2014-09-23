@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'id2' => array(
 			'name' => 'id2',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'title' => array(
 			'name' => 'title',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'allow_comments' => array(
 			'name' => 'allow_comments',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'privacy' => array(
 			'name' => 'privacy',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'content_level' => array(
 			'name' => 'content_level',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'num_photos' => array(
 			'name' => 'num_photos',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -139,7 +139,7 @@ return array(
 		'num_comments' => array(
 			'name' => 'num_comments',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -154,7 +154,7 @@ return array(
 		'num_views' => array(
 			'name' => 'num_views',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -169,7 +169,7 @@ return array(
 		'user_nick' => array(
 			'name' => 'user_nick',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -184,7 +184,7 @@ return array(
 		'password' => array(
 			'name' => 'password',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -217,7 +217,7 @@ return array(
 		'add_date' => array(
 			'name' => 'add_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -250,7 +250,7 @@ return array(
 		'allow_tagging' => array(
 			'name' => 'allow_tagging',
 			'type' => 'tinyint',
-			'length' => false,
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

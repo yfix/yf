@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'title' => array(
 			'name' => 'title',
 			'type' => 'varchar',
-			'length' => '100',
+			'length' => 100,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'type' => array(
 			'name' => 'type',
 			'type' => 'tinyint',
-			'length' => '4',
+			'length' => 4,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'sort' => array(
 			'name' => 'sort',
 			'type' => 'varchar',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'size_table_url' => array(
 			'name' => 'size_table_url',
 			'type' => 'varchar',
-			'length' => '100',
+			'length' => 100,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'size_table_title' => array(
 			'name' => 'size_table_title',
 			'type' => 'varchar',
-			'length' => '100',
+			'length' => 100,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

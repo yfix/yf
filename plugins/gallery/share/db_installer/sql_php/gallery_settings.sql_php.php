@@ -4,7 +4,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'title' => array(
 			'name' => 'title',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'desc' => array(
 			'name' => 'desc',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'allow_comments' => array(
 			'name' => 'allow_comments',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -82,7 +82,7 @@ return array(
 		'allow_tagging' => array(
 			'name' => 'allow_tagging',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -97,7 +97,7 @@ return array(
 		'privacy' => array(
 			'name' => 'privacy',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -112,7 +112,7 @@ return array(
 		'thumb_type' => array(
 			'name' => 'thumb_type',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -127,7 +127,7 @@ return array(
 		'medium_size' => array(
 			'name' => 'medium_size',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -142,7 +142,7 @@ return array(
 		'layout_type' => array(
 			'name' => 'layout_type',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -157,7 +157,7 @@ return array(
 		'thumbs_loc' => array(
 			'name' => 'thumbs_loc',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -172,7 +172,7 @@ return array(
 		'thumbs_in_row' => array(
 			'name' => 'thumbs_in_row',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -187,7 +187,7 @@ return array(
 		'slideshow_mode' => array(
 			'name' => 'slideshow_mode',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -202,7 +202,7 @@ return array(
 		'num_photos' => array(
 			'name' => 'num_photos',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -217,7 +217,7 @@ return array(
 		'num_comments' => array(
 			'name' => 'num_comments',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -232,7 +232,7 @@ return array(
 		'num_views' => array(
 			'name' => 'num_views',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -247,7 +247,7 @@ return array(
 		'user_nick' => array(
 			'name' => 'user_nick',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -262,7 +262,7 @@ return array(
 		'geo_cc' => array(
 			'name' => 'geo_cc',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -277,7 +277,7 @@ return array(
 		'geo_rc' => array(
 			'name' => 'geo_rc',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -292,7 +292,7 @@ return array(
 		'priority' => array(
 			'name' => 'priority',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

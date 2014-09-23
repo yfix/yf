@@ -4,7 +4,7 @@ return array(
 		'microtime' => array(
 			'name' => 'microtime',
 			'type' => 'decimal',
-			'length' => '13',
+			'length' => 13,
 			'decimals' => '3',
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'server_id' => array(
 			'name' => 'server_id',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -52,7 +52,7 @@ return array(
 		'action' => array(
 			'name' => 'action',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -67,7 +67,7 @@ return array(
 		'comment' => array(
 			'name' => 'comment',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -82,7 +82,7 @@ return array(
 		'get_object' => array(
 			'name' => 'get_object',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -97,7 +97,7 @@ return array(
 		'get_action' => array(
 			'name' => 'get_action',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -112,7 +112,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -127,7 +127,7 @@ return array(
 		'user_group' => array(
 			'name' => 'user_group',
 			'type' => 'tinyint',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -142,7 +142,7 @@ return array(
 		'ip' => array(
 			'name' => 'ip',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

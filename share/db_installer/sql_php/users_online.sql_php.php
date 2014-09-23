@@ -4,7 +4,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'bigint',
-			'length' => '20',
+			'length' => 20,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -38,7 +38,7 @@ return array(
 		'time' => array(
 			'name' => 'time',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

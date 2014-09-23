@@ -4,7 +4,7 @@ return array(
 		'category_id' => array(
 			'name' => 'category_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'object_name' => array(
 			'name' => 'object_name',
 			'type' => 'varchar',
-			'length' => '50',
+			'length' => 50,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'object_id' => array(
 			'name' => 'object_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'field_id' => array(
 			'name' => 'field_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

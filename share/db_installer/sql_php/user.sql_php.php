@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'group' => array(
 			'name' => 'group',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'nick' => array(
 			'name' => 'nick',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'login' => array(
 			'name' => 'login',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'email' => array(
 			'name' => 'email',
 			'type' => 'varchar',
-			'length' => '50',
+			'length' => 50,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'password' => array(
 			'name' => 'password',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'phone' => array(
 			'name' => 'phone',
 			'type' => 'varchar',
-			'length' => '40',
+			'length' => 40,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'city' => array(
 			'name' => 'city',
 			'type' => 'varchar',
-			'length' => '40',
+			'length' => 40,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -139,7 +139,7 @@ return array(
 		'state' => array(
 			'name' => 'state',
 			'type' => 'varchar',
-			'length' => '20',
+			'length' => 20,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -154,7 +154,7 @@ return array(
 		'country' => array(
 			'name' => 'country',
 			'type' => 'varchar',
-			'length' => '30',
+			'length' => 30,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -169,7 +169,7 @@ return array(
 		'zip_code' => array(
 			'name' => 'zip_code',
 			'type' => 'varchar',
-			'length' => '16',
+			'length' => 16,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -184,7 +184,7 @@ return array(
 		'address' => array(
 			'name' => 'address',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -217,7 +217,7 @@ return array(
 		'age' => array(
 			'name' => 'age',
 			'type' => 'smallint',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -247,7 +247,7 @@ return array(
 		'visits' => array(
 			'name' => 'visits',
 			'type' => 'smallint',
-			'length' => '6',
+			'length' => 6,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -262,7 +262,7 @@ return array(
 		'active' => array(
 			'name' => 'active',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -277,7 +277,7 @@ return array(
 		'add_date' => array(
 			'name' => 'add_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -292,7 +292,7 @@ return array(
 		'last_update' => array(
 			'name' => 'last_update',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -307,7 +307,7 @@ return array(
 		'last_login' => array(
 			'name' => 'last_login',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -322,7 +322,7 @@ return array(
 		'num_logins' => array(
 			'name' => 'num_logins',
 			'type' => 'smallint',
-			'length' => '6',
+			'length' => 6,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -337,7 +337,7 @@ return array(
 		'last_view' => array(
 			'name' => 'last_view',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -352,7 +352,7 @@ return array(
 		'num_views' => array(
 			'name' => 'num_views',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -367,7 +367,7 @@ return array(
 		'verify_code' => array(
 			'name' => 'verify_code',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -382,7 +382,7 @@ return array(
 		'profile_url' => array(
 			'name' => 'profile_url',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -412,7 +412,7 @@ return array(
 		'ip' => array(
 			'name' => 'ip',
 			'type' => 'varchar',
-			'length' => '15',
+			'length' => 15,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -445,7 +445,7 @@ return array(
 		'avatar' => array(
 			'name' => 'avatar',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -460,7 +460,7 @@ return array(
 		'priority' => array(
 			'name' => 'priority',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -475,7 +475,7 @@ return array(
 		'lon' => array(
 			'name' => 'lon',
 			'type' => 'decimal',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => '4',
 			'unsigned' => false,
 			'nullable' => false,
@@ -490,7 +490,7 @@ return array(
 		'lat' => array(
 			'name' => 'lat',
 			'type' => 'decimal',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => '4',
 			'unsigned' => false,
 			'nullable' => false,
@@ -541,7 +541,7 @@ return array(
 		'emails' => array(
 			'name' => 'emails',
 			'type' => 'smallint',
-			'length' => '6',
+			'length' => 6,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -556,7 +556,7 @@ return array(
 		'emailssent' => array(
 			'name' => 'emailssent',
 			'type' => 'smallint',
-			'length' => '6',
+			'length' => 6,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -571,7 +571,7 @@ return array(
 		'go_after_login' => array(
 			'name' => 'go_after_login',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

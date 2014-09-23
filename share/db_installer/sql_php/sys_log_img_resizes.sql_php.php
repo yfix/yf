@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'source_path' => array(
 			'name' => 'source_path',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'source_file_size' => array(
 			'name' => 'source_file_size',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'source_x' => array(
 			'name' => 'source_x',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'source_y' => array(
 			'name' => 'source_y',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'result_path' => array(
 			'name' => 'result_path',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'result_file_size' => array(
 			'name' => 'result_file_size',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'result_x' => array(
 			'name' => 'result_x',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'result_y' => array(
 			'name' => 'result_y',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -139,7 +139,7 @@ return array(
 		'limit_x' => array(
 			'name' => 'limit_x',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -154,7 +154,7 @@ return array(
 		'limit_y' => array(
 			'name' => 'limit_y',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -169,7 +169,7 @@ return array(
 		'other_options' => array(
 			'name' => 'other_options',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -184,7 +184,7 @@ return array(
 		'source_file' => array(
 			'name' => 'source_file',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -199,7 +199,7 @@ return array(
 		'source_line' => array(
 			'name' => 'source_line',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -229,7 +229,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -244,7 +244,7 @@ return array(
 		'user_group' => array(
 			'name' => 'user_group',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -277,7 +277,7 @@ return array(
 		'site_id' => array(
 			'name' => 'site_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -292,7 +292,7 @@ return array(
 		'server_id' => array(
 			'name' => 'server_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -307,7 +307,7 @@ return array(
 		'date' => array(
 			'name' => 'date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -322,7 +322,7 @@ return array(
 		'ip' => array(
 			'name' => 'ip',
 			'type' => 'varchar',
-			'length' => '16',
+			'length' => 16,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -337,7 +337,7 @@ return array(
 		'query_string' => array(
 			'name' => 'query_string',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -352,7 +352,7 @@ return array(
 		'request_uri' => array(
 			'name' => 'request_uri',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -367,7 +367,7 @@ return array(
 		'user_agent' => array(
 			'name' => 'user_agent',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -382,7 +382,7 @@ return array(
 		'referer' => array(
 			'name' => 'referer',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -397,7 +397,7 @@ return array(
 		'object' => array(
 			'name' => 'object',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -412,7 +412,7 @@ return array(
 		'action' => array(
 			'name' => 'action',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -475,7 +475,7 @@ return array(
 		'used_lib' => array(
 			'name' => 'used_lib',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -490,7 +490,7 @@ return array(
 		'tried_libs' => array(
 			'name' => 'tried_libs',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

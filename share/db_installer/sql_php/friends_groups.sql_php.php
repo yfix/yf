@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'id2' => array(
 			'name' => 'id2',
 			'type' => 'tinyint',
-			'length' => '4',
+			'length' => 4,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -48,13 +48,13 @@ return array(
 		),
 		'title' => array(
 			'name' => 'title',
-			'type' => 'set',
-			'length' => NULL,
+			'type' => 'varchar',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
 			'default' => NULL,
-			'charset' => 'utf8',
+			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
@@ -64,7 +64,7 @@ return array(
 		'order' => array(
 			'name' => 'order',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

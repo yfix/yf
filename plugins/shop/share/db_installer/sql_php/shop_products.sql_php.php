@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'url' => array(
 			'name' => 'url',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'image' => array(
 			'name' => 'image',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'external_url' => array(
 			'name' => 'external_url',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -139,7 +139,7 @@ return array(
 		'cat_id' => array(
 			'name' => 'cat_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -154,7 +154,7 @@ return array(
 		'model' => array(
 			'name' => 'model',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -169,7 +169,7 @@ return array(
 		'sku' => array(
 			'name' => 'sku',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -184,7 +184,7 @@ return array(
 		'quantity' => array(
 			'name' => 'quantity',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -199,7 +199,7 @@ return array(
 		'stock_status_id' => array(
 			'name' => 'stock_status_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -214,7 +214,7 @@ return array(
 		'manufacturer_id' => array(
 			'name' => 'manufacturer_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -229,7 +229,7 @@ return array(
 		'supplier_id' => array(
 			'name' => 'supplier_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -244,7 +244,7 @@ return array(
 		'price' => array(
 			'name' => 'price',
 			'type' => 'decimal',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
@@ -259,7 +259,7 @@ return array(
 		'price_promo' => array(
 			'name' => 'price_promo',
 			'type' => 'decimal',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
@@ -274,7 +274,7 @@ return array(
 		'price_partner' => array(
 			'name' => 'price_partner',
 			'type' => 'decimal',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
@@ -289,7 +289,7 @@ return array(
 		'price_raw' => array(
 			'name' => 'price_raw',
 			'type' => 'decimal',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
@@ -304,7 +304,7 @@ return array(
 		'old_price' => array(
 			'name' => 'old_price',
 			'type' => 'decimal',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
@@ -319,7 +319,7 @@ return array(
 		'currency' => array(
 			'name' => 'currency',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -334,7 +334,7 @@ return array(
 		'add_date' => array(
 			'name' => 'add_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -349,7 +349,7 @@ return array(
 		'update_date' => array(
 			'name' => 'update_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -364,7 +364,7 @@ return array(
 		'last_viewed_date' => array(
 			'name' => 'last_viewed_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -379,7 +379,7 @@ return array(
 		'featured' => array(
 			'name' => 'featured',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -394,7 +394,7 @@ return array(
 		'active' => array(
 			'name' => 'active',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -409,7 +409,7 @@ return array(
 		'viewed' => array(
 			'name' => 'viewed',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -424,7 +424,7 @@ return array(
 		'sold' => array(
 			'name' => 'sold',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -439,7 +439,7 @@ return array(
 		'status' => array(
 			'name' => 'status',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -454,7 +454,7 @@ return array(
 		'articul' => array(
 			'name' => 'articul',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -469,7 +469,7 @@ return array(
 		'origin_url' => array(
 			'name' => 'origin_url',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -484,7 +484,7 @@ return array(
 		'source' => array(
 			'name' => 'source',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

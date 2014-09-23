@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'mediumint',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'user_name' => array(
 			'name' => 'user_name',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -49,7 +49,7 @@ return array(
 		'user_group' => array(
 			'name' => 'user_group',
 			'type' => 'smallint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => true,
@@ -64,7 +64,7 @@ return array(
 		'ip_address' => array(
 			'name' => 'ip_address',
 			'type' => 'varchar',
-			'length' => '16',
+			'length' => 16,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -79,7 +79,7 @@ return array(
 		'user_agent' => array(
 			'name' => 'user_agent',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -94,7 +94,7 @@ return array(
 		'login_date' => array(
 			'name' => 'login_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'last_update' => array(
 			'name' => 'last_update',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => true,
@@ -124,7 +124,7 @@ return array(
 		'login_type' => array(
 			'name' => 'login_type',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => true,
@@ -139,7 +139,7 @@ return array(
 		'location' => array(
 			'name' => 'location',
 			'type' => 'varchar',
-			'length' => '40',
+			'length' => 40,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -154,7 +154,7 @@ return array(
 		'in_forum' => array(
 			'name' => 'in_forum',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -169,7 +169,7 @@ return array(
 		'in_topic' => array(
 			'name' => 'in_topic',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => true,

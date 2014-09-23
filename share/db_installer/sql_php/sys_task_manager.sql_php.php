@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'title' => array(
 			'name' => 'title',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'file' => array(
 			'name' => 'file',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'next_run' => array(
 			'name' => 'next_run',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'week_day' => array(
 			'name' => 'week_day',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'month_day' => array(
 			'name' => 'month_day',
 			'type' => 'smallint',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'hour' => array(
 			'name' => 'hour',
 			'type' => 'smallint',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'minute' => array(
 			'name' => 'minute',
 			'type' => 'smallint',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -139,7 +139,7 @@ return array(
 		'cronkey' => array(
 			'name' => 'cronkey',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -154,7 +154,7 @@ return array(
 		'log' => array(
 			'name' => 'log',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -184,7 +184,7 @@ return array(
 		'enabled' => array(
 			'name' => 'enabled',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -199,7 +199,7 @@ return array(
 		'key' => array(
 			'name' => 'key',
 			'type' => 'varchar',
-			'length' => '30',
+			'length' => 30,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -214,7 +214,7 @@ return array(
 		'safemode' => array(
 			'name' => 'safemode',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'web_path' => array(
 			'name' => 'web_path',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'real_path' => array(
 			'name' => 'real_path',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -82,7 +82,7 @@ return array(
 		'vertical' => array(
 			'name' => 'vertical',
 			'type' => 'char',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -97,7 +97,7 @@ return array(
 		'locale' => array(
 			'name' => 'locale',
 			'type' => 'char',
-			'length' => '7',
+			'length' => 7,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -112,7 +112,7 @@ return array(
 		'country' => array(
 			'name' => 'country',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

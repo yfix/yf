@@ -4,7 +4,7 @@ return array(
 		'code' => array(
 			'name' => 'code',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'code3' => array(
 			'name' => 'code3',
 			'type' => 'char',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'num' => array(
 			'name' => 'num',
 			'type' => 'char',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'name_eng' => array(
 			'name' => 'name_eng',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'cont' => array(
 			'name' => 'cont',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'tld' => array(
 			'name' => 'tld',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'currency' => array(
 			'name' => 'currency',
 			'type' => 'char',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'area' => array(
 			'name' => 'area',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -139,7 +139,7 @@ return array(
 		'population' => array(
 			'name' => 'population',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -154,7 +154,7 @@ return array(
 		'phone_prefix' => array(
 			'name' => 'phone_prefix',
 			'type' => 'char',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -169,7 +169,7 @@ return array(
 		'languages' => array(
 			'name' => 'languages',
 			'type' => 'varchar',
-			'length' => '256',
+			'length' => 256,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -184,7 +184,7 @@ return array(
 		'geoname_id' => array(
 			'name' => 'geoname_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -199,7 +199,7 @@ return array(
 		'capital_id' => array(
 			'name' => 'capital_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

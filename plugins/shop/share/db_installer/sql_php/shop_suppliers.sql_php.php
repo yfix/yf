@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '64',
+			'length' => 64,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'url' => array(
 			'name' => 'url',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'desc' => array(
 			'name' => 'desc',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'image' => array(
 			'name' => 'image',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'sort_order' => array(
 			'name' => 'sort_order',
 			'type' => 'int',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'admin_id' => array(
 			'name' => 'admin_id',
 			'type' => 'int',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

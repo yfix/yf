@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'cat_id' => array(
 			'name' => 'cat_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'price' => array(
 			'name' => 'price',
 			'type' => 'decimal',
-			'length' => '12',
+			'length' => 12,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'old_price' => array(
 			'name' => 'old_price',
 			'type' => 'decimal',
-			'length' => '12',
+			'length' => 12,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '128',
+			'length' => 128,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'active' => array(
 			'name' => 'active',
 			'type' => 'tinyint',
-			'length' => '4',
+			'length' => 4,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'event_id' => array(
 			'name' => 'event_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'from_email' => array(
 			'name' => 'from_email',
 			'type' => 'varchar',
-			'length' => '254',
+			'length' => 254,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -49,7 +49,7 @@ return array(
 		'from_name' => array(
 			'name' => 'from_name',
 			'type' => 'varchar',
-			'length' => '100',
+			'length' => 100,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -64,7 +64,7 @@ return array(
 		'subject' => array(
 			'name' => 'subject',
 			'type' => 'varchar',
-			'length' => '78',
+			'length' => 78,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -94,7 +94,7 @@ return array(
 		'active' => array(
 			'name' => 'active',
 			'type' => 'tinyint',
-			'length' => '4',
+			'length' => 4,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,

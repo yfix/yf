@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'mediumint',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'mediumint',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'topic_id' => array(
 			'name' => 'topic_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'start_date' => array(
 			'name' => 'start_date',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => true,
@@ -64,7 +64,7 @@ return array(
 		'last_sent' => array(
 			'name' => 'last_sent',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'topic_track_type' => array(
 			'name' => 'topic_track_type',
 			'type' => 'varchar',
-			'length' => '100',
+			'length' => 100,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

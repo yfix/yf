@@ -4,7 +4,7 @@ return array(
 		'product_id' => array(
 			'name' => 'product_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'group_id' => array(
 			'name' => 'group_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'price' => array(
 			'name' => 'price',
 			'type' => 'decimal',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,

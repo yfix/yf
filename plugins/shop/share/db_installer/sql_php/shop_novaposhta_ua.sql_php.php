@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'city_raw' => array(
 			'name' => 'city_raw',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -34,7 +34,7 @@ return array(
 		'address_raw' => array(
 			'name' => 'address_raw',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -49,7 +49,7 @@ return array(
 		'tel_raw' => array(
 			'name' => 'tel_raw',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -64,7 +64,7 @@ return array(
 		'city' => array(
 			'name' => 'city',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -79,7 +79,7 @@ return array(
 		'branch_no' => array(
 			'name' => 'branch_no',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => true,
@@ -94,7 +94,7 @@ return array(
 		'address' => array(
 			'name' => 'address',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -109,7 +109,7 @@ return array(
 		'info' => array(
 			'name' => 'info',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -124,7 +124,7 @@ return array(
 		'location' => array(
 			'name' => 'location',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -139,7 +139,7 @@ return array(
 		'tel' => array(
 			'name' => 'tel',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -154,7 +154,7 @@ return array(
 		'time_in_1' => array(
 			'name' => 'time_in_1',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -169,7 +169,7 @@ return array(
 		'time_in_2' => array(
 			'name' => 'time_in_2',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -184,7 +184,7 @@ return array(
 		'time_out_1' => array(
 			'name' => 'time_out_1',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -199,7 +199,7 @@ return array(
 		'time_out_2' => array(
 			'name' => 'time_out_2',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,

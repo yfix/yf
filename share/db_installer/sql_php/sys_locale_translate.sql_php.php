@@ -4,7 +4,7 @@ return array(
 		'var_id' => array(
 			'name' => 'var_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'locale' => array(
 			'name' => 'locale',
 			'type' => 'varchar',
-			'length' => '12',
+			'length' => 12,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -52,6 +52,7 @@ return array(
 			'name' => 'PRIMARY',
 			'type' => 'primary',
 			'columns' => array(
+				'' => '',
 			),
 		),
 	),

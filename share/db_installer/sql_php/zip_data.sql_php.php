@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -43,7 +43,7 @@ return array(
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => true,
+			'unique' => false,
 			'values' => NULL,
 		),
 	),

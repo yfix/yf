@@ -4,7 +4,7 @@ return array(
 		'loc_id' => array(
 			'name' => 'loc_id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'country' => array(
 			'name' => 'country',
 			'type' => 'char',
-			'length' => '2',
+			'length' => 2,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'region' => array(
 			'name' => 'region',
 			'type' => 'char',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'city' => array(
 			'name' => 'city',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'postal_code' => array(
 			'name' => 'postal_code',
 			'type' => 'char',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'dma_code' => array(
 			'name' => 'dma_code',
 			'type' => 'int',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'area_code' => array(
 			'name' => 'area_code',
 			'type' => 'int',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

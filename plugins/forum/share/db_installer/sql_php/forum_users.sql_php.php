@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'active' => array(
 			'name' => 'active',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'status' => array(
 			'name' => 'status',
 			'type' => 'char',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -49,7 +49,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '24',
+			'length' => 24,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'pswd' => array(
 			'name' => 'pswd',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'user_lastvisit' => array(
 			'name' => 'user_lastvisit',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'user_regdate' => array(
 			'name' => 'user_regdate',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'group' => array(
 			'name' => 'group',
 			'type' => 'tinyint',
-			'length' => '4',
+			'length' => 4,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => true,
@@ -124,7 +124,7 @@ return array(
 		'user_posts' => array(
 			'name' => 'user_posts',
 			'type' => 'mediumint',
-			'length' => '8',
+			'length' => 8,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -154,7 +154,7 @@ return array(
 		'user_dateformat' => array(
 			'name' => 'user_dateformat',
 			'type' => 'varchar',
-			'length' => '14',
+			'length' => 14,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -169,7 +169,7 @@ return array(
 		'user_rank' => array(
 			'name' => 'user_rank',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => true,
@@ -184,7 +184,7 @@ return array(
 		'user_avatar' => array(
 			'name' => 'user_avatar',
 			'type' => 'varchar',
-			'length' => '100',
+			'length' => 100,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -199,7 +199,7 @@ return array(
 		'user_email' => array(
 			'name' => 'user_email',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -214,7 +214,7 @@ return array(
 		'user_icq' => array(
 			'name' => 'user_icq',
 			'type' => 'varchar',
-			'length' => '15',
+			'length' => 15,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -229,7 +229,7 @@ return array(
 		'user_website' => array(
 			'name' => 'user_website',
 			'type' => 'varchar',
-			'length' => '100',
+			'length' => 100,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -244,7 +244,7 @@ return array(
 		'user_from' => array(
 			'name' => 'user_from',
 			'type' => 'varchar',
-			'length' => '100',
+			'length' => 100,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -274,7 +274,7 @@ return array(
 		'user_aim' => array(
 			'name' => 'user_aim',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -289,7 +289,7 @@ return array(
 		'user_yim' => array(
 			'name' => 'user_yim',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -304,7 +304,7 @@ return array(
 		'user_msnm' => array(
 			'name' => 'user_msnm',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -319,7 +319,7 @@ return array(
 		'user_occ' => array(
 			'name' => 'user_occ',
 			'type' => 'varchar',
-			'length' => '100',
+			'length' => 100,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -334,7 +334,7 @@ return array(
 		'user_interests' => array(
 			'name' => 'user_interests',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -364,7 +364,7 @@ return array(
 		'view_sig' => array(
 			'name' => 'view_sig',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -379,7 +379,7 @@ return array(
 		'view_images' => array(
 			'name' => 'view_images',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -394,7 +394,7 @@ return array(
 		'view_avatars' => array(
 			'name' => 'view_avatars',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -409,7 +409,7 @@ return array(
 		'posts_per_page' => array(
 			'name' => 'posts_per_page',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -424,7 +424,7 @@ return array(
 		'topics_per_page' => array(
 			'name' => 'topics_per_page',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -439,7 +439,7 @@ return array(
 		'dst_status' => array(
 			'name' => 'dst_status',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -454,7 +454,7 @@ return array(
 		'language' => array(
 			'name' => 'language',
 			'type' => 'varchar',
-			'length' => '12',
+			'length' => 12,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

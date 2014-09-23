@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'user_id' => array(
 			'name' => 'user_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'date' => array(
 			'name' => 'date',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'total_sum' => array(
 			'name' => 'total_sum',
 			'type' => 'decimal',
-			'length' => '12',
+			'length' => 12,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
@@ -64,7 +64,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '128',
+			'length' => 128,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -79,7 +79,7 @@ return array(
 		'email' => array(
 			'name' => 'email',
 			'type' => 'varchar',
-			'length' => '50',
+			'length' => 50,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -94,7 +94,7 @@ return array(
 		'phone' => array(
 			'name' => 'phone',
 			'type' => 'varchar',
-			'length' => '40',
+			'length' => 40,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -214,7 +214,7 @@ return array(
 		'payment' => array(
 			'name' => 'payment',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -229,7 +229,7 @@ return array(
 		'transaction_id' => array(
 			'name' => 'transaction_id',
 			'type' => 'varchar',
-			'length' => '40',
+			'length' => 40,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -262,7 +262,7 @@ return array(
 		'region' => array(
 			'name' => 'region',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -277,7 +277,7 @@ return array(
 		'status' => array(
 			'name' => 'status',
 			'type' => 'varchar',
-			'length' => '16',
+			'length' => 16,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -292,7 +292,7 @@ return array(
 		'delivery_time' => array(
 			'name' => 'delivery_time',
 			'type' => 'varchar',
-			'length' => '16',
+			'length' => 16,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -307,7 +307,7 @@ return array(
 		'delivery_price' => array(
 			'name' => 'delivery_price',
 			'type' => 'varchar',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -322,7 +322,7 @@ return array(
 		'is_manual_delivery_price' => array(
 			'name' => 'is_manual_delivery_price',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -337,7 +337,7 @@ return array(
 		'merge_id' => array(
 			'name' => 'merge_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -352,7 +352,7 @@ return array(
 		'discount' => array(
 			'name' => 'discount',
 			'type' => 'decimal',
-			'length' => '12',
+			'length' => 12,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
@@ -367,7 +367,7 @@ return array(
 		'discount_add' => array(
 			'name' => 'discount_add',
 			'type' => 'decimal',
-			'length' => '12',
+			'length' => 12,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,

@@ -4,7 +4,7 @@ return array(
 		'id' => array(
 			'name' => 'id',
 			'type' => 'int',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -19,7 +19,7 @@ return array(
 		'title' => array(
 			'name' => 'title',
 			'type' => 'varchar',
-			'length' => '32',
+			'length' => 32,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -34,7 +34,7 @@ return array(
 		'active' => array(
 			'name' => 'active',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -49,7 +49,7 @@ return array(
 		'icon' => array(
 			'name' => 'icon',
 			'type' => 'varchar',
-			'length' => '250',
+			'length' => 250,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -64,7 +64,7 @@ return array(
 		'prefix' => array(
 			'name' => 'prefix',
 			'type' => 'varchar',
-			'length' => '250',
+			'length' => 250,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -79,7 +79,7 @@ return array(
 		'suffix' => array(
 			'name' => 'suffix',
 			'type' => 'varchar',
-			'length' => '250',
+			'length' => 250,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -94,7 +94,7 @@ return array(
 		'is_admin' => array(
 			'name' => 'is_admin',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -109,7 +109,7 @@ return array(
 		'is_moderator' => array(
 			'name' => 'is_moderator',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -124,7 +124,7 @@ return array(
 		'view_board' => array(
 			'name' => 'view_board',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -139,7 +139,7 @@ return array(
 		'view_ip' => array(
 			'name' => 'view_ip',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -154,7 +154,7 @@ return array(
 		'view_member_info' => array(
 			'name' => 'view_member_info',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -169,7 +169,7 @@ return array(
 		'view_other_topics' => array(
 			'name' => 'view_other_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -184,7 +184,7 @@ return array(
 		'view_post_closed' => array(
 			'name' => 'view_post_closed',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -199,7 +199,7 @@ return array(
 		'post_new_topics' => array(
 			'name' => 'post_new_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -214,7 +214,7 @@ return array(
 		'reply_own_topics' => array(
 			'name' => 'reply_own_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -229,7 +229,7 @@ return array(
 		'reply_other_topics' => array(
 			'name' => 'reply_other_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -244,7 +244,7 @@ return array(
 		'delete_own_topics' => array(
 			'name' => 'delete_own_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -259,7 +259,7 @@ return array(
 		'delete_other_topics' => array(
 			'name' => 'delete_other_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -274,7 +274,7 @@ return array(
 		'edit_own_topics' => array(
 			'name' => 'edit_own_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -289,7 +289,7 @@ return array(
 		'edit_other_topics' => array(
 			'name' => 'edit_other_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -304,7 +304,7 @@ return array(
 		'open_topics' => array(
 			'name' => 'open_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -319,7 +319,7 @@ return array(
 		'close_topics' => array(
 			'name' => 'close_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -334,7 +334,7 @@ return array(
 		'pin_topics' => array(
 			'name' => 'pin_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -349,7 +349,7 @@ return array(
 		'unpin_topics' => array(
 			'name' => 'unpin_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -364,7 +364,7 @@ return array(
 		'move_topics' => array(
 			'name' => 'move_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -379,7 +379,7 @@ return array(
 		'approve_topics' => array(
 			'name' => 'approve_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -394,7 +394,7 @@ return array(
 		'unapprove_topics' => array(
 			'name' => 'unapprove_topics',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -409,7 +409,7 @@ return array(
 		'open_close_posts' => array(
 			'name' => 'open_close_posts',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -424,7 +424,7 @@ return array(
 		'delete_own_posts' => array(
 			'name' => 'delete_own_posts',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -439,7 +439,7 @@ return array(
 		'delete_other_posts' => array(
 			'name' => 'delete_other_posts',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -454,7 +454,7 @@ return array(
 		'edit_own_posts' => array(
 			'name' => 'edit_own_posts',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -469,7 +469,7 @@ return array(
 		'edit_other_posts' => array(
 			'name' => 'edit_other_posts',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -484,7 +484,7 @@ return array(
 		'move_posts' => array(
 			'name' => 'move_posts',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -499,7 +499,7 @@ return array(
 		'approve_posts' => array(
 			'name' => 'approve_posts',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -514,7 +514,7 @@ return array(
 		'unapprove_posts' => array(
 			'name' => 'unapprove_posts',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -529,7 +529,7 @@ return array(
 		'split_merge' => array(
 			'name' => 'split_merge',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -544,7 +544,7 @@ return array(
 		'edit_own_profile' => array(
 			'name' => 'edit_own_profile',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -559,7 +559,7 @@ return array(
 		'edit_other_profile' => array(
 			'name' => 'edit_other_profile',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -574,7 +574,7 @@ return array(
 		'hide_from_list' => array(
 			'name' => 'hide_from_list',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -589,7 +589,7 @@ return array(
 		'avatar_upload' => array(
 			'name' => 'avatar_upload',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -604,7 +604,7 @@ return array(
 		'use_search' => array(
 			'name' => 'use_search',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -619,7 +619,7 @@ return array(
 		'use_pm' => array(
 			'name' => 'use_pm',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -634,7 +634,7 @@ return array(
 		'max_messages' => array(
 			'name' => 'max_messages',
 			'type' => 'int',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => true,
@@ -649,7 +649,7 @@ return array(
 		'email_friend' => array(
 			'name' => 'email_friend',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -664,7 +664,7 @@ return array(
 		'search_flood' => array(
 			'name' => 'search_flood',
 			'type' => 'mediumint',
-			'length' => '6',
+			'length' => 6,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => true,
@@ -679,7 +679,7 @@ return array(
 		'make_polls' => array(
 			'name' => 'make_polls',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -694,7 +694,7 @@ return array(
 		'vote_polls' => array(
 			'name' => 'vote_polls',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
