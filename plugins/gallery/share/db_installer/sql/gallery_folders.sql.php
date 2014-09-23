@@ -16,7 +16,7 @@ return '
   `is_default` enum(\'0\',\'1\') NOT NULL,
   `add_date` int(10) unsigned NOT NULL,
   `active` enum(\'1\',\'0\') NOT NULL,
-  `allow_tagging` tinyint() unsigned NOT NULL,
+  `allow_tagging` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `id2` (`id2`)
