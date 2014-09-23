@@ -53,7 +53,7 @@ return array(
 		'release_year' => array(
 			'name' => 'release_year',
 			'type' => 'year',
-			'length' => NULL,
+			'length' => '4',
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
