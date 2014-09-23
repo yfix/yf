@@ -8,6 +8,8 @@ abstract class yf_db_installer {
 	/** @var array */
 	public $TABLES_SQL				= array();
 	/** @var array */
+	public $TABLES_SQL_PHP			= array();
+	/** @var array */
 	public $TABLES_DATA				= array();
 	/** @var bool */
 	public $USE_CACHE				= true;
@@ -142,31 +144,48 @@ abstract class yf_db_installer {
 	/**
 	*/
 	function _load_data_files() {
-		$data = array();
-		// Load install data from external files
+		// Preload db installer SQL CREATE TABLE DDL statements
+		$ext = '.sql.php';
 		$globs_sql = array(
-			'yf_main'			=> YF_PATH.'share/db_installer/sql/*.sql.php',
-			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
-			'project_config'	=> CONFIG_PATH.'share/db_installer/sql/*.sql.php',
-			'project_main'		=> PROJECT_PATH.'share/db_installer/sql/*.sql.php',
-			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
+			'yf_main'			=> YF_PATH.'share/db_installer/sql/*'.$ext,
+			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/sql/*'.$ext,
+			'project_config'	=> CONFIG_PATH.'share/db_installer/sql/*'.$ext,
+			'project_main'		=> PROJECT_PATH.'share/db_installer/sql/*'.$ext,
+			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/sql/*'.$ext,
 		);
 		foreach ($globs_sql as $glob) {
 			foreach (glob($glob) as $f) {
-				$t_name = substr(basename($f), 0, -strlen('.sql.php'));
-				$this->TABLES_SQL[$t_name] = include $f; // $data should be loaded from file
+				$t_name = substr(basename($f), 0, -strlen($ext));
+				$this->TABLES_SQL[$t_name] = include $f;
 			}
 		}
+		// Preload db installer PHP array of CREATE TABLE DDL statements
+		$ext = '.sql_php.php';
+		$globs_sql_php = array(
+			'yf_main'			=> YF_PATH.'share/db_installer/sql/*'.$ext,
+			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/sql/*'.$ext,
+			'project_config'	=> CONFIG_PATH.'share/db_installer/sql/*'.$ext,
+			'project_main'		=> PROJECT_PATH.'share/db_installer/sql/*'.$ext,
+			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/sql/*'.$ext,
+		);
+		foreach ($globs_sql_php as $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen($ext));
+				$this->TABLES_SQL_PHP[$t_name] = include $f;
+			}
+		}
+		// Preload db installer data PHP arrays needed to be inserted after CREATE TABLE == initial data
+		$ext = '.data.php';
 		$globs_data = array(
-			'yf_main'			=> YF_PATH.'share/db_installer/data/*.data.php',
-			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/data/*.data.php',
-			'project_config'	=> CONFIG_PATH.'share/db_installer/data/*.data.php',
-			'project_main'		=> PROJECT_PATH.'share/db_installer/data/*.data.php',
-			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/data/*.data.php',
+			'yf_main'			=> YF_PATH.'share/db_installer/data/*'.$ext,
+			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/data/*'.$ext,
+			'project_config'	=> CONFIG_PATH.'share/db_installer/data/*'.$ext,
+			'project_main'		=> PROJECT_PATH.'share/db_installer/data/*'.$ext,
+			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/data/*'.$ext,
 		);
 		foreach ($globs_data as $glob) {
 			foreach (glob($glob) as $f) {
-				$t_name = substr(basename($f), 0, -strlen('.data.php'));
+				$t_name = substr(basename($f), 0, -strlen($ext));
 				$this->TABLES_DATA[$t_name] = include $f; // $data should be loaded from file
 			}
 		}
@@ -258,12 +277,16 @@ abstract class yf_db_installer {
 		}
 		$cache_name = __CLASS__.'__'.__FUNCTION__.'__'.$table_name;
 		$data = array();
-		if ($this->USE_CACHE) {
-			$data = cache_get($cache_name);
+#		if ($this->USE_CACHE) {
+#			$data = cache_get($cache_name);
+#		}
+		// Try to get already pregenerated data
+		if (!$data) {
+			$data = $this->TABLES_SQL_PHP[$table_name];
 		}
 		if (!$data) {
 			$data = $this->_db_table_struct_into_array($this->TABLES_SQL[$table_name]);
-			cache_set($cache_name, $data);
+#			cache_set($cache_name, $data);
 		}
 		if (!isset($data)) {
 			return false;
