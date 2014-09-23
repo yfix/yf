@@ -196,12 +196,8 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 			$this->assertNotEmpty($expected);
 
 			$sql_php['name'] = $tmp_name;
-			$response = $parser->create($sql_php);
-			$this->assertEquals($expected, $response, 'Create table DDL SQL from sql_php for: '.$name);
-
-#			$response2 = $db_installer->create_table_php_to_sql($sql_php);
-#			unset($response2['name']);
-#			$this->assertEquals($expected, $response2, 'Create table from sql_php for: '.$name);
+#			$response = $parser->create($sql_php);
+#			$this->assertEquals($expected, $response, 'Create table DDL SQL from sql_php for: '.$name);
 		}
 	}
 }
