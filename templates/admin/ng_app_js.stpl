@@ -5,8 +5,9 @@
 			, 'ngSanitize'
 			, 'ngResource'
 			, 'ngTouch'
+			{{-- , 'ui.bootstrap' --}}
+			, 'ui.select2'
 			, 'mgcrea.ngStrap'
-			,'ui.select2'
 		]);
 		ng_app_admin.config( function( $datepickerProvider ) {
 			angular.extend( $datepickerProvider.defaults, {

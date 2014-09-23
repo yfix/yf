@@ -189,14 +189,17 @@ ng_app_admin.filter( 'orderObjectBy', function( $log ) {
 		var status       = true;
 		var regexp       = null;
 		// filter by regexp
+		RegExp.escape= function( s ) {
+			return( s.replace( /[\/\(\)]/g, '\\$&' ) );
+		};
+		var filter_escape = RegExp.escape( filter );
 		try {
-			RegExp.escape= function( s ) {
-				return( s.replace( /[-\/\\()|[\]]/g, '\\$&' ) );
-			};
-			regexp = new RegExp( RegExp.escape( '.*'+filter+'.*' ), 'img' );
+			regexp = new RegExp( filter_escape, 'img' );
 		} catch( e ) {
-			status = false;
+			$log.log( 'filter', filter_escape, '>', regexp );
 		}
+			$log.log( 'filter', filter_escape, '>', regexp );
+		if( regexp === null ) { status = false; }
 		$scope[ options.status ] = status;
 		angular.forEach( items, function( item ) {
 			var found = false;

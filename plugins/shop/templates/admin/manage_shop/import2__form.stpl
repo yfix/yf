@@ -46,15 +46,22 @@
 	<tr>
 		<th colspan="5">
 			<span>Список загруженных файлов ({{_upload_list__count}})</span>
-			<span style="width: 10em; margin: 0 2em;" class="control-group" ng-class="{ error: upload_list_filter__status === false }">
-				<input style="width: 10em; margin: 0;" type="text"
-					ng-model="upload_list_filter"
-					bs-tooltip
-						data-title     = "Вы можете использовать регулярные выражения"
-						data-trigger   = "focus"
-						data-placement = "top"
+			<span style="width: 10em; margin: 0 2em;" class="control-group"
+				ng-class="{ error: upload_list_filter__status === false }"
+			>
+				<input style="width: 10em; margin: 0;" type="text" ng-model="upload_list_filter"
+					tooltip="Вы можете использовать регулярные выражения"
+					tooltip-placement="top"
 				>
 				<span class="btn" ng-click="upload_list_filter=''"><i class="fa fa-times"></i></span>
+					<span class="btn btn-small"
+						bs-tooltip
+						data-trigger   = "hover"
+						data-placement = "right"
+						data-title     = "Вы можете использовать регулярные выражения"
+					>
+						<i class="fa fa-info-circle"></i>
+					</span>
 			</span>
 			<span class="btn btn-small btn-danger pull-right" ng-click="UploadApi.list__remove_all()">Удалить все</span>
 		</th>
