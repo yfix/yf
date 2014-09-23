@@ -53,18 +53,19 @@ foreach ($globs_php as $glob) {
 		}
 		$sql_a[] = $options ? '  /** '.implode(' ', $options).' **/' : '';
 
-		$sql = trim(implode(PHP_EOL, $sql_a));
+		$sql = '  '.trim(implode(PHP_EOL, $sql_a));
+#echo $sql .PHP_EOL.PHP_EOL;
 
 		if (!$sql) {
 			echo '-- ERROR: empty sql'. PHP_EOL;
 			continue;
 		}
 
-		$body = '<?'.'php'.PHP_EOL.'return \''. PHP_EOL. $sql. PHP_EOL. '\';'.PHP_EOL;
-echo $body .PHP_EOL.PHP_EOL;
+		$body = '<?'.'php'.PHP_EOL.'return \''. PHP_EOL. addslashes($sql). PHP_EOL. '\';'.PHP_EOL;
+#echo $body .PHP_EOL.PHP_EOL;
 		if (file_exists($sql_file) && md5($body) == md5(file_get_contents($sql_file))) {
 			continue;
 		}
-#		file_put_contents($sql_file, $body);
+		file_put_contents($sql_file, $body);
 	}
 }
