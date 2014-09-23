@@ -71,6 +71,7 @@ class yf_db_ddl_parser_mysql {
 			$v['type'] = strtolower($v['type']);
 			if ($v['type'] == 'primary') {
 				$type = 'PRIMARY KEY';
+				$name = 'PRIMARY';
 			} elseif ($v['type'] == 'unique') {
 				$type = 'UNIQUE KEY';
 			} elseif ($v['type'] == 'fulltext') {
@@ -236,7 +237,6 @@ class yf_db_ddl_parser_mysql {
 						}
 					}
 				}
-				$name = strtolower($name);
 				$struct['indexes'][$name] = array(
 					'name'		=> $name,
 					'type'		=> strtolower($type),
