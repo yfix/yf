@@ -116,19 +116,6 @@ class yf_db_ddl_parser_mysql {
 
 	/**
 	*/
-	function _get_int_def_length ($type) {
-		$a = array(
-			'tinyint'	=> 3,
-			'smallint'	=> 5,
-			'mediumint'	=> 8,
-			'int'		=> 11,
-			'bigint'	=> 20,
-		);
-		return $a[$type] ?: 11;
-	}
-
-	/**
-	*/
 	function parse ($sql) {
 		$parsed = $this->parser->parse($sql);
 
@@ -376,5 +363,18 @@ class yf_db_ddl_parser_mysql {
 			$struct['options'][$name] = $val;
 		}
 		return $struct;
+	}
+
+	/**
+	*/
+	function _get_int_def_length ($type) {
+		$a = array(
+			'tinyint'	=> 3,
+			'smallint'	=> 5,
+			'mediumint'	=> 8,
+			'int'		=> 11,
+			'bigint'	=> 20,
+		);
+		return $a[$type] ?: 11;
 	}
 }
