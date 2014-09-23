@@ -186,11 +186,19 @@ return array(
 		),
 	),
 	'indexes' => array(
-		'idx_1' => array(
-			'name' => 'idx_1',
-			'type' => 'index',
+		'PRIMARY' => array(
+			'name' => 'PRIMARY',
+			'type' => 'primary',
 			'columns' => array(
 				'id' => 'id',
+			),
+		),
+		'idx_2' => array(
+			'name' => 'idx_2',
+			'type' => 'unique',
+			'columns' => array(
+				'locale' => 'locale',
+				'name' => 'name',
 			),
 		),
 	),

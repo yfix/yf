@@ -12,6 +12,6 @@ return '
 	`date_modified` datetime,
 	`content_type` tinyint(2) unsigned NOT NULL default \'1\',
 	`active` enum(\'1\',\'0\') NOT NULL default \'1\',
-	UNIQUE KEY	(`locale`,`name`),
-	PRIMARY KEY	(`id`)
+	PRIMARY KEY	(`id`),
+	UNIQUE KEY	(`locale`,`name`)
 ';
