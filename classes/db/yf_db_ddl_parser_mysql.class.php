@@ -78,23 +78,26 @@ class yf_db_ddl_parser_mysql {
 			} elseif ($v['type'] == 'spatial') {
 				$type = 'SPATIAL KEY';
 			}
+			if ($name != 'PRIMARY') {
+				$name = strtolower($name);
+			}
 			$lines[] = $implode_line(array(
 				'type'		=> $type,
 				'name'		=> strlen($name) && !is_numeric($name) && in_array($v['type'], array('index', 'unique', 'fulltext', 'spatial')) ? '`'.$name.'`' : '',
-				'columns'	=> '(`'.implode('`,`', $v['columns']).'`)',
+				'columns'	=> strtolower('(`'.implode('`,`', $v['columns']).'`)'),
 			));
 		}
 		foreach ((array)$data['foreign_keys'] as $name => $v) {
 			$lines[] = $implode_line(array(
 				'begin'			=> 'CONSTRAINT',
-				'name'			=> '`'.$name.'`',
+				'name'			=> '`'.strtolower($name).'`',
 				'fk'			=> 'FOREIGN KEY',
-				'columns'		=> '(`'.implode('`,`', $v['columns']).'`)',
+				'columns'		=> strtolower('(`'.implode('`,`', $v['columns']).'`)'),
 				'ref'			=> 'REFERENCES',
 				'ref_table'		=> '`'.$v['ref_table'].'`',
-				'ref_columns'	=> '(`'.implode('`,`', $v['ref_columns']).'`)',
-				'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.$v['on_delete'] : '',
-				'on_update'		=> $v['on_update'] ? 'ON UPDATE '.$v['on_update'] : '',
+				'ref_columns'	=> strtolower('(`'.implode('`,`', $v['ref_columns']).'`)'),
+				'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.strtoupper($v['on_delete']) : '',
+				'on_update'		=> $v['on_update'] ? 'ON UPDATE '.strtoupper($v['on_update']) : '',
 			));
 		}
 		$options = array();
@@ -272,7 +275,9 @@ class yf_db_ddl_parser_mysql {
 				if (!$name) {
 					$name = 'idx_'.(count($struct['indexes']) + 1);
 				}
-				$name = strtolower($name);
+				if ($name != 'PRIMARY') {
+					$name = strtolower($name);
+				}
 				$struct['indexes'][$name] = array(
 					'name'		=> $name,
 					'type'		=> strtolower($type),
