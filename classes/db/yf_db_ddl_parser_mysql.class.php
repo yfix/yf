@@ -49,7 +49,7 @@ class yf_db_ddl_parser_mysql {
 				$def = 'NULL';
 			} elseif ($v['type'] == 'timestamp') {
 				$def = $v['default'];
-			} elseif (strlen($v['default'])) {
+			} elseif (!is_null($v['default'])) {
 				$def = '\''.$v['default'].'\'';
 			}
 			$lines[] = $implode_line(array(
