@@ -78,8 +78,11 @@ class yf_core_install {
 			return print '__CONSOLE_INSTALL__'.PHP_EOL;
 		}
 		$cur_dir = realpath('./');
+		$up1_dir = dirname($cur_dir).'/';
 		if (!is_writable($cur_dir)) {
 			$error = 'Current dir: '.$cur_dir.' is not writable, please fix filesystem permissions.';
+		} elseif (!is_writable($up1_dir)) {
+			$error = 'Up 1 level dir: '.$up1_dir.' is not writable, please fix filesystem permissions.';
 		}
 		ob_start();
 		if ($page == 'form') {
