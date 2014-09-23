@@ -385,6 +385,12 @@ abstract class yf_db_installer {
 	}
 
 	/**
+	*/
+	function create_table_php_to_sql ($data) {
+		return _class('db_ddl_parser_mysql', 'classes/db/')->create($data);
+	}
+
+	/**
 	* Alias
 	*/
 	function create_table_sql_to_php ($sql) {
