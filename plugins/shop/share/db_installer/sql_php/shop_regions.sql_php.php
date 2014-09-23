@@ -1,0 +1,70 @@
+<?php
+return array(
+	'fields' => array(
+		'id' => array(
+			'name' => 'id',
+			'type' => 'int',
+			'length' => '11',
+			'decimals' => NULL,
+			'unsigned' => false,
+			'nullable' => false,
+			'default' => NULL,
+			'auto_inc' => true,
+			'primary' => true,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'value' => array(
+			'name' => 'value',
+			'type' => 'varchar',
+			'length' => '255',
+			'decimals' => NULL,
+			'unsigned' => NULL,
+			'nullable' => false,
+			'default' => '',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'host' => array(
+			'name' => 'host',
+			'type' => 'varchar',
+			'length' => '255',
+			'decimals' => NULL,
+			'unsigned' => NULL,
+			'nullable' => false,
+			'default' => NULL,
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'active' => array(
+			'name' => 'active',
+			'type' => 'int',
+			'length' => '11',
+			'decimals' => NULL,
+			'unsigned' => false,
+			'nullable' => false,
+			'default' => '1',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+	),
+	'indexes' => array(
+		'PRIMARY' => array(
+			'name' => 'PRIMARY',
+			'type' => 'primary',
+			'columns' => array(
+				'id' => 'id',
+			),
+		),
+	),
+	'foreign_keys' => array(
+	),
+	'options' => array(
+	),
+);

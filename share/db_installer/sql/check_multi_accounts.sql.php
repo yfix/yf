@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`user_id` int(10) unsigned NOT NULL,
 	`matching_users` longtext NOT NULL,
 	`matching_ips` longtext NOT NULL,

@@ -1,0 +1,70 @@
+<?php
+return array(
+	'fields' => array(
+		'product_set_id' => array(
+			'name' => 'product_set_id',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'product_id' => array(
+			'name' => 'product_id',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'param_id' => array(
+			'name' => 'param_id',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'quantity' => array(
+			'name' => 'quantity',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+	),
+	'indexes' => array(
+		'basket_id' => array(
+			'name' => 'basket_id',
+			'type' => 'index',
+			'columns' => array(
+				'product_set_id' => 'product_set_id',
+			),
+		),
+	),
+	'foreign_keys' => array(
+	),
+	'options' => array(
+	),
+);

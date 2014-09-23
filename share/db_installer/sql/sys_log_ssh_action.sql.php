@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`microtime`		decimal(13,3) unsigned NOT NULL default \'0.000\',
 	`server_id`		varchar(64) NOT NULL default \'\',
 	`init_type`		enum(\'user\',\'admin\') default \'user\',

@@ -1,0 +1,97 @@
+<?php
+return array(
+	'fields' => array(
+		'id' => array(
+			'name' => 'id',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => NULL,
+			'auto_inc' => true,
+			'primary' => true,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'poll_id' => array(
+			'name' => 'poll_id',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'user_id' => array(
+			'name' => 'user_id',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'date' => array(
+			'name' => 'date',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'value' => array(
+			'name' => 'value',
+			'type' => 'tinyint',
+			'length' => '3',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => NULL,
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+	),
+	'indexes' => array(
+		'PRIMARY' => array(
+			'name' => 'PRIMARY',
+			'type' => 'primary',
+			'columns' => array(
+				'id' => 'id',
+			),
+		),
+		'poll_id' => array(
+			'name' => 'poll_id',
+			'type' => 'index',
+			'columns' => array(
+				'poll_id' => 'poll_id',
+			),
+		),
+		'user_id' => array(
+			'name' => 'user_id',
+			'type' => 'index',
+			'columns' => array(
+				'user_id' => 'user_id',
+			),
+		),
+	),
+	'foreign_keys' => array(
+	),
+	'options' => array(
+	),
+);

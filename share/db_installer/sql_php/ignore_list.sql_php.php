@@ -1,0 +1,66 @@
+<?php
+return array(
+	'fields' => array(
+		'user_id' => array(
+			'name' => 'user_id',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'target_user_id' => array(
+			'name' => 'target_user_id',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'add_date' => array(
+			'name' => 'add_date',
+			'type' => 'int',
+			'length' => '10',
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => '0',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'active' => array(
+			'name' => 'active',
+			'type' => 'enum',
+			'length' => NULL,
+			'decimals' => NULL,
+			'unsigned' => NULL,
+			'nullable' => false,
+			'default' => '1',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => array(
+				1 => '1',
+				0 => '0',
+			),
+		),
+	),
+	'indexes' => array(
+	),
+	'foreign_keys' => array(
+	),
+	'options' => array(
+	),
+);

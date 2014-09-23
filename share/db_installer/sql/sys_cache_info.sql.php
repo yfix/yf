@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` int(10) unsigned NOT NULL auto_increment,
 	`object` varchar(32) NOT NULL default \'\',
 	`action` varchar(32) NOT NULL default \'\',

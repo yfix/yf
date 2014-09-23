@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`cat_id` int(10) unsigned NOT NULL,
 	`parent_id` int(10) unsigned NOT NULL,

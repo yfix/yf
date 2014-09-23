@@ -154,8 +154,7 @@ abstract class yf_db_installer {
 		foreach ($globs_sql as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.sql.php'));
-				require_once $f; // $data should be loaded from file
-				$this->TABLES_SQL[$t_name] = $data;
+				$this->TABLES_SQL[$t_name] = include $f; // $data should be loaded from file
 			}
 		}
 		$globs_data = array(
@@ -168,8 +167,7 @@ abstract class yf_db_installer {
 		foreach ($globs_data as $glob) {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen('.data.php'));
-				require_once $f; // $data should be loaded from file
-				$this->TABLES_DATA[$t_name] = $data;
+				$this->TABLES_DATA[$t_name] = include $f; // $data should be loaded from file
 			}
 		}
 		// Project has higher priority than framework (allow to change anything in project)
@@ -364,94 +362,42 @@ abstract class yf_db_installer {
 	}
 
 	/**
+	* Alias
 	*/
-	function _db_table_struct_into_array ($raw_data) {
+	function create_table_sql_to_php ($sql) {
+		return $this->_db_table_struct_into_array($sql);
+	}
 
-// TODO: key could contain several fields
-
-// TODO: character_set with collate. CREATE TABLE t (c CHAR(20) CHARACTER SET utf8 COLLATE utf8_bin);
-// CREATE TABLE lookup  (id INT, INDEX USING BTREE (id))   ENGINE = MEMORY;
-
-// TODO: support for foreign keys
-// TODO: support for partitions
-
-// TODO: bug with parsed default values
-// TODO: write unit tests on parsing table structures
-		$struct_array	= array();
-		// Check if we have full table definition or cutted one
-		if (preg_match('/^CREATE[\s]*TABLE[\s]*[\`]{0,1}([^\s\`]+)[\`]{0,1}[\s]*\((.*)\)([^\(]*)$/ims', $raw_data, $m9)) {
-			$table_raw_data = $raw_data;
-			$table_name		= $m9[1];
-			$raw_data		= $m9[2];
+	/**
+	*/
+	function _db_table_struct_into_array ($sql) {
+		$options = '';
+		// Get table options from table structure. Example: /** ENGINE=MEMORY **/
+		if (preg_match('#\/\*\*(?P<raw_options>[^\*\/]+)\*\*\/#i', trim($sql), $m)) {
+			// Cut comment with options from source table structure to prevent misunderstanding
+			$sql = str_replace($m[0], '', $sql);
+			$options = $m['raw_options'];
 		}
-		// Cut off comments with params
-		if (preg_match('#\/\*\*([^\*\/]+)\*\*\/$#i', trim($raw_data), $m)) {
-			$raw_data = str_replace($m[0], '', $raw_data);
+		$tmp_name = '';
+		if (false === strpos(strtoupper($sql), 'CREATE TABLE')) {
+			$tmp_name = 'tmp_name_not_exists';
+			$sql = 'CREATE TABLE `'.$tmp_name.'` ('.$sql.')';
 		}
-		$pattern_field = '/[\`]{0,1}([^\s\`]+)[\`]{0,1}[\s]+?([^\s]+)(.*)/ims';
-		$pattern_key = '/(PRIMARY|UNIQUE){0,1}[\s\t]*?KEY[\s]*?[\`]{0,1}([a-z\_]*)[\`]{0,1}[\s]*?\(([^\)]+)\)/ims';
-		// Cleanup raw first
-		$pattern_split = "/[\n]+,?/";
-#		$pattern_split = '/,/';
-		$cur_raw_lines = preg_split($pattern_split, trim(str_replace("\t", ' ', $raw_data)));
-		foreach ((array)$cur_raw_lines as $cur_line) {
-			$m			= array();
-			$m_t		= array();
-			$def_value	= '';
-			// First we check if current line contains key or regular field
-			$IS_KEY = preg_match($pattern_key, $cur_line);
-			// Do parse
-			$res = preg_match($IS_KEY ? $pattern_key : $pattern_field, $cur_line, $m);
-			if (empty($res)) {
-				continue;
-			}
-			// Switch between processing key and regular field
-			if ($IS_KEY) {
-				// Prepare key params
-				$key_fields = explode(',', str_replace(array("`","'","\""), '', $m[3]));
-				$key_name	= !empty($m[2]) ? $m[2] : implode('_', $key_fields);
-				$key_type	= !empty($m[1]) ? strtolower($m[1]) : 'key';
-				// Prepare index definition array
-				$struct_array['keys'][$key_name] = array(
-					'fields'	=> $key_fields,
-					'type'		=> $key_type,
-				);
-			} else {
-				// Cut off collate string (if exists)
-				$m[3] = preg_replace('/collate[\s]["\'][a-z\_]["\']/i', '', $m[3]);
-				// Prepare field type
-				preg_match('/([a-z]+)[\(]*([^\)]*)[\)]*/ims', $m[2], $m_t);
-				// Prepare field params
-				$field_name		= $m[1];
-				$field_length	= $m_t[2];
-				$field_arrtib	= (false !== strpos(strtolower($m[3]), 'unsigned')) ? 'unsigned' : '';
-				$field_not_null	= (false !== strpos(strtolower($m[3]), 'not null')) ? 1 : 0;
-				$field_auto_inc	= (false !== strpos(strtolower($m[3]), 'auto_increment')) ? 1 : 0;
-				$field_default	= trim(str_replace(array('"', '\''), '', preg_replace('/(,|unsigned|not null|null|zerofill|auto_increment|default)/i', '', $m[3])));
-				$field_type		= preg_replace('/[^a-z]/i', '', strtolower($m_t[1]));
-				// Fix default value
-				if (!strlen($field_default) && (false !== strpos($field_type, 'int') || in_array($field_type, array('float','double')))) {
-					$field_default = '0';
-				}
-				$struct_array['fields'][$field_name] = array(
-					'type'		=> $field_type,
-					'length'	=> $field_length,
-					'attrib'	=> $field_attrib,
-					'not_null'	=> $field_not_null,
-					'default'	=> $field_default,
-					'auto_inc'	=> $field_auto_inc,
-				);
-			}
+		// Place them into the end of the DDL
+		if ($options) {
+			$sql = rtrim(rtrim(rtrim($sql), ';')).' '.$options;
 		}
-		return $struct_array;
+		$result = _class('db_ddl_parser_mysql', 'classes/db/')->parse($sql);
+		if ($result && $tmp_name) {
+			$result['name'] = '';
+		}
+		return $result;
 	}
 
 	/**
 	*/
 	function _get_table_struct_array_by_name ($table_name, $db) {
-		$data2 = $db->query_fetch('SHOW CREATE TABLE `'.$table_name.'`');
-		$table_struct = $data2['Create Table'];
-		return $this->_db_table_struct_into_array($table_struct);
+		return $this->_db_table_struct_into_array( $db->get_one('SHOW CREATE TABLE `'.$table_name.'`') );
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`code` char(2) NOT NULL DEFAULT \'\',
 	`code3` char(3) NOT NULL DEFAULT \'\',
 	`name` varchar(64) NOT NULL DEFAULT \'\',

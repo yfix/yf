@@ -424,6 +424,9 @@ class yf_cache {
 					}
 				}
 			}
+			if (!is_array($result) || !count($result)) {
+				$result = null;
+			}
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
 			'names'			=> $names,
@@ -470,6 +473,9 @@ class yf_cache {
 					}
 				}
 				$result = !$failed;
+			}
+			if (!$result) {
+				$result = null;
 			}
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(
@@ -543,7 +549,7 @@ class yf_cache {
 		$result = null;
 		if ($do_real_work) {
 			$result = $this->_driver->list_keys();
-			if ($this->CACHE_NS && $result) {
+			if ($this->CACHE_NS && is_array($result) && count($result)) {
 				$ns_len = strlen($this->CACHE_NS);
 				foreach ($result as $k => $v) {
 					if (substr($v, 0, $ns_len) !== $this->CACHE_NS) {
@@ -553,9 +559,11 @@ class yf_cache {
 					}
 				}
 			}
-			if ($result) {
+			if (is_array($result) && count($result)) {
 				asort($result);
 				$result = array_values($result);
+			} else {
+				$result = null;
 			}
 		}
 		DEBUG_MODE && debug('cache_'.__FUNCTION__.'[]', array(

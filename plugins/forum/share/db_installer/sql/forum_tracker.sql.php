@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` mediumint(8) NOT NULL auto_increment,
 	`user_id` mediumint(8) NOT NULL default \'0\',
 	`topic_id` int(10) NOT NULL default \'0\',

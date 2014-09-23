@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` int(10) unsigned NOT NULL auto_increment,
 	`sender` int(11) NOT NULL default \'0\',
 	`receiver` int(11) NOT NULL default \'0\',

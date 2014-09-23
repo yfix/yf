@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`form_id` varchar(64) NOT NULL DEFAULT \'\',
 	`field` varchar(64) NOT NULL DEFAULT \'\',
 	`attr` varchar(64) NOT NULL DEFAULT \'\',

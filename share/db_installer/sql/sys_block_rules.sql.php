@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`block_id` smallint(5) unsigned NOT NULL DEFAULT \'0\',
 	`rule_type` enum(\'DENY\',\'ALLOW\') NOT NULL DEFAULT \'DENY\',

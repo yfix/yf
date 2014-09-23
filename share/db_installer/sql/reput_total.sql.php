@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`user_id` int(10) unsigned NOT NULL,
 	`points` int(11) NOT NULL,
 	`alt_power` int(11) NOT NULL,

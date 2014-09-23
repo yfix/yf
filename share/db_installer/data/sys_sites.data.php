@@ -1,5 +1,5 @@
 <?php
-$data = array (
+return array (
   99999 => 
   array (
     'name' => 'Current site name (__CHANGE_ME!__)',

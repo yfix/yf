@@ -1,5 +1,5 @@
 <?php
-$data = '
+return '
 	`id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
 	`code` varchar(50) DEFAULT NULL,
 	`url` varchar(100) DEFAULT NULL,

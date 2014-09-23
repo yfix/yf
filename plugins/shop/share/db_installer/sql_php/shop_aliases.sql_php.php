@@ -1,0 +1,72 @@
+<?php
+return array(
+	'fields' => array(
+		'source' => array(
+			'name' => 'source',
+			'type' => 'varchar',
+			'length' => '32',
+			'decimals' => NULL,
+			'unsigned' => NULL,
+			'nullable' => false,
+			'default' => '',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'type' => array(
+			'name' => 'type',
+			'type' => 'varchar',
+			'length' => '32',
+			'decimals' => NULL,
+			'unsigned' => NULL,
+			'nullable' => false,
+			'default' => '',
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'src_item_id' => array(
+			'name' => 'src_item_id',
+			'type' => 'int',
+			'length' => '11',
+			'decimals' => NULL,
+			'unsigned' => false,
+			'nullable' => false,
+			'default' => NULL,
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+		'dst_item_id' => array(
+			'name' => 'dst_item_id',
+			'type' => 'int',
+			'length' => '11',
+			'decimals' => NULL,
+			'unsigned' => false,
+			'nullable' => false,
+			'default' => NULL,
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
+	),
+	'indexes' => array(
+		'PRIMARY' => array(
+			'name' => 'PRIMARY',
+			'type' => 'primary',
+			'columns' => array(
+				'source' => 'source',
+				'type' => 'type',
+				'src_item_id' => 'src_item_id',
+			),
+		),
+	),
+	'foreign_keys' => array(
+	),
+	'options' => array(
+	),
+);

@@ -1,5 +1,5 @@
 <?php
-$data = array (
+return array (
   99999 => 
   array (
     'name' => 'Google',
