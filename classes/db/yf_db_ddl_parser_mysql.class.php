@@ -141,8 +141,7 @@ class yf_db_ddl_parser_mysql {
 				$values = null; // ENUM and SET
 				$on_update = null; // TIMESTAMP and DATETIME
 				foreach ((array)$v['sub_tree'] as $v2) {
-#var_export($v2);
-#echo PHP_EOL;
+#print_r($v2); echo PHP_EOL;
 					if ($v2['expr_type'] == 'colref') {
 						$name = $v2['no_quotes']['parts'][0];
 					} elseif ($v2['expr_type'] == 'column-type') {

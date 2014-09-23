@@ -284,7 +284,7 @@ class yf_db {
 			// Try to connect several times
 			$tries = $this->RECONNECT_NUM_TRIES;
 			if (main()->is_console() && !main()->is_unit_test()) {
-				$tries = $this->RECONNECT_TRIES_CONSOLE;
+				$tries = $this->RECONNECT_CONSOLE_TRIES;
 			}
 			for ($i = 1; $i <= $tries; $i++) {
 				$this->db = new $driver_class_name($driver_params);
