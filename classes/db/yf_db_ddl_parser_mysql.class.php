@@ -212,7 +212,7 @@ class yf_db_ddl_parser_mysql {
 				$struct['fields'][$name] = array(
 					'name'		=> $name,
 					'type'		=> $type,
-					'length'	=> $length,
+					'length'	=> $length ? intval($length) : null,
 					'decimals'	=> $decimals,
 					'unsigned'	=> $unsigned,
 					'nullable'	=> $nullable,
