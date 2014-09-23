@@ -48,6 +48,13 @@ return array(
 		),
 	),
 	'indexes' => array(
+		'PRIMARY' => array(
+			'name' => 'PRIMARY',
+			'type' => 'primary',
+			'columns' => array(
+				'id' => 'id',
+			),
+		),
 		'lon' => array(
 			'name' => 'lon',
 			'type' => 'index',

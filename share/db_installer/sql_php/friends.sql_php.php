@@ -33,6 +33,13 @@ return array(
 		),
 	),
 	'indexes' => array(
+		'PRIMARY' => array(
+			'name' => 'PRIMARY',
+			'type' => 'primary',
+			'columns' => array(
+				'user_id' => 'user_id',
+			),
+		),
 	),
 	'foreign_keys' => array(
 	),
