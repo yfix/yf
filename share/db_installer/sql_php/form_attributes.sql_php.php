@@ -85,6 +85,9 @@ return array(
 			'name' => 'PRIMARY',
 			'type' => 'primary',
 			'columns' => array(
+				'form_id' => 'form_id',
+				'field' => 'field',
+				'attr' => 'attr',
 			),
 		),
 	),
