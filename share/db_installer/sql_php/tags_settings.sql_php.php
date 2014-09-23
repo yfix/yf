@@ -3,7 +3,7 @@ return array(
 	'fields' => array(
 		'user_id' => array(
 			'name' => 'user_id',
-			'type' => 'INT',
+			'type' => 'int',
 			'length' => false,
 			'decimals' => NULL,
 			'unsigned' => true,
@@ -18,7 +18,7 @@ return array(
 		),
 		'allowed_group' => array(
 			'name' => 'allowed_group',
-			'type' => 'TINYINT',
+			'type' => 'tinyint',
 			'length' => false,
 			'decimals' => NULL,
 			'unsigned' => true,

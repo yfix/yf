@@ -168,7 +168,7 @@ return array(
 		),
 		'allow_tagging' => array(
 			'name' => 'allow_tagging',
-			'type' => 'TINYINT',
+			'type' => 'tinyint',
 			'length' => false,
 			'decimals' => NULL,
 			'unsigned' => true,

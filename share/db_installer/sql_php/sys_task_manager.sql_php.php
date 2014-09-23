@@ -48,7 +48,7 @@ return array(
 		),
 		'php_code' => array(
 			'name' => 'php_code',
-			'type' => 'TEXT',
+			'type' => 'text',
 			'length' => NULL,
 			'decimals' => NULL,
 			'unsigned' => NULL,

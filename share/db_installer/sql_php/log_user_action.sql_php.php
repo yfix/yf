@@ -3,7 +3,7 @@ return array(
 	'fields' => array(
 		'id' => array(
 			'name' => 'id',
-			'type' => 'INT',
+			'type' => 'int',
 			'length' => false,
 			'decimals' => NULL,
 			'unsigned' => true,
@@ -18,7 +18,7 @@ return array(
 		),
 		'owner_id' => array(
 			'name' => 'owner_id',
-			'type' => 'INT',
+			'type' => 'int',
 			'length' => false,
 			'decimals' => NULL,
 			'unsigned' => true,
@@ -33,7 +33,7 @@ return array(
 		),
 		'action_name' => array(
 			'name' => 'action_name',
-			'type' => 'VARCHAR',
+			'type' => 'varchar',
 			'length' => '255',
 			'decimals' => NULL,
 			'unsigned' => NULL,
@@ -48,7 +48,7 @@ return array(
 		),
 		'member_id' => array(
 			'name' => 'member_id',
-			'type' => 'INT',
+			'type' => 'int',
 			'length' => false,
 			'decimals' => NULL,
 			'unsigned' => true,
@@ -63,7 +63,7 @@ return array(
 		),
 		'object_name' => array(
 			'name' => 'object_name',
-			'type' => 'VARCHAR',
+			'type' => 'varchar',
 			'length' => '255',
 			'decimals' => NULL,
 			'unsigned' => NULL,
@@ -78,7 +78,7 @@ return array(
 		),
 		'object_id' => array(
 			'name' => 'object_id',
-			'type' => 'INT',
+			'type' => 'int',
 			'length' => false,
 			'decimals' => NULL,
 			'unsigned' => true,
@@ -93,7 +93,7 @@ return array(
 		),
 		'add_date' => array(
 			'name' => 'add_date',
-			'type' => 'INT',
+			'type' => 'int',
 			'length' => false,
 			'decimals' => NULL,
 			'unsigned' => true,

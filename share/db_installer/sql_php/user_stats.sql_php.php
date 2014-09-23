@@ -138,7 +138,7 @@ return array(
 		),
 		'articles' => array(
 			'name' => 'articles',
-			'type' => 'INT',
+			'type' => 'int',
 			'length' => '10',
 			'decimals' => NULL,
 			'unsigned' => true,
@@ -153,7 +153,7 @@ return array(
 		),
 		'interests' => array(
 			'name' => 'interests',
-			'type' => 'INT',
+			'type' => 'int',
 			'length' => '10',
 			'decimals' => NULL,
 			'unsigned' => true,

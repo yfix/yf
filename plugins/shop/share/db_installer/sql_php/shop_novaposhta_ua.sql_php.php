@@ -211,21 +211,6 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 		),
-		'city_raw__address_raw' => array(
-			'name' => 'city_raw__address_raw',
-			'type' => NULL,
-			'length' => NULL,
-			'decimals' => NULL,
-			'unsigned' => NULL,
-			'nullable' => true,
-			'default' => NULL,
-			'charset' => NULL,
-			'collate' => NULL,
-			'auto_inc' => false,
-			'primary' => false,
-			'unique' => false,
-			'values' => NULL,
-		),
 	),
 	'indexes' => array(
 		'PRIMARY' => array(
@@ -233,6 +218,14 @@ return array(
 			'type' => 'primary',
 			'columns' => array(
 				'id' => 'id',
+			),
+		),
+		'city_raw__address_raw' => array(
+			'name' => 'city_raw__address_raw',
+			'type' => 'unique',
+			'columns' => array(
+				'city_raw' => 'city_raw',
+				'address_raw' => 'address_raw',
 			),
 		),
 		'city' => array(

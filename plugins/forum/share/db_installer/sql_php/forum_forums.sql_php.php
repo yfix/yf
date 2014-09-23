@@ -243,7 +243,7 @@ return array(
 		),
 		'options' => array(
 			'name' => 'options',
-			'type' => 'CHAR',
+			'type' => 'char',
 			'length' => '10',
 			'decimals' => NULL,
 			'unsigned' => NULL,

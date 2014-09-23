@@ -33,7 +33,7 @@ return array(
 		),
 		'exchanged_act_points' => array(
 			'name' => 'exchanged_act_points',
-			'type' => 'INT',
+			'type' => 'int',
 			'length' => false,
 			'decimals' => NULL,
 			'unsigned' => true,
