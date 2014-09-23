@@ -11,6 +11,6 @@ return '
   `num_comments` int(10) unsigned NOT NULL,
   `num_views` int(10) unsigned NOT NULL,
   `user_nick` varchar(255) NOT NULL,
-  `allow_tagging` tinyint() unsigned NOT NULL,
+  `allow_tagging` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`user_id`)
 ';
