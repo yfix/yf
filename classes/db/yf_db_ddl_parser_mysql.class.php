@@ -45,7 +45,7 @@ class yf_db_ddl_parser_mysql {
 			if (strpos($v['type'], 'int') !== false && !$v['length']) {
 				$v['length'] = $this->_get_int_def_length($v['type']);
 			}
-			$type_braces = (isset($v['length'] && is_numeric($v['length'])) ? '('.$v['length']. (isset($v['decimals']) && is_numeric($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
+			$type_braces = (isset($v['length']) && is_numeric($v['length']) ? '('.$v['length']. (isset($v['decimals']) && is_numeric($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
 			if (in_array($v['type'], array('enum','set')) && is_array($v['values']) && count($v['values'])) {
 				$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
 			}
