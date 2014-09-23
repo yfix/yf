@@ -5,7 +5,7 @@ return array(
 		'actor_id' => array(
 			'name' => 'actor_id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -21,7 +21,7 @@ return array(
 		'film_id' => array(
 			'name' => 'film_id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

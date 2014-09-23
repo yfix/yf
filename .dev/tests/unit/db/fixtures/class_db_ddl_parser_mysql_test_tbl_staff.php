@@ -5,7 +5,7 @@ return array(
 		'staff_id' => array(
 			'name' => 'staff_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -21,7 +21,7 @@ return array(
 		'first_name' => array(
 			'name' => 'first_name',
 			'type' => 'varchar',
-			'length' => '45',
+			'length' => 45,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -37,7 +37,7 @@ return array(
 		'last_name' => array(
 			'name' => 'last_name',
 			'type' => 'varchar',
-			'length' => '45',
+			'length' => 45,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -53,7 +53,7 @@ return array(
 		'address_id' => array(
 			'name' => 'address_id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -85,7 +85,7 @@ return array(
 		'email' => array(
 			'name' => 'email',
 			'type' => 'varchar',
-			'length' => '50',
+			'length' => 50,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -101,7 +101,7 @@ return array(
 		'store_id' => array(
 			'name' => 'store_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -117,7 +117,7 @@ return array(
 		'active' => array(
 			'name' => 'active',
 			'type' => 'tinyint',
-			'length' => '1',
+			'length' => 1,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -133,7 +133,7 @@ return array(
 		'username' => array(
 			'name' => 'username',
 			'type' => 'varchar',
-			'length' => '16',
+			'length' => 16,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -149,7 +149,7 @@ return array(
 		'password' => array(
 			'name' => 'password',
 			'type' => 'varchar',
-			'length' => '40',
+			'length' => 40,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,

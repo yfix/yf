@@ -5,7 +5,7 @@ return array(
 		'store_id' => array(
 			'name' => 'store_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -21,7 +21,7 @@ return array(
 		'manager_staff_id' => array(
 			'name' => 'manager_staff_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -37,7 +37,7 @@ return array(
 		'address_id' => array(
 			'name' => 'address_id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

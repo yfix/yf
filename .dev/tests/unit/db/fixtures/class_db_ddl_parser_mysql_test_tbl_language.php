@@ -5,7 +5,7 @@ return array(
 		'language_id' => array(
 			'name' => 'language_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -21,7 +21,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'char',
-			'length' => '20',
+			'length' => 20,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

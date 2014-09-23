@@ -5,7 +5,7 @@ return array(
 		'address_id' => array(
 			'name' => 'address_id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -21,7 +21,7 @@ return array(
 		'address' => array(
 			'name' => 'address',
 			'type' => 'varchar',
-			'length' => '50',
+			'length' => 50,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -37,7 +37,7 @@ return array(
 		'address2' => array(
 			'name' => 'address2',
 			'type' => 'varchar',
-			'length' => '50',
+			'length' => 50,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -53,7 +53,7 @@ return array(
 		'district' => array(
 			'name' => 'district',
 			'type' => 'varchar',
-			'length' => '20',
+			'length' => 20,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -69,7 +69,7 @@ return array(
 		'city_id' => array(
 			'name' => 'city_id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -85,7 +85,7 @@ return array(
 		'postal_code' => array(
 			'name' => 'postal_code',
 			'type' => 'varchar',
-			'length' => '10',
+			'length' => 10,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -101,7 +101,7 @@ return array(
 		'phone' => array(
 			'name' => 'phone',
 			'type' => 'varchar',
-			'length' => '20',
+			'length' => 20,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

@@ -5,7 +5,7 @@ return array(
 		'payment_id' => array(
 			'name' => 'payment_id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -21,7 +21,7 @@ return array(
 		'customer_id' => array(
 			'name' => 'customer_id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -37,7 +37,7 @@ return array(
 		'staff_id' => array(
 			'name' => 'staff_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -53,7 +53,7 @@ return array(
 		'rental_id' => array(
 			'name' => 'rental_id',
 			'type' => 'int',
-			'length' => '11',
+			'length' => 11,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => true,
@@ -69,7 +69,7 @@ return array(
 		'amount' => array(
 			'name' => 'amount',
 			'type' => 'decimal',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,

@@ -5,7 +5,7 @@ return array(
 		'film_id' => array(
 			'name' => 'film_id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -21,7 +21,7 @@ return array(
 		'title' => array(
 			'name' => 'title',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
@@ -53,7 +53,7 @@ return array(
 		'release_year' => array(
 			'name' => 'release_year',
 			'type' => 'year',
-			'length' => '4',
+			'length' => 4,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => true,
@@ -69,7 +69,7 @@ return array(
 		'language_id' => array(
 			'name' => 'language_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -85,7 +85,7 @@ return array(
 		'original_language_id' => array(
 			'name' => 'original_language_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => true,
@@ -101,7 +101,7 @@ return array(
 		'rental_duration' => array(
 			'name' => 'rental_duration',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -117,7 +117,7 @@ return array(
 		'rental_rate' => array(
 			'name' => 'rental_rate',
 			'type' => 'decimal',
-			'length' => '4',
+			'length' => 4,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
@@ -133,7 +133,7 @@ return array(
 		'length' => array(
 			'name' => 'length',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => true,
@@ -149,7 +149,7 @@ return array(
 		'replacement_cost' => array(
 			'name' => 'replacement_cost',
 			'type' => 'decimal',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => '2',
 			'unsigned' => false,
 			'nullable' => false,
