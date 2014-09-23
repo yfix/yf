@@ -35,6 +35,40 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	}
 
 	/**
+	*/
+	public function truncate_database($db_name, $extra = array(), &$error = false) {
+		if (!strlen($db_name)) {
+			$error = 'db_name is empty';
+			return false;
+		}
+		if (!isset($extra['if_exists'])) {
+			$extra['if_exists'] = true;
+		}
+		if (!$extra['sql'] && !$this->database_exists($db_name)) {
+			return true;
+		}
+		foreach ((array)$this->list_tables($db_name) as $table) {
+			$sql[] = $this->drop_table($db_name.'.'.$table, $extra);
+		}
+		foreach ((array)$this->list_views($db_name) as $name => $tmp) {
+			$sql[] = $this->drop_view($db_name.'.'.$name, $extra);
+		}
+		foreach ((array)$this->list_triggers($db_name) as $name => $tmp) {
+			$sql[] = $this->drop_trigger($db_name.'.'.$name, $extra);
+		}
+		foreach ((array)$this->list_procedures($db_name) as $name => $tmp) {
+			$sql[] = $this->drop_procedure($db_name.'.'.$name, $extra);
+		}
+		foreach ((array)$this->list_functions($db_name) as $name => $tmp) {
+			$sql[] = $this->drop_function($db_name.'.'.$name, $extra);
+		}
+		foreach ((array)$this->list_events($db_name) as $name => $tmp) {
+			$sql[] = $this->drop_event($db_name.'.'.$name, $extra);
+		}
+		return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
+	}
+
+	/**
 	* Slow method, but returning all info about indexes for selected database at once.
 	* Useful for analytics and getting overall picture.
 	*/
