@@ -180,24 +180,24 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 			// Get table options from table structure. Example: /** ENGINE=MEMORY **/
 			if (preg_match('#\/\*\*(?P<raw_options>[^\*\/]+)\*\*\/#i', trim($sql), $m)) {
 				// Cut comment with options from source table structure to prevent misunderstanding
-				$sql = str_replace($m[0], '', $sql);
+				$sql = trim(str_replace($m[0], '', $sql));
 				$options = $m['raw_options'];
 			}
 			$tmp_name = 'tmp_name_not_exists';
 			if (false === strpos(strtoupper($sql), 'CREATE TABLE')) {
-				$sql = 'CREATE TABLE `'.$tmp_name.'` ('.$sql.')';
+				$sql = 'CREATE TABLE `'.$tmp_name.'` ('.PHP_EOL.'  '.trim($sql).PHP_EOL.');';
 			}
 			// Place them into the end of the DDL
 			if ($options) {
-				$sql = rtrim(rtrim(rtrim($sql), ';')).' '.$options;
+				$sql = rtrim(rtrim(rtrim($sql), ';')).' '.trim($options).';';
 			}
 
 			$expected = $sql;
 			$this->assertNotEmpty($expected);
 
 			$sql_php['name'] = $tmp_name;
-#			$response = $parser->create($sql_php);
-#			$this->assertEquals($expected, $response, 'Create table DDL SQL from sql_php for: '.$name);
+			$response = $parser->create($sql_php);
+			$this->assertSame($expected, $response, 'Create table DDL SQL from sql_php for: '.$name);
 		}
 	}
 }
