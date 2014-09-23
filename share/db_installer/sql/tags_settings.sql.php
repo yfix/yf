@@ -1,6 +1,6 @@
 <?php
 return '
-	`user_id` INT UNSIGNED NOT NULL ,
-	`allowed_group` TINYINT UNSIGNED NOT NULL ,
-	PRIMARY KEY ( `user_id` ) 
+  `user_id` int() unsigned NOT NULL,
+  `allowed_group` tinyint() unsigned NOT NULL,
+  PRIMARY KEY (`user_id`)
 ';

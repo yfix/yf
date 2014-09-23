@@ -1,11 +1,11 @@
 <?php
 return '
-	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-	`owner_id` INT UNSIGNED NOT NULL ,
-	`action_name` VARCHAR( 255 ) NOT NULL ,
-	`member_id` INT UNSIGNED NOT NULL ,
-	`object_name` VARCHAR( 255 ) NOT NULL ,
-	`object_id` INT UNSIGNED NOT NULL ,
-	`add_date` INT UNSIGNED NOT NULL ,
-	PRIMARY KEY ( `id` )
+  `id` int() unsigned NOT NULL AUTO_INCREMENT,
+  `owner_id` int() unsigned NOT NULL,
+  `action_name` varchar(255) NOT NULL,
+  `member_id` int() unsigned NOT NULL,
+  `object_name` varchar(255) NOT NULL,
+  `object_id` int() unsigned NOT NULL,
+  `add_date` int() unsigned NOT NULL,
+  PRIMARY KEY (`id`)
 ';
