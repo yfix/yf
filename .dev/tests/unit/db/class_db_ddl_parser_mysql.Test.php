@@ -21,27 +21,22 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 			if (!file_exists($php_path)) {
 				continue;
 			}
-if (false === strpos(basename($path), 'staff')) {
-	continue;
-}
 			$expected = include $php_path;
 			$response = $parser->parse($sql);
-#			if (empty($expected)) {
+			if (empty($expected)) {
 				$str = var_export($response, 1);
 				$str = str_replace('  ', "\t", $str);
 				$str = str_replace('array (', 'array(', $str);
 				$str = preg_replace('~=>[\s]+array\(~ims', '=> array(', $str);
 
 #				file_put_contents($php_path, '<?php'.PHP_EOL.'return '.$str.';');
-#			}
+			}
 
-#			$this->assertSame($expected, $response);
-			$this->assertEquals($expected, $response);
+			$this->assertSame($expected, $response);
 
 			// Check that without SQL newlines or pretty formatting code works the same
-#			$response = $parser->parse(str_replace(array("\r","\n"), ' ', $sql));
-#			$this->assertSame($expected, $response);
-#if (++$i > 2) break;
+			$response = $parser->parse(str_replace(array("\r","\n"), ' ', $sql));
+			$this->assertSame($expected, $response);
 		}
 	}
 
@@ -56,11 +51,10 @@ if (false === strpos(basename($path), 'staff')) {
 			if (!file_exists($sql_path)) {
 				continue;
 			}
-			$expected = file_get_contents($sql_path);
-			$response = $parser->create($php_create);
+			$expected = trim(file_get_contents($sql_path));
+			$response = trim($parser->create($php_create));
 
 			$this->assertSame($expected, $response);
-#break;
 		}
 	}
 
