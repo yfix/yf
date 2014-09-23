@@ -40,6 +40,8 @@ class yf_db_ddl_parser_mysql {
 
 		$table_name = $data['name'];
 		foreach ((array)$data['fields'] as $name => $v) {
+			$name = strtolower($name);
+			$v['type'] = strtolower($v['type']);
 			$type_braces = (isset($v['length']) ? '('.$v['length']. (isset($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
 			if (in_array($v['type'], array('enum','set'))) {
 				$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
@@ -57,8 +59,8 @@ class yf_db_ddl_parser_mysql {
 				'type'		=> $v['type']. $type_braces,
 				'unsigned'	=> $v['unsigned'] ? 'unsigned' : '',
 				'nullable'	=> !$v['nullable'] ? 'NOT NULL' : '',
-				'charset'	=> $v['charset'] ? 'CHARACTER SET '.$v['charset'] : '',
-				'collate'	=> $v['collate'] ? 'COLLATE '.$v['collate'] : '',
+				'charset'	=> $v['charset'] ? 'CHARACTER SET '.strtolower($v['charset']) : '',
+				'collate'	=> $v['collate'] ? 'COLLATE '.strtolower($v['collate']) : '',
 				'default'	=> $def ? 'DEFAULT '.$def : '',
 				'auto_inc'	=> $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
 				'on_update'	=> $v['on_update'] ?: '',
@@ -66,6 +68,7 @@ class yf_db_ddl_parser_mysql {
 		}
 		foreach ((array)$data['indexes'] as $name => $v) {
 			$type = 'KEY';
+			$v['type'] = strtolower($v['type']);
 			if ($v['type'] == 'primary') {
 				$type = 'PRIMARY KEY';
 			} elseif ($v['type'] == 'unique') {
@@ -194,16 +197,17 @@ class yf_db_ddl_parser_mysql {
 				if ($auto_inc) {
 					$primary = true;
 				}
+				$name = strtolower($name);
 				$struct['fields'][$name] = array(
 					'name'		=> $name,
-					'type'		=> $type,
+					'type'		=> strtolower($type),
 					'length'	=> $length,
 					'decimals'	=> $decimals,
 					'unsigned'	=> $unsigned,
 					'nullable'	=> $nullable,
 					'default'	=> $default,
-					'charset'	=> $charset,
-					'collate'	=> $collate,
+					'charset'	=> $charset ? strtolower($charset) : null,
+					'collate'	=> $collate ? strtolower($collate) : null,
 					'auto_inc'	=> $auto_inc,
 					'primary'	=> $primary,
 					'unique'	=> $unique,
@@ -229,9 +233,10 @@ class yf_db_ddl_parser_mysql {
 						}
 					}
 				}
+				$name = strtolower($name);
 				$struct['indexes'][$name] = array(
 					'name'		=> $name,
-					'type'		=> $type,
+					'type'		=> strtolower($type),
 					'columns'	=> $columns,
 				);
 				if ($this->RAW_IN_RESULTS) {
@@ -255,21 +260,22 @@ class yf_db_ddl_parser_mysql {
 					} elseif ($v2['expr_type'] == 'column-list') {
 						foreach ((array)$v2['sub_tree'] as $v3) {
 							if ($v3['expr_type'] == 'index-column') {
-								$index_col_name = $v3['no_quotes']['parts'][0];
+								$index_col_name = strtolower($v3['no_quotes']['parts'][0]);
 								$columns[$index_col_name] = $index_col_name;
 							}
 						}
 					} elseif ($v2['expr_type'] == 'colref') {
-						$index_col_name = $v2['no_quotes']['parts'][0];
+						$index_col_name = strtolower($v2['no_quotes']['parts'][0]);
 						$columns[$index_col_name] = $index_col_name;
 					}
 				}
 				if (!$name) {
 					$name = 'idx_'.(count($struct['indexes']) + 1);
 				}
+				$name = strtolower($name);
 				$struct['indexes'][$name] = array(
 					'name'		=> $name,
-					'type'		=> $type,
+					'type'		=> strtolower($type),
 					'columns'	=> $columns,
 				);
 				if ($this->RAW_IN_RESULTS) {
@@ -288,7 +294,7 @@ class yf_db_ddl_parser_mysql {
 					} elseif ($v2['expr_type'] == 'column-list') {
 						foreach ((array)$v2['sub_tree'] as $v3) {
 							if ($v3['expr_type'] == 'index-column') {
-								$index_col_name = $v3['no_quotes']['parts'][0];
+								$index_col_name = strtolower($v3['no_quotes']['parts'][0]);
 								$columns[$index_col_name] = $index_col_name;
 							}
 						}
@@ -299,7 +305,7 @@ class yf_db_ddl_parser_mysql {
 							} elseif ($v3['expr_type'] == 'column-list') {
 								foreach ((array)$v3['sub_tree'] as $v4) {
 									if ($v4['expr_type'] == 'index-column') {
-										$ref_col_name = $v4['no_quotes']['parts'][0];
+										$ref_col_name = strtolower($v4['no_quotes']['parts'][0]);
 										$ref_columns[$ref_col_name] = $ref_col_name;
 									}
 								}
@@ -312,13 +318,14 @@ class yf_db_ddl_parser_mysql {
 				if (!$name) {
 					$name = 'fk_'.(count($struct['foreign_keys']) + 1);
 				}
+				$name = strtolower($name);
 				$struct['foreign_keys'][$name] = array(
 					'name'			=> $name,
 					'columns'		=> $columns,
 					'ref_table'		=> $ref_table,
 					'ref_columns'	=> $ref_columns,
-					'on_update'		=> $on_update,
-					'on_delete'		=> $on_delete,
+					'on_update'		=> $on_update ? strtoupper($on_update) : null,
+					'on_delete'		=> $on_delete ? strtoupper($on_delete) : null,
 				);
 				if ($this->RAW_IN_RESULTS) {
 					$struct['foreign_keys'][$name]['raw'] = $v['base_expr'];
