@@ -28,42 +28,46 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 	public function test_sakila() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
-		$this->assertNotEmpty( self::utils()->truncate_database(self::db_name()) );
-#		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
+		$db_prefix = self::db()->DB_PREFIX;
+
+#		$this->assertTrue( (bool)self::utils()->truncate_database(self::db_name()) );
+		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
 
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 		$parser->RAW_IN_RESULTS = true;
 
-		self::db()->query('SET foreign_key_checks = 0;');
+		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 0;') );
 
 		$fixtures_path = __DIR__.'/fixtures/';
+		$tables = array();
 		foreach (glob($fixtures_path.'*.sql') as $path) {
 			$name = substr(basename($path), strlen('class_db_ddl_parser_mysql_test_tbl_'), -strlen('.sql'));
-
+			$tables[$db_prefix.$name] = $db_prefix.$name;
 			$sql = file_get_contents($path);
 
-#			$this->assertNotEmpty( self::utils()->drop_table(self::table_name($name)) );
-			self::db()->query('DROP TABLE IF EXISTS `'.$name.'`');
-			self::db()->query($sql);
+			$this->assertTrue( (bool)self::utils()->drop_table(self::table_name($db_prefix.$name)) );
+			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
+
+			$sql = str_replace('CREATE TABLE `', 'CREATE TABLE `'.$db_prefix, $sql);
+			$this->assertTrue( (bool)self::db()->query($sql) );
+
+			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
+
+#			print_r( self::utils()->table_info(self::table_name($db_prefix.$name)) );
 
 			$php_path = substr($path, 0, -strlen('.sql')). '.php';
 			if (!file_exists($php_path)) {
 				continue;
 			}
 			$sql_php = include $php_path;
-/*
-			$response = $parser->parse($sql);
+#			$response = $parser->parse($sql);
+#print_r($sql_php);
 
-			$this->assertSame($expected, $response);
-
-			// Check that without SQL newlines or pretty formatting code works the same
-			$response = $parser->parse(str_replace(array("\r","\n"), ' ', $sql));
-			$this->assertSame($expected, $response);
-*/
+#			$this->assertSame($expected, $response);
 		}
-		self::db()->query('SET foreign_key_checks = 1;');
+		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
 
-		print_r( self::utils()->list_tables(self::db_name()) );
+		$this->assertEquals( $tables, self::utils()->list_tables(self::db_name()) );
 	}
 
 	/***/
