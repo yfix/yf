@@ -42,8 +42,11 @@ class yf_db_ddl_parser_mysql {
 		foreach ((array)$data['fields'] as $name => $v) {
 			$name = strtolower($name);
 			$v['type'] = strtolower($v['type']);
-			$type_braces = (isset($v['length']) ? '('.$v['length']. (isset($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
-			if (in_array($v['type'], array('enum','set'))) {
+			if (strpos($v['type'], 'int') !== false && !$v['length']) {
+				$v['length'] = $this->_get_int_def_length($v['type']);
+			}
+			$type_braces = (isset($v['length'] && is_numeric($v['length'])) ? '('.$v['length']. (isset($v['decimals']) && is_numeric($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
+			if (in_array($v['type'], array('enum','set')) && is_array($v['values']) && count($v['values'])) {
 				$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
 			}
 			$def = false;
@@ -109,6 +112,19 @@ class yf_db_ddl_parser_mysql {
 			$options[$k] = strtoupper($k).'='.$v;
 		}
 		return 'CREATE TABLE `'.$table_name.'` ('.PHP_EOL. implode(','.PHP_EOL, $lines). PHP_EOL.')'. ($options ? ' '.implode(' ', $options) : '').';';
+	}
+
+	/**
+	*/
+	function _get_int_def_length ($type) {
+		$a = array(
+			'tinyint'	=> 3,
+			'smallint'	=> 5,
+			'mediumint'	=> 8,
+			'int'		=> 11,
+			'bigint'	=> 20,
+		);
+		return $a[$type] ?: 11;
 	}
 
 	/**
@@ -202,9 +218,13 @@ class yf_db_ddl_parser_mysql {
 					$primary = true;
 				}
 				$name = strtolower($name);
+				$type = strtolower($type)
+				if (strpos($type, 'int') !== false && !$length) {
+					$length = $this->_get_int_def_length($type);
+				}
 				$struct['fields'][$name] = array(
 					'name'		=> $name,
-					'type'		=> strtolower($type),
+					'type'		=> $type,
 					'length'	=> $length,
 					'decimals'	=> $decimals,
 					'unsigned'	=> $unsigned,
