@@ -283,20 +283,30 @@ abstract class yf_db_installer {
 		// Try to get already pregenerated data
 		if (!$sql_php) {
 			$sql_php = $this->TABLES_SQL_PHP[$table_name];
+			if (!$sql_php && isset($this->TABLES_SQL[$table_name])) {
+				$sql_php = $this->create_table_sql_to_php($this->TABLES_SQL[$table_name]);
+			}
 		}
 		if (!$sql_php) {
-			$sql_php = $this->create_table_sql_to_php($this->TABLES_SQL[$table_name]);
+			// Try if sharded table
+			$shard_table_name = $this->_get_shard_table_name($table_name, $db);
+			if ($shard_table_name) {
+				$sql_php = $this->TABLES_SQL_PHP[$shard_table_name];
+				if (!$sql_php && isset($this->TABLES_SQL[$shard_table_name])) {
+					$sql_php = $this->create_table_sql_to_php($this->TABLES_SQL[$shard_table_name]);
+				}
+			}
 		}
-// TODO: try sharded table name
 		if (!$sql_php) {
 			return false;
 		}
 		if (!isset($sql_php['fields'][$column_name])) {
 			return false;
 		}
-		$table_struct = $this->alter_table_pre_hook($table_name, $column_name, $sql_php, $db);
-		$result = $this->_do_alter_table($table_name, $column_name, $sql_php, $db);
-		$this->alter_table_post_hook($table_name, $column_name, $sql_php, $db);
+		$full_table_name = $db->DB_PREFIX. $table_name;
+		$sql_php = $this->alter_table_pre_hook($full_table_name, $column_name, $sql_php, $db);
+		$result = $this->_do_alter_table($full_table_name, $column_name, $sql_php, $db);
+		$this->alter_table_post_hook($full_table_name, $column_name, $sql_php, $db);
 		$this->_release_lock();
 		return $result;
 	}
