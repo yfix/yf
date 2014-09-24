@@ -265,10 +265,10 @@ abstract class yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		if (!$extra['sql'] && !$this->table_exists($table)) {
-			$error = 'table_name not exists';
-			return false;
-		}
+#		if (!$extra['sql'] && !$this->table_exists($table)) {
+#			$error = 'table_name not exists';
+#			return false;
+#		}
 		$cols = array();
 		$q = $this->db->query('SHOW FULL COLUMNS FROM '.$this->_escape_table_name($table));
 		while ($a = $this->db->fetch_assoc($q)) {
@@ -1284,7 +1284,7 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function _escape_database_name($name = '') {
-		$name = trim($name);
+		$name = str_replace(array('\'', '"', '`'), '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
@@ -1294,7 +1294,7 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function _escape_table_name($name = '') {
-		$name = trim($name);
+		$name = str_replace(array('\'', '"', '`'), '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
