@@ -62,7 +62,7 @@ class yf_db_ddl_parser_mysql {
 				'type'		=> $v['type']. $type_braces,
 				'unsigned'	=> $v['unsigned'] ? 'unsigned' : '',
 				'nullable'	=> !$v['nullable'] ? 'NOT NULL' : '',
-				'charset'	=> $v['charset'] ? 'CHARACTER SET '.strtolower($v['charset']) : '',
+				'charset'	=> $v['charset'] && $v['collate'] ? 'CHARACTER SET '.strtolower($v['charset']) : '',
 				'collate'	=> $v['collate'] ? 'COLLATE '.strtolower($v['collate']) : '',
 				'default'	=> $def ? 'DEFAULT '.$def : '',
 				'auto_inc'	=> $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
