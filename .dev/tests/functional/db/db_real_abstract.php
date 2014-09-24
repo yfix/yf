@@ -81,6 +81,13 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 
 	/**
 	*/
+	protected function _innodb_has_fulltext() {
+		$db_server_version = self::db()->get_server_version();
+		return (bool)version_compare($db_server_version, '5.6.0', '>');
+	}
+
+	/**
+	*/
 	protected static function db() {
 		return self::$db;
 	}
