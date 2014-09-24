@@ -1,15 +1,15 @@
 <?php
 return '
-	`id` int(10) unsigned NOT NULL auto_increment,
-	`owner_id` int(11) NOT NULL default \'0\',
-	`user_id` int(10) unsigned NOT NULL default \'0\',
-	`title` text character set utf8 NOT NULL,
-	`membership` enum(\'open\',\'moderated\',\'closed\') NOT NULL default \'open\',
-	`nonmember_posting` enum(\'0\',\'1\') NOT NULL default \'0\',
-	`postlevel` enum(\'members\',\'select\') NOT NULL default \'members\',
-	`moderated` enum(\'0\',\'1\') NOT NULL default \'0\',
-	`adult` enum(\'none\',\'concepts\',\'explicit\') NOT NULL default \'none\',
-	`about` text character set utf8 NOT NULL,
-	`active` enum(\'0\',\'1\') NOT NULL default \'0\',
-	PRIMARY KEY  (`id`)
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `owner_id` int(11) NOT NULL DEFAULT \'0\',
+  `user_id` int(10) unsigned NOT NULL DEFAULT \'0\',
+  `title` varchar(255) NOT NULL,
+  `membership` enum(\'open\',\'moderated\',\'closed\') NOT NULL DEFAULT \'open\',
+  `nonmember_posting` enum(\'0\',\'1\') NOT NULL DEFAULT \'0\',
+  `postlevel` enum(\'members\',\'select\') NOT NULL DEFAULT \'members\',
+  `moderated` enum(\'0\',\'1\') NOT NULL DEFAULT \'0\',
+  `adult` enum(\'none\',\'concepts\',\'explicit\') NOT NULL DEFAULT \'none\',
+  `about` varchar(255) NOT NULL,
+  `active` enum(\'0\',\'1\') NOT NULL DEFAULT \'0\',
+  PRIMARY KEY (`id`)
 ';

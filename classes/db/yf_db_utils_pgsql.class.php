@@ -200,7 +200,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 				'engine'	=> null,
 				'rows'		=> null,
 				'data_size'	=> null,
-				'collation'	=> null,
+				'collate'	=> null,
 			);
 		}
 		return $tables;
@@ -248,12 +248,12 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 				'type'		=> $type,
 				'length'	=> $length,
 				'unsigned'	=> $unsigned,
-				'collation'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
-				'null'		=> $a['Null'] == 'NO' ? false : true,
+				'collate'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
+				'nullable'		=> $a['Null'] == 'NO' ? false : true,
 				'default'	=> $a['Default'] != 'NULL' ? $a['Default'] : null,
 				'auto_inc'	=> false !== strpos($a['Extra'], 'auto_increment') ? true : false,
-				'is_primary'=> $a['Key'] == 'PRI',
-				'is_unique'	=> $a['Key'] == 'UNI',
+				'primary'	=> $a['Key'] == 'PRI',
+				'unique'	=> $a['Key'] == 'UNI',
 				'type_raw'	=> $a['Type'],
 			);
 		}
@@ -291,7 +291,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			'columns'		=> $this->table_get_columns($orig_table),
 			'row_format'	=> $info['Row_format'],
 			'charset'		=> null,
-			'collation'		=> $info['Collation'],
+			'collate'		=> $info['Collation'],
 			'engine'		=> $info['Engine'],
 			'rows'			=> $info['Rows'],
 			'data_size'		=> $info['Data_length'],
@@ -1050,7 +1050,9 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$length = $v['length'];
 			$default = $v['default'];
 			$null = null;
-			if (isset($v['null'])) {
+			if (isset($v['nullable'])) {
+				$null = (bool)$v['nullable'];
+			} elseif (isset($v['null'])) {
 				$null = (bool)$v['null'];
 			} elseif (isset($v['not_null'])) {
 				$null = (bool)(!$v['not_null']);

@@ -71,12 +71,12 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$expected = array(
 			'id' => array(
-				'name' => 'id','type' => 'int','length' => '','unsigned' => false,'collation' => NULL,'null' => false,
-				'default' => NULL,'auto_inc' => true,'is_primary' => true,'is_unique' => true,'type_raw' => 'INT UNSIGNED',
+				'name' => 'id','type' => 'int','length' => '','unsigned' => false,'collate' => NULL,'nullable' => false,
+				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => true,'type_raw' => 'INT UNSIGNED',
 			),
 			'name' => array(
-				'name' => 'name','type' => 'varchar','length' => '','unsigned' => false,'collation' => null,'null' => false,
-				'default' => '\'\'','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'VARCHAR',
+				'name' => 'name','type' => 'varchar','length' => '','unsigned' => false,'collate' => null,'nullable' => false,
+				'default' => '\'\'','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'VARCHAR',
 			),
 		);
 		$this->assertEquals( $expected, self::utils()->table_get_columns($this->table_name($table)) );
@@ -92,12 +92,12 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$expected_columns = array(
 			'id' => array(
-				'name' => 'id','type' => 'int','length' => '','unsigned' => false,'collation' => NULL,'null' => false,
-				'default' => NULL,'auto_inc' => true,'is_primary' => true,'is_unique' => true,'type_raw' => 'INT UNSIGNED',
+				'name' => 'id','type' => 'int','length' => '','unsigned' => false,'collate' => NULL,'nullable' => false,
+				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => true,'type_raw' => 'INT UNSIGNED',
 			),
 			'name' => array(
-				'name' => 'name','type' => 'varchar','length' => '','unsigned' => false,'collation' => null,'null' => false,
-				'default' => '\'\'','auto_inc' => false,'is_primary' => false,'is_unique' => false,'type_raw' => 'VARCHAR',
+				'name' => 'name','type' => 'varchar','length' => '','unsigned' => false,'collate' => null,'nullable' => false,
+				'default' => '\'\'','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'VARCHAR',
 			),
 		);
 		$expected = array(
@@ -105,7 +105,7 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 			'db_name' => null,
 			'columns' => $expected_columns,
 			'row_format' => null,
-			'collation' => null,
+			'collate' => null,
 			'engine' => null,
 			'rows' => null,
 			'data_size' => null,

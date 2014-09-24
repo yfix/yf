@@ -24,99 +24,105 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		return self::db_name().'.'.$name;
 	}
 
-/*
-	public function test_sql_into_array_basic() {
+	/***/
+	public function test_sakila() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
-		$sql = 'id varchar(32) NOT NULL default \'\'';
-		$expected = array(
-			'fields' => array(
-				'id' => array( 'type' => 'varchar', 'length' => '32', 'attrib' => null, 'not_null' => 1, 'default' => '', 'auto_inc' => 0 ),
-			),
+		$db_prefix = self::db()->DB_PREFIX;
+
+#		$this->assertTrue( (bool)self::utils()->truncate_database(self::db_name()) );
+		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
+
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$parser->RAW_IN_RESULTS = true;
+
+		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 0;') );
+
+		$fixtures_path = __DIR__.'/fixtures/';
+		$tables = array();
+		foreach (glob($fixtures_path.'*.sql') as $path) {
+			$name = substr(basename($path), strlen('class_db_ddl_parser_mysql_test_tbl_'), -strlen('.sql'));
+			$tables[$db_prefix.$name] = $db_prefix.$name;
+			$sql = file_get_contents($path);
+
+			$this->assertTrue( (bool)self::utils()->drop_table(self::table_name($db_prefix.$name)) );
+			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
+
+			$sql = str_replace('CREATE TABLE `', 'CREATE TABLE `'.$db_prefix, $sql);
+			$this->assertTrue( (bool)self::db()->query($sql) );
+
+			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
+
+#			print_r( self::utils()->table_info(self::table_name($db_prefix.$name)) );
+
+			$php_path = substr($path, 0, -strlen('.sql')). '.php';
+			if (!file_exists($php_path)) {
+				continue;
+			}
+			$sql_php = include $php_path;
+#			$response = $parser->parse($sql);
+#print_r($sql_php);
+
+#			$this->assertSame($expected, $response);
+		}
+		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
+
+		$this->assertEquals( $tables, self::utils()->list_tables(self::db_name()) );
+	}
+
+	/***/
+	public function test_yf_db_installer() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+
+		$db_installer = _class('db_installer_mysql', 'classes/db/');
+
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$parser->RAW_IN_RESULTS = false;
+
+		$tables_sql = array();
+		$tables_php = array();
+
+		// Load install data from external files
+		$globs_sql = array(
+			'yf_main'		=> YF_PATH.'share/db_installer/sql/*.sql.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
 		);
-		$received = _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array($sql);
-		$this->assertSame( $expected, $received );
-	}
-*/
-	public function test_sql_into_array_complex() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-/*
-		$sql = '
-			`id` varchar(32) NOT NULL default \'\',
-			`user_id` int(10) unsigned NOT NULL,
-			`user_group` int(10) unsigned NOT NULL,
-			`time` int(10) unsigned NOT NULL default \'0\',
-			`type` enum(\'user\',\'admin\') NOT NULL,
-			`ip` varchar(16) NOT NULL,
-			`user_agent` varchar(255) NOT NULL,
-			`query_string` varchar(255) NOT NULL,
-			`site_id` tinyint(3) unsigned NOT NULL,
-			PRIMARY KEY	(`id`),
-			KEY `user_id` (`user_id`)
-		';
-		$this->assertEquals( $this->data_good, _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array($sql) );
-
-		$sql = '
-			`id` varchar(32) NOT NULL default \'\',
-			`user_id` int(10) unsigned NOT NULL,
-			`user_group` int(10) unsigned NOT NULL,
-			`time` int(10) unsigned NOT NULL default \'0\',
-			`type` enum(\'user\',\'admin\') NOT NULL,
-			`ip` varchar(16) NOT NULL,
-			`user_agent` varchar(255) NOT NULL,
-			`query_string` varchar(255) NOT NULL,
-			`site_id` tinyint(3) unsigned NOT NULL,
-			PRIMARY KEY	(`id`),
-			KEY `user_id` (`user_id`)
-		';
-		$this->assertEquals( $this->data_good, _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array($sql) );
-*/
-	}
-	public function test_sql_into_array2() {
-/*
-		$sql = '`id` varchar(32) NOT NULL default \'\', `user_id` int(10) unsigned NOT NULL, `user_group` int(10) unsigned NOT NULL, `time` int(10) unsigned NOT NULL default \'0\',
-			`type` enum(\'user\',\'admin\') NOT NULL, `ip` varchar(16) NOT NULL, `user_agent` varchar(255) NOT NULL, `query_string` varchar(255) NOT NULL,
-			`site_id` tinyint(3) unsigned NOT NULL, PRIMARY KEY	(`id`), KEY `user_id` (`user_id`)
-		';
-		$this->assertEquals( $this->data_good, _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array($sql) );
-*/
-	}
-	public function test_sql_into_array_multi_key() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$data_good = array(
-			'fields' => array(
-				'key' => array('type' => 'varchar', 'length' => '32', 'attrib' => NULL, 'not_null'	=> 1, 'default' => '', 'auto_inc' => 0),
-			),
-			'keys'	=> array(
-				'id' => array('fields' => array('key', 'name'), 'type' => 'primary'),
-			),
+		foreach ($globs_sql as $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen('.sql.php'));
+				$tables_sql[$t_name] = include $f; // $data should be loaded from file
+			}
+		}
+		$globs_php = array(
+			'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*.sql_php.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*.sql_php.php',
 		);
-		$sql = '
-			`key` varchar(32) NOT NULL default \'\',
-			`name` varchar(32) NOT NULL default \'\',
-			PRIMARY KEY	(`key`,`name`),
-		';
-#		$this->assertEquals( $data, _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array($sql) );
-	}
-	public function test_sql_into_array_foreign_key() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-	}
-	public function test_sql_into_array_partition() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-	}
-	public function test_sql_into_array_collate() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-	}
-	public function test_mysql_create_table_from_array() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-	}
-	public function test_mysql_alter_table_from_array() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-	}
+		foreach ($globs_php as $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen('.sql_php.php'));
+				$tables_php[$t_name] = include $f; // $data should be loaded from file
+			}
+		}
+/*
+		$this->assertNotEmpty($tables_sql);
+		$this->assertNotEmpty($tables_php);
+		$this->assertEquals(array_keys($tables_sql), array_keys($tables_php));
+		
+		foreach ((array)$tables_sql as $name => $sql) {
+			$orig_sql = $sql;
 
+			$expected = $tables_php[$name];
+			$this->assertNotEmpty($expected);
+
+			$response = $parser->parse($sql);
+			unset($expected['name']);
+			unset($response['name']);
+			$this->assertEquals($expected, $response, 'Parse create table raw: '.$name);
+
+			$response2 = $db_installer->create_table_sql_to_php($sql);
+			unset($response2['name']);
+			$this->assertEquals($expected, $response2, 'Parse create table with db_installer create_table_sql_to_php: '.$name);
+		}
+*/
+	}
 }

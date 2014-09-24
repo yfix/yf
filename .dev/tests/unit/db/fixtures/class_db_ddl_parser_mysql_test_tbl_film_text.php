@@ -5,7 +5,7 @@ return array(
 		'film_id' => array(
 			'name' => 'film_id',
 			'type' => 'smallint',
-			'length' => '6',
+			'length' => 6,
 			'decimals' => NULL,
 			'unsigned' => false,
 			'nullable' => false,
@@ -21,7 +21,7 @@ return array(
 		'title' => array(
 			'name' => 'title',
 			'type' => 'varchar',
-			'length' => '255',
+			'length' => 255,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

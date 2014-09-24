@@ -3,14 +3,15 @@
 
 require_once dirname(__DIR__).'/scripts_init.php';
 
+$ext = '.sql.php';
 $globs_sql = array(
-	'yf_main'		=> YF_PATH.'share/db_installer/sql/*.sql.php',
-	'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
+	'yf_main'		=> YF_PATH.'share/db_installer/sql/*'.$ext,
+	'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql/*'.$ext,
 );
 foreach ($globs_sql as $glob) {
 	foreach (glob($glob) as $f) {
 		echo '== '.$f. PHP_EOL;
-		$t_name = substr(basename($f), 0, -strlen('.sql.php'));
+		$t_name = substr(basename($f), 0, -strlen($ext));
 
 		$sql_php_file = dirname(dirname($f)).'/sql_php/'.$t_name.'.sql_php.php';
 		echo '++ sql_php: '.$sql_php_file. PHP_EOL;

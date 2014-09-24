@@ -5,7 +5,7 @@ return array(
 		'film_id' => array(
 			'name' => 'film_id',
 			'type' => 'smallint',
-			'length' => '5',
+			'length' => 5,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -21,7 +21,7 @@ return array(
 		'category_id' => array(
 			'name' => 'category_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,

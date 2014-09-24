@@ -21,32 +21,29 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 			if (!file_exists($php_path)) {
 				continue;
 			}
-if (false === strpos(basename($path), 'staff')) {
-	continue;
-}
 			$expected = include $php_path;
 			$response = $parser->parse($sql);
-#			if (empty($expected)) {
+			if (empty($expected)) {
 				$str = var_export($response, 1);
 				$str = str_replace('  ', "\t", $str);
 				$str = str_replace('array (', 'array(', $str);
 				$str = preg_replace('~=>[\s]+array\(~ims', '=> array(', $str);
 
 #				file_put_contents($php_path, '<?php'.PHP_EOL.'return '.$str.';');
-#			}
+			}
 
-#			$this->assertSame($expected, $response);
-			$this->assertEquals($expected, $response);
+			$this->assertSame($expected, $response);
 
 			// Check that without SQL newlines or pretty formatting code works the same
-#			$response = $parser->parse(str_replace(array("\r","\n"), ' ', $sql));
-#			$this->assertSame($expected, $response);
-#if (++$i > 2) break;
+			$response = $parser->parse(str_replace(array("\r","\n"), ' ', $sql));
+			$this->assertSame($expected, $response);
 		}
 	}
 
 	/***/
 	public function test_php_to_sql_sakila() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 
 		$fixtures_path = __DIR__.'/fixtures/';
@@ -56,17 +53,11 @@ if (false === strpos(basename($path), 'staff')) {
 			if (!file_exists($sql_path)) {
 				continue;
 			}
-			$expected = file_get_contents($sql_path);
-			$response = $parser->create($php_create);
+			$expected = trim(file_get_contents($sql_path));
+			$response = trim($parser->create($php_create));
 
 			$this->assertSame($expected, $response);
-#break;
 		}
-	}
-
-	/***/
-	public function test_php_to_sql_db_installer() {
-// TODO
 	}
 
 	/**
@@ -122,9 +113,8 @@ if (false === strpos(basename($path), 'staff')) {
 				$sql = str_replace($m[0], '', $sql);
 				$options = $m['raw_options'];
 			}
-			$tmp_name = '';
+			$tmp_name = 'tmp_name_not_exists';
 			if (false === strpos(strtoupper($sql), 'CREATE TABLE')) {
-				$tmp_name = 'tmp_name_not_exists';
 				$sql = 'CREATE TABLE `'.$tmp_name.'` ('.$sql.')';
 			}
 			// Place them into the end of the DDL
@@ -140,6 +130,74 @@ if (false === strpos(basename($path), 'staff')) {
 			$response2 = $db_installer->create_table_sql_to_php($sql);
 			unset($response2['name']);
 			$this->assertEquals($expected, $response2, 'Parse create table with db_installer create_table_sql_to_php: '.$name);
+		}
+	}
+
+	/***/
+	public function test_php_to_sql_db_installer() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+
+		$db_installer = _class('db_installer_mysql', 'classes/db/');
+
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$parser->RAW_IN_RESULTS = false;
+
+		$tables_sql = array();
+		$tables_php = array();
+
+		// Load install data from external files
+		$globs_sql = array(
+			'yf_main'		=> YF_PATH.'share/db_installer/sql/*.sql.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
+		);
+		foreach ($globs_sql as $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen('.sql.php'));
+				$tables_sql[$t_name] = include $f; // $data should be loaded from file
+			}
+		}
+		$globs_php = array(
+			'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*.sql_php.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*.sql_php.php',
+		);
+		foreach ($globs_php as $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen('.sql_php.php'));
+				$tables_php[$t_name] = include $f; // $data should be loaded from file
+			}
+		}
+
+		$this->assertNotEmpty($tables_sql);
+		$this->assertNotEmpty($tables_php);
+		$this->assertEquals(array_keys($tables_sql), array_keys($tables_php));
+		
+		foreach ((array)$tables_php as $name => $sql_php) {
+			$this->assertNotEmpty($sql_php);
+
+			$sql = $tables_sql[$name];
+
+			$options = '';
+			// Get table options from table structure. Example: /** ENGINE=MEMORY **/
+			if (preg_match('#\/\*\*(?P<raw_options>[^\*\/]+)\*\*\/#i', trim($sql), $m)) {
+				// Cut comment with options from source table structure to prevent misunderstanding
+				$sql = trim(str_replace($m[0], '', $sql));
+				$options = $m['raw_options'];
+			}
+			$tmp_name = 'tmp_name_not_exists';
+			if (false === strpos(strtoupper($sql), 'CREATE TABLE')) {
+				$sql = 'CREATE TABLE `'.$tmp_name.'` ('.PHP_EOL.'  '.trim($sql).PHP_EOL.');';
+			}
+			// Place them into the end of the DDL
+			if ($options) {
+				$sql = rtrim(rtrim(rtrim($sql), ';')).' '.trim($options).';';
+			}
+
+			$expected = $sql;
+			$this->assertNotEmpty($expected);
+
+			$sql_php['name'] = $tmp_name;
+			$response = $parser->create($sql_php);
+			$this->assertSame($expected, $response, 'Create table DDL SQL from sql_php for: '.$name);
 		}
 	}
 }

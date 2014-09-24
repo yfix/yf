@@ -5,7 +5,7 @@ return array(
 		'category_id' => array(
 			'name' => 'category_id',
 			'type' => 'tinyint',
-			'length' => '3',
+			'length' => 3,
 			'decimals' => NULL,
 			'unsigned' => true,
 			'nullable' => false,
@@ -21,7 +21,7 @@ return array(
 		'name' => array(
 			'name' => 'name',
 			'type' => 'varchar',
-			'length' => '25',
+			'length' => 25,
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,

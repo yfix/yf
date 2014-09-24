@@ -40,15 +40,21 @@ class yf_db_ddl_parser_mysql {
 
 		$table_name = $data['name'];
 		foreach ((array)$data['fields'] as $name => $v) {
-			$type_braces = (isset($v['length']) ? '('.$v['length']. (isset($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
-			if ($type == 'enum') {
+			$name = strtolower($name);
+			$v['type'] = strtolower($v['type']);
+			if (strpos($v['type'], 'int') !== false && !$v['length']) {
+				$v['length'] = $this->_get_int_def_length($v['type']);
+			}
+			$type_braces = (isset($v['length']) && is_numeric($v['length']) ? '('.$v['length']. (isset($v['decimals']) && is_numeric($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
+			if (in_array($v['type'], array('enum','set')) && is_array($v['values']) && count($v['values'])) {
 				$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
 			}
-			if ($v['default'] == 'NULL') {
+			$def = false;
+			if ($v['default'] === 'NULL') {
 				$def = 'NULL';
 			} elseif ($v['type'] == 'timestamp') {
 				$def = $v['default'];
-			} elseif (strlen($v['default'])) {
+			} elseif (!is_null($v['default'])) {
 				$def = '\''.$v['default'].'\'';
 			}
 			$lines[] = $implode_line(array(
@@ -56,8 +62,8 @@ class yf_db_ddl_parser_mysql {
 				'type'		=> $v['type']. $type_braces,
 				'unsigned'	=> $v['unsigned'] ? 'unsigned' : '',
 				'nullable'	=> !$v['nullable'] ? 'NOT NULL' : '',
-				'charset'	=> $v['charset'] ? 'CHARACTER SET '.$v['charset'] : '',
-				'collate'	=> $v['collate'] ? 'COLLATE '.$v['collate'] : '',
+				'charset'	=> $v['charset'] ? 'CHARACTER SET '.strtolower($v['charset']) : '',
+				'collate'	=> $v['collate'] ? 'COLLATE '.strtolower($v['collate']) : '',
 				'default'	=> $def ? 'DEFAULT '.$def : '',
 				'auto_inc'	=> $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
 				'on_update'	=> $v['on_update'] ?: '',
@@ -65,8 +71,10 @@ class yf_db_ddl_parser_mysql {
 		}
 		foreach ((array)$data['indexes'] as $name => $v) {
 			$type = 'KEY';
+			$v['type'] = strtolower($v['type']);
 			if ($v['type'] == 'primary') {
 				$type = 'PRIMARY KEY';
+				$name = 'PRIMARY';
 			} elseif ($v['type'] == 'unique') {
 				$type = 'UNIQUE KEY';
 			} elseif ($v['type'] == 'fulltext') {
@@ -74,23 +82,26 @@ class yf_db_ddl_parser_mysql {
 			} elseif ($v['type'] == 'spatial') {
 				$type = 'SPATIAL KEY';
 			}
+			if ($name != 'PRIMARY') {
+				$name = strtolower($name);
+			}
 			$lines[] = $implode_line(array(
 				'type'		=> $type,
-				'name'		=> in_array($v['type'], array('index', 'fulltext', 'spatial')) ? '`'.$name.'`' : '',
-				'columns'	=> '(`'.implode('`,`', $v['columns']).'`)',
+				'name'		=> strlen($name) && !is_numeric($name) && in_array($v['type'], array('index', 'unique', 'fulltext', 'spatial')) ? '`'.$name.'`' : '',
+				'columns'	=> strtolower('(`'.implode('`,`', $v['columns']).'`)'),
 			));
 		}
 		foreach ((array)$data['foreign_keys'] as $name => $v) {
 			$lines[] = $implode_line(array(
 				'begin'			=> 'CONSTRAINT',
-				'name'			=> '`'.$name.'`',
+				'name'			=> '`'.strtolower($name).'`',
 				'fk'			=> 'FOREIGN KEY',
-				'columns'		=> '(`'.implode('`,`', $v['columns']).'`)',
+				'columns'		=> strtolower('(`'.implode('`,`', $v['columns']).'`)'),
 				'ref'			=> 'REFERENCES',
 				'ref_table'		=> '`'.$v['ref_table'].'`',
-				'ref_columns'	=> '(`'.implode('`,`', $v['ref_columns']).'`)',
-				'on_update'		=> $v['on_update'] ? 'ON UPDATE '.$v['on_update'] : '',
-				'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.$v['on_delete'] : '',
+				'ref_columns'	=> strtolower('(`'.implode('`,`', $v['ref_columns']).'`)'),
+				'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.strtoupper($v['on_delete']) : '',
+				'on_update'		=> $v['on_update'] ? 'ON UPDATE '.strtoupper($v['on_update']) : '',
 			));
 		}
 		$options = array();
@@ -120,10 +131,6 @@ class yf_db_ddl_parser_mysql {
 			'options' => array(),
 		);
 
-// TODO:
-// http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
-// As of MySQL 5.6.5, TIMESTAMP and DATETIME columns can be automatically initializated and updated to the current date and time (that is, the current timestamp). 
-// Before 5.6.5, this is true only for TIMESTAMP, and for at most one TIMESTAMP column per table
 		foreach ((array)$tmp_create_def as $v) {
 			if ($v['expr_type'] == 'column-def') {
 				$name = null;
@@ -141,7 +148,6 @@ class yf_db_ddl_parser_mysql {
 				$values = null; // ENUM and SET
 				$on_update = null; // TIMESTAMP and DATETIME
 				foreach ((array)$v['sub_tree'] as $v2) {
-#print_r($v2); echo PHP_EOL;
 					if ($v2['expr_type'] == 'colref') {
 						$name = $v2['no_quotes']['parts'][0];
 					} elseif ($v2['expr_type'] == 'column-type') {
@@ -178,6 +184,9 @@ class yf_db_ddl_parser_mysql {
 								}
 							}
 						}
+						// http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
+						// As of MySQL 5.6.5, TIMESTAMP and DATETIME columns can be automatically initializated and updated to the current date and time (that is, the current timestamp). 
+						// Before 5.6.5, this is true only for TIMESTAMP, and for at most one TIMESTAMP column per table
 						if (in_array($type, array('timestamp','datetime'))) {
 							$try = 'ON UPDATE CURRENT_TIMESTAMP';
 							if (strpos($v2['base_expr'], $try) !== false) {
@@ -188,21 +197,28 @@ class yf_db_ddl_parser_mysql {
 						$auto_inc = $v2['auto_inc'];
 						$primary = $v2['primary'];
 						$unique = $v2['unique'];
+						$charset = $v2['charset'];
+						$collate = $v2['collate'];
 					}
 				}
 				if ($auto_inc) {
 					$primary = true;
 				}
+				$name = strtolower($name);
+				$type = strtolower($type);
+				if (strpos($type, 'int') !== false && !$length) {
+					$length = $this->_get_int_def_length($type);
+				}
 				$struct['fields'][$name] = array(
 					'name'		=> $name,
 					'type'		=> $type,
-					'length'	=> $length,
+					'length'	=> $length ? intval($length) : null,
 					'decimals'	=> $decimals,
 					'unsigned'	=> $unsigned,
 					'nullable'	=> $nullable,
 					'default'	=> $default,
-					'charset'	=> $charset,
-					'collate'	=> $collate,
+					'charset'	=> $charset ? strtolower($charset) : null,
+					'collate'	=> $collate ? strtolower($collate) : null,
 					'auto_inc'	=> $auto_inc,
 					'primary'	=> $primary,
 					'unique'	=> $unique,
@@ -230,7 +246,7 @@ class yf_db_ddl_parser_mysql {
 				}
 				$struct['indexes'][$name] = array(
 					'name'		=> $name,
-					'type'		=> $type,
+					'type'		=> strtolower($type),
 					'columns'	=> $columns,
 				);
 				if ($this->RAW_IN_RESULTS) {
@@ -254,21 +270,24 @@ class yf_db_ddl_parser_mysql {
 					} elseif ($v2['expr_type'] == 'column-list') {
 						foreach ((array)$v2['sub_tree'] as $v3) {
 							if ($v3['expr_type'] == 'index-column') {
-								$index_col_name = $v3['no_quotes']['parts'][0];
+								$index_col_name = strtolower($v3['no_quotes']['parts'][0]);
 								$columns[$index_col_name] = $index_col_name;
 							}
 						}
 					} elseif ($v2['expr_type'] == 'colref') {
-						$index_col_name = $v2['no_quotes']['parts'][0];
+						$index_col_name = strtolower($v2['no_quotes']['parts'][0]);
 						$columns[$index_col_name] = $index_col_name;
 					}
 				}
 				if (!$name) {
 					$name = 'idx_'.(count($struct['indexes']) + 1);
 				}
+				if ($name != 'PRIMARY') {
+					$name = strtolower($name);
+				}
 				$struct['indexes'][$name] = array(
 					'name'		=> $name,
-					'type'		=> $type,
+					'type'		=> strtolower($type),
 					'columns'	=> $columns,
 				);
 				if ($this->RAW_IN_RESULTS) {
@@ -287,7 +306,7 @@ class yf_db_ddl_parser_mysql {
 					} elseif ($v2['expr_type'] == 'column-list') {
 						foreach ((array)$v2['sub_tree'] as $v3) {
 							if ($v3['expr_type'] == 'index-column') {
-								$index_col_name = $v3['no_quotes']['parts'][0];
+								$index_col_name = strtolower($v3['no_quotes']['parts'][0]);
 								$columns[$index_col_name] = $index_col_name;
 							}
 						}
@@ -298,7 +317,7 @@ class yf_db_ddl_parser_mysql {
 							} elseif ($v3['expr_type'] == 'column-list') {
 								foreach ((array)$v3['sub_tree'] as $v4) {
 									if ($v4['expr_type'] == 'index-column') {
-										$ref_col_name = $v4['no_quotes']['parts'][0];
+										$ref_col_name = strtolower($v4['no_quotes']['parts'][0]);
 										$ref_columns[$ref_col_name] = $ref_col_name;
 									}
 								}
@@ -311,13 +330,14 @@ class yf_db_ddl_parser_mysql {
 				if (!$name) {
 					$name = 'fk_'.(count($struct['foreign_keys']) + 1);
 				}
+				$name = strtolower($name);
 				$struct['foreign_keys'][$name] = array(
 					'name'			=> $name,
 					'columns'		=> $columns,
 					'ref_table'		=> $ref_table,
 					'ref_columns'	=> $ref_columns,
-					'on_update'		=> $on_update,
-					'on_delete'		=> $on_delete,
+					'on_update'		=> $on_update ? strtoupper($on_update) : null,
+					'on_delete'		=> $on_delete ? strtoupper($on_delete) : null,
 				);
 				if ($this->RAW_IN_RESULTS) {
 					$struct['foreign_keys'][$name]['raw'] = $v['base_expr'];
@@ -343,5 +363,18 @@ class yf_db_ddl_parser_mysql {
 			$struct['options'][$name] = $val;
 		}
 		return $struct;
+	}
+
+	/**
+	*/
+	function _get_int_def_length ($type) {
+		$a = array(
+			'tinyint'	=> 3,
+			'smallint'	=> 5,
+			'mediumint'	=> 8,
+			'int'		=> 11,
+			'bigint'	=> 20,
+		);
+		return $a[$type] ?: 11;
 	}
 }

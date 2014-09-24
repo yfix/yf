@@ -12,5 +12,4 @@ return '
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `url` (`url`)
-
 ';

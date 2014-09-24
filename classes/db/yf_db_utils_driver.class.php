@@ -74,7 +74,7 @@ abstract class yf_db_utils_driver {
 		return array(
 			'name'		=> $db_name,
 			'charset'	=> $info['DEFAULT_CHARACTER_SET_NAME'],
-			'collation'	=> $info['DEFAULT_COLLATION_NAME'],
+			'collate'	=> $info['DEFAULT_COLLATION_NAME'],
 		);
 	}
 
@@ -126,7 +126,7 @@ abstract class yf_db_utils_driver {
 		}
 		$allowed = array(
 			'charset'	=> 'CHARACTER SET',
-			'collation'	=> 'COLLATE',
+			'collate'	=> 'COLLATE',
 		);
 		foreach ((array)$extra as $k => $v) {
 			$v = preg_replace('~[^a-z0-9_]+~i', '', $v);
@@ -188,11 +188,13 @@ abstract class yf_db_utils_driver {
 			return true;
 		}
 		foreach ((array)$this->list_tables($db_name) as $table) {
-			$table = trim($table);
-			if (!strlen($table)) {
-				continue;
-			}
 			$sql[] = $this->drop_table($db_name.'.'.$table, $extra);
+		}
+		foreach ((array)$this->list_views($db_name) as $name => $tmp) {
+			$sql[] = $this->drop_view($db_name.'.'.$name, $extra);
+		}
+		foreach ((array)$this->list_triggers($db_name) as $name => $tmp) {
+			$sql[] = $this->drop_trigger($db_name.'.'.$name, $extra);
 		}
 		return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
 	}
@@ -230,7 +232,7 @@ abstract class yf_db_utils_driver {
 				'engine'	=> $a['Engine'],
 				'rows'		=> $a['Rows'],
 				'data_size'	=> $a['Data_length'],
-				'collation'	=> $a['Collation'],
+				'collate'	=> $a['Collation'],
 			);
 		}
 		return $tables;
@@ -277,12 +279,12 @@ abstract class yf_db_utils_driver {
 				'type'		=> $type,
 				'length'	=> $length,
 				'unsigned'	=> $unsigned,
-				'collation'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
-				'null'		=> $a['Null'] == 'NO' ? false : true,
+				'collate'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
+				'nullable'	=> $a['Null'] == 'NO' ? false : true,
 				'default'	=> $a['Default'] != 'NULL' ? $a['Default'] : null,
 				'auto_inc'	=> false !== strpos($a['Extra'], 'auto_increment') ? true : false,
-				'is_primary'=> $a['Key'] == 'PRI',
-				'is_unique'	=> $a['Key'] == 'UNI',
+				'primary'	=> $a['Key'] == 'PRI',
+				'unique'	=> $a['Key'] == 'UNI',
 				'type_raw'	=> $a['Type'],
 			);
 		}
@@ -350,7 +352,7 @@ abstract class yf_db_utils_driver {
 			'columns'		=> $this->table_get_columns($orig_table),
 			'row_format'	=> $info['Row_format'],
 			'charset'		=> $this->table_get_charset($orig_table),
-			'collation'		=> $info['Collation'],
+			'collate'		=> $info['Collation'],
 			'engine'		=> $info['Engine'],
 			'rows'			=> $info['Rows'],
 			'data_size'		=> $info['Data_length'],
@@ -1135,7 +1137,9 @@ abstract class yf_db_utils_driver {
 			$length = $v['length'];
 			$default = $v['default'];
 			$null = null;
-			if (isset($v['null'])) {
+			if (isset($v['nullable'])) {
+				$null = (bool)$v['nullable'];
+			} elseif (isset($v['null'])) {
 				$null = (bool)$v['null'];
 			} elseif (isset($v['not_null'])) {
 				$null = (bool)(!$v['not_null']);
