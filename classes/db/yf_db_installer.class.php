@@ -231,11 +231,11 @@ abstract class yf_db_installer {
 			$table_name	= 'sys_'.$table_name;
 			$table_found = true;
 		}
+		$full_table_name = $db->DB_PREFIX. $table_name;
 		if ($table_found) {
 			$table_sql = $this->TABLES_SQL[$table_name];
 			$sql_php = $this->TABLES_SQL_PHP[$table_name];
 			$table_data	= $this->TABLES_DATA[$table_name];
-			$full_table_name = $db->DB_PREFIX. $table_name;
 		} else {
 			// Try if sharded table
 			$shard_table_name = $this->_get_shard_table_name($table_name, $db);
@@ -243,7 +243,6 @@ abstract class yf_db_installer {
 				$table_sql = $this->TABLES_SQL[$shard_table_name];
 				$sql_php = $this->TABLES_SQL_PHP[$shard_table_name];
 				$table_data	= $this->TABLES_DATA[$shard_table_name];
-				$full_table_name = $db->DB_PREFIX. $shard_table_name;
 			}
 		}
 		if (empty($table_sql)) {
