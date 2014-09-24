@@ -153,7 +153,7 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 			$php_sql['name'] = $db_prefix.$name;
 			$sql = $parser->create($php_sql);
 
-			$this->assertTrue( (bool)self::db()->query($sql) );
+			$this->assertTrue( (bool)self::db()->query($sql), 'creating table: '.$db_prefix.$name );
 			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
 		}
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
