@@ -28,7 +28,7 @@ return array(
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'name' => array(

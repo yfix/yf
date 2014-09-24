@@ -46,6 +46,9 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 		),
+		'' => array(
+			'primary' => true,
+		),
 	),
 	'indexes' => array(
 		'PRIMARY' => array(

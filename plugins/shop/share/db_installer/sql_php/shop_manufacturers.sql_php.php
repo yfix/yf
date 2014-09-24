@@ -43,7 +43,7 @@ return array(
 			'collate' => 'utf8_unicode_ci',
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'url' => array(
@@ -58,7 +58,7 @@ return array(
 			'collate' => 'utf8_unicode_ci',
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'desc' => array(

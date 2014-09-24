@@ -12,8 +12,8 @@ return array(
 			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
-			'primary' => false,
-			'unique' => false,
+			'primary' => true,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'height' => array(
