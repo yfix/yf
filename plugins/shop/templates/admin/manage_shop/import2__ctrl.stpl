@@ -73,8 +73,8 @@ ng_app_admin.factory( 'UploadApi',  function( ApiConfig, $resource, $window, $lo
 	service.item__remove = function( id ) {
 		return( service.resource.item__remove({ id: id }) );
 	};
-	service.item__import = function( id, data ) {
-		return( service.resource.item__import({ id: id, data: data }) );
+	service.item__import = function( id, action, data ) {
+		return( service.resource.item__import({ id: id, action: action, data: data }) );
 	};
 	return( service );
 });
@@ -329,7 +329,7 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 			);
 		},
 		item__import: function( item ) {
-			var result = UploadApi.item__import( $scope.item_data.id, $scope.item_data.fields );
+			var result = UploadApi.item__import( $scope.item_data.id, $scope.import_action.key, $scope.item_data.fields );
 			result.$promise.then(
 				function( r ) {
 					$scope.item__import({ response: r.response });
@@ -479,6 +479,9 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 	};
 	// init
 	_prepare__upload_list( $scope );
+	if( !angular.isObject( $scope.import_action ) ) {
+		$scope.import_action = $scope.data._import_action_array[0];
+	}
 });
 
 // config

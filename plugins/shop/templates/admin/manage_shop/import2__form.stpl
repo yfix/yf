@@ -55,10 +55,7 @@
 			<span style="width: 10em; margin: 0 2em;" class="control-group"
 				ng-class="{ error: upload_list_filter__status === false }"
 			>
-				<input style="width: 10em; margin: 0;" type="text" ng-model="upload_list_filter"
-					tooltip="Вы можете использовать регулярные выражения"
-					tooltip-placement="top"
-				>
+				<input style="width: 10em; margin: 0;" type="text" ng-model="upload_list_filter">
 				<span class="btn" ng-click="upload_list_filter=''"><i class="fa fa-times"></i></span>
 					<span class="btn btn-small"
 						bs-tooltip
@@ -69,7 +66,7 @@
 						<i class="fa fa-info-circle"></i>
 					</span>
 			</span>
-			<span class="btn btn-small btn-danger pull-right" ng-click="UploadApi.list__remove_all()">Удалить все</span>
+			<span class="btn btn-danger pull-right" ng-click="UploadApi.list__remove_all()">Удалить все</span>
 		</th>
 	</tr>
 	<tr>
@@ -110,6 +107,19 @@
 	width     : 100%;
 	min-width : 10em;
 }
+.import_action {
+	height      : 100%;
+	font-weight : normal;
+}
+.block_action span.btn {
+	margin: 0 0 0 1em;
+}
+.import_action ul.select2-result-single {
+	margin: 0.1em 0.2em;
+}
+.import_action .select2-chosen {
+	font-weight: bold;
+}
 </style>
 
 <div class="item_data_tooltip" ></div>
@@ -125,8 +135,28 @@
 				<span class="btn" ng-click="item_filter=''"><i class="fa fa-times"></i></span>
 				<span ng-show="item_filter">(<span ng-bind="Pagination.length"></span>)</span>
 			</span>
-			<span class="btn btn-small btn-warning pull-right" ng-click="UploadApi.item__import()" ng-show="!item_data.test_status">Проверить</span>
-			<span class="btn btn-small btn-success pull-right" ng-click="UploadApi.item__import()" ng-show="item_data.test_status">Импортировать</span>
+			<div class="block_action pull-right">
+				<ui-select class="import_action"
+					ng-model="import_action"
+					{{-- theme="select2" --}}
+					{{-- theme="bootstrap" --}}
+					{{-- theme="selectize" --}}
+					{{-- ng-disabled="disabled" --}}
+					{{-- reset-search-input="false" --}}
+					{{-- search-enabled="false" --}}
+				>
+					<ui-select-match placeholder="выберите действие...">{{$select.selected.value}}</ui-select-match>
+					<ui-select-choices repeat="action in data._import_action_array | filter: $select.search"
+						{{-- refresh="refreshAddresses($select.search)" --}}
+						{{-- refresh-delay="0" --}}
+					>
+					<div ng-bind-html="action.value | highlight: $select.search"></div>
+					</ui-select-choices>
+				</ui-select>
+
+				<span class="btn btn-warning pull-right" ng-click="UploadApi.item__import()" ng-show="!item_data.test_status">Проверить</span>
+				<span class="btn btn-success pull-right" ng-click="UploadApi.item__import()" ng-show="item_data.test_status">Импортировать</span>
+			</div>
 		</th>
 	</tr>
 	<tr>
@@ -145,7 +175,7 @@
 		>
 		</select>
 		</th>
-		<th>
+		<th style="text-align:center;">
 			статус
 			<div ng-show="item_data.test">
 				<span class="btn btn-small"

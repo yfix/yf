@@ -6,7 +6,9 @@
 			, 'ngResource'
 			, 'ngTouch'
 			{{-- , 'ui.bootstrap' --}}
+			{{-- ui-select2 is deprecated: use ui-select --}}
 			, 'ui.select2'
+			, 'ui.select'
 			, 'mgcrea.ngStrap'
 		]);
 		ng_app_admin.config( function( $datepickerProvider ) {
@@ -16,6 +18,9 @@
 				, startWeek: 1
 				, startView: 2
 			});
+		});
+		ng_app_admin.config( function( uiSelectConfig ) {
+			uiSelectConfig.theme = 'select2';
 		});
 
 	} catch (e) { console.error(e); }

@@ -70,6 +70,10 @@ class yf_manage_shop_import_products2 {
 				or add manufacturer( url by name )
 	*/
 
+	public $import_action = array(
+		'update' => 'обновление',
+		'insert' => 'добавление',
+	);
 	public $import_rulues = array(
 		array( 'id', ),
 		array( 'id', ),
@@ -669,10 +673,20 @@ class yf_manage_shop_import_products2 {
 		$_upload_list   = $this->upload_list;
 		$_upload_status = $this->upload_status;
 		$_import_field  = $this->import_field;
+		$_import_action = $this->import_action;
+		$_import_action_array = array();
+		foreach( $_import_action as $key => $value ) {
+			$_import_action_array[] = array(
+				'key'   => $key,
+				'value' => $value,
+			);
+		}
 		$result = array(
-			'_upload_status' => $_upload_status,
-			'_upload_list'   => $_upload_list,
-			'_import_field'  => $_import_field,
+			'_upload_status'       => $_upload_status,
+			'_upload_list'         => $_upload_list,
+			'_import_field'        => $_import_field,
+			'_import_action'       => $_import_action,
+			'_import_action_array' => $_import_action_array,
 		);
 		if( $json ) {
 			$result = json_encode( $result, JSON_NUMERIC_CHECK );

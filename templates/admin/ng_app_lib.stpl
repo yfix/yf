@@ -11,13 +11,21 @@
 	<script src="//cdn.rawgit.com/mgcrea/angular-strap/v2.0.0-rc.4/dist/angular-strap.tpl{js_min}.js" class="yf_core"></script>
     <link href="//cdn.rawgit.com/mgcrea/angular-motion/v0.3.2/dist/angular-motion{js_min}.css" rel="stylesheet">
 
-	{{-- ng-lib select2 --}}
+	{{-- ng-lib ui-select --}}
+	<script src="//rawgit.com/angular-ui/ui-select/v0.7.0/dist/select{js_min}.js"></script>
+	<link href="//rawgit.com/angular-ui/ui-select/v0.7.0/dist/select{js_min}.css" rel="stylesheet">
+	{{-- <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.default.css"> --}}
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.bootstrap2.css">
+	{{-- <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.bootstrap3.css"> --}}
+
+
+	{{-- ng-lib ui-select2 is deprecated: use ui-select --}}
 	<script src="//rawgit.com/angular-ui/ui-select2/master/src/select2.js"></script>
 
-		{{-- jq-lib select2 (need for ng-lib select2) --}}
-		<link  href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min.css" rel="stylesheet">
-		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2_locale_ru.min.js"></script>
+		{{-- jq-lib select2 (need for ng-lib select2/select) --}}
+		<link  href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2{js_min}.css" rel="stylesheet">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2{js_min}.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2_locale_ru{js_min}.js"></script>
 
 {{--
 	[>Angular-UI was initially written to provide AngularJS wrapping directives for Twitter Bootstrap<]
