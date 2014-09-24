@@ -276,9 +276,10 @@ abstract class yf_db_utils_driver {
 			list($type, $length, $unsigned, $decimals, $values) = array_values($this->_parse_column_type($a['Type']));
 			$nullable = ($a['Null'] == 'YES');
 			$default = null;
-			if (is_null($a['Default']) && $nullable) {
-				$default = 'NULL';
-			} elseif (!is_null($a['Default'])) {
+#			if (is_null($a['Default']) && $nullable) {
+#				$default = 'NULL';
+#			} elseif (!is_null($a['Default'])) {
+			if (!is_null($a['Default'])) {
 				$default = trim($a['Default']);
 			}
 			$cols[$name] = array(
@@ -302,8 +303,43 @@ abstract class yf_db_utils_driver {
 			}
 			$cols[$name]['type_raw'] = $a['Type'];
 		}
+		// Optionally fill "unique" field from indexes info
+		$indexes = $this->list_indexes($table, $extra, $error);
+		if ($indexes) {
+			foreach ((array)$indexes as $name => $idx) {
+				if ($idx['type'] !== 'unique') {
+					continue;
+				}
+				foreach ($idx['columns'] as $fname) {
+					if (!isset($cols[$fname])) {
+						continue;
+					}
+					$cols[$fname]['unique'] = true;
+				}
+			}
+		}
 		return $cols;
 	}
+
+/*
+For Schemas:
+
+SELECT default_character_set_name FROM information_schema.SCHEMATA S
+WHERE schema_name = "schemaname";
+For Tables:
+
+SELECT CCSA.character_set_name FROM information_schema.`TABLES` T,
+       information_schema.`COLLATION_CHARACTER_SET_APPLICABILITY` CCSA
+WHERE CCSA.collation_name = T.table_collation
+  AND T.table_schema = "schemaname"
+  AND T.table_name = "tablename";
+For Columns:
+
+SELECT character_set_name FROM information_schema.`COLUMNS` C
+WHERE table_schema = "schemaname"
+  AND table_name = "tablename"
+  AND column_name = "columnname";
+*/
 
 	/**
 	*/
@@ -599,10 +635,12 @@ abstract class yf_db_utils_driver {
 			} elseif ($row['Index_type'] == 'SPATIAL') {
 				$type = 'spatial';
 			}
-			$indexes[$row['Key_name']] = array(
-				'name'		=> $row['Key_name'],
-				'type'		=> $type,
-			);
+			if (!isset($indexes[$row['Key_name']])) {
+				$indexes[$row['Key_name']] = array(
+					'name'		=> $row['Key_name'],
+					'type'		=> $type,
+				);
+			}
 			$indexes[$row['Key_name']]['columns'][$row['Column_name']] = $row['Column_name'];
 		}
 		return $indexes;
@@ -719,18 +757,30 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$keys = array();
-		$sql = 'SELECT CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
+		$sql = 
+			'SELECT CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
 			FROM information_schema.KEY_COLUMN_USAGE
 			WHERE TABLE_SCHEMA = '.$this->_escape_val($db_name).' 
 				AND REFERENCED_TABLE_NAME IS NOT NULL 
 				AND TABLE_NAME = '. $this->_escape_val($this->db->_fix_table_name($table));
-		foreach ((array)$this->db->get_all($sql) as $id => $row) {
-			$keys[$row['CONSTRAINT_NAME']] = array(
-				'name'		=> $row['CONSTRAINT_NAME'], // foreign key name
-				'local'		=> $row['COLUMN_NAME'], // local columns
-				'table'		=> $row['REFERENCED_TABLE_NAME'], // referenced table
-				'foreign' 	=> $row['REFERENCED_COLUMN_NAME'], // referenced columns
-			);
+		foreach ((array)$this->db->get_all($sql) as $a) {
+			$name = $a['CONSTRAINT_NAME'];
+			$keys[$name]['name'] = $name;
+			$keys[$name]['columns'][$a['COLUMN_NAME']] = $a['COLUMN_NAME'];
+			$keys[$name]['ref_table'] = $a['REFERENCED_TABLE_NAME'];
+			$keys[$name]['ref_columns'][$a['REFERENCED_COLUMN_NAME']] = $a['REFERENCED_COLUMN_NAME'];
+		}
+		$sql = 
+			'SELECT CONSTRAINT_NAME, UPDATE_RULE, DELETE_RULE
+			FROM information_schema.REFERENTIAL_CONSTRAINTS
+			WHERE CONSTRAINT_SCHEMA = '.$this->_escape_val($db_name).'
+				AND TABLE_NAME = '.$this->_escape_val($this->db->_fix_table_name($table));
+		foreach ((array)$this->db->get_all($sql) as $a) {
+			$name = $a['CONSTRAINT_NAME'];
+			if (isset($keys[$name])) {
+				$keys[$name]['on_update'] = $a['UPDATE_RULE'];
+				$keys[$name]['on_delete'] = $a['DELETE_RULE'];
+			}
 		}
 		return $keys;
 	}
