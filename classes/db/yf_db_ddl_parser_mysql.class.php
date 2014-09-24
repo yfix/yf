@@ -367,14 +367,18 @@ class yf_db_ddl_parser_mysql {
 		foreach ((array)$struct['indexes'] as $idx) {
 			if ($idx['type'] === 'unique') {
 				foreach ((array)$idx['columns'] as $fname) {
-					$struct['fields'][$fname]['unique'] = true;
+					if (isset($struct['fields'][$fname])) {
+						$struct['fields'][$fname]['unique'] = true;
+					}
 				}
 			}
 		}
 		// If some column exists inside primary key def -> set its attribute "primary = true"
 		if (isset($struct['indexes']['PRIMARY'])) {
 			foreach ((array)$struct['indexes']['PRIMARY']['columns'] as $fname) {
-				$struct['fields'][$fname]['primary'] = true;
+				if (isset($struct['fields'][$fname])) {
+					$struct['fields'][$fname]['primary'] = true;
+				}
 			}
 		}
 		return $struct;
