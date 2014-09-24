@@ -199,9 +199,9 @@ class yf_db_installer_mysql extends yf_db_installer {
 	/**
 	*/
 // TODO: convert into db utils()
-	function _do_alter_table ($table_name, $column_name, array $sql_php, $db) {
+	function _do_alter_table ($full_table_name, $column_name, array $sql_php, $db) {
 		$column_data = $sql_php['fields'][$column_name];
-		$sql = 'ALTER TABLE '.$db->DB_PREFIX. $table_name. ' ADD '._class('db_ddl_parser_mysql', 'classes/db/')->create_column_line($column_name, $column_data);
+		$sql = 'ALTER TABLE '.$full_table_name. ' ADD '._class('db_ddl_parser_mysql', 'classes/db/')->create_column_line($column_name, $column_data);
 		return $db->query($sql);
 	}
 }
