@@ -1105,9 +1105,9 @@ class yf_db {
 	}
 
 	/**
-	* Return meta columns info for selected table
+	* Return columns info for selected table
 	*/
-	function meta_columns($table, $KEYS_NUMERIC = false, $FULL_INFO = false) {
+	function meta_columns($table) {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
@@ -1115,11 +1115,11 @@ class yf_db {
 		if (!strlen($table)) {
 			return false;
 		}
-		return $this->utils()->meta_columns($table, $KEYS_NUMERIC, $FULL_INFO);
+		return $this->utils()->meta_columns($table);
 	}
 
 	/**
-	* Return meta tables info
+	* Return tables list for current database
 	*/
 	function meta_tables() {
 		if (!$this->_connected && !$this->connect()) {
