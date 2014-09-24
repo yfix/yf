@@ -207,13 +207,13 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function escape_key($data) {
-		return '`'.$data.'`';
+		return '`'.trim($data, '`').'`';
 	}
 
 	/**
 	*/
 	function escape_val($data) {
-		return '\''.$data.'\'';
+		return '\''.trim($data, '\'').'\'';
 	}
 
 	/**
