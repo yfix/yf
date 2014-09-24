@@ -32,7 +32,7 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 #				file_put_contents($php_path, '<?php'.PHP_EOL.'return '.$str.';');
 			}
 
-			$this->assertSame($expected, $response);
+			$this->assertSame($expected, $response, 'fname: '.basename($path));
 
 			// Check that without SQL newlines or pretty formatting code works the same
 			$response = $parser->parse(str_replace(array("\r","\n"), ' ', $sql));
