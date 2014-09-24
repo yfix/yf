@@ -61,27 +61,37 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 			foreach ((array)$sql_php['fields'] as $fname => $f) {
 				unset($sql_php['fields'][$fname]['raw']);
 				unset($sql_php['fields'][$fname]['collate']);
+				unset($sql_php['fields'][$fname]['charset']);
+				if ($f['default'] === 'NULL') {
+					$sql_php['fields'][$fname]['default'] = null;
+				}
 			}
 			foreach ((array)$sql_php['indexes'] as $fname => $f) {
 				unset($sql_php['indexes'][$fname]['raw']);
 			}
-			foreach ((array)$sql_php['foreign_keys'] as $fname => $f) {
+			foreach ((array)$sql_php['foreign_keys'] as $fname => $fk) {
 				unset($sql_php['foreign_keys'][$fname]['raw']);
+				if (is_null($fk['on_update'])) {
+					$sql_php['foreign_keys'][$fname]['on_update'] = 'RESTRICT';
+				}
+				if (is_null($fk['on_delete'])) {
+					$sql_php['foreign_keys'][$fname]['on_delete'] = 'RESTRICT';
+				}
 			}
 
 			$columns = self::utils()->list_columns(self::table_name($db_prefix.$name));
 			foreach ((array)$columns as $fname => $f) {
 				unset($columns[$fname]['type_raw']);
 				unset($columns[$fname]['collate']);
+				unset($columns[$fname]['charset']);
 			}
 			$this->assertEquals( $sql_php['fields'], $columns, 'Compare columns with expected sql_php for table: '.$name );
 
 			$indexes = self::utils()->list_indexes(self::table_name($db_prefix.$name));
 			$this->assertEquals( $sql_php['indexes'], $indexes, 'Compare indexes with expected sql_php for table: '.$name );
 
-#			$fks = self::utils()->list_foreign_keys(self::table_name($db_prefix.$name));
-#			$this->assertEquals( $sql_php['foreign_keys'], $fks, 'Compare indexes with expected sql_php for table: '.$name );
-#break;
+			$fks = self::utils()->list_foreign_keys(self::table_name($db_prefix.$name));
+			$this->assertEquals( $sql_php['foreign_keys'], $fks, 'Compare indexes with expected sql_php for table: '.$name );
 		}
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
 
