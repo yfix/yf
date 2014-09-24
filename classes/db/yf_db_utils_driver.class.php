@@ -1317,7 +1317,7 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function _escape_key($key = '') {
-		$key = trim($key);
+		$key = trim(trim($key), '`');
 		if (!strlen($key)) {
 			return '';
 		}
@@ -1342,7 +1342,7 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function _escape_val($val = '') {
-		$val = trim($val);
+		$val = trim(trim($val), '\'');
 		if (!strlen($val)) {
 			return '';
 		}
