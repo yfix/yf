@@ -12,7 +12,7 @@ return array(
 			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
-			'primary' => false,
+			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
 		),
@@ -42,12 +42,9 @@ return array(
 			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
-			'primary' => false,
+			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-		),
-		'' => array(
-			'primary' => true,
 		),
 	),
 	'indexes' => array(
@@ -55,7 +52,8 @@ return array(
 			'name' => 'PRIMARY',
 			'type' => 'primary',
 			'columns' => array(
-				'' => '',
+				'var_id' => 'var_id',
+				'locale' => 'locale',
 			),
 		),
 	),
