@@ -242,20 +242,26 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 		$q = $this->db->query('SHOW FULL COLUMNS FROM '.$this->_escape_table_name($table));
 		while ($a = $this->db->fetch_assoc($q)) {
 			$name = $a['Field'];
-			list($type, $length, $unsigned) = array_values($this->_parse_column_type($a['Type']));
+			list($type, $length, $unsigned, $decimals, $values) = array_values($this->_parse_column_type($a['Type']));
 			$cols[$name] = array(
 				'name'		=> $name,
 				'type'		=> $type,
 				'length'	=> $length,
+				'decimals'	=> $decimals ?: null,
 				'unsigned'	=> $unsigned,
-				'collate'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
-				'nullable'		=> $a['Null'] == 'NO' ? false : true,
+				'nullable'	=> $a['Null'] == 'NO' ? false : true,
 				'default'	=> $a['Default'] != 'NULL' ? $a['Default'] : null,
-				'auto_inc'	=> false !== strpos($a['Extra'], 'auto_increment') ? true : false,
+				'charset'	=> NULL,
+				'collate'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
+				'auto_inc'	=> false !== strpos(strtolower($a['Extra']), 'auto_increment') ? true : false,
 				'primary'	=> $a['Key'] == 'PRI',
 				'unique'	=> $a['Key'] == 'UNI',
-				'type_raw'	=> $a['Type'],
+				'values'	=> is_array($values) && count($values) ? $values : NULL,
 			);
+			if (false !== strpos(strtolower($a['Extra']), 'on update') && in_array($type, array('timestamp','datetime'))) {
+				$cols[$name]['on_update'] = $a['Extra'];
+			}
+			$cols[$name]['type_raw'] = $a['Type'];
 		}
 		return $cols;
 */
