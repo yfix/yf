@@ -11,6 +11,8 @@ class yf_db {
 
 	/** @var string Type of database (default) */
 	public $DB_TYPE					= 'mysql';
+	/** @var bool Switch caching on/off */
+	public $NO_CACHE				= false;
 	/** @var bool Use tables names caching */
 	public $CACHE_TABLE_NAMES		= false;
 	/** @var int @conf_skip Number of queries */
@@ -259,7 +261,7 @@ class yf_db {
 		if (!empty($driver_class_name) && class_exists($driver_class_name) && !is_object($this->db)) {
 			if ($this->RECONNECT_USE_LOCKING) {
 				$lock_file = $this->_get_reconnect_lock_path($this->DB_HOST, $this->DB_USER, $this->DB_NAME, $this->DB_PORT);
-				clearstatcache();
+//				clearstatcache();
 				if (file_exists($lock_file)) {
 					// Timed out lock file
 					if ((time() - filemtime($lock_file)) > $this->RECONNECT_LOCK_TIMEOUT) {
@@ -630,12 +632,20 @@ class yf_db {
 
 	/**
 	*/
-	function get_table_columns_cached($table) {
+	function get_table_columns_cached($table, $no_cache = false) {
 		$cache_name = __FUNCTION__.'|'.$table.'|'.$this->DB_HOST.'|'.$this->DB_PORT.'|'.$this->DB_NAME.'|'.$this->DB_PREFIX;
-		$data = cache_get($cache_name);
+		$data = array();
+		if ($this->NO_CACHE) {
+			$no_cache = true;
+		}
+		if (!$no_cache) {
+			$data = cache_get($cache_name);
+		}
 		if (!$data) {
 			$data = $this->meta_columns($table);
-			cache_set($cache_name, $data);
+			if (!$no_cache) {
+				cache_set($cache_name, $data);
+			}
 		}
 		return $data;
 	}
@@ -646,7 +656,8 @@ class yf_db {
 		if (!$this->FIX_DATA_SAFE) {
 			return $data;
 		}
-		$cols = $this->get_table_columns_cached($table);
+		$cols = $this->get_table_columns_cached($table, $extra['no_cache']);
+var_dump($cols);
 		if (!$cols) {
 			$msg = __CLASS__.'->'.__FUNCTION__.': columns for table '.$table.' is empty, truncating data array';
 			if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
@@ -740,7 +751,7 @@ class yf_db {
 			return false;
 		}
 		$storage = &$this->_db_results_cache;
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($storage[$query])) {
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && isset($storage[$query])) {
 			return $storage[$query];
 		}
 		$data = null;
@@ -753,7 +764,7 @@ class yf_db {
 			}
 			$this->free_result($q);
 			// Store result in variable cache
-			if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($storage[$query])) {
+			if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && !isset($storage[$query])) {
 				$storage[$query] = $data;
 				// Permanently turn off queries cache (and free some memory) if case of limit reached
 				if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
@@ -888,7 +899,7 @@ class yf_db {
 			$use_cache = isset($params['use_cache']) ? $params['use_cache'] : true;
 		}
 		$storage = &$this->_db_results_cache;
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && isset($storage[$query])) {
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && isset($storage[$query])) {
 			if ($params['as_object']) {
 				return array_to_object($storage[$query]);
 			}
@@ -910,7 +921,7 @@ class yf_db {
 			@$this->free_result($q);
 		}
 		// Store result in variable cache
-		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !isset($storage[$query])) {
+		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && !isset($storage[$query])) {
 			$storage[$query] = $data;
 			// Permanently turn off queries cache (and free some memory) if case of limit reached
 			if ($this->CACHE_QUERIES_LIMIT && count($storage) > $this->CACHE_QUERIES_LIMIT) {
@@ -929,12 +940,20 @@ class yf_db {
 	*/
 	function query_fetch_cached($query, $cache_ttl = 600) {
 		$cache_key = 'SQL_'.__FUNCTION__.'_'.$this->DB_HOST.'_'.$this->DB_NAME.'_'.abs(crc32($query));
-		$data = cache_get($cache_key);
-		if (!empty($data)) {
-			return $data;
+		$use_cache = true;
+		if ($this->NO_CACHE) {
+			$use_cache = false;
 		}
-		$data = $this->query_fetch($query);
-		cache_set($cache_key, $data);
+		$data = array();
+		if ($use_cache) {
+			$data = cache_get($cache_key);
+		}
+		if (!$data) {
+			$data = $this->query_fetch($query);
+			if ($use_cache) {
+				cache_set($cache_key, $data);
+			}
+		}
 		return $data;
 	}
 
@@ -943,12 +962,20 @@ class yf_db {
 	*/
 	function query_fetch_all_cached($query, $key_name = null, $cache_ttl = 600) {
 		$cache_key = 'SQL_'.__FUNCTION__.'_'.$this->DB_HOST.'_'.$this->DB_NAME.'_'.abs(crc32($query));
-		$data = cache_get($cache_key);
-		if (!empty($data)) {
-			return $data;
+		$use_cache = true;
+		if ($this->NO_CACHE) {
+			$use_cache = false;
 		}
-		$data = $this->query_fetch_all($query, $key_name);
-		cache_set($cache_key, $data);
+		$data = array();
+		if ($use_cache) {
+			$data = cache_get($cache_key);
+		}
+		if (!$data) {
+			$data = $this->query_fetch_all($query, $key_name);
+			if ($use_cache) {
+				cache_set($cache_key, $data);
+			}
+		}
 		return $data;
 	}
 
