@@ -59,7 +59,7 @@ class yf_form2_auto {
 				$values = array();
 #var_dump($a);
 				$type = $this->_field_type($a['type']);
-				$length = intval($a['max_length']);
+				$length = intval($a['length']);
 // TODO: detect foreign keys as select box by constraint
 				if ($name == 'id') {
 					$func = 'info';
@@ -108,7 +108,7 @@ class yf_form2_auto {
 				if (in_array($type, array('int','float','double','decimal')) && $a['unsigned']) {
 					$_extra['min'] = 0;
 				}
-				if (!$a['has_default'] && $a['no_null']) {
+				if ($a['default'] && !$a['nullable']) {
 					$_extra['required'] = 1;
 				}
 				if (false !== strpos($func, '_box')) {
