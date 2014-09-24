@@ -72,11 +72,11 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		$expected = array(
 			'id' => array(
 				'name' => 'id','type' => 'int','length' => '','unsigned' => false,'collate' => NULL,'nullable' => false,
-				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => true,'type_raw' => 'INT UNSIGNED',
+				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => true,'type_raw' => 'INT UNSIGNED','decimals' => null,'charset' => null,'values' => null,
 			),
 			'name' => array(
 				'name' => 'name','type' => 'varchar','length' => '','unsigned' => false,'collate' => null,'nullable' => false,
-				'default' => '\'\'','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'VARCHAR',
+				'default' => '\'\'','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'VARCHAR','decimals' => null,'charset' => null,'values' => null,
 			),
 		);
 		$this->assertEquals( $expected, self::utils()->table_get_columns($this->table_name($table)) );
@@ -93,11 +93,11 @@ class class_db_real_utils_sqlite_test extends db_real_abstract {
 		$expected_columns = array(
 			'id' => array(
 				'name' => 'id','type' => 'int','length' => '','unsigned' => false,'collate' => NULL,'nullable' => false,
-				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => true,'type_raw' => 'INT UNSIGNED',
+				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => true,'type_raw' => 'INT UNSIGNED','decimals' => null,'charset' => null,'values' => null,
 			),
 			'name' => array(
 				'name' => 'name','type' => 'varchar','length' => '','unsigned' => false,'collate' => null,'nullable' => false,
-				'default' => '\'\'','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'VARCHAR',
+				'default' => '\'\'','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'VARCHAR','decimals' => null,'charset' => null,'values' => null,
 			),
 		);
 		$expected = array(
