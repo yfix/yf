@@ -235,6 +235,13 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		}
 		$this->assertNotEmpty($tables_php);
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 0;') );
+
+		$t1 = array_slice($tables_php, 0, 1, true);
+		$t2 = array_slice($tables_php, 1, 1, true);
+		$tables_php = array(
+			key($t1)	=> current($t1),
+			key($t2)	=> current($t2),
+		);
 		foreach ((array)$tables_php as $name => $sql_php) {
 			$table = $db_prefix.$name;
 			$sql_php = $this->_fix_sql_php($sql_php);
@@ -243,12 +250,8 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 			$this->assertTrue( (bool)self::db()->query('SELECT * FROM '.self::table_name($table).' LIMIT 1'), 'selecting from table: '.$table );
 			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($table)) );
 
-			$last_name = '';
 			$cols = $sql_php['fields'];
-			foreach ($cols as $cname => $cinfo) {
-				$last_name = $cname;
-			}
-			$last_col = $cols[$last_name];
+			$last_name = key(array_reverse($cols));
 
 			$before_cols = self::utils()->list_columns(self::table_name($table));
 			$this->assertTrue( (bool)self::utils()->drop_column(self::table_name($table), $last_name) );
@@ -259,7 +262,6 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 
 			$after2_cols = self::utils()->list_columns(self::table_name($table));
 			$this->assertEquals( $before_cols, $after2_cols );
-break;
 		}
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
 
@@ -275,7 +277,10 @@ break;
 		$db_prefix = self::db()->DB_PREFIX;
 		$innodb_has_fulltext = self::_innodb_has_fulltext();
 		$db_installer = _class('db_installer_mysql', 'classes/db/');
-		$db_installer->SHARDING_BY_YEAR = true;
+		$db_installer->SHARDING_BY_YEAR		= true;
+		$db_installer->SHARDING_BY_MONTH	= true;
+		$db_installer->SHARDING_BY_DAY		= true;
+		$db_installer->SHARDING_BY_LANG		= true;
 
 		self::utils()->truncate_database(self::db_name());
 		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
@@ -293,20 +298,29 @@ break;
 		}
 		$this->assertNotEmpty($tables_php);
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 0;') );
+
+		$t1 = array_slice($tables_php, 0, 1, true);
+		$t2 = array_slice($tables_php, 1, 1, true);
+		$t3 = array_slice($tables_php, 2, 1, true);
+		$t4 = array_slice($tables_php, 3, 1, true);
+		$t5 = array_slice($tables_php, 4, 1, true);
+		$tables_php = array(
+			key($t1)	=> current($t1),
+			key($t2).'_2020'	=> current($t2),
+			key($t3).'_2020_03' => current($t3),
+			key($t4).'_2020_03_28' => current($t4),
+			key($t5).'_ru' => current($t5),
+		);
 		foreach ((array)$tables_php as $name => $sql_php) {
-			$table = $db_prefix.$name.'_2014';
+			$table = $db_prefix.$name;
 			$sql_php = $this->_fix_sql_php($sql_php);
 			$this->assertTrue( is_array($sql_php) && count($sql_php) && $sql_php );
 			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($table)) );
 			$this->assertTrue( (bool)self::db()->query('SELECT * FROM '.self::table_name($table).' LIMIT 1'), 'selecting from table: '.$table );
 			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($table)) );
-/*
-			$last_name = '';
+
 			$cols = $sql_php['fields'];
-			foreach ($cols as $cname => $cinfo) {
-				$last_name = $cname;
-			}
-			$last_col = $cols[$last_name];
+			$last_name = key(array_reverse($cols));
 
 			$before_cols = self::utils()->list_columns(self::table_name($table));
 			$this->assertTrue( (bool)self::utils()->drop_column(self::table_name($table), $last_name) );
@@ -317,8 +331,6 @@ break;
 
 			$after2_cols = self::utils()->list_columns(self::table_name($table));
 			$this->assertEquals( $before_cols, $after2_cols );
-*/
-break;
 		}
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
 
