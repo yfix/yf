@@ -23,86 +23,33 @@ class yf_db_ddl_parser_mysql {
 	}
 
 	/**
+	* Useful for ALTER TABLE
+	*/
+	private function _implode_line($a) {
+		foreach ($a as $k => $v) {
+			$v = trim($v);
+			if (!strlen($v)) {
+				unset($a[$k]);
+			}
+		}
+		return '  '.implode(' ', $a);
+	}
+
+	/**
 	*/
 	function create (array $data, $params = array()) {
 		if (!strlen($data['name']) || empty($data['fields'])) {
 			return false;
 		}
-		$implode_line = function($a) {
-			foreach ($a as $k => $v) {
-				$v = trim($v);
-				if (!strlen($v)) {
-					unset($a[$k]);
-				}
-			}
-			return '  '.implode(' ', $a);
-		};
-
 		$table_name = $data['name'];
 		foreach ((array)$data['fields'] as $name => $v) {
-			$name = strtolower($name);
-			$v['type'] = strtolower($v['type']);
-			if (strpos($v['type'], 'int') !== false && !$v['length']) {
-				$v['length'] = $this->_get_int_def_length($v['type']);
-			}
-			$type_braces = (isset($v['length']) && is_numeric($v['length']) ? '('.$v['length']. (isset($v['decimals']) && is_numeric($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
-			if (in_array($v['type'], array('enum','set')) && is_array($v['values']) && count($v['values'])) {
-				$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
-			}
-			$def = false;
-			if ($v['default'] === 'NULL') {
-				$def = 'NULL';
-			} elseif ($v['type'] == 'timestamp') {
-				$def = $v['default'];
-			} elseif (!is_null($v['default'])) {
-				$def = '\''.$v['default'].'\'';
-			}
-			$lines[] = $implode_line(array(
-				'name'		=> '`'.$name.'`',
-				'type'		=> $v['type']. $type_braces,
-				'unsigned'	=> $v['unsigned'] ? 'unsigned' : '',
-				'charset'	=> $v['charset'] && $v['collate'] ? 'CHARACTER SET '.strtolower($v['charset']) : '',
-				'collate'	=> $v['collate'] ? 'COLLATE '.strtolower($v['collate']) : '',
-				'nullable'	=> !$v['nullable'] ? 'NOT NULL' : '',
-				'default'	=> $def ? 'DEFAULT '.$def : '',
-				'auto_inc'	=> $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
-				'on_update'	=> $v['on_update'] ?: '',
-			));
+			$lines[] = $this->create_column_line($name, $v);
 		}
 		foreach ((array)$data['indexes'] as $name => $v) {
-			$type = 'KEY';
-			$v['type'] = strtolower($v['type']);
-			if ($v['type'] == 'primary') {
-				$type = 'PRIMARY KEY';
-				$name = 'PRIMARY';
-			} elseif ($v['type'] == 'unique') {
-				$type = 'UNIQUE KEY';
-			} elseif ($v['type'] == 'fulltext') {
-				$type = 'FULLTEXT KEY';
-			} elseif ($v['type'] == 'spatial') {
-				$type = 'SPATIAL KEY';
-			}
-			if ($name != 'PRIMARY') {
-				$name = strtolower($name);
-			}
-			$lines[] = $implode_line(array(
-				'type'		=> $type,
-				'name'		=> strlen($name) && !is_numeric($name) && in_array($v['type'], array('index', 'unique', 'fulltext', 'spatial')) ? '`'.$name.'`' : '',
-				'columns'	=> strtolower('(`'.implode('`,`', $v['columns']).'`)'),
-			));
+			$lines[] = $this->create_index_line($name, $v);
 		}
 		foreach ((array)$data['foreign_keys'] as $name => $v) {
-			$lines[] = $implode_line(array(
-				'begin'			=> 'CONSTRAINT',
-				'name'			=> '`'.strtolower($name).'`',
-				'fk'			=> 'FOREIGN KEY',
-				'columns'		=> strtolower('(`'.implode('`,`', $v['columns']).'`)'),
-				'ref'			=> 'REFERENCES',
-				'ref_table'		=> '`'.$v['ref_table'].'`',
-				'ref_columns'	=> strtolower('(`'.implode('`,`', $v['ref_columns']).'`)'),
-				'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.strtoupper($v['on_delete']) : '',
-				'on_update'		=> $v['on_update'] ? 'ON UPDATE '.strtoupper($v['on_update']) : '',
-			));
+			$lines[] = $this->create_fk_line($name, $v);
 		}
 		$options = array();
 		foreach ((array)$data['options'] as $k => $v) {
@@ -112,6 +59,83 @@ class yf_db_ddl_parser_mysql {
 			$options[$k] = strtoupper($k).'='.$v;
 		}
 		return 'CREATE TABLE `'.$table_name.'` ('.PHP_EOL. implode(','.PHP_EOL, $lines). PHP_EOL.')'. ($options ? ' '.implode(' ', $options) : '').';';
+	}
+
+	/**
+	* Useful for ALTER TABLE
+	*/
+	function create_column_line ($name, array $v, $params = array()) {
+		$name = strtolower($name);
+		$v['type'] = strtolower($v['type']);
+		if (strpos($v['type'], 'int') !== false && !$v['length']) {
+			$v['length'] = $this->_get_int_def_length($v['type']);
+		}
+		$type_braces = (isset($v['length']) && is_numeric($v['length']) ? '('.$v['length']. (isset($v['decimals']) && is_numeric($v['decimals']) ? ','.$v['decimals'] : '').')' : '');
+		if (in_array($v['type'], array('enum','set')) && is_array($v['values']) && count($v['values'])) {
+			$type_braces = '(\''.implode('\',\'', $v['values']).'\')';
+		}
+		$def = false;
+		if ($v['default'] === 'NULL') {
+			$def = 'NULL';
+		} elseif ($v['type'] == 'timestamp') {
+			$def = $v['default'];
+		} elseif (!is_null($v['default'])) {
+			$def = '\''.$v['default'].'\'';
+		}
+		return $this->_implode_line(array(
+			'name'		=> '`'.$name.'`',
+			'type'		=> $v['type']. $type_braces,
+			'unsigned'	=> $v['unsigned'] ? 'unsigned' : '',
+			'charset'	=> $v['charset'] && $v['collate'] ? 'CHARACTER SET '.strtolower($v['charset']) : '',
+			'collate'	=> $v['collate'] ? 'COLLATE '.strtolower($v['collate']) : '',
+			'nullable'	=> !$v['nullable'] ? 'NOT NULL' : '',
+			'default'	=> $def ? 'DEFAULT '.$def : '',
+			'auto_inc'	=> $v['auto_inc'] ? 'AUTO_INCREMENT' : '',
+			'on_update'	=> $v['on_update'] ?: '',
+		));
+	}
+
+	/**
+	* Useful for ALTER INDEX
+	*/
+	function create_index_line ($name, array $v, $params = array()) {
+		$type = 'KEY';
+		$v['type'] = strtolower($v['type']);
+		if ($v['type'] == 'primary') {
+			$type = 'PRIMARY KEY';
+			$name = 'PRIMARY';
+		} elseif ($v['type'] == 'unique') {
+			$type = 'UNIQUE KEY';
+		} elseif ($v['type'] == 'fulltext') {
+			$type = 'FULLTEXT KEY';
+		} elseif ($v['type'] == 'spatial') {
+			$type = 'SPATIAL KEY';
+		}
+		if ($name != 'PRIMARY') {
+			$name = strtolower($name);
+		}
+		return $this->_implode_line(array(
+			'type'		=> $type,
+			'name'		=> strlen($name) && !is_numeric($name) && in_array($v['type'], array('index', 'unique', 'fulltext', 'spatial')) ? '`'.$name.'`' : '',
+			'columns'	=> strtolower('(`'.implode('`,`', $v['columns']).'`)'),
+		));
+	}
+
+	/**
+	* Useful for ALTER FOREIGN KEY
+	*/
+	function create_fk_line ($name, array $v, $params = array()) {
+		return $this->_implode_line(array(
+			'begin'			=> 'CONSTRAINT',
+			'name'			=> '`'.strtolower($name).'`',
+			'fk'			=> 'FOREIGN KEY',
+			'columns'		=> strtolower('(`'.implode('`,`', $v['columns']).'`)'),
+			'ref'			=> 'REFERENCES',
+			'ref_table'		=> '`'.$v['ref_table'].'`',
+			'ref_columns'	=> strtolower('(`'.implode('`,`', $v['ref_columns']).'`)'),
+			'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.strtoupper($v['on_delete']) : '',
+			'on_update'		=> $v['on_update'] ? 'ON UPDATE '.strtoupper($v['on_update']) : '',
+		));
 	}
 
 	/**
