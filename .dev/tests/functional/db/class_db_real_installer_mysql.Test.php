@@ -169,8 +169,6 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		self::utils()->truncate_database(self::db_name());
 		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
 
-		$db_installer = _class('db_installer_mysql', 'classes/db/');
-
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 		$parser->RAW_IN_RESULTS = false;
 
@@ -215,7 +213,59 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 	* check how db installer table altering working when selecting missing column in db, but have it in structure
 	*/
 	public function test_yf_db_installer_alter_table() {
-// TODO
+		$bak = self::db()->ERROR_AUTO_REPAIR;
+		self::db()->ERROR_AUTO_REPAIR = true;
+
+		$db_prefix = self::db()->DB_PREFIX;
+		$innodb_has_fulltext = self::_innodb_has_fulltext();
+
+		self::utils()->truncate_database(self::db_name());
+		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
+
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$parser->RAW_IN_RESULTS = false;
+
+		$tables_php = array();
+		$globs_php = array(
+			'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*.sql_php.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*.sql_php.php',
+		);
+		foreach ($globs_php as $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen('.sql_php.php'));
+				$tables_php[$t_name] = include $f; // $data should be loaded from file
+			}
+		}
+		$this->assertNotEmpty($tables_php);
+		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 0;') );
+		foreach ((array)$tables_php as $name => $sql_php) {
+			$sql_php = $this->_fix_sql_php($sql_php);
+			$this->assertTrue( is_array($sql_php) && count($sql_php) && $sql_php );
+			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
+			$this->assertTrue( (bool)self::db()->query('SELECT * FROM '.self::table_name($db_prefix.$name).' LIMIT 1'), 'selecting from table: '.$db_prefix.$name );
+			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
+
+			$last_name = '';
+			$cols = $sql_php['fields'];
+			foreach ($cols as $cname => $cinfo) {
+				$last_name = $cname;
+			}
+			$last_col = $cols[$last_name];
+
+			$before_cols = self::utils()->list_columns(self::table_name($db_prefix.$name));
+			$this->assertTrue( (bool)self::utils()->drop_column(self::table_name($db_prefix.$name), $last_name) );
+			$after_cols = self::utils()->list_columns(self::table_name($db_prefix.$name));
+			$this->assertNotEquals( $before_cols, $after_cols );
+
+			$this->assertTrue( self::db()->query('SELECT `'.implode('`,`', array_keys($before_cols)).'` FROM '.$db_prefix.$name.' LIMIT 1') );
+
+			$after2_cols = self::utils()->list_columns(self::table_name($db_prefix.$name));
+			$this->assertEquals( $before_cols, $after2_cols );
+break;
+		}
+		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
+
+		self::db()->ERROR_AUTO_REPAIR = $bak;
 	}
 
 	/***/
