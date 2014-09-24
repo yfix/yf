@@ -268,11 +268,11 @@ abstract class yf_db_installer {
 		if (!$this->_get_lock()) {
 			return false;
 		}
-		if (substr($table_name, 0, strlen($db->DB_PREFIX)) == $db->DB_PREFIX) {
+		if (strlen($db->DB_PREFIX) && substr($table_name, 0, strlen($db->DB_PREFIX)) === $db->DB_PREFIX) {
 			$table_name = substr($table_name, strlen($db->DB_PREFIX));
 		}
 		$avail_tables = $db->meta_tables();
-		if (!in_array($db->DB_PREFIX. $table_name, $avail_tables)) {
+		if (!in_array($db->DB_PREFIX.$table_name, $avail_tables)) {
 			return false;
 		}
 		$cache_name = __CLASS__.'__'.__FUNCTION__.'__'.$table_name;
