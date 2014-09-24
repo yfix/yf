@@ -634,10 +634,10 @@ class yf_db {
 	*/
 	function get_table_columns_cached($table, $no_cache = false) {
 		$cache_name = __FUNCTION__.'|'.$table.'|'.$this->DB_HOST.'|'.$this->DB_PORT.'|'.$this->DB_NAME.'|'.$this->DB_PREFIX;
-		$data = array();
 		if ($this->NO_CACHE) {
 			$no_cache = true;
 		}
+		$data = array();
 		if (!$no_cache) {
 			$data = cache_get($cache_name);
 		}
@@ -657,7 +657,6 @@ class yf_db {
 			return $data;
 		}
 		$cols = $this->get_table_columns_cached($table, $extra['no_cache']);
-var_dump($cols);
 		if (!$cols) {
 			$msg = __CLASS__.'->'.__FUNCTION__.': columns for table '.$table.' is empty, truncating data array';
 			if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
