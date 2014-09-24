@@ -166,15 +166,15 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$expected = array(
 			'id' => array(
 				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collate' => NULL,'nullable' => false,
-				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned',
+				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned','decimals' => null,'charset' => null,'values' => null,
 			),
 			'name' => array(
 				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)',
+				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)','decimals' => null,'charset' => null,'values' => null,
 			),
 			'active' => array(
 				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
+				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')','decimals' => null,'charset' => null,'values' => array('0' => '0', '1' => '1'),
 			),
 		);
 		$this->assertEquals( $expected, self::utils()->table_get_columns($this->table_name($table)) );
@@ -193,15 +193,15 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$expected_columns = array(
 			'id' => array(
 				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collate' => NULL,'nullable' => false,
-				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned',
+				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned','decimals' => null,'charset' => null,'values' => null,
 			),
 			'name' => array(
 				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)',
+				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)','decimals' => null,'charset' => null,'values' => null,
 			),
 			'active' => array(
 				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
+				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')','decimals' => null,'charset' => null,'values' => array('0' => '0', '1' => '1'),
 			),
 		);
 		$expected = array(
