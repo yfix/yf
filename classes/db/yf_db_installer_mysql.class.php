@@ -158,60 +158,24 @@ class yf_db_installer_mysql extends yf_db_installer {
 	}
 
 	/**
-	* Do create table
 	*/
-	function _do_create_table ($full_table_name, $table_struct, $db) {
-		$TABLE_OPTIONS = $this->_DEF_TABLE_OPTIONS;
-
+	function _do_create_table ($full_table_name, $sql_php, $db) {
 // TODO: convert into db utils()
-
-		$_options_to_merge = array();
-		// Get table options from table structure
-		// Example: /** ENGINE=MEMORY **/
-		if (preg_match('#\/\*\*([^\*\/]+)\*\*\/$#i', trim($table_struct), $m)) {
-			// Cut comment with options from source table structure
-			// to prevent misunderstanding
-			$table_struct = str_replace($m[0], '', $table_struct);
-
-			$_raw_options = str_replace(array("\r","\n","\t"), array('','',' '), trim($m[1]));
-
-			$_pattern = '/('.implode('|', $this->_KNOWN_TABLE_OPTIONS).")[\s]{0,}=[\s]{0,}([\']{0,1}[^\'\,]+[\']{0,1})/ims";
-			if (preg_match_all($_pattern, $_raw_options, $m)) {
-				foreach ((array)$m[0] as $_id => $v) {
-					$_option_key = strtoupper(trim($m[1][$_id]));
-					$_option_val = trim($m[2][$_id]);
-					if (!in_array($_option_key, $this->_KNOWN_TABLE_OPTIONS)) {
-						continue;
-					}
-					$_options_to_merge[$_option_key] = $_option_val;
-				}
+		$default_options = $this->_DEF_TABLE_OPTIONS;
+		foreach ((array)$default_options as $k => $v) {
+			if (!isset($sql_php['options'][$k])) {
+				$sql_php['options'][$k] = $v;
 			}
 		}
-		if (!empty($_options_to_merge)) {
-			foreach ((array)$_options_to_merge as $k => $v) {
-				$TABLE_OPTIONS[$k] = $v;
-			}
-		}
-		$_tmp = array();
-		foreach ((array)$TABLE_OPTIONS as $k => $v) {
-			$_tmp[$k] = $k.'='.$v;
-		}
-		$_table_options_string = '';
-		if (!empty($_tmp)) {
-			$_table_options_string = ' '.implode(', ', $_tmp);
-		}
-		$if_not_exists = ($this->USE_SQL_IF_NOT_EXISTS ? 'IF NOT EXISTS ' : '');
-		$sql = 'CREATE TABLE '.$if_not_exists. $db->escape_key($full_table_name).' ('.PHP_EOL. $table_struct.')'.$_table_options_string;
+		$sql_php['name'] = $full_table_name;
+		$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create($sql_php);
 		return $db->query($sql);
 	}
 
 	/**
-	* Do alter table structure
 	*/
 	function _do_alter_table ($table_name, $column_name, $table_struct, $db) {
-
 // TODO: convert into db utils()
-
 		$struct = $table_struct[$column_name];
 		$sql = 'ALTER TABLE '.$db->DB_PREFIX. $table_name. ' ADD '._class('db_ddl_parser_mysql', 'classes/db/')->create_column_line($column_name, $struct);
 		return $db->query($sql);
