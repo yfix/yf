@@ -164,7 +164,6 @@ class yf_db_installer_mysql extends yf_db_installer {
 		$TABLE_OPTIONS = $this->_DEF_TABLE_OPTIONS;
 
 // TODO: convert into db utils()
-// TODO: unify with latest db ddl parser
 
 		$_options_to_merge = array();
 		// Get table options from table structure
@@ -201,8 +200,8 @@ class yf_db_installer_mysql extends yf_db_installer {
 		if (!empty($_tmp)) {
 			$_table_options_string = ' '.implode(', ', $_tmp);
 		}
-		$sql = 'CREATE TABLE '.($this->USE_SQL_IF_NOT_EXISTS ? 'IF NOT EXISTS' : '').' '.$db->escape_key($full_table_name).' ('.PHP_EOL. 
-			$table_struct.')'.$_table_options_string;
+		$if_not_exists = ($this->USE_SQL_IF_NOT_EXISTS ? 'IF NOT EXISTS ' : '');
+		$sql = 'CREATE TABLE '.$if_not_exists. $db->escape_key($full_table_name).' ('.PHP_EOL. $table_struct.')'.$_table_options_string;
 		return $db->query($sql);
 	}
 
@@ -210,20 +209,11 @@ class yf_db_installer_mysql extends yf_db_installer {
 	* Do alter table structure
 	*/
 	function _do_alter_table ($table_name, $column_name, $table_struct, $db) {
-		$column_struct = $table_struct[$column_name];
-		if ($column_struct['type'] != 'int' && $column_struct['default'] == '') {
-			unset($column_struct['default']);
-		}
+
 // TODO: convert into db utils()
-// TODO: unify with latest db ddl parser
-		$sql = 'ALTER TABLE '.$db->DB_PREFIX. $table_name. PHP_EOL.
-			"\t".'ADD '._es($column_name).' '.strtoupper($column_struct['type']).
-			(!empty($column_struct['length'])	? '('.$column_struct['length'].')' : '').
-			(!empty($column_struct['attrib'])	? ' '.$column_struct['attrib'].'' : '').
-			(!empty($column_struct['not_null'])	? ' NOT NULL' : '').
-			(isset($column_struct['default'])	? ' DEFAULT \''.$column_struct['default'].'\'' : '').
-			(!empty($column_struct['auto_inc'])	? ' AUTO_INCREMENT' : '').
-		';';
+
+		$struct = $table_struct[$column_name];
+		$sql = 'ALTER TABLE '.$db->DB_PREFIX. $table_name. ' ADD '._class('db_ddl_parser_mysql', 'classes/db/')->create_column_line($column_name, $struct);
 		return $db->query($sql);
 	}
 }
