@@ -70,10 +70,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		if (!$extra['sql'] && !$this->table_exists($table)) {
-			$error = 'table_name not exists';
-			return false;
-		}
 		$cols = array();
 		$q = $this->db->query('PRAGMA table_info('.$this->_escape_table_name($table).')');
 		while ($a = $this->db->fetch_assoc($q)) {
@@ -810,8 +806,8 @@ COMMIT;
 
 	/**
 	*/
-	function _escape_database_name($name = '') {
-		$name = trim($name);
+	public function _escape_database_name($name = '') {
+		$name = str_replace(array('\'', '"', '`'), '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
@@ -821,7 +817,7 @@ COMMIT;
 	/**
 	*/
 	function _escape_table_name($name = '') {
-		$name = trim($name);
+		$name = str_replace(array('\'', '"', '`'), '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
@@ -844,7 +840,7 @@ COMMIT;
 	/**
 	*/
 	function _escape_key($key = '') {
-		$key = trim($key);
+		$key = trim(trim($key), '`');
 		if (!strlen($key)) {
 			return '';
 		}
@@ -869,7 +865,7 @@ COMMIT;
 	/**
 	*/
 	function _escape_val($val = '') {
-		$val = trim($val);
+		$val = trim(trim($val), '\'');
 		if (!strlen($val)) {
 			return '';
 		}
