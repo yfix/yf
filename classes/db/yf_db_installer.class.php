@@ -51,7 +51,7 @@ abstract class yf_db_installer {
 
 	/**
 	*/
-	abstract protected function _do_alter_table ($table_name, $column_name, $sql_php, $db);
+	abstract protected function _do_alter_table ($table_name, $column_name, array $sql_php, $db);
 
 	/**
 	*/
@@ -59,7 +59,7 @@ abstract class yf_db_installer {
 
 	/**
 	*/
-	abstract protected function _do_create_table ($full_table_name, $sql_php, $db);
+	abstract protected function _do_create_table ($full_table_name, array $sql_php, $db);
 
 	/**
 	* This method can be inherited in project with custom rules inside.
