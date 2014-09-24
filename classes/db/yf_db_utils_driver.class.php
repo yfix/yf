@@ -1538,7 +1538,7 @@ WHERE table_schema = "schemaname"
 		if (strlen($db_prefix)) {
 			$plen = strlen($db_prefix);
 			foreach ($tables as $table) {
-				if (substr($name, 0, $plen) !== $db_prefix) {
+				if (substr($table, 0, $plen) !== $db_prefix) {
 					unset($tables[$table]);
 				}
 			}
