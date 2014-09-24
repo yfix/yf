@@ -9,7 +9,8 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	*/
 	public function _get_supported_field_types() {
 		return array(
-			'bit','int','real','float','double','decimal','numeric',
+			'bit','tinyint','smallint','mediumint','bigint','integer','int',
+			'real','float','double','decimal','numeric',
 			'varchar','char','tinytext','mediumtext','longtext','text',
 			'tinyblob','mediumblob','longblob','blob','varbinary','binary',
 			'timestamp','datetime','time','date','year',
@@ -21,7 +22,8 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	*/
 	public function _get_unsigned_field_types() {
 		return array(
-			'bit','int','real','double','float','decimal','numeric'
+			'bit','tinyint','smallint','mediumint','bigint','integer','int',
+			'real','double','float','decimal','numeric'
 		);
 	}
 
@@ -111,7 +113,7 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 		foreach ((array)$this->db->get_all($sql) as $a) {
 			$table = $a['table_name'];
 			$name = $a['constraint_name'];
-			$type = 'key';
+			$type = 'index';
 			if ($a['constraint_type'] === 'PRIMARY KEY') {
 				$type = 'primary';
 			} elseif ($a['constraint_type'] === 'UNIQUE') {
@@ -119,10 +121,11 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			} elseif ($a['constraint_type'] == 'FULLTEXT') {
 				$type = 'fulltext';
 			}
+			$columns = explode(', ', $a['column_list']);
 			$indexes[$table][$name] = array(
 				'name'		=> $name,
 				'type'		=> $type,
-				'columns'	=> explode(', ', $a['column_list']),
+				'columns'	=> array_combine($columns, $columns),
 			);
 		}
 		return $indexes;
