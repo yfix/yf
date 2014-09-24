@@ -30,7 +30,6 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 
 		$db_prefix = self::db()->DB_PREFIX;
 
-#		$this->assertTrue( (bool)self::utils()->truncate_database(self::db_name()) );
 		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
 
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
