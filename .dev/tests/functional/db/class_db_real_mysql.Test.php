@@ -256,8 +256,8 @@ class class_db_real_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$data = array('id' => 1, 'id2' => 11, 'id3' => 111);
 		$data_wrong = $data + array('not_existing_col' => 1);
-		$this->assertEquals( $data, self::db()->_fix_data_safe($this->table_name($table), $data) );
-		$this->assertEquals( $data, self::db()->_fix_data_safe($this->table_name($table), $data_wrong) );
+		$this->assertEquals( $data, self::db()->_fix_data_safe($this->table_name($table), $data, array('no_cache' => 1)) );
+		$this->assertEquals( $data, self::db()->_fix_data_safe($this->table_name($table), $data_wrong, array('no_cache' => 1)) );
 
 		$data = array(
 			1 => array('id' => 1, 'id2' => 11, 'id3' => 111),
@@ -266,8 +266,8 @@ class class_db_real_mysql_test extends db_real_abstract {
 		$data_wrong = $data;
 		$data_wrong[1]['not_existing_col'] = 1;
 		$data_wrong[2]['not_existing_col'] = 2;
-		$this->assertEquals( $data, self::db()->_fix_data_safe($this->table_name($table), $data) );
-		$this->assertEquals( $data, self::db()->_fix_data_safe($this->table_name($table), $data_wrong) );
+		$this->assertEquals( $data, self::db()->_fix_data_safe($this->table_name($table), $data, array('no_cache' => 1)) );
+		$this->assertEquals( $data, self::db()->_fix_data_safe($this->table_name($table), $data_wrong, array('no_cache' => 1)) );
 	}
 	public function test_insert_safe() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
