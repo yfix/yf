@@ -237,34 +237,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'table_name not exists';
 			return false;
 		}
-/*
-		$cols = array();
-		$q = $this->db->query('SHOW FULL COLUMNS FROM '.$this->_escape_table_name($table));
-		while ($a = $this->db->fetch_assoc($q)) {
-			$name = $a['Field'];
-			list($type, $length, $unsigned, $decimals, $values) = array_values($this->_parse_column_type($a['Type']));
-			$cols[$name] = array(
-				'name'		=> $name,
-				'type'		=> $type,
-				'length'	=> $length,
-				'decimals'	=> $decimals ?: null,
-				'unsigned'	=> $unsigned,
-				'nullable'	=> $a['Null'] == 'NO' ? false : true,
-				'default'	=> $a['Default'] != 'NULL' ? $a['Default'] : null,
-				'charset'	=> NULL,
-				'collate'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
-				'auto_inc'	=> false !== strpos(strtolower($a['Extra']), 'auto_increment') ? true : false,
-				'primary'	=> $a['Key'] == 'PRI',
-				'unique'	=> $a['Key'] == 'UNI',
-				'values'	=> is_array($values) && count($values) ? $values : NULL,
-			);
-			if (false !== strpos(strtolower($a['Extra']), 'on update') && in_array($type, array('timestamp','datetime'))) {
-				$cols[$name]['on_update'] = $a['Extra'];
-			}
-			$cols[$name]['type_raw'] = $a['Type'];
-		}
-		return $cols;
-*/
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -285,28 +258,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-/*
-		$info = $this->db->get('SHOW TABLE STATUS'. (strlen($db_name) ? ' FROM '.$this->_escape_database_name($db_name).' LIKE "'.$this->db->_fix_table_name($table).'"' : ''));
-		if (!$info) {
-			$error = 'table_name not exists';
-			return false;
-		}
-		return array(
-			'name'			=> $table,
-			'db_name'		=> $db_name,
-			'columns'		=> $this->table_get_columns($orig_table),
-			'row_format'	=> $info['Row_format'],
-			'charset'		=> null,
-			'collate'		=> $info['Collation'],
-			'engine'		=> $info['Engine'],
-			'rows'			=> $info['Rows'],
-			'data_size'		=> $info['Data_length'],
-			'auto_inc'		=> $info['Auto_increment'],
-			'comment'		=> $info['Comment'],
-			'create_time'	=> $info['Create_time'],
-			'update_time'	=> $info['Update_time'],
-		);
-*/
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -508,26 +460,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-/*
-		// Possible alternative query: SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test3' AND TABLE_NAME = 't_user' AND COLUMN_KEY = 'PRI';
-		$indexes = array();
-		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->_escape_table_name($table)) as $row) {
-			$type = 'key';
-			if ($row['Key_name'] === 'PRIMARY') {
-				$type = 'primary';
-			} elseif (!$row['Non_unique']) {
-				$type = 'unique';
-			} elseif ($row['Index_type'] == 'FULLTEXT') {
-				$type = 'fulltext';
-			}
-			$indexes[$row['Key_name']] = array(
-				'name'		=> $row['Key_name'],
-				'type'		=> $type,
-			);
-			$indexes[$row['Key_name']]['columns'][$row['Seq_in_index'] - 1] = $row['Column_name'];
-		}
-		return $indexes;
-*/
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -563,31 +496,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'fields are empty';
 			return false;
 		}
-/*
-		// gemerate index name from columns names
-		$index_name = $index_name ?: implode('_', $fields);
-		if (!strlen($index_name)) {
-			$error = 'index name is empty';
-			return false;
-		}
-		$index_type = strtolower($extra['type'] ?: 'index');
-		$supported_types = array(
-			'index'		=> 'index',
-			'primary' 	=> 'primary key',
-			'unique' 	=> 'unique key',
-			'fulltext' 	=> 'fulltext key',
-		);
-		if (!isset($supported_types[$index_type])) {
-			$error = 'index type is not supported';
-			return false;
-		}
-		if ($index_name == 'PRIMARY' || $index_type == 'primary') {
-			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD PRIMARY KEY ('.implode(',', $this->_escape_fields($fields)).')';
-		} else {
-			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD '.strtoupper($supported_types[$index_type]).' '.$this->_escape_val($index_name).' ('.implode(',', $this->_escape_fields($fields)).')';
-		}
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-*/
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -601,14 +510,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'index name is empty';
 			return false;
 		}
-/*
-		if ($index_name == 'PRIMARY') {
-			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP PRIMARY KEY';
-		} else {
-			$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP INDEX '.$this->_escape_key($index_name);
-		}
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-*/
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -644,23 +546,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-/*
-		$keys = array();
-		$sql = 'SELECT CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
-			FROM information_schema.KEY_COLUMN_USAGE
-			WHERE TABLE_SCHEMA = '.$this->_escape_val($db_name).' 
-				AND REFERENCED_TABLE_NAME IS NOT NULL 
-				AND TABLE_NAME = '. $this->_escape_val($this->db->_fix_table_name($table));
-		foreach ((array)$this->db->get_all($sql) as $id => $row) {
-			$keys[$row['CONSTRAINT_NAME']] = array(
-				'name'		=> $row['CONSTRAINT_NAME'], // foreign key name
-				'local'		=> $row['COLUMN_NAME'], // local columns
-				'table'		=> $row['REFERENCED_TABLE_NAME'], // referenced table
-				'foreign' 	=> $row['REFERENCED_COLUMN_NAME'], // referenced columns
-			);
-		}
-		return $keys;
-*/
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -692,8 +578,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'table name is empty';
 			return false;
 		}
-#		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP FOREIGN KEY '.$this->_escape_key($index_name);
-#		return $extra['sql'] ? $sql : $this->db->query($sql);
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -726,16 +611,8 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 		);
 		$on_delete = isset($extra['on_delete']) && isset($supported_ref_options[$extra['on_delete']]) ? $supported_ref_options[$extra['on_delete']] : '';
 		$on_update = isset($extra['on_update']) && isset($supported_ref_options[$extra['on_update']]) ? $supported_ref_options[$extra['on_update']] : '';
-/*
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).PHP_EOL
-			. ' ADD CONSTRAINT '.$this->_escape_key($index_name).PHP_EOL
-			. ' FOREIGN KEY ('.implode(',', $this->_escape_fields($fields)).')'.PHP_EOL
-			. ' REFERENCES '.$this->_escape_key($ref_table).' ('.implode(',', $this->_escape_fields($ref_fields)).')'.PHP_EOL
-			. ($on_delete ? ' ON DELETE '.$on_delete : '').PHP_EOL
-			. ($on_update ? ' ON UPDATE '.$on_update : '')
-		;
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-*/
+
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -763,22 +640,8 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-/*
-		$sql = 'SELECT table_name FROM information_schema.tables WHERE table_schema = '.$this->_escape_val($db_name). ' AND table_type = "VIEW"';
-		$views = array();
-		foreach ((array)$this->db->get_all($sql) as $a) {
-			$name = $a['table_name'];
-			$create_view = '';
-			if (!$extra['no_details']) {
-				$create_view = $this->db->get('SHOW CREATE VIEW '.$this->_escape_table_name($db_name.'.'.$name));
-				if (is_array($create_view)) {
-					$create_view = $create_view['Create View'];
-				}
-			}
-			$views[$name] = $create_view;
-		}
-		return $views;
-*/
+
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -830,8 +693,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'view name is empty';
 			return false;
 		}
-#		$sql = 'DROP VIEW IF EXISTS '.$this->_escape_table_name($table);
-#		return $extra['sql'] ? $sql : $this->db->query($sql);
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -841,8 +703,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'table is empty';
 			return false;
 		}
-#		$sql = 'CREATE VIEW '.$this->_escape_table_name($table).' AS '.$sql_as;
-#		return $extra['sql'] ? $sql : $this->db->query($sql);
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -855,21 +716,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-/*
-		$triggers = array();
-		foreach ((array)$this->db->get_all('SHOW TRIGGERS FROM '.$this->_escape_database_name($db_name)) as $a) {
-			$name = $a['Trigger'];
-			$triggers[$name] = array(
-				'name'		=> $name,
-				'table'		=> $a['Table'],
-				'event'		=> $a['Event'],
-				'timing'	=> $a['Timing'],
-				'statement'	=> $a['Statement'],
-				'definer'	=> $a['definer'],
-			);
-		}
-		return $triggers;
-*/
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -921,8 +768,7 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'name is empty';
 			return false;
 		}
-#		$sql = 'DROP TRIGGER IF EXISTS '.$this->_escape_table_name($name);
-#		return $extra['sql'] ? $sql : $this->db->query($sql);
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -970,183 +816,38 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'trigger body is empty';
 			return false;
 		}
-/*
-		$sql = 'CREATE TRIGGER '.$this->_escape_table_name($db_name.'.'.$name). PHP_EOL
-			. ' '.strtoupper($trigger_time). ' '.strtoupper($trigger_event). PHP_EOL
-			. ' ON '.$this->_escape_table_name($db_name.'.'.$table).' FOR EACH ROW '
-			. $trigger_body;
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-*/
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
 	*/
 	public function _parse_column_type($str, &$error = false) {
-// TODO
-		$str = trim($str);
-		$type = $length = $decimals = $values = null;
-		if (preg_match('~^(?P<type>[a-z]+)[\s\t]*\((?P<length>[^\)]+)\)~i', $str, $m)) {
-			$type = $m['type'];
-			$length = $m['length'];
-		} elseif (preg_match('~^(?P<type>[a-z]+)~i', $str, $m)) {
-			$type = $m['type'];
-		}
-		$types = $this->_get_supported_field_types();
-		$types = array_combine($types, $types);
-		if ($type) {
-			$type = strtolower($type);
-			foreach ((array)$types as $_type) {
-				if (false !== strpos($type, $_type)) {
-					$type = $_type;
-					break;
-				}
-			}
-		}
-		if ($length && !is_numeric($length) && false !== strpos($length, ',')) {
-			if (in_array($type, array('real','double','float','decimal','numeric'))) {
-				list($length, $decimals) = explode(',',$length);
-				$length = (int)trim($length);
-				$decimals = (int)trim($decimals);
-			} elseif (in_array($type, array('enum','set'))) {
-				$values = array();
-				foreach(explode(',', $length) as $v) {
-					$v = trim(trim(trim($v),'\'"'));
-					if (strlen($v)) {
-						$values[$v] = $v;
-					}
-				}
-				$length = '';
-			}
-		}
-		return array(
-			'type'		=> $type,
-			'length'	=> $length,
-			'unsigned'	=> false !== strpos(strtolower($str), 'unsigned') && in_array($type, $this->_get_unsigned_field_types()) ? true : false,
-			'decimals'	=> $decimals,
-			'values'	=> $values,
-		);
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
 	* Create part of SQL for "CREATE TABLE" from array of params
 	*/
 	public function _compile_create_table($data, $extra = array(), &$error = false) {
-// TODO
-		if (!is_array($data) || !count($data)) {
-			return false;
-		}
-		// 1-dimensional array detected, convert it into 2-dimensional
-		if (isset($data['name']) && is_string($data['name'])) {
-			$data = array($data);
-		}
-		$items = array();
-		foreach ((array)$data as $v) {
-			$name = $v['name'];
-			if (!$v['key'] && !$name && !$extra['no_name']) {
-				continue;
-			}
-			$type = strtolower($v['type']);
-			if (!isset($v['key']) && !in_array($type, $this->_get_supported_field_types())) {
-				continue;
-			}
-			$unsigned = $v['unsigned'];
-			if (!isset($v['key']) && $unsigned && !in_array($type, $this->_get_unsigned_field_types())) {
-				$unsigned = false;
-			}
-			$length = $v['length'];
-			$default = $v['default'];
-			$null = null;
-			if (isset($v['nullable'])) {
-				$null = (bool)$v['nullable'];
-			} elseif (isset($v['null'])) {
-				$null = (bool)$v['null'];
-			} elseif (isset($v['not_null'])) {
-				$null = (bool)(!$v['not_null']);
-			}
-			$auto_inc = $v['auto_inc'] || $v['auto_increment'];
-			if ($auto_inc && $type != 'int') {
-				$auto_inc = false;
-			}
-			if ($auto_inc) {
-				$null = false;
-				$unsigned = true;
-			}
-			$comment = $v['comment'];
-/*
-			if (isset($v['key'])) {
-				$items[] = strtoupper($v['key']).' KEY '.($name ? $this->_escape_key($name).' ' : '').'('.(is_array($v['key_cols']) ? implode(',', $v['key_cols']) : $v['key_cols']).')';
-			} else {
-				$items[$name] = (!$extra['no_name'] ? $this->_escape_key($name).' ' : '')
-					.strtoupper($type)
-					. ($length ? '('.$length.')' : '')
-					. (isset($unsigned) ? ' UNSIGNED' : '')
-					. (isset($null) ? ' '.($null ? 'NULL' : 'NOT NULL') : '')
-					. (isset($default) ? ' DEFAULT \''.addslashes($default).'\'' : '')
-					. ($auto_inc ? ' AUTO_INCREMENT' : '')
-					. (strlen($comment) ? ' COMMENT \''.addslashes($comment).'\'' : '')
-				;
-			}
-*/
-		}
-		return implode(','.PHP_EOL, $items);
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
 	*/
 	public function _escape_database_name($name = '') {
-		$name = trim($name);
-		if (!strlen($name)) {
-			return false;
-		}
-		return is_object($this->db) ? $this->db->escape_key($name) : '"'.addslashes($name).'"';
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
 	*/
 	public function _escape_table_name($name = '') {
-		$name = trim($name);
-		if (!strlen($name)) {
-			return false;
-		}
-		$db = '';
-		$table = '';
-		if (strpos($name, '.') !== false) {
-			list($db, $table) = explode('.', $name);
-			$db = trim($db);
-			$table = trim($table);
-		} else {
-			$table = $name;
-		}
-		if (!strlen($table)) {
-			return false;
-		}
-		$table = $this->db->_fix_table_name($table);
-		return (strlen($db) ? $this->_escape_database_name($db).'.' : ''). (is_object($this->db) ? $this->db->escape_key($table) : '"'.addslashes($table).'"');
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
 	*/
 	public function _escape_key($key = '') {
-		$key = trim($key);
-		if (!strlen($key)) {
-			return '';
-		}
-		$out = '';
-		if ($key != '*' && false === strpos($key, '.') && false === strpos($key, '(')) {
-			$out = is_object($this->db) ? $this->db->escape_key($key) : '"'.addslashes($key).'"';
-		} else {
-			// split by "." and escape each value
-			if (false !== strpos($key, '.') && false === strpos($key, '(') && false === strpos($key, ' ')) {
-				$tmp = array();
-				foreach (explode('.', $key) as $v) {
-					$tmp[] = is_object($this->db) ? $this->db->escape_key($v) : '"'.addslashes($v).'"';
-				}
-				$out = implode('.', $tmp);
-			} else {
-				$out = $key;
-			}
-		}
-		return $out;
+// TODO: use code from mysql and adapt it
 	}
 
 	/**
@@ -1186,81 +887,5 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 		}
 // TODO: support for binding params (':field' => $val)
 		return is_object($this->db) && method_exists($this->db, '_es') ? $this->db->_es($val) : addslashes($val);
-	}
-
-	/**
-	* Meta Columns
-	*/
-	function meta_columns($table) {
-		$retarr = array();
-/*
-		$sql = "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum 
-			FROM pg_class c, pg_attribute a,pg_type t 
-			WHERE relkind IN ('r','v') AND (c.relname='%s' or c.relname = lower('%s')) AND a.attname NOT LIKE '....%%'
-			AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
-
-		$Q = $this->db->query(sprintf($sql, $table));
-		while ($A = $this->db->fetch_row($Q)) {
-			$fld = array();
-
-			$fld['name']= $A[0];
-			$type		= $A[1];
-
-			$fld['scale'] = null;
-			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-				$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
-			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-			} elseif (preg_match('/^(enum)\((.*)\)$/i', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = max(array_map('strlen',explode(',',$query_array[2]))) - 2; // PHP >= 4.0.6
-				$fld['max_length'] = ($fld['max_length'] == 0 ? 1 : $fld['max_length']);
-			} else {
-				$fld['type'] = $type;
-				$fld['max_length'] = -1;
-			}
-			$fld['not_null']		= ($A[2] != 'YES');
-			$fld['primary_key']		= ($A[3] == 'PRI');
-			$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
-			$fld['binary']			= (strpos($type,'blob') !== false);
-			$fld['unsigned']		= (strpos($type,'unsigned') !== false);
-			if (!$fld['binary']) {
-				$d = $A[4];
-				if ($d != '' && $d != 'NULL') {
-					$fld['has_default'] = true;
-					$fld['default_value'] = $d;
-				} else {
-					$fld['has_default'] = false;
-				}
-			}
-			$retarr[strtolower($fld['name'])] = $fld;
-		}
-*/
-		return $retarr;
-	}
-
-	/**
-	* Meta Tables
-	*/
-	function meta_tables($DB_PREFIX = '') {
-/*
-		$sql = 'SELECT tablename,\'T\' FROM pg_tables WHERE tablename NOT LIKE \'pg\_%\'
-					AND tablename NOT IN (\'sql_features\', \'sql_implementation_info\', \'sql_languages\', \'sql_packages\', \'sql_sizing\', \'sql_sizing_profiles\') 
-				UNION 
-					SELECT viewname,\'V\' FROM pg_views WHERE viewname NOT LIKE \'pg\_%\'';
-		$q = $this->db->query($sql);
-		while ($a = $this->db->fetch_row($q)) {
-			$name = $a['0'];
-			// Skip tables without prefix of current connection
-			if (strlen($DB_PREFIX) && substr($name, 0, strlen($DB_PREFIX)) != $DB_PREFIX) {
-				continue;
-			}
-			$tables[$name] = $name;
-		}
-		return $tables;
-*/
 	}
 }
