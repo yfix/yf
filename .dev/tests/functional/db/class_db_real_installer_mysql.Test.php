@@ -14,7 +14,7 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		self::utils()->truncate_database(self::db_name());
 	}
 	public static function tearDownAfterClass() {
-		self::utils()->truncate_database(self::db_name());
+#		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 	public static function db_name() {
@@ -99,8 +99,13 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 	}
 
 	/***/
-	public function test_yf_db_installer() {
+	public function test_yf_db_installer_basic() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+
+		$db_prefix = self::db()->DB_PREFIX;
+
+		self::utils()->truncate_database(self::db_name());
+		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
 
 		$db_installer = _class('db_installer_mysql', 'classes/db/');
 
@@ -131,26 +136,50 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 				$tables_php[$t_name] = include $f; // $data should be loaded from file
 			}
 		}
-/*
+
 		$this->assertNotEmpty($tables_sql);
 		$this->assertNotEmpty($tables_php);
 		$this->assertEquals(array_keys($tables_sql), array_keys($tables_php));
+
+		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 0;') );
 		
-		foreach ((array)$tables_sql as $name => $sql) {
-			$orig_sql = $sql;
+		$tables = array();
+		foreach ((array)$tables_php as $name => $php_sql) {
+			$tables[$db_prefix.$name] = $db_prefix.$name;
 
-			$expected = $tables_php[$name];
-			$this->assertNotEmpty($expected);
+			$this->assertTrue( (bool)self::utils()->drop_table(self::table_name($db_prefix.$name)) );
+			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
 
-			$response = $parser->parse($sql);
-			unset($expected['name']);
-			unset($response['name']);
-			$this->assertEquals($expected, $response, 'Parse create table raw: '.$name);
+			$php_sql['name'] = $db_prefix.$name;
+			$sql = $parser->create($php_sql);
 
-			$response2 = $db_installer->create_table_sql_to_php($sql);
-			unset($response2['name']);
-			$this->assertEquals($expected, $response2, 'Parse create table with db_installer create_table_sql_to_php: '.$name);
+			$this->assertTrue( (bool)self::db()->query($sql) );
+			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($db_prefix.$name)) );
 		}
-*/
+		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
+
+		$this->assertEquals( $tables, self::utils()->list_tables(self::db_name()) );
 	}
+
+	/***/
+	public function test_yf_db_installer_create_missing_table() {
+// TODO: check how db installer table creating working when selecting missing column in db, but have it in structure
+	}
+
+	/***/
+	public function test_yf_db_installer_alter_table() {
+// TODO: check how db installer table altering working when selecting missing column in db, but have it in structure
+	}
+
+	/***/
+	public function test_yf_db_installer_fix_table_indexes() {
+// TODO
+	}
+
+	/***/
+	public function test_yf_db_installer_fix_table_foreign_keys() {
+// TODO
+	}
+// TODO: db installer events before/after create/alter table tests
+// TODO: db installer extending tests
 }
