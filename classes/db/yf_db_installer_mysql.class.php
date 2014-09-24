@@ -159,10 +159,34 @@ class yf_db_installer_mysql extends yf_db_installer {
 
 	/**
 	*/
-	function _do_create_table ($full_table_name, $sql_php, $db) {
+	function _innodb_has_fulltext($db) {
+		if (!isset($db->_innodb_has_fulltext)) {
+			$db->_innodb_has_fulltext = (bool)version_compare($db->get_server_version(), '5.6.0', '>');
+		}
+		return $db->_innodb_has_fulltext;
+	}
+
+	/**
+	*/
+	function _fix_sql_php(array $sql_php, $db) {
+		$innodb_has_fulltext = $this->_innodb_has_fulltext($db);
+		if ( ! $innodb_has_fulltext) {
+			// Remove fulltext indexes from db structure before creating table
+			foreach ((array)$sql_php['indexes'] as $iname => $idx) {
+				if ($idx['type'] == 'fulltext') {
+					unset($sql_php['indexes'][$iname]);
+				}
+			}
+		}
+		return $sql_php;
+	}
+
+	/**
+	*/
 // TODO: convert into db utils()
-		$default_options = $this->_DEF_TABLE_OPTIONS;
-		foreach ((array)$default_options as $k => $v) {
+	function _do_create_table ($full_table_name, array $sql_php, $db) {
+		$sql_php = $this->_fix_sql_php($sql_php, $db);
+		foreach ((array)$this->_DEF_TABLE_OPTIONS as $k => $v) {
 			if (!isset($sql_php['options'][$k])) {
 				$sql_php['options'][$k] = $v;
 			}
@@ -174,10 +198,10 @@ class yf_db_installer_mysql extends yf_db_installer {
 
 	/**
 	*/
-	function _do_alter_table ($table_name, $column_name, $table_struct, $db) {
 // TODO: convert into db utils()
-		$struct = $table_struct[$column_name];
-		$sql = 'ALTER TABLE '.$db->DB_PREFIX. $table_name. ' ADD '._class('db_ddl_parser_mysql', 'classes/db/')->create_column_line($column_name, $struct);
+	function _do_alter_table ($table_name, $column_name, array $sql_php, $db) {
+		$column_data = $sql_php['fields'][$column_name];
+		$sql = 'ALTER TABLE '.$db->DB_PREFIX. $table_name. ' ADD '._class('db_ddl_parser_mysql', 'classes/db/')->create_column_line($column_name, $column_data);
 		return $db->query($sql);
 	}
 }
