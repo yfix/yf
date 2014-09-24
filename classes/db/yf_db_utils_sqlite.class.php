@@ -89,16 +89,20 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 				'name'		=> $name,
 				'type'		=> $type,
 				'length'	=> $length,
+				'decimals'	=> $decimals ?: null,
 				'unsigned'	=> $unsigned,
-				'collate'	=> null,
 				'nullable'	=> !$a['notnull'],
 				'default'	=> $a['dflt_value'],
+				'charset'	=> null,
+				'collate'	=> null,
 				'auto_inc'	=> $a['pk'] == 1,
 				'primary'	=> $a['pk'] == 1,
 // TODO: detect unique from indexes list
 				'unique'	=> $a['pk'] == 1,
 				'type_raw'	=> $a['type'],
+				'values'	=> null,
 			);
+			$cols[$name]['type_raw'] = $a['type'];
 		}
 		return $cols;
 	}
