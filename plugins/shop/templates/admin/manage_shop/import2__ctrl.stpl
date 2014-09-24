@@ -196,9 +196,8 @@ ng_app_admin.filter( 'orderObjectBy', function( $log ) {
 		try {
 			regexp = new RegExp( filter_escape, 'img' );
 		} catch( e ) {
-			$log.log( 'filter', filter_escape, '>', regexp );
+			{{-- $log.log( 'filter', filter_escape, '>', regexp ); --}}
 		}
-			$log.log( 'filter', filter_escape, '>', regexp );
 		if( regexp === null ) { status = false; }
 		$scope[ options.status ] = status;
 		angular.forEach( items, function( item ) {
@@ -253,6 +252,9 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 		pages     : 0,
 		from      : 0,
 		to        : 0,
+		first: function() {
+			this.page=1;
+		},
 		next: function() {
 			++this.page;
 			this.calc();
@@ -260,6 +262,10 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 		back: function() {
 			--this.page;
 			this.calc();
+		},
+		last: function() {
+			this.calc();
+			this.page=this.pages;
 		},
 		calc: function( length ) {
 			this.length = length || this.length;
@@ -366,7 +372,7 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 			$scope.item_data.test        = test;
 			$scope.item_data.test_status = test_status;
 			// inject status
-			angular.forEach( $scope.item_data.test, function( item, index ) {
+			angular.forEach( $scope.item_data.test.items, function( item, index ) {
 				this[ index ][ 'status'         ] = item[ 'status'         ];
 				this[ index ][ 'status_message' ] = item[ 'status_message' ];
 			}, $scope.item_data.items );
@@ -402,7 +408,7 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 		var test = result.response.action;
 		$scope.item_data.test = test.data._import_test;
 		$scope.item_data.test_status = test.status;
-			angular.forEach( $scope.item_data.test, function( item, index ) {
+			angular.forEach( $scope.item_data.test.items, function( item, index ) {
 				this[ index ][ 'status'         ] = item[ 'status'         ];
 				this[ index ][ 'status_message' ] = item[ 'status_message' ];
 			}, $scope.item_data.items );

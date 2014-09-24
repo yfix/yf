@@ -1,6 +1,13 @@
 <div class="ng-cloak" ng-controller="{_ng_controller}">
 
-{{-- notifications --}}
+{{-- common notifications --}}
+<style>
+.notifications {
+	position : absolute;
+	top      : 1em;
+	right    : 1em;
+}
+</style>
 <div class="notifications"></div>
 
 {{-- upload --}}
@@ -38,8 +45,7 @@
 	opacity : 1;
 }
 .upload_list_hover .action {
-	opacity : 1;
-	cursor: pointer;
+	cursor  : pointer;
 }
 </style>
 <table class="upload_list table table-striped" ng-show="data._upload_list">
@@ -117,7 +123,7 @@
 			<span style="width: 10em; margin: 0 2em;">
 				<input style="width: 10em; margin: 0;" type="text" ng-model="item_filter">
 				<span class="btn" ng-click="item_filter=''"><i class="fa fa-times"></i></span>
-				<span>(<span ng-bind="Pagination.length"></span>)</span>
+				<span ng-show="item_filter">(<span ng-bind="Pagination.length"></span>)</span>
 			</span>
 			<span class="btn btn-small btn-warning pull-right" ng-click="UploadApi.item__import()" ng-show="!item_data.test_status">Проверить</span>
 			<span class="btn btn-small btn-success pull-right" ng-click="UploadApi.item__import()" ng-show="item_data.test_status">Импортировать</span>
@@ -140,18 +146,33 @@
 		</select>
 		</th>
 		<th>
-			Статус
+			статус
 			<div ng-show="item_data.test">
-				<label style="margin: 0;"><input style="margin: 0 0.5em 0 0;" type="radio" name="item_filter_status" ng-model="item_filter_status">все</label>
-				<label style="margin: 0;"><input style="margin: 0 0.5em 0 0;" type="radio" name="item_filter_status" value="true" ng-model="item_filter_status">правильные</label>
-				<label style="margin: 0;"><input style="margin: 0 0.5em 0 0;" type="radio" name="item_filter_status" value="false" ng-model="item_filter_status">ошибки</label>
+				<span class="btn btn-small"
+					ng-click="item_filter_status=undefined"
+				>
+					<i class="fa fa-pie-chart"></i>
+					({{item_data.test.count}})
+				</span>
+				<span class="btn btn-small btn-success"
+					ng-click="item_filter_status=true"
+				>
+					<i class="fa fa-check"></i>
+					({{item_data.test.count_valid}})
+				</span>
+				<span class="btn btn-small btn-danger"
+					ng-click="item_filter_status=false"
+				>
+					<i class="fa fa-exclamation"></i>
+					({{item_data.test.count_invalid}})
+				</span>
 			</div>
 		</th>
 	</tr>
 	<tr
 		ng-repeat="item in item_data.items | filter: { status: item_filter_status } | filter: item_filter | pagination: { controller: Pagination }"
 		class="item"
-		ng-class="{ 'success': item.status === true, 'danger': item.status === false, 'error': item.status === false }"
+		ng-class="{ 'danger': item.status === false, 'error': item.status === false }"
 	>
 		<td ng-repeat="i in item track by $index">{{i}}</td>
 		<td>
@@ -166,18 +187,20 @@
 		</td>
 	</tr>
 	<tr>
-		<td colspan="{{item_data.cols}}">
+		<th colspan="{{item_data.cols+1}}">
 			<label class="pull-left">
-				Страница:&nbsp;
-				<span class="btn" ng-click="Pagination.back()"><i class="fa fa-arrow-left"></i></span>
-					<input type="number" style="width: 5em; margin-bottom: 0;" maxlength="5" ng-model="Pagination.page" ng-chage="Pagination.calc()">
-				<span class="btn" ng-click="Pagination.next()"><i class="fa fa-arrow-right"></i></span>
+				страница:&nbsp;
+				<span class="btn" ng-click="Pagination.first()" ng-hide="Pagination.page==1"><i class="fa fa-angle-double-left"></i></span>
+				<span class="btn" ng-click="Pagination.back()" ng-hide="Pagination.page==1"><i class="fa fa-angle-left"></i></span>
+					<input type="number" style="width: 4em; margin-bottom: 0;" maxlength="4" ng-model="Pagination.page" ng-chage="Pagination.calc()">
+				<span class="btn" ng-click="Pagination.next()" ng-hide="Pagination.page==Pagination.pages"><i class="fa fa-angle-right"></i></span>
+				<span class="btn" ng-click="Pagination.last()" ng-hide="Pagination.page==Pagination.pages"><i class="fa fa-angle-double-right"></i></span>
 				<span class="page_item">из</span>
 				<span ng-bind="Pagination.pages"></span>
 					<span class="page_item"> по </span>
 					<input type="number" style="width: 3em; margin-bottom: 0;" maxlength="3" ng-model="Pagination.page_size" ng-chage="Pagination.calc()">
 			</label>
-		</td>
+		</th>
 	</tr>
 </table>
 

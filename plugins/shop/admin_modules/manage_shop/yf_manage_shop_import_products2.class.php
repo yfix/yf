@@ -5,9 +5,6 @@ class yf_manage_shop_import_products2 {
 	private $_filter        = false;
 	private $_filter_params = false;
 
-	private $_instance             = false;
-	private $_class_admin_products = false;
-
 	public $import_field = array(
 		0                   => 'не использовать (0)',
 		'id'                => 'идентификатор (id)',
@@ -94,7 +91,14 @@ class yf_manage_shop_import_products2 {
 	// cache
 	public $cache_products = array();
 
+	// class
+	private $_instance = false;
+
+	private $_class_price          = false;
+	private $_class_admin_products = false;
+
 	function _init() {
+		$this->_class_price          = _class( '_shop_price',          'modules/shop/'              );
 		$this->_class_admin_products = _class( 'manage_shop_products', 'admin_modules/manage_shop/' );
 		$this->is_post = input()->is_post();
 		$this->is_init = (bool)input()->get( 'init' );
@@ -425,14 +429,19 @@ class yf_manage_shop_import_products2 {
 			$import_fields_test[ $index ] = $field;
 		}
 		$_import_field = $this->import_field;
-		$result = array();
+		$result = array(
+			'items'         => null,
+			'count'         => null,
+			'count_valid'   => null,
+			'count_invalid' => null,
+		);
 		foreach( $items as $index => $item ) {
 			$valid          = true;
 			$status         = true;
 			$exists         = null;
 			$status_message = array();
 			$exists_message = array();
-			$result[ $index ] = array(
+			$result[ 'items' ][ $index ] = array(
 				'fields'         => array(),
 				'valid'          => $valid,
 				'exists'         => $exists,
@@ -445,9 +454,9 @@ class yf_manage_shop_import_products2 {
 				$value = $item[ $field_index ];
 				$test = $this->_field__test( $field, $value );
 				if( $test === FALSE ) { continue; }
-				$result[ $index ][ 'fields' ][ $field_index ] = $test;
+				$result[ 'items' ][ $index ][ 'fields' ][ $field_index ] = $test;
 				$status = $status && $test[ 'status' ];
-				if( $status === FALSE ) {
+				if( $test[ 'status' ] === FALSE ) {
 					$status_message[] = $test[ 'status_message' ];
 				}
 				if( !is_null( $test[ 'exists' ] ) ) {
@@ -462,12 +471,18 @@ class yf_manage_shop_import_products2 {
 						. ( $test[ 'exists' ] ? 'существует': 'не существует' );
 				}
 			}
-			$result[ $index ][ 'status' ] = $status;
-			$result[ $index ][ 'exists' ] = $exists;
-			!empty( $exists_message ) && ( $result[ $index ][ 'exists_message' ]
+			$result[ 'items' ][ $index ][ 'status' ] = $status;
+			$result[ 'items' ][ $index ][ 'exists' ] = $exists;
+			!empty( $exists_message ) && ( $result[ 'items' ][ $index ][ 'exists_message' ]
 				= implode( '; ', $exists_message ) );
-			!empty( $status_message ) && ( $result[ $index ][ 'status_message' ]
+			!empty( $status_message ) && ( $result[ 'items' ][ $index ][ 'status_message' ]
 				= implode( '; ', $status_message ) );
+			if( $status ) {
+				++$result[ 'count_valid' ];
+			} else {
+				++$result[ 'count_invalid' ];
+			}
+			++$result[ 'count' ];
 		}
 		return( $result );
 	}
@@ -496,11 +511,12 @@ class yf_manage_shop_import_products2 {
 	}
 
 	protected function _field_test__price( $value ) {
-		$value  = (float)$value;
+		$_class_price = $this->_class_price;
+		$value  = $_class_price->_number_float( $value );
 		$valid  = $value > 0;
 		$exists = null;
 		$status = $valid;
-		$status_message = $status ? 'цена больше нуля' : 'цена должна быть больше нуля';
+		$status_message = $status ? null : 'цена должна быть больше нуля';
 		$result = array(
 			'valid'          => $valid,
 			'exists'         => $exists,
