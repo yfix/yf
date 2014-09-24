@@ -274,14 +274,21 @@ abstract class yf_db_utils_driver {
 		while ($a = $this->db->fetch_assoc($q)) {
 			$name = $a['Field'];
 			list($type, $length, $unsigned, $decimals, $values) = array_values($this->_parse_column_type($a['Type']));
+			$nullable = ($a['Null'] == 'YES');
+			$default = null;
+			if (is_null($a['Default']) && $nullable) {
+				$default = 'NULL';
+			} elseif (!is_null($a['Default'])) {
+				$default = trim($a['Default']);
+			}
 			$cols[$name] = array(
 				'name'		=> $name,
 				'type'		=> $type,
-				'length'	=> $length,
+				'length'	=> $length ? intval($length) : null,
 				'decimals'	=> $decimals ?: null,
-				'unsigned'	=> $unsigned,
-				'nullable'	=> $a['Null'] == 'NO' ? false : true,
-				'default'	=> $a['Default'] != 'NULL' ? $a['Default'] : null,
+				'unsigned'	=> $unsigned ?: null,
+				'nullable'	=> (bool)$nullable,
+				'default'	=> $default,
 // TODO: detect charset for column
 				'charset'	=> null,
 				'collate'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
@@ -291,7 +298,7 @@ abstract class yf_db_utils_driver {
 				'values'	=> $values ?: null,
 			);
 			if (false !== strpos(strtolower($a['Extra']), 'on update') && in_array($type, array('timestamp','datetime'))) {
-				$cols[$name]['on_update'] = $a['Extra'];
+				$cols[$name]['on_update'] = strtoupper($a['Extra']);
 			}
 			$cols[$name]['type_raw'] = $a['Type'];
 		}
@@ -582,19 +589,21 @@ abstract class yf_db_utils_driver {
 		// Possible alternative query: SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test3' AND TABLE_NAME = 't_user' AND COLUMN_KEY = 'PRI';
 		$indexes = array();
 		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->_escape_table_name($table)) as $row) {
-			$type = 'key';
+			$type = 'index';
 			if ($row['Key_name'] === 'PRIMARY') {
 				$type = 'primary';
 			} elseif (!$row['Non_unique']) {
 				$type = 'unique';
 			} elseif ($row['Index_type'] == 'FULLTEXT') {
 				$type = 'fulltext';
+			} elseif ($row['Index_type'] == 'SPATIAL') {
+				$type = 'spatial';
 			}
 			$indexes[$row['Key_name']] = array(
 				'name'		=> $row['Key_name'],
 				'type'		=> $type,
 			);
-			$indexes[$row['Key_name']]['columns'][$row['Seq_in_index'] - 1] = $row['Column_name'];
+			$indexes[$row['Key_name']]['columns'][$row['Column_name']] = $row['Column_name'];
 		}
 		return $indexes;
 	}
