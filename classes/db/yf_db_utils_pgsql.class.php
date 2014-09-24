@@ -233,10 +233,6 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		if (!$extra['sql'] && !$this->table_exists($table)) {
-			$error = 'table_name not exists';
-			return false;
-		}
 // TODO: use code from mysql and adapt it
 	}
 
