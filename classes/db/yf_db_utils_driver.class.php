@@ -265,10 +265,6 @@ abstract class yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-#		if (!$extra['sql'] && !$this->table_exists($table)) {
-#			$error = 'table_name not exists';
-#			return false;
-#		}
 		$cols = array();
 		$q = $this->db->query('SHOW FULL COLUMNS FROM '.$this->_escape_table_name($table));
 		while ($a = $this->db->fetch_assoc($q)) {
@@ -276,9 +272,6 @@ abstract class yf_db_utils_driver {
 			list($type, $length, $unsigned, $decimals, $values) = array_values($this->_parse_column_type($a['Type']));
 			$nullable = ($a['Null'] == 'YES');
 			$default = null;
-#			if (is_null($a['Default']) && $nullable) {
-#				$default = 'NULL';
-#			} elseif (!is_null($a['Default'])) {
 			if (!is_null($a['Default'])) {
 				$default = trim($a['Default']);
 			}
