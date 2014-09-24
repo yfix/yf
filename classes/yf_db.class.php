@@ -1151,10 +1151,6 @@ class yf_db {
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
-		$table = $this->_escape_table_name($table);
-		if (!strlen($table)) {
-			return false;
-		}
 		return $this->utils()->meta_tables($this->DB_PREFIX);
 	}
 
