@@ -82,11 +82,11 @@ abstract class yf_db_installer {
 		// Preload db installer PHP array of CREATE TABLE DDL statements
 		$ext = '.sql_php.php';
 		$globs_sql_php = array(
-			'yf_main'			=> YF_PATH.'share/db_installer/sql/*'.$ext,
-			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/sql/*'.$ext,
-			'project_config'	=> CONFIG_PATH.'share/db_installer/sql/*'.$ext,
-			'project_main'		=> PROJECT_PATH.'share/db_installer/sql/*'.$ext,
-			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/sql/*'.$ext,
+			'yf_main'			=> YF_PATH.'share/db_installer/sql_php/*'.$ext,
+			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/sql_php/*'.$ext,
+			'project_config'	=> CONFIG_PATH.'share/db_installer/sql_php/*'.$ext,
+			'project_main'		=> PROJECT_PATH.'share/db_installer/sql_php/*'.$ext,
+			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/sql_php/*'.$ext,
 		);
 		foreach ($globs_sql_php as $glob) {
 			foreach (glob($glob) as $f) {
