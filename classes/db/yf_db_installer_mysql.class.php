@@ -35,6 +35,8 @@ class yf_db_installer_mysql extends yf_db_installer {
 		'ROW_FORMAT',
 		'UNION',
 	);
+	/** @var array */
+	public $NO_REPAIR_TABLES = array();
 
 	/**
 	* Framework construct
@@ -144,6 +146,10 @@ class yf_db_installer_mysql extends yf_db_installer {
 	*/
 // TODO: convert into db utils()
 	function do_create_table ($full_table_name, array $sql_php, $db) {
+		 if(!empty($this->NO_REPAIR_TABLES) && in_array($full_table_name, $this->NO_REPAIR_TABLES)){
+			return false;
+		 }
+
 		$sql_php = $this->fix_sql_php($sql_php, $db);
 		foreach ((array)$this->_DEF_TABLE_OPTIONS as $k => $v) {
 			if (!isset($sql_php['options'][$k])) {
