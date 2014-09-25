@@ -199,13 +199,13 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	/**
 	*/
 	function escape_key($data) {
-		return '`'.$data.'`';
+		return '`'.trim($data, '`').'`';
 	}
 
 	/**
 	*/
 	function escape_val($data) {
-		return '\''.$data.'\'';
+		return '\''.trim($data, '\'').'\'';
 	}
 
 	/**

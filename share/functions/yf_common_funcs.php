@@ -382,3 +382,13 @@ function _var_dump($data) {
 	return ob_get_clean();
 }
 }
+
+if (!function_exists('_var_export')) {
+function _var_export($data) {
+	$str = var_export($data, 1);
+	$str = str_replace('  ', "\t", $str);
+	$str = str_replace('array (', 'array(', $str);
+	$str = preg_replace('~=>[\s]+array\(~ims', '=> array(', $str);
+	return $str;
+}
+}

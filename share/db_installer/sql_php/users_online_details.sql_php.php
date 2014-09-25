@@ -12,7 +12,7 @@ return array(
 			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
-			'primary' => false,
+			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
 		),
@@ -27,7 +27,7 @@ return array(
 			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
-			'primary' => false,
+			'primary' => true,
 			'unique' => false,
 			'values' => array(
 				'user_id' => 'user_id',

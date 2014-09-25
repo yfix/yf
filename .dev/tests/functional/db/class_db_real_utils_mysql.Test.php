@@ -166,15 +166,15 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$expected = array(
 			'id' => array(
 				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collate' => NULL,'nullable' => false,
-				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned',
+				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned','decimals' => null,'charset' => null,'values' => null,
 			),
 			'name' => array(
 				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)',
+				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)','decimals' => null,'charset' => null,'values' => null,
 			),
 			'active' => array(
 				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
+				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')','decimals' => null,'charset' => null,'values' => array('0' => '0', '1' => '1'),
 			),
 		);
 		$this->assertEquals( $expected, self::utils()->table_get_columns($this->table_name($table)) );
@@ -193,15 +193,15 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$expected_columns = array(
 			'id' => array(
 				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collate' => NULL,'nullable' => false,
-				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned',
+				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned','decimals' => null,'charset' => null,'values' => null,
 			),
 			'name' => array(
 				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)',
+				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)','decimals' => null,'charset' => null,'values' => null,
 			),
 			'active' => array(
 				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')',
+				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')','decimals' => null,'charset' => null,'values' => array('0' => '0', '1' => '1'),
 			),
 		);
 		$expected = array(
@@ -314,8 +314,8 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( array('type' => 'int','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('int') );
 		$this->assertEquals( array('type' => 'int','length' => 8,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('int(8)') );
-		$this->assertEquals( array('type' => 'int','length' => 11,'unsigned' => true,'decimals' => null,'values' => null), self::utils()->_parse_column_type('tinyint(11) unsigned') );
-		$this->assertEquals( array('type' => 'int','length' => 8,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('integer(8)') );
+		$this->assertEquals( array('type' => 'tinyint','length' => 11,'unsigned' => true,'decimals' => null,'values' => null), self::utils()->_parse_column_type('tinyint(11) unsigned') );
+		$this->assertEquals( array('type' => 'integer','length' => 8,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('integer(8)') );
 		$this->assertEquals( array('type' => 'bit','length' => null,'unsigned' => false,'decimals' => null,'values' => null), self::utils()->_parse_column_type('bit') );
 		$this->assertEquals( array('type' => 'decimal','length' => 6,'unsigned' => false,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('decimal(6,2)') );
 		$this->assertEquals( array('type' => 'decimal','length' => 6,'unsigned' => true,'decimals' => 2,'values' => null), self::utils()->_parse_column_type('decimal(6,2) unsigned') );
@@ -428,7 +428,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$expected = array(
-			'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary','columns' => array('id')),
+			'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary','columns' => array('id' => 'id')),
 		);
 		$this->assertEquals( $expected, self::utils()->list_indexes($this->table_name($table)) );
 	}
@@ -441,7 +441,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id')), self::utils()->index_info($this->table_name($table), 'PRIMARY') );
+		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')), self::utils()->index_info($this->table_name($table), 'PRIMARY') );
 	}
 	public function test_index_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -489,9 +489,9 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$this->assertNotEmpty( self::utils()->add_index($this->table_name($table), 'PRIMARY', array('id'), array('type' => 'primary')) );
-		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id')), self::utils()->index_info($this->table_name($table), 'PRIMARY') );
+		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')), self::utils()->index_info($this->table_name($table), 'PRIMARY') );
 		$this->assertNotEmpty( self::utils()->update_index($this->table_name($table), 'PRIMARY', array('id2'), array('type' => 'primary')) );
-		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id2')), self::utils()->index_info($this->table_name($table), 'PRIMARY') );
+		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id2' => 'id2')), self::utils()->index_info($this->table_name($table), 'PRIMARY') );
 	}
 
 	public function test_list_foreign_keys() {
@@ -509,7 +509,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertEmpty( self::utils()->list_foreign_keys($this->table_name($table1)) );
 		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $fkey, array('id'), $this->table_name($table2), array('id')) );
 		$expected = array(
-			$fkey => array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'),
+			$fkey => array('name' => $fkey, 'columns' => array('id' => 'id'), 'ref_table' => $table2, 'ref_columns' => array('id' => 'id'), 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT'),
 		);
 		$this->assertEquals( $expected, self::utils()->list_foreign_keys($this->table_name($table1)) );
 	}
@@ -526,7 +526,8 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table2), $data) );
 		$this->assertEmpty( self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $fkey, array('id'), $this->table_name($table2), array('id')) );
-		$this->assertEquals( array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'), self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+		$expected = array('name' => $fkey, 'columns' => array('id' => 'id'), 'ref_table' => $table2, 'ref_columns' => array('id' => 'id'), 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT');
+		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 	}
 	public function test_foreign_key_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -573,7 +574,8 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table2), $data) );
 		$this->assertEmpty( self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $fkey, array('id'), $this->table_name($table2), array('id')) );
-		$this->assertEquals( array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'), self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+		$expected = array('name' => $fkey, 'columns' => array('id' => 'id'), 'ref_table' => $table2, 'ref_columns' => array('id' => 'id'), 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT');
+		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 	}
 	public function test_update_foreign_key() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -589,9 +591,11 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table1), $data) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table2), $data) );
 		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $fkey, array('id'), $this->table_name($table2), array('id')) );
-		$this->assertEquals( array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id'), self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+		$expected = array('name' => $fkey, 'columns' => array('id' => 'id'), 'ref_table' => $table2, 'ref_columns' => array('id' => 'id'), 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT');
+		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 		$this->assertNotEmpty( self::utils()->update_foreign_key($this->table_name($table1), $fkey, array('id2'), $this->table_name($table2), array('id2')) );
-		$this->assertEquals( array('name' => $fkey, 'local' => 'id2', 'table' => $table2, 'foreign' => 'id2'), self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+		$expected = array('name' => $fkey, 'columns' => array('id2' => 'id2'), 'ref_table' => $table2, 'ref_columns' => array('id2' => 'id2'), 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT');
+		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 	}
 
 	public function test_list_views() {
@@ -1048,10 +1052,10 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table1), $data) );
 		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table2), $data) );
 		$this->assertTrue( (bool)self::utils()->add_foreign_key($this->table_name($table1), $fkey, array('id'), $this->table_name($table2), array('id')) );
-		$info = array('name' => $fkey, 'local' => 'id', 'table' => $table2, 'foreign' => 'id');
-		$this->assertEquals( $info, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+		$expected = array('name' => $fkey, 'columns' => array('id' => 'id'), 'ref_table' => $table2, 'ref_columns' => array('id' => 'id'), 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT');
+		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 
-		$this->assertEquals( $info, self::utils()->database($this->db_name())->table($table1)->foreign_key($fkey)->info() );
+		$this->assertEquals( $expected, self::utils()->database($this->db_name())->table($table1)->foreign_key($fkey)->info() );
 		$this->assertTrue( (bool)self::utils()->table($this->db_name(), $table1)->foreign_key($fkey)->info() );
 		$this->assertTrue( (bool)self::utils()->foreign_key($this->db_name(), $table1, $fkey)->info() );
 	}

@@ -39,7 +39,7 @@ return array(
 			'unsigned' => NULL,
 			'nullable' => false,
 			'default' => NULL,
-			'charset' => 'utf8',
+			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,

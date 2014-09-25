@@ -265,31 +265,74 @@ abstract class yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		if (!$extra['sql'] && !$this->table_exists($table)) {
-			$error = 'table_name not exists';
-			return false;
-		}
 		$cols = array();
 		$q = $this->db->query('SHOW FULL COLUMNS FROM '.$this->_escape_table_name($table));
 		while ($a = $this->db->fetch_assoc($q)) {
 			$name = $a['Field'];
-			list($type, $length, $unsigned) = array_values($this->_parse_column_type($a['Type']));
+			list($type, $length, $unsigned, $decimals, $values) = array_values($this->_parse_column_type($a['Type']));
+			$nullable = ($a['Null'] == 'YES');
+			$default = null;
+			if (!is_null($a['Default'])) {
+				$default = trim($a['Default']);
+			}
 			$cols[$name] = array(
 				'name'		=> $name,
 				'type'		=> $type,
-				'length'	=> $length,
-				'unsigned'	=> $unsigned,
+				'length'	=> $length ? intval($length) : null,
+				'decimals'	=> $decimals ?: null,
+				'unsigned'	=> $unsigned ?: null,
+				'nullable'	=> (bool)$nullable,
+				'default'	=> $default,
+// TODO: detect charset for column
+				'charset'	=> null,
 				'collate'	=> $a['Collation'] != 'NULL' ? $a['Collation'] : null,
-				'nullable'	=> $a['Null'] == 'NO' ? false : true,
-				'default'	=> $a['Default'] != 'NULL' ? $a['Default'] : null,
-				'auto_inc'	=> false !== strpos($a['Extra'], 'auto_increment') ? true : false,
+				'auto_inc'	=> false !== strpos(strtolower($a['Extra']), 'auto_increment') ? true : false,
 				'primary'	=> $a['Key'] == 'PRI',
 				'unique'	=> $a['Key'] == 'UNI',
-				'type_raw'	=> $a['Type'],
+				'values'	=> $values ?: null,
 			);
+			if (false !== strpos(strtolower($a['Extra']), 'on update') && in_array($type, array('timestamp','datetime'))) {
+				$cols[$name]['on_update'] = strtoupper($a['Extra']);
+			}
+			$cols[$name]['type_raw'] = $a['Type'];
+		}
+		// Optionally fill "unique" field from indexes info
+		$indexes = $this->list_indexes($table, $extra, $error);
+		if ($indexes) {
+			foreach ((array)$indexes as $name => $idx) {
+				if ($idx['type'] !== 'unique') {
+					continue;
+				}
+				foreach ($idx['columns'] as $fname) {
+					if (!isset($cols[$fname])) {
+						continue;
+					}
+					$cols[$fname]['unique'] = true;
+				}
+			}
 		}
 		return $cols;
 	}
+
+/*
+For Schemas:
+
+SELECT default_character_set_name FROM information_schema.SCHEMATA S
+WHERE schema_name = "schemaname";
+For Tables:
+
+SELECT CCSA.character_set_name FROM information_schema.`TABLES` T,
+       information_schema.`COLLATION_CHARACTER_SET_APPLICABILITY` CCSA
+WHERE CCSA.collation_name = T.table_collation
+  AND T.table_schema = "schemaname"
+  AND T.table_name = "tablename";
+For Columns:
+
+SELECT character_set_name FROM information_schema.`COLUMNS` C
+WHERE table_schema = "schemaname"
+  AND table_name = "tablename"
+  AND column_name = "columnname";
+*/
 
 	/**
 	*/
@@ -575,19 +618,23 @@ abstract class yf_db_utils_driver {
 		// Possible alternative query: SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test3' AND TABLE_NAME = 't_user' AND COLUMN_KEY = 'PRI';
 		$indexes = array();
 		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->_escape_table_name($table)) as $row) {
-			$type = 'key';
+			$type = 'index';
 			if ($row['Key_name'] === 'PRIMARY') {
 				$type = 'primary';
 			} elseif (!$row['Non_unique']) {
 				$type = 'unique';
 			} elseif ($row['Index_type'] == 'FULLTEXT') {
 				$type = 'fulltext';
+			} elseif ($row['Index_type'] == 'SPATIAL') {
+				$type = 'spatial';
 			}
-			$indexes[$row['Key_name']] = array(
-				'name'		=> $row['Key_name'],
-				'type'		=> $type,
-			);
-			$indexes[$row['Key_name']]['columns'][$row['Seq_in_index'] - 1] = $row['Column_name'];
+			if (!isset($indexes[$row['Key_name']])) {
+				$indexes[$row['Key_name']] = array(
+					'name'		=> $row['Key_name'],
+					'type'		=> $type,
+				);
+			}
+			$indexes[$row['Key_name']]['columns'][$row['Column_name']] = $row['Column_name'];
 		}
 		return $indexes;
 	}
@@ -703,18 +750,30 @@ abstract class yf_db_utils_driver {
 			return false;
 		}
 		$keys = array();
-		$sql = 'SELECT CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
+		$sql = 
+			'SELECT CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
 			FROM information_schema.KEY_COLUMN_USAGE
 			WHERE TABLE_SCHEMA = '.$this->_escape_val($db_name).' 
 				AND REFERENCED_TABLE_NAME IS NOT NULL 
 				AND TABLE_NAME = '. $this->_escape_val($this->db->_fix_table_name($table));
-		foreach ((array)$this->db->get_all($sql) as $id => $row) {
-			$keys[$row['CONSTRAINT_NAME']] = array(
-				'name'		=> $row['CONSTRAINT_NAME'], // foreign key name
-				'local'		=> $row['COLUMN_NAME'], // local columns
-				'table'		=> $row['REFERENCED_TABLE_NAME'], // referenced table
-				'foreign' 	=> $row['REFERENCED_COLUMN_NAME'], // referenced columns
-			);
+		foreach ((array)$this->db->get_all($sql) as $a) {
+			$name = $a['CONSTRAINT_NAME'];
+			$keys[$name]['name'] = $name;
+			$keys[$name]['columns'][$a['COLUMN_NAME']] = $a['COLUMN_NAME'];
+			$keys[$name]['ref_table'] = $a['REFERENCED_TABLE_NAME'];
+			$keys[$name]['ref_columns'][$a['REFERENCED_COLUMN_NAME']] = $a['REFERENCED_COLUMN_NAME'];
+		}
+		$sql = 
+			'SELECT CONSTRAINT_NAME, UPDATE_RULE, DELETE_RULE
+			FROM information_schema.REFERENTIAL_CONSTRAINTS
+			WHERE CONSTRAINT_SCHEMA = '.$this->_escape_val($db_name).'
+				AND TABLE_NAME = '.$this->_escape_val($this->db->_fix_table_name($table));
+		foreach ((array)$this->db->get_all($sql) as $a) {
+			$name = $a['CONSTRAINT_NAME'];
+			if (isset($keys[$name])) {
+				$keys[$name]['on_update'] = $a['UPDATE_RULE'];
+				$keys[$name]['on_delete'] = $a['DELETE_RULE'];
+			}
 		}
 		return $keys;
 	}
@@ -1277,7 +1336,7 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function _escape_database_name($name = '') {
-		$name = trim($name);
+		$name = str_replace(array('\'', '"', '`'), '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
@@ -1287,7 +1346,7 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function _escape_table_name($name = '') {
-		$name = trim($name);
+		$name = str_replace(array('\'', '"', '`'), '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
@@ -1310,7 +1369,7 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function _escape_key($key = '') {
-		$key = trim($key);
+		$key = trim(trim($key), '`');
 		if (!strlen($key)) {
 			return '';
 		}
@@ -1335,7 +1394,7 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function _escape_val($val = '') {
-		$val = trim($val);
+		$val = trim(trim($val), '\'');
 		if (!strlen($val)) {
 			return '';
 		}
@@ -1467,72 +1526,22 @@ abstract class yf_db_utils_driver {
 
 	/**
 	*/
-// TODO: merge with existing funcs
 	function meta_columns($table) {
-		$retarr = array();
-
-		$Q = $this->db->query(sprintf('SHOW COLUMNS FROM %s', $table));
-		while ($A = $this->db->fetch_row($Q)) {
-			$fld = array();
-
-			$fld['name']= $A[0];
-			$type		= $A[1];
-
-			$fld['scale'] = null;
-			if (preg_match('/^(.+)\((\d+),(\d+)/', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-				$fld['scale'] = is_numeric($query_array[3]) ? $query_array[3] : -1;
-			} elseif (preg_match('/^(.+)\((\d+)/', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = is_numeric($query_array[2]) ? $query_array[2] : -1;
-			} elseif (preg_match('/^(enum|set)\((.*)\)$/i', $type, $query_array)) {
-				$fld['type'] = $query_array[1];
-				$fld['max_length'] = max(array_map('strlen',explode(',',$query_array[2]))) - 2; // PHP >= 4.0.6
-				$fld['max_length'] = ($fld['max_length'] == 0 ? 1 : $fld['max_length']);
-				$values = array();
-				foreach (explode(',', $query_array[2]) as $v) {
-					$v = trim(trim($v), '\'"');
-					if (strlen($v)) {
-						$values[$v] = $v;
-					}
-				}
-				$fld['values'] = $values;
-			} else {
-				$fld['type'] = $type;
-				$fld['max_length'] = -1;
-			}
-			$fld['not_null']		= ($A[2] != 'YES');
-			$fld['primary_key']		= ($A[3] == 'PRI');
-			$fld['auto_increment']	= (strpos($A[5], 'auto_increment') !== false);
-			$fld['binary']			= (strpos($type,'blob') !== false);
-			$fld['unsigned']		= (strpos($type,'unsigned') !== false);
-			if (!$fld['binary']) {
-				$d = $A[4];
-				if ($d != '' && $d != 'NULL') {
-					$fld['has_default'] = true;
-					$fld['default_value'] = $d;
-				} else {
-					$fld['has_default'] = false;
-				}
-			}
-			$retarr[strtolower($fld['name'])] = $fld;
-		}
-		return $retarr;
+		return $this->list_columns($table);
 	}
 
 	/**
 	*/
-// TODO: merge with existing funcs
-	function meta_tables($DB_PREFIX = '') {
-		$q = $this->db->query('SHOW TABLES');
-		while ($a = $this->db->fetch_row($q)) {
-			$name = $a['0'];
-			// Skip tables without prefix of current connection
-			if (strlen($DB_PREFIX) && substr($name, 0, strlen($DB_PREFIX)) != $DB_PREFIX) {
-				continue;
+	function meta_tables($db_prefix = '') {
+		$tables = $this->list_tables();
+		// Skip tables without prefix of current connection
+		if (strlen($db_prefix)) {
+			$plen = strlen($db_prefix);
+			foreach ($tables as $table) {
+				if (substr($table, 0, $plen) !== $db_prefix) {
+					unset($tables[$table]);
+				}
 			}
-			$tables[$name] = $name;
 		}
 		return $tables;
 	}

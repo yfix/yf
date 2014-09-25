@@ -37,113 +37,33 @@ abstract class yf_db_installer {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $args) {
+	public function __call($name, $args) {
 		return main()->extend_call($this, $name, $args);
 	}
 
 	/**
 	* Framework constructor
 	*/
-	function _init () {
+	public function _init () {
 		$this->LOCK_FILE_NAME = PROJECT_PATH. $this->LOCK_FILE_NAME;
-		$this->_load_data_files();
+		$this->load_data();
 	}
 
 	/**
 	*/
-	abstract protected function _do_alter_table ($table_name, $column_name, $table_struct, $db);
+	abstract protected function repair($sql, $db_error, $db);
 
 	/**
 	*/
-	abstract protected function _auto_repair_table($sql, $db_error, $db);
+	abstract protected function do_create_table ($full_table_name, array $sql_php, $db);
 
 	/**
 	*/
-	abstract protected function _do_create_table ($full_table_name, $table_struct, $db);
-
-	/**
-	* This method can be inherited in project with custom rules inside.
-	* Or use array or pattern callbacks. Example:
-	*	$this->create_table_pre_callbacks = array(
-	*		'^b_bets.*' => function($table, $struct, $db, $m) {
-	*			return $struct;
-	*		}
-	*	);
-	*/
-	function create_table_pre_hook($full_table_name, $table_struct, $db) {
-		_class('core_events')->fire('db.before_create_table', array(
-			'table'		=> $full_table_name,
-			'struct'	=> $table_struct,
-			'db'		=> $db,
-		));
-		foreach ((array)$this->create_table_pre_callbacks as $regex => $func) {
-			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
-				continue;
-			}
-			$table_struct = $func($full_table_name, $table_struct, $db, $m);
-		}
-		return $table_struct;
-	}
-
-	/**
-	* This method can be inherited in project with custom rules inside.
-	*/
-	function create_table_post_hook($full_table_name, $table_struct, $db) {
-		_class('core_events')->fire('db.after_create_table', array(
-			'table'		=> $full_table_name,
-			'struct'	=> $table_struct,
-			'db'		=> $db,
-		));
-		foreach ((array)$this->create_table_post_callbacks as $regex => $func) {
-			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
-				continue;
-			}
-			$results[$regex] = $func($full_table_name, $table_struct, $db, $m);
-		}
-		return $results;
-	}
-
-	/**
-	* This method can be inherited in project with custom rules inside
-	*/
-	function alter_table_pre_hook($table_name, $column_name, $table_struct, $db) {
-		_class('core_events')->fire('db.before_alter_table', array(
-			'table'		=> $table_name,
-			'column'	=> $column_name,
-			'struct'	=> $table_struct,
-			'db'		=> $db,
-		));
-		foreach ((array)$this->alter_table_pre_callbacks as $table_regex => $func) {
-			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
-				continue;
-			}
-			$table_struct = $func($table_name, $column_name, $table_struct, $db, $m);
-		}
-		return $table_struct;
-	}
-
-	/**
-	* This method can be inherited in project with custom rules inside
-	*/
-	function alter_table_post_hook($table_name, $column_name, $table_struct, $db) {
-		_class('core_events')->fire('db.after_alter_table', array(
-			'table'		=> $table_name,
-			'column'	=> $column_name,
-			'struct'	=> $table_struct,
-			'db'		=> $db,
-		));
-		foreach ((array)$this->alter_table_post_callbacks as $table_regex => $func) {
-			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
-				continue;
-			}
-			$results[$regex] = $func($table_name, $column_name, $table_struct, $db, $m);
-		}
-		return $results;
-	}
+	abstract protected function do_alter_table ($table_name, $column_name, array $sql_php, $db);
 
 	/**
 	*/
-	function _load_data_files() {
+	public function load_data() {
 		// Preload db installer SQL CREATE TABLE DDL statements
 		$ext = '.sql.php';
 		$globs_sql = array(
@@ -217,12 +137,12 @@ abstract class yf_db_installer {
 	/**
 	* Do create table
 	*/
-	function create_table ($table_name, $db) {
+	public function create_table ($table_name, $db) {
 		$table_found = false;
 		if (empty($table_name)) {
 			return false;
 		}
-		if (!$this->_get_lock()) {
+		if (!$this->get_lock()) {
 			return false;
 		}
 		if (isset($this->TABLES_SQL[$table_name])) {
@@ -231,89 +151,90 @@ abstract class yf_db_installer {
 			$table_name	= 'sys_'.$table_name;
 			$table_found = true;
 		}
+		$full_table_name = $db->DB_PREFIX. $table_name;
 		if ($table_found) {
-			$table_struct = $this->TABLES_SQL[$table_name];
+			$table_sql = $this->TABLES_SQL[$table_name];
+			$sql_php = $this->TABLES_SQL_PHP[$table_name];
 			$table_data	= $this->TABLES_DATA[$table_name];
-			$full_table_name = $db->DB_PREFIX. $table_name;
 		} else {
 			// Try if sharded table
-			$shard = $this->_shard_table_struct($table_name, $data, $db);
-			if ($shard) {
-				$table_struct = $shard['struct'];
-				$table_data	= $shard['data'];
-				$full_table_name = $shard['name'];
+			$shard_table_name = $this->get_shard_table_name($table_name, $db);
+			if ($shard_table_name) {
+				$table_sql = $this->TABLES_SQL[$shard_table_name];
+				$sql_php = $this->TABLES_SQL_PHP[$shard_table_name];
+				$table_data	= $this->TABLES_DATA[$shard_table_name];
 			}
 		}
-		if (empty($table_struct)) {
+		if (empty($table_sql)) {
 			return false;
 		}
-		$table_struct = $this->create_table_pre_hook($full_table_name, $table_struct, $db);
-		$result = $this->_do_create_table($full_table_name, $table_struct, $db);
+		if (!$sql_php) {
+			$sql_php = $this->create_table_sql_to_php($table_sql);
+		}
+		$sql_php = $this->create_table_pre_hook($full_table_name, $sql_php, $db);
+		$result = $this->do_create_table($full_table_name, $sql_php, $db);
 		if (!$result) {
 			return false;
 		}
-		$this->create_table_post_hook($full_table_name, $table_struct, $db);
+		$this->create_table_post_hook($full_table_name, $sql_php, $db);
 		// Check if we also need to insert some data into new system table
 		if ($table_data && is_array($table_data)) {
 			$result = $db->insert_safe($full_table_name, $table_data);
 		}
-		$this->_release_lock();
+		$this->release_lock();
 		return $result;
 	}
 
 	/**
 	* Do alter table structure
 	*/
-	function alter_table ($table_name, $column_name, $db) {
-		if (!$this->_get_lock()) {
+	public function alter_table ($table_name, $column_name, $db) {
+		if (!$this->get_lock()) {
 			return false;
 		}
-		if (substr($table_name, 0, strlen($db->DB_PREFIX)) == $db->DB_PREFIX) {
+		if (strlen($db->DB_PREFIX) && substr($table_name, 0, strlen($db->DB_PREFIX)) === $db->DB_PREFIX) {
 			$table_name = substr($table_name, strlen($db->DB_PREFIX));
 		}
 		$avail_tables = $db->meta_tables();
-		if (!in_array($db->DB_PREFIX. $table_name, $avail_tables)) {
+		if (!in_array($db->DB_PREFIX.$table_name, $avail_tables)) {
 			return false;
 		}
-		$cache_name = __CLASS__.'__'.__FUNCTION__.'__'.$table_name;
-		$data = array();
-#		if ($this->USE_CACHE) {
-#			$data = cache_get($cache_name);
-#		}
+		$sql_php = array();
 		// Try to get already pregenerated data
-		if (!$data) {
-			$data = $this->TABLES_SQL_PHP[$table_name];
-		}
-		if (!$data) {
-			$data = $this->_db_table_struct_into_array($this->TABLES_SQL[$table_name]);
-#			cache_set($cache_name, $data);
-		}
-		if (!isset($data)) {
-			return false;
-		}
-		$table_struct = $data['fields'];
-		// Try if sharded table
-		if (empty($table_struct)) {
-			$shard = $this->_shard_table_struct($table_name, $data, $db);
-			if ($shard) {
-				$table_struct = $shard['struct'];
+		if (!$sql_php) {
+			$sql_php = $this->TABLES_SQL_PHP[$table_name];
+			if (!$sql_php && isset($this->TABLES_SQL[$table_name])) {
+				$sql_php = $this->create_table_sql_to_php($this->TABLES_SQL[$table_name]);
 			}
 		}
-		if (!isset($table_struct[$column_name])) {
+		if (!$sql_php) {
+			// Try if sharded table
+			$shard_table_name = $this->get_shard_table_name($table_name, $db);
+			if ($shard_table_name) {
+				$sql_php = $this->TABLES_SQL_PHP[$shard_table_name];
+				if (!$sql_php && isset($this->TABLES_SQL[$shard_table_name])) {
+					$sql_php = $this->create_table_sql_to_php($this->TABLES_SQL[$shard_table_name]);
+				}
+			}
+		}
+		if (!$sql_php) {
 			return false;
 		}
-		$table_struct = $this->alter_table_pre_hook($table_name, $column_name, $table_struct, $db);
-		$result = $this->_do_alter_table($table_name, $column_name, $table_struct, $db);
-		$this->alter_table_post_hook($table_name, $column_name, $table_struct, $db);
-		$this->_release_lock();
+		if (!isset($sql_php['fields'][$column_name])) {
+			return false;
+		}
+		$full_table_name = $db->DB_PREFIX. $table_name;
+		$sql_php = $this->alter_table_pre_hook($full_table_name, $column_name, $sql_php, $db);
+		$result = $this->do_alter_table($full_table_name, $column_name, $sql_php, $db);
+		$this->alter_table_post_hook($full_table_name, $column_name, $sql_php, $db);
+		$this->release_lock();
 		return $result;
 	}
 
 	/**
 	* Try to find table structure with sharding in mind
 	*/
-	function _shard_table_struct ($table_name, array $data, $db) {
-		$table_struct = array();
+	public function get_shard_table_name ($table_name, $db) {
 		$shard_table_name = '';
 		// Try sharding by year/month/day (example: db('currency_pairs_log_2013_07_01') from db('currency_pairs_log'))
 		if (!$shard_table_name && $this->SHARDING_BY_DAY) {
@@ -369,37 +290,30 @@ abstract class yf_db_installer {
 			} elseif (isset($this->TABLES_SQL['sys_'.$shard_table_name])) {
 				$table_found = true;
 				$shard_table_name = 'sys_'.$shard_table_name;
-				$table_name	= 'sys_'.$table_name;
-			}
-			if ($table_found) {
-				$table_struct = $this->TABLES_SQL[$shard_table_name];
-				$table_data	= $this->TABLES_DATA[$table_name]; // No error in name!
-				$full_table_name = $db->DB_PREFIX. $table_name;
+			} else {
+				// Not really found
+				$shard_table_name = '';
 			}
 		}
-		return $table_struct ? array(
-			'name'	=> $full_table_name,
-			'struct'=> $table_struct,
-			'data'	=> $table_data,
-		) : false;
+		return $shard_table_name;
 	}
 
 	/**
 	*/
-	function create_table_php_to_sql ($data) {
+	public function create_table_php_to_sql ($data) {
 		return _class('db_ddl_parser_mysql', 'classes/db/')->create($data);
 	}
 
 	/**
 	* Alias
 	*/
-	function create_table_sql_to_php ($sql) {
-		return $this->_db_table_struct_into_array($sql);
+	public function create_table_sql_to_php ($sql) {
+		return $this->db_table_struct_into_array($sql);
 	}
 
 	/**
 	*/
-	function _db_table_struct_into_array ($sql) {
+	public function db_table_struct_into_array ($sql) {
 		$options = '';
 		// Get table options from table structure. Example: /** ENGINE=MEMORY **/
 		if (preg_match('#\/\*\*(?P<raw_options>[^\*\/]+)\*\*\/#i', trim($sql), $m)) {
@@ -424,24 +338,104 @@ abstract class yf_db_installer {
 	}
 
 	/**
+	* This method can be inherited in project with custom rules inside.
+	* Or use array or pattern callbacks. Example:
+	*	$this->create_table_pre_callbacks = array(
+	*		'^b_bets.*' => function($table, $sql_php, $db, $m) {
+	*			return $struct;
+	*		}
+	*	);
 	*/
-	function _get_table_struct_array_by_name ($table_name, $db) {
-		return $this->_db_table_struct_into_array( $db->get_one('SHOW CREATE TABLE `'.$table_name.'`') );
+	public function create_table_pre_hook($full_table_name, $sql_php, $db) {
+		_class('core_events')->fire('db.before_create_table', array(
+			'table'		=> $full_table_name,
+			'sql_php'	=> $sql_php,
+			'db'		=> $db,
+		));
+		foreach ((array)$this->create_table_pre_callbacks as $regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
+				continue;
+			}
+			$sql_php = $func($full_table_name, $sql_php, $db, $m);
+		}
+		return $sql_php;
+	}
+
+	/**
+	* This method can be inherited in project with custom rules inside.
+	*/
+	public function create_table_post_hook($full_table_name, $sql_php, $db) {
+		_class('core_events')->fire('db.after_create_table', array(
+			'table'		=> $full_table_name,
+			'sql_php'	=> $sql_php,
+			'db'		=> $db,
+		));
+		foreach ((array)$this->create_table_post_callbacks as $regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $full_table_name, $m)) {
+				continue;
+			}
+			$results[$regex] = $func($full_table_name, $sql_php, $db, $m);
+		}
+		return $results;
+	}
+
+	/**
+	* This method can be inherited in project with custom rules inside
+	*/
+	public function alter_table_pre_hook($table_name, $column_name, $sql_php, $db) {
+		_class('core_events')->fire('db.before_alter_table', array(
+			'table'		=> $table_name,
+			'column'	=> $column_name,
+			'sql_php'	=> $sql_php,
+			'db'		=> $db,
+		));
+		foreach ((array)$this->alter_table_pre_callbacks as $table_regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
+				continue;
+			}
+			$sql_php = $func($table_name, $column_name, $sql_php, $db, $m);
+		}
+		return $sql_php;
+	}
+
+	/**
+	* This method can be inherited in project with custom rules inside
+	*/
+	public function alter_table_post_hook($table_name, $column_name, $sql_php, $db) {
+		_class('core_events')->fire('db.after_alter_table', array(
+			'table'		=> $table_name,
+			'column'	=> $column_name,
+			'sql_php'	=> $sql_php,
+			'db'		=> $db,
+		));
+		foreach ((array)$this->alter_table_post_callbacks as $table_regex => $func) {
+			if (!preg_match('/'.$regex.'/ims', $table_name, $m)) {
+				continue;
+			}
+			$results[$regex] = $func($table_name, $column_name, $sql_php, $db, $m);
+		}
+		return $results;
 	}
 
 	/**
 	*/
-	function _get_all_struct_array ($only_what, $db) {
+	public function get_table_struct_array_by_name ($table_name, $db) {
+		return $this->db_table_struct_into_array( $db->get_one('SHOW CREATE TABLE `'.$table_name.'`') );
+	}
+
+	/**
+	*/
+	public function get_all_struct_array ($only_what, $db) {
 		$structs_array = array();
 		foreach ((array)$db->meta_tables() as $full_table_name) {
-			$structs_array[substr($full_table_name, strlen($db->DB_PREFIX))] = $this->_get_table_struct_array_by_name($full_table_name, $db);
+			$structs_array[substr($full_table_name, strlen($db->DB_PREFIX))] = $this->get_table_struct_array_by_name($full_table_name, $db);
 		}
 		return $structs_array;
 	}
 
 	/**
 	*/
-	function _get_lock () {
+	protected function get_lock () {
 		if (!$this->USE_LOCKING) {
 			return true;
 		}
@@ -457,7 +451,7 @@ abstract class yf_db_installer {
 
 	/**
 	*/
-	function _release_lock () {
+	protected function release_lock () {
 		if (!$this->USE_LOCKING) {
 			return true;
 		}

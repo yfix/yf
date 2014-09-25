@@ -13,7 +13,7 @@ return array(
 			'collate' => NULL,
 			'auto_inc' => true,
 			'primary' => true,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'name' => array(

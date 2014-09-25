@@ -33,6 +33,7 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 		self::$db->CACHE_TABLE_NAMES = false;
 		self::$db->ERROR_AUTO_REPAIR = false;
 		self::$db->FIX_DATA_SAFE = true;
+		self::$db->NO_CACHE = true;
 		self::$db->_init();
 		if (false !== strpos(self::$DB_DRIVER, 'mysql')) {
 			return self::_connect_mysql($params);
@@ -76,6 +77,13 @@ abstract class db_real_abstract extends PHPUnit_Framework_TestCase {
 			'force' => true,
 		));
 		return !empty($res) ? true : false;
+	}
+
+	/**
+	*/
+	protected function _innodb_has_fulltext() {
+		$db_server_version = self::db()->get_server_version();
+		return (bool)version_compare($db_server_version, '5.6.0', '>');
 	}
 
 	/**

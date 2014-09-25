@@ -28,7 +28,7 @@ return array(
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'address_raw' => array(
@@ -43,7 +43,7 @@ return array(
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'tel_raw' => array(

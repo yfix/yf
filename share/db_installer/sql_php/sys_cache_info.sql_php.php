@@ -28,7 +28,7 @@ return array(
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'action' => array(
@@ -43,7 +43,7 @@ return array(
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'query_string' => array(
@@ -58,7 +58,7 @@ return array(
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'site_id' => array(
@@ -73,7 +73,7 @@ return array(
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'group_id' => array(

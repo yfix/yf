@@ -48,27 +48,9 @@ class yf_db_installer_mysql extends yf_db_installer {
 	}
 
 	/**
-	* Execute original query again safely
-	*/
-	function _db_query_safe($sql, $db) {
-		if (isset($db->_repairs_by_sql[$sql]) && $db->_repairs_by_sql[$sql] >= $this->NUM_RETRIES) {
-			return false;
-		}
-		$db->_repairs_by_sql[$sql]++;
-		$result = $db->query($sql);
-		if (!$result) {
-			if ($this->RETRY_DELAY) {
-				sleep($this->RETRY_DELAY);
-			}
-			$result = $this->_auto_repair_table($sql, $db_error, $db);
-		}
-		return $result;
-	}
-
-	/**
 	* Trying to repair given table structure (and possibly data)
 	*/
-	function _auto_repair_table($sql, $db_error, $db) {
+	function repair($sql, $db_error, $db) {
 		$sql = trim($sql);
 		// #1191 Can't find FULLTEXT index matching the column list
 		if (in_array($db_error['code'], array(1191)) && $this->RESTORE_FULLTEXT_INDEX) {
@@ -89,7 +71,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 				}
 				$db->query('ALTER TABLE '.$f_table.' ADD FULLTEXT KEY '.$f_field.' ('.$f_field.')');
 			}
-			return $this->_db_query_safe($sql, $db);
+			return $this->db_query_safe($sql, $db);
 
 		// Errors related to server high load (currently we will handle only SELECTs)
 		// #2013 means 'Lost connection to MySQL server during query'
@@ -97,7 +79,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 		// #1213 means 'Transaction deadlock. You should rerun the transaction.' (InnoDB)
 		} elseif (in_array($db_error['code'], array(2013,1205,1213)) && substr($sql, 0, strlen('SELECT ')) == 'SELECT ') {
 
-			return $this->_db_query_safe($sql, $db);
+			return $this->db_query_safe($sql, $db);
 
 		// #1146 means "Table %s doesn't exist"
 		} elseif ($db_error['code'] == 1146) {
@@ -119,7 +101,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 					return false;
 				}
 			}
-			return $this->_db_query_safe($sql, $db);
+			return $this->db_query_safe($sql, $db);
 
 		// #1054 means "Unknown column %s"
 		} elseif ($db_error['code'] == 1054) {
@@ -151,79 +133,75 @@ class yf_db_installer_mysql extends yf_db_installer {
 				}
 			}
 			if (!empty($installer_result)) {
-				return $this->_db_query_safe($sql, $db);
+				return $this->db_query_safe($sql, $db);
 			}
 		}
 		return true;
 	}
 
 	/**
-	* Do create table
 	*/
-	function _do_create_table ($full_table_name, $table_struct, $db) {
-		$TABLE_OPTIONS = $this->_DEF_TABLE_OPTIONS;
-
 // TODO: convert into db utils()
-// TODO: unify with latest db ddl parser
-
-		$_options_to_merge = array();
-		// Get table options from table structure
-		// Example: /** ENGINE=MEMORY **/
-		if (preg_match('#\/\*\*([^\*\/]+)\*\*\/$#i', trim($table_struct), $m)) {
-			// Cut comment with options from source table structure
-			// to prevent misunderstanding
-			$table_struct = str_replace($m[0], '', $table_struct);
-
-			$_raw_options = str_replace(array("\r","\n","\t"), array('','',' '), trim($m[1]));
-
-			$_pattern = '/('.implode('|', $this->_KNOWN_TABLE_OPTIONS).")[\s]{0,}=[\s]{0,}([\']{0,1}[^\'\,]+[\']{0,1})/ims";
-			if (preg_match_all($_pattern, $_raw_options, $m)) {
-				foreach ((array)$m[0] as $_id => $v) {
-					$_option_key = strtoupper(trim($m[1][$_id]));
-					$_option_val = trim($m[2][$_id]);
-					if (!in_array($_option_key, $this->_KNOWN_TABLE_OPTIONS)) {
-						continue;
-					}
-					$_options_to_merge[$_option_key] = $_option_val;
-				}
+	function do_create_table ($full_table_name, array $sql_php, $db) {
+		$sql_php = $this->fix_sql_php($sql_php, $db);
+		foreach ((array)$this->_DEF_TABLE_OPTIONS as $k => $v) {
+			if (!isset($sql_php['options'][$k])) {
+				$sql_php['options'][$k] = $v;
 			}
 		}
-		if (!empty($_options_to_merge)) {
-			foreach ((array)$_options_to_merge as $k => $v) {
-				$TABLE_OPTIONS[$k] = $v;
-			}
-		}
-		$_tmp = array();
-		foreach ((array)$TABLE_OPTIONS as $k => $v) {
-			$_tmp[$k] = $k.'='.$v;
-		}
-		$_table_options_string = '';
-		if (!empty($_tmp)) {
-			$_table_options_string = ' '.implode(', ', $_tmp);
-		}
-		$sql = 'CREATE TABLE '.($this->USE_SQL_IF_NOT_EXISTS ? 'IF NOT EXISTS' : '').' '.$db->escape_key($full_table_name).' ('.PHP_EOL. 
-			$table_struct.')'.$_table_options_string;
+		$sql_php['name'] = $full_table_name;
+		$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create($sql_php);
 		return $db->query($sql);
 	}
 
 	/**
-	* Do alter table structure
 	*/
-	function _do_alter_table ($table_name, $column_name, $table_struct, $db) {
-		$column_struct = $table_struct[$column_name];
-		if ($column_struct['type'] != 'int' && $column_struct['default'] == '') {
-			unset($column_struct['default']);
-		}
 // TODO: convert into db utils()
-// TODO: unify with latest db ddl parser
-		$sql = 'ALTER TABLE '.$db->DB_PREFIX. $table_name. PHP_EOL.
-			"\t".'ADD '._es($column_name).' '.strtoupper($column_struct['type']).
-			(!empty($column_struct['length'])	? '('.$column_struct['length'].')' : '').
-			(!empty($column_struct['attrib'])	? ' '.$column_struct['attrib'].'' : '').
-			(!empty($column_struct['not_null'])	? ' NOT NULL' : '').
-			(isset($column_struct['default'])	? ' DEFAULT \''.$column_struct['default'].'\'' : '').
-			(!empty($column_struct['auto_inc'])	? ' AUTO_INCREMENT' : '').
-		';';
+	function do_alter_table ($full_table_name, $column_name, array $sql_php, $db) {
+		$column_data = $sql_php['fields'][$column_name];
+		$sql = 'ALTER TABLE '.$full_table_name. ' ADD '._class('db_ddl_parser_mysql', 'classes/db/')->create_column_line($column_name, $column_data);
 		return $db->query($sql);
+	}
+
+	/**
+	* Execute original query again safely
+	*/
+	function db_query_safe($sql, $db) {
+		if (isset($db->_repairs_by_sql[$sql]) && $db->_repairs_by_sql[$sql] >= $this->NUM_RETRIES) {
+			return false;
+		}
+		$db->_repairs_by_sql[$sql]++;
+		$result = $db->query($sql);
+		if (!$result) {
+			if ($this->RETRY_DELAY) {
+				sleep($this->RETRY_DELAY);
+			}
+			$result = $this->repair($sql, $db_error, $db);
+		}
+		return $result;
+	}
+
+	/**
+	*/
+	function innodb_has_fulltext($db) {
+		if (!isset($db->_innodb_has_fulltext)) {
+			$db->_innodb_has_fulltext = (bool)version_compare($db->get_server_version(), '5.6.0', '>');
+		}
+		return $db->_innodb_has_fulltext;
+	}
+
+	/**
+	*/
+	function fix_sql_php(array $sql_php, $db) {
+		$innodb_has_fulltext = $this->innodb_has_fulltext($db);
+		if ( ! $innodb_has_fulltext) {
+			// Remove fulltext indexes from db structure before creating table
+			foreach ((array)$sql_php['indexes'] as $iname => $idx) {
+				if ($idx['type'] == 'fulltext') {
+					unset($sql_php['indexes'][$iname]);
+				}
+			}
+		}
+		return $sql_php;
 	}
 }

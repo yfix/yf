@@ -3,7 +3,7 @@ return '
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `product_id` int(11) NOT NULL DEFAULT \'0\',
   `is_default` tinyint(11) NOT NULL DEFAULT \'0\',
-  `md5` varchar(32) NOT NULL CHARACTER SET utf8,
+  `md5` varchar(32) NOT NULL,
   `date_uploaded` int(11) NOT NULL DEFAULT \'0\',
   `active` tinyint(1) unsigned NOT NULL DEFAULT \'1\',
   PRIMARY KEY (`id`),

@@ -30,7 +30,7 @@ return array(
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 			'raw' => '`manager_staff_id` tinyint(3) unsigned NOT NULL',
 		),

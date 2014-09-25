@@ -9,7 +9,8 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	*/
 	public function _get_supported_field_types() {
 		return array(
-			'bit','int','real','float','double','decimal','numeric',
+			'bit','tinyint','smallint','mediumint','bigint','integer','int',
+			'real','float','double','decimal','numeric',
 			'varchar','char','tinytext','mediumtext','longtext','text',
 			'tinyblob','mediumblob','longblob','blob','varbinary','binary',
 			'timestamp','datetime','time','date','year',
@@ -21,7 +22,8 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 	*/
 	public function _get_unsigned_field_types() {
 		return array(
-			'bit','int','real','double','float','decimal','numeric'
+			'bit','tinyint','smallint','mediumint','bigint','integer','int',
+			'real','double','float','decimal','numeric'
 		);
 	}
 
@@ -66,66 +68,6 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 			$sql[] = $this->drop_event($db_name.'.'.$name, $extra);
 		}
 		return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
-	}
-
-	/**
-	* Slow method, but returning all info about indexes for selected database at once.
-	* Useful for analytics and getting overall picture.
-	*/
-	public function list_all_database_indexes($db_name = '', $extra = array(), &$error = false) {
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!$db_name) {
-			$error = 'db_name is empty';
-			return false;
-		}
-		$sql = 
-			'SELECT a.table_schema,
-				a.table_name,
-				a.constraint_name, 
-				a.constraint_type,
-				CONVERT(GROUP_CONCAT(DISTINCT b.column_name ORDER BY b.ordinal_position SEPARATOR ", "), char) as column_list,
-				b.referenced_table_name,
-				b.referenced_column_name
-			FROM information_schema.table_constraints a
-			INNER JOIN information_schema.key_column_usage b ON a.constraint_name = b.constraint_name AND a.table_schema = b.table_schema AND a.table_name = b.table_name
-			WHERE a.table_schema = '.$this->_escape_val($db_name).'
-			GROUP BY a.table_schema, a.table_name, a.constraint_name, 
-				a.constraint_type, b.referenced_table_name, 
-				b.referenced_column_name
-			UNION
-			SELECT table_schema,
-				table_name,
-				index_name as constraint_name,
-				if(index_type="FULLTEXT", "FULLTEXT", "NON UNIQUE") as constraint_type,
-				CONVERT(GROUP_CONCAT(column_name ORDER BY seq_in_index separator ", "), char) as column_list,
-				null as referenced_table_name,
-				null as referenced_column_name
-			FROM information_schema.statistics
-			WHERE non_unique = 1 AND table_schema = '.$this->_escape_val($db_name).'
-			GROUP BY table_schema, table_name, constraint_name, constraint_type, referenced_table_name, referenced_column_name
-			ORDER BY table_schema, table_name, constraint_name'
-		;
-		$indexes = array();
-		foreach ((array)$this->db->get_all($sql) as $a) {
-			$table = $a['table_name'];
-			$name = $a['constraint_name'];
-			$type = 'key';
-			if ($a['constraint_type'] === 'PRIMARY KEY') {
-				$type = 'primary';
-			} elseif ($a['constraint_type'] === 'UNIQUE') {
-				$type = 'unique';
-			} elseif ($a['constraint_type'] == 'FULLTEXT') {
-				$type = 'fulltext';
-			}
-			$indexes[$table][$name] = array(
-				'name'		=> $name,
-				'type'		=> $type,
-				'columns'	=> explode(', ', $a['column_list']),
-			);
-		}
-		return $indexes;
 	}
 
 	/**

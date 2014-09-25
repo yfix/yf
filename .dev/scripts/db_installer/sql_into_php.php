@@ -32,7 +32,7 @@ foreach ($globs_sql as $glob) {
 			continue;
 		}
 
-		$a = _class('db_installer_mysql', 'classes/db/')->_db_table_struct_into_array($data);
+		$a = _class('db_installer_mysql', 'classes/db/')->create_table_sql_to_php($data);
 		if (isset($a['name'])) {
 			unset($a['name']);
 		}

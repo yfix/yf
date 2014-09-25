@@ -13,7 +13,7 @@ return array(
 			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
-			'primary' => false,
+			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
 			'raw' => '`film_id` smallint(6) NOT NULL',

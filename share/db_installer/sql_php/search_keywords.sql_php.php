@@ -43,7 +43,7 @@ return array(
 			'collate' => NULL,
 			'auto_inc' => false,
 			'primary' => false,
-			'unique' => false,
+			'unique' => true,
 			'values' => NULL,
 		),
 		'ref_url' => array(

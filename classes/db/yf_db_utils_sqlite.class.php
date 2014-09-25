@@ -70,10 +70,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 			$error = 'table_name is empty';
 			return false;
 		}
-		if (!$extra['sql'] && !$this->table_exists($table)) {
-			$error = 'table_name not exists';
-			return false;
-		}
 		$cols = array();
 		$q = $this->db->query('PRAGMA table_info('.$this->_escape_table_name($table).')');
 		while ($a = $this->db->fetch_assoc($q)) {
@@ -89,16 +85,20 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 				'name'		=> $name,
 				'type'		=> $type,
 				'length'	=> $length,
+				'decimals'	=> $decimals ?: null,
 				'unsigned'	=> $unsigned,
-				'collate'	=> null,
 				'nullable'	=> !$a['notnull'],
 				'default'	=> $a['dflt_value'],
+				'charset'	=> null,
+				'collate'	=> null,
 				'auto_inc'	=> $a['pk'] == 1,
 				'primary'	=> $a['pk'] == 1,
 // TODO: detect unique from indexes list
 				'unique'	=> $a['pk'] == 1,
 				'type_raw'	=> $a['type'],
+				'values'	=> null,
 			);
+			$cols[$name]['type_raw'] = $a['type'];
 		}
 		return $cols;
 	}
@@ -292,7 +292,6 @@ COMMIT;
 			$error = 'db_name is empty';
 			return false;
 		}
-		// Possible alternative query: SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'test3' AND TABLE_NAME = 't_user' AND COLUMN_KEY = 'PRI';
 		$indexes = array();
 		foreach ((array)$this->db->get_all('SHOW INDEX FROM ' . $this->_escape_table_name($table)) as $row) {
 			$type = 'key';
@@ -416,20 +415,7 @@ COMMIT;
 			return false;
 		}
 		$keys = array();
-		$sql = 'SELECT CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
-			FROM information_schema.KEY_COLUMN_USAGE
-			WHERE TABLE_SCHEMA = '.$this->_escape_val($db_name).' 
-				AND REFERENCED_TABLE_NAME IS NOT NULL 
-				AND TABLE_NAME = '. $this->_escape_val($this->db->_fix_table_name($table));
-		foreach ((array)$this->db->get_all($sql) as $id => $row) {
-			$keys[$row['CONSTRAINT_NAME']] = array(
-				'name'		=> $row['CONSTRAINT_NAME'], // foreign key name
-				'local'		=> $row['COLUMN_NAME'], // local columns
-				'table'		=> $row['REFERENCED_TABLE_NAME'], // referenced table
-				'foreign' 	=> $row['REFERENCED_COLUMN_NAME'], // referenced columns
-			);
-		}
-		return $keys;
+// TODO: port code from mysql
 	}
 
 	/**
@@ -531,20 +517,7 @@ COMMIT;
 			$error = 'db_name is empty';
 			return false;
 		}
-		$sql = 'SELECT table_name FROM information_schema.tables WHERE table_schema = '.$this->_escape_val($db_name). ' AND table_type = "VIEW"';
-		$views = array();
-		foreach ((array)$this->db->get_all($sql) as $a) {
-			$name = $a['table_name'];
-			$create_view = '';
-			if (!$extra['no_details']) {
-				$create_view = $this->db->get('SHOW CREATE VIEW '.$this->_escape_table_name($db_name.'.'.$name));
-				if (is_array($create_view)) {
-					$create_view = $create_view['Create View'];
-				}
-			}
-			$views[$name] = $create_view;
-		}
-		return $views;
+// TODO: port code from mysql
 	}
 
 	/**
@@ -806,8 +779,8 @@ COMMIT;
 
 	/**
 	*/
-	function _escape_database_name($name = '') {
-		$name = trim($name);
+	public function _escape_database_name($name = '') {
+		$name = str_replace(array('\'', '"', '`'), '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
@@ -817,7 +790,7 @@ COMMIT;
 	/**
 	*/
 	function _escape_table_name($name = '') {
-		$name = trim($name);
+		$name = str_replace(array('\'', '"', '`'), '', trim($name));
 		if (!strlen($name)) {
 			return false;
 		}
@@ -840,7 +813,7 @@ COMMIT;
 	/**
 	*/
 	function _escape_key($key = '') {
-		$key = trim($key);
+		$key = trim(trim($key), '`');
 		if (!strlen($key)) {
 			return '';
 		}
@@ -865,7 +838,7 @@ COMMIT;
 	/**
 	*/
 	function _escape_val($val = '') {
-		$val = trim($val);
+		$val = trim(trim($val), '\'');
 		if (!strlen($val)) {
 			return '';
 		}
@@ -899,36 +872,5 @@ COMMIT;
 		}
 // TODO: support for binding params (':field' => $val)
 		return is_object($this->db) && method_exists($this->db, '_es') ? $this->db->_es($val) : addslashes($val);
-	}
-
-	/**
-	*/
-// TODO: merge with existing methods
-	function meta_columns($table) {
-		$cols = array();
-		$sql = 'PRAGMA table_info('.$table.')';
-		$q = $this->db->query($sql);
-		while ($a = $this->db->fetch_assoc($q)) {
-			$name = $a['name'];
-			$cols[$name] = $a;
-		}
-		return $cols;
-	}
-
-	/**
-	*/
-// TODO: merge with existing methods
-	function meta_tables($DB_PREFIX = '') {
-		$sql = 'SELECT name	FROM sqlite_master WHERE type = "table"	AND name <> "sqlite_sequence"';
-		$q = $this->db->query($sql);
-		while ($a = $this->db->fetch_assoc($q)) {
-			$name = $a['name'];
-			// Skip tables without prefix of current connection
-			if (strlen($DB_PREFIX) && substr($name, 0, strlen($DB_PREFIX)) != $DB_PREFIX) {
-				continue;
-			}
-			$tables[$name] = $name;
-		}
-		return $tables;
 	}
 }
