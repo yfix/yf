@@ -252,10 +252,12 @@ abstract class yf_db_migrator {
 			}
 			foreach ((array)$diff['columns_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['fields'][$name];
-				foreach ($info as $k => $v) {
-					if (is_null($v)) { unset($info[$k]); }
+				if ($new_info) {
+					foreach ((array)$new_info as $k => $v) {
+						if (is_null($v)) { unset($new_info[$k]); }
+					}
+					$out[] = 'db()->utils()->alter_column(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
 				}
-				$out[] = 'db()->utils()->alter_column(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
 			}
 			foreach ((array)$diff['indexes_missing'] as $name => $info) {
 				$out[] = 'db()->utils()->add_index(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
@@ -264,9 +266,11 @@ abstract class yf_db_migrator {
 				$out[] = 'db()->utils()->drop_index(\''.$table.'\', \''.$name.'\');';
 			}
 			foreach ((array)$diff['indexes_changed'] as $name => $info) {
-				$out[] = 'db()->utils()->drop_index(\''.$table.'\', \''.$name.'\');';
 				$new_info = $tables_installer_info[$table]['indexes'][$name];
-				$out[] = 'db()->utils()->add_index(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+				if ($new_info) {
+					$out[] = 'db()->utils()->drop_index(\''.$table.'\', \''.$name.'\');';
+					$out[] = 'db()->utils()->add_index(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+				}
 			}
 			foreach ((array)$diff['foreign_keys_missing'] as $name => $info) {
 				$out[] = 'db()->utils()->add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
@@ -275,13 +279,17 @@ abstract class yf_db_migrator {
 				$out[] = 'db()->utils()->drop_foreign_key(\''.$table.'\', \''.$name.'\');';
 			}
 			foreach ((array)$diff['foreign_keys_changed'] as $name => $info) {
-				$out[] = 'db()->utils()->drop_foreign_key(\''.$table.'\', \''.$name.'\');';
 				$new_info = $tables_installer_info[$table]['foreign_keys'][$name];
-				$out[] = 'db()->utils()->add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+				if ($new_info) {
+					$out[] = 'db()->utils()->drop_foreign_key(\''.$table.'\', \''.$name.'\');';
+					$out[] = 'db()->utils()->add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+				}
 			}
 			foreach ((array)$diff['options_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['options'];
-				$out[] = 'db()->utils()->alter_table(\''.$table.'\', '._var_export($new_info).');';
+				if ($new_info) {
+					$out[] = 'db()->utils()->alter_table(\''.$table.'\', '._var_export($new_info).');';
+				}
 			}
 		}
 		return implode(PHP_EOL, $out);
