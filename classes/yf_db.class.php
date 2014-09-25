@@ -1394,7 +1394,7 @@ class yf_db {
 		if (empty($db_error) || !$this->ERROR_AUTO_REPAIR) {
 			return false;
 		}
-		return _class('db_installer_'.$this->get_driver_family(), 'classes/db/')->_auto_repair_table($sql, $db_error, $this);
+		return _class('db_installer_'.$this->get_driver_family(), 'classes/db/')->repair($sql, $db_error, $this);
 	}
 
 	/**
