@@ -319,4 +319,22 @@ abstract class yf_db_migrator {
 	public function list_migrations() {
 // TODO
 	}
+
+	/**
+	*/
+	public function dump_db_installer_sql() {
+// TODO
+	}
+
+	/**
+	*/
+	public function dump_sql_php() {
+// TODO
+	}
+
+	/**
+	*/
+	public function sync_sql_php() {
+// TODO
+	}
 }
