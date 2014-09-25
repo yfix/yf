@@ -277,6 +277,10 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		$db_prefix = self::db()->DB_PREFIX;
 		$innodb_has_fulltext = self::_innodb_has_fulltext();
 		$db_installer = _class('db_installer_mysql', 'classes/db/');
+		$bak['SHARDING_BY_YEAR'] = $db_installer->SHARDING_BY_YEAR;
+		$bak['SHARDING_BY_MONTH'] = $db_installer->SHARDING_BY_MONTH;
+		$bak['SHARDING_BY_DAY'] = $db_installer->SHARDING_BY_DAY;
+		$bak['SHARDING_BY_LANG'] = $db_installer->SHARDING_BY_LANG;
 		$db_installer->SHARDING_BY_YEAR		= true;
 		$db_installer->SHARDING_BY_MONTH	= true;
 		$db_installer->SHARDING_BY_DAY		= true;
@@ -334,6 +338,10 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 		}
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
 
+		$db_installer->SHARDING_BY_YEAR = $bak['SHARDING_BY_YEAR'];
+		$db_installer->SHARDING_BY_MONTH = $bak['SHARDING_BY_MONTH'];
+		$db_installer->SHARDING_BY_DAY = $bak['SHARDING_BY_DAY'];
+		$db_installer->SHARDING_BY_LANG = $bak['SHARDING_BY_LANG'];
 		self::db()->ERROR_AUTO_REPAIR = $bak['ERROR_AUTO_REPAIR'];
 	}
 
