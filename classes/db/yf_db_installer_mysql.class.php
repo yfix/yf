@@ -61,11 +61,11 @@ class yf_db_installer_mysql extends yf_db_installer {
 					continue;
 				}
 				// Check if such index already exists
-				foreach ((array)$db->query_fetch_all('SHOW INDEX FROM '.$f_table.'', 'Key_name') as $k => $v) {
+				foreach ((array)$db->get_all('SHOW INDEX FROM '.$f_table.'', 'Key_name') as $k => $v) {
 					if ($v['Column_name'] != $f_field) {
 						continue;
 					}
-					if ($v['Index_type'] == 'FULLTEXT') {
+					if (strtoupper($v['Index_type']) == 'FULLTEXT') {
 						continue 2;
 					}
 				}
@@ -85,7 +85,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 		} elseif ($db_error['code'] == 1146) {
 
 			// Try to get table name from error message
-			preg_match("#Table [\'][a-z_0-9]+\.([a-z_0-9]+)[\'] doesn\'t exist#ims", $db_error['message'], $m);
+			preg_match('#Table [\'][a-z_0-9]+\.([a-z_0-9]+)[\'] doesn\'t exist#ims', $db_error['message'], $m);
 			$item_to_repair = trim($m[1]);
 			foreach(range(1,3) as $n) {
 				$dot_pos = strpos($item_to_repair, '.');
@@ -107,7 +107,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 		} elseif ($db_error['code'] == 1054) {
 
 			// Try to get column name from error message
-			preg_match("#Unknown column [\']([a-z_0-9]+)[\'] in#ims", $db_error['message'], $m);
+			preg_match('#Unknown column [\']([a-z_0-9]+)[\'] in#ims', $db_error['message'], $m);
 			$item_to_repair = $m[1];
 			foreach(range(1,3) as $n) {
 				$dot_pos = strpos($item_to_repair, '.');
@@ -116,7 +116,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 				}
 			}
 			// Try to get table name from SQL
-			preg_match("#[\s\t]*(UPDATE|FROM|INTO)[\s\t]+[\`]{0,1}([a-z_0-9]+)[\`]{0,1}#ims", $sql, $m2);
+			preg_match('#[\s]*(UPDATE|FROM|INTO)[\s]+[`]{0,1}([a-z_0-9]+)[`]{0,1}#ims', $sql, $m2);
 			$table_to_repair = $m2[2];
 			foreach(range(1,3) as $n) {
 				$dot_pos = strpos($table_to_repair, '.');
