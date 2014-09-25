@@ -214,7 +214,7 @@ class yf_core_install {
 			'install_db_name'					=> 'test_'.substr(md5(microtime()), 0, 6),
 			'install_db_user'					=> 'root',
 			'install_db_pswd'					=> '',
-			'install_db_prefix'					=> 'test_',
+			'install_db_prefix'					=> 't_',
 			'install_web_path'					=> installer()->get_default_web_path(),
 			'install_admin_login'				=> 'admin',
 			'install_admin_pswd'				=> '123456',
