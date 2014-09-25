@@ -20,9 +20,6 @@ class yf_console_db_compare extends Command {
 		init_yf();
 
 		$report = db()->migrator()->compare();
-#		echo _var_export($report);
-
 		$output->writeln( _var_export($report) );
-// TODO
 	}
 }
