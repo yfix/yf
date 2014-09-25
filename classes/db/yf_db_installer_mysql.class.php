@@ -69,6 +69,7 @@ class yf_db_installer_mysql extends yf_db_installer {
 						continue 2;
 					}
 				}
+// TODO: convert into db utils()
 				$db->query('ALTER TABLE '.$f_table.' ADD FULLTEXT KEY '.$f_field.' ('.$f_field.')');
 			}
 			return $this->db_query_safe($sql, $db);
