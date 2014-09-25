@@ -37,14 +37,14 @@ abstract class yf_db_installer {
 	/**
 	* Catch missing method call
 	*/
-	function __call($name, $args) {
+	public function __call($name, $args) {
 		return main()->extend_call($this, $name, $args);
 	}
 
 	/**
 	* Framework constructor
 	*/
-	function _init () {
+	public function _init () {
 		$this->LOCK_FILE_NAME = PROJECT_PATH. $this->LOCK_FILE_NAME;
 		$this->load_data();
 	}
@@ -63,7 +63,7 @@ abstract class yf_db_installer {
 
 	/**
 	*/
-	function load_data() {
+	public function load_data() {
 		// Preload db installer SQL CREATE TABLE DDL statements
 		$ext = '.sql.php';
 		$globs_sql = array(
@@ -137,7 +137,7 @@ abstract class yf_db_installer {
 	/**
 	* Do create table
 	*/
-	function create_table ($table_name, $db) {
+	public function create_table ($table_name, $db) {
 		$table_found = false;
 		if (empty($table_name)) {
 			return false;
@@ -188,7 +188,7 @@ abstract class yf_db_installer {
 	/**
 	* Do alter table structure
 	*/
-	function alter_table ($table_name, $column_name, $db) {
+	public function alter_table ($table_name, $column_name, $db) {
 		if (!$this->get_lock()) {
 			return false;
 		}
@@ -234,7 +234,7 @@ abstract class yf_db_installer {
 	/**
 	* Try to find table structure with sharding in mind
 	*/
-	function get_shard_table_name ($table_name, $db) {
+	public function get_shard_table_name ($table_name, $db) {
 		$shard_table_name = '';
 		// Try sharding by year/month/day (example: db('currency_pairs_log_2013_07_01') from db('currency_pairs_log'))
 		if (!$shard_table_name && $this->SHARDING_BY_DAY) {
@@ -300,20 +300,20 @@ abstract class yf_db_installer {
 
 	/**
 	*/
-	function create_table_php_to_sql ($data) {
+	public function create_table_php_to_sql ($data) {
 		return _class('db_ddl_parser_mysql', 'classes/db/')->create($data);
 	}
 
 	/**
 	* Alias
 	*/
-	function create_table_sql_to_php ($sql) {
+	public function create_table_sql_to_php ($sql) {
 		return $this->db_table_struct_into_array($sql);
 	}
 
 	/**
 	*/
-	function db_table_struct_into_array ($sql) {
+	public function db_table_struct_into_array ($sql) {
 		$options = '';
 		// Get table options from table structure. Example: /** ENGINE=MEMORY **/
 		if (preg_match('#\/\*\*(?P<raw_options>[^\*\/]+)\*\*\/#i', trim($sql), $m)) {
@@ -346,7 +346,7 @@ abstract class yf_db_installer {
 	*		}
 	*	);
 	*/
-	function create_table_pre_hook($full_table_name, $sql_php, $db) {
+	public function create_table_pre_hook($full_table_name, $sql_php, $db) {
 		_class('core_events')->fire('db.before_create_table', array(
 			'table'		=> $full_table_name,
 			'sql_php'	=> $sql_php,
@@ -364,7 +364,7 @@ abstract class yf_db_installer {
 	/**
 	* This method can be inherited in project with custom rules inside.
 	*/
-	function create_table_post_hook($full_table_name, $sql_php, $db) {
+	public function create_table_post_hook($full_table_name, $sql_php, $db) {
 		_class('core_events')->fire('db.after_create_table', array(
 			'table'		=> $full_table_name,
 			'sql_php'	=> $sql_php,
@@ -382,7 +382,7 @@ abstract class yf_db_installer {
 	/**
 	* This method can be inherited in project with custom rules inside
 	*/
-	function alter_table_pre_hook($table_name, $column_name, $sql_php, $db) {
+	public function alter_table_pre_hook($table_name, $column_name, $sql_php, $db) {
 		_class('core_events')->fire('db.before_alter_table', array(
 			'table'		=> $table_name,
 			'column'	=> $column_name,
@@ -401,7 +401,7 @@ abstract class yf_db_installer {
 	/**
 	* This method can be inherited in project with custom rules inside
 	*/
-	function alter_table_post_hook($table_name, $column_name, $sql_php, $db) {
+	public function alter_table_post_hook($table_name, $column_name, $sql_php, $db) {
 		_class('core_events')->fire('db.after_alter_table', array(
 			'table'		=> $table_name,
 			'column'	=> $column_name,
@@ -419,13 +419,13 @@ abstract class yf_db_installer {
 
 	/**
 	*/
-	function get_table_struct_array_by_name ($table_name, $db) {
+	public function get_table_struct_array_by_name ($table_name, $db) {
 		return $this->db_table_struct_into_array( $db->get_one('SHOW CREATE TABLE `'.$table_name.'`') );
 	}
 
 	/**
 	*/
-	function get_all_struct_array ($only_what, $db) {
+	public function get_all_struct_array ($only_what, $db) {
 		$structs_array = array();
 		foreach ((array)$db->meta_tables() as $full_table_name) {
 			$structs_array[substr($full_table_name, strlen($db->DB_PREFIX))] = $this->get_table_struct_array_by_name($full_table_name, $db);
@@ -435,7 +435,7 @@ abstract class yf_db_installer {
 
 	/**
 	*/
-	function get_lock () {
+	protected function get_lock () {
 		if (!$this->USE_LOCKING) {
 			return true;
 		}
@@ -451,7 +451,7 @@ abstract class yf_db_installer {
 
 	/**
 	*/
-	function release_lock () {
+	protected function release_lock () {
 		if (!$this->USE_LOCKING) {
 			return true;
 		}
