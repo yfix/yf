@@ -392,9 +392,9 @@ WHERE table_schema = "schemaname"
 		return array(
 			'name'			=> $table,
 			'db_name'		=> $db_name,
-			'columns'		=> $this->table_get_columns($orig_table),
+			'columns'		=> !$extra['just_info'] ? $this->table_get_columns($orig_table) : null,
 			'row_format'	=> $info['Row_format'],
-			'charset'		=> $this->table_get_charset($orig_table),
+			'charset'		=> !$extra['just_info'] ? $this->table_get_charset($orig_table) : null,
 			'collate'		=> $info['Collation'],
 			'engine'		=> $info['Engine'],
 			'rows'			=> $info['Rows'],
@@ -403,6 +403,25 @@ WHERE table_schema = "schemaname"
 			'comment'		=> $info['Comment'],
 			'create_time'	=> $info['Create_time'],
 			'update_time'	=> $info['Update_time'],
+		);
+	}
+
+	/**
+	*/
+	public function table_simple_info($table, $extra = array(), &$error = false) {
+		$extra['just_info'] = true;
+		return $this->table_info($table, $extra, $error);
+	}
+
+	/**
+	*/
+	public function table_options($table, $extra = array(), &$error = false) {
+		$info = $this->table_simple_info($table, $extra, $error);
+		return array(
+			'engine'	=> $info['engine'],
+			'charset'	=> !$extra['just_info'] ? $this->table_get_charset($table) : null,
+			'collate'	=> $info['collate'],
+			'comment'	=> $info['comment'],
 		);
 	}
 
