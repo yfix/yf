@@ -126,21 +126,20 @@ abstract class yf_db_migrator {
 				$foreign_keys['new'][$name] = $info;
 			}
 		}
-		foreach ((array)$t1['options'] as $k => $v) {
-			if (!isset($t2['options'][$k])) {
-			}
-		}
 		$compare_options = array(
 			'engine',
 			'charset',
 		);
 		foreach ((array)$compare_options as $name) {
+			if (!isset($t1['options'][$name])) {
+				continue;
+			}
 			$o1 = $t1['options'][$name];
 			$o2 = $t2['options'][$name];
-			if ($o1 != $o2) {
+			if (strtolower($o1) !== strtolower($o2)) {
 				$options_changed[$name] = array(
-					0	=> $o1,
-					1	=> $o2,
+					'expected'	=> $o1,
+					'actual'	=> $o2,
 				);
 			}
 		}
@@ -176,10 +175,24 @@ abstract class yf_db_migrator {
 			if (in_array($k, $skip)) {
 				continue;
 			}
-			if ($c2[$k] != $v) {
+			if ($k === 'default') {
+				if ($c2[$k] == 'NULL') {
+					$c2[$k] = null;
+				}
+				if ($v == 'NULL') {
+					$v = null;
+				}
+			} elseif ($k === 'unsigned') {
+				$c2[$k] = (bool)$c2[$k];
+				$v = (bool)$v;
+			} elseif ($k === 'length' || $k === 'decimals') {
+				$c2[$k] = (int)$c2[$k];
+				$v = (int)$v;
+			}
+			if ($c2[$k] !== $v) {
 				$changes[$k] = array(
-					0	=> $v,
-					1	=> $c2[$k],
+					'expected'	=> $v,
+					'actual'	=> $c2[$k],
 				);
 			}
 		}
@@ -191,10 +204,10 @@ abstract class yf_db_migrator {
 	public function compare_index($i1, $i2) {
 		$changes = array();
 		foreach ((array)$i1 as $k => $v) {
-			if ($i2[$k] != $v) {
+			if ($i2[$k] !== $v) {
 				$changes[$k] = array(
-					0	=> $v,
-					1	=> $i2[$k],
+					'expected'	=> $v,
+					'actual'	=> $i2[$k],
 				);
 			}
 		}
@@ -206,10 +219,10 @@ abstract class yf_db_migrator {
 	public function compare_foreign_key($f1, $f2) {
 		$changes = array();
 		foreach ((array)$f1 as $k => $v) {
-			if ($f2[$k] != $v) {
+			if ($f2[$k] !== $v) {
 				$changes[$k] = array(
-					0	=> $v,
-					1	=> $f2[$k],
+					'expected'	=> $v,
+					'actual'	=> $f2[$k],
 				);
 			}
 		}
