@@ -1651,6 +1651,15 @@ class yf_db {
 
 	/**
 	*/
+	function installer() {
+		$cname = 'db_installer_'.$this->get_driver_family();
+		$obj = clone _class($cname, 'classes/db/');
+		$obj->db = $this;
+		return $obj;
+	}
+
+	/**
+	*/
 	function query_builder() {
 		$cname = 'db_query_builder_'.$this->get_driver_family();
 		$obj = clone _class($cname, 'classes/db/');
