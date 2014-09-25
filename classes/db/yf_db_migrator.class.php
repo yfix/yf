@@ -22,37 +22,198 @@ abstract class yf_db_migrator {
 	* Compare and report real db structure with expected structure, stored inside sql_php, including fields, indexes, foreign keys, table options, etc
 	*/
 	public function compare() {
-// TODO
+		$installer = $this->db->installer();
+		$utils = $this->db->utils();
+		$db_prefix = $this->db->DB_PREFIX;
+
+		$tables_installer_info = $installer->TABLES_SQL_PHP;
+		$tables_installer = array_keys($tables_installer_info);
+		$tables_installer = array_combine($tables_installer, $tables_installer);
+		ksort($tables_installer);
+
+		$tables_real = array();
+		$plen = strlen($db_prefix);
+		foreach ((array)$utils->list_tables() as $table) {
+			if ($plen && substr($table, 0, $plen) === $db_prefix) {
+				$table = substr($table, $plen);
+			}
+			$tables_real[$table] = $table;
+		}
+		ksort($tables_real);
+
+		$tables_missing = array();
+		$tables_changed = array();
+		$tables_new = array();
+		foreach ((array)$tables_installer as $table) {
+			if (!isset($tables_real[$table])) {
+				$tables_missing[$table] = $table;
+			}
+		}
+		foreach ((array)$tables_real as $table) {
+			if (!isset($tables_installer[$table])) {
+				$tables_new[$table] = $table;
+				continue;
+			}
+			$table_real_info = array(
+				'fields'		=> $utils->list_columns($table),
+				'indexes'		=> $utils->list_indexes($table),
+				'foreign_keys'	=> $utils->list_foreign_keys($table),
+				'options'		=> $utils->table_options($table),
+			);
+			$diff = $this->compare_table($tables_installer_info[$table], $table_real_info);
+			if ($diff) {
+				$tables_changed[$table] = $diff;
+			}
+		}
+		return array(
+#			'tables_real'		=> $tables_real,
+#			'tables_installer'	=> $tables_installer,
+#			'tables_missing'	=> $tables_missing,
+			'tables_changed'	=> $tables_changed,
+			'tables_new'		=> $tables_new,
+		);
 	}
 
 	/**
 	*/
-	public function compare_db() {
-// TODO
+	public function compare_table($t1, $t2) {
+		$columns = array();
+		$indexes = array();
+		$foreign_keys = array();
+		$options_changed = array();
+		foreach ((array)$t1['fields'] as $name => $info) {
+			if (!isset($t2['fields'][$name])) {
+				$columns['missing'][$name] = $info;
+			} else {
+				$diff = $this->compare_column($info, $t2['fields'][$name]);
+				if ($diff) {
+					$columns['changed'][$name] = $diff;
+				}
+			}
+		}
+		foreach ((array)$t2['fields'] as $name => $info) {
+			if (!isset($t1['fields'][$name])) {
+				$columns['new'][$name] = $info;
+			}
+		}
+		foreach ((array)$t1['indexes'] as $name => $info) {
+			if (!isset($t2['indexes'][$name])) {
+				$indexes['missing'][$name] = $info;
+			} else {
+				$diff = $this->compare_index($info, $t2['indexes'][$name]);
+				if ($diff) {
+					$indexes['changed'][$name] = $diff;
+				}
+			}
+		}
+		foreach ((array)$t2['indexes'] as $name => $info) {
+			if (!isset($t1['indexes'][$name])) {
+				$indexes['new'][$name] = $info;
+			}
+		}
+		foreach ((array)$t1['foreign_keys'] as $name => $info) {
+			if (!isset($t2['foreign_keys'][$name])) {
+				$foreign_keys['missing'][$name] = $info;
+			} else {
+				$diff = $this->compare_foreign_key($info, $t2['foreign_keys'][$name]);
+				if ($diff) {
+					$foreign_keys['changed'][$name] = $diff;
+				}
+			}
+		}
+		foreach ((array)$t2['foreign_keys'] as $name => $info) {
+			if (!isset($t1['foreign_keys'][$name])) {
+				$foreign_keys['new'][$name] = $info;
+			}
+		}
+		foreach ((array)$t1['options'] as $k => $v) {
+			if (!isset($t2['options'][$k])) {
+			}
+		}
+		$compare_options = array(
+			'engine',
+			'charset',
+		);
+		foreach ((array)$compare_options as $name) {
+			$o1 = $t1['options'][$name];
+			$o2 = $t2['options'][$name];
+			if ($o1 != $o2) {
+				$options_changed[$name] = array(
+					0	=> $o1,
+					1	=> $o2,
+				);
+			}
+		}
+		$result = array(
+			'columns_missing'		=> $columns['missing'],
+			'columns_new'			=> $columns['new'],
+			'columns_changed'		=> $columns['changed'],
+			'indexes_missing'		=> $indexes['missing'],
+			'indexes_new'			=> $indexes['new'],
+			'indexes_changed'		=> $indexes['changed'],
+			'foreign_keys_missing'	=> $foreign_keys['missing'],
+			'foreign_keys_new'		=> $foreign_keys['new'],
+			'foreign_keys_changed'	=> $foreign_keys['changed'],
+			'options_changed'		=> $options_changed,
+		);
+		foreach ($result as $k => $v) {
+			if (empty($v)) {
+				unset($result[$k]);
+			}
+		}
+		return $result;
 	}
 
 	/**
 	*/
-	public function compare_table() {
-// TODO
+	public function compare_column($c1, $c2) {
+		$changes = array();
+		$skip = array(
+			'charset',
+			'collate',
+		);
+		foreach ((array)$c1 as $k => $v) {
+			if (in_array($k, $skip)) {
+				continue;
+			}
+			if ($c2[$k] != $v) {
+				$changes[$k] = array(
+					0	=> $v,
+					1	=> $c2[$k],
+				);
+			}
+		}
+		return $changes;
 	}
 
 	/**
 	*/
-	public function compare_column() {
-// TODO
+	public function compare_index($i1, $i2) {
+		$changes = array();
+		foreach ((array)$i1 as $k => $v) {
+			if ($i2[$k] != $v) {
+				$changes[$k] = array(
+					0	=> $v,
+					1	=> $i2[$k],
+				);
+			}
+		}
+		return $changes;
 	}
 
 	/**
 	*/
-	public function compare_index() {
-// TODO
-	}
-
-	/**
-	*/
-	public function compare_foreign_key() {
-// TODO
+	public function compare_foreign_key($f1, $f2) {
+		$changes = array();
+		foreach ((array)$f1 as $k => $v) {
+			if ($f2[$k] != $v) {
+				$changes[$k] = array(
+					0	=> $v,
+					1	=> $f2[$k],
+				);
+			}
+		}
+		return $changes;
 	}
 
 	/**
