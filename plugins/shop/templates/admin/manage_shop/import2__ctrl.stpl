@@ -73,8 +73,8 @@ ng_app_admin.factory( 'UploadApi',  function( ApiConfig, $resource, $window, $lo
 	service.item__remove = function( id ) {
 		return( service.resource.item__remove({ id: id }) );
 	};
-	service.item__import = function( id, action, data ) {
-		return( service.resource.item__import({ id: id, action: action, data: data }) );
+	service.item__import = function( option ) {
+		return( service.resource.item__import({ option: option }) );
 	};
 	return( service );
 });
@@ -292,8 +292,8 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 	}
 	$scope.Import = {
 		field__change: function( index ) {
-			var item = $scope.item_data.fields[ index ];
-			angular.forEach( $scope.item_data.fields, function( _item, _index ) {
+			var item = $scope.item_data.option.fields[ index ];
+			angular.forEach( $scope.item_data.option.fields, function( _item, _index ) {
 				if( item != 0 && index != _index && item == _item ) {
 					var title = $scope.data._import_field[ item ];
 					var content = '- данное поле уже используется в колонке №' + _index;
@@ -301,7 +301,7 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 					this[ index ] = 0;
 					return( true );
 				}
-			}, $scope.item_data.fields );
+			}, $scope.item_data.option.fields );
 		}
 	};
 	$scope.UploadApi = {
@@ -329,7 +329,16 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 			);
 		},
 		item__import: function( item ) {
-			var result = UploadApi.item__import( $scope.item_data.id, $scope.import_action.key, $scope.item_data.fields );
+			// set import action
+			if( !angular.isObject( $scope.item_data.action_selected ) ){
+				var title   = 'Импорт:';
+				var content = 'выберите тип импорта - обновление или добавление';
+				$scope.notifications( title, content, 'warning' );
+				return( false );
+			}
+			$scope.item_data.option.action = $scope.item_data.action_selected.key;
+			// request
+			var result = UploadApi.item__import( $scope.item_data.option );
 			result.$promise.then(
 				function( r ) {
 					$scope.item__import({ response: r.response });
@@ -364,13 +373,21 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 			var content = 'файл получен';
 			$scope.notifications( title, content );
 			// get test data
-			var test = result.response.action.data.test.data._import_test;
+			var test        = result.response.action.data.test.data._import_test;
 			var test_status = result.response.action.data.test.data.status;
 			// get data
 			result.response.action.data.test = null;
 			$scope.item_data = result.response.action.data;
 			$scope.item_data.test        = test;
 			$scope.item_data.test_status = test_status;
+			// set import action
+			var action = $scope.item_data.option.action;
+			angular.forEach( $scope.data._import_action_array, function( item, index ) {
+				if( item.key == action ) {
+					$scope.item_data.action_selected = item;
+					return( true );
+				}
+			});
 			// inject status
 			angular.forEach( $scope.item_data.test.items, function( item, index ) {
 				this[ index ][ 'status'         ] = item[ 'status'         ];
@@ -479,9 +496,6 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 	};
 	// init
 	_prepare__upload_list( $scope );
-	if( !angular.isObject( $scope.import_action ) ) {
-		$scope.import_action = $scope.data._import_action_array[0];
-	}
 });
 
 // config

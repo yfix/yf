@@ -108,6 +108,7 @@
 	min-width : 10em;
 }
 .import_action {
+	min-width   : 10em;
 	height      : 100%;
 	font-weight : normal;
 }
@@ -137,7 +138,7 @@
 			</span>
 			<div class="block_action pull-right">
 				<ui-select class="import_action"
-					ng-model="import_action"
+					ng-model="item_data.action_selected"
 					{{-- theme="select2" --}}
 					{{-- theme="bootstrap" --}}
 					{{-- theme="selectize" --}}
@@ -147,10 +148,10 @@
 				>
 					<ui-select-match placeholder="выберите действие...">{{$select.selected.value}}</ui-select-match>
 					<ui-select-choices repeat="action in data._import_action_array | filter: $select.search"
-						{{-- refresh="refreshAddresses($select.search)" --}}
+						{{-- refresh="update_import_action( $select )" --}}
 						{{-- refresh-delay="0" --}}
 					>
-					<div ng-bind-html="action.value | highlight: $select.search"></div>
+						<div ng-bind-html="action.value | highlight: $select.search"></div>
 					</ui-select-choices>
 				</ui-select>
 
@@ -168,7 +169,7 @@
 		>
 		<span>№{{ $index }}</span>
 		<select class="import_field"
-			ng-model="item_data.fields[ $index ]"
+			ng-model="item_data.option.fields[ $index ]"
 			ng-change="Import.field__change( $index )"
 			ng-options="key as value for ( key, value ) in data._import_field"
 			ui-select2
