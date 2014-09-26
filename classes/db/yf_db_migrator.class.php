@@ -83,6 +83,9 @@ abstract class yf_db_migrator {
 		$options_changed = array();
 		foreach ((array)$t1['fields'] as $name => $info) {
 			if (!isset($t2['fields'][$name])) {
+				foreach ($info as $k => $v) {
+					if (is_null($v)) { unset($info[$k]); }
+				}
 				$columns['missing'][$name] = $info;
 			} else {
 				$diff = $this->compare_column($info, $t2['fields'][$name]);
