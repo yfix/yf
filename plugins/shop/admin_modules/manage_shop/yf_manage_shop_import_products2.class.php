@@ -76,8 +76,12 @@ class yf_manage_shop_import_products2 {
 	);
 	public $import_action_default = 'update';
 	public $import_rulues = array(
-		array( 'id', ),
-		array( 'id', ),
+		'update' => array(
+			'key' => array(
+				array( 'id', ),
+				array( 'supplier_id', 'articul', ),
+			),
+		),
 	);
 	public $upload_path            = null;
 	public $upload_list            = null;
@@ -462,7 +466,7 @@ class yf_manage_shop_import_products2 {
 			);
 			foreach( $import_fields_test as $field_index => $field ) {
 				$value = $item[ $field_index ];
-				$test = $this->_field__test( $field, $value );
+				$test = $this->_field__test( $field, $value, $action );
 				if( $test === FALSE ) { continue; }
 				$result[ 'items' ][ $index ][ 'fields' ][ $field_index ] = $test;
 				$status = $status && $test[ 'status' ];
@@ -497,15 +501,15 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
-	protected function _field__test( $field, $value ) {
+	protected function _field__test( $field, $value, $action ) {
 		$_class  = $this;
 		$_method = '_field_test__' . $field;
 		$_status = method_exists( $_class, $_method );
 		if( !$_status ) { return( false ); }
-		return( $_class->$_method( $value ) );
+		return( $_class->$_method( $value, $action ) );
 	}
 
-	protected function _field_test__id( $value ) {
+	protected function _field_test__id( $value, $action ) {
 		$value  = (int)$value;
 		$valid  = $value > 0;
 		$exists = $this->_product_exists( $value );
@@ -520,7 +524,7 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
-	protected function _field_test__price( $value ) {
+	protected function _field_test__price( $value, $action ) {
 		$_class_price = $this->_class_price;
 		$value  = $_class_price->_number_float( $value );
 		$valid  = $value > 0;
