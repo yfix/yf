@@ -86,27 +86,36 @@ abstract class yf_db_migrator {
 				$columns['missing'][$name] = $info;
 			} else {
 				$diff = $this->compare_column($info, $t2['fields'][$name]);
-				if ($diff) {
-					$columns['changed'][$name] = $diff;
+				if (isset($diff['default'])) {
+					// Fix for default value null when null not allowed
+					if (!$info['nullable'] && is_null($diff['default']['actual'])) {
+						unset($diff['default']);
+					}
 				}
+				if (!$diff) {
+					continue;
+				}
+				$columns['changed'][$name] = $diff;
 			}
 		}
 		foreach ((array)$t2['fields'] as $name => $info) {
-			if (!isset($t1['fields'][$name])) {
-				foreach ($info as $k => $v) {
-					if (is_null($v)) { unset($info[$k]); }
-				}
-				$columns['new'][$name] = $info;
+			if (isset($t1['fields'][$name])) {
+				continue;
 			}
+			foreach ($info as $k => $v) {
+				if (is_null($v)) { unset($info[$k]); }
+			}
+			$columns['new'][$name] = $info;
 		}
 		foreach ((array)$t1['indexes'] as $name => $info) {
 			if (!isset($t2['indexes'][$name])) {
 				$indexes['missing'][$name] = $info;
 			} else {
 				$diff = $this->compare_index($info, $t2['indexes'][$name]);
-				if ($diff) {
-					$indexes['changed'][$name] = $diff;
+				if (!$diff) {
+					continue;
 				}
+				$indexes['changed'][$name] = $diff;
 			}
 		}
 		foreach ((array)$t2['indexes'] as $name => $info) {
@@ -127,15 +136,24 @@ abstract class yf_db_migrator {
 				$foreign_keys['missing'][$name] = $info;
 			} else {
 				$diff = $this->compare_foreign_key($info, $t2['foreign_keys'][$name]);
-				if ($diff) {
-					$foreign_keys['changed'][$name] = $diff;
+				if (!$diff) {
+					continue;
 				}
+				$foreign_keys['changed'][$name] = $diff;
 			}
 		}
 		foreach ((array)$t2['foreign_keys'] as $name => $info) {
-			if (!isset($t1['foreign_keys'][$name])) {
-				$foreign_keys['new'][$name] = $info;
+			if (isset($t1['foreign_keys'][$name])) {
+				continue;
 			}
+			// Check that current foreign key not used in db with different name
+			foreach ((array)$foreign_keys['missing'] as $m_name => $m_info) {
+				if ($info['columns'] == $m_info['columns'] && $info['ref_columns'] == $m_info['ref_columns'] && $info['ref_table'] == $m_info['ref_table']) {
+					unset($foreign_keys['missing'][$m_name]);
+					continue 2;
+				}
+			}
+			$foreign_keys['new'][$name] = $info;
 		}
 		$compare_options = array(
 			'engine',
