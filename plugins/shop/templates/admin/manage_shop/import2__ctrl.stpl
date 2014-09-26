@@ -246,6 +246,9 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 		title: ''
 	};
 	$scope._upload_list__count = 0;
+	$scope.update_import_action = function( $item ) {
+		$scope.item_data.option.action = $item.key;
+	};
 	$scope.Pagination = {
 		page      : 1,
 		page_size : 10,
@@ -330,13 +333,12 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 		},
 		item__import: function( item ) {
 			// set import action
-			if( !angular.isObject( $scope.item_data.action_selected ) ){
+			if( !angular.isString( $scope.item_data.option.action ) ){
 				var title   = 'Импорт:';
 				var content = 'выберите тип импорта - обновление или добавление';
 				$scope.notifications( title, content, 'warning' );
 				return( false );
 			}
-			$scope.item_data.option.action = $scope.item_data.action_selected.key;
 			// request
 			var result = UploadApi.item__import( $scope.item_data.option );
 			result.$promise.then(

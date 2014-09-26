@@ -138,7 +138,8 @@
 			</span>
 			<div class="block_action pull-right">
 				<ui-select class="import_action"
-					ng-model="item_data.action_selected"
+					ng-model  = "item_data.action_selected"
+					on-select = "update_import_action( $item )"
 					{{-- theme="select2" --}}
 					{{-- theme="bootstrap" --}}
 					{{-- theme="selectize" --}}
