@@ -1613,26 +1613,8 @@ class yf_db {
 
 	/**
 	*/
-	function utils() {
-		$cname = 'db_utils_'.$this->get_driver_family();
-		$obj = clone _class($cname, 'classes/db/');
-		$obj->db = $this;
-		return $obj;
-	}
-
-	/**
-	*/
 	function split_sql($sql) {
 		return $this->utils()->split_sql($sql);
-	}
-
-	/**
-	*/
-	function query_builder() {
-		$cname = 'db_query_builder_'.$this->get_driver_family();
-		$obj = clone _class($cname, 'classes/db/');
-		$obj->db = $this;
-		return $obj;
 	}
 
 	/**
@@ -1647,6 +1629,42 @@ class yf_db {
 	*/
 	function from() {
 		return $this->query_builder()->from(array('__args__' => func_get_args()));
+	}
+
+	/**
+	*/
+	function utils() {
+		$cname = 'db_utils_'.$this->get_driver_family();
+		$obj = clone _class($cname, 'classes/db/');
+		$obj->db = $this;
+		return $obj;
+	}
+
+	/**
+	*/
+	function migrator() {
+		$cname = 'db_migrator_'.$this->get_driver_family();
+		$obj = clone _class($cname, 'classes/db/');
+		$obj->db = $this;
+		return $obj;
+	}
+
+	/**
+	*/
+	function installer() {
+		$cname = 'db_installer_'.$this->get_driver_family();
+		$obj = clone _class($cname, 'classes/db/');
+		$obj->db = $this;
+		return $obj;
+	}
+
+	/**
+	*/
+	function query_builder() {
+		$cname = 'db_query_builder_'.$this->get_driver_family();
+		$obj = clone _class($cname, 'classes/db/');
+		$obj->db = $this;
+		return $obj;
 	}
 
 	/**

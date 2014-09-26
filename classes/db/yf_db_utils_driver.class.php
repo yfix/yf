@@ -392,9 +392,9 @@ WHERE table_schema = "schemaname"
 		return array(
 			'name'			=> $table,
 			'db_name'		=> $db_name,
-			'columns'		=> $this->table_get_columns($orig_table),
+			'columns'		=> !$extra['just_info'] ? $this->table_get_columns($orig_table) : null,
 			'row_format'	=> $info['Row_format'],
-			'charset'		=> $this->table_get_charset($orig_table),
+			'charset'		=> !$extra['just_info'] ? $this->table_get_charset($orig_table) : null,
 			'collate'		=> $info['Collation'],
 			'engine'		=> $info['Engine'],
 			'rows'			=> $info['Rows'],
@@ -408,7 +408,27 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
+	public function table_simple_info($table, $extra = array(), &$error = false) {
+		$extra['just_info'] = true;
+		return $this->table_info($table, $extra, $error);
+	}
+
+	/**
+	*/
+	public function table_options($table, $extra = array(), &$error = false) {
+		$info = $this->table_simple_info($table, $extra, $error);
+		return array(
+			'engine'	=> $info['engine'],
+			'charset'	=> !$extra['just_info'] ? $this->table_get_charset($table) : null,
+			'collate'	=> $info['collate'],
+			'comment'	=> $info['comment'],
+		);
+	}
+
+	/**
+	*/
 	public function create_table($table, $data = array(), $extra = array(), &$error = false) {
+// TODO: add ability to pass $data as db ddl parser structure
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -577,6 +597,7 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function alter_column($table, $col_name, $data, $extra = array(), &$error = false) {
+// TODO: $data should be compatible with db ddl parser
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -664,6 +685,7 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function add_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
+// TODO: $fields should be compatible with db ddl parser
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -717,8 +739,16 @@ WHERE table_schema = "schemaname"
 	}
 
 	/**
+	* Alias
+	*/
+	public function alter_index($table, $index_name, $fields = array(), $extra = array(), &$error = false) {
+		return $this->update_index($table, $index_name, $fields, $extra, $error);
+	}
+
+	/**
 	*/
 	public function update_index($table, $index_name, $fields = array(), $extra = array(), &$error = false) {
+// TODO: $fields should be compatible with db ddl parser
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -814,6 +844,7 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function add_foreign_key($table, $index_name = '', array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+// TODO: $fields should be compatible with db ddl parser
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -850,6 +881,13 @@ WHERE table_schema = "schemaname"
 			. ($on_update ? ' ON UPDATE '.$on_update : '')
 		;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+
+	/**
+	* Alias
+	*/
+	public function alter_foreign_key($table, $index_name, array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+		return $this->update_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
 	}
 
 	/**
@@ -1124,6 +1162,7 @@ WHERE table_schema = "schemaname"
 	* See http://dev.mysql.com/doc/refman/5.6/en/create-table.html
 	*/
 	public function _parse_column_type($str, &$error = false) {
+// TODO: use db ddl parser if available for the given db family (mysql currently supported)
 		$str = trim($str);
 		$type = $length = $decimals = $values = null;
 		if (preg_match('~^(?P<type>[a-z]+)[\s\t]*\((?P<length>[^\)]+)\)~i', $str, $m)) {
@@ -1172,6 +1211,7 @@ WHERE table_schema = "schemaname"
 	* Create part of SQL for "CREATE TABLE" from array of params
 	*/
 	public function _compile_create_table($data, $extra = array(), &$error = false) {
+// TODO: use db ddl parser if available for the given db family (mysql currently supported)
 		if (!is_array($data) || !count($data)) {
 			return false;
 		}
