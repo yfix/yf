@@ -110,9 +110,17 @@ abstract class yf_db_migrator {
 			}
 		}
 		foreach ((array)$t2['indexes'] as $name => $info) {
-			if (!isset($t1['indexes'][$name])) {
-				$indexes['new'][$name] = $info;
+			if (isset($t1['indexes'][$name])) {
+				continue;
 			}
+			// Check that current index not used in db with different name
+			foreach ((array)$indexes['missing'] as $m_name => $m_info) {
+				if ($info['type'] == $m_info['type'] && $info['columns'] == $m_info['columns']) {
+					unset($indexes['missing'][$m_name]);
+					continue 2;
+				}
+			}
+			$indexes['new'][$name] = $info;
 		}
 		foreach ((array)$t1['foreign_keys'] as $name => $info) {
 			if (!isset($t2['foreign_keys'][$name])) {
