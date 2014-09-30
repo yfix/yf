@@ -355,34 +355,80 @@ abstract class yf_db_migrator {
 	}
 
 	/**
-	* Apply selected migration file to current database
+	* Alias
+	*/
+	public function create_migration($params = array()) {
+		return $this->create($params);
+	}
+
+	/**
+	* Create migration file from current database comparing to stored structure
+	*/
+	public function create($params = array()) {
+// TODO
+	}
+
+	/**
+	* Alias
 	*/
 	public function apply_migration($params = array()) {
+		return $this->apply($params);
+	}
+
+	/**
+	* Apply selected migration file to current database
+	*/
+	public function apply($params = array()) {
 // TODO
 	}
 
 	/**
-	* List of available migrations
+	* Alias
 	*/
 	public function list_migrations($params = array()) {
+		return $this->_list($params);
+	}
+
+	/**
+	* List of available migrations to apply
+	*/
+	public function _list($params = array()) {
 // TODO
 	}
 
 	/**
+	* Alias
 	*/
 	public function dump_db_installer_sql($params = array()) {
-// TODO
+		$params['only_sql'] = true;
+		return $this->dump($params);
 	}
 
 	/**
+	* Alias
 	*/
 	public function dump_sql_php($params = array()) {
+		return $this->dump($params);
+	}
+
+	/**
+	* Dump current database structure into sql and sql_php files
+	*/
+	public function dump($params = array()) {
 // TODO
 	}
 
 	/**
+	* Alias
 	*/
 	public function sync_sql_php($params = array()) {
+		return $this->sync($params);
+	}
+
+	/**
+	* Ensure all sql, sql_php are in sync with each other and current db structure
+	*/
+	public function sync($params = array()) {
 // TODO
 	}
 }
