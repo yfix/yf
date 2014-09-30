@@ -877,6 +877,9 @@ class yf_db_utils_pgsql extends yf_db_utils_driver {
 	/**
 	*/
 	public function _es($val = '') {
+		if (is_null($val)) {
+			return 'NULL';
+		}
 		$val = trim($val);
 		if (!strlen($val)) {
 			return '';

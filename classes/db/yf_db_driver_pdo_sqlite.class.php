@@ -61,6 +61,9 @@ class yf_db_driver_pdo_sqlite extends yf_db_driver_pdo {
 	/**
 	*/
 	function real_escape_string($string) {
+		if (is_null($string)) {
+			return 'NULL';
+		}
 		return $this->db_connect_id ? substr($this->db_connect_id->quote($string), 1, -1) : addslashes($string);
 	}
 
@@ -83,6 +86,9 @@ class yf_db_driver_pdo_sqlite extends yf_db_driver_pdo {
 	/**
 	*/
 	function escape_val($data) {
+		if (is_null($data)) {
+			return 'NULL';
+		}
 		return '\''.trim($data, '\'').'\'';
 	}
 }

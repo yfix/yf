@@ -130,7 +130,9 @@ class yf_db_driver_mysqli extends yf_db_driver {
 		if (!$this->db_connect_id) {
 			return _class('db')->_mysql_escape_mimic($string);
 		}
-		if (is_float($string)) {
+		if (is_null($string)) {
+			return 'NULL';
+		} elseif (is_float($string)) {
 			return str_replace(',', '.', $string);
 		} elseif (is_int($string)) {
 			return $string;
@@ -205,6 +207,9 @@ class yf_db_driver_mysqli extends yf_db_driver {
 	/**
 	*/
 	function escape_val($data) {
+		if (is_null($data)) {
+			return 'NULL';
+		}
 		return '\''.trim($data, '\'').'\'';
 	}
 

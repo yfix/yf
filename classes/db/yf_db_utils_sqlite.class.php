@@ -838,6 +838,9 @@ COMMIT;
 	/**
 	*/
 	function _escape_val($val = '') {
+		if (is_null($val)) {
+			return 'NULL';
+		}
 		$val = trim(trim($val), '\'');
 		if (!strlen($val)) {
 			return '';

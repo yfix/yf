@@ -1434,6 +1434,9 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function _escape_val($val = '') {
+		if (is_null($val)) {
+			return 'NULL';
+		}
 		$val = trim(trim($val), '\'');
 		if (!strlen($val)) {
 			return '';
@@ -1462,6 +1465,9 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function _es($val = '') {
+		if (is_null($val)) {
+			return 'NULL';
+		}
 		$val = trim($val);
 		if (!strlen($val)) {
 			return '';
