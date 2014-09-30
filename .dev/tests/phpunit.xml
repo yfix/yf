@@ -20,6 +20,7 @@
 		</testsuite>
 		<testsuite name="database">
 			<directory>./functional/db/</directory>
+			<directory>./unit/db/</directory>
 		</testsuite>
 		<testsuite name="functions">
 			<directory>./unit/functions/</directory>
