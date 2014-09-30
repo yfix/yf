@@ -393,6 +393,8 @@ abstract class yf_db_migrator {
 	* List of available migrations to apply
 	*/
 	public function _list($params = array()) {
+		$globs = array(
+		);
 // TODO
 	}
 
@@ -415,6 +417,17 @@ abstract class yf_db_migrator {
 	* Dump current database structure into sql and sql_php files
 	*/
 	public function dump($params = array()) {
+$ext = '.sql_php.php';
+$globs_php = array(
+	'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*'.$ext,
+	'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*'.$ext,
+);
+
+$ext = '.sql.php';
+$globs_sql = array(
+	'yf_main'		=> YF_PATH.'share/db_installer/sql/*'.$ext,
+	'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql/*'.$ext,
+);
 // TODO
 	}
 
