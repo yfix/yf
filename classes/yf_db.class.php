@@ -1066,6 +1066,9 @@ class yf_db {
 	* Function escapes characters for using in query
 	*/
 	function es($string) {
+		if (is_null($string)) {
+			return 'NULL';
+		}
 		if (!$this->_connected && !$this->connect()) {
 			return $this->_mysql_escape_mimic($string);
 		}
