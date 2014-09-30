@@ -22,7 +22,12 @@ class yf_console_db_migrate extends Command {
 		$method = $input->getArgument('method');
 		$methods = array(
 			'compare'	=> 'compare',
-			'generate'	=> 'generate_migration',
+			'generate'	=> 'generate',
+			'create'	=> 'create',
+			'apply'		=> 'apply',
+			'list'		=> '_list',
+			'dump'		=> 'dump',
+			'sync'		=> 'sync',
 		);
 		if ($method && isset($methods[$method])) {
 			$func = $methods[$method];
