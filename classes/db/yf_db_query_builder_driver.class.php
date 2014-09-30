@@ -291,7 +291,7 @@ abstract class yf_db_query_builder_driver {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					// support for syntax: select('a.id as aid')
-					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v, $m)) {
+					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $v, $m)) {
 						$a[] = $this->_escape_expr($m[1]).' AS '.$this->_escape_key($m[2]);
 					} else {
 						$a[] = $this->_escape_expr($v);
@@ -304,7 +304,7 @@ abstract class yf_db_query_builder_driver {
 						$v2 = trim($v2);
 						if (strlen($k2) && strlen($v2)) {
 							// support for syntax: select('a.id as aid')
-							if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v2, $m)) {
+							if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $v2, $m)) {
 								$a[] = $this->_escape_expr($m[1]).' AS '.$this->_escape_key($m[2]);
 							} else {
 								$a[] = $this->_escape_expr($k2).' AS '.$this->_escape_key($v2);
@@ -340,7 +340,7 @@ abstract class yf_db_query_builder_driver {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					// support for syntax: from('users as u') from('users as u', 'messages as m')
-					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v, $m)) {
+					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $v, $m)) {
 						$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
 					} else {
 						$a[] = $this->_escape_table_name($v);
@@ -353,7 +353,7 @@ abstract class yf_db_query_builder_driver {
 						$v2 = trim($v2);
 						if (strlen($k2) && strlen($v2)) {
 							// support for syntax: from('users as u') from('users as u', 'messages as m')
-							if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $v2, $m)) {
+							if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $v2, $m)) {
 								$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
 							} else {
 								$a[] = $this->_escape_table_name($k2).' AS '.$this->_escape_key($v2);
@@ -433,17 +433,20 @@ abstract class yf_db_query_builder_driver {
 		if (isset($where[0]) && is_array($where[0]) && isset($where[0]['__args__'])) {
 			$where = $where[0]['__args__'];
 		}
-		if (count($where) == 3 && is_string($where[0]) && is_string($where[1])) {
+		$count = count($where);
+		if (($count === 3 || $count === 2) && is_string($where[0]) && is_string($where[1])) {
 			$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
-		} elseif (count($where)) {
+		} elseif ($count) {
 			$a = array();
 			foreach ((array)$where as $k => $v) {
 				if (is_string($v)) {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]*(=|!=|<>|<|>|>=|<=)[\s\t]*([a-z0-9_\.]+)$~ims', $v, $m)) {
+					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]*(=|!=|<>|<|>|>=|<=)[\s]*([a-z0-9_\.]+)$~ims', $v, $m)) {
 						$a[] = $this->_process_where_cond($m[1], $m[2], $m[3]);
+					} elseif (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]*(is[\s]+null|is[\s]+not[\s]+null)$~ims', $v, $m)) {
+						$a[] = $this->_process_where_cond($m[1], $m[2], '');
 					} else {
 						$v = strtoupper(trim($v));
 						if (in_array($v, array('AND','OR','XOR'))) {
@@ -452,7 +455,8 @@ abstract class yf_db_query_builder_driver {
 					}
 				} elseif (is_array($v)) {
 					// array('field', 'condition', 'value'), example: array('id','>','1')
-					if (count($v) == 3 && isset($v[0])) {
+					$_count_v = count($v);
+					if (($_count_v === 3 || $_count_v === 2) && isset($v[0])) {
 						$a[] = $this->_process_where_cond($v[0], $v[1], $v[2]);
 					// array('field1' => 'val1', 'field2' => 'val2')
 					} else {
@@ -489,9 +493,12 @@ abstract class yf_db_query_builder_driver {
 				$op = 'not like';
 			}
 		}
-		if ($op == 'like' || $op == 'not like') {
+		if ($op === 'like' || $op === 'not like') {
 			$right = str_replace('*', '%', $right);
-		} elseif ($op == 'in' || $op == 'not in') {
+		} elseif ($op === 'is null' || $op === 'is not null') {
+			$right = '';
+			$right_generated = '__dummy_for_null__';
+		} elseif ($op === 'in' || $op === 'not in') {
 			$right_generated = $this->_ids_sql_from_array((array)$right);
 			if (strlen($right_generated)) {
 				$right_generated = '('.$right_generated.')';
@@ -499,6 +506,9 @@ abstract class yf_db_query_builder_driver {
 		}
 		if ((empty($right) || !strlen(is_array($right) ? '' : $right)) && !strlen($right_generated)) {
 			return '';
+		}
+		if ($right_generated === '__dummy_for_null__') {
+			return $this->_escape_expr($left). ' '. strtoupper($op);
 		}
 		return $this->_escape_expr($left). ' '. strtoupper($op). ($right_generated ?: ' '.$this->_escape_val($right));
 	}
@@ -521,7 +531,7 @@ abstract class yf_db_query_builder_driver {
 			$table = key($table);
 		} elseif (is_string($table)) {
 			// support for syntax: join('users as u', 'u.id = s.id')
-			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+AS[\s\t]+([a-z0-9_]+)$~ims', $table, $m)) {
+			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
 				$table = $m[1];
 				$as = $m[2];
 			}
@@ -534,7 +544,7 @@ abstract class yf_db_query_builder_driver {
 		} elseif (is_callable($on)) {
 			$_on = $on($table, $this);
 		} elseif (is_string($on)) {
-			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]*(=|!=|<>|<|>|>=|<=)[\s\t]*([a-z0-9_\.]+)$~ims', $on, $m)) {
+			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]*(=|!=|<>|<|>|>=|<=)[\s]*([a-z0-9_\.]+)$~ims', $on, $m)) {
 				$_on[] = $this->_escape_col_name($m[1]). ' '. $m[2]. ' '. $this->_escape_col_name($m[3]);
 			}
 		}
@@ -617,7 +627,7 @@ abstract class yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]*(=|!=|<>|<|>|>=|<=)[\s\t]*([a-z0-9_\.]+)$~ims', $v, $m)) {
+					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]*(=|!=|<>|<|>|>=|<=)[\s]*([a-z0-9_\.]+)$~ims', $v, $m)) {
 						$a[] = $this->_process_where_cond($m[1], $m[2], $m[3]);
 					} else {
 						$v = strtoupper(trim($v));
@@ -664,7 +674,7 @@ abstract class yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s\t]+(asc|desc)$~ims', $v, $m)) {
+					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+(asc|desc)$~ims', $v, $m)) {
 						$a[] = $this->_escape_expr($m[1]).' '.strtoupper($m[2]);
 					} else {
 						$a[] = $this->_escape_expr($v).' ASC';
