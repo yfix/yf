@@ -21,7 +21,7 @@ abstract class yf_db_migrator {
 	/**
 	* Compare and report real db structure with expected structure, stored inside sql_php, including fields, indexes, foreign keys, table options, etc
 	*/
-	public function compare() {
+	public function compare($params = array()) {
 		$installer = $this->db->installer();
 		$utils = $this->db->utils();
 		$db_prefix = $this->db->DB_PREFIX;
@@ -65,13 +65,16 @@ abstract class yf_db_migrator {
 				$tables_changed[$table] = $diff;
 			}
 		}
-		return array(
-#			'tables_real'		=> $tables_real,
-#			'tables_installer'	=> $tables_installer,
-#			'tables_missing'	=> $tables_missing,
+		$out = array(
 			'tables_changed'	=> $tables_changed,
 			'tables_new'		=> $tables_new,
 		);
+		if ($params['full_info']) {
+			$out['tables_real']		= $tables_real;
+			$out['tables_installer']= $tables_installer;
+			$out['tables_missing']	= $tables_missing;
+		}
+		return $out;
 	}
 
 	/**
@@ -262,9 +265,16 @@ abstract class yf_db_migrator {
 	}
 
 	/**
-	* Generate migration file, based on compare() report
+	* Alias
 	*/
 	public function generate_migration($params = array()) {
+		return $this->generate($params);
+	}
+
+	/**
+	* Generate migration file, based on compare() report
+	*/
+	public function generate($params = array()) {
 		$tables_installer_info = $installer->TABLES_SQL_PHP;
 
 		// Safe mode here means that we do not generate danger statements like drop something
@@ -347,32 +357,32 @@ abstract class yf_db_migrator {
 	/**
 	* Apply selected migration file to current database
 	*/
-	public function apply_migration() {
+	public function apply_migration($params = array()) {
 // TODO
 	}
 
 	/**
 	* List of available migrations
 	*/
-	public function list_migrations() {
+	public function list_migrations($params = array()) {
 // TODO
 	}
 
 	/**
 	*/
-	public function dump_db_installer_sql() {
+	public function dump_db_installer_sql($params = array()) {
 // TODO
 	}
 
 	/**
 	*/
-	public function dump_sql_php() {
+	public function dump_sql_php($params = array()) {
 // TODO
 	}
 
 	/**
 	*/
-	public function sync_sql_php() {
+	public function sync_sql_php($params = array()) {
 // TODO
 	}
 }
