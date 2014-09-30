@@ -264,8 +264,11 @@ abstract class yf_db_migrator {
 	/**
 	* Generate migration file, based on compare() report
 	*/
-	public function generate_migration() {
+	public function generate_migration($params = array()) {
 		$tables_installer_info = $installer->TABLES_SQL_PHP;
+
+		// Safe mode here means that we do not generate danger statements like drop something
+		$safe_mode = isset($params['safe_mode']) ? $params['safe_mode'] : true;
 
 		$report = $this->compare();
 		foreach ((array)$report['tables_changed'] as $table => $diff) {
@@ -276,8 +279,10 @@ abstract class yf_db_migrator {
 				// preg_replace('~[\n\t]+~ims', ' ', _var_export($info))
 				$out[] = 'db()->utils()->add_column(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
 			}
-			foreach ((array)$diff['columns_new'] as $name => $info) {
-#				$out[] = 'db()->utils()->drop_column(\''.$table.'\', \''.$name.'\');';
+			if (!$safe_mode) {
+				foreach ((array)$diff['columns_new'] as $name => $info) {
+					$out[] = 'db()->utils()->drop_column(\''.$table.'\', \''.$name.'\');';
+				}
 			}
 			foreach ((array)$diff['columns_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['fields'][$name];
@@ -291,8 +296,10 @@ abstract class yf_db_migrator {
 			foreach ((array)$diff['indexes_missing'] as $name => $info) {
 				$out[] = 'db()->utils()->add_index(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
 			}
-			foreach ((array)$diff['indexes_new'] as $name => $info) {
-#				$out[] = 'db()->utils()->drop_index(\''.$table.'\', \''.$name.'\');';
+			if (!$safe_mode) {
+				foreach ((array)$diff['indexes_new'] as $name => $info) {
+					$out[] = 'db()->utils()->drop_index(\''.$table.'\', \''.$name.'\');';
+				}
 			}
 			foreach ((array)$diff['indexes_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['indexes'][$name];
@@ -304,8 +311,10 @@ abstract class yf_db_migrator {
 			foreach ((array)$diff['foreign_keys_missing'] as $name => $info) {
 				$out[] = 'db()->utils()->add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
 			}
-			foreach ((array)$diff['foreign_keys_new'] as $name => $info) {
-#				$out[] = 'db()->utils()->drop_foreign_key(\''.$table.'\', \''.$name.'\');';
+			if (!$safe_mode) {
+				foreach ((array)$diff['foreign_keys_new'] as $name => $info) {
+					$out[] = 'db()->utils()->drop_foreign_key(\''.$table.'\', \''.$name.'\');';
+				}
 			}
 			foreach ((array)$diff['foreign_keys_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['foreign_keys'][$name];
@@ -327,9 +336,9 @@ abstract class yf_db_migrator {
 				$out[] = 'db()->utils()->create_table(\''.$table.'\', '._var_export($new_info).');';
 			}
 		}
-		foreach ((array)$report['tables_new'] as $table => $diff) {
-			if ($new_info) {
-#				$out[] = 'db()->utils()->drop_table(\''.$table.'\');';
+		if (!$safe_mode) {
+			foreach ((array)$report['tables_new'] as $table => $diff) {
+				$out[] = 'db()->utils()->drop_table(\''.$table.'\');';
 			}
 		}
 		return implode(PHP_EOL, $out);
