@@ -253,6 +253,7 @@ abstract class yf_db_migrator {
 	*/
 	public function compare_foreign_key($f1, $f2) {
 		$changes = array();
+// TODO: remove DB_PREFIX from ref_table
 		foreach ((array)$f1 as $k => $v) {
 			if ($f2[$k] !== $v) {
 				$changes[$k] = array(
@@ -493,13 +494,37 @@ abstract class yf_db_migrator {
 		$tmp_name = 'tmp_name_not_exists';
 		$skip_options = array(
 			'auto_increment',
+			'collate',
 		);
+
+		$utils = $this->db->utils();
+		$db_prefix = $this->db->DB_PREFIX;
+
 		foreach ((array)$tables_to_dump as $table) {
-			list(, $raw_sql) = array_values($this->db->get('SHOW CREATE TABLE '.$this->db->escape_key($this->db->_real_name($table))));
-			$sql_php = $this->create_table_sql_to_php($raw_sql);
+#			list(, $raw_sql) = array_values($this->db->get('SHOW CREATE TABLE '.$this->db->escape_key($this->db->_real_name($table))));
+#			$sql_php = $this->create_table_sql_to_php($raw_sql);
+
+			$real_table_name = $this->db->_real_name($table);
+			$sql_php = array(
+				'fields'		=> $utils->list_columns($real_table_name),
+				'indexes'		=> $utils->list_indexes($real_table_name),
+// TODO: remove DB_PREFIX from ref_table
+				'foreign_keys'	=> $utils->list_foreign_keys($real_table_name),
+				'options'		=> $utils->table_options($real_table_name),
+			);
+			foreach ((array)$sql_php['fields'] as $fname => $finfo) {
+				if ($finfo['collate'] === 'utf8_general_ci') {
+					$sql_php['fields'][$fname]['collate'] = null;
+				}
+			}
 			foreach ($skip_options as $skip_option) {
 				if (isset($sql_php['options'][$skip_option])) {
 					unset($sql_php['options'][$skip_option]);
+				}
+			}
+			foreach ((array)$sql_php['options'] as $k => $v) {
+				if (!strlen($v)) {
+					unset($sql_php['options'][$k]);
 				}
 			}
 			$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create(array('name' => $tmp_name) + $sql_php);
