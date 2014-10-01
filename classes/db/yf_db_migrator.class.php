@@ -281,6 +281,8 @@ abstract class yf_db_migrator {
 		// Safe mode here means that we do not generate danger statements like drop something
 		$safe_mode = isset($params['safe_mode']) ? $params['safe_mode'] : true;
 
+		$utils_prefix = '$this->utils->';
+
 		$report = $this->compare();
 		foreach ((array)$report['tables_changed'] as $table => $diff) {
 			foreach ((array)$diff['columns_missing'] as $name => $info) {
@@ -288,11 +290,11 @@ abstract class yf_db_migrator {
 					if (is_null($v)) { unset($info[$k]); }
 				}
 				// preg_replace('~[\n\t]+~ims', ' ', _var_export($info))
-				$out[] = 'db()->utils()->add_column(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
+				$out[] = $utils_prefix. 'add_column(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
 			}
 			if (!$safe_mode) {
 				foreach ((array)$diff['columns_new'] as $name => $info) {
-					$out[] = 'db()->utils()->drop_column(\''.$table.'\', \''.$name.'\');';
+					$out[] = $utils_prefix. 'drop_column(\''.$table.'\', \''.$name.'\');';
 				}
 			}
 			foreach ((array)$diff['columns_changed'] as $name => $info) {
@@ -301,55 +303,55 @@ abstract class yf_db_migrator {
 					foreach ((array)$new_info as $k => $v) {
 						if (is_null($v)) { unset($new_info[$k]); }
 					}
-					$out[] = 'db()->utils()->alter_column(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+					$out[] = $utils_prefix. 'alter_column(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
 				}
 			}
 			foreach ((array)$diff['indexes_missing'] as $name => $info) {
-				$out[] = 'db()->utils()->add_index(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
+				$out[] = $utils_prefix. 'add_index(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
 			}
 			if (!$safe_mode) {
 				foreach ((array)$diff['indexes_new'] as $name => $info) {
-					$out[] = 'db()->utils()->drop_index(\''.$table.'\', \''.$name.'\');';
+					$out[] = $utils_prefix. 'drop_index(\''.$table.'\', \''.$name.'\');';
 				}
 			}
 			foreach ((array)$diff['indexes_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['indexes'][$name];
 				if ($new_info) {
-					$out[] = 'db()->utils()->drop_index(\''.$table.'\', \''.$name.'\');';
-					$out[] = 'db()->utils()->add_index(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+					$out[] = $utils_prefix. 'drop_index(\''.$table.'\', \''.$name.'\');';
+					$out[] = $utils_prefix. 'add_index(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
 				}
 			}
 			foreach ((array)$diff['foreign_keys_missing'] as $name => $info) {
-				$out[] = 'db()->utils()->add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
+				$out[] = $utils_prefix. 'add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
 			}
 			if (!$safe_mode) {
 				foreach ((array)$diff['foreign_keys_new'] as $name => $info) {
-					$out[] = 'db()->utils()->drop_foreign_key(\''.$table.'\', \''.$name.'\');';
+					$out[] = $utils_prefix. 'drop_foreign_key(\''.$table.'\', \''.$name.'\');';
 				}
 			}
 			foreach ((array)$diff['foreign_keys_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['foreign_keys'][$name];
 				if ($new_info) {
-					$out[] = 'db()->utils()->drop_foreign_key(\''.$table.'\', \''.$name.'\');';
-					$out[] = 'db()->utils()->add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+					$out[] = $utils_prefix. 'drop_foreign_key(\''.$table.'\', \''.$name.'\');';
+					$out[] = $utils_prefix. 'add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
 				}
 			}
 			foreach ((array)$diff['options_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['options'];
 				if ($new_info) {
-					$out[] = 'db()->utils()->alter_table(\''.$table.'\', '._var_export($new_info).');';
+					$out[] = $utils_prefix. 'alter_table(\''.$table.'\', '._var_export($new_info).');';
 				}
 			}
 		}
 		foreach ((array)$report['tables_missing'] as $table => $diff) {
 			$new_info = $tables_installer_info[$table];
 			if ($new_info) {
-				$out[] = 'db()->utils()->create_table(\''.$table.'\', '._var_export($new_info).');';
+				$out[] = $utils_prefix. 'create_table(\''.$table.'\', '._var_export($new_info).');';
 			}
 		}
 		if (!$safe_mode) {
 			foreach ((array)$report['tables_new'] as $table => $diff) {
-				$out[] = 'db()->utils()->drop_table(\''.$table.'\');';
+				$out[] = $utils_prefix. 'drop_table(\''.$table.'\');';
 			}
 		}
 		return implode(PHP_EOL, $out);
