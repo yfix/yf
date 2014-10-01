@@ -35,13 +35,12 @@ function get_paths() {
 		'*/*/*/config/',
 		'../',
 		'../config/',
-		'../*/',
-		'../*/config/',
-		'../../*/',
-		'../../*/config/',
-		'../../../*/',
-		'../../../*/config/',
 	);
+	$max_deepness = substr_count($paths['called_path'], '/') - 1; // 1 level left for basedir
+	for ($i = 1; $i <= $max_deepness; $i++) {
+		$globs[] = str_repeat('../', $i).'*/';
+		$globs[] = str_repeat('../', $i).'*/config/';
+	}
 	foreach ($globs as $g) {
 		$files = glob($paths['called_path']. $g. 'db_setup.php');
 		if (!$files || !isset($files[0])) {
@@ -57,7 +56,7 @@ function get_paths() {
 		if (basename(dirname($paths['db_setup_path'])) == 'config') {
 			$paths['app_path'] = dirname(dirname($paths['db_setup_path'])).'/';
 		} else {
-			$paths['app_path'] = dirname($paths['db_setup_path']).'/';
+			$paths['app_path'] = dirname(dirname($paths['db_setup_path'])).'/';
 		}
 	}
 	if ($paths['app_path']) {
@@ -129,6 +128,9 @@ if (!defined('APP_PATH')) {
 }
 if (!defined('PROJECT_PATH')) {
 	define('PROJECT_PATH', $yf_paths['project_path']);
+}
+if (!defined('SITE_PATH')) {
+	define('SITE_PATH', $yf_paths['project_path']);
 }
 
 print_r($yf_paths);
