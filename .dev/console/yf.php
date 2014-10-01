@@ -90,10 +90,12 @@ function get_yf_console_commands() {
 	$prefix_framework = 'yf_'.$prefix_project;
 	$ext = '.class.php';
 	$globs = array(
-		'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $subfolder. $prefix_project. '*'. $ext,
-		'project_main'		=> PROJECT_PATH. $subfolder. $prefix_project. '*'. $ext,
-		'framework_plugins'	=> YF_PATH. 'plugins/*/'. $subfolder. $prefix_framework. '*'. $ext,
-		'framework_main'	=> __DIR__. '/'. $subfolder. $prefix_framework. '*'. $ext,
+		'project_app'			=> APP_PATH. $subfolder. $prefix_project. '*'. $ext,
+		'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $subfolder. $prefix_project. '*'. $ext,
+		'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $subfolder. $prefix_project. '*'. $ext,
+		'project_main'			=> PROJECT_PATH. $subfolder. $prefix_project. '*'. $ext,
+		'framework_plugins'		=> YF_PATH. 'plugins/*/'. $subfolder. $prefix_framework. '*'. $ext,
+		'framework_main'		=> __DIR__. '/'. $subfolder. $prefix_framework. '*'. $ext,
 	);
 	foreach ($globs as $gname => $glob) {
 		foreach (glob($glob) as $path) {
@@ -121,6 +123,12 @@ function get_yf_console_commands() {
 $yf_paths = get_paths();
 if (!defined('YF_PATH')) {
 	define('YF_PATH', $yf_paths['yf_path']);
+}
+if (!defined('APP_PATH')) {
+	define('APP_PATH', $yf_paths['app_path']);
+}
+if (!defined('PROJECT_PATH')) {
+	define('PROJECT_PATH', $yf_paths['project_path']);
 }
 
 print_r($yf_paths);
