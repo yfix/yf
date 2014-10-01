@@ -393,9 +393,24 @@ abstract class yf_db_migrator {
 	* List of available migrations to apply
 	*/
 	public function _list($params = array()) {
+		$ext = '.migration.php';
+		$dir = 'share/db_installer/migrations/*'.$ext;
 		$globs = array(
+			'yf_main'				=> YF_PATH. $dir,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
+			'project_app'			=> APP_PATH. $dir,
+			'project_main'			=> PROJECT_PATH. $dir,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
+			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
 		);
-// TODO
+		$migratons = array();
+		foreach ($globs as $gname => $glob) {
+			foreach (glob($glob) as $f) {
+				$name = substr(basename($f), 0, -strlen($ext));
+				$migrations[$name][$gname] = $f;
+			}
+		}
+		return $migrations;
 	}
 
 	/**
@@ -417,18 +432,151 @@ abstract class yf_db_migrator {
 	* Dump current database structure into sql and sql_php files
 	*/
 	public function dump($params = array()) {
-$ext = '.sql_php.php';
-$globs_php = array(
-	'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*'.$ext,
-	'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*'.$ext,
-);
+		$existing_files_sql_php = array();
+		$existing_sql_php = array();
+		// Preload db installer PHP array of CREATE TABLE DDL statements
+		$ext = '.sql_php.php';
+		$dir = 'share/db_installer/sql_php/*'.$ext;
+		$globs_sql_php = array(
+			'yf_main'				=> YF_PATH. $dir,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
+			'project_app'			=> APP_PATH. $dir,
+			'project_main'			=> PROJECT_PATH. $dir,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
+			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
+		);
+		foreach ($globs_sql_php as $gname => $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen($ext));
+				$existing_files_sql_php[$t_name][$gname] = $f;
+				$existing_sql_php[$t_name] = include $f;
+			}
+		}
+		// Project has higher priority than framework (allow to change anything in project)
+		// Try to load db structure from project file
+		// Sample contents part: 	$project_data['OTHER_TABLES_STRUCTS'] = my_array_merge((array)$project_data['OTHER_TABLES_STRUCTS'], array(
+		$structure_file = PROJECT_PATH. 'project_db_structure.php';
+		$project_data = array(); // Should be loaded with this name from file
+		if (file_exists($structure_file)) {
+			include_once ($structure_file);
+		}
+		$in_old_place = array();
+		foreach((array)$project_data as $cur_array_name => $tables) {
+			$prefix = '';
+			if ($cur_array_name == 'SYS_TABLES_STRUCTS') {
+				$prefix = 'sys_';
+			} elseif ($cur_array_name == 'OTHER_TABLES_STRUCTS') {
+				$prefix = '';
+			} else {
+				continue;
+			}
+			foreach ((array)$tables as $table => $sql) {
+				if (strlen($prefix)) {
+					$table = $prefix. $table;
+				}
+				$in_old_place[$table] = $table;
+				$existing_sql_php[$table] = $this->create_table_sql_to_php($sql);
+			}
+		}
+		$compared = $this->compare();
+		$tables_to_dump = array();
+		foreach ((array)$in_old_place as $table) {
+			$tables_to_dump[$table] = $table;
+		}
+		foreach ((array)$compared['tables_new'] as $table) {
+			$tables_to_dump[$table] = $table;
+		}
+		foreach ((array)$compared['tables_changed'] as $table => $changed) {
+			$tables_to_dump[$table] = $table;
+		}
+		$dumped = array();
+		$tmp_name = 'tmp_name_not_exists';
+		$skip_options = array(
+			'auto_increment',
+		);
+		foreach ((array)$tables_to_dump as $table) {
+			list(, $raw_sql) = array_values($this->db->get('SHOW CREATE TABLE '.$this->db->escape_key($this->db->_real_name($table))));
+			$sql_php = $this->create_table_sql_to_php($raw_sql);
+			foreach ($skip_options as $skip_option) {
+				if (isset($sql_php['options'][$skip_option])) {
+					unset($sql_php['options'][$skip_option]);
+				}
+			}
+			$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create(array('name' => $tmp_name) + $sql_php);
 
-$ext = '.sql.php';
-$globs_sql = array(
-	'yf_main'		=> YF_PATH.'share/db_installer/sql/*'.$ext,
-	'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql/*'.$ext,
-);
-// TODO
+			$sql_a = explode(PHP_EOL, trim($sql));
+			$last_index = count($sql_a) - 1;
+			$last_item = $sql_a[$last_index];
+			unset($sql_a[0]);
+			unset($sql_a[$last_index]);
+
+			// Add commented table attributes
+			$options = array();
+			foreach ((array)$sql_php['options'] as $k => $v) {
+				if ($k == 'charset') {
+					$k = 'DEFAULT CHARSET';
+				}
+				$options[$k] = strtoupper($k).'='.$v;
+			}
+			$sql_a[] = $options ? '  /** '.implode(' ', $options).' **/' : '';
+
+			$sql = '  '.trim(implode(PHP_EOL, $sql_a));
+
+			$file_sql = APP_PATH. 'share/db_installer/sql/'.$table.'.sql.php';
+			$dir_sql = dirname($file_sql);
+			if (!file_exists($dir_sql)) {
+				mkdir($dir_sql, 0755, true);
+			}
+			$body_sql = '<?'.'php'.PHP_EOL.'return \''. PHP_EOL. addslashes($sql). PHP_EOL. '\';'.PHP_EOL;
+			if (!file_exists($file_sql) || md5($body_sql) != md5(file_get_contents($file_sql))) {
+				$dumped['sql:'.$table] = $file_sql;
+				file_put_contents($file_sql, $body_sql);
+			}
+
+			$file_php = APP_PATH. 'share/db_installer/sql_php/'.$table.'.sql_php.php';
+			$dir_php = dirname($file_php);
+			if (!file_exists($dir_php)) {
+				mkdir($dir_php, 0755, true);
+			}
+			$body_php = '<?'.'php'.PHP_EOL.'return '._var_export($sql_php).';'.PHP_EOL;
+			if (!file_exists($file_php) || md5($body_php) != md5(file_get_contents($file_php))) {
+				$dumped['sql_php:'.$table] = $file_php;
+				file_put_contents($file_php, $body_php);
+			}
+		}
+		return $dumped;
+	}
+
+	/**
+	*/
+	public function create_table_php_to_sql ($data) {
+		return _class('db_ddl_parser_mysql', 'classes/db/')->create($data);
+	}
+
+	/**
+	*/
+	public function create_table_sql_to_php ($sql) {
+		$options = '';
+		// Get table options from table structure. Example: /** ENGINE=MEMORY **/
+		if (preg_match('#\/\*\*(?P<raw_options>[^\*\/]+)\*\*\/#i', trim($sql), $m)) {
+			// Cut comment with options from source table structure to prevent misunderstanding
+			$sql = str_replace($m[0], '', $sql);
+			$options = $m['raw_options'];
+		}
+		$tmp_name = '';
+		if (false === strpos(strtoupper($sql), 'CREATE TABLE')) {
+			$tmp_name = 'tmp_name_not_exists';
+			$sql = 'CREATE TABLE `'.$tmp_name.'` ('.$sql.')';
+		}
+		// Place them into the end of the DDL
+		if ($options) {
+			$sql = rtrim(rtrim(rtrim($sql), ';')).' '.$options;
+		}
+		$result = _class('db_ddl_parser_mysql', 'classes/db/')->parse($sql);
+		if ($result && $tmp_name) {
+			$result['name'] = '';
+		}
+		return $result;
 	}
 
 	/**
