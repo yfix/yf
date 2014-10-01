@@ -426,7 +426,8 @@ abstract class yf_db_installer {
 	/**
 	*/
 	public function get_table_struct_array_by_name ($table_name, $db) {
-		return $this->db_table_struct_into_array( $db->get_one('SHOW CREATE TABLE `'.$table_name.'`') );
+		list(, $create_sql) = array_values($db->get('SHOW CREATE TABLE '.$db->escape_key($table_name)));
+		return $this->db_table_struct_into_array($create_sql);
 	}
 
 	/**
