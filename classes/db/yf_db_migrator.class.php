@@ -1,8 +1,7 @@
 <?php
 
-// TODO: implement migrations like in ROR, based on these methods
-
 /**
+* YF database migrations handler
 */
 abstract class yf_db_migrator {
 
@@ -11,11 +10,6 @@ abstract class yf_db_migrator {
 	*/
 	function __call($name, $args) {
 		return main()->extend_call($this, $name, $args);
-	}
-
-	/**
-	*/
-	public function _init() {
 	}
 
 	/**
@@ -268,12 +262,192 @@ abstract class yf_db_migrator {
 	/**
 	* Alias
 	*/
+	public function list_migrations($params = array()) {
+		return $this->_list($params);
+	}
+
+	/**
+	* List of available migrations to apply
+	*/
+	public function _list($params = array()) {
+		$ext = '.migration.php';
+		$dir = 'share/db_installer/migrations/*'.$ext;
+		$globs = array(
+			'yf_main'				=> YF_PATH. $dir,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
+			'project_app'			=> APP_PATH. $dir,
+			'project_main'			=> PROJECT_PATH. $dir,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
+			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
+		);
+		$migratons = array();
+		foreach ($globs as $gname => $glob) {
+			foreach (glob($glob) as $f) {
+				$name = substr(basename($f), 0, -strlen($ext));
+				$migrations[$name][$gname] = $f;
+			}
+		}
+		return $migrations;
+	}
+
+	/**
+	* Alias
+	*/
+	public function dump_db_installer_sql($params = array()) {
+		$params['dump_only_sql'] = true;
+		return $this->dump($params);
+	}
+
+	/**
+	* Alias
+	*/
+	public function dump_sql_php($params = array()) {
+		return $this->dump($params);
+	}
+
+	/**
+	* Dump current database structure into sql and sql_php files
+	*/
+	public function dump($params = array()) {
+		$utils = $this->db->utils();
+		$installer = $this->db->installer();
+		$db_prefix = $this->db->DB_PREFIX;
+
+		$existing_files_sql_php = array();
+		$existing_sql_php = array();
+		// Preload db installer PHP array of CREATE TABLE DDL statements
+		$ext = '.sql_php.php';
+		$dir = 'share/db_installer/sql_php/*'.$ext;
+		$globs_sql_php = array(
+			'yf_main'				=> YF_PATH. $dir,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
+			'project_app'			=> APP_PATH. $dir,
+			'project_main'			=> PROJECT_PATH. $dir,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
+			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
+		);
+		foreach ($globs_sql_php as $gname => $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen($ext));
+				$existing_files_sql_php[$t_name][$gname] = $f;
+				$existing_sql_php[$t_name] = include $f;
+			}
+		}
+		// Project has higher priority than framework (allow to change anything in project)
+		// Try to load db structure from project file
+		// Sample contents part: 	$project_data['OTHER_TABLES_STRUCTS'] = my_array_merge((array)$project_data['OTHER_TABLES_STRUCTS'], array(
+		$structure_file = PROJECT_PATH. 'project_db_structure.php';
+		$project_data = array(); // Should be loaded with this name from file
+		if (file_exists($structure_file)) {
+			include_once ($structure_file);
+		}
+		$in_old_place = array();
+		foreach((array)$project_data as $cur_array_name => $tables) {
+			$prefix = '';
+			if ($cur_array_name == 'SYS_TABLES_STRUCTS') {
+				$prefix = 'sys_';
+			} elseif ($cur_array_name == 'OTHER_TABLES_STRUCTS') {
+				$prefix = '';
+			} else {
+				continue;
+			}
+			foreach ((array)$tables as $table => $sql) {
+				if (strlen($prefix)) {
+					$table = $prefix. $table;
+				}
+				$in_old_place[$table] = $table;
+				$existing_sql_php[$table] = $installer-create_table_sql_to_php($sql);
+			}
+		}
+		$compared = $this->compare();
+		$tables_to_dump = array();
+		foreach ((array)$in_old_place as $table) {
+			$tables_to_dump[$table] = $table;
+		}
+		foreach ((array)$compared['tables_new'] as $table) {
+			$tables_to_dump[$table] = $table;
+		}
+		foreach ((array)$compared['tables_changed'] as $table => $changed) {
+			$tables_to_dump[$table] = $table;
+		}
+		$dumped = array();
+		$tmp_name = 'tmp_name_not_exists';
+		$skip_options = array(
+			'auto_increment',
+			'collate',
+		);
+
+		foreach ((array)$tables_to_dump as $table) {
+			$sql_php = $this->get_real_table_sql_php($table);
+			$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create(array('name' => $tmp_name) + $sql_php);
+
+			$sql_a = explode(PHP_EOL, trim($sql));
+			$last_index = count($sql_a) - 1;
+			$last_item = $sql_a[$last_index];
+			unset($sql_a[0]);
+			unset($sql_a[$last_index]);
+
+			// Add commented table attributes
+			$options = array();
+			foreach ((array)$sql_php['options'] as $k => $v) {
+				if ($k == 'charset') {
+					$k = 'DEFAULT CHARSET';
+				}
+				$options[$k] = strtoupper($k).'='.$v;
+			}
+			$sql_a[] = $options ? '  /** '.implode(' ', $options).' **/' : '';
+
+			$sql = '  '.trim(implode(PHP_EOL, $sql_a));
+
+			$file_sql = APP_PATH. 'share/db_installer/sql/'.$table.'.sql.php';
+			$dir_sql = dirname($file_sql);
+			if (!file_exists($dir_sql)) {
+				mkdir($dir_sql, 0755, true);
+			}
+			$body_sql = '<?'.'php'.PHP_EOL.'return \''. PHP_EOL. addslashes($sql). PHP_EOL. '\';'.PHP_EOL;
+			if (!file_exists($file_sql) || md5($body_sql) != md5(file_get_contents($file_sql))) {
+				$dumped['sql:'.$table] = $file_sql;
+				file_put_contents($file_sql, $body_sql);
+			}
+
+			$file_php = APP_PATH. 'share/db_installer/sql_php/'.$table.'.sql_php.php';
+			$dir_php = dirname($file_php);
+			if (!file_exists($dir_php)) {
+				mkdir($dir_php, 0755, true);
+			}
+			$body_php = '<?'.'php'.PHP_EOL.'return '._var_export($sql_php).';'.PHP_EOL;
+			if (!file_exists($file_php) || md5($body_php) != md5(file_get_contents($file_php))) {
+				$dumped['sql_php:'.$table] = $file_php;
+				file_put_contents($file_php, $body_php);
+			}
+		}
+		return $dumped;
+	}
+
+	/**
+	* Alias
+	*/
+	public function sync_sql_php($params = array()) {
+		return $this->sync($params);
+	}
+
+	/**
+	* Ensure all sql, sql_php are in sync with each other and current db structure
+	*/
+	public function sync($params = array()) {
+		$params['dump_all'] = true;
+		return $this->dump($params);
+	}
+
+	/**
+	* Alias
+	*/
 	public function generate_migration($params = array()) {
 		return $this->generate($params);
 	}
 
 	/**
-	* Generate migration file, based on compare() report
+	* Generate migration file, based on compare() report. Need to make current database structure looks like desired from sql_php files.
 	*/
 	public function generate($params = array()) {
 		$tables_installer_info = $installer->TABLES_SQL_PHP;
@@ -284,12 +458,12 @@ abstract class yf_db_migrator {
 		$utils_prefix = '$this->utils->';
 
 		$report = $this->compare();
+		$out = array();
 		foreach ((array)$report['tables_changed'] as $table => $diff) {
 			foreach ((array)$diff['columns_missing'] as $name => $info) {
 				foreach ($info as $k => $v) {
 					if (is_null($v)) { unset($info[$k]); }
 				}
-				// preg_replace('~[\n\t]+~ims', ' ', _var_export($info))
 				$out[] = $utils_prefix. 'add_column(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
 			}
 			if (!$safe_mode) {
@@ -365,10 +539,163 @@ abstract class yf_db_migrator {
 	}
 
 	/**
-	* Create migration file from current database comparing to stored structure
+	* Create migration file from current database comparing to stored structure.
+	* Need to store current database changes to apply in other places.
 	*/
 	public function create($params = array()) {
-// TODO
+		$tables_installer_info = $installer->TABLES_SQL_PHP;
+
+		// Safe mode here means that we do not generate danger statements like drop something
+		$safe_mode = isset($params['safe_mode']) ? $params['safe_mode'] : true;
+
+		$utils_prefix = '$this->utils->';
+
+		$report = $this->compare();
+		$out = array();
+		foreach ((array)$report['tables_changed'] as $table => $diff) {
+			$table_real_info = $this->get_real_table_sql_php($table);
+			if (!$table_real_info) {
+				continue;
+			}
+			$table_real_info = $this->_cleanup_table_sql_php($table_real_info);
+
+			foreach ((array)$diff['columns_new'] as $name => $info) {
+				foreach ($info as $k => $v) {
+					if (is_null($v)) { unset($info[$k]); }
+				}
+				$out[] = $utils_prefix. 'add_column(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
+			}
+			foreach ((array)$diff['columns_changed'] as $name => $info) {
+				$new_info = $table_real_info['fields'][$name];
+				if ($new_info) {
+					$out[] = $utils_prefix. 'alter_column(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+				}
+			}
+			if (!$safe_mode) {
+				foreach ((array)$diff['columns_missing'] as $name => $info) {
+					$out[] = $utils_prefix. 'drop_column(\''.$table.'\', \''.$name.'\');';
+				}
+			}
+			foreach ((array)$diff['indexes_new'] as $name => $info) {
+				$out[] = $utils_prefix. 'add_index(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
+			}
+			if (!$safe_mode) {
+				foreach ((array)$diff['indexes_missing'] as $name => $info) {
+					$out[] = $utils_prefix. 'drop_index(\''.$table.'\', \''.$name.'\');';
+				}
+			}
+			foreach ((array)$diff['indexes_changed'] as $name => $info) {
+				$new_info = $table_real_info['indexes'][$name];
+				if ($new_info) {
+					$out[] = $utils_prefix. 'drop_index(\''.$table.'\', \''.$name.'\');';
+					$out[] = $utils_prefix. 'add_index(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+				}
+			}
+			foreach ((array)$diff['foreign_keys_new'] as $name => $info) {
+				$out[] = $utils_prefix. 'add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
+			}
+			if (!$safe_mode) {
+				foreach ((array)$diff['foreign_keys_missing'] as $name => $info) {
+					$out[] = $utils_prefix. 'drop_foreign_key(\''.$table.'\', \''.$name.'\');';
+				}
+			}
+			foreach ((array)$diff['foreign_keys_changed'] as $name => $info) {
+				$new_info = $table_real_info['foreign_keys'][$name];
+				if ($new_info) {
+					$out[] = $utils_prefix. 'drop_foreign_key(\''.$table.'\', \''.$name.'\');';
+					$out[] = $utils_prefix. 'add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+				}
+			}
+			foreach ((array)$diff['options_changed'] as $name => $info) {
+				$new_info = $table_real_info['options'];
+				if ($new_info) {
+					$out[] = $utils_prefix. 'alter_table(\''.$table.'\', '._var_export($new_info).');';
+				}
+			}
+		}
+		foreach ((array)$report['tables_new'] as $table => $diff) {
+			$new_info = $this->get_real_table_sql_php($table);
+			if ($new_info) {
+				$new_info = $this->_cleanup_table_sql_php($new_info);
+				$out[] = $utils_prefix. 'create_table(\''.$table.'\', '._var_export($new_info).');';
+			}
+		}
+		if (!$safe_mode) {
+			foreach ((array)$report['tables_missing'] as $table => $diff) {
+				$out[] = $utils_prefix. 'drop_table(\''.$table.'\');';
+			}
+		}
+		return implode(PHP_EOL, $out);
+	}
+
+	/**
+	*/
+	public function _cleanup_table_sql_php($sql_php = array()) {
+		foreach ((array)$sql_php['fields'] as $field_name => $field_info) {
+			foreach ((array)$field_info as $k => $v) {
+				$need_unset = false;
+				if (is_null($v) || in_array($k, array('type_raw', 'primary', 'unique'))) {
+					$need_unset = true;
+				} elseif ($k === 'auto_inc' && !$v) {
+					$need_unset = true;
+				}
+				if ($need_unset) {
+					unset($sql_php['fields'][$field_name][$k]);
+				}
+			}
+		}
+		foreach ((array)$sql_php['options'] as $k => $v) {
+			if (is_null($v)) {
+				unset($sql_php['options'][$k]);
+			}
+		}
+		foreach ((array)$sql_php as $k => $v) {
+			if (empty($v)) {
+				unset($sql_php[$k]);
+			}
+		}
+		return $sql_php;
+	}
+
+	/**
+	*/
+	public function get_real_table_sql_php($table) {
+		$utils = $this->db->utils();
+		$db_prefix = $this->db->DB_PREFIX;
+
+		$real_table_name = $this->db->_real_name($table);
+
+#		list(, $raw_sql) = array_values($this->db->get('SHOW CREATE TABLE '.$this->db->escape_key($real_table_name)));
+#		$sql_php = $this->db->installer()->create_table_sql_to_php($raw_sql);
+
+		$sql_php = array(
+#			'name'			=> $real_table_name,
+			'fields'		=> $utils->list_columns($real_table_name),
+			'indexes'		=> $utils->list_indexes($real_table_name),
+// TODO: remove DB_PREFIX from ref_table
+			'foreign_keys'	=> $utils->list_foreign_keys($real_table_name),
+			'options'		=> $utils->table_options($real_table_name),
+		);
+		foreach ((array)$sql_php['fields'] as $fname => $finfo) {
+			if ($finfo['collate'] === 'utf8_general_ci') {
+				$sql_php['fields'][$fname]['collate'] = null;
+			}
+		}
+		$skip_options = array(
+			'auto_increment',
+			'collate',
+		);
+		foreach ($skip_options as $skip_option) {
+			if (isset($sql_php['options'][$skip_option])) {
+				unset($sql_php['options'][$skip_option]);
+			}
+		}
+		foreach ((array)$sql_php['options'] as $k => $v) {
+			if (!strlen($v)) {
+				unset($sql_php['options'][$k]);
+			}
+		}
+		return $sql_php;
 	}
 
 	/**
@@ -382,241 +709,6 @@ abstract class yf_db_migrator {
 	* Apply selected migration file to current database
 	*/
 	public function apply($params = array()) {
-// TODO
-	}
-
-	/**
-	* Alias
-	*/
-	public function list_migrations($params = array()) {
-		return $this->_list($params);
-	}
-
-	/**
-	* List of available migrations to apply
-	*/
-	public function _list($params = array()) {
-		$ext = '.migration.php';
-		$dir = 'share/db_installer/migrations/*'.$ext;
-		$globs = array(
-			'yf_main'				=> YF_PATH. $dir,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
-			'project_app'			=> APP_PATH. $dir,
-			'project_main'			=> PROJECT_PATH. $dir,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
-			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
-		);
-		$migratons = array();
-		foreach ($globs as $gname => $glob) {
-			foreach (glob($glob) as $f) {
-				$name = substr(basename($f), 0, -strlen($ext));
-				$migrations[$name][$gname] = $f;
-			}
-		}
-		return $migrations;
-	}
-
-	/**
-	* Alias
-	*/
-	public function dump_db_installer_sql($params = array()) {
-		$params['only_sql'] = true;
-		return $this->dump($params);
-	}
-
-	/**
-	* Alias
-	*/
-	public function dump_sql_php($params = array()) {
-		return $this->dump($params);
-	}
-
-	/**
-	* Dump current database structure into sql and sql_php files
-	*/
-	public function dump($params = array()) {
-		$existing_files_sql_php = array();
-		$existing_sql_php = array();
-		// Preload db installer PHP array of CREATE TABLE DDL statements
-		$ext = '.sql_php.php';
-		$dir = 'share/db_installer/sql_php/*'.$ext;
-		$globs_sql_php = array(
-			'yf_main'				=> YF_PATH. $dir,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
-			'project_app'			=> APP_PATH. $dir,
-			'project_main'			=> PROJECT_PATH. $dir,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
-			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
-		);
-		foreach ($globs_sql_php as $gname => $glob) {
-			foreach (glob($glob) as $f) {
-				$t_name = substr(basename($f), 0, -strlen($ext));
-				$existing_files_sql_php[$t_name][$gname] = $f;
-				$existing_sql_php[$t_name] = include $f;
-			}
-		}
-		// Project has higher priority than framework (allow to change anything in project)
-		// Try to load db structure from project file
-		// Sample contents part: 	$project_data['OTHER_TABLES_STRUCTS'] = my_array_merge((array)$project_data['OTHER_TABLES_STRUCTS'], array(
-		$structure_file = PROJECT_PATH. 'project_db_structure.php';
-		$project_data = array(); // Should be loaded with this name from file
-		if (file_exists($structure_file)) {
-			include_once ($structure_file);
-		}
-		$in_old_place = array();
-		foreach((array)$project_data as $cur_array_name => $tables) {
-			$prefix = '';
-			if ($cur_array_name == 'SYS_TABLES_STRUCTS') {
-				$prefix = 'sys_';
-			} elseif ($cur_array_name == 'OTHER_TABLES_STRUCTS') {
-				$prefix = '';
-			} else {
-				continue;
-			}
-			foreach ((array)$tables as $table => $sql) {
-				if (strlen($prefix)) {
-					$table = $prefix. $table;
-				}
-				$in_old_place[$table] = $table;
-				$existing_sql_php[$table] = $this->create_table_sql_to_php($sql);
-			}
-		}
-		$compared = $this->compare();
-		$tables_to_dump = array();
-		foreach ((array)$in_old_place as $table) {
-			$tables_to_dump[$table] = $table;
-		}
-		foreach ((array)$compared['tables_new'] as $table) {
-			$tables_to_dump[$table] = $table;
-		}
-		foreach ((array)$compared['tables_changed'] as $table => $changed) {
-			$tables_to_dump[$table] = $table;
-		}
-		$dumped = array();
-		$tmp_name = 'tmp_name_not_exists';
-		$skip_options = array(
-			'auto_increment',
-			'collate',
-		);
-
-		$utils = $this->db->utils();
-		$db_prefix = $this->db->DB_PREFIX;
-
-		foreach ((array)$tables_to_dump as $table) {
-#			list(, $raw_sql) = array_values($this->db->get('SHOW CREATE TABLE '.$this->db->escape_key($this->db->_real_name($table))));
-#			$sql_php = $this->create_table_sql_to_php($raw_sql);
-
-			$real_table_name = $this->db->_real_name($table);
-			$sql_php = array(
-				'fields'		=> $utils->list_columns($real_table_name),
-				'indexes'		=> $utils->list_indexes($real_table_name),
-// TODO: remove DB_PREFIX from ref_table
-				'foreign_keys'	=> $utils->list_foreign_keys($real_table_name),
-				'options'		=> $utils->table_options($real_table_name),
-			);
-			foreach ((array)$sql_php['fields'] as $fname => $finfo) {
-				if ($finfo['collate'] === 'utf8_general_ci') {
-					$sql_php['fields'][$fname]['collate'] = null;
-				}
-			}
-			foreach ($skip_options as $skip_option) {
-				if (isset($sql_php['options'][$skip_option])) {
-					unset($sql_php['options'][$skip_option]);
-				}
-			}
-			foreach ((array)$sql_php['options'] as $k => $v) {
-				if (!strlen($v)) {
-					unset($sql_php['options'][$k]);
-				}
-			}
-			$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create(array('name' => $tmp_name) + $sql_php);
-
-			$sql_a = explode(PHP_EOL, trim($sql));
-			$last_index = count($sql_a) - 1;
-			$last_item = $sql_a[$last_index];
-			unset($sql_a[0]);
-			unset($sql_a[$last_index]);
-
-			// Add commented table attributes
-			$options = array();
-			foreach ((array)$sql_php['options'] as $k => $v) {
-				if ($k == 'charset') {
-					$k = 'DEFAULT CHARSET';
-				}
-				$options[$k] = strtoupper($k).'='.$v;
-			}
-			$sql_a[] = $options ? '  /** '.implode(' ', $options).' **/' : '';
-
-			$sql = '  '.trim(implode(PHP_EOL, $sql_a));
-
-			$file_sql = APP_PATH. 'share/db_installer/sql/'.$table.'.sql.php';
-			$dir_sql = dirname($file_sql);
-			if (!file_exists($dir_sql)) {
-				mkdir($dir_sql, 0755, true);
-			}
-			$body_sql = '<?'.'php'.PHP_EOL.'return \''. PHP_EOL. addslashes($sql). PHP_EOL. '\';'.PHP_EOL;
-			if (!file_exists($file_sql) || md5($body_sql) != md5(file_get_contents($file_sql))) {
-				$dumped['sql:'.$table] = $file_sql;
-				file_put_contents($file_sql, $body_sql);
-			}
-
-			$file_php = APP_PATH. 'share/db_installer/sql_php/'.$table.'.sql_php.php';
-			$dir_php = dirname($file_php);
-			if (!file_exists($dir_php)) {
-				mkdir($dir_php, 0755, true);
-			}
-			$body_php = '<?'.'php'.PHP_EOL.'return '._var_export($sql_php).';'.PHP_EOL;
-			if (!file_exists($file_php) || md5($body_php) != md5(file_get_contents($file_php))) {
-				$dumped['sql_php:'.$table] = $file_php;
-				file_put_contents($file_php, $body_php);
-			}
-		}
-		return $dumped;
-	}
-
-	/**
-	*/
-	public function create_table_php_to_sql ($data) {
-		return _class('db_ddl_parser_mysql', 'classes/db/')->create($data);
-	}
-
-	/**
-	*/
-	public function create_table_sql_to_php ($sql) {
-		$options = '';
-		// Get table options from table structure. Example: /** ENGINE=MEMORY **/
-		if (preg_match('#\/\*\*(?P<raw_options>[^\*\/]+)\*\*\/#i', trim($sql), $m)) {
-			// Cut comment with options from source table structure to prevent misunderstanding
-			$sql = str_replace($m[0], '', $sql);
-			$options = $m['raw_options'];
-		}
-		$tmp_name = '';
-		if (false === strpos(strtoupper($sql), 'CREATE TABLE')) {
-			$tmp_name = 'tmp_name_not_exists';
-			$sql = 'CREATE TABLE `'.$tmp_name.'` ('.$sql.')';
-		}
-		// Place them into the end of the DDL
-		if ($options) {
-			$sql = rtrim(rtrim(rtrim($sql), ';')).' '.$options;
-		}
-		$result = _class('db_ddl_parser_mysql', 'classes/db/')->parse($sql);
-		if ($result && $tmp_name) {
-			$result['name'] = '';
-		}
-		return $result;
-	}
-
-	/**
-	* Alias
-	*/
-	public function sync_sql_php($params = array()) {
-		return $this->sync($params);
-	}
-
-	/**
-	* Ensure all sql, sql_php are in sync with each other and current db structure
-	*/
-	public function sync($params = array()) {
 // TODO
 	}
 }
