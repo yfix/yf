@@ -12,6 +12,7 @@ class yf_console_db_utils extends Command {
 			->setName('db:utils')
 			->setDescription('YF project database utils')
 			->addArgument('method', InputArgument::OPTIONAL, 'API method to call')
+			->addArgument('params',	InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Params for sub-command');
 		;
 	}
 	protected function execute(InputInterface $input, OutputInterface $output) {
@@ -19,7 +20,28 @@ class yf_console_db_utils extends Command {
 		require_once $yf_paths['db_setup_path'];
 		init_yf();
 
+		$params = array();
+		// Parse arguments like that: k1=v1 k2=v2 into array('k1' => 'v1', 'k2' => 'v2')
+		foreach ((array)$input->getArgument('params') as $p) {
+			list($k, $v) = explode('=', trim($p));
+			$k = trim($k);
+			$v = trim($v);
+			if (strlen($k) && strlen($v)) {
+				$params[$k] = $v;
+			}
+		}
+
 		$method = $input->getArgument('method');
+
+		$methods = array();
+		$methods[] = 'conf';
+		foreach (get_class_methods( db()->utils() ) as $v) {
+			if (substr($v, 0, 1) !== '_') {
+				$methods[] = $v;
+			}
+		}
+		$methods = array_combine($methods, $methods);
+
 		if ($method == 'conf' || $method == 'get_conf') {
 			$vars = array(
 				'DB_TYPE'	=> DB_TYPE,
@@ -30,29 +52,24 @@ class yf_console_db_utils extends Command {
 				'DB_PREFIX'	=> DB_PREFIX,
 				'DB_CHARSET'=> DB_CHARSET,
 			);
-			$output->writeln(print_r($vars, 1));
-		}
-/*
-#		$methods = get_class_methods(_class('core_api'));
-		$methods = array_combine($methods, $methods);
-		foreach ($methods as $name) {
-			if ($name[0] == '_') {
-				unset($methods[$name]);
+			$output->writeln( _var_export($vars) );
+		} elseif ($method && isset($methods[$method])) {
+			$func = $methods[$method];
+			$text = db()->utils()->$func($params);
+			if (is_array($text)) {
+				$text = _var_export($text);
 			}
-		}
-		if ($method && in_array($method, $methods)) {
-#			$text = _class('db')->utils()->$method();
 			$output->writeln($text);
 		} else {
 			$table = $this->getHelperSet()->get('table');
 			$rows = array();
-			foreach ($methods as $name) {
+			foreach ($methods as $name => $real_name) {
 				$rows[] = array($name);
 			}
-			$table->setHeaders(array('API method'))
+			$table->setHeaders(array('Sub-commands'))
 				->setRows($rows);
 			$table->render($output);
 		}
-*/
+
 	}
 }
