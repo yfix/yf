@@ -32,7 +32,7 @@ class yf_console_db_migrate extends Command {
 		if ($method && isset($methods[$method])) {
 			$func = $methods[$method];
 			$text = db()->migrator()->$func();
-			if ($method == 'compare') {
+			if (is_array($text)) {
 				$text = _var_export($text);
 			}
 			$output->writeln($text);
