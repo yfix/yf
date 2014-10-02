@@ -12,7 +12,7 @@ class yf_console_db_migrate extends Command {
 			->setName('db:migrate')
 			->setDescription('YF project database migration tools')
 			->addArgument('method', InputArgument::OPTIONAL, 'API method to call')
-			->addArgument('params',	InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Params for migrator command');
+			->addArgument('params',	InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Params for sub-command');
 		;
 	}
 	protected function execute(InputInterface $input, OutputInterface $output) {
@@ -20,8 +20,18 @@ class yf_console_db_migrate extends Command {
 		require_once $yf_paths['db_setup_path'];
 		init_yf();
 
+		$params = array();
+		// Parse arguments like that: k1=v1 k2=v2 into array('k1' => 'v1', 'k2' => 'v2')
+		foreach ((array)$input->getArgument('params') as $p) {
+			list($k, $v) = explode('=', trim($p));
+			$k = trim($k);
+			$v = trim($v);
+			if (strlen($k) && strlen($v)) {
+				$params[$k] = $v;
+			}
+		}
+
 		$method = $input->getArgument('method');
-		$params = $input->getArgument('params') ?: array();
 
 		$methods = array(
 			'compare'	=> 'compare',
