@@ -5,8 +5,8 @@ require_once dirname(__DIR__).'/scripts_init.php';
 
 $ext = '.sql_php.php';
 $globs_php = array(
-	'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*'.$ext,
-	'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*'.$ext,
+	'yf_main'		=> YF_PATH.'share/db/sql_php/*'.$ext,
+	'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*'.$ext,
 );
 foreach ($globs_php as $glob) {
 	foreach (glob($glob) as $f) {

@@ -23,7 +23,7 @@ if (!function_exists('main')) {
 #db()->query('CREATE DATABASE IF NOT EXISTS '.DB_NAME);
 
 function get_table_create_sql($table) {
-	$path = YF_PATH. 'share/db_installer/db_table_sql/'.$table.'.db_table_sql.php';
+	$path = YF_PATH. 'share/db/sql/'.$table.'.db_table_sql.php';
 	include $path;
 	if (!$data) {
 		return false;
