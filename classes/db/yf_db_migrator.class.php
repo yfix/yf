@@ -131,6 +131,7 @@ abstract class yf_db_migrator {
 			}
 			$indexes['new'][$name] = $info;
 		}
+// TODO: remove DB_PREFIX from ref_table
 		foreach ((array)$t1['foreign_keys'] as $name => $info) {
 			if (!isset($t2['foreign_keys'][$name])) {
 				$foreign_keys['missing'][$name] = $info;
@@ -247,7 +248,6 @@ abstract class yf_db_migrator {
 	*/
 	public function compare_foreign_key($f1, $f2) {
 		$changes = array();
-// TODO: remove DB_PREFIX from ref_table
 		foreach ((array)$f1 as $k => $v) {
 			if ($f2[$k] !== $v) {
 				$changes[$k] = array(
@@ -450,85 +450,176 @@ abstract class yf_db_migrator {
 	* Generate migration file, based on compare() report. Need to make current database structure looks like desired from sql_php files.
 	*/
 	public function generate($params = array()) {
-		$tables_installer_info = $installer->TABLES_SQL_PHP;
+		$report = $this->compare();
+		return array(
+			'up'	=> $this->generate_up($report, $params),
+			'down'	=> $this->generate_down($report, $params),
+		);
+	}
+
+	/**
+	*/
+	public function generate_up($params = array()) {
+		if (!isset($report)) {
+			$report = $this->compare();
+		}
+		// Safe mode here means that we do not generate danger statements like drop something
+		$safe_mode = isset($params['safe_mode']) ? $params['safe_mode'] : true;
+
+		$out = array();
+		foreach ((array)$report['tables_changed'] as $table => $diff) {
+			$table_real_info = $this->get_real_table_sql_php($table);
+			if (!$table_real_info) {
+				continue;
+			}
+			$table_real_info = $this->_cleanup_table_sql_php($table_real_info);
+
+			foreach ((array)$diff['columns_new'] as $name => $info) {
+				$info = $this->_cleanup_column_sql_php($info);
+				$out[] = array('cmd' => 'add_column', 'table' => $table, 'column' => $name, 'info' => $info);
+			}
+			foreach ((array)$diff['columns_changed'] as $name => $info) {
+				$new_info = $table_real_info['fields'][$name];
+				if ($new_info) {
+					$new_info = $this->_cleanup_column_sql_php($new_info);
+					$out[] = array('cmd' => 'alter_column', 'table' => $table, 'column' => $name, 'info' => $new_info);
+				}
+			}
+			if (!$safe_mode) {
+				foreach ((array)$diff['columns_missing'] as $name => $info) {
+					$out[] = array('cmd' => 'drop_column', 'table' => $table, 'column' => $name);
+				}
+			}
+			foreach ((array)$diff['indexes_new'] as $name => $info) {
+				$out[] = array('cmd' => 'add_index', 'table' => $table, 'column' => $name, 'info' => $info);
+			}
+			if (!$safe_mode) {
+				foreach ((array)$diff['indexes_missing'] as $name => $info) {
+					$out[] = array('cmd' => 'drop_index', 'table' => $table, 'index' => $name);
+				}
+			}
+			foreach ((array)$diff['indexes_changed'] as $name => $info) {
+				$new_info = $table_real_info['indexes'][$name];
+				if ($new_info) {
+					$out[] = array('cmd' => 'drop_index', 'table' => $table, 'index' => $name);
+					$out[] = array('cmd' => 'add_index', 'table' => $table, 'index' => $name, 'info' => $new_info);
+				}
+			}
+			foreach ((array)$diff['foreign_keys_new'] as $name => $info) {
+				$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'fk' => $name, 'info' => $info);
+			}
+			if (!$safe_mode) {
+				foreach ((array)$diff['foreign_keys_missing'] as $name => $info) {
+					$out[] = array('cmd' => 'drop_foreign_key', 'table' => $table, 'fk' => $name);
+				}
+			}
+			foreach ((array)$diff['foreign_keys_changed'] as $name => $info) {
+				$new_info = $table_real_info['foreign_keys'][$name];
+				if ($new_info) {
+					$out[] = array('cmd' => 'drop_foreign_key', 'table' => $table, 'fk' => $name);
+					$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'fk' => $name, 'info' => $new_info);
+				}
+			}
+			foreach ((array)$diff['options_changed'] as $name => $info) {
+				$new_info = $table_real_info['options'];
+				if ($new_info) {
+					$out[] = array('cmd' => 'alter_table', 'table' => $table, 'info' => $new_info);
+				}
+			}
+		}
+		foreach ((array)$report['tables_new'] as $table => $diff) {
+			$new_info = $this->get_real_table_sql_php($table);
+			if ($new_info) {
+				$new_info = $this->_cleanup_table_sql_php($new_info);
+				$out[] = array('cmd' => 'create_table', 'table' => $table, 'info' => $new_info);
+			}
+		}
+		if (!$safe_mode) {
+			foreach ((array)$report['tables_missing'] as $table => $diff) {
+				$out[] = array('cmd' => 'drop_table', 'table' => $table);
+			}
+		}
+		return $out;
+	}
+
+	/**
+	*/
+	public function generate_down($report = null, $params = array()) {
+		if (!isset($report)) {
+			$report = $this->compare();
+		}
+		$tables_installer_info = $this->db->installer()->TABLES_SQL_PHP;
 
 		// Safe mode here means that we do not generate danger statements like drop something
 		$safe_mode = isset($params['safe_mode']) ? $params['safe_mode'] : true;
 
-		$utils_prefix = '$this->utils->';
-
-		$report = $this->compare();
 		$out = array();
 		foreach ((array)$report['tables_changed'] as $table => $diff) {
 			foreach ((array)$diff['columns_missing'] as $name => $info) {
-				foreach ($info as $k => $v) {
-					if (is_null($v)) { unset($info[$k]); }
-				}
-				$out[] = $utils_prefix. 'add_column(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
+				$info = $this->_cleanup_column_sql_php($info);
+				$out[] = array('cmd' => 'add_column', 'table' => $table, 'column' => $name, 'info' => $info);
 			}
 			if (!$safe_mode) {
 				foreach ((array)$diff['columns_new'] as $name => $info) {
-					$out[] = $utils_prefix. 'drop_column(\''.$table.'\', \''.$name.'\');';
+					$out[] = array('cmd' => 'drop_column', 'table' => $table, 'column' => $name);
 				}
 			}
 			foreach ((array)$diff['columns_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['fields'][$name];
 				if ($new_info) {
-					foreach ((array)$new_info as $k => $v) {
-						if (is_null($v)) { unset($new_info[$k]); }
-					}
-					$out[] = $utils_prefix. 'alter_column(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+					$new_info = $this->_cleanup_column_sql_php($new_info);
+					$out[] = array('cmd' => 'alter_column', 'table' => $table, 'column' => $name, 'info' => $new_info);
 				}
 			}
 			foreach ((array)$diff['indexes_missing'] as $name => $info) {
-				$out[] = $utils_prefix. 'add_index(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
+				$out[] = array('cmd' => 'add_index', 'table' => $table, 'index' => $name, 'info' => $info);
 			}
 			if (!$safe_mode) {
 				foreach ((array)$diff['indexes_new'] as $name => $info) {
-					$out[] = $utils_prefix. 'drop_index(\''.$table.'\', \''.$name.'\');';
+					$out[] = array('cmd' => 'drop_index', 'table' => $table, 'index' => $name);
 				}
 			}
 			foreach ((array)$diff['indexes_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['indexes'][$name];
 				if ($new_info) {
-					$out[] = $utils_prefix. 'drop_index(\''.$table.'\', \''.$name.'\');';
-					$out[] = $utils_prefix. 'add_index(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+					$out[] = array('cmd' => 'drop_index', 'table' => $table, 'index' => $name);
+					$out[] = array('cmd' => 'add_index', 'table' => $table, 'index' => $name, 'info' => $new_info);
 				}
 			}
 			foreach ((array)$diff['foreign_keys_missing'] as $name => $info) {
-				$out[] = $utils_prefix. 'add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
+				$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'fk' => $name, 'info' => $info);
 			}
 			if (!$safe_mode) {
 				foreach ((array)$diff['foreign_keys_new'] as $name => $info) {
-					$out[] = $utils_prefix. 'drop_foreign_key(\''.$table.'\', \''.$name.'\');';
+					$out[] = array('cmd' => 'drop_foreign_key', 'table' => $table, 'fk' => $name);
 				}
 			}
 			foreach ((array)$diff['foreign_keys_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['foreign_keys'][$name];
 				if ($new_info) {
-					$out[] = $utils_prefix. 'drop_foreign_key(\''.$table.'\', \''.$name.'\');';
-					$out[] = $utils_prefix. 'add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
+					$out[] = array('cmd' => 'drop_foreign_key', 'table' => $table, 'fk' => $name);
+					$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'fk' => $name, 'info' => $new_info);
 				}
 			}
 			foreach ((array)$diff['options_changed'] as $name => $info) {
 				$new_info = $tables_installer_info[$table]['options'];
 				if ($new_info) {
-					$out[] = $utils_prefix. 'alter_table(\''.$table.'\', '._var_export($new_info).');';
+					$out[] = array('cmd' => 'alter_table', 'table' => $table, 'info' => $new_info);
 				}
 			}
 		}
 		foreach ((array)$report['tables_missing'] as $table => $diff) {
 			$new_info = $tables_installer_info[$table];
 			if ($new_info) {
-				$out[] = $utils_prefix. 'create_table(\''.$table.'\', '._var_export($new_info).');';
+				$out[] = array('cmd' => 'create_table', 'table' => $table, 'info' => $new_info);
 			}
 		}
 		if (!$safe_mode) {
 			foreach ((array)$report['tables_new'] as $table => $diff) {
-				$out[] = $utils_prefix. 'drop_table(\''.$table.'\');';
+				$out[] = array('cmd' => 'drop_table', 'table' => $table);
 			}
 		}
-		return implode(PHP_EOL, $out);
+		return $out;
 	}
 
 	/**
@@ -539,110 +630,89 @@ abstract class yf_db_migrator {
 	}
 
 	/**
-	* Create migration file from current database comparing to stored structure.
-	* Need to store current database changes to apply in other places.
+	* Create migration file from current database comparing to stored structure. Need to store current database changes to apply in other places.
 	*/
 	public function create($params = array()) {
-		$tables_installer_info = $installer->TABLES_SQL_PHP;
-
-		// Safe mode here means that we do not generate danger statements like drop something
-		$safe_mode = isset($params['safe_mode']) ? $params['safe_mode'] : true;
-
-		$utils_prefix = '$this->utils->';
-
+		$name = date('YmdHis');
 		$report = $this->compare();
-		$out = array();
-		foreach ((array)$report['tables_changed'] as $table => $diff) {
-			$table_real_info = $this->get_real_table_sql_php($table);
-			if (!$table_real_info) {
-				continue;
-			}
-			$table_real_info = $this->_cleanup_table_sql_php($table_real_info);
+		$up = (array)$this->generate_up($report, $params);
+		$down = (array)$this->generate_down($report, $params);
+		$body = $this->_create_migration_body($name, $up, $down);
+		$file_path = $this->_write_new_migration_file($name, $body);
+		return file_get_contents($file_path);
+	}
 
-			foreach ((array)$diff['columns_new'] as $name => $info) {
-				foreach ($info as $k => $v) {
-					if (is_null($v)) { unset($info[$k]); }
-				}
-				$out[] = $utils_prefix. 'add_column(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
-			}
-			foreach ((array)$diff['columns_changed'] as $name => $info) {
-				$new_info = $table_real_info['fields'][$name];
-				if ($new_info) {
-					$out[] = $utils_prefix. 'alter_column(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
-				}
-			}
-			if (!$safe_mode) {
-				foreach ((array)$diff['columns_missing'] as $name => $info) {
-					$out[] = $utils_prefix. 'drop_column(\''.$table.'\', \''.$name.'\');';
-				}
-			}
-			foreach ((array)$diff['indexes_new'] as $name => $info) {
-				$out[] = $utils_prefix. 'add_index(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
-			}
-			if (!$safe_mode) {
-				foreach ((array)$diff['indexes_missing'] as $name => $info) {
-					$out[] = $utils_prefix. 'drop_index(\''.$table.'\', \''.$name.'\');';
+	/**
+	*/
+	public function _migration_commands_into_string($cmds = array(), $num_tabs = 2) {
+		$TAB = "\t";
+		$prefix = str_repeat($TAB, $num_tabs). '$utils->';
+		$a = array();
+		$a[] = str_repeat($TAB, $num_tabs).'$utils = $this->db->utils();';
+		foreach ((array)$cmds as $c) {
+			$name = $c['cmd'];
+			unset($c['cmd']);
+			$body = array();
+			foreach ($c as $k => $v) {
+				if (is_array($v)) {
+					$body[] = str_replace(PHP_EOL, PHP_EOL.str_repeat($TAB, $num_tabs), _var_export($v));
+				} else {
+					$body[] = '\''.addslashes($v).'\'';
 				}
 			}
-			foreach ((array)$diff['indexes_changed'] as $name => $info) {
-				$new_info = $table_real_info['indexes'][$name];
-				if ($new_info) {
-					$out[] = $utils_prefix. 'drop_index(\''.$table.'\', \''.$name.'\');';
-					$out[] = $utils_prefix. 'add_index(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
-				}
+			$a[] = $prefix. $name. '('.implode(', ', $body).');';
+		}
+		return implode(PHP_EOL, $a);
+	}
+
+	/**
+	*/
+	public function _create_migration_body($name, array $up, array $down) {
+		$TAB = "\t";
+		$fhead = PHP_EOL. $TAB.'/'.'**'.PHP_EOL.$TAB.'*'.'/';
+		return '<?'.'php'.PHP_EOL.PHP_EOL
+			. 'class yf_migration_'.$name.' extends yf_migration_runner {'.PHP_EOL
+			. $fhead. PHP_EOL. $TAB. 'protected function up() {'.PHP_EOL. $this->_migration_commands_into_string($up). PHP_EOL. $TAB. '}'.PHP_EOL
+			. $fhead .PHP_EOL. $TAB. 'protected function down() {'.PHP_EOL. $this->_migration_commands_into_string($down). PHP_EOL. $TAB. '}'.PHP_EOL
+			. '}';
+	}
+
+	/**
+	*/
+	public function _write_new_migration_file($name, $body) {
+		$file = APP_PATH. 'share/db_installer/migrations/'.$name.'.migration.php';
+		if (!file_exists($file)) {
+			$dir = dirname($file);
+			if (!file_exists($dir)) {
+				mkdir($dir, 0755, true);
 			}
-			foreach ((array)$diff['foreign_keys_new'] as $name => $info) {
-				$out[] = $utils_prefix. 'add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($info).');';
+			file_put_contents($file, $body);
+		}
+		return $file;
+	}
+
+	/**
+	*/
+	public function _cleanup_column_sql_php($field_info = array()) {
+		foreach ((array)$field_info as $k => $v) {
+			$need_unset = false;
+			if (is_null($v) || in_array($k, array('type_raw', 'primary', 'unique'))) {
+				$need_unset = true;
+			} elseif ($k === 'auto_inc' && !$v) {
+				$need_unset = true;
 			}
-			if (!$safe_mode) {
-				foreach ((array)$diff['foreign_keys_missing'] as $name => $info) {
-					$out[] = $utils_prefix. 'drop_foreign_key(\''.$table.'\', \''.$name.'\');';
-				}
-			}
-			foreach ((array)$diff['foreign_keys_changed'] as $name => $info) {
-				$new_info = $table_real_info['foreign_keys'][$name];
-				if ($new_info) {
-					$out[] = $utils_prefix. 'drop_foreign_key(\''.$table.'\', \''.$name.'\');';
-					$out[] = $utils_prefix. 'add_foreign_key(\''.$table.'\', \''.$name.'\', '._var_export($new_info).');';
-				}
-			}
-			foreach ((array)$diff['options_changed'] as $name => $info) {
-				$new_info = $table_real_info['options'];
-				if ($new_info) {
-					$out[] = $utils_prefix. 'alter_table(\''.$table.'\', '._var_export($new_info).');';
-				}
+			if ($need_unset) {
+				unset($field_info[$k]);
 			}
 		}
-		foreach ((array)$report['tables_new'] as $table => $diff) {
-			$new_info = $this->get_real_table_sql_php($table);
-			if ($new_info) {
-				$new_info = $this->_cleanup_table_sql_php($new_info);
-				$out[] = $utils_prefix. 'create_table(\''.$table.'\', '._var_export($new_info).');';
-			}
-		}
-		if (!$safe_mode) {
-			foreach ((array)$report['tables_missing'] as $table => $diff) {
-				$out[] = $utils_prefix. 'drop_table(\''.$table.'\');';
-			}
-		}
-		return implode(PHP_EOL, $out);
+		return $field_info;
 	}
 
 	/**
 	*/
 	public function _cleanup_table_sql_php($sql_php = array()) {
 		foreach ((array)$sql_php['fields'] as $field_name => $field_info) {
-			foreach ((array)$field_info as $k => $v) {
-				$need_unset = false;
-				if (is_null($v) || in_array($k, array('type_raw', 'primary', 'unique'))) {
-					$need_unset = true;
-				} elseif ($k === 'auto_inc' && !$v) {
-					$need_unset = true;
-				}
-				if ($need_unset) {
-					unset($sql_php['fields'][$field_name][$k]);
-				}
-			}
+			$sql_php['fields'][$field_name] = $this->_cleanup_column_sql_php($field_info);
 		}
 		foreach ((array)$sql_php['options'] as $k => $v) {
 			if (is_null($v)) {
