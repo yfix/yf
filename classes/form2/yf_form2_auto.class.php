@@ -45,7 +45,7 @@ class yf_form2_auto {
 		}
 		if ($table && $id) {
 			$db = ($_this->_params['db'] ?: $params['db']) ?: db();
-// TODO: use db_installer/fields/  info
+// TODO: use info from db()->utils()->list_columns()
 			$columns = $db->meta_columns($table);
 			$info = $db->get('SELECT * FROM '.$db->es($table).' WHERE id='.intval($id));
 			if (!is_array($_this->_replace)) {

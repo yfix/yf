@@ -76,8 +76,8 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 
 		// Load install data from external files
 		$globs_sql = array(
-			'yf_main'		=> YF_PATH.'share/db_installer/sql/*.sql.php',
-			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
+			'yf_main'		=> YF_PATH.'share/db/sql/*.sql.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql/*.sql.php',
 		);
 		foreach ($globs_sql as $glob) {
 			foreach (glob($glob) as $f) {
@@ -86,8 +86,8 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 			}
 		}
 		$globs_php = array(
-			'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*.sql_php.php',
-			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*.sql_php.php',
+			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
 		);
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
@@ -147,8 +147,8 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 
 		// Load install data from external files
 		$globs_sql = array(
-			'yf_main'		=> YF_PATH.'share/db_installer/sql/*.sql.php',
-			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql/*.sql.php',
+			'yf_main'		=> YF_PATH.'share/db/sql/*.sql.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql/*.sql.php',
 		);
 		foreach ($globs_sql as $glob) {
 			foreach (glob($glob) as $f) {
@@ -157,8 +157,8 @@ class class_db_ddl_parser_mysql_test extends db_offline_abstract {
 			}
 		}
 		$globs_php = array(
-			'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*.sql_php.php',
-			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*.sql_php.php',
+			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
 		);
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {

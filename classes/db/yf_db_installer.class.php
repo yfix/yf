@@ -66,7 +66,7 @@ abstract class yf_db_installer {
 	public function load_data() {
 		// Preload db installer SQL CREATE TABLE DDL statements
 		$ext = '.sql.php';
-		$dir = 'share/db_installer/sql/*'.$ext;
+		$dir = 'share/db/sql/*'.$ext;
 		$globs_sql = array(
 			'yf_main'				=> YF_PATH. $dir,
 			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
@@ -83,7 +83,7 @@ abstract class yf_db_installer {
 		}
 		// Preload db installer PHP array of CREATE TABLE DDL statements
 		$ext = '.sql_php.php';
-		$dir = 'share/db_installer/sql_php/*'.$ext;
+		$dir = 'share/db/sql_php/*'.$ext;
 		$globs_sql_php = array(
 			'yf_main'				=> YF_PATH. $dir,
 			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
@@ -100,7 +100,7 @@ abstract class yf_db_installer {
 		}
 		// Preload db installer data PHP arrays needed to be inserted after CREATE TABLE == initial data
 		$ext = '.data.php';
-		$dir = 'share/db_installer/data/*'.$ext;
+		$dir = 'share/db/data/*'.$ext;
 		$globs_data = array(
 			'yf_main'				=> YF_PATH. $dir,
 			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,

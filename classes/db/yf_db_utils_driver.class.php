@@ -1310,11 +1310,11 @@ WHERE table_schema = "schemaname"
 			$search_table = $table;
 		}
 		$globs = array(
-			PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$search_table.'.sql.php',
-			PROJECT_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
-			CONFIG_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
-			YF_PATH. 'plugins/*/share/db_installer/sql/'.$search_table.'.sql.php',
-			YF_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
+			PROJECT_PATH. 'plugins/*/share/db/sql/'.$search_table.'.sql.php',
+			PROJECT_PATH. 'share/db/sql/'.$search_table.'.sql.php',
+			CONFIG_PATH. 'share/db/sql/'.$search_table.'.sql.php',
+			YF_PATH. 'plugins/*/share/db/sql/'.$search_table.'.sql.php',
+			YF_PATH. 'share/db/sql/'.$search_table.'.sql.php',
 		);
 		$path = '';
 		foreach ($globs as $glob) {

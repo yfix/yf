@@ -286,7 +286,7 @@ abstract class yf_db_migrator {
 		$existing_sql_php = array();
 		// Preload db installer PHP array of CREATE TABLE DDL statements
 		$ext = '.sql_php.php';
-		$dir = 'share/db_installer/sql_php/*'.$ext;
+		$dir = 'share/db/sql_php/*'.$ext;
 		$globs_sql_php = array(
 			'yf_main'				=> YF_PATH. $dir,
 			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
@@ -368,7 +368,7 @@ abstract class yf_db_migrator {
 
 			$sql = '  '.trim(implode(PHP_EOL, $sql_a));
 
-			$file_sql = APP_PATH. 'share/db_installer/sql/'.$table.'.sql.php';
+			$file_sql = APP_PATH. 'share/db/sql/'.$table.'.sql.php';
 			$dir_sql = dirname($file_sql);
 			if (!file_exists($dir_sql)) {
 				mkdir($dir_sql, 0755, true);
@@ -379,7 +379,7 @@ abstract class yf_db_migrator {
 				file_put_contents($file_sql, $body_sql);
 			}
 
-			$file_php = APP_PATH. 'share/db_installer/sql_php/'.$table.'.sql_php.php';
+			$file_php = APP_PATH. 'share/db/sql_php/'.$table.'.sql_php.php';
 			$dir_php = dirname($file_php);
 			if (!file_exists($dir_php)) {
 				mkdir($dir_php, 0755, true);
@@ -650,7 +650,7 @@ abstract class yf_db_migrator {
 	/**
 	*/
 	public function _write_new_migration_file($name, $body) {
-		$file = APP_PATH. 'share/db_installer/migrations/db_migration_'.$name.'.class.php';
+		$file = APP_PATH. 'share/db/migrations/db_migration_'.$name.'.class.php';
 		if (!file_exists($file)) {
 			$dir = dirname($file);
 			if (!file_exists($dir)) {
@@ -751,7 +751,7 @@ abstract class yf_db_migrator {
 	public function _list($params = array()) {
 		$prefix = 'db_migration_';
 		$ext = '.class.php';
-		$dir = 'share/db_installer/migrations/'.$prefix.'*'.$ext;
+		$dir = 'share/db/migrations/'.$prefix.'*'.$ext;
 		$globs = array(
 			'yf_main'				=> YF_PATH. $dir,
 			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,

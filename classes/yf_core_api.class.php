@@ -516,9 +516,9 @@ class yf_core_api {
 
 	/**
 	*/
-	function get_tables_fields() {
-		$folder = 'share/db_installer/fields/';
-		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.fields.php'));
+	function get_tables_sql_php() {
+		$folder = 'share/db/sql_php/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.sql_php.php'));
 	}
 
 	/**

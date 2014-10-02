@@ -441,8 +441,8 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		$suffix = '.sql.php';
 		$suffix_len = strlen($suffix);
 		$sql_paths = array(
-			'yf'		=> YF_PATH.'share/db_installer/sql/sys_*'.$suffix,
-			'yf_plugins'=> YF_PATH.'plugins/*/share/db_installer/sql/sys_*'.$suffix,
+			'yf'		=> YF_PATH.'share/db/sql/sys_*'.$suffix,
+			'yf_plugins'=> YF_PATH.'plugins/*/share/db/sql/sys_*'.$suffix,
 			'yf_install'=> INSTALLER_PATH.'assets/data/*'.$suffix,
 		);
 		foreach ((array)$sql_paths as $pattern) {
