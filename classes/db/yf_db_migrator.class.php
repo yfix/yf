@@ -262,37 +262,6 @@ abstract class yf_db_migrator {
 	/**
 	* Alias
 	*/
-	public function list_migrations($params = array()) {
-		return $this->_list($params);
-	}
-
-	/**
-	* List of available migrations to apply
-	*/
-	public function _list($params = array()) {
-		$ext = '.migration.php';
-		$dir = 'share/db_installer/migrations/*'.$ext;
-		$globs = array(
-			'yf_main'				=> YF_PATH. $dir,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
-			'project_app'			=> APP_PATH. $dir,
-			'project_main'			=> PROJECT_PATH. $dir,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
-			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
-		);
-		$migratons = array();
-		foreach ($globs as $gname => $glob) {
-			foreach (glob($glob) as $f) {
-				$name = substr(basename($f), 0, -strlen($ext));
-				$migrations[$name][$gname] = $f;
-			}
-		}
-		return $migrations;
-	}
-
-	/**
-	* Alias
-	*/
 	public function dump_db_installer_sql($params = array()) {
 		$params['dump_only_sql'] = true;
 		return $this->dump($params);
@@ -671,7 +640,8 @@ abstract class yf_db_migrator {
 		$TAB = "\t";
 		$fhead = PHP_EOL. $TAB.'/'.'**'.PHP_EOL.$TAB.'*'.'/';
 		return '<?'.'php'.PHP_EOL.PHP_EOL
-			. 'class yf_migration_'.$name.' extends yf_migration_runner {'.PHP_EOL
+			. 'load(\'db_migrator\', \'framework\', \'classes/db/\');'.PHP_EOL
+			. 'class db_migration_'.$name.' extends yf_db_migrator {'.PHP_EOL
 			. $fhead. PHP_EOL. $TAB. 'protected function up() {'.PHP_EOL. $this->_migration_commands_into_string($up). PHP_EOL. $TAB. '}'.PHP_EOL
 			. $fhead .PHP_EOL. $TAB. 'protected function down() {'.PHP_EOL. $this->_migration_commands_into_string($down). PHP_EOL. $TAB. '}'.PHP_EOL
 			. '}';
@@ -680,7 +650,7 @@ abstract class yf_db_migrator {
 	/**
 	*/
 	public function _write_new_migration_file($name, $body) {
-		$file = APP_PATH. 'share/db_installer/migrations/'.$name.'.migration.php';
+		$file = APP_PATH. 'share/db_installer/migrations/db_migration_'.$name.'.class.php';
 		if (!file_exists($file)) {
 			$dir = dirname($file);
 			if (!file_exists($dir)) {
@@ -771,14 +741,65 @@ abstract class yf_db_migrator {
 	/**
 	* Alias
 	*/
-	public function apply_migration($params = array()) {
-		return $this->apply($params);
+	public function list_migrations($params = array()) {
+		return $this->_list($params);
+	}
+
+	/**
+	* List of available migrations to apply
+	*/
+	public function _list($params = array()) {
+		$prefix = 'db_migration_';
+		$ext = '.class.php';
+		$dir = 'share/db_installer/migrations/'.$prefix.'*'.$ext;
+		$globs = array(
+			'yf_main'				=> YF_PATH. $dir,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
+			'project_app'			=> APP_PATH. $dir,
+			'project_main'			=> PROJECT_PATH. $dir,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
+			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
+		);
+		$migratons = array();
+		foreach ($globs as $gname => $glob) {
+			foreach (glob($glob) as $f) {
+				$name = substr(basename($f), strlen($prefix), -strlen($ext));
+				$migrations[$name] = $f;
+			}
+		}
+		return $migrations;
+	}
+
+	/**
+	* Alias
+	*/
+	public function apply_migration($name, $params = array()) {
+		return $this->apply($name, $params);
 	}
 
 	/**
 	* Apply selected migration file to current database
 	*/
-	public function apply($params = array()) {
-// TODO
+	public function apply($name, $params = array()) {
+		if (!$name) {
+			return 'Error: empty migration name';
+		}
+		$avail = $this->_list();
+		$path = $avail[$name];
+		if (!$path || !file_exists($path)) {
+			return 'Error: cannot find migration with name: '.$name;
+		}
+		$mclass = 'db_migration_'.$name;
+		require_once $path;
+		$migration = new $mclass();
+		try {
+			$migration->db->begin();
+			$migration->up();
+			$migration->db->commit();
+		} catch (Exception $e) {
+			$migration->db->rollback();
+#			$migration->down();
+		}
+		return 'Success';
 	}
 }
