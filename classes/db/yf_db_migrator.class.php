@@ -781,6 +781,11 @@ abstract class yf_db_migrator {
 	* Apply selected migration file to current database
 	*/
 	public function apply($name, $params = array()) {
+		if (is_array($name)) {
+			$params = (array)$params + $name;
+			$name = '';
+		}
+		$name = isset($params['name']) ? $params['name'] : $name;
 		if (!$name) {
 			return 'Error: empty migration name';
 		}
@@ -792,14 +797,22 @@ abstract class yf_db_migrator {
 		$mclass = 'db_migration_'.$name;
 		require_once $path;
 		$migration = new $mclass();
+		$migration->db = $this->db;
+
+$migration->db->LOG_ALL_QUERIES = true;
+
 		try {
-			$migration->db->begin();
+			$this->db->begin();
 			$migration->up();
-			$migration->db->commit();
+			$this->db->commit();
 		} catch (Exception $e) {
-			$migration->db->rollback();
+			$this->db->rollback();
 #			$migration->down();
 		}
+
+$migration->db->LOG_ALL_QUERIES = false;
+print_r($migration->db->_LOG);
+
 		return 'Success';
 	}
 }
