@@ -410,33 +410,42 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10, 'unsigned' => true, 'nullable' => false, 'auto_inc' => true),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-		$expected = array(
-			'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary','columns' => array('id' => 'id')),
-		);
-		$this->assertEquals( $expected, self::utils()->list_indexes($this->table_name($table)) );
+		$this->assertEquals( $data['indexes'], self::utils()->list_indexes($this->table_name($table)) );
 	}
 	public function test_index_info() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10, 'unsigned' => true, 'nullable' => false, 'auto_inc' => true),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')), self::utils()->index_info($this->table_name($table), 'PRIMARY') );
+		$this->assertEquals( $data['indexes']['PRIMARY'], self::utils()->index_info($this->table_name($table), 'PRIMARY') );
 	}
 	public function test_index_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10, 'unsigned' => true, 'nullable' => false, 'auto_inc' => true),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
@@ -446,8 +455,12 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10),
-			array('key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
@@ -459,27 +472,38 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
+			),
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
 		$this->assertFalse( self::utils()->index_exists($this->table_name($table), 'PRIMARY') );
 		$this->assertNotEmpty( self::utils()->add_index($this->table_name($table), 'PRIMARY', array('id'), array('type' => 'primary')) );
 		$this->assertNotEmpty( self::utils()->index_exists($this->table_name($table), 'PRIMARY') );
+
+		$this->assertNotEmpty( self::utils()->drop_index($this->table_name($table), 'PRIMARY') );
+		$this->assertFalse( self::utils()->index_exists($this->table_name($table), 'PRIMARY') );
+		$this->assertNotEmpty( self::utils()->add_index($this->table_name($table), array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id'))) );
+		$this->assertNotEmpty( self::utils()->index_exists($this->table_name($table), 'PRIMARY') );
 	}
 	public function test_update_index() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10),
-			array('name' => 'id2', 'type' => 'int', 'length' => 10),
+			'fields' => array(
+				'id' => array('name' => 'id', 'type' => 'int', 'length' => 10),
+				'id2' => array('name' => 'id2', 'type' => 'int', 'length' => 10),
+			),
 		);
+		$index = array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id'));
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-		$this->assertNotEmpty( self::utils()->add_index($this->table_name($table), 'PRIMARY', array('id'), array('type' => 'primary')) );
-		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')), self::utils()->index_info($this->table_name($table), 'PRIMARY') );
-		$this->assertNotEmpty( self::utils()->update_index($this->table_name($table), 'PRIMARY', array('id2'), array('type' => 'primary')) );
-		$this->assertEquals( array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id2' => 'id2')), self::utils()->index_info($this->table_name($table), 'PRIMARY') );
+		$this->assertNotEmpty( self::utils()->add_index($this->table_name($table), $index) );
+		$this->assertEquals( $index, self::utils()->index_info($this->table_name($table), 'PRIMARY') );
+		$index['columns'] = array('id2' => 'id2');
+		$this->assertNotEmpty( self::utils()->update_index($this->table_name($table), $index) );
+		$this->assertEquals( $index, self::utils()->index_info($this->table_name($table), 'PRIMARY') );
 	}
 
 	public function test_list_foreign_keys() {
@@ -488,8 +512,12 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$fkey = 'fkey_'.__FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table1), $data) );
@@ -506,8 +534,12 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$fkey = 'fkey_'.__FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table1), $data) );
@@ -522,8 +554,12 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$fkey = 'fkey_'.__FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table1), $data) );
@@ -537,8 +573,12 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$fkey = 'fkey_'.__FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table1), $data) );
@@ -554,8 +594,12 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$fkey = 'fkey_'.__FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table1), $data) );
@@ -1019,7 +1063,11 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_helper_index() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$data = array(
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
+			),
+		);
 		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertTrue( (bool)self::utils()->add_index($this->table_name($table), 'PRIMARY', array('id'), array('type' => 'primary')) );
 		$this->assertTrue( (bool)self::utils()->index_exists($this->table_name($table), 'PRIMARY') );
