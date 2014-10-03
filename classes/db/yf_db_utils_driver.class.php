@@ -472,13 +472,12 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function create_table($table, $data = array(), $extra = array(), &$error = false) {
-// TODO: add ability to pass $data as db ddl parser structure
+	public function create_table($table, $extra = array(), &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
 		}
-		$orig_table = $table;
+		$table = $extra['name'] ?: $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
 		}
@@ -497,35 +496,106 @@ WHERE table_schema = "schemaname"
 			$error = 'table_name already exists';
 			return false;
 		}
-		// Default table options
-		$extra['engine'] = $extra['engine'] ?: 'InnoDB';
-		$extra['charset'] = $extra['charset'] ?: 'utf8';
-
-		$table_options = array();
-		foreach ((array)$this->_get_supported_table_options() as $name => $real_name) {
-			if (isset($extra[$name]) && strlen($extra[$name])) {
-				$table_options[$name] = $real_name.'='.$extra[$name];
+		if (empty($extra['fields'])) {
+			$data = $this->_get_table_structure_from_db_installer($table, $error);
+			if ($data['fields']) {
+				foreach (array('fields','indexes','foreign_keys','options') as $k) {
+					$extra[$k] = $data[$k];
+				}
 			}
 		}
-		$table_options = implode(' ', $table_options);
-
-		$data = ($extra['sql'] ?: $extra['data']) ?: $data;
-		if (is_array($data)) {
-			$data = $this->_compile_create_table($data, $extra, $error);
-		}
-		if (!$data) {
-			$data = $this->_get_table_structure_from_db_installer($table, $error);
-		}
-		if (!$data) {
-			$error = 'data is empty';
+		if (empty($extra['fields'])) {
+			$error = 'table fields empty';
 			return false;
 		}
-		$sql = 'CREATE TABLE IF NOT EXISTS '.$this->_escape_table_name($db_name.'.'.$table).' ('
-			. PHP_EOL. $data. PHP_EOL
-			. ')'.($table_options ? ' '.$table_options : '')
-			. ';'. PHP_EOL;
+		// Default table options
+		$table_options = array(
+			'engine'	=> 'InnoDB',
+			'charset'	=> 'utf8',
+		);
+		foreach ((array)$this->_get_supported_table_options() as $name => $real_name) {
+			if (isset($extra['options'][$name]) && strlen($extra['options'][$name])) {
+#				$table_options[$name] = $real_name.'='.$extra[$name];
+				$table_options[$name] = $extra['options'][$name];
+			}
+		}
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$sql = $parser->create(array(
+			'name'			=> $db_name.'.'.$table,
+			'fields'		=> $extra['fields'],
+			'indexes'		=> $extra['indexes'],
+			'foreign_keys'	=> $extra['foreign_keys'],
+			'options'		=> $table_options,
+		));
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
+
+/*
+		$utils->create_table('user_data_info_fields', array(
+			'fields' => array(
+				'id' => array(
+					'name' => 'id',
+					'type' => 'int',
+					'length' => 10,
+					'unsigned' => true,
+					'nullable' => false,
+					'auto_inc' => true,
+				),
+			),
+			'foreign_keys' => array(
+			),
+			'indexes' => array(
+				'PRIMARY' => array(
+					'name' => 'PRIMARY',
+					'type' => 'primary',
+					'columns' => array(
+						'id' => 'id',
+					),
+				),
+			),
+			'options' => array(
+				'engine' => 'MyISAM',
+				'charset' => 'utf8',
+			),
+		));
+		$utils->add_column('sys_menus', 'custom_fields', array(
+			'name' => 'custom_fields',
+			'type' => 'text',
+			'nullable' => false,
+		));
+		$utils->alter_column('tags_settings', 'user_id', array(
+			'name' => 'user_id',
+			'type' => 'int',
+			'length' => 11,
+			'unsigned' => true,
+			'nullable' => false,
+		));
+		$utils->alter_table('user', array(
+			'engine' => 'InnoDB',
+			'charset' => 'utf8',
+		));
+		$utils->add_index('sys_locale_translate', 'PRIMARY', array(
+			'name' => 'PRIMARY',
+			'type' => 'primary',
+			'columns' => array(
+				'var_id' => 'var_id',
+				'locale' => 'locale',
+			),
+		));
+		$utils->add_foreign_key('admin_walls', 'w_admin_walls_ibfk_1', array(
+			'name' => 'w_admin_walls_ibfk_1',
+			'columns' => array(
+				'user_id' => 'user_id',
+			),
+			'ref_table' => 'w_sys_admin',
+			'ref_columns' => array(
+				'id' => 'id',
+			),
+			'on_update' => 'CASCADE',
+			'on_delete' => 'CASCADE',
+		));
+
+*/
 
 	/**
 	*/
@@ -1304,17 +1374,20 @@ WHERE table_schema = "schemaname"
 	* Use db installer repository to get table structure
 	*/
 	public function _get_table_structure_from_db_installer($table, &$error = false) {
+// TODO: move this code into db installer class
 		if (strlen($this->db->DB_PREFIX) && substr($table, 0, strlen($this->db->DB_PREFIX)) == $this->db->DB_PREFIX) {
 			$search_table = substr($table, strlen($this->db->DB_PREFIX));
 		} else {
 			$search_table = $table;
 		}
+		$ext = '.sql_php.php';
+		$dir = 'share/db/sql_php/';
 		$globs = array(
-			PROJECT_PATH. 'plugins/*/share/db/sql/'.$search_table.'.sql.php',
-			PROJECT_PATH. 'share/db/sql/'.$search_table.'.sql.php',
-			CONFIG_PATH. 'share/db/sql/'.$search_table.'.sql.php',
-			YF_PATH. 'plugins/*/share/db/sql/'.$search_table.'.sql.php',
-			YF_PATH. 'share/db/sql/'.$search_table.'.sql.php',
+			PROJECT_PATH. 'plugins/*/'. $dir. $search_table. $ext,
+			PROJECT_PATH. $dir. $search_table. $ext,
+			CONFIG_PATH. $dir. $search_table. $ext,
+			YF_PATH. 'plugins/*/'. $dir. $search_table. $ext,
+			YF_PATH. $dir. $search_table. $ext,
 		);
 		$path = '';
 		foreach ($globs as $glob) {
@@ -1327,7 +1400,7 @@ WHERE table_schema = "schemaname"
 			$error = 'file not exists: '.$path;
 			return false;
 		}
-		include $path;
+		$data = include $path;
 		return $data;
 	}
 
