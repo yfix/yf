@@ -529,45 +529,6 @@ WHERE table_schema = "schemaname"
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
-/*
-		$utils->add_column('sys_menus', 'custom_fields', array(
-			'name' => 'custom_fields',
-			'type' => 'text',
-			'nullable' => false,
-		));
-		$utils->alter_column('tags_settings', 'user_id', array(
-			'name' => 'user_id',
-			'type' => 'int',
-			'length' => 11,
-			'unsigned' => true,
-			'nullable' => false,
-		));
-		$utils->alter_table('user', array(
-			'engine' => 'InnoDB',
-			'charset' => 'utf8',
-		));
-		$utils->add_index('sys_locale_translate', 'PRIMARY', array(
-			'name' => 'PRIMARY',
-			'type' => 'primary',
-			'columns' => array(
-				'var_id' => 'var_id',
-				'locale' => 'locale',
-			),
-		));
-		$utils->add_foreign_key('admin_walls', 'w_admin_walls_ibfk_1', array(
-			'name' => 'w_admin_walls_ibfk_1',
-			'columns' => array(
-				'user_id' => 'user_id',
-			),
-			'ref_table' => 'w_sys_admin',
-			'ref_columns' => array(
-				'id' => 'id',
-			),
-			'on_update' => 'CASCADE',
-			'on_delete' => 'CASCADE',
-		));
-*/
-
 	/**
 	*/
 	public function drop_table($table, $extra = array(), &$error = false) {
@@ -837,11 +798,17 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function add_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
-// TODO: $fields should be compatible with db ddl parser
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
 		}
+		if (is_array($index_name)) {
+			$extra = (array)$extra + $index_name;
+			$index_name = '';
+		}
+		$table = $extra['table'] ?: $table;
+		$index_name = $extra['name'] ?: $index_name;
+		$fields = $extra['columns'] ?: $fields;
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -886,6 +853,7 @@ WHERE table_schema = "schemaname"
 			$error = 'table name is empty';
 			return false;
 		}
+		$index_name = $extra['name'] ?: $index_name;
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
 			return false;
@@ -901,32 +869,27 @@ WHERE table_schema = "schemaname"
 	/**
 	* Alias
 	*/
-	public function alter_index($table, $index_name, $fields = array(), $extra = array(), &$error = false) {
-		if (is_array($table)) {
-			$extra = (array)$extra + $table;
-			$table = '';
-		}
+	public function alter_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
 		return $this->update_index($table, $index_name, $fields, $extra, $error);
 	}
 
 	/**
 	*/
-	public function update_index($table, $index_name, $fields = array(), $extra = array(), &$error = false) {
-// TODO: $fields should be compatible with db ddl parser
+	public function update_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
 		}
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
+		if (is_array($index_name)) {
+			$extra = (array)$extra + $index_name;
+			$index_name = '';
 		}
-		if (!strlen($index_name)) {
-			$error = 'index name is empty';
-			return false;
+		$table = $extra['table'] ?: $table;
+		$index_name = $extra['name'] ?: $index_name;
+		if ($this->drop_index($table, $index_name, $extra, $error)) {
+			return $this->add_index($table, $index_name, $fields, $extra, $error);
 		}
-		$this->drop_index($table, $index_name, $extra, $error);
-		return $this->add_index($table, $index_name, $fields, $extra, $error);
+		return false;
 	}
 
 	/**
@@ -1024,6 +987,20 @@ WHERE table_schema = "schemaname"
 		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP FOREIGN KEY '.$this->_escape_key($index_name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
+/*
+		$utils->add_foreign_key('admin_walls', array(
+			'name' => 'w_admin_walls_ibfk_1',
+			'columns' => array(
+				'user_id' => 'user_id',
+			),
+			'ref_table' => 'w_sys_admin',
+			'ref_columns' => array(
+				'id' => 'id',
+			),
+			'on_update' => 'CASCADE',
+			'on_delete' => 'CASCADE',
+		));
+*/
 
 	/**
 	*/
