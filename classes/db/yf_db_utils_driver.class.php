@@ -980,6 +980,8 @@ WHERE table_schema = "schemaname"
 			$extra = (array)$extra + $table;
 			$table = '';
 		}
+		$table = $extra['table'] ?: $table;
+		$index_name = $extra['name'] ?: $index_name;
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -987,34 +989,28 @@ WHERE table_schema = "schemaname"
 		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' DROP FOREIGN KEY '.$this->_escape_key($index_name);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
-/*
-		$utils->add_foreign_key('admin_walls', array(
-			'name' => 'w_admin_walls_ibfk_1',
-			'columns' => array(
-				'user_id' => 'user_id',
-			),
-			'ref_table' => 'w_sys_admin',
-			'ref_columns' => array(
-				'id' => 'id',
-			),
-			'on_update' => 'CASCADE',
-			'on_delete' => 'CASCADE',
-		));
-*/
 
 	/**
 	*/
-	public function add_foreign_key($table, $index_name = '', array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
-// TODO: $fields should be compatible with db ddl parser
+	public function add_foreign_key($table, $index_name = '', $fields = array(), $ref_table = '', $ref_fields = array(), $extra = array(), &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
 		}
+		if (is_array($index_name)) {
+			$extra = (array)$extra + $index_name;
+			$index_name = '';
+		}
+		$table = $extra['table'] ?: $table;
+		$index_name = $extra['name'] ?: $index_name;
+		$fields = $extra['columns'] ?: $fields;
+		$ref_table = $extra['ref_table'] ?: $ref_table;
+		$ref_fields = $extra['ref_columns'] ?: $ref_fields;
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
 		}
-		if (empty($fields)) {
+		if (empty($fields) || !is_array($fields)) {
 			$error = 'fields are empty';
 			return false;
 		}
@@ -1022,28 +1018,22 @@ WHERE table_schema = "schemaname"
 			$error = 'referenced table name is empty';
 			return false;
 		}
-		if (empty($ref_fields)) {
+		if (empty($ref_fields) || !is_array($ref_fields)) {
 			$error = 'referenced fields are empty';
 			return false;
 		}
 		if (empty($index_name)) {
 			$index_name = $ref_table.'_'.implode('_', $ref_fields);
 		}
-		$supported_ref_options = array(
-			'restrict'	=> 'RESTRICT',
-			'cascade'	=> 'CASCADE',
-			'set_null'	=> 'SET NULL',
-			'no_action'	=> 'NO ACTION',
-		);
-		$on_delete = isset($extra['on_delete']) && isset($supported_ref_options[$extra['on_delete']]) ? $supported_ref_options[$extra['on_delete']] : '';
-		$on_update = isset($extra['on_update']) && isset($supported_ref_options[$extra['on_update']]) ? $supported_ref_options[$extra['on_update']] : '';
+		$on_delete = isset($extra['on_delete']) ? $extra['on_delete'] : '';
+		$on_update = isset($extra['on_update']) ? $extra['on_update'] : '';
 
 		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).PHP_EOL
 			. ' ADD CONSTRAINT '.$this->_escape_key($index_name).PHP_EOL
 			. ' FOREIGN KEY ('.implode(',', $this->_escape_fields($fields)).')'.PHP_EOL
 			. ' REFERENCES '.$this->_escape_key($ref_table).' ('.implode(',', $this->_escape_fields($ref_fields)).')'.PHP_EOL
-			. ($on_delete ? ' ON DELETE '.$on_delete : '').PHP_EOL
-			. ($on_update ? ' ON UPDATE '.$on_update : '')
+			. ($on_delete ? ' ON DELETE '.strtoupper(str_replace('_', ' ', $on_delete)) : '').PHP_EOL
+			. ($on_update ? ' ON UPDATE '.strtoupper(str_replace('_', ' ', $on_update)) : '')
 		;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
@@ -1051,27 +1041,27 @@ WHERE table_schema = "schemaname"
 	/**
 	* Alias
 	*/
-	public function alter_foreign_key($table, $index_name, array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+	public function alter_foreign_key($table, $index_name = '', $fields = array(), $ref_table = '', $ref_fields = array(), $extra = array(), &$error = false) {
 		return $this->update_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
 	}
 
 	/**
 	*/
-	public function update_foreign_key($table, $index_name, array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+	public function update_foreign_key($table, $index_name = '', $fields = array(), $ref_table = '', $ref_fields = array(), $extra = array(), &$error = false) {
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
 		}
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
+		if (is_array($index_name)) {
+			$extra = (array)$extra + $index_name;
+			$index_name = '';
 		}
-		if (!strlen($index_name)) {
-			$error = 'index name is empty';
-			return false;
+		$table = $extra['table'] ?: $table;
+		$index_name = $extra['name'] ?: $index_name;
+		if ($this->drop_foreign_key($table, $index_name, $extra, $error)) {
+			return $this->add_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
 		}
-		$this->drop_foreign_key($table, $index_name, $extra, $error);
-		return $this->add_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
+		return false;
 	}
 
 	/**
