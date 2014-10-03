@@ -270,23 +270,6 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$new_info = self::utils()->table_info($this->table_name($table));
 		$this->assertEquals( 'ARCHIVE', $new_info['engine'] );
 	}
-/*
-	public function test__compile_create_table() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$in = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
-			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
-			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
-			array('key' => 'primary', 'key_cols' => 'id'),
-		);
-		$expected = 
-			'`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,'.PHP_EOL
-			.'`name` VARCHAR(255) NOT NULL DEFAULT \'\','.PHP_EOL
-			.'`active` ENUM(\'0\',\'1\') NOT NULL DEFAULT \'0\','.PHP_EOL
-			.'PRIMARY KEY (id)';
-		$this->assertEquals( $expected, self::utils()->_compile_create_table($in) );
-	}
-*/
 	public function test_create_table() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
@@ -605,8 +588,20 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table1), $data) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table2), $data) );
 		$this->assertEmpty( self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+		$expected = array(
+			'name' => $fkey,
+			'columns' => array('id' => 'id'),
+			'ref_table' => $table2,
+			'ref_columns' => array('id' => 'id'),
+			'on_update' => 'RESTRICT',
+			'on_delete' => 'RESTRICT'
+		);
 		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $fkey, array('id'), $this->table_name($table2), array('id')) );
-		$expected = array('name' => $fkey, 'columns' => array('id' => 'id'), 'ref_table' => $table2, 'ref_columns' => array('id' => 'id'), 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT');
+		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+
+		$this->assertNotEmpty( self::utils()->drop_foreign_key($this->table_name($table1), $fkey) );
+		$this->assertFalse( self::utils()->foreign_key_exists($this->table_name($table1), $fkey) );
+		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $expected) );
 		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 	}
 	public function test_update_foreign_key() {
@@ -614,20 +609,45 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10),
-			array('name' => 'id2', 'type' => 'int', 'length' => 10),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
-			array('name' => 'unique', 'key' => 'unique', 'key_cols' => 'id2'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
+				'id2'	=> array('name' => 'id2', 'type' => 'int', 'length' => 10),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+				'unique' => array('name' => 'unique', 'type' => 'unique', 'columns' => array('id2' => 'id2')),
+			),
 		);
 		$fkey = 'fkey_'.__FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table1), $data) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table2), $data) );
-		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $fkey, array('id'), $this->table_name($table2), array('id')) );
-		$expected = array('name' => $fkey, 'columns' => array('id' => 'id'), 'ref_table' => $table2, 'ref_columns' => array('id' => 'id'), 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT');
-		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+		$expected1 = array(
+			'name' => $fkey,
+			'columns' => array('id' => 'id'),
+			'ref_table' => $table2,
+			'ref_columns' => array('id' => 'id'),
+			'on_update' => 'RESTRICT',
+			'on_delete' => 'RESTRICT'
+		);
+		$expected2 = array(
+			'name' => $fkey,
+			'columns' => array('id2' => 'id2'),
+			'ref_table' => $table2,
+			'ref_columns' => array('id2' => 'id2'),
+			'on_update' => 'RESTRICT',
+			'on_delete' => 'RESTRICT'
+		);
+		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $expected1) );
+		$this->assertEquals( $expected1, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 		$this->assertNotEmpty( self::utils()->update_foreign_key($this->table_name($table1), $fkey, array('id2'), $this->table_name($table2), array('id2')) );
-		$expected = array('name' => $fkey, 'columns' => array('id2' => 'id2'), 'ref_table' => $table2, 'ref_columns' => array('id2' => 'id2'), 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT');
-		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+		$this->assertEquals( $expected2, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+
+		$this->assertNotEmpty( self::utils()->drop_foreign_key($this->table_name($table1), $fkey) );
+		$this->assertFalse( self::utils()->foreign_key_exists($this->table_name($table1), $fkey) );
+		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $expected1) );
+		$this->assertEquals( $expected1, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+		$this->assertNotEmpty( self::utils()->update_foreign_key($this->table_name($table1), $expected2) );
+		$this->assertEquals( $expected2, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 	}
 
 	public function test_list_views() {
@@ -636,7 +656,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
 		$this->assertEmpty( self::utils()->list_views($this->db_name()) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
@@ -647,7 +667,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
 		$this->assertFalse( self::utils()->view_exists($this->db_name().'.'.$view) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
@@ -658,7 +678,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
 		$this->assertFalse( self::utils()->view_exists($this->db_name().'.'.$view) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
@@ -669,7 +689,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
 		$this->assertFalse( self::utils()->view_exists($this->db_name().'.'.$view) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
@@ -682,7 +702,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
 		$this->assertFalse( self::utils()->view_exists($this->db_name().'.'.$view) );
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
@@ -828,7 +848,8 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
+		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 
 		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
 		$triggers = self::utils()->list_triggers($this->db_name());
@@ -841,7 +862,8 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_trigger_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
+		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
 		$this->assertFalse( self::utils()->trigger_exists($this->db_name().'.'.$trg) );
 		$sql = 'CREATE TRIGGER '.$this->db_name().'.'.$trg.' BEFORE INSERT ON '.$this->table_name($table).' FOR EACH ROW SET @sum = @sum + NEW.id';
@@ -851,7 +873,8 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_trigger_info() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
+		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
 		$sql = 'CREATE TRIGGER '.$this->db_name().'.'.$trg.' BEFORE INSERT ON '.$this->table_name($table).' FOR EACH ROW SET @sum = @sum + NEW.id';
 		$this->assertNotEmpty( self::utils()->db->query($sql) );
@@ -871,7 +894,8 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_drop_trigger() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
+		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
 		$this->assertFalse( self::utils()->trigger_exists($this->db_name().'.'.$trg) );
 		$sql = 'CREATE TRIGGER '.$this->db_name().'.'.$trg.' BEFORE INSERT ON '.$this->table_name($table).' FOR EACH ROW SET @sum = @sum + NEW.id';
@@ -883,7 +907,8 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_create_trigger() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), array(array('name' => 'id', 'type' => 'int', 'length' => 10))) );
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
+		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$trg = self::utils()->db->DB_PREFIX. 'trg_'.__FUNCTION__;
 		$this->assertNotEmpty( self::utils()->create_trigger($trg, $this->table_name($table), 'before', 'insert', 'SET @sum = @sum + NEW.id') );
 		$expected = array(
@@ -1029,7 +1054,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_helper_table() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
 		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertTrue( (bool)self::utils()->table_exists($this->db_name().'.'.$table) );
 
@@ -1040,7 +1065,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$view = self::utils()->db->DB_PREFIX. 'view_'.__FUNCTION__;
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(array('name' => 'id', 'type' => 'int', 'length' => 10));
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
 		$this->assertFalse( (bool)self::utils()->view_exists($this->db_name().'.'.$view) );
 		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertTrue( (bool)self::utils()->create_view($this->db_name().'.'.$view, 'SELECT * FROM '.$this->table_name($table)) );
@@ -1052,8 +1077,9 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_helper_column() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$col_info = array('name' => 'id', 'type' => 'int', 'length' => 10);
-		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), array($col_info)) );
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
+		$col_info = $data['fields']['id'];
+		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertTrue( (bool)self::utils()->column_exists($this->table_name($table), 'id') );
 
 		$this->assertTrue( (bool)self::utils()->database($this->db_name())->table($table)->column('id')->exists() );
@@ -1063,11 +1089,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_helper_index() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$data = array(
-			'fields' => array(
-				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
-			),
-		);
+		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
 		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertTrue( (bool)self::utils()->add_index($this->table_name($table), 'PRIMARY', array('id'), array('type' => 'primary')) );
 		$this->assertTrue( (bool)self::utils()->index_exists($this->table_name($table), 'PRIMARY') );
@@ -1081,14 +1103,25 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10),
-			array('name' => 'primary', 'key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$fkey = 'fkey_'.__FUNCTION__;
 		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table1), $data) );
 		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table2), $data) );
+		$expected = array(
+			'name' => $fkey,
+			'columns' => array('id' => 'id'),
+			'ref_table' => $table2,
+			'ref_columns' => array('id' => 'id'),
+			'on_update' => 'RESTRICT',
+			'on_delete' => 'RESTRICT'
+		);
 		$this->assertTrue( (bool)self::utils()->add_foreign_key($this->table_name($table1), $fkey, array('id'), $this->table_name($table2), array('id')) );
-		$expected = array('name' => $fkey, 'columns' => array('id' => 'id'), 'ref_table' => $table2, 'ref_columns' => array('id' => 'id'), 'on_update' => 'RESTRICT', 'on_delete' => 'RESTRICT');
 		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 
 		$this->assertEquals( $expected, self::utils()->database($this->db_name())->table($table1)->foreign_key($fkey)->info() );
@@ -1102,9 +1135,5 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		$this->assertEquals( $expected, self::utils()->split_sql('SELECT 1; SELECT 2; SELECT 3') );
 		$this->assertEquals( $expected, self::utils()->split_sql('SELECT 1;'.PHP_EOL.' SELECT 2;'.PHP_EOL.' SELECT 3') );
 		$this->assertEquals( $expected, self::utils()->split_sql(';;SELECT 1;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 2;;'.PHP_EOL.PHP_EOL.PHP_EOL.'; SELECT 3;;;') );
-	}
-	public function test_get_table_structure_from_db_installer() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( self::utils()-> );
 	}
 }
