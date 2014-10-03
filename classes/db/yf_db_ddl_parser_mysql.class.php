@@ -51,7 +51,11 @@ class yf_db_ddl_parser_mysql {
 	/**
 	* Useful for ALTER TABLE
 	*/
-	function create_column_line ($name, array $v, $params = array()) {
+	function create_column_line ($name = '', $v = array(), $params = array()) {
+		if (is_array($name)) {
+			$v = $name;
+			$name = $v['name'];
+		}
 		$name = strtolower($name);
 		$v['type'] = strtolower($v['type']);
 		if (strpos($v['type'], 'int') !== false && !$v['length']) {
@@ -85,7 +89,11 @@ class yf_db_ddl_parser_mysql {
 	/**
 	* Useful for ALTER INDEX
 	*/
-	function create_index_line ($name, array $v, $params = array()) {
+	function create_index_line ($name = '', $v = array(), $params = array()) {
+		if (is_array($name)) {
+			$v = $name;
+			$name = $v['name'];
+		}
 		$type = 'KEY';
 		$v['type'] = strtolower($v['type']);
 		if ($v['type'] == 'primary') {
@@ -111,7 +119,11 @@ class yf_db_ddl_parser_mysql {
 	/**
 	* Useful for ALTER FOREIGN KEY
 	*/
-	function create_fk_line ($name, array $v, $params = array()) {
+	function create_fk_line ($name = '', $v = array(), $params = array()) {
+		if (is_array($name)) {
+			$v = $name;
+			$name = $v['name'];
+		}
 		return $this->_implode_line(array(
 			'begin'			=> 'CONSTRAINT',
 			'name'			=> $this->escape_key(strtolower($name)),
