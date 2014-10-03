@@ -11,8 +11,6 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		self::$DB_DRIVER = 'mysql5';
 		self::_connect();
 		self::utils()->truncate_database(self::db_name());
-		_class('validate')->_init();
-		_class('validate')->db = self::$db;
 	}
 	public static function tearDownAfterClass() {
 		self::utils()->truncate_database(self::db_name());
@@ -24,7 +22,90 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 	public static function table_name($name) {
 		return $name;
 	}
-	public function test_basic() {
+	public static function migrator() {
+		return self::$db->migrator;
+	}
+	protected function prepare_sample_data() {
+		self::utils()->truncate_database(self::db_name());
+		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$data = array(
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
+		);
+		$fkey = 'fkey_'.__FUNCTION__;
+		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table1), $data) );
+		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table2), $data) );
+		$expected = array(
+			'name' => $fkey,
+			'columns' => array('id' => 'id'),
+			'ref_table' => $table2,
+			'ref_columns' => array('id' => 'id'),
+			'on_update' => 'RESTRICT',
+			'on_delete' => 'RESTRICT'
+		);
+		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $expected) );
+		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+	}
+
+// TODO for methods:
+#	get_real_table_sql_php
+#	_cleanup_table_sql_php
+#	_migration_commands_into_string
+#	_create_migration_body
+#	dump_db_installer_sql
+
+	public function test_compare() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+#		self::prepare_sample_data();
+#		$result = self::migrator()->compare();
 // TODO
+#		$this->assertEquals( $expected, $result );
+	}
+	public function test_generate() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+#		self::prepare_sample_data();
+#		$result = self::migrator()->generate();
+// TODO
+#		$this->assertEquals( $expected, $result );
+	}
+	public function test_create() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+#		self::prepare_sample_data();
+#		$result = self::migrator()->create();
+// TODO
+#		$this->assertEquals( $expected, $result );
+	}
+	public function test_list() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+#		self::prepare_sample_data();
+#		$result = self::migrator()->list();
+// TODO
+#		$this->assertEquals( $expected, $result );
+	}
+	public function test_apply() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+#		self::prepare_sample_data();
+#		$result = self::migrator()->apply();
+// TODO
+#		$this->assertEquals( $expected, $result );
+	}
+	public function test_dump() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+#		self::prepare_sample_data();
+#		$result = self::migrator()->dump();
+// TODO
+#		$this->assertEquals( $expected, $result );
+	}
+	public function test_sync() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+#		self::prepare_sample_data();
+#		$result = self::migrator()->sync();
+// TODO
+#		$this->assertEquals( $expected, $result );
 	}
 }
