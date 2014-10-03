@@ -156,58 +156,49 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
-			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
-			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
-			array('key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10, 'unsigned' => true, 'nullable' => false, 'auto_inc' => true),
+				'name'	=> array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'nullable' => false),
+				'active'=> array('name' => 'active', 'type' => 'enum', 'values' => array(1 => '1', 0 => '0'), 'default' => '0', 'nullable' => false),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-		$expected = array(
-			'id' => array(
-				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collate' => NULL,'nullable' => false,
-				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned','decimals' => null,'charset' => null,'values' => null,
-			),
-			'name' => array(
-				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)','decimals' => null,'charset' => null,'values' => null,
-			),
-			'active' => array(
-				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')','decimals' => null,'charset' => null,'values' => array('0' => '0', '1' => '1'),
-			),
-		);
-		$this->assertEquals( $expected, self::utils()->table_get_columns($this->table_name($table)) );
+		$this->assertEquals( $data['fields'], $this->_cleanup_columns_info( self::utils()->table_get_columns($this->table_name($table)) ) );
+	}
+	protected function _cleanup_columns_info($info) {
+		$skip_info = array('primary', 'unique', 'type_raw',	'collate');
+		foreach ((array)$result as $col => $info) {
+			foreach ((array)$info as $k => $v) {
+				if (is_null($v) || in_array($k, $skip_info) || ($k === 'auto_inc' && $v === false)) {
+					unset($info[$col][$k]);
+				}
+			}
+		}
+		return $info;
 	}
 	public function test_table_info() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array(
-			array('name' => 'id', 'type' => 'int', 'length' => 10, 'auto_inc' => true),
-			array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'not_null' => true),
-			array('name' => 'active', 'type' => 'enum', 'length' => '\'0\',\'1\'', 'default' => '0', 'not_null' => true),
-			array('key' => 'primary', 'key_cols' => 'id'),
+			'fields' => array(
+				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10, 'unsigned' => true, 'nullable' => false, 'auto_inc' => true),
+				'name'	=> array('name' => 'name', 'type' => 'varchar', 'length' => 255, 'default' => '', 'nullable' => false),
+				'active'=> array('name' => 'active', 'type' => 'enum', 'values' => array(1 => '1', 0 => '0'), 'default' => '0', 'nullable' => false),
+			),
+			'indexes' => array(
+				'PRIMARY' => array('name' => 'PRIMARY', 'type' => 'primary', 'columns' => array('id' => 'id')),
+			),
 		);
 		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
 		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
-		$expected_columns = array(
-			'id' => array(
-				'name' => 'id','type' => 'int','length' => '10','unsigned' => true,'collate' => NULL,'nullable' => false,
-				'default' => NULL,'auto_inc' => true,'primary' => true,'unique' => false,'type_raw' => 'int(10) unsigned','decimals' => null,'charset' => null,'values' => null,
-			),
-			'name' => array(
-				'name' => 'name','type' => 'varchar','length' => '255','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'varchar(255)','decimals' => null,'charset' => null,'values' => null,
-			),
-			'active' => array(
-				'name' => 'active','type' => 'enum','length' => '','unsigned' => false,'collate' => 'utf8_general_ci','nullable' => false,
-				'default' => '0','auto_inc' => false,'primary' => false,'unique' => false,'type_raw' => 'enum(\'0\',\'1\')','decimals' => null,'charset' => null,'values' => array('0' => '0', '1' => '1'),
-			),
-		);
 		$expected = array(
 			'name' => $table,
 			'db_name' => $this->db_name(),
-			'columns' => $expected_columns,
+			'columns' => $data['fields'],
 			'row_format' => 'Compact',
 			'collate' => 'utf8_general_ci',
 			'engine' => 'InnoDB',
@@ -220,7 +211,10 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 			'charset' => 'utf8',
 		);
 		$received = self::utils()->table_info($this->table_name($table));
-		$received && $received['create_time'] = '2014-01-01 01:01:01';
+		if ($received) {
+			$received['columns'] = $this->_cleanup_columns_info($received['columns']);
+			$received['create_time'] = '2014-01-01 01:01:01';
+		}
 		$this->assertEquals( $expected, $received );
 	}
 	public function test_rename_table() {
