@@ -515,7 +515,6 @@ WHERE table_schema = "schemaname"
 		);
 		foreach ((array)$this->_get_supported_table_options() as $name => $real_name) {
 			if (isset($extra['options'][$name]) && strlen($extra['options'][$name])) {
-#				$table_options[$name] = $real_name.'='.$extra[$name];
 				$table_options[$name] = $extra['options'][$name];
 			}
 		}
@@ -531,33 +530,6 @@ WHERE table_schema = "schemaname"
 	}
 
 /*
-		$utils->create_table('user_data_info_fields', array(
-			'fields' => array(
-				'id' => array(
-					'name' => 'id',
-					'type' => 'int',
-					'length' => 10,
-					'unsigned' => true,
-					'nullable' => false,
-					'auto_inc' => true,
-				),
-			),
-			'foreign_keys' => array(
-			),
-			'indexes' => array(
-				'PRIMARY' => array(
-					'name' => 'PRIMARY',
-					'type' => 'primary',
-					'columns' => array(
-						'id' => 'id',
-					),
-				),
-			),
-			'options' => array(
-				'engine' => 'MyISAM',
-				'charset' => 'utf8',
-			),
-		));
 		$utils->add_column('sys_menus', 'custom_fields', array(
 			'name' => 'custom_fields',
 			'type' => 'text',
@@ -594,7 +566,6 @@ WHERE table_schema = "schemaname"
 			'on_update' => 'CASCADE',
 			'on_delete' => 'CASCADE',
 		));
-
 */
 
 	/**
@@ -737,7 +708,8 @@ WHERE table_schema = "schemaname"
 			$error = 'table name is empty';
 			return false;
 		}
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD COLUMN '.$this->_compile_create_table($data);
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD COLUMN '.$parser->create_column_line($data);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -752,15 +724,16 @@ WHERE table_schema = "schemaname"
 			$error = 'table name is empty';
 			return false;
 		}
-		$col_info_str = $this->_compile_create_table($this->column_info($table, $col_name), array('no_name' => true));
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' CHANGE COLUMN '.$this->_escape_key($col_name).' '.$this->_escape_key($new_name).' '.$col_info_str;
+		$new_data = $this->column_info($table, $col_name);
+		$new_data['name'] = $new_name;
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' CHANGE COLUMN '.$this->_escape_key($col_name).' '.$parser->create_column_line($new_data);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	public function alter_column($table, $col_name, $data, $extra = array(), &$error = false) {
-// TODO: $data should be compatible with db ddl parser
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -784,8 +757,8 @@ WHERE table_schema = "schemaname"
 		} elseif ($data['after']) {
 			$position_change = ' AFTER '.$this->_escape_key($data['after']);
 		}
-		$col_info_str = $this->_compile_create_table($col_info, array('no_name' => true));
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' MODIFY COLUMN '.$this->_escape_key($col_name).' '.$col_info_str. $position_change;
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' MODIFY COLUMN '.$parser->create_column_line($col_info). $position_change;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -1456,6 +1429,7 @@ WHERE table_schema = "schemaname"
 	/**
 	* Create part of SQL for "CREATE TABLE" from array of params
 	*/
+/*
 	public function _compile_create_table($data, $extra = array(), &$error = false) {
 // TODO: use db ddl parser if available for the given db family (mysql currently supported)
 		if (!is_array($data) || !count($data)) {
@@ -1514,6 +1488,7 @@ WHERE table_schema = "schemaname"
 		}
 		return implode(','.PHP_EOL, $items);
 	}
+*/
 
 	/**
 	* Smart split long SQL into single queries. Usually to be able to execute them with php_mysql API functions
