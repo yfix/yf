@@ -132,8 +132,8 @@ class yf_db_ddl_parser_mysql {
 			'ref'			=> 'REFERENCES',
 			'ref_table'		=> '`'.$v['ref_table'].'`',
 			'ref_columns'	=> strtolower('('.implode(',', $this->escape_key($v['ref_columns'])).')'),
-			'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.strtoupper($v['on_delete']) : '',
-			'on_update'		=> $v['on_update'] ? 'ON UPDATE '.strtoupper($v['on_update']) : '',
+			'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.strtoupper(str_replace('_', ' ', $v['on_delete'])) : '',
+			'on_update'		=> $v['on_update'] ? 'ON UPDATE '.strtoupper(str_replace('_', ' ', $v['on_update'])) : '',
 		));
 	}
 
