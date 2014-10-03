@@ -445,7 +445,7 @@ abstract class yf_db_migrator {
 
 			foreach ((array)$diff['columns_new'] as $name => $info) {
 				$info = $this->_cleanup_column_sql_php($info);
-				$out[] = array('cmd' => 'add_column', 'table' => $table, 'column' => $name, 'info' => $info);
+				$out[] = array('cmd' => 'add_column', 'table' => $table, 'info' => $info);
 			}
 			foreach ((array)$diff['columns_changed'] as $name => $info) {
 				$new_info = $table_real_info['fields'][$name];
@@ -460,7 +460,7 @@ abstract class yf_db_migrator {
 				}
 			}
 			foreach ((array)$diff['indexes_new'] as $name => $info) {
-				$out[] = array('cmd' => 'add_index', 'table' => $table, 'column' => $name, 'info' => $info);
+				$out[] = array('cmd' => 'add_index', 'table' => $table, 'info' => $info);
 			}
 			if (!$safe_mode) {
 				foreach ((array)$diff['indexes_missing'] as $name => $info) {
@@ -471,11 +471,11 @@ abstract class yf_db_migrator {
 				$new_info = $table_real_info['indexes'][$name];
 				if ($new_info) {
 					$out[] = array('cmd' => 'drop_index', 'table' => $table, 'index' => $name);
-					$out[] = array('cmd' => 'add_index', 'table' => $table, 'index' => $name, 'info' => $new_info);
+					$out[] = array('cmd' => 'add_index', 'table' => $table, 'info' => $new_info);
 				}
 			}
 			foreach ((array)$diff['foreign_keys_new'] as $name => $info) {
-				$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'fk' => $name, 'info' => $info);
+				$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'info' => $info);
 			}
 			if (!$safe_mode) {
 				foreach ((array)$diff['foreign_keys_missing'] as $name => $info) {
@@ -486,7 +486,7 @@ abstract class yf_db_migrator {
 				$new_info = $table_real_info['foreign_keys'][$name];
 				if ($new_info) {
 					$out[] = array('cmd' => 'drop_foreign_key', 'table' => $table, 'fk' => $name);
-					$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'fk' => $name, 'info' => $new_info);
+					$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'info' => $new_info);
 				}
 			}
 			foreach ((array)$diff['options_changed'] as $name => $info) {
@@ -526,7 +526,7 @@ abstract class yf_db_migrator {
 		foreach ((array)$report['tables_changed'] as $table => $diff) {
 			foreach ((array)$diff['columns_missing'] as $name => $info) {
 				$info = $this->_cleanup_column_sql_php($info);
-				$out[] = array('cmd' => 'add_column', 'table' => $table, 'column' => $name, 'info' => $info);
+				$out[] = array('cmd' => 'add_column', 'table' => $table, 'info' => $info);
 			}
 			if (!$safe_mode) {
 				foreach ((array)$diff['columns_new'] as $name => $info) {
@@ -541,7 +541,7 @@ abstract class yf_db_migrator {
 				}
 			}
 			foreach ((array)$diff['indexes_missing'] as $name => $info) {
-				$out[] = array('cmd' => 'add_index', 'table' => $table, 'index' => $name, 'info' => $info);
+				$out[] = array('cmd' => 'add_index', 'table' => $table, 'info' => $info);
 			}
 			if (!$safe_mode) {
 				foreach ((array)$diff['indexes_new'] as $name => $info) {
@@ -552,11 +552,11 @@ abstract class yf_db_migrator {
 				$new_info = $tables_installer_info[$table]['indexes'][$name];
 				if ($new_info) {
 					$out[] = array('cmd' => 'drop_index', 'table' => $table, 'index' => $name);
-					$out[] = array('cmd' => 'add_index', 'table' => $table, 'index' => $name, 'info' => $new_info);
+					$out[] = array('cmd' => 'add_index', 'table' => $table, 'info' => $new_info);
 				}
 			}
 			foreach ((array)$diff['foreign_keys_missing'] as $name => $info) {
-				$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'fk' => $name, 'info' => $info);
+				$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'info' => $info);
 			}
 			if (!$safe_mode) {
 				foreach ((array)$diff['foreign_keys_new'] as $name => $info) {
@@ -567,7 +567,7 @@ abstract class yf_db_migrator {
 				$new_info = $tables_installer_info[$table]['foreign_keys'][$name];
 				if ($new_info) {
 					$out[] = array('cmd' => 'drop_foreign_key', 'table' => $table, 'fk' => $name);
-					$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'fk' => $name, 'info' => $new_info);
+					$out[] = array('cmd' => 'add_foreign_key', 'table' => $table, 'info' => $new_info);
 				}
 			}
 			foreach ((array)$diff['options_changed'] as $name => $info) {
