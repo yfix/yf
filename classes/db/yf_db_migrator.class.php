@@ -812,6 +812,9 @@ abstract class yf_db_migrator {
 		);
 		$migratons = array();
 		foreach ($globs as $gname => $glob) {
+			if ($params['only_from_project'] && substr($gname, 0, strlen('project_')) !== 'project_') {
+				continue;
+			}
 			foreach (glob($glob) as $f) {
 				$name = substr(basename($f), strlen($prefix), -strlen($ext));
 				$migrations[$name] = $f;
