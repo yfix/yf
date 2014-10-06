@@ -20,7 +20,7 @@ abstract class yf_db_migrator {
 		$utils = $this->db->utils();
 		$db_prefix = $this->db->DB_PREFIX;
 
-		$tables_installer_info = $installer->TABLES_SQL_PHP;
+		$tables_installer_info = $params['tables_sql_php'] ?: $installer->TABLES_SQL_PHP;
 		$tables_installer = array_keys($tables_installer_info);
 		$tables_installer = array_combine($tables_installer, $tables_installer);
 		ksort($tables_installer);
@@ -282,6 +282,57 @@ abstract class yf_db_migrator {
 		$installer = $this->db->installer();
 		$db_prefix = $this->db->DB_PREFIX;
 
+		list($existing_sql_php, $in_old_place, $existing_sql_php_files) = $this->_load_tables_sql_php_from_files();
+
+		$compared = $this->compare();
+		$tables_to_dump = array();
+		foreach ((array)$in_old_place as $table) {
+			$tables_to_dump[$table] = $table;
+		}
+		foreach ((array)$compared['tables_new'] as $table) {
+			$tables_to_dump[$table] = $table;
+		}
+		foreach ((array)$compared['tables_changed'] as $table => $changed) {
+			$tables_to_dump[$table] = $table;
+		}
+		$dumped = array();
+		$tmp_name = 'tmp_name_not_exists';
+		$skip_options = array(
+			'auto_increment',
+			'collate',
+		);
+
+		foreach ((array)$tables_to_dump as $table) {
+			$sql_php = $this->get_real_table_sql_php($table);
+			$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create(array('name' => $tmp_name) + $sql_php);
+
+			$sql_a = explode(PHP_EOL, trim($sql));
+			$last_index = count($sql_a) - 1;
+			$last_item = $sql_a[$last_index];
+			unset($sql_a[0]);
+			unset($sql_a[$last_index]);
+
+			// Add commented table attributes
+			$options = array();
+			foreach ((array)$sql_php['options'] as $k => $v) {
+				if ($k == 'charset') {
+					$k = 'DEFAULT CHARSET';
+				}
+				$options[$k] = strtoupper($k).'='.$v;
+			}
+			$sql_a[] = $options ? '  /** '.implode(' ', $options).' **/' : '';
+
+			$sql = '  '.trim(implode(PHP_EOL, $sql_a));
+
+			$this->_write_dump_sql_file($table, $sql);
+			$this->_write_dump_sql_php_file($table, $sql_php);
+		}
+		return $dumped;
+	}
+
+	/**
+	*/
+	public function _load_tables_sql_php_from_files($params = array()) {
 		$existing_files_sql_php = array();
 		$existing_sql_php = array();
 		// Preload db installer PHP array of CREATE TABLE DDL statements
@@ -328,69 +379,39 @@ abstract class yf_db_migrator {
 				$existing_sql_php[$table] = $installer-create_table_sql_to_php($sql);
 			}
 		}
-		$compared = $this->compare();
-		$tables_to_dump = array();
-		foreach ((array)$in_old_place as $table) {
-			$tables_to_dump[$table] = $table;
+		return array($in_old_place, $existing_sql_php, $existing_sql_php_files);
+	}
+
+	/**
+	*/
+	public function _write_dump_sql_file($table, $sql) {
+		$file_sql = APP_PATH. 'share/db/sql/'.$table.'.sql.php';
+		$dir_sql = dirname($file_sql);
+		if (!file_exists($dir_sql)) {
+			mkdir($dir_sql, 0755, true);
 		}
-		foreach ((array)$compared['tables_new'] as $table) {
-			$tables_to_dump[$table] = $table;
+		$body_sql = '<?'.'php'.PHP_EOL.'return \''. PHP_EOL. addslashes($sql). PHP_EOL. '\';'.PHP_EOL;
+		if (!file_exists($file_sql) || md5($body_sql) != md5(file_get_contents($file_sql))) {
+			$dumped['sql:'.$table] = $file_sql;
+			return file_put_contents($file_sql, $body_sql);
 		}
-		foreach ((array)$compared['tables_changed'] as $table => $changed) {
-			$tables_to_dump[$table] = $table;
+		return false;
+	}
+
+	/**
+	*/
+	public function _write_dump_sql_php_file($table, array $sql_php) {
+		$file_php = APP_PATH. 'share/db/sql_php/'.$table.'.sql_php.php';
+		$dir_php = dirname($file_php);
+		if (!file_exists($dir_php)) {
+			mkdir($dir_php, 0755, true);
 		}
-		$dumped = array();
-		$tmp_name = 'tmp_name_not_exists';
-		$skip_options = array(
-			'auto_increment',
-			'collate',
-		);
-
-		foreach ((array)$tables_to_dump as $table) {
-			$sql_php = $this->get_real_table_sql_php($table);
-			$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create(array('name' => $tmp_name) + $sql_php);
-
-			$sql_a = explode(PHP_EOL, trim($sql));
-			$last_index = count($sql_a) - 1;
-			$last_item = $sql_a[$last_index];
-			unset($sql_a[0]);
-			unset($sql_a[$last_index]);
-
-			// Add commented table attributes
-			$options = array();
-			foreach ((array)$sql_php['options'] as $k => $v) {
-				if ($k == 'charset') {
-					$k = 'DEFAULT CHARSET';
-				}
-				$options[$k] = strtoupper($k).'='.$v;
-			}
-			$sql_a[] = $options ? '  /** '.implode(' ', $options).' **/' : '';
-
-			$sql = '  '.trim(implode(PHP_EOL, $sql_a));
-
-			$file_sql = APP_PATH. 'share/db/sql/'.$table.'.sql.php';
-			$dir_sql = dirname($file_sql);
-			if (!file_exists($dir_sql)) {
-				mkdir($dir_sql, 0755, true);
-			}
-			$body_sql = '<?'.'php'.PHP_EOL.'return \''. PHP_EOL. addslashes($sql). PHP_EOL. '\';'.PHP_EOL;
-			if (!file_exists($file_sql) || md5($body_sql) != md5(file_get_contents($file_sql))) {
-				$dumped['sql:'.$table] = $file_sql;
-				file_put_contents($file_sql, $body_sql);
-			}
-
-			$file_php = APP_PATH. 'share/db/sql_php/'.$table.'.sql_php.php';
-			$dir_php = dirname($file_php);
-			if (!file_exists($dir_php)) {
-				mkdir($dir_php, 0755, true);
-			}
-			$body_php = '<?'.'php'.PHP_EOL.'return '._var_export($sql_php).';'.PHP_EOL;
-			if (!file_exists($file_php) || md5($body_php) != md5(file_get_contents($file_php))) {
-				$dumped['sql_php:'.$table] = $file_php;
-				file_put_contents($file_php, $body_php);
-			}
+		$body_php = '<?'.'php'.PHP_EOL.'return '._var_export($sql_php).';'.PHP_EOL;
+		if (!file_exists($file_php) || md5($body_php) != md5(file_get_contents($file_php))) {
+			$dumped['sql_php:'.$table] = $file_php;
+			return file_put_contents($file_php, $body_php);
 		}
-		return $dumped;
+		return false;
 	}
 
 	/**
