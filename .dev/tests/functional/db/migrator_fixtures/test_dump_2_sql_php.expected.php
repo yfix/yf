@@ -27,18 +27,6 @@ return array(
 		),
 	),
 	'foreign_keys' => array(
-		'fkey_prepare_sample_data' => array(
-			'name' => 'fkey_prepare_sample_data',
-			'columns' => array(
-				'id' => 'id',
-			),
-			'ref_table' => 't_test_get_real_table_sql_php_2',
-			'ref_columns' => array(
-				'id' => 'id',
-			),
-			'on_update' => 'RESTRICT',
-			'on_delete' => 'RESTRICT',
-		),
 	),
 	'options' => array(
 		'engine' => 'InnoDB',

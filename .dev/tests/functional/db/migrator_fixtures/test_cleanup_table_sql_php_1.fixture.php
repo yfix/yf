@@ -15,7 +15,6 @@ return array(
 			'primary' => true,
 			'unique' => false,
 			'values' => NULL,
-			'type_raw' => 'int(10)',
 		),
 	),
 	'indexes' => array(

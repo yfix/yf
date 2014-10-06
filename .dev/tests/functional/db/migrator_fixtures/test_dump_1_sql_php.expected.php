@@ -32,7 +32,7 @@ return array(
 			'columns' => array(
 				'id' => 'id',
 			),
-			'ref_table' => 't_test_get_real_table_sql_php_2',
+			'ref_table' => 't_test_dump_2',
 			'ref_columns' => array(
 				'id' => 'id',
 			),
