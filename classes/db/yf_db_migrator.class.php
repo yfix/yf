@@ -290,9 +290,14 @@ abstract class yf_db_migrator {
 		$installer = $this->db->installer();
 		$db_prefix = $this->db->DB_PREFIX;
 
-		list($existing_sql_php, $in_old_place, $existing_sql_php_files) = $this->_load_tables_sql_php_from_files();
+		$in_old_place = array();
+		$existing_sql_php = array();
+		$existing_sql_php_files = array();
+		if (!$params['no_load_default']) {
+			list($in_old_place, $existing_sql_php, $existing_sql_php_files) = $this->_load_tables_sql_php_from_files();
+		}
 
-		$compared = $this->compare();
+		$compared = $this->compare($params);
 		$tables_to_dump = array();
 		foreach ((array)$in_old_place as $table) {
 			$tables_to_dump[$table] = $table;
@@ -304,38 +309,44 @@ abstract class yf_db_migrator {
 			$tables_to_dump[$table] = $table;
 		}
 		$dumped = array();
-		$tmp_name = 'tmp_name_not_exists';
-		$skip_options = array(
-			'auto_increment',
-			'collate',
-		);
-
 		foreach ((array)$tables_to_dump as $table) {
 			$sql_php = $this->get_real_table_sql_php($table);
-			$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create(array('name' => $tmp_name) + $sql_php);
-
-			$sql_a = explode(PHP_EOL, trim($sql));
-			$last_index = count($sql_a) - 1;
-			$last_item = $sql_a[$last_index];
-			unset($sql_a[0]);
-			unset($sql_a[$last_index]);
-
-			// Add commented table attributes
-			$options = array();
-			foreach ((array)$sql_php['options'] as $k => $v) {
-				if ($k == 'charset') {
-					$k = 'DEFAULT CHARSET';
-				}
-				$options[$k] = strtoupper($k).'='.$v;
+			$sql = $this->_convert_sql_php_into_sql($sql_php);
+			$dumped_sql_path = $this->_write_dump_sql_file($table, $sql);
+			$dumped_sql_php_path = $this->_write_dump_sql_php_file($table, $sql_php);
+			if ($dumped_sql_path) {
+				$dumped['sql:'.$table] = $dumped_sql_path;
 			}
-			$sql_a[] = $options ? '  /** '.implode(' ', $options).' **/' : '';
-
-			$sql = '  '.trim(implode(PHP_EOL, $sql_a));
-
-			$this->_write_dump_sql_file($table, $sql);
-			$this->_write_dump_sql_php_file($table, $sql_php);
+			if ($dumped_sql_php_path) {
+				$dumped['sql_php:'.$table] = $dumped_sql_php_path;
+			}
 		}
 		return $dumped;
+	}
+
+	/**
+	*/
+	public function _convert_sql_php_into_sql(array $sql_php, $params = array()) {
+		$tmp_name = 'tmp_name_not_exists';
+		$sql = _class('db_ddl_parser_mysql', 'classes/db/')->create(array('name' => $tmp_name) + $sql_php);
+
+		$sql_a = explode(PHP_EOL, trim($sql));
+		$last_index = count($sql_a) - 1;
+		$last_item = $sql_a[$last_index];
+		unset($sql_a[0]);
+		unset($sql_a[$last_index]);
+
+		// Add commented table attributes
+		$options = array();
+		foreach ((array)$sql_php['options'] as $k => $v) {
+			if ($k == 'charset') {
+				$k = 'DEFAULT CHARSET';
+			}
+			$options[$k] = strtoupper($k).'='.$v;
+		}
+		$sql_a[] = $options ? '  /** '.implode(' ', $options).' **/' : '';
+		$sql = '  '.trim(implode(PHP_EOL, $sql_a));
+		return $sql;
 	}
 
 	/**
@@ -400,8 +411,8 @@ abstract class yf_db_migrator {
 		}
 		$body_sql = '<?'.'php'.PHP_EOL.'return \''. PHP_EOL. addslashes($sql). PHP_EOL. '\';'.PHP_EOL;
 		if (!file_exists($file_sql) || md5($body_sql) != md5(file_get_contents($file_sql))) {
-			$dumped['sql:'.$table] = $file_sql;
-			return file_put_contents($file_sql, $body_sql);
+			file_put_contents($file_sql, $body_sql);
+			return $file_sql;
 		}
 		return false;
 	}
@@ -416,8 +427,8 @@ abstract class yf_db_migrator {
 		}
 		$body_php = '<?'.'php'.PHP_EOL.'return '._var_export($sql_php).';'.PHP_EOL;
 		if (!file_exists($file_php) || md5($body_php) != md5(file_get_contents($file_php))) {
-			$dumped['sql_php:'.$table] = $file_php;
-			return file_put_contents($file_php, $body_php);
+			file_put_contents($file_php, $body_php);
+			return $file_php;
 		}
 		return false;
 	}
@@ -748,13 +759,15 @@ abstract class yf_db_migrator {
 		$sql_php = array(
 			'fields'		=> $utils->list_columns($real_table_name),
 			'indexes'		=> $utils->list_indexes($real_table_name),
-// TODO: remove DB_PREFIX from ref_table
 			'foreign_keys'	=> $utils->list_foreign_keys($real_table_name),
 			'options'		=> $utils->table_options($real_table_name),
 		);
 		foreach ((array)$sql_php['fields'] as $fname => $finfo) {
 			if ($finfo['collate'] === 'utf8_general_ci') {
 				$sql_php['fields'][$fname]['collate'] = null;
+			}
+			if (isset($finfo['type_raw'])) {
+				unset($sql_php['fields'][$fname]['type_raw']);
 			}
 		}
 		$skip_options = array(
