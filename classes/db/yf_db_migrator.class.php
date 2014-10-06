@@ -20,7 +20,7 @@ abstract class yf_db_migrator {
 		$utils = $this->db->utils();
 		$db_prefix = $this->db->DB_PREFIX;
 
-		$tables_installer_info = $params['tables_sql_php'] ?: $installer->TABLES_SQL_PHP;
+		$tables_installer_info = isset($params['tables_sql_php']) ? $params['tables_sql_php'] : $installer->TABLES_SQL_PHP;
 		$tables_installer = array_keys($tables_installer_info);
 		$tables_installer = array_combine($tables_installer, $tables_installer);
 		ksort($tables_installer);
@@ -80,9 +80,10 @@ abstract class yf_db_migrator {
 		$options_changed = array();
 		foreach ((array)$t1['fields'] as $name => $info) {
 			if (!isset($t2['fields'][$name])) {
-				foreach ($info as $k => $v) {
-					if (is_null($v)) { unset($info[$k]); }
-				}
+				$info = $this->_cleanup_column_sql_php($info);
+#				foreach ($info as $k => $v) {
+#					if (is_null($v)) { unset($info[$k]); }
+#				}
 				$columns['missing'][$name] = $info;
 			} else {
 				$diff = $this->compare_column($info, $t2['fields'][$name]);
@@ -102,9 +103,10 @@ abstract class yf_db_migrator {
 			if (isset($t1['fields'][$name])) {
 				continue;
 			}
-			foreach ($info as $k => $v) {
-				if (is_null($v)) { unset($info[$k]); }
-			}
+			$info = $this->_cleanup_column_sql_php($info);
+#			foreach ($info as $k => $v) {
+#				if (is_null($v)) { unset($info[$k]); }
+#			}
 			$columns['new'][$name] = $info;
 		}
 		foreach ((array)$t1['indexes'] as $name => $info) {
@@ -687,7 +689,7 @@ abstract class yf_db_migrator {
 	public function _cleanup_column_sql_php($field_info = array()) {
 		foreach ((array)$field_info as $k => $v) {
 			$need_unset = false;
-			if (is_null($v) || in_array($k, array('type_raw', 'primary', 'unique'))) {
+			if (is_null($v) || in_array($k, array('raw', 'type_raw', 'primary', 'unique'))) {
 				$need_unset = true;
 			} elseif ($k === 'auto_inc' && !$v) {
 				$need_unset = true;
