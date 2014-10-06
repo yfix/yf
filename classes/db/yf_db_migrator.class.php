@@ -54,7 +54,7 @@ abstract class yf_db_migrator {
 				'foreign_keys'	=> $utils->list_foreign_keys($table),
 				'options'		=> $utils->table_options($table),
 			);
-			$diff = $this->compare_table($tables_installer_info[$table], $table_real_info);
+			$diff = $this->compare_table($tables_installer_info[$table], $table_real_info, $db_prefix);
 			if ($diff) {
 				$tables_changed[$table] = $diff;
 			}
@@ -73,7 +73,8 @@ abstract class yf_db_migrator {
 
 	/**
 	*/
-	public function compare_table($t1, $t2) {
+	public function compare_table($t1, $t2, $db_prefix) {
+		$prefix_len = strlen($db_prefix);
 		$columns = array();
 		$indexes = array();
 		$foreign_keys = array();
@@ -81,9 +82,6 @@ abstract class yf_db_migrator {
 		foreach ((array)$t1['fields'] as $name => $info) {
 			if (!isset($t2['fields'][$name])) {
 				$info = $this->_cleanup_column_sql_php($info);
-#				foreach ($info as $k => $v) {
-#					if (is_null($v)) { unset($info[$k]); }
-#				}
 				$columns['missing'][$name] = $info;
 			} else {
 				$diff = $this->compare_column($info, $t2['fields'][$name]);
@@ -104,9 +102,6 @@ abstract class yf_db_migrator {
 				continue;
 			}
 			$info = $this->_cleanup_column_sql_php($info);
-#			foreach ($info as $k => $v) {
-#				if (is_null($v)) { unset($info[$k]); }
-#			}
 			$columns['new'][$name] = $info;
 		}
 		foreach ((array)$t1['indexes'] as $name => $info) {
@@ -135,6 +130,9 @@ abstract class yf_db_migrator {
 		}
 // TODO: remove DB_PREFIX from ref_table
 		foreach ((array)$t1['foreign_keys'] as $name => $info) {
+			if ($prefix_len && $info['ref_table'] && substr($info['ref_table'], 0, $prefix_len) === $db_prefix) {
+				$info['ref_table'] = substr($info['ref_table'], $prefix_len);
+			}
 			if (!isset($t2['foreign_keys'][$name])) {
 				$foreign_keys['missing'][$name] = $info;
 			} else {
