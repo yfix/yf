@@ -15,6 +15,11 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 	public static function tearDownAfterClass() {
 		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
+		$dir = APP_PATH.'share/db/';
+		// Delete only if share path is really temporal and inside framrwork tests
+		if (YF_PATH && $dir && substr($dir, 0, strlen(YF_PATH)) === YF_PATH) {
+			_class('dir')->delete_dir($dir, $delete_start_dir = true);
+		}
 	}
 	public static function db_name() {
 		return self::$DB_NAME;
@@ -158,9 +163,9 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 			$this->assertFileExists( $file );
 		}
 		$this->assertEquals( trim($this->_load_expected($table1.'_sql')), trim(include $result['sql:'.$table1]) );
-		$this->assertEquals( trim($this->_load_expected($table1.'_sql_php')), trim(include $result['sql_php:'.$table1]) );
+		$this->assertEquals( $this->_load_expected($table1.'_sql_php'), include $result['sql_php:'.$table1] );
 		$this->assertEquals( trim($this->_load_expected($table2.'_sql')), trim(include $result['sql:'.$table2]) );
-		$this->assertEquals( trim($this->_load_expected($table2.'_sql_php')), trim(include $result['sql_php:'.$table2]) );
+		$this->assertEquals( $this->_load_expected($table2.'_sql_php'), include $result['sql_php:'.$table2] );
 
 		// Cleanup
 		foreach ($expected as $k => $file) {
