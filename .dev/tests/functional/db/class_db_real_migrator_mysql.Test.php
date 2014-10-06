@@ -17,9 +17,9 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 		$dir = APP_PATH.'share/db/';
 		// Delete only if share path is really temporal and inside framrwork tests
-		if (YF_PATH && $dir && substr($dir, 0, strlen(YF_PATH)) === YF_PATH) {
-			_class('dir')->delete_dir($dir, $delete_start_dir = true);
-		}
+#		if (YF_PATH && $dir && substr($dir, 0, strlen(YF_PATH)) === YF_PATH) {
+#			_class('dir')->delete_dir($dir, $delete_start_dir = true);
+#		}
 	}
 	public static function db_name() {
 		return self::$DB_NAME;
@@ -175,12 +175,51 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 			$this->assertFileNotExists( $file );
 		}
 	}
-	public function test_create() {
+	public function test_create_safe() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		self::prepare_sample_data(__FUNCTION__);
-#		$result = self::migrator()->create();
+		self::prepare_sample_data(__FUNCTION__);
+
+		$mg_path = self::migrator()->create(array('tables_sql_php' => array(), 'safe_mode' => true, 'no_load_default' => true));
+		$this->assertNotEmpty( $mg_path );
+		$this->assertFileExists( $mg_path );
+		$mg_contents = file_get_contents($mg_path);
+		$this->assertNotEmpty( $mg_contents );
+		$mg_name = substr(basename($mg_path), strlen('db_migration_'), -strlen('.class.php'));
+		$this->assertNotEmpty( $mg_name );
+		$expected_file = __DIR__. '/migrator_fixtures/'.__FUNCTION__.'.class.php';
+		$this->assertNotEmpty( $expected_file );
+		$this->assertFileExists( $expected_file );
+		$expected = file_get_contents($expected_file);
+		$this->assertEquals( $expected, str_replace('migration_'.$mg_name, 'migration_%MIGRATION_NUMBER%', $mg_contents) );
+	}
+	public function test_create_full() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		self::prepare_sample_data(__FUNCTION__);
+
+		$mg_path = self::migrator()->create(array('tables_sql_php' => array(), 'safe_mode' => false, 'no_load_default' => true));
+		$this->assertNotEmpty( $mg_path );
+		$this->assertFileExists( $mg_path );
+		$mg_contents = file_get_contents($mg_path);
+		$this->assertNotEmpty( $mg_contents );
+		$mg_name = substr(basename($mg_path), strlen('db_migration_'), -strlen('.class.php'));
+		$this->assertNotEmpty( $mg_name );
+		$expected_file = __DIR__. '/migrator_fixtures/'.__FUNCTION__.'.class.php';
+		$this->assertNotEmpty( $expected_file );
+		$this->assertFileExists( $expected_file );
+		$expected = file_get_contents($expected_file);
+		$this->assertEquals( $expected, str_replace('migration_'.$mg_name, 'migration_%MIGRATION_NUMBER%', $mg_contents) );
+	}
+	public function test_migration_commands_into_string() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO
-#		$this->assertEquals( $expected, $result );
+	}
+	public function test_create_migration_body() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+// TODO
+	}
+	public function test_dump_db_installer_sql() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+// TODO
 	}
 	public function test_list() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -202,17 +241,5 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 #		$result = self::migrator()->sync();
 // TODO
 #		$this->assertEquals( $expected, $result );
-	}
-	public function test_migration_commands_into_string() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-	}
-	public function test_create_migration_body() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-	}
-	public function test_dump_db_installer_sql() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
 	}
 }
