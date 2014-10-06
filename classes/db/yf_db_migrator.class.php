@@ -651,7 +651,7 @@ abstract class yf_db_migrator {
 		$down = (array)$this->generate_down($report, $params);
 		$body = $this->_create_migration_body($name, $up, $down);
 		$file_path = $this->_write_new_migration_file($name, $body);
-		return file_get_contents($file_path);
+		return $file_path;
 	}
 
 	/**
