@@ -461,6 +461,7 @@ abstract class yf_db_migrator {
 		if (!isset($report)) {
 			$report = $this->compare();
 		}
+		$db_prefix = $this->db->DB_PREFIX;
 		// Safe mode here means that we do not generate danger statements like drop something
 		$safe_mode = isset($params['safe_mode']) ? $params['safe_mode'] : true;
 
@@ -470,7 +471,7 @@ abstract class yf_db_migrator {
 			if (!$table_real_info) {
 				continue;
 			}
-			$table_real_info = $this->_cleanup_table_sql_php($table_real_info);
+			$table_real_info = $this->_cleanup_table_sql_php($table_real_info, $db_prefix);
 
 			foreach ((array)$diff['columns_new'] as $name => $info) {
 				$info = $this->_cleanup_column_sql_php($info);
@@ -528,7 +529,7 @@ abstract class yf_db_migrator {
 		foreach ((array)$report['tables_new'] as $table => $diff) {
 			$new_info = $this->get_real_table_sql_php($table);
 			if ($new_info) {
-				$new_info = $this->_cleanup_table_sql_php($new_info);
+				$new_info = $this->_cleanup_table_sql_php($new_info, $db_prefix);
 				$out[] = array('cmd' => 'create_table', 'table' => $table, 'info' => $new_info);
 			}
 		}
@@ -546,6 +547,7 @@ abstract class yf_db_migrator {
 		if (!isset($report)) {
 			$report = $this->compare();
 		}
+		$db_prefix = $this->db->DB_PREFIX;
 		$tables_installer_info = $this->db->installer()->TABLES_SQL_PHP;
 
 		// Safe mode here means that we do not generate danger statements like drop something
@@ -709,9 +711,18 @@ abstract class yf_db_migrator {
 
 	/**
 	*/
-	public function _cleanup_table_sql_php($sql_php = array()) {
+	public function _cleanup_table_sql_php($sql_php = array(), $db_prefix = '') {
+		$prefix_len = strlen($db_prefix);
 		foreach ((array)$sql_php['fields'] as $field_name => $field_info) {
 			$sql_php['fields'][$field_name] = $this->_cleanup_column_sql_php($field_info);
+		}
+		if ($prefix_len && $sql_php['foreign_keys']) {
+			foreach ((array)$sql_php['foreign_keys'] as $fk_name => $fk_info) {
+				// remove db_prefix from ref_table
+				if (substr($fk_info['ref_table'], 0, $prefix_len) === $db_prefix) {
+					$sql_php['foreign_keys'][$fk_name]['ref_table'] = substr($fk_info['ref_table'], $prefix_len);
+				}
+			}
 		}
 		foreach ((array)$sql_php['options'] as $k => $v) {
 			if (is_null($v)) {
@@ -734,11 +745,7 @@ abstract class yf_db_migrator {
 
 		$real_table_name = $this->db->_real_name($table);
 
-#		list(, $raw_sql) = array_values($this->db->get('SHOW CREATE TABLE '.$this->db->escape_key($real_table_name)));
-#		$sql_php = $this->db->installer()->create_table_sql_to_php($raw_sql);
-
 		$sql_php = array(
-#			'name'			=> $real_table_name,
 			'fields'		=> $utils->list_columns($real_table_name),
 			'indexes'		=> $utils->list_indexes($real_table_name),
 // TODO: remove DB_PREFIX from ref_table
