@@ -209,18 +209,6 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		$expected = file_get_contents($expected_file);
 		$this->assertEquals( $expected, str_replace('migration_'.$mg_name, 'migration_%MIGRATION_NUMBER%', $mg_contents) );
 	}
-	public function test_migration_commands_into_string() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-	}
-	public function test_create_migration_body() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-	}
-	public function test_dump_db_installer_sql() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-	}
 	public function test_list() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		self::prepare_sample_data(__FUNCTION__);
@@ -239,10 +227,55 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 	}
 	public function test_apply() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		self::prepare_sample_data(__FUNCTION__);
-#		$result = self::migrator()->apply();
+		self::prepare_sample_data(__FUNCTION__);
+		$table1 = __FUNCTION__.'_1';
+		$table2 = __FUNCTION__.'_2';
+
+		$mg_path = self::migrator()->create(array('tables_sql_php' => array(), 'safe_mode' => true, 'no_load_default' => true));
+		$this->assertNotEmpty( $mg_path );
+		$this->assertFileExists( $mg_path );
+		$mg_name = substr(basename($mg_path), strlen('db_migration_'), -strlen('.class.php'));
+
+		self::utils()->truncate_database(self::db_name());
+		$expected = array('tables_changed' => array(), 'tables_new' => array());
+		$this->assertEquals( $expected, self::migrator()->compare(array('tables_sql_php' => array())) );
+
+		$apply_result = self::migrator()->apply($mg_name);
+		$this->assertNotEmpty( $apply_result );
+
+		$compare_result = self::migrator()->compare(array('tables_sql_php' => array()));
+		$expected = array(
+			'tables_changed' => array(),
+			'tables_new' => array($table1 => $table1, $table2 => $table2),
+		);
+		$this->assertEquals( $expected, $compare_result );
+
+		// More complex testing with dump and compare after apply
+		$dump_result = self::migrator()->dump(array('no_load_default' => true));
+		$this->assertNotEmpty( $dump_result );
+		$sql_php = array();
+		foreach ((array)$dump_result as $name => $path) {
+			if (false === strpos($name, 'sql_php')) {
+				continue;
+			}
+			list($type, $table) = explode(':', $name);
+			$sql_php[$table] = include $path;
+		}
+		$this->assertNotEmpty( $sql_php );
+		$expected = array('tables_changed' => array(), 'tables_new' => array());
+		$this->assertEquals( $expected, self::migrator()->compare(array('tables_sql_php' => $sql_php)) );
+	}
+	public function test_migration_commands_into_string() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO
-#		$this->assertEquals( $expected, $result );
+	}
+	public function test_create_migration_body() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+// TODO
+	}
+	public function test_dump_db_installer_sql() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+// TODO
 	}
 	public function test_sync() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
