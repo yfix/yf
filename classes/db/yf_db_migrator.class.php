@@ -311,6 +311,7 @@ abstract class yf_db_migrator {
 		$dumped = array();
 		foreach ((array)$tables_to_dump as $table) {
 			$sql_php = $this->get_real_table_sql_php($table);
+			$sql_php = $this->_cleanup_table_sql_php($sql_php, $db_prefix);
 			$sql = $this->_convert_sql_php_into_sql($sql_php);
 			$dumped_sql_path = $this->_write_dump_sql_file($table, $sql);
 			$dumped_sql_php_path = $this->_write_dump_sql_php_file($table, $sql_php);
