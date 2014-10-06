@@ -1,5 +1,6 @@
 <?php
 
+define('APP_PATH', __DIR__.'/_tmp/');
 define('STORAGE_PATH', __DIR__.'/_tmp/');
 if (!defined('YF_PATH')) {
 	$CONF['cache']['DRIVER'] = 'tmp';
