@@ -23,7 +23,7 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		return $name;
 	}
 	public static function migrator() {
-		return self::$db->migrator;
+		return self::$db->migrator();
 	}
 	protected function prepare_sample_data() {
 		self::utils()->truncate_database(self::db_name());
@@ -51,6 +51,20 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $expected) );
 		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
 	}
+	public function _load_fixture($name) {
+		$path = __DIR__.'/migrator_fixtures/'.$name.'.sql_php.php';
+		if (!file_exists($path)) {
+			return array();
+		}
+		return include $path;
+	}
+	public function _load_expected($name) {
+		$path = __DIR__.'/migrator_fixtures/'.$name.'.expected.php';
+		if (!file_exists($path)) {
+			return array();
+		}
+		return include $path;
+	}
 
 // TODO for methods:
 #	get_real_table_sql_php
@@ -61,10 +75,14 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 
 	public function test_compare() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		self::prepare_sample_data();
-#		$result = self::migrator()->compare();
+		self::prepare_sample_data();
+		$tables_sql_php = $this->_load_fixture(__FUNCTION__);
+		$result = self::migrator()->compare(array('tables_sql_php' => $tables_sql_php));
 // TODO
-#		$this->assertEquals( $expected, $result );
+
+print_r($result);
+#		$expected = $this->_load_expected(__FUNCTION__);
+		$this->assertEquals( $expected, $result );
 	}
 	public function test_generate() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
