@@ -104,6 +104,9 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	/**
 	*/
 	function real_escape_string($string) {
+		if (is_null($string)) {
+			return 'NULL';
+		}
 		return $this->db_connect_id ? $this->db_connect_id->escapeString($string) : false;
 	}
 
@@ -172,6 +175,9 @@ class yf_db_driver_sqlite extends yf_db_driver {
 	/**
 	*/
 	function escape_val($data) {
+		if (is_null($data)) {
+			return 'NULL';
+		}
 		return '\''.trim($data, '\'').'\'';
 	}
 

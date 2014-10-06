@@ -75,7 +75,9 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function real_escape_string($string) {
-		if (is_float($string)) {
+		if (is_null($string)) {
+			return 'NULL';
+		} elseif (is_float($string)) {
 			return str_replace(',', '.', $string);
 		} elseif (is_int($string)) {
 			return $string;
@@ -104,6 +106,9 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 	/**
 	*/
 	function escape_val($data) {
+		if (is_null($data)) {
+			return 'NULL';
+		}
 		return '\''.trim($data, '\'').'\'';
 	}
 }

@@ -121,8 +121,8 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 
 		$tables_php = array();
 		$globs_php = array(
-			'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*.sql_php.php',
-			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*.sql_php.php',
+			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
 		);
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
@@ -174,8 +174,8 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 
 		$tables_php = array();
 		$globs_php = array(
-			'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*.sql_php.php',
-			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*.sql_php.php',
+			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
 		);
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
@@ -224,8 +224,8 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 
 		$tables_php = array();
 		$globs_php = array(
-			'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*.sql_php.php',
-			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*.sql_php.php',
+			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
 		);
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {
@@ -291,8 +291,8 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 
 		$tables_php = array();
 		$globs_php = array(
-			'yf_main'		=> YF_PATH.'share/db_installer/sql_php/*.sql_php.php',
-			'yf_plugins'	=> YF_PATH.'plugins/*/share/db_installer/sql_php/*.sql_php.php',
+			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
 		);
 		foreach ($globs_php as $glob) {
 			foreach (glob($glob) as $f) {

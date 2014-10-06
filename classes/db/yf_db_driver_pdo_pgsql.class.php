@@ -46,6 +46,9 @@ class yf_db_driver_pdo_pgsql extends yf_db_driver_pdo {
 	/**
 	*/
 	function real_escape_string($string) {
+		if (is_null($string)) {
+			return 'NULL';
+		}
 		return addslashes($string);
 	}
 
@@ -67,6 +70,9 @@ class yf_db_driver_pdo_pgsql extends yf_db_driver_pdo {
 	/**
 	*/
 	function escape_val($data) {
+		if (is_null($data)) {
+			return 'NULL';
+		}
 		return '\''.trim($data, '\'').'\'';
 	}
 }

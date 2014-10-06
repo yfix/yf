@@ -1066,6 +1066,9 @@ class yf_db {
 	* Function escapes characters for using in query
 	*/
 	function es($string) {
+		if (is_null($string)) {
+			return 'NULL';
+		}
 		if (!$this->_connected && !$this->connect()) {
 			return $this->_mysql_escape_mimic($string);
 		}
@@ -1228,7 +1231,9 @@ class yf_db {
 	/**
 	*/
 	function escape_val($data) {
-		if (is_array($data)) {
+		if (is_null($data)) {
+			return 'NULL';
+		} elseif (is_array($data)) {
 			$func = __FUNCTION__;
 			foreach ((array)$data as $k => $v) {
 				$data[$k] = $this->$func($v);

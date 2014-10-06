@@ -11,7 +11,7 @@ class yf_db_ddl_parser_mysql {
 
 	/**
 	*/
-	function _init () {
+	public function _init () {
 		$libs_root = YF_PATH.'libs';
 		require_once $libs_root.'/symfony_class_loader/UniversalClassLoader.php';
 		$loader = new \Symfony\Component\ClassLoader\UniversalClassLoader();
@@ -20,19 +20,6 @@ class yf_db_ddl_parser_mysql {
 		));
 		$loader->register();
 		$this->parser = new \PHPSQLParser\PHPSQLParser();
-	}
-
-	/**
-	* Useful for ALTER TABLE
-	*/
-	private function _implode_line($a) {
-		foreach ($a as $k => $v) {
-			$v = trim($v);
-			if (!strlen($v)) {
-				unset($a[$k]);
-			}
-		}
-		return '  '.implode(' ', $a);
 	}
 
 	/**
@@ -58,13 +45,17 @@ class yf_db_ddl_parser_mysql {
 			}
 			$options[$k] = strtoupper($k).'='.$v;
 		}
-		return 'CREATE TABLE `'.$table_name.'` ('.PHP_EOL. implode(','.PHP_EOL, $lines). PHP_EOL.')'. ($options ? ' '.implode(' ', $options) : '').';';
+		return 'CREATE TABLE '.$this->escape_table_name($table_name).' ('.PHP_EOL. implode(','.PHP_EOL, $lines). PHP_EOL.')'. ($options ? ' '.implode(' ', $options) : '').';';
 	}
 
 	/**
 	* Useful for ALTER TABLE
 	*/
-	function create_column_line ($name, array $v, $params = array()) {
+	function create_column_line ($name = '', $v = array(), $params = array()) {
+		if (is_array($name)) {
+			$v = $name;
+			$name = $v['name'];
+		}
 		$name = strtolower($name);
 		$v['type'] = strtolower($v['type']);
 		if (strpos($v['type'], 'int') !== false && !$v['length']) {
@@ -83,7 +74,7 @@ class yf_db_ddl_parser_mysql {
 			$def = '\''.$v['default'].'\'';
 		}
 		return $this->_implode_line(array(
-			'name'		=> '`'.$name.'`',
+			'name'		=> $this->escape_key($name),
 			'type'		=> $v['type']. $type_braces,
 			'unsigned'	=> $v['unsigned'] ? 'unsigned' : '',
 			'charset'	=> $v['charset'] && $v['collate'] ? 'CHARACTER SET '.strtolower($v['charset']) : '',
@@ -98,7 +89,11 @@ class yf_db_ddl_parser_mysql {
 	/**
 	* Useful for ALTER INDEX
 	*/
-	function create_index_line ($name, array $v, $params = array()) {
+	function create_index_line ($name = '', $v = array(), $params = array()) {
+		if (is_array($name)) {
+			$v = $name;
+			$name = $v['name'];
+		}
 		$type = 'KEY';
 		$v['type'] = strtolower($v['type']);
 		if ($v['type'] == 'primary') {
@@ -116,25 +111,29 @@ class yf_db_ddl_parser_mysql {
 		}
 		return $this->_implode_line(array(
 			'type'		=> $type,
-			'name'		=> strlen($name) && !is_numeric($name) && in_array($v['type'], array('index', 'unique', 'fulltext', 'spatial')) ? '`'.$name.'`' : '',
-			'columns'	=> strtolower('(`'.implode('`,`', $v['columns']).'`)'),
+			'name'		=> strlen($name) && !is_numeric($name) && in_array($v['type'], array('index', 'unique', 'fulltext', 'spatial')) ? $this->escape_key($name) : '',
+			'columns'	=> strtolower('('.implode(',', $this->escape_key($v['columns'])).')'),
 		));
 	}
 
 	/**
 	* Useful for ALTER FOREIGN KEY
 	*/
-	function create_fk_line ($name, array $v, $params = array()) {
+	function create_fk_line ($name = '', $v = array(), $params = array()) {
+		if (is_array($name)) {
+			$v = $name;
+			$name = $v['name'];
+		}
 		return $this->_implode_line(array(
 			'begin'			=> 'CONSTRAINT',
-			'name'			=> '`'.strtolower($name).'`',
+			'name'			=> $this->escape_key(strtolower($name)),
 			'fk'			=> 'FOREIGN KEY',
-			'columns'		=> strtolower('(`'.implode('`,`', $v['columns']).'`)'),
+			'columns'		=> strtolower('('.implode(',', $this->escape_key($v['columns'])).')'),
 			'ref'			=> 'REFERENCES',
 			'ref_table'		=> '`'.$v['ref_table'].'`',
-			'ref_columns'	=> strtolower('(`'.implode('`,`', $v['ref_columns']).'`)'),
-			'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.strtoupper($v['on_delete']) : '',
-			'on_update'		=> $v['on_update'] ? 'ON UPDATE '.strtoupper($v['on_update']) : '',
+			'ref_columns'	=> strtolower('('.implode(',', $this->escape_key($v['ref_columns'])).')'),
+			'on_delete'		=> $v['on_delete'] ? 'ON DELETE '.strtoupper(str_replace('_', ' ', $v['on_delete'])) : '',
+			'on_update'		=> $v['on_update'] ? 'ON UPDATE '.strtoupper(str_replace('_', ' ', $v['on_update'])) : '',
 		));
 	}
 
@@ -419,5 +418,53 @@ class yf_db_ddl_parser_mysql {
 			'bigint'	=> 20,
 		);
 		return $a[$type] ?: 11;
+	}
+
+	/**
+	* Useful for ALTER TABLE
+	*/
+	private function _implode_line($a) {
+		foreach ($a as $k => $v) {
+			$v = trim($v);
+			if (!strlen($v)) {
+				unset($a[$k]);
+			}
+		}
+		return '  '.implode(' ', $a);
+	}
+
+	/**
+	*/
+	function escape_table_name($name = '') {
+		$name = trim($name);
+		if (!strlen($name)) {
+			return false;
+		}
+		$db = '';
+		$table = '';
+		if (strpos($name, '.') !== false) {
+			list($db, $table) = explode('.', $name);
+			$db = trim($db);
+			$table = trim($table);
+		} else {
+			$table = $name;
+		}
+		if (!strlen($table)) {
+			return false;
+		}
+		return (strlen($db) ? $this->escape_key($db).'.' : ''). $this->escape_key($table);
+	}
+
+	/**
+	*/
+	function escape_key($data) {
+		if (is_array($data)) {
+			$func = __FUNCTION__;
+			foreach ((array)$data as $k => $v) {
+				$data[$k] = $this->$func($v);
+			}
+			return $data;
+		}
+		return '`'.$data.'`';
 	}
 }

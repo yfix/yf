@@ -139,6 +139,9 @@ class yf_db_driver_pgsql extends yf_db_driver {
 	/**
 	*/
 	function real_escape_string($string) {
+		if (is_null($string)) {
+			return 'NULL';
+		}
 		return pg_escape_string($string);
 	}
 
@@ -166,6 +169,9 @@ class yf_db_driver_pgsql extends yf_db_driver {
 	/**
 	*/
 	function escape_val($data) {
+		if (is_null($data)) {
+			return 'NULL';
+		}
 		return '\''.trim($data, '\'').'\'';
 	}
 

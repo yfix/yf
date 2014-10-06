@@ -66,12 +66,14 @@ abstract class yf_db_installer {
 	public function load_data() {
 		// Preload db installer SQL CREATE TABLE DDL statements
 		$ext = '.sql.php';
+		$dir = 'share/db/sql/*'.$ext;
 		$globs_sql = array(
-			'yf_main'			=> YF_PATH.'share/db_installer/sql/*'.$ext,
-			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/sql/*'.$ext,
-			'project_config'	=> CONFIG_PATH.'share/db_installer/sql/*'.$ext,
-			'project_main'		=> PROJECT_PATH.'share/db_installer/sql/*'.$ext,
-			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/sql/*'.$ext,
+			'yf_main'				=> YF_PATH. $dir,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
+			'project_app'			=> APP_PATH. $dir,
+			'project_main'			=> PROJECT_PATH. $dir,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
+			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
 		);
 		foreach ($globs_sql as $glob) {
 			foreach (glob($glob) as $f) {
@@ -81,12 +83,14 @@ abstract class yf_db_installer {
 		}
 		// Preload db installer PHP array of CREATE TABLE DDL statements
 		$ext = '.sql_php.php';
+		$dir = 'share/db/sql_php/*'.$ext;
 		$globs_sql_php = array(
-			'yf_main'			=> YF_PATH.'share/db_installer/sql_php/*'.$ext,
-			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/sql_php/*'.$ext,
-			'project_config'	=> CONFIG_PATH.'share/db_installer/sql_php/*'.$ext,
-			'project_main'		=> PROJECT_PATH.'share/db_installer/sql_php/*'.$ext,
-			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/sql_php/*'.$ext,
+			'yf_main'				=> YF_PATH. $dir,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
+			'project_app'			=> APP_PATH. $dir,
+			'project_main'			=> PROJECT_PATH. $dir,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
+			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
 		);
 		foreach ($globs_sql_php as $glob) {
 			foreach (glob($glob) as $f) {
@@ -96,12 +100,14 @@ abstract class yf_db_installer {
 		}
 		// Preload db installer data PHP arrays needed to be inserted after CREATE TABLE == initial data
 		$ext = '.data.php';
+		$dir = 'share/db/data/*'.$ext;
 		$globs_data = array(
-			'yf_main'			=> YF_PATH.'share/db_installer/data/*'.$ext,
-			'yf_plugins'		=> YF_PATH.'plugins/*/share/db_installer/data/*'.$ext,
-			'project_config'	=> CONFIG_PATH.'share/db_installer/data/*'.$ext,
-			'project_main'		=> PROJECT_PATH.'share/db_installer/data/*'.$ext,
-			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/db_installer/data/*'.$ext,
+			'yf_main'				=> YF_PATH. $dir,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir,
+			'project_app'			=> APP_PATH. $dir,
+			'project_main'			=> PROJECT_PATH. $dir,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
+			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
 		);
 		foreach ($globs_data as $glob) {
 			foreach (glob($glob) as $f) {
@@ -420,7 +426,8 @@ abstract class yf_db_installer {
 	/**
 	*/
 	public function get_table_struct_array_by_name ($table_name, $db) {
-		return $this->db_table_struct_into_array( $db->get_one('SHOW CREATE TABLE `'.$table_name.'`') );
+		list(, $create_sql) = array_values($db->get('SHOW CREATE TABLE '.$db->escape_key($table_name)));
+		return $this->db_table_struct_into_array($create_sql);
 	}
 
 	/**

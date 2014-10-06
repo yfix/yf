@@ -59,6 +59,10 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function database_info($db_name = '', $extra = array(), &$error = false) {
+		if (is_array($db_name)) {
+			$extra = (array)$extra + $db_name;
+			$db_name = '';
+		}
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -202,6 +206,10 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function list_tables($db_name = '', $extra = array(), &$error = false) {
+		if (is_array($db_name)) {
+			$extra = (array)$extra + $db_name;
+			$db_name = '';
+		}
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -209,13 +217,26 @@ abstract class yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-		$tables = $this->db->get_2d('SHOW TABLES'. (strlen($db_name) ? ' FROM '.$this->_escape_database_name($db_name) : ''));
-		return $tables ? array_combine($tables, $tables) : array();
+		$no_views = isset($extra['no_views']) ? (bool)$extra['no_views'] : true;
+		$tables = array();
+		$sql = 'SHOW FULL TABLES'. (strlen($db_name) ? ' FROM '.$this->_escape_database_name($db_name) : '');
+		foreach ((array)$this->db->get_all($sql) as $a) {
+			list($table, $type) = array_values($a);
+			if ($no_views && $type === 'VIEW') {
+				continue;
+			}
+			$tables[$table] = $table;
+		}
+		return $tables;
 	}
 
 	/**
 	*/
 	public function list_tables_details($db_name = '', $extra = array(), &$error = false) {
+		if (is_array($db_name)) {
+			$extra = (array)$extra + $db_name;
+			$db_name = '';
+		}
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -241,6 +262,10 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function table_exists($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
 		}
@@ -261,6 +286,10 @@ abstract class yf_db_utils_driver {
 	/**
 	*/
 	public function table_get_columns($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($table)) {
 			$error = 'table_name is empty';
 			return false;
@@ -337,6 +366,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function table_get_charset($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -369,6 +402,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function table_info($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -409,6 +446,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function table_simple_info($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		$extra['just_info'] = true;
 		return $this->table_info($table, $extra, $error);
 	}
@@ -416,6 +457,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function table_options($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		$info = $this->table_simple_info($table, $extra, $error);
 		return array(
 			'engine'	=> $info['engine'],
@@ -427,9 +472,12 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function create_table($table, $data = array(), $extra = array(), &$error = false) {
-// TODO: add ability to pass $data as db ddl parser structure
-		$orig_table = $table;
+	public function create_table($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
+		$table = $extra['name'] ?: $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
 		}
@@ -448,39 +496,46 @@ WHERE table_schema = "schemaname"
 			$error = 'table_name already exists';
 			return false;
 		}
-		// Default table options
-		$extra['engine'] = $extra['engine'] ?: 'InnoDB';
-		$extra['charset'] = $extra['charset'] ?: 'utf8';
-
-		$table_options = array();
-		foreach ((array)$this->_get_supported_table_options() as $name => $real_name) {
-			if (isset($extra[$name]) && strlen($extra[$name])) {
-				$table_options[$name] = $real_name.'='.$extra[$name];
+		if (empty($extra['fields'])) {
+			$data = $this->_get_table_structure_from_db_installer($table, $error);
+			if ($data['fields']) {
+				foreach (array('fields','indexes','foreign_keys','options') as $k) {
+					$extra[$k] = $data[$k];
+				}
 			}
 		}
-		$table_options = implode(' ', $table_options);
-
-		$data = ($extra['sql'] ?: $extra['data']) ?: $data;
-		if (is_array($data)) {
-			$data = $this->_compile_create_table($data, $extra, $error);
-		}
-		if (!$data) {
-			$data = $this->_get_table_structure_from_db_installer($table, $error);
-		}
-		if (!$data) {
-			$error = 'data is empty';
+		if (empty($extra['fields'])) {
+			$error = 'table fields empty';
 			return false;
 		}
-		$sql = 'CREATE TABLE IF NOT EXISTS '.$this->_escape_table_name($db_name.'.'.$table).' ('
-			. PHP_EOL. $data. PHP_EOL
-			. ')'.($table_options ? ' '.$table_options : '')
-			. ';'. PHP_EOL;
+		// Default table options
+		$table_options = array(
+			'engine'	=> 'InnoDB',
+			'charset'	=> 'utf8',
+		);
+		foreach ((array)$this->_get_supported_table_options() as $name => $real_name) {
+			if (isset($extra['options'][$name]) && strlen($extra['options'][$name])) {
+				$table_options[$name] = $extra['options'][$name];
+			}
+		}
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$sql = $parser->create(array(
+			'name'			=> $db_name.'.'.$table,
+			'fields'		=> $extra['fields'],
+			'indexes'		=> $extra['indexes'],
+			'foreign_keys'	=> $extra['foreign_keys'],
+			'options'		=> $table_options,
+		));
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	public function drop_table($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -493,6 +548,10 @@ WHERE table_schema = "schemaname"
 	* Here we support only small subset of alter table options, mostly related to basic things like engine or charset
 	*/
 	public function alter_table($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -514,6 +573,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function rename_table($table, $new_name, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!$table || !$new_name) {
 			$error = 'table_name is empty';
 			return false;
@@ -525,6 +588,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function truncate_table($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -536,12 +603,20 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function list_columns($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		return $this->table_get_columns($table, $extra, $error);
 	}
 
 	/**
 	*/
 	public function column_exists($table, $col_name, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		$columns = $this->table_get_columns($table, $extra, $error);
 		return isset($columns[$col_name]);
 	}
@@ -549,6 +624,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function column_info($table, $col_name, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		$columns = $this->table_get_columns($table, $extra, $error);
 		return isset($columns[$col_name]) ? $columns[$col_name] : false;
 	}
@@ -556,6 +635,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function column_info_item($table, $col_name, $item_name, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		$columns = $this->table_get_columns($table, $extra, $error);
 		return isset($columns[$col_name][$item_name]) ? $columns[$col_name][$item_name] : false;
 	}
@@ -563,6 +646,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function drop_column($table, $col_name, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -574,30 +661,44 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function add_column($table, $data, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
 		}
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD COLUMN '.$this->_compile_create_table($data);
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD COLUMN '.$parser->create_column_line($data);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	public function rename_column($table, $col_name, $new_name, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
 		}
-		$col_info_str = $this->_compile_create_table($this->column_info($table, $col_name), array('no_name' => true));
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' CHANGE COLUMN '.$this->_escape_key($col_name).' '.$this->_escape_key($new_name).' '.$col_info_str;
+		$new_data = $this->column_info($table, $col_name);
+		$new_data['name'] = $new_name;
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' CHANGE COLUMN '.$this->_escape_key($col_name).' '.$parser->create_column_line($new_data);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	public function alter_column($table, $col_name, $data, $extra = array(), &$error = false) {
-// TODO: $data should be compatible with db ddl parser
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -617,14 +718,18 @@ WHERE table_schema = "schemaname"
 		} elseif ($data['after']) {
 			$position_change = ' AFTER '.$this->_escape_key($data['after']);
 		}
-		$col_info_str = $this->_compile_create_table($col_info, array('no_name' => true));
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' MODIFY COLUMN '.$this->_escape_key($col_name).' '.$col_info_str. $position_change;
+		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' MODIFY COLUMN '.$parser->create_column_line($col_info). $position_change;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
 	*/
 	public function list_indexes($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!$table) {
 			$error = 'table_name is empty';
 			return false;
@@ -663,6 +768,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function index_info($table, $index_name, &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
 			return false;
@@ -674,6 +783,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function index_exists($table, $index_name, &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
 			return false;
@@ -685,7 +798,17 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function add_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
-// TODO: $fields should be compatible with db ddl parser
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
+		if (is_array($index_name)) {
+			$extra = (array)$extra + $index_name;
+			$index_name = '';
+		}
+		$table = $extra['table'] ?: $table;
+		$index_name = $extra['name'] ?: $index_name;
+		$fields = $extra['columns'] ?: $fields;
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -722,10 +845,15 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function drop_index($table, $index_name, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
 		}
+		$index_name = $extra['name'] ?: $index_name;
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
 			return false;
@@ -741,29 +869,36 @@ WHERE table_schema = "schemaname"
 	/**
 	* Alias
 	*/
-	public function alter_index($table, $index_name, $fields = array(), $extra = array(), &$error = false) {
+	public function alter_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
 		return $this->update_index($table, $index_name, $fields, $extra, $error);
 	}
 
 	/**
 	*/
-	public function update_index($table, $index_name, $fields = array(), $extra = array(), &$error = false) {
-// TODO: $fields should be compatible with db ddl parser
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
+	public function update_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
 		}
-		if (!strlen($index_name)) {
-			$error = 'index name is empty';
-			return false;
+		if (is_array($index_name)) {
+			$extra = (array)$extra + $index_name;
+			$index_name = '';
 		}
-		$this->drop_index($table, $index_name, $extra, $error);
-		return $this->add_index($table, $index_name, $fields, $extra, $error);
+		$table = $extra['table'] ?: $table;
+		$index_name = $extra['name'] ?: $index_name;
+		if ($this->drop_index($table, $index_name, $extra, $error)) {
+			return $this->add_index($table, $index_name, $fields, $extra, $error);
+		}
+		return false;
 	}
 
 	/**
 	*/
 	public function list_foreign_keys($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		$orig_table = $table;
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
@@ -811,6 +946,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function foreign_key_info($table, $index_name, &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
 			return false;
@@ -822,6 +961,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function foreign_key_exists($table, $index_name, &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($index_name)) {
 			$error = 'index name is empty';
 			return false;
@@ -833,6 +976,12 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function drop_foreign_key($table, $index_name, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
+		$table = $extra['table'] ?: $table;
+		$index_name = $extra['name'] ?: $index_name;
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
@@ -843,13 +992,25 @@ WHERE table_schema = "schemaname"
 
 	/**
 	*/
-	public function add_foreign_key($table, $index_name = '', array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
-// TODO: $fields should be compatible with db ddl parser
+	public function add_foreign_key($table, $index_name = '', $fields = array(), $ref_table = '', $ref_fields = array(), $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
+		if (is_array($index_name)) {
+			$extra = (array)$extra + $index_name;
+			$index_name = '';
+		}
+		$table = $extra['table'] ?: $table;
+		$index_name = $extra['name'] ?: $index_name;
+		$fields = $extra['columns'] ?: $fields;
+		$ref_table = $extra['ref_table'] ?: $ref_table;
+		$ref_fields = $extra['ref_columns'] ?: $ref_fields;
 		if (!strlen($table)) {
 			$error = 'table name is empty';
 			return false;
 		}
-		if (empty($fields)) {
+		if (empty($fields) || !is_array($fields)) {
 			$error = 'fields are empty';
 			return false;
 		}
@@ -857,28 +1018,22 @@ WHERE table_schema = "schemaname"
 			$error = 'referenced table name is empty';
 			return false;
 		}
-		if (empty($ref_fields)) {
+		if (empty($ref_fields) || !is_array($ref_fields)) {
 			$error = 'referenced fields are empty';
 			return false;
 		}
 		if (empty($index_name)) {
 			$index_name = $ref_table.'_'.implode('_', $ref_fields);
 		}
-		$supported_ref_options = array(
-			'restrict'	=> 'RESTRICT',
-			'cascade'	=> 'CASCADE',
-			'set_null'	=> 'SET NULL',
-			'no_action'	=> 'NO ACTION',
-		);
-		$on_delete = isset($extra['on_delete']) && isset($supported_ref_options[$extra['on_delete']]) ? $supported_ref_options[$extra['on_delete']] : '';
-		$on_update = isset($extra['on_update']) && isset($supported_ref_options[$extra['on_update']]) ? $supported_ref_options[$extra['on_update']] : '';
+		$on_delete = isset($extra['on_delete']) ? $extra['on_delete'] : '';
+		$on_update = isset($extra['on_update']) ? $extra['on_update'] : '';
 
 		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).PHP_EOL
 			. ' ADD CONSTRAINT '.$this->_escape_key($index_name).PHP_EOL
 			. ' FOREIGN KEY ('.implode(',', $this->_escape_fields($fields)).')'.PHP_EOL
 			. ' REFERENCES '.$this->_escape_key($ref_table).' ('.implode(',', $this->_escape_fields($ref_fields)).')'.PHP_EOL
-			. ($on_delete ? ' ON DELETE '.$on_delete : '').PHP_EOL
-			. ($on_update ? ' ON UPDATE '.$on_update : '')
+			. ($on_delete ? ' ON DELETE '.strtoupper(str_replace('_', ' ', $on_delete)) : '').PHP_EOL
+			. ($on_update ? ' ON UPDATE '.strtoupper(str_replace('_', ' ', $on_update)) : '')
 		;
 		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
@@ -886,28 +1041,36 @@ WHERE table_schema = "schemaname"
 	/**
 	* Alias
 	*/
-	public function alter_foreign_key($table, $index_name, array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
+	public function alter_foreign_key($table, $index_name = '', $fields = array(), $ref_table = '', $ref_fields = array(), $extra = array(), &$error = false) {
 		return $this->update_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
 	}
 
 	/**
 	*/
-	public function update_foreign_key($table, $index_name, array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
+	public function update_foreign_key($table, $index_name = '', $fields = array(), $ref_table = '', $ref_fields = array(), $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
 		}
-		if (!strlen($index_name)) {
-			$error = 'index name is empty';
-			return false;
+		if (is_array($index_name)) {
+			$extra = (array)$extra + $index_name;
+			$index_name = '';
 		}
-		$this->drop_foreign_key($table, $index_name, $extra, $error);
-		return $this->add_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
+		$table = $extra['table'] ?: $table;
+		$index_name = $extra['name'] ?: $index_name;
+		if ($this->drop_foreign_key($table, $index_name, $extra, $error)) {
+			return $this->add_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
+		}
+		return false;
 	}
 
 	/**
 	*/
 	public function list_views($db_name = '', $extra = array(), &$error = false) {
+		if (is_array($db_name)) {
+			$extra = (array)$extra + $db_name;
+			$db_name = '';
+		}
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -934,6 +1097,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function view_exists($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
 		}
@@ -955,6 +1122,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function view_info($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (strpos($table, '.') !== false) {
 			list($db_name, $table) = explode('.', trim($table));
 		}
@@ -976,6 +1147,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function drop_view($table, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($table)) {
 			$error = 'view name is empty';
 			return false;
@@ -988,6 +1163,10 @@ WHERE table_schema = "schemaname"
 	* See https://dev.mysql.com/doc/refman/5.6/en/create-view.html
 	*/
 	public function create_view($table, $sql_as, $extra = array(), &$error = false) {
+		if (is_array($table)) {
+			$extra = (array)$extra + $table;
+			$table = '';
+		}
 		if (!strlen($table)) {
 			$error = 'table is empty';
 			return false;
@@ -999,6 +1178,10 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function list_triggers($db_name = '', $extra = array(), &$error = false) {
+		if (is_array($db_name)) {
+			$extra = (array)$extra + $db_name;
+			$db_name = '';
+		}
 		if (!$db_name) {
 			$db_name = $this->db->DB_NAME;
 		}
@@ -1131,17 +1314,20 @@ WHERE table_schema = "schemaname"
 	* Use db installer repository to get table structure
 	*/
 	public function _get_table_structure_from_db_installer($table, &$error = false) {
+// TODO: move this code into db installer class
 		if (strlen($this->db->DB_PREFIX) && substr($table, 0, strlen($this->db->DB_PREFIX)) == $this->db->DB_PREFIX) {
 			$search_table = substr($table, strlen($this->db->DB_PREFIX));
 		} else {
 			$search_table = $table;
 		}
+		$ext = '.sql_php.php';
+		$dir = 'share/db/sql_php/';
 		$globs = array(
-			PROJECT_PATH. 'plugins/*/share/db_installer/sql/'.$search_table.'.sql.php',
-			PROJECT_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
-			CONFIG_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
-			YF_PATH. 'plugins/*/share/db_installer/sql/'.$search_table.'.sql.php',
-			YF_PATH. 'share/db_installer/sql/'.$search_table.'.sql.php',
+			PROJECT_PATH. 'plugins/*/'. $dir. $search_table. $ext,
+			PROJECT_PATH. $dir. $search_table. $ext,
+			CONFIG_PATH. $dir. $search_table. $ext,
+			YF_PATH. 'plugins/*/'. $dir. $search_table. $ext,
+			YF_PATH. $dir. $search_table. $ext,
 		);
 		$path = '';
 		foreach ($globs as $glob) {
@@ -1154,7 +1340,7 @@ WHERE table_schema = "schemaname"
 			$error = 'file not exists: '.$path;
 			return false;
 		}
-		include $path;
+		$data = include $path;
 		return $data;
 	}
 
@@ -1210,6 +1396,7 @@ WHERE table_schema = "schemaname"
 	/**
 	* Create part of SQL for "CREATE TABLE" from array of params
 	*/
+/*
 	public function _compile_create_table($data, $extra = array(), &$error = false) {
 // TODO: use db ddl parser if available for the given db family (mysql currently supported)
 		if (!is_array($data) || !count($data)) {
@@ -1268,6 +1455,7 @@ WHERE table_schema = "schemaname"
 		}
 		return implode(','.PHP_EOL, $items);
 	}
+*/
 
 	/**
 	* Smart split long SQL into single queries. Usually to be able to execute them with php_mysql API functions
@@ -1434,6 +1622,9 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function _escape_val($val = '') {
+		if (is_null($val)) {
+			return 'NULL';
+		}
 		$val = trim(trim($val), '\'');
 		if (!strlen($val)) {
 			return '';
@@ -1462,6 +1653,9 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function _es($val = '') {
+		if (is_null($val)) {
+			return 'NULL';
+		}
 		$val = trim($val);
 		if (!strlen($val)) {
 			return '';

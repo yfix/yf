@@ -107,6 +107,9 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			self::qb()->from(array('user' => 'u'))->where(array('id' => '1', 'gid' => '4'))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' AND `u`.`gid` = \'4\'', 
 			self::qb()->from(array('user' => 'u'))->where(array('u.id' => '1', 'u.gid' => '4'))->sql() );
+
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IS NULL', self::qb()->from('user')->where('id','IS NULL')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IS NOT NULL', self::qb()->from('user')->where(array('id','IS NOT NULL'))->sql() );
 	}
 	public function test_where_like() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -127,6 +130,11 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\'', self::qb()->from('user as u')->where('u.id = 1')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\'', self::qb()->from('user as u')->where('u.id > 1')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\' AND `u`.`visits` < \'3\'', self::qb()->from('user as u')->where('u.id > 1')->where('u.visits < 3')->sql() );
+
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` IS NULL', self::qb()->from('user as u')->where('u.id is null')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` IS NULL', self::qb()->from('user as u')->where('u.id IS NULL')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` IS NOT NULL', self::qb()->from('user as u')->where('u.id is not null')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` IS NOT NULL', self::qb()->from('user as u')->where('u.id IS NOT NULL')->sql() );
 	}
 	public function test_where_or() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }

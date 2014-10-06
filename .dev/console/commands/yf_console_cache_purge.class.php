@@ -6,17 +6,17 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class yf_console_cache_control extends Command {
+class yf_console_cache_purge extends Command {
 	protected function configure() {
 		$this
 			->setName('cache:purge')
 			->setDescription('YF project purge cache')
-#			->addArgument('method', InputArgument::OPTIONAL, 'API method to call')
 		;
 	}
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		init_yf();
-// TODO
+		cache()->flush();
+		$text = 'Cache flushed successfully';
 		$output->writeln($text);
 	}
 }

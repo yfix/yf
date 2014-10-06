@@ -120,6 +120,7 @@ class class_db_offline_mysql_test extends db_offline_abstract {
 	}
 	public function test_escape_val() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertEquals( 'NULL', self::db()->escape_val(null));
 		$this->assertEquals( '\'\'', self::db()->escape_val(false));
 		$this->assertEquals( '\'\'', self::db()->escape_val(''));
 		$this->assertEquals( '\'text\'', self::db()->escape_val('text'));
