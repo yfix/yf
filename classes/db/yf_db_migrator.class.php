@@ -448,7 +448,7 @@ abstract class yf_db_migrator {
 	* Generate migration file, based on compare() report. Need to make current database structure looks like desired from sql_php files.
 	*/
 	public function generate($params = array()) {
-		$report = $this->compare();
+		$report = $this->compare($params);
 		return array(
 			'up'	=> $this->generate_up($report, $params),
 			'down'	=> $this->generate_down($report, $params),
@@ -459,7 +459,7 @@ abstract class yf_db_migrator {
 	*/
 	public function generate_up($params = array()) {
 		if (!isset($report)) {
-			$report = $this->compare();
+			$report = $this->compare($params);
 		}
 		$db_prefix = $this->db->DB_PREFIX;
 		// Safe mode here means that we do not generate danger statements like drop something
@@ -545,7 +545,7 @@ abstract class yf_db_migrator {
 	*/
 	public function generate_down($report = null, $params = array()) {
 		if (!isset($report)) {
-			$report = $this->compare();
+			$report = $this->compare($params);
 		}
 		$db_prefix = $this->db->DB_PREFIX;
 		$tables_installer_info = $this->db->installer()->TABLES_SQL_PHP;
