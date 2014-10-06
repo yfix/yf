@@ -646,7 +646,7 @@ abstract class yf_db_migrator {
 	*/
 	public function create($params = array()) {
 		$name = date('YmdHis');
-		$report = $this->compare();
+		$report = $this->compare($params);
 		$up = (array)$this->generate_up($report, $params);
 		$down = (array)$this->generate_down($report, $params);
 		$body = $this->_create_migration_body($name, $up, $down);
