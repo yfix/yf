@@ -88,7 +88,7 @@ abstract class yf_db_query_builder_driver {
 			'where'			=> array('separator' => 'AND', 'operator' => 'WHERE'),
 			'where_or'		=> array('separator' => 'OR', 'operator' => 'OR'),
 			'group_by'		=> array('separator' => ',', 'operator' => 'GROUP BY'),
-			'having'		=> array('separator' => ',', 'operator' => 'HAVING'),
+			'having'		=> array('separator' => 'AND', 'operator' => 'HAVING'),
 			'order_by'		=> array('separator' => ',', 'operator' => 'ORDER BY'),
 			'limit'			=> array(/* 'operator' => 'LIMIT' */),
 		);
