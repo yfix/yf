@@ -107,6 +107,10 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			self::qb()->from(array('user' => 'u'))->where(array('id' => '1', 'gid' => '4'))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' AND `u`.`gid` = \'4\'', 
 			self::qb()->from(array('user' => 'u'))->where(array('u.id' => '1', 'u.gid' => '4'))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`gid` = \'4\'', 
+			self::qb()->from(array('user' => 'u'))->where(array('u.id' => '', 'u.gid' => '4'))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\'', 
+			self::qb()->from(array('user' => 'u'))->where(array('u.id' => '1', 'u.gid' => ''))->sql() );
 
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IS NULL', self::qb()->from('user')->where('id','IS NULL')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IS NOT NULL', self::qb()->from('user')->where(array('id','IS NOT NULL'))->sql() );
