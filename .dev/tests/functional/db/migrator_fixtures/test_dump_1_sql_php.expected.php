@@ -5,16 +5,7 @@ return array(
 			'name' => 'id',
 			'type' => 'int',
 			'length' => 10,
-			'decimals' => NULL,
-			'unsigned' => NULL,
 			'nullable' => false,
-			'default' => NULL,
-			'charset' => NULL,
-			'collate' => NULL,
-			'auto_inc' => false,
-			'primary' => true,
-			'unique' => false,
-			'values' => NULL,
 		),
 	),
 	'indexes' => array(
@@ -32,7 +23,7 @@ return array(
 			'columns' => array(
 				'id' => 'id',
 			),
-			'ref_table' => 't_test_dump_2',
+			'ref_table' => 'test_dump_2',
 			'ref_columns' => array(
 				'id' => 'id',
 			),
