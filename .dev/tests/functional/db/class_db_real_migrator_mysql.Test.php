@@ -75,21 +75,6 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		}
 		return include $path;
 	}
-
-// TODO for methods:
-#	get_real_table_sql_php
-#	_cleanup_table_sql_php
-#	_migration_commands_into_string
-#	_create_migration_body
-#	dump_db_installer_sql
-
-#		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
-#		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
-
-#		$tables_sql_php = $this->_load_fixture(__FUNCTION__);
-#		$expected = $this->_load_expected(__FUNCTION__);
-
-
 	public function test_cleanup_table_sql_php() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		self::prepare_sample_data(__FUNCTION__);
@@ -131,44 +116,70 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 	}
 	public function test_generate() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		self::prepare_sample_data();
-#		$result = self::migrator()->generate();
-// TODO
-#		$this->assertEquals( $expected, $result );
+		self::prepare_sample_data(__FUNCTION__);
+		$table1 = __FUNCTION__.'_1';
+		$table2 = __FUNCTION__.'_2';
+
+		$result = self::migrator()->generate(array('tables_sql_php' => array(), 'safe_mode' => true));
+		$expected = $this->_load_expected($table1.'_safe');
+		$this->assertEquals( $expected, $result );
+
+		$result = self::migrator()->generate(array('tables_sql_php' => array(), 'safe_mode' => false));
+		$expected = $this->_load_expected($table1.'_full');
+		$this->assertEquals( $expected, $result );
+/*
+		foreach ((array)$this->_load_fixtures_list(__FUNCTION__) as $name => $path) {
+			$result = self::migrator()->generate(array('tables_sql_php' => $this->_load_fixture($name)));
+			$expected = $this->_load_expected($name);
+			$this->assertEquals( $expected, $result );
+		}
+*/
 	}
 	public function test_create() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		self::prepare_sample_data();
+#		self::prepare_sample_data(__FUNCTION__);
 #		$result = self::migrator()->create();
 // TODO
 #		$this->assertEquals( $expected, $result );
 	}
 	public function test_list() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		self::prepare_sample_data();
+#		self::prepare_sample_data(__FUNCTION__);
 #		$result = self::migrator()->list();
 // TODO
 #		$this->assertEquals( $expected, $result );
 	}
 	public function test_apply() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		self::prepare_sample_data();
+#		self::prepare_sample_data(__FUNCTION__);
 #		$result = self::migrator()->apply();
 // TODO
 #		$this->assertEquals( $expected, $result );
 	}
 	public function test_dump() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		self::prepare_sample_data();
+#		self::prepare_sample_data(__FUNCTION__);
 #		$result = self::migrator()->dump();
 // TODO
 #		$this->assertEquals( $expected, $result );
 	}
 	public function test_sync() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		self::prepare_sample_data();
+#		self::prepare_sample_data(__FUNCTION__);
 #		$result = self::migrator()->sync();
 // TODO
 #		$this->assertEquals( $expected, $result );
+	}
+	public function test_migration_commands_into_string() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+// TODO
+	}
+	public function test_create_migration_body() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+// TODO
+	}
+	public function test_dump_db_installer_sql() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+// TODO
 	}
 }
