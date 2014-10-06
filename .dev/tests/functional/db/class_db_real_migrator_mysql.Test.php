@@ -25,10 +25,10 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 	public static function migrator() {
 		return self::$db->migrator();
 	}
-	protected function prepare_sample_data() {
+	protected function prepare_sample_data($fname) {
 		self::utils()->truncate_database(self::db_name());
-		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
-		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$table1 = self::utils()->db->DB_PREFIX. $fname.'_1';
+		$table2 = self::utils()->db->DB_PREFIX. $fname.'_2';
 		$data = array(
 			'fields' => array(
 				'id'	=> array('name' => 'id', 'type' => 'int', 'length' => 10),
@@ -50,6 +50,16 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		);
 		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $expected) );
 		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+	}
+	public function _load_fixtures_list($name) {
+		$out = array();
+		$dir = __DIR__.'/migrator_fixtures/';
+		$ext = '.sql_php.php';
+		foreach (glob($dir. $name. '*'. $ext) as $path) {
+			$_name = substr(basename($path), 0, -strlen($ext));
+			$out[$_name] = $path;
+		}
+		return $out;
 	}
 	public function _load_fixture($name) {
 		$path = __DIR__.'/migrator_fixtures/'.$name.'.sql_php.php';
@@ -75,14 +85,27 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 
 	public function test_compare() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		self::prepare_sample_data();
-		$tables_sql_php = $this->_load_fixture(__FUNCTION__);
-		$result = self::migrator()->compare(array('tables_sql_php' => $tables_sql_php));
-// TODO
+#		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
+#		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$table1 = __FUNCTION__.'_1';
+		$table2 = __FUNCTION__.'_2';
+		self::prepare_sample_data(__FUNCTION__);
 
-print_r($result);
+#		$tables_sql_php = $this->_load_fixture(__FUNCTION__);
 #		$expected = $this->_load_expected(__FUNCTION__);
+
+		$result = self::migrator()->compare(array('tables_sql_php' => array()));
+		$expected = array(
+			'tables_changed' => array(),
+			'tables_new' => array($table1 => $table1, $table2 => $table2),
+		);
 		$this->assertEquals( $expected, $result );
+
+		foreach ((array)$this->_load_fixtures_list(__FUNCTION__) as $name => $path) {
+			$result = self::migrator()->compare(array('tables_sql_php' => $this->_load_fixture($name)));
+			$expected = $this->_load_expected($name);
+			$this->assertEquals( $expected, $result );
+		}
 	}
 	public function test_generate() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
