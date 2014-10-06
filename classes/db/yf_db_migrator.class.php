@@ -852,19 +852,23 @@ abstract class yf_db_migrator {
 		$migration = new $mclass();
 		$migration->db = $this->db;
 
-$migration->db->LOG_ALL_QUERIES = true;
+#$migration->db->LOG_ALL_QUERIES = true;
 
 		try {
 			$this->db->begin();
+			$this->db->query('SET foreign_key_checks = 0;');
 			$migration->up();
+			$this->db->query('SET foreign_key_checks = 1;');
 			$this->db->commit();
 		} catch (Exception $e) {
 			$this->db->rollback();
+			$this->db->query('SET foreign_key_checks = 1;');
 #			$migration->down();
+			return 'Error';
 		}
 
-$migration->db->LOG_ALL_QUERIES = false;
-print_r($migration->db->_LOG);
+#$migration->db->LOG_ALL_QUERIES = false;
+#print_r($migration->db->_LOG);
 
 		return 'Success';
 	}
