@@ -103,6 +103,8 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->where(array('t1.id2' => '1*', 't1.id3' => '2*'))->get() );
 		$this->assertSame( $data[1], self::qb()->from($this->table_name($table).' as t1')->where(array('t1.id2' => '1*', 't1.id3' => '1*'))->get() );
 		$this->assertSame( $data[2], self::qb()->from($this->table_name($table).' as t1')->where(array('t1.id2' => '2*', 't1.id3' => '2*'))->get() );
+		$this->assertSame( $data[2], self::qb()->from($this->table_name($table).' as t1')->where(array('t1.id2' => '', 't1.id3' => '2*'))->get() );
+		$this->assertSame( $data[2], self::qb()->from($this->table_name($table).' as t1')->where(array('t1.id2' => '2*', 't1.id3' => ''))->get() );
 
 		$this->assertSame( $data[1], self::qb()->from($this->table_name($table).' as t1')->where('id = 1')->get() );
 		$this->assertSame( $data[2], self::qb()->from($this->table_name($table).' as t1')->where('t1.id > 1')->get() );
