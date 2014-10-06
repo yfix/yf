@@ -127,13 +127,48 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		$result = self::migrator()->generate(array('tables_sql_php' => array(), 'safe_mode' => false));
 		$expected = $this->_load_expected($table1.'_full');
 		$this->assertEquals( $expected, $result );
-/*
-		foreach ((array)$this->_load_fixtures_list(__FUNCTION__) as $name => $path) {
-			$result = self::migrator()->generate(array('tables_sql_php' => $this->_load_fixture($name)));
-			$expected = $this->_load_expected($name);
-			$this->assertEquals( $expected, $result );
+	}
+	public function test_dump() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		self::prepare_sample_data(__FUNCTION__);
+		$table1 = __FUNCTION__.'_1';
+		$table2 = __FUNCTION__.'_2';
+
+		$dir_sql = 'share/db/sql/';
+		$ext_sql = '.sql.php';
+		$dir_sql_php = 'share/db/sql_php/';
+		$ext_sql_php = '.sql_php.php';
+		$expected = array(
+			'sql:'.$table1		=> APP_PATH. $dir_sql. $table1. $ext_sql,
+			'sql_php:'.$table1	=> APP_PATH. $dir_sql_php. $table1. $ext_sql_php,
+			'sql:'.$table2		=> APP_PATH. $dir_sql. $table2. $ext_sql,
+			'sql_php:'.$table2	=> APP_PATH. $dir_sql_php. $table2. $ext_sql_php,
+		);
+		// Cleanup
+		foreach ($expected as $k => $file) {
+			if (file_exists($file)) {
+				unlink($file);
+			}
+			$this->assertFileNotExists( $file );
 		}
-*/
+
+		$result = self::migrator()->dump(array('no_load_default' => true));
+		$this->assertEquals( $expected, $result );
+		foreach ($expected as $k => $file) {
+			$this->assertFileExists( $file );
+		}
+		$this->assertEquals( trim($this->_load_expected($table1.'_sql')), trim(include $result['sql:'.$table1]) );
+		$this->assertEquals( trim($this->_load_expected($table1.'_sql_php')), trim(include $result['sql_php:'.$table1]) );
+		$this->assertEquals( trim($this->_load_expected($table2.'_sql')), trim(include $result['sql:'.$table2]) );
+		$this->assertEquals( trim($this->_load_expected($table2.'_sql_php')), trim(include $result['sql_php:'.$table2]) );
+
+		// Cleanup
+		foreach ($expected as $k => $file) {
+			if (file_exists($file)) {
+				unlink($file);
+			}
+			$this->assertFileNotExists( $file );
+		}
 	}
 	public function test_create() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -153,13 +188,6 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		self::prepare_sample_data(__FUNCTION__);
 #		$result = self::migrator()->apply();
-// TODO
-#		$this->assertEquals( $expected, $result );
-	}
-	public function test_dump() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		self::prepare_sample_data(__FUNCTION__);
-#		$result = self::migrator()->dump();
 // TODO
 #		$this->assertEquals( $expected, $result );
 	}
