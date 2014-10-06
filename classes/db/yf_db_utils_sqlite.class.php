@@ -45,26 +45,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 
 	/**
 	*/
-	function table_exists($table, $extra = array(), &$error = false) {
-		if (strpos($table, '.') !== false) {
-			list($db_name, $table) = explode('.', trim($table));
-		}
-		if (!$table) {
-			$error = 'table_name is empty';
-			return false;
-		}
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!$db_name) {
-			$error = 'db_name is empty';
-			return false;
-		}
-		return (bool)in_array($table, (array)$this->list_tables($db_name));
-	}
-
-	/**
-	*/
 	function table_get_columns($table, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table_name is empty';
@@ -133,47 +113,9 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 
 	/**
 	*/
-	function create_table($table, $data = array(), $extra = array(), &$error = false) {
-		$orig_table = $table;
-		if (strpos($table, '.') !== false) {
-			list($db_name, $table) = explode('.', trim($table));
-		}
-		if (!$table) {
-			$error = 'table_name is empty';
-			return false;
-		}
-		if (!$extra['sql'] && $this->table_exists($table, $db_name)) {
-			$error = 'table_name already exists';
-			return false;
-		}
-		$data = ($extra['sql'] ?: $extra['data']) ?: $data;
-		if (is_array($data)) {
-			$data = $this->_compile_create_table($data, $extra, $error);
-		}
-		if (!$data) {
-			$data = $this->_get_table_structure_from_db_installer($table, $error);
-		}
-		if (!$data) {
-			$error = 'data is empty';
-			return false;
-		}
-		$sql = 'CREATE TABLE IF NOT EXISTS '.$this->_escape_table_name($table).' ('
-			. PHP_EOL. $data. PHP_EOL
-			. ')'.($table_options ? ' '.$table_options : '')
-			. ';'. PHP_EOL;
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-	}
-
-	/**
-	*/
-	function drop_table($table, $extra = array(), &$error = false) {
-		if (!$table) {
-			$error = 'table_name is empty';
-			return false;
-		}
-		$sql = 'DROP TABLE IF EXISTS '.$this->_escape_table_name($table);
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-	}
+// Inherited
+#	function create_table($table, $extra = array(), &$error = false) {
+#	}
 
 	/**
 	*/
@@ -199,33 +141,6 @@ class yf_db_utils_sqlite extends yf_db_utils_driver {
 
 	/**
 	*/
-	function list_columns($table, $extra = array(), &$error = false) {
-		return $this->table_get_columns($table, $extra, $error);
-	}
-
-	/**
-	*/
-	function column_exists($table, $col_name, $extra = array(), &$error = false) {
-		$columns = $this->table_get_columns($table, $extra, $error);
-		return isset($columns[$col_name]);
-	}
-
-	/**
-	*/
-	function column_info($table, $col_name, $extra = array(), &$error = false) {
-		$columns = $this->table_get_columns($table, $extra, $error);
-		return isset($columns[$col_name]) ? $columns[$col_name] : false;
-	}
-
-	/**
-	*/
-	function column_info_item($table, $col_name, $item_name, $extra = array(), &$error = false) {
-		$columns = $this->table_get_columns($table, $extra, $error);
-		return isset($columns[$col_name][$item_name]) ? $columns[$col_name][$item_name] : false;
-	}
-
-	/**
-	*/
 	function drop_column($table, $col_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
@@ -243,17 +158,6 @@ DROP TABLE t1_backup;
 COMMIT;
 */
 #		return $extra['sql'] ? $sql : $this->db->query($sql);
-	}
-
-	/**
-	*/
-	function add_column($table, $data, $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).' ADD COLUMN '.$this->_compile_create_table($data);
-		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
@@ -313,28 +217,6 @@ COMMIT;
 
 	/**
 	*/
-	function index_info($table, $index_name, &$error = false) {
-		if (!strlen($index_name)) {
-			$error = 'index name is empty';
-			return false;
-		}
-		$indexes = $this->list_indexes($table);
-		return isset($indexes[$index_name]) ? $indexes[$index_name] : false;
-	}
-
-	/**
-	*/
-	function index_exists($table, $index_name, &$error = false) {
-		if (!strlen($index_name)) {
-			$error = 'index name is empty';
-			return false;
-		}
-		$indexes = $this->list_indexes($table);
-		return isset($indexes[$index_name]);
-	}
-
-	/**
-	*/
 	function add_index($table, $index_name = '', $fields = array(), $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
@@ -390,18 +272,8 @@ COMMIT;
 
 	/**
 	*/
-	function update_index($table, $index_name, $fields = array(), $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-		if (!strlen($index_name)) {
-			$error = 'index name is empty';
-			return false;
-		}
-		$this->drop_index($table, $index_name, $extra, $error);
-		return $this->add_index($table, $index_name, $fields, $extra, $error);
-	}
+#	function update_index(
+#	}
 
 	/**
 	*/
@@ -420,28 +292,6 @@ COMMIT;
 
 	/**
 	*/
-	function foreign_key_info($table, $index_name, &$error = false) {
-		if (!strlen($index_name)) {
-			$error = 'index name is empty';
-			return false;
-		}
-		$keys = $this->list_foreign_keys($table);
-		return isset($keys[$index_name]) ? $keys[$index_name] : false;
-	}
-
-	/**
-	*/
-	function foreign_key_exists($table, $index_name, &$error = false) {
-		if (!strlen($index_name)) {
-			$error = 'index name is empty';
-			return false;
-		}
-		$keys = $this->list_foreign_keys($table);
-		return isset($keys[$index_name]);
-	}
-
-	/**
-	*/
 	function drop_foreign_key($table, $index_name, $extra = array(), &$error = false) {
 		if (!strlen($table)) {
 			$error = 'table name is empty';
@@ -453,59 +303,13 @@ COMMIT;
 
 	/**
 	*/
-	function add_foreign_key($table, $index_name = '', array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-		if (empty($fields)) {
-			$error = 'fields are empty';
-			return false;
-		}
-		if (!strlen($ref_table)) {
-			$error = 'referenced table name is empty';
-			return false;
-		}
-		if (empty($ref_fields)) {
-			$error = 'referenced fields are empty';
-			return false;
-		}
-		if (empty($index_name)) {
-			$index_name = $ref_table.'_'.implode('_', $ref_fields);
-		}
-		$supported_ref_options = array(
-			'restrict'	=> 'RESTRICT',
-			'cascade'	=> 'CASCADE',
-			'set_null'	=> 'SET NULL',
-			'no_action'	=> 'NO ACTION',
-		);
-		$on_delete = isset($extra['on_delete']) && isset($supported_ref_options[$extra['on_delete']]) ? $supported_ref_options[$extra['on_delete']] : '';
-		$on_update = isset($extra['on_update']) && isset($supported_ref_options[$extra['on_update']]) ? $supported_ref_options[$extra['on_update']] : '';
-
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).PHP_EOL
-			. ' ADD CONSTRAINT '.$this->_escape_key($index_name).PHP_EOL
-			. ' FOREIGN KEY ('.implode(',', $this->_escape_fields($fields)).')'.PHP_EOL
-			. ' REFERENCES '.$this->_escape_key($ref_table).' ('.implode(',', $this->_escape_fields($ref_fields)).')'.PHP_EOL
-			. ($on_delete ? ' ON DELETE '.$on_delete : '').PHP_EOL
-			. ($on_update ? ' ON UPDATE '.$on_update : '')
-		;
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-	}
+#	function add_foreign_key(
+#	}
 
 	/**
 	*/
-	function update_foreign_key($table, $index_name, array $fields, $ref_table, array $ref_fields, $extra = array(), &$error = false) {
-		if (!strlen($table)) {
-			$error = 'table name is empty';
-			return false;
-		}
-		if (!strlen($index_name)) {
-			$error = 'index name is empty';
-			return false;
-		}
-		$this->drop_foreign_key($table, $index_name, $extra, $error);
-		return $this->add_foreign_key($table, $index_name, $fields, $ref_table, $ref_fields, $extra, $error);
-	}
+#	function update_foreign_key(
+#	}
 
 	/**
 	*/
@@ -518,34 +322,6 @@ COMMIT;
 			return false;
 		}
 // TODO: port code from mysql
-	}
-
-	/**
-	*/
-	function view_exists($table, $extra = array(), &$error = false) {
-		if (strpos($table, '.') !== false) {
-			list($db_name, $table) = explode('.', trim($table));
-		}
-		if (!$table) {
-			$error = 'table_name is empty';
-			return false;
-		}
-		$views = $this->list_views($db_name);
-		return (bool)isset($views[$table]);
-	}
-
-	/**
-	*/
-	function view_info($table, $extra = array(), &$error = false) {
-		if (strpos($table, '.') !== false) {
-			list($db_name, $table) = explode('.', trim($table));
-		}
-		if (!$table) {
-			$error = 'table_name is empty';
-			return false;
-		}
-		$views = $this->list_views($db_name);
-		return isset($views[$table]) ? $views[$table] : false;
 	}
 
 	/**
@@ -586,97 +362,6 @@ COMMIT;
 			);
 		}
 		return $triggers;
-	}
-
-	/**
-	*/
-	function trigger_exists($name, $extra = array(), &$error = false) {
-		if (strpos($name, '.') !== false) {
-			list($db_name, $name) = explode('.', trim($name));
-		}
-		if (!$name) {
-			$error = 'trigger name is empty';
-			return false;
-		}
-		$triggers = $this->list_triggers($db_name, $extra, $error);
-		return (bool)isset($triggers[$name]);
-	}
-
-	/**
-	*/
-	function trigger_info($name, $extra = array(), &$error = false) {
-		if (strpos($name, '.') !== false) {
-			list($db_name, $name) = explode('.', trim($name));
-		}
-		if (!$name) {
-			$error = 'trigger name is empty';
-			return false;
-		}
-		if (!$db_name) {
-			$db_name = $this->db->DB_NAME;
-		}
-		if (!$db_name) {
-			$error = 'db_name is empty';
-			return false;
-		}
-		$triggers = $this->list_triggers($db_name, $extra, $error);
-		return isset($triggers[$name]) ? $triggers[$name] : false;
-	}
-
-	/**
-	*/
-	function drop_trigger($name, $extra = array(), &$error = false) {
-		if (!strlen($name)) {
-			$error = 'name is empty';
-			return false;
-		}
-		$sql = 'DROP TRIGGER IF EXISTS '.$this->_escape_table_name($name);
-		return $extra['sql'] ? $sql : $this->db->query($sql);
-	}
-
-	/**
-	*/
-	function create_trigger($name, $table, $trigger_time, $trigger_event, $trigger_body, $extra = array(), &$error = false) {
-		if (strpos($name, '.') !== false) {
-			list($db_name, $name) = explode('.', trim($name));
-		}
-		if (!$name) {
-			$error = 'trigger name is empty';
-			return false;
-		}
-		if (strpos($table, '.') !== false) {
-			list($db_name, $table) = explode('.', trim($table));
-		}
-		if (!$table) {
-			$error = 'trigger table is empty';
-			return false;
-		}
-		$supported_trigger_times = array(
-			'before',
-			'after'
-		);
-		if (!strlen($trigger_time) || !in_array(strtolower($trigger_time), $supported_trigger_times)) {
-			$error = 'trigger time is wrong';
-			return false;
-		}
-		$supported_trigger_events = array(
-			'insert',
-			'update',
-			'delete'
-		);
-		if (!strlen($trigger_event) || !in_array(strtolower($trigger_event), $supported_trigger_events)) {
-			$error = 'trigger event is wrong';
-			return false;
-		}
-		if (!strlen($trigger_body)) {
-			$error = 'trigger body is empty';
-			return false;
-		}
-		$sql = 'CREATE TRIGGER '.$this->_escape_table_name($db_name.'.'.$name). PHP_EOL
-			. ' '.strtoupper($trigger_time). ' '.strtoupper($trigger_event). PHP_EOL
-			. ' ON '.$this->_escape_table_name($db_name.'.'.$table).' FOR EACH ROW '
-			. $trigger_body;
-		return $extra['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
