@@ -128,15 +128,19 @@ abstract class yf_db_migrator {
 			}
 			$indexes['new'][$name] = $info;
 		}
-// TODO: remove DB_PREFIX from ref_table
 		foreach ((array)$t1['foreign_keys'] as $name => $info) {
+			// remove DB_PREFIX from ref_table
 			if ($prefix_len && $info['ref_table'] && substr($info['ref_table'], 0, $prefix_len) === $db_prefix) {
 				$info['ref_table'] = substr($info['ref_table'], $prefix_len);
 			}
 			if (!isset($t2['foreign_keys'][$name])) {
 				$foreign_keys['missing'][$name] = $info;
 			} else {
-				$diff = $this->compare_foreign_key($info, $t2['foreign_keys'][$name]);
+				$info2 = $t2['foreign_keys'][$name];
+				if ($prefix_len && $info2['ref_table'] && substr($info2['ref_table'], 0, $prefix_len) === $db_prefix) {
+					$info2['ref_table'] = substr($info2['ref_table'], $prefix_len);
+				}
+				$diff = $this->compare_foreign_key($info, $info2);
 				if (!$diff) {
 					continue;
 				}
@@ -146,6 +150,10 @@ abstract class yf_db_migrator {
 		foreach ((array)$t2['foreign_keys'] as $name => $info) {
 			if (isset($t1['foreign_keys'][$name])) {
 				continue;
+			}
+			// remove DB_PREFIX from ref_table
+			if ($prefix_len && $info['ref_table'] && substr($info['ref_table'], 0, $prefix_len) === $db_prefix) {
+				$info['ref_table'] = substr($info['ref_table'], $prefix_len);
 			}
 			// Check that current foreign key not used in db with different name
 			foreach ((array)$foreign_keys['missing'] as $m_name => $m_info) {
