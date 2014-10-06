@@ -62,7 +62,7 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		return $out;
 	}
 	public function _load_fixture($name) {
-		$path = __DIR__.'/migrator_fixtures/'.$name.'.sql_php.php';
+		$path = __DIR__.'/migrator_fixtures/'.$name.'.fixture.php';
 		if (!file_exists($path)) {
 			return array();
 		}
@@ -83,16 +83,38 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 #	_create_migration_body
 #	dump_db_installer_sql
 
-	public function test_compare() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 #		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 #		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
-		$table1 = __FUNCTION__.'_1';
-		$table2 = __FUNCTION__.'_2';
-		self::prepare_sample_data(__FUNCTION__);
 
 #		$tables_sql_php = $this->_load_fixture(__FUNCTION__);
 #		$expected = $this->_load_expected(__FUNCTION__);
+
+
+	public function test_cleanup_table_sql_php() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		self::prepare_sample_data(__FUNCTION__);
+		$name = __FUNCTION__.'_1';
+		$sample = $this->_load_fixture($name);
+		$this->assertNotEmpty( $sample );
+		$expected = $this->_load_expected($name);
+		$this->assertNotEmpty( $expected );
+		$result = self::migrator()->_cleanup_table_sql_php($sample, self::utils()->db->DB_PREFIX);
+		$this->assertEquals( $expected, $result );
+	}
+	public function test_get_real_table_sql_php() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		self::prepare_sample_data(__FUNCTION__);
+		$name = __FUNCTION__.'_1';
+		$expected = $this->_load_expected($name);
+		$this->assertNotEmpty( $expected );
+		$result = self::migrator()->get_real_table_sql_php($name);
+		$this->assertEquals( $expected, $result );
+	}
+	public function test_compare() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		self::prepare_sample_data(__FUNCTION__);
+		$table1 = __FUNCTION__.'_1';
+		$table2 = __FUNCTION__.'_2';
 
 		$result = self::migrator()->compare(array('tables_sql_php' => array()));
 		$expected = array(
