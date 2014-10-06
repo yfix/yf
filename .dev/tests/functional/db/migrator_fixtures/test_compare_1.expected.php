@@ -10,7 +10,6 @@ return array(
 					'unsigned' => true,
 					'nullable' => false,
 					'auto_inc' => true,
-					'primary' => true,
 				),
 				'name' => array(
 					'name' => 'name',
@@ -32,7 +31,6 @@ return array(
 					'type' => 'int',
 					'length' => 10,
 					'nullable' => false,
-					'primary' => true,
 				),
 			),
 			'indexes_changed' => array(
@@ -44,10 +42,6 @@ return array(
 						'actual' => array(
 							'id' => 'id',
 						),
-					),
-					'raw' => array(
-						'expected' => 'PRIMARY KEY (`category_id`)',
-						'actual' => NULL,
 					),
 				),
 			),
