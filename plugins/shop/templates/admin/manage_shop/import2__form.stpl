@@ -181,21 +181,30 @@
 			статус
 			<div ng-show="item_data.test">
 				<span class="btn btn-small"
-					ng-click="item_filter_status=undefined"
+					ng-class="{ active: item_filter_status == undefined }"
+					ng-click="item_filter_status = undefined"
 				>
-					<i class="fa fa-pie-chart"></i>
+					<i
+						ng-show="item_filter_status == undefined"
+						class="fa fa-pie-chart"></i>
 					({{item_data.test.count}})
 				</span>
 				<span class="btn btn-small btn-success"
-					ng-click="item_filter_status=true"
+					ng-class="{ active: item_filter_status == true }"
+					ng-click="item_filter_status = true"
 				>
-					<i class="fa fa-check"></i>
+					<i
+						ng-show="item_filter_status == true"
+						class="fa fa-check"></i>
 					({{item_data.test.count_valid}})
 				</span>
 				<span class="btn btn-small btn-danger"
-					ng-click="item_filter_status=false"
+					ng-class="{ active: item_filter_status == false }"
+					ng-click="item_filter_status = false"
 				>
-					<i class="fa fa-exclamation"></i>
+					<i
+						ng-show="item_filter_status == false"
+						class="fa fa-exclamation"></i>
 					({{item_data.test.count_invalid}})
 				</span>
 			</div>
