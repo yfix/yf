@@ -518,9 +518,16 @@ WHERE table_schema = "schemaname"
 				$table_options[$name] = $extra['options'][$name];
 			}
 		}
+		$plen = strlen($this->db->DB_PREFIX);
+		$need_fix = $db_name == $this->db->DB_NAME;
+		if ($need_fix && $extra['foreign_keys'] && $plen) {
+			foreach ((array)$extra['foreign_keys'] as $fname => $finfo) {
+				$extra['foreign_keys'][$fname]['ref_table'] = $this->db->_fix_table_name($finfo['ref_table']);
+			}
+		}
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 		$sql = $parser->create(array(
-			'name'			=> $db_name.'.'.$table,
+			'name'			=> $db_name.'.'.($need_fix ? $this->db->_fix_table_name($table) : $table),
 			'fields'		=> $extra['fields'],
 			'indexes'		=> $extra['indexes'],
 			'foreign_keys'	=> $extra['foreign_keys'],
@@ -1028,10 +1035,10 @@ WHERE table_schema = "schemaname"
 		$on_delete = isset($extra['on_delete']) ? $extra['on_delete'] : '';
 		$on_update = isset($extra['on_update']) ? $extra['on_update'] : '';
 
-		$sql = 'ALTER TABLE '.$this->_escape_table_name($table).PHP_EOL
+		$sql = 'ALTER TABLE '.$this->_escape_table_name($this->db->_fix_table_name($table)).PHP_EOL
 			. ' ADD CONSTRAINT '.$this->_escape_key($index_name).PHP_EOL
 			. ' FOREIGN KEY ('.implode(',', $this->_escape_fields($fields)).')'.PHP_EOL
-			. ' REFERENCES '.$this->_escape_key($ref_table).' ('.implode(',', $this->_escape_fields($ref_fields)).')'.PHP_EOL
+			. ' REFERENCES '.$this->_escape_key($this->db->_fix_table_name($ref_table)).' ('.implode(',', $this->_escape_fields($ref_fields)).')'.PHP_EOL
 			. ($on_delete ? ' ON DELETE '.strtoupper(str_replace('_', ' ', $on_delete)) : '').PHP_EOL
 			. ($on_update ? ' ON UPDATE '.strtoupper(str_replace('_', ' ', $on_update)) : '')
 		;
