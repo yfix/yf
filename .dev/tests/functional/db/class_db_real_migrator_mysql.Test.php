@@ -259,6 +259,15 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 		$table1 = __FUNCTION__.'_1';
 		$table2 = __FUNCTION__.'_2';
 
+		$existing = self::migrator()->_list();
+		if (!empty($existing)) {
+			foreach ($existing as $name => $path) {
+				unlink($path);
+			}
+			$existing = self::migrator()->_list();
+		}
+		$this->assertEmpty( $existing );
+
 		$mg_path = self::migrator()->create(array('tables_sql_php' => array(), 'safe_mode' => true, 'no_load_default' => true));
 		$this->assertNotEmpty( $mg_path );
 		$this->assertFileExists( $mg_path );
