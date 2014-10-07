@@ -1363,14 +1363,28 @@ class yf_db {
 	* Get real table name from its short variant
 	*/
 	function _real_name ($name) {
+		$name = trim($name);
+		if (!strlen($name)) {
+			return false;
+		}
+		$db = '';
+		$table = '';
+		if (strpos($name, '.') !== false) {
+			list($db, $table) = explode('.', $name);
+			$db = trim($db);
+			$table = trim($table);
+		} else {
+			$table = $name;
+		}
 		if (isset($this->_found_tables[$name])) {
 			return $this->_found_tables[$name];
 		}
 		$name = (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
-		if (strlen($this->DB_PREFIX) && substr($name, 0, strlen($this->DB_PREFIX)) != $this->DB_PREFIX) {
-			return $this->DB_PREFIX. $name;
+		$plen = strlen($this->DB_PREFIX);
+		if ($plen && substr($name, 0, $plen) !== $this->DB_PREFIX) {
+			return ($db ? $db.'.' : ''). $this->DB_PREFIX. $name;
 		} else {
-			return $name;
+			return ($db ? $db.'.' : ''). $name;
 		}
 	}
 
@@ -1378,18 +1392,29 @@ class yf_db {
 	* Try to fix table name
 	*/
 	function _fix_table_name($name = '') {
+		$name = trim($name);
+		if (!strlen($name)) {
+			return false;
+		}
+		$db = '';
+		$table = '';
+		if (strpos($name, '.') !== false) {
+			list($db, $name) = explode('.', $name);
+			$db = trim($db);
+			$name = trim($name);
+		}
 		if (!strlen($name)) {
 			return '';
 		}
 		if (substr($name, 0, strlen('dbt_')) == 'dbt_') {
 			$name = substr($name, strlen('dbt_'));
 		}
-		$orig_name = $name;
 		$name_wo_db_prefix = $name;
-		if ($this->DB_PREFIX && substr($name, 0, strlen($this->DB_PREFIX)) == $this->DB_PREFIX) {
-			$name_wo_db_prefix = substr($name, strlen($this->DB_PREFIX));
+		$plen = strlen($this->DB_PREFIX);
+		if ($plen && substr($name, 0, $plen) === $this->DB_PREFIX) {
+			$name_wo_db_prefix = substr($name, $plen);
 		}
-		return $this->DB_PREFIX. (in_array($name_wo_db_prefix, $this->_need_sys_prefix) ? 'sys_' : ''). $name_wo_db_prefix;
+		return ($db ? $db.'.' : ''). $this->DB_PREFIX. (in_array($name_wo_db_prefix, $this->_need_sys_prefix) ? 'sys_' : ''). $name_wo_db_prefix;
 	}
 
 	/**
