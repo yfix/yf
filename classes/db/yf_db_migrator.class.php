@@ -20,9 +20,11 @@ abstract class yf_db_migrator {
 		$utils = $this->db->utils();
 		$db_prefix = $this->db->DB_PREFIX;
 
-		$tables_installer_info = isset($params['tables_sql_php']) ? $params['tables_sql_php'] : $installer->TABLES_SQL_PHP;
+		$tables_installer_info = isset($params['tables_sql_php']) ? (array)$params['tables_sql_php'] : (array)$installer->TABLES_SQL_PHP;
 		$tables_installer = array_keys($tables_installer_info);
-		$tables_installer = array_combine($tables_installer, $tables_installer);
+		if ($tables_installer) {
+			$tables_installer = array_combine($tables_installer, $tables_installer);
+		}
 		ksort($tables_installer);
 
 		$tables_real = array();

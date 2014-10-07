@@ -1,18 +1,20 @@
 <?php
 
-$handlers_dirs = array(
-	'yf_main'			=> YF_PATH.'share/data_handlers/',
-	'yf_plugins'		=> YF_PATH.'plugins/*/share/data_handlers/',
-	'project_main'		=> PROJECT_PATH.'share/data_handlers/',
-	'project_plugins'	=> PROJECT_PATH.'plugins/*/share/data_handlers/',
+$h_suffix = '.h.php';
+$h_dir = 'share/data_handlers/';
+$globs = array(
+	'yf_main'				=> YF_PATH. $h_dir. '*'. $h_suffix,
+	'yf_plugins'			=> YF_PATH. 'plugins/*/'. $h_dir. '*'. $h_suffix,
+	'project_main'			=> PROJECT_PATH. $h_dir. '*'. $h_suffix,
+	'project_app'			=> APP_PATH. $h_dir. '*'. $h_suffix,
+	'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $h_dir. '*'. $h_suffix,
+	'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $h_dir. '*'. $h_suffix,
 );
 $handlers = array();
-$h_suffix = '.h.php';
 $strlen_suffix = strlen($h_suffix);
-foreach ($handlers_dirs as $handlers_dir) {
-	$strlen_dir = strlen($handlers_dir);
-	foreach(glob($handlers_dir.'*'.$h_suffix) as $path) {
-		$name = substr($path, $strlen_dir, -$strlen_suffix);
+foreach($globs as $gname => $glob) {
+	foreach(glob($glob) as $path) {
+		$name = substr(basename($path), 0, -$strlen_suffix);
 		$handlers[$name] = $path;
 	}
 }

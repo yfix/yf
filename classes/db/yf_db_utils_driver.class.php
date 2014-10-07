@@ -1365,7 +1365,9 @@ WHERE table_schema = "schemaname"
 			$type = $m['type'];
 		}
 		$types = $this->_get_supported_field_types();
-		$types = array_combine($types, $types);
+		if ($types) {
+			$types = array_combine($types, $types);
+		}
 		if ($type) {
 			$type = strtolower($type);
 			foreach ((array)$types as $_type) {

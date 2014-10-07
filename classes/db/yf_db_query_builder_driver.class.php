@@ -462,9 +462,14 @@ abstract class yf_db_query_builder_driver {
 					} else {
 						$tmp = array();
 						foreach ($v as $k2 => $v2) {
-							$tmp[] = $this->_process_where_cond($k2, '=', $v2);
+							$_tmp = $this->_process_where_cond($k2, '=', $v2);
+							if ($_tmp) {
+								$tmp[] = $_tmp;
+							}
 						}
-						$a[] = implode(' AND ', $tmp);
+						if ($tmp) {
+							$a[] = implode(' AND ', $tmp);
+						}
 					}
 				} elseif (is_callable($v)) {
 					$a[] = $v($where, $this);
@@ -643,16 +648,21 @@ abstract class yf_db_query_builder_driver {
 					} else {
 						$tmp = array();
 						foreach ($v as $k2 => $v2) {
-							$tmp[] = $this->_process_where_cond($k2, '=', $v2);
+							$_tmp = $this->_process_where_cond($k2, '=', $v2);
+							if ($_tmp) {
+								$tmp[] = $_tmp;
+							}
 						}
-						$a[] = implode(' AND ', $tmp);
+						if ($tmp) {
+							$a[] = implode(' AND ', $tmp);
+						}
 					}
 				} elseif (is_callable($v)) {
 					$a[] = $v($where, $this);
 				}
 			}
 			if ($a) {
-				$sql = implode(', ', $a);
+				$sql = implode(' AND ', $a);
 			}
 		}
 		if ($sql) {
