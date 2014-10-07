@@ -2,6 +2,7 @@
 	try {
 		var ng_app_admin = angular.module( '{ng_app}', [
 			'ngAnimate'
+			, 'ngRoute'
 			, 'ngSanitize'
 			, 'ngResource'
 			, 'ngTouch'

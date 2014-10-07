@@ -1,5 +1,6 @@
 {catch( js_min )}{if( const.DEBUG_MODE eq 0 )}.min{/if}{/catch}
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular{js_min}.js" class="yf_core"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-route{js_min}.js" class="yf_core"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-animate{js_min}.js" class="yf_core"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-sanitize{js_min}.js" class="yf_core"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-resource{js_min}.js" class="yf_core"></script>

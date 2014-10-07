@@ -77,7 +77,7 @@
 		<th>действия</th>
 	</tr>
 	<tr
-		ng-repeat     = "i in data._upload_list | orderObjectBy: { status: 'upload_list_filter__status', filter: 'upload_list_filter', order: 'time', reverse: 'true' }"
+		ng-repeat     = "i in data._upload_list | filterRE: { status: 'upload_list_filter__status', filter: 'upload_list_filter', order: 'time', reverse: 'true' }"
 		class         = "upload_list"
 		ng-class      = "{ upload_list_hover: upload_list_hover, success: upload_list_hover }"
 		ng-mouseover  = "upload_list_hover=true"
@@ -237,3 +237,21 @@
 </table>
 
 </div>
+
+{{--
+<script type="text/ng-template" id="_ng_view__default">
+<div class="ng-cloak">
+	Root view
+</div>
+</script>
+
+<script type="text/ng-template" id="_ng_view__test">
+<div class="ng-cloak">
+	Test view
+</div>
+</script>
+
+<div class="ng-cloak" ng-view>
+View
+</div>
+ --}}

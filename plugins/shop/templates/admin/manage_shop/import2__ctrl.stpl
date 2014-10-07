@@ -2,7 +2,9 @@
 <script>
 (function () { 'use strict';
 
-ng_app_admin.factory( 'Uploader', function( ApiConfig, $q, $rootScope, $window, $log ) {
+ng_app_admin.factory( 'Uploader',
+[ 'ApiConfig', '$q', '$rootScope', '$window', '$log',
+function( ApiConfig, $q, $rootScope, $window, $log ) {
 	var service = {};
 	service.response = {};
 	var _parse_response = function( xhr ) {
@@ -52,9 +54,11 @@ ng_app_admin.factory( 'Uploader', function( ApiConfig, $q, $rootScope, $window, 
 		return( deferred.promise );
 	};
 	return( service );
-});
+}]);
 
-ng_app_admin.factory( 'UploadApi',  function( ApiConfig, $resource, $window, $log ) {
+ng_app_admin.factory( 'UploadApi',
+[ 'ApiConfig', '$resource', '$window', '$log',
+function( ApiConfig, $resource, $window, $log ) {
 	var service = {};
 	service.url_list = ApiConfig.url.upload_list || $window.location.href;
 	service.url_item = ApiConfig.url.upload_item || $window.location.href;
@@ -77,9 +81,11 @@ ng_app_admin.factory( 'UploadApi',  function( ApiConfig, $resource, $window, $lo
 		return( service.resource.item__import({ option: option }) );
 	};
 	return( service );
-});
+}]);
 
-ng_app_admin.directive( 'fileUpload', function( ApiConfig, Uploader, $alert, $timeout, $parse, $window, $log ) {
+ng_app_admin.directive( 'fileUpload',
+[ 'ApiConfig', 'Uploader', '$alert', '$timeout', '$parse', '$window', '$log',
+function( ApiConfig, Uploader, $alert, $timeout, $parse, $window, $log ) {
 	return {
 		restrict: 'AE',
 		link: function( $scope, element, attrs ) {
@@ -178,9 +184,11 @@ ng_app_admin.directive( 'fileUpload', function( ApiConfig, Uploader, $alert, $ti
 			+ '<input class="ngfu-upload-file" type="file" ng-hide="true">'
 		,
 	}
-});
+}]);
 
-ng_app_admin.filter( 'orderObjectBy', function( $log ) {
+ng_app_admin.filter( 'filterRE',
+[ '$log',
+function( $log ) {
 	return function( items, options ) {
 		var $scope       = this;
 		var filtered     = [];
@@ -226,8 +234,11 @@ ng_app_admin.filter( 'orderObjectBy', function( $log ) {
 		if( reverse ) { filtered.reverse(); }
 		return( filtered );
 	};
-});
-ng_app_admin.filter( 'pagination', function( $log ) {
+}]);
+
+ng_app_admin.filter( 'pagination',
+[ '$log',
+function( $log ) {
 	return function( items, options ) {
 		if( !angular.isArray( items ) ) { return( items ); }
 		// calc pages
@@ -238,9 +249,11 @@ ng_app_admin.filter( 'pagination', function( $log ) {
 		result = items.slice( result.from, result.to );
 		return( result );
 	}
-});
+}]);
 
-ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
+ng_app_admin.controller( '{_ng_controller}',
+[ 'UploadApi', '$alert', '$tooltip', '$scope', '$filter', '$log',
+function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 	$scope.data = {_ng_data};
 	$scope.item_data_tooltip = {
 		title: ''
@@ -498,7 +511,7 @@ ng_app_admin.controller( '{_ng_controller}', function( UploadApi, $alert, $toolt
 	};
 	// init
 	_prepare__upload_list( $scope );
-});
+}]);
 
 // config
 ng_app_admin.constant( 'ApiConfig', {
@@ -509,14 +522,28 @@ ng_app_admin.constant( 'ApiConfig', {
 	}
 });
 
-ng_app_admin.config( function( $alertProvider ) {
+ng_app_admin.config(
+[ '$alertProvider',
+function( $alertProvider ) {
 	angular.extend( $alertProvider.defaults, {
 		container : '.notifications',
 		duration  : 5,
 		placement : 'top-left',
 		type      : 'info',
 	});
-});
+}]);
+
+{{--
+ng_app_admin.config(
+[ '$routeProvider', '$locationProvider',
+function( $routeProvider, $locationProvider ) {
+	$routeProvider
+		.when( '/test', {
+			templateUrl: '_ng_view__test',
+		})
+		.otherwise({ templateUrl: '_ng_view__default' });
+}]);
+--}}
 
 })();
 </script>
