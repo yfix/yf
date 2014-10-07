@@ -221,7 +221,7 @@
 				data-trigger="hover"
 				data-placement="left"
 				bs-tooltip="{ title: item.status_message }"
-				ng-show="item.status_message"
+				ng-show="item.status == false"
 			>
 				<i class="fa fa-info-circle"></i>
 			</span>

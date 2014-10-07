@@ -417,13 +417,41 @@ class yf_manage_shop_import_products2 {
 		}
 		// test import items
 		$_upload_item__import_test = $this->_upload_item__import_test( $option );
+		$status = $this->_upload_item__import_action_test( $option, $import_test );
 		$result = array(
 			'data'   => array(
 				'id'           => $id,
 				'_import_test' => $_upload_item__import_test,
 			),
-			'status' => false,
+			'status' => $status,
 		);
+		return( $result );
+	}
+
+	protected function _upload_item__import_action_test( $option, $import_test ) {
+		$action = $option[ 'action' ];
+		$fields = $option[ 'fields' ];
+		$result = false;
+		// test action, fields
+		if( empty( $action ) || empty( $fields ) ) { return( $result ); }
+		// test rules
+		$import_rulues = $this->import_rulues;
+		$rulues = $import_rulues[ $action ];
+		if( empty( $rulues ) ) { return( $result ); }
+		// test fields
+		$keys = array_values( $fields );
+		$fields_test = array_combine( $keys, $keys ); unset( $fields_test[ 0 ] );
+		foreach( $rulues[ 'key' ] as $keys ) {
+			$test = true;
+			foreach( $keys as $key ) {
+				if( !isset( $fields_test[ $key ] ) ) {
+					$test = false;
+					break;
+				}
+			}
+			if( $test ) { break; }
+		}
+		$result = $test ? true : false;
 		return( $result );
 	}
 
@@ -462,7 +490,6 @@ class yf_manage_shop_import_products2 {
 				'exists_message' => '',
 				'status'         => $status,
 				'status_message' => 'правильный формат',
-
 			);
 			foreach( $import_fields_test as $field_index => $field ) {
 				$value = $item[ $field_index ];

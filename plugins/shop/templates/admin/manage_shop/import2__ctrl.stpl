@@ -389,7 +389,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			$scope.notifications( title, content );
 			// get test data
 			var test        = result.response.action.data.test.data._import_test;
-			var test_status = result.response.action.data.test.data.status;
+			var test_status = result.response.action.data.test.status;
 			// get data
 			result.response.action.data.test = null;
 			$scope.item_data = result.response.action.data;
@@ -437,9 +437,12 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 		var title   = $scope.item_data.file + ':';
 		var content = result.response.action.status_message;
 		var type    = 'info';
-		var test = result.response.action;
-		$scope.item_data.test = test.data._import_test;
-		$scope.item_data.test_status = test.status;
+		// get test data
+		var action  = result.response.action;
+		var test        = action.data._import_test;
+		var test_status = action.status;
+		$scope.item_data.test        = test;
+		$scope.item_data.test_status = test_status;
 			angular.forEach( $scope.item_data.test.items, function( item, index ) {
 				this[ index ][ 'status'         ] = item[ 'status'         ];
 				this[ index ][ 'status_message' ] = item[ 'status_message' ];
