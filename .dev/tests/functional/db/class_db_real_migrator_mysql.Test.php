@@ -32,6 +32,8 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 	}
 	protected function prepare_sample_data($fname) {
 		self::utils()->truncate_database(self::db_name());
+		$this->assertEmpty( self::utils()->list_tables() );
+
 		$table1 = self::utils()->db->DB_PREFIX. $fname.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. $fname.'_2';
 		$data = array(
@@ -43,8 +45,8 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 			),
 		);
 		$fkey = 'fkey_'.__FUNCTION__;
-		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table1), $data) );
-		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table2), $data) );
+		$this->assertNotEmpty( self::utils()->create_table(self::table_name($table1), $data) );
+		$this->assertNotEmpty( self::utils()->create_table(self::table_name($table2), $data) );
 		$expected = array(
 			'name' => $fkey,
 			'columns' => array('id' => 'id'),
@@ -53,8 +55,8 @@ class class_db_real_migrator_mysql_test extends db_real_abstract {
 			'on_update' => 'RESTRICT',
 			'on_delete' => 'RESTRICT'
 		);
-		$this->assertNotEmpty( self::utils()->add_foreign_key($this->table_name($table1), $expected) );
-		$this->assertEquals( $expected, self::utils()->foreign_key_info($this->table_name($table1), $fkey) );
+		$this->assertNotEmpty( self::utils()->add_foreign_key(self::table_name($table1), $expected) );
+		$this->assertEquals( $expected, self::utils()->foreign_key_info(self::table_name($table1), $fkey) );
 	}
 	public function _load_fixtures_list($name) {
 		$out = array();
