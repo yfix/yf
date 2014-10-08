@@ -2130,6 +2130,13 @@ class yf_form2 {
 	}
 
 	/**
+	* Alias
+	*/
+	function insert_if_ok($table, $fields, $add_fields = array(), $extra = array()) {
+		return $this->db_insert_if_ok($table, $fields, $add_fields, $extra);
+	}
+
+	/**
 	*/
 	function db_insert_if_ok($table, $fields, $add_fields = array(), $extra = array()) {
 		$extra['add_fields'] = $add_fields;
@@ -2137,10 +2144,24 @@ class yf_form2 {
 	}
 
 	/**
+	* Alias
+	*/
+	function update_if_ok($table, $fields, $where_id, $extra = array()) {
+		return $this->db_update_if_ok($table, $fields, $where_id, $extra);
+	}
+
+	/**
 	*/
 	function db_update_if_ok($table, $fields, $where_id, $extra = array()) {
 		$extra['where_id'] = $where_id;
 		return $this->_db_change_if_ok($table, $fields, 'update', $extra);
+	}
+
+	/**
+	* Alias
+	*/
+	function change_if_ok($table, $fields, $type, $extra = array()) {
+		return $this->_db_change_if_ok($table, $fields, $type, $extra);
 	}
 
 	/**
@@ -2199,7 +2220,7 @@ class yf_form2 {
 				if (!$redirect_link) {
 					$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : '');
 				}
-				if (!$extra['no_redirect']) {
+				if (!$extra['no_redirect'] && !main()->is_console()) {
 					js_redirect($redirect_link);
 				}
 			}

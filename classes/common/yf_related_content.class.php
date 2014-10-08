@@ -151,7 +151,7 @@ class yf_related_content {
 		// Prepare fields to return as string for SQL
 		$_tmp = array();
 		foreach ((array)$FIELDS_RETURN as $k => $v) {
-			$_tmp[$k] = db()->enclose_field_name($v);
+			$_tmp[$k] = db()->escape_key($v);
 		}
 		$fields_to_return_sql = implode(', ', $_tmp);
 		unset($_tmp);
