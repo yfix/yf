@@ -1237,8 +1237,8 @@ class yf_main {
 					if (is_callable($data)) {
 						$data = $data($params);
 					}
-				} elseif (is_callable($data)) {
-					$data = $data($params);
+				} elseif (is_callable($handler)) {
+					$data = $handler($params);
 				}
 				if (!$data) {
 					$data = array();
