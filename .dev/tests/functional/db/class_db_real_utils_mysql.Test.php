@@ -22,9 +22,25 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		return self::$DB_NAME;
 	}
 	public static function table_name($name) {
-		return self::db_name().'.'.$name;
+		$prefix = self::$db->DB_PREFIX;
+		$plen = strlen($prefix);
+		$need_prefix = false;
+		if ($plen && strlen($name) && substr($name, 0, $plen) !== $prefix) {
+			$need_prefix = true;
+		}
+		return self::db_name().'.'. ($need_prefix ? $prefix : ''). $name;
 	}
 
+	public function test_fix_table_name() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$table = 'missing_tbl_'.substr(md5(microtime()), 0, 8);
+		$table_prepared = $this->table_name($table);
+		$this->assertNotEquals( $table, $table_prepared );
+		$this->assertEquals( self::$db->DB_PREFIX, self::utils()->db->DB_PREFIX );
+
+		$this->assertEquals( self::$db->DB_PREFIX. $table, self::utils()->db->_fix_table_name($table) );
+		$this->assertEquals( self::db_name().'.'.self::$db->DB_PREFIX. $table, self::utils()->db->_fix_table_name($table_prepared) );
+	}
 	public function test_list_collations() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertNotEmpty( self::utils()->list_collations() );
@@ -492,6 +508,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	public function test_list_foreign_keys() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
+
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$data = array(
