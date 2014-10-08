@@ -156,7 +156,7 @@ class yf_tpl_driver_yf {
 		$compiled_string = null;
 # TODO: add ability to use memcached or other fast cache-oriented storage instead of files => lower disk IO
 		$compiled_storage = 'files';
-		if ($compiled_storage == 'files') {
+		if ($compiled_storage === 'files') {
 			$compiled_cache_name = $name.'@'.$params['force_storage'].'@'.MAIN_TYPE;
 			if (isset($this->_compiled_cache[$compiled_cache_name])) {
 				list($compiled_string, $compiled_mtime) = $this->_compiled_cache[$compiled_cache_name];
@@ -262,12 +262,12 @@ class yf_tpl_driver_yf {
 		$pattern = '/\{(include|include_if_exists)\(\s*["\']{0,1}\s*([@:\w\\/\.]+)\s*["\']{0,1}?\s*[,;]{0,1}\s*([^"\'\)\}]*)\s*["\']{0,1}\s*\)\}/ims';
 		$extra = array();
 		$func = function($m) use ($replace, $name, $_this, $extra) {
-			$if_exists = ($m[1] == 'include_if_exists');
+			$if_exists = ($m[1] === 'include_if_exists');
 			$stpl_name = $m[2];
 			$_replace = $m[3];
 			$force_storage = '';
 			// Force to include template from special storage, example: @framework:script_js
-			if ($stpl_name[0] == '@') {
+			if ($stpl_name[0] === '@') {
 				list($force_storage, $stpl_name) = explode(':', substr($stpl_name, 1));
 			}
 			if ($if_exists && !tpl()->exists($stpl_name, $force_storage)) {
@@ -377,7 +377,7 @@ class yf_tpl_driver_yf {
 				'/\{(execute|exec_cached)\(\s*["\']{0,1}\s*([\w@\-]+)\s*[,;]\s*([\w@\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i', 
 				function($m) use ($replace, $name, $_this) {
 					$use_cache = false;
-					if ($m[1] == 'exec_cached') {
+					if ($m[1] === 'exec_cached') {
 						$use_cache = true;
 					}
 					return main()->_execute($m[2], $m[3], $m[4], $name. $_this->_STPL_EXT, 0, $use_cache);
@@ -425,7 +425,7 @@ class yf_tpl_driver_yf {
 		// JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
 		$string = preg_replace_callback('/\{(css|require_css|js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims', function($m) use ($_this) {
 			$func = $m[1];
-			if (substr($func, 0, strlen('require_')) != 'require_') {
+			if (substr($func, 0, strlen('require_')) !== 'require_') {
 				$func = 'require_'.$func;
 			}
 			return $func($m[3], _attrs_string2array($m[2]));
@@ -567,19 +567,10 @@ class yf_tpl_driver_yf {
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$cond = trim($m['cond']); // if | elseif
 			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
-			if (empty($part_left)) {
-				$part_left = '""';
-			}
-			$part_right = trim($m['right']);
-			if (strlen($part_right) && $part_right{0} == '#') {
-				$part_right = $replace[ltrim($part_right, '#')];
-			}
-			if (!is_numeric($part_right)) {
-				$part_right = '"'.$part_right.'"';
-			}
+			$part_right = $_this->_prepare_cond_text($m['right'], $replace, $stpl_name);
 			$cur_operator = $_this->_cond_operators[strtolower($m['op'])];
 			// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
-			if ($cur_operator == '%') {
+			if ($cur_operator === '%') {
 				$part_left = '!('.$part_left;
 				$part_right = $part_right.')';
 			}
@@ -590,25 +581,16 @@ class yf_tpl_driver_yf {
 					$a_cond	= trim($m['cond']);
 					$a_left	= $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
 					$a_op	= $_this->_cond_operators[strtolower(trim($m['op']))];
-					$a_right = trim($m['right']);
-					if (substr($a_right, 0, 1) == '#') {
-						$a_right = '$replace[\''.ltrim($a_right, '#').'\']';
-					}
-					if (!is_numeric($a_right)) {
-						$a_right = '\''.$a_right.'\'';
-					}
-					if (empty($a_left)) {
-						$a_left = '\'\'';
-					}
+					$a_right = $_this->_prepare_cond_text($m['right'], $replace, $stpl_name);
 					// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
-					if ($a_op == '%') {
+					if ($a_op === '%') {
 						$a_left = '!('.$a_left;
 						$a_right = $a_right.')';
 					}
 					return $a_cond.' ('.$a_left.' '.$a_op.' '.$a_right.') ';
 				}, $add_cond);
 			}
-			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. $part_left. ' '. $cur_operator. ' '. $part_right. $add_cond. ') { ?>';
+			return '<'.'?p'.'hp '.($cond === 'elseif' ? '} '.$cond : $cond).'('. $part_left. ' '. $cur_operator. ' '. $part_right. ' '. $add_cond. ') { ?>';
 		}, $string);
 
 		// Shortcuts for conditional patterns. Examples: {if_empty(name)}<h1 style="color: white;">NEW</h1>{/if}  {if_empty(name1,name2,name3)}<h1 style="color: white;">NEW</h1>{/if}  
@@ -651,7 +633,7 @@ class yf_tpl_driver_yf {
 				$func = $funcs_map[$func];
 			}
 			$negate = false;
-			if (substr($func, 0, 4) == 'not_') {
+			if (substr($func, 0, 4) === 'not_') {
 				$func = substr($func, 4);
 				$negate = true;
 			}
@@ -683,7 +665,7 @@ class yf_tpl_driver_yf {
 			} else {
 				$center_cond = ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')';
 			}
-			return '<'.'?p'.'hp '.($cond == 'elseif' ? '} '.$cond : $cond).'('. $center_cond. ') { ?>';
+			return '<'.'?p'.'hp '.($cond === 'elseif' ? '} '.$cond : $cond).'('. $center_cond. ') { ?>';
 		}, $string);
 
 		$string = str_replace('{else}', '<'.'?p'.'hp } else { ?'.'>', $string);
@@ -710,15 +692,33 @@ class yf_tpl_driver_yf {
 		$prepared_array = array();
 		foreach (explode(' ', str_replace("\t",'',trim($cond_text))) as $tmp_k => $tmp_v) {
 			$res_v = '';
+			$tmp_len = strlen($tmp_v);
+			if (!$tmp_len) {
+				continue;
+			}
+			$tmp_first = substr($tmp_v, 0, 1);
+			// Variable hint, starting from # or @
+			if (($tmp_first === '@' || $tmp_first === '#') && substr($tmp_v, 0, 2) !== '#.' && $tmp_len > 1) {
+				$tmp_v = substr($tmp_v, 1);
+				$tmp_len--;
+				if (!$tmp_len) {
+					continue;
+				}
+			}
 			// Value from $replace array (DO NOT replace 'array_key_exists()' with 'isset()' !!!)
-			if (array_key_exists($tmp_v, $replace)) {
+			if (is_numeric($tmp_v)) {
+				$res_v = '\''.$tmp_v.'\'';
+			// Simple number or string, started with '%'
+			} elseif ($tmp_first === '%' && $tmp_len > 1) {
+				$res_v = '\''.addslashes(substr($tmp_v, 1)).'\'';
+			} elseif (array_key_exists($tmp_v, $replace)) {
 				if (is_object($replace[$tmp_v]) && !method_exists($replace[$tmp_v], 'render')) {
 					$res_v = get_object_vars($replace[$tmp_v]);
 				}
 				if (is_array($replace[$tmp_v])) {
-					$res_v = $replace[$tmp_v] ? '("1")' : '("")';
+					$res_v = $replace[$tmp_v] ? '(\'1\')' : '(\'\')';
 				} else {
-					$res_v = '$replace["'.$tmp_v.'"]';
+					$res_v = '$replace[\''.$tmp_v.'\']';
 				}
 			// Arithmetic operators (currently we allow only '+' and '-')
 			} elseif (isset($this->_math_operators[$tmp_v])) {
@@ -726,10 +726,10 @@ class yf_tpl_driver_yf {
 			// Module config item
 			} elseif (strpos($tmp_v, 'module_conf.') === 0) {
 				list($mod_name, $mod_conf) = explode('.', substr($tmp_v, strlen('module_conf.')));
-				$res_v = 'module_conf("'.$mod_name.'","'.$mod_conf.'")';
+				$res_v = 'module_conf(\''.$mod_name.'\',\''.$mod_conf.'\')';
 			// Configuration item
 			} elseif (strpos($tmp_v, 'conf.') === 0) {
-				$res_v = 'conf("'.substr($tmp_v, strlen('conf.')).'")';
+				$res_v = 'conf(\''.substr($tmp_v, strlen('conf.')).'\')';
 			// Constant
 			} elseif (false !== strpos($tmp_v, 'const.')) {
 				$res_v = substr($tmp_v, strlen('const.'));
@@ -739,18 +739,17 @@ class yf_tpl_driver_yf {
 			// Global array element or sub array
 			} elseif (false !== strpos($tmp_v, '.')) {
 				$try_elm = substr($tmp_v, 0, strpos($tmp_v, '.'));
-				$try_elm2 = "['".str_replace('.',"']['",substr($tmp_v, strpos($tmp_v, '.') + 1))."']";
+				$try_elm2 = '[\''.str_replace('.','\'][\'',substr($tmp_v, strpos($tmp_v, '.') + 1)).'\']';
 				// Global array
 				$avail_arrays = (array)$this->tpl->_avail_arrays;
 				if (isset($avail_arrays[$try_elm])) {
 					$res_v = '$'.$avail_arrays[$try_elm].$try_elm2;
 				// Sub array
 				} elseif (isset($replace[$try_elm]) && is_array($replace[$try_elm])) {
-					$res_v = '$replace["'.$try_elm.'"]'.$try_elm2;
+					$res_v = '$replace[\''.$try_elm.'\']'.$try_elm2;
 				}
-			// Simple number or string, started with '%'
-			} elseif ($tmp_v{0} == '%' && strlen($tmp_v) > 1) {
-				$res_v = '"'.str_replace('"', "\\\"", substr($tmp_v, 1)).'"';
+			} elseif (is_string($tmp_v)) {
+				$res_v = '\''.addslashes($tmp_v).'\'';
 			} else {
 				// Do not touch!
 				// Variable or condition not found
@@ -760,7 +759,7 @@ class yf_tpl_driver_yf {
 				$prepared_array[$tmp_k] = $res_v;
 			}
 		}
-		return implode(' ', $prepared_array);
+		return count($prepared_array) ? implode(' ', $prepared_array) : '\'\'';
 	}
 
 	/**
@@ -808,7 +807,7 @@ class yf_tpl_driver_yf {
 			$data = null;
 			$sub_array = array();
 			// Ability to directly execute some class method and do foreach over it like {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
-			if ($func == 'foreach_exec') {
+			if ($func === 'foreach_exec') {
 				if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $key_to_cycle, $m_exec)) {
 					$sub_array = main()->_execute($m_exec['object'], $m_exec['action'], $m_exec['args'], $stpl_name. $_this->_STPL_EXT, 0, $use_cache = false);
 				} else {
@@ -924,7 +923,7 @@ class yf_tpl_driver_yf {
 			foreach ((array)$cur_matches as $v) {
 				$v = str_replace(array('{','}'), '', $v);
 				// Skip internal vars
-				if ($v{0} == '_' || $v == 'else') {
+				if ($v{0} === '_' || $v === 'else') {
 					continue;
 				}
 				$not_replaced[$v] = $v;
@@ -950,7 +949,7 @@ class yf_tpl_driver_yf {
 		}
 		$force_storage = '';
 		// Force to include template from special storage, example: @framework:script_js
-		if ($stpl_name[0] == '@') {
+		if ($stpl_name[0] === '@') {
 			list($force_storage, $stpl_name) = explode(':', substr($stpl_name, 1));
 		}
 		if ($if_exists && !tpl()->exists($stpl_name, $force_storage)) {
