@@ -308,8 +308,12 @@ class yf_tpl_driver_yf_compile {
 	/**
 	*/
 	function _cond_sub_array($cond) {
-		$try_elm = substr($cond, 0, strpos($cond, '.'));
-		$try_elm2 = '[\''.str_replace('.', '\'][\'', substr($cond, strpos($cond, '.') + 1)). '\']';
+		$pos = strpos($cond, '.');
+		if ($pos === false) {
+			return '$replace[\''.addslashes($cond).'\']';
+		}
+		$try_elm = substr($cond, 0, $pos);
+		$try_elm2 = '[\''.str_replace('.', '\'][\'', substr($cond, $pos + 1)). '\']';
 		// Global array
 		$avail_arrays = (array)_class('tpl')->_avail_arrays;
 		if (isset($avail_arrays[$try_elm])) {
