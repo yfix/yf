@@ -216,8 +216,8 @@ class yf_tpl_driver_yf_compile {
 	*/
 	function _compile_prepare_ifs (array $m) {
 		$cond = $m['cond'] === 'elseif' ? '} '.$m['cond'] : $m['cond'];
-		$part_left = $this->_compile_prepare_left($m['left']);
-		$part_right = $this->_compile_prepare_left($m['right']);
+		$part_left = $this->_compile_prepare_cond($m['left']);
+		$part_right = $this->_compile_prepare_cond($m['right'], $for_right = true);
 		$op = $this->_cond_operators[strtolower(trim($m['op']))];
 		// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
 		if ($op === '%') {
@@ -230,9 +230,9 @@ class yf_tpl_driver_yf_compile {
 			$pattern = '/[\s\t]*(?P<cond>and|xor|or)[\s\t]+["\']{0,1}(?P<left>[\w\s\.\-\+\%]+?)["\']{0,1}[\s\t]+(?P<op>eq|ne|gt|lt|ge|le|mod)[\s\t]+["\']{0,1}(?P<right>[\w\s\-\#]*)["\']{0,1}/ims';
 			$add_cond = preg_replace_callback($pattern, function($m) use ($_this) {
 				$a_cond	= trim($m['cond']);
-				$a_left	= $_this->_compile_prepare_left($m['left']);
+				$a_left	= $_this->_compile_prepare_cond($m['left']);
 				$a_op	= $_this->_cond_operators[strtolower(trim($m['op']))];
-				$a_right = $_this->_compile_prepare_left($m['right']);
+				$a_right = $_this->_compile_prepare_cond($m['right'], $for_right = true);
 				// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
 				if ($a_op === '%') {
 					$a_left = '!('.$a_left;
@@ -247,8 +247,8 @@ class yf_tpl_driver_yf_compile {
 	/**
 	* Prepare left part of the condition
 	*/
-	function _compile_prepare_left ($part_left = '') {
-		$part_left = trim($part_left);
+	function _compile_prepare_cond ($cond = '', $for_right = false) {
+		$cond = trim($cond);
 		$_array_magick = array(
 			'_key'	=> '$_k',
 			'_val'	=> '$_v',
@@ -259,55 +259,59 @@ class yf_tpl_driver_yf_compile {
 			'_even'	=> '($__f_counter % 2)',
 			'_odd'	=> '(!($__f_counter % 2))',
 		);
-		$tmp_len = strlen($part_left);
-		$tmp_first = substr($part_left, 0, 1);
+		$tmp_len = strlen($cond);
+		$tmp_first = substr($cond, 0, 1);
 		// Variable hint, starting from # or @
-		if (($tmp_first === '@' || $tmp_first == '#') && substr($part_left, 0, 2) !== '#.' && $tmp_len > 1) {
-			$part_left = substr($part_left, 1);
+		if (($tmp_first === '@' || $tmp_first == '#') && substr($cond, 0, 2) !== '#.' && $tmp_len > 1) {
+			$cond = substr($cond, 1);
 			$tmp_len--;
 		}
 		// Array item
-		if (is_numeric($part_left)) {
-			$part_left = '\''.$part_left.'\'';
+		if (is_numeric($cond)) {
+			$cond = '\''.$cond.'\'';
 		// Simple number or string, started with '%'
 		} elseif ($tmp_first === '%' && $tmp_len > 1) {
-			$part_left = '\''.addslashes(substr($part_left, 1)).'\'';
-		} elseif (substr($part_left, 0, 2) === '#.') {
-			$part_left = '$_v[\''.substr($part_left, 2).'\']';
+			$cond = '\''.addslashes(substr($cond, 1)).'\'';
+		} elseif (substr($cond, 0, 2) === '#.') {
+			$cond = '$_v[\''.substr($cond, 2).'\']';
 		// Arithmetic operators (currently we allow only '+' and '-')
-		} elseif (isset($this->_math_operators[$part_left])) {
-			$part_left = $this->_math_operators[$part_left];
+		} elseif (isset($this->_math_operators[$cond])) {
+			$cond = $this->_math_operators[$cond];
 		// Array special magic keyword
-		} elseif (isset($_array_magick[$part_left])) {
-			$part_left = $_array_magick[$part_left];
+		} elseif (isset($_array_magick[$cond])) {
+			$cond = $_array_magick[$cond];
 		// Module config item
-		} elseif (strpos($part_left, 'module_conf.') === 0) {
-			list($mod_name, $mod_conf) = explode('.', substr($part_left, strlen('module_conf.')));
-			$part_left = 'module_conf(\''.$mod_name.'\',\''.$mod_conf.'\')';
+		} elseif (strpos($cond, 'module_conf.') === 0) {
+			list($mod_name, $mod_conf) = explode('.', substr($cond, strlen('module_conf.')));
+			$cond = 'module_conf(\''.$mod_name.'\',\''.$mod_conf.'\')';
 		// Configuration item
-		} elseif (strpos($part_left, 'conf.') === 0) {
-			$part_left = 'conf(\''.substr($part_left, strlen('conf.')).'\')';
+		} elseif (strpos($cond, 'conf.') === 0) {
+			$cond = 'conf(\''.substr($cond, strlen('conf.')).'\')';
 		// Constant
-		} elseif (strpos($part_left, 'const.') === 0) {
-			$part_left = substr($part_left, strlen('const.'));
-			$part_left = '(defined(\''.$part_left.'\') ? constant(\''.$part_left.'\') : \'\')';
+		} elseif (strpos($cond, 'const.') === 0) {
+			$cond = substr($cond, strlen('const.'));
+			$cond = '(defined(\''.$cond.'\') ? constant(\''.$cond.'\') : \'\')';
 		// Global array element or sub array
-		} elseif (false !== strpos($part_left, '.')) {
-			$try_elm = substr($part_left, 0, strpos($part_left, '.'));
-			$try_elm2 = '[\''.str_replace('.', '\'][\'', substr($part_left, strpos($part_left, '.') + 1)). '\']';
+		} elseif (false !== strpos($cond, '.')) {
+			$try_elm = substr($cond, 0, strpos($cond, '.'));
+			$try_elm2 = '[\''.str_replace('.', '\'][\'', substr($cond, strpos($cond, '.') + 1)). '\']';
 			// Global array
 			$avail_arrays = (array)_class('tpl')->_avail_arrays;
 			if (isset($avail_arrays[$try_elm])) {
-				$part_left = '$'.$avail_arrays[$try_elm].$try_elm2;
+				$cond = '$'.$avail_arrays[$try_elm].$try_elm2;
 			// Sub array
 			} else {
-				$part_left = '$replace["'.$try_elm.'"]'.$try_elm2;
+				$cond = '$replace["'.$try_elm.'"]'.$try_elm2;
 			}
 		} elseif ($tmp_len) {
-			$part_left = addslashes($part_left);
-			$part_left = '(isset($replace[\''.$part_left.'\']) ? $replace[\''.$part_left.'\'] : \''.$part_left.'\')';
+			$cond = addslashes($cond);
+			if ($for_right) {
+				$cond = '(isset($replace[\''.$cond.'\']) ? $replace[\''.$cond.'\'] : \''.$cond.'\')';
+			} else {
+				$cond = '$replace[\''.$cond.'\']';
+			}
 		}
-		return strlen($part_left) ? $part_left : '\'\'';
+		return strlen($cond) ? $cond : '\'\'';
 	}
 
 	/**
@@ -327,10 +331,10 @@ class yf_tpl_driver_yf_compile {
 		if ($is_multiple) {
 			$part_left = array();
 			foreach (explode(',',trim($m['left'])) as $v) {
-				$part_left[] = $this->_compile_prepare_left($v);
+				$part_left[] = $this->_compile_prepare_cond($v);
 			}
 		} else {
-			$part_left = $this->_compile_prepare_left($m['left']);
+			$part_left = $this->_compile_prepare_cond($m['left']);
 		}
 		$func = trim($m['func']);
 		// We need these wrappers to make code compatible with PHP 5.3, As this direct code fails: php -r 'var_dump(empty(""));', php -r 'var_dump(isset(""));', 
