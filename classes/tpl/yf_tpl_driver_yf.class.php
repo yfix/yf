@@ -684,82 +684,91 @@ class yf_tpl_driver_yf {
 		}
 		return $new_string;
 	}
-
 	/**
 	* Prepare text for '_process_ifs' method
 	*/
-	function _prepare_cond_text ($cond_text = '', $replace = array(), $stpl_name = '', $for_right = false) {
+	function _prepare_cond_text ($cond = '', $replace = array(), $stpl_name = '', $for_right = false) {
 		$prepared_array = array();
-		foreach (explode(' ', str_replace("\t",'',trim($cond_text))) as $tmp_k => $tmp_v) {
-			$res_v = '';
-			$tmp_len = strlen($tmp_v);
+		$cond = str_replace("\t", '', trim($cond));
+		foreach (explode(' ', $cond) as $val) {
+			$a = '';
+			$tmp_len = strlen($val);
 			if (!$tmp_len) {
 				continue;
 			}
-			$tmp_first = substr($tmp_v, 0, 1);
+			$tmp_first = substr($val, 0, 1);
 			// Variable hint, starting from # or @
-			if (($tmp_first === '@' || $tmp_first === '#') && substr($tmp_v, 0, 2) !== '#.' && $tmp_len > 1) {
-				$tmp_v = substr($tmp_v, 1);
+			if (($tmp_first === '@' || $tmp_first === '#') && substr($val, 0, 2) !== '#.' && $tmp_len > 1) {
+				$val = substr($val, 1);
 				$tmp_len--;
 				if (!$tmp_len) {
 					continue;
 				}
 			}
 			// Value from $replace array (DO NOT replace 'array_key_exists()' with 'isset()' !!!)
-			if (is_numeric($tmp_v)) {
-				$res_v = '\''.$tmp_v.'\'';
+			if (is_numeric($val)) {
+				$a = '\''.$val.'\'';
 			// Simple number or string, started with '%'
 			} elseif ($tmp_first === '%' && $tmp_len > 1) {
-				$res_v = '\''.addslashes(substr($tmp_v, 1)).'\'';
-			} elseif (array_key_exists($tmp_v, $replace)) {
-				if (is_object($replace[$tmp_v]) && !method_exists($replace[$tmp_v], 'render')) {
-					$res_v = get_object_vars($replace[$tmp_v]);
+				$a = '\''.addslashes(substr($val, 1)).'\'';
+			} elseif (array_key_exists($val, $replace)) {
+				if (is_object($replace[$val]) && !method_exists($replace[$val], 'render')) {
+					$a = get_object_vars($replace[$val]);
 				}
-				if (is_array($replace[$tmp_v])) {
-					$res_v = $replace[$tmp_v] ? '(\'1\')' : '(\'\')';
+				if (is_array($replace[$val])) {
+					$a = $replace[$val] ? '(\'1\')' : '(\'\')';
 				} else {
-					$res_v = '$replace[\''.$tmp_v.'\']';
+					$a = '$replace[\''.$val.'\']';
 				}
 			// Arithmetic operators (currently we allow only '+' and '-')
-			} elseif (isset($this->_math_operators[$tmp_v])) {
-				$res_v = $this->_math_operators[$tmp_v];
+			} elseif (isset($this->_math_operators[$val])) {
+				$a = $this->_math_operators[$val];
 			// Module config item
-			} elseif (strpos($tmp_v, 'module_conf.') === 0) {
-				list($mod_name, $mod_conf) = explode('.', substr($tmp_v, strlen('module_conf.')));
-				$res_v = 'module_conf(\''.$mod_name.'\',\''.$mod_conf.'\')';
+			} elseif (strpos($val, 'module_conf.') === 0) {
+				list($mod_name, $mod_conf) = explode('.', substr($val, strlen('module_conf.')));
+				$a = 'module_conf(\''.$mod_name.'\',\''.$mod_conf.'\')';
 			// Configuration item
-			} elseif (strpos($tmp_v, 'conf.') === 0) {
-				$res_v = 'conf(\''.substr($tmp_v, strlen('conf.')).'\')';
+			} elseif (strpos($val, 'conf.') === 0) {
+				$a = 'conf(\''.substr($val, strlen('conf.')).'\')';
 			// Constant
-			} elseif (false !== strpos($tmp_v, 'const.')) {
-				$res_v = substr($tmp_v, strlen('const.'));
-				if (!defined($res_v)) {
-					$res_v = '';
+			} elseif (false !== strpos($val, 'const.')) {
+				$a = substr($val, strlen('const.'));
+				if (!defined($a)) {
+					$a = '';
 				}
 			// Global array element or sub array
-			} elseif (false !== strpos($tmp_v, '.')) {
-				$try_elm = substr($tmp_v, 0, strpos($tmp_v, '.'));
-				$try_elm2 = '[\''.str_replace('.','\'][\'',substr($tmp_v, strpos($tmp_v, '.') + 1)).'\']';
-				// Global array
-				$avail_arrays = (array)$this->tpl->_avail_arrays;
-				if (isset($avail_arrays[$try_elm])) {
-					$res_v = '$'.$avail_arrays[$try_elm].$try_elm2;
-				// Sub array
-				} elseif (isset($replace[$try_elm]) && is_array($replace[$try_elm])) {
-					$res_v = '$replace[\''.$try_elm.'\']'.$try_elm2;
-				}
-			} elseif ($for_right && is_string($tmp_v)) {
-				$res_v = '\''.addslashes($tmp_v).'\'';
+			} elseif (false !== strpos($val, '.')) {
+				$a = $this->_cond_sub_array($val, $replace, $stpl_name, $for_right);
+			} elseif ($for_right && is_string($val)) {
+				$a = '\''.addslashes($val).'\'';
 			} else {
 				// Do not touch!
 				// Variable or condition not found
 			}
 			// Add prepared element
-			if ($res_v != '') {
-				$prepared_array[$tmp_k] = $res_v;
+			if ($a != '') {
+				$prepared_array[] = $a;
 			}
 		}
 		return count($prepared_array) ? implode(' ', $prepared_array) : '\'\'';
+	}
+
+	/**
+	*/
+	function _cond_sub_array ($cond = '', $replace = array(), $stpl_name = '', $for_right = false) {
+		$pos = strpos($cond, '.');
+		$try_elm = substr($cond, 0, $pos);
+		$try_elm2 = '[\''.str_replace('.', '\'][\'', substr($cond, $pos + 1)).'\']';
+		$out = '';
+		// Global array
+		$avail_arrays = (array)$this->tpl->_avail_arrays;
+		if (isset($avail_arrays[$try_elm])) {
+			$out = '$'.$avail_arrays[$try_elm].$try_elm2;
+		// Sub array
+		} elseif (isset($replace[$try_elm]) && is_array($replace[$try_elm])) {
+			$out = '$replace[\''.$try_elm.'\']'.$try_elm2;
+		}
+		return $out;
 	}
 
 	/**
