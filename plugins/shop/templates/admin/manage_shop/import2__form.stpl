@@ -103,9 +103,14 @@
 .item_data .item_head {
 	text-align: center;
 }
-.import_field {
+.import_field_key {
 	width     : 100%;
+}
+.import_field {
 	min-width : 10em;
+}
+.import_key {
+	width     : 1em;
 }
 .supplier,
 .import_action {
@@ -179,21 +184,45 @@ ul.select2-result-single {
 			</div>
 		</th>
 	</tr>
-	<tr>
-	</tr>
+	<tr></tr>
 	<tr>
 		<th
 			ng-repeat="item in item_data.items[ 0 ]"
 			class="item_head"
 		>
 		<span>№{{ $index }}</span>
-		<select class="import_field"
-			ng-model="item_data.option.fields[ $index ]"
-			ng-change="Import.field__change( $index )"
-			ng-options="key as value for ( key, value ) in data._import_field"
-			ui-select2
-		>
-		</select>
+		<div class="import_field_key">
+			<span class="import_key btn btn-small"
+				ng-class = "{
+					'btn-success' : item_data.option.keys[ $index ] != true,
+					'btn-danger'  : item_data.option.keys[ $index ] == true,
+				}"
+				ng-show  = "item_data.action_selected.key == 'update' && item_data.option.fields[ $index ] != 0"
+				ng-click = "item_data.option.keys[ $index ] = !item_data.option.keys[ $index ]"
+			>
+				<span
+					ng-show="item_data.option.keys[ $index ] != true"
+					title = "обновляемое поля (ключ-поле)"
+				>
+					<i class="fa fa-check"></i>
+				</span>
+				<span
+					ng-show="item_data.option.keys[ $index ] == true"
+					title = "ключ-поле (обновляемое поля)"
+				>
+					<i class="fa fa-key"></i>
+				</span>
+			</span>
+			<span>
+				<select class="import_field"
+					ng-model="item_data.option.fields[ $index ]"
+					ng-change="Import.field__change( $index )"
+					ng-options="key as value for ( key, value ) in data._import_field"
+					ui-select2
+				>
+				</select>
+			</span>
+		</div>
 		</th>
 		<th style="text-align:center;">
 			статус

@@ -342,6 +342,17 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
+	protected function _option_default( &$option, $key, $cols, $default ) {
+		if( empty( $option ) || empty( $key ) || empty( $cols ) ) { return( null ); }
+		if( empty( $option[ $key ] ) ) {
+			$value = array();
+			for( $i = 0; $i < $cols; $i++ ) { $value[ $i ] = $default; }
+			$option[ $key ] = $value;
+			return( true );
+		}
+		return( false );
+	}
+
 	protected function _upload_item__get( $id ) {
 		$result = array(
 			'status' => false,
@@ -358,17 +369,15 @@ class yf_manage_shop_import_products2 {
 			$file      = $upload_path . $id;
 			$file_name = $file . '.import';
 			$option    = $this->_load_json( $file_name );
+			// default
 			if( FALSE === $option ) {
-				$fields = array();
-				for( $i = 0; $i < $cols; $i++ ) {
-					$fields[ $i ] = 0;
-				}
 				$option = array(
 					'id'     => $id,
-					'fields' => $fields,
 					'action' => $this->import_action_default,
 				);
 			}
+			$this->_option_default( $option, 'fields', $cols, 0 );
+			$this->_option_default( $option, 'keys',   $cols, 0 );
 			$result = array(
 				'data'   => array(
 					'id'     => $id,
@@ -434,6 +443,7 @@ class yf_manage_shop_import_products2 {
 	protected function _upload_item__import_action_test( $option, $import_test ) {
 		$action = $option[ 'action' ];
 		$fields = $option[ 'fields' ];
+		$keys   = $option[ 'keys'   ];
 		$result = false;
 		// test action, fields
 		if( empty( $action ) || empty( $fields ) ) { return( $result ); }
