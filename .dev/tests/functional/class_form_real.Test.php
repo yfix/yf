@@ -36,11 +36,12 @@ class class_form_real_test extends db_real_abstract {
 		$this->assertTrue( (bool)self::utils()->alter_column('static_pages', 'text', array('nullable' => true)) );
 		$this->assertTrue( (bool)self::utils()->column_info_item('static_pages', 'text', 'nullable') );
 
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+
 		$data = array(
 			'name'		=> 'for_unit_tests',
 			'active'	=> 1,
 		);
-		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_POST = $data;
 		$this->assertTrue( main()->is_post() );
 
@@ -48,9 +49,8 @@ class class_form_real_test extends db_real_abstract {
 			->text('name')
 			->text('text')
 			->active_box()
-#			->validate(array('name' => 'trim|required', 'text' => ''))
 			->validate(array('name' => 'trim|required'))
-			->db_insert_if_ok('static_pages', array('name','text'))
+			->insert_if_ok('static_pages', array('name','text'))
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 
 		$first = self::db()->from('static_pages')->get();
