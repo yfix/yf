@@ -32,8 +32,20 @@ class tpl_driver_yf_bugs_test extends tpl_abstract {
 		$this->assertEquals('', self::_tpl( '{if("quantity" gt 0 and "active" ne 0)} ok {/if}', $a ));
 	}
 	public function test_bug_04() {
-		module_conf('main', 'unit_var2', '5');
+		conf('unit_test_conf_item1', '5');
+		$this->assertEquals('5', conf('unit_test_conf_item1'));
 		conf('unit_test_conf_item2', '6');
+		$this->assertEquals('6', conf('unit_test_conf_item2'));
+		module_conf('main', 'unit_var1', '4');
+		$this->assertEquals('4', module_conf('main', 'unit_var1'));
+		module_conf('main', 'unit_var2', '5');
+		$this->assertEquals('5', module_conf('main', 'unit_var2'));
+
+		$this->assertEquals(' ok ', self::_tpl( '{if(conf.unit_test_conf_item1 eq "5" and conf.unit_test_conf_item2 eq "6")} ok {/if}' ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(conf.unit_test_conf_item1 eq 5 and conf.unit_test_conf_item2 eq 6)} ok {/if}' ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(conf.unit_test_conf_item1 eq 1 or conf.unit_test_conf_item2 eq 6)} ok {/if}' ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(conf.unit_test_conf_item1 ne 1 or conf.unit_test_conf_item2 ne 1)} ok {/if}' ));
+
 		$this->assertEquals(' ok ', self::_tpl( '{if(conf.unit_test_conf_item2 eq "6" and module_conf.main.unit_var2 eq "5")} ok {/if}' ));
 		$this->assertEquals(' ok ', self::_tpl( '{if(conf.unit_test_conf_item2 eq 6 and module_conf.main.unit_var2 eq 5)} ok {/if}' ));
 	}
@@ -124,5 +136,34 @@ class tpl_driver_yf_bugs_test extends tpl_abstract {
 		$this->assertEquals('{data.form}', self::_tpl('{data.form}', array()));
 		$this->assertNotEquals('{data.form}', self::_tpl('{data.form}', array('data' => $data)));
 		$this->assertGreaterThan( 100, strlen(self::_tpl('{data.form}', array('data' => $data))) );
+	}
+	public function test_bug_12() {
+		$a = array('var1' => 10, 'var2' => 1);
+		$this->assertEquals(' ok ', self::_tpl( '{if("var1" gt "var2")} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 gt var2)} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if("var1" lt "var2")} ko {else} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 lt var2)} ko {else} ok {/if}', $a ));
+		$a = array('var1' => '10', 'var2' => '1');
+		$this->assertEquals(' ok ', self::_tpl( '{if("var1" gt "var2")} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 gt var2)} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if("var1" lt "var2")} ko {else} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 lt var2)} ko {else} ok {/if}', $a ));
+		$a = array('var1' => '10000', 'var2' => '2300');
+		$this->assertEquals(' ok ', self::_tpl( '{if("var1" gt "var2")} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 gt var2)} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if("var1" lt "var2")} ko {else} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 lt var2)} ko {else} ok {/if}', $a ));
+		$a = array('var1' => '10000.00', 'var2' => '2300.00');
+		$this->assertEquals(' ok ', self::_tpl( '{if("var1" gt "var2")} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 gt var2)} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if("var1" lt "var2")} ko {else} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 lt var2)} ko {else} ok {/if}', $a ));
+	}
+	public function test_bug_13() {
+		$a = array('var1' => 10, 'var2' => 10);
+		$this->assertEquals(' ok ', self::_tpl( '{if(var3 eq "")} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var3 ne "")} ko {else} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 eq var2)} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 ne "")} ok {else} ko {/if}', $a ));
 	}
 }

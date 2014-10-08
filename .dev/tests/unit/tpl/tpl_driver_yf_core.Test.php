@@ -86,14 +86,10 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 				<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap{min_ext}.js"></script>
 			{/if}
 		';
-		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.js"></script>'
-			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs2', 'debug_mode' => 1))) );
-		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap.js"></script>'
-			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs3', 'debug_mode' => 1))) );
-		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>'
-			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs2', 'debug_mode' => 0))) );
-		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap.min.js"></script>'
-			, trim(self::_tpl($tpl_str, array('css_framework' => 'bs3', 'debug_mode' => 0))) );
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.js"></script>', trim(self::_tpl($tpl_str, array('css_framework' => 'bs2', 'debug_mode' => 1))) );
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap.js"></script>', trim(self::_tpl($tpl_str, array('css_framework' => 'bs3', 'debug_mode' => 1))) );
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>', trim(self::_tpl($tpl_str, array('css_framework' => 'bs2', 'debug_mode' => 0))) );
+		$this->assertEquals('<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/3.1.0/js/bootstrap.min.js"></script>', trim(self::_tpl($tpl_str, array('css_framework' => 'bs3', 'debug_mode' => 0))) );
 	}
 	public function test_cleanup() {
 		$this->assertEquals('<script>function myjs(){ var i = 0 }<script>', self::_tpl( '{cleanup()}<script>function myjs(){ {js-var} }<script>{/cleanup}', array('js-var' => 'var i = 0') ));
@@ -368,7 +364,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$data->key4 = array(1,2,3);
 		$this->assertEquals(' key1=val1  key2=val2  key3=val3  key4=1,2,3 ', self::_tpl('{foreach(data)} {_key}={_val} {/foreach}', array('data' => $data)));
 	}
-	public function test_if_funcs() {
+	public function test_if_funcs_basic() {
 		$data = array('name1' => '', 'name2' => 'something');
 
 		$this->assertEquals('good', self::_tpl('{if_not_ok(name1)}good{/if}', $data));
@@ -384,6 +380,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('good ok', self::_tpl('{if_empty(name1)}good{/if} {if_not_empty(name2)}ok{/if}', $data));
 		$this->assertEquals('good', self::_tpl('{if_not_empty(name2)}good{/if}', $data));
 		$this->assertEquals('good', self::_tpl('{if_isset(name1)}good{/if}', $data));
+
 		$this->assertEquals('good', self::_tpl('{if_not_isset(name3)}good{/if}', $data));
 
 		$this->assertEquals('good', self::_tpl('{if_empty(data)}good{/if}', array('data' => '')));
@@ -427,7 +424,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('good', self::_tpl('{if_or_isset(name1,name333,name555)}good{/if}', $data));
 		$this->assertEquals('good', self::_tpl('{if_not_isset(name777,name888,name999)}good{/if}', $data));
 		$this->assertEquals('good', self::_tpl('{if_and_not_isset(name777,name888,name999)}good{/if}', $data));
-#		$this->assertEquals('good', self::_tpl('{if_or_not_isset(name1,name2,name9999)}good{/if}', $data));
+		$this->assertEquals('good', self::_tpl('{if_or_not_isset(name1,name2,name9999)}good{/if}', $data));
 // TODO: add more tests
 /*
 		$this->assertEquals('good', self::_tpl('{if_empty(data)}good{/if}', array('data' => '')));

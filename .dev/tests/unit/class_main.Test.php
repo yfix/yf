@@ -142,4 +142,15 @@ class class_main_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( '192.168.111.222:81', $func(array('192.168.111.222:81',':81'), '192.168.111.222', '81') );
 		$this->assertEquals( '192.168.111.222:81', $func(array(':81','192.168.111.222:81'), '192.168.111.222', '81') );
 	}
+	public function test_data_handlers() {
+		$prev_data_handlers = main()->data_handlers;
+		$this->assertNotEmpty( $prev_data_handlers );
+		$name = 'new_handler_from_unit_tests';
+		main()->data_handlers[$name] = function($params) {
+			return 'Hello'. (isset($params['param']) ? ' '.$params['param'] : '');
+		};
+		$this->assertNotEquals( $prev_data_handlers, main()->data_handlers );
+		$this->assertEquals( 'Hello', main()->get_data($name) );
+		$this->assertEquals( 'Hello World', main()->get_data($name, 0, array('param' => 'World')) );
+	}
 }
