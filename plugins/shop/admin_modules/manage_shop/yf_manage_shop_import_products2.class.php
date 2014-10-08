@@ -97,6 +97,7 @@ class yf_manage_shop_import_products2 {
 		'upload' => 'загружен',
 		'import' => 'импортирован',
 	);
+	public $supplier = null;
 	// cache
 	public $cache_products = array();
 
@@ -114,6 +115,8 @@ class yf_manage_shop_import_products2 {
 		$this->upload_path = PROJECT_PATH . 'uploads/price/';
 		$this->upload_list__file_name = $this->upload_path . 'list.csv';
 		$this->_load_upload_list();
+		$supplier = db()->select( 'id', 'name' )->from( 'shop_suppliers' )->get_2d();
+		$this->supplier = $supplier;
 		// get filter
 		$_object             = input()->get( 'object' );
 		$_action             = input()->get( 'action' );
@@ -718,12 +721,26 @@ class yf_manage_shop_import_products2 {
 				'value' => $value,
 			);
 		}
+		$_supplier = $this->supplier;
+		$_supplier_array = array();
+		$_supplier_array[] = array(
+			'id'    => null,
+			'title' => 'поставщик',
+		);
+		foreach( $_supplier as $id => $title ) {
+			$_supplier_array[] = array(
+				'id'    => $id,
+				'title' => $title . ' ('. $id .')',
+			);
+		}
 		$result = array(
 			'_upload_status'       => $_upload_status,
 			'_upload_list'         => $_upload_list,
 			'_import_field'        => $_import_field,
 			'_import_action'       => $_import_action,
 			'_import_action_array' => $_import_action_array,
+			'_supplier'            => $_supplier,
+			'_supplier_array'      => $_supplier_array,
 		);
 		if( $json ) {
 			$result = json_encode( $result, JSON_NUMERIC_CHECK );

@@ -107,18 +107,23 @@
 	width     : 100%;
 	min-width : 10em;
 }
+.supplier,
 .import_action {
 	min-width   : 10em;
 	height      : 100%;
 	font-weight : normal;
 }
+.supplier {
+	min-width   : 15em;
+}
+.block_supplier span.btn,
 .block_action span.btn {
 	margin: 0 0 0 1em;
 }
-.import_action ul.select2-result-single {
+ul.select2-result-single {
 	margin: 0.1em 0.2em;
 }
-.import_action .select2-chosen {
+.select2-chosen {
 	font-weight: bold;
 }
 </style>
@@ -136,7 +141,16 @@
 				<span class="btn" ng-click="item_filter=''"><i class="fa fa-times"></i></span>
 				<span ng-show="item_filter">(<span ng-bind="Pagination.length"></span>)</span>
 			</span>
-			<div class="block_action pull-right">
+			<div class="block_supplier pull-right">
+				<ui-select class="supplier"
+					ng-model  = "item_data.supplier_selected"
+					on-select = "update_supplier( $item )"
+				>
+					<ui-select-match placeholder="выберите поставщика...">{{$select.selected.title}}</ui-select-match>
+					<ui-select-choices repeat="supplier in data._supplier_array | filter: $select.search">
+						<div ng-bind-html="supplier.title | highlight: $select.search"></div>
+					</ui-select-choices>
+				</ui-select>
 				<ui-select class="import_action"
 					ng-model  = "item_data.action_selected"
 					on-select = "update_import_action( $item )"
@@ -156,8 +170,12 @@
 					</ui-select-choices>
 				</ui-select>
 
-				<span class="btn btn-warning pull-right" ng-click="UploadApi.item__import()" ng-show="!item_data.test_status">Проверить</span>
-				<span class="btn btn-success pull-right" ng-click="UploadApi.item__import()" ng-show="item_data.test_status">Импортировать</span>
+				<span class="btn btn-warning pull-right" ng-click="UploadApi.item__import()" ng-show="!item_data.test_status">
+					Проверить
+				</span>
+				<span class="btn btn-success pull-right" ng-click="UploadApi.item__import()" ng-show="item_data.test_status">
+					Импортировать
+				</span>
 			</div>
 		</th>
 	</tr>
@@ -181,8 +199,10 @@
 			статус
 			<div ng-show="item_data.test">
 				<span class="btn btn-small"
-					ng-class="{ active: item_filter_status == undefined }"
-					ng-click="item_filter_status = undefined"
+					title    = "всего: {{item_data.test.count}}"
+					ng-class = "{ active: item_filter_status == undefined }"
+					ng-show  = "item_data.test.count > 0"
+					ng-click = "item_filter_status = undefined"
 				>
 					<i
 						ng-show="item_filter_status == undefined"
@@ -190,8 +210,10 @@
 					({{item_data.test.count}})
 				</span>
 				<span class="btn btn-small btn-success"
-					ng-class="{ active: item_filter_status == true }"
-					ng-click="item_filter_status = true"
+					title    = "успешно: {{item_data.test.count_valid}}"
+					ng-class = "{ active: item_filter_status == true }"
+					ng-show  = "item_data.test.count_valid > 0"
+					ng-click = "item_filter_status = true"
 				>
 					<i
 						ng-show="item_filter_status == true"
@@ -199,8 +221,10 @@
 					({{item_data.test.count_valid}})
 				</span>
 				<span class="btn btn-small btn-danger"
-					ng-class="{ active: item_filter_status == false }"
-					ng-click="item_filter_status = false"
+					title    = "неуспешно: {{item_data.test.count_invalid}}"
+					ng-class = "{ active: item_filter_status == false }"
+					ng-show  = "item_data.test.count_invalid > 0"
+					ng-click = "item_filter_status = false"
 				>
 					<i
 						ng-show="item_filter_status == false"

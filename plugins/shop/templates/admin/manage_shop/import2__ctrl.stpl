@@ -259,6 +259,9 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 		title: ''
 	};
 	$scope._upload_list__count = 0;
+	$scope.update_supplier = function( $item ) {
+		$scope.item_data.option.supplier = $item.id;
+	};
 	$scope.update_import_action = function( $item ) {
 		$scope.item_data.option.action = $item.key;
 	};
@@ -400,6 +403,14 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			angular.forEach( $scope.data._import_action_array, function( item, index ) {
 				if( item.key == action ) {
 					$scope.item_data.action_selected = item;
+					return( true );
+				}
+			});
+			// set import supplier
+			var supplier = $scope.item_data.option.supplier;
+			angular.forEach( $scope.data._supplier_array, function( item, index ) {
+				if( item.id == supplier ) {
+					$scope.item_data.supplier_selected = item;
 					return( true );
 				}
 			});
