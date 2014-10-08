@@ -567,7 +567,7 @@ class yf_tpl_driver_yf {
 		$string = preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$cond = trim($m['cond']); // if | elseif
 			$part_left = $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
-			$part_right = $_this->_prepare_cond_text($m['right'], $replace, $stpl_name);
+			$part_right = $_this->_prepare_cond_text($m['right'], $replace, $stpl_name, $for_right = true);
 			$cur_operator = $_this->_cond_operators[strtolower($m['op'])];
 			// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
 			if ($cur_operator === '%') {
@@ -581,7 +581,7 @@ class yf_tpl_driver_yf {
 					$a_cond	= trim($m['cond']);
 					$a_left	= $_this->_prepare_cond_text($m['left'], $replace, $stpl_name);
 					$a_op	= $_this->_cond_operators[strtolower(trim($m['op']))];
-					$a_right = $_this->_prepare_cond_text($m['right'], $replace, $stpl_name);
+					$a_right = $_this->_prepare_cond_text($m['right'], $replace, $stpl_name, $for_right = true);
 					// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
 					if ($a_op === '%') {
 						$a_left = '!('.$a_left;
@@ -688,7 +688,7 @@ class yf_tpl_driver_yf {
 	/**
 	* Prepare text for '_process_ifs' method
 	*/
-	function _prepare_cond_text ($cond_text = '', $replace = array(), $stpl_name = '') {
+	function _prepare_cond_text ($cond_text = '', $replace = array(), $stpl_name = '', $for_right = false) {
 		$prepared_array = array();
 		foreach (explode(' ', str_replace("\t",'',trim($cond_text))) as $tmp_k => $tmp_v) {
 			$res_v = '';
@@ -748,7 +748,7 @@ class yf_tpl_driver_yf {
 				} elseif (isset($replace[$try_elm]) && is_array($replace[$try_elm])) {
 					$res_v = '$replace[\''.$try_elm.'\']'.$try_elm2;
 				}
-			} elseif (is_string($tmp_v)) {
+			} elseif ($for_right && is_string($tmp_v)) {
 				$res_v = '\''.addslashes($tmp_v).'\'';
 			} else {
 				// Do not touch!
