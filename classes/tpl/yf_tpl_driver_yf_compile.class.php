@@ -293,16 +293,7 @@ class yf_tpl_driver_yf_compile {
 			$cond = '(defined(\''.$cond.'\') ? constant(\''.$cond.'\') : \'\')';
 		// Global array element or sub array
 		} elseif (false !== strpos($cond, '.')) {
-			$try_elm = substr($cond, 0, strpos($cond, '.'));
-			$try_elm2 = '[\''.str_replace('.', '\'][\'', substr($cond, strpos($cond, '.') + 1)). '\']';
-			// Global array
-			$avail_arrays = (array)_class('tpl')->_avail_arrays;
-			if (isset($avail_arrays[$try_elm])) {
-				$cond = '$'.$avail_arrays[$try_elm].$try_elm2;
-			// Sub array
-			} else {
-				$cond = '$replace["'.$try_elm.'"]'.$try_elm2;
-			}
+			$cond = $this->_cond_sub_array($cond);
 		} elseif ($tmp_len) {
 			$cond = addslashes($cond);
 			if ($for_right) {
@@ -312,6 +303,22 @@ class yf_tpl_driver_yf_compile {
 			}
 		}
 		return strlen($cond) ? $cond : '\'\'';
+	}
+
+	/**
+	*/
+	function _cond_sub_array($cond) {
+		$try_elm = substr($cond, 0, strpos($cond, '.'));
+		$try_elm2 = '[\''.str_replace('.', '\'][\'', substr($cond, strpos($cond, '.') + 1)). '\']';
+		// Global array
+		$avail_arrays = (array)_class('tpl')->_avail_arrays;
+		if (isset($avail_arrays[$try_elm])) {
+			$cond = '$'.$avail_arrays[$try_elm].$try_elm2;
+		// Sub array
+		} else {
+			$cond = '$replace["'.$try_elm.'"]'.$try_elm2;
+		}
+		return $cond;
 	}
 
 	/**
