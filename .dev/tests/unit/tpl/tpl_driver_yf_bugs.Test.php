@@ -140,15 +140,30 @@ class tpl_driver_yf_bugs_test extends tpl_abstract {
 	public function test_bug_12() {
 		$a = array('var1' => 10, 'var2' => 1);
 		$this->assertEquals(' ok ', self::_tpl( '{if("var1" gt "var2")} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 gt var2)} ok {else} ko {/if}', $a ));
 		$this->assertEquals(' ok ', self::_tpl( '{if("var1" lt "var2")} ko {else} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 lt var2)} ko {else} ok {/if}', $a ));
 		$a = array('var1' => '10', 'var2' => '1');
 		$this->assertEquals(' ok ', self::_tpl( '{if("var1" gt "var2")} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 gt var2)} ok {else} ko {/if}', $a ));
 		$this->assertEquals(' ok ', self::_tpl( '{if("var1" lt "var2")} ko {else} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 lt var2)} ko {else} ok {/if}', $a ));
 		$a = array('var1' => '10000', 'var2' => '2300');
 		$this->assertEquals(' ok ', self::_tpl( '{if("var1" gt "var2")} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 gt var2)} ok {else} ko {/if}', $a ));
 		$this->assertEquals(' ok ', self::_tpl( '{if("var1" lt "var2")} ko {else} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 lt var2)} ko {else} ok {/if}', $a ));
 		$a = array('var1' => '10000.00', 'var2' => '2300.00');
 		$this->assertEquals(' ok ', self::_tpl( '{if("var1" gt "var2")} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 gt var2)} ok {else} ko {/if}', $a ));
 		$this->assertEquals(' ok ', self::_tpl( '{if("var1" lt "var2")} ko {else} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 lt var2)} ko {else} ok {/if}', $a ));
+	}
+	public function test_bug_13() {
+		$a = array('var1' => 10, 'var2' => 10);
+		$this->assertEquals(' ok ', self::_tpl( '{if(var3 eq "")} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var3 ne "")} ko {else} ok {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 eq var2)} ok {else} ko {/if}', $a ));
+		$this->assertEquals(' ok ', self::_tpl( '{if(var1 ne "")} ok {else} ko {/if}', $a ));
 	}
 }
