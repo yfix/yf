@@ -1063,47 +1063,6 @@ class yf_db {
 	}
 
 	/**
-	* Function escapes characters for using in query
-	*/
-	function es($string) {
-		if (is_null($string)) {
-			return 'NULL';
-		}
-		if (!$this->_connected && !$this->connect()) {
-			return $this->_mysql_escape_mimic($string);
-		}
-		// Helper method for passing here whole arrays as param
-		if (is_array($string)) {
-			foreach ((array)$string as $k => $v) {
-				$string[$k] = $this->real_escape_string($v);
-			}
-			return $string;
-		}
-		return $this->db->real_escape_string($string);
-	}
-
-	/**
-	* Alias
-	*/
-	function real_escape_string($string) {
-		return $this->es($string);
-	}
-
-	/**
-	* Alias
-	*/
-	function escape_string($string) {
-		return $this->es($string);
-	}
-
-	/**
-	* Alias
-	*/
-	function escape($string) {
-		return $this->es($string);
-	}
-
-	/**
 	* Begin a transaction, or if a transaction has already started, continue it
 	*/
 	function begin() {
@@ -1210,54 +1169,6 @@ class yf_db {
 			return $sql;
 		}
 		return $this->db->limit($count, $offset);
-	}
-
-	/**
-	*/
-	function escape_key($data) {
-		if (is_array($data)) {
-			$func = __FUNCTION__;
-			foreach ((array)$data as $k => $v) {
-				$data[$k] = $this->$func($v);
-			}
-			return $data;
-		}
-		if (!is_object($this->db)) {
-			return '`'.$data.'`';
-		}
-		return $this->db->escape_key($data);
-	}
-
-	/**
-	*/
-	function escape_val($data) {
-		if (is_null($data)) {
-			return 'NULL';
-		} elseif (is_array($data)) {
-			$func = __FUNCTION__;
-			foreach ((array)$data as $k => $v) {
-				$data[$k] = $this->$func($v);
-			}
-			return $data;
-		}
-		if (!is_object($this->db)) {
-			return '\''.$data.'\'';
-		}
-		return $this->db->escape_val($data);
-	}
-
-	/**
-	* Alias
-	*/
-	function enclose_field_name($data) {
-		return $this->escape_key($data);
-	}
-
-	/**
-	* Alias
-	*/
-	function enclose_field_value($data) {
-		return $this->escape_val($data);
 	}
 
 	/**
@@ -1796,6 +1707,85 @@ class yf_db {
 	}
 
 	/**
+	* Function escapes characters for using in query
+	*/
+	function es($string) {
+		if (is_null($string) || $string === 'NULL') {
+			return 'NULL';
+		}
+		if (!$this->_connected && !$this->connect()) {
+			return $this->_mysql_escape_mimic($string);
+		}
+		// Helper method for passing here whole arrays as param
+		if (is_array($string)) {
+			foreach ((array)$string as $k => $v) {
+				if (is_null($v) || $v === 'NULL') {
+					$string[$k] = 'NULL';
+				} else {
+					$string[$k] = $this->real_escape_string($v);
+				}
+			}
+			return $string;
+		}
+		return $this->db->real_escape_string($string);
+	}
+
+	/**
+	* Alias
+	*/
+	function real_escape_string($string) {
+		return $this->es($string);
+	}
+
+	/**
+	* Alias
+	*/
+	function escape_string($string) {
+		return $this->es($string);
+	}
+
+	/**
+	* Alias
+	*/
+	function escape($string) {
+		return $this->es($string);
+	}
+
+	/**
+	*/
+	function escape_key($data) {
+		if (is_array($data)) {
+			$func = __FUNCTION__;
+			foreach ((array)$data as $k => $v) {
+				$data[$k] = $this->$func($v);
+			}
+			return $data;
+		}
+		if (!is_object($this->db)) {
+			return '`'.$data.'`';
+		}
+		return $this->db->escape_key($data);
+	}
+
+	/**
+	*/
+	function escape_val($data) {
+		if (is_null($data) || $data === 'NULL') {
+			return 'NULL';
+		} elseif (is_array($data)) {
+			$func = __FUNCTION__;
+			foreach ((array)$data as $k => $v) {
+				$data[$k] = $this->$func($v);
+			}
+			return $data;
+		}
+		if (!is_object($this->db)) {
+			return '\''.$data.'\'';
+		}
+		return $this->db->escape_val($data);
+	}
+
+	/**
 	*/
 	function _escape_table_name($name = '') {
 		$name = trim($name);
@@ -1824,7 +1814,9 @@ class yf_db {
 		if (is_array($string)) {
 	        return array_map(array($this, __FUNCTION__), $string);
 		}
-		if (is_float($string)) {
+		if (is_null($string) || $string === 'NULL') {
+			return 'NULL';
+		} elseif (is_float($string)) {
 			return str_replace(',', '.', $string);
 		} elseif (is_int($string)) {
 			return $string;
