@@ -1632,7 +1632,7 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function _escape_val($val = '') {
-		if (is_null($val)) {
+		if (is_null($val) || $val === 'NULL') {
 			return 'NULL';
 		}
 		$val = trim(trim($val), '\'');
@@ -1663,7 +1663,7 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function _es($val = '') {
-		if (is_null($val)) {
+		if (is_null($val) || $val === 'NULL') {
 			return 'NULL';
 		}
 		$val = trim($val);
