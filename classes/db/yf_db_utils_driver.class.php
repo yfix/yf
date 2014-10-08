@@ -280,7 +280,8 @@ abstract class yf_db_utils_driver {
 			$error = 'db_name is empty';
 			return false;
 		}
-		return (bool)in_array($table, (array)$this->list_tables($db_name));
+		$db_prefix = $this->db->DB_PREFIX;
+		return (bool)in_array($table, (array)$this->list_tables($db_name)) || (strlen($db_prefix) && in_array($db_prefix. $table, (array)$this->list_tables($db_name)));
 	}
 
 	/**
