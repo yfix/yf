@@ -1,5 +1,55 @@
 <?php
 
+/*
+	# addon select: supplier_id
+
+	# velika_kishenya
+	# olis
+	# start trade
+	# fortuna
+	# epicentr
+	# talisman
+	# zakaz_ua
+	# oblik
+	# dobra_hata
+	# promozp
+	# electrolux
+	# ekanevidal
+	# zoobonus
+	# svitcom
+
+	supplier_id, articul
+		new by articul
+			name, url( by name ),
+			articul,
+			price, price_raw,
+			description,
+			origin_url,
+			cat_id( by cat_name), supplier_id( by sup_name ), manufacturer_id( by man_name ),
+			status=1, active=1
+			add_date( by time )
+		update
+			price, price_raw, cat_id, update_date( by time )
+
+	format_data($name,$articul,$price,$supplier_id,$price_raw = 0)
+
+	# insert, if exists
+
+	# update, if exists id
+	id, name, price, etc
+		by id
+		by supplier_id, articul
+			update any fields
+
+	# rules
+		price > 0 or price_raw > 0
+		articul IS NOT NULL
+		cat_name IS NOT NULL
+		supplier_id MUST EXISTS IN DB
+		manufacturer_id MUST EXISTS IN DB
+			or add manufacturer( url by name )
+*/
+
 class yf_manage_shop_import_products2 {
 
 	private $_filter        = false;
@@ -20,56 +70,6 @@ class yf_manage_shop_import_products2 {
 		'supplier_name'     => 'поставщик: название (supplier_name)',
 	);
 
-	/*
-		# addon select: supplier_id
-
-		# velika_kishenya
-		# olis
-		# start trade
-		# fortuna
-		# epicentr
-		# talisman
-		# zakaz_ua
-		# oblik
-		# dobra_hata
-		# promozp
-		# electrolux
-		# ekanevidal
-		# zoobonus
-		# svitcom
-
-		supplier_id, articul
-			new by articul
-				name, url( by name ),
-				articul,
-				price, price_raw,
-				description,
-				origin_url,
-				cat_id( by cat_name), supplier_id( by sup_name ), manufacturer_id( by man_name ),
-				status=1, active=1
-				add_date( by time )
-			update
-				price, price_raw, cat_id, update_date( by time )
-
-		format_data($name,$articul,$price,$supplier_id,$price_raw = 0)
-
-		# insert, if exists
-
-		# update, if exists id
-		id, name, price, etc
-			by id
-			by supplier_id, articul
-				update any fields
-
-		# rules
-			price > 0 or price_raw > 0
-			articul IS NOT NULL
-			cat_name IS NOT NULL
-			supplier_id MUST EXISTS IN DB
-			manufacturer_id MUST EXISTS IN DB
-				or add manufacturer( url by name )
-	*/
-
 	public $import_action = array(
 		'update' => 'обновление',
 		'insert' => 'вставка',
@@ -79,7 +79,8 @@ class yf_manage_shop_import_products2 {
 		'update' => array(
 			'key' => array(
 				array( 'id', ),
-				array( 'supplier_id', 'articul', ),
+				array( 'supplier_id',   'articul', ),
+				array( 'supplier_name', 'articul', ),
 			),
 		),
 	);

@@ -192,6 +192,15 @@ ul.select2-result-single {
 		>
 		<span>№{{ $index }}</span>
 		<div class="import_field_key">
+			<span>
+				<select class="import_field"
+					ng-model="item_data.option.fields[ $index ]"
+					ng-change="Import.field__change( $index )"
+					ng-options="key as value for ( key, value ) in data._import_field"
+					ui-select2
+				>
+				</select>
+			</span>
 			<span class="import_key btn btn-small"
 				ng-class = "{
 					'btn-success' : item_data.option.keys[ $index ] != true,
@@ -201,26 +210,17 @@ ul.select2-result-single {
 				ng-click = "item_data.option.keys[ $index ] = !item_data.option.keys[ $index ]"
 			>
 				<span
-					ng-show="item_data.option.keys[ $index ] != true"
-					title = "обновляемое поля (ключ-поле)"
+					title   = "обновляемое поля (ключ-поле)"
+					ng-show = "item_data.option.keys[ $index ] != true"
 				>
 					<i class="fa fa-check"></i>
 				</span>
 				<span
-					ng-show="item_data.option.keys[ $index ] == true"
-					title = "ключ-поле (обновляемое поля)"
+					title   = "ключ-поле (обновляемое поля)"
+					ng-show = "item_data.option.keys[ $index ] == true"
 				>
 					<i class="fa fa-key"></i>
 				</span>
-			</span>
-			<span>
-				<select class="import_field"
-					ng-model="item_data.option.fields[ $index ]"
-					ng-change="Import.field__change( $index )"
-					ng-options="key as value for ( key, value ) in data._import_field"
-					ui-select2
-				>
-				</select>
 			</span>
 		</div>
 		</th>
