@@ -38,11 +38,10 @@ class class_form_real_test extends db_real_abstract {
 
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 
-		$data = array(
+		$_POST = array(
 			'name'		=> 'for_unit_tests',
-			'active'	=> 1,
+			'active'	=> '1',
 		);
-		$_POST = $data;
 		$this->assertTrue( main()->is_post() );
 
 		form($_POST)
@@ -54,8 +53,28 @@ class class_form_real_test extends db_real_abstract {
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
 
 		$first = self::db()->from('static_pages')->get();
-		foreach ($data as $k => $v) {
-			$this->assertEquals($v, $first[$k]);
+
+		$names = array('name', 'text', 'active');
+		foreach ($names as $name) {
+			$this->assertSame($_POST[$name], $first[$name]);
+		}
+
+		$this->assertTrue( (bool)self::utils()->truncate_table('static_pages') );
+		$this->assertEmpty( self::db()->from('static_pages')->get() );
+
+		form($_POST)
+			->text('name')
+			->text('text')
+			->active_box()
+			->validate(array('name' => 'trim|required'))
+			->insert_if_ok('static_pages', array('name','text'), array('text' => null))
+			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
+
+		$first = self::db()->from('static_pages')->get();
+
+		$names = array('name', 'text', 'active');
+		foreach ($names as $name) {
+			$this->assertSame($_POST[$name], $first[$name]);
 		}
 
 		$_SERVER['REQUEST_METHOD'] = null;
