@@ -645,6 +645,16 @@ class yf_tpl_driver_yf {
 				} else {
 					return '';
 				}
+			// Special processing of isset
+			} elseif ($func === '_isset') {
+				$part_left = array();
+				if ($is_multiple) {
+					foreach (explode(',',trim($m['left'])) as $v) {
+						$part_left[] = $_this->_cond_sub_array($v, $replace);
+					}
+				} else {
+					$part_left = $_this->_cond_sub_array($m['left'], $replace);
+				}
 			// Example of supported functions: {if_empty(data)} good {/if} {if_not_isset(data.sub1)} good {/if} 
 			} elseif (!function_exists($func) && !in_array($func, array('empty','isset'))) {
 				return '';
@@ -738,7 +748,7 @@ class yf_tpl_driver_yf {
 				}
 			// Global array element or sub array
 			} elseif (false !== strpos($val, '.')) {
-				$a = $this->_cond_sub_array($val, $replace, $stpl_name, $for_right);
+				$a = $this->_cond_sub_array($val, $replace, $for_right);
 			} elseif ($for_right && is_string($val)) {
 				$a = '\''.addslashes($val).'\'';
 			} else {
@@ -755,8 +765,11 @@ class yf_tpl_driver_yf {
 
 	/**
 	*/
-	function _cond_sub_array ($cond = '', $replace = array(), $stpl_name = '', $for_right = false) {
+	function _cond_sub_array ($cond, $replace = array(), $for_right = false) {
 		$pos = strpos($cond, '.');
+		if ($pos === false) {
+			return '$replace[\''.addslashes($cond).'\']';
+		}
 		$try_elm = substr($cond, 0, $pos);
 		$try_elm2 = '[\''.str_replace('.', '\'][\'', substr($cond, $pos + 1)).'\']';
 		$out = '';
