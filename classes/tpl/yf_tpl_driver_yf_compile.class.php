@@ -215,17 +215,12 @@ class yf_tpl_driver_yf_compile {
 	* Prepare condition for the compilation
 	*/
 	function _compile_prepare_ifs (array $m) {
-		$cond = $m['cond'] == 'elseif' ? '} '.$m['cond'] : $m['cond'];
+		$cond = $m['cond'] === 'elseif' ? '} '.$m['cond'] : $m['cond'];
 		$part_left = $this->_compile_prepare_left($m['left']);
-		$part_right = trim($m['right']);
-		if (substr($part_right, 0, 1) == '#') {
-			$part_right = '$replace[\''.ltrim($part_right, '#').'\']';
-		} else {
-			$part_right = '\''.$part_right.'\'';
-		}
+		$part_right = $this->_compile_prepare_left($m['right']);
 		$op = $this->_cond_operators[strtolower(trim($m['op']))];
 		// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
-		if ($op == '%') {
+		if ($op === '%') {
 			$part_left = '!('.$part_left;
 			$part_right = $part_right.')';
 		}
@@ -237,18 +232,9 @@ class yf_tpl_driver_yf_compile {
 				$a_cond	= trim($m['cond']);
 				$a_left	= $_this->_compile_prepare_left($m['left']);
 				$a_op	= $_this->_cond_operators[strtolower(trim($m['op']))];
-				$a_right = trim($m['right']);
-				if (substr($a_right, 0, 1) == '#') {
-					$a_right = '$replace[\''.ltrim($a_right, '#').'\']';
-				}
-				if (!is_numeric($a_right)) {
-					$a_right = '\''.$a_right.'\'';
-				}
-				if (empty($a_left)) {
-					$a_left = '\'\'';
-				}
+				$a_right = $_this->_compile_prepare_left($m['right']);
 				// Special case for "mod". Examples: {if("id" mod 4)} content {/if}
-				if ($a_op == '%') {
+				if ($a_op === '%') {
 					$a_left = '!('.$a_left;
 					$a_right = $a_right.')';
 				}
@@ -273,8 +259,20 @@ class yf_tpl_driver_yf_compile {
 			'_even'	=> '($__f_counter % 2)',
 			'_odd'	=> '(!($__f_counter % 2))',
 		);
+		$tmp_len = strlen($part_left);
+		$tmp_first = substr($part_left, 0, 1);
+		// Variable hint, starting from # or @
+		if (($tmp_first === '@' || $tmp_first == '#') && substr($part_left, 0, 2) !== '#.' && $tmp_len > 1) {
+			$part_left = substr($part_left, 1);
+			$tmp_len--;
+		}
 		// Array item
-		if (substr($part_left, 0, 2) == '#.') {
+		if (is_numeric($part_left)) {
+			$part_left = '\''.$part_left.'\'';
+		// Simple number or string, started with '%'
+		} elseif ($tmp_first === '%' && $tmp_len > 1) {
+			$part_left = '\''.addslashes(substr($part_left, 1)).'\'';
+		} elseif (substr($part_left, 0, 2) === '#.') {
 			$part_left = '$_v[\''.substr($part_left, 2).'\']';
 		// Arithmetic operators (currently we allow only '+' and '-')
 		} elseif (isset($this->_math_operators[$part_left])) {
@@ -305,13 +303,11 @@ class yf_tpl_driver_yf_compile {
 			} else {
 				$part_left = '$replace["'.$try_elm.'"]'.$try_elm2;
 			}
-		// Simple number or string, started with '%'
-		} elseif ($part_left{0} == '%' && strlen($part_left) > 1) {
-			$part_left = '"'.str_replace('"', '\"', substr($part_left, 1)).'"';
-		} else {
-			$part_left = '$replace[\''.$part_left.'\']';
+		} elseif ($tmp_len) {
+			$part_left = addslashes($part_left);
+			$part_left = '(isset($replace[\''.$part_left.'\']) ? $replace[\''.$part_left.'\'] : \''.$part_left.'\')';
 		}
-		return $part_left;
+		return strlen($part_left) ? $part_left : '\'\'';
 	}
 
 	/**
@@ -354,7 +350,7 @@ class yf_tpl_driver_yf_compile {
 			$func = $funcs_map[$func];
 		}
 		$negate = false;
-		if (substr($func, 0, 4) == 'not_') {
+		if (substr($func, 0, 4) === 'not_') {
 			$func = substr($func, 4);
 			$negate = true;
 		}
@@ -386,7 +382,7 @@ class yf_tpl_driver_yf_compile {
 		} else {
 			$center_cond = ($negate ? '!' : ''). $func. '('. (strlen($part_left) ? $part_left : '$replace["___not_existing_key__"]'). ')';
 		}
-		return ($cond == 'elseif' ? '} '.$cond : $cond).'('.$center_cond.') {';
+		return ($cond === 'elseif' ? '} '.$cond : $cond).'('.$center_cond.') {';
 	}
 
 	/**
@@ -422,7 +418,7 @@ class yf_tpl_driver_yf_compile {
 		$foreach_arr_tag = '';
 		$foreach_data_tag = '';
 		// Ability to directly execute some class method and do foreach over it like {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
-		if ($func == 'foreach_exec') {
+		if ($func === 'foreach_exec') {
 			$foreach_data_tag = 'array()';
 			if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $foreach_arr_name, $m_exec)) {
 				$foreach_data_tag = '(array)main()->_execute(\''.$m_exec['object'].'\', \''.$m_exec['action'].'\', \''.$m_exec['args'].'\', $name. $this->_STPL_EXT, 0, $use_cache = false)';
