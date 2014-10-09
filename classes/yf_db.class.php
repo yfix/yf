@@ -639,12 +639,12 @@ class yf_db {
 		}
 		$data = array();
 		if (!$no_cache) {
-			$data = cache_get($cache_name);
+			$data = cache_tmp()->get($cache_name);
 		}
 		if (!$data) {
 			$data = $this->meta_columns($table);
 			if (!$no_cache) {
-				cache_set($cache_name, $data);
+				cache_tmp()->set($cache_name, $data);
 			}
 		}
 		return $data;
@@ -671,12 +671,16 @@ class yf_db {
 			break;
 		}
 		$not_existing_cols = array();
+		$fixed_nulls = array();
 		if ($is_data_3d) {
 			foreach ((array)$data as $k => $_data) {
 				foreach ((array)$_data as $name => $v) {
 					if (!isset($cols[$name])) {
 						$not_existing_cols[$name] = $name;
 						unset($data[$k][$name]);
+					} elseif (is_null($v) && !$cols[$name]['nullable']) {
+						$fixed_nulls[$name] = $name;
+						$data[$name][$k] = '';
 					}
 				}
 			}
@@ -685,13 +689,18 @@ class yf_db {
 				if (!isset($cols[$name])) {
 					$not_existing_cols[$name] = $name;
 					unset($data[$name]);
+				} elseif (is_null($v) && !$cols[$name]['nullable']) {
+					$fixed_nulls[$name] = $name;
+					$data[$name] = '';
 				}
 			}
 		}
-		if ($not_existing_cols) {
-			$msg = __CLASS__.'->'.__FUNCTION__.': not existing columns for table '.$table.': '.implode(', ', $not_existing_cols);
-			if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
-				trigger_error($msg, E_USER_WARNING);
+		if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
+			if ($not_existing_cols) {
+				trigger_error(__CLASS__.'->'.__FUNCTION__.': not existing columns for table "'.$table.'", columns: '.implode(', ', $not_existing_cols), E_USER_NOTICE);
+			}
+			if ($fixed_nulls) {
+				trigger_error(__CLASS__.'->'.__FUNCTION__.': fixed nulls for table "'.$table.'", columns: '.implode(', ', $fixed_nulls), E_USER_NOTICE);
 			}
 		}
 		return $data;
@@ -1575,37 +1584,43 @@ class yf_db {
 	/**
 	*/
 	function utils() {
-		$cname = 'db_utils_'.$this->get_driver_family();
-		$obj = clone _class($cname, 'classes/db/');
-		$obj->db = $this;
-		return $obj;
+		if (!isset($this->utils)) {
+			$cname = 'db_utils_'.$this->get_driver_family();
+			$this->utils = _class($cname, 'classes/db/');
+			$this->utils->db = $this;
+		}
+		return $this->utils;
 	}
 
 	/**
 	*/
 	function migrator() {
-		$cname = 'db_migrator_'.$this->get_driver_family();
-		$obj = clone _class($cname, 'classes/db/');
-		$obj->db = $this;
-		return $obj;
+		if (!isset($this->migrator)) {
+			$cname = 'db_migrator_'.$this->get_driver_family();
+			$this->migrator = _class($cname, 'classes/db/');
+			$this->migrator->db = $this;
+		}
+		return $this->migrator;
 	}
 
 	/**
 	*/
 	function installer() {
-		$cname = 'db_installer_'.$this->get_driver_family();
-		$obj = clone _class($cname, 'classes/db/');
-		$obj->db = $this;
-		return $obj;
+		if (!isset($this->installer)) {
+			$cname = 'db_installer_'.$this->get_driver_family();
+			$this->installer = _class($cname, 'classes/db/');
+			$this->installer->db = $this;
+		}
+		return $this->installer;
 	}
 
 	/**
 	*/
 	function query_builder() {
 		$cname = 'db_query_builder_'.$this->get_driver_family();
-		$obj = clone _class($cname, 'classes/db/');
-		$obj->db = $this;
-		return $obj;
+		$qb = clone _class($cname, 'classes/db/');
+		$qb->db = $this;
+		return $qb;
 	}
 
 	/**

@@ -161,6 +161,39 @@ class yf_debug {
 
 	/**
 	*/
+	function _get_yf_version () {
+		$yf_version_file = YF_PATH. '.yf_version';
+		$yf_version = file_exists($yf_version_file) ? file_get_contents($yf_version_file) : '';
+
+		$git_base_path = YF_PATH. '.git';
+		$git_head_path = $git_base_path.'/HEAD';
+		$git_hash = '';
+		if (!file_exists($git_head_path) && file_exists($git_base_path) && is_file($git_base_path)) {
+			// gitdir: ../.git/modules/yf
+			list(, $git_base_path) = explode('gitdir:', file_get_contents($git_base_path));
+			$git_base_path = realpath(YF_PATH. trim($git_base_path));
+			$git_head_path = $git_base_path && file_exists($git_base_path) ? $git_base_path.'/HEAD' : '';
+		}
+		if ($git_head_path && file_exists($git_head_path)) {
+			// ref: refs/heads/master
+			list(, $git_subhead_path) = explode('ref:', file_get_contents($git_head_path));
+			$git_hash_file = $git_subhead_path ? $git_base_path.'/'.trim($git_subhead_path) : '';
+			$git_hash = $git_hash_file && file_exists($git_hash_file) ? file_get_contents($git_hash_file) : '';
+		}
+		$out = array();
+		if ($yf_version) {
+			$yf_version = _prepare_html($yf_version);
+			$out[] = '<a href="https://github.com/yfix/yf/tree/'.$yf_version.'" class="btn btn-mini btn-xs">'.$yf_version.'</a>';
+		}
+		if ($git_hash) {
+			$git_hash = _prepare_html($git_hash);
+			$out[] = '<a href="https://github.com/yfix/yf/tree/'.$git_hash.'" class="btn btn-mini btn-xs">'.substr($git_hash, 0, 8).'</a>';
+		}
+		return implode(' | ', $out);
+	}
+
+	/**
+	*/
 	function _debug_DEBUG_YF (&$params = array()) {
 		if (!$this->SHOW_SETTINGS) {
 			return '';
@@ -182,6 +215,7 @@ class yf_debug {
 			'SITE_PATH'			=> SITE_PATH,
 			'PROJECT_PATH'		=> PROJECT_PATH,
 			'YF_PATH'			=> YF_PATH,
+			'YF_VERSION'		=> $this->_get_yf_version(),
 			'WEB_PATH'			=> WEB_PATH,
 			'MEDIA_PATH'		=> MEDIA_PATH,
 			'ADMIN_WEB_PATH'	=> ADMIN_WEB_PATH,
@@ -286,7 +320,13 @@ class yf_debug {
 			->row_end()
 		;
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6 col-lg-6">'.$this->_show_key_val_table(_prepare_html($_data), array('no_total' => 1, 'no_sort' => 1, 'no_escape' => 1)).'</div>';
+			foreach ($_data as $k => $v) {
+				if ($name == 'yf' && $k == 'YF_VERSION') {
+					continue;
+				}
+				$_data[$k] = _prepare_html($v);
+			}
+			$body .= '<div class="span6 col-lg-6">'.$this->_show_key_val_table($_data, array('no_total' => 1, 'no_sort' => 1, 'no_escape' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -1129,7 +1169,7 @@ class yf_debug {
 			if ($params['skip_empty_values'] && !$v) {
 				continue;
 			}
-			$v = is_array($v) ? $this->_var_export($v) : $v;
+			$v = is_array($v) ? nl2br($this->_var_export($v)) : $v;
 			$items[] = array(
 				'key'	=> $params['escape'] ? _prepare_html($k) : $k,
 				'value'	=> $params['escape'] && strlen($v) ? '<pre>'._prepare_html($v).'</pre>' : $v,
@@ -1371,7 +1411,7 @@ class yf_debug {
 		if (defined('HHVM_VERSION')) {
 			return is_array($var) ? print_r($var, 1) : $var;
 		} else {
-			return var_export($var, 1);
+			return _var_export($var);
 		}
 	}
 }
