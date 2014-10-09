@@ -11,8 +11,8 @@ if (!file_exists($themes_file) || !filesize($themes_file)) {
 }
 
 $bs_v2 = '2.3.2';
-$bs_v3 = '3.1.1';
-$jquery_v = '1.11.0';
+$bs_v3 = '3.2.0';
+$jquery_v = '1.11.1';
 
 $d = './bootswatch_copy-'.$bs_v2.'/';
 if (!file_exists($d)) {

@@ -739,7 +739,7 @@ class yf_manage_shop_import_products2 {
 			if( isset( $value ) ) {
 				$values = _es( (array)$value );
 				foreach( $values as $i => $v ) {
-					if( !is_int( $v ) ) {
+					if( !is_int( $v ) && !is_null( $v ) ) {
 						$values[ $i ] = "'$v'";
 					}
 				}

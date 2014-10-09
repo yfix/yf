@@ -1,9 +1,9 @@
 {catch(min_ext)}{if_false(const.DEBUG_MODE)}.min{/if}{/catch}
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery{min_ext}.js" class="yf_core"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui{min_ext}.js" class="yf_core"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery{min_ext}.js" class="yf_core"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui{min_ext}.js" class="yf_core"></script>
 
-<!--script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore{min_ext}.js"></script-->
+<!--script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore{min_ext}.js"></script-->
 
 {if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
 	{if(cur_theme eq "bootstrap")}
@@ -24,16 +24,16 @@
 
 {if("conf.css_framework" eq "bs3")}
 	{if(cur_theme eq "bootstrap")}
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme{min_ext}.css" rel="stylesheet" class="yf_core">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme{min_ext}.css" rel="stylesheet" class="yf_core">
 	{else}
 		{if_true(const.DEBUG_MODE)}
 			<link href="http://bootswatch.com/{cur_theme}/bootstrap.css" rel="stylesheet" class="yf_core">
 		{else}
-			<link href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/{cur_theme}/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
+			<link href="//netdna.bootstrapcdn.com/bootswatch/3.2.0/{cur_theme}/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
 		{/if}
 	{/if}
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap{min_ext}.js" class="yf_core"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap{min_ext}.js" class="yf_core"></script>
 {/if}
 
 <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome{min_ext}.css" rel="stylesheet" class="yf_core">
@@ -56,5 +56,5 @@
 </style>
 
 <!--[if lt IE 9]>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv{min_ext}.js" class="yf_core"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv{min_ext}.js" class="yf_core"></script>
 <![endif]-->
