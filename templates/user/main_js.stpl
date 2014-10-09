@@ -1,10 +1,14 @@
 <!-- main_js.stpl --> {{-- Do not remove this line! --}}
 <script type="text/javascript" class="yf_core">
 $(function(){
+try {
 	$('.yf_tip').popover({
 		'trigger' : 'hover',
 		'delay'   : { 'show' : 100, 'hide' : 500 }
 	})
+} catch(e) {
+	console.log(e)
+}
 })
 </script>
 <script type="text/javascript" class="yf_core">
