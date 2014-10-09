@@ -638,15 +638,14 @@ class yf_db {
 			$no_cache = true;
 		}
 		$data = array();
-#		if (!$no_cache) {
-#			$data = cache_get($cache_name);
-#		}
+		if (!$no_cache) {
+			$data = cache_tmp()->get($cache_name);
+		}
 		if (!$data) {
 			$data = $this->meta_columns($table);
-var_dump($data);
-#			if (!$no_cache) {
-#				cache_set($cache_name, $data);
-#			}
+			if (!$no_cache) {
+				cache_tmp()->set($cache_name, $data);
+			}
 		}
 		return $data;
 	}
@@ -672,12 +671,16 @@ var_dump($data);
 			break;
 		}
 		$not_existing_cols = array();
+		$fixed_nulls = array();
 		if ($is_data_3d) {
 			foreach ((array)$data as $k => $_data) {
 				foreach ((array)$_data as $name => $v) {
 					if (!isset($cols[$name])) {
 						$not_existing_cols[$name] = $name;
 						unset($data[$k][$name]);
+					} elseif (is_null($v) && !$cols[$name]['nullable']) {
+						$fixed_nulls[$name] = $name;
+						$data[$name][$k] = '';
 					}
 				}
 			}
@@ -686,13 +689,18 @@ var_dump($data);
 				if (!isset($cols[$name])) {
 					$not_existing_cols[$name] = $name;
 					unset($data[$name]);
+				} elseif (is_null($v) && !$cols[$name]['nullable']) {
+					$fixed_nulls[$name] = $name;
+					$data[$name] = '';
 				}
 			}
 		}
-		if ($not_existing_cols) {
-			$msg = __CLASS__.'->'.__FUNCTION__.': not existing columns for table '.$table.': '.implode(', ', $not_existing_cols);
-			if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
-				trigger_error($msg, E_USER_WARNING);
+		if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
+			if ($not_existing_cols) {
+				trigger_error(__CLASS__.'->'.__FUNCTION__.': not existing columns for table "'.$table.'", columns: '.implode(', ', $not_existing_cols), E_USER_NOTICE);
+			}
+			if ($fixed_nulls) {
+				trigger_error(__CLASS__.'->'.__FUNCTION__.': fixed nulls for table "'.$table.'", columns: '.implode(', ', $fixed_nulls), E_USER_NOTICE);
 			}
 		}
 		return $data;
