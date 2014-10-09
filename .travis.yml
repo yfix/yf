@@ -17,7 +17,7 @@ services:
 #  - YF_DB_PSWD=
 
 before_script:
-  - if [ -n "$(hhvm --version | grep -i hiphop)" ]; then phpenv config-add .dev/tests/travis_php.ini; fi 
+#  - if [ -n "$(hhvm --version | grep -i hiphop)" ]; then phpenv config-add .dev/tests/travis_php.ini; fi 
   - mysql -e 'create database yf_for_unit_tests;'
 #  - composer self-update
 #  - composer install --prefer-source --no-interaction --dev
