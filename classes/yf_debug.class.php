@@ -161,6 +161,25 @@ class yf_debug {
 
 	/**
 	*/
+	function _get_yf_version () {
+		$yf_version_file = YF_PATH. '.yf_version';
+		if (file_exists($yf_version_file)) {
+			$git_head_path = YF_PATH. '.git/HEAD';
+			if (file_exists($git_head_path)) {
+				list(, $git_subhead_path) = explode('ref:', file_get_contents($git_head_path));
+				if ($git_subhead_path) {
+					$yf_version_file = YF_PATH. '.git/'.trim($git_subhead_path);
+					if (!file_exists($yf_version_file)) {
+						$yf_version_file = '';
+					}
+				}
+			}
+		}
+		return $yf_version_file && file_exists($yf_version_file) ? file_get_contents($yf_version_file) : 'unknown';
+	}
+
+	/**
+	*/
 	function _debug_DEBUG_YF (&$params = array()) {
 		if (!$this->SHOW_SETTINGS) {
 			return '';
@@ -182,6 +201,7 @@ class yf_debug {
 			'SITE_PATH'			=> SITE_PATH,
 			'PROJECT_PATH'		=> PROJECT_PATH,
 			'YF_PATH'			=> YF_PATH,
+			'YF_VERSION'		=> $this->_get_yf_version(),
 			'WEB_PATH'			=> WEB_PATH,
 			'MEDIA_PATH'		=> MEDIA_PATH,
 			'ADMIN_WEB_PATH'	=> ADMIN_WEB_PATH,
