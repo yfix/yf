@@ -553,9 +553,33 @@ class yf_manage_shop_import_products2 {
 	protected function _field_test__id( $value, $action ) {
 		$value  = (int)$value;
 		$valid  = $value > 0;
-		$exists = $this->_product_exists( $value );
+		$exists = $this->_product_exists( 'id', $value );
 		$status = $valid && $exists;
 		$status_message = $status ? 'товар уже существует' : 'товар не существует';
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
+	protected function _field_test__name( $value, $action ) {
+		$value  = trim( $value );
+		$valid  = !empty( $value );
+		if( !$valid ) {
+			$status_message = 'название товара пустое';
+		} else {
+			$length = 3;
+			$valid = mb_strlen( $value, 'UTF-8' ) >= $length;
+			if( !$valid ) {
+				$status_message = 'название товара менее '. $length .' символов';
+			}
+		}
+		$valid && $exists = $this->_product_exists( 'name', "'$value'" );
+		$status = $valid;
+		$status_message = $status ? null : $status_message;
 		$result = array(
 			'valid'          => $valid,
 			'exists'         => $exists,
@@ -581,21 +605,57 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
-	function _product_exists( $id ) {
+	protected function _field_test__price_raw( $value, $action ) {
+		$_class_price = $this->_class_price;
+		$value  = $_class_price->_number_float( $value );
+		$valid  = $value > 0;
+		$exists = null;
+		$status = $valid;
+		$status_message = $status ? null : 'себестоимость должна быть больше нуля';
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
+	protected function _field_test__articul( $value, $action ) {
+		$value  = trim( $value );
+		$valid  = !empty( $value );
+		if( !$valid ) {
+			$status_message = 'артикул пустой';
+		}
+		$valid && $exists = $this->_product_exists( 'articul', "'$value'" );
+		$status = $valid;
+		$status_message = $status ? null : $status_message;
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
+	function _product_exists( $key, $value ) {
+		if( empty( $key ) ) { return( null ); }
 		$products = &$this->cache_products;
-		if( !isset( $products[ $id ] ) ) {
+		if( !isset( $products[ $key ][ $value ] ) ) {
 			$product = $this->_get_products( array(
+				'key'   => $key,
 				'where' => array(
-					'id' => $id
+					$key => $value
 				),
 			));
 			// cache
-			$products[ $id ] = null;
-			if( isset( $product[ $id ] ) ) {
-				$products[ $id ] = $product[ $id ];
+			$products[ $key ][ $value ] = null;
+			if( isset( $product[ $value ] ) ) {
+				$products[ $key ][ $value ] = $product[ $value ];
 			}
 		}
-		$result = !is_null( $products[ $id ] );
+		$result = !is_null( $products[ $key ][ $value ] );
 		return( $result );
 	}
 
