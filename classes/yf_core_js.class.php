@@ -7,13 +7,13 @@ class yf_core_js {
 	public $content = array();
 	/** @array List of pre-defined assets */
 	public $assets = array(
-		'jquery'	=> '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js',
+		'jquery'	=> '//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js',
 		'jquery-ui'	=> array(
-			'url' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js',
+			'url' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js',
 			'require' => 'jquery',
 		),
 		'jquery-cookie' => array(
-			'url' => '//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js',
+			'url' => '//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js',
 			'require' => 'jquery',
 		),
 		'bs2'		=> array(
@@ -21,10 +21,10 @@ class yf_core_js {
 			'require' => 'jquery',
 		),
 		'bs3'		=> array(
-			'url' => '//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js',
+			'url' => '//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js',
 			'require' => 'jquery',
 		),
-#		'html5shiv'	=> '<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js" class="yf_core"></script><![endif]-->',
+#		'html5shiv'	=> '<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js" class="yf_core"></script><![endif]-->',
 	);
 
 	/**
