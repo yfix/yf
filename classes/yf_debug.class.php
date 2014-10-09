@@ -163,12 +163,24 @@ class yf_debug {
 	*/
 	function _get_yf_version () {
 		$yf_version_file = YF_PATH. '.yf_version';
-		if (file_exists($yf_version_file)) {
-			$git_head_path = YF_PATH. '.git/HEAD';
+		if (!file_exists($yf_version_file)) {
+			$git_base_path = YF_PATH. '.git';
+			$git_head_path = $git_base_path.'/HEAD';
+			if (!file_exists($git_head_path)) {
+				if (file_exists($git_base_path) && is_file($git_base_path)) {
+					// gitdir: ../.git/modules/yf
+					list(, $git_base_path) = explode('gitdir:', file_get_contents($git_base_path));
+					$git_base_path = realpath(YF_PATH. trim($git_base_path));
+					if ($git_base_path && file_exists($git_base_path)) {
+						$git_head_path = $git_base_path.'/HEAD';
+					}
+				}
+			}
 			if (file_exists($git_head_path)) {
+				// ref: refs/heads/master
 				list(, $git_subhead_path) = explode('ref:', file_get_contents($git_head_path));
 				if ($git_subhead_path) {
-					$yf_version_file = YF_PATH. '.git/'.trim($git_subhead_path);
+					$yf_version_file = $git_base_path.'/'.trim($git_subhead_path);
 					if (!file_exists($yf_version_file)) {
 						$yf_version_file = '';
 					}
