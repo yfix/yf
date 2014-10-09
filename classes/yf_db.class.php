@@ -638,14 +638,15 @@ class yf_db {
 			$no_cache = true;
 		}
 		$data = array();
-		if (!$no_cache) {
-			$data = cache_get($cache_name);
-		}
+#		if (!$no_cache) {
+#			$data = cache_get($cache_name);
+#		}
 		if (!$data) {
 			$data = $this->meta_columns($table);
-			if (!$no_cache) {
-				cache_set($cache_name, $data);
-			}
+var_dump($data);
+#			if (!$no_cache) {
+#				cache_set($cache_name, $data);
+#			}
 		}
 		return $data;
 	}
@@ -1575,37 +1576,43 @@ class yf_db {
 	/**
 	*/
 	function utils() {
-		$cname = 'db_utils_'.$this->get_driver_family();
-		$obj = clone _class($cname, 'classes/db/');
-		$obj->db = $this;
-		return $obj;
+		if (!isset($this->utils)) {
+			$cname = 'db_utils_'.$this->get_driver_family();
+			$this->utils = _class($cname, 'classes/db/');
+			$this->utils->db = $this;
+		}
+		return $this->utils;
 	}
 
 	/**
 	*/
 	function migrator() {
-		$cname = 'db_migrator_'.$this->get_driver_family();
-		$obj = clone _class($cname, 'classes/db/');
-		$obj->db = $this;
-		return $obj;
+		if (!isset($this->migrator)) {
+			$cname = 'db_migrator_'.$this->get_driver_family();
+			$this->migrator = _class($cname, 'classes/db/');
+			$this->migrator->db = $this;
+		}
+		return $this->migrator;
 	}
 
 	/**
 	*/
 	function installer() {
-		$cname = 'db_installer_'.$this->get_driver_family();
-		$obj = clone _class($cname, 'classes/db/');
-		$obj->db = $this;
-		return $obj;
+		if (!isset($this->installer)) {
+			$cname = 'db_installer_'.$this->get_driver_family();
+			$this->installer = _class($cname, 'classes/db/');
+			$this->installer->db = $this;
+		}
+		return $this->installer;
 	}
 
 	/**
 	*/
 	function query_builder() {
 		$cname = 'db_query_builder_'.$this->get_driver_family();
-		$obj = clone _class($cname, 'classes/db/');
-		$obj->db = $this;
-		return $obj;
+		$qb = clone _class($cname, 'classes/db/');
+		$qb->db = $this;
+		return $qb;
 	}
 
 	/**
