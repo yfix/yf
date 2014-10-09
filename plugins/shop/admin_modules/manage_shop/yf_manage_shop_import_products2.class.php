@@ -99,8 +99,12 @@ class yf_manage_shop_import_products2 {
 		'import' => 'импортирован',
 	);
 	public $supplier = null;
+	// categories
+	public $set_cat_name = 'shop_cats';
+	public $set_cat_id   = null;
+
 	// cache
-	public $cache_products = array();
+	public $cache = array();
 
 	// class
 	private $_instance = false;
@@ -118,6 +122,8 @@ class yf_manage_shop_import_products2 {
 		$this->_load_upload_list();
 		$supplier = db()->select( 'id', 'name' )->from( 'shop_suppliers' )->get_2d();
 		$this->supplier = $supplier;
+		// categories
+		$this->set_cat_id = _class( 'cats' )->_get_cat_id_by_name( $this->set_cat_name );
 		// get filter
 		$_object             = input()->get( 'object' );
 		$_action             = input()->get( 'action' );
@@ -469,12 +475,12 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
-	protected function _upload_item__import_test( $option ) {
+	protected function _upload_item__import_test( $options ) {
 		$upload_list = $this->upload_list;
 		// load import data
-		$id            = $option[ 'id'     ];
-		$import_fields = $option[ 'fields' ];
-		$action        = $option[ 'action' ];
+		$id            = $options[ 'id'     ];
+		$import_fields = $options[ 'fields' ];
+		$action        = $options[ 'action' ];
 		$upload_path   = $this->upload_path;
 		$file          = $upload_path . $id;
 		$items = $this->_file_parse( $file, $upload_list[ $id ] );
@@ -507,7 +513,7 @@ class yf_manage_shop_import_products2 {
 			);
 			foreach( $import_fields_test as $field_index => $field ) {
 				$value = $item[ $field_index ];
-				$test = $this->_field__test( $field, $value, $action );
+				$test = $this->_field__test( $field, $value, $options );
 				if( $test === FALSE ) { continue; }
 				$result[ 'items' ][ $index ][ 'fields' ][ $field_index ] = $test;
 				$status = $status && $test[ 'status' ];
@@ -553,12 +559,13 @@ class yf_manage_shop_import_products2 {
 	protected function _field_test__id( $value, $action ) {
 		$value  = (int)$value;
 		$valid  = $value > 0;
-		$exists = $this->_product_exists( 'id', $value );
+			$valid && list( $exists, $many ) = $this->_db_exists( 'shop_products', 'id', $value );
 		$status = $valid && $exists;
 		$status_message = $status ? 'товар уже существует' : 'товар не существует';
 		$result = array(
 			'valid'          => $valid,
 			'exists'         => $exists,
+			'many'           => $many,
 			'status'         => $status,
 			'status_message' => $status_message,
 		);
@@ -577,12 +584,13 @@ class yf_manage_shop_import_products2 {
 				$status_message = 'название товара менее '. $length .' символов';
 			}
 		}
-		$valid && $exists = $this->_product_exists( 'name', "'$value'" );
+		$valid && list( $exists, $many ) = $this->_db_exists( 'shop_products', 'name', $value );
 		$status = $valid;
 		$status_message = $status ? null : $status_message;
 		$result = array(
 			'valid'          => $valid,
 			'exists'         => $exists,
+			'many'           => $many,
 			'status'         => $status,
 			'status_message' => $status_message,
 		);
@@ -627,60 +635,134 @@ class yf_manage_shop_import_products2 {
 		if( !$valid ) {
 			$status_message = 'артикул пустой';
 		}
-		$valid && $exists = $this->_product_exists( 'articul', "'$value'" );
+		$valid && list( $exists, $many ) = $this->_db_exists( 'shop_products', 'articul', $value );
 		$status = $valid;
 		$status_message = $status ? null : $status_message;
 		$result = array(
 			'valid'          => $valid,
 			'exists'         => $exists,
+			'many'           => $many,
 			'status'         => $status,
 			'status_message' => $status_message,
 		);
 		return( $result );
 	}
 
-	function _product_exists( $key, $value ) {
-		if( empty( $key ) ) { return( null ); }
-		$products = &$this->cache_products;
-		if( !isset( $products[ $key ][ $value ] ) ) {
-			$product = $this->_get_products( array(
-				'key'   => $key,
-				'where' => array(
-					$key => $value
-				),
-			));
-			// cache
-			$products[ $key ][ $value ] = null;
-			if( isset( $product[ $value ] ) ) {
-				$products[ $key ][ $value ] = $product[ $value ];
-			}
-		}
-		$result = !is_null( $products[ $key ][ $value ] );
+	protected function _field_test__cat_id( $value, $action ) {
+		$value  = (int)$value;
+		$valid  = $value > 0;
+			!$valid && $status_message = 'категория пустая';
+		$valid && ( list( $exists, $many ) = $this->_db_exists( 'sys_category_items', 'id', $value
+			, array( 'where' => array( 'cat_id' => $this->set_cat_id ) ) ) );
+				!$exists  && $status_message = 'категория не существует';
+				$many > 1 && $status_message = 'множество категорий с этим id: ' . $many;
+		$status = $valid && $exists && $many == 1;
+			$status_message = $status ? null : $status_message;
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'many'           => $many,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
 		return( $result );
 	}
 
-	function _get_products( $options ) {
+	protected function _field_test__category_name( $value, $action ) {
+		$value  = trim( $value );
+		$valid  = !empty( $value );
+			!$valid && $status_message = 'категория пустая';
+		$valid && ( list( $exists, $many ) = $this->_db_exists( 'sys_category_items', 'name', $value
+			, array( 'where' => array( 'cat_id' => $this->set_cat_id ) ) ) );
+				!$exists  && $status_message = 'категория не существует';
+				$many > 1 && $status_message = 'множество категорий с этим именем: ' . $many;
+		$status = $valid && $exists && $many == 1;
+			$status_message = $status ? null : $status_message;
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'many'           => $many,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
+	function _db_exists( $name, $key, $value, $options = array() ) {
+		if( empty( $name ) || empty( $key ) ) { return( null ); }
 		$_      = $options;
+		$_where = (array)$_[ 'where' ];
+		$items = &$this->cache[ $name ];
+		if( !isset( $items[ $key ][ $value ] ) ) {
+			$_get_options = array(
+				'name'  => $name,
+				'key'   => $key,
+				'where' => $_where + array(
+					$key => $value
+				),
+			);
+			$item = $this->_db_get( $_get_options );
+			// cache
+			if( empty( $item ) ) {
+				$items[ $key ][ $value ] = null;
+			} else {
+				$items[ $key ][ $value ] = array();
+				foreach( (array)$item as $index => $_item ) {
+					if( isset( $_item[ $key ] ) ) {
+						if( isset( $_item[ 'id' ] ) ) {
+							$id = (int)$_item[ 'id' ];
+							$items[ 'id' ][ $id ] = &$item[ $index ];
+						} else {
+							$id = $index;
+						}
+						$items[ $key ][ $value ][ $id ] = &$item[ $index ];
+					}
+				}
+			}
+		}
+		$exists = !is_null( $items[ $key ][ $value ] );
+		$many   = count( $items[ $key ][ $value ] );
+		return( array( $exists, $many ) );
+	}
+
+	function _db_get( $options ) {
+		$_      = $options;
+		$_name  = $_[ 'name' ];
+			$sql_name = _es( $_name );
+		if( empty( $_name ) ) { return( null ); }
 		$_where = $_[ 'where' ];
+		$_limit = $_[ 'limit' ];
 		$_key   = isset( $_[ 'key' ] ) ? $_[ 'key' ] : 'id';
 		// prepare where
 		$where  = array();
 		foreach( $_where as $field => $value ) {
 			if( isset( $value ) ) {
-				$value = (array)$value;
-				$where[] = $field . ' IN( ' . implode( ', ', _es( $value ) ) . ' )';
+				$values = _es( (array)$value );
+				foreach( $values as $i => $v ) {
+					if( !is_int( $v ) ) {
+						$values[ $i ] = "'$v'";
+					}
+				}
+				$where[] = $field . ' IN( ' . implode( ', ', $values ) . ' )';
 			}
 		}
 		$sql_where = '';
 		if( !empty( $where ) ) {
 			$sql_where = 'WHERE ' . implode( ' AND ', $where );
 		}
+		// prepare limit
+		$sql_limit = '';
+		if( is_string( $_limit ) || is_int( $_limit ) ) {
+			$sql_limit = 'LIMIT ' . $_limit;
+		}
+		// prepare sql
 		$sql = sprintf(
-			'SELECT * FROM %s %s'
-			, db( 'shop_products' )
+			'SELECT * FROM %s %s %s'
+			, db( $sql_name )
 			, $sql_where
+			, $sql_limit
 		);
-		$result = db_get_all( $sql, $_key );
+		$result = db_get_all( $sql, '-1' );
 		return( $result );
 	}
 
