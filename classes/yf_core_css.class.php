@@ -7,10 +7,10 @@ class yf_core_css {
 	public $content = array();
 	/** @array List of pre-defined assets */
 	public $assets = array(
-		'jquery-ui'	=> '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css',
+		'jquery-ui'	=> '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.1/css/jquery-ui.min.css',
 		'angular-ui'=> '//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.css',
 		'bs2'		=> '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css',
-		'bs3'		=> '//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css',
+		'bs3'		=> '//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css',
 	);
 
 	/**
