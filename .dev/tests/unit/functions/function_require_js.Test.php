@@ -48,8 +48,11 @@ class function_require_js_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js" type="text/javascript" class="yf_core"></script>', _class('core_js')->show());
 	}
 	public function test_jquery() {
+		$this->assertNotEmpty(_class('core_js')->assets['jquery']);
+		$jquery_version = _class('core_js')->assets['jquery']['version'];
+		$this->assertNotEmpty($jquery_version);
 		jquery('var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });');
-		$this->assertEquals('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" type="text/javascript"></script>'.PHP_EOL
+		$this->assertEquals('<script src="//ajax.googleapis.com/ajax/libs/jquery/'.$jquery_version.'/jquery.min.js" type="text/javascript"></script>'.PHP_EOL
 			.'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });'.PHP_EOL.'})'.PHP_EOL
 			.'</script>', _class('core_js')->show());
 	}

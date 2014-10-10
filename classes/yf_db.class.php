@@ -678,9 +678,9 @@ class yf_db {
 					if (!isset($cols[$name])) {
 						$not_existing_cols[$name] = $name;
 						unset($data[$k][$name]);
-					} elseif (is_null($v) && !$cols[$name]['nullable']) {
+					} elseif ((is_null($v) || $v === 'NULL') && !$cols[$name]['nullable']) {
 						$fixed_nulls[$name] = $name;
-						$data[$name][$k] = '';
+						unset($data[$k][$name]);
 					}
 				}
 			}
@@ -689,9 +689,9 @@ class yf_db {
 				if (!isset($cols[$name])) {
 					$not_existing_cols[$name] = $name;
 					unset($data[$name]);
-				} elseif (is_null($v) && !$cols[$name]['nullable']) {
+				} elseif ((is_null($v) || $v === 'NULL') && !$cols[$name]['nullable']) {
 					$fixed_nulls[$name] = $name;
-					$data[$name] = '';
+					unset($data[$name]);
 				}
 			}
 		}
