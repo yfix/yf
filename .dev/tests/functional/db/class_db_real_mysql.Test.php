@@ -157,6 +157,10 @@ class class_db_real_mysql_test extends db_real_abstract {
 		$this->assertSame( array(array($expected)), self::db()->escape(array(array($input))) );
 		$this->assertSame( array(array('NULL',$expected)), self::db()->escape(array(array(NULL, $input))) );
 		$this->assertSame( array(array('NULL',$expected)), self::db()->escape(array(array('NULL', $input))) );
+		$this->assertSame( 3, self::db()->escape(3) );
+		$this->assertSame( '3.5', self::db()->escape(3.5) );
+		$this->assertSame( 1, self::db()->escape(true) );
+		$this->assertSame( 0, self::db()->escape(false) );
 
 		$this->assertSame( 'NULL', self::db()->_mysql_escape_mimic(NULL) );
 		$this->assertSame( 'NULL', self::db()->_mysql_escape_mimic('NULL') );
@@ -173,6 +177,10 @@ class class_db_real_mysql_test extends db_real_abstract {
 		$this->assertSame( array(array($expected)), self::db()->_mysql_escape_mimic(array(array($input))) );
 		$this->assertSame( array(array('NULL',$expected)), self::db()->_mysql_escape_mimic(array(array(NULL, $input))) );
 		$this->assertSame( array(array('NULL',$expected)), self::db()->_mysql_escape_mimic(array(array('NULL', $input))) );
+		$this->assertSame( 3, self::db()->_mysql_escape_mimic(3) );
+		$this->assertSame( '3.5', self::db()->_mysql_escape_mimic(3.5) );
+		$this->assertSame( 1, self::db()->_mysql_escape_mimic(true) );
+		$this->assertSame( 0, self::db()->_mysql_escape_mimic(false) );
 	}
 	public function test_get_one() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
