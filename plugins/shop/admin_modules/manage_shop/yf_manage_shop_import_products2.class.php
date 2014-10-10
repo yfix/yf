@@ -292,7 +292,7 @@ class yf_manage_shop_import_products2 {
 			case 'get':
 				$id = $_REQUEST[ 'id' ];
 				$result = $this->_upload_item__get( $id );
-				$test = $this->_upload_item__import( $result[ 'data' ][ 'option' ] );
+				$test = $this->_upload_item__import( $result[ 'data' ][ 'options' ] );
 				$result[ 'data' ][ 'test' ] = $test;
 				break;
 			case 'remove':
@@ -300,7 +300,7 @@ class yf_manage_shop_import_products2 {
 				$result = $this->_upload_item__remove( $id );
 				break;
 			case 'import':
-				$result = $this->_upload_item__import( $post[ 'option' ] );
+				$result = $this->_upload_item__import( $post[ 'options' ] );
 				break;
 		}
 		$result = array(
@@ -349,12 +349,12 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
-	protected function _option_default( &$option, $key, $cols, $default ) {
-		if( empty( $option ) || empty( $key ) || empty( $cols ) ) { return( null ); }
-		if( empty( $option[ $key ] ) ) {
+	protected function _option_default( &$options, $key, $cols, $default ) {
+		if( empty( $options ) || empty( $key ) || empty( $cols ) ) { return( null ); }
+		if( empty( $options[ $key ] ) ) {
 			$value = array();
 			for( $i = 0; $i < $cols; $i++ ) { $value[ $i ] = $default; }
-			$option[ $key ] = $value;
+			$options[ $key ] = $value;
 			return( true );
 		}
 		return( false );
@@ -375,24 +375,24 @@ class yf_manage_shop_import_products2 {
 			$upload_path = $this->upload_path;
 			$file      = $upload_path . $id;
 			$file_name = $file . '.import';
-			$option    = $this->_load_json( $file_name );
+			$options    = $this->_load_json( $file_name );
 			// default
-			if( FALSE === $option ) {
-				$option = array(
+			if( FALSE === $options ) {
+				$options = array(
 					'id'     => $id,
 					'action' => $this->import_action_default,
 				);
 			}
-			$this->_option_default( $option, 'fields', $cols, 0 );
-			$this->_option_default( $option, 'keys',   $cols, 0 );
+			$this->_option_default( $options, 'fields', $cols, 0 );
+			$this->_option_default( $options, 'keys',   $cols, 0 );
 			$result = array(
 				'data'   => array(
-					'id'     => $id,
-					'file'   => $upload_list[ $id ][ 'file_name' ],
-					'rows'   => $rows,
-					'cols'   => $cols,
-					'items'  => $items,
-					'option' => $option,
+					'id'      => $id,
+					'file'    => $upload_list[ $id ][ 'file_name' ],
+					'rows'    => $rows,
+					'cols'    => $cols,
+					'items'   => $items,
+					'options' => $options,
 				),
 				'status' => true,
 			);
@@ -411,8 +411,8 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
-	protected function _upload_item__import( $option ) {
-		$id          = $option[ 'id' ];
+	protected function _upload_item__import( $options ) {
+		$id          = $options[ 'id' ];
 		$upload_list = $this->upload_list;
 		// item exists
 		if( !isset( $upload_list[ $id ] ) ) {
@@ -426,7 +426,7 @@ class yf_manage_shop_import_products2 {
 		$upload_path = $this->upload_path;
 		$file        = $upload_path . $id;
 		$file_name   = $file . '.import';
-		$result      = $this->_save_json( $file_name, $option );
+		$result      = $this->_save_json( $file_name, $options );
 		if( FALSE === $result ) {
 			$result = array(
 				'status_message' => 'импорт - невозможно сохранить параметры',
@@ -435,22 +435,22 @@ class yf_manage_shop_import_products2 {
 			return( $result );
 		}
 		// test import items
-		$_upload_item__import_test = $this->_upload_item__import_test( $option );
-		$status = $this->_upload_item__import_action_test( $option, $import_test );
+		$import_test = $this->_upload_item__import_test( $options );
+		$status = $this->_upload_item__import_action_test( $options, $import_test );
 		$result = array(
 			'data'   => array(
 				'id'           => $id,
-				'_import_test' => $_upload_item__import_test,
+				'_import_test' => $import_test,
 			),
 			'status' => $status,
 		);
 		return( $result );
 	}
 
-	protected function _upload_item__import_action_test( $option, $import_test ) {
-		$action = $option[ 'action' ];
-		$fields = $option[ 'fields' ];
-		$keys   = $option[ 'keys'   ];
+	protected function _upload_item__import_action_test( $options, $import_test ) {
+		$action = $options[ 'action' ];
+		$fields = $options[ 'fields' ];
+		$keys   = $options[ 'keys'   ];
 		$result = false;
 		// test action, fields
 		if( empty( $action ) || empty( $fields ) ) { return( $result ); }
@@ -962,47 +962,11 @@ class yf_manage_shop_import_products2 {
 	function _form( $data ) {
 		// prepare form
 		$data = (array)$data;
-		$_form_tpl = tpl()->parse( 'manage_shop/import2__form', $data );
-		// create form
-		$_form = $_form_tpl;
-		// $_form = form( $data, array( 'ng-controller' => $data[ '_ng_controller' ] ) )
-			// ->fieldset_start()
-				// ->container( $_form_tpl, 'Загрузка' )
-			// ->fieldset_end()
-			// ->select2_box( array(
-				// 'desc'     => 'Действие',
-				// 'name'     => 'sub_action',
-				// 'values'   => $data[ '_sub_action' ],
-			// ))
-			// ->select2_box( array(
-				// 'desc'     => 'Поставщик',
-				// 'name'     => 'supplier',
-				// 'values'   => $data[ '_supplier' ],
-			// ))
-		// $link_back = './?object=manage_shop&action=products';
-		// $_form = form( $data )
-			// ->row_start( array( 'desc' => 'Всего выбрано' ) )
-				// ->info( 'total' )
-				// ->link( 'Back', $link_back , array( 'title' => 'Вернуться в к фильтру продуктов', 'icon' => 'fa fa-arrow-circle-left' ))
-			// ->row_end()
-			// ->select2_box( array(
-				// 'desc'     => 'Действие',
-				// 'name'     => 'sub_action',
-				// 'values'   => $data[ '_sub_action' ],
-			// ))
-			// ->select2_box( array(
-				// 'desc'     => 'Регион',
-				// 'name'     => 'region',
-				// 'multiple' => true,
-				// 'values'   => $data[ '_region' ],
-			// ))
-			// ->row_start( array( 'desc' => '' ) )
-				// ->submit( 'apply', 'Выполнить' )
-				// ->check_box( 'confirm', false, array( 'desc' => 'подтверждение', 'no_label' => true ) )
-			// ->row_end()
-		;
+		$_form_tpl  = tpl()->parse( 'manage_shop/import2__form', $data );
 		$_form_ctrl = tpl()->parse( 'manage_shop/import2__ctrl', $data );
-		return( $_form_ctrl . $_form );
+		// create form
+		$_form = $_form_ctrl . $_form_tpl;
+		return( $_form );
 	}
 
 }

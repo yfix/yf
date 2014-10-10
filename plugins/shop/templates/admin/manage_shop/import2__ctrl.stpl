@@ -77,8 +77,8 @@ function( ApiConfig, $resource, $window, $log ) {
 	service.item__remove = function( id ) {
 		return( service.resource.item__remove({ id: id }) );
 	};
-	service.item__import = function( option ) {
-		return( service.resource.item__import({ option: option }) );
+	service.item__import = function( options ) {
+		return( service.resource.item__import({ options: options }) );
 	};
 	return( service );
 }]);
@@ -260,10 +260,10 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 	};
 	$scope._upload_list__count = 0;
 	$scope.update_supplier = function( $item ) {
-		$scope.item_data.option.supplier = $item.id;
+		$scope.item_data.options.supplier = $item.id;
 	};
 	$scope.update_import_action = function( $item ) {
-		$scope.item_data.option.action = $item.key;
+		$scope.item_data.options.action = $item.key;
 	};
 	$scope.Pagination = {
 		page      : 1,
@@ -311,16 +311,28 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 	}
 	$scope.Import = {
 		field__change: function( index ) {
-			var item = $scope.item_data.option.fields[ index ];
-			angular.forEach( $scope.item_data.option.fields, function( _item, _index ) {
+			if( item == 0 ) { return( true ); }
+			var item = $scope.item_data.options.fields[ index ];
+			// test duplicate
+			angular.forEach( $scope.item_data.options.fields, function( _item, _index ) {
 				if( item != 0 && index != _index && item == _item ) {
 					var title = $scope.data._import_field[ item ];
 					var content = '- данное поле уже используется в колонке №' + _index;
 					$scope.notifications( title, content, 'warning' );
-					this[ index ] = 0;
+					item = 0;
+					this[ index ] = item;
 					return( true );
 				}
-			}, $scope.item_data.option.fields );
+			}, $scope.item_data.options.fields );
+			if( item == 0 ) { return( true ); }
+			// set key
+			$scope.item_data.options.keys[ index ] = false;
+			angular.forEach( [ 'id', 'articul', 'supplier_id', 'supplier_name' ], function( _item, _index ) {
+				if( item == _item ) {
+					this[ index ] = true;
+					return( true );
+				}
+			}, $scope.item_data.options.keys );
 		}
 	};
 	$scope.UploadApi = {
@@ -349,14 +361,14 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 		},
 		item__import: function( item ) {
 			// set import action
-			if( !angular.isString( $scope.item_data.option.action ) ){
+			if( !angular.isString( $scope.item_data.options.action ) ){
 				var title   = 'Импорт:';
 				var content = 'выберите тип импорта - обновление или добавление';
 				$scope.notifications( title, content, 'warning' );
 				return( false );
 			}
 			// request
-			var result = UploadApi.item__import( $scope.item_data.option );
+			var result = UploadApi.item__import( $scope.item_data.options );
 			result.$promise.then(
 				function( r ) {
 					$scope.item__import({ response: r.response });
@@ -399,7 +411,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			$scope.item_data.test        = test;
 			$scope.item_data.test_status = test_status;
 			// set import action
-			var action = $scope.item_data.option.action;
+			var action = $scope.item_data.options.action;
 			angular.forEach( $scope.data._import_action_array, function( item, index ) {
 				if( item.key == action ) {
 					$scope.item_data.action_selected = item;
@@ -407,7 +419,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 				}
 			});
 			// set import supplier
-			var supplier = $scope.item_data.option.supplier;
+			var supplier = $scope.item_data.options.supplier;
 			angular.forEach( $scope.data._supplier_array, function( item, index ) {
 				if( item.id == supplier ) {
 					$scope.item_data.supplier_selected = item;
