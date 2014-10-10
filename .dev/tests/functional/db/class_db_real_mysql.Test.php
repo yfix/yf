@@ -52,10 +52,10 @@ class class_db_real_mysql_test extends db_real_abstract {
 				. ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
 		);
 		$sql = 'SHOW CREATE TABLE '.$this->table_name($table);
-		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->query($sql)) );
-		$this->assertEquals( $expected, self::db()->fetch_assoc(self::db()->unbuffered_query($sql)) );
-		$this->assertEquals( $expected, self::db()->query_fetch($sql) );
-		$this->assertEquals( $expected, self::db()->get($sql) );
+		$this->assertSame( $expected, self::db()->fetch_assoc(self::db()->query($sql)) );
+		$this->assertSame( $expected, self::db()->fetch_assoc(self::db()->unbuffered_query($sql)) );
+		$this->assertSame( $expected, self::db()->query_fetch($sql) );
+		$this->assertSame( $expected, self::db()->get($sql) );
 
 		$this->assertNotEmpty( self::db()->query('INSERT INTO '.$this->table_name($table).' VALUES (1,1,1),(2,2,2),(3,3,3)') );
 		$this->assertEquals( 3, self::db()->affected_rows() );
@@ -83,42 +83,54 @@ class class_db_real_mysql_test extends db_real_abstract {
 	}
 	public function test_escape_key() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertEquals( '`mykey`', self::db()->escape_key('mykey') );
+		$this->assertSame( '`mykey`', self::db()->escape_key('mykey') );
+		$this->assertSame( array('`mykey`'), self::db()->escape_key(array('mykey')) );
+		$this->assertSame( array(array('`mykey`')), self::db()->escape_key(array(array('mykey'))) );
+		$this->assertSame( array('`key1`','`key2`','`key3`'), self::db()->escape_key(array('key1','key2','key3')) );
 	}
 	public function test_escape_val() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertEquals( '\'myval\'', self::db()->escape_val('myval') );
+		$this->assertSame( '\'myval\'', self::db()->escape_val('myval') );
+		$this->assertSame( 'NULL', self::db()->escape_val(NULL) );
+		$this->assertSame( 'NULL', self::db()->escape_val('NULL') );
+		$this->assertSame( array('\'myval\''), self::db()->escape_val(array('myval')) );
+		$this->assertSame( array(array('\'myval\'')), self::db()->escape_val(array(array('myval'))) );
+		$this->assertSame( array(array('NULL')), self::db()->escape_val(array(array(NULL))) );
+		$this->assertSame( array(array('NULL')), self::db()->escape_val(array(array('NULL'))) );
+		$this->assertSame( array('\'val1\'','\'val2\'','\'val3\''), self::db()->escape_val(array('val1','val2','val3')) );
+		$this->assertSame( array('\'val1\'','NULL','\'val3\''), self::db()->escape_val(array('val1',NULL,'val3')) );
+		$this->assertSame( array('\'val1\'','NULL','\'val3\''), self::db()->escape_val(array('val1','NULL','val3')) );
 	}
 	public function test_real_name() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::db()->DB_PREFIX. __FUNCTION__;
 		$table_wo_prefix = 'tbl_'.__FUNCTION__;
 		$prefixed_table = 'prfx_'.$table;
-		$this->assertEquals( $table, self::db()->_real_name($table) );
+		$this->assertSame( $table, self::db()->_real_name($table) );
 		self::db()->_found_tables = array($table => $prefixed_table);
-		$this->assertEquals( array($table => $prefixed_table), self::db()->_found_tables );
-		$this->assertEquals( $prefixed_table, self::db()->_real_name($table) );
+		$this->assertSame( array($table => $prefixed_table), self::db()->_found_tables );
+		$this->assertSame( $prefixed_table, self::db()->_real_name($table) );
 		$table_wo_prefix = 'tbl_'.__FUNCTION__;
-		$this->assertEquals( self::db()->DB_PREFIX.$table_wo_prefix, self::db()->_real_name($table_wo_prefix) );
-		$this->assertEquals( self::db()->DB_PREFIX.$table_wo_prefix, self::db()->_real_name(self::db()->DB_PREFIX.$table_wo_prefix) );
+		$this->assertSame( self::db()->DB_PREFIX.$table_wo_prefix, self::db()->_real_name($table_wo_prefix) );
+		$this->assertSame( self::db()->DB_PREFIX.$table_wo_prefix, self::db()->_real_name(self::db()->DB_PREFIX.$table_wo_prefix) );
 	}
 	public function test_fix_table_name() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table_wo_prefix = 'tbl_'.__FUNCTION__;
 		$table_sys = self::db()->DB_PREFIX. 'sys_'. $table_wo_prefix;
 		$table = self::db()->DB_PREFIX. $table_wo_prefix;
-		$this->assertEquals( $table, self::db()->_fix_table_name($table) );
-		$this->assertEquals( $table, self::db()->_fix_table_name('dbt_'.$table) );
-		$this->assertEquals( $table, self::db()->_fix_table_name($table_wo_prefix) );
-		$this->assertEquals( $table, self::db()->_fix_table_name('dbt_'.$table_wo_prefix) );
+		$this->assertSame( $table, self::db()->_fix_table_name($table) );
+		$this->assertSame( $table, self::db()->_fix_table_name('dbt_'.$table) );
+		$this->assertSame( $table, self::db()->_fix_table_name($table_wo_prefix) );
+		$this->assertSame( $table, self::db()->_fix_table_name('dbt_'.$table_wo_prefix) );
 		self::db()->_need_sys_prefix = array($table_wo_prefix);
-		$this->assertEquals( array($table_wo_prefix), self::db()->_need_sys_prefix );
-		$this->assertEquals( $table_sys, self::db()->_fix_table_name($table_wo_prefix) );
-		$this->assertEquals( $table_sys, self::db()->_fix_table_name('dbt_'.$table_wo_prefix) );
-		$this->assertEquals( $table_sys, self::db()->_fix_table_name($table_sys) );
-		$this->assertEquals( $table_sys, self::db()->_fix_table_name('dbt_'.$table_sys) );
-		$this->assertEquals( $table_sys, self::db()->_fix_table_name($table) );
-		$this->assertEquals( $table_sys, self::db()->_fix_table_name('dbt_'.$table) );
+		$this->assertSame( array($table_wo_prefix), self::db()->_need_sys_prefix );
+		$this->assertSame( $table_sys, self::db()->_fix_table_name($table_wo_prefix) );
+		$this->assertSame( $table_sys, self::db()->_fix_table_name('dbt_'.$table_wo_prefix) );
+		$this->assertSame( $table_sys, self::db()->_fix_table_name($table_sys) );
+		$this->assertSame( $table_sys, self::db()->_fix_table_name('dbt_'.$table_sys) );
+		$this->assertSame( $table_sys, self::db()->_fix_table_name($table) );
+		$this->assertSame( $table_sys, self::db()->_fix_table_name('dbt_'.$table) );
 	}
 	public function test_real_escape_string() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -129,6 +141,38 @@ class class_db_real_mysql_test extends db_real_abstract {
 		$this->assertSame( $expected, self::db()->escape($input) );
 		$this->assertSame( $expected, self::db()->es($input) );
 		$this->assertSame( $expected, self::db()->_mysql_escape_mimic($input) );
+
+		$this->assertSame( 'NULL', self::db()->escape(NULL) );
+		$this->assertSame( 'NULL', self::db()->escape('NULL') );
+		$this->assertSame( array('myval'), self::db()->escape(array('myval')) );
+		$this->assertSame( array('NULL'), self::db()->escape(array(NULL)) );
+		$this->assertSame( array('NULL'), self::db()->escape(array('NULL')) );
+		$this->assertSame( array(array('myval')), self::db()->escape(array(array('myval'))) );
+		$this->assertSame( array(array('NULL')), self::db()->escape(array(array(NULL))) );
+		$this->assertSame( array(array('NULL')), self::db()->escape(array(array('NULL'))) );
+		$this->assertSame( array('val1','val2','val3'), self::db()->escape(array('val1','val2','val3')) );
+		$this->assertSame( array('val1','NULL','val3'), self::db()->escape(array('val1',NULL,'val3')) );
+		$this->assertSame( array('val1','NULL','val3'), self::db()->escape(array('val1','NULL','val3')) );
+		$this->assertSame( array($expected), self::db()->escape(array($input)) );
+		$this->assertSame( array(array($expected)), self::db()->escape(array(array($input))) );
+		$this->assertSame( array(array('NULL',$expected)), self::db()->escape(array(array(NULL, $input))) );
+		$this->assertSame( array(array('NULL',$expected)), self::db()->escape(array(array('NULL', $input))) );
+
+		$this->assertSame( 'NULL', self::db()->_mysql_escape_mimic(NULL) );
+		$this->assertSame( 'NULL', self::db()->_mysql_escape_mimic('NULL') );
+		$this->assertSame( array('myval'), self::db()->_mysql_escape_mimic(array('myval')) );
+		$this->assertSame( array('NULL'), self::db()->_mysql_escape_mimic(array(NULL)) );
+		$this->assertSame( array('NULL'), self::db()->_mysql_escape_mimic(array('NULL')) );
+		$this->assertSame( array(array('myval')), self::db()->_mysql_escape_mimic(array(array('myval'))) );
+		$this->assertSame( array(array('NULL')), self::db()->_mysql_escape_mimic(array(array(NULL))) );
+		$this->assertSame( array(array('NULL')), self::db()->_mysql_escape_mimic(array(array('NULL'))) );
+		$this->assertSame( array('val1','val2','val3'), self::db()->_mysql_escape_mimic(array('val1','val2','val3')) );
+		$this->assertSame( array('val1','NULL','val3'), self::db()->_mysql_escape_mimic(array('val1',NULL,'val3')) );
+		$this->assertSame( array('val1','NULL','val3'), self::db()->_mysql_escape_mimic(array('val1','NULL','val3')) );
+		$this->assertSame( array($expected), self::db()->_mysql_escape_mimic(array($input)) );
+		$this->assertSame( array(array($expected)), self::db()->_mysql_escape_mimic(array(array($input))) );
+		$this->assertSame( array(array('NULL',$expected)), self::db()->_mysql_escape_mimic(array(array(NULL, $input))) );
+		$this->assertSame( array(array('NULL',$expected)), self::db()->_mysql_escape_mimic(array(array('NULL', $input))) );
 	}
 	public function test_get_one() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -266,8 +310,23 @@ class class_db_real_mysql_test extends db_real_abstract {
 		$data_wrong = $data;
 		$data_wrong[1]['not_existing_col'] = 1;
 		$data_wrong[2]['not_existing_col'] = 2;
-		$this->assertEquals( $data, self::db()->_fix_data_safe($this->table_name($table), $data, array('no_cache' => 1)) );
-		$this->assertEquals( $data, self::db()->_fix_data_safe($this->table_name($table), $data_wrong, array('no_cache' => 1)) );
+		$this->assertSame( $data, self::db()->_fix_data_safe($this->table_name($table), $data, array('no_cache' => 1)) );
+		$this->assertSame( $data, self::db()->_fix_data_safe($this->table_name($table), $data_wrong, array('no_cache' => 1)) );
+
+		$data = array('id' => 1, 'id2' => 11, 'id3' => NULL);
+		$this->assertSame( $data, self::db()->_fix_data_safe($this->table_name($table), $data, array('no_cache' => 1)) );
+		$data = array('id' => 1, 'id2' => 11, 'id3' => 'NULL');
+		$this->assertSame( $data, self::db()->_fix_data_safe($this->table_name($table), $data, array('no_cache' => 1)) );
+		$data = array(
+			1 => array('id' => 1, 'id2' => 11, 'id3' => NULL),
+			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
+		);
+		$this->assertSame( $data, self::db()->_fix_data_safe($this->table_name($table), $data, array('no_cache' => 1)) );
+		$data = array(
+			1 => array('id' => 1, 'id2' => 11, 'id3' => 'NULL'),
+			2 => array('id' => 2, 'id2' => 22, 'id3' => 222),
+		);
+		$this->assertSame( $data, self::db()->_fix_data_safe($this->table_name($table), $data, array('no_cache' => 1)) );
 	}
 	public function test_insert_safe() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
