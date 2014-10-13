@@ -161,7 +161,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _get_git_details ($FS_PATH) {
+	function _get_git_details ($FS_PATH, $as_submodule = false) {
 		$git_base_path = $FS_PATH. '.git';
 		if (!file_exists($git_base_path)) {
 			return array();
@@ -199,9 +199,13 @@ class yf_debug {
 		}
 		$git_config_path = $git_base_path. '/config';
 		$url_part = '';
-		// url = git@github.com:yfix/yf.git
-		if (file_exists($git_config_path) && preg_match('/origin"]\s+url\s+=\s+git@(?P<url_part>.+?).git/ims', file_get_contents($git_config_path), $m)) {
-			$url_part = str_replace(':', '/', $m['url_part']);
+		if (file_exists($git_config_path)) {
+			$config = file_get_contents($git_config_path);
+			$pattern1 = '/origin"\].+?url\s+=\s+(git@|https:\/\/)(?P<url_part>.+?).git/ims';
+			$pattern2 = '/submodule\s+"yf"\].+?url\s+=\s+(git@|https:\/\/)(?P<url_part>.+?).git/ims';
+			if (preg_match($pattern1, $config, $m) || preg_match($pattern2, $config, $m)) {
+				$url_part = str_replace(':', '/', $m['url_part']);
+			}
 		}
 		return array(
 			'hash'	=> $git_hash,
@@ -214,7 +218,11 @@ class yf_debug {
 	*/
 	function _get_yf_version () {
 		$out = array();
-		$git = $this->_get_git_details(YF_PATH);
+		$as_submodule = false;
+		if (strlen(YF_PATH) > strlen(APP_PATH) && substr(YF_PATH, 0, strlen(APP_PATH)) === APP_PATH) {
+			$as_submodule = true;
+		}
+		$git = $this->_get_git_details(YF_PATH, $as_submodule);
 		$yf_version_file = YF_PATH. '.yf_version';
 		$yf_version = file_exists($yf_version_file) ? file_get_contents($yf_version_file) : '';
 		if ($yf_version) {
