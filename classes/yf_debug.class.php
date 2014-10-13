@@ -168,6 +168,7 @@ class yf_debug {
 		$git_base_path = YF_PATH. '.git';
 		$git_head_path = $git_base_path.'/HEAD';
 		$git_hash = '';
+		$git_date = 0;
 		if (!file_exists($git_head_path) && file_exists($git_base_path) && is_file($git_base_path)) {
 			// gitdir: ../.git/modules/yf
 			list(, $git_base_path) = explode('gitdir:', file_get_contents($git_base_path));
@@ -178,7 +179,23 @@ class yf_debug {
 			// ref: refs/heads/master
 			list(, $git_subhead_path) = explode('ref:', file_get_contents($git_head_path));
 			$git_hash_file = $git_subhead_path ? $git_base_path.'/'.trim($git_subhead_path) : '';
-			$git_hash = $git_hash_file && file_exists($git_hash_file) ? file_get_contents($git_hash_file) : '';
+			$git_hash = $git_hash_file && file_exists($git_hash_file) ? trim(file_get_contents($git_hash_file)) : '';
+		}
+		$git_log_path = $git_base_path. '/logs/HEAD';
+		if ($git_hash && file_exists($git_log_path)) {
+			// ad814593f2844620e37ae220aea8a746d6a53efa 54b490f737cb00c701b3d7439be6d8032d398e96 Some author <some.author@email.dev> 1412937971 +0300    commit: db real mysql tests up
+			foreach ((array)file($git_log_path) as $line) {
+				if (strpos($line, $git_hash) === false) {
+					continue;
+				}
+				$line = trim($line);
+				$hash = trim(substr($line, 41, 40)); // 
+				if ($hash === $git_hash) {
+					list($tmp, $msg) = explode("\t", $line);
+					$git_date = substr($tmp, -strlen('1412937971 +0300'), -strlen(' +0300'));
+					break;
+				}
+			}
 		}
 		$out = array();
 		if ($yf_version) {
@@ -188,6 +205,9 @@ class yf_debug {
 		if ($git_hash) {
 			$git_hash = _prepare_html($git_hash);
 			$out[] = '<a href="https://github.com/yfix/yf/tree/'.$git_hash.'" class="btn btn-mini btn-xs">'.substr($git_hash, 0, 8).'</a>';
+			if ($git_date) {
+				$out[] = date('Y-m-d H:i', $git_date);
+			}
 		}
 		return implode(' | ', $out);
 	}
