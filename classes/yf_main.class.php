@@ -841,11 +841,13 @@ class yf_main {
 
 	/**
 	*/
-	function _preload_plugins_list() {
+	function _preload_plugins_list($force = false) {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		if (isset($this->_plugins)) {
+		if (isset($this->_plugins) && !$force) {
 			return $this->_plugins;
 		}
+		$white_list = (array)$this->_plugins_white_list;
+		$black_list = (array)$this->_plugins_black_list;
 		$sets = array(
 			'app'		=> APP_PATH.'plugins/*/',
 			'project'	=> PROJECT_PATH.'plugins/*/',
@@ -854,13 +856,20 @@ class yf_main {
 		$_plen = strlen(YF_PREFIX);
 		$plugins = array();
 		$plugins_classes = array();
+		$ext = YF_CLS_EXT; // default is .class.php
 		foreach ((array)$sets as $set => $pattern) {
 			foreach ((array)glob($pattern, GLOB_ONLYDIR|GLOB_NOSORT) as $d) {
 				$pname = basename($d);
+				if ($white_list && in_array($pname, $white_list)) {
+					// result is good, do not check black list if name found here, inside white list
+				} elseif ($black_list && in_array($pname, $black_list)) {
+					// Do not load files from this plugin
+					break;
+				}
 				$dlen = strlen($d);
 				$classes = array();
-				foreach (array_merge(glob($d.'*/*.class.php'), glob($d.'*/*/*.class.php')) as $f) {
-					$cname = str_replace(YF_CLS_EXT, '', basename($f));
+				foreach (array_merge(glob($d.'*/*'.$ext), glob($d.'*/*/*'.$ext)) as $f) {
+					$cname = str_replace($ext, '', basename($f));
 					$cdir = dirname(substr($f, $dlen)).'/';
 					if (substr($cname, 0, $_plen) == YF_PREFIX) {
 						$cname = substr($cname, $_plen);
@@ -871,7 +880,9 @@ class yf_main {
 				$plugins[$pname][$set] = $classes;
 			}
 		}
+		ksort($plugins);
 		$this->_plugins = $plugins;
+		ksort($plugins_classes);
 		$this->_plugins_classes = $plugins_classes;
 		return $this->_plugins;
 	}
