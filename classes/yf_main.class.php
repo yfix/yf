@@ -880,7 +880,6 @@ class yf_main {
 	*/
 	function _class_exists($class_name = '', $custom_path = '', $force_storage = '') {
 		$loaded = $this->load_class_file($class_name, $custom_path, $force_storage);
-var_dump($loaded);
 		return (bool)$loaded;
 	}
 
