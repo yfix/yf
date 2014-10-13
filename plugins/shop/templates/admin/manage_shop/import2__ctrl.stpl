@@ -260,7 +260,10 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 	};
 	$scope._upload_list__count = 0;
 	$scope.update_supplier = function( $item ) {
-		$scope.item_data.options.supplier = $item.id;
+		$scope.item_data.options.supplier_id = $item.id;
+	};
+	$scope.update_category = function( $item ) {
+		$scope.item_data.options.category_id = $item.id;
 	};
 	$scope.update_import_action = function( $item ) {
 		$scope.item_data.options.action = $item.key;
@@ -419,10 +422,18 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 				}
 			});
 			// set import supplier
-			var supplier = $scope.item_data.options.supplier;
+			var supplier_id = $scope.item_data.options.supplier_id;
 			angular.forEach( $scope.data._supplier_array, function( item, index ) {
-				if( item.id == supplier ) {
+				if( item.id == supplier_id ) {
 					$scope.item_data.supplier_selected = item;
+					return( true );
+				}
+			});
+			// set import category
+			var category_id = $scope.item_data.options.category_id;
+			angular.forEach( $scope.data._category_array, function( item, index ) {
+				if( item.id == category_id ) {
+					$scope.item_data.category_selected = item;
 					return( true );
 				}
 			});

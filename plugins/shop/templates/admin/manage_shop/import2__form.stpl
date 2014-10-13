@@ -113,12 +113,14 @@
 	width     : 1em;
 }
 .supplier,
+.category,
 .import_action {
 	min-width   : 10em;
 	height      : 100%;
 	font-weight : normal;
 }
-.supplier {
+.supplier,
+.category {
 	min-width   : 15em;
 }
 .block_supplier span.btn,
@@ -154,6 +156,15 @@ ul.select2-result-single {
 					<ui-select-match placeholder="выберите поставщика...">{{$select.selected.title}}</ui-select-match>
 					<ui-select-choices repeat="supplier in data._supplier_array | filter: $select.search">
 						<div ng-bind-html="supplier.title | highlight: $select.search"></div>
+					</ui-select-choices>
+				</ui-select>
+				<ui-select class="category"
+					ng-model  = "item_data.category_selected"
+					on-select = "update_category( $item )"
+				>
+					<ui-select-match placeholder="выберите категорию...">{{$select.selected.title}}</ui-select-match>
+					<ui-select-choices repeat="category in data._category_array | filter: $select.search">
+						<div ng-bind-html="category.title | highlight: $select.search"></div>
 					</ui-select-choices>
 				</ui-select>
 				<ui-select class="import_action"
