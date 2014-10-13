@@ -161,18 +161,18 @@ class yf_debug {
 
 	/**
 	*/
-	function _get_yf_version () {
-		$yf_version_file = YF_PATH. '.yf_version';
-		$yf_version = file_exists($yf_version_file) ? file_get_contents($yf_version_file) : '';
-
-		$git_base_path = YF_PATH. '.git';
+	function _get_git_details ($FS_PATH) {
+		$git_base_path = $FS_PATH. '.git';
+		if (!file_exists($git_base_path)) {
+			return array();
+		}
 		$git_head_path = $git_base_path.'/HEAD';
 		$git_hash = '';
 		$git_date = 0;
 		if (!file_exists($git_head_path) && file_exists($git_base_path) && is_file($git_base_path)) {
 			// gitdir: ../.git/modules/yf
 			list(, $git_base_path) = explode('gitdir:', file_get_contents($git_base_path));
-			$git_base_path = realpath(YF_PATH. trim($git_base_path));
+			$git_base_path = realpath($FS_PATH. trim($git_base_path));
 			$git_head_path = $git_base_path && file_exists($git_base_path) ? $git_base_path.'/HEAD' : '';
 		}
 		if ($git_head_path && file_exists($git_head_path)) {
@@ -197,17 +197,57 @@ class yf_debug {
 				}
 			}
 		}
+		$git_config_path = $git_base_path. '/config';
+		$url_part = '';
+		// url = git@github.com:yfix/yf.git
+		if (file_exists($git_config_path) && preg_match('/origin"]\s+url\s+=\s+git@(?P<url_part>.+?).git/ims', file_get_contents($git_config_path), $m)) {
+			$url_part = str_replace(':', '/', $m['url_part']);
+		}
+		return array(
+			'hash'	=> $git_hash,
+			'date'	=> $git_date,
+			'url'	=> 'https://'.$url_part.'/tree/',
+		);
+	}
+
+	/**
+	*/
+	function _get_yf_version () {
 		$out = array();
+		$git = $this->_get_git_details(YF_PATH);
+		$yf_version_file = YF_PATH. '.yf_version';
+		$yf_version = file_exists($yf_version_file) ? file_get_contents($yf_version_file) : '';
 		if ($yf_version) {
 			$yf_version = _prepare_html($yf_version);
-			$out[] = '<a href="https://github.com/yfix/yf/tree/'.$yf_version.'" class="btn btn-mini btn-xs">'.$yf_version.'</a>';
+			$out[] = '<a href="'.$git['url']. $yf_version.'" class="btn btn-mini btn-xs">'.$yf_version.'</a>';
 		}
-		if ($git_hash) {
-			$git_hash = _prepare_html($git_hash);
-			$out[] = '<a href="https://github.com/yfix/yf/tree/'.$git_hash.'" class="btn btn-mini btn-xs">'.substr($git_hash, 0, 8).'</a>';
-			if ($git_date) {
-				$out[] = date('Y-m-d H:i', $git_date);
-			}
+		if ($git['hash']) {
+			$git['hash'] = _prepare_html($git['hash']);
+			$out[] = '<a href="'.$git['url']. $git['hash'].'" class="btn btn-mini btn-xs">'.substr($git['hash'], 0, 8).'</a>';
+		}
+		if ($git['date']) {
+			$out[] = date('Y-m-d H:i', $git['date']);
+		}
+		return implode(' | ', $out);
+	}
+
+	/**
+	*/
+	function _get_app_version () {
+		$out = array();
+		$git = $this->_get_git_details(APP_PATH);
+		$app_version_file = APP_PATH. '.app_version';
+		$app_version = file_exists($app_version_file) ? file_get_contents($app_version_file) : '';
+		if ($app_version) {
+			$app_version = _prepare_html($app_version);
+			$out[] = '<a href="'.$git['url']. $app_version.'" class="btn btn-mini btn-xs">'.$app_version.'</a>';
+		}
+		if ($git['hash']) {
+			$git['hash'] = _prepare_html($git['hash']);
+			$out[] = '<a href="'.$git['url']. $git['hash'].'" class="btn btn-mini btn-xs">'.substr($git['hash'], 0, 8).'</a>';
+		}
+		if ($git['date']) {
+			$out[] = date('Y-m-d H:i', $git['date']);
 		}
 		return implode(' | ', $out);
 	}
@@ -241,6 +281,7 @@ class yf_debug {
 			'ADMIN_WEB_PATH'	=> ADMIN_WEB_PATH,
 			'ADMIN_SITE_PATH'	=> ADMIN_SITE_PATH,
 			'APP_PATH'			=> APP_PATH,
+			'APP_VERSION'		=> $this->_get_app_version(),
 			'CONFIG_PATH'		=> CONFIG_PATH,
 			'STORAGE_PATH'		=> STORAGE_PATH,
 			'LOGS_PATH'			=> LOGS_PATH,
@@ -341,7 +382,7 @@ class yf_debug {
 		;
 		foreach ($data as $name => $_data) {
 			foreach ($_data as $k => $v) {
-				if ($name == 'yf' && $k == 'YF_VERSION') {
+				if ($name == 'yf' && ($k == 'YF_VERSION' || $k == 'APP_VERSION')) {
 					continue;
 				}
 				$_data[$k] = _prepare_html($v);
