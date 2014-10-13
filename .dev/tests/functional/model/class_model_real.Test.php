@@ -27,52 +27,24 @@ class class_model_real_test extends db_real_abstract {
 		return $name;
 	}
 	public function test_basic() {
-/*
-		$body[] = '<p>The database currently contains <b>'. model('film')->count(). '</b> movies.</p>';
-		$body[] = '<p>The title of the first movie in the database is: <b>'. model('film')->first()->title. '</b></p>';
+		$model_base = _class('model');
+		$this->assertTrue( is_object($model_base) );
+		$this->assertTrue( is_a($model_base, 'yf_model') );
+		$this->assertSame( $model_base, _class('yf_model') );
 
-		$film = model('film')->first(array('title' => 'RANDOM GO'));
-		$body[] = '<p><b>'. $film->title. '</b>\'s description is: '.PHP_EOL. '<b>'. $film->description. '</b></p>';
-
-		$body[] = '<p>Films with a title that starts with a <b>T</b> and a rental rate of <b>2.99</b>:';
-		$films = model('film')->find(array('title' => 'T*', 'rental_rate' => '2.99'));
-		$body[] = '</p><ul>';
-		foreach ($films as $film) {
-			$body[] = '<li>'.$film->title.'</li>';
-		}
-		$body[] = '</ul>';
-
-		$body[] = '<p>There are <b>'. model('film')->count(array('rental_rate' => '4.99')). '</b> movie(s) with a rental rate of <b>4.99</b></p>';
-*/
-/*
-		return model('admin')->table(array(
-				'filter_params' => array(
-					'login'	=> 'like',
-					'email'	=> 'like',
-				),
-			))
-*/
-/*
-		return model('admin')->form($id, $a, array('autocomplete' => 'off'))
-			->login()
-			->email()
-			->password()
-*/
-/*
-		$this->assertFalse( (bool)self::utils()->table_exists('static_pages') );
-		$this->assertEmpty( self::db()->from('static_pages')->get_all() );
-		$this->assertTrue( (bool)self::utils()->table_exists('static_pages') );
-		$data = array(
-			'name'		=> 'for_unit_tests',
-			'active'	=> 1,
+		$this->assertFalse( main()->_class_exists('film_model') );
+		// unit_tests == name of the custom storage used here
+		main()->_custom_class_storages = array(
+			'film_model' => array('unit_tests' => array(__DIR__.'/fixtures/')),
 		);
-		$this->assertTrue( self::db()->insert('static_pages', $data) );
-		$first = self::db()->from('static_pages')->get();
-		foreach ($data as $k => $v) {
-			$this->assertEquals($v, $first[$k]);
-		}
-		$expected = array($data['name'] => $data['name']);
-		$this->assertEquals($expected, main()->get_data('static_pages_names'));
-*/
+		$this->assertTrue( main()->_class_exists('film_model') );
+
+		$film_model = _class('film_model');
+		$this->assertTrue( is_object($film_model) );
+		$this->assertTrue( is_a($film_model, 'film_model') );
+		$this->assertTrue( is_a($film_model, 'yf_model') );
+
+		$this->utils()->drop_table('film');
+		$this->assertFalse( (bool)$this->utils()->table_exists('film') );
 	}
 }
