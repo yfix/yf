@@ -877,6 +877,14 @@ class yf_main {
 	}
 
 	/**
+	*/
+	function _class_exists($class_name = '', $custom_path = '', $force_storage = '') {
+		$loaded = $this->load_class_file($class_name, $custom_path, $force_storage);
+var_dump($loaded);
+		return (bool)$loaded;
+	}
+
+	/**
 	* Load module file
 	*/
 	function load_class_file($class_name = '', $custom_path = '', $force_storage = '') {
@@ -1002,6 +1010,19 @@ class yf_main {
 				if (MAIN_TYPE_ADMIN) {
 					$storages['plugins_admin_user_framework'] = array(YF_PATH. $plugin_subdir. USER_MODULES_DIR, YF_PREFIX);
 				}
+			}
+		}
+		// Extending storages on-the-fly. Examples:
+		// main()->_custom_class_storages = array(
+		//     'film_model' => array('unit_tests' => array(__DIR__.'/model/fixtures/')),
+		// );
+		// $film_model = _class('film_model');
+		foreach ((array)$this->_custom_class_storages as $_class_name => $_storages) {
+			if ($_class_name !== $class_name) {
+				continue;
+			}
+			foreach ((array)$_storages as $sname => $sinfo) {
+				$storages[$sname] = $sinfo;
 			}
 		}
 		$storage = '';
