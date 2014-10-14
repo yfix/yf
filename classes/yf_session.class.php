@@ -61,7 +61,7 @@ class yf_session {
 	*/
 	function start () {
 		$main = main();
-		if (!empty($this->_started) || $main->CONSOLE_MODE || conf('SESSION_OFF') || $this->OFF) {
+		if (!empty($this->_started) || $main->is_console() || conf('SESSION_OFF') || $this->OFF) {
 			return false;
 		}
 		// Set custom session name
