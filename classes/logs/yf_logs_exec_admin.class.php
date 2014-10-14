@@ -71,7 +71,7 @@ class yf_logs_exec_admin {
 			return false;
 		}
 */
-		if (main()->CONSOLE_MODE) {
+		if (main()->is_console()) {
 			$query_string = http_build_query($_GET);
 		}
 		$data = array(

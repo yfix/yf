@@ -33,7 +33,7 @@ class yf_db {
 	public $DB_DRIVERS_DIR			= 'classes/db/';
 	/** @var int Num tries to reconnect in common mode (will be useful if db server is overloaded) (Set to '0' for disabling) */
 	public $RECONNECT_NUM_TRIES		= 3;
-	/** @var int Num tries to reconnect inside CONSOLE_MODE (will be useful if db server is overloaded and sometimes we lost connection to it) (Set to '0' for disabling) */
+	/** @var int Num tries to reconnect inside CONSOLE MODE (will be useful if db server is overloaded and sometimes we lost connection to it) (Set to '0' for disabling) */
 	public $RECONNECT_CONSOLE_TRIES	= 1000;
 	/** @var int Time to wait between reconnects (in seconds) */
 	public $RECONNECT_DELAY			= 1;
@@ -178,7 +178,7 @@ class yf_db {
 			$this->connect();
 		}
 		$this->_set_debug_items();
-		if (main()->CONSOLE_MODE) {
+		if (main()->is_console()) {
 			$this->enable_silent_mode();
 		}
 		// Set shutdown function

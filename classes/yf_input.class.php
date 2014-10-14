@@ -129,27 +129,27 @@ class yf_input {
 	* Checks whether current page was requested with POST method
 	*/
 	function is_post() {
-		return ($_SERVER['REQUEST_METHOD'] == 'POST');
+		return (bool)main()->is_post();
 	}
 
 	/**
 	* Checks whether current page was requested with AJAX
 	*/
 	function is_ajax() {
-		return (bool)conf('IS_AJAX');
+		return (bool)main()->is_ajax();
 	}
 
 	/**
 	* Checks whether current page was requested from console
 	*/
 	function is_console() {
-		return (bool)main()->CONSOLE_MODE;
+		return (bool)main()->is_console();
 	}
 
 	/**
 	* Checks whether current page is a redirect
 	*/
 	function is_redirect() {
-		return (bool)main()->_IS_REDIRECTING;
+		return (bool)main()->is_redirect();
 	}
 }

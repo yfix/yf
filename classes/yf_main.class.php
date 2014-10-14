@@ -257,7 +257,7 @@ class yf_main {
 	*/
 	function _check_site_maintenance () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		if (MAIN_TYPE_USER && !$this->CONSOLE_MODE && !DEBUG_MODE && conf('site_maintenance')) {
+		if (MAIN_TYPE_USER && !$this->is_console() && !DEBUG_MODE && conf('site_maintenance')) {
 			$this->NO_GRAPHICS = true;
 			header('HTTP/1.1 503 Service Temporarily Unavailable');
 			header('Status: 503 Service Temporarily Unavailable');
@@ -311,7 +311,7 @@ class yf_main {
 				}
 			}
 		}
-		if ($https_needed && !$this->CONSOLE_MODE && !($this->_server('HTTPS') || $this->_server('SSL_PROTOCOL'))) {
+		if ($https_needed && !$this->is_console() && !($this->_server('HTTPS') || $this->_server('SSL_PROTOCOL'))) {
 			$redirect_url = str_replace('http://', 'https://', WEB_PATH). $this->_server('QUERY_STRING');
 			return js_redirect(process_url($redirect_url));
 		}
@@ -325,7 +325,7 @@ class yf_main {
 	*/
     function _do_rewrite() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		if ($this->CONSOLE_MODE || MAIN_TYPE_ADMIN || !module_conf('tpl', 'REWRITE_MODE')) {
+		if ($this->is_console() || MAIN_TYPE_ADMIN || !module_conf('tpl', 'REWRITE_MODE')) {
 			return false;
 		}
         $host = $_SERVER['HTTP_HOST'];
@@ -548,7 +548,7 @@ class yf_main {
 	function init_server_health() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		// Server health result (needed to correctly self turn off faulty box from frontend requests)
-		if (!$this->CONSOLE_MODE && $this->SERVER_HEALTH_CHECK && $this->SERVER_HEALTH_FILE && file_exists($this->SERVER_HEALTH_FILE)) {
+		if (!$this->is_console() && $this->SERVER_HEALTH_CHECK && $this->SERVER_HEALTH_FILE && file_exists($this->SERVER_HEALTH_FILE)) {
 			$health_result = file_get_contents($this->SERVER_HEALTH_FILE);
 			if ($health_result != 'OK') {
 				header($this->_server('SERVER_PROTOCOL').' 503 Service Unavailable');
@@ -610,7 +610,7 @@ class yf_main {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->events->fire('main.before_session');
 		$skip = false;
-		if (isset($this->_session_init_complete) || $this->CONSOLE_MODE || conf('SESSION_OFF') || $this->SESSION_OFF) {
+		if (isset($this->_session_init_complete) || $this->is_console() || conf('SESSION_OFF') || $this->SESSION_OFF) {
 			$skip = true;
 		} elseif ($this->SPIDERS_DETECTION && conf('IS_SPIDER')) {
 			$skip = true;
@@ -841,11 +841,13 @@ class yf_main {
 
 	/**
 	*/
-	function _preload_plugins_list() {
+	function _preload_plugins_list($force = false) {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		if (isset($this->_plugins)) {
+		if (isset($this->_plugins) && !$force) {
 			return $this->_plugins;
 		}
+		$white_list = (array)$this->_plugins_white_list;
+		$black_list = (array)$this->_plugins_black_list;
 		$sets = array(
 			'app'		=> APP_PATH.'plugins/*/',
 			'project'	=> PROJECT_PATH.'plugins/*/',
@@ -854,13 +856,20 @@ class yf_main {
 		$_plen = strlen(YF_PREFIX);
 		$plugins = array();
 		$plugins_classes = array();
+		$ext = YF_CLS_EXT; // default is .class.php
 		foreach ((array)$sets as $set => $pattern) {
 			foreach ((array)glob($pattern, GLOB_ONLYDIR|GLOB_NOSORT) as $d) {
 				$pname = basename($d);
+				if ($white_list && in_array($pname, $white_list)) {
+					// result is good, do not check black list if name found here, inside white list
+				} elseif ($black_list && in_array($pname, $black_list)) {
+					// Do not load files from this plugin
+					break;
+				}
 				$dlen = strlen($d);
 				$classes = array();
-				foreach (array_merge(glob($d.'*/*.class.php'), glob($d.'*/*/*.class.php')) as $f) {
-					$cname = str_replace(YF_CLS_EXT, '', basename($f));
+				foreach (array_merge(glob($d.'*/*'.$ext), glob($d.'*/*/*'.$ext)) as $f) {
+					$cname = str_replace($ext, '', basename($f));
 					$cdir = dirname(substr($f, $dlen)).'/';
 					if (substr($cname, 0, $_plen) == YF_PREFIX) {
 						$cname = substr($cname, $_plen);
@@ -871,9 +880,18 @@ class yf_main {
 				$plugins[$pname][$set] = $classes;
 			}
 		}
+		ksort($plugins);
 		$this->_plugins = $plugins;
+		ksort($plugins_classes);
 		$this->_plugins_classes = $plugins_classes;
 		return $this->_plugins;
+	}
+
+	/**
+	*/
+	function _class_exists($class_name = '', $custom_path = '', $force_storage = '') {
+		$loaded = $this->load_class_file($class_name, $custom_path, $force_storage);
+		return (bool)$loaded;
 	}
 
 	/**
@@ -1002,6 +1020,19 @@ class yf_main {
 				if (MAIN_TYPE_ADMIN) {
 					$storages['plugins_admin_user_framework'] = array(YF_PATH. $plugin_subdir. USER_MODULES_DIR, YF_PREFIX);
 				}
+			}
+		}
+		// Extending storages on-the-fly. Examples:
+		// main()->_custom_class_storages = array(
+		//     'film_model' => array('unit_tests' => array(__DIR__.'/model/fixtures/')),
+		// );
+		// $film_model = _class('film_model');
+		foreach ((array)$this->_custom_class_storages as $_class_name => $_storages) {
+			if ($_class_name !== $class_name) {
+				continue;
+			}
+			foreach ((array)$_storages as $sname => $sinfo) {
+				$storages[$sname] = $sinfo;
 			}
 		}
 		$storage = '';
@@ -1451,7 +1482,7 @@ class yf_main {
 		$this->HOSTNAME = php_uname('n');
 		// Check required params
 		if (!defined('INCLUDE_PATH')) {
-			if ($this->CONSOLE_MODE) {
+			if ($this->is_console()) {
 				$_trace = debug_backtrace();
 				$_trace = $_trace[1];
 				$_path = dirname($_trace['file']);
@@ -1538,7 +1569,7 @@ class yf_main {
 		define('USER_MODULES_DIR', 'modules/');
 		define('ADMIN_MODULES_DIR', 'admin_modules/');
 		// Set console-specific options
-		if ($this->CONSOLE_MODE) {
+		if ($this->is_console()) {
 			ini_set('memory_limit', -1);
 			set_time_limit(0);
 			if (version_compare( phpversion(), '5.2.4' ) >= 0) {

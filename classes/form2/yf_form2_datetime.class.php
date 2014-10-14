@@ -6,6 +6,7 @@ class yf_form2_datetime {
 	* Datetimepicker, src: http://tarruda.github.io/bootstrap-datetimepicker/
 	* params :  no_date // no date picker
 	*			no_time // no time picker
+	*			min_date // min available date
 	*/
 	function datetime_select($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
 		if (is_array($desc)) {
@@ -77,6 +78,7 @@ $(function() {
 		}
 		'.($extra['no_time'] == 1 ? ', pickTime: false' : '')
 		. ($extra['no_date'] == 1 ? ', pickDate: false' : '')
+        . ($extra['min_date']? ', minDate: \''.date('d/m/Y', $extra['min_date']).'\'' : '')
 		.'
 	});
 });');
