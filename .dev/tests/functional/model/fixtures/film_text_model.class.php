@@ -1,6 +1,9 @@
 <?php
 
 class film_text_model extends yf_model {
+	public function film() {
+		return $this->has_one('film', 'film_id');
+	}
 /*
  * @property integer $film_id
  * @property string $title
