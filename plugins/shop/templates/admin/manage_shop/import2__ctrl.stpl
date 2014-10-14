@@ -438,10 +438,18 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 				}
 			});
 			// inject status
-			angular.forEach( $scope.item_data.test.items, function( item, index ) {
-				this[ index ][ 'status'         ] = item[ 'status'         ];
-				this[ index ][ 'status_message' ] = item[ 'status_message' ];
-			}, $scope.item_data.items );
+			if( $scope.item_data.test.items ) {
+				angular.forEach( $scope.item_data.test.items, function( item, index ) {
+					this[ index ][ 'status'         ] = item[ 'status'         ];
+					this[ index ][ 'status_message' ] = item[ 'status_message' ];
+				}, $scope.item_data.items );
+			} else {
+				angular.forEach( $scope.item_data.items, function( item, index ) {
+					this[ index ][ 'status' ] = true;
+				}, $scope.item_data.items );
+			}
+			// reset status filter
+			$scope.item_filter_status = undefined;
 		} else {
 			var title   = $scope.item_data.file + ':';
 			var content = 'файл не распознан';
@@ -477,10 +485,20 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 		var test_status = action.status;
 		$scope.item_data.test        = test;
 		$scope.item_data.test_status = test_status;
+		// inject status
+		if( $scope.item_data.test.items ) {
 			angular.forEach( $scope.item_data.test.items, function( item, index ) {
 				this[ index ][ 'status'         ] = item[ 'status'         ];
 				this[ index ][ 'status_message' ] = item[ 'status_message' ];
 			}, $scope.item_data.items );
+		} else {
+			angular.forEach( $scope.item_data.items, function( item, index ) {
+				this[ index ][ 'status' ] = true;
+			}, $scope.item_data.items );
+		}
+		// reset status filter
+		$scope.item_filter_status = undefined;
+		// show response status
 		if( result.response.action.status ) {
 			content = content || 'ошибок не обнаружено';
 		} else {
@@ -533,7 +551,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 	// prerape upload list
 	var _prepare__upload_list = function( scope ) {
 		var count = 0;
-		if( 'data' in scope ) {
+		if( !!scope && 'data' in scope ) {
 			angular.forEach( scope.data._upload_list, function( item, idx ) {
 				var time = $filter( 'date' )( item.time * 1000, 'yyyy-MM-dd H:mm:ss' );
 				var status = $scope.data._upload_status[ item.status ];

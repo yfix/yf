@@ -75,7 +75,28 @@ class yf_manage_shop_import_products2 {
 		'insert' => 'вставка',
 	);
 	public $import_action_default = 'update';
-	public $import_rulues = array(
+	public $import_rules = array(
+		'insert' => array(
+			'key' => array(
+				array( 'name', 'cat_id',        ),
+				array( 'name', 'category_name', ),
+			),
+			'exclude' => array(
+				'id',
+			),
+			'include' => array(
+				'name',
+				'cat_id',
+				'manufacturer_id',
+				'manufacturer_name',
+				'supplier_id',
+				'supplier_name',
+				'articul',
+				'external_url',
+				'origin_url',
+				'source',
+			),
+		),
 		'update' => array(
 			'key' => array(
 				array( 'id', ),
@@ -466,7 +487,8 @@ class yf_manage_shop_import_products2 {
 			return( $result );
 		}
 		// test import items
-		$status = $this->_upload_item__import_action_test( $options );
+		$status_message = '';
+		list( $status, $status_message ) = $this->_upload_item__import_action_test( $options );
 		$import_test = array();
 		$status && $import_test = $this->_upload_item__import_test( $options );
 		$result = array(
@@ -474,52 +496,117 @@ class yf_manage_shop_import_products2 {
 				'id'           => $id,
 				'_import_test' => $import_test,
 			),
-			'status' => $status,
+			'status'         => $status,
+			'status_message' => $status_message,
 		);
 		return( $result );
 	}
 
 	protected function _upload_item__import_action_test( $options ) {
-		$action = $options[ 'action' ];
-		$fields = $options[ 'fields' ];
-		$keys   = $options[ 'keys'   ];
-		$result = false;
+		$_ = $options;
+		$fields      = $_[ 'fields'      ];
+		$keys        = $_[ 'keys'        ];
+		$supplier_id = $_[ 'supplier_id' ];
+		$category_id = $_[ 'category_id' ];
+		$action      = $_[ 'action'      ];
+			$action  = !empty( $action ) ? $action :  $this->import_action_default;
+			$rules   = &$this->import_rules[ $action ];
+		$status         = false;
+		$status_message = '';
 		// test action, fields
-		if( empty( $action ) || empty( $fields ) ) { return( $result ); }
+		if( empty( $action ) || empty( $fields ) ) {
+			$fields = array();
+			foreach( $rules[ 'key' ] as $ks ) {
+				$f = array();
+				foreach( $ks as $k ) {
+					$f[] = $k;
+				}
+				$fields[] = implode( ', ', $f );
+			}
+			$fields = implode( ' или ', $fields );
+			$message = 'Установите поля: ';
+			$status_message = $message . $fields;
+			return( array( $status, $status_message ) );
+		}
 		// test rules
-		$import_rulues = $this->import_rulues;
-		$rulues = $import_rulues[ $action ];
-		if( empty( $rulues ) ) { return( $result ); }
+		if( empty( $rules ) ) {
+			$action_message = $this->import_action[ $action ];
+			$status_message = 'Отсутствуют правила для операции "'. $action_message;
+			return( array( $status, html_entity_decode( $status_message, ENT_QUOTES, 'UTF-8' ) ) );
+		}
 		// test fields by name
 		$fields_by_name = array_flip( $fields );
 		unset( $fields_by_name[ 0 ] );
-		foreach( $fields_by_name as $name => $key ) {
-			if( !$keys[ $key ] ) { unset( $fields_by_name[ $name ] ); }
+		if( $action == 'update' ) {
+			foreach( $fields_by_name as $name => $key ) {
+				if( !$keys[ $key ] ) { unset( $fields_by_name[ $name ] ); }
+			}
 		}
-		foreach( $rulues[ 'key' ] as $ks ) {
-			$test = true;
+		// override category_id
+		if( !empty( $supplier_id ) ) {
+			$fields_by_name[ 'supplier_id' ] = 0;
+		}
+		// override category_id
+		if( !empty( $category_id ) ) {
+			$fields_by_name[ 'cat_id' ] = 0;
+		}
+		// test key: include, exclude
+		foreach( $rules[ 'key' ] as $ks ) {
+			$is_key = true;
 			foreach( $ks as $k ) {
 				if( !isset( $fields_by_name[ $k ] ) ) {
-					$test = false;
+					$is_key = false;
 					break;
 				}
 			}
-			if( $test ) { break; }
+			if( $is_key ) { break; }
 		}
-		$result = $test ? true : false;
-		return( $result );
+		$status = $is_key ? true : false;
+		if( !$status ) {
+			$fields = array();
+			foreach( $rules[ 'key' ] as $ks ) {
+				$f = array();
+				foreach( $ks as $k ) {
+					$f[] = $k;
+				}
+				$fields[] = implode( ', ', $f );
+			}
+			$fields = implode( ' или ', $fields );
+			$action_message = $this->import_action[ $action ];
+			$status_message = 'Требуются поля для операции "'. $action_message .'": ' . $fields;
+			return( array( $status, html_entity_decode( $status_message, ENT_QUOTES, 'UTF-8' ) ) );
+		}
+		if( $status && $action == 'insert' ) {
+			$is_key = false;
+			foreach( $rules[ 'exclude' ] as $k ) {
+				if( isset( $fields_by_name[ $k ] ) ) {
+					$is_key = true;
+					break;
+				}
+			}
+			$status = !$is_key;
+			if( !$status ) {
+				$fields = implode( ', ', $rules[ 'exclude' ] );
+				$action_message = $this->import_action[ $action ];
+				$status_message = 'Поля для операции "'. $action_message .'" запрещены: ' . $fields; ;
+				return( array( $status, html_entity_decode( $status_message, ENT_QUOTES, 'UTF-8' ) ) );
+			}
+		}
+		return( array( $status, $status_message ) );
 	}
 
 	protected function _upload_item__import_test( $options ) {
 		$upload_list = $this->upload_list;
 		// load import data
 		$_      = $options;
-		$id     = $_[ 'id'     ];
-		$action = $_[ 'action' ];
-		$fields = $_[ 'fields' ];
-		$keys   = $_[ 'keys'   ];
+		$id          = $_[ 'id'          ];
+		$fields      = $_[ 'fields'      ];
+		$keys        = $_[ 'keys'        ];
 		$supplier_id = $_[ 'supplier_id' ];
 		$category_id = $_[ 'category_id' ];
+		$action      = $_[ 'action'      ];
+			$action  = !empty( $action ) ? $action :  $this->import_action_default;
+			$rules   = &$this->import_rules[ $action ];
 		// var_dump( $_ );
 		// exit;
 		$upload_path   = $this->upload_path;
@@ -529,8 +616,18 @@ class yf_manage_shop_import_products2 {
 		$fields_by_name = array_flip( $fields );
 		unset( $fields_by_name[ 0 ] );
 		$fields_keys = $fields_by_name;
-		foreach( $fields_keys as $name => $key ) {
-			if( !$keys[ $key ] ) { unset( $fields_keys[ $name ] ); }
+		if( $action == 'update' ) {
+			foreach( $fields_keys as $name => $key ) {
+				if( !$keys[ $key ] ) { unset( $fields_keys[ $name ] ); }
+			}
+		} elseif( $action == 'insert' ) {
+			$keys = array();
+			if( !empty( $rules ) ) {
+				foreach( $rules[ 'include' ] as $key ) {
+					if( isset( $fields_keys[ $key ] ) ) { $keys[ $key ] = $fields_keys[ $key ]; }
+				}
+			}
+			$fields_keys = $keys;
 		}
 		$_import_field = $this->import_field;
 		$result = array(
@@ -567,9 +664,9 @@ class yf_manage_shop_import_products2 {
 					!$exists  && $status_message[] = 'не существует';
 					$many > 1 && $status_message[] = 'обнаружено множество элементов';
 			} elseif( $action == 'insert' ) {
-				!$exists
-					&& $status_message[] = 'не существует'
-					&& $valid = false;
+				$exists
+					&& ( $status_message[] = 'уже существует' )
+					&& ( $valid = false );
 			}
 			$status = $valid;
 			$result[ 'items' ][ $index ] = array(
