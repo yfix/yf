@@ -1,6 +1,9 @@
 <?php
 
 class category_model extends yf_model {
+	public function films() {
+		return $this->belongs_to_many('film', 'film_category', 'category_id', 'film_id');
+	}
 /*
  * @property integer $category_id
  * @property string $name

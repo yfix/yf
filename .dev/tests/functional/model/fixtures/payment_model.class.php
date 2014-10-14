@@ -1,6 +1,15 @@
 <?php
 
 class payment_model extends yf_model {
+	public function rental() {
+		return $this->belongs_to('rental', 'rental_id');
+	}
+	public function customer() {
+		return $this->belongs_to('customer', 'customer_id');
+	}
+	public function staff() {
+		return $this->belongs_to('staff', 'staff_id');
+	}
 /*
  * @property integer $payment_id
  * @property integer $customer_id

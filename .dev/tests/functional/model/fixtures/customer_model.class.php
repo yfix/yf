@@ -1,6 +1,18 @@
 <?php
 
 class customer_model extends yf_model {
+	public function address() {
+		return $this->belongs_to('address', 'address_id');
+	}
+	public function store() {
+		return $this->belongs_to('store', 'store_id');
+	}
+	public function payments() {
+		return $this->has_many('payment', 'customer_id');
+	}
+	public function rentals() {
+		return $this->has_many('rental', 'customer_id');
+	}
 /*
  * @property integer $customer_id
  * @property integer $store_id

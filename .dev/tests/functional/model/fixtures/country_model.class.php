@@ -1,6 +1,9 @@
 <?php
 
 class country_model extends yf_model {
+	public function cities() {
+		return $this->has_many('city', 'country_id');
+	}
 /*
  * @property integer $country_id
  * @property string $country

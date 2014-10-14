@@ -1,6 +1,12 @@
 <?php
 
 class city_model extends yf_model {
+	public function addresses() {
+		return $this->has_many('address', 'city_id');
+	}
+	public function country() {
+		return $this->belongs_to('country', 'country_id');
+	}
 /*
  * @property integer $city_id
  * @property string $city

@@ -1,6 +1,18 @@
 <?php
 
 class rental_model extends yf_model {
+	public function payments() {
+		return $this->has_many('payment', 'rental_id');
+	}
+	public function staff() {
+		return $this->belongs_to('staff', 'staff_id');
+	}
+	public function inventory() {
+		return $this->belongs_to('inventory', 'inventory_id');
+	}
+	public function customer() {
+		return $this->belongs_to('customer', 'customer_id');
+	}
 /*
  * @property integer $rental_id
  * @property string $rental_date

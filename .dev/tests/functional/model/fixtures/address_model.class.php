@@ -1,6 +1,18 @@
 <?php
 
 class address_model extends yf_model {
+	public function city() {
+		return $this->belongs_to('city', 'city_id');
+	}
+	public function customers() {
+		return $this->has_many('customer', 'address_id');
+	}
+	public function staffs() {
+		return $this->has_many('staff', 'address_id');
+	}
+	public function stores() {
+		return $this->has_many('store', 'address_id');
+	}
 /*
  * @property integer $address_id
  * @property string $address

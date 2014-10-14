@@ -1,6 +1,12 @@
 <?php
 
 class language_model extends yf_model {
+	public function films() {
+		return $this->has_many('film', 'language_id');
+	}
+	public function films_by_original_language() {
+		return $this->has_many('film', 'original_language_id');
+	}
 /*
  * @property integer $language_id
  * @property string $name

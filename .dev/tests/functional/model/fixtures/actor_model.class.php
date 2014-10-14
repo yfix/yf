@@ -1,6 +1,9 @@
 <?php
 
 class actor_model extends yf_model {
+	public function films() {
+		return $this->belongs_to_many('film', 'film_actor', 'actor_id', 'film_id');
+	}
 /*
  * @property integer $actor_id
  * @property string $first_name

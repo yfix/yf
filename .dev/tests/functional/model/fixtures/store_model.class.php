@@ -1,6 +1,21 @@
 <?php
 
 class store_model extends yf_model {
+	public function customers() {
+		return $this->has_many('customer', 'store_id');
+	}
+	public function inventories() {
+		return $this->has_many('inventory', 'store_id');
+	}
+	public function staffs() {
+		return $this->has_many('staff', 'store_id');
+	}
+	public function manager_staff() {
+		return $this->belongs_to('staff', 'manager_staff_id');
+	}
+	public function address() {
+		return $this->belongs_to('address', 'address_id');
+	}
 /*
  * @property integer $store_id
  * @property integer $manager_staff_id

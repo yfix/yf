@@ -3,19 +3,19 @@
 class film_model extends yf_model {
 	protected $_table = 'film';
 	public function language() {
-		$this->has_many('language', 'language_id');
+		return $this->belongs_to('language', 'language_id');
 	}
 	public function original_language() {
-		$this->has_many('language', 'original_language_id');
+		return $this->belongs_to('language', 'original_language_id');
 	}
 	public function actors() {
-		$this->has_many_through('actor', 'film_actor', 'film_id', 'actor_id');
+		return $this->belongs_to_many('actor', 'film_actor', 'film_id', 'actor_id');
 	}
 	public function categories() {
-		$this->has_many_through('category', 'film_category', 'film_id', 'category_id');
+		return $this->belongs_to_many('category', 'film_category', 'film_id', 'category_id');
 	}
 	public function inventories() {
-		$this->has_many('inventory', 'film_id');
+		return $this->belongs_to_many('inventory', 'film_id');
 	}
 /*
  * @property integer $film_id

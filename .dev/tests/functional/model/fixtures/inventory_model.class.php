@@ -1,6 +1,15 @@
 <?php
 
 class inventory_model extends yf_model {
+	public function store() {
+		return $this->belongs_to('store', 'store_id');
+	}
+	public function film() {
+		return $this->belongs_to('film', 'film_id');
+	}
+	public function rentals() {
+		return $this->has_many('rental', 'inventory_id');
+	}
 /*
  * @property integer $inventory_id
  * @property integer $film_id
