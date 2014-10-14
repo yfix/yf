@@ -62,14 +62,15 @@ class class_main_real_test extends db_real_abstract {
 		$this->assertTrue( is_a($model_base, 'yf_model') );
 		$this->assertSame( $model_base, _class('yf_model') );
 
-		$this->assertFalse( main()->_class_exists('film_model') );
-
-		// unit_tests == name of the custom storage used here
-		main()->_custom_class_storages = array(
-			'film_model' => array('unit_tests' => array(__DIR__.'/model/fixtures/')),
-		);
-
-		$this->assertTrue( main()->_class_exists('film_model') );
+		$model_exists = main()->_class_exists('film_model');
+		if (!$model_exists) {
+			$this->assertFalse( main()->_class_exists('film_model') );
+			// unit_tests == name of the custom storage used here
+			main()->_custom_class_storages = array(
+				'film_model' => array('unit_tests' => array(__DIR__.'/model/fixtures/')),
+			);
+			$this->assertTrue( main()->_class_exists('film_model') );
+		}
 
 		$film_model = _class('film_model');
 		$this->assertTrue( is_object($film_model) );
