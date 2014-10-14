@@ -49,6 +49,12 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 		if (!$extra['sql'] && !$this->database_exists($db_name)) {
 			return true;
 		}
+		$fk_sql = 'SET foreign_key_checks = 0;';
+		if (!$extra['sql']) {
+			$this->db->query($fk_sql);
+		} else {
+			$sql[] = $fk_sql;
+		}
 		foreach ((array)$this->list_tables($db_name) as $table) {
 			$sql[] = $this->drop_table($db_name.'.'.$table, $extra);
 		}
@@ -66,6 +72,12 @@ class yf_db_utils_mysql extends yf_db_utils_driver {
 		}
 		foreach ((array)$this->list_events($db_name) as $name => $tmp) {
 			$sql[] = $this->drop_event($db_name.'.'.$name, $extra);
+		}
+		$fk_sql = 'SET foreign_key_checks = 1;';
+		if (!$extra['sql']) {
+			$this->db->query($fk_sql);
+		} else {
+			$sql[] = $fk_sql;
 		}
 		return $extra['sql'] ? implode(PHP_EOL, $sql) : true;
 	}
