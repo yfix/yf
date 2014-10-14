@@ -186,11 +186,30 @@ ul.select2-result-single {
 					</ui-select-choices>
 				</ui-select>
 
-				<span class="btn btn-warning pull-right" ng-click="UploadApi.item__import()" ng-show="!item_data.test_status">
-					Проверить
+				<span class="btn pull-right"
+					ng-show="item_data.test_status"
+					ng-click="item_data.options.confirm = !item_data.options.confirm"
+					title="подтверждение импорта"
+				>
+					<i ng-show="!item_data.options.confirm" class="fa fa-square-o"></i>
+					<i ng-show="item_data.options.confirm" class="fa fa-check-square-o"></i>
 				</span>
-				<span class="btn btn-success pull-right" ng-click="UploadApi.item__import()" ng-show="item_data.test_status">
-					Импортировать
+				<span class="btn pull-right"
+					ng-class = "{
+						'btn-danger'  : !item_data.test_status,
+						'btn-warning' : item_data.test_status && !item_data.options.confirm,
+						'btn-success' : item_data.test_status && item_data.options.confirm,
+					}"
+					ng-click="UploadApi.item__import()"
+				>
+					<span ng-show="!item_data.test_status">
+						Проверить
+					</span>
+					<span ng-show="item_data.test_status"
+						title="{{ item_data.options.confirm ? '' : 'требуется подтверждение импорта' }}"
+					>
+						Импортировать
+					</span>
 				</span>
 			</div>
 		</th>

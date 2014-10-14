@@ -413,6 +413,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			$scope.item_data = result.response.action.data;
 			$scope.item_data.test        = test;
 			$scope.item_data.test_status = test_status;
+			$scope.item_data.options.confirm = false;
 			// set import action
 			var action = $scope.item_data.options.action;
 			angular.forEach( $scope.data._import_action_array, function( item, index ) {
@@ -485,6 +486,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 		var test_status = action.status;
 		$scope.item_data.test        = test;
 		$scope.item_data.test_status = test_status;
+		$scope.item_data.options.confirm = false;
 		// inject status
 		if( $scope.item_data.test.items ) {
 			angular.forEach( $scope.item_data.test.items, function( item, index ) {
