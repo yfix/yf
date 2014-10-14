@@ -257,7 +257,7 @@ class yf_main {
 	*/
 	function _check_site_maintenance () {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		if (MAIN_TYPE_USER && !$this->CONSOLE_MODE && !DEBUG_MODE && conf('site_maintenance')) {
+		if (MAIN_TYPE_USER && !$this->is_console() && !DEBUG_MODE && conf('site_maintenance')) {
 			$this->NO_GRAPHICS = true;
 			header('HTTP/1.1 503 Service Temporarily Unavailable');
 			header('Status: 503 Service Temporarily Unavailable');
@@ -311,7 +311,7 @@ class yf_main {
 				}
 			}
 		}
-		if ($https_needed && !$this->CONSOLE_MODE && !($this->_server('HTTPS') || $this->_server('SSL_PROTOCOL'))) {
+		if ($https_needed && !$this->is_console() && !($this->_server('HTTPS') || $this->_server('SSL_PROTOCOL'))) {
 			$redirect_url = str_replace('http://', 'https://', WEB_PATH). $this->_server('QUERY_STRING');
 			return js_redirect(process_url($redirect_url));
 		}
@@ -325,7 +325,7 @@ class yf_main {
 	*/
     function _do_rewrite() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
-		if ($this->CONSOLE_MODE || MAIN_TYPE_ADMIN || !module_conf('tpl', 'REWRITE_MODE')) {
+		if ($this->is_console() || MAIN_TYPE_ADMIN || !module_conf('tpl', 'REWRITE_MODE')) {
 			return false;
 		}
         $host = $_SERVER['HTTP_HOST'];
@@ -548,7 +548,7 @@ class yf_main {
 	function init_server_health() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		// Server health result (needed to correctly self turn off faulty box from frontend requests)
-		if (!$this->CONSOLE_MODE && $this->SERVER_HEALTH_CHECK && $this->SERVER_HEALTH_FILE && file_exists($this->SERVER_HEALTH_FILE)) {
+		if (!$this->is_console() && $this->SERVER_HEALTH_CHECK && $this->SERVER_HEALTH_FILE && file_exists($this->SERVER_HEALTH_FILE)) {
 			$health_result = file_get_contents($this->SERVER_HEALTH_FILE);
 			if ($health_result != 'OK') {
 				header($this->_server('SERVER_PROTOCOL').' 503 Service Unavailable');
@@ -610,7 +610,7 @@ class yf_main {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->events->fire('main.before_session');
 		$skip = false;
-		if (isset($this->_session_init_complete) || $this->CONSOLE_MODE || conf('SESSION_OFF') || $this->SESSION_OFF) {
+		if (isset($this->_session_init_complete) || $this->is_console() || conf('SESSION_OFF') || $this->SESSION_OFF) {
 			$skip = true;
 		} elseif ($this->SPIDERS_DETECTION && conf('IS_SPIDER')) {
 			$skip = true;
@@ -1482,7 +1482,7 @@ class yf_main {
 		$this->HOSTNAME = php_uname('n');
 		// Check required params
 		if (!defined('INCLUDE_PATH')) {
-			if ($this->CONSOLE_MODE) {
+			if ($this->is_console()) {
 				$_trace = debug_backtrace();
 				$_trace = $_trace[1];
 				$_path = dirname($_trace['file']);
@@ -1569,7 +1569,7 @@ class yf_main {
 		define('USER_MODULES_DIR', 'modules/');
 		define('ADMIN_MODULES_DIR', 'admin_modules/');
 		// Set console-specific options
-		if ($this->CONSOLE_MODE) {
+		if ($this->is_console()) {
 			ini_set('memory_limit', -1);
 			set_time_limit(0);
 			if (version_compare( phpversion(), '5.2.4' ) >= 0) {
