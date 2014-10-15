@@ -421,6 +421,9 @@ class yf_db {
 		}
 		if (!$result && $db_error) {
 			$this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace_string() : '');
+			$this->_last_query_error = $db_error;
+		} else {
+			$this->_last_query_error = null;
 		}
 		// This part needed to update debug log after executing query, but ensure correct order of queries
 		if ($log_allowed && $log_id) {
@@ -1133,6 +1136,18 @@ class yf_db {
 			return false;
 		}
 		return $this->db->free_result($result);
+	}
+
+	/**
+	* Return error of the latest executed query.
+	* Difference from error() is that it will work correctly when repair enabled 
+	* (it executes lot of self queries and cleaning db api latest error)
+	*/
+	function last_error() {
+		$var = $this->_last_query_error;
+		return isset($var['code']) && !empty($var['code']) ? $var : false;
+// TODO: fix other methods like this: insert_id(), affected_rows(), num_rows()
+// TODO: use this only when repair table enabled and called.
 	}
 
 	/**
