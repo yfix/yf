@@ -105,7 +105,17 @@ class class_model_real_test extends db_real_abstract {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen($ext));
 				$tables_php[$t_name] = include $f; // $data should be loaded from file
-break;
+			}
+		}
+		$tables_data = array();
+		$ext = '.data.php';
+		$globs_data = array(
+			'fixtures'	=> __DIR__.'/fixtures/*'.$ext,
+		);
+		foreach ($globs_data as $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen($ext));
+				$tables_data[$t_name] = include $f; // $data should be loaded from file
 			}
 		}
 		$this->assertNotEmpty($tables_php);
@@ -132,9 +142,62 @@ break;
 				}
 			}
 			$this->assertEquals( $sql_php['foreign_keys'], $fks, 'Compare indexes with expected sql_php for table: '.$name );
+
+			$table_data = $tables_data[$name];
+			if ($table_data) {
+				$this->assertTrue( (bool)self::db()->insert_safe($name, $table_data) );
+			}
+			$real_data = self::db()->from($name)->get_all();
+			$this->assertEquals($table_data, $real_data);
+break;
 		}
 #print_r(self::utils()->list_tables(self::db_name()) );
 
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
 	}
+
+	/**
+	* @depends test_load_fixtures
+	*/
+	public function test_sakila_models() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+
+		$model_base = _class('model');
+		$this->assertTrue( is_object($model_base) );
+		$this->assertTrue( is_a($model_base, 'yf_model') );
+		$this->assertSame( $model_base, _class('yf_model') );
+
+		$db_prefix = self::db()->DB_PREFIX;
+		$plen = strlen($db_prefix);
+
+		foreach ((array)self::utils()->list_tables(self::db_name()) as $table) {
+			$table = substr($table, $plen);
+
+			// unit_tests == name of the custom storage used here
+#			main()->_custom_class_storages[$table.'_model'] = array('unit_tests' => array(__DIR__.'/fixtures/'));
+#echo (int)class_exists('actor_model');
+
+#			$model = model($table);
+
+#			$methods = get_class_methods($model);
+#print_r($methods);
+		}
+	}
+/*
+	public function test_dump_sakila_data() {
+		$db_name = 'sakila';
+		foreach((array)self::utils()->list_tables($db_name) as $table) {
+			$file = __DIR__.'/fixtures/'.$table.'.data.php';
+			if (file_exists($file)) {
+				continue;
+			}
+			$data = self::db()->get_all('SELECT * FROM '.$db_name.'.'.$table);
+			if (empty($data)) {
+				continue;
+			}
+			echo 'Saved data ('.count($data).'): '.$file. PHP_EOL;
+			file_put_contents($file, '<?'.'php'.PHP_EOL.'return '._var_export($data, 1).';');
+		}
+	}
+*/
 }
