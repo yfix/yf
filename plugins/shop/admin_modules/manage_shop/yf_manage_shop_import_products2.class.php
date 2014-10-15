@@ -1039,8 +1039,9 @@ class yf_manage_shop_import_products2 {
 		$table  = 'shop_products';
 		db()->begin();
 			$result = db()->insert_on_duplicate_key_update( $table, $data );
-				$error = db()->error();
-				$count = db()->affected_rows();
+				$error = db()->last_error();
+				// $count = db()->affected_rows(); // fix bug table repair
+				$count = count( $data );
 		if( $result ) {
 			db()->commit();
 			$status = true;
