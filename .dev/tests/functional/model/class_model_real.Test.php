@@ -155,6 +155,34 @@ break;
 
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
 	}
+
+	/**
+	* @depends test_load_fixtures
+	*/
+	public function test_sakila_models() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+
+		$model_base = _class('model');
+		$this->assertTrue( is_object($model_base) );
+		$this->assertTrue( is_a($model_base, 'yf_model') );
+		$this->assertSame( $model_base, _class('yf_model') );
+
+		$db_prefix = self::db()->DB_PREFIX;
+		$plen = strlen($db_prefix);
+
+		foreach ((array)self::utils()->list_tables(self::db_name()) as $table) {
+			$table = substr($table, $plen);
+
+			// unit_tests == name of the custom storage used here
+#			main()->_custom_class_storages[$table.'_model'] = array('unit_tests' => array(__DIR__.'/fixtures/'));
+#echo (int)class_exists('actor_model');
+
+#			$model = model($table);
+
+#			$methods = get_class_methods($model);
+#print_r($methods);
+		}
+	}
 /*
 	public function test_dump_sakila_data() {
 		$db_name = 'sakila';
