@@ -105,7 +105,17 @@ class class_model_real_test extends db_real_abstract {
 			foreach (glob($glob) as $f) {
 				$t_name = substr(basename($f), 0, -strlen($ext));
 				$tables_php[$t_name] = include $f; // $data should be loaded from file
-break;
+			}
+		}
+		$tables_data = array();
+		$ext = '.data.php';
+		$globs_data = array(
+			'fixtures'	=> __DIR__.'/fixtures/*'.$ext,
+		);
+		foreach ($globs_data as $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen($ext));
+				$tables_data[$t_name] = include $f; // $data should be loaded from file
 			}
 		}
 		$this->assertNotEmpty($tables_php);
@@ -132,6 +142,14 @@ break;
 				}
 			}
 			$this->assertEquals( $sql_php['foreign_keys'], $fks, 'Compare indexes with expected sql_php for table: '.$name );
+
+			$table_data = $tables_data[$name];
+			if ($table_data) {
+				$this->assertTrue( (bool)self::db()->insert_safe($name, $table_data) );
+			}
+			$real_data = self::db()->from($name)->get_all();
+			$this->assertEquals($table_data, $real_data);
+break;
 		}
 #print_r(self::utils()->list_tables(self::db_name()) );
 
