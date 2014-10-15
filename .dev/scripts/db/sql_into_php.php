@@ -43,12 +43,7 @@ foreach ($globs_sql as $glob) {
 		}
 #		print_r($a);
 
-		$str = var_export($a, 1);
-		$str = str_replace('  ', "\t", $str);
-		$str = str_replace('array (', 'array(', $str);
-		$str = preg_replace('~=>[\s]+array\(~ims', '=> array(', $str);
-
-		$body = '<?'.'php'.PHP_EOL.'return '.$str.';'.PHP_EOL;
+		$body = '<?'.'php'.PHP_EOL.'return '._var_export($a, 1).';'.PHP_EOL;
 		if (file_exists($sql_php_file) && md5($body) == md5(file_get_contents($sql_php_file))) {
 			continue;
 		}

@@ -47,7 +47,7 @@ foreach((array)db()->get_2d('SHOW TABLES LIKE "'.DB_PREFIX.$db_tables_like.'"') 
 	$db_create_sql = str_replace('  ', "\t", '  '.$db_create_sql);
 	$file_sql = './sql/'.$tname.'.sql.php';
 	echo $file_sql. PHP_EOL;
-	file_put_contents($file_sql, '<?'.'php'.PHP_EOL.'$data = \''.PHP_EOL.addslashes($db_create_sql).PHP_EOL.'\';');
+	file_put_contents($file_sql, '<?'.'php'.PHP_EOL.'return \''.PHP_EOL.addslashes($db_create_sql).PHP_EOL.'\';');
 	if (false !== strpos($table, 'sys_log_') || false !== strpos($table, '_revisions')) {
 		continue;
 	}
@@ -57,5 +57,5 @@ foreach((array)db()->get_2d('SHOW TABLES LIKE "'.DB_PREFIX.$db_tables_like.'"') 
 	}
 	$file_data = './data/'.$tname.'.data.php';
 	echo $file_data. PHP_EOL;
-	file_put_contents($file_data, '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
+	file_put_contents($file_data, '<?'.'php'.PHP_EOL.'return '._var_export($data, 1).';');
 }

@@ -16,7 +16,7 @@ foreach (glob(__DIR__.'/installer*_structs.php') as $_file) {
 			$k = 'sys_'.$k;
 		}
 		$f = $d. $k.'.db_table_sql.php';
-		file_put_contents($f, '<'.'?php'.PHP_EOL.'$data = '.var_export($v, 1).';');
+		file_put_contents($f, '<'.'?php'.PHP_EOL.'return '._var_export($v, 1).';');
 	}
 }
 
@@ -34,6 +34,6 @@ foreach (glob(__DIR__.'/installer*_datas.php') as $_file) {
 			$k = 'sys_'.$k;
 		}
 		$f = $d. $k.'.db_table_data.php';
-		file_put_contents($f, '<'.'?php'.PHP_EOL.'$data = '.var_export($v, 1).';');
+		file_put_contents($f, '<'.'?php'.PHP_EOL.'return '._var_export($v, 1).';');
 	}
 }
