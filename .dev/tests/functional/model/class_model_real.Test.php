@@ -137,4 +137,21 @@ break;
 
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
 	}
+/*
+	public function test_dump_sakila_data() {
+		$db_name = 'sakila';
+		foreach((array)self::utils()->list_tables($db_name) as $table) {
+			$file = __DIR__.'/fixtures/'.$table.'.data.php';
+			if (file_exists($file)) {
+				continue;
+			}
+			$data = self::db()->get_all('SELECT * FROM '.$db_name.'.'.$table);
+			if (empty($data)) {
+				continue;
+			}
+			echo 'Saved data ('.count($data).'): '.$file. PHP_EOL;
+			file_put_contents($file, '<?'.'php'.PHP_EOL.'return '._var_export($data, 1).';');
+		}
+	}
+*/
 }
