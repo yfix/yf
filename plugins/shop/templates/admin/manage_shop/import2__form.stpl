@@ -1,5 +1,7 @@
 <div class="ng-cloak" ng-controller="{_ng_controller}">
 
+<wait status='block_wait'></wait>
+
 {{-- common notifications --}}
 <style>
 .notifications {

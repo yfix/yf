@@ -83,6 +83,41 @@ function( ApiConfig, $resource, $window, $log ) {
 	return( service );
 }]);
 
+ng_app_admin.directive( 'wait',
+[ '$log',
+function( $log ) {
+	return {
+		restrict: 'AE',
+		link: function( $scope, element, attrs ) {
+			$log.log( 'wait', $scope.active );
+		},
+		scope: {
+			'active' : '=status',
+		},
+		template:
+			  '<style>'
+			+ '.ngwd-wait {'
+				+ 'position   : absolute;'
+				+ 'display    : table;'
+				+ 'top        : 0;'
+				+ 'left       : 0;'
+				+ 'width      : 100%;'
+				+ 'height     : 100%;'
+				+ 'background : RGBA( 0,0,0, 0.5 );'
+				+ 'z-index    : +111;'
+				+ 'font-size  : 5em;'
+				+ 'text-align : center;'
+			+ '}'
+			+ '.ngwd-wait .ngwd-content {'
+				+ 'vertical-align : middle;'
+				+ 'display        : table-cell;'
+			+ '}'
+			+ '</style>'
+			+ '<div class="ngwd-wait" ng-show="active"><div class="ngwd-content"><i class="fa fa-cog fa-spin test-success"></i></div></div>'
+		,
+	}
+}]);
+
 ng_app_admin.directive( 'fileUpload',
 [ 'ApiConfig', 'Uploader', '$alert', '$timeout', '$parse', '$window', '$log',
 function( ApiConfig, Uploader, $alert, $timeout, $parse, $window, $log ) {
@@ -338,31 +373,39 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			}, $scope.item_data.options.keys );
 		}
 	};
+	$scope.block_wait = false;
 	$scope.UploadApi = {
 		item__get: function( item ) {
+			$scope.block_wait = true;
 			var result = UploadApi.item__get( item.id );
 			result.$promise.then(
 				function( r ) {
+					$scope.block_wait = false;
 					$scope.item__get({ response: r.response });
 					$scope.item_filter = '';
 				},
 				function( r ) {
+					$scope.block_wait = false;
 					$log.log( 'item->get is fail:', r );
 				}
 			);
 		},
 		item__remove: function( item ) {
+			$scope.block_wait = true;
 			var result = UploadApi.item__remove( item.id );
 			result.$promise.then(
 				function( r ) {
+					$scope.block_wait = false;
 					$scope.item__remove({ item: item, response: r.response });
 				},
 				function( r ) {
+					$scope.block_wait = false;
 					$log.log( 'item->remove is fail:', r );
 				}
 			);
 		},
 		item__import: function( item ) {
+			$scope.block_wait = true;
 			// set import action
 			if( !angular.isString( $scope.item_data.options.action ) ){
 				var title   = 'Импорт:';
@@ -374,22 +417,27 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			var result = UploadApi.item__import( $scope.item_data.options );
 			result.$promise.then(
 				function( r ) {
+					$scope.block_wait = false;
 					$scope.item__import({ response: r.response });
 				},
 				function( r ) {
+					$scope.block_wait = false;
 					$log.log( 'item->import is fail:', r );
 				}
 			);
 		},
 		list__remove_all: function() {
+			$scope.block_wait = true;
 			var result = UploadApi.list__remove_all();
 			result.$promise.then(
 				function( r ) {
+					$scope.block_wait = false;
 					var title = r.response.action.status_message;
 					$scope.notifications( title );
 					$scope.upload_list__update({ response: r.response });
 				},
 				function( r ) {
+					$scope.block_wait = false;
 					var title = 'не удалось удалить все загруженные файлы';
 					$scope.notifications( title );
 					$log.log( 'upload_list->remove_all is fail:', r );

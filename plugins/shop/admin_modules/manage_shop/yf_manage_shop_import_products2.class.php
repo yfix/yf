@@ -420,9 +420,9 @@ class yf_manage_shop_import_products2 {
 			'status' => false,
 		);
 		$upload_list = $this->upload_list;
-		// get data, options
-		$items   = $this->_file_get( $id );
+		// get options, items
 		$options = $this->_options_get( $id );
+		$items   = $this->_file_get( $id );
 		if( is_array( $items ) ) {
 			$rows  = count( $items );
 			$cols  = count( $items[ 0 ] );
@@ -491,6 +491,8 @@ class yf_manage_shop_import_products2 {
 		$upload_path = $this->upload_path;
 		$file        = $upload_path . $id;
 		$file_name   = $file . '.import';
+		$options_save              = $_;
+		$options_save[ 'confirm' ] = false;
 		$result      = $this->_save_json( $file_name, $_ );
 		if( FALSE === $result ) {
 			$result = array(
@@ -1054,7 +1056,7 @@ class yf_manage_shop_import_products2 {
 		// update db
 		$table  = 'shop_products';
 		// debug sql
-		$result = db()->insert_on_duplicate_key_update( $table, $data, $sql ); var_dump( $result ); exit;
+		// $result = db()->insert_on_duplicate_key_update( $table, $data, true ); var_dump( 'record', $result ); exit;
 		// end debug sql
 		db()->begin();
 		$result = db()->insert_on_duplicate_key_update( $table, $data );
