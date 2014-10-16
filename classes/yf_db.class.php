@@ -418,6 +418,12 @@ class yf_db {
 		}
 		if (!$result && $query_allowed && $db_error && $this->ERROR_AUTO_REPAIR) {
 			$result	= $this->_repair_table($sql, $db_error);
+			if ($result) {
+				$repair_done_ok = true;
+#				$this->_last_affected_rows = $this->affected_rows();
+#				$this->_last_num_rows = $this->num_rows();
+#				$this->_last_insert_id = $this->insert_id();
+			}
 		}
 		if (!$result && $db_error) {
 			$this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace_string() : '');
