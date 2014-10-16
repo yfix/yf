@@ -452,8 +452,8 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			// reset status filter
 			$scope.item_filter_status = undefined;
 		} else {
-			var title   = $scope.item_data.file + ':';
-			var content = 'файл не распознан';
+			var title   = result.response.action.file + ':';
+			var content = result.response.action.status_message;
 			$scope.notifications( title, content, 'error' );
 			$scope.item_data = null;
 		}

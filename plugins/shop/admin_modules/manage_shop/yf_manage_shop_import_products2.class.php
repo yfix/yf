@@ -345,8 +345,10 @@ class yf_manage_shop_import_products2 {
 			case 'get':
 				$id = $_REQUEST[ 'id' ];
 				$result = $this->_upload_item__get( $id );
-				$test = $this->_upload_item__import( $result[ 'data' ][ 'options' ] );
-				$result[ 'data' ][ 'test' ] = $test;
+				if( $result[ 'status' ] ) {
+					$test = $this->_upload_item__import( $result[ 'data' ][ 'options' ] );
+					$result[ 'data' ][ 'test' ] = $test;
+				}
 				break;
 			case 'remove':
 				$id = $post[ 'id' ];
@@ -421,11 +423,11 @@ class yf_manage_shop_import_products2 {
 		// get data, options
 		$items   = $this->_file_get( $id );
 		$options = $this->_options_get( $id );
-		if( !is_null( $items ) && !is_null( $options ) ) {
+		if( is_array( $items ) ) {
 			$rows  = count( $items );
 			$cols  = count( $items[ 0 ] );
 			// default
-			if( FALSE === $options ) {
+			if( empty( $options ) ) {
 				$options = array(
 					'id'     => $id,
 					'action' => $this->import_action_default,
@@ -443,6 +445,20 @@ class yf_manage_shop_import_products2 {
 					'options' => $options,
 				),
 				'status' => true,
+			);
+		} else {
+			$upload_list = $this->upload_list;
+			$file        = $upload_list[ $id ][ 'file_name' ];
+			$this->_upload_item__remove( $id );
+			if( $items === false ) {
+				$status_message = 'файл не распознан';
+			} else {
+				$status_message = 'файл не найден';
+			}
+			$result = array(
+				'status'         => false,
+				'file'           => $file,
+				'status_message' => $status_message,
 			);
 		}
 		return( $result );
@@ -1034,16 +1050,22 @@ class yf_manage_shop_import_products2 {
 			}
 			$data[] = $sql_item;
 		}
-// var_dump( $data ); exit;
+		// var_dump( $data ); exit;
 		// update db
 		$table  = 'shop_products';
+		// debug sql
+		$result = db()->insert_on_duplicate_key_update( $table, $data, $sql ); var_dump( $result ); exit;
+		// end debug sql
 		db()->begin();
-			$result = db()->insert_on_duplicate_key_update( $table, $data );
-				$error = db()->last_error();
-				// $count = db()->affected_rows(); // fix bug table repair
-				$count = count( $data );
+		$result = db()->insert_on_duplicate_key_update( $table, $data );
+		// *** yf db bug: after table repair - dropped error, affected_rows, etc
+		// $error = db()->error();
+		// $count = db()->affected_rows();
+		// then usage: last_error, etc
+		// $error = db()->last_error();
 		if( $result ) {
 			db()->commit();
+			$count  = count( $data );
 			$status = true;
 			$status_message = 'Импортировано: ' . $count;
 		}
