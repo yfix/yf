@@ -58,7 +58,30 @@ class yf_manage_dashboards2 {
 		
 	}
 
-	/**
+		/**
+	*/
+	function parse_structure() {
+		main()->NO_GRAPHICS = true;
+		$data = $_POST['structure'];
+		foreach ($data['cols']  as $key => $_cols){
+			$cols [] = array (
+				'class' => $_cols['class'][0],
+				'id'    => $_cols['id'],
+				'key'   => $key,
+			);
+		}
+		$replace = array(
+			'row_class' => $data['class'],
+			'row_id'	=> $data['id'],
+			'cols'      => $cols,
+		);
+		$form =   tpl()->parse(__CLASS__.'/form_class', $replace);
+echo json_encode(array('data'=>$form));
+exit;
+		
+	}
+
+/**
 	*/
 	function delete () {
 		$id = $_GET['id'];
@@ -209,6 +232,7 @@ class yf_manage_dashboards2 {
 		}
 		$replace = array(
 			'save_link'	      => './?object='.$_GET['object'].'&action=save&id='.$ds['id'],
+			'parse_structure' => './?object='.$_GET['object'].'&action=parse_structure&id='.$ds['id'],
 			'lock_link'	      => './?object='.$_GET['object'].'&action=lock&id='.$ds['id'],
 			'dashboard_name'  =>  $ds['name'],
 			'rows'	          => $rows,

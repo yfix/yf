@@ -82,6 +82,34 @@ function removeElm() {
     })
 }
 
+
+function editExtra() {
+    $(".demo").delegate(".edit-extra", "click", function (e) {
+        e.preventDefault();
+	var		result = parse_grid_row($(this).parent());
+//	var		result = $(this).parent()
+	
+	$.ajax({
+			type: "POST",
+			url: "{parse_structure}",
+			dataType: 'json',
+			data: {'structure' : result},
+			success: function(data) {
+				 $('.modal-content').html(data['data']);
+				 console.log(data['data']);
+			//	setInterval(function () {
+		//			$('#message_save').html('');
+		//		}, 5000)
+			}
+		});
+
+	$('#ajaxModal').modal('show');
+//       console.log(result);
+//		saveLayout();
+    })
+}
+
+
 function clearDemo() {
     $(".demo").empty()
 }
@@ -253,6 +281,7 @@ $(document).ready(function () {
         $(this).next().slideDown()
     });
     removeElm();
+    editExtra();
     configurationElm();
     gridSystemGenerator();
     setInterval(function () {
