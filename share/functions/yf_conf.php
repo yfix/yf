@@ -135,13 +135,14 @@ if (!function_exists('conf')) {
 // module_conf('home_page', array('k1' => 'v1', 'k2' => 'v2')); => set module conf data subarray item
 if (!function_exists('module_conf')) {
 	function module_conf ($module = '', $name = '', $new_value = null) {
+		global $PROJECT_CONF;
 // TODO: add/merge real value of module($module)->$property (maybe be slow due to module init);
 		$value = null;
 		if (!$module && !$name) {
-			return $GLOBALS['PROJECT_CONF'];
+			return $PROJECT_CONF;
 		}
 		if ($module && !$name) {
-			return $GLOBALS['PROJECT_CONF'][$module];
+			return $PROJECT_CONF[$module];
 		}
 		return conf($name, $new_value, array('PROJECT_CONF' => $module));
 	}
