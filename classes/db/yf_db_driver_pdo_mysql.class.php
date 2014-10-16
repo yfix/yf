@@ -111,4 +111,22 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		}
 		return '\''.trim($data, '\'').'\'';
 	}
+
+	/**
+	*/
+	function get_last_warnings() {
+		if (!$this->db_connect_id) {
+			return false;
+		}
+		$q = $this->query('SHOW WARNINGS');
+		if (!$q) {
+			return false;
+		}
+		$warnings = array();
+		// Example: Warning (1264): Data truncated for column 'Name' at row 1
+		while ($a = $this->fetch_row($q)) {
+			$warnings[] = printf('%s (%d): %s', $a[0], $a[1], $a[2]);
+		}
+		return $warnings;
+	}
 }
