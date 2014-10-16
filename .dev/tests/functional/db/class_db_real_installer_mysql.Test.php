@@ -356,4 +356,85 @@ class class_db_real_installer_mysql_test extends db_real_abstract {
 	}
 // TODO: db installer events before/after create/alter table tests
 // TODO: db installer extending tests
+
+	/**
+	* When installer working, but not successful, we are loosing stats of the original query
+	*/
+	public function test_query_stats_override() {
+		$bak['ERROR_AUTO_REPAIR'] = self::db()->ERROR_AUTO_REPAIR;
+		self::db()->ERROR_AUTO_REPAIR = true;
+
+		$db_prefix = self::db()->DB_PREFIX;
+
+		self::utils()->truncate_database(self::db_name());
+		$this->assertEquals( array(), self::utils()->list_tables(self::db_name()) );
+
+		$tables_php = array();
+		$globs_php = array(
+			'yf_main'		=> YF_PATH.'share/db/sql_php/*.sql_php.php',
+			'yf_plugins'	=> YF_PATH.'plugins/*/share/db/sql_php/*.sql_php.php',
+		);
+		foreach ($globs_php as $glob) {
+			foreach (glob($glob) as $f) {
+				$t_name = substr(basename($f), 0, -strlen('.sql_php.php'));
+				$tables_php[$t_name] = include $f; // $data should be loaded from file
+			}
+		}
+		$this->assertNotEmpty($tables_php);
+		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 0;') );
+
+		$t1 = array_slice($tables_php, 0, 1, true);
+		$t2 = array_slice($tables_php, 1, 1, true);
+		$tables_php = array(
+			key($t1)	=> current($t1),
+#			key($t2)	=> current($t2),
+		);
+		foreach ((array)$tables_php as $name => $sql_php) {
+			$table = $db_prefix.$name;
+/*
+			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($table)) );
+
+var_dump('affected rows: '.self::db()->affected_rows());
+var_dump('num rows: '.self::db()->num_rows());
+var_dump('insert_id: '.self::db()->insert_id());
+
+#var_dump('insert', self::db()->insert($table, array('id' => 1)));
+#var_dump('insert', self::db()->insert_safe($table, array('id' => 1)));
+#var_dump('insert', self::db()->insert($table, array('id2' => 1)));
+var_dump('insert', self::db()->insert_safe($table, array('id2' => 1)));
+#var_dump('select', self::db()->query('select * from '.$table));
+#var_dump('delete', self::db()->query('delete from '.$table));
+#var_dump('update', self::db()->update($table, array('id' => 1), 1));
+
+var_dump('affected rows: '.self::db()->affected_rows());
+var_dump('num rows: '.self::db()->num_rows());
+var_dump('insert_id: '.self::db()->insert_id());
+
+			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($table)) );
+*/
+/*
+			$sql_php = $this->_fix_sql_php($sql_php);
+			$this->assertTrue( is_array($sql_php) && count($sql_php) && $sql_php );
+			$this->assertFalse( (bool)self::utils()->table_exists(self::table_name($table)) );
+			$this->assertTrue( (bool)self::db()->query('SELECT * FROM '.self::table_name($table).' LIMIT 1'), 'selecting from table: '.$table );
+			$this->assertTrue( (bool)self::utils()->table_exists(self::table_name($table)) );
+
+			$cols = $sql_php['fields'];
+			$last_name = key(array_reverse($cols));
+
+			$before_cols = self::utils()->list_columns(self::table_name($table));
+			$this->assertTrue( (bool)self::utils()->drop_column(self::table_name($table), $last_name) );
+			$after_cols = self::utils()->list_columns(self::table_name($table));
+			$this->assertNotEquals( $before_cols, $after_cols );
+
+			$this->assertTrue( self::db()->query('SELECT `'.implode('`,`', array_keys($before_cols)).'` FROM '.$table.' LIMIT 1') );
+
+			$after2_cols = self::utils()->list_columns(self::table_name($table));
+			$this->assertEquals( $before_cols, $after2_cols );
+*/
+		}
+		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
+
+		self::db()->ERROR_AUTO_REPAIR = $bak['ERROR_AUTO_REPAIR'];
+	}
 }

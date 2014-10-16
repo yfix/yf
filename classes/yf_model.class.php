@@ -1,16 +1,15 @@
 <?php
 
-// TODO: extend it
-
 /**
+* ORM model
 */
 class yf_model {
 
 	/**
 	* YF framework constructor
 	*/
-	public function _init() {
-	}
+#	public function _init() {
+#	}
 
 	/**
 	* We cleanup object properties when cloning
@@ -31,9 +30,9 @@ class yf_model {
 	/**
 	* Catch missing method call
 	*/
-	public static function __callStatic($name, $args) {
+#	public static function __callStatic($name, $args) {
 // TODO
-	}
+#	}
 
 	/**
 	*/
@@ -55,42 +54,31 @@ class yf_model {
 		$this->$name = $value;
 		return $this->$name;
 	}
-
-	/**
-	*/
+/*
 	function __isset($name) {
 // TODO
 	}
 
-	/**
-	*/
 	function __unset($name) {
 // TODO
 	}
 
-	/**
-	*/
 	function __toString() {
 // TODO
 	}
 
-	/**
-	*/
 	function __invoke() {
 // TODO
 	}
 
-	/**
-	*/
 	function __sleep() {
 // TODO
 	}
 
-	/**
-	*/
 	function __wakeup() {
 // TODO
 	}
+*/
 
 	/**
 	*/
@@ -136,44 +124,47 @@ class yf_model {
 	* Search for model data, according to args array
 	*/
 	public function find() {
-		$db = &$this->_db;
-		return $db->from($this->_get_table_name())->where(array('__args__' => func_get_args()))->get_all(array('as_object' => true));
+		return $this->_db->from($this->_get_table_name())
+			->where(array('__args__' => func_get_args()))
+			->get_all(array('as_object' => true));
 	}
 
 	/**
 	* Get all matching rows
 	*/
 	public function get_all() {
-// TODO
+		return $this->call_user_func_array(array($this, 'find'), func_get_args());
 	}
 
 	/**
 	* Alias for get_all()
 	*/
 	public function all() {
-// TODO
+		return $this->call_user_func_array(array($this, 'find'), func_get_args());
 	}
 
 	/**
 	* Direct access to the model's query builder where() statement
 	*/
 	public function where() {
-// TODO
+		return $this->_db->from($this->_get_table_name())
+			->where(array('__args__' => func_get_args()));
 	}
 
 	/**
 	* Return first matching row
 	*/
 	public function first() {
-		$db = &$this->_db;
-		return (object) $db->from($this->_get_table_name())->where(array('__args__' => func_get_args()))->get();
+		return (object) $this->_db->from($this->_get_table_name())
+			->where(array('__args__' => func_get_args()))
+			->get();
 	}
 
 	/**
 	* Alias for first
 	*/
 	public function get() {
-// TODO
+		return $this->call_user_func_array(array($this, 'first'), func_get_args());
 	}
 
 	/**
@@ -194,7 +185,9 @@ class yf_model {
 	* Delete matching record(s) from database
 	*/
 	public function delete() {
-// TODO
+		return $this->_db->from($this->_get_table_name())
+			->where(array('__args__' => func_get_args()))
+			->delete();
 	}
 
 	/**
