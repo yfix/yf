@@ -505,6 +505,8 @@ class yf_debug {
 				'sql'		=> $sql,
 				'rows'		=> strval($log['rows']),
 				'error'		=> $log['error'] ? '<pre>'._prepare_html($this->_var_export($log['error'])).'</pre>' : '',
+				'warning'	=> $log['warning'] ? '<pre>'._prepare_html($this->_var_export($log['warning'])).'</pre>' : '',
+				'info'		=> $log['info'] ? '<pre>'._prepare_html($this->_var_export($log['info'])).'</pre>' : '',
 				'exec_time'	=> strval($exec_time),
 				'time'		=> round($log['time'], 4),
 				'trace'		=> $_cur_trace,
@@ -525,7 +527,9 @@ class yf_debug {
 			'hidden_map' => array(
 				'explain'	=> 'sql',
 				'trace'		=> 'sql',
-				'error'		=> 'sql'
+				'error'		=> 'sql',
+				'warning'	=> 'sql',
+				'info'		=> 'sql',
 			),
 		));
 	}
