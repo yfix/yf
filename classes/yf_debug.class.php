@@ -94,7 +94,7 @@ class yf_debug {
 			if ($method_params) {
 				$debug_params[$method] = $method_params;
 			}
-			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' secs';
+			$debug_timings[$method] = round(microtime(true) - $ts2, 4).' sec';
 			$debug_contents[$name] = $content;
 		}
 		$debug_add = array();
@@ -105,6 +105,10 @@ class yf_debug {
 			}
 		}
 		$debug_time = round(microtime(true) - $ts, 4);
+
+		$debug_timings_html = '<div class="span4 col-lg-4">Debug panel timing: '.$debug_time.'<br />'.$this->_show_key_val_table($debug_timings, array('no_total' => 1, 'no_sort' => 1, 'no_escape' => 1)).'</div>';
+		$debug_contents['DEBUG_YF'] .= $debug_timings_html;
+
 		$data['debug_info'] = array(
 			'class_head'=> 'tab_info_compact',
 			'disabled'	=> 1,
@@ -112,8 +116,6 @@ class yf_debug {
 				<span title="'.t('Page generation time in seconds').'"><i class="icon icon-time fa fa-clock-o"></i>&nbsp;'.$exec_time.'</span>
 				<span title="'.t('Database queries').'">&nbsp;<i class="icon icon-table fa fa-table"></i>&nbsp;'.intval($num_db_queries).'</span><br />
 				<span title="'.t('Debug console generation time in seconds').'"><small>D&nbsp;'.$debug_time.'</small></span>',
-#				<a href="javascript:void(0)" data-hidden-toggle="debug-timings"><small>D&nbsp;'.$debug_time.'</small></a></span>
-#				<pre style="display:none;" id="debug-timings"><small>'._prepare_html($this->_var_export($debug_timings)).'</small></pre>
 		);
 		$body[] = '<style type="text/css" class="yf_core">#debug_console .nav li.tab_info_compact a { padding: 2px 5px; line-height:normal; }</style>';
 		foreach ((array)$debug_contents as $name => $content) {
