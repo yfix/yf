@@ -81,6 +81,44 @@ class yf_model {
 */
 
 	/**
+	* Linking with the table builder
+	*/
+	public function table($params = array()) {
+		$sql = $this->_db->from($this->_get_table_name())->sql();
+		$filter_name = $params['filter_name'] ?: ($this->_params['filter_name'] ?: $_GET['object'].'__'.$_GET['action']);
+		$params['filter'] = $params['filter'] ?: ($this->_params['filter'] ?: $_SESSION[$filter_name]);
+		return table($sql, $params);
+	}
+
+	/**
+	* Linking with the form builder
+	*/
+	public function form($whereid, $data = array(), $params = array()) {
+		$a = (array)$this->_db->from($this->_get_table_name())->whereid($whereid)->get();
+		return form($a + (array)$data, $params);
+	}
+
+	/**
+	* Linking with the form builder
+	*/
+	public function filter_form($data = array(), $params = array()) {
+		$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
+		$a = array(
+			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
+			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
+		);
+		$params['selected'] = $params['selected'] ?: $_SESSION[$filter_name];
+		return form($a + (array)$data, $params);
+	}
+
+	/**
+	* Model validation will be here
+	*/
+	public function validate($rules = array(), $params = array()) {
+// TODO
+	}
+
+	/**
 	*/
 	public function _get_table_name($name = '') {
 		if (!$name) {
@@ -114,8 +152,7 @@ class yf_model {
 #		if (isset($this->__cache[$cache_name])) {
 #			return $this->__cache[$cache_name];
 #		}
-		$db = &$this->_db;
-		$result = $db->get_one('SELECT COUNT(*) FROM '.$this->_get_table_name());
+		$result = $this->_db->get_one('SELECT COUNT(*) FROM '.$this->_get_table_name());
 #		$this->__cache[$cache_name] = $result;
 		return $result;
 	}
@@ -338,7 +375,7 @@ class yf_model {
 	}
 
 	/**
-	* Relation querying method $posts = model('post')->has('comments')->get();
+	* Relation querying method $posts = model('post')->has('comments', '>=', 3)->get();
 	*/
 	public function has($relation, $where = array()) {
 // TODO
@@ -355,45 +392,5 @@ class yf_model {
 	*/
 	public function with($model) {
 // TODO
-	}
-
-	/**
-	* Model validation will be here
-	*/
-	public function validate($rules = array(), $params = array()) {
-// TODO
-	}
-
-	/**
-	* Linking with the table builder
-	*/
-	public function table($params = array()) {
-		$db = &$this->_db;
-		$sql = $db->from($this->_get_table_name())->sql();
-		$filter_name = $params['filter_name'] ?: ($this->_params['filter_name'] ?: $_GET['object'].'__'.$_GET['action']);
-		$params['filter'] = $params['filter'] ?: ($this->_params['filter'] ?: $_SESSION[$filter_name]);
-		return table($sql, $params);
-	}
-
-	/**
-	* Linking with the form builder
-	*/
-	public function form($whereid, $data = array(), $params = array()) {
-		$db = &$this->_db;
-		$a = (array)$db->from($this->_get_table_name())->whereid($whereid)->get();
-		return form($a + (array)$data, $params);
-	}
-
-	/**
-	* Linking with the form builder
-	*/
-	public function filter_form($data = array(), $params = array()) {
-		$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
-		$a = array(
-			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
-			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
-		);
-		$params['selected'] = $params['selected'] ?: $_SESSION[$filter_name];
-		return form($a + (array)$data, $params);
 	}
 }
