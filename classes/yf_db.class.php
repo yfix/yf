@@ -431,17 +431,24 @@ class yf_db {
 		} else {
 			$this->_last_query_error = null;
 		}
-		$this->_last_insert_id = $result ? (int)$this->db->insert_id() : 0;
-		$this->_last_affected_rows = $result ? (int)$this->db->affected_rows() : 0;
+		$need_insert_id = false;
+		$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
+		if (in_array($_sql_type, array('INSERT', 'UPDATE', 'REPLACE'))) {
+			$need_insert_id = true;
+		}
+		$this->_last_insert_id = $result && $need_insert_id ? (int)$this->db->insert_id() : 0;
+		if ($this->GATHER_AFFECTED_ROWS) {
+			$this->_last_affected_rows = $result ? (int)$this->db->affected_rows() : 0;
+		}
 		// This part needed to update debug log after executing query, but ensure correct order of queries
-		if ($log_allowed && $log_id) {
+		if ($log_allowed) {
 			if (DEBUG_MODE && $this->SHOW_QUERY_WARNINGS && method_exists($this->db, 'get_last_warnings')) {
 				$warnings = $this->db->get_last_warnings();
 			}
 			if (DEBUG_MODE && $this->SHOW_QUERY_INFO && method_exists($this->db, 'get_last_query_info')) {
 				$info = $this->db->get_last_query_info();
 			}
-			$this->_update_query_log($log_id, $result, $query_time_start, $warnings, $info, $this->_last_insert_id, $this->_last_affected_rows);
+			$this->_update_query_log($log_id, $result, $query_time_start, $warnings, $info);
 		}
 		return $result;
 	}
@@ -478,6 +485,8 @@ class yf_db {
 		$this->_LOG[] = array(
 			'sql'		=> $sql,
 			'rows'		=> 0,
+			'affected_rows'	=> 0,
+			'insert_id'	=> 0,
 			'error'		=> $db_error,
 			'info'		=> $info,
 			'time'		=> 0,
@@ -488,7 +497,7 @@ class yf_db {
 
 	/**
 	*/
-	function _update_query_log($log_id, $result, $query_time_start = 0, $warnings = null, $info = null, $insert_id = null, $affected_rows = null) {
+	function _update_query_log($log_id, $result, $query_time_start = 0, $warnings = null, $info = null) {
 		if (!isset($this->_LOG[$log_id])) {
 			return false;
 		}
@@ -497,19 +506,21 @@ class yf_db {
 		$sql = $log['sql'];
 		if ($this->GATHER_AFFECTED_ROWS && $result) {
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
+			if (substr($_sql_type, 0, 4) === 'SHOW') {
+				$_sql_type = 'SHOW';
+			}
 			$rows = null;
-			if (in_array($_sql_type, array('INSERT', 'UPDATE', 'REPLACE', 'DELETE'))) {
-				$rows = $this->affected_rows();
-			} elseif ($_sql_type == 'SELECT') {
+			if ($_sql_type == 'SELECT') {
 				$rows = $this->num_rows($result);
+			} elseif (in_array($_sql_type, array('INSERT', 'UPDATE', 'REPLACE', 'DELETE', 'SHOW'))) {
+				$rows = $this->_last_affected_rows;
 			}
 		}
 		$log['time'] = $time;
 		$log['rows'] = $rows;
 		$log['warning'] = $warnings;
 		$log['info'] = $info;
-		$log['insert_id'] = $insert_id;
-		$log['affected_rows'] = $affected_rows;
+		$log['insert_id'] = $this->_last_insert_id;
 	}
 
 	/**
