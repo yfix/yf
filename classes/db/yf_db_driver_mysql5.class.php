@@ -95,6 +95,8 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function insert_id($query_id = false) {
+		return $this->db_connect_id ? mysql_insert_id($this->db_connect_id) : false;
+/*
 		if (!$this->db_connect_id) {
 			return false;
 		}
@@ -104,6 +106,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 		}
 		$a = $this->fetch_row($q);
 		return $a[0];
+*/
 	}
 
 	/**
