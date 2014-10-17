@@ -485,7 +485,6 @@ class yf_db {
 		$this->_LOG[] = array(
 			'sql'		=> $sql,
 			'rows'		=> 0,
-			'affected_rows'	=> 0,
 			'insert_id'	=> 0,
 			'error'		=> $db_error,
 			'info'		=> $info,
