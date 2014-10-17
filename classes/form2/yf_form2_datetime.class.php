@@ -79,6 +79,7 @@ $(function() {
 		'.($extra['no_time'] == 1 ? ', pickTime: false' : '')
 		. ($extra['no_date'] == 1 ? ', pickDate: false' : '')
         . ($extra['min_date']? ', minDate: \''.date('d/m/Y', $extra['min_date']).'\'' : '')
+        . ($extra['max_date']? ', maxDate: \''.date('d/m/Y', $extra['max_date']).'\'' : '')
 		.'
 	});
 });');
