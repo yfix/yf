@@ -1840,7 +1840,7 @@ class yf_db {
 			return $data;
 		}
 		if (!is_object($this->db)) {
-			return '`'.$data.'`';
+			return '`'.trim($data, '`').'`';
 		}
 		return $this->db->escape_key($data);
 	}
