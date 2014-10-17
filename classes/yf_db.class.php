@@ -424,9 +424,6 @@ class yf_db {
 			$result	= $this->_repair_table($sql, $db_error);
 			if ($result) {
 				$repair_done_ok = true;
-#				$this->_last_affected_rows = $this->affected_rows();
-#				$this->_last_num_rows = $this->num_rows();
-#				$this->_last_insert_id = $this->insert_id();
 			}
 		}
 		if (!$result && $db_error) {
@@ -1166,7 +1163,6 @@ class yf_db {
 	function last_error() {
 		$var = $this->_last_query_error;
 		return isset($var['code']) && !empty($var['code']) ? $var : false;
-// TODO: fix other methods like this: insert_id(), affected_rows(), num_rows()
 // TODO: use this only when repair table enabled and called.
 	}
 
