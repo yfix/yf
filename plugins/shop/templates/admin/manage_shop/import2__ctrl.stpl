@@ -106,8 +106,8 @@ function( $log, ApiConfig, $alert ) {
 	var type_icon = {
 		none    : '<i class="fa fa-circle"></i>',
 		success : '<i class="fa fa-check-circle"></i>',
-		error   : '<i class="fa fa-exclamation-triangle"></i>',
-		warning : '<i class="fa fa-exclamation"></i>',
+		error   : '<i class="fa fa-exclamation-circle"></i>',
+		warning : '<i class="fa fa-exclamation-triangle"></i>',
 		info    : '<i class="fa fa-info-circle"></i>',
 	};
 	var config_default = {
@@ -131,7 +131,7 @@ function( $log, ApiConfig, $alert ) {
 	};
 	service.show = function( title, content, type, duration ) {
 		var type     = type || 'info'
-		var title    = service.icon( type ) + ' ' + ( title || '' );
+		var title    = service.icon( type ) + '&nbsp;' + ( title || '' );
 		var duration = duration || ( type == 'error' && config.duration_error ) || config.duration;
 		var item = {
 			title    : title,
@@ -508,14 +508,16 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 			result.$promise.then(
 				function( r ) {
 					$scope.block_wait = false;
-					var title = r.response.action.status_message;
-					$scope.notifications.show( title );
+					var title   = 'Удаление файлов:';
+					var content = r.response.action.status_message || 'выполнено';
+					$scope.notifications.show( title, content );
 					$scope.upload_list__update({ response: r.response });
 				},
 				function( r ) {
 					$scope.block_wait = false;
-					var title = 'не удалось удалить все загруженные файлы';
-					$scope.notifications.show( title );
+					var title   = 'Удаление файлов:';
+					var content = r.response.action.status_message || 'не удалось удалить все файлы';
+					$scope.notifications.show( title, content, 'error' );
 					$log.log( 'upload_list->remove_all is fail:', r );
 				}
 			);
@@ -577,10 +579,30 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 			$scope.item_filter_status = undefined;
 		} else {
 			var title   = result.response.action.file + ':';
-			var content = result.response.action.status_message;
+			var content = result.response.action.status_message || 'отсутствует';
 			$scope.notifications.show( title, content, 'error' );
 			$scope.item_data = null;
 		}
+		// show response status
+		var title   = $scope.item_data.file + ':';
+		var content = result.response.action.status_message;
+		var type    = 'info';
+		if( result.response.action.status ) {
+			var count = $scope.item_data.test.count;
+			if( count > 0 ) {
+				var count_valid   = $scope.item_data.test.count_valid;
+				var count_invalid = $scope.item_data.test.count_invalid;
+				var content_defaut = 'проверено записей: ' + count + ' = ' + count_valid + ' / ' + count_invalid;
+			} else {
+				type = 'error';
+				content = content || 'импорт невозможен, проверьте установленные поля';
+			}
+			content = content || content_defaut;
+		} else {
+			type = 'error';
+			content = content || 'отсутствует';
+		}
+		$scope.notifications.show( title, content, type );
 	};
 	$scope.item__remove = function( result ) {
 		$scope.upload_list__update( result );
@@ -594,7 +616,7 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 				$scope.item_data = null;
 			}
 		} else {
-			content = 'файл не удален';
+			content = 'ошибка при удалении файла';
 			status = 'error';
 		}
 		$scope.notifications.show( title, content, status );
@@ -626,7 +648,11 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 		$scope.item_filter_status = undefined;
 		// show response status
 		if( result.response.action.status ) {
-			content = content || 'ошибок не обнаружено';
+			var count         = $scope.item_data.test.count;
+			var count_valid   = $scope.item_data.test.count_valid;
+			var count_invalid = $scope.item_data.test.count_invalid;
+			var content_defaut = 'проверено записей: ' + count + ' = ' + count_valid + ' / ' + count_invalid;
+			content = content || content_defaut;
 		} else {
 			type = 'error';
 			content = content || 'импорт невозможен, проверьте установленные поля';

@@ -17,8 +17,11 @@
 	right    : 1em;
 	z-index  : +1;
 }
-.notifications .table td {
-	color: #fff;
+.notifications .alert {
+	margin: 0 0 1px 0;
+}
+.alert i.fa {
+	margin-right: 0.5em;
 }
 </style>
 
@@ -34,22 +37,18 @@
 	<div class="notifications-list"
 		ng-show="notifications_list"
 	>
-	<table class="table">
-		<tr
+		<div class="alert"
 			ng-repeat="item in notifications.get_items()"
 			ng-class="{
-				'success' : item.type == 'success',
-				'error'   : item.type == 'error',
-				'warning' : item.type == 'warning',
-				'info'    : item.type == 'info',
+				'alert-success' : item.type == 'success',
+				'alert-error'   : item.type == 'error',
+				'alert-warning' : item.type == 'warning',
+				'alert-info'    : item.type == 'info',
 			}"
 		>
-			<td>
-				<span ng-bind-html="item.title"></span>
-				<span ng-bind-html="item.content"></span>
-			</td>
-		</tr>
-	</table>
+			<span ng-bind-html="item.title"></span>
+			<span ng-bind-html="item.content"></span>
+		</div>
 	</div>
 </div>
 
