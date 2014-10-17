@@ -285,8 +285,8 @@ class yf_db_driver_mysqli extends yf_db_driver {
 		}
 		$warnings = array();
 		// Example: Warning (1264): Data truncated for column 'Name' at row 1
-		while ($a = $this->fetch_row($q)) {
-			$warnings[] = printf('%s (%d): %s', $a[0], $a[1], $a[2]);
+		while ($a = $this->fetch_assoc($q)) {
+			$warnings[] = $a;
 		}
 		return $warnings;
 	}
