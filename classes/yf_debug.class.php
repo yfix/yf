@@ -503,7 +503,9 @@ class yf_debug {
 			$items[] = array(
 				'id'		=> $num,
 				'sql'		=> $sql,
-				'rows'		=> strval($log['rows']),
+				'num_rows'	=> strval($log['rows']),
+				'affected_rows'	=> strval($log['affected_rows']),
+				'insert_id'	=> strval($log['insert_id']),
 				'error'		=> $log['error'] ? '<pre>'._prepare_html($this->_var_export($log['error'])).'</pre>' : '',
 				'warning'	=> $log['warning'] ? '<pre>'._prepare_html($this->_var_export($log['warning'])).'</pre>' : '',
 				'info'		=> $log['info'] ? '<pre>'._prepare_html($this->_var_export($log['info'])).'</pre>' : '',
