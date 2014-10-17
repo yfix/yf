@@ -21,6 +21,7 @@
 	color: #fff;
 }
 </style>
+
 <div class="notifications">
 	<span class="btn pull-right"
 		ng-click="notifications_list = notifications.is_items() && ( !notifications_list )"
@@ -43,7 +44,10 @@
 				'info'    : item.type == 'info',
 			}"
 		>
-			<td>{{item.title}} {{item.content}}</td>
+			<td>
+				<span ng-bind-html="item.title"></span>
+				<span ng-bind-html="item.content"></span>
+			</td>
 		</tr>
 	</table>
 	</div>

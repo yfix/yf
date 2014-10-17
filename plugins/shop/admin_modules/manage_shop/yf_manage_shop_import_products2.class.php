@@ -163,7 +163,7 @@ class yf_manage_shop_import_products2 {
 		$items = db()->from( 'sys_category_items' )->where( 'cat_id', $this->set_cat_id )->order_by( 'name' )->all();
 		if( !empty( $items ) ) {
 			foreach( $items as $id => $item ) {
-				$name = $item[ 'name' ];
+				$name = mb_strtolower( $item[ 'name' ], 'UTF-8' );
 				$cache[ 'category' ][ 'id'   ][ $id ] = &$items[ $id ];
 				$cache[ 'category' ][ 'name' ][ $name ][ $id ] = &$items[ $id ];
 			}
@@ -172,7 +172,7 @@ class yf_manage_shop_import_products2 {
 		$items = db()->from( 'shop_suppliers' )->all();
 		if( !empty( $items ) ) {
 			foreach( $items as $id => $item ) {
-				$name = $item[ 'name' ];
+				$name = mb_strtolower( $item[ 'name' ], 'UTF-8' );
 				$cache[ 'supplier' ][ 'id'   ][ $id   ] = &$items[ $id ];
 				$cache[ 'supplier' ][ 'name' ][ $name ][ $id ] = &$items[ $id ];
 			}
@@ -181,7 +181,7 @@ class yf_manage_shop_import_products2 {
 		$items = db()->from( 'shop_manufacturers' )->all();
 		if( !empty( $items ) ) {
 			foreach( $items as $id => $item ) {
-				$name = $item[ 'name' ];
+				$name = mb_strtolower( $item[ 'name' ], 'UTF-8' );
 				$cache[ 'manufacturer' ][ 'id'   ][ $id   ] = &$items[ $id ];
 				$cache[ 'manufacturer' ][ 'name' ][ $name ][ $id ] = &$items[ $id ];
 			}
@@ -863,8 +863,8 @@ class yf_manage_shop_import_products2 {
 		$exists = null;
 		if( $valid ) {
 			$cache = &$this->cache;
-			$exists = is_array( $cache[ 'category' ][ 'name' ][ $value ] );
-			$many   = count( $cache[ 'category' ][ 'name' ][ $value ] );
+			$many   = count( $cache[ 'category' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ] );
+			$exists = $many > 0;
 				!$exists  && $status_message = 'категория не существует';
 				$many > 1 && $status_message = 'множество категорий с этим именем: ' . $many;
 		}
@@ -900,6 +900,7 @@ class yf_manage_shop_import_products2 {
 			$items = $this->_db_get( $_get_options );
 			// cache
 			if( !empty( $items ) && !empty( $key ) && !empty( $value ) ) {
+				$value == 'name' && $value = mb_strtolower( $value, 'UTF-8' );
 				$cache[ $key ][ $value ] = array();
 				foreach( (array)$items as $index => $_item ) {
 					if( isset( $_item[ $key ] ) ) {
@@ -930,27 +931,10 @@ class yf_manage_shop_import_products2 {
 		// prepare where
 		$where  = array();
 		foreach( $_where as $field => $value ) {
+			list( $field, $value ) = $this->_field_to_sql( $field, $value );
+			if( !$field ) { return( null ); }
 			if( isset( $value ) ) {
-				if( $field == 'category_name' ) {
-				// convert category: name to id
-					if( is_array( $cache[ 'category' ][ 'name' ][ $value ] ) ) {
-						$value = current( $cache[ 'category' ][ 'name' ][ $value ] )[ 'id' ];
-						$field = 'cat_id';
-					} else { return( null ); }
-				} elseif( $field == 'supplier_name' ) {
-				// convert supplier: name to id
-					if( is_array( $cache[ 'supplier' ][ 'name' ][ $value ] ) ) {
-						$value = current( $cache[ 'supplier' ][ 'name' ][ $value ] )[ 'id' ];
-						$field = 'supplier_id';
-					} else { return( null ); }
-				} elseif( $field == 'manufacturer_name' ) {
-				// convert manufacturer: name to id
-					if( is_array( $cache[ 'manufacturer' ][ 'name' ][ $value ] ) ) {
-						$value = current( $cache[ 'manufacturer' ][ 'name' ][ $value ] )[ 'id' ];
-						$field = 'manufacturer_id';
-					} else { return( null ); }
-				}
-				$values = _es( (array)$value );
+				$values = (array)$value;
 				foreach( $values as $i => $v ) {
 					if( !is_int( $v ) && !is_null( $v ) ) {
 						$values[ $i ] = "'$v'";
@@ -996,8 +980,9 @@ class yf_manage_shop_import_products2 {
 	protected function _field_to_sql__category_name( $field, $value ) {
 		$cache  = &$this->cache;
 		$result = null;
-		if( is_array( $cache[ 'category' ][ 'name' ][ $value ] ) ) {
-			$value = current( $cache[ 'category' ][ 'name' ][ $value ] )[ 'id' ];
+		$name = $cache[ 'category' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
+		if( is_array( $name ) ) {
+			$value = (int)current( $name )[ 'id' ];
 			$field = 'cat_id';
 			$result = array( $field, $value );
 		}
@@ -1007,8 +992,9 @@ class yf_manage_shop_import_products2 {
 	protected function _field_to_sql__supplier_name( $field, $value ) {
 		$cache  = &$this->cache;
 		$result = null;
-		if( is_array( $cache[ 'supplier' ][ 'name' ][ $value ] ) ) {
-			$value = current( $cache[ 'supplier' ][ 'name' ][ $value ] )[ 'id' ];
+		$name = $cache[ 'supplier' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
+		if( is_array( $name ) ) {
+			$value = (int)current( $name )[ 'id' ];
 			$field = 'supplier_id';
 			$result = array( $field, $value );
 		}
@@ -1018,39 +1004,11 @@ class yf_manage_shop_import_products2 {
 	protected function _field_to_sql__manufacturer_name( $field, $value ) {
 		$cache  = &$this->cache;
 		$result = null;
-		if( is_array( $cache[ 'manufacturer' ][ 'name' ][ $value ] ) ) {
-			$value = current( $cache[ 'manufacturer' ][ 'name' ][ $value ] )[ 'id' ];
+		$name = $cache[ 'manufacturer' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
+		if( is_array( $name ) ) {
+			$value = (int)current( $name )[ 'id' ];
 			$field = 'manufacturer_id';
 			$result = array( $field, $value );
-		}
-		return( $result );
-	}
-
-	protected function _fields_convert( $fields, $values ) {
-		$cache  = &$this->cache;
-		$result = array();
-		foreach( $fields as $field => $index ) {
-			$value = $values[ $index ];
-			if( $field == 'category_name' ) {
-			// convert category: name to id
-				if( is_array( $cache[ 'category' ][ 'name' ][ $value ] ) ) {
-					$value = current( $cache[ 'category' ][ 'name' ][ $value ] )[ 'id' ];
-					$field = 'cat_id';
-				} else { return( null ); }
-			} elseif( $field == 'supplier_name' ) {
-			// convert supplier: name to id
-				if( is_array( $cache[ 'supplier' ][ 'name' ][ $value ] ) ) {
-					$value = current( $cache[ 'supplier' ][ 'name' ][ $value ] )[ 'id' ];
-					$field = 'supplier_id';
-				} else { return( null ); }
-			} elseif( $field == 'manufacturer_name' ) {
-			// convert manufacturer: name to id
-				if( is_array( $cache[ 'manufacturer' ][ 'name' ][ $value ] ) ) {
-					$value = current( $cache[ 'manufacturer' ][ 'name' ][ $value ] )[ 'id' ];
-					$field = 'manufacturer_id';
-				} else { return( null ); }
-			}
-			$result[ $field ] = $this->_field_to_sql( $field, $value );
 		}
 		return( $result );
 	}

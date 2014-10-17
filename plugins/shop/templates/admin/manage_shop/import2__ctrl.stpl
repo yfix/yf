@@ -1,4 +1,11 @@
 {{-- app --}}
+<script type="text/ng-template" id="_ng_tpl_alert">
+<div class="alert alert-dismissable" tabindex="-1" ng-class="[type ? 'alert-' + type : null]">
+	<button type="button" class="close" ng-click="$hide()">&times;</button>
+	<strong ng-bind-html="title"></strong>&nbsp;<span ng-bind-html="content"></span>
+</div>
+</script>
+
 <script>
 (function () { 'use strict';
 
@@ -90,10 +97,18 @@ function( $log, ApiConfig, $alert ) {
 	var service = {};
 	// config
 	var type_message = {
+		none    : 'неизвестный',
 		success : 'выполнено',
 		error   : 'ошибка',
 		warning : 'предупреждение',
 		info    : 'информация',
+	};
+	var type_icon = {
+		none    : '<i class="fa fa-circle"></i>',
+		success : '<i class="fa fa-check-circle"></i>',
+		error   : '<i class="fa fa-exclamation-triangle"></i>',
+		warning : '<i class="fa fa-exclamation"></i>',
+		info    : '<i class="fa fa-info-circle"></i>',
 	};
 	var config_default = {
 		page_per       : 10,
@@ -107,15 +122,21 @@ function( $log, ApiConfig, $alert ) {
 		var result = ( type && type_message[ type ] ) || 'неизвестный';
 		return( result );
 	}
+	service.icon = function( type ) {
+		var result = ( type && type_icon[ type ] ) || 'неизвестный';
+		return( result );
+	}
 	service.add = function( item ) {
 		items.push( item );
 	};
 	service.show = function( title, content, type, duration ) {
+		var type     = type || 'info'
+		var title    = service.icon( type ) + ' ' + ( title || '' );
 		var duration = duration || ( type == 'error' && config.duration_error ) || config.duration;
 		var item = {
-			title    : title   || '',
+			title    : title,
 			content  : content || '',
-			type     : type    || 'info',
+			type     : type,
 			duration : duration,
 		};
 		$alert( item );
@@ -688,8 +709,10 @@ function( $alertProvider ) {
 		duration  : 10,
 		placement : 'top-left',
 		type      : 'info',
+		template  : '_ng_tpl_alert',
 	});
 }]);
+
 
 {{--
 ng_app_admin.config(
