@@ -96,17 +96,6 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	*/
 	function insert_id($query_id = false) {
 		return $this->db_connect_id ? mysql_insert_id($this->db_connect_id) : false;
-/*
-		if (!$this->db_connect_id) {
-			return false;
-		}
-		$q = $this->query('SELECT LAST_INSERT_ID()');
-		if (!$q) {
-			return false;
-		}
-		$a = $this->fetch_row($q);
-		return $a[0];
-*/
 	}
 
 	/**
@@ -229,7 +218,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 		if (is_null($data)) {
 			return 'NULL';
 		}
-		return '\''.trim($data, '\'').'\'';
+		return '\''.$data.'\'';
 	}
 
 	/**
