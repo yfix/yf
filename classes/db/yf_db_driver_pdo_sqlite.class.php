@@ -89,6 +89,6 @@ class yf_db_driver_pdo_sqlite extends yf_db_driver_pdo {
 		if (is_null($data)) {
 			return 'NULL';
 		}
-		return '\''.trim($data, '\'').'\'';
+		return '\''.$data.'\'';
 	}
 }
