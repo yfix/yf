@@ -218,7 +218,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 		if (is_null($data)) {
 			return 'NULL';
 		}
-		return '\''.trim($data, '\'').'\'';
+		return '\''.$data.'\'';
 	}
 
 	/**
