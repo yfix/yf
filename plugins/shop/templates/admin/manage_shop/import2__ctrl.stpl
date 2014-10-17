@@ -1,0 +1,606 @@
+{{-- app --}}
+<script>
+(function () { 'use strict';
+
+ng_app_admin.factory( 'Uploader',
+[ 'ApiConfig', '$q', '$rootScope', '$window', '$log',
+function( ApiConfig, $q, $rootScope, $window, $log ) {
+	var service = {};
+	service.response = {};
+	var _parse_response = function( xhr ) {
+		var json_text    = xhr.responseText;
+		var result       = angular.fromJson( json_text );
+		service.response = result;
+	};
+	service.upload = function( options ) {
+		var url  = options.url || ApiConfig.url.upload || $window.location.href;
+		if( !url ) {
+			$log.log( 'Uploader error: "url" is empty.' );
+			return( false );
+		}
+		var name = options.name || 'file';
+		var file = options.file;
+		if( !file ) { return( false ); }
+		var $scope = options.$scope;
+		var deferred = $q.defer(),
+		xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function( result ) {
+			if( 4 === this.readyState ) {
+				if( xhr.status == 200 ) {
+					$rootScope.$apply( function() {
+						_parse_response( xhr );
+						deferred.resolve({ options: options, xhr: xhr, response: service.response });
+					}, true );
+				} else {
+					$rootScope.$apply( function() {
+						deferred.reject({ options: options, xhr: xhr, response: service.response });
+					}, true );
+				}
+			}
+		}
+		xhr.onerror = function( r ) {
+			$rootScope.$apply( function() {
+				_parse_response( xhr );
+				deferred.reject({ options: options, xhr: xhr, response: service.response });
+			}, true );
+		}
+		if( options.onprogress ) {
+			xhr.upload.onprogress = options.onprogress;
+		}
+		var formdata = new FormData();
+			formdata.append( name, file, file.name );
+		xhr.open( 'POST', url, true );
+		xhr.send( formdata );
+		return( deferred.promise );
+	};
+	return( service );
+}]);
+
+ng_app_admin.factory( 'UploadApi',
+[ 'ApiConfig', '$resource', '$window', '$log',
+function( ApiConfig, $resource, $window, $log ) {
+	var service = {};
+	service.url_list = ApiConfig.url.upload_list || $window.location.href;
+	service.url_item = ApiConfig.url.upload_item || $window.location.href;
+	service.resource = $resource( null, null, {
+		list__remove_all : { method : 'POST', url : service.url_list, params : { sub_action : 'remove_all' }  } ,
+		item__get        : { method : 'GET',  url : service.url_item, params : { sub_action : 'get'        }  } ,
+		item__remove     : { method : 'POST', url : service.url_item, params : { sub_action : 'remove'     }  } ,
+		item__import     : { method : 'POST', url : service.url_item, params : { sub_action : 'import'     }  } ,
+	});
+	service.list__remove_all = function() {
+		return( service.resource.list__remove_all() );
+	};
+	service.item__get = function( id ) {
+		return( service.resource.item__get({ id: id }) );
+	};
+	service.item__remove = function( id ) {
+		return( service.resource.item__remove({ id: id }) );
+	};
+	service.item__import = function( options ) {
+		return( service.resource.item__import({ options: options }) );
+	};
+	return( service );
+}]);
+
+ng_app_admin.directive( 'fileUpload',
+[ 'ApiConfig', 'Uploader', '$alert', '$timeout', '$parse', '$window', '$log',
+function( ApiConfig, Uploader, $alert, $timeout, $parse, $window, $log ) {
+	return {
+		restrict: 'AE',
+		link: function( $scope, element, attrs ) {
+			// init vars
+			var url          = ApiConfig.url.upload || $window.location.href;
+			var show_status = $scope.$eval( attrs[ 'showStatus' ] ) || false;
+			var text_select  = attrs.placeholder || 'Выберете файл...';
+			var file_name    = '';
+			var file_size    = 0;
+			var file         = {};
+			var $file_upload = element.children( '.ngfu-upload-file'   ).first();
+			var $btn_upload  = element.children( '.ngfu-upload-button' ).first();
+			$scope.message   = text_select;
+			// show message
+			$scope.show_message_default = function( message ) {
+				var message = message || text_select;
+				$timeout( function() {
+					$scope.show_message( message )
+				}, 5000 );
+			};
+			$scope.show_message = function( message, error ) {
+				if( show_status && message ) {
+					$scope.action = {
+						error: !!error,
+					};
+					$scope.message = message;
+				}
+			};
+			// init events
+			var onChange = function( event ) {
+				var $this = event.target;
+				var files = $this.files;
+				if( files.length > 0 ) {
+					$scope.show_message( files.name );
+					$scope.$apply( function() {
+						onUpload({ 'url': url, 'files': files, 'name': name });
+					})
+				}
+				$this.value = null;
+			};
+			var onSelect = function( event ) {
+				$file_upload.trigger( 'click' );
+			};
+			var onUpload = function( options ) {
+				options        = options || {};
+				options.file   = options.files[0];
+				var file       = options.file;
+				var file_name  = file.name;
+				var file_size  = file.size;
+				$scope.show_message( 'Загрузка: ' + file_name );
+				// upload events
+				options.onprogress = function( event ) {
+					var progress = Math.round( event.lengthComputable ? event.loaded * 100 / event.total : 0 );
+					$scope.show_message( file_name + ' - ' + progress + '%' );
+					$scope.onProgress({ progress: progress, event: event });
+				}
+				// upload
+				var response = Uploader.upload( options );
+				if( response ) {
+					response.then(
+						// file uploaded
+						function( result ) {
+							var file_name = result.options.file.name;
+							var message = result.response.action.status_message || '';
+								message = file_name + ( message && ( ' - ' + message ) );
+							$scope.show_message( message );
+							$scope.show_message_default();
+							$scope.onSuccess({ result: result });
+						},
+						// file not uploaded
+						function( result ) {
+							var file_name = result.options.file.name;
+							$scope.show_message( file_name + ' - не загружен', true );
+							$scope.show_message_default();
+							$scope.onFail({ result: result });
+						});
+				// file canceled
+				} else {
+					var result = { options: options };
+					var file_name = result.options.file.name;
+					$scope.show_message( file_name + ' - отменен', true );
+					$scope.onCancel({ result: result });
+				}
+			}
+			$file_upload.bind( 'change', onChange );
+			$btn_upload.bind( 'click',  onSelect );
+		},
+		scope: {
+			'onProgress' : '&',
+			'onSuccess'  : '&',
+			'onFail'     : '&',
+			'onCancel'   : '&',
+		},
+		template:
+			'<span class="ngfu-upload-button btn btn-success" ng-class="{ \'btn-success\': !action.error, \'btn-warning\': action.error }" ng-bind="message"></span>'
+			+ '<input class="ngfu-upload-file" type="file" ng-hide="true">'
+		,
+	}
+}]);
+
+ng_app_admin.filter( 'filterRE',
+[ '$log',
+function( $log ) {
+	return function( items, options ) {
+		var $scope       = this;
+		var filtered     = [];
+		var filter       = $scope[ options.filter ] || '';
+		var status_model = $scope[ options.status ] || null;
+		var status       = true;
+		var regexp       = null;
+		// filter by regexp
+		RegExp.escape= function( s ) {
+			return( s.replace( /[\/\(\)]/g, '\\$&' ) );
+		};
+		var filter_escape = RegExp.escape( filter );
+		try {
+			regexp = new RegExp( filter_escape, 'img' );
+		} catch( e ) {
+			{{-- $log.log( 'filter', filter_escape, '>', regexp ); --}}
+		}
+		if( regexp === null ) { status = false; }
+		$scope[ options.status ] = status;
+		angular.forEach( items, function( item ) {
+			var found = false;
+			angular.forEach( item, function( value ) {
+				var result = ( value+'' ).match( regexp ) || !status;
+				if( result ) {
+					found = true;
+					return;
+				}
+			});
+			if( found ) { filtered.push( item ); }
+		});
+		// sort
+		var order   = options.order;
+		filtered.sort(  function (a, b) {
+			var result = 0;
+			if( a[ order ] == b[ order ] ) {
+				result = 0;
+			} else {
+				result = a[ order ] > b[ order ] ? 1 : -1;
+			}
+			return( result );
+		});
+		var reverse = options.reverse;
+		if( reverse ) { filtered.reverse(); }
+		return( filtered );
+	};
+}]);
+
+ng_app_admin.filter( 'pagination',
+[ '$log',
+function( $log ) {
+	return function( items, options ) {
+		if( !angular.isArray( items ) ) { return( items ); }
+		// calc pages
+		var $scope = this;
+		var pagination = options.controller;
+		var result = pagination.calc( items.length ) || false;
+		if( result === false ) { return( items ); }
+		result = items.slice( result.from, result.to );
+		return( result );
+	}
+}]);
+
+ng_app_admin.controller( '{_ng_controller}',
+[ 'UploadApi', '$alert', '$tooltip', '$scope', '$filter', '$log',
+function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
+	$scope.data = {_ng_data};
+	$scope.item_data_tooltip = {
+		title: ''
+	};
+	$scope._upload_list__count = 0;
+	$scope.update_supplier = function( $item ) {
+		$scope.item_data.options.supplier_id = $item.id;
+	};
+	$scope.update_category = function( $item ) {
+		$scope.item_data.options.category_id = $item.id;
+	};
+	$scope.update_import_action = function( $item ) {
+		$scope.item_data.options.action = $item.key;
+	};
+	$scope.Pagination = {
+		page      : 1,
+		page_size : 10,
+		pages     : 0,
+		from      : 0,
+		to        : 0,
+		first: function() {
+			this.page=1;
+		},
+		next: function() {
+			++this.page;
+			this.calc();
+		},
+		back: function() {
+			--this.page;
+			this.calc();
+		},
+		last: function() {
+			this.calc();
+			this.page=this.pages;
+		},
+		calc: function( length ) {
+			this.length = length || this.length;
+			length      = length || this.length;
+			var page       = this.page;
+			this.page_size = this.page_size < 1 ? 1: this.page_size;
+			var page_size  = this.page_size;
+			// from
+			var result = ( page - 1 ) * page_size;
+			result     = ( result < 0 ? 0: result );
+			this.from  = result;
+			// to
+			result  = result + page_size;
+			result  = ( result > length ? length: result );
+			this.to = result;
+			// pages
+			this.pages = Math.ceil( length / page_size );
+			// page
+			this.page = this.page < 1          ? 1:          this.page;
+			this.page = this.page > this.pages ? this.pages: this.page;
+			result = { from: this.from, to: this.to };
+			return( result );
+		}
+	}
+	$scope.Import = {
+		field__change: function( index ) {
+			if( item == 0 ) { return( true ); }
+			var item = $scope.item_data.options.fields[ index ];
+			// test duplicate
+			angular.forEach( $scope.item_data.options.fields, function( _item, _index ) {
+				if( item != 0 && index != _index && item == _item ) {
+					var title = $scope.data._import_field[ item ];
+					var content = '- данное поле уже используется в колонке №' + _index;
+					$scope.notifications( title, content, 'warning' );
+					item = 0;
+					this[ index ] = item;
+					return( true );
+				}
+			}, $scope.item_data.options.fields );
+			if( item == 0 ) { return( true ); }
+			// set key
+			$scope.item_data.options.keys[ index ] = false;
+			angular.forEach( [ 'id', 'articul', 'supplier_id', 'supplier_name' ], function( _item, _index ) {
+				if( item == _item ) {
+					this[ index ] = true;
+					return( true );
+				}
+			}, $scope.item_data.options.keys );
+		}
+	};
+	$scope.UploadApi = {
+		item__get: function( item ) {
+			var result = UploadApi.item__get( item.id );
+			result.$promise.then(
+				function( r ) {
+					$scope.item__get({ response: r.response });
+					$scope.item_filter = '';
+				},
+				function( r ) {
+					$log.log( 'item->get is fail:', r );
+				}
+			);
+		},
+		item__remove: function( item ) {
+			var result = UploadApi.item__remove( item.id );
+			result.$promise.then(
+				function( r ) {
+					$scope.item__remove({ item: item, response: r.response });
+				},
+				function( r ) {
+					$log.log( 'item->remove is fail:', r );
+				}
+			);
+		},
+		item__import: function( item ) {
+			// set import action
+			if( !angular.isString( $scope.item_data.options.action ) ){
+				var title   = 'Импорт:';
+				var content = 'выберите тип импорта - обновление или добавление';
+				$scope.notifications( title, content, 'warning' );
+				return( false );
+			}
+			// request
+			var result = UploadApi.item__import( $scope.item_data.options );
+			result.$promise.then(
+				function( r ) {
+					$scope.item__import({ response: r.response });
+				},
+				function( r ) {
+					$log.log( 'item->import is fail:', r );
+				}
+			);
+		},
+		list__remove_all: function() {
+			var result = UploadApi.list__remove_all();
+			result.$promise.then(
+				function( r ) {
+					var title = r.response.action.status_message;
+					$scope.notifications( title );
+					$scope.upload_list__update({ response: r.response });
+				},
+				function( r ) {
+					var title = 'не удалось удалить все загруженные файлы';
+					$scope.notifications( title );
+					$log.log( 'upload_list->remove_all is fail:', r );
+				}
+			);
+			$scope.item_data = null;
+		}
+	};
+	$scope.item__get = function( result ) {
+		$scope.upload_list__update( result );
+		if( result.response.action.status ) {
+			var data    = result.response.action.data;
+			var title   = data.file + ' (' + data.rows + '):';
+			var content = 'файл получен';
+			$scope.notifications( title, content );
+			// get test data
+			var test        = result.response.action.data.test.data._import_test;
+			var test_status = result.response.action.data.test.status;
+			// get data
+			result.response.action.data.test = null;
+			$scope.item_data = result.response.action.data;
+			$scope.item_data.test        = test;
+			$scope.item_data.test_status = test_status;
+			$scope.item_data.options.confirm = false;
+			// set import action
+			var action = $scope.item_data.options.action;
+			angular.forEach( $scope.data._import_action_array, function( item, index ) {
+				if( item.key == action ) {
+					$scope.item_data.action_selected = item;
+					return( true );
+				}
+			});
+			// set import supplier
+			var supplier_id = $scope.item_data.options.supplier_id;
+			angular.forEach( $scope.data._supplier_array, function( item, index ) {
+				if( item.id == supplier_id ) {
+					$scope.item_data.supplier_selected = item;
+					return( true );
+				}
+			});
+			// set import category
+			var category_id = $scope.item_data.options.category_id;
+			angular.forEach( $scope.data._category_array, function( item, index ) {
+				if( item.id == category_id ) {
+					$scope.item_data.category_selected = item;
+					return( true );
+				}
+			});
+			// inject status
+			if( $scope.item_data.test.items ) {
+				angular.forEach( $scope.item_data.test.items, function( item, index ) {
+					this[ index ][ 'status'         ] = item[ 'status'         ];
+					this[ index ][ 'status_message' ] = item[ 'status_message' ];
+				}, $scope.item_data.items );
+			} else {
+				angular.forEach( $scope.item_data.items, function( item, index ) {
+					this[ index ][ 'status' ] = true;
+				}, $scope.item_data.items );
+			}
+			// reset status filter
+			$scope.item_filter_status = undefined;
+		} else {
+			var title   = $scope.item_data.file + ':';
+			var content = 'файл не распознан';
+			$scope.notifications( title, content, 'error' );
+			$scope.item_data = null;
+		}
+	};
+	$scope.item__remove = function( result ) {
+		$scope.upload_list__update( result );
+		var data    = result.response.action.data;
+		var title   = result.item.file_name + ':';
+		var content = 'файл удален';
+		var status  = null;
+		if( result.response.action.status ) {
+			// clear data on remove file
+			if( $scope.item_data && $scope.item_data.id == result.item.id ) {
+				$scope.item_data = null;
+			}
+		} else {
+			content = 'файл не удален';
+			status = 'error';
+		}
+		$scope.notifications( title, content, status );
+	};
+	$scope.item__import = function( result ) {
+		$scope.upload_list__update( result );
+		var title   = $scope.item_data.file + ':';
+		var content = result.response.action.status_message;
+		var type    = 'info';
+		// get test data
+		var action  = result.response.action;
+		var test        = action.data._import_test;
+		var test_status = action.status;
+		$scope.item_data.test        = test;
+		$scope.item_data.test_status = test_status;
+		$scope.item_data.options.confirm = false;
+		// inject status
+		if( $scope.item_data.test.items ) {
+			angular.forEach( $scope.item_data.test.items, function( item, index ) {
+				this[ index ][ 'status'         ] = item[ 'status'         ];
+				this[ index ][ 'status_message' ] = item[ 'status_message' ];
+			}, $scope.item_data.items );
+		} else {
+			angular.forEach( $scope.item_data.items, function( item, index ) {
+				this[ index ][ 'status' ] = true;
+			}, $scope.item_data.items );
+		}
+		// reset status filter
+		$scope.item_filter_status = undefined;
+		// show response status
+		if( result.response.action.status ) {
+			content = content || 'ошибок не обнаружено';
+		} else {
+			type = 'error';
+			content = content || 'импорт невозможен, проверьте установленные поля';
+		}
+		$scope.notifications( title, content, type );
+	};
+	$scope.upload_list__update = function( result ) {
+		_prepare__upload_list( result.response );
+		angular.forEach( result.response, function( item, idx ) {
+			this[ idx ] = item;
+		}, $scope );
+	};
+	$scope.notifications = function( title, content, type ) {
+		$alert({
+			title   : title   || '',
+			content : content || '',
+			type    : type    || 'info',
+		});
+	};
+	$scope.upload_list__success = function( result ) {
+		var file    = result.options.file.name;
+		var size    = ( result.options.file.size / 1024 / 1024 ).toFixed( 2 ) + 'MB';
+		var title   = result.options.file.name + ', ' + size + ':';
+		var content = result.response.action.status_message;
+		$scope.notifications( title, content );
+		var response = { response: result } ;
+		$scope.item__get( result );
+	};
+	$scope.upload_list__fail = function( result ) {
+		var status = result.xhr.status;
+		var error = function( message ) {
+			var file    = result.options.file.name;
+			var size    = ( result.options.file.size / 1024 / 1024 ).toFixed( 2 ) + 'MB';
+			var title   = result.options.file.name + ', ' + size + ':';
+			var content = message;
+			$scope.notifications( title, content, 'error' )
+		};
+		if( status == 413 ) {
+			error( 'HTTP-сервер не позволяет загружать очень большие файлы' );
+		}
+		else if( status == 500 ) {
+			error( 'PHP-сервер не позволяет загружать очень большие файлы' );
+		}
+		else if( status == 503 ) {
+			error( 'PHP-сервер не позволяет выполнять данную операцию' );
+		}
+	};
+	// prerape upload list
+	var _prepare__upload_list = function( scope ) {
+		var count = 0;
+		if( !!scope && 'data' in scope ) {
+			angular.forEach( scope.data._upload_list, function( item, idx ) {
+				var time = $filter( 'date' )( item.time * 1000, 'yyyy-MM-dd H:mm:ss' );
+				var status = $scope.data._upload_status[ item.status ];
+				var size    = ( item.file_size / 1024 / 1024 ).toFixed( 2 ) + 'MB';
+				item[ '_time'      ] = time;
+				item[ '_status'    ] = status;
+				item[ '_file_size' ] = size;
+				++count;
+			});
+			$scope._upload_list__count = count;
+		}
+	};
+	// init
+	_prepare__upload_list( $scope );
+}]);
+
+// config
+ng_app_admin.constant( 'ApiConfig', {
+	url: {
+		upload      : '{_api_url_upload}',
+		upload_list : '{_api_url_upload_list}',
+		upload_item : '{_api_url_upload_item}',
+	}
+});
+
+ng_app_admin.config(
+[ '$alertProvider',
+function( $alertProvider ) {
+	angular.extend( $alertProvider.defaults, {
+		container : '.notifications',
+		duration  : 5,
+		placement : 'top-left',
+		type      : 'info',
+	});
+}]);
+
+{{--
+ng_app_admin.config(
+[ '$routeProvider', '$locationProvider',
+function( $routeProvider, $locationProvider ) {
+	$routeProvider
+		.when( '/test', {
+			templateUrl: '_ng_view__test',
+		})
+		.otherwise({ templateUrl: '_ng_view__default' });
+}]);
+--}}
+
+})();
+</script>

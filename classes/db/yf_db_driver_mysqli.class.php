@@ -261,4 +261,32 @@ class yf_db_driver_mysqli extends yf_db_driver {
 		mysqli_stmt_close($stmt);
 		return $result;
 	}
+
+	/**
+	*/
+	function get_last_warnings() {
+		if (!$this->db_connect_id) {
+			return false;
+		}
+		$q = $this->query('SHOW WARNINGS');
+		if (!$q) {
+			return false;
+		}
+		$warnings = array();
+		// Example: Warning (1264): Data truncated for column 'Name' at row 1
+		while ($a = $this->fetch_row($q)) {
+			$warnings[] = printf('%s (%d): %s', $a[0], $a[1], $a[2]);
+		}
+		return $warnings;
+	}
+
+	/**
+	*/
+	function get_last_query_info() {
+		if (!$this->db_connect_id) {
+			return false;
+		}
+		// Example: Records: 42 Deleted: 0 Skipped: 0 Warnings: 0
+		return mysqli_info($this->db_connect_id);
+	}
 }

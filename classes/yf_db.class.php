@@ -73,6 +73,10 @@ class yf_db {
 	public $INSTRUMENT_QUERIES		= false;
 	/** @var array */
 	public $_instrument_items		= array();
+	/** @var bool Currently only in DEBUG_MODE */
+	public $SHOW_QUERY_WARNINGS		= true;
+	/** @var bool Currently only in DEBUG_MODE */
+	public $SHOW_QUERY_INFO			= true;
 	/** @var bool @conf_skip Internal var (default value) */
 	public $_tried_to_connect		= false;
 	/** @var bool @conf_skip Internal var (default value) */
@@ -465,12 +469,22 @@ class yf_db {
 		if (!$_log_allowed) {
 			return false;
 		}
+		$warnings = null;
+		$info = null;
+		if (DEBUG_MODE && $this->SHOW_QUERY_WARNINGS && method_exists($this->db, 'get_last_warnings')) {
+			$warnings = $this->db->get_last_warnings();
+		}
+		if (DEBUG_MODE && $this->SHOW_QUERY_INFO && method_exists($this->db, 'get_last_query_info')) {
+			$info = $this->db->get_last_query_info();
+		}
 		$this->_LOG[] = array(
-			'sql'	=> $sql,
-			'rows'	=> 0,
-			'error'	=> $db_error,
-			'time'	=> 0,
-			'trace'	=> $_trace,
+			'sql'		=> $sql,
+			'rows'		=> 0,
+			'error'		=> $db_error,
+			'warning'	=> $warnings,
+			'info'		=> $info,
+			'time'		=> 0,
+			'trace'		=> $_trace,
 		);
 		return count($this->_LOG) - 1;
 	}
