@@ -1,6 +1,13 @@
+<style>
+.import2 {
+	position : relative;
+}
+</style>
 <div class="ng-cloak" ng-controller="{_ng_controller}">
 
 <wait status='block_wait'></wait>
+
+<div class="import2">
 
 {{-- common notifications --}}
 <style>
@@ -8,9 +15,39 @@
 	position : absolute;
 	top      : 1em;
 	right    : 1em;
+	z-index  : +1;
+}
+.notifications .table td {
+	color: #fff;
 }
 </style>
-<div class="notifications"></div>
+<div class="notifications">
+	<span class="btn pull-right"
+		ng-click="notifications_list = notifications.is_items() && ( !notifications_list )"
+		ng-class="{
+			'btn-info': notifications_list == true,
+		}"
+	>
+		<i class="fa fa-list"></i>
+	</span>
+	<div class="notifications-list"
+		ng-show="notifications_list"
+	>
+	<table class="table">
+		<tr
+			ng-repeat="item in notifications.get_items()"
+			ng-class="{
+				'success' : item.type == 'success',
+				'error'   : item.type == 'error',
+				'warning' : item.type == 'warning',
+				'info'    : item.type == 'info',
+			}"
+		>
+			<td>{{item.title}} {{item.content}}</td>
+		</tr>
+	</table>
+	</div>
+</div>
 
 {{-- upload --}}
 <div>
@@ -330,6 +367,7 @@ ul.select2-result-single {
 	</tr>
 </table>
 
+</div>
 </div>
 
 {{--

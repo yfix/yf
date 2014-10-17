@@ -83,6 +83,59 @@ function( ApiConfig, $resource, $window, $log ) {
 	return( service );
 }]);
 
+ng_app_admin.factory( 'Notifications',
+[ '$log', 'ApiConfig', '$alert',
+function( $log, ApiConfig, $alert ) {
+	var items   = [];
+	var service = {};
+	// config
+	var type_message = {
+		success : 'выполнено',
+		error   : 'ошибка',
+		warning : 'предупреждение',
+		info    : 'информация',
+	};
+	var config_default = {
+		page_per       : 10,
+		duration       : 10,
+		duration_error : 20,
+	};
+	var config = {};
+	angular.extend( config, config_default, ApiConfig.notifications );
+	// methods
+	service.type = function( type ) {
+		var result = ( type && type_message[ type ] ) || 'неизвестный';
+		return( result );
+	}
+	service.add = function( item ) {
+		items.push( item );
+	};
+	service.show = function( title, content, type, duration ) {
+		var duration = duration || ( type == 'error' && config.duration_error ) || config.duration;
+		var item = {
+			title    : title   || '',
+			content  : content || '',
+			type     : type    || 'info',
+			duration : duration,
+		};
+		$alert( item );
+		service.add( item );
+	};
+	service.get_last = function() {
+		var length = items.length;
+		var result = null;
+		if( length > 0 ) { result = items[ length - 1 ]; }
+		return( result );
+	};
+	service.get_items = function() {
+		return( items );
+	};
+	service.is_items = function() {
+		return( items.length > 0 );
+	};
+	return( service );
+}]);
+
 ng_app_admin.directive( 'wait',
 [ '$log',
 function( $log ) {
@@ -113,7 +166,7 @@ function( $log ) {
 				+ 'display        : table-cell;'
 			+ '}'
 			+ '</style>'
-			+ '<div class="ngwd-wait" ng-show="active"><div class="ngwd-content"><i class="fa fa-cog fa-spin test-success"></i></div></div>'
+			+ '<div class="ngwd-wait" ng-show="active"><div class="ngwd-content"><i class="fa fa-refresh fa-spin test-success"></i></div></div>'
 		,
 	}
 }]);
@@ -287,12 +340,14 @@ function( $log ) {
 }]);
 
 ng_app_admin.controller( '{_ng_controller}',
-[ 'UploadApi', '$alert', '$tooltip', '$scope', '$filter', '$log',
-function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
+[ '$log', 'UploadApi', 'Notifications', '$tooltip', '$scope', '$filter',
+function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 	$scope.data = {_ng_data};
 	$scope.item_data_tooltip = {
 		title: ''
 	};
+	$scope.notifications      = Notifications;
+	$scope.notifications_list = false;
 	$scope._upload_list__count = 0;
 	$scope.update_supplier = function( $item ) {
 		$scope.item_data.options.supplier_id = $item.id;
@@ -356,7 +411,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 				if( item != 0 && index != _index && item == _item ) {
 					var title = $scope.data._import_field[ item ];
 					var content = '- данное поле уже используется в колонке №' + _index;
-					$scope.notifications( title, content, 'warning' );
+					$scope.notifications.show( title, content, 'warning' );
 					item = 0;
 					this[ index ] = item;
 					return( true );
@@ -410,7 +465,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			if( !angular.isString( $scope.item_data.options.action ) ){
 				var title   = 'Импорт:';
 				var content = 'выберите тип импорта - обновление или добавление';
-				$scope.notifications( title, content, 'warning' );
+				$scope.notifications.show( title, content, 'warning' );
 				return( false );
 			}
 			// request
@@ -433,13 +488,13 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 				function( r ) {
 					$scope.block_wait = false;
 					var title = r.response.action.status_message;
-					$scope.notifications( title );
+					$scope.notifications.show( title );
 					$scope.upload_list__update({ response: r.response });
 				},
 				function( r ) {
 					$scope.block_wait = false;
 					var title = 'не удалось удалить все загруженные файлы';
-					$scope.notifications( title );
+					$scope.notifications.show( title );
 					$log.log( 'upload_list->remove_all is fail:', r );
 				}
 			);
@@ -452,7 +507,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			var data    = result.response.action.data;
 			var title   = data.file + ' (' + data.rows + '):';
 			var content = 'файл получен';
-			$scope.notifications( title, content );
+			$scope.notifications.show( title, content );
 			// get test data
 			var test        = result.response.action.data.test.data._import_test;
 			var test_status = result.response.action.data.test.status;
@@ -502,7 +557,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 		} else {
 			var title   = result.response.action.file + ':';
 			var content = result.response.action.status_message;
-			$scope.notifications( title, content, 'error' );
+			$scope.notifications.show( title, content, 'error' );
 			$scope.item_data = null;
 		}
 	};
@@ -521,7 +576,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			content = 'файл не удален';
 			status = 'error';
 		}
-		$scope.notifications( title, content, status );
+		$scope.notifications.show( title, content, status );
 	};
 	$scope.item__import = function( result ) {
 		$scope.upload_list__update( result );
@@ -555,7 +610,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			type = 'error';
 			content = content || 'импорт невозможен, проверьте установленные поля';
 		}
-		$scope.notifications( title, content, type );
+		$scope.notifications.show( title, content, type );
 	};
 	$scope.upload_list__update = function( result ) {
 		_prepare__upload_list( result.response );
@@ -563,19 +618,12 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			this[ idx ] = item;
 		}, $scope );
 	};
-	$scope.notifications = function( title, content, type ) {
-		$alert({
-			title   : title   || '',
-			content : content || '',
-			type    : type    || 'info',
-		});
-	};
 	$scope.upload_list__success = function( result ) {
 		var file    = result.options.file.name;
 		var size    = ( result.options.file.size / 1024 / 1024 ).toFixed( 2 ) + 'MB';
 		var title   = result.options.file.name + ', ' + size + ':';
 		var content = result.response.action.status_message;
-		$scope.notifications( title, content );
+		$scope.notifications.show( title, content );
 		var response = { response: result } ;
 		$scope.item__get( result );
 	};
@@ -586,7 +634,7 @@ function( UploadApi, $alert, $tooltip, $scope, $filter, $log ) {
 			var size    = ( result.options.file.size / 1024 / 1024 ).toFixed( 2 ) + 'MB';
 			var title   = result.options.file.name + ', ' + size + ':';
 			var content = message;
-			$scope.notifications( title, content, 'error' )
+			$scope.notifications.show( title, content, 'error' )
 		};
 		if( status == 413 ) {
 			error( 'HTTP-сервер не позволяет загружать очень большие файлы' );
@@ -624,7 +672,12 @@ ng_app_admin.constant( 'ApiConfig', {
 		upload      : '{_api_url_upload}',
 		upload_list : '{_api_url_upload_list}',
 		upload_item : '{_api_url_upload_item}',
-	}
+	},
+	notifications: {
+		page_per       : 10,
+		duration       : 10,
+		duration_error : 20,
+	},
 });
 
 ng_app_admin.config(
@@ -632,7 +685,7 @@ ng_app_admin.config(
 function( $alertProvider ) {
 	angular.extend( $alertProvider.defaults, {
 		container : '.notifications',
-		duration  : 5,
+		duration  : 10,
 		placement : 'top-left',
 		type      : 'info',
 	});

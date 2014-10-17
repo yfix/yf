@@ -506,6 +506,7 @@ class yf_manage_shop_import_products2 {
 		list( $status, $status_message ) = $this->_upload_item__import_action_test( $_ );
 		$import_test = array();
 		$status && $import_test = $this->_upload_item__import_test( $_ );
+			empty( $import_test[ 'count_valid' ] ) && $status = false;
 		// update db
 		$confirm = $_[ 'confirm' ];
 		if( $status && !empty( $confirm ) ) {
@@ -983,12 +984,74 @@ class yf_manage_shop_import_products2 {
 		$_class  = $this;
 		$_method = '_field_to_sql__' . $field;
 		$_status = method_exists( $_class, $_method );
-		if( !$_status ) { return( _es( $value ) ); }
-		return( $_class->$_method( $value ) );
+		if( !$_status ) { return( array( $field, _es( $value ) ) ); }
+		return( $_class->$_method( $field, $value ) );
 	}
 
-	protected function _field_to_sql__price( $value ) {
-		$result = number_format( $value, 2, '.', '' );
+	protected function _field_to_sql__price( $field, $value ) {
+		$value = number_format( $value, 2, '.', '' );
+		return( array( $field, $value ) );
+	}
+
+	protected function _field_to_sql__category_name( $field, $value ) {
+		$cache  = &$this->cache;
+		$result = null;
+		if( is_array( $cache[ 'category' ][ 'name' ][ $value ] ) ) {
+			$value = current( $cache[ 'category' ][ 'name' ][ $value ] )[ 'id' ];
+			$field = 'cat_id';
+			$result = array( $field, $value );
+		}
+		return( $result );
+	}
+
+	protected function _field_to_sql__supplier_name( $field, $value ) {
+		$cache  = &$this->cache;
+		$result = null;
+		if( is_array( $cache[ 'supplier' ][ 'name' ][ $value ] ) ) {
+			$value = current( $cache[ 'supplier' ][ 'name' ][ $value ] )[ 'id' ];
+			$field = 'supplier_id';
+			$result = array( $field, $value );
+		}
+		return( $result );
+	}
+
+	protected function _field_to_sql__manufacturer_name( $field, $value ) {
+		$cache  = &$this->cache;
+		$result = null;
+		if( is_array( $cache[ 'manufacturer' ][ 'name' ][ $value ] ) ) {
+			$value = current( $cache[ 'manufacturer' ][ 'name' ][ $value ] )[ 'id' ];
+			$field = 'manufacturer_id';
+			$result = array( $field, $value );
+		}
+		return( $result );
+	}
+
+	protected function _fields_convert( $fields, $values ) {
+		$cache  = &$this->cache;
+		$result = array();
+		foreach( $fields as $field => $index ) {
+			$value = $values[ $index ];
+			if( $field == 'category_name' ) {
+			// convert category: name to id
+				if( is_array( $cache[ 'category' ][ 'name' ][ $value ] ) ) {
+					$value = current( $cache[ 'category' ][ 'name' ][ $value ] )[ 'id' ];
+					$field = 'cat_id';
+				} else { return( null ); }
+			} elseif( $field == 'supplier_name' ) {
+			// convert supplier: name to id
+				if( is_array( $cache[ 'supplier' ][ 'name' ][ $value ] ) ) {
+					$value = current( $cache[ 'supplier' ][ 'name' ][ $value ] )[ 'id' ];
+					$field = 'supplier_id';
+				} else { return( null ); }
+			} elseif( $field == 'manufacturer_name' ) {
+			// convert manufacturer: name to id
+				if( is_array( $cache[ 'manufacturer' ][ 'name' ][ $value ] ) ) {
+					$value = current( $cache[ 'manufacturer' ][ 'name' ][ $value ] )[ 'id' ];
+					$field = 'manufacturer_id';
+				} else { return( null ); }
+			}
+			$result[ $field ] = $this->_field_to_sql( $field, $value );
+		}
 		return( $result );
 	}
 
@@ -1036,45 +1099,54 @@ class yf_manage_shop_import_products2 {
 				$id = (int)$test_items[ $index ][ 'found' ][ 0 ][ 'id' ];
 				if( $id < 1 ) { continue; }
 				$sql_item[ 'id' ] = $id;
-				// prepare fields
-				foreach( $fields_values as $k => $i ) {
-					$sql_item[ $k ] = $this->_field_to_sql( $k, $item[ $i ] );
-				}
 				// update record time
 				$sql_item[ 'update_date' ] = time();
-			} elseif( $action == 'insert' ) {
 				// prepare fields
 				foreach( $fields_values as $k => $i ) {
-					$sql_item[ $k ] = $this->_field_to_sql( $k, $item[ $i ] );
+					list( $field, $value ) = $this->_field_to_sql( $k, $item[ $i ] );
+					if( !$field ) { $sql_item = null; break; }
+					$sql_item[ $field ] = $value;
 				}
+			} elseif( $action == 'insert' ) {
 				// update record time
-				$sql_item[ 'add1_date' ] = time();
+				$sql_item[ 'add_date' ] = time();
+				// prepare fields
+				foreach( $fields_values as $k => $i ) {
+					list( $field, $value ) = $this->_field_to_sql( $k, $item[ $i ] );
+					if( !$field ) { $sql_item = null; break; }
+					$sql_item[ $field ] = $value;
+				}
 			}
-			$data[] = $sql_item;
+			$sql_item && $data[] = $sql_item;
 		}
 		// var_dump( $data ); exit;
 		// update db
-		$table  = 'shop_products';
-		// debug sql
-		// $result = db()->insert_on_duplicate_key_update( $table, $data, true ); var_dump( 'record', $result ); exit;
-		// end debug sql
-		db()->begin();
-		$result = db()->insert_on_duplicate_key_update( $table, $data );
-		// *** yf db bug: after table repair - dropped error, affected_rows, etc
-		// $error = db()->error();
-		// $count = db()->affected_rows();
-		// then usage: last_error, etc
-		// $error = db()->last_error();
-		if( $result ) {
-			db()->commit();
-			$count  = count( $data );
-			$status = true;
-			$status_message = 'Импортировано: ' . $count;
-		}
-		else {
-			db()->rollback();
+		if( empty( $sql_item ) ) {
 			$status = false;
-			$status_message = 'Ошибка при работе с БД!';
+			$status_message = 'Данные для обновление отсутствуют!';
+		} else {
+			$table  = 'shop_products';
+			// debug sql
+			// $result = db()->insert_on_duplicate_key_update( $table, $data, true ); var_dump( 'record', $result ); exit;
+			// end debug sql
+			db()->begin();
+			$result = db()->insert_on_duplicate_key_update( $table, $data );
+			// *** yf db bug: after table repair - dropped error, affected_rows, etc
+			// $error = db()->error();
+			$db_count = db()->affected_rows() / 2;
+			// then usage: last_error, etc
+			// $error = db()->last_error();
+			if( $result ) {
+				db()->commit();
+				$count  = count( $data );
+				$status = true;
+				$status_message = 'Импортировано: ' . $count . ' ('. $db_count .')';
+			}
+			else {
+				db()->rollback();
+				$status = false;
+				$status_message = 'Ошибка при работе с БД!';
+			}
 		}
 		return( array( $status, $status_message ) );
 	}
