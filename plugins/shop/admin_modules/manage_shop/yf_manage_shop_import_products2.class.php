@@ -982,7 +982,8 @@ class yf_manage_shop_import_products2 {
 		$result = null;
 		$name = $cache[ 'category' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
 		if( is_array( $name ) ) {
-			$value = (int)current( $name )[ 'id' ];
+			$value = current( $name )[ 'id' ];
+			$value = (int)$value[ 'id' ];
 			$field = 'cat_id';
 			$result = array( $field, $value );
 		}
@@ -994,7 +995,8 @@ class yf_manage_shop_import_products2 {
 		$result = null;
 		$name = $cache[ 'supplier' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
 		if( is_array( $name ) ) {
-			$value = (int)current( $name )[ 'id' ];
+			$value = current( $name )[ 'id' ];
+			$value = (int)$value[ 'id' ];
 			$field = 'supplier_id';
 			$result = array( $field, $value );
 		}
@@ -1006,7 +1008,8 @@ class yf_manage_shop_import_products2 {
 		$result = null;
 		$name = $cache[ 'manufacturer' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
 		if( is_array( $name ) ) {
-			$value = (int)current( $name )[ 'id' ];
+			$value = current( $name )[ 'id' ];
+			$value = (int)$value[ 'id' ];
 			$field = 'manufacturer_id';
 			$result = array( $field, $value );
 		}
