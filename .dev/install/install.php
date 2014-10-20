@@ -551,7 +551,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 			'login'		=> $_POST['install_admin_login'],
 			'password'	=> md5($_POST['install_admin_pswd']),
 			'first_name'=> $_POST['install_admin_login'],
-			'add_date'	=> gmmktime(),
+			'add_date'	=> time(),
 			'group'		=> 1,
 			'active'	=> 1,
 		));
