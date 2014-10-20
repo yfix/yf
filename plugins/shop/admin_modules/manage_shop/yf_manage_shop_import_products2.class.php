@@ -194,14 +194,16 @@ class yf_manage_shop_import_products2 {
 		$upload_list            = &$this->upload_list;
 		$data = $this->_load_csv( $upload_list__file_name );
 		$result = array();
-		foreach( $data as $item ) {
-			$id = $item[ 0 ];
-			if( empty( $id ) ) { continue; }
-			$_data = array();
-			foreach( $upload_list__field as $idx => $field ) {
-				$_data[ $field ] = $item[ $idx ];
+		if( !empty( $data ) ) {
+			foreach( $data as $item ) {
+				$id = $item[ 0 ];
+				if( empty( $id ) ) { continue; }
+				$_data = array();
+				foreach( $upload_list__field as $idx => $field ) {
+					$_data[ $field ] = $item[ $idx ];
+				}
+				$result[ $id ] = $_data;
 			}
-			$result[ $id ] = $_data;
 		}
 		$upload_list = $result;
 		return( $result );
