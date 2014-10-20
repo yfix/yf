@@ -214,16 +214,13 @@
 
 			};
 			var col_class_list = $(this).attr('class').split(/\s+/);
-		console.log(col_class_list);
 			$.each( col_class_list, function(index, item){
 			    if (item !== 'column' && item !== 'ui-sortable') {
 			       column['class'] += ' ' + item;
 			    }
 			});
 
-//		var	_custom_class = $(this).attr('class').match(/^col-md-[\d]+\s*span[\d]+\s*column\s*ui-sortable\s*(.*)/);
-//			column['custom_class'] = _custom_class[1];
-if(only_class ===false){
+		if(only_class ===false){
 			var content = $(this).children('div');
 			if (content.length > 0) {
 				column['content'] = { };
@@ -238,7 +235,7 @@ if(only_class ===false){
 					}
 				});
 			}
-}
+		}
 			items['cols'][key] = column;
 		});
 		return items;
