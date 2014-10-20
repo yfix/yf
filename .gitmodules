@@ -43,3 +43,6 @@
 [submodule "libs/yaml"]
 	path = libs/yaml
 	url = https://github.com/yfix/Yaml.git
+[submodule "libs/assetic"]
+	path = libs/assetic
+	url = git@github.com:yfix/assetic.git
