@@ -1,16 +1,15 @@
 <?php
 
-// TODO: extend it
-
 /**
+* ORM model
 */
 class yf_model {
 
 	/**
 	* YF framework constructor
 	*/
-	public function _init() {
-	}
+#	public function _init() {
+#	}
 
 	/**
 	* We cleanup object properties when cloning
@@ -31,9 +30,9 @@ class yf_model {
 	/**
 	* Catch missing method call
 	*/
-	public static function __callStatic($name, $args) {
+#	public static function __callStatic($name, $args) {
 // TODO
-	}
+#	}
 
 	/**
 	*/
@@ -55,40 +54,67 @@ class yf_model {
 		$this->$name = $value;
 		return $this->$name;
 	}
-
-	/**
-	*/
+/*
 	function __isset($name) {
 // TODO
 	}
 
-	/**
-	*/
 	function __unset($name) {
 // TODO
 	}
 
-	/**
-	*/
 	function __toString() {
 // TODO
 	}
 
-	/**
-	*/
 	function __invoke() {
 // TODO
 	}
 
-	/**
-	*/
 	function __sleep() {
 // TODO
 	}
 
-	/**
-	*/
 	function __wakeup() {
+// TODO
+	}
+*/
+
+	/**
+	* Linking with the table builder
+	*/
+	public function table($params = array()) {
+		$sql = $this->_db->from($this->_get_table_name())->sql();
+		$filter_name = $params['filter_name'] ?: ($this->_params['filter_name'] ?: $_GET['object'].'__'.$_GET['action']);
+		$params['filter'] = $params['filter'] ?: ($this->_params['filter'] ?: $_SESSION[$filter_name]);
+		return table($sql, $params);
+	}
+
+	/**
+	* Linking with the form builder
+	*/
+	public function form($whereid, $data = array(), $params = array()) {
+		$a = (array)$this->_db->from($this->_get_table_name())->whereid($whereid)->get();
+		return form($a + (array)$data, $params);
+	}
+
+	/**
+	* Linking with the form builder
+	*/
+	public function filter_form($data = array(), $params = array()) {
+		$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
+		$a = array(
+			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
+			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
+		);
+		$params['selected'] = $params['selected'] ?: $_SESSION[$filter_name];
+		return form($a + (array)$data, $params);
+	}
+
+	/**
+	* Model validation will be here
+	*/
+	public function validate($rules = array(), $params = array()) {
 // TODO
 	}
 
@@ -126,8 +152,7 @@ class yf_model {
 #		if (isset($this->__cache[$cache_name])) {
 #			return $this->__cache[$cache_name];
 #		}
-		$db = &$this->_db;
-		$result = $db->get_one('SELECT COUNT(*) FROM '.$this->_get_table_name());
+		$result = $this->_db->get_one('SELECT COUNT(*) FROM '.$this->_get_table_name());
 #		$this->__cache[$cache_name] = $result;
 		return $result;
 	}
@@ -136,44 +161,47 @@ class yf_model {
 	* Search for model data, according to args array
 	*/
 	public function find() {
-		$db = &$this->_db;
-		return $db->from($this->_get_table_name())->where(array('__args__' => func_get_args()))->get_all(array('as_object' => true));
+		return $this->_db->from($this->_get_table_name())
+			->where(array('__args__' => func_get_args()))
+			->get_all(array('as_object' => true));
 	}
 
 	/**
 	* Get all matching rows
 	*/
 	public function get_all() {
-// TODO
+		return $this->call_user_func_array(array($this, 'find'), func_get_args());
 	}
 
 	/**
 	* Alias for get_all()
 	*/
 	public function all() {
-// TODO
+		return $this->call_user_func_array(array($this, 'find'), func_get_args());
 	}
 
 	/**
 	* Direct access to the model's query builder where() statement
 	*/
 	public function where() {
-// TODO
+		return $this->_db->from($this->_get_table_name())
+			->where(array('__args__' => func_get_args()));
 	}
 
 	/**
 	* Return first matching row
 	*/
 	public function first() {
-		$db = &$this->_db;
-		return (object) $db->from($this->_get_table_name())->where(array('__args__' => func_get_args()))->get();
+		return (object) $this->_db->from($this->_get_table_name())
+			->where(array('__args__' => func_get_args()))
+			->get();
 	}
 
 	/**
 	* Alias for first
 	*/
 	public function get() {
-// TODO
+		return $this->call_user_func_array(array($this, 'first'), func_get_args());
 	}
 
 	/**
@@ -194,7 +222,9 @@ class yf_model {
 	* Delete matching record(s) from database
 	*/
 	public function delete() {
-// TODO
+		return $this->_db->from($this->_get_table_name())
+			->where(array('__args__' => func_get_args()))
+			->delete();
 	}
 
 	/**
@@ -345,7 +375,7 @@ class yf_model {
 	}
 
 	/**
-	* Relation querying method $posts = model('post')->has('comments')->get();
+	* Relation querying method $posts = model('post')->has('comments', '>=', 3)->get();
 	*/
 	public function has($relation, $where = array()) {
 // TODO
@@ -362,45 +392,5 @@ class yf_model {
 	*/
 	public function with($model) {
 // TODO
-	}
-
-	/**
-	* Model validation will be here
-	*/
-	public function validate($rules = array(), $params = array()) {
-// TODO
-	}
-
-	/**
-	* Linking with the table builder
-	*/
-	public function table($params = array()) {
-		$db = &$this->_db;
-		$sql = $db->from($this->_get_table_name())->sql();
-		$filter_name = $params['filter_name'] ?: ($this->_params['filter_name'] ?: $_GET['object'].'__'.$_GET['action']);
-		$params['filter'] = $params['filter'] ?: ($this->_params['filter'] ?: $_SESSION[$filter_name]);
-		return table($sql, $params);
-	}
-
-	/**
-	* Linking with the form builder
-	*/
-	public function form($whereid, $data = array(), $params = array()) {
-		$db = &$this->_db;
-		$a = (array)$db->from($this->_get_table_name())->whereid($whereid)->get();
-		return form($a + (array)$data, $params);
-	}
-
-	/**
-	* Linking with the form builder
-	*/
-	public function filter_form($data = array(), $params = array()) {
-		$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
-		$a = array(
-			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
-			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
-		);
-		$params['selected'] = $params['selected'] ?: $_SESSION[$filter_name];
-		return form($a + (array)$data, $params);
 	}
 }

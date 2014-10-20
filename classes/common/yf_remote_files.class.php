@@ -286,7 +286,7 @@ class yf_remote_files {
 			}
 			rewind($verbose_stream);
 			$info['CURL_STDERR'] = stream_get_contents($verbose_stream);
-			if (main()->CONSOLE_MODE) {
+			if (main()->is_console()) {
 				echo $info['CURL_STDERR'];
 			}
 			$info['CURL_OPTS'] = $this->pretty_dump_curl_opts($curl_opts);
@@ -300,7 +300,7 @@ class yf_remote_files {
 		$info['CURL_ERROR']	= curl_error($ch);
 		$requests_info = $info;
 		$GLOBALS['_curl_requests_info'][$id] = $info;
-		if (DEBUG_MODE && !main()->CONSOLE_MODE) {
+		if (DEBUG_MODE && !main()->is_console()) {
 			debug('curl_get_remote_page[]', array('info' => $info, 'trace' => main()->trace_string()));
 		}
 
@@ -480,7 +480,7 @@ class yf_remote_files {
 				}
 				$info['CURL_ERRNO']	= curl_errno($c);
 				$info['CURL_ERROR']	= curl_error($c);
-				if (DEBUG_MODE && !main()->CONSOLE_MODE) {
+				if (DEBUG_MODE && !main()->is_console()) {
 					debug('curl_get_remote_page[]', array('info' => $info, 'trace' => main()->trace_string()));
 				}
 				$requests_info = $info;
@@ -678,7 +678,7 @@ class yf_remote_files {
 		// Enable verbose debug output (usually into STDERR)
 		if ($url_options['curl_verbose'] || $this->DEBUG) {
 			$curl_opts[CURLOPT_VERBOSE] 	= true;
-			if (main()->CONSOLE_MODE && $url_options['interactive']) {
+			if (main()->is_console() && $url_options['interactive']) {
 				$interactive_console = true;
 			}
 			if (!$interactive_console) {
@@ -692,7 +692,7 @@ class yf_remote_files {
 				$curl_opts[$k] = $v;
 			}
 		}
-		if ($this->DEBUG && main()->CONSOLE_MODE) {
+		if ($this->DEBUG && main()->is_console()) {
 			print_r($this->pretty_dump_curl_opts($curl_opts));
 		}
 		return $curl_opts;

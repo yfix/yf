@@ -33,7 +33,7 @@ class yf_db {
 	public $DB_DRIVERS_DIR			= 'classes/db/';
 	/** @var int Num tries to reconnect in common mode (will be useful if db server is overloaded) (Set to '0' for disabling) */
 	public $RECONNECT_NUM_TRIES		= 3;
-	/** @var int Num tries to reconnect inside CONSOLE_MODE (will be useful if db server is overloaded and sometimes we lost connection to it) (Set to '0' for disabling) */
+	/** @var int Num tries to reconnect inside CONSOLE MODE (will be useful if db server is overloaded and sometimes we lost connection to it) (Set to '0' for disabling) */
 	public $RECONNECT_CONSOLE_TRIES	= 1000;
 	/** @var int Time to wait between reconnects (in seconds) */
 	public $RECONNECT_DELAY			= 1;
@@ -73,6 +73,10 @@ class yf_db {
 	public $INSTRUMENT_QUERIES		= false;
 	/** @var array */
 	public $_instrument_items		= array();
+	/** @var bool Currently only in DEBUG_MODE */
+	public $SHOW_QUERY_WARNINGS		= true;
+	/** @var bool Currently only in DEBUG_MODE */
+	public $SHOW_QUERY_INFO			= true;
 	/** @var bool @conf_skip Internal var (default value) */
 	public $_tried_to_connect		= false;
 	/** @var bool @conf_skip Internal var (default value) */
@@ -178,7 +182,7 @@ class yf_db {
 			$this->connect();
 		}
 		$this->_set_debug_items();
-		if (main()->CONSOLE_MODE) {
+		if (main()->is_console()) {
 			$this->enable_silent_mode();
 		}
 		// Set shutdown function
@@ -261,7 +265,6 @@ class yf_db {
 		if (!empty($driver_class_name) && class_exists($driver_class_name) && !is_object($this->db)) {
 			if ($this->RECONNECT_USE_LOCKING) {
 				$lock_file = $this->_get_reconnect_lock_path($this->DB_HOST, $this->DB_USER, $this->DB_NAME, $this->DB_PORT);
-//				clearstatcache();
 				if (file_exists($lock_file)) {
 					// Timed out lock file
 					if ((time() - filemtime($lock_file)) > $this->RECONNECT_LOCK_TIMEOUT) {
@@ -418,13 +421,34 @@ class yf_db {
 		}
 		if (!$result && $query_allowed && $db_error && $this->ERROR_AUTO_REPAIR) {
 			$result	= $this->_repair_table($sql, $db_error);
+			if ($result) {
+				$repair_done_ok = true;
+			}
 		}
 		if (!$result && $db_error) {
 			$this->_query_show_error($sql, $db_error, (DEBUG_MODE && $this->ERROR_BACKTRACE) ? $this->_trace_string() : '');
+			$this->_last_query_error = $db_error;
+		} else {
+			$this->_last_query_error = null;
+		}
+		$need_insert_id = false;
+		$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
+		if (in_array($_sql_type, array('INSERT', 'UPDATE', 'REPLACE'))) {
+			$need_insert_id = true;
+		}
+		$this->_last_insert_id = $result && $need_insert_id ? (int)$this->db->insert_id() : 0;
+		if ($this->GATHER_AFFECTED_ROWS) {
+			$this->_last_affected_rows = $result ? (int)$this->db->affected_rows() : 0;
 		}
 		// This part needed to update debug log after executing query, but ensure correct order of queries
-		if ($log_allowed && $log_id) {
-			$this->_update_query_log($log_id, $result, $query_time_start);
+		if ($log_allowed) {
+			if (DEBUG_MODE && $this->SHOW_QUERY_WARNINGS && method_exists($this->db, 'get_last_warnings')) {
+				$warnings = $this->db->get_last_warnings();
+			}
+			if (DEBUG_MODE && $this->SHOW_QUERY_INFO && method_exists($this->db, 'get_last_query_info')) {
+				$info = $this->db->get_last_query_info();
+			}
+			$this->_update_query_log($log_id, $result, $query_time_start, $warnings, $info);
 		}
 		return $result;
 	}
@@ -456,19 +480,23 @@ class yf_db {
 		if (!$_log_allowed) {
 			return false;
 		}
+		$warnings = null;
+		$info = null;
 		$this->_LOG[] = array(
-			'sql'	=> $sql,
-			'rows'	=> 0,
-			'error'	=> $db_error,
-			'time'	=> 0,
-			'trace'	=> $_trace,
+			'sql'		=> $sql,
+			'rows'		=> 0,
+			'insert_id'	=> 0,
+			'error'		=> $db_error,
+			'info'		=> $info,
+			'time'		=> 0,
+			'trace'		=> $_trace,
 		);
 		return count($this->_LOG) - 1;
 	}
 
 	/**
 	*/
-	function _update_query_log($log_id, $result, $query_time_start = 0) {
+	function _update_query_log($log_id, $result, $query_time_start = 0, $warnings = null, $info = null) {
 		if (!isset($this->_LOG[$log_id])) {
 			return false;
 		}
@@ -477,15 +505,21 @@ class yf_db {
 		$sql = $log['sql'];
 		if ($this->GATHER_AFFECTED_ROWS && $result) {
 			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
+			if (substr($_sql_type, 0, 4) === 'SHOW') {
+				$_sql_type = 'SHOW';
+			}
 			$rows = null;
-			if (in_array($_sql_type, array('INSERT', 'UPDATE', 'REPLACE', 'DELETE'))) {
-				$rows = $this->affected_rows();
-			} elseif ($_sql_type == 'SELECT') {
+			if ($_sql_type == 'SELECT') {
 				$rows = $this->num_rows($result);
+			} elseif (in_array($_sql_type, array('INSERT', 'UPDATE', 'REPLACE', 'DELETE', 'SHOW'))) {
+				$rows = $this->_last_affected_rows;
 			}
 		}
 		$log['time'] = $time;
 		$log['rows'] = $rows;
+		$log['warning'] = $warnings;
+		$log['info'] = $info;
+		$log['insert_id'] = $this->_last_insert_id;
 	}
 
 	/**
@@ -1136,6 +1170,17 @@ class yf_db {
 	}
 
 	/**
+	* Return error of the latest executed query.
+	* Difference from error() is that it will work correctly when repair enabled 
+	* (it executes lot of self queries and cleaning db api latest error)
+	*/
+	function last_error() {
+		$var = $this->_last_query_error;
+		return isset($var['code']) && !empty($var['code']) ? $var : false;
+// TODO: use this only when repair table enabled and called.
+	}
+
+	/**
 	* Return database error
 	*/
 	function error() {
@@ -1149,6 +1194,9 @@ class yf_db {
 	* Return last insert id
 	*/
 	function insert_id() {
+		if (isset($this->_last_insert_id)) {
+			return $this->_last_insert_id;
+		}
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
@@ -1159,6 +1207,9 @@ class yf_db {
 	* Get number of affected rows
 	*/
 	function affected_rows() {
+		if (isset($this->_last_affected_rows)) {
+			return $this->_last_affected_rows;
+		}
 		if (!$this->_connected && !$this->connect()) {
 			return false;
 		}
@@ -1344,7 +1395,19 @@ class yf_db {
 		if (empty($db_error) || !$this->ERROR_AUTO_REPAIR) {
 			return false;
 		}
-		return _class('db_installer_'.$this->get_driver_family(), 'classes/db/')->repair($sql, $db_error, $this);
+		$driver_family = $this->get_driver_family();
+		$code = $db_error['code'];
+		if ($driver_family === 'mysql' && !in_array($code, array(
+			1191, // Can't find FULLTEXT index matching the column list
+			2013, // Lost connection to MySQL server during query
+			1205, // Lock wait timeout expired. Transaction was rolled back (InnoDB)
+			1213, // Transaction deadlock. You should rerun the transaction. (InnoDB)
+			1146, // Table %s doesn't exist
+			1054, // Unknown column %s
+		))) {
+			return false;
+		}
+		return _class('db_installer_'.$driver_family, 'classes/db/')->repair($sql, $db_error, $this);
 	}
 
 	/**
@@ -1777,7 +1840,7 @@ class yf_db {
 			return $data;
 		}
 		if (!is_object($this->db)) {
-			return '`'.$data.'`';
+			return '`'.trim($data, '`').'`';
 		}
 		return $this->db->escape_key($data);
 	}

@@ -147,7 +147,7 @@ class yf_tpl {
 		if (DEBUG_MODE) {
 			$this->register_output_filter(array($this, '_debug_mode_callback'), 'debug_mode');
 		}
-		if (main()->CONSOLE_MODE) {
+		if (main()->is_console()) {
 			$this->OB_CATCH_CONTENT = false;
 		}
 		$this->_set_default_driver($this->DRIVER_NAME);
@@ -223,7 +223,12 @@ class yf_tpl {
 			$tpl_name = 'main';
 			if ($init_type == 'admin' && (empty($_SESSION['admin_id']) || empty($_SESSION['admin_group']))) {
 				$tpl_name = 'login';
-				if (!main()->CONSOLE_MODE) {
+				if (main()->is_ajax()) {
+					header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+					main()->NO_GRAPHICS = true;
+					$skip_prefetch = true;
+				}
+				if (!main()->is_console()) {
 					$skip_prefetch = true;
 				}
 			}
@@ -237,7 +242,7 @@ class yf_tpl {
 				conf('inline_js_edit', true);
 			}
 			if (!$skip_prefetch) {
-				if (main()->CONSOLE_MODE) {
+				if (main()->is_console()) {
 					// Skip security checks for console mode
 					_class('core_blocks')->tasks(false);
 				} else {
@@ -284,7 +289,7 @@ class yf_tpl {
 			if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
 				_class('output_cache')->_put_page_to_output_cache($body);
 			}
-			if (DEBUG_MODE && !main()->CONSOLE_MODE && !main()->is_ajax()) {
+			if (DEBUG_MODE && !main()->is_console() && !main()->is_ajax()) {
 				$body['debug_info'] = common()->show_debug_info();
 				if ($this->ALLOW_INLINE_DEBUG || main()->INLINE_EDIT_LOCALE) {
 					$body['debug_info'] .= $this->parse('system/js_inline_editor');
@@ -302,7 +307,7 @@ class yf_tpl {
 			// Throw generated output to user
 			echo $output;
 		}
-		if (DEBUG_MODE && main()->NO_GRAPHICS && !main()->CONSOLE_MODE && !main()->is_ajax()) {
+		if (DEBUG_MODE && main()->NO_GRAPHICS && !main()->is_console() && !main()->is_ajax()) {
 			echo common()->show_debug_info();
 		}
 		// Output cache for 'no graphics' content

@@ -52,7 +52,7 @@ foreach (glob(dirname(dirname(__DIR__)).'/install/install/sql/*.sql') as $f) {
 				db()->query(str_replace('%%prefix%%', DB_PREFIX, $sql));
 				$data = db()->get_all('SELECT * FROM '.DB_PREFIX. $t);
 				if (!empty($data)) {
-					file_put_contents($dir. $t.'.data.php', '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
+					file_put_contents($dir. $t.'.data.php', '<?'.'php'.PHP_EOL.'return '._var_export($data, 1).';');
 				}
 			}
 		}
@@ -62,7 +62,7 @@ foreach (glob(dirname(dirname(__DIR__)).'/install/install/sql/*.sql') as $f) {
 		db()->query(str_replace('%%prefix%%', DB_PREFIX, file_get_contents($f)));
 		$data = db()->get_all('SELECT * FROM '.$tname);
 		if (!empty($data)) {
-			file_put_contents('./data/'.$table.'.data.php', '<?'.'php'.PHP_EOL.'$data = '.var_export($data, 1).';');
+			file_put_contents('./data/'.$table.'.data.php', '<?'.'php'.PHP_EOL.'return '._var_export($data, 1).';');
 		}
 	}
 }
