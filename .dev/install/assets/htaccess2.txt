@@ -6,7 +6,7 @@ RewriteBase %%%#path#%%%
 # Allow to include static html pages inside folder "html", also allow "admin" folder and old images directory
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^(admin|js|templates|uploads|html|images|ckeditor|sitemaps)\/(.*) $1/$2		[L,NC]
+RewriteRule ^(admin|js|templates|uploads|html|images|ckeditor|sitemaps)\/(.*)	$1/$2	[L,NC]
 
 # Main rewrite for YF engine
-RewriteRule ^ index.php		[L,NC,T=application/x-httpd-php]
+RewriteRule ^	index.php	[L,NC,T=application/x-httpd-php]
