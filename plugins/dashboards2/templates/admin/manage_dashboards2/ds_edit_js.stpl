@@ -86,9 +86,11 @@ function removeElm() {
 function editExtra() {
     $(".demo").delegate(".edit-extra", "click", function (e) {
         e.preventDefault();
-	var		result = parse_grid_row($(this).parent());
+		var current = $(this).parent();
+	var		result = parse_grid_row(current, true);
 //	var		result = $(this).parent()
 	
+        current.addClass("current");
 	$.ajax({
 			type: "POST",
 			url: "{parse_structure}",
@@ -96,7 +98,6 @@ function editExtra() {
 			data: {'structure' : result},
 			success: function(data) {
 				 $('.modal-content').html(data['data']);
-				 console.log(data['data']);
 			//	setInterval(function () {
 		//			$('#message_save').html('');
 		//		}, 5000)
@@ -109,6 +110,68 @@ function editExtra() {
     })
 }
 
+function call() {
+	var form   = $('#form');
+	var items = {};
+	var current =  $('.current');
+	var current_row =  current.children('.view').children('.row');
+	form.find('input').each( function(){ // пробежим по каждому полю в форме
+			var id = ($(this).attr("id"));
+			var _val = $(this).val();
+			if(_val != "") {
+				if(id == 'row_id'){
+					current_row.removeAttr( "id" );
+					current_row.attr( "id", _val );
+				}
+
+				if(id == 'row_class'){
+					current_row.removeClass();
+					current_row.addClass('row clearfix ' + _val);
+				}
+				var cur_item;
+				if( id.indexOf('col_id_') == 0) {
+					var cols_id = id.split(/col_id_/);
+					$.each( cols_id, function(index, item){
+						if (item !== '') {
+							cur_item =  item;
+						}
+					});
+
+		//			var current_col = child_col[cur_item];
+		//			current_col.removeAttr( "id" );
+		//			current_col.attr( "id", _val );
+				current_row.children('[class*="col-"]').each(function(key) {
+					if (key == cur_item) {
+							$(this).removeAttr( "id" );
+							$(this).attr( "id", _val );
+					}		
+				});
+			} 
+			
+			if( id.indexOf('col_class_') == 0) {
+					var b_class = id.split(/col_class_/);
+					$.each( b_class, function(index, item){
+						if (item !== '') {
+							cur_item =  item;
+						}
+					});
+
+				current_row.children('[class*="col-"]').each(function(key) {
+					if (key == cur_item) {
+						$(this).removeClass();
+						$(this).addClass(_val + ' column ui-sortable');
+					}		
+				});
+			}else{
+
+			}
+		}
+			// items[id] = $(this).val(); 
+			});
+	current.children('.edit_columns').attr( "val", 'dfdsgdf' );
+	current.removeClass( "current" );
+	$('#ajaxModal').modal('hide')
+}
 
 function clearDemo() {
     $(".demo").empty()

@@ -65,7 +65,7 @@ class yf_manage_dashboards2 {
 		$data = $_POST['structure'];
 		foreach ($data['cols']  as $key => $_cols){
 			$cols [] = array (
-				'class' => $_cols['class'][0],
+				'class' => str_replace ( ' column ui-sortable', '', $_cols['class'] ), 
 				'id'    => $_cols['id'],
 				'key'   => $key,
 			);
@@ -250,7 +250,11 @@ exit;
 			if(isset($row_items["cols"]) && is_array($row_items["cols"] )){
 				foreach ((array)$row_items['cols'] as $col_id => $col_items) {
 					$content = "";
-					$row_class = $col_items["class"][0];
+					if(is_array($col_items['class'])){
+						$col_class = $col_items["class"][0];
+					}else {
+						$col_class = $col_items['class'];
+					}
 					if(isset($col_items["content"]) && is_array($col_items["content"] )){
 						foreach ((array)$col_items["content"] as $content_id => $content_items) {
 							if(isset($content_items["rows"]) && is_array($content_items["rows"] )){
@@ -265,12 +269,27 @@ exit;
 							}
 						}
 					}
-					$cols .= '<div class="col-md-'.$row_class.' span'.$row_class.' column ui-sortable"> '.$content.' </div>';
-					$num_cols .= " ". $row_class;
+					$id = '';
+					if(!empty($col_items["id"])){
+						$id = ' id="'.$col_items["id"]. '" ';
+					}
+					if(is_array($col_items['class'])){
+						$cols .= '<div class="col-md-'.$col_class.' column ui-sortable"'.$id.' > '.$content.' </div>';
+						$num_cols .= " ". $col_class;
+					}else {
+						preg_match( '/[\d]+/', $col_class, $matches); 
+						$cols .= '<div class="'.$col_class.' column ui-sortable"' .$id.'> '.$content.' </div>';
+						$num_cols .= " ". $matches[0];
+					}
 				}
 			}
 			
-			$rows [] = array('cols' => $cols, 'num_cols' => trim($num_cols), );
+			$rows [] = array(
+				'cols'      => $cols,
+				'num_cols'  => trim($num_cols),
+				'id'        => $row_items['id'],
+				'class'     => trim($row_items['class'])
+			);
 		}
 		$replace = array(
 			'rows'	=> $rows,

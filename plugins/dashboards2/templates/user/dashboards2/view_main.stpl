@@ -1,5 +1,5 @@
 {foreach("rows")}
-	<div class="row {#.css_class}">
+	<div class="row {if_not_empty(#.class)} {#.class}{/if}" {if_not_empty(#.id)} id="{#.id}"{/if}>
 		{#.cols}
 	</div>
 {/foreach} 

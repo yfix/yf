@@ -90,6 +90,11 @@ class yf_dashboards2 {
 			if(isset($row_items["cols"]) && is_array($row_items["cols"])){
 				foreach ((array)$row_items['cols'] as $col_id => $col_items) {
 					$content = "";
+					if(is_array($col_items['class'])){
+						$col_class = $col_items["class"][0];
+					}else {
+						$col_class = $col_items['class'];
+					}
 					$row_class = $col_items["class"][0];
 					if(isset($col_items["content"]) && is_array($col_items["content"])){
 						foreach ((array)$col_items["content"] as $content_id => $content_items) {
@@ -101,10 +106,23 @@ class yf_dashboards2 {
 							}
 						}
 					}
-					$cols .= '<div class="col-md-'.$row_class.' span'.$row_class.' column"> '.$content.' </div>';
+					$id = '';
+					if(!empty($col_items["id"])){
+						$id = ' id="'.$col_items["id"]. '" ';
+					}
+					if(is_array($col_items['class'])){
+						$cols .= '<div class="col-md-'.$col_class.'"'.$id.' > '.$content.' </div>';
+					}else {
+						$cols .= '<div class="'.$col_class.'"' .$id.'> '.$content.' </div>';
+					}	
 				}
 			}
-			$rows [] = array('cols' => $cols , 'css_class' =>$row_items["cols"][$row_id]['css_class'][0]);
+			$rows [] = array(
+				'cols'      => $cols,
+				'id'        => $row_items['id'],
+				'class'     => trim($row_items['class'])
+
+			);
 		}
 		$replace = array(
 			'rows'	=> $rows,
@@ -127,23 +145,27 @@ class yf_dashboards2 {
 		$content = '';
 		if ($is_cloneable_item) {
 			if ($widgets["type"] == 'php') {
+			/*
 				if (strlen($info['code'])) {
 					//						$content = eval('<?'.'php '.$info['code']);
 				} elseif ($info['method_name']) {
 					//						list($module_name, $method_name) = explode('.', $info['method_name']);
 				}
+			 */
 				list($module_name, $method_name) = explode('.', $widgets['val']);
 			} elseif ($widgets["type"] == 'block') {
 				$content = _class('core_blocks')->show_block(array('block_id' => $info['block_name']));
 			} elseif ($widgets["type"] == 'stpl') {
+			/*
 				if (strlen($info['code'])) {
 					$content = tpl()->parse_string($info['code']);
 				} elseif ($info['stpl_name']) {
 					$content = tpl()->parse($info['stpl_name']);
 				}
+			 */
 			}
 		} else {
-			list($module_name, $method_name) = explode('::', $info['full_name']);
+	//		list($module_name, $method_name) = explode('::', $info['full_name']);
 		}
 
 		if ($module_name && $method_name) {
@@ -168,6 +190,8 @@ class yf_dashboards2 {
 			$_GET['action'] = $_orig_action;
 		}
 
+		return $content;
+		/*
 		$items[$info['auto_id']] = tpl()->parse(__CLASS__.'/view_item', array(
 			//	'id'			=> $info['auto_id'].'_'.$info['auto_id'],
 			'name'			=> _prepare_html($widgets["type"]),
@@ -182,7 +206,7 @@ class yf_dashboards2 {
 			return '';
 		}
 		return implode(PHP_EOL, $items);
-
+		*/
 	}
 
 	/**

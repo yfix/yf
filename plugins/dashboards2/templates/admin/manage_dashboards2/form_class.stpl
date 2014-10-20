@@ -1,55 +1,49 @@
-<div style="padding: 30px;">
-<form class="form-horizontal" role="form">
-	<fieldset>
-		<legend>добавление класса</legend>
-		<fieldset>
+
+
+<div style="padding: 30px;" class="form_border">
+<form class="form-horizontal" id="form" role="form" action="javascript:void(null);" onsubmit="call()">
+		<fieldset >
 			<legend>добавление class или id к row</legend>
 
 
 			<div class="form-group">
 				<label class="col-sm-2 control-label" for="row_id">row id</label>
 				<div class="col-sm-10">
-					<input name="row_id" type="row_id" id="row_id" class="form-control" required="1" value="{row_id}">
+					<input name="row_id" type="row_id" id="row_id" class="form-control"  value="{row_id}">
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="row_class">row class</label>
 				<div class="col-sm-10">
-					<input name="row_class" type="row_class" id="row_class" class="form-control" required="1" value="{row_class}">
+					<input name="row_class" type="row_class" id="row_class" class="form-control"  value="{row_class}">
 				</div>
 			</div>
 		</fieldset>
 
 		<fieldset>
-			<legend>добавление class или id к колонкам</legend>
 
 
 			{foreach(cols)}
+		<fieldset >
+			<legend>добавление class или id к колонке {#.key}</legend>
 			<div class="form-group">
-				<label class="col-sm-2 control-label" for="coll_id[{#.key}]">id for col {#.key} </label>
+				<label class="col-sm-2 control-label" for="col_id_{#.key}">id for col {#.key} </label>
 				<div class="col-sm-10">
-					<input name="coll_id[{#.key}]" type="coll_id[{#.key}]" id="coll_id[{#.key}]" class="form-control" required="1" value="{#.id}">
+					<input name="col_id_{#.key}" type="col_id_{#.key}" id="col_id_{#.key}" class="form-control"  value="{#.id}">
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="bootstrap_class[{#.key}">bootstrap class for col {#.key}</label>
-				<div class="col-xs-2">
-					<input name="bootstrap_class[{#.key}]" type="bootstrap_class[{#.key}]" id="bootstrap_class[{#.key}]" class="form-control" required="1" value="{#.class}">
+				<label class="control-label col-sm-2" for="col_class_{#.key}">class for col {#.key}</label>
+				<div class="col-sm-10">
+					<input name="col_class_{#.key}" type="col_class_{#.key}" id="col_class_{#.key}" class="form-control"  value="{#.class}">
 				</div>
 			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="col_class[{#.key}">custom class</label>
-				<div class="col-xs-3">
-					<input name="col_class[{#.key}]" type="col_class[{#.key}]" id="col_class[{#.key}]" class="form-control" required="1" value="{#.class}">
-				</div>
-			</div>
-
-			{/foreach}
+		</fieldset>
+		{/foreach}
 		</fieldset>
 		<div class="form-group">
 			<button type="submit" class="btn btn-default">Submit</button>
 		</div>
-	</fieldset>
 </form>
 </div>
