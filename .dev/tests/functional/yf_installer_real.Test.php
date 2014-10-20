@@ -16,7 +16,7 @@ class yf_installer_real_test extends db_real_abstract {
 		$GLOBALS['db'] = self::db();
 	}
 	public static function tearDownAfterClass() {
-#		self::utils()->truncate_database(self::db_name());
+		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 		self::db()->ERROR_AUTO_REPAIR = self::$_bak['ERROR_AUTO_REPAIR'];
 	}
