@@ -1699,59 +1699,31 @@ class yf_db {
 	* Load new model object
 	*/
 	function _model_load($name) {
-		if (!$this->_models_preloaded) {
-			$this->_models_preload();
-		}
+		$main = main();
 		$model_class = $name.'_model';
-		$main_modules = &main()->modules;
-		if (isset($main_modules[$model_class])) {
-			return $main_modules[$model_class];
-		}
-		$avail_models = &$this->_models_preloaded;
-		$model_path = $avail_models[$name];
-		if (!isset($avail_models[$name])) {
-			throw new Exception('Not able to load model: '.$name);
-			return false;
-		}
-		if (!class_exists($model_class)) {
-			require_once $model_path;
-			if (!class_exists($model_class)) {
-				throw new Exception('Not able to find model class: '.$model_class.' by path: '.$model_path);
-				return false;
-			}
-		}
-		$model_obj = _class($model_class);
-		$model_obj->_db = $this;
-		return $model_obj;
-	}
-
-	/**
-	* Preload models for ORM
-	*/
-	function _models_preload() {
-		if ($this->_models_preloaded) {
-			return true;
-		}
-		load('model', 'framework', 'classes/');
-		$suffix = '_model'.YF_CLS_EXT;
-		$s_len = strlen($suffix);
-		$globs = array(
-			'yf'				=> YF_PATH.'share/models/*'.$suffix,
-			'yf_plugins'		=> YF_PATH.'plugins/*/share/models/*'.$suffix,
-			'project'			=> PROJECT_PATH.'share/models/*'.$suffix,
-			'project_plugins'	=> PROJECT_PATH.'plugins/*/share/models/*'.$suffix,
-			'project_app_path'	=> APP_PATH.'models/*'.$suffix,
-		);
-		$models = array();
-		foreach($globs as $glob) {
-			foreach (glob($glob) as $path) {
-				$name = trim(substr(basename($path), 0, -$s_len));
-				if ($name) {
-					$models[$name] = $path;
+		$custom_storages = &$main->_custom_class_storages;
+		$wildcard = '*_model';
+		if (!isset($$custom_storages[$wildcard]['yf'])) {
+			$yf_models_basic_storages = array(
+				'project_app_path'	=> array(APP_PATH.'models/'),
+				'project_plugins'	=> array(PROJECT_PATH.'plugins/*/share/models/'),
+				'project'			=> array(PROJECT_PATH.'share/models/'),
+				'yf_plugins'		=> array(YF_PATH.'plugins/*/share/models/'),
+				'yf'				=> array(YF_PATH.'share/models/'),
+			);
+			foreach ($yf_models_basic_storages as $k => $v) {
+				if (!isset($custom_storages[$wildcard][$k])) {
+					$custom_storages[$wildcard][$k] = $v;
 				}
 			}
 		}
-		$this->_models_preloaded = $models;
+		$model_obj = clone _class_safe($model_class);
+		if (!is_object($model_obj)) {
+			throw new Exception('Not able to load model: '.$name);
+			return false;
+		}
+		$model_obj->_db = $this;
+		return $model_obj;
 	}
 
 	/**
