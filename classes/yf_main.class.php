@@ -234,7 +234,7 @@ class yf_main {
 		);
 		foreach ($paths as $path) {
 			if (file_exists($path)) {
-				include $path;
+				include_once $path;
 				return true;
 			}
 		}
@@ -860,9 +860,9 @@ class yf_main {
 		foreach ((array)$sets as $set => $pattern) {
 			foreach ((array)glob($pattern, GLOB_ONLYDIR|GLOB_NOSORT) as $d) {
 				$pname = basename($d);
-				if ($white_list && in_array($pname, $white_list)) {
+				if ($white_list && wildcard_compare($white_list, $pname)) {
 					// result is good, do not check black list if name found here, inside white list
-				} elseif ($black_list && in_array($pname, $black_list)) {
+				} elseif ($black_list && wildcard_compare($black_list, $pname)) {
 					// Do not load files from this plugin
 					break;
 				}
