@@ -396,6 +396,15 @@ function _var_export($data) {
 // String comparison with wildcard. See http://php.net/manual/en/function.fnmatch.php
 if (!function_exists('wildcard_compare')) {
 function wildcard_compare($wild, $string) {
+	if (is_array($wild)) {
+		$func = __FUNCTION__;
+		foreach ($wild as $_wild) {
+			if ($func($_wild, $string)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	return fnmatch($wild, $string);
 }
 }
