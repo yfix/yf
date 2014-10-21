@@ -393,45 +393,9 @@ function _var_export($data) {
 }
 }
 
-// String comparison with wildcard. Got from here: http://stackoverflow.com/a/6060672/2521354
-// http://stackoverflow.com/questions/2305362/php-search-string-with-wildcards
+// String comparison with wildcard. See http://php.net/manual/en/function.fnmatch.php
 if (!function_exists('wildcard_compare')) {
 function wildcard_compare($wild, $string) {
 	return fnmatch($wild, $string);
-/*
-	$wild_i = 0;
-	$string_i = 0;
-
-	$wild_len = strlen($wild);
-	$string_len = strlen($string);
-	while ($string_i < $string_len && $wild[$wild_i] !== '*') {
-		if (($wild[$wild_i] !== $string[$string_i]) && ($wild[$wild_i] !== '?')) {
-			return false;
-		}
-		$wild_i++;
-		$string_i++;
-	}
-	$mp = 0;
-	$cp = 0;
-	while ($string_i < $string_len) {
-		if ($wild[$wild_i] === '*') {
-			if (++$wild_i === $wild_len) {
-				return true;
-			}
-			$mp = $wild_i;
-			$cp = $string_i + 1;
-		} elseif (($wild[$wild_i] === $string[$string_i]) || ($wild[$wild_i] === '?')) {
-			$wild_i++;
-			$string_i++;
-		} else {
-			$wild_i = $mp;
-			$string_i = $cp++;
-		}
-	}
-	while ($wild[$wild_i] === '*') {
-		$wild_i++;
-	}
-	return $wild_i === $wild_len ? true : false;
-*/
 }
 }
