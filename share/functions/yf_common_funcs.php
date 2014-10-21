@@ -397,6 +397,8 @@ function _var_export($data) {
 // http://stackoverflow.com/questions/2305362/php-search-string-with-wildcards
 if (!function_exists('wildcard_compare')) {
 function wildcard_compare($wild, $string) {
+	return fnmatch($wild, $string);
+/*
 	$wild_i = 0;
 	$string_i = 0;
 
@@ -430,5 +432,6 @@ function wildcard_compare($wild, $string) {
 		$wild_i++;
 	}
 	return $wild_i === $wild_len ? true : false;
+*/
 }
 }
