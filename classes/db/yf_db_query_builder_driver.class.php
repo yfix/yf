@@ -189,6 +189,14 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Counting number of records inside requested recordset
+	*/
+	function count() {
+		$this->_sql['select'] = 'COUNT(*)';
+		return $this->get_one();
+	}
+
+	/**
 	* Alias
 	*/
 	function first($use_cache = true) {
@@ -730,15 +738,6 @@ abstract class yf_db_query_builder_driver {
 		}
 		return $this;
 	}
-
-	/**
-	* Counting number of records inside requested recordset
-	*/
-/*
-	function count() {
-		$this->_sql[__FUNCTION__] = 'SELECT COUNT(*)';
-	}
-*/
 
 	/**
 	*/
