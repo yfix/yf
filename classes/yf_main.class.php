@@ -598,7 +598,7 @@ class yf_main {
 			}
 		}
 		if (!empty($SPIDER_NAME)) {
-			conf('IS_SPIDER',		1);
+			conf('IS_SPIDER', true);
 			conf('SPIDER_NAME',	$SPIDER_NAME);
 		}
 		return $SPIDER_NAME;
@@ -631,7 +631,7 @@ class yf_main {
 			$lang = DEFAULT_LANG;
 		}
 		conf('language', $lang);
-		conf('charset',	 'utf-8');
+		conf('charset',	'utf-8');
 		$output_caching = conf('output_caching');
 		if (isset($output_caching)) {
 			$this->OUTPUT_CACHING = $output_caching;
@@ -765,7 +765,7 @@ class yf_main {
 		$file_exists = file_exists($path_to_module);
 		if ($is_required) {
 			if ($file_exists) {
-				include_once ($path_to_module);
+				include_once $path_to_module;
 			} else {
 				if (DEBUG_MODE) {
 					echo '<b>YF FATAL ERROR</b>: Required file not found: '.$path_to_module.'<br>\n<pre>'.$this->trace_string().'</pre>';
@@ -1209,21 +1209,20 @@ class yf_main {
 		if (empty($module_name)	|| !is_object($MODULE_OBJ)) {
 			return false;
 		}
+		global $PROJECT_CONF, $CONF;
 		$module_conf_name = $module_name;
-		$project_conf = &$GLOBALS['PROJECT_CONF'];
 		// Allow to have separate conf entries for admin or user only modules
-		if (isset($project_conf[MAIN_TYPE.':'.$module_name])) {
+		if (isset($PROJECT_CONF[MAIN_TYPE.':'.$module_name])) {
 			$module_conf_name = MAIN_TYPE.':'.$module_name;
 		}
-		if (isset($project_conf[$module_conf_name])) {
-			foreach ((array)$project_conf[$module_conf_name] as $k => $v) {
+		if (isset($PROJECT_CONF[$module_conf_name])) {
+			foreach ((array)$PROJECT_CONF[$module_conf_name] as $k => $v) {
 				$MODULE_OBJ->$k = $v;
 			}
 		}
 		// Override PROJECT_CONF with specially set CONF (from web admin panel, as example)
-		$conf = &$GLOBALS['CONF'];
-		if (isset($conf[$module_conf_name]) && is_array($conf[$module_conf_name])) {
-			foreach ((array)$conf[$module_conf_name] as $k => $v) {
+		if (isset($CONF[$module_conf_name]) && is_array($CONF[$module_conf_name])) {
+			foreach ((array)$CONF[$module_conf_name] as $k => $v) {
 				$MODULE_OBJ->$k = $v;
 			}
 		}
@@ -1574,11 +1573,9 @@ class yf_main {
 		if ($this->is_console()) {
 			ini_set('memory_limit', -1);
 			set_time_limit(0);
-			if (version_compare( phpversion(), '5.2.4' ) >= 0) {
-				// Send PHP warnings and errors to stderr instead of stdout. This aids in diagnosing problems, while keeping messages out of redirected output.
-				if (ini_get('display_errors')) {
-					ini_set('display_errors', 'stderr');
-				}
+			// Send PHP warnings and errors to stderr instead of stdout. This aids in diagnosing problems, while keeping messages out of redirected output.
+			if (ini_get('display_errors')) {
+				ini_set('display_errors', 'stderr');
 			}
 			// Parse console options into $_GET array
 			foreach ((array)$_SERVER['argv'] as $v) {
