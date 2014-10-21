@@ -14,9 +14,13 @@ class class_model_real_test extends db_real_abstract {
 		self::$_bak['ERROR_AUTO_REPAIR'] = self::db()->ERROR_AUTO_REPAIR;
 		self::db()->ERROR_AUTO_REPAIR = true;
 		$GLOBALS['db'] = self::db();
+
+		// unit_tests == name of the custom storage used here
+		// Ensure unit_tests will be on top of the storages list
+		main()->_custom_class_storages['*_model'] = array('unit_tests' => array(__DIR__.'/fixtures/')) + (array)main()->_custom_class_storages['*_model'];
 	}
 	public static function tearDownAfterClass() {
-		self::utils()->truncate_database(self::db_name());
+#		self::utils()->truncate_database(self::db_name());
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 		self::db()->ERROR_AUTO_REPAIR = self::$_bak['ERROR_AUTO_REPAIR'];
 	}
@@ -70,10 +74,6 @@ class class_model_real_test extends db_real_abstract {
 
 		$model_exists = main()->_class_exists('film_model');
 		if (!$model_exists) {
-			// unit_tests == name of the custom storage used here
-			main()->_custom_class_storages = array(
-				'film_model' => array('unit_tests' => array(__DIR__.'/fixtures/')),
-			);
 			$this->assertTrue( main()->_class_exists('film_model') );
 		}
 
@@ -81,6 +81,18 @@ class class_model_real_test extends db_real_abstract {
 		$this->assertTrue( is_object($film_model) );
 		$this->assertTrue( is_a($film_model, 'film_model') );
 		$this->assertTrue( is_a($film_model, 'yf_model') );
+
+		$film_model2 = model('film');
+		$this->assertNotSame( $film_model2, $film_model );
+		$this->assertTrue( is_object($film_model2) );
+		$this->assertTrue( is_a($film_model2, 'film_model') );
+		$this->assertTrue( is_a($film_model2, 'yf_model') );
+
+		$film_model3 = model('film');
+		$this->assertNotSame( $film_model2, $film_model3 );
+		$this->assertTrue( is_object($film_model2) );
+		$this->assertTrue( is_a($film_model2, 'film_model') );
+		$this->assertTrue( is_a($film_model2, 'yf_model') );
 	}
 
 	/***/
@@ -151,7 +163,6 @@ class class_model_real_test extends db_real_abstract {
 			$this->assertEquals($table_data, $real_data);
 break;
 		}
-#print_r(self::utils()->list_tables(self::db_name()) );
 
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
 	}
@@ -172,14 +183,8 @@ break;
 
 		foreach ((array)self::utils()->list_tables(self::db_name()) as $table) {
 			$table = substr($table, $plen);
-
-			// unit_tests == name of the custom storage used here
-#			main()->_custom_class_storages[$table.'_model'] = array('unit_tests' => array(__DIR__.'/fixtures/'));
-#echo (int)class_exists('actor_model');
-
-#			$model = model($table);
-
-#			$methods = get_class_methods($model);
+			$model = self::$db->model($table);
+			$methods = get_class_methods($model);
 #print_r($methods);
 		}
 	}
