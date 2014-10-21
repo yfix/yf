@@ -161,7 +161,10 @@ class class_model_real_test extends db_real_abstract {
 			}
 			$real_data = self::db()->from($name)->get_all();
 			$this->assertEquals($table_data, $real_data);
-break;
+if ($i++ > 3) {
+	break;
+}
+#break;
 		}
 
 		$this->assertTrue( (bool)self::db()->query('SET foreign_key_checks = 1;') );
@@ -178,6 +181,9 @@ break;
 		$this->assertTrue( is_a($model_base, 'yf_model') );
 		$this->assertSame( $model_base, _class('yf_model') );
 
+		$base_methods = get_class_methods($model_base);
+#		$base_vars = get_object_vars($model_base);
+
 		$db_prefix = self::db()->DB_PREFIX;
 		$plen = strlen($db_prefix);
 
@@ -185,11 +191,27 @@ break;
 			$table = substr($table, $plen);
 			$model = self::$db->model($table);
 			$methods = get_class_methods($model);
-#print_r($methods);
+			$model_specific_methods = array_diff($methods, $base_methods);
+echo $table.PHP_EOL;
+print_r($model_specific_methods);
+			foreach ($model_specific_methods as $_method) {
+				if (substr($_method, 0, 1) === '_') {
+					continue;
+				}
+echo $_method.PHP_EOL;
+				$result = $model->$_method()->get();
+var_dump($result);
+			}
+#			$vars = get_object_vars($model);
+#print_r(array_diff($vars, $base_vars));
 		}
 	}
-/*
+
+	/**
+	* Just for tests development
+	*/
 	public function test_dump_sakila_data() {
+/*
 		$db_name = 'sakila';
 		foreach((array)self::utils()->list_tables($db_name) as $table) {
 			$file = __DIR__.'/fixtures/'.$table.'.data.php';
@@ -203,6 +225,6 @@ break;
 			echo 'Saved data ('.count($data).'): '.$file. PHP_EOL;
 			file_put_contents($file, '<?'.'php'.PHP_EOL.'return '._var_export($data, 1).';');
 		}
-	}
 */
+	}
 }
