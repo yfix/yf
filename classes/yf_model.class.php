@@ -8,8 +8,8 @@ class yf_model {
 	/**
 	* YF framework constructor
 	*/
-#	public function _init() {
-#	}
+	public function _init() {
+	}
 
 	/**
 	* We cleanup object properties when cloning
@@ -28,16 +28,29 @@ class yf_model {
 	}
 
 	/**
-	* Catch missing method call
 	*/
-#	public static function __callStatic($name, $args) {
+	public static function __callStatic($name, $args) {
+// TODO
+	}
+
+	/**
+	*/
+#	function __isset($name) {
+// TODO
+#	}
+
+	/**
+	*/
+#	function __unset($name) {
 // TODO
 #	}
 
 	/**
 	*/
 	function __get($name) {
-// TODO
+		if (substr($name, 0, 1) === '_') {
+			return $this->$name;
+		}
 #		if (!$this->_preload_complete) {
 #			$this->_preload_data();
 #		}
@@ -47,46 +60,47 @@ class yf_model {
 	/**
 	*/
 	function __set($name, $value) {
-// TODO
-#		if (!$this->_preload_complete) {
-#			$this->_preload_data();
-#		}
 		$this->$name = $value;
 		return $this->$name;
 	}
-/*
-	function __isset($name) {
-// TODO
-	}
 
-	function __unset($name) {
-// TODO
-	}
-
+	/**
+	*/
 	function __toString() {
-// TODO
+		return json_encode($this->_get_current_data());
 	}
 
-	function __invoke() {
-// TODO
+	/**
+	*/
+	public function _preload_data() {
+		$this->_preload_complete = true;
+		foreach ((array)$this->find() as $k => $v) {
+			$this->$k = $v;
+		}
+		return true;
 	}
 
-	function __sleep() {
-// TODO
+	/**
+	*/
+	public function _get_current_data() {
+		$data = array();
+		foreach (get_object_vars($this) as $var => $value) {
+			if (substr($var, 0, 1) === '_') {
+				continue;
+			}
+			$data[$var] = $value;
+		}
+		return $data;
 	}
-
-	function __wakeup() {
-// TODO
-	}
-*/
 
 	/**
 	* Query builder connector
 	*/
 	public function _query_builder($params = array()) {
+		$params = (array)$params + (array)$this->_params;
 		$table = $params['table'] ?: $this->_get_table_name();
 		if (!$table) {
-			throw new Exception('MODEL: '.__CLASS__.': requires table name to make queries');
+			throw new Exception('MODEL: '.get_called_class().': requires table name to make queries');
 		}
 		$qb = $this->_db->query_builder();
 		$qb->from($table);
@@ -106,7 +120,87 @@ class yf_model {
 			$offset = is_numeric($params['limit']) ? null : $params['limit'][1];
 			$qb->limit($count, $offset);
 		}
+		$qb = $this->_prepare_relations_for_qb($qb);
 		return $qb;
+	}
+
+	/**
+	*/
+	public function _prepare_relations_for_qb($qb) {
+		foreach ((array)$this->_relations as $key => $info) {
+			$type = $info['type'];
+			$model = $info['model'];
+			if (!$type || !$model) {
+				continue;
+			}
+#			$qb->join($join['table'], $join['on'], $join['type']);
+#			$qb->join()
+		}
+		return $qb;
+	}
+
+	/**
+	* Params for query builder
+	*/
+	public function select() {
+		$this->_params[__FUNCTION__] = func_get_args();
+		return $this;
+	}
+
+	/**
+	* Params for query builder
+	*/
+	public function where() {
+		$this->_params[__FUNCTION__] = func_get_args();
+		return $this;
+	}
+
+	/**
+	* Params for query builder
+	*/
+	public function where_or() {
+		$this->_params[__FUNCTION__] = func_get_args();
+		return $this;
+	}
+
+	/**
+	* Params for query builder
+	*/
+	public function whereid() {
+		$this->_params[__FUNCTION__] = func_get_args();
+		return $this;
+	}
+
+	/**
+	* Params for query builder
+	*/
+	public function group_by() {
+		$this->_params[__FUNCTION__] = func_get_args();
+		return $this;
+	}
+
+	/**
+	* Params for query builder
+	*/
+	public function order_by() {
+		$this->_params[__FUNCTION__] = func_get_args();
+		return $this;
+	}
+
+	/**
+	* Params for query builder
+	*/
+	public function having() {
+		$this->_params[__FUNCTION__] = func_get_args();
+		return $this;
+	}
+
+	/**
+	* Params for query builder
+	*/
+	public function limit() {
+		$this->_params[__FUNCTION__] = func_get_args();
+		return $this;
 	}
 
 	/**
@@ -154,13 +248,18 @@ class yf_model {
 			$name = $this->_table;
 		}
 		if (!$name) {
-			$name = substr(__CLASS__, 0, -strlen('_model'));
+			$name = substr(get_called_class(), 0, -strlen('_model'));
 			$yf_plen = strlen(YF_PREFIX);
 			if ($yf_plen && substr($name, 0, $yf_plen) === YF_PREFIX) {
 				$name = substr($name, $yf_plen);
 			}
 		}
 		return $this->_db->_fix_table_name($name);
+	}
+
+	/**
+	*/
+	public function _get_tables() {
 /*
 		$db = &$this->_db;
 		if (isset($db->_found_tables)) {
@@ -212,13 +311,6 @@ class yf_model {
 	}
 
 	/**
-	* Direct access to the model's query builder where() statement
-	*/
-	public function where() {
-		return $this->_query_builder(array('where' => func_get_args()));
-	}
-
-	/**
 	* Return first matching row
 	*/
 	public function first() {
@@ -236,15 +328,22 @@ class yf_model {
 	* Return first matched row or create such one, if not existed
 	*/
 	public function first_or_create() {
-// TODO
-		return $this;
+		$data = (object) $this->_query_builder(array('where' => func_get_args()))->get();
+		if (empty($data)) {
+			$insert_ok = $this->_query_builder(array('where' => func_get_args()))->insert();
+			$insert_id = $insert_ok ? $this->_db->insert_id() : 0;
+			if ($insert_id) {
+				$data = (object) $this->_query_builder()->whereid($insert_id)->get();
+			}
+		}
+		return $data;
 	}
 
 	/**
 	* Create new model record inside database
 	*/
 	public function create() {
-// TODO
+		$insert_ok = $this->_query_builder(array('where' => func_get_args()))->insert($this->_get_current_data());
 		return $this;
 	}
 
@@ -252,6 +351,7 @@ class yf_model {
 	* Delete matching record(s) from database
 	*/
 	public function delete() {
+// TODO
 		return $this->_query_builder(array('where' => func_get_args()))->delete();
 	}
 
@@ -284,7 +384,7 @@ class yf_model {
 	*/
 	public function update($data = array()) {
 // TODO
-		return $this;
+		return $this->_query_builder(array('where' => func_get_args()))->update($data);
 	}
 
 	/**
@@ -292,7 +392,7 @@ class yf_model {
 	*/
 	public function touch() {
 // TODO
-		return $this;
+		return $this->_query_builder(array('where' => func_get_args()))->update(array('timestamp' => time()));
 	}
 
 	/**
@@ -300,7 +400,7 @@ class yf_model {
 	*/
 	public function soft_delete() {
 // TODO
-		return $this;
+		return $this->_query_builder(array('where' => func_get_args()))->update(array('is_deleted' => 1));
 	}
 
 	/**
@@ -308,7 +408,7 @@ class yf_model {
 	*/
 	public function force_delete() {
 // TODO
-		return $this;
+		return $this->_query_builder(array('where' => func_get_args()))->delete();
 	}
 
 	/**
@@ -316,7 +416,7 @@ class yf_model {
 	*/
 	public function restore() {
 // TODO
-		return $this;
+		return $this->_query_builder(array('where' => func_get_args()))->update(array('is_deleted' => 0));
 	}
 
 	/**
@@ -324,7 +424,7 @@ class yf_model {
 	*/
 	public function with_trashed() {
 // TODO
-		return $this;
+		return $this->_query_builder(array('where' => func_get_args()))->where('is_deleted = 1');
 	}
 
 	/**
@@ -347,7 +447,12 @@ class yf_model {
 	* Relation one-to-one
 	*/
 	public function has_one($model, $foreign_key = '', $local_key = '') {
-// TODO
+		$this->_relations[__FUNCTION__.':'.$model.':'.$foreign_key.':'.$local_key] = array(
+			'type'			=> __FUNCTION__,
+			'model'			=> $model,
+			'foreign_key'	=> $foreign_key,
+			'local_key'		=> $local_key,
+		);
 		return $this;
 	}
 
@@ -355,7 +460,12 @@ class yf_model {
 	* Relation one-to-one inversed
 	*/
 	public function belongs_to($model, $local_key = '', $foreign_key = '') {
-// TODO
+		$this->_relations[__FUNCTION__.':'.$model.':'.$local_key.':'.$foreign_key] = array(
+			'type'			=> __FUNCTION__,
+			'model'			=> $model,
+			'foreign_key'	=> $foreign_key,
+			'local_key'		=> $local_key,
+		);
 		return $this;
 	}
 
@@ -363,7 +473,12 @@ class yf_model {
 	* Relation one-to-many
 	*/
 	public function has_many($model, $foreign_key = '', $local_key = '') {
-// TODO
+		$this->_relations[__FUNCTION__.':'.$model.':'.$foreign_key.':'.$local_key] = array(
+			'type'			=> __FUNCTION__,
+			'model'			=> $model,
+			'foreign_key'	=> $foreign_key,
+			'local_key'		=> $local_key,
+		);
 		return $this;
 	}
 
@@ -371,7 +486,13 @@ class yf_model {
 	* Relation many-to-many
 	*/
 	public function belongs_to_many($model, $pivot_table = '', $local_key = '', $foreign_key = '') {
-// TODO
+		$this->_relations[__FUNCTION__.':'.$model.':'.$pivot_table.':'.$foreign_key.':'.$local_key] = array(
+			'type'			=> __FUNCTION__,
+			'model'			=> $model,
+			'foreign_key'	=> $foreign_key,
+			'local_key'		=> $local_key,
+			'pivot_table'	=> $pivot_table,
+		);
 		return $this;
 	}
 
@@ -379,7 +500,13 @@ class yf_model {
 	* Relation distant through other model
 	*/
 	public function has_many_through($model, $through_model, $local_key = '', $foreign_key = '') {
-// TODO
+		$this->_relations[__FUNCTION__.':'.$model.':'.$through_model.':'.$local_key.':'.$foreign_key] = array(
+			'type'			=> __FUNCTION__,
+			'model'			=> $model,
+			'foreign_key'	=> $foreign_key,
+			'local_key'		=> $local_key,
+			'through_model'	=> $through_model,
+		);
 		return $this;
 	}
 
