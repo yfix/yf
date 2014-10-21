@@ -346,16 +346,17 @@ class yf_validate {
 	*/
 	public function required_any($in, $params = array(), $fields = array()) {
 		$param = trim(is_array($params) ? $params['param'] : $params);
-		// Example: duration_*
-		if (false !== strpos($param, '*')) {
-			$strpos = str_replace('*', '', $param);
+		$wildcard = false;
 		// Example: duration_day,duration_week,duration_month
-		} elseif (false !== strpos($param, ',')) {
+		if (false !== strpos($param, ',')) {
 			$field_names = explode(',', $param);
+		// Example: duration_*
+		} else {
+			$wildcard = $param;
 		}
 		foreach((array)$fields as $k => $v) {
 			$skip = true;
-			if ($strpos && false !== strpos($k, $strpos)) {
+			if ($wildcard && wildcard_compare($wildcard, $k)) {
 				$skip = false;
 			} elseif ($field_names && in_array($k, $field_names)) {
 				$skip = false;
