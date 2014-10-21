@@ -40,9 +40,11 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->required_any('', array('param' => 'd_day,d_week')) );
 		$this->assertFalse( _class('validate')->required_any('', array('param' => 'd_day,d_week'), array('d_day' => '', 'd_week' => '')) );
 		$this->assertFalse( _class('validate')->required_any('', array('param' => 'd_*'), array('d_day' => '', 'd_week' => '')) );
+		$this->assertFalse( _class('validate')->required_any('', array('param' => 'd_?????'), array('d_day' => 1, 'd_week' => '')) );
 
 		$this->assertTrue( _class('validate')->required_any('', array('param' => 'd_day,d_week'), array('d_day' => 1, 'd_week' => '')) );
 		$this->assertTrue( _class('validate')->required_any('', array('param' => 'd_*'), array('d_day' => 1, 'd_week' => '')) );
+		$this->assertTrue( _class('validate')->required_any('', array('param' => 'd_???*'), array('d_day' => 1, 'd_week' => '')) );
 	}
 	public function test_matches() {
 		$this->assertFalse( @_class('validate')->matches() );
