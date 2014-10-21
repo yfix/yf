@@ -1024,11 +1024,13 @@ class yf_main {
 		}
 		// Extending storages on-the-fly. Examples:
 		// main()->_custom_class_storages = array(
-		//     'film_model' => array('unit_tests' => array(__DIR__.'/model/fixtures/')),
+		//     'film_model' => array('unit_tests' => array(__DIR__.'/model/other_fixtures/')),
+		//     '*_model' => array('unit_tests' => array(__DIR__.'/model/fixtures/')),
 		// );
 		// $film_model = _class('film_model');
 		foreach ((array)$this->_custom_class_storages as $_class_name => $_storages) {
-			if ($_class_name !== $class_name) {
+			// Have support for wildcards: * ? [abc]
+			if (!fnmatch($_class_name, $class_name)) {
 				continue;
 			}
 			foreach ((array)$_storages as $sname => $sinfo) {
