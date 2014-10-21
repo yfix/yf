@@ -45,4 +45,4 @@
 	url = https://github.com/yfix/Yaml.git
 [submodule "libs/assetic"]
 	path = libs/assetic
-	url = https://github.com:yfix/assetic.git
+	url = https://github.com/yfix/assetic.git
