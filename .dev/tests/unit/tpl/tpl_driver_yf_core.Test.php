@@ -3,6 +3,9 @@
 require_once __DIR__.'/tpl__setup.php';
 
 class tpl_driver_yf_core_test extends tpl_abstract {
+	public function return_true($out = '') {
+		return $out ? (is_array($out) ? implode(',', $out) : $out) : 'true';
+	}
 	public function test_const() {
 		$this->assertEquals(YF_PATH, self::_tpl( '{const("YF_PATH")}' ));
 		$this->assertEquals(YF_PATH, self::_tpl( '{const(\'YF_PATH\')}' ));
@@ -42,32 +45,41 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('myjs(){ var i = 0; { js-var }; }', self::_tpl( 'myjs(){ {js-var}; { js-var }; }', array('js-var' => 'var i = 0') ));
 	}
 	public function test_execute() {
-		$this->assertEquals('true', self::_tpl( '{execute(test,true_for_unittest)}' ));
-		$this->assertEquals('truetrue', self::_tpl( '{execute(test,true_for_unittest)}{execute(test,true_for_unittest)}' ));
-		$this->assertEquals('{ execute(test,true_for_unittest)}', self::_tpl( '{ execute(test,true_for_unittest)}' ));
-		$this->assertEquals('{execute(test,true_for_unittest) }', self::_tpl( '{execute(test,true_for_unittest) }' ));
-		$this->assertEquals('{ execute(test,true_for_unittest) }', self::_tpl( '{ execute(test,true_for_unittest) }' ));
-		$this->assertEquals('true', self::_tpl( '{execute( test,true_for_unittest)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test,true_for_unittest )}' ));
-		$this->assertEquals('true', self::_tpl( '{execute( test,true_for_unittest )}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test ,true_for_unittest)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test, true_for_unittest)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test , true_for_unittest)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute( test , true_for_unittest )}' ));
-		$this->assertEquals('true', self::_tpl( '{execute(test;true_for_unittest)}' ));
-		$this->assertEquals('true', self::_tpl( '{execute( test;true_for_unittest )}' ));
-		$this->assertEquals('true', self::_tpl( '{execute( test ; true_for_unittest )}' ));
-		$this->assertEquals('val1', self::_tpl( '{execute(test;true_for_unittest;param1=val1)}' ));
-		$this->assertEquals('val1', self::_tpl( '{execute(test,true_for_unittest,param1=val1)}' ));
-		$this->assertEquals('val1', self::_tpl( '{execute( test , true_for_unittest , param1=val1 )}' ));
-		$this->assertEquals('val1,val2', self::_tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2)}' ));
-		$this->assertEquals('val1,val2,val3', self::_tpl( '{execute(test,true_for_unittest,param1=val1;param2=val2;param3=val3)}' ));
-		$this->assertEquals('val1,val2', self::_tpl( '{execute( test , true_for_unittest , param1=val1 ; param2=val2 )}' ));
-		$this->assertNotEquals('tru', self::_tpl( '{execute(test,true_for_unittest)}' ));
-		$_GET['object'] = 'test';
-		$this->assertEquals('true', self::_tpl( '{execute(@object,true_for_unittest)}' ));
-		$_GET['action'] = 'true_for_unittest';
+		$class = get_called_class();
+		$method = 'return_true';
+		$this->assertEquals('true', self::_tpl( '{execute('.$class.','.$method.')}' ));
+		$this->assertEquals('truetrue', self::_tpl( '{execute('.$class.','.$method.')}{execute('.$class.','.$method.')}' ));
+		$this->assertEquals('{ execute('.$class.','.$method.')}', self::_tpl( '{ execute('.$class.','.$method.')}' ));
+		$this->assertEquals('{execute('.$class.','.$method.') }', self::_tpl( '{execute('.$class.','.$method.') }' ));
+		$this->assertEquals('{ execute('.$class.','.$method.') }', self::_tpl( '{ execute('.$class.','.$method.') }' ));
+		$this->assertEquals('true', self::_tpl( '{execute( '.$class.','.$method.')}' ));
+		$this->assertEquals('true', self::_tpl( '{execute('.$class.','.$method.' )}' ));
+		$this->assertEquals('true', self::_tpl( '{execute( '.$class.','.$method.' )}' ));
+		$this->assertEquals('true', self::_tpl( '{execute('.$class.' ,'.$method.')}' ));
+		$this->assertEquals('true', self::_tpl( '{execute('.$class.', '.$method.')}' ));
+		$this->assertEquals('true', self::_tpl( '{execute('.$class.' , '.$method.')}' ));
+		$this->assertEquals('true', self::_tpl( '{execute( '.$class.' , '.$method.' )}' ));
+		$this->assertEquals('true', self::_tpl( '{execute('.$class.';'.$method.')}' ));
+		$this->assertEquals('true', self::_tpl( '{execute( '.$class.';'.$method.' )}' ));
+		$this->assertEquals('true', self::_tpl( '{execute( '.$class.' ; '.$method.' )}' ));
+		$this->assertEquals('val1', self::_tpl( '{execute('.$class.';'.$method.';param1=val1)}' ));
+		$this->assertEquals('val1', self::_tpl( '{execute('.$class.','.$method.',param1=val1)}' ));
+		$this->assertEquals('val1', self::_tpl( '{execute( '.$class.' , '.$method.' , param1=val1 )}' ));
+		$this->assertEquals('val1,val2', self::_tpl( '{execute('.$class.','.$method.',param1=val1;param2=val2)}' ));
+		$this->assertEquals('val1,val2,val3', self::_tpl( '{execute('.$class.','.$method.',param1=val1;param2=val2;param3=val3)}' ));
+		$this->assertEquals('val1,val2', self::_tpl( '{execute( '.$class.' , '.$method.' , param1=val1 ; param2=val2 )}' ));
+		$this->assertNotEquals('tru', self::_tpl( '{execute('.$class.','.$method.')}' ));
+
+		$bak['object'] = $_GET['object'];
+		$bak['action'] = $_GET['action'];
+
+		$_GET['object'] = $class;
+		$_GET['action'] = $method;
+		$this->assertEquals('true', self::_tpl( '{execute(@object,'.$method.')}' ));
 		$this->assertEquals('true', self::_tpl( '{execute(@object,@action)}' ));
+
+		$_GET['object'] = $bak['object'];
+		$_GET['action'] = $bak['action'];
 	}
 	public function test_catch() {
 		$this->assertEquals('  __true__', self::_tpl( '{catch( mytest1 )}{execute(test,true_for_unittest)}{/catch}  __{mytest1}__' ));
