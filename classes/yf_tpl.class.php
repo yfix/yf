@@ -582,6 +582,9 @@ class yf_tpl {
 					$storages['plugins_inherit_app2'] = APP_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
 					$storages['plugins_inherit_project2'] = PROJECT_PATH. $plugin_subdir. $this->_THEMES_PATH. $this->_INHERITED_SKIN2. '/'. $file_name;
 				}
+			}
+			$storages['framework'] = YF_PATH. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
+			if ($plugin_name) {
 				$storages['plugins_framework'] = YF_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
 				if (MAIN_TYPE_ADMIN) {
 					$storages['plugins_user_app'] = APP_PATH. $plugin_subdir. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
@@ -589,7 +592,6 @@ class yf_tpl {
 					$storages['plugins_framework_user']	= YF_PATH. $plugin_subdir. $this->_THEMES_PATH. 'user/'. $file_name;
 				}
 			}
-			$storages['framework'] = YF_PATH. $this->_THEMES_PATH. MAIN_TYPE.'/'. $file_name;
 			// user section within admin
 			if (MAIN_TYPE_ADMIN) {
 				$storages['framework_user']	= YF_PATH. $this->_THEMES_PATH. 'user/'. $file_name;
