@@ -94,6 +94,17 @@ class yf_model {
 	}
 
 	/**
+	* Find primary key name
+	*/
+	public function _get_primary_key_column($table) {
+		$primary = $this->_db->utils()->index_info($table, 'PRIMARY');
+		if ($primary) {
+			return current($primary['columns']);
+		}
+		return false;
+	}
+
+	/**
 	* Query builder connector
 	*/
 	public function _query_builder($params = array()) {
@@ -104,7 +115,16 @@ class yf_model {
 		}
 		$qb = $this->_db->query_builder();
 		$qb->from($table);
-		foreach (array('select','where','where_or','order_by','having','group_by') as $func) {
+		// whereid shortcut, example: find(1)  == 1 is PK
+		if (is_array($params['where']) && count($params['where']) === 1 && is_numeric($params['where'][0]) && !isset($params['whereid'])) {
+			$params['whereid'] = $params['where'];
+			$pk = $this->_get_primary_key_column($table);
+			if ($pk) {
+				$params['whereid'][1] = $pk;
+			}
+			unset($params['where']);
+		}
+		foreach (array('select','where','where_or','whereid','order_by','having','group_by') as $func) {
 			if ($params[$func]) {
 				call_user_func_array(array($qb, $func), $params[$func]);
 			}
@@ -294,7 +314,7 @@ class yf_model {
 	* Search for model data, according to args array
 	*/
 	public function find() {
-		return $this->_query_builder(array('where' => func_get_args()))->get_all(array('as_object' => true));
+		return $this->_query_builder(array('where' => func_get_args()))->get_all(array('as_objects' => true));
 	}
 
 	/**
