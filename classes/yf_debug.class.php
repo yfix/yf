@@ -714,10 +714,11 @@ class yf_debug {
 				'storage'		=> $data['storage'],
 				'time'			=> round($data['time'], 4),
 				'trace'			=> $data['trace'],
+				'storages'		=> '<pre>'._prepare_html($this->_var_export($data['storages'])).'</pre>',
 			);
 		}
 		$items = $this->_time_count_changes($items);
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'path')));
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'path', 'storages' => 'path')));
 	}
 
 	/**
