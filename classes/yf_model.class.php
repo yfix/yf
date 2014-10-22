@@ -233,7 +233,8 @@ class yf_model {
 	* Search for model data, according to args array, returning first record
 	*/
 	public function find() {
-		$result = $this->_query_builder(array('where' => func_get_args()))->get();
+		$args = func_get_args();
+		$result = $this->_query_builder($args ? array('where' => $args) : null)->get();
 		return $result ? (object)$result : new stdClass;
 	}
 
@@ -262,7 +263,8 @@ class yf_model {
 	* Get all matching rows
 	*/
 	public function all() {
-		return $this->_query_builder(array('where' => func_get_args()))->get_all(array('as_objects' => true));
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->get_all(array('as_objects' => true));
 	}
 
 	/**
@@ -276,19 +278,21 @@ class yf_model {
 	* Count number of matching records, according to condition
 	*/
 	public function count() {
-		return (int)$this->_query_builder(array('where' => func_get_args()))->count();
+		$args = func_get_args();
+		return (int)$this->_query_builder($args ? array('where' => $args) : null)->count();
 	}
 
 	/**
 	* Return first matched row or create such one, if not existed
 	*/
 	public function first_or_create() {
-		$data = (object) $this->_query_builder(array('where' => func_get_args()))->get();
+		$args = func_get_args();
+		$data = (object) $this->_query_builder($args ? array('where' => $args) : null)->get();
 		if (empty($data)) {
-			$insert_ok = $this->_query_builder(array('where' => func_get_args()))->insert();
+			$insert_ok = $this->_query_builder($args ? array('where' => $args) : null)->insert();
 			$insert_id = $insert_ok ? $this->_db->insert_id() : 0;
 			if ($insert_id) {
-				$data = (object) $this->_query_builder()->whereid($insert_id)->get();
+				$data = $this->find($insert_id);
 			}
 		}
 		return $data;
@@ -298,7 +302,8 @@ class yf_model {
 	* Create new model record inside database
 	*/
 	public function create() {
-		$insert_ok = $this->_query_builder(array('where' => func_get_args()))->insert($this->_get_current_data());
+		$args = func_get_args();
+		$insert_ok = $this->_query_builder($args ? array('where' => $args) : null)->insert($this->_get_current_data());
 		return $this;
 	}
 
@@ -307,7 +312,8 @@ class yf_model {
 	*/
 	public function delete() {
 // TODO
-		return $this->_query_builder(array('where' => func_get_args()))->delete();
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->delete();
 	}
 
 	/**
@@ -337,7 +343,8 @@ class yf_model {
 	*/
 	public function update($data = array()) {
 // TODO
-		return $this->_query_builder(array('where' => func_get_args()))->update($data);
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->update($data);
 	}
 
 	/**
@@ -345,7 +352,8 @@ class yf_model {
 	*/
 	public function touch() {
 // TODO
-		return $this->_query_builder(array('where' => func_get_args()))->update(array('timestamp' => time()));
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('timestamp' => time()));
 	}
 
 	/**
@@ -353,7 +361,8 @@ class yf_model {
 	*/
 	public function soft_delete() {
 // TODO
-		return $this->_query_builder(array('where' => func_get_args()))->update(array('is_deleted' => 1));
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('is_deleted' => 1));
 	}
 
 	/**
@@ -361,7 +370,8 @@ class yf_model {
 	*/
 	public function force_delete() {
 // TODO
-		return $this->_query_builder(array('where' => func_get_args()))->delete();
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->delete();
 	}
 
 	/**
@@ -369,7 +379,8 @@ class yf_model {
 	*/
 	public function restore() {
 // TODO
-		return $this->_query_builder(array('where' => func_get_args()))->update(array('is_deleted' => 0));
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('is_deleted' => 0));
 	}
 
 	/**
@@ -377,7 +388,8 @@ class yf_model {
 	*/
 	public function with_trashed() {
 // TODO
-		return $this->_query_builder(array('where' => func_get_args()))->where('is_deleted = 1');
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->where('is_deleted = 1');
 	}
 
 	/**
