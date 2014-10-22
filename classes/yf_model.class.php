@@ -5,6 +5,13 @@
 */
 class yf_model {
 
+#	protected $_db = null;
+	protected $_dirty_attrs = null;
+	protected $_is_trashed = null;
+	protected $_preload_complete = null;
+	protected $_relations = null;
+	protected $_params = null;
+
 	/**
 	* YF framework constructor
 	*/
@@ -26,24 +33,6 @@ class yf_model {
 	public function __call($name, $args) {
 		return main()->extend_call($this, $name, $args);
 	}
-
-	/**
-	*/
-	public static function __callStatic($name, $args) {
-// TODO
-	}
-
-	/**
-	*/
-#	function __isset($name) {
-// TODO
-#	}
-
-	/**
-	*/
-#	function __unset($name) {
-// TODO
-#	}
 
 	/**
 	*/
@@ -78,6 +67,22 @@ class yf_model {
 			$this->$k = $v;
 		}
 		return true;
+	}
+
+	/**
+	*/
+	public function _get_table_name($name = '') {
+		if (!$name) {
+			$name = $this->_table;
+		}
+		if (!$name) {
+			$name = substr(get_called_class(), 0, -strlen('_model'));
+			$yf_plen = strlen(YF_PREFIX);
+			if ($yf_plen && substr($name, 0, $yf_plen) === YF_PREFIX) {
+				$name = substr($name, $yf_plen);
+			}
+		}
+		return $this->_db->_fix_table_name($name);
 	}
 
 	/**
@@ -225,92 +230,6 @@ class yf_model {
 	}
 
 	/**
-	* Linking with the table builder
-	*/
-	public function table($params = array()) {
-		$sql = $this->_query_builder((array)$params['query_builder'])->sql();
-		$filter_name = $params['filter_name'] ?: ($this->_params['filter_name'] ?: $_GET['object'].'__'.$_GET['action']);
-		$params['filter'] = $params['filter'] ?: ($this->_params['filter'] ?: $_SESSION[$filter_name]);
-		return table($sql, $params);
-	}
-
-	/**
-	* Linking with the form builder
-	*/
-	public function form($whereid, $data = array(), $params = array()) {
-		$a = (array)$this->_query_builder((array)$params['query_builder'])->whereid($whereid)->get();
-		return form($a + (array)$data, $params);
-	}
-
-	/**
-	* Linking with the form builder
-	*/
-	public function filter_form($data = array(), $params = array()) {
-		$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
-		$a = array(
-			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
-			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
-		);
-		$params['selected'] = $params['selected'] ?: $_SESSION[$filter_name];
-		return form($a + (array)$data, $params);
-	}
-
-	/**
-	* Model validation will be here
-	*/
-	public function validate($rules = array(), $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function _get_table_name($name = '') {
-		if (!$name) {
-			$name = $this->_table;
-		}
-		if (!$name) {
-			$name = substr(get_called_class(), 0, -strlen('_model'));
-			$yf_plen = strlen(YF_PREFIX);
-			if ($yf_plen && substr($name, 0, $yf_plen) === YF_PREFIX) {
-				$name = substr($name, $yf_plen);
-			}
-		}
-		return $this->_db->_fix_table_name($name);
-	}
-
-	/**
-	*/
-	public function _get_tables() {
-/*
-		$db = &$this->_db;
-		if (isset($db->_found_tables)) {
-			return $db->_found_tables[$name];
-		}
-		$tables = $db->utils()->list_tables();
-		if ($db->DB_PREFIX) {
-			$p_len = strlen($db->DB_PREFIX);
-			$tmp = array();
-			foreach ($tables as $real) {
-				$short = $real;
-				if (substr($real, 0, $p_len) == $db->DB_PREFIX) {
-					$short = substr($real, $p_len);
-				}
-				$tmp[$short] = $real;
-			}
-			$tables = $tmp;
-		}
-		$db->_found_tables = $tables;
-		return $db->_found_tables[$name];
-*/
-	}
-
-	/**
-	*/
-	public function count() {
-		return $this->_query_builder(array('where' => func_get_args()))->count();
-	}
-
-	/**
 	* Search for model data, according to args array, returning first record
 	*/
 	public function find() {
@@ -319,31 +238,45 @@ class yf_model {
 	}
 
 	/**
-	* Get all matching rows
+	* Alias for first
 	*/
-	public function get_all() {
-		return call_user_func_array(array($this, 'all'), func_get_args());
+	public function one() {
+		return call_user_func_array(array($this, 'find'), func_get_args());
 	}
 
 	/**
-	* Alias for get_all()
-	*/
-	public function all() {
-		return $this->_query_builder(array('where' => func_get_args()))->get_all(array('as_objects' => true));
-	}
-
-	/**
-	* Return first matching row
+	* Alias for first
 	*/
 	public function first() {
-		return (object) $this->_query_builder(array('where' => func_get_args()))->get();
+		return call_user_func_array(array($this, 'find'), func_get_args());
 	}
 
 	/**
 	* Alias for first
 	*/
 	public function get() {
-		return call_user_func_array(array($this, 'first'), func_get_args());
+		return call_user_func_array(array($this, 'find'), func_get_args());
+	}
+
+	/**
+	* Get all matching rows
+	*/
+	public function all() {
+		return $this->_query_builder(array('where' => func_get_args()))->get_all(array('as_objects' => true));
+	}
+
+	/**
+	* Alias for all
+	*/
+	public function get_all() {
+		return call_user_func_array(array($this, 'all'), func_get_args());
+	}
+
+	/**
+	* Count number of matching records, according to condition
+	*/
+	public function count() {
+		return (int)$this->_query_builder(array('where' => func_get_args()))->count();
 	}
 
 	/**
@@ -381,16 +314,14 @@ class yf_model {
 	* Determine if the model or a given attribute has been modified.
 	*/
 	public function is_dirty($attr = null) {
-// TODO
-		return $this;
+		return $attr ? isset($this->_dirty_attrs[$attr]) : !empty($this->_dirty_attrs);
 	}
 
 	/**
 	* Get the attributes that have been changed since last sync.
 	*/
 	public function get_dirty($attr = null) {
-// TODO
-		return $this;
+		return $this->_dirty_attrs;
 	}
 
 	/**
@@ -592,5 +523,87 @@ class yf_model {
 	public function with($model) {
 // TODO
 		return $this;
+	}
+
+	/**
+	*/
+#	public static function __callStatic($name, $args) {
+// TODO
+#	}
+
+	/**
+	*/
+#	function __isset($name) {
+// TODO
+#	}
+
+	/**
+	*/
+#	function __unset($name) {
+// TODO
+#	}
+
+	/**
+	*/
+	public function _get_tables() {
+/*
+		$db = &$this->_db;
+		if (isset($db->_found_tables)) {
+			return $db->_found_tables[$name];
+		}
+		$tables = $db->utils()->list_tables();
+		if ($db->DB_PREFIX) {
+			$p_len = strlen($db->DB_PREFIX);
+			$tmp = array();
+			foreach ($tables as $real) {
+				$short = $real;
+				if (substr($real, 0, $p_len) == $db->DB_PREFIX) {
+					$short = substr($real, $p_len);
+				}
+				$tmp[$short] = $real;
+			}
+			$tables = $tmp;
+		}
+		$db->_found_tables = $tables;
+		return $db->_found_tables[$name];
+*/
+	}
+
+	/**
+	* Linking with the table builder
+	*/
+	public function table($params = array()) {
+		$sql = $this->_query_builder((array)$params['query_builder'])->sql();
+		$filter_name = $params['filter_name'] ?: ($this->_params['filter_name'] ?: $_GET['object'].'__'.$_GET['action']);
+		$params['filter'] = $params['filter'] ?: ($this->_params['filter'] ?: $_SESSION[$filter_name]);
+		return table($sql, $params);
+	}
+
+	/**
+	* Linking with the form builder
+	*/
+	public function form($whereid, $data = array(), $params = array()) {
+		$a = (array)$this->_query_builder((array)$params['query_builder'])->whereid($whereid)->get();
+		return form($a + (array)$data, $params);
+	}
+
+	/**
+	* Linking with the form builder
+	*/
+	public function filter_form($data = array(), $params = array()) {
+		$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
+		$a = array(
+			'form_action'	=> url_admin('/@object/filter_save/'.$filter_name),
+			'clear_url'		=> url_admin('/@object/filter_save/'.$filter_name.'/clear'),
+		);
+		$params['selected'] = $params['selected'] ?: $_SESSION[$filter_name];
+		return form($a + (array)$data, $params);
+	}
+
+	/**
+	* Model validation will be here
+	*/
+	public function validate($rules = array(), $params = array()) {
+// TODO
 	}
 }
