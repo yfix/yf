@@ -133,8 +133,9 @@ class yf_model {
 			if (!$type || !$model) {
 				continue;
 			}
-#			$qb->join($join['table'], $join['on'], $join['type']);
-#			$qb->join()
+			$model_obj = model($model);
+			$table = $model_obj->_get_table_name();
+			$qb->join($table/*, $join['on'], $join['type']*/);
 		}
 		return $qb;
 	}
