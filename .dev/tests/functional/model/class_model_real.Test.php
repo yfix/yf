@@ -192,12 +192,25 @@ if ($i++ > 3) {
 		$first_actor = model('actor')->find($raw_first_id);
 		$this->assertNotEmpty( $actors_data_objects[0] );
 		$this->assertEquals( $actors_data_objects[0], $first_actor );
+		$this->assertEquals( $raw_first_id, $first_actor->actor_id );
 
 		$raw_second_id = $actors_data[1]['actor_id'];
 		$this->assertNotEmpty( $raw_second_id );
 		$second_actor = model('actor')->find($raw_second_id);
 		$this->assertNotEmpty( $actors_data_objects[1] );
 		$this->assertEquals( $actors_data_objects[1], $second_actor );
+		$this->assertEquals( $raw_second_id, $second_actor->actor_id );
+
+		$some_actors = model('actor')->all('actor_id < 10');
+		$raw_some_actors = array();
+		foreach ($actors_data_objects as $i => $a) {
+			if ($a->actor_id < 10) {
+				$raw_some_actors[$i] = $a;
+			}
+		}
+		$this->assertNotEmpty( $raw_some_actors );
+		$this->assertEquals( $raw_some_actors, $some_actors );
+		$this->assertEquals( $raw_some_actors, model('actor')->where('actor_id < 10')->all() );
 
 #		$this->assertTrue( is_object($model_base) );
 #		$all_films = model('actor')->films();
