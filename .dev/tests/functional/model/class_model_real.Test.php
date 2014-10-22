@@ -176,7 +176,31 @@ if ($i++ > 3) {
 	public function test_sakila_basic() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
-		$all_films = model('actor')->films();
+		$actors_data = include __DIR__.'/fixtures/actor.data.php';
+		$actors_data_objects = array();
+		foreach ($actors_data as $arr) {
+			$actors_data_objects[] = (object)$arr;
+		}
+
+		$all_actors = model('actor')->all();
+		$this->assertTrue( is_array($all_actors) );
+		$this->assertTrue( (count($all_actors) > 0) );
+		$this->assertEquals( $actors_data_objects, $all_actors );
+
+		$raw_first_id = $actors_data[0]['actor_id'];
+		$this->assertNotEmpty( $raw_first_id );
+		$first_actor = model('actor')->find($raw_first_id);
+		$this->assertNotEmpty( $actors_data_objects[0] );
+		$this->assertEquals( $actors_data_objects[0], $first_actor );
+
+		$raw_second_id = $actors_data[1]['actor_id'];
+		$this->assertNotEmpty( $raw_second_id );
+		$second_actor = model('actor')->find($raw_second_id);
+		$this->assertNotEmpty( $actors_data_objects[1] );
+		$this->assertEquals( $actors_data_objects[1], $second_actor );
+
+#		$this->assertTrue( is_object($model_base) );
+#		$all_films = model('actor')->films();
 	}
 
 	/**
