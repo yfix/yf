@@ -210,10 +210,14 @@ if ($i++ > 3) {
 		}
 		$this->assertNotEmpty( $raw_some_actors );
 		$this->assertEquals( $raw_some_actors, $some_actors );
-		$this->assertEquals( $raw_some_actors, model('actor')->where('actor_id < 10')->all() );
 
-#		$this->assertTrue( is_object($model_base) );
-#		$all_films = model('actor')->films();
+		unset($some_actors);
+		$some_actors = model('actor')->where('actor_id < 10')->all();
+		$this->assertEquals( $raw_some_actors, $some_actors );
+
+#		$all_film_titles_with_actor1 = foreach (model('actor')->find(1)->films() as $film) { echo $film->title; }
+#		$film1_titles_with_actor1 = model('actor')->find(1)->films()->first()->title;
+#		$film1_titles_with_actor1 = foreach (model('actor')->with('films') as $actor) { echo $actor->films()->first()->title; }
 	}
 
 	/**
