@@ -311,24 +311,25 @@ class yf_model {
 	}
 
 	/**
-	* Search for model data, according to args array
+	* Search for model data, according to args array, returning first record
 	*/
 	public function find() {
-		return $this->_query_builder(array('where' => func_get_args()))->get_all(array('as_objects' => true));
+		$result = $this->_query_builder(array('where' => func_get_args()))->get();
+		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
 	* Get all matching rows
 	*/
 	public function get_all() {
-		return call_user_func_array(array($this, 'find'), func_get_args());
+		return call_user_func_array(array($this, 'all'), func_get_args());
 	}
 
 	/**
 	* Alias for get_all()
 	*/
 	public function all() {
-		return call_user_func_array(array($this, 'find'), func_get_args());
+		return $this->_query_builder(array('where' => func_get_args()))->get_all(array('as_objects' => true));
 	}
 
 	/**
