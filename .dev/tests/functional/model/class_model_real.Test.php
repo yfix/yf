@@ -173,9 +173,18 @@ if ($i++ > 3) {
 	/**
 	* @depends test_load_fixtures
 	*/
-	public function test_sakila_models() {
+	public function test_sakila_basic() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
+		$all_films = model('actor')->films();
+	}
+
+	/**
+	* @depends test_load_fixtures
+	*/
+	public function test_sakila_all_models() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+/*
 		$model_base = _class('model');
 		$this->assertTrue( is_object($model_base) );
 		$this->assertTrue( is_a($model_base, 'yf_model') );
@@ -192,19 +201,20 @@ if ($i++ > 3) {
 			$model = self::$db->model($table);
 			$methods = get_class_methods($model);
 			$model_specific_methods = array_diff($methods, $base_methods);
-echo $table.PHP_EOL;
-print_r($model_specific_methods);
+#echo $table.PHP_EOL;
+#print_r($model_specific_methods);
 			foreach ($model_specific_methods as $_method) {
 				if (substr($_method, 0, 1) === '_') {
 					continue;
 				}
-echo $_method.PHP_EOL;
+#echo $_method.PHP_EOL;
 				$result = $model->$_method()->get();
-var_dump($result);
+#var_dump($result);
 			}
 #			$vars = get_object_vars($model);
 #print_r(array_diff($vars, $base_vars));
 		}
+*/
 	}
 
 	/**
