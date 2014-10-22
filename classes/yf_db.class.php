@@ -942,8 +942,10 @@ class yf_db {
 		}
 		$storage = &$this->_db_results_cache;
 		if ($use_cache && $this->ALLOW_CACHE_QUERIES && !$this->NO_CACHE && isset($storage[$query])) {
-			if ($params['as_object']) {
-				return array_to_object($storage[$query]);
+			if ($params['as_objects']) {
+				foreach ((array)$storage[$query] as $k => $v) {
+					$storage[$query][$k] = (object)$v;
+				}
 			}
 			return $storage[$query];
 		}
@@ -971,8 +973,10 @@ class yf_db {
 				$storage = null;
 			}
 		}
-		if ($params['as_object']) {
-			return array_to_object($data);
+		if ($params['as_objects']) {
+			foreach ((array)$data as $k => $v) {
+				$data[$k] = (object)$v;
+			}
 		}
 		return $data;
 	}
