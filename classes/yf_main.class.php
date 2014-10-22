@@ -1073,6 +1073,7 @@ class yf_main {
 				'loaded_class_name'	=> $loaded_class_name,
 				'loaded_path'		=> $loaded_path,
 				'storage'			=> $storage,
+				'storages'			=> $storages,
 				'time'				=> (microtime(true) - $_time_start),
 				'trace'				=> $this->trace_string(),
 			));
