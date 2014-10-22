@@ -560,13 +560,18 @@ class yf_tpl {
 				$storages['project_admin_user'] = PROJECT_PATH. $this->_THEMES_PATH. $def_theme. '/'. $file_name;
 			}
 			// Load template from plugins. Should stay in subdir like this:
-			// YF_PATH.'plugins/news/templates/user/news/main.stpl' => tpl()->parse('news/main')
+			// YF_PATH.'plugins/news/templates/user/news/main.stpl' => tpl()->parse('news/main')		
+			$plugin_name = '';
 			if ($class_name && (isset($this->_yf_plugins[$class_name]) || isset($this->_yf_plugins_classes[$class_name]))) {
-				if (isset($this->_yf_plugins[$class_name])) {
-					$plugin_subdir = 'plugins/'.$class_name.'/';
-				} else {
-					$plugin_subdir = 'plugins/'.$this->_yf_plugins_classes[$class_name].'/';
+				if (isset($this->_yf_plugins_classes[$class_name])) {
+					$plugin_name = $this->_yf_plugins_classes[$class_name];
+				} elseif (isset($this->_yf_plugins[$class_name])) {
+					$plugin_name = $class_name;
 				}
+			}
+			if ($plugin_name) {
+				$plugin_subdir = 'plugins/'.$plugin_name.'/';
+
 				$storages['plugins_app'] = APP_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
 				$storages['plugins_project'] = PROJECT_PATH. $plugin_subdir. $this->TPL_PATH. $file_name;
 				if ($this->_INHERITED_SKIN) {
