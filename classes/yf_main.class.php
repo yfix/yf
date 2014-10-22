@@ -848,10 +848,11 @@ class yf_main {
 		}
 		$white_list = (array)$this->_plugins_white_list;
 		$black_list = (array)$this->_plugins_black_list;
+		// Order matters for plugins_classes !!
 		$sets = array(
-			'app'		=> APP_PATH.'plugins/*/',
-			'project'	=> PROJECT_PATH.'plugins/*/',
 			'framework'	=> YF_PATH.'plugins/*/',
+			'project'	=> PROJECT_PATH.'plugins/*/',
+			'app'		=> APP_PATH.'plugins/*/',
 		);
 		$_plen = strlen(YF_PREFIX);
 		$plugins = array();
@@ -984,21 +985,19 @@ class yf_main {
 		if (strlen($SITE_PATH. $site_path) && ($SITE_PATH. $site_path) != (PROJECT_PATH. $project_path)) {
 			$storages['site'] = array($SITE_PATH. $site_path);
 		}
-		$storages['site_hook'] = array($SITE_PATH. $site_path, $cur_hook_prefix);
+#		$storages['app_site_hook'] = array(APP_PATH. $site_path, $cur_hook_prefix);
 		$storages['app'] = array(APP_PATH. $project_path);
+#		$storages['project_site_hook'] = array($SITE_PATH. $site_path, $cur_hook_prefix);
 		$storages['project'] = array(PROJECT_PATH. $project_path);
-		$storages['framework'] = array(YF_PATH. $fwork_path, YF_PREFIX);
-		if (MAIN_TYPE_ADMIN) {
-			$storages['admin_user_app']	= array(APP_PATH. $project_path2);
-			$storages['admin_user_project']	= array(PROJECT_PATH. $project_path2);
-			$storages['admin_user_framework'] = array(YF_PATH. USER_MODULES_DIR, YF_PREFIX);
-		}
+		$plugin_name = '';
 		if (isset($yf_plugins[$class_name]) || isset($yf_plugins_classes[$class_name])) {
-			if (isset($yf_plugins[$class_name])) {
-				$plugin_name = $class_name;
-			} else {
+			if (isset($yf_plugins_classes[$class_name])) {
 				$plugin_name = $yf_plugins_classes[$class_name];
+			} elseif (isset($yf_plugins[$class_name])) {
+				$plugin_name = $class_name;
 			}
+		}
+		if ($plugin_name) {
 			$plugin_info = $yf_plugins[$plugin_name];
 			$plugin_subdir = 'plugins/'.$plugin_name.'/';
 
@@ -1021,6 +1020,12 @@ class yf_main {
 					$storages['plugins_admin_user_framework'] = array(YF_PATH. $plugin_subdir. USER_MODULES_DIR, YF_PREFIX);
 				}
 			}
+		}
+		$storages['framework'] = array(YF_PATH. $fwork_path, YF_PREFIX);
+		if (MAIN_TYPE_ADMIN) {
+			$storages['admin_user_app']	= array(APP_PATH. $project_path2);
+			$storages['admin_user_project']	= array(PROJECT_PATH. $project_path2);
+			$storages['admin_user_framework'] = array(YF_PATH. USER_MODULES_DIR, YF_PREFIX);
 		}
 		// Extending storages on-the-fly. Examples:
 		// main()->_custom_class_storages = array(
