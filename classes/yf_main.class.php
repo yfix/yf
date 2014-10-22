@@ -1014,14 +1014,17 @@ class yf_main {
 				if (MAIN_TYPE_ADMIN) {
 					$storages['plugins_admin_user_project']	= array(PROJECT_PATH. $plugin_subdir. $project_path2);
 				}
-			} elseif (isset($plugin_info['framework'])) {
+			}
+		}
+		$storages['framework'] = array(YF_PATH. $fwork_path, YF_PREFIX);
+		if ($plugin_name) {
+			if (isset($plugin_info['framework'])) {
 				$storages['plugins_framework'] = array(YF_PATH. $plugin_subdir. $fwork_path, YF_PREFIX);
 				if (MAIN_TYPE_ADMIN) {
 					$storages['plugins_admin_user_framework'] = array(YF_PATH. $plugin_subdir. USER_MODULES_DIR, YF_PREFIX);
 				}
 			}
 		}
-		$storages['framework'] = array(YF_PATH. $fwork_path, YF_PREFIX);
 		if (MAIN_TYPE_ADMIN) {
 			$storages['admin_user_app']	= array(APP_PATH. $project_path2);
 			$storages['admin_user_project']	= array(PROJECT_PATH. $project_path2);
