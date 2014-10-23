@@ -160,6 +160,12 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->length('123456', array('param' => '5')) );
 		$this->assertTrue( _class('validate')->length('123456', array('param' => '1,10')) );
 		$this->assertFalse( _class('validate')->length('123456', array('param' => '8,10')) );
+
+		$this->assertFalse( validate('1234', 'length[5]') );
+		$this->assertTrue( validate('12345', 'length[5]') );
+		$this->assertFalse( validate('123456', 'length[5]') );
+		$this->assertTrue( validate('123456', 'length[1,10]') );
+		$this->assertFalse( validate('123456', 'length[8,10]') );
 	}
 	public function test_greater_than() {
 		$this->assertFalse( @_class('validate')->greater_than() );
@@ -168,6 +174,11 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->greater_than('4', array('param' => '5')) );
 		$this->assertFalse( _class('validate')->greater_than('5', array('param' => '5')) );
 		$this->assertTrue( _class('validate')->greater_than('6', array('param' => '5')) );
+
+		$this->assertTrue( validate('12345', 'greater_than[0]') );
+		$this->assertFalse( validate('4', 'greater_than[5]') );
+		$this->assertFalse( validate('5', 'greater_than[5]') );
+		$this->assertTrue( validate('6', 'greater_than[5]') );
 	}
 	public function test_less_than() {
 		$this->assertFalse( @_class('validate')->less_than() );
@@ -176,6 +187,11 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->less_than('4', array('param' => '5')) );
 		$this->assertFalse( _class('validate')->less_than('5', array('param' => '5')) );
 		$this->assertFalse( _class('validate')->less_than('6', array('param' => '5')) );
+
+		$this->assertFalse( validate('12345', 'less_than[0]') );
+		$this->assertTrue( validate('4', 'less_than[5]') );
+		$this->assertFalse( validate('5', 'less_than[5]') );
+		$this->assertFalse( validate('6', 'less_than[5]') );
 	}
 	public function test_greater_than_equal_to() {
 		$this->assertFalse( @_class('validate')->greater_than_equal_to() );
@@ -184,6 +200,11 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->greater_than_equal_to('4', array('param' => '5')) );
 		$this->assertTrue( _class('validate')->greater_than_equal_to('5', array('param' => '5')) );
 		$this->assertTrue( _class('validate')->greater_than_equal_to('6', array('param' => '5')) );
+
+		$this->assertTrue( validate('12345', 'greater_than_equal_to[0]') );
+		$this->assertFalse( validate('4', 'greater_than_equal_to[5]') );
+		$this->assertTrue( validate('5', 'greater_than_equal_to[5]') );
+		$this->assertTrue( validate('6', 'greater_than_equal_to[5]') );
 	}
 	public function test_less_than_equal_to() {
 		$this->assertFalse( @_class('validate')->less_than_equal_to() );
@@ -192,6 +213,11 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->less_than_equal_to('4', array('param' => '5')) );
 		$this->assertTrue( _class('validate')->less_than_equal_to('5', array('param' => '5')) );
 		$this->assertFalse( _class('validate')->less_than_equal_to('6', array('param' => '5')) );
+
+		$this->assertFalse( validate('12345', 'less_than_equal_to[0]') );
+		$this->assertTrue( validate('4', 'less_than_equal_to[5]') );
+		$this->assertTrue( validate('5', 'less_than_equal_to[5]') );
+		$this->assertFalse( validate('6', 'less_than_equal_to[5]') );
 	}
 	public function test_alpha() {
 		$this->assertFalse( @_class('validate')->alpha() );
