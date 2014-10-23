@@ -2042,7 +2042,7 @@ class yf_form2 {
 				} elseif (is_callable($func)) {
 					$is_ok = $func($data[$name], null, $data, $error_msg);
 				} else {
-					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
+					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg, array('field' => $name));
 					if (!$is_ok && empty($error_msg)) {
 						$desc = $this->_find_field_desc($name) ?: $name;
 						$error_param = $this->_find_field_desc($param) ?: $param;
