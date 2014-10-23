@@ -225,6 +225,7 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->alpha(null) );
 		$this->assertFalse( _class('validate')->alpha(false) );
 		$this->assertFalse( _class('validate')->alpha(array()) );
+
 		$this->assertFalse( _class('validate')->alpha('~') );
 		$this->assertTrue( _class('validate')->alpha('a') );
 		$this->assertTrue( _class('validate')->alpha('abcdefghijklmnopqrstuvwxyz') );
@@ -232,6 +233,14 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->alpha('абвгдеёжзиЙклмнопрстуфхцчшщьъэюяієї') );
 		$this->assertFalse( _class('validate')->alpha('АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЪЭЮЯІЄЇ') );
 		$this->assertFalse( _class('validate')->alpha('0') );
+
+		$this->assertFalse( validate('~','alpha') );
+		$this->assertTrue( validate('a','alpha') );
+		$this->assertTrue( validate('abcdefghijklmnopqrstuvwxyz','alpha') );
+		$this->assertTrue( validate('ABCDEFGHIJKLMNOPQRSTUVWXYZ','alpha') );
+		$this->assertFalse( validate('абвгдеёжзиЙклмнопрстуфхцчшщьъэюяієї','alpha') );
+		$this->assertFalse( validate('АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЪЭЮЯІЄЇ','alpha') );
+		$this->assertFalse( validate('0','alpha') );
 	}
 	public function test_alpha_spaces() {
 		$this->assertFalse( @_class('validate')->alpha_spaces() );
