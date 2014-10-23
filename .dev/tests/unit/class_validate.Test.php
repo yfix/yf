@@ -6,17 +6,44 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 	public static function tearDownAfterClass() {
 		common()->USER_ERRORS = array();
 	}
+	public function test_func_validate() {
+		$this->assertTrue( validate(array(), array('key' => 'trim')) );
+		$this->assertTrue( validate(array('key' => 'val'), array('key' => 'required')) );
+		$this->assertTrue( validate(array('key' => 'val'), array('key' => 'trim|required')) );
+		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'required')) );
+		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'required', 'other_key' => 'trim', )) );
+		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'trim|required')) );
+		$this->assertTrue( validate(array('key' => array('val1','val2'), 'key2' => 'v2'), array('key' => 'trim|required', 'key2' => 'required')) );
+
+		$this->assertFalse( validate(array(), array('key' => 'required')) );
+		$this->assertFalse( validate(array(), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => ''), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => ' '), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => array()), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => array()), array('key' => 'trim|required')) );
+		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ''), array('key' => 'trim|required', 'key2' => 'required')) );
+		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ' '), array('key' => 'trim|required', 'key2' => 'required')) );
+
+		$this->assertTrue( validate(' test ', 'trim|required') );
+		$this->assertFalse( validate('  ', 'trim|required') );
+		$this->assertTrue( validate(array('key' => array('val1','val2'), 'key2' => 'v2'), 'trim|required') );
+		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ' '), 'trim|required') );
+	}
 	public function test_password_update() {
 		$var = ''; _class('validate')->password_update($var);
 		$this->assertEquals( null,  $var);
 		$var = 'test'; _class('validate')->password_update($var);
 		$this->assertEquals( md5('test'),  $var);
+
+		$this->assertTrue( validate($var, 'password_update') );
 	}
 	public function test_md5_not_empty() {
 		$var = ''; _class('validate')->md5_not_empty($var);
 		$this->assertEquals( '',  $var);
 		$var = 'test'; _class('validate')->md5_not_empty($var);
 		$this->assertEquals( md5('test'),  $var);
+
+		$this->assertTrue( validate($var, 'md5_not_empty') );
 	}
 	public function test_required() {
 		$this->assertFalse( _class('validate')->required('') );
@@ -33,6 +60,11 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->required('str') );
 		$this->assertTrue( _class('validate')->required(array('str')) );
 		$this->assertTrue( _class('validate')->required(array(1,2)) );
+
+		$this->assertFalse( validate('', 'required') );
+		$this->assertTrue( validate('str', 'required') );
+		$this->assertTrue( validate(array('str'), 'required') );
+		$this->assertTrue( validate(array(1,2), 'required') );
 	}
 	public function test_required_any() {
 		$this->assertFalse( @_class('validate')->required_any() );
@@ -45,6 +77,24 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->required_any('', array('param' => 'd_day,d_week'), array('d_day' => 1, 'd_week' => '')) );
 		$this->assertTrue( _class('validate')->required_any('', array('param' => 'd_*'), array('d_day' => 1, 'd_week' => '')) );
 		$this->assertTrue( _class('validate')->required_any('', array('param' => 'd_???*'), array('d_day' => 1, 'd_week' => '')) );
+	}
+	public function test_required_if() {
+		$this->assertFalse( @_class('validate')->required_if() );
+		$this->assertFalse( _class('validate')->required_if(null, array()) );
+		$this->assertTrue( _class('validate')->required_if('', array('param' => 'pswd')) );
+		$this->assertTrue( _class('validate')->required_if('some', array('param' => 'pswd')) );
+		$this->assertTrue( _class('validate')->required_if('', array('param' => 'pswd'), array('pswd' => false)) );
+		$this->assertTrue( _class('validate')->required_if('some', array('param' => 'pswd'), array('pswd' => false)) );
+		$this->assertTrue( _class('validate')->required_if('', array('param' => 'pswd'), array('pswd' => 0)) );
+		$this->assertTrue( _class('validate')->required_if('some', array('param' => 'pswd'), array('pswd' => 0)) );
+		$this->assertTrue( _class('validate')->required_if('', array('param' => 'pswd'), array('pswd' => '')) );
+		$this->assertTrue( _class('validate')->required_if('some', array('param' => 'pswd'), array('pswd' => '')) );
+		$this->assertTrue( _class('validate')->required_if('', array('param' => 'pswd'), array('other' => '')) );
+		$this->assertTrue( _class('validate')->required_if('some', array('param' => 'pswd'), array('other' => '')) );
+		$this->assertFalse( _class('validate')->required_if('', array('param' => 'pswd'), array('pswd' => '  ')) );
+		$this->assertTrue( _class('validate')->required_if('some', array('param' => 'pswd'), array('pswd' => '  ')) );
+		$this->assertFalse( _class('validate')->required_if('', array('param' => 'pswd'), array('pswd' => 'not_empty')) );
+		$this->assertTrue( _class('validate')->required_if('some', array('param' => 'pswd'), array('pswd' => 'not_empty')) );
 	}
 	public function test_matches() {
 		$this->assertFalse( @_class('validate')->matches() );
@@ -61,9 +111,13 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->differs('55', array('param' => 'my_field'), array('my_field' => '55')) );
 	}
 	public function test_regex_match() {
-		$this->assertFalse( @_class('validate')->matches() );
-		$this->assertFalse( _class('validate')->regex_match('testme@yfixnet', array('param' => '/^[a-z]+@[a-z]+\.[a-z]+$/')) );
-		$this->assertTrue( _class('validate')->regex_match('testme@yfix.net', array('param' => '/^[a-z]+@[a-z]+\.[a-z]+$/')) );
+		$this->assertFalse( @_class('validate')->regex_match() );
+		$regex = '/^[a-z]+@[a-z]+\.[a-z]+$/';
+		$this->assertFalse( _class('validate')->regex_match('testme@yfixnet', array('param' => $regex)) );
+		$this->assertTrue( _class('validate')->regex_match('testme@yfix.net', array('param' => $regex)) );
+
+#		$this->assertFalse( validate('testme@yfixnet', 'regex_match['.$regex.']') );
+#		$this->assertTrue( validate('testme@yfix.net', 'regex_match['.$regex.']') );
 	}
 	public function test_min_length() {
 		$this->assertFalse( @_class('validate')->min_length() );
@@ -71,6 +125,10 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->min_length('1234', array('param' => '5')) );
 		$this->assertTrue( _class('validate')->min_length('12345', array('param' => '5')) );
 		$this->assertTrue( _class('validate')->min_length('123456', array('param' => '5')) );
+
+		$this->assertFalse( validate('1234', 'min_length[5]') );
+		$this->assertTrue( validate('12345', 'min_length[5]') );
+		$this->assertTrue( validate('123456', 'min_length[5]') );
 	}
 	public function test_max_length() {
 		$this->assertFalse( @_class('validate')->max_length() );
@@ -78,6 +136,10 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( _class('validate')->max_length('1234', array('param' => '5')) );
 		$this->assertTrue( _class('validate')->max_length('12345', array('param' => '5')) );
 		$this->assertFalse( _class('validate')->max_length('123456', array('param' => '5')) );
+
+		$this->assertTrue( validate('1234', 'max_length[5]') );
+		$this->assertTrue( validate('12345', 'max_length[5]') );
+		$this->assertFalse( validate('123456', 'max_length[5]') );
 	}
 	public function test_exact_length() {
 		$this->assertFalse( @_class('validate')->exact_length() );
@@ -85,6 +147,10 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->exact_length('1234', array('param' => '5')) );
 		$this->assertTrue( _class('validate')->exact_length('12345', array('param' => '5')) );
 		$this->assertFalse( _class('validate')->exact_length('123456', array('param' => '5')) );
+
+		$this->assertFalse( validate('1234', 'exact_length[5]') );
+		$this->assertTrue( validate('12345', 'exact_length[5]') );
+		$this->assertFalse( validate('123456', 'exact_length[5]') );
 	}
 	public function test_length() {
 		$this->assertFalse( @_class('validate')->length() );
@@ -394,10 +460,6 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->valid_url(array()) );
 		$this->assertFalse( _class('validate')->valid_url(' ') );
 		$this->assertFalse( _class('validate')->valid_url(PHP_EOL) );
-#		$this->assertFalse( _class('validate')->valid_url(new StdClass()) );
-#		$this->assertFalse( _class('validate')->valid_url('fsfsfs') );
-#		$this->assertFalse( _class('validate')->valid_url('#') );
-#		$this->assertFalse( _class('validate')->valid_url('#id') );
 		$this->assertTrue( _class('validate')->valid_url('index') );
 		$this->assertTrue( _class('validate')->valid_url('index.html') );
 		$this->assertTrue( _class('validate')->valid_url('script.js') );
@@ -908,28 +970,5 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => array()), array('key' => 'trim|required')) );
 		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => array('val1','val2'), 'key2' => ''), array('key' => 'trim|required', 'key2' => 'required')) );
 		$this->assertFalse( _class('validate')->_input_is_valid(array('key' => array('val1','val2'), 'key2' => ' '), array('key' => 'trim|required', 'key2' => 'required')) );
-	}
-	public function test_func_validate() {
-		$this->assertTrue( validate(array(), array('key' => 'trim')) );
-		$this->assertTrue( validate(array('key' => 'val'), array('key' => 'required')) );
-		$this->assertTrue( validate(array('key' => 'val'), array('key' => 'trim|required')) );
-		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'required')) );
-		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'required', 'other_key' => 'trim', )) );
-		$this->assertTrue( validate(array('key' => array('val1','val2')), array('key' => 'trim|required')) );
-		$this->assertTrue( validate(array('key' => array('val1','val2'), 'key2' => 'v2'), array('key' => 'trim|required', 'key2' => 'required')) );
-
-		$this->assertFalse( validate(array(), array('key' => 'required')) );
-		$this->assertFalse( validate(array(), array('key' => 'trim|required')) );
-		$this->assertFalse( validate(array('key' => ''), array('key' => 'trim|required')) );
-		$this->assertFalse( validate(array('key' => ' '), array('key' => 'trim|required')) );
-		$this->assertFalse( validate(array('key' => array()), array('key' => 'trim|required')) );
-		$this->assertFalse( validate(array('key' => array()), array('key' => 'trim|required')) );
-		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ''), array('key' => 'trim|required', 'key2' => 'required')) );
-		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ' '), array('key' => 'trim|required', 'key2' => 'required')) );
-
-		$this->assertTrue( validate(' test ', 'trim|required') );
-		$this->assertFalse( validate('  ', 'trim|required') );
-		$this->assertTrue( validate(array('key' => array('val1','val2'), 'key2' => 'v2'), 'trim|required') );
-		$this->assertFalse( validate(array('key' => array('val1','val2'), 'key2' => ' '), 'trim|required') );
 	}
 }
