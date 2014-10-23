@@ -985,9 +985,9 @@ class yf_main {
 		if (strlen($SITE_PATH. $site_path) && ($SITE_PATH. $site_path) != (PROJECT_PATH. $project_path)) {
 			$storages['site'] = array($SITE_PATH. $site_path);
 		}
-#		$storages['app_site_hook'] = array(APP_PATH. $site_path, $cur_hook_prefix);
+		$storages['app_site_hook'] = array(APP_PATH. $site_path, $cur_hook_prefix);
 		$storages['app'] = array(APP_PATH. $project_path);
-#		$storages['project_site_hook'] = array($SITE_PATH. $site_path, $cur_hook_prefix);
+		$storages['project_site_hook'] = array($SITE_PATH. $site_path, $cur_hook_prefix);
 		$storages['project'] = array(PROJECT_PATH. $project_path);
 		$plugin_name = '';
 		if (isset($yf_plugins[$class_name]) || isset($yf_plugins_classes[$class_name])) {
