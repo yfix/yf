@@ -2026,7 +2026,7 @@ class yf_form2 {
 		foreach ((array)$validate_rules as $name => $rules) {
 			$is_required = false;
 			foreach ((array)$rules as $rule) {
-				if ($rule[0] == 'required') {
+				if (substr($rule[0], 0, strlen('required')) === 'required') {
 					$is_required = true;
 					break;
 				}
