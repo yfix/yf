@@ -1937,7 +1937,8 @@ class yf_form2 {
 			if (is_callable($on_before_validate)) {
 				$on_before_validate($_this->_validate_rules, $data);
 			}
-			_class('core_events')->fire('form.before_validate', array($_this->_validate_rules, $data));
+			$events = _class('core_events');
+			$events->fire('form.before_validate', array($_this->_validate_rules, $data));
 			// Processing of prepared rules
 			$validate_ok = $_this->_validate_rules_process($_this->_validate_rules, $data, $extra);
 			if ($validate_ok) {
@@ -1946,20 +1947,20 @@ class yf_form2 {
 				if (is_callable($on_validate_ok)) {
 					$on_validate_ok($data, $extra, $_this->_validate_rules);
 				}
-				_class('core_events')->fire('form.validate_ok', array($_this->_validate_rules, $data, $extra));
+				$events->fire('form.validate_ok', array($_this->_validate_rules, $data, $extra));
 			} else {
 				$_this->_validate_ok = false;
 				$on_validate_error = isset($extra['on_validate_error']) ? $extra['on_validate_error'] : $_this->_on['on_validate_error'];
 				if (is_callable($on_validate_error)) {
 					$on_validate_error($data, $extra, $_this->_validate_rules);
 				}
-				_class('core_events')->fire('form.validate_error', array($_this->_validate_rules, $data, $extra));
+				$events->fire('form.validate_error', array($_this->_validate_rules, $data, $extra));
 			}
 			$on_after_validate = isset($extra['on_after_validate']) ? $extra['on_after_validate'] : $_this->_on['on_after_validate'];
 			if (is_callable($on_after_validate)) {
 				$on_after_validate($_this->_validate_ok, $_this->_validate_rules, $data, $extra);
 			}
-			_class('core_events')->fire('form.after_validate', array($_this->_validate_ok, $_this->_validate_rules, $data, $extra));
+			$events->fire('form.after_validate', array($_this->_validate_ok, $_this->_validate_rules, $data, $extra));
 			$_this->_validated_fields = $data;
 		};
 		if ($this->_chained_mode) {
@@ -2045,7 +2046,14 @@ class yf_form2 {
 					if (!$is_ok && empty($error_msg)) {
 						$desc = $this->_find_field_desc($name) ?: $name;
 						$error_param = $this->_find_field_desc($param) ?: $param;
-						$error_msg = t('form_validate_'.$func, array('%field' => $desc, '%param' => $error_param));
+						// Search for custom error message, also able to divide error by validate func
+						$error_msg = $this->_find_custom_validate_error($name, $func);
+						if ($error_msg) {
+							$error_msg = str_replace(array('%field', '%param'), array($desc, $error_param), $error_msg);
+						} else {
+							// Default error message
+							$error_msg = t('form_validate_'.$func, array('%field' => $desc, '%param' => $error_param));
+						}
 					}
 				}
 				// In this case we do not track error if field is empty and not required
@@ -2099,6 +2107,31 @@ class yf_form2 {
 			break;
 		}
 		return $desc;
+	}
+
+	/**
+	*/
+	function _find_custom_validate_error($name, $func) {
+		if (!strlen($name)) {
+			return '';
+		}
+		$custom_error = '';
+		foreach ((array)$this->_body as $a) {
+			if (!isset($a['extra']) || !isset($a['extra']['validate_error'])) {
+				continue;
+			}
+			// Now we also support array elements descriptions searching
+			if ($a['extra']['name'] != $name && $a['extra']['name'] != $name.'[]') {
+				continue;
+			}
+			$custom_error = $a['extra']['validate_error'];
+			break;
+		}
+		// Support for separate errors by validate functions
+		if (is_array($custom_error)) {
+			return isset($custom_error[$func]) ? $custom_error[$func] : '';
+		}
+		return $custom_error;
 	}
 
 	/**
