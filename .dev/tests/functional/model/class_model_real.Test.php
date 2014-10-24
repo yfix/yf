@@ -231,6 +231,26 @@ if ($i++ > 3) {
 		$this->assertNull( $some_actors[0]->first_name );
 		unset($some_actors);
 
+		$some_actors = model('actor')->all(1);
+		$this->assertEquals( $raw_some_actors[0], $some_actors[0] );
+		unset($some_actors);
+
+		$some_actors = model('actor')->get(1);
+		$this->assertEquals( $raw_some_actors[0], $some_actors );
+		unset($some_actors);
+
+#		$some_actors = model('actor')->whereid(1)->all();
+#		$this->assertEquals( $raw_some_actors[0], $some_actors[0] );
+#		unset($some_actors);
+
+#		$some_actors = model('actor')->whereid(1)->get();
+#		$this->assertEquals( $raw_some_actors[0], $some_actors );
+#		unset($some_actors);
+
+		$some_actors = model('actor')->where('actor_id < 10')->order_by('actor_id desc')->all();
+		$this->assertEquals( array_reverse($raw_some_actors), $some_actors );
+		unset($some_actors);
+
 #		$all_film_titles_with_actor1 = foreach (model('actor')->find(1)->films() as $film) { echo $film->title; }
 #		$film1_titles_with_actor1 = model('actor')->find(1)->films()->first()->title;
 #		$film1_titles_with_actor1 = foreach (model('actor')->with('films') as $actor) { echo $actor->films()->first()->title; }
