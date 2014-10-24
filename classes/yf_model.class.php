@@ -311,9 +311,15 @@ class yf_model {
 	* Delete matching record(s) from database
 	*/
 	public function delete() {
-// TODO
 		$args = func_get_args();
 		return $this->_query_builder($args ? array('where' => $args) : null)->delete();
+	}
+
+	/**
+	* Soft-deleted records really delete
+	*/
+	public function force_delete() {
+		return call_user_func_array(array($this, 'delete'), func_get_args());
 	}
 
 	/**
@@ -333,16 +339,14 @@ class yf_model {
 	/**
 	* Save model back into database
 	*/
-	public function save($params = array()) {
-// TODO
-		return $this;
+	public function save() {
+		return call_user_func_array(array($this, 'update'), func_get_args());
 	}
 
 	/**
 	* Save data related to model back into database
 	*/
 	public function update($data = array()) {
-// TODO
 		$args = func_get_args();
 		return $this->_query_builder($args ? array('where' => $args) : null)->update($data);
 	}
@@ -351,7 +355,6 @@ class yf_model {
 	* Update only model's timestamps
 	*/
 	public function touch() {
-// TODO
 		$args = func_get_args();
 		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('timestamp' => time()));
 	}
@@ -360,25 +363,14 @@ class yf_model {
 	* Soft-deleting method (non-empty field deleted_at)
 	*/
 	public function soft_delete() {
-// TODO
 		$args = func_get_args();
 		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('is_deleted' => 1));
-	}
-
-	/**
-	* Soft-deleted records really delete
-	*/
-	public function force_delete() {
-// TODO
-		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->delete();
 	}
 
 	/**
 	* Soft-delete restore method
 	*/
 	public function restore() {
-// TODO
 		$args = func_get_args();
 		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('is_deleted' => 0));
 	}
@@ -616,6 +608,13 @@ class yf_model {
 	* Model validation will be here
 	*/
 	public function validate($rules = array(), $params = array()) {
+// TODO
+	}
+
+	/**
+	* Html widget connetion
+	*/
+	public function html($name, $params = array()) {
 // TODO
 	}
 }
