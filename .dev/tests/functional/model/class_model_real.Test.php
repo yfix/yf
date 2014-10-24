@@ -201,7 +201,6 @@ if ($i++ > 3) {
 		$this->assertEquals( $actors_data_objects[1], $second_actor );
 		$this->assertEquals( $raw_second_id, $second_actor->actor_id );
 
-		$some_actors = model('actor')->all('actor_id < 10');
 		$raw_some_actors = array();
 		foreach ($actors_data_objects as $i => $a) {
 			if ($a->actor_id < 10) {
@@ -209,11 +208,28 @@ if ($i++ > 3) {
 			}
 		}
 		$this->assertNotEmpty( $raw_some_actors );
-		$this->assertEquals( $raw_some_actors, $some_actors );
 
+		$some_actors = model('actor')->all('actor_id < 10');
+		$this->assertEquals( $raw_some_actors, $some_actors );
 		unset($some_actors);
+
 		$some_actors = model('actor')->where('actor_id < 10')->all();
 		$this->assertEquals( $raw_some_actors, $some_actors );
+		unset($some_actors);
+
+		$some_actors = model('actor')->where('actor_id < 10')->limit(1)->all();
+		$this->assertEquals( array_slice($raw_some_actors, 0, 1, true), $some_actors );
+		unset($some_actors);
+
+		$some_actors = model('actor')->where('actor_id < 10')->limit(1,1)->all();
+		$this->assertEquals( current(array_slice($raw_some_actors, 1, 1, true)), current($some_actors) );
+		$this->assertNotNull( $some_actors[0]->first_name );
+		unset($some_actors);
+
+		$some_actors = model('actor')->where('actor_id < 10')->select('actor_id')->limit(0,1)->all();
+		$this->assertEquals( $raw_some_actors[0]->actor_id, $some_actors[0]->actor_id );
+		$this->assertNull( $some_actors[0]->first_name );
+		unset($some_actors);
 
 #		$all_film_titles_with_actor1 = foreach (model('actor')->find(1)->films() as $film) { echo $film->title; }
 #		$film1_titles_with_actor1 = model('actor')->find(1)->films()->first()->title;
