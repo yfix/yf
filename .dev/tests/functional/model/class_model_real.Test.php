@@ -251,6 +251,15 @@ if ($i++ > 3) {
 		$this->assertEquals( array_reverse($raw_some_actors), $some_actors );
 		unset($some_actors);
 
+#		$some_actors = model('actor')->all(array('where' => 'actor_id < 10', 'order_by' => 'actor_id desc'));
+#		$this->assertEquals( array_reverse($raw_some_actors), $some_actors );
+#		unset($some_actors);
+
+		$all_actors_having_films = model('actor')->has('films')->all();
+#print_r($all_actors_having_films);
+#		$this->assertEquals( array_reverse($raw_some_actors), $some_actors );
+#		unset($some_actors);
+
 #		$all_film_titles_with_actor1 = foreach (model('actor')->find(1)->films() as $film) { echo $film->title; }
 #		$film1_titles_with_actor1 = model('actor')->find(1)->films()->first()->title;
 #		$film1_titles_with_actor1 = foreach (model('actor')->with('films') as $actor) { echo $actor->films()->first()->title; }
