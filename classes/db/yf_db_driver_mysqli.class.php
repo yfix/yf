@@ -4,7 +4,9 @@ load('db_driver', 'framework', 'classes/db/');
 class yf_db_driver_mysqli extends yf_db_driver {
 
 	/** @var @conf_skip */
-	public $db_connect_id		= null;
+	public $db_connect_id	= null;
+	/** @var string */
+	public $SQL_MODE		= '';
 
 	/**
 	*/
@@ -47,6 +49,8 @@ class yf_db_driver_mysqli extends yf_db_driver {
 		if (!$is_connected) {
 			$this->_connect_error = 'cannot_connect_to_server';
 			return false;
+		} else {
+			$this->query('SET SQL_MODE="'.$this->real_escape_string($this->SQL_MODE).'"');
 		}
 		if ($this->params['name'] != '') {
 			$dbselect = $this->select_db($this->params['name']);
