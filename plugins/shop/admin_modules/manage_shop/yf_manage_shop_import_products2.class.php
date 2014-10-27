@@ -248,8 +248,8 @@ class yf_manage_shop_import_products2 {
 	protected function _save_csv( $file_name, $data = null ) {
 		if( is_array( $data ) && ( $file = fopen( $file_name, 'w' ) ) !== FALSE ) {
 			foreach( $data as $id => $item ) {
-				$data = array_values( $item );
-				$result = fputcsv( $file, $data, ';' );
+				$_data = array_values( $item );
+				$result = fputcsv( $file, $_data, ';' );
 				if( false === $result ) { return( $result ); }
 			}
 			fclose( $file );
