@@ -333,11 +333,14 @@ class yf_model {
 	* Save data related to model back into database
 	*/
 	public function update($data = array()) {
+		if (empty($data)) {
+		}
 		$args = func_get_args();
 		return $this->_query_builder($args ? array('where' => $args) : null)->update($data);
 	}
 
 	/**
+	* Internal method
 	*/
 	public function _add_relation(array $params) {
 		$data = array(
