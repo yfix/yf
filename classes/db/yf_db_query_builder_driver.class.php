@@ -150,6 +150,67 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Insert array of values into table
+	*/
+	function compile_insert($table, $data, $replace = false, $ignore = false, $on_duplicate_key_update = false) {
+		if (!strlen($table) || !is_array($data)) {
+			return false;
+		}
+		if (is_string($replace)) {
+			$replace = false;
+		}
+		$values_array = array();
+		// Try to check if array is two-dimensional
+		foreach ((array)$data as $cur_row) {
+			$is_multiple = is_array($cur_row) ? 1 : 0;
+			break;
+		}
+		$cols = array();
+		if ($is_multiple) {
+			foreach ((array)$data as $cur_row) {
+				if (empty($cols)) {
+					$cols = array_keys($cur_row);
+				}
+				// This method ensures that SQL will consist of same key=value pairs, even if in some sub-array they will be missing
+				foreach ((array)$cols as $col) {
+					$cur_values[$col] = $cur_row[$col];
+				}
+				$values_array[] = '('.implode(', ', $this->_escape_val($cur_values)).PHP_EOL.')';
+			}
+		} elseif (count($data)) {
+			$cols	= array_keys($data);
+			$values = array_values($data);
+			foreach ((array)$values as $k => $v) {
+				$values[$k] = $this->_escape_val($v);
+			}
+			$values_array[] = '('.implode(', ', $values).PHP_EOL.')';
+		}
+		foreach ((array)$cols as $k => $v) {
+			unset($cols[$k]);
+			$cols[$v] = $this->_escape_key($v);
+		}
+		$sql = '';
+		if (count($cols) && count($values_array)) {
+			$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '')
+				.' INTO '.$this->_escape_table_name($table).PHP_EOL
+				.' ('.implode(', ', $cols).') VALUES '
+				.PHP_EOL.implode(', ', $values_array);
+			if ($on_duplicate_key_update) {
+				$sql .= PHP_EOL.' ON DUPLICATE KEY UPDATE ';
+				$tmp = array();
+				foreach ((array)$cols as $col => $col_escaped) {
+					if ($col == 'id') {
+						continue;
+					}
+					$tmp[] = $col_escaped.' = VALUES('.$col_escaped.')';
+				}
+				$sql .= implode(', ', $tmp);
+			}
+		}
+		return $sql ?: false;
+	}
+
+	/**
 	*/
 	function insert($table, array $data, $params = array()) {
 // TODO
