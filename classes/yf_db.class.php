@@ -1483,21 +1483,23 @@ class yf_db {
 	*/
 	function _instrument_query($query_sql = '', $keys = array('request_id', 'session_id', 'SESSION_user_id', 'GET_object', 'GET_action')) {
 		$query_header = '';
-		if ($query_sql) {
-			// the first frame is the original caller
-			$frame = array_pop(debug_backtrace());
-			// Add the PHP source location
-			$query_header = '-- File: '.$frame['file']."\t".'Line: '.$frame['line']."\t".'Function: '.$frame['function']."\t";
-			foreach ((array)$keys as $x => $key) {
-				$val = $this->_get_debug_item($key);
-				if($val) {
-					$val = str_replace(array("\t","\n","\0"), '', $val);
-					// all other chars are safe in comments
-					$key = strtolower(str_replace(array(': ',"\t","\n","\0"), '', $key));
-					// Add the requested instrumentation keys
-					$query_header .= "\t".$key.': '.$val;
-				}
+		if (!$query_sql) {
+			return '';
+		}
+		// the first frame is the original caller
+		$frame = array_pop(debug_backtrace());
+		// Add the PHP source location
+		$query_header = '-- File: '.$frame['file']."\t".'Line: '.$frame['line']."\t".'Function: '.$frame['function']."\t";
+		foreach ((array)$keys as $x => $key) {
+			$val = $this->_get_debug_item($key);
+			if (!$val) {
+				continue;
 			}
+			$val = str_replace(array("\t","\n","\0"), '', $val);
+			// all other chars are safe in comments
+			$key = strtolower(str_replace(array(': ',"\t","\n","\0"), '', $key));
+			// Add the requested instrumentation keys
+			$query_header .= "\t".$key.': '.$val;
 		}
 		return $query_header. PHP_EOL. $query_sql;
 	}
