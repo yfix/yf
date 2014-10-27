@@ -231,6 +231,7 @@ class yf_model {
 
 	/**
 	* Search for model data, according to args array, returning first record
+	* Usuallly get by primary key, but possible to use complex conditions.
 	*/
 	public function find() {
 		$args = func_get_args();
@@ -239,24 +240,31 @@ class yf_model {
 	}
 
 	/**
-	* Alias for first
+	* Alias for find
 	*/
 	public function one() {
 		return call_user_func_array(array($this, 'find'), func_get_args());
 	}
 
 	/**
-	* Alias for first
+	* Get first record ordered by the primary key
 	*/
 	public function first() {
-		return call_user_func_array(array($this, 'find'), func_get_args());
+#		return call_user_func_array(array($this, 'find'), func_get_args());
 	}
 
 	/**
-	* Alias for first
+	* Get last record ordered by the primary key
+	*/
+	public function last() {
+#		return call_user_func_array(array($this, 'find'), func_get_args());
+	}
+
+	/**
+	* Just get one row from resultset
 	*/
 	public function get() {
-		return call_user_func_array(array($this, 'find'), func_get_args());
+#		return call_user_func_array(array($this, 'find'), func_get_args());
 	}
 
 	/**
