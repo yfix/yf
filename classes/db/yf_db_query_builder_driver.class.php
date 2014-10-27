@@ -275,6 +275,86 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	*/
+	function update_batch($table, $data, $index = null, $only_sql = false, $params = array()) {
+		if (!$index) {
+			$index = 'id';
+		}
+		if (!strlen($table) || !$data || !is_array($data) || !$index) {
+			return false;
+		}
+		$this->_set_update_batch($data, $index);
+		if (count($this->_qb_set) === 0) {
+			return false;
+		}
+		$affected_rows = 0;
+		$records_at_once = 100;
+		$out = '';
+		for ($i = 0, $total = count($this->_qb_set); $i < $total; $i += $records_at_once) {
+			$_data = array_slice($this->_qb_set, $i, $records_at_once);
+			$sql = $this->_update_batch($table, $_data, $index);
+			if (is_callable($params['split_callback'])) {
+				$callback = $params['split_callback'];
+				$callback($_data);
+			}
+			if ($only_sql) {
+				$out .= $sql.';'.PHP_EOL;
+			} else {
+				$this->db->query($sql);
+				$affected_rows += $this->db->affected_rows();
+			}
+		}
+		$this->_qb_set = array();
+		if ( ! $only_sql) {
+			$out = $affected_rows;
+		}
+		return $out;
+	}
+
+	/**
+	*/
+	function _update_batch($table, $values, $index) {
+		$index = $this->_escape_key($index);
+		$ids = array();
+		foreach ((array)$values as $key => $val) {
+			$ids[] = $val[$index];
+			foreach (array_keys($val) as $field) {
+				if ($field !== $index) {
+					$final[$field][] = 'WHEN '.$index.' = '.$val[$index].' THEN '.$val[$field];
+				}
+			}
+		}
+		$cases = '';
+		foreach ((array)$final as $k => $v) {
+			$cases .= $k.' = CASE '.PHP_EOL. implode(PHP_EOL, $v). PHP_EOL. 'ELSE '.$k.' END, ';
+		}
+		return 'UPDATE '.$this->_escape_table_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
+	}
+
+	/**
+	*/
+	function _set_update_batch($key, $index = '') {
+		if ( ! is_array($key)) {
+			return false;
+		}
+		foreach ((array)$key as $k => $v) {
+			$index_set = FALSE;
+			$clean = array();
+			foreach ((array)$v as $k2 => $v2) {
+				if ($k2 === $index)	{
+					$index_set = TRUE;
+				}
+				$clean[$this->_escape_key($k2)] = $this->_escape_val($v2);
+			}
+			if ($index_set === FALSE) {
+				//return $this->display_error('db_batch_missing_index');
+				return false;
+			}
+			$this->_qb_set[] = $clean;
+		}
+	}
+
+	/**
 	* Counting number of records inside requested recordset
 	*/
 	function count() {
