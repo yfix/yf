@@ -1523,74 +1523,14 @@ class yf_db {
 		if (!strlen($table) || !$data || !is_array($data) || !$index) {
 			return false;
 		}
-		$this->_set_update_batch($data, $index);
-		if (count($this->qb_set) === 0) {
-			return false;
-		}
-		$affected_rows = 0;
-		$records_at_once = 100;
-		$out = '';
-		for ($i = 0, $total = count($this->qb_set); $i < $total; $i += $records_at_once) {
-			$sql = $this->_update_batch($table, array_slice($this->qb_set, $i, $records_at_once), $index);
-			if ($only_sql) {
-				$out .= $sql.';'.PHP_EOL;
-			} else {
-				$this->query($sql);
-				$affected_rows += $this->affected_rows();
-			}
-		}
-		$this->qb_set = array();
-		if ( ! $only_sql) {
-			$out = $affected_rows;
-		}
-		return $out;
-	}
-
-	/**
-	*/
-	function _update_batch($table, $values, $index) {
-		$index = $this->escape_key($index);
-		$ids = array();
-		foreach ((array)$values as $key => $val) {
-			$ids[] = $val[$index];
-			foreach (array_keys($val) as $field) {
-				if ($field !== $index) {
-					$final[$field][] = 'WHEN '.$index.' = '.$val[$index].' THEN '.$val[$field];
-				}
-			}
-		}
-		$cases = '';
-		foreach ((array)$final as $k => $v) {
-			$cases .= $k.' = CASE '.PHP_EOL. implode(PHP_EOL, $v). PHP_EOL. 'ELSE '.$k.' END, ';
-		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
-			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $values, 'index' => $index));
+			$_this = $this;
+			$fname = __FUNCTION__;
+			$params['slice_callback'] = function($_data) use ($_this, $fname, $table, $index) {
+				$_this->_save_query_revision($fname, $table, array('data' => $_data, 'index' => $index));
+			};
 		}
-		return 'UPDATE '.$this->_escape_table_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
-	}
-
-	/**
-	*/
-	function _set_update_batch($key, $index = '') {
-		if ( ! is_array($key)) {
-			return false;
-		}
-		foreach ((array)$key as $k => $v) {
-			$index_set = FALSE;
-			$clean = array();
-			foreach ((array)$v as $k2 => $v2) {
-				if ($k2 === $index)	{
-					$index_set = TRUE;
-				}
-				$clean[$this->escape_key($k2)] = $this->escape_val($v2);
-			}
-			if ($index_set === FALSE) {
-				//return $this->display_error('db_batch_missing_index');
-				return false;
-			}
-			$this->qb_set[] = $clean;
-		}
-		return $this;
+		return $this->query_builder()->update_batch($table, $data, $index, $only_sql, $params);
 	}
 
 	/**
