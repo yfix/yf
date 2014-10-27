@@ -1271,7 +1271,7 @@ class yf_db {
 	* Add query to shutdown array
 	*/
 	function _add_shutdown_query($sql = '') {
-		if (empty($sql)) {
+		if (empty($sql) || strlen($sql) < 5) {
 			return false;
 		}
 		// If shutdown execution is disabled - then execute this query immediatelly
@@ -1292,7 +1292,9 @@ class yf_db {
 			return false;
 		}
 		foreach ((array)$this->_SHUTDOWN_QUERIES as $sql) {
-			$this->query($sql);
+			if (is_string($sql) && strlen($sql) > 5) {
+				$this->query($sql);
+			}
 		}
 		// Prevent executing this method more than once
 		$this->_shutdown_executed = true;
