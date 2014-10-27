@@ -338,110 +338,131 @@ class yf_model {
 	}
 
 	/**
+	*/
+	public function _add_relation(array $params) {
+		$data = array(
+			'model'			=> $params['model'],
+			'type'			=> $params['type'],
+			'foreign_key'	=> $params['foreign_key'],
+			'local_key'		=> $params['local_key'],
+			'pivot_table'	=> $params['pivot_table'],
+			'through_model'	=> $params['through_model'],
+		);
+		foreach ($data as $k => $v) {
+			if (empty($v)) {
+				unset($data[$k]);
+			}
+		}
+		$relation_key = implode(':', array_keys($data));
+		$this->_relations[$relation_key] = $data;
+		return $this;
+	}
+
+	/**
 	* Relation one-to-one
 	*/
 	public function has_one($model, $foreign_key = '', $local_key = '') {
-		$this->_relations[__FUNCTION__.':'.$model.':'.$foreign_key.':'.$local_key] = array(
+		return $this->_add_relation(array(
 			'type'			=> __FUNCTION__,
 			'model'			=> $model,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
-		);
-		return $this;
+		));
 	}
 
 	/**
 	* Relation one-to-one inversed
 	*/
 	public function belongs_to($model, $local_key = '', $foreign_key = '') {
-		$this->_relations[__FUNCTION__.':'.$model.':'.$local_key.':'.$foreign_key] = array(
+		return $this->_add_relation(array(
 			'type'			=> __FUNCTION__,
 			'model'			=> $model,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
-		);
-		return $this;
+		));
 	}
 
 	/**
 	* Relation one-to-many
 	*/
 	public function has_many($model, $foreign_key = '', $local_key = '') {
-		$this->_relations[__FUNCTION__.':'.$model.':'.$foreign_key.':'.$local_key] = array(
+		return $this->_add_relation(array(
 			'type'			=> __FUNCTION__,
 			'model'			=> $model,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
-		);
-		return $this;
+		));
 	}
 
 	/**
 	* Relation many-to-many
 	*/
 	public function belongs_to_many($model, $pivot_table = '', $local_key = '', $foreign_key = '') {
-		$this->_relations[__FUNCTION__.':'.$model.':'.$pivot_table.':'.$foreign_key.':'.$local_key] = array(
+		return $this->_add_relation(array(
 			'type'			=> __FUNCTION__,
 			'model'			=> $model,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
 			'pivot_table'	=> $pivot_table,
-		);
-		return $this;
+		));
 	}
 
 	/**
 	* Relation distant through other model
 	*/
 	public function has_many_through($model, $through_model, $local_key = '', $foreign_key = '') {
-		$this->_relations[__FUNCTION__.':'.$model.':'.$through_model.':'.$local_key.':'.$foreign_key] = array(
+		return $this->_add_relation(array(
 			'type'			=> __FUNCTION__,
 			'model'			=> $model,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
 			'through_model'	=> $through_model,
-		);
-		return $this;
+		));
 	}
 
 	/**
 	* Relation polymorphic one-to-many
 	*/
 	public function morph_to() {
+		return $this->_add_relation(array(
+		));
 // TODO
-		return $this;
 	}
 
 	/**
 	* Relation polymorphic one-to-many
 	*/
 	public function morph_many($model, $method) {
+		return $this->_add_relation(array(
+		));
 // TODO
-		return $this;
 	}
 
 	/**
 	* Relation polymorphic many-to-many
 	*/
 	public function morph_to_many($model, $method) {
+		return $this->_add_relation(array(
+		));
 // TODO
-		return $this;
 	}
 
 	/**
 	* Relation polymorphic many-to-many
 	*/
 	public function morphed_by_many($model, $method) {
+		return $this->_add_relation(array(
+		));
 // TODO
-		return $this;
 	}
 
 	/**
 	* Associate here means to auotmatically create foreign key on child model
 	*/
 	public function associate($model_instance) {
+		return $this->_add_relation(array(
+		));
 // TODO
-		return $this;
 	}
 
 	/**
