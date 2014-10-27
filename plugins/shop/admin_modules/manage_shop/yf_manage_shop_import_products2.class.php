@@ -248,7 +248,9 @@ class yf_manage_shop_import_products2 {
 	}
 
 	protected function _fputcsv( $file, array $fields, $delimiter = ',', $enclosure = '"', $mysql_null = false ) {
-		// $result = fputcsv( $file, $_data, ';' );
+		$result = fputcsv( $file, $fields, $delimiter, $enclosure );
+		return( $result );
+		// alt method
 		$delimiter_esc = preg_quote( $delimiter, '/' );
 		$enclosure_esc = preg_quote( $enclosure, '/' );
 		$output = array();
@@ -265,6 +267,7 @@ class yf_manage_shop_import_products2 {
 	}
 
 	protected function _save_csv( $file_name, $data = null ) {
+		setlocale( LC_ALL, 'ru_UA.utf8' ) || setlocale( LC_ALL, 'en_US.utf8' );
 		if( is_array( $data ) && ( $file = fopen( $file_name, 'w' ) ) !== FALSE ) {
 			foreach( $data as $id => $item ) {
 				$_data = array_values( $item );
