@@ -235,9 +235,9 @@ if ($i++ > 3) {
 		$this->assertEquals( $raw_some_actors[0], $some_actors[0] );
 		unset($some_actors);
 
-#		$some_actors = model('actor')->get(1);
-#		$this->assertEquals( $raw_some_actors[0], $some_actors );
-#		unset($some_actors);
+		$some_actors = model('actor')->get(1);
+		$this->assertEquals( $raw_some_actors[0], $some_actors );
+		unset($some_actors);
 
 #		$some_actors = model('actor')->whereid(1)->all();
 #		$this->assertEquals( $raw_some_actors[0], $some_actors[0] );
@@ -267,6 +267,20 @@ if ($i++ > 3) {
 		foreach ($actors_data as $arr) {
 			$actors_data_objects[] = (object)$arr;
 		}
+
+		$raw_first_id = $actors_data[0]['actor_id'];
+		$this->assertNotEmpty( $raw_first_id );
+		$first_actor = model('actor')->find($raw_first_id);
+		$new_name = 'some new name';
+		$this->assertNotEmpty( $first_actor->first_name );
+		$this->assertNotEquals( $first_actor->first_name, $new_name );
+		$first_actor->first_name = $new_name;
+#		$first_actor->save();
+		$this->assertEquals( $first_actor->first_name, $new_name );
+
+		$first_actor_copy = model('actor')->find($raw_first_id);
+		$this->assertNotEquals( $first_actor, $first_actor_copy );
+#		$this->assertEquals( $first_actor_copy->first_name, $new_name );
 	}
 
 	/**
