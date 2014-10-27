@@ -109,10 +109,13 @@ class yf_i18n {
 		conf('language', $this->CUR_LOCALE);
 		$this->CUR_CHARSET = conf('charset');
 		$lc_all = array(
-			strtolower($this->CUR_LOCALE),
-			strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_LOCALE),
 			strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_LOCALE).'.'.$this->CUR_CHARSET,
+			strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_LOCALE),
+			strtolower($this->CUR_LOCALE),
 			strtolower(conf('languages::'.$this->CUR_LOCALE.'::name')),
+			'en_US.utf-8',
+			'en_US',
+			'en',
 		);
 		if (DEBUG_MODE) {
 			debug('locale::default', array(
@@ -124,11 +127,25 @@ class yf_i18n {
 				'LC_TIME'		=> setlocale(LC_TIME, 0), // for date and time formatting with strftime()
 				'LC_MESSAGES'	=> setlocale(LC_MESSAGES, 0), // for system responses (available if PHP was compiled with libintl)
 			));
-			debug('locale::yf', array('LC_ALL' => $lc_all));
+			debug('locale::variants', array('LC_ALL' => $lc_all));
 		}
 		// Try to set PHP's locale (provide several possible values)
-		setlocale(LC_ALL, $lc_all);
-
+		$success = setlocale(LC_ALL, $lc_all);
+// TODO: check $success
+		if (DEBUG_MODE) {
+			debug('locale::current', array(
+				'LC_ALL'		=> setlocale(LC_ALL, 0),
+				'LC_COLLATE'	=> setlocale(LC_COLLATE, 0),
+				'LC_CTYPE'		=> setlocale(LC_CTYPE, 0),
+				'LC_MONETARY'	=> setlocale(LC_MONETARY, 0),
+				'LC_NUMERIC'	=> setlocale(LC_NUMERIC, 0),
+				'LC_TIME'		=> setlocale(LC_TIME, 0),
+				'LC_MESSAGES'	=> setlocale(LC_MESSAGES, 0),
+			));
+			$sys_locale = '';
+			exec('locale -a', $sys_locale);
+			debug('locale::system', $sys_locale);
+		}
 	}
 
 	/**
