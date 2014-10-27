@@ -108,13 +108,27 @@ class yf_i18n {
 		conf('charset', !empty($charset) ? $charset : $this->CUR_CHARSET);
 		conf('language', $this->CUR_LOCALE);
 		$this->CUR_CHARSET = conf('charset');
-		// Try to set PHP's locale (provide several possible values)
-		setlocale(LC_ALL, array(
+		$lc_all = array(
 			strtolower($this->CUR_LOCALE),
 			strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_LOCALE),
 			strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_LOCALE).'.'.$this->CUR_CHARSET,
 			strtolower(conf('languages::'.$this->CUR_LOCALE.'::name')),
-		));
+		);
+		if (DEBUG_MODE) {
+			debug('locale::default', array(
+				'LC_ALL'		=> setlocale(LC_ALL, 0), // for all of the below
+				'LC_COLLATE'	=> setlocale(LC_COLLATE, 0), // for string comparison, see strcoll()
+				'LC_CTYPE'		=> setlocale(LC_CTYPE, 0), // for character classification and conversion, for example strtoupper()
+				'LC_MONETARY'	=> setlocale(LC_MONETARY, 0), // for localeconv()
+				'LC_NUMERIC'	=> setlocale(LC_NUMERIC, 0), // for decimal separator (See also localeconv())
+				'LC_TIME'		=> setlocale(LC_TIME, 0), // for date and time formatting with strftime()
+				'LC_MESSAGES'	=> setlocale(LC_MESSAGES, 0), // for system responses (available if PHP was compiled with libintl)
+			));
+			debug('locale::yf', array('LC_ALL' => $lc_all));
+		}
+		// Try to set PHP's locale (provide several possible values)
+		setlocale(LC_ALL, $lc_all);
+
 	}
 
 	/**
