@@ -250,21 +250,27 @@ class yf_model {
 	* Get first record ordered by the primary key
 	*/
 	public function first() {
-#		return call_user_func_array(array($this, 'find'), func_get_args());
+		$args = func_get_args();
+		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => ':pk asc', 'limit' => 1) : null)->get();
+		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
 	* Get last record ordered by the primary key
 	*/
 	public function last() {
-#		return call_user_func_array(array($this, 'find'), func_get_args());
+		$args = func_get_args();
+		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => ':pk desc', 'limit' => 1) : null)->get();
+		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
 	* Just get one row from resultset
 	*/
 	public function get() {
-#		return call_user_func_array(array($this, 'find'), func_get_args());
+		$args = func_get_args();
+		$result = $this->_query_builder($args ? array('where' => $args) : null)->get();
+		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
@@ -295,7 +301,7 @@ class yf_model {
 	*/
 	public function first_or_create() {
 		$args = func_get_args();
-		$data = (object) $this->_query_builder($args ? array('where' => $args) : null)->get();
+		$data = call_user_func_array(array($this, 'first'), $args);
 		if (empty($data)) {
 			$insert_ok = $this->_query_builder($args ? array('where' => $args) : null)->insert();
 			$insert_id = $insert_ok ? $this->_db->insert_id() : 0;
@@ -303,7 +309,7 @@ class yf_model {
 				$data = $this->find($insert_id);
 			}
 		}
-		return $data;
+		return $data ? (object)$data : new stdClass;
 	}
 
 	/**
@@ -313,35 +319,6 @@ class yf_model {
 		$args = func_get_args();
 		$insert_ok = $this->_query_builder($args ? array('where' => $args) : null)->insert($this->_get_current_data());
 		return $this;
-	}
-
-	/**
-	* Delete matching record(s) from database
-	*/
-	public function delete() {
-		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->delete();
-	}
-
-	/**
-	* Soft-deleted records really delete
-	*/
-	public function force_delete() {
-		return call_user_func_array(array($this, 'delete'), func_get_args());
-	}
-
-	/**
-	* Determine if the model or a given attribute has been modified.
-	*/
-	public function is_dirty($attr = null) {
-		return $attr ? isset($this->_dirty_attrs[$attr]) : !empty($this->_dirty_attrs);
-	}
-
-	/**
-	* Get the attributes that have been changed since last sync.
-	*/
-	public function get_dirty($attr = null) {
-		return $this->_dirty_attrs;
 	}
 
 	/**
@@ -357,55 +334,6 @@ class yf_model {
 	public function update($data = array()) {
 		$args = func_get_args();
 		return $this->_query_builder($args ? array('where' => $args) : null)->update($data);
-	}
-
-	/**
-	* Update only model's timestamps
-	*/
-	public function touch() {
-		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('timestamp' => time()));
-	}
-
-	/**
-	* Soft-deleting method (non-empty field deleted_at)
-	*/
-	public function soft_delete() {
-		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('is_deleted' => 1));
-	}
-
-	/**
-	* Soft-delete restore method
-	*/
-	public function restore() {
-		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('is_deleted' => 0));
-	}
-
-	/**
-	* Soft-deleted records matching method
-	*/
-	public function with_trashed() {
-// TODO
-		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->where('is_deleted = 1');
-	}
-
-	/**
-	* Detecmine if current model instance has been soft deleted
-	*/
-	public function trashed() {
-// TODO
-		return $this;
-	}
-
-	/**
-	* Needed for scope call
-	*/
-	public function of_type($scope) {
-// TODO
-		return $this;
 	}
 
 	/**
@@ -533,6 +461,84 @@ class yf_model {
 	* }
 	*/
 	public function with($model) {
+// TODO
+		return $this;
+	}
+
+	/**
+	* Delete matching record(s) from database
+	*/
+	public function delete() {
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->delete();
+	}
+
+	/**
+	* Soft-deleted records really delete
+	*/
+	public function force_delete() {
+		return call_user_func_array(array($this, 'delete'), func_get_args());
+	}
+
+	/**
+	* Determine if the model or a given attribute has been modified.
+	*/
+	public function is_dirty($attr = null) {
+		return $attr ? isset($this->_dirty_attrs[$attr]) : !empty($this->_dirty_attrs);
+	}
+
+	/**
+	* Get the attributes that have been changed since last sync.
+	*/
+	public function get_dirty($attr = null) {
+		return $this->_dirty_attrs;
+	}
+
+	/**
+	* Update only model's timestamps
+	*/
+	public function touch() {
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('timestamp' => time()));
+	}
+
+	/**
+	* Soft-deleting method (non-empty field deleted_at)
+	*/
+	public function soft_delete() {
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('is_deleted' => 1));
+	}
+
+	/**
+	* Soft-delete restore method
+	*/
+	public function restore() {
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('is_deleted' => 0));
+	}
+
+	/**
+	* Soft-deleted records matching method
+	*/
+	public function with_trashed() {
+// TODO
+		$args = func_get_args();
+		return $this->_query_builder($args ? array('where' => $args) : null)->where('is_deleted = 1');
+	}
+
+	/**
+	* Detecmine if current model instance has been soft deleted
+	*/
+	public function trashed() {
+// TODO
+		return $this;
+	}
+
+	/**
+	* Needed for scope call
+	*/
+	public function of_type($scope) {
 // TODO
 		return $this;
 	}
