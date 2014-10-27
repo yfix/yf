@@ -758,21 +758,7 @@ class yf_db {
 		if (empty($table) || empty($data) || empty($where)) {
 			return false;
 		}
-		// $where contains numeric id
-		if (is_numeric($where)) {
-			$where = 'id='.intval($where);
-		}
-		$tmp_data = array();
-		foreach ((array)$data as $k => $v) {
-			if (empty($k)) {
-				continue;
-			}
-			$tmp_data[$k] = $this->escape_key($k).' = '.$this->escape_val($v);
-		}
-		$sql = '';
-		if (count($tmp_data)) {
-			$sql = 'UPDATE '.$this->_escape_table_name($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
-		}
+		$sql = $this->query_builder()->compile_update($table, $data, $where, $_only_sql = true, $extra);
 		if (!$sql) {
 			return false;
 		}
