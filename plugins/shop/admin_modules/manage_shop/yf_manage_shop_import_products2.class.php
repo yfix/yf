@@ -211,6 +211,7 @@ class yf_manage_shop_import_products2 {
 
 	protected function _load_csv( $file_name ) {
 		ini_set( 'auto_detect_line_endings', TRUE );
+		setlocale( LC_ALL, 'ru_UA.utf8' ) || setlocale( LC_ALL, 'en_US.utf8' );
 		if( is_readable( $file_name ) && ( $file = fopen( $file_name, 'r' ) ) !== FALSE ) {
 			$result = array();
 			while( ( $item = fgetcsv( $file, 4096, ';' ) ) !== FALSE ) {
