@@ -210,9 +210,10 @@ class yf_manage_shop_import_products2 {
 	}
 
 	protected function _load_csv( $file_name ) {
+		ini_set( 'auto_detect_line_endings', TRUE );
 		if( is_readable( $file_name ) && ( $file = fopen( $file_name, 'r' ) ) !== FALSE ) {
 			$result = array();
-			while( ( $item = fgetcsv( $file, 1000, ';' ) ) !== FALSE ) {
+			while( ( $item = fgetcsv( $file, 4096, ';' ) ) !== FALSE ) {
 				$result[] = $item;
 			}
 			fclose( $file );
@@ -245,11 +246,28 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
+	protected function _fputcsv( $file, array $fields, $delimiter = ',', $enclosure = '"', $mysql_null = false ) {
+		// $result = fputcsv( $file, $_data, ';' );
+		$delimiter_esc = preg_quote( $delimiter, '/' );
+		$enclosure_esc = preg_quote( $enclosure, '/' );
+		$output = array();
+		foreach( $fields as $field ) {
+			if( $field === null && $mysql_null ) {
+				$output[] = 'NULL';
+				continue;
+			}
+			$output[] = preg_match( "/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field ) ?
+				( $enclosure . str_replace( $enclosure, $enclosure . $enclosure, $field ) . $enclosure ) : $field;
+		}
+		$result = fwrite($file, join($delimiter, $output) . "\n");
+		return( $result );
+	}
+
 	protected function _save_csv( $file_name, $data = null ) {
 		if( is_array( $data ) && ( $file = fopen( $file_name, 'w' ) ) !== FALSE ) {
 			foreach( $data as $id => $item ) {
 				$_data = array_values( $item );
-				$result = fputcsv( $file, $_data, ';' );
+				$result = $this->_fputcsv( $file, $_data, ';' );
 				if( false === $result ) { return( $result ); }
 			}
 			fclose( $file );
@@ -1032,16 +1050,18 @@ class yf_manage_shop_import_products2 {
 		// get fields, keys
 		$fields_by_name = array_flip( $fields );
 		unset( $fields_by_name[ 0 ] );
-		$fields_keys   = $fields_by_name;
-		$fields_values = $fields_by_name;
+		$fields_keys      = $fields_by_name;
+		$fields_values    = $fields_by_name;
+		$sql_item_default = array(
+			'status' => 1,
+			'active' => 1,
+		);
 		if( $action == 'update' ) {
 			foreach( $fields_keys as $name => $key ) {
 				if( !$keys[ $key ] ) { unset( $fields_keys[ $name ] ); }
 				else { unset( $fields_values[ $name ] ); }
 			}
-			$sql_item_default = array();
 		} elseif( $action == 'insert' ) {
-			$sql_item_default = array();
 			// add supplier_id
 			if( !empty( $supplier_id ) ) {
 				$sql_item_default[ 'supplier_id' ] = (int)$supplier_id;
