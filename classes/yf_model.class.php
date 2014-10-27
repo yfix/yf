@@ -240,10 +240,11 @@ class yf_model {
 	}
 
 	/**
-	* Alias for find
+	* Return first column from first row from resultset
 	*/
 	public function one() {
-		return call_user_func_array(array($this, 'find'), func_get_args());
+		$data = call_user_func_array(array($this, 'find'), func_get_args());
+		return is_array($data) ? current($data) : null;
 	}
 
 	/**
