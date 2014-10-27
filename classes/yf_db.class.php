@@ -240,25 +240,7 @@ class yf_db {
 		}
 		$this->_connect_start_time = microtime(true);
 		if (!$params['reconnect']) {
-			$this->DB_HOST = ($params['host'] ?: $db_host) ?: (defined('DB_HOST') ? DB_HOST : 'localhost');
-			$this->DB_USER = ($params['user'] ?: $db_user) ?: (defined('DB_USER') ? DB_USER : 'root');
-			// db_pswd can be empty string
-			$_db_pswd = isset($params['pswd']) ? $params['pswd'] : $db_pswd;
-			$this->DB_PSWD = !is_null($_db_pswd) ? $_db_pswd : (defined('DB_PSWD') ? DB_PSWD : '');
-			// db_name can be empty string - means we working in special mode, just connecting to server
-			$_db_name = isset($params['name']) ? $params['name'] : $db_name;
-			$this->DB_NAME = !is_null($_db_name) ? $_db_name : (defined('DB_NAME') ? DB_NAME : '');
-			$this->DB_PORT = ($params['port'] ?: $db_port) ?: (defined('DB_PORT') ? DB_PORT : '');
-			$this->DB_SOCKET = ($params['socket'] ?: $db_socket) ?: (defined('DB_SOCKET') ? DB_SOCKET : '');
-			$this->DB_SSL = ($params['ssl'] ?: $db_ssl) ?: (defined('DB_SSL') ? DB_SSL : false);
-			$this->DB_CHARSET = ($params['charset'] ?: $db_charset) ?: (defined('DB_CHARSET') ? DB_CHARSET : '');
-			if (isset($params['prefix'])) {
-				$this->DB_PREFIX = $params['prefix'];
-			}
-			$allow_auto_create_db = isset($params['auto_create_db']) ? $params['auto_create_db'] : $allow_auto_create_db;
-			if (!is_null($allow_auto_create_db)) {
-				$this->ALLOW_AUTO_CREATE_DB	= $allow_auto_create_db;
-			}
+			$this->_set_connect_params($db_host, $db_user, $db_pswd, $db_name, $force, $params);
 		}
 		$driver_class_name = main()->load_class_file('db_driver_'. $this->DB_TYPE, $this->DB_DRIVERS_DIR);
 		// Create new instanse of the driver class
@@ -274,18 +256,7 @@ class yf_db {
 					}
 				}
 			}
-			$driver_params = array(
-				'host'		=> $this->DB_HOST,
-				'user'		=> $this->DB_USER,
-				'pswd'		=> $this->DB_PSWD,
-				'name'		=> $this->DB_NAME,
-				'persist'	=> $this->DB_PERSIST,
-				'ssl'		=> $this->DB_SSL,
-				'port'		=> $this->DB_PORT,
-				'socket'	=> $this->DB_SOCKET,
-				'charset'	=> $this->DB_CHARSET,
-				'allow_auto_create_db' => $this->ALLOW_AUTO_CREATE_DB,
-			);
+			$driver_params = $this->_get_connect_params();
 			// Try to connect several times
 			$tries = $this->RECONNECT_NUM_TRIES;
 			if (main()->is_console() && !main()->is_unit_test()) {
@@ -332,6 +303,57 @@ class yf_db {
 		}
 		$this->_connection_time += (microtime(true) - $this->_connect_start_time);
 		return $this->_connected;
+	}
+
+	/**
+	*/
+	function _get_connect_params() {
+		return array(
+			'host'		=> $this->DB_HOST,
+			'user'		=> $this->DB_USER,
+			'pswd'		=> $this->DB_PSWD,
+			'name'		=> $this->DB_NAME,
+			'persist'	=> $this->DB_PERSIST,
+			'ssl'		=> $this->DB_SSL,
+			'port'		=> $this->DB_PORT,
+			'socket'	=> $this->DB_SOCKET,
+			'charset'	=> $this->DB_CHARSET,
+			'allow_auto_create_db' => $this->ALLOW_AUTO_CREATE_DB,
+		);
+	}
+
+	/**
+	*/
+	function _set_connect_params($db_host = '', $db_user = '', $db_pswd = null, $db_name = null, $force = false, $params = array()) {
+		if (is_array($db_host)) {
+			$params = $db_host;
+			$db_host = '';
+		}
+		if (!is_array($params)) {
+			$params = array();
+		}
+		if ($params['reconnect'] || $params['force']) {
+			$force = true;
+		}
+		$this->DB_HOST = ($params['host'] ?: $db_host) ?: (defined('DB_HOST') ? DB_HOST : 'localhost');
+		$this->DB_USER = ($params['user'] ?: $db_user) ?: (defined('DB_USER') ? DB_USER : 'root');
+		// db_pswd can be empty string
+		$_db_pswd = isset($params['pswd']) ? $params['pswd'] : $db_pswd;
+		$this->DB_PSWD = !is_null($_db_pswd) ? $_db_pswd : (defined('DB_PSWD') ? DB_PSWD : '');
+		// db_name can be empty string - means we working in special mode, just connecting to server
+		$_db_name = isset($params['name']) ? $params['name'] : $db_name;
+		$this->DB_NAME = !is_null($_db_name) ? $_db_name : (defined('DB_NAME') ? DB_NAME : '');
+		$this->DB_PORT = ($params['port'] ?: $db_port) ?: (defined('DB_PORT') ? DB_PORT : '');
+		$this->DB_SOCKET = ($params['socket'] ?: $db_socket) ?: (defined('DB_SOCKET') ? DB_SOCKET : '');
+		$this->DB_SSL = ($params['ssl'] ?: $db_ssl) ?: (defined('DB_SSL') ? DB_SSL : false);
+		$this->DB_CHARSET = ($params['charset'] ?: $db_charset) ?: (defined('DB_CHARSET') ? DB_CHARSET : '');
+		if (isset($params['prefix'])) {
+			$this->DB_PREFIX = $params['prefix'];
+		}
+		$allow_auto_create_db = isset($params['auto_create_db']) ? $params['auto_create_db'] : $allow_auto_create_db;
+		if (!is_null($allow_auto_create_db)) {
+			$this->ALLOW_AUTO_CREATE_DB	= $allow_auto_create_db;
+		}
 	}
 
 	/**
