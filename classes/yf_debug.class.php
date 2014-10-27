@@ -269,6 +269,7 @@ class yf_debug {
 			return '';
 		}
 		$cache_use = ((main()->USE_SYSTEM_CACHE || conf('USE_CACHE')) && !cache()->NO_CACHE);
+		$locale_debug = $this->_get_debug_data('locale');
 		$data['yf'] = array(
 			'MAIN_TYPE'			=> MAIN_TYPE,
 			'LANG'				=> conf('language'),
@@ -325,6 +326,8 @@ class yf_debug {
 			'NO_CACHE_HEADERS'	=> (int)main()->NO_CACHE_HEADERS,
 			'HTTP_IN_HEADERS'	=> $this->_get_request_headers(),
 			'HTTP_OUT_HEADERS'	=> headers_list(),
+			'LOCALE_YF'			=> $locale_debug['yf'],
+			'LOCALE_DEFAULT'	=> $locale_debug['default'],
 		);
 		foreach ((array)$this->_get_debug_data('_DEBUG_META') as $k => $v) {
 			$data['yf']['META_'.strtoupper($k)] = $v;
