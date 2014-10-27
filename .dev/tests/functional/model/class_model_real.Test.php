@@ -235,9 +235,9 @@ if ($i++ > 3) {
 		$this->assertEquals( $raw_some_actors[0], $some_actors[0] );
 		unset($some_actors);
 
-		$some_actors = model('actor')->get(1);
-		$this->assertEquals( $raw_some_actors[0], $some_actors );
-		unset($some_actors);
+#		$some_actors = model('actor')->get(1);
+#		$this->assertEquals( $raw_some_actors[0], $some_actors );
+#		unset($some_actors);
 
 #		$some_actors = model('actor')->whereid(1)->all();
 #		$this->assertEquals( $raw_some_actors[0], $some_actors[0] );
@@ -254,6 +254,32 @@ if ($i++ > 3) {
 #		$some_actors = model('actor')->all(array('where' => 'actor_id < 10', 'order_by' => 'actor_id desc'));
 #		$this->assertEquals( array_reverse($raw_some_actors), $some_actors );
 #		unset($some_actors);
+	}
+
+	/**
+	* @depends test_load_fixtures
+	*/
+	public function test_sakila_save() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+
+		$actors_data = include __DIR__.'/fixtures/actor.data.php';
+		$actors_data_objects = array();
+		foreach ($actors_data as $arr) {
+			$actors_data_objects[] = (object)$arr;
+		}
+	}
+
+	/**
+	* @depends test_load_fixtures
+	*/
+	public function test_sakila_relations() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+
+		$actors_data = include __DIR__.'/fixtures/actor.data.php';
+		$actors_data_objects = array();
+		foreach ($actors_data as $arr) {
+			$actors_data_objects[] = (object)$arr;
+		}
 
 		$all_actors_having_films = model('actor')->has('films')->all();
 #print_r($all_actors_having_films);
