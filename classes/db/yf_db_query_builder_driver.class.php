@@ -158,6 +158,31 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Update table with given values
+	*/
+	function compile_update($table, $data, $where) {
+		if (empty($table) || empty($data) || empty($where)) {
+			return false;
+		}
+		// $where contains numeric id
+		if (is_numeric($where)) {
+			$where = 'id='.intval($where);
+		}
+		$tmp_data = array();
+		foreach ((array)$data as $k => $v) {
+			if (empty($k)) {
+				continue;
+			}
+			$tmp_data[$k] = $this->_escape_key($k).' = '.$this->_escape_val($v);
+		}
+		$sql = '';
+		if (count($tmp_data)) {
+			$sql = 'UPDATE '.$this->_escape_table_name($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
+		}
+		return $sql ?: false;
+	}
+
+	/**
 	*/
 	function update(array $data, $params = array()) {
 // TODO
