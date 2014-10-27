@@ -90,7 +90,7 @@ class yf_logs_exec_admin {
 			'server_id'		=> (int)conf('SERVER_ID'),
 		);
 		if ($this->LOG_DRIVER == 'db') {
-			$sql = db()->insert_safe('log_admin_exec', $data);
+			$sql = db()->insert_safe('log_admin_exec', $data, $as_sql = true);
 			db()->_add_shutdown_query($sql);
 		} elseif ($this->LOG_DRIVER == 'file') {
 			$data['output_cache'] = '0';  // mean: exec full mode (not from output cache)
