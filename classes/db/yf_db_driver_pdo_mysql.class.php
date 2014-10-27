@@ -4,7 +4,9 @@ load('db_driver_pdo', 'framework', 'classes/db/');
 class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 
 	/** @var @conf_skip */
-	public $db_connect_id		= null;
+	public $db_connect_id	= null;
+	/** @var string */
+	public $SQL_MODE		= '';
 
 	/**
 	*/
@@ -48,6 +50,8 @@ class yf_db_driver_pdo_mysql extends yf_db_driver_pdo {
 		if (!$this->db_connect_id) {
 			$this->_connect_error = 'cannot_connect_to_server';
 			return $this->db_connect_id;
+		} else {
+			$this->query('SET SQL_MODE="'.$this->real_escape_string($this->SQL_MODE).'"');
 		}
 		if ($this->params['name'] != '') {
 			$dbselect = $this->select_db($this->params['name']);
