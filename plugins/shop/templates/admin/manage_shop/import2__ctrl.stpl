@@ -163,7 +163,6 @@ function( $log ) {
 	return {
 		restrict: 'AE',
 		link: function( $scope, element, attrs ) {
-			$log.log( 'wait', $scope.active );
 		},
 		scope: {
 			'active' : '=status',

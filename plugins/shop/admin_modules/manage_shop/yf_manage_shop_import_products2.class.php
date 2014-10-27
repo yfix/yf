@@ -305,15 +305,13 @@ class yf_manage_shop_import_products2 {
 					$this->_reject( 'save upload file data error' );
 				}
 				$result = $this->_upload_item__get( $id );
-					$test = $this->_upload_item__import( $id, $result[ 'data' ][ 'fields' ] );
+				if( $result[ 'status' ] ) {
+					$test = $this->_upload_item__import( $result[ 'data' ][ 'options' ] );
 					$result[ 'data' ][ 'test' ] = $test;
+				}
 				$result = array(
-					'data' => $this->_data_ng(),
-					'action' => array(
-						'data'           => $result[ 'data' ],
-						'status'         => true,
-						'status_message' => 'файл загружен',
-					),
+					'data'   => $this->_data_ng(),
+					'action' => $result,
 				);
 			} else {
 				$this->_reject( 'save upload file error' );
@@ -1208,6 +1206,7 @@ class yf_manage_shop_import_products2 {
 	}
 
 	protected function _call( $class = null, $class_path = null, $method = null, $options = array() ) {
+		ob_start();
 		main()->NO_GRAPHICS = true;
 		$result = $this->_firewall( $class, $class_path, $method, $options );
 		$json = json_encode( $result, JSON_NUMERIC_CHECK );
@@ -1219,8 +1218,11 @@ class yf_manage_shop_import_products2 {
 			$response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
 			$type = 'javascript';
 		}
+		$buffer = ob_get_contents();
+		ob_end_flush();
 		header( "Content-Type: application/$type; charset=UTF-8" );
 		echo( $response );
+		if( !empty( $buffer ) ) { echo( '/*' . $buffer . '*/' ); }
 		// without debug info
 		exit( 0 );
 	}

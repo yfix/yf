@@ -259,7 +259,7 @@ ul.select2-result-single {
 	<tr></tr>
 	<tr>
 		<th
-			ng-repeat="item in item_data.items[ 0 ]"
+			ng-repeat="item in item_data.items[ 0 ] track by $index"
 			class="item_head"
 		>
 		<span>№{{ $index }}</span>
