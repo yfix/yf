@@ -552,6 +552,7 @@ class yf_debug {
 		}
 		$data['stats'] = $db->get_2d('SHOW SESSION STATUS');
 		$data['vars'] = $db->get_2d('SHOW VARIABLES');
+#		$data['global_vars'] = $db->get_2d('SHOW GLOBAL VARIABLES');
 		foreach ($data as $name => $_data) {
 			$body .= '<div class="span10 col-lg-10">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
 		}
