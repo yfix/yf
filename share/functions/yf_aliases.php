@@ -6,8 +6,8 @@
 
 // Required to catch missing methods of the shortcut functions objects
 // Only one class from functions listed below
-if (!class_exists('my_missing_method_handler')) {
-	class my_missing_method_handler {
+if (!class_exists('yf_missing_method_handler')) {
+	class yf_missing_method_handler {
 		function __construct($o_name, $silent = false, $c_name = '') {
 			$this->_o_name = $o_name;
 			$this->_c_name = $c_name;
@@ -24,27 +24,27 @@ if (!class_exists('my_missing_method_handler')) {
 // example: _class('i18n')->load_lang();
 if (!function_exists('_class')) {
 	function _class($class_name, $custom_path = '', $params = '', $silent = false) {
-		return main()->init_class($class_name, $custom_path ?: 'classes/', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent, $class_name);
+		return main()->init_class($class_name, $custom_path ?: 'classes/', $params) ?: new yf_missing_method_handler(__FUNCTION__, $silent, $class_name);
 	}
 }
 // Alias to _class() with $silent = true
 // example: _class_safe('not_existing_module')->not_existing_method();
 if (!function_exists('_class_safe')) {
 	function _class_safe($class_name, $custom_path = '', $params = '') {
-		return main()->init_class($class_name, $custom_path ?: 'classes/', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent = true, $class_name);
+		return main()->init_class($class_name, $custom_path ?: 'classes/', $params) ?: new yf_missing_method_handler(__FUNCTION__, $silent = true, $class_name);
 	}
 }
 // example: module('test')->test_stpls();
 if (!function_exists('module')) {
 	function module($class_name, $params = '', $silent = false) {
-		return main()->init_class($class_name, '', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent, $class_name);
+		return main()->init_class($class_name, '', $params) ?: new yf_missing_method_handler(__FUNCTION__, $silent, $class_name);
 	}
 }
 // Alias to module() with $silent = true
 // example: module_safe('not_existing_module')->not_existing_method();
 if (!function_exists('module_safe')) {
 	function module_safe($class_name, $params = '') {
-		return main()->init_class($class_name, '', $params) ?: new my_missing_method_handler(__FUNCTION__, $silent = true, $class_name);
+		return main()->init_class($class_name, '', $params) ?: new yf_missing_method_handler(__FUNCTION__, $silent = true, $class_name);
 	}
 }
 // example: load('home_page', 'framework')
@@ -53,22 +53,22 @@ if (!function_exists('load')) {
 }
 // example: main()->init_class('test')
 if (!function_exists('main')) {
-	function main($silent = false) { global $main; return $main ?: new my_missing_method_handler(__FUNCTION__, $silent); }
+	function main($silent = false) { global $main; return $main ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
 // example: tpl()->parse('example', array())
 if (!function_exists('tpl')) {
-	function tpl($silent = false) { return _class('tpl') ?: new my_missing_method_handler(__FUNCTION__, $silent); }
+	function tpl($silent = false) { return _class('tpl') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
 // example: common()->send_mail()
 if (!function_exists('common')) {
-	function common($silent = false) { return _class('common') ?: new my_missing_method_handler(__FUNCTION__, $silent); }
+	function common($silent = false) { return _class('common') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
 if (!function_exists('input')) {
-	function input($silent = false) { return _class('input') ?: new my_missing_method_handler(__FUNCTION__, $silent); }
+	function input($silent = false) { return _class('input') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
 // example: cache()->put()
 if (!function_exists('cache')) {
-	function cache($silent = false) { return _class('cache') ?: new my_missing_method_handler(__FUNCTION__, $silent); }
+	function cache($silent = false) { return _class('cache') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
 if (!function_exists('cache_set')) {
 	function cache_set($name, $data, $ttl = 0) { return cache()->set($name, $data, $ttl); }
@@ -94,7 +94,7 @@ if (!function_exists('db')) {
 	function db($tbl_name = '', $silent = false) {
 		global $db;
 		if (!is_object($db)) {
-			return $tbl_name ?: new my_missing_method_handler(__FUNCTION__, $silent);
+			return $tbl_name ?: new yf_missing_method_handler(__FUNCTION__, $silent);
 		}
 		return $tbl_name ? $db->_real_name($tbl_name) : $db;
 	}
