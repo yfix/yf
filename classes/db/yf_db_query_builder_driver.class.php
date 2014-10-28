@@ -254,6 +254,7 @@ abstract class yf_db_query_builder_driver {
 // usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
 // TODO: be able to specify other table in params
 // TODO: where condition for update inside params
+/*
 		!$pk && $pk = 'id';
 		$a = $this->_sql_to_array();
 		if (!$a) {
@@ -275,6 +276,7 @@ abstract class yf_db_query_builder_driver {
 #			$result = $this->db->get($this->sql());
 #			return $this->db->update_batch($table, $data, $pk);
 		}
+*/
 	}
 
 	/**
@@ -906,6 +908,17 @@ abstract class yf_db_query_builder_driver {
 			$this->_sql[__FUNCTION__] = $sql;
 		}
 		return $this;
+	}
+
+	/**
+	* Find primary key name
+	*/
+	public function _get_primary_key_column($table) {
+		$primary = $this->db->utils()->index_info($table, 'PRIMARY');
+		if ($primary) {
+			return current($primary['columns']);
+		}
+		return false;
 	}
 
 	/**
