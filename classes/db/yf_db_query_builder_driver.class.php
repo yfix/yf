@@ -152,10 +152,13 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Insert array of values into table
 	*/
-	function compile_insert($table, $data, $replace = false, $ignore = false, $on_duplicate_key_update = false) {
+	function compile_insert($table, $data, $params = array()) {
 		if (!strlen($table) || !is_array($data)) {
 			return false;
 		}
+		$replace = isset($params['replace']) ? $params['replace'] : false;
+		$ignore = isset($params['ignore']) ? $params['ignore'] : false;
+		$on_duplicate_key_update = isset($params['on_duplicate_key_update']) ? $params['on_duplicate_key_update'] : false;
 		if (is_string($replace)) {
 			$replace = false;
 		}
