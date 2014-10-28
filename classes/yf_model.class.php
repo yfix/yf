@@ -1,5 +1,59 @@
 <?php
 
+if (!class_exists('yf_model_internal_result')) {
+	class yf_model_internal_result {
+		public function __construct($result, $model) {
+			foreach ($result as $k => $v) {
+				$this->$k = $v;
+			}
+			$this->_model($model);
+		}
+		public function __call($name, $args) {
+			$args['_data'] = $this;
+			return call_user_func_array(array($this->_model(), $name), $args);
+		}
+		public function _model($model = null) {
+			static $_model;
+			if (is_null($model)) {
+				return $_model;
+			}
+			return $_model = $model;
+		}
+	}
+}
+/*
+if (!class_exists('yf_model_internal_collection')) {
+	class yf_model_internal_collection {
+// TODO
+		public function __construct($data, $model) {
+#			foreach ($result as $k => $v) {
+#				$this->$k = $v;
+#			}
+#			$this->_data($model);
+#			$this->_model($model);
+		}
+		public function __call($name, $args) {
+			$args['_data'] = $this;
+			return call_user_func_array(array($this->_model(), $name), $args);
+		}
+		public function _model($model = null) {
+			static $_model;
+			if (is_null($model)) {
+				return $_model;
+			}
+			return $_model = $model;
+		}
+		public function _data($data = null) {
+			static $_data;
+			if (is_null($data)) {
+				return $_data;
+			}
+			return $_data = $data;
+		}
+	}
+}
+*/
+
 /**
 * ORM model
 */
@@ -235,8 +289,10 @@ class yf_model {
 	*/
 	public function find() {
 		$args = func_get_args();
+		$this->_where = $args;
 		$result = $this->_query_builder($args ? array('where' => $args) : null)->get();
-		return $result ? (object)$result : new stdClass;
+		return new yf_model_internal_result($result, $this);
+#		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
@@ -253,7 +309,8 @@ class yf_model {
 	public function first() {
 		$args = func_get_args();
 		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => ':pk asc', 'limit' => 1) : null)->get();
-		return $result ? (object)$result : new stdClass;
+		return new yf_model_internal_result($result, $this);
+#		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
@@ -262,7 +319,8 @@ class yf_model {
 	public function last() {
 		$args = func_get_args();
 		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => ':pk desc', 'limit' => 1) : null)->get();
-		return $result ? (object)$result : new stdClass;
+		return new yf_model_internal_result($result, $this);
+#		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
@@ -271,7 +329,8 @@ class yf_model {
 	public function get() {
 		$args = func_get_args();
 		$result = $this->_query_builder($args ? array('where' => $args) : null)->get();
-		return $result ? (object)$result : new stdClass;
+		return new yf_model_internal_result($result, $this);
+#		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
@@ -279,7 +338,9 @@ class yf_model {
 	*/
 	public function all() {
 		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->get_all(array('as_objects' => true));
+		return $this->_query_builder($args ? array('where' => $args) : null)->get_all(/*array('as_objects' => true)*/);
+#		$result = $this->_query_builder($args ? array('where' => $args) : null)->get_all(/*array('as_objects' => true)*/);
+#		return new yf_model_internal_collection($result, $this);
 	}
 
 	/**
@@ -310,7 +371,8 @@ class yf_model {
 				$data = $this->find($insert_id);
 			}
 		}
-		return $data ? (object)$data : new stdClass;
+#		return $data ? (object)$data : new stdClass;
+		return new yf_model_internal_result($data, $this);
 	}
 
 	/**
@@ -332,11 +394,18 @@ class yf_model {
 	/**
 	* Save data related to model back into database
 	*/
-	public function update($data = array()) {
-		if (empty($data)) {
+	public function update(/*$data = array()*/) {
+#		if (empty($data)) {
+			$data = $this->_get_current_data();
+#		}
+		$table = $this->_get_table_name();
+		$where = $this->_where;
+		if (!$data || !$table || !$where) {
+			return false;
 		}
-		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->update($data);
+var_dump($table, $data, $where);
+#		$sql = $this->_query_builder()->update($data);
+#		return $this->_db->update($table, $data, $where);
 	}
 
 	/**
