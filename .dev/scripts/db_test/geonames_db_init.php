@@ -28,7 +28,7 @@ function db_geonames($tbl_name = '') {
 		}
 	}
 	if (!is_object($_instance)) {
-		return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__);
+		return $tbl_name ? $tbl_name : new yf_missing_method_handler(__FUNCTION__);
 	}
 	return $tbl_name ? $_instance->_real_name($tbl_name) : $_instance;
 }
