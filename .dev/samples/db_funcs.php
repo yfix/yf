@@ -36,7 +36,7 @@ function db_t2($tbl_name = '') {
 		}
 	}
 	if (!is_object($_instance)) {
-		return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__);
+		return $tbl_name ? $tbl_name : new yf_missing_method_handler(__FUNCTION__);
 	}
 	return $tbl_name ? $_instance->_real_name($tbl_name) : $_instance;
 }
@@ -52,7 +52,7 @@ function db_pf($tbl_name = '') {
 		}
 	}
 	if (!is_object($_instance)) {
-		return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__);
+		return $tbl_name ? $tbl_name : new yf_missing_method_handler(__FUNCTION__);
 	}
 	return $tbl_name ? $_instance->_real_name($tbl_name) : $_instance;
 }
@@ -68,7 +68,7 @@ function db_rr($tbl_name = '') {
 		}
 	}
 	if (!is_object($_instance)) {
-		return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__);
+		return $tbl_name ? $tbl_name : new yf_missing_method_handler(__FUNCTION__);
 	}
 	return $tbl_name ? $_instance->_real_name($tbl_name) : $_instance;
 }
@@ -84,7 +84,7 @@ function db_cr($tbl_name = '') {
 		}
 	}
 	if (!is_object($_instance)) {
-		return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__);
+		return $tbl_name ? $tbl_name : new yf_missing_method_handler(__FUNCTION__);
 	}
 	return $tbl_name ? $_instance->_real_name($tbl_name) : $_instance;
 }
@@ -100,7 +100,7 @@ function db_m3($tbl_name = '') {
 		}
 	}
 	if (!is_object($_instance)) {
-		return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__);
+		return $tbl_name ? $tbl_name : new yf_missing_method_handler(__FUNCTION__);
 	}
 	return $tbl_name ? $_instance->_real_name($tbl_name) : $_instance;
 }
