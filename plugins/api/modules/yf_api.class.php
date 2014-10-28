@@ -1,14 +1,30 @@
 <?php
 
 /***
- * api
+ *  module: api
  *
  *    info: external api interface by example: ajax, rpc, etc
  * support: json, jsonp
- * example:
+ *     url:
  *        /api/@object/@action?value=10
  *        /api/@object?action=@action&value=10
  *        ./?object=api&action=@object&id=@action&value=10
+ *
+ * description: call class or module with method prefix '_api_'
+ *
+ *     example: handler user message
+ *         url: /api/user/message
+ *       class:
+ *              class user {
+ *                  _init() {
+ *                  ...
+ *                  }
+ *                  _api_message() {
+ *                      // handler here
+ *                      // get user id, store message, etc
+ *                  }
+ *                  ...
+ *              }
  */
 
 class yf_api {
