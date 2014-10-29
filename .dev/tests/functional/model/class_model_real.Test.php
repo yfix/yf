@@ -181,13 +181,13 @@ if ($i++ > 3) {
 		foreach ($actors_data as $arr) {
 			$actors_data_objects[] = (object)$arr;
 		}
-
+/*
 		$all_actors = model('actor')->all();
 #		$this->assertTrue( is_array($all_actors) );
 #		$this->assertTrue( (count($all_actors) > 0) );
 #		$this->assertEquals( $actors_data_objects, $all_actors );
 		$this->assertEquals( $actors_data, $all_actors );
-
+*/
 		$raw_first_id = $actors_data[0]['actor_id'];
 		$this->assertNotEmpty( $raw_first_id );
 		$first_actor = model('actor')->find($raw_first_id);
