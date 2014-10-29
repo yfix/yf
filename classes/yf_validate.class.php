@@ -166,10 +166,46 @@ class yf_validate {
 	* 	'name3' => array('trim|required', 'other_rule|other_rule2|other_rule3'),
 	* 	'name4' => array('trim|required', function() { return true; } ),
 	* 	'name5' => array('trim', 'required', function() { return true; } ),
+	* 	'name6,name7,name8' => array('trim', 'required', function() { return true; } ),
 	* 	'__before__' => 'trim',
 	* 	'__after__' => 'some_method2|some_method3',
 	*/
 	public function _validate_rules_cleanup($validate_rules = array()) {
+		// Trim names with spaces
+		foreach ((array)$validate_rules as $name => $raw) {
+			$trimmed = trim($name);
+			$tlen = strlen($trimmed);
+			if ($trimmed === $name && $tlen) {
+				continue;
+			}
+			if ($tlen) {
+				$validate_rules[$trimmed] = $raw;
+			}
+			unset($validate_rules[$name]);
+		}
+		// Prepare rule keys, containing several keys, splitted by comma. Example: "test1,test2,test3" => 'required'
+		foreach ((array)$validate_rules as $name => $raw) {
+			if (strpos($name, ',') === false) {
+				continue;
+			}
+			foreach (explode(',', trim($name)) as $_name) {
+				$_name = trim($_name);
+				if (!strlen($_name)) {
+					continue;
+				}
+				// Merge with existing rules with same key, for example we want to mass add some more rule to existing.
+				if (isset($validate_rules[$_name])) {
+					if (!is_array($validate_rules[$_name])) {
+						$validate_rules[$_name] = array($validate_rules[$_name]);
+					}
+					$validate_rules[$_name] = array_merge($validate_rules[$_name], is_array($raw) ? $raw : array($raw));
+				} else {
+					$validate_rules[$_name] = $raw;
+				}
+			}
+			unset($validate_rules[$name]);
+		}
+
 		// Add these rules to all validation rules, before them
 		$_name = '__before__';
 		$all_before = array();
