@@ -339,6 +339,7 @@ class yf_model {
 	public function all() {
 		$args = func_get_args();
 		return $this->_query_builder($args ? array('where' => $args) : null)->get_all(/*array('as_objects' => true)*/);
+#		return $this->_query_builder($args ? array('where' => $args) : null)->get_all(array('as_objects' => true));
 #		$result = $this->_query_builder($args ? array('where' => $args) : null)->get_all(/*array('as_objects' => true)*/);
 #		return new yf_model_internal_collection($result, $this);
 	}
