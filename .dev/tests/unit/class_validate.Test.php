@@ -1186,7 +1186,7 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		);
 		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
 	}
-	public function test_cleanup_split() {
+	public function test_cleanup_split_trim() {
 		$rules_raw = array(
 			'test1,test2,test3' => 'min_length:2|max_length:12|is_unique:user.login|between:1,10|chars:a,b,c,d|regex:[a-z0-9]+'
 		);
