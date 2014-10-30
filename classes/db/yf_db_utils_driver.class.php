@@ -496,7 +496,8 @@ WHERE table_schema = "schemaname"
 				'db_name'		=> $db_name,
 				'table_name'	=> $table,
 			)));
-			return $obj->render();
+			$sql = $obj->render();
+			return $this->db->query($sql);
 		}
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
