@@ -874,4 +874,28 @@ abstract class yf_db_migrator {
 
 		return 'Success';
 	}
+
+	/**
+	*/
+	public function rollback() {
+// TODO: rollback selected migration(s)
+	}
+
+	/**
+	*/
+	public function reset() {
+// TODO: rollback all applied migrations
+	}
+
+	/**
+	*/
+	public function _create_migrations_table() {
+// TODO: create internal migrations table, where we will store metadata
+	}
+
+	/**
+	*/
+	public function _get_migration_model() {
+// TODO:
+	}
 }
