@@ -11,6 +11,7 @@ class yf_db_utils_helper_create_table {
 	protected $indexes = array();
 	protected $foreign_keys = array();
 	protected $table_options = array();
+	protected $for_create = false;
 
 	/**
 	* Catch missing method call
@@ -82,19 +83,28 @@ class yf_db_utils_helper_create_table {
 
 	/**
 	*/
-	public function char($column, $length = 255, $params = array()) {
+	public function char($column, $params = array()) {
+		if (is_numeric($params)) { $params = array('length' => $params); }
 		return $this->add_column($column, (array)$params + array(
 			'type'		=> 'char',
-			'length'	=> $length,
+			'length'	=> $params['length'] ?: 255,
 		));
 	}
 
 	/**
+	* Alias
 	*/
-	public function string($column, $length = 255, $params = array()) {
+	public function string($column, $params = array()) {
+		return $this->varchar($column, $params);
+	}
+
+	/**
+	*/
+	public function varchar($column, $params = array()) {
+		if (is_numeric($params)) { $params = array('length' => $params); }
 		return $this->add_column($column, (array)$params + array(
 			'type'		=> 'varchar',
-			'length'	=> $length,
+			'length'	=> $params['length'] ?: 255,
 		));
 	}
 
@@ -335,40 +345,84 @@ class yf_db_utils_helper_create_table {
 	/**
 	*/
 	public function primary($columns, $name = null, $params = array())	{
+		if (is_string($columns)) {
+			$columns = array($columns => $columns);
+		}
 		if (!$name) {
 			$name = 'PRIMARY';
 		}
-		$this->utils->add_index($this->_get_table_name(), $name, $columns, array('type' => 'primary') + (array)$params);
+		if ($this->for_create) {
+			$this->indexes[$name] = array(
+				'type'		=> 'primary',
+				'columns'	=> $columns,
+			);
+		} else {
+			$this->utils->add_index($this->_get_table_name(), $name, $columns, array('type' => 'primary') + (array)$params);
+		}
 		return $this;
 	}
 
 	/**
 	*/
 	public function unique($columns, $name = null, $params = array()) {
+		if (is_string($columns)) {
+			$columns = array($columns => $columns);
+		}
 		if (!$name) {
 			$name = 'uniq_'.implode('_', $columns);
 		}
-		$this->utils->add_index($this->_get_table_name(), $name, $columns, array('type' => 'unique') + (array)$params);
+		if ($this->for_create) {
+			$this->indexes[$name] = array(
+				'type'		=> 'unique',
+				'columns'	=> $columns,
+			);
+		} else {
+			$this->utils->add_index($this->_get_table_name(), $name, $columns, array('type' => 'unique') + (array)$params);
+		}
 		return $this;
 	}
 
 	/**
 	*/
 	public function index($columns, $name = null, $params = array()) {
+		if (is_string($columns)) {
+			$columns = array($columns => $columns);
+		}
 		if (!$name) {
 			$name = implode('_', $columns);
 		}
-		$this->utils->add_index($this->_get_table_name(), $name, $columns, $params);
+		if ($this->for_create) {
+			$this->indexes[$name] = array(
+				'type'		=> 'index',
+				'columns'	=> $columns,
+			);
+		} else {
+			$this->utils->add_index($this->_get_table_name(), $name, $columns, $params);
+		}
 		return $this;
 	}
 
 	/**
 	*/
 	public function foreign($columns, $ref_table, $ref_columns, $name = null, $params = array()) {
+		if (is_string($columns)) {
+			$columns = array($columns => $columns);
+		}
+		if (is_string($ref_columns)) {
+			$ref_columns = array($ref_columns => $ref_columns);
+		}
 		if (!$name) {
 			$name = $ref_table.'_'.implode('_', $ref_columns);
 		}
-		$this->utils->add_foreign_key($this->_get_table_name(), $name, $columns, $this->_get_table_name($ref_table), $ref_columns, $params);
+		if ($this->for_create) {
+			$this->foreign_keys[$name] = array(
+				'columns'		=> $columns,
+				'ref_table'		=> $ref_table,
+				'ref_columns'	=> $ref_columns,
+			) + (array)$params;
+		} else {
+			$this->utils->add_foreign_key($this->_get_table_name(), $name, $columns, $this->_get_table_name($ref_table), $ref_columns, $params);
+		}
 		return $this;
 	}
 
@@ -400,6 +454,13 @@ class yf_db_utils_helper_create_table {
 	*/
 	public function drop_foreign($name) {
 		$this->utils->drop_foreign_key($this->_get_table_name(), $name);
+		return $this;
+	}
+
+	/**
+	*/
+	public function option($name, $value) {
+		$this->table_options[$name] = $value;
 		return $this;
 	}
 }
