@@ -495,6 +495,7 @@ WHERE table_schema = "schemaname"
 				'utils'			=> $this,
 				'db_name'		=> $db_name,
 				'table_name'	=> $table,
+				'for_create'	=> true,
 			)));
 			$sql = $obj->render();
 			return $this->db->query($sql);
