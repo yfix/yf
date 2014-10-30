@@ -334,41 +334,41 @@ class yf_db_utils_helper_create_table {
 
 	/**
 	*/
-	public function primary($columns, $name = null)	{
+	public function primary($columns, $name = null, $params = array())	{
 		if (!$name) {
 			$name = 'PRIMARY';
 		}
-		$this->utils->add_index($this->_get_table_name(), $name, $columns, array('type' => 'primary'));
+		$this->utils->add_index($this->_get_table_name(), $name, $columns, array('type' => 'primary') + (array)$params);
 		return $this;
 	}
 
 	/**
 	*/
-	public function unique($columns, $name = null) {
+	public function unique($columns, $name = null, $params = array()) {
 		if (!$name) {
 			$name = 'uniq_'.implode('_', $columns);
 		}
-		$this->utils->add_index($this->_get_table_name(), $name, $columns, array('type' => 'unique'));
+		$this->utils->add_index($this->_get_table_name(), $name, $columns, array('type' => 'unique') + (array)$params);
 		return $this;
 	}
 
 	/**
 	*/
-	public function index($columns, $name = null) {
+	public function index($columns, $name = null, $params = array()) {
 		if (!$name) {
 			$name = implode('_', $columns);
 		}
-		$this->utils->add_index($this->_get_table_name(), $name, $columns);
+		$this->utils->add_index($this->_get_table_name(), $name, $columns, $params);
 		return $this;
 	}
 
 	/**
 	*/
-	public function foreign($columns, $ref_table, $ref_columns, $name = null) {
+	public function foreign($columns, $ref_table, $ref_columns, $name = null, $params = array()) {
 		if (!$name) {
 			$name = $ref_table.'_'.implode('_', $ref_columns);
 		}
-		$this->utils->add_foreign_key($this->_get_table_name(), $name, $columns, $this->_get_table_name($ref_table), $ref_columns);
+		$this->utils->add_foreign_key($this->_get_table_name(), $name, $columns, $this->_get_table_name($ref_table), $ref_columns, $params);
 		return $this;
 	}
 
