@@ -86,7 +86,7 @@ class yf_db_utils_helper_create_table {
 		return $this->add_column($column, (array)$params + array(
 			'type'		=> 'char',
 			'length'	=> $length,
-		);
+		));
 	}
 
 	/**
@@ -95,7 +95,7 @@ class yf_db_utils_helper_create_table {
 		return $this->add_column($column, (array)$params + array(
 			'type'		=> 'varchar',
 			'length'	=> $length,
-		);
+		));
 	}
 
 	/**
@@ -103,7 +103,7 @@ class yf_db_utils_helper_create_table {
 	public function text($column, $params = array()) {
 		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'text',
-		);
+		));
 	}
 
 	/**
@@ -132,7 +132,7 @@ class yf_db_utils_helper_create_table {
 		if (is_numeric($params)) { $params = array('length' => $params); }
 		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'int',
-		);
+		));
 	}
 
 	/**
@@ -182,7 +182,7 @@ class yf_db_utils_helper_create_table {
 	public function float($column, $params = array()) {
 		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'float',
-		);
+		));
 	}
 
 	/**
@@ -190,7 +190,7 @@ class yf_db_utils_helper_create_table {
 	public function double($column, $params = array()) {
 		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'double',
-		);
+		));
 	}
 
 	/**
@@ -200,7 +200,7 @@ class yf_db_utils_helper_create_table {
 			'type'		=> 'decimal',
 			'length'	=> $length,
 			'decimals'	=> $decimals,
-		);
+		));
 	}
 
 	/**
@@ -209,7 +209,7 @@ class yf_db_utils_helper_create_table {
 		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'tinyint',
 			'length'=> 1,
-		);
+		));
 	}
 
 	/**
@@ -217,7 +217,7 @@ class yf_db_utils_helper_create_table {
 	public function binary($column, $params = array()) {
 		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'binary',
-		);
+		));
 	}
 
 	/**
@@ -226,7 +226,7 @@ class yf_db_utils_helper_create_table {
 		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'enum',
 			'values'=> $allowed,
-		);
+		));
 	}
 
 	/**
@@ -234,7 +234,7 @@ class yf_db_utils_helper_create_table {
 	public function date($column, $params = array()) {
 		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'date',
-		);
+		));
 	}
 
 	/**
@@ -242,7 +242,7 @@ class yf_db_utils_helper_create_table {
 	public function date_time($column, $params = array()) {
 		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'datetime',
-		);
+		));
 	}
 
 	/**
@@ -250,7 +250,7 @@ class yf_db_utils_helper_create_table {
 	public function time($column, $params = array()) {
 		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'time',
-		);
+		));
 	}
 
 	/**
@@ -258,7 +258,7 @@ class yf_db_utils_helper_create_table {
 	public function timestamp($column, $params = array()) {
 		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'timestamp',
-		);
+		));
 	}
 
 	/**
