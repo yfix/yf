@@ -311,7 +311,13 @@ if ($i++ > 3) {
 			$actors_data_objects[] = (object)$arr;
 		}
 
-		$all_actors_having_films = model('actor')->has('films')->all();
+		// One-one relation test
+#		print_r(
+#			self::utils()->table_info('actor')
+#		);
+
+
+#		$all_actors_having_films = model('actor')->has('films')->all();
 #print_r($all_actors_having_films);
 #		$this->assertEquals( array_reverse($raw_some_actors), $some_actors );
 #		unset($some_actors);

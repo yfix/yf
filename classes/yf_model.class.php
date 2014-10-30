@@ -12,6 +12,14 @@ if (!class_exists('yf_model_internal_result')) {
 			$args['_data'] = $this;
 			return call_user_func_array(array($this->_model(), $name), $args);
 		}
+/*
+		public function __get($name) {
+			if (substr($name, 0, 1) === '_') {
+				return $this->$name;
+			}
+			return $this->$name;
+		}
+*/
 		public function _model($model = null) {
 			static $_model;
 			if (is_null($model)) {
