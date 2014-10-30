@@ -1,22 +1,5 @@
 <?php
 
-class film_model extends yf_model {
-	protected $_table = 'film';
-	public function language() {
-		return $this->belongs_to('language', 'language_id');
-	}
-	public function original_language() {
-		return $this->belongs_to('language', 'original_language_id');
-	}
-	public function actors() {
-		return $this->belongs_to_many('actor', 'film_actor', 'film_id', 'actor_id');
-	}
-	public function categories() {
-		return $this->belongs_to_many('category', 'film_category', 'film_id', 'category_id');
-	}
-	public function inventories() {
-		return $this->belongs_to_many('inventory', 'film_id');
-	}
 /*
  * @property integer $film_id
  * @property string $title
@@ -32,45 +15,47 @@ class film_model extends yf_model {
  * @property string $special_features
  * @property string $last_update
  *
- * @property Language $language
- * @property Language $originalLanguage
- * @property Actor[] $actors
- * @property Category[] $categories
- * @property Inventory[] $inventories
+ * @property language $language
+ * @property language $original_language
+ * @property actor[] $actors
+ * @property category[] $categories
+ * @property inventory[] $inventories
  */
-/*
-	public static function representingColumn() {
+class film_model extends yf_model {
+	public static function _name_column() {
 		return 'title';
 	}
-
-	public function rules() {
+	public function _rules() {
 		return array(
-			array('title, language_id, last_update', 'required'),
-			array('language_id, original_language_id, rental_duration, length', 'numerical', 'integerOnly'=>true),
-			array('title', 'length', 'max'=>255),
-			array('release_year, rental_rate', 'length', 'max'=>4),
-			array('replacement_cost, rating', 'length', 'max'=>5),
-			array('description, special_features', 'safe'),
-			array('description, release_year, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating, special_features', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('film_id, title, description, release_year, language_id, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating, special_features, last_update', 'safe', 'on'=>'search'),
+			'title, language_id, last_update' => 'required',
+			'language_id, original_language_id, rental_duration, length' => 'integer',
+			'title' => 'max_length[255]',
+			'release_year, rental_rate' => 'max_length[4]',
+			'replacement_cost, rating' => 'max_length[5]',
+			'description, special_features' => 'safe',
+			'description, release_year, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating, special_features' => 'default[NULL]',
+			'film_id, title, description, release_year, language_id, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating, special_features, last_update' => 'safe[on=search]',
 		);
 	}
-
-	public function relations() {
+	public function _pivot_models() {
 		return array(
-			'language' => array(self::BELONGS_TO, 'Language', 'language_id'),
-			'originalLanguage' => array(self::BELONGS_TO, 'Language', 'original_language_id'),
-			'actors' => array(self::MANY_MANY, 'Actor', 'film_actor(film_id, actor_id)'),
-			'categories' => array(self::MANY_MANY, 'Category', 'film_category(film_id, category_id)'),
-			'inventories' => array(self::HAS_MANY, 'Inventory', 'film_id'),
+			'actors' => 'film_actor',
+			'categories' => 'film_category',
 		);
 	}
-
-	public function pivotModels() {
-		return array(
-			'actors' => 'FilmActor',
-			'categories' => 'FilmCategory',
-		);
+	public function language() {
+		return $this->belongs_to('language', 'language_id');
 	}
-*/
+	public function original_language() {
+		return $this->belongs_to('language', 'original_language_id');
+	}
+	public function actors() {
+		return $this->belongs_to_many('actor', 'film_actor', 'film_id', 'actor_id');
+	}
+	public function categories() {
+		return $this->belongs_to_many('category', 'film_category', 'film_id', 'category_id');
+	}
+	public function inventories() {
+		return $this->belongs_to_many('inventory', 'film_id');
+	}
 }
