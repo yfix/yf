@@ -39,6 +39,12 @@ class yf_db_utils_helper_create_table {
 
 	/**
 	*/
+	public function _get_table_name($new_name = '') {
+		return $this->db_name.'.'.$this->utils->db->_fix_table_name($new_name ?: $this->table_name);
+	}
+
+	/**
+	*/
 	public function __toString() {
 		return $this->render();
 	}
@@ -48,7 +54,7 @@ class yf_db_utils_helper_create_table {
 	public function render() {
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 		return $parser->create(array(
-			'name'			=> $this->db_name.'.'.$this->utils->db->_fix_table_name($this->table_name),
+			'name'			=> $this->_get_table_name(),
 			'fields'		=> $this->fields,
 			'indexes'		=> $this->indexes,
 			'foreign_keys'	=> $this->foreign_keys,
@@ -58,15 +64,14 @@ class yf_db_utils_helper_create_table {
 
 	/**
 	*/
-	public function increments($column, $params = array())	{
-		$this->fields[$column] = (array)$params + array(
+	public function increments($column, $params = array()) {
+		return $this->add_column($column, (array)$params + array(
 			'type'		=> 'int',
 			'length'	=> 10,
 			'auto_inc'	=> true,
 			'nullable'	=> false,
 			'unsigned'	=> true,
-		);
-		return $this;
+		));
 	}
 
 	/**
@@ -78,30 +83,27 @@ class yf_db_utils_helper_create_table {
 	/**
 	*/
 	public function char($column, $length = 255, $params = array()) {
-		$this->fields[$column] = (array)$params + array(
+		return $this->add_column($column, (array)$params + array(
 			'type'		=> 'char',
 			'length'	=> $length,
 		);
-		return $this;
 	}
 
 	/**
 	*/
 	public function string($column, $length = 255, $params = array()) {
-		$this->fields[$column] = (array)$params + array(
+		return $this->add_column($column, (array)$params + array(
 			'type'		=> 'varchar',
 			'length'	=> $length,
 		);
-		return $this;
 	}
 
 	/**
 	*/
 	public function text($column, $params = array()) {
-		$this->fields[$column] = (array)$params + array(
-			'type'		=> 'text',
+		return $this->add_column($column, (array)$params + array(
+			'type'	=> 'text',
 		);
-		return $this;
 	}
 
 	/**
@@ -120,142 +122,143 @@ class yf_db_utils_helper_create_table {
 	* Alias for int
 	*/
 	public function integer($column, $params = array()) {
+		if (is_numeric($params)) { $params = array('length' => $params); }
 		return $this->int($column, $params);
 	}
 
 	/**
 	*/
 	public function int($column, $params = array()) {
-		if (is_numeric($params)) {
-			$params = array(
-				'length' => $params,
-			);
-		}
-		$this->fields[$column] = (array)$params + array(
+		if (is_numeric($params)) { $params = array('length' => $params); }
+		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'int',
 		);
-		return $this;
 	}
 
 	/**
 	*/
 	public function big_int($column, $params = array()) {
+		if (is_numeric($params)) { $params = array('length' => $params); }
 		return $this->int($column, array('type' => 'bigint') + (array)$params);
 	}
 
 	/**
 	*/
 	public function medium_int($column, $params = array()) {
+		if (is_numeric($params)) { $params = array('length' => $params); }
 		return $this->int($column, array('type' => 'mediumint') + (array)$params);
 	}
 
 	/**
 	*/
 	public function tiny_int($column, $params = array()) {
+		if (is_numeric($params)) { $params = array('length' => $params); }
 		return $this->int($column, array('type' => 'tinyint') + (array)$params);
 	}
 
 	/**
 	*/
 	public function small_int($column, $params = array()) {
+		if (is_numeric($params)) { $params = array('length' => $params); }
 		return $this->int($column, array('type' => 'smallint') + (array)$params);
 	}
 
 	/**
 	*/
 	public function unsigned_int($column, $params = array()) {
+		if (is_numeric($params)) { $params = array('length' => $params); }
 		return $this->int($column, array('unsigned' => true) + (array)$params);
 	}
 
 	/**
 	*/
 	public function unsigned_big_int($column, $params = array()) {
+		if (is_numeric($params)) { $params = array('length' => $params); }
 		return $this->big_int($column, array('unsigned' => true) + (array)$params);
 	}
 
 	/**
 	*/
 	public function float($column, $params = array()) {
-		$this->fields[$column] = (array)$params + array(
+		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'float',
 		);
-		return $this;
 	}
 
 	/**
 	*/
 	public function double($column, $params = array()) {
-		return $this->float($column, array('type' => 'double') + (array)$params);
+		return $this->add_column($column, (array)$params + array(
+			'type'	=> 'double',
+		);
 	}
 
 	/**
 	*/
 	public function decimal($column, $length = 8, $decimals = 2, $params = array()) {
-		$this->fields[$column] = (array)$params + array(
+		return $this->add_column($column, (array)$params + array(
 			'type'		=> 'decimal',
 			'length'	=> $length,
 			'decimals'	=> $decimals,
 		);
-		return $this;
 	}
 
 	/**
 	*/
 	public function boolean($column, $params = array()) {
-		$this->fields[$column] = (array)$params + array(
+		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'tinyint',
 			'length'=> 1,
 		);
-		return $this;
 	}
 
 	/**
 	*/
 	public function binary($column, $params = array()) {
-		$this->fields[$column] = (array)$params + array(
+		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'binary',
 		);
-		return $this;
 	}
 
 	/**
 	*/
 	public function enum($column, array $allowed, $params = array()) {
-		$this->fields[$column] = (array)$params + array(
+		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'enum',
 			'values'=> $allowed,
 		);
-		return $this;
 	}
 
 	/**
 	*/
 	public function date($column, $params = array()) {
-		$this->fields[$column] = (array)$params + array(
+		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'date',
 		);
-		return $this;
 	}
 
 	/**
 	*/
 	public function date_time($column, $params = array()) {
-		return $this->int($column, array('type' => 'datetime') + (array)$params);
+		return $this->add_column($column, (array)$params + array(
+			'type'	=> 'datetime',
+		);
 	}
 
 	/**
 	*/
 	public function time($column, $params = array()) {
-		return $this->int($column, array('type' => 'time') + (array)$params);
+		return $this->add_column($column, (array)$params + array(
+			'type'	=> 'time',
+		);
 	}
 
 	/**
 	*/
 	public function timestamp($column, $params = array()) {
-		$this->fields[$column] = (array)$params + array(
+		return $this->add_column($column, (array)$params + array(
 			'type'	=> 'timestamp',
 		);
-		return $this;
 	}
 
 	/**
@@ -280,54 +283,123 @@ class yf_db_utils_helper_create_table {
 		return $this->timestamp('deleted_at', array('nullable' => true) + (array)$params);
 	}
 
-#	public function morphs($name, $indexName = null) {
-#		$this->unsignedInteger("{$name}_id");
-#		$this->string("{$name}_type");
-#		$this->index(array("{$name}_id", "{$name}_type"), $indexName);
-#	}
-
-#	public function rememberToken() {
-#		return $this->string('remember_token', 100)->nullable();
-#	}
-
-	public function dropColumn($columns) {
-		$columns = is_array($columns) ? $columns : (array) func_get_args();
-		return $this->addCommand('dropColumn', compact('columns'));
-	}
-
-	public function renameColumn($from, $to) {
-	}
-
-	public function dropPrimary($index = null) {
-	}
-
-	public function dropUnique($index) {
-	}
-
-	public function dropIndex($index) {
-	}
-
-	public function dropForeign($index) {
-	}
-
-	public function dropTimestamps() {
-	}
-
-	public function dropSoftDeletes() {
-	}
-
+	/**
+	* Rename current table
+	*/
 	public function rename($to)	{
+		$this->utils->rename_table($this->_get_table_name(), $this->_get_table_name($to));
+		return $this;
 	}
 
+	/**
+	*/
+	public function add_column($column, array $params) {
+		$this->fields[$column] = $params;
+		return $this;
+	}
+
+	/**
+	*/
+	public function drop_column($columns) {
+		if (!is_array($columns)) {
+			$columns = array($columns);
+		}
+		foreach ($columns as $column) {
+			$this->utils->drop_column($this->_get_table_name(), $column);
+		}
+		return $this;
+	}
+
+	/**
+	*/
+	public function rename_column($from, $to) {
+		$this->utils->rename_column($this->_get_table_name(), $from, $to);
+		return $this;
+	}
+
+	/**
+	*/
+	public function drop_timestamps() {
+		$this->drop_column('created_at');
+		$this->drop_column('updated_at');
+		return $this;
+	}
+
+	/**
+	*/
+	public function drop_soft_deletes() {
+		$this->drop_column('deleted_at');
+		return $this;
+	}
+
+	/**
+	*/
 	public function primary($columns, $name = null)	{
+		if (!$name) {
+			$name = 'PRIMARY';
+		}
+		$this->utils->add_index($this->_get_table_name(), $name, $columns, array('type' => 'primary'));
+		return $this;
 	}
 
+	/**
+	*/
 	public function unique($columns, $name = null) {
+		if (!$name) {
+			$name = 'uniq_'.implode('_', $columns);
+		}
+		$this->utils->add_index($this->_get_table_name(), $name, $columns, array('type' => 'unique'));
+		return $this;
 	}
 
+	/**
+	*/
 	public function index($columns, $name = null) {
+		if (!$name) {
+			$name = implode('_', $columns);
+		}
+		$this->utils->add_index($this->_get_table_name(), $name, $columns);
+		return $this;
 	}
 
-	public function foreign($columns, $name = null) {
+	/**
+	*/
+	public function foreign($columns, $ref_table, $ref_columns, $name = null) {
+		if (!$name) {
+			$name = $ref_table.'_'.implode('_', $ref_columns);
+		}
+		$this->utils->add_foreign_key($this->_get_table_name(), $name, $columns, $this->_get_table_name($ref_table), $ref_columns);
+		return $this;
+	}
+
+	/**
+	*/
+	public function drop_primary($name = null) {
+		if (!$name) {
+			$name = 'PRIMARY';
+		}
+		$this->utils->drop_index($this->_get_table_name(), $name);
+		return $this;
+	}
+
+	/**
+	*/
+	public function drop_unique($name) {
+		$this->utils->drop_index($this->_get_table_name(), $name);
+		return $this;
+	}
+
+	/**
+	*/
+	public function drop_index($name) {
+		$this->utils->drop_index($this->_get_table_name(), $name);
+		return $this;
+	}
+
+	/**
+	*/
+	public function drop_foreign($name) {
+		$this->utils->drop_foreign_key($this->_get_table_name(), $name);
+		return $this;
 	}
 }
