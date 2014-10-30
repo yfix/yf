@@ -474,6 +474,30 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function create_table($table, $extra = array(), &$error = false) {
+		// Example callable: create_table($name, function($t) { $t->int('id', 10); });
+		if (is_callable($extra)) {
+			if (strpos($table, '.') !== false) {
+				list($db_name, $table) = explode('.', trim($table));
+			}
+			if (!$table) {
+				$error = 'table_name is empty';
+				return false;
+			}
+			if (!$db_name) {
+				$db_name = $this->db->DB_NAME;
+			}
+			if (!$db_name) {
+				$error = 'db_name is empty';
+				return false;
+			}
+			$obj = clone _class('db_utils_helper_create_table', 'classes/db/');
+			$extra($obj->_setup(array(
+				'utils'			=> $this,
+				'db_name'		=> $db_name,
+				'table_name'	=> $table,
+			)));
+			return $obj->render();
+		}
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
