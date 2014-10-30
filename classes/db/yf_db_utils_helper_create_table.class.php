@@ -48,7 +48,7 @@ class yf_db_utils_helper_create_table {
 	public function render() {
 		$parser = _class('db_ddl_parser_mysql', 'classes/db/');
 		return $parser->create(array(
-			'name'			=> $db_name.'.'.$this->utils->db->_fix_table_name($this->table_name),
+			'name'			=> $this->db_name.'.'.$this->utils->db->_fix_table_name($this->table_name),
 			'fields'		=> $this->fields,
 			'indexes'		=> $this->indexes,
 			'foreign_keys'	=> $this->foreign_keys,
@@ -126,8 +126,13 @@ class yf_db_utils_helper_create_table {
 	/**
 	*/
 	public function int($column, $params = array()) {
+		if (is_numeric($params)) {
+			$params = array(
+				'length' => $params,
+			);
+		}
 		$this->fields[$column] = (array)$params + array(
-			'type'		=> 'longtext',
+			'type'	=> 'int',
 		);
 		return $this;
 	}
