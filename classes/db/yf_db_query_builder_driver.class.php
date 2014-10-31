@@ -65,7 +65,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Create text SQL from params
 	*/
-	function _sql_to_array() {
+	function _sql_to_array($return_raw = false) {
 		$a = array();
 		// Save 1 call of select()
 		if (empty($this->_sql['select']) && !empty($this->_sql['from'])) {
@@ -100,10 +100,18 @@ abstract class yf_db_query_builder_driver {
 			$operator = $opt['operator'];
 			if (is_array($this->_sql[$name])) {
 				if (isset($opt['separator'])) {
-					$a[$name] = $operator.' '.implode(' '.$opt['separator'].' ', $this->_sql[$name]);
+					if ($return_raw) {
+						$a[$name] = array('operator' => $operator, 'separator' => $opt['separator'], 'condition' => $this->_sql[$name]);
+					} else {
+						$a[$name] = $operator.' '.implode(' '.$opt['separator'].' ', $this->_sql[$name]);
+					}
 				}
 			} else {
-				$a[$name] = ($operator ? $operator.' ' : ''). $this->_sql[$name];
+				if ($return_raw) {
+					$a[$name] = array('operator' => ($operator ? $operator.' ' : ''), 'condition' => $this->_sql[$name]);
+				} else {
+					$a[$name] = ($operator ? $operator.' ' : ''). $this->_sql[$name];
+				}
 			}
 		}
 		return $a;
@@ -152,6 +160,10 @@ abstract class yf_db_query_builder_driver {
 	/**
 	*/
 	function insert(array $data, $params = array()) {
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
+// Use for into_table here INSERT INTO ... SELECT .. FROM ...
+//		if ($params['into_table']) { };
 		if (empty($data)) {
 			return false;
 		}
@@ -159,12 +171,10 @@ abstract class yf_db_query_builder_driver {
 		if (empty($this->_sql['from'])) {
 			return false;
 		}
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
-// Use for into_table here INSERT INTO ... SELECT .. FROM ...
-//		if ($params['into_table']) { };
-
 		$table = trim($this->_sql['from'][0], '`"\'');
+		if (!$table) {
+			return false;
+		}
 		$sql = $this->compile_insert($table, $data, $params);
 		if ($sql) {
 			$result = $this->db->query($sql);
@@ -241,41 +251,40 @@ abstract class yf_db_query_builder_driver {
 	/**
 	*/
 	function update(array $data, $params = array()) {
-print_r($this->_sql);
-// TODO
 // usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('last_activity' => time()))
 // usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
 // TODO: be able to specify other table in params
 // TODO: where condition for update inside params
-/*
-		!$pk && $pk = 'id';
-		$a = $this->_sql_to_array();
-		if (!$a) {
+#		if ($is_3d_array) {
+#			$this->update_batch();
+#		} else {
+#			$sql = $this->compile_update();
+#			$this->db->query($sql);
+#		}
+		if (empty($data)) {
 			return false;
 		}
-		$table = $a['from'];
-		$to_leave = array('where','where_or');
-		foreach ($a as $k => $v) {
-			if (!in_array($k, $to_leave)) {
-				unset($a[$k]);
-			}
+		$a = array();
+		if (empty($this->_sql['from'])) {
+			return false;
 		}
-		if ($a && $table) {
-			$sql = $this->sql();
-			$where = implode(' ', $a);
-			if (strtoupper(substr($where, 0, strlen('WHERE'))) == 'WHERE') {
-				$where = trim(substr($where, strlen('WHERE')));
-			}
-#			$result = $this->db->get($this->sql());
-#			return $this->db->update_batch($table, $data, $pk);
+		$table = trim($this->_sql['from'][0], '`"\'');
+		if (!$table) {
+			return false;
 		}
-		if ($is_3d_array) {
-			$this->update_batch();
-		} else {
-			$sql = $this->compile_update();
-			$this->db->query($sql);
+		$a = $this->_sql_to_array($return_raw = true);
+		$where = '';
+		if (isset($a['where'])) {
+			$where = implode(' '.$a['where']['separator'].' ', $a['where']['condition']);
 		}
-*/
+		if (isset($a['where_or'])) {
+			$where = rtrim($where).' '.$a['where_or']['operator'].' '.implode(' '.$a['where_or']['separator'].' ', $a['where_or']['condition']);
+		}
+		$sql = $this->compile_update($table, $data, $where);
+		if ($sql) {
+			$result = $this->db->query($sql);
+		}
+		return false;
 	}
 
 	/**
