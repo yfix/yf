@@ -150,6 +150,31 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	*/
+	function insert(array $data, $params = array()) {
+		if (empty($data)) {
+			return false;
+		}
+		$a = array();
+		if (empty($this->_sql['from'])) {
+			return false;
+		}
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
+// Use for into_table here INSERT INTO ... SELECT .. FROM ...
+//		if ($params['into_table']) { };
+
+		$table = trim($this->_sql['from'][0], '`"\'');
+		$sql = $this->compile_insert($table, $data, $params);
+		if ($sql) {
+			$result = $this->db->query($sql);
+			$insert_id = $result ? $this->db->insert_id() : false;
+			return $insert_id ?: $result;
+		}
+		return false;
+	}
+
+	/**
 	* Insert array of values into table
 	*/
 	function compile_insert($table, $data, $params = array()) {
@@ -215,40 +240,8 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	function insert($table, array $data, $params = array()) {
-// TODO
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
-	}
-
-	/**
-	* Update table with given values
-	*/
-	function compile_update($table, $data, $where) {
-		if (empty($table) || empty($data) || empty($where)) {
-			return false;
-		}
-		// $where contains numeric id
-		if (is_numeric($where)) {
-			$where = 'id='.intval($where);
-		}
-		$tmp_data = array();
-		foreach ((array)$data as $k => $v) {
-			if (empty($k)) {
-				continue;
-			}
-			$tmp_data[$k] = $this->_escape_key($k).' = '.$this->_escape_val($v);
-		}
-		$sql = '';
-		if (count($tmp_data)) {
-			$sql = 'UPDATE '.$this->_escape_table_name($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
-		}
-		return $sql ?: false;
-	}
-
-	/**
-	*/
 	function update(array $data, $params = array()) {
+print_r($this->_sql);
 // TODO
 // usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('last_activity' => time()))
 // usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
@@ -276,19 +269,50 @@ abstract class yf_db_query_builder_driver {
 #			$result = $this->db->get($this->sql());
 #			return $this->db->update_batch($table, $data, $pk);
 		}
+		if ($is_3d_array) {
+			$this->update_batch();
+		} else {
+			$sql = $this->compile_update();
+			$this->db->query($sql);
+		}
 */
 	}
 
 	/**
+	* Update table with given values
 	*/
-	function update_batch($table, $data, $index = null, $only_sql = false, $params = array()) {
+	function compile_update($table, array $data, $where) {
+		if (empty($table) || empty($data) || empty($where)) {
+			return false;
+		}
+		// $where contains numeric id
+		if (is_numeric($where)) {
+			$where = 'id='.intval($where);
+		}
+		$tmp_data = array();
+		foreach ((array)$data as $k => $v) {
+			if (empty($k)) {
+				continue;
+			}
+			$tmp_data[$k] = $this->_escape_key($k).' = '.$this->_escape_val($v);
+		}
+		$sql = '';
+		if (count($tmp_data)) {
+			$sql = 'UPDATE '.$this->_escape_table_name($table).' SET '.implode(', ', $tmp_data). (!empty($where) ? ' WHERE '.$where : '');
+		}
+		return $sql ?: false;
+	}
+
+	/**
+	*/
+	function update_batch($table, array $data, $index = null, $only_sql = false, $params = array()) {
 		if (!$index) {
 			$index = 'id';
 		}
 		if (!strlen($table) || !$data || !is_array($data) || !$index) {
 			return false;
 		}
-		$this->_set_update_batch($data, $index);
+		$this->_set_update_batch_data($data, $index);
 		if (count($this->_qb_set) === 0) {
 			return false;
 		}
@@ -297,7 +321,7 @@ abstract class yf_db_query_builder_driver {
 		$out = '';
 		for ($i = 0, $total = count($this->_qb_set); $i < $total; $i += $records_at_once) {
 			$_data = array_slice($this->_qb_set, $i, $records_at_once);
-			$sql = $this->_update_batch($table, $_data, $index);
+			$sql = $this->_get_update_batch_sql($table, $_data, $index);
 			if (is_callable($params['split_callback'])) {
 				$callback = $params['split_callback'];
 				$callback($_data);
@@ -318,7 +342,30 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	function _update_batch($table, $values, $index) {
+	function _set_update_batch_data($key, $index = '') {
+		if (!is_array($key)) {
+			return false;
+		}
+		foreach ((array)$key as $k => $v) {
+			$index_set = FALSE;
+			$clean = array();
+			foreach ((array)$v as $k2 => $v2) {
+				if ($k2 === $index)	{
+					$index_set = TRUE;
+				}
+				$clean[$this->_escape_key($k2)] = $this->_escape_val($v2);
+			}
+			if ($index_set === FALSE) {
+				throw new Exception('db_batch_missing_index');
+				return false;
+			}
+			$this->_qb_set[] = $clean;
+		}
+	}
+
+	/**
+	*/
+	function _get_update_batch_sql($table, $values, $index) {
 		$index = $this->_escape_key($index);
 		$ids = array();
 		foreach ((array)$values as $key => $val) {
@@ -334,29 +381,6 @@ abstract class yf_db_query_builder_driver {
 			$cases .= $k.' = CASE '.PHP_EOL. implode(PHP_EOL, $v). PHP_EOL. 'ELSE '.$k.' END, ';
 		}
 		return 'UPDATE '.$this->_escape_table_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
-	}
-
-	/**
-	*/
-	function _set_update_batch($key, $index = '') {
-		if ( ! is_array($key)) {
-			return false;
-		}
-		foreach ((array)$key as $k => $v) {
-			$index_set = FALSE;
-			$clean = array();
-			foreach ((array)$v as $k2 => $v2) {
-				if ($k2 === $index)	{
-					$index_set = TRUE;
-				}
-				$clean[$this->_escape_key($k2)] = $this->_escape_val($v2);
-			}
-			if ($index_set === FALSE) {
-				//return $this->display_error('db_batch_missing_index');
-				return false;
-			}
-			$this->_qb_set[] = $clean;
-		}
 	}
 
 	/**
