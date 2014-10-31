@@ -258,11 +258,10 @@ ND
 			'name'        => 'Grand Canyon',
 			'taste_level' => 5
 		));
-
+/*
 		// link our bears to picnics
 		// for our purposes we'll just add all bears to both picnics for our many to many relationship
-#		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
-/*
+		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
 		$bear_lawly->picnics()->attach($picnic_grand_canyon->id);
 
 		$bear_cerms->picnics()->attach($picnic_yellowstone->id);
@@ -271,7 +270,7 @@ ND
 		$bear_adobot->picnics()->attach($picnic_yellowstone->id);
 		$bear_adobot->picnics()->attach($picnic_grand_canyon->id);
 */
-/*
+
 		// ----------- alternate creating models -----------
 
 		bear::create(array(
@@ -290,15 +289,17 @@ ND
 		// ----------- querying models -----------
 
 		// find the bear or create it into the database
-		bear::first_or_create(array('name' => 'Lawly'));
+		$bear = bear::first_or_create(array('name' => 'Lawly'));
 		// find the bear or instantiate a new instance into the object we want
 		$bear = bear::first_or_new(array('name' => 'Cerms'));
 		// get all the bears
 		$bears = bear::all();
 		// find a specific bear by id
-		$bear = bear::find(1);
+		$bear = bear::find(2);
 		// find a bear by a specific attribute
-		$bear_lawly = bear::where('name', '=', 'Lawly')->first();
+		$bear_lawly = bear::where('name', '=', 'Cerms222')->first();
+#print_r($bear_lawly->_get_current_data());
+/*
 		// find a bear with danger level greater than 5
 		$dangerous_bears = bear::where('danger_level', '>', 5)->get();
 
@@ -334,7 +335,7 @@ ND
 		$fish->weight;
 		// alternatively you could go straight to the weight attribute
 		$adobot->fish->weight;
-
+/*
 		// ------ query one-to-many relationships ------
 
 		// find the trees lawly climbs
