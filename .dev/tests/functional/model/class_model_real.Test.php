@@ -95,6 +95,55 @@ class class_model_real_test extends db_real_abstract {
 		$this->assertTrue( is_a($film_model2, 'yf_model') );
 	}
 
+	/**
+	*/
+	public function test_basic_relations() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$prefix = self::utils()->db->DB_PREFIX.__FUNCTION__.'_';
+
+		$t_bears = $prefix.'bears';
+		self::utils()->create_table($t_bears, function($t) {
+			$t->increments('id')
+			->string('name')
+			->string('type')
+			->int('danger_level')
+			->timestamps();
+		});
+
+		$t_fish = $prefix.'fish';
+		self::utils()->create_table($t_fish, function($t) {
+			$t->increments('id')
+			->int('weight')
+			->int('bear_id')
+			->timestamps();
+		});
+
+		$t_trees = $prefix.'trees';
+		self::utils()->create_table($t_trees, function($t) {
+			$t->increments('id')
+			->string('type')
+			->int('age')
+			->int('bear_id')
+			->timestamps();
+		});
+
+		$t_picnics = $prefix.'picnicks';
+		self::utils()->create_table($t_picnicks, function($t) {
+			$t->increments('id')
+			->string('name')
+			->int('taste_level')
+			->timestamps();
+		});
+
+		$t_bears_picnics = $prefix.'bears_picnicks';
+		self::utils()->create_table($t_bears_picnics, function($t) {
+			$t->increments('id')
+			->int('bear_id')
+			->int('picnic_id')
+			->timestamps();
+		});
+	}
+
 	/***/
 	public function test_load_fixtures() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
