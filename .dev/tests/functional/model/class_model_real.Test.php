@@ -102,6 +102,8 @@ class class_model_real_test extends db_real_abstract {
 		$model_base = _class('model'); // Need this to load basic model class
 		$prefix = self::utils()->db->DB_PREFIX;
 
+		// ------- Create sample tables ---------
+
 		self::utils()->create_table($prefix.'bears', function($t) {
 			$t->increments('id')
 			->string('name')
@@ -192,23 +194,21 @@ ND
 		);
 
 		// --------- seed data --------------
-
-		// seed our bears table
-
 		// bear 1 is named Lawly. She is extremely dangerous. Especially when hungry.
-/*
-		$bear_lawly = model('bear')->create(array(
-			'name'         => 'Lawly',
-			'type'         => 'Grizzly',
-			'danger_level' => 8,
-		));
-var_dump($bear_lawly);
-*/
 		$bear_lawly = bear::create(array(
 			'name'         => 'Lawly',
 			'type'         => 'Grizzly',
 			'danger_level' => 8,
 		));
+/*
+		// Alternate syntax
+		$bear_lawly = model('bear')->create(array(
+			'name'         => 'Lawly',
+			'type'         => 'Grizzly',
+			'danger_level' => 8,
+		));
+		var_dump($bear_lawly);
+*/
 		// bear 2 is named Cerms. He has a loud growl but is pretty much harmless.
 		$bear_cerms = bear::create(array(
 			'name'         => 'Cerms',
