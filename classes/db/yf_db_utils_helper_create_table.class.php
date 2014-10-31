@@ -72,7 +72,7 @@ class yf_db_utils_helper_create_table {
 			'auto_inc'	=> true,
 			'nullable'	=> false,
 			'unsigned'	=> true,
-		));
+		))->primary($column);
 	}
 
 	/**
