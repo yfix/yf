@@ -12,6 +12,13 @@ if (!class_exists('yf_model_internal_result')) {
 			$args['_data'] = $this;
 			return call_user_func_array(array($this->_model(), $name), $args);
 		}
+		public function _model($model = null) {
+			static $_model;
+			if (is_null($model)) {
+				return $_model;
+			}
+			return $_model = $model;
+		}
 /*
 		public function __get($name) {
 			if (substr($name, 0, 1) === '_') {
@@ -20,44 +27,13 @@ if (!class_exists('yf_model_internal_result')) {
 			return $this->$name;
 		}
 */
-		public function _model($model = null) {
-			static $_model;
-			if (is_null($model)) {
-				return $_model;
-			}
-			return $_model = $model;
-		}
 	}
 }
+
 /*
 if (!class_exists('yf_model_internal_collection')) {
 	class yf_model_internal_collection {
 // TODO
-		public function __construct($data, $model) {
-#			foreach ($result as $k => $v) {
-#				$this->$k = $v;
-#			}
-#			$this->_data($model);
-#			$this->_model($model);
-		}
-		public function __call($name, $args) {
-			$args['_data'] = $this;
-			return call_user_func_array(array($this->_model(), $name), $args);
-		}
-		public function _model($model = null) {
-			static $_model;
-			if (is_null($model)) {
-				return $_model;
-			}
-			return $_model = $model;
-		}
-		public function _data($data = null) {
-			static $_data;
-			if (is_null($data)) {
-				return $_data;
-			}
-			return $_data = $data;
-		}
 	}
 }
 */
@@ -68,12 +44,22 @@ if (!class_exists('yf_model_internal_collection')) {
 class yf_model {
 
 #	protected $_db = null;
+	protected $_pk = null;
 	protected $_table = null;
+	protected $_fillable = array();
 	protected $_dirty_attrs = null;
 	protected $_is_trashed = null;
 	protected $_preload_complete = null;
 	protected $_relations = null;
 	protected $_params = null;
+
+	/**
+	*/
+	public function __construct($params = array()) {
+		if (isset($params['_is_static_call'])) {
+			$this->_db = db();
+		}
+	}
 
 	/**
 	* YF framework constructor
@@ -114,37 +100,8 @@ class yf_model {
 
 	/**
 	*/
-#	function __get($name) {
-#		if (substr($name, 0, 1) === '_') {
-#			return $this->$name;
-#		}
-#		if (!$this->_preload_complete) {
-#			$this->_preload_data();
-#		}
-#		return $this->$name;
-#	}
-
-	/**
-	*/
-#	function __set($name, $value) {
-#		$this->$name = $value;
-#		return $this->$name;
-#	}
-
-	/**
-	*/
 	function __toString() {
 		return json_encode($this->_get_current_data());
-	}
-
-	/**
-	*/
-	public function _preload_data() {
-		$this->_preload_complete = true;
-		foreach ((array)$this->find() as $k => $v) {
-			$this->$k = $v;
-		}
-		return true;
 	}
 
 	/**
@@ -170,6 +127,25 @@ class yf_model {
 	}
 
 	/**
+	* Find primary key name
+	*/
+	public function _get_primary_key_column($table = null) {
+		if (isset($this->_pk)) {
+			return $this->_pk;
+		}
+		if (!isset($table)) {
+			$table = $this->_get_table_name();
+		}
+		$primary = $this->_db->utils()->index_info($table, 'PRIMARY');
+		if ($primary) {
+			$this->_pk = current($primary['columns']);
+		} else {
+			$this->_pk = false;
+		}
+		return $this->_pk;
+	}
+
+	/**
 	*/
 	public function _get_current_data() {
 		$data = array();
@@ -180,17 +156,6 @@ class yf_model {
 			$data[$var] = $value;
 		}
 		return $data;
-	}
-
-	/**
-	* Find primary key name
-	*/
-	public function _get_primary_key_column($table) {
-		$primary = $this->_db->utils()->index_info($table, 'PRIMARY');
-		if ($primary) {
-			return current($primary['columns']);
-		}
-		return false;
 	}
 
 	/**
@@ -393,6 +358,7 @@ class yf_model {
 	* Return first matched row or create such one, if not existed
 	*/
 	public function first_or_create() {
+/*
 		$args = func_get_args();
 		$data = call_user_func_array(array($this, 'first'), $args);
 		if (empty($data)) {
@@ -402,23 +368,23 @@ class yf_model {
 				$data = $this->find($insert_id);
 			}
 		}
-#		return $data ? (object)$data : new stdClass;
 		return new yf_model_internal_result($data, $this);
+*/
 	}
 
 	/**
 	* Create new model record inside database
 	*/
-	public function create(array $data) {
-
-#echo 'get_called_class():'.get_called_class().PHP_EOL;
-#echo 'get_class(this):'.get_class($this).PHP_EOL;
-#echo '__CLASS__ :'.__CLASS__.PHP_EOL;
-#echo 'instanceof yf_model: '.(int)($this instanceof yf_model).PHP_EOL;
-#var_dump($this);
-
-		$insert_ok = $this->_query_builder()->insert($data);
-		return $this;
+	public static function create(array $data) {
+		$obj = new static(array('_is_static_call' => true));
+		$insert_id = $obj->_query_builder()->insert($data);
+		if ($insert_id) {
+			$pk = $obj->_get_primary_key_column();
+			if ($pk && !isset($data[$pk])) {
+				$data[$pk] = $insert_id;
+			}
+		}
+		return new yf_model_internal_result($data, $obj);
 	}
 
 	/**
@@ -432,9 +398,9 @@ class yf_model {
 	* Save data related to model back into database
 	*/
 	public function update(/*$data = array()*/) {
-#		if (empty($data)) {
+		if (empty($data)) {
 			$data = $this->_get_current_data();
-#		}
+		}
 		$table = $this->_get_table_name();
 		$where = $this->_where;
 		if (!$data || !$table || !$where) {
@@ -694,29 +660,32 @@ var_dump($table, $data, $where);
 
 	/**
 	*/
-	public function _get_tables() {
-/*
-		$db = &$this->_db;
-		if (isset($db->_found_tables)) {
-			return $db->_found_tables[$name];
-		}
-		$tables = $db->utils()->list_tables();
-		if ($db->DB_PREFIX) {
-			$p_len = strlen($db->DB_PREFIX);
-			$tmp = array();
-			foreach ($tables as $real) {
-				$short = $real;
-				if (substr($real, 0, $p_len) == $db->DB_PREFIX) {
-					$short = substr($real, $p_len);
-				}
-				$tmp[$short] = $real;
-			}
-			$tables = $tmp;
-		}
-		$db->_found_tables = $tables;
-		return $db->_found_tables[$name];
-*/
-	}
+#	function __get($name) {
+#		if (substr($name, 0, 1) === '_') {
+#			return $this->$name;
+#		}
+#		if (!$this->_preload_complete) {
+#			$this->_preload_data();
+#		}
+#		return $this->$name;
+#	}
+
+	/**
+	*/
+#	function __set($name, $value) {
+#		$this->$name = $value;
+#		return $this->$name;
+#	}
+
+	/**
+	*/
+#	public function _preload_data() {
+#		$this->_preload_complete = true;
+#		foreach ((array)$this->find() as $k => $v) {
+#			$this->$k = $v;
+#		}
+#		return true;
+#	}
 
 	/**
 	* Linking with the table builder
