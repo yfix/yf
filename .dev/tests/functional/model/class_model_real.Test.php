@@ -258,10 +258,11 @@ var_dump($bear_lawly);
 			'name'        => 'Grand Canyon',
 			'taste_level' => 5
 		));
-/*
+
 		// link our bears to picnics
 		// for our purposes we'll just add all bears to both picnics for our many to many relationship
-		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
+#		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
+/*
 		$bear_lawly->picnics()->attach($picnic_grand_canyon->id);
 
 		$bear_cerms->picnics()->attach($picnic_yellowstone->id);
@@ -269,6 +270,93 @@ var_dump($bear_lawly);
 
 		$bear_adobot->picnics()->attach($picnic_yellowstone->id);
 		$bear_adobot->picnics()->attach($picnic_grand_canyon->id);
+*/
+/*
+		// ----------- alternate creating models -----------
+
+		bear::create(array(
+			'name'         => 'Super Cool',
+			'type'         => 'Black',
+			'danger_level' => 1
+		));
+
+		// alternatively you can create an object, assign values, then save
+		$bear               = new bear;
+		$bear->name         = 'Super Cool';
+		$bear->type         = 'Black';
+		$bear->danger_level = 1;
+		$bear->save();
+
+		// ----------- querying models -----------
+
+		// find the bear or create it into the database
+		bear::first_or_create(array('name' => 'Lawly'));
+		// find the bear or instantiate a new instance into the object we want
+		$bear = bear::first_or_new(array('name' => 'Cerms'));
+		// get all the bears
+		$bears = bear::all();
+		// find a specific bear by id
+		$bear = bear::find(1);
+		// find a bear by a specific attribute
+		$bear_lawly = bear::where('name', '=', 'Lawly')->first();
+		// find a bear with danger level greater than 5
+		$dangerous_bears = bear::where('danger_level', '>', 5)->get();
+
+		// ----------- changing models -----------
+
+		// let's change the danger level of Lawly to level 10
+		// find the bear
+		$lawly = bear::where('name', '=', 'Lawly')->first();
+		// change the attribute
+		$lawly->danger_level = 10;
+		// save to our database
+		$lawly->save();
+
+		// ------ deleting models ------
+
+		// find and delete a record
+		$bear = bear::find(1);
+		$bear->delete();
+		// delete a record 
+		bear::destroy(1);
+		// delete multiple records 
+		bear::destroy(1, 2, 3);
+		// find and delete all bears with a danger level over 5
+		bear::where('danger_level', '>', 5)->delete();
+
+		// ------ query one-to-one relationships ------
+
+		// find a bear named Adobot
+		$adobot = bear::where('name', '=', 'Adobot')->first();
+		// get the fish that Adobot has
+		$fish = $adobot->fish;
+		// get the weight of the fish Adobot is going to eat
+		$fish->weight;
+		// alternatively you could go straight to the weight attribute
+		$adobot->fish->weight;
+
+		// ------ query one-to-many relationships ------
+
+		// find the trees lawly climbs
+		$lawly = bear::where('name', '=', 'Lawly')->first();
+		foreach ($lawly->trees as $tree) {
+			echo $tree->type . ' ' . $tree->age;
+		}
+
+		// ------ query many-to-many relationships ------
+
+		// get the picnics that Cerms goes to ------------------------
+		$cerms = bear::where('name', '=', 'Cerms')->first();
+		// get the picnics and their names and taste levels
+		foreach ($cerms->picnics as $picnic) {
+			echo $picnic->name . ' ' . $picnic->taste_level;
+		}
+		// get the bears that go to the Grand Canyon picnic -------------
+		$grand_canyon = picnic::where('name', '=', 'Grand Canyon')->first();
+		// show the bears
+		foreach ($grand_canyon->bears as $bear)
+			echo $bear->name . ' ' . $bear->type . ' ' . $bear->danger_level;
+		}
 */
 	}
 
@@ -470,7 +558,7 @@ if ($i++ > 3) {
 		$this->assertNotEmpty( $first_actor->first_name );
 		$this->assertNotEquals( $first_actor->first_name, $new_name );
 		$first_actor->first_name = $new_name;
-		$first_actor->save();
+#		$first_actor->save();
 		$this->assertEquals( $first_actor->first_name, $new_name );
 
 		$first_actor_copy = model('actor')->find($raw_first_id);
