@@ -352,9 +352,9 @@ class yf_model {
 	*/
 	public static function create(array $data) {
 		$obj = new static(array('_is_static_call' => true));
-		if (isset($data[self::CREATED_AT])) {
-			$data[self::CREATED_AT] = date('Y-m-d H:i:s');
-		}
+#		if (isset($data[self::CREATED_AT])) {
+#			$data[self::CREATED_AT] = date('Y-m-d H:i:s');
+#		}
 		$insert_id = $obj->_query_builder()->insert($data);
 		if (!$insert_id) {
 			return false;
