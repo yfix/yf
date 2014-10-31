@@ -150,7 +150,6 @@ class yf_model {
 	/**
 	*/
 	public function _get_table_name($name = '') {
-var_dump($this->_table);
 		if (!$name) {
 			$name = $this->_table;
 		}
