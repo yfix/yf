@@ -659,6 +659,7 @@ abstract class yf_db_migrator {
 	/**
 	*/
 	public function _migration_commands_into_string($cmds = array(), $num_tabs = 2) {
+// TODO: use new syntax with create_table() closures
 		$TAB = "\t";
 		$prefix = str_repeat($TAB, $num_tabs). '$utils->';
 		$a = array();
