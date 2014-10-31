@@ -15,6 +15,8 @@ class yf_model {
 	protected $_preload_complete = null;
 	protected $_relations = null;
 	protected $_params = null;
+	const CREATED_AT = 'created_at';
+	const UPDATED_AT = 'updated_at';
 
 	/**
 	*/
@@ -350,6 +352,9 @@ class yf_model {
 	*/
 	public static function create(array $data) {
 		$obj = new static(array('_is_static_call' => true));
+		if (isset($data[self::CREATED_AT])) {
+			$data[self::CREATED_AT] = date('Y-m-d H:i:s');
+		}
 		$insert_id = $obj->_query_builder()->insert($data);
 		if (!$insert_id) {
 			return false;
@@ -374,8 +379,8 @@ class yf_model {
 		$data = (array)$this->_get_current_data();
 		$pk = $this->_get_primary_key_column();
 		$this->_primary_id = $data[$pk];
-		if (isset($data['updated_at'])) {
-			$data['updated_at'] = date('Y-m-d H:i:s');
+		if (isset($data[self::UPDATED_AT])) {
+			$data[self::UPDATED_AT] = date('Y-m-d H:i:s');
 		}
 		return $this->_query_builder(array('whereid' => $this->_primary_id))->update($data);
 	}
