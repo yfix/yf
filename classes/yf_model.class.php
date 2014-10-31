@@ -21,9 +21,7 @@ class yf_model {
 	/**
 	*/
 	public function __construct($params = array()) {
-		if (isset($params['_is_static_call'])) {
-			$this->_db = db();
-		}
+		$this->_db = db();
 	}
 
 	/**
@@ -332,26 +330,22 @@ class yf_model {
 	/**
 	* Return first matched row or create such one, if not existed
 	*/
-	public function first_or_create() {
-/*
+	public static function first_or_create() {
+		$obj = new static();
 		$args = func_get_args();
-		$data = call_user_func_array(array($this, 'first'), $args);
-		if (empty($data)) {
-			$insert_ok = $this->_query_builder($args ? array('where' => $args) : null)->insert();
-			$insert_id = $insert_ok ? $this->_db->insert_id() : 0;
-			if ($insert_id) {
-				$data = $this->find($insert_id);
-			}
+		$first = call_user_func_array(array($obj, 'first'), $args);
+		$pk = $obj->_get_primary_key_column();
+		if (!empty($first->$pk)) {
+			return $first;
 		}
-		return new yf_model_internal_result($data, $this);
-*/
+		return call_user_func_array(array($obj, 'create'), $args);
 	}
 
 	/**
 	* Create new model record inside database
 	*/
 	public static function create(array $data) {
-		$obj = new static(array('_is_static_call' => true));
+		$obj = new static();
 #		if (isset($data[self::CREATED_AT])) {
 #			$data[self::CREATED_AT] = date('Y-m-d H:i:s');
 #		}
@@ -360,9 +354,8 @@ class yf_model {
 			return false;
 		}
 		$pk = $obj->_get_primary_key_column();
-		$data = (array)$obj->find($insert_id);
 		$obj->_primary_id = $insert_id;
-		return new yf_model_internal_result($data, $obj);
+		return $obj->find($insert_id);
 	}
 
 	/**
@@ -386,6 +379,15 @@ class yf_model {
 	}
 
 	/**
+	*/
+	public function attach($id, $params = array()) {
+#print_r($this->_relations);
+#		return $this->_query_builder(array('whereid' => $this->_primary_id))->insert($data, $params);
+#		return $this->_add_relation(array(
+#		));
+	}
+
+	/**
 	* Internal method
 	*/
 	public function _add_relation(array $params) {
@@ -402,7 +404,7 @@ class yf_model {
 				unset($data[$k]);
 			}
 		}
-		$relation_key = implode(':', array_keys($data));
+		$relation_key = implode(':', array_values($data));
 		$this->_relations[$relation_key] = $data;
 		return $this;
 	}
@@ -709,38 +711,31 @@ class yf_model {
 
 if (!class_exists('yf_model_internal_result')) {
 	class yf_model_internal_result {
-		public function __construct($result, $model) {
-			foreach ($result as $k => $v) {
-				$this->$k = $v;
-			}
-			$this->_model($model);
+		protected $_model = null;
+		public function __construct($data, $model) {
+			$this->_set_data($data);
+			$this->_model = $model;
 		}
 		public function __call($name, $args) {
-			$model = $this->_model();
-			// Forward current data into model
+			$this->_sync_model_data();
+			return call_user_func_array(array($this->_model, $name), $args);
+		}
+		public function _set_data($data) {
+			foreach ((array)$data as $k => $v) {
+				$first = substr($k, 0, 1);
+				if (ctype_alpha($first)) {
+					$this->$k = $v;
+				}
+			}
+		}
+		public function _sync_model_data() {
 			foreach (get_object_vars($this) as $var => $value) {
 				if (substr($var, 0, 1) === '_') {
 					continue;
 				}
-				$model->$var = $value;
+				$this->_model->$var = $value;
 			}
-			return call_user_func_array(array($model, $name), $args);
 		}
-		public function _model($model = null) {
-			static $_model;
-			if (is_null($model)) {
-				return $_model;
-			}
-			return $_model = $model;
-		}
-/*
-		public function __get($name) {
-			if (substr($name, 0, 1) === '_') {
-				return $this->$name;
-			}
-			return $this->$name;
-		}
-*/
 	}
 }
 
