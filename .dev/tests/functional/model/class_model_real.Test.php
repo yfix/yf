@@ -100,22 +100,51 @@ class class_model_real_test extends db_real_abstract {
 	public function test_basic_relations() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$model_base = _class('model'); // Need this to load basic model class
-		$prefix = self::utils()->db->DB_PREFIX.__FUNCTION__.'_';
+		$prefix = self::utils()->db->DB_PREFIX;
 
-		$t_bears = $prefix.'bears';
-		self::utils()->create_table($t_bears, function($t) {
+		self::utils()->create_table($prefix.'bears', function($t) {
 			$t->increments('id')
 			->string('name')
 			->string('type')
 			->int('danger_level')
 			->timestamps();
 		});
+		self::utils()->create_table($prefix.'fish', function($t) {
+			$t->increments('id')
+			->int('weight')
+			->int('bear_id')
+			->timestamps();
+		});
+		self::utils()->create_table($prefix.'trees', function($t) {
+			$t->increments('id')
+			->string('type')
+			->int('age')
+			->int('bear_id')
+			->timestamps();
+		});
+		self::utils()->create_table($prefix.'picnics', function($t) {
+			$t->increments('id')
+			->string('name')
+			->int('taste_level')
+			->timestamps();
+		});
+		self::utils()->create_table($prefix.'bears_picnics', function($t) {
+			$t->increments('id')
+			->int('bear_id')
+			->int('picnic_id')
+			->timestamps();
+		});
+
+		// ----------- Create models -------------
+
 		// Eval nowdoc string syntax
 		eval(
 <<<'ND'
 			class bear extends yf_model {
+				// link this model to db table
+				protected $_table = 'bears';
 				// define which attributes are mass assignable (for security)
-				protected $fillable = array('name', 'type', 'danger_level');
+				protected $_fillable = array('name', 'type', 'danger_level');
 				// each bear HAS one fish to eat
 				public function fish() {
 					return $this->has_one('fish');
@@ -129,67 +158,31 @@ class class_model_real_test extends db_real_abstract {
 					return $this->belongs_to_many('picnic', 'bears_picnics', 'bear_id', 'picnic_id');
 				}
 			}
-ND
-		);
-
-		$t_fish = $prefix.'fish';
-		self::utils()->create_table($t_fish, function($t) {
-			$t->increments('id')
-			->int('weight')
-			->int('bear_id')
-			->timestamps();
-		});
-		// Eval nowdoc string syntax
-		eval(
-<<<'ND'
 			class fish extends yf_model {
-				// define which attributes are mass assignable (for security)
-				protected $fillable = array('weight', 'bear_id');
 				// link this model to db table
-				protected $table = 'fish';
+				protected $_table = 'fish';
+				// define which attributes are mass assignable (for security)
+				protected $_fillable = array('weight', 'bear_id');
 				// relationships
 				public function bear() {
 					return $this->belongs_to('bear');
 				}
 			}
-ND
-		);
-
-		$t_trees = $prefix.'trees';
-		self::utils()->create_table($t_trees, function($t) {
-			$t->increments('id')
-			->string('type')
-			->int('age')
-			->int('bear_id')
-			->timestamps();
-		});
-		// Eval nowdoc string syntax
-		eval(
-<<<'ND'
 			class tree extends yf_model {
+				// link this model to db table
+				protected $_table = 'trees';
 				// define which attributes are mass assignable (for security)
-				protected $fillable = array('type', 'age', 'bear_id');
+				protected $_fillable = array('type', 'age', 'bear_id');
 				// relationships
 				public function bear() {
 					return $this->belongs_to('bear');
 				}
 			}
-ND
-		);
-
-		$t_picnics = $prefix.'picnicks';
-		self::utils()->create_table($t_picnicks, function($t) {
-			$t->increments('id')
-			->string('name')
-			->int('taste_level')
-			->timestamps();
-		});
-		// Eval nowdoc string syntax
-		eval(
-<<<'ND'
 			class picnic extends yf_model {
+				// link this model to db table
+				protected $_table = 'picnics';
 				// define which attributes are mass assignable (for security)
-				protected $fillable = array('name', 'taste_level');
+				protected $_fillable = array('name', 'taste_level');
 				// define a many to many relationship. also call the linking table
 				public function bears() {
 					return $this->belongs_to_many('bear', 'bears_picnics', 'picnic_id', 'bear_id');
@@ -198,18 +191,92 @@ ND
 ND
 		);
 
-		$t_bears_picnics = $prefix.'bears_picnicks';
-		self::utils()->create_table($t_bears_picnics, function($t) {
-			$t->increments('id')
-			->int('bear_id')
-			->int('picnic_id')
-			->timestamps();
-		});
+		// --------- seed data --------------
+
+		// seed our bears table
+
+		// bear 1 is named Lawly. She is extremely dangerous. Especially when hungry.
+/*
+		$bear_lawly = model('bear')->create(array(
+			'name'         => 'Lawly',
+			'type'         => 'Grizzly',
+			'danger_level' => 8,
+		));
+var_dump($bear_lawly);
+*/
+		$bear_lawly = bear::create(array(
+			'name'         => 'Lawly',
+			'type'         => 'Grizzly',
+			'danger_level' => 8,
+		));
+		// bear 2 is named Cerms. He has a loud growl but is pretty much harmless.
+		$bear_cerms = bear::create(array(
+			'name'         => 'Cerms',
+			'type'         => 'Black',
+			'danger_level' => 4
+		));
+		// bear 3 is named Adobot. He is a polar bear.
+		$bear_adobot = bear::create(array(
+			'name'         => 'Adobot',
+			'type'         => 'Polar',
+			'danger_level' => 3
+		));
+
+		// seed our fish table. our fish wont have names... because theyre going to be eaten
+		// we will use the variables we used to create the bears to get their id
+		fish::create(array(
+			'weight'  => 5,
+			'bear_id' => $bear_lawly->id
+		));
+		fish::create(array(
+			'weight'  => 12,
+			'bear_id' => $bear_cerms->id
+		));
+		fish::create(array(
+			'weight'  => 4,
+			'bear_id' => $bear_adobot->id
+		));
+
+		// seed our trees table
+		tree::create(array(
+			'type'    => 'Redwood',
+			'age'     => 500,
+			'bear_id' => $bear_lawly->id
+		));
+		tree::create(array(
+			'type'    => 'Oak',
+			'age'     => 400,
+			'bear_id' => $bear_lawly->id
+		));
+
+		// we will create one picnic and apply all bears to this one picnic
+		$picnic_yellowstone = picnic::create(array(
+			'name'        => 'Yellowstone',
+			'taste_level' => 6
+		));
+		$picnic_grand_canyon = picnic::create(array(
+			'name'        => 'Grand Canyon',
+			'taste_level' => 5
+		));
+/*
+		// link our bears to picnics
+		// for our purposes we'll just add all bears to both picnics for our many to many relationship
+		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
+		$bear_lawly->picnics()->attach($picnic_grand_canyon->id);
+
+		$bear_cerms->picnics()->attach($picnic_yellowstone->id);
+		$bear_cerms->picnics()->attach($picnic_grand_canyon->id);
+
+		$bear_adobot->picnics()->attach($picnic_yellowstone->id);
+		$bear_adobot->picnics()->attach($picnic_grand_canyon->id);
+*/
 	}
 
 	/***/
 	public function test_load_fixtures() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+
+		self::utils()->truncate_database(self::db_name());
 
 		$db_prefix = self::db()->DB_PREFIX;
 		$plen = strlen($db_prefix);
