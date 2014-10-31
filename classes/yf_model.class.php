@@ -68,6 +68,7 @@ if (!class_exists('yf_model_internal_collection')) {
 class yf_model {
 
 #	protected $_db = null;
+	protected $_table = null;
 	protected $_dirty_attrs = null;
 	protected $_is_trashed = null;
 	protected $_preload_complete = null;
@@ -84,8 +85,14 @@ class yf_model {
 	* We cleanup object properties when cloning
 	*/
 	public function __clone() {
+		$persist_properties = array(
+			'_table',
+			'_fillable',
+		);
 		foreach ((array)get_object_vars($this) as $k => $v) {
-			$this->$k = null;
+			if (!in_array($k, $persist_properties)) {
+				$this->$k = null;
+			}
 		}
 	}
 
@@ -107,22 +114,22 @@ class yf_model {
 
 	/**
 	*/
-	function __get($name) {
-		if (substr($name, 0, 1) === '_') {
-			return $this->$name;
-		}
+#	function __get($name) {
+#		if (substr($name, 0, 1) === '_') {
+#			return $this->$name;
+#		}
 #		if (!$this->_preload_complete) {
 #			$this->_preload_data();
 #		}
-		return $this->$name;
-	}
+#		return $this->$name;
+#	}
 
 	/**
 	*/
-	function __set($name, $value) {
-		$this->$name = $value;
-		return $this->$name;
-	}
+#	function __set($name, $value) {
+#		$this->$name = $value;
+#		return $this->$name;
+#	}
 
 	/**
 	*/
@@ -143,6 +150,7 @@ class yf_model {
 	/**
 	*/
 	public function _get_table_name($name = '') {
+var_dump($this->_table);
 		if (!$name) {
 			$name = $this->_table;
 		}
@@ -402,15 +410,15 @@ class yf_model {
 	/**
 	* Create new model record inside database
 	*/
-	public function create() {
-/*
-echo get_called_class();
-echo get_class($this);
-echo __CLASS__;
-*/
+	public function create(array $data) {
+
+#echo 'get_called_class():'.get_called_class().PHP_EOL;
+#echo 'get_class(this):'.get_class($this).PHP_EOL;
+#echo '__CLASS__ :'.__CLASS__.PHP_EOL;
+#echo 'instanceof yf_model: '.(int)($this instanceof yf_model).PHP_EOL;
 #var_dump($this);
-		$args = func_get_args();
-		$insert_ok = $this->_query_builder($args ? array('where' => $args) : null)->insert($this->_get_current_data());
+
+		$insert_ok = $this->_query_builder()->insert($data);
 		return $this;
 	}
 
