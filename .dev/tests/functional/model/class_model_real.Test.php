@@ -99,6 +99,7 @@ class class_model_real_test extends db_real_abstract {
 	*/
 	public function test_basic_relations() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$model_base = _class('model'); // Need this to load basic model class
 		$prefix = self::utils()->db->DB_PREFIX.__FUNCTION__.'_';
 
 		$t_bears = $prefix.'bears';
@@ -109,6 +110,27 @@ class class_model_real_test extends db_real_abstract {
 			->int('danger_level')
 			->timestamps();
 		});
+		// Eval nowdoc string syntax
+		eval(
+<<<'ND'
+			class bear extends yf_model {
+				// define which attributes are mass assignable (for security)
+				protected $fillable = array('name', 'type', 'danger_level');
+				// each bear HAS one fish to eat
+				public function fish() {
+					return $this->has_one('fish');
+				}
+				// each bear climbs many trees
+				public function trees() {
+					return $this->has_many('tree');
+				}
+				// each bear BELONGS to many picnic. define our pivot table also
+				public function picnics() {
+					return $this->belongs_to_many('picnic', 'bears_picnics', 'bear_id', 'picnic_id');
+				}
+			}
+ND
+		);
 
 		$t_fish = $prefix.'fish';
 		self::utils()->create_table($t_fish, function($t) {
@@ -117,6 +139,21 @@ class class_model_real_test extends db_real_abstract {
 			->int('bear_id')
 			->timestamps();
 		});
+		// Eval nowdoc string syntax
+		eval(
+<<<'ND'
+			class fish extends yf_model {
+				// define which attributes are mass assignable (for security)
+				protected $fillable = array('weight', 'bear_id');
+				// link this model to db table
+				protected $table = 'fish';
+				// relationships
+				public function bear() {
+					return $this->belongs_to('bear');
+				}
+			}
+ND
+		);
 
 		$t_trees = $prefix.'trees';
 		self::utils()->create_table($t_trees, function($t) {
@@ -126,6 +163,19 @@ class class_model_real_test extends db_real_abstract {
 			->int('bear_id')
 			->timestamps();
 		});
+		// Eval nowdoc string syntax
+		eval(
+<<<'ND'
+			class tree extends yf_model {
+				// define which attributes are mass assignable (for security)
+				protected $fillable = array('type', 'age', 'bear_id');
+				// relationships
+				public function bear() {
+					return $this->belongs_to('bear');
+				}
+			}
+ND
+		);
 
 		$t_picnics = $prefix.'picnicks';
 		self::utils()->create_table($t_picnicks, function($t) {
@@ -134,6 +184,19 @@ class class_model_real_test extends db_real_abstract {
 			->int('taste_level')
 			->timestamps();
 		});
+		// Eval nowdoc string syntax
+		eval(
+<<<'ND'
+			class picnic extends yf_model {
+				// define which attributes are mass assignable (for security)
+				protected $fillable = array('name', 'taste_level');
+				// define a many to many relationship. also call the linking table
+				public function bears() {
+					return $this->belongs_to_many('bear', 'bears_picnics', 'picnic_id', 'bear_id');
+				}
+			}
+ND
+		);
 
 		$t_bears_picnics = $prefix.'bears_picnicks';
 		self::utils()->create_table($t_bears_picnics, function($t) {
