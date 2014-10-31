@@ -360,8 +360,8 @@ class yf_model {
 			return false;
 		}
 		$pk = $obj->_get_primary_key_column();
-		$data = (array)$obj->find($data[$pk]);
-		$obj->_primary_id = $data[$pk];
+		$data = (array)$obj->find($insert_id);
+		$obj->_primary_id = $insert_id;
 		return new yf_model_internal_result($data, $obj);
 	}
 
