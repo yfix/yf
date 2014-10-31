@@ -1629,11 +1629,16 @@ class yf_db {
 				}
 			}
 		}
-		$model_obj = clone _class_safe($model_class);
-		if (!is_object($model_obj)) {
+		$obj = _class_safe($model_class);
+		// Special case to use preloaded models, try to load class name without postfix *_model
+		if (!is_object($obj) || !($obj instanceof yf_model)) {
+			$obj = _class_safe($name);
+		}
+		if (!is_object($obj) || !($obj instanceof yf_model)) {
 			throw new Exception('Not able to load model: '.$name);
 			return false;
 		}
+		$model_obj = clone $obj;
 		$model_obj->_db = $this;
 		return $model_obj;
 	}
