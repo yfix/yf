@@ -1,52 +1,15 @@
 <?php
 
-if (!class_exists('yf_model_internal_result')) {
-	class yf_model_internal_result {
-		public function __construct($result, $model) {
-			foreach ($result as $k => $v) {
-				$this->$k = $v;
-			}
-			$this->_model($model);
-		}
-		public function __call($name, $args) {
-			$args['_data'] = $this;
-			return call_user_func_array(array($this->_model(), $name), $args);
-		}
-		public function _model($model = null) {
-			static $_model;
-			if (is_null($model)) {
-				return $_model;
-			}
-			return $_model = $model;
-		}
-/*
-		public function __get($name) {
-			if (substr($name, 0, 1) === '_') {
-				return $this->$name;
-			}
-			return $this->$name;
-		}
-*/
-	}
-}
-
-/*
-if (!class_exists('yf_model_internal_collection')) {
-	class yf_model_internal_collection {
-// TODO
-	}
-}
-*/
-
 /**
 * ORM model
 */
 class yf_model {
 
 #	protected $_db = null;
-	protected $_pk = null;
 	protected $_table = null;
 	protected $_fillable = array();
+	protected $_primary_key = null;
+	protected $_primary_id = null;
 	protected $_dirty_attrs = null;
 	protected $_is_trashed = null;
 	protected $_preload_complete = null;
@@ -130,19 +93,24 @@ class yf_model {
 	* Find primary key name
 	*/
 	public function _get_primary_key_column($table = null) {
-		if (isset($this->_pk)) {
-			return $this->_pk;
-		}
 		if (!isset($table)) {
 			$table = $this->_get_table_name();
+			$self = true;
+		}
+		$container = &$this->_pk_cache;
+		if (isset($container[$table])) {
+			return $container[$table];
 		}
 		$primary = $this->_db->utils()->index_info($table, 'PRIMARY');
 		if ($primary) {
-			$this->_pk = current($primary['columns']);
+			$container[$table] = current($primary['columns']);
 		} else {
-			$this->_pk = false;
+			$container[$table] = false;
 		}
-		return $this->_pk;
+		if ($self && !isset($this->_primary_key)) {
+			$this->_primary_key = $container[$table];
+		}
+		return $container[$table];
 	}
 
 	/**
@@ -180,7 +148,7 @@ class yf_model {
 		}
 		foreach (array('select','where','where_or','whereid','order_by','having','group_by') as $func) {
 			if ($params[$func]) {
-				call_user_func_array(array($qb, $func), $params[$func]);
+				call_user_func_array(array($qb, $func), is_array($params[$func]) ? $params[$func] : array($params[$func]));
 			}
 		}
 		if ($params['join']) {
@@ -286,8 +254,8 @@ class yf_model {
 		$args = func_get_args();
 		$this->_where = $args;
 		$result = $this->_query_builder($args ? array('where' => $args) : null)->get();
+		$this->_primary_id = $result[$pk];
 		return new yf_model_internal_result($result, $this);
-#		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
@@ -303,9 +271,10 @@ class yf_model {
 	*/
 	public function first() {
 		$args = func_get_args();
-		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => ':pk asc', 'limit' => 1) : null)->get();
+		$pk = $this->_get_primary_key_column();
+		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => $pk.' asc', 'limit' => 1) : null)->get();
+		$this->_primary_id = $result[$pk];
 		return new yf_model_internal_result($result, $this);
-#		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
@@ -313,9 +282,10 @@ class yf_model {
 	*/
 	public function last() {
 		$args = func_get_args();
-		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => ':pk desc', 'limit' => 1) : null)->get();
+		$pk = $this->_get_primary_key_column();
+		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => $pk.' desc', 'limit' => 1) : null)->get();
+		$this->_primary_id = $result[$pk];
 		return new yf_model_internal_result($result, $this);
-#		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
@@ -323,9 +293,10 @@ class yf_model {
 	*/
 	public function get() {
 		$args = func_get_args();
+		$pk = $this->_get_primary_key_column();
 		$result = $this->_query_builder($args ? array('where' => $args) : null)->get();
+		$this->_primary_id = $result[$pk];
 		return new yf_model_internal_result($result, $this);
-#		return $result ? (object)$result : new stdClass;
 	}
 
 	/**
@@ -333,6 +304,7 @@ class yf_model {
 	*/
 	public function all() {
 		$args = func_get_args();
+		$pk = $this->_get_primary_key_column();
 		return $this->_query_builder($args ? array('where' => $args) : null)->get_all(/*array('as_objects' => true)*/);
 #		return $this->_query_builder($args ? array('where' => $args) : null)->get_all(array('as_objects' => true));
 #		$result = $this->_query_builder($args ? array('where' => $args) : null)->get_all(/*array('as_objects' => true)*/);
@@ -351,6 +323,7 @@ class yf_model {
 	*/
 	public function count() {
 		$args = func_get_args();
+		$pk = $this->_get_primary_key_column();
 		return (int)$this->_query_builder($args ? array('where' => $args) : null)->count();
 	}
 
@@ -378,12 +351,12 @@ class yf_model {
 	public static function create(array $data) {
 		$obj = new static(array('_is_static_call' => true));
 		$insert_id = $obj->_query_builder()->insert($data);
-		if ($insert_id) {
-			$pk = $obj->_get_primary_key_column();
-			if ($pk && !isset($data[$pk])) {
-				$data[$pk] = $insert_id;
-			}
+		if (!$insert_id) {
+			return false;
 		}
+		$pk = $obj->_get_primary_key_column();
+		$data = (array)$obj->find($data[$pk]);
+		$obj->_primary_id = $data[$pk];
 		return new yf_model_internal_result($data, $obj);
 	}
 
@@ -397,18 +370,14 @@ class yf_model {
 	/**
 	* Save data related to model back into database
 	*/
-	public function update(/*$data = array()*/) {
-		if (empty($data)) {
-			$data = $this->_get_current_data();
+	public function update() {
+		$data = (array)$this->_get_current_data();
+		$pk = $this->_get_primary_key_column();
+		$this->_primary_id = $data[$pk];
+		if (isset($data['updated_at'])) {
+			$data['updated_at'] = date('Y-m-d H:i:s');
 		}
-		$table = $this->_get_table_name();
-		$where = $this->_where;
-		if (!$data || !$table || !$where) {
-			return false;
-		}
-var_dump($table, $data, $where);
-#		$sql = $this->_query_builder()->update($data);
-#		return $this->_db->update($table, $data, $where);
+		return $this->_query_builder(array('whereid' => $this->_primary_id))->update($data);
 	}
 
 	/**
@@ -732,3 +701,48 @@ var_dump($table, $data, $where);
 // TODO
 	}
 }
+
+if (!class_exists('yf_model_internal_result')) {
+	class yf_model_internal_result {
+		public function __construct($result, $model) {
+			foreach ($result as $k => $v) {
+				$this->$k = $v;
+			}
+			$this->_model($model);
+		}
+		public function __call($name, $args) {
+			$model = $this->_model();
+			// Forward current data into model
+			foreach (get_object_vars($this) as $var => $value) {
+				if (substr($var, 0, 1) === '_') {
+					continue;
+				}
+				$model->$var = $value;
+			}
+			return call_user_func_array(array($model, $name), $args);
+		}
+		public function _model($model = null) {
+			static $_model;
+			if (is_null($model)) {
+				return $_model;
+			}
+			return $_model = $model;
+		}
+/*
+		public function __get($name) {
+			if (substr($name, 0, 1) === '_') {
+				return $this->$name;
+			}
+			return $this->$name;
+		}
+*/
+	}
+}
+
+/*
+if (!class_exists('yf_model_internal_collection')) {
+	class yf_model_internal_collection {
+// TODO
+	}
+}
+*/
