@@ -97,6 +97,15 @@ class yf_model {
 	}
 
 	/**
+	* Catch static calls
+	*/
+	public static function __callStatic($method, $args) {
+		$instance = new static;
+		$instance->_db = db();
+		return call_user_func_array(array($instance, $method), $args);
+	}
+
+	/**
 	*/
 	function __get($name) {
 		if (substr($name, 0, 1) === '_') {
@@ -138,11 +147,17 @@ class yf_model {
 			$name = $this->_table;
 		}
 		if (!$name) {
-			$name = substr(get_called_class(), 0, -strlen('_model'));
-			$yf_plen = strlen(YF_PREFIX);
-			if ($yf_plen && substr($name, 0, $yf_plen) === YF_PREFIX) {
-				$name = substr($name, $yf_plen);
+			$name = get_called_class();
+			$postfix = '_model';
+			$plen = strlen($postfix);
+			if ($plen && substr($name, -$plen) === $postfix) {
+				$name = substr($name, 0, -$plen);
 			}
+			$yf_len = strlen(YF_PREFIX);
+			if ($yf_len && substr($name, 0, $yf_len) === YF_PREFIX) {
+				$name = substr($name, $yf_len);
+			}
+			$this->_table = $name;
 		}
 		return $this->_db->_fix_table_name($name);
 	}
@@ -388,6 +403,12 @@ class yf_model {
 	* Create new model record inside database
 	*/
 	public function create() {
+/*
+echo get_called_class();
+echo get_class($this);
+echo __CLASS__;
+*/
+#var_dump($this);
 		$args = func_get_args();
 		$insert_ok = $this->_query_builder($args ? array('where' => $args) : null)->insert($this->_get_current_data());
 		return $this;
