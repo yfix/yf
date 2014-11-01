@@ -280,8 +280,9 @@ class yf_model {
 	/**
 	* Return first column from first row from resultset
 	*/
-	public function one() {
-		$data = call_user_func_array(array($this, 'find'), func_get_args());
+	public static function one() {
+		$obj = isset($this) ? $this : new static();
+		$data = call_user_func_array(array($obj, 'find'), func_get_args());
 		return is_array($data) ? current($data) : null;
 	}
 
@@ -340,17 +341,18 @@ class yf_model {
 	/**
 	* Alias for all
 	*/
-	public function get_all() {
-		return call_user_func_array(array($this, 'all'), func_get_args());
+	public static function get_all() {
+		$obj = isset($this) ? $this : new static();
+		return call_user_func_array(array($obj, 'all'), func_get_args());
 	}
 
 	/**
 	* Count number of matching records, according to condition
 	*/
-	public function count() {
+	public static function count() {
+		$obj = isset($this) ? $this : new static();
 		$args = func_get_args();
-		$pk = $this->_get_primary_key_column();
-		return (int)$this->_query_builder($args ? array('where' => $args) : null)->count();
+		return (int)$obj->_query_builder($args ? array('where' => $args) : null)->count();
 	}
 
 	/**
@@ -381,9 +383,6 @@ class yf_model {
 	*/
 	public static function create(array $data) {
 		$obj = isset($this) ? $this : new static();
-#		if (isset($data[self::CREATED_AT])) {
-#			$data[self::CREATED_AT] = date('Y-m-d H:i:s');
-#		}
 		$insert_id = $obj->_query_builder()->insert($data);
 		if (!$insert_id) {
 			return false;
@@ -396,26 +395,29 @@ class yf_model {
 	/**
 	* Save model back into database
 	*/
-	public function save() {
-		return call_user_func_array(array($this, 'update'), func_get_args());
+	public static function save() {
+		$obj = isset($this) ? $this : new static();
+		return call_user_func_array(array($obj, 'update'), func_get_args());
 	}
 
 	/**
 	* Save data related to model back into database
 	*/
-	public function update() {
-		$data = (array)$this->_get_current_data();
-		$pk = $this->_get_primary_key_column();
-		$this->_primary_id = $data[$pk];
+	public static function update() {
+		$obj = isset($this) ? $this : new static();
+		$data = (array)$obj->_get_current_data();
+		$pk = $obj->_get_primary_key_column();
+		$obj->_primary_id = $data[$pk];
 		if (isset($data[self::UPDATED_AT])) {
 			$data[self::UPDATED_AT] = date('Y-m-d H:i:s');
 		}
-		return $this->_query_builder(array('whereid' => $this->_primary_id))->update($data);
+		return $obj->_query_builder(array('whereid' => $obj->_primary_id))->update($data);
 	}
 
 	/**
 	*/
-	public function attach($id, $params = array()) {
+	public static function attach($id, $params = array()) {
+		$obj = isset($this) ? $this : new static();
 #print_r($this->_relations);
 #		return $this->_query_builder(array('whereid' => $this->_primary_id))->insert($data, $params);
 #		return $this->_add_relation(array(
