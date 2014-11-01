@@ -195,8 +195,8 @@ class yf_model {
 
 	/**
 	*/
-	public function _set_query_builder_params($part, $params) {
-		$this->_params[$part] = $args;
+	public function _set_query_builder_params($part, $args) {
+		$this->_params[$part][] = $args;
 		return $this;
 	}
 
