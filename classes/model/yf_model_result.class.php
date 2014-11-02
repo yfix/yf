@@ -6,6 +6,12 @@ class yf_model_result {
 		$this->_set_data($data);
 		$this->_model = $model;
 	}
+	public function __get($name) {
+		if ($name !== 'model' && !isset($this->$name)) {
+			return $this->_model->$name;
+		}
+		return $this->$name;
+	}
 	public function __call($name, $args) {
 		$this->_sync_model_data();
 		return call_user_func_array(array($this->_model, $name), $args);
