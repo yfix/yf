@@ -137,7 +137,19 @@ class class_model_real_test extends db_real_abstract {
 			->timestamps();
 		});
 
+		$this->assertTrue(self::utils()->table_exists($prefix.'bears'));
+		$this->assertTrue(self::utils()->table_exists($prefix.'fish'));
+		$this->assertTrue(self::utils()->table_exists($prefix.'trees'));
+		$this->assertTrue(self::utils()->table_exists($prefix.'picnics'));
+		$this->assertTrue(self::utils()->table_exists($prefix.'bears_picnics'));
+
 		// ----------- Create models -------------
+
+		$this->assertFalse(class_exists('bears'));
+		$this->assertFalse(class_exists('fish'));
+		$this->assertFalse(class_exists('trees'));
+		$this->assertFalse(class_exists('picnics'));
+		$this->assertFalse(class_exists('bears_picnics'));
 
 		// Eval nowdoc string syntax
 		eval(
@@ -193,6 +205,11 @@ class class_model_real_test extends db_real_abstract {
 ND
 		);
 
+		$this->assertTrue(class_exists('bear'));
+		$this->assertTrue(class_exists('fish'));
+		$this->assertTrue(class_exists('tree'));
+		$this->assertTrue(class_exists('picnic'));
+
 		// --------- seed data --------------
 		// bear 1 is named Lawly. She is extremely dangerous. Especially when hungry.
 		$bear_lawly = bear::create(array(
@@ -221,6 +238,39 @@ ND
 			'type'         => 'Polar',
 			'danger_level' => 3
 		));
+
+		$this->assertInternalType('object', $bear_lawly);
+		$this->assertInstanceOf('yf_model_internal_result', $bear_lawly);
+		$this->assertInstanceOf('yf_model', $bear_lawly->_get_model());
+		$this->assertInstanceOf('bear', $bear_lawly->_get_model());
+		$this->assertObjectHasAttribute('name', $bear_lawly);
+		$this->assertObjectHasAttribute('type', $bear_lawly);
+		$this->assertObjectHasAttribute('danger_level', $bear_lawly);
+		$this->assertSame('Lawly', $bear_lawly->name);
+		$this->assertSame('Grizzly', $bear_lawly->type);
+		$this->assertSame('8', $bear_lawly->danger_level);
+
+		$this->assertInternalType('object', $bear_cerms);
+		$this->assertInstanceOf('yf_model_internal_result', $bear_cerms);
+		$this->assertInstanceOf('yf_model', $bear_cerms->_get_model());
+		$this->assertInstanceOf('bear', $bear_cerms->_get_model());
+		$this->assertObjectHasAttribute('name', $bear_cerms);
+		$this->assertObjectHasAttribute('type', $bear_cerms);
+		$this->assertObjectHasAttribute('danger_level', $bear_cerms);
+		$this->assertSame('Cerms', $bear_cerms->name);
+		$this->assertSame('Black', $bear_cerms->type);
+		$this->assertSame('4', $bear_cerms->danger_level);
+
+		$this->assertInternalType('object', $bear_adobot);
+		$this->assertInstanceOf('yf_model_internal_result', $bear_adobot);
+		$this->assertInstanceOf('yf_model', $bear_adobot->_get_model());
+		$this->assertInstanceOf('bear', $bear_adobot->_get_model());
+		$this->assertObjectHasAttribute('name', $bear_adobot);
+		$this->assertObjectHasAttribute('type', $bear_adobot);
+		$this->assertObjectHasAttribute('danger_level', $bear_adobot);
+		$this->assertSame('Adobot', $bear_adobot->name);
+		$this->assertSame('Polar', $bear_adobot->type);
+		$this->assertSame('3', $bear_adobot->danger_level);
 
 		// seed our fish table. our fish wont have names... because theyre going to be eaten
 		// we will use the variables we used to create the bears to get their id
@@ -258,10 +308,10 @@ ND
 			'name'        => 'Grand Canyon',
 			'taste_level' => 5
 		));
-/*
+
 		// link our bears to picnics
 		// for our purposes we'll just add all bears to both picnics for our many to many relationship
-		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
+/*		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
 		$bear_lawly->picnics()->attach($picnic_grand_canyon->id);
 
 		$bear_cerms->picnics()->attach($picnic_yellowstone->id);
@@ -317,18 +367,21 @@ ND
 		$bear = bear::find(1);
 		$bear->delete();
 		// delete a record 
-#		bear::destroy(1);
+		bear::destroy(1);
 		// delete multiple records 
-#		bear::destroy(1, 2, 3);
+		bear::destroy(1, 2, 3);
 		// find and delete all bears with a danger level over 5
 		bear::where('danger_level', '>', 5)->delete();
 
 		// ------ query one-to-one relationships ------
-/*
+
 		// find a bear named Adobot
 		$adobot = bear::where('name', '=', 'Adobot')->first();
 		// get the fish that Adobot has
-		$fish = $adobot->fish;
+#		$fish = $adobot->fish;
+var_dump($adobot->_get_current_data());
+var_dump($adobot->fish);
+/*
 		// get the weight of the fish Adobot is going to eat
 		$fish->weight;
 		// alternatively you could go straight to the weight attribute
