@@ -487,11 +487,11 @@ ND
 #		$fish = $adobot->fish;
 #var_dump($adobot->_get_current_data());
 #var_dump($adobot->fish);
-/*
+
 		// get the weight of the fish Adobot is going to eat
-		$fish->weight;
+#		$fish->weight;
 		// alternatively you could go straight to the weight attribute
-		$adobot->fish->weight;
+#		$adobot->fish->weight;
 /*
 		// ------ query one-to-many relationships ------
 
