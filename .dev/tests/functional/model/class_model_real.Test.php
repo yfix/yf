@@ -321,16 +321,40 @@ ND
 		$this->assertSame($bear_adobot->id, $fish3->bear_id);
 
 		// seed our trees table
-		tree::create(array(
+		$tree1 = tree::create(array(
 			'type'    => 'Redwood',
 			'age'     => '500',
 			'bear_id' => $bear_lawly->id
 		));
-		tree::create(array(
+		$tree2 = tree::create(array(
 			'type'    => 'Oak',
 			'age'     => '400',
 			'bear_id' => $bear_lawly->id
 		));
+
+		$this->assertInternalType('object', $tree1);
+		$this->assertInstanceOf('yf_model_internal_result', $tree1);
+		$this->assertInstanceOf('yf_model', $tree1->_get_model());
+		$this->assertInstanceOf('tree', $tree1->_get_model());
+		$this->assertObjectHasAttribute('id', $tree1);
+		$this->assertObjectHasAttribute('type', $tree1);
+		$this->assertObjectHasAttribute('age', $tree1);
+		$this->assertObjectHasAttribute('bear_id', $tree1);
+		$this->assertSame('Redwood', $tree1->type);
+		$this->assertSame('500', $tree1->age);
+		$this->assertSame($bear_lawly->id, $tree1->bear_id);
+
+		$this->assertInternalType('object', $tree2);
+		$this->assertInstanceOf('yf_model_internal_result', $tree2);
+		$this->assertInstanceOf('yf_model', $tree2->_get_model());
+		$this->assertInstanceOf('tree', $tree2->_get_model());
+		$this->assertObjectHasAttribute('id', $tree2);
+		$this->assertObjectHasAttribute('type', $tree2);
+		$this->assertObjectHasAttribute('age', $tree2);
+		$this->assertObjectHasAttribute('bear_id', $tree2);
+		$this->assertSame('Oak', $tree2->type);
+		$this->assertSame('400', $tree2->age);
+		$this->assertSame($bear_lawly->id, $tree2->bear_id);
 
 		// we will create one picnic and apply all bears to this one picnic
 		$picnic_yellowstone = picnic::create(array(
@@ -353,6 +377,30 @@ ND
 		$bear_adobot->picnics()->attach($picnic_yellowstone->id);
 		$bear_adobot->picnics()->attach($picnic_grand_canyon->id);
 */
+
+		$this->assertInternalType('object', $picnic_yellowstone);
+		$this->assertInstanceOf('yf_model_internal_result', $picnic_yellowstone);
+		$this->assertInstanceOf('yf_model', $picnic_yellowstone->_get_model());
+		$this->assertInstanceOf('picnic', $picnic_yellowstone->_get_model());
+		$this->assertObjectHasAttribute('id', $picnic_yellowstone);
+		$this->assertObjectHasAttribute('name', $picnic_yellowstone);
+		$this->assertObjectHasAttribute('taste_level', $picnic_yellowstone);
+#		$this->assertObjectHasAttribute('bear_id', $picnic_yellowstone);
+		$this->assertSame('Yellowstone', $picnic_yellowstone->name);
+		$this->assertSame('6', $picnic_yellowstone->taste_level);
+#		$this->assertSame($bear_lawly->id, $picnic_yellowstone->bear_id);
+
+		$this->assertInternalType('object', $picnic_grand_canyon);
+		$this->assertInstanceOf('yf_model_internal_result', $picnic_grand_canyon);
+		$this->assertInstanceOf('yf_model', $picnic_grand_canyon->_get_model());
+		$this->assertInstanceOf('picnic', $picnic_grand_canyon->_get_model());
+		$this->assertObjectHasAttribute('id', $picnic_grand_canyon);
+		$this->assertObjectHasAttribute('name', $picnic_grand_canyon);
+		$this->assertObjectHasAttribute('taste_level', $picnic_grand_canyon);
+#		$this->assertObjectHasAttribute('bear_id', $picnic_grand_canyon);
+		$this->assertSame('Grand Canyon', $picnic_grand_canyon->name);
+		$this->assertSame('5', $picnic_grand_canyon->taste_level);
+#		$this->assertSame($bear_lawly->id, $picnic_grand_canyon->bear_id);
 
 		// ----------- alternate creating models -----------
 
