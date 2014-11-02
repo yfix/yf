@@ -377,7 +377,6 @@ ND
 		$bear_adobot->picnics()->attach($picnic_yellowstone->id);
 		$bear_adobot->picnics()->attach($picnic_grand_canyon->id);
 */
-
 		$this->assertInternalType('object', $picnic_yellowstone);
 		$this->assertInstanceOf('yf_model_internal_result', $picnic_yellowstone);
 		$this->assertInstanceOf('yf_model', $picnic_yellowstone->_get_model());
@@ -404,18 +403,42 @@ ND
 
 		// ----------- alternate creating models -----------
 
-		bear::create(array(
-			'name'         => 'Super Cool',
+		$bear_cool1 = bear::create(array(
+			'name'         => 'Super Cool1',
 			'type'         => 'Black',
 			'danger_level' => 1
 		));
 
 		// alternatively you can create an object, assign values, then save
-		$bear               = new bear;
-		$bear->name         = 'Super Cool';
-		$bear->type         = 'Black';
-		$bear->danger_level = 1;
-		$bear->save();
+		$bear_cool2               = new bear;
+		$bear_cool2->name         = 'Super Cool2';
+		$bear_cool2->type         = 'Black';
+		$bear_cool2->danger_level = 1;
+		$bear_cool2->save();
+
+		$this->assertInternalType('object', $bear_cool1);
+		$this->assertInstanceOf('yf_model_internal_result', $bear_cool1);
+		$this->assertInstanceOf('yf_model', $bear_cool1->_get_model());
+		$this->assertInstanceOf('bear', $bear_cool1->_get_model());
+		$this->assertObjectHasAttribute('id', $bear_cool1);
+		$this->assertObjectHasAttribute('name', $bear_cool1);
+		$this->assertObjectHasAttribute('type', $bear_cool1);
+		$this->assertObjectHasAttribute('danger_level', $bear_cool1);
+		$this->assertSame('Super Cool1', $bear_cool1->name);
+		$this->assertSame('Black', $bear_cool1->type);
+		$this->assertSame('1', $bear_cool1->danger_level);
+
+		$this->assertInternalType('object', $bear_cool2);
+		$this->assertInstanceOf('yf_model_internal_result', $bear_cool2);
+		$this->assertInstanceOf('yf_model', $bear_cool2->_get_model());
+		$this->assertInstanceOf('bear', $bear_cool2->_get_model());
+		$this->assertObjectHasAttribute('id', $bear_cool2);
+		$this->assertObjectHasAttribute('name', $bear_cool2);
+		$this->assertObjectHasAttribute('type', $bear_cool2);
+		$this->assertObjectHasAttribute('danger_level', $bear_cool2);
+		$this->assertSame('Super Cool1', $bear_cool2->name);
+		$this->assertSame('Black', $bear_cool2->type);
+		$this->assertSame('1', $bear_cool2->danger_level);
 
 		// ----------- querying models -----------
 
