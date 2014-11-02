@@ -1,5 +1,8 @@
 <?php
 
+load('yf_model_result', '', 'classes/model/');
+load('yf_model_relation', '', 'classes/model/');
+
 /**
 * ORM model
 */
@@ -21,10 +24,8 @@ class yf_model {
 
 	/**
 	*/
+/*
 	public function __get($name) {
-#print_r(get_class_methods($this));
-echo $name.PHP_EOL;
-#echo (int)method_exists($this, $name);
 		if (method_exists($this, $name)) {
 			return $this->name();
 		}
@@ -33,6 +34,7 @@ echo $name.PHP_EOL;
 		}
 		return null;
 	}
+*/
 
 	/**
 	*/
@@ -290,7 +292,7 @@ echo $name.PHP_EOL;
 		$obj->_where = $args;
 		$result = $obj->_query_builder($args ? array('where' => $args) : null)->get();
 		$obj->_primary_id = $result[$pk];
-		return new yf_model_internal_result($result, $obj);
+		return new yf_model_result($result, $obj);
 	}
 
 	/**
@@ -310,7 +312,7 @@ echo $name.PHP_EOL;
 		$pk = $this->_get_primary_key_column();
 		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => $pk.' asc', 'limit' => 1) : null)->get();
 		$this->_primary_id = $result[$pk];
-		return new yf_model_internal_result($result, $this);
+		return new yf_model_result($result, $this);
 	}
 
 	/**
@@ -321,7 +323,7 @@ echo $name.PHP_EOL;
 		$pk = $this->_get_primary_key_column();
 		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => $pk.' desc', 'limit' => 1) : null)->get();
 		$this->_primary_id = $result[$pk];
-		return new yf_model_internal_result($result, $this);
+		return new yf_model_result($result, $this);
 	}
 
 	/**
@@ -332,7 +334,7 @@ echo $name.PHP_EOL;
 		$pk = $this->_get_primary_key_column();
 		$result = $this->_query_builder($args ? array('where' => $args) : null)->get();
 		$this->_primary_id = $result[$pk];
-		return new yf_model_internal_result($result, $this);
+		return new yf_model_result($result, $this);
 	}
 
 	/**
@@ -347,7 +349,7 @@ echo $name.PHP_EOL;
 		}
 		$out = array();
 		foreach ($result as $k => $item) {
-			$out[$k] = new yf_model_internal_result($item, $obj);
+			$out[$k] = new yf_model_result($item, $obj);
 		}
 		return $out;
 	}
@@ -430,8 +432,9 @@ echo $name.PHP_EOL;
 
 	/**
 	*/
-	public static function attach($id, $params = array()) {
-		$obj = isset($this) ? $this : new static();
+	public function attach($id, $params = array()) {
+#		foreach () {
+#		}
 #print_r($this->_relations);
 #		return $this->_query_builder(array('whereid' => $this->_primary_id))->insert($data, $params);
 #		return $this->_add_relation(array(
@@ -754,38 +757,5 @@ echo $name.PHP_EOL;
 	*/
 	public function html($name, $params = array()) {
 // TODO
-	}
-}
-
-if (!class_exists('yf_model_internal_result')) {
-	class yf_model_internal_result {
-		protected $_model = null;
-		public function __construct($data, $model) {
-			$this->_set_data($data);
-			$this->_model = $model;
-		}
-		public function __call($name, $args) {
-			$this->_sync_model_data();
-			return call_user_func_array(array($this->_model, $name), $args);
-		}
-		public function _set_data($data) {
-			foreach ((array)$data as $k => $v) {
-				$first = substr($k, 0, 1);
-				if (ctype_alpha($first)) {
-					$this->$k = $v;
-				}
-			}
-		}
-		public function _sync_model_data() {
-			foreach (get_object_vars($this) as $var => $value) {
-				if (substr($var, 0, 1) === '_') {
-					continue;
-				}
-				$this->_model->$var = $value;
-			}
-		}
-		public function _get_model() {
-			return $this->_model;
-		}
 	}
 }
