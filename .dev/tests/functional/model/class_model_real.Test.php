@@ -297,11 +297,9 @@ ND
 		// find a specific bear by id
 		$bear = bear::find(2);
 		// find a bear by a specific attribute
-		$bear_lawly = bear::where('name', '=', 'Cerms222')->first();
-#print_r($bear_lawly->_get_current_data());
-/*
-		// find a bear with danger level greater than 5
-		$dangerous_bears = bear::where('danger_level', '>', 5)->get();
+		$bear_first = bear::where('name', '=', 'Cerms')->first();
+		// find a bear with danger level greater than 2
+		$dangerous_bears = bear::all('danger_level', '>', 2);
 
 		// ----------- changing models -----------
 
@@ -319,14 +317,14 @@ ND
 		$bear = bear::find(1);
 		$bear->delete();
 		// delete a record 
-		bear::destroy(1);
+#		bear::destroy(1);
 		// delete multiple records 
-		bear::destroy(1, 2, 3);
+#		bear::destroy(1, 2, 3);
 		// find and delete all bears with a danger level over 5
 		bear::where('danger_level', '>', 5)->delete();
 
 		// ------ query one-to-one relationships ------
-
+/*
 		// find a bear named Adobot
 		$adobot = bear::where('name', '=', 'Adobot')->first();
 		// get the fish that Adobot has
