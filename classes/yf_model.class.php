@@ -15,8 +15,24 @@ class yf_model {
 	protected $_preload_complete = null;
 	protected $_relations = null;
 	protected $_params = null;
+	protected $_pk_cache = null;
 	const CREATED_AT = 'created_at';
 	const UPDATED_AT = 'updated_at';
+
+	/**
+	*/
+	public function __get($name) {
+#print_r(get_class_methods($this));
+echo $name.PHP_EOL;
+#echo (int)method_exists($this, $name);
+		if (method_exists($this, $name)) {
+			return $this->name();
+		}
+		if (isset($this->$name)) {
+			return $this->$name;
+		}
+		return null;
+	}
 
 	/**
 	*/
@@ -582,6 +598,15 @@ class yf_model {
 	}
 
 	/**
+	* Delete matching record(s) from database, quicker method than delete()
+	*/
+	public static function destroy() {
+		$obj = isset($this) ? $this : new static();
+		$args = func_get_args();
+		return $obj->_query_builder($args ? array('where' => $args) : null)->delete();
+	}
+
+	/**
 	* Soft-deleted records really delete
 	*/
 	public function force_delete() {
@@ -667,18 +692,6 @@ class yf_model {
 	*/
 #	function __unset($name) {
 // TODO
-#	}
-
-	/**
-	*/
-#	function __get($name) {
-#		if (substr($name, 0, 1) === '_') {
-#			return $this->$name;
-#		}
-#		if (!$this->_preload_complete) {
-#			$this->_preload_data();
-#		}
-#		return $this->$name;
 #	}
 
 	/**
@@ -770,6 +783,9 @@ if (!class_exists('yf_model_internal_result')) {
 				}
 				$this->_model->$var = $value;
 			}
+		}
+		public function _get_model() {
+			return $this->_model;
 		}
 	}
 }
