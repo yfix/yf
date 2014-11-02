@@ -240,7 +240,7 @@ ND
 		));
 
 		$this->assertInternalType('object', $bear_lawly);
-		$this->assertInstanceOf('yf_model_internal_result', $bear_lawly);
+		$this->assertInstanceOf('yf_model_result', $bear_lawly);
 		$this->assertInstanceOf('yf_model', $bear_lawly->_get_model());
 		$this->assertInstanceOf('bear', $bear_lawly->_get_model());
 		$this->assertObjectHasAttribute('id', $bear_lawly);
@@ -252,7 +252,7 @@ ND
 		$this->assertEquals('8', $bear_lawly->danger_level);
 
 		$this->assertInternalType('object', $bear_cerms);
-		$this->assertInstanceOf('yf_model_internal_result', $bear_cerms);
+		$this->assertInstanceOf('yf_model_result', $bear_cerms);
 		$this->assertInstanceOf('yf_model', $bear_cerms->_get_model());
 		$this->assertInstanceOf('bear', $bear_cerms->_get_model());
 		$this->assertObjectHasAttribute('id', $bear_cerms);
@@ -264,7 +264,7 @@ ND
 		$this->assertEquals('4', $bear_cerms->danger_level);
 
 		$this->assertInternalType('object', $bear_adobot);
-		$this->assertInstanceOf('yf_model_internal_result', $bear_adobot);
+		$this->assertInstanceOf('yf_model_result', $bear_adobot);
 		$this->assertInstanceOf('yf_model', $bear_adobot->_get_model());
 		$this->assertInstanceOf('bear', $bear_adobot->_get_model());
 		$this->assertObjectHasAttribute('id', $bear_adobot);
@@ -291,7 +291,7 @@ ND
 		));
 
 		$this->assertInternalType('object', $fish1);
-		$this->assertInstanceOf('yf_model_internal_result', $fish1);
+		$this->assertInstanceOf('yf_model_result', $fish1);
 		$this->assertInstanceOf('yf_model', $fish1->_get_model());
 		$this->assertInstanceOf('fish', $fish1->_get_model());
 		$this->assertObjectHasAttribute('id', $fish1);
@@ -301,7 +301,7 @@ ND
 		$this->assertSame($bear_lawly->id, $fish1->bear_id);
 
 		$this->assertInternalType('object', $fish2);
-		$this->assertInstanceOf('yf_model_internal_result', $fish2);
+		$this->assertInstanceOf('yf_model_result', $fish2);
 		$this->assertInstanceOf('yf_model', $fish2->_get_model());
 		$this->assertInstanceOf('fish', $fish2->_get_model());
 		$this->assertObjectHasAttribute('id', $fish2);
@@ -311,7 +311,7 @@ ND
 		$this->assertSame($bear_cerms->id, $fish2->bear_id);
 
 		$this->assertInternalType('object', $fish3);
-		$this->assertInstanceOf('yf_model_internal_result', $fish3);
+		$this->assertInstanceOf('yf_model_result', $fish3);
 		$this->assertInstanceOf('yf_model', $fish3->_get_model());
 		$this->assertInstanceOf('fish', $fish3->_get_model());
 		$this->assertObjectHasAttribute('id', $fish3);
@@ -333,7 +333,7 @@ ND
 		));
 
 		$this->assertInternalType('object', $tree1);
-		$this->assertInstanceOf('yf_model_internal_result', $tree1);
+		$this->assertInstanceOf('yf_model_result', $tree1);
 		$this->assertInstanceOf('yf_model', $tree1->_get_model());
 		$this->assertInstanceOf('tree', $tree1->_get_model());
 		$this->assertObjectHasAttribute('id', $tree1);
@@ -345,7 +345,7 @@ ND
 		$this->assertSame($bear_lawly->id, $tree1->bear_id);
 
 		$this->assertInternalType('object', $tree2);
-		$this->assertInstanceOf('yf_model_internal_result', $tree2);
+		$this->assertInstanceOf('yf_model_result', $tree2);
 		$this->assertInstanceOf('yf_model', $tree2->_get_model());
 		$this->assertInstanceOf('tree', $tree2->_get_model());
 		$this->assertObjectHasAttribute('id', $tree2);
@@ -368,8 +368,8 @@ ND
 
 		// link our bears to picnics
 		// for our purposes we'll just add all bears to both picnics for our many to many relationship
-/*		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
-		$bear_lawly->picnics()->attach($picnic_grand_canyon->id);
+		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
+/*		$bear_lawly->picnics()->attach($picnic_grand_canyon->id);
 
 		$bear_cerms->picnics()->attach($picnic_yellowstone->id);
 		$bear_cerms->picnics()->attach($picnic_grand_canyon->id);
@@ -378,7 +378,7 @@ ND
 		$bear_adobot->picnics()->attach($picnic_grand_canyon->id);
 */
 		$this->assertInternalType('object', $picnic_yellowstone);
-		$this->assertInstanceOf('yf_model_internal_result', $picnic_yellowstone);
+		$this->assertInstanceOf('yf_model_result', $picnic_yellowstone);
 		$this->assertInstanceOf('yf_model', $picnic_yellowstone->_get_model());
 		$this->assertInstanceOf('picnic', $picnic_yellowstone->_get_model());
 		$this->assertObjectHasAttribute('id', $picnic_yellowstone);
@@ -390,7 +390,7 @@ ND
 #		$this->assertSame($bear_lawly->id, $picnic_yellowstone->bear_id);
 
 		$this->assertInternalType('object', $picnic_grand_canyon);
-		$this->assertInstanceOf('yf_model_internal_result', $picnic_grand_canyon);
+		$this->assertInstanceOf('yf_model_result', $picnic_grand_canyon);
 		$this->assertInstanceOf('yf_model', $picnic_grand_canyon->_get_model());
 		$this->assertInstanceOf('picnic', $picnic_grand_canyon->_get_model());
 		$this->assertObjectHasAttribute('id', $picnic_grand_canyon);
@@ -417,7 +417,7 @@ ND
 		$bear_cool2->save();
 
 		$this->assertInternalType('object', $bear_cool1);
-		$this->assertInstanceOf('yf_model_internal_result', $bear_cool1);
+		$this->assertInstanceOf('yf_model_result', $bear_cool1);
 		$this->assertInstanceOf('yf_model', $bear_cool1->_get_model());
 		$this->assertInstanceOf('bear', $bear_cool1->_get_model());
 		$this->assertObjectHasAttribute('id', $bear_cool1);
@@ -429,7 +429,7 @@ ND
 		$this->assertEquals('1', $bear_cool1->danger_level);
 
 		$this->assertInternalType('object', $bear_cool2);
-#		$this->assertInstanceOf('yf_model_internal_result', $bear_cool2);
+#		$this->assertInstanceOf('yf_model_result', $bear_cool2);
 		$this->assertInstanceOf('yf_model', $bear_cool2);
 		$this->assertInstanceOf('bear', $bear_cool2);
 #		$this->assertInstanceOf('yf_model', $bear_cool2->_get_model());
@@ -485,8 +485,8 @@ ND
 		$adobot = bear::where('name', '=', 'Adobot')->first();
 		// get the fish that Adobot has
 #		$fish = $adobot->fish;
-var_dump($adobot->_get_current_data());
-var_dump($adobot->fish);
+#var_dump($adobot->_get_current_data());
+#var_dump($adobot->fish);
 /*
 		// get the weight of the fish Adobot is going to eat
 		$fish->weight;
