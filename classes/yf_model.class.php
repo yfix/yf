@@ -289,25 +289,23 @@ class yf_model {
 	/**
 	* Get first record ordered by the primary key
 	*/
-	public static function first() {
-		$obj = isset($this) ? $this : new static();
+	public function first() {
 		$args = func_get_args();
-		$pk = $obj->_get_primary_key_column();
-		$result = $obj->_query_builder($args ? array('where' => $args, 'order_by' => $pk.' asc', 'limit' => 1) : null)->get();
-		$obj->_primary_id = $result[$pk];
-		return new yf_model_internal_result($result, $obj);
+		$pk = $this->_get_primary_key_column();
+		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => $pk.' asc', 'limit' => 1) : null)->get();
+		$this->_primary_id = $result[$pk];
+		return new yf_model_internal_result($result, $this);
 	}
 
 	/**
 	* Get last record ordered by the primary key
 	*/
-	public static function last() {
-		$obj = isset($this) ? $this : new static();
+	public function last() {
 		$args = func_get_args();
-		$pk = $obj->_get_primary_key_column();
-		$result = $obj->_query_builder($args ? array('where' => $args, 'order_by' => $pk.' desc', 'limit' => 1) : null)->get();
-		$obj->_primary_id = $result[$pk];
-		return new yf_model_internal_result($result, $obj);
+		$pk = $this->_get_primary_key_column();
+		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => $pk.' desc', 'limit' => 1) : null)->get();
+		$this->_primary_id = $result[$pk];
+		return new yf_model_internal_result($result, $this);
 	}
 
 	/**
