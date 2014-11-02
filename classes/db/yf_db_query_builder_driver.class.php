@@ -403,14 +403,14 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Alias
 	*/
-	function first($use_cache = true) {
+	function first($use_cache = false) {
 		return $this->get($use_cache);
 	}
 
 	/**
 	* Render SQL and execute db->get()
 	*/
-	function get($use_cache = true) {
+	function get($use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get($sql, $use_cache);
@@ -421,14 +421,14 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Alias
 	*/
-	function one($use_cache = true) {
+	function one($use_cache = false) {
 		return $this->get_one($use_cache);
 	}
 
 	/**
 	* Render SQL and execute db->get_one()
 	*/
-	function get_one($use_cache = true) {
+	function get_one($use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get_one($sql, $use_cache);
@@ -439,14 +439,14 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Alias
 	*/
-	function all($use_cache = true) {
+	function all($use_cache = false) {
 		return $this->get_all($use_cache);
 	}
 
 	/**
 	* Render SQL and execute db->get_all()
 	*/
-	function get_all($use_cache = true) {
+	function get_all($use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get_all($sql, $key_name, $use_cache);
@@ -457,7 +457,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Render SQL and execute db->get_2d()
 	*/
-	function get_2d($use_cache = true) {
+	function get_2d($use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get_2d($sql, $use_cache);
@@ -468,7 +468,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Render SQL and execute db->get_deep_array()
 	*/
-	function get_deep_array($levels = 1, $use_cache = true) {
+	function get_deep_array($levels = 1, $use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get_deep_array($sql, $levels, $use_cache);
