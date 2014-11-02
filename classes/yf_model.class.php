@@ -431,21 +431,10 @@ class yf_model {
 	}
 
 	/**
-	*/
-	public function attach($id, $params = array()) {
-#		foreach () {
-#		}
-#print_r($this->_relations);
-#		return $this->_query_builder(array('whereid' => $this->_primary_id))->insert($data, $params);
-#		return $this->_add_relation(array(
-#		));
-	}
-
-	/**
 	* Internal method
 	*/
 	public function _add_relation(array $params) {
-		$data = array(
+		$relation = array(
 			'model'			=> $params['model'],
 			'type'			=> $params['type'],
 			'foreign_key'	=> $params['foreign_key'],
@@ -453,14 +442,15 @@ class yf_model {
 			'pivot_table'	=> $params['pivot_table'],
 			'through_model'	=> $params['through_model'],
 		);
-		foreach ($data as $k => $v) {
+		foreach ($relation as $k => $v) {
 			if (empty($v)) {
-				unset($data[$k]);
+				unset($relation[$k]);
 			}
 		}
-		$relation_key = implode(':', array_values($data));
-		$this->_relations[$relation_key] = $data;
-		return $this;
+#		$relation_key = implode(':', array_values($relation));
+#		$this->_relations[$relation_key] = $relation;
+		$rel_obj = new yf_model_relation($this, $relation);
+		return $rel_obj;
 	}
 
 	/**
@@ -677,6 +667,12 @@ class yf_model {
 	public function of_type($scope) {
 // TODO
 		return $this;
+	}
+
+	/**
+	*/
+	public function _get_primary_id() {
+		return $this->_primary_id;
 	}
 
 	/**
