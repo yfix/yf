@@ -3,36 +3,35 @@
 class yf_model_relation {
 	protected $_model = null;
 	protected $_relation = array();
-	public function __construct($data, $model) {
-		$this->_set_data($data);
+	public function __construct($model, $relation) {
 		$this->_model = $model;
+		$this->_relation = $relation;
 	}
-/*
-	public function __call($name, $args) {
-		$this->_sync_model_data();
-		return call_user_func_array(array($this->_model, $name), $args);
-	}
-	public function _set_data($data) {
-		foreach ((array)$data as $k => $v) {
-			$first = substr($k, 0, 1);
-			if (ctype_alpha($first)) {
-				$this->$k = $v;
-			}
-		}
-	}
-	public function _sync_model_data() {
-		foreach (get_object_vars($this) as $var => $value) {
-			if (substr($var, 0, 1) === '_') {
-				continue;
-			}
-			$this->_model->$var = $value;
-		}
-	}
-*/
 	public function _get_model() {
 		return $this->_model;
 	}
 	public function _get_relation() {
 		return $this->_relation;
+	}
+	public function attach($id, $params = array()) {
+		$r = &$this->_relation;
+		if ($r['type'] === 'belongs_to_many') {
+			$model = $this->_model;
+			$db = $model->_db;
+			$utils = $db->utils();
+			$pivot = $r['pivot_table'];
+/*
+			$utils->create_table($r['pivot_table'], function($t) use ($r) {
+				$t->int($r['local_key'], array('unsigned' => true, 'nullable' => false));
+				$t->int($r['foreign_key'], array('unsigned' => true, 'nullable' => false));
+				$t->primary(array($r['local_key'] => $r['local_key'], $r['foreign_key'] => $r['foreign_key']));
+			});
+*/
+			return $db->replace($pivot, array(
+				$r['local_key']		=> $model->id,
+				$r['foreign_key']	=> $id,
+			));
+		}
+		return false;
 	}
 }
