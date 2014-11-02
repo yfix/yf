@@ -430,6 +430,8 @@ ND
 
 		$this->assertInternalType('object', $bear_cool2);
 #		$this->assertInstanceOf('yf_model_internal_result', $bear_cool2);
+		$this->assertInstanceOf('yf_model', $bear_cool2);
+		$this->assertInstanceOf('bear', $bear_cool2);
 #		$this->assertInstanceOf('yf_model', $bear_cool2->_get_model());
 #		$this->assertInstanceOf('bear', $bear_cool2->_get_model());
 #		$this->assertObjectHasAttribute('id', $bear_cool2);
