@@ -24,17 +24,15 @@ class yf_model {
 
 	/**
 	*/
-/*
 	public function __get($name) {
 		if (method_exists($this, $name)) {
-			return $this->name();
+			return $this->$name();
 		}
 		if (isset($this->$name)) {
 			return $this->$name;
 		}
 		return null;
 	}
-*/
 
 	/**
 	*/
