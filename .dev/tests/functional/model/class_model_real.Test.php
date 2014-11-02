@@ -369,14 +369,14 @@ ND
 		// link our bears to picnics
 		// for our purposes we'll just add all bears to both picnics for our many to many relationship
 		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
-/*		$bear_lawly->picnics()->attach($picnic_grand_canyon->id);
+		$bear_lawly->picnics()->attach($picnic_grand_canyon->id);
 
 		$bear_cerms->picnics()->attach($picnic_yellowstone->id);
 		$bear_cerms->picnics()->attach($picnic_grand_canyon->id);
 
 		$bear_adobot->picnics()->attach($picnic_yellowstone->id);
 		$bear_adobot->picnics()->attach($picnic_grand_canyon->id);
-*/
+
 		$this->assertInternalType('object', $picnic_yellowstone);
 		$this->assertInstanceOf('yf_model_result', $picnic_yellowstone);
 		$this->assertInstanceOf('yf_model', $picnic_yellowstone->_get_model());
