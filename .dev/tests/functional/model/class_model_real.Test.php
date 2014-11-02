@@ -243,6 +243,7 @@ ND
 		$this->assertInstanceOf('yf_model_internal_result', $bear_lawly);
 		$this->assertInstanceOf('yf_model', $bear_lawly->_get_model());
 		$this->assertInstanceOf('bear', $bear_lawly->_get_model());
+		$this->assertObjectHasAttribute('id', $bear_lawly);
 		$this->assertObjectHasAttribute('name', $bear_lawly);
 		$this->assertObjectHasAttribute('type', $bear_lawly);
 		$this->assertObjectHasAttribute('danger_level', $bear_lawly);
@@ -254,6 +255,7 @@ ND
 		$this->assertInstanceOf('yf_model_internal_result', $bear_cerms);
 		$this->assertInstanceOf('yf_model', $bear_cerms->_get_model());
 		$this->assertInstanceOf('bear', $bear_cerms->_get_model());
+		$this->assertObjectHasAttribute('id', $bear_cerms);
 		$this->assertObjectHasAttribute('name', $bear_cerms);
 		$this->assertObjectHasAttribute('type', $bear_cerms);
 		$this->assertObjectHasAttribute('danger_level', $bear_cerms);
@@ -265,6 +267,7 @@ ND
 		$this->assertInstanceOf('yf_model_internal_result', $bear_adobot);
 		$this->assertInstanceOf('yf_model', $bear_adobot->_get_model());
 		$this->assertInstanceOf('bear', $bear_adobot->_get_model());
+		$this->assertObjectHasAttribute('id', $bear_adobot);
 		$this->assertObjectHasAttribute('name', $bear_adobot);
 		$this->assertObjectHasAttribute('type', $bear_adobot);
 		$this->assertObjectHasAttribute('danger_level', $bear_adobot);
@@ -274,39 +277,69 @@ ND
 
 		// seed our fish table. our fish wont have names... because theyre going to be eaten
 		// we will use the variables we used to create the bears to get their id
-		fish::create(array(
-			'weight'  => 5,
+		$fish1 = fish::create(array(
+			'weight'  => '5',
 			'bear_id' => $bear_lawly->id
 		));
-		fish::create(array(
-			'weight'  => 12,
+		$fish2 = fish::create(array(
+			'weight'  => '12',
 			'bear_id' => $bear_cerms->id
 		));
-		fish::create(array(
-			'weight'  => 4,
+		$fish3 = fish::create(array(
+			'weight'  => '4',
 			'bear_id' => $bear_adobot->id
 		));
+
+		$this->assertInternalType('object', $fish1);
+		$this->assertInstanceOf('yf_model_internal_result', $fish1);
+		$this->assertInstanceOf('yf_model', $fish1->_get_model());
+		$this->assertInstanceOf('fish', $fish1->_get_model());
+		$this->assertObjectHasAttribute('id', $fish1);
+		$this->assertObjectHasAttribute('weight', $fish1);
+		$this->assertObjectHasAttribute('bear_id', $fish1);
+		$this->assertSame('5', $fish1->weight);
+		$this->assertSame($bear_lawly->id, $fish1->bear_id);
+
+		$this->assertInternalType('object', $fish2);
+		$this->assertInstanceOf('yf_model_internal_result', $fish2);
+		$this->assertInstanceOf('yf_model', $fish2->_get_model());
+		$this->assertInstanceOf('fish', $fish2->_get_model());
+		$this->assertObjectHasAttribute('id', $fish2);
+		$this->assertObjectHasAttribute('weight', $fish2);
+		$this->assertObjectHasAttribute('bear_id', $fish2);
+		$this->assertSame('12', $fish2->weight);
+		$this->assertSame($bear_cerms->id, $fish2->bear_id);
+
+		$this->assertInternalType('object', $fish3);
+		$this->assertInstanceOf('yf_model_internal_result', $fish3);
+		$this->assertInstanceOf('yf_model', $fish3->_get_model());
+		$this->assertInstanceOf('fish', $fish3->_get_model());
+		$this->assertObjectHasAttribute('id', $fish3);
+		$this->assertObjectHasAttribute('weight', $fish3);
+		$this->assertObjectHasAttribute('bear_id', $fish3);
+		$this->assertSame('4', $fish3->weight);
+		$this->assertSame($bear_adobot->id, $fish3->bear_id);
 
 		// seed our trees table
 		tree::create(array(
 			'type'    => 'Redwood',
-			'age'     => 500,
+			'age'     => '500',
 			'bear_id' => $bear_lawly->id
 		));
 		tree::create(array(
 			'type'    => 'Oak',
-			'age'     => 400,
+			'age'     => '400',
 			'bear_id' => $bear_lawly->id
 		));
 
 		// we will create one picnic and apply all bears to this one picnic
 		$picnic_yellowstone = picnic::create(array(
 			'name'        => 'Yellowstone',
-			'taste_level' => 6
+			'taste_level' => '6'
 		));
 		$picnic_grand_canyon = picnic::create(array(
 			'name'        => 'Grand Canyon',
-			'taste_level' => 5
+			'taste_level' => '5'
 		));
 
 		// link our bears to picnics
