@@ -5,9 +5,9 @@ class yf_model_relation {
 	protected $_relation = array();
 	protected $_parent = array(); // parent model
 	protected $_related = array(); // related model
-	public function __construct($model, $relation) {
-		$this->_model = $model;
+	public function __construct($relation, $model) {
 		$this->_relation = $relation;
+		$this->_model = $model;
 	}
 	public function _get_model() {
 		return $this->_model;
@@ -23,7 +23,7 @@ class yf_model_relation {
 		if ($r['type'] === 'belongs_to_many') {
 			$pivot = $r['pivot_table'];
 			return $db->replace($pivot, array(
-				$r['local_key']		=> $model->id,
+				$r['local_key']		=> $model->get_key_name(),
 				$r['foreign_key']	=> $id,
 			));
 		}
@@ -33,7 +33,7 @@ class yf_model_relation {
 		$relation = $this->_relation;
 		$model = $this->_model;
 		if ($relation['type'] === 'has_one') {
-			return model($relation['related'])->find($model->id);
+			return $relation['query']->whereid($model->get_key())->get();
 		}
 	}
 /*
