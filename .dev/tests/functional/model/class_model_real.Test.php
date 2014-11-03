@@ -536,19 +536,29 @@ ND
 		// alternatively you could go straight to the weight attribute
 		$weight2 = $adobot->fish->weight;
 
-		$this->assertNotSame($bear_adobot, $abobot);
-		$this->assertEquals($bear_adobot->id, $abobot->id);
+		$this->assertInternalType('object', $adobot);
+		$this->assertNotSame($bear_adobot, $adobot);
+		$this->assertEquals($bear_adobot->id, $adobot->id);
 		$this->assertEquals($bear_adobot->name, $bear_adobot->name);
+		$this->assertInternalType('object', $adobot->fish);
+		$this->assertInternalType('object', $fish);
+		$this->assertNotSame($fish, $adobot->fish);
+		$this->assertEquals($fish, $adobot->fish);
+		$this->assertInstanceOf('yf_model_result', $adobot->fish);
+		$this->assertInstanceOf('yf_model_result', $fish);
+		$this->assertInstanceOf('yf_model', $fish->_get_model());
+		$this->assertInstanceOf('fish', $fish->_get_model());
 
-/*
 		// ------ query one-to-many relationships ------
 
 		// find the trees lawly climbs
 		$lawly = bear::where('name', '=', 'Lawly')->first();
-		foreach ($lawly->trees as $tree) {
-			echo $tree->type . ' ' . $tree->age;
+#var_dump($lawly->trees);
+/*		foreach ($lawly->trees as $tree) {
+			$trees[$tree->type] = $tree->age;
 		}
-
+print_r($trees);
+/*
 		// ------ query many-to-many relationships ------
 
 		// get the picnics that Cerms goes to ------------------------
