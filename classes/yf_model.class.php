@@ -344,7 +344,7 @@ class yf_model {
 			$obj->set_data($first);
 			return $first;
 		}
-		return $obj->new_instance();
+		return call_user_func_array(array($obj, 'new_instance'), $args);
 	}
 
 	/**
@@ -358,6 +358,8 @@ class yf_model {
 			if (!$insert_id) {
 				return null;
 			}
+			$data[$pk] = $insert_id;
+			$this->set_data($data);
 			$this->set_key($insert_id);
 			return $insert_id;
 		}
