@@ -88,7 +88,6 @@ class yf_model {
 		$name = $this->_table;
 		if (!$name) {
 			$name = strtolower(class_basename($this, '', '_model'));
-echo $name.PHP_EOL;
 			$this->set_table($name);
 		}
 		return $this->_db->_fix_table_name($name);
