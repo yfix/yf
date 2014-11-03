@@ -384,9 +384,9 @@ ND
 		$this->assertObjectHasAttribute('id', $picnic_yellowstone);
 		$this->assertObjectHasAttribute('name', $picnic_yellowstone);
 		$this->assertObjectHasAttribute('taste_level', $picnic_yellowstone);
-		$this->assertObjectHasAttribute('bear_id', $picnic_yellowstone);
 		$this->assertSame('Yellowstone', $picnic_yellowstone->name);
 		$this->assertEquals('6', $picnic_yellowstone->taste_level);
+#		$this->assertObjectHasAttribute('bear_id', $picnic_yellowstone);
 #		$this->assertSame($bear_lawly->id, $picnic_yellowstone->bear_id);
 
 		$this->assertInternalType('object', $picnic_grand_canyon);
@@ -396,9 +396,9 @@ ND
 		$this->assertObjectHasAttribute('id', $picnic_grand_canyon);
 		$this->assertObjectHasAttribute('name', $picnic_grand_canyon);
 		$this->assertObjectHasAttribute('taste_level', $picnic_grand_canyon);
-#		$this->assertObjectHasAttribute('bear_id', $picnic_grand_canyon);
 		$this->assertSame('Grand Canyon', $picnic_grand_canyon->name);
 		$this->assertEquals('5', $picnic_grand_canyon->taste_level);
+#		$this->assertObjectHasAttribute('bear_id', $picnic_grand_canyon);
 #		$this->assertSame($bear_lawly->id, $picnic_grand_canyon->bear_id);
 
 		// ----------- alternate creating models -----------
@@ -510,7 +510,18 @@ ND
 			6 => array('id' => '6', 'name' => 'Lawly2', 'type' => '', 'danger_level' => '0'),
 		);
 		$this->assertEquals($expected, $bears_array);
-#		$this->assertEquals($expected, $bears_array);
+		$this->assertEquals($expected[2]['id'], $bear_id2->id);
+		$this->assertEquals($expected[2]['name'], $bear_id2->name);
+		$this->assertEquals($expected[2]['type'], $bear_id2->type);
+
+		$this->assertInternalType('object', $bear_cerms_first);
+		$this->assertNotSame($bear_cerms, $bear_cerms_first);
+		$this->assertEquals($bear_cerms->id, $bear_cerms_first->id);
+		$this->assertEquals($bear_cerms->name, $bear_cerms_first->name);
+		$this->assertEquals($bear_cerms->type, $bear_cerms_first->type);
+
+		$this->assertInternalType('array', $dangerous_bears);
+		$this->assertEquals('3', count($dangerous_bears));
 
 		// ----------- changing models -----------
 
