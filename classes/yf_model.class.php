@@ -26,7 +26,7 @@ class yf_model {
 	*/
 	public function __get($name) {
 		if (method_exists($this, $name)) {
-			return $this->$name();
+			return $this->$name()->get_data();
 		}
 		if (isset($this->$name)) {
 			return $this->$name;
@@ -431,15 +431,7 @@ class yf_model {
 	/**
 	* Internal method
 	*/
-	public function _add_relation(array $params) {
-		$relation = array(
-			'model'			=> $params['model'],
-			'type'			=> $params['type'],
-			'foreign_key'	=> $params['foreign_key'],
-			'local_key'		=> $params['local_key'],
-			'pivot_table'	=> $params['pivot_table'],
-			'through_model'	=> $params['through_model'],
-		);
+	public function _add_relation(array $relation) {
 		foreach ($relation as $k => $v) {
 			if (empty($v)) {
 				unset($relation[$k]);
@@ -447,17 +439,21 @@ class yf_model {
 		}
 #		$relation_key = implode(':', array_values($relation));
 #		$this->_relations[$relation_key] = $relation;
-		$rel_obj = new yf_model_relation($this, $relation);
-		return $rel_obj;
+		return new yf_model_relation($this, $relation);
 	}
 
 	/**
 	* Relation one-to-one
 	*/
-	public function has_one($model, $foreign_key = '', $local_key = '') {
+	public function has_one($related, $foreign_key = null, $local_key = null) {
+		if (is_null($relation)) {
+			list(, $caller) = debug_backtrace(false);
+			$relation = $caller['function'];
+		}
 		return $this->_add_relation(array(
 			'type'			=> __FUNCTION__,
-			'model'			=> $model,
+			'related'		=> $related,
+			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
 		));
@@ -466,22 +462,43 @@ class yf_model {
 	/**
 	* Relation one-to-one inversed
 	*/
-	public function belongs_to($model, $local_key = '', $foreign_key = '') {
+	public function belongs_to($related, $foreign_key = null, $other_key = null, $relation = null) {
+		if (is_null($relation)) {
+			list(, $caller) = debug_backtrace(false);
+			$relation = $caller['function'];
+		}
+		if (is_null($foreign_key)) {
+			$foreign_key = strtolower($relation).'_id';
+		}
+/*
+		$instance = new $related;
+
+		// Once we have the foreign key names, we'll just create a new Eloquent query
+		// for the related models and returns the relationship instance which will
+		// actually be responsible for retrieving and hydrating every relations.
+		$query = $instance->newQuery();
+
+		$otherKey = $otherKey ?: $instance->getKeyName();
+
+		return new BelongsTo($query, $this, $foreignKey, $otherKey, $relation);
+*/
 		return $this->_add_relation(array(
 			'type'			=> __FUNCTION__,
-			'model'			=> $model,
+			'related'		=> $related,
+			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key,
-			'local_key'		=> $local_key,
+			'other_key'		=> $other_key,
 		));
 	}
 
 	/**
 	* Relation one-to-many
 	*/
-	public function has_many($model, $foreign_key = '', $local_key = '') {
+	public function has_many($related, $foreign_key = null, $local_key = null) {
 		return $this->_add_relation(array(
 			'type'			=> __FUNCTION__,
-			'model'			=> $model,
+			'related'		=> $related,
+			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
 		));
@@ -490,10 +507,11 @@ class yf_model {
 	/**
 	* Relation many-to-many
 	*/
-	public function belongs_to_many($model, $pivot_table = '', $local_key = '', $foreign_key = '') {
+	public function belongs_to_many($related, $pivot_table = null, $local_key = null, $foreign_key = null) {
 		return $this->_add_relation(array(
 			'type'			=> __FUNCTION__,
-			'model'			=> $model,
+			'related'		=> $related,
+			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
 			'pivot_table'	=> $pivot_table,
@@ -503,10 +521,11 @@ class yf_model {
 	/**
 	* Relation distant through other model
 	*/
-	public function has_many_through($model, $through_model, $local_key = '', $foreign_key = '') {
+	public function has_many_through($related, $through_model, $local_key = null, $foreign_key = null) {
 		return $this->_add_relation(array(
 			'type'			=> __FUNCTION__,
-			'model'			=> $model,
+			'related'		=> $related,
+			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
 			'through_model'	=> $through_model,
@@ -525,7 +544,7 @@ class yf_model {
 	/**
 	* Relation polymorphic one-to-many
 	*/
-	public function morph_many($model, $method) {
+	public function morph_many() {
 		return $this->_add_relation(array(
 		));
 // TODO
@@ -534,7 +553,7 @@ class yf_model {
 	/**
 	* Relation polymorphic many-to-many
 	*/
-	public function morph_to_many($model, $method) {
+	public function morph_to_many() {
 		return $this->_add_relation(array(
 		));
 // TODO
@@ -543,7 +562,7 @@ class yf_model {
 	/**
 	* Relation polymorphic many-to-many
 	*/
-	public function morphed_by_many($model, $method) {
+	public function morphed_by_many() {
 		return $this->_add_relation(array(
 		));
 // TODO
@@ -553,8 +572,6 @@ class yf_model {
 	* Associate here means to auotmatically create foreign key on child model
 	*/
 	public function associate($model_instance) {
-		return $this->_add_relation(array(
-		));
 // TODO
 	}
 
