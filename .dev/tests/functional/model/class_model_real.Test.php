@@ -535,6 +535,11 @@ ND
 		$weight1 = $fish->weight;
 		// alternatively you could go straight to the weight attribute
 		$weight2 = $adobot->fish->weight;
+
+		$this->assertNotSame($bear_adobot, $abobot);
+		$this->assertEquals($bear_adobot->id, $abobot->id);
+		$this->assertEquals($bear_adobot->name, $bear_adobot->name);
+
 /*
 		// ------ query one-to-many relationships ------
 
