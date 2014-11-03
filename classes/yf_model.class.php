@@ -290,6 +290,7 @@ class yf_model {
 		if (!$insert_id) {
 			return null;
 		}
+		$obj->set_key($insert_id);
 		return $obj->find($insert_id);
 	}
 
@@ -304,7 +305,7 @@ class yf_model {
 			'order_by' => $obj->get_key_name().' asc',
 			'limit' => 1,
 		))->get();
-		return is_array($first) ? $first : call_user_func_array(array($obj, 'create'), $args);
+		return is_object($first) ? $first : call_user_func_array(array($obj, 'create'), $args);
 	}
 
 	/**
@@ -318,21 +319,28 @@ class yf_model {
 			'order_by' => $obj->get_key_name().' asc',
 			'limit' => 1,
 		))->get();
-		return is_array($first) ? $first : $obj->new_instance();
+		return is_object($first) ? $first : $obj->new_instance();
 	}
 
 	/**
 	* Save model back into database
 	*/
-	public static function save() {
-		$obj = isset($this) ? $this : new static();
-		$data = (array)$obj->get_data();
-		$pk = $obj->get_key_name();
-		$obj->_primary_id = $data[$pk];
+	public function save() {
+		$data = $this->get_data();
+		$pk = $this->get_key_name();
+		if (!$data[$pk]) {
+			$insert_id = $this->new_query()->insert($data);
+			if (!$insert_id) {
+				return null;
+			}
+			$this->set_key($insert_id);
+			return $insert_id;
+		}
+		$this->set_key($data[$pk]);
 		if (isset($data[self::UPDATED_AT])) {
 			$data[self::UPDATED_AT] = date('Y-m-d H:i:s');
 		}
-		return $obj->new_query(array('whereid' => $obj->_primary_id))->update($data);
+		return $this->new_query(array('whereid' => $this->get_key()))->update($data);
 	}
 
 	/**
