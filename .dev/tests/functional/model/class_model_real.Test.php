@@ -384,7 +384,7 @@ ND
 		$this->assertObjectHasAttribute('id', $picnic_yellowstone);
 		$this->assertObjectHasAttribute('name', $picnic_yellowstone);
 		$this->assertObjectHasAttribute('taste_level', $picnic_yellowstone);
-#		$this->assertObjectHasAttribute('bear_id', $picnic_yellowstone);
+		$this->assertObjectHasAttribute('bear_id', $picnic_yellowstone);
 		$this->assertSame('Yellowstone', $picnic_yellowstone->name);
 		$this->assertEquals('6', $picnic_yellowstone->taste_level);
 #		$this->assertSame($bear_lawly->id, $picnic_yellowstone->bear_id);
