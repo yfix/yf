@@ -401,9 +401,16 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Alias
 	*/
 	function first($use_cache = false) {
+// TODO order_by PK asc limit 1
+		return $this->get($use_cache);
+	}
+
+	/**
+	*/
+	function last($use_cache = false) {
+// TODO order_by PK desc limit 1
 		return $this->get($use_cache);
 	}
 
@@ -413,7 +420,11 @@ abstract class yf_db_query_builder_driver {
 	function get($use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
-			return $this->db->get($sql, $use_cache);
+			$result = $this->db->get($sql, $use_cache);
+			if ($result && is_callable($this->_result_wrapper)) {
+				return call_user_func($this->_result_wrapper, $result);
+			}
+			return $result;
 		}
 		return false;
 	}
@@ -449,7 +460,13 @@ abstract class yf_db_query_builder_driver {
 	function get_all($use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
-			return $this->db->get_all($sql, $key_name, $use_cache);
+			$result = $this->db->get_all($sql, $key_name, $use_cache);
+			if ($result && is_callable($this->_result_wrapper)) {
+				foreach ((array)$result as $k => $v) {
+					$result[$k] = call_user_func($this->_result_wrapper, $v);
+				}
+			}
+			return $result;
 		}
 		return false;
 	}
@@ -460,7 +477,11 @@ abstract class yf_db_query_builder_driver {
 	function get_2d($use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
-			return $this->db->get_2d($sql, $use_cache);
+			$result = $this->db->get_2d($sql, $use_cache);
+			if (is_callable($this->_result_wrapper)) {
+				return call_user_func($this->_result_wrapper, $result);
+			}
+			return $result;
 		}
 		return false;
 	}
