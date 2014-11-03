@@ -414,7 +414,7 @@ ND
 		$bear_cool2->name         = 'Super Cool2';
 		$bear_cool2->type         = 'Black';
 		$bear_cool2->danger_level = 1;
-		$bear_cool2->save();
+		$bear_cool2_saved = $bear_cool2->save();
 
 		$this->assertInternalType('object', $bear_cool1);
 		$this->assertInstanceOf('yf_model_result', $bear_cool1);
@@ -428,6 +428,7 @@ ND
 		$this->assertSame('Black', $bear_cool1->type);
 		$this->assertEquals('1', $bear_cool1->danger_level);
 
+		$this->assertTrue((bool)$bear_cool2_saved);
 		$this->assertInternalType('object', $bear_cool2);
 #		$this->assertInstanceOf('yf_model_result', $bear_cool2);
 		$this->assertInstanceOf('yf_model', $bear_cool2);
@@ -445,17 +446,55 @@ ND
 		// ----------- querying models -----------
 
 		// find the bear or create it into the database
-		$bear = bear::first_or_create(array('name' => 'Lawly'));
+		$bear_first1 = bear::first_or_create(array('name' => 'Lawly'));
+		$bear_first2 = bear::first_or_create(array('name' => 'Lawly2'));
 		// find the bear or instantiate a new instance into the object we want
-		$bear = bear::first_or_new(array('name' => 'Cerms'));
+		$bear_new1 = bear::first_or_new(array('name' => 'Cerms'));
+		$bear_new2 = bear::first_or_new(array('name' => 'Cerms2'));
 		// get all the bears
 		$bears = bear::all();
 		// find a specific bear by id
-		$bear = bear::find(2);
+		$bear_id2 = bear::find(2);
 		// find a bear by a specific attribute
-		$bear_first = bear::where('name', '=', 'Cerms')->first();
+		$bear_cerms_first = bear::where('name', '=', 'Cerms')->first();
 		// find a bear with danger level greater than 2
 		$dangerous_bears = bear::all('danger_level', '>', 2);
+
+		$this->assertInternalType('object', $bear_first1);
+		$this->assertInstanceOf('yf_model_result', $bear_first1);
+		$this->assertInstanceOf('yf_model', $bear_first1->_get_model());
+		$this->assertInstanceOf('bear', $bear_first1->_get_model());
+		$this->assertObjectHasAttribute('id', $bear_first1);
+		$this->assertSame('Lawly', $bear_first1->name);
+		$this->assertNotEmpty($bear_lawly->type);
+		$this->assertSame($bear_lawly->type, $bear_first1->type);
+		$this->assertEquals($bear_lawly->danger_level, $bear_first1->danger_level);
+
+		$this->assertInternalType('object', $bear_first2);
+		$this->assertInstanceOf('yf_model_result', $bear_first2);
+		$this->assertInstanceOf('yf_model', $bear_first2->_get_model());
+		$this->assertInstanceOf('bear', $bear_first2->_get_model());
+		$this->assertObjectHasAttribute('id', $bear_first2);
+		$this->assertSame('Lawly2', $bear_first2->name);
+		$this->assertSame('', $bear_first2->type);
+		$this->assertEquals('0', $bear_first2->danger_level);
+
+		$this->assertInternalType('array', $bears);
+		$this->assertNotEmpty($bears);
+		$bears_array = array();
+		foreach ((array)$bears as $k => $v) {
+			$bears_array[$k] = $v->get_data();
+			unset($bears_array[$k]['created_at']);
+			unset($bears_array[$k]['updated_at']);
+		}
+		$this->assertEquals(array(
+			1 => array('id' => '1', 'name' => 'Lawly', 'type' => 'Grizzly', 'danger_level' => '8'),
+			2 => array('id' => '2', 'name' => 'Cerms', 'type' => 'Black', 'danger_level' => '4'),
+			3 => array('id' => '3', 'name' => 'Adobot', 'type' => 'Polar', 'danger_level' => '3'),
+			4 => array('id' => '4', 'name' => 'Super Cool1', 'type' => 'Black', 'danger_level' => '1'),
+			5 => array('id' => '5', 'name' => 'Super Cool2', 'type' => 'Black', 'danger_level' => '1'),
+			6 => array('id' => '6', 'name' => 'Lawly2', 'type' => '', 'danger_level' => '0'),
+		), $bears_array);
 
 		// ----------- changing models -----------
 
@@ -610,7 +649,7 @@ if ($i++ > 3) {
 #		$this->assertEquals( $actors_data_objects, $all_actors );
 		$this->assertEquals( $actors_data, $all_actors );
 */
-/*
+
 		$raw_first_id = $actors_data[0]['actor_id'];
 		$this->assertNotEmpty( $raw_first_id );
 		$first_actor = model('actor')->find($raw_first_id);
@@ -633,7 +672,7 @@ if ($i++ > 3) {
 
 		$raw_second_id = $actors_data[1]['actor_id'];
 		$this->assertNotEmpty( $raw_second_id );
-*/
+
 /*
 		$second_actor = model('actor')->find($raw_second_id);
 		$this->assertNotEmpty( $actors_data_objects[1] );
