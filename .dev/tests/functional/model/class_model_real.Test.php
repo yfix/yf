@@ -430,12 +430,9 @@ ND
 
 		$this->assertTrue((bool)$bear_cool2_saved);
 		$this->assertInternalType('object', $bear_cool2);
-#		$this->assertInstanceOf('yf_model_result', $bear_cool2);
 		$this->assertInstanceOf('yf_model', $bear_cool2);
 		$this->assertInstanceOf('bear', $bear_cool2);
-#		$this->assertInstanceOf('yf_model', $bear_cool2->_get_model());
-#		$this->assertInstanceOf('bear', $bear_cool2->_get_model());
-#		$this->assertObjectHasAttribute('id', $bear_cool2);
+		$this->assertObjectHasAttribute('id', $bear_cool2);
 		$this->assertObjectHasAttribute('name', $bear_cool2);
 		$this->assertObjectHasAttribute('type', $bear_cool2);
 		$this->assertObjectHasAttribute('danger_level', $bear_cool2);
@@ -470,6 +467,7 @@ ND
 		$this->assertSame($bear_lawly->type, $bear_first1->type);
 		$this->assertEquals($bear_lawly->danger_level, $bear_first1->danger_level);
 
+		$this->assertNotSame($bear_first1, $bear_first2);
 		$this->assertInternalType('object', $bear_first2);
 		$this->assertInstanceOf('yf_model_result', $bear_first2);
 		$this->assertInstanceOf('yf_model', $bear_first2->_get_model());
@@ -487,6 +485,13 @@ ND
 		$this->assertEquals($bear_cerms->id, $bear_new1->id);
 		$this->assertEquals($bear_cerms->name, $bear_new1->name);
 		$this->assertEquals($bear_cerms, $bear_new1);
+
+		$this->assertNotSame($bear_new1, $bear_new2);
+		$this->assertInternalType('object', $bear_new2);
+		$this->assertInstanceOf('yf_model', $bear_new2);
+		$this->assertInstanceOf('bear', $bear_new2);
+		$this->assertNull($bear_new2->id);
+		$this->assertEquals('Cerms2', $bear_new2->name);
 
 		$this->assertInternalType('array', $bears);
 		$this->assertNotEmpty($bears);
