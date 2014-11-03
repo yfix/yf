@@ -8,17 +8,14 @@ load('yf_model_relation', '', 'classes/model/');
 */
 class yf_model {
 
-#	protected $_db = null;
+	protected $_db = null;
 	protected $_table = null;
 	protected $_fillable = array();
 	protected $_primary_key = null;
 	protected $_primary_id = null;
 	protected $_dirty_attrs = null;
 	protected $_is_trashed = null;
-	protected $_preload_complete = null;
 	protected $_relations = null;
-	protected $_params = null;
-	protected $_pk_cache = null;
 	const CREATED_AT = 'created_at';
 	const UPDATED_AT = 'updated_at';
 
@@ -36,14 +33,9 @@ class yf_model {
 
 	/**
 	*/
-	public function __construct($params = array()) {
-		$this->_db = db();
-	}
-
-	/**
-	* YF framework constructor
-	*/
-	public function _init() {
+	public function __construct($args = array(), $params = array()) {
+		$this->set_db_object($params['db']);
+		$this->set_data($args);
 	}
 
 	/**
@@ -51,8 +43,8 @@ class yf_model {
 	*/
 	public function __clone() {
 		$persist_properties = array(
-			'_table',
-			'_fillable',
+#			'_table',
+#			'_fillable',
 		);
 		foreach ((array)get_object_vars($this) as $k => $v) {
 			if (!in_array($k, $persist_properties)) {
@@ -72,66 +64,82 @@ class yf_model {
 	* Catch static calls
 	*/
 	public static function __callStatic($method, $args) {
-		$instance = new static;
-		$instance->_db = db();
-		return call_user_func_array(array($instance, $method), $args);
+		return call_user_func_array(array(new static, $method), $args);
 	}
 
 	/**
 	*/
 	function __toString() {
-		return json_encode($this->_get_current_data());
+		return json_encode($this->get_data());
 	}
 
 	/**
 	*/
-	public function _get_table_name($name = '') {
-		if (!$name) {
-			$name = $this->_table;
+	public function set_db_object($db = null) {
+		$this->_db = $db ?: db();
+	}
+
+	/**
+	*/
+	public function get_table() {
+		if (isset($this->_table)) {
+			return $this->_table;
 		}
+		$name = $this->_table;
 		if (!$name) {
-			$name = get_called_class();
-			$postfix = '_model';
-			$plen = strlen($postfix);
-			if ($plen && substr($name, -$plen) === $postfix) {
-				$name = substr($name, 0, -$plen);
-			}
-			$yf_len = strlen(YF_PREFIX);
-			if ($yf_len && substr($name, 0, $yf_len) === YF_PREFIX) {
-				$name = substr($name, $yf_len);
-			}
-			$this->_table = $name;
+			$name = strtolower(class_basename($this, '', '_model'));
+echo $name.PHP_EOL;
+			$this->set_table($name);
 		}
 		return $this->_db->_fix_table_name($name);
 	}
 
 	/**
-	* Find primary key name
 	*/
-	public function _get_primary_key_column($table = null) {
-		if (!isset($table)) {
-			$table = $this->_get_table_name();
-			$self = true;
-		}
-		$container = &$this->_pk_cache;
-		if (isset($container[$table])) {
-			return $container[$table];
-		}
-		$primary = $this->_db->utils()->index_info($table, 'PRIMARY');
-		if ($primary) {
-			$container[$table] = current($primary['columns']);
-		} else {
-			$container[$table] = false;
-		}
-		if ($self && !isset($this->_primary_key)) {
-			$this->_primary_key = $container[$table];
-		}
-		return $container[$table];
+	public function set_table($name) {
+		$this->_table = $name;
+		return $this->_table;
 	}
 
 	/**
+	* Primary key value
 	*/
-	public function _get_current_data() {
+	public function get_key() {
+		return $this->_primary_id;
+	}
+
+	/**
+	* Primary key value set
+	*/
+	public function set_key($id) {
+		$this->_primary_id = $id;
+		return $this->_primary_id;
+	}
+
+	/**
+	* Primary key name
+	*/
+	public function get_key_name() {
+		if (isset($this->_primary_key)) {
+			return $this->_primary_key;
+		}
+		$primary_index = $this->_db->utils()->index_info($this->get_table(), 'PRIMARY');
+		$name = current($primary_index['columns']);
+		return $this->set_key_name($name);
+	}
+
+	/**
+	* Primary key name set
+	*/
+	public function set_key_name($name) {
+		$this->_primary_key = $name;
+		return $this->_primary_key;
+	}
+
+	/**
+	* Return current model data
+	*/
+	public function get_data() {
 		$data = array();
 		foreach (get_object_vars($this) as $var => $value) {
 			if (substr($var, 0, 1) === '_') {
@@ -143,77 +151,88 @@ class yf_model {
 	}
 
 	/**
-	* Query builder connector
+	* Set current model data
 	*/
-	public function _query_builder($params = array()) {
-		$parts = array('select','where','where_or','whereid','order_by','having','group_by');
-/*
-		foreach ($parts as $part) {
-			if (isset($params[$part])) {
-				$this->_set_query_builder_params($part, $params[$part]);
+	public function set_data($data = array()) {
+		foreach ((array)$data as $k => $v) {
+			if (substr($k, 0, 1) === '_') {
+				continue;
 			}
-			if (isset($this->_params[$part])) {
-				$params[$part] = $this->_params[$part];
-			}
+			$this->$k = $v;
 		}
-*/
-		$params = (array)$params + (array)$this->_params;
-		$table = $params['table'] ?: $this->_get_table_name();
+	}
+
+	/**
+	* Default model foreign key
+	*/
+	public function get_foreign_key() {
+		return strtolower(class_basename($this, '', '_model')).'_id';
+	}
+
+	/**
+	* Return new instance of the given model
+	*/
+	public function new_instance($args = array()) {
+		$model = new static($args);
+		return $model;
+	}
+
+	/**
+	* Return new instance of model result
+	*/
+	public function new_result($result = array()) {
+		return new yf_model_result($result, $this);
+	}
+
+	/**
+	* Return new instance of model relation
+	*/
+	public function new_relation($relation) {
+		return new yf_model_relation($relation, $this);
+	}
+
+	/**
+	* Return new query builder instance
+	*/
+	public function new_query($params = array()) {
+		if (is_null($params['where'])) {
+			unset($params['where']);
+		}
+		$table = $params['table'] ?: $this->get_table();
 		if (!$table) {
 			throw new Exception('MODEL: '.get_called_class().': requires table name to make queries');
 		}
-		$qb = $this->_db->query_builder();
-		$qb->from($table);
+		$builder = $this->_db->query_builder();
+		$builder->_model = $this;
+		$builder->_with = $this->_with;
+		$builder->_result_wrapper = array($this, 'new_result');
+		$builder->from($table);
 		// whereid shortcut, example: find(1)  == 1 is PK
 		if (is_array($params['where']) && count($params['where']) === 1 && is_numeric($params['where'][0]) && !isset($params['whereid'])) {
 			$params['whereid'] = $params['where'];
-			$pk = $this->_get_primary_key_column($table);
+			$pk = $this->get_key_name($table);
 			if ($pk) {
 				$params['whereid'][1] = $pk;
 			}
 			unset($params['where']);
 		}
-		foreach ($parts as $part) {
+		foreach (array('select','where','where_or','whereid','order_by','having','group_by') as $part) {
 			if ($params[$part]) {
-				call_user_func_array(array($qb, $part), is_array($params[$part]) ? $params[$part] : array($params[$part]));
-			}
-		}
-		if ($params['join']) {
-			foreach((array)$params['join'] as $join) {
-				$qb->join($join['table'], $join['on'], $join['type']);
+				call_user_func_array(array($builder, $part), is_array($params[$part]) ? $params[$part] : array($params[$part]));
 			}
 		}
 		// limit => [10,30] or limit => 5
 		if ($params['limit']) {
 			$count = is_numeric($params['limit']) ? $params['limit'] : $params['limit'][0];
 			$offset = is_numeric($params['limit']) ? null : $params['limit'][1];
-			$qb->limit($count, $offset);
+			$builder->limit($count, $offset);
 		}
-		$qb = $this->_prepare_relations_for_qb($qb);
-		return $qb;
-	}
-
-	/**
-	*/
-	public function _prepare_relations_for_qb($qb) {
-		foreach ((array)$this->_relations as $key => $info) {
-			$type = $info['type'];
-			$model = $info['model'];
-			if (!$type || !$model) {
-				continue;
+		if ($params['join']) {
+			foreach((array)$params['join'] as $join) {
+				$builder->join($join['table'], $join['on'], $join['type']);
 			}
-			$model_obj = model($model);
-			$table = $model_obj->_get_table_name();
-			$qb->join($table/*, $join['on'], $join['type']*/);
 		}
-		return $qb;
-	}
-
-	/**
-	*/
-	public function _set_query_builder_params($part, $args) {
-		$this->_params[$part][] = $args;
-		return $this;
+		return $builder;
 	}
 
 	/**
@@ -221,7 +240,7 @@ class yf_model {
 	*/
 	public static function select() {
 		$obj = isset($this) ? $this : new static();
-		return $obj->_set_query_builder_params(__FUNCTION__, func_get_args());
+		return $obj->new_query(array(__FUNCTION__ => func_get_args()));
 	}
 
 	/**
@@ -229,55 +248,7 @@ class yf_model {
 	*/
 	public static function where() {
 		$obj = isset($this) ? $this : new static();
-		return $obj->_set_query_builder_params(__FUNCTION__, func_get_args());
-	}
-
-	/**
-	* Params for query builder
-	*/
-	public static function where_or() {
-		$obj = isset($this) ? $this : new static();
-		return $obj->_set_query_builder_params(__FUNCTION__, func_get_args());
-	}
-
-	/**
-	* Params for query builder
-	*/
-	public static function whereid() {
-		$obj = isset($this) ? $this : new static();
-		return $obj->_set_query_builder_params(__FUNCTION__, func_get_args());
-	}
-
-	/**
-	* Params for query builder
-	*/
-	public static function group_by() {
-		$obj = isset($this) ? $this : new static();
-		return $obj->_set_query_builder_params(__FUNCTION__, func_get_args());
-	}
-
-	/**
-	* Params for query builder
-	*/
-	public static function order_by() {
-		$obj = isset($this) ? $this : new static();
-		return $obj->_set_query_builder_params(__FUNCTION__, func_get_args());
-	}
-
-	/**
-	* Params for query builder
-	*/
-	public static function having() {
-		$obj = isset($this) ? $this : new static();
-		return $obj->_set_query_builder_params(__FUNCTION__, func_get_args());
-	}
-
-	/**
-	* Params for query builder
-	*/
-	public static function limit() {
-		$obj = isset($this) ? $this : new static();
-		return $obj->_set_query_builder_params(__FUNCTION__, func_get_args());
+		return $obj->new_query(array(__FUNCTION__ => func_get_args()));
 	}
 
 	/**
@@ -286,53 +257,13 @@ class yf_model {
 	*/
 	public static function find() {
 		$obj = isset($this) ? $this : new static();
-		$args = func_get_args();
-		$obj->_where = $args;
-		$result = $obj->_query_builder($args ? array('where' => $args) : null)->get();
-		$obj->_primary_id = $result[$pk];
-		return new yf_model_result($result, $obj);
-	}
-
-	/**
-	* Return first column from first row from resultset
-	*/
-	public static function one() {
-		$obj = isset($this) ? $this : new static();
-		$data = call_user_func_array(array($obj, 'find'), func_get_args());
-		return is_array($data) ? current($data) : null;
-	}
-
-	/**
-	* Get first record ordered by the primary key
-	*/
-	public function first() {
-		$args = func_get_args();
-		$pk = $this->_get_primary_key_column();
-		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => $pk.' asc', 'limit' => 1) : null)->get();
-		$this->_primary_id = $result[$pk];
-		return new yf_model_result($result, $this);
-	}
-
-	/**
-	* Get last record ordered by the primary key
-	*/
-	public function last() {
-		$args = func_get_args();
-		$pk = $this->_get_primary_key_column();
-		$result = $this->_query_builder($args ? array('where' => $args, 'order_by' => $pk.' desc', 'limit' => 1) : null)->get();
-		$this->_primary_id = $result[$pk];
-		return new yf_model_result($result, $this);
-	}
-
-	/**
-	* Just get one row from resultset
-	*/
-	public function get() {
-		$args = func_get_args();
-		$pk = $this->_get_primary_key_column();
-		$result = $this->_query_builder($args ? array('where' => $args) : null)->get();
-		$this->_primary_id = $result[$pk];
-		return new yf_model_result($result, $this);
+		$pk = $obj->get_key_name();
+		$result = $obj->new_query(array('where' => func_get_args()))->get();
+		if (!$result || !$result->$pk) {
+			return null;
+		}
+		$obj->set_key($result->$pk);
+		return $result;
 	}
 
 	/**
@@ -340,24 +271,7 @@ class yf_model {
 	*/
 	public static function all() {
 		$obj = isset($this) ? $this : new static();
-		$args = func_get_args();
-		$result = $obj->_query_builder($args ? array('where' => $args) : null)->get_all();
-		if (!$result) {
-			return false;
-		}
-		$out = array();
-		foreach ($result as $k => $item) {
-			$out[$k] = new yf_model_result($item, $obj);
-		}
-		return $out;
-	}
-
-	/**
-	* Alias for all
-	*/
-	public static function get_all() {
-		$obj = isset($this) ? $this : new static();
-		return call_user_func_array(array($obj, 'all'), func_get_args());
+		return $obj->new_query(array('where' => func_get_args()))->get_all();
 	}
 
 	/**
@@ -365,8 +279,19 @@ class yf_model {
 	*/
 	public static function count() {
 		$obj = isset($this) ? $this : new static();
-		$args = func_get_args();
-		return (int)$obj->_query_builder($args ? array('where' => $args) : null)->count();
+		return (int)$obj->new_query(array('where' => func_get_args()))->count();
+	}
+
+	/**
+	* Create new model record inside database
+	*/
+	public static function create(array $data) {
+		$obj = isset($this) ? $this : new static();
+		$insert_id = $obj->new_query()->insert($data);
+		if (!$insert_id) {
+			return null;
+		}
+		return $obj->find($insert_id);
 	}
 
 	/**
@@ -375,12 +300,12 @@ class yf_model {
 	public static function first_or_create() {
 		$obj = isset($this) ? $this : new static();
 		$args = func_get_args();
-		$first = call_user_func_array(array($obj, 'first'), $args);
-		$pk = $obj->_get_primary_key_column();
-		if (!empty($first->$pk)) {
-			return $first;
-		}
-		return call_user_func_array(array($obj, 'create'), $args);
+		$first = $obj->new_query(array(
+			'where' => $args,
+			'order_by' => $obj->get_key_name().' asc',
+			'limit' => 1,
+		))->get();
+		return is_array($first) ? $first : call_user_func_array(array($obj, 'create'), $args);
 	}
 
 	/**
@@ -389,21 +314,12 @@ class yf_model {
 	public static function first_or_new() {
 		$obj = isset($this) ? $this : new static();
 		$args = func_get_args();
-		return call_user_func_array(array($obj, 'first'), $args);
-	}
-
-	/**
-	* Create new model record inside database
-	*/
-	public static function create(array $data) {
-		$obj = isset($this) ? $this : new static();
-		$insert_id = $obj->_query_builder()->insert($data);
-		if (!$insert_id) {
-			return false;
-		}
-		$pk = $obj->_get_primary_key_column();
-		$obj->_primary_id = $insert_id;
-		return $obj->find($insert_id);
+		$first = $obj->new_query(array(
+			'where' => $args,
+			'order_by' => $obj->get_key_name().' asc',
+			'limit' => 1,
+		))->get();
+		return is_array($first) ? $first : $obj->new_instance();
 	}
 
 	/**
@@ -411,35 +327,13 @@ class yf_model {
 	*/
 	public static function save() {
 		$obj = isset($this) ? $this : new static();
-		return call_user_func_array(array($obj, 'update'), func_get_args());
-	}
-
-	/**
-	* Save data related to model back into database
-	*/
-	public static function update() {
-		$obj = isset($this) ? $this : new static();
-		$data = (array)$obj->_get_current_data();
-		$pk = $obj->_get_primary_key_column();
+		$data = (array)$obj->get_data();
+		$pk = $obj->get_key_name();
 		$obj->_primary_id = $data[$pk];
 		if (isset($data[self::UPDATED_AT])) {
 			$data[self::UPDATED_AT] = date('Y-m-d H:i:s');
 		}
-		return $obj->_query_builder(array('whereid' => $obj->_primary_id))->update($data);
-	}
-
-	/**
-	* Internal method
-	*/
-	public function _add_relation(array $relation) {
-		foreach ($relation as $k => $v) {
-			if (empty($v)) {
-				unset($relation[$k]);
-			}
-		}
-#		$relation_key = implode(':', array_values($relation));
-#		$this->_relations[$relation_key] = $relation;
-		return new yf_model_relation($this, $relation);
+		return $obj->new_query(array('whereid' => $obj->_primary_id))->update($data);
 	}
 
 	/**
@@ -450,12 +344,16 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		return $this->_add_relation(array(
+		$instance = model($related);
+		$query = $instance->new_query();
+		$other_key = $other_key ?: $instance->get_key_name();
+		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
+			'query'			=> $query,
 		));
 	}
 
@@ -470,24 +368,16 @@ class yf_model {
 		if (is_null($foreign_key)) {
 			$foreign_key = strtolower($relation).'_id';
 		}
-/*
-		$instance = new $related;
-
-		// Once we have the foreign key names, we'll just create a new Eloquent query
-		// for the related models and returns the relationship instance which will
-		// actually be responsible for retrieving and hydrating every relations.
-		$query = $instance->newQuery();
-
-		$otherKey = $otherKey ?: $instance->getKeyName();
-
-		return new BelongsTo($query, $this, $foreignKey, $otherKey, $relation);
-*/
-		return $this->_add_relation(array(
+		$instance = model($related);
+		$query = $instance->new_query();
+		$other_key = $other_key ?: $instance->get_key_name();
+		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key,
 			'other_key'		=> $other_key,
+			'query'			=> $query,
 		));
 	}
 
@@ -495,12 +385,23 @@ class yf_model {
 	* Relation one-to-many
 	*/
 	public function has_many($related, $foreign_key = null, $local_key = null) {
-		return $this->_add_relation(array(
+		if (is_null($relation)) {
+			list(, $caller) = debug_backtrace(false);
+			$relation = $caller['function'];
+		}
+		if (is_null($foreign_key)) {
+			$foreign_key = strtolower($relation).'_id';
+		}
+		$instance = model($related);
+		$query = $instance->new_query();
+		$local_key = $local_key ?: $instance->get_key_name();
+		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
+			'query'			=> $query,
 		));
 	}
 
@@ -508,27 +409,43 @@ class yf_model {
 	* Relation many-to-many
 	*/
 	public function belongs_to_many($related, $pivot_table = null, $local_key = null, $foreign_key = null) {
-		return $this->_add_relation(array(
+		if (is_null($relation)) {
+			list(, $caller) = debug_backtrace(false);
+			$relation = $caller['function'];
+		}
+		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
 			'pivot_table'	=> $pivot_table,
+			'query'			=> $query,
 		));
 	}
 
 	/**
 	* Relation distant through other model
 	*/
-	public function has_many_through($related, $through_model, $local_key = null, $foreign_key = null) {
-		return $this->_add_relation(array(
+	public function has_many_through($related, $through_model, $foreign_key = null, $local_key = null) {
+		if (is_null($relation)) {
+			list(, $caller) = debug_backtrace(false);
+			$relation = $caller['function'];
+		}
+		if (is_null($foreign_key)) {
+			$foreign_key = strtolower($relation).'_id';
+		}
+		$instance = model($related);
+		$query = $instance->new_query();
+		$local_key = $local_key ?: $instance->get_key_name();
+		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
 			'foreign_key'	=> $foreign_key,
 			'local_key'		=> $local_key,
 			'through_model'	=> $through_model,
+			'query'			=> $query,
 		));
 	}
 
@@ -536,8 +453,6 @@ class yf_model {
 	* Relation polymorphic one-to-many
 	*/
 	public function morph_to() {
-		return $this->_add_relation(array(
-		));
 // TODO
 	}
 
@@ -545,8 +460,6 @@ class yf_model {
 	* Relation polymorphic one-to-many
 	*/
 	public function morph_many() {
-		return $this->_add_relation(array(
-		));
 // TODO
 	}
 
@@ -554,8 +467,6 @@ class yf_model {
 	* Relation polymorphic many-to-many
 	*/
 	public function morph_to_many() {
-		return $this->_add_relation(array(
-		));
 // TODO
 	}
 
@@ -563,8 +474,6 @@ class yf_model {
 	* Relation polymorphic many-to-many
 	*/
 	public function morphed_by_many() {
-		return $this->_add_relation(array(
-		));
 // TODO
 	}
 
@@ -602,7 +511,7 @@ class yf_model {
 	*/
 	public function delete() {
 		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->delete();
+		return $this->new_query($args ? array('where' => $args) : null)->delete();
 	}
 
 	/**
@@ -611,7 +520,7 @@ class yf_model {
 	public static function destroy() {
 		$obj = isset($this) ? $this : new static();
 		$args = func_get_args();
-		return $obj->_query_builder($args ? array('where' => $args) : null)->delete();
+		return $obj->new_query($args ? array('where' => $args) : null)->delete();
 	}
 
 	/**
@@ -640,7 +549,7 @@ class yf_model {
 	*/
 	public function touch() {
 		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('timestamp' => time()));
+		return $this->new_query($args ? array('where' => $args) : null)->update(array('timestamp' => time()));
 	}
 
 	/**
@@ -648,7 +557,7 @@ class yf_model {
 	*/
 	public function soft_delete() {
 		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('is_deleted' => 1));
+		return $this->new_query($args ? array('where' => $args) : null)->update(array('is_deleted' => 1));
 	}
 
 	/**
@@ -656,7 +565,7 @@ class yf_model {
 	*/
 	public function restore() {
 		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->update(array('is_deleted' => 0));
+		return $this->new_query($args ? array('where' => $args) : null)->update(array('is_deleted' => 0));
 	}
 
 	/**
@@ -665,7 +574,7 @@ class yf_model {
 	public function with_trashed() {
 // TODO
 		$args = func_get_args();
-		return $this->_query_builder($args ? array('where' => $args) : null)->where('is_deleted = 1');
+		return $this->new_query($args ? array('where' => $args) : null)->where('is_deleted = 1');
 	}
 
 	/**
@@ -729,7 +638,7 @@ class yf_model {
 	* Linking with the table builder
 	*/
 	public function table($params = array()) {
-		$sql = $this->_query_builder((array)$params['query_builder'])->sql();
+		$sql = $this->new_query((array)$params['query_builder'])->sql();
 		$filter_name = $params['filter_name'] ?: ($this->_params['filter_name'] ?: $_GET['object'].'__'.$_GET['action']);
 		$params['filter'] = $params['filter'] ?: ($this->_params['filter'] ?: $_SESSION[$filter_name]);
 		return table($sql, $params);
@@ -739,7 +648,7 @@ class yf_model {
 	* Linking with the form builder
 	*/
 	public function form($whereid, $data = array(), $params = array()) {
-		$a = (array)$this->_query_builder((array)$params['query_builder'])->whereid($whereid)->get();
+		$a = (array)$this->new_query((array)$params['query_builder'])->whereid($whereid)->get();
 		return form($a + (array)$data, $params);
 	}
 
