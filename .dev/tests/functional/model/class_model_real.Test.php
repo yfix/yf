@@ -217,15 +217,6 @@ ND
 			'type'         => 'Grizzly',
 			'danger_level' => 8,
 		));
-/*
-		// Alternate syntax
-		$bear_lawly = model('bear')->create(array(
-			'name'         => 'Lawly',
-			'type'         => 'Grizzly',
-			'danger_level' => 8,
-		));
-		var_dump($bear_lawly);
-*/
 		// bear 2 is named Cerms. He has a loud growl but is pretty much harmless.
 		$bear_cerms = bear::create(array(
 			'name'         => 'Cerms',
@@ -526,12 +517,13 @@ ND
 		// ----------- changing models -----------
 
 		// let's change the danger level of Lawly to level 10
-		// find the bear
 		$lawly = bear::where('name', '=', 'Lawly')->first();
-		// change the attribute
+		$this->assertEquals($bear_lawly->danger_level, $lawly->danger_level);
+		$this->assertNotEquals('10', $lawly->danger_level);
 		$lawly->danger_level = 10;
-		// save to our database
 		$lawly->save();
+
+		$this->assertEquals('10', $lawly->danger_level);
 
 		// ------ query one-to-one relationships ------
 
