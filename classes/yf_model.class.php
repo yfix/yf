@@ -43,8 +43,8 @@ class yf_model {
 	*/
 	public function __clone() {
 		$persist_properties = array(
-#			'_table',
-#			'_fillable',
+			'_table',
+			'_fillable',
 		);
 		foreach ((array)get_object_vars($this) as $k => $v) {
 			if (!in_array($k, $persist_properties)) {
