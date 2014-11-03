@@ -428,8 +428,8 @@ if (!function_exists('class_basename')) {
 			}
 		}
 		$slen = strlen($suffix);
-		if ($slen && substr($class, -$slen) === $_prefix) {
-			$class = substr($class, 0, -$plen);
+		if ($slen && substr($class, -$slen) === $suffix) {
+			$class = substr($class, 0, -$slen);
 		}
 		return $class;
 	}
