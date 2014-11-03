@@ -126,7 +126,7 @@ class yf_model {
 			return $this->_primary_key;
 		}
 		$table = $this->get_table();
-		if ($table) {
+		if ($table && $this->_db->utils()->table_exists($table)) {
 			$primary_index = $this->_db->utils()->index_info($table, 'PRIMARY');
 		}
 		if (!isset($primary_index['columns'])) {
