@@ -34,6 +34,13 @@ class yf_model_relation {
 		$model = $this->_model;
 		if ($relation['type'] === 'has_one') {
 			return $relation['query']->whereid($model->get_key())->get();
+		} elseif ($relation['type'] === 'has_many') {
+#print_r($relation);
+			return $relation['query']->whereid($model->get_key())->inner_join()->get_all();
+		} elseif ($relation['type'] === 'belongs_to') {
+// TODO
+		} elseif ($relation['type'] === 'belongs_to_many') {
+// TODO
 		}
 	}
 /*
