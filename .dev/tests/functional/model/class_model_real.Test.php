@@ -467,31 +467,16 @@ ND
 		// save to our database
 		$lawly->save();
 
-		// ------ deleting models ------
-
-		// find and delete a record
-		$bear = bear::find(1);
-		$bear->delete();
-		// delete a record 
-		bear::destroy(1);
-		// delete multiple records 
-		bear::destroy(1, 2, 3);
-		// find and delete all bears with a danger level over 5
-		bear::where('danger_level', '>', 5)->delete();
-
 		// ------ query one-to-one relationships ------
 
 		// find a bear named Adobot
 		$adobot = bear::where('name', '=', 'Adobot')->first();
 		// get the fish that Adobot has
-#		$fish = $adobot->fish;
-#var_dump($adobot->_get_current_data());
-#var_dump($adobot->fish);
-
+		$fish = $adobot->fish;
 		// get the weight of the fish Adobot is going to eat
-#		$fish->weight;
+		$weight1 = $fish->weight;
 		// alternatively you could go straight to the weight attribute
-#		$adobot->fish->weight;
+		$weight2 = $adobot->fish->weight;
 /*
 		// ------ query one-to-many relationships ------
 
@@ -515,6 +500,18 @@ ND
 		foreach ($grand_canyon->bears as $bear)
 			echo $bear->name . ' ' . $bear->type . ' ' . $bear->danger_level;
 		}
+*/
+		// ------ deleting models ------
+/*
+		// find and delete a record
+		$bear = bear::find(1);
+		$bear->delete();
+		// delete a record 
+		bear::destroy(1);
+		// delete multiple records 
+		bear::destroy(1, 2, 3);
+		// find and delete all bears with a danger level over 5
+		bear::where('danger_level', '>', 5)->delete();
 */
 	}
 
@@ -613,6 +610,7 @@ if ($i++ > 3) {
 #		$this->assertEquals( $actors_data_objects, $all_actors );
 		$this->assertEquals( $actors_data, $all_actors );
 */
+/*
 		$raw_first_id = $actors_data[0]['actor_id'];
 		$this->assertNotEmpty( $raw_first_id );
 		$first_actor = model('actor')->find($raw_first_id);
@@ -635,6 +633,7 @@ if ($i++ > 3) {
 
 		$raw_second_id = $actors_data[1]['actor_id'];
 		$this->assertNotEmpty( $raw_second_id );
+*/
 /*
 		$second_actor = model('actor')->find($raw_second_id);
 		$this->assertNotEmpty( $actors_data_objects[1] );
