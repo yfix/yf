@@ -88,6 +88,9 @@ class yf_model {
 		$name = $this->_table;
 		if (!$name) {
 			$name = strtolower(class_basename($this, '', '_model'));
+			if ($name === 'model') {
+				return false;
+			}
 			$this->set_table($name);
 		}
 		return $this->_db->_fix_table_name($name);
@@ -122,7 +125,13 @@ class yf_model {
 		if (isset($this->_primary_key)) {
 			return $this->_primary_key;
 		}
-		$primary_index = $this->_db->utils()->index_info($this->get_table(), 'PRIMARY');
+		$table = $this->get_table();
+		if ($table) {
+			$primary_index = $this->_db->utils()->index_info($table, 'PRIMARY');
+		}
+		if (!isset($primary_index['columns'])) {
+			return null;
+		}
 		$name = current($primary_index['columns']);
 		return $this->set_key_name($name);
 	}
@@ -153,11 +162,18 @@ class yf_model {
 	* Set current model data
 	*/
 	public function set_data($data = array()) {
+		if ($data instanceof yf_model_result) {
+			$data = $data->get_data();
+		}
 		foreach ((array)$data as $k => $v) {
 			if (substr($k, 0, 1) === '_') {
 				continue;
 			}
 			$this->$k = $v;
+		}
+		$pk = $this->get_key_name();
+		if (isset($data[$pk])) {
+			$this->set_key($data[$pk]);
 		}
 	}
 
@@ -262,6 +278,7 @@ class yf_model {
 			return null;
 		}
 		$obj->set_key($result->$pk);
+		$obj->set_data($result);
 		return $result;
 	}
 
@@ -305,7 +322,11 @@ class yf_model {
 			'order_by' => $obj->get_key_name().' asc',
 			'limit' => 1,
 		))->get();
-		return is_object($first) ? $first : call_user_func_array(array($obj, 'create'), $args);
+		if (is_object($first)) {
+			$obj->set_data($first);
+			return $first;
+		}
+		return call_user_func_array(array($obj, 'create'), $args);
 	}
 
 	/**
@@ -319,7 +340,11 @@ class yf_model {
 			'order_by' => $obj->get_key_name().' asc',
 			'limit' => 1,
 		))->get();
-		return is_object($first) ? $first : $obj->new_instance();
+		if (is_object($first)) {
+			$obj->set_data($first);
+			return $first;
+		}
+		return $obj->new_instance();
 	}
 
 	/**
