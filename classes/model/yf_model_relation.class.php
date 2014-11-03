@@ -23,7 +23,7 @@ class yf_model_relation {
 		if ($r['type'] === 'belongs_to_many') {
 			$pivot = $r['pivot_table'];
 			return $db->replace($pivot, array(
-				$r['local_key']		=> $model->get_key_name(),
+				$r['local_key']		=> $model->get_key(),
 				$r['foreign_key']	=> $id,
 			));
 		}
