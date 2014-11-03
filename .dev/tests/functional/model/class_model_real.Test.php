@@ -479,6 +479,15 @@ ND
 		$this->assertSame('', $bear_first2->type);
 		$this->assertEquals('0', $bear_first2->danger_level);
 
+		$this->assertInternalType('object', $bear_new1);
+		$this->assertInstanceOf('yf_model_result', $bear_new1);
+		$this->assertInstanceOf('yf_model', $bear_new1->_get_model());
+		$this->assertInstanceOf('bear', $bear_new1->_get_model());
+		$this->assertObjectHasAttribute('id', $bear_new1);
+		$this->assertEquals($bear_cerms->id, $bear_new1->id);
+		$this->assertEquals($bear_cerms->name, $bear_new1->name);
+		$this->assertEquals($bear_cerms, $bear_new1);
+
 		$this->assertInternalType('array', $bears);
 		$this->assertNotEmpty($bears);
 		$bears_array = array();
@@ -487,14 +496,16 @@ ND
 			unset($bears_array[$k]['created_at']);
 			unset($bears_array[$k]['updated_at']);
 		}
-		$this->assertEquals(array(
+		$expected = array(
 			1 => array('id' => '1', 'name' => 'Lawly', 'type' => 'Grizzly', 'danger_level' => '8'),
 			2 => array('id' => '2', 'name' => 'Cerms', 'type' => 'Black', 'danger_level' => '4'),
 			3 => array('id' => '3', 'name' => 'Adobot', 'type' => 'Polar', 'danger_level' => '3'),
 			4 => array('id' => '4', 'name' => 'Super Cool1', 'type' => 'Black', 'danger_level' => '1'),
 			5 => array('id' => '5', 'name' => 'Super Cool2', 'type' => 'Black', 'danger_level' => '1'),
 			6 => array('id' => '6', 'name' => 'Lawly2', 'type' => '', 'danger_level' => '0'),
-		), $bears_array);
+		);
+		$this->assertEquals($expected, $bears_array);
+#		$this->assertEquals($expected, $bears_array);
 
 		// ----------- changing models -----------
 
