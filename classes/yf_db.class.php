@@ -1639,7 +1639,7 @@ class yf_db {
 			return false;
 		}
 		$model_obj = clone $obj;
-		$model_obj->_db = $this;
+		$model_obj->set_db_object($this);
 		return $model_obj;
 	}
 
