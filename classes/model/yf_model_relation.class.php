@@ -32,14 +32,30 @@ class yf_model_relation {
 	public function get_data() {
 		$relation = $this->_relation;
 		$model = $this->_model;
-		if ($relation['type'] === 'has_one') {
-			return $relation['query']->whereid($model->get_key())->get();
-		} elseif ($relation['type'] === 'has_many') {
-#print_r($relation);
-			return $relation['query']->whereid($model->get_key())->inner_join()->get_all();
-		} elseif ($relation['type'] === 'belongs_to') {
+		$table = $model->get_table();
+		$table_alias = 't0';
+		$id = $model->get_key();
+		$query = $relation['query'];
+		$rel_model = $query->_model;
+		$type = $relation['type'];
+
+		if ($type === 'has_one') {
+
+			return $query->whereid($id)->get();
+
+		} elseif ($type === 'has_many') {
+
+			$rel_table = $rel_model->get_table();
+			$foreign_key = $relation['foreign_key'];
+			$local_key = $relation['local_key'];
+
+			return $query->whereid($id)->inner_join($rel_table, array(
+				$foreign_key => $table_alias.'.'.$local_key,
+			))->get_all();
+
+		} elseif ($type === 'belongs_to') {
 // TODO
-		} elseif ($relation['type'] === 'belongs_to_many') {
+		} elseif ($type === 'belongs_to_many') {
 // TODO
 		}
 	}
