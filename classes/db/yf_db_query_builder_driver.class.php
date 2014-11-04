@@ -171,7 +171,10 @@ abstract class yf_db_query_builder_driver {
 		if (empty($this->_sql['from'])) {
 			return false;
 		}
-		$table = trim($this->_sql['from'][0], '`"\'');
+		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+		if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
+			$table = $m[1];
+		}
 		if (!$table) {
 			return false;
 		}
@@ -268,7 +271,10 @@ abstract class yf_db_query_builder_driver {
 		if (empty($this->_sql['from'])) {
 			return false;
 		}
-		$table = trim($this->_sql['from'][0], '`"\'');
+		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+		if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
+			$table = $m[1];
+		}
 		if (!$table) {
 			return false;
 		}
@@ -662,6 +668,9 @@ abstract class yf_db_query_builder_driver {
 	/**
 	*/
 	function _process_where(array $where, $func_name = 'where') {
+// TODO: auto-detect and apply whereid: where(1)
+// TODO: auto-detect and apply whereid with several numbers where(1,2,3) === whereid(1,2,3)
+// TODO: ability to pass 2 arguments, meaning equal: where('name','Peter'), where(array('name','Peter')) same as: where('name','=','Peter')
 		$sql = '';
 		if (isset($where[0]) && is_array($where[0]) && isset($where[0]['__args__'])) {
 			$where = $where[0]['__args__'];
