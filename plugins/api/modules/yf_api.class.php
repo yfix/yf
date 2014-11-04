@@ -29,6 +29,10 @@
 
 class yf_api {
 
+	public $is_post = null;
+	public $is_json = null;
+	public $request = null;
+
 	function _init() {
 		$class  = $_GET[ 'action' ];
 		$method = $_GET[ 'id' ];
@@ -38,7 +42,18 @@ class yf_api {
 		$this->_call( $class, null, $method );
 	}
 
-	// api call
+	protected function _parse_request() {
+		$is_post = &$this->is_post;
+		$is_json = &$this->is_json;
+		$request = &$this->request;
+			$is_post = input()->is_post();
+		if( $is_post ) {
+			$request = json_decode( file_get_contents( 'php://input' ), true );
+			$request && $is_json = true;
+		}
+		return( $request );
+	}
+
 	protected function _reject() {
 		header( 'Status: 503 Service Unavailable' );
 		die( 'Service Unavailable' );
@@ -55,7 +70,8 @@ class yf_api {
 			$_status = method_exists( $_class, $_method );
 		}
 		if( !$_status ) { $this->_reject(); }
-		return( $_class->$_method( $options ) );
+		$request = $this->_parse_request();
+		return( $_class->$_method( $request, $options ) );
 	}
 
 	protected function _call( $class = null, $class_path = null, $method = null, $options = array() ) {
