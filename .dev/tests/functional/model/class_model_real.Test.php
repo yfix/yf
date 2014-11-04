@@ -648,17 +648,27 @@ ND
 		$this->assertEquals($expected, $bears_in_grand_canyon);
 
 		// ------ deleting models ------
-/*
+
 		// find and delete a record
 		$bear = bear::find(1);
+		$this->assertNotEmpty($bear->id);
+		$this->assertEquals($bear->id, self::db()->from($bear->get_table())->whereid($bear->id)->get_one());
+		$this->assertInstanceOf('yf_model_result', $bear);
 		$bear->delete();
+		$this->assertFalse((bool)self::db()->from($bear->get_table())->whereid($bear->id)->get_one());
+
 		// delete a record 
-		bear::destroy(1);
+		$this->assertTrue((bool)self::db()->from('bears')->whereid(6)->get_one());
+		bear::destroy(6);
+		$this->assertFalse((bool)self::db()->from('bears')->whereid(6)->get_one());
+
 		// delete multiple records 
-		bear::destroy(1, 2, 3);
+		$this->assertEquals(3, (int)self::db()->from('bears')->whereid(array(2,3,4))->count());
+		bear::destroy(2, 3, 4);
+		$this->assertEquals(0, (int)self::db()->from('bears')->whereid(array(2,3,4))->count());
+		$this->assertEquals(5, self::db()->from('bears')->whereid(5)->get_one());
 		// find and delete all bears with a danger level over 5
 		bear::where('danger_level', '>', 5)->delete();
-*/
 	}
 
 	/***/
