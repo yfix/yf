@@ -11,6 +11,7 @@ class yf_model {
 	protected $_db = null;
 	protected $_table = null;
 	protected $_fillable = array();
+	protected $_guarded = array();
 	protected $_primary_key = null;
 	protected $_primary_id = null;
 	protected $_dirty_attrs = null;
@@ -77,14 +78,12 @@ class yf_model {
 	*/
 	public function set_db_object($db = null) {
 		$this->_db = $db ?: db();
+		return $this;
 	}
 
 	/**
 	*/
 	public function get_table() {
-		if (isset($this->_table)) {
-			return $this->_table;
-		}
 		$name = $this->_table;
 		if (!$name) {
 			$name = strtolower(class_basename($this, '', '_model'));
@@ -221,7 +220,7 @@ class yf_model {
 		$builder->_model = $this;
 		$builder->_with = $this->_with;
 		$builder->_result_wrapper = array($this, 'new_result');
-		$builder->from($table);
+		$builder->from($table.' AS t0');
 		// whereid shortcut, example: find(1)  == 1 is PK
 		if (is_array($params['where']) && count($params['where']) === 1 && is_numeric($params['where'][0]) && !isset($params['whereid'])) {
 			$params['whereid'] = $params['where'];
@@ -378,12 +377,12 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		$instance = model($related);
+		$instance = model($related)->set_db_object($this->_db);
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
-			'foreign_key'	=> !is_null($foreign_key) ? $foreign_key : strtolower($relation).'_id',
+			'foreign_key'	=> $instance->get_table().'.'.($foreign_key ?: $this->get_foreign_key()),
 			'local_key'		=> $local_key ?: $instance->get_key_name(),
 			'query'			=> $instance->new_query(),
 		));
@@ -397,12 +396,12 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		$instance = model($related);
+		$instance = model($related)->set_db_object($this->_db);
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
-			'foreign_key'	=> !is_null($foreign_key) ? $foreign_key : strtolower($relation).'_id',
+			'foreign_key'	=> $foreign_key ?: strtolower($relation).'_id',
 			'other_key'		=> $other_key ?: $instance->get_key_name(),
 			'query'			=> $instance->new_query(),
 		));
@@ -416,12 +415,12 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		$instance = model($related);
+		$instance = model($related)->set_db_object($this->_db);
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
-			'foreign_key'	=> !is_null($foreign_key) ? $foreign_key : strtolower($relation).'_id',
+			'foreign_key'	=> $instance->get_table().'.'.($foreign_key ?: $this->get_foreign_key()),
 			'local_key'		=> $local_key ?: $instance->get_key_name(),
 			'query'			=> $instance->new_query(),
 		));
@@ -435,7 +434,7 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		$instance = model($related);
+		$instance = model($related)->set_db_object($this->_db);
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
@@ -455,7 +454,7 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		$instance = model($related);
+		$instance = model($related)->set_db_object($this->_db);
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
@@ -465,6 +464,13 @@ class yf_model {
 			'local_key'		=> $local_key ?: $instance->get_key_name(),
 			'query'			=> $instance->new_query(),
 		));
+	}
+
+	/**
+	* Relation polymorphic one-to-one
+	*/
+	public function morph_one() {
+// TODO
 	}
 
 	/**
