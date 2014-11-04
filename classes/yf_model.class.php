@@ -373,21 +373,19 @@ class yf_model {
 	/**
 	* Relation one-to-one
 	*/
-	public function has_one($related, $foreign_key = null, $local_key = null) {
+	public function has_one($related, $foreign_key = null, $local_key = null, $relation = null) {
 		if (is_null($relation)) {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
 		$instance = model($related);
-		$query = $instance->new_query();
-		$other_key = $other_key ?: $instance->get_key_name();
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
-			'foreign_key'	=> $foreign_key,
-			'local_key'		=> $local_key,
-			'query'			=> $query,
+			'foreign_key'	=> !is_null($foreign_key) ? $foreign_key : strtolower($relation).'_id',
+			'local_key'		=> $local_key ?: $instance->get_key_name(),
+			'query'			=> $instance->new_query(),
 		));
 	}
 
@@ -399,87 +397,73 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		if (is_null($foreign_key)) {
-			$foreign_key = strtolower($relation).'_id';
-		}
 		$instance = model($related);
-		$query = $instance->new_query();
-		$other_key = $other_key ?: $instance->get_key_name();
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
-			'foreign_key'	=> $foreign_key,
-			'other_key'		=> $other_key,
-			'query'			=> $query,
+			'foreign_key'	=> !is_null($foreign_key) ? $foreign_key : strtolower($relation).'_id',
+			'other_key'		=> $other_key ?: $instance->get_key_name(),
+			'query'			=> $instance->new_query(),
 		));
 	}
 
 	/**
 	* Relation one-to-many
 	*/
-	public function has_many($related, $foreign_key = null, $local_key = null) {
+	public function has_many($related, $foreign_key = null, $local_key = null, $relation = null) {
 		if (is_null($relation)) {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		if (is_null($foreign_key)) {
-			$foreign_key = strtolower($relation).'_id';
-		}
 		$instance = model($related);
-		$query = $instance->new_query();
-		$local_key = $local_key ?: $instance->get_key_name();
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
-			'foreign_key'	=> $foreign_key,
-			'local_key'		=> $local_key,
-			'query'			=> $query,
+			'foreign_key'	=> !is_null($foreign_key) ? $foreign_key : strtolower($relation).'_id',
+			'local_key'		=> $local_key ?: $instance->get_key_name(),
+			'query'			=> $instance->new_query(),
 		));
 	}
 
 	/**
 	* Relation many-to-many
 	*/
-	public function belongs_to_many($related, $pivot_table = null, $local_key = null, $foreign_key = null) {
+	public function belongs_to_many($related, $pivot_table = null, $foreign_key = null, $local_key = null, $relation = null) {
 		if (is_null($relation)) {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
+		$instance = model($related);
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
-			'foreign_key'	=> $foreign_key,
-			'local_key'		=> $local_key,
 			'pivot_table'	=> $pivot_table,
-			'query'			=> $query,
+			'foreign_key'	=> !is_null($foreign_key) ? $foreign_key : strtolower($relation).'_id',
+			'local_key'		=> $local_key ?: $instance->get_key_name(),
+			'query'			=> $instance->new_query(),
 		));
 	}
 
 	/**
 	* Relation distant through other model
 	*/
-	public function has_many_through($related, $through_model, $foreign_key = null, $local_key = null) {
+	public function has_many_through($related, $through_model, $foreign_key = null, $local_key = null, $relation = null) {
 		if (is_null($relation)) {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		if (is_null($foreign_key)) {
-			$foreign_key = strtolower($relation).'_id';
-		}
 		$instance = model($related);
-		$query = $instance->new_query();
-		$local_key = $local_key ?: $instance->get_key_name();
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
-			'foreign_key'	=> $foreign_key,
-			'local_key'		=> $local_key,
 			'through_model'	=> $through_model,
-			'query'			=> $query,
+			'foreign_key'	=> !is_null($foreign_key) ? $foreign_key : strtolower($relation).'_id',
+			'local_key'		=> $local_key ?: $instance->get_key_name(),
+			'query'			=> $instance->new_query(),
 		));
 	}
 
