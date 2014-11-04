@@ -51,6 +51,12 @@ class yf_model_relation {
 
 	/**
 	*/
+	public function detach($id, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
 	public function get_data() {
 		$relation = $this->_relation;
 		$model = $this->_model;
@@ -73,16 +79,19 @@ class yf_model_relation {
 			$foreign_key = $relation['foreign_key'];
 			$local_key = $relation['local_key'];
 
+			$cols = array();
+			foreach ($db->utils()->columns_names($rel_table) as $col) {
+				$col = $table_alias.'.'.$col;
+				$cols[$col] = $col;
+			}
+			$join_table = $table;
+			$join_alias = 't1';
 			return $query->whereid($id)
-// TODO: decide something with overlapping select keys
-				->inner_join($rel_table, array(
-					$foreign_key => $table_alias.'.'.$local_key,
+				->select(implode(', ', $cols))
+				->inner_join($join_table.' AS '.$join_alias, array(
+					$table_alias.'.'.$foreign_key => $join_alias.'.'.$local_key,
 				))->get_all();
 
-		} elseif ($type === 'has_many_through') {
-// TODO
-		} elseif ($type === 'belongs_to') {
-// TODO
 		} elseif ($type === 'belongs_to_many') {
 
 			$foreign_key = $relation['foreign_key'];
@@ -91,14 +100,14 @@ class yf_model_relation {
 			$pivot_table = $db->_fix_table_name($relation['pivot_table']);
 			$pivot_alias = 't1';
 
-			$cols = array();
-			foreach ($db->utils()->columns_names($rel_table) as $col) {
-				$col = 't0.'.$col;
-				$cols[$col] = $col;
-			}
-
 			$join_table = $table;
 			$join_alias = 't2';
+
+			$cols = array();
+			foreach ($db->utils()->columns_names($rel_table) as $col) {
+				$col = $table_alias.'.'.$col;
+				$cols[$col] = $col;
+			}
 
 			return $query->whereid($id)
 				->select(implode(', ', $cols))
@@ -110,6 +119,10 @@ class yf_model_relation {
 				))
 				->get_all();
 
+		} elseif ($type === 'has_many_through') {
+// TODO
+		} elseif ($type === 'belongs_to') {
+// TODO
 		} elseif ($type === 'morph_one') {
 // TODO
 		} elseif ($type === 'morph_to') {
@@ -122,12 +135,9 @@ class yf_model_relation {
 // TODO
 		}
 	}
-/*
-	public function __call($name, $args) {
-		if (method_exists($this, $name)) {
-			return $this->$name;
-		}
-	}
+
+	/**
+	*/
 	public function _create_pivot_table($pivot, $relation) {
 		$r = $relation;
 		$utils->create_table($pivot, function($t) use ($r) {
@@ -136,5 +146,5 @@ class yf_model_relation {
 			$t->primary(array($r['local_key'] => $r['local_key'], $r['foreign_key'] => $r['foreign_key']));
 		});
 	}
-*/
 }
+
