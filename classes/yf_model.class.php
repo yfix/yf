@@ -377,7 +377,7 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		$instance = model($related)->set_db_object($this->_db);
+		$instance = $this->_db->model($related);
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
@@ -396,7 +396,7 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		$instance = model($related)->set_db_object($this->_db);
+		$instance = $this->_db->model($related);
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
@@ -415,7 +415,7 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		$instance = model($related)->set_db_object($this->_db);
+		$instance = $this->_db->model($related);
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
@@ -434,7 +434,7 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		$instance = model($related)->set_db_object($this->_db);
+		$instance = $this->_db->model($related);
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
@@ -454,7 +454,7 @@ class yf_model {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
 		}
-		$instance = model($related)->set_db_object($this->_db);
+		$instance = $this->_db->model($related);
 		return $this->new_relation(array(
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
