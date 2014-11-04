@@ -85,17 +85,28 @@ class yf_model_relation {
 // TODO
 		} elseif ($type === 'belongs_to_many') {
 
-			$pivot_table = $db->_fix_table_name($relation['pivot_table']);
 			$foreign_key = $relation['foreign_key'];
 			$other_key = $relation['other_key'];
 
+			$pivot_table = $db->_fix_table_name($relation['pivot_table']);
+			$pivot_alias = 't1';
+
+			$cols = array();
+			foreach ($db->utils()->columns_names($rel_table) as $col) {
+				$col = 't0.'.$col;
+				$cols[$col] = $col;
+			}
+
+			$join_table = $table;
+			$join_alias = 't2';
+
 			return $query->whereid($id)
-// TODO: decide something with overlapping select keys
-				->inner_join($pivot_table, array(
-					$table_alias.'.'.$rel_model->get_key_name() => $pivot_table.'.'.$other_key,
+				->select(implode(', ', $cols))
+				->inner_join($pivot_table.' AS '.$pivot_alias, array(
+					$table_alias.'.'.$rel_model->get_key_name() => $pivot_alias.'.'.$other_key,
 				))
-				->inner_join($table, array(
-					$table.'.'.$model->get_key_name() => $pivot_table.'.'.$foreign_key,
+				->inner_join($join_table.' AS '.$join_alias, array(
+					$pivot_alias.'.'.$foreign_key => $join_alias.'.'.$model->get_key_name(),
 				))
 				->get_all();
 
