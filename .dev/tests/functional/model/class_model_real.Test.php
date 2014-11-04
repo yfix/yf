@@ -223,13 +223,13 @@ ND
 		$bear_cerms = bear::create(array(
 			'name'         => 'Cerms',
 			'type'         => 'Black',
-			'danger_level' => 4
+			'danger_level' => 4,
 		));
 		// bear 3 is named Adobot. He is a polar bear.
 		$bear_adobot = bear::create(array(
 			'name'         => 'Adobot',
 			'type'         => 'Polar',
-			'danger_level' => 3
+			'danger_level' => 3,
 		));
 
 		$this->assertInternalType('object', $bear_lawly);
@@ -359,17 +359,6 @@ ND
 			'taste_level' => '5'
 		));
 
-		// link our bears to picnics
-		// for our purposes we'll just add all bears to both picnics for our many to many relationship
-		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
-		$bear_lawly->picnics()->attach($picnic_grand_canyon->id);
-
-		$bear_cerms->picnics()->attach($picnic_yellowstone->id);
-		$bear_cerms->picnics()->attach($picnic_grand_canyon->id);
-
-		$bear_adobot->picnics()->attach($picnic_yellowstone->id);
-		$bear_adobot->picnics()->attach($picnic_grand_canyon->id);
-
 		$this->assertInternalType('object', $picnic_yellowstone);
 		$this->assertInstanceOf('yf_model_result', $picnic_yellowstone);
 		$this->assertInstanceOf('yf_model', $picnic_yellowstone->_get_model());
@@ -379,8 +368,6 @@ ND
 		$this->assertObjectHasAttribute('taste_level', $picnic_yellowstone);
 		$this->assertSame('Yellowstone', $picnic_yellowstone->name);
 		$this->assertEquals('6', $picnic_yellowstone->taste_level);
-#		$this->assertObjectHasAttribute('bear_id', $picnic_yellowstone);
-#		$this->assertSame($bear_lawly->id, $picnic_yellowstone->bear_id);
 
 		$this->assertInternalType('object', $picnic_grand_canyon);
 		$this->assertInstanceOf('yf_model_result', $picnic_grand_canyon);
@@ -391,17 +378,56 @@ ND
 		$this->assertObjectHasAttribute('taste_level', $picnic_grand_canyon);
 		$this->assertSame('Grand Canyon', $picnic_grand_canyon->name);
 		$this->assertEquals('5', $picnic_grand_canyon->taste_level);
-#		$this->assertObjectHasAttribute('bear_id', $picnic_grand_canyon);
-#		$this->assertSame($bear_lawly->id, $picnic_grand_canyon->bear_id);
+
+		// ---------- link our bears to picnics -------------
+
+		// for our purposes we'll just add all bears to both picnics for our many to many relationship
+		$bear_lawly->picnics()->attach($picnic_yellowstone->id);
+		$bear_lawly->picnics()->attach($picnic_grand_canyon->id);
+
+		$bear_cerms->picnics()->attach($picnic_yellowstone->id);
+		$bear_cerms->picnics()->attach($picnic_grand_canyon->id);
+
+		$bear_adobot->picnics()->attach($picnic_yellowstone->id);
+		$bear_adobot->picnics()->attach($picnic_grand_canyon->id);
+
+		$this->assertEquals(
+			array('bear_id' => $bear_lawly->id, 'picnic_id' => $picnic_yellowstone->id),
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_lawly->id)->where('picnic_id = '.$picnic_yellowstone->id)->get()
+		);
+		$this->assertEquals(
+			array('bear_id' => $bear_lawly->id, 'picnic_id' => $picnic_grand_canyon->id),
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_lawly->id)->where('picnic_id = '.$picnic_grand_canyon->id)->get()
+		);
+
+		$this->assertEquals(
+			array('bear_id' => $bear_cerms->id, 'picnic_id' => $picnic_yellowstone->id),
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_cerms->id)->where('picnic_id = '.$picnic_yellowstone->id)->get()
+		);
+		$this->assertEquals(
+			array('bear_id' => $bear_cerms->id, 'picnic_id' => $picnic_grand_canyon->id),
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_cerms->id)->where('picnic_id = '.$picnic_grand_canyon->id)->get()
+		);
+
+		$this->assertEquals(
+			array('bear_id' => $bear_adobot->id, 'picnic_id' => $picnic_yellowstone->id),
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_adobot->id)->where('picnic_id = '.$picnic_yellowstone->id)->get()
+		);
+		$this->assertEquals(
+			array('bear_id' => $bear_adobot->id, 'picnic_id' => $picnic_grand_canyon->id),
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_adobot->id)->where('picnic_id = '.$picnic_grand_canyon->id)->get()
+		);
 
 		// ----------- alternate creating models -----------
 
-		$bear_cool1 = bear::create(array(
+		// Method 2
+		$bear_cool1 = model('bear')->create(array(
 			'name'         => 'Super Cool1',
 			'type'         => 'Black',
 			'danger_level' => 1
 		));
 
+		// Method 3
 		// alternatively you can create an object, assign values, then save
 		$bear_cool2               = new bear;
 		$bear_cool2->name         = 'Super Cool2';
@@ -520,8 +546,10 @@ ND
 
 		// let's change the danger level of Lawly to level 10
 		$lawly = bear::where('name', '=', 'Lawly')->first();
+
 		$this->assertEquals($bear_lawly->danger_level, $lawly->danger_level);
 		$this->assertNotEquals('10', $lawly->danger_level);
+
 		$lawly->danger_level = 10;
 		$lawly->save();
 
@@ -565,20 +593,28 @@ ND
 			'Oak' => 400,
 		);
 		$this->assertEquals($expected, $trees);
-/*
+
 		// ------ query many-to-many relationships ------
 
 		// get the picnics that Cerms goes to ------------------------
 		$cerms = bear::where('name', '=', 'Cerms')->first();
 		// get the picnics and their names and taste levels
+		$taste_levels = array();
 		foreach ($cerms->picnics as $picnic) {
-			echo $picnic->name . ' ' . $picnic->taste_level;
+			$taste_levels[$picnic->name] = $picnic->taste_level;
 		}
+		$expected = array(
+			'Yellowstone'	=> 6,
+			'Grand Canyon'	=> 5,
+		);
+#		$this->assertEquals($expected, $taste_levels);
+/*
 		// get the bears that go to the Grand Canyon picnic -------------
 		$grand_canyon = picnic::where('name', '=', 'Grand Canyon')->first();
 		// show the bears
+		$bears_in_grand_canyon = array();
 		foreach ($grand_canyon->bears as $bear)
-			echo $bear->name . ' ' . $bear->type . ' ' . $bear->danger_level;
+			$bears_in_grand_canyon[$bear->name] = $bear->type. ', danger: '.$bear->danger_level;
 		}
 */
 		// ------ deleting models ------
