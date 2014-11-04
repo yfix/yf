@@ -135,9 +135,17 @@ abstract class yf_db_query_builder_driver {
 	*/
 	function delete($as_sql = false) {
 		$sql = false;
+		if (empty($this->_sql['from'])) {
+			return false;
+		}
+		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+		if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
+			$table = $m[1];
+			$this->_sql['from'] = array($table);
+		}
 		$a = $this->_sql_to_array();
 		if ($a) {
-			$to_leave = array('from','where','where_or');
+			$to_leave = array('from','where','where_or','limit');
 			foreach ($a as $k => $v) {
 				if (!in_array($k, $to_leave)) {
 					unset($a[$k]);
