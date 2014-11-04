@@ -71,7 +71,8 @@ class yf_model_relation {
 
 		if ($type === 'has_one') {
 
-			return $query->whereid($id)
+			return $query
+				->whereid($id)
 				->get();
 
 		} elseif ($type === 'has_many') {
@@ -86,11 +87,32 @@ class yf_model_relation {
 			}
 			$join_table = $table;
 			$join_alias = 't1';
-			return $query->whereid($id)
+			return $query
+				->whereid($id)
 				->select(implode(', ', $cols))
 				->inner_join($join_table.' AS '.$join_alias, array(
 					$table_alias.'.'.$foreign_key => $join_alias.'.'.$local_key,
 				))->get_all();
+
+		} elseif ($type === 'belongs_to') {
+
+			$foreign_key = $relation['foreign_key'];
+			$other_key = $relation['other_key'];
+
+			$join_table = $table;
+			$join_alias = 't1';
+
+			$cols = array();
+			foreach ($db->utils()->columns_names($rel_table) as $col) {
+				$col = $table_alias.'.'.$col;
+				$cols[$col] = $col;
+			}
+			return $query
+				->where($join_alias.'.'.$model->get_key_name().' = '.$id)
+				->select(implode(', ', $cols))
+				->inner_join($join_table.' AS '.$join_alias, array(
+					$table_alias.'.'.$other_key => $join_alias.'.'.$foreign_key,
+				))->get();
 
 		} elseif ($type === 'belongs_to_many') {
 
@@ -108,7 +130,6 @@ class yf_model_relation {
 				$col = $table_alias.'.'.$col;
 				$cols[$col] = $col;
 			}
-
 			return $query->whereid($id)
 				->select(implode(', ', $cols))
 				->inner_join($pivot_table.' AS '.$pivot_alias, array(
@@ -120,8 +141,6 @@ class yf_model_relation {
 				->get_all();
 
 		} elseif ($type === 'has_many_through') {
-// TODO
-		} elseif ($type === 'belongs_to') {
 // TODO
 		} elseif ($type === 'morph_one') {
 // TODO
