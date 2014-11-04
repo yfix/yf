@@ -549,8 +549,11 @@ class yf_model {
 	* Delete matching record(s) from database
 	*/
 	public function delete() {
-		$args = func_get_args();
-		return $this->new_query($args ? array('where' => $args) : null)->delete();
+		$args = array('where' => func_get_args());
+		if (!$args['where']) {
+			$args = array('whereid' => (int)$this->get_key());
+		}
+		return $this->new_query($args)->limit(1)->delete();
 	}
 
 	/**
@@ -558,8 +561,11 @@ class yf_model {
 	*/
 	public static function destroy() {
 		$obj = isset($this) ? $this : new static();
-		$args = func_get_args();
-		return $obj->new_query($args ? array('where' => $args) : null)->delete();
+		$args = array('where' => func_get_args());
+		if (!$args['where']) {
+			$args = array('whereid' => (int)$obj->get_key());
+		}
+		return $obj->new_query($args)->delete();
 	}
 
 	/**
