@@ -561,7 +561,7 @@ class yf_model {
 	*/
 	public static function destroy() {
 		$obj = isset($this) ? $this : new static();
-		$args = array('whereid' => func_get_args());
+		$args = array('whereid' => array(func_get_args()));
 		if (!$args['whereid']) {
 			$args = array('whereid' => (int)$obj->get_key());
 		}
