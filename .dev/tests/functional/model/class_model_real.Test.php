@@ -596,28 +596,57 @@ ND
 
 		// ------ query many-to-many relationships ------
 
-		// get the picnics that Cerms goes to ------------------------
+		// get the picnics that Cerms goes to
 		$cerms = bear::where('name', '=', 'Cerms')->first();
 		// get the picnics and their names and taste levels
 		$taste_levels = array();
-		foreach ($cerms->picnics as $picnic) {
+		$cerms_picnics = $cerms->picnics;
+		foreach ($cerms_picnics as $picnic) {
 			$taste_levels[$picnic->name] = $picnic->taste_level;
 		}
 
+		$this->assertInternalType('object', $cerms);
+		$this->assertNotSame($bear_cerms, $cerms);
+		$this->assertInstanceOf('yf_model_result', $cerms);
+		$this->assertInstanceOf('bear', $cerms->_get_model());
+		$this->assertInternalType('array', $cerms_picnics);
+		$first_object = array_shift(array_values($cerms_picnics));
+		$this->assertInternalType('object', $first_object);
+		$this->assertInstanceOf('yf_model_result', $first_object);
+		$this->assertInstanceOf('yf_model', $first_object->_get_model());
+		$this->assertInstanceOf('picnic', $first_object->_get_model());
 		$expected = array(
 			'Yellowstone'	=> 6,
 			'Grand Canyon'	=> 5,
 		);
 		$this->assertEquals($expected, $taste_levels);
-/*
-		// get the bears that go to the Grand Canyon picnic -------------
+
+		// get the bears that go to the Grand Canyon picnic
 		$grand_canyon = picnic::where('name', '=', 'Grand Canyon')->first();
 		// show the bears
 		$bears_in_grand_canyon = array();
-		foreach ($grand_canyon->bears as $bear)
+		$grand_canyon_bears = $grand_canyon->bears;
+		foreach ($grand_canyon_bears as $bear) {
 			$bears_in_grand_canyon[$bear->name] = $bear->type. ', danger: '.$bear->danger_level;
 		}
-*/
+
+		$this->assertInternalType('object', $grand_canyon);
+		$this->assertNotSame($picnic_grand_canyon, $grand_canyon);
+		$this->assertInstanceOf('yf_model_result', $grand_canyon);
+		$this->assertInstanceOf('picnic', $grand_canyon->_get_model());
+		$this->assertInternalType('array', $grand_canyon_bears);
+		$first_object = array_shift(array_values($grand_canyon_bears));
+		$this->assertInternalType('object', $first_object);
+		$this->assertInstanceOf('yf_model_result', $first_object);
+		$this->assertInstanceOf('yf_model', $first_object->_get_model());
+		$this->assertInstanceOf('bear', $first_object->_get_model());
+		$expected = array(
+			'Lawly' => 'Grizzly, danger: 10',
+			'Cerms' => 'Black, danger: 4',
+			'Adobot' => 'Polar, danger: 3',
+		);
+		$this->assertEquals($expected, $bears_in_grand_canyon);
+
 		// ------ deleting models ------
 /*
 		// find and delete a record
