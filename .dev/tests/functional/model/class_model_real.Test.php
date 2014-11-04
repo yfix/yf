@@ -96,11 +96,13 @@ class class_model_real_test extends db_real_abstract {
 	}
 
 	/**
+	* Idea for tests got from here: http://scotch.io/tutorials/php/a-guide-to-using-eloquent-orm-in-laravel
 	*/
 	public function test_basic_relations() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$model_base = _class('model'); // Need this to load basic model class
 		$prefix = self::utils()->db->DB_PREFIX;
+
 
 		// ------- Create sample tables ---------
 
@@ -551,13 +553,18 @@ ND
 
 		// ------ query one-to-many relationships ------
 
+		$trees = array();
 		// find the trees lawly climbs
 		$lawly = bear::where('name', '=', 'Lawly')->first();
-#var_dump($lawly->trees);
-/*		foreach ($lawly->trees as $tree) {
+		foreach ($lawly->trees as $tree) {
 			$trees[$tree->type] = $tree->age;
 		}
-print_r($trees);
+
+		$expected = array(
+			'Redwood' => 500,
+			'Oak' => 400,
+		);
+		$this->assertEquals($expected, $trees);
 /*
 		// ------ query many-to-many relationships ------
 
