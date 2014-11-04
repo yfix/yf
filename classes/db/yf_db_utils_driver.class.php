@@ -297,6 +297,13 @@ abstract class yf_db_utils_driver {
 		}
 		$cols = array();
 		$q = $this->db->query('SHOW FULL COLUMNS FROM '.$this->_escape_table_name($table));
+		if ($extra['just_names']) {
+			while ($a = $this->db->fetch_assoc($q)) {
+				$name = $a['Field'];
+				$cols[$name] = $name;
+			}
+			return $cols;
+		}
 		while ($a = $this->db->fetch_assoc($q)) {
 			$name = $a['Field'];
 			list($type, $length, $unsigned, $decimals, $values) = array_values($this->_parse_column_type($a['Type']));
@@ -632,6 +639,13 @@ WHERE table_schema = "schemaname"
 		}
 		$sql = 'TRUNCATE TABLE '.$this->_escape_table_name($table);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+
+	/**
+	*/
+	public function columns_names($table, $extra = array(), &$error = false) {
+		$extra['just_names'] = true;
+		return $this->table_get_columns($table, $extra, $error);
 	}
 
 	/**
