@@ -579,6 +579,24 @@ ND
 		$this->assertInstanceOf('yf_model', $fish->_get_model());
 		$this->assertInstanceOf('fish', $fish->_get_model());
 
+		// Find bear that holds the fish1
+		$fish_first = fish::find(1);
+		$bear_fish1 = $fish_first->bear;
+
+		$this->assertInternalType('object', $fish_first);
+		$this->assertInstanceOf('yf_model_result', $fish_first);
+		$this->assertInstanceOf('yf_model', $fish_first->_get_model());
+		$this->assertInstanceOf('fish', $fish_first->_get_model());
+		$this->assertNotSame($fish1, $fish_first);
+
+		$this->assertInternalType('object', $bear_fish1);
+		$this->assertInstanceOf('yf_model_result', $bear_fish1);
+		$this->assertInstanceOf('yf_model', $bear_fish1->_get_model());
+		$this->assertInstanceOf('bear', $bear_fish1->_get_model());
+		$this->assertEquals($bear_lawly->id, $bear_fish1->id);
+		$this->assertEquals($bear_lawly->name, $bear_fish1->name);
+		$this->assertEquals($bear_lawly->name, $fish_first->bear->name);
+
 		// ------ query one-to-many relationships ------
 
 		$trees = array();
