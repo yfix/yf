@@ -663,12 +663,16 @@ ND
 		$this->assertFalse((bool)self::db()->from('bears')->whereid(6)->get_one());
 
 		// delete multiple records 
-		$this->assertEquals(3, (int)self::db()->from('bears')->whereid(array(2,3,4))->count());
-		bear::destroy(2, 3, 4);
-		$this->assertEquals(0, (int)self::db()->from('bears')->whereid(array(2,3,4))->count());
+		$this->assertEquals(2, (int)self::db()->from('bears')->whereid(array(2,3))->count());
+		bear::destroy(2,3);
+		$this->assertEquals(0, (int)self::db()->from('bears')->whereid(array(2,3))->count());
+		$this->assertEquals(4, self::db()->from('bears')->whereid(4)->get_one());
 		$this->assertEquals(5, self::db()->from('bears')->whereid(5)->get_one());
-		// find and delete all bears with a danger level over 5
-		bear::where('danger_level', '>', 5)->delete();
+
+		// find and delete all bears with a danger level less 5
+		$this->assertEquals(2, (int)self::db()->from('bears')->count());
+		bear::where('danger_level', '<', 5)->delete();
+		$this->assertEquals(0, (int)self::db()->from('bears')->count());
 	}
 
 	/***/
