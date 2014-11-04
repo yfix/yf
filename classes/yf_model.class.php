@@ -370,6 +370,21 @@ class yf_model {
 	}
 
 	/**
+	* Get the joining table name for a many-to-many relation.
+	*/
+	public function joining_table($related) {
+		$base = class_basename($this, '', '_model');
+		$related = class_basename($related, '', '_model');
+		$models = array($related, $base);
+		// Now that we have the model names in an array we can just sort them and
+		// use the implode function to join them together with an underscores,
+		// which is typically used by convention within the database system.
+		sort($models);
+		$table = strtolower(implode('_', $models));
+		return $this->_db->_fix_table_name($table);
+	}
+
+	/**
 	* Relation one-to-one
 	*/
 	public function has_one($related, $foreign_key = null, $local_key = null, $relation = null) {
@@ -429,7 +444,7 @@ class yf_model {
 	/**
 	* Relation many-to-many
 	*/
-	public function belongs_to_many($related, $pivot_table = null, $foreign_key = null, $local_key = null, $relation = null) {
+	public function belongs_to_many($related, $pivot_table = null, $foreign_key = null, $other_key = null, $relation = null) {
 		if (is_null($relation)) {
 			list(, $caller) = debug_backtrace(false);
 			$relation = $caller['function'];
@@ -439,9 +454,9 @@ class yf_model {
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
-			'pivot_table'	=> $pivot_table,
-			'foreign_key'	=> !is_null($foreign_key) ? $foreign_key : strtolower($relation).'_id',
-			'local_key'		=> $local_key ?: $instance->get_key_name(),
+			'pivot_table'	=> $pivot_table ?: $this->joining_table($related),
+			'foreign_key'	=> $foreign_key ?: $this->get_foreign_key(),
+			'other_key'		=> $other_key ?: $instance->get_foreign_key(),
 			'query'			=> $instance->new_query(),
 		));
 	}
@@ -460,7 +475,7 @@ class yf_model {
 			'related'		=> $related,
 			'relation'		=> $relation,
 			'through_model'	=> $through_model,
-			'foreign_key'	=> !is_null($foreign_key) ? $foreign_key : strtolower($relation).'_id',
+			'foreign_key'	=> $instance->get_table().'.'.($foreign_key ?: $this->get_foreign_key()),
 			'local_key'		=> $local_key ?: $instance->get_key_name(),
 			'query'			=> $instance->new_query(),
 		));
