@@ -397,7 +397,7 @@ class yf_model {
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
-			'foreign_key'	=> $instance->get_table().'.'.($foreign_key ?: $this->get_foreign_key()),
+			'foreign_key'	=> $foreign_key ?: $this->get_foreign_key(),
 			'local_key'		=> $local_key ?: $instance->get_key_name(),
 			'query'			=> $instance->new_query(),
 		));
@@ -435,7 +435,7 @@ class yf_model {
 			'type'			=> __FUNCTION__,
 			'related'		=> $related,
 			'relation'		=> $relation,
-			'foreign_key'	=> $instance->get_table().'.'.($foreign_key ?: $this->get_foreign_key()),
+			'foreign_key'	=> $foreign_key ?: $this->get_foreign_key(),
 			'local_key'		=> $local_key ?: $instance->get_key_name(),
 			'query'			=> $instance->new_query(),
 		));
@@ -561,8 +561,8 @@ class yf_model {
 	*/
 	public static function destroy() {
 		$obj = isset($this) ? $this : new static();
-		$args = array('where' => func_get_args());
-		if (!$args['where']) {
+		$args = array('whereid' => func_get_args());
+		if (!$args['whereid']) {
 			$args = array('whereid' => (int)$obj->get_key());
 		}
 		return $obj->new_query($args)->delete();
