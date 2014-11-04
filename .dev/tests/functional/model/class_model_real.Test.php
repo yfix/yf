@@ -603,11 +603,12 @@ ND
 		foreach ($cerms->picnics as $picnic) {
 			$taste_levels[$picnic->name] = $picnic->taste_level;
 		}
+
 		$expected = array(
 			'Yellowstone'	=> 6,
 			'Grand Canyon'	=> 5,
 		);
-#		$this->assertEquals($expected, $taste_levels);
+		$this->assertEquals($expected, $taste_levels);
 /*
 		// get the bears that go to the Grand Canyon picnic -------------
 		$grand_canyon = picnic::where('name', '=', 'Grand Canyon')->first();
