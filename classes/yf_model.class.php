@@ -220,6 +220,7 @@ class yf_model {
 		$builder->_model = $this;
 		$builder->_with = $this->_with;
 		$builder->_result_wrapper = array($this, 'new_result');
+		$builder->_remove_as_from_delete = true;
 		$builder->from($table.' AS t0');
 		// whereid shortcut, example: find(1)  == 1 is PK
 		if (is_array($params['where']) && count($params['where']) === 1 && is_numeric($params['where'][0]) && !isset($params['whereid'])) {
