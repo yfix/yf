@@ -410,6 +410,13 @@ ND
 		$this->create_models();
 		$this->create_data();
 		$this->create_models_alternate_methods();
+	}
+
+	/**
+	* @depends test_main
+	*/
+	public function test_query_models() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
 		$bear_lawly = bear::where('name', '=', 'Lawly')->first();
 		$bear_cerms = bear::where('name', '=', 'Cerms')->first();
