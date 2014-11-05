@@ -138,10 +138,12 @@ abstract class yf_db_query_builder_driver {
 		if (empty($this->_sql['from'])) {
 			return false;
 		}
-		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
-		if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
-			$table = $m[1];
-			$this->_sql['from'] = array($table);
+		if ($this->_remove_as_from_delete) {
+			$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
+				$table = $m[1];
+				$this->_sql['from'] = array($this->_escape_table_name($table));
+			}
 		}
 		$a = $this->_sql_to_array();
 		if ($a) {
