@@ -250,7 +250,15 @@ class yf_model {
 	}
 
 	/**
-	* Params for query builder
+	* Query builder custom constructor
+	*/
+	public static function query() {
+		$obj = isset($this) ? $this : new static();
+		return $obj->new_query(func_get_args());
+	}
+
+	/**
+	* Query builder custom constructor
 	*/
 	public static function select() {
 		$obj = isset($this) ? $this : new static();
@@ -258,7 +266,7 @@ class yf_model {
 	}
 
 	/**
-	* Params for query builder
+	* Query builder custom constructor
 	*/
 	public static function where() {
 		$obj = isset($this) ? $this : new static();
