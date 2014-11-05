@@ -22,18 +22,6 @@ class yf_model {
 
 	/**
 	*/
-	public function __get($name) {
-		if (method_exists($this, $name)) {
-			return $this->$name()->get_data();
-		}
-		if (isset($this->$name)) {
-			return $this->$name;
-		}
-		return null;
-	}
-
-	/**
-	*/
 	public function __construct($args = array(), $params = array()) {
 		$this->set_db_object($params['db']);
 		$this->set_data($args);
@@ -66,6 +54,18 @@ class yf_model {
 	*/
 	public static function __callStatic($method, $args) {
 		return call_user_func_array(array(new static, $method), $args);
+	}
+
+	/**
+	*/
+	public function __get($name) {
+		if (method_exists($this, $name)) {
+			return $this->$name()->get_data();
+		}
+		if (isset($this->$name)) {
+			return $this->$name;
+		}
+		return null;
 	}
 
 	/**
@@ -577,115 +577,11 @@ class yf_model {
 	}
 
 	/**
-	* Soft-deleted records really delete
-	*/
-	public function force_delete() {
-		return call_user_func_array(array($this, 'delete'), func_get_args());
-	}
-
-	/**
-	* Determine if the model or a given attribute has been modified.
-	*/
-	public function is_dirty($attr = null) {
-		return $attr ? isset($this->_dirty_attrs[$attr]) : !empty($this->_dirty_attrs);
-	}
-
-	/**
-	* Get the attributes that have been changed since last sync.
-	*/
-	public function get_dirty($attr = null) {
-		return $this->_dirty_attrs;
-	}
-
-	/**
 	* Update only model's timestamps
 	*/
 	public function touch() {
-		$args = func_get_args();
-		return $this->new_query($args ? array('where' => $args) : null)->update(array('timestamp' => time()));
+		return $this->new_query(array('where' => func_get_args()))->update(array(self::UPDATED_AT => date('Y-m-d H:i:s')));
 	}
-
-	/**
-	* Soft-deleting method (non-empty field deleted_at)
-	*/
-	public function soft_delete() {
-		$args = func_get_args();
-		return $this->new_query($args ? array('where' => $args) : null)->update(array('is_deleted' => 1));
-	}
-
-	/**
-	* Soft-delete restore method
-	*/
-	public function restore() {
-		$args = func_get_args();
-		return $this->new_query($args ? array('where' => $args) : null)->update(array('is_deleted' => 0));
-	}
-
-	/**
-	* Soft-deleted records matching method
-	*/
-	public function with_trashed() {
-// TODO
-		$args = func_get_args();
-		return $this->new_query($args ? array('where' => $args) : null)->where('is_deleted = 1');
-	}
-
-	/**
-	* Detecmine if current model instance has been soft deleted
-	*/
-	public function trashed() {
-// TODO
-		return $this;
-	}
-
-	/**
-	* Needed for scope call
-	*/
-	public function of_type($scope) {
-// TODO
-		return $this;
-	}
-
-	/**
-	*/
-	public function _get_primary_id() {
-		return $this->_primary_id;
-	}
-
-	/**
-	*/
-#	public static function __callStatic($name, $args) {
-// TODO
-#	}
-
-	/**
-	*/
-#	function __isset($name) {
-// TODO
-#	}
-
-	/**
-	*/
-#	function __unset($name) {
-// TODO
-#	}
-
-	/**
-	*/
-#	function __set($name, $value) {
-#		$this->$name = $value;
-#		return $this->$name;
-#	}
-
-	/**
-	*/
-#	public function _preload_data() {
-#		$this->_preload_complete = true;
-#		foreach ((array)$this->find() as $k => $v) {
-#			$this->$k = $v;
-#		}
-#		return true;
-#	}
 
 	/**
 	* Linking with the table builder
