@@ -122,6 +122,8 @@ class yf_db {
 	* Constructor
 	*/
 	function __construct($db_type = '', $db_prefix = null, $db_replication_slave = null) {
+		global $DEBUG;
+
 		$this->_load_tables_with_sys_prefix();
 		// Type/driver of database server
 		$this->DB_TYPE = !empty($db_type) ? $db_type : DB_TYPE;
@@ -130,7 +132,7 @@ class yf_db {
 		}
 		$this->DB_PREFIX = !empty($db_prefix) ? $db_prefix : DB_PREFIX;
 		// Check if this is primary database connection
-		$debug_index = $GLOBALS['DEBUG']['db_instances'] ? count($GLOBALS['DEBUG']['db_instances']) : 0;
+		$debug_index = $DEBUG['db_instances'] ? count($DEBUG['db_instances']) : 0;
 		if ($debug_index < 1) {
 			$this->IS_PRIMARY_CONNECTION = true;
 		} else {
@@ -143,9 +145,9 @@ class yf_db {
 			$this->DB_REPLICATION_SLAVE = (bool)DB_REPLICATION_SLAVE;
 		}
 		// Track db class instances
-		$GLOBALS['DEBUG']['db_instances'][$debug_index] = &$this;
+		$DEBUG['db_instances'][$debug_index] = &$this;
 		if (defined('DEBUG_MODE') && DEBUG_MODE) {
-			$GLOBALS['DEBUG']['db_instances_trace'][$debug_index] = $this->_trace_string();
+			$DEBUG['db_instances_trace'][$debug_index] = $this->_trace_string();
 		}
 	}
 
@@ -154,13 +156,18 @@ class yf_db {
 	function get_driver_family($db_type = '') {
 		$db_type = strtolower($db_type ?: $this->DB_TYPE);
 		// Get current abstract db type
-		if (in_array($db_type, array('db_type','mysql','mysqli','pdo_mysql','mysql5','mysql4','mysql41'))) {
-			$name = 'mysql';
-		} elseif (in_array($db_type, array('pgsql','pdo_pgsql','postgre','postgres','postgres7','postgres8','postgres9'))) {
-			$name = 'pgsql';
-		} elseif (in_array($db_type, array('sqlite','sqlite3','pdo_sqlite'))) {
-			$name = 'sqlite';
-		} else {
+		$families = array(
+			'mysql'	=> array('db_type','mysql','mysqli','pdo_mysql','mysql5','mysql4','mysql41'),
+			'pgsql'	=> array('pgsql','pdo_pgsql','postgre','postgres','postgres7','postgres8','postgres9'),
+			'sqlite'=> array('sqlite','sqlite3','pdo_sqlite'),
+		);
+		foreach ($families as $family => $aliases) {
+			if (in_array($db_type, $aliases)) {
+				$name = $family;
+				break;
+			}
+		}
+		if (!$name) {
 			$name = $db_type;
 		}
 		return $name;
@@ -246,9 +253,8 @@ class yf_db {
 		// Create new instanse of the driver class
 		if (!empty($driver_class_name) && class_exists($driver_class_name) && !is_object($this->db)) {
 			if ($this->RECONNECT_USE_LOCKING) {
-				$lock_file = $this->_get_reconnect_lock_path($this->DB_HOST, $this->DB_USER, $this->DB_NAME, $this->DB_PORT);
+				$lock_file = $this->_get_reconnect_lock_path();
 				if (file_exists($lock_file)) {
-					// Timed out lock file
 					if ((time() - filemtime($lock_file)) > $this->RECONNECT_LOCK_TIMEOUT) {
 						unlink($lock_file);
 					} else {
@@ -288,13 +294,11 @@ class yf_db {
 					sleep($sleep_time);
 				}
 			}
-			// Put lock file
 			if ($this->RECONNECT_USE_LOCKING && !$this->db->db_connect_id) {
 				file_put_contents($lock_file, gmdate('Y-m-d H:i:s').' GMT');
 			}
 		}
 		$this->_tried_to_connect = true;
-		// Stop execution If connection has failed
 		if (!$this->db->db_connect_id) {
 			trigger_error('DB: ERROR CONNECTING TO DATABASE', $this->CONNECTION_REQUIRED ? E_USER_ERROR : E_USER_WARNING);
 		} else {
@@ -595,7 +599,7 @@ class yf_db {
 		if (is_string($replace)) {
 			$replace = false;
 		}
-		$sql = $this->query_builder()->compile_insert($table, $data, $replace, $ignore, $on_duplicate_key_update);
+		$sql = $this->query_builder()->compile_insert($table, $data, compact('replace', 'ignore', 'on_duplicate_key_update'));
 		if (!$sql) {
 			return false;
 		}
@@ -603,7 +607,7 @@ class yf_db {
 			return $sql;
 		}
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS) {
-			$this->_save_query_revision(__FUNCTION__, $table, array('data' => $data, 'replace' => $replace, 'ignore' => $ignore));
+			$this->_save_query_revision(__FUNCTION__, $table, compact('data', 'replace', 'ignore', 'on_duplicate_key_update'));
 		}
 		return $this->query($sql);
 	}
@@ -1286,15 +1290,14 @@ class yf_db {
 	/**
 	* Get reconnect lock file name
 	*/
-	function _get_reconnect_lock_path($db_host = '', $db_user = '', $db_name = '', $db_port = '') {
-		$params = array(
-			'[DB_HOST]'	=> $db_host ? $db_host : $this->DB_HOST,
-			'[DB_NAME]'	=> $db_name ? $db_name : $this->DB_NAME,
-			'[DB_USER]'	=> $db_user ? $db_user : $this->DB_USER,
-			'[DB_PORT]'	=> $db_port ? $db_port : $this->DB_PORT,
+	function _get_reconnect_lock_path() {
+		$pairs = array(
+			'[DB_HOST]'	=> $this->DB_HOST,
+			'[DB_NAME]'	=> $this->DB_NAME,
+			'[DB_USER]'	=> $this->DB_USER,
+			'[DB_PORT]'	=> $this->DB_PORT,
 		);
-		$file_name = str_replace(array_keys($params), array_values($params), $this->RECONNECT_LOCK_FILE_NAME);
-		return INCLUDE_PATH. $file_name;
+		return STORAGE_PATH. str_replace(array_keys($pairs), array_values($pairs), $this->RECONNECT_LOCK_FILE_NAME);
 	}
 
 	/**
@@ -1626,12 +1629,17 @@ class yf_db {
 				}
 			}
 		}
-		$model_obj = clone _class_safe($model_class);
-		if (!is_object($model_obj)) {
+		$obj = _class_safe($model_class);
+		// Special case to use preloaded models, try to load class name without postfix *_model
+		if (!is_object($obj) || !($obj instanceof yf_model)) {
+			$obj = _class_safe($name);
+		}
+		if (!is_object($obj) || !($obj instanceof yf_model)) {
 			throw new Exception('Not able to load model: '.$name);
 			return false;
 		}
-		$model_obj->_db = $this;
+		$model_obj = clone $obj;
+		$model_obj->set_db_object($this);
 		return $model_obj;
 	}
 

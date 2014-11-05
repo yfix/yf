@@ -8,8 +8,8 @@ require_once "./yf_db_static.class.php";
 
 // Required to catch missing methods of the shortcut functions objects
 // Only one class from functions listed below
-if (!class_exists('my_missing_method_handler')) {
-	class my_missing_method_handler {
+if (!class_exists('yf_missing_method_handler')) {
+	class yf_missing_method_handler {
 		function __construct($o_name) { $this->_o_name = $o_name; }
 		function __call($name, $arguments) { trigger_error($this->_o_name.'(): missing object method: '.$name, E_USER_WARNING); return false; }
 	}
@@ -47,7 +47,7 @@ function db_pf($tbl_name = "") {
 		}
 	}
 	if (!is_object($_instance)) {
-		return $tbl_name ? $tbl_name : new my_missing_method_handler(__FUNCTION__);
+		return $tbl_name ? $tbl_name : new yf_missing_method_handler(__FUNCTION__);
 	}
 	return $tbl_name ? $_instance->_real_name($tbl_name) : $_instance;
 }

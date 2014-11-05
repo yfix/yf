@@ -659,6 +659,7 @@ abstract class yf_db_migrator {
 	/**
 	*/
 	public function _migration_commands_into_string($cmds = array(), $num_tabs = 2) {
+// TODO: use new syntax with create_table() closures
 		$TAB = "\t";
 		$prefix = str_repeat($TAB, $num_tabs). '$utils->';
 		$a = array();
@@ -873,5 +874,29 @@ abstract class yf_db_migrator {
 #print_r($migration->db->_LOG);
 
 		return 'Success';
+	}
+
+	/**
+	*/
+	public function rollback() {
+// TODO: rollback selected migration(s)
+	}
+
+	/**
+	*/
+	public function reset() {
+// TODO: rollback all applied migrations
+	}
+
+	/**
+	*/
+	public function _create_migrations_table() {
+// TODO: create internal migrations table, where we will store metadata
+	}
+
+	/**
+	*/
+	public function _get_migration_model() {
+// TODO:
 	}
 }

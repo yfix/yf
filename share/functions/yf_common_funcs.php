@@ -408,3 +408,29 @@ function wildcard_compare($wild, $string) {
 	return fnmatch($wild, $string);
 }
 }
+
+if (!function_exists('class_basename')) {
+	function class_basename($class, $prefix = '', $suffix = '') {
+		$class = is_object($class) ? get_class($class) : $class;
+		$class = basename(str_replace('\\', '/', $class));
+		$prefixes = array(
+			'yf'	=> YF_PREFIX,
+			'site'	=> 'site__',
+			'admin'	=> 'adm__',
+		);
+		if ($prefix) {
+			$prefixes['custom'] = $prefix;
+		}
+		foreach ($prefixes as $_prefix) {
+			$plen = strlen($_prefix);
+			if ($plen && substr($class, 0, $plen) === $_prefix) {
+				$class = substr($class, $plen);
+			}
+		}
+		$slen = strlen($suffix);
+		if ($slen && substr($class, -$slen) === $suffix) {
+			$class = substr($class, 0, -$slen);
+		}
+		return $class;
+	}
+}

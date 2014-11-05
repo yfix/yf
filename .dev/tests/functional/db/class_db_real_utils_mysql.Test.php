@@ -288,10 +288,39 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	}
 	public function test_create_table() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
 		$data = array('fields' => array('id' => array('name' => 'id', 'type' => 'int', 'length' => 10)));
-		$this->assertNotEmpty( self::utils()->create_table($this->table_name($table), $data) );
-		$this->assertNotEmpty( self::utils()->table_exists($this->table_name($table)) );
+		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), $data) );
+		$this->assertTrue( (bool)self::utils()->table_exists($this->table_name($table)) );
+
+		$this->assertTrue( (bool)self::utils()->drop_table($this->table_name($table)) );
+		$this->assertFalse( (bool)self::utils()->table_exists($this->table_name($table)) );
+
+		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), function($t) {
+			$t->int('id', 10);
+		}) );
+		$this->assertTrue( (bool)self::utils()->table_exists($this->table_name($table)) );
+	}
+	public function test_create_table_complex() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertNotEmpty( self::utils()->create_database($this->db_name()) );
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$this->assertTrue( (bool)self::utils()->drop_table($this->table_name($table)) );
+		$this->assertFalse( (bool)self::utils()->table_exists($this->table_name($table)) );
+
+		$this->assertTrue( (bool)self::utils()->create_table($this->table_name($table), function($t) {
+			$t->small_int('actor_id', array('length' => 5, 'unsigned' => true, 'nullable' => false, 'auto_inc' => true))
+			->string('first_name', array('length' => 45, 'nullable' => false))
+			->string('last_name', array('length' => 45, 'nullable' => false))
+			->primary('actor_id')
+			->index('last_name', 'idx_actor_last_name')
+			->option('engine', 'InnoDB')
+			->option('charset', 'utf8')
+			;
+		}) );
+
+		$this->assertTrue( (bool)self::utils()->table_exists($this->table_name($table)) );
 	}
 	public function test__parse_column_type() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }

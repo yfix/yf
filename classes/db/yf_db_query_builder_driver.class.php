@@ -65,7 +65,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Create text SQL from params
 	*/
-	function _sql_to_array() {
+	function _sql_to_array($return_raw = false) {
 		$a = array();
 		// Save 1 call of select()
 		if (empty($this->_sql['select']) && !empty($this->_sql['from'])) {
@@ -100,10 +100,18 @@ abstract class yf_db_query_builder_driver {
 			$operator = $opt['operator'];
 			if (is_array($this->_sql[$name])) {
 				if (isset($opt['separator'])) {
-					$a[$name] = $operator.' '.implode(' '.$opt['separator'].' ', $this->_sql[$name]);
+					if ($return_raw) {
+						$a[$name] = array('operator' => $operator, 'separator' => $opt['separator'], 'condition' => $this->_sql[$name]);
+					} else {
+						$a[$name] = $operator.' '.implode(' '.$opt['separator'].' ', $this->_sql[$name]);
+					}
 				}
 			} else {
-				$a[$name] = ($operator ? $operator.' ' : ''). $this->_sql[$name];
+				if ($return_raw) {
+					$a[$name] = array('operator' => ($operator ? $operator.' ' : ''), 'condition' => $this->_sql[$name]);
+				} else {
+					$a[$name] = ($operator ? $operator.' ' : ''). $this->_sql[$name];
+				}
 			}
 		}
 		return $a;
@@ -127,9 +135,17 @@ abstract class yf_db_query_builder_driver {
 	*/
 	function delete($as_sql = false) {
 		$sql = false;
+		if (empty($this->_sql['from'])) {
+			return false;
+		}
+		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+		if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
+			$table = $m[1];
+			$this->_sql['from'] = array($table);
+		}
 		$a = $this->_sql_to_array();
 		if ($a) {
-			$to_leave = array('from','where','where_or');
+			$to_leave = array('from','where','where_or','limit');
 			foreach ($a as $k => $v) {
 				if (!in_array($k, $to_leave)) {
 					unset($a[$k]);
@@ -150,12 +166,45 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	*/
+	function insert(array $data, $params = array()) {
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
+// Use for into_table here INSERT INTO ... SELECT .. FROM ...
+//		if ($params['into_table']) { };
+		if (empty($data)) {
+			return false;
+		}
+		$a = array();
+		if (empty($this->_sql['from'])) {
+			return false;
+		}
+		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+		if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
+			$table = $m[1];
+		}
+		if (!$table) {
+			return false;
+		}
+		$sql = $this->compile_insert($table, $data, $params);
+		if ($sql) {
+			$result = $this->db->query($sql);
+			$insert_id = $result ? $this->db->insert_id() : false;
+			return $insert_id ?: $result;
+		}
+		return false;
+	}
+
+	/**
 	* Insert array of values into table
 	*/
-	function compile_insert($table, $data, $replace = false, $ignore = false, $on_duplicate_key_update = false) {
+	function compile_insert($table, $data, $params = array()) {
 		if (!strlen($table) || !is_array($data)) {
 			return false;
 		}
+		$replace = isset($params['replace']) ? $params['replace'] : false;
+		$ignore = isset($params['ignore']) ? $params['ignore'] : false;
+		$on_duplicate_key_update = isset($params['on_duplicate_key_update']) ? $params['on_duplicate_key_update'] : false;
 		if (is_string($replace)) {
 			$replace = false;
 		}
@@ -212,16 +261,50 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	function insert($table, array $data, $params = array()) {
-// TODO
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
+	function update(array $data, $params = array()) {
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('last_activity' => time()))
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
+// TODO: be able to specify other table in params
+// TODO: where condition for update inside params
+#		if ($is_3d_array) {
+#			$this->update_batch();
+#		} else {
+#			$sql = $this->compile_update();
+#			$this->db->query($sql);
+#		}
+		if (empty($data)) {
+			return false;
+		}
+		$a = array();
+		if (empty($this->_sql['from'])) {
+			return false;
+		}
+		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+		if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
+			$table = $m[1];
+		}
+		if (!$table) {
+			return false;
+		}
+		$a = $this->_sql_to_array($return_raw = true);
+		$where = '';
+		if (isset($a['where'])) {
+			$where = implode(' '.$a['where']['separator'].' ', $a['where']['condition']);
+		}
+		if (isset($a['where_or'])) {
+			$where = rtrim($where).' '.$a['where_or']['operator'].' '.implode(' '.$a['where_or']['separator'].' ', $a['where_or']['condition']);
+		}
+		$sql = $this->compile_update($table, $data, $where);
+		if ($sql) {
+			$result = $this->db->query($sql);
+		}
+		return false;
 	}
 
 	/**
 	* Update table with given values
 	*/
-	function compile_update($table, $data, $where) {
+	function compile_update($table, array $data, $where) {
 		if (empty($table) || empty($data) || empty($where)) {
 			return false;
 		}
@@ -245,45 +328,14 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	function update(array $data, $params = array()) {
-// TODO
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('last_activity' => time()))
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
-// TODO: be able to specify other table in params
-// TODO: where condition for update inside params
-		!$pk && $pk = 'id';
-		$a = $this->_sql_to_array();
-		if (!$a) {
-			return false;
-		}
-		$table = $a['from'];
-		$to_leave = array('where','where_or');
-		foreach ($a as $k => $v) {
-			if (!in_array($k, $to_leave)) {
-				unset($a[$k]);
-			}
-		}
-		if ($a && $table) {
-			$sql = $this->sql();
-			$where = implode(' ', $a);
-			if (strtoupper(substr($where, 0, strlen('WHERE'))) == 'WHERE') {
-				$where = trim(substr($where, strlen('WHERE')));
-			}
-#			$result = $this->db->get($this->sql());
-#			return $this->db->update_batch($table, $data, $pk);
-		}
-	}
-
-	/**
-	*/
-	function update_batch($table, $data, $index = null, $only_sql = false, $params = array()) {
+	function update_batch($table, array $data, $index = null, $only_sql = false, $params = array()) {
 		if (!$index) {
 			$index = 'id';
 		}
 		if (!strlen($table) || !$data || !is_array($data) || !$index) {
 			return false;
 		}
-		$this->_set_update_batch($data, $index);
+		$this->_set_update_batch_data($data, $index);
 		if (count($this->_qb_set) === 0) {
 			return false;
 		}
@@ -292,7 +344,7 @@ abstract class yf_db_query_builder_driver {
 		$out = '';
 		for ($i = 0, $total = count($this->_qb_set); $i < $total; $i += $records_at_once) {
 			$_data = array_slice($this->_qb_set, $i, $records_at_once);
-			$sql = $this->_update_batch($table, $_data, $index);
+			$sql = $this->_get_update_batch_sql($table, $_data, $index);
 			if (is_callable($params['split_callback'])) {
 				$callback = $params['split_callback'];
 				$callback($_data);
@@ -313,7 +365,30 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	function _update_batch($table, $values, $index) {
+	function _set_update_batch_data($key, $index = '') {
+		if (!is_array($key)) {
+			return false;
+		}
+		foreach ((array)$key as $k => $v) {
+			$index_set = FALSE;
+			$clean = array();
+			foreach ((array)$v as $k2 => $v2) {
+				if ($k2 === $index)	{
+					$index_set = TRUE;
+				}
+				$clean[$this->_escape_key($k2)] = $this->_escape_val($v2);
+			}
+			if ($index_set === FALSE) {
+				throw new Exception('db_batch_missing_index');
+				return false;
+			}
+			$this->_qb_set[] = $clean;
+		}
+	}
+
+	/**
+	*/
+	function _get_update_batch_sql($table, $values, $index) {
 		$index = $this->_escape_key($index);
 		$ids = array();
 		foreach ((array)$values as $key => $val) {
@@ -332,29 +407,6 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	*/
-	function _set_update_batch($key, $index = '') {
-		if ( ! is_array($key)) {
-			return false;
-		}
-		foreach ((array)$key as $k => $v) {
-			$index_set = FALSE;
-			$clean = array();
-			foreach ((array)$v as $k2 => $v2) {
-				if ($k2 === $index)	{
-					$index_set = TRUE;
-				}
-				$clean[$this->_escape_key($k2)] = $this->_escape_val($v2);
-			}
-			if ($index_set === FALSE) {
-				//return $this->display_error('db_batch_missing_index');
-				return false;
-			}
-			$this->_qb_set[] = $clean;
-		}
-	}
-
-	/**
 	* Counting number of records inside requested recordset
 	*/
 	function count() {
@@ -363,19 +415,30 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Alias
 	*/
-	function first($use_cache = true) {
+	function first($use_cache = false) {
+// TODO order_by PK asc limit 1
+		return $this->get($use_cache);
+	}
+
+	/**
+	*/
+	function last($use_cache = false) {
+// TODO order_by PK desc limit 1
 		return $this->get($use_cache);
 	}
 
 	/**
 	* Render SQL and execute db->get()
 	*/
-	function get($use_cache = true) {
+	function get($use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
-			return $this->db->get($sql, $use_cache);
+			$result = $this->db->get($sql, $use_cache);
+			if ($result && is_callable($this->_result_wrapper)) {
+				return call_user_func($this->_result_wrapper, $result);
+			}
+			return $result;
 		}
 		return false;
 	}
@@ -383,14 +446,14 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Alias
 	*/
-	function one($use_cache = true) {
+	function one($use_cache = false) {
 		return $this->get_one($use_cache);
 	}
 
 	/**
 	* Render SQL and execute db->get_one()
 	*/
-	function get_one($use_cache = true) {
+	function get_one($use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get_one($sql, $use_cache);
@@ -401,17 +464,23 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Alias
 	*/
-	function all($use_cache = true) {
+	function all($use_cache = false) {
 		return $this->get_all($use_cache);
 	}
 
 	/**
 	* Render SQL and execute db->get_all()
 	*/
-	function get_all($use_cache = true) {
+	function get_all($use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
-			return $this->db->get_all($sql, $key_name, $use_cache);
+			$result = $this->db->get_all($sql, $key_name, $use_cache);
+			if ($result && is_callable($this->_result_wrapper)) {
+				foreach ((array)$result as $k => $v) {
+					$result[$k] = call_user_func($this->_result_wrapper, $v);
+				}
+			}
+			return $result;
 		}
 		return false;
 	}
@@ -419,10 +488,14 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Render SQL and execute db->get_2d()
 	*/
-	function get_2d($use_cache = true) {
+	function get_2d($use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
-			return $this->db->get_2d($sql, $use_cache);
+			$result = $this->db->get_2d($sql, $use_cache);
+			if (is_callable($this->_result_wrapper)) {
+				return call_user_func($this->_result_wrapper, $result);
+			}
+			return $result;
 		}
 		return false;
 	}
@@ -430,7 +503,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Render SQL and execute db->get_deep_array()
 	*/
-	function get_deep_array($levels = 1, $use_cache = true) {
+	function get_deep_array($levels = 1, $use_cache = false) {
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get_deep_array($sql, $levels, $use_cache);
@@ -603,6 +676,9 @@ abstract class yf_db_query_builder_driver {
 	/**
 	*/
 	function _process_where(array $where, $func_name = 'where') {
+// TODO: auto-detect and apply whereid: where(1)
+// TODO: auto-detect and apply whereid with several numbers where(1,2,3) === whereid(1,2,3)
+// TODO: ability to pass 2 arguments, meaning equal: where('name','Peter'), where(array('name','Peter')) same as: where('name','=','Peter')
 		$sql = '';
 		if (isset($where[0]) && is_array($where[0]) && isset($where[0]['__args__'])) {
 			$where = $where[0]['__args__'];
@@ -903,6 +979,17 @@ abstract class yf_db_query_builder_driver {
 			$this->_sql[__FUNCTION__] = $sql;
 		}
 		return $this;
+	}
+
+	/**
+	* Find primary key name
+	*/
+	public function _get_primary_key_column($table) {
+		$primary = $this->db->utils()->index_info($table, 'PRIMARY');
+		if ($primary) {
+			return current($primary['columns']);
+		}
+		return false;
 	}
 
 	/**

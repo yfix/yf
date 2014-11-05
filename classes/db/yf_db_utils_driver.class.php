@@ -297,6 +297,13 @@ abstract class yf_db_utils_driver {
 		}
 		$cols = array();
 		$q = $this->db->query('SHOW FULL COLUMNS FROM '.$this->_escape_table_name($table));
+		if ($extra['just_names']) {
+			while ($a = $this->db->fetch_assoc($q)) {
+				$name = $a['Field'];
+				$cols[$name] = $name;
+			}
+			return $cols;
+		}
 		while ($a = $this->db->fetch_assoc($q)) {
 			$name = $a['Field'];
 			list($type, $length, $unsigned, $decimals, $values) = array_values($this->_parse_column_type($a['Type']));
@@ -474,6 +481,32 @@ WHERE table_schema = "schemaname"
 	/**
 	*/
 	public function create_table($table, $extra = array(), &$error = false) {
+		// Example callable: create_table($name, function($t) { $t->int('id', 10); });
+		if (is_callable($extra)) {
+			if (strpos($table, '.') !== false) {
+				list($db_name, $table) = explode('.', trim($table));
+			}
+			if (!$table) {
+				$error = 'table_name is empty';
+				return false;
+			}
+			if (!$db_name) {
+				$db_name = $this->db->DB_NAME;
+			}
+			if (!$db_name) {
+				$error = 'db_name is empty';
+				return false;
+			}
+			$obj = clone _class('db_utils_helper_create_table', 'classes/db/');
+			$extra($obj->_setup(array(
+				'utils'			=> $this,
+				'db_name'		=> $db_name,
+				'table_name'	=> $table,
+				'for_create'	=> true,
+			)));
+			$sql = $obj->render();
+			return $this->db->query($sql);
+		}
 		if (is_array($table)) {
 			$extra = (array)$extra + $table;
 			$table = '';
@@ -606,6 +639,13 @@ WHERE table_schema = "schemaname"
 		}
 		$sql = 'TRUNCATE TABLE '.$this->_escape_table_name($table);
 		return $extra['sql'] ? $sql : $this->db->query($sql);
+	}
+
+	/**
+	*/
+	public function columns_names($table, $extra = array(), &$error = false) {
+		$extra['just_names'] = true;
+		return $this->table_get_columns($table, $extra, $error);
 	}
 
 	/**

@@ -1186,4 +1186,91 @@ class class_validate_test extends PHPUnit_Framework_TestCase {
 		);
 		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
 	}
+	public function test_cleanup_split_trim() {
+		$rules_raw = array(
+			'test1,test2,test3' => 'min_length:2|max_length:12|is_unique:user.login|between:1,10|chars:a,b,c,d|regex:[a-z0-9]+'
+		);
+		$a = array(
+			array('min_length', '2'),
+			array('max_length', '12'),
+			array('is_unique', 'user.login'),
+			array('between', '1,10'),
+			array('chars', 'a,b,c,d'),
+			array('regex', '[a-z0-9]+'),
+		);
+		$rules_cleaned = array(
+			'test1' => $a,
+			'test2' => $a,
+			'test3' => $a,
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+
+		$rules_raw = array(
+			' test1, test2, test3 ' => 'min_length:2|max_length:12|is_unique:user.login|between:1,10|chars:a,b,c,d|regex:[a-z0-9]+'
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+
+		$rules_raw = array(
+			'test1' => 'min_length:2|max_length:12',
+			'test2' => 'min_length:2|max_length:12',
+			'test3' => 'min_length:2|max_length:12',
+			'test1,test2,test3 ' => 'is_unique:user.login|between:1,10|chars:a,b,c,d|regex:[a-z0-9]+'
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+
+		$rules_raw = array(
+			'test1' => 'min_length:2|max_length:12',
+			'test2,test3' => 'min_length:2|max_length:12',
+			'test1,test2,test3 ' => 'is_unique:user.login|between:1,10|chars:a,b,c,d|regex:[a-z0-9]+'
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+
+		$rules_raw = array(
+			'test1' => array('min_length:2','max_length:12'),
+			'test2,test3' => 'min_length:2|max_length:12',
+			'test1,test2,test3 ' => 'is_unique:user.login|between:1,10|chars:a,b,c,d|regex:[a-z0-9]+'
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+
+		$rules_raw = array(
+			'test1' => array('min_length:2', 'max_length:12'),
+			'test2,test3' => array('min_length:2', 'max_length:12'),
+			'test1,test2,test3 ' => array('is_unique:user.login|between:1,10|chars:a,b,c,d|regex:[a-z0-9]+'),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+
+		$rules_raw = array(
+			'test1' => array('min_length:2', 'max_length:12'),
+			'test2,test3' => array('min_length:2', 'max_length:12'),
+			'test1,test2,test3 ' => array('is_unique:user.login','between:1,10','chars:a,b,c,d','regex:[a-z0-9]+'),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+
+		$rules_raw = array(
+			'test1' => 'min_length:2|max_length:12',
+			'test2' => 'min_length:2|max_length:12',
+			'test3' => 'min_length:2|max_length:12',
+			'test1,test2,test3 ' => array('is_unique:user.login','between:1,10','chars:a,b,c,d','regex:[a-z0-9]+'),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+
+		$rules_raw = array(
+			' test1 ' => 'min_length:2|max_length:12',
+			' test2 ' => 'min_length:2|max_length:12',
+			' test3 ' => 'min_length:2|max_length:12',
+			' test1 , test2 , test3 ' => array('is_unique:user.login','between:1,10','chars:a,b,c,d','regex:[a-z0-9]+'),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+
+		$rules_raw = array(
+			' ' => '',
+			' test1 ' => 'min_length:2|max_length:12',
+			'  ' => array(''),
+			' test2    ' => 'min_length:2|max_length:12',
+			' test3  ' => 'min_length:2|max_length:12',
+			'   ' => '  ',
+			'  test1, test2 ,test3  ' => array('is_unique:user.login','between:1,10','chars:a,b,c,d','regex:[a-z0-9]+'),
+		);
+		$this->assertEquals($rules_cleaned, _class('validate')->_validate_rules_cleanup($rules_raw) );
+	}
 }

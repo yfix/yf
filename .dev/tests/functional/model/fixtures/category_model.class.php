@@ -1,39 +1,29 @@
 <?php
 
-class category_model extends yf_model {
-	public function films() {
-		return $this->belongs_to_many('film', 'film_category', 'category_id', 'film_id');
-	}
 /*
  * @property integer $category_id
  * @property string $name
  * @property string $last_update
  *
- * @property Film[] $films
+ * @property film[] $films
  */
-/*
-	public static function representingColumn() {
+class category_model extends yf_model {
+	public static function _name_column() {
 		return 'name';
 	}
-
-	public function rules() {
+	public function _rules() {
 		return array(
-			array('name, last_update', 'required'),
-			array('name', 'length', 'max'=>25),
-			array('category_id, name, last_update', 'safe', 'on'=>'search'),
+			'name, last_update'	=> 'required',
+			'name'	=> 'max_length[25]',
+			'category_id, name, last_update' => 'safe[on=search]',
 		);
 	}
-
-	public function relations() {
+	public function _pivot_models() {
 		return array(
-			'films' => array(self::MANY_MANY, 'Film', 'film_category(category_id, film_id)'),
+			'films' => 'film_category',
 		);
 	}
-
-	public function pivotModels() {
-		return array(
-			'films' => 'FilmCategory',
-		);
+	public function films() {
+		return $this->belongs_to_many('film', 'film_category', 'category_id', 'film_id');
 	}
-*/
 }
