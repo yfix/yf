@@ -30,17 +30,18 @@ class yf_model_relation {
 	}
 
 	/**
+	* Attach related data to current model
 	*/
 	public function attach($id, $params = array()) {
 		$relation = $this->_relation;
 		$model = $this->_model;
 		$db = $model->_db;
-		$utils = $db->utils();
+		$pivot_table = $relation['pivot_table'];
 		$type = $relation['type'];
 
 		if ($type === 'belongs_to_many') {
 
-			return $db->replace($relation['pivot_table'], array(
+			return $db->replace($pivot_table, array(
 				$relation['other_key']		=> $id,
 				$relation['foreign_key']	=> $model->get_key(),
 			));
@@ -50,9 +51,25 @@ class yf_model_relation {
 	}
 
 	/**
+	* Detach related data to current model
 	*/
 	public function detach($id, $params = array()) {
-// TODO
+		$relation = $this->_relation;
+		$model = $this->_model;
+		$db = $model->_db;
+		$pivot_table = $relation['pivot_table'];
+		$type = $relation['type'];
+
+		if ($type === 'belongs_to_many') {
+
+			return $db->from($pivot_table)
+				->where($relation['other_key']. ' = '. $id)
+				->where($relation['foreign_key']. ' = '. $model->get_key())
+				->limit(1)
+				->delete();
+
+		}
+		return false;
 	}
 
 	/**
