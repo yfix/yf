@@ -30,12 +30,6 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	function dump_sql () {
-// TODO
-	}
-
-	/**
-	*/
 	function dump_json () {
 		return json_encode($this->exec());
 	}
@@ -680,7 +674,6 @@ abstract class yf_db_query_builder_driver {
 	function _process_where(array $where, $func_name = 'where') {
 // TODO: auto-detect and apply whereid: where(1)
 // TODO: auto-detect and apply whereid with several numbers where(1,2,3) === whereid(1,2,3)
-// TODO: ability to pass 2 arguments, meaning equal: where('name','Peter'), where(array('name','Peter')) same as: where('name','=','Peter')
 		$sql = '';
 		if (isset($where[0]) && is_array($where[0]) && isset($where[0]['__args__'])) {
 			$where = $where[0]['__args__'];
@@ -760,6 +753,10 @@ abstract class yf_db_query_builder_driver {
 			if (strlen($right_generated)) {
 				$right_generated = '('.$right_generated.')';
 			}
+		// Think that we dealing with 2 arguments passing like this: where('id',1)
+		} elseif (strlen($left) && (strlen($op) && !in_array($op, array('=','!=','<','>','<=','>='))) && !strlen($right)) {
+			$right = $op;
+			$op = '=';
 		}
 		if ((empty($right) || !strlen(is_array($right) ? '' : $right)) && !strlen($right_generated)) {
 			return '';
