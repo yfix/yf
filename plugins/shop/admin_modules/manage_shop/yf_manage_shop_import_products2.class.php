@@ -160,7 +160,7 @@ class yf_manage_shop_import_products2 {
 	function _cache_fetch() {
 		$cache = &$this->cache;
 		// category
-		$items = db()->from( 'sys_category_items' )->where( 'cat_id', $this->set_cat_id )->order_by( 'name' )->all();
+		$items = db()->from( 'sys_category_items' )->where( 'cat_id', '=', $this->set_cat_id )->order_by( 'name' )->all();
 		if( !empty( $items ) ) {
 			foreach( $items as $id => $item ) {
 				$name = mb_strtolower( $item[ 'name' ], 'UTF-8' );
