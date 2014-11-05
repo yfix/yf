@@ -61,12 +61,12 @@ class yf_api {
 
 	protected function _firewall( $class = null, $class_path = null, $method = null, $options = array() ) {
 		$_method = '_api_' . $method;
-		// try class
-		$_class  = _class_safe( $class, $class_path );
-		$_status = method_exists( $_class, $_method );
 		// try module
+		$_class  = module_safe( $class );
+		$_status = method_exists( $_class, $_method );
 		if( !$_status ) {
-			$_class  = module_safe( $class );
+			// try class
+			$_class  = _class_safe( $class, $class_path );
 			$_status = method_exists( $_class, $_method );
 		}
 		if( !$_status ) { $this->_reject(); }
