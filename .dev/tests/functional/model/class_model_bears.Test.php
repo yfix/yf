@@ -617,7 +617,7 @@ ND
 		$this->assertInstanceOf('yf_model_result', $cerms);
 		$this->assertInstanceOf('bear', $cerms->_get_model());
 		$this->assertInternalType('array', $cerms_picnics);
-		$first_object = array_shift(array_values($cerms_picnics));
+		$first_object = reset($cerms_picnics);
 		$this->assertInternalType('object', $first_object);
 		$this->assertInstanceOf('yf_model_result', $first_object);
 		$this->assertInstanceOf('yf_model', $first_object->_get_model());
@@ -642,7 +642,7 @@ ND
 		$this->assertInstanceOf('yf_model_result', $grand_canyon);
 		$this->assertInstanceOf('picnic', $grand_canyon->_get_model());
 		$this->assertInternalType('array', $grand_canyon_bears);
-		$first_object = array_shift(array_values($grand_canyon_bears));
+		$first_object = reset($grand_canyon_bears);
 		$this->assertInternalType('object', $first_object);
 		$this->assertInstanceOf('yf_model_result', $first_object);
 		$this->assertInstanceOf('yf_model', $first_object->_get_model());
