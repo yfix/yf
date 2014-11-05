@@ -402,7 +402,7 @@ ND
 	/**
 	* Idea for tests got from here: http://scotch.io/tutorials/php/a-guide-to-using-eloquent-orm-in-laravel
 	*/
-	public function test_bears_main() {
+	public function test_main() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$model_base = _class('model'); // Need this to load basic model class
 
@@ -497,21 +497,35 @@ ND
 
 		$this->assertInternalType('array', $dangerous_bears);
 		$this->assertEquals('3', count($dangerous_bears));
+	}
 
-		// ----------- changing models -----------
+	/**
+	* @depends test_main
+	*/
+	public function test_change_models() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
 		// let's change the danger level of Lawly to level 10
 		$lawly = bear::where('name', '=', 'Lawly')->first();
 
-		$this->assertEquals($bear_lawly->danger_level, $lawly->danger_level);
+		$this->assertEquals(8, $lawly->danger_level);
 		$this->assertNotEquals('10', $lawly->danger_level);
 
 		$lawly->danger_level = 10;
 		$lawly->save();
 
 		$this->assertEquals('10', $lawly->danger_level);
+	}
 
-		// ------ query one-to-one relationships ------
+	/**
+	* @depends test_main
+	* query one-to-one relationships
+	*/
+	public function test_one_to_one() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+
+		$bear_lawly = bear::where('name', '=', 'Lawly')->first();
+		$bear_adobot = bear::where('name', '=', 'Adobot')->first();
 
 		// find a bear named Adobot
 		$adobot = bear::where('name', '=', 'Adobot')->first();
@@ -552,8 +566,14 @@ ND
 		$this->assertEquals($bear_lawly->id, $bear_fish1->id);
 		$this->assertEquals($bear_lawly->name, $bear_fish1->name);
 		$this->assertEquals($bear_lawly->name, $fish_first->bear->name);
+	}
 
-		// ------ query one-to-many relationships ------
+	/**
+	* @depends test_main
+	* query one-to-many relationships
+	*/
+	public function test_one_to_many() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
 		$trees = array();
 		// find the trees lawly climbs
@@ -567,8 +587,14 @@ ND
 			'Oak' => 400,
 		);
 		$this->assertEquals($expected, $trees);
+	}
 
-		// ------ query many-to-many relationships ------
+	/**
+	* @depends test_main
+	* query many-to-many relationships
+	*/
+	public function test_many_to_many() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
 		// get the picnics that Cerms goes to
 		$cerms = bear::where('name', '=', 'Cerms')->first();
@@ -620,8 +646,13 @@ ND
 			'Adobot' => 'Polar, danger: 3',
 		);
 		$this->assertEquals($expected, $bears_in_grand_canyon);
+	}
 
-		// ------ deleting models ------
+	/**
+	* @depends test_main
+	*/
+	public function test_delete_models() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 
 		// find and delete a record
 		$bear = bear::find(1);
