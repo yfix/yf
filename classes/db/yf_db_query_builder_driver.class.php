@@ -171,10 +171,6 @@ abstract class yf_db_query_builder_driver {
 	/**
 	*/
 	public function insert(array $data, $params = array()) {
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
-// Use for into_table here INSERT INTO ... SELECT .. FROM ...
-//		if ($params['into_table']) { };
 		if (empty($data)) {
 			return false;
 		}
@@ -196,6 +192,16 @@ abstract class yf_db_query_builder_driver {
 			return $insert_id ?: $result;
 		}
 		return false;
+	}
+
+	/**
+	*/
+	public function insert_into($table, array $data, $params = array()) {
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
+// Use for into_table here INSERT INTO ... SELECT .. FROM ...
+//		if ($params['into_table']) { };
+// TODO
 	}
 
 	/**
@@ -266,8 +272,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	*/
 	public function update(array $data, $params = array()) {
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('last_activity' => time()))
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
+// TODO: support for dataset params: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
 // TODO: be able to specify other table in params
 // TODO: where condition for update inside params
 #		if ($is_3d_array) {
