@@ -42,7 +42,7 @@ class yf_api {
 		$this->_call( $class, null, $method );
 	}
 
-	protected function _parse_request() {
+	public function _parse_request() {
 		$is_post = &$this->is_post;
 		$is_json = &$this->is_json;
 		$request = &$this->request;
@@ -54,9 +54,15 @@ class yf_api {
 		return( $request );
 	}
 
-	protected function _reject() {
-		header( 'Status: 503 Service Unavailable' );
-		die( 'Service Unavailable' );
+	// usage if user_id < 1
+	public function _forbidden() {
+		$this->_reject( 'Forbidden', 'Status: 403 Forbidden', 403 );
+	}
+
+	public function _reject( $message = 'Service Unavailable', $header = 'Status: 503 Service Unavailable', $code = 503 ) {
+		http_response_code( $code );
+		header( $header );
+		die( $message );
 	}
 
 	protected function _firewall( $class = null, $class_path = null, $method = null, $options = array() ) {
