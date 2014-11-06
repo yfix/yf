@@ -223,15 +223,6 @@ class yf_model {
 		$builder->_result_wrapper = array($this, 'new_result');
 		$builder->_remove_as_from_delete = true;
 		$builder->from($table.' AS t0');
-		// whereid shortcut, example: find(1)  == 1 is PK
-		if (is_array($params['where']) && count($params['where']) === 1 && is_numeric($params['where'][0]) && !isset($params['whereid'])) {
-			$params['whereid'] = $params['where'];
-			$pk = $this->get_key_name($table);
-			if ($pk) {
-				$params['whereid'][1] = $pk;
-			}
-			unset($params['where']);
-		}
 		foreach (array('select','where','where_or','whereid','order_by','having','group_by') as $part) {
 			if ($params[$part]) {
 				call_user_func_array(array($builder, $part), is_array($params[$part]) ? $params[$part] : array($params[$part]));
@@ -283,7 +274,7 @@ class yf_model {
 	public static function find() {
 		$obj = isset($this) ? $this : new static();
 		$pk = $obj->get_key_name();
-		$result = $obj->new_query(array('where' => func_get_args()))->get();
+		$result = $obj->new_query(array('whereid' => func_get_args()))->get();
 		if (!$result || !$result->$pk) {
 			return null;
 		}
@@ -561,9 +552,6 @@ class yf_model {
 	*/
 	public function delete() {
 		$args = array('where' => func_get_args());
-		if (!$args['where']) {
-			$args = array('whereid' => (int)$this->get_key());
-		}
 		return $this->new_query($args)->limit(1)->delete();
 	}
 
@@ -572,10 +560,7 @@ class yf_model {
 	*/
 	public static function destroy() {
 		$obj = isset($this) ? $this : new static();
-		$args = array('whereid' => array(func_get_args()));
-		if (!$args['whereid']) {
-			$args = array('whereid' => (int)$obj->get_key());
-		}
+		$args = array('where' => func_get_args());
 		return $obj->new_query($args)->delete();
 	}
 
