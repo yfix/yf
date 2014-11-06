@@ -835,7 +835,7 @@ abstract class yf_db_query_builder_driver {
 		$right_generated = '';
 		// Think that we dealing with 2 arguments passing like this: where('id', 1)
 		// Also this will match: where('id', array(1,2,3))
-		if (strlen($left) && !empty($op) && !strlen($right) && !is_array($right)) {
+		if (strlen($left) && !empty($op) && !is_array($right) && !strlen($right)) {
 			if (strlen($op) && !in_array($op, array('=','!=','<','>','<=','>=','like','not like','is null','is not null','in','not in'))) {
 				$right = $op;
 				$op = '=';
