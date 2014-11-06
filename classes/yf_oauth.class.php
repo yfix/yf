@@ -48,7 +48,8 @@ class yf_oauth {
 					'json_normalized'=> json_encode($normalized_info),
 					'json_raw'		=> json_encode($oauth_user_info),
 					'add_date'		=> time(),
-					'user_id'		=> 0, // Here it is 0, will be updated later if OK
+//					'user_id'		=> 0, // Here it is 0, will be updated later if OK
+					'user_id'		=> 'NULL', // Here it is NULL, will be updated later if OK
 				));
 				$oauth_user_id = db()->insert_id();
 				if ($oauth_user_id) {
