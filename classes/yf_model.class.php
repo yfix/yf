@@ -242,9 +242,10 @@ class yf_model {
 			$offset = is_numeric($params['limit']) ? null : $params['limit'][1];
 			$builder->limit($count, $offset);
 		}
-		if ($params['join']) {
-			foreach((array)$params['join'] as $join) {
-				$builder->join($join['table'], $join['on'], $join['type']);
+		foreach (array('join','left_join','inner_join','right_join') as $func) {
+			if ($params[$func]) {
+				$join = $params[$func];
+				$builder->$func($join['table'], $join['on']);
 			}
 		}
 		return $builder;
