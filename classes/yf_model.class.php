@@ -274,7 +274,7 @@ class yf_model {
 	public static function find() {
 		$obj = isset($this) ? $this : new static();
 		$pk = $obj->get_key_name();
-		$result = $obj->new_query(array('whereid' => func_get_args()))->get();
+		$result = $obj->new_query(array('where' => func_get_args()))->get();
 		if (!$result || !$result->$pk) {
 			return null;
 		}
@@ -551,8 +551,7 @@ class yf_model {
 	* Delete matching record(s) from database
 	*/
 	public function delete() {
-		$args = array('where' => func_get_args());
-		return $this->new_query($args)->limit(1)->delete();
+		return $this->new_query(array('where' => func_get_args()))->limit(1)->delete();
 	}
 
 	/**
@@ -560,8 +559,7 @@ class yf_model {
 	*/
 	public static function destroy() {
 		$obj = isset($this) ? $this : new static();
-		$args = array('where' => func_get_args());
-		return $obj->new_query($args)->delete();
+		return $obj->new_query(array('where' => func_get_args()))->delete();
 	}
 
 	/**
