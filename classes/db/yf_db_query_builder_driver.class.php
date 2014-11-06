@@ -258,7 +258,7 @@ abstract class yf_db_query_builder_driver {
 		foreach ((array)$cols as $k => $v) {
 			unset($cols[$k]);
 			if( $escape ) {
-				$_v = $this->_escape_val( $v );
+				$_v = $this->_escape_key( $v );
 			} else {
 				$_v = $v;
 			}
