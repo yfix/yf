@@ -63,8 +63,8 @@ class yf_model_relation {
 		if ($type === 'belongs_to_many') {
 
 			return $db->from($pivot_table)
-				->where($relation['other_key']. ' = '. $id)
-				->where($relation['foreign_key']. ' = '. $model->get_key())
+				->where($relation['other_key'], $id)
+				->where($relation['foreign_key'], $model->get_key())
 				->limit(1)
 				->delete();
 
@@ -125,7 +125,7 @@ class yf_model_relation {
 				$cols[$col] = $col;
 			}
 			return $query
-				->where($join_alias.'.'.$model->get_key_name().' = '.$id)
+				->where($join_alias.'.'.$model->get_key_name(), $id)
 				->select(implode(', ', $cols))
 				->inner_join($join_table.' AS '.$join_alias, array(
 					$table_alias.'.'.$other_key => $join_alias.'.'.$foreign_key,
