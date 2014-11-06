@@ -95,14 +95,21 @@ abstract class yf_db_query_builder_driver {
 			if (is_array($this->_sql[$name])) {
 				if (isset($opt['separator'])) {
 					if ($return_raw) {
-						$a[$name] = array('operator' => $operator, 'separator' => $opt['separator'], 'condition' => $this->_sql[$name]);
+						$a[$name] = array(
+							'operator' => $operator,
+							'separator' => $opt['separator'],
+							'condition' => $this->_sql[$name]
+						);
 					} else {
 						$a[$name] = $operator.' '.implode(' '.$opt['separator'].' ', $this->_sql[$name]);
 					}
 				}
 			} else {
 				if ($return_raw) {
-					$a[$name] = array('operator' => ($operator ? $operator.' ' : ''), 'condition' => $this->_sql[$name]);
+					$a[$name] = array(
+						'operator' => ($operator ? $operator.' ' : ''),
+						'condition' => $this->_sql[$name],
+					);
 				} else {
 					$a[$name] = ($operator ? $operator.' ' : ''). $this->_sql[$name];
 				}
@@ -521,6 +528,7 @@ abstract class yf_db_query_builder_driver {
 	function select() {
 		$sql = '';
 		$fields = func_get_args();
+		$pattern_as = '~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims';
 		if (!count($fields) || $fields === array(array())) {
 			$sql = '*';
 		} else {
@@ -531,7 +539,7 @@ abstract class yf_db_query_builder_driver {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					// support for syntax: select('a.id as aid')
-					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $v, $m)) {
+					if (preg_match($pattern_as, $v, $m)) {
 						$a[] = $this->_escape_expr($m[1]).' AS '.$this->_escape_key($m[2]);
 					} else {
 						$a[] = $this->_escape_expr($v);
@@ -544,7 +552,7 @@ abstract class yf_db_query_builder_driver {
 						$v2 = trim($v2);
 						if (strlen($k2) && strlen($v2)) {
 							// support for syntax: select('a.id as aid')
-							if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $v2, $m)) {
+							if (preg_match($pattern_as, $v2, $m)) {
 								$a[] = $this->_escape_expr($m[1]).' AS '.$this->_escape_key($m[2]);
 							} else {
 								$a[] = $this->_escape_expr($k2).' AS '.$this->_escape_key($v2);
@@ -554,6 +562,7 @@ abstract class yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
+// TODO: use smarter part from _process_where
 				$sql = implode(', ', $a);
 			}
 		}
@@ -574,8 +583,10 @@ abstract class yf_db_query_builder_driver {
 	* Examples: from('users'), from(array('users' => 'u', 'suppliers' => 's'))
 	*/
 	function from() {
+// TODO: auto-joins if comma detected
 		$sql = '';
 		$tables = func_get_args();
+		$pattern_as = '~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims';
 		if (count($tables)) {
 			$a = array();
 			foreach ((array)$tables as $k => $v) {
@@ -584,7 +595,7 @@ abstract class yf_db_query_builder_driver {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					// support for syntax: from('users as u') from('users as u', 'messages as m')
-					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $v, $m)) {
+					if (preg_match($pattern_as, $v, $m)) {
 						$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
 					} else {
 						$a[] = $this->_escape_table_name($v);
@@ -597,7 +608,7 @@ abstract class yf_db_query_builder_driver {
 						$v2 = trim($v2);
 						if (strlen($k2) && strlen($v2)) {
 							// support for syntax: from('users as u') from('users as u', 'messages as m')
-							if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $v2, $m)) {
+							if (preg_match($pattern_as, $v2, $m)) {
 								$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
 							} else {
 								$a[] = $this->_escape_table_name($k2).' AS '.$this->_escape_key($v2);
@@ -607,6 +618,7 @@ abstract class yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
+// TODO: use smarter part from _process_where
 				$sql = implode(', ', $a);
 			}
 		}
@@ -877,6 +889,7 @@ abstract class yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
+// TODO: use smarter part from _process_where
 				$sql = implode(', ', $a);
 			}
 		}
@@ -929,6 +942,7 @@ abstract class yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
+// TODO: use smarter part from _process_where
 				$sql = implode(' AND ', $a);
 			}
 		}
@@ -942,6 +956,8 @@ abstract class yf_db_query_builder_driver {
 	* Examples: order_by('user_group'), order_by(array('supplier' => 'DESC','manufacturer' => ASC))
 	*/
 	function order_by() {
+// TODO: support for order_by('field','asc')
+// TODO: support for order_by(array('field1','asc'),array('field2','desc'),array('field3','asc'))
 		$sql = '';
 		$items = func_get_args();
 		if (count($items)) {
@@ -976,6 +992,7 @@ abstract class yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
+// TODO: use smarter part from _process_where
 				$sql = implode(', ', $a);
 			}
 		}
