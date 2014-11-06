@@ -1557,6 +1557,13 @@ class yf_db {
 	}
 
 	/**
+	* Query builder shortcut
+	*/
+	function table() {
+		return $this->query_builder()->table(array('__args__' => func_get_args()));
+	}
+
+	/**
 	*/
 	function utils() {
 		if (!isset($this->utils)) {
