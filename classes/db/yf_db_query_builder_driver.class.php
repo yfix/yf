@@ -183,6 +183,7 @@ abstract class yf_db_query_builder_driver {
 			return false;
 		}
 		$sql = $this->compile_insert($table, $data, $params);
+		if( !empty( $params[ 'sql' ] ) ) { return( $sql ); }
 		if ($sql) {
 			$result = $this->db->query($sql);
 			$insert_id = $result ? $this->db->insert_id() : false;
@@ -204,6 +205,7 @@ abstract class yf_db_query_builder_driver {
 		if (is_string($replace)) {
 			$replace = false;
 		}
+		$escape = isset( $params[ 'escape' ] ) ? (bool)$params[ 'escape' ] : true;
 		$values_array = array();
 		// Try to check if array is two-dimensional
 		foreach ((array)$data as $cur_row) {
@@ -220,19 +222,34 @@ abstract class yf_db_query_builder_driver {
 				foreach ((array)$cols as $col) {
 					$cur_values[$col] = $cur_row[$col];
 				}
-				$values_array[] = '('.implode(', ', $this->_escape_val($cur_values)).PHP_EOL.')';
+				if( $escape ) {
+					$_cur_values = $this->_escape_val($cur_values);
+				} else {
+					$_cur_values = $cur_values;
+				}
+				$values_array[] = '('.implode(', ', $_cur_values).PHP_EOL.')';
 			}
 		} elseif (count($data)) {
 			$cols	= array_keys($data);
 			$values = array_values($data);
 			foreach ((array)$values as $k => $v) {
-				$values[$k] = $this->_escape_val($v);
+				if( $escape ) {
+					$_v = $this->_escape_val( $v );
+				} else {
+					$_v = $v;
+				}
+				$values[$k] = $_v;
 			}
 			$values_array[] = '('.implode(', ', $values).PHP_EOL.')';
 		}
 		foreach ((array)$cols as $k => $v) {
 			unset($cols[$k]);
-			$cols[$v] = $this->_escape_key($v);
+			if( $escape ) {
+				$_v = $this->_escape_val( $v );
+			} else {
+				$_v = $v;
+			}
+			$cols[$v] = $_v;
 		}
 		$sql = '';
 		if (count($cols) && count($values_array)) {
@@ -290,17 +307,18 @@ abstract class yf_db_query_builder_driver {
 		if (isset($a['where_or'])) {
 			$where = rtrim($where).' '.$a['where_or']['operator'].' '.implode(' '.$a['where_or']['separator'].' ', $a['where_or']['condition']);
 		}
-		$sql = $this->compile_update($table, $data, $where);
+		$sql = $this->compile_update($table, $data, $where, $params);
+		if( !empty( $params[ 'sql' ] ) ) { return( $sql ); }
 		if ($sql) {
 			$result = $this->db->query($sql);
 		}
-		return false;
+		return $result;
 	}
 
 	/**
 	* Update table with given values
 	*/
-	function compile_update($table, array $data, $where) {
+	function compile_update($table, array $data, $where, $params = array()) {
 		if (empty($table) || empty($data) || empty($where)) {
 			return false;
 		}
@@ -309,11 +327,19 @@ abstract class yf_db_query_builder_driver {
 			$where = 'id='.intval($where);
 		}
 		$tmp_data = array();
+		$escape = isset( $params[ 'escape' ] ) ? (bool)$params[ 'escape' ] : true;
 		foreach ((array)$data as $k => $v) {
 			if (empty($k)) {
 				continue;
 			}
-			$tmp_data[$k] = $this->_escape_key($k).' = '.$this->_escape_val($v);
+			if( $escape ) {
+				$_k = $this->_escape_key( $k );
+				$_v = $this->_escape_val( $v );
+			} else {
+				$_k = $k;
+				$_v = $v;
+			}
+			$tmp_data[$k] = $_k . ' = ' . $_v;
 		}
 		$sql = '';
 		if (count($tmp_data)) {
