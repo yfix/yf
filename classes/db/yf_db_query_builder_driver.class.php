@@ -521,9 +521,6 @@ abstract class yf_db_query_builder_driver {
 	function select() {
 		$sql = '';
 		$fields = func_get_args();
-		if (isset($fields[0]) && is_array($fields[0]) && isset($fields[0]['__args__'])) {
-			$fields = $fields[0]['__args__'];
-		}
 		if (!count($fields) || $fields === array(array())) {
 			$sql = '*';
 		} else {
@@ -579,9 +576,6 @@ abstract class yf_db_query_builder_driver {
 	function from() {
 		$sql = '';
 		$tables = func_get_args();
-		if (isset($tables[0]) && is_array($tables[0]) && isset($tables[0]['__args__'])) {
-			$tables = $tables[0]['__args__'];
-		}
 		if (count($tables)) {
 			$a = array();
 			foreach ((array)$tables as $k => $v) {
@@ -664,16 +658,14 @@ abstract class yf_db_query_builder_driver {
 	* Example: where(array('id','>','1'),'and',array('name','!=','peter'))
 	*/
 	function where() {
-		$this->_process_where(func_get_args(), __FUNCTION__);
-		return $this;
+		return $this->_process_where(func_get_args(), __FUNCTION__);
 	}
 
 	/**
 	* Example: where_or(array('id','>','1'))
 	*/
 	function where_or() {
-		$this->_process_where(func_get_args(), __FUNCTION__);
-		return $this;
+		return $this->_process_where(func_get_args(), __FUNCTION__);
 	}
 
 	/**
@@ -682,9 +674,6 @@ abstract class yf_db_query_builder_driver {
 // TODO: auto-detect and apply whereid: where(1)
 // TODO: auto-detect and apply whereid with several numbers where(1,2,3) === whereid(1,2,3)
 		$sql = '';
-		if (isset($where[0]) && is_array($where[0]) && isset($where[0]['__args__'])) {
-			$where = $where[0]['__args__'];
-		}
 		$count = count($where);
 		if (($count === 3 || $count === 2) && is_string($where[0]) && is_string($where[1])) {
 			$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
@@ -734,6 +723,7 @@ abstract class yf_db_query_builder_driver {
 		if ($sql) {
 			$this->_sql[$func_name][] = $sql;
 		}
+		return $this;
 	}
 
 	/**
