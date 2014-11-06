@@ -218,7 +218,7 @@ abstract class yf_db_query_builder_driver {
 		if (is_string($replace)) {
 			$replace = false;
 		}
-		$escape = isset( $params[ 'escape' ] ) ? (bool)$params[ 'escape' ] : true;
+		$escape = isset($params['escape']) ? (bool)$params['escape'] : true;
 		$values_array = array();
 		// Try to check if array is two-dimensional
 		foreach ((array)$data as $cur_row) {
@@ -235,7 +235,7 @@ abstract class yf_db_query_builder_driver {
 				foreach ((array)$cols as $col) {
 					$cur_values[$col] = $cur_row[$col];
 				}
-				if( $escape ) {
+				if ($escape) {
 					$_cur_values = $this->_escape_val($cur_values);
 				} else {
 					$_cur_values = $cur_values;
@@ -246,8 +246,8 @@ abstract class yf_db_query_builder_driver {
 			$cols	= array_keys($data);
 			$values = array_values($data);
 			foreach ((array)$values as $k => $v) {
-				if( $escape ) {
-					$_v = $this->_escape_val( $v );
+				if ($escape) {
+					$_v = $this->_escape_val($v);
 				} else {
 					$_v = $v;
 				}
@@ -257,8 +257,8 @@ abstract class yf_db_query_builder_driver {
 		}
 		foreach ((array)$cols as $k => $v) {
 			unset($cols[$k]);
-			if( $escape ) {
-				$_v = $this->_escape_key( $v );
+			if ($escape) {
+				$_v = $this->_escape_key($v);
 			} else {
 				$_v = $v;
 			}
@@ -340,19 +340,19 @@ abstract class yf_db_query_builder_driver {
 			$where = 'id='.intval($where);
 		}
 		$tmp_data = array();
-		$escape = isset( $params[ 'escape' ] ) ? (bool)$params[ 'escape' ] : true;
+		$escape = isset($params['escape']) ? (bool)$params['escape'] : true;
 		foreach ((array)$data as $k => $v) {
 			if (empty($k)) {
 				continue;
 			}
-			if( $escape ) {
-				$_k = $this->_escape_key( $k );
-				$_v = $this->_escape_val( $v );
+			if ($escape) {
+				$_k = $this->_escape_key($k);
+				$_v = $this->_escape_val($v);
 			} else {
 				$_k = $k;
 				$_v = $v;
 			}
-			$tmp_data[$k] = $_k . ' = ' . $_v;
+			$tmp_data[$k] = $_k. ' = '. $_v;
 		}
 		$sql = '';
 		if (count($tmp_data)) {
@@ -720,7 +720,7 @@ abstract class yf_db_query_builder_driver {
 		$count = count($where);
 		if ($count && $this->_is_where_all_numeric($where)) {
 			// where(array(1,2,3))
-			if ($count === 1 && is_array($where[0])) {
+			if (count($where) === 1 && isset($where[0])) {
 				$where = $where[0];
 			}
 			return $this->whereid($where);
