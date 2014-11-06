@@ -725,7 +725,7 @@ abstract class yf_db_query_builder_driver {
 			}
 			return $this->whereid($where);
 		}
-		if (($count === 3 || $count === 2) && is_string($where[0]) && is_string($where[1])) {
+		if (($count === 3 || $count === 2) && is_string($where[0]) && (is_string($where[1]) || is_array($where[1]))) {
 			$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
 		} elseif ($count) {
 			$a = array();
@@ -829,12 +829,20 @@ abstract class yf_db_query_builder_driver {
 	public function _process_where_cond($left, $op, $right) {
 		!$op && $op = '=';
 		$left = trim(strtolower($left));
-		$op = trim(strtolower($op));
+		if (is_string($op)) {
+			$op = trim(strtolower($op));
+		}
 		$right_generated = '';
-		// Think that we dealing with 2 arguments passing like this: where('id',1)
-		if (strlen($left) && (strlen($op) && !in_array($op, array('=','!=','<','>','<=','>=','like','not like','is null','is not null','in','not in'))) && (!strlen($right) && !is_array($right))) {
-			$right = $op;
-			$op = '=';
+		// Think that we dealing with 2 arguments passing like this: where('id', 1)
+		// Also this will match: where('id', array(1,2,3))
+		if (strlen($left) && !empty($op) && !strlen($right) && !is_array($right)) {
+			if (strlen($op) && !in_array($op, array('=','!=','<','>','<=','>=','like','not like','is null','is not null','in','not in'))) {
+				$right = $op;
+				$op = '=';
+			} elseif (is_array($op) && $this->_is_where_all_numeric($op)) {
+				$right = $op;
+				$op = 'in';
+			}
 		}
 		if (is_string($right) && (false !== strpos($right, '%') || false !== strpos($right, '*'))) {
 			if ($op == '=') {
