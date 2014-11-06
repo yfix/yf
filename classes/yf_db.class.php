@@ -1546,21 +1546,21 @@ class yf_db {
 	* Query builder shortcut
 	*/
 	function select() {
-		return $this->query_builder()->select(array('__args__' => func_get_args()));
+		return call_user_func_array(array($this->query_builder(), __FUNCTION__), func_get_args());
 	}
 
 	/**
 	* Query builder shortcut
 	*/
 	function from() {
-		return $this->query_builder()->from(array('__args__' => func_get_args()));
+		return call_user_func_array(array($this->query_builder(), __FUNCTION__), func_get_args());
 	}
 
 	/**
 	* Query builder shortcut
 	*/
 	function table() {
-		return $this->query_builder()->table(array('__args__' => func_get_args()));
+		return call_user_func_array(array($this->query_builder(), __FUNCTION__), func_get_args());
 	}
 
 	/**
