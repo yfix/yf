@@ -695,10 +695,22 @@ abstract class yf_db_query_builder_driver {
 						}
 					}
 				} elseif (is_array($v)) {
+					$count_a = count($a);
+					$need_and = false;
+					if ($count_a && !in_array($a[$count_a - 1], array('AND','OR','XOR'))) {
+						$need_and = true;
+					}
 					// array('field', 'condition', 'value'), example: array('id','>','1')
 					$_count_v = count($v);
 					if (($_count_v === 3 || $_count_v === 2) && isset($v[0])) {
-						$a[] = $this->_process_where_cond($v[0], $v[1], $v[2]);
+						$tmp = $this->_process_where_cond($v[0], $v[1], $v[2]);
+						if (!strlen($tmp)) {
+							continue;
+						}
+						if ($need_and) {
+							$a[] = 'AND';
+						}
+						$a[] = $tmp;
 					// array('field1' => 'val1', 'field2' => 'val2')
 					} else {
 						$tmp = array();
@@ -708,8 +720,16 @@ abstract class yf_db_query_builder_driver {
 								$tmp[] = $_tmp;
 							}
 						}
-						if ($tmp) {
-							$a[] = implode(' AND ', $tmp);
+						if (count($tmp)) {
+							if ($need_and) {
+								$a[] = 'AND';
+							}
+							foreach ($tmp as $k2 => $v2) {
+								if ($k2 > 0) {
+									$a[] = 'AND';
+								}
+								$a[] = $v2;
+							}
 						}
 					}
 				} elseif (is_callable($v)) {
@@ -733,6 +753,11 @@ abstract class yf_db_query_builder_driver {
 		$left = trim(strtolower($left));
 		$op = trim(strtolower($op));
 		$right_generated = '';
+		// Think that we dealing with 2 arguments passing like this: where('id',1)
+		if (strlen($left) && (strlen($op) && !in_array($op, array('=','!=','<','>','<=','>=','like','not like','is null','is not null','in','not in'))) && (!strlen($right) && !is_array($right))) {
+			$right = $op;
+			$op = '=';
+		}
 		if (is_string($right) && (false !== strpos($right, '%') || false !== strpos($right, '*'))) {
 			if ($op == '=') {
 				$op = 'like';
@@ -750,10 +775,6 @@ abstract class yf_db_query_builder_driver {
 			if (strlen($right_generated)) {
 				$right_generated = '('.$right_generated.')';
 			}
-		// Think that we dealing with 2 arguments passing like this: where('id',1)
-		} elseif (strlen($left) && (strlen($op) && !in_array($op, array('=','!=','<','>','<=','>='))) && !strlen($right)) {
-			$right = $op;
-			$op = '=';
 		}
 		if ((empty($right) || !strlen(is_array($right) ? '' : $right)) && !strlen($right_generated)) {
 			return '';
