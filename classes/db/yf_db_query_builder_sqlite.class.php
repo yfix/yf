@@ -14,4 +14,10 @@ class yf_db_query_builder_sqlite extends yf_db_query_builder_driver {
 	}
 
 	// TODO: RLIKE and NOT RLIKE not supported
+
+	/**
+	*/
+	public function get_key_name($table = '') {
+		return 'id';
+	}
 }
