@@ -5,6 +5,11 @@
 */
 abstract class yf_db_query_builder_driver {
 
+	const REGEX_INLINE_CONDS = '~^([a-z0-9\(\)*_\.]+)[\s]*(=|!=|<>|<|>|>=|<=)[\s]*([a-z0-9_\.]+)$~ims';
+	const REGEX_IS_NULL = '~^([a-z0-9\(\)*_\.]+)[\s]*(is[\s]+null|is[\s]+not[\s]+null)$~ims';
+	const REGEX_AS = '~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims';
+	const REGEX_ASC_DESC = '~^([a-z0-9\(\)*_\.]+)[\s]+(asc|desc)$~ims';
+
 	/**
 	* Catch missing method call
 	*/
@@ -141,7 +146,7 @@ abstract class yf_db_query_builder_driver {
 		}
 		if ($this->_remove_as_from_delete) {
 			$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
-			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
+			if (preg_match(self::REGEX_AS, $table, $m)) {
 				$table = $m[1];
 				$this->_sql['from'] = array($this->_escape_table_name($table));
 			}
@@ -179,7 +184,7 @@ abstract class yf_db_query_builder_driver {
 			return false;
 		}
 		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
-		if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
+		if (preg_match(self::REGEX_AS, $table, $m)) {
 			$table = $m[1];
 		}
 		if (!$table) {
@@ -306,7 +311,7 @@ abstract class yf_db_query_builder_driver {
 			return false;
 		}
 		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
-		if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
+		if (preg_match(self::REGEX_AS, $table, $m)) {
 			$table = $m[1];
 		}
 		if (!$table) {
@@ -560,7 +565,6 @@ abstract class yf_db_query_builder_driver {
 	public function select() {
 		$sql = '';
 		$fields = func_get_args();
-		$pattern_as = '~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims';
 		if (!count($fields) || $fields === array(array())) {
 			$sql = '*';
 		} else {
@@ -571,7 +575,7 @@ abstract class yf_db_query_builder_driver {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					// support for syntax: select('a.id as aid')
-					if (preg_match($pattern_as, $v, $m)) {
+					if (preg_match(self::REGEX_AS, $v, $m)) {
 						$a[] = $this->_escape_expr($m[1]).' AS '.$this->_escape_key($m[2]);
 					} else {
 						$a[] = $this->_escape_expr($v);
@@ -584,7 +588,7 @@ abstract class yf_db_query_builder_driver {
 						$v2 = trim($v2);
 						if (strlen($k2) && strlen($v2)) {
 							// support for syntax: select('a.id as aid')
-							if (preg_match($pattern_as, $v2, $m)) {
+							if (preg_match(self::REGEX_AS, $v2, $m)) {
 								$a[] = $this->_escape_expr($m[1]).' AS '.$this->_escape_key($m[2]);
 							} else {
 								$a[] = $this->_escape_expr($k2).' AS '.$this->_escape_key($v2);
@@ -618,7 +622,6 @@ abstract class yf_db_query_builder_driver {
 // TODO: auto-joins if comma detected
 		$sql = '';
 		$tables = func_get_args();
-		$pattern_as = '~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims';
 		if (count($tables)) {
 			$a = array();
 			foreach ((array)$tables as $k => $v) {
@@ -627,7 +630,7 @@ abstract class yf_db_query_builder_driver {
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					// support for syntax: from('users as u') from('users as u', 'messages as m')
-					if (preg_match($pattern_as, $v, $m)) {
+					if (preg_match(self::REGEX_AS, $v, $m)) {
 						$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
 					} else {
 						$a[] = $this->_escape_table_name($v);
@@ -640,7 +643,7 @@ abstract class yf_db_query_builder_driver {
 						$v2 = trim($v2);
 						if (strlen($k2) && strlen($v2)) {
 							// support for syntax: from('users as u') from('users as u', 'messages as m')
-							if (preg_match($pattern_as, $v2, $m)) {
+							if (preg_match(self::REGEX_AS, $v2, $m)) {
 								$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
 							} else {
 								$a[] = $this->_escape_table_name($k2).' AS '.$this->_escape_key($v2);
@@ -734,9 +737,9 @@ abstract class yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]*(=|!=|<>|<|>|>=|<=)[\s]*([a-z0-9_\.]+)$~ims', $v, $m)) {
+					if (preg_match(self::REGEX_INLINE_CONDS, $v, $m)) {
 						$a[] = $this->_process_where_cond($m[1], $m[2], $m[3]);
-					} elseif (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]*(is[\s]+null|is[\s]+not[\s]+null)$~ims', $v, $m)) {
+					} elseif (preg_match(self::REGEX_IS_NULL, $v, $m)) {
 						$a[] = $this->_process_where_cond($m[1], $m[2], '');
 					} else {
 						$v = strtoupper(trim($v));
@@ -889,7 +892,7 @@ abstract class yf_db_query_builder_driver {
 			$table = key($table);
 		} elseif (is_string($table)) {
 			// support for syntax: join('users as u', 'u.id = s.id')
-			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims', $table, $m)) {
+			if (preg_match(self::REGEX_AS, $table, $m)) {
 				$table = $m[1];
 				$as = $m[2];
 			}
@@ -902,7 +905,7 @@ abstract class yf_db_query_builder_driver {
 		} elseif (is_callable($on)) {
 			$_on = $on($table, $this);
 		} elseif (is_string($on)) {
-			if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]*(=|!=|<>|<|>|>=|<=)[\s]*([a-z0-9_\.]+)$~ims', $on, $m)) {
+			if (preg_match(self::REGEX_INLINE_CONDS, $on, $m)) {
 				$_on[] = $this->_escape_col_name($m[1]). ' '. $m[2]. ' '. $this->_escape_col_name($m[3]);
 			}
 		}
@@ -986,7 +989,7 @@ abstract class yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]*(=|!=|<>|<|>|>=|<=)[\s]*([a-z0-9_\.]+)$~ims', $v, $m)) {
+					if (preg_match(self::REGEX_INLINE_CONDS, $v, $m)) {
 						$a[] = $this->_process_where_cond($m[1], $m[2], $m[3]);
 					} else {
 						$v = strtoupper(trim($v));
@@ -1041,7 +1044,7 @@ abstract class yf_db_query_builder_driver {
 					$v = trim($v);
 				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
-					if (preg_match('~^([a-z0-9\(\)*_\.]+)[\s]+(asc|desc)$~ims', $v, $m)) {
+					if (preg_match(self::REGEX_ASC_DESC, $v, $m)) {
 						$a[] = $this->_escape_expr($m[1]).' '.strtoupper($m[2]);
 					} else {
 						$a[] = $this->_escape_expr($v).' ASC';
