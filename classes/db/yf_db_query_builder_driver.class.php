@@ -682,7 +682,7 @@ abstract class yf_db_query_builder_driver {
 	public function whereid($id, $pk = '') {
 		!$pk && $pk = $this->get_key_name();
 		$sql = '';
-		if (is_array($id)) {
+		if (is_array($id) && count($id) > 1) {
 			$ids = $this->_ids_sql_from_array($id);
 			if ($ids) {
 				$sql = $this->_escape_col_name($pk).' IN('.$ids.')';
@@ -713,12 +713,18 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Prepare WHERE statement
 	*/
 	public function _process_where(array $where, $func_name = 'where') {
-// TODO: auto-detect and apply whereid: where(1)
-// TODO: auto-detect and apply whereid with several numbers where(1,2,3) === whereid(1,2,3)
 		$sql = '';
 		$count = count($where);
+		if ($count && $this->_is_where_all_numeric($where)) {
+			// where(array(1,2,3))
+			if ($count === 1 && is_array($where[0])) {
+				$where = $where[0];
+			}
+			return $this->whereid($where);
+		}
 		if (($count === 3 || $count === 2) && is_string($where[0]) && is_string($where[1])) {
 			$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
 		} elseif ($count) {
@@ -788,6 +794,34 @@ abstract class yf_db_query_builder_driver {
 			$this->_sql[$func_name][] = $sql;
 		}
 		return $this;
+	}
+
+	/**
+	* Detecting input consisting from numbers, think that this is "whereid" alias call like this: where(1), whereid(1,2,3)
+	*/
+	public function _is_where_all_numeric(&$where) {
+		if (empty($where) || (!is_array($where) && !is_numeric($where))) {
+			return false;
+		}
+		$count = count($where);
+		if (!$count) {
+			return false;
+		}
+		$self_func = __FUNCTION__;
+		foreach ($where as $k => $v) {
+			if (is_array($v)) {
+				if (!$this->$self_func($where[$k])) {
+					return false;
+				}
+				continue;
+			}
+			if (empty($v)) {
+				unset($where[$k]);
+			} elseif (!is_numeric($k) || !is_numeric($v)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
