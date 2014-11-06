@@ -567,6 +567,13 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Alias for "from"
+	*/
+	function table() {
+		return call_user_func_array(array($this, 'from'), func_get_args());
+	}
+
+	/**
 	* Examples: from('users'), from(array('users' => 'u', 'suppliers' => 's'))
 	*/
 	function from() {
