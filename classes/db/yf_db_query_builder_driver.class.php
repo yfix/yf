@@ -62,7 +62,63 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Create text SQL from params
+	* Return SELECT sql string
+	*/
+	public function _render_select() {
+		return $this->_sql_part_to_array('select');
+	}
+
+	/**
+	* Return FROM sql string
+	*/
+	public function _render_from() {
+		return $this->_sql_part_to_array('from');
+	}
+
+	/**
+	* Return JOINs sql string
+	*/
+	public function _render_joins() {
+		$a = array();
+		foreach (array('join','left_join','inner_join','right_join') as $name) {
+			$a[$name] = $this->_sql_part_to_array($name);
+			if (empty($a[$name])) {
+				unset($a[$name]);
+			}
+		}
+		return $a ? implode(' ', $a) : false;
+	}
+
+	/**
+	* Return WHERE sql string
+	*/
+	public function _render_where() {
+		$a = array();
+		foreach (array('where','where_or') as $name) {
+			$a[$name] = $this->_sql_part_to_array($name);
+			if (empty($a[$name])) {
+				unset($a[$name]);
+			}
+		}
+		return $a ? implode(' ', $a) : false;
+	}
+
+	/**
+	* Return ORDER BY sql string
+	*/
+	public function _render_order_by() {
+		return $this->_sql_part_to_array('order_by');
+	}
+
+	/**
+	* Return LIMIT sql string
+	*/
+	public function _render_limit() {
+		return $this->_sql['limit'];
+	}
+
+	/**
+	* Create overall SQL array parts in correct order
 	*/
 	public function _sql_to_array($return_raw = false) {
 		$a = array();
@@ -77,13 +133,26 @@ abstract class yf_db_query_builder_driver {
 		if (!empty($this->_sql['having']) && empty($this->_sql['group_by'])) {
 			unset($this->_sql['having']);
 		}
-		$opts = array(
+		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
+		foreach ($this->_get_sql_parts_config() as $name => $config) {
+			if (empty($this->_sql[$name])) {
+				continue;
+			}
+			$a[$name] = $this->_sql_part_to_array($name, $this->_sql[$name], $config, $return_raw);
+		}
+		return $a;
+	}
+
+	/**
+	*/
+	public function _get_sql_parts_config() {
+		return array(
 			'select'		=> array('separator' => ',', 'operator' => 'SELECT'),
 			'from'			=> array('separator' => ',', 'operator' => 'FROM'),
 			'join'			=> array('separator' => 'JOIN', 'operator' => 'JOIN'),
 			'left_join'		=> array('separator' => 'LEFT JOIN', 'operator' => 'LEFT JOIN'),
-			'right_join'	=> array('separator' => 'RIGHT JOIN', 'operator' => 'RIGHT JOIN'),
 			'inner_join'	=> array('separator' => 'INNER JOIN', 'operator' => 'INNER JOIN'),
+			'right_join'	=> array('separator' => 'RIGHT JOIN', 'operator' => 'RIGHT JOIN'),
 			'where'			=> array('separator' => 'AND', 'operator' => 'WHERE'),
 			'where_or'		=> array('separator' => 'OR', 'operator' => 'OR'),
 			'group_by'		=> array('separator' => ',', 'operator' => 'GROUP BY'),
@@ -91,36 +160,45 @@ abstract class yf_db_query_builder_driver {
 			'order_by'		=> array('separator' => ',', 'operator' => 'ORDER BY'),
 			'limit'			=> array(/* 'operator' => 'LIMIT' */),
 		);
-		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
-		foreach ($opts as $name => $opt) {
-			if (empty($this->_sql[$name])) {
-				continue;
+	}
+
+	/**
+	*/
+	public function _sql_part_to_array($part, $data = null, $config = null, $return_raw = false) {
+		if (!$part) {
+			return false;
+		}
+		$config = $config ?: $this->_get_sql_parts_config();
+		$data = isset($data) ? $data : (isset($this->_sql[$part]) ? $this->_sql[$part] : null);
+		if (!isset($data) || empty($data)) {
+			return false;
+		}
+		$operator = $config['operator'];
+		$out = array();
+		if (is_array($data)) {
+			if (!isset($config['separator'])) {
+				return false;
 			}
-			$operator = $opt['operator'];
-			if (is_array($this->_sql[$name])) {
-				if (isset($opt['separator'])) {
-					if ($return_raw) {
-						$a[$name] = array(
-							'operator' => $operator,
-							'separator' => $opt['separator'],
-							'condition' => $this->_sql[$name]
-						);
-					} else {
-						$a[$name] = $operator.' '.implode(' '.$opt['separator'].' ', $this->_sql[$name]);
-					}
-				}
+			if ($return_raw) {
+				$out = array(
+					'operator' => $operator,
+					'separator' => $config['separator'],
+					'condition' => $data,
+				);
 			} else {
-				if ($return_raw) {
-					$a[$name] = array(
-						'operator' => ($operator ? $operator.' ' : ''),
-						'condition' => $this->_sql[$name],
-					);
-				} else {
-					$a[$name] = ($operator ? $operator.' ' : ''). $this->_sql[$name];
-				}
+				$out = $operator.' '.implode(' '.$config['separator'].' ', $data);
+			}
+		} else {
+			if ($return_raw) {
+				$out = array(
+					'operator' => ($operator ? $operator.' ' : ''),
+					'condition' => $data,
+				);
+			} else {
+				$out = ($operator ? $operator.' ' : ''). $data;
 			}
 		}
-		return $a;
+		return $out;
 	}
 
 	/**
@@ -138,18 +216,133 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Counting number of records inside requested recordset
+	*/
+	public function count() {
+		$this->_sql['select'] = 'COUNT(*)';
+		return $this->get_one();
+	}
+
+	/**
+	* Return first item from resultset
+	*/
+	public function first($use_cache = false) {
+		if (is_object($this->get_model())) {
+			return $this->order_by($this->get_key_name().' asc')->limit(1)->get($use_cache);
+		} else {
+			return $this->get($use_cache);
+		}
+	}
+
+	/**
+	* Return last item from resultset
+	*/
+	public function last($use_cache = false) {
+		if (is_object($this->get_model())) {
+			return $this->order_by($this->get_key_name().' desc')->limit(1)->get($use_cache);
+		} else {
+			$result = $this->get_all($use_cache);
+			if (is_array($result) && count($result)) {
+				return end($result);
+			} else {
+				return null;
+			}
+		}
+	}
+
+	/**
+	* Render SQL and execute db->get()
+	*/
+	public function get($use_cache = false) {
+		$sql = $this->sql();
+		if ($sql) {
+			$result = $this->db->get($sql, $use_cache);
+			if ($result && is_callable($this->_result_wrapper)) {
+				return call_user_func($this->_result_wrapper, $result);
+			}
+			return $result;
+		}
+		return false;
+	}
+
+	/**
+	* Alias
+	*/
+	public function one($use_cache = false) {
+		return $this->get_one($use_cache);
+	}
+
+	/**
+	* Render SQL and execute db->get_one()
+	*/
+	public function get_one($use_cache = false) {
+		$sql = $this->sql();
+		if ($sql) {
+			return $this->db->get_one($sql, $use_cache);
+		}
+		return false;
+	}
+
+	/**
+	* Alias
+	*/
+	public function all($use_cache = false) {
+		return $this->get_all($use_cache);
+	}
+
+	/**
+	* Render SQL and execute db->get_all()
+	*/
+	public function get_all($use_cache = false) {
+		$sql = $this->sql();
+		if ($sql) {
+			$result = $this->db->get_all($sql, $key_name, $use_cache);
+			if ($result && is_callable($this->_result_wrapper)) {
+				foreach ((array)$result as $k => $v) {
+					$result[$k] = call_user_func($this->_result_wrapper, $v);
+				}
+			}
+			return $result;
+		}
+		return false;
+	}
+
+	/**
+	* Render SQL and execute db->get_2d()
+	*/
+	public function get_2d($use_cache = false) {
+		$sql = $this->sql();
+		if ($sql) {
+			$result = $this->db->get_2d($sql, $use_cache);
+			if (is_callable($this->_result_wrapper)) {
+				return call_user_func($this->_result_wrapper, $result);
+			}
+			return $result;
+		}
+		return false;
+	}
+
+	/**
+	* Render SQL and execute db->get_deep_array()
+	*/
+	public function get_deep_array($levels = 1, $use_cache = false) {
+		$sql = $this->sql();
+		if ($sql) {
+			return $this->db->get_deep_array($sql, $levels, $use_cache);
+		}
+		return false;
+	}
+
+	/**
 	*/
 	public function delete($as_sql = false) {
 		$sql = false;
+		if ($this->_remove_as_from_delete) {
+			$table = $this->get_table();
+			$this->_sql['from'] = $table ? array($this->_escape_table_name($table)) : false;
+		}
 		if (empty($this->_sql['from'])) {
 			return false;
-		}
-		if ($this->_remove_as_from_delete) {
-			$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
-			if (preg_match(self::REGEX_AS, $table, $m)) {
-				$table = $m[1];
-				$this->_sql['from'] = array($this->_escape_table_name($table));
-			}
 		}
 		$a = $this->_sql_to_array();
 		if ($a) {
@@ -191,7 +384,9 @@ abstract class yf_db_query_builder_driver {
 			return false;
 		}
 		$sql = $this->compile_insert($table, $data, $params);
-		if( !empty( $params[ 'sql' ] ) ) { return( $sql ); }
+		if (!empty($params['sql'])) {
+			return $sql;
+		}
 		if ($sql) {
 			$result = $this->db->query($sql);
 			$insert_id = $result ? $this->db->insert_id() : false;
@@ -202,12 +397,19 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	public function insert_into($table, array $data, $params = array()) {
+	public function insert_into($table, array $fields = array(), $params = array()) {
+// TODO: unit tests
 // usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
 // usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
 // Use for into_table here INSERT INTO ... SELECT .. FROM ...
-//		if ($params['into_table']) { };
-// TODO
+		$data = $this->get_all();
+		$first = reset($data);
+		$sql = $this->compile_insert($table, $data, $params);
+		if ($sql) {
+			$result = $this->db->query($sql);
+			$insert_id = $result ? $this->db->insert_id() : false;
+			return $insert_id ?: $result;
+		}
 	}
 
 	/**
@@ -295,27 +497,17 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function update(array $data, $params = array()) {
 // TODO: support for dataset params: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
-// TODO: be able to specify other table in params
 // TODO: where condition for update inside params
-#		if ($is_3d_array) {
-#			$this->update_batch();
-#		} else {
-#			$sql = $this->compile_update();
-#			$this->db->query($sql);
-#		}
+		$table = $params['table'] ?: $this->get_table();
+		if (!$table) {
+			return false;
+		}
 		if (empty($data)) {
 			return false;
 		}
-		$a = array();
-		if (empty($this->_sql['from'])) {
-			return false;
-		}
-		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
-		if (preg_match(self::REGEX_AS, $table, $m)) {
-			$table = $m[1];
-		}
-		if (!$table) {
-			return false;
+		// 3-dimensional array detected
+		if (is_array($data) && is_array(reset($data))) {
+			return $this->update_batch($table);
 		}
 		$a = $this->_sql_to_array($return_raw = true);
 		$where = '';
@@ -326,7 +518,9 @@ abstract class yf_db_query_builder_driver {
 			$where = rtrim($where).' '.$a['where_or']['operator'].' '.implode(' '.$a['where_or']['separator'].' ', $a['where_or']['condition']);
 		}
 		$sql = $this->compile_update($table, $data, $where, $params);
-		if( !empty( $params[ 'sql' ] ) ) { return( $sql ); }
+		if (!empty($params['sql'])) {
+			return $sql;
+		}
 		if ($sql) {
 			$result = $this->db->query($sql);
 		}
@@ -444,111 +638,6 @@ abstract class yf_db_query_builder_driver {
 			$cases .= $k.' = CASE '.PHP_EOL. implode(PHP_EOL, $v). PHP_EOL. 'ELSE '.$k.' END, ';
 		}
 		return 'UPDATE '.$this->_escape_table_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
-	}
-
-	/**
-	* Counting number of records inside requested recordset
-	*/
-	public function count() {
-		$this->_sql['select'] = 'COUNT(*)';
-		return $this->get_one();
-	}
-
-	/**
-	*/
-	public function first($use_cache = false) {
-// TODO order_by PK asc limit 1
-		return $this->get($use_cache);
-	}
-
-	/**
-	*/
-	public function last($use_cache = false) {
-// TODO order_by PK desc limit 1
-		return $this->get($use_cache);
-	}
-
-	/**
-	* Render SQL and execute db->get()
-	*/
-	public function get($use_cache = false) {
-		$sql = $this->sql();
-		if ($sql) {
-			$result = $this->db->get($sql, $use_cache);
-			if ($result && is_callable($this->_result_wrapper)) {
-				return call_user_func($this->_result_wrapper, $result);
-			}
-			return $result;
-		}
-		return false;
-	}
-
-	/**
-	* Alias
-	*/
-	public function one($use_cache = false) {
-		return $this->get_one($use_cache);
-	}
-
-	/**
-	* Render SQL and execute db->get_one()
-	*/
-	public function get_one($use_cache = false) {
-		$sql = $this->sql();
-		if ($sql) {
-			return $this->db->get_one($sql, $use_cache);
-		}
-		return false;
-	}
-
-	/**
-	* Alias
-	*/
-	public function all($use_cache = false) {
-		return $this->get_all($use_cache);
-	}
-
-	/**
-	* Render SQL and execute db->get_all()
-	*/
-	public function get_all($use_cache = false) {
-		$sql = $this->sql();
-		if ($sql) {
-			$result = $this->db->get_all($sql, $key_name, $use_cache);
-			if ($result && is_callable($this->_result_wrapper)) {
-				foreach ((array)$result as $k => $v) {
-					$result[$k] = call_user_func($this->_result_wrapper, $v);
-				}
-			}
-			return $result;
-		}
-		return false;
-	}
-
-	/**
-	* Render SQL and execute db->get_2d()
-	*/
-	public function get_2d($use_cache = false) {
-		$sql = $this->sql();
-		if ($sql) {
-			$result = $this->db->get_2d($sql, $use_cache);
-			if (is_callable($this->_result_wrapper)) {
-				return call_user_func($this->_result_wrapper, $result);
-			}
-			return $result;
-		}
-		return false;
-	}
-
-	/**
-	* Render SQL and execute db->get_deep_array()
-	*/
-	public function get_deep_array($levels = 1, $use_cache = false) {
-		$sql = $this->sql();
-		if ($sql) {
-			return $this->db->get_deep_array($sql, $levels, $use_cache);
-		}
-		return false;
 	}
 
 // TODO: optionally check available fields and tables with db_installer sql data
@@ -1093,6 +1182,16 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Get current linked model
+	*/
+	public function get_model() {
+		if (isset($this->_model) && is_object($this->_model) && ($this->_model instanceof yf_model)) {
+			return $this->_model;
+		}
+		return false;
+	}
+
+	/**
 	* Find primary key name
 	*/
 	public function get_key_name($table = '') {
@@ -1105,10 +1204,24 @@ abstract class yf_db_query_builder_driver {
 					$pk = current($primary_index['columns']);
 				}
 			}
-		} elseif (isset($this->_model) && is_object($this->_model) && ($this->_model instanceof yf_model)) {
-			$pk = $this->_model->get_key_name();
+		} elseif ($model = $this->get_model()) {
+			$pk = $model->get_key_name();
 		}
 		return $pk ?: 'id';
+	}
+
+	/**
+	* Return first table used
+	*/
+	public function get_table() {
+		if (empty($this->_sql['from'])) {
+			return false;
+		}
+		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+		if (preg_match(self::REGEX_AS, $table, $m)) {
+			$table = $m[1];
+		}
+		return $table;
 	}
 
 	/**
