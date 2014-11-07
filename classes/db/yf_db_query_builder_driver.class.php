@@ -683,7 +683,6 @@ abstract class yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
-// TODO: use smarter part from _process_where
 				$sql = implode(', ', $a);
 			}
 		}
@@ -707,40 +706,40 @@ abstract class yf_db_query_builder_driver {
 // TODO: auto-joins if comma detected
 		$sql = '';
 		$tables = func_get_args();
-		if (count($tables)) {
-			$a = array();
-			foreach ((array)$tables as $k => $v) {
-				if (is_string($v)) {
-					$v = trim($v);
+		if (!count($tables)) {
+			return $this;
+		}
+		$a = array();
+		foreach ((array)$tables as $k => $v) {
+			if (is_string($v)) {
+				$v = trim($v);
+			}
+			if (is_string($v) && strlen($v) && !empty($v)) {
+				// support for syntax: from('users as u') from('users as u', 'messages as m')
+				if (preg_match(self::REGEX_AS, $v, $m)) {
+					$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
+				} else {
+					$a[] = $this->_escape_table_name($v);
 				}
-				if (is_string($v) && strlen($v) && !empty($v)) {
-					// support for syntax: from('users as u') from('users as u', 'messages as m')
-					if (preg_match(self::REGEX_AS, $v, $m)) {
-						$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
-					} else {
-						$a[] = $this->_escape_table_name($v);
-					}
-				} elseif (is_callable($v)) {
-					$a[] = $v($tables, $this);
-				} elseif (is_array($v)) {
-					foreach ((array)$v as $k2 => $v2) {
-						$k2 = trim($k2);
-						$v2 = trim($v2);
-						if (strlen($k2) && strlen($v2)) {
-							// support for syntax: from('users as u') from('users as u', 'messages as m')
-							if (preg_match(self::REGEX_AS, $v2, $m)) {
-								$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
-							} else {
-								$a[] = $this->_escape_table_name($k2).' AS '.$this->_escape_key($v2);
-							}
+			} elseif (is_callable($v)) {
+				$a[] = $v($tables, $this);
+			} elseif (is_array($v)) {
+				foreach ((array)$v as $k2 => $v2) {
+					$k2 = trim($k2);
+					$v2 = trim($v2);
+					if (strlen($k2) && strlen($v2)) {
+						// support for syntax: from('users as u') from('users as u', 'messages as m')
+						if (preg_match(self::REGEX_AS, $v2, $m)) {
+							$a[] = $this->_escape_table_name($m[1]).' AS '.$this->_escape_key($m[2]);
+						} else {
+							$a[] = $this->_escape_table_name($k2).' AS '.$this->_escape_key($v2);
 						}
 					}
 				}
 			}
-			if ($a) {
-// TODO: use smarter part from _process_where
-				$sql = implode(', ', $a);
-			}
+		}
+		if ($a) {
+			$sql = implode(', ', $a);
 		}
 		if ($sql) {
 			$this->_sql[__FUNCTION__][] = $sql;
@@ -1028,32 +1027,32 @@ abstract class yf_db_query_builder_driver {
 	public function group_by() {
 		$sql = '';
 		$items = func_get_args();
-		if (count($items)) {
-			$a = array();
-			foreach ((array)$items as $k => $v) {
-				if (is_string($v)) {
-					$v = trim($v);
-				}
-				if (is_string($v) && strlen($v) && !empty($v)) {
-					$a[] = $this->_escape_expr($v);
-				} elseif (is_array($v)) {
-					foreach ((array)$v as $v2) {
-						if (!is_string($v2)) {
-							continue;
-						}
-						$v2 = trim($v2);
-						if ($v2) {
-							$a[] = $this->_escape_expr($v2);
-						}
+		if (!count($items)) {
+			return $this;
+		}
+		$a = array();
+		foreach ((array)$items as $k => $v) {
+			if (is_string($v)) {
+				$v = trim($v);
+			}
+			if (is_string($v) && strlen($v) && !empty($v)) {
+				$a[] = $this->_escape_expr($v);
+			} elseif (is_array($v)) {
+				foreach ((array)$v as $v2) {
+					if (!is_string($v2)) {
+						continue;
 					}
-				} elseif (is_callable($v)) {
-					$a[] = $v($items, $this);
+					$v2 = trim($v2);
+					if ($v2) {
+						$a[] = $this->_escape_expr($v2);
+					}
 				}
+			} elseif (is_callable($v)) {
+				$a[] = $v($items, $this);
 			}
-			if ($a) {
-// TODO: use smarter part from _process_where
-				$sql = implode(', ', $a);
-			}
+		}
+		if ($a) {
+			$sql = implode(', ', $a);
 		}
 		if ($sql) {
 			$this->_sql[__FUNCTION__][] = $sql;
@@ -1067,46 +1066,47 @@ abstract class yf_db_query_builder_driver {
 	public function having() {
 		$sql = '';
 		$where = func_get_args();
-		if (count($where)) {
-			$a = array();
-			foreach ((array)$where as $k => $v) {
-				if (is_string($v)) {
-					$v = trim($v);
-				}
-				if (is_string($v) && strlen($v) && !empty($v)) {
-					if (preg_match(self::REGEX_INLINE_CONDS, $v, $m)) {
-						$a[] = $this->_process_where_cond($m[1], $m[2], $m[3]);
-					} else {
-						$v = strtoupper(trim($v));
-						if (in_array($v, array('AND','OR','XOR'))) {
-							$a[] = $v;
-						}
-					}
-				} elseif (is_array($v)) {
-					// array('field', 'condition', 'value'), example: array('id','>','1')
-					if (count($v) == 3 && isset($v[0])) {
-						$a[] = $this->_process_where_cond($v[0], $v[1], $v[2]);
-					// array('field1' => 'val1', 'field2' => 'val2')
-					} else {
-						$tmp = array();
-						foreach ($v as $k2 => $v2) {
-							$_tmp = $this->_process_where_cond($k2, '=', $v2);
-							if ($_tmp) {
-								$tmp[] = $_tmp;
-							}
-						}
-						if ($tmp) {
-							$a[] = implode(' AND ', $tmp);
-						}
-					}
-				} elseif (is_callable($v)) {
-					$a[] = $v($where, $this);
-				}
+		if (!count($where)) {
+			return $this;
+		}
+		$a = array();
+		foreach ((array)$where as $k => $v) {
+			if (is_string($v)) {
+				$v = trim($v);
 			}
-			if ($a) {
+			if (is_string($v) && strlen($v) && !empty($v)) {
+				if (preg_match(self::REGEX_INLINE_CONDS, $v, $m)) {
+					$a[] = $this->_process_where_cond($m[1], $m[2], $m[3]);
+				} else {
+					$v = strtoupper(trim($v));
+					if (in_array($v, array('AND','OR','XOR'))) {
+						$a[] = $v;
+					}
+				}
+			} elseif (is_array($v)) {
+				// array('field', 'condition', 'value'), example: array('id','>','1')
+				if (count($v) == 3 && isset($v[0])) {
+					$a[] = $this->_process_where_cond($v[0], $v[1], $v[2]);
+				// array('field1' => 'val1', 'field2' => 'val2')
+				} else {
+					$tmp = array();
+					foreach ($v as $k2 => $v2) {
+						$_tmp = $this->_process_where_cond($k2, '=', $v2);
+						if ($_tmp) {
+							$tmp[] = $_tmp;
+						}
+					}
+					if ($tmp) {
+						$a[] = implode(' AND ', $tmp);
+					}
+				}
+			} elseif (is_callable($v)) {
+				$a[] = $v($where, $this);
+			}
+		}
+		if ($a) {
 // TODO: use smarter part from _process_where
-				$sql = implode(' AND ', $a);
-			}
+			$sql = implode(' AND ', $a);
 		}
 		if ($sql) {
 			$this->_sql[__FUNCTION__][] = $sql;
@@ -1122,41 +1122,41 @@ abstract class yf_db_query_builder_driver {
 // TODO: support for order_by(array('field1','asc'),array('field2','desc'),array('field3','asc'))
 		$sql = '';
 		$items = func_get_args();
-		if (count($items)) {
-			$a = array();
-			foreach ((array)$items as $k => $v) {
-				if (is_string($v)) {
-					$v = trim($v);
-				}
-				if (is_string($v) && strlen($v) && !empty($v)) {
-					if (preg_match(self::REGEX_ASC_DESC, $v, $m)) {
-						$a[] = $this->_escape_expr($m[1]).' '.strtoupper($m[2]);
-					} else {
-						$a[] = $this->_escape_expr($v).' ASC';
-					}
-				} elseif (is_array($v)) {
-					foreach ((array)$v as $k2 => $v2) {
-						if (!is_string($v2)) {
-							continue;
-						}
-						$direction = 'ASC';
-						$v2 = trim($v2);
-						if (is_string($k2) && in_array(strtoupper($v2), array('ASC','DESC'))) {
-							$direction = $v2;
-							$v2 = trim($k2);
-						}
-						if ($v2) {
-							$a[] = $this->_escape_expr($v2).' '.strtoupper($direction);
-						}
-					}
-				} elseif (is_callable($items)) {
-					$a[] = $v($items, $this);
-				}
+		if (!count($items)) {
+			return $this;
+		}
+		$a = array();
+		foreach ((array)$items as $k => $v) {
+			if (is_string($v)) {
+				$v = trim($v);
 			}
-			if ($a) {
-// TODO: use smarter part from _process_where
-				$sql = implode(', ', $a);
+			if (is_string($v) && strlen($v) && !empty($v)) {
+				if (preg_match(self::REGEX_ASC_DESC, $v, $m)) {
+					$a[] = $this->_escape_expr($m[1]).' '.strtoupper($m[2]);
+				} else {
+					$a[] = $this->_escape_expr($v).' ASC';
+				}
+			} elseif (is_array($v)) {
+				foreach ((array)$v as $k2 => $v2) {
+					if (!is_string($v2)) {
+						continue;
+					}
+					$direction = 'ASC';
+					$v2 = trim($v2);
+					if (is_string($k2) && in_array(strtoupper($v2), array('ASC','DESC'))) {
+						$direction = $v2;
+						$v2 = trim($k2);
+					}
+					if ($v2) {
+						$a[] = $this->_escape_expr($v2).' '.strtoupper($direction);
+					}
+				}
+			} elseif (is_callable($items)) {
+				$a[] = $v($items, $this);
 			}
+		}
+		if ($a) {
+			$sql = implode(', ', $a);
 		}
 		if ($sql) {
 			$this->_sql[__FUNCTION__][] = $sql;
