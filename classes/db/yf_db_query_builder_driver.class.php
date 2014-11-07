@@ -665,6 +665,21 @@ abstract class yf_db_query_builder_driver {
 			$sql = '*';
 		} else {
 			$a = array();
+			// Pre-split items by comma
+			foreach ((array)$fields as $k => $v) {
+				if (is_string($v)) {
+					if (strpos($v, ',') !== false) {
+						$fields[$k] = explode(',', $v);
+					}
+				} elseif (is_array($v) && is_numeric($k)) {
+					foreach ((array)$v as $k2 => $v2) {
+						if (strpos($v2, ',') !== false) {
+							// Replace parent array with splitted values
+							$fields[$k] = explode(',', $v2);
+						}
+					}
+				}
+			}
 			foreach ((array)$fields as $k => $v) {
 				if (is_string($v)) {
 					$v = trim($v);
@@ -694,7 +709,7 @@ abstract class yf_db_query_builder_driver {
 				}
 			}
 			if ($a) {
-				$sql = implode(', ', $a);
+				$sql = implode(' , ', $a);
 			}
 		}
 		if ($sql) {
@@ -1180,13 +1195,13 @@ abstract class yf_db_query_builder_driver {
 		foreach ((array)$items as $k => $v) {
 			if (is_string($v)) {
 				if (strpos($v, ',') !== false) {
-					$items[$k] = explode(', ', $v);
+					$items[$k] = explode(',', $v);
 				}
 			} elseif (is_array($v) && is_numeric($k)) {
 				foreach ((array)$v as $k2 => $v2) {
 					if (strpos($v2, ',') !== false) {
 						// Replace parent array with splitted values
-						$items[$k] = explode(', ', $v2);
+						$items[$k] = explode(',', $v2);
 					}
 				}
 			}
@@ -1209,6 +1224,7 @@ abstract class yf_db_query_builder_driver {
 					if (!is_string($v2)) {
 						continue;
 					}
+					$v2 = trim($v2);
 					if (preg_match(self::REGEX_ASC_DESC, $v2, $m)) {
 						$a[] = $this->_escape_expr($m[1]).' '.strtoupper($m[2]);
 					} else {
@@ -1249,6 +1265,48 @@ abstract class yf_db_query_builder_driver {
 			$this->_sql[__FUNCTION__] = $sql;
 		}
 		return $this;
+	}
+
+	/**
+	* UNION sql wrapper
+	*/
+	public function union() {
+// TODO
+	}
+
+	/**
+	* UNION ALL sql wrapper
+	*/
+	public function union_all() {
+// TODO
+	}
+
+	/**
+	* SQL subquery wrapper
+	*/
+	public function subquery() {
+// TODO
+	}
+
+	/**
+	* SQL statement ANY() for subqueries
+	*/
+	public function any() {
+// TODO
+	}
+
+	/**
+	* SQL statement EXISTS for subqueries
+	*/
+	public function exists() {
+// TODO
+	}
+
+	/**
+	* SQL statement NOT EXISTS for subqueries
+	*/
+	public function not_exists() {
+// TODO
 	}
 
 	/**
