@@ -145,8 +145,8 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	*/
-	public function _get_sql_parts_config() {
-		return array(
+	public function _get_sql_parts_config($part = null) {
+		$config = array(
 			'select'		=> array('separator' => ',', 'operator' => 'SELECT'),
 			'from'			=> array('separator' => ',', 'operator' => 'FROM'),
 			'join'			=> array('separator' => 'JOIN', 'operator' => 'JOIN'),
@@ -160,6 +160,7 @@ abstract class yf_db_query_builder_driver {
 			'order_by'		=> array('separator' => ',', 'operator' => 'ORDER BY'),
 			'limit'			=> array(/* 'operator' => 'LIMIT' */),
 		);
+		return isset($part) ? $config[$part] : $config;
 	}
 
 	/**
@@ -168,8 +169,10 @@ abstract class yf_db_query_builder_driver {
 		if (!$part) {
 			return false;
 		}
-		$config = $config ?: $this->_get_sql_parts_config();
-		$data = isset($data) ? $data : (isset($this->_sql[$part]) ? $this->_sql[$part] : null);
+		$config = $config ?: $this->_get_sql_parts_config($part);
+		if (!isset($data) && isset($this->_sql[$part])) {
+			$data = $this->_sql[$part];
+		}
 		if (!isset($data) || empty($data)) {
 			return false;
 		}
@@ -341,22 +344,18 @@ abstract class yf_db_query_builder_driver {
 			$table = $this->get_table();
 			$this->_sql['from'] = $table ? array($this->_escape_table_name($table)) : false;
 		}
-		if (empty($this->_sql['from'])) {
+		$from = $this->_render_from();
+		if (empty($from)) {
 			return false;
 		}
-		$a = $this->_sql_to_array();
-		if ($a) {
-			$to_leave = array('from','where','where_or','limit');
-			foreach ($a as $k => $v) {
-				if (!in_array($k, $to_leave)) {
-					unset($a[$k]);
-				}
-			}
-			if ($a && isset($a['from'])) {
-				$a = array('delete' => 'DELETE') + $a;
-				$sql = implode(' ', $a);
-			}
-		}
+		$sql = array(
+			'DELETE',
+			$this->_render_from(),
+			$this->_render_where(),
+			$this->_render_limit(),
+		);
+		// Implode only non-empty array items
+		$sql = implode(' ', array_filter($sql, 'strlen'));
 		if ($as_sql) {
 			return $sql;
 		}
@@ -373,9 +372,6 @@ abstract class yf_db_query_builder_driver {
 			return false;
 		}
 		$a = array();
-		if (empty($this->_sql['from'])) {
-			return false;
-		}
 		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
 		if (preg_match(self::REGEX_AS, $table, $m)) {
 			$table = $m[1];
