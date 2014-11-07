@@ -1,7 +1,13 @@
 <?php
 
 /**
-* Query builder (Active Record)
+* Database query builder (Active Record)
+*
+* Examples:
+*	db()->from('users')->get()
+*	db()->from('users')->get_all()
+*	db()->select('id,name')->from('users')->get_2d()
+*	db()->select('id,name')->from('users as u')->inner_join('groups as g', 'u.group_id = g.id')->order_by('add_date')->group_by('id')->limit(10)
 */
 abstract class yf_db_query_builder_driver {
 
@@ -269,7 +275,7 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Alias
+	* Alias for get_one()
 	*/
 	public function one($use_cache = false) {
 		return $this->get_one($use_cache);
@@ -287,14 +293,14 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Alias
+	* Alias for get_all()
 	*/
 	public function all($use_cache = false) {
 		return $this->get_all($use_cache);
 	}
 
 	/**
-	* Render SQL and execute db->get_all()
+	* Get all records with generated SQL
 	*/
 	public function get_all($use_cache = false) {
 		$sql = $this->sql();
@@ -337,6 +343,7 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Delete records matching query params
 	*/
 	public function delete($as_sql = false) {
 		$sql = false;
@@ -366,6 +373,7 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Insert data into table from query params
 	*/
 	public function insert(array $data, $params = array()) {
 		if (empty($data)) {
@@ -392,6 +400,7 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Insert data from query params SQL into other table
 	*/
 	public function insert_into($table, array $fields = array(), $params = array()) {
 // TODO: unit tests
@@ -409,7 +418,7 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Insert array of values into table
+	* Return SQL string with INSERT/REPLACE statement for given dataset
 	*/
 	public function compile_insert($table, $data, $params = array()) {
 		if (!strlen($table) || !is_array($data)) {
@@ -490,6 +499,7 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Update current dataset, mathcing query params
 	*/
 	public function update(array $data, $params = array()) {
 // TODO: support for dataset params: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
@@ -524,7 +534,7 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Update table with given values
+	* Return SQL string with UPDATE statement for given dataset
 	*/
 	public function compile_update($table, array $data, $where, $params = array()) {
 		if (empty($table) || empty($data) || empty($where)) {
@@ -557,6 +567,7 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Update multiple database records at once
 	*/
 	public function update_batch($table, array $data, $index = null, $only_sql = false, $params = array()) {
 		if (!$index) {
@@ -594,6 +605,7 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Related to update_batch()
 	*/
 	public function _set_update_batch_data($key, $index = '') {
 		if (!is_array($key)) {
@@ -617,6 +629,7 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Related to update_batch()
 	*/
 	public function _get_update_batch_sql($table, $values, $index) {
 		$index = $this->_escape_key($index);
@@ -636,16 +649,14 @@ abstract class yf_db_query_builder_driver {
 		return 'UPDATE '.$this->_escape_table_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
 	}
 
-// TODO: optionally check available fields and tables with db_installer sql data
 	/**
 	* Examples:
-	*	db()
-	*	->select('id','name')
-	*	->from('users','u')
-	*	->inner_join('groups','g',array('u.group_id'=>'g.id'))
-	*	->order_by('add_date')
-	*	->group_by('id')
-	*	->limit(10)
+	*	select('id, name, age')
+	*	select('id', 'name', 'age')
+	*	select(array('id', 'name', 'age'))
+	*	select('u.id as user_id, u.name as user_name')
+	*	select('DISTINCT user_id')
+	*	select(array('COUNT(u.id)' => 'num'));
 	*/
 	public function select() {
 		$sql = '';
@@ -700,7 +711,13 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Examples: from('users'), from(array('users' => 'u', 'suppliers' => 's'))
+	* Examples:
+	*	from('users')
+	*	from('users as u')
+	*	from('users as u', 'products as p')
+	*	from(array('users' => 'u'))
+	*	from(array('users' => 'u', 'suppliers' => 's'))
+	*	from(array('users' => 'u'), array('suppliers' => 's'))
 	*/
 	public function from() {
 // TODO: auto-joins if comma detected
@@ -764,7 +781,12 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Example: whereid(1)
+	* Examples:
+	*	whereid(1)
+	*	whereid(1, 'id')
+	*	whereid(1, 'user_id')
+	*	whereid(array(1,2,3))
+	*	whereid(array(1,2,3), 'user_id')
 	*/
 	public function whereid($id, $pk = '') {
 		!$pk && $pk = $this->get_key_name();
@@ -786,14 +808,27 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Example: where(array('id','>','1'),'and',array('name','!=','peter'))
+	* Examples:
+	*	where('id', '1')
+	*	where('id > 5')
+	*	where(array('id' => '5'))
+	*	where(array('id','>','1'),'and',array('name','!=','peter'))
+	*	where(1)
+	*	where(1,2,3)
+	*	where('id', array(1,2,3))
+	*	where(array('id' => array(1,2,3)))
 	*/
 	public function where() {
 		return $this->_process_where(func_get_args(), __FUNCTION__);
 	}
 
 	/**
-	* Example: where_or(array('id','>','1'))
+	* Examples:
+	*	where_or('id', '1')
+	*	where_or('id > 5')
+	*	where_or(array('id' => '5'))
+	*
+	*	Note: for more examples see "where()"
 	*/
 	public function where_or() {
 		return $this->_process_where(func_get_args(), __FUNCTION__);
@@ -959,7 +994,13 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Examples: join('suppliers', array('u.supplier_id' => 's.id'))
+	* Examples:
+	*	join('suppliers', 'products.supplier_id = 'suppliers.id'))
+	*	join('suppliers as s', 's.supplier_id = 'u.id'))
+	*	join(array('suppliers' => 's'), 's.supplier_id = 'u.id'))
+	*	join(array('suppliers' => 's'), 's.supplier_id = 'u.id'), 'inner')
+	*	inner_join('suppliers as s', array('s.supplier_id' => 'u.id'))
+	*	left_join('suppliers as s', array('s.supplier_id' => 'u.id', 's.other_id' => 'u.other_id'))
 	*/
 	public function join($table, $on, $join_type = '') {
 		$join_types = array(
@@ -1022,7 +1063,9 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Examples: group_by('user_group'), group_by(array('supplier','manufacturer'))
+	* Examples:
+	*	group_by('user_group')
+	*	group_by(array('supplier','manufacturer'))
 	*/
 	public function group_by() {
 		$sql = '';
@@ -1061,7 +1104,10 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Examples: having(array('COUNT(*)','>','1'))
+	* Examples:
+	*	having('COUNT(*)','>','1')
+	*	having(array('COUNT(*)','>','1'))
+	*	having(array('COUNT(id)','>','1'), array('COUNT(gid)','>','2'))
 	*/
 	public function having() {
 		$sql = '';
@@ -1105,7 +1151,6 @@ abstract class yf_db_query_builder_driver {
 			}
 		}
 		if ($a) {
-// TODO: use smarter part from _process_where
 			$sql = implode(' AND ', $a);
 		}
 		if ($sql) {
@@ -1115,15 +1160,21 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Examples: order_by('user_group'), order_by(array('supplier' => 'DESC','manufacturer' => ASC))
+	* Examples:
+	*	order_by('user_group')
+	* 	order_by('field','asc')
+	*	order_by(array('supplier' => 'desc', 'manufacturer' => 'asc')), 
+	*	order_by(array('field1','asc'), array('field2','desc'), array('field3','asc'))
 	*/
 	public function order_by() {
-// TODO: support for order_by('field','asc')
-// TODO: support for order_by(array('field1','asc'),array('field2','desc'),array('field3','asc'))
 		$sql = '';
 		$items = func_get_args();
-		if (!count($items)) {
+		$count = count($items);
+		if (!$count) {
 			return $this;
+		}
+		if ($count === 2 && !empty($items[0]) && in_array(trim(strtoupper($items[1])), array('ASC','DESC'))) {
+			$items = array(array($items[0] => $items[1]));
 		}
 		$a = array();
 		foreach ((array)$items as $k => $v) {
@@ -1165,7 +1216,9 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Examples: limit(10), limit(10,100)
+	* Examples:
+	*	limit(10)
+	*	limit(10,100)
 	*/
 	public function limit($count = 10, $offset = null) {
 		if ($count) {
