@@ -720,7 +720,6 @@ abstract class yf_db_query_builder_driver {
 	*	from(array('users' => 'u'), array('suppliers' => 's'))
 	*/
 	public function from() {
-// TODO: auto-joins if comma detected
 		$sql = '';
 		$tables = func_get_args();
 		if (!count($tables)) {
@@ -1177,6 +1176,21 @@ abstract class yf_db_query_builder_driver {
 			$items = array(array($items[0] => $items[1]));
 		}
 		$a = array();
+		// Pre-split items by comma
+		foreach ((array)$items as $k => $v) {
+			if (is_string($v)) {
+				if (strpos($v, ',') !== false) {
+					$items[$k] = explode(', ', $v);
+				}
+			} elseif (is_array($v) && is_numeric($k)) {
+				foreach ((array)$v as $k2 => $v2) {
+					if (strpos($v2, ',') !== false) {
+						// Replace parent array with splitted values
+						$items[$k] = explode(', ', $v2);
+					}
+				}
+			}
+		}
 		foreach ((array)$items as $k => $v) {
 			if (is_string($v)) {
 				$v = trim($v);
@@ -1188,18 +1202,25 @@ abstract class yf_db_query_builder_driver {
 					$a[] = $this->_escape_expr($v).' ASC';
 				}
 			} elseif (is_array($v)) {
+				if (count($v) === 2 && !empty($v[0]) && in_array(trim(strtoupper($v[1])), array('ASC','DESC'))) {
+					$v = array($v[0] => $v[1]);
+				}
 				foreach ((array)$v as $k2 => $v2) {
 					if (!is_string($v2)) {
 						continue;
 					}
-					$direction = 'ASC';
-					$v2 = trim($v2);
-					if (is_string($k2) && in_array(strtoupper($v2), array('ASC','DESC'))) {
-						$direction = $v2;
-						$v2 = trim($k2);
-					}
-					if ($v2) {
-						$a[] = $this->_escape_expr($v2).' '.strtoupper($direction);
+					if (preg_match(self::REGEX_ASC_DESC, $v2, $m)) {
+						$a[] = $this->_escape_expr($m[1]).' '.strtoupper($m[2]);
+					} else {
+						$direction = 'ASC';
+						$v2 = trim($v2);
+						if (is_string($k2) && in_array(strtoupper($v2), array('ASC','DESC'))) {
+							$direction = $v2;
+							$v2 = trim($k2);
+						}
+						if ($v2) {
+							$a[] = $this->_escape_expr($v2).' '.strtoupper($direction);
+						}
 					}
 				}
 			} elseif (is_callable($items)) {
@@ -1207,7 +1228,7 @@ abstract class yf_db_query_builder_driver {
 			}
 		}
 		if ($a) {
-			$sql = implode(', ', $a);
+			$sql = implode(' , ', $a);
 		}
 		if ($sql) {
 			$this->_sql[__FUNCTION__][] = $sql;
@@ -1308,9 +1329,6 @@ abstract class yf_db_query_builder_driver {
 		}
 		if (!strlen($col)) {
 			return false;
-		}
-		if (strlen($table) && (!strlen($db) || $db == $this->db->DB_NAME)) {
-#			$table = $this->db->_real_name($table);
 		}
 		return (strlen($db) ? $this->_escape_key($db).'.' : '')
 			. (strlen($table) ? $this->_escape_key($table).'.' : '')
