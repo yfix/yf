@@ -380,7 +380,7 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 	};
 	$scope.Pagination = {
 		page      : 1,
-		page_size : 10,
+		page_size : 20,
 		pages     : 0,
 		from      : 0,
 		to        : 0,
@@ -576,6 +576,7 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 			}
 			// reset status filter
 			$scope.item_filter_status = undefined;
+			$scope.upload_list_show = false;
 		} else {
 			var title   = result.response.action.file + ':';
 			var content = result.response.action.status_message || 'отсутствует';
@@ -710,6 +711,7 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 	};
 	// init
 	_prepare__upload_list( $scope );
+	$scope.upload_list_show = true;
 }]);
 
 // config
