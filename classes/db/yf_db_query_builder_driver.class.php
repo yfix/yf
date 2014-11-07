@@ -687,8 +687,10 @@ abstract class yf_db_query_builder_driver {
 							// support for syntax: select('a.id as aid')
 							if (preg_match(self::REGEX_AS, $v2, $m)) {
 								$a[] = $this->_escape_expr($m[1]).' AS '.$this->_escape_key($m[2]);
-							} else {
+							} elseif (!is_numeric($k2)) {
 								$a[] = $this->_escape_expr($k2).' AS '.$this->_escape_key($v2);
+							} else {
+								$a[] = $this->_escape_expr($v2);
 							}
 						}
 					}
@@ -862,7 +864,7 @@ abstract class yf_db_query_builder_driver {
 			$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
 		} elseif ($count) {
 			$a = array();
-#			$where = $this->_split_by_comma($where);
+			$where = $this->_split_by_comma($where);
 			foreach ((array)$where as $k => $v) {
 				if (is_string($v)) {
 					$v = trim($v);
@@ -1152,13 +1154,14 @@ abstract class yf_db_query_builder_driver {
 					$tmp = array();
 					foreach ($v as $k2 => $v2) {
 						$v2 = trim($v2);
+						$_tmp = '';
 						if (preg_match(self::REGEX_INLINE_CONDS, $v2, $m)) {
-							$tmp[] = $this->_process_where_cond($m[1], $m[2], $m[3]);
+							$_tmp = $this->_process_where_cond($m[1], $m[2], $m[3]);
 						} else {
 							$_tmp = $this->_process_where_cond($k2, '=', $v2);
-							if ($_tmp) {
-								$tmp[] = $_tmp;
-							}
+						}
+						if ($_tmp) {
+							$tmp[] = $_tmp;
 						}
 					}
 					if ($tmp) {
@@ -1259,28 +1262,6 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Return array of params splitted by comma from strings or subarray strings
-	*/
-	public function _split_by_comma(array $items) {
-		// Pre-split items by comma
-		foreach ($items as $k => $v) {
-			if (is_string($v)) {
-				if (strpos($v, ',') !== false) {
-					$items[$k] = explode(',', $v);
-				}
-			} elseif (is_array($v) && is_numeric($k)) {
-				foreach ((array)$v as $k2 => $v2) {
-					if (strpos($v2, ',') !== false) {
-						// Replace parent array with splitted values
-						$items[$k] = explode(',', $v2);
-					}
-				}
-			}
-		}
-		return $items;
-	}
-
-	/**
 	* UNION sql wrapper
 	*/
 	public function union() {
@@ -1363,6 +1344,31 @@ abstract class yf_db_query_builder_driver {
 			$table = $m[1];
 		}
 		return $table;
+	}
+
+	/**
+	* Return array of params splitted by comma from strings or subarray strings
+	*/
+	public function _split_by_comma(array $items) {
+		// Pre-split items by comma
+		foreach ($items as $k => $v) {
+			if (is_string($v)) {
+				if (strpos($v, ',') !== false) {
+					$items[$k] = explode(',', $v);
+				}
+			} elseif (is_array($v) && is_numeric($k)) {
+				foreach ((array)$v as $k2 => $v2) {
+					if (!is_string($v2)) {
+						continue;
+					}
+					if (strpos($v2, ',') !== false) {
+						// Replace parent array with splitted values
+						$items[$k] = explode(',', $v2);
+					}
+				}
+			}
+		}
+		return $items;
 	}
 
 	/**
