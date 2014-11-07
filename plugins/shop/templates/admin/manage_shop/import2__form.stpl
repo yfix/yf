@@ -107,7 +107,7 @@
 			<span style="width: 10em; margin: 0 2em;" class="control-group"
 				ng-class="{ error: upload_list_filter__status === false }"
 			>
-				<input style="width: 10em; margin: 0;" type="text" ng-model="upload_list_filter">
+				<input style="width: 10em; margin: 0;" type="text" ng-model="upload_list_filter" ng-focus="upload_list_show = true">
 				<span class="btn" ng-click="upload_list_filter=''"><i class="fa fa-times"></i></span>
 					<span class="btn btn-small"
 						bs-tooltip
@@ -200,7 +200,7 @@ ul.select2-result-single {
 			Файл: {{item_data.file}} ({{item_data.rows}})
 			</span>
 			<span style="width: 10em; margin: 0 2em;">
-				<input style="width: 10em; margin: 0;" type="text" ng-model="item_filter" ng-focus="upload_list_show = true">
+				<input style="width: 10em; margin: 0;" type="text" ng-model="item_filter">
 				<span class="btn" ng-click="item_filter=''"><i class="fa fa-times"></i></span>
 				<span ng-show="item_filter">(<span ng-bind="Pagination.length"></span>)</span>
 			</span>
