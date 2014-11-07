@@ -170,7 +170,7 @@ function( $log ) {
 		template:
 			  '<style>'
 			+ '.ngwd-wait {'
-				+ 'position   : absolute;'
+				+ 'position   : fixed;'
 				+ 'display    : table;'
 				+ 'top        : 0;'
 				+ 'left       : 0;'
