@@ -330,29 +330,29 @@ ND
 
 		$this->assertEquals(
 			array('bear_id' => $bear_lawly->id, 'picnic_id' => $picnic_yellowstone->id),
-			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_lawly->id)->where('picnic_id = '.$picnic_yellowstone->id)->get()
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_lawly->id)->where('picnic_id', $picnic_yellowstone->id)->get()
 		);
 		$this->assertEquals(
 			array('bear_id' => $bear_lawly->id, 'picnic_id' => $picnic_grand_canyon->id),
-			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_lawly->id)->where('picnic_id = '.$picnic_grand_canyon->id)->get()
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_lawly->id)->where('picnic_id', $picnic_grand_canyon->id)->get()
 		);
 
 		$this->assertEquals(
 			array('bear_id' => $bear_cerms->id, 'picnic_id' => $picnic_yellowstone->id),
-			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_cerms->id)->where('picnic_id = '.$picnic_yellowstone->id)->get()
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_cerms->id)->where('picnic_id', $picnic_yellowstone->id)->get()
 		);
 		$this->assertEquals(
 			array('bear_id' => $bear_cerms->id, 'picnic_id' => $picnic_grand_canyon->id),
-			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_cerms->id)->where('picnic_id = '.$picnic_grand_canyon->id)->get()
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_cerms->id)->where('picnic_id', $picnic_grand_canyon->id)->get()
 		);
 
 		$this->assertEquals(
 			array('bear_id' => $bear_adobot->id, 'picnic_id' => $picnic_yellowstone->id),
-			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_adobot->id)->where('picnic_id = '.$picnic_yellowstone->id)->get()
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_adobot->id)->where('picnic_id', $picnic_yellowstone->id)->get()
 		);
 		$this->assertEquals(
 			array('bear_id' => $bear_adobot->id, 'picnic_id' => $picnic_grand_canyon->id),
-			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id = '.$bear_adobot->id)->where('picnic_id = '.$picnic_grand_canyon->id)->get()
+			self::db()->select('bear_id, picnic_id')->from('bears_picnics')->where('bear_id', $bear_adobot->id)->where('picnic_id', $picnic_grand_canyon->id)->get()
 		);
 	}
 
