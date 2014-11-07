@@ -29,7 +29,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	}
 	public function test_select_basic() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertEquals( '`id`, `name`', self::qb()->select('id','name')->_sql['select'][0] );
+		$this->assertEquals( '`id` , `name`', self::qb()->select('id','name')->_sql['select'][0] );
 		$this->assertFalse( self::qb()->select('id','name')->sql() );
 	}
 	public function test_select_check_wrong_input() {
@@ -47,28 +47,28 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	}
 	public function test_select_complex() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertEquals( '`u`.`id`, `s`.`id`, `t`.`pid`', self::qb()->select('u.id', 's.id', 't.pid')->_sql['select'][0] );
+		$this->assertEquals( '`u`.`id` , `s`.`id` , `t`.`pid`', self::qb()->select('u.id', 's.id', 't.pid')->_sql['select'][0] );
 		$this->assertEquals( '`u`.`id` AS `user_id`', self::qb()->select(array('u.id' => 'user_id'))->_sql['select'][0] );
-		$this->assertEquals( '`u`.`id` AS `user_id`, `a`.`id` AS `article_id`, `b`.`id` AS `blog_id`', self::qb()->select(array('u.id' => 'user_id', 'a.id' => 'article_id', 'b.id' => 'blog_id'))->_sql['select'][0] );
-		$this->assertEquals( '`u`.`id` AS `user_id`, `a`.`id` AS `article_id`, `b`.`id` AS `blog_id`', self::qb()->select(array('u.id' => 'user_id'), array('a.id' => 'article_id'), array('b.id' => 'blog_id'))->_sql['select'][0] );
+		$this->assertEquals( '`u`.`id` AS `user_id` , `a`.`id` AS `article_id` , `b`.`id` AS `blog_id`', self::qb()->select(array('u.id' => 'user_id', 'a.id' => 'article_id', 'b.id' => 'blog_id'))->_sql['select'][0] );
+		$this->assertEquals( '`u`.`id` AS `user_id` , `a`.`id` AS `article_id` , `b`.`id` AS `blog_id`', self::qb()->select(array('u.id' => 'user_id'), array('a.id' => 'article_id'), array('b.id' => 'blog_id'))->_sql['select'][0] );
 		$this->assertEquals( 'COUNT(*) AS `num`', self::qb()->select(array('COUNT(*)' => 'num'))->_sql['select'][0] );
 		$this->assertEquals( 'COUNT(id) AS `num`', self::qb()->select(array('COUNT(id)' => 'num'))->_sql['select'][0] );
 		$this->assertEquals( 'COUNT(u.id) AS `num`', self::qb()->select(array('COUNT(u.id)' => 'num'))->_sql['select'][0] );
 		$this->assertEquals( 'DISTINCT u.id', self::qb()->select('DISTINCT u.id')->_sql['select'][0] );
 		$this->assertEquals( 'DISTINCT u.id AS `num`', self::qb()->select(array('DISTINCT u.id' => 'num'))->_sql['select'][0] );
-		$this->assertEquals( 'DISTINCT u.id AS `num`, a.id AS `article_id`', self::qb()->select( function(){return 'DISTINCT u.id AS `num`';}, function(){return 'a.id AS `article_id`';} )->_sql['select'][0] );
+		$this->assertEquals( 'DISTINCT `u`.`id` AS `num` , `a`.`id` AS `article_id`', self::qb()->select( function(){return 'DISTINCT `u`.`id` AS `num`';}, function(){return '`a`.`id` AS `article_id`';} )->_sql['select'][0] );
 	}
 	public function test_select_string_as() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( '`s`.`id` AS `sid`', self::qb()->select('s.id as sid')->_sql['select'][0] );
-		$this->assertEquals( '`s`.`id` AS `sid`, `u`.`id` AS `uid`', self::qb()->select('s.id as sid', 'u.id as uid')->_sql['select'][0] );
+		$this->assertEquals( '`s`.`id` AS `sid` , `u`.`id` AS `uid`', self::qb()->select('s.id as sid', 'u.id as uid')->_sql['select'][0] );
 		$this->assertEquals( '`u`.`id` AS `uid`', self::qb()->select(array('u.id as uid'))->_sql['select'][0] );
 	}
 	public function test_select_multiple_calls() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'SELECT `s`.`id` , `u`.`id` FROM `'.DB_PREFIX.'user`', self::qb()->select('s.id')->select('u.id')->from('user')->sql() );
 		$this->assertEquals( 'SELECT `s`.`id` AS `sid` , `u`.`id` AS `uid` FROM `'.DB_PREFIX.'user`', self::qb()->select('s.id as sid')->select('u.id as uid')->from('user')->sql() );
-#		$this->assertEquals( 'SELECT `s`.`id` AS `sid` , `u`.`id` AS `uid` FROM `'.DB_PREFIX.'user`', self::qb()->select('s.id as sid, u.id as uid')->from('user')->sql() );
+		$this->assertEquals( 'SELECT `s`.`id` AS `sid` , `u`.`id` AS `uid` FROM `'.DB_PREFIX.'user`', self::qb()->select('s.id as sid, u.id as uid')->from('user')->sql() );
 	}
 	public function test_from() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
