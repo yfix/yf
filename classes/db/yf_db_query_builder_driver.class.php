@@ -665,21 +665,7 @@ abstract class yf_db_query_builder_driver {
 			$sql = '*';
 		} else {
 			$a = array();
-			// Pre-split items by comma
-			foreach ((array)$fields as $k => $v) {
-				if (is_string($v)) {
-					if (strpos($v, ',') !== false) {
-						$fields[$k] = explode(',', $v);
-					}
-				} elseif (is_array($v) && is_numeric($k)) {
-					foreach ((array)$v as $k2 => $v2) {
-						if (strpos($v2, ',') !== false) {
-							// Replace parent array with splitted values
-							$fields[$k] = explode(',', $v2);
-						}
-					}
-				}
-			}
+			$fields = $this->_split_by_comma($fields);
 			foreach ((array)$fields as $k => $v) {
 				if (is_string($v)) {
 					$v = trim($v);
@@ -741,6 +727,7 @@ abstract class yf_db_query_builder_driver {
 			return $this;
 		}
 		$a = array();
+		$tables = $this->_split_by_comma($tables);
 		foreach ((array)$tables as $k => $v) {
 			if (is_string($v)) {
 				$v = trim($v);
@@ -770,7 +757,7 @@ abstract class yf_db_query_builder_driver {
 			}
 		}
 		if ($a) {
-			$sql = implode(', ', $a);
+			$sql = implode(' , ', $a);
 		}
 		if ($sql) {
 			$this->_sql[__FUNCTION__][] = $sql;
@@ -849,6 +836,16 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Add raw WHERE part. Be careful with it, no escaping or wrapping here!
+	*/
+	public function where_raw() {
+		foreach ((array)func_get_args() as $arg) {
+			$this->_sql['where'][] = $arg;
+		}
+		return $this;
+	}
+
+	/**
 	* Prepare WHERE statement
 	*/
 	public function _process_where(array $where, $func_name = 'where') {
@@ -865,6 +862,7 @@ abstract class yf_db_query_builder_driver {
 			$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
 		} elseif ($count) {
 			$a = array();
+#			$where = $this->_split_by_comma($where);
 			foreach ((array)$where as $k => $v) {
 				if (is_string($v)) {
 					$v = trim($v);
@@ -1088,6 +1086,7 @@ abstract class yf_db_query_builder_driver {
 			return $this;
 		}
 		$a = array();
+		$items = $this->_split_by_comma($items);
 		foreach ((array)$items as $k => $v) {
 			if (is_string($v)) {
 				$v = trim($v);
@@ -1109,7 +1108,7 @@ abstract class yf_db_query_builder_driver {
 			}
 		}
 		if ($a) {
-			$sql = implode(', ', $a);
+			$sql = implode(' , ', $a);
 		}
 		if ($sql) {
 			$this->_sql[__FUNCTION__][] = $sql;
@@ -1130,6 +1129,7 @@ abstract class yf_db_query_builder_driver {
 			return $this;
 		}
 		$a = array();
+		$where = $this->_split_by_comma($where);
 		foreach ((array)$where as $k => $v) {
 			if (is_string($v)) {
 				$v = trim($v);
@@ -1151,9 +1151,14 @@ abstract class yf_db_query_builder_driver {
 				} else {
 					$tmp = array();
 					foreach ($v as $k2 => $v2) {
-						$_tmp = $this->_process_where_cond($k2, '=', $v2);
-						if ($_tmp) {
-							$tmp[] = $_tmp;
+						$v2 = trim($v2);
+						if (preg_match(self::REGEX_INLINE_CONDS, $v2, $m)) {
+							$tmp[] = $this->_process_where_cond($m[1], $m[2], $m[3]);
+						} else {
+							$_tmp = $this->_process_where_cond($k2, '=', $v2);
+							if ($_tmp) {
+								$tmp[] = $_tmp;
+							}
 						}
 					}
 					if ($tmp) {
@@ -1191,21 +1196,7 @@ abstract class yf_db_query_builder_driver {
 			$items = array(array($items[0] => $items[1]));
 		}
 		$a = array();
-		// Pre-split items by comma
-		foreach ((array)$items as $k => $v) {
-			if (is_string($v)) {
-				if (strpos($v, ',') !== false) {
-					$items[$k] = explode(',', $v);
-				}
-			} elseif (is_array($v) && is_numeric($k)) {
-				foreach ((array)$v as $k2 => $v2) {
-					if (strpos($v2, ',') !== false) {
-						// Replace parent array with splitted values
-						$items[$k] = explode(',', $v2);
-					}
-				}
-			}
-		}
+		$items = $this->_split_by_comma($items);
 		foreach ((array)$items as $k => $v) {
 			if (is_string($v)) {
 				$v = trim($v);
@@ -1265,6 +1256,28 @@ abstract class yf_db_query_builder_driver {
 			$this->_sql[__FUNCTION__] = $sql;
 		}
 		return $this;
+	}
+
+	/**
+	* Return array of params splitted by comma from strings or subarray strings
+	*/
+	public function _split_by_comma(array $items) {
+		// Pre-split items by comma
+		foreach ($items as $k => $v) {
+			if (is_string($v)) {
+				if (strpos($v, ',') !== false) {
+					$items[$k] = explode(',', $v);
+				}
+			} elseif (is_array($v) && is_numeric($k)) {
+				foreach ((array)$v as $k2 => $v2) {
+					if (strpos($v2, ',') !== false) {
+						// Replace parent array with splitted values
+						$items[$k] = explode(',', $v2);
+					}
+				}
+			}
+		}
+		return $items;
 	}
 
 	/**
