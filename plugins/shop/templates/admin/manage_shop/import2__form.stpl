@@ -205,10 +205,25 @@ ul.select2-result-single {
 				<span ng-show="item_filter">(<span ng-bind="Pagination.length"></span>)</span>
 			</span>
 			<span class="btn"
+				title="Автоопределение полей"
 				ng-click="autodetect_fields()"
-				ng-disabled="!item_data"
+				ng-show="item_data"
 			>
-				 Автоопределение полей
+				<i class="fa fa-cogs"></i>
+			</span>
+			<span class="btn"
+				title="Сохранить настройки импорта (настройки хранятся в течении сессии)"
+				ng-click="options_save()"
+				ng-show="item_data.options"
+			>
+				<i class="fa fa-download"></i>
+			</span>
+			<span class="btn"
+				title="Восстановить настройки импорта"
+				ng-click="options_restore()"
+				ng-show="options_last"
+			>
+				<i class="fa fa-upload"></i>
 			</span>
 			<div class="block_supplier pull-right">
 				<ui-select class="supplier"
@@ -282,7 +297,13 @@ ul.select2-result-single {
 			ng-repeat="item in item_data.items[ 0 ] track by $index"
 			class="item_head"
 		>
-		<span>№{{ $index }}</span>
+		<span class="btn btn-small"
+			ng-click="item_data.options.fields[ $index ] = 0"
+			ng-disabled="item_data.options.fields[ $index ] == 0"
+			ng-class="{ 'text-success': item_data.options.fields[ $index ] == 0 }"
+		>
+			№{{ $index }}
+		</span>
 		<span class="import_key btn btn-small"
 			ng-class = "{
 				'btn-success' : item_data.options.keys[ $index ] != true,
@@ -303,12 +324,6 @@ ul.select2-result-single {
 			>
 				<i class="fa fa-key"></i>
 			</span>
-		</span>
-		<span class="btn btn-small"
-			ng-click="item_data.options.fields[ $index ] = 0"
-			ng-show="item_data.options.fields[ $index ] != 0"
-		>
-			<i class="fa fa-times"></i>
 		</span>
 		<div class="import_field_key">
 			<span>

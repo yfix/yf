@@ -369,6 +369,24 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 	$scope.notifications      = Notifications;
 	$scope.notifications_list = false;
 	$scope._upload_list__count = 0;
+	$scope.options_last = undefined;
+	$scope.options_save = function() {
+		$scope.options_last = {};
+		angular.forEach( [ 'keys', 'fields', 'supplier_id', 'category_id', 'action' ], function( option ) {
+			if( angular.isDefined( $scope.item_data.options[ option ] ) ) {
+				this[ option ] = $scope.item_data.options[ option ];
+			}
+		}, $scope.options_last );
+	}
+	$scope.options_restore = function() {
+		angular.forEach( $scope.options_last, function( option, key ) {
+			this[ key ] = option;
+		}, $scope.item_data.options );
+		// select import_action, supplier, category
+		$scope.select_import_action();
+		$scope.select_supplier();
+		$scope.select_category();
+	}
 	$scope.autodetect_fields = function() {
 		var match = $scope.data._import_field_autodetect;
 		var match_fields = [];
@@ -422,6 +440,33 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 	};
 	$scope.update_import_action = function( $item ) {
 		$scope.item_data.options.action = $item.key;
+	};
+	$scope.select_supplier = function() {
+		var supplier_id = $scope.item_data.options.supplier_id;
+		angular.forEach( $scope.data._supplier_array, function( item, index ) {
+			if( item.id == supplier_id ) {
+				$scope.item_data.supplier_selected = item;
+				return( true );
+			}
+		});
+	};
+	$scope.select_category = function() {
+		var category_id = $scope.item_data.options.category_id;
+		angular.forEach( $scope.data._category_array, function( item, index ) {
+			if( item.id == category_id ) {
+				$scope.item_data.category_selected = item;
+				return( true );
+			}
+		});
+	};
+	$scope.select_import_action = function() {
+		var action = $scope.item_data.options.action;
+		angular.forEach( $scope.data._import_action_array, function( item, index ) {
+			if( item.key == action ) {
+				$scope.item_data.action_selected = item;
+				return( true );
+			}
+		});
 	};
 	$scope.Pagination = {
 		page      : 1,
@@ -584,30 +629,10 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 			$scope.item_data.test        = test;
 			$scope.item_data.test_status = test_status;
 			$scope.item_data.options.confirm = false;
-			// set import action
-			var action = $scope.item_data.options.action;
-			angular.forEach( $scope.data._import_action_array, function( item, index ) {
-				if( item.key == action ) {
-					$scope.item_data.action_selected = item;
-					return( true );
-				}
-			});
-			// set import supplier
-			var supplier_id = $scope.item_data.options.supplier_id;
-			angular.forEach( $scope.data._supplier_array, function( item, index ) {
-				if( item.id == supplier_id ) {
-					$scope.item_data.supplier_selected = item;
-					return( true );
-				}
-			});
-			// set import category
-			var category_id = $scope.item_data.options.category_id;
-			angular.forEach( $scope.data._category_array, function( item, index ) {
-				if( item.id == category_id ) {
-					$scope.item_data.category_selected = item;
-					return( true );
-				}
-			});
+			// select import_action, supplier, category
+			$scope.select_import_action();
+			$scope.select_supplier();
+			$scope.select_category();
 			// inject status
 			if( $scope.item_data.test.items ) {
 				angular.forEach( $scope.item_data.test.items, function( item, index ) {
