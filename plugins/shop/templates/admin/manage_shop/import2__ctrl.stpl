@@ -369,6 +369,51 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 	$scope.notifications      = Notifications;
 	$scope.notifications_list = false;
 	$scope._upload_list__count = 0;
+	$scope.autodetect_fields = function() {
+		var match = $scope.data._import_field_autodetect;
+		var match_fields = [];
+		angular.forEach( match, function( item, i ) {
+			this[ i ] = new RegExp( item, 'img' );
+		}, match_fields );
+		var match_detect = match_fields[ 'price' ];
+		var items = $scope.item_data.items;
+		var length = items.length;
+		var row = -1, i, j, item, field;
+		if( length < 1 ) { return( false ); }
+		for( i = 0; i < 20; i++ ) {
+			item = items[ i ];
+			for( j = 0; j < item.length; j++ ) {
+				field = item[ j ];
+				if( !field || typeof field !== 'string' ) { continue; }
+				if( field.match( match_detect ) ) {
+					row = i;
+					break;
+				}
+			}
+			if( row > -1 ) { break; }
+		}
+		if( row > -1 ) {
+			var keys   = $scope.item_data.options.keys;
+			var fields = $scope.item_data.options.fields;
+			// fields
+			angular.forEach( items[ row ], function( item, i ) {
+				if( !item || typeof item !== 'string' ) { return( false ); }
+				for( field in match_fields ) {
+					if( item.match( match_fields[ field ] ) ) {
+						fields[ i ] = field;
+						// key
+						angular.forEach( [ 'id', 'articul', 'supplier_id', 'supplier_name' ], function( _field, _i ) {
+							if( field == _field ) {
+								this[ _i ] = true;
+								return( true );
+							}
+						}, keys );
+						return( true );
+					}
+				}
+			});
+		}
+	};
 	$scope.update_supplier = function( $item ) {
 		$scope.item_data.options.supplier_id = $item.id;
 	};

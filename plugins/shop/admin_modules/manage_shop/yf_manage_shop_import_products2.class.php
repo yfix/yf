@@ -70,6 +70,20 @@ class yf_manage_shop_import_products2 {
 		'supplier_name'     => 'поставщик: название (supplier_name)',
 	);
 
+	public $import_field_autodetect = array(
+		'id'                => '(идентификатор)|(id)',
+		'name'              => '(название)|(наименование)|(name)',
+		'price'             => '(цена)|(price)',
+		'price_raw'         => '(себестоимость)|(price_raw)',
+		'articul'           => '(артикул)|(articul)',
+		'cat_id'            => '(категория:?\s*идентификатор)|(cat_id)',
+		'category_name'     => '(категория)|(категория:?\s*название)|(category_name)',
+		'manufacturer_id'   => '(производитель:?\s*идентификатор)|(manufacturer_id)',
+		'manufacturer_name' => '(производитель)|(производитель:?\s*название)|(manufacturer_name)',
+		'supplier_id'       => '(поставщик:?\s*идентификатор)|(supplier_id)',
+		'supplier_name'     => '(поставщик)|(поставщик:?\s*название)|(supplier_name)',
+	);
+
 	public $import_action = array(
 		'update' => 'обновление',
 		'insert' => 'вставка',
@@ -1264,10 +1278,11 @@ class yf_manage_shop_import_products2 {
 
 	function _data_ng( $json = false ) {
 		$cache = &$this->cache;
-		$_upload_list   = $this->upload_list;
-		$_upload_status = $this->upload_status;
-		$_import_field  = $this->import_field;
-		$_import_action = $this->import_action;
+		$_upload_list             = $this->upload_list;
+		$_upload_status           = $this->upload_status;
+		$_import_field            = $this->import_field;
+		$_import_field_autodetect = $this->import_field_autodetect;
+		$_import_action           = $this->import_action;
 		$_import_action_array = array();
 		foreach( $_import_action as $key => $value ) {
 			$_import_action_array[] = array(
@@ -1304,15 +1319,16 @@ class yf_manage_shop_import_products2 {
 			);
 		}
 		$result = array(
-			'_upload_status'       => $_upload_status,
-			'_upload_list'         => $_upload_list,
-			'_import_field'        => $_import_field,
-			'_import_action'       => $_import_action,
-			'_import_action_array' => $_import_action_array,
-			'_supplier'            => $_supplier,
-			'_supplier_array'      => $_supplier_array,
-			'_category'            => $_category,
-			'_category_array'      => $_category_array,
+			'_upload_status'           => $_upload_status,
+			'_upload_list'             => $_upload_list,
+			'_import_field'            => $_import_field,
+			'_import_field_autodetect' => $_import_field_autodetect,
+			'_import_action'           => $_import_action,
+			'_import_action_array'     => $_import_action_array,
+			'_supplier'                => $_supplier,
+			'_supplier_array'          => $_supplier_array,
+			'_category'                => $_category,
+			'_category_array'          => $_category_array,
 		);
 		if( $json ) {
 			$result = json_encode( $result, JSON_NUMERIC_CHECK );

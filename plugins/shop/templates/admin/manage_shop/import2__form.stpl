@@ -200,9 +200,15 @@ ul.select2-result-single {
 			Файл: {{item_data.file}} ({{item_data.rows}})
 			</span>
 			<span style="width: 10em; margin: 0 2em;">
-				<input style="width: 10em; margin: 0;" type="text" ng-model="item_filter">
+				<input style="width: 10em; margin: 0;" type="text" ng-model="item_filter" ng-focus="upload_list_show = true">
 				<span class="btn" ng-click="item_filter=''"><i class="fa fa-times"></i></span>
 				<span ng-show="item_filter">(<span ng-bind="Pagination.length"></span>)</span>
+			</span>
+			<span class="btn"
+				ng-click="autodetect_fields()"
+				ng-disabled="!item_data"
+			>
+				 Автоопределение полей
 			</span>
 			<div class="block_supplier pull-right">
 				<ui-select class="supplier"
@@ -277,6 +283,33 @@ ul.select2-result-single {
 			class="item_head"
 		>
 		<span>№{{ $index }}</span>
+		<span class="import_key btn btn-small"
+			ng-class = "{
+				'btn-success' : item_data.options.keys[ $index ] != true,
+				'btn-danger'  : item_data.options.keys[ $index ] == true,
+			}"
+			ng-show  = "item_data.action_selected.key == 'update' && item_data.options.fields[ $index ] != 0"
+			ng-click = "item_data.options.keys[ $index ] = !item_data.options.keys[ $index ]"
+		>
+			<span
+				title   = "обновляемое поля (ключ-поле)"
+				ng-show = "item_data.options.keys[ $index ] != true"
+			>
+				<i class="fa fa-check"></i>
+			</span>
+			<span
+				title   = "ключ-поле (обновляемое поля)"
+				ng-show = "item_data.options.keys[ $index ] == true"
+			>
+				<i class="fa fa-key"></i>
+			</span>
+		</span>
+		<span class="btn btn-small"
+			ng-click="item_data.options.fields[ $index ] = 0"
+			ng-show="item_data.options.fields[ $index ] != 0"
+		>
+			<i class="fa fa-times"></i>
+		</span>
 		<div class="import_field_key">
 			<span>
 				<select class="import_field"
@@ -286,27 +319,6 @@ ul.select2-result-single {
 					ui-select2
 				>
 				</select>
-			</span>
-			<span class="import_key btn btn-small"
-				ng-class = "{
-					'btn-success' : item_data.options.keys[ $index ] != true,
-					'btn-danger'  : item_data.options.keys[ $index ] == true,
-				}"
-				ng-show  = "item_data.action_selected.key == 'update' && item_data.options.fields[ $index ] != 0"
-				ng-click = "item_data.options.keys[ $index ] = !item_data.options.keys[ $index ]"
-			>
-				<span
-					title   = "обновляемое поля (ключ-поле)"
-					ng-show = "item_data.options.keys[ $index ] != true"
-				>
-					<i class="fa fa-check"></i>
-				</span>
-				<span
-					title   = "ключ-поле (обновляемое поля)"
-					ng-show = "item_data.options.keys[ $index ] == true"
-				>
-					<i class="fa fa-key"></i>
-				</span>
 			</span>
 		</div>
 		</th>
