@@ -62,12 +62,35 @@ class class_model_basic_test extends db_real_abstract {
 	}
 
 	/***/
+	public function test_where() {
+		$model_base = _class('model');
+		eval(
+<<<'ND'
+			class test_where_model extends yf_model {
+			}
+ND
+		);
+		self::utils()->create_table(__FUNCTION__, function($t) {
+			$t->increments('id')
+			->string('name')
+			->string('gender')
+			->int('popularity');
+		});
+		$m = __FUNCTION__.'_model';
+		$m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
+		$m::create(array('name' => 'Michael', 'gender' => 'm', 'popularity' => 12));
+
+#		$m::where_popular('>','10');
+#		$m::where_gender('w');
+#		$m::where_name($wildcard);
+	}
+
+	/***/
 	public function test_scopes() {
 		$model_base = _class('model');
 		eval(
 <<<'ND'
 			class test_scopes_model extends yf_model {
-				protected $_table = 'test_scopes';
 				public function scope_popular($query) {
 					return $query->where('popular','>','10');
 #					return $query->where_popular('>','10');
@@ -83,20 +106,21 @@ class class_model_basic_test extends db_real_abstract {
 			}
 ND
 		);
-		self::utils()->create_table('test_scopes', function($t) {
+		self::utils()->create_table(__FUNCTION__, function($t) {
 			$t->increments('id')
 			->string('name')
 			->string('gender')
 			->int('popularity');
 		});
+		$m = __FUNCTION__.'_model';
 #		test_scopes::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
-		test_scopes_model::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
-		test_scopes_model::create(array('name' => 'Michael', 'gender' => 'm', 'popularity' => 12));
-		test_scopes_model::create(array('name' => 'Marilyn', 'gender' => 'w', 'popularity' => 11));
-		test_scopes_model::create(array('name' => 'Brigitte', 'gender' => 'w', 'popularity' => 11));
+		$m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
+		$m::create(array('name' => 'Michael', 'gender' => 'm', 'popularity' => 12));
+		$m::create(array('name' => 'Marilyn', 'gender' => 'w', 'popularity' => 11));
+		$m::create(array('name' => 'Brigitte', 'gender' => 'w', 'popularity' => 11));
 
-#		test_scopes_model::popular()->order_by('name')->get();
-#		test_scopes_model::popular()->women()->order_by('name', 'desc')->get();
-#		test_scopes_model::popular()->women()->name('mary*')->select('name')->one();
+#		$m::popular()->order_by('name')->get();
+#		$m::popular()->women()->order_by('name', 'desc')->get();
+#		$m::popular()->women()->name('mary*')->select('name')->one();
 	}
 }
