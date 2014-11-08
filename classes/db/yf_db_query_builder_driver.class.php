@@ -225,11 +225,72 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Pessimistic locking
+	*/
+	public function shared_lock() {
+// TODO
+	}
+
+	/**
+	* Lock records for update on select statement
+	*/
+	public function lock_for_update() {
+// TODO
+	}
+
+	/**
+	* Split big resultset into parts, by executing callback
+	*/
+	public function chunk($callback) {
+// TODO
+	}
+
+	/**
 	* Counting number of records inside requested recordset
 	*/
 	public function count() {
 		$this->_sql['select'] = 'COUNT(*)';
 		return $this->get_one();
+	}
+
+	/**
+	* SQL aggregate shortcut
+	*/
+	public function max() {
+// TODO
+	}
+
+	/**
+	* SQL aggregate shortcut
+	*/
+	public function min() {
+// TODO
+	}
+
+	/**
+	* SQL aggregate shortcut
+	*/
+	public function avg() {
+// TODO
+	}
+
+	/**
+	* SQL aggregate shortcut
+	*/
+	public function sum() {
+// TODO
+	}
+
+	/**
+	*/
+	public function increment($field, $step = 1) {
+// TODO
+	}
+
+	/**
+	*/
+	public function decrement($field, $step = 1) {
+// TODO
 	}
 
 	/**
@@ -785,33 +846,6 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	* Examples:
-	*	whereid(1)
-	*	whereid(1, 'id')
-	*	whereid(1, 'user_id')
-	*	whereid(array(1,2,3))
-	*	whereid(array(1,2,3), 'user_id')
-	*/
-	public function whereid($id, $pk = '') {
-		!$pk && $pk = $this->get_key_name();
-		$sql = '';
-		if (is_array($id) && count($id) > 1) {
-			$ids = $this->_ids_sql_from_array($id);
-			if ($ids) {
-				$sql = $this->_escape_col_name($pk).' IN('.$ids.')';
-			}
-		} elseif (is_callable($id)) {
-			$sql = $id();
-		} else {
-			$sql = $this->_process_where_cond($pk, '=', intval($id));
-		}
-		if ($sql) {
-			$this->_sql['where'][] = $sql;
-		}
-		return $this;
-	}
-
-	/**
-	* Examples:
 	*	where('id', '1')
 	*	where('id > 5')
 	*	where(array('id' => '5'))
@@ -838,6 +872,33 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Examples:
+	*	whereid(1)
+	*	whereid(1, 'id')
+	*	whereid(1, 'user_id')
+	*	whereid(array(1,2,3))
+	*	whereid(array(1,2,3), 'user_id')
+	*/
+	public function whereid($id, $pk = '') {
+		!$pk && $pk = $this->get_key_name();
+		$sql = '';
+		if (is_array($id) && count($id) > 1) {
+			$ids = $this->_ids_sql_from_array($id);
+			if ($ids) {
+				$sql = $this->_escape_col_name($pk).' IN('.$ids.')';
+			}
+		} elseif (is_callable($id)) {
+			$sql = $id();
+		} else {
+			$sql = $this->_process_where_cond($pk, '=', intval($id));
+		}
+		if ($sql) {
+			$this->_sql['where'][] = $sql;
+		}
+		return $this;
+	}
+
+	/**
 	* Add raw WHERE part. Be careful with it, no escaping or wrapping here!
 	*/
 	public function where_raw() {
@@ -845,6 +906,13 @@ abstract class yf_db_query_builder_driver {
 			$this->_sql['where'][] = $arg;
 		}
 		return $this;
+	}
+
+	/**
+	* Shortcut for IS NULL checking for field(s)
+	*/
+	public function where_null() {
+// TODO
 	}
 
 	/**
