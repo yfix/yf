@@ -62,21 +62,30 @@ class class_model_basic_test extends db_real_abstract {
 	}
 
 	/***/
+	public function test_short_name_autoload() {
+		$model_base = _class('model');
+		$m = __FUNCTION__.'_model';
+		eval('class '.$m.' extends yf_model {}');
+		self::utils()->create_table(__FUNCTION__, function($t) {
+			$t->increments('id');
+		});
+		$m::create(array('id' => 1));
+		$m::find(1);
+		$m_short = __FUNCTION__;
+#		$m_short::find(1);
+	}
+
+	/***/
 	public function test_where() {
 		$model_base = _class('model');
-		eval(
-<<<'ND'
-			class test_where_model extends yf_model {
-			}
-ND
-		);
+		$m = __FUNCTION__.'_model';
+		eval('class '.$m.' extends yf_model {}');
 		self::utils()->create_table(__FUNCTION__, function($t) {
 			$t->increments('id')
 			->string('name')
 			->string('gender')
 			->int('popularity');
 		});
-		$m = __FUNCTION__.'_model';
 		$m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
 		$m::create(array('name' => 'Michael', 'gender' => 'm', 'popularity' => 12));
 
@@ -122,5 +131,47 @@ ND
 #		$m::popular()->order_by('name')->get();
 #		$m::popular()->women()->order_by('name', 'desc')->get();
 #		$m::popular()->women()->name('mary*')->select('name')->one();
+	}
+
+	/***/
+	public function test_accessors_and_mutators() {
+		$model_base = _class('model');
+		eval(
+<<<'ND'
+			class test_scopes_model extends yf_model {
+				public function get_attr_name($value) {
+					return ucfirst($value);
+				}
+				public function set_attr_name($value) {
+					return strtolower($value);
+				}
+				public function get_attr_popularity($value) {
+					return 'Popularity: '.$value;
+				}
+				public function set_attr_popularity($value) {
+					return intval($value);
+				}
+			}
+ND
+		);
+		self::utils()->create_table(__FUNCTION__, function($t) {
+			$t->increments('id')
+			->string('name')
+			->string('gender')
+			->int('popularity');
+		});
+		$m = __FUNCTION__.'_model';
+		$m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
+
+#		$m1 = $m::find(1);
+#		$m1->popularity;
+
+#		$m1->popularity = '15';
+#		$m1->save();
+
+#		$m1->set('popularity', '15')->save();
+
+#		$m1->name;
+#		$m1->set('name', '15')->save();
 	}
 }
