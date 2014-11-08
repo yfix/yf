@@ -138,7 +138,7 @@ ND
 		$model_base = _class('model');
 		eval(
 <<<'ND'
-			class test_scopes_model extends yf_model {
+			class test_accessors_and_mutators_model extends yf_model {
 				public function get_attr_name($value) {
 					return ucfirst($value);
 				}
