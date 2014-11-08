@@ -60,4 +60,43 @@ class class_model_basic_test extends db_real_abstract {
 		$this->assertTrue( is_a($film_model2, 'film_model') );
 		$this->assertTrue( is_a($film_model2, 'yf_model') );
 	}
+
+	/***/
+	public function test_scopes() {
+		$model_base = _class('model');
+		eval(
+<<<'ND'
+			class test_scopes_model extends yf_model {
+				protected $_table = 'test_scopes';
+				public function scope_popular($query) {
+					return $query->where('popular','>','10');
+#					return $query->where_popular('>','10');
+				}
+				public function scope_women($query) {
+					return $query->where('gender','w');
+#					return $query->where_gender('w');
+				}
+				public function scope_name($query, $wildcard) {
+					return $query->where('name',$wildcard);
+#					return $query->where_name($wildcard);
+				}
+			}
+ND
+		);
+		self::utils()->create_table('test_scopes', function($t) {
+			$t->increments('id')
+			->string('name')
+			->string('gender')
+			->int('popularity');
+		});
+#		test_scopes::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
+		test_scopes_model::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
+		test_scopes_model::create(array('name' => 'Michael', 'gender' => 'm', 'popularity' => 12));
+		test_scopes_model::create(array('name' => 'Marilyn', 'gender' => 'w', 'popularity' => 11));
+		test_scopes_model::create(array('name' => 'Brigitte', 'gender' => 'w', 'popularity' => 11));
+
+#		test_scopes_model::popular()->order_by('name')->get();
+#		test_scopes_model::popular()->women()->order_by('name', 'desc')->get();
+#		test_scopes_model::popular()->women()->name('mary*')->select('name')->one();
+	}
 }
