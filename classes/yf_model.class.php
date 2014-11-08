@@ -11,12 +11,8 @@ class yf_model {
 	protected $_db = null;
 	protected $_table = null;
 	protected $_fillable = array();
-	protected $_guarded = array();
 	protected $_primary_key = null;
 	protected $_primary_id = null;
-	protected $_dirty_attrs = null;
-	protected $_is_trashed = null;
-	protected $_relations = null;
 	const CREATED_AT = 'created_at';
 	const UPDATED_AT = 'updated_at';
 
