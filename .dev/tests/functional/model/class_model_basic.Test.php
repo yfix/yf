@@ -174,4 +174,110 @@ ND
 #		$m1->name;
 #		$m1->set('name', '15')->save();
 	}
+
+	/***/
+	public function test_events() {
+		$model_base = _class('model');
+		$m = __FUNCTION__.'_model';
+		eval('class '.$m.' extends yf_model {}');
+		self::utils()->create_table(__FUNCTION__, function($t) {
+			$t->increments('id')
+			->string('name')
+			->string('gender')
+			->int('popularity');
+		});
+		$m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
+
+# $m->creating(function($model)) { if(!$model->is_valid()) return false; };
+# $m->created(function($model)) { };
+# $m->updating(function($model)) { };
+# $m->updated(function($model)) { };
+# $m->saving(function($model)) { };
+# $m->saved(function($model)) { };
+# $m->deleting(function($model)) { };
+# $m->deleted(function($model)) { };
+	}
+
+	/***/
+	public function test_validation() {
+// TODO
+/*
+			->validate(array(
+				'__before__'	=> 'trim',
+				'login'			=> 'required|alpha_numeric|is_unique_without[admin.login.'.$id.']',
+				'email'			=> 'required|valid_email|is_unique_without[admin.email.'.$id.']',
+				'first_name'	=> 'required',
+				'last_name'		=> 'required',
+				'password'		=> 'password_update',
+				'group'			=> 'required|exists[admin_groups.id]',
+			))
+*/
+	}
+
+	/***/
+	public function test_form() {
+// TODO
+/*
+		return model('admin')->form($id, $a, array('autocomplete' => 'off'))
+			->validate(array(
+				'__before__'	=> 'trim',
+				'login'			=> 'required|alpha_numeric|is_unique_without[admin.login.'.$id.']',
+				'email'			=> 'required|valid_email|is_unique_without[admin.email.'.$id.']',
+				'first_name'	=> 'required',
+				'last_name'		=> 'required',
+				'password'		=> 'password_update',
+				'group'			=> 'required|exists[admin_groups.id]',
+			))
+			->db_update_if_ok('admin', array('login','email','first_name','last_name','go_after_login','password','group'), 'id='.$id)
+			->on_after_update(function() {
+				common()->admin_wall_add(array(t('admin account edited: %login', array('%login' => $_POST['login'])), $id));
+			})
+			->login()
+			->email()
+			->password()
+			->text('first_name')
+			->text('last_name')
+			->text('go_after_login', 'Url after login')
+			->select_box('group', main()->get_data('admin_groups'), array('selected' => $a['group']))
+			->active_box()
+			->info_date('add_date','Added')
+			->row_start()
+				->save_and_back()
+				->link('log auth', url_admin('/log_admin_auth/show_for_admin/'.$a['id']))
+				->link('login as', url_admin('/@object/login_as/'.$a['id']), array('display_func' => $func))
+			->row_end()
+		;
+*/
+	}
+
+	/***/
+	public function test_table() {
+// TODO
+/*
+		$admin_id = main()->ADMIN_ID;
+		$func = function($row) use ($admin_id) {
+			return !($row['id'] == $admin_id);
+		};
+		return model('admin')->table(array(
+				'filter_params' => array(
+					'login'	=> 'like',
+					'email'	=> 'like',
+				),
+			))
+			->text('login')
+			->text('email')
+			->link('group', url_admin('/admin_groups/edit/%d'), main()->get_data('admin_groups'))
+			->text('first_name')
+			->text('last_name')
+			->text('go_after_login')
+			->date('add_date')
+			->btn_active(array('display_func' => $func))
+			->btn_edit()
+			->btn_delete(array('display_func' => $func))
+			->btn('log_auth', url_admin('/log_admin_auth/show_for_admin/%d'))
+			->btn('login', url_admin('/@object/login_as/%d'), array('display_func' => $func))
+			->footer_link('Failed auth log', url_admin('/log_admin_auth_fails'))
+			->footer_add();
+*/
+	}
 }
