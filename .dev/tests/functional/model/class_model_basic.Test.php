@@ -205,6 +205,58 @@ ND
 	}
 
 	/***/
+	public function test_has_many_through() {
+		$model_base = _class('model');
+		$m = __FUNCTION__.'_model';
+		$t_countries = __FUNCTION__.'_countries';
+		$t_users = __FUNCTION__.'_users';
+		$t_posts = __FUNCTION__.'_posts';
+		self::utils()->create_table($t_countries, function($t) {
+			$t->increments('id')
+			->string('name');
+		});
+		self::utils()->create_table($t_users, function($t) {
+			$t->increments('id')
+			->int('country_id')
+			->string('name');
+		});
+		self::utils()->create_table($t_posts, function($t) {
+			$t->increments('id')
+			->int('user_id')
+			->string('title');
+		});
+		eval(
+<<<'ND'
+			class test_has_many_through_model extends yf_model {
+				protected $_table = 'test_has_many_through_countries';
+				public function posts($value) {
+					return $this->has_many_through('test_has_many_through_post', 'test_has_many_through_user');
+				}
+			}
+			class test_has_many_through_post_model extends yf_model {
+				protected $_table = 'test_has_many_through_posts';
+			}
+			class test_has_many_through_user_model extends yf_model {
+				protected $_table = 'test_has_many_through_users';
+			}
+ND
+		);
+		$m::create(array('name' => 'Monaco'));
+	}
+
+	/***/
+	public function test_morph_to_one() {
+	}
+
+	/***/
+	public function test_morph_many() {
+	}
+
+	/***/
+	public function test_morph_to_many() {
+	}
+
+	/***/
 	public function test_validation() {
 // TODO
 /*
