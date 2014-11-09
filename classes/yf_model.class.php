@@ -42,6 +42,29 @@ class yf_model {
 	* Catch missing method call
 	*/
 	public function __call($name, $args) {
+		$where_prefix = 'where_';
+		$scope_prefix = 'scope_';
+		$get_prefix = 'get_attr_';
+		$set_prefix = 'set_attr_';
+		if (strpos($name, $where_prefix) !== false) {
+			$name = substr($name, strlen($where_prefix));
+			array_unshift($args, 't0.'.$name);
+			return call_user_func_array(array($this, 'where'), $args);
+		} elseif (strpos($name, $scope_prefix) !== false) {
+			if (method_exists($this, $name)) {
+				return call_user_func_array(array($this, $name), $args);
+			}
+		} elseif (strpos($name, $get_prefix) !== false) {
+			$accessor = $get_prefix. $name;
+			if (method_exists($this, $accessor)) {
+				return $this->$accessor($args);
+			}
+		} elseif (strpos($name, $set_prefix) !== false) {
+			$mutator = $set_prefix. $name;
+			if (method_exists($this, $mutator)) {
+				return $this->$mutator($args);
+			}
+		}
 		return main()->extend_call($this, $name, $args);
 	}
 
@@ -49,7 +72,19 @@ class yf_model {
 	* Catch static calls
 	*/
 	public static function __callStatic($method, $args) {
-		return call_user_func_array(array(new static, $method), $args);
+		$where_prefix = 'where_';
+		$scope_prefix = 'scope_';
+		$obj = new static;
+		if (strpos($name, $where_prefix) !== false) {
+			$name = substr($name, strlen($where_prefix));
+			array_unshift($args, 't0.'.$name);
+			return call_user_func_array(array($obj, 'where'), $args);
+		} elseif (strpos($name, $scope_prefix) !== false) {
+			if (method_exists($obj, $name)) {
+				return call_user_func_array(array($obj, $name), $args);
+			}
+		}
+		return call_user_func_array(array($obj, $method), $args);
 	}
 
 	/**
@@ -68,6 +103,26 @@ class yf_model {
 	*/
 	function __toString() {
 		return json_encode($this->get_data());
+	}
+
+	/**
+	* Set model attribute, example: (new bear)->set('name', 'Joe')
+	*/
+	public function set($name, $value = null) {
+		if (is_array($name)) {
+			$func = __FUNCTION__;
+			foreach ($name as $k => $v) {
+				$this->$func($k, $v);
+			}
+		} else {
+			$mutator = 'set_attr_'.$name;
+			if (method_exists($this, $mutator)) {
+				$this->$mutator($value);
+			} else {
+				$this->$name = $value;
+			}
+		}
+		return $this;
 	}
 
 	/**
