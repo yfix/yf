@@ -86,12 +86,16 @@ class class_model_basic_test extends db_real_abstract {
 			->string('gender')
 			->int('popularity');
 		});
-		$m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
-		$m::create(array('name' => 'Michael', 'gender' => 'm', 'popularity' => 12));
+		$m1 = $m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
+		$m2 = $m::create(array('name' => 'Michael', 'gender' => 'm', 'popularity' => 12));
 
-#		$m::where_popular('>','10');
-#		$m::where_gender('w');
-#		$m::where_name($wildcard);
+# 		$m::where_popular('>','10')->count();
+#		$m::where_gender('w')->get();
+#		$m::where_name($wildcard)->get();
+
+#		$m1->where_popular('>','10')->count();
+#		$m1->where_gender('w')->get();
+#		$m1->where_name($wildcard)->get();
 	}
 
 	/***/
@@ -140,7 +144,7 @@ ND
 <<<'ND'
 			class test_accessors_and_mutators_model extends yf_model {
 				public function get_attr_name($value) {
-					return ucfirst($value);
+					return strtoupper($value);
 				}
 				public function set_attr_name($value) {
 					return strtolower($value);
@@ -163,16 +167,18 @@ ND
 		$m = __FUNCTION__.'_model';
 		$m::create(array('name' => 'Susan', 'gender' => 'w', 'popularity' => 8));
 
-#		$m1 = $m::find(1);
-#		$m1->popularity;
+// TODO: complete functionality for accesors and mutators
 
-#		$m1->popularity = '15';
-#		$m1->save();
+		$m1 = $m::find(1);
+		$m1->popularity;
 
-#		$m1->set('popularity', '15')->save();
+		$m1->popularity = '15';
+		$m1->save();
 
-#		$m1->name;
-#		$m1->set('name', '15')->save();
+		$m1->set('popularity', '15')->save();
+
+		$m1->name;
+		$m1->set('name', '15')->save();
 	}
 
 	/***/
