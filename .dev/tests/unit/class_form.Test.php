@@ -301,21 +301,21 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<input name="test" type="week" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->week('test')) );
 	}
 	public function test_active_box() {
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Active</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Disabled</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Active</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->active_box('', array('force_id' => 'radio_box_1')))) );
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Active</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Disabled</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Active</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->active_box('test', array('force_id' => 'radio_box_1')))) );
 	}
 	public function test_allow_deny_box() {
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="DENY" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Deny</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="ALLOW" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Allow</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="DENY" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Deny</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="ALLOW" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Allow</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->allow_deny_box('', array('force_id' => 'radio_box_1')))) );
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="DENY" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Deny</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="ALLOW" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Allow</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="DENY" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Deny</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="ALLOW" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Allow</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->allow_deny_box('test', array('force_id' => 'radio_box_1')))) );
 	}
 	public function test_yes_no_box() {
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> No</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Yes</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban-circle"></i> No</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box('', array('force_id' => 'radio_box_1')))) );
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> No</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok"></i> Yes</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban-circle"></i> No</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box('test', array('force_id' => 'radio_box_1')))) );
 	}
 	public function test_submit() {
@@ -393,12 +393,12 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			, trim(self::form_no_chain($r)->tbl_link_view('test')) );
 	}
 	public function test_tbl_link_active() {
-#		$this->assertEquals('<a href="active_link" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</button></a>'
+#		$this->assertEquals('<a href="active_link" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Disabled</button></a>'
 #			, trim(self::form_no_chain($r)->tbl_link_active()) );
-#		$this->assertEquals('<a href="active_link" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</button></a>'
+#		$this->assertEquals('<a href="active_link" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Disabled</button></a>'
 #			, trim(self::form_no_chain($r)->tbl_link_active('test')) );
 		$r['active_link'] = './?object=someobject&action=someaction';
-		$this->assertEquals('<a href="./?object=someobject&action=someaction" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle"></i> Disabled</button></a>'
+		$this->assertEquals('<a href="./?object=someobject&action=someaction" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Disabled</button></a>'
 			, trim(self::form_no_chain($r)->tbl_link_active('test')) );
 	}
 	public function test_form_clone() {
