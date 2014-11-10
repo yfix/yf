@@ -29,12 +29,12 @@ class yf_manage_shop_clear_products {
 		->text('replace')
 		->text('description')
 		->func('cat_id', function($value, $extra, $row_info) {
-			$category = conf('all_cats::'.$value); 
+			$category = conf('all_cats::'.$value);
 			$category = !empty($category) ? $category['name'] : t('In all categories');
 			return '<span class="badge badge-warning">'.$category.'</span>';
 		}, array('desc' => 'Category'))
 		->func('id', function($value, $extra, $row_info) {
-			$where = '';	
+			$where = '';
 			if (!empty($row_info['cat_id'])) {
 				$cat_ids = _class('cats')->_get_recursive_cat_ids($row_info['cat_id']);
 				$where = ' AND (cat_id IN ('.implode(',', $cat_ids).') OR id IN (SELECT product_id FROM '.db('shop_product_to_category').' WHERE category_id IN ('.implode(',', $cat_ids).')))';
@@ -45,16 +45,16 @@ class yf_manage_shop_clear_products {
 		}, array('desc' => 'Products for changing'))
 		->btn_func('Run', function($row_info, $params, $instance_params, $_this) {
 			if ($row_info['process']) {
-				return '<button class="btn btn-mini btn-xs run_item btn-warning" data-id="'.$row_info['id'].'"><i class="icon-refresh icon-spin"></i> <span>'.t('Process').'...</span></button>';
+				return '<button class="btn btn-mini btn-xs run_item btn-warning" data-id="'.$row_info['id'].'"><i class="icon-refresh fa fa-refresh icon-spin fa-spin"></i> <span>'.t('Process').'...</span></button>';
 			} else {
-				return '<button class="btn btn-mini btn-xs btn-info run_item" data-id="'.$row_info['id'].'"><i class="icon-play"></i> <span>'.t('Run').'</span></button>';
+				return '<button class="btn btn-mini btn-xs btn-info run_item" data-id="'.$row_info['id'].'"><i class="icon-play fa fa-play"></i> <span>'.t('Run').'</span></button>';
 			}
 		})
 		->btn_func('Rollback', function($row_info, $params, $instance_params, $_this) {
 			if ($row_info['process']) {
-				return '<button class="btn btn-mini btn-xs btn-warning rollback_item" data-id="'.$row_info['id'].'"><i class="icon-refresh icon-spin"></i> <span>'.t('Process').'...</span></button>';
+				return '<button class="btn btn-mini btn-xs btn-warning rollback_item" data-id="'.$row_info['id'].'"><i class="icon-refresh fa fa-refresh icon-spin fa-spin"></i> <span>'.t('Process').'...</span></button>';
 			} else {
-				return '<button class="btn btn-mini btn-xs btn-danger rollback_item" data-id="'.$row_info['id'].'"><i class="icon-undo"></i> <span>'.t('Rollback').'</span></button>';
+				return '<button class="btn btn-mini btn-xs btn-danger rollback_item" data-id="'.$row_info['id'].'"><i class="icon-undo fa fa-undo"></i> <span>'.t('Rollback').'</span></button>';
 			}
 		})
 		->btn('List of changes', './?object=manage_shop&action=clear_pattern_list&id=%d', array('icon' => 'icon-th-list'))
@@ -84,7 +84,7 @@ class yf_manage_shop_clear_products {
 			return t('Wrong clean pattern');
 		}
 
-		$where = '';	
+		$where = '';
 		if (!empty($pattern_info['cat_id'])) {
 			$cat_ids = _class('cats')->_get_recursive_cat_ids($row_info['cat_id']);
 			$where = ' AND (cat_id IN ('.implode(',', $cat_ids).') OR id IN (SELECT product_id FROM '.db('shop_product_to_category').' WHERE category_id IN ('.implode(',', $cat_ids).')))';
@@ -165,7 +165,7 @@ class yf_manage_shop_clear_products {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	function clear_pattern_delete () {
 		$_GET['id'] = intval($_GET['id']);
@@ -197,12 +197,12 @@ class yf_manage_shop_clear_products {
 
 		echo json_encode(array('status' => 'done'));
 		exit;
-	} 
-	
+	}
+
 	function clear_pattern_rollback() {
 		$this->clear_pattern_run('checkout_group_revision');
 	}
-	
+
 	/*
 	 *
 	 */
@@ -236,7 +236,7 @@ class yf_manage_shop_clear_products {
 		$sql = 'SELECT * FROM '.db('shop_patterns').' WHERE id IN ('.implode(',', $_POST['ids']).')';
 		$patterns = db()->get_all($sql);
 		foreach ($patterns as $key => $item) {
-			$where = '';	
+			$where = '';
 			if (!empty($item['cat_id'])) {
 				$cat_ids = _class('cats')->_get_recursive_cat_ids($row_info['cat_id']);
 				$where = ' AND (cat_id IN ('.implode(',', $cat_ids).') OR id IN (SELECT product_id FROM '.db('shop_product_to_category').' WHERE category_id IN ('.implode(',', $cat_ids).')))';
@@ -271,7 +271,7 @@ class yf_manage_shop_clear_products {
 		sleep(5);
 		db()->begin();
 
-		$where = '';	
+		$where = '';
 		if (!empty($pattern_info['cat_id'])) {
 			$cat_ids = _class('cats')->_get_recursive_cat_ids($row_info['cat_id']);
 			$where = ' AND (cat_id IN ('.implode(',', $cat_ids).') OR id IN (SELECT product_id FROM '.db('shop_product_to_category').' WHERE category_id IN ('.implode(',', $cat_ids).')))';
@@ -297,7 +297,7 @@ class yf_manage_shop_clear_products {
 		}
 
 		db()->commit();
-		
+
 		db()->query('UPDATE '.db('shop_patterns').' SET process = 0 WHERE process = '.$process_id.' AND id = '.$_GET['id'].';');
 	}
 }

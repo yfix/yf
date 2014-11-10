@@ -6,7 +6,7 @@
 	<td align="center"><a href="{member_url}" target="_new">{user_nick}</a>{if("ban_popup_link" ne "")}<br /><br />{ban_popup_link}{/if}</td>
 	<td width="70" align="center">{add_date}</td>
 	<td align="center" nowrap>
-		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
-		<a href="{delete_link}" class="ajax_delete" title="{t(Delete)}"><i class="icon-trash"></i></a>&nbsp;
+		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit fa fa-edit"></i></a>&nbsp;
+		<a href="{delete_link}" class="ajax_delete" title="{t(Delete)}"><i class="icon-trash fa fa-trash"></i></a>&nbsp;
 	</td>
 </tr>

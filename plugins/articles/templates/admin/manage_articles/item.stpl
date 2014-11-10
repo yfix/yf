@@ -6,7 +6,7 @@
 	<td align="center" nowrap>{add_date}</td>
 	<td align="center"><b>{status}</b></td>
 	<td align="center" nowrap>
-		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit"></i></a>&nbsp;
-		<a href="{delete_link}" title="{t(Delete)}" onclick="return confirm('{t(Are you sure)} ?');"><i class="icon-trash"></i></a>&nbsp;
+		<a href="{edit_link}" title="{t(Edit)}"><i class="icon-edit fa fa-edit"></i></a>&nbsp;
+		<a href="{delete_link}" title="{t(Delete)}" onclick="return confirm('{t(Are you sure)} ?');"><i class="icon-trash fa fa-trash"></i></a>&nbsp;
 	</td>
 </tr>

@@ -7,7 +7,7 @@ class yf_test {
 	function true_for_unittest ($out = '') {
 		return $out ? (is_array($out) ? implode(',', $out) : $out) : 'true';
 	}
-	
+
 	/**
 	*/
 	function show () {
@@ -24,7 +24,7 @@ class yf_test {
 		}
 		$body[] = '<ul class="nav nav-list span3">';
 		foreach ((array)$methods as $name => $link) {
-			$body[] = '<li><a href="'.$link.'"><i class="icon-chevron-right"></i> '.$name.'</a></li>';
+			$body[] = '<li><a href="'.$link.'"><i class="icon-chevron-right fa fa-chevron-right"></i> '.$name.'</a></li>';
 		}
 		$body[] = '</ul>';
 		return implode(PHP_EOL, $body);

@@ -293,8 +293,8 @@ class yf_html {
 				</div>';
 		}
 		$controls = '
-			<a class="left carousel-control" href="#'.$extra['id'].'" data-slide="prev"><span class="icon icon-chevron-left"></span></a>
-			<a class="right carousel-control" href="#'.$extra['id'].'" data-slide="next"><span class="icon icon-chevron-right"></span></a>
+			<a class="left carousel-control" href="#'.$extra['id'].'" data-slide="prev"><span class="icon icon-chevron-left fa fa-chevron-left"></span></a>
+			<a class="right carousel-control" href="#'.$extra['id'].'" data-slide="next"><span class="icon icon-chevron-right fa fa-chevron-right"></span></a>
 		';
 		return '<div id="'.$extra['id'].'" class="carousel slide'.($extra['class'] ? ' '.$extra['class'] : '').'" data-ride="carousel">
 				<ol class="carousel-indicators">'.implode(PHP_EOL, $headers).'</ol>
@@ -636,7 +636,7 @@ class yf_html {
 			$link = $v['link'];
 			$class_item = $v['class_item'] ?: $extra['class_item'];
 			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
-			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"><a href="'.$link.'"><i class="icon-chevron-right"></i> '.t($name). $badge. '</a></li>';
+			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"><a href="'.$link.'"><i class="icon-chevron-right fa fa-chevron-right"></i> '.t($name). $badge. '</a></li>';
 		}
 		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</ul></div>';
 	}

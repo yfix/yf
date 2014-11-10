@@ -1,2 +1,2 @@
-<a href="./?object=user_info"><i class="icon-user"></i> {name}</a>
+<a href="./?object=user_info"><i class="icon-user fa fa-user"></i> {name}</a>
 

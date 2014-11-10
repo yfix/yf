@@ -2,9 +2,9 @@
 		<a href="{img_path}" title="View large" target="_blank">
 	{if("thumb_path" ne "")}
 			<img src="{thumb_path}" alt="{name}" class="product_image img-polaroid" style="width:90px;">
-	{/if}		
+	{/if}
 		</a>
 {/if}
 {if("del_url" ne "")}
-		<a href="{del_url}" class="btn btn-mini btn-xs"><i class="icon-trash"></i> {t(Delete)}</a><br/>
+		<a href="{del_url}" class="btn btn-mini btn-xs"><i class="icon-trash fa fa-trash"></i> {t(Delete)}</a><br/>
 {/if}

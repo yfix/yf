@@ -14,7 +14,7 @@
 <div>
 	<a href="{ajax_status_link}" id="ajax_status_link" class="btn">{t(Refresh Tables Status)}</a>
 	<a href="{backup_link}" class="btn">{t(Backup)}</a>
-	<span id="ajax_loading" class="label label-info" style="display:none;"><i class="icon-spin icon icon-refresh"></i> {t(Loading)}</span>
+	<span id="ajax_loading" class="label label-info" style="display:none;"><i class="icon-spin fa-spin icon icon-refresh fa fa-refresh"></i> {t(Loading)}</span>
 </div>
 
 <table id="tables" class="table table-bordered table-striped table-hover">
@@ -47,10 +47,10 @@
 <label for="my_check_all">
 	<input type="checkbox" name='check_all' onclick="check_all()" check_status="0" id="my_check_all">
 	<b>Select all</b>
-</label> 
+</label>
 {actions_select_box}
-	
-<span id="loading" class="label label-info" style="display:none"><i class="icon-spin icon-refresh"></i> {t(Loading)}</span>
+
+<span id="loading" class="label label-info" style="display:none"><i class="icon-spin fa-spin icon-refresh fa fa-refresh"></i> {t(Loading)}</span>
 
 <span id="status_message"></span>
 
@@ -114,7 +114,7 @@ function group_action (){
 	}
 	$("#loading").css("display", "");
 	$("#status_message").html(action);
-	
+
 	$.post("./?object=db_manager&action="+action, {
 		tables: tables
 	}, function (data){

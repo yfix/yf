@@ -311,10 +311,10 @@ class yf_category_editor {
 		);
 		return '<form action="'.$r['form_action'].'" method="post" id="draggable_form">
 				<div class="controls">
-					<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="icon-save"></i> '.t('Save').'</button>
-					<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-backward"></i> '.t('Go Back').'</a>
-					<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-plus-sign"></i> '.t('Add').'</a>
-					<a href="javascript:void(0);" class="btn btn-mini btn-xs" id="draggable-menu-expand-all"><i class="icon-expand-alt fa-expand"></i> '.t('Expand').'</a>
+					<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="icon-save fa fa-save"></i> '.t('Save').'</button>
+					<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-backward fa fa-backward"></i> '.t('Go Back').'</a>
+					<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-plus-sign fa fa-plus-circle"></i> '.t('Add').'</a>
+					<a href="javascript:void(0);" class="btn btn-mini btn-xs" id="draggable-menu-expand-all"><i class="icon-expand-alt fa fa-expand"></i> '.t('Expand').'</a>
 				</div>
 				<ul class="draggable_menu">'.implode(PHP_EOL, (array)$this->_drag_tpl_items($items)).'</ul>
 			</form>'

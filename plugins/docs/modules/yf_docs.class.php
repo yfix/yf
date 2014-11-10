@@ -64,7 +64,7 @@ class yf_docs {
 				continue;
 			}
 			$name = substr($cls, 0, -strlen('.class.php'));
-			$items[] = '<li><a href="./?object='.$name.'"><i class="icon-chevron-right"></i> '.t($name).'</a></li>';
+			$items[] = '<li><a href="./?object='.$name.'"><i class="icon-chevron-right fa fa-chevron-right"></i> '.t($name).'</a></li>';
 		}
 		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav">'.implode(PHP_EOL, $items).'</ul></div>';
 	}

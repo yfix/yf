@@ -26,10 +26,10 @@ class yf_html_tree {
 			'add_link'		=> $extra['add_link'] ?: './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
 			'back_link'		=> $extra['back_link'] ?: './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
 		);
-#		$btn_save	= '<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="icon-large icon-save"></i> '.t('Save').'</button>';
-#		$btn_back	= $r['back_link'] ? '<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-large icon-backward"></i> '.t('Go Back').'</a>' : '';
-#		$btn_add	= $r['add_link'] ? '<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-large icon-plus-sign"></i> '.t('Add').'</a>' : '';
-		$btn_expand = !$extra['no_expand'] ? '<a href="javascript:void(0);" class="btn btn-mini btn-xs draggable-menu-expand-all"><i class="icon-large icon-expand-alt fa-expand"></i> '.t('Expand').'</a>' : '';
+#		$btn_save	= '<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="icon-large fa-lg icon-save fa fa-save"></i> '.t('Save').'</button>';
+#		$btn_back	= $r['back_link'] ? '<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-large fa-lg icon-backward fa fa-backward"></i> '.t('Go Back').'</a>' : '';
+#		$btn_add	= $r['add_link'] ? '<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-large fa-lg icon-plus-sign fa fa-plus-circle"></i> '.t('Add').'</a>' : '';
+		$btn_expand = !$extra['no_expand'] ? '<a href="javascript:void(0);" class="btn btn-mini btn-xs draggable-menu-expand-all"><i class="icon-large fa-lg icon-expand-alt fa fa-expand"></i> '.t('Expand').'</a>' : '';
 		return '<form action="'.$r['form_action'].'" method="post" class="draggable_form'.($extra['form_class'] ? ' '.$extra['form_class'] : '').'">
 				<div class="controls">'
 					. $btn_save
@@ -77,14 +77,14 @@ class yf_html_tree {
 			}
 			$expander_icon = '';
 			if ($has_children) {
-				$expander_icon = $item['level'] >= $opened_levels ? 'icon-caret-right' : 'icon-caret-down';
+				$expander_icon = $item['level'] >= $opened_levels ? 'icon-caret-right fa fa-caret-right' : 'icon-caret-down fa fa-caret-down';
 			}
 			$content = ($item['icon_class'] ? '<i class="'.$item['icon_class'].'"></i>' : ''). $item['name'];
 			if ($item['link']) {
 				$content = '<a href="'.$item['link'].'">'.$content. '</a>';
 			}
 			$controls = $extra['show_controls'] ? str_replace('%d', $id, $form_controls) : '';
-			$badge = $item['badge'] ? ' <sup class="badge badge-'.($item['class_badge'] ?: 'info').'">'.$item['badge'].'</sup>' : ''; 
+			$badge = $item['badge'] ? ' <sup class="badge badge-'.($item['class_badge'] ?: 'info').'">'.$item['badge'].'</sup>' : '';
 			$items[] = '
 				<li id="item_'.$id.'"'.(!$is_draggable ? ' class="not_draggable"' : '').'>
 					<div class="dropzone"></div>
@@ -92,7 +92,7 @@ class yf_html_tree {
 						<a href="'.$item['link'].'" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
 						.$content
 						.$badge
-						.($is_draggable ? '&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>' : '')
+						.($is_draggable ? '&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move fa fa-arrows"></i></span>' : '')
 						.($controls ? '<div style="float:right;display:none;" class="controls_over">'.$controls.'</div>' : '')
 					.'</dl>'
 				;
@@ -128,7 +128,7 @@ class yf_html_tree {
 			.draggable_menu ul { display: block; }
 			.draggable_menu ul.closed { display: none; }
 			.draggable_menu .controls_over { display: none; }
-			.draggable_menu .icon-move { cursor: move; }'
+			.draggable_menu .icon-move, .fa-arrows { cursor: move; }'
 		);
 	}
 
@@ -168,8 +168,8 @@ class yf_html_tree {
 		return false;
 	})
 
-	var caret_class_opened = "icon-caret-down";
-	var caret_class_closed = "icon-caret-right";
+	var caret_class_opened = "icon-caret-down fa fa-caret-down";
+	var caret_class_closed = "icon-caret-right fa fa-caret-right";
 
 	$(".draggable-menu-expand-all").on("click", function() {
 		var _this = $(this);

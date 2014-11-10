@@ -35,8 +35,8 @@
 	<p><b>NOTE:</b></p>
 	<p>
 	P.S: Icons meaning:<br />
-	<i class="icon-eye-open"></i> - View list of tag rules.<br />
-	<i class="icon-edit"></i> - Edit tag text info.<br />
-	<i class="icon-trash"></i> - Delete tag and all of its rules.<br />
+	<i class="icon-eye-open fa fa-eye"></i> - View list of tag rules.<br />
+	<i class="icon-edit fa fa-edit"></i> - Edit tag text info.<br />
+	<i class="icon-trash fa fa-trash"></i> - Delete tag and all of its rules.<br />
 	</p>
 </div>

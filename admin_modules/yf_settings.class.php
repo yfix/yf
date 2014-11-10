@@ -12,7 +12,7 @@ class yf_settings {
 		'pure' => 'Yahoo PureCSS',
 		'foundation' => 'Zurb Foundation',
 	);
-	// currently for: bs2, bs3	
+	// currently for: bs2, bs3
 	public $css_subthemes = array(
 		'default'	=> 'Bootstrap',
 		'amelia'	=> 'Amelia (light)',
@@ -374,7 +374,7 @@ $(function() {
 */
 		);
 	}
-	
+
 	/**
 	*/
 	function _hook_side_column() {
@@ -384,7 +384,7 @@ $(function() {
 		$items = array();
 		$url = process_url(url_admin('/@object'));
 		foreach ((array)$this->_used_modules as $module_name) {
-			$items[] = '<li><a href="'.$url.'#module_'.$module_name.'"><i class="icon-chevron-right"></i> '.t($module_name).'</a></li>';
+			$items[] = '<li><a href="'.$url.'#module_'.$module_name.'"><i class="icon-chevron-right fa fa-chevron-right"></i> '.t($module_name).'</a></li>';
 		}
 		return '<div class="span3 bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav">'.implode(PHP_EOL, $items).'</ul></div>';
 	}

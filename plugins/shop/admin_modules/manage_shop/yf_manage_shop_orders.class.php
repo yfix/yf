@@ -401,7 +401,7 @@ class yf_manage_shop_orders{
 									<div class="unit_current">
 										%s
 										<span class="btn btn-mini unit_change">
-											<i class="icon-edit"></i>
+											<i class="icon-edit fa fa-edit"></i>
 										</span>
 									</div>
 									'
