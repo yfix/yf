@@ -96,6 +96,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertFalse( self::qb()->where()->sql() );
 		$this->assertFalse( self::qb()->from()->where()->sql() );
 		$this->assertFalse( self::qb()->select()->from()->where()->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->where('id',1)->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->where('id','1')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->where('id','=','1')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->where(array('id','=',1))->sql() );
