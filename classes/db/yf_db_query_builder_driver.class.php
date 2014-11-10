@@ -471,11 +471,13 @@ abstract class yf_db_query_builder_driver {
 		$data = $this->get_all();
 		$first = reset($data);
 		$sql = $this->compile_insert($table, $data, $params);
-		if ($sql) {
-			$result = $this->db->query($sql);
-			$insert_id = $result ? $this->db->insert_id() : false;
-			return $insert_id ?: $result;
+		if (!empty($params['sql'])) {
+			return $sql;
 		}
+		if (!$sql) { return $sql; }
+		$result = $this->db->query($sql);
+		$result && $result = $this->db->insert_id();
+		return $result;
 	}
 
 	/**
@@ -1253,7 +1255,7 @@ abstract class yf_db_query_builder_driver {
 	* Examples:
 	*	order_by('user_group')
 	* 	order_by('field','asc')
-	*	order_by(array('supplier' => 'desc', 'manufacturer' => 'asc')), 
+	*	order_by(array('supplier' => 'desc', 'manufacturer' => 'asc')),
 	*	order_by(array('field1','asc'), array('field2','desc'), array('field3','asc'))
 	*/
 	public function order_by() {
