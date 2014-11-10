@@ -244,7 +244,7 @@ class yf_category_editor {
 			->btn_clone('', './?object='.$_GET['object'].'&action=clone_item&id=%d')
 			->btn_active('', './?object='.$_GET['object'].'&action=activate_item&id=%d')
 			->footer_add('Add item', './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'], array('copy_to_header' => 1))
-			->footer_link('Drag items', './?object='.$_GET['object'].'&action=drag_items&id='.$_GET['id'], array('icon' => 'icon-move', 'copy_to_header' => 1))
+			->footer_link('Drag items', './?object='.$_GET['object'].'&action=drag_items&id='.$_GET['id'], array('icon' => 'icon-move fa fa-arrows', 'copy_to_header' => 1))
 			->footer_submit()
 		;
 	}
@@ -344,7 +344,7 @@ class yf_category_editor {
 			}
 			$expander_icon = '';
 			if ($item['have_children']) {
-				$expander_icon = $item['level_num'] >= 1 ? 'icon-caret-right' : 'icon-caret-down';
+				$expander_icon = $item['level_num'] >= 1 ? 'icon-caret-right fa fa-caret-right' : 'icon-caret-down fa fa-caret-down';
 			}
 			$content = ($item['icon_class'] ? '<i class="'.$item['icon_class'].'"></i>' : ''). $item['name'];
 			if ($item['link']) {
@@ -361,7 +361,7 @@ class yf_category_editor {
 					<dl>
 						<a href="#" class="expander"><i class="icon '.$expander_icon.'"></i></a>&nbsp;'
 						.$content
-						.'&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move"></i></span>
+						.'&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move fa fa-arrows"></i></span>
 						<div style="float:right;display:none;" class="controls_over">'
 						.str_replace('%d', $id, $form_controls)
 						.'</div>

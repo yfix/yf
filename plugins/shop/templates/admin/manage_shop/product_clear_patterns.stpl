@@ -25,7 +25,7 @@
 	var change_btn_status = function(btn_dom, type) {
 		if (type == 'run') {
 			btn_dom.removeClass('btn-warning').addClass('btn-info')
-			btn_dom.find('i').removeClass('icon-refresh icon-spin').addClass('icon-play');
+			btn_dom.find('i').removeClass('icon-refresh fa fa-refresh icon-spin fa-spin').addClass('icon-play fa fa-play');
 			btn_dom.find('span').text('{t('Run')}');
 		} else if(type == 'process') {
 			if (btn_dom.hasClass('rollback_item')) {
@@ -33,11 +33,11 @@
 				return true;
 			}
 			btn_dom.removeClass('btn-info').addClass('btn-warning');
-			btn_dom.find('i').removeClass('icon-play').addClass('icon-refresh icon-spin');
+			btn_dom.find('i').removeClass('icon-play fa fa-play').addClass('icon-refresh fa fa-refresh icon-spin fa-spin');
 			btn_dom.find('span').text('{t('Process')}...');
 		} else if(type == 'rollback') {
 			btn_dom.removeClass('btn-warning').addClass('btn-danger').show();
-			btn_dom.find('i').removeClass('icon-refresh icon-spin').addClass('icon-undo');
+			btn_dom.find('i').removeClass('icon-refresh fa fa-refresh icon-spin fa-spin').addClass('icon-undo fa fa-undo');
 			btn_dom.find('span').text('{t('Rollback')}');
 		}
 	}

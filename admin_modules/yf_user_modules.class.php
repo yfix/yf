@@ -2,7 +2,7 @@
 
 /**
 * User modules list handler
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -106,7 +106,7 @@ class yf_user_modules {
 			->btn_active(array('id' => 'name'))
 			->footer_submit(array('value' => 'activate selected'))
 			->footer_submit(array('value' => 'disable selected'))
-			->footer_link('Refresh list', './?object='.$_GET['object'].'&action=refresh_modules_list', array('icon' => 'icon-refresh'))
+			->footer_link('Refresh list', './?object='.$_GET['object'].'&action=refresh_modules_list', array('icon' => 'icon-refresh fa fa-refresh'))
 		;
 	}
 

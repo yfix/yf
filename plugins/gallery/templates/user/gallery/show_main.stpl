@@ -1,5 +1,5 @@
 {foreach("folders")}
-	<a href="{#.link}" class="btn btn-default"><i class="icon icon-folder-open"></i> {#.title}</a>
+	<a href="{#.link}" class="btn btn-default"><i class="icon icon-folder-open fa fa-folder-open"></i> {#.title}</a>
 {/foreach}
 
 <div align="left">

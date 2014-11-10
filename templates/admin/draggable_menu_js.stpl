@@ -9,7 +9,7 @@
 .draggable_menu ul { display: block; }
 .draggable_menu ul.closed { display: none; }
 .draggable_menu .controls_over { display: none; }
-.icon-move { cursor: move; }
+.icon-move, .fa-arrows { cursor: move; }
 </style>
 
 <script>
@@ -45,8 +45,8 @@ $(function(){
 		return false;
 	})
 
-	var caret_class_opened = 'icon-caret-down';
-	var caret_class_closed = 'icon-caret-right';
+	var caret_class_opened = 'icon-caret-down fa fa-caret-down';
+	var caret_class_closed = 'icon-caret-right fa fa-caret-right';
 
 	$('#draggable-menu-expand-all').on('click', function() {
 		var _this = $(this);

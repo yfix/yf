@@ -26,7 +26,7 @@ class yf_form2_tbl_funcs {
 			if ($extra['rewrite']) {
 				$link_url = url($link_url);
 			}
-			$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks';
+			$icon = $extra['icon'] ? $extra['icon']: 'icon-tasks fa fa-tasks';
 			$extra['href'] = $link_url;
 			$extra['class'] = $extra['class'] ?: 'btn btn-default btn-mini btn-xs'. ($extra['class_add'] ? ' '.$extra['class_add'] : '');
 			$attrs_names = array('id','name','href','class','style','target','alt','title');
@@ -48,7 +48,7 @@ class yf_form2_tbl_funcs {
 		}
 		$extra['link_variants'] = array('edit_link','edit_url');
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-edit';
+			$extra['icon'] = 'icon-edit fa fa-edit';
 		}
 		if (!isset($extra['class_add'])) {
 			$extra['class_add'] = 'ajax_edit';
@@ -65,7 +65,7 @@ class yf_form2_tbl_funcs {
 		}
 		$extra['link_variants'] = array('delete_link','delete_url');
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-trash';
+			$extra['icon'] = 'icon-trash fa fa-trash';
 		}
 		if (!isset($extra['class_add'])) {
 			$extra['class_add'] = 'ajax_delete btn-danger';
@@ -82,7 +82,7 @@ class yf_form2_tbl_funcs {
 		}
 		$extra['link_variants'] = array('clone_link','clone_url');
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-plus';
+			$extra['icon'] = 'icon-plus fa fa-plus';
 		}
 		if (!isset($extra['class_add'])) {
 			$extra['class_add'] = 'ajax_clone';
@@ -99,7 +99,7 @@ class yf_form2_tbl_funcs {
 		}
 		$extra['link_variants'] = array('view_link','view_url');
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-eye-open';
+			$extra['icon'] = 'icon-eye-open fa fa-eye';
 		}
 		if (!isset($extra['class_add'])) {
 			$extra['class_add'] = 'ajax_view';

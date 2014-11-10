@@ -1276,7 +1276,7 @@ class yf_form2 {
 	*/
 	function save($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-save';
+			$extra['icon'] = 'icon-save fa fa-save';
 		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}
@@ -1298,7 +1298,7 @@ class yf_form2 {
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Back';
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-save';
+			$extra['icon'] = 'icon-save fa fa-save';
 		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}
@@ -1320,7 +1320,7 @@ class yf_form2 {
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Clear';
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-save';
+			$extra['icon'] = 'icon-save fa fa-save';
 		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}

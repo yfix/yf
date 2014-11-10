@@ -1,13 +1,13 @@
 	<li id="item_{item_id}">
 		<div class="dropzone"></div>
 		<dl>
-			<a href="#" class="expander"><i class="icon{if(have_children eq 1)} {if(level_num ge 1)}icon-caret-right{else}icon-caret-down{/if} {/if}"></i></a>
+			<a href="#" class="expander"><i class="icon{if(have_children eq 1)} {if(level_num ge 1)}icon-caret-right fa fa-caret-right{else}icon-caret-down fa fa-caret-down{/if} {/if}"></i></a>
 {if(link ne "")}
 			<a href="{link}">{if(icon_class ne "")}<i class="{icon_class}"></i> {/if}{name}</a>
 {else}
 			{if(icon_class ne "")}<i class="{icon_class}"></i> {/if}{name}
 {/if}
-			<span class="move" title="{t(Move)}"><i class="icon icon-move"></i></span>
+			<span class="move" title="{t(Move)}"><i class="icon icon-move fa fa-arrows"></i></span>
 			<div style="float:right;display:none;" class="controls_over">
 {form_row(tbl_link_edit)}
 {form_row(tbl_link_delete)}

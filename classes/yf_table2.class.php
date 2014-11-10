@@ -244,8 +244,8 @@ class yf_table2 {
 						$th_attrs .= $info['extra']['th_id'] ? ' id="'.$info['extra']['th_id'].'"' : '';
 					}
 					$th_attrs .= $info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '';
-					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].'"></i> ' : '');
-					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].'"></i>' : '');
+					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].' fa fa-'.$params['th_icon_prepend'].'"></i> ' : '');
+					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].' fa fa-'.$params['th_icon_append'].'"></i>' : '');
 					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip'], $name) : '';
 					$title = isset($info['extra']['th_desc']) ? $info['extra']['th_desc'] : $info['desc'];
 					$body .= '<th'.$th_attrs.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
@@ -1036,7 +1036,7 @@ class yf_table2 {
 				$extra['id'] = $extra['name'];
 				$color_ok = $extra['color_ok'] ?: 'yellow';
 				$color_ko = $extra['color_ko'] ?: '';
-				$class = $extra['class'] ?: 'icon-star';
+				$class = $extra['class'] ?: 'icon-star fa fa-star';
 				$class_ok = $extra['class_ok'] ?: 'star-ok';
 				$class_ko = $extra['class_ko'] ?: 'star-ko';
 				$max = $extra['max'] ?: 5;
@@ -1163,7 +1163,7 @@ class yf_table2 {
 				if ($title) {
 					$attrs .= ' title="' . $title;
 				}
-				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks fa fa-tasks');
 				$link = trim(str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add']);
 				if (strlen($link) && !$_this->_is_link_allowed($link)) {
 					return '';
@@ -1225,7 +1225,7 @@ class yf_table2 {
 			$extra['class_add'] .= ' ajax_edit';
 		}
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-edit';
+			$extra['icon'] = 'icon-edit fa fa-edit';
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1250,7 +1250,7 @@ class yf_table2 {
 			$extra['class_add'] .= ' ajax_delete btn-danger';
 		}
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-trash';
+			$extra['icon'] = 'icon-trash fa fa-trash';
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1275,7 +1275,7 @@ class yf_table2 {
 			$extra['class_add'] .= ' ajax_clone';
 		}
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-code-fork';
+			$extra['icon'] = 'icon-code-fork fa fa-code-fork';
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1300,7 +1300,7 @@ class yf_table2 {
 			$extra['class_add'] .= ' ajax_view';
 		}
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-eye-open';
+			$extra['icon'] = 'icon-eye-open fa fa-eye';
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1376,7 +1376,7 @@ class yf_table2 {
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
-				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks');
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks fa fa-tasks');
 				$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
 				if ($extra['class_add']) {
 					$class .= ' '.$extra['class_add'];
@@ -1425,7 +1425,7 @@ class yf_table2 {
 			$extra['class_add'] .= ' ajax_add';
 		}
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-plus';
+			$extra['icon'] = 'icon-plus fa fa-plus';
 		}
 		return $this->footer_link($name, $link, $extra);
 	}
@@ -1453,7 +1453,7 @@ class yf_table2 {
 					$value = '';
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
-				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-save');
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-save fa fa-save');
 				$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
 
 				return '<button type="submit" name="'.trim($value).'" class="'.trim($class).'"><i class="'.trim($icon).'"></i> '. t($value).'</button>';

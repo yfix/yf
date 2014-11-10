@@ -3,11 +3,11 @@
 		<dl>
 			<a href="#" class="expander"><i class="icon"></i></a>
 <?php if ($replace['link'] != '') { ?>
-			<a href="<?php echo $replace['link']; ?>"><?php if ($replace['icon_class'] != '') { ?><i class="icon icon-<?php echo $replace['icon_class']; ?>"></i> <?php } ?><?php echo $replace['name']; ?></a>
+			<a href="<?php echo $replace['link']; ?>"><?php if ($replace['icon_class'] != '') { ?><i class="icon icon-<?php echo $replace['icon_class']; ?> fa fa-<?php echo $replace['icon_class']; ?>"></i> <?php } ?><?php echo $replace['name']; ?></a>
 <?php } else { ?>
-			<?php if ($replace['icon_class'] != '') { ?><i class="icon icon-<?php echo $replace['icon_class']; ?>"></i> <?php } ?><?php echo $replace['name']; ?>
+			<?php if ($replace['icon_class'] != '') { ?><i class="icon icon-<?php echo $replace['icon_class']; ?> fa fa-<?php echo $replace['icon_class']; ?>"></i> <?php } ?><?php echo $replace['name']; ?>
 <?php } ?>
-			<span class="move" title="<?php echo t('Move'); ?>"><i class="icon icon-move"></i></span>
+			<span class="move" title="<?php echo t('Move'); ?>"><i class="icon icon-move fa fa-arrows"></i></span>
 			<div style="float:right;display:none;" class="controls_over">
 <?php echo _class("form2")->tpl_row('tbl_link_edit',$replace,'','',''); ?>
 <?php echo _class("form2")->tpl_row('tbl_link_delete',$replace,'','',''); ?>

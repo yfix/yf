@@ -73,7 +73,7 @@ class yf_settings {
 		}
 		$a = array(
 			'row_start',
-				array('link', 'display_what', './?object='.$_GET['object'].'&action=display_what', array('no_text' => 1, 'icon' => 'icon-edit')),
+				array('link', 'display_what', './?object='.$_GET['object'].'&action=display_what', array('no_text' => 1, 'icon' => 'icon-edit fa fa-edit')),
 				array('save'),
 				array('link', 'cache_purge', './?object='.$_GET['object'].'&action=cache_purge', array('class' => 'btn btn-default')), // TODO: link, method, icon
 			'row_end',
@@ -203,7 +203,7 @@ $(function() {
 			}
 			$hooks = $hooks_data[$avail_hook_modules[$name]];
 			$is_checked = $s['value'] ? 1 : 0;
-			$container_html .= '<li class="item" id="liitem_'.str_replace('_', '', $name).'"><a style="cursor:move;"><i class="icon icon-move"></i> '.t($name).' ('.(count($hooks)).')'
+			$container_html .= '<li class="item" id="liitem_'.str_replace('_', '', $name).'"><a style="cursor:move;"><i class="icon icon-move fa fa-arrows"></i> '.t($name).' ('.(count($hooks)).')'
 				.' <input type="checkbox" name="check['.str_replace('_', '', $name).']" value="1" style="float:right;"'.($is_checked ? ' checked="checked"' : '').'></a></li>'.PHP_EOL;
 		}
 $container_html .= '

@@ -5,8 +5,8 @@
 
 <div class="controls">
 	<input type="hidden" name="is_all" id="is_all" value="0">
-	{if("show_add_selected" eq "1")}<a class="btn btn-default btn-mini btn-xs" id="add_selected_url"><i class=" icon-plus"></i> {t('add selected')}</a>{/if}
-	<a class="btn btn-default btn-mini btn-xs" id="add_all_url"><i class=" icon-plus"></i> {t('add all matched')}</a> 
+	{if("show_add_selected" eq "1")}<a class="btn btn-default btn-mini btn-xs" id="add_selected_url"><i class="icon-plus fa fa-plus"></i> {t('add selected')}</a>{/if}
+	<a class="btn btn-default btn-mini btn-xs" id="add_all_url"><i class="icon-plus fa fa-plus"></i> {t('add all matched')}</a>
 </div>
 </form>
 <script>

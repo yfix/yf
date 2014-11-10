@@ -57,7 +57,7 @@ class yf_manage_shop_clear_products {
 				return '<button class="btn btn-mini btn-xs btn-danger rollback_item" data-id="'.$row_info['id'].'"><i class="icon-undo fa fa-undo"></i> <span>'.t('Rollback').'</span></button>';
 			}
 		})
-		->btn('List of changes', './?object=manage_shop&action=clear_pattern_list&id=%d', array('icon' => 'icon-th-list'))
+		->btn('List of changes', './?object=manage_shop&action=clear_pattern_list&id=%d', array('icon' => 'icon-th-list fa fa-th-list'))
 		->btn_edit('', './?object=manage_shop&action=clear_pattern_edit&id=%d',array('no_ajax' => 1))
 		->btn_delete('', './?object=manage_shop&action=clear_pattern_delete&id=%d')
 		->footer_add('Add pattern', './?object=manage_shop&action=clear_pattern_add',array('no_ajax' => 1));
@@ -101,11 +101,11 @@ class yf_manage_shop_clear_products {
 		}
 
 		return table($pattern_list)
-			->header_link('Back', './?object=manage_shop&action=clear_patterns', array('icon' => 'icon-reply', 'class' => 'btn-warning'))
+			->header_link('Back', './?object=manage_shop&action=clear_patterns', array('icon' => 'icon-reply fa fa-reply', 'class' => 'btn-warning'))
 			->text('now')
 			->text('will_be')
 			->btn_edit('', './?object=manage_shop&action=product_edit&id=%d', array('no_ajax' => 1))
-			->footer_link('Back', './?object=manage_shop&action=clear_patterns', array('icon' => 'icon-reply', 'class' => 'btn-warning'))
+			->footer_link('Back', './?object=manage_shop&action=clear_patterns', array('icon' => 'icon-reply fa fa-reply', 'class' => 'btn-warning'))
 			;
 	}
 
