@@ -831,22 +831,6 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	*/
-	public function _ids_sql_from_array(array $ids) {
-		foreach ((array)$ids as $v) {
-			if (!is_int($v)) {
-				$v = (string)$v;
-				if (!strlen($v)) {
-					continue;
-				}
-				$v = $this->_escape_val($v);
-			}
-			$out[$v] = $v;
-		}
-		return implode(',', $out);
-	}
-
-	/**
 	* Examples:
 	*	where('id', '1')
 	*	where('id > 5')
@@ -930,7 +914,7 @@ abstract class yf_db_query_builder_driver {
 			}
 			return $this->whereid($where);
 		}
-		if (($count === 3 || $count === 2) && is_string($where[0]) && (is_string($where[1]) || is_array($where[1]))) {
+		if (($count === 3 || $count === 2) && is_string($where[0]) && (is_string($where[1]) || is_numeric($where[1]) || is_array($where[1]))) {
 			$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
 		} elseif ($count) {
 			$a = array();
@@ -1000,34 +984,6 @@ abstract class yf_db_query_builder_driver {
 			$this->_sql[$func_name][] = $sql;
 		}
 		return $this;
-	}
-
-	/**
-	* Detecting input consisting from numbers, think that this is "whereid" alias call like this: where(1), whereid(1,2,3)
-	*/
-	public function _is_where_all_numeric(&$where) {
-		if (empty($where) || (!is_array($where) && !is_numeric($where))) {
-			return false;
-		}
-		$count = count($where);
-		if (!$count) {
-			return false;
-		}
-		$self_func = __FUNCTION__;
-		foreach ($where as $k => $v) {
-			if (is_array($v)) {
-				if (!$this->$self_func($where[$k])) {
-					return false;
-				}
-				continue;
-			}
-			if (empty($v)) {
-				unset($where[$k]);
-			} elseif (!is_numeric($k) || !is_numeric($v)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -1439,6 +1395,50 @@ abstract class yf_db_query_builder_driver {
 			}
 		}
 		return $items;
+	}
+
+	/**
+	* Detecting input consisting from numbers, think that this is "whereid" alias call like this: where(1), whereid(1,2,3)
+	*/
+	public function _is_where_all_numeric(&$where) {
+		if (empty($where) || (!is_array($where) && !is_numeric($where))) {
+			return false;
+		}
+		$count = count($where);
+		if (!$count) {
+			return false;
+		}
+		$self_func = __FUNCTION__;
+		foreach ($where as $k => $v) {
+			if (is_array($v)) {
+				if (!$this->$self_func($where[$k])) {
+					return false;
+				}
+				continue;
+			}
+			if (empty($v)) {
+				unset($where[$k]);
+			} elseif (!is_numeric($k) || !is_numeric($v)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	*/
+	public function _ids_sql_from_array(array $ids) {
+		foreach ((array)$ids as $v) {
+			if (!is_int($v)) {
+				$v = (string)$v;
+				if (!strlen($v)) {
+					continue;
+				}
+				$v = $this->_escape_val($v);
+			}
+			$out[$v] = $v;
+		}
+		return implode(',', $out);
 	}
 
 	/**
