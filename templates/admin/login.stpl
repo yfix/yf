@@ -4,6 +4,7 @@
 	<title>{execute(graphics,show_site_title)}</title>
 	<meta charset="utf-8">
 {execute(common,bs_theme_html)}
+<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" class="yf_core">
 {include("main_style_css")}
 {execute(graphics,show_metatags)}
 	<style type="text/css">.container-valign-middle { margin:20% 30%; }</style>

@@ -13,6 +13,9 @@
 	{include( ng_app_js )}
 {/if}
 
+<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" class="yf_core">
+<link href="//cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.css" rel="stylesheet" class="yf_core">
+
 {execute_shutdown(graphics,show_css)}
 
 {execute(graphics,show_metatags)}

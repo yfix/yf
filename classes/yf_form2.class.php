@@ -869,7 +869,7 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'password';
 		}
-		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="icon-key fa fa-key"></i>';
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="icon-key fa fa-key fa-fw"></i>';
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
@@ -906,7 +906,7 @@ class yf_form2 {
 	*/
 	function login($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = $extra['type'] ?: 'text';
-		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="icon-user fa fa-user"></i>';
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="icon-user fa fa-user fa-fw"></i>';
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
