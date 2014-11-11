@@ -3,8 +3,6 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery{min_ext}.js" class="yf_core"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui{min_ext}.js" class="yf_core"></script>
 
-<!--script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore{min_ext}.js"></script-->
-
 {if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
 	{if(cur_theme eq "bootstrap")}
 		{if_true(const.DEBUG_MODE)}
@@ -24,20 +22,19 @@
 
 {if("conf.css_framework" eq "bs3")}
 	{if(cur_theme eq "bootstrap")}
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme{min_ext}.css" rel="stylesheet" class="yf_core">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme{min_ext}.css" rel="stylesheet" class="yf_core">
 	{else}
 		{if_true(const.DEBUG_MODE)}
 			<link href="http://bootswatch.com/{cur_theme}/bootstrap.css" rel="stylesheet" class="yf_core">
 		{else}
-			<link href="//netdna.bootstrapcdn.com/bootswatch/3.2.0/{cur_theme}/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
+			<link href="//netdna.bootstrapcdn.com/bootswatch/3.3.0/{cur_theme}/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
 		{/if}
 	{/if}
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap{min_ext}.js" class="yf_core"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap{min_ext}.js" class="yf_core"></script>
 {/if}
 
 <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome{min_ext}.css" rel="stylesheet" class="yf_core">
-<!--link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome{min_ext}.css" rel="stylesheet" class="yf_core"-->
 
 <script type="text/javascript" src="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/js/bootstrap-formhelpers-selectbox.js.gz" class="yf_core"></script>
 <link rel="stylesheet" href="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/css/bootstrap-formhelpers.min.css.gz" class="yf_core">
