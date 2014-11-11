@@ -864,14 +864,33 @@ abstract class yf_db_query_builder_driver {
 	*	whereid(1, 'user_id')
 	*	whereid(array(1,2,3))
 	*	whereid(array(1,2,3), 'user_id')
+	*	whereid(1,2,3)
+	*	whereid(1,2,3,'user_id')
 	*/
-	public function whereid($id, $pk = '') {
-		!$pk && $pk = $this->get_key_name();
+	public function whereid() {
+		$id = func_get_args();
+		$pk = '';
+		if (count($id) > 1) {
+			$last = array_pop($id);
+			if (!empty($last) && !is_numeric($last)) {
+				$pk = $last;
+			} else {
+				$id[] = $last;
+			}
+		}
+		if (!$pk) {
+			$pk = $this->get_key_name();
+		}
+		if (is_array($id) && count($id) === 1) {
+			$id = reset($id);
+		}
 		$sql = '';
 		if (is_array($id) && count($id) > 1) {
 			$ids = $this->_ids_sql_from_array($id);
-			if ($ids) {
-				$sql = $this->_escape_col_name($pk).' IN('.$ids.')';
+			if (count($ids) > 1) {
+				$sql = $this->_escape_col_name($pk).' IN('.implode(',', $ids).')';
+			} else {
+				$sql = $this->_process_where_cond($pk, '=', reset($ids));
 			}
 		} elseif (is_callable($id)) {
 			$sql = $id();
@@ -907,12 +926,15 @@ abstract class yf_db_query_builder_driver {
 	public function _process_where(array $where, $func_name = 'where') {
 		$sql = '';
 		$count = count($where);
-		if ($count && $this->_is_where_all_numeric($where)) {
-			// where(array(1,2,3))
-			if (count($where) === 1 && isset($where[0])) {
-				$where = $where[0];
+		if ($count) {
+			$all_numeric = $this->_is_where_all_numeric($where);
+			if ($all_numeric) {
+				// where(array(1,2,3))
+				if (count($where) === 1 && isset($where[0])) {
+					$where = $where[0];
+				}
+				return $this->whereid($where);
 			}
-			return $this->whereid($where);
 		}
 		if (($count === 3 || $count === 2) && is_string($where[0]) && (is_string($where[1]) || is_numeric($where[1]) || is_array($where[1]))) {
 			$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
@@ -1020,8 +1042,8 @@ abstract class yf_db_query_builder_driver {
 			$right_generated = '__dummy_for_null__';
 		} elseif ($op === 'in' || $op === 'not in') {
 			$right_generated = $this->_ids_sql_from_array((array)$right);
-			if (strlen($right_generated)) {
-				$right_generated = '('.$right_generated.')';
+			if ($right_generated) {
+				$right_generated = '('.implode(',', $right_generated).')';
 			}
 		}
 		if ((empty($right) || !strlen(is_array($right) ? '' : $right)) && !strlen($right_generated)) {
@@ -1428,17 +1450,26 @@ abstract class yf_db_query_builder_driver {
 	/**
 	*/
 	public function _ids_sql_from_array(array $ids) {
+		$out = array();
 		foreach ((array)$ids as $v) {
-			if (!is_int($v)) {
+			if (is_array($v)) {
+				$func = __FUNCTION__;
+				foreach ($this->$func($v) as $v2) {
+					$out[$v2] = $v2;
+				}
+			} elseif (!is_int($v)) {
 				$v = (string)$v;
 				if (!strlen($v)) {
 					continue;
 				}
 				$v = $this->_escape_val($v);
+				$out[$v] = $v;
+			} elseif (is_numeric($v)) {
+				$v = intval($v);
+				$out[$v] = $v;
 			}
-			$out[$v] = $v;
 		}
-		return implode(',', $out);
+		return $out;
 	}
 
 	/**
