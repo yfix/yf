@@ -905,6 +905,7 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	* Add raw WHERE part. Be careful with it, no escaping or wrapping here!
+	*	where_raw('raw sql here')
 	*/
 	public function where_raw() {
 		foreach ((array)func_get_args() as $arg) {
@@ -915,9 +916,31 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	* Shortcut for IS NULL checking for field(s)
+	*	where_null('pid')		=> `pid` IS NULL
+	*	where_null('pid','uid','gid')		=> `pid` IS NULL AND `uid` IS NULL AND `gid` IS NULL
+	*	where_null(array('pid','uid','gid'))		=> `pid` IS NULL AND `uid` IS NULL AND `gid` IS NULL
 	*/
 	public function where_null() {
-// TODO
+		$func = __FUNCTION__;
+		$not = false;
+		if (strpos($func, '_not_') !== false) {
+			$not = true;
+		}
+		foreach ((array)func_get_args() as $arg) {
+			if (is_array($arg)) {
+				$this->$func($arg);
+			} else {
+				$this->where($arg, $not ? 'is not null' : 'is null');
+			}
+		}
+		return $this;
+	}
+
+	/**
+	* Alias for where_null
+	*/
+	public function where_not_null() {
+		return call_user_func_array(array($this, 'where_null'), func_get_args());
 	}
 
 	/**
