@@ -891,11 +891,18 @@ abstract class yf_db_query_builder_driver {
 				$id[] = $last;
 			}
 		}
-		if (!$pk) {
-			$pk = $this->get_key_name();
-		}
 		if (is_array($id) && count($id) === 1) {
 			$id = reset($id);
+		}
+		if (is_array($id) && count($id) === 1) {
+			$key = key($id);
+			if (!is_numeric($key)) {
+				$pk = $key;
+			}
+			$id = reset($id);
+		}
+		if (!$pk) {
+			$pk = $this->get_key_name();
 		}
 		$sql = '';
 		if (is_array($id) && count($id) > 1) {
