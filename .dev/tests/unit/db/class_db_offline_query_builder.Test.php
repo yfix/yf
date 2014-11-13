@@ -587,12 +587,33 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertSame(array(1, 2), $data);
 	}
 	public function test_subquery() {
-// TODO
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertEquals('('.PHP_EOL.'SELECT 1'.PHP_EOL.')', self::qb()->subquery('SELECT 1'));
+		$this->assertEquals('('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users`'.PHP_EOL.')', self::qb()->subquery('SELECT * FROM `'.DB_PREFIX.'users`'));
+		$this->assertEquals('('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users`'.PHP_EOL.')', self::qb()->subquery( self::qb()->from('users') ));
+	}
+	public function test_union() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$first = self::qb()->table('users')->where_null('first_name');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `last_name` IS NULL UNION ('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users` WHERE `first_name` IS NULL'.PHP_EOL.')',
+			self::qb()->table('users')->where_null('last_name')->union($first)
+//->sql()
+		);
+	}
+	public function test_union_all() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$first = self::qb()->table('users')->where_null('first_name');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `last_name` IS NULL UNION ALL ('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users` WHERE `first_name` IS NULL'.PHP_EOL.')',
+			self::qb()->table('users')->where_null('last_name')->union_all($first)
+//->sql()
+		);
 	}
 	public function test_any() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO
 	}
 	public function test_exists() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO
 #		->exists(function($query) {
 #			$query->select(DB::raw(1))
@@ -606,27 +627,23 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 #		)
 	}
 	public function test_not_exists() {
-// TODO
-	}
-	public function test_union() {
-// TODO
-#		$first = DB::table('users')->whereNull('first_name');
-#		$users = DB::table('users')->whereNull('last_name')->union($first)->get();
-	}
-	public function test_union_all() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO
 	}
 	public function test_chunk() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO
 #		User::chunk(200, function($users){
 #			foreach ($users as $user) { ... }
 #		});
 	}
 	public function test_shared_lock() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO
 #		DB::table('users')->where('votes', '>', 100)->sharedLock()->get();
 	}
 	public function test_lock_for_update() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 // TODO
 #		DB::table('users')->where('votes', '>', 100)->lockForUpdate()->get();
 	}
