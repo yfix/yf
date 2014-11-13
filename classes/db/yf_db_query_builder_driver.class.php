@@ -376,10 +376,26 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Split big resultset into parts, by executing callback
+	* Split big resultset into parts, by executing callback on each chunk
 	*/
-	public function chunk($callback) {
-// TODO
+	public function chunk($num = 100, $callback) {
+		$sql = $this->sql();
+		if (!$sql) {
+			return false;
+		}
+		$q = $this->db->query($q);
+		if (!$q) {
+			return false;
+		}
+		$buffer = array();
+		while ($a = $this->db->fetch_assoc($q)) {
+			$buffer[] = $a;
+			if (count($buffer) >= $num) {
+				$callback($buffer);
+				$buffer = array();
+			}
+		}
+		return $this;
 	}
 
 	/**
@@ -492,9 +508,7 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Insert data from query params SQL into other table
 	*/
-	public function insert_into($table, array $fields = array(), $params = array()) {
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert_into('table2')
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
+	public function insert_into($table, $params = array()) {
 		if (!$table) {
 			return false;
 		}
@@ -504,8 +518,9 @@ abstract class yf_db_query_builder_driver {
 		if (!$select_sql) {
 			return false;
 		}
+		$fields_escaped = substr($this->_render_select(), strlen('SELECT '));
 		$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '')
-			.' INTO '.$this->_escape_table_name($table). ($cols ? ' ('.implode(', ', $cols).')' : ''). PHP_EOL. $select_sql;
+			.' INTO '.$this->_escape_table_name($table). ' ('. $fields_escaped. ') '. PHP_EOL. $select_sql;
 		return $params['sql'] ? $sql : $this->db->query($sql);
 	}
 
@@ -594,7 +609,6 @@ abstract class yf_db_query_builder_driver {
 	* Update current dataset, mathcing query params
 	*/
 	public function update(array $data, $params = array()) {
-// TODO: support for dataset params: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
 		$table = $params['table'] ?: $this->get_table();
 		if (!$table) {
 			return false;
@@ -603,9 +617,9 @@ abstract class yf_db_query_builder_driver {
 			return false;
 		}
 		// 3-dimensional array detected
-		if (is_array($data) && is_array(reset($data))) {
-			return $this->update_batch($table);
-		}
+#		if (is_array($data) && is_array(reset($data))) {
+#			return $this->update_batch($table);
+#		}
 		$a = $this->_sql_to_array($return_raw = true);
 		$where = '';
 		if (isset($a['where'])) {
