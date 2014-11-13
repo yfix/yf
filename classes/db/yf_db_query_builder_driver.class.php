@@ -145,6 +145,10 @@ abstract class yf_db_query_builder_driver {
 			if (empty($this->_sql[$name])) {
 				continue;
 			}
+			if ($name === 'where_or' && !isset($a['where'])) {
+				$a['where'] = $parts_config['where']['operator'];
+				$config['operator'] = '';
+			}
 			$a[$name] = $this->_sql_part_to_array($name, $this->_sql[$name], $config, $return_raw);
 		}
 		return $a;
@@ -196,7 +200,7 @@ abstract class yf_db_query_builder_driver {
 					'condition' => $data,
 				);
 			} else {
-				$out = $operator.' '.implode(' '.$config['separator'].' ', $data);
+				$out = ($operator ? $operator.' ' : ''). implode(' '.$config['separator'].' ', $data);
 			}
 		} else {
 			if ($return_raw) {
