@@ -140,7 +140,8 @@ abstract class yf_db_query_builder_driver {
 			unset($this->_sql['having']);
 		}
 		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
-		foreach ($this->_get_sql_parts_config() as $name => $config) {
+		$parts_config = $this->_get_sql_parts_config();
+		foreach ($parts_config as $name => $config) {
 			if (empty($this->_sql[$name])) {
 				continue;
 			}
@@ -249,7 +250,9 @@ abstract class yf_db_query_builder_driver {
 	* Counting number of records inside requested recordset
 	*/
 	public function count() {
-		$this->_sql['select'] = 'COUNT(*)';
+		$args = func_get_args();
+		$try_what = isset($args[0]) ? trim($args[0]) : '';
+		$this->_sql['select'] = 'COUNT('.($try_what ?: '*').')';
 		return $this->get_one();
 	}
 
@@ -905,7 +908,7 @@ abstract class yf_db_query_builder_driver {
 
 	/**
 	* Add raw WHERE part. Be careful with it, no escaping or wrapping here!
-	*	where_raw('raw sql here')
+	*	where_raw('id BETWEEN 1 AND 4')
 	*/
 	public function where_raw() {
 		foreach ((array)func_get_args() as $arg) {
@@ -950,10 +953,9 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Prepare WHERE statement
 	*/
-	public function _process_where(array $where, $func_name = 'where') {
+	public function _process_where(array $where, $func_name = 'where', $return_array = false) {
 		$sql = '';
-		$count = count($where);
-		if ($count) {
+		if ($count = count($where)) {
 			$all_numeric = $this->_is_where_all_numeric($where);
 			if ($all_numeric) {
 				// where(array(1,2,3))
@@ -963,59 +965,81 @@ abstract class yf_db_query_builder_driver {
 				return $this->whereid($where);
 			}
 		}
+		$where = $this->_split_by_comma($where);
+		$count = count($where);
 		if (($count === 3 || $count === 2) && is_string($where[0]) && (is_string($where[1]) || is_numeric($where[1]) || is_array($where[1]))) {
-			$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
-		} elseif ($count) {
+			if (!preg_match(self::REGEX_INLINE_CONDS, $where[0]) && !preg_match(self::REGEX_INLINE_CONDS, $where[1])) {
+				$sql = $this->_process_where_cond($where[0], $where[1], $where[2]);
+			}
+		}
+		$avail_imploders = array('AND','OR','XOR');
+		$imploder = 'AND';
+		if ($func_name === 'where_or') {
+			$imploder = 'OR';
+		}
+		if (!$sql && $count) {
 			$a = array();
-			$where = $this->_split_by_comma($where);
 			foreach ((array)$where as $k => $v) {
 				if (is_string($v)) {
 					$v = trim($v);
 				}
+				$count_a = count($a);
+				$need_imploder = false;
+				if ($count_a && !in_array($a[$count_a - 1], $avail_imploders)) {
+					$need_imploder = true;
+				}
 				if (is_string($v) && strlen($v) && !empty($v)) {
 					if (preg_match(self::REGEX_INLINE_CONDS, $v, $m)) {
+						if ($need_imploder) {
+							$a[] = $imploder;
+						}
 						$a[] = $this->_process_where_cond($m[1], $m[2], $m[3]);
 					} elseif (preg_match(self::REGEX_IS_NULL, $v, $m)) {
+						if ($need_imploder) {
+							$a[] = $imploder;
+						}
 						$a[] = $this->_process_where_cond($m[1], $m[2], '');
 					} else {
 						$v = strtoupper(trim($v));
-						if (in_array($v, array('AND','OR','XOR'))) {
+						if (in_array($v, $avail_imploders)) {
 							$a[] = $v;
 						}
 					}
 				} elseif (is_array($v)) {
-					$count_a = count($a);
-					$need_and = false;
-					if ($count_a && !in_array($a[$count_a - 1], array('AND','OR','XOR'))) {
-						$need_and = true;
-					}
 					// array('field', 'condition', 'value'), example: array('id','>','1')
 					$_count_v = count($v);
-					if (($_count_v === 3 || $_count_v === 2) && isset($v[0])) {
+					if (($_count_v === 3 || $_count_v === 2) && isset($v[0]) && !preg_match(self::REGEX_INLINE_CONDS, $v[0])) {
 						$tmp = $this->_process_where_cond($v[0], $v[1], $v[2]);
 						if (!strlen($tmp)) {
 							continue;
 						}
-						if ($need_and) {
-							$a[] = 'AND';
+						if ($need_imploder) {
+							$a[] = $imploder;
 						}
 						$a[] = $tmp;
 					// array('field1' => 'val1', 'field2' => 'val2')
 					} else {
 						$tmp = array();
 						foreach ($v as $k2 => $v2) {
-							$_tmp = $this->_process_where_cond($k2, '=', $v2);
+							if (is_string($v2)) {
+								$v2 = trim($v2);
+							}
+							if (is_string($v2) && preg_match(self::REGEX_INLINE_CONDS, $v2, $m)) {
+								$_tmp = $this->_process_where_cond($m[1], $m[2], $m[3]);
+							} else {
+								$_tmp = $this->_process_where_cond($k2, '=', $v2);
+							}
 							if ($_tmp) {
 								$tmp[] = $_tmp;
 							}
 						}
 						if (count($tmp)) {
-							if ($need_and) {
-								$a[] = 'AND';
+							if ($need_imploder) {
+								$a[] = $imploder;
 							}
 							foreach ($tmp as $k2 => $v2) {
 								if ($k2 > 0) {
-									$a[] = 'AND';
+									$a[] = $imploder;
 								}
 								$a[] = $v2;
 							}
