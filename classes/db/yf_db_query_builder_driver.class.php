@@ -497,6 +497,7 @@ abstract class yf_db_query_builder_driver {
 // usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
 // usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
 // Use for into_table here INSERT INTO ... SELECT .. FROM ...
+/*
 		$data = $this->get_all();
 		$first = reset($data);
 		$sql = $this->compile_insert($table, $data, $params);
@@ -507,6 +508,7 @@ abstract class yf_db_query_builder_driver {
 		$result = $this->db->query($sql);
 		$result && $result = $this->db->insert_id();
 		return $result;
+*/
 	}
 
 	/**
@@ -595,7 +597,6 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function update(array $data, $params = array()) {
 // TODO: support for dataset params: select('id, name')->from('table1')->where('age','>','30')->limit(50)->update(array('id' => '@id', 'name' => '@name'), array('table' => 'table2'))
-// TODO: where condition for update inside params
 		$table = $params['table'] ?: $this->get_table();
 		if (!$table) {
 			return false;
