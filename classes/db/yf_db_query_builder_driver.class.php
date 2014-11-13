@@ -922,25 +922,29 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function where_null() {
 		$func = __FUNCTION__;
-		$not = false;
-		if (strpos($func, '_not_') !== false) {
-			$not = true;
-		}
 		foreach ((array)func_get_args() as $arg) {
 			if (is_array($arg)) {
 				$this->$func($arg);
 			} else {
-				$this->where($arg, $not ? 'is not null' : 'is null');
+				$this->where($arg, 'is null');
 			}
 		}
 		return $this;
 	}
 
 	/**
-	* Alias for where_null
+	* where_null with "not"
 	*/
 	public function where_not_null() {
-		return call_user_func_array(array($this, 'where_null'), func_get_args());
+		$func = __FUNCTION__;
+		foreach ((array)func_get_args() as $arg) {
+			if (is_array($arg)) {
+				$this->$func($arg);
+			} else {
+				$this->where($arg, 'is not null');
+			}
+		}
+		return $this;
 	}
 
 	/**
