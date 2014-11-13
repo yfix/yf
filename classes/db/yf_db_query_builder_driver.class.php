@@ -239,7 +239,7 @@ abstract class yf_db_query_builder_driver {
 	* Counting number of records inside requested recordset
 	*/
 	public function count($id = '*', $as_sql = false) {
-		$query = $this->select('COUNT('.($id ?: '*').')');
+		$query = $this->select('COUNT('.$this->_escape_col_name($id ?: '*').')');
 		return $as_sql ? $query->sql() : $query->get_one();
 	}
 
@@ -247,7 +247,7 @@ abstract class yf_db_query_builder_driver {
 	* SQL aggregate MAX()
 	*/
 	public function max($pk = null, $as_sql = false) {
-		$query = $this->select('MAX('.($pk ?: $this->get_key_name()).')');
+		$query = $this->select('MAX('.$this->_escape_col_name($pk ?: $this->get_key_name()).')');
 		return $as_sql ? $query->sql() : $query->get_one();
 	}
 
@@ -255,7 +255,7 @@ abstract class yf_db_query_builder_driver {
 	* SQL aggregate MIN()
 	*/
 	public function min($pk = null, $as_sql = false) {
-		$query = $this->select('MIN('.($pk ?: $this->get_key_name()).')');
+		$query = $this->select('MIN('.$this->_escape_col_name($pk ?: $this->get_key_name()).')');
 		return $as_sql ? $query->sql() : $query->get_one();
 	}
 
@@ -263,7 +263,7 @@ abstract class yf_db_query_builder_driver {
 	* SQL aggregate AVG()
 	*/
 	public function avg($pk = null, $as_sql = false) {
-		$query = $this->select('AVG('.($pk ?: $this->get_key_name()).')');
+		$query = $this->select('AVG('.$this->_escape_col_name($pk ?: $this->get_key_name()).')');
 		return $as_sql ? $query->sql() : $query->get_one();
 	}
 
@@ -271,7 +271,7 @@ abstract class yf_db_query_builder_driver {
 	* SQL aggregate SUM()
 	*/
 	public function sum($pk = null, $as_sql = false) {
-		$query = $this->select('SUM('.($pk ?: $this->get_key_name()).')');
+		$query = $this->select('SUM('.$this->_escape_col_name($pk ?: $this->get_key_name()).')');
 		return $as_sql ? $query->sql() : $query->get_one();
 	}
 
