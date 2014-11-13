@@ -480,7 +480,17 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		);
 	}
 	public function test_insert() {
-// TODO
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$data = array(
+			'user_id'	=> 1,
+			'date'		=> '1234567890',
+			'total_sum'	=> '19,12',
+			'name'		=> 'name',
+		);
+		$this->assertEquals( 
+			'INSERT INTO `'.DB_PREFIX.'shop_orders` (`user_id`, `date`, `total_sum`, `name`) VALUES (\'1\', \'1234567890\', \'19,12\', \'name\')', 
+			str_replace(PHP_EOL, '', self::qb()->table('shop_orders')->insert($data, array('sql' => true)) )
+		);
 	}
 	public function test_insert_into() {
 // TODO
@@ -545,12 +555,6 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertTrue(self::qb()->_is_where_all_numeric($data));
 		$this->assertSame(array(1, 2), $data);
 	}
-	public function test_union() {
-// TODO
-	}
-	public function test_union_all() {
-// TODO
-	}
 	public function test_subquery() {
 // TODO
 	}
@@ -561,6 +565,12 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 // TODO
 	}
 	public function test_not_exists() {
+// TODO
+	}
+	public function test_union() {
+// TODO
+	}
+	public function test_union_all() {
 // TODO
 	}
 	public function test_chunk() {
