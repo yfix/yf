@@ -523,6 +523,28 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals('LIMIT 10, 1', self::qb()->limit(1,10)->_render_limit());
 	}
+	public function test_split_by_comma() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertSame(array(array('1','2','3')), self::qb()->_split_by_comma(array('1,2,3')));
+	}
+	public function test_ids_sql_from_array() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertSame(array(1=>1,2=>2,3=>3), self::qb()->_ids_sql_from_array(array(1,2,3)));
+	}
+	public function test_is_where_all_numeric() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$data = array('id' => 1, 2, 3);
+		$this->assertFalse(self::qb()->_is_where_all_numeric($data));
+		$data = array(1, 2, 'id' => 3);
+		$this->assertFalse(self::qb()->_is_where_all_numeric($data));
+		$data = array(1, 2, 'id');
+		$this->assertFalse(self::qb()->_is_where_all_numeric($data));
+		$data = array(1,2,3);
+		$this->assertTrue(self::qb()->_is_where_all_numeric($data));
+		$data = array(1, 2, '');
+		$this->assertTrue(self::qb()->_is_where_all_numeric($data));
+		$this->assertSame(array(1, 2), $data);
+	}
 	public function test_union() {
 // TODO
 	}
@@ -548,15 +570,6 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 // TODO
 	}
 	public function test_lock_for_update() {
-// TODO
-	}
-	public function test_split_by_comma() {
-// TODO
-	}
-	public function test_ids_sql_from_array() {
-// TODO
-	}
-	public function test_is_where_all_numeric() {
 // TODO
 	}
 }
