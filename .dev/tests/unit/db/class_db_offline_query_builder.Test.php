@@ -439,12 +439,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	}
 	public function test_compile_insert() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$data = array(
-			'user_id'	=> 1,
-			'date'		=> '1234567890',
-			'total_sum'	=> '19,12',
-			'name'		=> 'name',
-		);
+		$data = array('user_id'	=> 1, 'date' => '1234567890', 'total_sum' => '19,12', 'name' => 'name');
 		$this->assertEquals( 
 			'INSERT INTO `'.DB_PREFIX.'shop_orders` (`user_id`, `date`, `total_sum`, `name`) VALUES (\'1\', \'1234567890\', \'19,12\', \'name\')', 
 			str_replace(PHP_EOL, '', self::qb()->compile_insert('shop_orders', $data) )
@@ -464,12 +459,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	}
 	public function test_compile_update() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$data = array(
-			'user_id'	=> 1,
-			'date'		=> '1234567890',
-			'total_sum'	=> '19,12',
-			'name'		=> 'name',
-		);
+		$data = array('user_id'	=> 1, 'date' => '1234567890', 'total_sum' => '19,12', 'name' => 'name');
 		$this->assertEquals(
 			'UPDATE `'.DB_PREFIX.'shop_orders` SET `user_id` = \'1\', `date` = \'1234567890\', `total_sum` = \'19,12\', `name` = \'name\' WHERE id=1',
 			str_replace(PHP_EOL, '', self::qb()->compile_update('shop_orders', $data, 'id=1') )
@@ -481,25 +471,41 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	}
 	public function test_insert() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$data = array(
-			'user_id'	=> 1,
-			'date'		=> '1234567890',
-			'total_sum'	=> '19,12',
-			'name'		=> 'name',
-		);
+		$data = array('user_id'	=> 1, 'date' => '1234567890', 'total_sum' => '19,12', 'name' => 'name');
 		$this->assertEquals( 
 			'INSERT INTO `'.DB_PREFIX.'shop_orders` (`user_id`, `date`, `total_sum`, `name`) VALUES (\'1\', \'1234567890\', \'19,12\', \'name\')', 
 			str_replace(PHP_EOL, '', self::qb()->table('shop_orders')->insert($data, array('sql' => true)) )
 		);
 	}
 	public function test_insert_into() {
-// TODO
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+#		$this->assertEquals( 
+#			'INSERT INTO `'.DB_PREFIX.'stats_archive` (`user_id`,`visits`) SELECT `user_id`, `visits` FROM `'.DB_PREFIX.'stats` WHERE `id` > 1234',
+#			str_replace(PHP_EOL, '', self::qb()->select('user_id','visits')->from('stats')->insert_into('stats_archive', array('sql' => true)) )
+#		);
 	}
 	public function test_update() {
-// TODO
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$data = array('user_id'	=> 1, 'date' => '1234567890', 'total_sum' => '19,12', 'name' => 'name');
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'shop_orders` SET `user_id` = \'1\', `date` = \'1234567890\', `total_sum` = \'19,12\', `name` = \'name\' WHERE `id` = \'1\'',
+			str_replace(PHP_EOL, '', self::qb()->table('shop_orders')->whereid(1)->update($data, array('sql' => true)) )
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'shop_orders` SET `user_id` = \'1\', `date` = \'1234567890\', `total_sum` = \'19,12\', `name` = \'name\' WHERE `id` >= \'1\'',
+			str_replace(PHP_EOL, '', self::qb()->table('shop_orders')->where('id >= 1')->update($data, array('sql' => true)) )
+		);
 	}
 	public function test_update_batch() {
-// TODO
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$data = array(
+			1 => array('id' => 1, 'name' => 'name1'),
+			2 => array('id' => 2, 'name' => 'name2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, 'id', $only_sql = true)) )
+		);
 	}
 	public function test_render_select() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
