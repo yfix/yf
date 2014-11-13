@@ -1503,20 +1503,6 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Pessimistic locking
-	*/
-	public function shared_lock() {
-// TODO
-	}
-
-	/**
-	* Lock records for update on select statement
-	*/
-	public function lock_for_update() {
-// TODO
-	}
-
-	/**
 	* Get current linked model
 	*/
 	public function get_model() {
@@ -1718,5 +1704,19 @@ abstract class yf_db_query_builder_driver {
 	public function _escape_val($val = '') {
 // TODO: support for binding params (':field' => $val)
 		return $this->db->escape_val($val);
+	}
+
+	/**
+	* Pessimistic locking
+	*/
+	public function shared_lock() {
+// TODO
+	}
+
+	/**
+	* Lock records for update on select statement
+	*/
+	public function lock_for_update() {
+// TODO
 	}
 }
