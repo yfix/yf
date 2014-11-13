@@ -255,7 +255,12 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	}
 	public function test_where_raw() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE id BETWEEN 1 AND 5', self::qb()->from('user')->where_raw('id BETWEEN 1 AND 5') );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE id BETWEEN 1 AND 5', self::qb()->from('user')->where_raw('id BETWEEN 1 AND 5')->sql() );
+	}
+	public function test_where_between() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` BETWEEN \'1\' AND \'5\'', self::qb()->from('user')->where_between('id', 1, 5)->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` BETWEEN \'1\' AND \'5\'', self::qb()->from('user as u')->where_between('u.id', 1, 5)->sql() );
 	}
 	public function test_join() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -569,23 +574,40 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	}
 	public function test_exists() {
 // TODO
+#		->exists(function($query) {
+#			$query->select(DB::raw(1))
+#				->from('orders')
+#				->whereRaw('orders.user_id = users.id');
+#		})
+
+#		select * from users
+#		where exists (
+#		    select 1 from orders where orders.user_id = users.id
+#		)
 	}
 	public function test_not_exists() {
 // TODO
 	}
 	public function test_union() {
 // TODO
+#		$first = DB::table('users')->whereNull('first_name');
+#		$users = DB::table('users')->whereNull('last_name')->union($first)->get();
 	}
 	public function test_union_all() {
 // TODO
 	}
 	public function test_chunk() {
 // TODO
+#		User::chunk(200, function($users){
+#			foreach ($users as $user) { ... }
+#		});
 	}
 	public function test_shared_lock() {
 // TODO
+#		DB::table('users')->where('votes', '>', 100)->sharedLock()->get();
 	}
 	public function test_lock_for_update() {
 // TODO
+#		DB::table('users')->where('votes', '>', 100)->lockForUpdate()->get();
 	}
 }
