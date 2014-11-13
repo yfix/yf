@@ -484,10 +484,14 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	}
 	public function test_insert_into() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-#		$this->assertEquals( 
-#			'INSERT INTO `'.DB_PREFIX.'stats_archive` (`user_id`,`visits`) SELECT `user_id`, `visits` FROM `'.DB_PREFIX.'stats` WHERE `id` > 1234',
-#			str_replace(PHP_EOL, '', self::qb()->select('user_id','visits')->from('stats')->insert_into('stats_archive', array('sql' => true)) )
-#		);
+		$this->assertEquals( 
+			'INSERT INTO `'.DB_PREFIX.'stats_archive` (`user_id`) SELECT `user_id` FROM `'.DB_PREFIX.'stats`',
+			str_replace(PHP_EOL, '', self::qb()->select('user_id')->from('stats')->insert_into('stats_archive', array('sql' => true)) )
+		);
+		$this->assertEquals( 
+			'INSERT INTO `'.DB_PREFIX.'stats_archive` (`user_id` , `visits`) SELECT `user_id` , `visits` FROM `'.DB_PREFIX.'stats` WHERE `id` > \'1234\'',
+			str_replace(PHP_EOL, '', self::qb()->select('user_id','visits')->from('stats')->where('id > 1234')->insert_into('stats_archive', array('sql' => true)) )
+		);
 	}
 	public function test_update() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
