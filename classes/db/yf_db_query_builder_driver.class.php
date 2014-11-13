@@ -1048,6 +1048,29 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* SQL statement ANY() for subqueries
+	*/
+	public function where_any($key, $op = '=', $query) {
+		return $this->where_raw(
+			$this->_escape_col_name($key).' '.(in_array($op, array('=','>','<','>=','<=','!=','<>')) ? $op : '=').' '.$this->subquery($query)
+		);
+	}
+
+	/**
+	* SQL statement EXISTS for subqueries
+	*/
+	public function where_exists($query) {
+		return $this->where_raw('EXISTS '.$this->subquery($query));
+	}
+
+	/**
+	* SQL statement NOT EXISTS for subqueries
+	*/
+	public function where_not_exists($query) {
+		return $this->where_raw('NOT EXISTS '.$this->subquery($query));
+	}
+
+	/**
 	* Prepare WHERE statement
 	*/
 	public function _process_where(array $where, $func_name = 'where', $return_array = false) {
@@ -1469,7 +1492,7 @@ abstract class yf_db_query_builder_driver {
 	* UNION sql wrapper
 	*/
 	public function union($query, $all = false) {
-		return $this->where_raw(($all ? 'UNION ALL' : 'UNION').' '.$this->subquery($query));
+		return $this->sql(). ' '. ($all ? 'UNION ALL' : 'UNION'). ' '. $this->subquery($query);
 	}
 
 	/**
@@ -1477,29 +1500,6 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function union_all($query) {
 		return $this->union($query, $all = true);
-	}
-
-	/**
-	* SQL statement ANY() for subqueries
-	*/
-	public function any($key, $op = '=', $query) {
-		return $this->where_raw(
-			$this->_escape_col_name($key).' '.(in_array($op, array('=','>','<','>=','<=','!=','<>')) ? $op : '=').' '.$this->subquery($query)
-		);
-	}
-
-	/**
-	* SQL statement EXISTS for subqueries
-	*/
-	public function exists($query) {
-		return $this->where_raw('EXISTS '.$this->subquery($query));
-	}
-
-	/**
-	* SQL statement NOT EXISTS for subqueries
-	*/
-	public function not_exists($query) {
-		return $this->where_raw('NOT EXISTS '.$this->subquery($query));
 	}
 
 	/**
