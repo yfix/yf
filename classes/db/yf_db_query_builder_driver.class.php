@@ -493,22 +493,20 @@ abstract class yf_db_query_builder_driver {
 	* Insert data from query params SQL into other table
 	*/
 	public function insert_into($table, array $fields = array(), $params = array()) {
-// TODO: unit tests
-// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2')
+// usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert_into('table2')
 // usage pattern: select('id, name')->from('table1')->where('age','>','30')->limit(50)->insert('table2', array('id' => '@id', 'name' => '@name'))
-// Use for into_table here INSERT INTO ... SELECT .. FROM ...
-/*
-		$data = $this->get_all();
-		$first = reset($data);
-		$sql = $this->compile_insert($table, $data, $params);
-		if (!empty($params['sql'])) {
-			return $sql;
+		if (!$table) {
+			return false;
 		}
-		if (!$sql) { return $sql; }
-		$result = $this->db->query($sql);
-		$result && $result = $this->db->insert_id();
-		return $result;
-*/
+		$replace = isset($params['replace']) ? $params['replace'] : false;
+		$ignore = isset($params['ignore']) ? $params['ignore'] : false;
+		$select_sql = $this->sql();
+		if (!$select_sql) {
+			return false;
+		}
+		$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '')
+			.' INTO '.$this->_escape_table_name($table). ($cols ? ' ('.implode(', ', $cols).')' : ''). PHP_EOL. $select_sql;
+		return $params['sql'] ? $sql : $this->db->query($sql);
 	}
 
 	/**
@@ -941,6 +939,13 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Alias for whereid()
+	*/
+	public function where_in() {
+		return call_user_func_array(array($this, 'whereid'), func_get_args());
+	}
+
+	/**
 	* Add raw WHERE part. Be careful with it, no escaping or wrapping here!
 	*	where_raw('id BETWEEN 1 AND 4')
 	*/
@@ -982,6 +987,14 @@ abstract class yf_db_query_builder_driver {
 			}
 		}
 		return $this;
+	}
+
+	/**
+	* Shortcut for BETWEEN min AND max
+	*	where_between('pid', 1, 10)		=> `pid` BETWEEN 1 AND 10
+	*/
+	public function where_between($field, $min, $max) {
+		return $this->where_raw($this->_escape_col_name($field).' BETWEEN '.$this->_escape_val($min).' AND '.$this->_escape_val($max));
 	}
 
 	/**
