@@ -106,6 +106,12 @@ abstract class yf_db_query_builder_driver {
 				unset($a[$name]);
 			}
 		}
+		if (isset($a['where_or']) && !isset($a['where'])) {
+			$a = array(
+				'where' => 'WHERE',
+				'where_or' => trim(substr($a['where_or'], 0, strlen('OR '))),
+			);
+		}
 		return $a ? implode(' ', $a) : false;
 	}
 
