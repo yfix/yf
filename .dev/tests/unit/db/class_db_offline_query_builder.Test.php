@@ -511,6 +511,22 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
 			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, 'id', $only_sql = true)) )
 		);
+		$data = array(
+			1 => array('id' => 1, 'cat_id' => 11, 'name' => 'name1'),
+			2 => array('id' => 2, 'cat_id' => 22, 'name' => 'name2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'name1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\') AND `cat_id` IN(\'11\',\'22\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $only_sql = true)) )
+		);
+		$data = array(
+			1 => array('id' => 1, 'cat_id' => 11, 'name' => 'name1', 'desc' => 'desc1'),
+			2 => array('id' => 2, 'cat_id' => 22, 'name' => 'name2', 'desc' => 'desc2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'name1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'name2\' ELSE `name` END, `desc` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'desc1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'desc2\' ELSE `desc` END WHERE `id` IN(\'1\',\'2\') AND `cat_id` IN(\'11\',\'22\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $only_sql = true)) )
+		);
 	}
 	public function test_render_select() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
