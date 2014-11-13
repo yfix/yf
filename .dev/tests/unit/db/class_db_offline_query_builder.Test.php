@@ -69,6 +69,11 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT `s`.`id` , `u`.`id` FROM `'.DB_PREFIX.'user`', self::qb()->select('s.id')->select('u.id')->from('user')->sql() );
 		$this->assertEquals( 'SELECT `s`.`id` AS `sid` , `u`.`id` AS `uid` FROM `'.DB_PREFIX.'user`', self::qb()->select('s.id as sid')->select('u.id as uid')->from('user')->sql() );
 		$this->assertEquals( 'SELECT `s`.`id` AS `sid` , `u`.`id` AS `uid` FROM `'.DB_PREFIX.'user`', self::qb()->select('s.id as sid, u.id as uid')->from('user')->sql() );
+
+		$this->assertEquals(
+			'SELECT `s`.`id` AS `sid` , `u`.`id` AS `uid` , `u`.`name` AS `uname` , `u`.`group` AS `group_id` , `u`.`verified` FROM `'.DB_PREFIX.'user`',
+			self::qb()->select('s.id as sid, u.id as uid', array('u.name as uname'), array('u.group' => 'group_id'), 'u.verified')->from('user')->sql()
+		);
 	}
 	public function test_from() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -82,6 +87,19 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` , `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from(array('user' => 'u'), array('articles' => 'a'))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` , `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from(array('user' => 'u'))->from(array('articles' => 'a'))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` , `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->from('user as u, articles as a')->sql() );
+
+		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` , `'.DB_PREFIX.'articles` AS `a` , `'.DB_PREFIX.'products` AS `p` , `'.DB_PREFIX.'orders` AS `o` , `'.DB_PREFIX.'rating` AS `r`', 
+			self::qb()->select()->from('user as u, articles as a', array('products' => 'p', 'orders' => 'o'), 'rating as r')->sql()
+		);
+	}
+	public function test_table() {
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` , `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->table(array('user' => 'u'))->table(array('articles' => 'a'))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` , `'.DB_PREFIX.'articles` AS `a`', self::qb()->select()->table('user as u, articles as a')->sql() );
+		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` , `'.DB_PREFIX.'articles` AS `a` , `'.DB_PREFIX.'products` AS `p` , `'.DB_PREFIX.'orders` AS `o` , `'.DB_PREFIX.'rating` AS `r`', 
+			self::qb()->select()->table('user as u, articles as a', array('products' => 'p', 'orders' => 'o'), 'rating as r')->sql()
+		);
 	}
 	public function test_from_string_as() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -314,5 +332,104 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3))->delete($as_sql = true) );
 		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'uid')->delete($as_sql = true) );
 		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user as u')->whereid(array(1,2,3), 'u.id')->delete($as_sql = true) );
+	}
+	public function test_where_raw() {
+// TODO
+	}
+	public function test_compile_insert() {
+// TODO
+	}
+	public function test_compile_update() {
+// TODO
+	}
+	public function test_render_select() {
+// TODO
+	}
+	public function test_render_from() {
+// TODO
+	}
+	public function test_render_where() {
+// TODO
+	}
+	public function test_render_joins() {
+// TODO
+	}
+	public function test_render_order_by() {
+// TODO
+	}
+	public function test_render_limit() {
+// TODO
+	}
+	public function test_insert() {
+// TODO
+	}
+	public function test_replace() {
+// TODO
+	}
+	public function test_insert_into() {
+// TODO
+	}
+	public function test_replace_into() {
+// TODO
+	}
+	public function test_update() {
+// TODO
+	}
+	public function test_update_batch() {
+// TODO
+	}
+	public function test_union() {
+// TODO
+	}
+	public function test_union_all() {
+// TODO
+	}
+	public function test_subquery() {
+// TODO
+	}
+	public function test_any() {
+// TODO
+	}
+	public function test_exists() {
+// TODO
+	}
+	public function test_not_exists() {
+// TODO
+	}
+	public function test_avg() {
+// TODO
+	}
+	public function test_min() {
+// TODO
+	}
+	public function test_max() {
+// TODO
+	}
+	public function test_sum() {
+// TODO
+	}
+	public function test_increment() {
+// TODO
+	}
+	public function test_decrement() {
+// TODO
+	}
+	public function test_chunk() {
+// TODO
+	}
+	public function test_shared_lock() {
+// TODO
+	}
+	public function test_lock_for_update() {
+// TODO
+	}
+	public function test_split_by_comma() {
+// TODO
+	}
+	public function test_ids_sql_from_array() {
+// TODO
+	}
+	public function test_is_where_all_numeric() {
+// TODO
 	}
 }
