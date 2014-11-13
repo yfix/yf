@@ -658,7 +658,10 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Update multiple database records at once
+	* Update multiple database records at once.
+	* Examples:
+	*	update_batch('user', $data, 'id')
+	*	update_batch('user', $data, array('id', 'cat_id'))
 	*/
 	public function update_batch($table, array $data, $index = null, $only_sql = false, $params = array()) {
 		if (!$index) {
@@ -702,11 +705,14 @@ abstract class yf_db_query_builder_driver {
 		if (!is_array($key)) {
 			return false;
 		}
+		$index_is_array = is_array($index);
 		foreach ((array)$key as $k => $v) {
 			$index_set = FALSE;
 			$clean = array();
 			foreach ((array)$v as $k2 => $v2) {
-				if ($k2 === $index)	{
+				if ($index_is_array && in_array($k2, $index)) {
+					$index_set = TRUE;
+				} elseif ($k2 === $index) {
 					$index_set = TRUE;
 				}
 				$clean[$this->_escape_key($k2)] = $this->_escape_val($v2);
@@ -723,21 +729,49 @@ abstract class yf_db_query_builder_driver {
 	* Related to update_batch()
 	*/
 	public function _get_update_batch_sql($table, $values, $index) {
-		$index = $this->_escape_key($index);
 		$ids = array();
-		foreach ((array)$values as $key => $val) {
-			$ids[] = $val[$index];
-			foreach (array_keys($val) as $field) {
-				if ($field !== $index) {
-					$final[$field][] = 'WHEN '.$index.' = '.$val[$index].' THEN '.$val[$field];
+		$final = array();
+		$where = array();
+		$index_is_array = is_array($index);
+		if ($index_is_array) {
+			foreach ($index as $ik => $idx_col) {
+				$index[$ik] = $this->_escape_key($idx_col);
+			}
+			foreach ((array)$values as $key => $val) {
+				foreach ($index as $idx_col) {
+					$ids[$idx_col][] = $val[$idx_col];
+				}
+				foreach (array_keys($val) as $field) {
+					if (in_array($field, $index)) {
+						continue;
+					}
+					$when = array();
+					foreach ($index as $idx_col) {
+						$when[] = $idx_col.' = '.$val[$idx_col];
+					}
+					$final[$field][] = 'WHEN '.implode(' AND ', $when).' THEN '.$val[$field];
 				}
 			}
+			foreach ($index as $ik => $idx_col) {
+				$where[] = $idx_col.' IN('.implode(',', $ids[$idx_col]).')';
+			}
+		} else {
+			$index = $this->_escape_key($index);
+			foreach ((array)$values as $key => $val) {
+				$ids[] = $val[$index];
+				foreach (array_keys($val) as $field) {
+					if ($field !== $index) {
+						$final[$field][] = 'WHEN '.$index.' = '.$val[$index].' THEN '.$val[$field];
+					}
+				}
+			}
+			$where[] = $index.' IN('.implode(',', $ids).')';
 		}
 		$cases = '';
 		foreach ((array)$final as $k => $v) {
 			$cases .= $k.' = CASE '.PHP_EOL. implode(PHP_EOL, $v). PHP_EOL. 'ELSE '.$k.' END, ';
 		}
-		return 'UPDATE '.$this->_escape_table_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.$index.' IN('.implode(',', $ids).')';
+		return 'UPDATE '.$this->_escape_table_name($table).' SET '.substr($cases, 0, -2). ' WHERE '.implode(' AND ', $where);
 	}
 
 	/**
