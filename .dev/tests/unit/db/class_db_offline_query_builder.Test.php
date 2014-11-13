@@ -217,15 +217,22 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(1,2,3)', self::qb()->from('user')->where(array('product_id' => array(1,2,3)))->sql() );
 	}
 	public function test_where_complex() {
-#		$this->assertEquals(
-#			'SELECT * FROM `'.DB_PREFIX.'user`',
-#			self::qb()->from('user')->where('gid = 2', array('id',1), array('sid','=','3'), array('pid' => 4, 'hid' => 5, 'mid' => 6), array('id','IS NULL'))->sql()
-#		);
-# where_or
-#		$this->assertEquals(
-#			'SELECT * FROM `'.DB_PREFIX.'user`',
-#			self::qb()->from('user as u')->where(array('u.id',1), 'u.gid > 2', array('u.name','like','*hello*'), array('u.pid' => 4, 'u.hid' => 5, 'u.mid' => 6), array('u.id','IS NULL'))->sql()
-#		);
+		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'2\' AND `gid` = \'1\' AND `sid` = \'3\' AND `pid` = \'4\' AND `hid` = \'5\' AND `mid` = \'6\' AND `rank` IS NULL',
+			self::qb()->from('user')->where('id = 2', array('gid',1), array('sid','=','3'), array('pid' => 4, 'hid' => 5, 'mid' => 6), array('rank','IS NULL'))->sql()
+		);
+		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` = \'2\' OR `gid` = \'1\' OR `sid` = \'3\' OR `pid` = \'4\' OR `hid` = \'5\' OR `mid` = \'6\' OR `rank` IS NULL',
+			self::qb()->from('user')->where_or('id = 2', array('gid',1), array('sid','=','3'), array('pid' => 4, 'hid' => 5, 'mid' => 6), array('rank','IS NULL'))->sql()
+		);
+		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' AND `u`.`gid` > \'2\' AND `u`.`name` LIKE \'%hello%\' AND `u`.`pid` = \'4\' AND `u`.`hid` = \'5\' AND `u`.`mid` = \'6\' AND `u`.`id` IS NULL',
+			self::qb()->from('user as u')->where(array('u.id',1), 'u.gid > 2', array('u.name','like','*hello*'), array('u.pid' => 4, 'u.hid' => 5, 'u.mid' => 6), array('u.id','IS NULL'))->sql()
+		);
+		$this->assertEquals(
+			'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' OR `u`.`gid` > \'2\' OR `u`.`name` LIKE \'%hello%\' OR `u`.`pid` = \'4\' OR `u`.`hid` = \'5\' OR `u`.`mid` = \'6\' OR `u`.`id` IS NULL',
+			self::qb()->from('user as u')->where_or(array('u.id',1), 'u.gid > 2', array('u.name','like','*hello*'), array('u.pid' => 4, 'u.hid' => 5, 'u.mid' => 6), array('u.id','IS NULL'))->sql()
+		);
 	}
 	public function test_join() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
