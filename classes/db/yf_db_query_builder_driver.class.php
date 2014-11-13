@@ -236,74 +236,83 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Pessimistic locking
-	*/
-	public function shared_lock() {
-// TODO
-	}
-
-	/**
-	* Lock records for update on select statement
-	*/
-	public function lock_for_update() {
-// TODO
-	}
-
-	/**
-	* Split big resultset into parts, by executing callback
-	*/
-	public function chunk($callback) {
-// TODO
-	}
-
-	/**
 	* Counting number of records inside requested recordset
 	*/
-	public function count() {
-		$args = func_get_args();
-		$try_what = isset($args[0]) ? trim($args[0]) : '';
-		$this->_sql['select'] = 'COUNT('.($try_what ?: '*').')';
-		return $this->get_one();
+	public function count($id = '*', $as_sql = false) {
+		$query = $this->select('COUNT('.($id ?: '*').')');
+		return $as_sql ? $query->sql() : $query->get_one();
 	}
 
 	/**
-	* SQL aggregate shortcut
+	* SQL aggregate MAX()
 	*/
-	public function max() {
-// TODO
+	public function max($pk = null, $as_sql = false) {
+		$query = $this->select('MAX('.($pk ?: $this->get_key_name()).')');
+		return $as_sql ? $query->sql() : $query->get_one();
 	}
 
 	/**
-	* SQL aggregate shortcut
+	* SQL aggregate MIN()
 	*/
-	public function min() {
-// TODO
+	public function min($pk = null, $as_sql = false) {
+		$query = $this->select('MIN('.($pk ?: $this->get_key_name()).')');
+		return $as_sql ? $query->sql() : $query->get_one();
 	}
 
 	/**
-	* SQL aggregate shortcut
+	* SQL aggregate AVG()
 	*/
-	public function avg() {
-// TODO
+	public function avg($pk = null, $as_sql = false) {
+		$query = $this->select('AVG('.($pk ?: $this->get_key_name()).')');
+		return $as_sql ? $query->sql() : $query->get_one();
 	}
 
 	/**
-	* SQL aggregate shortcut
+	* SQL aggregate SUM()
 	*/
-	public function sum() {
-// TODO
+	public function sum($pk = null, $as_sql = false) {
+		$query = $this->select('SUM('.($pk ?: $this->get_key_name()).')');
+		return $as_sql ? $query->sql() : $query->get_one();
 	}
 
 	/**
+	* Increments value of a column with query condition, similar to update()
 	*/
-	public function increment($field, $step = 1) {
-// TODO
+	public function increment($field, $step = 1, $as_sql = false) {
+		if (!$field) {
+			return false;
+		}
+		$step = intval($step);
+		if (!$step) {
+			$step = 1;
+		}
+		$from = $this->_render_from();
+		if (empty($from)) {
+			return false;
+		}
+		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+		if (preg_match(self::REGEX_AS, $table, $m)) {
+			$table = $m[1];
+		}
+		if (!$table) {
+			return false;
+		}
+		$where = array(
+			$this->_render_where(),
+			$this->_render_limit(),
+		);
+		// Implode only non-empty array items
+		$where = implode(' ', array_filter($where, 'strlen'));
+		$key_escaped = $this->_escape_key($field);
+		$sql = 'UPDATE '.$this->_escape_table_name($table).' SET '.$key_escaped.' = '.$key_escaped.' '.($step < 0 ? '-' : '+'). ' '.abs(intval($step)). (!empty($where) ? ' '.$where : '');
+		return $as_sql ? $sql : $this->db->query($sql);
 	}
 
 	/**
+	* Decrements value of a column with query condition, similar to update()
 	*/
-	public function decrement($field, $step = 1) {
-// TODO
+	public function decrement($field, $step = 1, $as_sql = false) {
+		return $this->increment($field, ($step ?: 1) * -1, $as_sql);
 	}
 
 	/**
@@ -364,6 +373,13 @@ abstract class yf_db_query_builder_driver {
 			return $this->db->get_one($sql, $use_cache);
 		}
 		return false;
+	}
+
+	/**
+	* Split big resultset into parts, by executing callback
+	*/
+	public function chunk($callback) {
+// TODO
 	}
 
 	/**
@@ -431,7 +447,7 @@ abstract class yf_db_query_builder_driver {
 		}
 		$sql = array(
 			'DELETE',
-			$this->_render_from(),
+			$from,
 			$this->_render_where(),
 			$this->_render_limit(),
 		);
@@ -1416,6 +1432,20 @@ abstract class yf_db_query_builder_driver {
 	* SQL statement NOT EXISTS for subqueries
 	*/
 	public function not_exists() {
+// TODO
+	}
+
+	/**
+	* Pessimistic locking
+	*/
+	public function shared_lock() {
+// TODO
+	}
+
+	/**
+	* Lock records for update on select statement
+	*/
+	public function lock_for_update() {
 // TODO
 	}
 
