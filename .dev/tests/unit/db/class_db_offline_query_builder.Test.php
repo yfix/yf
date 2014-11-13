@@ -153,9 +153,10 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' OR `u`.`gid` = \'4\'', self::qb()->from('user as u')->where('u.id = 1')->where_or('u.gid = 4')->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` = \'1\' OR `u`.`gid` = \'4\' OR `u`.`visits` < \'4\'', self::qb()->from('user as u')->where('u.id = 1')->where_or('u.gid = 4')->where_or('u.visits < 4')->sql() );
-
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\' OR `u`.`visits` < \'3\'', self::qb()->from('user as u')->where_or('u.id > 1', 'u.visits < 3')->sql() );
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\' OR `u`.`visits` < \'3\'', self::qb()->from('user as u')->where_or('u.id > 1')->where_or('u.visits < 3')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\' OR `u`.`visits` < \'3\'', self::qb()->from('user as u')->where_or('u.id > 1, u.visits < 3')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\' OR `u`.`visits` < \'3\'', self::qb()->from('user as u')->where_or(array('u.id > 1, u.visits < 3'))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\' OR `u`.`visits` < \'3\'', self::qb()->from('user as u')->where_or('u.id > 1', 'u.visits < 3')->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` > \'1\' OR `u`.`visits` < \'3\'', self::qb()->from('user as u')->where_or('u.id > 1')->where_or('u.visits < 3')->sql() );
 	}
 	public function test_whereid() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -180,19 +181,18 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->where(array(1,2,3))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->where('uid', array(1,2,3))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->where(array('uid', array(1,2,3)))->sql() );
-
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user')->where('u.id', array(1,2,3))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user')->where(array('u.id', array(1,2,3)))->sql() );
 
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->where(array('uid' => array(1,2,3)))->sql() );
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user')->where(array('u.id' => array(1,2,3)))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->where(array('uid' => array(1,2,3)))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user')->where(array('u.id' => array(1,2,3)))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3) AND `pid` IN(4,5,6)', self::qb()->from('user')->where(array('uid' => array(1,2,3)))->where(array('pid' => array(4,5,6)))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3) AND `uid` IN(4,5,6)', self::qb()->from('user')->where(array('uid' => array(1,2,3)))->where(array('uid' => array(4,5,6)))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user')->where(array('u.id' => array(1,2,3)))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3) AND `u`.`pid` IN(4,5,6)', self::qb()->from('user')->where(array('u.id' => array(1,2,3)))->where(array('u.pid' => array(4,5,6)))->sql() );
 
 #		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3) AND `pid` IN(4,5,6)', self::qb()->from('user')->where(array('uid' => array(1,2,3), 'pid' => array(4,5,6)))->sql() );
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3) AND `pid` IN(4,5,6)', self::qb()->from('user')->where(array('uid' => array(1,2,3)))->where(array('pid' => array(4,5,6)))->sql() );
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3) AND `uid` IN(4,5,6)', self::qb()->from('user')->where(array('uid' => array(1,2,3)))->where(array('uid' => array(4,5,6)))->sql() );
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user')->where(array('u.id' => array(1,2,3)))->sql() );
 #		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3) AND `u`.`pid` IN(1,2,3)', self::qb()->from('user')->where(array('u.id' => array(1,2,3), 'u.pid' => array(4,5,6)))->sql() );
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3) AND `u`.`pid` IN(1,2,3)', self::qb()->from('user')->where(array('u.id' => array(1,2,3)))->where(array('u.pid' => array(4,5,6))->sql() );
 	}
 	public function test_where_in() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -212,9 +212,20 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->where(1,2,3)->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->where(array(1,2,3))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->where('id', array(1,2,3))->sql() );
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->where(array('id' => array(1,2,3)))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->where(array('id' => array(1,2,3)))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(1,2,3)', self::qb()->from('user')->where('product_id', array(1,2,3))->sql() );
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(1,2,3)', self::qb()->from('user')->where(array('product_id' => array(1,2,3)))->sql() );
+		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `product_id` IN(1,2,3)', self::qb()->from('user')->where(array('product_id' => array(1,2,3)))->sql() );
+	}
+	public function test_where_complex() {
+#		$this->assertEquals(
+#			'SELECT * FROM `'.DB_PREFIX.'user`',
+#			self::qb()->from('user')->where('gid = 2', array('id',1), array('sid','=','3'), array('pid' => 4, 'hid' => 5, 'mid' => 6), array('id','IS NULL'))->sql()
+#		);
+# where_or
+#		$this->assertEquals(
+#			'SELECT * FROM `'.DB_PREFIX.'user`',
+#			self::qb()->from('user as u')->where(array('u.id',1), 'u.gid > 2', array('u.name','like','*hello*'), array('u.pid' => 4, 'u.hid' => 5, 'u.mid' => 6), array('u.id','IS NULL'))->sql()
+#		);
 	}
 	public function test_join() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
