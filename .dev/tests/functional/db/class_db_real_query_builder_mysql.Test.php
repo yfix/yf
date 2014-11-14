@@ -35,120 +35,141 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 	public function test_selects_basic() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
 		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$data = array(
 			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
 			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
 		);
-		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table), $data) );
+		$this->assertNotEmpty( self::db()->insert_safe($t, $data) );
 
-		$this->assertSame( $data[1], self::db()->get('SELECT * FROM '.$this->table_name($table)) );
-		$this->assertSame( $data[1], self::db()->from($this->table_name($table))->get() );
-		$this->assertSame( $data[1], self::db()->select()->from($this->table_name($table))->get() );
-		$this->assertSame( $data[1], self::db()->select('*')->from($this->table_name($table))->get() );
-		$this->assertSame( $data[1], self::db()->select(array())->from($this->table_name($table))->get() );
-		$this->assertSame( $data[1], self::db()->select('id,id2,id3')->from($this->table_name($table))->get() );
-		$this->assertSame( $data[1], self::db()->select('id, id2, id3')->from($this->table_name($table))->get() );
-		$this->assertSame( $data[1], self::db()->select('id','id2','id3')->from($this->table_name($table))->get() );
-		$this->assertSame( $data[1], self::db()->select(array('id' => 'id','id2' => 'id2','id3' => 'id3'))->from($this->table_name($table))->get() );
+		$this->assertSame( $data[1], self::db()->get('SELECT * FROM '.$t) );
+		$this->assertSame( $data[1], self::db()->from($t)->get() );
+		$this->assertSame( $data[1], self::db()->select()->from($t)->get() );
+		$this->assertSame( $data[1], self::db()->select('*')->from($t)->get() );
+		$this->assertSame( $data[1], self::db()->select(array())->from($t)->get() );
+		$this->assertSame( $data[1], self::db()->select('id,id2,id3')->from($t)->get() );
+		$this->assertSame( $data[1], self::db()->select('id, id2, id3')->from($t)->get() );
+		$this->assertSame( $data[1], self::db()->select('id','id2','id3')->from($t)->get() );
+		$this->assertSame( $data[1], self::db()->select(array('id' => 'id','id2' => 'id2','id3' => 'id3'))->from($t)->get() );
 
-		$this->assertSame( $data, self::db()->get_all('SELECT * FROM '.$this->table_name($table)) );
-		$this->assertSame( $data, self::db()->from($this->table_name($table))->get_all() );
-		$this->assertSame( $data, self::db()->select()->from($this->table_name($table))->get_all() );
-		$this->assertSame( $data, self::db()->select('*')->from($this->table_name($table))->get_all() );
-		$this->assertSame( $data, self::db()->select(array())->from($this->table_name($table))->get_all() );
-		$this->assertSame( $data, self::db()->select('id,id2,id3')->from($this->table_name($table))->get_all() );
-		$this->assertSame( $data, self::db()->select('id, id2, id3')->from($this->table_name($table))->get_all() );
-		$this->assertSame( $data, self::db()->select('id','id2','id3')->from($this->table_name($table))->get_all() );
-		$this->assertSame( $data, self::db()->select(array('id' => 'id','id2' => 'id2','id3' => 'id3'))->from($this->table_name($table))->get_all() );
+		$this->assertSame( $data, self::db()->get_all('SELECT * FROM '.$t) );
+		$this->assertSame( $data, self::db()->from($t)->get_all() );
+		$this->assertSame( $data, self::db()->select()->from($t)->get_all() );
+		$this->assertSame( $data, self::db()->select('*')->from($t)->get_all() );
+		$this->assertSame( $data, self::db()->select(array())->from($t)->get_all() );
+		$this->assertSame( $data, self::db()->select('id,id2,id3')->from($t)->get_all() );
+		$this->assertSame( $data, self::db()->select('id, id2, id3')->from($t)->get_all() );
+		$this->assertSame( $data, self::db()->select('id','id2','id3')->from($t)->get_all() );
+		$this->assertSame( $data, self::db()->select(array('id' => 'id','id2' => 'id2','id3' => 'id3'))->from($t)->get_all() );
 
-		$this->assertSame( array('num' => '2'), self::db()->select('COUNT(id) AS num')->from($this->table_name($table))->get() );
-		$this->assertSame( '2', self::db()->select('COUNT(id)')->from($this->table_name($table))->get_one() );
-		$this->assertSame( '2', self::db()->select('COUNT(id) AS num')->from($this->table_name($table))->get_one() );
-		$this->assertSame( '3', self::db()->select('SUM(id)')->from($this->table_name($table))->get_one() );
-		$this->assertSame( '33', self::db()->select('SUM(id2)')->from($this->table_name($table))->get_one() );
-		$this->assertSame( '333', self::db()->select('SUM(id3)')->from($this->table_name($table))->get_one() );
-		$this->assertSame( '11', self::db()->select('MIN(id2)')->from($this->table_name($table))->get_one() );
-		$this->assertSame( '22', self::db()->select('MAX(id2)')->from($this->table_name($table))->get_one() );
-		$this->assertEquals( '1.5000', self::db()->select('AVG(id)')->from($this->table_name($table))->get_one() );
+		$this->assertSame( array('num' => '2'), self::db()->select('COUNT(id) AS num')->from($t)->get() );
+		$this->assertSame( '2', self::db()->select('COUNT(id)')->from($t)->get_one() );
+		$this->assertSame( '2', self::db()->select('COUNT(id) AS num')->from($t)->get_one() );
+		$this->assertSame( '3', self::db()->select('SUM(id)')->from($t)->get_one() );
+		$this->assertSame( '33', self::db()->select('SUM(id2)')->from($t)->get_one() );
+		$this->assertSame( '333', self::db()->select('SUM(id3)')->from($t)->get_one() );
+		$this->assertSame( '11', self::db()->select('MIN(id2)')->from($t)->get_one() );
+		$this->assertSame( '22', self::db()->select('MAX(id2)')->from($t)->get_one() );
+		$this->assertEquals( '1.5000', self::db()->select('AVG(id)')->from($t)->get_one() );
 
-		$this->assertSame( '2', self::db()->from($this->table_name($table))->count() );
-		$this->assertSame( '2', self::db()->from($this->table_name($table))->count('id') );
-		$this->assertSame( '3', self::db()->from($this->table_name($table))->sum() );
-		$this->assertSame( '3', self::db()->from($this->table_name($table))->sum('id') );
-		$this->assertSame( '33', self::db()->from($this->table_name($table))->sum('id2') );
-		$this->assertSame( '333', self::db()->from($this->table_name($table))->sum('id3') );
-		$this->assertSame( '11', self::db()->from($this->table_name($table))->min('id2') );
-		$this->assertSame( '22', self::db()->from($this->table_name($table))->max('id2') );
-		$this->assertEquals( '1.5000', self::db()->from($this->table_name($table))->avg() );
-		$this->assertEquals( '1.5000', self::db()->from($this->table_name($table))->avg('id') );
+		$this->assertSame( '2', self::db()->from($t)->count() );
+		$this->assertSame( '2', self::db()->from($t)->count('id') );
+		$this->assertSame( '3', self::db()->from($t)->sum() );
+		$this->assertSame( '3', self::db()->from($t)->sum('id') );
+		$this->assertSame( '33', self::db()->from($t)->sum('id2') );
+		$this->assertSame( '333', self::db()->from($t)->sum('id3') );
+		$this->assertSame( '11', self::db()->from($t)->min('id2') );
+		$this->assertSame( '22', self::db()->from($t)->max('id2') );
+		$this->assertEquals( '1.5000', self::db()->from($t)->avg() );
+		$this->assertEquals( '1.5000', self::db()->from($t)->avg('id') );
 
-		$this->assertSame( $data[1], self::db()->from($this->table_name($table))->get() );
-		$this->assertSame( $data[1], self::db()->from($this->table_name($table).' as t1')->get() );
-		$this->assertSame( $data[1], self::db()->from(array($this->table_name($table) => 't1'))->get() );
-		$this->assertSame( $data[1], self::db()->select('t1.id, t1.id2, t1.id3')->from($this->table_name($table).' as t1')->get() );
-		$this->assertSame( $data[1], self::db()->select('t1.id','t1.id2','t1.id3')->from($this->table_name($table).' as t1')->get() );
-		$this->assertSame( $data[1], self::db()->select('t1.id as id','t1.id2 as id2','t1.id3 as id3')->from($this->table_name($table).' as t1')->get() );
-		$this->assertSame( $data[1], self::db()->select(array('t1.id' => 'id','t1.id2' => 'id2','t1.id3' => 'id3'))->from($this->table_name($table).' as t1')->get() );
-		$this->assertSame( array('fld1' => $data[1]['id']), self::db()->select('t1.id as fld1')->from($this->table_name($table).' as t1')->get() );
+		$this->assertSame( $data[1], self::db()->from($t)->get() );
+		$this->assertSame( $data[1], self::db()->from($t.' as t1')->get() );
+		$this->assertSame( $data[1], self::db()->from(array($t => 't1'))->get() );
+		$this->assertSame( $data[1], self::db()->select('t1.id, t1.id2, t1.id3')->from($t.' as t1')->get() );
+		$this->assertSame( $data[1], self::db()->select('t1.id','t1.id2','t1.id3')->from($t.' as t1')->get() );
+		$this->assertSame( $data[1], self::db()->select('t1.id as id','t1.id2 as id2','t1.id3 as id3')->from($t.' as t1')->get() );
+		$this->assertSame( $data[1], self::db()->select(array('t1.id' => 'id','t1.id2' => 'id2','t1.id3' => 'id3'))->from($t.' as t1')->get() );
+		$this->assertSame( array('fld1' => $data[1]['id']), self::db()->select('t1.id as fld1')->from($t.' as t1')->get() );
 	}
 	public function test_where() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
 		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$data = array(
 			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
 			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
 		);
-		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table), $data) );
+		$this->assertNotEmpty( self::db()->insert_safe($t, $data) );
 
-		$this->assertSame( $data[1], self::qb()->from($this->table_name($table))->where('id','=','1')->get() );
-		$this->assertSame( $data[2], self::qb()->from($this->table_name($table))->where('id','=','2')->get() );
-		$this->assertSame( $data[2], self::qb()->from($this->table_name($table))->where('id','2')->get() );
-		$this->assertEmpty( self::qb()->from($this->table_name($table))->where('id','=','3')->get() );
-		$this->assertSame( $data[2], self::qb()->from($this->table_name($table))->where('id3','like','222')->get() );
-		$this->assertSame( $data[2], self::qb()->from($this->table_name($table))->where('id3','like','22%')->get() );
-		$this->assertSame( $data[2], self::qb()->from($this->table_name($table))->where('id3','like','22*')->get() );
-		$this->assertSame( $data[2], self::qb()->from($this->table_name($table))->where('id3','rlike','(222|222222)')->get() );
-		$this->assertSame( $data[1], self::qb()->from($this->table_name($table))->where('id3','not rlike','(222|222222)')->get() );
+		$this->assertSame( $data[1], self::qb()->from($t)->where('id','=','1')->get() );
+		$this->assertSame( $data[2], self::qb()->from($t)->where('id','=','2')->get() );
+		$this->assertSame( $data[2], self::qb()->from($t)->where('id','2')->get() );
+		$this->assertEmpty( self::qb()->from($t)->where('id','=','3')->get() );
+		$this->assertSame( $data[2], self::qb()->from($t)->where('id3','like','222')->get() );
+		$this->assertSame( $data[2], self::qb()->from($t)->where('id3','like','22%')->get() );
+		$this->assertSame( $data[2], self::qb()->from($t)->where('id3','like','22*')->get() );
+		$this->assertSame( $data[2], self::qb()->from($t)->where('id3','rlike','(222|222222)')->get() );
+		$this->assertSame( $data[1], self::qb()->from($t)->where('id3','not rlike','(222|222222)')->get() );
 
-		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->where(array('t1.id2' => '1*', 't1.id3' => '2*'))->get() );
-		$this->assertSame( $data[1], self::qb()->from($this->table_name($table).' as t1')->where(array('t1.id2' => '1*', 't1.id3' => '1*'))->get() );
-		$this->assertSame( $data[2], self::qb()->from($this->table_name($table).' as t1')->where(array('t1.id2' => '2*', 't1.id3' => '2*'))->get() );
-		$this->assertSame( $data[2], self::qb()->from($this->table_name($table).' as t1')->where(array('t1.id2' => '', 't1.id3' => '2*'))->get() );
-		$this->assertSame( $data[2], self::qb()->from($this->table_name($table).' as t1')->where(array('t1.id2' => '2*', 't1.id3' => ''))->get() );
+		$this->assertEmpty( self::qb()->from($t.' as t1')->where(array('t1.id2' => '1*', 't1.id3' => '2*'))->get() );
+		$this->assertSame( $data[1], self::qb()->from($t.' as t1')->where(array('t1.id2' => '1*', 't1.id3' => '1*'))->get() );
+		$this->assertSame( $data[2], self::qb()->from($t.' as t1')->where(array('t1.id2' => '2*', 't1.id3' => '2*'))->get() );
+		$this->assertSame( $data[2], self::qb()->from($t.' as t1')->where(array('t1.id2' => '', 't1.id3' => '2*'))->get() );
+		$this->assertSame( $data[2], self::qb()->from($t.' as t1')->where(array('t1.id2' => '2*', 't1.id3' => ''))->get() );
 
-		$this->assertSame( $data[1], self::qb()->from($this->table_name($table).' as t1')->where('id = 1')->get() );
-		$this->assertSame( $data[2], self::qb()->from($this->table_name($table).' as t1')->where('t1.id > 1')->get() );
-		$this->assertSame( $data[1], self::qb()->from($this->table_name($table).' as t1')->where('id = 1')->where('id2 = 11')->where('id3 = 111')->get() );
+		$this->assertSame( $data[1], self::qb()->from($t.' as t1')->where('id = 1')->get() );
+		$this->assertSame( $data[2], self::qb()->from($t.' as t1')->where('t1.id > 1')->get() );
+		$this->assertSame( $data[1], self::qb()->from($t.' as t1')->where('id = 1')->where('id2 = 11')->where('id3 = 111')->get() );
 
-		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->where('t1.id = 789')->where_or('t1.id2 = 798')->where_or('t1.id3 = 888')->get() );
-		$this->assertSame( $data[1], self::qb()->from($this->table_name($table).' as t1')->where('t1.id = 789')->where_or('t1.id2 = 798')->where_or('t1.id3 = 111')->get() );
+		$this->assertEmpty( self::qb()->from($t.' as t1')->where('t1.id = 789')->where_or('t1.id2 = 798')->where_or('t1.id3 = 888')->get() );
+		$this->assertSame( $data[1], self::qb()->from($t.' as t1')->where('t1.id = 789')->where_or('t1.id2 = 798')->where_or('t1.id3 = 111')->get() );
 
-		$this->assertSame( $data[1], self::qb()->from($this->table_name($table).' as t1')->whereid(1)->get() );
-		$this->assertSame( $data[1], self::qb()->from($this->table_name($table).' as t1')->whereid(1, 'id')->get() );
-		$this->assertSame( $data[1], self::qb()->from($this->table_name($table).' as t1')->whereid(1, 't1.id')->get() );
+		$this->assertSame( $data[1], self::qb()->from($t.' as t1')->whereid(1)->get() );
+		$this->assertSame( $data[1], self::qb()->from($t.' as t1')->whereid(1, 'id')->get() );
+		$this->assertSame( $data[1], self::qb()->from($t.' as t1')->whereid(1, 't1.id')->get() );
 
-		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->whereid(array(1,2,3,4))->get_all() );
-		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->whereid(array(1,2,3,4), 'id')->get_all() );
-		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->whereid(array(1,2,3,4), 't1.id')->get_all() );
-		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->where('t1.id', 'in', array(1,2,3,4))->get_all() );
-		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->where('t1.id', 'not in', array(5,6,7))->get_all() );
-		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->whereid(1,2,3,4)->get_all() );
-		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->whereid(1,2,3,4, 'id')->get_all() );
-		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->whereid(1,2,3,4, 't1.id')->get_all() );
+		$this->assertSame( $data, self::qb()->from($t.' as t1')->whereid(array(1,2,3,4))->get_all() );
+		$this->assertSame( $data, self::qb()->from($t.' as t1')->whereid(array(1,2,3,4), 'id')->get_all() );
+		$this->assertSame( $data, self::qb()->from($t.' as t1')->whereid(array(1,2,3,4), 't1.id')->get_all() );
+		$this->assertSame( $data, self::qb()->from($t.' as t1')->where('t1.id', 'in', array(1,2,3,4))->get_all() );
+		$this->assertSame( $data, self::qb()->from($t.' as t1')->where('t1.id', 'not in', array(5,6,7))->get_all() );
+		$this->assertSame( $data, self::qb()->from($t.' as t1')->whereid(1,2,3,4)->get_all() );
+		$this->assertSame( $data, self::qb()->from($t.' as t1')->whereid(1,2,3,4, 'id')->get_all() );
+		$this->assertSame( $data, self::qb()->from($t.' as t1')->whereid(1,2,3,4, 't1.id')->get_all() );
 
-		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(array(4,5,6))->get_all() );
-		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(array(4,5,6), 'id')->get_all() );
-		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(array(4,5,6), 't1.id')->get_all() );
-		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(4,5,6)->get_all() );
-		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(4,5,6, 'id')->get_all() );
-		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(4,5,6, 't1.id')->get_all() );
+		$this->assertEmpty( self::qb()->from($t.' as t1')->whereid(array(4,5,6))->get_all() );
+		$this->assertEmpty( self::qb()->from($t.' as t1')->whereid(array(4,5,6), 'id')->get_all() );
+		$this->assertEmpty( self::qb()->from($t.' as t1')->whereid(array(4,5,6), 't1.id')->get_all() );
+		$this->assertEmpty( self::qb()->from($t.' as t1')->whereid(4,5,6)->get_all() );
+		$this->assertEmpty( self::qb()->from($t.' as t1')->whereid(4,5,6, 'id')->get_all() );
+		$this->assertEmpty( self::qb()->from($t.' as t1')->whereid(4,5,6, 't1.id')->get_all() );
+// TODO: where_between
+// TODO: where_null
+// TODO: where_not_null
+
+		$this->assertSame( $data[1], self::qb()->from($t)->first() );
+		$this->assertSame( $data[2], self::qb()->from($t)->last() );
+	}
+	public function test_first() {
+// TODO
+	}
+	public function test_last() {
+// TODO
+	}
+	public function test_chunk() {
+// TODO
 	}
 	public function test_join() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
+		$t1 = $this->table_name($table1);
+		$t2 = $this->table_name($table2);
+
 		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table1)) );
 		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table2)) );
 		$data1 = array(
@@ -159,30 +180,32 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 			'1' => array('id' => '1', 'id2' => '22', 'id3' => '444'),
 			'2' => array('id' => '2', 'id2' => '22', 'id3' => '444'),
 		);
-		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table1), $data1) );
-		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table2), $data2) );
+		$this->assertNotEmpty( self::db()->insert_safe($t1, $data1) );
+		$this->assertNotEmpty( self::db()->insert_safe($t2, $data2) );
 
 		$expected = array(
 			'1' => array('id' => '1', 'id2' => '22', 'id3' => '444'),
 			'2' => array('id' => '2', 'id2' => '22', 'id3' => '444'),
 		);
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table1).' as t1')->join($this->table_name($table2).' as t2', 't1.id = t2.id')->get_all() );
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table1).' as t1')->left_join($this->table_name($table2).' as t2', 't1.id = t2.id')->get_all() );
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table1).' as t1')->right_join($this->table_name($table2).' as t2', 't1.id = t2.id')->get_all() );
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table1).' as t1')->inner_join($this->table_name($table2).' as t2', 't1.id = t2.id')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t1.' as t1')->join($t2.' as t2', 't1.id = t2.id')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t1.' as t1')->left_join($t2.' as t2', 't1.id = t2.id')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t1.' as t1')->right_join($t2.' as t2', 't1.id = t2.id')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t1.' as t1')->inner_join($t2.' as t2', 't1.id = t2.id')->get_all() );
 
 		$expected = array(
 			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
 			'2' => array('id' => '2', 'id2' => '11', 'id3' => '111'),
 		);
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table2).' as t2')->join($this->table_name($table1).' as t1', 't1.id = t2.id')->get_all() );
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table2).' as t2')->left_join($this->table_name($table1).' as t1', 't1.id = t2.id')->get_all() );
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table2).' as t2')->right_join($this->table_name($table1).' as t1', 't1.id = t2.id')->get_all() );
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table2).' as t2')->inner_join($this->table_name($table1).' as t1', 't1.id = t2.id')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t2.' as t2')->join($t1.' as t1', 't1.id = t2.id')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t2.' as t2')->left_join($t1.' as t1', 't1.id = t2.id')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t2.' as t2')->right_join($t1.' as t1', 't1.id = t2.id')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t2.' as t2')->inner_join($t1.' as t1', 't1.id = t2.id')->get_all() );
 	}
 	public function test_group_by() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
 		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$data = array(
 			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
@@ -190,31 +213,33 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
 			'4' => array('id' => '4', 'id2' => '22', 'id3' => '333'),
 		);
-		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table), $data) );
+		$this->assertNotEmpty( self::db()->insert_safe($t, $data) );
 
-		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->group_by('id')->get_all() );
-		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->group_by('t1.id')->get_all() );
+		$this->assertSame( $data, self::qb()->from($t.' as t1')->group_by('id')->get_all() );
+		$this->assertSame( $data, self::qb()->from($t.' as t1')->group_by('t1.id')->get_all() );
 		$expected = array(
 			'1' => $data[1],
 			'3' => $data[3],
 			'2' => $data[2],
 			'4' => $data[4],
 		);
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table).' as t1')->group_by('t1.id2', 't1.id3')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t.' as t1')->group_by('t1.id2', 't1.id3')->get_all() );
 		$expected = array(
 			'1' => $data[1],
 			'2' => $data[2],
 		);
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table).' as t1')->group_by('t1.id2')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t.' as t1')->group_by('t1.id2')->get_all() );
 		$expected = array(
 			'1' => $data[1] + array('num' => '2'),
 			'2' => $data[2] + array('num' => '2'),
 		);
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table).' as t1')->select('*','COUNT(id2) as num')->group_by('t1.id2')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t.' as t1')->select('*','COUNT(id2) as num')->group_by('t1.id2')->get_all() );
 	}
 	public function test_having() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
 		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$data = array(
 			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
@@ -222,20 +247,22 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
 			'4' => array('id' => '4', 'id2' => '22', 'id3' => '333'),
 		);
-		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table), $data) );
+		$this->assertNotEmpty( self::db()->insert_safe($t, $data) );
 
 		$expected = array('1' => $data[1], '2' => $data[2]);
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table).' as t1')->group_by('t1.id2')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t.' as t1')->group_by('t1.id2')->get_all() );
 		$expected = array('2' => $data[2]);
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table).' as t1')->group_by('t1.id2')->having(array('id3','=','222'))->get_all() );
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table).' as t1')->group_by('t1.id2')->having(array('t1.id3','=','222'))->get_all() );
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table).' as t1')->group_by('t1.id2')->having('id3 = 222')->get_all() );
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table).' as t1')->group_by('t1.id2')->having('t1.id3 = 222')->get_all() );
-		$this->assertSame( $expected, self::qb()->from($this->table_name($table).' as t1')->group_by('t1.id2')->having('t1.id3 > 111')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t.' as t1')->group_by('t1.id2')->having(array('id3','=','222'))->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t.' as t1')->group_by('t1.id2')->having(array('t1.id3','=','222'))->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t.' as t1')->group_by('t1.id2')->having('id3 = 222')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t.' as t1')->group_by('t1.id2')->having('t1.id3 = 222')->get_all() );
+		$this->assertSame( $expected, self::qb()->from($t.' as t1')->group_by('t1.id2')->having('t1.id3 > 111')->get_all() );
 	}
 	public function test_order_by() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
 		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$data = array(
 			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
@@ -243,16 +270,18 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
 			'4' => array('id' => '4', 'id2' => '22', 'id3' => '333'),
 		);
-		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table), $data) );
+		$this->assertNotEmpty( self::db()->insert_safe($t, $data) );
 
-		$this->assertSame( array_reverse($data, $preserve = true), self::qb()->from($this->table_name($table).' as t1')->order_by(array('id' => 'desc'))->get_all() );
-		$this->assertSame( array_reverse($data, $preserve = true), self::qb()->from($this->table_name($table).' as t1')->order_by(array('t1.id' => 'desc'))->get_all() );
-		$this->assertSame( array_reverse($data, $preserve = true), self::qb()->from($this->table_name($table).' as t1')->order_by('id desc')->get_all() );
-		$this->assertSame( array_reverse($data, $preserve = true), self::qb()->from($this->table_name($table).' as t1')->order_by('t1.id desc')->get_all() );
+		$this->assertSame( array_reverse($data, $preserve = true), self::qb()->from($t.' as t1')->order_by(array('id' => 'desc'))->get_all() );
+		$this->assertSame( array_reverse($data, $preserve = true), self::qb()->from($t.' as t1')->order_by(array('t1.id' => 'desc'))->get_all() );
+		$this->assertSame( array_reverse($data, $preserve = true), self::qb()->from($t.' as t1')->order_by('id desc')->get_all() );
+		$this->assertSame( array_reverse($data, $preserve = true), self::qb()->from($t.' as t1')->order_by('t1.id desc')->get_all() );
 	}
 	public function test_limit() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
 		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$data = array(
 			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
@@ -260,37 +289,202 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
 			'4' => array('id' => '4', 'id2' => '22', 'id3' => '333'),
 		);
-		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table), $data) );
+		$this->assertNotEmpty( self::db()->insert_safe($t, $data) );
 
-		$this->assertSame( array('4' => $data[4]), self::qb()->from($this->table_name($table).' as t1')->order_by('t1.id desc')->limit(1)->get_all() );
-		$this->assertSame( array('2' => $data[2]), self::qb()->from($this->table_name($table).' as t1')->order_by('t1.id desc')->limit(1,2)->get_all() );
+		$this->assertSame( array('4' => $data[4]), self::qb()->from($t.' as t1')->order_by('t1.id desc')->limit(1)->get_all() );
+		$this->assertSame( array('2' => $data[2]), self::qb()->from($t.' as t1')->order_by('t1.id desc')->limit(1,2)->get_all() );
 	}
-	public function test_delete() {
+/*
+	public function test_insert() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
-		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
-		$data = array(
-			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
-			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
-			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
-			'4' => array('id' => '4', 'id2' => '22', 'id3' => '333'),
+		$data = array('user_id'	=> 1, 'date' => '1234567890', 'total_sum' => '19,12', 'name' => 'name');
+		$this->assertEquals( 
+			'INSERT INTO `'.DB_PREFIX.'shop_orders` (`user_id`, `date`, `total_sum`, `name`) VALUES (\'1\', \'1234567890\', \'19,12\', \'name\')', 
+			str_replace(PHP_EOL, '', self::qb()->table('shop_orders')->insert($data, array('sql' => true)) )
 		);
-		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table), $data) );
-
-		$this->assertNotEmpty( self::qb()->from($this->table_name($table))->where('id > 1')->delete() );
-		$this->assertSame( array('1' => $data[1]), self::qb()->from($this->table_name($table))->get_all() );
-		$this->assertNotEmpty( self::qb()->from($this->table_name($table))->whereid('1')->delete() );
-		$this->assertEmpty( self::qb()->from($this->table_name($table))->get_all() );
-// TODO: fix DELETE with AS ... == not allowed
-#		$this->assertTrue( self::qb()->from($this->table_name($table).' as t1')->where('t1.id > 1')->delete() );
-#		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->where('t1.id > 1')->delete() );
-#		$this->assertSame( array('1' => $data[1]), self::qb()->from($this->table_name($table).' as t1')->get_all() );
-#		$this->assertTrue( self::qb()->from($this->table_name($table).' as t1')->whereid('1')->delete() );
-#		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->get_all() );
+	}
+	public function test_insert_into() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertEquals( 
+			'INSERT INTO `'.DB_PREFIX.'stats_archive` (`user_id`) SELECT `user_id` FROM `'.DB_PREFIX.'stats`',
+			str_replace(PHP_EOL, '', self::qb()->select('user_id')->from('stats')->insert_into('stats_archive', array('sql' => true)) )
+		);
+		$this->assertEquals( 
+			'INSERT INTO `'.DB_PREFIX.'stats_archive` (`user_id` , `visits`) SELECT `user_id` , `visits` FROM `'.DB_PREFIX.'stats` WHERE `id` > \'1234\'',
+			str_replace(PHP_EOL, '', self::qb()->select('user_id','visits')->from('stats')->where('id > 1234')->insert_into('stats_archive', array('sql' => true)) )
+		);
 	}
 	public function test_update() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$data = array('user_id'	=> 1, 'date' => '1234567890', 'total_sum' => '19,12', 'name' => 'name');
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'shop_orders` SET `user_id` = \'1\', `date` = \'1234567890\', `total_sum` = \'19,12\', `name` = \'name\' WHERE `id` = \'1\'',
+			str_replace(PHP_EOL, '', self::qb()->table('shop_orders')->whereid(1)->update($data, array('sql' => true)) )
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'shop_orders` SET `user_id` = \'1\', `date` = \'1234567890\', `total_sum` = \'19,12\', `name` = \'name\' WHERE `id` >= \'1\'',
+			str_replace(PHP_EOL, '', self::qb()->table('shop_orders')->where('id >= 1')->update($data, array('sql' => true)) )
+		);
+		$data = array(
+			1 => array('id' => 1, 'name' => 'name1'),
+			2 => array('id' => 2, 'name' => 'name2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update($data, array('sql' => true)) ))
+		);
+		$data = array(
+			1 => array('uid' => 1, 'name' => 'name1'),
+			2 => array('uid' => 2, 'name' => 'name2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `uid` = \'1\' THEN \'name1\' WHEN `uid` = \'2\' THEN \'name2\' ELSE `name` END WHERE `uid` IN(\'1\',\'2\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update($data, array('id' => 'uid', 'sql' => true)) ))
+		);
+	}
+	public function test_update_batch() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$data = array(
+			1 => array('id' => 1, 'name' => 'name1'),
+			2 => array('id' => 2, 'name' => 'name2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, null, $sql = true) ))
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, 'id', $sql = true) ))
+		);
+		$data = array(
+			1 => array('uid' => 1, 'name' => 'name1'),
+			2 => array('uid' => 2, 'name' => 'name2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `uid` = \'1\' THEN \'name1\' WHEN `uid` = \'2\' THEN \'name2\' ELSE `name` END WHERE `uid` IN(\'1\',\'2\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, 'uid', $sql = true) ))
+		);
+		$data = array(
+			1 => array('id' => 1, 'cat_id' => 11, 'name' => 'name1'),
+			2 => array('id' => 2, 'cat_id' => 22, 'name' => 'name2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'name1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\') AND `cat_id` IN(\'11\',\'22\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $sql = true) ))
+		);
+		$data = array(
+			1 => array('id' => 1, 'cat_id' => 11, 'name' => 'name1', 'desc' => 'desc1'),
+			2 => array('id' => 2, 'cat_id' => 22, 'name' => 'name2', 'desc' => 'desc2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'name1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'name2\' ELSE `name` END, `desc` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'desc1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'desc2\' ELSE `desc` END WHERE `id` IN(\'1\',\'2\') AND `cat_id` IN(\'11\',\'22\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $sql = true) ))
+		);
+	}
+/*
+	public function test_increment() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertFalse( self::qb()->increment(null, null, $sql = true) );
+		$this->assertFalse( self::qb()->increment('visits', null, $sql = true) );
+		$this->assertFalse( self::qb()->increment('visits', 1, $sql = true) );
+		$this->assertFalse( self::qb()->increment('visits', 5, $sql = true) );
+
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1', self::qb()->table('user')->increment('visits', null, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1', self::qb()->table('user')->increment('visits', 1, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5', self::qb()->table('user')->increment('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 500', self::qb()->table('user')->increment('visits', 500, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5', self::qb()->table('user')->increment('visits', -5, $sql = true) );
+
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', null, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', 1, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', -5, $sql = true) );
+
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 LIMIT 1', self::qb()->table('user')->limit(1)->increment('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\' LIMIT 1', self::qb()->table('user')->whereid(1)->limit(1)->increment('visits', 5, $sql = true) );
+
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `u`.`visits` = `u`.`visits` + 5 WHERE `u`.`id` = \'1\' LIMIT 1', self::qb()->table('user as u')->where('u.id', 1)->limit(1)->increment('u.visits', 5, $sql = true) );
+	}
+	public function test_decrement() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertFalse( self::qb()->decrement(null, null, $sql = true) );
+		$this->assertFalse( self::qb()->decrement('visits', null, $sql = true) );
+		$this->assertFalse( self::qb()->decrement('visits', 1, $sql = true) );
+		$this->assertFalse( self::qb()->decrement('visits', 5, $sql = true) );
+
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1', self::qb()->table('user')->decrement('visits', null, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1', self::qb()->table('user')->decrement('visits', 1, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5', self::qb()->table('user')->decrement('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 500', self::qb()->table('user')->decrement('visits', 500, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5', self::qb()->table('user')->decrement('visits', -5, $sql = true) );
+
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', null, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', 1, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', -5, $sql = true) );
+
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 LIMIT 1', self::qb()->table('user')->limit(1)->decrement('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\' LIMIT 1', self::qb()->table('user')->whereid(1)->limit(1)->decrement('visits', 5, $sql = true) );
+
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `u`.`visits` = `u`.`visits` - 5 WHERE `u`.`id` = \'1\' LIMIT 1', self::qb()->table('user as u')->where('u.id', 1)->limit(1)->decrement('u.visits', 5, $sql = true) );
+	}
+	public function test_subquery() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertEquals('('.PHP_EOL.'SELECT 1'.PHP_EOL.')', self::qb()->subquery('SELECT 1'));
+		$this->assertEquals('('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users`'.PHP_EOL.')', self::qb()->subquery('SELECT * FROM `'.DB_PREFIX.'users`'));
+		$this->assertEquals('('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users`'.PHP_EOL.')', self::qb()->subquery( self::qb()->from('users') ));
+	}
+	public function test_union() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$first = self::qb()->from('users')->where_null('first_name');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `last_name` IS NULL UNION ('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users` WHERE `first_name` IS NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_null('last_name')->union($first)->sql()
+		);
+	}
+	public function test_union_all() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$first = self::qb()->from('users')->where_null('first_name');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `last_name` IS NULL UNION ALL ('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users` WHERE `first_name` IS NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_null('last_name')->union_all($first)->sql()
+		);
+	}
+	public function test_where_any() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `group_id` = ANY ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_any('group_id', '=', $first)->sql()
+		);
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `group_id` > ANY ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_any('group_id', '>', $first)->sql()
+		);
+	}
+	public function test_where_all() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `group_id` > ALL ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_all('group_id', '>', $first)->sql()
+		);
+	}
+	public function test_where_exists() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE EXISTS ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_exists($first)->sql()
+		);
+	}
+	public function test_where_not_exists() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE NOT EXISTS ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_not_exists($first)->sql()
+		);
+	}
+*/
+	public function test_delete() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
 		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
 		$data = array(
 			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
@@ -298,13 +492,17 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
 			'4' => array('id' => '4', 'id2' => '22', 'id3' => '333'),
 		);
-		$this->assertNotEmpty( self::db()->insert_safe($this->table_name($table), $data) );
+		$this->assertNotEmpty( self::db()->insert_safe($t, $data) );
 
-#		$this->assertFalse( self::qb()->update(array()) );
-#		$data = array(
-#			1 => array('name' => 'name1'),
-#			2 => array('name' => 'name2'),
-#		);
-#		$this->assertEquals( '', self::qb()->from('user')->whereid(array(1,2,3))->update($data)->sql() );
+		$this->assertNotEmpty( self::qb()->from($t)->where('id > 1')->delete() );
+		$this->assertSame( array('1' => $data[1]), self::qb()->from($t)->get_all() );
+		$this->assertNotEmpty( self::qb()->from($t)->whereid('1')->delete() );
+		$this->assertEmpty( self::qb()->from($t)->get_all() );
+// TODO: fix DELETE with AS ... == not allowed
+#		$this->assertTrue( self::qb()->from($t.' as t1')->where('t1.id > 1')->delete() );
+#		$this->assertEmpty( self::qb()->from($t.' as t1')->where('t1.id > 1')->delete() );
+#		$this->assertSame( array('1' => $data[1]), self::qb()->from($t.' as t1')->get_all() );
+#		$this->assertTrue( self::qb()->from($t.' as t1')->whereid('1')->delete() );
+#		$this->assertEmpty( self::qb()->from($t.' as t1')->get_all() );
 	}
 }
