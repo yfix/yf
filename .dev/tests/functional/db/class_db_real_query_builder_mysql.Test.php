@@ -540,37 +540,58 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertNotSame( $expected, self::qb()->select('id2')->from($t)->whereid(1)->union( self::qb()->select('id2')->from($t)->whereid(1) )->all() );
 		$this->assertSame( $expected, self::qb()->select('id2')->from($t)->whereid(1)->union_all( self::qb()->select('id2')->from($t)->whereid(1) )->all() );
 	}
-/*
 	public function test_where_any() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
-		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `group_id` = ANY ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
-			self::qb()->from('users')->where_any('group_id', '=', $first)->sql()
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
+		$this->assertTrue( (bool)self::db()->query($this->create_table_sql($table)) );
+		$data = array(
+			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
+			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
+			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
 		);
-		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `group_id` > ANY ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
-			self::qb()->from('users')->where_any('group_id', '>', $first)->sql()
-		);
+		$this->assertTrue( (bool)self::db()->insert_safe($t, $data) );
+		$this->assertSame( $data, self::db()->from($t)->all() );
+		$this->assertSame( $data, self::qb()->from($t)->where_any( 'id', '=', self::qb()->select('id')->from($t) )->all() );
+		$expected = array('2' => $data[2], '3' => $data[3]);
+		$this->assertSame( $expected, self::qb()->from($t)->where_any( 'id', '>', self::qb()->select('id')->from($t)->whereid(1) )->all() );
 	}
 	public function test_where_all() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
-		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `group_id` > ALL ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
-			self::qb()->from('users')->where_all('group_id', '>', $first)->sql()
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
+		$this->assertTrue( (bool)self::db()->query($this->create_table_sql($table)) );
+		$data = array(
+			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
+			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
+			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
 		);
+		$this->assertTrue( (bool)self::db()->insert_safe($t, $data) );
+		$this->assertSame( $data, self::db()->from($t)->all() );
+		$expected = array('3' => $data[3]);
+		$this->assertSame( $expected, self::qb()->from($t)->where_all( 'id', '>=', self::qb()->select('id')->from($t) )->all() );
+		$expected = array('2' => $data[2], '3' => $data[3]);
+		$this->assertSame( $expected, self::qb()->from($t)->where_all( 'id', '>', self::qb()->select('id')->from($t)->whereid(1) )->all() );
 	}
 	public function test_where_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
-		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE EXISTS ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
-			self::qb()->from('users')->where_exists($first)->sql()
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
+		$this->assertTrue( (bool)self::db()->query($this->create_table_sql($table)) );
+		$data = array(
+			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
+			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
+			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
 		);
+		$this->assertTrue( (bool)self::db()->insert_safe($t, $data) );
+		$this->assertSame( $data, self::db()->from($t)->all() );
+		$this->assertSame( $data, self::qb()->from($t)->where_exists( self::qb()->select('id')->from($t) )->all() );
+		$expected = array('2' => $data[2], '3' => $data[3]);
+		$this->assertSame( $expected, self::qb()->from($t.' as t1')->where_exists( self::qb()->select('id')->from($t.' as t2')->where('id > 1')->where_raw('t2.id = t1.id') )->all() );
+		$expected = array('1' => $data[1]);
+		$this->assertSame( $expected, self::qb()->from($t.' as t1')->where_not_exists( self::qb()->select('id')->from($t.' as t2')->where('id > 1')->where_raw('t2.id = t1.id') )->all() );
 	}
-	public function test_where_not_exists() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
-		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE NOT EXISTS ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
-			self::qb()->from('users')->where_not_exists($first)->sql()
-		);
-	}
-*/
 }
