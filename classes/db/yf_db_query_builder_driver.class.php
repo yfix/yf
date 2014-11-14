@@ -15,6 +15,7 @@ abstract class yf_db_query_builder_driver {
 	const REGEX_IS_NULL = '~^([a-z0-9\(\)*_\.]+)[\s]*(is[\s]+null|is[\s]+not[\s]+null)$~ims';
 	const REGEX_AS = '~^([a-z0-9\(\)*_\.]+)[\s]+AS[\s]+([a-z0-9_]+)$~ims';
 	const REGEX_ASC_DESC = '~^([a-z0-9\(\)*_\.]+)[\s]+(asc|desc)$~ims';
+	const REGEX_TABLE_NAME_CLEANUP = '~[^a-z0-9_\.\s]~ims';
 
 	/**
 	* Catch missing method call
@@ -313,7 +314,7 @@ abstract class yf_db_query_builder_driver {
 		if (empty($from)) {
 			return false;
 		}
-		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+		$table = preg_replace(self::REGEX_TABLE_NAME_CLEANUP, '', $this->_sql['from'][0]);
 		if (preg_match(self::REGEX_AS, $table, $m)) {
 			$table = $m[1];
 		}
@@ -483,7 +484,8 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function delete($as_sql = false) {
 		$sql = false;
-		if ($this->_remove_as_from_delete) {
+		$remove_as_from_delete = true;
+		if ($remove_as_from_delete) {
 			$table = $this->get_table();
 			$this->_sql['from'] = $table ? array($this->_escape_table_name($table)) : false;
 		}
@@ -516,7 +518,7 @@ abstract class yf_db_query_builder_driver {
 			return false;
 		}
 		$a = array();
-		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+		$table = preg_replace(self::REGEX_TABLE_NAME_CLEANUP, '', $this->_sql['from'][0]);
 		if (preg_match(self::REGEX_AS, $table, $m)) {
 			$table = $m[1];
 		}
@@ -1602,7 +1604,7 @@ abstract class yf_db_query_builder_driver {
 		if (empty($this->_sql['from'])) {
 			return false;
 		}
-		$table = preg_replace('~[^a-z0-9_\s]~ims', '', $this->_sql['from'][0]);
+		$table = preg_replace(self::REGEX_TABLE_NAME_CLEANUP, '', $this->_sql['from'][0]);
 		if (preg_match(self::REGEX_AS, $table, $m)) {
 			$table = $m[1];
 		}
