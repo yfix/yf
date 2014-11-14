@@ -176,6 +176,10 @@ abstract class yf_db_query_builder_driver {
 		if ($unions) {
 			$a['union'] = implode(PHP_EOL, $unions);
 		}
+		$lock = $sql_data['lock'];
+		if (in_array($lock, array('lock_for_update', 'shared_lock'))) {
+			$a['lock'] = ($lock === 'lock_for_update' ? 'FOR UPDATE' : 'LOCK IN SHARE MODE');
+		}
 		return $a;
 	}
 
@@ -1545,6 +1549,22 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Pessimistic locking
+	*/
+	public function shared_lock() {
+		$this->_sql['lock'] = __FUNCTION__;
+		return $this;
+	}
+
+	/**
+	* Lock records for update on select statement
+	*/
+	public function lock_for_update() {
+		$this->_sql['lock'] = __FUNCTION__;
+		return $this;
+	}
+
+	/**
 	* Get current linked model
 	*/
 	public function get_model() {
@@ -1745,20 +1765,7 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function _escape_val($val = '') {
 // TODO: support for binding params (':field' => $val)
+// TODO: support for binding params ('id > ?', $val)
 		return $this->db->escape_val($val);
-	}
-
-	/**
-	* Pessimistic locking
-	*/
-	public function shared_lock() {
-// TODO
-	}
-
-	/**
-	* Lock records for update on select statement
-	*/
-	public function lock_for_update() {
-// TODO
 	}
 }
