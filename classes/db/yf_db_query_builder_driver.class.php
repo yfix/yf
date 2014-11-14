@@ -410,7 +410,7 @@ abstract class yf_db_query_builder_driver {
 		if (!$sql) {
 			return false;
 		}
-		$q = $this->db->query($q);
+		$q = $this->db->query($sql);
 		if (!$q) {
 			return false;
 		}
@@ -421,6 +421,9 @@ abstract class yf_db_query_builder_driver {
 				$callback($buffer);
 				$buffer = array();
 			}
+		}
+		if (count($buffer)) {
+			$callback($buffer);
 		}
 		return $this;
 	}
