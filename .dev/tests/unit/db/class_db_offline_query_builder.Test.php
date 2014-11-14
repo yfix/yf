@@ -337,110 +337,110 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	public function test_delete() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertFalse( self::qb()->delete() );
-		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->delete($as_sql = true) );
-		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->whereid(1)->delete($as_sql = true) );
-		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3))->delete($as_sql = true) );
-		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'uid')->delete($as_sql = true) );
-		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user as u')->whereid(array(1,2,3), 'u.id')->delete($as_sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user`', self::qb()->from('user')->delete($sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` = \'1\'', self::qb()->from('user')->whereid(1)->delete($sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `id` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3))->delete($sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3)', self::qb()->from('user')->whereid(array(1,2,3), 'uid')->delete($sql = true) );
+		$this->assertEquals( 'DELETE FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user as u')->whereid(array(1,2,3), 'u.id')->delete($sql = true) );
 	}
 	public function test_increment() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertFalse( self::qb()->increment(null, null, true) );
-		$this->assertFalse( self::qb()->increment('visits', null, true) );
-		$this->assertFalse( self::qb()->increment('visits', 1, true) );
-		$this->assertFalse( self::qb()->increment('visits', 5, true) );
+		$this->assertFalse( self::qb()->increment(null, null, $sql = true) );
+		$this->assertFalse( self::qb()->increment('visits', null, $sql = true) );
+		$this->assertFalse( self::qb()->increment('visits', 1, $sql = true) );
+		$this->assertFalse( self::qb()->increment('visits', 5, $sql = true) );
 
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1', self::qb()->table('user')->increment('visits', null, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1', self::qb()->table('user')->increment('visits', 1, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5', self::qb()->table('user')->increment('visits', 5, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 500', self::qb()->table('user')->increment('visits', 500, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5', self::qb()->table('user')->increment('visits', -5, true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1', self::qb()->table('user')->increment('visits', null, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1', self::qb()->table('user')->increment('visits', 1, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5', self::qb()->table('user')->increment('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 500', self::qb()->table('user')->increment('visits', 500, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5', self::qb()->table('user')->increment('visits', -5, $sql = true) );
 
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', null, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', 1, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', 5, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', -5, true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', null, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', 1, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', -5, $sql = true) );
 
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 LIMIT 1', self::qb()->table('user')->limit(1)->increment('visits', 5, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\' LIMIT 1', self::qb()->table('user')->whereid(1)->limit(1)->increment('visits', 5, true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 LIMIT 1', self::qb()->table('user')->limit(1)->increment('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\' LIMIT 1', self::qb()->table('user')->whereid(1)->limit(1)->increment('visits', 5, $sql = true) );
 
-#		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `u`.`visits` = `u`.`visits` - 5 WHERE `u`.`id` = \'1\' LIMIT 1', self::qb()->table('user as u')->where('u.id', 1)->limit(1)->decrement('u.visits', 5, true) );
-#		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\' LIMIT 1', self::qb()->table('user as u')->whereid(1)->limit(1)->increment('u.visits', 5, true) );
+#		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `u`.`visits` = `u`.`visits` - 5 WHERE `u`.`id` = \'1\' LIMIT 1', self::qb()->table('user as u')->where('u.id', 1)->limit(1)->decrement('u.visits', 5, $sql = true) );
+#		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\' LIMIT 1', self::qb()->table('user as u')->whereid(1)->limit(1)->increment('u.visits', 5, $sql = true) );
 	}
 	public function test_decrement() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertFalse( self::qb()->decrement(null, null, true) );
-		$this->assertFalse( self::qb()->decrement('visits', null, true) );
-		$this->assertFalse( self::qb()->decrement('visits', 1, true) );
-		$this->assertFalse( self::qb()->decrement('visits', 5, true) );
+		$this->assertFalse( self::qb()->decrement(null, null, $sql = true) );
+		$this->assertFalse( self::qb()->decrement('visits', null, $sql = true) );
+		$this->assertFalse( self::qb()->decrement('visits', 1, $sql = true) );
+		$this->assertFalse( self::qb()->decrement('visits', 5, $sql = true) );
 
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1', self::qb()->table('user')->decrement('visits', null, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1', self::qb()->table('user')->decrement('visits', 1, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5', self::qb()->table('user')->decrement('visits', 5, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 500', self::qb()->table('user')->decrement('visits', 500, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5', self::qb()->table('user')->decrement('visits', -5, true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1', self::qb()->table('user')->decrement('visits', null, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1', self::qb()->table('user')->decrement('visits', 1, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5', self::qb()->table('user')->decrement('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 500', self::qb()->table('user')->decrement('visits', 500, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5', self::qb()->table('user')->decrement('visits', -5, $sql = true) );
 
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', null, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', 1, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', 5, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', -5, true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', null, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', 1, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', -5, $sql = true) );
 
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 LIMIT 1', self::qb()->table('user')->limit(1)->decrement('visits', 5, true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\' LIMIT 1', self::qb()->table('user')->whereid(1)->limit(1)->decrement('visits', 5, true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 LIMIT 1', self::qb()->table('user')->limit(1)->decrement('visits', 5, $sql = true) );
+		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\' LIMIT 1', self::qb()->table('user')->whereid(1)->limit(1)->decrement('visits', 5, $sql = true) );
 	}
 	public function test_avg() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertFalse( self::qb()->avg(null, $only_sql = true) );
-		$this->assertFalse( self::qb()->avg('', $only_sql = true) );
-		$this->assertFalse( self::qb()->avg(false, $only_sql = true) );
-		$this->assertEquals( 'SELECT AVG(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->avg(null, $only_sql = true) );
-		$this->assertEquals( 'SELECT AVG(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->avg('id', $only_sql = true) );
-		$this->assertEquals( 'SELECT AVG(`visits`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->avg('visits', $only_sql = true) );
-		$this->assertEquals( 'SELECT AVG(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->table('user as u')->avg('u.visits', $only_sql = true) );
-		$this->assertEquals( 'SELECT AVG(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`group` = \'3\'', self::qb()->table('user as u')->where('u.group', 3)->avg('u.visits', $only_sql = true) );
+		$this->assertFalse( self::qb()->avg(null, $sql = true) );
+		$this->assertFalse( self::qb()->avg('', $sql = true) );
+		$this->assertFalse( self::qb()->avg(false, $sql = true) );
+		$this->assertEquals( 'SELECT AVG(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->avg(null, $sql = true) );
+		$this->assertEquals( 'SELECT AVG(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->avg('id', $sql = true) );
+		$this->assertEquals( 'SELECT AVG(`visits`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->avg('visits', $sql = true) );
+		$this->assertEquals( 'SELECT AVG(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->table('user as u')->avg('u.visits', $sql = true) );
+		$this->assertEquals( 'SELECT AVG(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`group` = \'3\'', self::qb()->table('user as u')->where('u.group', 3)->avg('u.visits', $sql = true) );
 	}
 	public function test_min() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertFalse( self::qb()->min(null, $only_sql = true) );
-		$this->assertFalse( self::qb()->min('', $only_sql = true) );
-		$this->assertFalse( self::qb()->min(false, $only_sql = true) );
-		$this->assertEquals( 'SELECT MIN(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->min(null, $only_sql = true) );
-		$this->assertEquals( 'SELECT MIN(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->min('id', $only_sql = true) );
-		$this->assertEquals( 'SELECT MIN(`visits`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->min('visits', $only_sql = true) );
-		$this->assertEquals( 'SELECT MIN(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->table('user as u')->min('u.visits', $only_sql = true) );
-		$this->assertEquals( 'SELECT MIN(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`group` = \'3\'', self::qb()->table('user as u')->where('u.group', 3)->min('u.visits', $only_sql = true) );
+		$this->assertFalse( self::qb()->min(null, $sql = true) );
+		$this->assertFalse( self::qb()->min('', $sql = true) );
+		$this->assertFalse( self::qb()->min(false, $sql = true) );
+		$this->assertEquals( 'SELECT MIN(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->min(null, $sql = true) );
+		$this->assertEquals( 'SELECT MIN(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->min('id', $sql = true) );
+		$this->assertEquals( 'SELECT MIN(`visits`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->min('visits', $sql = true) );
+		$this->assertEquals( 'SELECT MIN(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->table('user as u')->min('u.visits', $sql = true) );
+		$this->assertEquals( 'SELECT MIN(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`group` = \'3\'', self::qb()->table('user as u')->where('u.group', 3)->min('u.visits', $sql = true) );
 	}
 	public function test_max() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertFalse( self::qb()->max(null, $only_sql = true) );
-		$this->assertFalse( self::qb()->max('', $only_sql = true) );
-		$this->assertFalse( self::qb()->max(false, $only_sql = true) );
-		$this->assertEquals( 'SELECT MAX(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->max(null, $only_sql = true) );
-		$this->assertEquals( 'SELECT MAX(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->max('id', $only_sql = true) );
-		$this->assertEquals( 'SELECT MAX(`visits`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->max('visits', $only_sql = true) );
-		$this->assertEquals( 'SELECT MAX(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->table('user as u')->max('u.visits', $only_sql = true) );
-		$this->assertEquals( 'SELECT MAX(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`group` = \'3\'', self::qb()->table('user as u')->where('u.group', 3)->max('u.visits', $only_sql = true) );
+		$this->assertFalse( self::qb()->max(null, $sql = true) );
+		$this->assertFalse( self::qb()->max('', $sql = true) );
+		$this->assertFalse( self::qb()->max(false, $sql = true) );
+		$this->assertEquals( 'SELECT MAX(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->max(null, $sql = true) );
+		$this->assertEquals( 'SELECT MAX(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->max('id', $sql = true) );
+		$this->assertEquals( 'SELECT MAX(`visits`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->max('visits', $sql = true) );
+		$this->assertEquals( 'SELECT MAX(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->table('user as u')->max('u.visits', $sql = true) );
+		$this->assertEquals( 'SELECT MAX(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`group` = \'3\'', self::qb()->table('user as u')->where('u.group', 3)->max('u.visits', $sql = true) );
 	}
 	public function test_sum() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertFalse( self::qb()->sum(null, $only_sql = true) );
-		$this->assertFalse( self::qb()->sum('', $only_sql = true) );
-		$this->assertFalse( self::qb()->sum(false, $only_sql = true) );
-		$this->assertEquals( 'SELECT SUM(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->sum(null, $only_sql = true) );
-		$this->assertEquals( 'SELECT SUM(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->sum('id', $only_sql = true) );
-		$this->assertEquals( 'SELECT SUM(`visits`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->sum('visits', $only_sql = true) );
-		$this->assertEquals( 'SELECT SUM(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->table('user as u')->sum('u.visits', $only_sql = true) );
-		$this->assertEquals( 'SELECT SUM(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`group` = \'3\'', self::qb()->table('user as u')->where('u.group', 3)->sum('u.visits', $only_sql = true) );
+		$this->assertFalse( self::qb()->sum(null, $sql = true) );
+		$this->assertFalse( self::qb()->sum('', $sql = true) );
+		$this->assertFalse( self::qb()->sum(false, $sql = true) );
+		$this->assertEquals( 'SELECT SUM(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->sum(null, $sql = true) );
+		$this->assertEquals( 'SELECT SUM(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->sum('id', $sql = true) );
+		$this->assertEquals( 'SELECT SUM(`visits`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->sum('visits', $sql = true) );
+		$this->assertEquals( 'SELECT SUM(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->table('user as u')->sum('u.visits', $sql = true) );
+		$this->assertEquals( 'SELECT SUM(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`group` = \'3\'', self::qb()->table('user as u')->where('u.group', 3)->sum('u.visits', $sql = true) );
 	}
 	public function test_count() {
-		$this->assertFalse( self::qb()->count(null, true) );
-		$this->assertFalse( self::qb()->count('', $only_sql = true) );
-		$this->assertFalse( self::qb()->count(false, $only_sql = true) );
-		$this->assertEquals( 'SELECT COUNT(*) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->count(null, $only_sql = true) );
-		$this->assertEquals( 'SELECT COUNT(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->count('id', $only_sql = true) );
-		$this->assertEquals( 'SELECT COUNT(`visits`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->count('visits', $only_sql = true) );
-		$this->assertEquals( 'SELECT COUNT(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->table('user as u')->count('u.visits', $only_sql = true) );
-		$this->assertEquals( 'SELECT COUNT(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`group` = \'3\'', self::qb()->table('user as u')->where('u.group', 3)->count('u.visits', $only_sql = true) );
+		$this->assertFalse( self::qb()->count(null, $sql = true) );
+		$this->assertFalse( self::qb()->count('', $sql = true) );
+		$this->assertFalse( self::qb()->count(false, $sql = true) );
+		$this->assertEquals( 'SELECT COUNT(*) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->count(null, $sql = true) );
+		$this->assertEquals( 'SELECT COUNT(`id`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->count('id', $sql = true) );
+		$this->assertEquals( 'SELECT COUNT(`visits`) FROM `'.DB_PREFIX.'user`', self::qb()->table('user')->count('visits', $sql = true) );
+		$this->assertEquals( 'SELECT COUNT(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u`', self::qb()->table('user as u')->count('u.visits', $sql = true) );
+		$this->assertEquals( 'SELECT COUNT(`u`.`visits`) FROM `'.DB_PREFIX.'user` AS `u` WHERE `u`.`group` = \'3\'', self::qb()->table('user as u')->where('u.group', 3)->count('u.visits', $sql = true) );
 	}
 	public function test_compile_insert() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -513,7 +513,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		);
 		$this->assertEquals(
 			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, 'id', $only_sql = true)) )
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, 'id', $sql = true)) )
 		);
 		$data = array(
 			1 => array('id' => 1, 'cat_id' => 11, 'name' => 'name1'),
@@ -521,7 +521,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		);
 		$this->assertEquals(
 			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'name1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\') AND `cat_id` IN(\'11\',\'22\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $only_sql = true)) )
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $sql = true)) )
 		);
 		$data = array(
 			1 => array('id' => 1, 'cat_id' => 11, 'name' => 'name1', 'desc' => 'desc1'),
@@ -529,7 +529,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		);
 		$this->assertEquals(
 			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'name1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'name2\' ELSE `name` END, `desc` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'desc1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'desc2\' ELSE `desc` END WHERE `id` IN(\'1\',\'2\') AND `cat_id` IN(\'11\',\'22\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $only_sql = true)) )
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $sql = true)) )
 		);
 	}
 	public function test_render_select() {
@@ -563,28 +563,6 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	public function test_render_limit() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals('LIMIT 10, 1', self::qb()->limit(1,10)->_render_limit());
-	}
-	public function test_split_by_comma() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertSame(array(array('1','2','3')), self::qb()->_split_by_comma(array('1,2,3')));
-	}
-	public function test_ids_sql_from_array() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertSame(array(1=>1,2=>2,3=>3), self::qb()->_ids_sql_from_array(array(1,2,3)));
-	}
-	public function test_is_where_all_numeric() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$data = array('id' => 1, 2, 3);
-		$this->assertFalse(self::qb()->_is_where_all_numeric($data));
-		$data = array(1, 2, 'id' => 3);
-		$this->assertFalse(self::qb()->_is_where_all_numeric($data));
-		$data = array(1, 2, 'id');
-		$this->assertFalse(self::qb()->_is_where_all_numeric($data));
-		$data = array(1,2,3);
-		$this->assertTrue(self::qb()->_is_where_all_numeric($data));
-		$data = array(1, 2, '');
-		$this->assertTrue(self::qb()->_is_where_all_numeric($data));
-		$this->assertSame(array(1, 2), $data);
 	}
 	public function test_subquery() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -644,5 +622,27 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	public function test_lock_for_update() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `id` > \'10\' FOR UPDATE', self::qb()->from('users')->where('id > 10')->lock_for_update()->sql());
+	}
+	public function test_split_by_comma() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertSame(array(array('1','2','3')), self::qb()->_split_by_comma(array('1,2,3')));
+	}
+	public function test_ids_sql_from_array() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$this->assertSame(array(1=>1,2=>2,3=>3), self::qb()->_ids_sql_from_array(array(1,2,3)));
+	}
+	public function test_is_where_all_numeric() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$data = array('id' => 1, 2, 3);
+		$this->assertFalse(self::qb()->_is_where_all_numeric($data));
+		$data = array(1, 2, 'id' => 3);
+		$this->assertFalse(self::qb()->_is_where_all_numeric($data));
+		$data = array(1, 2, 'id');
+		$this->assertFalse(self::qb()->_is_where_all_numeric($data));
+		$data = array(1,2,3);
+		$this->assertTrue(self::qb()->_is_where_all_numeric($data));
+		$data = array(1, 2, '');
+		$this->assertTrue(self::qb()->_is_where_all_numeric($data));
+		$this->assertSame(array(1, 2), $data);
 	}
 }
