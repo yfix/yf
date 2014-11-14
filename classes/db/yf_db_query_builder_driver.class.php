@@ -645,9 +645,8 @@ abstract class yf_db_query_builder_driver {
 		}
 		// 3-dimensional array detected
 		if (is_array($data) && is_array(reset($data))) {
-// TODO: test this
-			$pk = $params['pk'] ?: $this->get_key_name();
-			return $this->update_batch($table, $data, $pk, $params['sql'], $params);
+			$index = $params['id'] ?: $this->get_key_name();
+			return $this->update_batch($table, $data, $index, $params['sql'], $params);
 		}
 		$a = $this->_sql_to_array($return_raw = true);
 		$where = '';
