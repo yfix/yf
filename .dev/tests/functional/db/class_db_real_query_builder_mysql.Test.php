@@ -147,12 +147,18 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertEmpty( self::qb()->from($t.' as t1')->whereid(4,5,6)->get_all() );
 		$this->assertEmpty( self::qb()->from($t.' as t1')->whereid(4,5,6, 'id')->get_all() );
 		$this->assertEmpty( self::qb()->from($t.' as t1')->whereid(4,5,6, 't1.id')->get_all() );
-// TODO: where_between
-// TODO: where_null
-// TODO: where_not_null
 
 		$this->assertSame( $data[1], self::qb()->from($t)->first() );
 		$this->assertSame( $data[2], self::qb()->from($t)->last() );
+
+		$this->assertNull( self::qb()->from($t)->where_between('id2', 1000, 1001)->all() );
+		$this->assertSame( $data, self::qb()->from($t)->where_between('id2', 1, 1001)->all() );
+		$this->assertSame( array('1' => $data[1]), self::qb()->from($t)->where_between('id2', 10, 12)->all() );
+		$this->assertSame( array('2' => $data[2]), self::qb()->from($t)->where_between('id2', 21, 22)->all() );
+	}
+	public function test_where_null() {
+// TODO: where_null
+// TODO: where_not_null
 	}
 	public function test_chunk() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
