@@ -594,41 +594,48 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 	}
 	public function test_union() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$first = self::qb()->table('users')->where_null('first_name');
+		$first = self::qb()->from('users')->where_null('first_name');
 		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `last_name` IS NULL UNION ('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users` WHERE `first_name` IS NULL'.PHP_EOL.')',
-			self::qb()->table('users')->where_null('last_name')->union($first)
-//->sql()
+			self::qb()->from('users')->where_null('last_name')->union($first)->sql()
 		);
 	}
 	public function test_union_all() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$first = self::qb()->table('users')->where_null('first_name');
+		$first = self::qb()->from('users')->where_null('first_name');
 		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `last_name` IS NULL UNION ALL ('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users` WHERE `first_name` IS NULL'.PHP_EOL.')',
-			self::qb()->table('users')->where_null('last_name')->union_all($first)
-//->sql()
+			self::qb()->from('users')->where_null('last_name')->union_all($first)->sql()
 		);
 	}
-	public function test_any() {
+	public function test_where_any() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
+		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `group_id` = ANY ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_any('group_id', '=', $first)->sql()
+		);
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `group_id` > ANY ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_any('group_id', '>', $first)->sql()
+		);
 	}
-	public function test_exists() {
+	public function test_where_all() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-#		->exists(function($query) {
-#			$query->select(DB::raw(1))
-#				->from('orders')
-#				->whereRaw('orders.user_id = users.id');
-#		})
-
-#		select * from users
-#		where exists (
-#		    select 1 from orders where orders.user_id = users.id
-#		)
+		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `group_id` > ALL ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_all('group_id', '>', $first)->sql()
+		);
 	}
-	public function test_not_exists() {
+	public function test_where_exists() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
+		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE EXISTS ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_exists($first)->sql()
+		);
+	}
+	public function test_where_not_exists() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE NOT EXISTS ('.PHP_EOL.'SELECT `gid` FROM `'.DB_PREFIX.'groups` WHERE `active` IS NOT NULL'.PHP_EOL.')',
+			self::qb()->from('users')->where_not_exists($first)->sql()
+		);
 	}
 	public function test_chunk() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
