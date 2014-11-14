@@ -154,14 +154,34 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertSame( $data[1], self::qb()->from($t)->first() );
 		$this->assertSame( $data[2], self::qb()->from($t)->last() );
 	}
-	public function test_first() {
-// TODO
-	}
-	public function test_last() {
-// TODO
-	}
 	public function test_chunk() {
-// TODO
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
+		$this->assertNotEmpty( self::db()->query($this->create_table_sql($table)) );
+		$data = array(
+			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
+			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
+			'3' => array('id' => '3', 'id2' => '33', 'id3' => '333'),
+		);
+		$this->assertNotEmpty( self::db()->insert_safe($t, $data) );
+
+		$out = array();
+		$this->assertNotEmpty( self::qb()->from($t)->chunk(1, function($data) use (&$out) { $out[] = $data; }) );
+		$this->assertSame( array(array($data[1]), array($data[2]), array($data[3])), $out );
+
+		$out = array();
+		$this->assertNotEmpty( self::qb()->from($t)->chunk(2, function($data) use (&$out) { $out[] = $data; }) );
+		$this->assertSame( array(array($data[1], $data[2]), array($data[3])), $out );
+
+		$out = array();
+		$this->assertNotEmpty( self::qb()->from($t)->chunk(3, function($data) use (&$out) { $out[] = $data; }) );
+		$this->assertSame( array(array($data[1], $data[2], $data[3])), $out );
+
+		$out = array();
+		$this->assertNotEmpty( self::qb()->from($t)->chunk(100, function($data) use (&$out) { $out[] = $data; }) );
+		$this->assertSame( array(array($data[1], $data[2], $data[3])), $out );
 	}
 	public function test_join() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
