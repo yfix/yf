@@ -439,16 +439,32 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		);
 		$this->assertSame( $expected, self::db()->select('id2')->from($t)->all() );
 	}
-/*
 	public function test_update_batch() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
 
-			self::qb()->table('users')->update_batch('users', $data, null)
-			self::qb()->table('users')->update_batch('users', $data, 'id')
-			self::qb()->table('users')->update_batch('users', $data, 'uid')
-			self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'))
-			self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'))
+		$this->assertTrue( (bool)self::db()->query($this->create_table_sql($table)) );
+		$data = array(
+			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
+			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
+			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
+			'4' => array('id' => '4', 'id2' => '22', 'id3' => '333'),
 		);
+		$this->assertTrue( (bool)self::db()->insert_safe($t, $data) );
+		$this->assertSame( $data, self::db()->from($t)->all() );
+		$new_data = $data;
+		$new_data['2']['id2'] = '555';
+		$new_data['4']['id2'] = '555';
+		$this->assertNotSame( $data, $new_data );
+		$this->assertTrue( (bool)self::qb()->table($t)->update_batch($t, $new_data, null) );
+		$this->assertSame( $new_data, self::db()->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->update($data) );
+		$this->assertSame( $data, self::db()->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->update_batch($t, $new_data, 'id') );
+		$this->assertSame( $new_data, self::db()->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->update_batch($t, $data, array('id','id3')) );
+		$this->assertSame( $data, self::db()->from($t)->all() );
 	}
 /*
 	public function test_increment() {
