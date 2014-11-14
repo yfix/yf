@@ -132,30 +132,49 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Create overall SQL array parts in correct order
 	*/
-	public function _sql_to_array($return_raw = false) {
+	public function _sql_to_array($return_raw = false, $sql_data = null) {
+		if (!isset($sql_data)) {
+			$sql_data = &$this->_sql;
+		}
 		$a = array();
 		// Save 1 call of select()
-		if (empty($this->_sql['select']) && !empty($this->_sql['from'])) {
+		if (empty($sql_data['select']) && !empty($sql_data['from'])) {
 			$this->select();
 		}
-		if (empty($this->_sql['select']) || empty($this->_sql['from'])) {
+		if (empty($sql_data['select']) || empty($sql_data['from'])) {
 			return array();
 		}
 		// HAVING without GROUP BY makes no sense
-		if (!empty($this->_sql['having']) && empty($this->_sql['group_by'])) {
-			unset($this->_sql['having']);
+		if (!empty($sql_data['having']) && empty($sql_data['group_by'])) {
+			unset($sql_data['having']);
 		}
 		// Ensuring strict order of parts of the generated SQL will be correct, no matter how functions were called
 		$parts_config = $this->_get_sql_parts_config();
 		foreach ($parts_config as $name => $config) {
-			if (empty($this->_sql[$name])) {
+			if (empty($sql_data[$name])) {
 				continue;
 			}
 			if ($name === 'where_or' && !isset($a['where'])) {
 				$a['where'] = $parts_config['where']['operator'];
 				$config['operator'] = '';
 			}
-			$a[$name] = $this->_sql_part_to_array($name, $this->_sql[$name], $config, $return_raw);
+			$a[$name] = $this->_sql_part_to_array($name, $sql_data[$name], $config, $return_raw);
+		}
+		$unions = array();
+		foreach ((array)$sql_data['union'] as $query) {
+			$subquery = $this->subquery($query);
+			if ($subquery) {
+				$unions[] = 'UNION '. $subquery;
+			}
+		}
+		foreach ((array)$sql_data['union_all'] as $query) {
+			$subquery = $this->subquery($query);
+			if ($subquery) {
+				$unions[] = 'UNION ALL '. $subquery;
+			}
+		}
+		if ($unions) {
+			$a['union'] = implode(PHP_EOL, $unions);
 		}
 		return $a;
 	}
@@ -175,7 +194,7 @@ abstract class yf_db_query_builder_driver {
 			'group_by'		=> array('separator' => ',', 'operator' => 'GROUP BY'),
 			'having'		=> array('separator' => 'AND', 'operator' => 'HAVING'),
 			'order_by'		=> array('separator' => ',', 'operator' => 'ORDER BY'),
-			'limit'			=> array(/* 'operator' => 'LIMIT' */),
+			'limit'			=> array(),
 		);
 		return isset($part) ? $config[$part] : $config;
 	}
@@ -1062,7 +1081,16 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function where_any($key, $op = '=', $query) {
 		return $this->where_raw(
-			$this->_escape_col_name($key).' '.(in_array($op, array('=','>','<','>=','<=','!=','<>')) ? $op : '=').' '.$this->subquery($query)
+			$this->_escape_col_name($key).' '.(in_array($op, array('=','>','<','>=','<=','!=','<>')) ? $op : '=').' ANY '.$this->subquery($query)
+		);
+	}
+
+	/**
+	* SQL statement ALL() for subqueries
+	*/
+	public function where_all($key, $op = '=', $query) {
+		return $this->where_raw(
+			$this->_escape_col_name($key).' '.(in_array($op, array('=','>','<','>=','<=','!=','<>')) ? $op : '=').' ALL '.$this->subquery($query)
 		);
 	}
 
@@ -1503,15 +1531,17 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* UNION sql wrapper
 	*/
-	public function union($query, $all = false) {
-		return $this->sql(). ' '. ($all ? 'UNION ALL' : 'UNION'). ' '. $this->subquery($query);
+	public function union($query) {
+		$this->_sql[__FUNCTION__][] = $query;
+		return $this;
 	}
 
 	/**
 	* UNION ALL sql wrapper
 	*/
 	public function union_all($query) {
-		return $this->union($query, $all = true);
+		$this->_sql[__FUNCTION__][] = $query;
+		return $this;
 	}
 
 	/**
