@@ -551,8 +551,13 @@ abstract class yf_db_query_builder_driver {
 			return false;
 		}
 		$fields_escaped = substr($this->_render_select(), strlen('SELECT '));
+		if ($fields_escaped === '*') {
+			$fields_escaped = '';
+		}
 		$sql = ($replace ? 'REPLACE' : 'INSERT'). ($ignore ? ' IGNORE' : '')
-			.' INTO '.$this->_escape_table_name($table). ' ('. $fields_escaped. ') '. PHP_EOL. $select_sql;
+			.' INTO '.$this->_escape_table_name($table)
+			. ($fields_escaped ? ' ('. $fields_escaped. ')' : '')
+			. ' '. PHP_EOL. $select_sql;
 		return $params['sql'] ? $sql : $this->db->query($sql);
 	}
 
