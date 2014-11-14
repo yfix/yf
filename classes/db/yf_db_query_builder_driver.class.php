@@ -666,7 +666,13 @@ abstract class yf_db_query_builder_driver {
 		if (isset($a['where_or'])) {
 			$where = rtrim($where).' '.$a['where_or']['operator'].' '.implode(' '.$a['where_or']['separator'].' ', $a['where_or']['condition']);
 		}
+		if (!strlen($where)) {
+			$where = '1=1';
+		}
 		$sql = $this->compile_update($table, $data, $where, $params);
+		if (isset($a['limit'])) {
+			$sql .= ' '.$this->_render_limit();
+		}
 		if (!empty($params['sql'])) {
 			return $sql;
 		}
