@@ -504,21 +504,43 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertTrue( (bool)self::qb()->table($t)->limit(1)->increment('id2', 5) );
 		$this->assertSame( $new_data, self::db()->from($t)->all() );
 	}
-/*
 	public function test_union() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$first = self::qb()->from('users')->where_null('first_name');
-		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `last_name` IS NULL UNION ('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users` WHERE `first_name` IS NULL'.PHP_EOL.')',
-			self::qb()->from('users')->where_null('last_name')->union($first)->sql()
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
+		$this->assertTrue( (bool)self::db()->query($this->create_table_sql($table)) );
+		$data = array(
+			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
+			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
 		);
-	}
-	public function test_union_all() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$first = self::qb()->from('users')->where_null('first_name');
-		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `last_name` IS NULL UNION ALL ('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users` WHERE `first_name` IS NULL'.PHP_EOL.')',
-			self::qb()->from('users')->where_null('last_name')->union_all($first)->sql()
+		$this->assertTrue( (bool)self::db()->insert_safe($t, $data) );
+		$this->assertSame( $data, self::db()->from($t)->all() );
+		$this->assertSame( $data, self::qb()->from($t)->whereid(1)->union( self::qb()->from($t)->whereid(2) )->all() );
+		$this->assertSame( $data, self::qb()->from($t)->whereid(1)->union_all( self::qb()->from($t)->whereid(2) )->all() );
+		$this->assertSame( array('1' => $data[1]), self::qb()->from($t)->whereid(1)->union( self::qb()->from($t)->whereid(3) )->all() );
+		$this->assertSame( array('1' => $data[1]), self::qb()->from($t)->whereid(1)->union_all( self::qb()->from($t)->whereid(3) )->all() );
+		$this->assertSame( array('1' => $data[1]), self::qb()->from($t)->whereid(1)->union( self::qb()->from($t)->whereid(1) )->all() );
+		$this->assertSame( array('1' => $data[1]), self::qb()->from($t)->whereid(1)->union_all( self::qb()->from($t)->whereid(1) )->all() );
+		$expected = array(
+			array('id2' => $data[1]['id2']),
+			array('id2' => $data[2]['id2']),
 		);
+		$this->assertSame( $expected, self::qb()->select('id2')->from($t)->whereid(1)->union( self::qb()->select('id2')->from($t)->whereid(2) )->all() );
+		$this->assertSame( $expected, self::qb()->select('id2')->from($t)->whereid(1)->union_all( self::qb()->select('id2')->from($t)->whereid(2) )->all() );
+		$expected = array(
+			array('id2' => $data[1]['id2']),
+		);
+		$this->assertSame( $expected, self::qb()->select('id2')->from($t)->whereid(1)->union( self::qb()->select('id2')->from($t)->whereid(1) )->all() );
+		$this->assertNotSame( $expected, self::qb()->select('id2')->from($t)->whereid(1)->union_all( self::qb()->select('id2')->from($t)->whereid(1) )->all() );
+		$expected = array(
+			array('id2' => $data[1]['id2']),
+			array('id2' => $data[1]['id2']),
+		);
+		$this->assertNotSame( $expected, self::qb()->select('id2')->from($t)->whereid(1)->union( self::qb()->select('id2')->from($t)->whereid(1) )->all() );
+		$this->assertSame( $expected, self::qb()->select('id2')->from($t)->whereid(1)->union_all( self::qb()->select('id2')->from($t)->whereid(1) )->all() );
 	}
+/*
 	public function test_where_any() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$first = self::qb()->select('gid')->from('groups')->where_not_null('active');
