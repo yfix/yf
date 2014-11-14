@@ -466,45 +466,45 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertTrue( (bool)self::qb()->table($t)->update_batch($t, $data, array('id','id3')) );
 		$this->assertSame( $data, self::db()->from($t)->all() );
 	}
+	public function test_increment_decrement() {
+		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
+		$this->assertTrue( (bool)self::db()->query($this->create_table_sql($table)) );
+		$data = array(
+			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
+			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
+		);
+		$this->assertTrue( (bool)self::db()->insert_safe($t, $data) );
+		$new_data = $data;
+		$new_data[1]['id2'] = strval(++$new_data[1]['id2']);
+		$new_data[2]['id2'] = strval(++$new_data[2]['id2']);
+		$this->assertNotSame( $data, $new_data );
+		$this->assertTrue( (bool)self::qb()->table($t)->increment('id2') );
+		$this->assertSame( $new_data, self::db()->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->decrement('id2') );
+		$this->assertSame( $data, self::db()->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->increment('id2', 1) );
+		$this->assertSame( $new_data, self::db()->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->decrement('id2', 1) );
+		$this->assertSame( $data, self::db()->from($t)->all() );
+		$new_data = $data;
+		$new_data[1]['id2'] = strval($new_data[1]['id2'] + 5);
+		$new_data[2]['id2'] = strval($new_data[2]['id2'] + 5);
+		$this->assertTrue( (bool)self::qb()->table($t)->increment('id2', 5) );
+		$this->assertSame( $new_data, self::db()->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->decrement('id2', 5) );
+		$this->assertSame( $data, self::db()->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->whereid(1)->increment('id2', 5) );
+		$new_data[2]['id2'] = $data[2]['id2'];
+		$this->assertSame( $new_data, self::db()->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->whereid(1)->increment('id2', -5) );
+		$this->assertSame( $data, self::db()->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->limit(1)->increment('id2', 5) );
+		$this->assertSame( $new_data, self::db()->from($t)->all() );
+	}
 /*
-	public function test_increment() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1', self::qb()->table('user')->increment('visits', null, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1', self::qb()->table('user')->increment('visits', 1, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5', self::qb()->table('user')->increment('visits', 5, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 500', self::qb()->table('user')->increment('visits', 500, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5', self::qb()->table('user')->increment('visits', -5, $sql = true) );
-
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', null, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', 1, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', 5, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->increment('visits', -5, $sql = true) );
-
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 LIMIT 1', self::qb()->table('user')->limit(1)->increment('visits', 5, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\' LIMIT 1', self::qb()->table('user')->whereid(1)->limit(1)->increment('visits', 5, $sql = true) );
-
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `u`.`visits` = `u`.`visits` + 5 WHERE `u`.`id` = \'1\' LIMIT 1', self::qb()->table('user as u')->where('u.id', 1)->limit(1)->increment('u.visits', 5, $sql = true) );
-	}
-	public function test_decrement() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1', self::qb()->table('user')->decrement('visits', null, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1', self::qb()->table('user')->decrement('visits', 1, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5', self::qb()->table('user')->decrement('visits', 5, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 500', self::qb()->table('user')->decrement('visits', 500, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5', self::qb()->table('user')->decrement('visits', -5, $sql = true) );
-
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', null, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', 1, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', 5, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 5 WHERE `id` = \'1\'', self::qb()->table('user')->whereid(1)->decrement('visits', -5, $sql = true) );
-
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 LIMIT 1', self::qb()->table('user')->limit(1)->decrement('visits', 5, $sql = true) );
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\' LIMIT 1', self::qb()->table('user')->whereid(1)->limit(1)->decrement('visits', 5, $sql = true) );
-
-		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `u`.`visits` = `u`.`visits` - 5 WHERE `u`.`id` = \'1\' LIMIT 1', self::qb()->table('user as u')->where('u.id', 1)->limit(1)->decrement('u.visits', 5, $sql = true) );
-	}
 	public function test_union() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
 		$first = self::qb()->from('users')->where_null('first_name');
