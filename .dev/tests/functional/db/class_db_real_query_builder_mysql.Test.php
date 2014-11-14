@@ -373,12 +373,12 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
 		);
 		$this->assertTrue( (bool)self::db()->insert_safe($t1, $data) );
-		$this->assertSame( 2, (int)self::db()->from($t1)->count() );
+		$this->assertSame( count($data), (int)self::db()->from($t1)->count() );
 		$this->assertSame( 0, (int)self::db()->from($t2)->count() );
 
 		$this->assertTrue( (bool)self::qb()->from($t1)->insert_into($t2) );
-		$this->assertSame( 2, (int)self::db()->from($t1)->count() );
-		$this->assertSame( 2, (int)self::db()->from($t2)->count() );
+		$this->assertSame( count($data), (int)self::db()->from($t1)->count() );
+		$this->assertSame( count($data), (int)self::db()->from($t2)->count() );
 		$this->assertSame( $data, self::db()->from($t2)->all() );
 
 		$this->assertTrue( (bool)self::qb()->from($t2)->delete() );
@@ -386,81 +386,73 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertTrue( (bool)self::qb()->from($t1)->where('id2 > 20')->insert_into($t2) );
 		$this->assertSame( array('2' => $data[2]), self::db()->from($t2)->all() );
 	}
-/*
 	public function test_update() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$data = array('user_id'	=> 1, 'date' => '1234567890', 'total_sum' => '19,12', 'name' => 'name');
-		$this->assertEquals(
-			'UPDATE `'.DB_PREFIX.'shop_orders` SET `user_id` = \'1\', `date` = \'1234567890\', `total_sum` = \'19,12\', `name` = \'name\' WHERE `id` = \'1\'',
-			str_replace(PHP_EOL, '', self::qb()->table('shop_orders')->whereid(1)->update($data, array('sql' => true)) )
-		);
-		$this->assertEquals(
-			'UPDATE `'.DB_PREFIX.'shop_orders` SET `user_id` = \'1\', `date` = \'1234567890\', `total_sum` = \'19,12\', `name` = \'name\' WHERE `id` >= \'1\'',
-			str_replace(PHP_EOL, '', self::qb()->table('shop_orders')->where('id >= 1')->update($data, array('sql' => true)) )
-		);
+		$table = self::utils()->db->DB_PREFIX. __FUNCTION__;
+		$t = $this->table_name($table);
+
+		$this->assertTrue( (bool)self::db()->query($this->create_table_sql($table)) );
 		$data = array(
-			1 => array('id' => 1, 'name' => 'name1'),
-			2 => array('id' => 2, 'name' => 'name2'),
+			'1' => array('id' => '1', 'id2' => '11', 'id3' => '111'),
+			'2' => array('id' => '2', 'id2' => '22', 'id3' => '222'),
+			'3' => array('id' => '3', 'id2' => '11', 'id3' => '222'),
+			'4' => array('id' => '4', 'id2' => '22', 'id3' => '333'),
 		);
-		$this->assertEquals(
-			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update($data, array('sql' => true)) ))
+		$this->assertTrue( (bool)self::db()->insert_safe($t, $data) );
+		$this->assertSame( count($data), (int)self::db()->from($t)->count() );
+
+		$this->assertTrue( (bool)self::qb()->table($t)->update(array('id2' => '1111')) );
+		$expected = array(
+			array('id2' => '1111'),
+			array('id2' => '1111'),
+			array('id2' => '1111'),
+			array('id2' => '1111')
 		);
-		$data = array(
-			1 => array('uid' => 1, 'name' => 'name1'),
-			2 => array('uid' => 2, 'name' => 'name2'),
+		$this->assertSame( $expected, self::db()->select('id2')->from($t)->all() );
+
+		$this->assertTrue( (bool)self::qb()->from($t)->delete() );
+		$this->assertSame( 0, (int)self::db()->from($t)->count() );
+		$this->assertTrue( (bool)self::db()->insert_safe($t, $data) );
+		$this->assertSame( count($data), (int)self::db()->from($t)->count() );
+		$this->assertTrue( (bool)self::qb()->table($t)->whereid(2)->update(array('id2' => '1111')) );
+		$expected = array(
+			array('id2' => $data[1]['id2']),
+			array('id2' => '1111'),
+			array('id2' => $data[3]['id2']),
+			array('id2' => $data[4]['id2'])
 		);
-		$this->assertEquals(
-			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `uid` = \'1\' THEN \'name1\' WHEN `uid` = \'2\' THEN \'name2\' ELSE `name` END WHERE `uid` IN(\'1\',\'2\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update($data, array('id' => 'uid', 'sql' => true)) ))
+		$this->assertSame( $expected, self::db()->select('id2')->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->where('id > 2')->limit(1)->update(array('id2' => '1111')) );
+		$expected = array(
+			array('id2' => $data[1]['id2']),
+			array('id2' => '1111'),
+			array('id2' => '1111'),
+			array('id2' => $data[4]['id2'])
 		);
+		$this->assertSame( $expected, self::db()->select('id2')->from($t)->all() );
+		$this->assertTrue( (bool)self::qb()->table($t)->where('id >= 2')->limit(10)->update(array('id2' => '5555')) );
+		$expected = array(
+			array('id2' => $data[1]['id2']),
+			array('id2' => '5555'),
+			array('id2' => '5555'),
+			array('id2' => '5555')
+		);
+		$this->assertSame( $expected, self::db()->select('id2')->from($t)->all() );
 	}
+/*
 	public function test_update_batch() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$data = array(
-			1 => array('id' => 1, 'name' => 'name1'),
-			2 => array('id' => 2, 'name' => 'name2'),
-		);
-		$this->assertEquals(
-			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, null, $sql = true) ))
-		);
-		$this->assertEquals(
-			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, 'id', $sql = true) ))
-		);
-		$data = array(
-			1 => array('uid' => 1, 'name' => 'name1'),
-			2 => array('uid' => 2, 'name' => 'name2'),
-		);
-		$this->assertEquals(
-			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `uid` = \'1\' THEN \'name1\' WHEN `uid` = \'2\' THEN \'name2\' ELSE `name` END WHERE `uid` IN(\'1\',\'2\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, 'uid', $sql = true) ))
-		);
-		$data = array(
-			1 => array('id' => 1, 'cat_id' => 11, 'name' => 'name1'),
-			2 => array('id' => 2, 'cat_id' => 22, 'name' => 'name2'),
-		);
-		$this->assertEquals(
-			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'name1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\') AND `cat_id` IN(\'11\',\'22\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $sql = true) ))
-		);
-		$data = array(
-			1 => array('id' => 1, 'cat_id' => 11, 'name' => 'name1', 'desc' => 'desc1'),
-			2 => array('id' => 2, 'cat_id' => 22, 'name' => 'name2', 'desc' => 'desc2'),
-		);
-		$this->assertEquals(
-			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'name1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'name2\' ELSE `name` END, `desc` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'desc1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'desc2\' ELSE `desc` END WHERE `id` IN(\'1\',\'2\') AND `cat_id` IN(\'11\',\'22\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $sql = true) ))
+
+			self::qb()->table('users')->update_batch('users', $data, null)
+			self::qb()->table('users')->update_batch('users', $data, 'id')
+			self::qb()->table('users')->update_batch('users', $data, 'uid')
+			self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'))
+			self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'))
 		);
 	}
 /*
 	public function test_increment() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertFalse( self::qb()->increment(null, null, $sql = true) );
-		$this->assertFalse( self::qb()->increment('visits', null, $sql = true) );
-		$this->assertFalse( self::qb()->increment('visits', 1, $sql = true) );
-		$this->assertFalse( self::qb()->increment('visits', 5, $sql = true) );
 
 		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1', self::qb()->table('user')->increment('visits', null, $sql = true) );
 		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` + 1', self::qb()->table('user')->increment('visits', 1, $sql = true) );
@@ -480,10 +472,6 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 	}
 	public function test_decrement() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertFalse( self::qb()->decrement(null, null, $sql = true) );
-		$this->assertFalse( self::qb()->decrement('visits', null, $sql = true) );
-		$this->assertFalse( self::qb()->decrement('visits', 1, $sql = true) );
-		$this->assertFalse( self::qb()->decrement('visits', 5, $sql = true) );
 
 		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1', self::qb()->table('user')->decrement('visits', null, $sql = true) );
 		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 1', self::qb()->table('user')->decrement('visits', 1, $sql = true) );
@@ -500,12 +488,6 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `visits` = `visits` - 5 WHERE `id` = \'1\' LIMIT 1', self::qb()->table('user')->whereid(1)->limit(1)->decrement('visits', 5, $sql = true) );
 
 		$this->assertEquals( 'UPDATE `'.DB_PREFIX.'user` SET `u`.`visits` = `u`.`visits` - 5 WHERE `u`.`id` = \'1\' LIMIT 1', self::qb()->table('user as u')->where('u.id', 1)->limit(1)->decrement('u.visits', 5, $sql = true) );
-	}
-	public function test_subquery() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertEquals('('.PHP_EOL.'SELECT 1'.PHP_EOL.')', self::qb()->subquery('SELECT 1'));
-		$this->assertEquals('('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users`'.PHP_EOL.')', self::qb()->subquery('SELECT * FROM `'.DB_PREFIX.'users`'));
-		$this->assertEquals('('.PHP_EOL.'SELECT * FROM `'.DB_PREFIX.'users`'.PHP_EOL.')', self::qb()->subquery( self::qb()->from('users') ));
 	}
 	public function test_union() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
