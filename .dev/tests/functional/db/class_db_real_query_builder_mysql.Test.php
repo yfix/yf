@@ -72,6 +72,17 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertSame( '22', self::db()->select('MAX(id2)')->from($this->table_name($table))->get_one() );
 		$this->assertEquals( '1.5000', self::db()->select('AVG(id)')->from($this->table_name($table))->get_one() );
 
+		$this->assertSame( '2', self::db()->from($this->table_name($table))->count() );
+		$this->assertSame( '2', self::db()->from($this->table_name($table))->count('id') );
+		$this->assertSame( '3', self::db()->from($this->table_name($table))->sum() );
+		$this->assertSame( '3', self::db()->from($this->table_name($table))->sum('id') );
+		$this->assertSame( '33', self::db()->from($this->table_name($table))->sum('id2') );
+		$this->assertSame( '333', self::db()->from($this->table_name($table))->sum('id3') );
+		$this->assertSame( '11', self::db()->from($this->table_name($table))->min('id2') );
+		$this->assertSame( '22', self::db()->from($this->table_name($table))->max('id2') );
+		$this->assertEquals( '1.5000', self::db()->from($this->table_name($table))->avg() );
+		$this->assertEquals( '1.5000', self::db()->from($this->table_name($table))->avg('id') );
+
 		$this->assertSame( $data[1], self::db()->from($this->table_name($table))->get() );
 		$this->assertSame( $data[1], self::db()->from($this->table_name($table).' as t1')->get() );
 		$this->assertSame( $data[1], self::db()->from(array($this->table_name($table) => 't1'))->get() );
@@ -93,6 +104,7 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 
 		$this->assertSame( $data[1], self::qb()->from($this->table_name($table))->where('id','=','1')->get() );
 		$this->assertSame( $data[2], self::qb()->from($this->table_name($table))->where('id','=','2')->get() );
+		$this->assertSame( $data[2], self::qb()->from($this->table_name($table))->where('id','2')->get() );
 		$this->assertEmpty( self::qb()->from($this->table_name($table))->where('id','=','3')->get() );
 		$this->assertSame( $data[2], self::qb()->from($this->table_name($table))->where('id3','like','222')->get() );
 		$this->assertSame( $data[2], self::qb()->from($this->table_name($table))->where('id3','like','22%')->get() );
@@ -122,10 +134,16 @@ class class_db_real_query_builder_mysql_test extends db_real_abstract {
 		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->whereid(array(1,2,3,4), 't1.id')->get_all() );
 		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->where('t1.id', 'in', array(1,2,3,4))->get_all() );
 		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->where('t1.id', 'not in', array(5,6,7))->get_all() );
+		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->whereid(1,2,3,4)->get_all() );
+		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->whereid(1,2,3,4, 'id')->get_all() );
+		$this->assertSame( $data, self::qb()->from($this->table_name($table).' as t1')->whereid(1,2,3,4, 't1.id')->get_all() );
 
 		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(array(4,5,6))->get_all() );
 		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(array(4,5,6), 'id')->get_all() );
 		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(array(4,5,6), 't1.id')->get_all() );
+		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(4,5,6)->get_all() );
+		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(4,5,6, 'id')->get_all() );
+		$this->assertEmpty( self::qb()->from($this->table_name($table).' as t1')->whereid(4,5,6, 't1.id')->get_all() );
 	}
 	public function test_join() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
