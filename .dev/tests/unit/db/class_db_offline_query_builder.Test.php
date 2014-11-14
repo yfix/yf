@@ -637,21 +637,12 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			self::qb()->from('users')->where_not_exists($first)->sql()
 		);
 	}
-	public function test_chunk() {
-		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-#		User::chunk(200, function($users){
-#			foreach ($users as $user) { ... }
-#		});
-	}
 	public function test_shared_lock() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-#		DB::table('users')->where('votes', '>', 100)->sharedLock()->get();
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `id` > \'10\' LOCK IN SHARE MODE', self::qb()->from('users')->where('id > 10')->shared_lock()->sql());
 	}
 	public function test_lock_for_update() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-// TODO
-#		DB::table('users')->where('votes', '>', 100)->lockForUpdate()->get();
+		$this->assertEquals('SELECT * FROM `'.DB_PREFIX.'users` WHERE `id` > \'10\' FOR UPDATE', self::qb()->from('users')->where('id > 10')->lock_for_update()->sql());
 	}
 }
