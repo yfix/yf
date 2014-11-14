@@ -741,7 +741,7 @@ class yf_manage_shop_import_products2 {
 			if( $status ) {
 				foreach( $fields_by_name as $field => $field_index ) {
 					$value = $item[ $field_index ];
-					$test = $this->_field__test( $field, $value, $options );
+					$test = $this->_field__test( $field, $value, $action );
 					if( $test === FALSE ) { continue; }
 					$result[ 'items' ][ $index ][ 'fields' ][ $field_index ] = $test;
 					$status = $status && $test[ 'status' ];
@@ -943,17 +943,16 @@ class yf_manage_shop_import_products2 {
 
 	protected function _field_test__manufacturer_name( $value, $action ) {
 		$value  = trim( $value );
-		$valid  = !empty( $value );
-			!$valid && $status_message = 'производитель пустой';
+		$valid  = true;
 		$exists = null;
-		if( $valid ) {
+		if( $valid && $action == 'update' ) {
 			$cache = &$this->cache;
 			$many   = count( $cache[ 'manufacturer' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ] );
 			$exists = $many > 0;
 				!$exists  && $status_message = 'производитель не существует';
 				$many > 1 && $status_message = 'множество производителей с этим именем: ' . $many;
 		}
-		$status = $valid && $exists && $many == 1;
+		$status = ( $action == 'insert' ) || ( $valid && $exists && $many == 1 );
 			$status_message = $status ? null : $status_message;
 		$result = array(
 			'valid'          => $valid,
@@ -1045,24 +1044,24 @@ class yf_manage_shop_import_products2 {
 			, $sql_limit
 		);
 		$result = db_get_all( $sql, '-1' );
-		// var_dump( $sql, $result );
+		// var_dump( $sql, $result ); exit;
 		return( $result );
 	}
 
-	protected function _field_to_sql( $field, $value ) {
+	protected function _field_to_sql( $field, $value, $action = null ) {
 		$_class  = $this;
 		$_method = '_field_to_sql__' . $field;
 		$_status = method_exists( $_class, $_method );
 		if( !$_status ) { return( array( $field, _es( $value ) ) ); }
-		return( $_class->$_method( $field, $value ) );
+		return( $_class->$_method( $field, $value, $action ) );
 	}
 
-	protected function _field_to_sql__price( $field, $value ) {
+	protected function _field_to_sql__price( $field, $value, $action = null ) {
 		$value = number_format( $value, 2, '.', '' );
 		return( array( $field, $value ) );
 	}
 
-	protected function _field_to_sql__category_name( $field, $value ) {
+	protected function _field_to_sql__category_name( $field, $value, $action = null ) {
 		$cache  = &$this->cache;
 		$result = null;
 		$name = $cache[ 'category' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
@@ -1075,7 +1074,7 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
-	protected function _field_to_sql__supplier_name( $field, $value ) {
+	protected function _field_to_sql__supplier_name( $field, $value, $action = null ) {
 		$cache  = &$this->cache;
 		$result = null;
 		$name = $cache[ 'supplier' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
@@ -1088,14 +1087,36 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
-	protected function _field_to_sql__manufacturer_name( $field, $value ) {
+	protected function _field_to_sql__manufacturer_name( $field, $value, $action = null ) {
+		if( $action == 'check' ) { return( array( $field, $value ) ); }
+		$value = trim( $value );
+		$field = 'manufacturer_id';
+		if( empty( $value ) ) { return( array( $field, 0 ) ); }
 		$cache  = &$this->cache;
 		$result = null;
 		$name = $cache[ 'manufacturer' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
 		if( is_array( $name ) ) {
 			$value = current( $name );
 			$value = (int)$value[ 'id' ];
-			$field = 'manufacturer_id';
+			$result = array( $field, $value );
+		} elseif ( $action == 'insert' ) {
+			// try add
+			$url = common()->_propose_url_from_name( $value );
+			$id = (int)db()->table( 'shop_manufacturers' )->insert( array(
+				'name' => _es( $value ),
+				'url'  => $url,
+			));
+			if( !empty( $value ) ) {
+				$item = array(
+					'id'   => $id,
+					'name' => $value,
+					'url'  => $url,
+				);
+				$cache_name = mb_strtolower( $item[ 'name' ], 'UTF-8' );
+				$cache[ 'manufacturer' ][ 'id' ][ $id ] = &$item;
+				$cache[ 'manufacturer' ][ 'name' ][ $cache_name ][ $id ] = &$item;
+			}
+			$value = $id;
 			$result = array( $field, $value );
 		}
 		return( $result );
@@ -1137,6 +1158,14 @@ class yf_manage_shop_import_products2 {
 			if( !empty( $category_id ) ) {
 				$sql_item_default[ 'cat_id' ] = (int)$category_id;
 			}
+			// add field for insert relation table
+			$relation       = array( 'manufacturer_name' );
+			$relation_field = array();
+			foreach( $relation as $item ) {
+				if( !empty( $fields_values[ $item ] ) ) {
+					$relation_field[ $item ] = $fields_values[ $item ];
+				}
+			}
 		}
 		foreach( $items as $index => $item ) {
 			$sql_item = $sql_item_default;
@@ -1160,9 +1189,18 @@ class yf_manage_shop_import_products2 {
 				$sql_item[ 'add_date' ] = time();
 				// prepare fields
 				foreach( $fields_values as $k => $i ) {
-					list( $field, $value ) = $this->_field_to_sql( $k, $item[ $i ] );
+					list( $field, $value ) = $this->_field_to_sql( $k, $item[ $i ], 'check' );
 					if( !$field ) { $sql_item = null; break; }
 					$sql_item[ $field ] = $value;
+				}
+				// insert relation
+				if( !empty( $sql_item ) ) {
+					foreach( $relation_field as $k => $i ) {
+						list( $field, $value ) = $this->_field_to_sql( $k, $item[ $i ], 'insert' );
+						if( !$field ) { $sql_item = null; break; }
+						unset( $sql_item[ $k ] );
+						$sql_item[ $field ] = $value;
+					}
 				}
 			}
 			$sql_item && $data[] = $sql_item;
