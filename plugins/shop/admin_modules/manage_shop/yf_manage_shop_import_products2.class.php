@@ -920,6 +920,51 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
+	protected function _field_test__manufacturer_id( $value, $action ) {
+		$value  = (int)$value;
+		$valid  = $value >= 0;
+			!$valid && $status_message = 'неверный код производителя';
+		$exists = null;
+		if( $valid ) {
+			$cache = &$this->cache;
+			$exists = is_array( $cache[ 'manufacturer' ][ 'id' ][ $value ] );
+				!$exists  && $status_message = 'код производителя не существует';
+		}
+		$status = $valid && $exists;
+			$status_message = $status ? null : $status_message;
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
+	protected function _field_test__manufacturer_name( $value, $action ) {
+		$value  = trim( $value );
+		$valid  = !empty( $value );
+			!$valid && $status_message = 'производитель пустой';
+		$exists = null;
+		if( $valid ) {
+			$cache = &$this->cache;
+			$many   = count( $cache[ 'manufacturer' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ] );
+			$exists = $many > 0;
+				!$exists  && $status_message = 'производитель не существует';
+				$many > 1 && $status_message = 'множество производителей с этим именем: ' . $many;
+		}
+		$status = $valid && $exists && $many == 1;
+			$status_message = $status ? null : $status_message;
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'many'           => $many,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
 	function _db_exists( $name, $options = array() ) {
 		$cache  = &$this->cache;
 		$_     = $options;
@@ -1124,9 +1169,9 @@ class yf_manage_shop_import_products2 {
 		}
 		// var_dump( $data ); exit;
 		// update db
-		if( empty( $sql_item ) ) {
+		if( empty( $data ) ) {
 			$status = false;
-			$status_message = 'Данные для обновление отсутствуют!';
+			$status_message = 'Данные для обработки отсутствуют!';
 		} else {
 			$table  = 'shop_products';
 			// debug sql
