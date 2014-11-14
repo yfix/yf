@@ -208,9 +208,6 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3) AND `uid` IN(4,5,6)', self::qb()->from('user')->where(array('uid' => array(1,2,3)))->where(array('uid' => array(4,5,6)))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3)', self::qb()->from('user')->where(array('u.id' => array(1,2,3)))->sql() );
 		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3) AND `u`.`pid` IN(4,5,6)', self::qb()->from('user')->where(array('u.id' => array(1,2,3)))->where(array('u.pid' => array(4,5,6)))->sql() );
-
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `uid` IN(1,2,3) AND `pid` IN(4,5,6)', self::qb()->from('user')->where(array('uid' => array(1,2,3), 'pid' => array(4,5,6)))->sql() );
-#		$this->assertEquals( 'SELECT * FROM `'.DB_PREFIX.'user` WHERE `u`.`id` IN(1,2,3) AND `u`.`pid` IN(1,2,3)', self::qb()->from('user')->where(array('u.id' => array(1,2,3), 'u.pid' => array(4,5,6)))->sql() );
 	}
 	public function test_where_in() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -505,6 +502,22 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 			'UPDATE `'.DB_PREFIX.'shop_orders` SET `user_id` = \'1\', `date` = \'1234567890\', `total_sum` = \'19,12\', `name` = \'name\' WHERE `id` >= \'1\'',
 			str_replace(PHP_EOL, '', self::qb()->table('shop_orders')->where('id >= 1')->update($data, array('sql' => true)) )
 		);
+		$data = array(
+			1 => array('id' => 1, 'name' => 'name1'),
+			2 => array('id' => 2, 'name' => 'name2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update($data, array('sql' => true)) ))
+		);
+		$data = array(
+			1 => array('uid' => 1, 'name' => 'name1'),
+			2 => array('uid' => 2, 'name' => 'name2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `uid` = \'1\' THEN \'name1\' WHEN `uid` = \'2\' THEN \'name2\' ELSE `name` END WHERE `uid` IN(\'1\',\'2\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update($data, array('id' => 'uid', 'sql' => true)) ))
+		);
 	}
 	public function test_update_batch() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
@@ -514,7 +527,19 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		);
 		$this->assertEquals(
 			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, 'id', $sql = true)) )
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, null, $sql = true) ))
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' THEN \'name1\' WHEN `id` = \'2\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, 'id', $sql = true) ))
+		);
+		$data = array(
+			1 => array('uid' => 1, 'name' => 'name1'),
+			2 => array('uid' => 2, 'name' => 'name2'),
+		);
+		$this->assertEquals(
+			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `uid` = \'1\' THEN \'name1\' WHEN `uid` = \'2\' THEN \'name2\' ELSE `name` END WHERE `uid` IN(\'1\',\'2\');',
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, 'uid', $sql = true) ))
 		);
 		$data = array(
 			1 => array('id' => 1, 'cat_id' => 11, 'name' => 'name1'),
@@ -522,7 +547,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		);
 		$this->assertEquals(
 			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'name1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'name2\' ELSE `name` END WHERE `id` IN(\'1\',\'2\') AND `cat_id` IN(\'11\',\'22\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $sql = true)) )
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $sql = true) ))
 		);
 		$data = array(
 			1 => array('id' => 1, 'cat_id' => 11, 'name' => 'name1', 'desc' => 'desc1'),
@@ -530,7 +555,7 @@ class class_db_offline_query_builder_test extends db_offline_abstract {
 		);
 		$this->assertEquals(
 			'UPDATE `'.DB_PREFIX.'users` SET `name` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'name1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'name2\' ELSE `name` END, `desc` = CASE  WHEN `id` = \'1\' AND `cat_id` = \'11\' THEN \'desc1\' WHEN `id` = \'2\' AND `cat_id` = \'22\' THEN \'desc2\' ELSE `desc` END WHERE `id` IN(\'1\',\'2\') AND `cat_id` IN(\'11\',\'22\');',
-			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $sql = true)) )
+			trim(str_replace(PHP_EOL, ' ', self::qb()->table('users')->update_batch('users', $data, array('id', 'cat_id'), $sql = true) ))
 		);
 	}
 	public function test_render_select() {
