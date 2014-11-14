@@ -85,13 +85,12 @@ class class_db_offline_mysql_test extends db_offline_abstract {
 	}
 	public function test_delete() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
-		$this->assertFalse(self::db()->delete('table', '', $as_sql = true));
+		$this->assertEquals( 'DELETE FROM `t_table`', self::db()->delete('table', '', $as_sql = true));
 		$this->assertEquals( 'DELETE FROM `t_table` WHERE `id` = \'1\'', self::db()->delete('table', 1, $as_sql = true));
 		$this->assertEquals( 'DELETE FROM `t_table` WHERE `id` = \'1\'', self::db()->delete('table', 'id=1', $as_sql = true));
 		$this->assertEquals( 'DELETE FROM `t_table` WHERE `id` = \'1\'', self::db()->delete('table', 'id = 1', $as_sql = true));
 		$this->assertEquals( 'DELETE FROM `t_table` WHERE `id` > \'1\'', self::db()->delete('table', 'id > 1', $as_sql = true));
 		$this->assertEquals( 'DELETE FROM `t_table` WHERE `id` IN(1,2,3,4)', self::db()->delete('table', array(1,2,3,4), $as_sql = true));
-#		$this->assertEquals( '', self::db()->delete('table', 'id between 1 and 5', $as_sql = true));
 	}
 	public function test_es() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
