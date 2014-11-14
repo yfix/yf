@@ -376,7 +376,11 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
-	* Split big resultset into parts, by executing callback on each chunk
+	* Split big resultset into parts, by executing callback on each chunk.
+	* Examples:
+	*	db()->from('big_table')->limit(10000)->chunk(200, function($data) {
+	*		foreach ((array)$data as $a) { print $a['name'].PHP_EOL; }
+	*	})
 	*/
 	public function chunk($num = 100, $callback) {
 		$sql = $this->sql();
@@ -818,8 +822,6 @@ abstract class yf_db_query_builder_driver {
 					} else {
 						$a[] = $this->_escape_expr($v);
 					}
-				} elseif (is_callable($v)) {
-					$a[] = $v($fields, $this);
 				} elseif (is_array($v)) {
 					foreach ((array)$v as $k2 => $v2) {
 						$k2 = trim($k2);
@@ -835,6 +837,10 @@ abstract class yf_db_query_builder_driver {
 							}
 						}
 					}
+				} elseif (is_object($v) && $v instanceof self) {
+					$a[] = $this->subquery($v);
+				} elseif (is_callable($v)) {
+					$a[] = $v($fields, $this);
 				}
 			}
 			if ($a) {
@@ -882,8 +888,6 @@ abstract class yf_db_query_builder_driver {
 				} else {
 					$a[] = $this->_escape_table_name($v);
 				}
-			} elseif (is_callable($v)) {
-				$a[] = $v($tables, $this);
 			} elseif (is_array($v)) {
 				foreach ((array)$v as $k2 => $v2) {
 					$k2 = trim($k2);
@@ -897,6 +901,10 @@ abstract class yf_db_query_builder_driver {
 						}
 					}
 				}
+			} elseif (is_object($v) && $v instanceof self) {
+				$a[] = $this->subquery($v);
+			} elseif (is_callable($v)) {
+				$a[] = $v($tables, $this);
 			}
 		}
 		if ($a) {
@@ -977,6 +985,8 @@ abstract class yf_db_query_builder_driver {
 			} else {
 				$sql = $this->_process_where_cond($pk, '=', reset($ids));
 			}
+		} elseif (is_object($id) && $id instanceof self) {
+			$sql = $this->subquery($id);
 		} elseif (is_callable($id)) {
 			$sql = $id();
 		} else {
@@ -1165,6 +1175,8 @@ abstract class yf_db_query_builder_driver {
 							}
 						}
 					}
+				} elseif (is_object($v) && $v instanceof self) {
+					$a[] = $this->subquery($v);
 				} elseif (is_callable($v)) {
 					$a[] = $v($where, $this);
 				}
@@ -1260,12 +1272,12 @@ abstract class yf_db_query_builder_driver {
 			foreach ((array)$on as $k => $v) {
 				$_on[] = $this->_escape_col_name($k).' = '.$this->_escape_col_name($v);
 			}
-		} elseif (is_callable($on)) {
-			$_on = $on($table, $this);
 		} elseif (is_string($on)) {
 			if (preg_match(self::REGEX_INLINE_CONDS, $on, $m)) {
 				$_on[] = $this->_escape_col_name($m[1]). ' '. $m[2]. ' '. $this->_escape_col_name($m[3]);
 			}
+		} elseif (is_callable($on)) {
+			$_on = $on($table, $this);
 		}
 		$sql = '';
 		if (is_string($table) && !empty($_on)) {
@@ -1484,7 +1496,7 @@ abstract class yf_db_query_builder_driver {
 	* SQL subquery wrapper
 	*/
 	public function subquery($query) {
-		$sql = (is_object($query) && $query instanceof yf_db_query_builder_driver) ? $query->sql() : $query;
+		$sql = (is_object($query) && $query instanceof self) ? $query->sql() : $query;
 		return '('. PHP_EOL. $sql. PHP_EOL. ')';
 	}
 
