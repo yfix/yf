@@ -326,7 +326,7 @@ abstract class yf_db_query_builder_driver {
 		);
 		// Implode only non-empty array items
 		$where = implode(' ', array_filter($where, 'strlen'));
-		$key_escaped = $this->_escape_key($field);
+		$key_escaped = $this->_escape_col_name($field);
 		$sql = 'UPDATE '.$this->_escape_table_name($table).' SET '.$key_escaped.' = '.$key_escaped.' '.($step < 0 ? '-' : '+'). ' '.abs(intval($step)). (!empty($where) ? ' '.$where : '');
 		return $as_sql ? $sql : $this->db->query($sql);
 	}
