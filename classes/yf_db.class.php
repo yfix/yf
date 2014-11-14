@@ -644,82 +644,6 @@ class yf_db {
 	}
 
 	/**
-	*/
-	function get_table_columns_cached($table, $no_cache = false) {
-		$cache_name = __FUNCTION__.'|'.$table.'|'.$this->DB_HOST.'|'.$this->DB_PORT.'|'.$this->DB_NAME.'|'.$this->DB_PREFIX;
-		if ($this->NO_CACHE) {
-			$no_cache = true;
-		}
-		$data = array();
-		if (!$no_cache) {
-			$data = cache_tmp()->get($cache_name);
-		}
-		if (!$data) {
-			$data = $this->meta_columns($table);
-			if (!$no_cache) {
-				cache_tmp()->set($cache_name, $data);
-			}
-		}
-		return $data;
-	}
-
-	/**
-	*/
-	function _fix_data_safe($table, $data = array(), $extra = array()) {
-		if (!$this->FIX_DATA_SAFE) {
-			return $data;
-		}
-		$cols = $this->get_table_columns_cached($table, $extra['no_cache']);
-		if (!$cols) {
-			$msg = __CLASS__.'->'.__FUNCTION__.': columns for table '.$table.' is empty, truncating data array';
-			if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
-				trigger_error($msg, E_USER_WARNING);
-			}
-			return false;
-		}
-		$is_data_3d = false;
-		// Try to check if array is two-dimensional
-		foreach ((array)$data as $cur_row) {
-			$is_data_3d = is_array($cur_row) ? 1 : 0;
-			break;
-		}
-		$not_existing_cols = array();
-		$fixed_nulls = array();
-		if ($is_data_3d) {
-			foreach ((array)$data as $k => $_data) {
-				foreach ((array)$_data as $name => $v) {
-					if (!isset($cols[$name])) {
-						$not_existing_cols[$name] = $name;
-						unset($data[$k][$name]);
-					} elseif ((is_null($v) || $v === 'NULL') && !$cols[$name]['nullable']) {
-						$fixed_nulls[$name] = $name;
-						unset($data[$k][$name]);
-					}
-				}
-			}
-		} else {
-			foreach ((array)$data as $name => $v) {
-				if (!isset($cols[$name])) {
-					$not_existing_cols[$name] = $name;
-					unset($data[$name]);
-				} elseif ((is_null($v) || $v === 'NULL') && !$cols[$name]['nullable']) {
-					$fixed_nulls[$name] = $name;
-					unset($data[$name]);
-				}
-			}
-		}
-		if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
-			if ($not_existing_cols) {
-				trigger_error(__CLASS__.'->'.__FUNCTION__.': not existing columns for table "'.$table.'", columns: '.implode(', ', $not_existing_cols), E_USER_NOTICE);
-			}
-			if ($fixed_nulls) {
-				trigger_error(__CLASS__.'->'.__FUNCTION__.': fixed nulls for table "'.$table.'", columns: '.implode(', ', $fixed_nulls), E_USER_NOTICE);
-			}
-		}
-		return $data;
-	}
-
-	/**
 	* Alias of update() with data auto-escape
 	*/
 	function update_safe($table, $data, $where, $only_sql = false, $extra = array()) {
@@ -1219,282 +1143,10 @@ class yf_db {
 	}
 
 	/**
-	* 'Silent' mode (logging off, tracing off, debugging off)
-	*/
-	function enable_silent_mode() {
-		$this->ALLOW_CACHE_QUERIES	= false;
-		$this->GATHER_AFFECTED_ROWS	= false;
-		$this->USE_SHUTDOWN_QUERIES = false;
-		$this->LOG_ALL_QUERIES		= false;
-		$this->LOG_SLOW_QUERIES		= false;
-		$this->USE_QUERY_BACKTRACE	= false;
-		$this->ERROR_BACKTRACE		= false;
-		$this->LOGGED_QUERIES_LIMIT = 1;
-	}
-
-	/**
-	* Add query to shutdown array
-	*/
-	function _add_shutdown_query($sql = '') {
-		if (empty($sql) || strlen($sql) < 5) {
-			return false;
-		}
-		// If shutdown execution is disabled - then execute this query immediatelly
-		if (!$this->USE_SHUTDOWN_QUERIES) {
-			return $this->query($sql);
-		} else {
-			// Add query to the array
-			$this->_SHUTDOWN_QUERIES[] = $sql;
-		}
-		return true;
-	}
-
-	/**
-	* Execute shutdown queries
-	*/
-	function _execute_shutdown_queries() {
-		if (!$this->USE_SHUTDOWN_QUERIES || $this->_shutdown_executed) {
-			return false;
-		}
-		foreach ((array)$this->_SHUTDOWN_QUERIES as $sql) {
-			if (is_string($sql) && strlen($sql) > 5) {
-				$this->query($sql);
-			}
-		}
-		// Prevent executing this method more than once
-		$this->_shutdown_executed = true;
-	}
-
-	/**
-	* Create unique temporary table name
-	*/
-	function _get_unique_tmp_table_name () {
-		return $this->DB_PREFIX.'tmp__'.substr(abs(crc32(rand().microtime(true))), 0, 8);
-	}
-
-	/**
-	* Do Log
-	*/
-	function _log_queries () {
-		// Restore startup working directory
-		@chdir(main()->_CWD);
-
-		if (!isset($this->_queries_logged)) {
-			$this->_queries_logged = true;
-		} else {
-			return false;
-		}
-		_class_safe('logs')->store_db_queries_log();
-	}
-
-	/**
-	* Get reconnect lock file name
-	*/
-	function _get_reconnect_lock_path() {
-		$pairs = array(
-			'[DB_HOST]'	=> $this->DB_HOST,
-			'[DB_NAME]'	=> $this->DB_NAME,
-			'[DB_USER]'	=> $this->DB_USER,
-			'[DB_PORT]'	=> $this->DB_PORT,
-		);
-		return STORAGE_PATH. str_replace(array_keys($pairs), array_values($pairs), $this->RECONNECT_LOCK_FILE_NAME);
-	}
-
-	/**
-	* Get real table name from its short variant
-	*/
-	function _real_name ($name) {
-		$name = trim($name);
-		if (!strlen($name)) {
-			return false;
-		}
-		$db = '';
-		$table = '';
-		if (strpos($name, '.') !== false) {
-			list($db, $table) = explode('.', $name);
-			$db = trim($db);
-			$table = trim($table);
-		} else {
-			$table = $name;
-		}
-		if (isset($this->_found_tables[$name])) {
-			return $this->_found_tables[$name];
-		}
-		$name = (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
-		$plen = strlen($this->DB_PREFIX);
-		if ($plen && substr($name, 0, $plen) !== $this->DB_PREFIX) {
-			return ($db ? $db.'.' : ''). $this->DB_PREFIX. $name;
-		} else {
-			return ($db ? $db.'.' : ''). $name;
-		}
-	}
-
-	/**
-	* Try to fix table name
-	*/
-	function _fix_table_name($name = '') {
-		$name = trim($name);
-		if (!strlen($name)) {
-			return false;
-		}
-		$db = '';
-		$table = '';
-		if (strpos($name, '.') !== false) {
-			list($db, $name) = explode('.', $name);
-			$db = trim($db);
-			$name = trim($name);
-		}
-		if (!strlen($name)) {
-			return '';
-		}
-		if (substr($name, 0, strlen('dbt_')) == 'dbt_') {
-			$name = substr($name, strlen('dbt_'));
-		}
-		$name_wo_db_prefix = $name;
-		$plen = strlen($this->DB_PREFIX);
-		if ($plen && substr($name, 0, $plen) === $this->DB_PREFIX) {
-			$name_wo_db_prefix = substr($name, $plen);
-		}
-		return ($db ? $db.'.' : ''). $this->DB_PREFIX. (in_array($name_wo_db_prefix, $this->_need_sys_prefix) ? 'sys_' : ''). $name_wo_db_prefix;
-	}
-
-	/**
-	* Trying to repair given table structure (and possibly data)
-	*/
-	function _repair_table($sql, $db_error) {
-		if (empty($db_error) || !$this->ERROR_AUTO_REPAIR) {
-			return false;
-		}
-		$driver_family = $this->get_driver_family();
-		$code = $db_error['code'];
-		if ($driver_family === 'mysql' && !in_array($code, array(
-			1191, // Can't find FULLTEXT index matching the column list
-			2013, // Lost connection to MySQL server during query
-			1205, // Lock wait timeout expired. Transaction was rolled back (InnoDB)
-			1213, // Transaction deadlock. You should rerun the transaction. (InnoDB)
-			1146, // Table %s doesn't exist
-			1054, // Unknown column %s
-		))) {
-			return false;
-		}
-		return _class('db_installer_'.$driver_family, 'classes/db/')->repair($sql, $db_error, $this);
-	}
-
-	/**
-	* Simple trace without dumping whole objects
-	*/
-	function _trace() {
-		$trace = array();
-		foreach (debug_backtrace() as $k => $v) {
-			if (!$k) {
-				continue;
-			}
-			$v['object'] = isset($v['object']) && is_object($v['object']) ? get_class($v['object']) : null;
-			$trace[$k - 1] = $v;
-		}
-		return $trace;
-	}
-
-	/**
-	* Print nice
-	*/
-	function _trace_string() {
-		$e = new Exception();
-		return implode(PHP_EOL, array_slice(explode(PHP_EOL, $e->getTraceAsString()), 1, -1));
-	}
-
-	/**
-	* Special init for the debug info items
-	*/
-	function _set_debug_items() {
-		if (!$this->INSTRUMENT_QUERIES) {
-			return false;
-		}
-		$cpu_usage = function_exists('getrusage') ? getrusage() : array();
-
-		$this->_instrument_items = array(
-			'memory_usage'		=> function_exists('memory_get_usage') ? memory_get_usage() : '',
-			'cpu_user'			=> $cpu_usage['ru_utime.tv_sec'] * 1e6 + $cpu_usage['ru_utime.tv_usec'],
-			'cpu_system'		=> $cpu_usage['ru_stime.tv_sec'] * 1e6 + $cpu_usage['ru_stime.tv_usec'],
-			'GET_object'		=> $_GET['object'],
-			'GET_action'		=> $_GET['action'],
-			'GET_id'			=> $_GET['id'],
-			'GET_page'			=> $_GET['page'],
-			'user_id'			=> $_SESSION['user_id'],
-			'user_group'		=> $_SESSION['user_group'],
-			'session_id'		=> session_id(),
-			'request_id'		=> md5($_SERVER['REMOTE_PORT']. $_SERVER['REMOTE_ADDR']. $_SERVER['REQUEST_URI']. microtime(true)),
-			'request_method'	=> $_SERVER['REQUEST_METHOD'],
-			'request_uri'		=> $_SERVER['REQUEST_URI'],
-			'http_host'			=> $_SERVER['HTTP_HOST'],
-			'remote_addr'		=> $_SERVER['REMOTE_ADDR'],
-		);
-		return true;
-	}
-
-	/**
-	* Get debug item value
-	*/
-	function _get_debug_item($name = '') {
-		if (!$this->INSTRUMENT_QUERIES) {
-			return '';
-		}
-		return $this->_instrument_items[$name];
-	}
-
-	/**
-	* Add instrumentation info to the query for highload SQL debug and profile
-	*/
-	function _instrument_query($query_sql = '', $keys = array('request_id', 'session_id', 'SESSION_user_id', 'GET_object', 'GET_action')) {
-		$query_header = '';
-		if (!$query_sql) {
-			return '';
-		}
-		// the first frame is the original caller
-		$frame = array_pop(debug_backtrace());
-		// Add the PHP source location
-		$query_header = '-- File: '.$frame['file']."\t".'Line: '.$frame['line']."\t".'Function: '.$frame['function']."\t";
-		foreach ((array)$keys as $x => $key) {
-			$val = $this->_get_debug_item($key);
-			if (!$val) {
-				continue;
-			}
-			$val = str_replace(array("\t","\n","\0"), '', $val);
-			// all other chars are safe in comments
-			$key = strtolower(str_replace(array(': ',"\t","\n","\0"), '', $key));
-			// Add the requested instrumentation keys
-			$query_header .= "\t".$key.': '.$val;
-		}
-		return $query_header. PHP_EOL. $query_sql;
-	}
-
-	/**
 	* Helper
 	*/
 	function delete($table, $where, $as_sql = false) {
-		// Do not allow wide deletes, to prevent awful mistakes, use plain db()->query('DELETE ...') instead
-		if (!$where) {
-			return false;
-		}
-		$where_func = 'where';
-		if (is_numeric($where)) {
-			$where_func = 'whereid';
-		} elseif (is_array($where)) {
-			$is_all_numeric = true;
-			foreach ($where as $k => $v) {
-				if (!is_numeric($k) || !is_numeric($v)) {
-					$is_all_numeric = false;
-					break;
-				}
-			}
-			if ($is_all_numeric) {
-				$where_func = 'whereid';
-			}
-		}
-		$sql = $this->from($table)->$where_func($where)->delete($_as_sql = true);
-		if (false === strpos(strtoupper($sql), 'WHERE')) {
-			return false;
-		}
+		$sql = $this->from($table)->where($where)->delete($_as_sql = true);
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS && !$as_sql) {
 			$this->_save_query_revision(__FUNCTION__, $table, array('where' => $where, 'cond' => $cond));
 		}
@@ -1651,6 +1303,230 @@ class yf_db {
 	}
 
 	/**
+	* Add query to shutdown array
+	*/
+	function _add_shutdown_query($sql = '') {
+		if (empty($sql) || strlen($sql) < 5) {
+			return false;
+		}
+		// If shutdown execution is disabled - then execute this query immediatelly
+		if (!$this->USE_SHUTDOWN_QUERIES) {
+			return $this->query($sql);
+		} else {
+			// Add query to the array
+			$this->_SHUTDOWN_QUERIES[] = $sql;
+		}
+		return true;
+	}
+
+	/**
+	* Execute shutdown queries
+	*/
+	function _execute_shutdown_queries() {
+		if (!$this->USE_SHUTDOWN_QUERIES || $this->_shutdown_executed) {
+			return false;
+		}
+		foreach ((array)$this->_SHUTDOWN_QUERIES as $sql) {
+			if (is_string($sql) && strlen($sql) > 5) {
+				$this->query($sql);
+			}
+		}
+		// Prevent executing this method more than once
+		$this->_shutdown_executed = true;
+	}
+
+	/**
+	* Create unique temporary table name
+	*/
+	function _get_unique_tmp_table_name () {
+		return $this->DB_PREFIX.'tmp__'.substr(abs(crc32(rand().microtime(true))), 0, 8);
+	}
+
+	/**
+	* Do Log
+	*/
+	function _log_queries () {
+		// Restore startup working directory
+		@chdir(main()->_CWD);
+
+		if (!isset($this->_queries_logged)) {
+			$this->_queries_logged = true;
+		} else {
+			return false;
+		}
+		_class_safe('logs')->store_db_queries_log();
+	}
+
+	/**
+	* Get reconnect lock file name
+	*/
+	function _get_reconnect_lock_path() {
+		$pairs = array(
+			'[DB_HOST]'	=> $this->DB_HOST,
+			'[DB_NAME]'	=> $this->DB_NAME,
+			'[DB_USER]'	=> $this->DB_USER,
+			'[DB_PORT]'	=> $this->DB_PORT,
+		);
+		return STORAGE_PATH. str_replace(array_keys($pairs), array_values($pairs), $this->RECONNECT_LOCK_FILE_NAME);
+	}
+
+	/**
+	*/
+	function get_table_columns_cached($table, $no_cache = false) {
+		$cache_name = __FUNCTION__.'|'.$table.'|'.$this->DB_HOST.'|'.$this->DB_PORT.'|'.$this->DB_NAME.'|'.$this->DB_PREFIX;
+		if ($this->NO_CACHE) {
+			$no_cache = true;
+		}
+		$data = array();
+		if (!$no_cache) {
+			$data = cache_tmp()->get($cache_name);
+		}
+		if (!$data) {
+			$data = $this->meta_columns($table);
+			if (!$no_cache) {
+				cache_tmp()->set($cache_name, $data);
+			}
+		}
+		return $data;
+	}
+
+	/**
+	*/
+	function _fix_data_safe($table, $data = array(), $extra = array()) {
+		if (!$this->FIX_DATA_SAFE) {
+			return $data;
+		}
+		$cols = $this->get_table_columns_cached($table, $extra['no_cache']);
+		if (!$cols) {
+			$msg = __CLASS__.'->'.__FUNCTION__.': columns for table '.$table.' is empty, truncating data array';
+			if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
+				trigger_error($msg, E_USER_WARNING);
+			}
+			return false;
+		}
+		$is_data_3d = false;
+		// Try to check if array is two-dimensional
+		foreach ((array)$data as $cur_row) {
+			$is_data_3d = is_array($cur_row) ? 1 : 0;
+			break;
+		}
+		$not_existing_cols = array();
+		$fixed_nulls = array();
+		if ($is_data_3d) {
+			foreach ((array)$data as $k => $_data) {
+				foreach ((array)$_data as $name => $v) {
+					if (!isset($cols[$name])) {
+						$not_existing_cols[$name] = $name;
+						unset($data[$k][$name]);
+					} elseif ((is_null($v) || $v === 'NULL') && !$cols[$name]['nullable']) {
+						$fixed_nulls[$name] = $name;
+						unset($data[$k][$name]);
+					}
+				}
+			}
+		} else {
+			foreach ((array)$data as $name => $v) {
+				if (!isset($cols[$name])) {
+					$not_existing_cols[$name] = $name;
+					unset($data[$name]);
+				} elseif ((is_null($v) || $v === 'NULL') && !$cols[$name]['nullable']) {
+					$fixed_nulls[$name] = $name;
+					unset($data[$name]);
+				}
+			}
+		}
+		if (!$extra['silent'] && !$this->FIX_DATA_SAFE_SILENT) {
+			if ($not_existing_cols) {
+				trigger_error(__CLASS__.'->'.__FUNCTION__.': not existing columns for table "'.$table.'", columns: '.implode(', ', $not_existing_cols), E_USER_NOTICE);
+			}
+			if ($fixed_nulls) {
+				trigger_error(__CLASS__.'->'.__FUNCTION__.': fixed nulls for table "'.$table.'", columns: '.implode(', ', $fixed_nulls), E_USER_NOTICE);
+			}
+		}
+		return $data;
+	}
+
+	/**
+	* Get real table name from its short variant
+	*/
+	function _real_name ($name) {
+		$name = trim($name);
+		if (!strlen($name)) {
+			return false;
+		}
+		$db = '';
+		$table = '';
+		if (strpos($name, '.') !== false) {
+			list($db, $table) = explode('.', $name);
+			$db = trim($db);
+			$table = trim($table);
+		} else {
+			$table = $name;
+		}
+		if (isset($this->_found_tables[$name])) {
+			return $this->_found_tables[$name];
+		}
+		$name = (in_array($name, $this->_need_sys_prefix) ? 'sys_' : ''). $name;
+		$plen = strlen($this->DB_PREFIX);
+		if ($plen && substr($name, 0, $plen) !== $this->DB_PREFIX) {
+			return ($db ? $db.'.' : ''). $this->DB_PREFIX. $name;
+		} else {
+			return ($db ? $db.'.' : ''). $name;
+		}
+	}
+
+	/**
+	* Try to fix table name
+	*/
+	function _fix_table_name($name = '') {
+		$name = trim($name);
+		if (!strlen($name)) {
+			return false;
+		}
+		$db = '';
+		$table = '';
+		if (strpos($name, '.') !== false) {
+			list($db, $name) = explode('.', $name);
+			$db = trim($db);
+			$name = trim($name);
+		}
+		if (!strlen($name)) {
+			return '';
+		}
+		if (substr($name, 0, strlen('dbt_')) == 'dbt_') {
+			$name = substr($name, strlen('dbt_'));
+		}
+		$name_wo_db_prefix = $name;
+		$plen = strlen($this->DB_PREFIX);
+		if ($plen && substr($name, 0, $plen) === $this->DB_PREFIX) {
+			$name_wo_db_prefix = substr($name, $plen);
+		}
+		return ($db ? $db.'.' : ''). $this->DB_PREFIX. (in_array($name_wo_db_prefix, $this->_need_sys_prefix) ? 'sys_' : ''). $name_wo_db_prefix;
+	}
+
+	/**
+	* Trying to repair given table structure (and possibly data)
+	*/
+	function _repair_table($sql, $db_error) {
+		if (empty($db_error) || !$this->ERROR_AUTO_REPAIR) {
+			return false;
+		}
+		$driver_family = $this->get_driver_family();
+		$code = $db_error['code'];
+		if ($driver_family === 'mysql' && !in_array($code, array(
+			1191, // Can't find FULLTEXT index matching the column list
+			2013, // Lost connection to MySQL server during query
+			1205, // Lock wait timeout expired. Transaction was rolled back (InnoDB)
+			1213, // Transaction deadlock. You should rerun the transaction. (InnoDB)
+			1146, // Table %s doesn't exist
+			1054, // Unknown column %s
+		))) {
+			return false;
+		}
+		return _class('db_installer_'.$driver_family, 'classes/db/')->repair($sql, $db_error, $this);
+	}
+
+	/**
 	*/
 	function _save_query_revision($method, $table, $params = array()) {
 		$trace = main()->trace_string();
@@ -1678,6 +1554,108 @@ class yf_db {
 		);
 		$sql = $this->insert_safe('sys_db_revisions', $to_insert, $only_sql = true);
 		$this->_add_shutdown_query($sql);
+	}
+
+	/**
+	* Simple trace without dumping whole objects
+	*/
+	function _trace() {
+		$trace = array();
+		foreach (debug_backtrace() as $k => $v) {
+			if (!$k) {
+				continue;
+			}
+			$v['object'] = isset($v['object']) && is_object($v['object']) ? get_class($v['object']) : null;
+			$trace[$k - 1] = $v;
+		}
+		return $trace;
+	}
+
+	/**
+	* Print nice
+	*/
+	function _trace_string() {
+		$e = new Exception();
+		return implode(PHP_EOL, array_slice(explode(PHP_EOL, $e->getTraceAsString()), 1, -1));
+	}
+
+	/**
+	* Special init for the debug info items
+	*/
+	function _set_debug_items() {
+		if (!$this->INSTRUMENT_QUERIES) {
+			return false;
+		}
+		$cpu_usage = function_exists('getrusage') ? getrusage() : array();
+
+		$this->_instrument_items = array(
+			'memory_usage'		=> function_exists('memory_get_usage') ? memory_get_usage() : '',
+			'cpu_user'			=> $cpu_usage['ru_utime.tv_sec'] * 1e6 + $cpu_usage['ru_utime.tv_usec'],
+			'cpu_system'		=> $cpu_usage['ru_stime.tv_sec'] * 1e6 + $cpu_usage['ru_stime.tv_usec'],
+			'GET_object'		=> $_GET['object'],
+			'GET_action'		=> $_GET['action'],
+			'GET_id'			=> $_GET['id'],
+			'GET_page'			=> $_GET['page'],
+			'user_id'			=> $_SESSION['user_id'],
+			'user_group'		=> $_SESSION['user_group'],
+			'session_id'		=> session_id(),
+			'request_id'		=> md5($_SERVER['REMOTE_PORT']. $_SERVER['REMOTE_ADDR']. $_SERVER['REQUEST_URI']. microtime(true)),
+			'request_method'	=> $_SERVER['REQUEST_METHOD'],
+			'request_uri'		=> $_SERVER['REQUEST_URI'],
+			'http_host'			=> $_SERVER['HTTP_HOST'],
+			'remote_addr'		=> $_SERVER['REMOTE_ADDR'],
+		);
+		return true;
+	}
+
+	/**
+	* Get debug item value
+	*/
+	function _get_debug_item($name = '') {
+		if (!$this->INSTRUMENT_QUERIES) {
+			return '';
+		}
+		return $this->_instrument_items[$name];
+	}
+
+	/**
+	* Add instrumentation info to the query for highload SQL debug and profile
+	*/
+	function _instrument_query($query_sql = '', $keys = array('request_id', 'session_id', 'SESSION_user_id', 'GET_object', 'GET_action')) {
+		$query_header = '';
+		if (!$query_sql) {
+			return '';
+		}
+		// the first frame is the original caller
+		$frame = array_pop(debug_backtrace());
+		// Add the PHP source location
+		$query_header = '-- File: '.$frame['file']."\t".'Line: '.$frame['line']."\t".'Function: '.$frame['function']."\t";
+		foreach ((array)$keys as $x => $key) {
+			$val = $this->_get_debug_item($key);
+			if (!$val) {
+				continue;
+			}
+			$val = str_replace(array("\t","\n","\0"), '', $val);
+			// all other chars are safe in comments
+			$key = strtolower(str_replace(array(': ',"\t","\n","\0"), '', $key));
+			// Add the requested instrumentation keys
+			$query_header .= "\t".$key.': '.$val;
+		}
+		return $query_header. PHP_EOL. $query_sql;
+	}
+
+	/**
+	* 'Silent' mode (logging off, tracing off, debugging off)
+	*/
+	function enable_silent_mode() {
+		$this->ALLOW_CACHE_QUERIES	= false;
+		$this->GATHER_AFFECTED_ROWS	= false;
+		$this->USE_SHUTDOWN_QUERIES = false;
+		$this->LOG_ALL_QUERIES		= false;
+		$this->LOG_SLOW_QUERIES		= false;
+		$this->USE_QUERY_BACKTRACE	= false;
+		$this->ERROR_BACKTRACE		= false;
+		$this->LOGGED_QUERIES_LIMIT = 1;
 	}
 
 	/**
