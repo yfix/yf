@@ -56,6 +56,9 @@ class yf_common {
 	*/
 	function bs_get_avail_themes() {
 		$css_fw = conf('css_framework');
+		if (!$css_fw) {
+			$css_fw = 'bs2';
+		}
 		$cache_dir = YF_PATH.'.dev/assets_cache/bootswatch/';
 		if ($css_fw === 'bs2' || $css_fw === 'bs3') {
 			$themes = explode(PHP_EOL, trim(file_get_contents($cache_dir. '/themes_'.$css_fw.'.txt')));
