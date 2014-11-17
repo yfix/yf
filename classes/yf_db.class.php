@@ -999,6 +999,38 @@ class yf_db {
 	}
 
 	/**
+	* Transaction wrapper. Examples:
+	* db()->transaction(function($db) {
+	*	$user = $db->from('user')->first();
+	*	$user['verified'] = true;
+	*	return $db->update('user', $user);
+	* })
+	*/
+	function transaction($callback) {
+		if (!is_callable($callback)) {
+			return false;
+		}
+		if (!$this->_connected && !$this->connect()) {
+			return false;
+		}
+		$this->begin();
+		$rolled_back = false;
+		try {
+			$result = $callback($this);
+		} catch (Exception $e) {
+			$result = false;
+			$this->rollback();
+			$rolled_back = true;
+			throw $e;
+		}
+		if ($result === false || $rolled_back) {
+			!$rolled_back && $this->rollback();
+			return false;
+		}
+		return $this->commit();
+	}
+
+	/**
 	* Begin a transaction, or if a transaction has already started, continue it
 	*/
 	function begin() {
