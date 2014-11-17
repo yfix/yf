@@ -109,14 +109,15 @@ class yf_common {
 		if (!defined('DB_HOST2')) {
 			return false;
 		}
-		if (!is_object($GLOBALS['db2'])) {
+		global $db2;
+		if (!is_object($db2)) {
 			$db_class_name = main()->load_class_file('db', 'classes/');
 			if ($db_class_name && class_exists($db_class_name)) {
-				$GLOBALS['db2'] = new $db_class_name('mysql5', 1, DB_PREFIX2);
-				$GLOBALS['db2']->connect(DB_HOST2, DB_USER2, DB_PSWD2, DB_NAME2, true, defined('DB_SSL2') ? DB_SSL2 : false, defined('DB_PORT2') ? DB_PORT2 : '', defined('DB_SOCKET2') ? DB_SOCKET2 : '', defined('DB_CHARSET2') ? DB_CHARSET2 : '');
+				$db2 = new $db_class_name('mysql5', 1, DB_PREFIX2);
+				$db2->connect(DB_HOST2, DB_USER2, DB_PSWD2, DB_NAME2, true, defined('DB_SSL2') ? DB_SSL2 : false, defined('DB_PORT2') ? DB_PORT2 : '', defined('DB_SOCKET2') ? DB_SOCKET2 : '', defined('DB_CHARSET2') ? DB_CHARSET2 : '');
 			}
 		}
-		return $GLOBALS['db2'];
+		return $db2;
 	}
 
 	/**
