@@ -63,6 +63,7 @@ class yf_common {
 		if ($css_fw === 'bs2' || $css_fw === 'bs3') {
 			$themes = explode(PHP_EOL, trim(file_get_contents($cache_dir. '/themes_'.$css_fw.'.txt')));
 		}
+		$themes[] = 'flatui';
 		$themes[] = 'bootstrap';
 		return $themes;
 	}
