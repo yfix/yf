@@ -39,7 +39,12 @@ function get_themes_bs3() {
 		if (!file_exists($dir)) {
 			mkdir($dir, 0755, true);
 		}
-		file_put_contents($themes_bs3_file, implode("\n", $m['theme']));
+		foreach ($m['theme'] as $k => $v) {
+			if (!$v || $v === 'default') {
+				unset($m['theme'][$k]);
+			}
+		}
+		file_put_contents($themes_bs3_file, trim(implode(PHP_EOL, $m['theme'])));
 	}
 	if (!file_exists($themes_bs3_file) || !filesize($themes_bs3_file)) {
 		exit('ERROR: Themes not found');
@@ -54,20 +59,16 @@ function get_themes_bs2() {
 
 // Bootstrap 3
 foreach (get_themes_bs3() as $theme) {
-	if ($theme !== 'default') {
-		$file = $dir_bs3. $theme.'-bootstrap.min.css';
-		save_url_to_file('http://netdna.bootstrapcdn.com/bootswatch/'.$bs_v3.'/'.$theme.'/bootstrap.min.css', $file);
-	}
+	$file = $dir_bs3. $theme.'-bootstrap.min.css';
+	save_url_to_file('http://netdna.bootstrapcdn.com/bootswatch/'.$bs_v3.'/'.$theme.'/bootstrap.min.css', $file);
 }
 save_url_to_file($jquery_url, $dir_bs3.'jquery.min.js');
 save_url_to_file('http://netdna.bootstrapcdn.com/bootstrap/'.$bs_v3.'/js/bootstrap.min.js', $dir_bs3.'bootstrap.min.js');
 
 // Bootstrap 2
 foreach (get_themes_bs2() as $theme) {
-	if ($theme !== 'default') {
-		$file = $dir_bs2. $theme.'-bootstrap.min.css';
-		save_url_to_file('http://netdna.bootstrapcdn.com/bootswatch/'.$bs_v2.'/'.$theme.'/bootstrap.min.css', $file);
-	}
+	$file = $dir_bs2. $theme.'-bootstrap.min.css';
+	save_url_to_file('http://netdna.bootstrapcdn.com/bootswatch/'.$bs_v2.'/'.$theme.'/bootstrap.min.css', $file);
 }
 save_url_to_file($jquery_url, $dir_bs2.'jquery.min.js');
 save_url_to_file('http://netdna.bootstrapcdn.com/twitter-bootstrap/'.$bs_v2.'/js/bootstrap.min.js', $dir_bs2.'bootstrap.min.js');
