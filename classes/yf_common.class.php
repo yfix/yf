@@ -55,10 +55,10 @@ class yf_common {
 	/**
 	*/
 	function bs_get_avail_themes() {
-		$themes = array('amelia','cerulean','cosmo','cyborg','flatly','journal','readable','simplex','slate','spacelab','spruce','superhero','united');
-		if (conf('css_framework') == 'bs3') {
-			$themes[] = 'yeti';
-			$themes[] = 'darkly';
+		$css_fw = conf('css_framework');
+		$cache_dir = YF_PATH.'.dev/assets_cache/bootswatch/';
+		if ($css_fw === 'bs2' || $css_fw === 'bs3') {
+			$themes = explode(PHP_EOL, trim(file_get_contents($cache_dir. '/themes_'.$css_fw.'.txt')));
 		}
 		$themes[] = 'bootstrap';
 		return $themes;
