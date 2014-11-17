@@ -84,8 +84,8 @@ foreach (get_themes_bs3() as $theme) {
 }
 save_url_to_file('http://netdna.bootstrapcdn.com/bootstrap/'.$bs_v3.'/css/bootstrap.min.css', $dir_bs3.'bootstrap.min.css');
 save_url_to_file('http://netdna.bootstrapcdn.com/bootstrap/'.$bs_v3.'/css/bootstrap-theme.min.css', $dir_bs3.'bootstrap-theme.min.css');
-save_url_to_file($jquery_url, $dir_bs3.'jquery.min.js');
 save_url_to_file('http://netdna.bootstrapcdn.com/bootstrap/'.$bs_v3.'/js/bootstrap.min.js', $dir_bs3.'bootstrap.min.js');
+save_url_to_file($jquery_url, $dir_bs3.'jquery.min.js');
 
 // Bootstrap 2
 foreach (get_themes_bs2() as $theme) {
@@ -93,8 +93,8 @@ foreach (get_themes_bs2() as $theme) {
 	save_url_to_file('http://netdna.bootstrapcdn.com/bootswatch/'.$bs_v2.'/'.$theme.'/bootstrap.min.css', $file);
 }
 save_url_to_file('http://netdna.bootstrapcdn.com/twitter-bootstrap/'.$bs_v2.'/css/bootstrap-combined.min.css', $dir_bs2.'bootstrap-combined.min.css');
-save_url_to_file($jquery_url, $dir_bs2.'jquery.min.js');
 save_url_to_file('http://netdna.bootstrapcdn.com/twitter-bootstrap/'.$bs_v2.'/js/bootstrap.min.js', $dir_bs2.'bootstrap.min.js');
+save_url_to_file($jquery_url, $dir_bs2.'jquery.min.js');
 
 // Jquery
 save_url_to_file($jquery_url, $cache_dir.'jquery/'.$jquery_v.'/jquery.min.js');
