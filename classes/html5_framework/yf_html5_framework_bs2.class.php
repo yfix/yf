@@ -7,9 +7,10 @@ class yf_html5_framework_bs2 {
 
 	public $def_class = array(
 		'form_group'	=> 'control-group form-group',
-		'label'			=> 'control-label col-md-4',
+		'label'			=> 'control-label col-md-3',
 		'controls'		=> 'controls',
-		'desc'			=> 'col-md-8',
+		'no_label'		=> ' col-md-offset-3',
+		'desc'			=> 'col-md-9',
 	);
 
 	/**
@@ -50,7 +51,7 @@ class yf_html5_framework_bs2 {
 			$class_form_group .= ' '.$extra['class_add_wrapper'];
 		}
 		$class_label = $extra['class_label'] ?: $this->def_class['label']. ($extra['class_add_label'] ? ' '.$extra['class_add_label'] : '');
-		$class_controls = $extra['class_controls'] ?: $this->def_class['controls']. ($extra['desc'] && !$no_label ? ' '.$this->def_class['desc'] : ''). ($extra['class_add_controls'] ? ' '.$extra['class_add_controls'] : '');
+		$class_controls = $extra['class_controls'] ?: $this->def_class['controls']. ($extra['desc'] && !$no_label ? ' '.$this->def_class['desc'] : $this->def_class['no_label']). ($extra['class_add_controls'] ? ' '.$extra['class_add_controls'] : '');
 
 		$row_start =
 			'<div class="'.$class_form_group.'">'.PHP_EOL
