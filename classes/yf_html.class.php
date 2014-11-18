@@ -102,7 +102,7 @@ class yf_html {
 			'legend' => $replace['title'],
 			'no_form' => 1,
 			'dd_mode' => 1,
-			'dd_class' => 'span6 col-lg-6',
+			'dd_class' => 'span6 col-md-6',
 		));
 		foreach ((array)$replace as $name => $val) {
 			$func = 'container';
@@ -134,7 +134,7 @@ class yf_html {
 			}
 		}
 		$legend = $extra['legend'] ? '<legend>'._prepare_html(t($extra['legend'])).'</legend>' : '';
-		$div_class = $extra['div_class'] ? $extra['div_class'] : 'span6 col-lg-6';
+		$div_class = $extra['div_class'] ? $extra['div_class'] : 'span6 col-md-6';
 		if (DEBUG_MODE) {
 			debug('dd_table[]', array(
 				'fields'		=> $replace,
@@ -380,7 +380,7 @@ class yf_html {
 	function thumbnails ($data = array(), $extra = array()) {
 		$items = array();
 		$columns = (int)$extra['columns'] ?: 3;
-		$row_class = 'span'.round(12 / $columns).' col-lg-'.round(12 / $columns);
+		$row_class = 'span'.round(12 / $columns).' col-md-'.round(12 / $columns);
 		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$img_src = $v;
@@ -614,7 +614,7 @@ class yf_html {
 				if (!$col) {
 					$col = $row_col;
 				}
-				$items[] = '<div class="span'.$col.' col-lg-'.$col.($class ? ' '.$class : '').'">'.$body.'</div>';
+				$items[] = '<div class="span'.$col.' col-md-'.$col.($class ? ' '.$class : '').'">'.$body.'</div>';
 			}
 			$rows[] = '<div class="row-fluid show-grid">'.implode(PHP_EOL, $items).'</div>';
 		}

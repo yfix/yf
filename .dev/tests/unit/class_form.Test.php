@@ -40,7 +40,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 '<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
 <fieldset>
 <div class="control-group form-group">
-<div class="controls">
+<div class="controls col-md-offset-3">
 <input type="text" class="form-control">
 </div>
 </div>
@@ -50,8 +50,8 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 '<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
 <fieldset>
 <div class="control-group form-group">
-<label class="control-label col-lg-4" for="name">Name</label>
-<div class="controls col-lg-8">
+<label class="control-label col-md-3" for="name">Name</label>
+<div class="controls col-md-9">
 <input name="name" type="text" id="name" class="form-control" placeholder="Name">
 </div>
 </div>
@@ -61,20 +61,20 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	public function test_input_text_no_form() {
 		$this->assertEquals(  
 '<div class="control-group form-group">
-<label class="control-label col-lg-4" for="name">Name</label>
-<div class="controls col-lg-8">
+<label class="control-label col-md-3" for="name">Name</label>
+<div class="controls col-md-9">
 <input name="name" type="text" id="name" class="form-control" placeholder="Name">
 </div>
 </div>', trim(form('', array('no_form' => 1))->text('name')) );
 	}
 	public function test_form_from_array() {
 		$a = array(array('text','name'));
-		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><label class="control-label col-lg-4" for="name">Name</label><div class="controls col-lg-8"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div></fieldset></form>'
+		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><label class="control-label col-md-3" for="name">Name</label><div class="controls col-md-9"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div></fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form()->array_to_form($a))) );
 	}
 	public function test_form_auto() {
 		$data = array('user' => 'name', 'email' => 'some@email.com');
-		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><div class="controls"><button type="submit" name="back_link" id="back_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button></div></div></fieldset></form>'
+		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><div class="controls col-md-offset-3"><button type="submit" name="back_link" id="back_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button></div></div></fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form($data)->auto())) );
 	}
 	public function test_input_text_simple() {
@@ -127,7 +127,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<input type="hidden" id="hdn" name="hdn" value="val1">', trim(self::form_no_chain($r)->hidden('hdn', array('value' => 'val1'))) );
 	}
 	public function test_container() {
-		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><div class="controls"><section id="test"></section></div></div></fieldset></form>'
+		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><div class="controls col-md-offset-3"><section id="test"></section></div></div></fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form()->container('<section id="test"></section>'))) );
 		$this->assertEquals('<section id="test"></section>', trim(self::form_no_chain($r)->container('<section id="test"></section>')) );
 	}
