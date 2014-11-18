@@ -183,7 +183,7 @@ class yf_manage_shop_product_edit {
 				'currency' => module('manage_shop')->CURRENCY,
 				'hide_empty' => 1,
 				'tabs'	=> array(
-					'class' => 'span6 col-lg-6',
+					'class' => 'span6 col-md-6',
 					'show_all' => 1,
 					'no_headers' => 1,
 				),

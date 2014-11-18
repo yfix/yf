@@ -108,7 +108,7 @@ class test_html {
 				Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
 			'fourth'	=> '44444',
 		);
-		return _class('html')->accordion($data, array('selected' => 'third', 'class' => 'span4 col-lg-4'));
+		return _class('html')->accordion($data, array('selected' => 'third', 'class' => 'span4 col-md-4'));
 	}
 
 	/***/

@@ -50,8 +50,8 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 '<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">
 <fieldset>
 <div class="control-group form-group">
-<label class="control-label col-lg-4" for="name">Name</label>
-<div class="controls col-lg-8">
+<label class="control-label col-md-4" for="name">Name</label>
+<div class="controls col-md-8">
 <input name="name" type="text" id="name" class="form-control" placeholder="Name">
 </div>
 </div>
@@ -61,15 +61,15 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	public function test_input_text_no_form() {
 		$this->assertEquals(  
 '<div class="control-group form-group">
-<label class="control-label col-lg-4" for="name">Name</label>
-<div class="controls col-lg-8">
+<label class="control-label col-md-4" for="name">Name</label>
+<div class="controls col-md-8">
 <input name="name" type="text" id="name" class="form-control" placeholder="Name">
 </div>
 </div>', trim(form('', array('no_form' => 1))->text('name')) );
 	}
 	public function test_form_from_array() {
 		$a = array(array('text','name'));
-		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><label class="control-label col-lg-4" for="name">Name</label><div class="controls col-lg-8"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div></fieldset></form>'
+		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><label class="control-label col-md-4" for="name">Name</label><div class="controls col-md-8"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div></fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form()->array_to_form($a))) );
 	}
 	public function test_form_auto() {

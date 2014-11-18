@@ -27,7 +27,7 @@
 			</ul>
 		</div>
 	</div>
-	<div class="container-fluid">
+	<div class="{if(conf.css_framework eq bs3)}container-fixed{else}container-fluid{/if}">
 		<div class="row-fluid">
 			<div class="span2 col-md-2">
 {block(left_area)}

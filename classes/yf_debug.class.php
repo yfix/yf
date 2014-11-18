@@ -106,7 +106,7 @@ class yf_debug {
 		}
 		$debug_time = round(microtime(true) - $ts, 4);
 
-		$debug_timings_html = '<div class="span4 col-lg-4">Debug panel timing: '.$debug_time.'<br />'.$this->_show_key_val_table($debug_timings, array('no_total' => 1, 'no_sort' => 1, 'no_escape' => 1)).'</div>';
+		$debug_timings_html = '<div class="span4 col-md-4">Debug panel timing: '.$debug_time.'<br />'.$this->_show_key_val_table($debug_timings, array('no_total' => 1, 'no_sort' => 1, 'no_escape' => 1)).'</div>';
 		$debug_contents['DEBUG_YF'] .= $debug_timings_html;
 
 		$data['debug_info'] = array(
@@ -401,7 +401,7 @@ class yf_debug {
 				}
 				$_data[$k] = _prepare_html($v);
 			}
-			$body .= '<div class="span6 col-lg-6">'.$this->_show_key_val_table($_data, array('no_total' => 1, 'no_sort' => 1, 'no_escape' => 1)).'</div>';
+			$body .= '<div class="span6 col-md-6">'.$this->_show_key_val_table($_data, array('no_total' => 1, 'no_sort' => 1, 'no_escape' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -558,7 +558,7 @@ class yf_debug {
 		$data['vars'] = $db->get_2d('SHOW VARIABLES');
 #		$data['global_vars'] = $db->get_2d('SHOW GLOBAL VARIABLES');
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span10 col-lg-10">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
+			$body .= '<div class="span10 col-md-10">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -590,7 +590,7 @@ class yf_debug {
 		}
 		$body .= 'PHP Extension used: '.$ext.'<br>'.PHP_EOL;
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span6 col-lg-6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
+			$body .= '<div class="span6 col-md-6">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -1017,7 +1017,7 @@ class yf_debug {
 		$data['globals'] = array_filter(array_keys($GLOBALS), function($v) { return $v[0] != '_';} );
 		sort($data['globals']);
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span4 col-lg-4">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
+			$body .= '<div class="span4 col-md-4">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
 		}
 		return $body;
 	}
@@ -1479,7 +1479,7 @@ class yf_debug {
 		}
 		$_items = $this->_time_count_changes($_items);
 
-		$data  = '<div class="span4 col-lg-4">dashboard name: <b>'.$items['name'].'</b><br /><br />';
+		$data  = '<div class="span4 col-md-4">dashboard name: <b>'.$items['name'].'</b><br /><br />';
 		$data .= 'Total time: <b>'.$items['total_time'].'</b><br /><br />';
 		$data .= $this->_show_auto_table($_items, array('hidden_map' => array()));
 		$data .= '</div>';

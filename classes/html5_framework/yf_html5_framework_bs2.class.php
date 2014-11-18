@@ -7,9 +7,9 @@ class yf_html5_framework_bs2 {
 
 	public $def_class = array(
 		'form_group'	=> 'control-group form-group',
-		'label'			=> 'control-label col-lg-4',
+		'label'			=> 'control-label col-md-4',
 		'controls'		=> 'controls',
-		'desc'			=> 'col-lg-8',
+		'desc'			=> 'col-md-8',
 	);
 
 	/**
@@ -62,7 +62,7 @@ class yf_html5_framework_bs2 {
 			.'</div>';
 
 		$before_content_html =
-			(($extra['prepend'] || $extra['append']) ? '<div class="input-group '.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
+			(($extra['prepend'] || $extra['append']) ? '<div class="input-group col-md-2 '.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
 			.($extra['prepend'] ? '<span class="add-on input-group-addon">'.$extra['prepend'].'</span>'.PHP_EOL : '');
 
 		$after_content_html =

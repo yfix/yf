@@ -5,7 +5,7 @@ class form2_auto_test {
 		return form('', array(
 				'no_form'	=> 1,
 				'tabs'		=> array(
-					'class'		=> 'span6 col-lg-6',
+					'class'		=> 'span6 col-md-6',
 					'show_all'	=> 1,
 					'no_headers'=> 1,
 				),
