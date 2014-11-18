@@ -14,9 +14,16 @@ function notifications_check() {
 	$.getJSON(url_check, function( data ) {
 		$.each(data, function(id, notification) {
 			if (notifications_shown[id] != id) {
+                var content;
+                if (notification.url == '') {
+                    content = "<input type='hidden' value='"+notification.id+"'></div>" + notification.content;
+                } else {
+                    content = "<input type='hidden' value='"+notification.id+"'></div><a href='" + notification.url + "'>" + notification.content + "</a>";
+                }
+
 				new PNotify({
 					title: notification.title,
-					text: "<input type='hidden' value='"+notification.id+"'></div>" + notification.content,
+					text: content,
 					buttons: {
 						   sticker: false
 					},
