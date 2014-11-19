@@ -58,9 +58,6 @@
 [submodule "libs/yf_open_flash_chart"]
 	path = libs/yf_open_flash_chart
 	url = https://github.com/yfix/yf_open_flash_chart.git
-[submodule "libs/yf_pop3"]
-	path = libs/yf_pop3
-	url = https://github.com/yfix/yf_pop3.git
 [submodule "libs/yf_utf8_funcs"]
 	path = libs/yf_utf8_funcs
 	url = https://github.com/yfix/yf_utf8_funcs.git
