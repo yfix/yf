@@ -276,6 +276,7 @@ class yf_main {
 
 		$this->_do_rewrite();
         
+		$this->_init_cur_user_info($this);
         if ($this->TRACK_ONLINE_STATUS) {
 			_class('online_users', 'classes/')->process();
 		}
@@ -284,7 +285,6 @@ class yf_main {
         } elseif ($this->type == 'user' && $this->ENABLE_NOTIFICATIONS_USER) {
 			_class('notifications', 'modules/')->_prepare();
         }
-		$this->_init_cur_user_info($this);
 
 		if ($this->TRACK_USER_PAGE_VIEWS && $this->USER_ID) {
 			$this->_add_shutdown_code(function(){

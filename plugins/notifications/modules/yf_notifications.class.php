@@ -1,6 +1,7 @@
 <?php
 
 class yf_notifications {
+    var $salt = 'spfiprt34593502riweprir';
 //	var $_CACHE_CHECK_TTL = 1;
 // todo: cache
 	function check() {
@@ -25,7 +26,7 @@ class yf_notifications {
                     'content'       => $notifications[$v]['content'],
                     'add_date'      => $notifications[$v]['add_date'],
                     'text'          => $add_info[$k]['text'],
-                    'url'           => $add_info[$k]['url'] != '' ? process_url($add_info[$k]['url']) : '',
+                    'url'           => $add_info[$k]['url'] != '' ? process_url($add_info[$k]['url']."&notification_id=".$k) : '',
                 );
             }
         }
@@ -44,6 +45,9 @@ class yf_notifications {
 	}
     
 	function _prepare () {
+        if (intval($_GET['notification_id']) != 0) {
+            db()->query("UPDATE `".db('notifications_receivers')."` SET `is_read`=1 WHERE `receiver_id`='".intval(main()->USER_ID)."' AND `receiver_type`='user_id' AND `id`=".intval($_GET['notification_id']));
+        }
         if (conf('IS_AJAX')) return false;
 		$tpl = file_get_contents(pathinfo(__FILE__,PATHINFO_DIRNAME)."/../templates/user/notifications/notifications_js.stpl");
 		$func_name = "url_".main()->type;
@@ -61,11 +65,16 @@ class yf_notifications {
         $notification_id = db()->get_one("SELECT `id` FROM `".db('notifications')."` WHERE `id`='"._es($name)."' 
                                         OR (`is_common_template`=1 AND `template_alias` = '"._es($name)."')");
         if (intval($notification_id) == 0) return false;
+        $hash = md5($url.$text.intval($notification_id).intval($user_id).$this->salt);        
+        $cnt = db()->get_one("SELECT COUNT(`id`) FROM `".db('notifications_receivers')."` WHERE `hash`='{$hash}'");
+        if ($cnt != 0) return false;
+        
         db()->insert(db('notifications_receivers'), array(
             'notification_id'   => intval($notification_id),
             'receiver_type'     => 'user_id',
             'receiver_id'       => intval($user_id),
             'is_read'           => 0,
+            'hash'              => $hash,
         ));
         
         if (($text != '') || ($url != '')) {
