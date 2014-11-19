@@ -34,15 +34,9 @@
 [submodule "libs/php_sql_parser"]
 	path = libs/php_sql_parser
 	url = https://github.com/yfix/php-sql-parser.git
-[submodule "libs/symfony_class_loader"]
-	path = libs/symfony_class_loader
-	url = https://github.com/yfix/ClassLoader.git
 [submodule "libs/kcfinder"]
 	path = libs/kcfinder
 	url = https://github.com/yfix/kcfinder.git
-[submodule "libs/yaml"]
-	path = libs/yaml
-	url = https://github.com/yfix/Yaml.git
 [submodule "libs/assetic"]
 	path = libs/assetic
 	url = https://github.com/yfix/assetic.git
