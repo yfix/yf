@@ -13,7 +13,7 @@ class yf_db_ddl_parser_mysql {
 	*/
 	public function _init () {
 		$libs_root = YF_PATH.'libs';
-		require_once $libs_root.'/symfony_class_loader/UniversalClassLoader.php';
+		require_once $libs_root.'/sf_class_loader/UniversalClassLoader.php';
 		$loader = new \Symfony\Component\ClassLoader\UniversalClassLoader();
 		$loader->registerNamespaces(array(
 			'PHPSQLParser' => $libs_root.'/php_sql_parser/src',
