@@ -1,7 +1,6 @@
 {
 	"require": {
 		"ensepar/html2pdf": "dev-master"
-		,"sharom/jevix": "dev-master"
 		,"firephp/firephp-core": "dev-master"
 		,"ezyang/htmlpurifier": "dev-master"
 		,"phpids/phpids": "dev-master"
