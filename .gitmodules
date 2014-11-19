@@ -46,3 +46,9 @@
 [submodule "libs/assetic"]
 	path = libs/assetic
 	url = https://github.com/yfix/assetic.git
+[submodule "libs/sf_class_loader"]
+	path = libs/sf_class_loader
+	url = https://github.com/yfix/ClassLoader.git
+[submodule "libs/sf_yaml"]
+	path = libs/sf_yaml
+	url = https://github.com/yfix/Yaml.git
