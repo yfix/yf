@@ -136,11 +136,9 @@ class yf_html5_framework_bs2 {
 				$extra['edit_link'] = '';
 			}
 		}
-		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-default btn-mini btn-xs"><i class="icon-edit fa fa-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
-		$link_name_html = (($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn btn-default">'.t($extra['link_name']).'</a>'.PHP_EOL : '');
+		$edit_link_html = $extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="'.$this->CLASS_EDIT_LINK.'"><i class="'.$this->CLASS_EDIT_ICON.'"></i> '.t('Edit').'</a>'.PHP_EOL : '';
+		$link_name_html = ($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="'.$this->CLASS_LINK_URL.'">'.t($extra['link_name']).'</a>'.PHP_EOL : '';
 
-#		$inline_help_before = ($extra['help_before'] ? '<span class="help-block">'.nl2br($extra['help_before']).'</span>'.PHP_EOL : '');
-#		$inline_help_after = ($extra['inline_help'] ? '<span class="help-block">'.nl2br($extra['inline_help']).'</span>'.PHP_EOL : '');
 		$inline_tip_html = ($extra['tip'] ? ' '.$obj->_show_tip($extra['tip'], $extra, $replace) : '');
 
 		if ($extra['only_row_start']) {
