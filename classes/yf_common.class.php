@@ -1149,34 +1149,37 @@ class yf_common {
 
 	/**
 	*/
-	function message_success($text = '') {
+	function message_success($text = '', $options = null) {
 		return $this->add_message($text, 'success', $key);
 	}
 
 	/**
 	*/
-	function message_info($text = '') {
-		return $this->add_message($text, 'info', $key);
+	function message_info($text = '', $options = null) {
+		return $this->add_message($text, 'info', $key, $options);
 	}
 
 	/**
 	*/
-	function message_warning($text = '') {
-		return $this->add_message($text, 'warning', $key);
+	function message_warning($text = '', $options = null) {
+		return $this->add_message($text, 'warning', $key, $options);
 	}
 
 	/**
 	*/
-	function message_error($text = '') {
-		return $this->add_message($text, 'error', $key);
+	function message_error($text = '', $options = null) {
+		return $this->add_message($text, 'error', $key, $options);
 	}
 
 	/**
 	*/
-	function add_message($text = '', $level = 'info', $key = '') {
+	function add_message($text = '', $level = 'info', $key = '', $options = null) {
 		if (!strlen($text)) {
 			return false;
 		}
+		$is_translate = true;
+			isset( $options[ 'translate' ] ) && $is_translate = (bool)$options[ 'translate' ];
+		if( $is_translate ) { $text = t( $text ); }
 		if ($key) {
 			$_SESSION['permanent'][$level][$key] = $text;
 		} else {
@@ -1203,7 +1206,7 @@ class yf_common {
 			if (!is_array($messages) || !count($messages)) {
 				continue;
 			}
-			$body[] = '<div class="'.$css_style.'"><button type="button" class="close" data-dismiss="alert">×</button>'.implode('<br />'.PHP_EOL, t($messages)).'</div>';
+			$body[] = '<div class="'.$css_style.'"><button type="button" class="close" data-dismiss="alert">×</button>'.implode('<br />'.PHP_EOL, $messages).'</div>';
 		}
 		unset($_SESSION['permanent']);
 		return implode(PHP_EOL, $body);
