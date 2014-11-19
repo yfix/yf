@@ -46,3 +46,6 @@
 [submodule "libs/sf_yaml"]
 	path = libs/sf_yaml
 	url = https://github.com/yfix/Yaml.git
+[submodule "libs/sf_finder"]
+	path = libs/sf_finder
+	url = https://github.com/yfix/Finder.git
