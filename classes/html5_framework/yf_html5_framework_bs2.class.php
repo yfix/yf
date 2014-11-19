@@ -5,13 +5,23 @@
 */
 class yf_html5_framework_bs2 {
 
-	public $def_class = array(
-		'form_group'	=> 'control-group form-group',
-		'label'			=> 'control-label col-md-3',
-		'controls'		=> 'controls',
-		'no_label'		=> ' col-md-offset-3',
-		'desc'			=> 'col-md-9',
-	);
+	public $CLASS_FORM_GROUP	= 'control-group form-group';
+	public $CLASS_INPUT_GROUP	= 'input-group col-md-2';
+	public $CLASS_ADDON			= 'add-on input-group-addon';
+	public $CLASS_INPUT_PREPEND	= 'input-prepend';
+	public $CLASS_INPUT_APPEND	= 'input-append';
+	public $CLASS_LABEL			= 'control-label col-md-3';
+	public $CLASS_NO_LABEL		= ' col-md-offset-3';
+	public $CLASS_CONTROLS		= 'controls';
+	public $CLASS_DESC			= 'col-md-9';
+	public $CLASS_EDIT_LINK		= 'btn btn-default btn-mini btn-xs';
+	public $CLASS_EDIT_ICON		= 'icon-edit fa fa-edit';
+	public $CLASS_LINK_URL		= 'btn btn-default';
+	public $CLASS_HELP			= 'help-block';
+	public $CLASS_ERROR			= 'error';
+	public $CLASS_SUCCESS		= 'success';
+	public $CLASS_WARNING		= 'warning';
+	public $CLASS_INFO			= 'info';
 
 	/**
 	*/
@@ -35,10 +45,10 @@ class yf_html5_framework_bs2 {
 			$no_label = $extra['no_label'];
 		}
 		$_css_group_map = array(
-			'errors'	=> 'error',
-			'success'	=> 'success',
-			'warnings'	=> 'warning',
-			'infos'		=> 'info',
+			'errors'	=> $this->CLASS_ERROR,
+			'success'	=> $this->CLASS_SUCCESS,
+			'warnings'	=> $this->CLASS_WARNING,
+			'infos'		=> $this->CLASS_INFO,
 		);
 		foreach ($_css_group_map as $_a => $_css_class) {
 			if (isset($extra[$_a][$name]) || ($is_html_array && isset($extra[$_a][$name_dotted]))) {
@@ -46,41 +56,42 @@ class yf_html5_framework_bs2 {
 				break;
 			}
 		}
-		$class_form_group = $extra['class_form_group'] ?: $this->def_class['form_group']. ($extra['class_add_form_group'] ? ' '.$extra['class_add_form_group'] : '');
+		$class_form_group = $extra['class_form_group'] ?: $this->CLASS_FORM_GROUP. ($extra['class_add_form_group'] ? ' '.$extra['class_add_form_group'] : '');
 		if ($extra['class_add_wrapper']) {
 			$class_form_group .= ' '.$extra['class_add_wrapper'];
 		}
-		$class_label = $extra['class_label'] ?: $this->def_class['label']. ($extra['class_add_label'] ? ' '.$extra['class_add_label'] : '');
-		$class_controls = $extra['class_controls'] ?: $this->def_class['controls']. ($extra['desc'] && !$no_label ? ' '.$this->def_class['desc'] : $this->def_class['no_label']). ($extra['class_add_controls'] ? ' '.$extra['class_add_controls'] : '');
+		$class_label = $extra['class_label'] ?: $this->CLASS_LABEL
+			. ($extra['class_add_label'] ? ' '.$extra['class_add_label'] : '');
 
-		$row_start =
-			'<div class="'.$class_form_group.'">'.PHP_EOL
-				.($extra['desc'] && !$no_label ? '<label class="'.$class_label.'" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
-				.(!$extra['wide'] ? '<div class="'.$class_controls.'">'.PHP_EOL : '');
+		$class_controls = $extra['class_controls'] ?: $this->CLASS_CONTROLS
+			. ($extra['desc'] && !$no_label ? ' '.$this->CLASS_DESC : $this->CLASS_NO_LABEL)
+			. ($extra['class_add_controls'] ? ' '.$extra['class_add_controls'] : '');
+
+		$row_start = '<div class="'.$class_form_group.'">'.PHP_EOL
+			.($extra['desc'] && !$no_label ? '<label class="'.$class_label.'" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
+			.(!$extra['wide'] ? '<div class="'.$class_controls.'">'.PHP_EOL : '');
 
 		$row_end =
 				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
 			.'</div>';
 
-		$before_content_html =
-			(($extra['prepend'] || $extra['append']) ? '<div class="input-group col-md-2 '.($extra['prepend'] ? 'input-prepend' : '').($extra['append'] ? ' input-append' : '').'">'.PHP_EOL : '')
-			.($extra['prepend'] ? '<span class="add-on input-group-addon">'.$extra['prepend'].'</span>'.PHP_EOL : '');
+		$before_content_html = ($extra['prepend'] || $extra['append']) ? '<div class="'.$this->CLASS_INPUT_GROUP.' '.($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : ''). ($extra['append'] ? ' '.$this->CLASS_INPUT_APPEND : '').'">'.PHP_EOL : '';
+		$before_content_html .= $extra['prepend'] ? '<span class="'.$this->CLASS_ADDON.'">'.$extra['prepend'].'</span>'.PHP_EOL : '';
 
-		$after_content_html =
-			($extra['append'] ? '<span class="add-on input-group-addon">'.$extra['append'].'</span>'.PHP_EOL : '')
-			.(($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '');
+		$after_content_html = $extra['append'] ? '<span class="'.$this->CLASS_ADDON.'">'.$extra['append'].'</span>'.PHP_EOL : '';
+		$after_content_html .= ($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '';
 
 		if ($extra['edit_link']) {
 			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
 				$extra['edit_link'] = '';
 			}
 		}
-		$edit_link_html = ($extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="btn btn-default btn-mini btn-xs"><i class="icon-edit fa fa-edit"></i> '.t('Edit').'</a>'.PHP_EOL : '');
-		$link_name_html = (($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="btn btn-default">'.t($extra['link_name']).'</a>'.PHP_EOL : '');
+		$edit_link_html = $extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="'.$this->CLASS_EDIT_LINK.'"><i class="'.$this->CLASS_EDIT_ICON.'"></i> '.t('Edit').'</a>'.PHP_EOL : '';
+		$link_name_html = ($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="'.$this->CLASS_LINK_URL.'">'.t($extra['link_name']).'</a>'.PHP_EOL : '';
 
-		$inline_help_before = ($extra['help_before'] ? '<span class="help-block">'.nl2br($extra['help_before']).'</span>'.PHP_EOL : '');
-		$inline_help_after = ($extra['inline_help'] ? '<span class="help-block">'.nl2br($extra['inline_help']).'</span>'.PHP_EOL : '');
-		$inline_tip_html = ($extra['tip'] ? ' '.$obj->_show_tip($extra['tip'], $extra, $replace) : '');
+		$inline_help_before = $extra['help_before'] ? '<span class="'.$this->CLASS_HELP.'">'.nl2br($extra['help_before']).'</span>'.PHP_EOL : '';
+		$inline_help_after = $extra['inline_help'] ? '<span class="'.$this->CLASS_HELP.'">'.nl2br($extra['inline_help']).'</span>'.PHP_EOL : '';
+		$inline_tip_html = $extra['tip'] ? ' '.$obj->_show_tip($extra['tip'], $extra, $replace) : '';
 
 		if ($extra['only_row_start']) {
 			return $row_start;
