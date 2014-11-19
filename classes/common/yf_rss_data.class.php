@@ -37,7 +37,7 @@ class yf_rss_data {
 	/** @var string */
 	public $AGGR_CACHE_PATH	= 'uploads/rss_aggregator_cache/';
 	/** @var string */
-	public $DOMIT_RSS_PATH		= 'libs/domit/xml_domit_rss.php';
+	public $DOMIT_RSS_PATH		= 'libs/yf_domit/xml_domit_rss.php';
 	/** @var bool Use serialized cache */
 	var	$USE_ARRAY_CACHE	= true;
 	/** @var @string Leave empty for default */
@@ -60,7 +60,7 @@ class yf_rss_data {
 	* Show given array as RSS page
 	*/
 	function show_rss_page ($data = array(), $params = array()) {
-		require_once (YF_PATH.'libs/feedcreator/feedcreator.class.php');
+		require_once (YF_PATH.'libs/yf_feedcreator/feedcreator.class.php');
 		$rss = new UniversalFeedCreator();
 		if (!isset($params['use_cached']) || !empty($params['use_cached'])) {
 			$rss->useCached();

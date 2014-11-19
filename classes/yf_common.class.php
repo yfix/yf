@@ -879,7 +879,7 @@ class yf_common {
 	*/
 	function is_utf8 ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path());
+			set_include_path (YF_PATH.'libs/yf_utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
 		$this->_set_include_path = true;
 
@@ -892,7 +892,7 @@ class yf_common {
 	*/
 	function utf8_html_entity_decode ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path());
+			set_include_path (YF_PATH.'libs/yf_utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
 		$this->_set_include_path = true;
 
@@ -905,7 +905,7 @@ class yf_common {
 	*/
 	function strip_tags_smart ($content) {
 		if(!$this->_set_include_path){
-			set_include_path (YF_PATH.'libs/utf8_funcs/'. PATH_SEPARATOR. get_include_path());
+			set_include_path (YF_PATH.'libs/yf_utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
 		$this->_set_include_path = true;
 
