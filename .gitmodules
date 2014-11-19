@@ -52,3 +52,6 @@
 [submodule "libs/yf_domit"]
 	path = libs/yf_domit
 	url = https://github.com/yfix/yf_domit.git
+[submodule "libs/yf_feedcreator"]
+	path = libs/yf_feedcreator
+	url = https://github.com/yfix/yf_feedcreator.git
