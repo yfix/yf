@@ -1167,16 +1167,7 @@ class yf_table2 {
 				$link = trim($params['link']. $instance_params['links_add']);
 				// Example: ->btn('custom', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'));
 				if (strlen($link)) {
-					if (isset($extra['link_params'])) {
-						foreach (explode(',', $extra['link_params']) as $lp) {
-							$lp = trim($lp);
-							if (strlen($lp)) {
-								$link = str_replace('%'.$lp, urlencode($row[$lp]), $link);
-							}
-						}
-					} else {
-						$link = str_replace('%d', urlencode($row[$id]), $params['link']);
-					}
+					$link = $_this->_process_link_params($link, $row, $extra + array('id' => $id));
 					if (!$_this->_is_link_allowed($link)) {
 						return '';
 					}
@@ -1196,6 +1187,26 @@ class yf_table2 {
 			},
 		);
 		return $this;
+	}
+
+	/**
+	* Example: ->btn('custom', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'));
+	*/
+	function _process_link_params($link, $row = array(), $extra = array()) {
+		if (!strlen($link) || empty($row)) {
+			return $link;
+		}
+		if (isset($extra['link_params'])) {
+			foreach (explode(',', $extra['link_params']) as $lp) {
+				$lp = trim($lp);
+				if (strlen($lp)) {
+					$link = str_replace('%'.$lp, urlencode($row[$lp]), $link);
+				}
+			}
+		} else {
+			$link = str_replace('%d', urlencode($row[$extra['id']]), $link);
+		}
+		return $link;
 	}
 
 	/**
