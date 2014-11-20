@@ -72,19 +72,45 @@ class class_table_test extends PHPUnit_Framework_TestCase {
 			'<tbody><tr><td>v11</td><td>v21</td></tr><tr><td>v12</td><td>v22</td></tr></tbody>'.
 			'</table>'), str_replace(PHP_EOL, '', trim($table)));
 	}
-	public function test_link() {
+	public function test_btn_link() {
 		$a = array(
 			array('id' => '1', 'user_id' => '122', 'product_id' => '133'),
 			array('id' => '2', 'user_id' => '222', 'product_id' => '233'),
 		);
 		$table = table($a)
 			->text('id')
-			->btn('custom', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'));
-		$this->assertEquals(str_replace(PHP_EOL, '', '
-<table class="table table-bordered table-striped table-hover">
-<thead><th>Id</th><th>Actions</th></thead><tbody>
-<tr><td>1</td><td nowrap><a href="./?object=test&uid=122&pid=133" class="btn btn-default btn-mini btn-xs" title="custom"><i class="icon-tasks fa fa-tasks"></i> custom</a> </td></tr>
-<tr><td>2</td><td nowrap><a href="./?object=test&uid=222&pid=233" class="btn btn-default btn-mini btn-xs" title="custom"><i class="icon-tasks fa fa-tasks"></i> custom</a> </td></tr>
-</tbody></table>'), str_replace(PHP_EOL, '', trim($table)));
+			->btn('custom', './?object=test&uid=%d')
+		;
+		$this->assertEquals(str_replace(PHP_EOL, '', 
+			'<table class="table table-bordered table-striped table-hover">'.
+			'<thead><th>Id</th><th>Actions</th></thead><tbody>'.
+			'<tr><td>1</td><td nowrap><a href="./?object=test&uid=1" class="btn btn-default btn-mini btn-xs" title="custom"><i class="icon-tasks fa fa-tasks"></i> custom</a> </td></tr>'.
+			'<tr><td>2</td><td nowrap><a href="./?object=test&uid=2" class="btn btn-default btn-mini btn-xs" title="custom"><i class="icon-tasks fa fa-tasks"></i> custom</a> </td></tr>'.
+			'</tbody></table>'), str_replace(PHP_EOL, '', trim($table)));
+
+		$table = table($a)
+			->text('id')
+			->btn('custom', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'))
+		;
+		$this->assertEquals(str_replace(PHP_EOL, '', 
+			'<table class="table table-bordered table-striped table-hover">'.
+			'<thead><th>Id</th><th>Actions</th></thead><tbody>'.
+			'<tr><td>1</td><td nowrap><a href="./?object=test&uid=122&pid=133" class="btn btn-default btn-mini btn-xs" title="custom"><i class="icon-tasks fa fa-tasks"></i> custom</a> </td></tr>'.
+			'<tr><td>2</td><td nowrap><a href="./?object=test&uid=222&pid=233" class="btn btn-default btn-mini btn-xs" title="custom"><i class="icon-tasks fa fa-tasks"></i> custom</a> </td></tr>'.
+			'</tbody></table>'), str_replace(PHP_EOL, '', trim($table)));
+
+		$table = table($a)
+			->text('id')
+			->btn('custom1', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'))
+			->btn('custom2', './?object=test&uid=%user_id&pid=555', array('link_params' => 'user_id'))
+		;
+		$this->assertEquals(str_replace(PHP_EOL, '', 
+			'<table class="table table-bordered table-striped table-hover">'.
+			'<thead><th>Id</th><th>Actions</th></thead><tbody>'.
+			'<tr><td>1</td><td nowrap><a href="./?object=test&uid=122&pid=133" class="btn btn-default btn-mini btn-xs" title="custom1"><i class="icon-tasks fa fa-tasks"></i> custom1</a> '
+				.'<a href="./?object=test&uid=122&pid=555" class="btn btn-default btn-mini btn-xs" title="custom2"><i class="icon-tasks fa fa-tasks"></i> custom2</a> </td></tr>'.
+			'<tr><td>2</td><td nowrap><a href="./?object=test&uid=222&pid=233" class="btn btn-default btn-mini btn-xs" title="custom1"><i class="icon-tasks fa fa-tasks"></i> custom1</a> '
+				.'<a href="./?object=test&uid=222&pid=555" class="btn btn-default btn-mini btn-xs" title="custom2"><i class="icon-tasks fa fa-tasks"></i> custom2</a> </td></tr>'.
+			'</tbody></table>'), str_replace(PHP_EOL, '', trim($table)));
 	}
 }
