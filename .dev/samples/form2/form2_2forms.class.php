@@ -15,15 +15,15 @@ class form2_2forms {
 				'add_fields'    => array('status' => 4),
 			))
 			->row_start(array('desc' => 'Rules for fine'))
-				->number('fine', 'Amount fine', array('class' => 'input-small', 'min' => 1, 'max' => 1000))
+				->number('fine', 'Amount fine', array('class_add' => 'input-small', 'min' => 1, 'max' => 1000))
 				->button(conf('currency_list::'.$info['currency']), array('disabled' => 1))
 				->select_box('type', array('fixed' => 'fixed', 'percent' => 'percent'))
 			->row_end()
 			->row_start(array('desc' => ''))
-				->number('fine_delay', '', array('class' => 'input-small', 'min' => 1, 'max' => 1000))
-				->number('fine_increase_period', '', array('class' => 'input-small', 'min' => 1, 'max' => 1000))
+				->number('fine_delay', '', array('class_add' => 'input-small', 'min' => 1, 'max' => 1000))
+				->number('fine_increase_period', '', array('class_add' => 'input-small', 'min' => 1, 'max' => 1000))
 			->row_end()
-			->submit('send', false, array('value' => 'Apply', 'class' => 'btn-success'));
+			->submit('send', false, array('value' => 'Apply', 'class_add' => 'btn-success'));
 
 		$body[] = form(false, array(
 				'legend' => 'cancel',
@@ -44,7 +44,7 @@ class form2_2forms {
 					$_this->_rendered = '';
 				}
 			})
-			->submit('cancel', false, array('value' => $request_owner == false ? 'Reject' : 'Cancel', 'class' => 'btn-danger'));
+			->submit('cancel', false, array('value' => $request_owner == false ? 'Reject' : 'Cancel', 'class_add' => 'btn-danger'));
 
 		return implode(PHP_EOL, $body);
 	}
