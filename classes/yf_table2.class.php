@@ -813,6 +813,26 @@ class yf_table2 {
 	}
 
 	/**
+	* Example: ->btn('custom', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'));
+	*/
+	function _process_link_params($link, $row = array(), $extra = array()) {
+		if (!strlen($link) || empty($row)) {
+			return $link;
+		}
+		if (isset($extra['link_params'])) {
+			foreach (explode(',', $extra['link_params']) as $lp) {
+				$lp = trim($lp);
+				if (strlen($lp)) {
+					$link = str_replace('%'.$lp, urlencode($row[$lp]), $link);
+				}
+			}
+		} else {
+			$link = str_replace('%d', urlencode($row[$extra['id']]), $link);
+		}
+		return $link;
+	}
+
+	/**
 	*/
 	function text($name, $desc = '', $extra = array()) {
 		// Shortcut: use second param as $extra
@@ -866,9 +886,7 @@ class yf_table2 {
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ? $row[$link_field_name] : $field;
-					if ($link_id) {
-						$link = str_replace('%d', urlencode($link_id), $params['link']). $instance_params['links_add'];
-					}
+					$link = $_this->_process_link_params($params['link']. $instance_params['links_add'], $row, $extra + array('id' => $link_id));
 					$is_link_allowed = $_this->_is_link_allowed($link);
 				}
 				if ($link && $is_link_allowed) {
@@ -1165,7 +1183,6 @@ class yf_table2 {
 				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks fa fa-tasks');
 				$link = trim($params['link']. $instance_params['links_add']);
-				// Example: ->btn('custom', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'));
 				if (strlen($link)) {
 					$link = $_this->_process_link_params($link, $row, $extra + array('id' => $id));
 					if (!$_this->_is_link_allowed($link)) {
@@ -1187,26 +1204,6 @@ class yf_table2 {
 			},
 		);
 		return $this;
-	}
-
-	/**
-	* Example: ->btn('custom', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'));
-	*/
-	function _process_link_params($link, $row = array(), $extra = array()) {
-		if (!strlen($link) || empty($row)) {
-			return $link;
-		}
-		if (isset($extra['link_params'])) {
-			foreach (explode(',', $extra['link_params']) as $lp) {
-				$lp = trim($lp);
-				if (strlen($lp)) {
-					$link = str_replace('%'.$lp, urlencode($row[$lp]), $link);
-				}
-			}
-		} else {
-			$link = str_replace('%d', urlencode($row[$extra['id']]), $link);
-		}
-		return $link;
 	}
 
 	/**
