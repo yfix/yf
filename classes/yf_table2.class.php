@@ -1164,9 +1164,22 @@ class yf_table2 {
 					$attrs .= ' title="' . $title;
 				}
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks fa fa-tasks');
-				$link = trim(str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add']);
-				if (strlen($link) && !$_this->_is_link_allowed($link)) {
-					return '';
+				$link = trim($params['link']. $instance_params['links_add']);
+				// Example: ->btn('custom', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'));
+				if (strlen($link)) {
+					if (isset($extra['link_params'])) {
+						foreach (explode(',', $extra['link_params']) as $lp) {
+							$lp = trim($lp);
+							if (strlen($lp)) {
+								$link = str_replace('%'.$lp, urlencode($row[$lp]), $link);
+							}
+						}
+					} else {
+						$link = str_replace('%d', urlencode($row[$id]), $params['link']);
+					}
+					if (!$_this->_is_link_allowed($link)) {
+						return '';
+					}
 				}
 				if ($extra['rewrite']) {
 					$link = url($link);
