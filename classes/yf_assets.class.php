@@ -104,7 +104,7 @@ class yf_assets {
 				));
 			}
 		}
-#		return $this; // Chaining
+		return $this; // Chaining
 	}
 
 	/**
