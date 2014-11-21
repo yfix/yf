@@ -9,6 +9,9 @@
 */
 class yf_form2 {
 
+	public $CLASS_FORM_MAIN = 'form-horizontal';// col-md-6'
+	public $CLASS_FORM_CONTROL = 'form-control';
+	public $CLASS_CKEDITOR = 'ckeditor';
 	public $CLASS_TPL_BADGE = 'badge badge-%name';
 	public $CLASS_TPL_LABEL = 'label label-%name';
 	public $CLASS_BTN_MINI = 'btn btn-default btn-mini btn-xs';
@@ -388,7 +391,7 @@ class yf_form2 {
 					$extra['action'] = process_url($extra['action'], true);
 				}
 			}
-			$extra['class'] = $extra['class'] ?: 'form-horizontal';// col-md-6';
+			$extra['class'] = $extra['class'] ?: $_this->CLASS_FORM_MAIN;// col-md-6';
 			if ($extra['class_add']) {
 				$extra['class'] .= ' '.$extra['class_add'];
 			}
@@ -767,7 +770,7 @@ class yf_form2 {
 			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
 			$extra['type'] = $extra['type'] ?: 'text';
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-			$extra['class'] = 'form-control'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = $_this->CLASS_FORM_CONTROL. $_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			// Supported: mini, small, medium, large, xlarge, xxlarge
 			if ($extra['sizing']) {
 				$extra['class'] .= ' input-'.$extra['sizing'];
@@ -802,7 +805,7 @@ class yf_form2 {
 			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
-			$extra['class'] = 'ckeditor form-control'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = $_this->CLASS_CKEDITOR.' '.$_this->CLASS_FORM_CONTROL. $_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			if ($_this->_params['no_label']) {
 				$extra['desc'] = '';
 			}
