@@ -44,6 +44,48 @@ return array(
 			'require' => 'jquery',
 			'version' => '3.2.0',
 		),
-#		'html5shiv'	=> '<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js" class="yf_core"></script><![endif]-->',
+		'html5shiv'	=> array(
+			'before_tag' => '<!--[if lt IE 9]>',
+			'url' => '//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js',
+			'after_tag' => '<![endif]-->',
+			'version'	=> '3.7.2',
+		),
+#		<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js" class="yf_core"></script><![endif]-->
+// TODO: modernizr
+// TODO: momentjs
+// TODO: angularjs
+// TODO: bootstrap-datetime
+// TODO: ckeditor
+// TODO: tinymce  '//cdnjs.cloudflare.com/ajax/libs/tinymce/3.5.8/tiny_mce.js';
+// TODO: ace-editor
+	),
+	'blueimp-uploader' => array(
+		'css' => array(
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/css/jquery.fileupload.css',
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/css/jquery.fileupload-ui.css',
+		),
+		'require_css' => array(
+			'jquery-ui',
+		),
+		'js' => array(
+			'//cdn.rawgit.com/yfix/JavaScript-Load-Image/js/load-image.all.min.js',
+			'//cdn.rawgit.com/yfix/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js',
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.iframe-transport.js',
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload.js',
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-ui.js',
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-process.js',
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-image.js',
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-audio.js',
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-video.js',
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-validate.js',
+		),
+		'require_js' => array(
+			'jquery',
+			'jquery-ui',
+		),
+	),
+	'font-avesome4' => array(
+		'css' => array(
+		),
 	),
 );
