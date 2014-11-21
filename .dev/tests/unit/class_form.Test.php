@@ -383,10 +383,10 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			, trim(self::form_no_chain($r)->tbl_link_delete('test')) );
 	}
 	public function test_tbl_link_clone() {
-		$this->assertEquals('<a name="Clone" class="btn btn-default btn-mini btn-xs ajax_clone"><i class="icon-plus fa fa-plus"></i> Clone</a>', trim(self::form_no_chain($r)->tbl_link_clone()) );
-		$this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs ajax_clone"><i class="icon-plus fa fa-plus"></i> test</a>', trim(self::form_no_chain($r)->tbl_link_clone('test')) );
+		$this->assertEquals('<a name="Clone" class="btn btn-default btn-mini btn-xs ajax_clone"><i class="icon-code-fork fa fa-code-fork"></i> Clone</a>', trim(self::form_no_chain($r)->tbl_link_clone()) );
+		$this->assertEquals('<a name="test" class="btn btn-default btn-mini btn-xs ajax_clone"><i class="icon-code-fork fa fa-code-fork"></i> test</a>', trim(self::form_no_chain($r)->tbl_link_clone('test')) );
 		$r['clone_link'] = './?object=someobject&action=someaction';
-		$this->assertEquals('<a name="test" href="./?object=someobject&action=someaction" class="btn btn-default btn-mini btn-xs ajax_clone"><i class="icon-plus fa fa-plus"></i> test</a>'
+		$this->assertEquals('<a name="test" href="./?object=someobject&action=someaction" class="btn btn-default btn-mini btn-xs ajax_clone"><i class="icon-code-fork fa fa-code-fork"></i> test</a>'
 			, trim(self::form_no_chain($r)->tbl_link_clone('test')) );
 	}
 	public function test_tbl_link_view() {
