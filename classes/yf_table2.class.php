@@ -36,7 +36,7 @@ class yf_table2 {
 	public $CLASS_TPL_BADGE = 'badge badge-%name';
 	public $CLASS_TPL_LABEL = 'label label-%name';
 	public $CLASS_CHANGE_ACTIVE = 'change_active';
-	public $CLASS_BTN = 'btn btn-default btn-mini btn-xs';
+	public $CLASS_BTN_MINI = 'btn btn-default btn-mini btn-xs';
 	public $CLASS_ICON_BTN = 'icon-tasks fa fa-tasks';
 	public $CLASS_ICON_EDIT = 'icon-edit fa fa-edit';
 	public $CLASS_ICON_DELETE = 'icon-trash fa fa-trash';
@@ -927,7 +927,7 @@ class yf_table2 {
 					if (!isset($extra['nowrap']) || $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
-					$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN;
+					$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN_MINI;
 					if ($extra['class_add']) {
 						$class .= ' '.$extra['class_add'];
 					}
@@ -1208,7 +1208,7 @@ class yf_table2 {
 					$link = url($link);
 				}
 				$extra['href'] = $link;
-				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN;
+				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN_MINI;
 				if ($extra['class_add']) {
 					$class .= ' '.$extra['class_add'];
 				}
@@ -1433,7 +1433,7 @@ class yf_table2 {
 				}
 				$extra['href'] = $link;
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $_this->CLASS_ICON_BTN);
-				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN;
+				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN_MINI;
 				if ($extra['class_add']) {
 					$class .= ' '.$extra['class_add'];
 				}
@@ -1511,7 +1511,7 @@ class yf_table2 {
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $_this->CLASS_ICON_SAVE);
-				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN;
+				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN_MINI;
 
 				$extra['type'] = 'submit';
 				$extra['name'] = trim($value);
