@@ -40,7 +40,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			'<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">'.
 			'<fieldset>'.
 			'<div class="control-group form-group">'.
-			'<div class="controls col-md-offset-3">'.
+			'<div class="controls col-md-offset-3 col-md-9">'.
 			'<input type="text" class="form-control">'.
 			'</div>'.
 			'</div>'.
@@ -72,13 +72,17 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	public function test_form_from_array() {
 		$a = array(array('text','name'));
 		$this->assertEquals(
-			'<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><label class="control-label col-md-3" for="name">Name</label><div class="controls col-md-9"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div></fieldset></form>'
+			'<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group">'.
+			'<label class="control-label col-md-3" for="name">Name</label><div class="controls col-md-9"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div>'.
+			'</fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form()->array_to_form($a))) );
 	}
 	public function test_form_auto() {
 		$data = array('user' => 'name', 'email' => 'some@email.com');
 		$this->assertEquals(
-			'<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><div class="controls col-md-offset-3"><button type="submit" name="back_link" id="back_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button></div></div></fieldset></form>'
+			'<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group">'.
+			'<div class="controls col-md-offset-3 col-md-9"><button type="submit" name="back_link" id="back_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button></div>'.
+			'</div></fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form($data)->auto())) );
 	}
 	public function test_input_text_simple() {
@@ -131,7 +135,8 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<input type="hidden" id="hdn" name="hdn" value="val1">', trim(self::form_no_chain($r)->hidden('hdn', array('value' => 'val1'))) );
 	}
 	public function test_container() {
-		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group"><div class="controls col-md-offset-3"><section id="test"></section></div></div></fieldset></form>'
+		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset>'.
+			'<div class="control-group form-group"><div class="controls col-md-offset-3 col-md-9"><section id="test"></section></div></div></fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form()->container('<section id="test"></section>'))) );
 		$this->assertEquals('<section id="test"></section>', trim(self::form_no_chain($r)->container('<section id="test"></section>')) );
 	}
@@ -150,12 +155,15 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			'group2' => array('k3' => 'v3',	'k4' => 'v4'),
 		);
 		$selected = 'k3';
-		$this->assertEquals('<select name="myselect" id="select_box_1" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup><optgroup label="group2" title="group2"><option value="k3" >v3</option><option value="k4" >v4</option></optgroup></select>'
+		$this->assertEquals('<select name="myselect" id="select_box_1" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup>'.
+			'<optgroup label="group2" title="group2"><option value="k3" >v3</option><option value="k4" >v4</option></optgroup></select>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data, array('force_id' => 'select_box_1')))) );
-		$this->assertEquals('<select name="myselect" id="select_box_2" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup><optgroup label="group2" title="group2"><option value="k3" selected="selected">v3</option><option value="k4" >v4</option></optgroup></select>'
+		$this->assertEquals('<select name="myselect" id="select_box_2" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup>'.
+			'<optgroup label="group2" title="group2"><option value="k3" selected="selected">v3</option><option value="k4" >v4</option></optgroup></select>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data, array('selected' => $selected, 'force_id' => 'select_box_2')))) );
 		$r['myselect'] = $selected;
-		$this->assertEquals('<select name="myselect" id="select_box_3" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup><optgroup label="group2" title="group2"><option value="k3" selected="selected">v3</option><option value="k4" >v4</option></optgroup></select>'
+		$this->assertEquals('<select name="myselect" id="select_box_3" class=" form-control" ><optgroup label="group1" title="group1"><option value="k1" >v1</option><option value="k2" >v2</option></optgroup>'.
+			'<optgroup label="group2" title="group2"><option value="k3" selected="selected">v3</option><option value="k4" >v4</option></optgroup></select>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data, array('force_id' => 'select_box_3')))) );
 	}
 	public function test_multi_select_box() {
@@ -163,10 +171,12 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$selected = array('k2' => '1', 'k3' => '1');
 		$this->assertEquals('<select  multiple name="myselect[]" id="multi_select_1" class=" form-control" ><option value="k1" >v1</option><option value="k2" >v2</option><option value="k3" >v2</option></select>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_select_box('myselect', $data))) );
-		$this->assertEquals('<select  multiple name="myselect[]" id="multi_select_2" class=" form-control" ><option value="k1" >v1</option><option value="k2" selected="selected">v2</option><option value="k3" selected="selected">v2</option></select>'
+		$this->assertEquals('<select  multiple name="myselect[]" id="multi_select_2" class=" form-control" ><option value="k1" >v1</option><option value="k2" selected="selected">v2</option>'.
+			'<option value="k3" selected="selected">v2</option></select>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_select_box('myselect', $data, array('selected' => $selected)))) );
 		$r['myselect'] = $selected;
-		$this->assertEquals('<select  multiple name="myselect[]" id="multi_select_3" class=" form-control" ><option value="k1" >v1</option><option value="k2" selected="selected">v2</option><option value="k3" selected="selected">v2</option></select>'
+		$this->assertEquals('<select  multiple name="myselect[]" id="multi_select_3" class=" form-control" ><option value="k1" >v1</option><option value="k2" selected="selected">v2</option>'.
+			'<option value="k3" selected="selected">v2</option></select>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_select_box('myselect', $data))) );
 	}
 	public function test_check_box() {
@@ -186,33 +196,43 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	public function test_multi_check_box() {
 		$data = array('k1' => 'v1', 'k2' => 'v2');
 		$selected = array('k2' => '1');
-		$this->assertEquals('<label class="checkbox">	<input type="checkbox" name="mycheck_k1" value="k1" id="multi_check_box_1"  >	v1 &nbsp;</label><label class="checkbox">	<input type="checkbox" name="mycheck_k2" value="k2" id="multi_check_box_2"  >	v2 &nbsp;</label>'
+		$this->assertEquals('<label class="checkbox">	<input type="checkbox" name="mycheck_k1" value="k1" id="multi_check_box_1"  >	v1 &nbsp;</label>'.
+			'<label class="checkbox">	<input type="checkbox" name="mycheck_k2" value="k2" id="multi_check_box_2"  >	v2 &nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_check_box('mycheck', $data))) );
-		$this->assertEquals('<label class="checkbox">	<input type="checkbox" name="mycheck_k1" value="k1" id="multi_check_box_3"  >	v1 &nbsp;</label><label class="checkbox">	<input type="checkbox" name="mycheck_k2" value="k2" id="multi_check_box_4" checked >	v2 &nbsp;</label>'
+		$this->assertEquals('<label class="checkbox">	<input type="checkbox" name="mycheck_k1" value="k1" id="multi_check_box_3"  >	v1 &nbsp;</label>'.
+			'<label class="checkbox">	<input type="checkbox" name="mycheck_k2" value="k2" id="multi_check_box_4" checked >	v2 &nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_check_box('mycheck', $data, array('selected' => $selected)))) );
 	}
 	public function test_radio_box() {
 		$data = array('k1' => 'v1', 'k2' => 'v2');
 		$selected = 'k2';
-		$this->assertEquals('<label class="radio">	<input type="radio" name="myradio" value="k1" id="radio_box_1_1"  >	v1&nbsp;</label><label class="radio">	<input type="radio" name="myradio" value="k2" id="radio_box_1_2"  >	v2&nbsp;</label>'
+		$this->assertEquals('<label class="radio">	<input type="radio" name="myradio" value="k1" id="radio_box_1_1"  >	v1&nbsp;</label>'.
+			'<label class="radio">	<input type="radio" name="myradio" value="k2" id="radio_box_1_2"  >	v2&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->radio_box('myradio', $data, array('force_id' => 'radio_box_1')))) );
-		$this->assertEquals('<label class="radio">	<input type="radio" name="myradio" value="k1" id="radio_box_1_1"  >	v1&nbsp;</label><label class="radio">	<input type="radio" name="myradio" value="k2" id="radio_box_1_2"  checked="true">	v2&nbsp;</label>'
+		$this->assertEquals('<label class="radio">	<input type="radio" name="myradio" value="k1" id="radio_box_1_1"  >	v1&nbsp;</label>'.
+			'<label class="radio">	<input type="radio" name="myradio" value="k2" id="radio_box_1_2"  checked="true">	v2&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->radio_box('myradio', $data, array('selected' => $selected, 'force_id' => 'radio_box_1')))) );
 	}
 	public function test_div_box() {
 		$data = array('k1' => 'v1', 'k2' => 'v2');
 		$selected = 'k2';
-		$this->assertEquals('<li class="dropdown" style="list-style-type:none;" id="mydiv"><a class="dropdown-toggle" data-toggle="dropdown">Mydiv&nbsp;<span class="caret"></span></a><ul class="dropdown-menu"><li class="dropdown"><a data-value="k1" >v1</a></li><li class="dropdown"><a data-value="k2" >v2</a></li></ul></li>'
+		$this->assertEquals('<li class="dropdown" style="list-style-type:none;" id="mydiv"><a class="dropdown-toggle" data-toggle="dropdown">Mydiv&nbsp;<span class="caret"></span></a>'.
+			'<ul class="dropdown-menu"><li class="dropdown"><a data-value="k1" >v1</a></li><li class="dropdown"><a data-value="k2" >v2</a></li></ul></li>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->div_box('mydiv', $data))) );
-		$this->assertEquals('<li class="dropdown" style="list-style-type:none;" id="mydiv"><a class="dropdown-toggle" data-toggle="dropdown">v2&nbsp;<span class="caret"></span></a><ul class="dropdown-menu"><li class="dropdown"><a data-value="k1" >v1</a></li><li class="dropdown active"><a data-value="k2" data-selected="selected">v2</a></li></ul></li>'
+		$this->assertEquals('<li class="dropdown" style="list-style-type:none;" id="mydiv"><a class="dropdown-toggle" data-toggle="dropdown">v2&nbsp;<span class="caret"></span></a>'.
+			'<ul class="dropdown-menu"><li class="dropdown"><a data-value="k1" >v1</a></li><li class="dropdown active"><a data-value="k2" data-selected="selected">v2</a></li></ul></li>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->div_box('mydiv', $data, array('selected' => $selected)))) );
 	}
 	public function test_list_box() {
 		$data = array('k1' => 'v1', 'k2' => 'v2');
 		$selected = 'k2';
-		$this->assertEquals('<div class="bfh-selectbox" id="mylist"><input type="hidden" name="mylist" value=""><a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#"><span class="bfh-selectbox-option bfh-selectbox-medium" data-option=""></span><b class="caret"></b></a><div class="bfh-selectbox-options"><input type="text" class="bfh-selectbox-filter"><div role="listbox"><ul role="option"><li><a tabindex="-1" href="#" data-option="k1">v1</a></li><li><a tabindex="-1" href="#" data-option="k2">v2</a></li></ul></div></div></div>'
+		$this->assertEquals('<div class="bfh-selectbox" id="mylist"><input type="hidden" name="mylist" value=""><a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">'.
+			'<span class="bfh-selectbox-option bfh-selectbox-medium" data-option=""></span><b class="caret"></b></a><div class="bfh-selectbox-options"><input type="text" class="bfh-selectbox-filter">'.
+			'<div role="listbox"><ul role="option"><li><a tabindex="-1" href="#" data-option="k1">v1</a></li><li><a tabindex="-1" href="#" data-option="k2">v2</a></li></ul></div></div></div>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->list_box('mylist', $data))) );
-		$this->assertEquals('<div class="bfh-selectbox" id="mylist"><input type="hidden" name="mylist" value="k2"><a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#"><span class="bfh-selectbox-option bfh-selectbox-medium" data-option="k2">v2</span><b class="caret"></b></a><div class="bfh-selectbox-options"><input type="text" class="bfh-selectbox-filter"><div role="listbox"><ul role="option"><li><a tabindex="-1" href="#" data-option="k1">v1</a></li><li><a tabindex="-1" href="#" data-option="k2">v2</a></li></ul></div></div></div>'
+		$this->assertEquals('<div class="bfh-selectbox" id="mylist"><input type="hidden" name="mylist" value="k2"><a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">'.
+			'<span class="bfh-selectbox-option bfh-selectbox-medium" data-option="k2">v2</span><b class="caret"></b></a><div class="bfh-selectbox-options"><input type="text" class="bfh-selectbox-filter">'.
+			'<div role="listbox"><ul role="option"><li><a tabindex="-1" href="#" data-option="k1">v1</a></li><li><a tabindex="-1" href="#" data-option="k2">v2</a></li></ul></div></div></div>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->list_box('mylist', $data, array('selected' => $selected)))) );
 	}
 	public function test_fieldset_start() {
@@ -305,21 +325,33 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<input name="test" type="week" id="test" class="form-control" placeholder="Test">', trim(self::form_no_chain($r)->week('test')) );
 	}
 	public function test_active_box() {
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Disabled</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Active</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning">'.
+			'<i class="icon-ban-circle fa fa-ban"></i> Disabled</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="1" id="radio_box_1_2"  >	'.
+			'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Active</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->active_box('', array('force_id' => 'radio_box_1')))) );
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Disabled</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Active</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning">'.
+			'<i class="icon-ban-circle fa fa-ban"></i> Disabled</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="1" id="radio_box_1_2"  >	'.
+			'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Active</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->active_box('test', array('force_id' => 'radio_box_1')))) );
 	}
 	public function test_allow_deny_box() {
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="DENY" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Deny</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="ALLOW" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Allow</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="DENY" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning">'.
+			'<i class="icon-ban-circle fa fa-ban"></i> Deny</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="ALLOW" id="radio_box_1_2"  >	'.
+			'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Allow</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->allow_deny_box('', array('force_id' => 'radio_box_1')))) );
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="DENY" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Deny</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="ALLOW" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Allow</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="DENY" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning">'.
+			'<i class="icon-ban-circle fa fa-ban"></i> Deny</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="ALLOW" id="radio_box_1_2"  >	'.
+			'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Allow</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->allow_deny_box('test', array('force_id' => 'radio_box_1')))) );
 	}
 	public function test_yes_no_box() {
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban-circle"></i> No</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="active" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning">'.
+			'<i class="icon-ban-circle fa fa-ban-circle"></i> No</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="active" value="1" id="radio_box_1_2"  >	'.
+			'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box('', array('force_id' => 'radio_box_1')))) );
-		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban-circle"></i> No</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="1" id="radio_box_1_2"  >	<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span>&nbsp;</label>'
+		$this->assertEquals('<label class="radio radio-horizontal">	<input type="radio" name="test" value="0" id="radio_box_1_1"  >	<span class="btn btn-default btn-mini btn-xs btn-warning">'.
+			'<i class="icon-ban-circle fa fa-ban-circle"></i> No</span>&nbsp;</label><label class="radio radio-horizontal">	<input type="radio" name="test" value="1" id="radio_box_1_2"  >	'.
+			'<span class="btn btn-default btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> Yes</span>&nbsp;</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->yes_no_box('test', array('force_id' => 'radio_box_1')))) );
 	}
 	public function test_submit() {
@@ -327,8 +359,14 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<button type="submit" name="test" id="test" class="btn btn-default btn-primary" value="Save">Save</button>', trim(self::form_no_chain($r)->submit('test')) );
 	}
 	public function test_save() {
-		$this->assertEquals('<button type="submit" id="save" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button>', trim(self::form_no_chain($r)->save()) );
-		$this->assertEquals('<button type="submit" name="test" id="test" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button>', trim(self::form_no_chain($r)->save('test')) );
+		$this->assertEquals(
+			'<button type="submit" id="save" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button>'
+			, trim(self::form_no_chain($r)->save())
+		);
+		$this->assertEquals(
+			'<button type="submit" name="test" id="test" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button>'
+			, trim(self::form_no_chain($r)->save('test'))
+		);
 	}
 	public function test_save_and_back() {
 #		$r['back_link'] = 'http://somewhere.com/';
@@ -402,7 +440,8 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 #		$this->assertEquals('<a href="active_link" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Disabled</button></a>'
 #			, trim(self::form_no_chain($r)->tbl_link_active('test')) );
 		$r['active_link'] = './?object=someobject&action=someaction';
-		$this->assertEquals('<a href="./?object=someobject&action=someaction" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> Disabled</button></a>'
+		$this->assertEquals('<a href="./?object=someobject&action=someaction" class="change_active"><button class="btn btn-default btn-mini btn-xs btn-warning">'.
+			'<i class="icon-ban-circle fa fa-ban"></i> Disabled</button></a>'
 			, trim(self::form_no_chain($r)->tbl_link_active('test')) );
 	}
 	public function test_form_clone() {
