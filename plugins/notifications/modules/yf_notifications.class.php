@@ -56,9 +56,9 @@ class yf_notifications {
 			"url_check" => $func_name("/{$obj_name}/check"),
 			"url_read" => $func_name("/{$obj_name}/read"),
 		);
-		require_js(tpl()->parse_string($tpl, $replace));		
-		require_css("//cdnjs.cloudflare.com/ajax/libs/pnotify/2.0.0/pnotify.all.min.css");
-		require_js("//cdnjs.cloudflare.com/ajax/libs/pnotify/2.0.0/pnotify.all.min.js");
+		js(tpl()->parse_string($tpl, $replace));		
+		css("//cdnjs.cloudflare.com/ajax/libs/pnotify/2.0.0/pnotify.all.min.css");
+		js("//cdnjs.cloudflare.com/ajax/libs/pnotify/2.0.0/pnotify.all.min.js");
 	}
     
     function _add_receiver_user($name, $user_id, $text = '', $url = '') {
