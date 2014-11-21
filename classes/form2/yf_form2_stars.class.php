@@ -69,23 +69,20 @@ class yf_form2_stars {
 			$body[] = '</span>';
 			$body[] = '<input type="hidden" name="'.$extra['name'].'" id='.$extra['name'].' value="0">';
 
-			js('<script type="text/javascript">
-				$(function () {
-					$(".'.$class.'.'.$extra['name'].'").on("click",function() {
-						var value = $(this).attr("data-value");
-						$("#"+$(this).attr("data-name")).val(value);
-						$(".rating.star.'.$extra['name'].'").each(function() {
-							$(this).attr("data-value");
-							if (value>=$(this).attr("data-value")) {
-								$(this).addClass("rating_selected");								
-							} else {
-								$(this).removeClass("rating_selected");				
-							}
-						});
+			jquery(
+				'$(".'.$class.'.'.$extra['name'].'").on("click",function() {
+					var value = $(this).attr("data-value");
+					$("#"+$(this).attr("data-name")).val(value);
+					$(".rating.star.'.$extra['name'].'").each(function() {
+						$(this).attr("data-value");
+						if (value>=$(this).attr("data-value")) {
+							$(this).addClass("rating_selected");								
+						} else {
+							$(this).removeClass("rating_selected");				
+						}
 					});
-				});
-				</script>');
-
+				});'
+			);
 			return $_this->_row_html(implode('', $body), $extra, $r);
 		};
 		if ($__this->_chained_mode) {
