@@ -9,6 +9,17 @@
 */
 class yf_form2 {
 
+	public $CLASS_TPL_BADGE = 'badge badge-%name';
+	public $CLASS_TPL_LABEL = 'label label-%name';
+	public $CLASS_BTN_MINI = 'btn btn-default btn-mini btn-xs';
+	public $CLASS_BTN_DEFAULT = 'btn btn-default';
+	public $CLASS_BTN_SUBMIT = 'btn btn-default btn-primary';
+	public $CLASS_ICON_SAVE = 'icon-save fa fa-save';
+	public $CLASS_ICON_PSWD = 'icon-key fa fa-key fa-fw';
+	public $CLASS_ICON_LOGIN = 'icon-user fa fa-user fa-fw';
+	public $CLASS_LABEL_INFO = 'label label-info';
+	public $CLASS_ERROR = 'alert alert-error alert-danger';
+
 	/**
 	* Catch missing method call
 	*/
@@ -26,7 +37,12 @@ class yf_form2 {
 	* We cleanup object properties when cloning
 	*/
 	function __clone() {
+		$keep_prefix = 'CLASS_';
+		$keep_len = strlen($keep_prefix);
 		foreach ((array)get_object_vars($this) as $k => $v) {
+			if (substr($k, 0, $keep_len) === $keep_prefix) {
+				continue;
+			}
 			$this->$k = null;
 		}
 	}
@@ -247,7 +263,7 @@ class yf_form2 {
 			if ($errors) {
 				$e = array();
 				foreach ((array)$errors as $msg) {
-					$e[] = '<div class="alert alert-error alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>'.$msg.'</div>';
+					$e[] = '<div class="'.$this->CLASS_ERROR.'"><button type="button" class="close" data-dismiss="alert">&times;</button>'.$msg.'</div>';
 				}
 				array_unshift($this->_body, implode(PHP_EOL, $e));
 			}
@@ -596,12 +612,12 @@ class yf_form2 {
 		if ($extra['badge']) {
 			$badge = is_array($extra['badge']) && isset($extra['badge'][$value]) ? $extra['badge'][$value] : $extra['badge'];
 			if ($badge) {
-				$css_class = 'badge badge-'.$badge;
+				$css_class = str_replace('%name', $badge, $this->CLASS_TPL_BADGE);
 			}
 		} elseif ($extra['label']) {
 			$label = is_array($extra['label']) && isset($extra['label'][$value]) ? $extra['label'][$value] : $extra['label'];
 			if ($label) {
-				$css_class = 'label label-'.$label;
+				$css_class = str_replace('%name', $label, $this->CLASS_TPL_LABEL);
 			}
 		} elseif ($extra['class']) {
 			$_css_class = is_array($extra['class']) && isset($extra['class'][$value]) ? $extra['class'][$value] : $extra['class'];
@@ -869,7 +885,7 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'password';
 		}
-		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="icon-key fa fa-key fa-fw"></i>';
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="'.$this->CLASS_ICON_PSWD.'"></i>';
 		return $this->input($name, $desc, $extra, $replace);
 	}
 
@@ -896,7 +912,7 @@ class yf_form2 {
 		}
 		$extra['value'] = t($extra['value']);
 		if (!$extra['class']) {
-			$extra['class'] = 'btn btn-default';
+			$extra['class'] = $this->CLASS_BTN_DEFAULT;
 		}
 		return $this->input($name, $desc, $extra, $replace);
 	}
@@ -906,7 +922,7 @@ class yf_form2 {
 	*/
 	function login($name = '', $desc = '', $extra = array(), $replace = array()) {
 		$extra['type'] = $extra['type'] ?: 'text';
-		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="icon-user fa fa-user fa-fw"></i>';
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="'.$this->CLASS_ICON_LOGIN.'"></i>';
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -1251,7 +1267,7 @@ class yf_form2 {
 				$extra['link_url'] = '';
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
-			$extra['class'] = $extra['class'] ?: 'btn btn-default btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = $extra['class'] ?: $_this->CLASS_BTN_SUBMIT. $_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			$extra['value'] = t($extra['value']);
 			$extra['type'] = 'submit';
 
@@ -1276,7 +1292,7 @@ class yf_form2 {
 	*/
 	function save($name = '', $desc = '', $extra = array(), $replace = array()) {
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-save fa fa-save';
+			$extra['icon'] = $this->CLASS_ICON_SAVE;
 		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}
@@ -1298,7 +1314,7 @@ class yf_form2 {
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Back';
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-save fa fa-save';
+			$extra['icon'] = $this->CLASS_ICON_SAVE;
 		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}
@@ -1320,7 +1336,7 @@ class yf_form2 {
 		$extra['link_url'] = $name;
 		$extra['link_name'] = $desc ?: 'Clear';
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-save fa fa-save';
+			$extra['icon'] = $this->CLASS_ICON_SAVE;
 		}
 		return $this->submit($name, $desc, $extra, $replace);
 	}
@@ -1365,14 +1381,14 @@ class yf_form2 {
 				if ($extra['rewrite']) {
 					$extra['link'] = url($extra['link']);
 				}
-				$extra['class'] = $extra['class'] ?: 'btn btn-default btn-mini btn-xs';
+				$extra['class'] = $extra['class'] ?: $_this->CLASS_BTN_MINI;
 				$extra['class'] = $_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra);
 				$extra['href'] = $extra['link'];
 				$extra['title'] = $extra['title'] ?: $extra['desc'] ?: $extra['name'];
 				$attrs_names = array('href','name','class','style','disabled','target','alt','title');
 				$content = '<a'._attrs($extra, $attrs_names).'>'.$icon. $value.'</a>';
 			} else {
-				$extra['class'] = $extra['class'] ?: 'label label-info';
+				$extra['class'] = $extra['class'] ?: $_this->CLASS_LABEL_INFO;
 				$content = '<span class="'.$_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$icon. $value.'</span>';
 			}
 			return $_this->_row_html($content, $extra, $r);
