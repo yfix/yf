@@ -8,7 +8,6 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 * tr params (string, array, callback)
 * td params (string, array, callback)
 * rotated mode
-* auto()
 */
 
 class class_table_test extends PHPUnit_Framework_TestCase {
@@ -112,5 +111,21 @@ class class_table_test extends PHPUnit_Framework_TestCase {
 			'<tr><td>2</td><td nowrap><a href="./?object=test&uid=222&pid=233" class="btn btn-default btn-mini btn-xs" title="custom1"><i class="icon-tasks fa fa-tasks"></i> custom1</a> '
 				.'<a href="./?object=test&uid=222&pid=555" class="btn btn-default btn-mini btn-xs" title="custom2"><i class="icon-tasks fa fa-tasks"></i> custom2</a> </td></tr>'.
 			'</tbody></table>'), str_replace(PHP_EOL, '', trim($table)));
+	}
+	public function test_auto() {
+		$a = array(
+			array('id' => '1', 'user_id' => '122', 'product_id' => '133'),
+			array('id' => '2', 'user_id' => '222', 'product_id' => '233'),
+		);
+		$table = table($a)->auto();
+
+		$this->assertEquals(str_replace(PHP_EOL, '', 
+			'<table class="table table-bordered table-striped table-hover">'.
+			'<thead><th>Id</th><th>User id</th><th>Product id</th><th>Actions</th></thead><tbody>'.
+			'<tr><td>1</td><td>122</td><td>133</td><td nowrap><a href="./?object=dynamic&action=edit&id=1" class="btn btn-default btn-mini btn-xs  ajax_edit" title="Edit"><i class="icon-edit fa fa-edit"></i> Edit</a> <a href="./?object=dynamic&action=delete&id=1" class="btn btn-default btn-mini btn-xs  ajax_delete btn-danger" title="Delete"><i class="icon-trash fa fa-trash"></i> Delete</a> </td></tr>'.
+			'<tr><td>2</td><td>222</td><td>233</td><td nowrap><a href="./?object=dynamic&action=edit&id=2" class="btn btn-default btn-mini btn-xs  ajax_edit" title="Edit"><i class="icon-edit fa fa-edit"></i> Edit</a> <a href="./?object=dynamic&action=delete&id=2" class="btn btn-default btn-mini btn-xs  ajax_delete btn-danger" title="Delete"><i class="icon-trash fa fa-trash"></i> Delete</a> </td></tr>'.
+			'</tbody></table>'.
+			'<div class="controls"><a href="./?object=dynamic&action=add" class="btn btn-default btn-mini btn-xs  ajax_add"><i class=" icon-plus fa fa-plus"></i> add</a> </div>'
+		), str_replace(PHP_EOL, '', trim($table)));
 	}
 }
