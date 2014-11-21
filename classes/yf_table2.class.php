@@ -240,9 +240,7 @@ class yf_table2 {
 			if ($params['condensed']) {
 				$params['table_class'] .= ' '.$this->CLASS_CONDENSED;
 			}
-			$table_class = trim($this->CLASS_TABLE_MAIN.' '.$params['table_class']);
-			$table_class .= ' '.$params['table_class_add'];
-
+			$table_class = trim(trim($this->CLASS_TABLE_MAIN.' '.$params['table_class']).' '.$params['table_class_add']);
 			$table_attrs = (isset($params['table_attr']) ? ' '.$params['table_attr'] : '');
 			$body .= '<table class="'.trim($table_class).'"'.$table_attrs.'>'.PHP_EOL;
 
@@ -925,9 +923,7 @@ class yf_table2 {
 					if ($extra['rewrite']) {
 						$link = url($link);
 					}
-					if ($extra['hidden_toggle']) {
-						$attrs .= ' data-hidden-toggle="'._prepare_html($extra['hidden_toggle']).'"';
-					}
+					$extra['href'] = $link;
 					if (!isset($extra['nowrap']) || $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
@@ -935,13 +931,17 @@ class yf_table2 {
 					if ($extra['class_add']) {
 						$class .= ' '.$extra['class_add'];
 					}
+					$extra['class'] = $class;
 					$link_trim_width = conf('link_trim_width') ?: 100;
 					if (isset($extra['link_trim_width'])) {
 						$link_trim_width = $extra['link_trim_width'];
 					}
 					$link_text = strlen($text) ? mb_strimwidth($text, 0, $link_trim_width, '...') : t('link');
-					$attrs .= ' title="'._prepare_html(trim($extra['link_title']) ?: trim($text)).'"';
-					$body .= '<a href="'.trim($link).'" class="'.trim($class).'"'. $attrs. '>'._prepare_html($link_text).'</a>';
+					$extra['title'] = trim($extra['link_title']) ?: trim($text);
+					if ($extra['hidden_toggle']) {
+						$extra['data-hidden-toggle'] = $extra['hidden_toggle'];
+					}
+					$body .= '<a'._attrs($extra, array('href','class','title')).'>'._prepare_html($link_text).'</a>';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
@@ -1392,12 +1392,15 @@ class yf_table2 {
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
+				$extra['href'] = $link;
+				$extra['title'] = $params['name'];
+				$extra['class'] = $_this->CLASS_CHANGE_ACTIVE;
 				if (!isset($_this->_pair_active)) {
 					$_this->_pair_active = main()->get_data('pair_active');
 				}
 				$values = $_this->_pair_active;
 				$val = $values[intval((bool)$row['active'])];
-				return !$extra['disabled'] ? '<a href="'.$link.'" title="'.$params['name'].'" class="'.$_this->CLASS_CHANGE_ACTIVE.'">'. $val. '</a> ' : $val;
+				return !$extra['disabled'] ? '<a'._attrs($extra, array('href','class','title')).'>'. $val. '</a> ' : $val;
 			},
 		);
 		return $this;
@@ -1428,6 +1431,7 @@ class yf_table2 {
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
+				$extra['href'] = $link;
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $_this->CLASS_ICON_BTN);
 				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN;
 				if ($extra['class_add']) {
@@ -1436,7 +1440,8 @@ class yf_table2 {
 				if ($extra['no_ajax'] || $instance_params['no_ajax']) {
 					$class .= ' '.$_this->CLASS_NO_AJAX;
 				}
-				return '<a href="'.trim($link).'" class="'.trim($class).'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
+				$extra['class'] = $class;
+				return '<a'._attrs($extra, array('href','class','title')).'><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
 		);
 		if (!$extra['display_in']) {
@@ -1508,7 +1513,10 @@ class yf_table2 {
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $_this->CLASS_ICON_SAVE);
 				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN;
 
-				return '<button type="submit" name="'.trim($value).'" class="'.trim($class).'"><i class="'.trim($icon).'"></i> '. t($value).'</button>';
+				$extra['type'] = 'submit';
+				$extra['name'] = trim($value);
+				$extra['class'] = $class;
+				return '<button'._attrs($extra, array('type','name','class')).'><i class="'.trim($icon).'"></i> '. t($value).'</button>';
 			}
 		);
 		if (!$extra['display_in']) {
