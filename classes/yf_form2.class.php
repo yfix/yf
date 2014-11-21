@@ -1253,14 +1253,14 @@ class yf_form2 {
 			$extra['link_name'] = $extra['link_name'] ?: '';
 			$extra['class'] = $extra['class'] ?: 'btn btn-default btn-primary'.$_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			$extra['value'] = t($extra['value']);
-			$extra['desc'] = ''; // We do not need label here
 			$extra['type'] = 'submit';
 
 			$attrs_names = array('type','name','id','class','style','value','disabled','target');
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
 				$value = (!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']);
-				return $_this->_row_html('<button'._attrs($extra, $attrs_names).'>'.$icon. $value.'</button>', $extra, $r);
+				$extra['desc'] = $icon . ( $extra['desc'] ?: $value );
+				return $_this->_row_html('<button'._attrs($extra, $attrs_names).'>'.$extra[ 'desc' ].'</button>', $extra, $r);
 			} else {
 				return $_this->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
 			}
