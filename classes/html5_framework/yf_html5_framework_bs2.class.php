@@ -11,7 +11,7 @@ class yf_html5_framework_bs2 {
 	public $CLASS_INPUT_PREPEND	= 'input-prepend';
 	public $CLASS_INPUT_APPEND	= 'input-append';
 	public $CLASS_LABEL			= 'control-label col-md-3';
-	public $CLASS_NO_LABEL		= ' col-md-offset-3';
+	public $CLASS_NO_LABEL		= ' col-md-offset-3 col-md-9';
 	public $CLASS_CONTROLS		= 'controls';
 	public $CLASS_DESC			= 'col-md-9';
 	public $CLASS_EDIT_LINK		= 'btn btn-default btn-mini btn-xs';
