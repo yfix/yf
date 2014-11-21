@@ -1273,13 +1273,15 @@ class yf_form2 {
 			$extra['class'] = $extra['class'] ?: $_this->CLASS_BTN_SUBMIT. $_this->_prepare_css_class('', $r[$extra['name']], $extra);
 			$extra['value'] = t($extra['value']);
 			$extra['type'] = 'submit';
+			$button_text = $extra[ 'desc' ];
+			$extra[ 'desc' ] = '';
 
 			$attrs_names = array('type','name','id','class','style','value','disabled','target');
 			if (!$extra['as_input']) {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
 				$value = (!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']);
-				$extra['desc'] = $icon . ( $extra['desc'] ?: $value );
-				return $_this->_row_html('<button'._attrs($extra, $attrs_names).'>'.$extra[ 'desc' ].'</button>', $extra, $r);
+				$button_text = $icon . ( $button_text ?: $value );
+				return $_this->_row_html('<button'._attrs($extra, $attrs_names).'>'.$button_text.'</button>', $extra, $r);
 			} else {
 				return $_this->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
 			}
