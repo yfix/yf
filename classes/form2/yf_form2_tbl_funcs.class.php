@@ -26,7 +26,7 @@ class yf_form2_tbl_funcs {
 			if ($extra['rewrite']) {
 				$link_url = url($link_url);
 			}
-			$icon = $extra['icon'] ? $extra['icon'] : _class('table')->CLASS_ICON_BTN;
+			$icon = $extra['icon'] ? $extra['icon'] : _class('table2')->CLASS_ICON_BTN;
 			$extra['href'] = $link_url;
 			$extra['class'] = $extra['class'] ?: $_this->CLASS_BTN_MINI. ($extra['class_add'] ? ' '.$extra['class_add'] : '');
 			$attrs_names = array('id','name','href','class','style','target','alt','title');
@@ -48,10 +48,10 @@ class yf_form2_tbl_funcs {
 		}
 		$extra['link_variants'] = array('edit_link','edit_url');
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = _class('table')->CLASS_ICON_EDIT;
+			$extra['icon'] = _class('table2')->CLASS_ICON_EDIT;
 		}
 		if (!isset($extra['class_add'])) {
-			$extra['class_add'] = _class('table')->CLASS_AJAX_EDIT;
+			$extra['class_add'] = _class('table2')->CLASS_AJAX_EDIT;
 		}
 		return $__this->tbl_link($name, $link, $extra, $replace);
 	}
@@ -65,10 +65,10 @@ class yf_form2_tbl_funcs {
 		}
 		$extra['link_variants'] = array('delete_link','delete_url');
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = _class('table')->CLASS_ICON_DELETE;
+			$extra['icon'] = _class('table2')->CLASS_ICON_DELETE;
 		}
 		if (!isset($extra['class_add'])) {
-			$extra['class_add'] = _class('table')->CLASS_AJAX_DELETE;
+			$extra['class_add'] = _class('table2')->CLASS_AJAX_DELETE;
 		}
 		return $__this->tbl_link($name, $link, $extra, $replace);
 	}
@@ -82,10 +82,10 @@ class yf_form2_tbl_funcs {
 		}
 		$extra['link_variants'] = array('clone_link','clone_url');
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = _class('table')->CLASS_ICON_CLONE;
+			$extra['icon'] = _class('table2')->CLASS_ICON_CLONE;
 		}
 		if (!isset($extra['class_add'])) {
-			$extra['class_add'] = _class('table')->CLASS_AJAX_CLONE;
+			$extra['class_add'] = _class('table2')->CLASS_AJAX_CLONE;
 		}
 		return $__this->tbl_link($name, $link, $extra, $replace);
 	}
@@ -99,10 +99,10 @@ class yf_form2_tbl_funcs {
 		}
 		$extra['link_variants'] = array('view_link','view_url');
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = _class('table')->CLASS_ICON_VIEW;
+			$extra['icon'] = _class('table2')->CLASS_ICON_VIEW;
 		}
 		if (!isset($extra['class_add'])) {
-			$extra['class_add'] = _class('table')->CLASS_AJAX_VIEW;
+			$extra['class_add'] = _class('table2')->CLASS_AJAX_VIEW;
 		}
 		return $__this->tbl_link($name, $link, $extra, $replace);
 	}
@@ -138,7 +138,7 @@ class yf_form2_tbl_funcs {
 				}
 				$extra['items'] = $_this->_pair_active_buttons;
 			}
-			return ' <a href="'.$link_url.'" class="'._class('table')->CLASS_CHANGE_ACTIVE.'">'.$extra['items'][$is_active].'</a> ';
+			return ' <a href="'.$link_url.'" class="'._class('table2')->CLASS_CHANGE_ACTIVE.'">'.$extra['items'][$is_active].'</a> ';
 		};
 		if ($__this->_chained_mode) {
 			$__this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
