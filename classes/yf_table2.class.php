@@ -25,6 +25,35 @@ class yf_table2 {
 			->footer_link('Add', './?object='.$_GET['object'].'&action=add');
 	*/
 
+	public $CLASS_TABLE_MAIN = 'table table-bordered table-striped table-hover';
+	public $CLASS_TOTAL_RECORDS = 'label label-info';
+	public $CLASS_FOOTER_LINKS = 'controls';
+	public $CLASS_HEADER_LINKS = 'controls';
+	public $CLASS_CONDENSED = 'table-condensed';
+	public $CLASS_NO_RECORDS = 'alert alert-info';
+	public $CLASS_HIGHLIGHT = 'badge-warning';
+	public $CLASS_TPL_ICON = 'icon icon-%name fa fa-%name';
+	public $CLASS_TPL_BADGE = 'badge badge-%name';
+	public $CLASS_TPL_LABEL = 'label label-%name';
+	public $CLASS_CHANGE_ACTIVE = 'change_active';
+	public $CLASS_BTN = 'btn btn-default btn-mini btn-xs';
+	public $CLASS_ICON_BTN = 'icon-tasks fa fa-tasks';
+	public $CLASS_ICON_EDIT = 'icon-edit fa fa-edit';
+	public $CLASS_ICON_DELETE = 'icon-trash fa fa-trash';
+	public $CLASS_ICON_ADD = 'icon-plus fa fa-plus';
+	public $CLASS_ICON_CLONE = 'icon-code-fork fa fa-code-fork';
+	public $CLASS_ICON_VIEW = 'icon-eye-open fa fa-eye';
+	public $CLASS_ICON_STAR = 'icon-star fa fa-star';
+	public $CLASS_ICON_SAVE = 'icon-save fa fa-save';
+	public $CLASS_AJAX_EDIT = 'ajax_edit';
+	public $CLASS_AJAX_DELETE = 'ajax_delete btn-danger';
+	public $CLASS_AJAX_ADD = 'ajax_add';
+	public $CLASS_AJAX_CLONE = 'ajax_clone';
+	public $CLASS_AJAX_VIEW = 'ajax_view';
+	public $CLASS_NO_AJAX = 'no_ajax';
+	public $CLASS_STAR_OK = 'star-ok';
+	public $CLASS_STAR_KO = 'star-ko';
+
 	/**
 	* Catch missing method call
 	*/
@@ -42,7 +71,12 @@ class yf_table2 {
 	* We cleanup object properties when cloning
 	*/
 	function __clone() {
+		$keep_prefix = 'CLASS_';
+		$keep_len = strlen($keep_prefix);
 		foreach ((array)get_object_vars($this) as $k => $v) {
+			if (substr($k, 0, $keep_len) === $keep_prefix) {
+				continue;
+			}
 			$this->$k = null;
 		}
 	}
@@ -185,7 +219,7 @@ class yf_table2 {
 	function _render_as_html(&$params, &$a, &$to_hide) {
 		$body = '';
 		if (MAIN_TYPE_ADMIN && !$params['no_pages'] && !$params['no_total'] && $a['total']) {
-			$body .= '<div class="label label-info" style="margin: 0 5px;">'.t('Total').':&nbsp;'.$a['total'].'</div>'.PHP_EOL;
+			$body .= '<div class="'.$this->CLASS_TOTAL_RECORDS.'" style="margin: 0 5px;">'.t('Total').':&nbsp;'.$a['total'].'</div>'.PHP_EOL;
 		}
 		$body .= (!$params['no_pages'] && $params['pages_on_top'] ? $a['pages'] : '').PHP_EOL;
 
@@ -201,14 +235,12 @@ class yf_table2 {
 				$body .= $this->_init_form()->form_begin($this->_form_params['name'], $this->_form_params['method'], $this->_form_params, $this->_form_params['replace']);
 			}
 			if ($header_links) {
-				$body .= '<div class="controls">'.implode(PHP_EOL, $header_links).'</div>';
+				$body .= '<div class="'.$this->CLASS_HEADER_LINKS.'">'.implode(PHP_EOL, $header_links).'</div>';
 			}
 			if ($params['condensed']) {
-				$params['table_class'] .= ' table-condensed';
+				$params['table_class'] .= ' '.$this->CLASS_CONDENSED;
 			}
-// TODO: convert code, using this into "table_class_add" instead of "table_class"
-#			$table_class = $params['table_class'] ?: 'table table-bordered table-striped table-hover';
-			$table_class = trim('table table-bordered table-striped table-hover '.$params['table_class']);
+			$table_class = trim($this->CLASS_TABLE_MAIN.' '.$params['table_class']);
 			$table_class .= ' '.$params['table_class_add'];
 
 			$table_attrs = (isset($params['table_attr']) ? ' '.$params['table_attr'] : '');
@@ -244,8 +276,8 @@ class yf_table2 {
 						$th_attrs .= $info['extra']['th_id'] ? ' id="'.$info['extra']['th_id'].'"' : '';
 					}
 					$th_attrs .= $info['extra']['width'] ? ' width="'.preg_replace('~[^[0-9]%]~ims', '', $info['extra']['width']).'"' : '';
-					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="icon icon-'.$params['th_icon_prepend'].' fa fa-'.$params['th_icon_prepend'].'"></i> ' : '');
-					$th_icon_append = ($params['th_icon_append'] ? ' <i class="icon icon-'.$params['th_icon_append'].' fa fa-'.$params['th_icon_append'].'"></i>' : '');
+					$th_icon_prepend = ($params['th_icon_prepend'] ? '<i class="'.str_replace('%name', $params['th_icon_prepend'], $this->CLASS_TPL_ICON).'"></i> ' : '');
+					$th_icon_append = ($params['th_icon_append'] ? ' <i class="'.str_replace('%name', $params['th_icon_append'], $this->CLASS_TPL_ICON).'"></i>' : '');
 					$tip = $info['extra']['header_tip'] ? '&nbsp;'.$this->_show_tip($info['extra']['header_tip'], $name) : '';
 					$title = isset($info['extra']['th_desc']) ? $info['extra']['th_desc'] : $info['desc'];
 					$body .= '<th'.$th_attrs.'>'. $th_icon_prepend. t($title). $th_icon_prepend. $tip. '</th>'.PHP_EOL;
@@ -273,12 +305,12 @@ class yf_table2 {
 			$body .= '</table>'.PHP_EOL;
 		} else {
 			if ($header_links) {
-				$body .= '<div class="controls">'.implode(PHP_EOL, $header_links).'</div>';
+				$body .= '<div class="'.$this->CLASS_HEADER_LINKS.'">'.implode(PHP_EOL, $header_links).'</div>';
 			}
 			if (isset($params['no_records_html'])) {
 				$body .= $params['no_records_html'].PHP_EOL;
 			} else {
-				$body .= ($params['no_records_simple'] ? t('No records') : '<div class="alert alert-info">'.t('No records').'</div>').PHP_EOL;
+				$body .= ($params['no_records_simple'] ? t('No records') : '<div class="'.$this->CLASS_NO_RECORDS.'">'.t('No records').'</div>').PHP_EOL;
 			}
 		}
 		$footer_links = array();
@@ -288,7 +320,7 @@ class yf_table2 {
 			$footer_links[] = $func($info, $params, $this).PHP_EOL;
 		}
 		if ($footer_links) {
-			$body .= '<div class="controls">'.implode(PHP_EOL, $footer_links).'</div>';
+			$body .= '<div class="'.$this->CLASS_FOOTER_LINKS.'">'.implode(PHP_EOL, $footer_links).'</div>';
 		}
 		if ($data && $this->_form_params) {
 			$body .= '</form>';
@@ -631,7 +663,7 @@ class yf_table2 {
 		if ($_extra['hl_filter'] && isset($this->_filter_data[$name])) {
 			$_kw = $this->_filter_data[$name];
 			if (is_string($_kw) && strlen($_kw)) {
-				$row[$name] = preg_replace('~('.preg_quote($_kw,'~').')~ims', '<b class="badge-warning">\1</b>', $row[$name]);
+				$row[$name] = preg_replace('~('.preg_quote($_kw,'~').')~ims', '<b class="'.$this->CLASS_HIGHLIGHT.'">\1</b>', $row[$name]);
 			}
 		}
 		if ($_extra['wordwrap']) {
@@ -712,12 +744,12 @@ class yf_table2 {
 		if ($extra['badge']) {
 			$badge = is_array($extra['badge']) && isset($extra['badge'][$field]) ? $extra['badge'][$field] : $extra['badge'];
 			if ($badge) {
-				$text = '<span class="badge badge-'.$badge.'">'.$text.'</span>';
+				$text = '<span class="'.str_replace('%name', $badge, $this->CLASS_TPL_BADGE).'">'.$text.'</span>';
 			}
 		} elseif ($extra['label']) {
 			$label = is_array($extra['label']) && isset($extra['label'][$field]) ? $extra['label'][$field] : $extra['label'];
 			if ($label) {
-				$text = '<span class="label label-'.$label.'">'.$text.'</span>';
+				$text = '<span class="'.str_replace('%name', $label, $this->CLASS_TPL_LABEL).'">'.$text.'</span>';
 			}
 		} elseif ($extra['class']) {
 			$css_class = is_array($extra['class']) && isset($extra['class'][$field]) ? $extra['class'][$field] : $extra['class'];
@@ -899,7 +931,7 @@ class yf_table2 {
 					if (!isset($extra['nowrap']) || $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
-					$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
+					$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN;
 					if ($extra['class_add']) {
 						$class .= ' '.$extra['class_add'];
 					}
@@ -1054,9 +1086,9 @@ class yf_table2 {
 				$extra['id'] = $extra['name'];
 				$color_ok = $extra['color_ok'] ?: 'yellow';
 				$color_ko = $extra['color_ko'] ?: '';
-				$class = $extra['class'] ?: 'icon-star fa fa-star';
-				$class_ok = $extra['class_ok'] ?: 'star-ok';
-				$class_ko = $extra['class_ko'] ?: 'star-ko';
+				$class = $extra['class'] ?: $_this->CLASS_ICON_STAR;
+				$class_ok = $extra['class_ok'] ?: $_this->CLASS_STAR_OK;
+				$class_ko = $extra['class_ko'] ?: $_this->CLASS_STAR_KO;
 				$max = $extra['max'] ?: 5;
 				$stars = $extra['stars'] ?: 5;
 				$input = isset($row[$extra['name']]) ? $row[$extra['name']] : $field;
@@ -1164,7 +1196,7 @@ class yf_table2 {
 					$no_text = 1;
 				}
 				$id = $override_id ? $override_id : 'id';
-				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks fa fa-tasks');
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $_this->CLASS_ICON_BTN);
 				$link = trim($params['link']. $instance_params['links_add']);
 				if (strlen($link)) {
 					$link = $_this->_process_link_params($link, $row, $extra + array('id' => $id));
@@ -1176,12 +1208,12 @@ class yf_table2 {
 					$link = url($link);
 				}
 				$extra['href'] = $link;
-				$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
+				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN;
 				if ($extra['class_add']) {
 					$class .= ' '.$extra['class_add'];
 				}
 				if ($extra['no_ajax'] || $instance_params['no_ajax']) {
-					$class .= ' no_ajax';
+					$class .= ' '.$_this->CLASS_NO_AJAX;
 				}
 				$extra['class'] = $class;
 				if ($extra['hidden_toggle']) {
@@ -1242,10 +1274,10 @@ class yf_table2 {
 			$extra = array();
 		}
 		if (!$extra['no_ajax']) {
-			$extra['class_add'] .= ' ajax_edit';
+			$extra['class_add'] .= ' '.$this->CLASS_AJAX_EDIT;
 		}
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-edit fa fa-edit';
+			$extra['icon'] = $this->CLASS_ICON_EDIT;
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1267,10 +1299,10 @@ class yf_table2 {
 			$extra = array();
 		}
 		if (!$extra['no_ajax']) {
-			$extra['class_add'] .= ' ajax_delete btn-danger';
+			$extra['class_add'] .= ' '.$this->CLASS_AJAX_DELETE;
 		}
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-trash fa fa-trash';
+			$extra['icon'] = $this->CLASS_ICON_DELETE;
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1292,10 +1324,10 @@ class yf_table2 {
 			$extra = array();
 		}
 		if (!$extra['no_ajax']) {
-			$extra['class_add'] .= ' ajax_clone';
+			$extra['class_add'] .= ' '.$this->CLASS_AJAX_CLONE;
 		}
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-code-fork fa fa-code-fork';
+			$extra['icon'] = $this->CLASS_ICON_CLONE;
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1317,10 +1349,10 @@ class yf_table2 {
 			$extra = array();
 		}
 		if (!$extra['no_ajax']) {
-			$extra['class_add'] .= ' ajax_view';
+			$extra['class_add'] .= ' '.$this->CLASS_AJAX_VIEW;
 		}
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-eye-open fa fa-eye';
+			$extra['icon'] = $this->CLASS_ICON_VIEW;
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1365,7 +1397,7 @@ class yf_table2 {
 				}
 				$values = $_this->_pair_active;
 				$val = $values[intval((bool)$row['active'])];
-				return !$extra['disabled'] ? '<a href="'.$link.'" title="'.$params['name'].'" class="change_active">'. $val. '</a> ' : $val;
+				return !$extra['disabled'] ? '<a href="'.$link.'" title="'.$params['name'].'" class="'.$_this->CLASS_CHANGE_ACTIVE.'">'. $val. '</a> ' : $val;
 			},
 		);
 		return $this;
@@ -1396,13 +1428,13 @@ class yf_table2 {
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
-				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-tasks fa fa-tasks');
-				$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $_this->CLASS_ICON_BTN);
+				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN;
 				if ($extra['class_add']) {
 					$class .= ' '.$extra['class_add'];
 				}
 				if ($extra['no_ajax'] || $instance_params['no_ajax']) {
-					$class .= ' no_ajax';
+					$class .= ' '.$_this->CLASS_NO_AJAX;
 				}
 				return '<a href="'.trim($link).'" class="'.trim($class).'"><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
 			}
@@ -1442,10 +1474,10 @@ class yf_table2 {
 			$extra = array();
 		}
 		if (!$extra['no_ajax']) {
-			$extra['class_add'] .= ' ajax_add';
+			$extra['class_add'] .= ' '.$this->CLASS_AJAX_ADD;
 		}
 		if (!isset($extra['icon'])) {
-			$extra['icon'] = 'icon-plus fa fa-plus';
+			$extra['icon'] = $this->CLASS_ICON_ADD;
 		}
 		return $this->footer_link($name, $link, $extra);
 	}
@@ -1473,8 +1505,8 @@ class yf_table2 {
 					$value = '';
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
-				$icon = ($extra['icon'] ? ' '.$extra['icon'] : 'icon-save fa fa-save');
-				$class = ($extra['class'] ?: $extra['a_class']) ?: 'btn btn-default btn-mini btn-xs';
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $_this->CLASS_ICON_SAVE);
+				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN;
 
 				return '<button type="submit" name="'.trim($value).'" class="'.trim($class).'"><i class="'.trim($icon).'"></i> '. t($value).'</button>';
 			}
