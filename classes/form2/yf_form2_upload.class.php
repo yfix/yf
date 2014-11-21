@@ -10,23 +10,22 @@ class yf_form2_upload {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'image');
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function( $_extra, $_replace, $_this ) {
-			require_css(array(
-				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/css/jquery.fileupload.css',
-				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/css/jquery.fileupload-ui.css',
+			css(array(
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/css/jquery.fileupload.css',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/css/jquery.fileupload-ui.css',
 			));
-			require_js( array(
-				'//blueimp.github.io/JavaScript-Load-Image/js/load-image.min.js',
-				'//blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js',
-				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.iframe-transport.js',
-				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload.js',
-				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-ui.js',
-				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-process.js',
-				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-image.js',
-				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-audio.js',
-				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-video.js',
-				'//cdn.rawgit.com/blueimp/jQuery-File-Upload/9.5.7/js/jquery.fileupload-validate.js',
+			js(array(
+				'//cdn.rawgit.com/yfix/JavaScript-Load-Image/js/load-image.all.min.js',
+				'//cdn.rawgit.com/yfix/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.iframe-transport.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-ui.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-process.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-image.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-audio.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-video.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-validate.js',
 			));
-
 			$r = array(
 				'item'   => $_replace,
 				'option' => $_extra,
