@@ -6,8 +6,6 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 * tab_start()
 * fieldset_start()
 * row_start()
-* _attrs()
-* _htmlchars()
 * _dd_row_html()
 * _input_assing_params_from_validate()
 */
