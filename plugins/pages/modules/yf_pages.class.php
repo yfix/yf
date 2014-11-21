@@ -48,11 +48,11 @@ class yf_pages {
 	/**
 	*/
 	function _init() {
-		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
-		require_js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
-		require_js('<script>hljs.initHighlightingOnLoad();</script>');
-		require_css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
-		require_css('section.page-contents pre, pre.prettyprint {
+		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
+		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
+		js('<script>hljs.initHighlightingOnLoad();</script>');
+		css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
+		css('section.page-contents pre, pre.prettyprint {
 			background-color: transparent;
 			border: 0;
 			font-family: inherit;
