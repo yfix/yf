@@ -136,4 +136,100 @@ class yf_assets {
 	public function add_asset($content, $params = array()) {
 		return $this->add($content, 'asset', $params);
 	}
+
+	/**
+	*/
+	public function add_js($content, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function add_css($content, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function add_less($content, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function add_sass($content, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function add_img($content, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function add_font($content, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_add() {
+// TODO
+	}
+
+	/**
+	*/
+	public function filters_process_css_urls() {
+// TODO
+	}
+
+	/**
+	*/
+	public function filters_apply() {
+// TODO
+	}
+
+	/**
+	*/
+	public function save_to() {
+// TODO
+	}
+
+	/**
+	*/
+	public function upload_to() {
+// TODO
+	}
+
+	/**
+	*/
+	public function show_js() {
+// TODO
+	}
+
+	/**
+	*/
+	public function show_css() {
+// TODO
+	}
+
+	/**
+	*/
+	public function show_img() {
+// TODO
+	}
+
+	/**
+	*/
+	public function show_font() {
+// TODO
+	}
+
+	/**
+	*/
+	public function combine() {
+// TODO
+	}
 }
