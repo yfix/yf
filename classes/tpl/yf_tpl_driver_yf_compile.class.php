@@ -43,7 +43,8 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'echo _class(\'tpl\')->_i18n_wrapper(stripslashes(\''.$str.'\'), $replace);'. $end;
 			},
 			'/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
-				return $start. 'echo constant(\''.trim($m[1]).'\');'. $end;
+				$c = trim($m[1]);
+				return $start. 'echo (defined(\''.$c.'\') ? constant(\''.$c.'\') : null);'. $end;
 			},
 			'/\{conf\(\s*["\']{0,1}([a-z_][a-z0-9_:]+?)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
 				return $start. 'echo conf(\''.$m[1].'\');'. $end;
@@ -266,9 +267,11 @@ class yf_tpl_driver_yf_compile {
 			$cond = substr($cond, 1);
 			$tmp_len--;
 		}
-		// Array item
+		// Number, also support for decimals and floats
 		if (is_numeric($cond)) {
-			$cond = '\''.$cond.'\'';
+			if (!ctype_digit($cond)) {
+				$cond = '\''.$cond.'\'';
+			}
 		// Simple number or string, started with '%'
 		} elseif ($tmp_first === '%' && $tmp_len > 1) {
 			$cond = '\''.addslashes(substr($cond, 1)).'\'';
@@ -289,8 +292,8 @@ class yf_tpl_driver_yf_compile {
 			$cond = 'conf(\''.substr($cond, strlen('conf.')).'\')';
 		// Constant
 		} elseif (strpos($cond, 'const.') === 0) {
-			$cond = substr($cond, strlen('const.'));
-			$cond = '(defined(\''.$cond.'\') ? constant(\''.$cond.'\') : \'\')';
+			$cond = addslashes(substr($cond, strlen('const.')));
+			$cond = '(defined(\''.$cond.'\') ? constant(\''.$cond.'\') : null)';
 		// Global array element or sub array
 		} elseif (false !== strpos($cond, '.')) {
 			$cond = $this->_cond_sub_array($cond);
@@ -302,7 +305,7 @@ class yf_tpl_driver_yf_compile {
 				$cond = '$replace[\''.$cond.'\']';
 			}
 		}
-		return strlen($cond) ? $cond : '\'\'';
+		return strlen($cond) ? $cond : 'null';
 	}
 
 	/**
