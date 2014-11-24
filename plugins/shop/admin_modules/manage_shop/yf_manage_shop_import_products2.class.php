@@ -1078,6 +1078,11 @@ class yf_manage_shop_import_products2 {
 		return( $_class->$_method( $field, $value, $action ) );
 	}
 
+	protected function _field_to_sql__url( $field, $value, $action = null ) {
+		$value = common()->_propose_url_from_name( $value );
+		return( array( $field, $value ) );
+	}
+
 	protected function _field_to_sql__price( $field, $value, $action = null ) {
 		$value = number_format( $value, 2, '.', '' );
 		return( array( $field, $value ) );
@@ -1159,6 +1164,10 @@ class yf_manage_shop_import_products2 {
 		$test_items = &$test[ 'items' ];
 		// get fields, keys
 		$fields_by_name = array_flip( $fields );
+		// create url by name
+		if( isset( $fields_by_name[ 'name' ] ) ) {
+			$fields_by_name[ 'url' ] = $fields_by_name[ 'name' ];
+		}
 		unset( $fields_by_name[ 0 ] );
 		$fields_keys      = $fields_by_name;
 		$fields_values    = $fields_by_name;
@@ -1227,7 +1236,6 @@ class yf_manage_shop_import_products2 {
 			}
 			$sql_item && $data[] = $sql_item;
 		}
-		// var_dump( $data ); exit;
 		// update db
 		if( empty( $data ) ) {
 			$status = false;
@@ -1383,6 +1391,10 @@ class yf_manage_shop_import_products2 {
 
 	function _data_ng( $json = false ) {
 		$cache = &$this->cache;
+		$_url = array(
+			'product_view' =>  url_user( array( 'object' => 'shop',        'action' => 'product',      'id' => 0 ) ),
+			'product_edit' => url_admin( array( 'object' => 'manage_shop', 'action' => 'product_edit', 'id' => 0 ) ),
+		);
 		$_upload_list             = $this->upload_list;
 		$_upload_status           = $this->upload_status;
 		$_import_field            = $this->import_field;
@@ -1424,6 +1436,7 @@ class yf_manage_shop_import_products2 {
 			);
 		}
 		$result = array(
+			'_url'                     => $_url,
 			'_upload_status'           => $_upload_status,
 			'_upload_list'             => $_upload_list,
 			'_import_field'            => $_import_field,
