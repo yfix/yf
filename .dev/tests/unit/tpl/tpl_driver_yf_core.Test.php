@@ -539,6 +539,8 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->_callme_results = array();
 		$this->assertEquals('', self::_tpl('{execute(unittest1,_callme;k1=v1)}{exec_last(unittest1,_callme;k2=v2)}'));
 		$this->assertSame(array('k1'=>'v1','k2'=>'v2'), $this->_callme_results);
+
+		unset(main()->modules['unittest1']);
 	}
 	public function _callme2($a) {
 		if (!is_array($this->_callme2_results)) {
@@ -571,5 +573,21 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$result = _class('unittest2')->_callme2(array());
 		$this->assertSame($result, array());
 		$this->assertSame(' no rows ', self::_tpl('{foreach_exec(unittest2,_callme2)} _{_key}={_val}_ {elseforeach} no rows {/foreach_exec}'));
+
+		unset(main()->modules['unittest2']);
+	}
+	public function test_class_properties() {
+		// Some magick here with DI container, we link to this class :-)
+		main()->modules['unittest3'] = $this;
+		$this->data1 = 'data1_val';
+		$this->data2 = ' data2_val ';
+		$this->data3 = array('k1' => 'v1', 'k2' => ' v2 ');
+		$this->assertSame('data1_val  data2_val ', self::_tpl('{unittest3.data1} {unittest3.data2}'));
+		$this->assertSame('DATA1_VAL DATA2_VAL', self::_tpl('{unittest3.data1|strtoupper} {unittest3.data2|trim|strtoupper}'));
+		$this->assertSame('DATA1_VAL DATA2_VAL', self::_tpl('{unittest3.data1|strtoupper} {unittest3.data2|trim|strtoupper}{unittest3.data_not_exists}'));
+		$this->assertSame('DATA1_VAL DATA2_VAL', self::_tpl('{unittest3.data1|strtoupper} {unittest3.data2|trim|strtoupper}{unittest3.data_not_exists|trim}'));
+#		$this->assertSame('v1  v2 ', self::_tpl('{unittest2.data.k1} {unittest2.data.k2}'));
+#		$this->assertSame('V1 V2', self::_tpl('{unittest2.data.k1|strtoupper} {unittest2.data.k2|trim}'));
+		unset(main()->modules['unittest3']);
 	}
 }
