@@ -190,6 +190,9 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		define('MY_TEST_CONST_2', '43');
 		$this->assertEquals('GOOD', self::_tpl( '{if("const.MY_TEST_CONST_1" ne "")}GOOD{else}BAD{/if}' ));
 		$this->assertEquals('GOOD', self::_tpl( '{if("const.MY_NOT_EXISTING_CONST" eq "")}GOOD{else}BAD{/if}' ));
+			$this->assertEquals('GOOD', self::_tpl( '{if(const.MY_NOT_EXISTING_CONST eq 0)}GOOD{else}BAD{/if}' ));
+			$this->assertEquals('GOOD', self::_tpl( '{if_empty(const.MY_NOT_EXISTING_CONST)}GOOD{else}BAD{/if}' ));
+			$this->assertEquals('GOOD', self::_tpl( '{if_not_isset(const.MY_NOT_EXISTING_CONST)}GOOD{else}BAD{/if}' ));
 		$this->assertEquals('GOOD', self::_tpl( '{if(const.MY_NOT_EXISTING_CONST eq "")}GOOD{else}BAD{/if}' ));
 		$this->assertEquals('GOOD', self::_tpl( '{if("const.MY_NOT_EXISTING_CONST" ne "")}BAD{else}GOOD{/if}' ));
 		$this->assertEquals('GOOD', self::_tpl( '{if(const.MY_NOT_EXISTING_CONST ne "")}BAD{else}GOOD{/if}' ));
@@ -268,7 +271,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 2). <small>(key: Two)</small><span style="color: green;">name: Second<br />, num_items: 4<br /></span>, <br />
 3). <small>(key: Three)</small><span style="color: blue;">name: Third<br />, num_items: 4<br /></span>, <br />
 4). <small>(key: Four)</small><span style="color: green;">name: Fourth<br />, num_items: 4<br /></span>
-'		, self::_tpl( 
+'		, self::_tpl(
 '{foreach(test_array_2)}
 {_num}). <small>(key: {_key})</small>{if(_first eq 1)}<b style="color:red;">First!!!</b><br />{/if}
 <span style="{if(_even eq 1)}color: blue;{/if}{if(_odd eq 1)}color: green;{/if}">name: {#.name}<br />, num_items: {_total}<br /></span>{if(_last ne 1)}, <br />{/if}'.PHP_EOL.'
