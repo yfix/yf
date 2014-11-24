@@ -21,6 +21,19 @@ class yf_assets {
 	}
 
 	/**
+	*/
+	public function __clone() {
+		return $this->clean_all();
+	}
+
+	/**
+	*/
+	public function clean_all() {
+		$this->content = array();
+		$this->assets = array();
+	}
+
+	/**
 	* $content: string/array
 	* $type: = auto|asset|url|file|inline|raw
 	*/
