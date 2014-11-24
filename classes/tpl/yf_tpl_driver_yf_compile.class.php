@@ -131,11 +131,11 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'echo '.$m[1].'(\''.$m[3].'\', _attrs_string2array(\''.$m[2].'\'));'. $end;
 			},
 			// Custom function (compatible with non-compile for extending tpl engine)
-			$pattern = '/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
+			'/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo $this->call_custom_pattern(\''.$m['name'].'\', \''.addslashes($m['args']).'\', null, $replace, $name);'. $end;
 			},
 			// Custom section (compatible with non-compile for extending tpl engine)
-			$pattern = '/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<body>.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
+			'/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<body>.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo $this->call_custom_pattern(\''.$m['name'].'\', \''.addslashes($m['args']).'\', \''.addslashes($m['body']).'\', $replace, $name);'. $end;
 			},
 			// DEBUG_MODE patterns
