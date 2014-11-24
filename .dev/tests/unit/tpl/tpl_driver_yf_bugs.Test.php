@@ -133,7 +133,7 @@ class tpl_driver_yf_bugs_test extends tpl_abstract {
 		$data->key1 = 'val1';
 		$data->form = form()->text('name');
 
-		$this->assertEquals('{data.form}', self::_tpl('{data.form}', array()));
+		$this->assertEquals('', self::_tpl('{data.form}', array()));
 		$this->assertNotEquals('{data.form}', self::_tpl('{data.form}', array('data' => $data)));
 		$this->assertGreaterThan( 100, strlen(self::_tpl('{data.form}', array('data' => $data))) );
 	}
