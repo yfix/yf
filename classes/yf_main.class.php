@@ -1830,6 +1830,24 @@ class yf_main {
 	}
 
 	/**
+	*/
+	function is_logged_in() {
+		return MAIN_TYPE_ADMIN ? $this->ADMIN_ID : $this->USER_ID;
+	}
+
+	/**
+	*/
+	function is_spider() {
+		return (bool)conf('IS_SPIDER');
+	}
+
+	/**
+	*/
+	function is_https() {
+		return isset($_SERVER['HTTPS']) || isset($_SERVER['SSL_PROTOCOL']);
+	}
+
+	/**
 	* Return class name of the object, stripping all YF-related prefixes
 	* Needed to ensure singleton pattern and extending classes with same name
 	*/
