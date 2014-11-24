@@ -59,6 +59,7 @@ class yf_manage_shop_import_products2 {
 		0                   => 'не использовать (0)',
 		'id'                => 'идентификатор (id)',
 		'name'              => 'название (name)',
+		'description'       => 'описание (description)',
 		'price'             => 'цена (price)',
 		'price_raw'         => 'себестоимость (price_raw)',
 		'articul'           => 'артикул (articul)',
@@ -73,6 +74,7 @@ class yf_manage_shop_import_products2 {
 	public $import_field_autodetect = array(
 		'id'                => '(идентификатор)|(id)',
 		'name'              => '(название)|(наименование)|(name)',
+		'description'       => '(описание)|(description)',
 		'price'             => '(цена)|(price)',
 		'price_raw'         => '(себестоимость)|(price_raw)',
 		'articul'           => '(артикул)|(articul)',
@@ -812,6 +814,26 @@ class yf_manage_shop_import_products2 {
 			if( !$valid ) {
 				$status_message = 'название товара менее '. $length .' символов';
 			}
+		}
+		$exists = null;
+		$status = $valid;
+		$status_message = $status ? null : $status_message;
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
+	protected function _field_test__description( $value, $action ) {
+		$value  = trim( $value );
+		$valid  = true;
+		$length = 3;
+		$value && $value = mb_strlen( $value, 'UTF-8' ) >= $length;
+		if( !$valid ) {
+			$status_message = 'описание товара менее '. $length .' символов';
 		}
 		$exists = null;
 		$status = $valid;
