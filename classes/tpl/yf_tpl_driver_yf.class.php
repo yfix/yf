@@ -295,7 +295,8 @@ class yf_tpl_driver_yf {
 			return $string;
 		}
 		// Need to optimize complex replace arrays and templates not containing sub replaces
-		$has_sub_pairs = preg_match('~\{[a-z0-9_-]+\.[a-z0-9_-]+\}~ims', $string);
+		$regex_sub_pairs = '~\{([a-z0-9_-]+)\.([a-z0-9_-]+)\}~ims';
+		$has_sub_pairs = preg_match($regex_sub_pairs, $string);
 		// Prepare pairs array of simple string replaces
 		$pairs = array();
 		$cleanup_keys = array();
@@ -337,6 +338,12 @@ class yf_tpl_driver_yf {
 		}
 		if ($pairs) {
 			$string = str_replace(array_keys($pairs), $pairs, $string);
+		}
+		// Modules properties direct access, example: {main.USER_ID}
+		if (strpos($string, '{') !== false) {
+			$string = preg_replace_callback($regex_sub_pairs, function($m) use ($replace, $name) {
+				return _class_safe($m[1])->$m[2];
+			}, $string);
 		}
 		// Cleanup, using regex pairs
 		if ($cleanup_keys) {
@@ -493,7 +500,11 @@ class yf_tpl_driver_yf {
 			},
 			// Second level variables with filters. Examples: {sub1.var1|trim}
 			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function($m) use ($replace, $name, $tpl) {
-				return $tpl->_process_var_filters($replace[$m[1]][$m[2]], $m[3]);
+				$val = $replace[$m[1]][$m[2]];
+				if (!isset($val)) {
+					$class_prop = _class_safe($m[1])->$m[2];
+				}
+				return $tpl->_process_var_filters($val ?: $class_prop, $m[3]);
 			},
 		);
 		// Evaluate custom PHP code pattern. Examples: {eval_code(print_r(_class('forum')))}
