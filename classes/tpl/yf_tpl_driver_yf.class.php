@@ -717,7 +717,11 @@ class yf_tpl_driver_yf {
 			}
 			// Value from $replace array (DO NOT replace 'array_key_exists()' with 'isset()' !!!)
 			if (is_numeric($val)) {
-				$a = '\''.$val.'\'';
+				if (ctype_digit($val)) {
+					$a = $val;
+				} else {
+					$a = '\''.$val.'\'';
+				}
 			// Simple number or string, started with '%'
 			} elseif ($tmp_first === '%' && $tmp_len > 1) {
 				$a = '\''.addslashes(substr($val, 1)).'\'';
@@ -726,7 +730,7 @@ class yf_tpl_driver_yf {
 					$a = get_object_vars($replace[$val]);
 				}
 				if (is_array($replace[$val])) {
-					$a = $replace[$val] ? '(\'1\')' : '(\'\')';
+					$a = $replace[$val] ? '\'1\'' : 'null';
 				} else {
 					$a = '$replace[\''.$val.'\']';
 				}
@@ -742,10 +746,8 @@ class yf_tpl_driver_yf {
 				$a = 'conf(\''.substr($val, strlen('conf.')).'\')';
 			// Constant
 			} elseif (false !== strpos($val, 'const.')) {
-				$a = substr($val, strlen('const.'));
-				if (!defined($a)) {
-					$a = '';
-				}
+				$c = addslashes(substr($val, strlen('const.')));
+				$a = '(defined(\''.$c.'\') ? constant(\''.$c.'\') : null)';
 			// Global array element or sub array
 			} elseif (false !== strpos($val, '.')) {
 				$a = $this->_cond_sub_array($val, $replace, $for_right);
@@ -760,7 +762,7 @@ class yf_tpl_driver_yf {
 				$prepared_array[] = $a;
 			}
 		}
-		return count($prepared_array) ? implode(' ', $prepared_array) : '\'\'';
+		return count($prepared_array) ? implode(' ', $prepared_array) : 'null';
 	}
 
 	/**
