@@ -14,6 +14,13 @@ class yf_assets {
 	}
 
 	/**
+	* Direct call to object as to string is not allowed, return empty string instead
+	*/
+	function __toString() {
+		return '';
+	}
+
+	/**
 	* $content: string/array
 	* $type: = auto|asset|url|file|inline|raw
 	*/
