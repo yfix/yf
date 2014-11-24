@@ -166,4 +166,10 @@ class tpl_driver_yf_bugs_test extends tpl_abstract {
 		$this->assertEquals(' ok ', self::_tpl( '{if(var1 eq var2)} ok {else} ko {/if}', $a ));
 		$this->assertEquals(' ok ', self::_tpl( '{if(var1 ne "")} ok {else} ko {/if}', $a ));
 	}
+	public function test_bug_14() {
+		$this->assertFalse(defined('MY_NOT_EXISTING_CONST'));
+		$this->assertEquals('GOOD', self::_tpl( '{if(const.MY_NOT_EXISTING_CONST eq 0)}GOOD{else}BAD{/if}' ));
+		$this->assertEquals('GOOD', self::_tpl( '{if_empty(const.MY_NOT_EXISTING_CONST)}GOOD{else}BAD{/if}' ));
+		$this->assertEquals('GOOD', self::_tpl( '{if_not_isset(const.MY_NOT_EXISTING_CONST)}GOOD{else}BAD{/if}' ));
+	}
 }
