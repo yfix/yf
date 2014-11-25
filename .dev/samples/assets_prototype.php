@@ -3,7 +3,7 @@
 $bundles = array(
 	'css' => array(
 		'jquery-ui'	=> array(
-			'url' => '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.1/css/jquery-ui.min.css',
+			'url' => '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.css',
 			'version' => '1.11.1',
 		),
 		'angular-ui'=> array(
@@ -117,7 +117,7 @@ class assets {
 
 $assets = new assets($bundles);
 $assets
-	->add_js('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.1/css/jquery-ui.min.css')
+	->add_js('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.css')
 	->add_js(dirname(__DIR__).'/assets_cache/bootswatch/2.3.2/bootstrap.min.js')
 	->add_js('../assets_cache/bootswatch/2.3.2/bootstrap.min.js')
 	->add_js('<script>alert("hello world")</script>')
@@ -128,7 +128,7 @@ echo $assets->outpub_js();
 
 /*
 $assets->add_js(array(
-	'//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.1/css/jquery-ui.min.css',
+	'//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.css',
 	dirname(__DIR__).'/assets_cache/bootswatch/2.3.2/bootstrap.min.js',
 	'../assets_cache/bootswatch/2.3.2/bootstrap.min.js',
 	'<script>alert("hello world")</script>',
