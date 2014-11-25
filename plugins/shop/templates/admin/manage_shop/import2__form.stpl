@@ -137,12 +137,11 @@
 			ng-mouseover  = "upload_list_hover=true"
 			ng-mouseleave = "upload_list_hover=false"
 		>
-			<td class="action" ng-click = "UploadApi.item__get( i )">
-				{{i.file_name}}
+			<td class="action" ng-click = "UploadApi.item__get( i )" ng-bind="i.file_name">
 			</td>
-			<td>{{i._file_size}}</td>
-			<td>{{i._time}}</td>
-			<td>{{i._status}}</td>
+			<td ng-bind="i._file_size"></td>
+			<td ng-bind="i._time"></td>
+			<td ng-bind="i._status"></td>
 			<td>
 				<span class="btn btn-small btn-success" ng-click="UploadApi.item__get( i )">Получить</span>
 				<span class="btn btn-small btn-danger" ng-click="UploadApi.item__remove( i )">Удалить</span>
@@ -165,9 +164,9 @@
 .import_field {
 	min-width : 10em;
 }
-.import_key {
+{{-- .import_key {
 	width     : 1em;
-}
+} --}}
 .supplier,
 .category,
 .import_action {
@@ -195,9 +194,9 @@ ul.select2-result-single {
 
 <table class="item_data table table-striped" ng-show="item_data">
 	<tr>
-		<th colspan="{{item_data.cols+1}}">
+		<th colspan="{{ item_data.cols+1 }}">
 			<span>
-			Файл: {{item_data.file}} ({{item_data.rows}})
+			Файл: {{ item_data.file }} ({{ item_data.rows }})
 			</span>
 			<span style="width: 10em; margin: 0 2em;">
 				<input style="width: 10em; margin: 0;" type="text" ng-model="item_filter">
@@ -230,7 +229,7 @@ ul.select2-result-single {
 					ng-model  = "item_data.supplier_selected"
 					on-select = "update_supplier( $item )"
 				>
-					<ui-select-match placeholder="выберите поставщика...">{{$select.selected.title}}</ui-select-match>
+					<ui-select-match placeholder="выберите поставщика...">{{ $select.selected.title }}</ui-select-match>
 					<ui-select-choices repeat="supplier in data._supplier_array | filter: $select.search">
 						<div ng-bind-html="supplier.title | highlight: $select.search"></div>
 					</ui-select-choices>
@@ -239,7 +238,7 @@ ul.select2-result-single {
 					ng-model  = "item_data.category_selected"
 					on-select = "update_category( $item )"
 				>
-					<ui-select-match placeholder="выберите категорию...">{{$select.selected.title}}</ui-select-match>
+					<ui-select-match placeholder="выберите категорию...">{{ $select.selected.title }}</ui-select-match>
 					<ui-select-choices repeat="category in data._category_array | filter: $select.search">
 						<div ng-bind-html="category.title | highlight: $select.search"></div>
 					</ui-select-choices>
@@ -254,7 +253,7 @@ ul.select2-result-single {
 					{{-- reset-search-input="false" --}}
 					{{-- search-enabled="false" --}}
 				>
-					<ui-select-match placeholder="выберите действие...">{{$select.selected.value}}</ui-select-match>
+					<ui-select-match placeholder="выберите действие...">{{ $select.selected.value }}</ui-select-match>
 					<ui-select-choices repeat="action in data._import_action_array | filter: $select.search"
 						{{-- refresh="update_import_action( $select )" --}}
 						{{-- refresh-delay="0" --}}
@@ -341,7 +340,7 @@ ul.select2-result-single {
 			статус
 			<div ng-show="item_data.test">
 				<span class="btn btn-small"
-					title    = "всего: {{item_data.test.count}}"
+					title    = "всего: {{ item_data.test.count }}"
 					ng-class = "{ active: item_filter_status == undefined }"
 					ng-show  = "item_data.test.count > 0"
 					ng-click = "item_filter_status = undefined"
@@ -349,10 +348,10 @@ ul.select2-result-single {
 					<i
 						ng-show="item_filter_status == undefined"
 						class="fa fa-pie-chart"></i>
-					({{item_data.test.count}})
+					({{ item_data.test.count }})
 				</span>
 				<span class="btn btn-small btn-success"
-					title    = "успешно: {{item_data.test.count_valid}}"
+					title    = "успешно: {{ item_data.test.count_valid }}"
 					ng-class = "{ active: item_filter_status == true }"
 					ng-show  = "item_data.test.count_valid > 0"
 					ng-click = "item_filter_status = true"
@@ -360,10 +359,10 @@ ul.select2-result-single {
 					<i
 						ng-show="item_filter_status == true"
 						class="fa fa-check"></i>
-					({{item_data.test.count_valid}})
+					({{ item_data.test.count_valid }})
 				</span>
 				<span class="btn btn-small btn-danger"
-					title    = "неуспешно: {{item_data.test.count_invalid}}"
+					title    = "неуспешно: {{ item_data.test.count_invalid }}"
 					ng-class = "{ active: item_filter_status == false }"
 					ng-show  = "item_data.test.count_invalid > 0"
 					ng-click = "item_filter_status = false"
@@ -371,7 +370,7 @@ ul.select2-result-single {
 					<i
 						ng-show="item_filter_status == false"
 						class="fa fa-exclamation"></i>
-					({{item_data.test.count_invalid}})
+					({{ item_data.test.count_invalid }})
 				</span>
 			</div>
 		</th>
@@ -394,7 +393,7 @@ ul.select2-result-single {
 		</td>
 	</tr>
 	<tr>
-		<th colspan="{{item_data.cols+1}}">
+		<th colspan="{{ item_data.cols+1 }}">
 			<label class="pull-left">
 				страница:&nbsp;
 				<span class="btn" ng-click="Pagination.first()" ng-hide="Pagination.page==1"><i class="fa fa-angle-double-left"></i></span>
