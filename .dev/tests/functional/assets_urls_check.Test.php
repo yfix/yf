@@ -7,8 +7,9 @@ class assets_urls_check_test extends PHPUnit_Framework_TestCase {
 		if (substr($url, 0, 2) === '//') {
 			$url = 'http:'.$url;
 		}
-		exec('curl -4 -f --connect-timeout 3 --max-time 5 "'.$url.'" 2>/dev/null | wc -c', $out);
-		return $out[0];
+		return strlen(file_get_contents($url, false, stream_context_create(array('http' => array('timeout' => 5)))));
+#		exec('curl -4 -f --connect-timeout 3 --max-time 5 "'.$url.'" 2>/dev/null | wc -c', $out);
+#		return $out[0];
 	}
 	public function test_do() {
 		$data = require YF_PATH.'.dev/scripts/assets/assets_urls_collect.php';
