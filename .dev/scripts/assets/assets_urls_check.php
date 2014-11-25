@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require __DIR__.'/assets_urls_collect.php';
+$data = require __DIR__.'/assets_urls_collect.php';
 
 function get_url_size($url) {
 	if (substr($url, 0, 2) === '//') {
@@ -11,9 +11,9 @@ function get_url_size($url) {
 	return $out[0];
 }
 
-foreach ($urls as $url) {
+foreach ($data['urls'] as $url) {
 	$size = get_url_size($url);
-	foreach ($url_paths[$url] as $path) {
+	foreach ($data['paths'][$url] as $path) {
 		echo ($size > 50 ? 'GOOD' : 'BAD').' | '.$url.' | '.$path.' | '.$size. PHP_EOL;
 	}
 }
