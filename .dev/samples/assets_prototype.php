@@ -77,10 +77,6 @@ $bundles = array(
 			'jquery-ui',
 		),
 	),
-	'font-avesome4' => array(
-		'css' => array(
-		),
-	),
 );
 
 class assets {
@@ -140,3 +136,17 @@ $assets->add_js(array(
 	'jquery',
 ));
 */
+# TODO: versioning
+# TODO: custom tags for IE fixes
+# TODO: several collections support (main, debug, inline, header, footer, page-specific)
+# TODO: minification
+# TODO: gzip
+# TODO: custom filters
+# TODO: data-uri with base64
+# TODO: images optimizing
+# TODO: images sprites
+# TODO: sass
+# TODO: less
+# TODO: fonts
+# TODO: check existing urls for alive
+# TODO: upload generated content (S3, Git, FTP)
