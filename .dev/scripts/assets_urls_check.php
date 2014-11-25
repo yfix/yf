@@ -26,15 +26,23 @@ foreach ((array)$matches as $k => $v) {
 		$matches[] = preg_replace($min_regex, '', $v);
 	}
 }
+$urls = array();
+$url_paths = array();
 foreach ((array)$matches as $v) {
 	$path = substr($v, 0, strpos($v, ':'));
 	if (!preg_match('~(?P<url>//(cdn|netdna).+?\.(js|css))[\'"\{]+~ims', trim(substr($v, strlen($path.':'))), $m)) {
 		continue;
 	}
 	$url = trim($m['url']);
-	if (!strlen($url)) {
+	if (!strlen($url) || false !== strpos($url, '$')) {
 		continue;
 	}
+	$urls[$url] = $url;
+	$url_paths[$url][$path] = $path;
+}
+foreach ($urls as $url) {
 	$size = get_url_size($url);
-	echo ($size > 50 ? 'GOOD' : 'BAD').' | '.$url.' | '.$path.' | '.$size. PHP_EOL;
+	foreach ($url_paths[$url] as $path) {
+		echo ($size > 50 ? 'GOOD' : 'BAD').' | '.$url.' | '.$path.' | '.$size. PHP_EOL;
+	}
 }
