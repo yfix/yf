@@ -36,13 +36,13 @@ $(function(){
 			yf_ajax_validation_icon_update(_this, result);
 //			console.log(result)
 		} else {
-			var validate_rules_arr = {}
+			var validate_rules_arr = { }
 			// is_unique=user.login&other_rule=other_param
 			$.each(validate_rules_str.split('&'), function(i1, v1) {
 				var _splitted = v1.split('=');
 				validate_rules_arr[_splitted[0]] = _splitted[1];
 			})
-			var rules_to_post = {}
+			var rules_to_post = { }
 			$.each(validate_rules_arr, function(rule_name, rule_param) {
 				rules_to_post[rule_name] = {
 					'func' : rule_name,
