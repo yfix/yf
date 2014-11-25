@@ -11,20 +11,20 @@ class yf_form2_upload {
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function( $_extra, $_replace, $_this ) {
 			css(array(
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/css/jquery.fileupload.css',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/css/jquery.fileupload-ui.css',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload.css',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload-ui.css',
 			));
 			js(array(
-				'//cdn.rawgit.com/yfix/JavaScript-Load-Image/js/load-image.all.min.js',
-				'//cdn.rawgit.com/yfix/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.iframe-transport.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-ui.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-process.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-image.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-audio.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-video.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/js/jquery.fileupload-validate.js',
+				'//cdn.rawgit.com/yfix/JavaScript-Load-Image/master/js/load-image.all.min.js',
+				'//cdn.rawgit.com/yfix/JavaScript-Canvas-to-Blob/master/js/canvas-to-blob.min.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.iframe-transport.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-ui.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-process.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-image.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-audio.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-video.js',
+				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-validate.js',
 			));
 			$r = array(
 				'item'   => $_replace,
