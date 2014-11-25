@@ -23,7 +23,7 @@
 		<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
 		<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme{min_ext}.css" rel="stylesheet" class="yf_core">
 	{elseif(cur_theme eq "flatui")}
-		<link href="//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/vendor/bootstrap{min_ext}.css" rel="stylesheet">
+		<link href="//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/vendor/bootstrap.min.css" rel="stylesheet">
 		<link href="//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/flat-ui{min_ext}.css" rel="stylesheet">
 		<script src="//cdn.rawgit.com/yfix/Flat-UI/master/dist/js/flat-ui{min_ext}.js"></script>
 	{else}
