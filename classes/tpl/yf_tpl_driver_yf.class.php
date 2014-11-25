@@ -340,11 +340,11 @@ class yf_tpl_driver_yf {
 			$string = str_replace(array_keys($pairs), $pairs, $string);
 		}
 		// Modules properties direct access, example: {main.USER_ID}
-		if (strpos($string, '{') !== false) {
-			$string = preg_replace_callback($regex_sub_pairs, function($m) use ($replace, $name) {
-				return _class_safe($m[1])->$m[2];
-			}, $string);
-		}
+#		if (strpos($string, '{') !== false) {
+#			$string = preg_replace_callback($regex_sub_pairs, function($m) use ($replace, $name) {
+#				return _class_safe($m[1])->$m[2];
+#			}, $string);
+#		}
 		// Cleanup, using regex pairs
 		if ($cleanup_keys) {
 			$regex_pairs = array();
@@ -501,9 +501,9 @@ class yf_tpl_driver_yf {
 			// Second level variables with filters. Examples: {sub1.var1|trim}
 			'/\{([a-z0-9\-\_]+)\.([a-z0-9\-\_]+)\|([a-z0-9\-\_\|]+)\}/ims' => function($m) use ($replace, $name, $tpl) {
 				$val = $replace[$m[1]][$m[2]];
-				if (!isset($val)) {
-					$class_prop = _class_safe($m[1])->$m[2];
-				}
+#				if (!isset($val)) {
+#					$class_prop = _class_safe($m[1])->$m[2];
+#				}
 				return $tpl->_process_var_filters($val ?: $class_prop, $m[3]);
 			},
 		);

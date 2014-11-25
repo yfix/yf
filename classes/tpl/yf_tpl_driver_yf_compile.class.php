@@ -76,7 +76,8 @@ class yf_tpl_driver_yf_compile {
 			'/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\}/i' => function($m) use ($start, $end) {
 				$global_arrays = tpl()->_avail_arrays;
 				$is_global = is_array($global_arrays) && array_key_exists($m[1], $global_arrays);
-				return $start. 'echo '.($is_global ? '$'.$global_arrays[$m[1]].'[\''.$m[2].'\']' : '($replace[\''.$m[1].'\'][\''.$m[2].'\'] ?: _class_safe(\''.$m[1].'\')->'.$m[2].')').';'. $end;
+#				return $start. 'echo '.($is_global ? '$'.$global_arrays[$m[1]].'[\''.$m[2].'\']' : '($replace[\''.$m[1].'\'][\''.$m[2].'\'] ?: _class_safe(\''.$m[1].'\')->'.$m[2].')').';'. $end;
+				return $start. 'echo '.($is_global ? '$'.$global_arrays[$m[1]].'[\''.$m[2].'\']' : '$replace[\''.$m[1].'\'][\''.$m[2].'\']').';'. $end;
 			},
 			// Variable filtering like in Smarty/Twig. Examples: {var1|trim} {var1|urlencode|trim} {var1|_prepare_html} {var1|my_func} {sub1.var1|trim}
 			'/\{([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function($m) use ($start, $end) {
@@ -84,7 +85,8 @@ class yf_tpl_driver_yf_compile {
 			},
 			// Second level variables with filters
 			'/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function($m) use ($start, $end) {
-				return $start. 'echo _class(\'tpl\')->_process_var_filters($replace[\''.$m[1].'\'][\''.$m[2].'\'] ?: _class_safe(\''.$m[1].'\')->'.$m[2].', \''.$m[3].'\');'. $end;
+#				return $start. 'echo _class(\'tpl\')->_process_var_filters($replace[\''.$m[1].'\'][\''.$m[2].'\'] ?: _class_safe(\''.$m[1].'\')->'.$m[2].', \''.$m[3].'\');'. $end;
+				return $start. 'echo _class(\'tpl\')->_process_var_filters($replace[\''.$m[1].'\'][\''.$m[2].'\'], \''.$m[3].'\');'. $end;
 			},
 			// Vars inside foreach with filters
 			'/\{\#\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function($m) use ($start, $end) {
