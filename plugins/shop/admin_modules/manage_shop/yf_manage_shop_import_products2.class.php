@@ -73,7 +73,7 @@ class yf_manage_shop_import_products2 {
 
 	public $import_field_autodetect = array(
 		'id'                => '(идентификатор)|(id)',
-		'name'              => '(название)|(наименование)|(name)',
+		'name'              => '(имя)|(название)|(наименование)|(name)',
 		'description'       => '(описание)|(description)',
 		'price'             => '(цена)|(price)',
 		'price_raw'         => '(себестоимость)|(price_raw)',
