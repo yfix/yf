@@ -11,10 +11,10 @@ class assets_urls_check_test extends PHPUnit_Framework_TestCase {
 		return $out[0];
 	}
 	public function test_do() {
-		require YF_PATH.'.dev/scripts/assets/assets_urls_collect.php';
-		foreach ($urls as $url) {
+		$data = require YF_PATH.'.dev/scripts/assets/assets_urls_collect.php';
+		foreach ($data['urls'] as $url) {
 			$size = $this->get_url_size($url);
-			foreach ($url_paths[$url] as $path) {
+			foreach ($data['paths'][$url] as $path) {
 				$this->assertTrue(($size > 50), $url.' | '.$path.' | '.$size);
 			}
 		}
