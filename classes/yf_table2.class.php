@@ -915,7 +915,7 @@ class yf_table2 {
 				$is_link_allowed = true;
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
-					$link_id = $link_field_name ? $row[$link_field_name] : $field;
+					$link_id = $link_field_name ?: $name;
 					$link = $_this->_process_link_params($params['link']. $instance_params['links_add'], $row, $extra + array('id' => $link_id));
 					$is_link_allowed = $_this->_is_link_allowed($link);
 				}
