@@ -166,10 +166,10 @@ if (!function_exists('getmicrotime')) {
 	function getmicrotime() { return microtime(true); }
 }
 if (!function_exists('js_redirect')) {
-	function js_redirect ($location, $rewrite = true, $text = '', $ttl = 0) { return common()->redirect($location, $rewrite, 'js', $text, $ttl); }
+	function js_redirect($location, $rewrite = true, $text = '', $ttl = 0) { return common()->redirect($location, $rewrite, 'js', $text, $ttl); }
 }
 if (!function_exists('redirect')) {
-	function redirect ($location, $rewrite = true, $text = '', $ttl = 3) { return common()->redirect($location, $rewrite, 'html', $text, $ttl); }
+	function redirect($location, $rewrite = true, $text = '', $ttl = 3) { return common()->redirect($location, $rewrite, 'html', $text, $ttl); }
 }
 if (!function_exists('_e')) {
 	function _e($text = '', $clear_error = true) { return common()->_show_error_message($text, $clear_error); }
@@ -208,14 +208,14 @@ if (!function_exists('_wordwrap')) {
 	function _wordwrap($string, $length = 75, $break = '\n', $cut = false) { return _class('utf8')->wordwrap($string, $length, $break, $cut); }
 }
 if (!function_exists('_check_rights')) {
-	function _check_rights ($methods) { global $main; return method_exists($main, '_check_rights') ? $main->_check_rights($methods) : true; }
+	function _check_rights($methods) { global $main; return method_exists($main, '_check_rights') ? $main->_check_rights($methods) : true; }
 }
 // Execute command on remote server using SSH
 if (!function_exists('_ssh_exec')) {
-	function _ssh_exec ($server_info = array(), $cmd = '') { return _class('ssh')->exec($server_info, $cmd); }
+	function _ssh_exec($server_info = array(), $cmd = '') { return _class('ssh')->exec($server_info, $cmd); }
 }
 if (!function_exists('_add_get')) {
-	function _add_get ($add_skip = array()) { return common()->add_get_vars($add_skip); }
+	function _add_get($add_skip = array()) { return common()->add_get_vars($add_skip); }
 }
 // Localize current piece of data
 if (!function_exists('l')) {
@@ -244,22 +244,22 @@ if (!function_exists('model')) {
 }
 // current GMT time
 if (!function_exists('gmtime')) {
-	function gmtime () { return common()->gmtime(); }
+	function gmtime() { return common()->gmtime(); }
 }
 if (!function_exists('sphinx_query')) {
-	function sphinx_query ($sql, $need_meta = false) { return _class('sphinxsearch')->query($sql, $need_meta); }
+	function sphinx_query($sql, $need_meta = false) { return _class('sphinxsearch')->query($sql, $need_meta); }
 }
 if (!function_exists('sphinx_escape_string')) {
-	function sphinx_escape_string ($string) { return _class('sphinxsearch')->escape_string($string); }
+	function sphinx_escape_string($string) { return _class('sphinxsearch')->escape_string($string); }
 }
 if (!function_exists('html')) {
-	function html ($params) { return _class('html')->chained_wrapper($params); }
+	function html(array $params = array()) { return _class('html')->chained_wrapper($params); }
 }
 if (!function_exists('validate')) {
 	function validate($input = '', $rules = array()) { return _class('validate')->_input_is_valid($input, $rules); }
 }
 if (!function_exists('_check_user_ban')) {
-	function _check_user_ban ($info = array(), $user_info = array()) { return common()->check_user_ban($info, $user_info); }
+	function _check_user_ban($info = array(), $user_info = array()) { return common()->check_user_ban($info, $user_info); }
 }
 // Wrapper for tpl generated php code for PHP 5.3 compatibility
 if (!function_exists('_empty')) {
