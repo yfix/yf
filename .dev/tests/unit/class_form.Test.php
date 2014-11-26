@@ -146,6 +146,9 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(str_replace(PHP_EOL, '', 
 			'<select name="myselect" id="select_box_2" class="form-control"><option value="k1">v1</option><option value="k2">v2</option></select>'
 			), str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data))) );
+		$this->assertEquals(str_replace(PHP_EOL, '', 
+			'<select name="myselect" id="select_box_3" class="form-control" data-unittest="val"><option value="k1">v1</option><option value="k2">v2</option></select>'
+			), str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->select_box('myselect', $data, array('data-unittest' => 'val')))) );
 	}
 	public function test_select_box_subarray() {
 		$data = array(
