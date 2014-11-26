@@ -7,7 +7,7 @@ class yf_form2_ckeditor {
 	* Best way to include it into project: 
 	*
 	* git submodule add https://github.com/yfix/ckeditor-releases.git www/ckeditor/ && cd www/ckeditor/ && git checkout latest/full
-	* git submodule add git@github.com:yfix/yf_kcfinder.git www/kcfinder
+	* git submodule add https://github.com/yfix/kcfinder.git www/kcfinder
 	* 
 	* 'www/' usually means PROJECT_PATH inside project working copy.
 	* P.S. You can use free CDN for ckeditor as alternate solution: <script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js"></script>
