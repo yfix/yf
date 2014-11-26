@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-$cache_dir = __DIR__.'/';
+$cache_dir = dirname(dirname(__DIR__)).'/assets_cache/';
 
 $bs_v3 = '3.3.0';
 $bs_v2 = '2.3.2';

@@ -25,11 +25,11 @@ class function_attrs_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_auto_data() {
 		$a = array(
-			'data-test' => 'myval',
-			'adata-test' => 'myval', // should not appear automatically
+			'data-unittest' => 'myval',
+			'adata-unittest' => 'myval', // should not appear automatically
 		);
-		$this->assertEquals(' data-test="myval"', _attrs($a, array()));
-		$this->assertEquals(' adata-test="myval" data-test="myval"', _attrs($a, array('adata-test')));
+		$this->assertEquals(' data-unittest="myval"', _attrs($a, array()));
+		$this->assertEquals(' adata-unittest="myval" data-unittest="myval"', _attrs($a, array('adata-unittest')));
 	}
 	public function test_auto_ng() {
 		$a = array(
@@ -53,8 +53,8 @@ class function_attrs_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(' id="myid"', _attrs($a, array('id')));
 		$this->assertEquals(' name="myname" id="myid"', _attrs($a, array('name')));
 		$this->assertEquals(' name="myname" id="myid"', _attrs($a, array('id','name')));
-		$this->assertEquals(' data-test="testval" id="myid"', _attrs(array('data-test' => 'testval') + $a, array()));
-		$this->assertEquals(' name="myname" data-test="testval" id="myid"', _attrs(array('data-test' => 'testval') + $a, array('id','name')));
+		$this->assertEquals(' data-unittest="testval" id="myid"', _attrs(array('data-unittest' => 'testval') + $a, array()));
+		$this->assertEquals(' name="myname" data-unittest="testval" id="myid"', _attrs(array('data-unittest' => 'testval') + $a, array('id','name')));
 	}
 	public function test_override_attr() {
 		$a = array(
@@ -70,10 +70,10 @@ class function_attrs_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(' id="myid"', _attrs($a, array('id')));
 		$this->assertEquals(' id="myid"', _attrs($a, array('name')));
 		$this->assertEquals(' id="myid"', _attrs($a, array('id','name')));
-		$this->assertEquals(' data-test="testval" id="myid"', _attrs(array('data-test' => 'testval') + $a, array()));
-		$this->assertEquals(' id="myid" data-test="testval"', _attrs(array('data-test' => 'testval') + $a, array('id','name')));
-		$this->assertEquals(' id="myid" data-test="testval"', _attrs(array('data-test' => 'testval', 'id' => 'id_override') + $a, array('id')));
-		$this->assertEquals(' id="id_override" data-test="testval"', _attrs(array('data-test' => 'testval', 'id' => 'id_override', 'attr' => array()) + $a, array('id')));
+		$this->assertEquals(' data-unittest="testval" id="myid"', _attrs(array('data-unittest' => 'testval') + $a, array()));
+		$this->assertEquals(' id="myid" data-unittest="testval"', _attrs(array('data-unittest' => 'testval') + $a, array('id','name')));
+		$this->assertEquals(' id="myid" data-unittest="testval"', _attrs(array('data-unittest' => 'testval', 'id' => 'id_override') + $a, array('id')));
+		$this->assertEquals(' id="id_override" data-unittest="testval"', _attrs(array('data-unittest' => 'testval', 'id' => 'id_override', 'attr' => array()) + $a, array('id')));
 	}
 	public function test_val_array() {
 		$a = array(

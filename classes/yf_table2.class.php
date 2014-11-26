@@ -886,6 +886,7 @@ class yf_table2 {
 			'func'	=> function($field, $params, $row, $instance_params, $_this) {
 				$name = $params['name'];
 				$extra = $params['extra'];
+				$orig_extra = $extra;
 				if ($extra['padding'] && $row['level']) {
 					$body = '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px;">&#9492;</span>';
 				}
@@ -949,7 +950,7 @@ class yf_table2 {
 					$body .= $text;
 				}
 				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
-				return $_this->_apply_badges($body, $extra, $field);
+				return $_this->_apply_badges($body, $orig_extra, $field);
 			}
 		);
 		return $this;
@@ -1279,6 +1280,9 @@ class yf_table2 {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = $this->CLASS_ICON_EDIT;
 		}
+		if (!isset($extra['data-test'])) {
+			$extra['data-test'] = 'edit';
+		}
 		return $this->btn($name, $link, $extra);
 	}
 
@@ -1303,6 +1307,9 @@ class yf_table2 {
 		}
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = $this->CLASS_ICON_DELETE;
+		}
+		if (!isset($extra['data-test'])) {
+			$extra['data-test'] = 'delete';
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1329,6 +1336,9 @@ class yf_table2 {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = $this->CLASS_ICON_CLONE;
 		}
+		if (!isset($extra['data-test'])) {
+			$extra['data-test'] = 'clone';
+		}
 		return $this->btn($name, $link, $extra);
 	}
 
@@ -1353,6 +1363,9 @@ class yf_table2 {
 		}
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = $this->CLASS_ICON_VIEW;
+		}
+		if (!isset($extra['data-test'])) {
+			$extra['data-test'] = 'view';
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1395,6 +1408,9 @@ class yf_table2 {
 				$extra['href'] = $link;
 				$extra['title'] = $params['name'];
 				$extra['class'] = $_this->CLASS_CHANGE_ACTIVE;
+				if (!isset($extra['data-test'])) {
+					$extra['data-test'] = 'activate';
+				}
 				if (!isset($_this->_pair_active)) {
 					$_this->_pair_active = main()->get_data('pair_active');
 				}

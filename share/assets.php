@@ -3,7 +3,7 @@
 return array(
 	'css' => array(
 		'jquery-ui'	=> array(
-			'url' => '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.1/css/jquery-ui.min.css',
+			'url' => '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.css',
 			'version' => '1.11.1',
 		),
 		'angular-ui'=> array(
