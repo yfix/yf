@@ -757,7 +757,7 @@ class yf_html {
 			}
 			$extra['multiple'] = 'multiple';
 			$extra['name'] = $name ? $name.'[]' : '';
-			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','multiple','disabled')).$add_str.">".PHP_EOL;
+			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','multiple','disabled')). ($add_str ? ' '.trim($add_str) : '').">".PHP_EOL;
 		}
 		if ($show_text && $level == 0) {
 			$body .= '<option value="">-'.t('select').' '.t($name).'-</option>'.PHP_EOL;
@@ -843,7 +843,7 @@ class yf_html {
 			} else {
 				$body .=
 					'<label class="radio'.($extra['horizontal'] ? ' radio-horizontal' : '').'">'
-						.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'" '.$add_str.' '.((strval($value) == $selected) ? 'checked' : '').'>'
+						.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ((strval($value) == $selected) ? ' checked' : '').'>'
 						.t($val_name)
 					.'</label>'.PHP_EOL;
 			}
@@ -880,10 +880,7 @@ class yf_html {
 		}
 
 		return '<label class="checkbox">'
-				.'<input type="checkbox" name="'.$name.'" id="'.$extra['id'].'" value="'.$value.'"'
-					.($selected ? ' checked="checked"' : '')
-					.($add_str ? ' '.$add_str : '')
-				.'> &nbsp;' // Please do not remove this whitespace :)
+				.'<input type="checkbox" name="'.$name.'" id="'.$extra['id'].'" value="'.$value.'"'. ($selected ? ' checked="checked"' : '') .($add_str ? ' '.$add_str : '').'> &nbsp;' // Please do not remove this whitespace :)
 				.($translate ? t($extra['desc']) : $extra['desc'])
 			.'</label>';
 	}
@@ -951,7 +948,7 @@ class yf_html {
 				);
 				$body .= tpl()->parse('system/common/check_box_item', $replace);
 			} else {
-				$body .= '<input type="checkbox" name="'.$val_name.'" class="check" value="'.$key.'" '.$sel_text.' '.$add_str.' id="'.$id.'">'
+				$body .= '<input type="checkbox" name="'.$val_name.'" id="'.$id.'" class="check" value="'.$key.'"'.($sel_text ? ' '.$sel_text : ''). ($add_str ? ' '.trim($add_str) : '').'>'
 					.($translate ? t($value) : $value)
 					.($flow_vertical ? '<br />' : '&nbsp;'). PHP_EOL;
 			}
@@ -1007,7 +1004,7 @@ class yf_html {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
 			$is_selected = $_what_compare == $selected;
 			$val = ($translate ? t($cur_value) : $cur_value);
-			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'"'.($is_selected ? ' data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
 			if ($is_selected) {
 				$selected_val = $val;
 			}
@@ -1047,7 +1044,7 @@ class yf_html {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
 			$is_selected = $_what_compare == $selected;
 			$val = $translate ? t($cur_value) : $cur_value;
-			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'" '.($is_selected ? 'data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'"'.($is_selected ? ' data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
 			if ($is_selected) {
 				$selected_val = $val;
 			}
