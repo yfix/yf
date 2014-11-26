@@ -1,6 +1,6 @@
 <?php
 
-$path = $argv[1] ?: dirname(dirname(dirname(__DIR__))).'/';
+$path = $DIR_TO_CHECK ?: ($argv[1] ?: dirname(dirname(dirname(__DIR__))).'/');
 
 $grep_regex = '//(cdn|netdna)';
 $min_regex = '~\{[^\}]*?min[^\}]*?\}~';
