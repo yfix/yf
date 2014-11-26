@@ -26,14 +26,59 @@ class yf_table2_filter {
 			'lte'		=> function($a){ return ' <= "'._es($a['value']).'"'; }, // "lower or equal than"
 			'like'		=> function($a){ return ' LIKE "%'._es($a['value']).'%"'; }, // LIKE '%'.$value.'%'
 			'rlike'		=> function($a){ return ' RLIKE "'._es($a['value']).'"'; }, // regular expression, RLIKE $value
-			'between'	=> function($a){ return strlen($a['and']) ? ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"' : ' = "'._es($a['value']).'"'; }, // BETWEEN $min AND $max
 			'dt_eq'		=> function($a){ return ' = "'._es(strtotime($a['value'])).'"'; }, // "equal"
 			'dt_ne'		=> function($a){ return ' != "'._es(strtotime($a['value'])).'"'; }, // "not equal"
 			'dt_gt'		=> function($a){ return ' > "'._es(strtotime($a['value'])).'"'; }, // "greater than",
 			'dt_gte'	=> function($a){ return ' >= "'._es(strtotime($a['value'])).'"'; }, // "greater or equal than",
 			'dt_lt'		=> function($a){ return ' < "'._es(strtotime($a['value'])).'"'; }, // "less than",
 			'dt_lte'	=> function($a){ return ' <= "'._es(strtotime($a['value'])).'"'; }, // "lower or equal than"
-			'dt_between'=> function($a){ return strlen($a['and']) ? ' BETWEEN "'._es(strtotime($a['value'])).'" AND "'._es(strtotime($a['and'])).'"' : ' = "'._es(strtotime($a['value'])).'"'; }, // BETWEEN $min AND $max
+			'between'	=> function($a){ return ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"'; }, // BETWEEN $min AND $max
+			'between' => function( $a ){
+				$from = trim( $a[ 'value' ] );
+				$to   = trim( $a[ 'and'   ] );
+				if( $from && $to ) {
+					$result = sprintf( " BETWEEN '%s' AND '%s'", $from, $to );
+				} else {
+					if( $from ) {
+						$result = sprintf( " >= '%s'", $from );
+					} elseif( $to ) {
+						$result = sprintf( " <= '%s'", $to );
+					}
+				}
+				return( $result );
+			},
+			'dt_between' => function( $a ){
+				$from = trim( $a[ 'value' ] );
+				$to   = trim( $a[ 'and'   ] );
+				!empty( $from ) && $from = strtotime( $from );
+				!empty( $to )   && $to   = strtotime( $to   );
+				if( $from && $to ) {
+					$result = sprintf( " BETWEEN '%s' AND '%s'", $from, $to );
+				} else {
+					if( $from ) {
+						$result = sprintf( " >= '%s'", $from );
+					} elseif( $to ) {
+						$result = sprintf( " <= '%s'", $to );
+					}
+				}
+				return( $result );
+			},
+			'datetime_between' => function( $a ){
+				$from = trim( $a[ 'value' ] );
+				$to   = trim( $a[ 'and'   ] );
+				!empty( $from ) && $from = date( 'Y-m-d H-i-s', strtotime( $from ) );
+				!empty( $to )   && $to   = date( 'Y-m-d H-i-s', strtotime( $to )   );
+				if( $from && $to ) {
+					$result = sprintf( " BETWEEN '%s' AND '%s'", $from, $to );
+				} else {
+					if( $from ) {
+						$result = sprintf( " >= '%s'", $from );
+					} elseif( $to ) {
+						$result = sprintf( " <= '%s'", $to );
+					}
+				}
+				return( $result );
+			},
 		);
 		foreach((array)$filter_data as $k => $v) {
 			if (!strlen($k)) {
@@ -44,7 +89,10 @@ class yf_table2_filter {
 			}
 			// Special field for BETWEEN second value
 			if (substr($k, -strlen('__and')) == '__and') {
-				continue;
+				$k = substr($k, 0, -strlen('__and'));
+				$from = $filter_data[ $k ];
+				if( $from ) { continue; }
+				$v = ' ';
 			}
 			$field = $k;
 			$left_part = '';
