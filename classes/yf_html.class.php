@@ -686,19 +686,19 @@ class yf_html {
 		// (example: $add_str = 'size=6')
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		$extra['class'] .= ' form-control';
-		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
-		}
-		if ($extra['style']) {
-			$add_str .= ' style="'.$extra['style'].'" ';
-		}
 		if (!$values) {
 			return false;
+		}
+		if ($extra['disabled']) {
+			$extra['disabled'] = 'disabled';
 		}
 		if ($level == 0) {
 			$extra['force_id'] && $id = $extra['force_id'];
 			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-			$body = PHP_EOL.'<select name="'.$name.'"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$id.'"' : '').$add_str.">".PHP_EOL;
+			if ($this->AUTO_ASSIGN_IDS) {
+				$extra['id'] = $id;
+			}
+			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','disabled')).$add_str.">".PHP_EOL;
 		}
 		$selected = strval($selected);
 		if ($show_text && $level == 0) {
@@ -736,31 +736,27 @@ class yf_html {
 		$show_text = isset($extra['show_text']) ? $extra['show_text'] : (!is_null($show_text) ? $show_text : false);
 		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
 		$level = isset($extra['level']) ? $extra['level'] : $level;
-		$disabled = isset($extra['disabled']) ? $extra['disabled'] : $disabled;
 		// (example: $add_str = 'size=6') disabled
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		$extra['class'] .= ' form-control';
-		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
-		}
-		if ($extra['style']) {
-			$add_str .= ' style="'.$extra['style'].'" ';
-		}
 		if (!$values) {
 			return false;
+		}
+		if ($extra['disabled'] || $disabled) {
+			$extra['disabled'] = 'disabled';
 		}
 		if (!is_array($selected)) {
 			$selected = strval($selected);
 		}
-		if ($disabled  == 1) {
-			$disabled = 'disabled';
-		} else {
-			$disabled = '';
-		}
 		if ($level == 0) {
 			$extra['force_id'] && $id = $extra['force_id'];
 			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-			$body = PHP_EOL.'<select '.$disabled.' multiple name="'.$name.'[]"'.($this->AUTO_ASSIGN_IDS ? ' id="'.$id.'"' : '').$add_str.'>'.PHP_EOL;
+			if ($this->AUTO_ASSIGN_IDS) {
+				$extra['id'] = $id;
+			}
+			$extra['multiple'] = 'multiple';
+			$extra['name'] = $extra['name'].'[]';
+			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','multiple','disabled')).$add_str.">".PHP_EOL;
 		}
 		if ($show_text && $level == 0) {
 			$body .= '<option value="">-'.t('select').' '.t($name).'-</option>'.PHP_EOL;
@@ -975,7 +971,6 @@ class yf_html {
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'text');
 		$extra['value'] = $extra['value'] ?: $value;
-#		$extra['id'] = $extra['id'] ?: $extra['name'];
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$extra['desc'] = $extra['desc'] ?: ucfirst(str_replace('_', '', $extra['name']));
 		$extra['type'] = $extra['type'] ?: 'text';
