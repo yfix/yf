@@ -10,6 +10,7 @@ class yf_form2_upload {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'image');
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function( $_extra, $_replace, $_this ) {
+#			asset('blueimp-uploader');
 			css(array(
 				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload.css',
 				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload-ui.css',
