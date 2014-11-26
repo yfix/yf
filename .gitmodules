@@ -7,9 +7,6 @@
 [submodule "libs/phpseclib"]
 	path = libs/phpseclib
 	url = https://github.com/yfix/phpseclib.git
-[submodule "libs/twig"]
-	path = libs/twig
-	url = https://github.com/yfix/Twig.git
 [submodule "libs/geonames-db-import"]
 	path = libs/geonames-db-import
 	url = https://github.com/yfix/geonames-db-import.git
