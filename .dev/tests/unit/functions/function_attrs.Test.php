@@ -84,5 +84,6 @@ class function_attrs_test extends PHPUnit_Framework_TestCase {
 		);
 		$this->assertEquals('', _attrs($a, array()));
 		$this->assertEquals(' key="k1=v1&k2=v2"', _attrs($a, array('key')));
+		$this->assertEquals(' name="test[]"', _attrs(array('name' => 'test[]'), array('name')));
 	}
 }
