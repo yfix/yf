@@ -698,6 +698,7 @@ class yf_html {
 			if ($this->AUTO_ASSIGN_IDS) {
 				$extra['id'] = $id;
 			}
+			$extra['name'] = $name;
 			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','disabled')).$add_str.">".PHP_EOL;
 		}
 		$selected = strval($selected);
@@ -755,7 +756,7 @@ class yf_html {
 				$extra['id'] = $id;
 			}
 			$extra['multiple'] = 'multiple';
-			$extra['name'] = $extra['name'].'[]';
+			$extra['name'] = $name.'[]';
 			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','multiple','disabled')).$add_str.">".PHP_EOL;
 		}
 		if ($show_text && $level == 0) {
