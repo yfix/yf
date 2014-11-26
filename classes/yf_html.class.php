@@ -149,7 +149,7 @@ class yf_html {
 
 	/**
 	*/
-	function modal ($extra = array()) {
+	function modal($extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$def_style = $extra['inline'] ? 'position: relative; top: auto; left: auto; right: auto; bottom: auto; margin: 0 auto 20px; z-index: 1; max-width: 100%; display: block; overflow-y: auto;' : '';
 		$extra['style'] = $extra['style'] ?: $def_style;
@@ -170,7 +170,7 @@ class yf_html {
 
 	/**
 	*/
-	function tabs ($tabs = array(), $extra = array()) {
+	function tabs($tabs = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$headers = array();
 		$items = array();
@@ -223,7 +223,7 @@ class yf_html {
 
 	/**
 	*/
-	function accordion ($data = array(), $extra = array()) {
+	function accordion($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
 		foreach ((array)$data as $k => $v) {
@@ -263,7 +263,7 @@ class yf_html {
 
 	/**
 	*/
-	function carousel ($data = array(), $extra = array()) {
+	function carousel($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
 		$headers = array();
@@ -305,7 +305,7 @@ class yf_html {
 
 	/**
 	*/
-	function alert ($data = array(), $extra = array()) {
+	function alert($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$close_btn = (!$extra['no_close'] && !$data['no_close']) ? '<button type="button" class="close" data-dismiss="alert">×</button>' : '';
 		$head = is_array($data) ? $data['head'] : '';
@@ -324,7 +324,7 @@ class yf_html {
 
 	/**
 	*/
-	function navbar ($data = array(), $extra = array()) {
+	function navbar($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
 		$brand = '';
@@ -355,7 +355,7 @@ class yf_html {
 
 	/**
 	*/
-	function breadcrumbs ($data = array(), $extra = array()) {
+	function breadcrumbs($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
 		$divider = $extra['divider'] ?: '/';
@@ -377,7 +377,7 @@ class yf_html {
 
 	/**
 	*/
-	function thumbnails ($data = array(), $extra = array()) {
+	function thumbnails($data = array(), $extra = array()) {
 		$items = array();
 		$columns = (int)$extra['columns'] ?: 3;
 		$row_class = 'span'.round(12 / $columns).' col-md-'.round(12 / $columns);
@@ -409,7 +409,7 @@ class yf_html {
 
 	/**
 	*/
-	function progress_bar ($data = array(), $extra = array()) {
+	function progress_bar($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
 		foreach ((array)$data as $v) {
@@ -429,7 +429,7 @@ class yf_html {
 
 	/**
 	*/
-	function pagination ($data = array(), $extra = array()) {
+	function pagination($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (isset($data['prev'])) {
 			$prev = $data['prev'];
@@ -459,7 +459,7 @@ class yf_html {
 
 	/**
 	*/
-	function panel ($data = array(), $extra = array()) {
+	function panel($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		return
 			'<div class="panel panel-primary'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">
@@ -472,14 +472,14 @@ class yf_html {
 
 	/**
 	*/
-	function jumbotron ($data = array(), $extra = array()) {
+	function jumbotron($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		return '<div class="jumbotron'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'"><h1>'.$data['head'].'</h1>'.$data['body'].'</div>';
 	}
 
 	/**
 	*/
-	function well ($body = '', $extra = array()) {
+	function well($body = '', $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (!$extra['class']) {
 			$extra['class'] = 'well-lg';
@@ -489,7 +489,7 @@ class yf_html {
 
 	/**
 	*/
-	function list_group ($data = array(), $extra = array()) {
+	function list_group($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
 		foreach ((array)$data as $v) {
@@ -508,7 +508,7 @@ class yf_html {
 
 	/**
 	*/
-	function media_objects ($data = array(), $extra = array()) {
+	function media_objects($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
@@ -545,7 +545,7 @@ class yf_html {
 
 	/**
 	*/
-	function menu ($data = array(), $extra = array()) {
+	function menu($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if ($data) {
 			$data = $this->_recursive_sort_items($data);
@@ -597,7 +597,7 @@ class yf_html {
 
 	/**
 	*/
-	function grid ($data = array(), $extra = array()) {
+	function grid($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$rows = array();
 		$ul_opened = false;
@@ -668,7 +668,7 @@ class yf_html {
 
 	/**
 	*/
-	function select_box ($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0) {
+	function select_box($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0) {
 		// Passing params as array
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
@@ -797,7 +797,7 @@ class yf_html {
 
 	/**
 	*/
-	function radio_box ($name, $values = array(), $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
+	function radio_box($name, $values = array(), $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -853,7 +853,7 @@ class yf_html {
 	/**
 	* Simple check box
 	*/
-	function check_box ($name = '', $value = '', $selected = '', $add_str = '', $extra = array()) {
+	function check_box($name = '', $value = '', $selected = '', $add_str = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -890,7 +890,7 @@ class yf_html {
 	/**
 	* Processing many checkboxes at one time
 	*/
-	function multi_check_box ($name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
+	function multi_check_box($name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -961,7 +961,7 @@ class yf_html {
 	/**
 	* Simple input form control
 	*/
-	function input ($name = '', $value = '', $extra = array()) {
+	function input($name = '', $value = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -982,7 +982,7 @@ class yf_html {
 
 	/**
 	*/
-	function div_box ($name, $values = array(), $selected = '', $extra = array()) {
+	function div_box($name, $values = array(), $selected = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -1022,7 +1022,7 @@ class yf_html {
 
 	/**
 	*/
-	function button_box ($name, $values = array(), $selected = '', $extra = array()) {
+	function button_box($name, $values = array(), $selected = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -1072,14 +1072,14 @@ class yf_html {
 
 	/**
 	*/
-	function button_split_box ($name, $values = array(), $selected = '', $extra = array()) {
+	function button_split_box($name, $values = array(), $selected = '', $extra = array()) {
 		$extra['button_split'] = true;
 		return $this->button_box ($name, $values, $selected, $extra);
 	}
 
 	/**
 	*/
-	function list_box ($name, $values = array(), $selected = '', $extra = array()) {
+	function list_box($name, $values = array(), $selected = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -1120,7 +1120,7 @@ class yf_html {
 
 	/**
 	*/
-	function select2_box ($name, $values = array(), $selected = '', $extra = array()) {
+	function select2_box($name, $values = array(), $selected = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 		} else {
@@ -1142,7 +1142,7 @@ class yf_html {
 
 	/**
 	*/
-	function chosen_box ($name, $values = array(), $selected = '', $extra = array()) {
+	function chosen_box($name, $values = array(), $selected = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 		} else {
@@ -1162,7 +1162,7 @@ class yf_html {
 
 	/**
 	*/
-	function date_picker ($name, $cur_date = '') {
+	function date_picker($name, $cur_date = '') {
 		js('jquery-ui');
 		css('jquery-ui');
 
@@ -1176,31 +1176,31 @@ class yf_html {
 
 	/**
 	*/
-	function date_box ($selected = '', $years = '', $name_postfix = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
+	function date_box($selected = '', $years = '', $name_postfix = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
 		return _class('html_datetime', 'classes/html/')->date_box($selected, $years, $name_postfix, $add_str, $show_what, $show_text, $translate);
 	}
 
 	/**
 	*/
-	function time_box ($selected = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1) {
-		return _class('html_datetime', 'classes/html/')->time_box ($selected, $name_postfix, $add_str, $show_text, $translate);
+	function time_box($selected = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1) {
+		return _class('html_datetime', 'classes/html/')->time_box($selected, $name_postfix, $add_str, $show_text, $translate);
 	}
 
 	/**
 	*/
-	function date_box2 ($name, $selected = '', $years = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
+	function date_box2($name, $selected = '', $years = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
 		return _class('html_datetime', 'classes/html/')->date_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate);
 	}
 
 	/**
 	*/
-	function time_box2 ($name, $selected = '', $add_str = '', $show_text = 1, $translate = 1) {
-		return _class('html_datetime', 'classes/html/')->time_box2 ($name, $selected, $add_str, $show_text, $translate);
+	function time_box2($name, $selected = '', $add_str = '', $show_text = 1, $translate = 1) {
+		return _class('html_datetime', 'classes/html/')->time_box2($name, $selected, $add_str, $show_text, $translate);
 	}
 
 	/**
 	*/
-	function datetime_box2 ($name, $selected = '', $years = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
+	function datetime_box2($name, $selected = '', $years = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
 		return _class('html_datetime', 'classes/html/')->datetime_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate);
 	}
 }
