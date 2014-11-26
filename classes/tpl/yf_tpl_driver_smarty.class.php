@@ -1,6 +1,8 @@
 <?php
 
 /**
+* Note: currently disabled, use this console command to add it back again:
+* git submodule add https://github.com/yfix/smarty.git libs/smarty/
 */
 class yf_tpl_driver_smarty {
 
