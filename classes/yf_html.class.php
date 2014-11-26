@@ -699,7 +699,7 @@ class yf_html {
 				$extra['id'] = $id;
 			}
 			$extra['name'] = $name;
-			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','disabled')).$add_str.">".PHP_EOL;
+			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','disabled')). ($add_str ? ' '.$add_str : '').'>'.PHP_EOL;
 		}
 		$selected = strval($selected);
 		if ($show_text && $level == 0) {
@@ -757,7 +757,7 @@ class yf_html {
 			}
 			$extra['multiple'] = 'multiple';
 			$extra['name'] = $name ? $name.'[]' : '';
-			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','multiple','disabled')). ($add_str ? ' '.trim($add_str) : '').">".PHP_EOL;
+			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','multiple','disabled')). ($add_str ? ' '.trim($add_str) : '').'>'.PHP_EOL;
 		}
 		if ($show_text && $level == 0) {
 			$body .= '<option value="">-'.t('select').' '.t($name).'-</option>'.PHP_EOL;
