@@ -1225,9 +1225,9 @@ class yf_table2 {
 				}
 				$renderer = $extra['renderer'] ?: 'a';
 				if ($renderer == 'a') {
-					$body = '<a'._attrs($extra, array('href','class','target','title')).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+					$body = '<a'._attrs($extra, array('href','class','target','title', 'data-test')).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 				} elseif ($renderer == 'button') {
-					$body = '<button'._attrs($extra, array('class','target','title')).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</button> ';
+					$body = '<button'._attrs($extra, array('class','target','title', 'data-test')).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</button> ';
 				}
 
 				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
@@ -1279,6 +1279,9 @@ class yf_table2 {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = $this->CLASS_ICON_EDIT;
 		}
+		if (!isset($extra['data-test'])) {
+			$extra['data-test'] = 'edit';
+		}
 		return $this->btn($name, $link, $extra);
 	}
 
@@ -1303,6 +1306,9 @@ class yf_table2 {
 		}
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = $this->CLASS_ICON_DELETE;
+		}
+		if (!isset($extra['data-test'])) {
+			$extra['data-test'] = 'delete';
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1329,6 +1335,9 @@ class yf_table2 {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = $this->CLASS_ICON_CLONE;
 		}
+		if (!isset($extra['data-test'])) {
+			$extra['data-test'] = 'clone';
+		}
 		return $this->btn($name, $link, $extra);
 	}
 
@@ -1353,6 +1362,9 @@ class yf_table2 {
 		}
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = $this->CLASS_ICON_VIEW;
+		}
+		if (!isset($extra['data-test'])) {
+			$extra['data-test'] = 'view';
 		}
 		return $this->btn($name, $link, $extra);
 	}
@@ -1395,6 +1407,9 @@ class yf_table2 {
 				$extra['href'] = $link;
 				$extra['title'] = $params['name'];
 				$extra['class'] = $_this->CLASS_CHANGE_ACTIVE;
+				if (!isset($extra['data-test'])) {
+					$extra['data-test'] = 'activate';
+				}
 				if (!isset($_this->_pair_active)) {
 					$_this->_pair_active = main()->get_data('pair_active');
 				}
