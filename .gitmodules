@@ -4,9 +4,6 @@
 [submodule "libs/phpmailer"]
 	path = libs/phpmailer
 	url = https://github.com/yfix/PHPMailer.git
-[submodule "libs/fenom"]
-	path = libs/fenom
-	url = https://github.com/yfix/fenom.git
 [submodule "libs/phpseclib"]
 	path = libs/phpseclib
 	url = https://github.com/yfix/phpseclib.git
