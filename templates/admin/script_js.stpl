@@ -69,7 +69,9 @@ $(function(){
 	$("form input[type=checkbox].yf_toggle_all_checkboxes").click(function(){
 		$("input[type=checkbox]", $(this).parents("form")).not(".yf_toggle_all_checkboxes").prop("checked", $(this).is(":checked"))
 	});
-
+	 $(document).on('hide.bs.modal','#edit_link_modal',  function (e) {
+		$('#edit_link_modal').remove();
+	})
 	// Any pressed number or letter [0-9a-z] will case avoiding ajax action (edit)
 	$(document).bind('keydown', function(e){ if (e.keyCode >= 48 && e.keyCode <= 90) { document.skip_ajax_pressed = true; }	})
 	$(document).bind('keyup', function(e){ if (e.keyCode >= 48 && e.keyCode <= 90) { document.skip_ajax_pressed = false; } })
