@@ -713,7 +713,7 @@ class yf_html {
 				$body .= '</optgroup>'.PHP_EOL;
 			} else {
 				$_what_compare = strval($type == 1 ? $cur_value : $key);
-				$body .= '<option value="'.$key.'" '.($_what_compare == $selected ? 'selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</option>'.PHP_EOL;
+				$body .= '<option value="'.$key.'"'.($_what_compare == $selected ? ' selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</option>'.PHP_EOL;
 			}
 		}
 		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
@@ -756,7 +756,7 @@ class yf_html {
 				$extra['id'] = $id;
 			}
 			$extra['multiple'] = 'multiple';
-			$extra['name'] = $name.'[]';
+			$extra['name'] = $name ? $name.'[]' : '';
 			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','multiple','disabled')).$add_str.">".PHP_EOL;
 		}
 		if ($show_text && $level == 0) {
@@ -782,7 +782,7 @@ class yf_html {
 				} else {
 					$sel_text = '';
 				}
-				$body .= '<option value="'.$key.'" '.$sel_text.'>'.($translate ? t($value) : $value).'</option>'.PHP_EOL;
+				$body .= '<option value="'.$key.'"'.($sel_text ? ' '.$sel_text : '').'>'.($translate ? t($value) : $value).'</option>'.PHP_EOL;
 			}
 		}
 		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
