@@ -760,7 +760,7 @@ class yf_html {
 			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','multiple','disabled')). ($add_str ? ' '.trim($add_str) : '').'>'.PHP_EOL;
 		}
 		if ($show_text && $level == 0) {
-			$body .= '<option value="">-'.t('select').' '.t($name).'-</option>'.PHP_EOL;
+			$body .= '<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>'.PHP_EOL;
 		}
 		$self_func = __FUNCTION__;
 		foreach ((array)$values as $key => $value) {
