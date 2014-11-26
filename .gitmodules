@@ -49,6 +49,3 @@
 [submodule "libs/yf_utf8_funcs"]
 	path = libs/yf_utf8_funcs
 	url = https://github.com/yfix/yf_utf8_funcs.git
-[submodule "libs/smarty"]
-	path = libs/smarty
-	url = https://github.com/yfix/smarty.git
