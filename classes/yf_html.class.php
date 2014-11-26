@@ -685,7 +685,7 @@ class yf_html {
 		$level = isset($extra['level']) ? $extra['level'] : $level;
 		// (example: $add_str = 'size=6')
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
-		$extra['class'] .= ' form-control';
+		$extra['class'] = trim($extra['class'].' form-control');
 		if (!$values) {
 			return false;
 		}
@@ -739,7 +739,7 @@ class yf_html {
 		$level = isset($extra['level']) ? $extra['level'] : $level;
 		// (example: $add_str = 'size=6') disabled
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
-		$extra['class'] .= ' form-control';
+		$extra['class'] = trim($extra['class'].' form-control');
 		if (!$values) {
 			return false;
 		}
