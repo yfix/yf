@@ -886,6 +886,7 @@ class yf_table2 {
 			'func'	=> function($field, $params, $row, $instance_params, $_this) {
 				$name = $params['name'];
 				$extra = $params['extra'];
+				$orig_extra = $extra;
 				if ($extra['padding'] && $row['level']) {
 					$body = '<span style="padding-left:'.($row['level'] * 20).'px; padding-right:5px;">&#9492;</span>';
 				}
@@ -949,7 +950,7 @@ class yf_table2 {
 					$body .= $text;
 				}
 				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
-				return $_this->_apply_badges($body, $extra, $field);
+				return $_this->_apply_badges($body, $orig_extra, $field);
 			}
 		);
 		return $this;
@@ -1225,9 +1226,9 @@ class yf_table2 {
 				}
 				$renderer = $extra['renderer'] ?: 'a';
 				if ($renderer == 'a') {
-					$body = '<a'._attrs($extra, array('href','class','target','title', 'data-test')).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
+					$body = '<a'._attrs($extra, array('href','class','target','title')).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</a> ';
 				} elseif ($renderer == 'button') {
-					$body = '<button'._attrs($extra, array('class','target','title', 'data-test')).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</button> ';
+					$body = '<button'._attrs($extra, array('class','target','title')).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</button> ';
 				}
 
 				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
