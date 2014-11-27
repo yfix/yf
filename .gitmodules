@@ -46,3 +46,6 @@
 [submodule "libs/yf_utf8_funcs"]
 	path = libs/yf_utf8_funcs
 	url = https://github.com/yfix/yf_utf8_funcs.git
+[submodule "libs/php-unified-archive"]
+	path = libs/php-unified-archive
+	url = https://github.com/yfix/php-unified-archive.git
