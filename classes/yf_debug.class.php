@@ -1244,17 +1244,38 @@ class yf_debug {
 		if (!$this->SHOW_GLOBALS) {
 			return '';
 		}
+		$classes_builtin = array();
+		$classes_custom = array();
+		foreach (get_declared_classes() as $k => $name) {
+			$r = new ReflectionClass($name);
+			$file_name = $r->getFileName();
+			if (!$file_name) {
+				$classes_builtin[$name] = '<built-in class>';
+			} else {
+				$classes_custom[$name] = $file_name.':'.$r->getStartLine();
+			}
+		}
+		ksort($classes_builtin);
+		$data['classes'] = $classes_custom + $classes_builtin;
+
+		$funcs = get_defined_functions();
+		foreach ((array)$funcs['user'] as $k => $name) {
+			$r = new ReflectionFunction($name);
+			$data['functions'][$name] = $r->getFileName().':'.$r->getStartLine();
+		}
+		ksort($data['functions']);
+
 		$data['constants'] = get_defined_constants(true);
 		$data['constants'] = array_keys($data['constants']['user']); // Compatibility with PHP 5.3
 		sort($data['constants']);
-		$data['functions'] = get_defined_functions();
-		$data['functions'] = $data['functions']['user']; // Compatibility with PHP 5.3
-		sort($data['functions']);
-		$data['classes'] = get_declared_classes();
+
 		$data['globals'] = array_filter(array_keys($GLOBALS), function($v) { return $v[0] != '_';} );
 		sort($data['globals']);
+
+		$grid = array(4,4,2,2);
 		foreach ($data as $name => $_data) {
-			$body .= '<div class="span4 col-md-4">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1)).'</div>';
+			$grid_num = $grid[++$i - 1];
+			$body .= '<div class="span'.$grid_num.' col-md-'.$grid_num.'">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'no_sort' => 1)).'</div>';
 		}
 		return $body;
 	}
