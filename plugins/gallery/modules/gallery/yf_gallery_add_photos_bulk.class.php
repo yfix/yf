@@ -34,15 +34,16 @@ class yf_gallery_add_photos_bulk {
 			if (!move_uploaded_file($_ARCHIVE['tmp_name'], $_archive_uploaded_path)) {
 				return _e('GALLERY: upload internal error #1 in '.__FUNCTION__);
 			}
-			main()->load_class_file('pclzip', 'classes/');
-			if (class_exists('pclzip')) {
-				$zip = new pclzip($_archive_uploaded_path);
-				if (!is_object($zip)) {
-					return _e('GALLERY: upload internal error #2 in '.__FUNCTION__);
-				} else {
-					$result = $zip->extract(PCLZIP_OPT_PATH, $_archive_extract_path);
-				}
-			}
+// TODO: replace this with php built-in ZIP handler
+#			main()->load_class_file('pclzip', 'classes/');
+#			if (class_exists('pclzip')) {
+#				$zip = new pclzip($_archive_uploaded_path);
+#				if (!is_object($zip)) {
+#					return _e('GALLERY: upload internal error #2 in '.__FUNCTION__);
+#				} else {
+#					$result = $zip->extract(PCLZIP_OPT_PATH, $_archive_extract_path);
+#				}
+#			}
 			if (!$result) {
 				return _e('GALLERY: upload internal error #3 in '.__FUNCTION__);
 			}

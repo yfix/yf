@@ -424,8 +424,8 @@ class yf_file_manager {
 		}
 		$_old_dir_name	= str_replace("\\", '/', getcwd());
 		chdir($_old_dir_name);
-// TODO: check or replace pclzip
-		_class_safe('pclzip', 'classes/common/')->create($item_list);
+// TODO: replace making ZIP with php built-in http://php.net/manual/en/zip.examples.php
+#		_class_safe('pclzip', 'classes/common/')->create($item_list);
 		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(array('dir_name')));
 	}
 
@@ -449,7 +449,7 @@ class yf_file_manager {
 			}
 			chdir($extraction_dir);
 // TODO: check or replace pclzip
-			_class_safe('pclzip', 'classes/common/')->extract();
+#			_class_safe('pclzip', 'classes/common/')->extract();
 		}
 		chdir($_old_dir_name);
 		return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(array('dir_name')));

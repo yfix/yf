@@ -868,11 +868,12 @@ class yf_dev{
 			$extract_path = $tmp_dir;
 
 			// Init zip object
-			main()->load_class_file("pclzip", "classes/");
-			if (class_exists("pclzip")) {
-				$ZIP_OBJ = new pclzip($archive_path);
-				$result = $ZIP_OBJ->extract(PCLZIP_OPT_PATH, $extract_path); 
-			} 
+// TODO: replace this with php built-in ZIP handler
+#			main()->load_class_file("pclzip", "classes/");
+#			if (class_exists("pclzip")) {
+#				$ZIP_OBJ = new pclzip($archive_path);
+#				$result = $ZIP_OBJ->extract(PCLZIP_OPT_PATH, $extract_path); 
+#			} 
 
 			$original_theme_name = $result[0]["stored_filename"];
 
