@@ -1491,6 +1491,7 @@ class yf_debug {
 			$v['params'] = $v['params'] ? '<pre>'._prepare_html($this->_var_export($v['params'])).'</pre>' : '';
 			unset($v['is_added']);
 			$items[$k] = array('id' => ++$i) + $v;
+			$items[$k]['strlen'] = strlen($v['content']);
 		}
 		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
 	}
