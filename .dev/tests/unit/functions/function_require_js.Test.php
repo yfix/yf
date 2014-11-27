@@ -44,8 +44,9 @@ class function_require_js_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js" type="text/javascript" class="yf_core"></script>', _class('core_js')->show());
 	}
 	public function test_jquery() {
-		$this->assertNotEmpty(_class('core_js')->assets['jquery']);
-		$jquery_version = _class('core_js')->assets['jquery']['version'];
+		$jquery_asset = _class('assets')->get_asset('js', 'jquery');
+		$this->assertNotEmpty($jquery_asset);
+		$jquery_version = $jquery_asset['version'];
 		$this->assertNotEmpty($jquery_version);
 		jquery('var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });');
 		$this->assertEquals('<script src="//ajax.googleapis.com/ajax/libs/jquery/'.$jquery_version.'/jquery.min.js" type="text/javascript"></script>'.PHP_EOL
