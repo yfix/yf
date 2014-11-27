@@ -1272,7 +1272,7 @@ class yf_debug {
 		$data['globals'] = array_filter(array_keys($GLOBALS), function($v) { return $v[0] != '_';} );
 		sort($data['globals']);
 
-		$grid = array(4,4,2,2);
+		$grid = array(5,4,1,2);
 		foreach ($data as $name => $_data) {
 			$grid_num = $grid[++$i - 1];
 			$body .= '<div class="span'.$grid_num.' col-md-'.$grid_num.'">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'no_sort' => 1)).'</div>';
