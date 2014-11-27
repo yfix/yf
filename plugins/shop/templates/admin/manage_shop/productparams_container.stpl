@@ -1,4 +1,4 @@
-<a class="btn btn-mini btn-xs addparams"><span>{t(Add Params)}</span></a><br />
+<a class="btn btn-mini btn-xs addparams" data-test="product_params_btn"><span>{t(Add Params)}</span></a><br />
 <div id="productparams_container">
 </div>
 <script>
@@ -10,7 +10,7 @@ $(function(){
 	var hidden = '';
 	
 	for(var param_id in params_selected) {
-		code = '<div><select name="productparams[]" class="productparams"><option value="">- none -</option>';
+		code = '<div data-test="params_block"><select name="productparams[]" class="productparams"><option value="">- none -</option>';
 		
 		for(var param_id2 in params) {
 			if (param_id == param_id2) {
@@ -47,7 +47,7 @@ $(function(){
 					
 	
 	$(".addparams").click(function(){
-		code = '<div><select name="productparams[]" class="productparams"><option value="">- none -</option>';		
+		code = '<div data-test="params_block"><select name="productparams[]" class="productparams"><option value="">- none -</option>';		
 		for(var param_id2 in params) {
 			code += '<option value="'+param_id2+'">'+params[param_id2]['title']+'</option>';
 		}	   

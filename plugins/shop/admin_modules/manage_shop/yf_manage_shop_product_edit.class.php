@@ -162,6 +162,7 @@ class yf_manage_shop_product_edit {
 				'thumb_path' => $base_url . $a['thumb'],
 				'del_url'    => './?object='.main()->_get('object').'&action=product_image_delete&id='.$product_info['id'].'&key='.$a['id'],
 				'image_key'  => $a['id'],
+				'data-test'	 => 'delete_image_btn',
 			));
 		}
 		$products_to_category = array();
@@ -194,11 +195,11 @@ class yf_manage_shop_product_edit {
 			->text('name')
 			->text('articul')
 			->text('url')
-			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0))
+			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0, 'data-test' => 'select_category'))
 // TODO: replace with similar JS container as for params and images
 #			->multi_select('category', module('manage_shop')->_cats_for_select, array('desc' => 'Secondary categories', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'selected' => $products_to_category, 'translate' => 0))
-			->select_box('manufacturer_id', module('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'edit_link' => './?object='.main()->_get('object').'&action=manufacturers', 'translate' => 0))
-			->select_box('supplier_id', module('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'edit_link' => './?object='.main()->_get('object').'&action=suppliers'))
+			->select_box('manufacturer_id', module('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'edit_link' => './?object='.main()->_get('object').'&action=manufacturers', 'translate' => 0, 'data-test' => 'select_manufacturer'))
+			->select_box('supplier_id', module('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'edit_link' => './?object='.main()->_get('object').'&action=suppliers', 'data-test' => 'select_supplier'))
 			->select2_box( array(
 				'desc'      => 'Регион',
 				'name'      => 'region',
@@ -206,6 +207,7 @@ class yf_manage_shop_product_edit {
 				'values'    => $_region,
 				'selected'  => $region,
 				'edit_link' => url_admin( '/manage_shop/region' ),
+				'data-test' => 'select_region',
 			))
 			->textarea('description')
 			->price('old_price')
@@ -218,14 +220,15 @@ class yf_manage_shop_product_edit {
 			->save_and_back()
 		->tab_end()
 		->tab_start('params')
-			->link('Search images', './?object='.main()->_get('object').'&action=product_image_search&id='.$product_info['id'], array('class_add' => 'btn-success'))
+			->link('Search images', './?object='.main()->_get('object').'&action=product_image_search&id='.$product_info['id'], array('class_add' => 'btn-success', 'data-test' => 'search_image_btn'))
 			->container(
 				($images_items ? implode(PHP_EOL, $images_items) : '').
-				'<a class="btn btn-default btn-mini btn-xs test_add_image" onclick="addImage();"><span>'.t('Add Image').'</span></a> <div id="images"></div>'
+				'<a class="btn btn-default btn-mini btn-xs" data-test="add_image" onclick="addImage();"><span>'.t('Add Image').'</span></a> <div id="images"></div>'
 				, array('desc' => 'Images')
 			)
 			->link('Set main image', './?object='.$_GET['object'].'&action=set_main_image&id='.$product_info['id'], array(
 				'class_add' => 'ajax_edit',
+				'data-test' => 'set_main_image_btn',
 				'display_func' => function() use ($images_items) { return (is_array($images_items) && count($images_items) > 1); }
 			))
 			->container(module('manage_shop')->_productparams_container($id), array('desc' => 'Product params'/*, 'edit_link' => './?object='.main()->_get('object').'&action=attributes'*/))
@@ -238,6 +241,7 @@ class yf_manage_shop_product_edit {
 				'multiple'  => true,
 				'values'    => module('manage_shop')->_units_for_select,
 				'edit_link' => url_admin( '/manage_shop/units' ),
+				'data-test' => 'select_units',
 			))
 		->tab_end()
 			.tpl()->parse('manage_shop/product_edit_js');

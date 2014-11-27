@@ -35,7 +35,7 @@ class yf_manage_shop_hook_side_column {
 			->date('add_date', array('format' => '%d/%m/%Y', 'nowrap' => 1))
 			->admin('user_id', array('desc' => 'admin'))
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d')
+			->btn_view('', './?object=manage_shop&action=product_revisions_view&id=%d', array('data-test' => 'view_revision_btn'))
 			->footer_link('All products revisions', './?object=manage_shop&action=product_revisions')
 		;
 	}
@@ -66,7 +66,7 @@ class yf_manage_shop_hook_side_column {
             }))
 */
 			->text('action')
-			->btn_view('', './?object=manage_shop&action=product_images_revisions_view&id=%d')
+			->btn_view('', './?object=manage_shop&action=product_images_revisions_view&id=%d', array('data-test' => 'view_image_revision_btn'))
 			->footer_link('All images revisions', './?object=manage_shop&action=product_images_revisions')
 		;
 	}
