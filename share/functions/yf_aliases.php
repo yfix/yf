@@ -142,22 +142,22 @@ if (!function_exists('table2')) {
 	function table2($data = array(), $params = array()) { $table = clone _class('table2'); return $table->chained_wrapper($data, $params); }
 }
 if (!function_exists('js')) {
-	function js($content, $type = 'auto', $params = array()) { return _class('core_js')->add($content, $type, $params); }
+	function js($content, $content_type = 'auto', $params = array()) { return _class('core_js')->add($content, $content_type, $params); }
 }
 if (!function_exists('require_js')) {
-	function require_js($content, $type = 'auto', $params = array()) { return _class('core_js')->add($content, $type, $params); }
+	function require_js($content, $content_type = 'auto', $params = array()) { return _class('core_js')->add($content, $content_type, $params); }
 }
 if (!function_exists('jquery')) {
 	function jquery($content, $params = array()) { return _class('core_js')->jquery($content, $params); }
 }
 if (!function_exists('css')) {
-	function css($content, $type = 'auto', $params = array()) { return _class('core_css')->add($content, $type, $params); }
+	function css($content, $content_type = 'auto', $params = array()) { return _class('core_css')->add($content, $content_type, $params); }
 }
 if (!function_exists('require_css')) {
-	function require_css($content, $type = 'auto', $params = array()) { return _class('core_css')->add($content, $type, $params); }
+	function require_css($content, $content_type = 'auto', $params = array()) { return _class('core_css')->add($content, $content_type, $params); }
 }
 if (!function_exists('asset')) {
-	function asset($content, $type = 'auto', $params = array()) { return _class('assets')->add($content, $type, $params); }
+	function asset($content, $asset_type = 'auto', $content_type = 'auto', $params = array()) { return _class('assets')->add($content, $asset_type, $content_type, $params); }
 }
 if (!function_exists('events')) {
 	function events() { return _class('core_events'); }
