@@ -263,6 +263,377 @@ class yf_debug {
 
 	/**
 	*/
+	function _do_debug_db_connection_queries ($db, $connect_trace = array()) {
+		if (!$this->SHOW_DB_QUERY_LOG) {
+			return '';
+		}
+		if (!is_object($db) || !is_array($db->_LOG) || !$db->_tried_to_connect) {
+			return false;
+		}
+		$items = array();
+		$db_queries_list = $db->_LOG;
+		if ($this->SHOW_DB_EXPLAIN_QUERY && !empty($db_queries_list) && substr($db->DB_TYPE, 0, 5) == 'mysql') {
+			foreach ((array)$db_queries_list as $id => $log) {
+				if ($log['error']) {
+					continue;
+				}
+				$sql = trim($log['sql']);
+				// Cut comment
+				if (substr($sql, 0, 2) == '--') {
+					$sql = substr($sql, strpos($sql, "\n"));
+				}
+				$sql = preg_replace('/[\s]{2,}/ims', ' ', str_replace("\t", ' ', trim($sql)));
+				if (preg_match('/^[\(]*select/ims', $sql)) {
+					$db_explain_results[$id] = $db->get_all('EXPLAIN '.$sql, -1);
+				}
+			}
+		}
+		$total_queries_exec_time = 0;
+
+		$body .= '<b>'.t('QUERY_LOG').'  ('
+			.($db->DB_SSL ? 'SSL ' : '')
+			.$db->DB_TYPE
+			.'://'.$db->DB_USER
+			.'@'.$db->DB_HOST
+			.($db->DB_PORT ? ':'.$db->DB_PORT : '')
+			.'/'.$db->DB_NAME
+			.($db->DB_CHARSET ? '?charset='.$db->DB_CHARSET : '')
+			.($db->DB_SOCKET ? '?socket='.$db->DB_SOCKET : '')
+			.')</b>';
+
+		$trace_html = ' <a href="javascript:void(0)" class="btn btn-default btn-mini btn-xs btn-toggle" data-hidden-toggle="debug-db-connect-trace">'.t('Trace').'</a>'
+				.'<pre style="display:none;" id="debug-db-connect-trace"><small>'._prepare_html($connect_trace).'</small></pre>';
+
+		$body .= $connect_trace ? $trace_html : '';
+
+		$_this = $this;
+		foreach ((array)$db_queries_list as $id => $log) {
+			$sql = trim($log['sql']);
+			// Cut comment
+			if (substr($sql, 0, 2) == '--') {
+				$sql = substr($sql, strpos($sql, "\n"));
+				$sql = trim($sql);
+				if (!strlen($sql)) {
+					continue;
+				}
+			}
+			$total_queries_exec_time += $log['time'];
+			$_cur_trace = $log['trace'];
+			$_cur_explain = isset($db_explain_results[$id]) ? $this->_format_db_explain_result($db_explain_results[$id]) : '';
+			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
+
+			$admin_link = $this->_admin_link('sql_query', urlencode($sql), true);
+			$sql = htmlspecialchars($sql);
+			$replace = array(
+				','	=> ', ', 
+			);
+			$sql = str_replace(array_keys($replace), array_values($replace), $sql);
+			if ($db->DB_PREFIX) {
+				$sql = preg_replace_callback('/([\s\t]+`?)('.preg_quote($db->DB_PREFIX, '/').'[a-z0-9_]+)(`?)/ims', function($m) use ($_this) {
+					return $m[1]. $_this->_admin_link('show_db_table', $m[2]). $m[3];
+				}, $sql);
+			}
+			$exec_time = round($log['time'], 4);
+			if ($admin_link && $this->ADD_ADMIN_LINKS) {
+				$exec_time = '<a href="'.$admin_link.'" class="btn btn-default btn-mini btn-xs">'.$exec_time.'</a>';
+			}
+			$num = $id + 1;
+			$items[] = array(
+				'id'		=> $num,
+				'sql'		=> $sql,
+				'rows'		=> strval($log['rows']),
+				'insert_id'	=> strval($log['insert_id']),
+				'error'		=> $log['error'] ? '<pre>'._prepare_html($this->_var_export($log['error'])).'</pre>' : '',
+				'warning'	=> $log['warning'] ? '<pre>'._prepare_html($this->_var_export($log['warning'])).'</pre>' : '',
+				'info'		=> $log['info'] ? '<pre>'._prepare_html($this->_var_export($log['info'])).'</pre>' : '',
+				'exec_time'	=> strval($exec_time),
+				'time'		=> round($log['time'], 4),
+				'trace'		=> $_cur_trace,
+				'explain'	=> $_cur_explain,
+			);
+		}
+		$items = $this->_time_count_changes($items);
+		foreach ((array)$items as $k => $v) {
+			unset($items[$k]['time']);
+		}
+		return $this->_show_auto_table($items, array(
+			'first_col_width' => '1%',
+			'tr' => function($row, $id) { return $row['error'] ? ' class="error"' : ''; },
+			'caption' => array(
+				'total_exec_time'	=> round($total_queries_exec_time, 4),
+				'connect_time'		=> round($db->_connection_time, 4),
+			),
+			'hidden_map' => array(
+				'explain'	=> 'sql',
+				'trace'		=> 'sql',
+				'error'		=> 'sql',
+				'warning'	=> 'sql',
+				'info'		=> 'sql',
+			),
+		));
+	}
+
+	/**
+	*/
+	function _show_db_shutdown_queries ($db) {
+		if (!$this->SHOW_DB_QUERY_LOG) {
+			return '';
+		}
+		return $this->_show_key_val_table($db->_SHUTDOWN_QUERIES);
+	}
+
+	/**
+	*/
+	function _show_db_stats ($db) {
+		if (!$this->SHOW_DB_STATS) {
+			return '';
+		}
+		$data['stats'] = $db->get_2d('SHOW SESSION STATUS');
+		$data['vars'] = $db->get_2d('SHOW VARIABLES');
+#		$data['global_vars'] = $db->get_2d('SHOW GLOBAL VARIABLES');
+		foreach ($data as $name => $_data) {
+			$body .= '<div class="span10 col-md-10">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
+		}
+		return $body;
+	}
+
+	/**
+	*/
+	function _format_db_explain_result($explain_result = array()) {
+		if (empty($explain_result)) {
+			return false;
+		}
+		$body = '<table class="table table-bordered table-striped table-hover table-condensed">';
+		// Header
+		foreach ((array)$explain_result[0] as $k => $v) {
+			$body .= '<td>'.$k.'</td>';
+		}
+		// Data
+		foreach ((array)$explain_result as $_num => $_data) {
+			$body .= '<tr>';
+			foreach ((array)$_data as $k => $v) {
+				$body .= '<td>'.(strlen($v) ? $v : '').'</td>';
+			}
+			$body .= '</tr>';
+		}
+		$body .= '</table>';
+		return $body;
+	}
+
+	/**
+	*/
+	function _show_key_val_table ($a, $params = array(), $name = '') {
+		if (!$a) {
+			return false;
+		}
+		if (!isset($params['first_col_width'])) {
+			$params['first_col_width'] = '1%';
+		}
+		if (is_array($a) && !$params['no_sort']) {
+			ksort($a);
+		}
+		// Escape by default
+		if (!$params['no_escape']) {
+			$params['escape'] = 1;
+		}
+		$items = array();
+		foreach ((array)$a as $k => $v) {
+			if ($params['skip_empty_values'] && !$v) {
+				continue;
+			}
+			$v = is_array($v) ? nl2br($this->_var_export($v)) : $v;
+			$items[] = array(
+				'key'	=> $params['escape'] ? _prepare_html($k) : $k,
+				'value'	=> $params['escape'] && strlen($v) ? '<pre>'._prepare_html($v).'</pre>' : $v,
+			);
+		}
+		if (!$items) {
+			return false;
+		}
+		if ($params['escape']) {
+			$params['no_escape'] = 1; // Means we already escaped here
+		}
+		return $this->_show_auto_table($items, $params);
+	}
+
+	/**
+	*/
+	function _show_auto_table ($items = array(), $params = array(), $name = '') {
+		if (!is_array($items)) {
+			$items = array();
+		}
+		$items = $this->_format_trace_in_items($items);
+		$total_time = 0.0;
+		foreach ($items as $k1 => $item) {
+			foreach ($item as $k => $v) {
+				if (is_array($v)) {
+					$v = !empty($v) ? $this->_var_export($v) : '';
+					if (!$params['no_escape']) {
+						$v = !empty($v) ? _prepare_html($v) : '';
+					}
+					if (is_array($v)) {
+						$v = $this->_var_export($v);
+					}
+					$items[$k1][$k] = $v;
+				}
+				if ($k == 'time') {
+					$total_time += $v;
+				}
+			}
+		}
+		if (!$items) {
+			return false;
+		}
+		$caption = $params['header'] ? '<b class="btn btn-default disabled">'.$params['header'].'</b>' : '';
+		if (!$params['no_total']) {
+			if (!is_array($params['caption'])) {
+				$params['caption'] = array();
+			}
+			count($items) && $params['caption']['items'] = count($items);
+			$total_time && $params['caption']['total_time'] = round($total_time, 4);
+			foreach ((array)$params['caption'] as $k => $v) {
+				$caption .= ' <span class="label label-info">'.$k.': '.$v.'</span>'.PHP_EOL;
+			}
+		}
+		$table = table((array)$items, array(
+			'table_class' 		=> 'debug_item table-condensed', 
+			'auto_no_buttons' 	=> 1,
+			'pager_records_on_page' => 10000,
+			'hidden_map'		=> $params['hidden_map'],
+			'tr'				=> $params['tr'],
+			'td'				=> $params['td'],
+			'no_total'			=> true,
+			'caption'			=> $caption ? '<div class="pull-left">'.$caption.'</div>' : '',
+		))->auto();
+		foreach ((array)$params['hidden_map'] as $name => $to) {
+			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name, 'display_func' => function($row, $info, $params) use($name) { return (bool)strlen($row[$name]); }));
+		}
+		return (string)$table;
+	}
+
+	/**
+	* Process through admin link or just return text if links disabled
+	*/
+	function _admin_link ($type, $text = '', $just_link = false, $replace = array()) {
+		if (!$this->ADD_ADMIN_LINKS || !isset($this->ADMIN_PATHS[$type])) {
+			return $text;
+		}
+		if ($type == 'link') {
+			return '<a href="'.$text.'" class="btn btn-default btn-mini btn-xs">'.$text.'</a>';
+		}
+		$id = $text;
+		$replace += array(
+			'{ID}'	=> urlencode(str_replace("\\", '/', $id)),
+			'{THEME}'	=> conf('theme'),
+		);
+		$url = str_replace(array_keys($replace), array_values($replace), $this->ADMIN_PATHS[$type]);
+		$link = ADMIN_WEB_PATH. '?'. $url;
+		if ($just_link) {
+			return $link;
+		}
+		return '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs">'.$text.'</a>';
+	}
+
+	/**
+	*/
+	function _format_trace ($trace) {
+		return '<pre><small>'._prepare_html($trace).'</small></pre>';
+	}
+
+	/**
+	*/
+	function _format_trace_in_items ($items) {
+		foreach ((array)$items as $k => $v) {
+			if (isset($v['trace'])) {
+				$items[$k]['trace'] = $this->_format_trace($v['trace']);
+			}
+		}
+		return $items;
+	}
+
+	/**
+	*/
+	function _get_debug_data ($name) {
+		$this->_used_debug_datas[$name]++;
+		$data = debug($name);
+		$this->backup_debug_data[$name] = $data;
+		debug($name, false);
+		return $data;
+	}
+
+	/**
+	*/
+	function _time_count_changes ($items = array(), $field = 'time') {
+		$time_all = 0;
+		$time_max = 0;
+		foreach ((array)$items as $i => $v) {
+			$time = $v[$field];
+			$time_all += $time;
+			if ($time > $time_max) {
+				$time_max = $time;
+			}
+		}
+		if (!$time_all) {
+			return $items;
+		}
+		$warn_limit = $time_max / $time_all * 100 / 2;
+		if ($warn_limit < 20) {
+			$warn_limit = 20;
+		}
+		foreach ((array)$items as $i => $v) {
+			$time = $v[$field];
+			$timep = round($time / $time_all * 100, 1);
+			$items[$i]['timep'] = $timep ? '<span class="'.($timep > $warn_limit ? 'label label-warning' : '').'">'.$timep.'%</span>' : '';
+		}
+		return $items;
+	}
+
+	/**
+	*/
+	function _i18n_vars_todo () {
+// TODO: JS full rewrite needed, as was done for i18n inline editor
+		// !!! Needed to be on the bottom of the page
+		$i18n_vars = _class('i18n')->_I18N_VARS;
+		if (!$this->SHOW_I18N_VARS || empty($i18n_vars)) {
+			return false;
+		}
+		ksort($i18n_vars);
+		$js_vars1 = array();
+		foreach ((array)$i18n_vars as $name => $value) {
+			$name = str_replace("_", " ", strtolower($name));
+			$js_vars1[$name] = $value;
+		}
+		$body .= 'var _i18n_for_page = '.json_encode($js_vars1);
+
+		$not_translated = _class('i18n')->_NOT_TRANSLATED;
+		if (!empty($not_translated)) {
+			ksort($not_translated);
+			$js_vars2 = array();
+			foreach ((array)$not_translated as $name => $hits) {
+				$name = str_replace("_", " ", strtolower($name));
+				$js_vars2[$name] = (int)$hits;
+			}
+			$body .= 'var _i18n_not_translated = '.json_encode($js_vars2);
+		}
+
+		$body .= 'var _i18n_for_page = '.json_encode($js_vars);
+		return '<script type="text/javascript">'.$body.'</script>';
+	}
+
+	/**
+	*/
+	function _var_export ($var) {
+		if (defined('HHVM_VERSION')) {
+			return is_array($var) ? print_r($var, 1) : $var;
+		} else {
+			return _var_export($var);
+		}
+	}
+
+	//------------ debug methods tabs below -----------//
+
+	/**
+	*/
 	function _debug_DEBUG_YF (&$params = array()) {
 		if (!$this->SHOW_SETTINGS) {
 			return '';
@@ -425,142 +796,6 @@ class yf_debug {
 			$items['db_stats_'.$name] = $this->_show_db_stats($db);
 		}
 		return _class('html')->tabs($items, array('hide_empty' => 1));
-	}
-
-	/**
-	*/
-	function _do_debug_db_connection_queries ($db, $connect_trace = array()) {
-		if (!$this->SHOW_DB_QUERY_LOG) {
-			return '';
-		}
-		if (!is_object($db) || !is_array($db->_LOG) || !$db->_tried_to_connect) {
-			return false;
-		}
-		$items = array();
-		$db_queries_list = $db->_LOG;
-		if ($this->SHOW_DB_EXPLAIN_QUERY && !empty($db_queries_list) && substr($db->DB_TYPE, 0, 5) == 'mysql') {
-			foreach ((array)$db_queries_list as $id => $log) {
-				if ($log['error']) {
-					continue;
-				}
-				$sql = trim($log['sql']);
-				// Cut comment
-				if (substr($sql, 0, 2) == '--') {
-					$sql = substr($sql, strpos($sql, "\n"));
-				}
-				$sql = preg_replace('/[\s]{2,}/ims', ' ', str_replace("\t", ' ', trim($sql)));
-				if (preg_match('/^[\(]*select/ims', $sql)) {
-					$db_explain_results[$id] = $db->get_all('EXPLAIN '.$sql, -1);
-				}
-			}
-		}
-		$total_queries_exec_time = 0;
-
-		$body .= '<b>'.t('QUERY_LOG').'  ('
-			.($db->DB_SSL ? 'SSL ' : '')
-			.$db->DB_TYPE
-			.'://'.$db->DB_USER
-			.'@'.$db->DB_HOST
-			.($db->DB_PORT ? ':'.$db->DB_PORT : '')
-			.'/'.$db->DB_NAME
-			.($db->DB_CHARSET ? '?charset='.$db->DB_CHARSET : '')
-			.($db->DB_SOCKET ? '?socket='.$db->DB_SOCKET : '')
-			.')</b>';
-
-		$trace_html = ' <a href="javascript:void(0)" class="btn btn-default btn-mini btn-xs btn-toggle" data-hidden-toggle="debug-db-connect-trace">'.t('Trace').'</a>'
-				.'<pre style="display:none;" id="debug-db-connect-trace"><small>'._prepare_html($connect_trace).'</small></pre>';
-
-		$body .= $connect_trace ? $trace_html : '';
-
-		$_this = $this;
-		foreach ((array)$db_queries_list as $id => $log) {
-			$sql = trim($log['sql']);
-			// Cut comment
-			if (substr($sql, 0, 2) == '--') {
-				$sql = substr($sql, strpos($sql, "\n"));
-				$sql = trim($sql);
-				if (!strlen($sql)) {
-					continue;
-				}
-			}
-			$total_queries_exec_time += $log['time'];
-			$_cur_trace = $log['trace'];
-			$_cur_explain = isset($db_explain_results[$id]) ? $this->_format_db_explain_result($db_explain_results[$id]) : '';
-			$_sql_type = strtoupper(rtrim(substr(ltrim($sql), 0, 7)));
-
-			$admin_link = $this->_admin_link('sql_query', urlencode($sql), true);
-			$sql = htmlspecialchars($sql);
-			$replace = array(
-				','	=> ', ', 
-			);
-			$sql = str_replace(array_keys($replace), array_values($replace), $sql);
-			if ($db->DB_PREFIX) {
-				$sql = preg_replace_callback('/([\s\t]+`?)('.preg_quote($db->DB_PREFIX, '/').'[a-z0-9_]+)(`?)/ims', function($m) use ($_this) {
-					return $m[1]. $_this->_admin_link('show_db_table', $m[2]). $m[3];
-				}, $sql);
-			}
-			$exec_time = round($log['time'], 4);
-			if ($admin_link && $this->ADD_ADMIN_LINKS) {
-				$exec_time = '<a href="'.$admin_link.'" class="btn btn-default btn-mini btn-xs">'.$exec_time.'</a>';
-			}
-			$num = $id + 1;
-			$items[] = array(
-				'id'		=> $num,
-				'sql'		=> $sql,
-				'rows'		=> strval($log['rows']),
-				'insert_id'	=> strval($log['insert_id']),
-				'error'		=> $log['error'] ? '<pre>'._prepare_html($this->_var_export($log['error'])).'</pre>' : '',
-				'warning'	=> $log['warning'] ? '<pre>'._prepare_html($this->_var_export($log['warning'])).'</pre>' : '',
-				'info'		=> $log['info'] ? '<pre>'._prepare_html($this->_var_export($log['info'])).'</pre>' : '',
-				'exec_time'	=> strval($exec_time),
-				'time'		=> round($log['time'], 4),
-				'trace'		=> $_cur_trace,
-				'explain'	=> $_cur_explain,
-			);
-		}
-		$items = $this->_time_count_changes($items);
-		foreach ((array)$items as $k => $v) {
-			unset($items[$k]['time']);
-		}
-		return $this->_show_auto_table($items, array(
-			'first_col_width' => '1%',
-			'tr' => function($row, $id) { return $row['error'] ? ' class="error"' : ''; },
-			'caption' => array(
-				'total_exec_time'	=> round($total_queries_exec_time, 4),
-				'connect_time'		=> round($db->_connection_time, 4),
-			),
-			'hidden_map' => array(
-				'explain'	=> 'sql',
-				'trace'		=> 'sql',
-				'error'		=> 'sql',
-				'warning'	=> 'sql',
-				'info'		=> 'sql',
-			),
-		));
-	}
-
-	/**
-	*/
-	function _show_db_shutdown_queries ($db) {
-		if (!$this->SHOW_DB_QUERY_LOG) {
-			return '';
-		}
-		return $this->_show_key_val_table($db->_SHUTDOWN_QUERIES);
-	}
-
-	/**
-	*/
-	function _show_db_stats ($db) {
-		if (!$this->SHOW_DB_STATS) {
-			return '';
-		}
-		$data['stats'] = $db->get_2d('SHOW SESSION STATUS');
-		$data['vars'] = $db->get_2d('SHOW VARIABLES');
-#		$data['global_vars'] = $db->get_2d('SHOW GLOBAL VARIABLES');
-		foreach ($data as $name => $_data) {
-			$body .= '<div class="span10 col-md-10">'.$name.'<br>'.$this->_show_key_val_table($_data, array('no_total' => 1, 'skip_empty_values' => 1)).'</div>';
-		}
-		return $body;
 	}
 
 	/**
@@ -986,8 +1221,10 @@ class yf_debug {
 		if (!$this->SHOW_XCACHE_INFO || !function_exists('xcache_get')) {
 			return '';
 		}
-		foreach ((array)ini_get_all('xcache') as $_k => $_v) {
-			$data[$_k] = $_v['local_value'];
+		$ini_names = 'cacher optimizer coverager admin.enable_auth size count slots ttl gc_interval stat var_size var_count var_slots var_ttl var_maxttl var_gc_interval coverager_autostart';
+		foreach(explode(' ', $ini_names) as $name) {
+			$name = 'xcache.'.$name;
+			$data[$name] = ini_get($name);
 		}
 		return $this->_show_key_val_table($data);
 	}
@@ -1159,20 +1396,6 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_assets (&$params = array()) {
-		$items = $this->_get_debug_data('assets');
-		foreach ((array)$items as $k => $v) {
-			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
-			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
-			$v['params'] = $v['params'] ? '<pre>'._prepare_html($this->_var_export($v['params'])).'</pre>' : '';
-			unset($v['is_added']);
-			$items[$k] = array('id' => ++$i) + $v;
-		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
-	}
-
-	/**
-	*/
 	function _debug_events (&$params = array()) {
 		$main_ts = main()->_time_start;
 		$items = array();
@@ -1205,243 +1428,7 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_other (&$params = array()) {
-		$items = array();
-		foreach (debug() as $k => $v) {
-			if (isset($this->_used_debug_datas[$k])) {
-				continue;
-			}
-			$items[$k] = $v;
-		}
-		return $this->_show_key_val_table($items);
-	}
-
-	/**
-	*/
-	function _show_key_val_table ($a, $params = array(), $name = '') {
-		if (!$a) {
-			return false;
-		}
-		if (!isset($params['first_col_width'])) {
-			$params['first_col_width'] = '1%';
-		}
-		if (is_array($a) && !$params['no_sort']) {
-			ksort($a);
-		}
-		// Escape by default
-		if (!$params['no_escape']) {
-			$params['escape'] = 1;
-		}
-		$items = array();
-		foreach ((array)$a as $k => $v) {
-			if ($params['skip_empty_values'] && !$v) {
-				continue;
-			}
-			$v = is_array($v) ? nl2br($this->_var_export($v)) : $v;
-			$items[] = array(
-				'key'	=> $params['escape'] ? _prepare_html($k) : $k,
-				'value'	=> $params['escape'] && strlen($v) ? '<pre>'._prepare_html($v).'</pre>' : $v,
-			);
-		}
-		if (!$items) {
-			return false;
-		}
-		if ($params['escape']) {
-			$params['no_escape'] = 1; // Means we already escaped here
-		}
-		return $this->_show_auto_table($items, $params);
-	}
-
-	/**
-	*/
-	function _show_auto_table ($items = array(), $params = array(), $name = '') {
-		if (!is_array($items)) {
-			$items = array();
-		}
-		$items = $this->_format_trace_in_items($items);
-		$total_time = 0.0;
-		foreach ($items as $k1 => $item) {
-			foreach ($item as $k => $v) {
-				if (is_array($v)) {
-					$v = !empty($v) ? $this->_var_export($v) : '';
-					if (!$params['no_escape']) {
-						$v = !empty($v) ? _prepare_html($v) : '';
-					}
-					if (is_array($v)) {
-						$v = $this->_var_export($v);
-					}
-					$items[$k1][$k] = $v;
-				}
-				if ($k == 'time') {
-					$total_time += $v;
-				}
-			}
-		}
-		if (!$items) {
-			return false;
-		}
-		$caption = $params['header'] ? '<b class="btn btn-default disabled">'.$params['header'].'</b>' : '';
-		if (!$params['no_total']) {
-			if (!is_array($params['caption'])) {
-				$params['caption'] = array();
-			}
-			count($items) && $params['caption']['items'] = count($items);
-			$total_time && $params['caption']['total_time'] = round($total_time, 4);
-			foreach ((array)$params['caption'] as $k => $v) {
-				$caption .= ' <span class="label label-info">'.$k.': '.$v.'</span>'.PHP_EOL;
-			}
-		}
-		$table = table((array)$items, array(
-			'table_class' 		=> 'debug_item table-condensed', 
-			'auto_no_buttons' 	=> 1,
-			'pager_records_on_page' => 10000,
-			'hidden_map'		=> $params['hidden_map'],
-			'tr'				=> $params['tr'],
-			'td'				=> $params['td'],
-			'no_total'			=> true,
-			'caption'			=> $caption ? '<div class="pull-left">'.$caption.'</div>' : '',
-		))->auto();
-		foreach ((array)$params['hidden_map'] as $name => $to) {
-			$table->btn($name, 'javascript:void();', array('hidden_toggle' => $name, 'display_func' => function($row, $info, $params) use($name) { return (bool)strlen($row[$name]); }));
-		}
-		return (string)$table;
-	}
-
-	/**
-	*/
-	function _format_db_explain_result($explain_result = array()) {
-		if (empty($explain_result)) {
-			return false;
-		}
-		$body = '<table class="table table-bordered table-striped table-hover table-condensed">';
-		// Header
-		foreach ((array)$explain_result[0] as $k => $v) {
-			$body .= '<td>'.$k.'</td>';
-		}
-		// Data
-		foreach ((array)$explain_result as $_num => $_data) {
-			$body .= '<tr>';
-			foreach ((array)$_data as $k => $v) {
-				$body .= '<td>'.(strlen($v) ? $v : '').'</td>';
-			}
-			$body .= '</tr>';
-		}
-		$body .= '</table>';
-		return $body;
-	}
-
-	/**
-	* Process through admin link or just return text if links disabled
-	*/
-	function _admin_link ($type, $text = '', $just_link = false, $replace = array()) {
-		if (!$this->ADD_ADMIN_LINKS || !isset($this->ADMIN_PATHS[$type])) {
-			return $text;
-		}
-		if ($type == 'link') {
-			return '<a href="'.$text.'" class="btn btn-default btn-mini btn-xs">'.$text.'</a>';
-		}
-		$id = $text;
-		$replace += array(
-			'{ID}'	=> urlencode(str_replace("\\", '/', $id)),
-			'{THEME}'	=> conf('theme'),
-		);
-		$url = str_replace(array_keys($replace), array_values($replace), $this->ADMIN_PATHS[$type]);
-		$link = ADMIN_WEB_PATH. '?'. $url;
-		if ($just_link) {
-			return $link;
-		}
-		return '<a href="'.$link.'" class="btn btn-default btn-mini btn-xs">'.$text.'</a>';
-	}
-
-	/**
-	*/
-	function _format_trace ($trace) {
-		return '<pre><small>'._prepare_html($trace).'</small></pre>';
-	}
-
-	/**
-	*/
-	function _format_trace_in_items ($items) {
-		foreach ((array)$items as $k => $v) {
-			if (isset($v['trace'])) {
-				$items[$k]['trace'] = $this->_format_trace($v['trace']);
-			}
-		}
-		return $items;
-	}
-
-	/**
-	*/
-	function _get_debug_data ($name) {
-		$this->_used_debug_datas[$name]++;
-		$data = debug($name);
-		$this->backup_debug_data[$name] = $data;
-		debug($name, false);
-		return $data;
-	}
-
-	/**
-	*/
-	function _time_count_changes ($items = array(), $field = 'time') {
-		$time_all = 0;
-		$time_max = 0;
-		foreach ((array)$items as $i => $v) {
-			$time = $v[$field];
-			$time_all += $time;
-			if ($time > $time_max) {
-				$time_max = $time;
-			}
-		}
-		if (!$time_all) {
-			return $items;
-		}
-		$warn_limit = $time_max / $time_all * 100 / 2;
-		if ($warn_limit < 20) {
-			$warn_limit = 20;
-		}
-		foreach ((array)$items as $i => $v) {
-			$time = $v[$field];
-			$timep = round($time / $time_all * 100, 1);
-			$items[$i]['timep'] = $timep ? '<span class="'.($timep > $warn_limit ? 'label label-warning' : '').'">'.$timep.'%</span>' : '';
-		}
-		return $items;
-	}
-
-	/**
-	*/
-	function _i18n_vars_todo () {
-// TODO: JS full rewrite needed, as was done for i18n inline editor
-		// !!! Needed to be on the bottom of the page
-		$i18n_vars = _class('i18n')->_I18N_VARS;
-		if (!$this->SHOW_I18N_VARS || empty($i18n_vars)) {
-			return false;
-		}
-		ksort($i18n_vars);
-		$js_vars1 = array();
-		foreach ((array)$i18n_vars as $name => $value) {
-			$name = str_replace("_", " ", strtolower($name));
-			$js_vars1[$name] = $value;
-		}
-		$body .= 'var _i18n_for_page = '.json_encode($js_vars1);
-
-		$not_translated = _class('i18n')->_NOT_TRANSLATED;
-		if (!empty($not_translated)) {
-			ksort($not_translated);
-			$js_vars2 = array();
-			foreach ((array)$not_translated as $name => $hits) {
-				$name = str_replace("_", " ", strtolower($name));
-				$js_vars2[$name] = (int)$hits;
-			}
-			$body .= 'var _i18n_not_translated = '.json_encode($js_vars2);
-		}
-
-		$body .= 'var _i18n_for_page = '.json_encode($js_vars);
-		return '<script type="text/javascript">'.$body.'</script>';
-	}
-
-	/**
-	*/
-	function _debug_dashboards () {
+	function _debug_dashboard () {
 		if (!$this->SHOW_DB_STATS) {
 			return '';
 		}
@@ -1475,11 +1462,28 @@ class yf_debug {
 
 	/**
 	*/
-	function _var_export ($var) {
-		if (defined('HHVM_VERSION')) {
-			return is_array($var) ? print_r($var, 1) : $var;
-		} else {
-			return _var_export($var);
+	function _debug_assets (&$params = array()) {
+		$items = $this->_get_debug_data('assets');
+		foreach ((array)$items as $k => $v) {
+			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
+			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
+			$v['params'] = $v['params'] ? '<pre>'._prepare_html($this->_var_export($v['params'])).'</pre>' : '';
+			unset($v['is_added']);
+			$items[$k] = array('id' => ++$i) + $v;
 		}
+		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
+	}
+
+	/**
+	*/
+	function _debug_other (&$params = array()) {
+		$items = array();
+		foreach (debug() as $k => $v) {
+			if (isset($this->_used_debug_datas[$k])) {
+				continue;
+			}
+			$items[$k] = $v;
+		}
+		return $this->_show_key_val_table($items);
 	}
 }
