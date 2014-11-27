@@ -1159,22 +1159,8 @@ class yf_debug {
 
 	/**
 	*/
-	function _debug_css (&$params = array()) {
-		$items = $this->_get_debug_data('core_css');
-		foreach ((array)$items as $k => $v) {
-			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
-			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
-			$v['params'] = $v['params'] ? '<pre>'._prepare_html($this->_var_export($v['params'])).'</pre>' : '';
-			unset($v['is_added']);
-			$items[$k] = array('id' => ++$i) + $v;
-		}
-		return $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
-	}
-
-	/**
-	*/
-	function _debug_js (&$params = array()) {
-		$items = $this->_get_debug_data('core_js');
+	function _debug_assets (&$params = array()) {
+		$items = $this->_get_debug_data('assets');
 		foreach ((array)$items as $k => $v) {
 			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
 			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
