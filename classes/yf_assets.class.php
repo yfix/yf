@@ -255,8 +255,8 @@ class yf_assets {
 				$this->set_content($asset_type, $md5, 'url', $_content, $params);
 			} elseif ($content_type === 'file') {
 				if (file_exists($_content)) {
-					$text = file_get_contents($_content);
-					if (strlen($text)) {
+					$str = file_get_contents($_content);
+					if (strlen($str)) {
 						$this->set_content($asset_type, $md5, 'file', $_content, $params);
 					}
 				}
@@ -384,35 +384,35 @@ class yf_assets {
 		// Process previously added content, depending on its type
 		foreach ((array)$this->get_content($out_type) as $md5 => $v) {
 			$type = $v['content_type'];
-			$text = $v['content'];
+			$str = $v['content'];
 			$_params = (array)$v['params'] + (array)$params;
 			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
 			if ($type === 'url') {
-				if ($params['min'] && !DEBUG_MODE && strpos($text, '.min.') === false) {
-					$text = substr($text, 0, -strlen($ext)).'.min'.$ext;
+				if ($params['min'] && !DEBUG_MODE && strpos($str, '.min.') === false) {
+					$str = substr($str, 0, -strlen($ext)).'.min'.$ext;
 				}
 			}
 			if ($out_type === 'js') {
 				if ($type === 'url') {
-					$out[$md5] = '<script src="'.$text.'" type="text/javascript"'.$css_class.'></script>';
+					$out[$md5] = '<script src="'.$str.'" type="text/javascript"'.$css_class.'></script>';
 				} elseif ($type === 'file') {
-					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</script>';
+					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
 				} elseif ($type === 'inline') {
-					$text = $this->_strip_script_tags($text);
-					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</script>';
+					$str = $this->_strip_script_tags($str);
+					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</script>';
 				} elseif ($type === 'raw') {
-					$out[$md5] = $text;
+					$out[$md5] = $str;
 				}
 			} elseif ($out_type === 'css') {
 				if ($type === 'url') {
-					$out[$md5] = '<link href="'.$text.'" rel="stylesheet"'.$css_class.' />';
+					$out[$md5] = '<link href="'.$str.'" rel="stylesheet"'.$css_class.' />';
 				} elseif ($type === 'file') {
-					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</style>';
+					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>';
 				} elseif ($type === 'inline') {
-					$text = $this->_strip_style_tags($text);
-					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</style>';
+					$str = $this->_strip_style_tags($str);
+					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</style>';
 				} elseif ($type === 'raw') {
-					$out[$md5] = $text;
+					$out[$md5] = $str;
 				}
 			}
 		}
@@ -431,7 +431,7 @@ class yf_assets {
 	/**
 	* Shortcut
 	*/
-	public function show_css() {
+	public function show_css($params = array()) {
 		return $this->show('css', $params);
 	}
 
@@ -447,9 +447,9 @@ class yf_assets {
 // TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
 // TODO: decide with images: jpeg, png, gif, sprites
 // TODO: decide with fonts: different formats
-	public function combine_by_type($asset_type, $params = array()) {
+	public function combine($asset_type, $params = array()) {
 		$ext = '.'.$asset_type;
-		$combined_file = $params['out_file'] ?: PROJECT_PATH. 'templates/'.$asset_type.'/'.date('YmdHis').'_'.md5($_SERVER['HTTP_HOST']). $ext;
+		$combined_file = $params['out_file'] ?: PROJECT_PATH. 'templates/'.$asset_type.'/'.date('YmdHis').'_'.substr(md5($_SERVER['HTTP_HOST']), 0, 8). $ext;
 		if (file_exists($combined_file) && filemtime($combined_file) > (time() - 3600)) {
 			return $combined_file;
 		}
@@ -467,21 +467,25 @@ class yf_assets {
 		$out = array();
 		$content = $this->get_content($asset_type);
 		foreach ((array)$content as $md5 => $v) {
-			$type = $v['content_type'];
-			$text = $v['content'];
-			if ($type === 'url') {
-				$out[$md5] = file_get_contents($text, false, stream_context_create(array('http' => array('timeout' => 5))));
-			} elseif ($type === 'file') {
-				$out[$md5] = file_get_contents($text);
-			} elseif ($type === 'inline') {
-				if ($asset_type === 'css') {
-					$text = $this->_strip_style_tags($text);
-				} elseif ($asset_type === 'js') {
-					$text = $this->_strip_script_tags($text);
+			$content_type = $v['content_type'];
+			$_content = $v['content'];
+			if ($content_type === 'url') {
+				$try_prefix = '//';
+				if (substr($_content, 0, strlen($try_prefix)) === $try_prefix) {
+					$_content = 'http:'.$_content;
 				}
-				$out[$md5] = $text;
-			} elseif ($type === 'raw') {
-				$out[$md5] = $text;
+				$out[$md5] = file_get_contents($_content, false, stream_context_create(array('http' => array('timeout' => 5))));
+			} elseif ($content_type === 'file' && file_exists($_content)) {
+				$out[$md5] = file_get_contents($_content);
+			} elseif ($content_type === 'inline') {
+				if ($asset_type === 'css') {
+					$_content = $this->_strip_style_tags($_content);
+				} elseif ($asset_type === 'js') {
+					$_content = $this->_strip_script_tags($_content);
+				}
+				$out[$md5] = $_content;
+			} elseif ($content_type === 'raw') {
+				$out[$md5] = $_content;
 			}
 		}
 		_class('core_events')->fire('assets.after_combine', array(
@@ -495,6 +499,20 @@ class yf_assets {
 			file_put_contents($combined_file, implode(PHP_EOL, $out));
 		}
 		return $combined_file;
+	}
+
+	/**
+	* Shortcut
+	*/
+	public function combine_js($params = array()) {
+		return $this->combine('js', $params);
+	}
+
+	/**
+	* Shortcut
+	*/
+	public function combine_css($params = array()) {
+		return $this->combine('css', $params);
 	}
 
 	/**
@@ -546,34 +564,34 @@ class yf_assets {
 
 	/**
 	*/
-	public function _strip_style_tags ($text) {
+	public function _strip_style_tags ($str) {
 /*
 // TODO: add support for extracting url from <link rel="stylesheet" href="path.to/style.css">
-//		preg_replace_callback('~<link[\s\t]+rel="stylesheet"[\s\t]+href="([^"]+)"[\s\t]*[/]?>~ims', function($m) use (&$text) {
+//		preg_replace_callback('~<link[\s\t]+rel="stylesheet"[\s\t]+href="([^"]+)"[\s\t]*[/]?>~ims', function($m) use (&$str) {
 //			return $m[1];
 //		});
 */
 		for ($i = 0; $i < 10; $i++) {
-			if (strpos($text, 'style') === false) {
+			if (strpos($str, 'style') === false) {
 				break;
 			}
-			$text = preg_replace('~^<style[^>]*?>~ims', '', $text);
-			$text = preg_replace('~</style>$~ims', '', $text);
+			$str = preg_replace('~^<style[^>]*?>~ims', '', $str);
+			$str = preg_replace('~</style>$~ims', '', $str);
 		}
-		return $text;
+		return $str;
 	}
 
 	/**
 	*/
-	public function _strip_script_tags ($text) {
+	public function _strip_script_tags ($str) {
 		for ($i = 0; $i < 10; $i++) {
-			if (strpos($text, 'script') === false) {
+			if (strpos($str, 'script') === false) {
 				break;
 			}
-			$text = preg_replace('~^<script[^>]*?>~ims', '', $text);
-			$text = preg_replace('~</script>$~ims', '', $text);
+			$str = preg_replace('~^<script[^>]*?>~ims', '', $str);
+			$str = preg_replace('~</script>$~ims', '', $str);
 		}
-		return $text;
+		return $str;
 	}
 
 	/**
