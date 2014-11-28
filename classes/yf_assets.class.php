@@ -4,12 +4,14 @@ class yf_assets {
 
 	/** @array Container for added content */
 	protected $content = array();
-	/** @array List of pre-defined assets. See share/assets.php */
+	/** @array List of pre-defined assets */
 	protected $assets = array();
-	/** @array List of pre-defined bundles of assets. See share/assets.php */
-	protected $bundles = array();
 	/** @array All filters to apply stored here */
 	protected $filters = array();
+	/***/
+	protected $supported_asset_types = array(
+		'js','css','less','sass','img','font',
+	);
 
 	/**
 	* Catch missing method call
@@ -36,35 +38,44 @@ class yf_assets {
 	public function clean_all() {
 		$this->content	= array();
 		$this->assets	= array();
-		$this->bundles	= array();
 		$this->filters	= array();
 	}
 
 	/**
 	*/
 	public function _init() {
-		$assets = array();
-		$bundles = array();
-		$supported_asset_types = array('js','css','less','sass','font');
-		foreach ((array)$this->load_predefined_assets() as $name => $data) {
-#			if (in_array($name, $supported_asset_types)) {
-				$assets[$name] = $data;
-#			} else {
-#				$bundles[$name] = $data;
-#			}
-		}
-		if ($assets) {
-			$this->assets += (array)$assets;
-		}
-		if ($bundles) {
-			$this->bundles += (array)$bundles;
-		}
+		$this->load_predefined_assets();
 	}
 
 	/**
 	*/
 	public function load_predefined_assets() {
-		return require YF_PATH.'share/assets.php';
+		$assets = array();
+		$suffix = '.php';
+		$dir = 'share/assets/';
+		$globs = array(
+			'yf_main'				=> YF_PATH. $dir. '*'. $suffix,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir. '*'. $suffix,
+			'project_main'			=> PROJECT_PATH. $dir. '*'. $suffix,
+			'project_app'			=> APP_PATH. $dir. '*'. $suffix,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir. '*'. $suffix,
+			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $dir. '*'. $suffix,
+		);
+		$slen = strlen($suffix);
+		foreach($globs as $gname => $glob) {
+			foreach(glob($glob) as $path) {
+				$name = substr(basename($path), 0, -$slen);
+				$assets[$name] = include $path;
+			}
+		}
+		$this->assets += $assets;
+		return $assets;
+	}
+
+	/**
+	*/
+	public function get_asset_details($name) {
+		return $this->assets[$name];
 	}
 
 	/**
@@ -79,8 +90,9 @@ class yf_assets {
 			$trace = main()->trace_string();
 		}
 		if (!$asset_type) {
-			$asset_type = 'bundle';
 // TODO
+			$asset_type = 'bundle';
+			return false;
 		}
 		if (!is_array($content)) {
 			$content = array($content);
@@ -115,17 +127,29 @@ class yf_assets {
 			} elseif ($content_type == 'raw') {
 				$this->set_content($asset_type, $md5, 'raw', $_content, $params);
 			} elseif ($content_type == 'asset') {
-				$info = $this->assets[$asset_type][$_content];
-				if (is_array($info)) {
-					$url = $info['url'];
-					if ($info['require']) {
-						$this->add($asset_type, $info['require'], 'asset');
-					}
-				} else {
-					$url = $info;
+				$info = null;
+				$version_number = null;
+				$version_info = null;
+				$asset_data = $this->get_asset_details($_content);
+				if ($asset_data && is_array($asset_data)) {
+					// Get last version
+					$version_arr = array_slice($asset_data, -1, 1, true);
+					$version_number = key($version_arr);
+					$version_info = current($version_arr);
+					$info = $version_info[$asset_type];
 				}
-				$md5 = md5($url);
-				$this->set_content($asset_type, $md5, 'url', $url, $params);
+				if ($info && is_array($info)) {
+					if (isset($asset_data['require'][$asset_type])) {
+						$this->add($asset_data['require'][$asset_type], $asset_type, 'asset');
+					}
+					if (is_array($info)) {
+						$url = $info['url'];
+					} else {
+						$url = $info;
+					}
+					$md5 = md5($url);
+					$this->set_content($asset_type, $md5, 'url', $url, $params);
+				}
 			}
 			if (DEBUG_MODE) {
 				debug('assets[]', array(
