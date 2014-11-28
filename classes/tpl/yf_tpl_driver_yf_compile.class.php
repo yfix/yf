@@ -38,8 +38,7 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'ob_start();'. $end. $m[2]. $start. '$replace[\''.$m[1].'\'] = trim(ob_get_clean());'. $end;
 			},
 			'/\{(t|translate|i18n)\(\s*["\']{0,1}(.*?)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
-				$str = addslashes($m[2]);
-				$str = preg_replace('/\{([a-z0-9_-]+)\}/i', '\'.$replace[\'\1\'].\'', $str);
+				$str = preg_replace('/\{([a-z0-9_-]+)\}/i', '\'.$replace[\'\1\'].\'', addslashes($m[2]));
 				return $start. 'echo _class(\'tpl\')->_i18n_wrapper(stripslashes(\''.$str.'\'), $replace);'. $end;
 			},
 			'/\{const\(\s*["\']{0,1}([a-z_][a-z0-9_]+?)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end) {
@@ -131,15 +130,15 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'echo _class("form2")->tpl_row(\''.$m[1].'\',$replace,\''.$m[3].'\',\''.$m[5].'\',\''.$m[7].'\');'. $end;
 			},
 			'/\{(css|require_css|js|require_js|jquery|angularjs|backbonejs|reactjs|emberjs)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
-				return $start. 'echo '.$m[1].'(\''.addslashes($m[3]).'\', _attrs_string2array(\''.addslashes($m[2]).'\'));'. $end;
+				return $start. 'echo '.$m[1].'(\''.str_replace("'", "\\'", $m[3]).'\', _attrs_string2array(\''.str_replace("'", "\\'", $m[2]).'\'));'. $end;
 			},
 			// Custom function (compatible with non-compile for extending tpl engine)
 			'/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
-				return $start. 'echo $this->call_custom_pattern(\''.$m['name'].'\', \''.addslashes($m['args']).'\', null, $replace, $name);'. $end;
+				return $start. 'echo $this->call_custom_pattern(\''.$m['name'].'\', \''.str_replace("'", "\\'", $m['args']).'\', null, $replace, $name);'. $end;
 			},
 			// Custom section (compatible with non-compile for extending tpl engine)
 			'/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<body>.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
-				return $start. 'echo $this->call_custom_pattern(\''.$m['name'].'\', \''.addslashes($m['args']).'\', \''.addslashes($m['body']).'\', $replace, $name);'. $end;
+				return $start. 'echo $this->call_custom_pattern(\''.$m['name'].'\', \''.str_replace("'", "\\'", $m['args']).'\', \''.str_replace("'", "\\'", $m['body']).'\', $replace, $name);'. $end;
 			},
 			// DEBUG_MODE patterns
 			'/(\{_debug_get_replace\(\)\})/i' => function($m) use ($start, $end) {
@@ -276,7 +275,7 @@ class yf_tpl_driver_yf_compile {
 			}
 		// Simple number or string, started with '%'
 		} elseif ($tmp_first === '%' && $tmp_len > 1) {
-			$cond = '\''.addslashes(substr($cond, 1)).'\'';
+			$cond = '\''.str_replace("'", "\\'", substr($cond, 1)).'\'';
 		} elseif (substr($cond, 0, 2) === '#.') {
 			$cond = '$_v[\''.substr($cond, 2).'\']';
 		// Arithmetic operators (currently we allow only '+' and '-')
@@ -294,13 +293,13 @@ class yf_tpl_driver_yf_compile {
 			$cond = 'conf(\''.substr($cond, strlen('conf.')).'\')';
 		// Constant
 		} elseif (strpos($cond, 'const.') === 0) {
-			$cond = addslashes(substr($cond, strlen('const.')));
+			$cond = str_replace("'", "\\'", substr($cond, strlen('const.')));
 			$cond = '(defined(\''.$cond.'\') ? constant(\''.$cond.'\') : null)';
 		// Global array element or sub array
 		} elseif (false !== strpos($cond, '.')) {
 			$cond = $this->_cond_sub_array($cond);
 		} elseif ($tmp_len) {
-			$cond = addslashes($cond);
+			$cond = str_replace("'", "\\'", $cond);
 			if ($for_right) {
 				$cond = '(isset($replace[\''.$cond.'\']) ? $replace[\''.$cond.'\'] : \''.$cond.'\')';
 			} else {
@@ -315,7 +314,7 @@ class yf_tpl_driver_yf_compile {
 	function _cond_sub_array($cond) {
 		$pos = strpos($cond, '.');
 		if ($pos === false) {
-			return '$replace[\''.addslashes($cond).'\']';
+			return '$replace[\''.str_replace("'", "\\'", $cond).'\']';
 		}
 		$try_elm = substr($cond, 0, $pos);
 		$try_elm2 = '[\''.str_replace('.', '\'][\'', substr($cond, $pos + 1)). '\']';
