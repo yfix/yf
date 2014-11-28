@@ -130,8 +130,8 @@ class yf_tpl_driver_yf_compile {
 			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9_-]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo _class("form2")->tpl_row(\''.$m[1].'\',$replace,\''.$m[3].'\',\''.$m[5].'\',\''.$m[7].'\');'. $end;
 			},
-			'/\{(css|require_css|js|require_js)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
-				return $start. 'echo '.$m[1].'(\''.$m[3].'\', _attrs_string2array(\''.$m[2].'\'));'. $end;
+			'/\{(css|require_css|js|require_js|jquery|angularjs|backbonejs|reactjs|emberjs)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
+				return $start. 'echo '.$m[1].'(\''.addslashes($m[3]).'\', _attrs_string2array(\''.addslashes($m[2]).'\'));'. $end;
 			},
 			// Custom function (compatible with non-compile for extending tpl engine)
 			'/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
