@@ -3,12 +3,11 @@
         "leafo/lessphp": "*",
         "leafo/scssphp": "*",
         "ptachoire/cssembed": "*",
-        "leafo/scssphp-compass": "*",
         "cssmin/cssmin": "*",
         "mrclay/minify": "*",
         "kamicane/packager": "*",
         "joliclic/javascript-packer": "*",
-        "patchwork/jsqueeze": "~1.0",
+        "patchwork/jsqueeze": "~1.0"
     },
     "repositories": [
         {

@@ -13,26 +13,41 @@ if [ -z "$COMPOSER_EXISTS" ]; then
 	ln -s composer.phar composer
 fi
 #composer global self-update
-#composer global install
+#composer global install --dev
 composer self-update
-composer install
+composer install --dev
 
 # node deps
-npm install uglify-js@1 && mkdir -p $DIR/vendor/uglifyjs && mv $DIR/node_modules $DIR/vendor/uglifyjs
-npm install
 export UGLIFYJS_BIN=$DIR/vendor/uglifyjs/node_modules/uglify-js/bin/uglifyjs
+if [ ! -f "$UGLIFYJS_BIN" ]; then
+	npm install uglify-js@1 && mkdir -p $DIR/vendor/uglifyjs && mv -n $DIR/node_modules $DIR/vendor/uglifyjs
+fi
+
+npm install
 export AUTOPREFIXER_BIN=$DIR/node_modules/autoprefixer/autoprefixer
 
 # java deps
 mkdir -p vendor/java
-(cd $TMP_DIR && wget http://dl.google.com/closure-compiler/compiler-latest.zip && unzip compiler-latest.zip -d $DIR/vendor/java/compiler)
+
 export CLOSURE_JAR=$DIR/vendor/java/compiler/compiler.jar
-(cd $TMP_DIR && wget http://closure-stylesheets.googlecode.com/files/closure-stylesheets-20111230.jar && mv closure-stylesheets-20111230.jar $DIR/vendor/java)
+if [ ! -f "$CLOSURE_JAR" ]; then
+	(cd $TMP_DIR && wget -nc http://dl.google.com/closure-compiler/compiler-latest.zip && unzip -n compiler-latest.zip -d $DIR/vendor/java/compiler)
+fi
+
 export GSS_JAR=$DIR/vendor/java/closure-stylesheets-20111230.jar
-(cd $TMP_DIR && wget https://github.com/downloads/nzakas/cssembed/cssembed-0.4.5.jar && mv cssembed-0.4.5.jar $DIR/vendor/java)
+if [ ! -f "$GSS_JAR" ]; then
+	(cd $TMP_DIR && wget -nc http://closure-stylesheets.googlecode.com/files/closure-stylesheets-20111230.jar && mv -n closure-stylesheets-20111230.jar $DIR/vendor/java)
+fi
+
 export CSSEMBED_JAR=$DIR/vendor/java/cssembed-0.4.5.jar
-(cd $TMP_DIR && wget http://yui.zenfs.com/releases/yuicompressor/yuicompressor-2.4.7.zip && unzip yuicompressor-2.4.7.zip -d $DIR/vendor/java)
+if [ ! -f "$CSSEMBED_JAR" ]; then
+	(cd $TMP_DIR && wget -nc https://github.com/downloads/nzakas/cssembed/cssembed-0.4.5.jar && mv -n cssembed-0.4.5.jar $DIR/vendor/java)
+fi
+
 export YUI_COMPRESSOR_JAR=$DIR/vendor/java/yuicompressor-2.4.7/build/yuicompressor-2.4.7.jar
+if [ ! -f "$YUI_COMPRESSOR_JAR" ]; then
+	(cd $TMP_DIR && wget -nc http://yui.zenfs.com/releases/yuicompressor/yuicompressor-2.4.7.zip && unzip -n yuicompressor-2.4.7.zip -d $DIR/vendor/java)
+fi
 
 # # ruby deps
 sudo apt-get install -y bundler
@@ -41,10 +56,14 @@ bundle install
 # other deps
 sudo apt-get install -y jpegoptim libjpeg-progs optipng
 
-(cd $TMP_DIR && wget -q http://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-linux-x64-release.zip && unzip dartsdk-linux-x64-release.zip && mv dart-sdk $DIR/vendor)
 export DART_BIN=$DIR/vendor/dart-sdk/bin/dart2js
+if [ ! -f "$DART_BIN" ]; then
+	(cd $TMP_DIR && wget -nc http://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-linux-x64-release.zip && unzip -n dartsdk-linux-x64-release.zip && mv -f dart-sdk $DIR/vendor)
+fi
 
-(cd $TMP_DIR && wget -q http://static.jonof.id.au/dl/kenutils/pngout-20130221-linux.tar.gz && tar -xzf pngout-20130221-linux.tar.gz && mv pngout-20130221-linux $DIR/vendor)
 export PNGOUT_BIN=$DIR/vendor/pngout-20130221-linux/x86_64/pngout
+if [ ! -f "$PNGOUT_BIN" ]; then
+	(cd $TMP_DIR && wget -nc http://static.jonof.id.au/dl/kenutils/pngout-20130221-linux.tar.gz && tar -xzf pngout-20130221-linux.tar.gz && mv -n pngout-20130221-linux $DIR/vendor)
+fi
 
 rm -rf $TMP_DIR
