@@ -12,8 +12,10 @@ if [ -z "$COMPOSER_EXISTS" ]; then
 	curl -sS https://getcomposer.org/installer | php
 	ln -s composer.phar composer
 fi
-composer global self-update
-composer global install
+#composer global self-update
+#composer global install
+composer self-update
+composer install
 
 # node deps
 npm install uglify-js@1 && mkdir -p $DIR/vendor/uglifyjs && mv $DIR/node_modules $DIR/vendor/uglifyjs
