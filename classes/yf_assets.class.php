@@ -449,7 +449,7 @@ class yf_assets {
 // TODO: decide with fonts: different formats
 	public function combine_by_type($asset_type, $params = array()) {
 		$ext = '.'.$asset_type;
-		$combined_file = PROJECT_PATH. 'templates/'.$asset_type.'/'.date('YmdHis').'_'.md5($_SERVER['HTTP_HOST']). $ext;
+		$combined_file = $params['out_file'] ?: PROJECT_PATH. 'templates/'.$asset_type.'/'.date('YmdHis').'_'.md5($_SERVER['HTTP_HOST']). $ext;
 		if (file_exists($combined_file) && filemtime($combined_file) > (time() - 3600)) {
 			return $combined_file;
 		}
@@ -499,6 +499,8 @@ class yf_assets {
 
 	/**
 	*/
+// TODO: replace links with WEB_PATH or MEDIA_PATH, as $combined_file is filesystem path
+// TODO: support for multiple media servers
 	public function show_combined_content($out_type, $params = array()) {
 		$combined_file = $this->combine_by_type($out_type, $params);
 		if (!$combined_file || !file_exists($combined_file)) {

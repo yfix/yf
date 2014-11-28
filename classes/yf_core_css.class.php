@@ -78,10 +78,4 @@ class yf_core_css {
 	public function show_css($params = array()) {
 		return $this->show($params);
 	}
-
-	/**
-	*/
-	public function _detect_content($content = '') {
-		return _class('assets')->detect_content_type('css', $content);
-	}
 }
