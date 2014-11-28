@@ -128,4 +128,23 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertContains('jquery-ui.min.css', $out_css);
 		$this->assertContains('jquery.fileupload.css', $out_css);
 	}
+	public function test_combine_js() {
+		_class('assets')->clean_all();
+		asset('blueimp-uploader');
+		$out_file = APP_PATH.'combined/'.__FUNCTION__.'.js';
+		if (file_exists($out_file)) {
+			unlink($out_file);
+		}
+		$result = _class('assets')->combine_js(array('out_file' => $out_file));
+		$this->assertSame($result, $out_file);
+		$this->assertFileExists($result);
+		$this->assertTrue(strlen(file_get_contents($result)) > 100000);
+		unlink($out_file);
+	}
+	public function test_minify_js() {
+// TODO
+	}
+	public function test_minify_css() {
+// TODO
+	}
 }
