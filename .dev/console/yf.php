@@ -8,7 +8,7 @@
 * # curl -sS https://getcomposer.org/installer | php
 * # composer self-update
 * # composer global require symfony/console:~2.4
-* Add symlink for "yf" into /usr/local/bin/yf
+* # ln -s /home/www/yf/.dev/console/yf /usr/local/bin/yf
 */
 
 use Symfony\Component\Console\Application;
