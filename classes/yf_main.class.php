@@ -1330,20 +1330,38 @@ class yf_main {
 			return false;
 		}
 		$this->data_handlers = array();
+		$handlers = array();
 		$this->events->fire('main.load_data_handlers');
-		$framework_rules_file_path = YF_PATH. 'share/data_handlers.php';
-		if (file_exists($framework_rules_file_path)) {
-			include ($framework_rules_file_path);
+
+		$suffix = '.h.php';
+		$dir = 'share/data_handlers/';
+		$globs = array(
+			'yf_main'				=> YF_PATH. $dir. '*'. $suffix,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir. '*'. $suffix,
+			'project_main'			=> PROJECT_PATH. $dir. '*'. $suffix,
+			'project_app'			=> APP_PATH. $dir. '*'. $suffix,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir. '*'. $suffix,
+			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $dir. '*'. $suffix,
+		);
+		$strlen_suffix = strlen($suffix);
+		foreach($globs as $gname => $glob) {
+			foreach(glob($glob) as $path) {
+				$name = substr(basename($path), 0, -$strlen_suffix);
+				$handlers[$name] = $path;
+			}
 		}
-		$rules_file_path = PROJECT_PATH. 'share/data_handlers.php';
-		if (file_exists($rules_file_path)) {
-			include ($rules_file_path);
+		$aliases = array(
+			'category_sets'	=> 'cats_blocks',
+			'sys_sites'		=> 'sites',
+			'sys_servers'	=> 'servers',
+		);
+		foreach ((array)$aliases as $from => $to) {
+			$handlers[$from] = $handlers[$to];
 		}
-		$rules_file_path = PROJECT_PATH. 'cache_rules.php';
-		if (file_exists($rules_file_path)) {
-			include ($rules_file_path);
-		}
+		$this->data_handlers = $handlers;
+
 		$this->_data_handlers_loaded = true;
+		return $this->data_handlers;
 	}
 
 	/**
