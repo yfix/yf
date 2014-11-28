@@ -10,7 +10,7 @@ class yf_assets {
 	protected $filters = array();
 	/***/
 	protected $supported_asset_types = array(
-		'js', 'css', 'less', 'sass', 'coffee', 'img', 'font',
+		'js', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle',
 	);
 	/***/
 	protected $supported_out_types = array(
@@ -41,7 +41,6 @@ class yf_assets {
 	*/
 	public function clean_all() {
 		$this->content	= array();
-		$this->assets	= array();
 		$this->filters	= array();
 	}
 
@@ -107,39 +106,6 @@ class yf_assets {
 		return $found;
 	}
 
-
-	/**
-	*/
-	public function get_asset_details($name) {
-		return $this->assets[$name];
-	}
-
-	/**
-	* Return named asset, also can return specific version
-	*/
-	public function get_asset($name, $asset_type, $version = '') {
-		$asset_data = $this->get_asset_details($name);
-		// Get last version
-		if (!$asset_data) {
-			return null;
-		}
-		if (isset($asset_data['inherit'])) {
-			$func = __FUNCTION__;
-			return $this->$func($asset_data['inherit'][$asset_type], $asset_type, $version);
-		}
-		if (!is_array($asset_data['versions'])) {
-			return null;
-		}
-		if ($version) {
-			return $asset_data['versions'][$version][$asset_type];
-		} else {
-			$version_arr = array_slice($asset_data['versions'], -1, 1, true);
-			$version_number = key($version_arr);
-			$version_info = current($version_arr);
-			return $version_info[$asset_type];
-		}
-	}
-
 	/**
 	* Helper for jquery on document ready
 	*/
@@ -188,19 +154,54 @@ class yf_assets {
 	}
 
 	/**
+	*/
+	public function get_asset_details($name) {
+		return $this->assets[$name];
+	}
+
+	/**
+	* Return named asset, also can return specific version
+	*/
+	public function get_asset($name, $asset_type, $version = '') {
+		$asset_data = $this->get_asset_details($name);
+		// Get last version
+		if (!$asset_data) {
+			return null;
+		}
+		if (isset($asset_data['inherit'])) {
+			$func = __FUNCTION__;
+			return $this->$func($asset_data['inherit'][$asset_type], $asset_type, $version);
+		}
+		if (!is_array($asset_data['versions'])) {
+			return null;
+		}
+		if ($version) {
+			return $asset_data['versions'][$version][$asset_type];
+		} else {
+			$version_arr = array_slice($asset_data['versions'], -1, 1, true);
+			$version_number = key($version_arr);
+			$version_info = current($version_arr);
+			return $version_info[$asset_type];
+		}
+	}
+
+	/**
 	* Add asset item into current workflow
 	*
 	* $content: string/array
 	* $asset_type: = bundle|js|css|img|less|sass|font
 	* $content_type_hint: = auto|asset|url|file|inline|raw
 	*/
-	public function add($content, $asset_type, $content_type_hint = 'auto', $params = array()) {
+	public function add($content, $asset_type = 'bundle', $content_type_hint = 'auto', $params = array()) {
 		if (DEBUG_MODE) {
 			$trace = main()->trace_string();
 		}
+		if (empty($content)) {
+			return $this;
+		}
 		if (!$asset_type || !in_array($asset_type, $this->supported_asset_types)) {
-			throw new Exception('Assets: unsupported asset type: '.$asset_type);
-			return null;
+			throw new Exception('Assets add(): unsupported asset type: '.$asset_type);
+			return $this;
 		}
 		if (!is_array($content)) {
 			$content = array($content);
@@ -211,6 +212,20 @@ class yf_assets {
 		}
 		foreach ($content as $_content) {
 			$_content = trim($_content);
+			if ($asset_type === 'bundle') {
+				$bundle_details = $this->get_asset_details($_content);
+				foreach ($this->supported_asset_types as $atype) {
+					$arequire = $bundle_details['require'][$atype];
+					if ($arequire) {
+						$this->add($arequire, $atype);
+					}
+					$adata = $this->get_asset($_content, $atype);
+					if ($adata) {
+						$this->add($adata, $atype);
+					}
+				}
+				continue;
+			}
 			if (!strlen($_content)) {
 				continue;
 			}
@@ -221,20 +236,7 @@ class yf_assets {
 				$content_type = $this->detect_content_type($asset_type, $_content);
 			}
 			$md5 = md5($_content);
-			if ($content_type == 'url') {
-				$this->set_content($asset_type, $md5, 'url', $_content, $params);
-			} elseif ($content_type == 'file') {
-				if (file_exists($_content)) {
-					$text = file_get_contents($_content);
-					if (strlen($text)) {
-						$this->set_content($asset_type, $md5, 'file', $_content, $params);
-					}
-				}
-			} elseif ($content_type == 'inline') {
-				$this->set_content($asset_type, $md5, 'inline', $_content, $params);
-			} elseif ($content_type == 'raw') {
-				$this->set_content($asset_type, $md5, 'raw', $_content, $params);
-			} elseif ($content_type == 'asset') {
+			if ($content_type === 'asset') {
 				$info = $this->get_asset($_content, $asset_type);
 				if ($info) {
 					$asset_data = $this->get_asset_details($_content);
@@ -249,6 +251,19 @@ class yf_assets {
 					$md5 = md5($url);
 					$this->set_content($asset_type, $md5, 'url', $url, $params);
 				}
+			} elseif ($content_type === 'url') {
+				$this->set_content($asset_type, $md5, 'url', $_content, $params);
+			} elseif ($content_type === 'file') {
+				if (file_exists($_content)) {
+					$text = file_get_contents($_content);
+					if (strlen($text)) {
+						$this->set_content($asset_type, $md5, 'file', $_content, $params);
+					}
+				}
+			} elseif ($content_type === 'inline') {
+				$this->set_content($asset_type, $md5, 'inline', $_content, $params);
+			} elseif ($content_type === 'raw') {
+				$this->set_content($asset_type, $md5, 'raw', $_content, $params);
 			}
 			if (DEBUG_MODE) {
 				debug('assets[]', array(
@@ -372,31 +387,31 @@ class yf_assets {
 			$text = $v['content'];
 			$_params = (array)$v['params'] + (array)$params;
 			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
-			if ($type == 'url') {
+			if ($type === 'url') {
 				if ($params['min'] && !DEBUG_MODE && strpos($text, '.min.') === false) {
 					$text = substr($text, 0, -strlen($ext)).'.min'.$ext;
 				}
 			}
 			if ($out_type === 'js') {
-				if ($type == 'url') {
+				if ($type === 'url') {
 					$out[$md5] = '<script src="'.$text.'" type="text/javascript"'.$css_class.'></script>';
-				} elseif ($type == 'file') {
+				} elseif ($type === 'file') {
 					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</script>';
-				} elseif ($type == 'inline') {
+				} elseif ($type === 'inline') {
 					$text = $this->_strip_script_tags($text);
 					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</script>';
-				} elseif ($type == 'raw') {
+				} elseif ($type === 'raw') {
 					$out[$md5] = $text;
 				}
 			} elseif ($out_type === 'css') {
-				if ($type == 'url') {
+				if ($type === 'url') {
 					$out[$md5] = '<link href="'.$text.'" rel="stylesheet"'.$css_class.' />';
-				} elseif ($type == 'file') {
+				} elseif ($type === 'file') {
 					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</style>';
-				} elseif ($type == 'inline') {
+				} elseif ($type === 'inline') {
 					$text = $this->_strip_style_tags($text);
 					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</style>';
-				} elseif ($type == 'raw') {
+				} elseif ($type === 'raw') {
 					$out[$md5] = $text;
 				}
 			}
@@ -454,18 +469,18 @@ class yf_assets {
 		foreach ((array)$content as $md5 => $v) {
 			$type = $v['content_type'];
 			$text = $v['content'];
-			if ($type == 'url') {
+			if ($type === 'url') {
 				$out[$md5] = file_get_contents($text, false, stream_context_create(array('http' => array('timeout' => 5))));
-			} elseif ($type == 'file') {
+			} elseif ($type === 'file') {
 				$out[$md5] = file_get_contents($text);
-			} elseif ($type == 'inline') {
+			} elseif ($type === 'inline') {
 				if ($asset_type === 'css') {
 					$text = $this->_strip_style_tags($text);
 				} elseif ($asset_type === 'js') {
 					$text = $this->_strip_script_tags($text);
 				}
 				$out[$md5] = $text;
-			} elseif ($type == 'raw') {
+			} elseif ($type === 'raw') {
 				$out[$md5] = $text;
 			}
 		}
