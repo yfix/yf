@@ -3,6 +3,44 @@
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
 class class_assets_test extends PHPUnit_Framework_TestCase {
+	public function test_detect_content_type_css() {
+		$this->assertEquals('asset', _class('assets')->detect_content_type('css', 'jquery-ui'));
+		$this->assertEquals('url', _class('assets')->detect_content_type('css', 'http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css'));
+		$this->assertEquals('url', _class('assets')->detect_content_type('css', 'https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css'));
+		$this->assertEquals('url', _class('assets')->detect_content_type('css', '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '<style>$(function(){})</style>'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '<style type="text/css">.some_class { border: 1px solid black; } #some_id { display:none; }</style>'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '.some_class { border: 1px solid black; } #some_id { display:none; }'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '
+			.some_class { border: 1px solid black; }
+			#some_id { display:none; }
+		'));
+
+		$f = '/tmp/yf_unit_tests_empty_style.css';
+		file_put_contents($f, 'test');
+		$this->assertEquals('file', _class('assets')->detect_content_type('css', $f));
+		unlink($f);
+	}
+	public function test_detect_content_type_js() {
+		$this->assertEquals('asset', _class('assets')->detect_content_type('js', 'jquery'));
+		$this->assertEquals('url', _class('assets')->detect_content_type('js', 'http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'));
+		$this->assertEquals('url', _class('assets')->detect_content_type('js', 'https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'));
+		$this->assertEquals('url', _class('assets')->detect_content_type('js', '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('js', '<script>$(function(){})</script>'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('js', '<script type="text/javascript">$(function(){})</script>'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('js', '$(function(){
+			$("#element").on("click", function(){})
+		})'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('js', '$(function(){
+			var url="http://www.google.com/";
+		})'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('js', '$(function(){})'));
+
+		$f = '/tmp/yf_unit_tests_empty_script.js';
+		file_put_contents($f, 'test');
+		$this->assertEquals('file', _class('assets')->detect_content_type('js', $f));
+		unlink($f);
+	}
 	public function test_strip_script_tags() {
 		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script>$(function(){})</script>'));
 		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script>$(function(){})'));
