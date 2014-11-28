@@ -182,11 +182,12 @@ class yf_assets {
 	* Helper for JS library code
 	*/
 	function helper_js_library($lib_name, $content, $params = array()) {
-		if (empty($this->already_required[$lib_name])) {
-			$this->add_asset($lib_name, 'js');
-			$this->already_required[$lib_name] = true;
+		$asset_type = 'js';
+		if (empty($this->already_required[$asset_type][$lib_name])) {
+			$this->add_asset($lib_name, $asset_type);
+			$this->already_required[$asset_type][$lib_name] = true;
 		}
-		return $this->add($content, 'js', 'inline', $params);
+		return $this->add($content, $asset_type, 'inline', $params);
 	}
 
 	/**
@@ -324,6 +325,7 @@ class yf_assets {
 	* Clean content for given asset type
 	*/
 	public function clean_content($asset_type) {
+		$this->already_required[$asset_type] = array();
 		return $this->content[$asset_type] = array();
 	}
 
