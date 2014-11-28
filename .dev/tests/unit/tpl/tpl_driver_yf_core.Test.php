@@ -330,7 +330,6 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	public function test_assets_js_libs() {
 		$jquery_url = _class('assets')->get_asset('jquery', 'js');
 		$this->assertNotEmpty($jquery_url);
-		_class('assets')->already_required['jquery'] = false;
 		self::_tpl( '{jquery()} var i = 0; $("#id").on(\'click\', ".sub_selector", function(){ return false; }); {/jquery}' );
 		$this->assertEquals(
 			'<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>'.PHP_EOL.

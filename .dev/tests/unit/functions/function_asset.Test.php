@@ -36,7 +36,6 @@ class function_asset_test extends PHPUnit_Framework_TestCase {
 	public function test_jquery() {
 		$jquery_url = _class('assets')->get_asset('jquery', 'js');
 		$this->assertNotEmpty($jquery_url);
-		_class('assets')->already_required['jquery'] = false;
 		jquery('var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });');
 		$this->assertEquals(
 			'<script src="'.$jquery_url.'" type="text/javascript"></script>'.PHP_EOL.
