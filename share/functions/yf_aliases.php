@@ -154,7 +154,7 @@ if (!function_exists('require_css')) {
 	function require_css($content, $content_type = 'auto', $params = array()) { return _class('core_css')->add($content, $content_type, $params); }
 }
 if (!function_exists('asset')) {
-	function asset($content, $asset_type = 'auto', $content_type = 'auto', $params = array()) { return _class('assets')->add($content, $asset_type, $content_type, $params); }
+	function asset($content, $asset_type = 'bundle', $content_type = 'auto', $params = array()) { return _class('assets')->add($content, $asset_type, $content_type, $params); }
 }
 if (!function_exists('jquery')) {
 	function jquery($content, $params = array()) { return _class('assets')->jquery($content, $params); }
