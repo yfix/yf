@@ -79,17 +79,29 @@ class yf_assets {
 	}
 
 	/**
+	* Return named asset, also can return specific version
 	*/
-	public function get_asset($name, $asset_type) {
+	public function get_asset($name, $asset_type, $version = '') {
 		$asset_data = $this->get_asset_details($name);
 		// Get last version
-		if ($asset_data && is_array($asset_data['versions'])) {
+		if (!$asset_data) {
+			return null;
+		}
+		if (isset($asset_data['inherit'])) {
+			$func = __FUNCTION__;
+			return $this->$func($asset_data['inherit'][$asset_type], $asset_type, $version);
+		}
+		if (!is_array($asset_data['versions'])) {
+			return null;
+		}
+		if ($version) {
+			return $asset_data['versions'][$version][$asset_type];
+		} else {
 			$version_arr = array_slice($asset_data['versions'], -1, 1, true);
 			$version_number = key($version_arr);
 			$version_info = current($version_arr);
 			return $version_info[$asset_type];
 		}
-		return null;
 	}
 
 	/**
@@ -99,13 +111,11 @@ class yf_assets {
 	* $asset_type: = bundle|js|css|img|less|sass|font
 	* $content_type_hint: = auto|asset|url|file|inline|raw
 	*/
-	public function add($content, $asset_type = '', $content_type_hint = 'auto', $params = array()) {
+	public function add($content, $asset_type, $content_type_hint = 'auto', $params = array()) {
 		if (DEBUG_MODE) {
 			$trace = main()->trace_string();
 		}
 		if (!$asset_type) {
-// TODO
-			$asset_type = 'bundle';
 			return false;
 		}
 		if (!is_array($content)) {
@@ -141,20 +151,9 @@ class yf_assets {
 			} elseif ($content_type == 'raw') {
 				$this->set_content($asset_type, $md5, 'raw', $_content, $params);
 			} elseif ($content_type == 'asset') {
-				$info = null;
-				$version_number = null;
-				$version_info = null;
-				$asset_data = $this->get_asset_details($_content);
-// TODO: support for asset config
-// TODO: support for asset inherit (for example needed for bootstrap)
-				if ($asset_data && is_array($asset_data['versions'])) {
-					// Get last version
-					$version_arr = array_slice($asset_data['versions'], -1, 1, true);
-					$version_number = key($version_arr);
-					$version_info = current($version_arr);
-					$info = $version_info[$asset_type];
-				}
+				$info = $this->get_asset($_content, $asset_type);
 				if ($info) {
+					$asset_data = $this->get_asset_details($_content);
 					if (isset($asset_data['require'][$asset_type])) {
 						$this->add($asset_data['require'][$asset_type], $asset_type, 'asset');
 					}
