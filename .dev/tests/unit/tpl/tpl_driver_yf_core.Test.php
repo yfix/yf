@@ -327,6 +327,17 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		self::_tpl( '{css(class=yf_core,other=param)}//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css{/css}' );
 		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css" rel="stylesheet" class="yf_core" />', _class('core_css')->show() );
 	}
+	public function test_assets_js_libs() {
+		$jquery_url = _class('assets')->get_asset('jquery', 'js');
+		$this->assertNotEmpty($jquery_url);
+		_class('assets')->already_required['jquery'] = false;
+		self::_tpl( '{jquery()} var i = 0; $("#id").on(\'click\', ".sub_selector", function(){ return false; }); {/jquery}' );
+		$this->assertEquals(
+			'<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>'.PHP_EOL.
+			'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'var i = 0; $("#id").on(\'click\', ".sub_selector", function(){ return false; });'.PHP_EOL.'})'.PHP_EOL.'</script>',
+			_class('assets')->show_js()
+		);
+	}
 	public function test_replace_subarray() {
 		$this->assertEquals('', self::_tpl( '{get.test}' ));
 		$this->assertEquals('{ get.test }', self::_tpl( '{ get.test }' ));
