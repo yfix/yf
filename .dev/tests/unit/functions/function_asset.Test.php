@@ -34,12 +34,15 @@ class function_asset_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_style_tags('<style><style><style type="text/css" id="some_id">#some_id { display:none; }'));
 	}
 	public function test_jquery() {
-#		$jquery_url = _class('assets')->get_asset('jquery', 'js');
-#		$this->assertNotEmpty($jquery_url);
-#		jquery('var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });');
-#		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript"></script>'.PHP_EOL
-#			.'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });'.PHP_EOL.'})'.PHP_EOL
-#			.'</script>', _class('assets')->show_js());
+		$jquery_url = _class('assets')->get_asset('jquery', 'js');
+		$this->assertNotEmpty($jquery_url);
+		_class('assets')->already_required['jquery'] = false;
+		jquery('var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });');
+		$this->assertEquals(
+			'<script src="'.$jquery_url.'" type="text/javascript"></script>'.PHP_EOL.
+			'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });'.PHP_EOL.'})'.PHP_EOL.'</script>'
+			, _class('assets')->show_js()
+		);
 	}
 	public function test_basic() {
 #		_class('assets')->clean_all();
