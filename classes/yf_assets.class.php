@@ -79,6 +79,20 @@ class yf_assets {
 	}
 
 	/**
+	*/
+	public function get_asset($name, $asset_type) {
+		$asset_data = $this->get_asset_details($name);
+		// Get last version
+		if ($asset_data && is_array($asset_data['versions'])) {
+			$version_arr = array_slice($asset_data['versions'], -1, 1, true);
+			$version_number = key($version_arr);
+			$version_info = current($version_arr);
+			return $version_info[$asset_type];
+		}
+		return null;
+	}
+
+	/**
 	* Add asset item into current workflow
 	*
 	* $content: string/array
@@ -133,14 +147,14 @@ class yf_assets {
 				$asset_data = $this->get_asset_details($_content);
 // TODO: support for asset config
 // TODO: support for asset inherit (for example needed for bootstrap)
-				if ($asset_data && is_array($asset_data)) {
+				if ($asset_data && is_array($asset_data['versions'])) {
 					// Get last version
-					$version_arr = array_slice($asset_data, -1, 1, true);
+					$version_arr = array_slice($asset_data['versions'], -1, 1, true);
 					$version_number = key($version_arr);
 					$version_info = current($version_arr);
 					$info = $version_info[$asset_type];
 				}
-				if ($info && is_array($info)) {
+				if ($info) {
 					if (isset($asset_data['require'][$asset_type])) {
 						$this->add($asset_data['require'][$asset_type], $asset_type, 'asset');
 					}
@@ -229,12 +243,6 @@ class yf_assets {
 	}
 
 	/**
-	*/
-	public function get_asset($asset_type, $name, $params = array()) {
-		return $this->assets[$asset_type][$name];
-	}
-
-	/**
 	* Shortcut
 	*/
 	public function add_js($content, $content_type_hint = 'auto', $params = array()) {
@@ -318,7 +326,7 @@ class yf_assets {
 	public function detect_content_type($asset_type, $content = '') {
 		$content = trim($content);
 		$type = false;
-		if (isset($this->assets[$asset_type][$content])) {
+		if (isset($this->assets[$content])) {
 			$type = 'asset';
 		} elseif ($asset_type === 'js') {
 			if (preg_match('~^(http://|https://|//)[a-z0-9]+~ims', $content)) {
