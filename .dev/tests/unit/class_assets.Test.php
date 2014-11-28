@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
-class function_asset_test extends PHPUnit_Framework_TestCase {
+class class_assets_test extends PHPUnit_Framework_TestCase {
 	public function test_strip_script_tags() {
 		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script>$(function(){})</script>'));
 		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script>$(function(){})'));
