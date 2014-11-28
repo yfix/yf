@@ -10,14 +10,11 @@ class yf_assets {
 	protected $filters = array();
 	/***/
 	protected $supported_asset_types = array(
-		'js','css','less','sass','img','font',
-		// TODO: coffeescript
+		'js', 'css', 'less', 'sass', 'coffee', 'img', 'font',
 	);
 	/***/
 	protected $supported_out_types = array(
-		'js','css', // 'images', 'fonts',
-		// TODO: decide with images: jpeg, png, gif, sprites
-		// TODO: decide with fonts: different formats
+		'js', 'css', 'images', 'fonts',
 	);
 
 	/**
@@ -424,6 +421,7 @@ class yf_assets {
 	}
 
 	/**
+	* Combine added content according to rules, optionally applying different filters
 	*/
 // TODO: add tpl for auto-generated hash file name, using: %host, %project, %include_path, %yf_path, %date, %is_user, %is_admin ...
 // TODO: add ability to pass callback for auto-generated hash file name
@@ -432,6 +430,8 @@ class yf_assets {
 // TODO: move to web accessible folder only after completion to ensure atomicity
 // TODO: unify get_url_contents()
 // TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
+// TODO: decide with images: jpeg, png, gif, sprites
+// TODO: decide with fonts: different formats
 	public function combine_by_type($asset_type, $params = array()) {
 		$ext = '.'.$asset_type;
 		$combined_file = PROJECT_PATH. 'templates/'.$asset_type.'/'.date('YmdHis').'_'.md5($_SERVER['HTTP_HOST']). $ext;
