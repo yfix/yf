@@ -131,6 +131,8 @@ class yf_assets {
 				$version_number = null;
 				$version_info = null;
 				$asset_data = $this->get_asset_details($_content);
+// TODO: support for asset config
+// TODO: support for asset inherit (for example needed for bootstrap)
 				if ($asset_data && is_array($asset_data)) {
 					// Get last version
 					$version_arr = array_slice($asset_data, -1, 1, true);

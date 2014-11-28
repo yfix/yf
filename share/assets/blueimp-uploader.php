@@ -1,15 +1,6 @@
 <?php
 
 return array(
-	'require' => array(
-		'css' => array(
-			'jquery-ui',
-		),
-		'js' => array(
-			'jquery',
-			'jquery-ui',
-		),
-	),
 	'versions' => array(
 		'master' => array(
 			'css' => array(
@@ -28,6 +19,15 @@ return array(
 				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-video.js',
 				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-validate.js',
 			),
+		),
+	),
+	'require' => array(
+		'css' => array(
+			'jquery-ui',
+		),
+		'js' => array(
+			'jquery',
+			'jquery-ui',
 		),
 	),
 );
