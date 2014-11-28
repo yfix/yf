@@ -66,104 +66,10 @@ class yf_core_css {
 	}
 
 	/**
-	* Main method to display overall CSS. Can be called from main
-	* like this: {execute_shutdown(core_css,show)} or {execute_shutdown(graphics,show_css)}
+	* Output CSS content
 	*/
 	public function show($params = array()) {
-		// CSS from current module
-		$module_css_path = _class('assets')->find_asset_type_for_module('css', $_GET['object']);
-		if ($module_css_path) {
-			$this->add_file($module_css_path);
-		}
-		if ($params['packed']) {
-			$packed = $this->_show_packed_content($params);
-			// Degrade gracefully
-			if (strlen($packed)) {
-				return $packed;
-			}
-		}
-		$prepend = _class('core_events')->fire('show_css.prepend');
-		$out = array();
-		// Process previously added content, depending on its type
-		foreach ((array)_class('assets')->get_content('css') as $md5 => $v) {
-			$type = $v['content_type'];
-			$text = $v['content'];
-			$_params = (array)$v['params'] + (array)$params;
-			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
-			if ($type == 'url') {
-				if ($params['min'] && !DEBUG_MODE && strpos($text, '.min.') === false) {
-					$text = substr($text, 0, -strlen('.css')).'.min.css';
-				}
-// TODO: add optional _prepare_html() for $url
-				$out[$md5] = '<link href="'.$text.'" rel="stylesheet"'.$css_class.' />';
-			} elseif ($type == 'file') {
-				$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</style>';
-			} elseif ($type == 'inline') {
-				$text = $this->_strip_style_tags($text);
-				$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</style>';
-			} elseif ($type == 'raw') {
-				$out[$md5] = $text;
-			}
-		}
-		$append = _class('core_events')->fire('show_css.append', array('out' => &$out));
-		_class('assets')->clean_content('css');
-		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
-	}
-
-	/**
-	*/
-	public function _show_packed_content($params = array()) {
-		$packed_file = $this->_pack_content($params);
-		if (!$packed_file || !file_exists($packed_file)) {
-			return false;
-		}
-		$css_class = $params['class'] ? ' class="'.$params['class'].'"' : '';
-		return '<link href="'.$packed_file.'" rel="stylesheet"'.$css_class.' />';
-	}
-
-	/**
-	*/
-	public function _pack_content($params = array()) {
-// TODO: add tpl for auto-generated hash file name, using: %host, %project, %include_path, %yf_path, %date, %is_user, %is_admin ...
-// TODO: add ability to pass callback for auto-generated hash file name
-// TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
-		$packed_file = INCLUDE_PATH. 'uploads/css/packed_'.md5($_SERVER['HTTP_HOST']).'.css';
-		if (file_exists($packed_file) && filemtime($packed_file) > (time() - 3600)) {
-			return $packed_file;
-		}
-		$packed_dir = dirname($packed_file);
-		if (!file_exists($packed_dir)) {
-			mkdir($packed_dir, 0755, true);
-		}
-		_class('core_errors')->fire('css.before_pack', array(
-			'fiie'		=> $packed_file,
-			'content'	=> _class('assets')->get_content('css'),
-			'params'	=> $params,
-		));
-		$out = array();
-		foreach ((array)_class('assets')->get_content('css') as $md5 => $v) {
-			$type = $v['type'];
-			$text = $v['text'];
-			if ($type == 'url') {
-				$out[$md5] = file_get_contents($text);
-			} elseif ($type == 'file') {
-				$out[$md5] = file_get_contents($text);
-			} elseif ($type == 'inline') {
-				$text = $this->_strip_style_tags($text);
-				$out[$md5] = $text;
-			} elseif ($type == 'raw') {
-				$out[$md5] = $text;
-			}
-		}
-// TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
-		file_put_contents($packed_file, implode(PHP_EOL, $out));
-
-		_class('core_errors')->fire('css.after_pack', array(
-			'fiie'		=> $packed_file,
-			'content'	=> $out,
-			'params'	=> $params,
-		));
-		return $packed_file;
+		return _class('assets')->show_css($params);
 	}
 
 	/**
@@ -177,24 +83,5 @@ class yf_core_css {
 	*/
 	public function _detect_content($content = '') {
 		return _class('assets')->detect_content_type('css', $content);
-	}
-
-	/**
-	*/
-	public function _strip_style_tags ($text) {
-/*
-// TODO: add support for extracting url from <link rel="stylesheet" href="path.to/style.css">
-//		preg_replace_callback('~<link[\s\t]+rel="stylesheet"[\s\t]+href="([^"]+)"[\s\t]*[/]?>~ims', function($m) use (&$text) {
-//			return $m[1];
-//		});
-*/
-		for ($i = 0; $i < 10; $i++) {
-			if (strpos($text, 'style') === false) {
-				break;
-			}
-			$text = preg_replace('~^<style[^>]*?>~ims', '', $text);
-			$text = preg_replace('~</style>$~ims', '', $text);
-		}
-		return $text;
 	}
 }
