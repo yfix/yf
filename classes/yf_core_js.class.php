@@ -66,102 +66,10 @@ class yf_core_js {
 	}
 
 	/**
-	* Main method to display overall JS. Can be called from main
-	* like this: {execute_shutdown(core_js,show)} or {execute_shutdown(graphics,show_js)}
+	* Output JS content
 	*/
 	public function show($params = array()) {
-		// JS from current module
-		$module_js_path = _class('assets')->find_asset_type_for_module('js', $_GET['object']);
-		if ($module_js_path) {
-			$this->add_file($module_js_path);
-		}
-		if ($params['packed']) {
-			$packed = $this->_show_packed_content($params);
-			// Degrade gracefully
-			if (strlen($packed)) {
-				return $packed;
-			}
-		}
-		$prepend = _class('core_events')->fire('show_js.prepend');
-		$out = array();
-		// Process previously added content, depending on its type
-		foreach ((array)_class('assets')->get_content('js') as $md5 => $v) {
-			$type = $v['content_type'];
-			$text = $v['content'];
-			$_params = (array)$v['params'] + (array)$params;
-			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
-			if ($type == 'url') {
-				if ($params['min'] && !DEBUG_MODE && strpos($text, '.min.') === false) {
-					$text = substr($text, 0, -strlen('.js')).'.min.js';
-				}
-// TODO: add optional _prepare_html() for $url
-				$out[$md5] = '<script src="'.$text.'" type="text/javascript"'.$css_class.'></script>';
-			} elseif ($type == 'file') {
-				$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</script>';
-			} elseif ($type == 'inline') {
-				$text = $this->_strip_script_tags($text);
-				$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</script>';
-			} elseif ($type == 'raw') {
-				$out[$md5] = $text;
-			}
-		}
-		$append = _class('core_events')->fire('show_js.append', array('out' => &$out));
-		_class('assets')->clean_content('js');
-		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
-	}
-
-	/**
-	*/
-	public function _show_packed_content($params = array()) {
-		$packed_file = $this->_pack_content($params);
-		if (!$packed_file || !file_exists($packed_file)) {
-			return false;
-		}
-		$css_class = $params['class'] ? ' class="'.$params['class'].'"' : '';
-		return '<script type="text/javascript" src="'.$packed_file.'"'.$css_class.'></script>';
-	}
-
-	/**
-	*/
-	public function _pack_content($params = array()) {
-// TODO
-		$packed_file = INCLUDE_PATH. 'uploads/js/packed_'.md5($_SERVER['HTTP_HOST']).'.js';
-		if (file_exists($packed_file) && filemtime($packed_file) > (time() - 3600)) {
-			return $packed_file;
-		}
-		$packed_dir = dirname($packed_file);
-		if (!file_exists($packed_dir)) {
-			mkdir($packed_dir, 0755, true);
-		}
-		_class('core_errors')->fire('js.before_pack', array(
-			'fiie'		=> $packed_file,
-			'content'	=> _class('assets')->get_content('js'),
-			'params'	=> $params,
-		));
-		$out = array();
-		foreach ((array)_class('assets')->get_content('js') as $md5 => $v) {
-			$type = $v['type'];
-			$text = $v['text'];
-			if ($type == 'url') {
-				$out[$md5] = file_get_contents($text);
-			} elseif ($type == 'file') {
-				$out[$md5] = file_get_contents($text);
-			} elseif ($type == 'inline') {
-				$text = $this->_strip_script_tags($text);
-				$out[$md5] = $text;
-			} elseif ($type == 'raw') {
-				$out[$md5] = $text;
-			}
-		}
-// TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
-		file_put_contents($packed_file, implode(PHP_EOL, $out));
-
-		_class('core_errors')->fire('js.after_pack', array(
-			'fiie'		=> $packed_file,
-			'content'	=> $out,
-			'params'	=> $params,
-		));
-		return $packed_file;
+		return _class('assets')->show_js($params);
 	}
 
 	/**
@@ -172,32 +80,8 @@ class yf_core_js {
 	}
 
 	/**
-	* Special code for jquery on document ready
-	*/
-	function jquery($content, $params = array()) {
-		if (!$this->_jquery_requried) {
-			$this->add_asset('jquery');
-			$this->_jquery_requried = true;
-		}
-		return $this->add('$(function(){'.PHP_EOL. $content. PHP_EOL.'})', 'inline', $params);
-	}
-
-	/**
 	*/
 	public function _detect_content($content = '') {
 		return _class('assets')->detect_content_type('js', $content);
-	}
-
-	/**
-	*/
-	public function _strip_script_tags ($text) {
-		for ($i = 0; $i < 10; $i++) {
-			if (strpos($text, 'script') === false) {
-				break;
-			}
-			$text = preg_replace('~^<script[^>]*?>~ims', '', $text);
-			$text = preg_replace('~</script>$~ims', '', $text);
-		}
-		return $text;
 	}
 }
