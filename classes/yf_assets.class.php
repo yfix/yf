@@ -11,6 +11,13 @@ class yf_assets {
 	/***/
 	protected $supported_asset_types = array(
 		'js','css','less','sass','img','font',
+		// TODO: coffeescript
+	);
+	/***/
+	protected $supported_out_types = array(
+		'js','css', // 'images', 'fonts',
+		// TODO: decide with images: jpeg, png, gif, sprites
+		// TODO: decide with fonts: different formats
 	);
 
 	/**
@@ -73,6 +80,38 @@ class yf_assets {
 	}
 
 	/**
+	* Search for assets for current module in several places, where it can be stored.
+	*/
+	public function find_asset_type_for_module($asset_type, $module = '') {
+		if (!$module) {
+			$module = $_GET['object'];
+		}
+		$ext = '.'.$asset_type;
+		$path = $module. '/'. $module. $ext;
+		$paths = array(
+			'yf_admin'			=> MAIN_TYPE_ADMIN ? YF_PATH. 'templates/admin/'.$path : '',
+			'yf_user'			=> YF_PATH. 'templates/user/'.$path,
+			'yf_plugins_admin'	=> MAIN_TYPE_ADMIN ? YF_PATH. 'plugins/'.$module.'/templates/admin/'.$path : '',
+			'yf_plugins_user'	=> YF_PATH. 'plugins/'.$module.'/templates/user/'.$path,
+			'project_admin'		=> MAIN_TYPE_ADMIN ? PROJECT_PATH. 'templates/admin/'.$path : '',
+			'project_user'		=> PROJECT_PATH. 'templates/user/'.$path,
+			'site_user'			=> SITE_PATH != PROJECT_PATH ? SITE_PATH. 'templates/user/'.$path : '',
+		);
+		$found = '';
+		foreach (array_reverse($paths, true) as $path) {
+			if (!strlen($path)) {
+				continue;
+			}
+			if (file_exists($path)) {
+				$found = $path;
+				break;
+			}
+		}
+		return $found;
+	}
+
+
+	/**
 	*/
 	public function get_asset_details($name) {
 		return $this->assets[$name];
@@ -105,6 +144,17 @@ class yf_assets {
 	}
 
 	/**
+	* Helper for jquery on document ready
+	*/
+	function jquery($content, $params = array()) {
+		if (!$this->_jquery_requried) {
+			$this->add_asset('jquery', 'js');
+			$this->_jquery_requried = true;
+		}
+		return $this->add('$(function(){'.PHP_EOL. $content. PHP_EOL.'})', 'js', 'inline', $params);
+	}
+
+	/**
 	* Add asset item into current workflow
 	*
 	* $content: string/array
@@ -115,8 +165,9 @@ class yf_assets {
 		if (DEBUG_MODE) {
 			$trace = main()->trace_string();
 		}
-		if (!$asset_type) {
-			return false;
+		if (!$asset_type || !in_array($asset_type, $this->supported_asset_types)) {
+			throw new Exception('Assets: unsupported asset type: '.$asset_type);
+			return null;
 		}
 		if (!is_array($content)) {
 			$content = array($content);
@@ -256,40 +307,53 @@ class yf_assets {
 	}
 
 	/**
-	* Shortcut
-	*/
-	public function add_less($content, $content_type_hint = 'auto', $params = array()) {
-		return $this->add('less', $content, $content_type_hint, $params);
-	}
-
-	/**
-	* Shortcut
-	*/
-	public function add_sass($content, $content_type_hint = 'auto', $params = array()) {
-		return $this->add('sass', $content, $content_type_hint, $params);
-	}
-
-	/**
-	* Shortcut
-	*/
-	public function add_img($content, $content_type_hint = 'auto', $params = array()) {
-// TODO
-#		return $this->add('img', $content, $content_type_hint, $params);
-	}
-
-	/**
-	* Shortcut
-	*/
-	public function add_font($content, $content_type_hint = 'auto', $params = array()) {
-// TODO
-#		return $this->add('font', $content, $content_type_hint, $params);
-	}
-
-	/**
-	* General output/embed method
+	* Main method to display overall content by out type (js, css, images, fonts).
+	* Can be called from main template like this: {exec_last(assets,show_js)} {exec_last(assets,show_css)}
 	*/
 	public function show($out_type, $params = array()) {
-// TODO
+		if (!$out_type || !in_array($out_type, $this->supported_out_types)) {
+			throw new Exception('Assets: unsupported out content type: '.$out_type);
+			return null;
+		}
+// TODO: decide with virtual formats like sass, less, coffeescript
+		// Assets from current module
+		$module_assets_path = $this->find_asset_type_for_module($out_type, $_GET['object']);
+		if ($module_assets_path) {
+			$this->add_file($module_assets_path, $out_type);
+		}
+		if ($params['combined']) {
+			$combined = $this->_show_combined_content($out_type, $params);
+			// Degrade gracefully, also display raw content in case when combining queue is in progress
+			if (strlen($combined)) {
+				return $combined;
+			}
+		}
+		$prepend = _class('core_events')->fire('assets.prepend');
+		$out = array();
+		// Process previously added content, depending on its type
+		foreach ((array)$this->get_content($out_type) as $md5 => $v) {
+			$type = $v['content_type'];
+			$text = $v['content'];
+			$_params = (array)$v['params'] + (array)$params;
+			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
+			if ($type == 'url') {
+				if ($params['min'] && !DEBUG_MODE && strpos($text, '.min.') === false) {
+					$text = substr($text, 0, -strlen('.css')).'.min.css';
+				}
+// TODO: add optional _prepare_html() for $url
+				$out[$md5] = '<link href="'.$text.'" rel="stylesheet"'.$css_class.' />';
+			} elseif ($type == 'file') {
+				$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</style>';
+			} elseif ($type == 'inline') {
+				$text = $this->_strip_style_tags($text);
+				$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</style>';
+			} elseif ($type == 'raw') {
+				$out[$md5] = $text;
+			}
+		}
+		$append = _class('core_events')->fire('show_css.append', array('out' => &$out));
+		_class('assets')->clean_content($out_type);
+		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
 	}
 
 	/**
@@ -307,17 +371,80 @@ class yf_assets {
 	}
 
 	/**
-	* Shortcut
 	*/
-	public function show_images() {
-		return $this->show('images', $params);
+	public function combine_by_type($asset_type, $params = array()) {
+// TODO: add tpl for auto-generated hash file name, using: %host, %project, %include_path, %yf_path, %date, %is_user, %is_admin ...
+// TODO: add ability to pass callback for auto-generated hash file name
+// TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
+		$ext = '.'.$asset_type;
+		$combined_file = PROJECT_PATH. 'templates/'.$asset_type.'/'.date('YmdHis').'_'.md5($_SERVER['HTTP_HOST']). $ext;
+// TODO: locking atomic to prevent doing same job in several threads
+// TODO: move to web accessible folder only after completion to ensure atomicity
+		if (file_exists($combined_file) && filemtime($combined_file) > (time() - 3600)) {
+			return $combined_file;
+		}
+		$combined_dir = dirname($combined_file);
+		if (!file_exists($combined_dir)) {
+			mkdir($combined_dir, 0755, true);
+		}
+		$content = _class('assets')->get_content($asset_type);
+		_class('core_events')->fire('assets.before_combine', array(
+			'asset_type'=> $asset_type,
+			'file'		=> $combined_file,
+			'content'	=> &$content,
+			'params'	=> $params,
+		));
+		$out = array();
+		$content = _class('assets')->get_content($asset_type);
+		foreach ((array)$content as $md5 => $v) {
+			$type = $v['content_type'];
+			$text = $v['content'];
+			if ($type == 'url') {
+// TODO: unify get_url_contents()
+				$out[$md5] = file_get_contents($text, false, stream_context_create(array('http' => array('timeout' => 5))));
+			} elseif ($type == 'file') {
+				$out[$md5] = file_get_contents($text);
+			} elseif ($type == 'inline') {
+				if ($asset_type === 'css') {
+					$text = $this->_strip_style_tags($text);
+				} elseif ($asset_type === 'js') {
+					$text = $this->_strip_script_tags($text);
+				}
+				$out[$md5] = $text;
+			} elseif ($type == 'raw') {
+				$out[$md5] = $text;
+			}
+		}
+		_class('core_events')->fire('assets.after_combine', array(
+			'asset_type'=> $asset_type,
+			'file'		=> $combined_file,
+			'content'	=> &$content,
+			'out'		=> &$out,
+			'params'	=> $params,
+		));
+// TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
+		if (!empty($out)) {
+			file_put_contents($combined_file, implode(PHP_EOL, $out));
+		}
+		return $combined_file;
 	}
 
 	/**
-	* Shortcut
 	*/
-	public function show_fonts() {
-		return $this->show('fonts', $params);
+	public function show_combined_content($out_type, $params = array()) {
+		$combined_file = $this->combine_by_type($out_type, $params);
+		if (!$combined_file || !file_exists($combined_file)) {
+			return false;
+		}
+		if ($out_type === 'js') {
+			$params['type'] = 'text/javascript';
+			$params['src'] = $combined_file;
+			return '<script'._attrs($params, array('type', 'src', 'class', 'id')).'></script>';
+		} elseif ($out_type === 'css') {
+			$params['rel'] = 'stylesheet';
+			$params['href'] = $combined_file;
+			return '<link'._attrs($params, array('href', 'rel', 'class', 'id')).' />';
+		}
 	}
 
 	/**
@@ -348,36 +475,36 @@ class yf_assets {
 	}
 
 	/**
-	* Search for assets for current module in several places, where it can be stored.
 	*/
-	public function find_asset_type_for_module($asset_type, $module = '') {
-		if (!$module) {
-			$module = $_GET['object'];
-		}
-		$ext = '.'.$asset_type;
-		$path = $module. '/'. $module. $ext;
-		$paths = array(
-			MAIN_TYPE_ADMIN ? YF_PATH. 'templates/admin/'.$path : '',
-			YF_PATH. 'templates/user/'.$path,
-			MAIN_TYPE_ADMIN ? YF_PATH. 'plugins/'.$module.'/templates/admin/'.$path : '',
-			YF_PATH. 'plugins/'.$module.'/templates/user/'.$path,
-			MAIN_TYPE_ADMIN ? PROJECT_PATH. 'templates/admin/'.$path : '',
-			PROJECT_PATH. 'templates/user/'.$path,
-			SITE_PATH != PROJECT_PATH ? SITE_PATH. 'templates/user/'.$path : '',
-		);
-		$found = '';
-		foreach (array_reverse($paths, true) as $path) {
-			if (!strlen($path)) {
-				continue;
-			}
-			if (file_exists($path)) {
-				$found = $path;
+	public function _strip_style_tags ($text) {
+/*
+// TODO: add support for extracting url from <link rel="stylesheet" href="path.to/style.css">
+//		preg_replace_callback('~<link[\s\t]+rel="stylesheet"[\s\t]+href="([^"]+)"[\s\t]*[/]?>~ims', function($m) use (&$text) {
+//			return $m[1];
+//		});
+*/
+		for ($i = 0; $i < 10; $i++) {
+			if (strpos($text, 'style') === false) {
 				break;
 			}
+			$text = preg_replace('~^<style[^>]*?>~ims', '', $text);
+			$text = preg_replace('~</style>$~ims', '', $text);
 		}
-		return $found;
+		return $text;
 	}
 
+	/**
+	*/
+	public function _strip_script_tags ($text) {
+		for ($i = 0; $i < 10; $i++) {
+			if (strpos($text, 'script') === false) {
+				break;
+			}
+			$text = preg_replace('~^<script[^>]*?>~ims', '', $text);
+			$text = preg_replace('~</script>$~ims', '', $text);
+		}
+		return $text;
+	}
 	/**
 	* Add custom filter callback
 	*/
@@ -402,19 +529,7 @@ class yf_assets {
 
 	/**
 	*/
-	public function save_to() {
-// TODO
-	}
-
-	/**
-	*/
 	public function upload_to() {
-// TODO
-	}
-
-	/**
-	*/
-	public function combine() {
-// TODO
+// TODO: upload to S3, FTP
 	}
 }
