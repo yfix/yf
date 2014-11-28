@@ -147,11 +147,46 @@ class yf_assets {
 	* Helper for jquery on document ready
 	*/
 	function jquery($content, $params = array()) {
-		if (!$this->_jquery_requried) {
-			$this->add_asset('jquery', 'js');
-			$this->_jquery_requried = true;
+		return $this->helper_js_library(__FUNCTION__, '$(function(){'.PHP_EOL. $content. PHP_EOL.'})', $params);
+	}
+
+	/**
+	* Helper
+	*/
+	function angularjs($content, $params = array()) {
+		return $this->helper_js_library(__FUNCTION__, $content, $params);
+	}
+
+	/**
+	* Helper
+	*/
+	function backbonejs($content, $params = array()) {
+		return $this->helper_js_library(__FUNCTION__, $content, $params);
+	}
+
+	/**
+	* Helper
+	*/
+	function reactjs($content, $params = array()) {
+		return $this->helper_js_library(__FUNCTION__, $content, $params);
+	}
+
+	/**
+	* Helper
+	*/
+	function emberjs($content, $params = array()) {
+		return $this->helper_js_library(__FUNCTION__, $content, $params);
+	}
+
+	/**
+	* Helper for JS library code
+	*/
+	function helper_js_library($lib_name, $content, $params = array()) {
+		if (empty($this->already_required[$lib_name])) {
+			$this->add_asset($lib_name, 'js');
+			$this->already_required[$lib_name] = true;
 		}
-		return $this->add('$(function(){'.PHP_EOL. $content. PHP_EOL.'})', 'js', 'inline', $params);
+		return $this->add($content, 'js', 'inline', $params);
 	}
 
 	/**
@@ -310,12 +345,14 @@ class yf_assets {
 	* Main method to display overall content by out type (js, css, images, fonts).
 	* Can be called from main template like this: {exec_last(assets,show_js)} {exec_last(assets,show_css)}
 	*/
+// TODO: decide with virtual formats like sass, less, coffeescript
+// TODO: add optional _prepare_html() for $url
 	public function show($out_type, $params = array()) {
 		if (!$out_type || !in_array($out_type, $this->supported_out_types)) {
 			throw new Exception('Assets: unsupported out content type: '.$out_type);
 			return null;
 		}
-// TODO: decide with virtual formats like sass, less, coffeescript
+		$ext = '.'.$out_type;
 		// Assets from current module
 		$module_assets_path = $this->find_asset_type_for_module($out_type, $_GET['object']);
 		if ($module_assets_path) {
@@ -338,21 +375,35 @@ class yf_assets {
 			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
 			if ($type == 'url') {
 				if ($params['min'] && !DEBUG_MODE && strpos($text, '.min.') === false) {
-					$text = substr($text, 0, -strlen('.css')).'.min.css';
+					$text = substr($text, 0, -strlen($ext)).'.min'.$ext;
 				}
-// TODO: add optional _prepare_html() for $url
-				$out[$md5] = '<link href="'.$text.'" rel="stylesheet"'.$css_class.' />';
-			} elseif ($type == 'file') {
-				$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</style>';
-			} elseif ($type == 'inline') {
-				$text = $this->_strip_style_tags($text);
-				$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</style>';
-			} elseif ($type == 'raw') {
-				$out[$md5] = $text;
+			}
+			if ($out_type === 'js') {
+				if ($type == 'url') {
+					$out[$md5] = '<script src="'.$text.'" type="text/javascript"'.$css_class.'></script>';
+				} elseif ($type == 'file') {
+					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</script>';
+				} elseif ($type == 'inline') {
+					$text = $this->_strip_script_tags($text);
+					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</script>';
+				} elseif ($type == 'raw') {
+					$out[$md5] = $text;
+				}
+			} elseif ($out_type === 'css') {
+				if ($type == 'url') {
+					$out[$md5] = '<link href="'.$text.'" rel="stylesheet"'.$css_class.' />';
+				} elseif ($type == 'file') {
+					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($text). PHP_EOL. '</style>';
+				} elseif ($type == 'inline') {
+					$text = $this->_strip_style_tags($text);
+					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $text. PHP_EOL. '</style>';
+				} elseif ($type == 'raw') {
+					$out[$md5] = $text;
+				}
 			}
 		}
-		$append = _class('core_events')->fire('show_css.append', array('out' => &$out));
-		_class('assets')->clean_content($out_type);
+		$append = _class('core_events')->fire('assets.append', array('out' => &$out));
+		$this->clean_content($out_type);
 		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
 	}
 
@@ -372,14 +423,16 @@ class yf_assets {
 
 	/**
 	*/
-	public function combine_by_type($asset_type, $params = array()) {
 // TODO: add tpl for auto-generated hash file name, using: %host, %project, %include_path, %yf_path, %date, %is_user, %is_admin ...
 // TODO: add ability to pass callback for auto-generated hash file name
 // TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
-		$ext = '.'.$asset_type;
-		$combined_file = PROJECT_PATH. 'templates/'.$asset_type.'/'.date('YmdHis').'_'.md5($_SERVER['HTTP_HOST']). $ext;
 // TODO: locking atomic to prevent doing same job in several threads
 // TODO: move to web accessible folder only after completion to ensure atomicity
+// TODO: unify get_url_contents()
+// TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
+	public function combine_by_type($asset_type, $params = array()) {
+		$ext = '.'.$asset_type;
+		$combined_file = PROJECT_PATH. 'templates/'.$asset_type.'/'.date('YmdHis').'_'.md5($_SERVER['HTTP_HOST']). $ext;
 		if (file_exists($combined_file) && filemtime($combined_file) > (time() - 3600)) {
 			return $combined_file;
 		}
@@ -387,7 +440,7 @@ class yf_assets {
 		if (!file_exists($combined_dir)) {
 			mkdir($combined_dir, 0755, true);
 		}
-		$content = _class('assets')->get_content($asset_type);
+		$content = $this->get_content($asset_type);
 		_class('core_events')->fire('assets.before_combine', array(
 			'asset_type'=> $asset_type,
 			'file'		=> $combined_file,
@@ -395,12 +448,11 @@ class yf_assets {
 			'params'	=> $params,
 		));
 		$out = array();
-		$content = _class('assets')->get_content($asset_type);
+		$content = $this->get_content($asset_type);
 		foreach ((array)$content as $md5 => $v) {
 			$type = $v['content_type'];
 			$text = $v['content'];
 			if ($type == 'url') {
-// TODO: unify get_url_contents()
 				$out[$md5] = file_get_contents($text, false, stream_context_create(array('http' => array('timeout' => 5))));
 			} elseif ($type == 'file') {
 				$out[$md5] = file_get_contents($text);
@@ -422,7 +474,6 @@ class yf_assets {
 			'out'		=> &$out,
 			'params'	=> $params,
 		));
-// TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
 		if (!empty($out)) {
 			file_put_contents($combined_file, implode(PHP_EOL, $out));
 		}
@@ -505,6 +556,7 @@ class yf_assets {
 		}
 		return $text;
 	}
+
 	/**
 	* Add custom filter callback
 	*/
