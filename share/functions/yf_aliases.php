@@ -147,9 +147,6 @@ if (!function_exists('js')) {
 if (!function_exists('require_js')) {
 	function require_js($content, $content_type = 'auto', $params = array()) { return _class('core_js')->add($content, $content_type, $params); }
 }
-if (!function_exists('jquery')) {
-	function jquery($content, $params = array()) { return _class('core_js')->jquery($content, $params); }
-}
 if (!function_exists('css')) {
 	function css($content, $content_type = 'auto', $params = array()) { return _class('core_css')->add($content, $content_type, $params); }
 }
@@ -158,6 +155,21 @@ if (!function_exists('require_css')) {
 }
 if (!function_exists('asset')) {
 	function asset($content, $asset_type = 'auto', $content_type = 'auto', $params = array()) { return _class('assets')->add($content, $asset_type, $content_type, $params); }
+}
+if (!function_exists('jquery')) {
+	function jquery($content, $params = array()) { return _class('assets')->jquery($content, $params); }
+}
+if (!function_exists('angularjs')) {
+	function angularjs($content, $params = array()) { return _class('assets')->angularjs($content, $params); }
+}
+if (!function_exists('backbonejs')) {
+	function backbonejs($content, $params = array()) { return _class('assets')->backbonejs($content, $params); }
+}
+if (!function_exists('reactjs')) {
+	function reactjs($content, $params = array()) { return _class('assets')->reactjs($content, $params); }
+}
+if (!function_exists('emberjs')) {
+	function emberjs($content, $params = array()) { return _class('assets')->emberjs($content, $params); }
 }
 if (!function_exists('events')) {
 	function events() { return _class('core_events'); }
