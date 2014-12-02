@@ -52,6 +52,31 @@ class yf_assets {
 
 	/**
 	*/
+	function _autoload_libs() {
+		if ($this->_autoload_registered) {
+			return true;
+		}
+		$paths = array(
+			'server'=> '/usr/local/share/composer/vendor/autoload.php',
+			'app'	=> APP_PATH.'libs/vendor/autoload.php',
+			'yf'	=> YF_PATH.'libs/vendor/autoload.php',
+		);
+		$what_loaded = '';
+		foreach ($paths as $name => $path) {
+			if (file_exists($path)) {
+				$what_loaded = $name;
+				require_once $path;
+			}
+		}
+		if (!$what_loaded) {
+			throw new Exception('Assets: filter libs not loaded as composer autoload not found on these paths: '.implode(', ', $paths).'.'
+				. PHP_EOL. 'You need to install composer dependencies by running this script from console: %YF_PATH%/.dev/scripts/assets/install_global.sh');
+		}
+		$this->_autoload_registered = true;
+	}
+
+	/**
+	*/
 	public function load_predefined_assets() {
 		$assets = array();
 		$suffix = '.php';
@@ -614,6 +639,27 @@ class yf_assets {
 	*/
 	public function filters_process_css_urls() {
 // TODO
+	}
+
+	/**
+	*/
+	public function filter_jsmin($in) {
+		$this->_autoload_libs();
+		return \JSMin::minify($in);
+	}
+
+	/**
+	*/
+	public function filter_jsminplus($in) {
+		$this->_autoload_libs();
+		return \JSMinPlus::minify($in);
+	}
+
+	/**
+	*/
+	public function filter_cssmin($in) {
+		$this->_autoload_libs();
+		return \CssMin::minify($in);
 	}
 
 	/**
