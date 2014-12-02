@@ -141,10 +141,31 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(strlen(file_get_contents($result)) > 100000);
 		unlink($out_file);
 	}
-	public function test_minify_js() {
-// TODO
+	public function test_filter_cssmin() {
+		$in = 'body {
+		    color : white;
+		}';
+		$this->assertEquals('body{color:white}', _class('assets')->filter_cssmin($in));
+#		$this->assertEquals('body{color:white}body{background:black}', _class('assets')->filter_cssmin($in));
 	}
-	public function test_minify_css() {
-// TODO
+	public function test_filter_jsmin() {
+		$in = 'var a = "abc";
+
+			// fsfafwe
+
+			;;
+			var bbb = "u";
+		';
+        $this->assertEquals('var a="abc";;;var bbb="u";', _class('assets')->filter_jsmin($in));
+	}
+	public function test_filter_jsminplus() {
+		$in = 'var a = "abc";
+
+			// fsfafwe
+
+			;;
+			var bbb = "u";
+		';
+        $this->assertEquals('var a="abc",bbb="u"', _class('assets')->filter_jsminplus($in));
 	}
 }
