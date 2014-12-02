@@ -6,7 +6,9 @@
 		"mrclay/minify": "*",
 		"natxet/CssMin": "3.0.*",
 		"yfix/packager": "dev-master",
-		"meenie/javascript-packer": "*",
 		"patchwork/jsqueeze": "~1.0"
+	},
+	"_commented": {
+		"meenie/javascript-packer": "*"
 	}
 }
