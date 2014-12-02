@@ -562,6 +562,7 @@ class yf_assets {
 	}
 
 	/**
+	* Auto-detection on content type
 	*/
 	public function detect_content_type($asset_type, $content = '') {
 		$content = trim($content);
@@ -589,14 +590,12 @@ class yf_assets {
 	}
 
 	/**
+	* Cleanup for CSS strings
 	*/
 	public function _strip_style_tags ($str) {
-/*
-// TODO: add support for extracting url from <link rel="stylesheet" href="path.to/style.css">
-//		preg_replace_callback('~<link[\s\t]+rel="stylesheet"[\s\t]+href="([^"]+)"[\s\t]*[/]?>~ims', function($m) use (&$str) {
-//			return $m[1];
-//		});
-*/
+		// Extracting url from <link rel="stylesheet" href="path.to/style.css">
+		$str = preg_replace_callback('~<link[\s]+rel="stylesheet"[\s]+href=["\']([^"\']+)["\'][\s]*[/]?>~ims', function($m) { return $m[1]; }, $str);
+
 		for ($i = 0; $i < 10; $i++) {
 			if (strpos($str, 'style') === false) {
 				break;
@@ -608,8 +607,12 @@ class yf_assets {
 	}
 
 	/**
+	* Cleanup for JS strings
 	*/
 	public function _strip_script_tags ($str) {
+		// Extracting url from <script src="path.to/scripts.js"></script>
+		$str = preg_replace_callback('~<script[\s]+[^>]*src=["\']([^"]+?)["\'][^>]*>~ims', function($m) { return $m[1]; }, $str);
+
 		for ($i = 0; $i < 10; $i++) {
 			if (strpos($str, 'script') === false) {
 				break;
