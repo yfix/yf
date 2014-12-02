@@ -5,16 +5,7 @@ TMP_DIR=$DIR/tmp
 BIN_DIR=/usr/local/bin
 mkdir -p $TMP_DIR
 
-# php deps
-export COMPOSER_HOME=/usr/local/share/composer/
-COMPOSER_EXISTS=$(command composer 2> /dev/null)
-if [ -z "$COMPOSER_EXISTS" ]; then 
-	cd $BIN_DIR
-	curl -sS https://getcomposer.org/installer | php
-	ln -vs composer.phar composer
-fi
-composer global self-update
-composer global install --dev
+source $DIR/composer_require_global.sh
 
 # node deps
 npm install -g uglify-js@1

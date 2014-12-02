@@ -12,8 +12,6 @@ if [ -z "$COMPOSER_EXISTS" ]; then
 	curl -sS https://getcomposer.org/installer | php
 	ln -s composer.phar composer
 fi
-#composer global self-update
-#composer global install --dev
 composer self-update
 composer install --dev
 
