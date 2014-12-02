@@ -53,26 +53,27 @@ class yf_assets {
 	/**
 	*/
 	function _autoload_libs() {
-		if ($this->_autoload_registered) {
+		if (isset($this->_autoload_registered)) {
 			return true;
 		}
 		$paths = array(
-			'server'=> '/usr/local/share/composer/vendor/autoload.php',
 			'app'	=> APP_PATH.'libs/vendor/autoload.php',
 			'yf'	=> YF_PATH.'libs/vendor/autoload.php',
+			'server'=> '/usr/local/share/composer/vendor/autoload.php',
 		);
-		$what_loaded = '';
+		$path_loaded = '';
 		foreach ($paths as $name => $path) {
 			if (file_exists($path)) {
-				$what_loaded = $name;
+				$path_loaded = $name;
 				require_once $path;
+				break;
 			}
 		}
-		if (!$what_loaded) {
+		if (!$path_loaded) {
 			throw new Exception('Assets: filter libs not loaded as composer autoload not found on these paths: '.implode(', ', $paths).'.'
 				. PHP_EOL. 'You need to install composer dependencies by running this script from console: %YF_PATH%/.dev/scripts/assets/install_global.sh');
 		}
-		$this->_autoload_registered = true;
+		$this->_autoload_registered = $paths[$path_loaded];
 	}
 
 	/**
