@@ -630,9 +630,32 @@ class yf_assets {
 	}
 
 	/**
+	* Clean list of current filters to apply automatically to output
 	*/
-	public function filters_apply($asset_type) {
-// TODO
+	public function filters_clean($asset_type = '') {
+		if ($asset_type) {
+			$this->filters[$asset_type] = array();
+		} else {
+			$this->filters = array();
+		}
+	}
+
+	/**
+	* Apply filters from names array to input string
+	*/
+	public function filters_apply($str, $filters = array(), $params = array()) {
+		$out = $str;
+		$methods = $this->get_class_methods($this);
+		$methods = array_combine($methods, $methods);
+		foreach ($filters as $name => $filter) {
+			if (is_callable($filter)) {
+				$str = $filter($str, $params);
+			} elseif (isset($methods['filter_'.$name])) {
+				$func = 'filter_'.$name;
+				$str = $this->$func($str, $params);
+			}
+		}
+		return $str;
 	}
 
 	/**
@@ -642,23 +665,38 @@ class yf_assets {
 	}
 
 	/**
+	* Content filter
 	*/
 	public function filter_jsmin($in) {
 		$this->_autoload_libs();
+		if (!class_exists('\JSMin')) {
+			throw new Exception('Assets: class \JSMin not found');
+			return $in;
+		}
 		return \JSMin::minify($in);
 	}
 
 	/**
+	* Content filter
 	*/
 	public function filter_jsminplus($in) {
 		$this->_autoload_libs();
+		if (!class_exists('\JSMinPlus')) {
+			throw new Exception('Assets: class \JSMinPlus not found');
+			return $in;
+		}
 		return \JSMinPlus::minify($in);
 	}
 
 	/**
+	* Content filter
 	*/
 	public function filter_cssmin($in) {
 		$this->_autoload_libs();
+		if (!class_exists('\CssMin')) {
+			throw new Exception('Assets: class \CssMin not found');
+			return $in;
+		}
 		return \CssMin::minify($in);
 	}
 
