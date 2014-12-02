@@ -3,14 +3,6 @@
 		"ensepar/html2pdf": "dev-master",
 		"firephp/firephp-core": "dev-master",
 		"ezyang/htmlpurifier": "dev-master",
-		"phpids/phpids": "dev-master",
-		"leafo/lessphp": "*",
-		"leafo/scssphp": "*",
-		"ptachoire/cssembed": "*",
-		"mrclay/minify": "*",
-		"natxet/CssMin": "3.0.*",
-		"yfix/packager": "dev-master",
-		"meenie/javascript-packer": "*",
-		"patchwork/jsqueeze": "~1.0"
+		"phpids/phpids": "dev-master"
 	}
 }
