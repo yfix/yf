@@ -20,9 +20,9 @@ before_script:
 #  - if [ -n "$(hhvm --version | grep -i hiphop)" ]; then phpenv config-add .dev/tests/travis_php.ini; fi 
   - mysql -e 'create database yf_for_unit_tests;'
   - composer self-update
-  - cd libs/ && COMPOSER=../.dev/scripts/assets/composer.json composer install --prefer-source --no-interaction --dev
+  - (cd ./libs/ && COMPOSER=../.dev/scripts/assets/composer.json composer install --prefer-source --no-interaction --dev)
 
-script: export YF_DB_PSWD=""; cd .dev/tests/bin/ && ./phpunit_run_all.sh
+script: export YF_DB_PSWD=""; cd ./.dev/tests/bin/ && ./phpunit_run_all.sh
 
 matrix:
 #  allow_failures:
