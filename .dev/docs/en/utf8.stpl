@@ -1,0 +1,24 @@
+<h3>unicode_check</h3>
+{github(utf8.unicode_check)}
+<p><code>unicode_check</code> function perform checks about Unicode support in PHP, and set the right settings if needed.</p>
+
+<h3>convert_to_utf8</h3>
+{github(utf8.convert_to_utf8)}
+<p><code>convert_to_utf8</code> function convert data to UTF-8.<br />
+Requires the iconv, GNU recode or mbstring PHP extension.<br />
+ Return converted data or FALSE.
+</p>
+
+<h3>truncate_bytes</h3>
+{github(utf8.truncate_bytes)}
+<p><code>truncate_bytes</code> function truncate a UTF-8-encoded string safely to a number of bytes.<br />
+If the end position is in the middle of a UTF-8 sequence, it scans backwards<br />
+until the beginning of the byte sequence.<br />
+Use this function whenever you want to chop off a string at an unsure<br />
+location. On the other hand, if you're sure that you're splitting on a<br />
+character boundary (e.g. after using strpos() or similar), you can safely use<br />
+substr() instead.<br />
+param $string - string to truncate.<br />
+param $len - an upper limit on the returned string length.<br />
+Return truncated string.
+</p>
