@@ -424,7 +424,7 @@ class yf_assets {
 				} elseif ($type === 'file') {
 					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
 				} elseif ($type === 'inline') {
-					$str = $this->_strip_script_tags($str);
+					$str = $this->_strip_js_input($str);
 					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</script>';
 				} elseif ($type === 'raw') {
 					$out[$md5] = $str;
@@ -435,7 +435,7 @@ class yf_assets {
 				} elseif ($type === 'file') {
 					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>';
 				} elseif ($type === 'inline') {
-					$str = $this->_strip_style_tags($str);
+					$str = $this->_strip_css_input($str);
 					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</style>';
 				} elseif ($type === 'raw') {
 					$out[$md5] = $str;
@@ -505,9 +505,9 @@ class yf_assets {
 				$out[$md5] = file_get_contents($_content);
 			} elseif ($content_type === 'inline') {
 				if ($asset_type === 'css') {
-					$_content = $this->_strip_style_tags($_content);
+					$_content = $this->_strip_css_input($_content);
 				} elseif ($asset_type === 'js') {
-					$_content = $this->_strip_script_tags($_content);
+					$_content = $this->_strip_js_input($_content);
 				}
 				$out[$md5] = $_content;
 			} elseif ($content_type === 'raw') {
@@ -592,9 +592,9 @@ class yf_assets {
 	/**
 	* Cleanup for CSS strings
 	*/
-	public function _strip_style_tags ($str) {
+	public function _strip_css_input($str) {
 		// Extracting url from <link rel="stylesheet" href="path.to/style.css">
-		$str = preg_replace_callback('~<link[\s]+rel="stylesheet"[\s]+href=["\']([^"\']+)["\'][\s]*[/]?>~ims', function($m) { return $m[1]; }, $str);
+		$str = preg_replace_callback('~<link[\s]+[^>]*href=["\']([^"\']+?)["\'][^>]*>~ims', function($m) { return $m[1]; }, $str);
 
 		for ($i = 0; $i < 10; $i++) {
 			if (strpos($str, 'style') === false) {
@@ -609,9 +609,9 @@ class yf_assets {
 	/**
 	* Cleanup for JS strings
 	*/
-	public function _strip_script_tags ($str) {
+	public function _strip_js_input($str) {
 		// Extracting url from <script src="path.to/scripts.js"></script>
-		$str = preg_replace_callback('~<script[\s]+[^>]*src=["\']([^"]+?)["\'][^>]*>~ims', function($m) { return $m[1]; }, $str);
+		$str = preg_replace_callback('~<script[\s]+[^>]*src=["\']([^"\']+?)["\'][^>]*>~ims', function($m) { return $m[1]; }, $str);
 
 		for ($i = 0; $i < 10; $i++) {
 			if (strpos($str, 'script') === false) {
