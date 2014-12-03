@@ -306,7 +306,7 @@ class yf_assets {
 				));
 			}
 		}
-		return $DIRECT_OUT ? $this->show($asset_type) : $this;
+		return $DIRECT_OUT ? $this->show_css().$this->show_js() : $this;
 	}
 
 	/**
