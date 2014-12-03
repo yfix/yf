@@ -152,7 +152,6 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 	public function test_filter_cssmin() {
 		$in = 'body {'.PHP_EOL.'    color : white; '.PHP_EOL.'}';
 		$this->assertEquals('body{color:white}', _class('assets')->filter_cssmin($in));
-#		$this->assertEquals('body{color:white}body{background:black}', _class('assets')->filter_cssmin($in));
 	}
 	public function test_filter_jsmin() {
 		$in = 'var a = "abc";'.PHP_EOL.PHP_EOL.'// fsfafwe.'.PHP_EOL.PHP_EOL.';;'.PHP_EOL.PHP_EOL.'var bbb = "u";'.PHP_EOL;

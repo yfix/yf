@@ -4,7 +4,6 @@ DIR=$( cd $( dirname "${BASH_SOURCE[0]}" ) && pwd )
 TMP_DIR=$DIR/tmp
 mkdir -p $TMP_DIR
 
-
 # php deps
 #export COMPOSER_HOME=/usr/local/share/composer/
 COMPOSER_EXISTS=$(command composer 2> /dev/null)
