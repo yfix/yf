@@ -12,5 +12,6 @@ if [ -z "$COMPOSER_EXISTS" ]; then
 	ln -vs composer.phar composer
 fi
 composer global self-update
+unlink $DIR/composer.lock
 composer global require --dev leafo/lessphp leafo/scssphp ptachoire/cssembed mrclay/minify meenie/javascript-packer "patchwork/jsqueeze:1.*" "natxet/CssMin:3.0.*" "yfix/packager:dev-master" 
 
