@@ -9,8 +9,8 @@ npm install -g \
 	coffee-script \
 	stylus \
 	nib \
-	ember-precompile \
 	typescript \
 	less \
 	handlebars \
 	autoprefixer
+#	ember-precompile \
