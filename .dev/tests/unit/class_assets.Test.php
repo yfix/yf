@@ -41,27 +41,35 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('file', _class('assets')->detect_content_type('js', $f));
 		unlink($f);
 	}
-	public function test_strip_script_tags() {
-		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script>$(function(){})</script>'));
-		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script>$(function(){})'));
-		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('$(function(){})</script>'));
-		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('$(function(){})'));
-		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script type="text/javascript">$(function(){})</script>'));
-		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script type="text/javascript" id="test">$(function(){})</script>'));
-		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script type="text/javascript" some-attr="some-val">$(function(){})</script>'));
-		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script><script>$(function(){})</script></script>'));
-		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script><script type="text/javascript" some-attr="some-val"><script>$(function(){})</script></script></script>'));
-		$this->assertEquals('$(function(){})', _class('assets')->_strip_script_tags('<script><script type="text/javascript" some-attr="some-val"><script>$(function(){})'));
+	public function test_strip_js_input() {
+		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('<script>$(function(){})</script>'));
+		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('<script>$(function(){})'));
+		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('$(function(){})</script>'));
+		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('$(function(){})'));
+		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('<script type="text/javascript">$(function(){})</script>'));
+		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('<script type="text/javascript" id="test">$(function(){})</script>'));
+		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('<script type="text/javascript" some-attr="some-val">$(function(){})</script>'));
+		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('<script><script>$(function(){})</script></script>'));
+		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('<script><script type="text/javascript" some-attr="some-val"><script>$(function(){})</script></script></script>'));
+		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('<script><script type="text/javascript" some-attr="some-val"><script>$(function(){})'));
+		$this->assertEquals('path.to/script.js', _class('assets')->_strip_js_input('<script src="path.to/script.js"></script>'));
+		$this->assertEquals('path.to/script.js', _class('assets')->_strip_js_input('<script type="text/javascript" src="path.to/script.js"></script>'));
+		$this->assertEquals('path.to/script.js', _class('assets')->_strip_js_input('<script src="path.to/script.js" type="text/javascript"></script>'));
 	}
-	public function test_strip_style_tags() {
-		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_style_tags('<style>#some_id { display:none; }</style>'));
-		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_style_tags('<style>#some_id { display:none; }'));
-		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_style_tags('#some_id { display:none; }</style>'));
-		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_style_tags('#some_id { display:none; }'));
-		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_style_tags('<style type="text/css">#some_id { display:none; }</style>'));
-		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_style_tags('<style type="text/css" id="some_id">#some_id { display:none; }</style>'));
-		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_style_tags('<style><style><style type="text/css" id="some_id">#some_id { display:none; }</style></style></style>'));
-		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_style_tags('<style><style><style type="text/css" id="some_id">#some_id { display:none; }'));
+	public function test_strip_css_input() {
+		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('<style>#some_id { display:none; }</style>'));
+		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('<style>#some_id { display:none; }'));
+		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('#some_id { display:none; }</style>'));
+		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('#some_id { display:none; }'));
+		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('<style type="text/css">#some_id { display:none; }</style>'));
+		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('<style type="text/css" id="some_id">#some_id { display:none; }</style>'));
+		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('<style><style><style type="text/css" id="some_id">#some_id { display:none; }</style></style></style>'));
+		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('<style><style><style type="text/css" id="some_id">#some_id { display:none; }'));
+		$this->assertEquals('path.to/style.css', _class('assets')->_strip_css_input('<link href="path.to/style.css">'));
+		$this->assertEquals('path.to/style.css', _class('assets')->_strip_css_input('<link rel="stylesheet" href="path.to/style.css">'));
+		$this->assertEquals('path.to/style.css', _class('assets')->_strip_css_input('<link href="path.to/style.css" rel="stylesheet">'));
+		$this->assertEquals('path.to/style.css', _class('assets')->_strip_css_input('<link href="path.to/style.css" rel="stylesheet" />'));
+		$this->assertEquals('path.to/style.css', _class('assets')->_strip_css_input('<link rel="stylesheet" href="path.to/style.css" />'));
 	}
 	public function test_jquery() {
 		$url = _class('assets')->get_asset('jquery', 'js');
