@@ -5,6 +5,11 @@ TMP_DIR=$DIR/tmp
 BIN_DIR=/usr/local/bin
 mkdir -p $TMP_DIR
 
+JAVA_EXISTS=$(command java 2> /dev/null)
+if [ -z "$JAVA_EXISTS" ]; then 
+	sudo apt-get install -y openjdk-7-jre
+fi
+
 # java deps
 mkdir -p $BIN_DIR/vendor/java
 

@@ -3,6 +3,8 @@
 DIR=$( cd $( dirname "${BASH_SOURCE[0]}" ) && pwd )
 
 # node deps
+sudo apt-get install -y npm
+
 npm install -g \
 	uglify-js \
 	uglifycss \
