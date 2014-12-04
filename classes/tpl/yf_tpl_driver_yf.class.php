@@ -431,7 +431,8 @@ class yf_tpl_driver_yf {
 		// CSS smart inclusion. Examples: {require_css(http//path.to/file.css)}, {catch(tpl_var)}.some_css_class {} {/catch} {require_css(tpl_var)}
 		// JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
 		// Custom lib smart inclusion. Examples: {jquery()} $.click('.red', function(alert('hello'))) {/jquery}
-		$string = preg_replace_callback('/\{(css|require_css|js|require_js|jquery|angularjs|backbonejs|reactjs|emberjs)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims', function($m) use ($_this) {
+		// Asset bundle inclusion. Examples: {asset()} angular-full {/asset}
+		$string = preg_replace_callback('/\{(css|require_css|js|require_js|asset|jquery|angularjs|backbonejs|reactjs|emberjs)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims', function($m) use ($_this) {
 			$func = $m[1];
 			return $func($m[3], _attrs_string2array($m[2]));
 		}, $string);
