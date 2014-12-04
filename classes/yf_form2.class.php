@@ -1770,12 +1770,6 @@ class yf_form2 {
 		return _class('form2_google_maps', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
 
-	/**
-	*/
-	function file_uploader($name = '', $desc = '', $extra = array(), $replace = array()) {
-		return _class('form2_file_uploader', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
-	}
-
 	function upload($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return _class('form2_upload', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
