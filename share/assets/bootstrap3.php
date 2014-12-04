@@ -12,5 +12,6 @@ return array(
 	),
 	'require' => array(
 		'js' => 'jquery',
+		'css' => 'font-awesome4',
 	),
 );
