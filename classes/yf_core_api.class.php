@@ -663,17 +663,7 @@ class yf_core_api {
 	/**
 	*/
 	function add_syntax_highlighter() {
-		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
-		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
-		js('<script>hljs.initHighlightingOnLoad();</script>');
-		css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
-		css('section.page-contents pre, pre.prettyprint {
-			background-color: transparent;
-			border: 0;
-			font-family: inherit;
-			font-size: inherit;
-			font-weight: bold;
-		}');
+		asset('highlightjs');
 	}
 
 	/**
