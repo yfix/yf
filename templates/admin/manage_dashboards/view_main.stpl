@@ -1,9 +1,9 @@
 {include("manage_dashboards/ds_css")}
-<style>
+{css()}
  	.container { width: 100%; }
 	.left_area { width: 0px; }
 	.center_area { width: 98%; margin-left: 1%; margin-right: 1%; }
-</style>
+{/css}
 
 <div class="container-fluid ds_view" id="yf_dashboard">
   <div class="row-fluid">

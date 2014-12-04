@@ -20,8 +20,7 @@
 
 {back}
 
-<script type="text/javascript">
-<!--
+{js()}
 	var t__please_select_dir = '{t(please_select_dir)} ';
 
 	function submit_copy () {
@@ -42,6 +41,4 @@
 			document.forms[form_name].submit();
 		} else alert(t__please_select_dir);
 	}
--->
-</script>
-
+{/js}

@@ -1,5 +1,5 @@
-<script type="text/javascript">
-$(function() {
+{jquery()}
+
 	$(".column").sortable({
 		connectWith: ".column",
 		helper: function(e,li) {
@@ -112,5 +112,4 @@ $(function() {
 		$('#ds-settings-container').toggle()
 	})
 
-});
-</script>
+{/jquery}

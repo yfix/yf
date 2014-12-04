@@ -1,14 +1,10 @@
-<script type="text/javascript" src="{const(WEB_PATH)}js/jquery/ui/ui.core.js"></script>
-<script type="text/javascript" src="{const(WEB_PATH)}js/jquery/ui/ui.slider.js"></script>
-<script type="text/javascript" src="{const(WEB_PATH)}js/date.js"></script>
-<script type="text/javascript" src="{const(WEB_PATH)}js/jquery/ui/date_slider/date_slider.js"></script>
+{css()} jquery-ui {/css}
+{css()} {const(WEB_PATH)}js/jquery/ui/date_slider/date_slider.css {/css}
 
-<style type="text/css">
-	@import url('{const(WEB_PATH)}js/jquery/ui/jquery-ui-1.7.1.custom.css');
-	@import url('{const(WEB_PATH)}js/jquery/ui/date_slider/date_slider.css');
-</style>
-	
-<script type='text/javascript'>
+{js()} jquery-ui {/js}
+{js()} {const(WEB_PATH)}js/date.js {/js}
+{js()} {const(WEB_PATH)}js/jquery/ui/date_slider/date_slider.js {/js}
+{js()}
 	var months_abbr = "";
 	var date_from = '{date_from}';
 	var date_to = '{date_to}';
@@ -17,7 +13,7 @@
 	if (!stats_period_view) {
 		stats_period_view = 30;
 	}
-</script>
+{/js}
 
 <div align='center'>
 	<h3 id='date_interval_text'>{date_interval}</h3>

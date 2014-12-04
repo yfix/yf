@@ -62,8 +62,7 @@
 	</form>
 </div>
 
-<script type="text/javascript">
-<!--
+{js()}
 	var tasks				= new Array('view','edit', 'copy','move','delete','chmod','make_zip','unzip','download','email');
 	var form_action			= '{form_action}'
 	var default_zip_name	= '{default_zip_name}';
@@ -175,5 +174,4 @@
 				document.forms[form_name].elements[i].checked = reverse;
 		}
 	}
--->
-</script>
+{/js}
