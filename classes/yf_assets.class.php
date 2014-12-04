@@ -196,6 +196,9 @@ class yf_assets {
 		if (!$asset_data) {
 			return null;
 		}
+		if (!is_string($asset_data) && is_callable($asset_data)) {
+			$asset_data = $asset_data();
+		}
 		if (isset($asset_data['inherit'])) {
 			$func = __FUNCTION__;
 			return $this->$func($asset_data['inherit'][$asset_type], $asset_type, $version);
@@ -224,7 +227,10 @@ class yf_assets {
 		if (DEBUG_MODE) {
 			$trace = main()->trace_string();
 		}
-		if (!$asset_type || !in_array($asset_type, $this->supported_asset_types)) {
+		if (!$asset_type) {
+			$asset_type = 'bundle';
+		}
+		if (!in_array($asset_type, $this->supported_asset_types)) {
 			throw new Exception('Assets add(): unsupported asset type: '.$asset_type);
 			return $this;
 		}
@@ -235,15 +241,24 @@ class yf_assets {
 		if (!is_array($content)) {
 			$content = array($content);
 		}
+		if (!$content_type_hint) {
+			$content_type_hint = 'auto';
+		}
 		if (is_array($content_type_hint)) {
 			$params = (array)$params + $content_type_hint;
 			$content_type_hint = '';
 		}
 		foreach ($content as $_content) {
+			if (!is_string($_content) && is_callable($_content)) {
+				$_content = $_content();
+			}
 			$_content = trim($_content);
 			$_params = $params;
 			if ($asset_type === 'bundle') {
 				$bundle_details = $this->get_asset_details($_content);
+				if (!is_string($bundle_details) && is_callable($bundle_details)) {
+					$bundle_details = $bundle_details();
+				}
 				foreach ($this->supported_asset_types as $atype) {
 					$arequire = $bundle_details['require'][$atype];
 					if ($arequire) {
