@@ -11,4 +11,7 @@ return array(
 			'css' => '//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css',
 		),
 	),
+	'require' => array(
+		'js' => 'jquery',
+	),
 );
