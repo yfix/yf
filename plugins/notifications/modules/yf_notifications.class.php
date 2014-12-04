@@ -66,8 +66,16 @@ class yf_notifications {
                                         OR (`is_common_template`=1 AND `template_alias` = '"._es($name)."')");
         if (intval($notification_id) == 0) return false;
         $hash = md5($url.$text.intval($notification_id).intval($user_id).$this->salt);        
-        $cnt = db()->get_one("SELECT COUNT(`id`) FROM `".db('notifications_receivers')."` WHERE `hash`='{$hash}'");
-        if ($cnt != 0) return false;
+        $A = db()->get("SELECT * FROM `".db('notifications_receivers')."` WHERE `hash`='{$hash}'");
+        if (!empty($A)) {
+            if ($A['is_read'] == 1) {
+                db()->query("UPDATE `".db('notifications_receivers')."` SET `is_read`=0 WHERE `hash`='{$hash}'");
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
         
         db()->insert(db('notifications_receivers'), array(
             'notification_id'   => intval($notification_id),
