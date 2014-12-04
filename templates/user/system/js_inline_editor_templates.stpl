@@ -1,7 +1,4 @@
-<script type="text/javascript">
-// Inline template editor code
-$(function(){
-
+{jquery()}
 	// Prepare html for the templates inline editor
 	$("body").append("" 
 		+ "<div id='inline_edit_stpl'>" 
@@ -100,5 +97,4 @@ $(function(){
 		}
 	});
 
-})
-</script>
+{/jquery}

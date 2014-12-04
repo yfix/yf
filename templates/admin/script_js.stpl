@@ -1,18 +1,16 @@
-<!-- script_js.stpl --> {{-- Do not remove this line! --}}
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.jquery.min.js" class="yf_core"></script>
+{js()} chosen {/js}
+{css()} chosen {/css}
 
 {if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
-<script type="text/javascript" class="yf_core">
-$(function(){
-try {
-	$('select').not('.portlet select').not('.no-chosen').chosen();
-} catch (e) { console.log(e); }
-});
-</script>
+	{jquery()}
+	try {
+		$('select').not('.portlet select').not('.no-chosen').chosen();
+	} catch (e) { console.log(e); }
+	{/jquery}
 {/if}
 
-<script type="text/javascript" class="yf_core">
-$(function(){
+{jquery()}
+
 	var _t_active = "{t(Active)}";
 	var _t_inactive = "{t(Disabled)}";
 	var _t_yes = "{t(Yes)}";
@@ -131,10 +129,9 @@ $(function(){
 
 	// Affix used in settings TOC, idea got from Bootstrap docs
 	$(".bs-docs-sidenav").affix();
-});
-</script>
+
+{/jquery}
 
 {if(const.DEBUG_MODE eq 1)}
 	{include("debug_console_js")}
 {/if}
-<!-- /script_js.stpl --> {{-- Do not remove this line! --}}

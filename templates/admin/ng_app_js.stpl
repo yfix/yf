@@ -1,28 +1,29 @@
-	<script>
-	try {
-		var ng_app_admin = angular.module( '{ng_app}', [
-			'ngAnimate'
-			, 'ngRoute'
-			, 'ngSanitize'
-			, 'ngResource'
-			, 'ngTouch'
-			{{-- , 'ui.bootstrap' --}}
-			{{-- ui-select2 is deprecated: use ui-select --}}
-			, 'ui.select2'
-			, 'ui.select'
-			, 'mgcrea.ngStrap'
-		]);
-		ng_app_admin.config( function( $datepickerProvider ) {
-			angular.extend( $datepickerProvider.defaults, {
-				dateFormat: 'dd.MM.yyyy'
-				, autoclose: 1
-				, startWeek: 1
-				, startView: 2
-			});
-		});
-		ng_app_admin.config( function( uiSelectConfig ) {
-			uiSelectConfig.theme = 'select2';
-		});
+{js()}
 
-	} catch (e) { console.error(e); }
-	</script>
+try {
+	var ng_app_admin = angular.module( '{ng_app}', [
+		'ngAnimate'
+		, 'ngRoute'
+		, 'ngSanitize'
+		, 'ngResource'
+		, 'ngTouch'
+		{{-- , 'ui.bootstrap' --}}
+		{{-- ui-select2 is deprecated: use ui-select --}}
+		, 'ui.select2'
+		, 'ui.select'
+		, 'mgcrea.ngStrap'
+	]);
+	ng_app_admin.config( function( $datepickerProvider ) {
+		angular.extend( $datepickerProvider.defaults, {
+			dateFormat: 'dd.MM.yyyy'
+			, autoclose: 1
+			, startWeek: 1
+			, startView: 2
+		});
+	});
+	ng_app_admin.config( function( uiSelectConfig ) {
+		uiSelectConfig.theme = 'select2';
+	});
+} catch (e) { console.error(e); }
+
+{/js}

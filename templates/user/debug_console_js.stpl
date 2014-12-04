@@ -1,4 +1,4 @@
-<style type="text/css" class="yf_core">
+{css()}
 #debug_console pre {
 	color: #ccc;
 	background: black;
@@ -16,11 +16,11 @@
 	padding-left: 20px;
 	padding-right: 20px;
 }
-</style>
+{/css}
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" class="yf_core"></script>
-<script type="text/javascript" class="yf_core">
-$(function(){
+{js()} jquery-cookie {/js}
+
+{jquery()}
 	// Needed for debug console
 	$("table.debug_item a[data-hidden-toggle]", "#debug_console").on("click", function(e){
 		e.preventDefault();
@@ -31,8 +31,6 @@ $(function(){
 		_hidden.toggle();
 //		console.log(_this, _parent, _name, _hidden)
 	})
-
-	// Needed for debug console
 	$(".btn-toggle", "#debug_console").on("click", function(e){
 		e.preventDefault();
 		var _this = $(this)
@@ -42,21 +40,19 @@ $(function(){
 		}
 		console.log(_this, _toggle_what_id)
 	})
-
-try {
-	// Needed for debug console
-	$("ul.nav-tabs li a", "#debug_console").on("click", function(){
-		$.cookie('debug_tabs_active', $(this).attr("href").substring(1), {path: '/'}); // Remove # at the beginning
-	})
-} catch (e) { console.log(e); }
-
-});
-</script>
+	try {
+		// Needed for debug console
+		$("ul.nav-tabs li a", "#debug_console").on("click", function(){
+			$.cookie('debug_tabs_active', $(this).attr("href").substring(1), {path: '/'}); // Remove # at the beginning
+		})
+	} catch (e) { console.log(e); }
+{/jquery}
 
 {if_true(conf.DEBUG_CONSOLE_POPUP)}
-<style type="text/css">#debug_console{display:none;}</style>
-<script type="text/javascript">
-$(function(){
+	{css()} #debug_console{display:none;} {/css}
+
+	{jquery()}
+
 	var debug_window_name = "yf_debug_frame"
 	var debug_console_use_iframe = false;
 	var debug_console_head = [ ];
@@ -105,6 +101,6 @@ $(function(){
 	} else {
 		console.error('Debug console popup: cannot access frame document');
 	}
-})
-</script>
+
+	{/jquery}
 {/if}

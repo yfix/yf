@@ -1,18 +1,13 @@
-<!-- main_js.stpl --> {{-- Do not remove this line! --}}
-<script type="text/javascript" class="yf_core">
-$(function(){
-try {
-	$('.yf_tip').popover({
-		'trigger' : 'hover',
-		'delay'   : { 'show' : 100, 'hide' : 500 }
-	})
-} catch(e) {
-	console.log(e)
-}
-})
-</script>
-<script type="text/javascript" class="yf_core">
-$(function(){
+{jquery()}
+	try {
+		$('.yf_tip').popover({
+			'trigger' : 'hover',
+			'delay'   : { 'show' : 100, 'hide' : 500 }
+		})
+	} catch(e) {
+		console.log(e)
+	}
+
 	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
 	var yf_ajax_link_validate = '{url(dynamic,ajax_validate)}';
 	var yf_ajax_validate_cache = { };
@@ -76,10 +71,8 @@ $(function(){
 		yf_ajax_validation_icon_clear(_this)
 		_this.closest('.input-group').after('&nbsp;<i class="ajax-validation-status icon icon-large fa-lg ' + icon + '" style="color:' + color + ';" title="' + title + '"></i>');
 	}
-})
-</script>
+{/jquery}
 
 {if_ok(const.DEBUG_MODE)}
 	{include("debug_console_js")}
 {/if}
-<!-- /main_js.stpl --> {{-- Do not remove this line! --}}

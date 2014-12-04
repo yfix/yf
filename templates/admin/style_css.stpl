@@ -1,5 +1,5 @@
-<!-- style_css.stpl --> {{-- Do not remove this line! --}}
-<style type="text/css" class="yf_core">
+{css()}
+
 .sidebar-nav { padding: 9px 0; }
 
 .left_area { margin-left: 20px; margin-right: 20px; width: 410px; float:left; word-wrap: break-word; }
@@ -59,16 +59,17 @@ body.cssfw-bs3 a.accordion-toggle { display: block; }
 
 /* override styles per bs theme here */
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color: #52575c; }
-</style>
+
+{/css}
 
 {if(conf.css_framework eq bs2)}
-<style type="text/css">
+	{css}
 label.radio-horizontal { padding-left: inherit; display: inline-block; margin-bottom: inherit; }
 label.radio-horizontal input[type=radio] { float: none; margin-left:inherit; margin-top:0; }
-</style>
+	{/css}
 {/if}
 {if(conf.css_framework eq bs3)}
-<style type="text/css">
+	{css}
 .container-fixed input, .container-fixed textarea, .container-fixed select { max-width: 300px; }
 .container-fixed .input-mini { width:70px !important }
 .container-fixed .input-small { width:100px !important }
@@ -79,7 +80,5 @@ label.radio-horizontal input[type=radio] { float: none; margin-left:inherit; mar
 .container-fixed .input-group[class*="col-"] { float:left !important; margin-right: 3px; }
 label.radio-horizontal { padding-left: inherit; display: inline-block; margin-right: 5px; }
 label.radio-horizontal input[type=radio] { float: left; }
-</style>
+	{/css}
 {/if}
-
-<!-- /style_css.stpl --> {{-- Do not remove this line! --}}

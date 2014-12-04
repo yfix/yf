@@ -1,4 +1,5 @@
-<style>
+{css()}
+
 .draggable_menu { width:70%; }
 .draggable_menu li { list-style-type: none; }
 .draggable_menu dl { font-weight:bold; position: relative; display: block; margin:0; border-top: 1px solid #444; }
@@ -10,10 +11,11 @@
 .draggable_menu ul.closed { display: none; }
 .draggable_menu .controls_over { display: none; }
 .icon-move, .fa-arrows { cursor: move; }
-</style>
 
-<script>
-$(function(){
+{/css}
+
+{jquery()}
+
 	var orig_items = { };
 	var i = 0;
 	$("li", ".draggable_menu").each(function(){
@@ -76,12 +78,7 @@ $(function(){
 		}
 		return false;
 	});
-})
-</script>
 
-<script>
-//init functions
-$(function() {
 	$('dl, .dropzone', '.draggable_menu').droppable({
 		accept: '.draggable_menu li',
 		tolerance: 'pointer',
@@ -136,7 +133,10 @@ $(function() {
 	$(".draggable_menu").on('mouseout', 'dl', function() {
 		$(this).find('.controls_over').hide();
 	});
-});
+
+{/jquery}
+
+{js()}
 var draggable_history = {
 	stack: new Array(),
 	temp: null,
@@ -164,4 +164,4 @@ var draggable_history = {
 		$('.draggable_menu li:has(ul li):not(.closed)').addClass('opened');
 	}
 }
-</script>
+{/js}

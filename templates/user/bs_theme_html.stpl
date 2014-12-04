@@ -1,47 +1,28 @@
-{catch(min_ext)}{if_false(const.DEBUG_MODE)}.min{/if}{/catch}
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery{min_ext}.js" class="yf_core"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui{min_ext}.js" class="yf_core"></script>
+{js()} jquery {/js}
+{js()} jquery-ui {/js}
+{js()} bootstrap {/js}
 
 {if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
 	{if(cur_theme eq "bootstrap")}
-		{if_true(const.DEBUG_MODE)}
-			<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.css" rel="stylesheet" class="yf_core">
-		{else}
-			<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" class="yf_core">
-		{/if}
+		{css()} bootstrap2 {/css}
 	{else}
-		{if(const.DEBUG_MODE eq 1)}
-			<link href="http://bootswatch.com/2/{cur_theme}/bootstrap.css" rel="stylesheet" class="yf_core">
-		{else}
-			<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/{cur_theme}/bootstrap.min.css" rel="stylesheet" class="yf_core">
-		{/if}
+		{css()} //netdna.bootstrapcdn.com/bootswatch/2.3.2/{cur_theme}/bootstrap.min.css {/css}
 	{/if}
-	<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap{min_ext}.js" class="yf_core"></script>
 {elseif("conf.css_framework" eq "bs3")}
 	{if(cur_theme eq "bootstrap")}
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme{min_ext}.css" rel="stylesheet" class="yf_core">
+		{css()} bootstrap3 {/css}
 	{elseif(cur_theme eq "flatui")}
-		<link href="//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/vendor/bootstrap.min.css" rel="stylesheet">
-		<link href="//cdn.rawgit.com/yfix/Flat-UI/master/dist/css/flat-ui{min_ext}.css" rel="stylesheet">
-		<script src="//cdn.rawgit.com/yfix/Flat-UI/master/dist/js/flat-ui{min_ext}.js"></script>
+		{css()} //cdn.rawgit.com/yfix/Flat-UI/master/dist/css/vendor/bootstrap.min.css {/css}
+		{css()} //cdn.rawgit.com/yfix/Flat-UI/master/dist/css/flat-ui.min.css {/css}
+		{js()} //cdn.rawgit.com/yfix/Flat-UI/master/dist/js/flat-ui.min.js {/js}
 	{else}
-		{if_true(const.DEBUG_MODE)}
-			<link href="http://bootswatch.com/{cur_theme}/bootstrap.css" rel="stylesheet" class="yf_core">
-		{else}
-			<link href="//netdna.bootstrapcdn.com/bootswatch/3.3.0/{cur_theme}/bootstrap{min_ext}.css" rel="stylesheet" class="yf_core">
-		{/if}
+		{css()} //netdna.bootstrapcdn.com/bootswatch/3.3.0/{cur_theme}/bootstrap.min.css {/css}
 	{/if}
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap{min_ext}.js" class="yf_core"></script>
 {/if}
 
-<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome{min_ext}.css" rel="stylesheet" class="yf_core">
+{css()} font-awesome3 {/css}
 
-<script type="text/javascript" src="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/js/bootstrap-formhelpers-selectbox.js.gz" class="yf_core"></script>
-<link rel="stylesheet" href="http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/css/bootstrap-formhelpers.min.css.gz" class="yf_core">
-
-<style type="text/css" class="yf_core">
+{css()}
 [class^="bfh-flag-"], [class*="bfh-flag-"] {
 	display: inline-block;
 	margin-right: 5px;
@@ -52,8 +33,4 @@
 .bfh-selectbox-options a {
 	padding-left: 10px;
 }
-</style>
-
-<!--[if lt IE 9]>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv{min_ext}.js" class="yf_core"></script>
-<![endif]-->
+{/css}
