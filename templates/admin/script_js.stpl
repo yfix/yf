@@ -132,6 +132,8 @@
 
 {/jquery}
 
+{js()} html5shiv {/js}
+
 {if(const.DEBUG_MODE eq 1)}
 	{include("debug_console_js")}
 {/if}

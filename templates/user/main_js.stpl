@@ -73,6 +73,8 @@
 	}
 {/jquery}
 
+{js()} html5shiv {/js}
+
 {if_ok(const.DEBUG_MODE)}
 	{include("debug_console_js")}
 {/if}

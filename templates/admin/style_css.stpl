@@ -82,3 +82,4 @@ label.radio-horizontal { padding-left: inherit; display: inline-block; margin-ri
 label.radio-horizontal input[type=radio] { float: left; }
 	{/css}
 {/if}
+
