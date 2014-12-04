@@ -1,3 +1,10 @@
+{js()} jquery {/js}
+{js()} jquery-ui {/js}
+{js()} bootstrap {/js}
+{asset()} bootstrap-theme {/asset}
+{css()} font-awesome3 {/css}
+{css()} bfh-select {/css}
+
 {css()}
 
 .sidebar-nav { padding: 9px 0; }
@@ -82,4 +89,3 @@ label.radio-horizontal { padding-left: inherit; display: inline-block; margin-ri
 label.radio-horizontal input[type=radio] { float: left; }
 	{/css}
 {/if}
-

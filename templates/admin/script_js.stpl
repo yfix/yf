@@ -1,5 +1,4 @@
-{js()} chosen {/js}
-{css()} chosen {/css}
+{asset()} chosen {/asset}
 
 {if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
 	{jquery()}

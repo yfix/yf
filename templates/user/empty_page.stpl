@@ -2,11 +2,7 @@
 <html>
 <head>
 	<title>{if_ok(title)}{title}{else}{execute(graphics,show_site_title)}{/if}</title>
-
-{execute(common,bs_theme_html)}
-{include("main_style_css")}
 {exec_last(assets,show_css)}
-
 {execute(graphics,show_metatags)}
 	<meta charset="utf-8">
 	<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
@@ -14,10 +10,7 @@
 </head>
 <body>
 	{text}
-
 	{if_true(close_button)}<div align="center"><a href="javascript:void(0)" onclick="window.close();">{t(Close)}</a></div>{/if}
-
-{include("main_js")}
 {exec_last(assets,show_js)}
 </body>
 </html>

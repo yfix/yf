@@ -2,13 +2,8 @@
 <html>
 <head>
 	<title>{execute(graphics,show_site_title)}</title>
-
-{execute(common,bs_theme_html)}
-{include("main_style_css")}
 {exec_last(assets,show_css)}
-
 {execute(graphics,show_metatags)}
-
 </head>
 <body class="bs-theme-{execute(common,bs_current_theme)} cssfw-{conf(css_framework)}">
 	<div class="navbar navbar-default{if(conf.css_havbar_inverse eq 1)} navbar-inverse{/if}">
@@ -43,7 +38,6 @@
 			</div>
 		</div>
 	</div>
-{include("main_js")}
 {exec_last(assets,show_js)}
 </body>
 </html>

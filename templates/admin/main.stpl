@@ -6,9 +6,6 @@
 	<base href="{const(ADMIN_WEB_PATH)}"/>
 	<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
 
-{execute(common,bs_theme_html)}
-{css()} font-awesome4 {/css}
-{css()} chosen {/css}
 {exec_last(assets,show_css)}
 
 {if_ok(ng_app)}

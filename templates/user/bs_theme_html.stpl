@@ -1,6 +1,0 @@
-{js()} jquery {/js}
-{js()} jquery-ui {/js}
-{js()} bootstrap {/js}
-{asset()} bootstrap-theme {/asset}
-{css()} font-awesome3 {/css}
-{css()} bfh-select {/css}

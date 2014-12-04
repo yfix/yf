@@ -4,9 +4,7 @@
 	<title>{execute(graphics,show_site_title)}</title>
 	<meta charset="utf-8">
 
-{execute(common,bs_theme_html)}
-{include("main_style_css")}
-{css()} font-awesome4 {/css}
+{exec_last(assets,show_css)}
 {css()}
 	.container-valign-middle { margin:20% 30%; }
 	{if(conf.css_framework eq bs3)}
@@ -14,7 +12,6 @@
 		#debug_console { float:left; }
 	{/if}
 {/css}
-{exec_last(assets,show_css)}
 
 {execute(graphics,show_metatags)}
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +20,6 @@
 	<div class="{if(conf.css_framework eq bs3)}container-fixed{else}container-fluid{/if} container-valign-middle">
 {execute(login_form,_admin_login_form)}
 	</div>
-{include("main_js")}
 {exec_last(assets,show_js)}
 </body>
 </html>
