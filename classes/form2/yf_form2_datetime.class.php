@@ -50,11 +50,6 @@ class yf_form2_datetime {
 				$extra['value'] = empty( $value ) || $value == '0000-00-00 00:00:00' ? null : strtotime( $value );
 			}
 			$extra['value'] = empty( $extra['value'] ) ? '' : date( $_format_php, $extra['value'] );
-			// js lib
-			js('momentjs');
-			js('//cdn.rawgit.com/yfix/bootstrap-datetimepicker/master/build/js/bootstrap-datetimepicker.min.js');
-			css('//cdn.rawgit.com/yfix/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css');
-			css('.bootstrap-datetimepicker-widget .picker-switch { width: 90%; }');
 
 			$body = '
 <div id="'.$extra['name'].'" data-date-format="'.$_format_js.'" class="input-append datetimepicker">
@@ -66,21 +61,22 @@ class yf_form2_datetime {
 </div>
 </div>
 ';
+			asset('bootstrap-datetimepicker');
 			jquery('
-	$("#'.$extra['name'].'").datetimepicker({
-		language: "ru"
-		, icons: {
-			time: "icon icon-time fa fa-clock-o",
-			date: "icon icon-calendar fa fa-calendar",
-			up:   "icon icon-arrow-up fa fa-arrow-up",
-			down: "icon icon-arrow-down fa fa-arrow-down"
-		}
-		'.($extra['no_time'] == 1 ? ', pickTime: false' : '')
-		. ($extra['no_date'] == 1 ? ', pickDate: false' : '')
-        . ($extra['min_date']? ', minDate: \''.date('d/m/Y', $extra['min_date']).'\'' : '')
-        . ($extra['max_date']? ', maxDate: \''.date('d/m/Y', $extra['max_date']).'\'' : '')
-		.'
-	});
+				$("#'.$extra['name'].'").datetimepicker({
+					language: "ru"
+					, icons: {
+						time: "icon icon-time fa fa-clock-o",
+						date: "icon icon-calendar fa fa-calendar",
+						up:   "icon icon-arrow-up fa fa-arrow-up",
+						down: "icon icon-arrow-down fa fa-arrow-down"
+					}
+					'.($extra['no_time'] == 1 ? ', pickTime: false' : '')
+					. ($extra['no_date'] == 1 ? ', pickDate: false' : '')
+			        . ($extra['min_date']? ', minDate: \''.date('d/m/Y', $extra['min_date']).'\'' : '')
+			        . ($extra['max_date']? ', maxDate: \''.date('d/m/Y', $extra['max_date']).'\'' : '')
+					.'
+				});
 			');
 			return $_this->_row_html($body, $extra, $r);
 		};
