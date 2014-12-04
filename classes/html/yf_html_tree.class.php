@@ -135,8 +135,7 @@ class yf_html_tree {
 	/**
 	*/
 	function _js($extra = array()) {
-		js(
-'$(function(){
+		jquery('
 	var orig_items = { };
 	var i = 0;
 	$("li", ".draggable_menu").each(function(){
@@ -253,9 +252,10 @@ class yf_html_tree {
 	});
 	$(".draggable_menu").on("mouseout", "dl", function() {
 		$(this).find(".controls_over").hide();
-	});
-});
+	});'
+		);
 
+		js('
 var draggable_history = {
 	stack: new Array(),
 	temp: null,
