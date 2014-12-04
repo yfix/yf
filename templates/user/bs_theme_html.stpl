@@ -1,36 +1,7 @@
 {js()} jquery {/js}
 {js()} jquery-ui {/js}
 {js()} bootstrap {/js}
-
-{if("conf.css_framework" eq "bs2" or "conf.css_framework" eq "")}
-	{if(cur_theme eq "bootstrap")}
-		{css()} bootstrap2 {/css}
-	{else}
-		{css()} //netdna.bootstrapcdn.com/bootswatch/2.3.2/{cur_theme}/bootstrap.min.css {/css}
-	{/if}
-{elseif("conf.css_framework" eq "bs3")}
-	{if(cur_theme eq "bootstrap")}
-		{css()} bootstrap3 {/css}
-	{elseif(cur_theme eq "flatui")}
-		{css()} //cdn.rawgit.com/yfix/Flat-UI/master/dist/css/vendor/bootstrap.min.css {/css}
-		{css()} //cdn.rawgit.com/yfix/Flat-UI/master/dist/css/flat-ui.min.css {/css}
-		{js()} //cdn.rawgit.com/yfix/Flat-UI/master/dist/js/flat-ui.min.js {/js}
-	{else}
-		{css()} //netdna.bootstrapcdn.com/bootswatch/3.3.0/{cur_theme}/bootstrap.min.css {/css}
-	{/if}
-{/if}
-
+{asset()} bootstrap-theme {/asset}
 {css()} font-awesome3 {/css}
-
-{css()}
-[class^="bfh-flag-"], [class*="bfh-flag-"] {
-	display: inline-block;
-	margin-right: 5px;
-}
-[class^="bfh-flag-"]:empty, [class*="bfh-flag-"]:empty {
-	width: 16px;
-}
-.bfh-selectbox-options a {
-	padding-left: 10px;
-}
-{/css}
+{css()} font-awesome4 {/css}
+{css()} bfh-select {/css}
