@@ -8,7 +8,7 @@
 	{form_row("save_and_back")}
 {form_row("form_end")}
 
-{js()} ace_editor {/js}
+{js()} ace-editor {/js}
 {js()}
 	function initAceEditor() {
 		var html_editor = ace.edit("editor_html");

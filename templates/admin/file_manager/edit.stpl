@@ -17,4 +17,4 @@
 
 {back}
 
-{js()} ace_editor {/js}
+{js()} ace-editor {/js}
