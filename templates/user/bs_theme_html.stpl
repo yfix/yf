@@ -3,5 +3,4 @@
 {js()} bootstrap {/js}
 {asset()} bootstrap-theme {/asset}
 {css()} font-awesome3 {/css}
-{css()} font-awesome4 {/css}
 {css()} bfh-select {/css}
