@@ -286,19 +286,21 @@ class yf_assets {
 				$info = $this->get_asset($_content, $asset_type);
 				if ($info) {
 					$asset_data = $this->get_asset_details($_content);
-					if (isset($asset_data['require'][$asset_type])) {
-						$this->add($asset_data['require'][$asset_type], $asset_type, 'asset', array('direct_out' => false));
+					if (!is_string($asset_data) && is_callable($asset_data)) {
+						$asset_data = $asset_data();
 					}
-					if (is_array($info)) {
-						$url = $info['url'];
-					} else {
-						$url = $info;
-					}
-					$md5 = md5($url);
 					if (isset($asset_data['config'])) {
 						$_params['config'] = $asset_data['config'];
 					}
-					$this->set_content($asset_type, $md5, 'url', $url, $_params);
+					if (isset($asset_data['require'][$asset_type])) {
+						$this->add($asset_data['require'][$asset_type], $asset_type, 'asset', (array)$_params + array('direct_out' => false));
+					}
+					if (!is_array($info)) {
+						$info = array($info);
+					}
+					foreach ($info as $_info) {
+						$this->add($_info, $asset_type, 'auto', (array)$_params + array('direct_out' => false));
+					}
 				}
 			} elseif ($content_type === 'url') {
 				$this->set_content($asset_type, $md5, 'url', $_content, $_params);
