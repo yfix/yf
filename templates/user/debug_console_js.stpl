@@ -57,6 +57,7 @@
 	var debug_console_use_iframe = false;
 	var debug_console_head = [ ];
 	// Allow to override JS, CSS as array of html elements strings
+// TODO: replace .yf_core with more generic method, maybe just include all scripts
 	if (typeof debug_console_override_head == "object") {
 		$.each(debug_console_override_head, function(i, _html){
 			debug_console_head.push( _html )
