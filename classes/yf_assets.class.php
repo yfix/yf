@@ -323,6 +323,7 @@ class yf_assets {
 					'md5'			=> $md5,
 					'content'		=> $_content,
 					'is_added'		=> !is_null($this->get_content($asset_type, $md5)),
+					'preview'		=> '',
 					'params'		=> $_params,
 					'trace'			=> $trace,
 				));
@@ -489,6 +490,7 @@ class yf_assets {
 					'md5'			=> $md5,
 					'content_type'	=> $content_type,
 					'content'		=> $str,
+					'preview'		=> '',
 					'params'		=> $_params,
 					'trace'			=> $debug['trace'],
 				));
