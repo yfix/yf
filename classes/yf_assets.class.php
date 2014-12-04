@@ -175,7 +175,7 @@ class yf_assets {
 	function helper_js_library($lib_name, $content, $params = array()) {
 		$asset_type = 'js';
 		if (!isset($this->already_required[$asset_type][$lib_name])) {
-			$this->add_asset($lib_name, $asset_type, array('direct_out' => false));
+			$this->add_asset($lib_name, $asset_type, $this->ADD_IS_DIRECT_OUT ? array('direct_out' => false) : array());
 			$this->already_required[$asset_type][$lib_name] = true;
 		}
 		return $this->add($content, $asset_type, 'inline', $params);
@@ -262,11 +262,11 @@ class yf_assets {
 				foreach ($this->supported_asset_types as $atype) {
 					$arequire = $bundle_details['require'][$atype];
 					if ($arequire) {
-						$this->add($arequire, $atype, 'auto', array('direct_out' => false));
+						$this->add($arequire, $atype, 'auto', $DIRECT_OUT ? array('direct_out' => false) : array());
 					}
 					$adata = $this->get_asset($_content, $atype);
 					if ($adata) {
-						$this->add($adata, $atype, 'auto', array('direct_out' => false));
+						$this->add($adata, $atype, 'auto', $DIRECT_OUT ? array('direct_out' => false) : array());
 					}
 				}
 				continue;
@@ -293,13 +293,13 @@ class yf_assets {
 						$_params['config'] = $asset_data['config'];
 					}
 					if (isset($asset_data['require'][$asset_type])) {
-						$this->add($asset_data['require'][$asset_type], $asset_type, 'asset', (array)$_params + array('direct_out' => false));
+						$this->add($asset_data['require'][$asset_type], $asset_type, 'asset', (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array()));
 					}
 					if (!is_array($info)) {
 						$info = array($info);
 					}
 					foreach ($info as $_info) {
-						$this->add($_info, $asset_type, 'auto', (array)$_params + array('direct_out' => false));
+						$this->add($_info, $asset_type, 'auto', (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array()));
 					}
 				}
 			} elseif ($content_type === 'url') {
@@ -437,7 +437,7 @@ class yf_assets {
 			return null;
 		}
 		if (!is_array($params)) {
-			$params = array($params);
+			$params = !empty($params) ? array($params) : array();
 		}
 		$ext = '.'.$out_type;
 		// Assets from current module
@@ -477,21 +477,20 @@ class yf_assets {
 					}
 				}
 				$dname = $out_type.'_'.$md5;
-				$trace = str_replace(array('<','>'), array('&lt;','&gt;'), implode('; ', array_slice(explode(PHP_EOL, $debug['trace']), 2, 2, true)));
+				$trace_short = str_replace(array('<','>'), array('&lt;','&gt;'), implode('; ', array_slice(explode(PHP_EOL, $debug['trace']), 2, 2, true)));
 				$ctype = $debug['content_type'];
 				if ($ctype === 'asset') {
 					$ctype .= ':'.$debug['content'];
 				}
-				$before = PHP_EOL. '<!-- asset start: '.$dname.' | '.$ctype.' | '.$trace.' -->'. PHP_EOL. $before;
+				$before = PHP_EOL. '<!-- asset start: '.$dname.' | '.$ctype.' | '.$trace_short.' -->'. PHP_EOL. $before;
 				$after = $after. PHP_EOL. '<!-- asset end: '.$dname.' -->'. PHP_EOL;
 				debug('assets_out[]', array(
-#					'asset_type'	=> $asset_type,
-#					'content_type'	=> $content_type,
+					'out_type'		=> $out_type,
 					'md5'			=> $md5,
-#					'content'		=> $_content,
-#					'is_added'		=> !is_null($this->get_content($asset_type, $md5)),
-#					'params'		=> $_params,
-#					'trace'			=> $trace,
+					'content_type'	=> $content_type,
+					'content'		=> $str,
+					'params'		=> $_params,
+					'trace'			=> $debug['trace'],
 				));
 			}
 			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, array('css_class' => $css_class)). $after;
