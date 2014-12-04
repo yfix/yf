@@ -1488,12 +1488,11 @@ class yf_debug {
 
 		$items = $this->_get_debug_data('assets_out');
 		foreach ((array)$items as $k => $v) {
-#			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
-#			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
-#			$v['params'] = $v['params'] ? '<pre>'._prepare_html($this->_var_export($v['params'])).'</pre>' : '';
-#			unset($v['is_added']);
+			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
+			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
+			$v['params'] = $v['params'] ? '<pre>'._prepare_html($this->_var_export($v['params'])).'</pre>' : '';
 			$items[$k] = array('id' => ++$i) + $v;
-#			$items[$k]['strlen'] = strlen($v['content']);
+			$items[$k]['strlen'] = strlen($v['content']);
 		}
 		$body['out'] = $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
 
