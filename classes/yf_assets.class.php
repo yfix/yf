@@ -423,27 +423,46 @@ class yf_assets {
 					$str = substr($str, 0, -strlen($ext)).'.min'.$ext;
 				}
 			}
+			$before = '';
+			$after = '';
+			if (DEBUG_MODE) {
+				$debug = array();
+				foreach(debug('assets') as $d) {
+					if ($d['md5'] === $md5) {
+						$debug = $d;
+						break;
+					}
+				}
+				$dname = $out_type.'_'.$md5;
+				$trace = str_replace(array('<','>'), array('&lt;','&gt;'), implode('; ', array_slice(explode(PHP_EOL, $debug['trace']), 2, 2, true)));
+				$ctype = $debug['content_type'];
+				if ($ctype === 'asset') {
+					$ctype .= ':'.$debug['content'];
+				}
+				$before = PHP_EOL.'<!-- asset start: '.$dname.' | '.$ctype.' | '.$trace.' -->'.PHP_EOL;
+				$after = PHP_EOL.'<!-- asset end: '.$dname.' -->'.PHP_EOL;
+			}
 			if ($out_type === 'js') {
 				if ($type === 'url') {
-					$out[$md5] = '<script src="'.$str.'" type="text/javascript"'.$css_class.'></script>';
+					$out[$md5] = $before. '<script src="'.$str.'" type="text/javascript"'.$css_class.'></script>'. $after;
 				} elseif ($type === 'file') {
-					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
+					$out[$md5] = $before. '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>'. $after;
 				} elseif ($type === 'inline') {
 					$str = $this->_strip_js_input($str);
-					$out[$md5] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</script>';
+					$out[$md5] = $before. '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</script>'. $after;
 				} elseif ($type === 'raw') {
-					$out[$md5] = $str;
+					$out[$md5] = $before. $str. $after;
 				}
 			} elseif ($out_type === 'css') {
 				if ($type === 'url') {
-					$out[$md5] = '<link href="'.$str.'" rel="stylesheet"'.$css_class.' />';
+					$out[$md5] = $before. '<link href="'.$str.'" rel="stylesheet"'.$css_class.' />'. $after;
 				} elseif ($type === 'file') {
-					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>';
+					$out[$md5] = $before. '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>'. $after;
 				} elseif ($type === 'inline') {
 					$str = $this->_strip_css_input($str);
-					$out[$md5] = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</style>';
+					$out[$md5] = $before. '<style type="text/css"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</style>'. $after;
 				} elseif ($type === 'raw') {
-					$out[$md5] = $str;
+					$out[$md5] = $before. $str. $after;
 				}
 			}
 		}
