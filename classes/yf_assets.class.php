@@ -317,7 +317,7 @@ class yf_assets {
 				$this->set_content($asset_type, $md5, 'raw', $_content, $_params);
 			}
 			if (DEBUG_MODE) {
-				debug('assets[]', array(
+				debug('assets_add[]', array(
 					'asset_type'	=> $asset_type,
 					'content_type'	=> $content_type,
 					'md5'			=> $md5,
@@ -409,6 +409,24 @@ class yf_assets {
 	}
 
 	/**
+	*/
+	public function _get_all_content_for_out($out_type, $params = array()) {
+		// Move down inlined content
+		$all_content = $this->get_content($out_type);
+		$top = array();
+		$bottom = array();
+		foreach ((array)$all_content as $md5 => $v) {
+			$content_type = $v['content_type'];
+			if (in_array($content_type, array('inline', 'raw'))) {
+				$top[$md5] = $v;
+			} else {
+				$bottom[$md5] = $v;
+			}
+		}
+		return $bottom + $top;
+	}
+
+	/**
 	* Main method to display overall content by out type (js, css, images, fonts).
 	* Can be called from main template like this: {exec_last(assets,show_js)} {exec_last(assets,show_css)}
 	*/
@@ -435,9 +453,10 @@ class yf_assets {
 			}
 		}
 		$prepend = _class('core_events')->fire('assets.prepend');
-		$out = array();
+
 		// Process previously added content, depending on its type
-		foreach ((array)$this->get_content($out_type) as $md5 => $v) {
+		$out = array();
+		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
 			$content_type = $v['content_type'];
 			$str = $v['content'];
 			$_params = (array)$v['params'] + (array)$params;
@@ -451,7 +470,7 @@ class yf_assets {
 			$after = $_params['config']['after'];
 			if (DEBUG_MODE) {
 				$debug = array();
-				foreach(debug('assets') as $d) {
+				foreach ((array)debug('assets_add') as $d) {
 					if ($d['md5'] === $md5) {
 						$debug = $d;
 						break;
@@ -465,6 +484,15 @@ class yf_assets {
 				}
 				$before = PHP_EOL. '<!-- asset start: '.$dname.' | '.$ctype.' | '.$trace.' -->'. PHP_EOL. $before;
 				$after = $after. PHP_EOL. '<!-- asset end: '.$dname.' -->'. PHP_EOL;
+				debug('assets_out[]', array(
+#					'asset_type'	=> $asset_type,
+#					'content_type'	=> $content_type,
+					'md5'			=> $md5,
+#					'content'		=> $_content,
+#					'is_added'		=> !is_null($this->get_content($asset_type, $md5)),
+#					'params'		=> $_params,
+#					'trace'			=> $trace,
+				));
 			}
 			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, array('css_class' => $css_class)). $after;
 		}
@@ -599,6 +627,7 @@ class yf_assets {
 				$params['src'] = $str;
 				$out = '<script'._attrs($params, array('type', 'src', 'class', 'id')).'></script>';
 			} elseif ($content_type === 'file') {
+// TODO: try to find web path for file and show it as url
 				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
 			} elseif ($content_type === 'inline') {
 				$str = $this->_strip_js_input($str);
@@ -613,6 +642,7 @@ class yf_assets {
 				$params['href'] = $str;
 				$out = '<link'._attrs($params, array('href', 'rel', 'class', 'id')).' />';
 			} elseif ($content_type === 'file') {
+// TODO: try to find web path for file and show it as url
 				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>';
 			} elseif ($content_type === 'inline') {
 				$str = $this->_strip_css_input($str);
