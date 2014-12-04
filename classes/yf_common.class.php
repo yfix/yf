@@ -457,10 +457,7 @@ class yf_common {
 	*/
 	function show_empty_page ($text = '', $params = array()) {
 		main()->NO_GRAPHICS = true;
-		$CSS_FILE = !empty($params['css_file']) ? $params['css_file'] : 'style.css';
-		$output = '';
-		$output .= tpl()->parse('empty_page', array(
-			'css'			=> '<link rel="stylesheet" type="text/css" href="'.WEB_PATH. tpl()->TPL_PATH. $CSS_FILE.'">',
+		$output = tpl()->parse('empty_page', array(
 			'text'			=> $text,
 			'title'			=> $params['title'],
 			'close_button'	=> (int)((bool)$params['close_button']),
@@ -468,7 +465,8 @@ class yf_common {
 		));
 		$output = tpl()->_apply_output_filters($output);
 		main()->_send_main_headers(strlen($output));
-		return print $output;
+		echo $output;
+		return ;
 	}
 
 	/**
