@@ -1,7 +1,7 @@
 <?php
 
 $bs_theme = common()->bs_current_theme();
-$bs_version = $CONF['css_framework'] === 'bs3' ? '3' : '2';
+$bs_version = conf('css_framework') === 'bs3' ? '3' : '2';
 $inherit_name = 'bootstrap'. $bs_version;
 
 if ($bs_theme === 'bootstrap') {
