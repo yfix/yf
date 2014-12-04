@@ -396,6 +396,9 @@ class yf_assets {
 			throw new Exception('Assets: unsupported out content type: '.$out_type);
 			return null;
 		}
+		if (!is_array($params)) {
+			$params = array($params);
+		}
 		$ext = '.'.$out_type;
 		// Assets from current module
 		$module_assets_path = $this->find_asset_type_for_module($out_type, $_GET['object']);
@@ -417,7 +420,7 @@ class yf_assets {
 			$str = $v['content'];
 			$_params = (array)$v['params'] + (array)$params;
 			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
-			if ($params['min'] && $content_type === 'url' && !DEBUG_MODE) {
+			if ($_params['min'] && $content_type === 'url' && !DEBUG_MODE) {
 				if (strpos($str, '.min.') === false) {
 					$str = substr($str, 0, -strlen($ext)).'.min'.$ext;
 				}
@@ -462,7 +465,7 @@ class yf_assets {
 			if ($content_type === 'url') {
 				$out = '<script src="'.$str.'" type="text/javascript"'.$css_class.'></script>';
 			} elseif ($content_type === 'file') {
-				$out] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
+				$out = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
 			} elseif ($content_type === 'inline') {
 				$str = $this->_strip_js_input($str);
 				$out = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</script>';
