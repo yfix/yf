@@ -428,7 +428,7 @@ class yf_assets {
 			$this->add_file($module_assets_path, $out_type);
 		}
 		if ($params['combined']) {
-			$combined = $this->_show_combined_content($out_type, $params);
+			$combined = $this->show_combined_content($out_type, $params);
 			// Degrade gracefully, also display raw content in case when combining queue is in progress
 			if (strlen($combined)) {
 				return $combined;
@@ -471,42 +471,6 @@ class yf_assets {
 		$append = _class('core_events')->fire('assets.append', array('out' => &$out));
 		$this->clean_content($out_type);
 		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
-	}
-
-	/**
-	* Generate html output for desired asset out type and content type
-	*/
-// TODO: add optional _prepare_html() for $url
-	public function html_out($out_type, $content_type, $str, $params = array()) {
-		if (!$out_type || !$content_type || !strlen($str)) {
-			return false;
-		}
-		$out = '';
-		$css_class = $params['css_class'];
-		if ($out_type === 'js') {
-			if ($content_type === 'url') {
-				$out = '<script src="'.$str.'" type="text/javascript"'.$css_class.'></script>';
-			} elseif ($content_type === 'file') {
-				$out = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
-			} elseif ($content_type === 'inline') {
-				$str = $this->_strip_js_input($str);
-				$out = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</script>';
-			} elseif ($content_type === 'raw') {
-				$out = $str;
-			}
-		} elseif ($out_type === 'css') {
-			if ($content_type === 'url') {
-				$out = '<link href="'.$str.'" rel="stylesheet"'.$css_class.' />';
-			} elseif ($content_type === 'file') {
-				$out = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>';
-			} elseif ($content_type === 'inline') {
-				$str = $this->_strip_css_input($str);
-				$out = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</style>';
-			} elseif ($content_type === 'raw') {
-				$out = $str;
-			}
-		}
-		return $out;
 	}
 
 	/**
@@ -584,7 +548,11 @@ class yf_assets {
 			'params'	=> $params,
 		));
 		if (!empty($out)) {
-			file_put_contents($combined_file, implode(PHP_EOL, $out));
+			$divider = PHP_EOL;
+			if ($asset_type === 'js') {
+				$divider = PHP_EOL.';'.PHP_EOL;
+			}
+			file_put_contents($combined_file, implode($divider, $out));
 		}
 		return $combined_file;
 	}
@@ -608,19 +576,52 @@ class yf_assets {
 // TODO: replace links with WEB_PATH or MEDIA_PATH, as $combined_file is filesystem path
 // TODO: support for multiple media servers
 	public function show_combined_content($out_type, $params = array()) {
-		$combined_file = $this->combine_by_type($out_type, $params);
+		$combined_file = $this->combine($out_type, $params);
 		if (!$combined_file || !file_exists($combined_file)) {
 			return false;
 		}
+		return $this->html_out($out_type, 'url', str_replace(PROJECT_PATH, WEB_PATH, $combined_file), $params);
+	}
+
+	/**
+	* Generate html output for desired asset out type and content type
+	*/
+// TODO: add optional _prepare_html() for $url
+	public function html_out($out_type, $content_type, $str, $params = array()) {
+		if (!$out_type || !$content_type || !strlen($str)) {
+			return false;
+		}
+		$out = '';
+		$params['class'] = $params['css_class'];
 		if ($out_type === 'js') {
 			$params['type'] = 'text/javascript';
-			$params['src'] = $combined_file;
-			return '<script'._attrs($params, array('type', 'src', 'class', 'id')).'></script>';
+			if ($content_type === 'url') {
+				$params['src'] = $str;
+				$out = '<script'._attrs($params, array('type', 'src', 'class', 'id')).'></script>';
+			} elseif ($content_type === 'file') {
+				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
+			} elseif ($content_type === 'inline') {
+				$str = $this->_strip_js_input($str);
+				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</script>';
+			} elseif ($content_type === 'raw') {
+				$out = $str;
+			}
 		} elseif ($out_type === 'css') {
-			$params['rel'] = 'stylesheet';
-			$params['href'] = $combined_file;
-			return '<link'._attrs($params, array('href', 'rel', 'class', 'id')).' />';
+			$params['type'] = 'text/css';
+			if ($content_type === 'url') {
+				$params['rel'] = 'stylesheet';
+				$params['href'] = $str;
+				$out = '<link'._attrs($params, array('href', 'rel', 'class', 'id')).' />';
+			} elseif ($content_type === 'file') {
+				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>';
+			} elseif ($content_type === 'inline') {
+				$str = $this->_strip_css_input($str);
+				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</style>';
+			} elseif ($content_type === 'raw') {
+				$out = $str;
+			}
 		}
+		return $out;
 	}
 
 	/**
