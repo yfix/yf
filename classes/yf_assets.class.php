@@ -241,6 +241,7 @@ class yf_assets {
 		}
 		foreach ($content as $_content) {
 			$_content = trim($_content);
+			$_params = $params;
 			if ($asset_type === 'bundle') {
 				$bundle_details = $this->get_asset_details($_content);
 				foreach ($this->supported_asset_types as $atype) {
@@ -265,6 +266,7 @@ class yf_assets {
 				$content_type = $this->detect_content_type($asset_type, $_content);
 			}
 			$md5 = md5($_content);
+			$asset_data = array();
 			if ($content_type === 'asset') {
 				$info = $this->get_asset($_content, $asset_type);
 				if ($info) {
@@ -278,21 +280,24 @@ class yf_assets {
 						$url = $info;
 					}
 					$md5 = md5($url);
-					$this->set_content($asset_type, $md5, 'url', $url, $params);
+					if (isset($asset_data['config'])) {
+						$_params['config'] = $asset_data['config'];
+					}
+					$this->set_content($asset_type, $md5, 'url', $url, $_params);
 				}
 			} elseif ($content_type === 'url') {
-				$this->set_content($asset_type, $md5, 'url', $_content, $params);
+				$this->set_content($asset_type, $md5, 'url', $_content, $_params);
 			} elseif ($content_type === 'file') {
 				if (file_exists($_content)) {
 					$str = file_get_contents($_content);
 					if (strlen($str)) {
-						$this->set_content($asset_type, $md5, 'file', $_content, $params);
+						$this->set_content($asset_type, $md5, 'file', $_content, $_params);
 					}
 				}
 			} elseif ($content_type === 'inline') {
-				$this->set_content($asset_type, $md5, 'inline', $_content, $params);
+				$this->set_content($asset_type, $md5, 'inline', $_content, $_params);
 			} elseif ($content_type === 'raw') {
-				$this->set_content($asset_type, $md5, 'raw', $_content, $params);
+				$this->set_content($asset_type, $md5, 'raw', $_content, $_params);
 			}
 			if (DEBUG_MODE) {
 				debug('assets[]', array(
@@ -301,7 +306,7 @@ class yf_assets {
 					'md5'			=> $md5,
 					'content'		=> $_content,
 					'is_added'		=> !is_null($this->get_content($asset_type, $md5)),
-					'params'		=> $params,
+					'params'		=> $_params,
 					'trace'			=> $trace,
 				));
 			}
@@ -425,8 +430,8 @@ class yf_assets {
 					$str = substr($str, 0, -strlen($ext)).'.min'.$ext;
 				}
 			}
-			$before = $v['config']['before'];
-			$after = $v['config']['after'];
+			$before = $_params['config']['before'];
+			$after = $_params['config']['after'];
 			if (DEBUG_MODE) {
 				$debug = array();
 				foreach(debug('assets') as $d) {
