@@ -391,7 +391,6 @@ class yf_assets {
 	* Can be called from main template like this: {exec_last(assets,show_js)} {exec_last(assets,show_css)}
 	*/
 // TODO: decide with virtual formats like sass, less, coffeescript
-// TODO: add optional _prepare_html() for $url
 	public function show($out_type, $params = array()) {
 		if (!$out_type || !in_array($out_type, $this->supported_out_types)) {
 			throw new Exception('Assets: unsupported out content type: '.$out_type);
@@ -414,17 +413,17 @@ class yf_assets {
 		$out = array();
 		// Process previously added content, depending on its type
 		foreach ((array)$this->get_content($out_type) as $md5 => $v) {
-			$type = $v['content_type'];
+			$content_type = $v['content_type'];
 			$str = $v['content'];
 			$_params = (array)$v['params'] + (array)$params;
 			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
-			if ($type === 'url') {
-				if ($params['min'] && !DEBUG_MODE && strpos($str, '.min.') === false) {
+			if ($params['min'] && $content_type === 'url' && !DEBUG_MODE) {
+				if (strpos($str, '.min.') === false) {
 					$str = substr($str, 0, -strlen($ext)).'.min'.$ext;
 				}
 			}
-			$before = '';
-			$after = '';
+			$before = $v['config']['before'];
+			$after = $v['config']['after'];
 			if (DEBUG_MODE) {
 				$debug = array();
 				foreach(debug('assets') as $d) {
@@ -439,36 +438,50 @@ class yf_assets {
 				if ($ctype === 'asset') {
 					$ctype .= ':'.$debug['content'];
 				}
-				$before = PHP_EOL.'<!-- asset start: '.$dname.' | '.$ctype.' | '.$trace.' -->'.PHP_EOL;
-				$after = PHP_EOL.'<!-- asset end: '.$dname.' -->'.PHP_EOL;
+				$before = PHP_EOL. '<!-- asset start: '.$dname.' | '.$ctype.' | '.$trace.' -->'. PHP_EOL. $before;
+				$after = $after. PHP_EOL. '<!-- asset end: '.$dname.' -->'. PHP_EOL;
 			}
-			if ($out_type === 'js') {
-				if ($type === 'url') {
-					$out[$md5] = $before. '<script src="'.$str.'" type="text/javascript"'.$css_class.'></script>'. $after;
-				} elseif ($type === 'file') {
-					$out[$md5] = $before. '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>'. $after;
-				} elseif ($type === 'inline') {
-					$str = $this->_strip_js_input($str);
-					$out[$md5] = $before. '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</script>'. $after;
-				} elseif ($type === 'raw') {
-					$out[$md5] = $before. $str. $after;
-				}
-			} elseif ($out_type === 'css') {
-				if ($type === 'url') {
-					$out[$md5] = $before. '<link href="'.$str.'" rel="stylesheet"'.$css_class.' />'. $after;
-				} elseif ($type === 'file') {
-					$out[$md5] = $before. '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>'. $after;
-				} elseif ($type === 'inline') {
-					$str = $this->_strip_css_input($str);
-					$out[$md5] = $before. '<style type="text/css"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</style>'. $after;
-				} elseif ($type === 'raw') {
-					$out[$md5] = $before. $str. $after;
-				}
-			}
+			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, array('css_class' => $css_class)). $after;
 		}
 		$append = _class('core_events')->fire('assets.append', array('out' => &$out));
 		$this->clean_content($out_type);
 		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
+	}
+
+	/**
+	* Generate html output for desired asset out type and content type
+	*/
+// TODO: add optional _prepare_html() for $url
+	public function html_out($out_type, $content_type, $str, $params = array()) {
+		if (!$out_type || !$content_type || !strlen($str)) {
+			return false;
+		}
+		$out = '';
+		$css_class = $params['css_class'];
+		if ($out_type === 'js') {
+			if ($content_type === 'url') {
+				$out = '<script src="'.$str.'" type="text/javascript"'.$css_class.'></script>';
+			} elseif ($content_type === 'file') {
+				$out] = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
+			} elseif ($content_type === 'inline') {
+				$str = $this->_strip_js_input($str);
+				$out = '<script type="text/javascript"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</script>';
+			} elseif ($content_type === 'raw') {
+				$out = $str;
+			}
+		} elseif ($out_type === 'css') {
+			if ($content_type === 'url') {
+				$out = '<link href="'.$str.'" rel="stylesheet"'.$css_class.' />';
+			} elseif ($content_type === 'file') {
+				$out = '<style type="text/css"'.$css_class.'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>';
+			} elseif ($content_type === 'inline') {
+				$str = $this->_strip_css_input($str);
+				$out = '<style type="text/css"'.$css_class.'>'. PHP_EOL. $str. PHP_EOL. '</style>';
+			} elseif ($content_type === 'raw') {
+				$out = $str;
+			}
+		}
+		return $out;
 	}
 
 	/**
