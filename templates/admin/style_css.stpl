@@ -70,13 +70,13 @@ body.cssfw-bs3 a.accordion-toggle { display: block; }
 {/css}
 
 {if(conf.css_framework eq bs2)}
-	{css}
+	{css()}
 label.radio-horizontal { padding-left: inherit; display: inline-block; margin-bottom: inherit; }
 label.radio-horizontal input[type=radio] { float: none; margin-left:inherit; margin-top:0; }
 	{/css}
 {/if}
 {if(conf.css_framework eq bs3)}
-	{css}
+	{css()}
 .container-fixed input, .container-fixed textarea, .container-fixed select { max-width: 300px; }
 .container-fixed .input-mini { width:70px !important }
 .container-fixed .input-small { width:100px !important }
