@@ -206,7 +206,7 @@ class yf_main {
 			}
 			register_shutdown_function(array($this, '_framework_destruct'));
 		} catch (Exception $e) {
-			$msg = 'MAIN: Caught exception: '.print_r($e->getMessage(), 1). PHP_EOL. '<pre>'.$e->getTraceAsString().'</pre>';
+			$msg = 'MAIN: Caught exception: '.print_r($e->getMessage(), 1). PHP_EOL. $e->getTraceAsString();
 			trigger_error($msg, E_USER_WARNING);
 		}
 		return true;
