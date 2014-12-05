@@ -111,13 +111,13 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		_class('assets')->clean_all();
 		_class('assets')->ADD_IS_DIRECT_OUT = true;
 
-		$jquery_result = jquery($jquery_js);
-		$this->assertSame( $expected_jquery_lib. PHP_EOL. $expected_js, $jquery_result );
+		$jquery_result = js('jquery');
+		$this->assertSame( $expected_jquery_lib, $jquery_result );
 		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
 
-		// Second call should avoid adding jquery again
+		_class('assets')->clean_all();
 		$jquery_result = jquery($jquery_js);
-		$this->assertSame( $expected_js, $jquery_result );
+		$this->assertSame( $expected_jquery_lib. PHP_EOL. $expected_js, $jquery_result );
 		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
 
 		_class('assets')->ADD_IS_DIRECT_OUT = false;
