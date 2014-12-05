@@ -129,8 +129,8 @@ class yf_tpl_driver_yf_compile {
 			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9_-]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo _class("form2")->tpl_row(\''.$m[1].'\',$replace,\''.$m[3].'\',\''.$m[5].'\',\''.$m[7].'\');'. $end;
 			},
-			'/\{(css|require_css|js|require_js|asset|jquery|angularjs|backbonejs|reactjs|emberjs)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
-				return $start. 'echo '.$m[1].'(\''.str_replace("'", "\\'", $m[3]).'\', _attrs_string2array(\''.str_replace("'", "\\'", $m[2]).'\'));'. $end;
+			'/\{(?P<func>css|require_css|js|require_js|asset|jquery|angularjs|backbonejs|reactjs|emberjs)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<content>.+?)\s*{\/(\1)\}/ims' => function($m) use ($start, $end) {
+				return $start. 'echo '.$m['func'].'(\''.str_replace("'", "\\'", $m['content']).'\', _attrs_string2array(\''.str_replace("'", "\\'", $m['args']).'\'));'. $end;
 			},
 			// Custom function (compatible with non-compile for extending tpl engine)
 			'/\{(?P<name>[a-z0-9_:-]+)\(\s*["\']{0,1}(?P<args>[a-z0-9_:\.]+?)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
