@@ -190,6 +190,21 @@ class yf_assets {
 	/**
 	* Return named asset, also can return specific version
 	*/
+/*
+TODO: idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
+Package Versions#
+
+In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
+
+Version constraints can be specified in a few different ways.
+
+Name	Example	Description
+Exact version	1.0.2	You can specify the exact version of a package.
+Range	>=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2	By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=. 
+You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
+Wildcard	1.0.*	You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
+Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
+*/
 	public function get_asset($name, $asset_type, $version = '') {
 		$asset_data = $this->get_asset_details($name);
 		// Get last version
