@@ -305,10 +305,15 @@ class yf_table2 {
 			if ($header_links) {
 				$body .= '<div class="'.$this->CLASS_HEADER_LINKS.'">'.implode(PHP_EOL, $header_links).'</div>';
 			}
-			if (isset($params['no_records_html'])) {
-				$body .= $params['no_records_html'].PHP_EOL;
+			if (isset($params['no_records_callback'])) {
+				$func = $params['no_records_callback'];
+				$body .= $func($params, $a, $this);
 			} else {
-				$body .= ($params['no_records_simple'] ? t('No records') : '<div class="'.$this->CLASS_NO_RECORDS.'">'.t('No records').'</div>').PHP_EOL;
+				if (isset($params['no_records_html'])) {
+					$body .= $params['no_records_html'].PHP_EOL;
+				} else {
+					$body .= ($params['no_records_simple'] ? t('No records') : '<div class="'.$this->CLASS_NO_RECORDS.'">'.t('No records').'</div>').PHP_EOL;
+				}
 			}
 		}
 		$footer_links = array();
@@ -417,6 +422,11 @@ class yf_table2 {
 				}
 			}
 		}
+		// Save result details to be used by outer code
+		$this->_total = $total;
+		$this->_pages = $pages;
+		$this->_ids = $ids;
+
 		return array(
 			'data'	=> $data,
 			'pages'	=> $pages,
