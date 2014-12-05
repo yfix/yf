@@ -30,4 +30,9 @@ return array(
 			'jquery-ui',
 		),
 	),
+	'add' => array(
+		'js' => array(
+			'blueimp-uploader-cors',
+		),
+	),
 );
