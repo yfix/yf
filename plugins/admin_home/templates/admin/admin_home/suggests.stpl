@@ -20,9 +20,7 @@
 	
 </div>
 
-<script type="text/javascript">
-<!--
-$(function(){
+{jquery()}
 	$("#alert_box").show("medium");
 	// Catch keyboard keys
 	$(document).bind("keyup", function(e){
@@ -33,9 +31,10 @@ $(function(){
 		_close_alert();
 	});
 });
+{/jquery}
+{js()}
 function _close_alert() {
 	$("div#alert_box").css("display", "none");
 }
--->
-</script>
+{/js}
 {/if}
