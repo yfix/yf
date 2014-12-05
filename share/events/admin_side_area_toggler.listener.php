@@ -49,12 +49,6 @@ MAIN_TYPE_ADMIN && _class('core_events')->listen('block.prepend[center_area]', f
 
 	$css = '.center_area_wide { margin-left:1%; margin-right:1%; width:98%; }';
 
-#	$js .= '<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>'.PHP_EOL;
-#	$js .= '<script type="text/javascript">'.PHP_EOL.'$(function(){'. PHP_EOL. $jquery. PHP_EOL. '})'.PHP_EOL.'</script>'.PHP_EOL;
-#	_class('core_events')->listen('show_js.append', function() use ($js, $css) {
-#		return $js. '<style type="text/css">'.$css.'</style>'.PHP_EOL;
-#	});
-
 	jquery($jquery);
 	js('jquery-cookie');
 	css($css);
