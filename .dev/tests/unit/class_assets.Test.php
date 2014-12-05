@@ -166,7 +166,6 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertNotEmpty($out_js);
 		$this->assertContains('<script', $out_js);
 		$this->assertContains('jquery.min.js', $out_js);
-		$this->assertContains('jquery-ui', $out_js);
 		$this->assertContains('jquery.fileupload', $out_js);
 
 		$out_css = _class('assets')->show_css();
