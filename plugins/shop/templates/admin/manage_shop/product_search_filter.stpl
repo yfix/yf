@@ -1,8 +1,6 @@
-<link href="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.min.css" rel="stylesheet"/>
-<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.min.js" type="text/javascript"></script>
+{asset()} select2 {/asset}
 
-<script type="text/javascript">
-$( document ).ready( function() {
+{jquery()}
 
 //	var ajax_search_url = "{ajax_search_url}";
     var ajax_search_url = "./?object=manage_shop&action=product_search_autocomplete";
@@ -29,8 +27,7 @@ $( document ).ready( function() {
 		$("#" + ajax_search_input + "_value").val($(this).val());
 	});
 
-});
-</script>
+{/jquery}
 
 <input type="text" id="{input_name}_search" value="" class="input-large">
 <input type="text" name="{input_name}" id="{input_name}_value" value="{input_value}" class="input-small">

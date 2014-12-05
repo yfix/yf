@@ -1,8 +1,8 @@
-<style>
+{css()}
 .import2 {
 	position : relative;
 }
-</style>
+{/css}
 <div class="ng-cloak" ng-controller="{_ng_controller}">
 
 <wait status='block_wait'></wait>
@@ -10,7 +10,7 @@
 <div class="import2">
 
 {{-- common notifications --}}
-<style>
+{css()}
 .notifications {
 	position : absolute;
 	top      : 1em;
@@ -23,7 +23,7 @@
 .alert i.fa {
 	margin-right: 0.5em;
 }
-</style>
+{/css}
 
 <div class="notifications">
 	<span class="btn pull-right"
@@ -412,21 +412,3 @@ ul.select2-result-single {
 
 </div>
 </div>
-
-{{--
-<script type="text/ng-template" id="_ng_view__default">
-<div class="ng-cloak">
-	Root view
-</div>
-</script>
-
-<script type="text/ng-template" id="_ng_view__test">
-<div class="ng-cloak">
-	Test view
-</div>
-</script>
-
-<div class="ng-cloak" ng-view>
-View
-</div>
- --}}
