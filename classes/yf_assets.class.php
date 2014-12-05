@@ -461,7 +461,6 @@ class yf_assets {
 			$content_type = $v['content_type'];
 			$str = $v['content'];
 			$_params = (array)$v['params'] + (array)$params;
-			$css_class = $_params['class'] ? ' class="'.$_params['class'].'"' : '';
 			if ($_params['min'] && $content_type === 'url' && !DEBUG_MODE) {
 				if (strpos($str, '.min.') === false) {
 					$str = substr($str, 0, -strlen($ext)).'.min'.$ext;
@@ -495,7 +494,7 @@ class yf_assets {
 					'trace'			=> $debug['trace'],
 				));
 			}
-			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, array('css_class' => $css_class)). $after;
+			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, $_params). $after;
 		}
 		$append = _class('core_events')->fire('assets.append', array('out' => &$out));
 		$this->clean_content($out_type);
@@ -621,7 +620,6 @@ class yf_assets {
 			return false;
 		}
 		$out = '';
-		$params['class'] = $params['css_class'];
 		if ($out_type === 'js') {
 			$params['type'] = 'text/javascript';
 			if ($content_type === 'url') {
