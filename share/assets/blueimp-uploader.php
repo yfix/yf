@@ -35,4 +35,10 @@ return array(
 			'blueimp-uploader-cors',
 		),
 	),
+	'noscript' => array(
+		'css' => array(
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload-noscript.css',
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload-ui-noscript.css',
+		),
+	),
 );
