@@ -307,13 +307,13 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$jquery_url = _class('assets')->get_asset('jquery', 'js');
 		$this->assertNotEmpty($jquery_url);
 		self::_tpl( '{js()}'.$jquery_url.'{/js}' );
-		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript"></script>', _class('core_js')->show() );
+		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript"></script>', _class('assets')->show_js() );
 		self::_tpl( '{js()} '.$jquery_url.' {/js}' );
-		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript"></script>', _class('core_js')->show() );
+		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript"></script>', _class('assets')->show_js() );
 		self::_tpl( '{js(class=yf_core)}'.$jquery_url.'{/js}' );
-		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript" class="yf_core"></script>', _class('core_js')->show() );
+		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript" class="yf_core"></script>', _class('assets')->show_js() );
 		self::_tpl( '{js(class=yf_core,other=param)}'.$jquery_url.'{/js}' );
-		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript" class="yf_core"></script>', _class('core_js')->show() );
+		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript" class="yf_core"></script>', _class('assets')->show_js() );
 	}
 	public function test_css() {
 		$jqueryui_url = _class('assets')->get_asset('jquery-ui', 'css');
@@ -327,13 +327,13 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$jqueryui_url = _class('assets')->get_asset('jquery-ui', 'css');
 		$this->assertNotEmpty($jqueryui_url);
 		self::_tpl( '{css()}'.$jqueryui_url.'{/css}' );
-		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" />', _class('core_css')->show() );
+		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" />', _class('assets')->show_css() );
 		self::_tpl( '{css()} '.$jqueryui_url.' {/css}' );
-		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" />', _class('core_css')->show() );
+		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" />', _class('assets')->show_css() );
 		self::_tpl( '{css(class=yf_core)}'.$jqueryui_url.'{/css}' );
-		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" class="yf_core" />', _class('core_css')->show() );
+		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" class="yf_core" />', _class('assets')->show_css() );
 		self::_tpl( '{css(class=yf_core,other=param)}'.$jqueryui_url.'{/css}' );
-		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" class="yf_core" />', _class('core_css')->show() );
+		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" class="yf_core" />', _class('assets')->show_css() );
 	}
 	public function test_assets_js_libs() {
 		$jquery_url = _class('assets')->get_asset('jquery', 'js');
