@@ -62,9 +62,7 @@ class yf_table2_postload {
 				})
 			});
 		';
-		_class('core_events')->listen('show_js.append', function() use ($jquery) {
-			return '<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.$jquery.PHP_EOL.'})'.PHP_EOL.'</script>'.PHP_EOL;
-		});
+		jquery($jquery);
 		return $_this;
 	}
 }
