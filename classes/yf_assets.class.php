@@ -626,7 +626,7 @@ class yf_assets {
 			$params['type'] = 'text/javascript';
 			if ($content_type === 'url') {
 				$params['src'] = $str;
-				$out = '<script'._attrs($params, array('type', 'src', 'class', 'id')).'></script>';
+				$out = '<script'._attrs($params, array('src', 'type', 'class', 'id')).'></script>';
 			} elseif ($content_type === 'file') {
 // TODO: try to find web path for file and show it as url
 				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
