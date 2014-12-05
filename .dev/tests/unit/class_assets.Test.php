@@ -3,6 +3,11 @@
 require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
 class class_assets_test extends PHPUnit_Framework_TestCase {
+	public static function setUpBeforeClass() {
+		// Replace default style and script templates with empty strings
+		tpl()->parse_string('', array(), 'style_css');
+		tpl()->parse_string('', array(), 'script_js');
+	}
 	public function test_detect_content_type_css() {
 		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$this->assertEquals('asset', _class('assets')->detect_content_type('css', 'jquery-ui'));
