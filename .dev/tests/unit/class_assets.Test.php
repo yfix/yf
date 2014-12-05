@@ -14,9 +14,14 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_detect_content_type_css() {
 		$this->assertEquals('asset', _class('assets')->detect_content_type('css', 'jquery-ui'));
-		$this->assertEquals('url', _class('assets')->detect_content_type('css', 'http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css'));
-		$this->assertEquals('url', _class('assets')->detect_content_type('css', 'https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css'));
-		$this->assertEquals('url', _class('assets')->detect_content_type('css', '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css'));
+		$ckeditor_url = '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css';
+		$this->assertEquals('url', _class('assets')->detect_content_type('css', $ckeditor_url));
+		$this->assertEquals('url', _class('assets')->detect_content_type('css', 'http:'.$ckeditor_url));
+		$this->assertEquals('url', _class('assets')->detect_content_type('css', 'https:'.$ckeditor_url));
+		$this->assertEquals('url', _class('assets')->detect_content_type('css', $ckeditor_url.'?time=1234567890'));
+		$this->assertEquals('url', _class('assets')->detect_content_type('css', 'http:'.$ckeditor_url.'?time=1234567890'));
+		$this->assertEquals('url', _class('assets')->detect_content_type('css', 'https:'.$ckeditor_url.'?time=1234567890'));
+		$this->assertEquals('url', _class('assets')->detect_content_type('css', '//fonts.googleapis.com/css?family=Roboto+Condensed:300italic,400italic,700italic,400,700,300&subset=cyrillic-ext,latin-ext'));
 		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '<style>$(function(){})</style>'));
 		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '<style type="text/css">.some_class { border: 1px solid black; } #some_id { display:none; }</style>'));
 		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '.some_class { border: 1px solid black; } #some_id { display:none; }'));
@@ -32,9 +37,13 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_detect_content_type_js() {
 		$this->assertEquals('asset', _class('assets')->detect_content_type('js', 'jquery'));
-		$this->assertEquals('url', _class('assets')->detect_content_type('js', 'http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'));
-		$this->assertEquals('url', _class('assets')->detect_content_type('js', 'https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'));
-		$this->assertEquals('url', _class('assets')->detect_content_type('js', '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'));
+		$ckeditor_url = '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js';
+		$this->assertEquals('url', _class('assets')->detect_content_type('js', $ckeditor_url));
+		$this->assertEquals('url', _class('assets')->detect_content_type('js', 'http:'.$ckeditor_url));
+		$this->assertEquals('url', _class('assets')->detect_content_type('js', 'https:'.$ckeditor_url));
+		$this->assertEquals('url', _class('assets')->detect_content_type('js', $ckeditor_url.'?time=1234567890'));
+		$this->assertEquals('url', _class('assets')->detect_content_type('js', 'http:'.$ckeditor_url.'?time=1234567890'));
+		$this->assertEquals('url', _class('assets')->detect_content_type('js', 'https:'.$ckeditor_url.'?time=1234567890'));
 		$this->assertEquals('inline', _class('assets')->detect_content_type('js', '<script>$(function(){})</script>'));
 		$this->assertEquals('inline', _class('assets')->detect_content_type('js', '<script type="text/javascript">$(function(){})</script>'));
 		$this->assertEquals('inline', _class('assets')->detect_content_type('js', '$(function(){
