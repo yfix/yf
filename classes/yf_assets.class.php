@@ -253,20 +253,51 @@ class yf_assets {
 				$_content = $_content();
 			}
 			$_content = trim($_content);
+			if (!$_content) {
+				continue;
+			}
 			$_params = $params;
 			if ($asset_type === 'bundle') {
 				$bundle_details = $this->get_asset_details($_content);
 				if (!is_string($bundle_details) && is_callable($bundle_details)) {
 					$bundle_details = $bundle_details();
 				}
-				foreach ($this->supported_asset_types as $atype) {
-					$arequire = $bundle_details['require'][$atype];
-					if ($arequire) {
-						$this->add($arequire, $atype, 'auto', $DIRECT_OUT ? array('direct_out' => false) : array());
-					}
-					$adata = $this->get_asset($_content, $atype);
-					if ($adata) {
-						$this->add($adata, $atype, 'auto', $DIRECT_OUT ? array('direct_out' => false) : array());
+				if ($bundle_details) {
+					$sub_params = $DIRECT_OUT ? array('direct_out' => false) : array();
+					foreach ($this->supported_asset_types as $atype) {
+						$_require = $bundle_details['require'][$atype];
+						if ($_require) {
+							$info = $_require;
+							if (!is_array($info)) {
+								$info = array($info);
+							}
+							foreach ($info as $_info) {
+								if ($_info) {
+									$this->add($_info, $atype, 'auto', $sub_params);
+								}
+							}
+						}
+						$info = $this->get_asset($_content, $atype);
+						if (!is_array($info)) {
+							$info = array($info);
+						}
+						foreach ($info as $_info) {
+							if ($_info) {
+								$this->add($_info, $atype, 'auto', $sub_params);
+							}
+						}
+						$_add = $bundle_details['add'][$atype];
+						if ($_add) {
+							$info = $_add;
+							if (!is_array($info)) {
+								$info = array($info);
+							}
+							foreach ($info as $_info) {
+								if ($_info) {
+									$this->add($_info, $atype, 'auto', $sub_params);
+								}
+							}
+						}
 					}
 				}
 				continue;
@@ -292,14 +323,38 @@ class yf_assets {
 					if (isset($asset_data['config'])) {
 						$_params['config'] = $asset_data['config'];
 					}
-					if (isset($asset_data['require'][$asset_type])) {
-						$this->add($asset_data['require'][$asset_type], $asset_type, 'asset', (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array()));
+					$sub_params = (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array());
+					$_require = $asset_data['require'][$asset_type];
+					if ($_require) {
+						$info = $_require;
+						if (!is_array($info)) {
+							$info = array($info);
+						}
+						foreach ($info as $_info) {
+							if ($_info) {
+								$this->add($_info, $asset_type, 'auto', $sub_params);
+							}
+						}
 					}
 					if (!is_array($info)) {
 						$info = array($info);
 					}
 					foreach ($info as $_info) {
-						$this->add($_info, $asset_type, 'auto', (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array()));
+						if ($_info) {
+							$this->add($_info, $asset_type, 'auto', $sub_params);
+						}
+					}
+					$_add = $asset_data['add'][$asset_type];
+					if ($_add) {
+						$info = $_add;
+						if (!is_array($info)) {
+							$info = array($info);
+						}
+						foreach ($info as $_info) {
+							if ($_info) {
+								$this->add($_info, $asset_type, 'auto', $sub_params);
+							}
+						}
 					}
 				}
 			} elseif ($content_type === 'url') {
