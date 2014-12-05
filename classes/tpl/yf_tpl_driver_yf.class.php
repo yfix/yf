@@ -432,9 +432,9 @@ class yf_tpl_driver_yf {
 		// JS smart inclusion. Examples: {require_js(http//path.to/file.js)}, {catch(tpl_var)} $(function(){...}) {/catch} {require_js(tpl_var)}
 		// Custom lib smart inclusion. Examples: {jquery()} $.click('.red', function(alert('hello'))) {/jquery}
 		// Asset bundle inclusion. Examples: {asset()} angular-full {/asset}
-		$string = preg_replace_callback('/\{(css|require_css|js|require_js|asset|jquery|angularjs|backbonejs|reactjs|emberjs)\(\s*["\']{0,1}([^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(.+?)\s*{\/(\1)\}/ims', function($m) use ($_this) {
-			$func = $m[1];
-			return $func($m[3], _attrs_string2array($m[2]));
+		$string = preg_replace_callback('/\{(?P<func>css|require_css|js|require_js|asset|jquery|angularjs|backbonejs|reactjs|emberjs)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<content>.+?)\s*{\/(\1)\}/ims', function($m) use ($_this) {
+			$func = $m['func'];
+			return $func($m['content'], _attrs_string2array($m['args']));
 		}, $string);
 
 		return $string;
