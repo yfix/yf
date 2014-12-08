@@ -476,10 +476,17 @@ class yf_main {
 			'app_core'			=> APP_PATH. 'share/events/*'.$ext,
 			'app_plugins'		=> APP_PATH. 'plugins/*/share/events/*'.$ext,
 		);
+		$ext_len = strlen($ext);
+		$names = array();
 		foreach ($globs as $glob) {
 			foreach (glob($glob) as $path) {
-				require_once $path;
+				$name = substr(basename($path), 0, -$ext_len);
+				$names[$name] = $path;
 			}
+		}
+		// This double iterating allows to inherit/replace listeners with same name in project
+		foreach ($names as $name => $path) {
+			require_once $path;
 		}
 	}
 
