@@ -1,3 +1,5 @@
+{js()} html5shiv {/js}
+
 {jquery()}
 	try {
 		$('.yf_tip').popover({
@@ -72,8 +74,6 @@
 		_this.closest('.input-group').after('&nbsp;<i class="ajax-validation-status icon icon-large fa-lg ' + icon + '" style="color:' + color + ';" title="' + title + '"></i>');
 	}
 {/jquery}
-
-{js()} html5shiv {/js}
 
 {if_ok(const.DEBUG_MODE)}
 	{include("debug_console_js")}
