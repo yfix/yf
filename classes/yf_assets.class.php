@@ -869,251 +869,69 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	}
 
 	/**
+	* Alias for filters_apply
+	*/
+	public function filter($in, $filters, $params = array()) {
+		return $this->filters_apply($in, $filters, $params);
+	}
+
+	/**
 	* Apply filters from names array to input string
 	*/
-	public function filters_apply($str, $filters = array(), $params = array()) {
-		$out = $str;
-		$methods = $this->get_class_methods($this);
-		$methods = array_combine($methods, $methods);
-		foreach ($filters as $name => $filter) {
+	public function filters_apply($in, $filters = array(), $params = array()) {
+		$this->_autoload_libs();
+		if (!is_array($filters)) {
+			$filters = array($filters);
+		}
+		$out = $in;
+		$avail_filters = $this->get_avail_filters();
+		foreach ($filters as $filter) {
 			if (is_callable($filter)) {
-				$str = $filter($str, $params);
-			} elseif (isset($methods['filter_'.$name])) {
-				$func = 'filter_'.$name;
-				$str = $this->$func($str, $params);
+				$out = $filter($in, $params);
+			} elseif (isset($avail_filters[$filter])) {
+				$out = _class('assets_filter_'.$filter, 'classes/assets/')->apply($in, $params);
 			}
 		}
-		return $str;
+		return $out;
 	}
 
 	/**
 	*/
-	public function filter_jsmin($in, $params = array()) {
-		$this->_autoload_libs();
-		if (!class_exists('\JSMin')) {
-			throw new Exception('Assets: class \JSMin not found');
-			return $in;
+	public function get_avail_filters() {
+		if (isset($this->_avail_filters)) {
+			return $this->_avail_filters;
 		}
-		return \JSMin::minify($in);
-	}
-
-	/**
-	*/
-	public function filter_jsminplus($in, $params = array()) {
-		$this->_autoload_libs();
-		if (!class_exists('\JSMinPlus')) {
-			throw new Exception('Assets: class \JSMinPlus not found');
-			return $in;
+		$names = array();
+		$suffix = '.class.php';
+		$prefix = 'assets_filter_';
+		$prefix2 = YF_PREFIX;
+		$dir = 'classes/assets/';
+		$pattern = $dir. '*'. $prefix. '*'. $suffix;
+		$globs = array(
+			'yf_main'				=> YF_PATH. $pattern,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
+			'project_main'			=> PROJECT_PATH. $pattern,
+			'project_app'			=> APP_PATH. $pattern,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
+			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
+		);
+		$slen = strlen($suffix);
+		$plen = strlen($prefix);
+		$plen2 = strlen($prefix2);
+		$names = array();
+		foreach($globs as $gname => $glob) {
+			foreach(glob($glob) as $path) {
+				$name = substr(basename($path), 0, -$slen);
+				if (substr($name, 0, $plen2) === $prefix2) {
+					$name = substr($name, $plen2);
+				}
+				if (substr($name, 0, $plen) === $prefix) {
+					$name = substr($name, $plen);
+				}
+				$names[$name] = $path;
+			}
 		}
-		return \JSMinPlus::minify($in);
-	}
-
-	/**
-	*/
-	public function filter_cssmin($in, $params = array()) {
-		$this->_autoload_libs();
-		if (!class_exists('\CssMin')) {
-			throw new Exception('Assets: class \CssMin not found');
-			return $in;
-		}
-		return \CssMin::minify($in);
-	}
-
-	/**
-	*/
-	public function filter_css_rewrite_filter($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_css_import_filter($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_minify_css_compressor($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_uglify_css($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_google_closure($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_autoprefixer($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_packager($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_uglifyjs($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_packer($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_yui($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_css_embed($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_php_css_embed($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_compass($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_jpegoptim($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_pngout($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_jpegtran($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_optipng($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_gss($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_sass($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_scss_php($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_ember_precompiler($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_less($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_less_php($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_coffee_script($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_typescript($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_handlebars($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_sprockets($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_dart($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_jade($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_roole($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_stylus($in, $params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function filter_jssqueeze($in, $params = array()) {
-// TODO
-		!isset($params['single_line']) && $params['single_line'] = true;
-		!isset($params['keep_important_comments']) && $params['keep_important_comments'] = true;
-		!isset($params['special_var_rx']) && $params['special_var_rx'] = \JSqueeze::SPECIAL_VAR_RX;
-
-		$parser = new \JSqueeze();
-		return $parser->squeeze($in, $params['single_line'], $params['keep_important_comments'], $params['special_var_rx']);
+		$this->_avail_filters = $names;
+		return $names;
 	}
 }
