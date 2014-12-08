@@ -360,5 +360,21 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 			. PHP_EOL. '<script type="text/javascript">'.PHP_EOL.$fake_lib8['versions']['master']['js'].PHP_EOL.'</script>'
 			. PHP_EOL. '<script type="text/javascript">'.PHP_EOL.$fake_lib8['add']['js'].PHP_EOL.'</script>';
 		$this->assertEquals( $expected8, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib9', 'js') );
+		$fake_lib9 = array(
+			'versions' => array(
+				'master' => array( 'js' => 'var d="fake9"' ),
+			),
+			'config' => array(
+				'before' => '<!-- before -->',
+				'after' => '<!-- after -->',
+			),
+		);
+		_class('assets')->bundle_register('fake_lib9', $fake_lib9);
+		_class('assets')->add('fake_lib9');
+		$expected9 = $fake_lib9['config']['before']. '<script type="text/javascript">'.PHP_EOL. $fake_lib9['versions']['master']['js']. PHP_EOL.'</script>'. $fake_lib9['config']['after'];
+		$this->assertEquals( $expected9, _class('assets')->show_js() );
 	}
 }
