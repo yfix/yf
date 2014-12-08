@@ -495,8 +495,22 @@ class yf_core_api {
 
 	/**
 	*/
+	function get_assets() {
+		$folder = 'share/assets/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
+	}
+
+	/**
+	*/
+	function get_event_listeners() {
+		$folder = 'share/events/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
+	}
+
+	/**
+	*/
 	function get_cron_jobs() {
-		$folder = 'share/tasks_to_run/';
+		$folder = 'share/cron_jobs/';
 		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
 	}
 
