@@ -29,6 +29,8 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 			.some_class { border: 1px solid black; }
 			#some_id { display:none; }
 		'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '@import "test.css"'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('css', '@import url("test.css")'));
 
 		$f = '/tmp/yf_unit_tests_empty_style.css';
 		file_put_contents($f, 'test');
@@ -53,6 +55,8 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 			var url="http://www.google.com/";
 		})'));
 		$this->assertEquals('inline', _class('assets')->detect_content_type('js', '$(function(){})'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('js', 'var a="abc";'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('js', 'alert("hello")'));
 
 		$f = '/tmp/yf_unit_tests_empty_script.js';
 		file_put_contents($f, 'test');
@@ -212,5 +216,149 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 	public function test_filter_jsminplus() {
 		$in = 'var a = "abc";'.PHP_EOL.PHP_EOL.'// fsfafwe.'.PHP_EOL.PHP_EOL.';;'.PHP_EOL.PHP_EOL.'var bbb = "u";'.PHP_EOL;
         $this->assertEquals('var a="abc",bbb="u"', _class('assets')->filter_jsminplus($in));
+	}
+	public function test_add() {
+		$fake_lib1_url = _class('assets')->get_asset('jquery', 'js');
+		$fake_lib1 = array(
+			'versions' => array(
+				'last' => array( 'js' => $fake_lib1_url ),
+			),
+		);
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib1', 'js') );
+		$this->assertEmpty( _class('assets')->show_js() );
+		_class('assets')->bundle_register('fake_lib1', $fake_lib1);
+		$this->assertSame( $fake_lib1['versions']['last']['js'], _class('assets')->get_asset('fake_lib1', 'js') );
+		$expected = '<script src="'.$fake_lib1_url.'" type="text/javascript"></script>';
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		_class('assets')->add('fake_lib1');
+		$this->assertEquals( $expected, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		_class('assets')->add('fake_lib1', 'bundle');
+		$this->assertEquals( $expected, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		_class('assets')->add('fake_lib1', 'bundle', 'auto');
+		$this->assertEquals( $expected, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		_class('assets')->add('fake_lib1', 'js');
+		$this->assertEquals( $expected, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		_class('assets')->add('fake_lib1', 'js', 'auto');
+		$this->assertEquals( $expected, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		_class('assets')->add('fake_lib1', 'js', 'asset');
+		$this->assertEquals( $expected, _class('assets')->show_js() );
+	}
+	public function test_config() {
+		$fake_lib1_url = _class('assets')->get_asset('jquery', 'js');
+		$fake_lib1 = array(
+			'versions' => array(
+				'1.0' => array(	'js' => 'alert("hello")' ),
+				'1.1' => array(	'js' => $fake_lib1_url ),
+			),
+		);
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib1', 'js') );
+		$this->assertEmpty( _class('assets')->show_js() );
+		_class('assets')->bundle_register('fake_lib1', $fake_lib1);
+		$this->assertSame( $fake_lib1['versions']['1.1']['js'], _class('assets')->get_asset('fake_lib1', 'js') );
+		$expected1 = '<script src="'.$fake_lib1_url.'" type="text/javascript"></script>';
+		_class('assets')->add('fake_lib1');
+		$this->assertEquals( $expected1, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib2', 'js') );
+		$fake_lib2 = array(
+			'versions' => array(
+				'1.0' => array(	'js' => 'var a="abc";' ),
+			),
+			'require' => array(
+				'js' => 'fake_lib1',
+			),
+		);
+		_class('assets')->bundle_register('fake_lib2', $fake_lib2);
+		$this->assertSame( $fake_lib2['versions']['1.0']['js'], _class('assets')->get_asset('fake_lib2', 'js') );
+		_class('assets')->add('fake_lib2');
+		$expected2 = $expected1 . PHP_EOL. '<script type="text/javascript">'.PHP_EOL.$fake_lib2['versions']['1.0']['js'].PHP_EOL.'</script>';
+		$this->assertEquals( $expected2, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib3', 'js') );
+		$fake_lib3 = array(
+			'require' => array(
+				'js' => array(
+					'fake_lib2',
+					'fake_lib1',
+				),
+			),
+		);
+		_class('assets')->bundle_register('fake_lib3', $fake_lib3);
+		_class('assets')->add('fake_lib3');
+		$expected3 = $expected2;
+		$this->assertEquals( $expected3, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib4', 'js') );
+		$fake_lib4 = array(
+			'require' => array( 'js' => 'fake_lib3' ),
+		);
+		_class('assets')->bundle_register('fake_lib4', $fake_lib4);
+		_class('assets')->add('fake_lib4');
+		$expected4 = $expected3;
+		$this->assertEquals( $expected4, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib4', 'js') );
+		$fake_lib5 = array(
+			'versions' => array(
+				'master' => array( 'js' => 'var b="123"' ),
+			),
+		);
+		_class('assets')->bundle_register('fake_lib5', $fake_lib5);
+		_class('assets')->add('fake_lib5');
+		$this->assertSame( $fake_lib5['versions']['master']['js'], _class('assets')->get_asset('fake_lib5', 'js') );
+		$expected5 = '<script type="text/javascript">'.PHP_EOL.$fake_lib5['versions']['master']['js'].PHP_EOL.'</script>';
+		$this->assertEquals( $expected5, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib6', 'js') );
+		$fake_lib6 = array(
+			'require' => array( 'js' => array('fake_lib3', 'fake_lib5') ),
+		);
+		_class('assets')->bundle_register('fake_lib6', $fake_lib6);
+		_class('assets')->add('fake_lib6');
+		$expected6 = $expected3. PHP_EOL. $expected5;
+		$this->assertEquals( $expected6, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib7', 'js') );
+		$fake_lib7 = array(
+			'require' => array( 'js' => 'fake_lib6' ),
+			'add' => array( 'js' => 'var my3="val";'),
+		);
+		_class('assets')->bundle_register('fake_lib7', $fake_lib7);
+		_class('assets')->add('fake_lib7');
+		$expected7 = $expected6. PHP_EOL. '<script type="text/javascript">'.PHP_EOL.$fake_lib7['add']['js'].PHP_EOL.'</script>';
+		$this->assertEquals( $expected7, _class('assets')->show_js() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib8', 'js') );
+		$fake_lib8 = array(
+			'versions' => array(
+				'master' => array( 'js' => 'var c="45678"' ),
+			),
+			'require' => array( 'js' => 'fake_lib1' ),
+			'add' => array( 'js' => 'var my8="val8";'),
+		);
+		_class('assets')->bundle_register('fake_lib8', $fake_lib8);
+		_class('assets')->add('fake_lib8');
+		$expected8 = $expected1
+			. PHP_EOL. '<script type="text/javascript">'.PHP_EOL.$fake_lib8['versions']['master']['js'].PHP_EOL.'</script>'
+			. PHP_EOL. '<script type="text/javascript">'.PHP_EOL.$fake_lib8['add']['js'].PHP_EOL.'</script>';
+		$this->assertEquals( $expected8, _class('assets')->show_js() );
 	}
 }
