@@ -484,7 +484,7 @@ class yf_main {
 				$names[$name] = $path;
 			}
 		}
-		// This double iterating allows to inherit/replace listeners with same name in project
+		// This double iterating code allows to inherit/replace listeners with same name in project
 		foreach ($names as $name => $path) {
 			require_once $path;
 		}

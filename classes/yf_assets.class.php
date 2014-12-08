@@ -127,11 +127,16 @@ class yf_assets {
 			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $dir. '*'. $suffix,
 		);
 		$slen = strlen($suffix);
+		$names = array();
 		foreach($globs as $gname => $glob) {
 			foreach(glob($glob) as $path) {
 				$name = substr(basename($path), 0, -$slen);
-				$assets[$name] = include $path;
+				$names[$name] = $path;
 			}
+		}
+		// This double iterating code ensures we can inherit/replace assets with same name inside project
+		foreach($names as $name => $path) {
+			$assets[$name] = include $path;
 		}
 		$this->assets += $assets;
 		return $assets;
