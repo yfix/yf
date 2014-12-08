@@ -10,7 +10,7 @@ class yf_assets {
 	protected $filters = array();
 	/***/
 	protected $supported_asset_types = array(
-		'js', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle',
+		'js', 'jquery', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle',
 	);
 	/***/
 	protected $supported_out_types = array(
@@ -275,12 +275,15 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	* Add asset item into current workflow
 	*
 	* $content: string/array
-	* $asset_type: = bundle|js|css|img|less|sass|font
+	* $asset_type: = bundle|js|jquery|css|img|less|sass|font
 	* $content_type_hint: = auto|asset|url|file|inline|raw
 	*/
 	public function add($content, $asset_type = 'bundle', $content_type_hint = 'auto', $params = array()) {
 		if (DEBUG_MODE) {
 			$trace = main()->trace_string();
+		}
+		if ($asset_type === 'jquery') {
+			return $this->jquery($content, $params);
 		}
 		if ($asset_type === 'js') {
 			$this->init_js();
