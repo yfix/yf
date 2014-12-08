@@ -266,9 +266,13 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		if (!is_string($asset_data) && is_callable($asset_data)) {
 			$asset_data = $asset_data();
 		}
+		$inherit_info = null;
 		if (isset($asset_data['inherit'])) {
+			$inherit_info = $asset_data['inherit'][$asset_type];
+		}
+		if ($inherit_info) {
 			$func = __FUNCTION__;
-			return $this->$func($asset_data['inherit'][$asset_type], $asset_type, $version);
+			return $this->$func($inherit_info, $asset_type, $version);
 		}
 		if (!is_array($asset_data['versions'])) {
 			return null;
@@ -393,12 +397,13 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			$md5 = md5($_content);
 			$asset_data = array();
 			if ($content_type === 'asset') {
-				$asset_info = $this->get_asset($_content, $asset_type);
-				if ($asset_info) {
-					$asset_data = $this->get_asset_details($_content);
+				$asset_data = $this->get_asset_details($_content);
+				if ($asset_data) {
 					if (!is_string($asset_data) && is_callable($asset_data)) {
 						$asset_data = $asset_data();
 					}
+				}
+				if ($asset_data) {
 					if (isset($asset_data['config'])) {
 						$_params['config'] = $asset_data['config'];
 					}
@@ -415,7 +420,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 							}
 						}
 					}
-					$info = $asset_info;
+					$info = $this->get_asset($_content, $asset_type);
 					if (!is_array($info)) {
 						$info = array($info);
 					}
