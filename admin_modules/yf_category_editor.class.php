@@ -309,6 +309,8 @@ class yf_category_editor {
 			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
 			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
 		);
+		asset('yf_draggable_tree');
+
 		return '<form action="'.$r['form_action'].'" method="post" id="draggable_form">
 				<div class="controls">
 					<button type="submit" class="btn btn-primary btn-mini btn-xs"><i class="icon-save fa fa-save"></i> '.t('Save').'</button>
@@ -317,8 +319,7 @@ class yf_category_editor {
 					<a href="javascript:void(0);" class="btn btn-mini btn-xs" id="draggable-menu-expand-all"><i class="icon-expand-alt fa fa-expand"></i> '.t('Expand').'</a>
 				</div>
 				<ul class="draggable_menu">'.implode(PHP_EOL, (array)$this->_drag_tpl_items($items)).'</ul>
-			</form>'
-			.tpl()->parse('draggable_menu_js');
+			</form>';
 	}
 
 	/**
