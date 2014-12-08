@@ -296,6 +296,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('ok', self::_tpl('{catch(mycond)}{cond_array.mykey}{/catch}{foreach("test_array")}{if(#.name eq #mycond)}ok{/if}{/foreach}', $data) );
 	}
 	public function test_js() {
+		_class('assets')->clean_all();
 		$jquery_url = _class('assets')->get_asset('jquery', 'js');
 		$this->assertNotEmpty($jquery_url);
 		$this->assertEquals('', self::_tpl( '{js()}'.$jquery_url.'{/js}' ));
@@ -304,6 +305,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('', self::_tpl( '{js(class=yf_core,other=param)}'.$jquery_url.'{/js}' ));
 	}
 	public function test_js_complex() {
+		_class('assets')->clean_all();
 		$jquery_url = _class('assets')->get_asset('jquery', 'js');
 		$this->assertNotEmpty($jquery_url);
 		self::_tpl( '{js()}'.$jquery_url.'{/js}' );
@@ -316,6 +318,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript" class="yf_core"></script>', _class('assets')->show_js() );
 	}
 	public function test_css() {
+		_class('assets')->clean_all();
 		$jqueryui_url = _class('assets')->get_asset('jquery-ui', 'css');
 		$this->assertNotEmpty($jqueryui_url);
 		$this->assertEquals('', self::_tpl( '{css()}'.$jqueryui_url.'{/css}' ));
@@ -324,6 +327,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('', self::_tpl( '{css(class=yf_core,other=param)}'.$jqueryui_url.'{/css}' ));
 	}
 	public function test_css_complex() {
+		_class('assets')->clean_all();
 		$jqueryui_url = _class('assets')->get_asset('jquery-ui', 'css');
 		$this->assertNotEmpty($jqueryui_url);
 		self::_tpl( '{css()}'.$jqueryui_url.'{/css}' );
@@ -336,6 +340,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" class="yf_core" />', _class('assets')->show_css() );
 	}
 	public function test_assets_js_libs() {
+		_class('assets')->clean_all();
 		$jquery_url = _class('assets')->get_asset('jquery', 'js');
 		$this->assertNotEmpty($jquery_url);
 		self::_tpl( '{jquery()} var i = 0; $("#id").on(\'click\', ".sub_selector", function(){ return false; }); {/jquery}' );
