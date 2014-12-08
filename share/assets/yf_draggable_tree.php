@@ -17,7 +17,7 @@ return array(
 	.icon-move, .fa-arrows { cursor: move; }',
 			),
 
-			'js' => array(
+			'jquery' => array(
 '	var orig_items = { };
 	var i = 0;
 	$("li", ".draggable_menu").each(function(){
@@ -135,7 +135,9 @@ return array(
 	$(".draggable_menu").on("mouseout", "dl", function() {
 		$(this).find(".controls_over").hide();
 	});',
+			),
 
+			'js' => array(
 '	var draggable_history = {
 		stack: new Array(),
 		temp: null,
