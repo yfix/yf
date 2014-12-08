@@ -13,6 +13,10 @@ class yf_assets {
 		'js', 'jquery', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle',
 	);
 	/***/
+	protected $supported_content_types = array(
+		'asset', 'url', 'file', 'inline',
+	);
+	/***/
 	protected $supported_out_types = array(
 		'js', 'css', 'images', 'fonts',
 	);
@@ -284,7 +288,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	*
 	* $content: string/array
 	* $asset_type: = bundle|js|jquery|css|img|less|sass|font
-	* $content_type_hint: = auto|asset|url|file|inline|raw
+	* $content_type_hint: = auto|asset|url|file|inline
 	*/
 	public function add($content, $asset_type = 'bundle', $content_type_hint = 'auto', $params = array()) {
 		if (DEBUG_MODE) {
@@ -381,7 +385,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 				continue;
 			}
 			$content_type = '';
-			if (in_array($content_type_hint, array('url','file','inline','raw','asset'))) {
+			if (in_array($content_type_hint, $this->supported_content_types)) {
 				$content_type = $content_type_hint;
 			} else {
 				$content_type = $this->detect_content_type($asset_type, $_content);
@@ -444,8 +448,6 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 				}
 			} elseif ($content_type === 'inline') {
 				$this->set_content($asset_type, $md5, 'inline', $_content, $_params);
-			} elseif ($content_type === 'raw') {
-				$this->set_content($asset_type, $md5, 'raw', $_content, $_params);
 			}
 			if (DEBUG_MODE) {
 				debug('assets_add[]', array(
@@ -482,13 +484,6 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	*/
 	public function add_inline($content, $asset_type, $params = array()) {
 		return $this->add($content, $asset_type, 'inline', $params);
-	}
-
-	/**
-	* Shortcut
-	*/
-	public function add_raw($content, $asset_type, $params = array()) {
-		return $this->add($content, $asset_type, 'raw', $params);
 	}
 
 	/**
@@ -549,7 +544,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		$bottom = array();
 		foreach ((array)$all_content as $md5 => $v) {
 			$content_type = $v['content_type'];
-			if (in_array($content_type, array('inline', 'raw'))) {
+			if (in_array($content_type, array('inline'))) {
 				$top[$md5] = $v;
 			} else {
 				$bottom[$md5] = $v;
@@ -701,8 +696,6 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 					$_content = $this->_strip_js_input($_content);
 				}
 				$out[$md5] = $_content;
-			} elseif ($content_type === 'raw') {
-				$out[$md5] = $_content;
 			}
 		}
 		_class('core_events')->fire('assets.after_combine', array(
@@ -768,8 +761,6 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			} elseif ($content_type === 'inline') {
 				$str = $this->_strip_js_input($str);
 				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</script>';
-			} elseif ($content_type === 'raw') {
-				$out = $str;
 			}
 		} elseif ($out_type === 'css') {
 			$params['type'] = 'text/css';
@@ -783,8 +774,6 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			} elseif ($content_type === 'inline') {
 				$str = $this->_strip_css_input($str);
 				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. $str. PHP_EOL. '</style>';
-			} elseif ($content_type === 'raw') {
-				$out = $str;
 			}
 		}
 		return $out;
@@ -809,7 +798,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 				$type = 'url';
 			} elseif (preg_match('~^/[a-z0-9\./_-]+\.js$~ims', $content) && file_exists($content)) {
 				$type = 'file';
-			} elseif (preg_match('~^(<script|[$;#\*/])~ims', $content) || strpos($content, PHP_EOL) !== false) {
+			} else {
 				$type = 'inline';
 			}
 		} elseif ($asset_type === 'css') {
@@ -817,7 +806,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 				$type = 'url';
 			} elseif (preg_match('~^/[a-z0-9\./_-]+\.css$~ims', $content) && file_exists($content)) {
 				$type = 'file';
-			} elseif (preg_match('~^(<style|[$;#\.@/\*])~ims', $content) || strpos($content, PHP_EOL) !== false) {
+			} else {
 				$type = 'inline';
 			}
 		}
@@ -980,18 +969,6 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 
 	/**
 	*/
-	public function filter_jssqueeze($in, $params = array()) {
-// TODO
-		!isset($params['single_line']) && $params['single_line'] = true;
-		!isset($params['keep_important_comments']) && $params['keep_important_comments'] = true;
-		!isset($params['special_var_rx']) && $params['special_var_rx'] = \JSqueeze::SPECIAL_VAR_RX;
-
-		$parser = new \JSqueeze();
-		return $parser->squeeze($in, $params['single_line'], $params['keep_important_comments'], $params['special_var_rx']);
-	}
-
-	/**
-	*/
 	public function filter_packer($in, $params = array()) {
 // TODO
 	}
@@ -1126,5 +1103,17 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	*/
 	public function filter_stylus($in, $params = array()) {
 // TODO
+	}
+
+	/**
+	*/
+	public function filter_jssqueeze($in, $params = array()) {
+// TODO
+		!isset($params['single_line']) && $params['single_line'] = true;
+		!isset($params['keep_important_comments']) && $params['keep_important_comments'] = true;
+		!isset($params['special_var_rx']) && $params['special_var_rx'] = \JSqueeze::SPECIAL_VAR_RX;
+
+		$parser = new \JSqueeze();
+		return $parser->squeeze($in, $params['single_line'], $params['keep_important_comments'], $params['special_var_rx']);
 	}
 }
