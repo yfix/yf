@@ -107,7 +107,7 @@ abstract class yf_db_installer {
 		}
 		// Allow override in project
 		foreach ($t_names as $t_name => $path) {
-			$this->TABLES_SQL_PHP[$t_name] = include $f;
+			$this->TABLES_SQL_PHP[$t_name] = include $path;
 		}
 
 		// Preload db installer data PHP arrays needed to be inserted after CREATE TABLE == initial data
@@ -130,7 +130,7 @@ abstract class yf_db_installer {
 		}
 		// Allow override in project
 		foreach ($t_names as $t_name => $path) {
-			$this->TABLES_DATA[$t_name] = include $f; // $data should be loaded from file
+			$this->TABLES_DATA[$t_name] = include $path;
 		}
 
 		// Project has higher priority than framework (allow to change anything in project)
