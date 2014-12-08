@@ -321,7 +321,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		}
 		if (is_array($content_type_hint)) {
 			$params = (array)$params + $content_type_hint;
-			$content_type_hint = '';
+			$content_type_hint = $params['type'];
 		}
 		foreach ($content as $_content) {
 			if (!is_string($_content) && is_callable($_content)) {
