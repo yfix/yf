@@ -338,7 +338,10 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 					$bundle_details = $bundle_details();
 				}
 				if ($bundle_details) {
-					$sub_params = $DIRECT_OUT ? array('direct_out' => false) : array();
+					if (isset($bundle_details['config'])) {
+						$_params['config'] = $bundle_details['config'];
+					}
+					$sub_params = (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array());
 					foreach ($this->supported_asset_types as $atype) {
 						$_require = $bundle_details['require'][$atype];
 						if ($_require) {
