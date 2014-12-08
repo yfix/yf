@@ -502,6 +502,13 @@ class yf_core_api {
 
 	/**
 	*/
+	function get_assets_filters() {
+		$folder = 'classes/assets/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.class.php'));
+	}
+
+	/**
+	*/
 	function get_event_listeners() {
 		$folder = 'share/events/';
 		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
