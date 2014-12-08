@@ -266,14 +266,6 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		if (!is_string($asset_data) && is_callable($asset_data)) {
 			$asset_data = $asset_data();
 		}
-		$inherit_info = null;
-		if (isset($asset_data['inherit'])) {
-			$inherit_info = $asset_data['inherit'][$asset_type];
-		}
-		if ($inherit_info) {
-			$func = __FUNCTION__;
-			return $this->$func($inherit_info, $asset_type, $version);
-		}
 		if (!is_array($asset_data['versions'])) {
 			return null;
 		}
