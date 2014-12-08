@@ -306,6 +306,7 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 	}
 	public function test_js_complex() {
 		_class('assets')->clean_all();
+
 		$jquery_url = _class('assets')->get_asset('jquery', 'js');
 		$this->assertNotEmpty($jquery_url);
 		self::_tpl( '{js()}'.$jquery_url.'{/js}' );
@@ -316,6 +317,12 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript" class="yf_core"></script>', _class('assets')->show_js() );
 		self::_tpl( '{js(class=yf_core,other=param)}'.$jquery_url.'{/js}' );
 		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript" class="yf_core"></script>', _class('assets')->show_js() );
+
+		$url = '/my.js';
+		self::_tpl( '{js()}'.$url.'{/js}' );
+		$this->assertEquals('<script type="text/javascript">'.PHP_EOL.$url.PHP_EOL.'</script>', _class('assets')->show_js() );
+		self::_tpl( '{js(type=url)}'.$url.'{/js}' );
+		$this->assertEquals('<script src="'.$url.'" type="text/javascript"></script>', _class('assets')->show_js() );
 	}
 	public function test_css() {
 		_class('assets')->clean_all();
