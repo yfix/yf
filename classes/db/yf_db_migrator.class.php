@@ -368,13 +368,19 @@ abstract class yf_db_migrator {
 			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
 			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
 		);
+		$t_names = array();
 		foreach ($globs_sql_php as $gname => $glob) {
-			foreach (glob($glob) as $f) {
-				$t_name = substr(basename($f), 0, -strlen($ext));
-				$existing_files_sql_php[$t_name][$gname] = $f;
-				$existing_sql_php[$t_name] = include $f;
+			foreach (glob($glob) as $path) {
+				$t_name = substr(basename($path), 0, -strlen($ext));
+				$t_names[$t_name] = $path;
+				$existing_files_sql_php[$t_name][$gname] = $path;
 			}
 		}
+		// Allow override inside project
+		foreach ($t_names as $t_name => $path) {
+			$existing_sql_php[$t_name] = include $path;
+		}
+
 		// Project has higher priority than framework (allow to change anything in project)
 		// Try to load db structure from project file
 		// Sample contents part: 	$project_data['OTHER_TABLES_STRUCTS'] = my_array_merge((array)$project_data['OTHER_TABLES_STRUCTS'], array(
