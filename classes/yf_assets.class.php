@@ -542,6 +542,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	* Can be called from main template like this: {exec_last(assets,show_js)} {exec_last(assets,show_css)}
 	*/
 // TODO: decide with virtual formats like sass, less, coffeescript
+// TODO: Fallback to local: window.Foundation || document.write('<script src="/js/vendor/foundation.min.js"><\/script>')
 	public function show($out_type, $params = array()) {
 		if (!$out_type || !in_array($out_type, $this->supported_out_types)) {
 			throw new Exception('Assets: unsupported out content type: '.$out_type);
