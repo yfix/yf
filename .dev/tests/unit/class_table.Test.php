@@ -92,6 +92,9 @@ class class_table_test extends PHPUnit_Framework_TestCase {
 		$this->assertObjectHasAttribute('_pages', $table);
 		$this->assertObjectHasAttribute('_ids', $table);
 		$this->assertSame(count($table->_ids), count($a));
+
+		$table = table(null, array('no_records_callback' => function(){return 'Hello';}));
+		$this->assertEquals('Hello', trim($table));
 	}
 	public function test_btn_link() {
 		$a = array(
