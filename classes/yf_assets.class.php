@@ -237,7 +237,7 @@ class yf_assets {
 		}
 		if (is_array($content_type_hint)) {
 			$params = (array)$params + $content_type_hint;
-			$content_type_hint = '';
+			$content_type_hint = $params['type'];
 		}
 		foreach ($content as $_content) {
 			$_content = trim($_content);
