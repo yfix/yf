@@ -54,6 +54,10 @@ class yf_table2 {
 	public $CLASS_STAR_OK = 'star-ok';
 	public $CLASS_STAR_KO = 'star-ko';
 
+	public $_total = 0;
+	public $_pages = '';
+	public $_ids = array();
+
 	/**
 	* Catch missing method call
 	*/
