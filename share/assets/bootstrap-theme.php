@@ -2,7 +2,7 @@
 
 $bs_theme = common()->bs_current_theme();
 $bs_major_version = conf('css_framework') === 'bs3' ? '3' : '2';
-$inherit_name = 'bootstrap'. $bs_major_version;
+$require_name = 'bootstrap'. $bs_major_version;
 
 $css_fixes[2] = '
 	label.radio-horizontal { padding-left: inherit; display: inline-block; margin-bottom: inherit; }
@@ -27,8 +27,8 @@ if ($bs_theme === 'bootstrap') {
 			'css' => $css_fixes[$bs_major_version],
 		),
 		'require' => array(
-			'js' => $inherit_name,
-			'css' => $inherit_name,
+			'js' => $require_name,
+			'css' => $require_name,
 		),
 	);
 } elseif ($bs_theme === 'flatui') {
