@@ -9,7 +9,6 @@
 {exec_last(assets,show_css)}
 
 {if_ok(ng_app)}
-	{include( ng_app_lib )}
 	{include( ng_app_js )}
 {/if}
 
