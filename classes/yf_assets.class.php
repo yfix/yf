@@ -139,6 +139,7 @@ class yf_assets {
 			$assets[$name] = include $path;
 		}
 		$this->assets += $assets;
+// TODO: debug info
 		return $assets;
 	}
 
