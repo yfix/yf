@@ -77,6 +77,21 @@ class class_table_test extends PHPUnit_Framework_TestCase {
 			'<thead><th>K1</th><th>K2</th></thead>'.
 			'<tbody><tr><td>v11</td><td>v21</td></tr><tr><td>v12</td><td>v22</td></tr></tbody>'.
 			'</table>'), str_replace(PHP_EOL, '', trim($table)));
+
+		$this->assertObjectHasAttribute('_total', $table);
+		$this->assertEquals($table->_total, count($a));
+		$this->assertObjectHasAttribute('_pages', $table);
+		$this->assertInternalType('string', $table->_pages);
+		$this->assertObjectHasAttribute('_ids', $table);
+		$this->assertSame(count($table->_ids), count($a));
+
+		$a = array();
+		$table = table($a);
+		$this->assertObjectHasAttribute('_total', $table);
+		$this->assertEquals($table->_total, count($a));
+		$this->assertObjectHasAttribute('_pages', $table);
+		$this->assertObjectHasAttribute('_ids', $table);
+		$this->assertSame(count($table->_ids), count($a));
 	}
 	public function test_btn_link() {
 		$a = array(
