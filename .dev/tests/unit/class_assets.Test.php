@@ -218,40 +218,33 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 'var a="abc",bbb="u"', _class('assets')->filter($in, 'jsminplus') );
 	}
 	public function test_add() {
-		$fake_lib1_url = _class('assets')->get_asset('jquery', 'js');
-		$fake_lib1 = array(
-			'versions' => array(
-				'last' => array( 'js' => $fake_lib1_url ),
-			),
-		);
-		$this->assertEmpty( _class('assets')->get_asset('fake_lib1', 'js') );
+		$url = _class('assets')->get_asset('jquery', 'js');
+		$this->assertNotEmpty($url);
 		$this->assertEmpty( _class('assets')->show_js() );
-		_class('assets')->bundle_register('fake_lib1', $fake_lib1);
-		$this->assertSame( $fake_lib1['versions']['last']['js'], _class('assets')->get_asset('fake_lib1', 'js') );
-		$expected = '<script src="'.$fake_lib1_url.'" type="text/javascript"></script>';
+		$expected = '<script src="'.$url.'" type="text/javascript"></script>';
 
 		$this->assertEmpty( _class('assets')->show_js() );
-		_class('assets')->add('fake_lib1');
+		_class('assets')->add('jquery');
 		$this->assertEquals( $expected, _class('assets')->show_js() );
 
 		$this->assertEmpty( _class('assets')->show_js() );
-		_class('assets')->add('fake_lib1', 'bundle');
+		_class('assets')->add('jquery', 'bundle');
 		$this->assertEquals( $expected, _class('assets')->show_js() );
 
 		$this->assertEmpty( _class('assets')->show_js() );
-		_class('assets')->add('fake_lib1', 'bundle', 'auto');
+		_class('assets')->add('jquery', 'bundle', 'auto');
 		$this->assertEquals( $expected, _class('assets')->show_js() );
 
 		$this->assertEmpty( _class('assets')->show_js() );
-		_class('assets')->add('fake_lib1', 'js');
+		_class('assets')->add('jquery', 'js');
 		$this->assertEquals( $expected, _class('assets')->show_js() );
 
 		$this->assertEmpty( _class('assets')->show_js() );
-		_class('assets')->add('fake_lib1', 'js', 'auto');
+		_class('assets')->add('jquery', 'js', 'auto');
 		$this->assertEquals( $expected, _class('assets')->show_js() );
 
 		$this->assertEmpty( _class('assets')->show_js() );
-		_class('assets')->add('fake_lib1', 'js', 'asset');
+		_class('assets')->add('jquery', 'js', 'asset');
 		$this->assertEquals( $expected, _class('assets')->show_js() );
 	}
 	public function test_config() {
