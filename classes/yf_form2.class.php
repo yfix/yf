@@ -177,22 +177,31 @@ class yf_form2 {
 		$extra_override = $all_attrs_override[$form_id];
 		// Search for override params inside shared files
 		$suffix = $form_id.'.form.php';
+		$slen = strlen($suffix);
+		$path_pattern = 'share/form/'.$form_id.'*'.$suffix;
 		$paths = array(
-			'yf_main'			=> YF_PATH. 'share/form/'.$suffix,
-			'yf_plugins'		=> YF_PATH. 'plugins/*/share/form/'.$suffix,
-			'project_config'	=> CONFIG_PATH. 'share/form/'.$suffix,
-			'project_main'		=> PROJECT_PATH. 'share/form/'.$suffix,
-			'project_plugins'	=> PROJECT_PATH. 'plugins/*/share/form/'.$suffix,
+			'yf_main'			=> YF_PATH. $path_pattern,
+			'yf_plugins'		=> YF_PATH. 'plugins/*'.$path_pattern,
+			'project_config'	=> CONFIG_PATH. $path_pattern,
+			'project_main'		=> PROJECT_PATH. $path_pattern,
+			'project_plugins'	=> PROJECT_PATH. 'plugins/*'.$path_pattern,
 		);
 		if (SITE_PATH != PROJECT_PATH) {
 			$paths['site_main'] = SITE_PATH. 'share/form/'.$suffix;
 		}
+		$names = array();
 		foreach ((array)$paths as $glob) {
-			foreach (glob($glob) as $f) {
-				include $f;
-				foreach ((array)$data as $field => $attrs) {
-					$extra_override[$field] = (array)$extra_override[$field] + (array)$attrs;
-				}
+			foreach (glob($glob) as $path) {
+				$name = substr(basename($path), 0, -$slen);
+				$names[$name] = $path;
+			}
+		}
+		// Allow override framework defaults inside project
+		foreach ($names as $name => $path) {
+			$data = array();
+			include $path;
+			foreach ((array)$data as $field => $attrs) {
+				$extra_override[$field] = (array)$extra_override[$field] + (array)$attrs;
 			}
 		}
 		return $extra_override;
