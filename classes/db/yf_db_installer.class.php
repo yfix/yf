@@ -75,12 +75,18 @@ abstract class yf_db_installer {
 			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
 			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
 		);
+		$t_names = array();
 		foreach ($globs_sql as $glob) {
-			foreach (glob($glob) as $f) {
-				$t_name = substr(basename($f), 0, -strlen($ext));
-				$this->TABLES_SQL[$t_name] = include $f;
+			foreach (glob($glob) as $path) {
+				$t_name = substr(basename($path), 0, -strlen($ext));
+				$t_names[$t_name] = $path;
 			}
 		}
+		// Allow override in project
+		foreach ($t_names as $t_name => $path) {
+			$this->TABLES_SQL[$t_name] = include $path;
+		}
+
 		// Preload db installer PHP array of CREATE TABLE DDL statements
 		$ext = '.sql_php.php';
 		$dir = 'share/db/sql_php/*'.$ext;
@@ -92,12 +98,18 @@ abstract class yf_db_installer {
 			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
 			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
 		);
+		$t_names = array();
 		foreach ($globs_sql_php as $glob) {
-			foreach (glob($glob) as $f) {
-				$t_name = substr(basename($f), 0, -strlen($ext));
-				$this->TABLES_SQL_PHP[$t_name] = include $f;
+			foreach (glob($glob) as $path) {
+				$t_name = substr(basename($path), 0, -strlen($ext));
+				$t_names[$t_name] = $path;
 			}
 		}
+		// Allow override in project
+		foreach ($t_names as $t_name => $path) {
+			$this->TABLES_SQL_PHP[$t_name] = include $f;
+		}
+
 		// Preload db installer data PHP arrays needed to be inserted after CREATE TABLE == initial data
 		$ext = '.data.php';
 		$dir = 'share/db/data/*'.$ext;
@@ -109,12 +121,18 @@ abstract class yf_db_installer {
 			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir,
 			'project_plugins_app'	=> APP_PATH. 'plugins/*/'. $dir,
 		);
+		$t_names = array();
 		foreach ($globs_data as $glob) {
-			foreach (glob($glob) as $f) {
-				$t_name = substr(basename($f), 0, -strlen($ext));
-				$this->TABLES_DATA[$t_name] = include $f; // $data should be loaded from file
+			foreach (glob($glob) as $path) {
+				$t_name = substr(basename($path), 0, -strlen($ext));
+				$t_names[$t_name] = $path;
 			}
 		}
+		// Allow override in project
+		foreach ($t_names as $t_name => $path) {
+			$this->TABLES_DATA[$t_name] = include $f; // $data should be loaded from file
+		}
+
 		// Project has higher priority than framework (allow to change anything in project)
 		// Try to load db structure from project file
 		// Sample contents part: 	$project_data['OTHER_TABLES_STRUCTS'] = my_array_merge((array)$project_data['OTHER_TABLES_STRUCTS'], array(
