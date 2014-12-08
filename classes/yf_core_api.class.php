@@ -538,7 +538,7 @@ class yf_core_api {
 	/**
 	*/
 	function get_migrations() {
-		$folder = 'share/migrations/';
+		$folder = 'share/db/migrations/';
 		return $this->get_classes_by_params(array('folder' => $folder));
 	}
 
