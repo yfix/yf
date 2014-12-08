@@ -286,6 +286,10 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		} elseif ($asset_type === 'css') {
 			$this->init_css();
 		}
+		if (is_array($content_type_hint)) {
+			$params = (array)$params + $content_type_hint;
+			$content_type_hint = $params['type'];
+		}
 		if (!$asset_type) {
 			$asset_type = 'bundle';
 		}
