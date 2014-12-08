@@ -144,6 +144,14 @@ class yf_assets {
 	}
 
 	/**
+	* Register new bundle or replace existing by name on-the-fly
+	*/
+	public function bundle_register($name, array $config) {
+		$this->assets[$name] = $config;
+		return $this;
+	}
+
+	/**
 	* Search for assets for current module in several places, where it can be stored.
 	*/
 	public function find_asset_type_for_module($asset_type, $module = '') {
