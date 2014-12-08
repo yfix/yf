@@ -775,6 +775,12 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	}
 
 	/**
+	*/
+	public function upload_to() {
+// TODO: upload to S3, FTP
+	}
+
+	/**
 	* Auto-detection on content type
 	*/
 	public function detect_content_type($asset_type, $content = '') {
@@ -877,14 +883,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 
 	/**
 	*/
-	public function filters_process_css_urls() {
-// TODO
-	}
-
-	/**
-	* Content filter
-	*/
-	public function filter_jsmin($in) {
+	public function filter_jsmin($in, $params = array()) {
 		$this->_autoload_libs();
 		if (!class_exists('\JSMin')) {
 			throw new Exception('Assets: class \JSMin not found');
@@ -894,9 +893,8 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	}
 
 	/**
-	* Content filter
 	*/
-	public function filter_jsminplus($in) {
+	public function filter_jsminplus($in, $params = array()) {
 		$this->_autoload_libs();
 		if (!class_exists('\JSMinPlus')) {
 			throw new Exception('Assets: class \JSMinPlus not found');
@@ -906,9 +904,8 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	}
 
 	/**
-	* Content filter
 	*/
-	public function filter_cssmin($in) {
+	public function filter_cssmin($in, $params = array()) {
 		$this->_autoload_libs();
 		if (!class_exists('\CssMin')) {
 			throw new Exception('Assets: class \CssMin not found');
@@ -919,7 +916,199 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 
 	/**
 	*/
-	public function upload_to() {
-// TODO: upload to S3, FTP
+	public function filter_css_rewrite_filter($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_css_import_filter($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_minify_css_compressor($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_uglify_css($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_google_closure($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_autoprefixer($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_packager($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_uglifyjs($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_jssqueeze($in, $params = array()) {
+// TODO
+		!isset($params['single_line']) && $params['single_line'] = true;
+		!isset($params['keep_important_comments']) && $params['keep_important_comments'] = true;
+		!isset($params['special_var_rx']) && $params['special_var_rx'] = \JSqueeze::SPECIAL_VAR_RX;
+
+		$parser = new \JSqueeze();
+		return $parser->squeeze($in, $params['single_line'], $params['keep_important_comments'], $params['special_var_rx']);
+	}
+
+	/**
+	*/
+	public function filter_packer($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_yui($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_css_embed($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_php_css_embed($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_compass($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_jpegoptim($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_pngout($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_jpegtran($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_optipng($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_gss($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_sass($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_scss_php($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_ember_precompiler($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_less($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_less_php($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_coffee_script($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_typescript($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_handlebars($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_sprockets($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_dart($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_jade($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_roole($in, $params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function filter_stylus($in, $params = array()) {
+// TODO
 	}
 }
