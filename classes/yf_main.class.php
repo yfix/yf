@@ -1340,7 +1340,7 @@ class yf_main {
 		$handlers = array();
 		$this->events->fire('main.load_data_handlers');
 
-		$suffix = '.h.php';
+		$suffix = '.php';
 		$dir = 'share/data_handlers/';
 		$globs = array(
 			'yf_main'				=> YF_PATH. $dir. '*'. $suffix,

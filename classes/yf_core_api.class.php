@@ -532,7 +532,7 @@ class yf_core_api {
 	*/
 	function get_data_handlers() {
 		$folder = 'share/data_handlers/';
-		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.h.php'));
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
 	}
 
 	/**
