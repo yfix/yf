@@ -39,23 +39,28 @@ function _call_fast_func ($f_name) {
 	return false;
 }
 
+$fname = '';
 // Switch between fast actions (place your custom code below):
-if ($_GET['object'] == 'help' && $_GET['action'] == 'show_tip') {
-	$done = _call_fast_func('tooltip');
-} elseif ($_GET['object'] == 'dynamic' && $_GET['action'] == 'php_func' && MAIN_TYPE_ADMIN) {
-	$done = _call_fast_func('php_func');
-} elseif ($_GET['object'] == 'dynamic' && $_GET['action'] == 'image') {
-	$done = _call_fast_func('dynamic_image');
-} elseif ($_GET['object'] == 'dynamic' && $_GET['action'] == 'captcha_image') {
-	$done = _call_fast_func('captcha_image');
-} elseif ($_GET['object'] == 'forum' && $_GET['action'] == 'low') {
-	$done = _call_fast_func('forum_low');
-} elseif ($_GET['object'] == 'search' && $_GET['action'] == 'autocomplete') {
-	$done = _call_fast_func('search_autocomplete');
+$route = '/'.$_GET['object'].'/'.$_GET['action'];
+if ($route === '/help/show_tip') {
+	$fname = 'tooltip';
+} elseif ($route === '/dynamic/php_func' && MAIN_TYPE_ADMIN) {
+	$fname = 'php_func';
+} elseif ($route === '/dynamic/image') {
+	$fname = 'dynamic_image';
+} elseif ($route === '/dynamic/captcha_image') {
+	$fname = 'captcha_image';
+} elseif ($route === '/forum/low') {
+	$fname = 'forum_low';
+} elseif ($route === '/search/autocomplete') {
+	$fname = 'search_autocomplete';
 } elseif (main()->OUTPUT_CACHING && empty($_COOKIE['member_id'])) {
-	$done = _call_fast_func('output_cache');
-} elseif ($_GET['object'] == 'category' && in_array($_GET['action'], array('rss_for_cat', 'rss_for_city'))) {
-	$done = _call_fast_func('rss_export');
+	$fname = 'output_cache';
+} elseif ($route === '/category/rss_for_cat' || $route === '/category/rss_for_city') {
+	$fname = 'rss_export';
+}
+if ($fname) {
+	$done = _call_fast_func($fname);
 }
 // Finish fast init
 if ($done) {
