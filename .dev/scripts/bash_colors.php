@@ -29,13 +29,13 @@ class colors {
 		'cyan' => '46',
 		'light_gray' => '47',
 	);
-	public function get_colored_string($string, $fg_color = null, $bg_color = null) {
-		$colored_string = "";
+	public function apply($string, $fg_color = null, $bg_color = null) {
+		$colored_string = '';
 		if (isset($this->fg_colors[$fg_color])) {
-			$colored_string .= "\033[" . $this->fg_colors[$fg_color] . "m";
+			$colored_string .= "\033[" . $this->fg_colors[$fg_color] . 'm';
 		}
 		if (isset($this->bg_colors[$bg_color])) {
-			$colored_string .= "\033[" . $this->bg_colors[$bg_color] . "m";
+			$colored_string .= "\033[" . $this->bg_colors[$bg_color] . 'm';
 		}
 		$colored_string .=  $string . "\033[0m";
 		return $colored_string;
@@ -49,9 +49,14 @@ class colors {
 }
  
 $colors = new colors();
-echo $colors->get_colored_string("purple string on yellow background.", "purple", "yellow") . "\n";
-echo $colors->get_colored_string("blue string on light gray background.", "blue", "light_gray") . "\n";
-echo $colors->get_colored_string("red string on black background.", "red", "black") . "\n";
-echo $colors->get_colored_string("cyan string on green background.", "cyan", "green") . "\n";
-echo $colors->get_colored_string("cyan string on default background.", "cyan") . "\n";
-echo $colors->get_colored_string("default string on cyan background.", null, "cyan") . "\n";
+echo $colors->apply('SUCCESS', 'white', 'green') . PHP_EOL;
+echo $colors->apply('WARNING', 'white', 'yellow') . PHP_EOL;
+echo $colors->apply('INFO', 'white', 'blue') . PHP_EOL;
+echo $colors->apply('ERROR', 'white', 'red') . PHP_EOL;
+
+foreach ($colors->get_fg_colors() as $fg) {
+	foreach ($colors->get_bg_colors() as $bg) {
+		echo $colors->apply($fg.','.$bg, $fg, $bg).' ';
+	}
+	echo PHP_EOL;
+}
