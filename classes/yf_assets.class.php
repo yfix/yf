@@ -122,13 +122,14 @@ class yf_assets {
 		$assets = array();
 		$suffix = '.php';
 		$dir = 'share/assets/';
+		$pattern = $dir. '*'. $suffix;
 		$globs = array(
-			'yf_main'				=> YF_PATH. $dir. '*'. $suffix,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir. '*'. $suffix,
-			'project_main'			=> PROJECT_PATH. $dir. '*'. $suffix,
-			'project_app'			=> APP_PATH. $dir. '*'. $suffix,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir. '*'. $suffix,
-			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $dir. '*'. $suffix,
+			'yf_main'				=> YF_PATH. $pattern,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
+			'project_main'			=> PROJECT_PATH. $pattern,
+			'project_app'			=> APP_PATH. $pattern,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
+			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
 		);
 		$slen = strlen($suffix);
 		$names = array();

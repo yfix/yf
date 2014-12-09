@@ -468,13 +468,15 @@ class yf_main {
 		$this->events = &$this->init_class('core_events', 'classes/');
 		// Load event listeners from supported locations
 		$ext = '.listener.php';
+		$dir = 'share/events/';
+		$pattern = $dir. '*'. $ext;
 		$globs = array(
-			'yf_core'			=> YF_PATH. 'share/events/*'.$ext,
-			'yf_plugins'		=> YF_PATH. 'plugins/*/share/events/*'.$ext,
-			'project_core'		=> PROJECT_PATH. 'share/events/*'.$ext,
-			'project_plugins'	=> PROJECT_PATH. 'plugins/*/share/events/*'.$ext,
-			'app_core'			=> APP_PATH. 'share/events/*'.$ext,
-			'app_plugins'		=> APP_PATH. 'plugins/*/share/events/*'.$ext,
+			'yf_core'			=> YF_PATH. $pattern,
+			'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
+			'project_core'		=> PROJECT_PATH. $pattern,
+			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
+			'app_core'			=> APP_PATH. $pattern,
+			'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
 		);
 		$ext_len = strlen($ext);
 		$names = array();
@@ -1342,13 +1344,14 @@ class yf_main {
 
 		$suffix = '.php';
 		$dir = 'share/data_handlers/';
+		$pattern = $dir. '*'. $suffix;
 		$globs = array(
-			'yf_main'				=> YF_PATH. $dir. '*'. $suffix,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $dir. '*'. $suffix,
-			'project_main'			=> PROJECT_PATH. $dir. '*'. $suffix,
-			'project_app'			=> APP_PATH. $dir. '*'. $suffix,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $dir. '*'. $suffix,
-			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $dir. '*'. $suffix,
+			'yf_main'				=> YF_PATH. $pattern,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
+			'project_main'			=> PROJECT_PATH. $pattern,
+			'project_app'			=> APP_PATH. $pattern,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
+			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
 		);
 		$strlen_suffix = strlen($suffix);
 		foreach($globs as $gname => $glob) {
