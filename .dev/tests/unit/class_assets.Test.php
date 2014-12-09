@@ -207,15 +207,21 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_filter_cssmin() {
 		$in = 'body {'.PHP_EOL.'    color : white; '.PHP_EOL.'}';
-		$this->assertEquals( 'body{color:white}', _class('assets')->filter($in, 'cssmin') );
+		$expected = 'body{color:white}';
+#		$this->assertEquals( $expected, _class('assets')->filters_process_input($in, 'cssmin') );
+		$this->assertEmpty( _class('assets')->show_css() );
+		$expected2 = '<style type="text/css">'.PHP_EOL. $expected. PHP_EOL.'</style>';
+		$this->assertEquals( $expected2, _class('assets')->add_css($in)->filters_add_css('cssmin')->filters_process_css()->show_css() );
 	}
 	public function test_filter_jsmin() {
 		$in = 'var a = "abc";'.PHP_EOL.PHP_EOL.'// fsfafwe.'.PHP_EOL.PHP_EOL.';;'.PHP_EOL.PHP_EOL.'var bbb = "u";'.PHP_EOL;
-        $this->assertEquals( 'var a="abc";;;var bbb="u";', _class('assets')->filter($in, 'jsmin') );
+		$expected = 'var a="abc";;;var bbb="u";';
+        $this->assertEquals( $expected, _class('assets')->filters_process_input($in, 'jsmin') );
 	}
 	public function test_filter_jsminplus() {
 		$in = 'var a = "abc";'.PHP_EOL.PHP_EOL.'// fsfafwe.'.PHP_EOL.PHP_EOL.';;'.PHP_EOL.PHP_EOL.'var bbb = "u";'.PHP_EOL;
-        $this->assertEquals( 'var a="abc",bbb="u"', _class('assets')->filter($in, 'jsminplus') );
+		$expected = 'var a="abc",bbb="u"';
+        $this->assertEquals( $expected, _class('assets')->filters_process_input($in, 'jsminplus') );
 	}
 	public function test_add() {
 		$url = _class('assets')->get_asset('jquery', 'js');
