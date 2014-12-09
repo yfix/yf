@@ -148,6 +148,47 @@ class yf_assets {
 	}
 
 	/**
+	* Get list of built-in filters
+	*/
+	public function filters_get_avail() {
+		if (isset($this->_avail_filters)) {
+			return $this->_avail_filters;
+		}
+		$names = array();
+		$suffix = '.class.php';
+		$prefix = 'assets_filter_';
+		$prefix2 = YF_PREFIX;
+		$dir = 'classes/assets/';
+		$pattern = $dir. '*'. $prefix. '*'. $suffix;
+		$globs = array(
+			'yf_main'				=> YF_PATH. $pattern,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
+			'project_main'			=> PROJECT_PATH. $pattern,
+			'project_app'			=> APP_PATH. $pattern,
+			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
+			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
+		);
+		$slen = strlen($suffix);
+		$plen = strlen($prefix);
+		$plen2 = strlen($prefix2);
+		$names = array();
+		foreach($globs as $gname => $glob) {
+			foreach(glob($glob) as $path) {
+				$name = substr(basename($path), 0, -$slen);
+				if (substr($name, 0, $plen2) === $prefix2) {
+					$name = substr($name, $plen2);
+				}
+				if (substr($name, 0, $plen) === $prefix) {
+					$name = substr($name, $plen);
+				}
+				$names[$name] = $path;
+			}
+		}
+		$this->_avail_filters = $names;
+		return $names;
+	}
+
+	/**
 	* Register new bundle or replace existing by name on-the-fly
 	*/
 	public function bundle_register($name, array $config) {
@@ -848,13 +889,49 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	}
 
 	/**
-	* Add custom filter callback
+	* Shortcut for filters_add with js asset
 	*/
-	public function filter_add($asset_type, $callback, $params = array()) {
+	public function filters_add_js($callback, $params = array()) {
+		return $this->filters_add('js', $callback, $params);
+	}
+
+	/**
+	* Shortcut for filters_add with css asset
+	*/
+	public function filters_add_css($callback, $params = array()) {
+		return $this->filters_add('css', $callback, $params);
+	}
+
+	/**
+	* Add filters to processing chain, both custom and built-in supported
+	*/
+	public function filters_add($asset_type, $callback, $params = array()) {
+		if (!$asset_type) {
+			throw new Exception('Assets: '.__FUNCTION__.' missing asset_type');
+			return $this;
+		}
+		if (is_array($callback)) {
+			$func = __FUNCTION__;
+			foreach ($callback as $k => $v) {
+				$this->$func($asset_type, $v, $params);
+			}
+			return $this;
+		}
 		$this->filters[$asset_type][] = array(
 			'callback'	=> $callback,
 			'params'	=> $params,
 		);
+		return $this;
+	}
+
+	/**
+	* Get list of filters, added to procesing chain, both custom and built-in
+	*/
+	public function filters_get_added($asset_type) {
+		if (!$asset_type) {
+			return false;
+		}
+		return $this->filters[$asset_type];
 	}
 
 	/**
@@ -869,69 +946,82 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	}
 
 	/**
-	* Alias for filters_apply
-	*/
-	public function filter($in, $filters, $params = array()) {
-		return $this->filters_apply($in, $filters, $params);
-	}
-
-	/**
 	* Apply filters from names array to input string
 	*/
-	public function filters_apply($in, $filters = array(), $params = array()) {
+	public function filters_process_input($in, $filters = array(), $params = array()) {
+		if (is_array($in)) {
+			$out = array();
+			$func = __FUNCTION__;
+			foreach ($in as $k => $v) {
+				$out[$k] = $this->$func($v, $filters, $params);
+			}
+			return $out;
+		}
 		$this->_autoload_libs();
+
 		if (!is_array($filters)) {
 			$filters = array($filters);
 		}
 		$out = $in;
-		$avail_filters = $this->get_avail_filters();
+		$avail_filters = $this->filters_get_avail();
 		foreach ($filters as $filter) {
+			$_params = array();
+			if (is_array($filter)) {
+				$_params = $filter['params'];
+				$filter = $filter['callback'];
+			}
+			if (!$filter) {
+				continue;
+			}
 			if (is_callable($filter)) {
-				$out = $filter($in, $params);
-			} elseif (isset($avail_filters[$filter])) {
-				$out = _class('assets_filter_'.$filter, 'classes/assets/')->apply($in, $params);
+				$out = $filter($out, $params);
+			} elseif (is_string($filter) && isset($avail_filters[$filter])) {
+				$out = _class('assets_filter_'.$filter, 'classes/assets/')->apply($out, $params);
 			}
 		}
 		return $out;
 	}
 
 	/**
+	* Shortcut for filters_content_process with js asset
 	*/
-	public function get_avail_filters() {
-		if (isset($this->_avail_filters)) {
-			return $this->_avail_filters;
+	public function filters_process_js($params = array()) {
+		return $this->filters_process_added('js', $params);
+	}
+
+	/**
+	* Shortcut for filters_content_process with css asset
+	*/
+	public function filters_process_css($params = array()) {
+		return $this->filters_process_added('css', $params);
+	}
+
+	/**
+	* Apply added filters to gathered content of the given asset type
+	*/
+	public function filters_process_added($asset_type, $params = array()) {
+		if (!$asset_type) {
+			return false;
 		}
-		$names = array();
-		$suffix = '.class.php';
-		$prefix = 'assets_filter_';
-		$prefix2 = YF_PREFIX;
-		$dir = 'classes/assets/';
-		$pattern = $dir. '*'. $prefix. '*'. $suffix;
-		$globs = array(
-			'yf_main'				=> YF_PATH. $pattern,
-			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
-			'project_main'			=> PROJECT_PATH. $pattern,
-			'project_app'			=> APP_PATH. $pattern,
-			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
-			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
-		);
-		$slen = strlen($suffix);
-		$plen = strlen($prefix);
-		$plen2 = strlen($prefix2);
-		$names = array();
-		foreach($globs as $gname => $glob) {
-			foreach(glob($glob) as $path) {
-				$name = substr(basename($path), 0, -$slen);
-				if (substr($name, 0, $plen2) === $prefix2) {
-					$name = substr($name, $plen2);
-				}
-				if (substr($name, 0, $plen) === $prefix) {
-					$name = substr($name, $plen);
-				}
-				$names[$name] = $path;
+		$filters = $this->filters_get_added($asset_type);
+		if (!$filters) {
+			return $this;
+		}
+		$content = $this->get_content($asset_type);
+		if (!$content) {
+			return $this;
+		}
+		foreach ($content as $md5 => $info) {
+// TODO: support for other content types
+			if ($info['content_type'] !== 'inline') {
+				continue;
+			}
+			$_content = $info['content'];
+			$processed = $this->filters_process_input($_content, $filters, $params);
+			if ($_content !== $processed) {
+				$this->content[$asset_type][$md5]['content'] = $processed;
 			}
 		}
-		$this->_avail_filters = $names;
-		return $names;
+		return $this;
 	}
 }
