@@ -397,7 +397,10 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEmpty( _class('assets')->get_asset('fake_lib10', 'js') );
 		$fake_lib10 = array(
 			'versions' => array(
-				'master' => array( 'js' => 'var e="fake10";' ),
+				'master' => array(
+					'js' => 'var e="fake10";',
+					'css' => '.fake10 {color:red;}";',
+				),
 			),
 			'require' => array(
 				'js' => 'fake_lib9',
@@ -407,5 +410,30 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		_class('assets')->add('fake_lib10');
 		$expected10 = $expected9. PHP_EOL. '<script type="text/javascript">'.PHP_EOL. $fake_lib10['versions']['master']['js']. PHP_EOL.'</script>';
 		$this->assertEquals( $expected10, _class('assets')->show_js() );
+		$expected10_css = '<style type="text/css">'.PHP_EOL. $fake_lib10['versions']['master']['css']. PHP_EOL.'</style>';
+		$this->assertEquals( $expected10_css, _class('assets')->show_css() );
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->show_css() );
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib11', 'js') );
+		$this->assertEmpty( _class('assets')->get_asset('fake_lib11', 'css') );
+		$fake_lib11 = array(
+			'versions' => array(
+				'master' => array(
+					'js' => 'var f="fake11";',
+					'css' => '.fake11 {color:black;}";',
+				),
+			),
+			'require' => array(
+				'js' => 'fake_lib10',
+				'css' => 'fake_lib10',
+			),
+		);
+		_class('assets')->bundle_register('fake_lib11', $fake_lib11);
+		_class('assets')->add('fake_lib11');
+		$expected11_js = $expected10. PHP_EOL. '<script type="text/javascript">'.PHP_EOL. $fake_lib11['versions']['master']['js']. PHP_EOL.'</script>';
+		$this->assertEquals( $expected11_js, _class('assets')->show_js() );
+		$expected11_css = $expected10_css. PHP_EOL. '<style type="text/css">'.PHP_EOL. $fake_lib11['versions']['master']['css']. PHP_EOL.'</style>';
+		$this->assertEquals( $expected11_css, _class('assets')->show_css() );
 	}
 }
