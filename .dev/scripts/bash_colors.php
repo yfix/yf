@@ -1,6 +1,6 @@
 <?php
  
-class colors {
+class bash_colors {
 	private $fg_colors = array(
 		'black' => '0;30',
 		'dark_gray' => '1;30',
@@ -48,16 +48,18 @@ class colors {
 		return array_keys($this->bg_colors);
 	}
 }
- 
-$colors = new colors();
-echo $colors->apply('SUCCESS', 'white', 'green') . PHP_EOL;
-echo $colors->apply('WARNING', 'white', 'yellow') . PHP_EOL;
-echo $colors->apply('INFO', 'white', 'blue') . PHP_EOL;
-echo $colors->apply('ERROR', 'white', 'red') . PHP_EOL;
-
-foreach ($colors->get_fg_colors() as $fg) {
-	foreach ($colors->get_bg_colors() as $bg) {
-		echo $colors->apply($fg.','.$bg, $fg, $bg).' ';
-	}
-	echo PHP_EOL;
+function bash_color($text, $bg, $fg) {
+	return (new bash_colors())->apply($text, $bg, $fg);
+}
+function bash_color_success($text = '') {
+	return bash_color($text ?: 'SUCCESS', 'white', 'green');
+}
+function bash_color_warning($text = '') {
+	return bash_color($text ?: 'WARNING', 'white', 'yellow');
+}
+function bash_color_info($text = '') {
+	return bash_color($text ?: 'INFO', 'white', 'blue');
+}
+function bash_color_error($text = '') {
+	return bash_color($text ?: 'ERROR', 'white', 'red');
 }
