@@ -205,23 +205,40 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(strlen(file_get_contents($result)) > 100000);
 		unlink($out_file);
 	}
+	public function test_filter_custom() {
+		$in = 'body{'.PHP_EOL.'color:white'.PHP_EOL.'}';
+		$expected = 'body{color:white}';
+		$func = function($in) {
+			return str_replace(PHP_EOL, '', $in);
+		};
+		$this->assertEquals( $expected, _class('assets')->filters_process_input($in, $func) );
+	}
 	public function test_filter_cssmin() {
 		$in = 'body {'.PHP_EOL.'    color : white; '.PHP_EOL.'}';
 		$expected = 'body{color:white}';
-#		$this->assertEquals( $expected, _class('assets')->filters_process_input($in, 'cssmin') );
+		$this->assertEquals( $expected, _class('assets')->filters_process_input($in, 'cssmin') );
 		$this->assertEmpty( _class('assets')->show_css() );
 		$expected2 = '<style type="text/css">'.PHP_EOL. $expected. PHP_EOL.'</style>';
 		$this->assertEquals( $expected2, _class('assets')->add_css($in)->filters_add_css('cssmin')->filters_process_css()->show_css() );
+#		$this->assertEquals( $expected2, _class('assets')->add_css($in)->show_css(array('filters' => 'cssmin')) );
 	}
 	public function test_filter_jsmin() {
 		$in = 'var a = "abc";'.PHP_EOL.PHP_EOL.'// fsfafwe.'.PHP_EOL.PHP_EOL.';;'.PHP_EOL.PHP_EOL.'var bbb = "u";'.PHP_EOL;
 		$expected = 'var a="abc";;;var bbb="u";';
         $this->assertEquals( $expected, _class('assets')->filters_process_input($in, 'jsmin') );
+		$this->assertEmpty( _class('assets')->show_js() );
+		$expected2 = '<script type="text/javascript">'.PHP_EOL. $expected. PHP_EOL.'</script>';
+		$this->assertEquals( $expected2, _class('assets')->add_js($in)->filters_add_js('jsmin')->filters_process_js()->show_js() );
+#		$this->assertEquals( $expected2, _class('assets')->add_js($in)->show_js(array('filters' => 'jsmin')) );
 	}
 	public function test_filter_jsminplus() {
 		$in = 'var a = "abc";'.PHP_EOL.PHP_EOL.'// fsfafwe.'.PHP_EOL.PHP_EOL.';;'.PHP_EOL.PHP_EOL.'var bbb = "u";'.PHP_EOL;
 		$expected = 'var a="abc",bbb="u"';
         $this->assertEquals( $expected, _class('assets')->filters_process_input($in, 'jsminplus') );
+		$this->assertEmpty( _class('assets')->show_js() );
+		$expected2 = '<script type="text/javascript">'.PHP_EOL. $expected. PHP_EOL.'</script>';
+		$this->assertEquals( $expected2, _class('assets')->add_js($in)->filters_add_js('jsminplus')->filters_process_js()->show_js() );
+#		$this->assertEquals( $expected2, _class('assets')->add_js($in)->show_js(array('filters' => 'jsminplus')) );
 	}
 	public function test_add() {
 		$url = _class('assets')->get_asset('jquery', 'js');
