@@ -21,11 +21,22 @@ function _call_fast_func ($f_name) {
 	if (MAIN_TYPE_ADMIN && !in_array($f_name, array('php_func'))) {
 		return false;
 	}
-	$f_name = '_fast_'.$f_name;
-	$fwork_fast_path = YF_PATH.'share/fast_init/';
-	$path = $fwork_fast_path.'func_'.$f_name.'.php';
-	$func = include ($path);
-	return is_callable($func) ? $func() : $func;
+	$dir = 'share/fast_init/';
+	$suffix = '.php';
+	$pattern = $dir. $f_name. $suffix;
+	$globs = array(
+		'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
+		'project_app'			=> APP_PATH. $pattern,
+		'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
+		'yf_main'				=> YF_PATH. $pattern,
+	);
+	foreach($globs as $gname => $glob) {
+		foreach(glob($glob) as $path) {
+			$func = include $path;
+			return $func();
+		}
+	}
+	return false;
 }
 
 // Switch between fast actions (place your custom code below):

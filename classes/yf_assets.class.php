@@ -16,6 +16,8 @@ class yf_assets {
 	protected $supported_out_types = array(
 		'js', 'css', 'images', 'fonts',
 	);
+	/** @bool Needed to ensure smooth transition of existing codebase. If enabled - then each add() call will immediately return generated content */
+	public $ADD_IS_DIRECT_OUT = false;
 
 	/**
 	* Catch missing method call
@@ -172,8 +174,8 @@ class yf_assets {
 	*/
 	function helper_js_library($lib_name, $content, $params = array()) {
 		$asset_type = 'js';
-		if (empty($this->already_required[$asset_type][$lib_name])) {
-			$this->add_asset($lib_name, $asset_type);
+		if (!isset($this->already_required[$asset_type][$lib_name])) {
+			$this->add_asset($lib_name, $asset_type, array('direct_out' => false));
 			$this->already_required[$asset_type][$lib_name] = true;
 		}
 		return $this->add($content, $asset_type, 'inline', $params);
@@ -222,19 +224,20 @@ class yf_assets {
 		if (DEBUG_MODE) {
 			$trace = main()->trace_string();
 		}
-		if (empty($content)) {
-			return $this;
-		}
 		if (!$asset_type || !in_array($asset_type, $this->supported_asset_types)) {
 			throw new Exception('Assets add(): unsupported asset type: '.$asset_type);
 			return $this;
+		}
+		$DIRECT_OUT = isset($params['direct_out']) ? $params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
+		if (empty($content)) {
+			return $DIRECT_OUT ? $this->show($asset_type) : $this;
 		}
 		if (!is_array($content)) {
 			$content = array($content);
 		}
 		if (is_array($content_type_hint)) {
 			$params = (array)$params + $content_type_hint;
-			$content_type_hint = '';
+			$content_type_hint = $params['type'];
 		}
 		foreach ($content as $_content) {
 			$_content = trim($_content);
@@ -243,11 +246,11 @@ class yf_assets {
 				foreach ($this->supported_asset_types as $atype) {
 					$arequire = $bundle_details['require'][$atype];
 					if ($arequire) {
-						$this->add($arequire, $atype);
+						$this->add($arequire, $atype, 'auto', array('direct_out' => false));
 					}
 					$adata = $this->get_asset($_content, $atype);
 					if ($adata) {
-						$this->add($adata, $atype);
+						$this->add($adata, $atype, 'auto', array('direct_out' => false));
 					}
 				}
 				continue;
@@ -267,7 +270,7 @@ class yf_assets {
 				if ($info) {
 					$asset_data = $this->get_asset_details($_content);
 					if (isset($asset_data['require'][$asset_type])) {
-						$this->add($asset_data['require'][$asset_type], $asset_type, 'asset');
+						$this->add($asset_data['require'][$asset_type], $asset_type, 'asset', array('direct_out' => false));
 					}
 					if (is_array($info)) {
 						$url = $info['url'];
@@ -303,7 +306,7 @@ class yf_assets {
 				));
 			}
 		}
-		return $this; // Chaining
+		return $DIRECT_OUT ? $this->show_css().$this->show_js() : $this;
 	}
 
 	/**
@@ -363,7 +366,9 @@ class yf_assets {
 	* Clean content for given asset type
 	*/
 	public function clean_content($asset_type) {
-		$this->already_required[$asset_type] = array();
+		if (!$this->ADD_IS_DIRECT_OUT) {
+			$this->already_required[$asset_type] = array();
+		}
 		return $this->content[$asset_type] = array();
 	}
 
