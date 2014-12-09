@@ -1,6 +1,6 @@
 <?php
 
-$locale = conf('language');
+$locale = conf('language') ?: 'ru';
 return array(
 	'versions' => array(
 		'1.2.15' => array(

@@ -12,4 +12,7 @@ return array(
 			),
 		),
 	),
+	'require' => array(
+		'js' => 'jquery',
+	),
 );
