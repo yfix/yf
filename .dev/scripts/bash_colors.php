@@ -28,6 +28,7 @@ class colors {
 		'magenta' => '45',
 		'cyan' => '46',
 		'light_gray' => '47',
+		'white' => '107',
 	);
 	public function apply($string, $fg_color = null, $bg_color = null) {
 		$colored_string = '';
