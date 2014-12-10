@@ -22,15 +22,15 @@
 		mapTypeId: google.maps.MapTypeId.ROADMAP,
 		mapTypeControlOptions: {
 			style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-			position: google.maps.ControlPosition.TOP_CENTER				
+			position: google.maps.ControlPosition.TOP_CENTER
 		}
 		};
 		map = new google.maps.Map($('#'+container_id)[0], myOptions);
-		markers_cnt = loadMarkers();		
-		
+		markers_cnt = loadMarkers();
+
 		zoomtoAllMarkers();
 	}
-	
+
 	function zoomtoAllMarkers() {
 		var bounds = new google.maps.LatLngBounds();
 		var num_markers = 0;
@@ -44,14 +44,14 @@
 		}
 		if (num_markers > 0) map.fitBounds(bounds);
 	}
-	
+
 	function placeMarker(location,description) {
 		marker_index = 0;
 		while (markersArray[marker_index]) marker_index++;
 		if (marker_index > markers_limit) {
 		} else {
 			var marker = new google.maps.Marker({
-				position: location, 
+				position: location,
 				title: description,
 				map: map
 			});
@@ -59,7 +59,7 @@
 			descriptionsArray[marker_index] = description;
 		}
 	}
-		
+
 	function loadMarkers() {
 		try {
 			result = JSON.parse(content);
@@ -68,7 +68,7 @@
 		}
 		marker_index_load = 0;
 		while (marker_index_load <= markers_limit) {
-			if (result[marker_index_load]) placeMarker(new google.maps.LatLng(result[marker_index_load]['lat'], result[marker_index_load]['lng']),result[marker_index_load]['dsc']);			
+			if (result[marker_index_load]) placeMarker(new google.maps.LatLng(result[marker_index_load]['lat'], result[marker_index_load]['lng']),result[marker_index_load]['dsc']);
 			marker_index_load++;
 		}
 	}
@@ -77,7 +77,7 @@
 
 {jquery()}
 	initMap('map_canvas');
-{/js}
+{/jquery}
 
 <div id="map_canvas"></div>
-	
+
