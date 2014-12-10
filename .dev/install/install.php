@@ -418,7 +418,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	*/
 	function import_table_data ($table, $dir = '') {
 		if (!$dir) {
-			$dir = INSTALLER_PATH.'assets/data/';
+			$dir = INSTALLER_PATH.'installer_data/db_tables/';
 		}
 		$file = $dir. $table.'.data.php';
 		if (!file_exists($file)) {
@@ -443,7 +443,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		$sql_paths = array(
 			'yf'		=> YF_PATH.'share/db/sql/sys_*'.$suffix,
 			'yf_plugins'=> YF_PATH.'plugins/*/share/db/sql/sys_*'.$suffix,
-			'yf_install'=> INSTALLER_PATH.'assets/data/*'.$suffix,
+			'yf_install'=> INSTALLER_PATH.'installer_data/db_tables/*'.$suffix,
 		);
 		foreach ((array)$sql_paths as $pattern) {
 			foreach ((array)glob($pattern) as $f) {
@@ -497,9 +497,9 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 
 		$suffix = '.data.php';
 		$suffix_len = strlen($suffix);
-		$data_paths['en'] = INSTALLER_PATH.'assets/data_en/*'.$suffix;
+		$data_paths['en'] = INSTALLER_PATH.'installer_data/db_tables_en/*'.$suffix;
 		if ($lang && $lang != 'en') {
-			$data_paths[$lang] = INSTALLER_PATH.'assets/data_'.$lang.'/*'.$suffix;
+			$data_paths[$lang] = INSTALLER_PATH.'installer_data/db_tables_'.$lang.'/*'.$suffix;
 		}
 		$tables = array();
 		foreach ((array)$data_paths as $pattern) {
@@ -512,13 +512,13 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		foreach ((array)$tables as $table) {
 			db()->query('SELECT * FROM '.db($table).' LIMIT 1');
 		}
-		$dir = INSTALLER_PATH.'assets/data_en/';
+		$dir = INSTALLER_PATH.'installer_data/db_tables_en/';
 		foreach ((array)glob($dir.'*.data.php') as $f) {
 			$_table = substr(basename($f), 0, -strlen('.data.php'));
 			$this->import_table_data($_table, $dir);
 		}
 		if ($lang) {
-			$dir = INSTALLER_PATH.'assets/data_'.$lang.'/';
+			$dir = INSTALLER_PATH.'installer_data/db_tables_'.$lang.'/';
 			foreach ((array)glob($dir.'*.data.php') as $f) {
 				$_table = substr(basename($f), 0, -strlen('.data.php'));
 				$this->import_table_data($_table, $dir);
@@ -532,10 +532,10 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 	*/
 	function write_htaccess($rewrite_enabled = true) {
 		if ($rewrite_enabled) {
-			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'assets/htaccess.txt');
+			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'installer_data/htaccess.txt');
 			db()->update_safe('sys_settings', array('value' => 1), 'id=4');
 		} else {
-			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'assets/htaccess2.txt');
+			$htaccess_file_content = file_get_contents(INSTALLER_PATH.'installer_data/htaccess2.txt');
 		}
 		file_put_contents(PROJECT_PATH.'.htaccess', str_replace('%%%#path#%%%', $_POST['install_rw_base'], $htaccess_file_content));
 		return installer();
