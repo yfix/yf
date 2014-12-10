@@ -108,15 +108,20 @@ class yf_i18n {
 		conf('charset', !empty($charset) ? $charset : $this->CUR_CHARSET);
 		conf('language', $this->CUR_LOCALE);
 		$this->CUR_CHARSET = conf('charset');
-		$lc_all = array(
+// TODO: country detection connect
+		$this->CUR_COUNTRY = conf('country') ?: (in_array(strtolower($this->CUR_LOCALE), array('ru','uk')) ? 'UA' : '');
+
+		$lc_all = array_unique(array_filter(array(
 			strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_LOCALE).'.'.$this->CUR_CHARSET,
 			strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_LOCALE),
+			$this->CUR_COUNTRY ? strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_COUNTRY).'.'.$this->CUR_CHARSET : '',
+			$this->CUR_COUNTRY ? strtolower($this->CUR_LOCALE).'_'.strtoupper($this->CUR_COUNTRY) : '',
 			strtolower($this->CUR_LOCALE),
 			strtolower(conf('languages::'.$this->CUR_LOCALE.'::name')),
 			'en_US.utf-8',
 			'en_US',
 			'en',
-		);
+		)));
 		if (DEBUG_MODE) {
 			debug('locale::default', array(
 				'LC_ALL'		=> setlocale(LC_ALL, 0), // for all of the below
