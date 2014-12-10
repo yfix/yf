@@ -1,5 +1,4 @@
 {asset()} bootstrap-theme {/asset}
 {js()} jquery-ui {/js}
 {css()} bfh-select {/css}
-
 {asset()} yf_bootstrap_fixes_admin {/asset}

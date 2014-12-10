@@ -3,7 +3,6 @@
 <head>
 	<title>{execute(graphics,show_site_title)}</title>
 	<meta charset="utf-8">
-
 {exec_last(assets,show_css)}
 {css()}
 	.container-valign-middle { margin:20% 30%; }
@@ -12,7 +11,6 @@
 		#debug_console { float:left; }
 	{/if}
 {/css}
-
 {execute(graphics,show_metatags)}
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>

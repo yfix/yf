@@ -1,19 +1,11 @@
-{catch(ng_app)}api.admin{/catch}
 <!DOCTYPE html>
-<html{if_ok(ng_app)} ng-app="{ng_app}"{/if}>
+<html ng-app="api.admin">
 <head>
 	<title>{execute(graphics,show_site_title)}</title>
 	<base href="{const(ADMIN_WEB_PATH)}"/>
 	<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
-
 {exec_last(assets,show_css)}
-
-{if_ok(ng_app)}
-	{include( ng_app_js )}
-{/if}
-
 {execute(graphics,show_metatags)}
-
 </head>
 <body class="bs-theme-{execute(common,bs_current_theme)} cssfw-{conf(css_framework)}">
 {if(conf.css_framework eq bs3)}
