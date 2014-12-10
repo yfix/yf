@@ -643,6 +643,8 @@ class yf_debug {
 		$data['yf'] = array(
 			'MAIN_TYPE'			=> MAIN_TYPE,
 			'LANG'				=> conf('language'),
+			'COUNTRY'			=> conf('country'),
+			'TIMEZONE'			=> date_default_timezone_get(). (conf('timezone') ? ', conf: '.conf('timezone') : ''),
 			'DEBUG_MODE'		=> (int)DEBUG_MODE,
 			'DEV_MODE'			=> (int)conf('DEV_MODE'),
 			'REWRITE_MODE'		=> (int)tpl()->REWRITE_MODE,
@@ -1487,6 +1489,7 @@ class yf_debug {
 		$body = array();
 
 		$items = $this->_get_debug_data('assets_out');
+		$i = 0;
 		foreach ((array)$items as $k => $v) {
 			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
 			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
@@ -1494,9 +1497,10 @@ class yf_debug {
 			$items[$k] = array('id' => ++$i) + $v;
 			$items[$k]['strlen'] = strlen($v['content']);
 		}
-		$body['out'] = $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
+		$body['assets_out'] = $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
 
 		$items = $this->_get_debug_data('assets_add');
+		$i = 0;
 		foreach ((array)$items as $k => $v) {
 			$v['preview'] = '<pre>'._prepare_html(substr($v['content'], 0, 100)).'</pre>';
 			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
@@ -1505,7 +1509,7 @@ class yf_debug {
 			$items[$k] = array('id' => ++$i) + $v;
 			$items[$k]['strlen'] = strlen($v['content']);
 		}
-		$body['add'] = $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
+		$body['assets_add_log'] = $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
 
 		return _class('html')->tabs($body, array('hide_empty' => 1));
 	}
