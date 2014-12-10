@@ -15,11 +15,11 @@ return array(
 	'require' => array(
 		'js' => array(
 			'jquery',
-			'bootstrap',
+#			'bootstrap',
 			'momentjs',
 		),
 		'css' => array(
-			'bootstrap',
+#			'bootstrap',
 		),
 	),
 );
