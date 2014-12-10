@@ -87,7 +87,7 @@ class yf_notifications {
         
         if (($text != '') || ($url != '')) {
             $id = db()->insert_id();
-            db()->insert(db('notifications_receivers_add_info'), array(
+            db()->replace(db('notifications_receivers_add_info'), array(
                 'id'    => intval($id),
                 'text'  => _es($text),
                 'url'   => _es($url),
