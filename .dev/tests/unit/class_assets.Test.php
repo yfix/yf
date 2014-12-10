@@ -4,6 +4,7 @@ require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 
 class class_assets_test extends PHPUnit_Framework_TestCase {
 	public function test_detect_content_type_css() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$this->assertEquals('asset', _class('assets')->detect_content_type('css', 'jquery-ui'));
 		$this->assertEquals('url', _class('assets')->detect_content_type('css', 'http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css'));
 		$this->assertEquals('url', _class('assets')->detect_content_type('css', 'https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css'));
@@ -22,6 +23,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		unlink($f);
 	}
 	public function test_detect_content_type_js() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$this->assertEquals('asset', _class('assets')->detect_content_type('js', 'jquery'));
 		$this->assertEquals('url', _class('assets')->detect_content_type('js', 'http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'));
 		$this->assertEquals('url', _class('assets')->detect_content_type('js', 'https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/ckeditor.js'));
@@ -42,6 +44,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		unlink($f);
 	}
 	public function test_strip_js_input() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('<script>$(function(){})</script>'));
 		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('<script>$(function(){})'));
 		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('$(function(){})</script>'));
@@ -57,6 +60,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('path.to/script.js', _class('assets')->_strip_js_input('<script src="path.to/script.js" type="text/javascript"></script>'));
 	}
 	public function test_strip_css_input() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('<style>#some_id { display:none; }</style>'));
 		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('<style>#some_id { display:none; }'));
 		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('#some_id { display:none; }</style>'));
@@ -72,40 +76,71 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('path.to/style.css', _class('assets')->_strip_css_input('<link rel="stylesheet" href="path.to/style.css" />'));
 	}
 	public function test_jquery() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
+		_class('assets')->clean_all();
+
 		$url = _class('assets')->get_asset('jquery', 'js');
 		$this->assertNotEmpty($url);
-		jquery('var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });');
-		$this->assertEquals(
-			'<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.
-			'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });'.PHP_EOL.'})'.PHP_EOL.'</script>'
-			, _class('assets')->show_js()
-		);
+		$jquery_js = 'var i = 0; $("#id").on("click", ".sub_selector", function(){ return false; });';
+		$expected_jquery_lib = '<script src="'.$url.'" type="text/javascript"></script>';
+		$expected_js = '<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL. $jquery_js. PHP_EOL.'})'.PHP_EOL.'</script>';
+
+		$jquery_result = jquery($jquery_js);
+		$this->assertInstanceOf( get_class(_class('assets')), $jquery_result );
+		$this->assertEquals( $expected_jquery_lib. PHP_EOL. $expected_js, _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing');
+
+		// Second call should avoid adding jquery again
+		$jquery_result = jquery($jquery_js);
+		$this->assertSame( _class('assets'), $jquery_result );
+		$this->assertEquals( $expected_jquery_lib. PHP_EOL. $expected_js, _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
+
+		_class('assets')->clean_all();
+		_class('assets')->ADD_IS_DIRECT_OUT = true;
+
+		$jquery_result = jquery($jquery_js);
+		$this->assertSame( $expected_jquery_lib. PHP_EOL. $expected_js, $jquery_result );
+		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
+
+		// Second call should avoid adding jquery again
+		$jquery_result = jquery($jquery_js);
+		$this->assertSame( $expected_js, $jquery_result );
+		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
+
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 	}
 	public function test_angularjs() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$url = _class('assets')->get_asset('angularjs', 'js');
 		$this->assertNotEmpty($url);
 		angularjs('alert("Hello");');
 		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
 	}
 	public function test_backbonejs() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$url = _class('assets')->get_asset('backbonejs', 'js');
 		$this->assertNotEmpty($url);
 		backbonejs('alert("Hello");');
 		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
 	}
 	public function test_reactjs() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$url = _class('assets')->get_asset('reactjs', 'js');
 		$this->assertNotEmpty($url);
 		reactjs('alert("Hello");');
 		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
 	}
 	public function test_emberjs() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$url = _class('assets')->get_asset('emberjs', 'js');
 		$this->assertNotEmpty($url);
 		emberjs('alert("Hello");');
 		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
 	}
 	public function test_basic() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		_class('assets')->clean_all();
 		$url = '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css';
 		$expected = '<link href="'.$url.'" rel="stylesheet" />';
@@ -119,9 +154,11 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, _class('assets')->show_css());
 	}
 	public function test_bundle() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		_class('assets')->clean_all();
 
-		asset('blueimp-uploader');
+		$asset_out = asset('blueimp-uploader');
+		$this->assertInstanceOf( get_class(_class('assets')), $asset_out );
 
 		$out_js = _class('assets')->show_js();
 		$this->assertNotEmpty($out_js);
@@ -135,8 +172,24 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertContains('<link href="', $out_css);
 		$this->assertContains('jquery-ui.min.css', $out_css);
 		$this->assertContains('jquery.fileupload.css', $out_css);
+
+		_class('assets')->clean_all();
+		_class('assets')->ADD_IS_DIRECT_OUT = true;
+
+		$out = asset('blueimp-uploader');
+		// In this mode we out generated JS and CSS one after another together
+		$this->assertContains('<script', $out);
+		$this->assertContains('jquery.min.js', $out);
+		$this->assertContains('jquery-ui', $out);
+		$this->assertContains('jquery.fileupload', $out);
+		$this->assertContains('<link href="', $out);
+		$this->assertContains('jquery-ui.min.css', $out);
+		$this->assertContains('jquery.fileupload.css', $out);
+
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 	}
 	public function test_combine_js() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		_class('assets')->clean_all();
 		asset('blueimp-uploader');
 		$out_file = APP_PATH.'combined/'.__FUNCTION__.'.js';
@@ -150,14 +203,17 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		unlink($out_file);
 	}
 	public function test_filter_cssmin() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$in = 'body {'.PHP_EOL.'    color : white; '.PHP_EOL.'}';
 		$this->assertEquals('body{color:white}', _class('assets')->filter_cssmin($in));
 	}
 	public function test_filter_jsmin() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$in = 'var a = "abc";'.PHP_EOL.PHP_EOL.'// fsfafwe.'.PHP_EOL.PHP_EOL.';;'.PHP_EOL.PHP_EOL.'var bbb = "u";'.PHP_EOL;
         $this->assertEquals('var a="abc";;;var bbb="u";', _class('assets')->filter_jsmin($in));
 	}
 	public function test_filter_jsminplus() {
+		_class('assets')->ADD_IS_DIRECT_OUT = false;
 		$in = 'var a = "abc";'.PHP_EOL.PHP_EOL.'// fsfafwe.'.PHP_EOL.PHP_EOL.';;'.PHP_EOL.PHP_EOL.'var bbb = "u";'.PHP_EOL;
         $this->assertEquals('var a="abc",bbb="u"', _class('assets')->filter_jsminplus($in));
 	}
