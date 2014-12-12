@@ -1,0 +1,12 @@
+<?php
+
+return array(
+	'versions' => array(
+		'master' => array(
+			'js' => '//cdn.rawgit.com/yfix/jquery-dot/src/js/jquery.dotdotdot.js',
+		),
+	),
+	'require' => array(
+		'js' => 'jquery',
+	),
+);
