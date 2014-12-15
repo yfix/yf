@@ -66,10 +66,11 @@ class yf_manage_shop_orders{
 				return common()->get_static_conf('order_status', $field);
 			}, array('nowrap' => 1))
 			->btn_edit('', './?object='.main()->_get('object').'&action=view_order&id=%d',array('no_ajax' => 1))
-				->btn( 'Invoice'           , $link_invoice        , array( 'title' => 'Накладная без учета добавочной скидки'    , 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
-				->btn( 'PDF'               , $link_pdf_invoice    , array( 'title' => 'Накладная PDF без учета добавочной скидки', 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
-				->btn( t( 'Invoice' ) . '+', $link_invoice_add    , array( 'title' => 'Накладная с учетом добавочной скидки'     , 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
-				->btn( t( 'PDF' ) . '+'    , $link_pdf_invoice_add, array( 'title' => 'Накладная PDF с учетом добавочной скидки' , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
+            ->btn( 'Invoice'           , $link_invoice        , array( 'title' => 'Накладная без учета добавочной скидки'    , 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
+            ->btn( 'PDF'               , $link_pdf_invoice    , array( 'title' => 'Накладная PDF без учета добавочной скидки', 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
+            ->btn( t( 'Invoice' ) . '+', $link_invoice_add    , array( 'title' => 'Накладная с учетом добавочной скидки'     , 'icon' => 'fa fa-file-text-o', 'target' => '_blank' ) )
+            ->btn( t( 'PDF' ) . '+'    , $link_pdf_invoice_add, array( 'title' => 'Накладная PDF с учетом добавочной скидки' , 'icon' => 'fa fa-file-o'     , 'target' => '_blank' ) )
+			->btn_clone('Дублировать', './?object='.main()->_get('object').'&action=order_clone&id=%d')
 		;
 	}
 
@@ -737,5 +738,27 @@ class yf_manage_shop_orders{
 		);
 
 	}
+    
+    function order_clone() {
+		$_GET['id'] = intval($_GET['id']);
+		if ($_GET['id']) {
+			$a = db()->get("SELECT * FROM `".db('shop_orders')."` WHERE `id`='".intval($_GET['id'])."'");
+		}
+		if (!$a['id']) {
+			return _e('No such order!');
+		}
+        $items = db()->get_all("SELECT * FROM `".db('shop_order_items')."` WHERE `order_id`='".intval($_GET['id'])."'");
+        unset($a['id']);
+        db()->insert(db('shop_orders'),$a);
+        $new_id = db()->insert_id();
+        
+        foreach ($items as $item) {
+            unset($item['id']);
+            $item['order_id'] = $new_id;
+            db()->insert(db('shop_order_items'),$item);
+        }
+        
+		return js_redirect('./?object='.main()->_get('object').'&action=orders');
+    }
 
 }

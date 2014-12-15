@@ -228,6 +228,10 @@ class yf_manage_shop {
 	function order_revisions_view() {
 		return _class('manage_shop__product_revisions', 'admin_modules/manage_shop/')->{__FUNCTION__}();
 	}
+    
+	function order_clone() {
+		return _class('manage_shop_orders', 'admin_modules/manage_shop/')->{__FUNCTION__}();
+	}
 
 	// revision: category
 	function _add_revision($type, $action = false, $ids = false) {
