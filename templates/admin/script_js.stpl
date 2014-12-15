@@ -1,5 +1,5 @@
 {asset()} chosen {/asset}
-{js()} html5shiv {/js}
+{asset()} html5shiv {/asset}
 {asset()} angular-app {/asset}
 {asset()} yf_js_admin {/asset}
 {asset()} yf_debug_console {/asset}
