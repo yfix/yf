@@ -6,8 +6,7 @@
 </div>
 </script>
 
-<script>
-(function () { 'use strict';
+{jquery()}
 
 ng_app_admin.factory( 'Uploader',
 [ 'ApiConfig', '$q', '$rootScope', '$window', '$log',
@@ -823,5 +822,4 @@ function( $routeProvider, $locationProvider ) {
 }]);
 --}}
 
-})();
-</script>
+{/jquery}

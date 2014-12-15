@@ -64,8 +64,8 @@
 
 <hr>
 
+{css()}
 {{-- upload list --}}
-<style>
 .upload_list.ng-enter, .upload_list.ng-leave {
 	transition : 0.5s linear all;
 }
@@ -89,7 +89,8 @@
 .upload_list_hover .action {
 	cursor  : pointer;
 }
-</style>
+{/css}
+
 <table class="upload_list table table-striped" ng-show="data._upload_list">
 	<tr>
 		<th>
@@ -151,7 +152,7 @@
 	</td></tr>
 </table>
 
-<style>
+{css()}
 .page_item {
 	margin: auto 1em;
 }
@@ -188,7 +189,7 @@ ul.select2-result-single {
 .select2-chosen {
 	font-weight: bold;
 }
-</style>
+{/css}
 
 <div class="item_data_tooltip" ></div>
 

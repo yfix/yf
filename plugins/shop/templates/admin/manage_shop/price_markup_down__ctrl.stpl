@@ -1,4 +1,4 @@
-<script>
+{jquery()}
 
 ng_app_admin.config( function( $typeaheadProvider ) {
 	angular.extend( $typeaheadProvider.defaults, {
@@ -167,4 +167,4 @@ ng_app_admin.controller( '{_ng_controller}', function ( srv_search, $scope, $fil
 
 });
 
-</script>
+{/jquery}
