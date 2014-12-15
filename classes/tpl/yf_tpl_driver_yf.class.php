@@ -107,8 +107,8 @@ class yf_tpl_driver_yf {
 			$string = $this->_process_executes($string, $replace, $name);
 		}
 		$string = $this->_process_replaces($string, $replace, $name);
-		$string = $this->_process_js_css($string, $replace, $name);
 		$string = $this->_replace_std_patterns($string, $name, $replace, $params);
+		$string = $this->_process_js_css($string, $replace, $name);
 		$string = $this->_process_executes_last($string, $replace, $name);
 		return $string;
 	}
