@@ -23,12 +23,12 @@ $css_fixes[3] = '
 
 if ($bs_theme === 'bootstrap') {
 	return array(
-		'add' => array(
-			'css' => $css_fixes[$bs_major_version],
-		),
 		'require' => array(
 			'js' => $require_name,
 			'css' => $require_name,
+		),
+		'add' => array(
+			'css' => $css_fixes[$bs_major_version],
 		),
 	);
 } elseif ($bs_theme === 'flatui') {
@@ -55,12 +55,14 @@ if ($bs_theme === 'bootstrap') {
 				'css' => '//netdna.bootstrapcdn.com/bootswatch/2.3.2/'.$bs_theme.'/bootstrap.min.css',
 			),
 		),
-		'add' => array(
-			'css' => $css_fixes[$bs_major_version],
-		),
 		'require' => array(
 			'js' => 'bootstrap2',
-			'css' => 'font-awesome3',
+		),
+		'add' => array(
+			'css' => array(
+				'font-awesome3',
+				$css_fixes[$bs_major_version],
+			),
 		),
 	);
 } elseif ($bs_major_version == 3) {
@@ -70,12 +72,14 @@ if ($bs_theme === 'bootstrap') {
 				'css' => '//netdna.bootstrapcdn.com/bootswatch/3.3.0/'.$bs_theme.'/bootstrap.min.css',
 			),
 		),
-		'add' => array(
-			'css' => $css_fixes[$bs_major_version],
-		),
 		'require' => array(
 			'js' => 'bootstrap3',
-			'css' => 'font-awesome4',
+		),
+		'add' => array(
+			'css' => array(
+				'font-awesome4',
+				$css_fixes[$bs_major_version],
+			),
 		),
 	);
 }
