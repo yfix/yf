@@ -84,6 +84,9 @@ class yf_tpl {
 	* Framework constructor
 	*/
 	function _init () {
+		// Needed to ensure backtracking still works on big templates (extended from 1 000 000 on 26kb stpl js() parsing)
+		ini_set('pcre.backtrack_limit', '10000000');
+
 		if (defined('IS_FRONT')) {
 			conf('IS_FRONT', (bool)IS_FRONT);
 		}
