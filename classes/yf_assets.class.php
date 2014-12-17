@@ -355,6 +355,12 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		if (empty($content)) {
 			return $DIRECT_OUT ? $this->show($asset_type) : $this;
 		}
+		if (is_array($content) && isset($content['content'])) {
+			if (is_array($content['params'])) {
+				$params += $content['params'];
+			}
+			$content = $content['content'];
+		}
 		if (!is_array($content)) {
 			$content = array($content);
 		}
@@ -369,60 +375,23 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			if (!is_string($_content) && is_callable($_content)) {
 				$_content = $_content();
 			}
+			$_params = $params;
+			if (is_array($_content) && isset($_content['content'])) {
+				if (is_array($_content['params'])) {
+					$_params += $_content['params'];
+				}
+				$_content = $_content['content'];
+			}
+			if (is_array($_content)) {
+				$this->add($_content, $asset_type, $content_type_hint, $_params);
+				continue;
+			}
 			$_content = trim($_content);
 			if (!$_content) {
 				continue;
 			}
-			$_params = $params;
 			if ($asset_type === 'bundle') {
-				$bundle_details = $this->get_asset_details($_content);
-				if (!is_string($bundle_details) && is_callable($bundle_details)) {
-					$bundle_details = $bundle_details();
-				}
-				if ($bundle_details) {
-					if (isset($bundle_details['config'])) {
-						$_params['config'] = $bundle_details['config'];
-					}
-					$sub_params = (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array());
-					foreach ($this->supported_asset_types as $atype) {
-						$_require = $bundle_details['require'][$atype];
-						if ($_require) {
-							$info = $_require;
-							if (!is_array($info)) {
-								$info = array($info);
-							}
-							foreach ($info as $_info) {
-								if ($_info) {
-									$this->add($_info, $atype, 'auto', $sub_params);
-								}
-							}
-						}
-						$info = $this->get_asset($_content, $atype);
-						if (!is_array($info)) {
-							$info = array($info);
-						}
-						foreach ($info as $_info) {
-							if ($_info) {
-								$this->add($_info, $atype, 'auto', $sub_params);
-							}
-						}
-						$_add = $bundle_details['add'][$atype];
-						if ($_add) {
-							$info = $_add;
-							if (!is_array($info)) {
-								$info = array($info);
-							}
-							foreach ($info as $_info) {
-								if ($_info) {
-									$this->add($_info, $atype, 'auto', $sub_params);
-								}
-							}
-						}
-					}
-				}
-				continue;
-			}
-			if (!strlen($_content)) {
+				$this->_add_bundle($_content, $_params);
 				continue;
 			}
 			$content_type = '';
@@ -434,51 +403,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			$md5 = md5($_content);
 			$asset_data = array();
 			if ($content_type === 'asset') {
-				$asset_data = $this->get_asset_details($_content);
-				if ($asset_data) {
-					if (!is_string($asset_data) && is_callable($asset_data)) {
-						$asset_data = $asset_data();
-					}
-				}
-				if ($asset_data) {
-					if (isset($asset_data['config'])) {
-						$_params['config'] = $asset_data['config'];
-					}
-					$sub_params = (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array());
-					$_require = $asset_data['require'][$asset_type];
-					if ($_require) {
-						$info = $_require;
-						if (!is_array($info)) {
-							$info = array($info);
-						}
-						foreach ($info as $_info) {
-							if ($_info) {
-								$this->add($_info, $asset_type, 'auto', $sub_params);
-							}
-						}
-					}
-					$info = $this->get_asset($_content, $asset_type);
-					if (!is_array($info)) {
-						$info = array($info);
-					}
-					foreach ($info as $_info) {
-						if ($_info) {
-							$this->add($_info, $asset_type, 'auto', $sub_params);
-						}
-					}
-					$_add = $asset_data['add'][$asset_type];
-					if ($_add) {
-						$info = $_add;
-						if (!is_array($info)) {
-							$info = array($info);
-						}
-						foreach ($info as $_info) {
-							if ($_info) {
-								$this->add($_info, $asset_type, 'auto', $sub_params);
-							}
-						}
-					}
-				}
+				$this->_add_asset($_content, $asset_type, $_params);
 			} elseif ($content_type === 'url') {
 				$this->set_content($asset_type, $md5, 'url', $_content, $_params);
 			} elseif ($content_type === 'file') {
@@ -505,6 +430,97 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			}
 		}
 		return $DIRECT_OUT ? $this->show_css().$this->show_js() : $this;
+	}
+
+	/**
+	*/
+	public function _add_bundle($_content, $params = array()) {
+		if (!$_content) {
+			return false;
+		}
+		$bundle_details = $this->get_asset_details($_content);
+		if (!$bundle_details) {
+			return false;
+		}
+		if (!is_string($bundle_details) && is_callable($bundle_details)) {
+			$bundle_details = $bundle_details();
+		}
+		if (!$bundle_details) {
+			return false;
+		}
+		if (isset($bundle_details['config'])) {
+			$_params['config'] = $bundle_details['config'];
+		}
+		$DIRECT_OUT = isset($params['direct_out']) ? $params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
+		$sub_params = (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array());
+		foreach ($this->supported_asset_types as $atype) {
+			$this->_sub_add($bundle_details['require'][$atype], $atype, $sub_params);
+			$this->_sub_add($this->get_asset($_content, $atype), $atype, $sub_params);
+			$this->_sub_add($bundle_details['add'][$atype], $atype, $sub_params);
+		}
+	}
+
+	/**
+	*/
+	public function _add_asset($_content, $asset_type, $params = array()) {
+		if (!$_content) {
+			return false;
+		}
+		$asset_data = $this->get_asset_details($_content);
+		if (!$asset_data) {
+			return false;
+		}
+		if (!is_string($asset_data) && is_callable($asset_data)) {
+			$asset_data = $asset_data();
+		}
+		if (!$asset_data) {
+			return false;
+		}
+		if (isset($asset_data['config'])) {
+			$_params['config'] = $asset_data['config'];
+		}
+		$DIRECT_OUT = isset($params['direct_out']) ? $params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
+		$sub_params = (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array());
+		$this->_sub_add($asset_data['require'][$asset_type], $asset_type, $sub_params);
+		$this->_sub_add($this->get_asset($_content, $asset_type), $asset_type, $sub_params);
+		$this->_sub_add($asset_data['add'][$asset_type], $asset_type, $sub_params);
+	}
+
+	/**
+	*/
+	public function _sub_add($info, $asset_type, $sub_params = array()) {
+		if (!$info) {
+			return false;
+		}
+		if (!is_string($info) && is_callable($info)) {
+			$info = $info();
+		}
+		if (!$info) {
+			return false;
+		}
+		if (!is_array($info)) {
+			$info = array($info);
+		}
+		if (is_array($info) && isset($info['content'])) {
+			if (is_array($info['params'])) {
+				$sub_params += $info['params'];
+			}
+			$info = $info['content'];
+			if (!$info) {
+				return false;
+			}
+			if (!is_array($info)) {
+				$info = array($info);
+			}
+		}
+		if (!$info) {
+			return false;
+		}
+		foreach ((array)$info as $_info) {
+			if ($_info) {
+				$this->add($_info, $asset_type, 'auto', $sub_params);
+			}
+		}
 	}
 
 	/**
@@ -642,6 +658,9 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			}
 			$before = $_params['config']['before'];
 			$after = $_params['config']['after'];
+			if ($_params['config']['class']) {
+				$_params['class'] = $_params['config']['class'];
+			}
 			if (DEBUG_MODE) {
 				$debug = array();
 				foreach ((array)debug('assets_add') as $d) {
