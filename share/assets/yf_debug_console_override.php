@@ -12,10 +12,8 @@ return DEBUG_MODE ? function() {
     	];
 	';
 	return array(
-		'versions' => array(
-			'master' => array(
-#				'js' => $js,
-			),
-		),
+		'versions' => array('master' => array(
+#			'js' => $js,
+		)),
 	);
 } : null;
