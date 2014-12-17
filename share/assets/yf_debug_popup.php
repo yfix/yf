@@ -16,13 +16,17 @@ return array(
 			debug_console_head.push( _html )
 		})
 		// Add debug console specific .yf_core items, not all, as in other case
-//		$('script, link, style', '#debug_console').not('.yf_debug_console_asset').each(function(){
-//			debug_console_head.push( $(this).clone(true)[0].outerHTML )
-//		})
+		$('script[type=text/javascript], link[rel=stylesheet], style', '#debug_console').not('.yf_debug_console_asset').each(function(){
+			debug_console_head.push( $(this).clone(true)[0].outerHTML )
+		})
 	} else {
-//		$('script, link, style').not('.yf_debug_console_asset').each(function(){
-//			debug_console_head.push( $(this).clone(true)[0].outerHTML )
-//		})
+//		$('script[type="text/javascript"], link[rel=stylesheet], style', 'head').not('.yf_debug_console_asset').each(function(){
+		$('link[rel=stylesheet], style', 'head').not('.yf_debug_console_asset').each(function(){
+			debug_console_head.push( $(this).clone(true)[0].outerHTML )
+		})
+		$('script[type="text/javascript"]', 'body').not('.yf_debug_console_asset').each(function(){
+			debug_console_head.push( $(this).clone(true)[0].outerHTML )
+		})
 	}
 	if (debug_console_use_iframe) {
 // TODO: need to do popup div display of tab contents in this mode
@@ -51,6 +55,7 @@ return array(
 		})
 		frame_doc.writeln( $("#debug_console").clone(true)[0].outerHTML );
 		frame_doc.close();
+		$("#debug_console", frame_doc).show()
 		$("#debug_console").hide().remove()
 	} else {
 		console.error('Debug console popup: cannot access frame document');
