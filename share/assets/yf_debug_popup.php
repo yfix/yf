@@ -3,25 +3,26 @@
 return array(
 	'versions' => array('master' => array(
 		'css' => '#debug_console { display: none; }',
-		'jquery' => 
+		'jquery' => array(
+			'params' => array('class' => 'yf_debug_console_asset'),
+			'content' => 
 <<<END
 	var debug_window_name = "yf_debug_frame"
 	var debug_console_use_iframe = false;
 	var debug_console_head = [ ];
 	// Allow to override JS, CSS as array of html elements strings
-// TODO: replace .yf_core with more generic method, maybe just include all scripts
 	if (typeof debug_console_override_head == "object") {
 		$.each(debug_console_override_head, function(i, _html){
 			debug_console_head.push( _html )
 		})
 		// Add debug console specific .yf_core items, not all, as in other case
-		$('.yf_core', '#debug_console').each(function(){
-			debug_console_head.push( $(this).clone(true)[0].outerHTML )
-		})
+//		$('script, link, style', '#debug_console').not('.yf_debug_console_asset').each(function(){
+//			debug_console_head.push( $(this).clone(true)[0].outerHTML )
+//		})
 	} else {
-		$('.yf_core').each(function(){
-			debug_console_head.push( $(this).clone(true)[0].outerHTML )
-		})
+//		$('script, link, style').not('.yf_debug_console_asset').each(function(){
+//			debug_console_head.push( $(this).clone(true)[0].outerHTML )
+//		})
 	}
 	if (debug_console_use_iframe) {
 // TODO: need to do popup div display of tab contents in this mode
@@ -55,5 +56,5 @@ return array(
 		console.error('Debug console popup: cannot access frame document');
 	}
 END
-	)),
+	))),
 );
