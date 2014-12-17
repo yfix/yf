@@ -2,15 +2,9 @@
 
 return DEBUG_MODE ? function() {
 
+$debug_override = conf('DEBUG_CONSOLE_OVERRIDE');
 $debug_use_popup = conf('DEBUG_CONSOLE_POPUP');
 return array(
-	'require' => array(
-		'js' => 'jquery-cookie',
-	),
-	'add' => array(
-		'js'	=> $debug_use_popup ? 'yf_debug_popup' : '',
-		'css'	=> $debug_use_popup ? 'yf_debug_popup' : '',
-	),
 	'versions' => array(
 		'master' => array(
 			'css' => '
@@ -42,6 +36,19 @@ return array(
 		})
 	} catch (e) { console.log(e); }
 END
+		),
+	),
+	'require' => array(
+		'js' => 'jquery-cookie',
+	),
+	'add' => array(
+		'js'	=> array(
+#			$debug_override ? 'yf_debug_console_override' : '',
+#			$debug_use_popup ? 'yf_debug_popup' : '',
+		),
+		'css'	=> array(
+#			$debug_override ? 'yf_debug_console_override' : '',
+#			$debug_use_popup ? 'yf_debug_popup' : '',
 		),
 	),
 );
