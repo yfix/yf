@@ -10,7 +10,7 @@ class yf_assets {
 	protected $filters = array();
 	/***/
 	protected $supported_asset_types = array(
-		'js', 'jquery', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle',
+		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle',
 	);
 	/***/
 	protected $supported_content_types = array(
@@ -232,7 +232,7 @@ class yf_assets {
 	* Helper for jquery on document ready
 	*/
 	function jquery($content, $params = array()) {
-		return $this->helper_js_library(__FUNCTION__, '$(function(){'.PHP_EOL. $content. PHP_EOL.'})', $params);
+		return $this->helper_js_library(__FUNCTION__, $content, $params + array('wrap' => '$(function(){'.PHP_EOL.'%s'.PHP_EOL.'})' ));
 	}
 
 	/**
@@ -312,13 +312,14 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			return null;
 		}
 		if ($version) {
-			return $asset_data['versions'][$version][$asset_type];
+			$version_info = $asset_data['versions'][$version];
 		} else {
 			$version_arr = array_slice($asset_data['versions'], -1, 1, true);
 			$version_number = key($version_arr);
 			$version_info = current($version_arr);
-			return $version_info[$asset_type];
 		}
+		$content = $version_info[$asset_type];
+		return $content;
 	}
 
 	/**
@@ -332,8 +333,8 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		if (DEBUG_MODE) {
 			$trace = main()->trace_string();
 		}
-		if ($asset_type === 'jquery') {
-			return $this->jquery($content, $params);
+		if (!is_string($content) && is_callable($content)) {
+			$content = $content($params);
 		}
 		if ($asset_type === 'js' && !$this->_init_js_done) {
 			$this->init_js();
@@ -351,15 +352,18 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			throw new Exception('Assets add(): unsupported asset type: '.$asset_type);
 			return $this;
 		}
-		$DIRECT_OUT = isset($params['direct_out']) ? $params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
-		if (empty($content)) {
-			return $DIRECT_OUT ? $this->show($asset_type) : $this;
-		}
 		if (is_array($content) && isset($content['content'])) {
 			if (is_array($content['params'])) {
 				$params += $content['params'];
 			}
 			$content = $content['content'];
+		}
+		if ($asset_type === 'jquery') {
+			return $this->jquery($content, $params);
+		}
+		$DIRECT_OUT = isset($params['direct_out']) ? $params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
+		if (empty($content)) {
+			return $DIRECT_OUT ? $this->show($asset_type) : $this;
 		}
 		if (!is_array($content)) {
 			$content = array($content);
@@ -372,10 +376,10 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			$content_type_hint = $params['type'];
 		}
 		foreach ((array)$content as $_content) {
-			if (!is_string($_content) && is_callable($_content)) {
-				$_content = $_content();
-			}
 			$_params = $params;
+			if (!is_string($_content) && is_callable($_content)) {
+				$_content = $_content($_params);
+			}
 			if (is_array($_content) && isset($_content['content'])) {
 				if (is_array($_content['params'])) {
 					$_params += $_content['params'];
@@ -390,6 +394,10 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			if (!$_content) {
 				continue;
 			}
+			$md5 = md5($_content);
+			if ($this->_is_content_added($asset_type, $md5)) {
+				continue;
+			}
 			if ($asset_type === 'bundle') {
 				$this->_add_bundle($_content, $_params);
 				continue;
@@ -400,7 +408,6 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			} else {
 				$content_type = $this->detect_content_type($asset_type, $_content);
 			}
-			$md5 = md5($_content);
 			$asset_data = array();
 			if ($content_type === 'asset') {
 				$this->_add_asset($_content, $asset_type, $_params);
@@ -434,7 +441,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 
 	/**
 	*/
-	public function _add_bundle($_content, $params = array()) {
+	public function _add_bundle($_content, $_params = array()) {
 		if (!$_content) {
 			return false;
 		}
@@ -443,26 +450,45 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			return false;
 		}
 		if (!is_string($bundle_details) && is_callable($bundle_details)) {
-			$bundle_details = $bundle_details();
+			$bundle_details = $bundle_details($_params);
 		}
 		if (!$bundle_details) {
 			return false;
 		}
-		if (isset($bundle_details['config'])) {
-			$_params['config'] = $bundle_details['config'];
+		if (isset($bundle_details['config']) && is_array($bundle_details['config'])) {
+			$_params['config'] = (array)$_params['config'] + (array)$bundle_details['config'];
 		}
-		$DIRECT_OUT = isset($params['direct_out']) ? $params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
-		$sub_params = (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array());
-		foreach ($this->supported_asset_types as $atype) {
-			$this->_sub_add($bundle_details['require'][$atype], $atype, $sub_params);
-			$this->_sub_add($this->get_asset($_content, $atype), $atype, $sub_params);
-			$this->_sub_add($bundle_details['add'][$atype], $atype, $sub_params);
+		$DIRECT_OUT = isset($_params['direct_out']) ? $_params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
+		$_params += ($DIRECT_OUT ? array('direct_out' => false) : array());
+		foreach ((array)$this->supported_asset_types as $atype) {
+			if ($atype === 'jquery') {
+				continue;
+			}
+			$inherit_type = $atype === 'js' ? 'jquery' : null;
+
+			if ($require_data = $bundle_details['require'][$atype]) {
+				$this->_sub_add($require_data, $atype, $_params);
+			} elseif ($inherit_type && $require_data = $bundle_details['require'][$inherit_type]) {
+				$this->_sub_add($require_data, $inherit_type, $_params);
+			}
+
+			if ($data = $this->get_asset($_content, $atype)) {
+				$this->_sub_add($data, $atype, $_params);
+			} elseif ($inherit_type && $data = $this->get_asset($_content, $inherit_type)) {
+				$this->_sub_add($data, $inherit_type, $_params);
+			}
+
+			if ($add_data = $bundle_details['add'][$atype]) {
+				$this->_sub_add($add_data, $atype, $_params);
+			} elseif ($inherit_type && $add_data = $bundle_details['add'][$inherit_type]) {
+				$this->_sub_add($add_data, $inherit_type, $_params);
+			}
 		}
 	}
 
 	/**
 	*/
-	public function _add_asset($_content, $asset_type, $params = array()) {
+	public function _add_asset($_content, $asset_type, $_params = array()) {
 		if (!$_content) {
 			return false;
 		}
@@ -471,29 +497,47 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			return false;
 		}
 		if (!is_string($asset_data) && is_callable($asset_data)) {
-			$asset_data = $asset_data();
+			$asset_data = $asset_data($_params);
 		}
 		if (!$asset_data) {
 			return false;
 		}
-		if (isset($asset_data['config'])) {
-			$_params['config'] = $asset_data['config'];
+		if (isset($asset_data['config']) && is_array($asset_data['config'])) {
+			$_params['config'] = (array)$_params['config'] + (array)$asset_data['config'];
 		}
-		$DIRECT_OUT = isset($params['direct_out']) ? $params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
-		$sub_params = (array)$_params + ($DIRECT_OUT ? array('direct_out' => false) : array());
-		$this->_sub_add($asset_data['require'][$asset_type], $asset_type, $sub_params);
-		$this->_sub_add($this->get_asset($_content, $asset_type), $asset_type, $sub_params);
-		$this->_sub_add($asset_data['add'][$asset_type], $asset_type, $sub_params);
+		$DIRECT_OUT = isset($_params['direct_out']) ? $_params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
+		$_params += ($DIRECT_OUT ? array('direct_out' => false) : array());
+
+		$atype = $asset_type;
+		$inherit_type = $atype === 'js' ? 'jquery' : null;
+
+		if ($require_data = $asset_data['require'][$atype]) {
+			$this->_sub_add($require_data, $atype, $_params);
+		} elseif ($inherit_type && $require_data = $asset_data['require'][$inherit_type]) {
+			$this->_sub_add($require_data, $inherit_type, $_params);
+		}
+
+		if ($data = $this->get_asset($_content, $atype)) {
+			$this->_sub_add($data, $atype, $_params);
+		} elseif ($inherit_type && $data = $this->get_asset($_content, $inherit_type)) {
+			$this->_sub_add($data, $inherit_type, $_params);
+		}
+
+		if ($add_data = $asset_data['add'][$atype]) {
+			$this->_sub_add($add_data, $atype, $_params);
+		} elseif ($inherit_type && $data = $asset_data['add'][$inherit_type]) {
+			$this->_sub_add($add_data, $inherit_type, $_params);
+		}
 	}
 
 	/**
 	*/
-	public function _sub_add($info, $asset_type, $sub_params = array()) {
+	public function _sub_add($info, $asset_type, $_params = array()) {
 		if (!$info) {
 			return false;
 		}
 		if (!is_string($info) && is_callable($info)) {
-			$info = $info();
+			$info = $info($_params);
 		}
 		if (!$info) {
 			return false;
@@ -503,7 +547,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		}
 		if (is_array($info) && isset($info['content'])) {
 			if (is_array($info['params'])) {
-				$sub_params += $info['params'];
+				$_params += $info['params'];
 			}
 			$info = $info['content'];
 			if (!$info) {
@@ -518,7 +562,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		}
 		foreach ((array)$info as $_info) {
 			if ($_info) {
-				$this->add($_info, $asset_type, 'auto', $sub_params);
+				$this->add($_info, $asset_type, 'auto', $_params);
 			}
 		}
 	}
@@ -560,9 +604,21 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	}
 
 	/**
+	*/
+	public function _is_content_added($asset_type, $md5) {
+		return isset($this->content[$asset_type][$md5]);
+	}
+
+	/**
 	* Set unique content entry for given asset type
 	*/
 	public function set_content($asset_type, $md5, $content_type, $content, $params = array()) {
+		if (isset($this->content[$asset_type][$md5])) {
+			return $this->content[$asset_type][$md5];
+		}
+		if (isset($params['wrap']) && false !== strpos($params['wrap'], '%s')) {
+			$content = str_replace('%s', $content, $params['wrap']);
+		}
 		return $this->content[$asset_type][$md5] = array(
 			'content_type'	=> $content_type,
 			'content'		=> $content,
@@ -993,7 +1049,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			if (!$filter) {
 				continue;
 			}
-			if (is_callable($filter)) {
+			if (!is_string($filter) && is_callable($filter)) {
 				$out = $filter($out, $params);
 			} elseif (is_string($filter) && isset($avail_filters[$filter])) {
 				$out = _class('assets_filter_'.$filter, 'classes/assets/')->apply($out, $params);
