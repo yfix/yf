@@ -16,7 +16,7 @@ return array(
 			debug_console_head.push( _html )
 		})
 		// Add debug console specific .yf_core items, not all, as in other case
-		$('script[type=text/javascript], link[rel=stylesheet], style', '#debug_console').not('.yf_debug_console_asset').each(function(){
+		$('script[type="text/javascript"], link[rel=stylesheet], style', '#debug_console').not('.yf_debug_console_asset').each(function(){
 			debug_console_head.push( $(this).clone(true)[0].outerHTML )
 		})
 	} else {
