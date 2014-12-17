@@ -15,6 +15,7 @@ return array(
 			'angular-select',
 		),
 		'css' => array(
+			'angular-strap',
 			'angular-select2',
 			'angular-select',
 		),
