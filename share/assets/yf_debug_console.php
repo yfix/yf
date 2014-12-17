@@ -50,11 +50,7 @@ return array(
 		'js' => 'jquery-cookie',
 	),
 	'add' => array(
-		'js'	=> array(
-			$debug_override ? 'yf_debug_console_override' : '',
-			$debug_use_popup ? 'yf_debug_popup' : '',
-		),
-		'css'	=> array(
+		'asset'	=> array(
 			$debug_override ? 'yf_debug_console_override' : '',
 			$debug_use_popup ? 'yf_debug_popup' : '',
 		),

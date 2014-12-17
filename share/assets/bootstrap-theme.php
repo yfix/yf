@@ -24,8 +24,7 @@ $css_fixes[3] = '
 if ($bs_theme === 'bootstrap') {
 	return array(
 		'require' => array(
-			'js' => $require_name,
-			'css' => $require_name,
+			'asset' => $require_name,
 		),
 		'add' => array(
 			'css' => $css_fixes[$bs_major_version],

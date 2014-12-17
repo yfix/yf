@@ -2,7 +2,7 @@
 
 return array(
 	'require' => array(
-		'js' => array(
+		'asset' => array(
 			'angularjs',
 			'angular-locale',
 			'angular-route',
@@ -14,24 +14,5 @@ return array(
 			'angular-select2',
 			'angular-select',
 		),
-		'css' => array(
-			'angular-strap',
-			'angular-select2',
-			'angular-select',
-		),
-/*
-		'assets' => array(
-			'angularjs',
-			'angular-locale',
-			'angular-route',
-			'angular-animate',
-			'angular-sanitize',
-			'angular-resource',
-			'angular-touch',
-			'angular-strap',
-			'angular-select2',
-			'angular-select',
-		),
-*/
 	),
 );

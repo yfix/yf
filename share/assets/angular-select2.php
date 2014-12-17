@@ -8,11 +8,8 @@ return array(
 		),
 	),
 	'require' => array(
-		'js' => array(
+		'asset' => array(
 			'angularjs',
-			'select2',
-		),
-		'css' => array(
 			'select2',
 		),
 	),
