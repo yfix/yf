@@ -10,7 +10,7 @@ class yf_assets {
 	protected $filters = array();
 	/***/
 	protected $supported_asset_types = array(
-		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle',
+		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle', 'asset'
 	);
 	/***/
 	protected $supported_content_types = array(
@@ -326,7 +326,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	* Add asset item into current workflow
 	*
 	* $content: string/array
-	* $asset_type: = bundle|js|jquery|css|img|less|sass|font
+	* $asset_type: = bundle|asset|js|jquery|css|img|less|sass|font
 	* $content_type_hint: = auto|asset|url|file|inline
 	*/
 	public function add($content, $asset_type = 'bundle', $content_type_hint = 'auto', $params = array()) {
@@ -345,7 +345,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			$params = (array)$params + $content_type_hint;
 			$content_type_hint = $params['type'];
 		}
-		if (!$asset_type) {
+		if (!$asset_type || $asset_type === 'asset') {
 			$asset_type = 'bundle';
 		}
 		if (!in_array($asset_type, $this->supported_asset_types)) {
@@ -461,15 +461,18 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		$DIRECT_OUT = isset($_params['direct_out']) ? $_params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
 		$_params += ($DIRECT_OUT ? array('direct_out' => false) : array());
 		foreach ((array)$this->supported_asset_types as $atype) {
-			if ($atype === 'jquery') {
+			if ($atype === 'jquery' || $atype === 'asset') {
 				continue;
 			}
 			$inherit_type = $atype === 'js' ? 'jquery' : null;
+			$inherit_type2 = 'asset';
 
 			if ($require_data = $bundle_details['require'][$atype]) {
 				$this->_sub_add($require_data, $atype, $_params);
 			} elseif ($inherit_type && $require_data = $bundle_details['require'][$inherit_type]) {
 				$this->_sub_add($require_data, $inherit_type, $_params);
+			} elseif ($inherit_type2 && $require_data = $bundle_details['require'][$inherit_type2]) {
+				$this->_sub_add($require_data, $inherit_type2, $_params);
 			}
 
 			if ($data = $this->get_asset($_content, $atype)) {
@@ -482,6 +485,8 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 				$this->_sub_add($add_data, $atype, $_params);
 			} elseif ($inherit_type && $add_data = $bundle_details['add'][$inherit_type]) {
 				$this->_sub_add($add_data, $inherit_type, $_params);
+			} elseif ($inherit_type2 && $add_data = $bundle_details['add'][$inherit_type2]) {
+				$this->_sub_add($add_data, $inherit_type2, $_params);
 			}
 		}
 	}
@@ -510,11 +515,14 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 
 		$atype = $asset_type;
 		$inherit_type = $atype === 'js' ? 'jquery' : null;
+		$inherit_type2 = 'asset';
 
 		if ($require_data = $asset_data['require'][$atype]) {
 			$this->_sub_add($require_data, $atype, $_params);
 		} elseif ($inherit_type && $require_data = $asset_data['require'][$inherit_type]) {
 			$this->_sub_add($require_data, $inherit_type, $_params);
+		} elseif ($inherit_type2 && $require_data = $asset_data['require'][$inherit_type2]) {
+			$this->_sub_add($require_data, $inherit_type2, $_params);
 		}
 
 		if ($data = $this->get_asset($_content, $atype)) {
@@ -527,6 +535,8 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			$this->_sub_add($add_data, $atype, $_params);
 		} elseif ($inherit_type && $data = $asset_data['add'][$inherit_type]) {
 			$this->_sub_add($add_data, $inherit_type, $_params);
+		} elseif ($inherit_type2 && $data = $asset_data['add'][$inherit_type2]) {
+			$this->_sub_add($add_data, $inherit_type2, $_params);
 		}
 	}
 
