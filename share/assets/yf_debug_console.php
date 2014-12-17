@@ -52,11 +52,11 @@ return array(
 	'add' => array(
 		'js'	=> array(
 			$debug_override ? 'yf_debug_console_override' : '',
-#			$debug_use_popup ? 'yf_debug_popup' : '',
+			$debug_use_popup ? 'yf_debug_popup' : '',
 		),
 		'css'	=> array(
 			$debug_override ? 'yf_debug_console_override' : '',
-#			$debug_use_popup ? 'yf_debug_popup' : '',
+			$debug_use_popup ? 'yf_debug_popup' : '',
 		),
 	),
 );
