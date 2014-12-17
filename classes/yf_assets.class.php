@@ -335,9 +335,9 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		if ($asset_type === 'jquery') {
 			return $this->jquery($content, $params);
 		}
-		if ($asset_type === 'js') {
+		if ($asset_type === 'js' && !$this->_init_js_done) {
 			$this->init_js();
-		} elseif ($asset_type === 'css') {
+		} elseif ($asset_type === 'css' && !$this->_init_css_done) {
 			$this->init_css();
 		}
 		if (is_array($content_type_hint)) {
@@ -371,7 +371,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			$params = (array)$params + $content_type_hint;
 			$content_type_hint = $params['type'];
 		}
-		foreach ($content as $_content) {
+		foreach ((array)$content as $_content) {
 			if (!is_string($_content) && is_callable($_content)) {
 				$_content = $_content();
 			}
