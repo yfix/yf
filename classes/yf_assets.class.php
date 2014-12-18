@@ -681,6 +681,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		$last = array();
 		$names_to_md5 = array();
 		$out_before = array();
+		$out_after = array();
 		foreach ((array)$all_content as $md5 => $v) {
 			if ($v['name']) {
 				$names_to_md5[$v['name']] = $md5;
@@ -689,6 +690,8 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		foreach ((array)$all_content as $md5 => $v) {
 			if ($v['params']['out_before']) {
 				$out_before[$md5] = $names_to_md5[$v['params']['out_before']];
+			} elseif ($v['params']['out_after']) {
+				$out_after[$md5] = $names_to_md5[$v['params']['out_after']];
 			}
 			$content_type = $v['content_type'];
 			if ($is_ajax && $content_type !== 'inline') {
@@ -705,18 +708,36 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		$data = $top + $bottom + $last;
 		if ($out_before) {
 			foreach ((array)$out_before as $self_md5 => $before_md5) {
-				$before_pos = 0;
+				$pos = 0;
 				$self_data = array($self_md5 => $data[$self_md5]);
 				unset($data[$self_md5]);
 				foreach ($data as $_md5 => $v) {
 					if ($_md5 === $before_md5) {
 						break;
 					}
-					$before_pos++;
+					$pos++;
 				}
-				if ($before_pos && $self_data) {
-					$data_before = array_slice($data, 0, $before_pos, $preserve_keys = true);
-					$data_after = array_slice($data, $before_pos, null, $preserve_keys = true);
+				if ($pos && $self_data) {
+					$data_before = array_slice($data, 0, $pos, $preserve_keys = true);
+					$data_after = array_slice($data, $pos, null, $preserve_keys = true);
+					$data = $data_before + $self_data + $data_after;
+				}
+			}
+		}
+		if ($out_after) {
+			foreach ((array)$out_after as $self_md5 => $after_md5) {
+				$pos = 0;
+				$self_data = array($self_md5 => $data[$self_md5]);
+				unset($data[$self_md5]);
+				foreach ($data as $_md5 => $v) {
+					if ($_md5 === $after_md5) {
+						break;
+					}
+					$pos++;
+				}
+				if ($pos && $self_data) {
+					$data_before = array_slice($data, 0, $pos + 1, $preserve_keys = true);
+					$data_after = array_slice($data, $pos + 1, null, $preserve_keys = true);
 					$data = $data_before + $self_data + $data_after;
 				}
 			}
