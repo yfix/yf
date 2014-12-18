@@ -460,6 +460,9 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		}
 		$DIRECT_OUT = isset($_params['direct_out']) ? $_params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
 		$_params += ($DIRECT_OUT ? array('direct_out' => false) : array());
+		if (is_string($_content)) {
+			$_params['name'] = $_content;
+		}
 		foreach ((array)$this->supported_asset_types as $atype) {
 			if ($atype === 'jquery' || $atype === 'asset') {
 				continue;
@@ -512,6 +515,9 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		}
 		$DIRECT_OUT = isset($_params['direct_out']) ? $_params['direct_out'] : $this->ADD_IS_DIRECT_OUT;
 		$_params += ($DIRECT_OUT ? array('direct_out' => false) : array());
+		if (is_string($_content)) {
+			$_params['name'] = $_content;
+		}
 
 		$atype = $asset_type;
 		$inherit_type = $atype === 'js' ? 'jquery' : null;
@@ -629,9 +635,14 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		if (isset($params['wrap']) && false !== strpos($params['wrap'], '%s')) {
 			$content = str_replace('%s', $content, $params['wrap']);
 		}
+		if (isset($params['name'])) {
+			$name = $params['name'];
+			unset($params['name']);
+		}
 		return $this->content[$asset_type][$md5] = array(
 			'content_type'	=> $content_type,
 			'content'		=> $content,
+			'name'			=> $name,
 			'params'		=> $params,
 		);
 	}
@@ -662,13 +673,30 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	/**
 	*/
 	public function _get_all_content_for_out($out_type, $params = array()) {
+		$is_ajax = main()->is_ajax();
 		// Move down inlined content
 		$all_content = $this->get_content($out_type);
 		$top = array();
 		$bottom = array();
 		$last = array();
+		$names_to_md5 = array();
+		$out_before = array();
+		$out_after = array();
 		foreach ((array)$all_content as $md5 => $v) {
+			if ($v['name']) {
+				$names_to_md5[$v['name']] = $md5;
+			}
+		}
+		foreach ((array)$all_content as $md5 => $v) {
+			if ($v['params']['out_before']) {
+				$out_before[$md5] = $names_to_md5[$v['params']['out_before']];
+			} elseif ($v['params']['out_after']) {
+				$out_after[$md5] = $names_to_md5[$v['params']['out_after']];
+			}
 			$content_type = $v['content_type'];
+			if ($is_ajax && $content_type !== 'inline') {
+				continue;
+			}
 			if ($v['params']['is_last']) {
 				$last[$md5] = $v;
 			} elseif (in_array($content_type, array('inline'))) {
@@ -677,7 +705,44 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 				$top[$md5] = $v;
 			}
 		}
-		return $top + $bottom + $last;
+		$data = $top + $bottom + $last;
+		if ($out_before) {
+			foreach ((array)$out_before as $self_md5 => $before_md5) {
+				$pos = 0;
+				$self_data = array($self_md5 => $data[$self_md5]);
+				unset($data[$self_md5]);
+				foreach ($data as $_md5 => $v) {
+					if ($_md5 === $before_md5) {
+						break;
+					}
+					$pos++;
+				}
+				if ($pos && $self_data) {
+					$data_before = array_slice($data, 0, $pos, $preserve_keys = true);
+					$data_after = array_slice($data, $pos, null, $preserve_keys = true);
+					$data = $data_before + $self_data + $data_after;
+				}
+			}
+		}
+		if ($out_after) {
+			foreach ((array)$out_after as $self_md5 => $after_md5) {
+				$pos = 0;
+				$self_data = array($self_md5 => $data[$self_md5]);
+				unset($data[$self_md5]);
+				foreach ($data as $_md5 => $v) {
+					if ($_md5 === $after_md5) {
+						break;
+					}
+					$pos++;
+				}
+				if ($pos && $self_data) {
+					$data_before = array_slice($data, 0, $pos + 1, $preserve_keys = true);
+					$data_after = array_slice($data, $pos + 1, null, $preserve_keys = true);
+					$data = $data_before + $self_data + $data_after;
+				}
+			}
+		}
+		return $data;
 	}
 
 	/**
@@ -717,6 +782,9 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		// Process previously added content, depending on its type
 		$out = array();
 		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
+			if (!is_array($v)) {
+				continue;
+			}
 			$content_type = $v['content_type'];
 			$str = $v['content'];
 			$_params = (array)$v['params'] + (array)$params;
