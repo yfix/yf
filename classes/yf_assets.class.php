@@ -666,15 +666,18 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		$all_content = $this->get_content($out_type);
 		$top = array();
 		$bottom = array();
+		$last = array();
 		foreach ((array)$all_content as $md5 => $v) {
 			$content_type = $v['content_type'];
-			if (in_array($content_type, array('inline'))) {
-				$top[$md5] = $v;
-			} else {
+			if ($v['params']['is_last']) {
+				$last[$md5] = $v;
+			} elseif (in_array($content_type, array('inline'))) {
 				$bottom[$md5] = $v;
+			} else {
+				$top[$md5] = $v;
 			}
 		}
-		return $bottom + $top;
+		return $top + $bottom + $last;
 	}
 
 	/**
