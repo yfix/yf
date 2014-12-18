@@ -662,6 +662,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	/**
 	*/
 	public function _get_all_content_for_out($out_type, $params = array()) {
+		$is_ajax = main()->is_ajax();
 		// Move down inlined content
 		$all_content = $this->get_content($out_type);
 		$top = array();
@@ -669,6 +670,9 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		$last = array();
 		foreach ((array)$all_content as $md5 => $v) {
 			$content_type = $v['content_type'];
+			if ($is_ajax && $content_type !== 'inline') {
+				continue;
+			}
 			if ($v['params']['is_last']) {
 				$last[$md5] = $v;
 			} elseif (in_array($content_type, array('inline'))) {
