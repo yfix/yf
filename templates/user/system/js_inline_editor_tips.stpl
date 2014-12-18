@@ -1,7 +1,4 @@
-<script type="text/javascript">
-// Inline tips editor code
-$(function(){
-
+{jquery()}
 	// Prepare html for the tips inline editor
 	$("body").append("" 
 		+ "<div id='inline_edit_tip'>" 
@@ -109,5 +106,4 @@ $(function(){
 		_old_tip_text = "";
 	});
 
-})
-</script>
+{/jquery}

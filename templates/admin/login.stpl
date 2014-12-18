@@ -3,23 +3,21 @@
 <head>
 	<title>{execute(graphics,show_site_title)}</title>
 	<meta charset="utf-8">
-{execute(common,bs_theme_html)}
-<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" class="yf_core">
-{include("main_style_css")}
+{exec_last(assets,show_css)}
+{css()}
+	.container-valign-middle { margin:20% 30%; }
+	{if(conf.css_framework eq bs3)}
+		.input-group[class*="col-"] { float:left !important; margin-right: 3px; }
+		#debug_console { float:left; }
+	{/if}
+{/css}
 {execute(graphics,show_metatags)}
-	<style type="text/css">
-.container-valign-middle { margin:20% 30%; }
-{if(conf.css_framework eq bs3)}
-	.input-group[class*="col-"] { float:left !important; margin-right: 3px; }
-	#debug_console { float:left; }
-{/if}
-	</style>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body class="bs-theme-{execute(common,bs_current_theme)} cssfw-{conf(css_framework)}">
 	<div class="{if(conf.css_framework eq bs3)}container-fixed{else}container-fluid{/if} container-valign-middle">
 {execute(login_form,_admin_login_form)}
 	</div>
-	{include("main_js")}
+{exec_last(assets,show_js)}
 </body>
 </html>

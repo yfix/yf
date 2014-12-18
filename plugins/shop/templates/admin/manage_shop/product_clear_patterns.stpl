@@ -1,4 +1,6 @@
-<script>
+{asset()} jquery {/asset}
+{js()}
+
 	var ids = [];
 	var patterns_dom         = '#patterns_list';
 	var pattern_run_url      = '{pattern_run_url}';
@@ -98,4 +100,5 @@
 			checking_patterns();
 		}, 3000);
 	});
-</script>
+
+{/js}

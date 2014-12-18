@@ -1,0 +1,29 @@
+{css()} jquery-ui {/css}
+{css()} {const(WEB_PATH)}js/jquery/ui/date_slider/date_slider.css {/css}
+
+{js()} jquery-ui {/js}
+{js()} {const(WEB_PATH)}js/date.js {/js}
+{js()} {const(WEB_PATH)}js/jquery/ui/date_slider/date_slider.js {/js}
+{js()}
+	var months_abbr = "";
+	var date_from = '{date_from}';
+	var date_to = '{date_to}';
+	var stats_period_view = '{stats_period}';
+
+	if (!stats_period_view) {
+		stats_period_view = 30;
+	}
+{/js}
+
+<div align='center'>
+	<h3 id='date_interval_text'>{date_interval}</h3>
+	<div style='width:780px;'>
+		<div id='date_slider'>
+			<span style='clear:both;'></span>
+		</div>
+		
+		<input id='apply_date_interval' type='button' name='apply_date_interval' value='>' style='width:20px;' />
+		<br style='clear: both;'>
+	</div>
+</div>
+<br style='clear:both;' />

@@ -3,10 +3,7 @@
 		{country_box}
 	</p>
 
-<script type="text/javascript">
-<!--
-// JQuery on DOM ready
-$(function(){
+{jquery()}
 	var _ajax_link		= "{ajax_link}";
 	var _def_msg_region	= "<option value=''>--   Please select country first  --</option>";
 	var _def_msg_city	= "<option value=''>--   Please select region first  --</option>";
@@ -79,9 +76,7 @@ $(function(){
 			}
 		}
 	}
-});
--->
-</script>
+{/jquery}
 
 <noscript>
 	<p class="negative">

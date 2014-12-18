@@ -296,46 +296,70 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('ok', self::_tpl('{catch(mycond)}{cond_array.mykey}{/catch}{foreach("test_array")}{if(#.name eq #mycond)}ok{/if}{/foreach}', $data) );
 	}
 	public function test_js() {
-		$this->assertEquals('', self::_tpl( '{js()}//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js{/js}' ));
-		$this->assertEquals('', self::_tpl( '{js()} //ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js {/js}' ));
-		$this->assertEquals('', self::_tpl( '{js(class=yf_core)}//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js{/js}' ));
-		$this->assertEquals('', self::_tpl( '{js(class=yf_core,other=param)}//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js{/js}' ));
+		_class('assets')->clean_all();
+		$jquery_url = _class('assets')->get_asset('jquery', 'js');
+		$this->assertNotEmpty($jquery_url);
+		$this->assertEquals('', self::_tpl( '{js()}'.$jquery_url.'{/js}' ));
+		$this->assertEquals('', self::_tpl( '{js()} '.$jquery_url.' {/js}' ));
+		$this->assertEquals('', self::_tpl( '{js(class=yf_core)}'.$jquery_url.'{/js}' ));
+		$this->assertEquals('', self::_tpl( '{js(class=yf_core,other=param)}'.$jquery_url.'{/js}' ));
 	}
 	public function test_js_complex() {
-		self::_tpl( '{js()}//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js{/js}' );
-		$this->assertEquals('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js" type="text/javascript"></script>', _class('core_js')->show() );
-		self::_tpl( '{js()} //ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js {/js}' );
-		$this->assertEquals('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js" type="text/javascript"></script>', _class('core_js')->show() );
-		self::_tpl( '{js(class=yf_core)}//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js{/js}' );
-		$this->assertEquals('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js" type="text/javascript" class="yf_core"></script>', _class('core_js')->show() );
-		self::_tpl( '{js(class=yf_core,other=param)}//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js{/js}' );
-		$this->assertEquals('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js" type="text/javascript" class="yf_core"></script>', _class('core_js')->show() );
+		_class('assets')->clean_all();
+
+		$jquery_url = _class('assets')->get_asset('jquery', 'js');
+		$this->assertNotEmpty($jquery_url);
+		self::_tpl( '{js()}'.$jquery_url.'{/js}' );
+		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript"></script>', _class('assets')->show_js() );
+		self::_tpl( '{js()} '.$jquery_url.' {/js}' );
+		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript"></script>', _class('assets')->show_js() );
+		self::_tpl( '{js(class=yf_core)}'.$jquery_url.'{/js}' );
+		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript" class="yf_core"></script>', _class('assets')->show_js() );
+		self::_tpl( '{js(class=yf_core,other=param)}'.$jquery_url.'{/js}' );
+		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript" class="yf_core"></script>', _class('assets')->show_js() );
+
+		$url = '/my.js';
+		self::_tpl( '{js()}'.$url.'{/js}' );
+		$this->assertEquals('<script type="text/javascript">'.PHP_EOL.$url.PHP_EOL.'</script>', _class('assets')->show_js() );
+		self::_tpl( '{js(type=url)}'.$url.'{/js}' );
+		$this->assertEquals('<script src="'.$url.'" type="text/javascript"></script>', _class('assets')->show_js() );
 	}
 	public function test_css() {
-		$this->assertEquals('', self::_tpl( '{css()}//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css{/css}' ));
-		$this->assertEquals('', self::_tpl( '{css()} //cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css {/css}' ));
-		$this->assertEquals('', self::_tpl( '{css(class=yf_core)}//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css{/css}' ));
-		$this->assertEquals('', self::_tpl( '{css(class=yf_core,other=param)}//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css{/css}' ));
+		_class('assets')->clean_all();
+		$jqueryui_url = _class('assets')->get_asset('jquery-ui', 'css');
+		$this->assertNotEmpty($jqueryui_url);
+		$this->assertEquals('', self::_tpl( '{css()}'.$jqueryui_url.'{/css}' ));
+		$this->assertEquals('', self::_tpl( '{css()} '.$jqueryui_url.' {/css}' ));
+		$this->assertEquals('', self::_tpl( '{css(class=yf_core)}'.$jqueryui_url.'{/css}' ));
+		$this->assertEquals('', self::_tpl( '{css(class=yf_core,other=param)}'.$jqueryui_url.'{/css}' ));
 	}
 	public function test_css_complex() {
-		self::_tpl( '{css()}//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css{/css}' );
-		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css" rel="stylesheet" />', _class('core_css')->show() );
-		self::_tpl( '{css()} //cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css {/css}' );
-		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css" rel="stylesheet" />', _class('core_css')->show() );
-		self::_tpl( '{css(class=yf_core)}//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css{/css}' );
-		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css" rel="stylesheet" class="yf_core" />', _class('core_css')->show() );
-		self::_tpl( '{css(class=yf_core,other=param)}//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css{/css}' );
-		$this->assertEquals('<link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css" rel="stylesheet" class="yf_core" />', _class('core_css')->show() );
+		_class('assets')->clean_all();
+		$jqueryui_url = _class('assets')->get_asset('jquery-ui', 'css');
+		$this->assertNotEmpty($jqueryui_url);
+		self::_tpl( '{css()}'.$jqueryui_url.'{/css}' );
+		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" />', _class('assets')->show_css() );
+		self::_tpl( '{css()} '.$jqueryui_url.' {/css}' );
+		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" />', _class('assets')->show_css() );
+		self::_tpl( '{css(class=yf_core)}'.$jqueryui_url.'{/css}' );
+		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" class="yf_core" />', _class('assets')->show_css() );
+		self::_tpl( '{css(class=yf_core,other=param)}'.$jqueryui_url.'{/css}' );
+		$this->assertEquals('<link href="'.$jqueryui_url.'" rel="stylesheet" class="yf_core" />', _class('assets')->show_css() );
 	}
 	public function test_assets_js_libs() {
+		_class('assets')->clean_all();
 		$jquery_url = _class('assets')->get_asset('jquery', 'js');
 		$this->assertNotEmpty($jquery_url);
 		self::_tpl( '{jquery()} var i = 0; $("#id").on(\'click\', ".sub_selector", function(){ return false; }); {/jquery}' );
 		$this->assertEquals(
-			'<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>'.PHP_EOL.
+			'<script src="'.$jquery_url.'" type="text/javascript"></script>'.PHP_EOL.
 			'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'var i = 0; $("#id").on(\'click\', ".sub_selector", function(){ return false; });'.PHP_EOL.'})'.PHP_EOL.'</script>',
 			_class('assets')->show_js()
 		);
+
+		_class('assets')->clean_all();
+		self::_tpl( '{asset()} jquery {/asset}' );
+		$this->assertEquals('<script src="'.$jquery_url.'" type="text/javascript"></script>', _class('assets')->show_js());
 	}
 	public function test_replace_subarray() {
 		$this->assertEquals('', self::_tpl( '{get.test}' ));

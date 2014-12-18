@@ -7,4 +7,7 @@ return array(
 			'css' => '//cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.min.css',
 		),
 	),
+	'require' => array(
+		'js' => 'jquery',
+	),
 );

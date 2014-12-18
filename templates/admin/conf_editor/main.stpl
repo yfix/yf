@@ -31,9 +31,8 @@
 </div>
 
 {if("use_js_convert" eq "1")}
-<script type="text/javascript">
-<!--
-$(function(){
+
+{jquery()}
 
 	// Replace all textareas with more user friendly inputs
 	$(".json_value").each(function(){
@@ -83,12 +82,12 @@ $(function(){
 
 		})
 	});
-})
--->
-</script>
+
+{/jquery}
+
 {/if}
 
-<style type="text/css">
+{css()}
 .module_inner_menu {
 	color: #0066CC;
 	float:left;
@@ -139,4 +138,4 @@ li.active_module_item {
 	border-bottom: 2px solid #FFFFFF;
 	background-color: #D6E7F2;
 }
-</style>
+{/css}

@@ -1370,12 +1370,13 @@ WHERE table_schema = "schemaname"
 		}
 		$ext = '.sql_php.php';
 		$dir = 'share/db/sql_php/';
+		$pattern = $dir. $search_table. $ext;
 		$globs = array(
-			PROJECT_PATH. 'plugins/*/'. $dir. $search_table. $ext,
-			PROJECT_PATH. $dir. $search_table. $ext,
-			CONFIG_PATH. $dir. $search_table. $ext,
-			YF_PATH. 'plugins/*/'. $dir. $search_table. $ext,
-			YF_PATH. $dir. $search_table. $ext,
+			PROJECT_PATH. 'plugins/*/'. $pattern,
+			PROJECT_PATH. $pattern,
+			CONFIG_PATH. $pattern,
+			YF_PATH. 'plugins/*/'. $pattern,
+			YF_PATH. $pattern,
 		);
 		$path = '';
 		foreach ($globs as $glob) {

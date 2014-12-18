@@ -67,34 +67,6 @@ class yf_graphics {
 	}
 
 	/**
-	* Show CSS
-	*/
-	function show_css () {
-		return _class('core_css')->show_css();
-	}
-
-	/**
-	* Try to load CSS file with inheritance
-	*/
-	function _show_css_file ($css = '', $keyword = '', $option = '') {
-		return _class('core_css')->_show_css_file($css, $keyword, $option);
-	}
-
-	/**
-	* Try to load CSS file with inheritance
-	*/
-	function _load_css_file ($name = '') {
-		return _class('core_css')->_load_css_file($name);
-	}
-
-	/**
-	* Common javascript loader
-	*/
-	function show_js () {
-		return _class('core_js')->show_js();
-	}
-
-	/**
 	* Show site title
 	*/
 	function show_site_title () {

@@ -8,8 +8,6 @@ return array(
 				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload-ui.css',
 			),
 			'js' => array(
-				'//cdn.rawgit.com/yfix/JavaScript-Load-Image/master/js/load-image.all.min.js',
-				'//cdn.rawgit.com/yfix/JavaScript-Canvas-to-Blob/master/js/canvas-to-blob.min.js',
 				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.iframe-transport.js',
 				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload.js',
 				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-ui.js',
@@ -26,8 +24,21 @@ return array(
 			'jquery-ui',
 		),
 		'js' => array(
+			'blueimp-load-image',
+			'blueimp-canvas-to-blob',
 			'jquery',
 			'jquery-ui',
+		),
+	),
+	'add' => array(
+		'js' => array(
+			'blueimp-uploader-cors',
+		),
+	),
+	'noscript' => array(
+		'css' => array(
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload-noscript.css',
+			'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload-ui-noscript.css',
 		),
 	),
 );

@@ -1,6 +1,6 @@
-<h2>{if("for_edit" eq 1)}{t(Edit)}{/if}{if("for_edit" eq 0)}{t(Add)}{/if} {t(Rule for Tag)} <a href="{edit_tag_link}"><b>{tag_name}</b></a></h2>
+{asset()} yf_input_insert {/asset}
 
-{include("js_input_insert")}
+<h2>{if("for_edit" eq 1)}{t(Edit)}{/if}{if("for_edit" eq 0)}{t(Add)}{/if} {t(Rule for Tag)} <a href="{edit_tag_link}"><b>{tag_name}</b></a></h2>
 
 <div class="editform">
 <form action="{form_action}" method="post">

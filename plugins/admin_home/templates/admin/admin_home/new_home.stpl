@@ -1,5 +1,5 @@
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<style type="text/css">
+{asset()} jquery-ui {/asset}
+{css()}
 	.portlet { padding: 10px; margin-bottom: 20px; border: 1px solid #dddddd; border-radius: 4px; -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }
 	.portlet-header { padding: 5px 10px; margin: -10px -10px 10px; border-bottom: 1px solid #dddddd; border-top-right-radius: 3px; border-top-left-radius: 3px; }
 	.portlet-content { }
@@ -7,9 +7,8 @@
 	.portlets-side-column .portlet-header { margin: 0; padding: 0 5px; border-bottom: transparent; }
 	.portlets-side-column .portlet-content { display: none; }
 	.ui-sortable-placeholder { border: 1px dotted #dddddd; visibility: visible !important; height: 50px !important; }
-</style>
-<script type="text/javascript">
-$(function() {
+{/css}
+{jquery()}
     $(".column").sortable({
 		connectWith: ".column"
     });
@@ -28,8 +27,7 @@ $(function() {
 		})
 		return false;
 	})
-});
-</script>
+{/jquery}
 
 <div class="container-fluid" id="yf_dashboard">
   <div class="row-fluid">

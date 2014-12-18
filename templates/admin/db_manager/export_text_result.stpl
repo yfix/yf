@@ -6,8 +6,6 @@
 
 <div align="center"><a href="{back_link}">{t(Back)}</a></div>
 
-<script type="text/javascript">
-$(function(){
+{jquery()}
 	$("#sql").focus().select();
-})
-</script>
+{/jquery}

@@ -1,8 +1,9 @@
 <a class="btn btn-mini btn-xs addparams" data-test="product_params_btn"><span>{t(Add Params)}</span></a><br />
 <div id="productparams_container">
 </div>
-<script>
-$(function(){	
+
+{jquery()}
+
 	var params = {params};
 	var params_selected = {params_selected};
 	var code = '';
@@ -43,9 +44,6 @@ $(function(){
 		$("#productparams_container").append(code);
 	}
 	
-//
-					
-	
 	$(".addparams").click(function(){
 		code = '<div data-test="params_block"><select name="productparams[]" class="productparams"><option value="">- none -</option>';		
 		for(var param_id2 in params) {
@@ -72,5 +70,5 @@ $(function(){
 			$(this).parent().children(".productparam_options_"+$(this).val()).show();		
 		}
 	}); 
-});
-</script>
+
+{/jquery}

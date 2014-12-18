@@ -1093,6 +1093,7 @@ class yf_html {
 		if (!$values) {
 			return false;
 		}
+		asset('bfh-select');
 // TODO: allow deep customization of its layout
 // TODO: require here js, css of the bfh-selectbox plugin
 		$selected = strval($selected);
@@ -1125,14 +1126,16 @@ class yf_html {
 			$extra['name'] = $name;
 		}
 		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		css('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.css');
-		js('//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.js');
+
+		asset('select2');
+
 		$js_options = (array)$extra['js_options'] + array(
 			'width'			=> 'element',
 			'placeholder'	=> $extra['desc'],
 			// put default js options here
 		);
-		js('$(function() { $("#'.addslashes($extra['force_id']).'").select2('.json_encode($js_options).'); });');
+		jquery('$("#'.addslashes($extra['force_id']).'").select2('.json_encode($js_options).');');
+
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
 		$extra[ 'class' ] .= 'no-chosen';
 		return $this->$func($extra, $values, $selected);
@@ -1148,12 +1151,13 @@ class yf_html {
 		}
 		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 
-		css('//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.css');
-		js('//cdnjs.cloudflare.com/ajax/libs/chosen/0.9.15/chosen.jquery.min.js');
+		asset('chosen');
+
 		$js_options = (array)$extra['js_options'] + array(
 			// put default js options here
 		);
-		js('$(function() { $("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options).'); });');
+		jquery('$("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options).');');
+
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
 		return $this->$func($extra, $values, $selected);
 	}
@@ -1164,7 +1168,7 @@ class yf_html {
 		js('jquery-ui');
 		css('jquery-ui');
 
-		js('$(function() { $( ".datepicker" ).datepicker({ dateFormat: "yy-mm-dd" }); });');
+		jquery('$( ".datepicker" ).datepicker({ dateFormat: "yy-mm-dd" });');
 		css('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery.ui.datepicker.min.css');
 
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];

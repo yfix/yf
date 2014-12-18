@@ -1,3 +1,5 @@
+{include("yf_draggable_tree")}
+
 <form action="{form_action}" method="post" id="draggable_form">
 
 <div class="controls">
@@ -12,5 +14,3 @@
 </ul>
 
 </form>
-
-{include("draggable_menu_js")}

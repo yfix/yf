@@ -14,24 +14,22 @@ class yf_form2_ui_range {
 		$func = function($extra, $r, $_this) {
 // TODO: upgrade look and feel and connect $field__and for filter
 			$_this->_prepare_inline_error($extra);
-			$body = '
-				<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-				<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-				<script>
-				$(function() {
-					$( "#slider-range" ).slider({
-						range: true,
-						min: 0,
-						max: 500,
-						values: [ 75, 300 ],
-						slide: function( event, ui ) {
-							$( "#'.$name.'" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-						}
-					});
-					$( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-						" - $" + $( "#slider-range" ).slider( "values", 1 ) );
+
+			asset('jquery-ui');
+			jquery('
+				$( "#slider-range" ).slider({
+					range: true,
+					min: 0,
+					max: 500,
+					values: [ 75, 300 ],
+					slide: function( event, ui ) {
+						$( "#'.$name.'" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+					}
 				});
-				</script>
+				$( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+					" - $" + $( "#slider-range" ).slider( "values", 1 ) );
+			');
+			$body = '
 				<div class="span10">
 					<div id="slider-range"></div>
 				</div>

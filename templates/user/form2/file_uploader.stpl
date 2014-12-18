@@ -81,12 +81,13 @@
     <a class="play-pause"></a>
     <ol class="indicator"></ol>
 </div>
-<script>
+
+{js()}
+
 (function () {
     'use strict';
 
     var url = "{url}";
-	
 	
     angular.module('fileupload', [
         'blueimp.fileupload'
@@ -158,4 +159,4 @@
         ]);
 }());
 
-</script>
+{/js}

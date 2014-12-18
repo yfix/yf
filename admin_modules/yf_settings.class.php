@@ -183,16 +183,14 @@ class yf_settings {
 			}
 			return js_redirect('./?object='.$_GET['object'].'&action='.$_GET['action']);
 		}
+		jquery('
+			var container = $("#settings-sortable-container")
+			container.find("ul").sortable();
+			container.closest("form").on("submit", function(){
+				$(this).find("input[name=sort][type=hidden]").val( container.find("ul").sortable("serialize", { key: "sort[]" }) )
+			});
+		');
 		$container_html = '
-<script type="text/javascript">
-$(function() {
-	var container = $("#settings-sortable-container")
-	container.find("ul").sortable();
-	container.closest("form").on("submit", function(){
-		$(this).find("input[name=sort][type=hidden]").val( container.find("ul").sortable("serialize", { key: "sort[]" }) )
-	});
-})
-</script>
 <div class="span6" id="settings-sortable-container">
     <ul class="nav nav-pills nav-stacked" id="sortable_settings">
 ';
@@ -214,29 +212,6 @@ $container_html .= '
 		return form($a, array('legend' => 'Settings items'))
 			->hidden('sort')
 			->container($container_html, array('wide' => 1))
-/*
-			->container('
-<script type="text/javascript">
-$(function() {
-	var myapp = angular.module("myapp", ["ui"]);
-	myapp.controller("controller", function ($scope) {
-		$scope.list = '.($names ? json_encode($names) : '[]').';
-		$("#settings-sortable-container").find("ul").show().sortable().end().find("#settings-spinner").hide();
-		$("#settings-sortable-container").closest("form").on("submit", function(){
-			return false;
-		})
-	});
-	angular.bootstrap(document, ["myapp"]);
-})
-</script>
-<div ng:controller="controller" class="span6" id="settings-sortable-container">
-	<i class="icon icon-spinner icon-spin icon-2x" id="settings-spinner"></i>
-    <ul ng:model="list" class="nav nav-pills nav-stacked" id="sortable_settings" style="display:none;">
-        <li ng:repeat="item in list" class="item"><a><i class="icon icon-move"></i> {{item}} <input type="checkbox" style="float:right;"></a></li>
-    </ul>
-</div>
-			', array('wide' => 1))
-*/
 			->save_and_back();
 	}
 

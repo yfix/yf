@@ -1,13 +1,13 @@
-<script type="text/javascript">
+{js()}
 var _last_tr_item = null;
 var _last_tr_html = null;
 var _edited_value = null;
 var _source_var = null;
 var _i18n_for_page = typeof _i18n_for_page != 'undefined' ? _i18n_for_page : { };
 var _i18n_not_translated = typeof _i18n_not_translated != 'undefined' ? _i18n_not_translated : { };
+{/js}
 
-// Inline locale editor
-$(function(){
+{jquery()}
 
 	// Fix "input" fields
 	function remove_locale_tr_span(text) {
@@ -137,8 +137,9 @@ $(function(){
 
 	_inline_editor_loaded = true;
 
-})
+{/jquery}
 
+{js()}
 // Do not touch! Needed to prevent double init of the inline editor
 var _inline_editor_loaded = false;
 
@@ -146,4 +147,4 @@ var _inline_editor_loaded = false;
 function _debug_catch(obj) {
 	$("span.locale_tr", $(obj)).on("click", _locale_tr_click_handle);
 }
-</script>
+{/js}

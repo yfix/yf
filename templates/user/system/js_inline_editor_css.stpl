@@ -1,4 +1,4 @@
-<style type="text/css">
+{css()}
 span.locale_tr, .input-append span.locale_tr, .input-prepend span.locale_tr {
 	background: yellow;
 	color: black;
@@ -83,4 +83,4 @@ span.tooltip_edit_inline {
 	width:99%;
 	height:200px;
 }
-</style>
+{/css}

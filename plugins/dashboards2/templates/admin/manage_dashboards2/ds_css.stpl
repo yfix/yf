@@ -1,4 +1,5 @@
-<style type="text/css">
+{css()}
+
 /*body {
 	padding-top:50px;
 	padding-bottom: 40px;
@@ -273,4 +274,4 @@ a.language-selected { font-style: italic; font-weight: bold; }
 .modal-body { padding-bottom:0; }
 .modal-footer { margin-top:0; }
 
-</style>
+{/css}

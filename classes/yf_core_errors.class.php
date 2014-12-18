@@ -285,7 +285,7 @@ class yf_core_errors {
 			db()->_add_shutdown_query($sql);
 		}
 		if (DEBUG_MODE && ($this->ERROR_REPORTING & $error_type) && strlen($msg)) {
-			echo '<b>'.$this->error_types[$error_type].'</b>: '. _prepare_html($error_msg).' (<i>'.$error_file.' on line '.$error_line.'</i>)<pre>'._prepare_html(main()->trace_string()).'</pre><br />'.PHP_EOL;
+			echo '<b>'.$this->error_types[$error_type].'</b>: <pre>'. _prepare_html($error_msg).'</pre> (<i>'.$error_file.' on line '.$error_line.'</i>)<pre>'._prepare_html(main()->trace_string()).'</pre><br />'.PHP_EOL;
 		}
 		_class('core_events')->fire('core.error', $data);
 		// For critical errors stop execution here
