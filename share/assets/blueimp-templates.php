@@ -6,7 +6,7 @@ return array(
 			'js' => array(
 				'content' => '//cdn.rawgit.com/yfix/JavaScript-Templates/master/js/tmpl.min.js',
 				'params' => array(
-					'out_before' => 'blueimp-gallery',
+//					'out_before' => 'blueimp-uploader',
 				),
 			),
 		),
