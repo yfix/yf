@@ -485,4 +485,20 @@ class yf_dynamic {
 			exit;
 		}
 	}
+
+	/**
+	*/
+	function placeholder() {
+		main()->NO_GRAPHICS = true;
+
+		list($id, $ext) = explode('.', $_GET['id']);
+		list($w, $h) = explode('x', $id);
+		$w = (int)$w ?: 100;
+		$h = (int)$h ?: 100;
+
+		require_once YF_PATH.'share/functions/yf_placeholder_img.php';
+		echo yf_placeholder_img($w, $h);
+
+		exit;
+	}
 }
