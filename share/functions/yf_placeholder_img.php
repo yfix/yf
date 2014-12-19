@@ -49,8 +49,8 @@ function yf_placeholder_img($w = 100, $h = 100, $params = array()) {
 	imagefilledrectangle($im, 0, 0, $w, $h, $color_bg);
 
 	$bbox = imagettfbbox($font_size, $font_angle, $font, $text);
-	$x = $bbox[0] + (imagesx($im) / 2) - ($bbox[4] / 2) - $font_size / 2 + 3;
-	$y = $bbox[1] + (imagesy($im) / 2) - ($bbox[5] / 2) - $font_size / 2 + 1;
+	$x = $bbox[0] + (imagesx($im) / 2) - ($bbox[4] / 2);
+	$y = $bbox[1] + (imagesy($im) / 2) - ($bbox[5] / 2);
 	imagettftext($im, $font_size, $font_angle, $x, $y, $color_text, $font, $text);
 
 	ob_start();
