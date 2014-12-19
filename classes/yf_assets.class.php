@@ -859,9 +859,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	/**
 	*/
 	public function get_cache($out_type, $md5, $data = array()) {
-		$cache_name = $this->_cache_name($out_type, $md5, $data);
-		$cache_dir = $this->_cache_dir($out_type);
-		$cache_path = $cache_dir. $cache_name;
+		$cache_path = $this->_cache_path($out_type, $md5, $data);
 		if (file_exists($cache_path) && !$this->_cache_expired($cache_path)) {
 			return file_get_contents($cache_path);
 		}
@@ -874,9 +872,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		if (!$this->USE_CACHE) {
 			return false;
 		}
-		$cache_name = $this->_cache_name($out_type, $md5, $data);
-		$cache_dir = $this->_cache_dir($out_type);
-		$cache_path = $cache_dir. $cache_name;
+		$cache_path = $this->_cache_path($out_type, $md5, $data);
 		$content = $data['content'];
 		$content_type = $data['content_type'];
 		if ($content_type === 'url') {
@@ -893,6 +889,14 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 
 	/**
 	*/
+	public function _cache_path($out_type, $md5, $data = array()) {
+		$cache_dir = $this->_cache_dir($out_type, $data['name']);
+		$cache_name = $this->_cache_name($out_type, $md5, $data);
+		return $cache_dir. ($cache_name ?: ($data['name'] ? $md5.'_'.$data['name'] : '') ?: $md5). '.'. $out_type;
+	}
+
+	/**
+	*/
 	public function _cache_name($out_type, $md5, $data = array()) {
 		$content = $data['content'];
 		$content_type = $data['content_type'];
@@ -905,16 +909,18 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 		} elseif ($content_type === 'file') {
 			$_name = pathinfo($content, PATHINFO_FILENAME);
 		}
-		return ($data['name'] ?: $md5). ($_name ? '_'.$_name : ''). '.'. $out_type;
+		return $_name;
 	}
 
 	/**
 	*/
-	public function _cache_dir($out_type) {
-		$cache_dir = PROJECT_PATH.'templates/user/cache/'.$_SERVER['HTTP_HOST'].'/'.conf('language').'/'.$out_type.'/';
-		if (!$this->_cache_dir_created[$out_type]) {
+	public function _cache_dir($out_type, $asset_name = '') {
+		$host = $_SERVER['HTTP_HOST'];
+		$lang = conf('language');
+		$cache_dir = PROJECT_PATH.'templates/user/cache/'.$host.'/'.$lang.'/'.($asset_name ? $asset_name.'/' : '').$out_type.'/';
+		if (!$this->_cache_dir_created[$out_type][$asset_name]) {
 			!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
-			$this->_cache_dir_created[$out_type] = $cache_dir;
+			$this->_cache_dir_created[$out_type][$asset_name] = $cache_dir;
 		}
 		return $cache_dir;
 	}
