@@ -22,6 +22,10 @@ class yf_assets {
 	);
 	/** @bool Needed to ensure smooth transition of existing codebase. If enabled - then each add() call will immediately return generated content */
 	public $ADD_IS_DIRECT_OUT = false;
+	/** @bool */
+	public $USE_CACHE = false;
+	/** @bool */
+	public $CACHE_TTL = 3600;
 
 	/**
 	* Catch missing method call
@@ -646,6 +650,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			'params'		=> $params,
 		);
 	}
+
 	/**
 	* Clean content for given asset type
 	*/
@@ -778,16 +783,21 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 			}
 		}
 		$prepend = _class('core_events')->fire('assets.prepend');
-
 		// Process previously added content, depending on its type
 		$out = array();
 		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
 			if (!is_array($v)) {
 				continue;
 			}
+			$_params = (array)$v['params'] + (array)$params;
+			if ($this->USE_CACHE) {
+				$cached = $this->get_cache($out_type, $md5, $v);
+				if (!$cached) {
+					$this->set_cache($out_type, $md5, $v, $_params);
+				}
+			}
 			$content_type = $v['content_type'];
 			$str = $v['content'];
-			$_params = (array)$v['params'] + (array)$params;
 			if ($_params['min'] && $content_type === 'url' && !DEBUG_MODE) {
 				if (strpos($str, '.min.') === false) {
 					$str = substr($str, 0, -strlen($ext)).'.min'.$ext;
@@ -816,6 +826,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 				$after = $after. PHP_EOL. '<!-- asset end: '.$dname.' -->'. PHP_EOL;
 				debug('assets_out[]', array(
 					'out_type'		=> $out_type,
+					'name'			=> $v['name'],
 					'md5'			=> $md5,
 					'content_type'	=> $content_type,
 					'content'		=> $str,
@@ -843,6 +854,75 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 	*/
 	public function show_css($params = array()) {
 		return $this->show('css', $params);
+	}
+
+	/**
+	*/
+	public function get_cache($out_type, $md5, $data = array()) {
+		$cache_name = $this->_cache_name($out_type, $md5, $data);
+		$cache_dir = $this->_cache_dir($out_type);
+		$cache_path = $cache_dir. $cache_name;
+		if (file_exists($cache_path) && !$this->_cache_expired($cache_path)) {
+			return file_get_contents($cache_path);
+		}
+		return false;
+	}
+
+	/**
+	*/
+	public function set_cache($out_type, $md5, $data = array()) {
+		if (!$this->USE_CACHE) {
+			return false;
+		}
+		$cache_name = $this->_cache_name($out_type, $md5, $data);
+		$cache_dir = $this->_cache_dir($out_type);
+		$cache_path = $cache_dir. $cache_name;
+		$content = $data['content'];
+		$content_type = $data['content_type'];
+		if ($content_type === 'url') {
+			$content = file_get_contents((substr($content, 0, 2) === '//' ? 'http:' : '').$content, false, stream_context_create(array('http' => array('timeout' => 5))));
+		} elseif ($content_type === 'file') {
+			$content = file_get_contents($content);
+		}
+		if (!strlen($content)) {
+			return false;
+		}
+// TODO: process CSS @import and url()
+		return file_put_contents($cache_path, $content);
+	}
+
+	/**
+	*/
+	public function _cache_name($out_type, $md5, $data = array()) {
+		$content = $data['content'];
+		$content_type = $data['content_type'];
+		$_name = '';
+		if ($content_type === 'url') {
+			$_name = pathinfo(parse_url($content, PHP_URL_PATH), PATHINFO_FILENAME);
+			while (pathinfo($_name, PATHINFO_EXTENSION) === $out_type && $out_type) {
+				$_name = pathinfo($_name, PATHINFO_FILENAME);
+			}
+		} elseif ($content_type === 'file') {
+			$_name = pathinfo($content, PATHINFO_FILENAME);
+		}
+		return ($data['name'] ?: $md5). ($_name ? '_'.$_name : ''). '.'. $out_type;
+	}
+
+	/**
+	*/
+	public function _cache_dir($out_type) {
+		$cache_dir = PROJECT_PATH.'templates/user/cache/'.$_SERVER['HTTP_HOST'].'/'.conf('language').'/'.$out_type.'/';
+		if (!$this->_cache_dir_created[$out_type]) {
+			!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
+			$this->_cache_dir_created[$out_type] = $cache_dir;
+		}
+		return $cache_dir;
+	}
+
+	/**
+	*/
+	public function _cache_expired($cache_path) {
+		return file_exists($cache_path) && filesize($cache_path) > 10 && filemtime($cache_path) <= (time() - $this->CACHE_TTL);
 	}
 
 	/**
