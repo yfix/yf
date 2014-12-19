@@ -939,7 +939,7 @@ Tilde Operator	~1.2	Very useful for projects that follow semantic versioning. ~1
 // TODO: decide with fonts: different formats
 	public function combine($asset_type, $params = array()) {
 		$ext = '.'.$asset_type;
-		$combined_file = $params['out_file'] ?: PROJECT_PATH. 'templates/'.$asset_type.'/'.date('YmdHis').'_'.substr(md5($_SERVER['HTTP_HOST']), 0, 8). $ext;
+		$combined_file = $params['out_file'] ?: PROJECT_PATH. 'templates/cache/combined_'.$asset_type.'/'.date('YmdHis').'_'.substr(md5($_SERVER['HTTP_HOST']), 0, 8). $ext;
 		if (file_exists($combined_file) && filemtime($combined_file) > (time() - 3600)) {
 			return $combined_file;
 		}
