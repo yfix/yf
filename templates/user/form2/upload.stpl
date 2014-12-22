@@ -20,8 +20,8 @@
 	</div>
 </div>
 
-<script>
-$( function() {
+{jquery()}
+
 	var _handler = function( $this ) {
 		var $preview        = $this.find( '.preview > img' );
 		var $handler        = $this.find( '.handler' );
@@ -143,6 +143,5 @@ $( function() {
 			context.progress.hide();
 		}
 	});
-});
-</script>
 
+{/jquery}

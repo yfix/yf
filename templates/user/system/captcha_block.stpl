@@ -3,9 +3,9 @@
 {itip('Please, confirm your action by entering the digital code you see on the image')}
 <small><br /><a href="javascript:void(0)" id="captcha_reload_img">{t(Get new image)}</a></small>
 
-<script type="text/javascript">
-var captcha_img_src = '{img_src}';
-$(function(){
+{jquery()}
+	var captcha_img_src = '{img_src}';
+
 	$("#captcha_input").on("keyup", function(e){
 		var _val = $(this).val();
 		if (_val.length > 0 && !_val.match(/^[0-9]+$/)) {
@@ -19,5 +19,4 @@ $(function(){
 		var _new_img_src = captcha_img_src.replace(/__captcha_id__([^\/]*?)/, "__captcha_id__" + (1000000 * Math.random()).toString().replace(/[^0-9]/, ""));
 		$('#captcha_img').attr("src",  _new_img_src);
 	})
-})
-</script>
+{/jquery}

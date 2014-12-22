@@ -54,9 +54,8 @@
 
 <span id="status_message"></span>
 
-<script type="text/javascript">
-<!--
-$(function(){
+{jquery()}
+
 	$("a#ajax_status_link").click(function(){
 		$("#ajax_loading").show();
 		$.post($(this).attr("href"), function(data) {
@@ -79,7 +78,10 @@ $(function(){
 		})
 		return false;
 	});
-});
+
+{/jquery}
+
+{js()}
 
 function check_all (){
 	var check_status = $("#my_check_all").attr("check_status");
@@ -122,5 +124,5 @@ function group_action (){
 		$("#status_message").html(data);
 	});
 }
--->
-</script>
+
+{/js}

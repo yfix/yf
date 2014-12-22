@@ -495,8 +495,29 @@ class yf_core_api {
 
 	/**
 	*/
+	function get_assets() {
+		$folder = 'share/assets/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
+	}
+
+	/**
+	*/
+	function get_assets_filters() {
+		$folder = 'classes/assets/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.class.php'));
+	}
+
+	/**
+	*/
+	function get_event_listeners() {
+		$folder = 'share/events/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
+	}
+
+	/**
+	*/
 	function get_cron_jobs() {
-		$folder = 'share/tasks_to_run/';
+		$folder = 'share/cron_jobs/';
 		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
 	}
 
@@ -524,7 +545,7 @@ class yf_core_api {
 	/**
 	*/
 	function get_migrations() {
-		$folder = 'share/migrations/';
+		$folder = 'share/db/migrations/';
 		return $this->get_classes_by_params(array('folder' => $folder));
 	}
 
@@ -663,17 +684,7 @@ class yf_core_api {
 	/**
 	*/
 	function add_syntax_highlighter() {
-		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js');
-		js('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/languages/php.min.js');
-		js('<script>hljs.initHighlightingOnLoad();</script>');
-		css('//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/railscasts.min.css');
-		css('section.page-contents pre, pre.prettyprint {
-			background-color: transparent;
-			border: 0;
-			font-family: inherit;
-			font-size: inherit;
-			font-weight: bold;
-		}');
+		asset('highlightjs');
 	}
 
 	/**

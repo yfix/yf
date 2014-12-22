@@ -1,7 +1,7 @@
 <div id="productparams_container">
 </div>
-<script>
-$(function(){	
+
+{jquery()}
 	var params = {params};
 	var params_selected = {params_selected};
 	var code = '';
@@ -23,5 +23,5 @@ $(function(){
 		code += '</div>';
 		$("#productparams_container").append(code);
 	}	
-});
-</script>
+
+{/jquery}

@@ -3,7 +3,8 @@
 	{table}
 </div>
 
-<script>
+{asset()} jquery {/asset}
+{js()}
 	var DOM = '.express_catalog table tbody';
 	var create_row = function(data){
 		var user_bet = data['user_bet'] == 1 ? ' info' : ''
@@ -75,4 +76,4 @@
 
 	});
 
-</script>
+{/js}

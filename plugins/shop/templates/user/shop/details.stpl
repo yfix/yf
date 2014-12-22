@@ -120,8 +120,8 @@
 </div>
 </form>
 
+{jquery()}
 
-<script type="text/javascript">
 $.tabs = function(selector, start) {
 	$(selector).each(function(i, element) {
 		$($(element).attr('tab')).css('display', 'none');
@@ -145,8 +145,5 @@ $.tabs = function(selector, start) {
 
 	$(selector + '[tab=\'' + start + '\']').trigger('click');
 };
-<!--
-$.tabs('.tabs a'); 
-//--></script>
 
-
+{/jquery}

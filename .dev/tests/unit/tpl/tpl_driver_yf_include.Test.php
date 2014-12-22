@@ -43,6 +43,10 @@ class tpl_driver_yf_include_test extends tpl_abstract {
 		self::_tpl( '{cond1}|{cond2}', array(), $name.'_catch' );
 		$this->assertEquals('__ok__|', self::_tpl( '{catch(cond1)}{if(k1 eq 5)}__ok__{/if}{/catch}{catch(cond2)}{if(k2 eq 4)}__ok2__{/if}{/catch}{include("'.$name.'_catch")}', array('k1' => '5') ));
 		$this->assertEquals('__ok__|', self::_tpl( '{catch(cond1)}{if("k1" eq "5")}__ok__{/if}{/catch}{catch(cond2)}{if("k2" eq "4")}__ok2__{/if}{/catch}{cond1}|{cond2}', array('k1' => '5') ));
+
+		$expected = strpos(get_called_class(), '_compiled_') === false ? 'val1|{cond2}' : 'val1|';
+		$this->assertEquals($expected, self::_tpl( '{include("'.$name.'_catch")}', array('cond1' => 'val1') ));
+		$this->assertEquals('val1|val2', self::_tpl( '{include("'.$name.'_catch")}', array('cond1' => 'val1', 'cond2' => 'val2') ));
 	}
 	public function test_multi_include() {
 		$name = 'unittest/'.__CLASS__.'/'.__FUNCTION__;

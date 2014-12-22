@@ -1,27 +1,14 @@
-{catch(ng_app)}api.admin{/catch}
 <!DOCTYPE html>
-<html{if( ng_app ne '' )} ng-app="{ng_app}"{/if}>
+<html ng-app="api.admin">
 <head>
 	<title>{execute(graphics,show_site_title)}</title>
 	<base href="{const(ADMIN_WEB_PATH)}"/>
 	<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
-{execute(common,bs_theme_html)}
-
-{{-- angular api --}}
-{if( ng_app ne '' )}
-	{include( ng_app_lib )}
-	{include( ng_app_js )}
-{/if}
-
-<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" class="yf_core">
-<link href="//cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.css" rel="stylesheet" class="yf_core">
-
-{execute_shutdown(graphics,show_css)}
-
+{exec_last(assets,show_css)}
 {execute(graphics,show_metatags)}
 </head>
 <body class="bs-theme-{execute(common,bs_current_theme)} cssfw-{conf(css_framework)}">
-{if("conf.css_framework" eq "bs3")}
+{if(conf.css_framework eq bs3)}
 	<div class="navbar navbar-default">
 {else}
 	<div class="navbar navbar-default navbar-inverse">
@@ -44,6 +31,6 @@
 {execute(common,show_messages)}
 {block(center_area)}
 	</div>
-{execute_shutdown(graphics,show_js)}
+{exec_last(assets,show_js)}
 </body>
 </html>

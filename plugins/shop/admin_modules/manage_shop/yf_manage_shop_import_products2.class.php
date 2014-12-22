@@ -1392,7 +1392,7 @@ class yf_manage_shop_import_products2 {
 	function _data_ng( $json = false ) {
 		$cache = &$this->cache;
 		$_url = array(
-			'product_view' =>  url_user( array( 'object' => 'shop',        'action' => 'product',      'id' => 0 ) ),
+			'product_view' => url_user( array( 'object' => 'shop',        'action' => 'product',      'id' => 0 ) ),
 			'product_edit' => url_admin( array( 'object' => 'manage_shop', 'action' => 'product_edit', 'id' => 0 ) ),
 		);
 		$_upload_list             = $this->upload_list;
@@ -1461,12 +1461,12 @@ class yf_manage_shop_import_products2 {
 			'import' => 'импортировать',
 			'delete' => 'удалить',
 		);
-			$sub_action = $_POST[ 'sub_action' ];
-				$is_sub_action = $sub_action !== '0' && isset( $_sub_action[ $sub_action ] );
+		$sub_action = $_POST[ 'sub_action' ];
+		$is_sub_action = $sub_action !== '0' && isset( $_sub_action[ $sub_action ] );
 		// -----
 		$_supplier = _class('manage_shop')->_suppliers_for_select;
-			$supplier = (int)$_POST[ 'supplier' ];
-				$is_supplier = $supplier != 0 && isset( $_supplier[ $supplier ] );
+		$supplier = (int)$_POST[ 'supplier' ];
+		$is_supplier = $supplier != 0 && isset( $_supplier[ $supplier ] );
 		// prepare ng-app
 		$_ng_controller       = 'ctrl.import2';
 		$_api_url_upload      = url_admin( '//manage_shop/import2/&api=upload' );
@@ -1506,8 +1506,8 @@ class yf_manage_shop_import_products2 {
 			'_ng_data'             => $_ng_data,
 			'_sub_action'          => $_sub_action,
 			'_supplier'            => $_supplier,
-				'sub_action' => $sub_action,
-				'supplier'   => $supplier,
+			'sub_action' => $sub_action,
+			'supplier'   => $supplier,
 		);
 		return( $result );
 	}

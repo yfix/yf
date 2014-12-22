@@ -29,9 +29,9 @@
 </ul>
 <div id="found_images">
 </div>
-<link href="//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/css/jquery.Jcrop.min.css" type="text/css" rel="stylesheet" />
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.min.js"></script>
-<script>
+
+{asset()} jcrop {/asset}
+{js()}
 	var search_url = '{search_url}';
 	var found_images = {search_results};
 	var in_row = 6;
@@ -143,9 +143,9 @@
 
 
 	});
-</script>
+{/js}
 
-<style>
+{css()}
 	#found_images {padding-top: 30px;}
 	#found_images img {cursor: pointer;max-width: 100%;}
 	#found_images img.success {border: solid 3px #468847;}
@@ -154,7 +154,8 @@
 	#uploading {width: 100%;left: 0;margin: 0;background: transparent;top: 200px;}
 	#uploading .progress {width: 30%;margin: 0 auto;}
 	#uploading h3 {color: #fff;}
-</style>
+{/css}
+
 <div class="modal hide fade" id="found_image_modal">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

@@ -172,10 +172,11 @@ class yf_cache {
 	/**
 	*/
 	function _get_avail_drivers_list () {
+		$dir = 'classes/cache/';
 		$paths = array(
-			'project'	=> PROJECT_PATH. 'classes/cache/',
-			'yf_core'	=> YF_PATH. 'classes/cache/',
-			'yf_plugins'=> YF_PATH. 'plugins/*/classes/cache/',
+			'project'	=> PROJECT_PATH. $dir,
+			'yf_core'	=> YF_PATH. $dir,
+			'yf_plugins'=> YF_PATH. 'plugins/*/'. $dir,
 		);
 		$prefix = 'cache_driver_';
 		$suffix = '.class.php';

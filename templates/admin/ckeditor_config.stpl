@@ -1,4 +1,5 @@
-<script type="text/javascript">
+{js()}
+
 var ck_config = {
 	toolbarGroups: [
 	    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
@@ -27,4 +28,5 @@ try {
 try {
 	CKEDITOR.inline( _ck_content_id, ck_config);
 } catch(e) { }
-</script>
+
+{/js}

@@ -1,4 +1,5 @@
-<script type="text/javascript">
+{asset()} jquery {/asset}
+{js()}
 
 function handleSaveLayout() {
     var e = $(".demo").html();
@@ -349,4 +350,4 @@ $(document).ready(function () {
     }, timerSave)
 })
 
-</script>
+{/js}

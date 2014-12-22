@@ -10,23 +10,7 @@ class yf_form2_upload {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'image');
 		$extra['desc'] = $extra['desc'] ?: ($desc ?: ucfirst(str_replace('_', ' ', $extra['name'])));
 		$func = function( $_extra, $_replace, $_this ) {
-#			asset('blueimp-uploader');
-			css(array(
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload.css',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/css/jquery.fileupload-ui.css',
-			));
-			js(array(
-				'//cdn.rawgit.com/yfix/JavaScript-Load-Image/master/js/load-image.all.min.js',
-				'//cdn.rawgit.com/yfix/JavaScript-Canvas-to-Blob/master/js/canvas-to-blob.min.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.iframe-transport.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-ui.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-process.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-image.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-audio.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-video.js',
-				'//cdn.rawgit.com/yfix/jQuery-File-Upload/master/js/jquery.fileupload-validate.js',
-			));
+			asset('blueimp-uploader');
 			$r = array(
 				'item'   => $_replace,
 				'option' => $_extra,

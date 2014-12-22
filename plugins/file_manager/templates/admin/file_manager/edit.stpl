@@ -1,0 +1,20 @@
+<h3>{file_name}</h3>
+
+<table class="table table-bordered table-striped table-hover">
+<form action="{form_action}" method="post">
+	<tr>
+		<td>
+			<textarea class="input-xxlarge" cols="100" rows="30" name="source" id="source" style="color:blue;font-family:monospace;">{text}</textarea>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<input type="submit" value="{t(SAVE)}" class="btn">
+		</td>
+	</tr>
+</form>
+</table>
+
+{back}
+
+{js()} ace-editor {/js}

@@ -860,7 +860,7 @@ class yf_table2 {
 	* Example: ->btn('custom', './?object=test&uid=%user_id&pid=%product_id', array('link_params' => 'user_id,product_id'));
 	*/
 	function _process_link_params($link, $row = array(), $extra = array()) {
-		if (!strlen($link) || empty($row)) {
+		if (!strlen($link) || empty($row) || false === strpos($link, '%')) {
 			return $link;
 		}
 		if (isset($extra['link_params'])) {
@@ -871,7 +871,11 @@ class yf_table2 {
 				}
 			}
 		} else {
-			$link = str_replace('%d', urlencode($row[$extra['id']]), $link);
+			if ($row[$extra['id']]) {
+				$link = str_replace('%d', urlencode($row[$extra['id']]), $link);
+			} else {
+				$link = '';
+			}
 		}
 		return $link;
 	}

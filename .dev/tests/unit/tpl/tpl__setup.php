@@ -5,6 +5,10 @@ require_once dirname(__DIR__).'/yf_unit_tests_setup.php';
 abstract class tpl_abstract extends PHPUnit_Framework_TestCase {
 	public static $_bak = array();
 	public static function setUpBeforeClass() {
+		// Replace default style and script templates with empty strings
+		tpl()->parse_string('', array(), 'style_css');
+		tpl()->parse_string('', array(), 'script_js');
+
 		tpl()->INSIDE_UNIT_TESTS = true;
 		if (false !== strpos(strtolower(get_called_class()), 'compiled')) {
 			self::$_bak = tpl()->COMPILE_TEMPLATES;

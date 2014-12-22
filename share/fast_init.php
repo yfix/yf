@@ -41,22 +41,24 @@ function _call_fast_func ($f_name) {
 
 $fname = '';
 // Switch between fast actions (place your custom code below):
-$route = '/'.$_GET['object'].'/'.$_GET['action'];
-if ($route === '/help/show_tip') {
+$route = ($_GET['object'] && $_GET['action']) ? '/'.$_GET['object'].'/'.$_GET['action'] : $_SERVER['REQUEST_URI'];
+if (strpos($route, '/dynamic/placeholder') === 0) {
+	$fname = 'placeholder';
+} elseif (strpos($route, '/help/show_tip') === 0) {
 	$fname = 'tooltip';
-} elseif ($route === '/dynamic/php_func' && MAIN_TYPE_ADMIN) {
+} elseif (strpos($route, '/dynamic/php_func') === 0 && MAIN_TYPE_ADMIN) {
 	$fname = 'php_func';
-} elseif ($route === '/dynamic/image') {
+} elseif (strpos($route, '/dynamic/image') === 0) {
 	$fname = 'dynamic_image';
-} elseif ($route === '/dynamic/captcha_image') {
+} elseif (strpos($route, '/dynamic/captcha_image') === 0) {
 	$fname = 'captcha_image';
-} elseif ($route === '/forum/low') {
+} elseif (strpos($route, '/forum/low') === 0) {
 	$fname = 'forum_low';
-} elseif ($route === '/search/autocomplete') {
+} elseif (strpos($route, '/search/autocomplete') === 0) {
 	$fname = 'search_autocomplete';
 } elseif (main()->OUTPUT_CACHING && empty($_COOKIE['member_id'])) {
 	$fname = 'output_cache';
-} elseif ($route === '/category/rss_for_cat' || $route === '/category/rss_for_city') {
+} elseif (strpos($route, '/category/rss_for_cat') === 0 || strpos($route, '/category/rss_for_city') === 0) {
 	$fname = 'rss_export';
 }
 if ($fname) {

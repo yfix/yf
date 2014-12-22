@@ -6,8 +6,8 @@
 		<a href="{location}">{t(Click here if you don&#39;t want to wait or have some trouble with auto redirect)}.</a>
 	</div>
 	{/if}
-<script type="text/javascript">
-<!--
+
+{js()}
 var _elm = document.getElementById("redirect_text");
 if (_elm) {
 	_elm.style.display = 'block';
@@ -17,9 +17,10 @@ var _interval = window.setInterval(function(){
 	window.clearInterval(_interval);
 	window.location.href='{location}';
 }, (_redirect_tll || 0.1) * 1000);
--->
-</script>
+{/js}
+
 <noscript>{html_redirect}</noscript>
+
 {/if}
 {if("mode" eq "html")}
 <meta http-equiv="Refresh" content="{ttl}; Url='{location}'" /><br />

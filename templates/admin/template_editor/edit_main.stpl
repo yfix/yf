@@ -8,20 +8,20 @@
 	{form_row("save_and_back")}
 {form_row("form_end")}
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
-<script>
-function initAceEditor() {
-	var html_editor = ace.edit("editor_html");
-	html_editor.setTheme("ace/theme/tomorrow_night");
-	html_editor.getSession().setMode("ace/mode/html");
-	html_editor.setFontSize("16px") ;
-	html_editor.setPrintMarginColumn(false);
-}
-initAceEditor();
-</script>
-<script>
+{js()} ace-editor {/js}
+{js()}
+	function initAceEditor() {
+		var html_editor = ace.edit("editor_html");
+		html_editor.setTheme("ace/theme/tomorrow_night");
+		html_editor.getSession().setMode("ace/mode/html");
+		html_editor.setFontSize("16px") ;
+		html_editor.setPrintMarginColumn(false);
+	}
+	initAceEditor();
+{/js}
+{jquery()}
 $("#editor_html").closest("form").on("submit", function(){
 	$(this).find("#stpl_text").val(html_editor.session.getValue())
 	return true;
 })
-</script>
+{/jquery}

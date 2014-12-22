@@ -1,4 +1,4 @@
-<style type="text/css">
+{css()}
 	.portlet { padding: 10px; margin-bottom: 20px; border: 1px solid #dddddd; border-radius: 4px; -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }
 	.portlet-header { padding: 5px 10px; margin: -10px -10px 10px; border-bottom: 1px solid #dddddd; border-top-right-radius: 3px; border-top-left-radius: 3px; }
 	.portlet-content { }
@@ -26,4 +26,4 @@
 	.color-orange.portlet, .color-orange div { border-color: #f66e00; }  .color-orange .portlet-header, .color-orange i { background-color: #f66e00; font-weight:bold; color: #151719; }
 	li.color-green { background: #8dc100; }
 	.color-green.portlet, .color-green div { border-color: #8dc100; }  .color-green .portlet-header, .color-green i { background-color: #8dc100; font-weight:bold; color: #151719; }
-</style>
+{/css}

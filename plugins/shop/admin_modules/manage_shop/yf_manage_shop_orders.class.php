@@ -447,57 +447,53 @@ class yf_manage_shop_orders{
 		;
 
 		// misc handlers
-		$out .= '
-			<style>
-				.select2_box {
-					display: none;
-				}
-				.unit_current {
-					position : relative;
-				}
-				.btn.unit_change {
-					display  : none;
-					position : absolute;
-					right    : 0;
-				}
-			</style>
-			<script>
-			$(function() {
-				$(".delivery_id").on( "change", function( event ) {
-					var location =  $(this).find( "option:selected" ).text();
-					$(".delivery_location").val( location );
-				});
-				var delivery_type__on_change = function( target ) {
-					var value = +$(target).find( "option:selected" ).val();
-					if( value == 1 ) {
-						$(".delivery_id_wrap").hide();
-						$(".delivery_location_wrap").hide();
-					} else if( value == 2 ) {
-						var count = +$(".delivery_id_wrap").find( "option" ).length;
-						if( count > 1 ) {
-							$(".delivery_id_wrap").show();
-							$(".delivery_location_wrap").show();
-						}
-					}
-				}
-				delivery_type__on_change( $(".delivery_type_wrap") );
-				$(".delivery_type_wrap").on( "change", function( event ) {
-					delivery_type__on_change( event.target );
-				});
-
-				$( ".unit_change" ).on( "click", function( event ) {
-					var $this = $( this );
-					var $select2 = $this.parent().next();
-					$select2.toggle()
-				}).each( function( i ) {
-					var $this = $( this );
-					if( $this.parent().next().length ) {
-						$this.show();
-					}
-				});
+		css('
+			.select2_box {
+				display: none;
+			}
+			.unit_current {
+				position : relative;
+			}
+			.btn.unit_change {
+				display  : none;
+				position : absolute;
+				right    : 0;
+			}
+		');
+		jquery('
+			$(".delivery_id").on( "change", function( event ) {
+				var location =  $(this).find( "option:selected" ).text();
+				$(".delivery_location").val( location );
 			});
-			</script>
-		';
+			var delivery_type__on_change = function( target ) {
+				var value = +$(target).find( "option:selected" ).val();
+				if( value == 1 ) {
+					$(".delivery_id_wrap").hide();
+					$(".delivery_location_wrap").hide();
+				} else if( value == 2 ) {
+					var count = +$(".delivery_id_wrap").find( "option" ).length;
+					if( count > 1 ) {
+						$(".delivery_id_wrap").show();
+						$(".delivery_location_wrap").show();
+					}
+				}
+			}
+			delivery_type__on_change( $(".delivery_type_wrap") );
+
+			$(".delivery_type_wrap").on( "change", function( event ) {
+				delivery_type__on_change( event.target );
+			});
+			$( ".unit_change" ).on( "click", function( event ) {
+				var $this = $( this );
+				var $select2 = $this.parent().next();
+				$select2.toggle()
+			}).each( function( i ) {
+				var $this = $( this );
+				if( $this.parent().next().length ) {
+					$this.show();
+				}
+			});
+		');
 
 		// get similar orders
 		$sql= "SELECT o.*, COUNT(*) AS num_items FROM `".db('shop_orders')."` AS `o`
