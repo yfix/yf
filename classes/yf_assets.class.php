@@ -287,16 +287,7 @@ class yf_assets {
 
 	/**
 	* Return named asset, also can return specific version.
-	*
-	* Versions idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
-	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
-	* Version constraints can be specified in a few different ways.
-	* Exact version    1.0.2	You can specify the exact version of a package.
-	* Range	           >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
-	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=. 
-	*		You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
-	* Wildcard         1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
-	* Tilde Operator   ~1.2 Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
+	* @name can be just asset name or also contain version: "jquery", "jquery:1.*"
 	*/
 	public function get_asset($name, $asset_type, $version = '') {
 		if (strpos($name, ':') !== false) {
@@ -316,15 +307,35 @@ class yf_assets {
 		if (!is_array($asset_data['versions'])) {
 			return null;
 		}
-		if ($version) {
-			$version_info = $asset_data['versions'][$version];
-		} else {
-			$version_arr = array_slice($asset_data['versions'], -1, 1, true);
-			$version_number = key($version_arr);
-			$version_info = current($version_arr);
+		$version = $this->find_version_best_match($version, array_keys($asset_data['versions']));
+		if (!$version || !isset($asset_data['versions'][$version])) {
+			return null;
 		}
+		$version_info = $asset_data['versions'][$version];
 		$content = $version_info[$asset_type];
 		return $content;
+	}
+
+	/**
+	* Versions idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
+	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
+	* Version constraints can be specified in a few different ways.
+	* Exact version    1.0.2	You can specify the exact version of a package.
+	* Range	           >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
+	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=. 
+	*		You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
+	* Wildcard         1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
+	* Tilde Operator   ~1.2 Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
+	*/
+	public function find_version_best_match($version = '', $avail_versions = array()) {
+		if (empty($avail_versions)) {
+			return null;
+		}
+		if (!$version) {
+			return current(array_slice($avail_versions, -1, 1, true));
+		}
+// TODO: comparing versions and return best match
+		return $version;
 	}
 
 	/**
