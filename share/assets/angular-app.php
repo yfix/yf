@@ -1,5 +1,7 @@
 <?php
 
+return null;
+/*
 return MAIN_TYPE_ADMIN ? array(
 	'versions' => array(
 		'master' => array(
@@ -34,3 +36,4 @@ return MAIN_TYPE_ADMIN ? array(
 		),
 	),
 ) : null;
+*/
