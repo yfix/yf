@@ -803,9 +803,13 @@ class yf_assets {
 			}
 			$_params = (array)$v['params'] + (array)$params;
 			if ($this->USE_CACHE) {
-				$cached = $this->get_cache($out_type, $md5, $v);
-				if (!$cached) {
-					$this->set_cache($out_type, $md5, $v, $_params);
+				$cached_path = $this->get_cache($out_type, $md5, $v);
+				if (!$cached_path) {
+					$cached_path = $this->set_cache($out_type, $md5, $v, $_params);
+				}
+				if ($cached_path) {
+#					$content_type = $v['content_type'];
+#					$v['content'] = MEDIA_PATH. substr($cached_path, strlen(PROJECT_PATH));
 				}
 			}
 			$content_type = $v['content_type'];
@@ -872,8 +876,15 @@ class yf_assets {
 	*/
 	public function get_cache($out_type, $md5, $data = array()) {
 		$cache_path = $this->_cache_path($out_type, $md5, $data);
+
+
+#if ($out_type === 'css') {
+#return false;
+#}
+
+
 		if (file_exists($cache_path) && !$this->_cache_expired($cache_path)) {
-			return file_get_contents($cache_path);
+			return $cache_path;
 		}
 		return false;
 	}
@@ -895,8 +906,23 @@ class yf_assets {
 		if (!strlen($content)) {
 			return false;
 		}
+#main()->NO_GRAPHICS = true;
+#echo '<pre>';
+		if ($out_type === 'css' && $content_type === 'url') {
+			$content = preg_replace_callback('~[\s:]+url\([\'"]?(?P<url>[^\'"\)]+?)[\'"]?\)~ims', function($m) use ($data, $cache_path) {
+				$url = trim($m['url']);
+				if (strpos($url, 'data:') === 0) {
+					return $m[0];
+				}
+				return $m[0];
+#				if () {
+#				}
+#echo dirname($data). $url.PHP_EOL;
+			}, $content);
+		}
 // TODO: process CSS @import and url()
-		return file_put_contents($cache_path, $content);
+		file_put_contents($cache_path, $content);
+		return $cache_path;
 	}
 
 	/**

@@ -412,12 +412,15 @@ class yf_main {
 		foreach ((array)conf('required_files::'.MAIN_TYPE) as $path) {
 			$required_files[] = $path;
 		}
-		$common_funcs_path	= PROJECT_PATH.'share/functions/common_funcs.php';
-		$fwork_funcs_path	= YF_PATH.'share/functions/'.YF_PREFIX.'common_funcs.php';
-		if (file_exists($common_funcs_path)) {
-			$required_files[] = $common_funcs_path;
-		} elseif (file_exists($fwork_funcs_path)) {
-			$required_files[] = $fwork_funcs_path;
+		$funcs_paths = array(
+			'app'		=> APP_PATH.'share/functions/common_funcs.php',
+			'project'	=> PROJECT_PATH.'share/functions/common_funcs.php',
+			'yf'		=> YF_PATH.'share/functions/'.YF_PREFIX.'common_funcs.php',
+		);
+		foreach ($funcs_paths as $path) {
+			if (file_exists($path)) {
+				$required_files[] = $path;
+			}
 		}
 		foreach ((array)$include_files as $path) {
 			$this->include_module($this->_replace_core_paths($path), $_requried = false);
