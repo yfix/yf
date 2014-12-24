@@ -100,10 +100,12 @@ class yf_manage_shop_novaposhta_ua {
 
 	function novaposhta_ua__import() {
 		// get data
-		$file = '/tmp/JsonWarehouseList.json';
-		$content = file_get_contents( $file );
+		// *** local
+		// $file = '/tmp/JsonWarehouseList.json';
+		// $content = file_get_contents( $file );
+		// *** remote
 		$url = 'http://novaposhta.ua/shop/office/getJsonWarehouseList/';
-		// $content = common()->get_remote_page( $url );
+		$content = common()->get_remote_page( $url );
 		$data = json_decode( $content, true );
 		if( empty( $data[ 'response' ] ) ) { return( 'Не найдено данных по адресу: ' . $url ); }
 		$count = 0;
