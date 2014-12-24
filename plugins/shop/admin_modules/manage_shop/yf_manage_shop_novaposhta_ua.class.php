@@ -98,6 +98,64 @@ class yf_manage_shop_novaposhta_ua {
 
 	function novaposhta_ua__import() {
 		// get data
+		// $file = '/tmp/JsonWarehouseList.json';
+		// $content = file_get_contents( $file );
+		$url = 'http://novaposhta.ua/shop/office/getJsonWarehouseList/';
+		$content = common()->get_remote_page( $url );
+		$data = json_decode( $content, true );
+		if( empty( $data[ 'response' ] ) ) { return( 'Не найдено данных по адресу: ' . $url ); }
+		$count = 0;
+		$sql_data = array();
+		foreach( $data[ 'response' ] as $i => $item ) {
+			$count++;
+			$city_raw    = $item[ 'cityRu'    ] ?: '';
+			$tel_raw     = $item[ 'phone'     ] ?: '';
+			$address_raw = $item[ 'addressRu' ] ?: '';
+			$city = $this->_cleanup_city( $city_raw );
+			$tel  = $this->_cleanup_tel( $tel_raw );
+			list( $address, $branch_no, $info ) = $this->_cleanup_address( $address_raw );
+			$address   = trim( $address   );
+			$branch_no = (int)$branch_no;
+			$info      = trim( $info      );
+			// add city
+			$location = empty( $city ) ? '' : $city . ', ';
+			// add branch
+			$location .= 'Отделение' . ( $branch_no > 0 ? ' №' . $branch_no : '' );
+			// add ':'
+			$location .= empty( $address ) && empty( $info ) ? '' : ': ';
+			// add address
+			$location .= empty( $address ) ? '' : $address;
+			// add info
+			$location .= empty( $info ) ? '' : " ($info)";
+			$sql_data[] = _es( array(
+				'city_raw'    => $city_raw,
+				'address_raw' => $address_raw,
+				'tel_raw'     => $tel_raw,
+				'city'        => $city,
+				'branch_no'   => $branch_no,
+				'address'     => $address,
+				'info'        => $info,
+				'location'    => $location,
+				'tel'         => $tel,
+				'options'     => json_encode( $item, JSON_NUMERIC_CHECK ),
+			));
+		}
+		$table_name = db( 'shop_novaposhta_ua' );
+		$count_in_db = (int)db()->get_one( "SELECT COUNT(*) FROM $table_name" );
+		$sql_result = db()->insert_on_duplicate_key_update( $table_name, $sql_data );
+		$table_result = array(
+			array( 'title' => 'Обработано: ', 'count' => $count )               ,
+			array( 'title' => 'Добавлено: ' , 'count' => $count - $count_in_db ),
+		);
+		$result = table( $table_result, array( 'no_total' => true ) )
+		->text( 'title', 'Операция' )
+		->text( 'count', 'Количество' )
+		;
+		return( $result );
+	}
+
+	function novaposhta_ua__import_old() {
+		// get data
 		// $file = '/tmp/warenhouses_ru.xls';
 		// $content = file_get_contents( $file );
 		$url = 'http://novaposhta.ua/public/files/xls/warenhouses_ru.xls';
