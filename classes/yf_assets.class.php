@@ -808,8 +808,8 @@ class yf_assets {
 					$cached_path = $this->set_cache($out_type, $md5, $v, $_params);
 				}
 				if ($cached_path) {
-#					$content_type = $v['content_type'];
-#					$v['content'] = MEDIA_PATH. substr($cached_path, strlen(PROJECT_PATH));
+					$content_type = $v['content_type'];
+					$v['content'] = MEDIA_PATH. substr($cached_path, strlen(PROJECT_PATH));
 				}
 			}
 			$content_type = $v['content_type'];
@@ -899,7 +899,8 @@ class yf_assets {
 		$content = $data['content'];
 		$content_type = $data['content_type'];
 		if ($content_type === 'url') {
-			$content = file_get_contents((substr($content, 0, 2) === '//' ? 'http:' : '').$content, false, stream_context_create(array('http' => array('timeout' => 5))));
+			$url = (substr($content, 0, 2) === '//' ? 'http:' : ''). $content;
+			$content = file_get_contents($url, false, stream_context_create(array('http' => array('timeout' => 5))));
 		} elseif ($content_type === 'file') {
 			$content = file_get_contents($content);
 		}
@@ -922,6 +923,15 @@ class yf_assets {
 		}
 // TODO: process CSS @import and url()
 		file_put_contents($cache_path, $content);
+
+		if ($out_type === 'js' && $content_type === 'url') {
+			$map_ext = '.map';
+			$map_url = (substr($data['content'], 0, 2) === '//' ? 'http:' : ''). substr($data['content'], 0, -strlen('.js')). $map_ext;
+			$map_content = file_get_contents($map_url, false, stream_context_create(array('http' => array('timeout' => 5))));
+			if ($map_content) {
+				file_put_contents($cache_path. $map_ext, $map_content);
+			}
+		}
 		return $cache_path;
 	}
 
