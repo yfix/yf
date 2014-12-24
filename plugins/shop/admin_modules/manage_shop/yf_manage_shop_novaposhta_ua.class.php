@@ -73,7 +73,8 @@ class yf_manage_shop_novaposhta_ua {
 		}
 		// branch_no
 		if( preg_match( '#^[^\d]+(\d*)\s*:(.*)$#', $data, $match )
-			|| preg_match( '#^[^\d]+N\s*(\d*)\,*(.*)$#', $data, $match ) ) {
+			|| preg_match( '#^[^\d]+N\s*(\d*)\,*(.*)$#', $data, $match )
+			|| preg_match( '#^[^\d]+№\s*(\d*)\s*\,*(.*)$#', $data, $match ) ) {
 			$branch_no = (int)$match[ 1 ];
 			$branch_no = $branch_no ?: 1;
 			$data = $match[ 2 ];
@@ -81,9 +82,10 @@ class yf_manage_shop_novaposhta_ua {
 		// cleanup
 		$data = preg_replace( array( '#Відділення#' ), '', $data );
 		$filter = array(
-			'#\s*Відділення\s*#' => '',
-			'#Отделение,\s*#'    => '',
-			'#^\s*:\s*#'         => '',
+			'#\s*Відділення\s*#'  => '',
+			'#Отделение,\s*#'     => '',
+			'#Отделение[^\,]\,\s*#' => '',
+			'#^\s*:\s*#'          => '',
 		);
 		// add info
 		if( preg_match( '#^\s*[:,]\s*([^:]+)\s*[:]\s*(.+)$#', $data, $match ) ) {
@@ -98,10 +100,10 @@ class yf_manage_shop_novaposhta_ua {
 
 	function novaposhta_ua__import() {
 		// get data
-		// $file = '/tmp/JsonWarehouseList.json';
-		// $content = file_get_contents( $file );
+		$file = '/tmp/JsonWarehouseList.json';
+		$content = file_get_contents( $file );
 		$url = 'http://novaposhta.ua/shop/office/getJsonWarehouseList/';
-		$content = common()->get_remote_page( $url );
+		// $content = common()->get_remote_page( $url );
 		$data = json_decode( $content, true );
 		if( empty( $data[ 'response' ] ) ) { return( 'Не найдено данных по адресу: ' . $url ); }
 		$count = 0;
