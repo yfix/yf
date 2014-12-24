@@ -584,16 +584,16 @@ class yf_auth_user {
 	*/
 	function _exec_method_on_action($action = 'login') {
 		if ($action == 'login') {
-			$CALLBACKS = $this->EXEC_AFTER_LOGIN;
+			$callbacks = $this->EXEC_AFTER_LOGIN;
 		} elseif ($action == 'logout') {
-			$CALLBACKS = $this->EXEC_AFTER_LOGOUT;
+			$callbacks = $this->EXEC_AFTER_LOGOUT;
 		}
-		if (empty($CALLBACKS)) {
+		if (empty($callbacks) || !is_array($callbacks)) {
 			return false;
 		}
-		foreach ((array)$CALLBACKS as $cur_method) {
-			if (is_callable($cur_method[0])) {
-				call_user_func_array($cur_method[0], (array)$cur_method[1]);
+		foreach ((array)$callbacks as $callback) {
+			if (is_callable($callback)) {
+				call_user_func_array($callback, array('self' => $this));
 			}
 		}
 	}
