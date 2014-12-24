@@ -3,6 +3,7 @@
 return array(
 	'require' => array(
 		'asset' => array(
+			'angular-modules',
 			'angularjs',
 			'angular-locale',
 			'angular-route',

@@ -125,6 +125,16 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
 
 		_class('assets')->ADD_IS_DIRECT_OUT = false;
+
+#		_class('assets')->clean_all();
+#		$jquery_result = js('jquery', 'auto', array('direct_out' => true));
+#		$this->assertSame( $expected_jquery_lib, $jquery_result );
+#		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
+
+#		_class('assets')->clean_all();
+#		$jquery_result = jquery($jquery_js, array('direct_out' => true));
+#		$this->assertSame( $expected_jquery_lib. PHP_EOL. $expected_js, $jquery_result );
+#		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
 	}
 	public function test_angularjs() {
 		$url = _class('assets')->get_asset('angularjs', 'js');
@@ -408,6 +418,45 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expected11_js, _class('assets')->show_js() );
 		$expected11_css = $expected10_css. PHP_EOL. '<style type="text/css">'.PHP_EOL. $fake_lib11['versions']['master']['css']. PHP_EOL.'</style>';
 		$this->assertEquals( $expected11_css, _class('assets')->show_css() );
+	}
+
+	/*
+	* idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
+	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
+	* Version constraints can be specified in a few different ways.
+	* Exact version    1.0.2	You can specify the exact version of a package.
+	* Range	           >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
+	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=. 
+	*		You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
+	* Wildcard         1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
+	* Tilde Operator   ~1.2 Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
+	*/
+	public function test_versions() {
+		_class('assets')->clean_all();
+		$name = __FUNCTION__;
+		$data = array(
+			'versions' => array(
+				'1.11.0' => array('js' => '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'),
+				'1.11.2' => array('js' => '//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'),
+			),
+		);
+		$this->assertEmpty( _class('assets')->get_asset($name, 'js') );
+		$this->assertEmpty( _class('assets')->show_js() );
+		_class('assets')->bundle_register($name, $data);
+
+		$expected = $data['versions']['1.11.2']['js'];
+		$this->assertSame( $expected, _class('assets')->get_asset($name, 'js') );
+#		$this->assertSame( $expected, _class('assets')->get_asset($name.':1.11.2', 'js') );
+#		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1.11.1', 'js') );
+#		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1.11', 'js') );
+#		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1', 'js') );
+#		$this->assertSame( $expected, _class('assets')->get_asset($name.':>=1.11.2', 'js') );
+#		$this->assertSame( $expected, _class('assets')->get_asset($name.':<2', 'js') );
+#		$this->assertSame( $expected, _class('assets')->get_asset($name.':<1.11.3', 'js') );
+#		$this->assertSame( $expected, _class('assets')->get_asset($name.':<1.11.3,>1.11.1', 'js') );
+#		$this->assertSame( $expected, _class('assets')->get_asset($name.':1.11.*', 'js') );
+#		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1.11.0,<1.11.3', 'js') );
+#		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1.11.0 | <2', 'js') );
 	}
 	public function test_filter_cssmin() {
 		$in = 'body {'.PHP_EOL.'    color : white; '.PHP_EOL.'}';

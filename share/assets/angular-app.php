@@ -1,6 +1,5 @@
 <?php
 
-// Disabled by default, override this file inside project
 return null;
 /*
 return MAIN_TYPE_ADMIN ? array(
@@ -31,10 +30,9 @@ return MAIN_TYPE_ADMIN ? array(
 		'),
 	),
 	'require' => array(
-		'js' => 'angular-full',
-		'css' => array(
-			'font-awesome4',
+		'asset' => array(
 			'angular-full',
+			'font-awesome4',
 		),
 	),
 ) : null;
