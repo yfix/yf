@@ -259,6 +259,9 @@ class yf_auth_user {
 				$cur_web_path	= $request_uri[strlen($request_uri) - 1] == '/' ? substr($request_uri, 0, -1) : dirname($request_uri);
 				$redirect_url	= 'https://'.getenv('HTTP_HOST').str_replace(array("\\","//"), array('/','/'), (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path).'/');
 			}
+			if ($params['no_redirect']) {
+				return false;
+			}
 			return js_redirect($redirect_url);
 		}
 
@@ -502,7 +505,7 @@ class yf_auth_user {
 	/**
 	* Do log out user
 	*/
-	function _do_logout () {
+	function _do_logout ($no_redirect = false) {
 		if ($this->STORE_ONLINE_USERS) {
 			db()->_add_shutdown_query('DELETE FROM '.db('online').' WHERE user_id='.intval($_SESSION[$this->VAR_USER_ID]));
 			$MAIN = &main();
@@ -530,6 +533,9 @@ class yf_auth_user {
 		$this->_cleanup_cookie();
 		session_destroy();
 
+		if ($no_redirect) {
+			return false;
+		}
 		js_redirect($this->URL_AFTER_LOGOUT);
 	}
 
