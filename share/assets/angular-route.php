@@ -2,8 +2,8 @@
 
 return array(
 	'versions' => array(
-		'1.2.20' => array(
-			'js' => '//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-route.min.js',
+		'1.2.26' => array(
+			'js' => '//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.26/angular-route.min.js',
 		),
 	),
 	'require' => array(
