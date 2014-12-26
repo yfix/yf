@@ -1457,11 +1457,11 @@ class yf_debug {
 			return '';
 		}
 		$items = $this->_get_debug_data('dashboard');
-		if(!isset($items)) {
+		if(!isset($items) || !isset($items['widgets'])) {
 			return false ;
 		}
 		$loaded_modules = $this->backup_debug_data['main_load_class'];
-		foreach ($items['widgets'] as $key => $value){
+		foreach ((array)$items['widgets'] as $key => $value){
 			$_items[$key]['class_name'] = $value['class_name'];
 			$_items[$key]['action'] = $value['action'];
 			foreach ($loaded_modules as $k => $v) {
