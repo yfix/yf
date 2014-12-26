@@ -701,7 +701,7 @@ class yf_debug {
 			'LOCALE_CURRENT'	=> $locale_debug['current'],
 			'LOCALE_VARIANTS'	=> $locale_debug['variants'],
 			'LOCALE_DEFAULT'	=> $locale_debug['default'],
-			'LOCALE_SYSTEM'		=> implode(', ', $locale_debug['system']),
+			'LOCALE_SYSTEM'		=> implode(', ', (array)$locale_debug['system']),
 		);
 		foreach ((array)$this->_get_debug_data('_DEBUG_META') as $k => $v) {
 			$data['yf']['META_'.strtoupper($k)] = $v;
@@ -756,6 +756,7 @@ class yf_debug {
 			'php_loaded_extensions'	=> implode(', ', get_loaded_extensions()),
 			'php_ini_scanned_files'	=> function_exists('php_ini_scanned_files') ? php_ini_scanned_files() : '',
 		);
+		$data['session']['session_id'] = session_id();
 		foreach ((array)ini_get_all('session') as $k => $v) {
 			$data['session'][$k] = $v['local_value'];
 		}
