@@ -1,4 +1,4 @@
-{asset("yf_draggable_tree")}
+{asset()} yf_draggable_tree {/asset}
 
 <form action="{form_action}" method="post" id="draggable_form">
 

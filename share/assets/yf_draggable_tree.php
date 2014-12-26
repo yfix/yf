@@ -16,9 +16,10 @@ return array(
 	.draggable_menu .controls_over { display: none; }
 	.icon-move, .fa-arrows { cursor: move; }',
 			),
-
-			'jquery' => array(
-'	var orig_items = { };
+			'js' => array(
+'
+$(function(){
+	var orig_items = { };
 	var i = 0;
 	$("li", ".draggable_menu").each(function(){
 		orig_items[++i] = {
@@ -134,11 +135,11 @@ return array(
 	});
 	$(".draggable_menu").on("mouseout", "dl", function() {
 		$(this).find(".controls_over").hide();
-	});',
-			),
-
-			'js' => array(
-'	var draggable_history = {
+	});
+})
+',
+'
+	var draggable_history = {
 		stack: new Array(),
 		temp: null,
 		// takes an element and saves it"s position in the sitemap.
@@ -163,11 +164,12 @@ return array(
 			$(".draggable_menu li.opened").not(":has(li)").removeClass("opened");
 			$(".draggable_menu li:has(ul li):not(.closed)").addClass("opened");
 		}
-	}',
+	}
+',
 			),
 		),
 	),
 	'require' => array(
-		'js' => 'jquery-ui',
+		'asset' => 'jquery-ui',
 	),
 );
