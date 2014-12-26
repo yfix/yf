@@ -756,6 +756,7 @@ class yf_debug {
 			'php_loaded_extensions'	=> implode(', ', get_loaded_extensions()),
 			'php_ini_scanned_files'	=> function_exists('php_ini_scanned_files') ? php_ini_scanned_files() : '',
 		);
+		$data['session']['session_id'] = session_id();
 		foreach ((array)ini_get_all('session') as $k => $v) {
 			$data['session'][$k] = $v['local_value'];
 		}

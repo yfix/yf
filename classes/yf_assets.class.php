@@ -803,9 +803,13 @@ class yf_assets {
 			}
 			$_params = (array)$v['params'] + (array)$params;
 			if ($this->USE_CACHE) {
-				$cached = $this->get_cache($out_type, $md5, $v);
-				if (!$cached) {
-					$this->set_cache($out_type, $md5, $v, $_params);
+				$cached_path = $this->get_cache($out_type, $md5, $v);
+				if (!$cached_path) {
+					$cached_path = $this->set_cache($out_type, $md5, $v, $_params);
+				}
+				if ($cached_path) {
+					$content_type = $v['content_type'];
+					$v['content'] = MEDIA_PATH. substr($cached_path, strlen(PROJECT_PATH));
 				}
 			}
 			$content_type = $v['content_type'];
@@ -872,8 +876,16 @@ class yf_assets {
 	*/
 	public function get_cache($out_type, $md5, $data = array()) {
 		$cache_path = $this->_cache_path($out_type, $md5, $data);
+
+// !!!!!!!!!!!!!!!
+#if ($out_type === 'css') {
+#if ($out_type === 'js') {
+#	return false;
+#}
+// !!!!!!!!!!!!!!!
+
 		if (file_exists($cache_path) && !$this->_cache_expired($cache_path)) {
-			return file_get_contents($cache_path);
+			return $cache_path;
 		}
 		return false;
 	}
@@ -888,15 +900,100 @@ class yf_assets {
 		$content = $data['content'];
 		$content_type = $data['content_type'];
 		if ($content_type === 'url') {
-			$content = file_get_contents((substr($content, 0, 2) === '//' ? 'http:' : '').$content, false, stream_context_create(array('http' => array('timeout' => 5))));
+			$url = (substr($content, 0, 2) === '//' ? 'http:' : ''). $content;
+			$content = file_get_contents($url, false, stream_context_create(array('http' => array('timeout' => 5))));
 		} elseif ($content_type === 'file') {
 			$content = file_get_contents($content);
 		}
 		if (!strlen($content)) {
 			return false;
 		}
-// TODO: process CSS @import and url()
-		return file_put_contents($cache_path, $content);
+		if ($out_type === 'css' && $content_type === 'url') {
+			$content = $this->_css_urls_rewrite_and_save($content, $url, $cache_path);
+		}
+		file_put_contents($cache_path, $content);
+
+		if ($out_type === 'js' && $content_type === 'url') {
+			$map_ext = '.map';
+// TODO: parse such things: //# sourceMappingURL=lightbox.min.map
+			$map_url = (substr($data['content'], 0, 2) === '//' ? 'http:' : ''). /*substr(*/$data['content']/*, 0, -strlen('.js'))*/. $map_ext;
+			$map_content = file_get_contents($map_url, false, stream_context_create(array('http' => array('timeout' => 5))));
+			if ($map_content) {
+				file_put_contents($cache_path. $map_ext, $map_content);
+			}
+		}
+		return $cache_path;
+	}
+
+	/**
+	* process and save CSS url() and @import
+	*/
+    function _css_urls_rewrite_and_save($content, $content_url, $cache_path) {
+
+#main()->NO_GRAPHICS = true;
+#echo '<pre>';
+
+		$_this = $this;
+		return preg_replace_callback('~[\s:]+url\([\'"\s]*(?P<url>[^\'"\)]+?)[\'"\s]*\)~ims', function($m) use ($_this, $content_url, $cache_path) {
+			$url = trim($m['url']);
+			if (strpos($url, 'data:') === 0) {
+				return $m[0];
+			}
+			$orig_url = $url;
+			if (substr($url, 0, 2) !== '//' && substr($url, 0, strlen('http')) !== 'http') {
+				$url = dirname($content_url). '/'. $url;
+			}
+			$host = parse_url($url, PHP_URL_HOST);
+			$path = parse_url($url, PHP_URL_PATH);
+			$query = parse_url($url, PHP_URL_QUERY);
+			// example: //fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700
+			if ($host === 'fonts.googleapis.com') {
+				$ext = '.'.($path === '/css' ? 'css' : trim($path, '/')); // example: /css
+				$path = preg_replace('~[^a-z0-9_-]~ims', '_', strtolower($query)). $ext;
+			}
+			$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
+			$save_path = '/'.ltrim($save_path, '/');
+
+			$url = $_this->_get_absolute_url($url). ($query ? '?'.$query : '');
+			$str = file_get_contents($url, false, stream_context_create(array('http' => array('timeout' => 5))));
+			if (strlen($str)) {
+#echo implode(' | ', array($orig_url, $host, $path, $url, $save_path, strlen($str))). PHP_EOL;
+#echo ' url(\''.basename($save_path).'\') '.PHP_EOL;
+				$str = $_this->_css_urls_rewrite_and_save($str, $content_url, $cache_path);
+				file_put_contents($save_path, $str);
+			}
+			return ' url(\''.basename($save_path).'\') ';
+		}, $content);
+	}
+
+	/**
+	*/
+    function _get_absolute_url($url) {
+		$u = parse_url($url);
+		if (substr($url, 0, 2) === '//') {
+			$u['scheme'] = 'http';
+		}
+		$host = $u['host'];
+		$path = $this->_get_absolute_path($u['path']);
+		return strlen($host) && strlen($path) ? $u['scheme']. '://'. $host. '/'. ltrim($path, '/') : null;
+	}
+
+	/**
+	*/
+	function _get_absolute_path($path) {
+		$parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
+		$absolutes = array();
+		foreach ($parts as $part) {
+			if ('.' == $part) {
+				continue;
+			}
+			if ('..' == $part) {
+				array_pop($absolutes);
+			} else {
+				$absolutes[] = $part;
+			}
+		}
+		return implode(DIRECTORY_SEPARATOR, $absolutes);
 	}
 
 	/**
