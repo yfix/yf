@@ -756,6 +756,9 @@ class yf_form2 {
 			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
 
 			$attrs_names = array('id','contenteditable','style','class','title');
+			if ($extra['ckeditor']) {
+				$extra['ckeditor_inline'] = true;
+			}
 			return $_this->_row_html(isset($extra['ckeditor']) ? '<div'._attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
 		};
 		if ($this->_chained_mode) {
