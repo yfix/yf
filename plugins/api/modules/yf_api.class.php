@@ -65,6 +65,19 @@ class yf_api {
 		die( $message );
 	}
 
+	public function _redirect( $url, $message = '' ) {
+		$code     = 302;
+		$status   = '302 Found';
+		$header   = 'Status: ' . $status;
+		// $header   = ( $_SERVER['SERVER_PROTOCOL'] ?: 'HTTP/1.1' ) . ' ' . $status;
+		$url      = $url ?: url( '/' );
+		$location = 'Location: ' . $url;
+		http_response_code( $code );
+		header( $header   );
+		header( $location );
+		exit( $message );
+	}
+
 	protected function _firewall( $class = null, $class_path = null, $method = null, $options = array() ) {
 		$_method = '_api_' . $method;
 		// try module
