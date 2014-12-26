@@ -137,7 +137,7 @@ class yf_locale_editor {
 			->text('is_default')
 			->btn_edit('', './?object='.$_GET['object'].'&action=lang_edit&id=%d')
 			->btn_delete('', './?object='.$_GET['object'].'&action=lang_delete&id=%d', array('display_func' => $no_actions_if_default))
-			->btn('Make default', './?object='.$_GET['object'].'&action=lang_default&id=%d', array('class' => 'btn-info', 'display_func' => $no_actions_if_default))
+			->btn('Make default', './?object='.$_GET['object'].'&action=lang_default&id=%d', array('class_add' => 'btn-info', 'display_func' => $no_actions_if_default))
 			->btn_active('', './?object='.$_GET['object'].'&action=lang_active&id=%d', array('display_func' => $no_actions_if_default))
 			->footer_link('Manage vars', './?object='.$_GET['object'].'&action=show_vars')
 			->footer_add('Add language', './?object='.$_GET['object'].'&action=lang_add')
