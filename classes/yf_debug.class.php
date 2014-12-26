@@ -701,7 +701,7 @@ class yf_debug {
 			'LOCALE_CURRENT'	=> $locale_debug['current'],
 			'LOCALE_VARIANTS'	=> $locale_debug['variants'],
 			'LOCALE_DEFAULT'	=> $locale_debug['default'],
-			'LOCALE_SYSTEM'		=> implode(', ', $locale_debug['system']),
+			'LOCALE_SYSTEM'		=> implode(', ', (array)$locale_debug['system']),
 		);
 		foreach ((array)$this->_get_debug_data('_DEBUG_META') as $k => $v) {
 			$data['yf']['META_'.strtoupper($k)] = $v;
