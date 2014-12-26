@@ -21,12 +21,14 @@ if (!_ck_content_id) {
 	_ck_content_id = 'content_editable';
 }
 
-try {
-	CKEDITOR.replace( 'text', ck_config)
-} catch(e) { }
+try { 
 
-try {
+{if_ok(ckeditor_inline)}
 	CKEDITOR.inline( _ck_content_id, ck_config);
-} catch(e) { }
+{else}
+	CKEDITOR.replace( 'text', ck_config);
+{/if}
+
+} catch(e) { console.error(e) }
 
 {/js}
