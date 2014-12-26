@@ -26,6 +26,8 @@ class yf_assets {
 	public $USE_CACHE = false;
 	/** @bool */
 	public $CACHE_TTL = 3600;
+	/** @bool */
+	public $URL_TIMEOUT = 5;
 
 	/**
 	* Catch missing method call
@@ -58,6 +60,19 @@ class yf_assets {
 	*/
 	public function _init() {
 		$this->load_predefined_assets();
+	}
+
+	/**
+	* Smart wrapper
+	*/
+	function _url_get_contents($url) {
+		if (!strlen($url)) {
+			return false;
+		}
+		$url = (substr($url, 0, 2) === '//' ? 'http:' : ''). $url;
+		return file_get_contents($url, false, stream_context_create(array(
+			'http' => array('timeout' => $this->URL_TIMEOUT)
+		)));
 	}
 
 	/**
@@ -320,11 +335,11 @@ class yf_assets {
 	* Versions idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
 	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
 	* Version constraints can be specified in a few different ways.
-	* Exact version    1.0.2	You can specify the exact version of a package.
-	* Range	           >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
+	* Exact version	1.0.2	You can specify the exact version of a package.
+	* Range			   >=1.0 >=1.0,<2.0 >=1.0,<1.1 | >=1.2
 	*		By using comparison operators you can specify ranges of valid versions. Valid operators are >, >=, <, <=, !=. 
 	*		You can define multiple ranges. Ranges separated by a comma (,) will be treated as a logical AND. A pipe (|) will be treated as a logical OR. AND has higher precedence than OR.
-	* Wildcard         1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
+	* Wildcard		 1.0.* You can specify a pattern with a * wildcard. 1.0.* is the equivalent of >=1.0,<1.1.
 	* Tilde Operator   ~1.2 Very useful for projects that follow semantic versioning. ~1.2 is equivalent to >=1.2,<2.0. For more details, read the next section below.
 	*/
 	public function find_version_best_match($version = '', $avail_versions = array()) {
@@ -802,17 +817,17 @@ class yf_assets {
 				continue;
 			}
 			$_params = (array)$v['params'] + (array)$params;
-			if ($this->USE_CACHE) {
+			$content_type = $v['content_type'];
+			if ($this->USE_CACHE && $content_type !== 'inline') {
 				$cached_path = $this->get_cache($out_type, $md5, $v);
 				if (!$cached_path) {
 					$cached_path = $this->set_cache($out_type, $md5, $v, $_params);
 				}
 				if ($cached_path) {
-					$content_type = $v['content_type'];
+					$content_type = 'url';
 					$v['content'] = MEDIA_PATH. substr($cached_path, strlen(PROJECT_PATH));
 				}
 			}
-			$content_type = $v['content_type'];
 			$str = $v['content'];
 			if ($_params['min'] && $content_type === 'url' && !DEBUG_MODE) {
 				if (strpos($str, '.min.') === false) {
@@ -876,14 +891,6 @@ class yf_assets {
 	*/
 	public function get_cache($out_type, $md5, $data = array()) {
 		$cache_path = $this->_cache_path($out_type, $md5, $data);
-
-// !!!!!!!!!!!!!!!
-#if ($out_type === 'css') {
-#if ($out_type === 'js') {
-#	return false;
-#}
-// !!!!!!!!!!!!!!!
-
 		if (file_exists($cache_path) && !$this->_cache_expired($cache_path)) {
 			return $cache_path;
 		}
@@ -899,9 +906,10 @@ class yf_assets {
 		$cache_path = $this->_cache_path($out_type, $md5, $data);
 		$content = $data['content'];
 		$content_type = $data['content_type'];
+		$content_url = '';
 		if ($content_type === 'url') {
-			$url = (substr($content, 0, 2) === '//' ? 'http:' : ''). $content;
-			$content = file_get_contents($url, false, stream_context_create(array('http' => array('timeout' => 5))));
+			$content_url = $content;
+			$content = $this->_url_get_contents($content_url);
 		} elseif ($content_type === 'file') {
 			$content = file_get_contents($content);
 		}
@@ -909,32 +917,55 @@ class yf_assets {
 			return false;
 		}
 		if ($out_type === 'css' && $content_type === 'url') {
-			$content = $this->_css_urls_rewrite_and_save($content, $url, $cache_path);
+			$content = $this->_css_urls_rewrite_and_save($content, $content_url, $cache_path);
 		}
 		file_put_contents($cache_path, $content);
-
+#		$content = gzdecode($content); // PHP 5.4+ only
+		// Decode gzip content to not confuse browser and web server
+		// gzip file beginnning: \x1F\x8B
+		if (bin2hex(substr($content, 0, 2)) === '1f8b') {
+			ob_start();
+			readgzfile($cache_path);
+			$content = ob_get_clean();
+			file_put_contents($cache_path, $content);
+		}
 		if ($out_type === 'js' && $content_type === 'url') {
-			$map_ext = '.map';
-// TODO: parse such things: //# sourceMappingURL=lightbox.min.map
-			$map_url = (substr($data['content'], 0, 2) === '//' ? 'http:' : ''). /*substr(*/$data['content']/*, 0, -strlen('.js'))*/. $map_ext;
-			$map_content = file_get_contents($map_url, false, stream_context_create(array('http' => array('timeout' => 5))));
-			if ($map_content) {
-				file_put_contents($cache_path. $map_ext, $map_content);
-			}
+			$this->_js_map_save($content, $content_url, $cache_path);
 		}
 		return $cache_path;
 	}
 
 	/**
+	* Try to find and save JS map file. It is used for navigating minified files inside browser's developer tools.
+	*/
+	function _js_map_save($content, $content_url, $cache_path) {
+		$map_ext = '.map';
+		$map_url = '';
+		// Parse inline map url suggest, example: //# sourceMappingURL=lightbox.min.map
+		if (preg_match('~#\s*sourceMappingURL=(?P<map_url>.+\.map)~ims', $content, $m)) {
+			$map_url = trim($m['map_url']);
+			if (strlen($map_url) && strpos($map_url, '/') === false) {
+				$map_url = dirname($content_url). '/'. $map_url;
+			}
+		}
+		if (!$map_url) {
+			$map_url = $content_url. $map_ext;
+		}
+		$map_content = $this->_url_get_contents($map_url);
+		if (!strlen($map_content)) {
+			return false;
+		}
+		$map_path = dirname($cache_path). '/'. basename($map_url);
+		return file_put_contents($map_path, $map_content);
+	}
+
+	/**
 	* process and save CSS url() and @import
 	*/
-    function _css_urls_rewrite_and_save($content, $content_url, $cache_path) {
-
-#main()->NO_GRAPHICS = true;
-#echo '<pre>';
-
+	function _css_urls_rewrite_and_save($content, $content_url, $cache_path) {
 		$_this = $this;
-		return preg_replace_callback('~[\s:]+url\([\'"\s]*(?P<url>[^\'"\)]+?)[\'"\s]*\)~ims', function($m) use ($_this, $content_url, $cache_path) {
+		$self_func = __FUNCTION__;
+		return preg_replace_callback('~[\s:]+url\([\'"\s]*(?P<url>[^\'"\)]+?)[\'"\s]*\)~ims', function($m) use ($_this, $content_url, $cache_path, $self_func) {
 			$url = trim($m['url']);
 			if (strpos($url, 'data:') === 0) {
 				return $m[0];
@@ -943,9 +974,10 @@ class yf_assets {
 			if (substr($url, 0, 2) !== '//' && substr($url, 0, strlen('http')) !== 'http') {
 				$url = dirname($content_url). '/'. $url;
 			}
-			$host = parse_url($url, PHP_URL_HOST);
-			$path = parse_url($url, PHP_URL_PATH);
-			$query = parse_url($url, PHP_URL_QUERY);
+			$u = parse_url($url);
+			$host = $u['host'];
+			$path = $u['path'];
+			$query = $u['query'];
 			// example: //fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700
 			if ($host === 'fonts.googleapis.com') {
 				$ext = '.'.($path === '/css' ? 'css' : trim($path, '/')); // example: /css
@@ -955,11 +987,9 @@ class yf_assets {
 			$save_path = '/'.ltrim($save_path, '/');
 
 			$url = $_this->_get_absolute_url($url). ($query ? '?'.$query : '');
-			$str = file_get_contents($url, false, stream_context_create(array('http' => array('timeout' => 5))));
+			$str = $_this->_url_get_contents($url);
 			if (strlen($str)) {
-#echo implode(' | ', array($orig_url, $host, $path, $url, $save_path, strlen($str))). PHP_EOL;
-#echo ' url(\''.basename($save_path).'\') '.PHP_EOL;
-				$str = $_this->_css_urls_rewrite_and_save($str, $content_url, $cache_path);
+				$str = $_this->$self_func($str, $content_url, $cache_path);
 				file_put_contents($save_path, $str);
 			}
 			return ' url(\''.basename($save_path).'\') ';
@@ -968,7 +998,7 @@ class yf_assets {
 
 	/**
 	*/
-    function _get_absolute_url($url) {
+	function _get_absolute_url($url) {
 		$u = parse_url($url);
 		if (substr($url, 0, 2) === '//') {
 			$u['scheme'] = 'http';
@@ -1075,11 +1105,7 @@ class yf_assets {
 			$content_type = $v['content_type'];
 			$_content = $v['content'];
 			if ($content_type === 'url') {
-				$try_prefix = '//';
-				if (substr($_content, 0, strlen($try_prefix)) === $try_prefix) {
-					$_content = 'http:'.$_content;
-				}
-				$out[$md5] = file_get_contents($_content, false, stream_context_create(array('http' => array('timeout' => 5))));
+				$out[$md5] = $this->_url_get_contents($_content);
 			} elseif ($content_type === 'file' && file_exists($_content)) {
 				$out[$md5] = file_get_contents($_content);
 			} elseif ($content_type === 'inline') {
@@ -1131,7 +1157,11 @@ class yf_assets {
 		if (!$combined_file || !file_exists($combined_file)) {
 			return false;
 		}
-		return $this->html_out($out_type, 'url', str_replace(PROJECT_PATH, WEB_PATH, $combined_file), $params);
+		$url = $combined_file;
+		if (substr($url, 0, strlen(PROJECT_PATH)) === PROJECT_PATH) {
+			$url = MEDIA_PATH. substr($url, strlen(PROJECT_PATH));
+		}
+		return $this->html_out($out_type, 'url', $url, $params);
 	}
 
 	/**
@@ -1142,14 +1172,21 @@ class yf_assets {
 		if (!$out_type || !$content_type || !strlen($str)) {
 			return false;
 		}
+		$func = __FUNCTION__;
 		$out = '';
+		// try to find web path for file and show it as url
+		if ($content_type === 'file') {
+			if (substr($str, 0, strlen(PROJECT_PATH)) === PROJECT_PATH) {
+				$url = MEDIA_PATH. substr($str, strlen(PROJECT_PATH));
+				return $this->$func($out_type, 'url', $url, $params);
+			}
+		}
 		if ($out_type === 'js') {
 			$params['type'] = 'text/javascript';
 			if ($content_type === 'url') {
 				$params['src'] = $str;
 				$out = '<script'._attrs($params, array('src', 'type', 'class', 'id')).'></script>';
 			} elseif ($content_type === 'file') {
-// TODO: try to find web path for file and show it as url
 				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
 			} elseif ($content_type === 'inline') {
 				$str = $this->_strip_js_input($str);
@@ -1162,7 +1199,6 @@ class yf_assets {
 				$params['href'] = $str;
 				$out = '<link'._attrs($params, array('href', 'rel', 'class', 'id')).' />';
 			} elseif ($content_type === 'file') {
-// TODO: try to find web path for file and show it as url
 				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>';
 			} elseif ($content_type === 'inline') {
 				$str = $this->_strip_css_input($str);
