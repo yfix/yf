@@ -1084,7 +1084,8 @@ class yf_manage_shop_import_products2 {
 	}
 
 	protected function _field_to_sql__price( $field, $value, $action = null ) {
-		$value = number_format( $value, 2, '.', '' );
+		$_class_price = $this->_class_price;
+		$value = $_class_price->_number_mysql( $value );
 		return( array( $field, $value ) );
 	}
 
