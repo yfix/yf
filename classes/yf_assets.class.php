@@ -930,9 +930,6 @@ class yf_assets {
 		if (!strlen($content)) {
 			return false;
 		}
-		if ($out_type === 'css' && $content_type === 'url') {
-			$content = $this->_css_urls_rewrite_and_save($content, $content_url, $cache_path);
-		}
 		file_put_contents($cache_path, $content);
 #		$content = gzdecode($content); // PHP 5.4+ only
 		// Decode gzip content to not confuse browser and web server
@@ -942,6 +939,14 @@ class yf_assets {
 			readgzfile($cache_path);
 			$content = ob_get_clean();
 			file_put_contents($cache_path, $content);
+		}
+		if ($out_type === 'css' && $content_type === 'url') {
+			$content_before = $content;
+			$content = $this->_css_urls_rewrite_and_save($content, $content_url, $cache_path);
+			if ($content_before !== $content) {
+				file_put_contents($cache_path, $content);
+			}
+			unset($content_before);
 		}
 		if ($out_type === 'js' && $content_type === 'url') {
 			$this->_js_map_save($content, $content_url, $cache_path);
