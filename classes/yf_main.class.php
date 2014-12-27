@@ -1819,6 +1819,15 @@ class yf_main {
 	}
 
 	/**
+	*/
+	function no_graphics($val = null) {
+		if (!is_null($val)) {
+			$this->NO_GRAPHICS = $val;
+		}
+		return $this->NO_GRAPHICS;
+	}
+
+	/**
 	* Checks whether current page was requested with POST method
 	*/
 	function is_post() {
