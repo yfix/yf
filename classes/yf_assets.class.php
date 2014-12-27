@@ -978,10 +978,7 @@ class yf_assets {
 		if ($cache_existed && file_get_contents($cache_path) === $content) {
 			return $cache_path;
 		}
-		file_put_contents($cache_path.'.info', implode(PHP_EOL, array(
-			'url: '.$content_url,
-			'date: '.date('Y-m-d H:i:s'),
-		)));
+		$this->_write_cache_info($cache_path, $content_url, $content);
 		return $cache_path;
 	}
 
@@ -1013,11 +1010,18 @@ class yf_assets {
 			touch($map_path);
 			return true;
 		}
-		file_put_contents($map_path.'.info', implode(PHP_EOL, array(
-			'url: '.$map_url,
-			'date: '.date('Y-m-d H:i:s'),
-		)));
+		$this->_write_cache_info($map_path, $map_url, $map_content);
 		return file_put_contents($map_path, $map_content);
+	}
+
+	/**
+	*/
+	function _write_cache_info($cache_path, $url, $content) {
+		return file_put_contents($cache_path.'.info', implode(PHP_EOL, array(
+			'url: '.$url,
+			'date: '.date('Y-m-d H:i:s'),
+			'md5: '.md5($content),
+		)));
 	}
 
 	/**
@@ -1053,10 +1057,7 @@ class yf_assets {
 				if (strlen($str)) {
 					$str = $_this->$self_func($str, $content_url, $cache_path);
 					file_put_contents($save_path, $str);
-					file_put_contents($save_path.'.info', implode(PHP_EOL, array(
-						'url: '.$url,
-						'date: '.date('Y-m-d H:i:s'),
-					)));
+					$_this->_write_cache_info($save_path, $url, $str);
 				}
 			}
 			return 'url(\''.basename($save_path).'\')';
