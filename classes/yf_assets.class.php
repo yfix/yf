@@ -933,13 +933,9 @@ class yf_assets {
 		// Content is same, no need to overwrite it
 		if (file_exists($cache_path) && file_get_contents($cache_path) === $content) {
 			touch($cache_path);
-			return true;
+			return $cache_path;
 		}
 		file_put_contents($cache_path, $content);
-		file_put_contents($cache_path.'.info', implode(PHP_EOL, array(
-			'url: '.$content_url,
-			'date: '.date('Y-m-d H:i:s'),
-		)));
 #		$content = gzdecode($content); // PHP 5.4+ only
 		// Decode gzip content to not confuse browser and web server
 		// gzip file beginnning: \x1F\x8B
@@ -960,6 +956,15 @@ class yf_assets {
 		if ($out_type === 'js' && $content_type === 'url') {
 			$this->_js_map_save($content, $content_url, $cache_path);
 		}
+		// Content is same, no need to overwrite info about it
+		// This is not a mistake to do this check again, after url rewrite content can still be same
+		if (file_exists($cache_path) && file_get_contents($cache_path) === $content) {
+			return $cache_path;
+		}
+		file_put_contents($cache_path.'.info', implode(PHP_EOL, array(
+			'url: '.$content_url,
+			'date: '.date('Y-m-d H:i:s'),
+		)));
 		return $cache_path;
 	}
 
