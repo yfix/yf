@@ -1519,7 +1519,7 @@ class yf_debug {
 			$items[$k] = array('id' => ++$i) + $v;
 			$items[$k]['strlen'] = strlen($v['content']);
 		}
-		$body['assets_names'] = $this->_show_auto_table($items, array('hidden_map' => array('content' => 'name')));
+		$body['assets_names'] = $this->_show_auto_table($items, array('hidden_map' => array('content' => 'path')));
 
 		return _class('html')->tabs($body, array('hide_empty' => 1));
 	}
