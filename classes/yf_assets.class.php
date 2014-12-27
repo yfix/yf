@@ -25,7 +25,7 @@ class yf_assets {
 	/** @bool */
 	public $USE_CACHE = false;
 	/** @bool */
-	public $CACHE_TTL = 3600;
+	public $CACHE_TTL = 86400;
 	/** @bool */
 	public $URL_TIMEOUT = 5;
 	/** @bool */
@@ -930,7 +930,16 @@ class yf_assets {
 		if (!strlen($content)) {
 			return false;
 		}
+		// Content is same, no need to overwrite it
+		if (file_exists($cache_path) && file_get_contents($cache_path) === $content) {
+			touch($cache_path);
+			return true;
+		}
 		file_put_contents($cache_path, $content);
+		file_put_contents($cache_path.'.info', implode(PHP_EOL, array(
+			'url: '.$content_url,
+			'date: '.date('Y-m-d H:i:s'),
+		)));
 #		$content = gzdecode($content); // PHP 5.4+ only
 		// Decode gzip content to not confuse browser and web server
 		// gzip file beginnning: \x1F\x8B
@@ -978,6 +987,14 @@ class yf_assets {
 		if (!strlen($map_content)) {
 			return false;
 		}
+		if (file_exists($map_path) && file_get_contents($map_path) === $map_content) {
+			touch($map_path);
+			return true;
+		}
+		file_put_contents($map_path.'.info', implode(PHP_EOL, array(
+			'url: '.$map_url,
+			'date: '.date('Y-m-d H:i:s'),
+		)));
 		return file_put_contents($map_path, $map_content);
 	}
 
@@ -1014,6 +1031,10 @@ class yf_assets {
 				if (strlen($str)) {
 					$str = $_this->$self_func($str, $content_url, $cache_path);
 					file_put_contents($save_path, $str);
+					file_put_contents($save_path.'.info', implode(PHP_EOL, array(
+						'url: '.$url,
+						'date: '.date('Y-m-d H:i:s'),
+					)));
 				}
 			}
 			return 'url(\''.basename($save_path).'\')';
