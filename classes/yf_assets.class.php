@@ -833,6 +833,9 @@ class yf_assets {
 			$_params = (array)$v['params'] + (array)$params;
 			$content_type = $v['content_type'];
 			if ($this->USE_CACHE && $content_type !== 'inline') {
+				if ($v['name'] === 'bootstrap-theme') {
+					$v['name'] .= '-'.common()->bs_current_theme();
+				}
 				$cached_path = $this->get_cache($out_type, $md5, $v);
 				if (!$cached_path && !$this->FORCE_LOCAL_STORAGE) {
 					$cached_path = $this->set_cache($out_type, $md5, $v, $_params);
@@ -931,7 +934,8 @@ class yf_assets {
 			return false;
 		}
 		// Content is same, no need to overwrite it
-		if (file_exists($cache_path) && file_get_contents($cache_path) === $content) {
+		$cache_existed = file_exists($cache_path);
+		if ($cache_existed && file_get_contents($cache_path) === $content) {
 			touch($cache_path);
 			return $cache_path;
 		}
@@ -958,7 +962,7 @@ class yf_assets {
 		}
 		// Content is same, no need to overwrite info about it
 		// This is not a mistake to do this check again, after url rewrite content can still be same
-		if (file_exists($cache_path) && file_get_contents($cache_path) === $content) {
+		if ($cache_existed && file_get_contents($cache_path) === $content) {
 			return $cache_path;
 		}
 		file_put_contents($cache_path.'.info', implode(PHP_EOL, array(
