@@ -161,9 +161,15 @@ class yf_assets {
 		// This double iterating code ensures we can inherit/replace assets with same name inside project
 		foreach($names as $name => $path) {
 			$assets[$name] = include $path;
+			if (DEBUG_INFO) {
+				debug('assets_names[]', array(
+					'name'		=> $name,
+					'path'		=> $path,
+					'content'	=> $assets[$name],
+				));
+			}
 		}
 		$this->assets += $assets;
-// TODO: debug info
 		return $assets;
 	}
 
@@ -949,13 +955,16 @@ class yf_assets {
 			}
 		}
 		if (!$map_url) {
-			$map_url = $content_url. $map_ext;
+			return false;
+		}
+		$map_path = dirname($cache_path). '/'. basename($map_url);
+		if (file_exists($map_path)) {
+			return true;
 		}
 		$map_content = $this->_url_get_contents($map_url);
 		if (!strlen($map_content)) {
 			return false;
 		}
-		$map_path = dirname($cache_path). '/'. basename($map_url);
 		return file_put_contents($map_path, $map_content);
 	}
 
@@ -965,7 +974,7 @@ class yf_assets {
 	function _css_urls_rewrite_and_save($content, $content_url, $cache_path) {
 		$_this = $this;
 		$self_func = __FUNCTION__;
-		return preg_replace_callback('~[\s:]+url\([\'"\s]*(?P<url>[^\'"\)]+?)[\'"\s]*\)~ims', function($m) use ($_this, $content_url, $cache_path, $self_func) {
+		return preg_replace_callback('~url\([\'"\s]*(?P<url>[^\'"\)]+?)[\'"\s]*\)~ims', function($m) use ($_this, $content_url, $cache_path, $self_func) {
 			$url = trim($m['url']);
 			if (strpos($url, 'data:') === 0) {
 				return $m[0];
@@ -985,14 +994,16 @@ class yf_assets {
 			}
 			$save_path = $_this->_get_absolute_path(dirname($cache_path). '/'. basename($path));
 			$save_path = '/'.ltrim($save_path, '/');
-
-			$url = $_this->_get_absolute_url($url). ($query ? '?'.$query : '');
-			$str = $_this->_url_get_contents($url);
-			if (strlen($str)) {
-				$str = $_this->$self_func($str, $content_url, $cache_path);
-				file_put_contents($save_path, $str);
+			// singleton for getting urls contents
+			if (!file_exists($save_path)) {
+				$url = $_this->_get_absolute_url($url). ($query ? '?'.$query : '');
+				$str = $_this->_url_get_contents($url);
+				if (strlen($str)) {
+					$str = $_this->$self_func($str, $content_url, $cache_path);
+					file_put_contents($save_path, $str);
+				}
 			}
-			return ' url(\''.basename($save_path).'\') ';
+			return 'url(\''.basename($save_path).'\')';
 		}, $content);
 	}
 
