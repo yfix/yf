@@ -346,6 +346,23 @@ class yf_assets {
 	}
 
 	/**
+	* Get name of the current used version of the named asset
+	*/
+	public function get_asset_version_name($name) {
+		$asset_data = $this->get_asset_details($name);
+		if (!$asset_data) {
+			return null;
+		}
+		if (!is_string($asset_data) && is_callable($asset_data)) {
+			$asset_data = $asset_data();
+		}
+		if (is_array($asset_data['versions'])) {
+			return key(array_slice($asset_data['versions'], -1, 1, true));
+		}
+		return null;
+	}
+
+	/**
 	* Versions idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
 	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
 	* Version constraints can be specified in a few different ways.
@@ -688,6 +705,7 @@ class yf_assets {
 			'content_type'	=> $content_type,
 			'content'		=> $content,
 			'name'			=> $name,
+			'version'		=> $name ? ($this->get_asset_version_name($name) ?: 'master') : '',
 			'params'		=> $params,
 		);
 	}
@@ -846,11 +864,6 @@ class yf_assets {
 				}
 			}
 			$str = $v['content'];
-			if ($_params['min'] && $content_type === 'url' && !DEBUG_MODE) {
-				if (strpos($str, '.min.') === false) {
-					$str = substr($str, 0, -strlen($ext)).'.min'.$ext;
-				}
-			}
 			$before = $_params['config']['before'];
 			$after = $_params['config']['after'];
 			if ($_params['config']['class']) {
@@ -1083,7 +1096,7 @@ class yf_assets {
 	/**
 	*/
 	public function _cache_path($out_type, $md5, $data = array()) {
-		$cache_dir = $this->_cache_dir($out_type, $data['name']);
+		$cache_dir = $this->_cache_dir($out_type, $data['name'], $data['version']);
 		$cache_name = $this->_cache_name($out_type, $md5, $data);
 		return $cache_dir. ($cache_name ?: ($data['name'] ? $md5.'_'.$data['name'] : '') ?: $md5). '.'. $out_type;
 	}
@@ -1107,10 +1120,10 @@ class yf_assets {
 
 	/**
 	*/
-	public function _cache_dir($out_type, $asset_name = '') {
+	public function _cache_dir($out_type, $asset_name = '', $version = '') {
 		$host = $_SERVER['HTTP_HOST'];
 		$lang = conf('language');
-		$cache_dir = PROJECT_PATH.'templates/user/cache/'.$host.'/'.$lang.'/'.($asset_name ? $asset_name.'/' : '').$out_type.'/';
+		$cache_dir = PROJECT_PATH.'templates/user/cache/'.$host.'/'.$lang.'/'. ($asset_name ? $asset_name.'/' : ''). ($version ? $version.'/' : ''). $out_type.'/';
 		if (!$this->_cache_dir_created[$out_type][$asset_name]) {
 			!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
 			$this->_cache_dir_created[$out_type][$asset_name] = $cache_dir;
