@@ -58,15 +58,16 @@ function yf_placeholder_img($w = 100, $h = 100, $params = array()) {
 	imagedestroy($im);
 	$data = ob_get_clean();
 
-	header('Content-Type: image/png', true);
-	header('Last-Modified: '. gmdate('D, d M Y 00:01:01') . ' GMT', true);
-	header('Content-Length: '.strlen($data), true);
-	header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet', true);
-	header_remove('Pragma');
-	header_remove('Cache-Control');
-	header_remove('Expires');
-	header_remove('Set-Cookie');
-
-	echo $data;
+	if (!$params['no_out']) {
+		header('Content-Type: image/png', true);
+		header('Last-Modified: '. gmdate('D, d M Y 00:01:01') . ' GMT', true);
+		header('Content-Length: '.strlen($data), true);
+		header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet', true);
+		header_remove('Pragma');
+		header_remove('Cache-Control');
+		header_remove('Expires');
+		header_remove('Set-Cookie');
+		echo $data;
+	}
 	return $data;
 }
