@@ -28,6 +28,10 @@ class yf_assets {
 	public $CACHE_TTL = 3600;
 	/** @bool */
 	public $URL_TIMEOUT = 5;
+	/** @bool */
+	public $FORCE_LOCAL_STORAGE = false;
+	/** @bool */
+	public $FORCE_LOCAL_TTL = 86400000; // 1000 days * 24 hours * 60 minutes * 60 seconds == almost forever
 
 	/**
 	* Catch missing method call
@@ -59,6 +63,10 @@ class yf_assets {
 	/**
 	*/
 	public function _init() {
+		if ($this->FORCE_LOCAL_STORAGE) {
+			$this->USE_CACHE = true;
+			$this->CACHE_TTL = $this->FORCE_LOCAL_TTL;
+		}
 		$this->load_predefined_assets();
 	}
 
@@ -826,7 +834,7 @@ class yf_assets {
 			$content_type = $v['content_type'];
 			if ($this->USE_CACHE && $content_type !== 'inline') {
 				$cached_path = $this->get_cache($out_type, $md5, $v);
-				if (!$cached_path) {
+				if (!$cached_path && !$this->FORCE_LOCAL_STORAGE) {
 					$cached_path = $this->set_cache($out_type, $md5, $v, $_params);
 				}
 				if ($cached_path) {
