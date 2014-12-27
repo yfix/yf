@@ -1512,6 +1512,15 @@ class yf_debug {
 		}
 		$body['assets_add_log'] = $this->_show_auto_table($items, array('hidden_map' => array('trace' => 'md5', 'content' => 'preview')));
 
+		$items = $this->_get_debug_data('assets_names');
+		$i = 0;
+		foreach ((array)$items as $k => $v) {
+			$v['content'] = '<pre>'._prepare_html($this->_var_export($v['content'])).'</pre>';
+			$items[$k] = array('id' => ++$i) + $v;
+			$items[$k]['strlen'] = strlen($v['content']);
+		}
+		$body['assets_names'] = $this->_show_auto_table($items, array('hidden_map' => array('content' => 'name')));
+
 		return _class('html')->tabs($body, array('hide_empty' => 1));
 	}
 
