@@ -487,6 +487,7 @@ class yf_dynamic {
 	}
 
 	/**
+	* Output sample placeholder image, useful for designing wireframes and prototypes
 	*/
 	function placeholder() {
 		main()->NO_GRAPHICS = true;
@@ -501,5 +502,24 @@ class yf_dynamic {
 		echo yf_placeholder_img($w, $h, $params);
 
 		exit;
+	}
+
+	/**
+	* Helper to output placeholder image, by default output is data/image
+	*/
+	function placeholder_img($extra = array()) {
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$w = (int)$extra['width'];
+		$h = (int)$extra['height'];
+		if ($extra['as_url']) {
+			$extra['src'] = url('/dynamic/placeholder/'.$w.'x'.$h);
+		} else {
+			require_once YF_PATH.'share/functions/yf_placeholder_img.php';
+			$img_data = yf_placeholder_img($w, $h, array('no_out' => true) + (array)$extra);
+			$extra['src'] = 'data:image/png;base64,'.base64_encode($img_data);
+		}
+		return '<img'._attrs($extra, array('src', 'type', 'class', 'id')).' />';
 	}
 }
