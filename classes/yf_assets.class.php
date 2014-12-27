@@ -846,9 +846,12 @@ class yf_assets {
 				'name' => 'combined',
 				'version' => date('Ymd'),
 			));
-			$combined_info = json_decode(file_get_contents($combined_file.'.info'), $as_array = true);
-			$md5_inside_combined = explode(',', $combined_info['elements']);
-			$md5_inside_combined = array_combine($md5_inside_combined, $md5_inside_combined);
+			$md5_inside_combined = array();
+			if (file_exists($combined_file)) {
+				$combined_info = json_decode(file_get_contents($combined_file.'.info'), $as_array = true);
+				$md5_inside_combined = explode(',', $combined_info['elements']);
+				$md5_inside_combined = array_combine($md5_inside_combined, $md5_inside_combined);
+			}
 		}
 		if ($params['combined']) {
 			$combined = $this->show_combined_content($out_type, $params);
