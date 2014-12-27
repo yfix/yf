@@ -926,11 +926,6 @@ class yf_assets {
 			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, $_params). $after;
 		}
 		if ($this->COMBINE && $to_combine) {
-			foreach ($to_combine as $md5 => $info) {
-				if (isset($md5_inside_combined[$md5])) {
-					unset($out[$md5]);
-				}
-			}
 			if (!file_exists($combined_file)) {
 				$divider = PHP_EOL;
 				if ($out_type === 'js') {
@@ -951,12 +946,18 @@ class yf_assets {
 					if ($out_type === 'js' && $content_type === 'url') {
 						$this->_js_map_save($combined[$md5], $content, $combined_file);
 					}
+					$md5_inside_combined[$md5] = $md5;
 				}
 				if ($combined) {
 					$combined_md5 = array_keys($combined);
 					$combined = implode($divider, $combined);
 					file_put_contents($combined_file, $combined);
 					$this->_write_cache_info($combined_file, '', $combined, array('elements' => implode(',', $combined_md5)));
+				}
+			}
+			foreach ($to_combine as $md5 => $info) {
+				if (isset($md5_inside_combined[$md5])) {
+					unset($out[$md5]);
 				}
 			}
 			$before = '';
@@ -1212,7 +1213,7 @@ class yf_assets {
 	public function _cache_dir($out_type, $asset_name = '', $version = '') {
 		$host = $_SERVER['HTTP_HOST'];
 		$lang = conf('language');
-		$cache_dir = PROJECT_PATH.'templates/user/cache/'.$host.'/'.$lang.'/'. ($asset_name ? $asset_name.'/' : ''). ($version ? $version.'/' : ''). $out_type.'/';
+		$cache_dir = PROJECT_PATH.'templates/'.MAIN_TYPE.'/cache/'.$host.'/'.$lang.'/'. ($asset_name ? $asset_name.'/' : ''). ($version ? $version.'/' : ''). $out_type.'/';
 		if (!$this->_cache_dir_created[$out_type][$asset_name]) {
 			!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
 			$this->_cache_dir_created[$out_type][$asset_name] = $cache_dir;
