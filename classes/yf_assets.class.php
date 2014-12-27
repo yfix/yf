@@ -32,6 +32,8 @@ class yf_assets {
 	public $FORCE_LOCAL_STORAGE = false;
 	/** @bool */
 	public $FORCE_LOCAL_TTL = 86400000; // 1000 days * 24 hours * 60 minutes * 60 seconds == almost forever
+	/** @bool */
+	public $COMBINE = false;
 
 	/**
 	* Catch missing method call
@@ -76,6 +78,11 @@ class yf_assets {
 	function _url_get_contents($url) {
 		if (!strlen($url)) {
 			return false;
+		}
+		// Do not use web server for self-accessible paths
+		if (substr($url, 0, strlen(MEDIA_PATH)) === MEDIA_PATH) {
+			$path = PROJECT_PATH. substr($url, strlen(MEDIA_PATH));
+			return file_get_contents($path);
 		}
 		$url = (substr($url, 0, 2) === '//' ? 'http:' : ''). $url;
 		return file_get_contents($url, false, stream_context_create(array(
@@ -834,6 +841,15 @@ class yf_assets {
 		if ($module_assets_path) {
 			$this->add_file($module_assets_path, $out_type);
 		}
+		if ($this->COMBINE) {
+			$combined_file = $this->_cache_path($out_type, '', array(
+				'name' => 'combined',
+				'version' => date('Ymd'),
+			));
+			$combined_info = json_decode(file_get_contents($combined_file.'.info'), $as_array = true);
+			$md5_inside_combined = explode(',', $combined_info['elements']);
+			$md5_inside_combined = array_combine($md5_inside_combined, $md5_inside_combined);
+		}
 		if ($params['combined']) {
 			$combined = $this->show_combined_content($out_type, $params);
 			// Degrade gracefully, also display raw content in case when combining queue is in progress
@@ -841,9 +857,11 @@ class yf_assets {
 				return $combined;
 			}
 		}
+		$bs_current_theme = common()->bs_current_theme();
 		$prepend = _class('core_events')->fire('assets.prepend');
 		// Process previously added content, depending on its type
 		$out = array();
+		$to_combine = array();
 		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
 			if (!is_array($v)) {
 				continue;
@@ -852,7 +870,7 @@ class yf_assets {
 			$content_type = $v['content_type'];
 			if ($this->USE_CACHE && $content_type !== 'inline') {
 				if ($v['name'] === 'bootstrap-theme') {
-					$v['name'] .= '-'.common()->bs_current_theme();
+					$v['name'] .= '-'.$bs_current_theme;
 				}
 				$cached_path = $this->get_cache($out_type, $md5, $v);
 				if (!$cached_path && !$this->FORCE_LOCAL_STORAGE) {
@@ -868,6 +886,12 @@ class yf_assets {
 			$after = $_params['config']['after'];
 			if ($_params['config']['class']) {
 				$_params['class'] = $_params['config']['class'];
+			}
+			if ($this->COMBINE && in_array($content_type, array('url', 'file')) && empty($before) && empty($after) && empty($_params['class']) && empty($_params['id'])) {
+				$to_combine[$md5] = array(
+					'content' => $str,
+					'content_type' => $content_type,
+				);
 			}
 			if (DEBUG_MODE) {
 				$debug = array();
@@ -897,6 +921,61 @@ class yf_assets {
 				));
 			}
 			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, $_params). $after;
+		}
+		if ($this->COMBINE && $to_combine) {
+			foreach ($to_combine as $md5 => $info) {
+				if (isset($md5_inside_combined[$md5])) {
+					unset($out[$md5]);
+				}
+			}
+			if (!file_exists($combined_file)) {
+				$divider = PHP_EOL;
+				if ($out_type === 'js') {
+					$divider = PHP_EOL.';'.PHP_EOL;
+				}
+				$combined = array();
+				foreach ($to_combine as $md5 => $info) {
+					$content_type = $info['content_type'];
+					$content = $info['content'];
+					if ($content_type === 'url') {
+						$combined[$md5] = $this->_url_get_contents($content);
+					} elseif ($content_type === 'file' && file_exists($content)) {
+						$combined[$md5] = file_get_contents($content);
+					}
+					if ($out_type === 'css' && $content_type === 'url') {
+						$combined[$md5] = $this->_css_urls_rewrite_and_save($combined[$md5], $content, $combined_file);
+					}
+					if ($out_type === 'js' && $content_type === 'url') {
+						$this->_js_map_save($combined[$md5], $content, $combined_file);
+					}
+				}
+				if ($combined) {
+					$combined_md5 = array_keys($combined);
+					$combined = implode($divider, $combined);
+					file_put_contents($combined_file, $combined);
+					$this->_write_cache_info($combined_file, '', $combined, array('elements' => implode(',', $combined_md5)));
+				}
+			}
+			$before = '';
+			$after = '';
+			if (DEBUG_MODE) {
+				$dname = 'combined';
+				$trace = main()->trace_string();
+				$trace_short = str_replace(array('<','>'), array('&lt;','&gt;'), implode('; ', array_slice(explode(PHP_EOL, $trace), 2, 2, true)));
+				$before = PHP_EOL. '<!-- asset start: '.$dname.' | '.$out_type.' | '.$trace_short.' -->'. PHP_EOL. $before;
+				$after = $after. PHP_EOL. '<!-- asset end: '.$dname.' -->'. PHP_EOL;
+				debug('assets_out[]', array(
+					'out_type'		=> $out_type,
+					'name'			=> $dname,
+					'md5'			=> '',
+					'content_type'	=> 'file',
+					'content'		=> $combined_file,
+					'preview'		=> '',
+					'params'		=> '',
+					'trace'			=> $trace,
+				));
+			}
+			$out = array(md5($combined) => $before. $this->html_out($out_type, 'file', $combined_file). $after) + $out;
 		}
 		$append = _class('core_events')->fire('assets.append', array('out' => &$out));
 		$this->clean_content($out_type);
@@ -1016,12 +1095,18 @@ class yf_assets {
 
 	/**
 	*/
-	function _write_cache_info($cache_path, $url, $content) {
-		return file_put_contents($cache_path.'.info', implode(PHP_EOL, array(
-			'url: '.$url,
-			'date: '.date('Y-m-d H:i:s'),
-			'md5: '.md5($content),
-		)));
+	function _write_cache_info($cache_path, $url, $content, $extra = array()) {
+		$data = array(
+			'url'	=> $url,
+			'date'	=> date('Y-m-d H:i:s'),
+			'md5'	=> md5($content),
+		);
+		if ($extra) {
+			foreach ($extra as $k => $v) {
+				$data[$k] = $v;
+			}
+		}
+		return file_put_contents($cache_path.'.info', json_encode($data));
 	}
 
 	/**
