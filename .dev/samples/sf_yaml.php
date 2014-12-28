@@ -1,29 +1,16 @@
 <?php
 
 define('YF_PATH', dirname(dirname(__DIR__)).'/');
-$libs_root = YF_PATH.'libs';
-/*
-require_once $libs_root.'/sf_class_loader/UniversalClassLoader.php';
-$loader = new \Symfony\Component\ClassLoader\UniversalClassLoader();
-$loader->registerNamespaces(array(
-	'Symfony\Component\Yaml'	=> $libs_root.'/sf_yaml',
-));
-$loader->register();
-*/
-$files = array(
-	'Exception/ExceptionInterface.php',
-	'Exception/RuntimeException.php',
-	'Exception/ParseException.php',
-	'Inline.php',
-	'Parser.php',
-	'Dumper.php',
-	'Escaper.php',
-	'Unescaper.php',
-	'Yaml.php',
-);
-foreach ($files as $file) {
-	require_once $libs_root. '/sf_yaml/'. $file;
-}
+
+spl_autoload_register(function($class){
+	$lib_root = YF_PATH.'libs/sf_yaml/';
+	$prefix = 'Symfony\Component\Yaml';
+	if (strpos($class, $prefix) === 0) {
+		$path = $lib_root. str_replace("\\", '/', substr($class, strlen($prefix) + 1)).'.php';
+#		echo $path.PHP_EOL;
+		include $path;
+	}
+});
 
 function yaml_parse($input) {
 	return \Symfony\Component\Yaml\Yaml::parse($input);
