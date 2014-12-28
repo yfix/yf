@@ -1,6 +1,6 @@
 <?php
 
-# git clone git@github.com:yfix/vfs_stream.git /home/www/yf/libs/vfs_stream/
+# git clone git@github.com:yfix/vfsStream.git /home/www/yf/libs/vfs_stream/
 
 define('YF_PATH', dirname(dirname(__DIR__)).'/');
 
