@@ -27,6 +27,8 @@ class yf_assets {
 	/** @bool */
 	public $CACHE_TTL = 86400;
 	/** @bool */
+	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/';
+	/** @bool */
 	public $URL_TIMEOUT = 5;
 	/** @bool */
 	public $FORCE_LOCAL_STORAGE = false;
@@ -1215,7 +1217,23 @@ class yf_assets {
 	public function _cache_dir($out_type, $asset_name = '', $version = '') {
 		$host = $_SERVER['HTTP_HOST'];
 		$lang = conf('language');
-		$cache_dir = PROJECT_PATH.'templates/'.MAIN_TYPE.'/cache/'.$host.'/'.$lang.'/'. ($asset_name ? $asset_name.'/' : ''). ($version ? $version.'/' : ''). $out_type.'/';
+		if (!is_string($this->CACHE_DIR_TPL) && is_callable($this->CACHE_DIR_TPL)) {
+			$func = $this->CACHE_DIR_TPL;
+			$cache_dir = $func($out_type, $asset_name, $version);
+		} else {
+			$replace = array(
+				'{site_path}'	=> SITE_PATH,
+				'{app_path}'	=> APP_PATH,
+				'{project_path}'=> PROJECT_PATH,
+				'{main_type}'	=> MAIN_TYPE,
+				'{host}'		=> $host,
+				'{lang}'		=> $lang,
+				'{asset_name}'	=> $asset_name ? $asset_name.'/' : '',
+				'{version}'		=> $version ? $version.'/' : '',
+				'{out_type}'	=> $out_type,
+			);
+			$cache_dir = str_replace(array('///','//'), '/', str_replace(array_keys($replace), array_values($replace), $this->CACHE_DIR_TPL));
+		}
 		if (!$this->_cache_dir_created[$out_type][$asset_name]) {
 			!file_exists($cache_dir) && mkdir($cache_dir, 0755, true);
 			$this->_cache_dir_created[$out_type][$asset_name] = $cache_dir;
