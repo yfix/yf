@@ -8,7 +8,7 @@ spl_autoload_register(function($class){
 	$prefix = 'Symfony\Component\DomCrawler';
 	if (strpos($class, $prefix) === 0) {
 		$path = $lib_root. str_replace("\\", '/', substr($class, strlen($prefix) + 1)).'.php';
-		echo $path.PHP_EOL;
+#		echo $path.PHP_EOL;
 		include $path;
 	}
 });

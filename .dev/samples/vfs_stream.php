@@ -9,7 +9,7 @@ spl_autoload_register(function($class){
 	$prefix = 'org\bovigo\vfs';
 	if (strpos($class, $prefix) === 0) {
 		$path = $lib_root. str_replace("\\", '/', $class).'.php';
-		echo $path. PHP_EOL;
+#		echo $path. PHP_EOL;
 		include $path;
 	}
 });
