@@ -53,28 +53,28 @@ class yf_register {
 	/**
 	* Send email with verification code
 	*/
-	function _send_email_with_code ($code = "", $extra = false) {
-		$identify = !empty($extra['identify']) ? $extra['identify'] : $_POST["email"];
+	function _send_email_with_code ($code = '', $extra = false) {
+		$identify = !empty($extra['identify']) ? $extra['identify'] : $_POST['email'];
 		$replace = array(
-			"nick"			=> $identify,
-			"confirm_code"	=> $code,
-			"conf_link"		=> process_url("./?object=".$_GET["object"]."&action=confirm&id=".$code),
-			"aol_link"		=> process_url("./?object=".$_GET["object"]."&action=confirm&id=".$code),
-			"conf_link_aol"	=> process_url("./?object=".$_GET["object"]."&action=confirm_aol&id=".$code),
-			"conf_form_url"	=> process_url("./?object=login_form&action=account_inactive"),
-			"admin_name"	=> SITE_ADVERT_NAME,
-			"advert_url"	=> SITE_ADVERT_URL,
+			'nick'			=> $identify,
+			'confirm_code'	=> $code,
+			'conf_link'		=> process_url('./?object='.$_GET['object'].'&action=confirm&id='.$code),
+			'aol_link'		=> process_url('./?object='.$_GET['object'].'&action=confirm&id='.$code),
+			'conf_link_aol'	=> process_url('./?object='.$_GET['object'].'&action=confirm_aol&id='.$code),
+			'conf_form_url'	=> process_url('./?object=login_form&action=account_inactive'),
+			'admin_name'	=> SITE_ADVERT_NAME,
+			'advert_url'	=> SITE_ADVERT_URL,
 		);
 		if(isset($extra['add_replace']) && is_array($extra['add_replace'])){
 			$replace = array_merge($replace, $extra['add_replace']);
 		}
-		$text = tpl()->parse($_GET["object"]."/email_confirm".(!empty($_POST["account_type"]) ? '_'.$_POST["account_type"] : ''), $replace);	
+		$text = tpl()->parse($_GET['object'].'/email_confirm'.(!empty($_POST['account_type']) ? '_'.$_POST['account_type'] : ''), $replace);	
 		// prepare email data
 		$email_from	= SITE_ADMIN_EMAIL;
 		$name_from	= SITE_ADVERT_NAME;
-		$email_to	= !empty($extra['email']) ? $extra['email'] : $_POST["email"];
+		$email_to	= !empty($extra['email']) ? $extra['email'] : $_POST['email'];
 		$name_to	= $identify;
-		$subject	= !empty($extra['subject']) ? $extra['subject'] : t("Membership confirmation required!");
+		$subject	= !empty($extra['subject']) ? $extra['subject'] : t('Membership confirmation required!');
 		return common()->send_mail($email_from, $name_from, $email_to, $name_to, $subject, $text, nl2br($text));
 	}
 
@@ -82,21 +82,21 @@ class yf_register {
 	* Send success email
 	*/
 	function _send_success_email ($extra = false) {
-		$identify = !empty($extra['identify']) ? $extra['identify'] : $_POST["email"];
+		$identify = !empty($extra['identify']) ? $extra['identify'] : $_POST['email'];
 		$replace = array(
-			"code"			=> $code,
-			"nick"			=> $identify,
-			"password"		=> $_POST["password"],
-			"advert_name"	=> SITE_ADVERT_NAME,
-			"advert_url"	=> SITE_ADVERT_URL,
+			'code'			=> $code,
+			'nick'			=> $identify,
+			'password'		=> $_POST['password'],
+			'advert_name'	=> SITE_ADVERT_NAME,
+			'advert_url'	=> SITE_ADVERT_URL,
 		);
-		$text = tpl()->parse($_GET["object"]."/email_success".(!empty($_POST["account_type"]) ? '_'.$_POST["account_type"] : ''), $replace);
+		$text = tpl()->parse($_GET['object'].'/email_success'.(!empty($_POST['account_type']) ? '_'.$_POST['account_type'] : ''), $replace);
 		// prepare email data
 		$email_from	= SITE_ADMIN_EMAIL;
 		$name_from	= SITE_ADVERT_NAME;
-		$email_to	= !empty($extra['email']) ? $extra['email'] : $_POST["email"];
+		$email_to	= !empty($extra['email']) ? $extra['email'] : $_POST['email'];
 		$name_to	= $identify;
-		$subject	= !empty($extra['subject']) ? $extra['subject'] : t("Membership confirmation required!");
+		$subject	= !empty($extra['subject']) ? $extra['subject'] : t('Membership confirmation required!');
 		return common()->send_mail($email_from, $name_from, $email_to, $name_to, $subject, $text, nl2br($text));
 	}
 
@@ -107,14 +107,14 @@ class yf_register {
 	function confirm () {
 		// Send registration confirmation email
 		if (!$this->CONFIRM_REGISTER) {
-			return tpl()->parse($_GET["object"]."/confirm_messages", array("msg" => "confirm_not_needed"));
+			return tpl()->parse($_GET['object'].'/confirm_messages', array('msg' => 'confirm_not_needed'));
 		}
 		// Check confirmation code
-		if (!strlen($_GET["id"])) {
-			return _e("Confirmation ID is required!");
+		if (!strlen($_GET['id'])) {
+			return _e('Confirmation ID is required!');
 		}
 		// Decode confirmation number
-		list($user_id, $member_date) = explode("wvcn", trim(base64_decode($_GET["id"])));
+		list($user_id, $member_date) = explode('wvcn', trim(base64_decode($_GET['id'])));
 		$user_id		= intval($user_id);
 		$member_date	= intval($member_date);
 		// Get target user info
@@ -122,31 +122,31 @@ class yf_register {
 			$target_user_info = user($user_id);
 		}
 		// User id is required
-		if (empty($target_user_info["id"])) {
-			return _e("Wrong user ID");
+		if (empty($target_user_info['id'])) {
+			return _e('Wrong user ID');
 		}
 		// Check if user already confirmed
-		if ($target_user_info["active"]) {
-			return tpl()->parse($_GET["object"]."/confirm_messages", array("msg" => "already_confirmed"));
+		if ($target_user_info['active']) {
+			return tpl()->parse($_GET['object'].'/confirm_messages', array('msg' => 'already_confirmed'));
 		}
 		// Check if code is expired
 		if (!common()->_error_exists()) {
 			if (!empty($member_date) && (time() - $member_date) > $this->CONFIRM_TTL) {
-				_re("Confirmation code has expired.");
+				_re('Confirmation code has expired.');
 			}
 		}
 		if (!common()->_error_exists()) {
-			if ($_GET["id"] != $target_user_info["verify_code"]) {
-				_re("Wrong confirmation code");
+			if ($_GET['id'] != $target_user_info['verify_code']) {
+				_re('Wrong confirmation code');
 			}
 		}
 		if (!common()->_error_exists()) {
 			db()->update('user', array('active' => 1), $user_id);
-			return tpl()->parse($_GET["object"]."/confirm_messages", array("msg" => "confirm_success"));
+			return tpl()->parse($_GET['object'].'/confirm_messages', array('msg' => 'confirm_success'));
 		}
 		$body .= _e();
-		$body .= tpl()->parse($_GET["object"]."/enter_code", $replace3);
-		$body .= tpl()->parse($_GET["object"]."/resend_code", $replace4);
+		$body .= tpl()->parse($_GET['object'].'/enter_code', $replace3);
+		$body .= tpl()->parse($_GET['object'].'/resend_code', $replace4);
 		return $body;
 	}
 
@@ -156,14 +156,14 @@ class yf_register {
 // TODO: convert into form()
 	function enter_code () {
 		// Do activate
-		if (isset($_POST["confirm_code"])) {
-			$_GET["id"] = $_POST["confirm_code"];
+		if (isset($_POST['confirm_code'])) {
+			$_GET['id'] = $_POST['confirm_code'];
 			return $this->confirm();
 		}
 		// Display form
 		$replace = array(
 		);
-		return tpl()->parse($_GET["object"]."/enter_code", $replace);
+		return tpl()->parse($_GET['object'].'/enter_code', $replace);
 	}
 
 	/**
@@ -171,42 +171,42 @@ class yf_register {
 	*/
 // TODO: convert into form()
 	function resend_code () {
-		if (!empty($_POST["email"])) {
-			$user_info = db()->query_fetch("SELECT * FROM ".db('user')." WHERE email='"._es($_POST["email"])."'");
+		if (!empty($_POST['email'])) {
+			$user_info = db()->query_fetch('SELECT * FROM '.db('user').' WHERE email="'._es($_POST['email']).'"');
 			if (empty($user_info)) {
-				return _e("No such user");
+				return _e('No such user');
 			}
-			if ($user_info["active"]) {
-				return "Your account is already activated.";
+			if ($user_info['active']) {
+				return 'Your account is already activated.';
 			}
 			if (!common()->_error_exists()) {
-				$code = base64_encode($user_info["id"] . "wvcn" . time());
-				db()->update('user', array("verify_code" => $code), $user_info["id"]);
+				$code = base64_encode($user_info['id'] . 'wvcn' . time());
+				db()->update('user', array('verify_code' => $code), $user_info['id']);
 				$replace = array(
-					"nick"			=> $user_info["nick"],
-					"confirm_code"	=> $code,
-					"conf_link"		=> process_url("./?object=".$_GET["object"]."&action=confirm&id=".$code),
-					"aol_link"		=> process_url("./?object=".$_GET["object"]."&action=confirm&id=".$code),
-					"conf_link_aol"	=> process_url("./?object=".$_GET["object"]."&action=confirm_aol&id=".$code),
-					"conf_form_url"	=> process_url("./?object=login_form&action=account_inactive"),
-					"admin_name"	=> SITE_ADVERT_NAME,
-					"advert_url"	=> SITE_ADVERT_URL,
+					'nick'			=> $user_info['nick'],
+					'confirm_code'	=> $code,
+					'conf_link'		=> process_url('./?object='.$_GET['object'].'&action=confirm&id='.$code),
+					'aol_link'		=> process_url('./?object='.$_GET['object'].'&action=confirm&id='.$code),
+					'conf_link_aol'	=> process_url('./?object='.$_GET['object'].'&action=confirm_aol&id='.$code),
+					'conf_form_url'	=> process_url('./?object=login_form&action=account_inactive'),
+					'admin_name'	=> SITE_ADVERT_NAME,
+					'advert_url'	=> SITE_ADVERT_URL,
 				);
-				$text = tpl()->parse($_GET["object"]."/email_confirm_".$this->_account_types[$user_info["group"]], $replace);
+				$text = tpl()->parse($_GET['object'].'/email_confirm_'.$this->_account_types[$user_info['group']], $replace);
 				// Prepare email
 				$email_from	= SITE_ADMIN_EMAIL;
 				$name_from	= SITE_ADVERT_NAME;
-				$email_to	= $user_info["email"];
-				$name_to	= $user_info["nick"];
-				$subject	= t("Membership confirmation required!");
+				$email_to	= $user_info['email'];
+				$name_to	= $user_info['nick'];
+				$subject	= t('Membership confirmation required!');
 				$send_result = common()->send_mail($email_from, $name_from, $email_to, $name_to, $subject, $text, nl2br($text));
 				if ($send_result) {
-					return "Code sent. Please check your email.";
+					return 'Code sent. Please check your email.';
 				} else {
-					return "Error sending mail. Please contact site admin.";
+					return 'Error sending mail. Please contact site admin.';
 				}
 			}
 		}
-		return tpl()->parse($_GET["object"]."/resend_code", $replace);
+		return tpl()->parse($_GET['object'].'/resend_code', $replace);
 	}
 }
