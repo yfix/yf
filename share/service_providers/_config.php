@@ -33,6 +33,7 @@ $autoload_config && spl_autoload_register(function($class) use ($autoload_config
 		} else {
 			$path = $libs_root. $lib_dir. str_replace("\\", '/', substr($class, strlen($prefix) + 1)).'.php';
 		}
+#		echo $path.PHP_EOL;
 		if (!file_exists($path)) {
 			continue;
 		}
