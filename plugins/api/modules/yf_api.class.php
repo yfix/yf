@@ -105,10 +105,10 @@ class yf_api {
 			$response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
 			$type = 'javascript';
 		}
+		if( function_exists( 'http_response_code' ) ) { http_response_code( 200 ); } // PHP 5 >= 5.4.0
+		header( 'Status: 200' );
 		header( "Content-Type: application/$type; charset=UTF-8" );
-		echo( $response );
-		// without debug info
-		exit( 0 );
+		exit( $response );
 	}
 
 }
