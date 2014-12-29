@@ -60,7 +60,7 @@ class yf_api {
 	}
 
 	public function _reject( $message = 'Service Unavailable', $header = 'Status: 503 Service Unavailable', $code = 503 ) {
-		http_response_code( $code );
+		if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP 5 >= 5.4.0
 		header( $header );
 		die( $message );
 	}
@@ -72,7 +72,7 @@ class yf_api {
 		// $header   = ( $_SERVER['SERVER_PROTOCOL'] ?: 'HTTP/1.1' ) . ' ' . $status;
 		$url      = $url ?: url( '/' );
 		$location = 'Location: ' . $url;
-		http_response_code( $code );
+		if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP 5 >= 5.4.0
 		header( $header   );
 		header( $location );
 		exit( $message );
