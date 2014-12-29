@@ -27,7 +27,8 @@ class yf_assets {
 	/** @bool */
 	public $CACHE_TTL = 86400;
 	/** @bool */
-	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/';
+#	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/'; // full variant with domain and lang
+	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{asset_name}/{version}/{out_type}/'; // shorter variant
 	/** @bool */
 	public $URL_TIMEOUT = 5;
 	/** @bool */
