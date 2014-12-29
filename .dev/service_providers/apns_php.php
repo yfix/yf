@@ -1,19 +1,12 @@
 #!/usr/bin/php
 <?php
 
-define('YF_PATH', dirname(dirname(__DIR__)).'/');
-$libs_root = YF_PATH.'libs/';
+$requires = array();
+$git_urls = array('https://github.com/yfix/ApnsPHP.git' => 'apns_php/');
+$autoload_config = array();
+require __DIR__.'/_config.php';
 
-$git_urls = array(
-	'https://github.com/yfix/ApnsPHP.git' => $libs_root. 'apns_php/',
-);
-foreach ($git_urls as $git_url => $lib_dir) {
-	if (!file_exists($lib_dir.'.git')) {
-		passthru('git clone --depth 1 '.$git_url.' '.$lib_dir);
-	}
-}
-
-require_once $lib_dir. 'ApnsPHP/Autoload.php';
+require_once $libs_root. 'apns_php/ApnsPHP/Autoload.php';
 
 // Test mode when direct call
 if (realpath($argv[0]) === realpath(__FILE__)) {

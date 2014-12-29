@@ -1,39 +1,16 @@
 #!/usr/bin/php
 <?php
 
-define('YF_PATH', dirname(dirname(__DIR__)).'/');
-$libs_root = YF_PATH.'libs/';
+$requires = array();
+$git_urls = array('https://github.com/yfix/var-dumper.git' => 'sf_var_dumper/');
+$autoload_config = array('sf_var_dumper/' => 'Symfony\Component\VarDumper');
+require __DIR__.'/_config.php';
 
-$git_urls = array(
-	'https://github.com/yfix/var-dumper.git' => $libs_root. 'sf_var_dumper/',
-);
-foreach ($git_urls as $git_url => $lib_dir) {
-	if (!file_exists($lib_dir.'.git')) {
-		passthru('git clone --depth 1 '.$git_url.' '.$lib_dir);
-	}
-}
-$config = array(
-	$libs_root. 'sf_var_dumper/' => 'Symfony\Component\VarDumper',
-);
-spl_autoload_register(function($class) use ($config) {
-#	echo '=='.$class .PHP_EOL;
-	foreach ($config as $lib_root => $prefix) {
-		if (strpos($class, $prefix) !== 0) {
-			continue;
+if (!function_exists('dump')) {
+	function dump($var) {
+		foreach (func_get_args() as $var) {
+			\Symfony\Component\VarDumper\VarDumper::dump($var);
 		}
-		$path = $lib_root. str_replace("\\", '/', substr($class, strlen($prefix) + 1)).'.php';
-		if (!file_exists($path)) {
-			continue;
-		}
-#		echo $path.PHP_EOL;
-		include $path;
-		return true;
-	}
-});
-
-function dump($var) {
-	foreach (func_get_args() as $var) {
-		\Symfony\Component\VarDumper\VarDumper::dump($var);
 	}
 }
 

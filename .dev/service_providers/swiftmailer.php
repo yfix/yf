@@ -1,17 +1,11 @@
 #!/usr/bin/php
 <?php
 
-define('YF_PATH', dirname(dirname(__DIR__)).'/');
-$libs_root = YF_PATH.'libs/';
+$requires = array();
+$git_urls = array('https://github.com/yfix/swiftmailer.git' => 'swiftmailer/');
+$autoload_config = array();
+require __DIR__.'/_config.php';
 
-$git_urls = array(
-	'https://github.com/yfix/swiftmailer.git' => $libs_root. 'swiftmailer/',
-);
-foreach ($git_urls as $git_url => $lib_dir) {
-	if (!file_exists($lib_dir.'.git')) {
-		passthru('git clone --depth 1 '.$git_url.' '.$lib_dir);
-	}
-}
 require_once $libs_root.'swiftmailer/lib/swift_required.php';
 
 // Test mode when direct call
