@@ -1929,4 +1929,30 @@ class yf_main {
 		trigger_error($module.': No method '.$name, E_USER_WARNING);
 		return $return_obj ? $that : false;
 	}
+
+	/**
+	*/
+	function require_php_lib($name, $params = array()) {
+		$dir = 'share/service_providers/';
+		$file = $name.'.php';
+		$paths = array(
+			'app'		=> APP_PATH. $dir. $file,
+			'project'	=> PROJECT_PATH. $dir. $file,
+			'yf'		=> YF_PATH. $dir. $file,
+		);
+		$found_path = '';
+		foreach ($paths as $location => $path) {
+			if (file_exists($path)) {
+				$found_path = $path;
+				break;
+			}
+		}
+		if (!$found_path) {
+			throw new Exception('main '.__FUNCTION__.' not found: '.$name);
+			return false;
+		}
+		ob_start();
+		require_once $found_path;
+		return ob_get_clean();
+	}
 }
