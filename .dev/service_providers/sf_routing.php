@@ -5,7 +5,7 @@ define('YF_PATH', dirname(dirname(__DIR__)).'/');
 $libs_root = YF_PATH.'libs/';
 
 $git_urls = array(
-	'https://github.com/yfix/php-unified-archive.git' => $libs_root. 'php-unified-archive/',
+	'https://github.com/symfony/Routing.git' => $libs_root. 'sf_routing/',
 );
 foreach ($git_urls as $git_url => $lib_dir) {
 	if (!file_exists($lib_dir.'.git')) {
@@ -13,7 +13,7 @@ foreach ($git_urls as $git_url => $lib_dir) {
 	}
 }
 $config = array(
-	$libs_root. 'php-unified-archive/src/' => 'wapmorgan\UnifiedArchive',
+	$libs_root. 'sf_routing/' => 'Symfony\Component\Routing',
 );
 spl_autoload_register(function($class) use ($config) {
 #	echo '=='.$class .PHP_EOL;
@@ -33,6 +33,6 @@ spl_autoload_register(function($class) use ($config) {
 
 // Test mode when direct call
 if (realpath($argv[0]) === realpath(__FILE__)) {
-	$out = \wapmorgan\UnifiedArchive\UnifiedArchive::archiveNodes('./form2', 'samples_archive.zip', $fake = true);
-	var_export($out);
+	$route = new Symfony\Component\Routing\Route('/hello', array('controller' => 'foo'));
+	var_dump($route);
 }
