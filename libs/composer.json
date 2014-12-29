@@ -1,8 +1,0 @@
-{
-	"require": {
-		"ensepar/html2pdf": "dev-master",
-		"firephp/firephp-core": "dev-master",
-		"ezyang/htmlpurifier": "dev-master",
-		"phpids/phpids": "dev-master"
-	}
-}
