@@ -7,7 +7,7 @@ $autoload_config = array('sf_process/' => 'Symfony\Component\Process');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$process = new Symfony\Component\Process\Process('ls -lsa');
 	$process->setTimeout(5);
 	$process->run();

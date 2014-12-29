@@ -7,7 +7,7 @@ $autoload_config = array('sf_intl/' => 'Symfony\Component\Intl');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$languages = \Symfony\Component\Intl\Intl::getLanguageBundle()->getLanguageNames();
 	var_dump($languages);
 }

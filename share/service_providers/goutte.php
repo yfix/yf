@@ -7,7 +7,7 @@ $autoload_config = array('goutte/Goutte/' => 'Goutte');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$client = new Goutte\Client();
 	$crawler = $client->request('GET', 'http://google.com/');
 	$crawler->filter('head > title')->each(function ($node) {

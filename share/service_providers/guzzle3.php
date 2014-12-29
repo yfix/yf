@@ -7,7 +7,7 @@ $autoload_config = array('guzzle3/src/Guzzle/' => 'Guzzle');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	Guzzle\Http\StaticClient::mount();
 	$response = Guzzle::get('http://google.com');
 	echo strlen($response);

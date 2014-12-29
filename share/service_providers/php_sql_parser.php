@@ -7,7 +7,7 @@ $autoload_config = array('php_sql_parser/src/PHPSQLParser/' => 'PHPSQLParser');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$parser = new \PHPSQLParser\PHPSQLParser();
 	$sql = '
 		`id` int(6) NOT NULL AUTO_INCREMENT,

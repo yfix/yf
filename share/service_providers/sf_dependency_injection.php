@@ -7,7 +7,7 @@ $autoload_config = array('sf_dependency_injection/' => 'Symfony\Component\Depend
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$sc = new Symfony\Component\DependencyInjection\ContainerBuilder();
 	$sc->register('foo', '%foo.class%')
 		->addArgument(new Symfony\Component\DependencyInjection\Reference('bar'));

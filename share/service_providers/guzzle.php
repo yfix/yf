@@ -15,7 +15,7 @@ $autoload_config = array(
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$client = new GuzzleHttp\Client();
 	$res = $client->get('http://google.com');
 	echo $res->getStatusCode(). PHP_EOL;

@@ -9,7 +9,7 @@ require __DIR__.'/_config.php';
 require_once $libs_root. 'promise/src/functions.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$deferred = new \React\Promise\Deferred();
 	$promise = $deferred->promise();
 	var_dump($promise);

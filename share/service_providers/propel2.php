@@ -7,7 +7,7 @@ $autoload_config = array('propel2/src/Propel/' => 'Propel');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 	$serviceContainer->setAdapterClass('bookstore', 'mysql');
 	$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();

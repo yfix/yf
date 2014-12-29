@@ -7,7 +7,7 @@ $autoload_config = array('sf_dom_crawler/' => 'Symfony\Component\DomCrawler');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$crawler = new \Symfony\Component\DomCrawler\Crawler();
 	$crawler->addContent('<html><body><p>Hello World!</p></body></html>');
 	echo $crawler->filterXPath('descendant-or-self::body/p')->text();

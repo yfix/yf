@@ -7,7 +7,7 @@ $autoload_config = array('aws-sdk-php/src/Aws/' => 'Aws');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$s3 = \Aws\S3\S3Client::factory();
 	var_dump($s3);
 }

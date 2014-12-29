@@ -7,7 +7,7 @@ $autoload_config = array('sf_class_loader/' => 'Symfony\Component\ClassLoader');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$loader = new \Symfony\Component\ClassLoader\UniversalClassLoader();
 	var_dump($loader);
 }

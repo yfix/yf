@@ -7,7 +7,7 @@ $autoload_config = array('sf_routing/' => 'Symfony\Component\Routing');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (realpath($argv[0]) === realpath(__FILE__)) {
+if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$route = new Symfony\Component\Routing\Route('/hello', array('controller' => 'foo'));
 	var_dump($route);
 }
