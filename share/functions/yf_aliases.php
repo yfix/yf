@@ -171,6 +171,9 @@ if (!function_exists('reactjs')) {
 if (!function_exists('emberjs')) {
 	function emberjs($content, $params = array()) { return _class('assets')->emberjs($content, $params); }
 }
+if (!function_exists('require_php_lib')) {
+	function require_php_lib($name, $params = array()) { return main()->require_php_lib($name, $params); }
+}
 if (!function_exists('events')) {
 	function events() { return _class('core_events'); }
 }
