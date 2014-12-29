@@ -38,6 +38,8 @@ class yf_assets {
 	/** @bool */
 	public $COMBINE = false;
 	/** @bool */
+	public $COMBINED_VERSION_TPL = '{year}{month}';
+	/** @bool */
 	public $SHORTEN_LOCAL_URL = true;
 
 	/**
@@ -849,7 +851,7 @@ class yf_assets {
 		if ($this->COMBINE) {
 			$combined_file = $this->_cache_path($out_type, '', array(
 				'name' => 'combined',
-				'version' => date('Ymd'),
+				'version' => $this->_get_combined_version($out_type),
 			));
 			$md5_inside_combined = array();
 			if (file_exists($combined_file)) {
@@ -989,6 +991,33 @@ class yf_assets {
 		$append = _class('core_events')->fire('assets.append', array('out' => &$out));
 		$this->clean_content($out_type);
 		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
+	}
+
+	/**
+	*/
+	public function _get_combined_version($out_type = '') {
+		if (!is_string($this->COMBINED_VERSION_TPL) && is_callable($this->COMBINED_VERSION_TPL)) {
+			$func = $this->COMBINED_VERSION_TPL;
+			$version = $func($out_type);
+		} else {
+			$replace = array(
+				'{site_path}'	=> SITE_PATH,
+				'{app_path}'	=> APP_PATH,
+				'{project_path}'=> PROJECT_PATH,
+				'{main_type}'	=> MAIN_TYPE,
+				'{host}'		=> $_SERVER['HTTP_HOST'],
+				'{lang}'		=> conf('language'),
+				'{out_type}'	=> $out_type,
+				'{year}'		=> date('Y'),
+				'{month}'		=> date('m'),
+				'{day}'			=> date('d'),
+				'{hour}'		=> date('H'),
+				'{minute}'		=> date('i'),
+				'{second}'		=> date('s'),
+			);
+			$version = str_replace(array('///','//'), '/', str_replace(array_keys($replace), array_values($replace), $this->COMBINED_VERSION_TPL));
+		}
+		return $version;
 	}
 
 	/**
