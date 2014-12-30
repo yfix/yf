@@ -203,6 +203,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 
 		_class('assets')->ADD_IS_DIRECT_OUT = false;
 	}
+/*
 	public function test_combine_js() {
 		asset('blueimp-uploader');
 		$out_file = APP_PATH.'combined/'.__FUNCTION__.'.js';
@@ -215,6 +216,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(strlen(file_get_contents($result)) > 100000);
 		unlink($out_file);
 	}
+*/
 	public function test_filter_custom() {
 		$in = 'body{'.PHP_EOL.'color:white'.PHP_EOL.'}';
 		$expected = 'body{color:white}';
