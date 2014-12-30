@@ -901,6 +901,7 @@ class yf_assets {
 			}
 			$_params = (array)$v['params'] + (array)$params;
 			$content_type = $v['content_type'];
+			$cached_path = '';
 			if ($this->USE_CACHE && $content_type !== 'inline') {
 				if ($v['name'] === 'bootstrap-theme') {
 					$v['name'] .= '-'.$bs_current_theme;
@@ -950,6 +951,8 @@ class yf_assets {
 					'content'		=> $str,
 					'preview'		=> '',
 					'params'		=> $_params,
+					'cached'		=> $cached_path ? 1 : 0,
+					'combined'		=> (int)isset($to_combine[$md5]),
 					'trace'			=> $debug['trace'],
 				));
 			}
@@ -1016,6 +1019,8 @@ class yf_assets {
 				'content'		=> $combined_file,
 				'preview'		=> '',
 				'params'		=> '',
+				'cached'		=> '1',
+				'combined'		=> '',
 				'trace'			=> $trace,
 			));
 		}
