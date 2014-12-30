@@ -1031,6 +1031,7 @@ class yf_assets {
 			$func = $this->COMBINED_VERSION_TPL;
 			$version = $func($out_type);
 		} else {
+			$date = explode('-', date('Y-m-d-H-i-s'));
 			$replace = array(
 				'{site_path}'	=> SITE_PATH,
 				'{app_path}'	=> APP_PATH,
@@ -1039,12 +1040,12 @@ class yf_assets {
 				'{host}'		=> $_SERVER['HTTP_HOST'],
 				'{lang}'		=> conf('language'),
 				'{out_type}'	=> $out_type,
-				'{year}'		=> date('Y'),
-				'{month}'		=> date('m'),
-				'{day}'			=> date('d'),
-				'{hour}'		=> date('H'),
-				'{minute}'		=> date('i'),
-				'{second}'		=> date('s'),
+				'{year}'		=> $date[0],
+				'{month}'		=> $date[1],
+				'{day}'			=> $date[2],
+				'{hour}'		=> $date[3],
+				'{minute}'		=> $date[4],
+				'{second}'		=> $date[5],
 			);
 			$version = str_replace(array('///','//'), '/', str_replace(array_keys($replace), array_values($replace), $this->COMBINED_VERSION_TPL));
 		}
@@ -1281,6 +1282,7 @@ class yf_assets {
 			$func = $this->CACHE_DIR_TPL;
 			$cache_dir = $func($out_type, $asset_name, $version);
 		} else {
+			$date = explode('-', date('Y-m-d-H-i-s'));
 			$replace = array(
 				'{site_path}'	=> SITE_PATH,
 				'{app_path}'	=> APP_PATH,
@@ -1288,9 +1290,15 @@ class yf_assets {
 				'{main_type}'	=> MAIN_TYPE,
 				'{host}'		=> $host,
 				'{lang}'		=> $lang,
-				'{asset_name}'	=> $asset_name ? $asset_name.'/' : '',
-				'{version}'		=> $version ? $version.'/' : '',
+				'{asset_name}'	=> $asset_name,
+				'{version}'		=> $version,
 				'{out_type}'	=> $out_type,
+				'{year}'		=> $date[0],
+				'{month}'		=> $date[1],
+				'{day}'			=> $date[2],
+				'{hour}'		=> $date[3],
+				'{minute}'		=> $date[4],
+				'{second}'		=> $date[5],
 			);
 			$cache_dir = str_replace(array('///','//'), '/', str_replace(array_keys($replace), array_values($replace), $this->CACHE_DIR_TPL));
 		}
