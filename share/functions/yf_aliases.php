@@ -172,13 +172,13 @@ if (!function_exists('emberjs')) {
 	function emberjs($content, $params = array()) { return _class('assets')->emberjs($content, $params); }
 }
 if (!function_exists('sass')) {
-	function sass($content, $params = array()) { return _class('assets')->sass($content, $params); }
+	function sass($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'sass', $content_type, $params); }
 }
 if (!function_exists('less')) {
-	function less($content, $params = array()) { return _class('assets')->less($content, $params); }
+	function less($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'less', $content_type, $params); }
 }
 if (!function_exists('coffee')) {
-	function coffee($content, $params = array()) { return _class('assets')->coffee($content, $params); }
+	function coffee($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'coffee', $content_type, $params); }
 }
 if (!function_exists('require_php_lib')) {
 	function require_php_lib($name, $params = array()) { return main()->require_php_lib($name, $params); }
