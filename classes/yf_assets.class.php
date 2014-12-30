@@ -323,6 +323,27 @@ class yf_assets {
 	}
 
 	/**
+	* Helper for SASS
+	*/
+	function sass($content, $params = array()) {
+// TODO
+	}
+
+	/**
+	* Helper for LESS
+	*/
+	function less($content, $params = array()) {
+// TODO
+	}
+
+	/**
+	* Helper for CoffeeScript
+	*/
+	function coffee($content, $params = array()) {
+// TODO
+	}
+
+	/**
 	*/
 	public function get_asset_details($name) {
 		return $this->assets[$name];
