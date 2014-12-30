@@ -1,5 +1,17 @@
 <?php
 
+// TODO: cache fill from console, with ability to put into cron task
+// TODO: requirejs integration, auto-generate its config with switcher on/off
+// TODO: support for multiple media servers
+// TODO: decide with virtual formats like sass, less, coffeescript
+// TODO: Fallback to local: window.Foundation || document.write('<script src="/js/vendor/foundation.min.js"><\/script>')
+// TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
+// TODO: locking atomic to prevent doing same job in several threads
+// TODO: move to web accessible folder only after completion to ensure atomicity
+// TODO: decide with images: jpeg, png, gif, sprites
+// TODO: comparing versions and return best match
+// TODO: upload to S3, FTP
+
 class yf_assets {
 
 	/** @array Container for added content */
@@ -26,8 +38,7 @@ class yf_assets {
 	public $USE_CACHE = false;
 	/** @bool */
 	public $CACHE_TTL = 86400;
-	/** @bool */
-#	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/'; // full variant with domain and lang
+	/** @bool */ // '{project_path}/templates/{main_type}/cache/{host}/{lang}/{asset_name}/{version}/{out_type}/'; // full variant with domain and lang
 	public $CACHE_DIR_TPL = '{project_path}/templates/{main_type}/cache/{asset_name}/{version}/{out_type}/'; // shorter variant
 	/** @bool */
 	public $URL_TIMEOUT = 5;
@@ -848,8 +859,6 @@ class yf_assets {
 	* Main method to display overall content by out type (js, css, images, fonts).
 	* Can be called from main template like this: {exec_last(assets,show_js)} {exec_last(assets,show_css)}
 	*/
-// TODO: decide with virtual formats like sass, less, coffeescript
-// TODO: Fallback to local: window.Foundation || document.write('<script src="/js/vendor/foundation.min.js"><\/script>')
 	public function show($out_type, $params = array()) {
 		if (!$out_type || !in_array($out_type, $this->supported_out_types)) {
 			throw new Exception('Assets: unsupported out content type: '.$out_type);
@@ -879,13 +888,6 @@ class yf_assets {
 				$combined_info = json_decode(file_get_contents($combined_file.'.info'), $as_array = true);
 				$md5_inside_combined = explode(',', $combined_info['elements']);
 				$md5_inside_combined = array_combine($md5_inside_combined, $md5_inside_combined);
-			}
-		}
-		if ($params['combined']) {
-			$combined = $this->show_combined_content($out_type, $params);
-			// Degrade gracefully, also display raw content in case when combining queue is in progress
-			if (strlen($combined)) {
-				return $combined;
 			}
 		}
 		$bs_current_theme = common()->bs_current_theme();
@@ -954,64 +956,72 @@ class yf_assets {
 			$out[$md5] = $before. $this->html_out($out_type, $content_type, $str, $_params). $after;
 		}
 		if ($this->COMBINE && $to_combine) {
-			if (!file_exists($combined_file)) {
-				$divider = PHP_EOL;
-				if ($out_type === 'js') {
-					$divider = PHP_EOL.';'.PHP_EOL;
-				}
-				$combined = array();
-				foreach ($to_combine as $md5 => $info) {
-					$content_type = $info['content_type'];
-					$content = $info['content'];
-					if ($content_type === 'url') {
-						$combined[$md5] = $this->_url_get_contents($content);
-					} elseif ($content_type === 'file' && file_exists($content)) {
-						$combined[$md5] = file_get_contents($content);
-					}
-					if ($out_type === 'css' && $content_type === 'url') {
-						$combined[$md5] = $this->_css_urls_rewrite_and_save($combined[$md5], $content, $combined_file);
-					}
-					if ($out_type === 'js' && $content_type === 'url') {
-						$this->_js_map_save($combined[$md5], $content, $combined_file);
-					}
-					$md5_inside_combined[$md5] = $md5;
-				}
-				if ($combined) {
-					$combined_md5 = array_keys($combined);
-					$combined = implode($divider, $combined);
-					file_put_contents($combined_file, $combined);
-					$this->_write_cache_info($combined_file, '', $combined, array('elements' => implode(',', $combined_md5)));
-				}
-			}
-			foreach ($to_combine as $md5 => $info) {
-				if (isset($md5_inside_combined[$md5])) {
-					unset($out[$md5]);
-				}
-			}
-			$before = '';
-			$after = '';
-			if (DEBUG_MODE) {
-				$dname = 'combined';
-				$trace = main()->trace_string();
-				$trace_short = str_replace(array('<','>'), array('&lt;','&gt;'), implode('; ', array_slice(explode(PHP_EOL, $trace), 2, 2, true)));
-				$before = PHP_EOL. '<!-- asset start: '.$dname.' | '.$out_type.' | '.$trace_short.' -->'. PHP_EOL. $before;
-				$after = $after. PHP_EOL. '<!-- asset end: '.$dname.' -->'. PHP_EOL;
-				debug('assets_out[]', array(
-					'out_type'		=> $out_type,
-					'name'			=> $dname,
-					'md5'			=> '',
-					'content_type'	=> 'file',
-					'content'		=> $combined_file,
-					'preview'		=> '',
-					'params'		=> '',
-					'trace'			=> $trace,
-				));
-			}
-			$out = array(md5($combined) => $before. $this->html_out($out_type, 'file', $combined_file). $after) + $out;
+			$out = $this->_combine_content($out, $out_type, $to_combine, $combined_file, $md5_inside_combined);
 		}
 		$append = _class('core_events')->fire('assets.append', array('out' => &$out));
 		$this->clean_content($out_type);
 		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
+	}
+
+	/**
+	*/
+	public function _combine_content(array $out, $out_type, array $to_combine, $combined_file, array $md5_inside_combined) {
+		if (!file_exists($combined_file)) {
+			$divider = PHP_EOL;
+			if ($out_type === 'js') {
+				$divider = PHP_EOL.';'.PHP_EOL;
+			}
+			$combined = array();
+			foreach ($to_combine as $md5 => $info) {
+				$content_type = $info['content_type'];
+				$content = $info['content'];
+				if ($content_type === 'url') {
+					$combined[$md5] = $this->_url_get_contents($content);
+				} elseif ($content_type === 'file' && file_exists($content)) {
+					$combined[$md5] = file_get_contents($content);
+				}
+				if ($out_type === 'css' && $content_type === 'url') {
+					$combined[$md5] = $this->_css_urls_rewrite_and_save($combined[$md5], $content, $combined_file);
+				}
+				if ($out_type === 'js' && $content_type === 'url') {
+					$this->_js_map_save($combined[$md5], $content, $combined_file);
+				}
+				$md5_inside_combined[$md5] = $md5;
+			}
+			if ($combined) {
+				$combined_md5 = array_keys($combined);
+				$combined = implode($divider, $combined);
+				file_put_contents($combined_file, $combined);
+				$this->_write_cache_info($combined_file, '', $combined, array('elements' => implode(',', $combined_md5)));
+			}
+		}
+		foreach ($to_combine as $md5 => $info) {
+			if (isset($md5_inside_combined[$md5])) {
+				unset($out[$md5]);
+			}
+		}
+		$before = '';
+		$after = '';
+		if (DEBUG_MODE) {
+			$dname = 'combined';
+			$trace = main()->trace_string();
+			$trace_short = str_replace(array('<','>'), array('&lt;','&gt;'), implode('; ', array_slice(explode(PHP_EOL, $trace), 2, 2, true)));
+			$before = PHP_EOL. '<!-- asset start: '.$dname.' | '.$out_type.' | '.$trace_short.' -->'. PHP_EOL. $before;
+			$after = $after. PHP_EOL. '<!-- asset end: '.$dname.' -->'. PHP_EOL;
+			debug('assets_out[]', array(
+				'out_type'		=> $out_type,
+				'name'			=> $dname,
+				'md5'			=> '',
+				'content_type'	=> 'file',
+				'content'		=> $combined_file,
+				'preview'		=> '',
+				'params'		=> '',
+				'trace'			=> $trace,
+			));
+		}
+		return array(
+			md5($combined) => $before. $this->html_out($out_type, 'file', $combined_file). $after
+		) + $out;
 	}
 
 	/**
@@ -1091,8 +1101,7 @@ class yf_assets {
 			return $cache_path;
 		}
 		file_put_contents($cache_path, $content);
-#		$content = gzdecode($content); // PHP 5.4+ only
-		// Decode gzip content to not confuse browser and web server
+		// Decode gzip content to not confuse browser and web server, as gzdecode($content) is PHP 5.4+ only
 		// gzip file beginnning: \x1F\x8B
 		if (bin2hex(substr($content, 0, 2)) === '1f8b') {
 			ob_start();
@@ -1299,103 +1308,8 @@ class yf_assets {
 	}
 
 	/**
-	* Combine added content according to rules, optionally applying different filters
-	*/
-// TODO: add tpl for auto-generated hash file name, using: %host, %project, %include_path, %yf_path, %date, %is_user, %is_admin ...
-// TODO: add ability to pass callback for auto-generated hash file name
-// TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
-// TODO: locking atomic to prevent doing same job in several threads
-// TODO: move to web accessible folder only after completion to ensure atomicity
-// TODO: unify get_url_contents()
-// TODO: in DEBUG_MODE add comments into generated file and change its name to not overlap with production one
-// TODO: decide with images: jpeg, png, gif, sprites
-// TODO: decide with fonts: different formats
-	public function combine($asset_type, $params = array()) {
-		$ext = '.'.$asset_type;
-		$combined_file = $params['out_file'] ?: PROJECT_PATH. 'templates/cache/combined_'.$asset_type.'/'.date('YmdHis').'_'.substr(md5($_SERVER['HTTP_HOST']), 0, 8). $ext;
-		if (file_exists($combined_file) && filemtime($combined_file) > (time() - 3600)) {
-			return $combined_file;
-		}
-		$combined_dir = dirname($combined_file);
-		if (!file_exists($combined_dir)) {
-			mkdir($combined_dir, 0755, true);
-		}
-		$content = $this->get_content($asset_type);
-		_class('core_events')->fire('assets.before_combine', array(
-			'asset_type'=> $asset_type,
-			'file'		=> $combined_file,
-			'content'	=> &$content,
-			'params'	=> $params,
-		));
-		$out = array();
-		$content = $this->get_content($asset_type);
-		foreach ((array)$content as $md5 => $v) {
-			$content_type = $v['content_type'];
-			$_content = $v['content'];
-			if ($content_type === 'url') {
-				$out[$md5] = $this->_url_get_contents($_content);
-			} elseif ($content_type === 'file' && file_exists($_content)) {
-				$out[$md5] = file_get_contents($_content);
-			} elseif ($content_type === 'inline') {
-				if ($asset_type === 'css') {
-					$_content = $this->_strip_css_input($_content);
-				} elseif ($asset_type === 'js') {
-					$_content = $this->_strip_js_input($_content);
-				}
-				$out[$md5] = $_content;
-			}
-		}
-		_class('core_events')->fire('assets.after_combine', array(
-			'asset_type'=> $asset_type,
-			'file'		=> $combined_file,
-			'content'	=> &$content,
-			'out'		=> &$out,
-			'params'	=> $params,
-		));
-		if (!empty($out)) {
-			$divider = PHP_EOL;
-			if ($asset_type === 'js') {
-				$divider = PHP_EOL.';'.PHP_EOL;
-			}
-			file_put_contents($combined_file, implode($divider, $out));
-		}
-		return $combined_file;
-	}
-
-	/**
-	* Shortcut
-	*/
-	public function combine_js($params = array()) {
-		return $this->combine('js', $params);
-	}
-
-	/**
-	* Shortcut
-	*/
-	public function combine_css($params = array()) {
-		return $this->combine('css', $params);
-	}
-
-	/**
-	*/
-// TODO: replace links with WEB_PATH or MEDIA_PATH, as $combined_file is filesystem path
-// TODO: support for multiple media servers
-	public function show_combined_content($out_type, $params = array()) {
-		$combined_file = $this->combine($out_type, $params);
-		if (!$combined_file || !file_exists($combined_file)) {
-			return false;
-		}
-		$url = $combined_file;
-		if (substr($url, 0, strlen(PROJECT_PATH)) === PROJECT_PATH) {
-			$url = MEDIA_PATH. substr($url, strlen(PROJECT_PATH));
-		}
-		return $this->html_out($out_type, 'url', $url, $params);
-	}
-
-	/**
 	* Generate html output for desired asset out type and content type
 	*/
-// TODO: add optional _prepare_html() for $url
 	public function html_out($out_type, $content_type, $str, $params = array()) {
 		if (!$out_type || !$content_type || !strlen($str)) {
 			return false;
@@ -1440,12 +1354,6 @@ class yf_assets {
 			}
 		}
 		return $out;
-	}
-
-	/**
-	*/
-	public function upload_to() {
-// TODO: upload to S3, FTP
 	}
 
 	/**
@@ -1645,5 +1553,11 @@ class yf_assets {
 			}
 		}
 		return $this;
+	}
+
+	/**
+	*/
+	public function upload_to() {
+// TODO: upload to S3, FTP
 	}
 }
