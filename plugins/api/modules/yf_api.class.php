@@ -29,15 +29,22 @@
 
 class yf_api {
 
+	public $class   = null;
+	public $method  = null;
 	public $is_post = null;
 	public $is_json = null;
 	public $request = null;
 
 	function _init() {
+		$class   = &$this->class;
+		$method  = &$this->method;
+		$is_post = &$this->is_post;
+		// setup
 		$class  = $_GET[ 'action' ];
-		$method = $_GET[ 'id' ];
+		$method = $_GET[ 'id'     ];
+		$is_post = isset( $_POST );
 		// override
-		$class == 'show' && $class  = $_REQUEST[ 'object' ];
+		$class == 'show' && $class = $_REQUEST[ 'object' ];
 		!$method && $method = $_REQUEST[ 'action' ];
 		$this->_call( $class, null, $method );
 	}
@@ -46,7 +53,6 @@ class yf_api {
 		$is_post = &$this->is_post;
 		$is_json = &$this->is_json;
 		$request = &$this->request;
-			$is_post = input()->is_post();
 		if( $is_post ) {
 			$request = json_decode( file_get_contents( 'php://input' ), true );
 			$request && $is_json = true;
@@ -106,7 +112,7 @@ class yf_api {
 			$type = 'javascript';
 		}
 		if( function_exists( 'http_response_code' ) ) { http_response_code( 200 ); } // PHP 5 >= 5.4.0
-		header( 'HTTP/1.1 200 OK' );
+		header( 'Status: 200' );
 		header( "Content-Type: application/$type; charset=UTF-8" );
 		exit( $response );
 	}
