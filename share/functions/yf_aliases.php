@@ -171,6 +171,15 @@ if (!function_exists('reactjs')) {
 if (!function_exists('emberjs')) {
 	function emberjs($content, $params = array()) { return _class('assets')->emberjs($content, $params); }
 }
+if (!function_exists('sass')) {
+	function sass($content, $params = array()) { return _class('assets')->sass($content, $params); }
+}
+if (!function_exists('less')) {
+	function less($content, $params = array()) { return _class('assets')->less($content, $params); }
+}
+if (!function_exists('coffee')) {
+	function coffee($content, $params = array()) { return _class('assets')->coffee($content, $params); }
+}
 if (!function_exists('require_php_lib')) {
 	function require_php_lib($name, $params = array()) { return main()->require_php_lib($name, $params); }
 }
