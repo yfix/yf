@@ -106,7 +106,7 @@ class yf_api {
 			$type = 'javascript';
 		}
 		if( function_exists( 'http_response_code' ) ) { http_response_code( 200 ); } // PHP 5 >= 5.4.0
-		header( 'Status: 200' );
+		header( 'HTTP/1.1 200 OK' );
 		header( "Content-Type: application/$type; charset=UTF-8" );
 		exit( $response );
 	}
