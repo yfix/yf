@@ -323,27 +323,6 @@ class yf_assets {
 	}
 
 	/**
-	* Helper for SASS
-	*/
-	function sass($content, $params = array()) {
-// TODO
-	}
-
-	/**
-	* Helper for LESS
-	*/
-	function less($content, $params = array()) {
-// TODO
-	}
-
-	/**
-	* Helper for CoffeeScript
-	*/
-	function coffee($content, $params = array()) {
-// TODO
-	}
-
-	/**
 	*/
 	public function get_asset_details($name) {
 		return $this->assets[$name];
@@ -767,6 +746,27 @@ class yf_assets {
 	*/
 	public function add_css($content, $content_type_hint = 'auto', $params = array()) {
 		return $this->add($content, 'css', $content_type_hint, $params);
+	}
+
+	/**
+	* Shortcut
+	*/
+	public function add_sass($content, $content_type_hint = 'auto', $params = array()) {
+		return $this->add($content, 'sass', $content_type_hint, $params);
+	}
+
+	/**
+	* Shortcut
+	*/
+	public function add_less($content, $content_type_hint = 'auto', $params = array()) {
+		return $this->add($content, 'less', $content_type_hint, $params);
+	}
+
+	/**
+	* Shortcut
+	*/
+	public function add_coffee($content, $content_type_hint = 'auto', $params = array()) {
+		return $this->add($content, 'coffee', $content_type_hint, $params);
 	}
 
 	/**
