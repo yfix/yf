@@ -1933,6 +1933,9 @@ class yf_main {
 	/**
 	*/
 	function require_php_lib($name, $params = array()) {
+		if (isset($this->php_libs[$name])) {
+			return $this->php_libs[$name];
+		}
 		$dir = 'share/service_providers/';
 		$file = $name.'.php';
 		$paths = array(
@@ -1953,6 +1956,7 @@ class yf_main {
 		}
 		ob_start();
 		require_once $found_path;
+		$this->php_libs[$name] = $found_path;
 		return ob_get_clean();
 	}
 }
