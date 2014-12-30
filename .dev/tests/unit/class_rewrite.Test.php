@@ -68,6 +68,19 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test///') );
 		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/////////////') );
 		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/////////////something') );
+
+		unset($_GET['debug']);
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?host='.self::$host, url('/test/my/123/456?host='.self::$host) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1', url('/test/my/123/456', array('k1' => 'v1')) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k2=v2&k1=v1', url('/test/my/123/456?k2=v2', array('k1' => 'v1')) );
+		$_GET['debug'] = '555';
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?host='.self::$host.'&debug='.$_GET['debug'], url('/test/my/123/456?host='.self::$host) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&debug='.$_GET['debug'], url('/test/my/123/456', array('k1' => 'v1')) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k2=v2&k1=v1&debug='.$_GET['debug'], url('/test/my/123/456?k2=v2', array('k1' => 'v1')) );
+		unset($_GET['debug']);
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?host='.self::$host, url('/test/my/123/456?host='.self::$host) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1', url('/test/my/123/456', array('k1' => 'v1')) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k2=v2&k1=v1', url('/test/my/123/456?k2=v2', array('k1' => 'v1')) );
 	}
 	public function test_rewrite_enabled_simple() {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
