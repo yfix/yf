@@ -199,6 +199,9 @@ class yf_cache {
 	* Get data from cache
 	*/
 	function get ($name, $force_ttl = 0, $params = array()) {
+		if ($name === false || $name === null) {
+			return null;
+		}
 		$do_real_work = true;
 		if (!$this->_driver_ok || empty($name) || $this->NO_CACHE) {
 			$do_real_work = false;
@@ -238,6 +241,9 @@ class yf_cache {
 	* Set data into cache
 	*/
 	function set ($name, $data, $ttl = 0) {
+		if ($name === false || $name === null) {
+			return null;
+		}
 		$do_real_work = true;
 		if (!$this->_driver_ok || $this->NO_CACHE || $this->_no_cache[$name]) {
 			$do_real_work = false;
@@ -276,6 +282,9 @@ class yf_cache {
 	* Delete selected cache entry
 	*/
 	function del ($name) {
+		if ($name === false || $name === null) {
+			return null;
+		}
 		$do_real_work = true;
 		if (!$this->_driver_ok) {
 			$do_real_work = false;
