@@ -50,7 +50,7 @@ class yf_rewrite_pattern_yf {
 #			$u .= '.html';
 		}
 		if (!empty($arr_out)) {
-			$u .= '?'.implode('&',$arr_out);
+			$u .= (strpos($u, '?') === false ? '?' : '&'). implode('&', $arr_out);
 		}
 		$class_rewrite = _class('rewrite');
 		if (!$class_rewrite->USE_WEB_PATH) {

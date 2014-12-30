@@ -181,7 +181,7 @@ class yf_rewrite {
 				$arr_out[] = $k.'='.$v;
 			}
 			if (!empty($arr_out)) {
-				$u .= '?'.implode('&', $arr_out);
+				$u .= (strpos($u, '?') === false ? '?' : '&'). implode('&', $arr_out);
 			}
 			if ($for_section == 'admin') {
 				$link = ADMIN_WEB_PATH. $u;
