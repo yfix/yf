@@ -4,9 +4,9 @@ return array(
 	'versions' => array(
 		'master' => array(
 			'jquery' => 
-<<<END
+"
 	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
-	var yf_ajax_link_validate = '{url(dynamic,ajax_validate)}';
+	var yf_ajax_link_validate = '".url_user('/dynamic/ajax_validate')."';
 	var yf_ajax_validate_cache = { };
 	$('input[data-ajax-validate]', 'form').on('blur', function(i){
 		var _this = $(this);
@@ -38,10 +38,10 @@ return array(
 				rules_to_post[rule_name] = {
 					'func' : rule_name,
 					'param': rule_param,
-					"data" : _val
+					'data' : _val
 				}
 			})
-			$.post( yf_ajax_link_validate, {"rules" : rules_to_post}, function(data) {
+			$.post( yf_ajax_link_validate, {'rules' : rules_to_post}, function(data) {
 				result = data
 				yf_ajax_validate_cache[cache_key] = result
 				yf_ajax_validation_icon_update(_this, result);
@@ -64,9 +64,9 @@ return array(
 			title = 'not good';
 		}
 		yf_ajax_validation_icon_clear(_this)
-		_this.closest('.input-group').after('&nbsp;<i class="ajax-validation-status icon icon-large fa-lg ' + icon + '" style="color:' + color + ';" title="' + title + '"></i>');
+		_this.closest('.input-group').after('&nbsp;<i class=\"ajax-validation-status icon icon-large fa-lg ' + icon + '\" style=\"color:' + color + ';\" title=\"' + title + '\"></i>');
 	}
-END
+"
 		),
 	),
 );
