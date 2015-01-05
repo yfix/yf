@@ -232,15 +232,43 @@ class yf_payment_api__provider_liqpay {
 			return( $result );
 		}
 		list( $account_id, $account ) = $object;
-		// update status
+		// update
+		$sql_amount   = $payment_api->_number_mysql( $amount );
+		$sql_datetime = $payment_api->sql_datatime();
 		$_payment_status_id = (int)$operation[ 'status_id' ];
-		if( $payment_status_success_id != $_payment_status_id
-			&& $payment_status_id != $_payment_status_id ) {
+		if( $payment_status_success_id != $_payment_status_id ) {
+			db()->begin();
+			if( $payment_status_id != $_payment_status_id && $payment_status_name == 'success' ) {
+				// update account
+				$sql_data = array(
+					'datetime_update' => db()->escape_val( $sql_datetime ),
+					'balance'         => '( balance + ' . $sql_amount . ' )',
+				);
+				$sql_status = db()->table( 'payment_account' )
+					->where( 'account_id', $account_id )
+					->order_by( 'account_id' )
+					->update( $sql_data, array( 'escape' => false ) );
+				if( empty( $sql_status ) ) {
+					db()->rollback();
+					$result = array(
+						'status'         => false,
+						'status_message' => 'Ошибка при обновлении счета',
+					);
+					return( $result );
+				}
+				// get balance
+				$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, 'force' => true ) );
+				list( $account_id, $account ) = $object;
+				$balance = $account[ 'balance' ];
+			}
 			// update operation
-			$sql_datetime = $payment_api->sql_datatime();
 			$sql_data = array(
 				'status_id'       => $payment_status_id,
 				'datetime_update' => $sql_datetime,
+			);
+			$balance && $sql_data += array(
+				'balance'         => $balance,
+				'datetime_finish' => $sql_datetime,
 			);
 			// save options
 			$operation_options[ 'check' ][] = array(
@@ -248,8 +276,6 @@ class yf_payment_api__provider_liqpay {
 				'datetime' => $sql_datetime,
 			);
 			$sql_data[ 'options' ] = _es( json_encode( $operation_options ) );
-			// sql
-			db()->begin();
 			$sql_status = db()->table( 'payment_operation' )
 				->where( 'operation_id', $operation_id )
 				->update( $sql_data );
