@@ -58,14 +58,27 @@ return array(
 		var icon = 'icon-ok-circle fa-check-circle';
 		var color = 'green';
 		var title = 'OK';
+		var input_group = _this.closest('.input-group');
+		var control_group = _this.closest('.control-group');
+		var controls = _this.closest('.controls');
+		var help_block = controls.find('.help-block');
+		if (!help_block.length) {
+			controls.append('<span class=\"help-block\"></span>')
+			help_block = controls.find('.help-block');
+		}
 		if (!result || !result['ok']) {
 			icon = 'icon-ban-circle fa-times-circle';
 			color = 'red';
 			title = result['error_msg'] || '".t('not good')."';
+			controls.addClass('error');
+			control_group.addClass('error');
+		} else {
+			controls.removeClass('error');
+			control_group.removeClass('error');
 		}
 		yf_ajax_validation_icon_clear(_this)
-		_this.closest('.input-group').after('&nbsp;<i class=\"ajax-validation-status icon icon-large fa-lg ' + icon + '\" style=\"color:' + color + ';\" title=\"' + title + '\"></i>');
-		_this.closest('.controls').find('.help-block').html(!result || !result['ok'] ? title : '')
+		input_group.after('&nbsp;<i class=\"ajax-validation-status icon icon-large fa-lg ' + icon + '\" style=\"color:' + color + ';\" title=\"' + title + '\"></i>');
+		help_block.html(!result || !result['ok'] ? title : '')
 	}
 "
 		),
