@@ -50,6 +50,32 @@ return array(
 		return result;
 	})
 
+	// HTML5 custom validation messages
+	$('input[type=text]', 'form').not('[data-ajax-validate]').on('change invalid valid', function() {
+		var _this = $(this)
+		var textfield = _this.get(0);
+		var control_group = _this.closest('.control-group');
+		var controls = _this.closest('.controls');
+		var help_block = controls.find('.help-block');
+//		if (!help_block.length) {
+//			controls.append('<span class=\"help-block\"></span>')
+//			help_block = controls.find('.help-block');
+//		}
+		// setCustomValidity not only sets the message, but also marks the field as invalid. 
+		// In order to see whether the field really is invalid, we have to remove the message first
+		textfield.setCustomValidity('');
+		if (!textfield.validity.valid) {
+			textfield.setCustomValidity(help_block.html());
+			controls.addClass('error');
+			control_group.addClass('error');
+			help_block.show()
+		} else {
+			controls.removeClass('error');
+			control_group.removeClass('error');
+			help_block.hide()
+		}
+	})
+
 	function yf_ajax_validation_icon_clear(_this) {
 		_this.closest('.input-group').next('i.ajax-validation-status').remove()
 	}
