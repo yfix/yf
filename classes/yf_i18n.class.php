@@ -308,7 +308,7 @@ class yf_i18n {
 		// Inside each file $data array will be searched for
 		//
 		foreach ((array)$lang_files as $path) {
-			include $path;
+			$data = include $path;
 			foreach ((array)$data as $_source => $_trans) {
 				$_source = str_replace(' ', '_', strtolower($_source));
 				$this->TR_VARS[$lang][$_source] = $_trans;
