@@ -61,10 +61,11 @@ return array(
 		if (!result || !result['ok']) {
 			icon = 'icon-ban-circle fa-times-circle';
 			color = 'red';
-			title = 'not good';
+			title = result['error_msg'] || '".t('not good')."';
 		}
 		yf_ajax_validation_icon_clear(_this)
 		_this.closest('.input-group').after('&nbsp;<i class=\"ajax-validation-status icon icon-large fa-lg ' + icon + '\" style=\"color:' + color + ';\" title=\"' + title + '\"></i>');
+		_this.closest('.controls').find('.help-block').html(!result || !result['ok'] ? title : '')
 	}
 "
 		),
