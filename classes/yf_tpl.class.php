@@ -83,7 +83,7 @@ class yf_tpl {
 	/**
 	* Framework constructor
 	*/
-	function _init () {
+	function _init() {
 		// Needed to ensure backtracking still works on big templates (extended from 1 000 000 on 26kb stpl js() parsing)
 		ini_set('pcre.backtrack_limit', '10000000');
 
@@ -158,7 +158,7 @@ class yf_tpl {
 
 	/**
 	*/
-	function _set_default_driver ($name = '') {
+	function _set_default_driver($name = '') {
 		if (!$name) {
 			$name = $this->DRIVER_NAME;
 		}
@@ -172,7 +172,7 @@ class yf_tpl {
 	/**
 	* Global scope tags
 	*/
-	function _init_global_tags () {
+	function _init_global_tags() {
 		$data = array(
 			'is_logged_in'  => intval((bool) main()->USER_ID),
 			'is_spider'     => (int)conf('IS_SPIDER'),
@@ -191,7 +191,7 @@ class yf_tpl {
 	* Initialization of the main content
 	* Throws one 'echo' at the end
 	*/
-	function init_graphics () {
+	function init_graphics() {
 		$init_type = MAIN_TYPE;
 		// Do not remove this!
 		$this->_init_global_tags();
@@ -330,7 +330,7 @@ class yf_tpl {
 	/**
 	* Process output filters for the given text
 	*/
-	function _apply_output_filters ($text = '') {
+	function _apply_output_filters($text = '') {
 		foreach ((array)$this->_OUTPUT_FILTERS as $cur_filter) {
 			if (is_callable($cur_filter)) {
 				$text = call_user_func($cur_filter, $text);
@@ -343,7 +343,7 @@ class yf_tpl {
 	* Initialization of the main template in the theme (could be overwritten to match design)
 	* Return contents of the main template
 	*/
-	function _init_main_stpl ($tpl_name = '') {
+	function _init_main_stpl($tpl_name = '') {
 		return $this->parse($tpl_name);
 	}
 
@@ -464,14 +464,14 @@ class yf_tpl {
 	/**
 	* Alias
 	*/
-	function exists ($stpl_name = '', $force_storage = '') {
+	function exists($stpl_name = '', $force_storage = '') {
 		return (bool)$this->_stpl_exists($stpl_name, $force_storage);
 	}
 
 	/**
 	* Check if template exists (simple wrapper for the '_get_template_file')
 	*/
-	function _stpl_exists ($stpl_name = '', $force_storage = '') {
+	function _stpl_exists($stpl_name = '', $force_storage = '') {
 		// Exists in cache
 		if (!$force_storage && isset($this->driver->CACHE[$stpl_name])) {
 			return true;
@@ -482,14 +482,14 @@ class yf_tpl {
 	/**
 	* Alias
 	*/
-	function get ($file_name = '', $force_storage = '', $JUST_CHECK_IF_EXISTS = false, $RETURN_TEMPLATE_PATH = false) {
+	function get($file_name = '', $force_storage = '', $JUST_CHECK_IF_EXISTS = false, $RETURN_TEMPLATE_PATH = false) {
 		return $this->_get_template_file($file_name, $force_storage, $JUST_CHECK_IF_EXISTS, $RETURN_TEMPLATE_PATH);
 	}
 
 	/**
 	* Read template file contents (or get it from DB)
 	*/
-	function _get_template_file ($file_name = '', $force_storage = '', $JUST_CHECK_IF_EXISTS = false, $RETURN_TEMPLATE_PATH = false) {
+	function _get_template_file($file_name = '', $force_storage = '', $JUST_CHECK_IF_EXISTS = false, $RETURN_TEMPLATE_PATH = false) {
 		$string	 = false;
 		$NOT_FOUND  = false;
 		$storage	= 'inline';
@@ -647,7 +647,7 @@ class yf_tpl {
 	/**
 	* Get default user theme (for admin section)
 	*/
-	function _get_def_user_theme () {
+	function _get_def_user_theme() {
 		if (!empty($this->_def_user_theme)) {
 			return $this->_def_user_theme;
 		}
@@ -667,7 +667,7 @@ class yf_tpl {
 	/**
 	* Check if given template exists
 	*/
-	function _stpl_path_exists ($file_name) {
+	function _stpl_path_exists($file_name) {
 		return file_exists($file_name);
 	}
 
@@ -697,7 +697,7 @@ class yf_tpl {
 	/**
 	* Simple cleanup (compress) output
 	*/
-	function _simple_cleanup_callback ($text = '') {
+	function _simple_cleanup_callback($text = '') {
 		if (DEBUG_MODE) {
 			debug('compress_output::size_original', strlen($text));
 		}
@@ -714,28 +714,28 @@ class yf_tpl {
 	/**
 	* Custom text replacing method
 	*/
-	function _custom_replace_callback ($text = '') {
+	function _custom_replace_callback($text = '') {
 		return _class('custom_meta_info')->_process($text);
 	}
 
 	/**
 	* Replace method for 'IFRAME in center' mode
 	*/
-	function _replace_for_iframe_callback ($text = '') {
+	function _replace_for_iframe_callback($text = '') {
 		return _class('rewrite')->_replace_links_for_iframe($text);
 	}
 
 	/**
 	* Rewrite links callback method
 	*/
-	function _rewrite_links_callback ($text = '') {
+	function _rewrite_links_callback($text = '') {
 		return _class('rewrite')->_rewrite_replace_links($text);
 	}
 
 	/**
 	* Clenup HTML output with Tidy
 	*/
-	function _tidy_cleanup_callback ($text = '') {
+	function _tidy_cleanup_callback($text = '') {
 		if (!class_exists('tidy') || !extension_loaded('tidy')) {
 			return $text;
 		}
@@ -751,7 +751,7 @@ class yf_tpl {
 
 	/**
 	*/
-	function _debug_mode_callback ($text = '') {
+	function _debug_mode_callback($text = '') {
 		if (!DEBUG_MODE) {
 			return $text;
 		}
@@ -761,7 +761,7 @@ class yf_tpl {
 	/**
 	* Custom filter (Inherit this method and customize anything you want)
 	*/
-	function _custom_filter ($stpl_name = '', &$replace) {
+	function _custom_filter($stpl_name = '', &$replace) {
 		if ($stpl_name == 'home_page/main') {
 			// example only:
 			// print_r($replace);
@@ -772,7 +772,7 @@ class yf_tpl {
 	/**
 	* Wrapper function for t/translate/i18n calls inside templates
 	*/
-	function _i18n_wrapper ($input = '', $replace = array()) {
+	function _i18n_wrapper($input = '', $replace = array()) {
 		if (!strlen($input)) {
 			return '';
 		}
@@ -809,7 +809,7 @@ class yf_tpl {
 	/**
 	* Wrapper for translation method (for call from templates or other)
 	*/
-	function _translate_for_stpl ($string = '', $args_from_tpl = '', $lang = '') {
+	function _translate_for_stpl($string = '', $args_from_tpl = '', $lang = '') {
 		$args = array();
 		if (is_string($args_from_tpl) && strlen($args_from_tpl)) {
 			$args = _attrs_string2array($args_from_tpl);
@@ -821,7 +821,7 @@ class yf_tpl {
 	* Wrapper around '_generate_url' function, called like this inside templates:
 	* {url(object=home_page;action=test)}
 	*/
-	function _generate_url_wrapper ($params = array()){
+	function _generate_url_wrapper($params = array()){
 		if (!function_exists('_force_get_url')) {
 			return '';
 		}
@@ -848,7 +848,7 @@ class yf_tpl {
 	/**
 	* Replace paths to images
 	*/
-	function _replace_images_paths ($string = '') {
+	function _replace_images_paths($string = '') {
 		$images_path  = (MAIN_TYPE_USER ? $this->MEDIA_PATH : ADMIN_WEB_PATH). $this->TPL_PATH. $this->_IMAGES_PATH;
 		$uploads_path = $this->MEDIA_PATH. $this->_UPLOADS_PATH;
 		$r = array(

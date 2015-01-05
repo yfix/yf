@@ -31,13 +31,13 @@ class yf_module {
 
 	/**
 	*/
-	function _view_comments ($params = array()) {
+	function _view_comments($params = array()) {
 		return module_safe('comments')->_show_for_object( (array)$params + (array)$this->_comments_params );
 	}
 
 	/**
 	*/
-	function _get_num_comments ($params = array()) {
+	function _get_num_comments($params = array()) {
 		if (!is_array($params)) {
 			$params = array('objects_ids' => $params);
 		}
@@ -46,25 +46,25 @@ class yf_module {
 
 	/**
 	*/
-	function _comment_is_allowed ($params = array()) {
+	function _comment_is_allowed($params = array()) {
 		return true;
 	}
 
 	/**
 	*/
-	function _comment_edit_allowed ($params = array()) {
+	function _comment_edit_allowed($params = array()) {
 		return (bool)($this->USER_ID && $params['user_id'] && $params['user_id'] == $this->USER_ID);
 	}
 
 	/**
 	*/
-	function _comment_delete_allowed ($params = array()) {
+	function _comment_delete_allowed($params = array()) {
 		return (bool)$this->USER_ID && $params['user_id'] && $params['user_id'] == $this->USER_ID;
 	}
 
 	/**
 	*/
-	function add_comment ($params = array()) {
+	function add_comment($params = array()) {
 		if ($_POST['submit'] == 'Preview') {
 			return module('preview')->_display_preview(array('text' => $_POST['text']));
 		}
@@ -73,13 +73,13 @@ class yf_module {
 
 	/**
 	*/
-	function edit_comment ($params = array()) {
+	function edit_comment($params = array()) {
 		return module_safe('comments')->_edit( (array)$this->_comments_params + (array)$params );
 	}
 
 	/**
 	*/
-	function delete_comment ($params = array()) {
+	function delete_comment($params = array()) {
 		return module_safe('comments')->_delete( (array)$this->_comments_params + (array)$params );
 	}
 
@@ -129,21 +129,21 @@ class yf_module {
 	/**
 	* Display rate box (stars etx)
 	*/
-	function _show_rate_box ($params = array()) {
+	function _show_rate_box($params = array()) {
 		return module_safe('rate')->_show_for_object($params);
 	}
 
 	/**
 	* Display rate box (stars etx)
 	*/
-	function _prefetch_rate_infos ($params = array()) {
+	function _prefetch_rate_infos($params = array()) {
 		return module_safe('rate')->_prefetch_rate_infos($params);
 	}
 
 	/**
 	* Format given text (convert BB Codes, new lines etc)
 	*/
-	function _format_text ($body = '') {
+	function _format_text($body = '') {
 		// Stop here if text is empty
 		if (empty($body)) {
 			return '';
@@ -162,7 +162,7 @@ class yf_module {
 	/**
 	* Process custom box
 	*/
-	function _box ($name = '', $selected = '') {
+	function _box($name = '', $selected = '') {
 		if (empty($name) || empty($this->_boxes[$name])) return false;
 		else return eval('return common()->'.$this->_boxes[$name].';');
 	}
@@ -190,13 +190,13 @@ class yf_module {
 
 	/**
 	*/
-	function _show_tags ($ids = array(), $params = array()) {
+	function _show_tags($ids = array(), $params = array()) {
 		return module_safe('tags')->_show($ids, (array)$this->_tags_params + (array)$params );
 	}
 
 	/**
 	*/
-	function edit_tag () {
+	function edit_tag() {
 		return module_safe('tags')->_edit_tags($_GET['id']);
 	}
 

@@ -59,7 +59,7 @@ class yf_cache {
 	/**
 	* Framework constructor
 	*/
-	function _init ($params = array()) {
+	function _init($params = array()) {
 		if (isset($this->_init_complete)) {
 			return true;
 		}
@@ -70,7 +70,7 @@ class yf_cache {
 
 	/**
 	*/
-	function _init_settings ($params = array()) {
+	function _init_settings($params = array()) {
 		// backwards compatibility
 		if ($this->FILES_TTL) {
 			$this->TTL = $this->FILES_TTL;
@@ -114,7 +114,7 @@ class yf_cache {
 	* Callback that can be overriden to ensure security when allowing url params like no_cache, refresh_cache
 	* We can add DEBUG_MODE checking here to not allow refresh_cache attacks, maybe add check for: conf('cache_refresh_token', 'something_random'), main()->CACHE_CONTROL_FROM_URL
 	*/
-	function _url_action_allowed ($action = '') {
+	function _url_action_allowed($action = '') {
 		$actions = array('no_cache', 'refresh_cache');
 		$callback = conf('cache_url_action_allowed');
 		if (is_callable($callback)) {
@@ -125,7 +125,7 @@ class yf_cache {
 
 	/**
 	*/
-	function _connect ($params = array()) {
+	function _connect($params = array()) {
 		if (!$this->DRIVER) {
 			return null;
 		}
@@ -155,7 +155,7 @@ class yf_cache {
 
 	/**
 	*/
-	function _set_current_driver ($params = array()) {
+	function _set_current_driver($params = array()) {
 		$avail_drivers = $this->_get_avail_drivers_list();
 		$driver = '';
 		$want = isset($params['driver']) ? $params['driver'] : $this->DRIVER;
@@ -171,7 +171,7 @@ class yf_cache {
 
 	/**
 	*/
-	function _get_avail_drivers_list () {
+	function _get_avail_drivers_list() {
 		$dir = 'classes/cache/';
 		$paths = array(
 			'project'	=> PROJECT_PATH. $dir,
@@ -198,7 +198,7 @@ class yf_cache {
 	/**
 	* Get data from cache
 	*/
-	function get ($name, $force_ttl = 0, $params = array()) {
+	function get($name, $force_ttl = 0, $params = array()) {
 		if ($name === false || $name === null) {
 			return null;
 		}
@@ -240,7 +240,7 @@ class yf_cache {
 	/**
 	* Set data into cache
 	*/
-	function set ($name, $data, $ttl = 0) {
+	function set($name, $data, $ttl = 0) {
 		if ($name === false || $name === null) {
 			return null;
 		}
@@ -281,7 +281,7 @@ class yf_cache {
 	/**
 	* Delete selected cache entry
 	*/
-	function del ($name) {
+	function del($name) {
 		if ($name === false || $name === null) {
 			return null;
 		}
@@ -315,35 +315,35 @@ class yf_cache {
 	/**
 	* Delete selected cache entry (alias)
 	*/
-	function refresh ($name = '') {
+	function refresh($name = '') {
 		return $this->del($name, true);
 	}
 
 	/**
 	* Clean selected cache entry (alias)
 	*/
-	function clean ($name = '') {
+	function clean($name = '') {
 		return $this->del($name, true);
 	}
 
 	/**
 	* Clean selected cache entry (alias)
 	*/
-	function clear ($name = '') {
+	function clear($name = '') {
 		return $this->del($name, true);
 	}
 
 	/**
 	* Put data into cache (alias for 'set')
 	*/
-	function put ($name = '', $data = null, $ttl = 0) {
+	function put($name = '', $data = null, $ttl = 0) {
 		return $this->set($name, $data, $ttl);
 	}
 
 	/**
 	* Clean all cache entries
 	*/
-	function flush () {
+	function flush() {
 		$do_real_work = true;
 		if (!$this->_driver_ok) {
 			$do_real_work = false;
@@ -368,35 +368,35 @@ class yf_cache {
 	/**
 	* Clean all cache entries (alias)
 	*/
-	function clean_all () {
+	function clean_all() {
 		return $this->flush();
 	}
 
 	/**
 	* Clean all cache entries (alias)
 	*/
-	function clear_all () {
+	function clear_all() {
 		return $this->flush();
 	}
 
 	/**
 	* Clean all cache entries (alias)
 	*/
-	function refresh_all () {
+	function refresh_all() {
 		return $this->flush();
 	}
 
 	/**
 	* Clears all cache entries (alias)
 	*/
-	function _clear_cache_files () {
+	function _clear_cache_files() {
 		return $this->flush();
 	}
 
 	/**
 	* Get several cache entries at once
 	*/
-	function multi_get ($names = array(), $force_ttl = 0, $params = array()) {
+	function multi_get($names = array(), $force_ttl = 0, $params = array()) {
 		$do_real_work = true;
 		if (!$this->_driver_ok || $this->NO_CACHE) {
 			$do_real_work = false;
@@ -451,7 +451,7 @@ class yf_cache {
 	/**
 	* Set several cache entries at once
 	*/
-	function multi_set ($data = array(), $ttl = 0) {
+	function multi_set($data = array(), $ttl = 0) {
 		$do_real_work = true;
 		if (!$this->_driver_ok || $this->NO_CACHE) {
 			$do_real_work = false;
@@ -500,7 +500,7 @@ class yf_cache {
 	/**
 	* Del several cache entries at once
 	*/
-	function multi_del ($names = array()) {
+	function multi_del($names = array()) {
 		$do_real_work = true;
 		if (!$this->_driver_ok) {
 			$do_real_work = false;
@@ -545,7 +545,7 @@ class yf_cache {
 
 	/**
 	*/
-	function list_keys () {
+	function list_keys() {
 		$do_real_work = true;
 		if (!$this->_driver_ok) {
 			$do_real_work = false;
@@ -587,7 +587,7 @@ class yf_cache {
 
 	/**
 	*/
-	function del_by_prefix ($prefix = '') {
+	function del_by_prefix($prefix = '') {
 		$do_real_work = true;
 		if (!$this->_driver_ok) {
 			$do_real_work = false;

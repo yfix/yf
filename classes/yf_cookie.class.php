@@ -22,7 +22,7 @@ class yf_cookie {
 
 	/**
 	*/
-	function _init () {
+	function _init() {
 		$main = main();
 		// Import cookie settings from main class, but prefixed with "COOKIE_"
 		$prefix = 'COOKIE_';

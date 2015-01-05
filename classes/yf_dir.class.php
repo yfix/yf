@@ -24,7 +24,7 @@ class yf_dir {
 	/**
 	* Check if we need to skip current path according to given patterns (unified method for whole dir module)
 	*/
-	function _skip_by_pattern ($path = '', $_is_dir = false, $pattern_include = '', $pattern_exclude = '') {
+	function _skip_by_pattern($path = '', $_is_dir = false, $pattern_include = '', $pattern_exclude = '') {
 		if (!$path) {
 			return false;
 		}
@@ -149,14 +149,14 @@ class yf_dir {
 	/**
 	* Alias
 	*/
-	function scan ($start_dir, $_tmp = true, $pattern_include = '', $pattern_exclude = '') {
+	function scan($start_dir, $_tmp = true, $pattern_include = '', $pattern_exclude = '') {
 		return $this->scan_dir($start_dir, $_tmp, $pattern_include, $pattern_exclude);
 	}
 
 	/**
 	* Recursively scanning directory structure (including subdirectories) //
 	*/
-	function scan_dir ($start_dir, $_tmp = 1, $pattern_include = '', $pattern_exclude = '') {
+	function scan_dir($start_dir, $_tmp = 1, $pattern_include = '', $pattern_exclude = '') {
 		// Here we accept several start folders, result will be merged
 		if (is_array($start_dir)) {
 			foreach ((array)$start_dir as $_dir_name) {
@@ -418,7 +418,7 @@ class yf_dir {
 	/**
 	* Delete files in specified dir recursively using patterns
 	*/
-	function delete_files ($start_dir, $pattern_include = '', $pattern_exclude = '') {
+	function delete_files($start_dir, $pattern_include = '', $pattern_exclude = '') {
 		foreach ((array)$this->scan_dir($start_dir, 1, $pattern_include, $pattern_exclude) as $file_path) {
 			unlink($file_path);
 		}

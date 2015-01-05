@@ -59,7 +59,7 @@ class yf_session {
 
 	/**
 	*/
-	function start () {
+	function start() {
 		$main = main();
 		if (!empty($this->_started) || $main->is_console() || conf('SESSION_OFF') || $this->OFF) {
 			return false;
@@ -150,14 +150,14 @@ class yf_session {
 
 	/**
 	*/
-	function stop () {
+	function stop() {
 		session_write_close();
 		return true;
 	}
 
 	/**
 	*/
-	function _driver_setup ($driver_name) {
+	function _driver_setup($driver_name) {
 		$session_class_name = 'session_driver_'.$driver_name;
 		$session_loaded_class_name = $this->load_class_file($session_class_name, 'classes/session/');
 		if (empty($session_loaded_class_name)) {

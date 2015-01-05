@@ -22,14 +22,14 @@ class yf_core_menu {
 	/**
 	* Show menu (alias for the '_show_menu')
 	*/
-	function show ($params) {
+	function show($params) {
 		return $this->_show_menu($params);
 	}
 
 	/**
 	* Show menu (alias for the '_show_menu')
 	*/
-	function show_menu ($params) {
+	function show_menu($params) {
 		return $this->_show_menu($params);
 	}
 
@@ -42,7 +42,7 @@ class yf_core_menu {
 	*		4 => 'Divider',
 	*	);
 	*/
-	function _show_menu ($params = array()) {
+	function _show_menu($params = array()) {
 		$return_array	= isset($params['return_array']) ? $params['return_array'] : false;
 		$force_stpl_name= isset($params['force_stpl_name']) ? $params['force_stpl_name'] : false;
 		$menu_name		= $params['name'];
