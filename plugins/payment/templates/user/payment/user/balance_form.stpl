@@ -263,7 +263,7 @@
 					class="payment-operation__item"
 					ng-class="{ warning: o.status_id < 2 }"
 				>
-					<td><span ng-bind="o.datetime_start"></span></td>
+					<td><span ng-bind="o.datetime_update"></span></td>
 					<td><span ng-bind="o.title"></span></td>
 					<td><span class="text-success" ng-bind="o.amount | number: payment.currency.minor_units"></span></td>
 					<td><span ng-bind="o.balance | number: payment.currency.minor_units"></span></td>
