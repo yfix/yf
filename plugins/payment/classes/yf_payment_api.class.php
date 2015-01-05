@@ -282,14 +282,25 @@ class yf_payment_api {
 				->group_by( $source )
 				->order_by( 'datetime', 'DESC' )
 				->get_deep_array( 1 );
-			foreach( $result as $id => $item ) {
-				$key   = $item[ $source    ];
-				$value = $item[ $key_value ];
-				$rate  = $item[ $key_rate  ];
-				$currency_rate[ $key ] = array(
-					'value' => (float)$value,
-					'rate'  => (float)$rate,
-				);
+			if( empty( $result ) ) {
+				$currency_id_default = &$this->currency_id_default;
+				foreach( $this->currencies as $key => $item ) {
+					if( $currency_id_default == $key ) { continue; }
+					$currency_rate[ $key ] = array(
+						'value' => 1.0,
+						'rate'  => 1.0,
+					);
+				}
+			} else {
+				foreach( $result as $id => $item ) {
+					$key   = $item[ $source    ];
+					$value = $item[ $key_value ];
+					$rate  = $item[ $key_rate  ];
+					$currency_rate[ $key ] = array(
+						'value' => (float)$value,
+						'rate'  => (float)$rate,
+					);
+				}
 			}
 		}
 		// get from db
@@ -583,7 +594,7 @@ class yf_payment_api {
 	public function deposition( $options = null ) {
 		$_ = &$options;
 		$_[ 'type_name' ] = __FUNCTION__;
-		$_[ 'operation_title' ] = $_[ 'operation_title' ] ?: 'Поплнение счета';
+		$_[ 'operation_title' ] = $_[ 'operation_title' ] ?: 'Пополнение счета';
 		$result = $this->_operation_check( $_ );
 		list( $status, $data, $operation_data ) = $result;
 		if( empty( $status ) ) { return( $result ); }
