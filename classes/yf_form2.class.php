@@ -729,6 +729,7 @@ class yf_form2 {
 		}
 		$extra['errors'] = common()->_get_error_messages();
 		if (isset($extra['errors'][$name])) {
+			common()->_remove_error_messages($name);
 			$extra['inline_help'] = $extra['errors'][$name];
 		}
 	}
