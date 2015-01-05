@@ -1,0 +1,309 @@
+<div class="col-md-12 user_view">
+<div class="payment">
+<div class="block_user_balance ng-cloak" ng-controller="balance">
+
+<wait active='block_wait'></wait>
+
+{css()}
+	.offset-1 {
+		margin-left: 1em;
+	}
+	.payment_account {
+		margin-bottom: 1em;
+	}
+	.payment_account__refresh,
+	.payment_account__recharge,
+	.payment_account__header,
+	.payment_account__balance {
+		height: 3em;
+	}
+	.payment_account__header,
+	.payment_account__balance {
+		font-size   : 2em;
+		font-weight : bold;
+	}
+	.payment_account__currency {
+		font-size: 1em;
+	}
+	.payment_balance_recharge {
+		margin: 1em 0;
+	}
+	.payment_account__balance.change {
+		-webkit-transition : all linear 1s;
+		-moz-transition    : all linear 1s;
+		-o-transition      : all linear 1s;
+		transition         : all linear 1s;
+	}
+	.payment_account__balance.change-add {
+		opacity : 0;
+	}
+	.payment_account__balance.change {
+		opacity : 1;
+	}
+{/css}
+
+	<div class="row payment_account" ng-show="payment.account">
+		<div class="col-sm-2">
+			<span class="payment_account__header">Счет:</span>
+		</div>
+		<div class="col-sm-3">
+			<span
+				class="payment_account__balance text-success"
+				ng-bind="payment.account.balance | number: payment.currency.minor_units"
+				animate-on-change
+			></span>
+			&nbsp;
+			<span class="payment_account__currency text-mutted" ng-bind="payment.currency.short"></span>
+		</div>
+		<div class="col-sm-7">
+			<div class="pull-right">
+				<button type="button" class="payment_account__refresh btn btn-success btn-lg"
+					title="Обновить информацию о счете"
+					ng-hide="block_balance_recharge"
+					ng-click="balance_refresh()"
+				>
+					<i class="fa fa-refresh"></i>
+				</button>
+				<span class="offset-1"></span>
+				<button type="button" class="payment_account__recharge btn btn-primary btn-lg"
+					title="Пополнить счет"
+					ng-hide="block_balance_recharge"
+					ng-click="show_balance_recharge( true )"
+				>
+					Пополнить
+				</button>
+			</div>
+		</div>
+
+	</div>
+
+	{css()}
+		.block_payment_status {
+			margin: 0.5em 0 1em;
+		}
+	{/css}
+
+	<div class="block_payment_status"
+		ng-class="{ 'text-success': status, 'text-danger': !status }"
+		ng-show="status_message"
+		ng-bind="status_message"
+	>
+	</div>
+
+{catch( col1 )}2{/catch}
+{catch( col2 )}10{/catch}
+
+{css()}
+.payment_balance_recharge input.ng-invalid {
+	color: #800;
+	border-color: rgba(133,0,0, 0.5);
+}
+.payment_balance_recharge input:focus.ng-invalid {
+	color: #800;
+	box-shadow: inset 0 1px 1px rgba(133,0,0,0.07), 0 0 8px rgba(133,0,0, 0.7);
+	border-color: rgba(133,0,0, 0.7);
+}
+.payment_balance_recharge .error-message {
+	color: #800;
+	margin: 0.2em 0 0;
+	font-size: 0.9em;
+}
+{/css}
+
+	<div class="payment_balance_recharge" ng-show="block_balance_recharge">
+		<form name="form_payment_balance_recharge" class="form-horizontal" role="form" novalidate>
+			<div class="form-group">
+				<div class="col-sm-offset-{col1} col-sm-{col2}">
+					<h3 class="title">Пополнение счета</h3>
+				</div>
+			</div>
+			<div class="form-group"
+				ng-show="form_payment_balance_recharge.amount.$invalid || form_payment_balance_recharge.amount_currency.$invalid"
+			>
+				<div class="col-sm-offset-{col1} col-sm-{col2}">
+					<div class="error-message"
+						ng-show="form_payment_balance_recharge.amount.$error.number || form_payment_balance_recharge.amount_currency.$error.number"
+					>
+						Неверно указана величина пополнения
+					</div>
+					<div class="error-message"
+						ng-show="form_payment_balance_recharge.amount.$error.min"
+					>
+						Величина '{{ payment.currency.short }}' должна быть больше или равна {{ amount_min }}
+					</div>
+					<div class="error-message"
+						ng-show="form_payment_balance_recharge.amount_currency.$error.min"
+					>
+						Величина '{{ currency_selected.short }}' должна быть больше или равна {{ amount_currency_min }}
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-{col1} control-label" for="balance_recharge___amount" ng-bind="payment.currency.name"></label>
+				<div class="col-sm-{col2}">
+					<div class="col-sm-2 input-group pull-left">
+						<input type="number" required class="form-control balance_recharge__amount" id="balance_recharge___amount"
+							name        = "amount"
+							placeholder = "{{ payment.currency.short }}"
+							min         = "{{ amount_min }}"
+							step        = "{{ amount_step }}"
+							ng-change   = "amount_change( false )"
+							ng-model    = "amount"
+						>
+					</div>
+					<div class="col-sm-3 input-group pull-left">
+						<span class="input-group-addon">=</span>
+						<input type="number" required class="form-control balance_recharge__amount" id="balance_recharge__amount"
+							name        = "amount_currency"
+							placeholder = "{{ currency_selected.short }}"
+							min         = "{{ amount_currency_min  }}"
+							step        = "{{ amount_currency_step }}"
+							ng-change   = "amount_change( true )"
+							ng-model    = "amount_currency"
+						>
+					</div>
+					<div class="col-sm-2">
+						<select class="form-control"
+							ng-model   = "currency_selected"
+							ng-options = "currency.short for ( currency_id, currency ) in payment.currencies"
+							ng-change  = "currency_change()"
+						></select>
+					</div>
+				</div>
+			</div>
+			<div class="form-group"
+				ng-show="_amount_currency && form_payment_balance_recharge.$valid"
+			>
+				<label class="col-sm-{col1} control-label">итого</label>
+				<div class="col-sm-{col2}">
+					<div class="form-control-static text-success">
+						<span class="balance_recharge__amount"
+							ng-bind="_amount_currency | number: currency_selected.minor_units"
+							style="font-weight: bold;"
+						></span>
+						<span class="text-muted"
+							ng-bind="currency_selected.short"
+						></span>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-{col1} control-label">сервис</label>
+				<div class="col-sm-{col2}">
+					<div style="margin: 0 1em 0.5em 0;">
+					<div class="input-group col-sm-5 pull-left"
+						style="margin: 0 1em 0.5em 0;"
+						ng-repeat="p in payment.provider"
+					>
+						<span class="input-group-addon">
+							<input type="radio" name="provider_id"
+								id="block_balance_recharge__provider_id_{{p.provider_id}}"
+								ng-model="provider_id"
+								ng-value="p.provider_id"
+								ng-click="provider_change( p )"
+							>
+						</span>
+						<label class="form-control" for="block_balance_recharge__provider_id_{{p.provider_id}}">
+							{{-- <img class="img" src="//placehold.it/20x20/bbb&text=i" title="icon of {{p.title}}"> --}}
+							<span ng-bind="p.title"></span>
+						</label>
+					</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-{col1} col-sm-{col2}">
+					<button type="submit" class="btn btn-success btn-lg" ng-disabled="form_payment_balance_recharge.$invalid" ng-click="balance_recharge()">Пополнить</button>
+					<button type="button" class="btn btn-default btn-lg" ng-click="show_balance_recharge( false )" >Отмена</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+{css()}
+.payment-operation caption {
+	font-size  : 1.1em;
+}
+.payment-operation__btn {
+	margin      : 0 0.5em;
+	padding     : 0 2em;
+	height      : 2em;
+	line-height : 0;
+}
+.payment-operation__item.ng-enter,
+.payment-operation__item.ng-move {
+	-webkit-transition : 0.5s linear all;
+	-moz-transition    : 0.5s linear all;
+	-o-transition      : 0.5s linear all;
+	transition         : 0.5s linear all;
+}
+.payment-operation__item.ng-enter.ng-enter-active,
+.payment-operation__item.ng-move.ng-move-active {
+	opacity : 1;
+}
+.payment-operation__item.ng-enter,
+.payment-operation__item.ng-move {
+	opacity : 0;
+}
+{/css}
+	<div class="payment-operation" ng-show="payment.operation && block_operation">
+		<table class="table table-striped">
+			<caption class="text-capitalize text-success">Журнал операций</caption>
+			<thead>
+				<tr>
+					<th>дата</th>
+					<th>название</th>
+					<th>сумма</th>
+					<th>баланс</th>
+					<th>статус</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="o in payment.operation"
+					class="payment-operation__item"
+					ng-class="{ warning: o.status_id < 2 }"
+				>
+					<td><span ng-bind="o.datetime_start"></span></td>
+					<td><span ng-bind="o.title"></span></td>
+					<td><span class="text-success" ng-bind="o.amount | number: payment.currency.minor_units"></span></td>
+					<td><span ng-bind="o.balance | number: payment.currency.minor_units"></span></td>
+					<td><span ng-bind="payment.status[ o.status_id ][ 'title' ]"></span></td>
+				</tr>
+			</tbody>
+			<tfoot>
+			<tr>
+				<td colspan="5">
+					<span>
+						Страница:
+					</span>
+					<button type="button" class="payment_operation__first btn btn-xs payment-operation__btn"
+						title="первая страница"
+						ng-show="payment.operation_pagination.page > 2"
+						ng-click="operation_first()"
+					>
+						<i class="fa fa-angle-double-left"></i>
+					</button>
+					<button type="button" class="payment_operation__prev btn btn-xs payment-operation__btn"
+						title="предыдущая страница"
+						ng-show="payment.operation_pagination.page > 1"
+						ng-click="operation( -1 )"
+					>
+						<i class="fa fa-angle-left"></i>
+					</button>
+					<span ng-bind="payment.operation_pagination.page"></span>
+					<button type="button" class="payment_operation__next btn btn-xs payment-operation__btn"
+						title="следующая страница"
+						ng-show="payment.operation.length == payment.operation_pagination.page_per"
+						ng-click="operation( 1 )"
+					>
+						<i class="fa fa-angle-right"></i>
+					</button>
+				</td>
+			</tr>
+			</tfoot>
+		</table>
+	</div>
+
+</div>
+</div>
+</div>
