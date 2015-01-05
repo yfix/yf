@@ -1251,6 +1251,16 @@ class yf_common {
 	}
 
 	/**
+	*/
+	function _remove_error_messages($key = '') {
+		if ($key) {
+			unset($this->USER_ERRORS[$key]);
+		} else {
+			$this->USER_ERRORS = array();
+		}
+	}
+
+	/**
 	* Show formatted contents of user errors
 	*/
 	function _show_error_message($cur_error_msg = '', $clear_error = true) {
@@ -1274,7 +1284,7 @@ class yf_common {
 			_class('user_errors', 'classes/common/')->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
 		}
 		if ($clear_error) {
-			$this->USER_ERRORS = array();
+			$this->_remove_error_messages();
 		}
 		if (conf('IS_SPIDER')) {
 			return false;
