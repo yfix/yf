@@ -5,7 +5,7 @@ class yf_html5_framework_empty {
 		$row_start = 
 			'<div>'.PHP_EOL
 				.($extra['desc'] && !$extra['no_label'] ? '<label for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
-				.(!$extra['wide'] ? '<div">'.PHP_EOL : '');
+				.(!$extra['wide'] ? '<div>'.PHP_EOL : '');
 
 		$row_end =
 				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
