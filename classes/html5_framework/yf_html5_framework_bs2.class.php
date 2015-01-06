@@ -5,23 +5,25 @@
 */
 class yf_html5_framework_bs2 {
 
-	public $CLASS_FORM_GROUP	= 'control-group form-group';
-	public $CLASS_INPUT_GROUP	= 'input-group'; // col-md-2
-	public $CLASS_ADDON			= 'add-on input-group-addon';
-	public $CLASS_INPUT_PREPEND	= 'input-prepend';
-	public $CLASS_INPUT_APPEND	= 'input-append';
-	public $CLASS_LABEL			= 'control-label col-md-3';
-	public $CLASS_NO_LABEL		= ' col-md-offset-3 col-md-9';
-	public $CLASS_CONTROLS		= 'controls';
-	public $CLASS_DESC			= 'col-md-9';
-	public $CLASS_EDIT_LINK		= 'btn btn-default btn-mini btn-xs';
-	public $CLASS_EDIT_ICON		= 'icon-edit fa fa-edit';
-	public $CLASS_LINK_URL		= 'btn btn-default';
-	public $CLASS_HELP			= 'help-block';
-	public $CLASS_ERROR			= 'error';
-	public $CLASS_SUCCESS		= 'success';
-	public $CLASS_WARNING		= 'warning';
-	public $CLASS_INFO			= 'info';
+	public $CLASS_FORM_GROUP		= 'control-group form-group';
+	public $CLASS_INPUT_GROUP		= 'input-group'; // col-md-2
+	public $CLASS_ADDON				= 'add-on input-group-addon';
+	public $CLASS_INPUT_PREPEND		= 'input-prepend';
+	public $CLASS_INPUT_APPEND		= 'input-append';
+	public $CLASS_LABEL				= 'control-label col-md-3';
+	public $CLASS_NO_LABEL			= ' col-md-offset-3 col-md-9';
+	public $CLASS_NO_LABEL_BUTTONS	= ' col-md-offset-3 col-md-11';
+	public $CLASS_CONTROLS			= 'controls';
+	public $CLASS_CONTROLS_BUTTONS	= 'controls';
+	public $CLASS_DESC				= 'col-md-9';
+	public $CLASS_EDIT_LINK			= 'btn btn-default btn-mini btn-xs';
+	public $CLASS_EDIT_ICON			= 'icon-edit fa fa-edit';
+	public $CLASS_LINK_URL			= 'btn btn-default';
+	public $CLASS_HELP				= 'help-block';
+	public $CLASS_ERROR				= 'error';
+	public $CLASS_SUCCESS			= 'success';
+	public $CLASS_WARNING			= 'warning';
+	public $CLASS_INFO				= 'info';
 
 	/**
 	*/
@@ -63,8 +65,10 @@ class yf_html5_framework_bs2 {
 		$class_label = $extra['class_label'] ?: $this->CLASS_LABEL
 			. ($extra['class_add_label'] ? ' '.$extra['class_add_label'] : '');
 
-		$class_controls = $extra['class_controls'] ?: $this->CLASS_CONTROLS
-			. ($extra['desc'] && !$no_label ? ' '.$this->CLASS_DESC : $this->CLASS_NO_LABEL)
+		$def_class_controls = $extra['buttons_controls'] ? $this->CLASS_CONTROLS_BUTTONS : $this->CLASS_CONTROLS;
+		$def_class_no_label = $extra['buttons_controls'] ? $this->CLASS_NO_LABEL_BUTTONS : $this->CLASS_NO_LABEL;
+		$class_controls = $extra['class_controls'] ?: $def_class_controls
+			. ($extra['desc'] && !$no_label ? ' '.$this->CLASS_DESC : $def_class_no_label)
 			. ($extra['class_add_controls'] ? ' '.$extra['class_add_controls'] : '');
 
 		$row_start = '<div class="'.$class_form_group.'">'.PHP_EOL
