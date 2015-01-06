@@ -86,6 +86,7 @@ class class_form_real_test extends db_real_abstract {
 		$this->assertTrue( (bool)self::utils()->table_exists('static_pages') );
 
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$params = array('do_not_remove_errors' => 1);
 
 		$_POST = array(
 			'name'		=> 'for_unit_tests',
@@ -96,7 +97,7 @@ class class_form_real_test extends db_real_abstract {
 		common()->USER_ERRORS = array();
 		$this->assertEmpty( common()->USER_ERRORS );
 		$custom_error = 'Such field as "%field" is empty...';
-		form($_POST)
+		form($_POST, $params)
 			->text('text')
 			->validate(array('text' => 'trim|required'))
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
@@ -106,7 +107,7 @@ class class_form_real_test extends db_real_abstract {
 
 		common()->USER_ERRORS = array();
 		$this->assertEmpty( common()->USER_ERRORS );
-		form($_POST)
+		form($_POST, $params)
 			->text('text', array('validate_error' => $custom_error))
 			->validate(array('text' => 'trim|required'))
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
@@ -116,7 +117,7 @@ class class_form_real_test extends db_real_abstract {
 		$this->assertEmpty( common()->USER_ERRORS );
 		$_POST['text'] = 'something';
 		$custom_error = array('integer' => 'Custom error: "%field" should be of type integer');
-		form($_POST)
+		form($_POST, $params)
 			->text('text', array('validate_error' => $custom_error))
 			->validate(array('text' => 'trim|required|integer'))
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
@@ -125,7 +126,7 @@ class class_form_real_test extends db_real_abstract {
 		common()->USER_ERRORS = array();
 		$this->assertEmpty( common()->USER_ERRORS );
 		$_POST['text'] = '1234';
-		form($_POST)
+		form($_POST, $params)
 			->text('text', array('validate_error' => $custom_error))
 			->validate(array('text' => 'trim|required|integer'))
 			->render(); // !! Important to call it to run validate() and insert_if_ok() processing
