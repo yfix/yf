@@ -219,6 +219,7 @@ class yf_form2 {
 			$ts = microtime(true);
 		}
 		_class('core_events')->fire('form.before_render', array($extra, $replace, $this));
+		$this->_extra = $extra;
 		$on_before_render = isset($extra['on_before_render']) ? $extra['on_before_render'] : $this->_on['on_before_render'];
 		if (is_callable($on_before_render)) {
 			$on_before_render($extra, $replace, $this);
@@ -729,7 +730,14 @@ class yf_form2 {
 		}
 		$extra['errors'] = common()->_get_error_messages();
 		if (isset($extra['errors'][$name])) {
-			common()->_remove_error_messages($name);
+			$remove_errors = true;
+			$var_name = 'do_not_remove_errors';
+			if ($extra[$var_name] || $this->_params[$var_name] || $this->_extra[$var_name] || $this->_params['extra'][$var_name]) {
+				$remove_errors = false;
+			}
+			if ($remove_errors) {
+				common()->_remove_error_messages($name);
+			}
 			$extra['inline_help'] = $extra['errors'][$name];
 		}
 	}
