@@ -94,6 +94,32 @@ return array(
 		var icon_css_class = is_error ? yf_css_icon_error : yf_css_icon_success;
 		input_group.after("&nbsp;<i class=\"ajax-validation-status " + icon_css_class + "\" title=\"" + title + "\"></i>");
 	}
+
+	// HTML5 custom validation messages
+	$("input[type=text]", "form").not("[data-ajax-validate]").on("change keyup invalid valid", function() {
+		var _this = $(this)
+		var textfield = _this.get(0);
+		var control_group = _this.closest(".control-group");
+		var controls = _this.closest(".controls");
+		var help_block = controls.find(".help-block");
+//		if (!help_block.length) {
+//			controls.append(yf_html_help_block);
+//			help_block = controls.find(".help-block");
+//		}
+		// setCustomValidity not only sets the message, but also marks the field as invalid. 
+		// In order to see whether the field really is invalid, we have to remove the message first
+		textfield.setCustomValidity("");
+		if (!textfield.validity.valid) {
+			textfield.setCustomValidity(help_block.html());
+			controls.addClass(yf_css_class_error);
+			control_group.addClass(yf_css_class_error);
+			help_block.show()
+		} else {
+			controls.removeClass(yf_css_class_error);
+			control_group.removeClass(yf_css_class_error);
+			help_block.hide()
+		}
+	})
 ',
 		),
 	),
