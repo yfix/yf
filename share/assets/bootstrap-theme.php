@@ -20,6 +20,7 @@ $css_fixes[3] = '
 	.container-fixed .input-group[class*="col-"] { float:left !important; margin-right: 3px; }
 	label.radio-horizontal { padding-left: inherit; display: inline-block; margin-right: 5px; }
 	label.radio-horizontal input[type=radio] { float: left; }
+	.form-horizontal .radio, .form-horizontal .checkbox { padding-left: 20px; }
 ';
 
 if ($bs_theme === 'bootstrap') {
