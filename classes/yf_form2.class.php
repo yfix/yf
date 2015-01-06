@@ -20,6 +20,7 @@ class yf_form2 {
 	public $CLASS_ICON_SAVE = 'icon-save fa fa-save';
 	public $CLASS_ICON_PSWD = 'icon-key fa fa-key fa-fw';
 	public $CLASS_ICON_LOGIN = 'icon-user fa fa-user fa-fw';
+	public $CLASS_ICON_EMAIL = 'icon-user fa fa-at fa-fw';
 	public $CLASS_LABEL_INFO = 'label label-info';
 	public $CLASS_ERROR = 'alert alert-error alert-danger';
 
@@ -993,7 +994,7 @@ class yf_form2 {
 		if (!$name) {
 			$name = 'email';
 		}
-		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '@';
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : '<i class="'.$this->CLASS_ICON_EMAIL.'"></i>';
 		return $this->input($name, $desc, $extra, $replace);
 	}
 

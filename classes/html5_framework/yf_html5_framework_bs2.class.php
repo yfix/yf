@@ -6,7 +6,7 @@
 class yf_html5_framework_bs2 {
 
 	public $CLASS_FORM_GROUP	= 'control-group form-group';
-	public $CLASS_INPUT_GROUP	= 'input-group col-md-2';
+	public $CLASS_INPUT_GROUP	= 'input-group'; // col-md-2
 	public $CLASS_ADDON			= 'add-on input-group-addon';
 	public $CLASS_INPUT_PREPEND	= 'input-prepend';
 	public $CLASS_INPUT_APPEND	= 'input-append';
