@@ -58,7 +58,7 @@ return array(
 		var controls = _this.closest('.controls');
 		var help_block = controls.find('.help-block');
 //		if (!help_block.length) {
-//			controls.append('<span class=\"help-block\"></span>')
+//			controls.append('<span class=\"help-block pull-left\"></span>')
 //			help_block = controls.find('.help-block');
 //		}
 		// setCustomValidity not only sets the message, but also marks the field as invalid. 
@@ -66,12 +66,12 @@ return array(
 		textfield.setCustomValidity('');
 		if (!textfield.validity.valid) {
 			textfield.setCustomValidity(help_block.html());
-			controls.addClass('error');
-			control_group.addClass('error');
+			controls.addClass('error has-error');
+			control_group.addClass('error has-error');
 			help_block.show()
 		} else {
-			controls.removeClass('error');
-			control_group.removeClass('error');
+			controls.removeClass('error has-error');
+			control_group.removeClass('error has-error');
 			help_block.hide()
 		}
 	})
@@ -89,21 +89,21 @@ return array(
 		var controls = _this.closest('.controls');
 		var help_block = controls.find('.help-block');
 		if (!help_block.length) {
-			controls.append('<span class=\"help-block\"></span>')
+			controls.append('<span class=\"help-block pull-left\"></span>')
 			help_block = controls.find('.help-block');
 		}
 		if (!result || !result['ok']) {
 			icon = 'icon-ban-circle fa-times-circle';
 			color = 'red';
 			title = result['error_msg'] || '".t('not good')."';
-			controls.addClass('error');
-			control_group.addClass('error');
+			controls.addClass('error has-error');
+			control_group.addClass('error has-error');
 		} else {
-			controls.removeClass('error');
-			control_group.removeClass('error');
+			controls.removeClass('error has-error');
+			control_group.removeClass('error has-error');
 		}
 		yf_ajax_validation_icon_clear(_this)
-		input_group.after('&nbsp;<i class=\"ajax-validation-status icon icon-large fa-lg ' + icon + '\" style=\"color:' + color + ';\" title=\"' + title + '\"></i>');
+		input_group.after('&nbsp;<i class=\"ajax-validation-status icon icon-large fa fa-2x ' + icon + '\" style=\"color:' + color + ';\" title=\"' + title + '\"></i>');
 		help_block.html(!result || !result['ok'] ? title : '')
 	}
 "
