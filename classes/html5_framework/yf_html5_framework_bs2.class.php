@@ -19,11 +19,11 @@ class yf_html5_framework_bs2 {
 	public $CLASS_EDIT_LINK			= 'btn btn-default btn-mini btn-xs';
 	public $CLASS_EDIT_ICON			= 'icon-edit fa fa-edit';
 	public $CLASS_LINK_URL			= 'btn btn-default';
-	public $CLASS_HELP				= 'help-block';
-	public $CLASS_ERROR				= 'error';
-	public $CLASS_SUCCESS			= 'success';
-	public $CLASS_WARNING			= 'warning';
-	public $CLASS_INFO				= 'info';
+	public $CLASS_HELP				= 'help-block pull-left';
+	public $CLASS_ERROR				= 'error has-error';
+	public $CLASS_SUCCESS			= 'success has-success';
+	public $CLASS_WARNING			= 'warning has-warning';
+	public $CLASS_INFO				= 'info has-info';
 
 	/**
 	*/
