@@ -6,6 +6,7 @@ class yf_payment__user {
 	}
 
 	public function balance( $options ) {
+		if( empty( main()->USER_ID ) ) { js_redirect( '/', false, 'User id empty' ); }
 		$payment_api = _class( 'payment_api' );
 		list( $account_id,  $account  ) = $payment_api->get_account();
 		list( $currency_id, $currency ) = $payment_api->get_currency__by_id( $account );
