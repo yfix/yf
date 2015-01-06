@@ -1365,7 +1365,8 @@ class yf_form2 {
 			$extra['value'] = t($extra['value']);
 			$extra['type'] = 'submit';
 			$button_text = $extra[ 'desc' ];
-			$extra[ 'desc' ] = '';
+			$extra['desc'] = '';
+			$extra['buttons_controls'] = true;
 
 			$attrs_names = array('type','name','id','class','style','value','disabled','target');
 			if (!$extra['as_input']) {
