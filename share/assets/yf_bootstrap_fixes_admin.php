@@ -20,7 +20,7 @@ return array(
 .form-inline .form-group { width: 100%; }
 .form-inline .form-group .controls { margin-left: 0; }
 
-.icon-email:before { content: "@"; }
+.cssfw-bs2 .icon-email:before { content: "@"; }
 			'),
 		),
 	),

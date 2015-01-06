@@ -16,7 +16,7 @@ ul#slide_menu .dropdown-divider { font-weight: bold; border-bottom: 1px solid; }
 .form-inline .form-group { width: 100%; }
 .form-inline .form-group .controls { margin-left: 0; }
 
-.icon-email:before { content: "@"; }
+.cssfw-bs2 .icon-email:before { content: "@"; }
 			'),
 		),
 	),
