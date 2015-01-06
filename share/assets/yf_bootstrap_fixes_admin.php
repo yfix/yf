@@ -17,6 +17,8 @@ return array(
 .controls>.radio:first-child { padding-top:inherit; }
 .form-inline .radio:first-child { padding-left: 5px; }
 .form-inline .radio input[type=radio] { float: none; }
+.form-inline .form-group { width: 100%; }
+.form-inline .form-group .controls { margin-left: 0; }
 			'),
 		),
 	),
