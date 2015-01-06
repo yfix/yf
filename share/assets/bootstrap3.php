@@ -5,7 +5,7 @@ return array(
 		'3.3.1' => array(
 			'css' => array(
 				'//netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css',
-				'//netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css',
+				! conf('bs3_no_default_theme') ? '//netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css' : '',
 			),
 			'js' => '//netdna.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js',
 		),
