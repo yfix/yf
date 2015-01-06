@@ -15,6 +15,8 @@ ul#slide_menu .dropdown-divider { font-weight: bold; border-bottom: 1px solid; }
 /*.form-inline .control-group label { margin-top: -5px; }*/
 .form-inline .form-group { width: 100%; }
 .form-inline .form-group .controls { margin-left: 0; }
+
+.icon-email:before { content: "@"; }
 			'),
 		),
 	),

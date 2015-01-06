@@ -19,6 +19,8 @@ return array(
 .form-inline .radio input[type=radio] { float: none; }
 .form-inline .form-group { width: 100%; }
 .form-inline .form-group .controls { margin-left: 0; }
+
+.icon-email:before { content: "@"; }
 			'),
 		),
 	),
