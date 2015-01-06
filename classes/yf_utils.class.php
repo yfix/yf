@@ -65,7 +65,7 @@ class yf_utils {
 	}
 
 	// Show custom text message (fetch it from db)
-	function show_text ($text = '') {
+	function show_text($text = '') {
 		$text_l = str_replace(' ', '_', strtolower($text));
 		list($value) = db()->query_fetch("SELECT value AS `0` FROM ".db('texts')." WHERE name='".db()->es($text_l)."' AND active='1' AND language='".db()->es(conf('language'))."'");
 		$text = strlen($value) ? stripslashes($value) : $text_l;
@@ -92,7 +92,7 @@ class yf_utils {
 	}
 
 	// Show Javascript alert
-	function js_alert ($text) {
+	function js_alert($text) {
 		echo "<script type='text/javascript'>alert('".str_replace(array("'", "\r", "\n"), "", $text)."')</script>";
 	}
 
@@ -135,7 +135,7 @@ class yf_utils {
 	}
 
 	// Filter text for specified symbols
-	function text_filter ($str) {
+	function text_filter($str) {
 		$str = htmlspecialchars($str);
 		if (defined('SITE_BAD_WORD_FILTER') && SITE_BAD_WORD_FILTER == 1) {
 			$bad_words = conf('BAD_WORDS_ARRAY');
@@ -152,7 +152,7 @@ class yf_utils {
 	}
 
 	// Function to prevent creation VERY long words (without spaces inside)
-	function _check_words_length ($text, $length = 0, $do_encode_email = false) {
+	function _check_words_length($text, $length = 0, $do_encode_email = false) {
 		if (empty($length)) {
 			$length = 60;
 			if (SITE_MAX_WORD_LENGTH != 'SITE_MAX_WORD_LENGTH' && SITE_MAX_WORD_LENGTH != '') {
@@ -201,7 +201,7 @@ class yf_utils {
 	}
 
 	// Prepare content to the correct output in form fields
-	function _prepare_html ($text = '', $need_strip_slashes = 1, $use_smart_function = 1) {
+	function _prepare_html($text = '', $need_strip_slashes = 1, $use_smart_function = 1) {
 		if (is_array($text)) {
 			foreach ((array)$text as $k => $v) {
 				$text[$k] = $this->_prepare_html($v);
@@ -237,12 +237,12 @@ class yf_utils {
 	}
 
 	// Do filter text from unwanted sequences of symbols
-	function _filter_text ($body, $length = 0) {
+	function _filter_text($body, $length = 0) {
 		return _check_words_length(preg_replace("/([^\s]+)\r\n/i", "\$1 \r\n", $body), $length);
 	}
 
 	// Get user avatar
-	function _show_avatar ($user_id = 0, $user_name = '', $as_link = 0, $is_middle = 0, $only_img_src = 0, $force_link = '') {
+	function _show_avatar($user_id = 0, $user_name = '', $as_link = 0, $is_middle = 0, $only_img_src = 0, $force_link = '') {
 		if (is_array($user_name)) {
 			$user_info = $user_name;
 			$user_name = _display_name($user_info);
@@ -273,13 +273,13 @@ class yf_utils {
 	}
 
 	// Check if user's avatar image exists
-	function _avatar_exists ($user_id = 0, $is_middle = 0) {
+	function _avatar_exists($user_id = 0, $is_middle = 0) {
 		$avatar_path = _gen_dir_path($user_id, INCLUDE_PATH. SITE_AVATARS_DIR , 1, 0777). intval($user_id). ($is_middle ? '_m' : ''). '.jpg';
 		return file_exists($avatar_path);
 	}
 
 	// Get user's age (int) from birthday date in formet 'YYYY-MM-DD'
-	function _get_age_from_birth ($birth_date = '0000-00-00') {
+	function _get_age_from_birth($birth_date = '0000-00-00') {
 		if (empty($birth_date) || $birth_date == '0000-00-00') {
 			return false;
 		}
@@ -288,7 +288,7 @@ class yf_utils {
 	}
 
 	// Display user nick name (or name before all nicks will not be transfered)
-	function _display_name ($user_info = array()) {
+	function _display_name($user_info = array()) {
 		if (is_string($user_info)) {
 			return $user_info;
 		}
@@ -296,7 +296,7 @@ class yf_utils {
 	}
 
 	// Display formatted date
-	function _format_date ($input_date = '', $type = 'short') {
+	function _format_date($input_date = '', $type = 'short') {
 		if (!strlen($input_date)) {
 			return '';
 		}
@@ -338,7 +338,7 @@ class yf_utils {
 	}
 
 	// This function adds the 'st', 'nd', 'rd' or 'th' to a given timestamp
-	function _day_suffix_eng ($timestamp = 0) {
+	function _day_suffix_eng($timestamp = 0) {
 		if (empty($timestamp)) $timestamp = time();
 		$day_number = gmstrftime ('%#d', $timestamp);
 		$sufixes	= array ('1' => 'st', '2' => 'nd', '3' => 'rd');
@@ -366,7 +366,7 @@ class yf_utils {
 	}
 
 	// Add login activity
-	function _add_login_activity () {
+	function _add_login_activity() {
 		if (MAIN_TYPE_ADMIN) {
 			return false;
 		}
@@ -379,7 +379,7 @@ class yf_utils {
 	}
 
 	// Prepare phone number for the internal view
-	function _prepare_phone ($phone = '') {
+	function _prepare_phone($phone = '') {
 		return preg_replace('/[^0-9]/ims', '', $phone);
 	}
 
@@ -423,7 +423,7 @@ class yf_utils {
 	}
 
 	// Format given text as BB code
-	function format_bbcode_text ($body = '') {
+	function format_bbcode_text($body = '') {
 		if (empty($body)) {
 			return '';
 		}
@@ -512,7 +512,7 @@ class yf_utils {
 	}
 
 	// Display link to user's profile
-	function _profile_link ($user_info = 0, $skip_get_array = array(), $do_add_get = true) {
+	function _profile_link($user_info = 0, $skip_get_array = array(), $do_add_get = true) {
 		if (IS_FRONT == 1) {
 			return false;
 		}
@@ -552,7 +552,7 @@ class yf_utils {
 		_class('output_cache')->_exec_trigger($data);
 	}
 
-	function _country_name ($code = '') {
+	function _country_name($code = '') {
 		$countries = conf('countries');
 		if (!$countries) {
 			$countries = main()->get_data('countries');
@@ -564,7 +564,7 @@ class yf_utils {
 		return isset($countries[$code]) ? $countries[$code] : $code;
 	}
 
-	function _region_name ($region_code = '', $country_code = '') {
+	function _region_name($region_code = '', $country_code = '') {
 		$regions = conf('regions');
 		if (!$regions) {
 			$regions = main()->get_data('regions');
@@ -578,14 +578,14 @@ class yf_utils {
 	}
 
 	// Display link to send internal email
-	function _email_link ($user_id = 0, $skip_get_array = array(), $do_add_get = true) {
+	function _email_link($user_id = 0, $skip_get_array = array(), $do_add_get = true) {
 		$body = _prepare_members_link('./?object=email&action=send_form&id='.$user_id);
 		$body .= ($do_add_get ? common()->add_get_vars(array_merge(array('page'),(array)$skip_get_array)) : '');
 		return $body;
 	}
 
 	// Prepare link for members
-	function _prepare_members_link ($url = '') {
+	function _prepare_members_link($url = '') {
 		if (main()->USER_ID) {
 			return $url;
 		}
@@ -596,7 +596,7 @@ class yf_utils {
 		}
 	}
 
-	function _range ($_start = 0, $_end = 10) {
+	function _range($_start = 0, $_end = 10) {
 		$data = array();
 		for ($i = $_start; $i <= $_end; $i++) {
 			$data[$i] = $i;
@@ -604,7 +604,7 @@ class yf_utils {
 		return $data;
 	}
 
-	function _my_strip_tags ($_text = '') {
+	function _my_strip_tags($_text = '') {
 		return strip_tags($_text, '<a><b><i><u><p><br><strike><span><div><ul><ol><li><h1><h2><h3><h4><h5><h6><table><thead><tbody><th><tr><td>');
 	}
 
@@ -638,12 +638,12 @@ class yf_utils {
 		return true;
 	}
 
-	function _cut_bb_codes ($body = '') {
+	function _cut_bb_codes($body = '') {
 		return preg_replace('/\[[^\]]+\]/ims', '', $body);
 	}
 
 	// Get server info
-	function _server_info ($server_id) {
+	function _server_info($server_id) {
 		$cached_server_info = &main()->_cached_server_info;
 		if (is_numeric($server_id)) {
 			$server_id = intval($server_id);
@@ -675,7 +675,7 @@ class yf_utils {
 	}
 
 	// Get account info
-	function _account_info ($account_id) {
+	function _account_info($account_id) {
 		$cached_account_info = &main()->_cached_account_info;
 		if (is_numeric($account_id)) {
 			$account_id = intval($account_id);
@@ -708,12 +708,12 @@ class yf_utils {
 	}
 
 	// Locale safe floatval
-	function _floatval ($val = 0) {
+	function _floatval($val = 0) {
 		return floatval(str_replace(',', '.', $val));
 	}
 
 	// Useful explode with cleanup
-	function my_explode ($string = '', $divider = "\n") {
+	function my_explode($string = '', $divider = "\n") {
 		$result = explode("\n", trim($string));
 		foreach ((array)$result as $k => $v) {
 			$v = trim($v);

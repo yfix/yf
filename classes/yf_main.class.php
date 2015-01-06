@@ -148,7 +148,7 @@ class yf_main {
 	* Engine constructor
 	* Depends on type that is given to it initialize user section or administrative backend
 	*/
-	function __construct ($type = 'user', $no_db_connect = false, $auto_init_all = false) {
+	function __construct($type = 'user', $no_db_connect = false, $auto_init_all = false) {
 		if (!isset($this->_time_start)) {
 			$this->_time_start = microtime(true);
 		}
@@ -222,7 +222,7 @@ class yf_main {
 	/**
 	* Micro-framework 'fast_init' inside big YF framework. We use it when some actions need to be done at top speed.
 	*/
-	function try_fast_init () {
+	function try_fast_init() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (!$this->ALLOW_FAST_INIT) {
 			return false;
@@ -244,7 +244,7 @@ class yf_main {
 	/**
 	* Allows to call code here before we begin initializing engine parts
 	*/
-	function _before_init_hook () {
+	function _before_init_hook() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->NO_GRAPHICS = $GLOBALS['no_graphics'];
 		$GLOBALS['no_graphics'] = &$this->NO_GRAPHICS;
@@ -255,7 +255,7 @@ class yf_main {
 
 	/**
 	*/
-	function _check_site_maintenance () {
+	function _check_site_maintenance() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (MAIN_TYPE_USER && !$this->is_console() && !DEBUG_MODE && conf('site_maintenance')) {
 			$this->NO_GRAPHICS = true;
@@ -270,7 +270,7 @@ class yf_main {
 	/**
 	* Allows to call code here before we begin with graphics
 	*/
-	function _after_init_hook () {
+	function _after_init_hook() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->_check_site_maintenance();
 
@@ -375,7 +375,7 @@ class yf_main {
 	/**
 	* conf(), module_conf() wrappers
 	*/
-	function init_conf_functions () {
+	function init_conf_functions() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$path = dirname(__DIR__).'/share/functions/yf_conf.php';
 		if (file_exists($path)) {
@@ -386,7 +386,7 @@ class yf_main {
 	/**
 	* main(), _class(), module(), db(), tpl(), common() wrappers and more
 	*/
-	function init_main_functions () {
+	function init_main_functions() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$path = dirname(__DIR__).'/share/functions/yf_aliases.php';
 		if (file_exists($path)) {
@@ -397,7 +397,7 @@ class yf_main {
 	/**
 	* Initialization of required files
 	*/
-	function init_files () {
+	function init_files() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$include_files = array();
 		$required_files = array();
@@ -432,7 +432,7 @@ class yf_main {
 
 	/**
 	*/
-	function init_modules_base () {
+	function init_modules_base() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->modules = array();
 		$GLOBALS['modules'] = &$this->modules; // Compatibility with old code
@@ -466,7 +466,7 @@ class yf_main {
 
 	/**
 	*/
-	function init_events () {
+	function init_events() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->events = &$this->init_class('core_events', 'classes/');
 		// Load event listeners from supported locations
@@ -515,7 +515,7 @@ class yf_main {
 
 	/**
 	*/
-	function init_content () {
+	function init_content() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->events->fire('main.before_content');
 
@@ -578,7 +578,7 @@ class yf_main {
 
 	/**
 	*/
-	function init_firephp () {
+	function init_firephp() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (!$this->FIREPHP_ENABLE) {
 			return false;
@@ -594,7 +594,7 @@ class yf_main {
 
 	/**
 	*/
-	function spider_detection () {
+	function spider_detection() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if (!$this->SPIDERS_DETECTION) {
 			return false;
@@ -618,7 +618,7 @@ class yf_main {
 
 	/**
 	*/
-	function init_session () {
+	function init_session() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->events->fire('main.before_session');
 		$skip = false;
@@ -724,7 +724,7 @@ class yf_main {
 	/**
 	* Starting localization engine
 	*/
-	function init_locale () {
+	function init_locale() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if ($_GET['no_lang'] || conf('no_locale')) {
 			return false;
@@ -735,7 +735,7 @@ class yf_main {
 	/**
 	* Init authentication
 	*/
-	function init_auth () {
+	function init_auth() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$this->events->fire('main.before_auth');
 		if (defined('SITE_DEFAULT_PAGE')) {
@@ -1128,7 +1128,7 @@ class yf_main {
 	/**
 	* Try to return class method output
 	*/
-	function call_class_method ($class_name = '', $custom_path = '', $method_name = '', $method_params = '', $tpl_name = '', $silent = false, $use_cache = false, $cache_ttl = -1, $cache_key_override = '') {
+	function call_class_method($class_name = '', $custom_path = '', $method_name = '', $method_params = '', $tpl_name = '', $silent = false, $use_cache = false, $cache_ttl = -1, $cache_key_override = '') {
 		if (!strlen($class_name) || !strlen($method_name)) {
 			return false;
 		}
@@ -1184,7 +1184,7 @@ class yf_main {
 	/**
 	* Try to return class method output (usually from templates)
 	*/
-	function _execute ($class_name = '', $method_name = '', $method_params = '', $tpl_name = '', $silent = false, $use_cache = false, $cache_ttl = -1, $cache_key_override = '') {
+	function _execute($class_name = '', $method_name = '', $method_params = '', $tpl_name = '', $silent = false, $use_cache = false, $cache_ttl = -1, $cache_key_override = '') {
 		if (DEBUG_MODE) {
 			$_time_start = microtime(true);
 		}
@@ -1211,14 +1211,14 @@ class yf_main {
 	/**
 	* Alias for '_execute'
 	*/
-	function execute ($class_name = '', $method_name = '', $method_params = '', $tpl_name = '', $silent = false, $use_cache = false, $cache_ttl = -1, $cache_key_override = '') {
+	function execute($class_name = '', $method_name = '', $method_params = '', $tpl_name = '', $silent = false, $use_cache = false, $cache_ttl = -1, $cache_key_override = '') {
 		return $this->_execute ($class_name, $method_name, $method_params, $tpl_name, $silent, $use_cache, $cache_ttl, $cache_key_override);
 	}
 
 	/**
 	* Alias for '_execute'
 	*/
-	function exec_cached ($class_name = '', $method_name = '', $method_params = '', $tpl_name = '', $silent = false, $use_cache = true, $cache_ttl = -1, $cache_key_override = '') {
+	function exec_cached($class_name = '', $method_name = '', $method_params = '', $tpl_name = '', $silent = false, $use_cache = true, $cache_ttl = -1, $cache_key_override = '') {
 		return $this->_execute ($class_name, $method_name, $method_params, $tpl_name, $silent, $use_cache, $cache_ttl, $cache_key_override);
 	}
 
@@ -1256,7 +1256,7 @@ class yf_main {
 	/**
 	* Get named data array
 	*/
-	function get_data ($name = '', $force_ttl = 0, $params = array()) {
+	function get_data($name = '', $force_ttl = 0, $params = array()) {
 		if (DEBUG_MODE) {
 			$time_start = microtime(true);
 		}
@@ -1323,7 +1323,7 @@ class yf_main {
 	/**
 	* Put named data array
 	*/
-	function put_data ($name = '', $data = array()) {
+	function put_data($name = '', $data = array()) {
 		if (empty($this->USE_SYSTEM_CACHE)) {
 			return false;
 		}
@@ -1336,7 +1336,7 @@ class yf_main {
 	/**
 	* Load common data handlers array from file
 	*/
-	function _load_data_handlers () {
+	function _load_data_handlers() {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		if ($this->_data_handlers_loaded) {
 			return false;
@@ -1746,7 +1746,7 @@ class yf_main {
 	/**
 	* Evaluate given code as PHP code
 	*/
-	function _eval_code ($code_text = '', $as_string = 1) {
+	function _eval_code($code_text = '', $as_string = 1) {
 		return eval('return '.($as_string ? '"'.$code_text.'"' : $code_text).' ;');
 	}
 
@@ -1816,6 +1816,15 @@ class yf_main {
 	*/
 	function _env($key = null, $val = null) {
 		return $this->init_class('input', 'classes/')->env($key, $val);
+	}
+
+	/**
+	*/
+	function no_graphics($val = null) {
+		if (!is_null($val)) {
+			$this->NO_GRAPHICS = $val;
+		}
+		return $this->NO_GRAPHICS;
 	}
 
 	/**
@@ -1919,5 +1928,35 @@ class yf_main {
 		}
 		trigger_error($module.': No method '.$name, E_USER_WARNING);
 		return $return_obj ? $that : false;
+	}
+
+	/**
+	*/
+	function require_php_lib($name, $params = array()) {
+		if (isset($this->php_libs[$name])) {
+			return $this->php_libs[$name];
+		}
+		$dir = 'share/service_providers/';
+		$file = $name.'.php';
+		$paths = array(
+			'app'		=> APP_PATH. $dir. $file,
+			'project'	=> PROJECT_PATH. $dir. $file,
+			'yf'		=> YF_PATH. $dir. $file,
+		);
+		$found_path = '';
+		foreach ($paths as $location => $path) {
+			if (file_exists($path)) {
+				$found_path = $path;
+				break;
+			}
+		}
+		if (!$found_path) {
+			throw new Exception('main '.__FUNCTION__.' not found: '.$name);
+			return false;
+		}
+		ob_start();
+		require_once $found_path;
+		$this->php_libs[$name] = $found_path;
+		return ob_get_clean();
 	}
 }

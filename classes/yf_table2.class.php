@@ -956,11 +956,14 @@ class yf_table2 {
 						$link_trim_width = $extra['link_trim_width'];
 					}
 					$link_text = strlen($text) ? mb_strimwidth($text, 0, $link_trim_width, '...') : t('link');
+					if ($link_text === 'link') {
+						$link_text = '';
+					}
 					$extra['title'] = trim($extra['link_title']) ?: trim($text);
 					if ($extra['hidden_toggle']) {
 						$extra['data-hidden-toggle'] = $extra['hidden_toggle'];
 					}
-					$body .= '<a'._attrs($extra, array('href','class','title')).'>'._prepare_html($link_text).'</a>';
+					$body .= strlen($link_text) ? '<a'._attrs($extra, array('href','class','title')).'>'._prepare_html($link_text).'</a>' : '';
 				} else {
 					if (isset($extra['nowrap']) && $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);

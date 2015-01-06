@@ -27,7 +27,7 @@ class yf_utf8 {
 
 	/**
 	*/
-	function __construct () {
+	function __construct() {
 		list($this->MULTIBYTE, $utf8_init_error) = $this->unicode_check();
 		if ($utf8_init_error) {
 			trigger_error(__CLASS__.':'.$utf8_init_error, E_USER_WARNING);

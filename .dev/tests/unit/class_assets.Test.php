@@ -203,17 +203,58 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 
 		_class('assets')->ADD_IS_DIRECT_OUT = false;
 	}
-	public function test_combine_js() {
+	public function test_show() {
 		asset('blueimp-uploader');
-		$out_file = APP_PATH.'combined/'.__FUNCTION__.'.js';
-		if (file_exists($out_file)) {
-			unlink($out_file);
-		}
-		$result = _class('assets')->combine_js(array('out_file' => $out_file));
-		$this->assertSame($result, $out_file);
-		$this->assertFileExists($result);
-		$this->assertTrue(strlen(file_get_contents($result)) > 100000);
-		unlink($out_file);
+		$out = _class('assets')->show_js();
+		$this->assertContains('<script', $out);
+		$this->assertContains('jquery.min.js', $out);
+		$this->assertContains('jquery-ui', $out);
+		$this->assertContains('jquery.fileupload', $out);
+		$out = _class('assets')->show_css();
+		$this->assertContains('<link href="', $out);
+		$this->assertContains('jquery-ui.min.css', $out);
+		$this->assertContains('jquery.fileupload.css', $out);
+	}
+	public function test_show_cached() {
+		_class('assets')->USE_CACHE = true;
+		_class('assets')->CACHE_DIR_TPL = '{project_path}/_tmp/assets_cache_{out_type}/{asset_name}_{version}/';
+		asset('blueimp-uploader');
+		$out = _class('assets')->show_js();
+		$this->assertContains('/_tmp/assets_cache_js/', $out);
+		$this->assertContains('<script', $out);
+		$this->assertContains('jquery.min.js', $out);
+		$this->assertContains('jquery-ui', $out);
+		$this->assertContains('jquery.fileupload', $out);
+		$out = _class('assets')->show_css();
+		$this->assertContains('/_tmp/assets_cache_css/', $out);
+		$this->assertContains('<link href="', $out);
+		$this->assertContains('jquery-ui.min.css', $out);
+		$this->assertContains('jquery.fileupload.css', $out);
+
+#		$this->assertFileExists($result);
+#		$this->assertTrue(strlen(file_get_contents($result)) > 100000);
+#		unlink($out_file);
+
+		_class('assets')->USE_CACHE = false;
+	}
+	public function test_show_combined() {
+		_class('assets')->USE_CACHE = true;
+		_class('assets')->CACHE_DIR_TPL = '{project_path}/_tmp/assets_cache_{out_type}/{asset_name}_{version}/';
+		_class('assets')->COMBINE = true;
+		_class('assets')->COMBINED_VERSION_TPL = '{year}{month}';
+
+		asset('blueimp-uploader');
+		$out = _class('assets')->show_js();
+		$this->assertContains('/_tmp/assets_cache_js/combined_'.date('Ym').'/', $out);
+		$out = _class('assets')->show_css();
+		$this->assertContains('/_tmp/assets_cache_css/combined_'.date('Ym').'/', $out);
+
+#		$this->assertFileExists($result);
+#		$this->assertTrue(strlen(file_get_contents($result)) > 100000);
+#		unlink($out_file);
+
+		_class('assets')->USE_CACHE = false;
+		_class('assets')->COMBINE = false;
 	}
 	public function test_filter_custom() {
 		$in = 'body{'.PHP_EOL.'color:white'.PHP_EOL.'}';

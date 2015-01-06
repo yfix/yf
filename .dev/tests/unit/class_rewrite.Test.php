@@ -68,6 +68,18 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test///') );
 		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/////////////') );
 		$this->assertEquals('http://'.self::$host.'/test', url(self::$host.'/test/////////////something') );
+
+		unset($_GET['debug']);
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url('/test/my/123/456?host='.self::$host) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456', url('/test/my/123/456/?host='.self::$host) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1', url('/test/my/123/456', array('k1' => 'v1')) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&k2=v2', url('/test/my/123/456?k2=v2', array('k1' => 'v1')) );
+		$_GET['debug'] = '555';
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&debug='.$_GET['debug'], url('/test/my/123/456', array('k1' => 'v1')) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&k2=v2&debug='.$_GET['debug'], url('/test/my/123/456?k2=v2', array('k1' => 'v1')) );
+		unset($_GET['debug']);
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1', url('/test/my/123/456', array('k1' => 'v1')) );
+		$this->assertEquals('http://'.self::$host.'/test/my/123/456?k1=v1&k2=v2', url('/test/my/123/456?k2=v2', array('k1' => 'v1')) );
 	}
 	public function test_rewrite_enabled_simple() {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
@@ -75,7 +87,42 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_rewrite_disabled_simple() {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;
+		unset($_GET['debug']);
 		$this->assertEquals('http://'.self::$host.'/?object=test', process_url('./?object=test'));
+		$this->assertEquals('http://'.self::$host.'/?object=test', url('/test') );
+		$this->assertEquals('http://'.self::$host.'/?object=test', url('/test/') );
+		$this->assertEquals('http://'.self::$host.'/?object=test', url('/test', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my', url('/test/my') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my', url('/test/my/') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123', url('/test/my/123') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123', url('/test/my/123/') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456', url('/test/my/123/456') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456', url('/test/my/123/456/') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456', url('/test/my/123/456', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456', url('/test/my/123/456/', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1', url('/test/my/123/456?k1=v1') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1', url('/test/my/123/456/?k1=v1') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1', url('/test/my/123/456', array('k1' => 'v1')) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&k2=v2', url('/test/my/123/456', array('k1' => 'v1', 'k2' => 'v2')) );
+		unset($_GET['debug']);
+		$_GET['debug'] = '555';
+		$this->assertEquals('http://'.self::$host.'/?object=test&debug='.$_GET['debug'], process_url('./?object=test'));
+		$this->assertEquals('http://'.self::$host.'/?object=test&debug='.$_GET['debug'], url('/test') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&debug='.$_GET['debug'], url('/test/') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&debug='.$_GET['debug'], url('/test', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&debug='.$_GET['debug'], url('/test/my') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&debug='.$_GET['debug'], url('/test/my/') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&debug='.$_GET['debug'], url('/test/my/123') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&debug='.$_GET['debug'], url('/test/my/123/') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&debug='.$_GET['debug'], url('/test/my/123/456') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&debug='.$_GET['debug'], url('/test/my/123/456/') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&debug='.$_GET['debug'], url('/test/my/123/456', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&debug='.$_GET['debug'], url('/test/my/123/456/', array('host' => self::$host)) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&debug='.$_GET['debug'], url('/test/my/123/456?k1=v1') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&debug='.$_GET['debug'], url('/test/my/123/456/?k1=v1') );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&debug='.$_GET['debug'], url('/test/my/123/456', array('k1' => 'v1')) );
+		$this->assertEquals('http://'.self::$host.'/?object=test&action=my&id=123&page=456&k1=v1&k2=v2&debug='.$_GET['debug'], url('/test/my/123/456', array('k1' => 'v1', 'k2' => 'v2')) );
+		unset($_GET['debug']);
 	}
 	public function test_rewrite_disabled() {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;

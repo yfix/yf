@@ -69,7 +69,7 @@ class yf_graphics {
 	/**
 	* Show site title
 	*/
-	function show_site_title () {
+	function show_site_title() {
 		if (defined('SITE_ADVERT_NAME')) {
 			$title = SITE_ADVERT_NAME;
 		}
@@ -111,7 +111,7 @@ class yf_graphics {
 	/**
 	* Show metatags
 	*/
-	function show_metatags () {
+	function show_metatags() {
 		$charset = conf('charset');
 		if (!$charset) {
 			$charset = 'utf-8';
@@ -150,35 +150,35 @@ class yf_graphics {
 	/**
 	* Show menu (alias for the '_show_menu')
 	*/
-	function show_menu ($params) {
+	function show_menu($params) {
 		return $this->_show_menu($params);
 	}
 
 	/**
 	* Display main 'center' block contents
 	*/
-	function show_center () {
+	function show_center() {
 		return _class('core_blocks')->show_center();
 	}
 
 	/**
 	* Alias for the '_show_block'
 	*/
-	function show_block ($params = array()) {
+	function show_block($params = array()) {
 		return $this->_show_block($params);
 	}
 
 	/**
 	* Show custom block contents
 	*/
-	function _show_block ($input = array()) {
+	function _show_block($input = array()) {
 		return _class('core_blocks')->_show_block($input);
 	}
 
 	/**
 	* Action to on denied block
 	*/
-	function _action_on_block_denied ($block_name = '') {
+	function _action_on_block_denied($block_name = '') {
 		return _class('core_blocks')->_action_on_block_denied($block_name);
 	}
 
@@ -192,14 +192,14 @@ class yf_graphics {
 	/**
 	* Load array of blocks rules
 	*/
-	function _load_blocks_rules () {
+	function _load_blocks_rules() {
 		return _class('core_blocks')->_load_blocks_rules();
 	}
 
 	/**
 	* Check rights for blocks
 	*/
-	function _check_block_rights ($block_id = 0, $OBJECT = '', $ACTION = '') {
+	function _check_block_rights($block_id = 0, $OBJECT = '', $ACTION = '') {
 		return _class('core_blocks')->_check_block_rights($block_id, $OBJECT, $ACTION);
 	}
 
@@ -227,7 +227,7 @@ class yf_graphics {
 	/**
 	* Welcome message method
 	*/
-	function show_welcome () {
+	function show_welcome() {
 		// For authorized admins only
 		if (MAIN_TYPE_ADMIN) {
 			$login_time = $_SESSION['admin_login_time'];
@@ -271,7 +271,7 @@ class yf_graphics {
 	/**
 	* Welcome message for the admin section
 	*/
-	function show_welcome2 () {
+	function show_welcome2() {
 		if (MAIN_TYPE_ADMIN) {
 			$body = t('You logged in as %user at %date', array('%date' => date('H:i:s', $_SESSION['admin_login_time']), '%user' => t('admin')));
 		}
@@ -281,21 +281,21 @@ class yf_graphics {
 	/**
 	* @deprecated
 	*/
-	function _show_se_keywords ($input = '') {
+	function _show_se_keywords($input = '') {
 		return false;
 	}
 
 	/**
 	* @deprecated
 	*/
-	function _set_se_keywords () {
+	function _set_se_keywords() {
 		return false;
 	}
 
 	/**
 	* Show menu
 	*/
-	function _show_menu ($input = array()) {
+	function _show_menu($input = array()) {
 		return _class('core_menu')->_show_menu($input);
 	}
 
@@ -316,7 +316,7 @@ class yf_graphics {
 	/**
 	* Show help tip block
 	*/
-	function _show_help_tip ($params = array()) {
+	function _show_help_tip($params = array()) {
 		$tip_id		= $params['tip_id'];
 		$tip_type	= !empty($params['tip_type']) ? intval($params['tip_type']) : 1;
 		if (empty($tip_id)) {
@@ -345,7 +345,7 @@ class yf_graphics {
 	/**
 	* Show inline tip block
 	*/
-	function _show_inline_tip ($params = array()) {
+	function _show_inline_tip($params = array()) {
 		$params['tip_id'] = $params['text'];
 		return $this->_show_help_tip($params);
 	}

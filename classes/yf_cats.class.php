@@ -33,7 +33,7 @@ class yf_cats {
 
 	/**
 	*/
-	function _init () {
+	function _init() {
 		$this->_category_sets = main()->get_data('category_sets');
 		$this->_default_cats_block = $_GET['object'].'_cats';
 	}
@@ -377,7 +377,7 @@ class yf_cats {
 
 	/**
 	*/
-	function _get_recursive_cat_ids ($cat_id = 0, $all_cats = false) {
+	function _get_recursive_cat_ids($cat_id = 0, $all_cats = false) {
 		$cat_id = intval($cat_id);
 		if (empty($all_cats)) {
 			$all_cats = conf('all_cats');

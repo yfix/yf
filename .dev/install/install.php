@@ -424,7 +424,7 @@ new yf_main(\'admin\', $no_db_connect = false, $auto_init_all = true);';
 		if (!file_exists($file)) {
 			return false;
 		}
-		include $file;
+		$data = include $file;
 		if (empty($data)) {
 			return false;
 		}

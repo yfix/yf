@@ -21,7 +21,7 @@ class yf_common {
 	/**
 	* Constructor
 	*/
-	function __construct () {
+	function __construct() {
 		define('COMMON_LIB', 'classes/common/');
 		$this->MEDIA_PATH = WEB_PATH;
 		if (defined('MEDIA_PATH')) {
@@ -131,7 +131,7 @@ class yf_common {
 	/**
 	* This function generate dividing table contents per pages
 	*/
-	function divide_pages ($input_data = '', $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = array()) {
+	function divide_pages($input_data = '', $url_path = '', $render_type = '', $records_on_page = 0, $num_records = 0, $tpls_path = '', $add_get_vars = 1, $extra = array()) {
 		// Override default method for input array
 		$method = is_array($input_data) ? 'go_with_array' : 'go';
 		return _class('divide_pages', 'classes/common/')->$method($input_data, $url_path, $render_type, $records_on_page, $num_records, $tpls_path, $add_get_vars, $extra);
@@ -140,100 +140,100 @@ class yf_common {
 	/**
 	* Send emails with attachments with DEBUG ability
 	*/
-	function send_mail ($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = array(), $priority = 3) {
+	function send_mail($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = array(), $priority = 3) {
 		return _class('send_mail', 'classes/common/')->send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $pear_mailer_backend, $force_mta_opts, $priority);
 	}
 
 	/**
 	* Quick send mail (From admin info)
 	*/
-	function quick_send_mail ($email_to, $subject, $html) {
+	function quick_send_mail($email_to, $subject, $html) {
 		return $this->send_mail (SITE_ADMIN_EMAIL, defined('SITE_ADMIN_NAME') ? SITE_ADMIN_NAME : 'Site admin', $email_to, '', $subject, strip_tags($html), $html);
 	}
 
 	/**
 	* Quick email notification to the admin (from the system)
 	*/
-	function send_notify_mail_to_admin ($subject, $html) {
+	function send_notify_mail_to_admin($subject, $html) {
 		return $this->send_mail (SITE_ADMIN_EMAIL, SITE_NAME.' system notification', SITE_ADMIN_EMAIL, '', $subject, strip_tags($html), $html);
 	}
 
 	/**
 	* This function generate select box with tree hierarhy inside
 	*/
-	function select_box ($name, $values = array(), $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
+	function select_box($name, $values = array(), $selected = '', $show_text = true, $type = 2, $add_str = '', $translate = 0, $level = 0) {
 		return _class('html')->select_box($name, $values, $selected, $show_text, $type, $add_str, $translate, $level);
 	}
 
 	/**
 	* Generate multi-select box
 	*/
-	function multi_select ($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+	function multi_select($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
 		return _class('html')->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
 
 	/**
 	* Alias for the multi_select
 	*/
-	function multi_select_box ($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
+	function multi_select_box($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0, $disabled = false) {
 		return $this->multi_select($name, $values, $selected, $show_text, $type, $add_str, $translate, $level, $disabled);
 	}
 
 	/**
 	* Processing radio buttons
 	*/
-	function radio_box ($box_name, $values = array(), $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
+	function radio_box($box_name, $values = array(), $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
 		return _class('html')->radio_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate);
 	}
 
 	/**
 	* Simple check box
 	*/
-	function check_box ($box_name, $values = array(), $selected = '', $add_str = '') {
+	function check_box($box_name, $values = array(), $selected = '', $add_str = '') {
 		return _class('html')->check_box($box_name, $values, $selected, $add_str);
 	}
 
 	/**
 	* Processing many checkboxes at one time
 	*/
-	function multi_check_box ($box_name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
+	function multi_check_box($box_name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
 		return _class('html')->multi_check_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array);
 	}
 
 	/**
 	*/
-	function date_box ($selected_date = '', $years = '', $name_postfix = '', $add_str = '', $order = 'ymd', $show_text = 1, $translate = 1) {
+	function date_box($selected_date = '', $years = '', $name_postfix = '', $add_str = '', $order = 'ymd', $show_text = 1, $translate = 1) {
 		return _class('html')->date_box($selected_date, $years, $name_postfix, $add_str, $order, $show_text, $translate);
 	}
 
 	/**
 	*/
-	function time_box ($selected_time = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1) {
+	function time_box($selected_time = '', $name_postfix = '', $add_str = '', $show_text = 1, $translate = 1) {
 		return _class('html')->time_box($selected_time, $name_postfix, $add_str, $show_text, $translate);
 	}
 
 	/**
 	*/
-	function date_box2 ($name = '', $selected = '', $range = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
+	function date_box2($name = '', $selected = '', $range = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
 		return _class('html')->date_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
 	}
 
 	/**
 	*/
-	function datetime_box2 ($name = '', $selected = '', $range = '', $add_str = '', $show_what = 'ymdhis', $show_text = 1, $translate = 1) {
+	function datetime_box2($name = '', $selected = '', $range = '', $add_str = '', $show_what = 'ymdhis', $show_text = 1, $translate = 1) {
 		return _class('html')->datetime_box2($name, $selected, $range, $add_str, $show_what, $show_text, $translate);
 	}
 
 	/**
 	*/
-	function time_box2 ($name = '', $selected = '', $add_str = '', $show_text = 1, $translate = 1) {
+	function time_box2($name = '', $selected = '', $add_str = '', $show_text = 1, $translate = 1) {
 		return _class('html')->time_box2($name, $selected, $add_str, $show_text, $translate);
 	}
 
 	/**
 	* Format file size
 	*/
-	function format_file_size ($fs = 0, $digits_count = 0) {
+	function format_file_size($fs = 0, $digits_count = 0) {
 		if ($digits_count == 0) {
 			return ($fs < 1024*1024) ? round($fs/1024, 3).' Kb' : (($fs < 1024*1024*1024) ? round($fs/(1024*1024), 3).' Mb' : round($fs/(1024*1024*1024), 3).' Gb');
 		} else {
@@ -269,14 +269,14 @@ class yf_common {
 	/**
 	* Return file size formatted
 	*/
-	function get_formatted_file_size ($file_name = '', $digits_count = 0) {
+	function get_formatted_file_size($file_name = '', $digits_count = 0) {
 		return $this->format_file_size(file_exists($file_name) ? filesize($file_name) : 0, $digits_count);
 	}
 
 	/**
 	* Return file extension
 	*/
-	function get_file_ext ($file_path = '') {
+	function get_file_ext($file_path = '') {
 		return pathinfo($file_path, PATHINFO_EXTENSION);
 	}
 
@@ -290,14 +290,14 @@ class yf_common {
 	/**
 	* Email verifying function
 	*/
-	function email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
+	function email_verify($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
 		return _class('validate')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
 	}
 
 	/**
 	* Verify url
 	*/
-	function url_verify ($url = '', $absolute = false) {
+	function url_verify($url = '', $absolute = false) {
 		return _class('validate')->_url_verify($url, $absolute);
 	}
 
@@ -387,7 +387,7 @@ class yf_common {
 	/**
 	* Show execution time info
 	*/
-	function _show_execution_time () {
+	function _show_execution_time() {
 		main()->_time_end = $this->_format_time_value(microtime(true) - main()->_time_start);
 		return '<div align="center" id="debug_exec_time">'._ucfirst(t('page_generated_in')).' '.main()->_time_end.' '.t('seconds').', &nbsp;&nbsp;'.t('number_of_queries').' = '.intval(db()->NUM_QUERIES).'</div>'.PHP_EOL;
 	}
@@ -395,14 +395,14 @@ class yf_common {
 	/**
 	* Get user IP address
 	*/
-	function get_ip ($check_type = 'force') {
+	function get_ip($check_type = 'force') {
 		return _class('client_utils', 'classes/common/')->_get_ip($check_type);
 	}
 
 	/**
 	* Show print version of the given page
 	*/
-	function print_page ($text = '') {
+	function print_page($text = '') {
 		main()->NO_GRAPHICS = true;
 		return print tpl()->parse('system/common/print_page', array(
 			'text'			=> $text,
@@ -413,14 +413,14 @@ class yf_common {
 	/**
 	* Send given text to a desired email address
 	*/
-	function email_page ($text = '') {
+	function email_page($text = '') {
 		return _class('email_page', 'classes/common/')->go($text);
 	}
 
 	/**
 	* Create PDF 'on the fly' from the given content
 	*/
-	function pdf_page ($html = '', $file = '', $type = 'I') {
+	function pdf_page($html = '', $file = '', $type = 'I') {
 		return _class('pdf_page', 'classes/common/')->go($html, $file, $type);
 	}
 
@@ -434,28 +434,28 @@ class yf_common {
 	/**
 	* Alias
 	*/
-	function log_exec () {
+	function log_exec() {
 		return _class('logs')->log_exec();
 	}
 
 	/**
 	* Create RSS 'on the fly' from the given content
 	*/
-	function rss_page ($data = '', $params = array()) {
+	function rss_page($data = '', $params = array()) {
 		return _class('rss_data', 'classes/common/')->show_rss_page($data, $params);
 	}
 
 	/**
 	* Get data from RSS feeds and return it as array
 	*/
-	function fetch_rss ($params = array()) {
+	function fetch_rss($params = array()) {
 		return _class('rss_data', 'classes/common/')->fetch_data($params);
 	}
 
 	/**
 	* Show empty page (useful for popup windows, etc)
 	*/
-	function show_empty_page ($text = '', $params = array()) {
+	function show_empty_page($text = '', $params = array()) {
 		main()->NO_GRAPHICS = true;
 		$output = tpl()->parse('empty_page', array(
 			'text'			=> $text,
@@ -472,42 +472,42 @@ class yf_common {
 	/**
 	* Try to add activity points
 	*/
-	function _add_activity_points ($user_id = 0, $task_name = '', $action_value = '', $record_id = 0) {
+	function _add_activity_points($user_id = 0, $task_name = '', $action_value = '', $record_id = 0) {
 		return module_safe('activity')->_auto_add_points($user_id, $task_name, $action_value, $record_id);
 	}
 
 	/**
 	* Try to remove activity points
 	*/
-	function _remove_activity_points ($user_id = 0, $task_name = '', $record_id = 0) {
+	function _remove_activity_points($user_id = 0, $task_name = '', $record_id = 0) {
 		return module_safe('activity')->_auto_remove_points($user_id, $task_name, $record_id);
 	}
 
 	/**
 	* Upload given file to remote server from this server
 	*/
-	function upload_file ($path_tmp = '', $new_dir = '', $new_file = '') {
+	function upload_file($path_tmp = '', $new_dir = '', $new_file = '') {
 		return _class('remote_files', 'classes/common/')->do_upload($path_tmp, $new_dir, $new_file);
 	}
 
 	/**
 	* Delete uploaded file
 	*/
-	function delete_uploaded_file ($path_to = '') {
+	function delete_uploaded_file($path_to = '') {
 		return _class('remote_files', 'classes/common/')->do_delete($path_to);
 	}
 
 	/**
 	* Remote file last-modification time
 	*/
-	function filemtime_remote ($path_to = '') {
+	function filemtime_remote($path_to = '') {
 		return _class('remote_files', 'classes/common/')->filemtime_remote($path_to);
 	}
 
 	/**
 	* Check if file exists
 	*/
-	function file_is_exists ($path_to = '') {
+	function file_is_exists($path_to = '') {
 		return _class('remote_files', 'classes/common/')->file_is_exists($path_to);
 	}
 
@@ -549,14 +549,14 @@ class yf_common {
 	/**
 	* Check if user is banned
 	*/
-	function check_user_ban ($info = array(), $user_info = array()) {
+	function check_user_ban($info = array(), $user_info = array()) {
 		return _class('user_ban', 'classes/common/')->_check($info, $user_info);
 	}
 
 	/**
 	* Check if user is banned
 	*/
-	function get_browser_info () {
+	function get_browser_info() {
 		return _class('client_utils', 'classes/common/')->_get_browser_info();
 	}
 
@@ -613,28 +613,28 @@ class yf_common {
 	/**
 	* Get file using HTTP request (grabbed from drupal 5.1)
 	*/
-	function http_request ($url, $headers = array(), $method = 'GET', $data = NULL, $retry = 3) {
+	function http_request($url, $headers = array(), $method = 'GET', $data = NULL, $retry = 3) {
 		return _class('remote_files', 'classes/common/')->http_request($url, $headers, $method, $data, $retry);
 	}
 
 	/**
 	* Get file using HTTP request (grabbed from drupal 5.1)
 	*/
-	function get_whois_info ($url, $server = '') {
+	function get_whois_info($url, $server = '') {
 		return _class('other_common', 'classes/common/')->get_whois_info ($url, $server);
 	}
 
 	/**
 	* Get geo info by IP from db
 	*/
-	function _get_geo_data_from_db ($cur_ip = '') {
+	function _get_geo_data_from_db($cur_ip = '') {
 		return _class('other_common', 'classes/common/')->_get_geo_data_from_db ($cur_ip);
 	}
 
 	/**
 	* Get geo info by IP from db
 	*/
-	function _is_ip_to_skip ($cur_ip = '') {
+	function _is_ip_to_skip($cur_ip = '') {
 		return _class('other_common', 'classes/common/')->_is_ip_to_skip ($cur_ip);
 	}
 
@@ -648,7 +648,7 @@ class yf_common {
 	/**
 	* Check if given IP is banned
 	*/
-	function _ip_is_banned ($CUR_IP = '') {
+	function _ip_is_banned($CUR_IP = '') {
 		if (!$CUR_IP) {
 			$CUR_IP = common()->get_ip();
 		}
@@ -696,7 +696,7 @@ class yf_common {
 	/**
 	* Adaptively split large text into smaller parts by token with part size limit
 	*/
-	function _my_split ($text = '', $split_token = '', $split_length = 0) {
+	function _my_split($text = '', $split_token = '', $split_length = 0) {
 		return _class('other_common', 'classes/common/')->_my_split ($text, $split_token, $split_length);
 	}
 
@@ -748,14 +748,14 @@ class yf_common {
 	/**
 	* Cut BB Codes from the given text
 	*/
-	function _cut_bb_codes ($body = '') {
+	function _cut_bb_codes($body = '') {
 		return preg_replace('/\[[^\]]+\]/ims', '', $body);
 	}
 
 	/**
 	* Log user actions for stats
 	*/
-	function _log_user_action ($action_name, $member_id, $object_name = '', $object_id = 0) {
+	function _log_user_action($action_name, $member_id, $object_name = '', $object_id = 0) {
 		return _class('logs')->_log_user_action($action_name, $member_id, $object_name, $object_id);
 	}
 
@@ -819,7 +819,7 @@ class yf_common {
 	/**
 	* Convert name into URL-friendly string
 	*/
-	function _propose_url_from_name ($name = '', $from_encoding = '', $force_dashes = false) {
+	function _propose_url_from_name($name = '', $from_encoding = '', $force_dashes = false) {
 		if (empty($name)) {
 			return '';
 		}
@@ -875,7 +875,7 @@ class yf_common {
 	/**
 	* is_utf8
 	*/
-	function is_utf8 ($content) {
+	function is_utf8($content) {
 		if(!$this->_set_include_path){
 			set_include_path (YF_PATH.'libs/yf_utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
@@ -888,7 +888,7 @@ class yf_common {
 	/**
 	* utf8_html_entity_decode
 	*/
-	function utf8_html_entity_decode ($content) {
+	function utf8_html_entity_decode($content) {
 		if(!$this->_set_include_path){
 			set_include_path (YF_PATH.'libs/yf_utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
@@ -901,7 +901,7 @@ class yf_common {
 	/**
 	* strip_tags_smart
 	*/
-	function strip_tags_smart ($content) {
+	function strip_tags_smart($content) {
 		if(!$this->_set_include_path){
 			set_include_path (YF_PATH.'libs/yf_utf8_funcs/'. PATH_SEPARATOR. get_include_path());
 		}
@@ -914,35 +914,35 @@ class yf_common {
 	/**
 	* strip_tags_smart
 	*/
-	function utf8_clean ($text = '', $params = array()) {
+	function utf8_clean($text = '', $params = array()) {
 		return _class('utf8_clean', 'classes/common/')->_do($text, $params);
 	}
 
 	/**
 	* current GMT time
 	*/
-	function gmtime () {
+	function gmtime() {
 		return strtotime('now GMT');
 	}
 
 	/**
 	*
 	*/
-	function graph ($data, $params = '') {
+	function graph($data, $params = '') {
 		return _class('graph', 'classes/common/')->graph($data, $params);
 	}
 
 	/**
 	*
 	*/
-	function graph_bar ($data, $params = '') {
+	function graph_bar($data, $params = '') {
 		return _class('graph', 'classes/common/')->graph_bar($data, $params);
 	}
 
 	/**
 	*
 	*/
-	function graph_pie ($data, $params = '') {
+	function graph_pie($data, $params = '') {
 		return _class('graph', 'classes/common/')->graph_pie($data, $params);
 	}
 
@@ -956,7 +956,7 @@ class yf_common {
 	/**
 	* new method checking for spider by ip address (database from http://www.iplists.com/)
 	*/
-	function _is_spider ($ip = '', $ua = '') {
+	function _is_spider($ip = '', $ua = '') {
 		return _class('spider_detection', 'classes/common/')->_is_spider ($ip, $ua);
 	}
 
@@ -964,14 +964,14 @@ class yf_common {
 	* Searches given URL for known search engines hosts
 	* @return string name of the found search engine
 	*/
-	function is_search_engine_url ($url = '') {
+	function is_search_engine_url($url = '') {
 		return _class('spider_detection', 'classes/common/')->is_search_engine_url ($url);
 	}
 
 	/**
 	* Return SQL part for detecting search engine ips
 	*/
-	function get_spiders_ips_sql ($field_name = 'ip') {
+	function get_spiders_ips_sql($field_name = 'ip') {
 		return _class('spider_detection', 'classes/common/')->get_spiders_ips_sql ($field_name);
 	}
 
@@ -979,14 +979,14 @@ class yf_common {
 	* Get country by IP address using maxmind API (http://geolite.maxmind.com/download/geoip/api/php/)
 	* @return 2-byte $country_code (uppercased) or false if something wrong
 	*/
-	function _get_country_by_ip ($ip = '') {
+	function _get_country_by_ip($ip = '') {
 		return _class('other_common', 'classes/common/')->_get_country_by_ip ($ip);
 	}
 
 	/**
 	* Converter between well-known currencies
 	*/
-	function _currency_convert ($number = 0, $c_from = '', $c_to = '') {
+	function _currency_convert($number = 0, $c_from = '', $c_to = '') {
 		return _class('other_common', 'classes/common/')->_currency_convert ($number, $c_from, $c_to);
 	}
 
@@ -1012,13 +1012,13 @@ class yf_common {
 	/**
 	* Sphinx QL query wrapper
 	*/
-	function sphinx_query ($sql, $need_meta = false) {
+	function sphinx_query($sql, $need_meta = false) {
 		return _class('sphinxsearch')->query($sql, $need_meta);
 	}
 
 	/**
 	*/
-	function sphinx_escape_string ($string) {
+	function sphinx_escape_string($string) {
 		return _class('sphinxsearch')->escape_string($string);
 	}
 
@@ -1213,7 +1213,7 @@ class yf_common {
 	/**
 	* Raise user error
 	*/
-	function _raise_error ($text = '', $error_key = '') {
+	function _raise_error($text = '', $error_key = '') {
 		$text		= t((string)$text);
 		$error_key	= (string)$error_key;
 		if (!$text) {
@@ -1233,7 +1233,7 @@ class yf_common {
 	/**
 	* Chec if user error exists
 	*/
-	function _error_exists ($error_key = '') {
+	function _error_exists($error_key = '') {
 		if (!empty($error_key)) {
 			return (bool)$this->USER_ERRORS[$error_key];
 		}
@@ -1243,7 +1243,7 @@ class yf_common {
 	/**
 	* Show formatted contents of user errors
 	*/
-	function _get_error_messages ($key = '') {
+	function _get_error_messages($key = '') {
 		if (!$this->USER_ERRORS) {
 			return false;
 		}
@@ -1251,9 +1251,19 @@ class yf_common {
 	}
 
 	/**
+	*/
+	function _remove_error_messages($key = '') {
+		if ($key) {
+			unset($this->USER_ERRORS[$key]);
+		} else {
+			$this->USER_ERRORS = array();
+		}
+	}
+
+	/**
 	* Show formatted contents of user errors
 	*/
-	function _show_error_message ($cur_error_msg = '', $clear_error = true) {
+	function _show_error_message($cur_error_msg = '', $clear_error = true) {
 		// Prevent recursive display
 		if (strlen($cur_error_msg) && false !== strpos($cur_error_msg, '<!--YF_ERROR_MESSAGE_START-->')) {
 			return t($cur_error_msg);
@@ -1274,7 +1284,7 @@ class yf_common {
 			_class('user_errors', 'classes/common/')->_track_error(implode(PHP_EOL, (array)$this->USER_ERRORS));
 		}
 		if ($clear_error) {
-			$this->USER_ERRORS = array();
+			$this->_remove_error_messages();
 		}
 		if (conf('IS_SPIDER')) {
 			return false;
@@ -1292,7 +1302,7 @@ class yf_common {
 	/**
 	* Show formatted single error message
 	*/
-	function _show_error_inline ($error_key = '') {
+	function _show_error_inline($error_key = '') {
 		if (empty($error_key)) {
 			return false;
 		}
@@ -1316,7 +1326,7 @@ class yf_common {
 	/**
 	* Show formatted contents of notices for user
 	*/
-	function show_notices ($keep = false, $force_text = '') {
+	function show_notices($keep = false, $force_text = '') {
 		if ($force_text) {
 			$this->set_notice($force_text);
 		}
@@ -1332,7 +1342,7 @@ class yf_common {
 	/**
 	* Set notice to display on next page (usually after redirect)
 	*/
-	function set_notice ($text = '') {
+	function set_notice($text = '') {
 		$_SESSION['_user_notices'][crc32($text)] = $text;
 	}
 }

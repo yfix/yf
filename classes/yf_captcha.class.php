@@ -88,7 +88,7 @@ class yf_captcha {
 	/**
 	* Framework constructor
 	*/
-	function _init () {
+	function _init() {
 		$this->_is_enabled_hook();
 		if (!$this->ENABLED) {
 			return false;

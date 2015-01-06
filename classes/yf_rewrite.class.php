@@ -91,8 +91,12 @@ class yf_rewrite {
 			$orig_url_str = $url_str;
 			$params = array();
 			if (preg_match('~[a-z0-9_\./]+~ims', $url_str)) {
+				$_other = '';
+				if (strpos($url_str, '?') !== false) {
+					list($url_str, $_other) = explode('?', $url_str);
+				}
 				if ($url_str[0] == '/') {
-					if( $url_str[1] == '/' ) {
+					if ($url_str[1] == '/') {
 						// Example: //test/test_action/&k1=v1&k2=v2 => object=test, action=test_action, k1=v1, k2=v2
 						list(,,$params['object'], $params['action'], $params['_other']) = explode('/', $url_str);
 					} else {
@@ -102,6 +106,9 @@ class yf_rewrite {
 				} else {
 					// Example: test2.dev/test/oauth/github => host=test2.dev, object=test, action=oauth, id=github
 					list($params['host'], $params['object'], $params['action'], $params['id'], $params['page'], $params['_other']) = explode('/', $url_str);
+				}
+				if (!$params['_other'] && $_other) {
+					$params['_other'] = $_other;
 				}
 			}
 			if (is_array($host)) {
@@ -114,7 +121,7 @@ class yf_rewrite {
 		}
 		// Support for other params passed by http encoded string (&k1=v1&k2=v2)
 		if (isset($params['_other'])) {
-			parse_str($params['_other'], $tmp);
+			parse_str(trim($params['_other'], '&?'), $tmp);
 			foreach ((array)$tmp as $k => $v) {
 				$k = trim($k);
 				$v = trim($v);
@@ -181,7 +188,7 @@ class yf_rewrite {
 				$arr_out[] = $k.'='.$v;
 			}
 			if (!empty($arr_out)) {
-				$u .= '?'.implode('&', $arr_out);
+				$u .= (strpos($u, '?') === false ? '?' : '&'). implode('&', $arr_out);
 			}
 			if ($for_section == 'admin') {
 				$link = ADMIN_WEB_PATH. $u;

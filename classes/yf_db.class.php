@@ -1370,14 +1370,14 @@ class yf_db {
 	/**
 	* Create unique temporary table name
 	*/
-	function _get_unique_tmp_table_name () {
+	function _get_unique_tmp_table_name() {
 		return $this->DB_PREFIX.'tmp__'.substr(abs(crc32(rand().microtime(true))), 0, 8);
 	}
 
 	/**
 	* Do Log
 	*/
-	function _log_queries () {
+	function _log_queries() {
 		// Restore startup working directory
 		@chdir(main()->_CWD);
 
@@ -1481,7 +1481,7 @@ class yf_db {
 	/**
 	* Get real table name from its short variant
 	*/
-	function _real_name ($name) {
+	function _real_name($name) {
 		$name = trim($name);
 		if (!strlen($name)) {
 			return false;

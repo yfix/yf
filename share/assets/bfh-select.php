@@ -4,10 +4,10 @@ return array(
 	'versions' => array(
 		'master' => array(
 			'js' => array(
-				'http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/js/bootstrap-formhelpers-selectbox.js.gz',
+				'//cdn.rawgit.com/yfix/bootstrap-form-helpers/master/dist/js/bootstrap-formhelpers.min.js',
 			),
 			'css' => array(
-				'http://yfix.s3-website-eu-west-1.amazonaws.com/bfh/css/bootstrap-formhelpers.min.css.gz',
+				'//cdn.rawgit.com/yfix/bootstrap-form-helpers/master/dist/css/bootstrap-formhelpers.min.css',
 				'
 					[class^="bfh-flag-"], [class*="bfh-flag-"] { display: inline-block; margin-right: 5px; }
 					[class^="bfh-flag-"]:empty, [class*="bfh-flag-"]:empty { width: 16px; }

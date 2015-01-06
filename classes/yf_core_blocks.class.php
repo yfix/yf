@@ -22,14 +22,14 @@ class yf_core_blocks {
 	/**
 	* Alias for the '_show_block'
 	*/
-	function show_block ($params = array()) {
+	function show_block($params = array()) {
 		return $this->_show_block($params);
 	}
 
 	/**
 	* Show custom block contents
 	*/
-	function _show_block ($input = array()) {
+	function _show_block($input = array()) {
 		if (!isset($this->_blocks_infos)) {
 			$this->_blocks_infos = main()->get_data('blocks_all');
 		}
@@ -118,7 +118,7 @@ class yf_core_blocks {
 	/**
 	* Action to on denied block
 	*/
-	function _action_on_block_denied ($block_name = '') {
+	function _action_on_block_denied($block_name = '') {
 		if ($block_name == 'center_area') {
 			if ($this->TASK_DENIED_403_HEADER) {
 				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
@@ -167,7 +167,7 @@ class yf_core_blocks {
 	/**
 	* Load array of blocks rules
 	*/
-	function _load_blocks_rules () {
+	function _load_blocks_rules() {
 		if (!empty($this->_blocks_rules)) {
 			return false;
 		}
@@ -210,7 +210,7 @@ class yf_core_blocks {
 	/**
 	* Check rights for blocks
 	*/
-	function _check_block_rights ($block_id = 0, $OBJECT = '', $ACTION = '') {
+	function _check_block_rights($block_id = 0, $OBJECT = '', $ACTION = '') {
 		if (empty($block_id) || empty($OBJECT)) {
 			return false;
 		}
@@ -311,7 +311,7 @@ class yf_core_blocks {
 	/**
 	* Display main 'center' block contents
 	*/
-	function show_center () {
+	function show_center() {
 		return $this->tasks($allowed_check = true);
 	}
 

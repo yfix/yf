@@ -40,7 +40,7 @@ class yf_encryption {
 
 	/**
 	*/
-	function __construct () {
+	function __construct() {
 		$crypto_use_mcrypt = conf('crypto_use_mcrypt');
 		if (isset($crypto_use_mcrypt)) {
 			$this->USE_MCRYPT = $crypto_use_mcrypt;
@@ -56,7 +56,7 @@ class yf_encryption {
 
 	/**
 	*/
-	function init () {
+	function init() {
 		if (!extension_loaded('mcrypt')) {
 			$this->USE_MCRYPT = false;
 		}
@@ -193,7 +193,7 @@ class yf_encryption {
 	/**
 	* Encrypt specified file using private key
 	*/
-	function encrypt_file ($source_path, $encrypted_path, $secret = null, $cipher = null) {
+	function encrypt_file($source_path, $encrypted_path, $secret = null, $cipher = null) {
 		file_put_contents($encrypted_path, $this->encrypt(file_get_contents($source_path), $secret, $cipher));
 		return $this;
 	}
@@ -208,7 +208,7 @@ class yf_encryption {
 
 	/**
 	*/
-	function _safe_base64_encode ($text) {
+	function _safe_base64_encode($text) {
 		$r = array(
 			'/' => '*',
 		);
@@ -217,7 +217,7 @@ class yf_encryption {
 
 	/**
 	*/
-	function _safe_base64_decode ($text) {
+	function _safe_base64_decode($text) {
 		$r = array(
 			'*' => '/',
 			' ' => '+',
@@ -229,7 +229,7 @@ class yf_encryption {
 	/**
 	* Safe encrypt data into base64 string (replace '/' symbol)
 	*/
-	function _safe_encrypt_with_base64 ($input, $secret = null, $cipher = null) {
+	function _safe_encrypt_with_base64($input, $secret = null, $cipher = null) {
 		$encrypted = $this->encrypt($input, $secret, $cipher);
 		$iv = $this->_iv;
 		return $this->_safe_base64_encode($iv).'|'.$this->_safe_base64_encode($encrypted);
@@ -238,7 +238,7 @@ class yf_encryption {
 	/**
 	* Safe decrypt data from base64 string (replace '/' symbol)
 	*/
-	function _safe_decrypt_with_base64 ($input, $secret = null, $cipher = null) {
+	function _safe_decrypt_with_base64($input, $secret = null, $cipher = null) {
 		if (strpos($input, '|') === false) {
 			return false;
 		}

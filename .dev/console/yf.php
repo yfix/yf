@@ -11,9 +11,14 @@
 * # ln -s /home/www/yf/.dev/console/yf /usr/local/bin/yf
 */
 
-use Symfony\Component\Console\Application;
-
-require '/usr/local/share/composer/vendor/autoload.php';
+$autoload_file = '/usr/local/share/composer/vendor/autoload.php';
+if (file_exists($autoload_file)) {
+	require $autoload_file;
+} else {
+	ob_start();
+	require dirname(dirname(__DIR__)).'/share/service_providers/sf_console.php';
+	ob_end_clean();
+}
 
 function get_paths() {
 	$paths = array(
@@ -135,6 +140,6 @@ if (!defined('SITE_PATH')) {
 
 print_r($yf_paths);
 
-$app = new Application('yf', '1.0 (stable)');
+$app = new \Symfony\Component\Console\Application('yf', '1.0 (stable)');
 $app->addCommands(get_yf_console_commands());
 $app->run();

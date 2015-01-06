@@ -192,7 +192,7 @@ class yf_logs {
 	/**
 	* Save queries log
 	*/
-	function store_db_queries_log () {
+	function store_db_queries_log() {
 		return _class('logs_db_queries', 'classes/logs/')->go();
 	}
 
@@ -217,7 +217,7 @@ class yf_logs {
 	/**
 	* Log script execution params
 	*/
-	function log_exec () {
+	function log_exec() {
 		if (MAIN_TYPE_ADMIN && $this->LOG_EXEC_ADMIN) {
 			return _class('logs_exec_admin', 'classes/logs/')->go();
 		} elseif (MAIN_TYPE_USER && $this->LOG_EXEC_USER) {

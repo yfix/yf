@@ -106,6 +106,9 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 		if (!$this->is_ready()) {
 			return null;
 		}
+		if ($name === false || $name === null) {
+			return null;
+		}
 		$result = $this->_connection->get($name);
 		if ($result === false) {
 			return null;
@@ -126,6 +129,9 @@ class yf_cache_driver_memcache extends yf_cache_driver {
 	*/
 	function set($name, $data, $ttl = 0) {
 		if (!$this->is_ready()) {
+			return null;
+		}
+		if ($name === false || $name === null) {
 			return null;
 		}
 		$result = null;

@@ -97,7 +97,7 @@ class yf_i18n {
 	/**
 	* Constructor
 	*/
-	function init_locale () {
+	function init_locale() {
 		$this->_load_lang($this->CUR_LOCALE);
 		// Get charset from the current language
 		$charset = conf('languages::'.$this->CUR_LOCALE.'::charset');
@@ -308,7 +308,7 @@ class yf_i18n {
 		// Inside each file $data array will be searched for
 		//
 		foreach ((array)$lang_files as $path) {
-			include $path;
+			$data = include $path;
 			foreach ((array)$data as $_source => $_trans) {
 				$_source = str_replace(' ', '_', strtolower($_source));
 				$this->TR_VARS[$lang][$_source] = $_trans;
@@ -349,7 +349,7 @@ class yf_i18n {
 	* @param	$args	array	Optional array of items to replace after translation
 	* @return string Translation result
 	*/
-	function translate_string ($input_string, $args = 0, $lang = '') {
+	function translate_string($input_string, $args = 0, $lang = '') {
 		if (DEBUG_MODE) {
 			$_start_time = microtime(true);
 		}
@@ -586,7 +586,7 @@ class yf_i18n {
 	/**
 	* Insert missed var
 	*/
-	function insert_var ($var_name) {
+	function insert_var($var_name) {
 		if (empty($var_name)) {
 			return false;
 		}

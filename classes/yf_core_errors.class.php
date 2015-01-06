@@ -74,7 +74,7 @@ class yf_core_errors {
 	/**
 	* Constructor
 	*/
-	function __construct () {
+	function __construct() {
 		if (defined('ERROR_REPORTING')) {
 			conf('ERROR_REPORTING', (int)ERROR_REPORTING);
 		}
@@ -170,7 +170,7 @@ class yf_core_errors {
 	/**
 	* The error handling routine set by set_error_handler()
 	*/
-	function error_handler ($error_type, $error_msg, $error_file, $error_line, $error_context) {
+	function error_handler($error_type, $error_msg, $error_file, $error_line, $error_context) {
 		// quickly turn off notices logging
 		if ($this->NO_NOTICES && ($error_type == E_NOTICE || $error_type == E_USER_NOTICE)) {
 			return true;
@@ -389,7 +389,7 @@ class yf_core_errors {
 	/**
 	* Track user error message
 	*/
-	function _prepare_env () {
+	function _prepare_env() {
 		$this->ENV_ARRAYS = strtoupper($this->ENV_ARRAYS);
 		$data = array();
 		// Include only desired arrays

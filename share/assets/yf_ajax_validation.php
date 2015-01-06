@@ -4,9 +4,9 @@ return array(
 	'versions' => array(
 		'master' => array(
 			'jquery' => 
-<<<END
+"
 	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
-	var yf_ajax_link_validate = '{url(dynamic,ajax_validate)}';
+	var yf_ajax_link_validate = '".url_user('/dynamic/ajax_validate')."';
 	var yf_ajax_validate_cache = { };
 	$('input[data-ajax-validate]', 'form').on('blur', function(i){
 		var _this = $(this);
@@ -38,16 +38,42 @@ return array(
 				rules_to_post[rule_name] = {
 					'func' : rule_name,
 					'param': rule_param,
-					"data" : _val
+					'data' : _val
 				}
 			})
-			$.post( yf_ajax_link_validate, {"rules" : rules_to_post}, function(data) {
+			$.post( yf_ajax_link_validate, {'rules' : rules_to_post}, function(data) {
 				result = data
 				yf_ajax_validate_cache[cache_key] = result
 				yf_ajax_validation_icon_update(_this, result);
 			})
 		}
 		return result;
+	})
+
+	// HTML5 custom validation messages
+	$('input[type=text]', 'form').not('[data-ajax-validate]').on('change invalid valid', function() {
+		var _this = $(this)
+		var textfield = _this.get(0);
+		var control_group = _this.closest('.control-group');
+		var controls = _this.closest('.controls');
+		var help_block = controls.find('.help-block');
+//		if (!help_block.length) {
+//			controls.append('<span class=\"help-block\"></span>')
+//			help_block = controls.find('.help-block');
+//		}
+		// setCustomValidity not only sets the message, but also marks the field as invalid. 
+		// In order to see whether the field really is invalid, we have to remove the message first
+		textfield.setCustomValidity('');
+		if (!textfield.validity.valid) {
+			textfield.setCustomValidity(help_block.html());
+			controls.addClass('error');
+			control_group.addClass('error');
+			help_block.show()
+		} else {
+			controls.removeClass('error');
+			control_group.removeClass('error');
+			help_block.hide()
+		}
 	})
 
 	function yf_ajax_validation_icon_clear(_this) {
@@ -58,15 +84,29 @@ return array(
 		var icon = 'icon-ok-circle fa-check-circle';
 		var color = 'green';
 		var title = 'OK';
+		var input_group = _this.closest('.input-group');
+		var control_group = _this.closest('.control-group');
+		var controls = _this.closest('.controls');
+		var help_block = controls.find('.help-block');
+		if (!help_block.length) {
+			controls.append('<span class=\"help-block\"></span>')
+			help_block = controls.find('.help-block');
+		}
 		if (!result || !result['ok']) {
 			icon = 'icon-ban-circle fa-times-circle';
 			color = 'red';
-			title = 'not good';
+			title = result['error_msg'] || '".t('not good')."';
+			controls.addClass('error');
+			control_group.addClass('error');
+		} else {
+			controls.removeClass('error');
+			control_group.removeClass('error');
 		}
 		yf_ajax_validation_icon_clear(_this)
-		_this.closest('.input-group').after('&nbsp;<i class="ajax-validation-status icon icon-large fa-lg ' + icon + '" style="color:' + color + ';" title="' + title + '"></i>');
+		input_group.after('&nbsp;<i class=\"ajax-validation-status icon icon-large fa-lg ' + icon + '\" style=\"color:' + color + ';\" title=\"' + title + '\"></i>');
+		help_block.html(!result || !result['ok'] ? title : '')
 	}
-END
+"
 		),
 	),
 );

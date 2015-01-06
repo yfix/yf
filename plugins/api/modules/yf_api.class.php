@@ -29,15 +29,22 @@
 
 class yf_api {
 
+	public $class   = null;
+	public $method  = null;
 	public $is_post = null;
 	public $is_json = null;
 	public $request = null;
 
 	function _init() {
+		$class   = &$this->class;
+		$method  = &$this->method;
+		$is_post = &$this->is_post;
+		// setup
 		$class  = $_GET[ 'action' ];
-		$method = $_GET[ 'id' ];
+		$method = $_GET[ 'id'     ];
+		$is_post = isset( $_POST );
 		// override
-		$class == 'show' && $class  = $_REQUEST[ 'object' ];
+		$class == 'show' && $class = $_REQUEST[ 'object' ];
 		!$method && $method = $_REQUEST[ 'action' ];
 		$this->_call( $class, null, $method );
 	}
@@ -46,7 +53,6 @@ class yf_api {
 		$is_post = &$this->is_post;
 		$is_json = &$this->is_json;
 		$request = &$this->request;
-			$is_post = input()->is_post();
 		if( $is_post ) {
 			$request = json_decode( file_get_contents( 'php://input' ), true );
 			$request && $is_json = true;
@@ -60,9 +66,22 @@ class yf_api {
 	}
 
 	public function _reject( $message = 'Service Unavailable', $header = 'Status: 503 Service Unavailable', $code = 503 ) {
-		http_response_code( $code );
+		if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP 5 >= 5.4.0
 		header( $header );
 		die( $message );
+	}
+
+	public function _redirect( $url, $message = '' ) {
+		$code     = 302;
+		$status   = '302 Found';
+		$header   = 'Status: ' . $status;
+		// $header   = ( $_SERVER['SERVER_PROTOCOL'] ?: 'HTTP/1.1' ) . ' ' . $status;
+		$url      = $url ?: url( '/' );
+		$location = 'Location: ' . $url;
+		if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP 5 >= 5.4.0
+		header( $header   );
+		header( $location );
+		exit( $message );
 	}
 
 	protected function _firewall( $class = null, $class_path = null, $method = null, $options = array() ) {
@@ -92,10 +111,10 @@ class yf_api {
 			$response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
 			$type = 'javascript';
 		}
+		if( function_exists( 'http_response_code' ) ) { http_response_code( 200 ); } // PHP 5 >= 5.4.0
+		header( 'Status: 200' );
 		header( "Content-Type: application/$type; charset=UTF-8" );
-		echo( $response );
-		// without debug info
-		exit( 0 );
+		exit( $response );
 	}
 
 }

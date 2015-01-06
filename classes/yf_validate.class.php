@@ -665,7 +665,7 @@ class yf_validate {
 	*    http://stackoverflow.com/questions/106179/regular-expression-to-match-hostname-or-ip-address
 	*    http://data.iana.org/TLD/tlds-alpha-by-domain.txt
 	*/
-	public function valid_hostname ($in = '') {
+	public function valid_hostname($in = '') {
 		$len = strlen($in);
 		if (!$len && $len > 255) {
 			return false;
@@ -1037,7 +1037,7 @@ class yf_validate {
 	/**
 	* Check user nick
 	*/
-	public function _check_user_nick ($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'nick') {
+	public function _check_user_nick($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'nick') {
 // TODO: rewrite me
 		$TEXT_TO_CHECK = $_POST[$name_in_form];
 		if (!is_null($force_value_to_check)) {
@@ -1064,7 +1064,7 @@ class yf_validate {
 	/**
 	* Check user profile url
 	*/
-	public function _check_profile_url ($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'profile_url') {
+	public function _check_profile_url($CUR_VALUE = '', $force_value_to_check = null, $name_in_form = 'profile_url') {
 // TODO: rewrite me
 		$TEXT_TO_CHECK = $_POST[$name_in_form];
 		// Override value to check
@@ -1092,7 +1092,7 @@ class yf_validate {
 	/**
 	* Check user login
 	*/
-	public function _check_login () {
+	public function _check_login() {
 // TODO: rewrite me
 		if ($_POST['login'] == '') {
 			_re('Login required');
@@ -1105,7 +1105,7 @@ class yf_validate {
 	/**
 	* Check selected location (country, region, city)
 	*/
-	public function _check_location ($cur_country = '', $cur_region = '', $cur_city = '') {
+	public function _check_location($cur_country = '', $cur_region = '', $cur_city = '') {
 // TODO: rewrite me
 		if (FEATURED_COUNTRY_SELECT && !empty($_POST['country']) && substr($_POST['country'], 0, 2) == 'f_') {
 			$_POST['country'] = substr($_POST['country'], 2);
@@ -1146,7 +1146,7 @@ class yf_validate {
 	/**
 	* Check user birth date
 	*/
-	public function _check_birth_date ($CUR_VALUE = '') {
+	public function _check_birth_date($CUR_VALUE = '') {
 // TODO: rewrite me
 		$_POST['birth_date']	= $CUR_VALUE;
 
@@ -1173,7 +1173,7 @@ class yf_validate {
 	/**
 	* Internal method
 	*/
-	public function _email_verify ($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
+	public function _email_verify($email = '', $check_mx = false, $check_by_smtp = false, $check_blacklists = false) {
 		return _class('remote_files', 'classes/common/')->_email_verify($email, $check_mx, $check_by_smtp, $check_blacklists);
 	}
 
@@ -1187,7 +1187,7 @@ class yf_validate {
 	/**
 	* Alias
 	*/
-	public function _url_verify ($in = '') {
+	public function _url_verify($in = '') {
 		return $this->valid_url($in);
 	}
 

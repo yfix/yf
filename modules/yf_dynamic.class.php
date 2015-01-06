@@ -12,6 +12,12 @@ class yf_dynamic {
 	public $VARS_IGNORE_CASE		= true;
 	/** @var int Quantity of finded users by user search (for 'find_users' function)*/
 	public $USER_RESULTS_LIMIT = 20;
+	/** @var array */
+	public $AJAX_VALIDATE_ALLOWED = array(
+		'user.login',
+		'user.email',
+		'user.nick',
+	);
 
 	/**
 	* Catch missing method call
@@ -423,20 +429,21 @@ class yf_dynamic {
 	function ajax_validate() {
 		main()->NO_GRAPHICS = true;
 		header('X-Robots-Tag: noindex, nofollow, noarchive, nosnippet');
-		$allowed_params = array(
-			'user.login',
-			'user.email',
-			'user.nick',
-		);
+
+		$allowed_params = $this->AJAX_VALIDATE_ALLOWED;
+
 		$rules = array();
 		$errors = array();
 		if (isset($_POST['rules']) && is_array($_POST['rules'])) {
 			$rules = $_POST['rules'];
+		} elseif (isset($_GET['rules']) && is_array($_GET['rules'])) {
+			$rules = $_GET['rules'];
 		} else {
 			$rules[] = array(
 				'func'	=> preg_replace('~[^a-z0-9_]+~ims', '', (isset($_POST['func']) ? $_POST['func'] : (isset($_GET['func']) ? $_GET['func'] : $_GET['id']))),
 				'data'	=> isset($_POST['data']) ? $_POST['data'] : $_GET['data'],
 				'param'	=> isset($_POST['param']) ? $_POST['param'] : $_GET['param'],
+				'field'	=> isset($_POST['field']) ? $_POST['field'] : $_GET['field'],
 			);
 		}
 		$class_validate = _class('validate');
@@ -445,8 +452,22 @@ class yf_dynamic {
 			if (is_null($rule['data'])) {
 				$errors[] = 'empty data';
 			}
-			if (strlen($rule['param']) && !in_array($rule['param'], $allowed_params)) {
-				$errors[] = 'not allowed param';
+			if (strlen($rule['param'])) {
+				$not_allowed_param = true;
+				if (in_array($rule['param'], $allowed_params)) {
+					$not_allowed_param = false;
+				} else {
+					foreach ((array)$allowed_params as $aparam) {
+						// is_unique_without[user.login.1]
+						if ($rule['param'] && strpos($rule['param'], $aparam.'.') === 0) {
+							$not_allowed_param = false;
+							break;
+						}
+					}
+				}
+				if ($not_allowed_param) {
+					$errors[] = 'not allowed param';
+				}
 			}
 			if (!preg_match('~^[a-z][a-z0-9_]+$~ims', $rule['func'])) {
 				$errors[] = 'wrong func name';
@@ -457,13 +478,16 @@ class yf_dynamic {
 				break;
 			}
 			if ($rule['param'] == 'user.email') {
-				$email_valid = $class_validate->valid_email($rule['data']);
+				$email_valid = $class_validate->valid_email($rule['data'], array(), array(), $error_msg);
 				if (!$email_valid) {
 					break;
 				}
 			}
-			$is_valid = $class_validate->$rule['func']($rule['data'], array('param' => $rule['param']));
+			$is_valid = $class_validate->$rule['func']($rule['data'], array('param' => $rule['param']), array(), $error_msg);
 			if (!$is_valid) {
+				if (!$error_msg) {
+					$error_msg = t('form_validate_'.$rule['func'], array('%field' => $rule['field'], '%param' => $rule['param']));
+				}
 				break;
 			}
 		}
@@ -476,6 +500,9 @@ class yf_dynamic {
 				$out = array('ko' => 1);
 			}
 		}
+		if ($error_msg) {
+			$out['error_msg'] = $error_msg;
+		}
 		$is_ajax = conf('IS_AJAX');
 		if ($is_ajax) {
 			header('Content-type: application/json');
@@ -487,6 +514,7 @@ class yf_dynamic {
 	}
 
 	/**
+	* Output sample placeholder image, useful for designing wireframes and prototypes
 	*/
 	function placeholder() {
 		main()->NO_GRAPHICS = true;
@@ -501,5 +529,24 @@ class yf_dynamic {
 		echo yf_placeholder_img($w, $h, $params);
 
 		exit;
+	}
+
+	/**
+	* Helper to output placeholder image, by default output is data/image
+	*/
+	function placeholder_img($extra = array()) {
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$w = (int)$extra['width'];
+		$h = (int)$extra['height'];
+		if ($extra['as_url']) {
+			$extra['src'] = url('/dynamic/placeholder/'.$w.'x'.$h);
+		} else {
+			require_once YF_PATH.'share/functions/yf_placeholder_img.php';
+			$img_data = yf_placeholder_img($w, $h, array('no_out' => true) + (array)$extra);
+			$extra['src'] = 'data:image/png;base64,'.base64_encode($img_data);
+		}
+		return '<img'._attrs($extra, array('src', 'type', 'class', 'id')).' />';
 	}
 }

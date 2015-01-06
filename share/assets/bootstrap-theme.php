@@ -7,6 +7,7 @@ $require_name = 'bootstrap'. $bs_major_version;
 $css_fixes[2] = '
 	label.radio-horizontal { padding-left: inherit; display: inline-block; margin-bottom: inherit; }
 	label.radio-horizontal input[type=radio] { float: none; margin-left:inherit; margin-top:0; }
+	.dropdown-toggle .caret { margin: 0 !important; }
 ';
 $css_fixes[3] = '
 	.container-fixed input, .container-fixed textarea, .container-fixed select { max-width: 300px; }
