@@ -13,8 +13,9 @@ class class_form_validate_test extends PHPUnit_Framework_TestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 
 		$_POST['name'] = '';
+		$params = array('do_not_remove_errors' => 1);
 
-		form()
+		form($a, $params)
 			->text('name', array('validate' => 'required'))
 			->validate()
 			->render();
@@ -25,7 +26,7 @@ class class_form_validate_test extends PHPUnit_Framework_TestCase {
 
 		$_POST['name'] = '';
 
-		form()
+		form($a, $params)
 			->text('name')
 			->validate($rules = array('name' => 'required'))
 			->render();
@@ -36,7 +37,7 @@ class class_form_validate_test extends PHPUnit_Framework_TestCase {
 
 		$_POST['name'] = '';
 
-		form($a)
+		form($a, $params)
 			->text('name')
 			->validate($rules = array('name' => 'trim'))
 			->render();
@@ -44,7 +45,7 @@ class class_form_validate_test extends PHPUnit_Framework_TestCase {
 
 		$_POST['name'] = 'something';
 
-		form($a)
+		form($a, $params)
 			->text('name')
 			->validate($rules = array('name' => 'required'), $post = array('name' => ''))
 			->render();
@@ -56,7 +57,7 @@ class class_form_validate_test extends PHPUnit_Framework_TestCase {
 		$_POST['name1'] = 'val';
 		$_POST['name2'] = 'val';
 
-		form($a)
+		form($a, $params)
 			->text('name1')
 			->text('name2')
 			->validate($rules = array('name1' => 'trim', 'name2' => 'matches:name1'))
@@ -66,7 +67,7 @@ class class_form_validate_test extends PHPUnit_Framework_TestCase {
 		$_POST['name1'] = 'val';
 		$_POST['name2'] = 'other';
 
-		form($a)
+		form($a, $params)
 			->text('name1')
 			->text('name2')
 			->validate($rules = array('name1' => 'trim', 'name2' => 'matches:name1'))
@@ -76,7 +77,7 @@ class class_form_validate_test extends PHPUnit_Framework_TestCase {
 		$_POST['name1'] = 'val';
 		$_POST['name2'] = 'other';
 
-		form($a)
+		form($a, $params)
 			->text('name1', 'Desc1')
 			->text('name2', 'Desc2')
 			->validate($rules = array('name1' => 'trim', 'name2' => 'matches:name1'))
