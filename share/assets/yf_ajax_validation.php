@@ -4,8 +4,8 @@ return array(
 	'versions' => array(
 		'master' => array(
 			'jquery' => 
-'
 	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
+'
 	var yf_ajax_link_validate = "'.url_user('/dynamic/ajax_validate').'";
 	var yf_ajax_validate_cache = { };
 	var yf_css_class_error = "error has-error";
@@ -81,13 +81,13 @@ return array(
 			controls.removeClass(yf_css_class_error);
 			control_group.removeClass(yf_css_class_error);
 		}
-/*
-		if (is_error) {
-			textfield.setCustomValidity(title);
-		} else {
-			textfield.setCustomValidity("");
-		}
-*/
+
+//		if (is_error) {
+//			textfield.setCustomValidity(title);
+//		} else {
+//			textfield.setCustomValidity("");
+//		}
+
 		help_block.html(is_error ? title : "")
 
 		yf_ajax_validation_icon_clear(_this)
@@ -102,10 +102,6 @@ return array(
 		var control_group = _this.closest(".control-group");
 		var controls = _this.closest(".controls");
 		var help_block = controls.find(".help-block");
-//		if (!help_block.length) {
-//			controls.append(yf_html_help_block);
-//			help_block = controls.find(".help-block");
-//		}
 		// setCustomValidity not only sets the message, but also marks the field as invalid. 
 		// In order to see whether the field really is invalid, we have to remove the message first
 		textfield.setCustomValidity("");
