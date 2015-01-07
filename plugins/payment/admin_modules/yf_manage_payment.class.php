@@ -230,12 +230,14 @@ class yf_manage_payment {
 			->on_validate_ok( function( $data, $extra, $rules ) use( &$user_id, &$account_id, &$account ) {
 				$payment_api = _class( 'payment_api' );
 				$options = array(
-					'user_id'       => $user_id,
-					'account_id'    => $account_id,
-					'amount'        => $_POST[ 'amount' ],
-					'provider_name' => 'administration',
+					'user_id'         => $user_id,
+					'account_id'      => $account_id,
+					'amount'          => $_POST[ 'amount' ],
+					'operation_title' => $_POST[ 'title' ],
+					'operation'       => $_POST[ 'operation' ],
+					'provider_name'   => 'administration',
 				);
-				$result = $payment_api->deposition( $options );
+				$result = $payment_api->transaction_system( $options );
 				if( $result[ 'status' ] === true ) {
 					$message = 'message_success';
 					if( empty( $account_id ) ) {
@@ -257,7 +259,13 @@ class yf_manage_payment {
 				}
 			})
 			->number( 'amount', 'Сумма' )
-			->submit( 'balance', 'recharge', array( 'desc' => 'Пополнить' ) )
+			->text( 'title', 'Название' )
+			->row_start( array(
+				'desc' => 'Операция',
+			))
+				->submit( 'operation', 'deposition', array( 'desc' => 'Пополнить' ) )
+				->submit( 'operation', 'payment',    array( 'desc' => 'Списать'   ) )
+			->row_end()
 		;
 		if( $account_id > 0 ) {
 			// fetch operations
