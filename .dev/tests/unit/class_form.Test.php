@@ -12,6 +12,8 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_form_test extends PHPUnit_Framework_TestCase {
 	private static $_bak_settings = array();
+	private static $css = array();
+	private static $action = '';
 	public static function setUpBeforeClass() {
 		$_GET = array(
 			'object' => 'dynamic',
@@ -19,6 +21,15 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		);
 		self::$_bak_settings['REWRITE_MODE'] = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;
+		$css = _class('html5_framework');
+
+		$css_framework = conf('css_framework') ?: 'bs2';
+		$obj = _class('html5_framework_'.$css_framework, 'classes/html5_framework/');
+		$css = get_object_vars($obj);
+
+		self::$css = $css;
+
+		self::$action = './?object=dynamic&action=unit_test_form';
 	}
 	public static function tearDownAfterClass() {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = self::$_bak_settings['REWRITE_MODE'];
@@ -28,28 +39,28 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_empty_form() {
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">'.
+			'<form method="post" action="'.self::$action.'" class="form-horizontal" name="form_action" autocomplete="1">'.
 			'<fieldset>'.
 			'</fieldset>'.
 			'</form>'), str_replace(PHP_EOL, '', trim(form())) );
 	}
 	public function test_input_text() {
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">'.
+			'<form method="post" action="'.self::$action.'" class="form-horizontal" name="form_action" autocomplete="1">'.
 			'<fieldset>'.
-			'<div class="control-group form-group">'.
-			'<div class="controls col-md-offset-3 col-md-9">'.
+			'<div class="'.self::$css['CLASS_FORM_GROUP'].'">'.
+			'<div class="'.self::$css['CLASS_CONTROLS']. self::$css['CLASS_NO_LABEL'].'">'.
 			'<input type="text" class="form-control">'.
 			'</div>'.
 			'</div>'.
 			'</fieldset>'.
 			'</form>'), str_replace(PHP_EOL, '', trim(@form()->text())) );
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1">'.
+			'<form method="post" action="'.self::$action.'" class="form-horizontal" name="form_action" autocomplete="1">'.
 			'<fieldset>'.
-			'<div class="control-group form-group">'.
-			'<label class="control-label col-md-3" for="name">Name</label>'.
-			'<div class="controls col-md-9">'.
+			'<div class="'.self::$css['CLASS_FORM_GROUP'].'">'.
+			'<label class="'.self::$css['CLASS_LABEL'].'" for="name">Name</label>'.
+			'<div class="'.self::$css['CLASS_CONTROLS'].' '.self::$css['CLASS_DESC'].'">'.
 			'<input name="name" type="text" id="name" class="form-control" placeholder="Name">'.
 			'</div>'.
 			'</div>'.
@@ -60,9 +71,9 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$form = form('', array('no_form' => 1))->text('name');
 
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<div class="control-group form-group">'.
-			'<label class="control-label col-md-3" for="name">Name</label>'.
-			'<div class="controls col-md-9">'.
+			'<div class="'.self::$css['CLASS_FORM_GROUP'].'">'.
+			'<label class="'.self::$css['CLASS_LABEL'].'" for="name">Name</label>'.
+			'<div class="'.self::$css['CLASS_CONTROLS'].' '.self::$css['CLASS_DESC'].'">'.
 			'<input name="name" type="text" id="name" class="form-control" placeholder="Name">'.
 			'</div>'.
 			'</div>'), str_replace(PHP_EOL, '', trim($form)) );
@@ -70,16 +81,16 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	public function test_form_from_array() {
 		$a = array(array('text','name'));
 		$this->assertEquals(
-			'<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group">'.
-			'<label class="control-label col-md-3" for="name">Name</label><div class="controls col-md-9"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div>'.
+			'<form method="post" action="'.self::$action.'" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="'.self::$css['CLASS_FORM_GROUP'].'">'.
+			'<label class="'.self::$css['CLASS_LABEL'].'" for="name">Name</label><div class="'.self::$css['CLASS_CONTROLS'].' '.self::$css['CLASS_DESC'].'"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div>'.
 			'</fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form()->array_to_form($a))) );
 	}
 	public function test_form_auto() {
 		$data = array('user' => 'name', 'email' => 'some@email.com');
 		$this->assertEquals(
-			'<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="control-group form-group">'.
-			'<div class="controls col-md-offset-3 col-md-9"><button type="submit" name="back_link" id="back_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button></div>'.
+			'<form method="post" action="'.self::$action.'" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="'.self::$css['CLASS_FORM_GROUP'].'">'.
+			'<div class="'.self::$css['CLASS_CONTROLS_BUTTONS']. self::$css['CLASS_NO_LABEL_BUTTONS'].'"><button type="submit" name="back_link" id="back_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button></div>'.
 			'</div></fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form($data)->auto())) );
 	}
@@ -133,8 +144,8 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<input type="hidden" id="hdn" name="hdn" value="val1">', trim(self::form_no_chain($r)->hidden('hdn', array('value' => 'val1'))) );
 	}
 	public function test_container() {
-		$this->assertEquals('<form method="post" action="./?object=dynamic&action=unit_test_form" class="form-horizontal" name="form_action" autocomplete="1"><fieldset>'.
-			'<div class="control-group form-group"><div class="controls col-md-offset-3 col-md-9"><section id="test"></section></div></div></fieldset></form>'
+		$this->assertEquals('<form method="post" action="'.self::$action.'" class="form-horizontal" name="form_action" autocomplete="1"><fieldset>'.
+			'<div class="'.self::$css['CLASS_FORM_GROUP'].'"><div class="'.self::$css['CLASS_CONTROLS']. self::$css['CLASS_NO_LABEL'].'"><section id="test"></section></div></div></fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form()->container('<section id="test"></section>'))) );
 		$this->assertEquals('<section id="test"></section>', trim(self::form_no_chain($r)->container('<section id="test"></section>')) );
 	}
