@@ -76,11 +76,37 @@ function( $log, $scope, $http, $timeout, $q, $filter, PaymentBalanceApi ) {
 	// select first provider
 	if( $scope.payment.provider ) {
 		for( var index in $scope.payment.provider ) break;
-		$scope.provider_id = +$scope.payment.provider[ index ].provider_id;
-		$scope.provider_change = function( provider ) {
-			$scope.provider_id = provider.provider_id;
-		};
+		$scope.provider_selected = $scope.payment.provider[ index ];
+		$scope.provider_id       = $scope.payment.provider[ index ].provider_id;
 	}
+	$scope.provider_change = function( provider ) {
+		$scope.provider_selected = provider;
+		$scope.provider_id       = provider.provider_id;
+		$scope.provider_currency();
+	};
+	$scope.provider_currency = function( provider_id ) {
+		provider_id = provider_id || $scope.provider_id;
+		var currency_allow = $scope.payment.provider[ provider_id ]._currency_allow || null;
+		var currencies = {};
+		if( currency_allow ) {
+			angular.forEach( $scope.payment.currencies, function( item, id ) {
+				if( currency_allow[ id ] ) {
+					this[ id ] = item;
+				}
+			}, currencies );
+		} else {
+			for( var index in $scope.payment.currencies ) break;
+			currencies[ index ] = $scope.payment.currencies[ index ];
+		}
+		$scope.currencies = currencies;
+		// select first
+		if( !$scope.currencies[ $scope.currency_id ] ) {
+			for( var index in $scope.currencies ) break;
+			$scope.currency_id       = index;
+			$scope.currency_selected = $scope.currencies[ index ];
+			$scope.currency_change();
+		}
+	};
 	// currency change: min, step
 	$scope.currency_min = function( is_currency ) {
 		is_currency = is_currency || false;
@@ -270,10 +296,8 @@ function( $log, $scope, $http, $timeout, $q, $filter, PaymentBalanceApi ) {
 	// init
 	$scope.block_wait = false;
 	// currency
-	$scope.currency_id = 'UAH';
-	if( $scope.payment.currencies && $scope.payment.currencies.UAH ) {
-		$scope.currency_selected = $scope.payment.currencies.UAH;
-	}
+	$scope.provider_currency();
+	// amount
 	$scope.amount_init();
 }])
 

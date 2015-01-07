@@ -10,20 +10,23 @@ class yf_payment__user {
 		$payment_api = _class( 'payment_api' );
 		list( $account_id,  $account  ) = $payment_api->get_account();
 		list( $currency_id, $currency ) = $payment_api->get_currency__by_id( $account );
-		$operation     = $payment_api->operation( $account );
-		$provider      = $payment_api->provider();
+		$operation = $payment_api->operation( $account );
+		$provider  = $payment_api->provider();
+		$payment_api->provider_currency( array(
+			'provider' => &$provider,
+		));
 		$status        = $payment_api->status();
 		$currencies    = $payment_api->currencies;
 		$currency_rate = $payment_api->currency_rate__buy();
 		$replace = array(
 			'payment'   => json_encode( array(
-				'account'       => $account,
-				'currency'      => $currency,
-				'operation'     => $operation,
-				'provider'      => $provider,
-				'status'        => $status,
-				'currencies'    => $currencies,
-				'currency_rate' => $currency_rate,
+				'account'              => $account,
+				'currency'             => $currency,
+				'operation'            => $operation,
+				'provider'             => $provider,
+				'status'               => $status,
+				'currencies'           => $currencies,
+				'currency_rate'        => $currency_rate,
 				'operation_pagination' => array( 'page' => 1, 'page_per' => $payment_api->OPERATION_LIMIT ),
 			), JSON_NUMERIC_CHECK ),
 		);

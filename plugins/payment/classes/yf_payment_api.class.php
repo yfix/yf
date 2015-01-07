@@ -583,6 +583,21 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function provider_currency( $options = null ) {
+		// get options '_'
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$result = null;
+		if( is_array( $_provider ) ) {
+			foreach( $_provider as $id => $item ) {
+				$name = $item[ 'name' ];
+				$class = 'provider_' . $name;
+				$provider = $this->_class( $class );
+				$provider && $_provider[ $id ][ '_currency_allow' ] = &$provider->currency_allow;
+			}
+		}
+		return( $result );
+	}
+
 	/*
 		account_id by user_id
 		provider_id
@@ -807,12 +822,14 @@ class yf_payment_api {
 	}
 
 	// simple route: class__sub_class->method
-	public function _class( $class, $method, $options = null ) {
+	public function _class( $class, $method = null, $options = null ) {
 		$_path  = $this->_class_path;
 		$_class_name = __CLASS__ . '__' . $class;
 		$_class = _class_safe( $_class_name, $_path );
-		$status = method_exists( $_class, $method );
+		$status = $_class instanceof $_class_name;
 		if( !$status ) { return( null ); }
+		$status = method_exists( $_class, $method );
+		if( !$status ) { return( $_class ); }
 		$result = $_class->{ $method }( $options );
 		return( $result );
 	}
@@ -853,7 +870,7 @@ class yf_payment_api {
 	public function dump( $options = null ) {
 		static $is_first = true;
 		// import options
-		isset( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		$ts = microtime( true );
 		$file = $_file ?: sprintf( '/tmp/payment_api_dump-%s.txt', date( 'Y-m-d_H-i-s', $ts ) );
 		ini_set( 'html_errors', 0 );

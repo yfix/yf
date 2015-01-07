@@ -132,7 +132,10 @@
 						Величина '{{ payment.currency.short }}' должна быть больше или равна {{ amount_min }}
 					</div>
 					<div class="error-message"
-						ng-show="form_payment_balance_recharge.amount_currency.$error.min"
+						ng-show="
+							provider_selected._currency_allow
+							&& form_payment_balance_recharge.amount_currency.$error.min
+						"
 					>
 						Величина '{{ currency_selected.short }}' должна быть больше или равна {{ amount_currency_min }}
 					</div>
@@ -151,23 +154,27 @@
 							ng-model    = "amount"
 						>
 					</div>
-					<div class="col-sm-3 input-group pull-left">
-						<span class="input-group-addon">=</span>
-						<input type="number" required class="form-control balance_recharge__amount" id="balance_recharge__amount"
-							name        = "amount_currency"
-							placeholder = "{{ currency_selected.short }}"
-							min         = "{{ amount_currency_min  }}"
-							step        = "{{ amount_currency_step }}"
-							ng-change   = "amount_change( true )"
-							ng-model    = "amount_currency"
-						>
-					</div>
-					<div class="col-sm-2">
-						<select class="form-control"
-							ng-model   = "currency_selected"
-							ng-options = "currency.short for ( currency_id, currency ) in payment.currencies"
-							ng-change  = "currency_change()"
-						></select>
+					<div
+						ng-show="provider_selected._currency_allow"
+					>
+						<div class="col-sm-3 input-group pull-left">
+							<span class="input-group-addon">=</span>
+							<input type="number" required class="form-control balance_recharge__amount" id="balance_recharge__amount"
+								name        = "amount_currency"
+								placeholder = "{{ currency_selected.short }}"
+								min         = "{{ amount_currency_min  }}"
+								step        = "{{ amount_currency_step }}"
+								ng-change   = "amount_change( true )"
+								ng-model    = "amount_currency"
+							>
+						</div>
+						<div class="col-sm-2">
+							<select class="form-control"
+								ng-model   = "currency_selected"
+								ng-options = "currency.short for ( currency_id, currency ) in currencies"
+								ng-change  = "currency_change()"
+							></select>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -271,7 +278,12 @@
 				</tr>
 			</tbody>
 			<tfoot>
-			<tr>
+			<tr
+				ng-show="
+					payment.operation.length == payment.operation_pagination.page_per
+					|| payment.operation_pagination.page > 1
+				"
+			>
 				<td colspan="5">
 					<span>
 						Страница:
