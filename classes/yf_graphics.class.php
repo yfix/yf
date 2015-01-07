@@ -333,7 +333,10 @@ class yf_graphics {
 		} elseif (isset($this->_avail_tips[$tip_id])) {
 			$legend = $this->_avail_tips[$tip_id];
 		} else {
-			$legend = $tip_id;
+			$legend = t($tip_id);
+		}
+		if (!strlen($legend)) {
+			return false;
 		}
 		return tpl()->parse('system/help_tip', array(
 			'tip_id'	=> _prepare_html($tip_id),
