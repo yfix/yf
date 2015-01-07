@@ -974,7 +974,7 @@ class yf_validate {
 	* Returns TRUE is captcha user input value is valid
 	*/
 	public function captcha($in) {
-		return _class('captcha')->check('captcha');
+		return _class('captcha')->check('captcha', $in);
 	}
 
 	/**
