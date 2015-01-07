@@ -305,7 +305,7 @@ class yf_manage_payment {
 			$balance = $account[ 'balance' ];
 		}
 		$replace += array(
-			'user_info' => user_info( $user_id ),
+			'user' => user( $user_id ),
 			'balance' => array(
 				'amount'   => $balance,
 				'currency' => $currency_str,
