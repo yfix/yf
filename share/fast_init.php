@@ -50,8 +50,9 @@ if (strpos($route, '/dynamic/placeholder') === 0) {
 	$fname = 'php_func';
 } elseif (strpos($route, '/dynamic/image') === 0) {
 	$fname = 'dynamic_image';
-} elseif (strpos($route, '/dynamic/captcha_image') === 0) {
-	$fname = 'captcha_image';
+// captcha needs session, but it does not started yet
+//} elseif (strpos($route, '/dynamic/captcha_image') === 0) {
+//	$fname = 'captcha_image';
 } elseif (strpos($route, '/forum/low') === 0) {
 	$fname = 'forum_low';
 } elseif (strpos($route, '/search/autocomplete') === 0) {
