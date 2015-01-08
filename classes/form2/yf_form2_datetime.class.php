@@ -8,7 +8,7 @@ class yf_form2_datetime {
 	*			no_time // no time picker
 	*			min_date // min available date
 	*/
-	function datetime_select($name = '', $desc = '', $extra = array(), $replace = array(), $__this) {
+	function datetime_select($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
 		if (is_array($desc)) {
 			$extra += $desc;
 			$desc = '';
@@ -17,10 +17,10 @@ class yf_form2_datetime {
 			$extra = array();
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
-		$extra['desc'] = $__this->_prepare_desc($extra, $desc);
+		$extra['desc'] = $form->_prepare_desc($extra, $desc);
 
-		$func = function($extra, $r, $_this) {
-			$_this->_prepare_inline_error($extra);
+		$func = function($extra, $r, $form) {
+			$form->_prepare_inline_error($extra);
 			$format = $format_php = $placeholder = array();
 			$extra['no_time'] = $extra['with_time'] ? !$extra['with_time'] : $extra['no_time'];
 			$extra['no_time'] = isset( $extra['no_time'] ) ? $extra['no_time'] : 1;
@@ -42,10 +42,10 @@ class yf_form2_datetime {
 			if (!strlen($extra['value'])) {
 				if (isset($extra['selected'])) {
 					$value = $extra['selected'];
-				} elseif (isset($_this->_params['selected'])) {
-					$value = $_this->_params['selected'][$extra['name']];
-				} elseif (isset($_this->_replace[$extra['name']])) {
-					$value = $_this->_replace[$extra['name']];
+				} elseif (isset($form->_params['selected'])) {
+					$value = $form->_params['selected'][$extra['name']];
+				} elseif (isset($form->_replace[$extra['name']])) {
+					$value = $form->_replace[$extra['name']];
 				}
 				$extra['value'] = empty( $value ) || $value == '0000-00-00 00:00:00' ? null : strtotime( $value );
 			}
@@ -78,12 +78,12 @@ class yf_form2_datetime {
 					.'
 				});
 			');
-			return $_this->_row_html($body, $extra, $r);
+			return $form->_row_html($body, $extra, $r);
 		};
-		if ($__this->_chained_mode) {
-			$__this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
-			return $__this;
+		if ($form->_chained_mode) {
+			$form->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $form;
 		}
-		return $func($extra, $replace, $__this);
+		return $func($extra, $replace, $form);
 	}
 }

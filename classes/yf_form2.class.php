@@ -23,6 +23,7 @@ class yf_form2 {
 	public $CLASS_ICON_EMAIL = 'icon-email fa fa-at fa-fw';
 	public $CLASS_LABEL_INFO = 'label label-info';
 	public $CLASS_ERROR = 'alert alert-error alert-danger';
+	public $CLASS_REQUIRED = 'control-group-required form-group-required';
 
 	/**
 	* Catch missing method call
@@ -791,24 +792,24 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
-		$func = function($extra, $r, $_this) {
-			$_this->_prepare_inline_error($extra);
-			$extra['id'] = $_this->_prepare_id($extra);
+		$func = function($extra, $r, $form) {
+			$form->_prepare_inline_error($extra);
+			$extra['id'] = $form->_prepare_id($extra);
 			$extra['placeholder'] = t(isset($extra['placeholder']) ? $extra['placeholder'] : $extra['desc']);
-			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
+			$extra['value'] = $form->_prepare_value($extra, $r, $form->_params);
 			$extra['type'] = $extra['type'] ?: 'text';
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-			$extra['class'] = $_this->CLASS_FORM_CONTROL. $_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = $form->CLASS_FORM_CONTROL. $form->_prepare_css_class('', $r[$extra['name']], $extra);
 			// Supported: mini, small, medium, large, xlarge, xxlarge
 			if ($extra['sizing']) {
 				$extra['class'] .= ' input-'.$extra['sizing'];
 			}
-			if ($_this->_params['no_label']) {
+			if ($form->_params['no_label']) {
 				$extra['desc'] = '';
 			}
-			$extra = $_this->_input_assign_params_from_validate($extra);
+			$extra = $form->_input_assign_params_from_validate($extra);
 			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step');
-			return $_this->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
+			return $form->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -829,20 +830,20 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
-		$func = function($extra, $r, $_this) {
-			$_this->_prepare_inline_error($extra);
-			$extra['id'] = $_this->_prepare_id($extra);
+		$func = function($extra, $r, $form) {
+			$form->_prepare_inline_error($extra);
+			$extra['id'] = $form->_prepare_id($extra);
 			$extra['placeholder'] = t(isset($extra['placeholder']) ? $extra['placeholder'] : $extra['desc']);
-			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
+			$extra['value'] = $form->_prepare_value($extra, $r, $form->_params);
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
-			$extra['class'] = $_this->CLASS_CKEDITOR.' '.$_this->CLASS_FORM_CONTROL. $_this->_prepare_css_class('', $r[$extra['name']], $extra);
-			if ($_this->_params['no_label']) {
+			$extra['class'] = $form->CLASS_CKEDITOR.' '.$form->CLASS_FORM_CONTROL. $form->_prepare_css_class('', $r[$extra['name']], $extra);
+			if ($form->_params['no_label']) {
 				$extra['desc'] = '';
 			}
-			$extra = $_this->_input_assign_params_from_validate($extra);
+			$extra = $form->_input_assign_params_from_validate($extra);
 			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required','size');
-			return $_this->_row_html('<textarea'._attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']).'</textarea>', $extra, $r);
+			return $form->_row_html('<textarea'._attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -889,9 +890,9 @@ class yf_form2 {
 			$extra = array();
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$func = function($extra, $r, $_this) {
-			$extra['id'] = $_this->_prepare_id($extra);
-			$extra['value'] = $_this->_prepare_value($extra, $r, $_this->_params);
+		$func = function($extra, $r, $form) {
+			$extra['id'] = $form->_prepare_id($extra);
+			$extra['value'] = $form->_prepare_value($extra, $r, $form->_params);
 			$extra['type'] = 'hidden';
 
 			$attrs_names = array('type','id','name','value','data');
@@ -1290,25 +1291,25 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
-		$func = function($extra, $r, $_this) {
-			$_this->_prepare_inline_error($extra);
+		$func = function($extra, $r, $form) {
+			$form->_prepare_inline_error($extra);
 			if (!$extra['items']) {
-				if (!isset($_this->_pair_active)) {
-					$_this->_pair_active = main()->get_data('pair_active');
+				if (!isset($form->_pair_active)) {
+					$form->_pair_active = main()->get_data('pair_active');
 				}
-				$extra['items'] = $_this->_pair_active;
+				$extra['items'] = $form->_pair_active;
 			}
 			$extra['values'] = $extra['items'];
-			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
-			$extra['id'] = $_this->_prepare_id($extra);
+			$extra['desc'] = !$form->_params['no_label'] ? $extra['desc'] : '';
+			$extra['id'] = $form->_prepare_id($extra);
 			if (!isset($extra['horizontal'])) {
 				$extra['horizontal'] = true;
 			}
 			$extra['selected'] = isset($extra['selected']) ? $extra['selected'] : $r[$extra['name']];
-			if (isset($_this->_params['selected'])) {
-				$extra['selected'] = $_this->_params['selected'][$extra['name']];
+			if (isset($form->_params['selected'])) {
+				$extra['selected'] = $form->_params['selected'][$extra['name']];
 			}
-			return $_this->_row_html(_class('html')->radio_box($extra), $extra, $r);
+			return $form->_row_html(_class('html')->radio_box($extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -1353,15 +1354,15 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['value'] = isset($extra['value']) ? $extra['value'] : ($value ?: 'Save');
-		$func = function($extra, $r, $_this) {
-			$_this->_prepare_inline_error($extra);
+		$func = function($extra, $r, $form) {
+			$form->_prepare_inline_error($extra);
 			$extra['id'] = $extra['id'] ?: ($extra['name'] ?: strtolower($extra['value']));
 			$extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
 			if (preg_match('~^[a-z0-9_-]+$~ims', $extra['link_url'])) {
 				$extra['link_url'] = '';
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
-			$extra['class'] = $extra['class'] ?: $_this->CLASS_BTN_SUBMIT. $_this->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['class'] = $extra['class'] ?: $form->CLASS_BTN_SUBMIT. $form->_prepare_css_class('', $r[$extra['name']], $extra);
 			$extra['value'] = t($extra['value']);
 			$extra['type'] = 'submit';
 			$button_text = $extra[ 'desc' ];
@@ -1373,9 +1374,9 @@ class yf_form2 {
 				$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
 				$value = (!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']);
 				$button_text = $icon . ( $button_text ?: $value );
-				return $_this->_row_html('<button'._attrs($extra, $attrs_names).'>'.$button_text.'</button>', $extra, $r);
+				return $form->_row_html('<button'._attrs($extra, $attrs_names).'>'.$button_text.'</button>', $extra, $r);
 			} else {
-				return $_this->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
+				return $form->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
 			}
 		};
 		if ($this->_chained_mode) {
@@ -1459,9 +1460,9 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
-		$func = function($extra, $r, $_this) {
-			$_this->_prepare_inline_error($extra);
-			$extra['desc'] = !$extra['no_label'] && !$_this->_params['no_label'] ? $extra['desc'] : '';
+		$func = function($extra, $r, $form) {
+			$form->_prepare_inline_error($extra);
+			$extra['desc'] = !$extra['no_label'] && !$form->_params['no_label'] ? $extra['desc'] : '';
 
 			$value = $r[$extra['name']] ?: $extra['value'];
 			if (is_array($extra['data'])) {
@@ -1490,17 +1491,17 @@ class yf_form2 {
 				if ($extra['rewrite']) {
 					$extra['link'] = url($extra['link']);
 				}
-				$extra['class'] = $extra['class'] ?: $_this->CLASS_BTN_MINI;
-				$extra['class'] = $_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra);
+				$extra['class'] = $extra['class'] ?: $form->CLASS_BTN_MINI;
+				$extra['class'] = $form->_prepare_css_class($extra['class'], $r[$extra['name']], $extra);
 				$extra['href'] = $extra['link'];
 				$extra['title'] = $extra['title'] ?: $extra['desc'] ?: $extra['name'];
 				$attrs_names = array('href','name','class','style','disabled','target','alt','title');
 				$content = '<a'._attrs($extra, $attrs_names).'>'.$icon. $value.'</a>';
 			} else {
-				$extra['class'] = $extra['class'] ?: $_this->CLASS_LABEL_INFO;
-				$content = '<span class="'.$_this->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$icon. $value.'</span>';
+				$extra['class'] = $extra['class'] ?: $form->CLASS_LABEL_INFO;
+				$content = '<span class="'.$form->_prepare_css_class($extra['class'], $r[$extra['name']], $extra).'">'.$icon. $value.'</span>';
 			}
-			return $_this->_row_html($content, $extra, $r);
+			return $form->_row_html($content, $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -1586,21 +1587,21 @@ class yf_form2 {
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 		$extra['func_html_control'] = $extra['func_html_control'] ?: $func_html_control;
-		$func = function($extra, $r, $_this) {
-			$_this->_prepare_inline_error($extra);
+		$func = function($extra, $r, $form) {
+			$form->_prepare_inline_error($extra);
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-			$extra['selected'] = $_this->_prepare_selected($extra['name'], $extra, $r);
+			$extra['selected'] = $form->_prepare_selected($extra['name'], $extra, $r);
 			$extra['id'] = $extra['name'];
 
 			$func = $extra['func_html_control'];
 			$content = _class('html')->$func($extra);
-			if ($extra['no_label'] || $_this->_params['no_label']) {
+			if ($extra['no_label'] || $form->_params['no_label']) {
 				$extra['desc'] = '';
 			}
 			if ($extra['hide_empty'] && !strlen($content)) {
 				return '';
 			}
-			return $_this->_row_html($content, $extra, $r);
+			return $form->_row_html($content, $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -1621,14 +1622,14 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
-		$func = function($extra, $r, $_this) {
-			$_this->_prepare_inline_error($extra);
+		$func = function($extra, $r, $form) {
+			$form->_prepare_inline_error($extra);
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
-			$extra['selected'] = $_this->_prepare_selected($extra['name'], $extra, $r);
-			$extra['id'] = $_this->_prepare_id($extra);
+			$extra['selected'] = $form->_prepare_selected($extra['name'], $extra, $r);
+			$extra['id'] = $form->_prepare_id($extra);
 
-			return $_this->_row_html($r[$extra['name']], $extra, $r);
+			return $form->_row_html($r[$extra['name']], $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -1935,13 +1936,13 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'captcha');
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
-		$func = function($extra, $r, $_this) {
-			$_this->_prepare_inline_error($extra);
-			$extra['id'] = $_this->_prepare_id($extra);
+		$func = function($extra, $r, $form) {
+			$form->_prepare_inline_error($extra);
+			$extra['id'] = $form->_prepare_id($extra);
 			$extra['required'] = true;
 			$extra['value'] = $r['captcha'];
 			$extra['input_attrs'] = _attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value'));
-			return $_this->_row_html(_class('captcha')->show_block('./?object=dynamic&action=captcha_image', $extra), $extra, $r);
+			return $form->_row_html(_class('captcha')->show_block('./?object=dynamic&action=captcha_image', $extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -1993,13 +1994,13 @@ class yf_form2 {
 		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['custom_fields'] = $custom_fields;
-		$func = function($extra, $r, $_this) {
+		$func = function($extra, $r, $form) {
 			$custom_fields = explode(',', $extra['custom_fields']);
 			$sub_array_name = $extra['sub_array'] ?: 'custom';
 			$custom_info = _attrs_string2array($r[$extra['name']]);
 
 			$body = array();
-			$_this->_chained_mode = false;
+			$form->_chained_mode = false;
 			foreach ((array)$custom_fields as $field_name) {
 				if (empty($field_name)) {
 					continue;
@@ -2011,9 +2012,9 @@ class yf_form2 {
 					'value'	=> $custom_info[$field_name],
 				));
 				$desc = ucfirst(str_replace('_', ' ', $field_name)).' [Custom]';
-				$body[] = $_this->container($str, $desc);
+				$body[] = $form->container($str, $desc);
 			}
-			$_this->_chained_mode = true;
+			$form->_chained_mode = true;
 			return implode(PHP_EOL, $body);
 		};
 		if ($this->_chained_mode) {
@@ -2088,50 +2089,50 @@ class yf_form2 {
 	function validate($validate_rules = array(), $post = array(), $extra = array()) {
 		$this->_validate_prepare($validate_rules, $extra);
 
-		$func = function($validate_rules, $post, $extra, $_this) {
-			$_this->_validate_prepare($validate_rules, $extra);
-			$form_id = $_this->_form_id;
-			$form_id_field = $_this->_form_id_field;
+		$func = function($validate_rules, $post, $extra, $form) {
+			$form->_validate_prepare($validate_rules, $extra);
+			$form_id = $form->_form_id;
+			$form_id_field = $form->_form_id_field;
 			// Do not do validation until data is empty (usually means that form is just displayed and we wait user input)
 			$data = (array)(!empty($post) ? $post : $_POST);
 			// Convert multi-dimensional arrays into single-dimensional array dot notation: array('k1' => array('k2' => 'v2'))  ==>  array('k1.k2' => 'v2')
 			$data = array_dot($data);
 			if (empty($data)) {
-				return $_this;
+				return $form;
 			}
 			// We need this to validate only correct form on page, where there can be several forms with validation at once
 			if ($form_id && $data[$form_id_field] != $form_id) {
-				return $_this;
+				return $form;
 			}
-			$on_before_validate = isset($extra['on_before_validate']) ? $extra['on_before_validate'] : $_this->_on['on_before_validate'];
+			$on_before_validate = isset($extra['on_before_validate']) ? $extra['on_before_validate'] : $form->_on['on_before_validate'];
 			if (is_callable($on_before_validate)) {
-				$on_before_validate($_this->_validate_rules, $data);
+				$on_before_validate($form->_validate_rules, $data);
 			}
 			$events = _class('core_events');
-			$events->fire('form.before_validate', array($_this->_validate_rules, $data));
+			$events->fire('form.before_validate', array($form->_validate_rules, $data));
 			// Processing of prepared rules
-			$validate_ok = $_this->_validate_rules_process($_this->_validate_rules, $data, $extra);
+			$validate_ok = $form->_validate_rules_process($form->_validate_rules, $data, $extra);
 			if ($validate_ok) {
-				$_this->_validate_ok = true;
-				$on_validate_ok = isset($extra['on_validate_ok']) ? $extra['on_validate_ok'] : $_this->_on['on_validate_ok'];
+				$form->_validate_ok = true;
+				$on_validate_ok = isset($extra['on_validate_ok']) ? $extra['on_validate_ok'] : $form->_on['on_validate_ok'];
 				if (is_callable($on_validate_ok)) {
-					$on_validate_ok($data, $extra, $_this->_validate_rules);
+					$on_validate_ok($data, $extra, $form->_validate_rules);
 				}
-				$events->fire('form.validate_ok', array($_this->_validate_rules, $data, $extra));
+				$events->fire('form.validate_ok', array($form->_validate_rules, $data, $extra));
 			} else {
-				$_this->_validate_ok = false;
-				$on_validate_error = isset($extra['on_validate_error']) ? $extra['on_validate_error'] : $_this->_on['on_validate_error'];
+				$form->_validate_ok = false;
+				$on_validate_error = isset($extra['on_validate_error']) ? $extra['on_validate_error'] : $form->_on['on_validate_error'];
 				if (is_callable($on_validate_error)) {
-					$on_validate_error($data, $extra, $_this->_validate_rules);
+					$on_validate_error($data, $extra, $form->_validate_rules);
 				}
-				$events->fire('form.validate_error', array($_this->_validate_rules, $data, $extra));
+				$events->fire('form.validate_error', array($form->_validate_rules, $data, $extra));
 			}
-			$on_after_validate = isset($extra['on_after_validate']) ? $extra['on_after_validate'] : $_this->_on['on_after_validate'];
+			$on_after_validate = isset($extra['on_after_validate']) ? $extra['on_after_validate'] : $form->_on['on_after_validate'];
 			if (is_callable($on_after_validate)) {
-				$on_after_validate($_this->_validate_ok, $_this->_validate_rules, $data, $extra);
+				$on_after_validate($form->_validate_ok, $form->_validate_rules, $data, $extra);
 			}
-			$events->fire('form.after_validate', array($_this->_validate_ok, $_this->_validate_rules, $data, $extra));
-			$_this->_validated_fields = $data;
+			$events->fire('form.after_validate', array($form->_validate_ok, $form->_validate_rules, $data, $extra));
+			$form->_validated_fields = $data;
 		};
 		if ($this->_chained_mode) {
 			$this->_validate = array(
@@ -2370,13 +2371,13 @@ class yf_form2 {
 	/**
 	*/
 	function _db_change_if_ok($table, $fields, $type, $extra = array()) {
-		$func = function($table, $fields, $type, $extra, $_this) {
+		$func = function($table, $fields, $type, $extra, $form) {
 			if (!$table || !$type || empty($_POST)) {
-				return $_this;
+				return $form;
 			}
-			$validate_ok = ($_this->_validate_ok || $extra['force']);
+			$validate_ok = ($form->_validate_ok || $extra['force']);
 			if (!$validate_ok) {
-				return $_this;
+				return $form;
 			}
 			$data = array();
 			foreach ((array)$fields as $k => $name) {
@@ -2388,8 +2389,8 @@ class yf_form2 {
 					$db_field_name = $name;
 					$name = $k;
 				}
-				if (isset($_this->_validated_fields[$name])) {
-					$data[$db_field_name] = $_this->_validated_fields[$name];
+				if (isset($form->_validated_fields[$name])) {
+					$data[$db_field_name] = $form->_validated_fields[$name];
 				}
 			}
 			// This is non-validated list of fields to add to the insert array
@@ -2397,29 +2398,29 @@ class yf_form2 {
 				$data[$db_field_name] = $value;
 			}
 			// Callback/hook function implementation
-			$on_before_update = isset($extra['on_before_update']) ? $extra['on_before_update'] : $_this->_on['on_before_update'];
+			$on_before_update = isset($extra['on_before_update']) ? $extra['on_before_update'] : $form->_on['on_before_update'];
 			if ($data && $table && is_callable($on_before_update)) {
 				$on_before_update($data, $table, $fields, $type, $extra);
 			}
 			_class('core_events')->fire('form.before_update', array($data, $table, $fields, $type, $extra));
 			if ($data && $table) {
-				$db = is_object($_this->_params['db']) ? $_this->_params['db'] : db();
+				$db = is_object($form->_params['db']) ? $form->_params['db'] : db();
 				if ($type == 'update') {
 					$db->update($table, $db->es($data), $extra['where_id']);
 				} elseif ($type == 'insert') {
 					$db->insert($table, $db->es($data));
 				}
 				// Callback/hook function implementation
-				$on_after_update = isset($extra['on_after_update']) ? $extra['on_after_update'] : $_this->_on['on_after_update'];
+				$on_after_update = isset($extra['on_after_update']) ? $extra['on_after_update'] : $form->_on['on_after_update'];
 				if (is_callable($on_after_update)) {
 					$on_after_update($data, $table, $fields, $type, $extra);
 				}
 				_class('core_events')->fire('form.after_update', array($data, $table, $fields, $type, $extra));
-				$on_success_text = isset($extra['on_success_text']) ? $extra['on_success_text'] : $_this->_on['on_success_text'];
+				$on_success_text = isset($extra['on_success_text']) ? $extra['on_success_text'] : $form->_on['on_success_text'];
 				if ($on_success_text) {
 					common()->set_notice($on_success_text);
 				}
-				$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : (!empty($_this->_replace['redirect_link']) ? $_this->_replace['redirect_link'] : !empty($_this->_replace['back_link']) ? $_this->_replace['back_link'] : '');
+				$redirect_link = $extra['redirect_link'] ? $extra['redirect_link'] : (!empty($form->_replace['redirect_link']) ? $form->_replace['redirect_link'] : !empty($form->_replace['back_link']) ? $form->_replace['back_link'] : '');
 				if (!$redirect_link) {
 					$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : '');
 				}

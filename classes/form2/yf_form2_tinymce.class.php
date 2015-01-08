@@ -5,7 +5,7 @@ class yf_form2_tinymce {
 	/**
 	* Embedding tinymce editor (http://www.tinymce.com/).
 	*/
-	function _tinymce_html($extra = array(), $replace = array(), $__this) {
+	function _tinymce_html($extra = array(), $replace = array(), $form) {
 		if (!is_array($extra)) {
 			return '';
 		}
@@ -13,7 +13,7 @@ class yf_form2_tinymce {
 		if (!is_array($params)) {
 			$params = array();
 		}
-		if ($__this->_tinymce_scripts_included) {
+		if ($form->_tinymce_scripts_included) {
 			return '';
 		}
 		$web_path = '';
@@ -44,7 +44,7 @@ class yf_form2_tinymce {
 		');
 
 		// Avoid including tinymce scripts several times on same page
-		$__this->_tinymce_scripts_included = true;
+		$form->_tinymce_scripts_included = true;
 
 		return $body;
 	}

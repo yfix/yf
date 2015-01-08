@@ -4,7 +4,7 @@ class yf_form2_ace_editor {
 
 	/**
 	*/
-	function _ace_editor_html($extra = array(), $replace = array(), $__this) {
+	function _ace_editor_html($extra = array(), $replace = array(), $form) {
 		$extra['id'] = $extra['id'] ?: 'editor_html';
 		asset('ace-editor');
 		jquery('
