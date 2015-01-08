@@ -147,7 +147,8 @@ class yf_payment_api {
 	public $type       = null;
 	public $type_index = null;
 
-	public $OPERATION_LIMIT = 10;
+	public $OPERATION_LIMIT     = 10;
+	public $BALANCE_LIMIT_LOWER = 0;
 
 	public function _init() {
 		$this->user_id_default = (int)main()->USER_ID;
@@ -805,7 +806,7 @@ class yf_payment_api {
 		$status_id = (int)$status[ 'status_id' ];
 		$data[ 'status' ] = $status;
 		// check account
-		$account_result = $this->get_account( $options );
+		list( $balance, $account_result ) = $this->get_balance( $options );
 		if( empty( $account_result ) ) { return( $account_result ); }
 		list( $account_id, $account ) = $account_result;
 		// check amount
@@ -820,6 +821,21 @@ class yf_payment_api {
 		}
 		$sql_amount = $this->_number_mysql( $amount );
 		$data[ 'sql_amount' ] = $sql_amount;
+		// check balance limit lower
+		$balance_limit_lower = $this->_default( array(
+			$_[ 'balance_limit_lower' ],
+			$account[ 'options' ][ 'balance_limit_lower' ],
+			$this->BALANCE_LIMIT_LOWER,
+			0,
+		));
+		$balance_limit_lower = $this->_number_float( $balance_limit_lower );
+		if( $type[ 'name' ] == 'payment' && ( $balance - $amount < $balance_limit_lower ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Недостаточно средств на счету',
+			);
+			return( $result );
+		}
 		// prepare provider
 		$object = array();
 		if( !empty( $_[ 'provider_name' ] ) ) {
@@ -945,6 +961,17 @@ class yf_payment_api {
 		$float = number_format( $float, $decimals, $decimal_point, '`' );
 		$float = str_replace( '`', $thousands_separator, $float );
 		return( $float );
+	}
+
+	public function _default( $list = null ) {
+		$result = null;
+		foreach( $list as $index => $value ) {
+			if( !is_null( $value ) ) {
+				$result = &$list[ $index ];
+				break;
+			}
+		}
+		return( $result );
 	}
 
 	public function dump( $options = null ) {
