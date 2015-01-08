@@ -41,6 +41,7 @@ class yf_rewrite_pattern_yf {
 		unset($arr['object']);
 		unset($arr['action']);
 		unset($arr['host']);
+		unset($arr['port']);
 		unset($arr['id']);
 		unset($arr['page']);
 		foreach ((array)$arr as $k => $v) {
@@ -54,7 +55,7 @@ class yf_rewrite_pattern_yf {
 		}
 		$class_rewrite = _class('rewrite');
 		if (!$class_rewrite->USE_WEB_PATH) {
-			return $class_rewrite->_correct_protocol('http://'.$a['host'].'/'.$u);
+			return $class_rewrite->_correct_protocol('http://'. $a['host']. ($a['port'] && $a['port'] != '80' ? ':'.$a['port'] : ''). '/'. $u);
 		} else {
 			return $class_rewrite->_correct_protocol(WEB_PATH. $u);
 		}

@@ -9,7 +9,20 @@ class yf_rewrite {
 		$this->REWRITE_PATTERNS = array(
 			'yf' => _class('rewrite_pattern_yf', 'classes/rewrite/'),
 		);
-		$this->DEFAULT_HOST = defined('WEB_DOMAIN') ? WEB_DOMAIN : $_SERVER['HTTP_HOST'];
+		$this->DEFAULT_HOST = '';
+		if (defined('WEB_DOMAIN') && strlen(WEB_DOMAIN)) {
+			$this->DEFAULT_HOST = WEB_DOMAIN;
+		} elseif (defined('WEB_PATH') && ($host = parse_url(WEB_PATH, PHP_URL_HOST))) {
+			$this->DEFAULT_HOST = $host;
+		} elseif ($_SERVER['HTTP_HOST']) {
+			$this->DEFAULT_HOST = $_SERVER['HTTP_HOST'];
+		}
+		$this->DEFAULT_PORT = '80';
+		if (defined('WEB_PATH') && ($port = parse_url(WEB_PATH, PHP_URL_PORT))) {
+			$this->DEFAULT_PORT = $port;
+		} elseif ($_SERVER['HTTP_PORT']) {
+			$this->DEFAULT_PORT = $_SERVER['HTTP_PORT'];
+		}
 	}
 
 	/**
@@ -73,9 +86,9 @@ class yf_rewrite {
 		$u_arr = explode('/', $u);
 		parse_str($result['query'], $s_arr);
 
-		$arr = $this->REWRITE_PATTERNS['yf']->_parse($host,(array)$u_arr,(array)$s_arr,$url);
+		$arr = $this->REWRITE_PATTERNS['yf']->_parse($host, (array)$u_arr, (array)$s_arr, $url);
 
-		$new_url = $this->_force_get_url($arr,WEB_DOMAIN);
+		$new_url = $this->_force_get_url($arr, WEB_DOMAIN);
 
 		return $url == $new_url;
 	}
@@ -177,12 +190,15 @@ class yf_rewrite {
 		if (empty($params['host'])) {
 			$params['host'] = !empty($host) ? $host : $this->DEFAULT_HOST;
 		}
+		if (empty($params['port'])) {
+			$params['port'] = !empty($port) ? $port : $this->DEFAULT_PORT;
+		}
 		$REWRITE_ENABLED = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		if ($REWRITE_ENABLED && $for_section != 'admin') {
 			$link = $this->REWRITE_PATTERNS['yf']->_get($params);
 		} else {
 			foreach ((array)$params as $k => $v) {
-				if ($k == 'host') {
+				if ($k === 'host' || $k === 'port') {
 					continue;
 				}
 				$arr_out[] = $k.'='.$v;
@@ -193,14 +209,15 @@ class yf_rewrite {
 			if ($for_section == 'admin') {
 				$link = ADMIN_WEB_PATH. $u;
 			} else {
-				$link = $this->_correct_protocol((main()->USE_ONLY_HTTPS ? 'https' : 'http').'://'.$params['host'].'/'.$u);
+				$link = $this->_correct_protocol((main()->USE_ONLY_HTTPS ? 'https' : 'http').'://'.$params['host']. ($params['port'] && $params['port'] != '80' ? ':'.$params['port'] : ''). '/'.$u);
 			}
 		}
         if (DEBUG_MODE) {
 			debug(__FUNCTION__.'[]', array(
 				'params'		=> $params,
 				'rewrited_link' => $link,
-				'host'			=> $host,
+				'host'			=> $params['host'],
+				'port'			=> $params['port'],
 				'url_str'		=> $url_str,
 				'time'			=> microtime(true) - $time_start,
 				'trace' 		=> main()->trace_string(),
