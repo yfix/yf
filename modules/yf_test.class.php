@@ -4,13 +4,13 @@ class yf_test {
 
 	/**
 	*/
-	function true_for_unittest ($out = '') {
+	function true_for_unittest($out = '') {
 		return $out ? (is_array($out) ? implode(',', $out) : $out) : 'true';
 	}
 
 	/**
 	*/
-	function show () {
+	function show() {
 		if (!DEBUG_MODE) {
 			return;
 		}
@@ -32,7 +32,7 @@ class yf_test {
 
 	/**
 	*/
-	function change_debug () {
+	function change_debug() {
 		if (!DEBUG_MODE) {
 			return;
 		}
@@ -51,7 +51,23 @@ class yf_test {
 
 	/**
 	*/
-	function oauth ($params = array()) {
+	function oauth($params = array()) {
 		return module('login_form')->oauth($params);
+	}
+
+	/**
+	* Twitter bootstrap elements testing
+	*/
+	function bs($params = array()) {
+		main()->no_graphics(true);
+
+		_class('assets')->clean_all();
+		asset('bootstrap-theme');
+
+		$body = form()->text('name');
+
+		$css = _class('assets')->show_css();
+		$js = _class('assets')->show_js();
+		echo '<html><head>'.$css.'</head><body>'. $body. $js. '</body></html>';
 	}
 }
