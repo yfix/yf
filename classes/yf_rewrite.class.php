@@ -3,7 +3,7 @@
 class yf_rewrite {
 
 	public $DEFAULT_HOST = '';
-	public $DEFAULT_PORT = '80';
+	public $DEFAULT_PORT = '';
 
 	/**
 	* YF module constructor
@@ -27,10 +27,13 @@ class yf_rewrite {
 			}
 		}
 		if (!$this->DEFAULT_PORT) {
-			if (defined('WEB_PATH') && ($port = parse_url(WEB_PATH, PHP_URL_PORT))) {
-				$this->DEFAULT_PORT = $port;
+			if (defined('WEB_PATH') && strlen(WEB_PATH)) {
+				$port = parse_url(WEB_PATH, PHP_URL_PORT);
+				if ($port != '80') {
+					$this->DEFAULT_PORT = $port;
+				}
 			}
-			if (!$this->DEFAULT_PORT && $_SERVER['HTTP_PORT']) {
+			if (!$this->DEFAULT_PORT && $_SERVER['HTTP_PORT'] && $_SERVER['HTTP_PORT'] != '80') {
 				$this->DEFAULT_PORT = $_SERVER['HTTP_PORT'];
 			}
 			if (!$this->DEFAULT_PORT) {
@@ -205,7 +208,10 @@ class yf_rewrite {
 			$params['host'] = !empty($host) ? $host : $this->DEFAULT_HOST;
 		}
 		if (empty($params['port'])) {
-			$params['port'] = !empty($port) ? $port : $this->DEFAULT_PORT;
+			$port = $port ?: $this->DEFAULT_PORT;
+			if ($port != '80') {
+				$params['port'] = $port;
+			}
 		}
 		$REWRITE_ENABLED = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		if ($REWRITE_ENABLED && $for_section != 'admin') {
