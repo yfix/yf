@@ -605,7 +605,72 @@ class yf_payment_api {
 		direction             { in (приход) }
 		type_id               { deposition : пополнение счета (приход) }
 		status_id             { in_progress, success, refused }
+
+		example:
+			$payment_api = _class( 'payment_api' );
+			$options = array(
+				'user_id'         => $user_id,
+				'amount'          => '10',
+				'operation_title' => 'Пополнение счета',
+				'operation'       => 'deposition', // or 'payment'
+				'provider_name'   => 'system', // or 'administration', etc
+			);
+			$result = $payment_api->transaction( $options );
 	 */
+	public function transaction( $options = null ) {
+		$_ = &$options;
+		$operation = $_[ 'operation' ];
+		if( !in_array( $operation, array( 'payment', 'deposition', ) ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестная операция: ' . $operation,
+			);
+			return( $result );
+		}
+		$result = $this->$operation( $options );
+		return( $result );
+	}
+
+	/*
+		example:
+			$payment_api = _class( 'payment_api' );
+			$options = array(
+				'user_id'         => $user_id,
+				'amount'          => '10',
+				'operation_title' => 'Пополнение счета',
+				'operation'       => 'deposition', // or 'payment'
+			);
+			$result = $payment_api->transaction_system( $options );
+	 */
+	public function transaction_system( $options = null ) {
+		$_ = &$options;
+		$operation = $_[ 'operation' ] . '_system';
+		if( !in_array( $operation, array( 'payment_system', 'deposition_system', ) ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестная операция: ' . $operation,
+			);
+			return( $result );
+		}
+		$result = $this->$operation( $options );
+		return( $result );
+	}
+
+	/*
+		example:
+			$payment_api = _class( 'payment_api' );
+			$options = array(
+				'user_id'         => $user_id,
+				'amount'          => '10',
+				'operation_title' => 'Пополнение счета',
+			);
+			$result = $payment_api->deposition_system( $options );
+	 */
+	public function deposition_system( $options = null ) {
+		$options[ 'provider_name' ] = 'system';
+		$result = $this->deposition( $options );
+		return( $result );
+	}
 	public function deposition( $options = null ) {
 		$_ = &$options;
 		$_[ 'type_name' ] = __FUNCTION__;
@@ -642,11 +707,26 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	/*
+		example:
+			$payment_api = _class( 'payment_api' );
+			$options = array(
+				'user_id'         => $user_id,
+				'amount'          => '10',
+				'operation_title' => 'Пополнение счета',
+			);
+			$result = $payment_api->payment_system( $options );
+	 */
+	public function payment_system( $options = null ) {
+		$options[ 'provider_name' ] = 'system';
+		$result = $this->payment( $options );
+		return( $result );
+	}
 	public function payment( $options = null ) {
 		$_ = &$options;
 		$_[ 'type_name' ] = __FUNCTION__;
 		$_[ 'operation_title' ] = $_[ 'operation_title' ] ?: 'Оплата';
-		$result = $this->_operation_check( $options );
+		$result = $this->_operation_check( $_ );
 		list( $status, $data, $operation_data ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		// update payment operation
