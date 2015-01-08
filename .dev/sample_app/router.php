@@ -1,8 +1,9 @@
 <?php
 
 define('DEBUG_MODE', isset($_GET['debug']));
-define('STORAGE_PATH', __DIR__.'/tests_tmp_storage/');
-define('PROJECT_PATH', __DIR__.'/');
+define('APP_PATH', __DIR__.'/');
+define('STORAGE_PATH', APP_PATH.'tests_tmp_storage/');
+define('PROJECT_PATH', APP_PATH.'public/');
 define('SITE_DEFAULT_PAGE', './?object=docs');
 define('YF_PATH', dirname(dirname(__DIR__)).'/');
 require YF_PATH.'classes/yf_main.class.php';

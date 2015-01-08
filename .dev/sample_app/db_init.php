@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require __DIR__.'/db_setup.php';
+require __DIR__.'/config/db_setup.php';
 
 $tmp_dir = '/tmp/yf_sample_app/';
 
