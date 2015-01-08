@@ -7,7 +7,7 @@ class yf_table2_image {
 
 	/**
 	*/
-	function image($name, $path, $link = '', $extra = array(), $_this) {
+	function image($name, $path, $link = '', $extra = array(), $table) {
 		if (is_array($path)) {
 			$extra = (array)$extra + $path;
 			$path = '';
@@ -25,14 +25,14 @@ class yf_table2_image {
 		if (!isset($extra['width'])) {
 			$extra['width'] = '50px';
 		}
-		$_this->_fields[] = array(
+		$table->_fields[] = array(
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'desc'	=> $extra['desc'] ? $extra['desc'] : 'Image',
 			'path'	=> $path,
 			'link'	=> $link,
-			'func'	=> function($field, $params, $row, $instance_params, $_this) {
+			'func'	=> function($field, $params, $row, $instance_params, $table) {
 				$extra = $params['extra'];
 				$id = $row['id'];
 				$fs_path = $extra['fs_path'] ?: PROJECT_PATH;
@@ -90,6 +90,6 @@ class yf_table2_image {
 					.($link_url ? '</a>' : '');
 			}
 		);
-		return $_this;
+		return $table;
 	}
 }

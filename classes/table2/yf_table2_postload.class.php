@@ -7,7 +7,7 @@ class yf_table2_postload {
 
 	/**
 	*/
-	function postload($params = array(), $_this) {
+	function postload($params = array(), $table) {
 		$attr_postload_url = $params['attr_postload_url'] ?: 'postload-url';
 		$tr_id_key = $params['tr_id_key'] ?: 'name';
 
@@ -63,6 +63,6 @@ class yf_table2_postload {
 			});
 		';
 		jquery($jquery);
-		return $_this;
+		return $table;
 	}
 }

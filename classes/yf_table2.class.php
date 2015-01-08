@@ -720,11 +720,11 @@ class yf_table2 {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $_this = null) {
+	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $table = null) {
 		if (!$filter_data) {
 			return '';
 		}
-		return _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_data, $filter_params, $__sql, $_this);
+		return _class('table2_filter', 'classes/table2/')->_filter_sql_prepare($filter_data, $filter_params, $__sql, $table);
 	}
 
 	/**
@@ -901,7 +901,7 @@ class yf_table2 {
 			'desc'	=> $desc,
 			'link'	=> $extra['link'],
 			'data'	=> $extra['translate'] ? t($extra['data']) : $extra['data'],
-			'func'	=> function($field, $params, $row, $instance_params, $_this) {
+			'func'	=> function($field, $params, $row, $instance_params, $table) {
 				$name = $params['name'];
 				$extra = $params['extra'];
 				$orig_extra = $extra;
@@ -935,8 +935,8 @@ class yf_table2 {
 				if ($params['link']) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ?: $name;
-					$link = $_this->_process_link_params($params['link']. $instance_params['links_add'], $row, $extra + array('id' => $link_id));
-					$is_link_allowed = $_this->_is_link_allowed($link);
+					$link = $table->_process_link_params($params['link']. $instance_params['links_add'], $row, $extra + array('id' => $link_id));
+					$is_link_allowed = $table->_is_link_allowed($link);
 				}
 				if ($link && $is_link_allowed) {
 					if ($extra['rewrite']) {
@@ -946,7 +946,7 @@ class yf_table2 {
 					if (!isset($extra['nowrap']) || $extra['nowrap']) {
 						$text = str_replace(' ', '&nbsp;', $text);
 					}
-					$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN_MINI;
+					$class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
 					if ($extra['class_add']) {
 						$class .= ' '.$extra['class_add'];
 					}
@@ -970,8 +970,8 @@ class yf_table2 {
 					}
 					$body .= $text;
 				}
-				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
-				return $_this->_apply_badges($body, $orig_extra, $field);
+				$body .= $extra['hidden_data'] ? $table->_hidden_data_container($row, $params, $instance_params) : '';
+				return $table->_apply_badges($body, $orig_extra, $field);
 			}
 		);
 		return $this;
@@ -1079,10 +1079,10 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'desc'	=> $desc,
-			'func'	=> function($field, $params, $row, $instance_params, $_this) {
+			'func'	=> function($field, $params, $row, $instance_params, $table) {
 				$extra = $params['extra'];
 				$text = str_replace(' ', '&nbsp;', _format_date($field, $extra['format']));
-				return $_this->_apply_badges($text, $extra, $field);
+				return $table->_apply_badges($text, $extra, $field);
 			}
 		);
 		return $this;
@@ -1103,14 +1103,14 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'desc'	=> $desc,
-			'func'	=> function($field, $params, $row, $instance_params, $_this) {
+			'func'	=> function($field, $params, $row, $instance_params, $table) {
 				$extra = $params['extra'];
 				$extra['id'] = $extra['name'];
 				$color_ok = $extra['color_ok'] ?: 'yellow';
 				$color_ko = $extra['color_ko'] ?: '';
-				$class = $extra['class'] ?: $_this->CLASS_ICON_STAR;
-				$class_ok = $extra['class_ok'] ?: $_this->CLASS_STAR_OK;
-				$class_ko = $extra['class_ko'] ?: $_this->CLASS_STAR_KO;
+				$class = $extra['class'] ?: $table->CLASS_ICON_STAR;
+				$class_ok = $extra['class_ok'] ?: $table->CLASS_STAR_OK;
+				$class_ko = $extra['class_ko'] ?: $table->CLASS_STAR_KO;
 				$max = $extra['max'] ?: 5;
 				$stars = $extra['stars'] ?: 5;
 				$input = isset($row[$extra['name']]) ? $row[$extra['name']] : $field;
@@ -1205,7 +1205,7 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($row, $params, $instance_params, $_this) {
+			'func'	=> function($row, $params, $instance_params, $table) {
 				$extra = $params['extra'];
 				$override_id = '';
 				if (isset($extra['id'])) {
@@ -1218,11 +1218,11 @@ class yf_table2 {
 					$no_text = 1;
 				}
 				$id = $override_id ? $override_id : 'id';
-				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $_this->CLASS_ICON_BTN);
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $table->CLASS_ICON_BTN);
 				$link = trim($params['link']. $instance_params['links_add']);
 				if (strlen($link)) {
-					$link = $_this->_process_link_params($link, $row, $extra + array('id' => $id));
-					if (!$_this->_is_link_allowed($link)) {
+					$link = $table->_process_link_params($link, $row, $extra + array('id' => $id));
+					if (!$table->_is_link_allowed($link)) {
 						return '';
 					}
 				}
@@ -1230,12 +1230,12 @@ class yf_table2 {
 					$link = url($link);
 				}
 				$extra['href'] = $link;
-				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN_MINI;
+				$class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
 				if ($extra['class_add']) {
 					$class .= ' '.$extra['class_add'];
 				}
 				if ($extra['no_ajax'] || $instance_params['no_ajax']) {
-					$class .= ' '.$_this->CLASS_NO_AJAX;
+					$class .= ' '.$table->CLASS_NO_AJAX;
 				}
 				$extra['class'] = $class;
 				if ($extra['hidden_toggle']) {
@@ -1252,7 +1252,7 @@ class yf_table2 {
 					$body = '<button'._attrs($extra, array('class','target','title')).'><i class="'.trim($icon).'"></i>'.(empty($no_text) ? ' '.t($params['name']) : '').'</button> ';
 				}
 
-				$body .= $extra['hidden_data'] ? $_this->_hidden_data_container($row, $params, $instance_params) : '';
+				$body .= $extra['hidden_data'] ? $table->_hidden_data_container($row, $params, $instance_params) : '';
 				return $body;
 			},
 		);
@@ -1409,7 +1409,7 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($row, $params, $instance_params, $_this) {
+			'func'	=> function($row, $params, $instance_params, $table) {
 				$extra = $params['extra'];
 				$override_id = '';
 				if (isset($extra['id'])) {
@@ -1420,7 +1420,7 @@ class yf_table2 {
 				}
 				$id = $override_id ? $override_id : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				if (strlen($link) && !$_this->_is_link_allowed($link)) {
+				if (strlen($link) && !$table->_is_link_allowed($link)) {
 					return '';
 				}
 				if ($extra['rewrite']) {
@@ -1428,14 +1428,14 @@ class yf_table2 {
 				}
 				$extra['href'] = $link;
 				$extra['title'] = $params['name'];
-				$extra['class'] = $_this->CLASS_CHANGE_ACTIVE;
+				$extra['class'] = $table->CLASS_CHANGE_ACTIVE;
 				if (!isset($extra['data-test'])) {
 					$extra['data-test'] = 'activate';
 				}
-				if (!isset($_this->_pair_active)) {
-					$_this->_pair_active = main()->get_data('pair_active');
+				if (!isset($table->_pair_active)) {
+					$table->_pair_active = main()->get_data('pair_active');
 				}
-				$values = $_this->_pair_active;
+				$values = $table->_pair_active;
 				$val = $values[intval((bool)$row['active'])];
 				return !$extra['disabled'] ? '<a'._attrs($extra, array('href','class','title')).'>'. $val. '</a> ' : $val;
 			},
@@ -1458,24 +1458,24 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($params, $instance_params, $_this) {
+			'func'	=> function($params, $instance_params, $table) {
 				$extra = $params['extra'];
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
 				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				if (strlen($link) && !$_this->_is_link_allowed($link)) {
+				if (strlen($link) && !$table->_is_link_allowed($link)) {
 					return '';
 				}
 				if ($extra['rewrite']) {
 					$link = url($link);
 				}
 				$extra['href'] = $link;
-				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $_this->CLASS_ICON_BTN);
-				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN_MINI;
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $table->CLASS_ICON_BTN);
+				$class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
 				if ($extra['class_add']) {
 					$class .= ' '.$extra['class_add'];
 				}
 				if ($extra['no_ajax'] || $instance_params['no_ajax']) {
-					$class .= ' '.$_this->CLASS_NO_AJAX;
+					$class .= ' '.$table->CLASS_NO_AJAX;
 				}
 				$extra['class'] = $class;
 				return '<a'._attrs($extra, array('href','class','title')).'><i class="'.$icon.'"></i> '.t($params['name']).'</a> ';
@@ -1539,7 +1539,7 @@ class yf_table2 {
 			'name'	=> $name,
 			'extra'	=> $extra,
 			'link'	=> $link,
-			'func'	=> function($params, $instance_params, $_this) {
+			'func'	=> function($params, $instance_params, $table) {
 				$extra = $params['extra'];
 				$value = $params['name'] ? $params['name'] : 'Submit';
 				if (is_array($value) && empty($extra)) {
@@ -1547,8 +1547,8 @@ class yf_table2 {
 					$value = '';
 				}
 				$value = $extra['value'] ? $extra['value'] : $value;
-				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $_this->CLASS_ICON_SAVE);
-				$class = ($extra['class'] ?: $extra['a_class']) ?: $_this->CLASS_BTN_MINI;
+				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $table->CLASS_ICON_SAVE);
+				$class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
 
 				$extra['type'] = 'submit';
 				$extra['name'] = trim($value);
