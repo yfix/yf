@@ -1,5 +1,8 @@
 <?php
 
+$CONF['css_framework'] = 'bs3';
+$CONF['DEF_BOOTSTRAP_THEME'] = 'bootstrap';
+$PROJECT_CONF['tpl']['REWRITE_MODE'] = 1;
 define('DEBUG_MODE', isset($_GET['debug']));
 define('APP_PATH', __DIR__.'/');
 define('STORAGE_PATH', APP_PATH.'tests_tmp_storage/');
