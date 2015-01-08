@@ -1495,10 +1495,13 @@ class yf_main {
 			$_SERVER['SERVER_ADDR'] = preg_replace('#[^0-9\.]+#', '', trim( $_SERVER['SERVER_ADDR'] ));
 		}
 		if (!is_null($_SERVER['SERVER_PORT'])) {
-			$_SERVER['SERVER_PORT'] = intval( $_SERVER['SERVER_PORT'] );
+			$_SERVER['SERVER_PORT'] = intval($_SERVER['SERVER_PORT']);
 		}
 		if (!is_null($_SERVER['HTTP_HOST'])) {
-			$_SERVER['HTTP_HOST'] = strtolower(str_replace('..', '.', preg_replace('#[^0-9a-z\-\.]+#', '', trim( $_SERVER['HTTP_HOST'] ))));
+			if (false !== ($pos = strpos($_SERVER['HTTP_HOST'], ':'))) {
+				$_SERVER['HTTP_HOST'] = substr($_SERVER['HTTP_HOST'], 0, $pos);
+			}
+			$_SERVER['HTTP_HOST'] = strtolower(str_replace('..', '.', preg_replace('#[^0-9a-z\-\.]+#', '', trim($_SERVER['HTTP_HOST']))));
 		}
 		if (!is_null($_SERVER['REQUEST_URI'])) {
 			// Possible bug when apache sends full url into request_uri, like this: "http://test.dev/" instead of "/"
@@ -1589,9 +1592,9 @@ class yf_main {
 			}
 			$this->web_path_was_not_defined = true;
 			define('WEB_PATH',
-				(($_SERVER['HTTPS'] || $_SERVER['SSL_PROTOCOL']) ? 'https://' : 'http://')
-				.$host
-				.str_replace(array("\\",'//'), array('/','/'), (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path).'/')
+				($this->is_https() ? 'https://' : 'http://')
+				.$host. ($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != '80' ? ':'.$_SERVER['SERVER_PORT'] : '')
+				.str_replace(array("\\",'//'), '/', (MAIN_TYPE_ADMIN ? dirname($cur_web_path) : $cur_web_path).'/')
 			);
 		}
 		// Should be different that WEB_PATH to distribute static content from other subdomain
