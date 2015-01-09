@@ -169,4 +169,11 @@ class yf_test {
 		}
 		echo '<html><head>'._class('assets')->show_css().'</head><body>'. $body. _class('assets')->show_js(). '</body></html>';
 	}
+
+	/**
+	*/
+	function amqp() {
+		$obj = _class('queue_amqp', 'classes/queue/');
+		return var_export($obj, 1);
+	}
 }
