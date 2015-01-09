@@ -1,7 +1,16 @@
 <?php
 
-class yf_html5_framework_empty {
-	function form_row ($content, $extra = array(), $replace = array(), $obj) {
+class yf_html5fw_empty {
+
+	/**
+	*/
+	function form_render_out ($content, $extra = array(), $replace = array(), $form) {
+		return $content;
+	}
+
+	/**
+	*/
+	function form_row ($content, $extra = array(), $replace = array(), $form) {
 		$row_start = 
 			'<div>'.PHP_EOL
 				.($extra['desc'] && !$extra['no_label'] ? '<label for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
@@ -36,5 +45,12 @@ class yf_html5_framework_empty {
 					.(isset($extra['tinymce']) ? $this->_tinymce_html($extra, $replace) : '')
 				.$row_end;
 		}
+	}
+
+	/**
+	*/
+	function form_dd_row($content, $extra = array(), $replace = array(), $form) {
+// TODO
+		return $this->form_row($content, $extra, $replace, $form);
 	}
 }
