@@ -100,6 +100,9 @@ class yf_assets {
 		// Do not use web server for self-accessible paths
 		if (substr($url, 0, strlen(MEDIA_PATH)) === MEDIA_PATH) {
 			$path = PROJECT_PATH. substr($url, strlen(MEDIA_PATH));
+			// This line needed to strip query string from file name like this:
+			// /templates/user/css/style.css?1416914173 -> templates/user/css/style.css
+			$path = parse_url($path, PHP_URL_PATH);
 			return file_get_contents($path);
 		}
 		$url = (substr($url, 0, 2) === '//' ? 'http:' : ''). $url;
