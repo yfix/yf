@@ -38,7 +38,7 @@ class yf_site_nav_bar {
 			}
 		}
 		// Add first item to all valid items
-		array_unshift($items, $this->_nav_item('Home', $this->HOME_LOCATION, 'icon-home fa-home'));
+		array_unshift($items, $this->_nav_item('Home', $this->HOME_LOCATION, 'icon-home fa fa-home'));
 		// Try to get items from hook '_nav_bar_items'
 		if (!empty($this->HOOK_NAME)) {
 			$CUR_OBJ = module($_GET['object']);

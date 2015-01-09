@@ -10,30 +10,7 @@ class yf_validate {
 	/** @var array Allowed nick symbols (display for user) */
 	public $NICK_ALLOWED_SYMBOLS	= array('a-z','0-9','_','\-','@','#',' ');
 	/** @var array Reserved words for the profile url (default) */
-	public $reserved_words = array(
-		'login',
-		'logout',
-		'admin',
-		'admin_modules',
-		'classes',
-		'modules',
-		'functions',
-		'uploads',
-		'fonts',
-		'pages_cache',
-		'core_cache',
-		'templates'
-	);
-/*
-	public $methods_info = array(
-		'numeric' => array(
-			'regex'		=> '^[\-+]?[0-9]*\.?[0-9]+$',
-			'help'		=> 'Value must contain only numbers',
-			'examples'	=> array('25', '25.05'),
-		),
-	);
-		# $extra['title'] is used in html5 validation suggesting messages
-*/
+	public $reserved_words = array('login', 'logout', 'admin', 'admin_modules', 'classes', 'modules', 'functions', 'uploads', 'fonts', 'pages_cache', 'core_cache', 'templates');
 
 	/**
 	* Catch missing method call
@@ -974,7 +951,7 @@ class yf_validate {
 	* Returns TRUE is captcha user input value is valid
 	*/
 	public function captcha($in) {
-		return _class('captcha')->check('captcha');
+		return _class('captcha')->check('captcha', $in);
 	}
 
 	/**

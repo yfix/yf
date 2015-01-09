@@ -238,6 +238,9 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		_class('assets')->USE_CACHE = false;
 	}
 	public function test_show_combined() {
+		if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+			$this->markTestSkipped( 'PHPUnit will skip this test method for PHP version <5.4' );
+		}
 		_class('assets')->USE_CACHE = true;
 		_class('assets')->CACHE_DIR_TPL = '{project_path}/_tmp/assets_cache_{out_type}/{asset_name}_{version}/';
 		_class('assets')->COMBINE = true;

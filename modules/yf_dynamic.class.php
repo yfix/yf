@@ -17,6 +17,7 @@ class yf_dynamic {
 		'user.login',
 		'user.email',
 		'user.nick',
+		'captcha',
 	);
 
 	/**

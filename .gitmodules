@@ -49,3 +49,6 @@
 [submodule "libs/php-unified-archive"]
 	path = libs/php-unified-archive
 	url = https://github.com/yfix/php-unified-archive.git
+[submodule "libs/php-ffmpeg"]
+	path = libs/php-ffmpeg
+	url = https://github.com/yfix/PHP-FFMpeg

@@ -12,7 +12,7 @@ class yf_form2_ckeditor {
 	* 'www/' usually means PROJECT_PATH inside project working copy.
 	* P.S. You can use free CDN for ckeditor as alternate solution.
 	*/
-	function _ckeditor_html($extra = array(), $replace = array(), $__this) {
+	function _ckeditor_html($extra = array(), $replace = array(), $form) {
 		if (!is_array($extra)) {
 			return '';
 		}
@@ -20,7 +20,7 @@ class yf_form2_ckeditor {
 		if (!is_array($params)) {
 			$params = array();
 		}
-		if ($__this->_ckeditor_scripts_included) {
+		if ($form->_ckeditor_scripts_included) {
 			return '';
 		}
 		$web_ck_path = '';
@@ -56,7 +56,7 @@ class yf_form2_ckeditor {
 		');
 
 		// Avoid including ckeditor scripts several times on same page
-		$__this->_ckeditor_scripts_included = true;
+		$form->_ckeditor_scripts_included = true;
 
 		return $body;
 	}

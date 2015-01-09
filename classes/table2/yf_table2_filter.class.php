@@ -7,11 +7,11 @@ class yf_table2_filter {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $_this = null) {
+	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $table = null) {
 		if (!$filter_data) {
 			return '';
 		}
-		$db = is_object($_this->_params['db']) ? $_this->_params['db'] : db();
+		$db = is_object($table->_params['db']) ? $table->_params['db'] : db();
 		$special_fields = array(
 			'order_by',
 			'order_direction',
@@ -192,7 +192,7 @@ class yf_table2_filter {
 	/**
 	* Simple filtering of the given array. Need to support table() raw array data with filtering
 	*/
-	function _filter_array(&$data, $filter = array(), $filter_params = array(), $_this = null) {
+	function _filter_array(&$data, $filter = array(), $filter_params = array(), $table = null) {
 		if (!$data || !$filter) {
 			return false;
 		}

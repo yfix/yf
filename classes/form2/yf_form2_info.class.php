@@ -6,11 +6,11 @@ class yf_form2_info {
 
 	/**
 	*/
-	function user_info($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
+	function user_info($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
 		$name = 'user_name';
-		$user_id = $_this->_replace['user_id'];
+		$user_id = $form->_replace['user_id'];
 
-		$db = ($_this->_params['db'] ?: $extra['db']) ?: db();
+		$db = ($form->_params['db'] ?: $extra['db']) ?: db();
 
 		$user_info = $db->get('SELECT login,email,phone,nick,id AS user_name FROM '.$db->_fix_table_name('user').' WHERE id='.intval($user_id));
 		$user_name = array();
@@ -30,19 +30,19 @@ class yf_form2_info {
 				$user_name[] = $user_info['nick'];
 			}
 		}
-		$_this->_replace[$name] = implode('; ', $user_name);
+		$form->_replace[$name] = implode('; ', $user_name);
 
 		$extra['link'] = './?object=members&action=edit&id='.$user_id;
-		return $_this->info($name, $desc, $extra, $replace);
+		return $form->info($name, $desc, $extra, $replace);
 	}
 
 	/**
 	*/
-	function admin_info($name = '', $desc = '', $extra = array(), $replace = array(), $_this) {
+	function admin_info($name = '', $desc = '', $extra = array(), $replace = array(), $form) {
 		$name = 'admin_name';
-		$user_id = $_this->_replace['user_id'];
+		$user_id = $form->_replace['user_id'];
 
-		$db = ($_this->_params['db'] ?: $extra['db']) ?: db();
+		$db = ($form->_params['db'] ?: $extra['db']) ?: db();
 
 		$user_info = $db->get('SELECT login,id AS user_name FROM '.$db->_fix_table_name('admin').' WHERE id='.intval($user_id));
 // TODO: add tpl param
@@ -55,8 +55,8 @@ class yf_form2_info {
 				$user_name[] = $user_info['login'];
 			}
 		}
-		$_this->_replace[$name] = implode('; ', $user_name);
+		$form->_replace[$name] = implode('; ', $user_name);
 		$extra['link'] = './?object=admin&action=edit&id='.$user_id;
-		return $_this->info($name, $desc, $extra, $replace);
+		return $form->info($name, $desc, $extra, $replace);
 	}
 }

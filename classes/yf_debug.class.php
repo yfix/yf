@@ -117,7 +117,6 @@ class yf_debug {
 				<span title="'.t('Database queries').'">&nbsp;<i class="icon icon-table fa fa-table"></i>&nbsp;'.intval($num_db_queries).'</span><br />
 				<span title="'.t('Debug console generation time in seconds').'"><small>D&nbsp;'.$debug_time.'</small></span>',
 		);
-		$body[] = '<style type="text/css" class="yf_core">#debug_console .nav li.tab_info_compact a { padding: 2px 5px; line-height:normal; }</style>';
 		foreach ((array)$debug_contents as $name => $content) {
 			if (empty($content)) {
 				continue;

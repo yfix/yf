@@ -23,7 +23,7 @@ class yf_site_nav_bar {
 		if (empty($items)) {
 			return false;
 		}
-		array_unshift($items, $this->_nav_item('Home', './?object=admin_home', 'icon-home fa-home'));
+		array_unshift($items, $this->_nav_item('Home', './?object=admin_home', 'icon-home fa fa-home'));
 		if (!empty($this->HOOK_NAME)) {
 			$CUR_OBJ = module($_GET['object']);
 		}

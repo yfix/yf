@@ -147,7 +147,8 @@ class yf_payment_api {
 	public $type       = null;
 	public $type_index = null;
 
-	public $OPERATION_LIMIT = 10;
+	public $OPERATION_LIMIT     = 10;
+	public $BALANCE_LIMIT_LOWER = 0;
 
 	public function _init() {
 		$this->user_id_default = (int)main()->USER_ID;
@@ -583,6 +584,21 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function provider_currency( $options = null ) {
+		// get options '_'
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$result = null;
+		if( is_array( $_provider ) ) {
+			foreach( $_provider as $id => $item ) {
+				$name = $item[ 'name' ];
+				$class = 'provider_' . $name;
+				$provider = $this->_class( $class );
+				$provider && $_provider[ $id ][ '_currency_allow' ] = &$provider->currency_allow;
+			}
+		}
+		return( $result );
+	}
+
 	/*
 		account_id by user_id
 		provider_id
@@ -590,7 +606,72 @@ class yf_payment_api {
 		direction             { in (приход) }
 		type_id               { deposition : пополнение счета (приход) }
 		status_id             { in_progress, success, refused }
+
+		example:
+			$payment_api = _class( 'payment_api' );
+			$options = array(
+				'user_id'         => $user_id,
+				'amount'          => '10',
+				'operation_title' => 'Пополнение счета',
+				'operation'       => 'deposition', // or 'payment'
+				'provider_name'   => 'system', // or 'administration', etc
+			);
+			$result = $payment_api->transaction( $options );
 	 */
+	public function transaction( $options = null ) {
+		$_ = &$options;
+		$operation = $_[ 'operation' ];
+		if( !in_array( $operation, array( 'payment', 'deposition', ) ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестная операция: ' . $operation,
+			);
+			return( $result );
+		}
+		$result = $this->$operation( $options );
+		return( $result );
+	}
+
+	/*
+		example:
+			$payment_api = _class( 'payment_api' );
+			$options = array(
+				'user_id'         => $user_id,
+				'amount'          => '10',
+				'operation_title' => 'Пополнение счета',
+				'operation'       => 'deposition', // or 'payment'
+			);
+			$result = $payment_api->transaction_system( $options );
+	 */
+	public function transaction_system( $options = null ) {
+		$_ = &$options;
+		$operation = $_[ 'operation' ] . '_system';
+		if( !in_array( $operation, array( 'payment_system', 'deposition_system', ) ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестная операция: ' . $operation,
+			);
+			return( $result );
+		}
+		$result = $this->$operation( $options );
+		return( $result );
+	}
+
+	/*
+		example:
+			$payment_api = _class( 'payment_api' );
+			$options = array(
+				'user_id'         => $user_id,
+				'amount'          => '10',
+				'operation_title' => 'Пополнение счета',
+			);
+			$result = $payment_api->deposition_system( $options );
+	 */
+	public function deposition_system( $options = null ) {
+		$options[ 'provider_name' ] = 'system';
+		$result = $this->deposition( $options );
+		return( $result );
+	}
 	public function deposition( $options = null ) {
 		$_ = &$options;
 		$_[ 'type_name' ] = __FUNCTION__;
@@ -627,11 +708,26 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	/*
+		example:
+			$payment_api = _class( 'payment_api' );
+			$options = array(
+				'user_id'         => $user_id,
+				'amount'          => '10',
+				'operation_title' => 'Пополнение счета',
+			);
+			$result = $payment_api->payment_system( $options );
+	 */
+	public function payment_system( $options = null ) {
+		$options[ 'provider_name' ] = 'system';
+		$result = $this->payment( $options );
+		return( $result );
+	}
 	public function payment( $options = null ) {
 		$_ = &$options;
 		$_[ 'type_name' ] = __FUNCTION__;
 		$_[ 'operation_title' ] = $_[ 'operation_title' ] ?: 'Оплата';
-		$result = $this->_operation_check( $options );
+		$result = $this->_operation_check( $_ );
 		list( $status, $data, $operation_data ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		// update payment operation
@@ -710,7 +806,7 @@ class yf_payment_api {
 		$status_id = (int)$status[ 'status_id' ];
 		$data[ 'status' ] = $status;
 		// check account
-		$account_result = $this->get_account( $options );
+		list( $balance, $account_result ) = $this->get_balance( $options );
 		if( empty( $account_result ) ) { return( $account_result ); }
 		list( $account_id, $account ) = $account_result;
 		// check amount
@@ -725,6 +821,21 @@ class yf_payment_api {
 		}
 		$sql_amount = $this->_number_mysql( $amount );
 		$data[ 'sql_amount' ] = $sql_amount;
+		// check balance limit lower
+		$balance_limit_lower = $this->_default( array(
+			$_[ 'balance_limit_lower' ],
+			$account[ 'options' ][ 'balance_limit_lower' ],
+			$this->BALANCE_LIMIT_LOWER,
+			0,
+		));
+		$balance_limit_lower = $this->_number_float( $balance_limit_lower );
+		if( $type[ 'name' ] == 'payment' && ( $balance - $amount < $balance_limit_lower ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Недостаточно средств на счету',
+			);
+			return( $result );
+		}
 		// prepare provider
 		$object = array();
 		if( !empty( $_[ 'provider_name' ] ) ) {
@@ -807,12 +918,14 @@ class yf_payment_api {
 	}
 
 	// simple route: class__sub_class->method
-	public function _class( $class, $method, $options = null ) {
+	public function _class( $class, $method = null, $options = null ) {
 		$_path  = $this->_class_path;
 		$_class_name = __CLASS__ . '__' . $class;
 		$_class = _class_safe( $_class_name, $_path );
-		$status = method_exists( $_class, $method );
+		$status = $_class instanceof $_class_name;
 		if( !$status ) { return( null ); }
+		$status = method_exists( $_class, $method );
+		if( !$status ) { return( $_class ); }
 		$result = $_class->{ $method }( $options );
 		return( $result );
 	}
@@ -850,10 +963,21 @@ class yf_payment_api {
 		return( $float );
 	}
 
+	public function _default( $list = null ) {
+		$result = null;
+		foreach( $list as $index => $value ) {
+			if( !is_null( $value ) ) {
+				$result = &$list[ $index ];
+				break;
+			}
+		}
+		return( $result );
+	}
+
 	public function dump( $options = null ) {
 		static $is_first = true;
 		// import options
-		isset( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		$ts = microtime( true );
 		$file = $_file ?: sprintf( '/tmp/payment_api_dump-%s.txt', date( 'Y-m-d_H-i-s', $ts ) );
 		ini_set( 'html_errors', 0 );

@@ -9,6 +9,8 @@ return array(
 	'versions' => array('master' => array(
 		'css' => array(
 			'content' => '
+				#debug_console { clear: both; }
+				#debug_console .nav li.tab_info_compact a { padding: 2px 5px; line-height:normal; }
 				#debug_console pre { color: #ccc; background: black; font-weight: bold; font-family: inherit; margin: 0; display: inline-block; width: auto; padding: 2px; border: 0; }
 				#debug_console #debug_exec_time { float:left; display:block; padding-left: 20px; padding-right: 20px; }
 			',

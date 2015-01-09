@@ -215,7 +215,7 @@ class yf_captcha {
 	/**
 	* Show image with text
 	*/
-	function check($field_in_form = 'image_numbers') {
+	function check($field_in_form = 'image_numbers', $input = null) {
 		if (!$this->ENABLED) {
 			return true;
 		}
@@ -226,10 +226,13 @@ class yf_captcha {
 		}
 		$this->already_used = true;
 
-		if (empty($_POST[$field_in_form])) {
+		if (!isset($input)) {
+			$input = $_POST[$field_in_form] ?: $_GET[$field_in_form];
+		}
+		if (empty($input)) {
 			_re('Please enter code', $field_in_form);
 		} else {
-			$hash = md5($this->secret_key. $_POST[$field_in_form]);
+			$hash = md5($this->secret_key. $input);
 			if ($this->use_cookies) {
 				if ($hash != $_COOKIE[$this->var_name]) {
 					$code_incorrect = true;

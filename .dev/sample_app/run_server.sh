@@ -1,7 +1,7 @@
 #!/bin/bash
  
 DOCROOT="$(pwd)/public"
-ROUTER="$(pwd)/index.php"
+ROUTER="$(pwd)/router.php"
 HOST=0.0.0.0
 PORT=33380
  

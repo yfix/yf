@@ -43,6 +43,8 @@ td input[type=text], td textarea { margin-bottom: 0; }
 .table a.btn { text-decoration: none; }
 .table { width:auto; }
 
+.control-group-required .control-label:after, .form-group-required .control-label:after { content:" *"; color:red; }
+
 body.cssfw-bs3 .carousel-control .icon-chevron-left,
 body.cssfw-bs3 .carousel-control .icon-chevron-right { position: absolute; top: 50%; z-index: 5; display: inline-block; }
 body.cssfw-bs3 a.accordion-toggle { display: block; }
