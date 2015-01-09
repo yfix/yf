@@ -56,18 +56,117 @@ class yf_test {
 	}
 
 	/**
-	* Twitter bootstrap elements testing
+	* Css frameworks lister
 	*/
-	function bs($params = array()) {
+	function html5fw($params = array()) {
 		main()->no_graphics(true);
-
 		_class('assets')->clean_all();
+		if (!$params['use_yf_fixes'] && !$_GET['use_yf_fixes']) {
+			_class('assets')->MAIN_TPL_JS = '';
+			_class('assets')->MAIN_TPL_CSS = '';
+		}
 		asset('bootstrap-theme');
 
-		$body = form()->text('name');
+		$links = array();
+		$prefix = 'html5fw_';
+		foreach (get_class_methods($this) as $name) {
+			if ($name[0] !== '_' && substr($name, 0, strlen($prefix)) === $prefix) {
+				$links[url('/@object/'.$name)] = substr($name, strlen($prefix));
+			}
+		}
+		$body = _class('html')->navlist($links);
+		echo '<html><head>'._class('assets')->show_css().'</head><body>'. $body. _class('assets')->show_js(). '</body></html>';
+	}
 
-		$css = _class('assets')->show_css();
-		$js = _class('assets')->show_js();
-		echo '<html><head>'.$css.'</head><body>'. $body. $js. '</body></html>';
+	/**
+	*/
+	function html5fw_empty($params = array()) {
+		return $this->_html5fw_test('empty', function($fw, $params) { }, $params);
+	}
+
+	/**
+	*/
+	function html5fw_bs2($params = array()) {
+		return $this->_html5fw_test('bs2', function($fw, $params) {
+			asset('bootstrap-theme');
+		}, $params);
+	}
+
+	/**
+	*/
+	function html5fw_bs3($params = array()) {
+		return $this->_html5fw_test('bs3', function($fw, $params) {
+			asset('bootstrap-theme');
+		}, $params);
+	}
+
+	/**
+	*/
+	function html5fw_foundation($params = array()) {
+		return $this->_html5fw_test('foundation', function($fw, $params) {
+			asset('foundation');
+		}, $params);
+	}
+
+	/**
+	*/
+	function html5fw_pure($params = array()) {
+		return $this->_html5fw_test('pure', function($fw, $params) {
+			asset('purecss');
+		}, $params);
+	}
+
+	/**
+	*/
+	function html5fw_semantic_ui($params = array()) {
+		return $this->_html5fw_test('semantic_ui', function($fw, $params) {
+			asset('semantic-ui');
+		}, $params);
+	}
+
+	/**
+	*/
+	function html5fw_uikit($params = array()) {
+		return $this->_html5fw_test('uikit', function($fw, $params) {
+			asset('uikit');
+		}, $params);
+	}
+
+	/**
+	*/
+	function html5fw_maxmert($params = array()) {
+		return $this->_html5fw_test('maxmert', function($fw, $params) {
+			asset('maxmertkit');
+		}, $params);
+	}
+
+	/**
+	* Css frameworks acceptance testing unified method
+	*/
+	function _html5fw_test($fw = 'bs2', $callback, $params = array()) {
+		main()->no_graphics(true);
+		_class('assets')->clean_all();
+		if (!$params['use_yf_fixes'] && !$_GET['use_yf_fixes']) {
+			_class('assets')->MAIN_TPL_JS = '';
+			_class('assets')->MAIN_TPL_CSS = '';
+		}
+		conf('css_framework', $fw);
+
+		$callback($fw, $params);
+
+		$method = $_GET['id'];
+		$obj = _class('test_html5fw_'.$fw, 'modules/test/');
+		if (!$method) {
+			$links = array();
+			foreach (get_class_methods($obj) as $name) {
+				if ($name[0] !== '_') {
+					$links[url('/@object/@action/'.$name)] = $name;
+				}
+			}
+			$body = _class('html')->navlist($links);
+		} else {
+			$body = $obj->$method($params);
+		}
+		echo '<html><head>'._class('assets')->show_css().'</head><body>'. $body. _class('assets')->show_js(). '</body></html>';
 	}
 }
