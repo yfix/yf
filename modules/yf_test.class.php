@@ -176,4 +176,27 @@ class yf_test {
 		$obj = _class('queue_amqp', 'classes/queue/');
 		return var_export($obj, 1);
 	}
+
+	/**
+	*/
+	function sass() {
+		require_php_lib('scssphp');
+		$raw = '
+			$color: #abc;
+			div { color: lighten($color, 20%); }
+		';
+		$scss = new scssc();
+		$css = $scss->compile($raw);
+		return 'SASS: <pre>'._prepare_html($raw).'</pre>'.PHP_EOL.'<br \>CSS: <pre>'._prepare_html($css).'</pre>';
+	}
+
+	/**
+	*/
+	function less() {
+		require_php_lib('lessphp');
+		$raw = '.block { padding: 3 + 4px }';
+		$less = new \lessc;
+		$css = $less->compile($raw);
+		return 'LESS: <pre>'._prepare_html($raw).'</pre>'.PHP_EOL.'<br \>CSS: <pre>'._prepare_html($css).'</pre>';
+	}
 }
