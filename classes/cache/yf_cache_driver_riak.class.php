@@ -1,13 +1,5 @@
 <?php
 
-/*
-use Riak\Bucket;
-use Riak\Connection;
-use Riak\Input;
-use Riak\Exception;
-use Riak\Object;
-*/
-
 load('cache_driver', 'framework', 'classes/cache/');
 class yf_cache_driver_riak extends yf_cache_driver {
 
@@ -82,7 +74,7 @@ class yf_cache_driver_riak extends yf_cache_driver {
 			return null;
 		}
 		try {
-			$object = new Object($name);
+			$object = new Riak\Object($name);
 			$object->setContent(serialize($data));
 			if ($ttl > 0) {
 				$object->addMetadata(self::EXPIRES_HEADER, (string) (time() + $ttl));
@@ -175,10 +167,10 @@ class yf_cache_driver_riak extends yf_cache_driver {
 		// Our approach here is last-write wins
 		$winner = $objectList[count($objectList)];
 
-		$putInput = new Input\PutInput();
+		$putInput = new Riak\Input\PutInput();
 		$putInput->setVClock($vClock);
 
-		$mergedObject = new Object($id);
+		$mergedObject = new Riak\Object($id);
 		$mergedObject->setContent($winner->getContent());
 
 		$this->bucket->put($mergedObject, $putInput);
