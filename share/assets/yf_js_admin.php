@@ -1,5 +1,7 @@
 <?php
 
+return function() {
+
 return array(
 	'versions' => array(
 		'master' => array(
@@ -121,3 +123,5 @@ return array(
 		'js' => 'yf_popover',
 	),
 );
+
+};

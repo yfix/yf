@@ -1,5 +1,7 @@
 <?php
 
+return function() {
+
 return array(
 	'versions' => array(
 		'3.3.1' => array(
@@ -17,3 +19,5 @@ return array(
 		'css' => 'font-awesome4',
 	),
 );
+
+};

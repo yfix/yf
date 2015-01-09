@@ -1,5 +1,7 @@
 <?php
 
+return function() {
+
 $locale = conf('language') ?: 'ru';
 return array(
 	'versions' => array(
@@ -28,3 +30,5 @@ return array(
 		'js' => 'jquery',
 	),
 );
+
+};

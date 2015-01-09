@@ -1,5 +1,7 @@
 <?php
 
+return function() {
+
 $lang = conf('language');
 return array(
 	'versions' => array(
@@ -16,3 +18,5 @@ return array(
 #		'css' => 'bootstrap',
 	),
 );
+
+};
