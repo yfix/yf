@@ -1051,15 +1051,27 @@ class yf_assets {
 			$func = $this->COMBINED_VERSION_TPL;
 			$version = $func($out_type);
 		} else {
-			$date = explode('-', date('Y-m-d-H-i-s'));
+			if (!isset($this->_cache_language)) {
+				$this->_cache_language = conf('language');
+			}
+			$lang = $this->_cache_language;
+			if (!isset($this->_cache_html5fw)) {
+				$this->_cache_html5fw = conf('language');
+			}
+			$html5fw = $this->_cache_html5fw;
+			if (!isset($this->_cache_date)) {
+				$this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
+			}
+			$date = $this->_cache_date;
 			$replace = array(
 				'{site_path}'	=> SITE_PATH,
 				'{app_path}'	=> APP_PATH,
 				'{project_path}'=> PROJECT_PATH,
 				'{main_type}'	=> MAIN_TYPE,
 				'{host}'		=> $_SERVER['HTTP_HOST'],
-				'{lang}'		=> conf('language'),
+				'{lang}'		=> $lang,
 				'{out_type}'	=> $out_type,
+				'{html5fw}'		=> $html5fw,
 				'{year}'		=> $date[0],
 				'{month}'		=> $date[1],
 				'{day}'			=> $date[2],
@@ -1296,13 +1308,23 @@ class yf_assets {
 	/**
 	*/
 	public function _cache_dir($out_type, $asset_name = '', $version = '') {
-		$host = $_SERVER['HTTP_HOST'];
-		$lang = conf('language');
 		if (!is_string($this->CACHE_DIR_TPL) && is_callable($this->CACHE_DIR_TPL)) {
 			$func = $this->CACHE_DIR_TPL;
 			$cache_dir = $func($out_type, $asset_name, $version);
 		} else {
-			$date = explode('-', date('Y-m-d-H-i-s'));
+			$host = $_SERVER['HTTP_HOST'];
+			if (!isset($this->_cache_language)) {
+				$this->_cache_language = conf('language');
+			}
+			$lang = $this->_cache_language;
+			if (!isset($this->_cache_html5fw)) {
+				$this->_cache_html5fw = conf('language');
+			}
+			$html5fw = $this->_cache_html5fw;
+			if (!isset($this->_cache_date)) {
+				$this->_cache_date = explode('-', date('Y-m-d-H-i-s'));
+			}
+			$date = $this->_cache_date;
 			$replace = array(
 				'{site_path}'	=> SITE_PATH,
 				'{app_path}'	=> APP_PATH,
@@ -1313,6 +1335,7 @@ class yf_assets {
 				'{asset_name}'	=> $asset_name,
 				'{version}'		=> $version,
 				'{out_type}'	=> $out_type,
+				'{html5fw}'		=> $html5fw,
 				'{year}'		=> $date[0],
 				'{month}'		=> $date[1],
 				'{day}'			=> $date[2],
