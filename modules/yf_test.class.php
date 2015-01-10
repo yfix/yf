@@ -183,10 +183,11 @@ class yf_test {
 		require_php_lib('scssphp');
 		$raw = '
 			$color: #abc;
-			div { color: lighten($color, 20%); }
+			body { color: lighten($color, 20%); }
 		';
 		$scss = new scssc();
 		$css = $scss->compile($raw);
+		sass($raw);
 		return 'SASS: <pre>'._prepare_html($raw).'</pre>'.PHP_EOL.'<br \>CSS: <pre>'._prepare_html($css).'</pre>';
 	}
 
@@ -194,9 +195,38 @@ class yf_test {
 	*/
 	function less() {
 		require_php_lib('lessphp');
-		$raw = '.block { padding: 3 + 4px }';
+		$raw = 'body { padding: 3 + 4px }';
 		$less = new \lessc;
 		$css = $less->compile($raw);
+		less($raw);
 		return 'LESS: <pre>'._prepare_html($raw).'</pre>'.PHP_EOL.'<br \>CSS: <pre>'._prepare_html($css).'</pre>';
+	}
+
+	/**
+	*/
+	function jade() {
+		require_php_lib('jade_php');
+		$raw = '
+div
+  address
+  i
+  strong
+';
+		$dumper = new \Everzet\Jade\Dumper\PHPDumper();
+		$parser = new \Everzet\Jade\Parser(new \Everzet\Jade\Lexer\Lexer());
+		$jade   = new \Everzet\Jade\Jade($parser, $dumper);
+		$out	= $jade->render($raw);
+		jade($raw);
+		return 'JADE: <pre>'._prepare_html($raw).'</pre>'.PHP_EOL.'<br \>HTML: <pre>'._prepare_html($out).'</pre>';
+	}
+
+	/**
+	*/
+	function coffee() {
+		require_php_lib('coffeescript_php');
+		$raw = 'alert "I knew it!" if elvis?';
+		$js = \CoffeeScript\Compiler::compile($raw, array('header' => false));
+		coffee($raw);
+		return 'COFFEE: <pre>'._prepare_html($raw).'</pre>'.PHP_EOL.'<br \>JS: <pre>'._prepare_html($js).'</pre>';
 	}
 }
