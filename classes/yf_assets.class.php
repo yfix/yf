@@ -22,7 +22,7 @@ class yf_assets {
 	protected $filters = array();
 	/***/
 	protected $supported_asset_types = array(
-		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle', 'asset'
+		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'jade', 'img', 'font', 'bundle', 'asset'
 	);
 	/***/
 	protected $supported_content_types = array(
@@ -797,10 +797,41 @@ class yf_assets {
 
 	/**
 	*/
+	public function get_sass_content($params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function get_less_content($params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function get_jade_content($params = array()) {
+// TODO
+	}
+
+	/**
+	*/
+	public function get_coffee_content($params = array()) {
+// TODO
+	}
+
+	/**
+	*/
 	public function _get_all_content_for_out($out_type, $params = array()) {
 		$is_ajax = main()->is_ajax();
 		// Move down inlined content
 		$all_content = $this->get_content($out_type);
+		if ($out_type === 'css') {
+			$all_content += (array)$this->get_sass_content($params);
+			$all_content += (array)$this->get_less_content($params);
+			$all_content += (array)$this->get_jade_content($params);
+		} elseif ($out_type === 'js') {
+			$all_content += (array)$this->get_coffee_content($params);
+		}
 		$top = array();
 		$bottom = array();
 		$last = array();
