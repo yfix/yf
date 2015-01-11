@@ -178,7 +178,9 @@ if (!function_exists('less')) {
 	function less($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'less', $content_type, $params); }
 }
 if (!function_exists('jade')) {
-	function jade($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'jade', $content_type, $params); }
+	function jade($content, $content_type = 'auto', $params = array()) {
+// TODO
+	}
 }
 if (!function_exists('coffee')) {
 	function coffee($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'coffee', $content_type, $params); }
