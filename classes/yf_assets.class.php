@@ -22,7 +22,7 @@ class yf_assets {
 	protected $filters = array();
 	/***/
 	protected $supported_asset_types = array(
-		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'jade', 'img', 'font', 'bundle', 'asset'
+		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle', 'asset'
 	);
 	/***/
 	protected $supported_content_types = array(
@@ -798,25 +798,39 @@ class yf_assets {
 	/**
 	*/
 	public function get_sass_content($params = array()) {
-// TODO
+		$out = array();
+		require_php_lib('scssphp');
+		$scss = new scssc();
+		foreach ((array)$this->get_content('sass') as $md5 => $v) {
+			$v['content'] = $scss->compile($v['content']);
+			$out[$md5] = $v;
+		}
+		return $out;
 	}
 
 	/**
 	*/
 	public function get_less_content($params = array()) {
-// TODO
-	}
-
-	/**
-	*/
-	public function get_jade_content($params = array()) {
-// TODO
+		$out = array();
+		require_php_lib('lessphp');
+		$less = new lessc();
+		foreach ((array)$this->get_content('less') as $md5 => $v) {
+			$v['content'] = $less->compile($v['content']);
+			$out[$md5] = $v;
+		}
+		return $out;
 	}
 
 	/**
 	*/
 	public function get_coffee_content($params = array()) {
-// TODO
+		$out = array();
+		require_php_lib('coffeescript_php');
+		foreach ((array)$this->get_content('coffee') as $md5 => $v) {
+			$v['content'] = \CoffeeScript\Compiler::compile($v['content'], array('header' => false));
+			$out[$md5] = $v;
+		}
+		return $out;
 	}
 
 	/**
@@ -828,7 +842,6 @@ class yf_assets {
 		if ($out_type === 'css') {
 			$all_content += (array)$this->get_sass_content($params);
 			$all_content += (array)$this->get_less_content($params);
-			$all_content += (array)$this->get_jade_content($params);
 		} elseif ($out_type === 'js') {
 			$all_content += (array)$this->get_coffee_content($params);
 		}
@@ -1462,6 +1475,9 @@ class yf_assets {
 			} else {
 				$type = 'inline';
 			}
+		// Support for other composite data formats like sass, less, coffee
+		} elseif (!in_array($asset_type, array('js', 'css'))) {
+			$type = 'inline';
 		}
 		return $type;
 	}
