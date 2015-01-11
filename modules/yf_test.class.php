@@ -183,7 +183,7 @@ class yf_test {
 		require_php_lib('scssphp');
 		$raw = '
 			$color: #abc;
-			body { color: lighten($color, 20%); }
+			body { background-color: lighten($color, 20%); }
 		';
 		$scss = new scssc();
 		$css = $scss->compile($raw);
@@ -204,6 +204,16 @@ class yf_test {
 
 	/**
 	*/
+	function coffee() {
+		require_php_lib('coffeescript_php');
+		$raw = 'alert "I knew it!" if elvis?';
+		$js = \CoffeeScript\Compiler::compile($raw, array('header' => false));
+		coffee($raw);
+		return 'COFFEE: <pre>'._prepare_html($raw).'</pre>'.PHP_EOL.'<br \>JS: <pre>'._prepare_html($js).'</pre>';
+	}
+
+	/**
+	*/
 	function jade() {
 		require_php_lib('jade_php');
 		$raw = '
@@ -216,17 +226,6 @@ div
 		$parser = new \Everzet\Jade\Parser(new \Everzet\Jade\Lexer\Lexer());
 		$jade   = new \Everzet\Jade\Jade($parser, $dumper);
 		$out	= $jade->render($raw);
-		jade($raw);
 		return 'JADE: <pre>'._prepare_html($raw).'</pre>'.PHP_EOL.'<br \>HTML: <pre>'._prepare_html($out).'</pre>';
-	}
-
-	/**
-	*/
-	function coffee() {
-		require_php_lib('coffeescript_php');
-		$raw = 'alert "I knew it!" if elvis?';
-		$js = \CoffeeScript\Compiler::compile($raw, array('header' => false));
-		coffee($raw);
-		return 'COFFEE: <pre>'._prepare_html($raw).'</pre>'.PHP_EOL.'<br \>JS: <pre>'._prepare_html($js).'</pre>';
 	}
 }
