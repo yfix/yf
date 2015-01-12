@@ -48,7 +48,7 @@ if ($bs_theme === 'bootstrap') {
 			),
 		),
 		'require' => array(
-			'css' => 'bootstrap2',
+			'css' => 'bootstrap3',
 		),
 	);
 } elseif ($bs_major_version == 2) {
