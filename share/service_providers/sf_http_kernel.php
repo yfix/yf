@@ -8,6 +8,9 @@ require __DIR__.'/_config.php';
 
 // Test mode when direct call
 if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+	$old_level = error_reporting();
+	error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED & ~E_STRICT);
+
 	$routes = new \Symfony\Component\Routing\RouteCollection();
 	$routes->add('hello', new \Symfony\Component\Routing\Route('/', array('_controller' =>
     	function (\Symfony\Component\HttpFoundation\Request $request) {
@@ -30,4 +33,6 @@ if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
 	$kernel->handle($request)->send();
 
 	echo PHP_EOL;
+
+	error_reporting($old_level);
 }
