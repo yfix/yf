@@ -4,7 +4,7 @@
 $libs_root = YF_PATH.'libs/';
 $is_console = $_SERVER['argc'] && !isset($_SERVER['REQUEST_METHOD']);
 
-$check_error = function($dir, $check_file, $error_reason = 'git url or command is wrong') use ($name) {
+$check_error = function($name, $dir, $check_file, $error_reason = 'git url or command is wrong') {
 	$error_reasons = array();
 	if (!file_exists($check_file)) {
 		if (!is_writable($dir)) {
@@ -26,20 +26,47 @@ $check_error = function($dir, $check_file, $error_reason = 'git url or command i
 // globally: curl -s http://getcomposer.org/installer | php -- --install-dir=/usr/local/bin
 // locally: curl -s http://getcomposer.org/installer | php
 // ls -s /usr/local/bin/composer.phar /usr/local/bin/composer
+$composer_require = function($package) use ($libs_root) {
+#	passthru('composer self-update');
+	$cmd = 'cd '.$libs_root.' && composer require --no-interaction '.$package;
+	passthru($cmd);
+/*
+	$old_error_level = error_reporting();
+	error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED & ~E_STRICT);
+
+	ob_start();
+	include_once __DIR__.'/composer.php';
+	ob_end_clean();
+
+	$cwd = getcwd();
+	chdir($libs_root);
+
+	$input = new Symfony\Component\Console\Input\ArrayInput(array('command' => 'require', 'packages' => is_array($package) ? $package : array($package)));
+	$input->setInteractive(false);
+	$application = new Composer\Console\Application();
+	$application->setAutoExit(false);
+	$application->run($input);
+
+	chdir($cwd);
+	error_reporting($old_error_level);
+*/
+};
+!isset($composer_names) && $composer_names = array();
 if ($composer_names) {
-#	$composer_names && passthru('composer self-update');
 	$dir = $libs_root.'vendor/';
 	foreach ((array)$composer_names as $composer_package) {
 		$check_file = $dir. dirname($composer_package).'/'.basename($composer_package).'/';
 		if (!file_exists($check_file)) {
-			$cmd = 'cd '.$libs_root.' && composer require --no-interaction '.$composer_package;
-			passthru($cmd);
-			$check_error($dir, $check_file, 'something wrong with composer');
+			$composer_require($composer_package);
+			$check_error($composer_package, $dir, $check_file, 'something wrong with composer');
 		}
 	}
 	require_once $dir. 'autoload.php';
-	$autoload_config = array(); // Exclude raw git clone steps
+	// Exclude raw git clone steps
+	$git_urls = array();
+	$autoload_config = array();
 }
+!isset($git_urls) && $git_urls = array();
 foreach ((array)$git_urls as $git_url => $lib_dir) {
 	$dir = $libs_root. $lib_dir;
 	$check_file = $dir.'.git';
@@ -51,9 +78,10 @@ foreach ((array)$git_urls as $git_url => $lib_dir) {
 			$cmd = 'git clone --depth 1 '.$git_url.' '.$dir;
 		}
 		passthru($cmd);
-		$check_error($dir, $check_file);
+		$check_error(basename($lib_dir), $dir, $check_file);
 	}
 }
+!isset($autoload_config) && $autoload_config = array();
 $autoload_config && spl_autoload_register(function($class) use ($autoload_config, $libs_root) {
 #	echo '=='.$class .PHP_EOL;
 	foreach ((array)$autoload_config as $lib_dir => $prefix) {
@@ -81,7 +109,7 @@ $autoload_config && spl_autoload_register(function($class) use ($autoload_config
 		return true;
 	}
 });
-
+!isset($requires) && $requires = array();
 if ($requires) {
 	ob_start();
 	foreach ((array)$requires as $name) {
