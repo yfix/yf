@@ -18,7 +18,7 @@ class yf_rewrite {
 			}
 			if (!$this->DEFAULT_HOST && defined('WEB_PATH')) {
 				$host = parse_url(WEB_PATH, PHP_URL_HOST);
-				if (!(main()->web_path_was_not_defined && $host === '127.0.0.1')) {
+				if ($host && !(main()->web_path_was_not_defined && $host === '127.0.0.1')) {
 					$this->DEFAULT_HOST = $host;
 				}
 			}
@@ -29,12 +29,12 @@ class yf_rewrite {
 		if (!$this->DEFAULT_PORT) {
 			if (defined('WEB_PATH') && strlen(WEB_PATH)) {
 				$port = parse_url(WEB_PATH, PHP_URL_PORT);
-				if ($port != '80') {
+				if ($port && $port != '80') {
 					$this->DEFAULT_PORT = $port;
 				}
 			}
-			if (!$this->DEFAULT_PORT && $_SERVER['HTTP_PORT'] && $_SERVER['HTTP_PORT'] != '80') {
-				$this->DEFAULT_PORT = $_SERVER['HTTP_PORT'];
+			if (!$this->DEFAULT_PORT && $_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != '80') {
+				$this->DEFAULT_PORT = $_SERVER['SERVER_PORT'];
 			}
 			if (!$this->DEFAULT_PORT) {
 				$this->DEFAULT_PORT = '80';

@@ -7,8 +7,11 @@
 *	Bootstrap 3		http://twbs.github.io/bootstrap/3
 *	Zurb Foundation	http://foundation.zurb.com/
 *	Pure CSS		http://purecss.io/
+*	Semantic UI		http://semantic-ui.com/
+*	UI Kit			http://getuikit.com/
+*	Maxmertkit		http://www.maxmert.com/
 */
-class yf_html5_framework {
+class yf_html5fw {
 
 	/** @var */
 	public $DEFAULT_CSS_FRAMEWORK = 'bs2';
@@ -43,7 +46,7 @@ class yf_html5_framework {
 		if (!$css_framework) {
 			$css_framework = $this->DEFAULT_CSS_FRAMEWORK;
 		}
-		return _class('html5_framework_'.$css_framework, 'classes/html5_framework/')->form_row($content, $extra, $replace, $obj);
+		return _class('html5fw_'.$css_framework, 'classes/html5fw/')->form_row($content, $extra, $replace, $obj);
 	}
 
 	/**
@@ -53,7 +56,7 @@ class yf_html5_framework {
 		if (!$css_framework) {
 			$css_framework = $this->DEFAULT_CSS_FRAMEWORK;
 		}
-		return _class('html5_framework_'.$css_framework, 'classes/html5_framework/')->form_dd_row($content, $extra, $replace, $obj);
+		return _class('html5fw_'.$css_framework, 'classes/html5fw/')->form_dd_row($content, $extra, $replace, $obj);
 	}
 
 	/**
@@ -63,6 +66,6 @@ class yf_html5_framework {
 		if (!$css_framework) {
 			$css_framework = $this->DEFAULT_CSS_FRAMEWORK;
 		}
-		return _class('html5_framework_'.$css_framework, 'classes/html5_framework/')->form_render_out($content, $extra, $replace, $obj);
+		return _class('html5fw_'.$css_framework, 'classes/html5fw/')->form_render_out($content, $extra, $replace, $obj);
 	}
 }

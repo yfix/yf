@@ -1,5 +1,7 @@
 <?php
 
+return function() {
+
 $bs_theme = common()->bs_current_theme();
 $bs_major_version = conf('css_framework') === 'bs3' ? '3' : '2';
 $require_name = 'bootstrap'. $bs_major_version;
@@ -84,3 +86,5 @@ if ($bs_theme === 'bootstrap') {
 		),
 	);
 }
+
+};

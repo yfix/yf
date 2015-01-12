@@ -21,10 +21,10 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		);
 		self::$_bak_settings['REWRITE_MODE'] = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;
-		$css = _class('html5_framework');
+		$css = _class('html5fw');
 
 		$css_framework = conf('css_framework') ?: 'bs2';
-		$obj = _class('html5_framework_'.$css_framework, 'classes/html5_framework/');
+		$obj = _class('html5fw_'.$css_framework, 'classes/html5fw/');
 		$css = get_object_vars($obj);
 
 		self::$css = $css;

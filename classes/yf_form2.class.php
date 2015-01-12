@@ -348,7 +348,7 @@ class yf_form2 {
 
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		$extra['css_framework'] = $css_framework;
-		$this->_rendered = _class('html5_framework')->form_render_out($this->_rendered, $extra, $r, $this);
+		$this->_rendered = _class('html5fw')->form_render_out($this->_rendered, $extra, $r, $this);
 
 		$on_after_render = isset($extra['on_after_render']) ? $extra['on_after_render'] : $this->_on['on_after_render'];
 		if (is_callable($on_after_render)) {
@@ -583,7 +583,7 @@ class yf_form2 {
 		}
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		$extra['css_framework'] = $css_framework;
-		return _class('html5_framework')->form_row($content, $extra, $replace, $this);
+		return _class('html5fw')->form_row($content, $extra, $replace, $this);
 	}
 
 	/**
@@ -598,7 +598,7 @@ class yf_form2 {
 		}
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		$extra['css_framework'] = $css_framework;
-		return _class('html5_framework')->form_dd_row($content, $extra, $replace, $this);
+		return _class('html5fw')->form_dd_row($content, $extra, $replace, $this);
 	}
 
 	/**

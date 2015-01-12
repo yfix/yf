@@ -3,7 +3,8 @@
 /**
 * Twitter bootstrap v2.3 html5 abstraction driver
 */
-class yf_html5_framework_bs2 {
+load('html5fw_empty', 'framework', 'classes/html5fw/');
+class yf_html5fw_bs2 extends yf_html5fw_empty {
 
 	public $CLASS_FORM_GROUP		= 'control-group form-group';
 	public $CLASS_INPUT_GROUP		= 'input-group'; // col-md-2
@@ -27,21 +28,15 @@ class yf_html5_framework_bs2 {
 
 	/**
 	*/
-	function form_render_out ($content, $extra = array(), $replace = array(), $obj) {
-		return $content;
-	}
-
-	/**
-	*/
-	function form_row ($content, $extra = array(), $replace = array(), $obj) {
+	function form_row ($content, $extra = array(), $replace = array(), $form) {
 		$name = $extra['name'];
 		$is_html_array = (false !== strpos($name, '['));
 		if ($is_html_array) {
 			$name_dotted = str_replace(array('[',']'), array('.',''), trim($name,']['));
 		}
 		$no_label = false;
-		if (isset($obj->_params['no_label'])) {
-			$no_label = $obj->_params['no_label'];
+		if (isset($form->_params['no_label'])) {
+			$no_label = $form->_params['no_label'];
 		}
 		if (isset($extra['no_label'])) {
 			$no_label = $extra['no_label'];
@@ -95,7 +90,7 @@ class yf_html5_framework_bs2 {
 
 		$inline_help_before = $extra['help_before'] ? '<span class="'.$this->CLASS_HELP.'">'.nl2br($extra['help_before']).'</span>'.PHP_EOL : '';
 		$inline_help_after = $extra['inline_help'] ? '<span class="'.$this->CLASS_HELP.'">'.nl2br($extra['inline_help']).'</span>'.PHP_EOL : '';
-		$inline_tip_html = $extra['tip'] ? ' '.$obj->_show_tip($extra['tip'], $extra, $replace) : '';
+		$inline_tip_html = $extra['tip'] ? ' '.$form->_show_tip($extra['tip'], $extra, $replace) : '';
 
 		if ($extra['only_row_start']) {
 			return $row_start;
@@ -109,9 +104,9 @@ class yf_html5_framework_bs2 {
 			return $row_start
 					.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
 					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
-					.(isset($extra['ace_editor']) ? $obj->_ace_editor_html($extra, $replace) : '')
-					.(isset($extra['ckeditor']) ? $obj->_ckeditor_html($extra, $replace) : '')
-					.(isset($extra['tinymce']) ? $obj->_tinymce_html($extra, $replace) : '')
+					.(isset($extra['ace_editor']) ? $form->_ace_editor_html($extra, $replace) : '')
+					.(isset($extra['ckeditor']) ? $form->_ckeditor_html($extra, $replace) : '')
+					.(isset($extra['tinymce']) ? $form->_tinymce_html($extra, $replace) : '')
 				.$row_end;
 		}
 	}
@@ -119,8 +114,8 @@ class yf_html5_framework_bs2 {
 	/**
 	* Generate form row using dl>dt,dd html tags. Useful for user profle and other simple table-like content
 	*/
-	function form_dd_row($content, $extra = array(), $replace = array(), $obj) {
-		$dd_class = $obj->_params['dd_class'] ?: 'span6';
+	function form_dd_row($content, $extra = array(), $replace = array(), $form) {
+		$dd_class = $form->_params['dd_class'] ?: 'span6';
 
 		$class_wrapper = $extra['class_wrapper'] ?: 'dl-horizontal';
 		if ($extra['class_add_wrapper']) {
@@ -143,7 +138,7 @@ class yf_html5_framework_bs2 {
 		$edit_link_html = $extra['edit_link'] ? ' <a href="'.$extra['edit_link'].'" class="'.$this->CLASS_EDIT_LINK.'"><i class="'.$this->CLASS_EDIT_ICON.'"></i> '.t('Edit').'</a>'.PHP_EOL : '';
 		$link_name_html = ($extra['link_url'] && $extra['link_name']) ? ' <a href="'.$extra['link_url'].'" class="'.$this->CLASS_LINK_URL.'">'.t($extra['link_name']).'</a>'.PHP_EOL : '';
 
-		$inline_tip_html = ($extra['tip'] ? ' '.$obj->_show_tip($extra['tip'], $extra, $replace) : '');
+		$inline_tip_html = ($extra['tip'] ? ' '.$form->_show_tip($extra['tip'], $extra, $replace) : '');
 
 		if ($extra['only_row_start']) {
 			return $row_start . $before_content_html;
@@ -157,9 +152,9 @@ class yf_html5_framework_bs2 {
 			return $row_start
 					.$before_content_html. $inline_help_before. $content. PHP_EOL
 					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after. $after_content_html
-					.(isset($extra['ace_editor']) ? $obj->_ace_editor_html($extra, $replace) : '')
-					.(isset($extra['ckeditor']) ? $obj->_ckeditor_html($extra, $replace) : '')
-					.(isset($extra['tinymce']) ? $obj->_tinymce_html($extra, $replace) : '')
+					.(isset($extra['ace_editor']) ? $form->_ace_editor_html($extra, $replace) : '')
+					.(isset($extra['ckeditor']) ? $form->_ckeditor_html($extra, $replace) : '')
+					.(isset($extra['tinymce']) ? $form->_tinymce_html($extra, $replace) : '')
 				.$row_end;
 		}
 	}

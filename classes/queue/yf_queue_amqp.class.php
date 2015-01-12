@@ -1,28 +1,22 @@
 <?php
-require_once dirname(INCLUDE_PATH).'/vendor/autoload.php';
-use PhpAmqpLib\Connection\AMQPConnection;
-use PhpAmqpLib\Message\AMQPMessage;
 
-class amqp_queue{
-
+class yf_queue_amqp {
 
 	private $host = 'localhost'; 
-	
 	private $port = '5672'; 
-
 	private $login = 'guest'; 
-	
 	private $pswd = 'guest'; 
-
 	private $queue = false;
 
-	function _init(){
-		//init namespaces
-		///require_once 'queue/vendor_autoload.php';
-		
+	function _init() {
+		require_php_lib('php_amqplib');
 	}
 
-	function conf($host = false, $port = false, $login = false, $pswd = false){
+	function _get_connection() {
+		return new \PhpAmqpLib\Connection\AMQPConnection($this->host, $this->port, $this->login, $this->pswd);
+	}
+
+	function conf($host = false, $port = false, $login = false, $pswd = false) {
 		$this->host = $host ? $host : $this->host;
 		$this->port= $port ? $port : $this->port;
 		$this->login = $login ? $login : $this->login;
@@ -30,12 +24,11 @@ class amqp_queue{
 		return $this;
 	}
 
-	function send($text = false, $queue = false){
-		if(empty($text) || empty($queue)){
+	function send($text = false, $queue = false) {
+		if (empty($text) || empty($queue)) {
 			return false;
 		}
-
-		$connection = new AMQPConnection($this->host, $this->port, $this->login, $this->pswd);
+		$connection = $this->_get_connection();
 		$channel = $connection->channel();
 		try{
 			$channel->queue_declare($queue, false, true, false, false);
@@ -43,19 +36,17 @@ class amqp_queue{
 			echo $e->getMessage();
 			return false;
 		}
-
-		$prep_text = new AMQPMessage(trim($text), array('delivery_mode' => 2));
+		$prep_text = new \PhpAmqpLib\Message\AMQPMessage(trim($text), array('delivery_mode' => 2));
 		$channel->basic_publish($prep_text, '', $queue);
 
 		return true;
 	}
 
-	function get($queue){
-		if(empty($queue)){
+	function get($queue) {
+		if (empty($queue)) {
 			return false;
 		}
-
-		$connection = new AMQPConnection($this->host, $this->port, $this->login, $this->pswd);
+		$connection = $this->_get_connection();
 		$channel = $connection->channel();
 		try{
 			$channel->queue_declare($queue, false, true, false, false);
@@ -63,7 +54,6 @@ class amqp_queue{
 			echo $e->getMessage();
 			return false;
 		}
-
 		$msg = $channel->basic_get($queue);
 		$channel->basic_ack($msg->delivery_info['delivery_tag']);
 		$msg = !empty($msg->body) ? trim($msg->body) : false;
@@ -71,12 +61,11 @@ class amqp_queue{
 		return $msg;
 	}
 
-	function delete($queue = false){
-		if(empty($queue)){
+	function delete($queue = false) {
+		if (empty($queue)) {
 			return false;
 		}
-
-		$connection = new AMQPConnection($this->host, $this->port, $this->login, $this->pswd);
+		$connection = $this->_get_connection();
 		$channel = $connection->channel();
 		try{
 			$channel->queue_delete($queue);
@@ -86,13 +75,12 @@ class amqp_queue{
 		}
 	}
 
-	//Get all messages WITHOUT removing from queue
-	function view_all($queue){
-		if(empty($queue)){
+	// Get all messages WITHOUT removing from queue
+	function view_all($queue) {
+		if (empty($queue)) {
 			return false;
 		}
-
-		$connection = new AMQPConnection($this->host, $this->port, $this->login, $this->pswd);
+		$connection = $this->_get_connection();
 		$channel = $connection->channel();
 		try{
 			$channel->queue_declare($queue, false, true, false, false, false);
@@ -100,7 +88,6 @@ class amqp_queue{
 			echo $e->getMessage();
 			return false;
 		}
-		
 		$msg = true;
 		$all_msgs = array();
 		while($msg){
@@ -111,9 +98,6 @@ class amqp_queue{
 				$all_msgs[] = trim($msg);
 			}
 		}
-
 		return $all_msgs;
 	}
-
 }
-

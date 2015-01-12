@@ -626,14 +626,15 @@ class yf_html {
 	function navlist($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
-		foreach ((array)$data as $v) {
+		foreach ((array)$data as $k => $v) {
 			if (!is_array($v)) {
 				$name = $v;
+				$link = $k;
 				$v = array();
 			} else {
 				$name = $v['name'];
+				$link = $v['link'];
 			}
-			$link = $v['link'];
 			$class_item = $v['class_item'] ?: $extra['class_item'];
 			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
 			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"><a href="'.$link.'"><i class="icon-chevron-right fa fa-chevron-right"></i> '.t($name). $badge. '</a></li>';

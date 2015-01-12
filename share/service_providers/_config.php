@@ -12,7 +12,12 @@ foreach ($git_urls as $git_url => $lib_dir) {
 		} else {
 			$cmd = 'git clone --depth 1 '.$git_url.' '.$dir;
 		}
-		passthru($cmd);
+		// Console mode
+		if ($_SERVER['argc'] && !isset($_SERVER['REQUEST_METHOD'])) {
+			passthru($cmd);
+		} else {
+			exec($cmd, $out);
+		}
 	}
 }
 $autoload_config && spl_autoload_register(function($class) use ($autoload_config, $libs_root) {
