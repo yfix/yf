@@ -799,9 +799,13 @@ class yf_assets {
 	*/
 	public function get_sass_content($params = array()) {
 		$out = array();
+		$content = $this->get_content('sass');
+		if (empty($content)) {
+			return array();
+		}
 		require_php_lib('scssphp');
 		$scss = new scssc();
-		foreach ((array)$this->get_content('sass') as $md5 => $v) {
+		foreach ((array)$content as $md5 => $v) {
 			$v['content'] = $scss->compile($v['content']);
 			$out[$md5] = $v;
 		}
@@ -812,9 +816,13 @@ class yf_assets {
 	*/
 	public function get_less_content($params = array()) {
 		$out = array();
+		$content = $this->get_content('less');
+		if (empty($content)) {
+			return array();
+		}
 		require_php_lib('lessphp');
 		$less = new lessc();
-		foreach ((array)$this->get_content('less') as $md5 => $v) {
+		foreach ((array)$content as $md5 => $v) {
 			$v['content'] = $less->compile($v['content']);
 			$out[$md5] = $v;
 		}
@@ -825,8 +833,12 @@ class yf_assets {
 	*/
 	public function get_coffee_content($params = array()) {
 		$out = array();
+		$content = $this->get_content('coffee');
+		if (empty($content)) {
+			return array();
+		}
 		require_php_lib('coffeescript_php');
-		foreach ((array)$this->get_content('coffee') as $md5 => $v) {
+		foreach ((array)$content as $md5 => $v) {
 			$v['content'] = \CoffeeScript\Compiler::compile($v['content'], array('header' => false));
 			$out[$md5] = $v;
 		}
