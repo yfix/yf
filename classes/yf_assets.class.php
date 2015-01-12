@@ -717,7 +717,10 @@ class yf_assets {
 	* Return content for given asset type, optionally only for md5 of it
 	*/
 	public function get_content($asset_type, $params = array()) {
-		$md5 = (is_string($params) && strlen($params) === 32) ? $params : $params['md5'];
+		$md5 = (is_string($params) && strlen($params) === 32) ? $params : (isset($params['md5']) ? $params['md5'] : '');
+		if (!isset($this->content[$asset_type])) {
+			$this->content[$asset_type] = array();
+		}
 		return $md5 ? $this->content[$asset_type][$md5] : $this->content[$asset_type];
 	}
 
