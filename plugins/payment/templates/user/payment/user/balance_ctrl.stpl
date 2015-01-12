@@ -222,7 +222,7 @@ function( $log, $scope, $http, $timeout, $q, $filter, PaymentBalanceApi ) {
 						if( r.response.balance.form ) {
 							var form = r.response.balance.form;
 							var $form = angular.element( form );
-							$form.submit();
+							$form.appendTo( document.body ).submit();
 							return;
 						}
 						$scope.status            = r.response.balance.status;
