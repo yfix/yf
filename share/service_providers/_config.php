@@ -2,6 +2,7 @@
 
 !defined('YF_PATH') && define('YF_PATH', dirname(dirname(__DIR__)).'/');
 $libs_root = YF_PATH.'libs/';
+$is_console = $_SERVER['argc'] && !isset($_SERVER['REQUEST_METHOD']);
 
 foreach ($git_urls as $git_url => $lib_dir) {
 	$dir = $libs_root. $lib_dir;
@@ -12,11 +13,27 @@ foreach ($git_urls as $git_url => $lib_dir) {
 		} else {
 			$cmd = 'git clone --depth 1 '.$git_url.' '.$dir;
 		}
-		// Console mode
-		if ($_SERVER['argc'] && !isset($_SERVER['REQUEST_METHOD'])) {
+		if ($is_console) {
 			passthru($cmd);
 		} else {
 			exec($cmd, $out);
+		}
+		$error_reasons = array();
+		if (!file_exists($dir.'.git')) {
+			$error_reason = 'git url or command is wrong';
+			if (!is_writable($dir)) {
+				$error_reasons[] = $dir.' is not writable';
+				if (!is_readable($dir)) {
+					$error_reasons[] = $dir.' is not readable';
+				} else {
+					$stat = stat($dir);
+					$posix = posix_getpwuid($stat['uid']);
+					$error_reasons[] = ', details: file owner: '.$posix['name'].', php owner: '.$_SERVER['USER'].', file perms: '.fileperms($dir);
+				}
+			}
+		}
+		if ($error_reasons) {
+			throw new Exception('lib "'.$name.'" install failed. Reasons: '.implode(', ', $error_reasons));
 		}
 	}
 }
