@@ -13,7 +13,7 @@ require_once('Crypt/RSA.php');
 require_once('Net/SSH2.php');
 
 // Test mode when direct call
-if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 	$key = new Crypt_RSA();
 	var_dump($key);
 }

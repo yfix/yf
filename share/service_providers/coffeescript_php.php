@@ -10,7 +10,7 @@ require $libs_root. 'coffeescript_php/src/CoffeeScript/Init.php';
 \CoffeeScript\Init::load();
 
 // Test mode when direct call
-if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 	$coffee = 'alert "I knew it!" if elvis?';
 	echo \CoffeeScript\Compiler::compile($coffee, array('header' => false));
 }

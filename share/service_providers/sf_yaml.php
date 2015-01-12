@@ -18,7 +18,7 @@ if (!function_exists('yaml_dump')) {
 }
 
 // Test mode when direct call
-if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 	$yaml_str = '
 receipt:     Oz-Ware Purchase Invoice
 date:        2012-08-06

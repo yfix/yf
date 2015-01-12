@@ -7,7 +7,7 @@ $autoload_config = array('php-opencloud/lib/OpenCloud/' => 'OpenCloud');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 	$client = new \OpenCloud\Rackspace(\OpenCloud\Rackspace::US_IDENTITY_ENDPOINT, array(
 	    'username' => 'foo',
 	    'apiKey'   => 'bar'

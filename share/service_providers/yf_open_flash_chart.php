@@ -7,7 +7,7 @@ $autoload_config = array();
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 	include_once $libs_root.'yf_open_flash_chart/open-flash-chart.php';
 
 	$bar = new bar_outline( 70, '#A2C2FC', '#0750D9' );

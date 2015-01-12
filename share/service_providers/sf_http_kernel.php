@@ -7,7 +7,7 @@ $autoload_config = array('sf_http_kernel/' => 'Symfony\Component\HttpKernel');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 	$old_level = error_reporting();
 	error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED & ~E_STRICT);
 

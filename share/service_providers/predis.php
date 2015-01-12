@@ -7,7 +7,7 @@ $autoload_config = array('predis/src/' => 'Predis');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 	$client = new Predis\Client(array(
 	    'scheme' => 'tcp',
 	    'host'   => '127.0.0.1',

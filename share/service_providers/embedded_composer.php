@@ -7,7 +7,7 @@ $autoload_config = array('embedded-composer/src/Dflydev/EmbeddedComposer/' => 'D
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 	$classLoader = new Composer\Autoload\ClassLoader();
 	$embedded_composer_builder = new Dflydev\EmbeddedComposer\Core\EmbeddedComposerBuilder($classLoader, './');
 	$embedded_composer = $embedded_composer_builder
