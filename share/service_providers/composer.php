@@ -8,6 +8,8 @@ require __DIR__.'/_config.php';
 
 // Test mode when direct call
 if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+	$input = new Symfony\Component\Console\Input\ArrayInput(array('command' => 'show', 'package' => 'leafo/scssphp'));
 	$application = new Composer\Console\Application();
-	$application->run();
+	$application->setAutoExit(false);
+	$application->run($input);
 }
