@@ -852,10 +852,10 @@ class yf_assets {
 		// Move down inlined content
 		$all_content = $this->get_content($out_type);
 		if ($out_type === 'css') {
-			$all_content += (array)$this->get_sass_content($params);
-			$all_content += (array)$this->get_less_content($params);
+			$all_content = (array)$all_content + (array)$this->get_sass_content($params);
+			$all_content = (array)$all_content + (array)$this->get_less_content($params);
 		} elseif ($out_type === 'js') {
-			$all_content += (array)$this->get_coffee_content($params);
+			$all_content = (array)$all_content + (array)$this->get_coffee_content($params);
 		}
 		$top = array();
 		$bottom = array();
