@@ -1355,7 +1355,7 @@ class yf_db {
 	* Execute shutdown queries
 	*/
 	function _execute_shutdown_queries() {
-		if (!$this->USE_SHUTDOWN_QUERIES || $this->_shutdown_executed) {
+		if (!$this->USE_SHUTDOWN_QUERIES || !isset($this->_shutdown_executed)) {
 			return false;
 		}
 		foreach ((array)$this->_SHUTDOWN_QUERIES as $sql) {
