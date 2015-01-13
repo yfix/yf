@@ -25,9 +25,6 @@
 [submodule "libs/php_sql_parser"]
 	path = libs/php_sql_parser
 	url = https://github.com/yfix/php-sql-parser.git
-[submodule "libs/sf_class_loader"]
-	path = libs/sf_class_loader
-	url = https://github.com/yfix/ClassLoader.git
 [submodule "libs/yf_domit"]
 	path = libs/yf_domit
 	url = https://github.com/yfix/yf_domit.git
