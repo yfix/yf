@@ -22,17 +22,20 @@ $check_error = function($name, $dir, $check_file, $error_reason = 'git url or co
 		throw new Exception('lib "'.$name.'" install failed. Reasons: '.implode(', ', $error_reasons));
 	}
 };
+
 // TODO: auto-install composer into /usr/local/bin with symlink
 // globally: curl -s http://getcomposer.org/installer | php -- --install-dir=/usr/local/bin
 // locally: curl -s http://getcomposer.org/installer | php
 // ls -s /usr/local/bin/composer.phar /usr/local/bin/composer
 $composer_require = function($package) use ($libs_root) {
-#	passthru('composer self-update');
-	$cmd = 'cd '.$libs_root.' && composer require --no-interaction '.$package;
-	passthru($cmd);
-/*
-	$old_error_level = error_reporting();
-	error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED & ~E_STRICT);
+
+##	passthru('composer self-update');
+#	$cmd = 'cd '.$libs_root.' && composer require --no-interaction '.$package;
+#	passthru($cmd);
+
+	set_error_handler(function ($code, $msg) {
+		// do nothing for these types of errors
+	}, E_NOTICE | E_USER_NOTICE | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED);
 
 	ob_start();
 	include_once __DIR__.'/composer.php';
@@ -47,10 +50,10 @@ $composer_require = function($package) use ($libs_root) {
 	$application->setAutoExit(false);
 	$application->run($input);
 
+	restore_error_handler();
 	chdir($cwd);
-	error_reporting($old_error_level);
-*/
 };
+
 !isset($composer_names) && $composer_names = array();
 if ($composer_names) {
 	$dir = $libs_root.'vendor/';
@@ -66,6 +69,7 @@ if ($composer_names) {
 	$git_urls = array();
 	$autoload_config = array();
 }
+
 !isset($git_urls) && $git_urls = array();
 foreach ((array)$git_urls as $git_url => $lib_dir) {
 	$dir = $libs_root. $lib_dir;
@@ -81,6 +85,7 @@ foreach ((array)$git_urls as $git_url => $lib_dir) {
 		$check_error(basename($lib_dir), $dir, $check_file);
 	}
 }
+
 !isset($autoload_config) && $autoload_config = array();
 $autoload_config && spl_autoload_register(function($class) use ($autoload_config, $libs_root) {
 #	echo '=='.$class .PHP_EOL;
@@ -109,6 +114,7 @@ $autoload_config && spl_autoload_register(function($class) use ($autoload_config
 		return true;
 	}
 });
+
 !isset($requires) && $requires = array();
 if ($requires) {
 	ob_start();
