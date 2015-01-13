@@ -28,9 +28,6 @@
 [submodule "libs/sf_class_loader"]
 	path = libs/sf_class_loader
 	url = https://github.com/yfix/ClassLoader.git
-[submodule "libs/sf_finder"]
-	path = libs/sf_finder
-	url = https://github.com/yfix/Finder.git
 [submodule "libs/yf_domit"]
 	path = libs/yf_domit
 	url = https://github.com/yfix/yf_domit.git
