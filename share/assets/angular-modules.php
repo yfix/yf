@@ -3,7 +3,7 @@
 return function() {
 
 $content = <<<EOS
-var __angular_modules__ = [];
+var __ANGULAR_MODULES__ = [];
 EOS;
 
 return array(

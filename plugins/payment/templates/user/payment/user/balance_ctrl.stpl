@@ -1,37 +1,22 @@
 {asset()} angular-app {/asset}
+{asset()} ng-balance {/asset}
 
 {js()}
+(function () { 'use strict';
 
-__angular_modules__.push( 'payment' );
+var __NS__ = 'payment.balance.recharge';
+__ANGULAR_MODULES__.push( __NS__ );
 
-// init module
-angular.module( 'payment', [
+angular.module( __NS__, [
 	'ngAnimate',
 	'ngResource',
-	'uix.wait',
+	'uix',
+	'payment.balance',
 ])
 
-.factory( 'PaymentBalanceApi',
-[ '$log', '$resource',
-function( $log, $resource ) {
-	var service = { };
-	service.url = '{url( /api/payment/balance )}';
-	service.resource = $resource( null, null, {
-		recharge: { method : 'POST', url : service.url, params : { operation : 'recharge' }  } ,
-		operation: { method : 'POST', url : service.url, params : { operation : 'operation' }  } ,
-	});
-	service.recharge = function( options ) {
-		return( service.resource.recharge({ options: options }) );
-	};
-	service.operation = function( options ) {
-		return( service.resource.operation({ options: options }) );
-	};
-	return( service );
-}])
-
-.controller( 'balance',
-[ '$log', '$scope', '$http', '$timeout', '$q', '$filter', 'PaymentBalanceApi',
-function( $log, $scope, $http, $timeout, $q, $filter, PaymentBalanceApi ) {
+.controller( 'payment.balance.recharge.ctrl',
+[ '$log', '$scope', '$http', '$timeout', '$q', '$filter', 'PaymentBalanceApi', 'PaymentBalance',
+function( $log, $scope, $http, $timeout, $q, $filter, PaymentBalanceApi, PaymentBalance ) {
 	$scope.payment = {payment};
 	$scope.amount_init = function() {
 		// min, step
@@ -186,7 +171,8 @@ function( $log, $scope, $http, $timeout, $q, $filter, PaymentBalanceApi ) {
 					$scope.block_wait = false;
 					if( r.response && r.response.payment ) {
 						if( r.response.payment ) {
-							angular.extend( $scope.payment, r.response.payment);
+							angular.extend( $scope.payment, r.response.payment );
+							PaymentBalance.load({ account: r.response.payment.account });
 						}
 					} else {
 						$scope.status_message = 'Ошибка при выполнении операции';
@@ -229,6 +215,7 @@ function( $log, $scope, $http, $timeout, $q, $filter, PaymentBalanceApi ) {
 						$scope.status_message    = r.response.balance.status_message;
 						if( r.response.payment ) {
 							angular.extend( $scope.payment, r.response.payment);
+							PaymentBalance.load({ account: r.response.payment.account });
 						}
 						// hide block_balance_recharge
 						$this.timer.cancel();
@@ -301,22 +288,7 @@ function( $log, $scope, $http, $timeout, $q, $filter, PaymentBalanceApi ) {
 	$scope.amount_init();
 }])
 
-.directive( 'animateOnChange',
-[ '$log', '$animate',
-function( $log, $animate ) {
-	return {
-		restrict: 'A',
-		scope: {
-			content: '=ngBind'
-		},
-		link: function( scope, element, attrs ) {
-			scope.$watch( 'content', function( item_new, item_old ) {
-				$animate.removeClass( element, 'change' );
-				$animate.addClass( element, 'change' );
-			});
-		},
-	};
-}])
-
 ;
+
+})();
 {/js}
