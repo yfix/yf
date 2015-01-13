@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-$requires = array('sf_process', 'evenement', 'monolog', 'psr_log');
+$requires = array('sf_process', 'monolog', 'psr_log', 'evenement', 'temporary_fs');
 $git_urls = array('https://github.com/alchemy-fr/BinaryDriver.git' => 'binary_driver/');
 $autoload_config = array('binary_driver/src/Alchemy/BinaryDriver/' => 'Alchemy\BinaryDriver');
 require __DIR__.'/_config.php';
@@ -9,15 +9,15 @@ require __DIR__.'/_config.php';
 // Test mode when direct call
 if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 
-	class test_ls_driver extends Alchemy\BinaryDriver\AbstractBinary {
-		public function getName() {
-			return 'ls driver';
-		}
-	}
-	$parser = new test_ls_driver();
-var_dump($parser);
-#	$driver = Alchemy\BinaryDriver\Driver::load('ls');
-#	// will return the output of `ls -a -l`
-#	$parser->parse($driver->command(array('-a', '-l')));
+	$factory = new Alchemy\BinaryDriver\ProcessBuilderFactory('/usr/bin/php');
+	// return a Symfony\Component\Process\Process
+	$process = $factory->create('-v');
+	// echoes '/usr/bin/php' '-v'
+	echo $process->getCommandLine();
+
+	$process = $factory->create(array('-r', 'echo "Hello !";'));
+	// echoes '/usr/bin/php' '-r' 'echo "Hello !";'
+	echo $process->getCommandLine();
+	echo PHP_EOL;
 
 }
