@@ -157,8 +157,13 @@ class yf_payment_api {
 
 	public function user_id( $value = -1 ) {
 		$object = &$this->user_id;
-		if( $value !== -1 ) { $object = $value; }
+		if( $this->check_user_id( $value ) && $value !== -1 ) { $object = $value; }
 		return( $object );
+	}
+
+	public function check_user_id( $value = null ) {
+		if( empty( $value ) || !is_int( $value ) || $value < 0 ) { return( null ); }
+		return( $value );
 	}
 
 	public function account_type( $value = -1 ) {
@@ -347,7 +352,11 @@ class yf_payment_api {
 		$_ = &$options;
 		$data = array();
 		// user_id
-		$value = (int)$_[ 'user_id' ] ?: $this->user_id;
+		$value = $this->_default( array(
+			$_[ 'user_id' ],
+			$this->user_id,
+		));
+		$value = $this->check_user_id( $value );
 		if( empty( $value ) ) { return( null ); }
 		$data[ 'user_id' ] = $value;
 		// account_type_id
@@ -380,8 +389,12 @@ class yf_payment_api {
 		// options
 		$_ = &$options;
 		$db = db()->table( 'payment_account' )->order_by( 'account_id' );
-		// by user_id
-		$value = (int)$_[ 'user_id' ] ?: $this->user_id;
+		// user_id
+		$value = $this->_default( array(
+			$_[ 'user_id' ],
+			$this->user_id,
+		));
+		$value = $this->check_user_id( $value );
 		if( empty( $value ) ) { return( null ); }
 		$this->user_id( $value );
 		$db->where( 'user_id', '=', _es( $value ) );
@@ -765,15 +778,19 @@ class yf_payment_api {
 		// options
 		$_ = &$options;
 		// check user_id
-		$user_id = (int)$_[ 'user_id' ] ?: $this->user_id ?: $this->user_id_default;
-		if( $user_id <= 0 ) {
+		$value = $this->_default( array(
+			$_[ 'user_id' ],
+			$this->user_id,
+		));
+		$value = $this->check_user_id( $value );
+		if( empty( $value ) ) {
 			$result = array(
 				'status'         => -1,
 				'status_message' => 'Требуется авторизация',
 			);
 			return( $result );
 		}
-		$data[ 'user_id' ] = $user_id;
+		$data[ 'user_id' ] = $value;
 		// check type
 		$object = array();
 		if( !empty( $_[ 'type_name' ] ) ) {
