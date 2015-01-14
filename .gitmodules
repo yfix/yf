@@ -4,9 +4,6 @@
 [submodule "libs/phpcrypt"]
 	path = libs/phpcrypt
 	url = https://github.com/yfix/phpcrypt.git
-[submodule "libs/php-diff"]
-	path = libs/php-diff
-	url = https://github.com/yfix/php-diff
 [submodule "libs/jquery-file-upload"]
 	path = libs/jquery-file-upload
 	url = https://github.com/yfix/jQuery-File-Upload.git
