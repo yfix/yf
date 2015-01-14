@@ -263,6 +263,7 @@ abstract class yf_db_query_builder_driver {
 	* Counting number of records inside requested recordset
 	*/
 	public function count($id = '*', $as_sql = false) {
+		unset( $this->_sql[ 'select' ] );
 		$query = $this->select('COUNT('.$this->_escape_col_name($id ?: '*').')');
 		return $as_sql ? $query->sql() : $query->get_one();
 	}
@@ -1471,6 +1472,7 @@ abstract class yf_db_query_builder_driver {
 		$items = func_get_args();
 		$count = count($items);
 		if (!$count) {
+			unset( $this->_sql[__FUNCTION__] );
 			return $this;
 		}
 		if ($count === 2 && !empty($items[0]) && in_array(trim(strtoupper($items[1])), array('ASC','DESC'))) {
@@ -1532,9 +1534,9 @@ abstract class yf_db_query_builder_driver {
 	public function limit($count = 10, $offset = null) {
 		if ($count) {
 			$sql = $this->db->limit($count, $offset);
-		}
-		if ($sql) {
 			$this->_sql[__FUNCTION__] = $sql;
+		} else {
+			unset( $this->_sql[__FUNCTION__] );
 		}
 		return $this;
 	}
