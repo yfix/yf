@@ -20,7 +20,6 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 	protected $header_add_realm = false;
 
 // TODO: refresh_token
-// TODO: make defence from cyclic redirects to prevent self-DOS
 
 	/**
 	*/
@@ -34,6 +33,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			$access_token = $this->get_access_token();
 			$access_token_secret = $this->_storage_get('access_token_secret');
 			if (!$access_token || !$access_token_secret) {
+				common()->message_error('OAuth login error #22. Please contact support');
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
 			}
@@ -75,6 +75,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 			$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 			$result = $this->_decode_result($result, $response, __FUNCTION__);
 			if (isset($result['error']) || isset($result['err']) || substr($response['http_code'], 0, 1) == '4') {
+				common()->message_error('OAuth login error #33. Please contact support');
 				js_redirect( $this->redirect_uri, $url_rewrite = false );
 				return false;
 			} else {
@@ -133,6 +134,7 @@ abstract class yf_oauth_driver1 extends yf_oauth_driver2 {
 		$result = common()->get_remote_page($url, $cache = false, $opts, $response);
 		$result = $this->_decode_result($result, array('content_type' => 'application/x-www-form-urlencoded') + (array)$response, __FUNCTION__);
 		if (isset($result['error']) || substr($response['http_code'], 0, 1) == '4') {
+			common()->message_error('OAuth login error #44. Please contact support');
 			js_redirect( $this->redirect_uri, $url_rewrite = false );
 			return false;
 		} else {
