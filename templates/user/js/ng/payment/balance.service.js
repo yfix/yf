@@ -100,6 +100,11 @@ function( $log, $scope, PaymentBalance ) {
 	$scope.currency = function() {
 		return( PaymentBalance.currency() );
 	};
+}])
+
+.run(
+[ '$log', 'PaymentBalance',
+function( $log, PaymentBalance ) {
 	// init
 	PaymentBalance.refresh();
 }])
