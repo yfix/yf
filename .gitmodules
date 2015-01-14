@@ -1,6 +1,3 @@
-[submodule "libs/php5-utf8"]
-	path = libs/php5-utf8
-	url = https://github.com/yfix/php5-utf8.git
 [submodule "libs/phpmailer"]
 	path = libs/phpmailer
 	url = https://github.com/yfix/PHPMailer.git
