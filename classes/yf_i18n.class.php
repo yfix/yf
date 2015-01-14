@@ -266,9 +266,10 @@ class yf_i18n {
 			$dirs = array(
 				'yf_main'			=> YF_PATH. $pattern,
 				'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
-				'project_config'	=> CONFIG_PATH. $pattern,
 				'project_main'		=> PROJECT_PATH. $pattern,
 				'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
+				'app_main'			=> APP_PATH. $pattern,
+				'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
 			);
 			if (SITE_PATH != PROJECT_PATH) {
 				$dirs['site'] = SITE_PATH.'share/langs/'.$lang.'/';
