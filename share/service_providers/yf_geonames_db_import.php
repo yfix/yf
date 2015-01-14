@@ -2,7 +2,7 @@
 <?php
 
 $requires = array();
-$git_urls = array('https://github.com/yfix/geonames-db-import.git' => 'geonames-db-import/');
+$git_urls = array('https://github.com/yfix/geonames-db-import.git' => 'yf_geonames_db_import/');
 $autoload_config = array();
 require __DIR__.'/_config.php';
 
