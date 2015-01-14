@@ -1,5 +1,6 @@
 {asset()} angular-app {/asset}
 {asset()} ng-balance {/asset}
+{asset()} ng-uix {/asset}
 
 {js()}
 (function () { 'use strict';
