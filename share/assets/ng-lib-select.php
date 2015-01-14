@@ -1,5 +1,8 @@
 <?php
-
+/*
+	deprecated
+	use: ng-lib-select2
+ */
 return array(
 	'versions' => array(
 		'master' => array(
@@ -9,7 +12,7 @@ return array(
 	'require' => array(
 		'asset' => array(
 			'angularjs',
-			'select2',
+			'jq-select2',
 		),
 	),
 );
