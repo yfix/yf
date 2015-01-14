@@ -27,6 +27,24 @@ class yf_static_pages {
 	}
 
 	/**
+	*/
+	function _module_action_handler($name) {
+		if (method_exists($this, $name) && substr($name, 0, 1) !== '_') {
+			return $this->$name();
+		} else {
+			$page = $this->_get_page_from_db($name);
+			if ($page) {
+				$_GET['id'] = $name;
+				$_GET['action'] = 'show';
+				return $this->show();
+			} else {
+				common()->message_error('Not found');
+				return false;
+			}
+		}
+	}
+
+	/**
 	* Display page contents
 	*/
 	function show () {
@@ -96,20 +114,22 @@ class yf_static_pages {
 	}
 
 	/**
-	* Get page from database
 	*/
-	function _get_page_from_db () {
-		if (empty($_GET['id'])) {
+	function _get_page_from_db ($id = null) {
+		$id = $id ?: $_GET['id'];
+		if (empty($id)) {
 			return array();
 		}
-		// Try to get page contents
-		$page_info = db()->query_fetch(
-			'SELECT * FROM '.db('static_pages')." 
-			WHERE active='1' 
-				AND ".(is_numeric($_GET['id']) ? " id=".intval($_GET['id']) : " name='"._es(_strtolower($_GET["id"]))."'")
-				. ($this->MULTILANG_MODE ? " AND locale='"._es(conf('language'))."'" : "")
-		);
-		return $page_info;
+		$q = db()->from('static_pages')->where('active = 1');
+		if (is_numeric($id)) {
+			$q->where('id', (int)$id);
+		} else {
+			$q->where('name', _strtolower($id));
+		}
+		if ($this->MULTILANG_MODE) {
+			$q->where('locale', conf('language'));
+		}
+		return $q->get();
 	}
 
 	/**
