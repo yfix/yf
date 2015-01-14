@@ -30,7 +30,7 @@ class yf_redirect {
 	/** @var bool */
 	public $LOOP_KEEP_LAST	= 10;
 	/** @var bool */
-	public $LOOP_TTL		= 60;
+	public $LOOP_TTL		= 30;
 
 	/**
 	*/
