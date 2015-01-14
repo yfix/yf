@@ -7,9 +7,6 @@
 [submodule "libs/jquery-file-upload"]
 	path = libs/jquery-file-upload
 	url = https://github.com/yfix/jQuery-File-Upload.git
-[submodule "libs/geoip-api-php"]
-	path = libs/geoip-api-php
-	url = https://github.com/yfix/geoip-api-php.git
 [submodule "libs/php_sql_parser"]
 	path = libs/php_sql_parser
 	url = https://github.com/yfix/php-sql-parser.git
