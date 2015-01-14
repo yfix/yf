@@ -890,6 +890,7 @@ class yf_payment_api {
 
 	public function operation( $options = null ) {
 		$_ = &$options;
+		$is_no_count    = $_[ 'no_count'     ];
 		$is_sql         = $_[ 'sql'          ];
 		$is_no_limit    = $_[ 'no_limit'     ];
 		$is_no_order_by = $_[ 'no_order_by'  ];
@@ -931,7 +932,11 @@ class yf_payment_api {
 		} else {
 			$result = $db->all();
 		}
-		return( $result );
+		$count = null;
+		if( !$is_no_count ) {
+			$count = $db->order_by()->limit( null )->count( '*', $is_sql );
+		}
+		return( array( $result, $count ) );
 	}
 
 	// simple route: class__sub_class->method

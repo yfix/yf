@@ -10,7 +10,9 @@ class yf_payment__user {
 		$payment_api = _class( 'payment_api' );
 		list( $account_id,  $account  ) = $payment_api->get_account();
 		list( $currency_id, $currency ) = $payment_api->get_currency__by_id( $account );
-		$operation = $payment_api->operation( $account );
+		list( $operation, $count ) = $payment_api->operation( $account );
+		$page_per = $payment_api->OPERATION_LIMIT;
+		$pages    = ceil( $count / $page_per );
 		$provider  = $payment_api->provider();
 		$payment_api->provider_currency( array(
 			'provider' => &$provider,
@@ -27,7 +29,12 @@ class yf_payment__user {
 				'status'               => $status,
 				'currencies'           => $currencies,
 				'currency_rate'        => $currency_rate,
-				'operation_pagination' => array( 'page' => 1, 'page_per' => $payment_api->OPERATION_LIMIT ),
+				'operation_pagination' => array(
+					'count'    => $count,
+					'page_per' => $page_per,
+					'pages'    => $pages,
+					'page'     => 1,
+				),
 			), JSON_NUMERIC_CHECK ),
 		);
 		// tpl
