@@ -143,13 +143,14 @@ class yf_login_form {
 				return js_redirect('./?object=login_form');
 			}
 		}
-		if ($_GET['id'] && preg_match('/^[a-z0-9_-]+$/ims', $_GET['id'])) {
+#		$allowed_objects = array('login','login_form','register','user_profile','profile')
+		$allowed_objects = array('login_form', 'user_profile', 'profile');
+		$def_object = 'login_form';
+		$url_object = in_array($_GET['object'], $allowed_objects) ? $_GET['object'] : 'login_form';
+		$url_action = __FUNCTION__;
+		if (in_array($_GET['object'], $allowed_objects) && $_GET['id'] && preg_match('/^[a-z0-9_-]+$/ims', $_GET['id'])) {
 			return _class('oauth')->login($_GET['id']);
 		}
-		$body = array();
-		$providers = _class('oauth')->_get_providers();
-		$url_object = in_array($_GET['object'], array('login','login_form','register','user_profile','profile')) ? $_GET['object'] : 'login_form';
-		$url_action = __FUNCTION__;
 		foreach ((array)$providers as $name => $settings) {
 			if ($name[0] == '_') {
 				continue;
