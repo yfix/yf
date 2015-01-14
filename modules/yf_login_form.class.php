@@ -55,6 +55,7 @@ class yf_login_form {
 			->login($this->LOGIN_FIELD, '', array('class' => 'input-medium', 'type' => $this->LOGIN_FIELD != 'login' ? $this->LOGIN_FIELD : 'text'))
 			->password(array('class' => 'input-medium'))
 			->check_box('remember_me')
+			->container($this->oauth(array('only_icons' => 1)), array('wide' => 1))
 			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
 		;
 	}
@@ -104,8 +105,8 @@ class yf_login_form {
 			->password(array('class' => 'input-medium'))
 			->check_box('remember_me', '', array('no_label' => 1))
 			->submit(array('value' => 'Login', 'link_name' => 'Register', 'link_url' => './?object=register'))
+			->container($this->oauth(array('only_icons' => 1)), array('wide' => 0))
 			->link('Retrieve lost password', './?object=get_pswd', array('class' => 'btn btn-mini btn-xs'))
-			->container($this->oauth(array('only_icons' => 1)), array('wide' => 1))
 			->hidden('action', null, array('value' => 'login'))
 		;
 	}
@@ -147,11 +148,13 @@ class yf_login_form {
 		}
 		$body = array();
 		$providers = _class('oauth')->_get_providers();
+		$url_object = in_array($_GET['object'], array('login','login_form','register','user_profile','profile')) ? $_GET['object'] : 'login_form';
+		$url_action = __FUNCTION__;
 		foreach ((array)$providers as $name => $settings) {
 			if ($name[0] == '_') {
 				continue;
 			}
-			$href = process_url('./?object='.$_GET['object'].'&action='.__FUNCTION__.'&id='.$name, true);
+			$href = url_user('/'.$url_object.'/'.$url_action.'/'.$name);
 			$img_web_path = 'https://s3-eu-west-1.amazonaws.com/yfix/oauth/providers/'.$name.'.png';
 			$body[] = '<a href="'.$href.'">'.'<img src="'.$img_web_path.'" style="height:32px;padding-right:2px;">'. (!$params['only_icons'] ? ' '.$name : '').'</a>';
 		}
