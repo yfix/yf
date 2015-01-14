@@ -162,7 +162,7 @@ class yf_payment_api {
 	}
 
 	public function check_user_id( $value = null ) {
-		if( empty( $value ) || !is_int( $value ) || $value < 0 ) { return( null ); }
+		if( empty( $value ) || $value != (int)$value || $value < 0 ) { return( null ); }
 		return( $value );
 	}
 
