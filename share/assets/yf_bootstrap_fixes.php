@@ -20,10 +20,6 @@ legend+.control-group { margin-top: 0; }
 .form-no-labels .controls { margin-left: 0; }
 
 td input[type=text], td textarea { margin-bottom: 0; }
-.modal.fade.in { top: 30px; }
-.modal .form-horizontal .control-group { margin-bottom: 1em; }
-.modal .form-horizontal .controls { margin-left: 150px; margin-right: 20px; }
-.modal .form-horizontal .control-label { width: 130px; }
 
 .rating { unicode-bidi:bidi-override;direction:rtl;font-size:20px }
 .rating span.star { font-family:FontAwesome;font-weight:normal;font-style:normal;display:inline-block }
@@ -45,9 +41,14 @@ td input[type=text], td textarea { margin-bottom: 0; }
 
 .control-group-required .control-label:after, .form-group-required .control-label:after { content:" *"; color:red; }
 
-body.cssfw-bs3 .carousel-control .icon-chevron-left,
-body.cssfw-bs3 .carousel-control .icon-chevron-right { position: absolute; top: 50%; z-index: 5; display: inline-block; }
-body.cssfw-bs3 a.accordion-toggle { display: block; }
+.cssfw-bs2 .modal.fade.in { top: 30px; }
+.cssfw-bs2 .modal .form-horizontal .control-group { margin-bottom: 1em; }
+.cssfw-bs2 .modal .form-horizontal .controls { margin-left: 150px; margin-right: 20px; }
+.cssfw-bs2 .modal .form-horizontal .control-label { width: 130px; }
+
+.cssfw-bs3 .carousel-control .icon-chevron-left,
+.cssfw-bs3 .carousel-control .icon-chevron-right { position: absolute; top: 50%; z-index: 5; display: inline-block; }
+.cssfw-bs3 a.accordion-toggle { display: block; }
 
 /* override styles per bs theme here */ 
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color: #52575c; }

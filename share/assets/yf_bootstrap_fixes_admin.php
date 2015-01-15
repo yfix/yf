@@ -10,7 +10,7 @@ return array(
 	.center_area { margin-left:25%; margin-right: 1%; width: 74%; }
 }
 
-.modal { width: auto; }
+.cssfw-bs2 .modal { width: auto; }
 .tab-content { overflow: visible; }
 .chzn-container { color: black; }
 
