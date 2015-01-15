@@ -114,7 +114,6 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$jquery_result = jquery($jquery_js);
 		$this->assertSame( _class('assets'), $jquery_result );
 		$this->assertEquals( $expected_jquery_lib. PHP_EOL. $expected_js, _class('assets')->show_js() );
-		$this->assertEmpty( _class('assets')->show_js() );
 		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
 
 		_class('assets')->clean_all();
@@ -530,7 +529,6 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$expected1 = '<script src="'.$fake_lib1_url.'" type="text/javascript"></script>';
 		$expected2 = $expected1 . PHP_EOL. '<script type="text/javascript">'.PHP_EOL.$fake_lib4['versions']['master']['js'].PHP_EOL.'</script>';
 		$this->assertEquals( $expected2, _class('assets')->show_js() );
-
 	}
 
 	/*
