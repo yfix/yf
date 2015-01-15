@@ -82,6 +82,8 @@ class yf_assets {
 	public function clean_all() {
 		$this->content	= array();
 		$this->filters	= array();
+		$this->_assets_added	= array();
+		$this->_bundles_added	= array();
 	}
 
 	/**
@@ -547,6 +549,13 @@ class yf_assets {
 		if (!$_content) {
 			return false;
 		}
+		if (is_string($_content)) {
+			// Prevent recursion
+			if (/*$_content !== 'jquery' && */isset($this->_bundles_added[$_content])) {
+				return false;
+			}
+			$this->_bundles_added[$_content] = true;
+		}
 		$bundle_details = $this->get_asset_details($_content);
 		if (!$bundle_details) {
 			return false;
@@ -601,6 +610,13 @@ class yf_assets {
 	public function _add_asset($_content, $asset_type, $_params = array()) {
 		if (!$_content) {
 			return false;
+		}
+		// Prevent recursion
+		if (is_string($_content)) {
+			if (/*$_content !== 'jquery' && */isset($this->_assets_added[$asset_type][$_content])) {
+				return false;
+			}
+			$this->_assets_added[$asset_type][$_content] = true;
 		}
 		$asset_data = $this->get_asset_details($_content);
 		if (!$asset_data) {
@@ -760,7 +776,10 @@ class yf_assets {
 		if (!$this->ADD_IS_DIRECT_OUT) {
 			$this->already_required[$asset_type] = array();
 		}
-		return $this->content[$asset_type] = array();
+		$this->content[$asset_type] = array();
+		$this->_assets_added[$asset_type] = array();
+		$this->_bundles_added = array();
+		return array();
 	}
 
 	/**
@@ -1189,7 +1208,7 @@ class yf_assets {
 		// Content is same, no need to overwrite it
 		$cache_existed = file_exists($cache_path);
 		if ($cache_existed && file_get_contents($cache_path) === $content) {
-			touch($cache_path);
+			is_writable($cache_path) && touch($cache_path);
 			return $cache_path;
 		}
 		file_put_contents($cache_path, $content);
@@ -1246,7 +1265,7 @@ class yf_assets {
 			return false;
 		}
 		if (file_exists($map_path) && file_get_contents($map_path) === $map_content) {
-			touch($map_path);
+			is_writable($map_path) && touch($map_path);
 			return true;
 		}
 		$this->_write_cache_info($map_path, $map_url, $map_content);
