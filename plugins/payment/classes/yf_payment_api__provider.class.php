@@ -12,7 +12,7 @@ class yf_payment_api__provider {
 
 	public function allow( $value ) {
 		$result = &$this->ENABLE;
-		!isset( $value ) && $result = (bool)$value;
+		isset( $value ) && $result = (bool)$value;
 		return( $result );
 	}
 
