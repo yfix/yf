@@ -700,7 +700,7 @@ class yf_html {
 				$extra['id'] = $id;
 			}
 			$extra['name'] = $name;
-			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','disabled')). ($add_str ? ' '.$add_str : '').'>'.PHP_EOL;
+			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','disabled','required')). ($add_str ? ' '.$add_str : '').'>'.PHP_EOL;
 		}
 		$selected = strval($selected);
 		if ($show_text && $level == 0) {
@@ -758,7 +758,7 @@ class yf_html {
 			}
 			$extra['multiple'] = 'multiple';
 			$extra['name'] = $name ? $name.'[]' : '';
-			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','multiple','disabled')). ($add_str ? ' '.trim($add_str) : '').'>'.PHP_EOL;
+			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','multiple','disabled','required')). ($add_str ? ' '.trim($add_str) : '').'>'.PHP_EOL;
 		}
 		if ($show_text && $level == 0) {
 			$body .= '<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>'.PHP_EOL;
@@ -975,7 +975,7 @@ class yf_html {
 		$extra['type'] = $extra['type'] ?: 'text';
 		$extra['placeholder'] = $extra['desc'];
 
-		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete');
+		$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step');
 		return '<input'._attrs($extra, $attrs_names).'>';
 	}
 
