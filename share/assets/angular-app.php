@@ -30,8 +30,8 @@ return array(
 	),
 	'require' => array(
 		'asset' => array(
+			'ng-modules',
 			'angular-full',
-			'angular-modules',
 		),
 	),
 );
