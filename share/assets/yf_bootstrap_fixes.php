@@ -50,6 +50,8 @@ td input[type=text], td textarea { margin-bottom: 0; }
 .cssfw-bs3 .carousel-control .icon-chevron-right { position: absolute; top: 50%; z-index: 5; display: inline-block; }
 .cssfw-bs3 a.accordion-toggle { display: block; }
 
+.cssfw-bs3 .form-vertical .col-md-3 { width:100%; }
+
 /* override styles per bs theme here */ 
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color: #52575c; }
 .bs-theme-slate.cssfw-bs3 .dropdown-toggle .caret { border-top-color: #c8c8c8; }
