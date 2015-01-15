@@ -4,16 +4,16 @@ var __NS__ = 'payment.balance';
 
 angular.module( __NS__ )
 
-.constant( 'Config', {
+.constant( 'PaymentBalanceConfig', {
 	url: '/api/payment/balance',
 })
 
 .factory( 'PaymentBalanceApi',
-[ '$log', '$resource', 'Config',
-function( $log, $resource, Config ) {
+[ '$log', '$resource', 'PaymentBalanceConfig',
+function( $log, $resource, PaymentBalanceConfig ) {
 	// private
 	var config = {};
-	angular.extend( config, Config );
+	angular.extend( config, PaymentBalanceConfig );
 	// service
 	var service = {};
 	service.url = function( value ) {

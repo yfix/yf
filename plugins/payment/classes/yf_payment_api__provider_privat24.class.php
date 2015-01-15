@@ -1,5 +1,9 @@
 <?php
 
+// _class( 'payment_api__provider' );
+
+// class yf_payment_api__provider_privat24 extends yf_payment_api__provider {
+
 class yf_payment_api__provider_privat24 {
 
 	public $ENABLE = true;
@@ -60,6 +64,8 @@ class yf_payment_api__provider_privat24 {
 		$this->api = new Privat24( $this->PUBLIC_KEY, $this->PRIVATE_KEY );
 		$this->url_result = url( '/api/payment/provider?name=privat24&operation=response' );
 		$this->url_server = url( '/api/payment/provider?name=privat24&operation=response&server=true' );
+		// parent
+		// parent::_init();
 	}
 
 	public function _form_options( $options ) {

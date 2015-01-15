@@ -4,21 +4,16 @@ var __NS__ = 'payment.balance.recharge';
 __ANGULAR_MODULES__.push( __NS__ );
 
 angular.module( __NS__, [
-	'ngAnimate',
-	'ngResource',
-	'uix',
 	'payment.balance',
 ])
 
-.constant( 'Config', {
-	payment: {},
-})
+.value( 'PaymentBalanceRechargeConfig', { payment: {}, } )
 
 .controller( 'payment.balance.recharge.ctrl',
-[ '$log', '$scope', '$http', '$timeout', '$q', '$filter', 'Config', 'PaymentBalanceApi', 'PaymentBalance',
-function( $log, $scope, $http, $timeout, $q, $filter, Config, PaymentBalanceApi, PaymentBalance ) {
+[ '$log', '$scope', '$timeout', 'PaymentBalanceApi', 'PaymentBalance', 'PaymentBalanceRechargeConfig',
+function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBalanceRechargeConfig ) {
 	$scope.payment = {};
-	angular.extend( $scope.payment, Config.payment );
+	angular.extend( $scope.payment, PaymentBalanceRechargeConfig.payment );
 	$scope.amount_init = function() {
 		// min, step
 		$scope.amount_min           = $scope.currency_min( false );

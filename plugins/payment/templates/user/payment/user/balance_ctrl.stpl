@@ -7,7 +7,7 @@ var __NS__ = 'payment.balance.recharge';
 
 angular.module( __NS__ )
 
-.constant( 'Config', { payment: {payment} } )
+.value( 'PaymentBalanceRechargeConfig', { payment: {payment}, } )
 
 ;
 })();

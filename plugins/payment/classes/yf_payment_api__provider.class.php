@@ -18,17 +18,17 @@ class yf_payment_api__provider {
 
 	public function deposition( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
-		$result = $this->transaction( $options );
+		$result = $this->_transaction( $options );
 		return( $result );
 	}
 
 	public function payment( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
-		$result = $this->transaction( $options );
+		$result = $this->_transaction( $options );
 		return( $result );
 	}
 
-	public function transaction( $options ) {
+	protected function _transaction( $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$_api           = $this->payment_api;
 		$_              = $options;

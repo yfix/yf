@@ -13,6 +13,7 @@ return array(
 	),
 	'require' => array(
 		'asset' => array(
+			'jquery',
 			'angularjs',
 			'jq-select2',
 		),

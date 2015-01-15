@@ -15,7 +15,7 @@ return array(
 	),
 	'require' => array(
 		'asset' => array(
-			'angular-app',
+			'ng-app',
 			'ng-balance',
 			'ng-uix',
 		),

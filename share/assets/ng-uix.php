@@ -16,6 +16,6 @@ return array(
 		),
 	),
 	'require' => array(
-		'asset' => 'angular-app',
+		'asset' => 'ng-app',
 	),
 );
