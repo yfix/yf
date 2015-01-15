@@ -37,10 +37,18 @@ class yf_payment_api__provider {
 		$operation_data = &$_[ 'operation_data' ];
 		$operation      = &$_[ 'operation'      ];
 		// prepare data
-		$account_id = (int)$data[ 'account_id' ];
+		$operation_id = (int)$data[ 'operation_id' ];
+		$account_id   = (int)$data[ 'account_id'   ];
 		$amount     = $_api->_number_float( $data[ 'amount' ] );
+		// operation_id
+		if( empty( $operation_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Не определен код операции',
+			);
+			return( $result );
+		}
 		// update account balance
-		db()->begin();
 		$sql_datetime = $_api->sql_datatime();
 		$sql_amount = $_api->_number_mysql( $amount );
 		switch( $operation_data[ 'type' ][ 'name' ] ) {
@@ -56,6 +64,7 @@ class yf_payment_api__provider {
 			'datetime_update' => db()->escape_val( $sql_datetime ),
 			'balance' => "( balance $sql_sign $sql_amount )",
 		);
+		db()->begin();
 		$status = db()->table( 'payment_account' )
 			->where( 'account_id', '=', $account_id )
 			// ->update( $sql_data, array( 'escape' => false, 'sql' => true ) );
@@ -93,7 +102,6 @@ class yf_payment_api__provider {
 			'datetime_update' => $sql_datetime,
 			'datetime_finish' => $sql_datetime,
 		);
-		$operation_id = (int)$data[ 'operation_id' ];
 		$status = db()->table( 'payment_operation' )
 			->where( 'operation_id', $operation_id )
 			->update( $sql_data );
