@@ -1309,6 +1309,7 @@ class yf_form2 {
 			if (isset($form->_params['selected'])) {
 				$extra['selected'] = $form->_params['selected'][$extra['name']];
 			}
+			$extra = $form->_input_assign_params_from_validate($extra);
 			return $form->_row_html(_class('html')->radio_box($extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -1592,6 +1593,7 @@ class yf_form2 {
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['selected'] = $form->_prepare_selected($extra['name'], $extra, $r);
 			$extra['id'] = $extra['name'];
+			$extra = $form->_input_assign_params_from_validate($extra);
 
 			$func = $extra['func_html_control'];
 			$content = _class('html')->$func($extra);
@@ -1628,6 +1630,7 @@ class yf_form2 {
 			$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 			$extra['selected'] = $form->_prepare_selected($extra['name'], $extra, $r);
 			$extra['id'] = $form->_prepare_id($extra);
+			$extra = $form->_input_assign_params_from_validate($extra);
 
 			return $form->_row_html($r[$extra['name']], $extra, $r);
 		};
@@ -1942,6 +1945,7 @@ class yf_form2 {
 			$extra['required'] = true;
 			$extra['value'] = $r['captcha'];
 			$extra['input_attrs'] = _attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value'));
+			$extra = $form->_input_assign_params_from_validate($extra);
 			return $form->_row_html(_class('captcha')->show_block('./?object=dynamic&action=captcha_image', $extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
