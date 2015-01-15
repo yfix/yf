@@ -82,6 +82,8 @@ class yf_assets {
 	public function clean_all() {
 		$this->content	= array();
 		$this->filters	= array();
+		$this->_assets_added	= array();
+		$this->_bundles_added	= array();
 	}
 
 	/**
@@ -547,6 +549,13 @@ class yf_assets {
 		if (!$_content) {
 			return false;
 		}
+		// Prevent recursion
+		if (is_string($_content)) {
+			if (isset($this->_bundles_added[$_content])) {
+				return false;
+			}
+			$this->_bundles_added[$_content] = true;
+		}
 		$bundle_details = $this->get_asset_details($_content);
 		if (!$bundle_details) {
 			return false;
@@ -601,6 +610,13 @@ class yf_assets {
 	public function _add_asset($_content, $asset_type, $_params = array()) {
 		if (!$_content) {
 			return false;
+		}
+		// Prevent recursion
+		if (is_string($_content)) {
+			if (isset($this->_assets_added[$_content])) {
+				return false;
+			}
+			$this->_assets_added[$_content] = true;
 		}
 		$asset_data = $this->get_asset_details($_content);
 		if (!$asset_data) {
