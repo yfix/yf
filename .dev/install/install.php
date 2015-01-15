@@ -394,7 +394,8 @@ if (file_exists($saved_settings)) {
 }
 define(\'DEBUG_MODE\', false);
 define(\'YF_PATH\', \''.YF_PATH.'\');
-define(\'WEB_PATH\', \''.rtrim($_POST['install_web_path'], '/').'/\');
+define(\'WEB_PATH\', \'//\'.$_SERVER[\'HTTP_HOST\'].\'/\');
+//define(\'WEB_PATH\', \''.rtrim($_POST['install_web_path'], '/').'/\');
 define(\'ADMIN_WEB_PATH\', WEB_PATH. basename(__DIR__).\'/\');
 //define(\'ADMIN_WEB_PATH\', \'//\'.$_SERVER[\'HTTP_HOST\'].\'/\'.basename(__DIR__).\'/\');
 define(\'ADMIN_SITE_PATH\', __DIR__.\'/\');
