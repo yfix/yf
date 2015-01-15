@@ -39,7 +39,7 @@ class yf_payment__user {
 		);
 		// tpl
 		$result  = '';
-		// $result .= tpl()->parse( 'payment/user/balance_ctrl', $replace );
+		$result .= tpl()->parse( 'payment/user/balance_ctrl', $replace );
 		$result .= tpl()->parse( 'payment/user/balance_form', $replace );
 		return( $result );
 	}

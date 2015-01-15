@@ -1,6 +1,6 @@
 <?php
 
-$js = <<<EOS
+$js = <<<'EOS'
 (function () { 'use strict';
 angular.element( document ).ready( function() {
 	angular.bootstrap( document, __ANGULAR_MODULES__ );
@@ -8,7 +8,7 @@ angular.element( document ).ready( function() {
 })();
 EOS;
 
-$css = <<<EOS
+$css = <<<'EOS'
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
@@ -31,6 +31,7 @@ return array(
 	'require' => array(
 		'asset' => array(
 			'angular-full',
+			'angular-modules',
 		),
 	),
 );

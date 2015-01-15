@@ -1,6 +1,6 @@
 <?php
 
-$content = <<<EOS
+$content = <<<'EOS'
 var __ANGULAR_MODULES__ = [];
 EOS;
 
