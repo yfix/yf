@@ -2,23 +2,34 @@
 
 class yf_payment_api__provider {
 
-	public $payment_api      = null;
+	public $ENABLE = null;
+
+	public $payment_api = null;
 
 	public function _init() {
 		$this->payment_api = _class( 'payment_api' );
 	}
 
+	public function allow( $value ) {
+		$result = &$this->ENABLE;
+		!isset( $value ) && $result = (bool)$value;
+		return( $result );
+	}
+
 	public function deposition( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->transaction( $options );
 		return( $result );
 	}
 
 	public function payment( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->transaction( $options );
 		return( $result );
 	}
 
 	public function transaction( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_api           = $this->payment_api;
 		$_              = $options;
 		$data           = &$_[ 'data'           ];

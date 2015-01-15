@@ -14,6 +14,8 @@ return array(
 		),
 	),
 	'require' => array(
-		'js' => 'angular-app',
+		'asset' => array(
+			'angular-app',
+		),
 	),
 );

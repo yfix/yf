@@ -2,6 +2,8 @@
 
 class yf_payment_api__provider_privat24 {
 
+	public $ENABLE = true;
+
 	public $payment_api = null;
 	public $api         = null;
 

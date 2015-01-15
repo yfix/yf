@@ -13,7 +13,7 @@ class yf_payment__user {
 		list( $operation, $count ) = $payment_api->operation( $account );
 		$page_per = $payment_api->OPERATION_LIMIT;
 		$pages    = ceil( $count / $page_per );
-		$provider  = $payment_api->provider();
+		$provider = $payment_api->provider();
 		$payment_api->provider_currency( array(
 			'provider' => &$provider,
 		));
@@ -39,7 +39,7 @@ class yf_payment__user {
 		);
 		// tpl
 		$result  = '';
-		$result .= tpl()->parse( 'payment/user/balance_ctrl', $replace );
+		// $result .= tpl()->parse( 'payment/user/balance_ctrl', $replace );
 		$result .= tpl()->parse( 'payment/user/balance_form', $replace );
 		return( $result );
 	}

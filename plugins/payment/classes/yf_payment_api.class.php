@@ -553,14 +553,23 @@ class yf_payment_api {
 		$provider       = $this->provider;
 		$provider_index = $this->provider_index;
 		if( empty( $provider ) ) {
-			$provider = db()->table( 'payment_provider' )->where( 'active', 1 )->get_deep_array( 1 );
-			// $provider = db()->table( 'payment_provider' )->get_deep_array( 1 );
+			$provider = db()->table( 'payment_provider' )
+				->where( 'active', 1 )
+				->order_by( 'order' )
+				->get_deep_array( 1 );
 			if( empty( $provider ) ) {
 				$provider       = null;
 				$provider_index = null;
 				return( $provider );
 			}
-			foreach ((array)$provider as $index => $item ) {
+			foreach( (array)$provider as $index => $item ) {
+				$name = $item[ 'name' ];
+				$class = 'provider_' . $name;
+				$provider_class = $this->_class( $class );
+				if( !( $provider_class && $provider_class->ENABLE ) ) {
+					unset( $provider[ $index ] );
+					continue;
+				}
 				$id     = (int)$item[ 'provider_id' ];
 				$system = (int)$item[ 'system' ];
 				$name   = $item[ 'name' ];
