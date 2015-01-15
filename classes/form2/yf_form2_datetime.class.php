@@ -50,11 +50,15 @@ class yf_form2_datetime {
 				$extra['value'] = empty( $value ) || $value == '0000-00-00 00:00:00' ? null : strtotime( $value );
 			}
 			$extra['value'] = empty( $extra['value'] ) ? '' : date( $_format_php, $extra['value'] );
+			$extra = $form->_input_assign_params_from_validate($extra);
+			$extra['type'] = 'text';
+			$extra['class'] = 'input-medium form-control';
+			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step');
 
 			$body = '
 <div id="'.$extra['name'].'" data-date-format="'.$_format_js.'" class="input-append datetimepicker">
 <div class="input-group">
-    <input name="'.$extra['name'].'" value="'.$extra['value'].'" type="text" class="input-medium form-control" placeholder="'.$extra['placeholder'].'"></input>
+    <input'._attrs($extra, $attrs_names).'></input>
     <span class="add-on input-group-addon">
 		<i class="icon icon-calendar fa fa-calendar"></i>
     </span>
