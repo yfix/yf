@@ -76,7 +76,7 @@ class yf_common {
 		} elseif (MAIN_TYPE_ADMIN) {
 			$theme = 'slate'; // Default
 		}
-		$conf_theme = conf('DEF_BOOTSTRAP_THEME');
+		$conf_theme = conf('DEF_BOOTSTRAP_THEME_'.strtoupper(MAIN_TYPE)) ?: conf('DEF_BOOTSTRAP_THEME');
 		if ($conf_theme) {
 			$theme = $conf_theme;
 		}
