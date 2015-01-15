@@ -549,9 +549,9 @@ class yf_assets {
 		if (!$_content) {
 			return false;
 		}
+		// Prevent recursion
 		if (is_string($_content)) {
-			// Prevent recursion
-			if (/*$_content !== 'jquery' && */isset($this->_bundles_added[$_content])) {
+			if (isset($this->_bundles_added[$_content])) {
 				return false;
 			}
 			$this->_bundles_added[$_content] = true;
@@ -613,7 +613,7 @@ class yf_assets {
 		}
 		// Prevent recursion
 		if (is_string($_content)) {
-			if (/*$_content !== 'jquery' && */isset($this->_assets_added[$asset_type][$_content])) {
+			if (isset($this->_assets_added[$asset_type][$_content])) {
 				return false;
 			}
 			$this->_assets_added[$asset_type][$_content] = true;
