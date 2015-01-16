@@ -46,6 +46,7 @@ class yf_login_form {
 		return form(array('form_action' => './?task=login'), array(
 				'class'		=> 'form-horizontal form-condensed form-no-labels col-md-10',
 				'no_label'	=> 1,
+				'hide_empty' => 1,
 			))
 			->validate(array(
 				'__form_id__' => 'login_small_form',
@@ -95,6 +96,7 @@ class yf_login_form {
 		return form(array('form_action' => './?task=login'), array(
 				'class' => 'form-horizontal',
 				'legend' => 'Member Login',
+				'hide_empty' => 1,
 			))
 			->validate(array(
 				'__form_id__' => 'login_full_form',
@@ -151,6 +153,7 @@ class yf_login_form {
 		if (in_array($_GET['object'], $allowed_objects) && $_GET['id'] && preg_match('/^[a-z0-9_-]+$/ims', $_GET['id'])) {
 			return _class('oauth')->login($_GET['id']);
 		}
+		$body = array();
 		foreach ((array)$providers as $name => $settings) {
 			if ($name[0] == '_') {
 				continue;
