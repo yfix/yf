@@ -12,6 +12,9 @@ return array(
 		),
 	),
 	'require' => array(
-		'assets' => 'jquery',
+		'asset' => 'jquery',
+	),
+	'config' => array(
+		'no_cache' => true,
 	),
 );
