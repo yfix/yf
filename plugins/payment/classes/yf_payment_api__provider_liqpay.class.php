@@ -601,7 +601,6 @@ class yf_payment_api__provider_liqpay {
 			return( $result );
 		}
 		// fee
-		var_dump( $amount_currency );
 		$amount_currency = $payment_api->fee( $amount_currency, $this->fee );
 		if( empty( $amount_currency ) ) {
 			$result = array(
