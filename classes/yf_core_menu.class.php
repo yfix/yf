@@ -79,10 +79,9 @@ class yf_core_menu {
 		$ICONS_DIR = _class('graphics')->ICONS_PATH;
 		$MEDIA_PATH = _class('graphics')->MEDIA_PATH;
 
+		$item_links = array();
+		$cur_page_id = null;
 		foreach ((array)$menu_items as $i => $item) {
-			$item_counter++;
-			$_next_info	= isset($menu_items[$i + 1]) ? $menu_items[$i + 1] : array();
-			$_next_level = isset($_next_info['level']) ? (int)$_next_info['level'] : 0;
 			$is_cur_page = false;
 			$item_link = '';
 			if (substr($item['location'], 0, 3) == './?') {
@@ -95,6 +94,15 @@ class yf_core_menu {
 			} elseif ($item['type_id'] == 2) {
 				$item_link = $item['location'];
 			}
+			if ($is_cur_page) {
+				$cur_page_id = $i;
+			}
+			$item_links[$i] = $item_link;
+		}
+		foreach ((array)$menu_items as $i => $item) {
+			$item_counter++;
+			$_next_info	= isset($menu_items[$i + 1]) ? $menu_items[$i + 1] : array();
+			$_next_level = isset($_next_info['level']) ? (int)$_next_info['level'] : 0;
 			$icon = trim($item['icon']);
 			$icon_path = '';
 			$icon_class = '';
@@ -113,7 +121,7 @@ class yf_core_menu {
 				'item_id'		=> intval($item['id']),
 				'parent_id'		=> intval($item['parent_id']),
 				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
-				'link'			=> !empty($in_output_cache) ? process_url($item_link) : $item_link,
+				'link'			=> !empty($in_output_cache) ? process_url($item_links[$i]) : $item_links[$i],
 				'name'			=> _prepare_html(t($item['name'])),
 				'level_pad'		=> str_repeat($level_pad_text, $item['level']),
 				'level_num'		=> intval($item['level']),
@@ -124,7 +132,7 @@ class yf_core_menu {
 				'icon_class'	=> $icon_class,
 				'is_first_item'	=> (int)($item_counter == 1),
 				'is_last_item'	=> (int)($item_counter == $num_menu_items),
-				'is_cur_page'	=> (int)$is_cur_page,
+				'is_cur_page'	=> (int)($i === $cur_page_id),
 				'have_children'	=> intval((bool)$item['have_children']),
 				'next_level_diff'=> intval(abs($item['level'] - $_next_level)),
 			);
