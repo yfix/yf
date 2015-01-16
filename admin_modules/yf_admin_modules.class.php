@@ -248,7 +248,7 @@ class yf_admin_modules {
 				if (!strlen($name)) {
 					continue;
 				}
-				$admin_modules_array[$name] = $name;
+				$modules[$name] = $name;
 			}
 		}
 		ksort($modules);
