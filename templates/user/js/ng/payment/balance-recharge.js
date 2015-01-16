@@ -36,10 +36,12 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 		change: function() {
 			var $this = this;
 			var amount = $scope.amount;
-			$this.timer.start( function() {
-				$scope.amount = amount;
-				$scope.amount_change( false );
-			});
+			if( amount ) {
+				$this.timer.start( function() {
+					$scope.amount = amount;
+					$scope.amount_change( false );
+				});
+			}
 		},
 	};
 	$scope.currency_change = function() {
