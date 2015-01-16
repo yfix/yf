@@ -60,7 +60,7 @@ class yf_admin_modules {
 			$places = array(
 				'framework' => array('dir' => YF_PATH. $dir, 'file' => YF_PREFIX. $name. YF_CLS_EXT),
 				'project'	=> array('dir' => ADMIN_SITE_PATH. $dir, 'file' => $name. YF_CLS_EXT),
-				'app'		=> array('dir' => APP_PATH. ADMIN_MODULES_DIR, 'file' => $name. YF_CLS_EXT),
+				'app'		=> array('dir' => APP_PATH. $dir, 'file' => $name. YF_CLS_EXT),
 			);
 			if ($plugin_name) {
 				$places += array(
@@ -197,7 +197,7 @@ class yf_admin_modules {
 	* Get available modules from files
 	*/
 	function _get_modules_from_files ($include_framework = true, $with_sub_modules = false) {
-		$admin_modules_array = array();
+		$modules = array();
 
 		$yf_prefix_len = strlen(YF_PREFIX);
 		$yf_cls_ext_len = strlen(YF_CLS_EXT);
@@ -251,8 +251,8 @@ class yf_admin_modules {
 				$admin_modules_array[$name] = $name;
 			}
 		}
-		ksort($admin_modules_array);
-		return $admin_modules_array;
+		ksort($modules);
+		return $modules;
 	}
 
 	/**
