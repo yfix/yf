@@ -1,4 +1,4 @@
-{asset()} select2 {/asset}
+{asset()} jq-select2 {/asset}
 
 {jquery()}
 

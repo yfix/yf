@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="api.admin">
+<html>
 <head>
 	<title>{execute(graphics,show_site_title)}</title>
 	<base href="{const(ADMIN_WEB_PATH)}"/>

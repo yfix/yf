@@ -1,3 +1,5 @@
+{asset()} ng-app-init {/asset}
+
 {{-- app --}}
 <script type="text/ng-template" id="_ng_tpl_alert">
 <div class="alert alert-dismissable" tabindex="-1" ng-class="[type ? 'alert-' + type : null]">
@@ -7,6 +9,32 @@
 </script>
 
 {js()}
+
+(function () { 'use strict';
+
+var __NS__ = 'manage_shop.import2';
+__ANGULAR_MODULES__.push( __NS__ );
+
+var ng_app_admin = angular.module( __NS__, [
+	'ngSanitize',
+	'ngResource',
+	'ui.select2',
+	'ui.select',
+	'mgcrea.ngStrap',
+])
+
+.config( function( uiSelectConfig ) {
+	uiSelectConfig.theme = "select2";
+})
+.config( function( $datepickerProvider ) {
+	angular.extend( $datepickerProvider.defaults, {
+		dateFormat: "dd.MM.yyyy"
+		, autoclose: 1
+		, startWeek: 1
+		, startView: 2
+	});
+})
+;
 
 ng_app_admin.factory( 'Uploader',
 [ 'ApiConfig', '$q', '$rootScope', '$window', '$log',
@@ -822,4 +850,5 @@ function( $routeProvider, $locationProvider ) {
 }]);
 --}}
 
+})();
 {/js}

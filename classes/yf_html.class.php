@@ -1128,7 +1128,7 @@ class yf_html {
 		}
 		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 
-		asset('select2');
+		asset('jq-select2');
 
 		$js_options = (array)$extra['js_options'] + array(
 			'width'			=> 'element',

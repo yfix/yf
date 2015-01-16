@@ -178,6 +178,10 @@
 .supplier,
 .category {
 	min-width   : 15em;
+	margin      : 0 0 0 0.5em;
+}
+.block_supplier {
+	margin      : 0 0 0 1em;
 }
 .block_supplier span.btn,
 .block_action span.btn {
@@ -327,7 +331,7 @@ ul.select2-result-single {
 		</span>
 		<div class="import_field_key">
 			<span>
-				<select class="import_field"
+				<select class="import_field no-chosen"
 					ng-model="item_data.options.fields[ $index ]"
 					ng-change="Import.field__change( $index )"
 					ng-options="key as value for ( key, value ) in data._import_field"
