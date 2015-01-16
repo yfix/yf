@@ -10,10 +10,11 @@ legend+.control-group { margin-top: 0; }
 
 .sidebar-nav { padding: 9px 0; }
 
-.navbar .dropdown-menu .sub-menu { left: 100%; position: absolute; top: 0; visibility: hidden; margin-top: -1px; }
-.navbar .dropdown-menu li:hover > .sub-menu { visibility: visible; }
-.navbar .dropdown:hover .dropdown-menu { display: block; }
-
+@media (min-width: 768px) {
+	.navbar .dropdown-menu .sub-menu { left: 100%; position: absolute; top: 0; visibility: hidden; margin-top: -1px; }
+	.navbar .dropdown-menu li:hover > .sub-menu { visibility: visible; }
+	.navbar .dropdown:hover .dropdown-menu { display: block; }
+}
 .nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu { margin-top: 0; }
 .cssfw-bs3 .navbar-header { width:99%; padding-right:1%; }
 
