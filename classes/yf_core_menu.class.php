@@ -94,12 +94,14 @@ class yf_core_menu {
 			} elseif ($item['type_id'] == 2) {
 				$item_link = $item['location'];
 			}
+			$id = $item['id'];
 			if ($is_cur_page) {
-				$cur_page_id = $i;
+				$cur_page_id = $id;
 			}
-			$item_links[$i] = $item_link;
+			$item_links[$id] = $item_link;
 		}
 		foreach ((array)$menu_items as $i => $item) {
+			$id = $item['id'];
 			$item_counter++;
 			$_next_info	= isset($menu_items[$i + 1]) ? $menu_items[$i + 1] : array();
 			$_next_level = isset($_next_info['level']) ? (int)$_next_info['level'] : 0;
@@ -120,8 +122,8 @@ class yf_core_menu {
 			$items[$item['id']] = array(
 				'item_id'		=> intval($item['id']),
 				'parent_id'		=> intval($item['parent_id']),
-				'bg_class'		=> !(++$i % 2) ? 'bg1' : 'bg2',
-				'link'			=> !empty($in_output_cache) ? process_url($item_links[$i]) : $item_links[$i],
+				'bg_class'		=> !($item_counter % 2) ? 'bg1' : 'bg2',
+				'link'			=> $item_links[$id],
 				'name'			=> _prepare_html(t($item['name'])),
 				'level_pad'		=> str_repeat($level_pad_text, $item['level']),
 				'level_num'		=> intval($item['level']),
@@ -132,7 +134,7 @@ class yf_core_menu {
 				'icon_class'	=> $icon_class,
 				'is_first_item'	=> (int)($item_counter == 1),
 				'is_last_item'	=> (int)($item_counter == $num_menu_items),
-				'is_cur_page'	=> (int)($i === $cur_page_id),
+				'is_cur_page'	=> (int)($id === $cur_page_id),
 				'have_children'	=> intval((bool)$item['have_children']),
 				'next_level_diff'=> intval(abs($item['level'] - $_next_level)),
 			);
