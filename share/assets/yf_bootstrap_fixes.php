@@ -29,8 +29,6 @@ td input[type=text], td textarea { margin-bottom: 0; }
 
 .label.labels-big, .badge.labels-big { font-size: inherit; }
 
-.form-condensed .control-group { margin-bottom: 1em; }
-
 .bs-docs-sidenav { width: 200px; margin: 0; padding: 0; z-index: 1000; }
 .bs-docs-sidenav [class*="span"] { margin-left: 0; }
 .bs-docs-sidenav > li > a { display: block; margin: 0; padding: 5px 15px; /*  border: 1px solid #555;*/ }
@@ -39,18 +37,40 @@ td input[type=text], td textarea { margin-bottom: 0; }
 .table a.btn { text-decoration: none; }
 .table { width:auto; }
 
+.form-condensed .control-group { margin-bottom: 1em; }
+
+.form-inline .form-group { width: 100%; }
+.form-inline .form-group .controls { margin-left: 0; }
+.form-inline .controls .radio:first-child { padding-top:0 }
+.form-inline .controls > .checkbox:first-child { padding-top:0 }
+.form-inline .radio:first-child { padding-left: 5px; }
+.form-inline .radio input[type=radio] { float: none; }
+.form-inline legend { margin-bottom: 0; margin-top: 0; }
+
 .control-group-required .control-label:after, .form-group-required .control-label:after { content:" *"; color:red; }
+
+.cssfw-bs2 .icon-email:before { content: "@"; }
 
 .cssfw-bs2 .modal.fade.in { top: 30px; }
 .cssfw-bs2 .modal .form-horizontal .control-group { margin-bottom: 1em; }
 .cssfw-bs2 .modal .form-horizontal .controls { margin-left: 150px; margin-right: 20px; }
 .cssfw-bs2 .modal .form-horizontal .control-label { width: 130px; }
 
+.cssfw-bs2 .breadcrumb > li+li:before { content: "/\00a0"; padding: 0 5px; }
+.cssfw-bs2 .navbar .breadcrumb { margin: 0 7px; border: 0; }
+.cssfw-bs3 .navbar .breadcrumb { margin: 0 7px; }
+@media (min-width: 768px) {
+	.cssfw-bs2 .navbar .breadcrumb { float: left; margin: 2px 10px; }
+	.cssfw-bs3 .navbar .breadcrumb { float: left; margin: 7px 10px; }
+}
+
 .cssfw-bs3 .carousel-control .icon-chevron-left,
 .cssfw-bs3 .carousel-control .icon-chevron-right { position: absolute; top: 50%; z-index: 5; display: inline-block; }
 .cssfw-bs3 a.accordion-toggle { display: block; }
 
 .cssfw-bs3 .form-vertical .col-md-3 { width:100%; margin-top: 5px; }
+.cssfw-bs3 .form-vertical .col-md-offset-3 { width:100%; margin-left: 0; margin-top: 5px; }
+.cssfw-bs3 .form-vertical .input-group { max-width: 300px; }
 
 /* override styles per bs theme here */ 
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color: #52575c; }
