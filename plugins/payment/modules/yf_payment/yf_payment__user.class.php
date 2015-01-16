@@ -14,8 +14,8 @@ class yf_payment__user {
 		$page_per = $payment_api->OPERATION_LIMIT;
 		$pages    = ceil( $count / $page_per );
 		$provider = $payment_api->provider();
-		$payment_api->provider_currency( array(
-			'provider' => &$provider,
+		$payment_api->provider_options( $provider, array(
+			'fee', 'currency_allow',
 		));
 		$status        = $payment_api->status();
 		$currencies    = $payment_api->currencies;

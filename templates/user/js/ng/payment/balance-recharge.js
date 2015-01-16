@@ -56,16 +56,12 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 		$scope.block_operation = !show;
 	};
 	$scope.show_balance_recharge( false );
-	// select first provider
-	if( $scope.payment.provider ) {
-		for( var index in $scope.payment.provider ) break;
-		$scope.provider_selected = $scope.payment.provider[ index ];
-		$scope.provider_id       = $scope.payment.provider[ index ].provider_id;
-	}
 	$scope.provider_change = function( provider ) {
 		$scope.provider_selected = provider;
 		$scope.provider_id       = provider.provider_id;
+		$scope.fee               = provider._fee || 0;
 		$scope.provider_currency();
+		CurrencyApi.change();
 	};
 	$scope.provider_currency = function( provider_id ) {
 		provider_id = provider_id || $scope.provider_id;
@@ -147,11 +143,16 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 		// to USD, etc
 		amount_currency  = amount * rate / value;
 		var amount_currency_round = +amount_currency.toFixed( round_currency );
+		// fee
+		var amount_currency_fee       = amount_currency_round * ( +$scope.fee / 100 );
+		var amount_currency_fee_round = amount_currency_fee.toFixed( round_currency );
 		// save amount
 		$scope.amount           = amount;
-		$scope._amount_currency = amount_currency_round;
+		// total
+		$scope._amount_currency = ( +amount_currency_round ) + ( +amount_currency_fee_round );
 		if( !is_currency ) {
-			$scope.amount_currency = amount_currency_round;
+			$scope.amount_currency     = amount_currency_round;
+			$scope.amount_currency_fee = amount_currency_fee_round;
 		}
 	};
 	var BalanceApi = {
@@ -285,8 +286,11 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 	};
 	// init
 	$scope.block_wait = false;
-	// currency
-	$scope.provider_currency();
+	// select first provider
+	if( $scope.payment.provider ) {
+		for( var index in $scope.payment.provider ) break;
+		$scope.provider_change( $scope.payment.provider[ index ] );
+	}
 	// amount
 	$scope.amount_init();
 }])

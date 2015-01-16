@@ -54,6 +54,8 @@ class yf_payment_api__provider_privat24 {
 		),
 	);
 
+	public $fee = 2; // 2%
+
 	public $url_result = null;
 	public $url_server = null;
 
@@ -382,6 +384,15 @@ class yf_payment_api__provider_privat24 {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Невозможно произвести конвертацию валют',
+			);
+			return( $result );
+		}
+		// fee
+		$amount_currency = $payment_api->fee( $amount_currency, $this->fee );
+		if( empty( $amount_currency ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Невозможно произвести начисление комисси',
 			);
 			return( $result );
 		}

@@ -31,6 +31,14 @@
 			options
 				{ icon, image }
 
+		payment_currency_rate
+			currency_rate_id
+			datetime
+			from
+			to
+			from_value
+			to_value
+
 		payment_operation
 			operation_id
 			account_id
@@ -47,6 +55,7 @@
 			datetime_start
 			datetime_finish
 			datetime_update
+			options
 
 		payment_provider
 				{ system, administration, webmoney, privat24 }
@@ -55,6 +64,9 @@
 			title
 			options
 				{ icon, image }
+			system
+			active
+			order
 
 		payment_status
 				{ in_progress, success, refused }
@@ -76,6 +88,7 @@
 			title
 			options
 				{ icon, image }
+			active
 
 */
 
@@ -311,6 +324,11 @@ class yf_payment_api {
 		}
 		// get from db
 		return( $currency_rate );
+	}
+
+	public function fee( $amount, $fee ) {
+		$result = $amount + $amount * ( $fee / 100 );
+		return( $result );
 	}
 
 	public function currency_conversion( $options = null ) {
@@ -606,19 +624,18 @@ class yf_payment_api {
 		return( $result );
 	}
 
-	public function provider_currency( $options = null ) {
-		// get options '_'
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$result = null;
-		if( is_array( $_provider ) ) {
-			foreach( $_provider as $id => $item ) {
-				$name = $item[ 'name' ];
-				$class = 'provider_' . $name;
-				$provider = $this->_class( $class );
-				$provider && $_provider[ $id ][ '_currency_allow' ] = &$provider->currency_allow;
+	public function provider_options( &$provider, $options = null ) {
+		if( !isset( $options ) || !is_array( $provider ) ) { return( false ); }
+		foreach( $provider as $id => $item ) {
+			$name = $item[ 'name' ];
+			$class = 'provider_' . $name;
+			$provider_class = $this->_class( $class );
+			if( empty( $provider_class ) ) { continue; }
+			foreach( $options as $item ) {
+				$provider[ $id ][ '_' . $item ] = &$provider_class->{$item};
 			}
 		}
-		return( $result );
+		return( true );
 	}
 
 	/*
