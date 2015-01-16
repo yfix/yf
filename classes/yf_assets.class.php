@@ -995,7 +995,8 @@ class yf_assets {
 			$_params = (array)$v['params'] + (array)$params;
 			$content_type = $v['content_type'];
 			$cached_path = '';
-			if ($this->USE_CACHE && $content_type !== 'inline') {
+			$use_cache = $this->USE_CACHE && $content_type !== 'inline' && !$_params['no_cache'] && !$_params['config']['no_cache'];
+			if ($use_cache) {
 				if ($v['name'] === 'bootstrap-theme') {
 					$v['name'] .= '-'.$bs_current_theme;
 				}
@@ -1014,7 +1015,8 @@ class yf_assets {
 			if ($_params['config']['class']) {
 				$_params['class'] = $_params['config']['class'];
 			}
-			if ($this->COMBINE && in_array($content_type, array('url', 'file')) && empty($before) && empty($after) && empty($_params['class']) && empty($_params['id'])) {
+			$use_combine = $this->COMBINE && $use_cache && in_array($content_type, array('url', 'file')) && empty($before) && empty($after) && empty($_params['class']) && empty($_params['id']);
+			if ($use_combine) {
 				$to_combine[$md5] = array(
 					'content' => $str,
 					'content_type' => $content_type,
