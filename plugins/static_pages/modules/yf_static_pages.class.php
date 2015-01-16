@@ -276,7 +276,7 @@ class yf_static_pages {
 		$old_items = $params['items'];
 		// Create new items
 		$items = array();
-		$items[]	= $NAV_BAR_OBJ->_nav_item('Home', './');
+#		$items[]	= $NAV_BAR_OBJ->_nav_item('Home', './');
 		$items[]	= $NAV_BAR_OBJ->_nav_item($subtitle);
 		return $items;
 	}
