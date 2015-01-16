@@ -302,16 +302,19 @@ class yf_core_menu {
 
 	/**
 	*/
-	function _is_current_page(&$item) {
+	function _is_current_page($item) {
+		$object = $_GET['object'];
+		$action = $_GET['action'];
+		$id = $_GET['id'];
 		$is_cur_page = false;
-		parse_str($item['location'], $_item_parts);
+		parse_str($item['location'], $u);
 		// Check if we are on the current page
-		if (isset($_item_parts['object']) && $_item_parts['object'] && $_item_parts['object'] == $_GET['object']) {
-			if (isset($_item_parts['action']) && $_item_parts['action']) {
-				if ($_item_parts['action'] == $_GET['action']) {
+		if (isset($u['object']) && $u['object'] && $u['object'] == $object) {
+			if (isset($u['action']) && $u['action']) {
+				if ($u['action'] == $action) {
 					// Needed for static pages
-					if ($_item_parts['id']) {
-						if ($_item_parts['id'] == $_GET['id']) {
+					if ($u['id']) {
+						if ($u['id'] == $id) {
 							$is_cur_page = true;
 						}
 					} else {
