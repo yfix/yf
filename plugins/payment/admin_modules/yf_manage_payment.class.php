@@ -237,7 +237,7 @@ class yf_manage_payment {
 					'operation'       => $_POST[ 'operation' ],
 					'provider_name'   => 'administration',
 				);
-				$result = $payment_api->transaction_system( $options );
+				$result = $payment_api->transaction( $options );
 				if( $result[ 'status' ] === true ) {
 					$message = 'message_success';
 					if( empty( $account_id ) ) {
@@ -276,7 +276,7 @@ class yf_manage_payment {
 				'no_order_by' => true,
 				'sql'         => true,
 			);
-			$sql = $payment_api->operation( $operation_options );
+			list( $sql, $sql_count ) = $payment_api->operation( $operation_options );
 			if( empty( $filter ) ) {
 				$filter = array(
 					'order_by'        => 'datetime_update',
