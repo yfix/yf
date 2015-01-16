@@ -21,6 +21,8 @@ class yf_form2 {
 	public $CLASS_ICON_PSWD = 'icon-key fa fa-key fa-fw';
 	public $CLASS_ICON_LOGIN = 'icon-user fa fa-user fa-fw';
 	public $CLASS_ICON_EMAIL = 'icon-email fa fa-at fa-fw';
+	public $CLASS_ICON_CURRENCY = 'icon-dollar fa fa-dollar fa-fw';
+	public $CLASS_ICON_CALENDAR = 'icon icon-calendar fa fa-calendar fa-fw';
 	public $CLASS_LABEL_INFO = 'label label-info';
 	public $CLASS_ERROR = 'alert alert-error alert-danger';
 	public $CLASS_REQUIRED = 'control-group-required form-group-required';
@@ -1041,7 +1043,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : ($this->_params['currency'] ?: '$');
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : ($this->_params['currency'] ?: '<i class="'.$this->CLASS_ICON_CURRENCY.'"></i>');
 		$extra['append'] = isset($extra['append']) ? $extra['append'] : ''; // '.00';
 		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
 		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '8';
