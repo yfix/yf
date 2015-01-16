@@ -29,7 +29,9 @@ class yf_register {
 			->password()
 			->password('pswdconf')
 			->captcha()
-			->save();
+			->save()
+			->container(module('login_form')->oauth(array('only_icons' => 1)), array('wide' => 0))
+		;
 	}
 
 	/**
