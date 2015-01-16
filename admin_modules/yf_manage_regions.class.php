@@ -113,12 +113,12 @@ class yf_manage_regions {
 		$per_page = array('' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000);
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
-#				'class'		=> 'form-inline',
+				'class' => 'form-vertical',
 			))
 			->text('name')
 			->select_box('per_page', $per_page, array('class' => 'input-small'))
 			->select_box('order_by', $order_fields, array('show_text' => 1, 'class' => 'input-medium'))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
 			->save_and_clear();
 		;
 	}

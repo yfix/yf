@@ -142,7 +142,10 @@ class yf_manage_revisions {
 				}
 				$action = db()->get_2d('SELECT DISTINCT action FROM '.db('shop_revisions'));
 				$action = array_combine($action, $action );
-				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+				return form($replace, array(
+						'selected' => $_SESSION[$filter_name],
+						'class' => 'form-vertical',
+					))
 					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
 					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
 					->text('user_id', 'Админ')
@@ -154,7 +157,7 @@ class yf_manage_revisions {
 		$action = $_GET['action'];
 		if (isset($filters[$action])) {
 			return $filters[$action]($filter_name, $replace)
-				->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1))
+				->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
 				->save_and_clear();
 		}
 		return false;

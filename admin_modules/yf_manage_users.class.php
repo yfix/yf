@@ -230,6 +230,7 @@ class yf_manage_users {
 		}
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
+				'class' => 'form-vertical',
 			))
 			->number('id')
 			->text('name')
@@ -237,7 +238,7 @@ class yf_manage_users {
 			->email('email')
 			->select_box('group', main()->get_data('user_groups'), array('show_text' => 1))
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
 			->save_and_clear();
 		;
 	}
