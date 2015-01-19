@@ -4,6 +4,12 @@ return function() {
 
 $advanced_js_validation = conf('form_advanced_js_validation');
 if ($advanced_js_validation) {
+	$lang = conf('language');
+	$lang_files = array(
+		'en' => 'en_US',
+		'ru' => 'ru_RU',
+		'ua' => 'ua_UA',
+	);
 	return array(
 		'require' => array(
 			'asset' => array(
@@ -11,9 +17,45 @@ if ($advanced_js_validation) {
 				'jquery-formvalidation',
 			),
 		),
-		'versions' => array('master' => array('jquery' => '
-			$("form[data-fv-framework]").formValidation();
-		')),
+		'versions' => array('master' => array('jquery' => 
+			'$("form[data-fv-framework]").formValidation({
+				framework: "bootstrap"
+				, icon: {
+					valid: "fa fa-2x fa-check-circle text-success",
+					invalid: "fa fa-2x fa-times-circle text-error text-danger",
+					validating: "fa fa-2x fa-refresh"
+				}
+				, locale: "'.$lang_files[$lang].'"
+//				, err: { container: "tooltip" }
+			})
+/*
+// This event will be triggered when the field passes given validator
+    .on("success.validator.fv", function(e, data) {
+        // data.field     --> The field name
+        // data.element   --> The field element
+        // data.result    --> The result returned by the validator
+        // data.validator --> The validator name
+
+        if (data.field === "userName"
+            && data.validator === "remote"
+            && (data.result.available === false || data.result.available === "false"))
+        {
+            // The userName field passes the remote validator
+            data.element                    // Get the field element
+                .closest(".form-group")     // Get the field parent
+
+                // Add has-warning class
+                .removeClass("has-success")
+                .addClass("has-warning")
+
+                // Show message
+                .find("small[data-fv-validator=remote][data-fv-for=userName]")
+                .show();
+        }
+    })
+*/
+			;')
+		),
 	);
 }
 
@@ -28,6 +70,7 @@ return array(
 	var yf_css_class_error = "error has-error";
 	var yf_css_icon_error = "icon icon-large icon-ban-circle fa fa-2x fa-times-circle text-error text-danger";
 	var yf_css_icon_success = "icon icon-large icon-ok-circle fa fa-2x fa-check-circle text-success";
+	var yf_css_icon_refresh = "icon icon-large icon-refresh fa fa-2x fa-refresh text-info";
 	var yf_html_help_block = "<span class=\"help-block pull-left\"></span>";
 	var yf_title_error = "'.t('not good').'";
 	var yf_title_success = "OK";
