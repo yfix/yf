@@ -83,7 +83,7 @@ class yf_payment_api__provider {
 		list( $payment_status_id, $payment_status ) = $object;
 		if( empty( $payment_status_id ) ) {
 			db()->rollback();
-			return( $payment_status );
+			return( $object );
 		}
 		$result[ 'status_message' ] = 'Выполнено: ' . $options[ 'operation_title' ] . ', сумма: ' . $amount;
 		if( !empty( $payment_api->currency[ 'short' ] ) ) {

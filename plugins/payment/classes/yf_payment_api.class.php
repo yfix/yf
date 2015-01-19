@@ -206,7 +206,7 @@ class yf_payment_api {
 			$account_type    = null;
 			$account_type_id = null;
 		} else {
-			$account_type    = current( $result );
+			$account_type    = reset( $result );
 			$account_type_id = $account_type[ 'account_type_id' ];
 		}
 		return( array( $account_type_id, $account_type ) );
@@ -434,7 +434,7 @@ class yf_payment_api {
 			// account not exists
 			list( $account_id, $account ) = $this->account_create( $options );
 		} else {
-			$account    = current( $result );
+			$account    = reset( $result );
 			$account_id = $account[ 'account_id' ];
 		}
 		$this->account    = $account;
@@ -559,7 +559,7 @@ class yf_payment_api {
 			return( $result );
 		}
 		if( count( $payment_status ) == 1 ) {
-			$payment_status    = current( $payment_status );
+			$payment_status    = reset( $payment_status );
 			$payment_status_id = (int)$payment_status[ 'status_id' ];
 		}
 		return( array( $payment_status_id, $payment_status ) );
@@ -619,6 +619,12 @@ class yf_payment_api {
 		// by default: all, not system
 		else {
 			$result = $provider_index[ 'system' ][ 0 ];
+		}
+		if( is_array( $result ) ) {
+			foreach( $result as $index => $item ) {
+				$_options = &$result[ $index ][ 'options' ];
+				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
+			}
 		}
 		return( $result );
 	}
@@ -831,7 +837,7 @@ class yf_payment_api {
 			);
 			return( $result );
 		}
-		$type    = current( $object );
+		$type    = reset( $object );
 		$type_id = (int)$type[ 'type_id' ];
 		$data[ 'type' ] = $type;
 		// check status
@@ -843,7 +849,7 @@ class yf_payment_api {
 			);
 			return( $result );
 		}
-		$status    = current( $status );
+		$status    = reset( $status );
 		$status_id = (int)$status[ 'status_id' ];
 		$data[ 'status' ] = $status;
 		// check account
@@ -893,7 +899,7 @@ class yf_payment_api {
 			);
 			return( $result );
 		}
-		$provider    = current( $object );
+		$provider = reset( $object );
 		$provider_id = (int)$provider[ 'provider_id' ];
 		$data[ 'provider' ] = $provider;
 		// prepare result
@@ -927,6 +933,8 @@ class yf_payment_api {
 				$result = $db->sql();
 			} else {
 				$result = $db->get();
+				$_options = &$result[ 'options' ];
+				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
 			}
 			return( $result );
 		}
@@ -960,8 +968,9 @@ class yf_payment_api {
 			$count = $db->order_by()->limit( null )->count( '*', $is_sql );
 		}
 		if( is_array( $result ) ) {
-			foreach( $result as $index => &$item ) {
-				$item[ 'options' ] && $item[ 'options' ] = (array)json_decode( $item[ 'options' ], JSON_NUMERIC_CHECK );
+			foreach( $result as $index => $item ) {
+				$_options = &$result[ $index ][ 'options' ];
+				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
 			}
 		}
 		return( array( $result, $count ) );
