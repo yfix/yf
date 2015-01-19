@@ -266,28 +266,25 @@ class yf_payment_api__provider_liqpay {
 				$balance = $account[ 'balance' ];
 			}
 			// update operation
-			$sql_data = array(
+			$data = array( 'options' => array(
+				'check' => array( array(
+					'data'     => $response,
+					'datetime' => $sql_datetime,
+				))
+			));
+			$data = array(
+				'operation_id'    => $operation_id,
 				'status_id'       => $payment_status_id,
 				'datetime_update' => $sql_datetime,
+				'options'         => $data,
 			);
-			$balance && $sql_data += array(
+			$balance && $data += array(
 				'balance'         => $balance,
 				'datetime_finish' => $sql_datetime,
 			);
 			// save options
-			$operation_options[ 'check' ][] = array(
-				'data'     => $response,
-				'datetime' => $sql_datetime,
-			);
-			$sql_data[ 'options' ] = _es( json_encode( $operation_options ) );
-			$sql_status = db()->table( 'payment_operation' )
-				->where( 'operation_id', $operation_id )
-				->update( $sql_data );
-			if( empty( $sql_status ) ) {
-				$result = array(
-					'status'         => false,
-					'status_message' => 'Ошибка при обновлении операции: ' . $operation_id,
-				);
+			$result = $payment_api->operation_update( $data );
+			if( !$result[ 'status' ] ) {
 				db()->rollback();
 				return( $result );
 			}
@@ -479,15 +476,12 @@ class yf_payment_api__provider_liqpay {
 			db()->begin();
 			if( $payment_status_id != $_payment_status_id && $payment_status_name == 'success' ) {
 				// update account
-				$sql_data = array(
+				$_data = array(
 					'datetime_update' => db()->escape_val( $sql_datetime ),
 					'balance'         => '( balance + ' . $sql_amount . ' )',
 				);
-				$sql_status = db()->table( 'payment_account' )
-					->where( 'account_id', $account_id )
-					->order_by( 'account_id' )
-					->update( $sql_data, array( 'escape' => false ) );
-				if( empty( $sql_status ) ) {
+				$_result = $payment_api->balance_update( $_data, array( 'is_escape' => false ) );
+				if( !$_result[ 'status' ] ) {
 					db()->rollback();
 					$result = array(
 						'status'         => false,
@@ -501,28 +495,25 @@ class yf_payment_api__provider_liqpay {
 				$balance = $account[ 'balance' ];
 			}
 			// update operation
-			$sql_data = array(
+			$data = array( 'options' => array(
+				'response' => array( array(
+					'data'     => $response,
+					'datetime' => $sql_datetime,
+				))
+			));
+			$data = array(
+				'operation_id'    => $operation_id,
 				'status_id'       => $payment_status_id,
 				'datetime_update' => $sql_datetime,
+				'options'         => $data,
 			);
-			$balance && $sql_data += array(
+			$balance && $data += array(
 				'balance'         => $balance,
 				'datetime_finish' => $sql_datetime,
 			);
 			// save options
-			$operation_options[ 'response' ][] = array(
-				'data'     => $response,
-				'datetime' => $sql_datetime,
-			);
-			$sql_data[ 'options' ] = _es( json_encode( $operation_options ) );
-			$sql_status = db()->table( 'payment_operation' )
-				->where( 'operation_id', $operation_id )
-				->update( $sql_data );
-			if( empty( $sql_status ) ) {
-				$result = array(
-					'status'         => false,
-					'status_message' => 'Ошибка при обновлении операции: ' . $operation_id,
-				);
+			$result = $payment_api->operation_update( $data );
+			if( !$result[ 'status' ] ) {
 				db()->rollback();
 				return( $result );
 			}
@@ -603,13 +594,6 @@ class yf_payment_api__provider_liqpay {
 		// fee
 		$fee = $this->fee;
 		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
-		if( empty( $amount_currency_total ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Невозможно произвести начисление комисси',
-			);
-			return( $result );
-		}
 		// prepare request form
 		$form_data  = array(
 			'user_id'               => $user_id,
@@ -641,12 +625,13 @@ class yf_payment_api__provider_liqpay {
 				'data'     => $form_data,
 				'form'     => $form_options,
 				'datetime' => $operation_data[ 'sql_datetime' ],
-			)),
+			))
 		);
 		$result = $payment_api->operation_update( array(
-			'operation_id'      => $operation_id,
-			'operation_options' => $operation_options,
+			'operation_id' => $operation_id,
+			'options'      => $operation_options,
 		));
+		if( !$result[ 'status' ] ) { return( $result ); }
 		$result = array(
 			'form'           => $form,
 			'status'         => true,

@@ -959,41 +959,72 @@ class yf_payment_api {
 		if( !$is_no_count ) {
 			$count = $db->order_by()->limit( null )->count( '*', $is_sql );
 		}
+		if( is_array( $result ) ) {
+			foreach( $result as $index => &$item ) {
+				$item[ 'options' ] && $item[ 'options' ] = (array)json_decode( $item[ 'options' ], JSON_NUMERIC_CHECK );
+			}
+		}
 		return( array( $result, $count ) );
 	}
 
-	public function operation_update( $options = null ) {
+	public function balance_update( $data, $options = null ) {
+		$result = $this->_object_update( 'account', $data, $options );
+		return( $result );
+	}
+
+	public function operation_update( $data, $options = null ) {
+		$result = $this->_object_update( 'operation', $data, $options );
+		return( $result );
+	}
+
+	protected function _object_update( $name, $data, $options = null ) {
+		if( empty( $name ) ) { return( null ); }
 		// import options
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		// check operation_id
-		$operation_id = (int)$_operation_id;
-		if( $operation_id < 1 ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Ошибка при обновлении операции: ' . $operation_id,
-			);
-			return( $result );
-		}
-		// get operation
-		$operation = db()->table( 'payment_operation' )
-			->where( 'operation_id', $operation_id )
-			->get();
-		$operation_options = (array)json_decode( $operation[ 'options' ], JSON_NUMERIC_CHECK );
-		is_array( $_operation_options ) &&
-			$operation_options = array_merge_recursive( $operation_options, $_operation_options );
-		$sql_data = array(
-			'options' => _es( json_encode( $operation_options ) ),
+		is_array( $data    ) && extract( $data,    EXTR_PREFIX_ALL | EXTR_REFS, ''  );
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '_' );
+		// check object id
+		$status         = false;
+		$status_message = '';
+		$result = array(
+			'status'         => &$status,
+			'status_message' => &$status_message,
 		);
-		$sql_status = db()->table( 'payment_operation' )
-			->where( 'operation_id', $operation_id )
-			->update( $sql_data );
-		if( empty( $sql_status ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Ошибка при обновлении операции: ' . $operation_id,
-			);
+		$id_name = $name . '_id';
+		$id      = (int)${ '_' . $id_name };
+		if( $id < 1 ) {
+			$status_message = 'Ошибка при обновлении "' . $name . '": ' . $id;
 			return( $result );
 		}
+		$table = 'payment_' . $name;
+		// extend options
+		if( is_array( $_options ) ) {
+			// get operation
+			$operation = db()->table( $table )
+				->where( $id_name, $id )
+				->get();
+			$operation_options = (array)json_decode( $operation[ 'options' ], JSON_NUMERIC_CHECK );
+			$_options = json_encode( array_merge_recursive(
+				$operation_options,
+				$_options
+			));
+		}
+		// remove id by update
+		unset( $data[ $id_name ] );
+		// escape sql data
+		$sql_data = $data;
+		$__is_escape && $sql_data = _es( $data );
+		// query
+		$sql_status = db()->table( $table )
+			->where( $id_name, $id )
+			->update( $sql_data, array( 'escape' => $__is_escape ) );
+		// status
+		if( empty( $sql_status ) ) {
+			$status_message = 'Ошибка при обновлении "' . $name . '": ' . $id;
+			return( $result );
+		}
+		$status         = true;
+		$status_message = 'Выполнено обновление "' . t( $name ) . '"';
+		return( $result );
 	}
 
 	// simple route: class__sub_class->method
