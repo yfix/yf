@@ -72,6 +72,7 @@ td input[type=text], td textarea { margin-bottom: 0; }
 .cssfw-bs3 .form-vertical .col-md-3 { width:100%; margin-top: 5px; }
 .cssfw-bs3 .form-vertical .col-md-offset-3 { width:100%; margin-left: 0; margin-top: 5px; }
 .cssfw-bs3 .form-vertical .input-group { max-width: 300px; }
+.cssfw-bs3 .form-vertical .radio, .cssfw-bs3 .form-vertical .checkbox { margin-top: 0; }
 
 /* override styles per bs theme here */ 
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color: #52575c; }
