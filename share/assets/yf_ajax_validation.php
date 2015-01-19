@@ -2,6 +2,21 @@
 
 return function() {
 
+$advanced_js_validation = conf('form_advanced_js_validation');
+if ($advanced_js_validation) {
+	return array(
+		'require' => array(
+			'asset' => array(
+				'bootstrap-theme',
+				'jquery-formvalidation',
+			),
+		),
+		'versions' => array('master' => array('jquery' => '
+			$("form[data-fv-framework]").formValidation();
+		')),
+	);
+}
+
 return array(
 	'versions' => array(
 		'master' => array(
