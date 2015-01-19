@@ -275,16 +275,7 @@ class yf_form2 {
 			unset($this->_body['form_end']);
 			$this->_body['form_end'] = $form_end;
 		}
-		if ($this->_params['show_alerts']) {
-			$errors = common()->_get_error_messages();
-			if ($errors) {
-				$e = array();
-				foreach ((array)$errors as $msg) {
-					$e[] = '<div class="'.$this->CLASS_ERROR.'"><button type="button" class="close" data-dismiss="alert">&times;</button>'.$msg.'</div>';
-				}
-				array_unshift($this->_body, implode(PHP_EOL, $e));
-			}
-		}
+
 		$tabbed_mode = false;
 		$tabbed_buffer = array();
 		$tabs = array();
@@ -346,6 +337,16 @@ class yf_form2 {
 		if ($tabs) {
 			$this->_body[$tabs_container] = _class('html')->tabs($tabs, $this->_params['tabs']);
 		}
+		if ($this->_params['show_alerts']) {
+			$errors = common()->_get_error_messages();
+			if ($errors) {
+				$e = array();
+				foreach ((array)$errors as $msg) {
+					$e[] = '<div class="'.$this->CLASS_ERROR.'"><button type="button" class="close" data-dismiss="alert">&times;</button>'.$msg.'</div>';
+				}
+				$this->_body = array_slice($this->_body, 0, 1, true) + array('error_message' => implode(PHP_EOL, $e)) + array_slice($this->_body, 1, null, true);
+			}
+		}
 		$this->_rendered = implode(PHP_EOL, $this->_body);
 
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
@@ -389,7 +390,7 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'form_action');
 		$extra['method'] = $extra['method'] ?: ($method ?: 'post');
 
-		$func = function($extra, $r, $_this) {
+		$func = function($extra, $r, $form) {
 			$enctype = '';
 			if ($extra['enctype']) {
 				$enctype = $extra['enctype'];
@@ -398,21 +399,26 @@ class yf_form2 {
 			}
 			$extra['enctype'] = $enctype;
 			if (!isset($extra['action'])) {
-				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $_this->_params['links_add'];
+				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $form->_params['links_add'];
 			}
 			if (MAIN_TYPE_USER) {
 				if (strpos($extra['action'], 'http://') === false && strpos($extra['action'], 'https://') !== 0) {
 					$extra['action'] = process_url($extra['action'], true);
 				}
 			}
-			$extra['class'] = $extra['class'] ?: $_this->CLASS_FORM_MAIN;// col-md-6';
+			$extra['class'] = $extra['class'] ?: $form->CLASS_FORM_MAIN;// col-md-6';
 			if ($extra['class_add']) {
 				$extra['class'] .= ' '.$extra['class_add'];
 			}
 			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
+			$advanced_js_validation = conf('form_advanced_js_validation');
+			if ($advanced_js_validation) {
+				$extra['data-fv-framework'] = 'bootstrap';
+			}
+
 			$body = '<form'._attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate')).'>'.PHP_EOL;
-			$_this->_fieldset_mode_on = true;
+			$form->_fieldset_mode_on = true;
 			$body .= '<fieldset'._attrs($extra['fieldset'], array('class','style','id','name')).'>';
 			if ($extra['legend']) {
 				$body .= PHP_EOL.'<legend>'._htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
@@ -432,8 +438,8 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$func = function($extra, $r, $_this) {
-			$_this->_fieldset_mode_on = false;
+		$func = function($extra, $r, $form) {
+			$form->_fieldset_mode_on = false;
 			$body .= '</fieldset>'.PHP_EOL;
 			$body .= '</form>'.PHP_EOL;
 			return $body;
@@ -454,11 +460,11 @@ class yf_form2 {
 			$name = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$func = function($extra, $r, $_this) {
-			if ($_this->_fieldset_mode_on) {
+		$func = function($extra, $r, $form) {
+			if ($form->_fieldset_mode_on) {
 				$body = '</fieldset>'.PHP_EOL;
 			} else {
-				$_this->_fieldset_mode_on = true;
+				$form->_fieldset_mode_on = true;
 			}
 			$body .= '<fieldset'._attrs($extra, array('class','style','id','name')).'>';
 			if ($extra['legend']) {
@@ -477,9 +483,9 @@ class yf_form2 {
 	* Paired with fieldset_start
 	*/
 	function fieldset_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			if ($_this->_fieldset_mode_on) {
-				$_this->_fieldset_mode_on = false;
+		$func = function($extra, $r, $form) {
+			if ($form->_fieldset_mode_on) {
+				$form->_fieldset_mode_on = false;
 				return '</fieldset>'.PHP_EOL;
 			}
 		};
@@ -494,14 +500,14 @@ class yf_form2 {
 	* Shortcut for starting form row, needed to build row with several inlined inputs
 	*/
 	function row_start($extra = array()) {
-		$func = function($extra, $r, $_this) {
+		$func = function($extra, $r, $form) {
 			// auto-close row_end(), if not called implicitely
-			if ($_this->_stacked_mode_on) {
-				$_this->row_end();
+			if ($form->_stacked_mode_on) {
+				$form->row_end();
 			}
-			$_this->_stacked_mode_on = true;
-			$_this->_prepare_inline_error($extra);
-			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
+			$form->_stacked_mode_on = true;
+			$form->_prepare_inline_error($extra);
+			return $form->_row_html('', array('only_row_start' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -514,9 +520,9 @@ class yf_form2 {
 	* Paired with row_start
 	*/
 	function row_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_stacked_mode_on = false;
-			return $_this->_row_html('', array('only_row_end' => 1) + (array)$extra);
+		$func = function($extra, $r, $form) {
+			$form->_stacked_mode_on = false;
+			return $form->_row_html('', array('only_row_end' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -534,14 +540,14 @@ class yf_form2 {
 			$name = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$func = function($extra, $r, $_this) {
+		$func = function($extra, $r, $form) {
 			// auto-close tab_end(), if not called implicitely
-			if ($_this->_tabbed_mode_on) {
-				$_this->tab_end();
+			if ($form->_tabbed_mode_on) {
+				$form->tab_end();
 			}
-			$_this->_tabbed_mode_on = true;
-			$_this->_tabs_name = $extra['name'];
-			$_this->_tabs_extra = $extra;
+			$form->_tabbed_mode_on = true;
+			$form->_tabs_name = $extra['name'];
+			$form->_tabs_extra = $extra;
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -554,8 +560,8 @@ class yf_form2 {
 	* Paired with tab_start
 	*/
 	function tab_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_tabbed_mode_on = false;
+		$func = function($extra, $r, $form) {
+			$form->_tabbed_mode_on = false;
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -762,17 +768,17 @@ class yf_form2 {
 		$extra['text'] = $text;
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 
-		$func = function($extra, $r, $_this) {
+		$func = function($extra, $r, $form) {
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['contenteditable'] = isset($extra['ckeditor']) ? 'true' : 'false';
-			$extra['id'] = $_this->_prepare_id($extra, 'content_editable');
-			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
+			$extra['id'] = $form->_prepare_id($extra, 'content_editable');
+			$extra['desc'] = !$form->_params['no_label'] ? $extra['desc'] : '';
 
 			$attrs_names = array('id','contenteditable','style','class','title');
 			if ($extra['ckeditor']) {
 				$extra['ckeditor_inline'] = true;
 			}
-			return $_this->_row_html(isset($extra['ckeditor']) ? '<div'._attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
+			return $form->_row_html(isset($extra['ckeditor']) ? '<div'._attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
