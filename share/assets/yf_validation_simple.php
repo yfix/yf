@@ -2,63 +2,6 @@
 
 return function() {
 
-$advanced_js_validation = conf('form_advanced_js_validation');
-if ($advanced_js_validation) {
-	$lang = conf('language');
-	$lang_files = array(
-		'en' => 'en_US',
-		'ru' => 'ru_RU',
-		'ua' => 'ua_UA',
-	);
-	return array(
-		'require' => array(
-			'asset' => array(
-				'bootstrap-theme',
-				'jquery-formvalidation',
-			),
-		),
-		'versions' => array('master' => array('jquery' => 
-			'$("form[data-fv-framework]").formValidation({
-				framework: "bootstrap"
-				, icon: {
-					valid: "fa fa-2x fa-check-circle text-success",
-					invalid: "fa fa-2x fa-times-circle text-error text-danger",
-					validating: "fa fa-2x fa-refresh"
-				}
-				, locale: "'.$lang_files[$lang].'"
-//				, err: { container: "tooltip" }
-			})
-/*
-// This event will be triggered when the field passes given validator
-    .on("success.validator.fv", function(e, data) {
-        // data.field     --> The field name
-        // data.element   --> The field element
-        // data.result    --> The result returned by the validator
-        // data.validator --> The validator name
-
-        if (data.field === "userName"
-            && data.validator === "remote"
-            && (data.result.available === false || data.result.available === "false"))
-        {
-            // The userName field passes the remote validator
-            data.element                    // Get the field element
-                .closest(".form-group")     // Get the field parent
-
-                // Add has-warning class
-                .removeClass("has-success")
-                .addClass("has-warning")
-
-                // Show message
-                .find("small[data-fv-validator=remote][data-fv-for=userName]")
-                .show();
-        }
-    })
-*/
-			;')
-		),
-	);
-}
-
 return array(
 	'versions' => array(
 		'master' => array(
@@ -177,62 +120,6 @@ return array(
 		}
 	})
 ',
-/*
-	$("form").each(function() {
-		var form = this;
-
-		// Suppress the default bubbles
-		form.addEventListener("invalid", function(event) {
-			event.preventDefault();
-		}, true);
-
-		// Support Safari, iOS Safari, and the Android browser—each of which do not prevent form submissions by default
-		$(form).on("submit", function(event) {
-			if (!this.checkValidity()) {
-				event.preventDefault();
-			}
-		});
-
-		$("input, select, textarea", form)
-			// Destroy the tooltip on blur if the field contains valid data
-			.on("change keyup", function() {
-//			.on("change keyup invalid valid", function() {
-				yf_on_validate_change($(this));
-			})
-			.on("blur", function() {
-				var field = $(this);
-				if (this.validity.valid) {
-					field.popover("destroy");
-				} else {
-					field.popover("hide");
-				}
-			})
-			.on("focus", function() {
-				$(this).popover("show");
-			})
-		;
-
-		$("button:not([type=button]), input[type=submit]", form).on("click", function(event) {
-			// Destroy any tooltips from previous runs
-			$("input, select, textarea", form).each(function() {
-				$(this).popover("destroy");
-			});
-			// Add a tooltip to each invalid field
-			var invalidFields = $(":invalid", form).each(function() {
-				var field = $(this).popover({
-					trigger: "hover",
-					placement: "bottom",
-					html: true,
-					content: function() {
-						return "<i class=\"" + yf_css_icon_error + "\"></i>&nbsp;" + field[ 0 ].validationMessage;
-					}
-				});
-			});
-			// If there are errors, give focus to the first invalid field
-			invalidFields.first().trigger("focus").eq(0).focus();
-		});
-	});
-*/
 		),
 	),
 );
