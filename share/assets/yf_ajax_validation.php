@@ -98,7 +98,7 @@ return array(
 	}
 
 	// HTML5 custom validation messages
-	$("input, textarea", "form, select").not("[type=submit]").not("[type=image]").not("[data-ajax-validate]").on("change keyup invalid valid", function() {
+	$("input, textarea", "form, select").not("[type=submit]").not("[type=image]")/*.not("[data-ajax-validate]")*/.on("change keyup invalid valid", function() {
 		var _this = $(this)
 		var textfield = _this.get(0);
 		var control_group = _this.closest(".control-group");
