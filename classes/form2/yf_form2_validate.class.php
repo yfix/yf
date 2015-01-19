@@ -50,7 +50,7 @@ class yf_form2_validate {
 			$extra['maxlength'] = $vr['max_length'][1];
 		}
 */
-		if (isset($vr['required'])) {
+		if (isset($vr['required']) || isset($vr['captcha'])) {
 			$extra['required'] = 1;
 			$extra['class_add_form_group'] = trim($extra['class_add_form_group'].' '.$form->CLASS_REQUIRED);
 		}
