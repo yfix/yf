@@ -9,7 +9,7 @@
 // TODO: locking atomic to prevent doing same job in several threads
 // TODO: move to web accessible folder only after completion to ensure atomicity
 // TODO: decide with images: jpeg, png, gif, sprites
-// TODO: comparing versions and return best match
+// TODO: comparing versions and return best match. Try to use service "php_semver" for this
 // TODO: upload to S3, FTP
 
 class yf_assets {
