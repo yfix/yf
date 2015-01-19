@@ -86,6 +86,11 @@ foreach ((array)$git_urls as $git_url => $lib_dir) {
 	}
 }
 
+# pear-style autoload
+#if (is_file($file = dirname(__FILE__).'/../'.str_replace(array('_', "\0"), array('/', ''), $class).'.php')) {
+#	require $file;
+#}
+
 !isset($autoload_config) && $autoload_config = array();
 $autoload_config && spl_autoload_register(function($class) use ($autoload_config, $libs_root) {
 #	echo '=='.$class .PHP_EOL;
