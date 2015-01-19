@@ -601,8 +601,9 @@ class yf_payment_api__provider_liqpay {
 			return( $result );
 		}
 		// fee
-		$amount_currency = $payment_api->fee( $amount_currency, $this->fee );
-		if( empty( $amount_currency ) ) {
+		$fee = $this->fee;
+		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
+		if( empty( $amount_currency_total ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Невозможно произвести начисление комисси',
@@ -611,17 +612,19 @@ class yf_payment_api__provider_liqpay {
 		}
 		// prepare request form
 		$form_data  = array(
-			'user_id'         => $user_id,
-			'operation_id'    => $operation_id,
-			'account_id'      => $account_id,
-			'provider_id'     => $provider_id,
-			'currency_id'     => $currency_id,
-			'amount'          => $amount,
-			'amount_currency' => $amount_currency,
+			'user_id'               => $user_id,
+			'operation_id'          => $operation_id,
+			'account_id'            => $account_id,
+			'provider_id'           => $provider_id,
+			'currency_id'           => $currency_id,
+			'fee'                   => $fee,
+			'amount'                => $amount,
+			'amount_currency'       => $amount_currency,
+			'amount_currency_total' => $amount_currency_total,
 		);
 		// $description = implode( '#', array_values( $description ) );
 		$form_options = array(
-			'amount'       => $amount_currency,
+			'amount'       => $amount_currency_total,
 			'currency'     => $currency_id,
 			'operation_id' => $operation_id,
 			'title'        => $data[ 'title' ],
@@ -633,28 +636,17 @@ class yf_payment_api__provider_liqpay {
 		$form = $this->_form( $form_options );
 		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
 		// save options
-		$operation = db()->table( 'payment_operation' )
-			->where( 'operation_id', $operation_id )
-			->get();
-		$operation_options = (array)json_decode( $operation[ 'options' ], JSON_NUMERIC_CHECK );
-		$operation_options[ 'request' ][] = array(
-			'data'     => $form_data,
-			'form'     => $form_options,
-			'datetime' => $operation_data[ 'sql_datetime' ],
+		$operation_options = array(
+			'request' => array( array(
+				'data'     => $form_data,
+				'form'     => $form_options,
+				'datetime' => $operation_data[ 'sql_datetime' ],
+			)),
 		);
-		$sql_data = array(
-			'options' => _es( json_encode( $operation_options ) ),
-		);
-		$sql_status = db()->table( 'payment_operation' )
-			->where( 'operation_id', $operation_id )
-			->update( $sql_data );
-		if( empty( $sql_status ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Ошибка при обновлении операции: ' . $operation_id,
-			);
-			return( $result );
-		}
+		$result = $payment_api->operation_update( array(
+			'operation_id'      => $operation_id,
+			'operation_options' => $operation_options,
+		));
 		$result = array(
 			'form'           => $form,
 			'status'         => true,

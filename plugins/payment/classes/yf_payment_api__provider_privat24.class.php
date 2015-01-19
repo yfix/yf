@@ -388,8 +388,9 @@ class yf_payment_api__provider_privat24 {
 			return( $result );
 		}
 		// fee
-		$amount_currency = $payment_api->fee( $amount_currency, $this->fee );
-		if( empty( $amount_currency ) ) {
+		$fee = $this->fee;
+		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
+		if( empty( $amount_currency_total ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Невозможно произвести начисление комисси',
@@ -398,17 +399,19 @@ class yf_payment_api__provider_privat24 {
 		}
 		// prepare request form
 		$form_data  = array(
-			'user_id'         => $user_id,
-			'operation_id'    => $operation_id,
-			'account_id'      => $account_id,
-			'provider_id'     => $provider_id,
-			'currency_id'     => $currency_id,
-			'amount'          => $amount,
-			'amount_currency' => $amount_currency,
+			'user_id'               => $user_id,
+			'operation_id'          => $operation_id,
+			'account_id'            => $account_id,
+			'provider_id'           => $provider_id,
+			'currency_id'           => $currency_id,
+			'fee'                   => $fee,
+			'amount'                => $amount,
+			'amount_currency'       => $amount_currency,
+			'amount_currency_total' => $amount_currency_total,
 		);
 		// $description = implode( '#', array_values( $description ) );
 		$form_options = array(
-			'amount'       => $amount_currency,
+			'amount'       => $amount_currency_total,
 			'currency'     => $currency_id,
 			'operation_id' => $operation_id,
 			'title'        => $data[ 'title' ],

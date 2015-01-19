@@ -44,7 +44,6 @@
 			account_id
 			provider_id
 				{ system, administration, webmoney, privat24 }
-			provider_operation_id
 			direction
 				{ in (приход), out (расход) }
 			type_id
@@ -641,7 +640,6 @@ class yf_payment_api {
 	/*
 		account_id by user_id
 		provider_id
-		provider_operation_id { NULL - inner methods }
 		direction             { in (приход) }
 		type_id               { deposition : пополнение счета (приход) }
 		status_id             { in_progress, success, refused }
@@ -904,7 +902,6 @@ class yf_payment_api {
 		$result = array(
 			'account_id'            => $account_id,
 			'provider_id'           => $provider_id,
-			'provider_operation_id' => null,
 			'status_id'             => $status_id, // in_progress
 			'type_id'               => $type_id,   // deposition, payment, etc
 			'amount'                => $sql_amount,
@@ -963,6 +960,40 @@ class yf_payment_api {
 			$count = $db->order_by()->limit( null )->count( '*', $is_sql );
 		}
 		return( array( $result, $count ) );
+	}
+
+	public function operation_update( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// check operation_id
+		$operation_id = (int)$_operation_id;
+		if( $operation_id < 1 ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка при обновлении операции: ' . $operation_id,
+			);
+			return( $result );
+		}
+		// get operation
+		$operation = db()->table( 'payment_operation' )
+			->where( 'operation_id', $operation_id )
+			->get();
+		$operation_options = (array)json_decode( $operation[ 'options' ], JSON_NUMERIC_CHECK );
+		is_array( $_operation_options ) &&
+			$operation_options = array_merge_recursive( $operation_options, $_operation_options );
+		$sql_data = array(
+			'options' => _es( json_encode( $operation_options ) ),
+		);
+		$sql_status = db()->table( 'payment_operation' )
+			->where( 'operation_id', $operation_id )
+			->update( $sql_data );
+		if( empty( $sql_status ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка при обновлении операции: ' . $operation_id,
+			);
+			return( $result );
+		}
 	}
 
 	// simple route: class__sub_class->method
