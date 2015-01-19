@@ -80,7 +80,6 @@ class yf_payment_api__provider {
 		);
 		// get status
 		$object = $payment_api->get_status( array( 'name' => 'success' ) );
-		if( empty( $object ) ) { return( $object ); }
 		list( $payment_status_id, $payment_status ) = $object;
 		if( empty( $payment_status_id ) ) {
 			db()->rollback();

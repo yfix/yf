@@ -184,14 +184,14 @@ class yf_payment_api__provider_privat24 {
 				$status_message      = 'Отклонено: ';
 				break;
 		}
-		// get status
+		// get success status
 		$object = $payment_api->get_status( array( 'name' => 'success' ) );
-		if( empty( $object ) ) { return( $object ); }
 		list( $payment_status_success_id, $payment_success_status ) = $object;
+		if( empty( $payment_status_success_id ) ) { return( $object ); }
 		// get currency status
 		$object = $payment_api->get_status( array( 'name' => $payment_status_name ) );
-		if( empty( $object ) ) { return( $object ); }
 		list( $payment_status_id, $payment_status ) = $object;
+		if( empty( $payment_status_id ) ) { return( $object ); }
 		// get deposition options
 		// list( $user_id, $operation_id, $account_id, $provider_id, $amount ) = explode( '#', $response[ 'description' ] );
 		$operation_id = (int)$response[ 'operation_id' ];
