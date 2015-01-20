@@ -10,7 +10,7 @@ class test_html {
 	/***/
 	function _hook_side_column() {
 		$items = array();
-		$url = process_url('./?object='.$_GET['object']);
+		$url = url('/@object');
 		$methods = get_class_methods($this);
 		sort($methods);
 		foreach ((array)$methods as $name) {
@@ -27,7 +27,7 @@ class test_html {
 
 	/***/
 	function show() {
-		$url = process_url('./?object='.$_GET['object']);
+		$url = url('/@object');
 		$methods = get_class_methods($this);
 		sort($methods);
 		foreach ((array)$methods as $name) {
@@ -161,19 +161,19 @@ class test_html {
 	function navbar() {
 		return _class('html')->navbar(array(
 			'brand'	=> array(
-				'link'	=> './',
+				'link'	=> url('/'),
 				'name'	=> 'Title',
 			),
 			array(
-				'link'	=> './?object=home',
+				'link'	=> url('/home'),
 				'name'	=> 'Home',
 			),
 			array(
-				'link'	=> './?object=link1',
+				'link'	=> url('/link1'),
 				'name'	=> 'Link1',
 			),
 			array(
-				'link'	=> './?object=link2',
+				'link'	=> url('/link2'),
 				'name'	=> 'Link2',
 			),
 		));
@@ -183,19 +183,19 @@ class test_html {
 	function navlist() {
 		return _class('html')->navlist(array(
 			'brand'	=> array(
-				'link'	=> './',
+				'link'	=> url('/'),
 				'name'	=> 'Title',
 			),
 			array(
-				'link'	=> './?object=home',
+				'link'	=> url('/home'),
 				'name'	=> 'Home',
 			),
 			array(
-				'link'	=> './?object=link1',
+				'link'	=> url('/link1'),
 				'name'	=> 'Link1',
 			),
 			array(
-				'link'	=> './?object=link2',
+				'link'	=> url('/link2'),
 				'name'	=> 'Link2',
 			),
 		));
@@ -205,11 +205,11 @@ class test_html {
 	function breadcrumbs() {
 		return _class('html')->breadcrumbs(array(
 			array(
-				'link'	=> './?object=home',
+				'link'	=> url('/home'),
 				'name'	=> 'Home',
 			),
 			array(
-				'link'	=> './?object=library',
+				'link'	=> url('/library'),
 				'name'	=> 'Library',
 			),
 			array(
@@ -235,29 +235,32 @@ class test_html {
 
 	/***/
 	function thumbnails() {
+#		$img = module('dynamic')->placeholder_img(array('width' => 300, 'height' => 200));
+		$img = url('/dynamic/placeholder/300x200');
+
 		return _class('html')->thumbnails(array(
 			array(
-				'img'	=> 'http://placehold.it/300x200',
+				'img'	=> $img,
 			),
 			array(
-				'img'	=> 'http://placehold.it/300x200',
+				'img'	=> $img,
 				'head'	=> 'Thumbnail label 4',
 			),
 			array(
-				'img'	=> 'http://placehold.it/300x200',
+				'img'	=> $img,
 				'alt'	=> '300x200',
 				'head'	=> 'Thumbnail label 1',
 				'body'	=> '<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
 					<p><a href="#" class="btn btn-primary">Action</a> <a href="#" class="btn">Action</a></p>',
 			),
-			'http://placehold.it/300x200',
+			$img,
 			array(
-				'img'	=> 'http://placehold.it/300x200',
+				'img'	=> $img,
 				'alt'	=> '300x200',
 				'head'	=> 'Thumbnail label 2',
 				'body'	=> '<p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>',
 			),
-			'http://placehold.it/300x200',
+			$img,
 		), array('columns' => 3));
 	}
 
@@ -279,13 +282,13 @@ class test_html {
 	/***/
 	function pagination() {
 		return _class('html')->pagination(array(
-			'1'	=> './?object=some&id=1',
-			'2'	=> './?object=some&id=2',
-			'prev'	=> './?object=some&id=1',
-			'next'	=> './?object=some&id=2',
-			'3'	=> './?object=some&id=3',
-			'4'	=> './?object=some&id=4',
-			'5'	=> './?object=some&id=5',
+			'1'	=> url('/some/action/1'),
+			'2'	=> url('/some/action/2'),
+			'prev'	=> url('/some/action/1'),
+			'next'	=> url('/some/action/2'),
+			'3'	=> url('/some/action/3'),
+			'4'	=> url('/some/action/4'),
+			'5'	=> url('/some/action/5'),
 		));
 	}
 
@@ -331,50 +334,55 @@ class test_html {
 
 	/***/
 	function media_objects() {
+#		$img = module('dynamic')->placeholder_img(array('width' => 300, 'height' => 200));
+		$img = url('/dynamic/placeholder/64x64');
+		$body = 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.';
+		$date = date('Y-m-d H:i:s');
+
 		return _class('html')->media_objects(array(
 			11 => array(
-				'link'	=> './?object=comments&action=view&id=11',
-				'img'	=> 'http://placehold.it/64x64',
+				'link'	=> url('/comments/view/11'),
+				'img'	=> $img,
 				'alt'	=> '64x64',
 				'head'	=> 'Comment 1',
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
-				'date'	=> date('Y-m-d H:i:s'),
+				'body'	=> $body,
+				'date'	=> $date,
 			),
 			22 => array(
-				'link'	=> './?object=comments&action=view&id=22',
-				'img'	=> 'http://placehold.it/64x64',
+				'link'	=> url('/comments/view/22'),
+				'img'	=> $img,
 				'alt'	=> '64x64',
 				'head'	=> 'Comment 2',
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
-				'date'	=> date('Y-m-d H:i:s'),
+				'body'	=> $body,
+				'date'	=> $date,
 			),
 			33 => array(
-				'link'	=> './?object=comments&action=view&id=33',
-				'img'	=> 'http://placehold.it/64x64',
+				'link'	=> url('/comments/view/33'),
+				'img'	=> $img,
 				'alt'	=> '64x64',
-				'head'	=> 'Comment 1',
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'head'	=> 'Comment 3',
+				'body'	=> $body,
 				'parent_id'	=> 22,
 			),
 			44 => array(
-				'link'	=> './?object=comments&action=view&id=44',
-				'img'	=> 'http://placehold.it/64x64',
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
-				'date'	=> date('Y-m-d H:i:s'),
+				'link'	=> url('/comments/view/44'),
+				'img'	=> $img,
+				'body'	=> $body,
+				'date'	=> $date,
 				'parent_id'	=> 33,
 			),
 			55 => array(
-				'img'	=> 'http://placehold.it/64x64',
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
+				'img'	=> $img,
+				'body'	=> $body,
 				'parent_id'	=> 44,
 			),
 			66 => array(
-				'link'	=> './?object=comments&action=view&id=66',
-				'img'	=> 'http://placehold.it/64x64',
+				'link'	=> url('/comments/view/66'),
+				'img'	=> $img,
 				'alt'	=> '64x64',
-				'head'	=> 'Comment 1',
-				'body'	=> 'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.',
-				'date'	=> date('Y-m-d H:i:s'),
+				'head'	=> 'Comment 6',
+				'body'	=> $body,
+				'date'	=> $date,
 			),
 		));
 	}
@@ -386,12 +394,12 @@ class test_html {
 				'name'	=> 'Tools',
 			),
 			22 => array(
-				'link'		=> './?object=blocks',
+				'link'		=> url('/blocks'),
 				'name'		=> 'Blocks editor',
 				'parent_id'	=> 11,
 			),
 			33 => array(
-				'link'		=> './?object=file_manager',
+				'link'		=> url('/file_manager'),
 				'name'		=> 'File manager',
 				'parent_id'	=> 11,
 			),
@@ -399,17 +407,17 @@ class test_html {
 				'name'		=> 'Administration',
 			),
 			55 => array(
-				'link'		=> './?object=admin',
+				'link'		=> url('/admin'),
 				'name'		=> 'Admin accounts',
 				'parent_id'	=> 44,
 			),
 			66 => array(
-				'link'		=> './?object=admin_groups',
+				'link'		=> url('/admin_groups'),
 				'name'		=> 'Admin groups',
 				'parent_id'	=> 44,
 			),
 			77 => array(
-				'link'		=> './?object=admin_modules',
+				'link'		=> url('/admin_modules'),
 				'name'		=> 'Admin modules',
 				'parent_id'	=> 44,
 			),
@@ -418,17 +426,17 @@ class test_html {
 				'parent_id'	=> 44,
 			),
 			99 => array(
-				'link'		=> './?object=manage_users',
+				'link'		=> url('/manage_users'),
 				'name'		=> 'User accounts',
 				'parent_id'	=> 88,
 			),
 			101 => array(
-				'link'		=> './?object=user_groups',
+				'link'		=> url('/user_groups'),
 				'name'		=> 'User groups',
 				'parent_id'	=> 88,
 			),
 			102 => array(
-				'link'		=> './?object=user_modules',
+				'link'		=> url('/user_modules'),
 				'name'		=> 'User modules',
 				'parent_id'	=> 88,
 			),
@@ -436,17 +444,17 @@ class test_html {
 				'name'		=> 'Content',
 			),
 			104 => array(
-				'link'		=> './?object=static_pages',
+				'link'		=> url('/static_pages'),
 				'name'		=> 'Static pages',
 				'parent_id'	=> 103,
 			),
 			105 => array(
-				'link'		=> './?object=manage_news',
+				'link'		=> url('/manage_news'),
 				'name'		=> 'News',
 				'parent_id'	=> 103,
 			),
 			106 => array(
-				'link'		=> './?object=manage_comments',
+				'link'		=> url('/manage_comments'),
 				'name'		=> 'Comments',
 				'parent_id'	=> 103,
 			),
@@ -460,12 +468,12 @@ class test_html {
 				'name'	=> 'Tools',
 			),
 			22 => array(
-				'link'		=> './?object=blocks',
+				'link'		=> url('/blocks'),
 				'name'		=> 'Blocks editor',
 				'parent_id'	=> 11,
 			),
 			33 => array(
-				'link'		=> './?object=file_manager',
+				'link'		=> url('/file_manager'),
 				'name'		=> 'File manager',
 				'parent_id'	=> 11,
 			),
@@ -473,17 +481,17 @@ class test_html {
 				'name'		=> 'Administration',
 			),
 			55 => array(
-				'link'		=> './?object=admin',
+				'link'		=> url('/admin'),
 				'name'		=> 'Admin accounts',
 				'parent_id'	=> 44,
 			),
 			66 => array(
-				'link'		=> './?object=admin_groups',
+				'link'		=> url('/admin_groups'),
 				'name'		=> 'Admin groups',
 				'parent_id'	=> 44,
 			),
 			77 => array(
-				'link'		=> './?object=admin_modules',
+				'link'		=> url('/admin_modules'),
 				'name'		=> 'Admin modules',
 				'parent_id'	=> 44,
 			),
@@ -492,17 +500,17 @@ class test_html {
 				'parent_id'	=> 44,
 			),
 			99 => array(
-				'link'		=> './?object=manage_users',
+				'link'		=> url('/manage_users'),
 				'name'		=> 'User accounts',
 				'parent_id'	=> 88,
 			),
 			101 => array(
-				'link'		=> './?object=user_groups',
+				'link'		=> url('/user_groups'),
 				'name'		=> 'User groups',
 				'parent_id'	=> 88,
 			),
 			102 => array(
-				'link'		=> './?object=user_modules',
+				'link'		=> url('/user_modules'),
 				'name'		=> 'User modules',
 				'parent_id'	=> 88,
 			),
@@ -510,17 +518,17 @@ class test_html {
 				'name'		=> 'Content',
 			),
 			104 => array(
-				'link'		=> './?object=static_pages',
+				'link'		=> url('/static_pages'),
 				'name'		=> 'Static pages',
 				'parent_id'	=> 103,
 			),
 			105 => array(
-				'link'		=> './?object=manage_news',
+				'link'		=> url('/manage_news'),
 				'name'		=> 'News',
 				'parent_id'	=> 103,
 			),
 			106 => array(
-				'link'		=> './?object=manage_comments',
+				'link'		=> url('/manage_comments'),
 				'name'		=> 'Comments',
 				'parent_id'	=> 103,
 			),
