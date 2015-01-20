@@ -17,7 +17,7 @@ return function() {
 					validating: "fa fa-2x fa-refresh"
 				}
 				, locale: "'.$lang_files[$lang].'"
-//				, err: { container: "tooltip" }
+//				, err: { container: "popover" }
 			})
 /*
 // This event will be triggered when the field passes given validator
