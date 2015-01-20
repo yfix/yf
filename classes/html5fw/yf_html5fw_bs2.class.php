@@ -12,8 +12,8 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 	public $CLASS_INPUT_PREPEND		= 'input-prepend';
 	public $CLASS_INPUT_APPEND		= 'input-append';
 	public $CLASS_LABEL				= 'control-label col-md-3';
-	public $CLASS_NO_LABEL			= ' col-md-offset-3 col-md-9';
-	public $CLASS_NO_LABEL_BUTTONS	= ' col-md-offset-3 col-md-11';
+	public $CLASS_NO_LABEL			= ' col-md-offset-3';
+	public $CLASS_NO_LABEL_BUTTONS	= ' col-md-offset-3';
 	public $CLASS_CONTROLS			= 'controls col-md-offset-3';
 	public $CLASS_CONTROLS_BUTTONS	= 'controls col-md-offset-3';
 	public $CLASS_DESC				= '';
