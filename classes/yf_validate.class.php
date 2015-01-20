@@ -96,7 +96,7 @@ class yf_validate {
 		foreach ((array)$rules as $name => $_rules) {
 			$is_required = false;
 			foreach ((array)$_rules as $rule) {
-				if ($rule[0] == 'required') {
+				if (is_string($rule[0]) && substr($rule[0], 0, strlen('required')) === 'required') {
 					$is_required = true;
 					break;
 				}
@@ -108,9 +108,9 @@ class yf_validate {
 				$param = $rule[1];
 				// PHP pure function, from core or user
 				if (is_string($func) && function_exists($func)) {
-					$data[$name] = $this->_apply_existing_func($func, $data[$name]);
+					$data[$name] = $this->_apply_existing_func($func, $data[$name], $error_msg);
 				} elseif (is_callable($func)) {
-					$is_ok = $func($data[$name], null, $data);
+					$is_ok = $func($data[$name], null, $data, $error_msg);
 				} else {
 					$is_ok = _class('validate')->$func($data[$name], array('param' => $param), $data, $error_msg);
 					if (!$is_ok && empty($error_msg)) {
