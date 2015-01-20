@@ -132,7 +132,7 @@
 			<th>действия</th>
 		</tr>
 		<tr
-			ng-repeat     = "i in data._upload_list | filterRE: { status: 'upload_list_filter__status', filter: 'upload_list_filter', order: 'time', reverse: 'true' }"
+			ng-repeat     = "i in data._upload_list | filterRE: { status: upload_list_filter__status, filter: upload_list_filter, order: 'time', reverse: 'true' }"
 			class         = "upload_list"
 			ng-class      = "{ upload_list_hover: upload_list_hover, success: upload_list_hover }"
 			ng-mouseover  = "upload_list_hover=true"
@@ -346,12 +346,12 @@ ul.select2-result-single {
 			<div ng-show="item_data.test">
 				<span class="btn btn-small"
 					title    = "всего: {{ item_data.test.count }}"
-					ng-class = "{ active: item_filter_status == undefined }"
+					ng-class = "{ active: item_filter_status == '' }"
 					ng-show  = "item_data.test.count > 0"
-					ng-click = "item_filter_status = undefined"
+					ng-click = "item_filter_status = ''"
 				>
 					<i
-						ng-show="item_filter_status == undefined"
+						ng-show="item_filter_status == ''"
 						class="fa fa-pie-chart"></i>
 					({{ item_data.test.count }})
 				</span>

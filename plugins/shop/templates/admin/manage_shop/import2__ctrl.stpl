@@ -325,10 +325,9 @@ ng_app_admin.filter( 'filterRE',
 [ '$log',
 function( $log ) {
 	return function( items, options ) {
-		var $scope       = this;
 		var filtered     = [];
-		var filter       = $scope[ options.filter ] || '';
-		var status_model = $scope[ options.status ] || null;
+		var filter       = options.filter || '';
+		var status_model = options.status || null;
 		var status       = true;
 		var regexp       = null;
 		// filter by regexp
@@ -342,7 +341,7 @@ function( $log ) {
 			{{-- $log.log( 'filter', filter_escape, '>', regexp ); --}}
 		}
 		if( regexp === null ) { status = false; }
-		$scope[ options.status ] = status;
+		options.status = status;
 		angular.forEach( items, function( item ) {
 			var found = false;
 			angular.forEach( item, function( value ) {
@@ -377,7 +376,6 @@ function( $log ) {
 	return function( items, options ) {
 		if( !angular.isArray( items ) ) { return( items ); }
 		// calc pages
-		var $scope = this;
 		var pagination = options.controller;
 		var result = pagination.calc( items.length ) || false;
 		if( result === false ) { return( items ); }
@@ -672,7 +670,7 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 				}, $scope.item_data.items );
 			}
 			// reset status filter
-			$scope.item_filter_status = undefined;
+			$scope.item_filter_status = '';
 			$scope.upload_list_show = false;
 		} else {
 			var title   = result.response.action.file + ':';
@@ -742,7 +740,7 @@ function( $log, UploadApi, Notifications, $tooltip, $scope, $filter ) {
 			}, $scope.item_data.items );
 		}
 		// reset status filter
-		$scope.item_filter_status = undefined;
+		$scope.item_filter_status = '';
 		// show response status
 		if( result.response.action.status ) {
 			var count         = $scope.item_data.test.count;
