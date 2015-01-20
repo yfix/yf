@@ -12,7 +12,7 @@ $css_fixes[2] = '
 	.dropdown-toggle .caret { margin: 0 !important; }
 ';
 $css_fixes[3] = '
-	.container-fixed input, .container-fixed textarea, .container-fixed select { max-width: 300px; }
+	.container-fixed input, textarea, select { max-width: 300px; }
 	.container-fixed textarea.cke_source { max-width: inherit; }
 	.container-fixed .input-mini { width:70px !important }
 	.container-fixed .input-small { width:100px !important }
