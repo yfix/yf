@@ -18,7 +18,7 @@ class yf_form2_datetime {
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
 		$extra['desc'] = $form->_prepare_desc($extra, $desc);
-		$extra['limit_date_format'] = $extra['limit_date_format'] ? $extra['limit_date_format'] : 'd-m-Y H:i';
+		$extra['limit_date_format'] = $extra['limit_date_format'] ? $extra['limit_date_format'] : 'm-d-Y H:i';
 
 		$format = $format_php = $placeholder = array();
 		$extra['no_time'] = $extra['with_time'] ? !$extra['with_time'] : $extra['no_time'];
@@ -54,7 +54,7 @@ class yf_form2_datetime {
 		asset('bootstrap-datetimepicker');
 		jquery('
 			$("#'.$extra['name'].'").datetimepicker({
-				language: "'.conf('language').'"
+				locale: "'.conf('language').'"
 				, icons: {
 					time: "icon icon-time fa fa-clock-o",
 					date: "icon icon-calendar fa fa-calendar",
@@ -67,7 +67,7 @@ class yf_form2_datetime {
 		        . ($extra['max_date']? ', maxDate: \''.date($extra['limit_date_format'], $extra['max_date']).'\'' : '')
 				. ($extra['default_date'] ? ', defaultDate: \''.date($extra['limit_date_format'], $extra['default_date']).'\'' : '')
 				. ($extra['side_by_side'] && $extra['no_time'] != 1 ? ', sideBySide: true' : '')
-			//	. ($extra['stepping']  ? ', stepping: '.$extra['stepping'] : '')
+				. ($extra['stepping']  ? ', stepping: '.$extra['stepping'] : '')
 				.'
 			});
 		');
