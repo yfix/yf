@@ -74,6 +74,8 @@ td input[type=text], td textarea { margin-bottom: 0; }
 .cssfw-bs3 .form-vertical .input-group { max-width: 300px; }
 .cssfw-bs3 .form-vertical .radio, .cssfw-bs3 .form-vertical .checkbox { margin-top: 0; }
 
+.cssfw-bs3 .media { min-height: 75px; }
+
 /* override styles per bs theme here */ 
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color: #52575c; }
 .bs-theme-slate.cssfw-bs3 .dropdown-toggle .caret { border-top-color: #c8c8c8; }
