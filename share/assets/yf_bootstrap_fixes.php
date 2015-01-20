@@ -69,10 +69,10 @@ td input[type=text], td textarea { margin-bottom: 0; }
 .cssfw-bs3 .carousel-control .icon-chevron-right { position: absolute; top: 50%; z-index: 5; display: inline-block; }
 .cssfw-bs3 a.accordion-toggle { display: block; }
 
-.cssfw-bs3 .form-vertical .col-md-3 { width:100%; margin-top: 5px; }
-.cssfw-bs3 .form-vertical .col-md-offset-3 { width:100%; margin-left: 0; margin-top: 5px; }
+.cssfw-bs3 .form-vertical .control-label { width:100% !important; margin-top: 5px; margin-bottom: 0; padding-left: 0; }
+.cssfw-bs3 .form-vertical .controls { width:100%; margin-left: 0; margin-top: 5px; float:left; padding-left: 0; }
 .cssfw-bs3 .form-vertical .input-group { max-width: 300px; }
-.cssfw-bs3 .form-vertical .radio, .cssfw-bs3 .form-vertical .checkbox { margin-top: 0; }
+.cssfw-bs3 .form-vertical .radio, .cssfw-bs3 .form-vertical .checkbox { margin-left: 20px; margin-top: 0; }
 
 .cssfw-bs3 .media { min-height: 75px; }
 
