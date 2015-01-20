@@ -76,7 +76,7 @@ td input[type=text], td textarea { margin-bottom: 0; }
 
 .cssfw-bs3 .media { min-height: 75px; }
 
-.cssfw-bs3 .controls .help-block { width: 100%; }
+.cssfw-bs3 .controls .help-block { width: 100%; margin-bottom: 0; }
 
 /* override styles per bs theme here */ 
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color: #52575c; }
