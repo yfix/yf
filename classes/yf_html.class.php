@@ -827,11 +827,12 @@ class yf_html {
 		$id_prefix = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$extra['force_id'] && $id_prefix = $extra['force_id'];
 		$counter = 0;
+		$body = array();
 		foreach ((array)$values as $value => $val_name) {
 			$id = $id_prefix.'_'.++$counter;
 			if ($this->BOXES_USE_STPL) {
 				$_what_compare = strval($type == 1 ? $val_name : $value);
-				$replace = array(
+				$body[] = tpl()->parse('system/common/radio_box_item', array(
 					'name'			=> $name,
 					'value'			=> $value,
 					'selected'		=> $_what_compare == $selected ? 'checked="true"' : '',
@@ -840,17 +841,15 @@ class yf_html {
 					'divider'		=> $flow_vertical ? '<br />' : '&nbsp;',
 					'horizontal'	=> $extra['horizontal'] ? 1 : 0,
 					'id'			=> $id,
-				);
-				$body .= tpl()->parse('system/common/radio_box_item', $replace);
+				));
 			} else {
-				$body .=
-					'<label class="radio'.($extra['horizontal'] ? ' radio-horizontal' : '').'">'
-						.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ((strval($value) == $selected) ? ' checked' : '').'>'
-						.t($val_name)
-					.'</label>'.PHP_EOL;
+				$body[] = '<label class="radio'.($extra['horizontal'] ? ' radio-inline' : '').'">'
+							.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ((strval($value) == $selected) ? ' checked' : '').'>'
+							.t($val_name)
+						.'</label>'.PHP_EOL;
 			}
 		}
-		return $body;
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -880,11 +879,11 @@ class yf_html {
 		if ($extra['style']) {
 			$add_str .= ' style="'.$extra['style'].'" ';
 		}
-
-		return '<label class="checkbox">'
-				.'<input type="checkbox" name="'.$name.'" id="'.$extra['id'].'" value="'.$value.'"'. ($selected ? ' checked="checked"' : '') .($add_str ? ' '.$add_str : '').'> &nbsp;' // Please do not remove this whitespace :)
-				.($translate ? t($extra['desc']) : $extra['desc'])
-			.'</label>';
+		return '<label class="checkbox checkbox-inline">'
+				. '<input type="checkbox" name="'.$name.'" id="'.$extra['id'].'" value="'.$value.'"'
+				. ($selected ? ' checked="checked"' : '') . ($add_str ? ' '.$add_str : '')
+				. '> &nbsp;'. ($translate ? t($extra['desc']) : $extra['desc']) // Please do not remove whitespace :)
+			. '</label>';
 	}
 
 	/**
@@ -917,6 +916,7 @@ class yf_html {
 		if (!is_array($selected)) {
 			$selected = strval($selected);
 		}
+		$body = array();
 		foreach ((array)$values as $key => $value) {
 			$sel_text = '';
 			// Selected value could be an array
@@ -928,7 +928,7 @@ class yf_html {
 				}
 			} elseif (strlen($selected)) {
 				$_what_compare = strval($type == 1 ? $value : $key);
-				$sel_text = $_what_compare == $selected ? 'checked="true"' : '';
+				$sel_text = $_what_compare == $selected ? 'checked="checked"' : '';
 			} else {
 				$sel_text = '';
 			}
@@ -939,7 +939,7 @@ class yf_html {
 			}
 			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 			if ($this->BOXES_USE_STPL) {
-				$replace = array(
+				$body[] = tpl()->parse('system/common/check_box_item', array(
 					'name'		=> $val_name,
 					'value'		=> $key,
 					'selected'	=> $sel_text,
@@ -947,15 +947,16 @@ class yf_html {
 					'label'		=> $translate ? t($value) : $value,
 					'divider'	=> $flow_vertical ? '<br />' : '&nbsp;',
 					'id'		=> $id,
-				);
-				$body .= tpl()->parse('system/common/check_box_item', $replace);
+				));
 			} else {
-				$body .= '<input type="checkbox" name="'.$val_name.'" id="'.$id.'" class="check" value="'.$key.'"'.($sel_text ? ' '.$sel_text : ''). ($add_str ? ' '.trim($add_str) : '').'>'
-					.($translate ? t($value) : $value)
-					.($flow_vertical ? '<br />' : '&nbsp;'). PHP_EOL;
+				$body[] = '<label class="checkbox'.(!$flow_vertical ? ' checkbox-inline' : '').'">'
+							. '<input type="checkbox" name="'.$val_name.'" id="'.$id.'" value="'.$key.'"'
+							. ($sel_text ? ' '.$sel_text : '') . ($add_str ? ' '.trim($add_str) : '')
+							. '> &nbsp;'. ($translate ? t($value) : $value) // Please do not remove whitespace :)
+						.'</label>';
 			}
 		}
-		return $body;
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
