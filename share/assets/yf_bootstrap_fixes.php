@@ -1,9 +1,7 @@
 <?php
 
-return array(
-	'versions' => array(
-		'master' => array(
-			'css' => array('
+return array('versions' => array('master' => array('css' => array('
+
 fieldset.well { padding-bottom: 0; }
 fieldset.well legend { margin-bottom:0; padding: 0 0.5em; width: auto; line-height: 1.5em; background: inherit; }
 legend+.control-group { margin-top: 0; }
@@ -42,13 +40,18 @@ td input[type=text], td textarea { margin-bottom: 0; }
 
 .form-inline .form-group { width: 100%; }
 .form-inline .form-group .controls { margin-left: 0; }
-.form-inline .controls .radio:first-child { padding-top:0 }
-.form-inline .controls > .checkbox:first-child { padding-top:0 }
-.form-inline .radio:first-child { padding-left: 5px; }
+/*.form-inline .controls .radio:first-child { padding-top:0 }*/
+/*.form-inline .controls > .checkbox:first-child { padding-top:0 }*/
+/*.form-inline .radio:first-child { padding-left: 5px; }*/
 .form-inline .radio input[type=radio] { float: none; }
 .form-inline legend { margin-bottom: 0; margin-top: 0; }
 
 .control-group-required .control-label:after, .form-group-required .control-label:after { content:" *"; color:red; }
+
+.cssfw-bs2 label.radio-inline { padding-left: inherit; display: inline-block; margin-bottom: inherit; }
+.cssfw-bs2 label.radio-inline input[type=radio] { float: none; margin-left:inherit; margin-top:0; }
+
+.cssfw-bs2 .dropdown-toggle .caret { margin: 0 !important; }
 
 .cssfw-bs2 .icon-email:before { content: "@"; }
 
@@ -65,6 +68,17 @@ td input[type=text], td textarea { margin-bottom: 0; }
 	.cssfw-bs3 .navbar .breadcrumb { float: left; margin: 7px 10px; }
 }
 
+.cssfw-bs3 .container-fixed input, textarea, select { max-width: 300px; }
+.cssfw-bs3 .container-fixed textarea.cke_source { max-width: inherit; }
+.cssfw-bs3 .container-fixed .input-mini { width:70px !important }
+.cssfw-bs3 .container-fixed .input-small { width:100px !important }
+.cssfw-bs3 .container-fixed .input-medium { width:160px !important }
+.cssfw-bs3 .container-fixed .input-large { width:220px !important }
+.cssfw-bs3 .container-fixed .input-xlarge { width:280px !important }
+.cssfw-bs3 .container-fixed .input-xxlarge { width:540px !important }
+.cssfw-bs3 .container-fixed .input-group[class*="col-"] { float:left !important; margin-right: 3px; }
+.cssfw-bs3 .form-horizontal .radio, .form-horizontal .checkbox { margin-top: 5px; }
+
 .cssfw-bs3 .carousel-control .icon-chevron-left,
 .cssfw-bs3 .carousel-control .icon-chevron-right { position: absolute; top: 50%; z-index: 5; display: inline-block; }
 .cssfw-bs3 a.accordion-toggle { display: block; }
@@ -72,7 +86,6 @@ td input[type=text], td textarea { margin-bottom: 0; }
 .cssfw-bs3 .form-vertical .control-label { width:100% !important; margin-top: 5px; margin-bottom: 0; padding-left: 0; }
 .cssfw-bs3 .form-vertical .controls { width:100%; margin-left: 0; margin-top: 5px; float:left; padding-left: 0; }
 .cssfw-bs3 .form-vertical .input-group { max-width: 300px; }
-.cssfw-bs3 .form-vertical .radio, .cssfw-bs3 .form-vertical .checkbox { margin-left: 20px; margin-top: 0; }
 
 .cssfw-bs3 .media { min-height: 75px; }
 
@@ -82,6 +95,6 @@ td input[type=text], td textarea { margin-bottom: 0; }
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color: #52575c; }
 .bs-theme-slate.cssfw-bs3 .dropdown-toggle .caret { border-top-color: #c8c8c8; }
 			'),
-		),
-	),
-);
+$css_fixes[3] = '
+
+')));
