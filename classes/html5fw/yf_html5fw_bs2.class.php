@@ -72,8 +72,12 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		$controls_extra = $extra['controls'];
 		$controls_extra['class'] = $class_controls;
 
+		$label_extra = $extra['control_label'];
+		$label_extra['class'] = $class_label;
+		$label_extra['for'] = $extra['id'];
+
 		$row_start = '<div'._attrs($form_group_extra, array('id','class','style')).'>'.PHP_EOL
-			.($extra['desc'] && !$no_label ? '<label class="'.$class_label.'" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
+			.($extra['desc'] && !$no_label ? '<label'._attrs($label_extra, array('id','class','style','for')).'>'.t($extra['desc']).'</label>'.PHP_EOL : '')
 			.(!$extra['wide'] ? '<div'._attrs($controls_extra, array('id','class','style')).'>'.PHP_EOL : '');
 
 		$row_end =
