@@ -65,6 +65,7 @@ class yf_common {
 		}
 		$themes[] = 'flatui';
 		$themes[] = 'material_design';
+		$themes[] = 'bootstrap_theme';
 		$themes[] = 'bootstrap';
 		return $themes;
 	}
