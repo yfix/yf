@@ -66,19 +66,30 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 			. ($extra['desc'] && !$no_label ? ' '.$this->CLASS_DESC : $def_class_no_label)
 			. ($extra['class_add_controls'] ? ' '.$extra['class_add_controls'] : '');
 
-		$row_start = '<div class="'.$class_form_group.'">'.PHP_EOL
+		$form_group_extra = $extra['form_group'];
+		$form_group_extra['class'] = $class_form_group;
+
+		$controls_extra = $extra['controls'];
+		$controls_extra['class'] = $class_controls;
+
+		$row_start = '<div'._attrs($form_group_extra, array('id','class','style')).'>'.PHP_EOL
 			.($extra['desc'] && !$no_label ? '<label class="'.$class_label.'" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
-			.(!$extra['wide'] ? '<div class="'.$class_controls.'">'.PHP_EOL : '');
+			.(!$extra['wide'] ? '<div'._attrs($controls_extra, array('id','class','style')).'>'.PHP_EOL : '');
 
 		$row_end =
 				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
 			.'</div>';
 
-		$before_content_html = ($extra['prepend'] || $extra['append']) ? '<div class="'.$this->CLASS_INPUT_GROUP.' '.($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : ''). ($extra['append'] ? ' '.$this->CLASS_INPUT_APPEND : '').'">'.PHP_EOL : '';
+		$input_group_extra = $extra['input_group'];
+		$input_group_extra['class'] = $this->CLASS_INPUT_GROUP.' '.($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : ''). ($extra['append'] ? ' '.$this->CLASS_INPUT_APPEND : '');
+
+		$show_input_group = ($extra['append'] || $extra['prepend']);
+
+		$before_content_html = $show_input_group ? '<div'._attrs($input_group_extra, array('id','class','style')).'>'.PHP_EOL : '';
 		$before_content_html .= $extra['prepend'] ? '<span class="'.$this->CLASS_ADDON.'">'.$extra['prepend'].'</span>'.PHP_EOL : '';
 
 		$after_content_html = $extra['append'] ? '<span class="'.$this->CLASS_ADDON.'">'.$extra['append'].'</span>'.PHP_EOL : '';
-		$after_content_html .= ($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '';
+		$after_content_html .= $show_input_group ? '</div>'.PHP_EOL : '';
 
 		if ($extra['edit_link']) {
 			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {
