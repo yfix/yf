@@ -878,7 +878,7 @@ class yf_html {
 		if ($extra['style']) {
 			$add_str .= ' style="'.$extra['style'].'" ';
 		}
-		return '<label class="checkbox checkbox-inline">'
+		return '<label class="checkbox checkbox-inline'.($extra['class_add_label_checkbox'] ? ' '.$extra['class_add_label_checkbox'] : '').'">'
 				. '<input type="checkbox" name="'.$name.'" id="'.$extra['id'].'" value="'.$value.'"'
 				. ($selected ? ' checked="checked"' : '') . ($add_str ? ' '.$add_str : '')
 				. '> &nbsp;'. ($translate ? t($extra['desc']) : $extra['desc']) // Please do not remove whitespace :)

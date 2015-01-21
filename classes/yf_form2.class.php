@@ -1680,6 +1680,11 @@ class yf_form2 {
 			$extra = (array)$extra + $value;
 			$value = '';
 		}
+/*
+$extra['class_add_controls'] = 'btn-group';
+$extra['controls']['data-toggle'] = 'buttons';
+$extra['class_add_label_checkbox'] = 'btn btn-sm btn-default';
+*/
 		return $this->_html_control($name, $value, $extra, $replace, 'check_box');
 	}
 
