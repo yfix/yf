@@ -16,6 +16,8 @@ return array(
 		),
 	),
 	'require' => array(
-		'css' => 'yf_bootstrap_fixes',
+		'asset' => array(
+			'yf_bootstrap_fixes',
+		),
 	),
 );

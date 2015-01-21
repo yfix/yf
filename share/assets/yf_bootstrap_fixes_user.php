@@ -11,6 +11,9 @@ ul#slide_menu .dropdown-divider { font-weight:bold; border-bottom:1px solid; }
 		),
 	),
 	'require' => array(
-		'css' => 'yf_bootstrap_fixes',
+		'asset' => array(
+			'yf_bootstrap_fixes',
+#			'icheck',
+		),
 	),
 );
