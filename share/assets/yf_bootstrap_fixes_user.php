@@ -5,8 +5,8 @@ return array(
 		'master' => array(
 			'css' => array('
 .left_area .bs-docs-sidenav, .right_area .bs-docs-sidenav { position:fixed; }
-.dl-horizontal dt { width: 50%; margin-right: 10px; }
-ul#slide_menu .dropdown-divider { font-weight: bold; border-bottom: 1px solid; }
+.dl-horizontal dt { width:50%; margin-right:10px; }
+ul#slide_menu .dropdown-divider { font-weight:bold; border-bottom:1px solid; }
 			'),
 		),
 	),
