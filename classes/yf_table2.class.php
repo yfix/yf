@@ -1133,7 +1133,20 @@ class yf_table2 {
 	/**
 	* Callback function will be populated with these params: function($field, $params, $row, $instance_params) {}
 	*/
-	function func($name, $func, $extra = array()) {
+	function func($name, $func = null, $extra = array()) {
+		if (!is_string($name) && is_callable($name)) {
+			if (is_array($func)) {
+				$extra = (array)$extra + $func;
+			}
+			$func = $name;
+			if (isset($extra['name'])) {
+				$name = $extra['name'];
+			} else {
+				$name = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+				$this->_params['custom_fields'][$name] = array();
+				$extra['desc'] = $extra['desc'] ?: ''; // Prevent auto-generated id desc
+			}
+		}
 		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
 		$this->_fields[] = array(
 			'type'	=> __FUNCTION__,
