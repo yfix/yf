@@ -64,6 +64,7 @@ class yf_common {
 			$themes = explode(PHP_EOL, trim(file_get_contents($cache_dir. '/themes_'.$css_fw.'.txt')));
 		}
 		$themes[] = 'flatui';
+		$themes[] = 'material_design';
 		$themes[] = 'bootstrap';
 		return $themes;
 	}
