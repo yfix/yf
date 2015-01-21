@@ -800,7 +800,7 @@ class yf_html {
 
 	/**
 	*/
-	function radio_box($name, $values = array(), $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
+	function radio_box($name, $values = array(), $selected = '', $horizontal = true, $type = 2, $add_str = '', $translate = 0) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -812,7 +812,7 @@ class yf_html {
 		}
 		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
 		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
-		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : $flow_vertical;
+		$horizontal = isset($extra['horizontal']) ? $extra['horizontal'] : $horizontal;
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		if ($extra['class']) {
 			$add_str .= ' class="'.$extra['class'].'" ';
@@ -835,16 +835,15 @@ class yf_html {
 				$body[] = tpl()->parse('system/common/radio_box_item', array(
 					'name'			=> $name,
 					'value'			=> $value,
-					'selected'		=> $_what_compare == $selected ? 'checked="true"' : '',
+					'selected'		=> $_what_compare == $selected ? 'checked="checked"' : '',
 					'add_str'		=> $add_str,
 					'label'			=> $translate ? t($val_name) : $val_name,
-					'divider'		=> $flow_vertical ? '<br />' : '&nbsp;',
-					'horizontal'	=> $extra['horizontal'] ? 1 : 0,
+					'horizontal'	=> intval((bool)$horizontal),
 					'id'			=> $id,
 				));
 			} else {
-				$body[] = '<label class="radio'.($extra['horizontal'] ? ' radio-inline' : '').'">'
-							.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ((strval($value) == $selected) ? ' checked' : '').'>'
+				$body[] = '<label class="radio'.($horizontal ? ' radio-inline' : '').'">'
+							.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ((strval($value) == $selected) ? ' checked="checked"' : '').'>'
 							.t($val_name)
 						.'</label>'.PHP_EOL;
 			}
@@ -889,7 +888,7 @@ class yf_html {
 	/**
 	* Processing many checkboxes at one time
 	*/
-	function multi_check_box($name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
+	function multi_check_box($name, $values = array(), $selected = array(), $horizontal = true, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -901,7 +900,7 @@ class yf_html {
 		}
 		$selected = $extra['selected'];
 		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
-		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
+		$horizontal = isset($extra['horizontal']) ? $extra['horizontal'] : $horizontal;
 		$name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 		if ($extra['class']) {
@@ -945,11 +944,10 @@ class yf_html {
 					'selected'	=> $sel_text,
 					'add_str'	=> $add_str,
 					'label'		=> $translate ? t($value) : $value,
-					'divider'	=> $flow_vertical ? '<br />' : '&nbsp;',
 					'id'		=> $id,
 				));
 			} else {
-				$body[] = '<label class="checkbox'.(!$flow_vertical ? ' checkbox-inline' : '').'">'
+				$body[] = '<label class="checkbox'.($horizontal ? ' checkbox-inline' : '').'">'
 							. '<input type="checkbox" name="'.$val_name.'" id="'.$id.'" value="'.$key.'"'
 							. ($sel_text ? ' '.$sel_text : '') . ($add_str ? ' '.trim($add_str) : '')
 							. '> &nbsp;'. ($translate ? t($value) : $value) // Please do not remove whitespace :)
