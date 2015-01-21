@@ -17,6 +17,7 @@ if ($bs_theme === 'bootstrap') {
 		),
 	);
 } elseif ($bs_theme === 'flatui') {
+	conf('bs3_no_default_theme', true);
 	return array(
 		'versions' => array(
 			'master' => array(
@@ -29,11 +30,35 @@ if ($bs_theme === 'bootstrap') {
 				),
 			),
 		),
-		'require' => array(
-			'css' => 'bootstrap3',
-		),
+#		'require' => array(
+#			'css' => 'bootstrap3',
+#		),
 		'add' => array(
 			'css' => $fixes_name,
+		),
+	);
+} elseif ($bs_theme === 'material_design') {
+	conf('bs3_no_default_theme', true);
+	return array(
+		'versions' => array(
+			'master' => array(
+				'css' => array(
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/css/ripples.min.css',
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/css/material-wfont.min.css',
+				),
+				'js' => array(
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/js/ripples.min.js',
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/js/material.min.js',
+#					'$(function(){ $.material.init(); })',
+				),
+#				'jquery' => '$.material.init();',
+			),
+		),
+		'require' => array(
+			'asset' => 'bootstrap3',
+		),
+		'add' => array(
+#			'css' => $fixes_name,
 		),
 	);
 } elseif ($bs_major_version == 2) {
