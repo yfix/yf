@@ -346,14 +346,15 @@ class yf_table2 {
 		if ($params['rotate_table']) {
 			$default_per_page = 10;
 		}
-		$pager_path = $params['pager_path'];
-		$pager_type = $params['pager_type'];
-		$pager_records_on_page = $params['pager_records_on_page'] ?: $default_per_page;
-		$pager_num_records = $params['pager_num_records'] ?: 0;
-		$pager_stpl_path = $params['pager_stpl_path'] ?: '';
-		$pager_add_get_vars = $params['pager_add_get_vars'] ?: 1;
-		$pager_extra['sql_callback'] = $params['pager_sql_callback'] ?: null;
-
+		$pager = array(
+			'path'				=> $params['pager_path'],
+			'type'				=> $params['pager_type'],
+			'records_on_page'	=> $params['pager_records_on_page'] ?: $default_per_page,
+			'num_records'		=> $params['pager_num_records'] ?: 0,
+			'stpl_path'			=> $params['pager_stpl_path'] ?: '',
+			'add_get_vars'		=> $params['pager_add_get_vars'] ?: 1,
+			'sql_callback'		=> $params['pager_sql_callback'] ?: null,
+		);
 		$sql = $this->_sql;
 		$ids = array();
 		if (is_array($sql)) {
@@ -375,10 +376,11 @@ class yf_table2 {
 			if ($params['filter']) {
 				$this->_filter_array($data, $params['filter'], $params['filter_params']);
 			}
-			list(,$pages,) = common()->divide_pages(null, null, null, $pager_records_on_page, count($data));
-			if (count($data) > $pager_records_on_page) {
-				$slice_start = (empty($_GET['page']) ? 0 : intval($_GET['page']) - 1) * $pager_records_on_page;
-				$slice_end = $pager_records_on_page;
+			$pager['out'] = common()->divide_pages(null, null, null, $pager['records_on_page'], count($data));
+			$pages = $pager['out'][1];
+			if (count($data) > $pager['records_on_page']) {
+				$slice_start = (empty($_GET['page']) ? 0 : intval($_GET['page']) - 1) * $pager['records_on_page'];
+				$slice_end = $pager['records_on_page'];
 				$data = array_slice($data, $slice_start, $slice_end, $preserve_keys = true);
 			}
 			$total = count($data);
@@ -386,7 +388,7 @@ class yf_table2 {
 		} elseif (strlen($sql)) {
 			if (is_object($params['db'])) {
 				$db = $params['db'];
-				$pager_extra['db'] = $db;
+				$pager['extra']['db'] = $db;
 			} else {
 				$db = db();
 			}
@@ -413,7 +415,10 @@ class yf_table2 {
 					}
 				}
 			}
-			list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars, $pager_extra);
+			$pager['out'] = common()->divide_pages($sql, $pager['path'], $pager['type'], $pager['records_on_page'], $pager['num_records'], $pager['stpl_path'], $pager['add_get_vars'], $pager['extra']);
+			$add_sql = $pager['out'][0];
+			$pages = $pager['out'][1];
+			$total = $pager['out'][2];
 
 			$items = array();
 			$q = $db->query($sql. $add_sql);
@@ -430,6 +435,7 @@ class yf_table2 {
 		$this->_total = $total;
 		$this->_pages = $pages;
 		$this->_ids = $ids;
+		$this->_pager = $pager;
 
 		return array(
 			'data'	=> $data,
@@ -1156,6 +1162,20 @@ class yf_table2 {
 			'func'	=> $func,
 		);
 		return $this;
+	}
+
+	/**
+	* Column counter, knows about pagination
+	*/
+	function rownum($extra = array()) {
+		$table = $this;
+		$func = function($val, $extra, $row) use ($table) {
+			$pager = $table->_pager;
+			$first = $pager['out'][3];
+			$cur = ++$table->_counter;
+			return $first + $cur;
+		};
+		return $this->func($func, $extra);
 	}
 
 	/**
