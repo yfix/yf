@@ -1308,7 +1308,7 @@ class yf_form2 {
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $form) {
 			$form->_prepare_inline_error($extra);
-			$as_btn_group = isset($extra['btn_group']) ? $extra['btn_group'] : $this->CONF_BOXES_USE_BTN_GROUP;
+			$as_btn_group = isset($extra['btn_group']) ? $extra['btn_group'] : $form->CONF_BOXES_USE_BTN_GROUP;
 			if ($as_btn_group) {
 				$extra['class_add_controls'] = 'btn-group';
 				$extra['controls']['data-toggle'] = 'buttons';
