@@ -87,6 +87,9 @@ td input[type=text], td textarea { margin-bottom:0; }
 .cssfw-bs3 .form-vertical .controls { width:100%; margin-left:0; margin-top:5px; float:left; padding-left:0; }
 .cssfw-bs3 .form-vertical .input-group { max-width:300px; }
 
+.cssfw-bs3 .form-horizontal .controls.btn-group { margin-left:0; }
+.cssfw-bs3 .form-horizontal .controls.btn-group label.btn { padding: 3px 5px; }
+
 .cssfw-bs3 .media { min-height:75px; }
 
 .cssfw-bs3 .controls .help-block { width:100%; margin-bottom:0; }
