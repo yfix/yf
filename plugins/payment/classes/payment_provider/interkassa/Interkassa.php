@@ -35,6 +35,7 @@ class Interkassa {
 		'ik_int',      // Interface, /web|json/ web; json Интерфейс. Позволяет указать формат интерфейса SCI как "web" или "json". По умолчанию "web".
 	);
 	protected $_signature_allow_x = array(
+		'_ik_x_', // not in manual, but allow %)
 		'ik_x_', // ik_x_[name] - X Prefix, ik_x_field1 = somedata; ik_x_baggage1 = code123; Префикс дополнительных полей. Позволяет передавать дополнительные поля на SCI, после чего эти параметры включаются в данные уведомления о совершенном платеже на страницу взаимодействия.  Для создания вы можете воспользоваться нашим генератором платежной формы
 	);
 
@@ -108,12 +109,10 @@ class Interkassa {
 		}
 		// sort by key
 		ksort( $request, SORT_STRING );
-var_dump( $request );
 		// compile string
 		$key = $this->private_key();
-var_dump( $key );
+		$key = $this->_private_key;
 		$str = implode( ':', $request ) . ':' . $key;
-var_dump( $str );
 		// create signature
 		$result = $this->str_to_sign( $str );
 		return( $result );
@@ -121,7 +120,6 @@ var_dump( $str );
 
 	public function str_to_sign( $str ) {
 		$hash_method = $this->hash_method();
-var_dump( $hash_method );
 		$result = base64_encode( hash( $hash_method, $str, true ) );
 		return( $result );
 	}
