@@ -464,7 +464,7 @@ class yf_blocks {
 			))
 			->text('name')
 			->select_box('type', array('admin' => 'admin', 'user' => 'user'), array('show_text' => 1))
-			->radio_box('active', main()->get_data('pair_active'))
+			->active_box()
 			->select_box('order_by', $order_fields, array('show_text' => 1))
 			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
 			->save_and_clear();
