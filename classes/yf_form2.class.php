@@ -27,6 +27,8 @@ class yf_form2 {
 	public $CLASS_ERROR = 'alert alert-error alert-danger';
 	public $CLASS_REQUIRED = 'control-group-required form-group-required';
 
+	public $CONF_BOXES_USE_BTN_GROUP = true;
+
 	/**
 	* Catch missing method call
 	*/
@@ -46,8 +48,13 @@ class yf_form2 {
 	function __clone() {
 		$keep_prefix = 'CLASS_';
 		$keep_len = strlen($keep_prefix);
+		$keep_prefix2 = 'CONF_';
+		$keep_len2 = strlen($keep_prefix2);
 		foreach ((array)get_object_vars($this) as $k => $v) {
 			if (substr($k, 0, $keep_len) === $keep_prefix) {
+				continue;
+			}
+			if (substr($k, 0, $keep_len2) === $keep_prefix2) {
 				continue;
 			}
 			$this->$k = null;
@@ -1301,11 +1308,14 @@ class yf_form2 {
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $form) {
 			$form->_prepare_inline_error($extra);
+			$as_btn_group = isset($extra['btn_group']) ? $extra['btn_group'] : $this->CONF_BOXES_USE_BTN_GROUP;
+			if ($as_btn_group) {
+				$extra['class_add_controls'] = 'btn-group';
+				$extra['controls']['data-toggle'] = 'buttons';
+			}
 			if (!$extra['items']) {
-				if (!isset($form->_pair_active)) {
-					$form->_pair_active = main()->get_data('pair_active');
-				}
-				$extra['items'] = $form->_pair_active;
+				$data_handler = $as_btn_group ? 'pair_active_btn_group' : 'pair_active';
+				$extra['items'] = main()->get_data($data_handler);
 			}
 			$extra['values'] = $extra['items'];
 			$extra['desc'] = !$form->_params['no_label'] ? $extra['desc'] : '';
@@ -1680,11 +1690,13 @@ class yf_form2 {
 			$extra = (array)$extra + $value;
 			$value = '';
 		}
-/*
-$extra['class_add_controls'] = 'btn-group';
-$extra['controls']['data-toggle'] = 'buttons';
-$extra['class_add_label_checkbox'] = 'btn btn-sm btn-default';
-*/
+		$as_btn_group = isset($extra['btn_group']) ? $extra['btn_group'] : $this->CONF_BOXES_USE_BTN_GROUP;
+		if ($as_btn_group) {
+			$extra['class_add_controls'] = 'btn-group';
+			$extra['controls']['data-toggle'] = 'buttons';
+			$extra['class_add_label_checkbox'] = 'btn btn-xs btn-default';
+			$extra['desc'] = '<span><i class="icon icon-check fa fa-check"></i></span> '.$extra['desc'];
+		}
 		return $this->_html_control($name, $value, $extra, $replace, 'check_box');
 	}
 
@@ -1697,6 +1709,12 @@ $extra['class_add_label_checkbox'] = 'btn btn-sm btn-default';
 	/**
 	*/
 	function radio_box($name, $values, $extra = array(), $replace = array()) {
+		$as_btn_group = isset($extra['btn_group']) ? $extra['btn_group'] : $this->CONF_BOXES_USE_BTN_GROUP;
+		if ($as_btn_group) {
+			$extra['class_add_controls'] = 'btn-group';
+			$extra['controls']['data-toggle'] = 'buttons';
+			$extra['class_add_label_radio'] = 'btn btn-xs btn-default';
+		}
 		return $this->_html_control($name, $values, $extra, $replace, 'radio_box');
 	}
 
