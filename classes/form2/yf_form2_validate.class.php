@@ -50,11 +50,13 @@ class yf_form2_validate {
 			$extra['maxlength'] = $vr['max_length'][1];
 		}
 */
+#		$extra['feedback_icon'] = 'icon icon-ok fa fa-check';
+#		$extra['feedback_icon'] = 'icon icon-remove fa fa-close';
+
 		// Useful for testing server-side validation
 		if (conf('form_no_js_validation')) {
 			return $extra;
 		}
-
 		if (isset($vr['required']) || isset($vr['captcha'])) {
 			$extra['required'] = 1;
 			$extra['class_add_form_group'] = trim($extra['class_add_form_group'].' '.$form->CLASS_REQUIRED);
