@@ -1018,6 +1018,10 @@ class yf_form2 {
 	* HTML5
 	*/
 	function number($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -1042,6 +1046,13 @@ class yf_form2 {
 	/**
 	*/
 	function decimal($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
 		$extra['step'] = $extra['step'] ?: '0.01';
 		return $this->number($name, $desc, $extra, $replace);
 	}
@@ -1066,6 +1077,10 @@ class yf_form2 {
 	/**
 	*/
 	function price($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -1077,6 +1092,10 @@ class yf_form2 {
 	* HTML5
 	*/
 	function url($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
