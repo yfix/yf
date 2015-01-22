@@ -23,6 +23,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;
 		self::$_bak_settings['CONF_BOXES_USE_BTN_GROUP'] = $GLOBALS['PROJECT_CONF']['form2']['CONF_BOXES_USE_BTN_GROUP'];
 		$GLOBALS['PROJECT_CONF']['form2']['CONF_BOXES_USE_BTN_GROUP'] = false;
+		_class('form2')->CONF_BOXES_USE_BTN_GROUP = false;
 
 		$css = _class('html5fw');
 
@@ -37,6 +38,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	public static function tearDownAfterClass() {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = self::$_bak_settings['REWRITE_MODE'];
 		$GLOBALS['PROJECT_CONF']['form2']['CONF_BOXES_USE_BTN_GROUP'] = self::$_bak_settings['CONF_BOXES_USE_BTN_GROUP'];
+		_class('form2')->CONF_BOXES_USE_BTN_GROUP = self::$_bak_settings['CONF_BOXES_USE_BTN_GROUP'];
 	}
 	private function form_no_chain($r = array()) {
 		return form($r, array('no_form' => 1, 'only_content' => 1, 'no_chained_mode' => 1));
