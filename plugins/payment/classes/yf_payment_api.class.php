@@ -1,5 +1,9 @@
 <?php
 
+if( !function_exists( 'array_replace_recursive' ) ) {
+	trigger_error( 'Not exists function "array_replace_recursive ( PHP 5 >= 5.3.0 )"', E_USER_ERROR );
+}
+
 /*
 	default currency:
 	exchange:
@@ -107,7 +111,8 @@ class yf_payment_api {
 	public $currency_id         = null;
 	public $currency            = null;
 	public $currency_rate       = null;
-	public $currencies          = array(
+	public $currencies          = null;
+	public $currencies_default  = array(
 		'UNT' => array(
 			'currency_id' => 'UNT',
 			'name'        => 'балл',
@@ -159,12 +164,22 @@ class yf_payment_api {
 	public $type       = null;
 	public $type_index = null;
 
+	public $CONFIG              = null;
 	public $OPERATION_LIMIT     = 10;
 	public $BALANCE_LIMIT_LOWER = 0;
 
 	public function _init() {
+		$this->config();
 		$this->user_id_default = (int)main()->USER_ID;
 		$this->user_id( $this->user_id_default );
+	}
+
+	public function config( $options = null ) {
+		!empty( (array)$options ) && $this->CONFIG = (array)$options;
+		$config = &$this->CONFIG;
+		if( is_array( $config[ 'currencies' ] ) ) {
+			$this->currencies = array_replace_recursive( $this->currencies_default, $config[ 'currencies' ] );
+		}
 	}
 
 	public function user_id( $value = -1 ) {
