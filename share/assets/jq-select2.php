@@ -12,6 +12,8 @@ return array(
 			),
 			'css' => array(
 				'//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.css',
+				// CSS to make Select2 fit in with Bootstrap 3.x
+				'//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2-bootstrap.min.css',
 			),
 		),
 		'3.5.2' => array(
@@ -22,7 +24,7 @@ return array(
 			'css' => array(
 				'//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css',
 				// CSS to make Select2 fit in with Bootstrap 3.x
-				// '//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2-bootstrap.min.css',
+				'//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2-bootstrap.min.css',
 			),
 		),
 	),

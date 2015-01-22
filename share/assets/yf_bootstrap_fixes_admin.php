@@ -13,11 +13,17 @@ return array(
 .tab-content { overflow:visible; }
 .chzn-container { color:black; }
 			'),
+			'jquery' => array(
+				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',
+#				'$("select").not(".portlet select").not(".no-chosen").chosen();',
+			),
 		),
 	),
 	'require' => array(
 		'asset' => array(
 			'yf_bootstrap_fixes',
+			'jq-select2',
+#			'chosen',
 		),
 	),
 );
