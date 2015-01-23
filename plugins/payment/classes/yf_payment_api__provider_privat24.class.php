@@ -25,6 +25,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		'url_result'   => 'return_url',
 		'url_server'   => 'server_url',
 		'public_key'   => 'merchant',
+		'key_public'   => 'merchant',
 	);
 
 	public $_options_transform_reverse = array(

@@ -19,7 +19,7 @@ class Interkassa {
 		'ik_pw_on',    // Payway On, /^[\w;,\.]{0,512}$/ webmoney; w1_merchant_ usd Включенные способы оплаты. Позволяет указывать доступные способы оплаты для клиента.  Опциональный параметр.
 		'ik_pw_off',   // Payway Off, /^[\w;,\.]{0,512}$/ webmoney_me rchant Отключенные способы оплаты. Позволяет указывать недоступные способы оплаты для клиента.  Опциональный параметр.
 		'ik_pw_via',   // Payway Via, /^[\w]{0,62}$/ visa_liqpay_mer chant_usd Выбранный способ оплаты. Позволяет указать точный способ оплаты для клиента. Параметр работает только с параметром действия (ik_act) установленного в "process" или "payway". см. действие (ik_act).  Опциональный параметр.
-		'ik_sign',     // Signature, /^.{0,128}$/ oVAOevI3mWrcvrjB4j/ySg== Цифровая подпись. См. формирования цифровой подписи. Обязательный параметр, если в настройках кассы установлен параметр "Требуется ли цифровая подпись от кассы" (Sign Co Required).
+		// 'ik_sign',     // Signature, /^.{0,128}$/ oVAOevI3mWrcvrjB4j/ySg== Цифровая подпись. См. формирования цифровой подписи. Обязательный параметр, если в настройках кассы установлен параметр "Требуется ли цифровая подпись от кассы" (Sign Co Required).
 		'ik_loc',      // Locale, /^.{5}$/' ru; de_us Локаль. Позволяет явно указать язык и регион установленные для клиента. Формируется по шаблону: [language[_territory]. По умолчанию определяется автоматически.
 		'ik_enc',      // Encoding, /^.{0,16}$/ utf-8; ISO-8859- 1; cp1251 Кодировка. По умолчанию используется кодировка UTF- 8.
 		'ik_cli',      // User, /^.{0,64}$/ usermail@gmail .com; +380501234567 Контактная информация клиента. Принимает значение как email или номер мобильного телефона.  Опциональный параметр.
@@ -33,6 +33,15 @@ class Interkassa {
 		'ik_fal_m',    // Fail Method, /get|post/i
 		'ik_act',      // process — обработать; payways — способы оплаты; payways_calc — расчет способов оплаты; payway — платежное направление.
 		'ik_int',      // Interface, /web|json/ web; json Интерфейс. Позволяет указать формат интерфейса SCI как "web" или "json". По умолчанию "web".
+		// ********************** response
+		'ik_inv_id',   // Invoice Id, 12345; 5632156; Идентификатор платежа.
+		'ik_co_prs_id', // Checkout Purse Id, 307447812424; Идентификатор кошелька кассы.
+		'ik_trn_id',   // Transaction Id, 14533; ID_4233; Идентификатор транзакции.
+		'ik_inv_crt',  // Invoice Created, 2013-03-17 17:30:33; Время создания платежа.
+		'ik_inv_prc',  // Invoice Processed, 2013-03-20 15:46:58; Время проведения платежа.
+		'ik_inv_st',   // Invoice State, success; fail Состояние платежа. Возможные значения: Дополнительные new — новый, waitAccept —ожидает оплаты, process —обрабатывается, success —успешно проведен, canceled—отменен, fail—не проведен.
+		'ik_ps_price', // Paysystem Price, 25.32; Сумма платежа в платежной системе.
+		'ik_co_rfn',   // Checkout Refund, 24.94; Сумма зачисления на счет кассы.
 	);
 	protected $_signature_allow_x = array(
 		'_ik_x_', // not in manual, but allow %)
@@ -111,7 +120,6 @@ class Interkassa {
 		ksort( $request, SORT_STRING );
 		// compile string
 		$key = $this->private_key();
-		$key = $this->_private_key;
 		$str = implode( ':', $request ) . ':' . $key;
 		// create signature
 		$result = $this->str_to_sign( $str );
