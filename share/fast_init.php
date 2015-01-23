@@ -39,33 +39,37 @@ function _call_fast_func ($f_name) {
 	return false;
 }
 
-$fname = '';
-// Switch between fast actions (place your custom code below):
-$route = ($_GET['object'] && $_GET['action']) ? '/'.$_GET['object'].'/'.$_GET['action'] : $_SERVER['REQUEST_URI'];
-if (strpos($route, '/dynamic/placeholder') === 0) {
-	$fname = 'placeholder';
-} elseif (strpos($route, '/help/show_tip') === 0) {
-	$fname = 'tooltip';
-} elseif (strpos($route, '/dynamic/php_func') === 0 && MAIN_TYPE_ADMIN) {
-	$fname = 'php_func';
-} elseif (strpos($route, '/dynamic/image') === 0) {
-	$fname = 'dynamic_image';
-// captcha needs session, but it does not started yet
-//} elseif (strpos($route, '/dynamic/captcha_image') === 0) {
-//	$fname = 'captcha_image';
-} elseif (strpos($route, '/forum/low') === 0) {
-	$fname = 'forum_low';
-} elseif (strpos($route, '/search/autocomplete') === 0) {
-	$fname = 'search_autocomplete';
-} elseif (main()->OUTPUT_CACHING && empty($_COOKIE['member_id'])) {
-	$fname = 'output_cache';
-} elseif (strpos($route, '/category/rss_for_cat') === 0 || strpos($route, '/category/rss_for_city') === 0) {
-	$fname = 'rss_export';
+function _route( $table ) {
+	$request = ($_GET['object'] && $_GET['action']) ? '/'.$_GET['object'].'/'.$_GET['action'] : $_SERVER['REQUEST_URI'];
+	foreach( $table as $uri => $action ) {
+		if( strpos( $request, $uri ) === 0 ) { return( $action ); }
+	}
+	return( null );
 }
+
+$_route_table = array(
+	'/dynamic/placeholder'   => 'placeholder',
+	'/help/show_tip'         => 'tooltip',
+	'/dynamic/php_func'      => 'php_func',
+	'/dynamic/image'         => 'dynamic_image',
+	'/dynamic/captcha_image' => 'captcha_image',
+	'/forum/low'             => 'forum_low',
+	'/search/autocomplete'   => 'search_autocomplete',
+	'/category/rss_for_cat'  => 'rss_export',
+	'/payment_test/'         => 'payment_test',
+);
+
+$fname = _route( $_route_table );
+
+// cache
+if (!$fname && main()->OUTPUT_CACHING && empty($_COOKIE['member_id'])) {
+	$fname = 'output_cache';
+}
+// try
 if ($fname) {
 	$done = _call_fast_func($fname);
 }
-// Finish fast init
+// log
 if ($done) {
 	if (module_conf('main', 'LOG_EXEC')) {
 		_call_fast_func('log_exec');
@@ -75,5 +79,6 @@ if ($done) {
 		$body .= '<br />exec time: <b>'. round(microtime(true) - main()->_time_start, 5).'</b> sec';
 		echo $body;
 	}
-	die(); // Required if success to stop execution
+	exit;
 }
+
