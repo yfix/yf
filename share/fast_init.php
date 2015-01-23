@@ -15,12 +15,33 @@ if (!defined('YF_PATH')) {
 }
 require_once YF_PATH.'share/functions/yf_aliases.php';
 
-// Load and run fast init function code
-function _call_fast_func ($f_name) {
-	// Currently admin is allowed to call only dynamic->php_func
-	if (MAIN_TYPE_ADMIN && !in_array($f_name, array('php_func'))) {
-		return false;
+!$CONF['fast_init_route_table'] && $CONF['fast_init_route_table'] = array(
+	'/dynamic/placeholder'   => 'placeholder',
+	'/help/show_tip'         => 'tooltip',
+	'/dynamic/php_func'      => 'php_func',
+	'/dynamic/image'         => 'dynamic_image',
+	'/dynamic/captcha_image' => 'captcha_image',
+	'/forum/low'             => 'forum_low',
+	'/search/autocomplete'   => 'search_autocomplete',
+	'/category/rss_for_cat'  => 'rss_export',
+	'/payment_test/'         => 'payment_test',
+);
+$fast_init_route = function( $table ) {
+	$request = ($_GET['object'] && $_GET['action']) ? '/'.$_GET['object'].'/'.$_GET['action'] : $_SERVER['REQUEST_URI'];
+	foreach( $table as $uri => $action ) {
+		if( strpos( $request, $uri ) === 0 ) {
+			return $action;
+		}
 	}
+	return( null );
+};
+$fname = $fast_init_route( $CONF['fast_init_route_table'] );
+if (!$fname && main()->OUTPUT_CACHING && empty($_COOKIE['member_id'])) {
+	$fname = 'output_cache';
+}
+
+// Load and run fast init function code
+$fast_init_call = function ($f_name) {
 	$dir = 'share/fast_init/';
 	$suffix = '.php';
 	$pattern = $dir. $f_name. $suffix;
@@ -37,42 +58,16 @@ function _call_fast_func ($f_name) {
 		}
 	}
 	return false;
-}
+};
 
-function _route( $table ) {
-	$request = ($_GET['object'] && $_GET['action']) ? '/'.$_GET['object'].'/'.$_GET['action'] : $_SERVER['REQUEST_URI'];
-	foreach( $table as $uri => $action ) {
-		if( strpos( $request, $uri ) === 0 ) { return( $action ); }
-	}
-	return( null );
-}
-
-$_route_table = array(
-	'/dynamic/placeholder'   => 'placeholder',
-	'/help/show_tip'         => 'tooltip',
-	'/dynamic/php_func'      => 'php_func',
-	'/dynamic/image'         => 'dynamic_image',
-	'/dynamic/captcha_image' => 'captcha_image',
-	'/forum/low'             => 'forum_low',
-	'/search/autocomplete'   => 'search_autocomplete',
-	'/category/rss_for_cat'  => 'rss_export',
-	'/payment_test/'         => 'payment_test',
-);
-
-$fname = _route( $_route_table );
-
-// cache
-if (!$fname && main()->OUTPUT_CACHING && empty($_COOKIE['member_id'])) {
-	$fname = 'output_cache';
-}
 // try
 if ($fname) {
-	$done = _call_fast_func($fname);
+	$done = $fast_init_call($fname);
 }
 // log
 if ($done) {
 	if (module_conf('main', 'LOG_EXEC')) {
-		_call_fast_func('log_exec');
+		$fast_init_call('log_exec');
 	}
 	if (DEBUG_MODE && !main()->_no_fast_init_debug) {
 		$body .= '<hr>DEBUG INFO:'.PHP_EOL;
@@ -81,4 +76,3 @@ if ($done) {
 	}
 	exit;
 }
-
