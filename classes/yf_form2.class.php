@@ -27,7 +27,7 @@ class yf_form2 {
 	public $CLASS_ERROR = 'alert alert-error alert-danger';
 	public $CLASS_REQUIRED = 'control-group-required form-group-required';
 
-	public $CONF_BOXES_USE_BTN_GROUP = true;
+	public $CONF_BOXES_USE_BTN_GROUP = false;
 
 	/**
 	* Catch missing method call

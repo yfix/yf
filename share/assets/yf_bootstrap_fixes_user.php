@@ -9,7 +9,7 @@ return array(
 ul#slide_menu .dropdown-divider { font-weight:bold; border-bottom:1px solid; }
 			'),
 			'jquery' => array(
-				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',
+#				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',
 //				'$("select").not(".portlet select").not(".no-chosen").chosen();',
 			),
 		),
@@ -17,7 +17,7 @@ ul#slide_menu .dropdown-divider { font-weight:bold; border-bottom:1px solid; }
 	'require' => array(
 		'asset' => array(
 			'yf_bootstrap_fixes',
-			'jq-select2',
+#			'jq-select2',
 #			'icheck',
 #			'chosen',
 		),
