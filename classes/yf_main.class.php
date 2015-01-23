@@ -275,7 +275,7 @@ class yf_main {
 		$this->_check_site_maintenance();
 
 		$this->_do_rewrite();
-        
+
 		$this->_init_cur_user_info($this);
         if ($this->TRACK_ONLINE_STATUS) {
 			_class('online_users', 'classes/')->process();
@@ -401,7 +401,7 @@ class yf_main {
 		$this->PROFILING && $this->_timing[] = array(microtime(true), __CLASS__, __FUNCTION__, $this->trace_string(), func_get_args());
 		$include_files = array();
 		$required_files = array();
-		$this->events->fire('main.before_files');
+		$this->events && $this->events->fire('main.before_files');
 		if ($this->NO_DB_CONNECT == 0) {
 			$include_files[] = CONFIG_PATH. 'db_setup.php';
 			$include_files[] = PROJECT_PATH. 'db_setup.php';
@@ -462,6 +462,12 @@ class yf_main {
 		}
 		$this->db = &$this->modules['db'];
 		$this->events->fire('main.after_db');
+	}
+
+	function is_db() {
+		$result = true;
+		if (!is_object($this->db) || !$this->db->_connected) { $result = false; }
+		return( $result );
 	}
 
 	/**
@@ -692,7 +698,7 @@ class yf_main {
 				if ($self_ips) {
 					foreach (explode(',', str_replace(array(',',';',PHP_EOL,"\t",' '), ',', trim($server['ip']))) as $v) {
 						$v = trim($v);
-						$v && $server_ips[$v] = $v; 
+						$v && $server_ips[$v] = $v;
 					}
 					if ($server_ips && array_intersect($self_ips, $server_ips)) {
 						$this->SERVER_ID = (int)$server['id'];
@@ -1343,7 +1349,7 @@ class yf_main {
 		}
 		$this->data_handlers = array();
 		$handlers = array();
-		$this->events->fire('main.load_data_handlers');
+		$this->events && $this->events->fire('main.load_data_handlers');
 
 		$suffix = '.php';
 		$dir = 'share/data_handlers/';
@@ -1393,7 +1399,7 @@ class yf_main {
 	}
 
 	/**
-	* Print nice 
+	* Print nice
 	*/
 	function trace_string() {
 		$e = new Exception();
