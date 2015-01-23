@@ -84,9 +84,12 @@ class yf_i18n {
 		}
 		// Force to get all available vars (try to find and insert new ones)
 		if (DEBUG_MODE && $this->AUTO_FIND_VARS && $this->TRANSLATE_ENABLED) {
-			$q = db()->query('SELECT id,value FROM '.db('locale_vars').'');
-			while ($a = db()->fetch_assoc($q)) {
-				$this->TR_ALL_VARS[$a['value']] = $a['id'];
+			$is_db = main()->is_db();
+			if( $is_db ) {
+				$q = db()->query('SELECT id,value FROM '.db('locale_vars').'');
+				while ($a = db()->fetch_assoc($q)) {
+					$this->TR_ALL_VARS[$a['value']] = $a['id'];
+				}
 			}
 			if (!empty($this->TR_ALL_VARS)) {
 				ksort($this->TR_ALL_VARS);
