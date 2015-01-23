@@ -14,10 +14,6 @@ return array(
 	var _btn_yes = \'<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> '.t('Yes').'</button>\';
 	var _btn_no = \'<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> '.t('No').'</button>\';
 
-	try {
-		$("select").not(".portlet select").not(".no-chosen").chosen();
-	} catch (e) { console.log(e); }
-
 	// Change activity status of different elements without page refresh
 	$(document).on("click", ".change_active", function(){
 		var _obj = this;

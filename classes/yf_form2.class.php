@@ -27,7 +27,7 @@ class yf_form2 {
 	public $CLASS_ERROR = 'alert alert-error alert-danger';
 	public $CLASS_REQUIRED = 'control-group-required form-group-required';
 
-	public $CONF_BOXES_USE_BTN_GROUP = true;
+	public $CONF_BOXES_USE_BTN_GROUP = false;
 
 	/**
 	* Catch missing method call
@@ -1018,6 +1018,10 @@ class yf_form2 {
 	* HTML5
 	*/
 	function number($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -1042,6 +1046,13 @@ class yf_form2 {
 	/**
 	*/
 	function decimal($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
 		$extra['step'] = $extra['step'] ?: '0.01';
 		return $this->number($name, $desc, $extra, $replace);
 	}
@@ -1066,6 +1077,10 @@ class yf_form2 {
 	/**
 	*/
 	function price($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -1077,6 +1092,10 @@ class yf_form2 {
 	* HTML5
 	*/
 	function url($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -1308,7 +1327,7 @@ class yf_form2 {
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $form) {
 			$form->_prepare_inline_error($extra);
-			$as_btn_group = isset($extra['btn_group']) ? $extra['btn_group'] : $this->CONF_BOXES_USE_BTN_GROUP;
+			$as_btn_group = isset($extra['btn_group']) ? $extra['btn_group'] : $form->CONF_BOXES_USE_BTN_GROUP;
 			if ($as_btn_group) {
 				$extra['class_add_controls'] = 'btn-group';
 				$extra['controls']['data-toggle'] = 'buttons';
