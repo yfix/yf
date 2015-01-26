@@ -105,7 +105,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
-			$result[] = '<form id="_js_provider_liqpay_form" method="POST" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
+			$result[] = '<form id="_js_provider_liqpay_form" method="post" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
 		}
 		foreach ((array)$form_options as $key => $value ) {
 			if( $is_array ) {

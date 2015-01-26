@@ -115,13 +115,17 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		) {
 			$url = $this->_url( $options );
 			$_[ 'ik_suc_u' ] = $url . '&status=success';
+			$_[ 'ik_suc_m' ] ='post';
 			$_[ 'ik_pnd_u' ] = $url . '&status=pending';
+			$_[ 'ik_pnd_m' ] ='post';
 			$_[ 'ik_fal_u' ] = $url . '&status=fail';
+			$_[ 'ik_fal_m' ] ='post';
 			unset( $_[ 'url_result' ] );
 		}
 		if( !empty( $_[ 'url_server' ] ) || empty( $_[ 'ik_ia_u' ] ) ) {
 			$url_server = $this->_url( $options, $is_server = true );
 			$_[ 'ik_ia_u' ] = $url_server . '&status=interaction';
+			$_[ 'ik_ia_m' ] ='post';
 			unset( $_[ 'url_server' ] );
 		}
 		// default
@@ -160,7 +164,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
-			$result[] = '<form id="_js_provider_interkassa_form" method="POST" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
+			$result[] = '<form id="_js_provider_interkassa_form" method="post" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
 		}
 		foreach ((array)$form_options as $key => $value ) {
 			if( $is_array ) {

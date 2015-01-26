@@ -107,7 +107,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
-			$result[] = '<form id="_js_provider_privat24_form" method="POST" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
+			$result[] = '<form id="_js_provider_privat24_form" method="post" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
 		}
 		foreach ((array)$form_options as $key => $value ) {
 			if( $is_array ) {
