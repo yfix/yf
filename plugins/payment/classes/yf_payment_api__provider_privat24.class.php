@@ -1,6 +1,10 @@
 <?php
 
-class yf_payment_api__provider_privat24 {
+_class( 'payment_api__provider_remote' );
+
+class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote {
+
+	public $ENABLE = true;
 
 	public $payment_api = null;
 	public $api         = null;
@@ -21,6 +25,7 @@ class yf_payment_api__provider_privat24 {
 		'url_result'   => 'return_url',
 		'url_server'   => 'server_url',
 		'public_key'   => 'merchant',
+		'key_public'   => 'merchant',
 	);
 
 	public $_options_transform_reverse = array(
@@ -48,6 +53,8 @@ class yf_payment_api__provider_privat24 {
 		),
 	);
 
+	public $fee = 2; // 2%
+
 	public $url_result = null;
 	public $url_server = null;
 
@@ -58,6 +65,8 @@ class yf_payment_api__provider_privat24 {
 		$this->api = new Privat24( $this->PUBLIC_KEY, $this->PRIVATE_KEY );
 		$this->url_result = url( '/api/payment/provider?name=privat24&operation=response' );
 		$this->url_server = url( '/api/payment/provider?name=privat24&operation=response&server=true' );
+		// parent
+		parent::_init();
 	}
 
 	public function _form_options( $options ) {
@@ -174,142 +183,12 @@ class yf_payment_api__provider_privat24 {
 				$status_message      = 'Отклонено: ';
 				break;
 		}
-		// get status
-		$object = $payment_api->get_status( array( 'name' => 'success' ) );
-		if( empty( $object ) ) { return( $object ); }
-		list( $payment_status_success_id, $payment_success_status ) = $object;
-		// get currency status
-		$object = $payment_api->get_status( array( 'name' => $payment_status_name ) );
-		if( empty( $object ) ) { return( $object ); }
-		list( $payment_status_id, $payment_status ) = $object;
-		// get deposition options
-		// list( $user_id, $operation_id, $account_id, $provider_id, $amount ) = explode( '#', $response[ 'description' ] );
-		$operation_id = (int)$response[ 'operation_id' ];
-		$operation = db()->table( 'payment_operation' )
-			->where( 'operation_id', $operation_id )
-			->get();
-		$operation_options = json_decode( $operation[ 'options' ], JSON_NUMERIC_CHECK );
-		// check operation options
-		if( empty( $operation_options[ 'request' ] ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Отсутствуют опции операции',
-			);
-			return( $result );
-		}
-		$request = current( $operation_options[ 'request' ] );
-		$operation_data = $request[ 'data' ];
-			$user_id         = (int)$operation_data[ 'user_id'      ];
-			$_operation_id   = (int)$operation_data[ 'operation_id' ];
-			$account_id      = (int)$operation_data[ 'account_id'   ];
-			$provider_id     = (int)$operation_data[ 'provider_id'  ];
-			$currency_id     = $operation_data[ 'currency_id'  ];
-			$amount          = $payment_api->_number_float( $operation_data[ 'amount' ] );
-			$amount_currency = $payment_api->_number_float( $operation_data[ 'amount_currency' ] );
-		// check operation_id
-		if( $operation_id != $_operation_id ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Неверный код операции',
-			);
-			return( $result );
-		}
-		// check provider
-		$object = $payment_api->provider( array( 'provider_id' => $provider_id ) );
-		if( empty( $object ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Неверный провайдер',
-			);
-			return( $result );
-		}
-		$provider      = current( $object );
-		$provider_name = $provider[ 'name' ];
-		if( $provider_name != 'privat24' ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Провайдер не совпадает (privat24)',
-			);
-			return( $result );
-		}
-		// check account
-		$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, ) );
-		if( empty( $object ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Неверный счет',
-			);
-			return( $result );
-		}
-		list( $account_id, $account ) = $object;
-		// update
-		$sql_amount   = $payment_api->_number_mysql( $amount );
-		$sql_datetime = $payment_api->sql_datatime();
-		$balance      = null;
-		$_payment_status_id = (int)$operation[ 'status_id' ];
-		if( $payment_status_success_id != $_payment_status_id ) {
-			db()->begin();
-			if( $payment_status_id != $_payment_status_id && $payment_status_name == 'success' ) {
-				// update account
-				$sql_data = array(
-					'datetime_update' => db()->escape_val( $sql_datetime ),
-					'balance'         => '( balance + ' . $sql_amount . ' )',
-				);
-				$sql_status = db()->table( 'payment_account' )
-					->where( 'account_id', $account_id )
-					->order_by( 'account_id' )
-					->update( $sql_data, array( 'escape' => false ) );
-				if( empty( $sql_status ) ) {
-					db()->rollback();
-					$result = array(
-						'status'         => false,
-						'status_message' => 'Ошибка при обновлении счета',
-					);
-					return( $result );
-				}
-				// get balance
-				$object = $payment_api->get_account__by_id( array( 'account_id' => $account_id, 'force' => true ) );
-				list( $account_id, $account ) = $object;
-				$balance = $account[ 'balance' ];
-			}
-			// update operation
-			$sql_data = array(
-				'status_id'       => $payment_status_id,
-				'datetime_update' => $sql_datetime,
-			);
-			$balance && $sql_data += array(
-				'balance'         => $balance,
-				'datetime_finish' => $sql_datetime,
-			);
-			// save options
-			$operation_options[ 'response' ][] = array(
-				'data'     => $response,
-				'datetime' => $sql_datetime,
-			);
-			$sql_data[ 'options' ] = _es( json_encode( $operation_options ) );
-			$sql_status = db()->table( 'payment_operation' )
-				->where( 'operation_id', $operation_id )
-				->update( $sql_data );
-			if( empty( $sql_status ) ) {
-				$result = array(
-					'status'         => false,
-					'status_message' => 'Ошибка при обновлении операции: ' . $operation_id,
-				);
-				db()->rollback();
-				return( $result );
-			}
-			db()->commit();
-		} else {
-			$status_message = 'Выполнено повторно: ';
-		}
-		$status_message .= $response[ 'title' ] . ', сумма: ' . $amount;
-		if( !empty( $payment_api->currency[ 'short' ] ) ) {
-			$status_message .= ' ' . $payment_api->currency[ 'short' ];
-		}
-		$result = array(
-			'status'         => true,
-			'status_message' => $status_message,
-		);
+		// update account, operation data
+		$result = $this->_api_deposition( array(
+			'provider_name'       => 'privat24',
+			'response'            => $response,
+			'payment_status_name' => $payment_status_name,
+		));
 		return( $result );
 	}
 
@@ -377,19 +256,24 @@ class yf_payment_api__provider_privat24 {
 			);
 			return( $result );
 		}
+		// fee
+		$fee = $this->fee;
+		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
 		// prepare request form
 		$form_data  = array(
-			'user_id'         => $user_id,
-			'operation_id'    => $operation_id,
-			'account_id'      => $account_id,
-			'provider_id'     => $provider_id,
-			'currency_id'     => $currency_id,
-			'amount'          => $amount,
-			'amount_currency' => $amount_currency,
+			'user_id'               => $user_id,
+			'operation_id'          => $operation_id,
+			'account_id'            => $account_id,
+			'provider_id'           => $provider_id,
+			'currency_id'           => $currency_id,
+			'fee'                   => $fee,
+			'amount'                => $amount,
+			'amount_currency'       => $amount_currency,
+			'amount_currency_total' => $amount_currency_total,
 		);
 		// $description = implode( '#', array_values( $description ) );
 		$form_options = array(
-			'amount'       => $amount_currency,
+			'amount'       => $amount_currency_total,
 			'currency'     => $currency_id,
 			'operation_id' => $operation_id,
 			'title'        => $data[ 'title' ],
@@ -401,28 +285,18 @@ class yf_payment_api__provider_privat24 {
 		$form = $this->_form( $form_options );
 		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
 		// save options
-		$operation = db()->table( 'payment_operation' )
-			->where( 'operation_id', $operation_id )
-			->get();
-		$operation_options = (array)json_decode( $operation[ 'options' ], JSON_NUMERIC_CHECK );
-		$operation_options[ 'request' ][] = array(
-			'data'     => $form_data,
-			'form'     => $form_options,
-			'datetime' => $operation_data[ 'sql_datetime' ],
+		$operation_options = array(
+			'request' => array( array(
+				'data'     => $form_data,
+				'form'     => $form_options,
+				'datetime' => $operation_data[ 'sql_datetime' ],
+			))
 		);
-		$sql_data = array(
-			'options' => _es( json_encode( $operation_options ) ),
-		);
-		$sql_status = db()->table( 'payment_operation' )
-			->where( 'operation_id', $operation_id )
-			->update( $sql_data );
-		if( empty( $sql_status ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Ошибка при обновлении операции: ' . $operation_id,
-			);
-			return( $result );
-		}
+		$result = $payment_api->operation_update( array(
+			'operation_id' => $operation_id,
+			'options'      => $operation_options,
+		));
+		if( !$result[ 'status' ] ) { return( $result ); }
 		$result = array(
 			'form'           => $form,
 			'status'         => true,

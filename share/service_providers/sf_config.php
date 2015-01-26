@@ -7,7 +7,7 @@ $autoload_config = array('sf_config/' => 'Symfony\Component\Config');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 	$treeBuilder = new \Symfony\Component\Config\Definition\Builder\TreeBuilder();
 	$rootNode = $treeBuilder->root('database');
 	$rootNode

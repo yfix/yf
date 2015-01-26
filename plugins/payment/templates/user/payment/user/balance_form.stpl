@@ -1,6 +1,6 @@
 <div class="col-md-12 user_view">
 <div class="payment">
-<div class="block_user_balance ng-cloak" ng-controller="balance">
+<div class="block_user_balance ng-cloak" ng-controller="payment.balance.recharge.ctrl">
 
 <wait active='block_wait'></wait>
 
@@ -178,6 +178,24 @@
 					</div>
 				</div>
 			</div>
+
+			<div class="form-group"
+				ng-show="fee && _amount_currency && form_payment_balance_recharge.$valid"
+			>
+				<label class="col-sm-{col1} control-label">комиссия</label>
+				<div class="col-sm-{col2}">
+					<div class="form-control-static text-success">
+						<span class="balance_recharge__amount"
+							ng-bind="amount_currency_fee | number: currency_selected.minor_units"
+							style="font-weight: bold;"
+						></span>
+						<span class="text-muted"
+							ng-bind="currency_selected.short"
+						></span>
+					</div>
+				</div>
+			</div>
+
 			<div class="form-group"
 				ng-show="_amount_currency && form_payment_balance_recharge.$valid"
 			>
@@ -194,6 +212,7 @@
 					</div>
 				</div>
 			</div>
+
 			<div class="form-group">
 				<label class="col-sm-{col1} control-label">сервис</label>
 				<div class="col-sm-{col2}">
@@ -232,10 +251,15 @@
 	font-size  : 1.1em;
 }
 .payment-operation__btn {
-	margin      : 0 0.5em;
 	padding     : 0 2em;
 	height      : 2em;
 	line-height : 0;
+	float       : left;
+}
+.payment-operation__btn + span,
+span + .payment-operation__btn,
+.payment-operation__btn + button {
+	margin      : 0 0.5em;
 }
 .payment-operation__item.ng-enter,
 .payment-operation__item.ng-move {
@@ -253,11 +277,17 @@
 	opacity : 0;
 }
 {/css}
-	<div class="payment-operation" ng-show="payment.operation && block_operation">
+	<div class="payment-operation"
+	ng-show="
+		( payment.operation && block_operation )
+		|| payment.operation_pagination.page > 1
+		">
 		<table class="table table-striped">
 			<caption class="text-capitalize text-success">Журнал операций</caption>
 			<thead>
-				<tr>
+				<tr
+					ng-show   = "payment.operation"
+				>
 					<th>дата</th>
 					<th>название</th>
 					<th>сумма</th>
@@ -266,9 +296,11 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="o in payment.operation"
-					class="payment-operation__item"
-					ng-class="{ warning: o.status_id < 2 }"
+				<tr
+					class     = "payment-operation__item"
+					ng-show   = "payment.operation"
+					ng-repeat = "o in payment.operation"
+					ng-class  = "{ warning: o.status_id < 2 }"
 				>
 					<td><span ng-bind="o.datetime_update"></span></td>
 					<td><span ng-bind="o.title"></span></td>
@@ -276,17 +308,20 @@
 					<td><span ng-bind="o.balance | number: payment.currency.minor_units"></span></td>
 					<td><span ng-bind="payment.status[ o.status_id ][ 'title' ]"></span></td>
 				</tr>
+				<tr
+					class   = "payment-operation__item_none"
+					ng-show = "!payment.operation"
+				>
+					<td colspan="5" class="text-center"><span class="text-muted">Нет данных</span></td>
+				</tr>
 			</tbody>
 			<tfoot>
 			<tr
-				ng-show="
-					payment.operation.length == payment.operation_pagination.page_per
-					|| payment.operation_pagination.page > 1
-				"
+				ng-show="payment.operation_pagination.pages > 1"
 			>
 				<td colspan="5">
-					<span>
-						Страница:
+					<span class="pull-left">
+						Страница:&nbsp;
 					</span>
 					<button type="button" class="payment_operation__first btn btn-xs payment-operation__btn"
 						title="первая страница"
@@ -302,13 +337,24 @@
 					>
 						<i class="fa fa-angle-left"></i>
 					</button>
-					<span ng-bind="payment.operation_pagination.page"></span>
+					<span class="pull-left">
+						<span ng-bind="payment.operation_pagination.page"></span>
+						<span>из</span>
+						<span ng-bind="payment.operation_pagination.pages"></span>
+					</span>
 					<button type="button" class="payment_operation__next btn btn-xs payment-operation__btn"
 						title="следующая страница"
 						ng-show="payment.operation.length == payment.operation_pagination.page_per"
 						ng-click="operation( 1 )"
 					>
 						<i class="fa fa-angle-right"></i>
+					</button>
+					<button type="button" class="payment_operation__last btn btn-xs payment-operation__btn"
+						title="последняя страница"
+						ng-show="payment.operation_pagination.page < payment.operation_pagination.pages - 1"
+						ng-click="operation_last()"
+					>
+						<i class="fa fa-angle-double-right"></i>
 					</button>
 				</td>
 			</tr>

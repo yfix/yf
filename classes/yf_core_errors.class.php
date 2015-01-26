@@ -137,10 +137,10 @@ class yf_core_errors {
 			$result[] = sprintf(
 				$traceline,
 				$key,
-				$stackPoint['file'],
-				$stackPoint['line'],
-				$stackPoint['function'],
-				implode(', ', $stackPoint['args'])
+				isset($stackPoint['file']) ? $stackPoint['file'] : '',
+				isset($stackPoint['line']) ? $stackPoint['line'] : '',
+				isset($stackPoint['function']) ? $stackPoint['function'] : '',
+				implode(', ', isset($stackPoint['args']) ? $stackPoint['args'] : array())
 			);
 		}
 		// trace always ends with {main}

@@ -1,7 +1,9 @@
-<a href="javascript:void(0)" class="captcha_reload_img"><img src="{img_src}" id="captcha_img" class="captcha_img img-rounded" /></a>
-<input type="text" id="captcha_input" name="captcha" size="{num_symbols}" maxlength="{num_symbols}" class="input-small" value="{value}" {input_attrs} data-disabled-ajax-validate="captcha" />
-{itip('Please, confirm your action by entering the digital code you see on the image')}
-<small><br /><a href="javascript:void(0)" class="captcha_reload_img">{t(Get new image)}</a></small>
+<div class="input-group">
+	<a href="javascript:void(0)" class="captcha_reload_img"><img src="{img_src}" id="captcha_img" class="captcha_img img-rounded" /></a>
+	<input type="text" id="captcha_input" name="captcha" {input_attrs} size="{num_symbols}" maxlength="{num_symbols}" pattern=".{{num_symbols}}" class="input-small form-control" value="{value}" required="1" data-disabled-ajax-validate="captcha" />
+	{itip('Please, confirm your action by entering the digital code you see on the image')}
+	<small><br /><a href="javascript:void(0)" class="captcha_reload_img">{t(Get new image)}</a></small>
+</div>
 
 {jquery()}
 	var captcha_img_src = '{img_src}';

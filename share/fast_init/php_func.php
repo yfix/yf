@@ -2,6 +2,9 @@
 
 // Fast execute php function (specially for the threaded execution)
 return function() {
+	if (MAIN_TYPE_ADMIN !== true) {
+		return false;
+	}
 	main()->NO_GRAPHICS = true;
 	// Check if console mode
 	if ( ! (!empty($_SERVER['argc']) && !array_key_exists('REQUEST_METHOD', $_SERVER) ) ) {

@@ -21,9 +21,13 @@ class yf_form2 {
 	public $CLASS_ICON_PSWD = 'icon-key fa fa-key fa-fw';
 	public $CLASS_ICON_LOGIN = 'icon-user fa fa-user fa-fw';
 	public $CLASS_ICON_EMAIL = 'icon-email fa fa-at fa-fw';
+	public $CLASS_ICON_CURRENCY = 'icon-dollar fa fa-dollar fa-fw';
+	public $CLASS_ICON_CALENDAR = 'icon icon-calendar fa fa-calendar fa-fw';
 	public $CLASS_LABEL_INFO = 'label label-info';
 	public $CLASS_ERROR = 'alert alert-error alert-danger';
 	public $CLASS_REQUIRED = 'control-group-required form-group-required';
+
+	public $CONF_BOXES_USE_BTN_GROUP = false;
 
 	/**
 	* Catch missing method call
@@ -44,8 +48,13 @@ class yf_form2 {
 	function __clone() {
 		$keep_prefix = 'CLASS_';
 		$keep_len = strlen($keep_prefix);
+		$keep_prefix2 = 'CONF_';
+		$keep_len2 = strlen($keep_prefix2);
 		foreach ((array)get_object_vars($this) as $k => $v) {
 			if (substr($k, 0, $keep_len) === $keep_prefix) {
+				continue;
+			}
+			if (substr($k, 0, $keep_len2) === $keep_prefix2) {
 				continue;
 			}
 			$this->$k = null;
@@ -273,16 +282,7 @@ class yf_form2 {
 			unset($this->_body['form_end']);
 			$this->_body['form_end'] = $form_end;
 		}
-		if ($this->_params['show_alerts']) {
-			$errors = common()->_get_error_messages();
-			if ($errors) {
-				$e = array();
-				foreach ((array)$errors as $msg) {
-					$e[] = '<div class="'.$this->CLASS_ERROR.'"><button type="button" class="close" data-dismiss="alert">&times;</button>'.$msg.'</div>';
-				}
-				array_unshift($this->_body, implode(PHP_EOL, $e));
-			}
-		}
+
 		$tabbed_mode = false;
 		$tabbed_buffer = array();
 		$tabs = array();
@@ -344,6 +344,16 @@ class yf_form2 {
 		if ($tabs) {
 			$this->_body[$tabs_container] = _class('html')->tabs($tabs, $this->_params['tabs']);
 		}
+		if ($this->_params['show_alerts']) {
+			$errors = common()->_get_error_messages();
+			if ($errors) {
+				$e = array();
+				foreach ((array)$errors as $msg) {
+					$e[] = '<div class="'.$this->CLASS_ERROR.'"><button type="button" class="close" data-dismiss="alert">&times;</button>'.$msg.'</div>';
+				}
+				$this->_body = array_slice($this->_body, 0, 1, true) + array('error_message' => implode(PHP_EOL, $e)) + array_slice($this->_body, 1, null, true);
+			}
+		}
 		$this->_rendered = implode(PHP_EOL, $this->_body);
 
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
@@ -387,7 +397,7 @@ class yf_form2 {
 		$extra['name'] = $extra['name'] ?: ($name ?: 'form_action');
 		$extra['method'] = $extra['method'] ?: ($method ?: 'post');
 
-		$func = function($extra, $r, $_this) {
+		$func = function($extra, $r, $form) {
 			$enctype = '';
 			if ($extra['enctype']) {
 				$enctype = $extra['enctype'];
@@ -396,21 +406,26 @@ class yf_form2 {
 			}
 			$extra['enctype'] = $enctype;
 			if (!isset($extra['action'])) {
-				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $_this->_params['links_add'];
+				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $form->_params['links_add'];
 			}
 			if (MAIN_TYPE_USER) {
 				if (strpos($extra['action'], 'http://') === false && strpos($extra['action'], 'https://') !== 0) {
 					$extra['action'] = process_url($extra['action'], true);
 				}
 			}
-			$extra['class'] = $extra['class'] ?: $_this->CLASS_FORM_MAIN;// col-md-6';
+			$extra['class'] = $extra['class'] ?: $form->CLASS_FORM_MAIN;// col-md-6';
 			if ($extra['class_add']) {
 				$extra['class'] .= ' '.$extra['class_add'];
 			}
 			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
 
+			$advanced_js_validation = conf('form_advanced_js_validation');
+			if ($advanced_js_validation) {
+				$extra['data-fv-framework'] = 'bootstrap';
+			}
+
 			$body = '<form'._attrs($extra, array('method','action','class','style','id','name','autocomplete','enctype','novalidate')).'>'.PHP_EOL;
-			$_this->_fieldset_mode_on = true;
+			$form->_fieldset_mode_on = true;
 			$body .= '<fieldset'._attrs($extra['fieldset'], array('class','style','id','name')).'>';
 			if ($extra['legend']) {
 				$body .= PHP_EOL.'<legend>'._htmlchars(t($extra['legend'])).'</legend>'.PHP_EOL;
@@ -430,8 +445,8 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$func = function($extra, $r, $_this) {
-			$_this->_fieldset_mode_on = false;
+		$func = function($extra, $r, $form) {
+			$form->_fieldset_mode_on = false;
 			$body .= '</fieldset>'.PHP_EOL;
 			$body .= '</form>'.PHP_EOL;
 			return $body;
@@ -452,11 +467,11 @@ class yf_form2 {
 			$name = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$func = function($extra, $r, $_this) {
-			if ($_this->_fieldset_mode_on) {
+		$func = function($extra, $r, $form) {
+			if ($form->_fieldset_mode_on) {
 				$body = '</fieldset>'.PHP_EOL;
 			} else {
-				$_this->_fieldset_mode_on = true;
+				$form->_fieldset_mode_on = true;
 			}
 			$body .= '<fieldset'._attrs($extra, array('class','style','id','name')).'>';
 			if ($extra['legend']) {
@@ -475,9 +490,9 @@ class yf_form2 {
 	* Paired with fieldset_start
 	*/
 	function fieldset_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			if ($_this->_fieldset_mode_on) {
-				$_this->_fieldset_mode_on = false;
+		$func = function($extra, $r, $form) {
+			if ($form->_fieldset_mode_on) {
+				$form->_fieldset_mode_on = false;
 				return '</fieldset>'.PHP_EOL;
 			}
 		};
@@ -492,14 +507,14 @@ class yf_form2 {
 	* Shortcut for starting form row, needed to build row with several inlined inputs
 	*/
 	function row_start($extra = array()) {
-		$func = function($extra, $r, $_this) {
+		$func = function($extra, $r, $form) {
 			// auto-close row_end(), if not called implicitely
-			if ($_this->_stacked_mode_on) {
-				$_this->row_end();
+			if ($form->_stacked_mode_on) {
+				$form->row_end();
 			}
-			$_this->_stacked_mode_on = true;
-			$_this->_prepare_inline_error($extra);
-			return $_this->_row_html('', array('only_row_start' => 1) + (array)$extra);
+			$form->_stacked_mode_on = true;
+			$form->_prepare_inline_error($extra);
+			return $form->_row_html('', array('only_row_start' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -512,9 +527,9 @@ class yf_form2 {
 	* Paired with row_start
 	*/
 	function row_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_stacked_mode_on = false;
-			return $_this->_row_html('', array('only_row_end' => 1) + (array)$extra);
+		$func = function($extra, $r, $form) {
+			$form->_stacked_mode_on = false;
+			return $form->_row_html('', array('only_row_end' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -532,14 +547,14 @@ class yf_form2 {
 			$name = '';
 		}
 		$extra['name'] = $extra['name'] ?: $name;
-		$func = function($extra, $r, $_this) {
+		$func = function($extra, $r, $form) {
 			// auto-close tab_end(), if not called implicitely
-			if ($_this->_tabbed_mode_on) {
-				$_this->tab_end();
+			if ($form->_tabbed_mode_on) {
+				$form->tab_end();
 			}
-			$_this->_tabbed_mode_on = true;
-			$_this->_tabs_name = $extra['name'];
-			$_this->_tabs_extra = $extra;
+			$form->_tabbed_mode_on = true;
+			$form->_tabs_name = $extra['name'];
+			$form->_tabs_extra = $extra;
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -552,8 +567,8 @@ class yf_form2 {
 	* Paired with tab_start
 	*/
 	function tab_end($extra = array()) {
-		$func = function($extra, $r, $_this) {
-			$_this->_tabbed_mode_on = false;
+		$func = function($extra, $r, $form) {
+			$form->_tabbed_mode_on = false;
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -760,17 +775,17 @@ class yf_form2 {
 		$extra['text'] = $text;
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 
-		$func = function($extra, $r, $_this) {
+		$func = function($extra, $r, $form) {
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['contenteditable'] = isset($extra['ckeditor']) ? 'true' : 'false';
-			$extra['id'] = $_this->_prepare_id($extra, 'content_editable');
-			$extra['desc'] = !$_this->_params['no_label'] ? $extra['desc'] : '';
+			$extra['id'] = $form->_prepare_id($extra, 'content_editable');
+			$extra['desc'] = !$form->_params['no_label'] ? $extra['desc'] : '';
 
 			$attrs_names = array('id','contenteditable','style','class','title');
 			if ($extra['ckeditor']) {
 				$extra['ckeditor_inline'] = true;
 			}
-			return $_this->_row_html(isset($extra['ckeditor']) ? '<div'._attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
+			return $form->_row_html(isset($extra['ckeditor']) ? '<div'._attrs($extra, $attrs_names).'>'.$extra['text'].'</div>' : $extra['text'], $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -1003,6 +1018,10 @@ class yf_form2 {
 	* HTML5
 	*/
 	function number($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -1027,6 +1046,13 @@ class yf_form2 {
 	/**
 	*/
 	function decimal($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
 		$extra['step'] = $extra['step'] ?: '0.01';
 		return $this->number($name, $desc, $extra, $replace);
 	}
@@ -1041,7 +1067,7 @@ class yf_form2 {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : ($this->_params['currency'] ?: '$');
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : ($this->_params['currency'] ?: '<i class="'.$this->CLASS_ICON_CURRENCY.'"></i>');
 		$extra['append'] = isset($extra['append']) ? $extra['append'] : ''; // '.00';
 		$extra['sizing'] = isset($extra['sizing']) ? $extra['sizing'] : 'small';
 		$extra['maxlength'] = isset($extra['maxlength']) ? $extra['maxlength'] : '8';
@@ -1051,6 +1077,10 @@ class yf_form2 {
 	/**
 	*/
 	function price($name, $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -1062,6 +1092,10 @@ class yf_form2 {
 	* HTML5
 	*/
 	function url($name = '', $desc = '', $extra = array(), $replace = array()) {
+		if (is_array($desc)) {
+			$extra = (array)$extra + $desc;
+			$desc = '';
+		}
 		if (!is_array($extra)) {
 			$extra = array();
 		}
@@ -1293,11 +1327,14 @@ class yf_form2 {
 		$extra['desc'] = $this->_prepare_desc($extra, $desc);
 		$func = function($extra, $r, $form) {
 			$form->_prepare_inline_error($extra);
+			$as_btn_group = isset($extra['btn_group']) ? $extra['btn_group'] : $form->CONF_BOXES_USE_BTN_GROUP;
+			if ($as_btn_group) {
+				$extra['class_add_controls'] = 'btn-group';
+				$extra['controls']['data-toggle'] = 'buttons';
+			}
 			if (!$extra['items']) {
-				if (!isset($form->_pair_active)) {
-					$form->_pair_active = main()->get_data('pair_active');
-				}
-				$extra['items'] = $form->_pair_active;
+				$data_handler = $as_btn_group ? 'pair_active_btn_group' : 'pair_active';
+				$extra['items'] = main()->get_data($data_handler);
 			}
 			$extra['values'] = $extra['items'];
 			$extra['desc'] = !$form->_params['no_label'] ? $extra['desc'] : '';
@@ -1309,6 +1346,7 @@ class yf_form2 {
 			if (isset($form->_params['selected'])) {
 				$extra['selected'] = $form->_params['selected'][$extra['name']];
 			}
+			$extra = $form->_input_assign_params_from_validate($extra);
 			return $form->_row_html(_class('html')->radio_box($extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -1592,6 +1630,7 @@ class yf_form2 {
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['selected'] = $form->_prepare_selected($extra['name'], $extra, $r);
 			$extra['id'] = $extra['name'];
+			$extra = $form->_input_assign_params_from_validate($extra);
 
 			$func = $extra['func_html_control'];
 			$content = _class('html')->$func($extra);
@@ -1628,6 +1667,7 @@ class yf_form2 {
 			$extra['values'] = isset($extra['values']) ? $extra['values'] : (array)$values; // Required
 			$extra['selected'] = $form->_prepare_selected($extra['name'], $extra, $r);
 			$extra['id'] = $form->_prepare_id($extra);
+			$extra = $form->_input_assign_params_from_validate($extra);
 
 			return $form->_row_html($r[$extra['name']], $extra, $r);
 		};
@@ -1669,6 +1709,13 @@ class yf_form2 {
 			$extra = (array)$extra + $value;
 			$value = '';
 		}
+		$as_btn_group = isset($extra['btn_group']) ? $extra['btn_group'] : $this->CONF_BOXES_USE_BTN_GROUP;
+		if ($as_btn_group) {
+			$extra['class_add_controls'] = 'btn-group';
+			$extra['controls']['data-toggle'] = 'buttons';
+			$extra['class_add_label_checkbox'] = 'btn btn-xs btn-default';
+			$extra['desc'] = '<span><i class="icon icon-check fa fa-check"></i></span> '.$extra['desc'];
+		}
 		return $this->_html_control($name, $value, $extra, $replace, 'check_box');
 	}
 
@@ -1681,6 +1728,12 @@ class yf_form2 {
 	/**
 	*/
 	function radio_box($name, $values, $extra = array(), $replace = array()) {
+		$as_btn_group = isset($extra['btn_group']) ? $extra['btn_group'] : $this->CONF_BOXES_USE_BTN_GROUP;
+		if ($as_btn_group) {
+			$extra['class_add_controls'] = 'btn-group';
+			$extra['controls']['data-toggle'] = 'buttons';
+			$extra['class_add_label_radio'] = 'btn btn-xs btn-default';
+		}
 		return $this->_html_control($name, $values, $extra, $replace, 'radio_box');
 	}
 
@@ -1942,6 +1995,7 @@ class yf_form2 {
 			$extra['required'] = true;
 			$extra['value'] = $r['captcha'];
 			$extra['input_attrs'] = _attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value'));
+			$extra = $form->_input_assign_params_from_validate($extra);
 			return $form->_row_html(_class('captcha')->show_block('./?object=dynamic&action=captcha_image', $extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {

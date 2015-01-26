@@ -37,8 +37,6 @@ class yf_site_nav_bar {
 				$items[]	= $this->_nav_item($this->_decode_from_url($_GET['object']));
 			}
 		}
-		// Add first item to all valid items
-		array_unshift($items, $this->_nav_item('Home', $this->HOME_LOCATION, 'icon-home fa fa-home'));
 		// Try to get items from hook '_nav_bar_items'
 		if (!empty($this->HOOK_NAME)) {
 			$CUR_OBJ = module($_GET['object']);
@@ -56,13 +54,16 @@ class yf_site_nav_bar {
 			return false;
 		}
 		// Stop here if gathered nothing
-		if (count($items) == 1) {
+		if (count($items) < 1) {
 			return false;
 		}
 		// Hook have max priority
 		if (!empty($hooked_items)) {
 			$items = $hooked_items;
 		}
+		// Add first item to all valid items
+		array_unshift($items, $this->_nav_item('Home', $this->HOME_LOCATION, 'icon-home fa fa-home'));
+
 		if ($return_array) {
 			$this->_nav_item_as_array = false;
 			return $items;

@@ -1,4 +1,4 @@
 {asset()} html5shiv {/asset}
-{asset()} yf_ajax_validation {/asset}
+{asset()} yf_validation {/asset}
 {asset()} yf_popover {/asset}
 {asset()} yf_debug_console {/asset}

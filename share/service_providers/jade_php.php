@@ -7,7 +7,7 @@ $autoload_config = array('jade_php/src/Everzet/' => 'Everzet');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 	$template = '
 div
   address

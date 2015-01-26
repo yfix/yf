@@ -1,5 +1,9 @@
 <?php
 
+if( !function_exists( 'array_replace_recursive' ) ) {
+	trigger_error( 'Not exists function "array_replace_recursive ( PHP 5 >= 5.3.0 )"', E_USER_ERROR );
+}
+
 /*
 	default currency:
 	exchange:
@@ -31,12 +35,19 @@
 			options
 				{ icon, image }
 
+		payment_currency_rate
+			currency_rate_id
+			datetime
+			from
+			to
+			from_value
+			to_value
+
 		payment_operation
 			operation_id
 			account_id
 			provider_id
 				{ system, administration, webmoney, privat24 }
-			provider_operation_id
 			direction
 				{ in (приход), out (расход) }
 			type_id
@@ -47,6 +58,7 @@
 			datetime_start
 			datetime_finish
 			datetime_update
+			options
 
 		payment_provider
 				{ system, administration, webmoney, privat24 }
@@ -55,6 +67,9 @@
 			title
 			options
 				{ icon, image }
+			system
+			active
+			order
 
 		payment_status
 				{ in_progress, success, refused }
@@ -76,6 +91,7 @@
 			title
 			options
 				{ icon, image }
+			active
 
 */
 
@@ -95,7 +111,8 @@ class yf_payment_api {
 	public $currency_id         = null;
 	public $currency            = null;
 	public $currency_rate       = null;
-	public $currencies          = array(
+	public $currencies          = null;
+	public $currencies_default  = array(
 		'UNT' => array(
 			'currency_id' => 'UNT',
 			'name'        => 'балл',
@@ -147,18 +164,33 @@ class yf_payment_api {
 	public $type       = null;
 	public $type_index = null;
 
+	public $CONFIG              = null;
 	public $OPERATION_LIMIT     = 10;
 	public $BALANCE_LIMIT_LOWER = 0;
 
 	public function _init() {
+		$this->config();
 		$this->user_id_default = (int)main()->USER_ID;
 		$this->user_id( $this->user_id_default );
 	}
 
+	public function config( $options = null ) {
+		!empty( (array)$options ) && $this->CONFIG = (array)$options;
+		$config = &$this->CONFIG;
+		if( is_array( $config[ 'currencies' ] ) ) {
+			$this->currencies = array_replace_recursive( $this->currencies_default, $config[ 'currencies' ] );
+		}
+	}
+
 	public function user_id( $value = -1 ) {
 		$object = &$this->user_id;
-		if( $value !== -1 ) { $object = $value; }
+		if( $this->check_user_id( $value ) && $value !== -1 ) { $object = $value; }
 		return( $object );
+	}
+
+	public function check_user_id( $value = null ) {
+		if( empty( $value ) || $value != (int)$value || $value < 0 ) { return( null ); }
+		return( $value );
 	}
 
 	public function account_type( $value = -1 ) {
@@ -189,7 +221,7 @@ class yf_payment_api {
 			$account_type    = null;
 			$account_type_id = null;
 		} else {
-			$account_type    = current( $result );
+			$account_type    = reset( $result );
 			$account_type_id = $account_type[ 'account_type_id' ];
 		}
 		return( array( $account_type_id, $account_type ) );
@@ -308,6 +340,11 @@ class yf_payment_api {
 		return( $currency_rate );
 	}
 
+	public function fee( $amount, $fee ) {
+		$result = $amount + $amount * ( $fee / 100 );
+		return( $result );
+	}
+
 	public function currency_conversion( $options = null ) {
 		$_ = &$options;
 		$conversion_type = $_[ 'conversion_type' ] == 'sell' ? 'sell' : 'buy';
@@ -347,7 +384,11 @@ class yf_payment_api {
 		$_ = &$options;
 		$data = array();
 		// user_id
-		$value = (int)$_[ 'user_id' ] ?: $this->user_id;
+		$value = $this->_default( array(
+			$_[ 'user_id' ],
+			$this->user_id,
+		));
+		$value = $this->check_user_id( $value );
 		if( empty( $value ) ) { return( null ); }
 		$data[ 'user_id' ] = $value;
 		// account_type_id
@@ -380,8 +421,12 @@ class yf_payment_api {
 		// options
 		$_ = &$options;
 		$db = db()->table( 'payment_account' )->order_by( 'account_id' );
-		// by user_id
-		$value = (int)$_[ 'user_id' ] ?: $this->user_id;
+		// user_id
+		$value = $this->_default( array(
+			$_[ 'user_id' ],
+			$this->user_id,
+		));
+		$value = $this->check_user_id( $value );
 		if( empty( $value ) ) { return( null ); }
 		$this->user_id( $value );
 		$db->where( 'user_id', '=', _es( $value ) );
@@ -404,7 +449,7 @@ class yf_payment_api {
 			// account not exists
 			list( $account_id, $account ) = $this->account_create( $options );
 		} else {
-			$account    = current( $result );
+			$account    = reset( $result );
 			$account_id = $account[ 'account_id' ];
 		}
 		$this->account    = $account;
@@ -529,7 +574,7 @@ class yf_payment_api {
 			return( $result );
 		}
 		if( count( $payment_status ) == 1 ) {
-			$payment_status    = current( $payment_status );
+			$payment_status    = reset( $payment_status );
 			$payment_status_id = (int)$payment_status[ 'status_id' ];
 		}
 		return( array( $payment_status_id, $payment_status ) );
@@ -540,14 +585,23 @@ class yf_payment_api {
 		$provider       = $this->provider;
 		$provider_index = $this->provider_index;
 		if( empty( $provider ) ) {
-			$provider = db()->table( 'payment_provider' )->where( 'active', 1 )->get_deep_array( 1 );
-			// $provider = db()->table( 'payment_provider' )->get_deep_array( 1 );
+			$provider = db()->table( 'payment_provider' )
+				->where( 'active', 1 )
+				->order_by( 'order' )
+				->get_deep_array( 1 );
 			if( empty( $provider ) ) {
 				$provider       = null;
 				$provider_index = null;
 				return( $provider );
 			}
-			foreach ((array)$provider as $index => $item ) {
+			foreach( (array)$provider as $index => $item ) {
+				$name = $item[ 'name' ];
+				$class = 'provider_' . $name;
+				$provider_class = $this->_class( $class );
+				if( !( $provider_class && $provider_class->ENABLE ) ) {
+					unset( $provider[ $index ] );
+					continue;
+				}
 				$id     = (int)$item[ 'provider_id' ];
 				$system = (int)$item[ 'system' ];
 				$name   = $item[ 'name' ];
@@ -581,28 +635,32 @@ class yf_payment_api {
 		else {
 			$result = $provider_index[ 'system' ][ 0 ];
 		}
-		return( $result );
-	}
-
-	public function provider_currency( $options = null ) {
-		// get options '_'
-		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$result = null;
-		if( is_array( $_provider ) ) {
-			foreach( $_provider as $id => $item ) {
-				$name = $item[ 'name' ];
-				$class = 'provider_' . $name;
-				$provider = $this->_class( $class );
-				$provider && $_provider[ $id ][ '_currency_allow' ] = &$provider->currency_allow;
+		if( is_array( $result ) ) {
+			foreach( $result as $index => $item ) {
+				$_options = &$result[ $index ][ 'options' ];
+				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
 			}
 		}
 		return( $result );
 	}
 
+	public function provider_options( &$provider, $options = null ) {
+		if( !isset( $options ) || !is_array( $provider ) ) { return( false ); }
+		foreach( $provider as $id => $item ) {
+			$name = $item[ 'name' ];
+			$class = 'provider_' . $name;
+			$provider_class = $this->_class( $class );
+			if( empty( $provider_class ) ) { continue; }
+			foreach( $options as $item ) {
+				$provider[ $id ][ '_' . $item ] = &$provider_class->{$item};
+			}
+		}
+		return( true );
+	}
+
 	/*
 		account_id by user_id
 		provider_id
-		provider_operation_id { NULL - inner methods }
 		direction             { in (приход) }
 		type_id               { deposition : пополнение счета (приход) }
 		status_id             { in_progress, success, refused }
@@ -765,15 +823,19 @@ class yf_payment_api {
 		// options
 		$_ = &$options;
 		// check user_id
-		$user_id = (int)$_[ 'user_id' ] ?: $this->user_id ?: $this->user_id_default;
-		if( $user_id <= 0 ) {
+		$value = $this->_default( array(
+			$_[ 'user_id' ],
+			$this->user_id,
+		));
+		$value = $this->check_user_id( $value );
+		if( empty( $value ) ) {
 			$result = array(
 				'status'         => -1,
 				'status_message' => 'Требуется авторизация',
 			);
 			return( $result );
 		}
-		$data[ 'user_id' ] = $user_id;
+		$data[ 'user_id' ] = $value;
 		// check type
 		$object = array();
 		if( !empty( $_[ 'type_name' ] ) ) {
@@ -790,7 +852,7 @@ class yf_payment_api {
 			);
 			return( $result );
 		}
-		$type    = current( $object );
+		$type    = reset( $object );
 		$type_id = (int)$type[ 'type_id' ];
 		$data[ 'type' ] = $type;
 		// check status
@@ -802,7 +864,7 @@ class yf_payment_api {
 			);
 			return( $result );
 		}
-		$status    = current( $status );
+		$status    = reset( $status );
 		$status_id = (int)$status[ 'status_id' ];
 		$data[ 'status' ] = $status;
 		// check account
@@ -852,7 +914,7 @@ class yf_payment_api {
 			);
 			return( $result );
 		}
-		$provider    = current( $object );
+		$provider = reset( $object );
 		$provider_id = (int)$provider[ 'provider_id' ];
 		$data[ 'provider' ] = $provider;
 		// prepare result
@@ -861,7 +923,6 @@ class yf_payment_api {
 		$result = array(
 			'account_id'            => $account_id,
 			'provider_id'           => $provider_id,
-			'provider_operation_id' => null,
 			'status_id'             => $status_id, // in_progress
 			'type_id'               => $type_id,   // deposition, payment, etc
 			'amount'                => $sql_amount,
@@ -873,6 +934,7 @@ class yf_payment_api {
 
 	public function operation( $options = null ) {
 		$_ = &$options;
+		$is_no_count    = $_[ 'no_count'     ];
 		$is_sql         = $_[ 'sql'          ];
 		$is_no_limit    = $_[ 'no_limit'     ];
 		$is_no_order_by = $_[ 'no_order_by'  ];
@@ -886,6 +948,8 @@ class yf_payment_api {
 				$result = $db->sql();
 			} else {
 				$result = $db->get();
+				$_options = &$result[ 'options' ];
+				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
 			}
 			return( $result );
 		}
@@ -914,6 +978,76 @@ class yf_payment_api {
 		} else {
 			$result = $db->all();
 		}
+		$count = null;
+		if( !$is_no_count ) {
+			$count = $db->order_by()->limit( null )->count( '*', $is_sql );
+		}
+		if( is_array( $result ) ) {
+			foreach( $result as $index => $item ) {
+				$_options = &$result[ $index ][ 'options' ];
+				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
+			}
+		}
+		return( array( $result, $count ) );
+	}
+
+	public function balance_update( $data, $options = null ) {
+		$result = $this->_object_update( 'account', $data, $options );
+		return( $result );
+	}
+
+	public function operation_update( $data, $options = null ) {
+		$result = $this->_object_update( 'operation', $data, $options );
+		return( $result );
+	}
+
+	protected function _object_update( $name, $data, $options = null ) {
+		if( empty( $name ) ) { return( null ); }
+		// import options
+		is_array( $data    ) && extract( $data,    EXTR_PREFIX_ALL | EXTR_REFS, ''  );
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '_' );
+		// check object id
+		$status         = false;
+		$status_message = '';
+		$result = array(
+			'status'         => &$status,
+			'status_message' => &$status_message,
+		);
+		$id_name = $name . '_id';
+		$id      = (int)${ '_' . $id_name };
+		if( $id < 1 ) {
+			$status_message = 'Ошибка при обновлении "' . $name . '": ' . $id;
+			return( $result );
+		}
+		$table = 'payment_' . $name;
+		// extend options
+		if( is_array( $_options ) ) {
+			// get operation
+			$operation = db()->table( $table )
+				->where( $id_name, $id )
+				->get();
+			$operation_options = (array)json_decode( $operation[ 'options' ], JSON_NUMERIC_CHECK );
+			$_options = json_encode( array_merge_recursive(
+				$operation_options,
+				$_options
+			));
+		}
+		// remove id by update
+		unset( $data[ $id_name ] );
+		// escape sql data
+		$sql_data = $data;
+		$__is_escape && $sql_data = _es( $data );
+		// query
+		$sql_status = db()->table( $table )
+			->where( $id_name, $id )
+			->update( $sql_data, array( 'escape' => $__is_escape ) );
+		// status
+		if( empty( $sql_status ) ) {
+			$status_message = 'Ошибка при обновлении "' . $name . '": ' . $id;
+			return( $result );
+		}
+		$status         = true;
+		$status_message = 'Выполнено обновление "' . t( $name ) . '"';
 		return( $result );
 	}
 
@@ -990,6 +1124,7 @@ class yf_payment_api {
 		$_var && $result .= 'VAR:' . PHP_EOL . var_export( $_var, true ) . PHP_EOL . PHP_EOL;
 		!empty( $result ) && file_put_contents( $file, $result, FILE_APPEND );
 		$is_first = false;
+		return( $result );
 	}
 
 }

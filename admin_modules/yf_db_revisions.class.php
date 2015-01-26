@@ -100,7 +100,11 @@ class yf_db_revisions {
 				$method_fields = array_combine($methods, $methods);
 				$tables = db()->get_2d('SELECT DISTINCT query_table FROM '.db('db_revisions'));
 				$table_fields = array_combine($tables, $tables);
-				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
+				return form($replace, array(
+						'selected' => $_SESSION[$filter_name],
+						'class' => 'form-vertical',
+#						'class' => 'form-horizontal form-condensed'
+					))
 					->text('add_date')
 					->text('user_id')
 					->text('ip')
@@ -112,7 +116,7 @@ class yf_db_revisions {
 		$action = $_GET['action'];
 		if (isset($filters[$action])) {
 			return $filters[$action]($filter_name, $replace)
-				->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1))
+				->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
 				->save_and_clear();
 		}
 		return false;

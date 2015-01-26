@@ -60,6 +60,7 @@ class yf_watch_online_users{
 		);
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
+				'class' => 'form-vertical',
 			))
 			->select_box('user_type', $this->USER_TYPES)
 			->save();

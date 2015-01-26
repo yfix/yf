@@ -60,8 +60,10 @@ class yf_ssh {
 		if (!$this->DRIVER) {
 			$this->DRIVER = 'phpseclib';
 		}
-		$test_phpseclib_path = YF_PATH.'libs/phpseclib/phpseclib/Net/SSH2.php';
-		if ($this->DRIVER == 'phpseclib' && !file_exists($test_phpseclib_path)) {
+		if ($this->DRIVER == 'phpseclib') {
+			require_php_lib('phpseclib');
+		}
+		if ($this->DRIVER == 'phpseclib' && !class_exists('Net_SSH2')) {
 			trigger_error('phpseclib Net_SSH2 not found', E_USER_WARNING);
 			return false;
 		} elseif ($this->DRIVER == 'pecl_ssh2' && !function_exists('ssh2_connect')) {
@@ -69,11 +71,6 @@ class yf_ssh {
 			return false;
 		} else {
 			$this->_INIT_OK = true;
-		}
-		if ($this->_INIT_OK && $this->DRIVER == 'phpseclib') {
-			set_include_path (YF_PATH.'libs/phpseclib/phpseclib/'. PATH_SEPARATOR. get_include_path());
-			require_once('Crypt/RSA.php');
-			require_once('Net/SSH2.php');
 		}
 	}
 

@@ -5,22 +5,21 @@ return array(
 		'master' => array(
 			'css' => array('
 .left_area .bs-docs-sidenav, .right_area .bs-docs-sidenav { position:fixed; }
-
-.dl-horizontal dt { width: 50%; margin-right: 10px; }
-
-ul#slide_menu .dropdown-divider { font-weight: bold; border-bottom: 1px solid; }
-
-.form-inline legend { margin-bottom: 0; margin-top: 0; }
-.form-inline .controls .radio:first-child, .form-inline .controls>.checkbox:first-child { padding-top:0 }
-/*.form-inline .control-group label { margin-top: -5px; }*/
-.form-inline .form-group { width: 100%; }
-.form-inline .form-group .controls { margin-left: 0; }
-
-.cssfw-bs2 .icon-email:before { content: "@"; }
+.dl-horizontal dt { width:50%; margin-right:10px; }
+ul#slide_menu .dropdown-divider { font-weight:bold; border-bottom:1px solid; }
 			'),
+			'jquery' => array(
+#				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',
+//				'$("select").not(".portlet select").not(".no-chosen").chosen();',
+			),
 		),
 	),
 	'require' => array(
-		'css' => 'yf_bootstrap_fixes',
+		'asset' => array(
+			'yf_bootstrap_fixes',
+#			'jq-select2',
+#			'icheck',
+#			'chosen',
+		),
 	),
 );

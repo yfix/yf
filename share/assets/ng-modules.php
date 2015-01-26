@@ -1,9 +1,7 @@
 <?php
 
-return function() {
-
-$content = <<<EOS
-var __angular_modules__ = [];
+$content = <<<'EOS'
+var __ANGULAR_MODULES__ = [];
 EOS;
 
 return array(
@@ -15,5 +13,3 @@ return array(
 		),
 	),
 );
-
-};

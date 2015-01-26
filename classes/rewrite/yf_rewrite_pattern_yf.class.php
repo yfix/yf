@@ -12,6 +12,8 @@ class yf_rewrite_pattern_yf {
 				$u .= '/'.$a['id'];
 				unset($a['id']);
 			}
+		} elseif ($a['object'] === 'static_pages' && in_array($a['id'], $this->_get_static_pages_names())) {
+			$u = $a['id'];
 		} else {
 			$u = array();
 			if (!empty($a['object'])) {
@@ -72,6 +74,8 @@ class yf_rewrite_pattern_yf {
 				$s .= '&id='.$url[1];
 				unset($url[1]);
 			}
+		} elseif (in_array($url[0], $this->_get_static_pages_names())) {
+			$s = 'object=static_pages&id='.$url[0];
 		// Examples: /table2_test/0/5,  where 5 - page number
 		} elseif (!empty($url[0]) && is_numeric($url[1]) && is_numeric($url[2])) {
 			$s = 'object='.$url[0].'&action=show';
@@ -110,5 +114,18 @@ class yf_rewrite_pattern_yf {
 		$arr['object'] = preg_replace('~[^a-z0-9_]+~ims', '', trim($arr['object']));
 		$arr['action'] = preg_replace('~[^a-z0-9_]+~ims', '', trim($arr['action']));
 		return $arr;
+	}
+
+	/**
+	*/
+	function _get_static_pages_names() {
+		if (!isset($this->_static_pages)) {
+			if (!main()->STATIC_PAGES_ROUTE_TOP) {
+				$this->_static_pages = array();
+			} else {
+				$this->_static_pages = main()->get_data('static_pages_names');
+			}
+		}
+		return $this->_static_pages;
 	}
 }

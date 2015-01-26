@@ -1,10 +1,10 @@
-{asset()} select2 {/asset}
+{asset()} jq-select2 {/asset}
 
-{jquery()}	
+{jquery()}
 	$("#product_name").select2({
 		placeholder: "{t('name')}",
 		minimumInputLength: 2,
-		ajax: { 
+		ajax: {
 		    url: "./?object=manage_shop&action=product_search_autocomplete",
 		    dataType: 'json',
 			data: function (term, page) {
@@ -16,20 +16,20 @@
 				return { results: data };
 			}
 		},
-	});	
+	});
 	$("#product_name").on("change",function() {
 		$("#product_id").val($(this).val());
 		$("#add_product_button_container").show();
 	});
-	
+
 	$('#add_product_button').on("click",function() {
-		
+
 		$.ajax({
 			type: "POST",
 			url: "./?object=manage_shop&action=order_product_add_ajax",
-			data: { 
-				product_id: $("#product_id").val(), 
-				quantity: $("#add_product_quantity").val(), 
+			data: {
+				product_id: $("#product_id").val(),
+				quantity: $("#add_product_quantity").val(),
 				order_id: {order_id},
 			},
 			success: function() {
@@ -37,7 +37,7 @@
 			},
 			dataType: 'json'
 		});
-		
+
 		return false;
 	});
 {/jquery}

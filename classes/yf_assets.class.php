@@ -9,7 +9,7 @@
 // TODO: locking atomic to prevent doing same job in several threads
 // TODO: move to web accessible folder only after completion to ensure atomicity
 // TODO: decide with images: jpeg, png, gif, sprites
-// TODO: comparing versions and return best match
+// TODO: comparing versions and return best match. Try to use service "php_semver" for this
 // TODO: upload to S3, FTP
 
 class yf_assets {
@@ -82,6 +82,8 @@ class yf_assets {
 	public function clean_all() {
 		$this->content	= array();
 		$this->filters	= array();
+		$this->_assets_added	= array();
+		$this->_bundles_added	= array();
 	}
 
 	/**
@@ -547,6 +549,13 @@ class yf_assets {
 		if (!$_content) {
 			return false;
 		}
+		// Prevent recursion
+		if (is_string($_content)) {
+			if (isset($this->_bundles_added[$_content])) {
+				return false;
+			}
+			$this->_bundles_added[$_content] = true;
+		}
 		$bundle_details = $this->get_asset_details($_content);
 		if (!$bundle_details) {
 			return false;
@@ -601,6 +610,13 @@ class yf_assets {
 	public function _add_asset($_content, $asset_type, $_params = array()) {
 		if (!$_content) {
 			return false;
+		}
+		// Prevent recursion
+		if (is_string($_content)) {
+			if (isset($this->_assets_added[$asset_type][$_content])) {
+				return false;
+			}
+			$this->_assets_added[$asset_type][$_content] = true;
 		}
 		$asset_data = $this->get_asset_details($_content);
 		if (!$asset_data) {
@@ -717,7 +733,10 @@ class yf_assets {
 	* Return content for given asset type, optionally only for md5 of it
 	*/
 	public function get_content($asset_type, $params = array()) {
-		$md5 = (is_string($params) && strlen($params) === 32) ? $params : $params['md5'];
+		$md5 = (is_string($params) && strlen($params) === 32) ? $params : (isset($params['md5']) ? $params['md5'] : '');
+		if (!isset($this->content[$asset_type])) {
+			$this->content[$asset_type] = array();
+		}
 		return $md5 ? $this->content[$asset_type][$md5] : $this->content[$asset_type];
 	}
 
@@ -757,7 +776,10 @@ class yf_assets {
 		if (!$this->ADD_IS_DIRECT_OUT) {
 			$this->already_required[$asset_type] = array();
 		}
-		return $this->content[$asset_type] = array();
+		$this->content[$asset_type] = array();
+		$this->_assets_added[$asset_type] = array();
+		$this->_bundles_added = array();
+		return array();
 	}
 
 	/**
@@ -799,9 +821,13 @@ class yf_assets {
 	*/
 	public function get_sass_content($params = array()) {
 		$out = array();
+		$content = $this->get_content('sass');
+		if (empty($content)) {
+			return array();
+		}
 		require_php_lib('scssphp');
 		$scss = new scssc();
-		foreach ((array)$this->get_content('sass') as $md5 => $v) {
+		foreach ((array)$content as $md5 => $v) {
 			$v['content'] = $scss->compile($v['content']);
 			$out[$md5] = $v;
 		}
@@ -812,9 +838,13 @@ class yf_assets {
 	*/
 	public function get_less_content($params = array()) {
 		$out = array();
+		$content = $this->get_content('less');
+		if (empty($content)) {
+			return array();
+		}
 		require_php_lib('lessphp');
 		$less = new lessc();
-		foreach ((array)$this->get_content('less') as $md5 => $v) {
+		foreach ((array)$content as $md5 => $v) {
 			$v['content'] = $less->compile($v['content']);
 			$out[$md5] = $v;
 		}
@@ -825,8 +855,12 @@ class yf_assets {
 	*/
 	public function get_coffee_content($params = array()) {
 		$out = array();
+		$content = $this->get_content('coffee');
+		if (empty($content)) {
+			return array();
+		}
 		require_php_lib('coffeescript_php');
-		foreach ((array)$this->get_content('coffee') as $md5 => $v) {
+		foreach ((array)$content as $md5 => $v) {
 			$v['content'] = \CoffeeScript\Compiler::compile($v['content'], array('header' => false));
 			$out[$md5] = $v;
 		}
@@ -840,10 +874,10 @@ class yf_assets {
 		// Move down inlined content
 		$all_content = $this->get_content($out_type);
 		if ($out_type === 'css') {
-			$all_content += (array)$this->get_sass_content($params);
-			$all_content += (array)$this->get_less_content($params);
+			$all_content = (array)$all_content + (array)$this->get_sass_content($params);
+			$all_content = (array)$all_content + (array)$this->get_less_content($params);
 		} elseif ($out_type === 'js') {
-			$all_content += (array)$this->get_coffee_content($params);
+			$all_content = (array)$all_content + (array)$this->get_coffee_content($params);
 		}
 		$top = array();
 		$bottom = array();
@@ -961,7 +995,8 @@ class yf_assets {
 			$_params = (array)$v['params'] + (array)$params;
 			$content_type = $v['content_type'];
 			$cached_path = '';
-			if ($this->USE_CACHE && $content_type !== 'inline') {
+			$use_cache = $this->USE_CACHE && $content_type !== 'inline' && !$_params['no_cache'] && !$_params['config']['no_cache'];
+			if ($use_cache) {
 				if ($v['name'] === 'bootstrap-theme') {
 					$v['name'] .= '-'.$bs_current_theme;
 				}
@@ -980,7 +1015,8 @@ class yf_assets {
 			if ($_params['config']['class']) {
 				$_params['class'] = $_params['config']['class'];
 			}
-			if ($this->COMBINE && in_array($content_type, array('url', 'file')) && empty($before) && empty($after) && empty($_params['class']) && empty($_params['id'])) {
+			$use_combine = $this->COMBINE && $use_cache && in_array($content_type, array('url', 'file')) && empty($before) && empty($after) && empty($_params['class']) && empty($_params['id']);
+			if ($use_combine) {
 				$to_combine[$md5] = array(
 					'content' => $str,
 					'content_type' => $content_type,
@@ -1174,7 +1210,7 @@ class yf_assets {
 		// Content is same, no need to overwrite it
 		$cache_existed = file_exists($cache_path);
 		if ($cache_existed && file_get_contents($cache_path) === $content) {
-			touch($cache_path);
+			is_writable($cache_path) && touch($cache_path);
 			return $cache_path;
 		}
 		file_put_contents($cache_path, $content);
@@ -1231,7 +1267,7 @@ class yf_assets {
 			return false;
 		}
 		if (file_exists($map_path) && file_get_contents($map_path) === $map_content) {
-			touch($map_path);
+			is_writable($map_path) && touch($map_path);
 			return true;
 		}
 		$this->_write_cache_info($map_path, $map_url, $map_content);

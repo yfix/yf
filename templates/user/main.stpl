@@ -7,9 +7,9 @@
 </head>
 <body class="bs-theme-{execute(common,bs_current_theme)} cssfw-{conf(css_framework)}">
 	<div class="navbar navbar-default{if(conf.css_havbar_inverse eq 1)} navbar-inverse{/if}">
-		<div class="navbar-inner navbar-header">
+		<div class="navbar-inner navbar-header container">
 			<a class="brand navbar-brand" href="{const(WEB_PATH)}">{const(SITE_ADVERT_NAME)}</a>
-			<ul class="nav navbar-nav">
+			<ul class="breadcrumb">
 {execute(site_nav_bar,_show)}
 			</ul>
 {execute(site_nav_bar,_show_dropdown_menu)}

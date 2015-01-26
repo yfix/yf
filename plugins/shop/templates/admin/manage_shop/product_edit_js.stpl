@@ -17,7 +17,7 @@ function image_upload(field, preview) {
 					}
 				});
 			}
-		},	
+		},
 		bgiframe: false,
 		width: 700,
 		height: 400,
@@ -29,7 +29,7 @@ var image_row = 0;
 function addImage() {
 	html = '<div id="image_row' + image_row + '"><input type="file" name="image[' + image_row + ']"  value="" data-test="upload_field_' + image_row + '">';
 	html += '<a onclick="$(\'#image_row' + image_row  + '\').remove();" class="btn btn-mini btn-xs" data-test="remove_upload_field_' + image_row + '">Remove</a>';
-	html += '<br /></div>'; 
+	html += '<br /></div>';
 	$('#images').append(html);
 	image_row++;
 }

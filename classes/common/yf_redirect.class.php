@@ -23,11 +23,61 @@ class yf_redirect {
 	public $FORCE_TYPE		= 'http';
 	/** @var bool */
 	public $LOG_REDIRECTS	= true;
+	/** @var bool */
+	public $LOOP_DEFENCE	= true;
+	/** @var bool */
+	public $LOOP_COUNT		= 3;
+	/** @var bool */
+	public $LOOP_KEEP_LAST	= 10;
+	/** @var bool */
+	public $LOOP_TTL		= 5;
+
+	/**
+	*/
+	function _loop_detected($cur_url) {
+		if (!$this->LOOP_DEFENCE) {
+			return false;
+		}
+		$cur_time = time();
+		$loop_var = &$_SESSION['last_redirect_log'];
+		if (!is_array($loop_var)) {
+			$loop_var = array();
+		}
+		$loop_var[] = array(
+			'time'	=> $cur_time,
+			'url'	=> $cur_url,
+		);
+		$detected = false;
+		$detect_slice = array_reverse(array_slice((array)$loop_var, -$loop_count, $loop_count, true));
+		if (count($detect_slice) < $this->LOOP_COUNT) {
+			return false;
+		}
+		$counter = 0;
+		foreach ((array)$detect_slice as $v) {
+			$time = $v['time'];
+			$url = $v['url'];
+			if ($time < ($cur_time - $this->LOOP_TTL)) {
+				break;
+			}
+			if ($v['url'] != $cur_url) {
+				break;
+			}
+			$counter++;
+		}
+		if ($counter >= $this->LOOP_COUNT) {
+			$detected = true;
+		}
+		// Keep only last 10 redirects log
+		$keep_last = $this->LOOP_KEEP_LAST;
+		$loop_var = array_slice($loop_var, -$keep_last, $keep_last, true);
+
+		return $detected;
+	}
 
 	/**
 	* Common redirect method
 	*/
-	function _go ($location, $rewrite = true, $redirect_type = 'js', $text = '', $ttl = 3, $params = array()) {
+	function _go($location, $rewrite = true, $redirect_type = 'js', $text = '', $ttl = 3, $params = array()) {
 		if (is_array($location)) {
 			$params += $location;
 			$rewrite = isset($params['rewrite']) ? $params['rewrite'] : $rewrite;
@@ -43,7 +93,6 @@ class yf_redirect {
 		if (main()->_IS_REDIRECTING) {
 			return false;
 		}
-		main()->NO_GRAPHICS = true;
 		main()->_IS_REDIRECTING = true;
 		if (empty($location)) {
 			$location = './?object='.$_GET['object']
@@ -64,6 +113,14 @@ class yf_redirect {
 		if (method_exists($obj, $hook_name)) {
 			$obj->$hook_name($text);
 		}
+		if ($this->LOOP_DEFENCE) {
+			$loop_detected = $this->_loop_detected($location);
+			if ($loop_detected && !DEBUG_MODE) {
+				common()->message_error('Internal error: redirect loop detected. Please contact support');
+				return false;
+			}
+		}
+		main()->NO_GRAPHICS = true;
 		if (DEBUG_MODE) {
 			$hidden_fields = '';
 			if ($form_method == 'GET') {
@@ -90,6 +147,9 @@ class yf_redirect {
 				'form_method'	=> $form_method,
 				'hidden_fields'	=> $hidden_fields,
 			));
+			if ($loop_detected) {
+				$body .= '<b style="color:red">Redirect loop detected!</b>';
+			}
 			$body .= '<pre><small>'.htmlspecialchars(main()->trace_string()).'</small></pre>';
 			if ($this->FORCE_TYPE) {
 				$redirect_type = $this->FORCE_TYPE;

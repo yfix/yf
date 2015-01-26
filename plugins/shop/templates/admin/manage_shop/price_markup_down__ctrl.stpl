@@ -1,4 +1,20 @@
+{asset()} ng-app-init {/asset}
+
 {js()}
+
+(function () { 'use strict';
+
+var __NS__ = 'manage_shop.price_markup_down';
+__ANGULAR_MODULES__.push( __NS__ );
+
+var ng_app_admin = angular.module( __NS__, [
+	'ngAnimate',
+	'ngSanitize',
+	'ngResource',
+	'ui.select2',
+	'ui.select',
+	'mgcrea.ngStrap',
+]);
 
 ng_app_admin.config( function( $typeaheadProvider ) {
 	angular.extend( $typeaheadProvider.defaults, {
@@ -167,4 +183,5 @@ ng_app_admin.controller( '{_ng_controller}', function ( srv_search, $scope, $fil
 
 });
 
+})();
 {/js}

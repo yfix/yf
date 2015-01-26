@@ -7,7 +7,7 @@ $autoload_config = array('sf_translation/' => 'Symfony\Component\Translation');
 require __DIR__.'/_config.php';
 
 // Test mode when direct call
-if (!$_SERVER['REQUEST_METHOD'] && realpath($argv[0]) === realpath(__FILE__)) {
+if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
 	$translator = new \Symfony\Component\Translation\Translator('fr_FR', new Symfony\Component\Translation\MessageSelector());
 	$translator->setFallbackLocales(array('fr'));
 	$translator->addLoader('array', new Symfony\Component\Translation\Loader\ArrayLoader());

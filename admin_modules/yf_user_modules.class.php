@@ -58,25 +58,23 @@ class yf_user_modules {
 				$plugin_name = $this->_yf_plugins_classes[$name];
 			}
 			$locations = array();
-			$d = PROJECT_PATH. USER_MODULES_DIR;
-			$f = $name. YF_CLS_EXT;
-			if (file_exists($d. $f)) {
-				$locations['project'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
+			$dir = USER_MODULES_DIR;
+			$places = array(
+				'framework' => array('dir' => YF_PATH. $dir, 'file' => YF_PREFIX. $name. YF_CLS_EXT),
+				'project'	=> array('dir' => ADMIN_SITE_PATH. $dir, 'file' => $name. YF_CLS_EXT),
+				'app'		=> array('dir' => APP_PATH. $dir, 'file' => $name. YF_CLS_EXT),
+			);
+			if ($plugin_name) {
+				$places += array(
+					'framework_plugin'	=> array('dir' => YF_PATH. 'plugins/'. $plugin_name. '/'. $dir, 'file' => YF_PREFIX. $name. YF_CLS_EXT),
+					'project_plugin'	=> array('dir' => PROJECT_PATH. 'plugins/'. $plugin_name. '/'. $dir, 'file' => $name. YF_CLS_EXT),
+					'app_plugin'		=> array('dir' => APP_PATH. 'plugins/'. $plugin_name. '/'. $dir, 'file' => $name. YF_CLS_EXT),
+				);
 			}
-			$d = PROJECT_PATH. 'plugins/'. $plugin_name. '/'. USER_MODULES_DIR;
-			$f = $name. YF_CLS_EXT;
-			if ($plugin_name && file_exists($d. $f)) {
-				$locations['project_plugin'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
-			}
-			$d = YF_PATH. USER_MODULES_DIR;
-			$f = YF_PREFIX. $name. YF_CLS_EXT;
-			if (file_exists($d. $f)) {
-				$locations['framework'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
-			}
-			$d = YF_PATH. 'plugins/'. $plugin_name. '/'. USER_MODULES_DIR;
-			$f = YF_PREFIX. $name. YF_CLS_EXT;
-			if ($plugin_name && file_exists($d. $f)) {
-				$locations['framework_plugin'] = './?object=file_manager&action=edit_item&f_='.$f.'&dir_name='.urlencode($d);
+			foreach ($places as $pname => $p) {
+				if (file_exists($p['dir']. $p['file'])) {
+					$locations[$pname] = './?object=file_manager&action=edit_item&f_='.urlencode($p['file']).'&dir_name='.urlencode($p['dir']);
+				}
 			}
 			$items[] = array(
 				'name'		=> $a['name'],
@@ -202,103 +200,57 @@ class yf_user_modules {
 	* Get available user modules from the project modules folder
 	*/
 	function _get_modules_from_files ($include_framework = true, $with_sub_modules = false) {
-		$user_modules_array = array();
-		$pattern_include = '-f ~/'.preg_quote(USER_MODULES_DIR,'~').'.*'.preg_quote(YF_CLS_EXT,'~').'$~';
-		$pattern_no_submodules = '~/'.preg_quote(USER_MODULES_DIR,'~').'[^/]+'.preg_quote(YF_CLS_EXT,'~').'$~ims';
+		$modules = array();
 
 		$yf_prefix_len = strlen(YF_PREFIX);
 		$yf_cls_ext_len = strlen(YF_CLS_EXT);
 		$site_prefix_len = strlen(YF_SITE_CLS_PREFIX);
 
-		$dir_to_scan = PROJECT_PATH. USER_MODULES_DIR;
-		foreach ((array)_class('dir')->scan($dir_to_scan, true, $pattern_include) as $k => $v) {
-			$v = str_replace('//', '/', $v);
-			if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
-				continue;
-			}
+		$pattern = USER_MODULES_DIR.'*'.YF_CLS_EXT;
+		$places = array();
+#$with_sub_modules
+/*
 			if (!$with_sub_modules) {
 				if (false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
 					continue;
 				}
 			}
-			$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
-			if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
-				$module_name = substr($module_name, $site_prefix_len);
-			}
-			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
-				continue;
-			}
-			$user_modules_array[$module_name] = $module_name;
-		}
-
-		// Plugins parsed differently
-		foreach ((array)_class('dir')->scan(PROJECT_PATH. 'plugins/', true, $pattern_include) as $k => $v) {
-			$v = str_replace('//', '/', $v);
-			if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
-				continue;
-			}
-			if (!$with_sub_modules) {
-				if (!preg_match($pattern_no_submodules, $v)) {
-					continue;
-				}
-			}
-			$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
-			if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
-				$module_name = substr($module_name, $site_prefix_len);
-			}
-			if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
-				continue;
-			}
-			$user_modules_array[$module_name] = $module_name;
-		}
-		// Do parse files from the framework
+*/
 		if ($include_framework) {
-			$dir_to_scan = YF_PATH. USER_MODULES_DIR;
-			foreach ((array)_class('dir')->scan($dir_to_scan, true, $pattern_include) as $k => $v) {
-				$v = str_replace('//', '/', $v);
-				if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
+			$places += array(
+				'yf_main'			=> YF_PATH. $pattern,
+				'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
+			);
+		}
+		$places += array(
+			'project_main'		=> PROJECT_PATH. $pattern,
+			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
+			'app_main'			=> APP_PATH. $pattern,
+			'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
+		);
+		foreach ($places as $place_name => $glob) {
+			foreach (glob($glob) as $path) {
+				if (substr($path, -$yf_cls_ext_len) !== YF_CLS_EXT) {
 					continue;
 				}
-				if (!$with_sub_modules) {
-					if (false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
-						continue;
-					}
+				$name = substr(basename($path), 0, -$yf_cls_ext_len);
+				if (substr($name, 0, $yf_prefix_len) === YF_PREFIX) {
+					$name = substr($name, $yf_prefix_len);
 				}
-				$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
-				$module_name = substr($module_name, $yf_prefix_len);
-				if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
-					$module_name = substr($module_name, $site_prefix_len);
+				if (substr($name, 0, $site_prefix_len) === YF_SITE_CLS_PREFIX) {
+					$module_name = substr($name, $site_prefix_len);
 				}
-				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
+				if (in_array($name, $this->_MODULES_TO_SKIP)) {
 					continue;
 				}
-				$user_modules_array[$module_name] = $module_name;
-			}
-			// Plugins parsed differently
-			foreach ((array)_class('dir')->scan(YF_PATH. 'plugins/', true, $pattern_include) as $k => $v) {
-				$v = str_replace('//', '/', $v);
-				if (substr($v, -$yf_cls_ext_len) != YF_CLS_EXT) {
+				if (!strlen($name)) {
 					continue;
 				}
-				if (!$with_sub_modules) {
-					if (!preg_match($pattern_no_submodules, $v)) {
-						continue;
-					}
-				}
-				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-				$module_name = substr(basename($v), 0, -$yf_cls_ext_len);
-				$module_name = substr($module_name, $yf_prefix_len);
-				if (substr($module_name, 0, $site_prefix_len) == YF_SITE_CLS_PREFIX) {
-					$module_name = substr($module_name, $site_prefix_len);
-				}
-				if (in_array($module_name, $this->_MODULES_TO_SKIP)) {
-					continue;
-				}
-				$user_modules_array[$module_name] = $module_name;
+				$modules[$name] = $name;
 			}
 		}
-		ksort($user_modules_array);
-		return $user_modules_array;
+		ksort($modules);
+		return $modules;
 	}
 
 	/**
@@ -504,12 +456,13 @@ class yf_user_modules {
 		}
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
+				'class' => 'form-vertical',
 			))
 			->text('name')
 			->select_box('locations', $locations, array('show_text' => 1))
-			->radio_box('active', main()->get_data('pair_active'))
+			->active_box()
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
 			->save_and_clear();
 		;
 	}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="api.admin">
+<html>
 <head>
 	<title>{execute(graphics,show_site_title)}</title>
 	<base href="{const(ADMIN_WEB_PATH)}"/>
@@ -13,8 +13,8 @@
 {else}
 	<div class="navbar navbar-default navbar-inverse">
 {/if}
-		<div class="navbar-inner navbar-header">
-			<ul class="nav navbar-nav">
+		<div class="navbar-inner navbar-header container">
+			<ul class="breadcrumb">
 {execute(site_nav_bar,_show)}
 			</ul>
 {execute(site_nav_bar,_show_dropdown_menu)}

@@ -90,13 +90,14 @@ class yf_admin_wall {
 		}
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
+				'class' => 'form-vertical',
 			))
 			->text('message')
 			->text('object')
 			->text('action')
 			->integer('object_id')
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
 			->save_and_clear();
 		;
 	}

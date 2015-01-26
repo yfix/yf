@@ -13,6 +13,7 @@ return array(
 		'master' => array(
 			'js' => array(
 				'//cdn.rawgit.com/formvalidation/formvalidation/master/dist/js/formValidation.min.js',
+				'//cdn.rawgit.com/formvalidation/formvalidation/master/dist/js/framework/bootstrap.min.js',
 				$lang_files[$lang] ? '//cdn.rawgit.com/formvalidation/formvalidation/master/dist/js/language/'.$lang_files[$lang].'.js' : '',
 			),
 			'css' => '//cdn.rawgit.com/formvalidation/formvalidation/master/dist/css/formValidation.min.css',

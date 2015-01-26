@@ -71,6 +71,7 @@ class yf_log_admin_redirects {
 		}
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
+				'class' => 'form-vertical',
 			))
 			->number('user_id')
 			->text('ip')
@@ -79,7 +80,7 @@ class yf_log_admin_redirects {
 			->text('url_from')
 			->text('url_to')
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'))
+			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
 			->save_and_clear();
 		;
 	}
