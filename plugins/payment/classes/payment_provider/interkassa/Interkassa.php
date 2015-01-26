@@ -53,29 +53,41 @@ class Interkassa {
 		'sha256',
 	);
 
-	private $_public_key       = null;
-	private $_private_key      = null;
-	private $_private_key_test = null;
+	private $_key_public       = null;
+	private $_key_private      = null;
+	private $_key_private_test = null;
 	private $_hash_method      = null;
 	private $_test_mode        = null;
 
-	public function __construct( $public_key, $private_key, $private_key_test, $hash_method = 'md5', $test_mode ) {
-		if( empty( $public_key ) ) {
-			throw new InvalidArgumentException( 'public_key (merchant) is empty' );
+	public function __construct( $key_public, $key_private, $key_private_test, $hash_method = 'md5', $test_mode ) {
+		if( empty( $key_public ) ) {
+			throw new InvalidArgumentException( 'key_public (ik_co_id) is empty' );
 		}
-		if( empty( $private_key ) ) {
-			throw new InvalidArgumentException( 'private_key is empty' );
+		if( empty( $key_private ) ) {
+			throw new InvalidArgumentException( 'key_private is empty' );
 		}
-		if( empty( $private_key_test ) ) {
-			throw new InvalidArgumentException( 'private_key_test is empty' );
+		if( empty( $key_private_test ) ) {
+			throw new InvalidArgumentException( 'key_private_test is empty' );
 		}
 		if( !$this->hash_method( $hash_method ) ) {
 			throw new InvalidArgumentException( 'hash method allow is not allow' );
 		}
-		$this->_public_key       = $public_key;
-		$this->_private_key      = $private_key;
-		$this->_private_key_test = $private_key_test;
+		$this->_key_public       = $key_public;
+		$this->_key_private      = $key_private;
+		$this->_key_private_test = $key_private_test;
 		$this->_test_mode        = $test_mode;
+	}
+
+	public function key( $name = 'public', $value = null ) {
+		if( !in_array( $name, array( 'public', 'private', 'private_test' ) ) ) {
+			return( null );
+		}
+		$_name  = '_key_' . $name;
+		$_value = &$this->{ $_name };
+		// set
+		if( !empty( $value ) && is_string( $value ) ) { $_value = $value; }
+		// get
+		return( $_value );
 	}
 
 	public function hash_method_allow( $value ) {
@@ -96,8 +108,8 @@ class Interkassa {
 		return( $result );
 	}
 
-	public function private_key() {
-		$result = $this->_test_mode ? $this->_private_key_test : $this->_private_key;
+	public function key_private() {
+		$result = $this->_test_mode ? $this->_key_private_test : $this->_key_private;
 		return( $result );
 	}
 
@@ -119,7 +131,9 @@ class Interkassa {
 		// sort by key
 		ksort( $request, SORT_STRING );
 		// compile string
-		$key = $this->private_key();
+		$key = $this->key_private();
+		$key = $this->_key_private;
+// var_dump( $key  );
 		$str = implode( ':', $request ) . ':' . $key;
 		// create signature
 		$result = $this->str_to_sign( $str );
@@ -128,6 +142,7 @@ class Interkassa {
 
 	public function str_to_sign( $str ) {
 		$hash_method = $this->hash_method();
+// var_dump( $hash_method, $str  );
 		$result = base64_encode( hash( $hash_method, $str, true ) );
 		return( $result );
 	}

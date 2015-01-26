@@ -10,9 +10,9 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	public $api         = null;
 
 	public $URL              = 'https://sci.interkassa.com/';
-	public $PUBLIC_KEY       = null;  // Checkout ID, Идентификатор кассы
-	public $PRIVATE_KEY      = null;  // secret key
-	public $PRIVATE_KEY_TEST = null;  // secret key for test
+	public $KEY_PUBLIC       = null;  // Checkout ID, Идентификатор кассы
+	public $KEY_PRIVATE      = null;  // secret key
+	public $KEY_PRIVATE_TEST = null;  // secret key for test
 	public $HASH_METHOD      = 'md5'; // signature hash method
 
 	public $TEST_MODE   = null;
@@ -34,7 +34,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		'ik_desc'   => 'title',
 		'ik_x_desc' => 'description',
 		'ik_pm_no'  => 'operation_id',
-		'ik_co_id'  => 'public_key',
+		'ik_co_id'  => 'key_public',
 	);
 
 	public $currency_default = 'UAH';
@@ -66,11 +66,36 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/interkassa/Interkassa.php' );
-		$this->api = new Interkassa( $this->PUBLIC_KEY, $this->PRIVATE_KEY, $this->PRIVATE_KEY_TEST, $this->HASH_METHOD, $this->TEST_MODE );
+		$this->api = new Interkassa( $this->KEY_PUBLIC, $this->KEY_PRIVATE, $this->KEY_PRIVATE_TEST, $this->HASH_METHOD, $this->TEST_MODE );
 		$this->url_result = url( '/api/payment/provider?name=interkassa&operation=response' );
 		$this->url_server = url( '/api/payment/provider?name=interkassa&operation=response&server=true' );
 		// parent
 		parent::_init();
+	}
+
+	public function key( $name = 'public', $value = null ) {
+		$value = $this->api->key( $name, $value );
+		return( $value );
+	}
+
+	public function key_reset() {
+		$this->api->key( 'public',       $this->KEY_PUBLIC       );
+		$this->api->key( 'private',      $this->KEY_PRIVATE      );
+		$this->api->key( 'private_test', $this->KEY_PRIVATE_TEST );
+	}
+
+	public function hash_method( $value = null ) {
+		$value = $this->api->hash_method( $value );
+		return( $value );
+	}
+
+	public function hash_method_reset() {
+		$this->api->hash_method( $this->HASH_METHOD );
+	}
+
+	public function signature( $options ) {
+		$result = $this->api->signature( $options );
+		return( $result );
 	}
 
 	public function _form_options( $options ) {
@@ -101,7 +126,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		}
 		// default
 		$_[ 'ik_am' ] = number_format( $_[ 'ik_am' ], 2, '.', '' );
-		empty( $_[ 'ik_co_id'   ] ) && $_[ 'ik_co_id'   ] = $this->PUBLIC_KEY;
+		empty( $_[ 'ik_co_id'   ] ) && $_[ 'ik_co_id'   ] = $this->KEY_PUBLIC;
 		if( empty( $_[ 'ik_am' ] ) || empty( $_[ 'ik_co_id' ] ) ) { $_ = null; }
 		if( !empty( $this->TEST_MODE ) || !empty( $_[ 'test_mode' ] ) ) {
 			unset( $_[ 'test' ] );
@@ -198,13 +223,13 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		}
 		// update operation
 		$response = $this->_response_parse( $payment );
-		// check public key (merchant)
-		$public_key = $response[ 'public_key' ];
-		$_public_key = $this->PUBLIC_KEY;
-		if( $public_key != $_public_key ) {
+		// check public key (ik_co_id)
+		$key_public = $response[ 'key_public' ];
+		$_key_public = $this->key( 'public' );
+		if( $key_public != $_key_public ) {
 			$result = array(
 				'status'         => false,
-				'status_message' => 'Неверный ключ (merchant)',
+				'status_message' => 'Неверный ключ (ik_co_id)',
 			);
 			return( $result );
 		}
@@ -234,7 +259,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		}
 		// update account, operation data
 		$result = $this->_api_deposition( array(
-			'provider_name'       => 'privat24',
+			'provider_name'       => 'interkassa',
 			'response'            => $response,
 			'payment_status_name' => $payment_status_name,
 		));
@@ -344,7 +369,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$result = array(
 			'form'           => $form,
 			'status'         => true,
-			'status_message' => 'Поплнение через сервис: Приват24',
+			'status_message' => 'Поплнение через сервис: Интеркасса',
 		);
 		return( $result );
 	}
