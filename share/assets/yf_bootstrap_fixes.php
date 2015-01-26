@@ -69,6 +69,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 }
 
 .cssfw-bs3 .container-fixed input, textarea, select { max-width:300px; }
+.cssfw-bs3 .container-fixed .form-inline input, textarea, select { max-width:200px; }
 .cssfw-bs3 .container-fixed textarea.cke_source { max-width:inherit; }
 .cssfw-bs3 .container-fixed .input-mini { width:70px !important }
 .cssfw-bs3 .container-fixed .input-small { width:100px !important }
