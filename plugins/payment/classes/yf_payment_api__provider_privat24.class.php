@@ -10,8 +10,8 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	public $api         = null;
 
 	public $URL         = 'https://api.privatbank.ua/p24api/ishop';
-	public $PUBLIC_KEY  = null; // merchant
-	public $PRIVATE_KEY = null; // pass
+	public $KEY_PUBLIC  = null; // merchant
+	public $KEY_PRIVATE = null; // pass
 
 	public $TEST_MODE   = null;
 
@@ -62,7 +62,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/privat24/Privat24.php' );
-		$this->api = new Privat24( $this->PUBLIC_KEY, $this->PRIVATE_KEY );
+		$this->api = new Privat24( $this->KEY_PUBLIC, $this->KEY_PRIVATE );
 		$this->url_result = url( '/api/payment/provider?name=privat24&operation=response' );
 		$this->url_server = url( '/api/payment/provider?name=privat24&operation=response&server=true' );
 		// parent
@@ -80,7 +80,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		}
 		// default
 		$_[ 'amt' ] = number_format( $_[ 'amt' ], 2, '.', '' );
-		empty( $_[ 'merchant'   ] ) && $_[ 'merchant'   ] = $this->PUBLIC_KEY;
+		empty( $_[ 'merchant'   ] ) && $_[ 'merchant'   ] = $this->KEY_PUBLIC;
 		empty( $_[ 'pay_way'    ] ) && $_[ 'pay_way'    ] = 'privat24';
 		if( empty( $_[ 'return_url' ] ) ) {
 			$_[ 'return_url' ] = $this->url_result
@@ -155,7 +155,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$response = $this->_response_parse( $payment );
 		// check public key (merchant)
 		$public_key = $response[ 'public_key' ];
-		$_public_key = $this->PUBLIC_KEY;
+		$_public_key = $this->KEY_PUBLIC;
 		if( $public_key != $_public_key ) {
 			$result = array(
 				'status'         => false,

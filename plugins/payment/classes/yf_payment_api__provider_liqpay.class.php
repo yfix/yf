@@ -10,8 +10,8 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	public $api         = null;
 
 	public $URL         = 'https://www.liqpay.com/api/pay';
-	public $PUBLIC_KEY  = null;
-	public $PRIVATE_KEY = null;
+	public $KEY_PUBLIC  = null;
+	public $KEY_PRIVATE = null;
 
 	public $TEST_MODE   = null;
 
@@ -59,7 +59,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/liqpay/LiqPay.php' );
-		$this->api = new LiqPay( $this->PUBLIC_KEY, $this->PRIVATE_KEY );
+		$this->api = new LiqPay( $this->KEY_PUBLIC, $this->KEY_PRIVATE );
 		$this->url_result = url( '/api/payment/provider?name=liqpay&operation=response' );
 		$this->url_server = url( '/api/payment/provider?name=liqpay&operation=response&server=true' );
 		// parent
@@ -77,7 +77,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		}
 		// default
 		$_[ 'amount' ] = number_format( $_[ 'amount' ], 2, '.', '' );
-		empty( $_[ 'public_key' ] ) && $_[ 'public_key' ] = $this->PUBLIC_KEY;
+		empty( $_[ 'public_key' ] ) && $_[ 'public_key' ] = $this->KEY_PUBLIC;
 		empty( $_[ 'pay_way'    ] ) && $_[ 'pay_way'    ] = 'card,delayed';
 		if( empty( $_[ 'result_url' ] ) ) {
 			$_[ 'result_url' ] = $this->url_result
@@ -228,7 +228,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		}
 		// calc signature
 		$payment = ''
-			. $this->PRIVATE_KEY
+			. $this->KEY_PRIVATE
 			. $_POST[ 'amount' ]
 			. $_POST[ 'currency' ]
 			. $_POST[ 'public_key' ]
@@ -251,7 +251,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		$response = $this->_response_parse( $_POST );
 		// check public key (merchant)
 		$public_key = $response[ 'public_key' ];
-		$_public_key = $this->PUBLIC_KEY;
+		$_public_key = $this->KEY_PUBLIC;
 		if( $public_key != $_public_key ) {
 			$result = array(
 				'status'         => false,
