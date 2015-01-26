@@ -10,6 +10,7 @@ return array(
 				'//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.ohlcRenderer.min.js',
 				'//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.highlighter.min.js',
 				'//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.cursor.min.js',
+#				'//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/excanvas.min.js',
 			),
 			'css' => array(
 				'//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/jquery.jqplot.min.css',
