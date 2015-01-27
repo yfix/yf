@@ -1,6 +1,7 @@
 <?php
 
-return array('versions' => array('master' => array('css' => array('
+return array('versions' => array('master' => array('css' => array(
+<<<END
 
 fieldset.well { padding-bottom:0; }
 fieldset.well legend { margin-bottom:0; padding:0 0.5em; width:auto; line-height:1.5em; background:inherit; }
@@ -103,4 +104,5 @@ td input[type=text], td textarea { margin-bottom:0; }
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color:#52575c; }
 .bs-theme-slate.cssfw-bs3 .dropdown-toggle .caret { border-top-color:#c8c8c8; }
 
-'))));
+END
+))));
