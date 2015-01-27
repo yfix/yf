@@ -178,6 +178,7 @@ class yf_payment_api__provider_remote {
 				return( $result );
 			}
 			db()->commit();
+			$status_message = $_status_message;
 		} else {
 			$status_message = 'Выполнено повторно: ';
 		}

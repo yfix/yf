@@ -37,6 +37,12 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		'merchant'    => 'public_key',
 	);
 
+	public $_status = array(
+		'ok'   => 'success',
+		'wait' => 'in_progress',
+		'fail' => 'refused',
+	);
+
 	public $currency_default = 'UAH';
 	public $currency_allow = array(
 		'USD' => array(
@@ -69,6 +75,21 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		parent::_init();
 	}
 
+	public function key( $name = 'public', $value = null ) {
+		$value = $this->api->key( $name, $value );
+		return( $value );
+	}
+
+	public function key_reset() {
+		$this->key( 'public',  $this->KEY_PUBLIC  );
+		$this->key( 'private', $this->KEY_PRIVATE );
+	}
+
+	public function signature( $options, $is_request = true ) {
+		$result = $this->api->signature( $options, $is_request );
+		return( $result );
+	}
+
 	public function _form_options( $options ) {
 		$_ = $options;
 		// transform
@@ -99,7 +120,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$_ = &$options;
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
-		$signature    = $this->api->cnb_signature( $form_options );
+		$signature    = $this->signature( $form_options );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'signature' ] = $signature;
 		$url = &$this->URL;
@@ -143,7 +164,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 			);
 			return( $result );
 		}
-		$_signature = $this->api->string_to_sign( $payment );
+		$_signature = $this->signature( $payment, $is_request = false );
 		if( $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
@@ -167,27 +188,13 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		// ok, fail, test, wait
 		$state = $response[ 'state' ];
 		if( $this->TEST_MODE && $state == 'test' ) { $state = 'ok'; }
-		$payment_status_name = 'success';
-		switch( $state ) {
-			case 'ok':
-				$payment_status_name = 'success';
-				$status_message      = 'Выполнено: ';
-				break;
-			case 'wait':
-				$payment_status_name = 'in_progress';
-				$status_message      = 'Ожидание: ';
-				break;
-			case 'fail':
-			default:
-				$payment_status_name = 'refused';
-				$status_message      = 'Отклонено: ';
-				break;
-		}
+		list( $payment_status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
 			'provider_name'       => 'privat24',
 			'response'            => $response,
 			'payment_status_name' => $payment_status_name,
+			'status_message'      => $status_message,
 		));
 		return( $result );
 	}

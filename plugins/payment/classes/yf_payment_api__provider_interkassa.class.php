@@ -45,6 +45,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		'fail'       => 'refused',
 		'canceled'   => 'refused',
 	);
+
 	public $currency_default = 'UAH';
 	public $currency_allow = array(
 		'USD' => array(
@@ -190,6 +191,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 
 	public function _api_response() {
 		$payment_api = $this->payment_api;
+		$test_mode = &$this->TEST_MODE;
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation
@@ -221,7 +223,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		// response POST:
 		$signature = $payment[ 'ik_sign' ];
 		// check signature
-		if( empty( $signature ) ) {
+		if( !$test_mode && empty( $signature ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
@@ -229,7 +231,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			return( $result );
 		}
 		$_signature = $this->signature( $payment );
-		if( $signature != $_signature ) {
+		if( !( $test_mode && empty( $signature ) ) && $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
@@ -258,6 +260,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			'provider_name'       => 'interkassa',
 			'response'            => $response,
 			'payment_status_name' => $payment_status_name,
+			'status_message'      => $status_message,
 		));
 		return( $result );
 	}
