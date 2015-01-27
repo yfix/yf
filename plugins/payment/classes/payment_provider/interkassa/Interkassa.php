@@ -130,9 +130,10 @@ class Interkassa {
 		}
 		// sort by key
 		ksort( $request, SORT_STRING );
+// var_dump( $request );
 		// compile string
 		$key = $this->key_private();
-		$key = $this->_key_private;
+// $key = $this->_key_private;
 // var_dump( $key  );
 		$str = implode( ':', $request ) . ':' . $key;
 		// create signature
@@ -142,8 +143,8 @@ class Interkassa {
 
 	public function str_to_sign( $str ) {
 		$hash_method = $this->hash_method();
-// var_dump( $hash_method, $str  );
 		$result = base64_encode( hash( $hash_method, $str, true ) );
+// var_dump( $hash_method, $str, $result  );
 		return( $result );
 	}
 

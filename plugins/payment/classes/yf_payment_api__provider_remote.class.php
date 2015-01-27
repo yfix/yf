@@ -4,6 +4,12 @@ class yf_payment_api__provider_remote {
 
 	public $ENABLE = null;
 
+	public $_status_message = array(
+		'success'     => 'Выполнено: ',
+		'in_progress' => 'Ожидание: ',
+		'refused'     => 'Отклонено: ',
+	);
+
 	public $payment_api = null;
 
 	public function _init() {
@@ -14,6 +20,13 @@ class yf_payment_api__provider_remote {
 		$result = &$this->ENABLE;
 		isset( $value ) && $result = (bool)$value;
 		return( $result );
+	}
+
+	protected function _state( $value ) {
+		if( !$this->ENABLE ) { return( null ); }
+		$name    = $this->_status[ $value ];
+		$message = $this->_status_message[ $name ];
+		return( array( $name, $message ) );
 	}
 
 	protected function _api_deposition( $options ) {
