@@ -688,6 +688,7 @@ class yf_html {
 		// (example: $add_str = 'size=6')
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		$extra['class'] = trim($extra['class'].' form-control');
+		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		if (!$values) {
 			return false;
 		}
@@ -751,6 +752,7 @@ class yf_html {
 		// (example: $add_str = 'size=6') disabled
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		$extra['class'] = trim($extra['class'].' form-control');
+		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		if (!$values) {
 			return false;
 		}
@@ -824,7 +826,7 @@ class yf_html {
 		$horizontal = isset($extra['horizontal']) ? $extra['horizontal'] : $horizontal;
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
+			$add_str .= ' class="'.trim($extra['class'].' '.$extra['class_add']).'" ';
 		}
 		if ($extra['style']) {
 			$add_str .= ' style="'.$extra['style'].'" ';
@@ -894,6 +896,7 @@ class yf_html {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
 		$translate = $extra['translate'] ? $extra['translate'] : $translate;
+		$extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		$add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
 		if ($extra['style']) {
 			$add_str .= ' style="'.$extra['style'].'" ';
@@ -932,7 +935,7 @@ class yf_html {
 		$name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
+			$add_str .= ' class="'.trim($extra['class'].' '.$extra['class_add']).'" ';
 		}
 		if ($extra['style']) {
 			$add_str .= ' style="'.$extra['style'].'" ';
@@ -1213,12 +1216,24 @@ class yf_html {
 		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 
 		asset('jquery-image-picker');
-#		asset('masonry');
+		asset('jquery-imagesloaded');
+		asset('masonry');
+		$extra['class_add'] = trim($extra['class_add']. ' image-picker masonry');
 
 		$js_options = (array)$extra['js_options'] + array(
 			// put default js options here
 		);
-		jquery('$("#'.addslashes($extra['force_id']).'").imagepicker('.json_encode($js_options).');');
+		jquery('
+			var select_box = $("#'.addslashes($extra['force_id']).'")
+			select_box.imagepicker('.json_encode($js_options).');
+
+			var container = select_box.next("ul.thumbnails");
+			container.imagesLoaded(function(){
+				container.masonry({
+					itemSelector: "li",
+				});
+			});
+		');
 
 		$extra['option_callback'] = function($key, $cur_value, $is_selected, $text, $extra) {
 			return '<option value="'.$key.'"'.($is_selected ? ' selected="selected"' : '').' data-img-src="'.$cur_value.'">'.$text.'</option>';
