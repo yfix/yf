@@ -694,6 +694,7 @@ class yf_html {
 		if ($extra['disabled']) {
 			$extra['disabled'] = 'disabled';
 		}
+		$body = array();
 		if ($level == 0) {
 			$extra['force_id'] && $id = $extra['force_id'];
 			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
@@ -701,25 +702,33 @@ class yf_html {
 				$extra['id'] = $id;
 			}
 			$extra['name'] = $name;
-			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','disabled','required')). ($add_str ? ' '.$add_str : '').'>'.PHP_EOL;
+			$body[] = '<select'._attrs($extra, array('name','id','class','style','disabled','required')). ($add_str ? ' '.$add_str : '').'>';
 		}
 		$selected = strval($selected);
 		if ($show_text && $level == 0) {
-			$body .= '<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>'.PHP_EOL;
+			$body[] = '<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>';
 		}
 		$self_func = __FUNCTION__;
+		$option_callback = $extra['option_callback'];
+		$use_option_callback = is_callable($option_callback);
 		foreach ((array)$values as $key => $cur_value) {
 			if (is_array($cur_value)) {
-				$body .= '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">'.PHP_EOL;
-				$body .= $this->$self_func($name, $cur_value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
-				$body .= '</optgroup>'.PHP_EOL;
+				$body[] = '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">';
+				$body[] = $this->$self_func($name, $cur_value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
+				$body[] = '</optgroup>';
 			} else {
 				$_what_compare = strval($type == 1 ? $cur_value : $key);
-				$body .= '<option value="'.$key.'"'.($_what_compare == $selected ? ' selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</option>'.PHP_EOL;
+				$is_selected = ($_what_compare == $selected);
+				$text = $translate ? t($cur_value) : $cur_value;
+				if ($use_option_callback) {
+					$body[] = $option_callback($key, $cur_value, $is_selected, $text, $extra);
+				} else {
+					$body[] = '<option value="'.$key.'"'.($is_selected ? ' selected="selected"' : '').'>'.$text.'</option>';
+				}
 			}
 		}
-		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
-		return $body;
+		$body[] = $level == 0 ? '</select>'.PHP_EOL : '';
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -1189,6 +1198,31 @@ class yf_html {
 		);
 		jquery('$("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options).');');
 
+		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
+		return $this->$func($extra, $values, $selected);
+	}
+
+	/**
+	*/
+	function image_select_box($name, $values = array(), $selected = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+		} else {
+			$extra['name'] = $name;
+		}
+		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+
+		asset('jquery-image-picker');
+#		asset('masonry');
+
+		$js_options = (array)$extra['js_options'] + array(
+			// put default js options here
+		);
+		jquery('$("#'.addslashes($extra['force_id']).'").imagepicker('.json_encode($js_options).');');
+
+		$extra['option_callback'] = function($key, $cur_value, $is_selected, $text, $extra) {
+			return '<option value="'.$key.'"'.($is_selected ? ' selected="selected"' : '').' data-img-src="'.$cur_value.'">'.$text.'</option>';
+		};
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
 		return $this->$func($extra, $values, $selected);
 	}
