@@ -1,6 +1,7 @@
 <?php
 
-return array('versions' => array('master' => array('css' => array('
+return array('versions' => array('master' => array('css' => array(
+<<<END
 
 fieldset.well { padding-bottom:0; }
 fieldset.well legend { margin-bottom:0; padding:0 0.5em; width:auto; line-height:1.5em; background:inherit; }
@@ -69,6 +70,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 }
 
 .cssfw-bs3 .container-fixed input, textarea, select { max-width:300px; }
+.cssfw-bs3 .container-fixed .form-inline input, textarea, select { max-width:200px; }
 .cssfw-bs3 .container-fixed textarea.cke_source { max-width:inherit; }
 .cssfw-bs3 .container-fixed .input-mini { width:70px !important }
 .cssfw-bs3 .container-fixed .input-small { width:100px !important }
@@ -102,4 +104,5 @@ td input[type=text], td textarea { margin-bottom:0; }
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color:#52575c; }
 .bs-theme-slate.cssfw-bs3 .dropdown-toggle .caret { border-top-color:#c8c8c8; }
 
-'))));
+END
+))));

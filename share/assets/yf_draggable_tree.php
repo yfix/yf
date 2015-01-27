@@ -17,7 +17,7 @@ return array(
 	.icon-move, .fa-arrows { cursor: move; }',
 			),
 			'js' => array(
-'
+<<<END
 $(function(){
 	var orig_items = { };
 	var i = 0;
@@ -137,8 +137,9 @@ $(function(){
 		$(this).find(".controls_over").hide();
 	});
 })
-',
-'
+END
+,
+<<<END
 	var draggable_history = {
 		stack: new Array(),
 		temp: null,
@@ -165,7 +166,7 @@ $(function(){
 			$(".draggable_menu li:has(ul li):not(.closed)").addClass("opened");
 		}
 	}
-',
+END
 			),
 		),
 	),
