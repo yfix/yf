@@ -823,7 +823,7 @@ class yf_form2 {
 				$extra['desc'] = '';
 			}
 			$extra = $form->_input_assign_params_from_validate($extra);
-			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step');
+			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','readonly','required','autocomplete','accept','target','autofocus','title','min','max','step');
 			return $form->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -857,7 +857,7 @@ class yf_form2 {
 				$extra['desc'] = '';
 			}
 			$extra = $form->_input_assign_params_from_validate($extra);
-			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required','size');
+			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required','size','disabled','readonly','autocomplete','autofocus');
 			return $form->_row_html('<textarea'._attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {

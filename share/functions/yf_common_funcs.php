@@ -412,7 +412,7 @@ function wildcard_compare($wild, $string) {
 if (!function_exists('class_basename')) {
 	function class_basename($class, $prefix = '', $suffix = '') {
 		$class = is_object($class) ? get_class($class) : $class;
-		$class = basename(str_replace('\\', '/', $class));
+		$class = basename(str_replace("\\", '/', $class));
 		$prefixes = array(
 			'yf'	=> YF_PREFIX,
 			'site'	=> 'site__',
@@ -432,5 +432,23 @@ if (!function_exists('class_basename')) {
 			$class = substr($class, 0, -$slen);
 		}
 		return $class;
+	}
+}
+
+// base64 safe for use in urls
+if (!function_exists('base64_encode_safe')) {
+	function base64_encode_safe($in) {
+		if (!strlen($in) || preg_match('~^[a-z0-9=\*-]{2,2000}$~i', $in)) {
+			return $in;
+		}
+		return str_replace(array('/', '+'), array('*', '-'), base64_encode($in));
+	}
+}
+if (!function_exists('base64_decode_safe')) {
+	function base64_decode_safe($in) {
+		if (!strlen($in) || !preg_match('~^[a-z0-9=\*-]{2,2000}$~i', $in)) {
+			return $in;
+		}
+		return base64_decode(str_replace(array('*', '-'), array('/', '+'), $in));
 	}
 }
