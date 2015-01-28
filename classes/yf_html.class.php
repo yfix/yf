@@ -12,7 +12,7 @@ class yf_html {
 	/** @var bool */
 	public $AUTO_ASSIGN_IDS = true;
 	/** @var bool */
-	public $BOXES_USE_STPL	= true;
+	public $BOXES_USE_STPL	= false;
 
 	/**
 	* Catch missing method call
@@ -688,12 +688,14 @@ class yf_html {
 		// (example: $add_str = 'size=6')
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		$extra['class'] = trim($extra['class'].' form-control');
+		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		if (!$values) {
 			return false;
 		}
 		if ($extra['disabled']) {
 			$extra['disabled'] = 'disabled';
 		}
+		$body = array();
 		if ($level == 0) {
 			$extra['force_id'] && $id = $extra['force_id'];
 			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
@@ -701,25 +703,33 @@ class yf_html {
 				$extra['id'] = $id;
 			}
 			$extra['name'] = $name;
-			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','disabled','required')). ($add_str ? ' '.$add_str : '').'>'.PHP_EOL;
+			$body[] = '<select'._attrs($extra, array('name','id','class','style','disabled','required')). ($add_str ? ' '.$add_str : '').'>';
 		}
 		$selected = strval($selected);
 		if ($show_text && $level == 0) {
-			$body .= '<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>'.PHP_EOL;
+			$body[] = '<option value="">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>';
 		}
 		$self_func = __FUNCTION__;
+		$option_callback = $extra['option_callback'];
+		$use_option_callback = is_callable($option_callback);
 		foreach ((array)$values as $key => $cur_value) {
 			if (is_array($cur_value)) {
-				$body .= '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">'.PHP_EOL;
-				$body .= $this->$self_func($name, $cur_value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
-				$body .= '</optgroup>'.PHP_EOL;
+				$body[] = '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">';
+				$body[] = $this->$self_func($name, $cur_value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
+				$body[] = '</optgroup>';
 			} else {
 				$_what_compare = strval($type == 1 ? $cur_value : $key);
-				$body .= '<option value="'.$key.'"'.($_what_compare == $selected ? ' selected="selected"' : '').'>'.($translate ? t($cur_value) : $cur_value).'</option>'.PHP_EOL;
+				$is_selected = ($_what_compare == $selected);
+				$text = $translate ? t($cur_value) : $cur_value;
+				if ($use_option_callback) {
+					$body[] = $option_callback($key, $cur_value, $is_selected, $text, $extra);
+				} else {
+					$body[] = '<option value="'.$key.'"'.($is_selected ? ' selected="selected"' : '').'>'.$text.'</option>';
+				}
 			}
 		}
-		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
-		return $body;
+		$body[] = $level == 0 ? '</select>'.PHP_EOL : '';
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -742,6 +752,7 @@ class yf_html {
 		// (example: $add_str = 'size=6') disabled
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		$extra['class'] = trim($extra['class'].' form-control');
+		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		if (!$values) {
 			return false;
 		}
@@ -800,7 +811,7 @@ class yf_html {
 
 	/**
 	*/
-	function radio_box($name, $values = array(), $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
+	function radio_box($name, $values = array(), $selected = '', $horizontal = true, $type = 2, $add_str = '', $translate = 0) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -812,10 +823,10 @@ class yf_html {
 		}
 		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
 		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
-		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : $flow_vertical;
+		$horizontal = isset($extra['horizontal']) ? $extra['horizontal'] : $horizontal;
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
 		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
+			$add_str .= ' class="'.trim($extra['class'].' '.$extra['class_add']).'" ';
 		}
 		if ($extra['style']) {
 			$add_str .= ' style="'.$extra['style'].'" ';
@@ -827,30 +838,42 @@ class yf_html {
 		$id_prefix = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$extra['force_id'] && $id_prefix = $extra['force_id'];
 		$counter = 0;
+		$body = array();
+		$orig_extra = $extra;
 		foreach ((array)$values as $value => $val_name) {
+			if (is_array($val_name)) {
+				$extra = (array)$orig_extra + (array)$val_name['extra'];
+				$val_name = $val_name['html'];
+			}
+			$is_selected = (strval($type == 1 ? $val_name : $value) == $selected);
 			$id = $id_prefix.'_'.++$counter;
 			if ($this->BOXES_USE_STPL) {
-				$_what_compare = strval($type == 1 ? $val_name : $value);
-				$replace = array(
+				$body[] = tpl()->parse('system/common/radio_box_item', array(
 					'name'			=> $name,
 					'value'			=> $value,
-					'selected'		=> $_what_compare == $selected ? 'checked="true"' : '',
+					'selected'		=> $is_selected ? 'checked="checked"' : '',
 					'add_str'		=> $add_str,
 					'label'			=> $translate ? t($val_name) : $val_name,
-					'divider'		=> $flow_vertical ? '<br />' : '&nbsp;',
-					'horizontal'	=> $extra['horizontal'] ? 1 : 0,
+					'horizontal'	=> intval((bool)$horizontal),
 					'id'			=> $id,
-				);
-				$body .= tpl()->parse('system/common/radio_box_item', $replace);
+					'extra'			=> $extra,
+				));
 			} else {
-				$body .=
-					'<label class="radio'.($extra['horizontal'] ? ' radio-horizontal' : '').'">'
-						.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ((strval($value) == $selected) ? ' checked' : '').'>'
-						.t($val_name)
-					.'</label>'.PHP_EOL;
+				$label_extra = $extra['label_extra'];
+				$label_extra['class'] = ($label_extra['class'] ?: 'radio'). ($horizontal ? ' radio-inline' : '');
+				if ($extra['class_add_label_radio']) {
+					$label_extra['class'] .= ' '.$extra['class_add_label_radio'];
+				}
+				if ($is_selected) {
+					$label_extra['class'] .= ' active';
+				}
+				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
+							.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
+							.t($val_name)
+						.'</label>'.PHP_EOL;
 			}
 		}
-		return $body;
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -873,24 +896,30 @@ class yf_html {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
 		$translate = $extra['translate'] ? $extra['translate'] : $translate;
+		$extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		$add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
-		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
-		}
 		if ($extra['style']) {
 			$add_str .= ' style="'.$extra['style'].'" ';
 		}
-
-		return '<label class="checkbox">'
-				.'<input type="checkbox" name="'.$name.'" id="'.$extra['id'].'" value="'.$value.'"'. ($selected ? ' checked="checked"' : '') .($add_str ? ' '.$add_str : '').'> &nbsp;' // Please do not remove this whitespace :)
-				.($translate ? t($extra['desc']) : $extra['desc'])
-			.'</label>';
+		$label_extra = $extra['label_extra'];
+		$label_extra['class'] = ($label_extra['class'] ?: 'checkbox checkbox-inline');
+		if ($extra['class_add_label_checkbox']) {
+			$label_extra['class'] .= ' '.$extra['class_add_label_checkbox'];
+		}
+		if ($selected) {
+			$label_extra['class'] .= ' active';
+		}
+		return '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
+				. '<input type="checkbox" name="'.$name.'" id="'.$extra['id'].'" value="'.$value.'"'
+				. ($selected ? ' checked="checked"' : '') . ($add_str ? ' '.$add_str : '')
+				. '> &nbsp;'. ($translate ? t($extra['desc']) : $extra['desc']) // Please do not remove whitespace :)
+			. '</label>';
 	}
 
 	/**
 	* Processing many checkboxes at one time
 	*/
-	function multi_check_box($name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
+	function multi_check_box($name, $values = array(), $selected = array(), $horizontal = true, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = $extra['name'];
@@ -902,11 +931,11 @@ class yf_html {
 		}
 		$selected = $extra['selected'];
 		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
-		$flow_vertical = isset($extra['flow_vertical']) ? $extra['flow_vertical'] : false;
+		$horizontal = isset($extra['horizontal']) ? $extra['horizontal'] : $horizontal;
 		$name_as_array = isset($extra['name_as_array']) ? $extra['name_as_array'] : false;
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : '';
 		if ($extra['class']) {
-			$add_str .= ' class="'.$extra['class'].'" ';
+			$add_str .= ' class="'.trim($extra['class'].' '.$extra['class_add']).'" ';
 		}
 		if ($extra['style']) {
 			$add_str .= ' style="'.$extra['style'].'" ';
@@ -917,45 +946,57 @@ class yf_html {
 		if (!is_array($selected)) {
 			$selected = strval($selected);
 		}
+
+		$body = array();
 		foreach ((array)$values as $key => $value) {
 			$sel_text = '';
 			// Selected value could be an array
 			if (is_array($selected)) {
 				if ($type == 1) {
-					$sel_text = in_array($value, $selected) ? 'checked' : '';
+					$sel_text = in_array($value, $selected) ? 'checked="checked"' : '';
 				} else {
-					$sel_text = isset($selected[$key]) ? 'checked' : '';
+					$sel_text = isset($selected[$key]) ? 'checked="checked"' : '';
 				}
 			} elseif (strlen($selected)) {
 				$_what_compare = strval($type == 1 ? $value : $key);
-				$sel_text = $_what_compare == $selected ? 'checked="true"' : '';
+				$sel_text = $_what_compare == $selected ? 'checked="checked"' : '';
 			} else {
 				$sel_text = '';
 			}
+			$is_selected = strlen($sel_text) ? 1 : 0;
 			if ($name_as_array) {
 				$val_name = $name.'['.$key.']';
 			} else {
 				$val_name = $name.'_'.$key;
 			}
+			$label_extra = $extra['label_extra'];
+			$label_extra['class'] = ($label_extra['class'] ?: 'checkbox'). ($horizontal ? ' checkbox-inline' : '');
+			if ($extra['class_add_label_checkbox']) {
+				$label_extra['class'] .= ' '.$extra['class_add_label_checkbox'];
+			}
+			if ($is_selected) {
+				$label_extra['class'] .= ' active';
+			}
 			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 			if ($this->BOXES_USE_STPL) {
-				$replace = array(
+				$body[] = tpl()->parse('system/common/check_box_item', array(
 					'name'		=> $val_name,
 					'value'		=> $key,
 					'selected'	=> $sel_text,
 					'add_str'	=> $add_str,
 					'label'		=> $translate ? t($value) : $value,
-					'divider'	=> $flow_vertical ? '<br />' : '&nbsp;',
 					'id'		=> $id,
-				);
-				$body .= tpl()->parse('system/common/check_box_item', $replace);
+					'extra'		=> $extra,
+				));
 			} else {
-				$body .= '<input type="checkbox" name="'.$val_name.'" id="'.$id.'" class="check" value="'.$key.'"'.($sel_text ? ' '.$sel_text : ''). ($add_str ? ' '.trim($add_str) : '').'>'
-					.($translate ? t($value) : $value)
-					.($flow_vertical ? '<br />' : '&nbsp;'). PHP_EOL;
+				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
+							. '<input type="checkbox" name="'.$val_name.'" id="'.$id.'" value="'.$key.'"'
+							. ($is_selected ? ' '.$sel_text : '') . ($add_str ? ' '.trim($add_str) : '')
+							. '> &nbsp;'. ($translate ? t($value) : $value) // Please do not remove whitespace :)
+						.'</label>';
 			}
 		}
-		return $body;
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -1160,6 +1201,43 @@ class yf_html {
 		);
 		jquery('$("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options).');');
 
+		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
+		return $this->$func($extra, $values, $selected);
+	}
+
+	/**
+	*/
+	function image_select_box($name, $values = array(), $selected = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+		} else {
+			$extra['name'] = $name;
+		}
+		$extra['force_id'] = $extra['force_id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+
+		asset('jquery-image-picker');
+		asset('jquery-imagesloaded');
+		asset('masonry');
+		$extra['class_add'] = trim($extra['class_add']. ' image-picker masonry');
+
+		$js_options = (array)$extra['js_options'] + array(
+			// put default js options here
+		);
+		jquery('
+			var select_box = $("#'.addslashes($extra['force_id']).'")
+			select_box.imagepicker('.json_encode($js_options).');
+
+			var container = select_box.next("ul.thumbnails");
+			container.imagesLoaded(function(){
+				container.masonry({
+					itemSelector: "li",
+				});
+			});
+		');
+
+		$extra['option_callback'] = function($key, $cur_value, $is_selected, $text, $extra) {
+			return '<option value="'.$key.'"'.($is_selected ? ' selected="selected"' : '').' data-img-src="'.$cur_value.'">'.$text.'</option>';
+		};
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
 		return $this->$func($extra, $values, $selected);
 	}

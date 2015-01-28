@@ -128,12 +128,10 @@ class yf_table2 {
 			$ts = microtime(true);
 		}
 		// Merge params passed to table2() and params passed here, with params here have more priority:
-		$tmp = $this->_params;
 		foreach ((array)$params as $k => $v) {
-			$tmp[$k] = $v;
+			$this->_params[$k] = $v;
 		}
-		$params = $tmp;
-		unset($tmp);
+		$params = &$this->_params;
 
 		if (isset($params['data-postload-url'])) {
 			_class('table2_postload', 'classes/table2/')->postload($params['postload_params'], $this);
@@ -159,7 +157,7 @@ class yf_table2 {
 			$this->_render_auto($params, $data);
 		}
 		// Fill data array with custom fields, also fitting slots with empty strings where no custom data.
-		if ($data && $ids && $params['custom_fields']) {
+		if ($params['custom_fields'] && $data && $ids) {
 			$this->_render_add_custom_fields($params, $data, $ids);
 		}
 		$to_hide = array();
@@ -262,7 +260,14 @@ class yf_table2 {
 				foreach ((array)$this->_fields as $info) {
 					$name = $info['name'];
 					if (!isset($data1row[$name])) {
-						continue;
+						// Fix for anonymous auto-named func data
+						if ($info['type'] === 'func' && is_callable($info['func'])) {
+							foreach ((array)$data as $k => $v) {
+								$data[$k][$info['name']] = '';
+							}
+						} else {
+							continue;
+						}
 					}
 					if (isset($to_hide[$name])) {
 						continue;
@@ -346,14 +351,15 @@ class yf_table2 {
 		if ($params['rotate_table']) {
 			$default_per_page = 10;
 		}
-		$pager_path = $params['pager_path'];
-		$pager_type = $params['pager_type'];
-		$pager_records_on_page = $params['pager_records_on_page'] ?: $default_per_page;
-		$pager_num_records = $params['pager_num_records'] ?: 0;
-		$pager_stpl_path = $params['pager_stpl_path'] ?: '';
-		$pager_add_get_vars = $params['pager_add_get_vars'] ?: 1;
-		$pager_extra['sql_callback'] = $params['pager_sql_callback'] ?: null;
-
+		$pager = array(
+			'path'				=> $params['pager_path'],
+			'type'				=> $params['pager_type'],
+			'records_on_page'	=> $params['pager_records_on_page'] ?: $default_per_page,
+			'num_records'		=> $params['pager_num_records'] ?: 0,
+			'stpl_path'			=> $params['pager_stpl_path'] ?: '',
+			'add_get_vars'		=> $params['pager_add_get_vars'] ?: 1,
+			'sql_callback'		=> $params['pager_sql_callback'] ?: null,
+		);
 		$sql = $this->_sql;
 		$ids = array();
 		if (is_array($sql)) {
@@ -375,10 +381,11 @@ class yf_table2 {
 			if ($params['filter']) {
 				$this->_filter_array($data, $params['filter'], $params['filter_params']);
 			}
-			list(,$pages,) = common()->divide_pages(null, null, null, $pager_records_on_page, count($data));
-			if (count($data) > $pager_records_on_page) {
-				$slice_start = (empty($_GET['page']) ? 0 : intval($_GET['page']) - 1) * $pager_records_on_page;
-				$slice_end = $pager_records_on_page;
+			$pager['out'] = common()->divide_pages(null, null, null, $pager['records_on_page'], count($data));
+			$pages = $pager['out'][1];
+			if (count($data) > $pager['records_on_page']) {
+				$slice_start = (empty($_GET['page']) ? 0 : intval($_GET['page']) - 1) * $pager['records_on_page'];
+				$slice_end = $pager['records_on_page'];
 				$data = array_slice($data, $slice_start, $slice_end, $preserve_keys = true);
 			}
 			$total = count($data);
@@ -386,7 +393,7 @@ class yf_table2 {
 		} elseif (strlen($sql)) {
 			if (is_object($params['db'])) {
 				$db = $params['db'];
-				$pager_extra['db'] = $db;
+				$pager['extra']['db'] = $db;
 			} else {
 				$db = db();
 			}
@@ -413,7 +420,10 @@ class yf_table2 {
 					}
 				}
 			}
-			list($add_sql, $pages, $total) = common()->divide_pages($sql, $pager_path, $pager_type, $pager_records_on_page, $pager_num_records, $pager_stpl_path, $pager_add_get_vars, $pager_extra);
+			$pager['out'] = common()->divide_pages($sql, $pager['path'], $pager['type'], $pager['records_on_page'], $pager['num_records'], $pager['stpl_path'], $pager['add_get_vars'], $pager['extra']);
+			$add_sql = $pager['out'][0];
+			$pages = $pager['out'][1];
+			$total = $pager['out'][2];
 
 			$items = array();
 			$q = $db->query($sql. $add_sql);
@@ -430,6 +440,7 @@ class yf_table2 {
 		$this->_total = $total;
 		$this->_pages = $pages;
 		$this->_ids = $ids;
+		$this->_pager = $pager;
 
 		return array(
 			'data'	=> $data,
@@ -489,44 +500,45 @@ class yf_table2 {
 	*	->text('user')
 	*/
 	function _render_add_custom_fields(&$params, &$data, &$ids) {
-		if ($data && $ids && $params['custom_fields']) {
-			$db = is_object($params['db']) ? $params['db'] : db();
-			$ids_sql = implode(',', $ids);
-			$custom_foreign_fields = array();
-			foreach ((array)$params['custom_fields'] as $custom_name => $custom_sql) {
-				// In this case we can override name of the field used in virtual foreign key, used for custom field.
-				// good example is 'user_id' instead of 'id'
-				if (is_array($custom_sql)) {
-					$tmp = $custom_sql;
-					$custom_sql = $tmp[0];
-					$foreign_field = $tmp[1];
-					unset($tmp);
-					if ($foreign_field != 'id') {
-						$_ids = array();
-						foreach((array)$data as $k => $v) {
-							$_ids[$v[$foreign_field]] = $v[$foreign_field];
-						}
-						$_ids_sql = implode(',', $_ids);
-					}
-					$custom_foreign_fields[$custom_name] = $foreign_field;
-					$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $_ids_sql, $custom_sql));
-				} else {
-					$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
-				}
-			}
-			foreach ((array)$data as $_id => $row) {
-				foreach ((array)$this->_data_sql_names as $custom_name => $custom_data) {
-					if ($custom_foreign_fields[$custom_name]) {
-						$_custom_id = $row[$custom_foreign_fields[$custom_name]];
-					} else {
-						$_custom_id = $_id;
-					}
-					$data[$_id][$custom_name] = strval($custom_data[$_custom_id]);
-				}
-			}
-			// Needed to correctly pass inside $instance_params to each function
-			$params['data_sql_names'] = $this->_data_sql_names;
+		if (!$data || !$ids || !$params['custom_fields']) {
+			return false;
 		}
+		$db = is_object($params['db']) ? $params['db'] : db();
+		$ids_sql = implode(',', $ids);
+		$custom_foreign_fields = array();
+		foreach ((array)$params['custom_fields'] as $custom_name => $custom_sql) {
+			// In this case we can override name of the field used in virtual foreign key, used for custom field.
+			// good example is 'user_id' instead of 'id'
+			if (is_array($custom_sql)) {
+				$tmp = $custom_sql;
+				$custom_sql = $tmp[0];
+				$foreign_field = $tmp[1];
+				unset($tmp);
+				if ($foreign_field != 'id') {
+					$_ids = array();
+					foreach((array)$data as $k => $v) {
+						$_ids[$v[$foreign_field]] = $v[$foreign_field];
+					}
+					$_ids_sql = implode(',', $_ids);
+				}
+				$custom_foreign_fields[$custom_name] = $foreign_field;
+				$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $_ids_sql, $custom_sql));
+			} else {
+				$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
+			}
+		}
+		foreach ((array)$data as $_id => $row) {
+			foreach ((array)$this->_data_sql_names as $custom_name => $custom_data) {
+				if ($custom_foreign_fields[$custom_name]) {
+					$_custom_id = $row[$custom_foreign_fields[$custom_name]];
+				} else {
+					$_custom_id = $_id;
+				}
+				$data[$_id][$custom_name] = strval($custom_data[$_custom_id]);
+			}
+		}
+		// Needed to correctly pass inside $instance_params to each function
+		$params['data_sql_names'] = $this->_data_sql_names;
 	}
 
 	/**
@@ -1133,7 +1145,20 @@ class yf_table2 {
 	/**
 	* Callback function will be populated with these params: function($field, $params, $row, $instance_params) {}
 	*/
-	function func($name, $func, $extra = array()) {
+	function func($name, $func = null, $extra = array()) {
+		if (!is_string($name) && is_callable($name)) {
+			if (is_array($func)) {
+				$extra = (array)$extra + $func;
+			}
+			$func = $name;
+			if (isset($extra['name'])) {
+				$name = $extra['name'];
+			} else {
+				$name = __FUNCTION__.'_'.++$this->_auto_names[__FUNCTION__];
+				$extra['desc'] = $extra['desc'] ?: ''; // Prevent auto-generated id desc
+			}
+			$this->_params['custom_fields'][$name] = $func;
+		}
 		$desc = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', ' ', $name));
 		$this->_fields[] = array(
 			'type'	=> __FUNCTION__,
@@ -1143,6 +1168,20 @@ class yf_table2 {
 			'func'	=> $func,
 		);
 		return $this;
+	}
+
+	/**
+	* Column counter, knows about pagination
+	*/
+	function rownum($extra = array()) {
+		$table = $this;
+		$func = function($val, $extra, $row) use ($table) {
+			$pager = $table->_pager;
+			$first = $pager['out'][3];
+			$cur = ++$table->_rownum_counter;
+			return $first + $cur;
+		};
+		return $this->func($func, $extra);
 	}
 
 	/**

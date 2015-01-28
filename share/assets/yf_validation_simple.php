@@ -5,7 +5,7 @@ return function() {
 return array(
 	'versions' => array(
 		'master' => array(
-			'jquery' => 
+			'js' => array(
 	// http://test2.dev/dynamic/ajax_validate/?func=is_unique&param=user.login&data=test
 '
 	var yf_ajax_link_validate = "'.url_user('/dynamic/ajax_validate').'";
@@ -17,7 +17,9 @@ return array(
 	var yf_html_help_block = "<span class=\"help-block pull-left\"></span>";
 	var yf_title_error = "'.t('not good').'";
 	var yf_title_success = "OK";
-
+',
+<<<END
+$(function(){
 	$("input[data-ajax-validate]", "form").on("blur", function(i){
 		var _this = $(this);
 		var _val = _this.val();
@@ -119,8 +121,12 @@ return array(
 			help_block.hide()
 		}
 	})
-',
-		),
+});
+END
+		)),
+	),
+	'require' => array(
+		'asset' => 'jquery',
 	),
 );
 

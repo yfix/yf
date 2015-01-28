@@ -47,9 +47,9 @@ function( $log, $resource, PaymentBalanceConfig ) {
 [ '$log', 'PaymentBalanceApi',
 function( $log, PaymentBalanceApi ) {
 	// private
-	var _data = {};
-	var _balance;
-	var _currency;
+	var _data     = {};
+	var _balance  = 0;
+	var _currency = {};
 	// handler
 	var service = {};
 	service.balance = function( value ) {
@@ -59,7 +59,7 @@ function( $log, PaymentBalanceApi ) {
 		return( _balance );
 	};
 	service.currency = function( value ) {
-		if( value && typeof value === 'string' ) {
+		if( value && typeof value === 'object' ) {
 			_currency = value;
 		}
 		return( _currency );
@@ -68,7 +68,7 @@ function( $log, PaymentBalanceApi ) {
 		if( value && typeof value === 'object' ) {
 			angular.extend( _data, value );
 			service.balance( _data.account.balance );
-			service.currency( _data.currency.short );
+			service.currency( _data.currency );
 		}
 		return( _currency );
 	};
@@ -95,10 +95,8 @@ function( $log, PaymentBalanceApi ) {
 [ '$log', '$scope', 'PaymentBalance',
 function( $log, $scope, PaymentBalance ) {
 	$scope.balance = function() {
+		$scope.currency = PaymentBalance.currency();
 		return( PaymentBalance.balance() );
-	};
-	$scope.currency = function() {
-		return( PaymentBalance.currency() );
 	};
 }])
 

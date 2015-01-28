@@ -10,8 +10,8 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	public $api         = null;
 
 	public $URL         = 'https://www.liqpay.com/api/pay';
-	public $PUBLIC_KEY  = null;
-	public $PRIVATE_KEY = null;
+	public $KEY_PUBLIC  = null;
+	public $KEY_PRIVATE = null;
 
 	public $TEST_MODE   = null;
 
@@ -28,6 +28,13 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	public $_options_transform_reverse = array(
 		'description' => 'title',
 		'order_id'    => 'operation_id',
+		'public_key'  => 'key_public',
+	);
+
+	public $_status = array(
+		'success'     => 'success',
+		'wait_secure' => 'in_progress',
+		'failure'     => 'refused',
 	);
 
 	public $currency_default = 'UAH';
@@ -59,11 +66,26 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/liqpay/LiqPay.php' );
-		$this->api = new LiqPay( $this->PUBLIC_KEY, $this->PRIVATE_KEY );
+		$this->api = new LiqPay( $this->KEY_PUBLIC, $this->KEY_PRIVATE );
 		$this->url_result = url( '/api/payment/provider?name=liqpay&operation=response' );
 		$this->url_server = url( '/api/payment/provider?name=liqpay&operation=response&server=true' );
 		// parent
 		parent::_init();
+	}
+
+	public function key( $name = 'public', $value = null ) {
+		$value = $this->api->key( $name, $value );
+		return( $value );
+	}
+
+	public function key_reset() {
+		$this->key( 'public',  $this->KEY_PUBLIC  );
+		$this->key( 'private', $this->KEY_PRIVATE );
+	}
+
+	public function signature( $options, $is_request = true ) {
+		$result = $this->api->signature( $options, $is_request );
+		return( $result );
 	}
 
 	public function _form_options( $options ) {
@@ -77,7 +99,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		}
 		// default
 		$_[ 'amount' ] = number_format( $_[ 'amount' ], 2, '.', '' );
-		empty( $_[ 'public_key' ] ) && $_[ 'public_key' ] = $this->PUBLIC_KEY;
+		empty( $_[ 'public_key' ] ) && $_[ 'public_key' ] = $this->key( 'public' );
 		empty( $_[ 'pay_way'    ] ) && $_[ 'pay_way'    ] = 'card,delayed';
 		if( empty( $_[ 'result_url' ] ) ) {
 			$_[ 'result_url' ] = $this->url_result
@@ -97,7 +119,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		$_ = &$options;
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
-		$signature    = $this->api->cnb_signature( $form_options );
+		$signature    = $this->signature( $form_options, $is_request = true );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'signature' ] = $signature;
 		$url = &$this->URL;
@@ -105,7 +127,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
-			$result[] = '<form id="_js_provider_liqpay_form" method="POST" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
+			$result[] = '<form id="_js_provider_liqpay_form" method="post" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
 		}
 		foreach ((array)$form_options as $key => $value ) {
 			if( $is_array ) {
@@ -157,27 +179,13 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		// success, failure, wait_secure, sandbox
 		$state = $response[ 'status' ];
 		if( $this->TEST_MODE && $state == 'sandbox' ) { $state = 'success'; }
-		$payment_status_name = 'success';
-		switch( $state ) {
-			case 'success':
-				$payment_status_name = 'success';
-				$status_message      = 'Выполнено: ';
-				break;
-			case 'wait_secure':
-				$payment_status_name = 'in_progress';
-				$status_message      = 'Ожидание: ';
-				break;
-			case 'failure':
-			default:
-				$payment_status_name = 'refused';
-				$status_message      = 'Отклонено: ';
-				break;
-		}
+		list( $payment_status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
 			'provider_name'       => 'liqpay',
 			'response'            => $response,
 			'payment_status_name' => $payment_status_name,
+			'status_message'      => $status_message,
 		));
 		return( $result );
 	}
@@ -227,19 +235,7 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 			return( $result );
 		}
 		// calc signature
-		$payment = ''
-			. $this->PRIVATE_KEY
-			. $_POST[ 'amount' ]
-			. $_POST[ 'currency' ]
-			. $_POST[ 'public_key' ]
-			. $_POST[ 'order_id' ]
-			. $_POST[ 'type' ]
-			. $_POST[ 'description' ]
-			. $_POST[ 'status' ]
-			. $_POST[ 'transaction_id' ]
-			. $_POST[ 'sender_phone' ]
-		;
-		$_signature = $this->api->str_to_sign( $payment );
+		$_signature = $this->signature( $_POST, $is_request = false );
 		if( $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
@@ -250,8 +246,8 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		// update operation
 		$response = $this->_response_parse( $_POST );
 		// check public key (merchant)
-		$public_key = $response[ 'public_key' ];
-		$_public_key = $this->PUBLIC_KEY;
+		$public_key = $response[ 'key_public' ];
+		$_public_key = $this->key( 'public' );
 		if( $public_key != $_public_key ) {
 			$result = array(
 				'status'         => false,
@@ -263,27 +259,13 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 		// success, failure, wait_secure, sandbox
 		$state = $response[ 'status' ];
 		if( $this->TEST_MODE && $state == 'sandbox' ) { $state = 'success'; }
-		$payment_status_name = 'success';
-		switch( $state ) {
-			case 'success':
-				$payment_status_name = 'success';
-				$status_message      = 'Выполнено: ';
-				break;
-			case 'wait_secure':
-				$payment_status_name = 'in_progress';
-				$status_message      = 'Ожидание: ';
-				break;
-			case 'failure':
-			default:
-				$payment_status_name = 'refused';
-				$status_message      = 'Отклонено: ';
-				break;
-		}
+		list( $payment_status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
 			'provider_name'       => 'liqpay',
 			'response'            => $response,
 			'payment_status_name' => $payment_status_name,
+			'status_message'      => $status_message,
 		));
 		return( $result );
 	}

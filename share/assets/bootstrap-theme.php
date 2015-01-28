@@ -5,37 +5,29 @@ return function() {
 $bs_theme = common()->bs_current_theme();
 $bs_major_version = conf('css_framework') === 'bs3' ? '3' : '2';
 $require_name = 'bootstrap'. $bs_major_version;
-
-$css_fixes[2] = '
-	label.radio-horizontal { padding-left: inherit; display: inline-block; margin-bottom: inherit; }
-	label.radio-horizontal input[type=radio] { float: none; margin-left:inherit; margin-top:0; }
-	.dropdown-toggle .caret { margin: 0 !important; }
-';
-$css_fixes[3] = '
-	.container-fixed input, .container-fixed textarea, .container-fixed select { max-width: 300px; }
-	.container-fixed textarea.cke_source { max-width: inherit; }
-	.container-fixed .input-mini { width:70px !important }
-	.container-fixed .input-small { width:100px !important }
-	.container-fixed .input-medium { width:160px !important }
-	.container-fixed .input-large { width:220px !important }
-	.container-fixed .input-xlarge { width:280px !important }
-	.container-fixed .input-xxlarge { width:540px !important }
-	.container-fixed .input-group[class*="col-"] { float:left !important; margin-right: 3px; }
-	label.radio-horizontal { padding-left: inherit; display: inline-block; margin-right: 5px; }
-	label.radio-horizontal input[type=radio] { float: left; }
-	.form-horizontal .radio, .form-horizontal .checkbox { padding-left: 20px; }
-';
+$fixes_name = 'yf_bootstrap_fixes_'.MAIN_TYPE;
 
 if ($bs_theme === 'bootstrap') {
+	conf('bs3_no_default_theme', true);
 	return array(
 		'require' => array(
 			'asset' => $require_name,
 		),
 		'add' => array(
-			'css' => $css_fixes[$bs_major_version],
+			'asset' => $fixes_name,
+		),
+	);
+} elseif ($bs_theme === 'bootstrap_theme') {
+	return array(
+		'require' => array(
+			'asset' => $require_name,
+		),
+		'add' => array(
+			'asset' => $fixes_name,
 		),
 	);
 } elseif ($bs_theme === 'flatui') {
+	conf('bs3_no_default_theme', true);
 	return array(
 		'versions' => array(
 			'master' => array(
@@ -48,8 +40,28 @@ if ($bs_theme === 'bootstrap') {
 				),
 			),
 		),
+	);
+} elseif ($bs_theme === 'material_design') {
+	conf('bs3_no_default_theme', true);
+	return array(
+		'versions' => array(
+			'master' => array(
+				'css' => array(
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/css/ripples.min.css',
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/css/material-wfont.min.css',
+				),
+				'js' => array(
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/js/ripples.min.js',
+					'//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/js/material.min.js',
+					'$(function(){ $.material.init(); })',
+				),
+			),
+		),
 		'require' => array(
-			'css' => 'bootstrap3',
+			'asset' => 'bootstrap3',
+		),
+		'add' => array(
+			'asset' => $fixes_name,
 		),
 	);
 } elseif ($bs_major_version == 2) {
@@ -63,9 +75,9 @@ if ($bs_theme === 'bootstrap') {
 			'js' => 'bootstrap2',
 		),
 		'add' => array(
-			'css' => array(
+			'asset' => array(
 				'font-awesome3',
-				$css_fixes[$bs_major_version],
+				$fixes_name,
 			),
 		),
 	);
@@ -80,9 +92,9 @@ if ($bs_theme === 'bootstrap') {
 			'js' => 'bootstrap3',
 		),
 		'add' => array(
-			'css' => array(
+			'asset' => array(
 				'font-awesome4',
-				$css_fixes[$bs_major_version],
+				$fixes_name,
 			),
 		),
 	);

@@ -2,45 +2,48 @@
 
 _class( 'payment_api__provider_remote' );
 
-class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote {
+class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remote {
 
 	public $ENABLE = true;
 
 	public $payment_api = null;
 	public $api         = null;
 
-	public $URL         = 'https://api.privatbank.ua/p24api/ishop';
-	public $KEY_PUBLIC  = null; // merchant
-	public $KEY_PRIVATE = null; // pass
+	public $URL              = 'https://sci.interkassa.com/';
+	public $KEY_PUBLIC       = null;  // Checkout ID, Идентификатор кассы
+	public $KEY_PRIVATE      = null;  // secret key
+	public $KEY_PRIVATE_TEST = null;  // secret key for test
+	public $HASH_METHOD      = 'md5'; // signature hash method
 
 	public $TEST_MODE   = null;
 
 	public $_options_transform = array(
-		'amount'       => 'amt',
-		'currency'     => 'ccy',
-		'title'        => 'details',
-		'description'  => 'ext_details',
-		'order_id'     => 'order',
-		'operation_id' => 'order',
-		'url_result'   => 'return_url',
-		'url_server'   => 'server_url',
-		'public_key'   => 'merchant',
-		'key_public'   => 'merchant',
+		'amount'       => 'ik_am',
+		'currency'     => 'ik_cur',
+		'title'        => 'ik_desc',
+		'description'  => 'ik_x_desc',
+		'operation_id' => 'ik_pm_no',
+		'public_key'   => 'ik_co_id',
+		'key_public'   => 'ik_co_id',
+		'test'         => 'test_mode',
 	);
 
 	public $_options_transform_reverse = array(
-		'amt'         => 'amount',
-		'ccy'         => 'currency',
-		'details'     => 'title',
-		'ext_details' => 'description',
-		'order'       => 'operation_id',
-		'merchant'    => 'public_key',
+		'ik_am'     => 'amount',
+		'ik_cur'    => 'currency',
+		'ik_desc'   => 'title',
+		'ik_x_desc' => 'description',
+		'ik_pm_no'  => 'operation_id',
+		'ik_co_id'  => 'key_public',
 	);
 
 	public $_status = array(
-		'ok'   => 'success',
-		'wait' => 'in_progress',
-		'fail' => 'refused',
+		'success'    => 'success',
+		'new'        => 'in_progress',
+		'waitAccept' => 'in_progress',
+		'process'    => 'in_progress',
+		'fail'       => 'refused',
+		'canceled'   => 'refused',
 	);
 
 	public $currency_default = 'UAH';
@@ -57,9 +60,13 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 			'currency_id' => 'UAH',
 			'active'      => true,
 		),
+		'RUB' => array(
+			'currency_id' => 'RUB',
+			'active'      => true,
+		),
 	);
 
-	public $fee = 2; // 2%
+	// public $fee = 5; // 5%
 
 	public $url_result = null;
 	public $url_server = null;
@@ -67,10 +74,10 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	public function _init() {
 		$this->payment_api = _class( 'payment_api' );
 		// load api
-		require_once( __DIR__ . '/payment_provider/privat24/Privat24.php' );
-		$this->api = new Privat24( $this->KEY_PUBLIC, $this->KEY_PRIVATE );
-		$this->url_result = url( '/api/payment/provider?name=privat24&operation=response' );
-		$this->url_server = url( '/api/payment/provider?name=privat24&operation=response&server=true' );
+		require_once( __DIR__ . '/payment_provider/interkassa/Interkassa.php' );
+		$this->api = new Interkassa( $this->KEY_PUBLIC, $this->KEY_PRIVATE, $this->KEY_PRIVATE_TEST, $this->HASH_METHOD, $this->TEST_MODE );
+		$this->url_result = url( '/api/payment/provider?name=interkassa&operation=response' );
+		$this->url_server = url( '/api/payment/provider?name=interkassa&operation=response&server=true' );
 		// parent
 		parent::_init();
 	}
@@ -81,12 +88,22 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	}
 
 	public function key_reset() {
-		$this->key( 'public',  $this->KEY_PUBLIC  );
-		$this->key( 'private', $this->KEY_PRIVATE );
+		$this->key( 'public',       $this->KEY_PUBLIC       );
+		$this->key( 'private',      $this->KEY_PRIVATE      );
+		$this->key( 'private_test', $this->KEY_PRIVATE_TEST );
 	}
 
-	public function signature( $options, $is_request = true ) {
-		$result = $this->api->signature( $options, $is_request );
+	public function hash_method( $value = null ) {
+		$value = $this->api->hash_method( $value );
+		return( $value );
+	}
+
+	public function hash_method_reset() {
+		$this->api->hash_method( $this->HASH_METHOD );
+	}
+
+	public function signature( $options ) {
+		$result = $this->api->signature( $options );
 		return( $result );
 	}
 
@@ -99,20 +116,48 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 				unset( $_[ $from ] );
 			}
 		}
+		// url
+		if( !empty( $_[ 'url_result' ] )
+			|| empty( $_[ 'ik_suc_uc' ] )
+			|| empty( $_[ 'ik_pnd_u'  ] )
+			|| empty( $_[ 'ik_fal_u'  ] )
+		) {
+			$url = $this->_url( $options );
+			$_[ 'ik_suc_u' ] = $url . '&status=success';
+			$_[ 'ik_pnd_u' ] = $url . '&status=pending';
+			$_[ 'ik_fal_u' ] = $url . '&status=fail';
+			$_[ 'ik_suc_m' ] = 'post';
+			$_[ 'ik_pnd_m' ] = 'post';
+			$_[ 'ik_fal_m' ] = 'post';
+			unset( $_[ 'url_result' ] );
+		}
+		if( !empty( $_[ 'url_server' ] ) || empty( $_[ 'ik_ia_u' ] ) ) {
+			$url_server = $this->_url( $options, $is_server = true );
+			$_[ 'ik_ia_u' ] = $url_server . '&status=interaction';
+			$_[ 'ik_ia_m' ] = 'post';
+			unset( $_[ 'url_server' ] );
+		}
 		// default
-		$_[ 'amt' ] = number_format( $_[ 'amt' ], 2, '.', '' );
-		empty( $_[ 'merchant'   ] ) && $_[ 'merchant'   ] = $this->KEY_PUBLIC;
-		empty( $_[ 'pay_way'    ] ) && $_[ 'pay_way'    ] = 'privat24';
-		if( empty( $_[ 'return_url' ] ) ) {
-			$_[ 'return_url' ] = $this->url_result
-				. '&operation_id=' . (int)$options[ 'operation_id' ];
+		$_[ 'ik_am' ] = number_format( $_[ 'ik_am' ], 2, '.', '' );
+		empty( $_[ 'ik_co_id'   ] ) && $_[ 'ik_co_id'   ] = $this->KEY_PUBLIC;
+		if( empty( $_[ 'ik_am' ] ) || empty( $_[ 'ik_co_id' ] ) ) { $_ = null; }
+		if( !empty( $this->TEST_MODE ) || !empty( $_[ 'test_mode' ] ) ) {
+			unset( $_[ 'test_mode' ] );
+			$_[ 'ik_act'    ] = 'payway';
+			$_[ 'ik_pw_via' ] = 'test_interkassa_test_xts';
 		}
-		if( empty( $_[ 'server_url' ] ) ) {
-			$_[ 'server_url' ] = $this->url_server
-				. '&operation_id=' . (int)$options[ 'operation_id' ];
-		}
-		if( empty( $_[ 'amt' ] ) || empty( $_[ 'merchant' ] ) ) { $_ = null; }
 		return( $_ );
+	}
+
+	public function _url( $options, $is_server = false ) {
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( $is_server ) {
+			$url = $_url_server ?: $this->url_server;
+		} else {
+			$url = $_url_result ?: $this->url_result;
+		}
+		$result = $url . '&operation_id=' . $_operation_id;
+		return( $result );
 	}
 
 	public function _form( $data, $options = null ) {
@@ -120,15 +165,15 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$_ = &$options;
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
-		$signature    = $this->signature( $form_options );
+		$signature    = $this->api->signature( $form_options );
 		if( empty( $signature ) ) { return( null ); }
-		$form_options[ 'signature' ] = $signature;
+		$form_options[ 'ik_sign' ] = $signature;
 		$url = &$this->URL;
 		$result = array();
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
-			$result[] = '<form id="_js_provider_privat24_form" method="post" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
+			$result[] = '<form id="_js_provider_interkassa_form" method="post" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
 		}
 		foreach ((array)$form_options as $key => $value ) {
 			if( $is_array ) {
@@ -146,26 +191,47 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 
 	public function _api_response() {
 		$payment_api = $this->payment_api;
+		$test_mode = &$this->TEST_MODE;
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
+		/* // test data
+		$this->key( 'private',      'xXceiJgnFURU0lq9' );
+		$this->key( 'private_test', 'AxlrteZIreEpMddf' );
+		$this->hash_method( 'sha256' );
+		$_POST = array (
+			'ik_co_id' => '54be5909bf4efc7f6b8ab8f5',
+			'ik_co_prs_id' => '203295131974',
+			'ik_inv_id' => '33274174',
+			'ik_inv_st' => 'success',
+			'ik_inv_crt' => '2015-01-23 11:20:09',
+			'ik_inv_prc' => '2015-01-23 11:20:09',
+			'ik_trn_id' => '',
+			'ik_pm_no' => 'ID_4233',
+			'ik_pw_via' => 'test_interkassa_test_xts',
+			'ik_am' => '100.00',
+			'ik_co_rfn' => '100.0000',
+			'ik_ps_price' => '103.00',
+			'ik_cur' => 'USD',
+			'ik_desc' => 'Пополнение счета (Interkassa)',
+			'ik_x_user_id' => '3',
+			'_ik_x_user_id' => '3',
+			'ik_sign' => 'mgNlOcdt6ydxAZZvAPEZYo7PZRoWnM/zvlgk2pdZe20=',
+		); // */
+		$payment = $_POST;
 		// response POST:
-		$payment   = $_POST[ 'payment'   ];
-		$signature = $_POST[ 'signature' ];
-		// test data
-		// $payment = 'amt=16.00&ccy=UAH&details=Поплнение счета (Приват 24)&ext_details=3#71#9#3#16&pay_way=privat24&order=71&merchant=104702&state=test&date=171214180311&ref=test payment&payCountry=UA';
-		// $signature = '585b0c173ec36300a5ff77f6cbd9f195492f0c0d';
+		$signature = $payment[ 'ik_sign' ];
 		// check signature
-		if( empty( $signature ) ) {
+		if( !$test_mode && empty( $signature ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
 			);
 			return( $result );
 		}
-		$_signature = $this->signature( $payment, $is_request = false );
-		if( $signature != $_signature ) {
+		$_signature = $this->signature( $payment );
+		if( !( $test_mode && empty( $signature ) ) && $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
@@ -174,24 +240,24 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		}
 		// update operation
 		$response = $this->_response_parse( $payment );
-		// check public key (merchant)
-		$public_key = $response[ 'public_key' ];
-		$_public_key = $this->KEY_PUBLIC;
-		if( $public_key != $_public_key ) {
+		// check public key (ik_co_id)
+		$key_public = $response[ 'key_public' ];
+		$_key_public = $this->key( 'public' );
+		if( $key_public != $_key_public ) {
 			$result = array(
 				'status'         => false,
-				'status_message' => 'Неверный ключ (merchant)',
+				'status_message' => 'Неверный ключ (ik_co_id)',
 			);
 			return( $result );
 		}
 		// check status
-		// ok, fail, test, wait
-		$state = $response[ 'state' ];
-		if( $this->TEST_MODE && $state == 'test' ) { $state = 'ok'; }
+		$state = $response[ 'ik_inv_st' ];
 		list( $payment_status_name, $status_message ) = $this->_state( $state );
+		// test
+		// $response[ 'operation_id' ] = '3304';
 		// update account, operation data
 		$result = $this->_api_deposition( array(
-			'provider_name'       => 'privat24',
+			'provider_name'       => 'interkassa',
 			'response'            => $response,
 			'payment_status_name' => $payment_status_name,
 			'status_message'      => $status_message,
@@ -200,12 +266,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	}
 
 	public function _response_parse( $response ) {
-		$options = explode( '&', $response );
-		$_ = array();
-		foreach( (array)$options as $option ) {
-			list( $key, $value ) = explode( '=', $option );
-			$_[ $key ] = $value;
-		}
+		$_ = $response;
 		// transform
 		foreach( (array)$this->_options_transform_reverse as $from => $to  ) {
 			if( isset( $_[ $from ] ) ) {
@@ -307,7 +368,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$result = array(
 			'form'           => $form,
 			'status'         => true,
-			'status_message' => 'Поплнение через сервис: Приват24',
+			'status_message' => 'Поплнение через сервис: Интеркасса',
 		);
 		return( $result );
 	}

@@ -64,6 +64,8 @@ class yf_common {
 			$themes = explode(PHP_EOL, trim(file_get_contents($cache_dir. '/themes_'.$css_fw.'.txt')));
 		}
 		$themes[] = 'flatui';
+		$themes[] = 'material_design';
+		$themes[] = 'bootstrap_theme';
 		$themes[] = 'bootstrap';
 		return $themes;
 	}
@@ -182,8 +184,8 @@ class yf_common {
 	/**
 	* Processing radio buttons
 	*/
-	function radio_box($box_name, $values = array(), $selected = '', $flow_vertical = false, $type = 2, $add_str = '', $translate = 0) {
-		return _class('html')->radio_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate);
+	function radio_box($box_name, $values = array(), $selected = '', $horizontal = true, $type = 2, $add_str = '', $translate = 0) {
+		return _class('html')->radio_box($box_name, $values, $selected, $horizontal, $type, $add_str, $translate);
 	}
 
 	/**
@@ -196,8 +198,8 @@ class yf_common {
 	/**
 	* Processing many checkboxes at one time
 	*/
-	function multi_check_box($box_name, $values = array(), $selected = array(), $flow_vertical = false, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
-		return _class('html')->multi_check_box($box_name, $values, $selected, $flow_vertical, $type, $add_str, $translate, $name_as_array);
+	function multi_check_box($box_name, $values = array(), $selected = array(), $horizontal = true, $type = 2, $add_str = '', $translate = 0, $name_as_array = false) {
+		return _class('html')->multi_check_box($box_name, $values, $selected, $horizontal, $type, $add_str, $translate, $name_as_array);
 	}
 
 	/**

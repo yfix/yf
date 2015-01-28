@@ -2,7 +2,7 @@
 
 /**
 * Locale handler
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -31,7 +31,7 @@ class yf_i18n {
 	public $LANGUAGES			= array();
 	/** @var array */
 	public $_HTML_ENTITIES		= array(
-		'_' => '&#95;', "'" => '&#39;', '"' => '&quot;', '/' => '&frasl;', "\\"=> '&#92;', '[' => '&#91;', ']' => '&#93;', 
+		'_' => '&#95;', "'" => '&#39;', '"' => '&quot;', '/' => '&frasl;', "\\"=> '&#92;', '[' => '&#91;', ']' => '&#93;',
 		'(' => '&#40;', ')' => '&#41;', '{' => '&#123;', '}' => '&#125;', '?' => '&#63;', '!' => '&#33;', '|' => '&#124;',
 	);
 	/** @var bool Allow to find vars in shared place inside files */
@@ -84,9 +84,12 @@ class yf_i18n {
 		}
 		// Force to get all available vars (try to find and insert new ones)
 		if (DEBUG_MODE && $this->AUTO_FIND_VARS && $this->TRANSLATE_ENABLED) {
-			$q = db()->query('SELECT id,value FROM '.db('locale_vars').'');
-			while ($a = db()->fetch_assoc($q)) {
-				$this->TR_ALL_VARS[$a['value']] = $a['id'];
+			$is_db = main()->is_db();
+			if( $is_db ) {
+				$q = db()->query('SELECT id,value FROM '.db('locale_vars').'');
+				while ($a = db()->fetch_assoc($q)) {
+					$this->TR_ALL_VARS[$a['value']] = $a['id'];
+				}
 			}
 			if (!empty($this->TR_ALL_VARS)) {
 				ksort($this->TR_ALL_VARS);
@@ -206,16 +209,18 @@ class yf_i18n {
 	* Default storage of translations
 	*/
 	function _load_lang_get_vars_from_db($lang) {
+		$is_db = main()->is_db();
+		if( !$is_db ) { return( null ); }
 		$CACHE_NAME = 'locale_translate_'.$lang;
 		$data = cache_get($CACHE_NAME);
 		if (!$data && !is_array($data)) {
 			$data = array();
 			$q = db()->query(
-				'SELECT v.value AS source, t.value AS translation 
-				FROM '.db('locale_vars').' AS v, '.db('locale_translate').' AS t 
-				WHERE t.var_id=v.id 
-					AND t.locale="'._es($lang).'" 
-					AND t.value != "" 
+				'SELECT v.value AS source, t.value AS translation
+				FROM '.db('locale_vars').' AS v, '.db('locale_translate').' AS t
+				WHERE t.var_id=v.id
+					AND t.locale="'._es($lang).'"
+					AND t.value != ""
 					AND t.value != v.value'
 			);
 			while ($a = db()->fetch_assoc($q)) {
@@ -235,9 +240,9 @@ class yf_i18n {
 		$user_id = intval($user_id);
 		if ($this->ALLOW_USER_TRANSLATE && $user_id) {
 			$q = db()->query(
-				'SELECT name, translation 
-				FROM '.db('locale_user_tr').' 
-				WHERE user_id='.intval($user_id).' 
+				'SELECT name, translation
+				FROM '.db('locale_user_tr').'
+				WHERE user_id='.intval($user_id).'
 					AND locale="'._es($lang).'"
 					AND translation != ""
 					AND translation != name'
@@ -254,7 +259,7 @@ class yf_i18n {
 	function _load_lang_get_vars_from_files($lang) {
 		$lang_files = array();
 		// Auto-find shared language vars. They will be connected in order of file system
-		// Names can be any, but better to include lang name into file name. Examples: 
+		// Names can be any, but better to include lang name into file name. Examples:
 		// share/langs/ru/001_other.php
 		// share/langs/ru/002_other2.php
 		// share/langs/ru/other.php
@@ -282,7 +287,7 @@ class yf_i18n {
 			}
 		}
 		// Auto-find vars for user modules. They will be connected in order of file system
-		// Names must begin with __locale__{lang} and then any name. Examples: 
+		// Names must begin with __locale__{lang} and then any name. Examples:
 		// modules/shop/__locale__ru.php
 		// modules/shop/__locale__ru_orders.php
 		// modules/shop/__locale__ru_products.php
@@ -337,7 +342,7 @@ class yf_i18n {
 	*	| => '&#124;'
 	*
 	* @code
-	*	$msg = t('You must log in below or <a href="%url">create a new account</a> before viewing the next page.', 
+	*	$msg = t('You must log in below or <a href="%url">create a new account</a> before viewing the next page.',
 	*			array('%url' => process_url('./?object=user&action=register')));
 	* @endcode
 	*
@@ -602,7 +607,7 @@ class yf_i18n {
 	*/
 	function _list_system_locales() {
 		ob_start();
-		system('locale -a'); 
+		system('locale -a');
 		$str = ob_get_clean();
 		return split("\\n", trim($str));
 	}

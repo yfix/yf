@@ -5,18 +5,16 @@ return function() {
 return array(
 	'versions' => array(
 		'master' => array(
-			'jquery' => '
-
-	var _t_are_you_sure = "'.t('Are you sure').'?";
-	var _btn_active = \'<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> '.t('Active').'</button>\';
-	var _btn_inactive = \'<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> '.t('Disabled').'</button>\';
-	var _btn_yes = \'<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> '.t('Yes').'</button>\';
-	var _btn_no = \'<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> '.t('No').'</button>\';
-
-	try {
-		$("select").not(".portlet select").not(".no-chosen").chosen();
-	} catch (e) { console.log(e); }
-
+			'js' => array('
+				var _t_are_you_sure = "'.t('Are you sure').'?";
+				var _t_modal_title = "'.t('Modal edit').'";
+				var _btn_active = \'<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> '.t('Active').'</button>\';
+				var _btn_inactive = \'<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> '.t('Disabled').'</button>\';
+				var _btn_yes = \'<button class="btn btn-mini btn-xs btn-success"><i class="icon-ok fa fa-check"></i> '.t('Yes').'</button>\';
+				var _btn_no = \'<button class="btn btn-mini btn-xs btn-warning"><i class="icon-ban-circle fa fa-ban"></i> '.t('No').'</button>\';
+			',
+<<<END
+$(function(){
 	// Change activity status of different elements without page refresh
 	$(document).on("click", ".change_active", function(){
 		var _obj = this;
@@ -61,7 +59,7 @@ return array(
 	$("form input[type=checkbox].yf_toggle_all_checkboxes").click(function(){
 		$("input[type=checkbox]", $(this).parents("form")).not(".yf_toggle_all_checkboxes").prop("checked", $(this).is(":checked"))
 	});
-	 $(document).on("hide.bs.modal","#edit_link_modal",  function (e) {
+	$(document).on("hide.bs.modal","#edit_link_modal",  function (e) {
 		$("#edit_link_modal").remove();
 	})
 	// Any pressed number or letter [0-9a-z] will case avoiding ajax action (edit)
@@ -76,7 +74,23 @@ return array(
 			return true;
 		}
 		$.get(_obj.attr("href"), function(data) {
-			$(\'<div class="modal fade" id="edit_link_modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></div>\' + data + \'</div></div></div>\').modal({
+			var modal_html = 
+				'<div class="modal fade" id="edit_link_modal">' 
+					+ '<div class="modal-dialog">' 
+						+ '<div class="modal-content">' 
+							+ '<div class="modal-header">' 
+								+ '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' 
+								+ '<h4 class="modal-title">' + _t_modal_title + '</h4>' 
+							+ '</div>'
+							+ '<div class="modal-body">'
+								+ data
+							+ '</div>'
+//							+ '<div class="modal-footer">'
+//							+ '</div>'
+						+ '</div>'
+					+ '</div>'
+				+ '</div>';
+			$(modal_html).modal({
 				keyboard: true,
 				backdrop: true,
 				show: true
@@ -116,11 +130,15 @@ return array(
 
 	// Affix used in settings TOC, idea got from Bootstrap docs
 	$(".bs-docs-sidenav").affix();
-
-		'),
+});
+END
+		)),
 	),
 	'add' => array(
-		'js' => 'yf_popover',
+		'asset' => 'yf_popover',
+	),
+	'require' => array(
+		'asset' => 'jquery',
 	),
 );
 

@@ -12,11 +12,11 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 	public $CLASS_INPUT_PREPEND		= 'input-prepend';
 	public $CLASS_INPUT_APPEND		= 'input-append';
 	public $CLASS_LABEL				= 'control-label col-md-3';
-	public $CLASS_NO_LABEL			= ' col-md-offset-3 col-md-9';
-	public $CLASS_NO_LABEL_BUTTONS	= ' col-md-offset-3 col-md-11';
-	public $CLASS_CONTROLS			= 'controls';
-	public $CLASS_CONTROLS_BUTTONS	= 'controls';
-	public $CLASS_DESC				= 'col-md-9';
+	public $CLASS_NO_LABEL			= ' col-md-offset-3';
+	public $CLASS_NO_LABEL_BUTTONS	= ' col-md-offset-3';
+	public $CLASS_CONTROLS			= 'controls col-md-offset-3';
+	public $CLASS_CONTROLS_BUTTONS	= 'controls col-md-offset-3';
+	public $CLASS_DESC				= '';
 	public $CLASS_EDIT_LINK			= 'btn btn-default btn-mini btn-xs';
 	public $CLASS_EDIT_ICON			= 'icon-edit fa fa-edit';
 	public $CLASS_LINK_URL			= 'btn btn-default';
@@ -25,6 +25,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 	public $CLASS_SUCCESS			= 'success has-success';
 	public $CLASS_WARNING			= 'warning has-warning';
 	public $CLASS_INFO				= 'info has-info';
+	public $CLASS_FEEDBACK			= 'form-control-feedback';
 
 	/**
 	*/
@@ -66,19 +67,36 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 			. ($extra['desc'] && !$no_label ? ' '.$this->CLASS_DESC : $def_class_no_label)
 			. ($extra['class_add_controls'] ? ' '.$extra['class_add_controls'] : '');
 
-		$row_start = '<div class="'.$class_form_group.'">'.PHP_EOL
-			.($extra['desc'] && !$no_label ? '<label class="'.$class_label.'" for="'.$extra['id'].'">'.t($extra['desc']).'</label>'.PHP_EOL : '')
-			.(!$extra['wide'] ? '<div class="'.$class_controls.'">'.PHP_EOL : '');
+		$form_group_extra = $extra['form_group'];
+		$form_group_extra['class'] = $class_form_group;
+
+		$controls_extra = $extra['controls'];
+		$controls_extra['class'] = $class_controls;
+
+		$label_extra = $extra['control_label'];
+		$label_extra['class'] = $class_label;
+		$label_extra['for'] = $extra['id'];
+
+		$row_start = '<div'._attrs($form_group_extra, array('id','class','style')).'>'.PHP_EOL
+			.($extra['desc'] && !$no_label ? '<label'._attrs($label_extra, array('id','class','style','for')).'>'.t($extra['desc']).'</label>'.PHP_EOL : '')
+			.(!$extra['wide'] ? '<div'._attrs($controls_extra, array('id','class','style')).'>'.PHP_EOL : '');
 
 		$row_end =
 				(!$extra['wide'] ? '</div>'.PHP_EOL : '')
 			.'</div>';
 
-		$before_content_html = ($extra['prepend'] || $extra['append']) ? '<div class="'.$this->CLASS_INPUT_GROUP.' '.($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : ''). ($extra['append'] ? ' '.$this->CLASS_INPUT_APPEND : '').'">'.PHP_EOL : '';
+		$input_group_extra = $extra['input_group'];
+		$input_group_extra['class'] = $this->CLASS_INPUT_GROUP.' '.($extra['prepend'] ? $this->CLASS_INPUT_PREPEND : ''). ($extra['append'] ? ' '.$this->CLASS_INPUT_APPEND : '');
+
+		$show_input_group = ($extra['append'] || $extra['prepend']);
+
+		$before_content_html = $show_input_group ? '<div'._attrs($input_group_extra, array('id','class','style')).'>'.PHP_EOL : '';
 		$before_content_html .= $extra['prepend'] ? '<span class="'.$this->CLASS_ADDON.'">'.$extra['prepend'].'</span>'.PHP_EOL : '';
 
 		$after_content_html = $extra['append'] ? '<span class="'.$this->CLASS_ADDON.'">'.$extra['append'].'</span>'.PHP_EOL : '';
-		$after_content_html .= ($extra['prepend'] || $extra['append']) ? '</div>'.PHP_EOL : '';
+		$after_content_html .= $show_input_group ? '</div>'.PHP_EOL : '';
+
+#		$after_content_html .= $extra['feedback_icon'] ? '<span class="'.$extra['feedback_icon'].' '.$this->CLASS_FEEDBACK.'" aria-hidden="true"></span>'.PHP_EOL : '';
 
 		if ($extra['edit_link']) {
 			if (MAIN_TYPE_ADMIN && main()->ADMIN_GROUP != 1 && !_class('common_admin')->_admin_link_is_allowed($extra['edit_link'])) {

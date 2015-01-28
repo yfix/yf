@@ -2,12 +2,12 @@
 
 return array(
 	'versions' => array(
-		'master' => array(
+		'v4.0.0' => array(
 			'js' => array(
-				'//cdn.rawgit.com/yfix/bootstrap-datetimepicker/master/build/js/bootstrap-datetimepicker.min.js',
+				'//cdn.rawgit.com/yfix/bootstrap-datetimepicker/v4.0.0/build/js/bootstrap-datetimepicker.min.js',
 			),
 			'css' => array(
-				'//cdn.rawgit.com/yfix/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css',
+				'//cdn.rawgit.com/yfix/bootstrap-datetimepicker/v4.0.0/build/css/bootstrap-datetimepicker.min.css',
 				'.bootstrap-datetimepicker-widget .picker-switch { width: 90%; }',
 			),
 		),
