@@ -1100,7 +1100,7 @@ class yf_form2 {
 			$extra = array();
 		}
 		$extra['type'] = 'url';
-		$extra['prepend'] = 'url';
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : 'url';
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
