@@ -1945,7 +1945,7 @@ class yf_main {
 		if (isset($this->php_libs[$name])) {
 			return $this->php_libs[$name];
 		}
-		$dir = 'share/service_providers/';
+		$dir = 'share/services/';
 		$file = $name.'.php';
 		$paths = array(
 			'app'		=> APP_PATH. $dir. $file,
