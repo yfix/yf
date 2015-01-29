@@ -219,6 +219,48 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			'_ik_x_user_id' => '3',
 			'ik_sign' => 'mgNlOcdt6ydxAZZvAPEZYo7PZRoWnM/zvlgk2pdZe20=',
 		); // */
+/*
+	&status=success
+		string '$_GET' (length=5)
+		array (size=4)
+			'test_mode' => string '1' (length=1)
+			'status' => string 'success' (length=7)
+			'object' => string 'payment_test' (length=12)
+			'action' => string 'provider' (length=8)
+		string '$_POST' (length=6)
+		array (size=12)
+			'ik_co_id' => string '54be5909bf4efc7f6b8ab8f5' (length=24)
+			'ik_inv_id' => string '33226688' (length=8)
+			'ik_inv_st' => string 'success' (length=7)
+			'ik_inv_crt' => string '2015-01-21 13:14:26' (length=19)
+			'ik_inv_prc' => string '2015-01-21 13:14:26' (length=19)
+			'ik_pm_no' => string 'ID_4233' (length=7)
+			'ik_pw_via' => string 'test_interkassa_test_xts' (length=24)
+			'ik_am' => string '100.00' (length=6)
+			// Checkout Refund - Сумма зачисления на счет кассы.
+			'ik_co_rfn' => string '97.0000' (length=7)
+			// Paysystem Price - Сумма платежа в платежной системе.
+			'ik_ps_price' => string '100.00' (length=6)
+			'ik_cur' => string 'USD' (length=3)
+			'ik_desc' => string 'Пополнение счета (Interkassa)' (length=44)
+			'ik_x_user_id' => string '3' (length=1)
+	&status=fail
+		string '$_GET' (length=5)
+		array (size=4)
+			'status' => string 'fail' (length=4)
+		string '$_POST' (length=6)
+		array (size=12)
+			'ik_inv_st' => string 'canceled' (length=8)
+			'ik_inv_prc' => string '' (length=0)
+	&status=pending
+		string '$_GET' (length=5)
+		array (size=4)
+			'status' => string 'pending' (length=7)
+		string '$_POST' (length=6)
+		array (size=12)
+			'ik_inv_st' => string 'waitAccept' (length=10)
+			'ik_inv_prc' => string '' (length=0)
+ */
 		$payment = $_POST;
 		// response POST:
 		$signature = $payment[ 'ik_sign' ];
