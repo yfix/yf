@@ -36,8 +36,6 @@ class yf_rss_data {
 	public $FEEDS_CACHE_PATH	= 'uploads/rss_cache/';
 	/** @var string */
 	public $AGGR_CACHE_PATH	= 'uploads/rss_aggregator_cache/';
-	/** @var string */
-	public $DOMIT_RSS_PATH		= 'libs/yf_domit/xml_domit_rss.php';
 	/** @var bool Use serialized cache */
 	var	$USE_ARRAY_CACHE	= true;
 	/** @var @string Leave empty for default */
@@ -51,16 +49,16 @@ class yf_rss_data {
 	function _init () {
 		$this->FEEDS_CACHE_PATH	= STORAGE_PATH. $this->FEEDS_CACHE_PATH;
 		!file_exists($this->FEEDS_CACHE_PATH) && _mkdir_m($this->FEEDS_CACHE_PATH);
+
 		$this->AGGR_CACHE_PATH = STORAGE_PATH. $this->AGGR_CACHE_PATH;
 		!file_exists($this->AGGR_CACHE_PATH) && _mkdir_m($this->AGGR_CACHE_PATH);
-		$this->DOMIT_RSS_PATH = YF_PATH. $this->DOMIT_RSS_PATH;
 	}
 
 	/**
 	* Show given array as RSS page
 	*/
 	function show_rss_page ($data = array(), $params = array()) {
-		require_once (YF_PATH.'libs/yf_feedcreator/feedcreator.class.php');
+		require_php_lib('yf_feedcreator');
 		$rss = new UniversalFeedCreator();
 		if (!isset($params['use_cached']) || !empty($params['use_cached'])) {
 			$rss->useCached();
@@ -261,8 +259,8 @@ class yf_rss_data {
 	* Do get data from given feed
 	*/
 	function _get_rss_feed_array ($rss_url = '', $feed_ttl = 3600, $num_items = 15) {
-		// Connect DOMIT library
-		require_once ($this->DOMIT_RSS_PATH);
+		require_php_lib('yf_domit');
+		
 		// Prepare cache params
 		if ($this->USE_ARRAY_CACHE) {
 			$_url_hash			= md5($rss_url);
