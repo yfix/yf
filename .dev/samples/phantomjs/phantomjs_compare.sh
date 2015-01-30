@@ -1,0 +1,1 @@
+compare -verbose -metric mae html5fw_bs2.png html5fw_bs3.png html5fw_diff.png
