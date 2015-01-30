@@ -144,7 +144,7 @@ class yf_send_mail {
 		// Try to use PHPMailer mailer
 		if ($this->USE_MAILER == 'phpmailer') {
 
-			require_once(YF_PATH.'libs/phpmailer/PHPMailerAutoload.php');
+			require_php_lib('phpmailer');
 
 			$mail = new PHPMailer(true); // defaults to using php 'mail()'
 			try {
