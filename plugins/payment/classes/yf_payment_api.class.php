@@ -115,9 +115,9 @@ class yf_payment_api {
 	public $currencies_default  = array(
 		'UNT' => array(
 			'currency_id' => 'UNT',
-			'name'        => 'балл',
-			'short'       => 'балл.',
-			'sign'        => 'б.',
+			'name'        => 'доллар',
+			'short'       => '$',
+			'sign'        => '$',
 			'number'      => 0,
 			'minor_units' => 0,      // Number of digits after the decimal separator
 		),
