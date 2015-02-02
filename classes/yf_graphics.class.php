@@ -254,14 +254,15 @@ class yf_graphics {
 			$user_id	= (int)main()->USER_ID;
 			$user_group	= (int)main()->USER_GROUP;
 			if ($user_id && $user_group) {
-				$user_info 		= user($user_id);
-				$user_groups	= main()->get_data('user_groups');
+				$user_info   = user($user_id);
+				$user_groups = main()->get_data('user_groups');
 
 				$body .= tpl()->parse('system/user_welcome', array(
-					'id'	=> intval($user_info['id']),
-					'name'	=> _prepare_html(_display_name($user_info)),
-					'group'	=> _prepare_html(t($user_groups[$user_group])),
-					'time'	=> _format_date($login_time),
+					'id'        => intval($user_info['id']),
+					'name'      => _prepare_html(_display_name($user_info)),
+					'group'     => _prepare_html(t($user_groups[$user_group])),
+					'time'      => _format_date($login_time),
+					'user_info' => $user_info,
 				));
 			}
 		}
