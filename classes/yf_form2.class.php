@@ -418,7 +418,7 @@ class yf_form2 {
 			if ($extra['class_add']) {
 				$extra['class'] .= ' '.$extra['class_add'];
 			}
-			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
+			$extra['autocomplete'] = isset($extra['autocomplete']) ? $extra['autocomplete'] : true;
 
 			$advanced_js_validation = conf('form_advanced_js_validation');
 			if ($advanced_js_validation) {
