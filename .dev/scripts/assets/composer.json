@@ -2,7 +2,7 @@
 	"require": {
 	},
 	"_commented": {
-		"meenie/javascript-packer": "*"
+		"meenie/javascript-packer": "*",
 		"yfix/packager": "dev-master",
 		"leafo/lessphp": "*",
 		"leafo/scssphp": "*",
