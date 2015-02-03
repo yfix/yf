@@ -80,6 +80,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 .cssfw-bs3 .container-fixed .input-xxlarge { width:540px !important }
 .cssfw-bs3 .container-fixed .input-group[class*="col-"] { float:left !important; margin-right:3px; }
 .cssfw-bs3 .radio-inline, .cssfw-bs3 .checkbox-inline { margin-top:0; }
+.cssfw-bs3 .container-fixed .stacked-row .stacked-item { float: left; margin-right: 5px; }
 
 .cssfw-bs3 .carousel-control .icon-chevron-left,
 .cssfw-bs3 .carousel-control .icon-chevron-right { position:absolute; top:50%; z-index:5; display:inline-block; }
