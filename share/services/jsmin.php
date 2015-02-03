@@ -1,11 +1,10 @@
 #!/usr/bin/php
 <?php
 
-$requires = array();
-$git_urls = array('https://github.com/linkorb/jsmin-php.git' => 'jsmin-php/');
+$requires = array('minify');
 require __DIR__.'/_config.php';
 
-require_once $libs_root.'jsmin-php/src/jsmin-1.1.1.php';
+require_once $libs_root.'minify/min/lib/JSMin.php';
 
 // Test mode when direct call
 if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
