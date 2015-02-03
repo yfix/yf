@@ -55,7 +55,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			'<form method="post" action="'.self::$action.'" class="form-horizontal" name="form_action" autocomplete="1">'.
 			'<fieldset>'.
 			'<div class="'.self::$css['CLASS_FORM_GROUP'].'">'.
-			'<div class="'.self::$css['CLASS_CONTROLS']. self::$css['CLASS_NO_LABEL'].'">'.
+			'<div class="'._attr_class_clean(self::$css['CLASS_CONTROLS']. self::$css['CLASS_NO_LABEL']).'">'.
 			'<input type="text" class="form-control">'.
 			'</div>'.
 			'</div>'.
@@ -66,7 +66,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			'<fieldset>'.
 			'<div class="'.self::$css['CLASS_FORM_GROUP'].'">'.
 			'<label class="'.self::$css['CLASS_LABEL'].'" for="name">Name</label>'.
-			'<div class="'.self::$css['CLASS_CONTROLS'].' '.self::$css['CLASS_DESC'].'">'.
+			'<div class="'._attr_class_clean(self::$css['CLASS_CONTROLS'].' '.self::$css['CLASS_DESC']).'">'.
 			'<input name="name" type="text" id="name" class="form-control" placeholder="Name">'.
 			'</div>'.
 			'</div>'.
@@ -79,7 +79,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(str_replace(PHP_EOL, '', 
 			'<div class="'.self::$css['CLASS_FORM_GROUP'].'">'.
 			'<label class="'.self::$css['CLASS_LABEL'].'" for="name">Name</label>'.
-			'<div class="'.self::$css['CLASS_CONTROLS'].' '.self::$css['CLASS_DESC'].'">'.
+			'<div class="'._attr_class_clean(self::$css['CLASS_CONTROLS'].' '.self::$css['CLASS_DESC']).'">'.
 			'<input name="name" type="text" id="name" class="form-control" placeholder="Name">'.
 			'</div>'.
 			'</div>'), str_replace(PHP_EOL, '', trim($form)) );
@@ -88,7 +88,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$a = array(array('text','name'));
 		$this->assertEquals(
 			'<form method="post" action="'.self::$action.'" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="'.self::$css['CLASS_FORM_GROUP'].'">'.
-			'<label class="'.self::$css['CLASS_LABEL'].'" for="name">Name</label><div class="'.self::$css['CLASS_CONTROLS'].' '.self::$css['CLASS_DESC'].'"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div>'.
+			'<label class="'.self::$css['CLASS_LABEL'].'" for="name">Name</label><div class="'._attr_class_clean(self::$css['CLASS_CONTROLS'].' '.self::$css['CLASS_DESC']).'"><input name="name" type="text" id="name" class="form-control" placeholder="Name"></div></div>'.
 			'</fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form()->array_to_form($a))) );
 	}
@@ -96,7 +96,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$data = array('user' => 'name', 'email' => 'some@email.com');
 		$this->assertEquals(
 			'<form method="post" action="'.self::$action.'" class="form-horizontal" name="form_action" autocomplete="1"><fieldset><div class="'.self::$css['CLASS_FORM_GROUP'].'">'.
-			'<div class="'.self::$css['CLASS_CONTROLS_BUTTONS']. self::$css['CLASS_NO_LABEL_BUTTONS'].'"><button type="submit" name="back_link" id="back_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button></div>'.
+			'<div class="'._attr_class_clean(self::$css['CLASS_CONTROLS_BUTTONS']. ' '.self::$css['CLASS_NO_LABEL_BUTTONS']).'"><button type="submit" name="back_link" id="back_link" class="btn btn-default btn-primary" value="Save"><i class="icon-save fa fa-save"></i> Save</button></div>'.
 			'</div></fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form($data)->auto())) );
 	}
@@ -106,7 +106,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name', '')) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name', '', array('stacked' => 1))) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(self::form_no_chain($r)->text('name', '', array('stacked' => 1))) );
-		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Name">', trim(form('', array('no_form' => 1))->text('name', '', array('stacked' => 1))) );
+		$this->assertEquals('<span class="stacked-item"><input name="name" type="text" id="name" class="form-control" placeholder="Name">'.PHP_EOL.'</span>', trim(form('', array('no_form' => 1))->text('name', '', array('stacked' => 1))) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc">', trim(self::form_no_chain($r)->text('name', array('desc' => 'Desc'))) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc">', trim(self::form_no_chain($r)->text('name', 'Desc')) );
 	}
@@ -114,7 +114,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$r['name'] = 'value1';
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc" value="value1">'
 			, trim(self::form_no_chain($r)->text('name', array('desc' => 'Desc'))) );
-		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" placeholder="Desc" value="value1">'
+		$this->assertEquals('<span class="stacked-item"><input name="name" type="text" id="name" class="form-control" placeholder="Desc" value="value1">'.PHP_EOL.'</span>'
 			, trim(form($r, array('no_form' => 1))->text('name', array('stacked' => 1, 'desc' => 'Desc'))) );
 		$this->assertEquals('<input name="name" type="text" id="name" class="form-control" style="color:red;" placeholder="Desc" value="value1">'
 			, self::form_no_chain($r)->text('name', array('desc' => 'Desc', 'style' => 'color:red;')) );
@@ -151,7 +151,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_container() {
 		$this->assertEquals('<form method="post" action="'.self::$action.'" class="form-horizontal" name="form_action" autocomplete="1"><fieldset>'.
-			'<div class="'.self::$css['CLASS_FORM_GROUP'].'"><div class="'.self::$css['CLASS_CONTROLS']. self::$css['CLASS_NO_LABEL'].'"><section id="test"></section></div></div></fieldset></form>'
+			'<div class="'.self::$css['CLASS_FORM_GROUP'].'"><div class="'._attr_class_clean(self::$css['CLASS_CONTROLS']. self::$css['CLASS_NO_LABEL']).'"><section id="test"></section></div></div></fieldset></form>'
 			, str_replace(PHP_EOL, '', trim(form()->container('<section id="test"></section>'))) );
 		$this->assertEquals('<section id="test"></section>', trim(self::form_no_chain($r)->container('<section id="test"></section>')) );
 	}
@@ -415,7 +415,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info_link()) );
 		$this->assertEquals('<span class=" label label-info"></span>', trim(self::form_no_chain($r)->info_link('test')) );
 		$r['test'] = './?object=someobject&action=someaction';
-		$this->assertEquals('<a href="./?object=someobject&action=someaction" name="test" class=" btn btn-default btn-mini btn-xs" title="Test">./?object=someobject&action=someaction</a>'
+		$this->assertEquals('<a href="./?object=someobject&action=someaction" name="test" class="btn btn-default btn-mini btn-xs" title="Test">./?object=someobject&action=someaction</a>'
 			, trim(self::form_no_chain($r)->info_link('test')) );
 	}
 	public function test_tbl_link() {
