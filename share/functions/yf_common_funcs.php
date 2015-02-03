@@ -289,6 +289,23 @@ if (!function_exists('_htmlchars')) {
 	}
 }
 
+// Make sure that class attribute contains unique names and also cleanup extra spaces
+if (!function_exists('_attr_class_clean')) {
+	function _attr_class_clean($class = '') {
+		if (!strlen($class) || strpos($class, ' ') === false) {
+			return $class;
+		}
+		$tmp = array();
+		foreach (explode(' ', trim($class)) as $v) {
+			$v = trim($v);
+			if (strlen($v)) {
+				$tmp[$v] = $v;
+			}
+		}
+		return implode(' ', $tmp);
+	}
+}
+
 // Build string of html attributes, used by high-level html generators like form, table, html
 if (!function_exists('_attrs')) {
 	function _attrs($extra, $names) {
@@ -315,14 +332,7 @@ if (!function_exists('_attrs')) {
 		}
 		// Make sure that class attribute contains unique names and also cleanup extra spaces
 		if (isset($a['class']) && strpos($a['class'], ' ') !== false) {
-			$tmp = array();
-			foreach (explode(' ', trim($a['class'])) as $v) {
-				$v = trim($v);
-				if (strlen($v)) {
-					$tmp[$v] = $v;
-				}
-			}
-			$a['class'] = implode(' ', $tmp);
+			$a['class'] = _attr_class_clean($a['class']);
 		}
 		foreach ($a as $name => $val) {
 			if (is_array($val)) {
