@@ -26,6 +26,7 @@ class yf_form2 {
 	public $CLASS_LABEL_INFO = 'label label-info';
 	public $CLASS_ERROR = 'alert alert-error alert-danger';
 	public $CLASS_REQUIRED = 'control-group-required form-group-required';
+	public $CLASS_STACKED_ROW = 'stacked-row';
 
 	public $CONF_BOXES_USE_BTN_GROUP = false;
 
@@ -514,7 +515,7 @@ class yf_form2 {
 			}
 			$form->_stacked_mode_on = true;
 			$form->_prepare_inline_error($extra);
-			$extra['class_add_form_group'] .= ' stacked-row';
+			$extra['class_add_form_group'] = trim($this->CLASS_STACKED_ROW.' '.$extra['class_add_form_group']);
 			return $form->_row_html('', array('only_row_start' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
