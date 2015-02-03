@@ -588,7 +588,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$out = _class('assets')->filters_process_input($in, 'jsmin');
         $this->assertEquals( $expected, trim($out) );
 		$this->assertEmpty( _class('assets')->show_js() );
-		$expected2 = '<script type="text/javascript">'.PHP_EOL. PHP_EOL. $expected. PHP_EOL.'</script>';
+		$expected2 = '<script type="text/javascript">'.PHP_EOL. $expected. PHP_EOL.'</script>';
 		$out = _class('assets')->add_js($in)->filters_add_js('jsmin')->filters_process_js()->show_js();
 		$this->assertEquals( $expected2, trim($out) );
 #		$this->assertEquals( $expected2, _class('assets')->add_js($in)->show_js(array('filters' => 'jsmin')) );
