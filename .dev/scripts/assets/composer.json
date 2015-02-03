@@ -1,14 +1,14 @@
 {
 	"require": {
-		"leafo/lessphp": "*",
-		"leafo/scssphp": "*",
 		"ptachoire/cssembed": "*",
 		"mrclay/minify": "*",
 		"natxet/CssMin": "3.0.*",
-		"yfix/packager": "dev-master",
 		"patchwork/jsqueeze": "~1.0"
 	},
 	"_commented": {
 		"meenie/javascript-packer": "*"
+		"yfix/packager": "dev-master",
+		"leafo/lessphp": "*",
+		"leafo/scssphp": "*",
 	}
 }
