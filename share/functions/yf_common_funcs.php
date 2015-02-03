@@ -313,6 +313,17 @@ if (!function_exists('_attrs')) {
 				}
 			}
 		}
+		// Make sure that class attribute contains unique names and also cleanup extra spaces
+		if (isset($a['class']) && strpos($a['class'], ' ') !== false) {
+			$tmp = array();
+			foreach (explode(' ', trim($a['class'])) as $v) {
+				$v = trim($v);
+				if (strlen($v)) {
+					$tmp[$v] = $v;
+				}
+			}
+			$a['class'] = implode(' ', $tmp);
+		}
 		foreach ($a as $name => $val) {
 			if (is_array($val)) {
 				$body[$name] = _htmlchars($name).'="'.http_build_query(_htmlchars($val)).'"';
