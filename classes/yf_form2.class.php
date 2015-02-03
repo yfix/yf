@@ -514,6 +514,7 @@ class yf_form2 {
 			}
 			$form->_stacked_mode_on = true;
 			$form->_prepare_inline_error($extra);
+			$extra['class_add_form_group'] .= ' stacked-row';
 			return $form->_row_html('', array('only_row_start' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
