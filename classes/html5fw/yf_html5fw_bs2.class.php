@@ -26,6 +26,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 	public $CLASS_WARNING			= 'warning has-warning';
 	public $CLASS_INFO				= 'info has-info';
 	public $CLASS_FEEDBACK			= 'form-control-feedback';
+	public $CLASS_STACKED_ITEM		= 'stacked-item';
 
 	/**
 	*/
@@ -115,8 +116,10 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		} elseif ($extra['only_row_end']) {
 			return $row_end;
 		} elseif ($extra['stacked']) {
-			return $inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
-				.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after;
+			return '<span class="'.$this->CLASS_STACKED_ITEM.'">'
+					.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
+					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
+				.'</span>';
 		} else {
 			// Full variant
 			return $row_start
