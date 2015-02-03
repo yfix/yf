@@ -1,14 +1,14 @@
 {
 	"require": {
-		"ptachoire/cssembed": "*",
-		"mrclay/minify": "*",
-		"natxet/CssMin": "3.0.*",
-		"patchwork/jsqueeze": "~1.0"
 	},
 	"_commented": {
 		"meenie/javascript-packer": "*"
 		"yfix/packager": "dev-master",
 		"leafo/lessphp": "*",
 		"leafo/scssphp": "*",
+		"mrclay/minify": "*",
+		"natxet/CssMin": "3.0.*",
+		"ptachoire/cssembed": "*",
+		"patchwork/jsqueeze": "~1.0"
 	}
 }
