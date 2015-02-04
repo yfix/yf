@@ -1051,6 +1051,57 @@ class yf_payment_api {
 		return( $result );
 	}
 
+	public function money_html( $options = null ) {
+		!is_array( $options ) && $options = array(
+			'value' => $options,
+		);
+		$options += array(
+			'format' => 'html',
+			'sign'   => true,
+		);
+		$result = $this->money_format( $options );
+		return( $result );
+	}
+
+	public function money_format( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// currency
+		list( $currency_id, $currency ) = $this->get_currency__by_id( array( 'currency_id' => $_currency_id ) );
+		$decimals = $currency[ 'minor_units' ];
+		$sign     = $currency[ 'sign'        ];
+		switch( $_format ) {
+			case 'html':
+				$thousands_separator = '&nbsp;';
+			default:
+				$thousands_separator = ' ';
+				break;
+		}
+		// format number
+		is_string( $_thousands_separator ) && $thousands_separator = $_thousands_separator;
+		is_string( $_decimal_point       ) && $decimal_point       = $_decimal_point;
+		$value  = $this->_number_round( $_value, $decimals );
+		$value = $this->_number_format( $value, $decimals, $decimal_point, $thousands_separator );
+		// decoration
+		$nbsp = '';
+		switch( $_format ) {
+			case 'html':
+				$sign  = '<span class="currency">'. $sign  .'</span>';
+				$value = '<span class="money">'.    $value .'</span>';
+				$nbsp = '&nbsp;';
+				$thousands_separator = '&nbsp;';
+			default:
+				$nbsp = ' ';
+				$thousands_separator = ' ';
+				break;
+		}
+		// render
+		$result = $value;
+		$_nbsp && $result .= $nbsp;
+		$_sign && $result .= $sign;
+		return( $result );
+	}
+
 	// simple route: class__sub_class->method
 	public function _class( $class, $method = null, $options = null ) {
 		$_path  = $this->_class_path;
