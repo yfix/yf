@@ -1,10 +1,14 @@
-<div class="col-md-12 user_view">
+<div class="container-block">
+<div class="user_view">
 <div class="payment">
 <div class="block_user_balance ng-cloak" ng-controller="payment.balance.recharge.ctrl">
 
 <wait active='block_wait'></wait>
 
 {css()}
+	.user_view {
+		padding: 1em 0;
+	}
 	.offset-1 {
 		margin-left: 1em;
 	}
@@ -362,6 +366,7 @@ span + .payment-operation__btn,
 		</table>
 	</div>
 
+</div>
 </div>
 </div>
 </div>
