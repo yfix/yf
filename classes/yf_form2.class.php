@@ -507,7 +507,12 @@ class yf_form2 {
 	/**
 	* Shortcut for starting form row, needed to build row with several inlined inputs
 	*/
-	function row_start($extra = array()) {
+	function row_start($name = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $form) {
 			// auto-close row_end(), if not called implicitely
 			if ($form->_stacked_mode_on) {
@@ -515,6 +520,9 @@ class yf_form2 {
 			}
 			$form->_stacked_mode_on = true;
 			$form->_prepare_inline_error($extra);
+			if (!isset($extra['id']) && $extra['name']) {
+				$extra['id'] = $extra['name'];
+			}
 			$extra['class_add_form_group'] = trim($this->CLASS_STACKED_ROW.' '.$extra['class_add_form_group']);
 			return $form->_row_html('', array('only_row_start' => 1) + (array)$extra);
 		};

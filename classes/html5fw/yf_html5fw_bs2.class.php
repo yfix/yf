@@ -71,6 +71,10 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		$form_group_extra = $extra['form_group'];
 		$form_group_extra['class'] = $class_form_group;
 
+		if ($form->_params['form_group_auto_id'] && !$form_group_extra['id'] && $extra['id']) {
+			$form_group_extra['class'] .= ' form-group-id-'.$extra['id'];
+		}
+
 		$controls_extra = $extra['controls'];
 		$controls_extra['class'] = $class_controls;
 
