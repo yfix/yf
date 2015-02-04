@@ -20,7 +20,7 @@ require_once YF_PATH.'share/functions/yf_aliases.php';
 	'/help/show_tip'         => 'tooltip',
 	'/dynamic/php_func'      => 'php_func',
 	'/dynamic/image'         => 'dynamic_image',
-	'/dynamic/captcha_image' => 'captcha_image',
+#	'/dynamic/captcha_image' => 'captcha_image',
 	'/forum/low'             => 'forum_low',
 	'/search/autocomplete'   => 'search_autocomplete',
 	'/category/rss_for_cat'  => 'rss_export',
