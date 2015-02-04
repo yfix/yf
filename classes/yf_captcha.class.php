@@ -238,7 +238,6 @@ class yf_captcha {
 					$code_incorrect = true;
 				}
 			} else {
-var_dump(func_get_args(), $_SESSION, $_POST);
 				if ($hash != $_SESSION[$this->var_name]) {
 					$code_incorrect = true;
 				}
@@ -252,7 +251,7 @@ var_dump(func_get_args(), $_SESSION, $_POST);
 		if ($this->use_cookies) {
 			setcookie($this->var_name, '', time());
 		} else {
-#			unset($_SESSION[$this->var_name]);
+			unset($_SESSION[$this->var_name]);
 		}
 		return $VALID_CODE;
 	}
@@ -321,6 +320,7 @@ var_dump(func_get_args(), $_SESSION, $_POST);
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet', true);
 		}
 		echo $data;
+		exit;
 	}
 
 	/**
