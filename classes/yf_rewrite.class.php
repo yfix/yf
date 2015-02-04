@@ -120,6 +120,10 @@ class yf_rewrite {
 			$url_str = trim($params);
 			$orig_url_str = $url_str;
 			$params = array();
+			$params['fragment'] = parse_url($url_str, PHP_URL_FRAGMENT);
+			if (strlen($params['fragment'])) {
+				$url_str = str_replace('#'.$params['fragment'], '', $url_str);
+			}
 			if (preg_match('~[a-z0-9_\./]+~ims', $url_str)) {
 				$_other = '';
 				if (strpos($url_str, '?') !== false) {
@@ -218,7 +222,7 @@ class yf_rewrite {
 			$link = $this->REWRITE_PATTERNS['yf']->_get($params);
 		} else {
 			foreach ((array)$params as $k => $v) {
-				if ($k === 'host' || $k === 'port') {
+				if ($k === 'host' || $k === 'port' || $k === 'fragment') {
 					continue;
 				}
 				$arr_out[] = $k.'='.$v;
@@ -230,6 +234,9 @@ class yf_rewrite {
 				$link = ADMIN_WEB_PATH. $u;
 			} else {
 				$link = $this->_correct_protocol((main()->USE_ONLY_HTTPS ? 'https' : 'http').'://'.$params['host']. ($params['port'] && $params['port'] != '80' ? ':'.$params['port'] : ''). '/'.$u);
+			}
+			if ($params['fragment']) {
+				$link .= '#'.$params['fragment'];
 			}
 		}
         if (DEBUG_MODE) {
