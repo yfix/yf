@@ -138,12 +138,14 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			, trim(self::form_no_chain($r)->text('name', array('ng-test-escape' => '!@#$%^&*("\'<>?><:;'))) );
 	}
 	public function test_input_textarea() {
-		$this->assertEquals('<textarea id="name" name="name" placeholder="Name" contenteditable="true" class="ckeditor form-control"></textarea>', trim(self::form_no_chain($r)->textarea('name')) );
-		$this->assertEquals('<textarea id="name" name="name" placeholder="Name" contenteditable="true" class="ckeditor form-control"></textarea>', trim(self::form_no_chain($r)->textarea('name', '')) );
-		$this->assertEquals('<textarea id="name" name="name" placeholder="Desc" contenteditable="true" class="ckeditor form-control"></textarea>'
+		$this->assertEquals('<textarea id="name" name="name" placeholder="Name" contenteditable="true" class="form-control"></textarea>', trim(self::form_no_chain($r)->textarea('name')) );
+		$this->assertEquals('<textarea id="name" name="name" placeholder="Name" contenteditable="true" class="form-control"></textarea>', trim(self::form_no_chain($r)->textarea('name', '')) );
+		$this->assertEquals('<textarea id="name" name="name" placeholder="Desc" contenteditable="true" class="form-control"></textarea>'
 			, trim(self::form_no_chain($r)->textarea('name', '', array('desc' => 'Desc'))) );
-		$this->assertEquals('<textarea id="name" name="name" placeholder="Desc" contenteditable="true" class="ckeditor form-control"></textarea>'
+		$this->assertEquals('<textarea id="name" name="name" placeholder="Desc" contenteditable="true" class="form-control"></textarea>'
 			, trim(self::form_no_chain($r)->textarea('name', array('desc' => 'Desc'))) );
+		$this->assertEquals('<textarea id="name" name="name" placeholder="Desc" contenteditable="true" class="ckeditor form-control"></textarea>'
+			, trim(self::form_no_chain($r)->textarea('name', array('desc' => 'Desc', 'ckeditor' => true))) );
 	}
 	public function test_input_hidden() {
 		$this->assertEquals('<input type="hidden" id="hdn" name="hdn">', trim(self::form_no_chain($r)->hidden('hdn')) );
