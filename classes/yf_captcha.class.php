@@ -238,6 +238,7 @@ class yf_captcha {
 					$code_incorrect = true;
 				}
 			} else {
+var_dump(func_get_args(), $_SESSION, $_POST);
 				if ($hash != $_SESSION[$this->var_name]) {
 					$code_incorrect = true;
 				}
@@ -251,7 +252,7 @@ class yf_captcha {
 		if ($this->use_cookies) {
 			setcookie($this->var_name, '', time());
 		} else {
-			unset($_SESSION[$this->var_name]);
+#			unset($_SESSION[$this->var_name]);
 		}
 		return $VALID_CODE;
 	}
@@ -303,11 +304,23 @@ class yf_captcha {
 		} else {
 			$_SESSION[$this->var_name] = $hash;
 		}
-		// Throw image to the user
-		!$no_header && header('Content-type: image/png');
+		ob_start();
 		imagepng($image);
-		// Cleanup
 		imagedestroy($image);
+		$data = ob_get_clean();
+		// Throw image to the user
+		if (!$no_header) {
+			header_remove('Set-Cookie');
+			header('Content-Type: image/png', true);
+			header('Content-Length: '.strlen($data), true);
+			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT', true); // Date in the past
+			header('Last-Modified: '. gmdate('D, d M Y H:i:s'). ' GMT', true); // always modified
+			header('Cache-Control: no-store, no-cache, must-revalidate', true); // HTTP/1.1
+			header('Cache-Control: post-check=0, pre-check=0', false); // HTTP/1.1
+			header('Pragma: no-cache', true); // HTTP/1.0
+			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet', true);
+		}
+		echo $data;
 	}
 
 	/**
