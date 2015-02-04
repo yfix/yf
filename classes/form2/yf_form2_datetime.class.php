@@ -18,7 +18,7 @@ class yf_form2_datetime {
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
 		$extra['desc'] = $form->_prepare_desc($extra, $desc);
-		$extra['limit_date_format'] = $extra['limit_date_format'] ? $extra['limit_date_format'] : 'm-d-Y H:i';
+		$extra['limit_date_format'] = $extra['limit_date_format'] ? $extra['limit_date_format'] : 'm/d/Y H:i';
 
 		$format = $format_php = $placeholder = array();
 		$extra['no_time'] = $extra['with_time'] ? !$extra['with_time'] : $extra['no_time'];
