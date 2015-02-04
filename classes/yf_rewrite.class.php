@@ -61,7 +61,7 @@ class yf_rewrite {
 				if (MAIN_TYPE_ADMIN && in_array($arr['task'], array('login','logout'))) {
 					continue;
 				}
-				$replace = $this->_force_get_url($arr);
+				$replace = $this->_force_get_url($arr). (strlen($url['fragment']) ? '#'.$url['fragment'] : '');
 				$r_array[$v] = $replace;
 			}
 			// Fix for bug with similar shorter links, sort by length DESC
