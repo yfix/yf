@@ -1078,8 +1078,9 @@ class yf_payment_api {
 				break;
 		}
 		// format number
-		is_string( $_thousands_separator ) && $thousands_separator = $_thousands_separator;
+		isset(     $_decimals            ) && $decimals            = $_decimals;
 		is_string( $_decimal_point       ) && $decimal_point       = $_decimal_point;
+		is_string( $_thousands_separator ) && $thousands_separator = $_thousands_separator;
 		$value  = $this->_number_round( $_value, $decimals );
 		$value = $this->_number_format( $value, $decimals, $decimal_point, $thousands_separator );
 		// decoration
