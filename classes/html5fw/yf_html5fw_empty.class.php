@@ -41,8 +41,7 @@ class yf_html5fw_empty {
 			return $row_start
 					.$before_content_html. $content. PHP_EOL. $after_content_html
 					.$edit_link_html. $link_name_html. $inline_help_html. $inline_tip_html
-					.(isset($extra['ckeditor']) ? $this->_ckeditor_html($extra, $replace) : '')
-					.(isset($extra['tinymce']) ? $this->_tinymce_html($extra, $replace) : '')
+					.$this->_add_rich_editor($extra, $replace, $form)
 				.$row_end;
 		}
 	}
@@ -52,5 +51,21 @@ class yf_html5fw_empty {
 	function form_dd_row($content, $extra = array(), $replace = array(), $form) {
 // TODO
 		return $this->form_row($content, $extra, $replace, $form);
+	}
+
+	/**
+	*/
+	function _add_rich_editor($extra = array(), $replace = array(), $form) {
+		$out = array();
+		if (isset($extra['ace_editor']) && $extra['ace_editor']) {
+			$out[] = $form->_ace_editor_html($extra, $replace);
+		}
+		if (isset($extra['ckeditor']) && $extra['ckeditor']) {
+			$out[] = $form->_ckeditor_html($extra, $replace);
+		}
+		if (isset($extra['tinymce']) && $extra['tinymce']) {
+			$out[] = $form->_tinymce_html($extra, $replace);
+		}
+		return implode(PHP_EOL, $out);
 	}
 }

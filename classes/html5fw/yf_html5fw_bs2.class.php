@@ -125,9 +125,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 			return $row_start
 					.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
 					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
-					.(isset($extra['ace_editor']) ? $form->_ace_editor_html($extra, $replace) : '')
-					.(isset($extra['ckeditor']) ? $form->_ckeditor_html($extra, $replace) : '')
-					.(isset($extra['tinymce']) ? $form->_tinymce_html($extra, $replace) : '')
+					.$this->_add_rich_editor($extra, $replace, $form)
 				.$row_end;
 		}
 	}
@@ -173,9 +171,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 			return $row_start
 					.$before_content_html. $inline_help_before. $content. PHP_EOL
 					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after. $after_content_html
-					.(isset($extra['ace_editor']) ? $form->_ace_editor_html($extra, $replace) : '')
-					.(isset($extra['ckeditor']) ? $form->_ckeditor_html($extra, $replace) : '')
-					.(isset($extra['tinymce']) ? $form->_tinymce_html($extra, $replace) : '')
+					.$this->_add_rich_editor($extra, $replace, $form)
 				.$row_end;
 		}
 	}

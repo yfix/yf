@@ -854,7 +854,8 @@ class yf_form2 {
 			$extra['value'] = $form->_prepare_value($extra, $r, $form->_params);
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
 			$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
-			$extra['class'] = $form->CLASS_CKEDITOR.' '.$form->CLASS_FORM_CONTROL. $form->_prepare_css_class('', $r[$extra['name']], $extra);
+			$use_ckeditor = isset($extra['ckeditor']) ? $extra['ckeditor'] : false;
+			$extra['class'] = ($use_ckeditor ? $form->CLASS_CKEDITOR.' ' : ''). $form->CLASS_FORM_CONTROL. $form->_prepare_css_class('', $r[$extra['name']], $extra);
 			if ($form->_params['no_label']) {
 				$extra['desc'] = '';
 			}
