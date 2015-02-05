@@ -1198,6 +1198,7 @@ class yf_html {
 
 		$js_options = (array)$extra['js_options'] + array(
 			// put default js options here
+			'disable_search_threshold' => 10,
 		);
 		jquery('$("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options).');');
 
