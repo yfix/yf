@@ -610,7 +610,8 @@ class yf_payment_api {
 			}
 		}
 		// options
-		$_             = &$options;
+		$_           = &$options;
+		$all         = $_[ 'all'         ];
 		$exists      = $_[ 'exists'      ];
 		$provider_id = $_[ 'provider_id' ];
 		$name        = $_[ 'name'        ];
@@ -618,6 +619,10 @@ class yf_payment_api {
 		// test: exists by provider_id
 		if( !empty( $exists ) ) {
 			$result = !empty( $provider[ $exists ] );
+		}
+		// all
+		elseif( !empty( $all ) ) {
+			$result = $provider;
 		}
 		// by provider_id
 		elseif( !empty( $provider_id ) ) {
@@ -738,8 +743,9 @@ class yf_payment_api {
 		list( $status, $data, $operation_data ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		// update payment operation
-		$provider_title = $operation_data[ 'provider' ][ 'title' ];
-		$title = $_[ 'operation_title' ] . ' (' . $provider_title . ')';
+		// $provider_title = $operation_data[ 'provider' ][ 'title' ];
+		// $title = $_[ 'operation_title' ] . ' (' . $provider_title . ')';
+		$title = $_[ 'operation_title' ];
 		$data += array(
 			'direction' => 'in',
 			'title'     => $title,
@@ -789,8 +795,9 @@ class yf_payment_api {
 		list( $status, $data, $operation_data ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		// update payment operation
-		$provider_title = $operation_data[ 'provider' ][ 'title' ];
-		$title = $_[ 'operation_title' ] . ' (' . $provider_title . ')';
+		// $provider_title = $operation_data[ 'provider' ][ 'title' ];
+		// $title = $_[ 'operation_title' ] . ' (' . $provider_title . ')';
+		$title = $_[ 'operation_title' ];
 		$data += array(
 			'direction' => 'out',
 			'title'     => $title,
