@@ -1213,8 +1213,11 @@ class yf_html {
 		asset('chosen');
 
 		$js_options = (array)$extra['js_options'] + array(
+			'disable_search_threshold'	=> 10,
+			'no_results_text'			=> t('No results match'),
+			'placeholder_text_multiple' => t('Select Some Options'),
+			'placeholder_text_single'	=> t('Select an Option'),
 			// put default js options here
-			'disable_search_threshold' => 10,
 		);
 		jquery('$("#'.addslashes($extra['force_id']).'").chosen('.json_encode($js_options).');');
 
