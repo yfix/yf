@@ -13,6 +13,8 @@ class yf_html {
 	public $AUTO_ASSIGN_IDS = true;
 	/** @var bool */
 	public $BOXES_USE_STPL	= false;
+	/** @var strinh */
+	public $SELECT_BOX_DEF_OPT_TPL = '- {t(Select)} %name% -';
 
 	/**
 	* Catch missing method call
@@ -707,7 +709,11 @@ class yf_html {
 		}
 		$selected = strval($selected);
 		if ($show_text && $level == 0) {
-			$body[] = '<option value="" class="opt-default">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>';
+			$def_opt_text = $show_text;
+			if ($show_text == 1) {
+				$def_opt_text = str_replace('%name%', t($name), $this->SELECT_BOX_DEF_OPT_TPL);
+			}
+			$body[] = '<option value="" class="opt-default">'. $def_opt_text. '</option>';
 		}
 		$self_func = __FUNCTION__;
 		$option_callback = $extra['option_callback'];
@@ -728,7 +734,7 @@ class yf_html {
 				}
 			}
 		}
-		$body[] = $level == 0 ? '</select>'.PHP_EOL : '';
+		$body[] = $level == 0 ? '</select>' : '';
 		return implode(PHP_EOL, $body);
 	}
 
@@ -762,6 +768,7 @@ class yf_html {
 		if (!is_array($selected)) {
 			$selected = strval($selected);
 		}
+		$body = array();
 		if ($level == 0) {
 			$extra['force_id'] && $id = $extra['force_id'];
 			$id = $id ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
@@ -770,17 +777,21 @@ class yf_html {
 			}
 			$extra['multiple'] = 'multiple';
 			$extra['name'] = $name ? $name.'[]' : '';
-			$body = PHP_EOL.'<select'._attrs($extra, array('name','id','class','style','multiple','disabled','required')). ($add_str ? ' '.trim($add_str) : '').'>'.PHP_EOL;
+			$body[] = '<select'._attrs($extra, array('name','id','class','style','multiple','disabled','required')). ($add_str ? ' '.trim($add_str) : '').'>';
 		}
 		if ($show_text && $level == 0) {
-			$body .= '<option value="" class="opt-default">'.($show_text == 1 ? '-'.t('select').' '.t($name).'-' : $show_text).'</option>'.PHP_EOL;
+			$def_opt_text = $show_text;
+			if ($show_text == 1) {
+				$def_opt_text = str_replace('%name%', t($name), $this->SELECT_BOX_DEF_OPT_TPL);
+			}
+			$body[] = '<option value="" class="opt-default">'. $def_opt_text. '</option>';
 		}
 		$self_func = __FUNCTION__;
 		foreach ((array)$values as $key => $value) {
 			if (is_array($value)) {
-				$body .= '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">'.PHP_EOL;
-				$body .= $this->$self_func($name, $value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
-				$body .= '</optgroup>'.PHP_EOL;
+				$body[] = '<optgroup label="'.$key.'" title="'.($translate ? t($key) : $key).'">';
+				$body[] = $this->$self_func($name, $value, $selected, $show_text, $type, $add_str, $translate, $level + 1);
+				$body[] = '</optgroup>';
 			} else {
 				// Selected value could be an array
 				if (is_array($selected)) {
@@ -795,11 +806,11 @@ class yf_html {
 				} else {
 					$sel_text = '';
 				}
-				$body .= '<option value="'.$key.'"'.($sel_text ? ' '.$sel_text : '').'>'.($translate ? t($value) : $value).'</option>'.PHP_EOL;
+				$body[] = '<option value="'.$key.'"'.($sel_text ? ' '.$sel_text : '').'>'.($translate ? t($value) : $value).'</option>';
 			}
 		}
-		$body .= $level == 0 ? '</select>'.PHP_EOL : '';
-		return $body;
+		$body[] = $level == 0 ? '</select>' : '';
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -1047,18 +1058,21 @@ class yf_html {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
 			$is_selected = $_what_compare == $selected;
 			$val = ($translate ? t($cur_value) : $cur_value);
-			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'"'.($is_selected ? ' data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'"'.($is_selected ? ' data-selected="selected"' : '').'>'.$val.'</a></li>';
 			if ($is_selected) {
 				$selected_val = $val;
 			}
 		}
-		$body .= '<li class="dropdown" style="list-style-type:none;" id="'.$extra['id'].'">';
-		$body .= '<a class="dropdown-toggle" data-toggle="dropdown">'.($selected_val ?: $desc).'&nbsp;<span class="caret"></span></a>';
-		$body .= '<ul class="dropdown-menu">';
-		$body .= implode(PHP_EOL, $items);
-		$body .= '</ul>';
-		$body .= '</li>';
-		return $body;
+		$body = array();
+		$body[] = '<li class="dropdown" style="list-style-type:none;" id="'.$extra['id'].'">';
+		$body[] = '<a class="dropdown-toggle" data-toggle="dropdown">'.($selected_val ?: $desc).'&nbsp;<span class="caret"></span></a>';
+		$body[] = '<ul class="dropdown-menu">';
+		foreach ($items as $v) {
+			$body[] = $v;
+		}
+		$body[] = '</ul>';
+		$body[] = '</li>';
+		return implode(PHP_EOL, $body);
 	}
 
 	/**
@@ -1087,7 +1101,7 @@ class yf_html {
 			$_what_compare = strval($type == 1 ? $cur_value : $key);
 			$is_selected = $_what_compare == $selected;
 			$val = $translate ? t($cur_value) : $cur_value;
-			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'"'.($is_selected ? ' data-selected="selected"' : '').'>'.$val.'</a></li>'.PHP_EOL;
+			$items[] = '<li class="dropdown'.($is_selected ? ' active' : '').'"><a data-value="'.$key.'"'.($is_selected ? ' data-selected="selected"' : '').'>'.$val.'</a></li>';
 			if ($is_selected) {
 				$selected_val = $val;
 			}
@@ -1099,13 +1113,15 @@ class yf_html {
 		$body = array();
 		$body[] = '<div class="btn-group" id="'.$extra['id'].'">';
 		if ($extra['button_split']) {
-			$body[] = '<button class="btn">'.$text.'</button>'.PHP_EOL;
+			$body[] = '<button class="btn">'.$text.'</button>';
 			$body[] = '<button class="'.$class.'" data-toggle="dropdown"><span class="caret"></span></button>';
 		} else {
 			$body[] = '<button class="'.$class.'" data-toggle="dropdown">'.$text.'&nbsp;<span class="caret"></span></button>';
 		}
 		$body[] = '<ul class="dropdown-menu">';
-		$body[] = implode(PHP_EOL, $items);
+		foreach ($items as $v) {
+			$body[] = $v;
+		}
 		$body[] = '</ul>';
 		$body[] = '</div>';
 		return implode(PHP_EOL, $body);
@@ -1180,7 +1196,7 @@ class yf_html {
 		jquery('$("#'.addslashes($extra['force_id']).'").select2('.json_encode($js_options).');');
 
 		$func = $extra['multiple'] ? 'multi_select' : 'select_box';
-		$extra[ 'class' ] .= 'no-chosen';
+		$extra['class'] .= 'no-chosen';
 		return $this->$func($extra, $values, $selected);
 	}
 
@@ -1249,7 +1265,7 @@ class yf_html {
 		js('jquery-ui');
 		css('jquery-ui');
 
-		jquery('$( ".datepicker" ).datepicker({ dateFormat: "yy-mm-dd" });');
+		jquery('$(".datepicker").datepicker({ dateFormat: "yy-mm-dd" });');
 		css('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery.ui.datepicker.min.css');
 
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
