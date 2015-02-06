@@ -14,7 +14,7 @@ class yf_html {
 	/** @var bool */
 	public $BOXES_USE_STPL	= false;
 	/** @var strinh */
-	public $SELECT_BOX_DEF_OPT_TPL = '- {t(Select)} %name% -';
+	public $SELECT_BOX_DEF_OPT_TPL = '- %select% %name% -';
 
 	/**
 	* Catch missing method call
@@ -711,7 +711,7 @@ class yf_html {
 		if ($show_text && $level == 0) {
 			$def_opt_text = $show_text;
 			if ($show_text == 1) {
-				$def_opt_text = str_replace('%name%', t($name), $this->SELECT_BOX_DEF_OPT_TPL);
+				$def_opt_text = str_replace(array('%name%','%select%'), array(t($name), t('Select')), $this->SELECT_BOX_DEF_OPT_TPL);
 			}
 			$body[] = '<option value="" class="opt-default">'. $def_opt_text. '</option>';
 		}
@@ -782,7 +782,7 @@ class yf_html {
 		if ($show_text && $level == 0) {
 			$def_opt_text = $show_text;
 			if ($show_text == 1) {
-				$def_opt_text = str_replace('%name%', t($name), $this->SELECT_BOX_DEF_OPT_TPL);
+				$def_opt_text = str_replace(array('%name%','%select%'), array(t($name), t('Select')), $this->SELECT_BOX_DEF_OPT_TPL);
 			}
 			$body[] = '<option value="" class="opt-default">'. $def_opt_text. '</option>';
 		}
