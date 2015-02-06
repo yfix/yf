@@ -84,7 +84,7 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 		));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
 			'<select name="myselect3" id="select_box_6" class="myclass form-control" style="color:red;" disabled="disabled" data-unittest="testval" onclick="alert(\'Hello\')">'.
-			'<option value="" class="opt-default">-select myselect3-</option><option value="1">red</option><option value="2" selected="selected">green</option></select>'
+			'<option value="" class="opt-default">- Select myselect3 -</option><option value="1">red</option><option value="2" selected="selected">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($html))
 		);
 		$html = html()->select_box(array(
@@ -100,7 +100,7 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 		));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
 			'<select name="myselect3" id="select_box_7" class="myclass form-control" style="color:red;" disabled="disabled" data-unittest="testval" onclick="alert(\'Hello\')">'.
-			'<option value="" class="opt-default">-select myselect3-</option><optgroup label="sub1" title="sub1"><option value="1">red</option><option value="2" selected="selected">green</option></optgroup></select>'
+			'<option value="" class="opt-default">- Select myselect3 -</option><optgroup label="sub1" title="sub1"><option value="1">red</option><option value="2" selected="selected">green</option></optgroup></select>'
 			), str_replace(PHP_EOL, '', trim($html))
 		);
 		$html = html()->select_box(array(
@@ -196,7 +196,7 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 		));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
 			'<select name="myselect3[]" id="multi_select_8" class="myclass form-control" style="color:red;" multiple="multiple" disabled="disabled" data-unittest="testval" onclick="alert(\'Hello\')">'.
-			'<option value="" class="opt-default">-select myselect3-</option><optgroup label="sub1" title="sub1"><option value="1">red</option><option value="2" selected="selected">green</option></optgroup></select>'
+			'<option value="" class="opt-default">- Select myselect3 -</option><optgroup label="sub1" title="sub1"><option value="1">red</option><option value="2" selected="selected">green</option></optgroup></select>'
 			), str_replace(PHP_EOL, '', trim($html))
 		);
 		$html = html()->multi_select(array(
