@@ -290,6 +290,22 @@ class yf_form2 {
 		$tabs_name = '';
 		$tabs_container = '';
 
+		// Create tree of row_start and its children
+		$item_row = array();
+		$row_items = array();
+		$row = false;
+		foreach ((array)$this->_body as $k => $v) {
+			if ($v['name'] == 'row_start') {
+				$row = $k;
+			} elseif ($v['name'] == 'row_end') {
+				$row = false;
+			} elseif ($row) {
+				$item_row[$k] = $row;
+				$row_items[$row][$k] = $v['extra']['id'] ?: $v['extra']['name'];
+			}
+		}
+		$all_errors = common()->_get_error_messages();
+
 		foreach ((array)$this->_body as $k => $v) {
 			if (!is_array($v)) {
 				continue;
@@ -297,6 +313,15 @@ class yf_form2 {
 			$_extra = (array)$v['extra'] + (array)$extra_override[$v['extra']['name']];
 			$_replace = (array)$r + (array)$v['replace'];
 			$func = $v['func'];
+			if ($v['name'] == 'row_start') {
+				// Mark row as containing errors, if children elements has at least one error
+				foreach ((array)$row_items[$k] as $_k => $_id) {
+					if (!$_id || !isset($all_errors[$_id])) {
+						continue;
+					}
+					$_extra['errors'][$v['extra']['name']] = $all_errors[$_id];
+				}
+			}
 			if ($this->_stacked_mode_on) {
 				$_extra['stacked'] = true;
 			}
@@ -519,7 +544,7 @@ class yf_form2 {
 				$form->row_end();
 			}
 			$form->_stacked_mode_on = true;
-			$form->_prepare_inline_error($extra);
+#			$form->_prepare_inline_error($extra);
 			if (!isset($extra['id']) && $extra['name']) {
 				$extra['id'] = $extra['name'];
 			}
