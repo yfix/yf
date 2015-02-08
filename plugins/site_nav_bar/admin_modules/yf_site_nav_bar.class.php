@@ -5,6 +5,8 @@ class yf_site_nav_bar {
 
 	/** @var string */
 	public $HOOK_NAME = '_nav_bar_items';
+	/** @var bool */
+	public $AUTO_TRANSLATE = true;
 
 	// Display navigation bar
 	function _show () {
@@ -49,6 +51,9 @@ class yf_site_nav_bar {
 
 	// Display navigation bar item
 	function _nav_item ($name = '', $nav_link = '', $nav_icon = '') {
+		if ($this->AUTO_TRANSLATE) {
+			$name = t($name);
+		}
 		$replace = array(
 			'name'			=> _prepare_html($name),
 			'link'			=> $nav_link,
