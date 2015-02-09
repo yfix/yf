@@ -220,7 +220,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$_       = &$options;
 		$api     = $this->api;
 		$allow   = &$this->currency_allow;
-		$default = $this->default;
+		$default = $this->currency_default;
 		// chech: allow currency_id
 		$id     = $_[ 'currency_id' ];
 		$result = $default;

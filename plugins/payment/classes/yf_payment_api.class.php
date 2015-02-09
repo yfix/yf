@@ -280,14 +280,14 @@ class yf_payment_api {
 	}
 
 	public function currency_rate__buy( $options = null ) {
-		$_ = &$options; $_ = (array)$_;
+		$_ = (array)$options;
 		$_[ 'currency_rate_type' ] = 'buy';
 		$result = $this->currency_rate( $_ );
 		return( $result );
 	}
 
 	public function currency_rate__sell( $options = null ) {
-		$_ = &$options; $_ = (array)$_;
+		$_ = (array)$options;
 		$_[ 'currency_rate_type' ] = 'sell';
 		$result = $this->currency_rate( $_ );
 		return( $result );
@@ -564,7 +564,7 @@ class yf_payment_api {
 
 	public function get_status( $options = null ) {
 		$_ = &$options;
-		$payment_status = $this->status( $_ );
+		$payment_status = $this->status( $options );
 		if( empty( $payment_status ) ) {
 			$name = $_[ 'exists' ] ?: $_[ 'status_id' ] ?: $_[ 'name' ];
 			$result = array(
@@ -735,11 +735,16 @@ class yf_payment_api {
 		$result = $this->deposition( $options );
 		return( $result );
 	}
+	public function deposition_user( $options = null ) {
+		$options[ 'user_mode' ] = true;
+		$result = $this->deposition( $options );
+		return( $result );
+	}
 	public function deposition( $options = null ) {
 		$_ = &$options;
 		$_[ 'type_name' ] = __FUNCTION__;
 		$_[ 'operation_title' ] = $_[ 'operation_title' ] ?: 'Пополнение счета';
-		$result = $this->_operation_check( $_ );
+		$result = $this->_operation_check( $options );
 		list( $status, $data, $operation_data ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		// update payment operation
@@ -791,7 +796,7 @@ class yf_payment_api {
 		$_ = &$options;
 		$_[ 'type_name' ] = __FUNCTION__;
 		$_[ 'operation_title' ] = $_[ 'operation_title' ] ?: 'Оплата';
-		$result = $this->_operation_check( $_ );
+		$result = $this->_operation_check( $options );
 		list( $status, $data, $operation_data ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		// update payment operation
@@ -922,6 +927,13 @@ class yf_payment_api {
 			return( $result );
 		}
 		$provider = reset( $object );
+		if( $_[ 'user_mode' ] && (bool)$provider[ 'system' ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестный провайдер',
+			);
+			return( $result );
+		}
 		$provider_id = (int)$provider[ 'provider_id' ];
 		$data[ 'provider' ] = $provider;
 		// prepare result

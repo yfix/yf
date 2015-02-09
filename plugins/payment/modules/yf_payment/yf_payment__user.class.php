@@ -13,13 +13,18 @@ class yf_payment__user {
 		list( $operation, $count ) = $payment_api->operation( $account );
 		$page_per = $payment_api->OPERATION_LIMIT;
 		$pages    = ceil( $count / $page_per );
-		$provider = $payment_api->provider();
+		// provider
 		$providers = $payment_api->provider( array(
 			'all' => true,
 		));
-		$payment_api->provider_options( $provider, array(
+		$payment_api->provider_options( $providers, array(
 			'fee', 'currency_allow',
 		));
+		$provider = array();
+		foreach( $providers as &$item ) {
+			!(bool)$item[ 'system' ] && $provider[] = $item;
+		}
+		// misc
 		$status        = $payment_api->status();
 		$currencies    = $payment_api->currencies;
 		$currency_rate = $payment_api->currency_rate__buy();
