@@ -2,7 +2,8 @@
 
 class yf_payment_api__provider {
 
-	public $ENABLE = null;
+	public $ENABLE    = null;
+	public $TEST_MODE = null;
 
 	public $payment_api = null;
 
