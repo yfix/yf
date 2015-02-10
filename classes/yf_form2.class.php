@@ -1413,6 +1413,66 @@ class yf_form2 {
 	}
 
 	/**
+	* Helper to display one or more buttons in one row without need to do work with row_start, etc..
+	*/
+	function buttons($names = array(), $extra = array(), $replace = array()) {
+		if (!is_array($names)) {
+			$names = array($names);
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['names'] = $extra['names'] ?: $names;
+		$func = function($extra, $r, $form) {
+#			$form->_prepare_inline_error($extra);
+			foreach ((array)$extra['names'] as $name) {
+				if (is_array($name)) {
+					$name = $extra['name'];
+					$_extra = $name;
+				} else {
+					$_extra = array();
+				}
+				$_extra = (array)$_extra + (array)$extra;
+				$_extra['value'] = isset($_extra['value']) ? $_extra['value'] : (ucfirst($name) ?: 'Submit');
+				$_extra['id'] = $_extra['id'] ?: ($_extra['name'] ?: strtolower($extra['value']));
+// TODO: use button()
+// TODO: complete this
+// TODO: tests
+/*
+				$extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
+				if (preg_match('~^[a-z0-9_-]+$~ims', $extra['link_url'])) {
+					$extra['link_url'] = '';
+				}
+				$extra['link_name'] = $extra['link_name'] ?: '';
+				$extra['class'] = $extra['class'] ?: $form->CLASS_BTN_SUBMIT. $form->_prepare_css_class('', $r[$extra['name']], $extra);
+				$extra['value'] = t($extra['value']);
+				$extra['type'] = 'submit';
+				$button_text = $extra[ 'desc' ];
+				$extra['desc'] = '';
+				$extra['buttons_controls'] = true;
+
+				$attrs_names = array('type','name','id','class','style','value','disabled','target');
+				if (!$extra['as_input']) {
+					$icon = ($extra['icon'] ? '<i class="'.$extra['icon'].'"></i> ' : '');
+					$value = (!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']);
+					$button_text = $icon . ( $button_text ?: $value );
+					return $form->_row_html('<button'._attrs($extra, $attrs_names).'>'.$button_text.'</button>', $extra, $r);
+				} else {
+					return $form->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
+				}
+*/
+			}
+			$divider = isset($extra['divider']) ? $extra['divider'] : PHP_EOL;
+			return implode($divider, $out);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func((array)$extra + (array)$this->_extra, (array)$replace + (array)$this->_replace, $this);
+	}
+
+	/**
 	*/
 	function submit($name = '', $value = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
