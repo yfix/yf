@@ -36,11 +36,9 @@ class yf_static_pages {
 	/**
 	*/
 	function show() {
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-
 		$sql = 'SELECT * FROM '.db('static_pages');
 		return table($sql, array(
-				'filter' => $_SESSION[$filter_name],
+				'filter' => true,
 				'filter_params' => array(
 					'name'	=> 'like',
 				),
@@ -203,18 +201,13 @@ class yf_static_pages {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> url('/@object/filter_save/'.$filter_name),
-			'clear_url'		=> url('/@object/filter_save/'.$filter_name.'/clear'),
-		);
 		$order_fields = array(
 			'name'		=> 'name',
 			'active'	=> 'active',
 		);
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
 				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->text('name')
 			->select_box('order_by', $order_fields, array('show_text' => 1))
