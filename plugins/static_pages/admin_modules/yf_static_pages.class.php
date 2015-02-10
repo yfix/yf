@@ -44,7 +44,7 @@ class yf_static_pages {
 				),
 			))
 			->text('name')
-			->btn_edit()
+			->btn_edit(array('no_ajax' => 1))
 			->btn_delete()
 			->btn('View', './?object='.$_GET['object'].'&action=view&id=%d')
 			->btn_active()
