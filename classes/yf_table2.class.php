@@ -137,6 +137,10 @@ class yf_table2 {
 			_class('table2_postload', 'classes/table2/')->postload($params['postload_params'], $this);
 			$params['table_attr'] = trim($params['table_attr'].' data-postload-url="'._prepare_html($params['data-postload-url']).'"');
 		}
+		if (isset($params['filter']) && !is_array($params['filter']) && is_numeric($params['filter']) || is_bool($params['filter']) && !empty($params['filter'])) {
+			$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
+			$params['filter'] = $_SESSION[$filter_name];
+		}
 
 		$on_before_render = isset($params['on_before_render']) ? $params['on_before_render'] : $this->_on['on_before_render'];
 		if (is_callable($on_before_render)) {
