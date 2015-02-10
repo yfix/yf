@@ -336,7 +336,7 @@ class yf_rewrite {
 	/**
 	*/
 	function _url ($params = array(), $host = '', $url_str = '') {
-		return $this->_force_get_url($params, $host, $url_str);
+		return $this->_force_get_url($params, $host, $url_str, true, $for_section = MAIN_TYPE);
 	}
 
 	/**
