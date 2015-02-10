@@ -36,6 +36,9 @@ class yf_static_pages {
 	/**
 	*/
 	function show() {
+
+return $this->_hook_widget__static_pages_list();
+
 		$sql = 'SELECT * FROM '.db('static_pages');
 		return table($sql, array(
 				'filter' => true,
@@ -229,16 +232,17 @@ class yf_static_pages {
 		if ($params['describe_self']) {
 			return $meta;
 		}
+		$sql = db()->from('static_pages');
+
 		$config = $params;
 		$avail_orders = $meta['configurable']['order_by'];
 		if (isset($avail_orders[$config['order_by']])) {
-			$order_by_sql = ' ORDER BY '.db()->es($avail_orders[$config['order_by']].'');
+			$sql->order_by($avail_orders[$config['order_by']]);
 		}
 		$avail_limits = $meta['configurable']['limit'];
 		if (isset($avail_limits[$config['limit']])) {
-			$limit_records = (int)$avail_limits[$config['limit']];
+			$sql->limit($avail_limits[$config['limit']]);
 		}
-		$sql = 'SELECT * FROM '.db('static_pages'). $order_by_sql;
 		return table($sql, array('no_header' => 1, 'btn_no_text' => 1))
 			->link('name', './?object='.$_GET['object'].'&action=view&id=%d', '', array('width' => '100%'))
 			->btn_edit()
