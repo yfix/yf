@@ -89,6 +89,12 @@ class yf_form2 {
 			$db = is_object($params['db']) ? $params['db'] : db();
 			$replace = $db->get_2d($sql);
 		}
+		if (isset($params['filter']) && !is_array($params['filter']) && is_numeric($params['filter']) || is_bool($params['filter']) && !empty($params['filter'])) {
+			$filter_name = $params['filter_name'] ?: $_GET['object'].'__'.$_GET['action'];
+			$params['selected'] = $_SESSION[$filter_name];
+			$replace['form_action'] = $replace['form_action'] ?: url('/@object/filter_save/'.$filter_name);
+			$replace['clear_url'] = $replace['clear_url'] ?: url('/@object/filter_save/'.$filter_name.'/clear');
+		}
 		if (!$params['no_chained_mode']) {
 			$this->_chained_mode = true;
 		}
