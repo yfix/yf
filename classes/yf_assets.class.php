@@ -1,15 +1,13 @@
 <?php
 
-// TODO: cache fill from console, with ability to put into cron task
 // TODO: requirejs integration, auto-generate its config with switcher on/off
+// TODO: cache fill from console, with ability to put into cron task
 // TODO: support for multiple media servers
-// TODO: decide with virtual formats like sass, less, coffeescript
 // TODO: Fallback to local: window.Foundation || document.write('<script src="/js/vendor/foundation.min.js"><\/script>')
 // TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
-// TODO: locking atomic to prevent doing same job in several threads
 // TODO: move to web accessible folder only after completion to ensure atomicity
 // TODO: decide with images: jpeg, png, gif, sprites
-// TODO: comparing versions and return best match. Try to use service "php_semver" for this
+// TODO: compare versions with require_php_lib('php_semver')
 // TODO: upload to S3, FTP
 
 class yf_assets {
@@ -423,6 +421,7 @@ class yf_assets {
 			return current(array_slice($avail_versions, -1, 1, true));
 		}
 // TODO: comparing versions and return best match
+#		require_php_lib('php_semver')
 		return $version;
 	}
 
