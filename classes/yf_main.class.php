@@ -1651,6 +1651,9 @@ class yf_main {
 		if ($this->USER_INFO_DYNAMIC) {
 			module_conf('user_data', 'MODE', 'DYNAMIC');
 		}
+		if (!conf('css_framework')) {
+			conf('css_framework', 'bs2');
+		}
 	}
 
 	/**
