@@ -983,6 +983,13 @@ abstract class yf_db_query_builder_driver {
 	}
 
 	/**
+	* Alias
+	*/
+	public function or_where() {
+		return $this->_process_where(func_get_args(), 'where_or');
+	}
+
+	/**
 	* Examples:
 	*	whereid(1)
 	*	whereid(1, 'id')
