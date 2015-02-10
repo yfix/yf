@@ -36,9 +36,6 @@ class yf_static_pages {
 	/**
 	*/
 	function show() {
-
-return $this->_hook_widget__static_pages_list();
-
 		$sql = 'SELECT * FROM '.db('static_pages');
 		return table($sql, array(
 				'filter' => true,
