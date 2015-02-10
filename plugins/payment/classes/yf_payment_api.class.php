@@ -1004,9 +1004,13 @@ class yf_payment_api {
 			$count = $db->order_by()->limit( null )->count( '*', $is_sql );
 		}
 		if( is_array( $result ) ) {
-			foreach( $result as $index => $item ) {
-				$_options = &$result[ $index ][ 'options' ];
+			$datetime_key = array( 'start', 'finish', 'update', );
+			foreach( $result as $index => &$item ) {
+				$_options = &$item[ 'options' ];
 				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
+				foreach( $datetime_key as $key ) {
+					$item[ '_ts_' . $key ] = strtotime( $item[ 'datetime_' . $key ] );
+				}
 			}
 		}
 		return( array( $result, $count ) );
