@@ -434,7 +434,7 @@ class yf_tpl_driver_yf {
 		// Asset bundle inclusion. Examples: {asset()} angular-full {/asset}
 		$string = preg_replace_callback('/\{(?P<func>css|require_css|js|require_js|asset|jquery|angularjs|backbonejs|reactjs|emberjs|sass|less|jade|coffee)\(\s*["\']{0,1}(?P<args>[^"\'\)\}]*?)["\']{0,1}\s*\)\}\s*(?P<content>.+?)\s*{\/(\1)\}/ims', function($m) use ($_this) {
 			$func = $m['func'];
-			return $func($m['content'], _attrs_string2array($m['args']));
+			return strlen($func) ? $func($m['content'], _attrs_string2array($m['args'])) : false;
 		}, $string);
 
 		return $string;
