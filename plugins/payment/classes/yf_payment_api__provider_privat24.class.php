@@ -61,6 +61,10 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 
 	public $fee = 2; // 2%
 
+	public $service_allow = array(
+		'Приват24',
+	);
+
 	public $url_result = null;
 	public $url_server = null;
 

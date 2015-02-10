@@ -124,7 +124,7 @@ class yf_payment_api {
 		'USD' => array(
 			'currency_id' => 'USD',
 			'name'        => 'Доллар США',
-			'short'       => '$',
+			'short'       => 'доллар',
 			'sign'        => '$',
 			'number'      => 840,
 			'minor_units' => 2,
@@ -438,7 +438,7 @@ class yf_payment_api {
 		$db->where( 'account_type_id', '=', _es( $value ) );
 		$options[ 'account_type_id' ] = $value;
 		// by currency_id
-		$value = (int)$_[ 'currency_id' ] ?: $this->currency_id;
+		$value = $_[ 'currency_id' ] ?: $this->currency_id;
 		empty( $value ) && list( $value ) = $this->get_currency__by_id();
 		if( empty( $value ) ) { return( null ); }
 		$db->where( 'currency_id', '=', _es( $value ) );
@@ -880,7 +880,9 @@ class yf_payment_api {
 		$status_id = (int)$status[ 'status_id' ];
 		$data[ 'status' ] = $status;
 		// check account
-		list( $balance, $account_result ) = $this->get_balance( $options );
+		$_options = $options;
+		unset( $_options[ 'currency_id' ] );
+		list( $balance, $account_result ) = $this->get_balance( $_options );
 		if( empty( $account_result ) ) { return( $account_result ); }
 		list( $account_id, $account ) = $account_result;
 		// check amount

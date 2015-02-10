@@ -18,7 +18,7 @@ class yf_payment__user {
 			'all' => true,
 		));
 		$payment_api->provider_options( $providers, array(
-			'fee', 'currency_allow',
+			'fee', 'currency_allow', 'description',
 		));
 		$provider = array();
 		foreach( $providers as &$item ) {

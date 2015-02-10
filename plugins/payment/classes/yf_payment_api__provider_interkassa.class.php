@@ -13,7 +13,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	public $KEY_PUBLIC       = null;  // Checkout ID, Идентификатор кассы
 	public $KEY_PRIVATE      = null;  // secret key
 	public $KEY_PRIVATE_TEST = null;  // secret key for test
-	public $HASH_METHOD      = 'md5'; // signature hash method
+	public $HASH_METHOD      = 'md5'; // signature hash method: md5, sha256
 
 	public $TEST_MODE   = null;
 
@@ -68,6 +68,42 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 
 	// public $fee = 5; // 5%
 
+	public $service_allow = array(
+		'Visa',
+		'Mastercard',
+		'WebMoney',
+		// 'LiqPay',
+		// 'Privat24',
+		// 'Yandex.Money',
+		// 'Единый кошелек',
+		'PerfectMoney',
+		'Почта России',
+		'Юнистрим',
+		'Салоны связи',
+		'Альфаклик (Альфабанк)',
+		'Anelik',
+		'ЛИДЕР',
+		// 'Qiwi Кошелек',
+		'Украинский банк',
+		'Российский банк',
+		'Терминалы России',
+		'Терминалы Украины',
+		'Тестовая платежная система',
+		'Салоны связи «Альт-телеком»',
+		// 'SWIFT Банковский перевод',
+		'Интернет-банк «Связной Банк»',
+		'Салоны связи «Форвард Мобайл»',
+		'Интернет-банк «PSB-Retail» («Промсвязьбанк»)',
+		'Сбербанк ОнЛ@йн',
+		'Салоны связи «Диксис»',
+		'Салоны связи «Евросеть»',
+		'Салоны связи «Связной»',
+		'OKPay',
+		'Салоны связи «Цифроград»',
+		'Payeer',
+		'Салоны связи «Сотовый мир»',
+	);
+
 	public $url_result = null;
 	public $url_server = null;
 
@@ -102,8 +138,8 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$this->api->hash_method( $this->HASH_METHOD );
 	}
 
-	public function signature( $options ) {
-		$result = $this->api->signature( $options );
+	public function signature( $options, $request = true ) {
+		$result = $this->api->signature( $options, $request );
 		return( $result );
 	}
 
@@ -272,7 +308,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 			);
 			return( $result );
 		}
-		$_signature = $this->signature( $payment );
+		$_signature = $this->signature( $payment, false );
 		if( !( $test_mode && empty( $signature ) ) && $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
@@ -323,7 +359,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 		$_       = &$options;
 		$api     = $this->api;
 		$allow   = &$this->currency_allow;
-		$default = $this->default;
+		$default = $this->currency_default;
 		// chech: allow currency_id
 		$id     = $_[ 'currency_id' ];
 		$result = $default;

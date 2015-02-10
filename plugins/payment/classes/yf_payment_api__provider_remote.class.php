@@ -4,6 +4,9 @@ class yf_payment_api__provider_remote {
 
 	public $ENABLE = null;
 
+	public $service_allow = null;
+	public $description   = null;
+
 	public $_status_message = array(
 		'success'     => 'Выполнено: ',
 		'in_progress' => 'Ожидание: ',
@@ -14,6 +17,7 @@ class yf_payment_api__provider_remote {
 
 	public function _init() {
 		$this->payment_api = _class( 'payment_api' );
+		!empty( $this->service_allow ) && $this->description = implode( ', ', $this->service_allow );
 	}
 
 	public function allow( $value ) {
