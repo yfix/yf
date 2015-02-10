@@ -4,16 +4,16 @@ _class( 'payment_api__provider_remote' );
 
 class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote {
 
-	public $ENABLE = true;
+	public $ENABLE    = true;
+	public $TEST_MODE = null;
+
 
 	public $payment_api = null;
 	public $api         = null;
 
 	public $URL         = 'https://api.privatbank.ua/p24api/ishop';
-	public $PUBLIC_KEY  = null; // merchant
-	public $PRIVATE_KEY = null; // pass
-
-	public $TEST_MODE   = null;
+	public $KEY_PUBLIC  = null; // merchant
+	public $KEY_PRIVATE = null; // pass
 
 	public $_options_transform = array(
 		'amount'       => 'amt',
@@ -35,6 +35,12 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		'ext_details' => 'description',
 		'order'       => 'operation_id',
 		'merchant'    => 'public_key',
+	);
+
+	public $_status = array(
+		'ok'   => 'success',
+		'wait' => 'in_progress',
+		'fail' => 'refused',
 	);
 
 	public $currency_default = 'UAH';
@@ -62,11 +68,26 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/privat24/Privat24.php' );
-		$this->api = new Privat24( $this->PUBLIC_KEY, $this->PRIVATE_KEY );
+		$this->api = new Privat24( $this->KEY_PUBLIC, $this->KEY_PRIVATE );
 		$this->url_result = url( '/api/payment/provider?name=privat24&operation=response' );
 		$this->url_server = url( '/api/payment/provider?name=privat24&operation=response&server=true' );
 		// parent
 		parent::_init();
+	}
+
+	public function key( $name = 'public', $value = null ) {
+		$value = $this->api->key( $name, $value );
+		return( $value );
+	}
+
+	public function key_reset() {
+		$this->key( 'public',  $this->KEY_PUBLIC  );
+		$this->key( 'private', $this->KEY_PRIVATE );
+	}
+
+	public function signature( $options, $is_request = true ) {
+		$result = $this->api->signature( $options, $is_request );
+		return( $result );
 	}
 
 	public function _form_options( $options ) {
@@ -80,7 +101,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		}
 		// default
 		$_[ 'amt' ] = number_format( $_[ 'amt' ], 2, '.', '' );
-		empty( $_[ 'merchant'   ] ) && $_[ 'merchant'   ] = $this->PUBLIC_KEY;
+		empty( $_[ 'merchant'   ] ) && $_[ 'merchant'   ] = $this->KEY_PUBLIC;
 		empty( $_[ 'pay_way'    ] ) && $_[ 'pay_way'    ] = 'privat24';
 		if( empty( $_[ 'return_url' ] ) ) {
 			$_[ 'return_url' ] = $this->url_result
@@ -99,7 +120,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$_ = &$options;
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
-		$signature    = $this->api->cnb_signature( $form_options );
+		$signature    = $this->signature( $form_options );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'signature' ] = $signature;
 		$url = &$this->URL;
@@ -107,7 +128,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
-			$result[] = '<form id="_js_provider_privat24_form" method="POST" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
+			$result[] = '<form id="_js_provider_privat24_form" method="post" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
 		}
 		foreach ((array)$form_options as $key => $value ) {
 			if( $is_array ) {
@@ -143,7 +164,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 			);
 			return( $result );
 		}
-		$_signature = $this->api->string_to_sign( $payment );
+		$_signature = $this->signature( $payment, $is_request = false );
 		if( $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
@@ -155,7 +176,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$response = $this->_response_parse( $payment );
 		// check public key (merchant)
 		$public_key = $response[ 'public_key' ];
-		$_public_key = $this->PUBLIC_KEY;
+		$_public_key = $this->KEY_PUBLIC;
 		if( $public_key != $_public_key ) {
 			$result = array(
 				'status'         => false,
@@ -167,27 +188,13 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		// ok, fail, test, wait
 		$state = $response[ 'state' ];
 		if( $this->TEST_MODE && $state == 'test' ) { $state = 'ok'; }
-		$payment_status_name = 'success';
-		switch( $state ) {
-			case 'ok':
-				$payment_status_name = 'success';
-				$status_message      = 'Выполнено: ';
-				break;
-			case 'wait':
-				$payment_status_name = 'in_progress';
-				$status_message      = 'Ожидание: ';
-				break;
-			case 'fail':
-			default:
-				$payment_status_name = 'refused';
-				$status_message      = 'Отклонено: ';
-				break;
-		}
+		list( $payment_status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
 			'provider_name'       => 'privat24',
 			'response'            => $response,
 			'payment_status_name' => $payment_status_name,
+			'status_message'      => $status_message,
 		));
 		return( $result );
 	}
@@ -213,7 +220,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$_       = &$options;
 		$api     = $this->api;
 		$allow   = &$this->currency_allow;
-		$default = $this->default;
+		$default = $this->currency_default;
 		// chech: allow currency_id
 		$id     = $_[ 'currency_id' ];
 		$result = $default;

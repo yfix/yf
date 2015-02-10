@@ -26,6 +26,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 	public $CLASS_WARNING			= 'warning has-warning';
 	public $CLASS_INFO				= 'info has-info';
 	public $CLASS_FEEDBACK			= 'form-control-feedback';
+	public $CLASS_STACKED_ITEM		= 'stacked-item';
 
 	/**
 	*/
@@ -69,6 +70,10 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 
 		$form_group_extra = $extra['form_group'];
 		$form_group_extra['class'] = $class_form_group;
+
+		if ($form->_params['form_group_auto_id'] && !$form_group_extra['id'] && $extra['id']) {
+			$form_group_extra['class'] .= ' form-group-id-'.$extra['id'];
+		}
 
 		$controls_extra = $extra['controls'];
 		$controls_extra['class'] = $class_controls;
@@ -115,16 +120,16 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		} elseif ($extra['only_row_end']) {
 			return $row_end;
 		} elseif ($extra['stacked']) {
-			return $inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
-				.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after;
+			return '<span class="'.$this->CLASS_STACKED_ITEM.'">'
+					.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
+					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
+				.'</span>';
 		} else {
 			// Full variant
 			return $row_start
 					.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
 					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
-					.(isset($extra['ace_editor']) ? $form->_ace_editor_html($extra, $replace) : '')
-					.(isset($extra['ckeditor']) ? $form->_ckeditor_html($extra, $replace) : '')
-					.(isset($extra['tinymce']) ? $form->_tinymce_html($extra, $replace) : '')
+					.$this->_add_rich_editor($extra, $replace, $form)
 				.$row_end;
 		}
 	}
@@ -170,9 +175,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 			return $row_start
 					.$before_content_html. $inline_help_before. $content. PHP_EOL
 					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after. $after_content_html
-					.(isset($extra['ace_editor']) ? $form->_ace_editor_html($extra, $replace) : '')
-					.(isset($extra['ckeditor']) ? $form->_ckeditor_html($extra, $replace) : '')
-					.(isset($extra['tinymce']) ? $form->_tinymce_html($extra, $replace) : '')
+					.$this->_add_rich_editor($extra, $replace, $form)
 				.$row_end;
 		}
 	}

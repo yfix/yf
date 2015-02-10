@@ -1,6 +1,7 @@
 <?php
 
-return array('versions' => array('master' => array('css' => array('
+return array('versions' => array('master' => array('css' => array(
+<<<END
 
 fieldset.well { padding-bottom:0; }
 fieldset.well legend { margin-bottom:0; padding:0 0.5em; width:auto; line-height:1.5em; background:inherit; }
@@ -56,7 +57,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 .cssfw-bs2 .modal .form-horizontal .controls { margin-left:150px; margin-right:20px; }
 .cssfw-bs2 .modal .form-horizontal .control-label { width:130px; }
 
-.cssfw-bs2 .breadcrumb > li+li:before { content:"/\00a0"; padding:0 5px; }
+.cssfw-bs2 .breadcrumb > li+li:before { content:"/\\00a0"; padding:0 5px; }
 .cssfw-bs2 .navbar .breadcrumb { margin:0 7px; border:0; }
 @media (min-width:768px) {
 	.cssfw-bs2 .navbar .breadcrumb { float:left; margin:2px 10px; }
@@ -69,6 +70,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 }
 
 .cssfw-bs3 .container-fixed input, textarea, select { max-width:300px; }
+.cssfw-bs3 .container-fixed .form-inline input, textarea, select { max-width:200px; }
 .cssfw-bs3 .container-fixed textarea.cke_source { max-width:inherit; }
 .cssfw-bs3 .container-fixed .input-mini { width:70px !important }
 .cssfw-bs3 .container-fixed .input-small { width:100px !important }
@@ -78,6 +80,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 .cssfw-bs3 .container-fixed .input-xxlarge { width:540px !important }
 .cssfw-bs3 .container-fixed .input-group[class*="col-"] { float:left !important; margin-right:3px; }
 .cssfw-bs3 .radio-inline, .cssfw-bs3 .checkbox-inline { margin-top:0; }
+.cssfw-bs3 .container-fixed .stacked-row .stacked-item { float: left; margin-right: 5px; }
 
 .cssfw-bs3 .carousel-control .icon-chevron-left,
 .cssfw-bs3 .carousel-control .icon-chevron-right { position:absolute; top:50%; z-index:5; display:inline-block; }
@@ -102,4 +105,5 @@ td input[type=text], td textarea { margin-bottom:0; }
 .bs-theme-slate textarea, .bs-theme-slate select, .bs-theme-slate .chosen-container .chosen-drop { color:#52575c; }
 .bs-theme-slate.cssfw-bs3 .dropdown-toggle .caret { border-top-color:#c8c8c8; }
 
-'))));
+END
+))));

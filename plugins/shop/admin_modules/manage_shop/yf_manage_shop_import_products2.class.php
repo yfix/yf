@@ -986,6 +986,48 @@ class yf_manage_shop_import_products2 {
 		return( $result );
 	}
 
+	protected function _field_test__supplier_id( $value, $action ) {
+		$value  = (int)$value;
+		$valid  = $value >= 0;
+			!$valid && $status_message = 'неверный код поставщика';
+		$exists = null;
+		if( $valid ) {
+			$cache = &$this->cache;
+			$exists = is_array( $cache[ 'supplier' ][ 'id' ][ $value ] );
+				!$exists  && $status_message = 'код поставщика не существует';
+		}
+		$status = $valid && $exists;
+			$status_message = $status ? null : $status_message;
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
+	protected function _field_test__supplier_name( $value, $action ) {
+		$value  = trim( $value );
+		$valid  = true;
+		$exists = null;
+		$cache  = &$this->cache;
+		$many   = count( $cache[ 'supplier' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ] );
+		$exists = $many > 0;
+			!$exists  && $status_message = 'поставщик не существует';
+			$many > 1 && $status_message = 'множество поставщиков с этим именем: ' . $many;
+		$status = ( $valid && $exists && $many == 1 );
+			$status_message = $status ? null : $status_message;
+		$result = array(
+			'valid'          => $valid,
+			'exists'         => $exists,
+			'many'           => $many,
+			'status'         => $status,
+			'status_message' => $status_message,
+		);
+		return( $result );
+	}
+
 	function _db_exists( $name, $options = array() ) {
 		$cache  = &$this->cache;
 		$_     = $options;
@@ -1094,7 +1136,7 @@ class yf_manage_shop_import_products2 {
 		$result = null;
 		$name = $cache[ 'category' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
 		if( is_array( $name ) ) {
-			$value = current( $name );
+			$value = reset( $name );
 			$value = (int)$value[ 'id' ];
 			$field = 'cat_id';
 			$result = array( $field, $value );
@@ -1107,7 +1149,7 @@ class yf_manage_shop_import_products2 {
 		$result = null;
 		$name = $cache[ 'supplier' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
 		if( is_array( $name ) ) {
-			$value = current( $name );
+			$value = reset( $name );
 			$value = (int)$value[ 'id' ];
 			$field = 'supplier_id';
 			$result = array( $field, $value );
@@ -1124,7 +1166,7 @@ class yf_manage_shop_import_products2 {
 		$result = null;
 		$name = $cache[ 'manufacturer' ][ 'name' ][ mb_strtolower( $value, 'UTF-8' ) ];
 		if( is_array( $name ) ) {
-			$value = current( $name );
+			$value = reset( $name );
 			$value = (int)$value[ 'id' ];
 			$result = array( $field, $value );
 		} elseif ( $action == 'insert' ) {

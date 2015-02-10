@@ -4,7 +4,7 @@ return array(
 	'versions' => array(
 		'master' => array(
 			'jquery' => 
-"
+<<<END
 $( 'form' ).each(function() {
     var form = this;
 
@@ -63,8 +63,7 @@ $( 'form' ).each(function() {
         invalidFields.first().trigger( 'focus' ).eq( 0 ).focus();
     });
 });
-
-"
+END
 		),
 	),
 	'require' => array(

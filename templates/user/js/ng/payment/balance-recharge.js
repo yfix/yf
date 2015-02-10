@@ -60,12 +60,12 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 		$scope.provider_selected = provider;
 		$scope.provider_id       = provider.provider_id;
 		$scope.fee               = provider._fee || 0;
-		$scope.provider_currency();
+		$scope.provider_currency( provider );
 		CurrencyApi.change();
 	};
-	$scope.provider_currency = function( provider_id ) {
-		provider_id = provider_id || $scope.provider_id;
-		var currency_allow = $scope.payment.provider[ provider_id ]._currency_allow || null;
+	$scope.provider_currency = function( provider ) {
+		provider = provider || $scope.provider_selected;
+		var currency_allow = provider._currency_allow || null;
 		var index, currencies = {};
 		if( currency_allow ) {
 			angular.forEach( $scope.payment.currencies, function( item, id ) {
@@ -165,7 +165,9 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 		},
 		operation: function( options ) {
 			var $this = this;
-			$scope.block_wait = true;
+			$scope.block_wait     = true;
+			$scope.status         = false;
+			$scope.status_message = null;
 			var result = PaymentBalanceApi.operation( options );
 			result.$promise.then(
 				function( r ) {
@@ -198,12 +200,13 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 		},
 		recharge: function( options ) {
 			var $this = this;
-			$scope.block_wait = true;
+			$scope.block_wait     = true;
+			$scope.status         = false;
+			$scope.status_message = null;
 			var result = PaymentBalanceApi.recharge( options );
 			result.$promise.then(
 				function( r ) {
 					$scope.block_wait = false;
-					$scope.status     = false;
 					if( r.response && r.response.balance ) {
 						// provider request form
 						if( r.response.balance.form ) {
@@ -230,7 +233,6 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 				},
 				function( r ) {
 					$scope.block_wait = false;
-					$scope.status     = false;
 					if( r.response && r.response.balance ) {
 						$scope.status         = r.response.balance.status;
 						$scope.status_message = r.response.balance.status_message;

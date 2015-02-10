@@ -1,6 +1,7 @@
 <?php
 
-return array('versions' => array('master' => array('jquery' => '
+return array('versions' => array('master' => array('jquery' => 
+<<<END
 	$("form").each(function() {
 		var form = this;
 
@@ -55,4 +56,5 @@ return array('versions' => array('master' => array('jquery' => '
 			invalidFields.first().trigger("focus").eq(0).focus();
 		});
 	});
-')));
+END
+)));

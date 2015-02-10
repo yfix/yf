@@ -18,7 +18,7 @@ class yf_form2_datetime {
 		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'date');
 		$extra['desc'] = $form->_prepare_desc($extra, $desc);
-		$extra['limit_date_format'] = $extra['limit_date_format'] ? $extra['limit_date_format'] : 'm-d-Y H:i';
+		$extra['limit_date_format'] = $extra['limit_date_format'] ? $extra['limit_date_format'] : 'm/d/Y H:i';
 
 		$format = $format_php = $placeholder = array();
 		$extra['no_time'] = $extra['with_time'] ? !$extra['with_time'] : $extra['no_time'];
@@ -61,8 +61,7 @@ class yf_form2_datetime {
 					up:   "icon icon-arrow-up fa fa-arrow-up",
 					down: "icon icon-arrow-down fa fa-arrow-down"
 				}
-				'.($extra['no_time'] == 1 ? ', pickTime: false' : '')
-				. ($extra['no_date'] == 1 ? ', pickDate: false' : '')
+				'
 		        . ($extra['min_date']? ', minDate: \''.date($extra['limit_date_format'], $extra['min_date']).'\'' : '')
 		        . ($extra['max_date']? ', maxDate: \''.date($extra['limit_date_format'], $extra['max_date']).'\'' : '')
 				. ($extra['default_date'] ? ', defaultDate: \''.date($extra['limit_date_format'], $extra['default_date']).'\'' : '')

@@ -26,6 +26,7 @@ class yf_form2 {
 	public $CLASS_LABEL_INFO = 'label label-info';
 	public $CLASS_ERROR = 'alert alert-error alert-danger';
 	public $CLASS_REQUIRED = 'control-group-required form-group-required';
+	public $CLASS_STACKED_ROW = 'stacked-row';
 
 	public $CONF_BOXES_USE_BTN_GROUP = false;
 
@@ -289,6 +290,22 @@ class yf_form2 {
 		$tabs_name = '';
 		$tabs_container = '';
 
+		// Create tree of row_start and its children
+		$item_row = array();
+		$row_items = array();
+		$row = false;
+		foreach ((array)$this->_body as $k => $v) {
+			if ($v['name'] == 'row_start') {
+				$row = $k;
+			} elseif ($v['name'] == 'row_end') {
+				$row = false;
+			} elseif ($row) {
+				$item_row[$k] = $row;
+				$row_items[$row][$k] = $v['extra']['id'] ?: $v['extra']['name'];
+			}
+		}
+		$all_errors = common()->_get_error_messages();
+
 		foreach ((array)$this->_body as $k => $v) {
 			if (!is_array($v)) {
 				continue;
@@ -296,6 +313,15 @@ class yf_form2 {
 			$_extra = (array)$v['extra'] + (array)$extra_override[$v['extra']['name']];
 			$_replace = (array)$r + (array)$v['replace'];
 			$func = $v['func'];
+			if ($v['name'] == 'row_start') {
+				// Mark row as containing errors, if children elements has at least one error
+				foreach ((array)$row_items[$k] as $_k => $_id) {
+					if (!$_id || !isset($all_errors[$_id])) {
+						continue;
+					}
+					$_extra['errors'][$v['extra']['name']] = $all_errors[$_id];
+				}
+			}
 			if ($this->_stacked_mode_on) {
 				$_extra['stacked'] = true;
 			}
@@ -417,7 +443,7 @@ class yf_form2 {
 			if ($extra['class_add']) {
 				$extra['class'] .= ' '.$extra['class_add'];
 			}
-			$extra['autocomplete'] = $extra['autocomplete'] ?: true;
+			$extra['autocomplete'] = isset($extra['autocomplete']) ? $extra['autocomplete'] : true;
 
 			$advanced_js_validation = conf('form_advanced_js_validation');
 			if ($advanced_js_validation) {
@@ -506,14 +532,23 @@ class yf_form2 {
 	/**
 	* Shortcut for starting form row, needed to build row with several inlined inputs
 	*/
-	function row_start($extra = array()) {
+	function row_start($name = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		$extra['name'] = $extra['name'] ?: $name;
 		$func = function($extra, $r, $form) {
 			// auto-close row_end(), if not called implicitely
 			if ($form->_stacked_mode_on) {
 				$form->row_end();
 			}
 			$form->_stacked_mode_on = true;
-			$form->_prepare_inline_error($extra);
+#			$form->_prepare_inline_error($extra);
+			if (!isset($extra['id']) && $extra['name']) {
+				$extra['id'] = $extra['name'];
+			}
+			$extra['class_add_form_group'] = trim($this->CLASS_STACKED_ROW.' '.$extra['class_add_form_group']);
 			return $form->_row_html('', array('only_row_start' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
@@ -823,7 +858,7 @@ class yf_form2 {
 				$extra['desc'] = '';
 			}
 			$extra = $form->_input_assign_params_from_validate($extra);
-			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','required','autocomplete','accept','target','autofocus','title','min','max','step');
+			$attrs_names = array('name','type','id','class','style','placeholder','value','data','size','maxlength','pattern','disabled','readonly','required','autocomplete','accept','target','autofocus','title','min','max','step');
 			return $form->_row_html('<input'._attrs($extra, $attrs_names).'>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -851,13 +886,14 @@ class yf_form2 {
 			$extra['placeholder'] = t(isset($extra['placeholder']) ? $extra['placeholder'] : $extra['desc']);
 			$extra['value'] = $form->_prepare_value($extra, $r, $form->_params);
 			$extra['edit_link'] = $extra['edit_link'] ? (isset($r[$extra['edit_link']]) ? $r[$extra['edit_link']] : $extra['edit_link']) : '';
-			$extra['contenteditable'] = $extra['contenteditable'] ?: 'true';
-			$extra['class'] = $form->CLASS_CKEDITOR.' '.$form->CLASS_FORM_CONTROL. $form->_prepare_css_class('', $r[$extra['name']], $extra);
+			$extra['contenteditable'] = (!isset($extra['contenteditable']) || $extra['contenteditable']) ? 'true' : false;
+			$use_ckeditor = isset($extra['ckeditor']) ? $extra['ckeditor'] : false;
+			$extra['class'] = ($use_ckeditor ? $form->CLASS_CKEDITOR.' ' : ''). $form->CLASS_FORM_CONTROL. $form->_prepare_css_class('', $r[$extra['name']], $extra);
 			if ($form->_params['no_label']) {
 				$extra['desc'] = '';
 			}
 			$extra = $form->_input_assign_params_from_validate($extra);
-			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required','size');
+			$attrs_names = array('id','name','placeholder','contenteditable','class','style','cols','rows','title','required','size','disabled','readonly','autocomplete','autofocus');
 			return $form->_row_html('<textarea'._attrs($extra, $attrs_names).'>'.(!isset($extra['no_escape']) ? _htmlchars($extra['value']) : $extra['value']).'</textarea>', $extra, $r);
 		};
 		if ($this->_chained_mode) {
@@ -1100,7 +1136,7 @@ class yf_form2 {
 			$extra = array();
 		}
 		$extra['type'] = 'url';
-		$extra['prepend'] = 'url';
+		$extra['prepend'] = isset($extra['prepend']) ? $extra['prepend'] : 'url';
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
 			$name = '';
@@ -1771,6 +1807,12 @@ class yf_form2 {
 	*/
 	function chosen_box($name, $values, $extra = array(), $replace = array()) {
 		return $this->_html_control($name, $values, $extra, $replace, 'chosen_box');
+	}
+
+	/**
+	*/
+	function image_select_box($name, $values, $extra = array(), $replace = array()) {
+		return $this->_html_control($name, $values, $extra, $replace, 'image_select_box');
 	}
 
 	/**

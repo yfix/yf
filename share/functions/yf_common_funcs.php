@@ -289,6 +289,23 @@ if (!function_exists('_htmlchars')) {
 	}
 }
 
+// Make sure that class attribute contains unique names and also cleanup extra spaces
+if (!function_exists('_attr_class_clean')) {
+	function _attr_class_clean($class = '') {
+		if (!strlen($class) || strpos($class, ' ') === false) {
+			return $class;
+		}
+		$tmp = array();
+		foreach (explode(' ', trim($class)) as $v) {
+			$v = trim($v);
+			if (strlen($v)) {
+				$tmp[$v] = $v;
+			}
+		}
+		return implode(' ', $tmp);
+	}
+}
+
 // Build string of html attributes, used by high-level html generators like form, table, html
 if (!function_exists('_attrs')) {
 	function _attrs($extra, $names) {
@@ -312,6 +329,10 @@ if (!function_exists('_attrs')) {
 					$a[$name] = $val;
 				}
 			}
+		}
+		// Make sure that class attribute contains unique names and also cleanup extra spaces
+		if (isset($a['class']) && strpos($a['class'], ' ') !== false) {
+			$a['class'] = _attr_class_clean($a['class']);
 		}
 		foreach ($a as $name => $val) {
 			if (is_array($val)) {
@@ -412,7 +433,7 @@ function wildcard_compare($wild, $string) {
 if (!function_exists('class_basename')) {
 	function class_basename($class, $prefix = '', $suffix = '') {
 		$class = is_object($class) ? get_class($class) : $class;
-		$class = basename(str_replace('\\', '/', $class));
+		$class = basename(str_replace("\\", '/', $class));
 		$prefixes = array(
 			'yf'	=> YF_PREFIX,
 			'site'	=> 'site__',
@@ -432,5 +453,23 @@ if (!function_exists('class_basename')) {
 			$class = substr($class, 0, -$slen);
 		}
 		return $class;
+	}
+}
+
+// base64 safe for use in urls
+if (!function_exists('base64_encode_safe')) {
+	function base64_encode_safe($in) {
+		if (!strlen($in) || preg_match('~^[a-z0-9=\*-]{2,2000}$~i', $in)) {
+			return $in;
+		}
+		return str_replace(array('/', '+'), array('*', '-'), base64_encode($in));
+	}
+}
+if (!function_exists('base64_decode_safe')) {
+	function base64_decode_safe($in) {
+		if (!strlen($in) || !preg_match('~^[a-z0-9=\*-]{2,2000}$~i', $in)) {
+			return $in;
+		}
+		return base64_decode(str_replace(array('*', '-'), array('/', '+'), $in));
 	}
 }

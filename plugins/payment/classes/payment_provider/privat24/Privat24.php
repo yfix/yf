@@ -14,82 +14,48 @@ class Privat24 {
 		// 'return_url',
 		// 'server_url',
 	);
-	private $_public_key  = null;
-	private $_private_key = null;
+	protected $_key_public  = null;
+	protected $_key_private = null;
 
-	public function __construct( $public_key, $private_key ) {
-		if( empty( $public_key ) ) {
-			throw new InvalidArgumentException( 'public_key (merchant) is empty' );
+	public function __construct( $key_public, $key_private ) {
+		if( empty( $key_public ) ) {
+			throw new InvalidArgumentException( 'key_public (merchant) is empty' );
 		}
-		if( empty( $private_key ) ) {
-			throw new InvalidArgumentException( 'private_key is empty' );
+		if( empty( $key_private ) ) {
+			throw new InvalidArgumentException( 'key_private is empty' );
 		}
-		$this->_public_key  = $public_key;
-		$this->_private_key = $private_key;
+		$this->_key_public  = $key_public;
+		$this->_key_private = $key_private;
 	}
 
-
-	/**
-	 * Call API
-	 *
-	 * @param string $url
-	 * @param array $params
-	 *
-	 * @return string
-	 */
-/*
-	public function api($url, $params = array()) {
-		$url = 'https://www.liqpay.com/api/'.$url;
-
-		$public_key = $this->_public_key;
-		$private_key = $this->_private_key;
-		$data = json_encode(array_merge(compact('public_key'), $params));
-		$signature = base64_encode(sha1($private_key.$data.$private_key, 1));
-		$postfields = "data={$data}&signature={$signature}";
-
-		$ch = curl_init();
-
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS,$postfields);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-
-		$server_output = curl_exec($ch);
-
-		curl_close($ch);
-
-		return json_decode($server_output);
+	public function key( $name = 'public', $value = null ) {
+		if( !in_array( $name, array( 'public', 'private' ) ) ) {
+			return( null );
+		}
+		$_name  = '_key_' . $name;
+		$_value = &$this->{ $_name };
+		// set
+		if( !empty( $value ) && is_string( $value ) ) { $_value = $value; }
+		// get
+		return( $_value );
 	}
- */
 
-	/**
-	 * cnb_signature
-	 *
-	 * @param array $params
-	 *
-	 * @return string
-	 */
-	public function cnb_signature( $options ) {
+	public function signature( $options, $is_request = true ) {
 		$_ = &$options;
-		$request = array();
-		foreach ((array)$this->_signature_allow as $key ) {
-			$request[] = $key . '=' . $_[ $key ];
+		if( $is_request ) {
+			$request = array();
+			foreach ((array)$this->_signature_allow as $key ) {
+				$request[] = $key . '=' . $_[ $key ];
+			}
+			$request = implode( '&', $request );
+			$_ = $request;
 		}
-		$request = implode( '&', $request );
-		$signature = $this->string_to_sign( $request );
-		return( $signature );
+		$result = $this->str_to_sign( $_ );
+		return( $result );
 	}
 
-	/**
-	 * string_to_sign
-	 *
-	 * @param string $string
-	 *
-	 * @return string
-	 */
-	public function string_to_sign( $str ) {
-		$signature = sha1( md5( $str . $this->_private_key ) );
+	public function str_to_sign( $str ) {
+		$signature = sha1( md5( $str . $this->_key_private ) );
 		return( $signature );
 	}
 

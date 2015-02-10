@@ -574,6 +574,11 @@ class yf_assets {
 		if (is_string($_content)) {
 			$_params['name'] = $_content;
 		}
+		$__params = $_params;
+		// Prevent inherit no_cache and other package-related settings into other required packages
+		if (isset($__params['config'])) {
+			unset($__params['config']);
+		}
 		foreach ((array)$this->supported_asset_types as $atype) {
 			if ($atype === 'jquery' || $atype === 'asset') {
 				continue;
@@ -582,11 +587,11 @@ class yf_assets {
 			$inherit_type2 = 'asset';
 
 			if ($require_data = $bundle_details['require'][$atype]) {
-				$this->_sub_add($require_data, $atype, $_params);
+				$this->_sub_add($require_data, $atype, $__params);
 			} elseif ($inherit_type && $require_data = $bundle_details['require'][$inherit_type]) {
-				$this->_sub_add($require_data, $inherit_type, $_params);
+				$this->_sub_add($require_data, $inherit_type, $__params);
 			} elseif ($inherit_type2 && $require_data = $bundle_details['require'][$inherit_type2]) {
-				$this->_sub_add($require_data, $inherit_type2, $_params);
+				$this->_sub_add($require_data, $inherit_type2, $__params);
 			}
 
 			if ($data = $this->get_asset($_content, $atype)) {
@@ -596,11 +601,11 @@ class yf_assets {
 			}
 
 			if ($add_data = $bundle_details['add'][$atype]) {
-				$this->_sub_add($add_data, $atype, $_params);
+				$this->_sub_add($add_data, $atype, $__params);
 			} elseif ($inherit_type && $add_data = $bundle_details['add'][$inherit_type]) {
-				$this->_sub_add($add_data, $inherit_type, $_params);
+				$this->_sub_add($add_data, $inherit_type, $__params);
 			} elseif ($inherit_type2 && $add_data = $bundle_details['add'][$inherit_type2]) {
-				$this->_sub_add($add_data, $inherit_type2, $_params);
+				$this->_sub_add($add_data, $inherit_type2, $__params);
 			}
 		}
 	}
@@ -636,17 +641,22 @@ class yf_assets {
 		if (is_string($_content)) {
 			$_params['name'] = $_content;
 		}
+		$__params = $_params;
+		// Prevent inherit no_cache and other package-related settings into other required packages
+		if (isset($__params['config'])) {
+			unset($__params['config']);
+		}
 
 		$atype = $asset_type;
 		$inherit_type = $atype === 'js' ? 'jquery' : null;
 		$inherit_type2 = 'asset';
 
 		if ($require_data = $asset_data['require'][$atype]) {
-			$this->_sub_add($require_data, $atype, $_params);
+			$this->_sub_add($require_data, $atype, $__params);
 		} elseif ($inherit_type && $require_data = $asset_data['require'][$inherit_type]) {
-			$this->_sub_add($require_data, $inherit_type, $_params);
+			$this->_sub_add($require_data, $inherit_type, $__params);
 		} elseif ($inherit_type2 && $require_data = $asset_data['require'][$inherit_type2]) {
-			$this->_sub_add($require_data, $inherit_type2, $_params);
+			$this->_sub_add($require_data, $inherit_type2, $__params);
 		}
 
 		if ($data = $this->get_asset($_content, $atype)) {
@@ -656,11 +666,11 @@ class yf_assets {
 		}
 
 		if ($add_data = $asset_data['add'][$atype]) {
-			$this->_sub_add($add_data, $atype, $_params);
+			$this->_sub_add($add_data, $atype, $__params);
 		} elseif ($inherit_type && $data = $asset_data['add'][$inherit_type]) {
-			$this->_sub_add($add_data, $inherit_type, $_params);
+			$this->_sub_add($add_data, $inherit_type, $__params);
 		} elseif ($inherit_type2 && $data = $asset_data['add'][$inherit_type2]) {
-			$this->_sub_add($add_data, $inherit_type2, $_params);
+			$this->_sub_add($add_data, $inherit_type2, $__params);
 		}
 	}
 

@@ -31,6 +31,14 @@ class yf_redirect {
 	public $LOOP_KEEP_LAST	= 10;
 	/** @var bool */
 	public $LOOP_TTL		= 5;
+	/** @var array of url patterns to exclude from defence */
+	public $LOOP_EXCLUDE_SOURCE	= array(
+		'~^/[a-z0-9_]+/filter_save/~i',
+		'~&action=filter_save&~i',
+	);
+	/** @var array of url patterns to exclude from defence */
+	public $LOOP_EXCLUDE_TARGET	= array(
+	);
 
 	/**
 	*/
@@ -52,6 +60,22 @@ class yf_redirect {
 		if (count($detect_slice) < $this->LOOP_COUNT) {
 			return false;
 		}
+		$exclude_source = $this->LOOP_EXCLUDE_SOURCE;
+		if ($exclude_source && !is_array($exclude_source)) {
+			$exclude_source = array($exclude_source);
+		}
+		// Check current/source page for exclude patterns
+		$url_path_and_query = $_SERVER['REQUEST_URI']. (strlen($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : '');
+		foreach ((array)$exclude_source as $pattern) {
+			if (preg_match($pattern, $url_path_and_query)) {
+				return false;
+			}
+		}
+		// Check redirect target page for exclude patterns
+		$exclude_target = $this->LOOP_EXCLUDE_TARGET;
+		if ($exclude_target && !is_array($exclude_target)) {
+			$exclude_target = array($exclude_target);
+		}
 		$counter = 0;
 		foreach ((array)$detect_slice as $v) {
 			$time = $v['time'];
@@ -61,6 +85,15 @@ class yf_redirect {
 			}
 			if ($v['url'] != $cur_url) {
 				break;
+			}
+			if ($exclude_patterns) {
+				$u = parse_url($v['url']);
+				$url_path_and_query = $u['path']. (strlen($u['query']) ? '?'.$u['query'] : '');
+				foreach ((array)$exclude_target as $pattern) {
+					if (preg_match($pattern, $url_path_and_query)) {
+						break 2;
+					}
+				}
 			}
 			$counter++;
 		}

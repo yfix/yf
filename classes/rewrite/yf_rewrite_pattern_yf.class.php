@@ -46,6 +46,8 @@ class yf_rewrite_pattern_yf {
 		unset($arr['port']);
 		unset($arr['id']);
 		unset($arr['page']);
+		$fragment = $arr['fragment'];
+		unset($arr['fragment']);
 		foreach ((array)$arr as $k => $v) {
 			$arr_out[] = $k.'='.$v;
 		}
@@ -55,12 +57,16 @@ class yf_rewrite_pattern_yf {
 		if (!empty($arr_out)) {
 			$u .= (strpos($u, '?') === false ? '?' : '&'). implode('&', $arr_out);
 		}
-		$class_rewrite = _class('rewrite');
-		if (!$class_rewrite->USE_WEB_PATH) {
-			return $class_rewrite->_correct_protocol('http://'. $a['host']. ($a['port'] && $a['port'] != '80' ? ':'.$a['port'] : ''). '/'. $u);
-		} else {
-			return $class_rewrite->_correct_protocol(WEB_PATH. $u);
+		if ($fragment) {
+			$u .= '#'.$fragment;
 		}
+		$class_rewrite = _class('rewrite');
+		if ($class_rewrite->USE_WEB_PATH) {
+			$url = WEB_PATH;
+		} else {
+			$url = 'http://'. $a['host']. ($a['port'] && $a['port'] != '80' ? ':'.$a['port'] : ''). '/';
+		}
+		return $class_rewrite->_correct_protocol($url. $u);
 	}
 
 	/**

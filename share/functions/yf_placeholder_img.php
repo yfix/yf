@@ -4,8 +4,8 @@
 * Simple replacement for http://placehold.it/
 */
 function yf_placeholder_img($w = 100, $h = 100, $params = array()) {
-	$w = (int)$w ?: 100;
-	$h = (int)$h ?: 100;
+	$w = abs((int)$w ?: 100);
+	$h = abs((int)$h ?: 100);
 	$text = $params['text'] ?: $w.' x '.$h;
 
 	$font_try_paths = $params['font_paths'] ?: array(

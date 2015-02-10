@@ -147,12 +147,12 @@ class class_table_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(str_replace(PHP_EOL, '', 
 			'<table class="'._class('table2')->CLASS_TABLE_MAIN.'">'.
 			'<thead><th>Id</th><th>User id</th><th>Product id</th><th>Actions</th></thead><tbody>'.
-			'<tr><td>1</td><td>122</td><td>133</td><td nowrap><a href="./?object=dynamic&action=edit&id=1" class="'._class('table2')->CLASS_BTN_MINI.'  ajax_edit" title="Edit" data-test="edit"><i class="'._class('table2')->CLASS_ICON_EDIT.'"></i> Edit</a> '.
-			'<a href="./?object=dynamic&action=delete&id=1" class="'._class('table2')->CLASS_BTN_MINI.'  ajax_delete btn-danger" title="Delete" data-test="delete"><i class="'._class('table2')->CLASS_ICON_DELETE.'"></i> Delete</a> </td></tr>'.
-			'<tr><td>2</td><td>222</td><td>233</td><td nowrap><a href="./?object=dynamic&action=edit&id=2" class="'._class('table2')->CLASS_BTN_MINI.'  ajax_edit" title="Edit" data-test="edit"><i class="'._class('table2')->CLASS_ICON_EDIT.'"></i> Edit</a> '.
-			'<a href="./?object=dynamic&action=delete&id=2" class="'._class('table2')->CLASS_BTN_MINI.'  ajax_delete btn-danger" title="Delete" data-test="delete"><i class="'._class('table2')->CLASS_ICON_DELETE.'"></i> Delete</a> </td></tr>'.
+			'<tr><td>1</td><td>122</td><td>133</td><td nowrap><a href="./?object=dynamic&action=edit&id=1" class="'._class('table2')->CLASS_BTN_MINI.' ajax_edit" title="Edit" data-test="edit"><i class="'._class('table2')->CLASS_ICON_EDIT.'"></i> Edit</a> '.
+			'<a href="./?object=dynamic&action=delete&id=1" class="'._class('table2')->CLASS_BTN_MINI.' ajax_delete btn-danger" title="Delete" data-test="delete"><i class="'._class('table2')->CLASS_ICON_DELETE.'"></i> Delete</a> </td></tr>'.
+			'<tr><td>2</td><td>222</td><td>233</td><td nowrap><a href="./?object=dynamic&action=edit&id=2" class="'._class('table2')->CLASS_BTN_MINI.' ajax_edit" title="Edit" data-test="edit"><i class="'._class('table2')->CLASS_ICON_EDIT.'"></i> Edit</a> '.
+			'<a href="./?object=dynamic&action=delete&id=2" class="'._class('table2')->CLASS_BTN_MINI.' ajax_delete btn-danger" title="Delete" data-test="delete"><i class="'._class('table2')->CLASS_ICON_DELETE.'"></i> Delete</a> </td></tr>'.
 			'</tbody></table>'.
-			'<div class="controls"><a href="./?object=dynamic&action=add" class="'._class('table2')->CLASS_BTN_MINI.'  ajax_add"><i class=" icon-plus fa fa-plus"></i> add</a> </div>'
+			'<div class="controls"><a href="./?object=dynamic&action=add" class="'._class('table2')->CLASS_BTN_MINI.' ajax_add"><i class=" icon-plus fa fa-plus"></i> add</a> </div>'
 		), str_replace(PHP_EOL, '', trim($table)));
 	}
 	public function test_rotate() {

@@ -280,14 +280,14 @@ class yf_payment_api {
 	}
 
 	public function currency_rate__buy( $options = null ) {
-		$_ = &$options; $_ = (array)$_;
+		$_ = (array)$options;
 		$_[ 'currency_rate_type' ] = 'buy';
 		$result = $this->currency_rate( $_ );
 		return( $result );
 	}
 
 	public function currency_rate__sell( $options = null ) {
-		$_ = &$options; $_ = (array)$_;
+		$_ = (array)$options;
 		$_[ 'currency_rate_type' ] = 'sell';
 		$result = $this->currency_rate( $_ );
 		return( $result );
@@ -564,7 +564,7 @@ class yf_payment_api {
 
 	public function get_status( $options = null ) {
 		$_ = &$options;
-		$payment_status = $this->status( $_ );
+		$payment_status = $this->status( $options );
 		if( empty( $payment_status ) ) {
 			$name = $_[ 'exists' ] ?: $_[ 'status_id' ] ?: $_[ 'name' ];
 			$result = array(
@@ -610,7 +610,8 @@ class yf_payment_api {
 			}
 		}
 		// options
-		$_             = &$options;
+		$_           = &$options;
+		$all         = $_[ 'all'         ];
 		$exists      = $_[ 'exists'      ];
 		$provider_id = $_[ 'provider_id' ];
 		$name        = $_[ 'name'        ];
@@ -618,6 +619,10 @@ class yf_payment_api {
 		// test: exists by provider_id
 		if( !empty( $exists ) ) {
 			$result = !empty( $provider[ $exists ] );
+		}
+		// all
+		elseif( !empty( $all ) ) {
+			$result = $provider;
 		}
 		// by provider_id
 		elseif( !empty( $provider_id ) ) {
@@ -730,16 +735,22 @@ class yf_payment_api {
 		$result = $this->deposition( $options );
 		return( $result );
 	}
+	public function deposition_user( $options = null ) {
+		$options[ 'user_mode' ] = true;
+		$result = $this->deposition( $options );
+		return( $result );
+	}
 	public function deposition( $options = null ) {
 		$_ = &$options;
 		$_[ 'type_name' ] = __FUNCTION__;
 		$_[ 'operation_title' ] = $_[ 'operation_title' ] ?: 'Пополнение счета';
-		$result = $this->_operation_check( $_ );
+		$result = $this->_operation_check( $options );
 		list( $status, $data, $operation_data ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		// update payment operation
-		$provider_title = $operation_data[ 'provider' ][ 'title' ];
-		$title = $_[ 'operation_title' ] . ' (' . $provider_title . ')';
+		// $provider_title = $operation_data[ 'provider' ][ 'title' ];
+		// $title = $_[ 'operation_title' ] . ' (' . $provider_title . ')';
+		$title = $_[ 'operation_title' ];
 		$data += array(
 			'direction' => 'in',
 			'title'     => $title,
@@ -785,12 +796,13 @@ class yf_payment_api {
 		$_ = &$options;
 		$_[ 'type_name' ] = __FUNCTION__;
 		$_[ 'operation_title' ] = $_[ 'operation_title' ] ?: 'Оплата';
-		$result = $this->_operation_check( $_ );
+		$result = $this->_operation_check( $options );
 		list( $status, $data, $operation_data ) = $result;
 		if( empty( $status ) ) { return( $result ); }
 		// update payment operation
-		$provider_title = $operation_data[ 'provider' ][ 'title' ];
-		$title = $_[ 'operation_title' ] . ' (' . $provider_title . ')';
+		// $provider_title = $operation_data[ 'provider' ][ 'title' ];
+		// $title = $_[ 'operation_title' ] . ' (' . $provider_title . ')';
+		$title = $_[ 'operation_title' ];
 		$data += array(
 			'direction' => 'out',
 			'title'     => $title,
@@ -915,6 +927,13 @@ class yf_payment_api {
 			return( $result );
 		}
 		$provider = reset( $object );
+		if( $_[ 'user_mode' ] && (bool)$provider[ 'system' ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестный провайдер',
+			);
+			return( $result );
+		}
 		$provider_id = (int)$provider[ 'provider_id' ];
 		$data[ 'provider' ] = $provider;
 		// prepare result
@@ -1048,6 +1067,58 @@ class yf_payment_api {
 		}
 		$status         = true;
 		$status_message = 'Выполнено обновление "' . t( $name ) . '"';
+		return( $result );
+	}
+
+	public function money_html( $options = null ) {
+		!is_array( $options ) && $options = array(
+			'value' => $options,
+		);
+		$options += array(
+			'format' => 'html',
+			'sign'   => true,
+		);
+		$result = $this->money_format( $options );
+		return( $result );
+	}
+
+	public function money_format( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// currency
+		list( $currency_id, $currency ) = $this->get_currency__by_id( array( 'currency_id' => $_currency_id ) );
+		$decimals = $currency[ 'minor_units' ];
+		$sign     = $currency[ 'sign'        ];
+		switch( $_format ) {
+			case 'html':
+				$thousands_separator = '&nbsp;';
+			default:
+				$thousands_separator = ' ';
+				break;
+		}
+		// format number
+		isset(     $_decimals            ) && $decimals            = $_decimals;
+		is_string( $_decimal_point       ) && $decimal_point       = $_decimal_point;
+		is_string( $_thousands_separator ) && $thousands_separator = $_thousands_separator;
+		$value  = $this->_number_round( $_value, $decimals );
+		$value = $this->_number_format( $value, $decimals, $decimal_point, $thousands_separator );
+		// decoration
+		$nbsp = '';
+		switch( $_format ) {
+			case 'html':
+				$sign  = '<span class="currency">'. $sign  .'</span>';
+				$value = '<span class="money">'.    $value .'</span>';
+				$nbsp = '&nbsp;';
+				$thousands_separator = '&nbsp;';
+			default:
+				$nbsp = ' ';
+				$thousands_separator = ' ';
+				break;
+		}
+		// render
+		$result = $value;
+		$_nbsp && $result .= $nbsp;
+		$_sign && $result .= $sign;
 		return( $result );
 	}
 

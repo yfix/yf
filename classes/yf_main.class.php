@@ -1651,6 +1651,9 @@ class yf_main {
 		if ($this->USER_INFO_DYNAMIC) {
 			module_conf('user_data', 'MODE', 'DYNAMIC');
 		}
+		if (!conf('css_framework')) {
+			conf('css_framework', 'bs2');
+		}
 	}
 
 	/**
@@ -1945,7 +1948,7 @@ class yf_main {
 		if (isset($this->php_libs[$name])) {
 			return $this->php_libs[$name];
 		}
-		$dir = 'share/service_providers/';
+		$dir = 'share/services/';
 		$file = $name.'.php';
 		$paths = array(
 			'app'		=> APP_PATH. $dir. $file,

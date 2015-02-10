@@ -54,6 +54,7 @@ class yf_api {
 		$is_json = &$this->is_json;
 		$request = &$this->request;
 		if( $is_post ) {
+			$request = file_get_contents( 'php://input' );
 			$request = json_decode( file_get_contents( 'php://input' ), true );
 			$request && $is_json = true;
 		}

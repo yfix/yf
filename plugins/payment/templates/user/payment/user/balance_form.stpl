@@ -1,45 +1,51 @@
-<div class="col-md-12 user_view">
+<div class="container-block">
+<div class="user_view">
 <div class="payment">
 <div class="block_user_balance ng-cloak" ng-controller="payment.balance.recharge.ctrl">
 
 <wait active='block_wait'></wait>
 
 {css()}
-	.offset-1 {
-		margin-left: 1em;
-	}
-	.payment_account {
-		margin-bottom: 1em;
-	}
-	.payment_account__refresh,
-	.payment_account__recharge,
-	.payment_account__header,
-	.payment_account__balance {
-		height: 3em;
-	}
-	.payment_account__header,
-	.payment_account__balance {
-		font-size   : 2em;
-		font-weight : bold;
-	}
-	.payment_account__currency {
-		font-size: 1em;
-	}
-	.payment_balance_recharge {
-		margin: 1em 0;
-	}
-	.payment_account__balance.change {
-		-webkit-transition : all linear 1s;
-		-moz-transition    : all linear 1s;
-		-o-transition      : all linear 1s;
-		transition         : all linear 1s;
-	}
-	.payment_account__balance.change-add {
-		opacity : 0;
-	}
-	.payment_account__balance.change {
-		opacity : 1;
-	}
+
+.user_view {
+	padding: 1em 0;
+}
+.offset-1 {
+	margin-left: 1em;
+}
+.payment_account {
+	margin-bottom: 1em;
+}
+.payment_account__refresh,
+.payment_account__recharge,
+.payment_account__header,
+.payment_account__balance {
+	height: 3em;
+}
+.payment_account__header,
+.payment_account__balance {
+	font-size   : 2em;
+	font-weight : bold;
+}
+.payment_account__currency {
+	font-size: 1em;
+}
+.payment_balance_recharge {
+	margin: 1em 0;
+}
+.payment_account__balance.change {
+	-webkit-transition : all linear 1s;
+	-moz-transition    : all linear 1s;
+	-o-transition      : all linear 1s;
+	transition         : all linear 1s;
+}
+.payment_account__balance.change-add {
+	opacity : 0;
+}
+.payment_account__balance.change {
+	opacity : 1;
+}
+
 {/css}
 
 	<div class="row payment_account" ng-show="payment.account">
@@ -362,6 +368,7 @@ span + .payment-operation__btn,
 		</table>
 	</div>
 
+</div>
 </div>
 </div>
 </div>
