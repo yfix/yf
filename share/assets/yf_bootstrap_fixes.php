@@ -57,7 +57,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 .cssfw-bs2 .modal .form-horizontal .controls { margin-left:150px; margin-right:20px; }
 .cssfw-bs2 .modal .form-horizontal .control-label { width:130px; }
 
-.cssfw-bs2 .breadcrumb > li+li:before { content:"/\00a0"; padding:0 5px; }
+.cssfw-bs2 .breadcrumb > li+li:before { content:"/\\00a0"; padding:0 5px; }
 .cssfw-bs2 .navbar .breadcrumb { margin:0 7px; border:0; }
 @media (min-width:768px) {
 	.cssfw-bs2 .navbar .breadcrumb { float:left; margin:2px 10px; }
