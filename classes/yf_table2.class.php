@@ -371,7 +371,14 @@ class yf_table2 {
 		} elseif (is_callable($sql)) {
 			$sql_is_callable = true;
 		} elseif (is_object($sql)) {
-			$sql_is_object = true;
+			if ($sql instanceof yf_db_query_builder_driver) {
+				$sql_is_query_builder = true;
+			} else {
+				$sql_is_object = true;
+			}
+		}
+		if ($sql_is_query_builder) {
+			$sql = $sql->sql();
 		}
 		if ($sql_is_array || $sql_is_object || $sql_is_callable) {
 			if ($sql_is_object) {
