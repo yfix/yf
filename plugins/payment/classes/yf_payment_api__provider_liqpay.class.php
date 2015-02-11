@@ -4,16 +4,9 @@ _class( 'payment_api__provider_remote' );
 
 class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 
-	public $ENABLE = true;
-
-	public $payment_api = null;
-	public $api         = null;
-
 	public $URL         = 'https://www.liqpay.com/api/pay';
 	public $KEY_PUBLIC  = null;
 	public $KEY_PRIVATE = null;
-
-	public $TEST_MODE   = null;
 
 	public $_options_transform = array(
 		'title'        => 'description',

@@ -20,9 +20,10 @@ class yf_payment__user {
 		$payment_api->provider_options( $providers, array(
 			'fee', 'currency_allow', 'description',
 		));
+		$provider_user = $payment_api->provider();
 		$provider = array();
-		foreach( $providers as &$item ) {
-			!(bool)$item[ 'system' ] && $provider[] = $item;
+		foreach( $provider_user as &$item ) {
+			$provider[] = $item[ 'provider_id' ];
 		}
 		// misc
 		$status        = $payment_api->status();

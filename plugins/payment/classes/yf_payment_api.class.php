@@ -595,16 +595,16 @@ class yf_payment_api {
 				return( $provider );
 			}
 			foreach( (array)$provider as $index => $item ) {
-				$name = $item[ 'name' ];
+				$name   = $item[ 'name' ];
+				$id     = (int)$item[ 'provider_id' ];
+				$provider_index[ 'all'    ][ $id ] = &$provider[ $id ];
 				$class = 'provider_' . $name;
 				$provider_class = $this->_class( $class );
 				if( !( $provider_class && $provider_class->ENABLE ) ) {
 					unset( $provider[ $index ] );
 					continue;
 				}
-				$id     = (int)$item[ 'provider_id' ];
 				$system = (int)$item[ 'system' ];
-				$name   = $item[ 'name' ];
 				$provider_index[ 'system' ][ $system ][ $id ] = &$provider[ $id ];
 				$provider_index[ 'name'   ][ $name   ][ $id ] = &$provider[ $id ];
 			}
@@ -622,7 +622,7 @@ class yf_payment_api {
 		}
 		// all
 		elseif( !empty( $all ) ) {
-			$result = $provider;
+			$result = $provider_index[ 'all' ];
 		}
 		// by provider_id
 		elseif( !empty( $provider_id ) ) {

@@ -56,9 +56,10 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 		$scope.block_operation = !show;
 	};
 	$scope.show_balance_recharge( false );
-	$scope.provider_change = function( provider ) {
+	$scope.provider_change = function( provider_id ) {
+		$scope.provider_id = +provider_id;
+		var provider = $scope.payment.providers[ provider_id ];
 		$scope.provider_selected = provider;
-		$scope.provider_id       = provider.provider_id;
 		$scope.fee               = provider._fee || 0;
 		$scope.provider_currency( provider );
 		CurrencyApi.change();
@@ -289,12 +290,11 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 	// init
 	$scope.block_wait = false;
 	// select first provider
-	if( $scope.payment.provider ) {
-		for( var index in $scope.payment.provider ) break;
-		$scope.provider_change( $scope.payment.provider[ index ] );
+	if( $scope.payment.provider[ 0 ] ) {
+		$scope.provider_change( $scope.payment.provider[ 0 ] );
+		// amount
+		$scope.amount_init();
 	}
-	// amount
-	$scope.amount_init();
 }])
 
 ;

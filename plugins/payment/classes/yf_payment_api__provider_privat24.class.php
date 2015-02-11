@@ -4,13 +4,6 @@ _class( 'payment_api__provider_remote' );
 
 class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote {
 
-	public $ENABLE    = true;
-	public $TEST_MODE = null;
-
-
-	public $payment_api = null;
-	public $api         = null;
-
 	public $URL         = 'https://api.privatbank.ua/p24api/ishop';
 	public $KEY_PUBLIC  = null; // merchant
 	public $KEY_PRIVATE = null; // pass

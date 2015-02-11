@@ -4,18 +4,11 @@ _class( 'payment_api__provider_remote' );
 
 class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remote {
 
-	public $ENABLE = true;
-
-	public $payment_api = null;
-	public $api         = null;
-
 	public $URL              = 'https://sci.interkassa.com/';
 	public $KEY_PUBLIC       = null;  // Checkout ID, Идентификатор кассы
 	public $KEY_PRIVATE      = null;  // secret key
 	public $KEY_PRIVATE_TEST = null;  // secret key for test
 	public $HASH_METHOD      = 'md5'; // signature hash method: md5, sha256
-
-	public $TEST_MODE   = null;
 
 	public $_options_transform = array(
 		'amount'       => 'ik_am',

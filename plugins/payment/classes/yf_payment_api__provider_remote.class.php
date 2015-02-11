@@ -2,7 +2,8 @@
 
 class yf_payment_api__provider_remote {
 
-	public $ENABLE = null;
+	public $ENABLE    = null;
+	public $TEST_MODE = null;
 
 	public $service_allow = null;
 	public $description   = null;
@@ -14,6 +15,7 @@ class yf_payment_api__provider_remote {
 	);
 
 	public $payment_api = null;
+	public $api         = null;
 
 	public function _init() {
 		$this->payment_api = _class( 'payment_api' );
