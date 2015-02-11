@@ -54,6 +54,8 @@ class yf_assets {
 	public $MAIN_TPL_CSS = 'style_css';
 	/** @bool Set to blank to disable */
 	public $MAIN_TPL_JS = 'script_js';
+	/** @bool */
+	public $USE_REQUIRE_JS = false;
 
 	/**
 	* Catch missing method call
@@ -974,11 +976,13 @@ class yf_assets {
 		if (!is_array($params)) {
 			$params = !empty($params) ? array($params) : array();
 		}
-		$ext = '.'.$out_type;
 		// Assets from current module
 		$module_assets_path = $this->find_asset_type_for_module($out_type, $_GET['object']);
 		if ($module_assets_path) {
 			$this->add_file($module_assets_path, $out_type);
+		}
+		if ($out_type === 'js' && $this->USE_REQUIRE_JS) {
+			return $this->show_require_js($params);
 		}
 		if ($this->COMBINE) {
 			$combined_file = $this->_cache_path($out_type, '', array(
@@ -1068,6 +1072,32 @@ class yf_assets {
 		$append = _class('core_events')->fire('assets.append', array('out' => &$out));
 		$this->clean_content($out_type);
 		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
+	}
+
+	/**
+	*/
+	public function show_require_js($params = array()) {
+		$out_type = 'js';
+		$out = array();
+		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
+			if (!is_array($v)) {
+				continue;
+			}
+			$out[$md5] = $this->html_out($out_type, $v['content_type'], $v['content'], (array)$v['params'] + (array)$params);
+		}
+		$this->clean_content($out_type);
+		$out = '
+<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.js" type="text/javascript"></script>
+<script type="text/javascript">
+requirejs.config({ baseUrl: "/templates/"'.MAIN_TYPE.'"/cache/" });
+define("jquery", [], function() { });
+requirejs( [ "module1", "module2" ], function( angular ) {
+	console.log( "modules load" );
+});
+</script>
+				'/*. PHP_EOL. implode(PHP_EOL, $out)*/;
+var_dump($out);
+		return $out;
 	}
 
 	/**
