@@ -120,7 +120,12 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		} elseif ($extra['only_row_end']) {
 			return $row_end;
 		} elseif ($extra['stacked']) {
-			return '<span class="'.$this->CLASS_STACKED_ITEM.'">'
+			$extra_stacked = is_array($extra['stacked']) ? $extra['stacked'] : array();
+			if ($extra['class_stacked'] && !isset($extra_stacked['class'])) {
+				$extra_stacked['class'] = $extra['class_stacked'];
+			}
+			$extra_stacked['class'] = ($extra['class_stacked'] ?: $this->CLASS_STACKED_ITEM). ' '.$extra['class_add_stacked'];
+			return '<span'._attrs($extra_stacked, array('id', 'class', 'style')).'>'
 					.$inline_help_before. $before_content_html. $content. PHP_EOL. $after_content_html
 					.$edit_link_html. $link_name_html. $inline_tip_html. $inline_help_after
 				.'</span>';
