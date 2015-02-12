@@ -938,7 +938,7 @@ class yf_html {
 		}
 		$extra['type'] = 'checkbox';
 		return '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
-				. '<input'._attrs($extra, array('type', 'name', 'id', 'value', 'checked', 'class', 'style')). ($add_str ? ' '.$add_str : '')
+				. '<input'._attrs($extra, array('type','name','id','value','checked','class','style','disabled','required')). ($add_str ? ' '.$add_str : '')
 				. '> &nbsp;'. ($translate ? t($extra['desc']) : $extra['desc']) // Please do not remove whitespace :)
 			. '</label>';
 	}
