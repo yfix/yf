@@ -16,7 +16,9 @@ class yf_html {
 	/** @var string */
 	public $SELECT_BOX_DEF_OPT_TPL = '- %select% %name% -';
 	/** @var string */
-	public $CLASS_LABEL_CHECKBOX = 'checkbox checkbox-inline';
+	public $CLASS_LABEL_CHECKBOX = 'checkbox';
+	/** @var string */
+	public $CLASS_LABEL_CHECKBOX_INLINE = 'checkbox-inline';
 	/** @var string */
 	public $CLASS_LABEL_CHECKBOX_SELECTED = 'active';
 
@@ -926,7 +928,8 @@ class yf_html {
 		$translate = $extra['translate'] ? $extra['translate'] : $translate;
 
 		$label_extra = $extra['label_extra'];
-		$label_extra['class'] = isset($label_extra['class']) ? $label_extra['class'] : (isset($extra['class_label_checkbox']) ? $extra['class_label_checkbox'] : $this->CLASS_LABEL_CHECKBOX);
+		$def_label_class = $this->CLASS_LABEL_CHECKBOX.' '.$this->CLASS_LABEL_CHECKBOX_INLINE;
+		$label_extra['class'] = isset($label_extra['class']) ? $label_extra['class'] : (isset($extra['class_label_checkbox']) ? $extra['class_label_checkbox'] : $def_label_class);
 		if ($extra['class_add_label_checkbox']) {
 			$label_extra['class'] .= ' '.$extra['class_add_label_checkbox'];
 		}
@@ -994,12 +997,15 @@ class yf_html {
 				$val_name = $name.'_'.$key;
 			}
 			$label_extra = $extra['label_extra'];
-			$label_extra['class'] = ($label_extra['class'] ?: 'checkbox'). ($horizontal ? ' checkbox-inline' : '');
+			$label_extra['class'] = isset($label_extra['class']) ? $label_extra['class'] : (isset($extra['class_label_checkbox']) ? $extra['class_label_checkbox'] : $this->CLASS_LABEL_CHECKBOX);
+			if ($horizontal) {
+				$label_extra['class'] .= ' '.$this->CLASS_LABEL_CHECKBOX_INLINE;
+			}
 			if ($extra['class_add_label_checkbox']) {
 				$label_extra['class'] .= ' '.$extra['class_add_label_checkbox'];
 			}
 			if ($is_selected) {
-				$label_extra['class'] .= ' active';
+				$label_extra['class'] .= ' '.$this->CLASS_LABEL_CHECKBOX_SELECTED;
 			}
 			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 			if ($this->BOXES_USE_STPL) {
