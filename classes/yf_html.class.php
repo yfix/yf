@@ -13,7 +13,7 @@ class yf_html {
 	public $BOXES_USE_STPL	= false;
 	public $SELECT_BOX_DEF_OPT_TPL = '- %select% %name% -';
 	public $CLASS_LABEL_RADIO = 'radio';
-	public $CLASS_LABEL_CHECKBOX_INLINE = 'radio-inline';
+	public $CLASS_LABEL_RADIO_INLINE = 'radio-inline';
 	public $CLASS_LABEL_RADIO_SELECTED = 'active';
 	public $CLASS_LABEL_CHECKBOX = 'checkbox';
 	public $CLASS_LABEL_CHECKBOX_INLINE = 'checkbox-inline';
