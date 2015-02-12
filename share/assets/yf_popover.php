@@ -5,8 +5,9 @@ return array(
 		'jquery' => 
 			'try {
 				$(".yf_tip").popover({
-					"trigger" : "hover",
-					"delay"   : { "show" : 100, "hide" : 500 }
+					"trigger"	: "hover",
+					"delay"		: { "show" : 0, "hide" : 0 },
+					"animation" : false
 				})
 			} catch(e) { console.log(e) }'
 	)),
