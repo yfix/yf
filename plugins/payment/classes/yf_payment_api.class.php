@@ -625,8 +625,8 @@ class yf_payment_api {
 			$result = $provider_index[ 'all' ];
 		}
 		// by provider_id
-		elseif( !empty( $provider_id ) ) {
-			$result = array( $provider_id => $provider[ $provider_id ] );
+		elseif( isset( $provider_id ) ) {
+			$provider[ $provider_id ] && $result = array( $provider_id => $provider[ $provider_id ] );
 		}
 		// by name
 		elseif( !empty( $name ) ) {
