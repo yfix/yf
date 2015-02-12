@@ -5,6 +5,8 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 class class_html_test extends PHPUnit_Framework_TestCase {
 	public function test_select_box() {
 		$html = html();
+		$def_class = $html->CLASS_SELECT_BOX;
+		$def_opt_class = $html->CLASS_SELECT_OPTION_DEFAULT;
 		$html->_ids = array();
 
 		$this->assertEmpty( $html->select_box('', array()) );
@@ -19,17 +21,17 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 
 		$str = $html->select_box('', $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select class="form-control"><option value="1">red</option><option value="2">green</option></select>'
+			'<select class="'.$def_class.'"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->select_box('myselect', $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect" class="form-control"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect" class="'.$def_class.'"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->select_box('myselect2', $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect2" class="form-control"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect2" class="'.$def_class.'"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 
@@ -38,17 +40,17 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 
 		$str = $html->select_box('myselect', $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect" id="select_box_1" class="form-control"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect" id="select_box_1" class="'.$def_class.'"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->select_box('myselect2', $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect2" id="select_box_2" class="form-control"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect2" id="select_box_2" class="'.$def_class.'"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->select_box(array('name' => 'myselect3', 'data-unittest' => 'testval'), $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3" id="select_box_3" class="form-control" data-unittest="testval"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect3" id="select_box_3" class="'.$def_class.'" data-unittest="testval"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->select_box(array(
@@ -58,7 +60,7 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 			'disabled' => 1
 		));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3" id="select_box_4" class="form-control" disabled="disabled" data-unittest="testval"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect3" id="select_box_4" class="'.$def_class.'" disabled="disabled" data-unittest="testval"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->select_box(array(
@@ -69,7 +71,7 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 			'selected' => 2
 		));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3" id="select_box_5" class="form-control" disabled="disabled" data-unittest="testval"><option value="1">red</option><option value="2" selected="selected">green</option></select>'
+			'<select name="myselect3" id="select_box_5" class="'.$def_class.'" disabled="disabled" data-unittest="testval"><option value="1">red</option><option value="2" selected="selected">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->select_box(array(
@@ -84,8 +86,8 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 			'show_text' => 1,
 		));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3" id="select_box_6" class="myclass form-control" style="color:red;" disabled="disabled" data-unittest="testval" onclick="alert(\'Hello\')">'.
-			'<option value="" class="opt-default">- Select myselect3 -</option><option value="1">red</option><option value="2" selected="selected">green</option></select>'
+			'<select name="myselect3" id="select_box_6" class="myclass" style="color:red;" disabled="disabled" data-unittest="testval" onclick="alert(\'Hello\')">'.
+			'<option value="" class="'.$def_opt_class.'">- Select myselect3 -</option><option value="1">red</option><option value="2" selected="selected">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->select_box(array(
@@ -95,13 +97,13 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 			'disabled' => 1,
 			'selected' => 2,
 			'style' => 'color:red;',
-			'class' => 'myclass',
+			'class_add' => 'myclass',
 			'add_str' => 'onclick="alert(\'Hello\')"',
 			'show_text' => 1,
 		));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3" id="select_box_7" class="myclass form-control" style="color:red;" disabled="disabled" data-unittest="testval" onclick="alert(\'Hello\')">'.
-			'<option value="" class="opt-default">- Select myselect3 -</option><optgroup label="sub1" title="sub1"><option value="1">red</option><option value="2" selected="selected">green</option></optgroup></select>'
+			'<select name="myselect3" id="select_box_7" class="'.$def_class.' myclass" style="color:red;" disabled="disabled" data-unittest="testval" onclick="alert(\'Hello\')">'.
+			'<option value="" class="'.$def_opt_class.'">- Select myselect3 -</option><optgroup label="sub1" title="sub1"><option value="1">red</option><option value="2" selected="selected">green</option></optgroup></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->select_box(array(
@@ -110,12 +112,14 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 			'show_text' => 'my default text',
 		));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3" id="select_box_8" class="form-control"><option value="" class="opt-default">my default text</option><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect3" id="select_box_8" class="'.$def_class.'"><option value="" class="'.$def_opt_class.'">my default text</option><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 	}
 	public function test_multi_select() {
 		$html = html();
+		$def_class = $html->CLASS_SELECT_BOX;
+		$def_opt_class = $html->CLASS_SELECT_OPTION_DEFAULT;
 		$html->_ids = array();
 
 		$this->assertEmpty( $html->multi_select('', array()) );
@@ -130,17 +134,17 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 
 		$str = $html->multi_select('', $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select class="form-control" multiple="multiple"><option value="1">red</option><option value="2">green</option></select>'
+			'<select class="'.$def_class.'" multiple="multiple"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->multi_select('myselect', $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect[]" class="form-control" multiple="multiple"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect[]" class="'.$def_class.'" multiple="multiple"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->multi_select('myselect2', $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect2[]" class="form-control" multiple="multiple"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect2[]" class="'.$def_class.'" multiple="multiple"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 
@@ -149,39 +153,39 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 
 		$str = $html->multi_select('myselect', $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect[]" id="multi_select_1" class="form-control" multiple="multiple"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect[]" id="multi_select_1" class="'.$def_class.'" multiple="multiple"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->multi_select('myselect2', $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect2[]" id="multi_select_2" class="form-control" multiple="multiple"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect2[]" id="multi_select_2" class="'.$def_class.'" multiple="multiple"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->multi_select(array('name' => 'myselect3', 'data-unittest' => 'testval'), $data);
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3[]" id="multi_select_3" class="form-control" multiple="multiple" data-unittest="testval"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect3[]" id="multi_select_3" class="'.$def_class.'" multiple="multiple" data-unittest="testval"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->multi_select(array('name' => 'myselect3', 'data-unittest' => 'testval', 'values' => $data));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3[]" id="multi_select_4" class="form-control" multiple="multiple" data-unittest="testval"><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect3[]" id="multi_select_4" class="'.$def_class.'" multiple="multiple" data-unittest="testval"><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->multi_select(array('name' => 'myselect3', 'data-unittest' => 'testval', 'values' => $data, 'disabled' => 1));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3[]" id="multi_select_5" class="form-control" multiple="multiple" disabled="disabled" data-unittest="testval"><option value="1">red</option>'.
+			'<select name="myselect3[]" id="multi_select_5" class="'.$def_class.'" multiple="multiple" disabled="disabled" data-unittest="testval"><option value="1">red</option>'.
 			'<option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->multi_select(array('name' => 'myselect3', 'data-unittest' => 'testval', 'values' => $data, 'disabled' => 1, 'selected' => 2));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3[]" id="multi_select_6" class="form-control" multiple="multiple" disabled="disabled" data-unittest="testval"><option value="1">red</option>'.
+			'<select name="myselect3[]" id="multi_select_6" class="'.$def_class.'" multiple="multiple" disabled="disabled" data-unittest="testval"><option value="1">red</option>'.
 			'<option value="2" selected="selected">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->multi_select(array('name' => 'myselect3', 'data-unittest' => 'testval', 'values' => $data, 'disabled' => 1, 'selected' => array(1 => 1, 2 => 2)));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3[]" id="multi_select_7" class="form-control" multiple="multiple" disabled="disabled" data-unittest="testval"><option value="1" selected="selected">red</option>'.
+			'<select name="myselect3[]" id="multi_select_7" class="'.$def_class.'" multiple="multiple" disabled="disabled" data-unittest="testval"><option value="1" selected="selected">red</option>'.
 			'<option value="2" selected="selected">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
@@ -197,8 +201,20 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 			'show_text' => 1,
 		));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3[]" id="multi_select_8" class="myclass form-control" style="color:red;" multiple="multiple" disabled="disabled" data-unittest="testval" onclick="alert(\'Hello\')">'.
-			'<option value="" class="opt-default">- Select myselect3 -</option><optgroup label="sub1" title="sub1"><option value="1">red</option><option value="2" selected="selected">green</option></optgroup></select>'
+			'<select name="myselect3[]" id="multi_select_8" class="myclass" style="color:red;" multiple="multiple" disabled="disabled" data-unittest="testval" onclick="alert(\'Hello\')">'.
+			'<option value="" class="'.$def_opt_class.'">- Select myselect3 -</option><optgroup label="sub1" title="sub1"><option value="1">red</option><option value="2" selected="selected">green</option></optgroup></select>'
+			), str_replace(PHP_EOL, '', trim($str))
+		);
+		$str = $html->multi_select(array(
+			'name' => 'myselect3',
+			'values' => array('sub1' => $data),
+			'selected' => 2,
+			'class_add' => 'myclass',
+			'show_text' => 1,
+		));
+		$this->assertEquals(str_replace(PHP_EOL, '', 
+			'<select name="myselect3[]" id="multi_select_9" class="'.$def_class.' myclass" multiple="multiple">'.
+			'<option value="" class="'.$def_opt_class.'">- Select myselect3 -</option><optgroup label="sub1" title="sub1"><option value="1">red</option><option value="2" selected="selected">green</option></optgroup></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 		$str = $html->multi_select(array(
@@ -207,7 +223,7 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 			'show_text' => 'my default text',
 		));
 		$this->assertEquals(str_replace(PHP_EOL, '', 
-			'<select name="myselect3[]" id="multi_select_9" class="form-control" multiple="multiple"><option value="" class="opt-default">my default text</option><option value="1">red</option><option value="2">green</option></select>'
+			'<select name="myselect3[]" id="multi_select_10" class="'.$def_class.'" multiple="multiple"><option value="" class="'.$def_opt_class.'">my default text</option><option value="1">red</option><option value="2">green</option></select>'
 			), str_replace(PHP_EOL, '', trim($str))
 		);
 	}
