@@ -274,10 +274,61 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 			'desc' => 'My desc',
 			'class_add_label_checkbox' => 'testme',
 		)));
+		$this->assertEquals('<label class="'.$html->CLASS_LABEL_CHECKBOX.' active"><input type="checkbox" name="checkbox" value="1" checked="checked"> &nbsp;Checkbox</label>', $html->check_box(array(
+			'selected' => true,
+		)));
+		$this->assertEquals('<label class="'.$html->CLASS_LABEL_CHECKBOX.' active"><input type="checkbox" name="checkbox" value="1" checked="checked"> &nbsp;Checkbox</label>', $html->check_box(array(
+			'checked' => true,
+		)));
+		$this->assertEquals('<label class="'.$html->CLASS_LABEL_CHECKBOX.'"><input type="checkbox" name="checkbox" value="1"> &nbsp;Checkbox</label>', $html->check_box(array(
+			'selected' => false,
+		)));
+		$this->assertEquals('<label class="'.$html->CLASS_LABEL_CHECKBOX.'"><input type="checkbox" name="checkbox" value="1"> &nbsp;Checkbox</label>', $html->check_box(array(
+			'checked' => false,
+		)));
+		$this->assertEquals(
+			'<label class="'.$html->CLASS_LABEL_CHECKBOX.' testme active"><input type="checkbox" name="test" id="myid" value="true" checked="checked"> &nbsp;My desc</label>'
+			, $html->check_box(array(
+			'name' => 'test',
+			'value' => 'true',
+			'id' => 'myid',
+			'desc' => 'My desc',
+			'class_add_label_checkbox' => 'testme',
+			'selected' => true,
+		)));
+		$this->assertEquals(
+			'<label class="'.$html->CLASS_LABEL_CHECKBOX.' testme active"><input type="checkbox" name="test" id="myid" value="true" checked="checked" style="color:red;"> &nbsp;My desc</label>'
+			, $html->check_box(array(
+			'name' => 'test',
+			'value' => 'true',
+			'id' => 'myid',
+			'desc' => 'My desc',
+			'class_add_label_checkbox' => 'testme',
+			'selected' => true,
+			'style' => 'color:red;',
+		)));
 
 		$html->_ids = array();
-/*
 		$html->AUTO_ASSIGN_IDS = true;
-*/
+
+		$this->assertEquals('<label class="'.$html->CLASS_LABEL_CHECKBOX.'"><input type="checkbox" name="checkbox" id="check_box_1" value="1"> &nbsp;Checkbox</label>', $html->check_box());
+		$this->assertEquals('<label class="'.$html->CLASS_LABEL_CHECKBOX.'"><input type="checkbox" name="checkbox" id="check_box_2" value="1"> &nbsp;Checkbox</label>', $html->check_box('', ''));
+		$this->assertEquals('<label class="'.$html->CLASS_LABEL_CHECKBOX.'"><input type="checkbox" name="test" id="check_box_3" value="1"> &nbsp;Test</label>', $html->check_box('test'));
+		$this->assertEquals('<label class="'.$html->CLASS_LABEL_CHECKBOX.'"><input type="checkbox" name="test" id="check_box_4" value="true"> &nbsp;Test</label>', $html->check_box('test', 'true'));
+		$this->assertEquals('<label class="'.$html->CLASS_LABEL_CHECKBOX.'"><input type="checkbox" name="checkbox" id="check_box_5" value="true"> &nbsp;Checkbox</label>', $html->check_box('', 'true'));
+		$this->assertEquals('<label class="'.$html->CLASS_LABEL_CHECKBOX.'"><input type="checkbox" name="test" id="check_box_6" value="1"> &nbsp;Test</label>', $html->check_box(array(
+			'name' => 'test',
+		)));
+		$this->assertEquals(
+			'<label class="'.$html->CLASS_LABEL_CHECKBOX.' testme active"><input type="checkbox" name="test" id="myid" value="true" checked="checked" style="color:red;"> &nbsp;My desc</label>'
+			, $html->check_box(array(
+			'name' => 'test',
+			'value' => 'true',
+			'id' => 'myid',
+			'desc' => 'My desc',
+			'class_add_label_checkbox' => 'testme',
+			'selected' => true,
+			'style' => 'color:red;',
+		)));
 	}
 }
