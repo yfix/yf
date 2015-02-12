@@ -17,6 +17,8 @@ class yf_html {
 	public $SELECT_BOX_DEF_OPT_TPL = '- %select% %name% -';
 	/** @var string */
 	public $CLASS_LABEL_CHECKBOX = 'checkbox checkbox-inline';
+	/** @var string */
+	public $CLASS_LABEL_CHECKBOX_SELECTED = 'active';
 
 	/**
 	* Catch missing method call
@@ -917,7 +919,7 @@ class yf_html {
 			$selected = $extra['checked'];
 		}
 		$extra['checked'] = $selected ? 'checked' : null;
-		$extra['id'] = $extra['id'] ?: ($this->AUTO_ASSIGN_IDS ? __FUNCTION__.'_'.++$this->_ids[__FUNCTION__] : null);
+		$extra['id'] = ($extra['force_id'] ?: $extra['id']) ?: ($this->AUTO_ASSIGN_IDS ? __FUNCTION__.'_'.++$this->_ids[__FUNCTION__] : null);
 		$extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $extra['name']));
 		$extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		$add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
@@ -929,7 +931,7 @@ class yf_html {
 			$label_extra['class'] .= ' '.$extra['class_add_label_checkbox'];
 		}
 		if ($selected) {
-			$label_extra['class'] .= ' active';
+			$label_extra['class'] .= ' '.$this->CLASS_LABEL_CHECKBOX_SELECTED;
 		}
 		$extra['type'] = 'checkbox';
 		return '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
