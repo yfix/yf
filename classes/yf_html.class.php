@@ -1323,4 +1323,12 @@ class yf_html {
 	function datetime_box2($name, $selected = '', $years = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
 		return _class('html_datetime', 'classes/html/')->datetime_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate);
 	}
+
+	/**
+	*/
+	function tooltip($text = '', $extra = array()) {
+#		return form()->_show_tip($text);
+		css('.popover { width:auto; min-width: 100px;}');
+		return '&nbsp;<span class="yf_tip" data-toggle="popover" data-content="'._prepare_html($text).'"><i class="icon icon-question-sign fa fa-question-circle"></i></span>';
+	}
 }
