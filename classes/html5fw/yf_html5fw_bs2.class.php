@@ -82,8 +82,10 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 		$label_extra['class'] = $class_label;
 		$label_extra['for'] = $extra['id'];
 
+		$label_tip_html = $extra['label_tip'] ? trim(' '.html()->tooltip($extra['label_tip'])) : '';
+
 		$row_start = '<div'._attrs($form_group_extra, array('id','class','style')).'>'.PHP_EOL
-			.($extra['desc'] && !$no_label ? '<label'._attrs($label_extra, array('id','class','style','for')).'>'.t($extra['desc']).'</label>'.PHP_EOL : '')
+			.($extra['desc'] && !$no_label ? '<label'._attrs($label_extra, array('id','class','style','for')).'>'.t($extra['desc']). $label_tip_html.'</label>'.PHP_EOL : '')
 			.(!$extra['wide'] ? '<div'._attrs($controls_extra, array('id','class','style')).'>'.PHP_EOL : '');
 
 		$row_end =
