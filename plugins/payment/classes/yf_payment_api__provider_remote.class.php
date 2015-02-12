@@ -5,6 +5,10 @@ class yf_payment_api__provider_remote {
 	public $ENABLE    = null;
 	public $TEST_MODE = null;
 
+	public $URL         = null;
+	public $KEY_PUBLIC  = null;
+	public $KEY_PRIVATE = null;
+
 	public $service_allow = null;
 	public $description   = null;
 
@@ -33,6 +37,25 @@ class yf_payment_api__provider_remote {
 		$name    = $this->_status[ $value ];
 		$message = $this->_status_message[ $name ];
 		return( array( $name, $message ) );
+	}
+
+	protected function _api_request( $url, $post ) {
+		// curl
+		$ch = curl_init();
+		curl_setopt( $ch, CURLOPT_URL           , $url  );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $ch, CURLOPT_POST          , 1     );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS    , $post );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1     );
+		$result = curl_exec( $ch );
+		curl_close( $ch );
+		return( $result );
+	}
+
+	protected function api_request( $uri, $data ) {
+		$url    = $this->URL . $uri;
+		$result = $this->_api_request( $url, $data );
+		return( $result );
 	}
 
 	protected function _api_deposition( $options ) {

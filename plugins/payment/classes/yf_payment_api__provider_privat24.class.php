@@ -4,7 +4,7 @@ _class( 'payment_api__provider_remote' );
 
 class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote {
 
-	public $URL         = 'https://api.privatbank.ua/p24api/ishop';
+	public $URL         = 'https://api.privatbank.ua/p24api/';
 	public $KEY_PUBLIC  = null; // merchant
 	public $KEY_PRIVATE = null; // pass
 
@@ -87,6 +87,29 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
+	public function api_request( $options ) {
+		$_ = $options;
+		// transform
+		foreach ((array)$this->_options_transform as $from => $to ) {
+			if( isset( $_[ $from ] ) ) {
+				$_[ $to ] = $_[ $from ];
+				unset( $_[ $from ] );
+			}
+		}
+		// default
+		$_[ 'amt' ] = number_format( $_[ 'amt' ], 2, '.', '' );
+		// prepare data
+		$data = array();
+		foreach( $_ as $key => $value ) {
+			$value = htmlentities( $value, ENT_COMPAT | ENT_XML1, 'UTF-8', $double_encode = false );
+			var_dump( $value );
+			$data[] = sprintf( '<prop name="%s" value="%s" />', $key, $value );
+		}
+		// signature
+		$key_public  = $this->KEY_PUBLIC;
+		$key_private = $this->KEY_PRIVATE;
+	}
+
 	public function _form_options( $options ) {
 		$_ = $options;
 		// transform
@@ -120,7 +143,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$signature    = $this->signature( $form_options );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'signature' ] = $signature;
-		$url = &$this->URL;
+		$url = &$this->URL . 'ishop';
 		$result = array();
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
