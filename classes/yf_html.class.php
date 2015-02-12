@@ -9,18 +9,17 @@
 */
 class yf_html {
 
-	/** @var bool */
 	public $AUTO_ASSIGN_IDS = true;
-	/** @var bool */
 	public $BOXES_USE_STPL	= false;
-	/** @var string */
 	public $SELECT_BOX_DEF_OPT_TPL = '- %select% %name% -';
-	/** @var string */
+	public $CLASS_LABEL_RADIO = 'radio';
+	public $CLASS_LABEL_CHECKBOX_INLINE = 'radio-inline';
+	public $CLASS_LABEL_RADIO_SELECTED = 'active';
 	public $CLASS_LABEL_CHECKBOX = 'checkbox';
-	/** @var string */
 	public $CLASS_LABEL_CHECKBOX_INLINE = 'checkbox-inline';
-	/** @var string */
 	public $CLASS_LABEL_CHECKBOX_SELECTED = 'active';
+	public $CLASS_SELECT_BOX = 'form-control';
+	public $CLASS_SELECT_OPTION_DEFAULT = 'opt-default';
 
 	/**
 	* Catch missing method call
@@ -705,7 +704,7 @@ class yf_html {
 		$level = isset($extra['level']) ? $extra['level'] : $level;
 		// (example: $add_str = 'size=6')
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
-		$extra['class'] = trim($extra['class'].' form-control');
+		$extra['class'] = trim($extra['class'].' '.$this->CLASS_SELECT_BOX);
 		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		if (!$values) {
 			return false;
@@ -729,7 +728,7 @@ class yf_html {
 			if ($show_text == 1) {
 				$def_opt_text = str_replace(array('%name%','%select%'), array(t($name), t('Select')), $this->SELECT_BOX_DEF_OPT_TPL);
 			}
-			$body[] = '<option value="" class="opt-default">'. $def_opt_text. '</option>';
+			$body[] = '<option value="" class="'.$this->CLASS_SELECT_OPTION_DEFAULT.'">'. $def_opt_text. '</option>';
 		}
 		$self_func = __FUNCTION__;
 		$option_callback = $extra['option_callback'];
@@ -773,7 +772,7 @@ class yf_html {
 		$level = isset($extra['level']) ? $extra['level'] : $level;
 		// (example: $add_str = 'size=6') disabled
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
-		$extra['class'] = trim($extra['class'].' form-control');
+		$extra['class'] = trim($extra['class'].' '.$this->CLASS_SELECT_BOX);
 		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		if (!$values) {
 			return false;
@@ -800,7 +799,7 @@ class yf_html {
 			if ($show_text == 1) {
 				$def_opt_text = str_replace(array('%name%','%select%'), array(t($name), t('Select')), $this->SELECT_BOX_DEF_OPT_TPL);
 			}
-			$body[] = '<option value="" class="opt-default">'. $def_opt_text. '</option>';
+			$body[] = '<option value="" class="'.$this->CLASS_SELECT_OPTION_DEFAULT.'">'. $def_opt_text. '</option>';
 		}
 		$self_func = __FUNCTION__;
 		foreach ((array)$values as $key => $value) {
@@ -887,12 +886,12 @@ class yf_html {
 				));
 			} else {
 				$label_extra = $extra['label_extra'];
-				$label_extra['class'] = ($label_extra['class'] ?: 'radio'). ($horizontal ? ' radio-inline' : '');
+				$label_extra['class'] = ($label_extra['class'] ?: $this->CLASS_LABEL_RADIO). ($horizontal ? ' '.$this->CLASS_LABEL_RADIO_INLINE : '');
 				if ($extra['class_add_label_radio']) {
 					$label_extra['class'] .= ' '.$extra['class_add_label_radio'];
 				}
 				if ($is_selected) {
-					$label_extra['class'] .= ' active';
+					$label_extra['class'] .= ' '.$this->CLASS_LABEL_RADIO_SELECTED;
 				}
 				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
 							.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
