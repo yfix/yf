@@ -87,7 +87,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	public function api_request( $options ) {
+	public function api_request( $method, $options ) {
 		$_ = $options;
 		// transform
 		foreach ((array)$this->_options_transform as $from => $to ) {
@@ -105,9 +105,32 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 			var_dump( $value );
 			$data[] = sprintf( '<prop name="%s" value="%s" />', $key, $value );
 		}
+		$data = implode( '', $data );
 		// signature
 		$key_public  = $this->KEY_PUBLIC;
 		$key_private = $this->KEY_PRIVATE;
+		$signature = $this->api->str_to_sign( $data );
+		// prepare xml request
+		$data = array(
+			'<?xml version="1.0" encoding="UTF-8"?>',
+			'<request version="1.0">',
+				'<merchant>',
+					'<id>',
+						$key_public,
+					'</id>',
+					'<signature>',
+						$signature,
+					'</signature>',
+				'</merchant>',
+			'<data>',
+				$data,
+			'</data>',
+			'</request>',
+		);
+		$data = implode( '', $data );
+		// request
+		$result = $this->_api_request( $method, $data );
+		return( $result );
 	}
 
 	public function _form_options( $options ) {

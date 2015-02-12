@@ -39,7 +39,7 @@ class yf_payment_api__provider_remote {
 		return( array( $name, $message ) );
 	}
 
-	protected function _api_request( $url, $post ) {
+	protected function _api_post( $url, $post ) {
 		// curl
 		$ch = curl_init();
 		curl_setopt( $ch, CURLOPT_URL           , $url  );
@@ -52,9 +52,9 @@ class yf_payment_api__provider_remote {
 		return( $result );
 	}
 
-	protected function api_request( $uri, $data ) {
+	protected function _api_request( $uri, $data ) {
 		$url    = $this->URL . $uri;
-		$result = $this->_api_request( $url, $data );
+		$result = $this->_api_post( $url, $data );
 		return( $result );
 	}
 
