@@ -14,7 +14,7 @@ class form2_2forms {
 				'redirect_link' => '/?object=offers&action=view&id='.$request_id,
 				'add_fields'    => array('status' => 4),
 			))
-			->row_start(array('desc' => 'Rules for fine'))
+			->row_start(array('desc' => 'Rules for fine', 'label_tip' => 'test label tip'))
 				->number('fine', 'Amount fine', array('class_add' => 'input-small', 'min' => 1, 'max' => 1000))
 				->button(conf('currency_list::'.$info['currency']), array('disabled' => 1))
 				->select_box('type', array('fixed' => 'fixed', 'percent' => 'percent'))
