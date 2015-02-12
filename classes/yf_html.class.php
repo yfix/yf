@@ -1327,6 +1327,9 @@ class yf_html {
 	/**
 	*/
 	function tooltip($text = '', $extra = array()) {
+		if (!strlen($text)) {
+			return '';
+		}
 #		return form()->_show_tip($text);
 		css('.popover { width:auto; min-width: 100px;}');
 		return '&nbsp;<span class="yf_tip" data-toggle="popover" data-content="'._prepare_html($text).'"><i class="icon icon-question-sign fa fa-question-circle"></i></span>';
