@@ -704,7 +704,7 @@ class yf_html {
 		$level = isset($extra['level']) ? $extra['level'] : $level;
 		// (example: $add_str = 'size=6')
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
-		$extra['class'] = trim($extra['class'].' '.$this->CLASS_SELECT_BOX);
+		$extra['class'] = isset($extra['class']) ? $extra['class'] : $this->CLASS_SELECT_BOX;
 		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		if (!$values) {
 			return false;
@@ -772,7 +772,7 @@ class yf_html {
 		$level = isset($extra['level']) ? $extra['level'] : $level;
 		// (example: $add_str = 'size=6') disabled
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
-		$extra['class'] = trim($extra['class'].' '.$this->CLASS_SELECT_BOX);
+		$extra['class'] = isset($extra['class']) ? $extra['class'] : $this->CLASS_SELECT_BOX;
 		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		if (!$values) {
 			return false;
