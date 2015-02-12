@@ -13,8 +13,10 @@ class yf_html {
 	public $AUTO_ASSIGN_IDS = true;
 	/** @var bool */
 	public $BOXES_USE_STPL	= false;
-	/** @var strinh */
+	/** @var string */
 	public $SELECT_BOX_DEF_OPT_TPL = '- %select% %name% -';
+	/** @var string */
+	public $CLASS_LABEL_CHECKBOX = 'checkbox checkbox-inline';
 
 	/**
 	* Catch missing method call
@@ -27,7 +29,17 @@ class yf_html {
 	* We cleanup object properties when cloning
 	*/
 	function __clone() {
+		$keep_prefix = 'CLASS_';
+		$keep_len = strlen($keep_prefix);
+		$keep_prefix2 = 'CONF_';
+		$keep_len2 = strlen($keep_prefix2);
 		foreach ((array)get_object_vars($this) as $k => $v) {
+			if (substr($k, 0, $keep_len) === $keep_prefix) {
+				continue;
+			}
+			if (substr($k, 0, $keep_len2) === $keep_prefix2) {
+				continue;
+			}
 			if ($k[0] == '_') {
 				$this->$k = null;
 			}
@@ -898,31 +910,30 @@ class yf_html {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$name = isset($extra['name']) ? $extra['name'] : 'checkbox';
-		$value = $extra['value'] ?: (strlen($value) ? $value : '1');
+		$extra['name'] = strlen($name) ? $name : (strlen($extra['name']) ? $extra['name'] : 'checkbox');
+		$extra['value'] = strlen($value) ? $value : (strlen($extra['value']) ? $extra['value'] : '1');
 		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
 		if (isset($extra['checked'])) {
 			$selected = $extra['checked'];
 		}
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
-		$translate = $extra['translate'] ? $extra['translate'] : $translate;
+		$extra['checked'] = $selected ? 'checked' : null;
+		$extra['id'] = $extra['id'] ?: ($this->AUTO_ASSIGN_IDS ? __FUNCTION__.'_'.++$this->_ids[__FUNCTION__] : null);
+		$extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $extra['name']));
 		$extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		$add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
-		if ($extra['style']) {
-			$add_str .= ' style="'.$extra['style'].'" ';
-		}
+		$translate = $extra['translate'] ? $extra['translate'] : $translate;
+
 		$label_extra = $extra['label_extra'];
-		$label_extra['class'] = ($label_extra['class'] ?: 'checkbox checkbox-inline');
+		$label_extra['class'] = isset($label_extra['class']) ? $label_extra['class'] : (isset($extra['class_label_checkbox']) ? $extra['class_label_checkbox'] : $this->CLASS_LABEL_CHECKBOX);
 		if ($extra['class_add_label_checkbox']) {
 			$label_extra['class'] .= ' '.$extra['class_add_label_checkbox'];
 		}
 		if ($selected) {
 			$label_extra['class'] .= ' active';
 		}
+		$extra['type'] = 'checkbox';
 		return '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
-				. '<input type="checkbox" name="'.$name.'" id="'.$extra['id'].'" value="'.$value.'"'
-				. ($selected ? ' checked="checked"' : '') . ($add_str ? ' '.$add_str : '')
+				. '<input'._attrs($extra, array('type', 'name', 'id', 'value', 'class', 'style')). ($add_str ? ' '.$add_str : '')
 				. '> &nbsp;'. ($translate ? t($extra['desc']) : $extra['desc']) // Please do not remove whitespace :)
 			. '</label>';
 	}
