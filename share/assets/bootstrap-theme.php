@@ -77,6 +77,7 @@ if ($bs_theme === 'bootstrap') {
 		'add' => array(
 			'asset' => array(
 				'font-awesome3',
+#				'font-awesome4',
 				$fixes_name,
 			),
 		),
