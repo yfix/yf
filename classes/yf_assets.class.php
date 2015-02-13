@@ -20,7 +20,11 @@ class yf_assets {
 	protected $filters = array();
 	/***/
 	protected $supported_asset_types = array(
-		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle', 'asset'
+		'jquery', 'js', 'css', 'less', 'sass', 'coffee'/*, 'img', 'font'*/, 'bundle', 'asset'
+	);
+	/***/
+	protected $inherit_asset_types_map = array(
+		'js' => array('jquery'),
 	);
 	/***/
 	protected $supported_content_types = array(
@@ -580,33 +584,38 @@ class yf_assets {
 		if (isset($__params['config'])) {
 			unset($__params['config']);
 		}
-		foreach ((array)$this->supported_asset_types as $atype) {
-			if ($atype === 'jquery' || $atype === 'asset') {
+#var_dump(__FUNCTION__.': '.$_content);
+		$inherit_types_map = $this->inherit_asset_types_map;
+		$types = array();
+		foreach ((array)$this->supported_asset_types as $k => $atype) {
+			if ($atype === 'jquery') {
 				continue;
 			}
-			$inherit_type = $atype === 'js' ? 'jquery' : null;
-			$inherit_type2 = 'asset';
-
-			if ($require_data = $bundle_details['require'][$atype]) {
-				$this->_sub_add($require_data, $atype, $__params);
-			} elseif ($inherit_type && $require_data = $bundle_details['require'][$inherit_type]) {
-				$this->_sub_add($require_data, $inherit_type, $__params);
-			} elseif ($inherit_type2 && $require_data = $bundle_details['require'][$inherit_type2]) {
-				$this->_sub_add($require_data, $inherit_type2, $__params);
+			$types[$atype] = $atype;
+			$inherit_types = (array)$inherit_types_map[$atype] ?: array();
+			foreach ((array)$inherit_types as $inherit_type) {
+				$types[$inherit_type] = $inherit_type;
 			}
-
-			if ($data = $this->get_asset($_content, $atype)) {
+		}
+		foreach ((array)$types as $atype) {
+			$data = $bundle_details['require'][$atype];
+			if ($data) {
+#var_dump(__FUNCTION__.': '.$_content.': require '.$atype.' '.$data);
+				$this->_sub_add($data, $atype, $__params);
+			}
+		}
+		foreach ((array)$types as $atype) {
+			$data = $this->get_asset($_content, $atype);
+			if ($data) {
+#var_dump(__FUNCTION__.': '.$_content.': content '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $_params);
-			} elseif ($inherit_type && $data = $this->get_asset($_content, $inherit_type)) {
-				$this->_sub_add($data, $inherit_type, $_params);
 			}
-
-			if ($add_data = $bundle_details['add'][$atype]) {
-				$this->_sub_add($add_data, $atype, $__params);
-			} elseif ($inherit_type && $add_data = $bundle_details['add'][$inherit_type]) {
-				$this->_sub_add($add_data, $inherit_type, $__params);
-			} elseif ($inherit_type2 && $add_data = $bundle_details['add'][$inherit_type2]) {
-				$this->_sub_add($add_data, $inherit_type2, $__params);
+		}
+		foreach ((array)$types as $atype) {
+			$data = $bundle_details['add'][$atype];
+			if ($data) {
+#var_dump(__FUNCTION__.': '.$_content.': add '.$atype.' '.$data);
+				$this->_sub_add($data, $atype, $__params);
 			}
 		}
 	}
@@ -648,30 +657,34 @@ class yf_assets {
 			unset($__params['config']);
 		}
 
-		$atype = $asset_type;
-		$inherit_type = $atype === 'js' ? 'jquery' : null;
-		$inherit_type2 = 'asset';
-
-		if ($require_data = $asset_data['require'][$atype]) {
-			$this->_sub_add($require_data, $atype, $__params);
-		} elseif ($inherit_type && $require_data = $asset_data['require'][$inherit_type]) {
-			$this->_sub_add($require_data, $inherit_type, $__params);
-		} elseif ($inherit_type2 && $require_data = $asset_data['require'][$inherit_type2]) {
-			$this->_sub_add($require_data, $inherit_type2, $__params);
+		$inherit_types_map = $this->inherit_asset_types_map;
+		$types = array();
+		$types[$asset_type] = $asset_type;
+		$inherit_types = (array)$inherit_types_map[$atype] ?: array();
+		foreach ((array)$inherit_types as $inherit_type) {
+			$types[$inherit_type] = $inherit_type;
 		}
-
-		if ($data = $this->get_asset($_content, $atype)) {
-			$this->_sub_add($data, $atype, $_params);
-		} elseif ($inherit_type && $data = $this->get_asset($_content, $inherit_type)) {
-			$this->_sub_add($data, $inherit_type, $_params);
+#var_dump(__FUNCTION__.': '.$_content.', atype: '.$asset_type);
+		foreach ((array)$types as $atype) {
+			$data = $asset_data['require'][$atype];
+			if ($data) {
+#var_dump(__FUNCTION__.': '.$_content.': require '.$atype.' '.$data);
+				$this->_sub_add($data, $atype, $__params);
+			}
 		}
-
-		if ($add_data = $asset_data['add'][$atype]) {
-			$this->_sub_add($add_data, $atype, $__params);
-		} elseif ($inherit_type && $data = $asset_data['add'][$inherit_type]) {
-			$this->_sub_add($add_data, $inherit_type, $__params);
-		} elseif ($inherit_type2 && $data = $asset_data['add'][$inherit_type2]) {
-			$this->_sub_add($add_data, $inherit_type2, $__params);
+		foreach ((array)$types as $atype) {
+			$data = $this->get_asset($_content, $atype);
+			if ($data) {
+#var_dump(__FUNCTION__.': '.$_content.': content '.$atype.' '.$data);
+				$this->_sub_add($data, $atype, $_params);
+			}
+		}
+		foreach ((array)$types as $atype) {
+			$data = $asset_data['add'][$atype];
+			if ($data) {
+#var_dump(__FUNCTION__.': '.$_content.': add '.$atype.' '.$data);
+				$this->_sub_add($data, $atype, $__params);
+			}
 		}
 	}
 
