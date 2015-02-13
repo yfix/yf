@@ -828,6 +828,99 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/***/
+	public function test_order7() {
+		$jquery_url = _class('assets')->get_asset('jquery', 'js');
+		$url = $jquery_url;
+		$url1 = $url.'?v=1';
+		$url2 = $url.'?v=2';
+		$url3 = $url.'?v=3';
+		$url4 = $url.'?v=4';
+
+		$name1 = __FUNCTION__.'_fake_lib1';
+		$name2 = __FUNCTION__.'_fake_lib2';
+		$name3 = __FUNCTION__.'_fake_lib3';
+		$name4 = __FUNCTION__.'_fake_lib4';
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->_helper_add_config(array(
+			$name1 => array(
+				'versions' => array(
+					'master' => array(
+						'js' => array(
+							$url1,
+							$url2,
+						),
+						'jquery' => '$("body").click()',
+						'asset' => $name3,
+					)
+				),
+				'add' => array(
+					'asset' => $name4,
+				),
+			),
+			$name3 => array('versions' => array('master' => array('js' => $url3))),
+			$name4 => array('versions' => array('master' => array('js' => $url4))),
+		));
+		$expected = implode(PHP_EOL, array(
+			'<script src="'.$url1.'" type="text/javascript"></script>', // main script url
+			'<script src="'.$url2.'" type="text/javascript"></script>', // main script url
+			'<script src="'.$jquery_url.'" type="text/javascript"></script>', // Appears as requirement for inlined script, after required js
+			'<script src="'.$url3.'" type="text/javascript"></script>', // main asset appears after js and jquery
+			'<script src="'.$url4.'" type="text/javascript"></script>', // added last inside urls
+			'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'$("body").click()'.PHP_EOL.'})'.PHP_EOL.'</script>', // Inline script should be after urls, wrapped with jquery doc ready
+		));
+		$this->assertEquals( $expected, _class('assets')->show_js() );
+	}
+
+	/***/
+	public function test_order8() {
+		$jquery_url = _class('assets')->get_asset('jquery', 'js');
+		$url = $jquery_url;
+		$url1 = $url.'?v=1';
+		$url2 = $url.'?v=2';
+		$url3 = $url.'?v=3';
+		$url4 = $url.'?v=4';
+
+		$name1 = __FUNCTION__.'_fake_lib1';
+		$name2 = __FUNCTION__.'_fake_lib2';
+		$name3 = __FUNCTION__.'_fake_lib3';
+		$name4 = __FUNCTION__.'_fake_lib4';
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->_helper_add_config(array(
+			$name1 => array(
+				'versions' => array(
+					'master' => array(
+						'js' => array(
+							$url1,
+							$url2,
+						),
+						'jquery' => '$("body").click()',
+						'asset' => $name3,
+					)
+				),
+				'require' => array(
+					'asset' => 'jquery',
+				),
+				'add' => array(
+					'asset' => $name4,
+				),
+			),
+			$name3 => array('versions' => array('master' => array('js' => $url3))),
+			$name4 => array('versions' => array('master' => array('js' => $url4))),
+		));
+		$expected = implode(PHP_EOL, array(
+			'<script src="'.$jquery_url.'" type="text/javascript"></script>', // Appears first because of required config entry
+			'<script src="'.$url1.'" type="text/javascript"></script>', // main script url
+			'<script src="'.$url2.'" type="text/javascript"></script>', // main script url
+			'<script src="'.$url3.'" type="text/javascript"></script>', // main asset appears after js and jquery
+			'<script src="'.$url4.'" type="text/javascript"></script>', // added last inside urls
+			'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'$("body").click()'.PHP_EOL.'})'.PHP_EOL.'</script>', // Inline script should be after urls, wrapped with jquery doc ready
+		));
+		$this->assertEquals( $expected, _class('assets')->show_js() );
+	}
+
+	/***/
 	public function test_order6() {
 		$jquery_url = _class('assets')->get_asset('jquery', 'js');
 		$url = $jquery_url;
