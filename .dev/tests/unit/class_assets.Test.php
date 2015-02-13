@@ -499,7 +499,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/***/
-	public function test_recursion() {
+	public function test_recursion1() {
 		_class('assets')->clean_all();
 		$fake_lib1_url = _class('assets')->get_asset('jquery', 'js').'?123';
 		$lib_name1 = __FUNCTION__.'_fake_lib1';
@@ -524,8 +524,12 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$expected1 = '<script src="'.$fake_lib1_url.'" type="text/javascript"></script>';
 		$expected2 = $expected1 . PHP_EOL. '<script type="text/javascript">'.PHP_EOL.$fake_lib2['versions']['master']['js'].PHP_EOL.'</script>';
 		$this->assertEquals( $expected2, _class('assets')->show_js() );
+	}
 
+	/***/
+	public function test_recursion2() {
 		_class('assets')->clean_all();
+		$fake_lib1_url = _class('assets')->get_asset('jquery', 'js').'?123';
 		$lib_name3 = __FUNCTION__.'_fake_lib3';
 		$lib_name4 = __FUNCTION__.'_fake_lib4';
 		$fake_lib3 = array(
@@ -548,6 +552,62 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$expected1 = '<script src="'.$fake_lib1_url.'" type="text/javascript"></script>';
 		$expected2 = $expected1 . PHP_EOL. '<script type="text/javascript">'.PHP_EOL.$fake_lib4['versions']['master']['js'].PHP_EOL.'</script>';
 		$this->assertEquals( $expected2, _class('assets')->show_js() );
+	}
+
+	/***/
+	public function test_recusrion3() {
+		$jquery_url = _class('assets')->get_asset('jquery', 'js');
+		$url = $jquery_url;
+		$url1 = $url.'?v=1';
+		$url2 = $url.'?v=2';
+		$url3 = $url.'?v=3';
+		$url4 = $url.'?v=4';
+
+		$name1 = __FUNCTION__.'_fake_lib1';
+		$name2 = __FUNCTION__.'_fake_lib2';
+		$name3 = __FUNCTION__.'_fake_lib3';
+		$name4 = __FUNCTION__.'_fake_lib4';
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->_helper_add_config(array(
+			$name1 => array(
+				'versions' => array(
+					'master' => array(
+						'js' => array(
+							$url1,
+							$url2,
+						),
+						'jquery' => '$("body").click()',
+						'asset' => $name3,
+					)
+				),
+				'require' => array(
+					'asset' => 'jquery',
+				),
+				'add' => array(
+					'asset' => $name4,
+				),
+			),
+			$name3 => array(
+				'versions' => array('master' => array('js' => $url3)),
+				'require' => array('asset' => $name1),
+				'add' => array('asset' => $name1),
+			),
+			$name4 => array(
+				'versions' => array('master' => array('js' => $url4)),
+				'require' => array('asset' => $name1),
+				'add' => array('asset' => $name1),
+			),
+		));
+		$expected = implode(PHP_EOL, array(
+			'<script src="'.$jquery_url.'" type="text/javascript"></script>', // Appears first because of required config entry
+			'<script src="'.$url1.'" type="text/javascript"></script>', // main script url
+			'<script src="'.$url2.'" type="text/javascript"></script>', // main script url
+			'<script src="'.$url3.'" type="text/javascript"></script>', // main asset appears after js and jquery
+			'<script src="'.$url4.'" type="text/javascript"></script>', // added last inside urls
+			'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'$("body").click()'.PHP_EOL.'})'.PHP_EOL.'</script>', // Inline script should be after urls, wrapped with jquery doc ready
+		));
+		$this->assertEquals( $expected, _class('assets')->show_js() );
 	}
 
 	/**
@@ -599,11 +659,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEmpty( _class('assets')->show_css() );
 		$this->_helper_add_config(array(
 			$name1 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url1,
-					)
-				),
+				'versions' => array('master' => array('css' => $url1)),
 				'require' => array(
 					'css' => $name2,
 				),
@@ -612,18 +668,10 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 				),
 			),
 			$name2 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url2,
-					)
-				),
+				'versions' => array('master' => array('css' => $url2)),
 			),
 			$name3 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url3,
-					)
-				),
+				'versions' => array('master' => array('css' => $url3)),
 			),
 		));
 		$expected = implode(PHP_EOL, array(
@@ -648,11 +696,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEmpty( _class('assets')->show_css() );
 		$this->_helper_add_config(array(
 			$name1 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url1,
-					)
-				),
+				'versions' => array('master' => array('css' => $url1)),
 				'require' => array(
 					'css' => $name2,
 				),
@@ -661,18 +705,10 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 				),
 			),
 			$name2 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url2,
-					)
-				),
+				'versions' => array('master' => array('css' => $url2)),
 			),
 			$name3 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url3,
-					)
-				),
+				'versions' => array('master' => array('css' => $url3)),
 			),
 		));
 		$expected = implode(PHP_EOL, array(
@@ -697,11 +733,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEmpty( _class('assets')->show_css() );
 		$this->_helper_add_config(array(
 			$name1 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url1,
-					)
-				),
+				'versions' => array('master' => array('css' => $url1)),
 				'require' => array(
 					'asset' => $name2,
 				),
@@ -710,18 +742,10 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 				),
 			),
 			$name2 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url2,
-					)
-				),
+				'versions' => array('master' => array('css' => $url2)),
 			),
 			$name3 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url3,
-					)
-				),
+				'versions' => array('master' => array('css' => $url3)),
 			),
 		));
 		$expected = implode(PHP_EOL, array(
@@ -746,11 +770,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEmpty( _class('assets')->show_css() );
 		$this->_helper_add_config(array(
 			$name1 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url1,
-					)
-				),
+				'versions' => array('master' => array('css' => $url1)),
 				'require' => array(
 					'asset' => $name2,
 				),
@@ -759,21 +779,13 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 				),
 			),
 			$name2 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url2,
-					)
-				),
+				'versions' => array('master' => array('css' => $url2)),
 				'add' => array(
 					'asset' => $name3,
 				),
 			),
 			$name3 => array(
-				'versions' => array(
-					'master' => array(
-						'css' => $url3,
-					)
-				),
+				'versions' => array('master' => array('css' => $url3)),
 			),
 		));
 		$expected = implode(PHP_EOL, array(
@@ -801,11 +813,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEmpty( _class('assets')->show_js() );
 		$this->_helper_add_config(array(
 			$name1 => array(
-				'versions' => array(
-					'master' => array(
-						'js' => $url1,
-					)
-				),
+				'versions' => array('master' => array('js' => $url1)),
 				'require' => array(
 					'js' => $name3,
 					'asset' => $name4,
@@ -823,6 +831,48 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 			'<script src="'.$url4.'" type="text/javascript"></script>',
 			'<script src="'.$url1.'" type="text/javascript"></script>',
 			'<script src="'.$url2.'" type="text/javascript"></script>',
+		));
+		$this->assertEquals( $expected, _class('assets')->show_js() );
+	}
+
+	/***/
+	public function test_order6() {
+		$jquery_url = _class('assets')->get_asset('jquery', 'js');
+		$url = $jquery_url;
+		$url1 = $url.'?v=1';
+		$url2 = $url.'?v=2';
+		$url3 = $url.'?v=3';
+		$url4 = $url.'?v=4';
+
+		$name1 = __FUNCTION__.'_fake_lib1';
+		$name2 = __FUNCTION__.'_fake_lib2';
+		$name3 = __FUNCTION__.'_fake_lib3';
+		$name4 = __FUNCTION__.'_fake_lib4';
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->_helper_add_config(array(
+			$name1 => array(
+				'versions' => array('master' => array('js' => $url1)),
+				'require' => array(
+					'js' => $name3,
+					'jquery' => '$("body").click()',
+					'asset' => $name4,
+				),
+				'add' => array(
+					'asset' => $name2,
+				),
+			),
+			$name2 => array('versions' => array('master' => array('js' => $url2))),
+			$name3 => array('versions' => array('master' => array('js' => $url3))),
+			$name4 => array('versions' => array('master' => array('js' => $url4))),
+		));
+		$expected = implode(PHP_EOL, array(
+			'<script src="'.$url3.'" type="text/javascript"></script>', // required js
+			'<script src="'.$jquery_url.'" type="text/javascript"></script>', // Appears as requirement for inlined script, after required js
+			'<script src="'.$url4.'" type="text/javascript"></script>', // required asset appears after js and jquery
+			'<script src="'.$url1.'" type="text/javascript"></script>', // main script
+			'<script src="'.$url2.'" type="text/javascript"></script>', // added script after main
+			'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'$("body").click()'.PHP_EOL.'})'.PHP_EOL.'</script>', // Inline script should be after urls, wrapped with jquery doc ready
 		));
 		$this->assertEquals( $expected, _class('assets')->show_js() );
 	}
@@ -915,52 +965,6 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 			'<script src="'.$url2.'" type="text/javascript"></script>', // main script url
 			'<script src="'.$url3.'" type="text/javascript"></script>', // main asset appears after js and jquery
 			'<script src="'.$url4.'" type="text/javascript"></script>', // added last inside urls
-			'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'$("body").click()'.PHP_EOL.'})'.PHP_EOL.'</script>', // Inline script should be after urls, wrapped with jquery doc ready
-		));
-		$this->assertEquals( $expected, _class('assets')->show_js() );
-	}
-
-	/***/
-	public function test_order6() {
-		$jquery_url = _class('assets')->get_asset('jquery', 'js');
-		$url = $jquery_url;
-		$url1 = $url.'?v=1';
-		$url2 = $url.'?v=2';
-		$url3 = $url.'?v=3';
-		$url4 = $url.'?v=4';
-
-		$name1 = __FUNCTION__.'_fake_lib1';
-		$name2 = __FUNCTION__.'_fake_lib2';
-		$name3 = __FUNCTION__.'_fake_lib3';
-		$name4 = __FUNCTION__.'_fake_lib4';
-
-		$this->assertEmpty( _class('assets')->show_js() );
-		$this->_helper_add_config(array(
-			$name1 => array(
-				'versions' => array(
-					'master' => array(
-						'js' => $url1,
-					)
-				),
-				'require' => array(
-					'js' => $name3,
-					'jquery' => '$("body").click()',
-					'asset' => $name4,
-				),
-				'add' => array(
-					'asset' => $name2,
-				),
-			),
-			$name2 => array('versions' => array('master' => array('js' => $url2))),
-			$name3 => array('versions' => array('master' => array('js' => $url3))),
-			$name4 => array('versions' => array('master' => array('js' => $url4))),
-		));
-		$expected = implode(PHP_EOL, array(
-			'<script src="'.$url3.'" type="text/javascript"></script>', // required js
-			'<script src="'.$jquery_url.'" type="text/javascript"></script>', // Appears as requirement for inlined script, after required js
-			'<script src="'.$url4.'" type="text/javascript"></script>', // required asset appears after js and jquery
-			'<script src="'.$url1.'" type="text/javascript"></script>', // main script
-			'<script src="'.$url2.'" type="text/javascript"></script>', // added script after main
 			'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'$("body").click()'.PHP_EOL.'})'.PHP_EOL.'</script>', // Inline script should be after urls, wrapped with jquery doc ready
 		));
 		$this->assertEquals( $expected, _class('assets')->show_js() );
