@@ -9,9 +9,11 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		tpl()->parse_string('', array(), 'script_js');
 		_class('assets')->ADD_IS_DIRECT_OUT = false;
 	}
+
 	public function setUp() {
 		_class('assets')->clean_all();
 	}
+
 	/***/
 	public function test_detect_content_type_css() {
 		$this->assertEquals('asset', _class('assets')->detect_content_type('css', 'jquery-ui'));
@@ -38,6 +40,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('file', _class('assets')->detect_content_type('css', $f));
 		unlink($f);
 	}
+
 	/***/
 	public function test_detect_content_type_js() {
 		$this->assertEquals('asset', _class('assets')->detect_content_type('js', 'jquery'));
@@ -65,6 +68,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('file', _class('assets')->detect_content_type('js', $f));
 		unlink($f);
 	}
+
 	/***/
 	public function test_strip_js_input() {
 		$this->assertEquals('$(function(){})', _class('assets')->_strip_js_input('<script>$(function(){})</script>'));
@@ -81,6 +85,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('path.to/script.js', _class('assets')->_strip_js_input('<script type="text/javascript" src="path.to/script.js"></script>'));
 		$this->assertEquals('path.to/script.js', _class('assets')->_strip_js_input('<script src="path.to/script.js" type="text/javascript"></script>'));
 	}
+
 	/***/
 	public function test_strip_css_input() {
 		$this->assertEquals('#some_id { display:none; }', _class('assets')->_strip_css_input('<style>#some_id { display:none; }</style>'));
@@ -97,6 +102,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('path.to/style.css', _class('assets')->_strip_css_input('<link href="path.to/style.css" rel="stylesheet" />'));
 		$this->assertEquals('path.to/style.css', _class('assets')->_strip_css_input('<link rel="stylesheet" href="path.to/style.css" />'));
 	}
+
 	/***/
 	public function test_jquery() {
 		$url = _class('assets')->get_asset('jquery', 'js');
@@ -140,6 +146,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 #		$this->assertSame( $expected_jquery_lib. PHP_EOL. $expected_js, $jquery_result );
 #		$this->assertEmpty( _class('assets')->show_js(), 'Calling output method again should return nothing' );
 	}
+
 	/***/
 	public function test_angularjs() {
 		$url = _class('assets')->get_asset('angularjs', 'js');
@@ -147,6 +154,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		angularjs('alert("Hello");');
 		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
 	}
+
 	/***/
 	public function test_backbonejs() {
 		$url = _class('assets')->get_asset('backbonejs', 'js');
@@ -154,6 +162,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		backbonejs('alert("Hello");');
 		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
 	}
+
 	/***/
 	public function test_reactjs() {
 		$url = _class('assets')->get_asset('reactjs', 'js');
@@ -161,6 +170,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		reactjs('alert("Hello");');
 		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
 	}
+
 	/***/
 	public function test_emberjs() {
 		$url = _class('assets')->get_asset('emberjs', 'js');
@@ -168,6 +178,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		emberjs('alert("Hello");');
 		$this->assertEquals( '<script src="'.$url.'" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'alert("Hello");'.PHP_EOL.'</script>', _class('assets')->show_js() );
 	}
+
 	/***/
 	public function test_basic() {
 		$url = '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.3.2/contents.css';
@@ -181,6 +192,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		css($url);
 		$this->assertEquals($expected, _class('assets')->show_css());
 	}
+
 	/***/
 	public function test_bundle() {
 		$asset_out = asset('blueimp-uploader');
@@ -213,6 +225,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 
 		_class('assets')->ADD_IS_DIRECT_OUT = false;
 	}
+
 	/***/
 	public function test_show() {
 		asset('blueimp-uploader');
@@ -226,6 +239,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertContains('jquery-ui.min.css', $out);
 		$this->assertContains('jquery.fileupload.css', $out);
 	}
+
 	/***/
 	public function test_show_cached() {
 		_class('assets')->USE_CACHE = true;
@@ -249,6 +263,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 
 		_class('assets')->USE_CACHE = false;
 	}
+
 	/***/
 	public function test_show_combined() {
 		if (version_compare(PHP_VERSION, '5.4.0', '<')) {
@@ -272,6 +287,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		_class('assets')->USE_CACHE = false;
 		_class('assets')->COMBINE = false;
 	}
+
 	/***/
 	public function test_filter_custom() {
 		$in = 'body{'.PHP_EOL.'color:white'.PHP_EOL.'}';
@@ -281,6 +297,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		};
 		$this->assertEquals( $expected, _class('assets')->filters_process_input($in, $func) );
 	}
+
 	/***/
 	public function test_add() {
 		$url = _class('assets')->get_asset('jquery', 'js');
@@ -312,6 +329,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		_class('assets')->add('jquery', 'js', 'asset');
 		$this->assertEquals( $expected, _class('assets')->show_js() );
 	}
+
 	/***/
 	public function test_config() {
 		$fake_lib1_url = _class('assets')->get_asset('jquery', 'js');
@@ -479,6 +497,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$expected11_css = $expected10_css. PHP_EOL. '<style type="text/css">'.PHP_EOL. $fake_lib11['versions']['master']['css']. PHP_EOL.'</style>';
 		$this->assertEquals( $expected11_css, _class('assets')->show_css() );
 	}
+
 	/***/
 	public function test_recursion() {
 		_class('assets')->clean_all();
@@ -531,6 +550,240 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expected2, _class('assets')->show_js() );
 	}
 
+	/**
+	*/
+	public function _helper_add_config($libs = array(), $types = array('js','css')) {
+		_class('assets')->clean_all();
+		foreach ($libs as $name => $config) {
+			foreach ($types as $type) {
+				$this->assertEmpty( _class('assets')->get_asset($name, $type) );
+			}
+		}
+		foreach ($libs as $name => $config) {
+			_class('assets')->bundle_register($name, $config);
+		}
+		foreach ($libs as $name => $config) {
+			foreach ($types as $type) {
+				$type_conf = $config['versions']['master'][$type];
+				if (!$type_conf) {
+					continue;
+				}
+				$this->assertSame( $type_conf, _class('assets')->get_asset($name, $type) );
+			}
+		}
+		foreach ($libs as $name => $config) {
+			_class('assets')->add($name);
+		}
+		foreach ($libs as $name => $config) {
+			foreach ($types as $type) {
+				$type_conf = $config['versions']['master'][$type];
+				if (!$type_conf) {
+					continue;
+				}
+				$this->assertNotEmpty( _class('assets')->get_asset($name, $type) );
+			}
+		}
+	}
+
+	/***/
+	public function test_order1() {
+		$url = 'http://jquery.com/jquery-wp-content/themes/jquery.com/style.css';
+		$url1 = $url.'?v=1';
+		$url2 = $url.'?v=2';
+		$url3 = $url.'?v=3';
+
+		$name1 = __FUNCTION__.'_fake_lib1';
+		$name2 = __FUNCTION__.'_fake_lib2';
+		$name3 = __FUNCTION__.'_fake_lib3';
+
+		$this->assertEmpty( _class('assets')->show_css() );
+		$this->_helper_add_config(array(
+			$name1 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url1,
+					)
+				),
+				'require' => array(
+					'css' => $name2,
+				),
+				'add' => array(
+					'css' => $name3,
+				),
+			),
+			$name2 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url2,
+					)
+				),
+			),
+			$name3 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url3,
+					)
+				),
+			),
+		));
+		$expected = implode(PHP_EOL, array(
+			'<link href="'.$url2.'" rel="stylesheet" />', // required
+			'<link href="'.$url1.'" rel="stylesheet" />', // main
+			'<link href="'.$url3.'" rel="stylesheet" />', // added
+		));
+		$this->assertEquals( $expected, _class('assets')->show_css() );
+	}
+
+	/***/
+	public function test_order2() {
+		$url = 'http://jquery.com/jquery-wp-content/themes/jquery.com/style.css';
+		$url1 = $url.'?v=1';
+		$url2 = $url.'?v=2';
+		$url3 = $url.'?v=3';
+
+		$name1 = __FUNCTION__.'_fake_lib1';
+		$name2 = __FUNCTION__.'_fake_lib2';
+		$name3 = __FUNCTION__.'_fake_lib3';
+
+		$this->assertEmpty( _class('assets')->show_css() );
+		$this->_helper_add_config(array(
+			$name1 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url1,
+					)
+				),
+				'require' => array(
+					'css' => $name2,
+				),
+				'add' => array(
+					'asset' => $name3,
+				),
+			),
+			$name2 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url2,
+					)
+				),
+			),
+			$name3 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url3,
+					)
+				),
+			),
+		));
+		$expected = implode(PHP_EOL, array(
+			'<link href="'.$url2.'" rel="stylesheet" />', // required
+			'<link href="'.$url1.'" rel="stylesheet" />', // main
+			'<link href="'.$url3.'" rel="stylesheet" />', // added
+		));
+		$this->assertEquals( $expected, _class('assets')->show_css() );
+	}
+
+	/***/
+	public function test_order3() {
+		$url = 'http://jquery.com/jquery-wp-content/themes/jquery.com/style.css';
+		$url1 = $url.'?v=1';
+		$url2 = $url.'?v=2';
+		$url3 = $url.'?v=3';
+
+		$name1 = __FUNCTION__.'_fake_lib1';
+		$name2 = __FUNCTION__.'_fake_lib2';
+		$name3 = __FUNCTION__.'_fake_lib3';
+
+		$this->assertEmpty( _class('assets')->show_css() );
+		$this->_helper_add_config(array(
+			$name1 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url1,
+					)
+				),
+				'require' => array(
+					'asset' => $name2,
+				),
+				'add' => array(
+					'asset' => $name3,
+				),
+			),
+			$name2 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url2,
+					)
+				),
+			),
+			$name3 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url3,
+					)
+				),
+			),
+		));
+		$expected = implode(PHP_EOL, array(
+			'<link href="'.$url2.'" rel="stylesheet" />', // required
+			'<link href="'.$url1.'" rel="stylesheet" />', // main
+			'<link href="'.$url3.'" rel="stylesheet" />', // added
+		));
+		$this->assertEquals( $expected, _class('assets')->show_css() );
+	}
+
+	/***/
+	public function test_order4() {
+		$url = 'http://jquery.com/jquery-wp-content/themes/jquery.com/style.css';
+		$url1 = $url.'?v=1';
+		$url2 = $url.'?v=2';
+		$url3 = $url.'?v=3';
+
+		$name1 = __FUNCTION__.'_fake_lib1';
+		$name2 = __FUNCTION__.'_fake_lib2';
+		$name3 = __FUNCTION__.'_fake_lib3';
+
+		$this->assertEmpty( _class('assets')->show_css() );
+		$this->_helper_add_config(array(
+			$name1 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url1,
+					)
+				),
+				'require' => array(
+					'asset' => $name2,
+				),
+				'add' => array(
+					'asset' => $name3,
+				),
+			),
+			$name2 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url2,
+					)
+				),
+				'add' => array(
+					'asset' => $name3,
+				),
+			),
+			$name3 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url3,
+					)
+				),
+			),
+		));
+		$expected = implode(PHP_EOL, array(
+			'<link href="'.$url2.'" rel="stylesheet" />', // required
+			'<link href="'.$url3.'" rel="stylesheet" />', // added after required element
+			'<link href="'.$url1.'" rel="stylesheet" />', // main
+		));
+		$this->assertEquals( $expected, _class('assets')->show_css() );
+	}
+
 	/*
 	* idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
 	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
@@ -569,6 +822,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 #		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1.11.0,<1.11.3', 'js') );
 #		$this->assertSame( $expected, _class('assets')->get_asset($name.':>1.11.0 | <2', 'js') );
 	}
+
 	/***/
  	public function test_filter_cssmin() {
 		$in = 'body {'.PHP_EOL.'    color : white; '.PHP_EOL.'}';
@@ -581,6 +835,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expected2, trim($out) );
 #		$this->assertEquals( $expected2, _class('assets')->add_css($in)->show_css(array('filters' => 'cssmin')) );
 	}
+
 	/***/
 	public function test_filter_jsmin() {
 		$in = 'var a = "abc";'.PHP_EOL.PHP_EOL.'// fsfafwe.'.PHP_EOL.PHP_EOL.';;'.PHP_EOL.PHP_EOL.'var bbb = "u";'.PHP_EOL;
@@ -593,6 +848,7 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expected2, trim($out) );
 #		$this->assertEquals( $expected2, _class('assets')->add_js($in)->show_js(array('filters' => 'jsmin')) );
 	}
+
 	/***/
 	public function test_filter_jsminplus() {
 		$in = 'var a = "abc";'.PHP_EOL.PHP_EOL.'// fsfafwe.'.PHP_EOL.PHP_EOL.';;'.PHP_EOL.PHP_EOL.'var bbb = "u";'.PHP_EOL;
