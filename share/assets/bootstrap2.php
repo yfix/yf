@@ -8,9 +8,9 @@ return array(
 		),
 	),
 	'require' => array(
-		'js' => 'jquery',
+		'asset' => 'jquery',
 	),
 	'add' => array(
-		'css' => 'font-awesome3',
+		'asset' => 'font-awesome3',
 	),
 );

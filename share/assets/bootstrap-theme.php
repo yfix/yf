@@ -72,7 +72,7 @@ if ($bs_theme === 'bootstrap') {
 			),
 		),
 		'require' => array(
-			'js' => 'bootstrap2',
+			'asset' => 'bootstrap2',
 		),
 		'add' => array(
 			'asset' => array(
@@ -84,12 +84,12 @@ if ($bs_theme === 'bootstrap') {
 } elseif ($bs_major_version == 3) {
 	return array(
 		'versions' => array(
-			'3.3.0' => array(
-				'css' => '//netdna.bootstrapcdn.com/bootswatch/3.3.0/'.$bs_theme.'/bootstrap.min.css',
+			'3.3.2' => array(
+				'css' => '//netdna.bootstrapcdn.com/bootswatch/3.3.2/'.$bs_theme.'/bootstrap.min.css',
 			),
 		),
 		'require' => array(
-			'js' => 'bootstrap3',
+			'asset' => 'bootstrap3',
 		),
 		'add' => array(
 			'asset' => array(
