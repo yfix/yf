@@ -10,7 +10,4 @@ return array(
 	'require' => array(
 		'asset' => 'jquery',
 	),
-	'add' => array(
-		'asset' => 'font-awesome3',
-	),
 );
