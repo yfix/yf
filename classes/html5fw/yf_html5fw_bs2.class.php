@@ -26,7 +26,7 @@ class yf_html5fw_bs2 extends yf_html5fw_empty {
 	public $CLASS_WARNING			= 'warning has-warning';
 	public $CLASS_INFO				= 'info has-info';
 	public $CLASS_FEEDBACK			= 'form-control-feedback';
-	public $CLASS_STACKED_ITEM		= 'stacked-item';
+	public $CLASS_STACKED_ITEM		= 'stacked-item'; // col-md-2
 
 	/**
 	*/
