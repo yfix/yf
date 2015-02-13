@@ -784,6 +784,95 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expected, _class('assets')->show_css() );
 	}
 
+	/***/
+	public function test_order5() {
+		$jquery_url = _class('assets')->get_asset('jquery', 'js');
+		$url = $jquery_url;
+		$url1 = $url.'?v=1';
+		$url2 = $url.'?v=2';
+		$url3 = $url.'?v=3';
+		$url4 = $url.'?v=4';
+
+		$name1 = __FUNCTION__.'_fake_lib1';
+		$name2 = __FUNCTION__.'_fake_lib2';
+		$name3 = __FUNCTION__.'_fake_lib3';
+		$name4 = __FUNCTION__.'_fake_lib4';
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->_helper_add_config(array(
+			$name1 => array(
+				'versions' => array(
+					'master' => array(
+						'js' => $url1,
+					)
+				),
+				'require' => array(
+					'js' => $name3,
+					'asset' => $name4,
+				),
+				'add' => array(
+					'asset' => $name2,
+				),
+			),
+			$name2 => array('versions' => array('master' => array('js' => $url2))),
+			$name3 => array('versions' => array('master' => array('js' => $url3))),
+			$name4 => array('versions' => array('master' => array('js' => $url4))),
+		));
+		$expected = implode(PHP_EOL, array(
+			'<script src="'.$url3.'" type="text/javascript"></script>',
+			'<script src="'.$url4.'" type="text/javascript"></script>',
+			'<script src="'.$url1.'" type="text/javascript"></script>',
+			'<script src="'.$url2.'" type="text/javascript"></script>',
+		));
+		$this->assertEquals( $expected, _class('assets')->show_js() );
+	}
+
+	/***/
+	public function test_order6() {
+		$jquery_url = _class('assets')->get_asset('jquery', 'js');
+		$url = $jquery_url;
+		$url1 = $url.'?v=1';
+		$url2 = $url.'?v=2';
+		$url3 = $url.'?v=3';
+		$url4 = $url.'?v=4';
+
+		$name1 = __FUNCTION__.'_fake_lib1';
+		$name2 = __FUNCTION__.'_fake_lib2';
+		$name3 = __FUNCTION__.'_fake_lib3';
+		$name4 = __FUNCTION__.'_fake_lib4';
+
+		$this->assertEmpty( _class('assets')->show_js() );
+		$this->_helper_add_config(array(
+			$name1 => array(
+				'versions' => array(
+					'master' => array(
+						'js' => $url1,
+					)
+				),
+				'require' => array(
+					'js' => $name3,
+					'jquery' => '$("body").click()',
+					'asset' => $name4,
+				),
+				'add' => array(
+					'asset' => $name2,
+				),
+			),
+			$name2 => array('versions' => array('master' => array('js' => $url2))),
+			$name3 => array('versions' => array('master' => array('js' => $url3))),
+			$name4 => array('versions' => array('master' => array('js' => $url4))),
+		));
+		$expected = implode(PHP_EOL, array(
+			'<script src="'.$url3.'" type="text/javascript"></script>', // required js
+			'<script src="'.$jquery_url.'" type="text/javascript"></script>', // Appears as requirement for inlined script, after required js
+			'<script src="'.$url4.'" type="text/javascript"></script>', // required asset appears after js and jquery
+			'<script src="'.$url1.'" type="text/javascript"></script>', // main script
+			'<script src="'.$url2.'" type="text/javascript"></script>', // added script after main
+			'<script type="text/javascript">'.PHP_EOL.'$(function(){'.PHP_EOL.'$("body").click()'.PHP_EOL.'})'.PHP_EOL.'</script>', // Inline script should be after urls, wrapped with jquery doc ready
+		));
+		$this->assertEquals( $expected, _class('assets')->show_js() );
+	}
+
 	/*
 	* idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
 	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
