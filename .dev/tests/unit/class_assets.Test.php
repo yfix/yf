@@ -732,6 +732,58 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expected, _class('assets')->show_css() );
 	}
 
+	/***/
+	public function test_order4() {
+		$url = 'http://jquery.com/jquery-wp-content/themes/jquery.com/style.css';
+		$url1 = $url.'?v=1';
+		$url2 = $url.'?v=2';
+		$url3 = $url.'?v=3';
+
+		$name1 = __FUNCTION__.'_fake_lib1';
+		$name2 = __FUNCTION__.'_fake_lib2';
+		$name3 = __FUNCTION__.'_fake_lib3';
+
+		$this->assertEmpty( _class('assets')->show_css() );
+		$this->_helper_add_config(array(
+			$name1 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url1,
+					)
+				),
+				'require' => array(
+					'asset' => $name2,
+				),
+				'add' => array(
+					'asset' => $name3,
+				),
+			),
+			$name2 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url2,
+					)
+				),
+				'add' => array(
+					'asset' => $name3,
+				),
+			),
+			$name3 => array(
+				'versions' => array(
+					'master' => array(
+						'css' => $url3,
+					)
+				),
+			),
+		));
+		$expected = implode(PHP_EOL, array(
+			'<link href="'.$url2.'" rel="stylesheet" />', // required
+			'<link href="'.$url3.'" rel="stylesheet" />', // added after required element
+			'<link href="'.$url1.'" rel="stylesheet" />', // main
+		));
+		$this->assertEquals( $expected, _class('assets')->show_css() );
+	}
+
 	/*
 	* idea from  https://getcomposer.org/doc/01-basic-usage.md#package-versions
 	* In the previous example we were requiring version 1.0.* of monolog. This means any version in the 1.0 development branch. It would match 1.0.0, 1.0.2 or 1.0.20.
