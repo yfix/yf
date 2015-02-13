@@ -8,6 +8,24 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	public $KEY_PUBLIC  = null; // merchant
 	public $KEY_PRIVATE = null; // pass
 
+	public $_api_request_timeout = 30;  // sec
+	public $_api_method_allow = array(
+		'pay_pb' => array(
+			'b_card_or_acc',
+			'amt',
+			'ccy',
+			'details',
+		),
+	);
+
+	public $_xml_transform = array(
+		'amount'       => 'amt',
+		'currency'     => 'ccy',
+		'title'        => 'details',
+		'operation_id' => 'payment_id',
+		'account'      => 'b_card_or_acc',
+	);
+
 	public $_options_transform = array(
 		'amount'       => 'amt',
 		'currency'     => 'ccy',
@@ -88,49 +106,148 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	}
 
 	public function api_request( $method, $options ) {
-		$_ = $options;
+		$api_method_allow = $this->_api_method_allow[ $method ];
+		if( !is_array( $api_method_allow ) ) { return( null ); }
+		$payment_api = &$this->payment_api;
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// transform
-		foreach ((array)$this->_options_transform as $from => $to ) {
-			if( isset( $_[ $from ] ) ) {
-				$_[ $to ] = $_[ $from ];
-				unset( $_[ $from ] );
-			}
+		foreach( $this->_xml_transform as $from => $to ) {
+			$f = &${ '_'.$from };
+			$t = &${ '_'.$to   };
+			if( isset( $f ) ) { $t = $f; unset( ${ '_'.$from } ); }
 		}
 		// default
-		$_[ 'amt' ] = number_format( $_[ 'amt' ], 2, '.', '' );
-		// prepare data
-		$data = array();
-		foreach( $_ as $key => $value ) {
-			$value = htmlentities( $value, ENT_COMPAT | ENT_XML1, 'UTF-8', $double_encode = false );
-			var_dump( $value );
-			$data[] = sprintf( '<prop name="%s" value="%s" />', $key, $value );
+		$_amt  = number_format( $_amt, 2, '.', '' );
+		$_wait = $_wait ?: $this->_api_request_timeout;
+		$_test = $payment_api->_default( array( $_test, $this->TEST_MODE ) );
+		// $_test = (int)$_test;
+		foreach( $api_method_allow as $name ) {
+			$value = &${ '_'.$name };
+			if( !isset( $value ) ) {
+				$result = array(
+					'status'         => false,
+					'status_message' => 'Отсутствуют данные запроса',
+				);
+				return( $result );
+			}
 		}
-		$data = implode( '', $data );
+		// build xml
+		$xml_request = new SimpleXMLElement(
+			'<?xml version="1.0" encoding="UTF-8"?>'
+			.'<request version="1.0">'
+			.'</request>'
+		);
+		$xml_merchant = $xml_request->addChild( 'merchant' );
+		$xml_data     = $xml_request->addChild( 'data'     );
+		// oper, wait, test
+		$xml_data->addChild( 'oper', 'cmt' );
+		$xml_data->addChild( 'wait', $_wait );
+		$xml_data->addChild( 'test', $_test );
+		// payment
+		$xml_payment = $xml_data->addChild( 'payment' );
+		// payment id
+		isset( $_payment_id ) && $xml_payment->addAttribute( 'id', $_payment_id );
+		// data
+		$data = '';
+		foreach( $api_method_allow as $name ) {
+			$value = ${ '_'.$name };
+			$value = htmlentities( $value, ENT_COMPAT | ENT_XML1, 'UTF-8', $double_encode = false );
+			$prop = $xml_payment->addChild( 'prop' );
+			$prop->addAttribute( 'name',  $name  );
+			$prop->addAttribute( 'value', $value );
+		}
 		// signature
 		$key_public  = $this->KEY_PUBLIC;
-		$key_private = $this->KEY_PRIVATE;
+		$data = '';
+		foreach( $xml_data->children() as $_xml ) { $data .= $_xml->asXML(); }
 		$signature = $this->api->str_to_sign( $data );
-		// prepare xml request
-		$data = array(
-			'<?xml version="1.0" encoding="UTF-8"?>',
-			'<request version="1.0">',
-				'<merchant>',
-					'<id>',
-						$key_public,
-					'</id>',
-					'<signature>',
-						$signature,
-					'</signature>',
-				'</merchant>',
-			'<data>',
-				$data,
-			'</data>',
-			'</request>',
-		);
-		$data = implode( '', $data );
+		// merchant
+		$xml_merchant->addChild( 'id',        $key_public );
+		$xml_merchant->addChild( 'signature', $signature   );
 		// request
-		$result = $this->_api_request( $method, $data );
-		return( $result );
+		$data = $xml_request->asXML();
+		$response = $this->_api_request( $method, $data );
+		libxml_use_internal_errors( true );
+		$xml_response = simplexml_load_string( $response );
+		// error?
+		$error = libxml_get_errors();
+		if( $error ) {
+			libxml_clear_errors();
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверная структура данных',
+			);
+			return( $result );
+		}
+		// ----- check response
+		// key public - merchant
+		$value = $key_public;
+		$r_value = (string)$xml_response->merchant->id;
+		if( $value != $r_value ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверный публичный ключ (merchant)',
+			);
+			return( $result );
+		}
+		// signature
+		$data = '';
+		foreach( $xml_response->data->children() as $_xml ) { $data .= $_xml->asXML(); }
+		$value = $this->api->str_to_sign( $data );
+		$r_value = (string)$xml_response->merchant->signature;
+		if( $value != $r_value ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверный подпись (signature)',
+			);
+			return( $result );
+		}
+		// payment
+		$xml_response_payment = $xml_response->data->payment->attributes();
+		// id
+		$value = $_payment_id;
+		$r_value = (string)$xml_response_payment->id;
+		if( $value != $r_value ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверный номер операции (operation_id)',
+			);
+			return( $result );
+		}
+		// amt
+		$value = $_amt;
+		$r_value = (string)$xml_response_payment->amt;
+		if( $value != $r_value ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверная сумма (amt)',
+			);
+			return( $result );
+		}
+		// ccy
+		$value = $_ccy;
+		$r_value = (string)$xml_response_payment->ccy;
+		if( $value != $r_value ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверная валюта (ccy)',
+			);
+			return( $result );
+		}
+		// state
+		$status         = (bool)$xml_response_payment->state;
+		$status_message = (string)$xml_response_payment->message;
+		if( $status ) {
+			if( $status_message == 'payment added to the queue' ) {
+				$status_message = 'Платеж добавлен в очередь';
+			} else {
+				$status_message = 'Платеж выполнен успешно';
+			}
+		} else {
+			$status_message = 'Платеж забракован';
+		}
+		return( array( $status, $status_message ) );
 	}
 
 	public function _form_options( $options ) {
