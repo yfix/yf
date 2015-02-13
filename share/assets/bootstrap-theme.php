@@ -82,6 +82,7 @@ if ($bs_theme === 'bootstrap') {
 		),
 	);
 } elseif ($bs_major_version == 3) {
+	conf('bs3_no_default_theme', true);
 	return array(
 		'versions' => array(
 			'3.3.2' => array(
