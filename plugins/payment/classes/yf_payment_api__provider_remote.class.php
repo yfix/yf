@@ -9,6 +9,8 @@ class yf_payment_api__provider_remote {
 	public $KEY_PUBLIC  = null;
 	public $KEY_PRIVATE = null;
 
+	public $API_SSL_VERIFY = true;
+
 	public $service_allow = null;
 	public $description   = null;
 
@@ -40,16 +42,72 @@ class yf_payment_api__provider_remote {
 	}
 
 	protected function _api_post( $url, $post ) {
-		// curl
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL           , $url  );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt( $ch, CURLOPT_POST          , 1     );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS    , $post );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1     );
-		$result = curl_exec( $ch );
+		// options
+		$options = array(
+			// CURLOPT_URL            =>  $url,
+			CURLOPT_POST           =>  true,
+			CURLOPT_POSTFIELDS     =>  $post,
+			CURLOPT_RETURNTRANSFER =>  true,
+		);
+		if( $this->API_SSL_VERIFY && strpos( $url, 'https' ) !== false ) {
+			$options += array(
+				CURLOPT_SSL_VERIFYPEER => true,
+				CURLOPT_SSL_VERIFYHOST => 2,
+				CURLOPT_CAINFO         => __DIR__ . '/ca.pem',
+			);
+		} else {
+			$options += array(
+				CURLOPT_SSL_VERIFYPEER => false,
+			);
+		}
+		// exec
+		$ch = curl_init( $url );
+		curl_setopt_array( $ch, $options );
+		$result    = curl_exec( $ch );
+		// status
+		$http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+		$error_number  = curl_errno( $ch );
+		$error_message = curl_error( $ch );
 		curl_close( $ch );
-		return( $result );
+		// debug
+		// var_dump( $url, $options, $result, $http_code );
+		// exit;
+		// result
+		$status = null;
+		if( $result === false ) {
+			$message = sprintf( '[%d] %s', $error_number, $error_message );
+			$result = array(
+				'status'         => $status,
+				'status_message' => 'Ошибка транспорта: ' . $message,
+			);
+			return( $result );
+		}
+		switch( $http_code ) {
+			case 200:
+				$status = true;
+				break;
+			case 400:
+				$message = 'неверный запрос';
+				break;
+			case 401:
+				$message = 'неавторизован';
+				break;
+			case 403:
+				$message = 'доступ ограничен';
+				break;
+			case 404:
+				$message = 'неверный адрес';
+				break;
+			default:
+				if( $http_code >= 500 ) {
+					$message = 'ошибка сервера';
+				}
+				break;
+		}
+		if( $http_code != 200 ) {
+			$result = sprintf( 'Ошибка транспорта: [%d] %s', $http_code, $message );
+		}
+		return( array( $status, $result ) );
 	}
 
 	protected function _api_request( $uri, $data ) {

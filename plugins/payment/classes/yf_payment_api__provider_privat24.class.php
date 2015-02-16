@@ -175,7 +175,9 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$xml_merchant->addChild( 'signature', $signature   );
 		// request
 		$data = $xml_request->asXML();
-		$response = $this->_api_request( $method, $data );
+		$result = $this->_api_request( $method, $data );
+		list( $status, $response ) = $result;
+		if( !$status ) { return( $result ); }
 		libxml_use_internal_errors( true );
 		$xml_response = simplexml_load_string( $response );
 // debug
