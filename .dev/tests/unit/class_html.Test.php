@@ -348,4 +348,40 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 			'style' => 'color:red;',
 		)));
 	}
+	public function test_multi_check_box() {
+		$html = html();
+		$def_class = $html->CLASS_LABEL_CHECKBOX.' '.$html->CLASS_LABEL_CHECKBOX_INLINE;
+
+		$html->_ids = array();
+		$html->AUTO_ASSIGN_IDS = false;
+		$data = array(
+			1 => 'red',
+			2 => 'green'
+		);
+
+		$this->assertEmpty($html->multi_check_box(''));
+		$this->assertEmpty($html->multi_check_box('test'));
+		$this->assertEquals(str_replace(PHP_EOL, '', 
+			'<label class="'.$def_class.'"><input type="checkbox" name="test_1" id="multi_check_box_1" value="1"> &nbsp;red</label>'.
+			'<label class="'.$def_class.'"><input type="checkbox" name="test_2" id="multi_check_box_2" value="2"> &nbsp;green</label>'
+			), str_replace(PHP_EOL, '', trim( $html->multi_check_box('test', $data) )));
+	}
+	public function test_radio_box() {
+		$html = html();
+		$def_class = $html->CLASS_LABEL_RADIO.' '.$html->CLASS_LABEL_RADIO_INLINE;
+
+		$html->_ids = array();
+		$html->AUTO_ASSIGN_IDS = false;
+		$data = array(
+			1 => 'red',
+			2 => 'green'
+		);
+
+		$this->assertEmpty($html->radio_box(''));
+		$this->assertEmpty($html->radio_box('test'));
+		$this->assertEquals(str_replace(PHP_EOL, '', 
+			'<label class="'.$def_class.'"><input type="radio" name="test" id="radio_box_1_1" value="1">red</label>'.
+			'<label class="'.$def_class.'"><input type="radio" name="test" id="radio_box_1_2" value="2">green</label>'
+			), str_replace(PHP_EOL, '', trim( $html->radio_box('test', $data) )));
+	}
 }
