@@ -93,12 +93,12 @@ class test_html {
 	function accordion() {
 		$data = array(
 			'first' 	=> array(
-				'body'			=> 'first',
+				'body'			=> 'first accordion item body<br />'.PHP_EOL.'first accordion item body',
 				'class_group'	=> 'panel-info',
 				'class_head'	=> 'alert-info',
 			),
 			'second'	=> array(
-				'body'			=> 'second',
+				'body'			=> 'second accordion item body<br />'.PHP_EOL.'second accordion item body',
 				'class_group'	=> 'panel-danger',
 				'class_head'	=> 'alert-error',
 			),
@@ -106,7 +106,7 @@ class test_html {
 				Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
 				Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
 				Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
-			'fourth'	=> '44444',
+			'fourth'	=> '44444 accordion item body<br />'.PHP_EOL.'second accordion item body',
 		);
 		return _class('html')->accordion($data, array('selected' => 'third', 'class' => 'span4 col-md-4'));
 	}
