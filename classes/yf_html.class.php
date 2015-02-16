@@ -375,7 +375,8 @@ class yf_html {
 	function breadcrumbs($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
-		$divider = $extra['divider'] ?: '/';
+		$divider = $extra['divider'] ?: ''; // '/'
+		$show_divider = !$this->_is_bs3 && strlen($divider);
 		$len = count($data);
 		$data = _prepare_html($data);
 		foreach ((array)$data as $k => $v) {
@@ -384,7 +385,7 @@ class yf_html {
 			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
 			$items[] = '<li class="'.($is_last ? ' active' : ''). ($class_item ? ' '.$class_item : '').'">
 				'.(($is_last || !$v['link']) ? $v['name']
-					: '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name']. $badge. '</a>'.(!$this->_is_bs3 ? ' <span class="divider">'.$divider.'</span>' : '')
+					: '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name']. $badge. '</a>'.($show_divider ? ' <span class="divider">'.$divider.'</span>' : '')
 				).'
 			</li>';
 		}
