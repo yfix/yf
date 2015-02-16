@@ -56,16 +56,20 @@ class yf_docs {
 
 	/***/
 	function _hook_side_column() {
-		$items = array();
 		$url = process_url('./?object='.$_GET['object']);
+		$names = array();
 		foreach (array_merge((array)glob(APP_PATH.'modules/*.class.php'),(array)glob(PROJECT_PATH.'modules/*.class.php')) as $cls) {
 			$cls = basename($cls);
 			if ($cls == __CLASS__) {
 				continue;
 			}
 			$name = substr($cls, 0, -strlen('.class.php'));
-			$items[] = '<li><a href="./?object='.$name.'"><i class="icon-chevron-right fa fa-chevron-right"></i> '.t($name).'</a></li>';
+			$names[$name] = $name;
 		}
-		return '<div class="bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav">'.implode(PHP_EOL, $items).'</ul></div>';
+		$links = array();
+		foreach ($names as $name) {
+			$links[url('/'.$name)] = t($name);
+		}
+		return html()->navlist($links);
 	}
 }
