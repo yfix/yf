@@ -16,6 +16,13 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 			'ccy',
 			'details',
 		),
+		'pay_visa' => array(
+			'b_name',
+			'b_card_or_acc',
+			'amt',
+			'ccy',
+			'details',
+		),
 	);
 
 	public $_xml_transform = array(
@@ -24,6 +31,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		'title'        => 'details',
 		'operation_id' => 'payment_id',
 		'account'      => 'b_card_or_acc',
+		'name'         => 'b_name',
 	);
 
 	public $_options_transform = array(
@@ -170,6 +178,8 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$response = $this->_api_request( $method, $data );
 		libxml_use_internal_errors( true );
 		$xml_response = simplexml_load_string( $response );
+// debug
+// var_dump( $response, $xml_response );
 		// error?
 		$error = libxml_get_errors();
 		if( $error ) {
@@ -177,6 +187,13 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 			$result = array(
 				'status'         => null,
 				'status_message' => 'Ошибка ответа: неверная структура данных',
+			);
+			return( $result );
+		}
+		if( $xml_response->getName() == 'error' ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверные данные - ' . (string)$xml_response,
 			);
 			return( $result );
 		}
