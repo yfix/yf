@@ -195,11 +195,11 @@ class yf_manage_shop_product_edit {
 			->text('name')
 			->text('articul')
 			->text('url')
-			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0, 'data-test' => 'select_category'))
+			->chosen_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0, 'data-test' => 'select_category'))
 // TODO: replace with similar JS container as for params and images
 #			->multi_select('category', module('manage_shop')->_cats_for_select, array('desc' => 'Secondary categories', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'selected' => $products_to_category, 'translate' => 0))
-			->select_box('manufacturer_id', module('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'edit_link' => './?object='.main()->_get('object').'&action=manufacturers', 'translate' => 0, 'data-test' => 'select_manufacturer'))
-			->select_box('supplier_id', module('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'edit_link' => './?object='.main()->_get('object').'&action=suppliers', 'data-test' => 'select_supplier'))
+			->chosen_box('manufacturer_id', module('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'edit_link' => './?object='.main()->_get('object').'&action=manufacturers', 'translate' => 0, 'data-test' => 'select_manufacturer'))
+			->chosen_box('supplier_id', module('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'edit_link' => './?object='.main()->_get('object').'&action=suppliers', 'data-test' => 'select_supplier'))
 			->select2_box( array(
 				'desc'      => 'Регион',
 				'name'      => 'region',

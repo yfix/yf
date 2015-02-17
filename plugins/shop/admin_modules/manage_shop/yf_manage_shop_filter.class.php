@@ -146,7 +146,7 @@ class yf_manage_shop_filter{
 				}
 				return form($replace, array('selected' => $_SESSION[$filter_name], 'class' => 'form-horizontal form-condensed'))
 					->text('name')
-					->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
+					->chosen_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 
 			},
@@ -192,7 +192,7 @@ class yf_manage_shop_filter{
 					->text('user_id', 'Admin')
 					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
 					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
-					->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
+					->chosen_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'show_text' => 1, 'no_translate' => 1))
 					->select_box('action', common()->get_static_conf('product_revisions',false,false), array('show_text' => 1))
 					->select_box('order_by', $order_fields, array('show_text' => 1, 'translate' => 1));
 			},
