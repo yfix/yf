@@ -4,6 +4,7 @@ class yf_rewrite {
 
 	public $DEFAULT_HOST = '';
 	public $DEFAULT_PORT = '';
+	public $special_links = array('../', './', '/');
 
 	/**
 	* YF module constructor
@@ -55,7 +56,12 @@ class yf_rewrite {
 		$links = $standalone ? array($body) : $this->_get_unique_links($body);
 		if (!empty($links) && is_array($links)) {
 			$r_array = array();
+			$has_special = false;
 			foreach ($links as $v) {
+				if (in_array($v, $this->special_links)) {
+					$has_special = true;
+					continue;
+				}
 				$url = parse_url($v);
 				parse_str($url['query'], $arr);
 				if (MAIN_TYPE_ADMIN && in_array($arr['task'], array('login','logout'))) {
@@ -74,6 +80,9 @@ class yf_rewrite {
 				return ($sa < $sb) ? +1 : -1;
 			});
 			$body = str_replace(array_keys($r_array), array_values($r_array), $body);
+			if ($has_special) {
+				$body = $this->_replace_special_links($body, $links);
+			}
 			if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
 				$exec_time = (microtime(true) - $this->_time_start);
 				$trace = main()->trace_string();
@@ -89,6 +98,22 @@ class yf_rewrite {
 		}
 		if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
 			debug('rewrite_exec_time', debug('rewrite_exec_time') + $exec_time);
+		}
+		return $body;
+	}
+
+	/**
+	* Special processing for short links '/', './', '../'
+	*/
+	function _replace_special_links ($body = '', $links = array()) {
+		$rewrite_to_url = $this->_force_get_url('/');
+		foreach ((array)$this->special_links as $link) {
+			if (!in_array($link, $links)) {
+#				continue;
+			}
+			$regex = '~(?P<part1>(href|src)\s*=\s*["\']{1})\s*'.preg_quote($link, '~').'?\s*(?P<part2>["\']{1}[\s>]?)~ims';
+			$replace_into = '\1'.$rewrite_to_url.'\3';
+			$body = preg_replace($regex, $replace_into, $body);
 		}
 		return $body;
 	}
