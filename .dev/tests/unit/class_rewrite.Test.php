@@ -208,27 +208,55 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 	}
 	public function test_rewrite_replace_links() {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = true;
+		$host = self::$host;
 
 		$in = '<body><a href="http://google.com/">
 			<a href="./?object=obj&action=act">
 			<form action="./?object=form&action=method">
 			<a href="./?object=obj&action=act&id=1&page=1">
 			<a href="./?object=obj&action=act&id=1&page=1#frag">
+			<a href="/">
+			<a href="./">
+			<a href="../">
+			<a href = "./">
+			<a href = "./" >
+			<a href = " ./ " >
+			/
+			./
+			../
 			</body>';
 		$out = '<body><a href="http://google.com/">
-			<a href="http://test.dev/obj/act">
-			<form action="http://test.dev/form/method">
-			<a href="http://test.dev/obj/act/1/1">
-			<a href="http://test.dev/obj/act/1/1#frag">
+			<a href="http://'.$host.'/obj/act">
+			<form action="http://'.$host.'/form/method">
+			<a href="http://'.$host.'/obj/act/1/1">
+			<a href="http://'.$host.'/obj/act/1/1#frag">
+			<a href="http://'.$host.'/">
+			<a href="http://'.$host.'/">
+			<a href="http://'.$host.'/">
+			<a href = "http://'.$host.'/">
+			<a href = "http://'.$host.'/" >
+			<a href = "http://'.$host.'/" >
+			/
+			./
+			../
 			</body>';
 		$this->assertEquals($out, _class('rewrite')->_rewrite_replace_links($in) );
 
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;
 		$out2 = '<body><a href="http://google.com/">
-			<a href="http://test.dev/?object=obj&action=act">
-			<form action="http://test.dev/?object=form&action=method">
-			<a href="http://test.dev/?object=obj&action=act&id=1&page=1">
-			<a href="http://test.dev/?object=obj&action=act&id=1&page=1#frag">
+			<a href="http://'.$host.'/?object=obj&action=act">
+			<form action="http://'.$host.'/?object=form&action=method">
+			<a href="http://'.$host.'/?object=obj&action=act&id=1&page=1">
+			<a href="http://'.$host.'/?object=obj&action=act&id=1&page=1#frag">
+			<a href="http://'.$host.'/">
+			<a href="http://'.$host.'/">
+			<a href="http://'.$host.'/">
+			<a href = "http://'.$host.'/">
+			<a href = "http://'.$host.'/" >
+			<a href = "http://'.$host.'/" >
+			/
+			./
+			../
 			</body>';
 		$this->assertEquals($out2, _class('rewrite')->_rewrite_replace_links($in) );
 	}
