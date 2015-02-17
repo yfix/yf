@@ -14,7 +14,10 @@ if ($bs_theme === 'bootstrap') {
 			'asset' => $require_name,
 		),
 		'add' => array(
-			'asset' => $fixes_name,
+			'asset' => array(
+				'font-awesome4',
+				$fixes_name,
+			),
 		),
 	);
 } elseif ($bs_theme === 'bootstrap_theme') {
@@ -23,7 +26,10 @@ if ($bs_theme === 'bootstrap') {
 			'asset' => $require_name,
 		),
 		'add' => array(
-			'asset' => $fixes_name,
+			'asset' => array(
+				'font-awesome4',
+				$fixes_name,
+			),
 		),
 	);
 } elseif ($bs_theme === 'flatui') {
