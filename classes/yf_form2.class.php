@@ -554,7 +554,7 @@ class yf_form2 {
 			if (!isset($extra['id']) && $extra['name']) {
 				$extra['id'] = $extra['name'];
 			}
-			$extra['class_add_form_group'] = trim($this->CLASS_STACKED_ROW.' '.$extra['class_add_form_group']);
+			$extra['class_add_form_group'] = trim($form->CLASS_STACKED_ROW.' '.$extra['class_add_form_group']);
 			return $form->_row_html('', array('only_row_start' => 1) + (array)$extra);
 		};
 		if ($this->_chained_mode) {
