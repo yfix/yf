@@ -179,6 +179,7 @@ class yf_manage_shop_product_edit {
 			'units'       => $products_to_unit,
 		);
 		$textarea_id = 'description';
+/*
 		$cke_config = '
 			CKEDITOR.replace("'.$textarea_id.'", {
 				toolbar: [
@@ -189,6 +190,17 @@ class yf_manage_shop_product_edit {
 				removePlugins: "bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates",
 			});
 		';
+*/
+		$cke_config = array(
+			'toolbar' => array(
+				array(
+					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat' , 'Bold', 'Italic', 'Underline' ,
+					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', '-', 'Blockquote', 'Link', 'Unlink', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
+				),
+			),
+			'language' => conf('language'),
+			'removePlugins' => 'bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates',
+		);
 		return form($replace, array(
 // TODO: use validation
 				'for_upload' => 1,
