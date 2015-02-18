@@ -26,16 +26,29 @@ class yf_form2_ckeditor {
 		if (!isset($replace['content_id'])) {
 			$replace['content_id'] = $content_id;
 		}
+		$content_id = $extra['id'] ? $extra['id'] : 'content_editable';
+		$hidden_id = $params['hidden_id'] ? $params['hidden_id'] : '';
 		if (isset($params['config'])) {
-			$config_js = $params['config'];
+			if (is_array($params['config'])) {
+				$config_js = '
+					try {
+						CKEDITOR.replace("'.$content_id.'", '.json_encode($params['config']).');
+					} catch (e) {
+						console.log("ckeditor init failed:", e);
+					}
+				';
+			} elseif (is_callable($params['config'])) {
+				$func = $params['config'];
+				$config_js = $func($extra, $replace, $form);
+			} else {
+				$config_js = $params['config'];
+			}
 		} else {
 			$config_js = tpl()->_stpl_exists($stpl_name) ? tpl()->parse($stpl_name, (array)$extra + (array)$replace) : '';
 		}
 		if (strlen($config_js)) {
 			js($config_js);
 		}
-		$content_id = $extra['id'] ? $extra['id'] : 'content_editable';
-		$hidden_id = $params['hidden_id'] ? $params['hidden_id'] : '';
 		jquery('
 			var _content_id = "#'.$content_id.'";
 			var _hidden_id = "#'.$hidden_id.'";
