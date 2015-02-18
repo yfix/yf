@@ -128,8 +128,12 @@ $(function(){
 		return true;
 	})
 
-	// Affix used in settings TOC, idea got from Bootstrap docs
-	$(".bs-docs-sidenav").affix();
+	try {
+		// Affix used in settings TOC, idea got from Bootstrap docs
+		$(".bs-docs-sidenav").affix();
+	} catch(e) {
+		console.error("affix init failed for .bs-docs-sidenav", e);
+	}
 });
 END
 		)),

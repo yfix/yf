@@ -34,7 +34,7 @@ class yf_form2_ckeditor {
 					try {
 						CKEDITOR.replace("'.$content_id.'", '.json_encode($params['config']).');
 					} catch (e) {
-						console.log("ckeditor init failed:", e);
+						console.error("ckeditor init failed:", e);
 					}
 				';
 			} elseif (is_callable($params['config'])) {
