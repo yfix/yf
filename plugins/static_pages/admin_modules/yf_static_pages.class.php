@@ -87,6 +87,16 @@ class yf_static_pages {
 		$a = (array)$_POST + (array)$a;
 		$a['back_link'] = url_admin('/@object');
 		$_this = $this;
+		$cke_config = array(
+			'toolbar' => array(
+				array(
+					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat' , 'Bold', 'Italic', 'Underline' ,
+					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', '-', 'Blockquote', 'Link', 'Unlink', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
+				),
+			),
+			'language' => conf('language'),
+			'removePlugins' => 'bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates',
+		);
 		return form($a)
 			->validate(array(
 				'__before__'=> 'trim',
@@ -102,7 +112,7 @@ class yf_static_pages {
 				cache_del('static_pages_names');
 			})
 			->text('name')
-			->textarea('text','',array('class' => 'span4','rows' => '10','ckeditor' => true, 'id' => 'text'))
+			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => $cke_config)))
 			->text('page_title')
 			->text('page_heading')
 			->text('meta_keywords')
