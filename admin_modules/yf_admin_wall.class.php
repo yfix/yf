@@ -117,7 +117,7 @@ class yf_admin_wall {
 		}
 		$config = $params;
 		$sql = 'SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' ORDER BY add_date DESC';
-		return table($sql, array('no_header' => 1, 'btn_no_text' => 1))
+		return table($sql, array('no_header' => 1, 'btn_no_text' => 1, 'pages_on_top' => 1, 'pager_path' => './?object='.$_GET['object'].'&action=show'))
 			->date('add_date')
 			->admin('user_id')
 			->text('message')
