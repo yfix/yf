@@ -2,7 +2,7 @@
 
 /**
 * Static/HTML pages content editor
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -90,12 +90,14 @@ class yf_static_pages {
 		$cke_config = array(
 			'toolbar' => array(
 				array(
-					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat' , 'Bold', 'Italic', 'Underline' ,
-					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', '-', 'Blockquote', 'Link', 'Unlink', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
+					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
+					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', '-', 'Blockquote', 'Link', 'Unlink', 'Image', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
 				),
 			),
 			'language' => conf('language'),
-			'removePlugins' => 'bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates',
+			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,table,tabletools,templates,style',
+			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
+			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*)',
 		);
 		return form($a)
 			->validate(array(
@@ -189,7 +191,7 @@ class yf_static_pages {
 			//$_GET['action'] => {string to replace}
 			'show'	=> '',
 			'edit'	=> '',
-		);			 		
+		);
 		if (isset($cases[$_GET['action']])) {
 			$subheader = $cases[$_GET['action']];
 		}
