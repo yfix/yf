@@ -178,6 +178,17 @@ class yf_manage_shop_product_edit {
 			'back_url'    => './?object='.main()->_get('object').'&action=products',
 			'units'       => $products_to_unit,
 		);
+		$textarea_id = 'description';
+		$cke_config = '
+			CKEDITOR.replace("'.$textarea_id.'", {
+				toolbar: [
+					[ "Cut", "Copy", "Paste", "PasteText", "PasteFromWord", "-", "Undo", "Redo" ], [ "RemoveFormat" ], [ "Bold", "Italic", "Underline" ],
+					[ "FontSize" ], [ "TextColor" ], [ "NumberedList", "BulletedList", "-", "Blockquote" ], [ "Link", "Unlink", "SpecialChar" ], [ "Source" ], [ "Maximize" ]
+				],
+				language: "ru",
+				removePlugins: "bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates",
+			});
+		';
 		return form($replace, array(
 // TODO: use validation
 				'for_upload' => 1,
@@ -190,7 +201,7 @@ class yf_manage_shop_product_edit {
 				),
 			))
 		->tab_start('tab_desc', array('tab_body' => array('class' => 'active span12 col-md-12')))
-			->textarea('description', array('cols' => 200, 'rows' => 10, 'ckeditor' => true, 'style' => 'min-width:100%'))
+			->textarea($textarea_id, array('style' => 'min-width:100%', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => $cke_config)))
 		->tab_end()
 		->tab_start('main')
 			->link('product_url_user', url('/shop/product/'.$product_info['id']), array('target' => '_blank'))
