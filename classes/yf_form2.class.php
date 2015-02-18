@@ -293,6 +293,7 @@ class yf_form2 {
 		$tabbed_mode = false;
 		$tabbed_buffer = array();
 		$tabs = array();
+		$tabs_extra = array();
 		$tabs_name = '';
 		$tabs_container = '';
 
@@ -353,6 +354,7 @@ class yf_form2 {
 				if ($v['name'] == 'tab_start') {
 					$this->_tabs_counter++;
 					$tabs_name = $this->_tabs_name ?: 'tabs_'.$this->_tabs_counter;
+					$tabs_extra['by_id'][$tabs_name] = $this->_tabs_extra;
 				}
 				if ($v['name'] == 'tab_start' && !$tabs_container) {
 					$tabs_container = $k;
@@ -374,7 +376,7 @@ class yf_form2 {
 			$tabbed_buffer = array();
 		}
 		if ($tabs) {
-			$this->_body[$tabs_container] = _class('html')->tabs($tabs, $this->_params['tabs']);
+			$this->_body[$tabs_container] = _class('html')->tabs($tabs, (array)$this->_params['tabs'] + (array)$tabs_extra);
 		}
 		if ($this->_params['show_alerts']) {
 			$errors = common()->_get_error_messages();
