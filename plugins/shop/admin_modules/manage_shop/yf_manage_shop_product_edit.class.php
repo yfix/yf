@@ -213,7 +213,7 @@ class yf_manage_shop_product_edit {
 				),
 			))
 		->tab_start('tab_desc', array('tab_body' => array('class' => 'active span12 col-md-12')))
-			->textarea($textarea_id, array('style' => 'min-width:100%', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => $cke_config)))
+			->textarea('description', array('style' => 'min-width:100%', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => $cke_config)))
 		->tab_end()
 		->tab_start('main')
 			->link('product_url_user', url('/shop/product/'.$product_info['id']), array('target' => '_blank'))
