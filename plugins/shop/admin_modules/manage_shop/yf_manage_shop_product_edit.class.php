@@ -189,6 +189,9 @@ class yf_manage_shop_product_edit {
 					'no_headers' => 1,
 				),
 			))
+		->tab_start('tab_desc', array('tab_body' => array('class' => 'active span12 col-md-12')))
+			->textarea('description', array('cols' => 200, 'rows' => 10, 'ckeditor' => true, 'style' => 'min-width:100%'))
+		->tab_end()
 		->tab_start('main')
 			->link('product_url_user', url('/shop/product/'.$product_info['id']), array('target' => '_blank'))
 			->info('id')
@@ -209,15 +212,8 @@ class yf_manage_shop_product_edit {
 				'edit_link' => url_admin( '/manage_shop/region' ),
 				'data-test' => 'select_region',
 			))
-			->textarea('description')
-			->price('old_price')
-			->price('price')
-			->price('price_promo')
-			->price('price_partner')
-			->price('price_raw')
 			->number('quantity', array('min' => 0))
 			->active_box('active')
-			->save_and_back()
 		->tab_end()
 		->tab_start('params')
 			->link('Search images', './?object='.main()->_get('object').'&action=product_image_search&id='.$product_info['id'], array('class_add' => 'btn-success', 'data-test' => 'search_image_btn'))
@@ -243,6 +239,14 @@ class yf_manage_shop_product_edit {
 				'edit_link' => url_admin( '/manage_shop/units' ),
 				'data-test' => 'select_units',
 			))
+			->price('old_price')
+			->price('price')
+			->price('price_promo')
+			->price('price_partner')
+			->price('price_raw')
+		->tab_end()
+		->tab_start('tab_save', array('tab_body' => array('class' => 'active span12 col-md-12')))
+			->save_and_back()
 		->tab_end()
 			.tpl()->parse('manage_shop/product_edit_js');
 	}
