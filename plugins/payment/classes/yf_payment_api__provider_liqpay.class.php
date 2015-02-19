@@ -8,6 +8,9 @@ class yf_payment_api__provider_liqpay extends yf_payment_api__provider_remote {
 	public $KEY_PUBLIC  = null;
 	public $KEY_PRIVATE = null;
 
+	public $IS_DEPOSITION = true;
+	// public $IS_PAYMENT    = true;
+
 	public $_options_transform = array(
 		'title'        => 'description',
 		'operation_id' => 'order_id',

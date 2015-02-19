@@ -12,7 +12,7 @@ class yf_payment_api__provider {
 		!empty( $this->service_allow ) && $this->description = implode( ', ', $this->service_allow );
 	}
 
-	public function allow( $value ) {
+	public function allow( $value = null ) {
 		$result = &$this->ENABLE;
 		isset( $value ) && $result = (bool)$value;
 		return( $result );

@@ -11,6 +11,9 @@ class yf_payment_api__provider_remote {
 
 	public $API_SSL_VERIFY = true;
 
+	public $IS_DEPOSITION = null;
+	public $IS_PAYMENT    = null;
+
 	public $service_allow = null;
 	public $description   = null;
 

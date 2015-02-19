@@ -8,6 +8,9 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	public $KEY_PUBLIC  = null; // merchant
 	public $KEY_PRIVATE = null; // pass
 
+	public $IS_DEPOSITION = true;
+	public $IS_PAYMENT    = true;
+
 	public $_api_request_timeout = 30;  // sec
 	public $_api_method_allow = array(
 		'pay_pb' => array(
@@ -302,7 +305,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$signature    = $this->signature( $form_options );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'signature' ] = $signature;
-		$url = &$this->URL . 'ishop';
+		$url = $this->URL . 'ishop';
 		$result = array();
 		if( $is_array ) {
 			$result[ 'url' ] = $url;

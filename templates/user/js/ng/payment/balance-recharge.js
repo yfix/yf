@@ -290,8 +290,8 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 	// init
 	$scope.block_wait = false;
 	// select first provider
-	if( $scope.payment.provider[ 0 ] ) {
-		$scope.provider_change( $scope.payment.provider[ 0 ] );
+	if( $scope.payment.provider.deposition[ 0 ] ) {
+		$scope.provider_change( $scope.payment.provider.deposition[ 0 ] );
 		// amount
 		$scope.amount_init();
 	}

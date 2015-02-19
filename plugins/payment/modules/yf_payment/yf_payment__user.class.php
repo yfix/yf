@@ -18,12 +18,16 @@ class yf_payment__user {
 			'all' => true,
 		));
 		$payment_api->provider_options( $providers, array(
+			'IS_DEPOSITION', 'IS_PAYMENT',
 			'fee', 'currency_allow', 'description',
 		));
 		$provider_user = $payment_api->provider();
 		$provider = array();
-		foreach( $provider_user as &$item ) {
-			$provider[] = $item[ 'provider_id' ];
+		foreach( (array)$provider_user as &$item ) {
+			$provider_id = (int)$item[ 'provider_id' ];
+			$_provider   = &$providers[ $provider_id ];
+			$_provider[ '_IS_DEPOSITION' ] && $provider[ 'deposition' ][] = $provider_id;
+			$_provider[ '_IS_PAYMENT'    ] && $provider[ 'payment'    ][] = $provider_id;
 		}
 		// misc
 		$status        = $payment_api->status();

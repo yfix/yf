@@ -10,6 +10,9 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	public $KEY_PRIVATE_TEST = null;  // secret key for test
 	public $HASH_METHOD      = 'md5'; // signature hash method: md5, sha256
 
+	public $IS_DEPOSITION = true;
+	// public $IS_PAYMENT    = true;
+
 	public $_options_transform = array(
 		'amount'       => 'ik_am',
 		'currency'     => 'ik_cur',
