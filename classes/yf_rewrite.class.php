@@ -51,7 +51,21 @@ class yf_rewrite {
 			return $body;
 		}
 		if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
+			$trace = main()->trace_string();
 			$this->_time_start = microtime(true);
+		}
+		// Special processing for short links '/', './', '../' == this case mostly used in redirects like js_redirect('./')
+		if (in_array(trim($body), $this->special_links)) {
+			$out = $this->_force_get_url('/');
+			if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
+				debug('rewrite[]', array(
+					'source'	=> $body,
+					'rewrited'	=> $out,
+					'trace'		=> $trace,
+					'exec_time'	=> (microtime(true) - $this->_time_start),
+				));
+			}
+			return $out;
 		}
 		$links = $standalone ? array($body) : $this->_get_unique_links($body);
 		if (!empty($links) && is_array($links)) {
@@ -84,14 +98,12 @@ class yf_rewrite {
 				$body = $this->_replace_special_links($body, $links);
 			}
 			if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
-				$exec_time = (microtime(true) - $this->_time_start);
-				$trace = main()->trace_string();
 				foreach ((array)$r_array as $s => $r) {
 					debug('rewrite[]', array(
 						'source'	=> $s,
 						'rewrited'	=> $r,
 						'trace'		=> $trace,
-						'exec_time'	=> $exec_time,
+						'exec_time'	=> (microtime(true) - $this->_time_start),
 					));
 				}
 			}
