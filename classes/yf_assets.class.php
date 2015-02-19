@@ -1,15 +1,13 @@
 <?php
 
-// TODO: cache fill from console, with ability to put into cron task
 // TODO: requirejs integration, auto-generate its config with switcher on/off
+// TODO: cache fill from console, with ability to put into cron task
 // TODO: support for multiple media servers
-// TODO: decide with virtual formats like sass, less, coffeescript
 // TODO: Fallback to local: window.Foundation || document.write('<script src="/js/vendor/foundation.min.js"><\/script>')
 // TODO: support for .min, using some of console minifier (yahoo, google, jsmin ...)
-// TODO: locking atomic to prevent doing same job in several threads
 // TODO: move to web accessible folder only after completion to ensure atomicity
 // TODO: decide with images: jpeg, png, gif, sprites
-// TODO: comparing versions and return best match. Try to use service "php_semver" for this
+// TODO: compare versions with require_php_lib('php_semver')
 // TODO: upload to S3, FTP
 
 class yf_assets {
@@ -22,7 +20,11 @@ class yf_assets {
 	protected $filters = array();
 	/***/
 	protected $supported_asset_types = array(
-		'jquery', 'js', 'css', 'less', 'sass', 'coffee', 'img', 'font', 'bundle', 'asset'
+		'jquery', 'js', 'css', 'less', 'sass', 'coffee'/*, 'img', 'font'*/, 'bundle', 'asset'
+	);
+	/***/
+	protected $inherit_asset_types_map = array(
+		'js' => array('jquery'),
 	);
 	/***/
 	protected $supported_content_types = array(
@@ -56,6 +58,8 @@ class yf_assets {
 	public $MAIN_TPL_CSS = 'style_css';
 	/** @bool Set to blank to disable */
 	public $MAIN_TPL_JS = 'script_js';
+	/** @bool */
+	public $USE_REQUIRE_JS = false;
 
 	/**
 	* Catch missing method call
@@ -423,6 +427,7 @@ class yf_assets {
 			return current(array_slice($avail_versions, -1, 1, true));
 		}
 // TODO: comparing versions and return best match
+#		require_php_lib('php_semver')
 		return $version;
 	}
 
@@ -579,33 +584,38 @@ class yf_assets {
 		if (isset($__params['config'])) {
 			unset($__params['config']);
 		}
-		foreach ((array)$this->supported_asset_types as $atype) {
-			if ($atype === 'jquery' || $atype === 'asset') {
+		// var_dump(__FUNCTION__.': '.$_content);
+		$inherit_types_map = $this->inherit_asset_types_map;
+		$types = array();
+		foreach ((array)$this->supported_asset_types as $k => $atype) {
+			if ($atype === 'jquery') {
 				continue;
 			}
-			$inherit_type = $atype === 'js' ? 'jquery' : null;
-			$inherit_type2 = 'asset';
-
-			if ($require_data = $bundle_details['require'][$atype]) {
-				$this->_sub_add($require_data, $atype, $__params);
-			} elseif ($inherit_type && $require_data = $bundle_details['require'][$inherit_type]) {
-				$this->_sub_add($require_data, $inherit_type, $__params);
-			} elseif ($inherit_type2 && $require_data = $bundle_details['require'][$inherit_type2]) {
-				$this->_sub_add($require_data, $inherit_type2, $__params);
+			$types[$atype] = $atype;
+			$inherit_types = (array)$inherit_types_map[$atype] ?: array();
+			foreach ((array)$inherit_types as $inherit_type) {
+				$types[$inherit_type] = $inherit_type;
 			}
-
-			if ($data = $this->get_asset($_content, $atype)) {
+		}
+		foreach ((array)$types as $atype) {
+			$data = $bundle_details['require'][$atype];
+			if ($data) {
+				// var_dump(__FUNCTION__.': '.$_content.': require '.$atype.' '.$data);
+				$this->_sub_add($data, $atype, $__params);
+			}
+		}
+		foreach ((array)$types as $atype) {
+			$data = $this->get_asset($_content, $atype);
+			if ($data) {
+				// var_dump(__FUNCTION__.': '.$_content.': content '.$atype.' '.$data);
 				$this->_sub_add($data, $atype, $_params);
-			} elseif ($inherit_type && $data = $this->get_asset($_content, $inherit_type)) {
-				$this->_sub_add($data, $inherit_type, $_params);
 			}
-
-			if ($add_data = $bundle_details['add'][$atype]) {
-				$this->_sub_add($add_data, $atype, $__params);
-			} elseif ($inherit_type && $add_data = $bundle_details['add'][$inherit_type]) {
-				$this->_sub_add($add_data, $inherit_type, $__params);
-			} elseif ($inherit_type2 && $add_data = $bundle_details['add'][$inherit_type2]) {
-				$this->_sub_add($add_data, $inherit_type2, $__params);
+		}
+		foreach ((array)$types as $atype) {
+			$data = $bundle_details['add'][$atype];
+			if ($data) {
+				// var_dump(__FUNCTION__.': '.$_content.': add '.$atype.' '.$data);
+				$this->_sub_add($data, $atype, $__params);
 			}
 		}
 	}
@@ -647,30 +657,34 @@ class yf_assets {
 			unset($__params['config']);
 		}
 
-		$atype = $asset_type;
-		$inherit_type = $atype === 'js' ? 'jquery' : null;
-		$inherit_type2 = 'asset';
-
-		if ($require_data = $asset_data['require'][$atype]) {
-			$this->_sub_add($require_data, $atype, $__params);
-		} elseif ($inherit_type && $require_data = $asset_data['require'][$inherit_type]) {
-			$this->_sub_add($require_data, $inherit_type, $__params);
-		} elseif ($inherit_type2 && $require_data = $asset_data['require'][$inherit_type2]) {
-			$this->_sub_add($require_data, $inherit_type2, $__params);
+		$inherit_types_map = $this->inherit_asset_types_map;
+		$types = array();
+		$types[$asset_type] = $asset_type;
+		$inherit_types = (array)$inherit_types_map[$atype] ?: array();
+		foreach ((array)$inherit_types as $inherit_type) {
+			$types[$inherit_type] = $inherit_type;
 		}
-
-		if ($data = $this->get_asset($_content, $atype)) {
-			$this->_sub_add($data, $atype, $_params);
-		} elseif ($inherit_type && $data = $this->get_asset($_content, $inherit_type)) {
-			$this->_sub_add($data, $inherit_type, $_params);
+		// var_dump(__FUNCTION__.': '.$_content.', atype: '.$asset_type);
+		foreach ((array)$types as $atype) {
+			$data = $asset_data['require'][$atype];
+			if ($data) {
+				// var_dump(__FUNCTION__.': '.$_content.': require '.$atype.' '.$data);
+				$this->_sub_add($data, $atype, $__params);
+			}
 		}
-
-		if ($add_data = $asset_data['add'][$atype]) {
-			$this->_sub_add($add_data, $atype, $__params);
-		} elseif ($inherit_type && $data = $asset_data['add'][$inherit_type]) {
-			$this->_sub_add($add_data, $inherit_type, $__params);
-		} elseif ($inherit_type2 && $data = $asset_data['add'][$inherit_type2]) {
-			$this->_sub_add($add_data, $inherit_type2, $__params);
+		foreach ((array)$types as $atype) {
+			$data = $this->get_asset($_content, $atype);
+			if ($data) {
+				// var_dump(__FUNCTION__.': '.$_content.': content '.$atype.' '.$data);
+				$this->_sub_add($data, $atype, $_params);
+			}
+		}
+		foreach ((array)$types as $atype) {
+			$data = $asset_data['add'][$atype];
+			if ($data) {
+				// var_dump(__FUNCTION__.': '.$_content.': add '.$atype.' '.$data);
+				$this->_sub_add($data, $atype, $__params);
+			}
 		}
 	}
 
@@ -975,11 +989,13 @@ class yf_assets {
 		if (!is_array($params)) {
 			$params = !empty($params) ? array($params) : array();
 		}
-		$ext = '.'.$out_type;
 		// Assets from current module
 		$module_assets_path = $this->find_asset_type_for_module($out_type, $_GET['object']);
 		if ($module_assets_path) {
 			$this->add_file($module_assets_path, $out_type);
+		}
+		if ($out_type === 'js' && $this->USE_REQUIRE_JS) {
+			return $this->show_require_js($params);
 		}
 		if ($this->COMBINE) {
 			$combined_file = $this->_cache_path($out_type, '', array(
@@ -1069,6 +1085,32 @@ class yf_assets {
 		$append = _class('core_events')->fire('assets.append', array('out' => &$out));
 		$this->clean_content($out_type);
 		return implode(PHP_EOL, $prepend). implode(PHP_EOL, $out). implode(PHP_EOL, $append);
+	}
+
+	/**
+	*/
+	public function show_require_js($params = array()) {
+		$out_type = 'js';
+		$out = array();
+		foreach ((array)$this->_get_all_content_for_out($out_type) as $md5 => $v) {
+			if (!is_array($v)) {
+				continue;
+			}
+			$out[$md5] = $this->html_out($out_type, $v['content_type'], $v['content'], (array)$v['params'] + (array)$params);
+		}
+		$this->clean_content($out_type);
+		$out = '
+<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.js" type="text/javascript"></script>
+<script type="text/javascript">
+requirejs.config({ baseUrl: "/templates/"'.MAIN_TYPE.'"/cache/" });
+define("jquery", [], function() { });
+requirejs( [ "module1", "module2" ], function( angular ) {
+	console.log( "modules load" );
+});
+</script>
+				'/*. PHP_EOL. implode(PHP_EOL, $out)*/;
+var_dump($out);
+		return $out;
 	}
 
 	/**

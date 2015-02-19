@@ -124,7 +124,7 @@ class yf_payment_api {
 		'USD' => array(
 			'currency_id' => 'USD',
 			'name'        => 'Доллар США',
-			'short'       => '$',
+			'short'       => 'доллар',
 			'sign'        => '$',
 			'number'      => 840,
 			'minor_units' => 2,
@@ -438,7 +438,7 @@ class yf_payment_api {
 		$db->where( 'account_type_id', '=', _es( $value ) );
 		$options[ 'account_type_id' ] = $value;
 		// by currency_id
-		$value = (int)$_[ 'currency_id' ] ?: $this->currency_id;
+		$value = $_[ 'currency_id' ] ?: $this->currency_id;
 		empty( $value ) && list( $value ) = $this->get_currency__by_id();
 		if( empty( $value ) ) { return( null ); }
 		$db->where( 'currency_id', '=', _es( $value ) );
@@ -595,16 +595,16 @@ class yf_payment_api {
 				return( $provider );
 			}
 			foreach( (array)$provider as $index => $item ) {
-				$name = $item[ 'name' ];
+				$name   = $item[ 'name' ];
+				$id     = (int)$item[ 'provider_id' ];
+				$provider_index[ 'all'    ][ $id ] = &$provider[ $id ];
 				$class = 'provider_' . $name;
 				$provider_class = $this->_class( $class );
 				if( !( $provider_class && $provider_class->ENABLE ) ) {
 					unset( $provider[ $index ] );
 					continue;
 				}
-				$id     = (int)$item[ 'provider_id' ];
 				$system = (int)$item[ 'system' ];
-				$name   = $item[ 'name' ];
 				$provider_index[ 'system' ][ $system ][ $id ] = &$provider[ $id ];
 				$provider_index[ 'name'   ][ $name   ][ $id ] = &$provider[ $id ];
 			}
@@ -622,11 +622,11 @@ class yf_payment_api {
 		}
 		// all
 		elseif( !empty( $all ) ) {
-			$result = $provider;
+			$result = $provider_index[ 'all' ];
 		}
 		// by provider_id
-		elseif( !empty( $provider_id ) ) {
-			$result = array( $provider_id => $provider[ $provider_id ] );
+		elseif( isset( $provider_id ) ) {
+			$provider[ $provider_id ] && $result = array( $provider_id => $provider[ $provider_id ] );
 		}
 		// by name
 		elseif( !empty( $name ) ) {
@@ -880,7 +880,9 @@ class yf_payment_api {
 		$status_id = (int)$status[ 'status_id' ];
 		$data[ 'status' ] = $status;
 		// check account
-		list( $balance, $account_result ) = $this->get_balance( $options );
+		$_options = $options;
+		unset( $_options[ 'currency_id' ] );
+		list( $balance, $account_result ) = $this->get_balance( $_options );
 		if( empty( $account_result ) ) { return( $account_result ); }
 		list( $account_id, $account ) = $account_result;
 		// check amount
@@ -1002,9 +1004,13 @@ class yf_payment_api {
 			$count = $db->order_by()->limit( null )->count( '*', $is_sql );
 		}
 		if( is_array( $result ) ) {
-			foreach( $result as $index => $item ) {
-				$_options = &$result[ $index ][ 'options' ];
+			$datetime_key = array( 'start', 'finish', 'update', );
+			foreach( $result as $index => &$item ) {
+				$_options = &$item[ 'options' ];
 				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
+				foreach( $datetime_key as $key ) {
+					$item[ '_ts_' . $key ] = strtotime( $item[ 'datetime_' . $key ] );
+				}
 			}
 		}
 		return( array( $result, $count ) );

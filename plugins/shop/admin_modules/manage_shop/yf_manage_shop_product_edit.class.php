@@ -178,6 +178,29 @@ class yf_manage_shop_product_edit {
 			'back_url'    => './?object='.main()->_get('object').'&action=products',
 			'units'       => $products_to_unit,
 		);
+		$textarea_id = 'description';
+/*
+		$cke_config = '
+			CKEDITOR.replace("'.$textarea_id.'", {
+				toolbar: [
+					[ "Cut", "Copy", "Paste", "PasteText", "PasteFromWord", "-", "Undo", "Redo" ], [ "RemoveFormat" ], [ "Bold", "Italic", "Underline" ],
+					[ "FontSize" ], [ "TextColor" ], [ "NumberedList", "BulletedList", "-", "Blockquote" ], [ "Link", "Unlink", "SpecialChar" ], [ "Source" ], [ "Maximize" ]
+				],
+				language: "ru",
+				removePlugins: "bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates",
+			});
+		';
+*/
+		$cke_config = array(
+			'toolbar' => array(
+				array(
+					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat' , 'Bold', 'Italic', 'Underline' ,
+					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', '-', 'Blockquote', 'Link', 'Unlink', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
+				),
+			),
+			'language' => conf('language'),
+			'removePlugins' => 'bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates',
+		);
 		return form($replace, array(
 // TODO: use validation
 				'for_upload' => 1,
@@ -189,17 +212,20 @@ class yf_manage_shop_product_edit {
 					'no_headers' => 1,
 				),
 			))
+		->tab_start('tab_desc', array('tab_body' => array('class' => 'active span12 col-md-12')))
+			->textarea('description', array('style' => 'min-width:100%', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => $cke_config)))
+		->tab_end()
 		->tab_start('main')
-			->link('product_url_user', url('/shop/product/'.$product_info['id']), array('target' => '_blank'))
+			->link('product_url_user', url_user('/shop/product/'.$product_info['id']), array('target' => '_blank'))
 			->info('id')
 			->text('name')
 			->text('articul')
 			->text('url')
-			->select_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0, 'data-test' => 'select_category'))
+			->chosen_box('cat_id', module('manage_shop')->_cats_for_select, array('desc' => 'Main category', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'translate' => 0, 'data-test' => 'select_category'))
 // TODO: replace with similar JS container as for params and images
 #			->multi_select('category', module('manage_shop')->_cats_for_select, array('desc' => 'Secondary categories', 'edit_link' => './?object=category_editor&action=show_items&id=shop_cats', 'selected' => $products_to_category, 'translate' => 0))
-			->select_box('manufacturer_id', module('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'edit_link' => './?object='.main()->_get('object').'&action=manufacturers', 'translate' => 0, 'data-test' => 'select_manufacturer'))
-			->select_box('supplier_id', module('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'edit_link' => './?object='.main()->_get('object').'&action=suppliers', 'data-test' => 'select_supplier'))
+			->chosen_box('manufacturer_id', module('manage_shop')->_man_for_select, array('desc' => 'Manufacturer', 'edit_link' => './?object='.main()->_get('object').'&action=manufacturers', 'translate' => 0, 'data-test' => 'select_manufacturer'))
+			->chosen_box('supplier_id', module('manage_shop')->_suppliers_for_select, array('desc' => 'Supplier', 'edit_link' => './?object='.main()->_get('object').'&action=suppliers', 'data-test' => 'select_supplier'))
 			->select2_box( array(
 				'desc'      => 'Регион',
 				'name'      => 'region',
@@ -209,15 +235,8 @@ class yf_manage_shop_product_edit {
 				'edit_link' => url_admin( '/manage_shop/region' ),
 				'data-test' => 'select_region',
 			))
-			->textarea('description')
-			->price('old_price')
-			->price('price')
-			->price('price_promo')
-			->price('price_partner')
-			->price('price_raw')
 			->number('quantity', array('min' => 0))
 			->active_box('active')
-			->save_and_back()
 		->tab_end()
 		->tab_start('params')
 			->link('Search images', './?object='.main()->_get('object').'&action=product_image_search&id='.$product_info['id'], array('class_add' => 'btn-success', 'data-test' => 'search_image_btn'))
@@ -243,6 +262,14 @@ class yf_manage_shop_product_edit {
 				'edit_link' => url_admin( '/manage_shop/units' ),
 				'data-test' => 'select_units',
 			))
+			->price('old_price')
+			->price('price')
+			->price('price_promo')
+			->price('price_partner')
+			->price('price_raw')
+		->tab_end()
+		->tab_start('tab_save', array('tab_body' => array('class' => 'active span12 col-md-12')))
+			->save_and_back()
 		->tab_end()
 			.tpl()->parse('manage_shop/product_edit_js');
 	}

@@ -2,7 +2,7 @@
 
 /**
 * Static/HTML pages content editor
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -11,18 +11,40 @@ class yf_static_pages {
 
 	/**
 	*/
-	function show() {
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
+	function _get_page_info($id = null) {
+		$id = isset($id) ? $id : $_GET['id'];
+		return db()->from('static_pages')
+			->where('name', _strtolower(urldecode($id)) )
+			->or_where('id', (int)$id)->get();
+	}
 
+	/**
+	*/
+	function _fix_page_name($in = null) {
+		if (!strlen($in)) {
+			return '';
+		}
+		// Detect non-latin characters
+		if (strlen($in) !== _strlen($in)) {
+			$in = common()->make_translit(_strtolower($in));
+		}
+		$in = preg_replace('/[^a-z0-9\_\-]/i', '_', strtolower($in));
+		$in = str_replace(array('__', '___'), '_', $in);
+		return $in;
+	}
+
+	/**
+	*/
+	function show() {
 		$sql = 'SELECT * FROM '.db('static_pages');
 		return table($sql, array(
-				'filter' => $_SESSION[$filter_name],
+				'filter' => true,
 				'filter_params' => array(
 					'name'	=> 'like',
 				),
 			))
 			->text('name')
-			->btn_edit()
+			->btn_edit(array('no_ajax' => 1))
 			->btn_delete()
 			->btn('View', './?object='.$_GET['object'].'&action=view&id=%d')
 			->btn_active()
@@ -32,81 +54,67 @@ class yf_static_pages {
 	/**
 	*/
 	function add() {
-		if (empty($_POST['name'])) {
-			return form(array('back_link' => './?object='.$_GET['object']))
-				->text('name')
-				->save_and_back();
-		}
-		$name = preg_replace('/[^a-z0-9\_\-]/i', '_', _strtolower($_POST['name']));
-		$name = str_replace(array('__', '___'), '_', $name);
-		if (strlen($name)) {
-			db()->insert('static_pages', _es(array('name' => $name)));
-			$page_id = db()->insert_id();
-			common()->admin_wall_add(array('statis page added: '.$name, $page_id));
-		}
-		cache_del('static_pages_names');
-		if (!empty($page_id)) {
-			return js_redirect('./?object='.$_GET['object'].'&action=edit&id='.$page_id);
-		} else {
-			return _e('Cannot insert record!');
-		}
+		$a = (array)$_POST + (array)$a;
+		$a['back_link'] = url_admin('/@object');
+		$_this = $this;
+		return form($a)
+			->validate(array(
+				'__before__'=> 'trim',
+				'name' => array('required', function(&$in) use ($_this) {
+					$in = $_this->_fix_page_name($in);
+					return (bool)strlen($in);
+				}),
+			))
+			->db_insert_if_ok('static_pages', array('name'))
+			->on_after_update(function() {
+				$id = db()->insert_id();
+				common()->admin_wall_add(array('static page added: '.$name, $id));
+				cache_del('static_pages_names');
+				js_redirect(url_admin('/@object/edit/'.$id));
+			})
+			->text('name')
+			->save_and_back()
+		;
 	}
 
 	/**
 	*/
 	function edit() {
-		if (!isset($_GET['id'])) {
-			return _e('No id');
+		$a = $this->_get_page_info();
+		if (!$a) {
+			return _e('No info');
 		}
-		$page_info = db()->get('SELECT * FROM '.db('static_pages').' WHERE name="'._es(_strtolower(urldecode($_GET['id']))).'" OR id='.intval($_GET['id']).' LIMIT 1');
-		if (!$page_info) {
-			return _e('No page info');
-		}
-		if (main()->is_post()) {
-			if (isset($_POST['name'])) {
-				$_POST['name'] = preg_replace('/[^a-z0-9\_\-]/i', '_', _strtolower($_POST['name']));
-				$_POST['name'] = str_replace(array('__', '___'), '_', $_POST['name']);
-			}
-			$sql = array();
-			$fields = array(
-				'name',
-				'text',
-				'page_title',
-				'page_heading',
-				'meta_keywords',
-				'meta_desc',
-				'active',
-			);
-			foreach ((array)$fields as $field) {
-				if (isset($_POST[$field])) {
-					$sql[$field] = $_POST[$field];
-				}
-			}
-			if ($sql['text']) {
-				db()->update('static_pages', db()->es($sql), 'id='.intval($page_info['id']));
-				common()->admin_wall_add(array('statis page updated: '.$page_info['name'], $page_info['id']));
-			}
-			cache_del('static_pages_names');
-			return js_redirect(url_admin('/@object'));
-		}
-		$DATA = $page_info;
-		foreach ((array)$_POST as $k => $v) {
-			$DATA[$k] = $v;
-		}
-		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$page_info['id'],
-			'name'			=> $DATA['name'],
-			'text'			=> $DATA['text'],
-			'page_title'	=> $DATA['page_title'],
-			'page_heading'	=> $DATA['page_heading'],
-			'meta_keywords'	=> $DATA['meta_keywords'],
-			'meta_desc'		=> $DATA['meta_desc'],
-			'active'		=> $DATA['active'],
-			'back_url'		=> url_admin('/@object'),
+		$a = (array)$_POST + (array)$a;
+		$a['back_link'] = url_admin('/@object');
+		$_this = $this;
+		$cke_config = array(
+			'toolbar' => array(
+				array(
+					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
+					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', '-', 'Blockquote', 'Link', 'Unlink', 'Image', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
+				),
+			),
+			'language' => conf('language'),
+			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,table,tabletools,templates,style',
+			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
+			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*)',
 		);
-		return form($replace)
+		return form($a)
+			->validate(array(
+				'__before__'=> 'trim',
+				'name' => array('required', function(&$in) use ($_this) {
+					$in = $_this->_fix_page_name($in);
+					return (bool)strlen($in);
+				}),
+				'text' => 'required',
+			))
+			->db_update_if_ok('static_pages', array('name','text','page_title','page_heading','meta_keywords','meta_desc','active'), 'id='.$a['id'])
+			->on_after_update(function() {
+				common()->admin_wall_add(array('static page updated: '.$a['name'], $a['id']));
+				cache_del('static_pages_names');
+			})
 			->text('name')
-			->textarea('text','',array('class' => 'span4','rows' => '10','ckeditor' => true, 'id' => 'text'))
+			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => $cke_config)))
 			->text('page_title')
 			->text('page_heading')
 			->text('meta_keywords')
@@ -118,11 +126,12 @@ class yf_static_pages {
 	/**
 	*/
 	function delete() {
-		if (isset($_GET['id'])) {
-			db()->query('DELETE FROM '.db('static_pages').' WHERE name="'._es(urldecode($_GET['id'])).'" OR id='.intval($_GET['id']));
-			common()->admin_wall_add(array('static page deleted: '.$_GET['id'], $_GET['id']));
+		$a = $this->_get_page_info();
+		if ($a) {
+			db()->from('static_pages')->whereid($a['id'])->delete();
+			common()->admin_wall_add(array('static page deleted: '.$a['id'], $a['id']));
+			cache_del('static_pages_names');
 		}
-		cache_del('static_pages_names');
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
 			echo $page_name;
@@ -134,17 +143,15 @@ class yf_static_pages {
 	/**
 	*/
 	function active () {
-		if (isset($_GET['id'])) {
-			$page_info = db()->query_fetch('SELECT * FROM '.db('static_pages').' WHERE name="'._es(_strtolower(urldecode($_GET['id']))).'" OR id='.intval($_GET['id']));
-		}
-		if (!empty($page_info['id'])) {
-			db()->UPDATE('static_pages', array('active' => (int)!$page_info['active']), 'id='.intval($page_info['id']));
-			common()->admin_wall_add(array('static page: '.$page_info['name'].' '.($page_info['active'] ? 'inactivated' : 'activated'), $page_info['id']));
+		$a = $this->_get_page_info();
+		if (!empty($a['id'])) {
+			db()->update('static_pages', array('active' => (int)!$a['active']), (int)$a['id']);
+			common()->admin_wall_add(array('static page: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']));
 			cache_del('static_pages_names');
 		}
 		if ($_POST['ajax_mode']) {
 			main()->NO_GRAPHICS = true;
-			echo ($page_info['active'] ? 0 : 1);
+			echo intval( ! $a['active']);
 		} else {
 			return js_redirect(url_admin('/@object'));
 		}
@@ -153,15 +160,13 @@ class yf_static_pages {
 	/**
 	*/
 	function view() {
-		if (!empty($_GET['id'])) {
-			$page_info = db()->query_fetch('SELECT * FROM '.db('static_pages').' WHERE name="'._es(_strtolower(urldecode($_GET['id']))).'" OR id='.intval($_GET['id']));
-		}
-		if (empty($page_info)) {
+		$a = $this->_get_page_info();
+		if (empty($a)) {
 			return _e('No such page!');
 		}
-		$body = stripslashes($page_info['text']);
+		$body = stripslashes($a['text']);
 		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=edit&id='.$page_info['id'],
+			'form_action'	=> url_admin('/@object/edit/'.$a['id']),
 			'back_link'		=> url_admin('/@object'),
 			'body'			=> $body,
 		);
@@ -184,9 +189,9 @@ class yf_static_pages {
 		$subheader = _ucwords(str_replace('_', ' ', $_GET['action']));
 		$cases = array (
 			//$_GET['action'] => {string to replace}
-			'show'			=> '',
-			'edit'			=> '',
-		);			 		
+			'show'	=> '',
+			'edit'	=> '',
+		);
 		if (isset($cases[$_GET['action']])) {
 			$subheader = $cases[$_GET['action']];
 		}
@@ -208,18 +213,13 @@ class yf_static_pages {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$order_fields = array(
 			'name'		=> 'name',
 			'active'	=> 'active',
 		);
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
 				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->text('name')
 			->select_box('order_by', $order_fields, array('show_text' => 1))
@@ -241,16 +241,17 @@ class yf_static_pages {
 		if ($params['describe_self']) {
 			return $meta;
 		}
+		$sql = db()->from('static_pages');
+
 		$config = $params;
 		$avail_orders = $meta['configurable']['order_by'];
 		if (isset($avail_orders[$config['order_by']])) {
-			$order_by_sql = ' ORDER BY '.db()->es($avail_orders[$config['order_by']].'');
+			$sql->order_by($avail_orders[$config['order_by']]);
 		}
 		$avail_limits = $meta['configurable']['limit'];
 		if (isset($avail_limits[$config['limit']])) {
-			$limit_records = (int)$avail_limits[$config['limit']];
+			$sql->limit($avail_limits[$config['limit']]);
 		}
-		$sql = 'SELECT * FROM '.db('static_pages'). $order_by_sql;
 		return table($sql, array('no_header' => 1, 'btn_no_text' => 1))
 			->link('name', './?object='.$_GET['object'].'&action=view&id=%d', '', array('width' => '100%'))
 			->btn_edit()

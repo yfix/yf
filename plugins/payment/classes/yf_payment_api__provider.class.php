@@ -9,6 +9,7 @@ class yf_payment_api__provider {
 
 	public function _init() {
 		$this->payment_api = _class( 'payment_api' );
+		!empty( $this->service_allow ) && $this->description = implode( ', ', $this->service_allow );
 	}
 
 	public function allow( $value ) {

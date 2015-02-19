@@ -200,27 +200,59 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_select_box('myselect', $data))) );
 	}
 	public function test_check_box() {
-		$this->assertEquals('<label class="checkbox checkbox-inline"><input type="checkbox" name="id" id="id" value="1"> &nbsp;Id</label>'
+		$html = html();
+		$def_class = $html->CLASS_LABEL_CHECKBOX.' '.$html->CLASS_LABEL_CHECKBOX_INLINE;
+
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="id" id="id" value="1"> &nbsp;Id</label>'
 			, trim(self::form_no_chain($r)->check_box('id')) );
-		$this->assertEquals('<label class="checkbox checkbox-inline active"><input type="checkbox" name="id" id="id" value="1" checked="checked"> &nbsp;Id</label>'
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="id" id="id" value="1" checked="checked"> &nbsp;Id</label>'
 			, trim(self::form_no_chain($r)->check_box('id', array('selected' => 'true'))) );
-		$this->assertEquals('<label class="checkbox checkbox-inline active"><input type="checkbox" name="id" id="id" value="1" checked="checked"> &nbsp;Id</label>'
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="id" id="id" value="1" checked="checked"> &nbsp;Id</label>'
 			, trim(self::form_no_chain($r)->check_box('id', '1', array('selected' => 'true'))) );
-		$this->assertEquals('<label class="checkbox checkbox-inline active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
 			, trim(self::form_no_chain($r)->check_box('is_public', '1', array('selected' => 'true'))) );
-		$this->assertEquals('<label class="checkbox checkbox-inline active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
 			, trim(self::form_no_chain($r)->check_box('is_public', '1', array('checked' => 'true'))) );
-		$this->assertEquals('<label class="checkbox checkbox-inline active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+		$this->assertEquals('<label class="'.$def_class.' active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
 			, trim(self::form_no_chain($r)->check_box('is_public', array('checked' => 'true'))) );
+		$this->assertEquals(
+			'<label class="testme active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+			, trim(self::form_no_chain($r)->check_box('is_public', array(
+				'checked' => 'true',
+				'class_label_checkbox' => 'testme',
+			)
+		)));
+		$this->assertEquals(
+			'<label class="'.$def_class.' testme active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;Is public</label>'
+			, trim(self::form_no_chain($r)->check_box('is_public', array(
+				'checked' => 'true',
+				'class_add_label_checkbox' => 'testme',
+			)
+		)));
+		$this->assertEquals(
+			'<label class="'.$def_class.' testme active"><input type="checkbox" name="is_public" id="myid" value="myval" checked="checked" class="myclass" style="color:red;" data-some="mydata"> &nbsp;Is public</label>'
+			, trim(self::form_no_chain($r)->check_box('is_public', array(
+				'checked' => 'true',
+				'class_add_label_checkbox' => 'testme',
+				'class' => 'myclass',
+				'style' => 'color:red;',
+				'value' => 'myval',
+				'force_id' => 'myid',
+				'data-some' => 'mydata',
+			)
+		)));
 	}
 	public function test_multi_check_box() {
+		$html = html();
 		$data = array('k1' => 'v1', 'k2' => 'v2');
 		$selected = array('k2' => '1');
-		$this->assertEquals('<label class="checkbox checkbox-inline"><input type="checkbox" name="mycheck_k1" id="multi_check_box_1" value="k1"> &nbsp;v1</label>'
-			.'<label class="checkbox checkbox-inline"><input type="checkbox" name="mycheck_k2" id="multi_check_box_2" value="k2"> &nbsp;v2</label>'
+		$def_class = $html->CLASS_LABEL_CHECKBOX.' '.$html->CLASS_LABEL_CHECKBOX_INLINE;
+
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="mycheck_k1" id="multi_check_box_1" value="k1"> &nbsp;v1</label>'
+			.'<label class="'.$def_class.'"><input type="checkbox" name="mycheck_k2" id="multi_check_box_2" value="k2"> &nbsp;v2</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_check_box('mycheck', $data))) );
-		$this->assertEquals('<label class="checkbox checkbox-inline"><input type="checkbox" name="mycheck_k1" id="multi_check_box_3" value="k1"> &nbsp;v1</label>'
-			.'<label class="checkbox checkbox-inline active"><input type="checkbox" name="mycheck_k2" id="multi_check_box_4" value="k2" checked="checked"> &nbsp;v2</label>'
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="mycheck_k1" id="multi_check_box_3" value="k1"> &nbsp;v1</label>'
+			.'<label class="'.$def_class.' active"><input type="checkbox" name="mycheck_k2" id="multi_check_box_4" value="k2" checked="checked"> &nbsp;v2</label>'
 			, str_replace(PHP_EOL, '', trim(self::form_no_chain($r)->multi_check_box('mycheck', $data, array('selected' => $selected)))) );
 	}
 	public function test_radio_box() {

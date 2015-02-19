@@ -4,16 +4,35 @@ _class( 'payment_api__provider_remote' );
 
 class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote {
 
-	public $ENABLE    = true;
-	public $TEST_MODE = null;
-
-
-	public $payment_api = null;
-	public $api         = null;
-
-	public $URL         = 'https://api.privatbank.ua/p24api/ishop';
+	public $URL         = 'https://api.privatbank.ua/p24api/';
 	public $KEY_PUBLIC  = null; // merchant
 	public $KEY_PRIVATE = null; // pass
+
+	public $_api_request_timeout = 30;  // sec
+	public $_api_method_allow = array(
+		'pay_pb' => array(
+			'b_card_or_acc',
+			'amt',
+			'ccy',
+			'details',
+		),
+		'pay_visa' => array(
+			'b_name',
+			'b_card_or_acc',
+			'amt',
+			'ccy',
+			'details',
+		),
+	);
+
+	public $_xml_transform = array(
+		'amount'       => 'amt',
+		'currency'     => 'ccy',
+		'title'        => 'details',
+		'operation_id' => 'payment_id',
+		'account'      => 'b_card_or_acc',
+		'name'         => 'b_name',
+	);
 
 	public $_options_transform = array(
 		'amount'       => 'amt',
@@ -61,6 +80,10 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 
 	public $fee = 2; // 2%
 
+	public $service_allow = array(
+		'Приват24',
+	);
+
 	public $url_result = null;
 	public $url_server = null;
 
@@ -88,6 +111,162 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	public function signature( $options, $is_request = true ) {
 		$result = $this->api->signature( $options, $is_request );
 		return( $result );
+	}
+
+	public function api_request( $method, $options ) {
+		$api_method_allow = $this->_api_method_allow[ $method ];
+		if( !is_array( $api_method_allow ) ) { return( null ); }
+		$payment_api = &$this->payment_api;
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// transform
+		foreach( $this->_xml_transform as $from => $to ) {
+			$f = &${ '_'.$from };
+			$t = &${ '_'.$to   };
+			if( isset( $f ) ) { $t = $f; unset( ${ '_'.$from } ); }
+		}
+		// default
+		$_amt  = number_format( $_amt, 2, '.', '' );
+		$_wait = $_wait ?: $this->_api_request_timeout;
+		$_test = $payment_api->_default( array( $_test, $this->TEST_MODE ) );
+		// $_test = (int)$_test;
+		foreach( $api_method_allow as $name ) {
+			$value = &${ '_'.$name };
+			if( !isset( $value ) ) {
+				$result = array(
+					'status'         => false,
+					'status_message' => 'Отсутствуют данные запроса',
+				);
+				return( $result );
+			}
+		}
+		// build xml
+		$xml_request = new SimpleXMLElement(
+			'<?xml version="1.0" encoding="UTF-8"?>'
+			.'<request version="1.0">'
+			.'</request>'
+		);
+		$xml_merchant = $xml_request->addChild( 'merchant' );
+		$xml_data     = $xml_request->addChild( 'data'     );
+		// oper, wait, test
+		$xml_data->addChild( 'oper', 'cmt' );
+		$xml_data->addChild( 'wait', $_wait );
+		$xml_data->addChild( 'test', $_test );
+		// payment
+		$xml_payment = $xml_data->addChild( 'payment' );
+		// payment id
+		isset( $_payment_id ) && $xml_payment->addAttribute( 'id', $_payment_id );
+		// data
+		$data = '';
+		foreach( $api_method_allow as $name ) {
+			$value = ${ '_'.$name };
+			$value = htmlentities( $value, ENT_COMPAT | ENT_XML1, 'UTF-8', $double_encode = false );
+			$prop = $xml_payment->addChild( 'prop' );
+			$prop->addAttribute( 'name',  $name  );
+			$prop->addAttribute( 'value', $value );
+		}
+		// signature
+		$key_public  = $this->KEY_PUBLIC;
+		$data = '';
+		foreach( $xml_data->children() as $_xml ) { $data .= $_xml->asXML(); }
+		$signature = $this->api->str_to_sign( $data );
+		// merchant
+		$xml_merchant->addChild( 'id',        $key_public );
+		$xml_merchant->addChild( 'signature', $signature   );
+		// request
+		$data = $xml_request->asXML();
+		$result = $this->_api_request( $method, $data );
+		list( $status, $response ) = $result;
+		if( !$status ) { return( $result ); }
+		libxml_use_internal_errors( true );
+		$xml_response = simplexml_load_string( $response );
+// debug
+// var_dump( $response, $xml_response );
+		// error?
+		$error = libxml_get_errors();
+		if( $error ) {
+			libxml_clear_errors();
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверная структура данных',
+			);
+			return( $result );
+		}
+		if( $xml_response->getName() == 'error' ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверные данные - ' . (string)$xml_response,
+			);
+			return( $result );
+		}
+		// ----- check response
+		// key public - merchant
+		$value = $key_public;
+		$r_value = (string)$xml_response->merchant->id;
+		if( $value != $r_value ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверный публичный ключ (merchant)',
+			);
+			return( $result );
+		}
+		// signature
+		$data = '';
+		foreach( $xml_response->data->children() as $_xml ) { $data .= $_xml->asXML(); }
+		$value = $this->api->str_to_sign( $data );
+		$r_value = (string)$xml_response->merchant->signature;
+		if( $value != $r_value ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверный подпись (signature)',
+			);
+			return( $result );
+		}
+		// payment
+		$xml_response_payment = $xml_response->data->payment->attributes();
+		// id
+		$value = $_payment_id;
+		$r_value = (string)$xml_response_payment->id;
+		if( $value != $r_value ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверный номер операции (operation_id)',
+			);
+			return( $result );
+		}
+		// amt
+		$value = $_amt;
+		$r_value = (string)$xml_response_payment->amt;
+		if( $value != $r_value ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверная сумма (amt)',
+			);
+			return( $result );
+		}
+		// ccy
+		$value = $_ccy;
+		$r_value = (string)$xml_response_payment->ccy;
+		if( $value != $r_value ) {
+			$result = array(
+				'status'         => null,
+				'status_message' => 'Ошибка ответа: неверная валюта (ccy)',
+			);
+			return( $result );
+		}
+		// state
+		$status         = (bool)$xml_response_payment->state;
+		$status_message = (string)$xml_response_payment->message;
+		if( $status ) {
+			if( $status_message == 'payment added to the queue' ) {
+				$status_message = 'Платеж добавлен в очередь';
+			} else {
+				$status_message = 'Платеж выполнен успешно';
+			}
+		} else {
+			$status_message = 'Платеж забракован';
+		}
+		return( array( $status, $status_message ) );
 	}
 
 	public function _form_options( $options ) {
@@ -123,7 +302,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		$signature    = $this->signature( $form_options );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'signature' ] = $signature;
-		$url = &$this->URL;
+		$url = &$this->URL . 'ishop';
 		$result = array();
 		if( $is_array ) {
 			$result[ 'url' ] = $url;

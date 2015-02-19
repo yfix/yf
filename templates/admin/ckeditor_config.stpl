@@ -29,6 +29,6 @@ try {
 	CKEDITOR.replace( 'text', ck_config);
 {/if}
 
-} catch(e) { console.error(e) }
+} catch(e) { console.error("CKeditor init failed:", e) }
 
 {/js}

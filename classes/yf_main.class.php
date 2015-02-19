@@ -465,8 +465,9 @@ class yf_main {
 	}
 
 	function is_db() {
-		$result = true;
-		if (!is_object($this->db) || !$this->db->_connected) { $result = false; }
+		$result = false;
+		if (is_object($this->db)) { $result = true; }
+		// if (is_object($this->db) && $this->db->_connected) { $result = true; }
 		return( $result );
 	}
 

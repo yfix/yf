@@ -9,12 +9,17 @@
 */
 class yf_html {
 
-	/** @var bool */
 	public $AUTO_ASSIGN_IDS = true;
-	/** @var bool */
 	public $BOXES_USE_STPL	= false;
-	/** @var strinh */
 	public $SELECT_BOX_DEF_OPT_TPL = '- %select% %name% -';
+	public $CLASS_LABEL_RADIO = 'radio';
+	public $CLASS_LABEL_RADIO_INLINE = 'radio-inline';
+	public $CLASS_LABEL_RADIO_SELECTED = 'active';
+	public $CLASS_LABEL_CHECKBOX = 'checkbox';
+	public $CLASS_LABEL_CHECKBOX_INLINE = 'checkbox-inline';
+	public $CLASS_LABEL_CHECKBOX_SELECTED = 'active';
+	public $CLASS_SELECT_BOX = 'form-control';
+	public $CLASS_SELECT_OPTION_DEFAULT = 'opt-default';
 
 	/**
 	* Catch missing method call
@@ -27,7 +32,17 @@ class yf_html {
 	* We cleanup object properties when cloning
 	*/
 	function __clone() {
+		$keep_prefix = 'CLASS_';
+		$keep_len = strlen($keep_prefix);
+		$keep_prefix2 = 'CONF_';
+		$keep_len2 = strlen($keep_prefix2);
 		foreach ((array)get_object_vars($this) as $k => $v) {
+			if (substr($k, 0, $keep_len) === $keep_prefix) {
+				continue;
+			}
+			if (substr($k, 0, $keep_len2) === $keep_prefix2) {
+				continue;
+			}
 			if ($k[0] == '_') {
 				$this->$k = null;
 			}
@@ -174,9 +189,16 @@ class yf_html {
 	*/
 	function tabs($tabs = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+
+		$extra_by_id = array();
+		if (isset($extra['by_id'])) {
+			$extra_by_id = (array)$extra['by_id'];
+			unset($extra['by_id']);
+		}
+		$links_prefix = $extra['links_prefix'] ?: 'tab_';
+
 		$headers = array();
 		$items = array();
-		$links_prefix = $extra['links_prefix'] ?: 'tab_';
 		foreach ((array)$tabs as $k => $v) {
 			$desc_raw = null;
 			$disabled = null;
@@ -189,34 +211,47 @@ class yf_html {
 				$disabled = $v['disabled'];
 			}
 			$content = trim($content);
-			if ($extra['hide_empty'] && !strlen($content)) {
+			$_extra = (array)$extra_by_id[$k] + (array)$extra;
+			if ($_extra['hide_empty'] && !strlen($content)) {
 				continue;
 			}
 			$name = $v['name'] ?: $k;
-			$desc = $v['desc'] ?: (!$extra['no_auto_desc'] ? ucfirst(str_replace('_', ' ', $name)) : $name);
+			$desc = $v['desc'] ?: (!$_extra['no_auto_desc'] ? ucfirst(str_replace('_', ' ', $name)) : $name);
 			$id = preg_replace('~[^a-z0-9_-]+~i', '', $v['id'] ?: $links_prefix. $k);
-			if (isset($extra['selected'])) {
-				$is_active = ($extra['selected'] == $k);
+			if (isset($_extra['selected'])) {
+				$is_active = ($_extra['selected'] == $k);
 			} else {
 				$is_active = (++$i == 1);
 			}
-			$css_class = ($is_active || $extra['show_all']) ? 'active' : 'fade';
-			if ($extra['class']) {
-				$css_class .= ' '.$extra['class'];
-			}
-			$class_head = $v['class_head'] ?: $extra['class_head'];
-			$class_body = $v['class_body'] ?: $extra['class_body'];
-			if (isset($extra['totals'][$name])) {
-				$v['badge'] = intval( isset($extra['totals'][$name]['total']) ? $extra['totals'][$name]['total'] : $extra['totals'][$name] );
+			if (isset($_extra['totals'][$name])) {
+				$v['badge'] = intval( isset($_extra['totals'][$name]['total']) ? $_extra['totals'][$name]['total'] : $_extra['totals'][$name] );
 			}
 			$badge = isset($v['badge']) ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
-			if (!$extra['no_headers']) {
+			if (!$_extra['no_headers']) {
+				$class_head = $v['class_head'] ?: $_extra['class_head'];
+				$class_head .= $_extra['class_add_head'] ? ' '.$_extra['class_add_head'] : '';
+				if ($is_active) {
+					$class_head = trim('active '.$class_head);
+				}
+				$_extra_head = (array)$_extra['tab_head'];
+				$_extra_head['class'] = $_extra_head['class'] ?: $class_head;
 				$headers[] =
-					'<li class="'.($is_active ? 'active' : ''). ($class_head ? ' '.$class_head : '').'">
+					'<li'._attrs($_extra_head, array('id','class','style')).'>
 						<a '.(!$disabled ? 'href="#'.$id.'" ' : '').'data-toggle="tab">'.($desc_raw ?: t($desc)). $badge. '</a>
 					</li>';
 			}
-			$items[] = '<div class="tab-pane '.$css_class. ($class_body ? ' '.$class_body : '').'" id="'.$id.'">'.$content.'</div>';
+			$class_body = ($_extra['class'] ?: $v['class_body']) ?: $_extra['class_body'];
+			$class_body = $class_body ?: 'tab-pane';
+			$class_body .= $_extra['class_add_body'] ? ' '.$_extra['class_add_body'] : '';
+			if ($is_active || $_extra['show_all']) {
+				$class_body = trim('active '.$class_body);
+			} else {
+				$class_body = trim('fade '.$class_body);
+			}
+			$_extra_body = (array)$_extra['tab_body'];
+			$_extra_body['id'] = $_extra_body['id'] ?: $id;
+			$_extra_body['class'] = $_extra_body['class'] ?: $class_body;
+			$items[] = '<div'._attrs($_extra_body, array('id','class','style')).'>'.$content.'</div>';
 		}
 		$body .= $headers ? '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL : '';
 		$body .= '<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$items).'</div>';
@@ -360,7 +395,8 @@ class yf_html {
 	function breadcrumbs($data = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		$items = array();
-		$divider = $extra['divider'] ?: '/';
+		$divider = $extra['divider'] ?: ''; // '/'
+		$show_divider = !$this->_is_bs3 && strlen($divider);
 		$len = count($data);
 		$data = _prepare_html($data);
 		foreach ((array)$data as $k => $v) {
@@ -369,7 +405,7 @@ class yf_html {
 			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
 			$items[] = '<li class="'.($is_last ? ' active' : ''). ($class_item ? ' '.$class_item : '').'">
 				'.(($is_last || !$v['link']) ? $v['name']
-					: '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name']. $badge. '</a>'.(!$this->_is_bs3 ? ' <span class="divider">'.$divider.'</span>' : '')
+					: '<a href="'.$v['link'].'" title="'.$v['name'].'">'.$v['name']. $badge. '</a>'.($show_divider ? ' <span class="divider">'.$divider.'</span>' : '')
 				).'
 			</li>';
 		}
@@ -689,7 +725,7 @@ class yf_html {
 		$level = isset($extra['level']) ? $extra['level'] : $level;
 		// (example: $add_str = 'size=6')
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
-		$extra['class'] = trim($extra['class'].' form-control');
+		$extra['class'] = isset($extra['class']) ? $extra['class'] : $this->CLASS_SELECT_BOX;
 		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		if (!$values) {
 			return false;
@@ -713,7 +749,7 @@ class yf_html {
 			if ($show_text == 1) {
 				$def_opt_text = str_replace(array('%name%','%select%'), array(t($name), t('Select')), $this->SELECT_BOX_DEF_OPT_TPL);
 			}
-			$body[] = '<option value="" class="opt-default">'. $def_opt_text. '</option>';
+			$body[] = '<option value="" class="'.$this->CLASS_SELECT_OPTION_DEFAULT.'">'. $def_opt_text. '</option>';
 		}
 		$self_func = __FUNCTION__;
 		$option_callback = $extra['option_callback'];
@@ -757,7 +793,7 @@ class yf_html {
 		$level = isset($extra['level']) ? $extra['level'] : $level;
 		// (example: $add_str = 'size=6') disabled
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
-		$extra['class'] = trim($extra['class'].' form-control');
+		$extra['class'] = isset($extra['class']) ? $extra['class'] : $this->CLASS_SELECT_BOX;
 		$extra['class_add'] && $extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		if (!$values) {
 			return false;
@@ -784,7 +820,7 @@ class yf_html {
 			if ($show_text == 1) {
 				$def_opt_text = str_replace(array('%name%','%select%'), array(t($name), t('Select')), $this->SELECT_BOX_DEF_OPT_TPL);
 			}
-			$body[] = '<option value="" class="opt-default">'. $def_opt_text. '</option>';
+			$body[] = '<option value="" class="'.$this->CLASS_SELECT_OPTION_DEFAULT.'">'. $def_opt_text. '</option>';
 		}
 		$self_func = __FUNCTION__;
 		foreach ((array)$values as $key => $value) {
@@ -871,12 +907,12 @@ class yf_html {
 				));
 			} else {
 				$label_extra = $extra['label_extra'];
-				$label_extra['class'] = ($label_extra['class'] ?: 'radio'). ($horizontal ? ' radio-inline' : '');
+				$label_extra['class'] = ($label_extra['class'] ?: $this->CLASS_LABEL_RADIO). ($horizontal ? ' '.$this->CLASS_LABEL_RADIO_INLINE : '');
 				if ($extra['class_add_label_radio']) {
 					$label_extra['class'] .= ' '.$extra['class_add_label_radio'];
 				}
 				if ($is_selected) {
-					$label_extra['class'] .= ' active';
+					$label_extra['class'] .= ' '.$this->CLASS_LABEL_RADIO_SELECTED;
 				}
 				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
 							.'<input type="radio" name="'.$name.'" id="'.$id.'" value="'.$value.'"'. ($add_str ? ' '.trim($add_str) : ''). ($is_selected ? ' checked="checked"' : '').'>'
@@ -898,31 +934,31 @@ class yf_html {
 		if (!is_array($extra)) {
 			$extra = array();
 		}
-		$name = isset($extra['name']) ? $extra['name'] : 'checkbox';
-		$value = $extra['value'] ?: (strlen($value) ? $value : '1');
+		$extra['name'] = strlen($name) ? $name : (strlen($extra['name']) ? $extra['name'] : 'checkbox');
+		$extra['value'] = strlen($value) ? $value : (strlen($extra['value']) ? $extra['value'] : '1');
 		$selected = isset($extra['selected']) ? $extra['selected'] : $selected;
 		if (isset($extra['checked'])) {
 			$selected = $extra['checked'];
 		}
-		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
-		$desc = $extra['desc'] ? $extra['desc'] : ucfirst(str_replace('_', '', $name));
-		$translate = $extra['translate'] ? $extra['translate'] : $translate;
+		$extra['checked'] = $selected ? 'checked' : null;
+		$extra['id'] = ($extra['force_id'] ?: $extra['id']) ?: ($this->AUTO_ASSIGN_IDS ? __FUNCTION__.'_'.++$this->_ids[__FUNCTION__] : null);
+		$extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $extra['name']));
 		$extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		$add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
-		if ($extra['style']) {
-			$add_str .= ' style="'.$extra['style'].'" ';
-		}
+		$translate = $extra['translate'] ? $extra['translate'] : $translate;
+
 		$label_extra = $extra['label_extra'];
-		$label_extra['class'] = ($label_extra['class'] ?: 'checkbox checkbox-inline');
+		$def_label_class = $this->CLASS_LABEL_CHECKBOX.' '.$this->CLASS_LABEL_CHECKBOX_INLINE;
+		$label_extra['class'] = isset($label_extra['class']) ? $label_extra['class'] : (isset($extra['class_label_checkbox']) ? $extra['class_label_checkbox'] : $def_label_class);
 		if ($extra['class_add_label_checkbox']) {
 			$label_extra['class'] .= ' '.$extra['class_add_label_checkbox'];
 		}
 		if ($selected) {
-			$label_extra['class'] .= ' active';
+			$label_extra['class'] .= ' '.$this->CLASS_LABEL_CHECKBOX_SELECTED;
 		}
+		$extra['type'] = 'checkbox';
 		return '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
-				. '<input type="checkbox" name="'.$name.'" id="'.$extra['id'].'" value="'.$value.'"'
-				. ($selected ? ' checked="checked"' : '') . ($add_str ? ' '.$add_str : '')
+				. '<input'._attrs($extra, array('type','name','id','value','checked','class','style','disabled','required')). ($add_str ? ' '.$add_str : '')
 				. '> &nbsp;'. ($translate ? t($extra['desc']) : $extra['desc']) // Please do not remove whitespace :)
 			. '</label>';
 	}
@@ -981,12 +1017,15 @@ class yf_html {
 				$val_name = $name.'_'.$key;
 			}
 			$label_extra = $extra['label_extra'];
-			$label_extra['class'] = ($label_extra['class'] ?: 'checkbox'). ($horizontal ? ' checkbox-inline' : '');
+			$label_extra['class'] = isset($label_extra['class']) ? $label_extra['class'] : (isset($extra['class_label_checkbox']) ? $extra['class_label_checkbox'] : $this->CLASS_LABEL_CHECKBOX);
+			if ($horizontal) {
+				$label_extra['class'] .= ' '.$this->CLASS_LABEL_CHECKBOX_INLINE;
+			}
 			if ($extra['class_add_label_checkbox']) {
 				$label_extra['class'] .= ' '.$extra['class_add_label_checkbox'];
 			}
 			if ($is_selected) {
-				$label_extra['class'] .= ' active';
+				$label_extra['class'] .= ' '.$this->CLASS_LABEL_CHECKBOX_SELECTED;
 			}
 			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 			if ($this->BOXES_USE_STPL) {
@@ -1304,5 +1343,16 @@ class yf_html {
 	*/
 	function datetime_box2($name, $selected = '', $years = '', $add_str = '', $show_what = 'ymd', $show_text = 1, $translate = 1) {
 		return _class('html_datetime', 'classes/html/')->datetime_box2($name, $selected, $years, $add_str, $show_what, $show_text, $translate);
+	}
+
+	/**
+	*/
+	function tooltip($text = '', $extra = array()) {
+		if (!strlen($text)) {
+			return '';
+		}
+#		return form()->_show_tip($text);
+		css('.popover { width:auto; min-width: 100px;}');
+		return '&nbsp;<span class="yf_tip" data-toggle="popover" data-content="'._prepare_html($text).'"><i class="icon icon-question-sign fa fa-question-circle"></i></span>';
 	}
 }

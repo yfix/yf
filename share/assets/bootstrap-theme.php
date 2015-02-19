@@ -14,7 +14,10 @@ if ($bs_theme === 'bootstrap') {
 			'asset' => $require_name,
 		),
 		'add' => array(
-			'asset' => $fixes_name,
+			'asset' => array(
+				'font-awesome4',
+				$fixes_name,
+			),
 		),
 	);
 } elseif ($bs_theme === 'bootstrap_theme') {
@@ -23,7 +26,10 @@ if ($bs_theme === 'bootstrap') {
 			'asset' => $require_name,
 		),
 		'add' => array(
-			'asset' => $fixes_name,
+			'asset' => array(
+				'font-awesome4',
+				$fixes_name,
+			),
 		),
 	);
 } elseif ($bs_theme === 'flatui') {
@@ -72,24 +78,26 @@ if ($bs_theme === 'bootstrap') {
 			),
 		),
 		'require' => array(
-			'js' => 'bootstrap2',
+			'asset' => 'bootstrap2',
 		),
 		'add' => array(
 			'asset' => array(
 				'font-awesome3',
+#				'font-awesome4',
 				$fixes_name,
 			),
 		),
 	);
 } elseif ($bs_major_version == 3) {
+	conf('bs3_no_default_theme', true);
 	return array(
 		'versions' => array(
-			'3.3.0' => array(
-				'css' => '//netdna.bootstrapcdn.com/bootswatch/3.3.0/'.$bs_theme.'/bootstrap.min.css',
+			'3.3.2' => array(
+				'css' => '//netdna.bootstrapcdn.com/bootswatch/3.3.2/'.$bs_theme.'/bootstrap.min.css',
 			),
 		),
 		'require' => array(
-			'js' => 'bootstrap3',
+			'asset' => 'bootstrap3',
 		),
 		'add' => array(
 			'asset' => array(
