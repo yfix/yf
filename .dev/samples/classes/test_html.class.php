@@ -138,6 +138,7 @@ class test_html {
 
 	/***/
 	function carousel() {
+		css('.carousel { max-width: 870px; }');
 		return _class('html')->carousel(array(
 			array(
 				'img'	=> '//twbs.github.io/bootstrap/2.3.2/assets/img/bootstrap-mdo-sfmoma-01.jpg',

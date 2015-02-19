@@ -225,7 +225,7 @@ class yf_manage_shop_product_sets {
 				_class('manage_shop_filter', 'admin_modules/manage_shop/')->_product_search_widget('products_ids', $replace[ 'products_ids' ], true)
 				, 'Добавить продукты'
 			)
-			->select_box('cat_id', module('manage_shop')->_cats_for_select)
+			->chosen_box('cat_id', module('manage_shop')->_cats_for_select)
 			->active_box()
 			->save_and_back()
 		;

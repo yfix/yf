@@ -12,6 +12,7 @@ return array(
 .cssfw-bs2 .modal { width:auto; }
 .tab-content { overflow:visible; }
 .chzn-container { color:black; }
+.portlet-content .pagination { margin-top: 0; margin-bottom: 0; }
 			'),
 			'jquery' => array(
 #				'$("select").not(".portlet select").not(".no-chosen").not(".no-select2").select2();',

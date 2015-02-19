@@ -534,7 +534,7 @@ class yf_table2 {
 				}
 				$custom_foreign_fields[$custom_name] = $foreign_field;
 				$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $_ids_sql, $custom_sql));
-			} else {
+			} elseif (!is_callable($custom_sql)) {
 				$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
 			}
 		}

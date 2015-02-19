@@ -2,6 +2,7 @@
 
 return array('versions' => array('master' => array('css' => array(
 <<<END
+.cke_source { min-width: 100%; }
 
 fieldset.well { padding-bottom:0; }
 fieldset.well legend { margin-bottom:0; padding:0 0.5em; width:auto; line-height:1.5em; background:inherit; }

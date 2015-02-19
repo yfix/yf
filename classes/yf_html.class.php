@@ -189,9 +189,16 @@ class yf_html {
 	*/
 	function tabs($tabs = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+
+		$extra_by_id = array();
+		if (isset($extra['by_id'])) {
+			$extra_by_id = (array)$extra['by_id'];
+			unset($extra['by_id']);
+		}
+		$links_prefix = $extra['links_prefix'] ?: 'tab_';
+
 		$headers = array();
 		$items = array();
-		$links_prefix = $extra['links_prefix'] ?: 'tab_';
 		foreach ((array)$tabs as $k => $v) {
 			$desc_raw = null;
 			$disabled = null;
@@ -204,34 +211,47 @@ class yf_html {
 				$disabled = $v['disabled'];
 			}
 			$content = trim($content);
-			if ($extra['hide_empty'] && !strlen($content)) {
+			$_extra = (array)$extra_by_id[$k] + (array)$extra;
+			if ($_extra['hide_empty'] && !strlen($content)) {
 				continue;
 			}
 			$name = $v['name'] ?: $k;
-			$desc = $v['desc'] ?: (!$extra['no_auto_desc'] ? ucfirst(str_replace('_', ' ', $name)) : $name);
+			$desc = $v['desc'] ?: (!$_extra['no_auto_desc'] ? ucfirst(str_replace('_', ' ', $name)) : $name);
 			$id = preg_replace('~[^a-z0-9_-]+~i', '', $v['id'] ?: $links_prefix. $k);
-			if (isset($extra['selected'])) {
-				$is_active = ($extra['selected'] == $k);
+			if (isset($_extra['selected'])) {
+				$is_active = ($_extra['selected'] == $k);
 			} else {
 				$is_active = (++$i == 1);
 			}
-			$css_class = ($is_active || $extra['show_all']) ? 'active' : 'fade';
-			if ($extra['class']) {
-				$css_class .= ' '.$extra['class'];
-			}
-			$class_head = $v['class_head'] ?: $extra['class_head'];
-			$class_body = $v['class_body'] ?: $extra['class_body'];
-			if (isset($extra['totals'][$name])) {
-				$v['badge'] = intval( isset($extra['totals'][$name]['total']) ? $extra['totals'][$name]['total'] : $extra['totals'][$name] );
+			if (isset($_extra['totals'][$name])) {
+				$v['badge'] = intval( isset($_extra['totals'][$name]['total']) ? $_extra['totals'][$name]['total'] : $_extra['totals'][$name] );
 			}
 			$badge = isset($v['badge']) ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
-			if (!$extra['no_headers']) {
+			if (!$_extra['no_headers']) {
+				$class_head = $v['class_head'] ?: $_extra['class_head'];
+				$class_head .= $_extra['class_add_head'] ? ' '.$_extra['class_add_head'] : '';
+				if ($is_active) {
+					$class_head = trim('active '.$class_head);
+				}
+				$_extra_head = (array)$_extra['tab_head'];
+				$_extra_head['class'] = $_extra_head['class'] ?: $class_head;
 				$headers[] =
-					'<li class="'.($is_active ? 'active' : ''). ($class_head ? ' '.$class_head : '').'">
+					'<li'._attrs($_extra_head, array('id','class','style')).'>
 						<a '.(!$disabled ? 'href="#'.$id.'" ' : '').'data-toggle="tab">'.($desc_raw ?: t($desc)). $badge. '</a>
 					</li>';
 			}
-			$items[] = '<div class="tab-pane '.$css_class. ($class_body ? ' '.$class_body : '').'" id="'.$id.'">'.$content.'</div>';
+			$class_body = ($_extra['class'] ?: $v['class_body']) ?: $_extra['class_body'];
+			$class_body = $class_body ?: 'tab-pane';
+			$class_body .= $_extra['class_add_body'] ? ' '.$_extra['class_add_body'] : '';
+			if ($is_active || $_extra['show_all']) {
+				$class_body = trim('active '.$class_body);
+			} else {
+				$class_body = trim('fade '.$class_body);
+			}
+			$_extra_body = (array)$_extra['tab_body'];
+			$_extra_body['id'] = $_extra_body['id'] ?: $id;
+			$_extra_body['class'] = $_extra_body['class'] ?: $class_body;
+			$items[] = '<div'._attrs($_extra_body, array('id','class','style')).'>'.$content.'</div>';
 		}
 		$body .= $headers ? '<ul id="'.$extra['id'].'" class="nav nav-tabs">'.implode(PHP_EOL, (array)$headers). '</ul>'. PHP_EOL : '';
 		$body .= '<div id="'.$extra['id'].'_content" class="tab-content">'. implode(PHP_EOL, (array)$items).'</div>';

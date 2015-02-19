@@ -2,7 +2,7 @@
 
 /**
 * Static/HTML pages content editor
-* 
+*
 * @package		YF
 * @author		YFix Team <yfix.dev@gmail.com>
 * @version		1.0
@@ -87,6 +87,18 @@ class yf_static_pages {
 		$a = (array)$_POST + (array)$a;
 		$a['back_link'] = url_admin('/@object');
 		$_this = $this;
+		$cke_config = array(
+			'toolbar' => array(
+				array(
+					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
+					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', '-', 'Blockquote', 'Link', 'Unlink', 'Image', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
+				),
+			),
+			'language' => conf('language'),
+			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,table,tabletools,templates,style',
+			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
+			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*)',
+		);
 		return form($a)
 			->validate(array(
 				'__before__'=> 'trim',
@@ -102,7 +114,7 @@ class yf_static_pages {
 				cache_del('static_pages_names');
 			})
 			->text('name')
-			->textarea('text','',array('class' => 'span4','rows' => '10','ckeditor' => true, 'id' => 'text'))
+			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => $cke_config)))
 			->text('page_title')
 			->text('page_heading')
 			->text('meta_keywords')
@@ -179,7 +191,7 @@ class yf_static_pages {
 			//$_GET['action'] => {string to replace}
 			'show'	=> '',
 			'edit'	=> '',
-		);			 		
+		);
 		if (isset($cases[$_GET['action']])) {
 			$subheader = $cases[$_GET['action']];
 		}

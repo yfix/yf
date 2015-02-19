@@ -21,24 +21,36 @@ class yf_manage_cron {
 		$this->_minutes = array('*' => '*') + range(0, 59);
 		$this->_hours 	= array('*' => '*') + range(0, 23);
 		$this->_days 	= array('*' => '*') + array_combine(range(1, 31),range(1, 31));
-
 	}
 
 	/**
 	*/
 	function show() {
-		$path = glob(YF_PATH.'share/cron_jobs/*cron.php') + glob(YF_PATH.'plugins/*/share/cron_jobs/*cron.php');
-
-		foreach($path as $name){
-			$cron_name = basename($name);
-			$return = db()->get("SELECT * FROM ".db('cron_tasks')." WHERE `name`= '".$cron_name."'");
-			if(empty($return)){
+		$pattern = 'share/cron_jobs/*cron.php';
+		$globs = array(
+			'yf_main'			=> YF_PATH. $pattern,
+			'yf_plugins'		=> YF_PATH. 'plugins/*'.$pattern,
+			'project_main'		=> PROJECT_PATH. $pattern,
+			'project_plugins'	=> PROJECT_PATH. 'plugins/*'.$pattern,
+			'app_main'			=> APP_PATH. $pattern,
+			'app_plugins'		=> APP_PATH. 'plugins/*'.$pattern,
+		);
+		$paths = array();
+		foreach((array)$globs as $glob) {
+			foreach (glob($glob) as $path) {
+				$paths[$path] = $path;
+			}
+		}
+		foreach((array)$paths as $path) {
+			$name = basename($path);
+			$data = db()->from('cron_tasks')->where('name', $name)->get();
+			if (empty($data)) {
 				db()->insert_safe('cron_tasks', array(
-					'name'	=>	$cron_name,
+					'name'	=>	$name,
 				));
 			}
 		}
-		return table("SELECT * FROM ".db('cron_tasks')." ORDER BY `name` ASC")
+		return table('SELECT * FROM '.db('cron_tasks').' ORDER BY `name` ASC')
 			->text('name','',array('badge' => 'info'))
 			->text('comment', array('width' => 300))
 			->text('frequency')
@@ -48,7 +60,6 @@ class yf_manage_cron {
 
 	/**
 	*/
-
 	function edit() {
 		$_GET['id'] = intval($_GET['id']);
 		if (empty($_GET['id'])) {
@@ -71,18 +82,17 @@ class yf_manage_cron {
 				common()->admin_wall_add(array('cron tasks updated: '.$a['name'], $a['id']));
 			}
 		}
-
 		$a['redirect_link'] = url_admin('/@object');
 		$cron_timer = explode(' ', $a['frequency']);
 		$a['minutes'] 	= $cron_timer[0];
 		$a['hours'] 	= $cron_timer[1];
 		$a['days'] 		= $cron_timer[2];
-		return form($_POST + $a, array('autocomplete' => 'off'))
+		return form((array)$_POST + (array)$a, array('autocomplete' => 'off'))
 			->info('name')
 			->textarea('comment')
-			->select_box('minutes', $this->_minutes, array("class" => "span1", 'type' => 1))
-			->select_box('hours', $this->_hours, array("class" => "span1", 'type' => 1))
-			->select_box('days', $this->_days, array("class" => "span1", 'type' => 1))
+			->select_box('minutes', $this->_minutes, array('class_add' => 'span1 col-md-1', 'type' => 1))
+			->select_box('hours', $this->_hours, array('class_add' => 'span1 col-md-1', 'type' => 1))
+			->select_box('days', $this->_days, array('class_add' => 'span1 col-md-1', 'type' => 1))
 			->active_box()
 			->save_and_back();
 	}
@@ -92,5 +102,4 @@ class yf_manage_cron {
 	function active() {
 		return _class('admin_methods')->active($this->_table);
 	}
-
 }
