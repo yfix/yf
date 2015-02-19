@@ -216,7 +216,7 @@ class yf_manage_shop_product_edit {
 			->textarea('description', array('style' => 'min-width:100%', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => $cke_config)))
 		->tab_end()
 		->tab_start('main')
-			->link('product_url_user', url('/shop/product/'.$product_info['id']), array('target' => '_blank'))
+			->link('product_url_user', url_user('/shop/product/'.$product_info['id']), array('target' => '_blank'))
 			->info('id')
 			->text('name')
 			->text('articul')
