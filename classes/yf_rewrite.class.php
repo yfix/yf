@@ -166,6 +166,10 @@ class yf_rewrite {
 				if (strpos($url_str, '?') !== false) {
 					list($url_str, $_other) = explode('?', $url_str);
 				}
+				// Example: ./test/oauth/github, ../test/oauth/github
+				if ($url_str[0] == '.') {
+					$url_str = ltrim($url_str, '.');
+				}
 				if ($url_str[0] == '/') {
 					if ($url_str[1] == '/') {
 						// Example: //test/test_action/&k1=v1&k2=v2 => object=test, action=test_action, k1=v1, k2=v2
