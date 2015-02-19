@@ -142,6 +142,9 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://'.self::$host.'/', url('') );
 		$this->assertEquals('http://'.self::$host.'/', url('/') );
 		$this->assertEquals('http://'.self::$host.'/', url('/////') );
+		$this->assertEquals('http://'.self::$host.'/', url('./') );
+		$this->assertEquals('http://'.self::$host.'/', url('../') );
+		$this->assertEquals('http://'.self::$host.'/', url('..../') );
 		$this->assertEquals('http://'.self::$host.'/#frag', url('/#frag') );
 		$_GET['object'] = 'testobj';
 		$this->assertEquals('http://'.self::$host.'/?object='.$_GET['object'].'&action=testme&id=4', url('/@object/testme/4') );
@@ -155,6 +158,9 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://'.self::$host.'/', url_user('') );
 		$this->assertEquals('http://'.self::$host.'/', url_user('/') );
 		$this->assertEquals('http://'.self::$host.'/', url_user('/////') );
+		$this->assertEquals('http://'.self::$host.'/', url_user('./') );
+		$this->assertEquals('http://'.self::$host.'/', url_user('../') );
+		$this->assertEquals('http://'.self::$host.'/', url_user('..../') );
 		$this->assertEquals('http://'.self::$host.'/#frag', url_user('/#frag') );
 		$_GET['object'] = 'testobj';
 		$this->assertEquals('http://'.self::$host.'/'.$_GET['object'].'/testme/4', url_user('/@object/testme/4') );
@@ -168,6 +174,9 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://'.self::$host.'/', url_user('') );
 		$this->assertEquals('http://'.self::$host.'/', url_user('/') );
 		$this->assertEquals('http://'.self::$host.'/', url_user('/////') );
+		$this->assertEquals('http://'.self::$host.'/', url_user('./') );
+		$this->assertEquals('http://'.self::$host.'/', url_user('../') );
+		$this->assertEquals('http://'.self::$host.'/', url_user('..../') );
 		$this->assertEquals('http://'.self::$host.'/#frag', url_user('/#frag') );
 		$_GET['object'] = 'testobj';
 		$this->assertEquals('http://'.self::$host.'/?object='.$_GET['object'].'&action=testme&id=4', url_user('/@object/testme/4') );
@@ -181,6 +190,9 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(ADMIN_WEB_PATH, url_admin('') );
 		$this->assertEquals(ADMIN_WEB_PATH, url_admin('/') );
 		$this->assertEquals(ADMIN_WEB_PATH, url_admin('/////') );
+		$this->assertEquals(ADMIN_WEB_PATH, url_admin('./') );
+		$this->assertEquals(ADMIN_WEB_PATH, url_admin('../') );
+		$this->assertEquals(ADMIN_WEB_PATH, url_admin('..../') );
 		$_GET['object'] = 'testobj';
 		$this->assertEquals(ADMIN_WEB_PATH.'?object='.$_GET['object'].'&action=testme&id=4', url_admin('/@object/testme/4') );
 		$_GET['object'] = 'testobj2';
@@ -192,11 +204,18 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(ADMIN_WEB_PATH.'?object='.$_GET['object'].'&action=testme&id=4&page=2&k5=v5&k6=v6&k7=v7&k8=v8#frag', url_admin('/@object/testme/4/2/&k5=v5&k6=v6&k7=v7&k8=v8#frag') );
 	}
 	public function test_get_unique_links() {
-		$html = '<a href="http://google.com/">
+		$html = '
+			<a href="http://google.com/">
 			<a href="./?object=obj&action=act">
 			<form action="./?object=form&action=method">
 			<a href="./?object=obj&action=act&id=1&page=1">
 			<a href="./?object=obj&action=act&id=1&page=1#frag">
+
+			http://yahoo.com/
+			./?object=obj55&action=act66
+			./?object=form44&action=method33
+			./?object=obj6&action=act77&id=18&page=188
+			./?object=obj5&action=act4&id=155&page=144#frag423423
 		';
 		$links = array(
 			'./?object=obj&action=act',
@@ -246,6 +265,11 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links('./') );
 		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links('../') );
 
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links(url_user()) );
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links(url_user('/')) );
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links(url_user('./')) );
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links(url_user('../')) );
+
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;
 
 		$out2 = '<body><a href="http://google.com/">
@@ -268,6 +292,11 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links('/') );
 		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links('./') );
 		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links('../') );
+
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links(url_user()) );
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links(url_user('/')) );
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links(url_user('./')) );
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links(url_user('../')) );
 	}
 	public function test_correct_protocol() {
 		$old = main()->USE_ONLY_HTTPS;
