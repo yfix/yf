@@ -242,7 +242,12 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 			</body>';
 		$this->assertEquals($out, _class('rewrite')->_rewrite_replace_links($in) );
 
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links('/') );
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links('./') );
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links('../') );
+
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = false;
+
 		$out2 = '<body><a href="http://google.com/">
 			<a href="http://'.$host.'/?object=obj&action=act">
 			<form action="http://'.$host.'/?object=form&action=method">
@@ -259,6 +264,10 @@ class class_rewrite_test extends PHPUnit_Framework_TestCase {
 			../
 			</body>';
 		$this->assertEquals($out2, _class('rewrite')->_rewrite_replace_links($in) );
+
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links('/') );
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links('./') );
+		$this->assertEquals('http://'.$host.'/', _class('rewrite')->_rewrite_replace_links('../') );
 	}
 	public function test_correct_protocol() {
 		$old = main()->USE_ONLY_HTTPS;
