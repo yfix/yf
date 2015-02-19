@@ -62,6 +62,8 @@ class class_assets_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('inline', _class('assets')->detect_content_type('js', '$(function(){})'));
 		$this->assertEquals('inline', _class('assets')->detect_content_type('js', 'var a="abc";'));
 		$this->assertEquals('inline', _class('assets')->detect_content_type('js', 'alert("hello")'));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('js', PHP_EOL.'var testtag="<span>";'.PHP_EOL));
+		$this->assertEquals('inline', _class('assets')->detect_content_type('js', 'var testtag="<span>";'));
 
 		$f = '/tmp/yf_unit_tests_empty_script.js';
 		file_put_contents($f, 'test');
