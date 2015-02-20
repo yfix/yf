@@ -60,6 +60,8 @@ class yf_assets {
 	public $MAIN_TPL_JS = 'script_js';
 	/** @bool */
 	public $USE_REQUIRE_JS = false;
+	/** @bool */
+	public $CACHE_OUT_ADD_MTIME = true;
 
 	/**
 	* Catch missing method call
@@ -1491,6 +1493,38 @@ var_dump($out);
 	}
 
 	/**
+	* Add modification time to url, if this is local file, no matter cached or not, we just need to be able to get its mtime.
+	*/
+	public function _cached_url_get_mtime($str = '') {
+		$url_param = 'yfmt';
+		if (!$this->CACHE_OUT_ADD_MTIME || !strlen($str) || false !== strpos($str, $url_param.'=')) {
+			return false;
+		}
+		$mtime = '';
+		$file = '';
+		$has_question_sign = (false !== strpos($str, '?'));
+		$media_path_len = strlen(MEDIA_PATH);
+		// short url paths like /templates/user/cache/..., but not //domain.com/
+		if (substr($str, 0, 1) === '/' && substr($str, 1, 1) !== '/') {
+			if (substr($str, 0, strlen(PROJECT_PATH)) === PROJECT_PATH) {
+				$file = $str;
+			} else {
+				$file = PROJECT_PATH. ltrim($str, '/');
+			}
+		} elseif (substr($str, 0, $media_path_len) === MEDIA_PATH) {
+			$file = PROJECT_PATH. ltrim(substr($str, $media_path_len), '/');
+		}
+		// Avoid different url params when checking local file path
+		if ($file) {
+			$file = parse_url($file, PHP_URL_PATH);
+		}
+		if ($file && file_exists($file)) {
+			$mtime = filemtime($file);
+		}
+		return $mtime ? ($has_question_sign ? '&' : '?'). urlencode($url_param).'='.$mtime : '';
+	}
+
+	/**
 	* Generate html output for desired asset out type and content type
 	*/
 	public function html_out($out_type, $content_type, $str, $params = array()) {
@@ -1515,7 +1549,7 @@ var_dump($out);
 		if ($out_type === 'js') {
 			$params['type'] = 'text/javascript';
 			if ($content_type === 'url') {
-				$params['src'] = $str;
+				$params['src'] = $str. $this->_cached_url_get_mtime($str);
 				$out = '<script'._attrs($params, array('src', 'type', 'class', 'id')).'></script>';
 			} elseif ($content_type === 'file') {
 				$out = '<script'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</script>';
@@ -1527,7 +1561,7 @@ var_dump($out);
 			$params['type'] = 'text/css';
 			if ($content_type === 'url') {
 				$params['rel'] = 'stylesheet';
-				$params['href'] = $str;
+				$params['href'] = $str. $this->_cached_url_get_mtime($str);
 				$out = '<link'._attrs($params, array('href', 'rel', 'class', 'id')).' />';
 			} elseif ($content_type === 'file') {
 				$out = '<style'._attrs($params, array('type', 'class', 'id')).'>'. PHP_EOL. file_get_contents($str). PHP_EOL. '</style>';
