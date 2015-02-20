@@ -323,6 +323,9 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertEquals('<script type="text/javascript">'.PHP_EOL.$url.PHP_EOL.'</script>', _class('assets')->show_js() );
 		self::_tpl( '{js(type=url)}'.$url.'{/js}' );
 		$this->assertEquals('<script src="'.$url.'" type="text/javascript"></script>', _class('assets')->show_js() );
+
+		self::_tpl( '{js()}'.PHP_EOL.'var testtag="<span>";'.PHP_EOL.'{/js}' );
+		$this->assertEquals('<script type="text/javascript">'.PHP_EOL.'var testtag="<span>";'.PHP_EOL.'</script>', _class('assets')->show_js() );
 	}
 	public function test_css() {
 		_class('assets')->clean_all();

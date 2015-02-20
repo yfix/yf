@@ -41,6 +41,7 @@ if (!$fname && main()->OUTPUT_CACHING && empty($_COOKIE['member_id'])) {
 }
 
 // Load and run fast init function code
+if (!isset($fast_init_call) || !is_callable($fast_init_call)) {
 $fast_init_call = function ($f_name) {
 	$dir = 'share/fast_init/';
 	$suffix = '.php';
@@ -59,6 +60,7 @@ $fast_init_call = function ($f_name) {
 	}
 	return false;
 };
+}
 
 // try
 if ($fname) {
