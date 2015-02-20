@@ -120,7 +120,7 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 		BalanceApi.timer.cancel();
 		// init calc
 		is_currency = is_currency || false;
-		var form = $scope.form_payment_balance_recharge;
+		var form = $scope.form_payment__deposition;
 		if( !angular.isObject( form ) ||
 			(
 				( is_currency && form.amount_currency.$error.number ) ||
