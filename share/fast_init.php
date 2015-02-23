@@ -15,51 +15,61 @@ if (!defined('YF_PATH')) {
 }
 require_once YF_PATH.'share/functions/yf_aliases.php';
 
-!$CONF['fast_init_route_table'] && $CONF['fast_init_route_table'] = array(
-	'/dynamic/placeholder'   => 'placeholder',
-	'/help/show_tip'         => 'tooltip',
-	'/dynamic/php_func'      => 'php_func',
-	'/dynamic/image'         => 'dynamic_image',
-#	'/dynamic/captcha_image' => 'captcha_image',
-	'/forum/low'             => 'forum_low',
-	'/search/autocomplete'   => 'search_autocomplete',
-	'/category/rss_for_cat'  => 'rss_export',
-	'/payment_test/'         => 'payment_test',
-);
-$fast_init_route = function( $table ) {
-	$request = ($_GET['object'] && $_GET['action']) ? '/'.$_GET['object'].'/'.$_GET['action'] : $_SERVER['REQUEST_URI'];
-	foreach( $table as $uri => $action ) {
-		if( strpos( $request, $uri ) === 0 ) {
-			return $action;
+if (!isset($CONF['fast_init_route']) || !is_callable($CONF['fast_init_route'])) {
+	$fast_init_route = function ($table) {
+		$request = ($_GET['object'] && $_GET['action']) ? '/'.$_GET['object'].'/'.$_GET['action'] : $_SERVER['REQUEST_URI'];
+		foreach ($table as $uri => $action) {
+			if (strpos($request, $uri) === 0) {
+				return $action;
+			}
 		}
-	}
-	return( null );
-};
-$fname = $fast_init_route( $CONF['fast_init_route_table'] );
+		return null;
+	};
+} else {
+	$fast_init_route = $CONF['fast_init_route'];
+}
+
+if (!$CONF['fast_init_route_table']) {
+	$CONF['fast_init_route_table'] = array(
+		'/dynamic/placeholder'   => 'placeholder',
+		'/help/show_tip'         => 'tooltip',
+		'/dynamic/php_func'      => 'php_func',
+		'/dynamic/image'         => 'dynamic_image',
+#		'/dynamic/captcha_image' => 'captcha_image',
+		'/forum/low'             => 'forum_low',
+		'/search/autocomplete'   => 'search_autocomplete',
+		'/category/rss_for_cat'  => 'rss_export',
+		'/payment_test/'         => 'payment_test',
+	);
+}
+
+$fname = $fast_init_route($CONF['fast_init_route_table']);
 if (!$fname && main()->OUTPUT_CACHING && empty($_COOKIE['member_id'])) {
 	$fname = 'output_cache';
 }
 
 // Load and run fast init function code
-if (!isset($fast_init_call) || !is_callable($fast_init_call)) {
-$fast_init_call = function ($f_name) {
-	$dir = 'share/fast_init/';
-	$suffix = '.php';
-	$pattern = $dir. $f_name. $suffix;
-	$globs = array(
-		'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
-		'project_app'			=> APP_PATH. $pattern,
-		'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
-		'yf_main'				=> YF_PATH. $pattern,
-	);
-	foreach($globs as $gname => $glob) {
-		foreach(glob($glob) as $path) {
-			$func = include $path;
-			return $func();
+if (!isset($CONF['fast_init_call']) || !is_callable($CONF['fast_init_call'])) {
+	$fast_init_call = function ($f_name) {
+		$dir = 'share/fast_init/';
+		$suffix = '.php';
+		$pattern = $dir. $f_name. $suffix;
+		$globs = array(
+			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
+			'project_app'			=> APP_PATH. $pattern,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
+			'yf_main'				=> YF_PATH. $pattern,
+		);
+		foreach($globs as $gname => $glob) {
+			foreach(glob($glob) as $path) {
+				$func = include $path;
+				return $func();
+			}
 		}
-	}
-	return false;
-};
+		return false;
+	};
+} else {
+	$fast_init_call = $CONF['fast_init_call'];
 }
 
 // try
