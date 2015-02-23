@@ -29,7 +29,7 @@ if (!isset($CONF['fast_init_route']) || !is_callable($CONF['fast_init_route'])) 
 	$fast_init_route = $CONF['fast_init_route'];
 }
 
-if (!$CONF['fast_init_route_table']) {
+if (!isset($CONF['fast_init_route_table'])) {
 	$CONF['fast_init_route_table'] = array(
 		'/dynamic/placeholder'   => 'placeholder',
 		'/help/show_tip'         => 'tooltip',
