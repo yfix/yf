@@ -156,6 +156,14 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 			$scope.amount_currency_fee = amount_currency_fee_round;
 		}
 	};
+	// payment out
+	$scope.paymentout_provider_change = function( provider_id, method_id ) {
+		angular.extend( $scope.action.payment, {
+			provider_id : provider_id,
+			method_id   : method_id,
+		});
+		$log.log( 'method', $scope.action );
+	};
 	var BalanceApi = {
 		timer: {
 			id      : null,
@@ -289,6 +297,10 @@ function( $log, $scope, $timeout, PaymentBalanceApi, PaymentBalance, PaymentBala
 	};
 	// init
 	$scope.block_wait = false;
+	$scope.action = {
+		'deposition' : {},
+		'payment'    : {},
+	};
 	// select first provider
 	if( $scope.payment.provider.deposition && $scope.payment.provider.deposition[ 0 ] ) {
 		$scope.provider_change( $scope.payment.provider.deposition[ 0 ] );
