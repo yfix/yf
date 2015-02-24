@@ -259,7 +259,7 @@ class yf_captcha {
 	/**
 	* Show image with text
 	*/
-	function show_image($no_header = false) {
+	function show_image($no_header = false, $no_exit = false) {
 		if (function_exists('main')) {
 			main()->NO_GRAPHICS = true;
 		}
@@ -320,7 +320,9 @@ class yf_captcha {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet', true);
 		}
 		echo $data;
-		exit;
+		if (!$no_exit) {
+			exit;
+		}
 	}
 
 	/**

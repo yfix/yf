@@ -42,10 +42,14 @@ if (!empty($argv[1])) {
 		exec('pgrep -a php | grep '.$file, $is_already_run);
 		if(empty($last_start_time) || (time() > strtotime("+".$cron_info['frequency'], $last_start_time))){
 			$timer = true;
-		}else{
+		}else{ 
 			$timer = false;
+		}
+		// kill if exectime is over
+		if($is_already_run && (time() > strtotime("+".$cron_info['exec_time']." seconds", $last_start_time))){
+			exec('pkill -f '.$file);
 		}	
-		if (file_exists($file) && $timer && empty($is_already_run)) {
+		if(file_exists($file) && $timer && empty($is_already_run)) {
   			$cmd = 'php '.__FILE__.' '.$file.' '.$cron_info['exec_type'].' '.$cron_info['id'].' &';
 		    echo $cmd.PHP_EOL;
    			exec($cmd);

@@ -263,6 +263,12 @@ class class_html_test extends PHPUnit_Framework_TestCase {
 			'id' => 'myid',
 			'desc' => 'My desc',
 		)));
+		$this->assertEquals('<label class="'.$def_class.'"><input type="checkbox" name="test" id="myid" value="true"> &nbsp;</label>', $html->check_box(array(
+			'name' => 'test',
+			'value' => 'true',
+			'id' => 'myid',
+			'desc' => '',
+		)));
 		$this->assertEquals('<label><input type="checkbox" name="test" id="myid" value="true"> &nbsp;My desc</label>', $html->check_box(array(
 			'name' => 'test',
 			'value' => 'true',
