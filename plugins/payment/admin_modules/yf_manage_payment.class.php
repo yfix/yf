@@ -223,7 +223,7 @@ class yf_manage_payment {
 		);
 		// $replace += $_POST + $data;
 		$replace += $_POST;
-		$form = form( $replace, array( 'class_add' => 'form-inline', 'autocomplete' => 'off' ) )
+		$form = form( $replace, array( 'autocomplete' => 'off' ) )
 			->validate(array(
 				'amount' => 'trim|required|numeric|greater_than_equal_to[1]',
 			))
