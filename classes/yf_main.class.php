@@ -148,11 +148,15 @@ class yf_main {
 	* Engine constructor
 	* Depends on type that is given to it initialize user section or administrative backend
 	*/
-	function __construct($type = 'user', $no_db_connect = false, $auto_init_all = false) {
+	function __construct($type = 'user', $no_db_connect = false, $auto_init_all = false, $_conf = array()) {
 		if (!isset($this->_time_start)) {
 			$this->_time_start = microtime(true);
 		}
 		global $CONF;
+		// Inject configuration directly, usually inside unit tests
+		if (is_null($CONF) && !empty($_conf)) {
+			$CONF = $_conf;
+		}
 		if (defined('DEBUG_MODE') && DEBUG_MODE && ($this->ALLOW_DEBUG_PROFILING || $CONF['main']['ALLOW_DEBUG_PROFILING'])) {
 			$this->PROFILING = true;
 		}
@@ -227,6 +231,8 @@ class yf_main {
 		if (!$this->ALLOW_FAST_INIT) {
 			return false;
 		}
+		global $CONF; // Do not remove this, it is needed for extending fast init
+
 		$paths = array(
 			'app'		=> APP_PATH.'share/fast_init.php',
 			'project'	=> PROJECT_PATH.'share/fast_init.php',
