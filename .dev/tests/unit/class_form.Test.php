@@ -241,6 +241,13 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 				'data-some' => 'mydata',
 			)
 		)));
+		$this->assertEquals(
+			'<label class="'.$def_class.' active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;</label>'
+			, trim(self::form_no_chain($r)->check_box('is_public', array(
+				'checked' => 'true',
+				'no_label' => true,
+			)
+		)));
 	}
 	public function test_multi_check_box() {
 		$html = html();
