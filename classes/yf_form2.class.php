@@ -1737,10 +1737,10 @@ class yf_form2 {
 			$extra = $form->_input_assign_params_from_validate($extra);
 
 			$func = $extra['func_html_control'];
+			$content = _class('html')->$func($extra);
 			if ($extra['no_label'] || $form->_params['no_label']) {
 				$extra['desc'] = '';
 			}
-			$content = _class('html')->$func($extra);
 			if ($extra['hide_empty'] && !strlen($content)) {
 				return '';
 			}
