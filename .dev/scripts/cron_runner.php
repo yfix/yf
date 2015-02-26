@@ -30,7 +30,7 @@ if (!empty($argv[1])) {
     db()->update_safe('cron_logs', array(
 		'log'		=> $log,
         'time_end'  => $time_end, 
-        'time_spent'=> $time_diff, 
+        'time_spent'=> round($time_diff, 2), 
     ), 'id ='.intval($id));
     exit();
 

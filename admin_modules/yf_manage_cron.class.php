@@ -43,17 +43,20 @@ class yf_manage_cron {
 				));
 			}
 		}
-		return table("SELECT * FROM ".db('cron_tasks')." ORDER BY `name` ASC")
-			->text('name','',array('badge' => 'info'))
+		return table("SELECT c.*, a.login FROM ".db('cron_tasks')." as c
+			LEFT JOIN ".db('sys_admin')." as a 
+			ON(a.id = c.admin_id)
+			 ORDER BY c.name ASC")
+			->text('name')
+			->text('dir', 'Directory')
+			->text('comment', array('width' => 300))
 			->text('frequency')
 			->func('exec_type', function($extra, $r, $_this) {
 				return $this->exec_type[$extra];
 			})
-			->text('exec_time')
-			->text('comment', array('width' => 300))
-			->text('dir', 'Directory')
-			->text('admin_id')
-			->date('update_date', array('format' => '%d-%m-%Y'))
+			->text('exec_time', 'Max exec time, s')
+			->text('login')
+			->date('update_date', array('format' => '%d-%m-%Y %H:%M'))
 			->btn_edit(array('no_ajax' => 1))
 			->btn_func('Logs', function($value, $extra, $row_info){
 				$action_url = url_admin('/@object/cron_logs/'.$value['id']);
@@ -77,6 +80,9 @@ class yf_manage_cron {
 		}
 		$file_content = nl2br(file_get_contents($a['dir'].$a['name']));
 		return form($a, array('autocomplete' => 'off'))
+			->validate(array(
+				'exec_time' => 'trim|decimal|required',
+			))
 			->on_post(function(){
 				db()->update_safe('cron_tasks', array(
 					'comment'		=> $_POST['comment'],
@@ -91,10 +97,10 @@ class yf_manage_cron {
 				return js_redirect(url_admin('/@object')); 
 			})
 			->info('name')
-			->container('<pre>'.$file_content.'</pre>')
+			->container('<pre>'.$file_content.'</pre>', 'Content')
 			->select_box('exec_type', $this->exec_type)
 			->container($this->select_f(), 'Start every')
-			->text('exec_time', array(
+			->integer('exec_time', 'Max exec time, s', array(
 				'placeholder'    => "время выполнения, секунд",
 			))
 			->textarea('comment')
