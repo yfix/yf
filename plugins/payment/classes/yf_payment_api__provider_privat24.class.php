@@ -17,6 +17,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 			'pay_pb' => array(
 				'title' => 'Приват24',
 				'icon'  => 'privat24',
+				'amount_min' => 100,
 				'field' => array(
 					'b_card_or_acc',
 					'amt',
@@ -24,12 +25,13 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 					'details',
 				),
 				'option' => array(
-					'amount',
+					'account' => 'Счет',
 				),
 			),
 			'pay_visa' => array(
 				'title' => 'Visa',
 				'icon'  => 'visa',
+				'amount_min' => 100,
 				'field' => array(
 					'b_name',
 					'b_card_or_acc',
@@ -38,8 +40,8 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 					'details',
 				),
 				'option' => array(
-					'amount',
-					'name',
+					'name'    => 'ФИО получателя',
+					'account' => 'Счет',
 				),
 			),
 		),
@@ -204,7 +206,8 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		libxml_use_internal_errors( true );
 		$xml_response = simplexml_load_string( $response );
 // debug
-// var_dump( $response, $xml_response );
+ini_set( 'html_errors', 0 );
+var_dump( $response, $xml_response );
 		// error?
 		$error = libxml_get_errors();
 		if( $error ) {
@@ -433,18 +436,18 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	}
 
 	public function deposition( $options ) {
-		$payment_api = $this->payment_api;
+		$payment_api    = $this->payment_api;
 		$_              = $options;
 		$data           = &$_[ 'data'           ];
 		$options        = &$_[ 'options'        ];
 		$operation_data = &$_[ 'operation_data' ];
 		// prepare data
-		$user_id      = (int)$operation_data[ 'user_id' ];
-		$operation_id = (int)$data[ 'operation_id' ];
-		$account_id   = (int)$data[ 'account_id'   ];
-		$provider_id  = (int)$data[ 'provider_id'  ];
-		$amount       = $payment_api->_number_float( $data[ 'amount' ] );
-		$currency_id  = $this->get_currency( $options );
+		$user_id        = (int)$operation_data[ 'user_id' ];
+		$operation_id   = (int)$data[ 'operation_id' ];
+		$account_id     = (int)$data[ 'account_id'   ];
+		$provider_id    = (int)$data[ 'provider_id'  ];
+		$amount         = $payment_api->_number_float( $data[ 'amount' ] );
+		$currency_id    = $this->get_currency( $options );
 		if( empty( $operation_id ) ) {
 			$result = array(
 				'status'         => false,
@@ -514,4 +517,55 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
+	public function payment( $options ) {
+		$payment_api    = $this->payment_api;
+		$_              = $options;
+		$data           = &$_[ 'data'           ];
+		$options        = &$_[ 'options'        ];
+		$operation_data = &$_[ 'operation_data' ];
+		// prepare data
+		$user_id        = (int)$operation_data[ 'user_id' ];
+		$operation_id   = (int)$data[ 'operation_id' ];
+		$account_id     = (int)$data[ 'account_id'   ];
+		$provider_id    = (int)$data[ 'provider_id'  ];
+		$amount         = $payment_api->_number_float( $data[ 'amount' ] );
+		$currency_id    = $this->get_currency( $options );
+		if( empty( $operation_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Не определен код операции',
+			);
+			return( $result );
+		}
+		// currency conversion
+		$amount_currency = $payment_api->currency_conversion( array(
+			'conversion_type' => 'sell',
+			'currency_id'     => $currency_id,
+			'amount'          => $amount,
+		));
+		if( empty( $amount_currency ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Невозможно произвести конвертацию валют',
+			);
+			return( $result );
+		}
+		// fee
+		$fee = $this->fee;
+		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
+		// prepare
+		$method_id = $options[ 'method_id' ];
+		$request   = array(
+			'operation_id' => $operation_id,
+			'amount'       => $amount_currency_total,
+			// 'currency'     => 'UAH',
+			'title'        => $options[ 'operation_title' ],
+			'account'      => $options[ 'account' ],
+		);
+		$result = $this->api_request( $method_id, $request );
+		ini_set( 'html_errors', 0 );
+		var_dump( $options, $request, $result );
+		exit;
+		list( $status, $status_message ) = $result;
+	}
 }

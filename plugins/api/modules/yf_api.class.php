@@ -29,6 +29,8 @@
 
 class yf_api {
 
+	public $JSON_VULNERABILITY_PROTECTION = true;
+
 	public $class   = null;
 	public $method  = null;
 	public $is_post = null;
@@ -36,6 +38,7 @@ class yf_api {
 	public $request = null;
 
 	function _init() {
+		// ob_start();
 		$class   = &$this->class;
 		$method  = &$this->method;
 		$is_post = &$this->is_post;
@@ -69,10 +72,10 @@ class yf_api {
 	public function _reject( $message = 'Service Unavailable', $header = 'Status: 503 Service Unavailable', $code = 503 ) {
 		if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP 5 >= 5.4.0
 		header( $header );
-		die( $message );
+		$this->_send( $message );
 	}
 
-	public function _redirect( $url, $message = '' ) {
+	public function _redirect( $url, $message = null ) {
 		$code     = 302;
 		$status   = '302 Found';
 		$header   = 'Status: ' . $status;
@@ -82,7 +85,7 @@ class yf_api {
 		if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP 5 >= 5.4.0
 		header( $header   );
 		header( $location );
-		exit( $message );
+		$this->_send( $message );
 	}
 
 	protected function _firewall( $class = null, $class_path = null, $method = null, $options = array() ) {
@@ -115,7 +118,16 @@ class yf_api {
 		if( function_exists( 'http_response_code' ) ) { http_response_code( 200 ); } // PHP 5 >= 5.4.0
 		header( 'Status: 200' );
 		header( "Content-Type: application/$type; charset=UTF-8" );
-		exit( $response );
+		$this->_send( $response );
+	}
+
+	protected function _send( $response = null ) {
+		// $error = ob_get_contents();
+		// ob_end_clean();
+		if( !empty( $this->JSON_VULNERABILITY_PROTECTION ) ) { echo( ")]}',\n" ); }
+		if( isset( $response ) ) { echo( $response ); }
+		// if( isset( $error    ) ) { echo( "\n,([{\n $error" ); }
+		exit;
 	}
 
 }

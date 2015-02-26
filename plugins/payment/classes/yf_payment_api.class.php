@@ -792,6 +792,11 @@ class yf_payment_api {
 		$result = $this->payment( $options );
 		return( $result );
 	}
+	public function payment_user( $options = null ) {
+		$options[ 'user_mode' ] = true;
+		$result = $this->payment( $options );
+		return( $result );
+	}
 	public function payment( $options = null ) {
 		$_ = &$options;
 		$_[ 'type_name' ] = __FUNCTION__;

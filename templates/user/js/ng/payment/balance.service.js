@@ -8,7 +8,7 @@ angular.module( __NS__ )
 	url: '/api/payment/balance',
 })
 
-.factory( 'PaymentBalanceApi',
+.factory( 'PaymentApi',
 [ '$log', '$resource', 'PaymentBalanceConfig',
 function( $log, $resource, PaymentBalanceConfig ) {
 	// private
@@ -25,14 +25,18 @@ function( $log, $resource, PaymentBalanceConfig ) {
 	};
 	service.create_resource = function() {
 		return( $resource( null, null, {
-			refresh:   { method : 'GET',  url : service.url(), params : { operation : 'refresh'   } } ,
-			recharge:  { method : 'POST', url : service.url(), params : { operation : 'recharge'  } } ,
-			operation: { method : 'POST', url : service.url(), params : { operation : 'operation' } } ,
+			refresh   : { method : 'GET',  url : service.url(), params : { operation : 'refresh'   } } ,
+			recharge  : { method : 'POST', url : service.url(), params : { operation : 'recharge'  } } ,
+			payout    : { method : 'POST', url : service.url(), params : { operation : 'payout'  } } ,
+			operation : { method : 'POST', url : service.url(), params : { operation : 'operation' } } ,
 		}));
 	};
 	service.resource = service.create_resource();
 	service.recharge = function( options ) {
 		return( service.resource.recharge({ options: options }) );
+	};
+	service.payout = function( options ) {
+		return( service.resource.payout({ options: options }) );
 	};
 	service.operation = function( options ) {
 		return( service.resource.operation({ options: options }) );
@@ -44,8 +48,8 @@ function( $log, $resource, PaymentBalanceConfig ) {
 }])
 
 .factory( 'PaymentBalance',
-[ '$log', 'PaymentBalanceApi',
-function( $log, PaymentBalanceApi ) {
+[ '$log', 'PaymentApi',
+function( $log, PaymentApi ) {
 	// private
 	var _data     = {};
 	var _balance  = 0;
@@ -73,7 +77,7 @@ function( $log, PaymentBalanceApi ) {
 		return( _currency );
 	};
 	service.refresh = function() {
-		var result = PaymentBalanceApi.refresh();
+		var result = PaymentApi.refresh();
 		result.$promise.then(
 			function( r ) {
 				if( r.response && r.response.balance ) {
