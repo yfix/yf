@@ -119,6 +119,10 @@ class yf_redirect {
 			$ttl = isset($params['ttl']) ? $params['ttl'] : $ttl;
 			$location = $params['location'];
 		}
+		// Avoid rewriting by mistake
+		if (strpos($location, 'http://') === 0 || strpos($location, 'https://') === 0) {
+			$rewrite = false;
+		}
 		$form_method = in_array(strtoupper($params['form_method']), array('GET','POST')) ? strtoupper($params['form_method']) : 'GET';
 		if ($GLOBALS['no_redirect']) {
 			return $text;
