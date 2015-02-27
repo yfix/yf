@@ -872,7 +872,7 @@ class yf_html {
 		$type = isset($extra['type']) ? $extra['type'] : (!is_null($type) ? $type : 2);
 		$horizontal = isset($extra['horizontal']) ? $extra['horizontal'] : $horizontal;
 		$add_str = isset($extra['add_str']) ? $extra['add_str'] : $add_str;
-		if ($extra['class']) {
+		if ($extra['class_add']) {
 			$add_str .= ' class="'.trim($extra['class'].' '.$extra['class_add']).'" ';
 		}
 		if ($extra['style']) {
