@@ -330,7 +330,7 @@ class yf_form2 {
 				}
 			}
 			if ($this->_stacked_mode_on) {
-				$_extra['stacked'] = true;
+				$_extra['stacked'] = $_extra['stacked'] ?: true;
 			}
 			// Callback to decide if we need to show this field or not
 			if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
@@ -637,7 +637,7 @@ class yf_form2 {
 			$extra['prepend'] = '';
 		}
 		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
+			$extra['stacked'] = $extra['stacked'] ?: true;
 		}
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		$extra['css_framework'] = $css_framework;
