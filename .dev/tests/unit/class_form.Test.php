@@ -523,5 +523,8 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals('<span class="stacked-item my_stacked_class" style="float:none;"><input name="name" type="text" id="name" class="form-control" placeholder="'.$desc.'" value="'.$r['name'].'">'.PHP_EOL.'</span>'
 			, trim(form($r, array('no_form' => 1))->text('name', array('desc' => $desc, 'stacked' => array('class_add' => 'my_stacked_class', 'style' => 'float:none;')))) );
+
+		$this->assertEquals('<span class="stacked-item my_stacked_class" style="float:none;"><button type="submit" name="name" id="name" class="btn btn-default btn-primary" value="Save">'.$desc.'</button>'.PHP_EOL.'</span>'
+			, trim(form($r, array('no_form' => 1))->submit('name', array('desc' => $desc, 'stacked' => array('class_add' => 'my_stacked_class', 'style' => 'float:none;')))) );
 	}
 }
