@@ -508,4 +508,20 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$form2 = form(array('k'=>'v'))->text('k');
 		$this->assertNotSame( $form1, $form2 );
 	}
+	public function test_stacked() {
+		$desc = 'Desc';
+		$r['name'] = 'value1';
+
+		$this->assertEquals('<span class="stacked-item"><input name="name" type="text" id="name" class="form-control" placeholder="'.$desc.'" value="'.$r['name'].'">'.PHP_EOL.'</span>'
+			, trim(form($r, array('no_form' => 1))->text('name', array('desc' => $desc, 'stacked' => 1))) );
+
+		$this->assertEquals('<span class="my_stacked_class"><input name="name" type="text" id="name" class="form-control" placeholder="'.$desc.'" value="'.$r['name'].'">'.PHP_EOL.'</span>'
+			, trim(form($r, array('no_form' => 1))->text('name', array('desc' => $desc, 'stacked' => array('class' => 'my_stacked_class')))) );
+
+		$this->assertEquals('<span class="stacked-item my_stacked_class"><input name="name" type="text" id="name" class="form-control" placeholder="'.$desc.'" value="'.$r['name'].'">'.PHP_EOL.'</span>'
+			, trim(form($r, array('no_form' => 1))->text('name', array('desc' => $desc, 'stacked' => array('class_add' => 'my_stacked_class')))) );
+
+		$this->assertEquals('<span class="stacked-item my_stacked_class" style="float:none;"><input name="name" type="text" id="name" class="form-control" placeholder="'.$desc.'" value="'.$r['name'].'">'.PHP_EOL.'</span>'
+			, trim(form($r, array('no_form' => 1))->text('name', array('desc' => $desc, 'stacked' => array('class_add' => 'my_stacked_class', 'style' => 'float:none;')))) );
+	}
 }
