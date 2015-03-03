@@ -262,8 +262,9 @@ class yf_rewrite {
 		if ($REWRITE_ENABLED && $for_section != 'admin') {
 			$link = $this->REWRITE_PATTERNS['yf']->_get($params);
 		} else {
+			$skip_url_params = array('host', 'port', 'fragment', 'path', 'admin_host', 'admin_port', 'admin_path');
 			foreach ((array)$params as $k => $v) {
-				if ($k === 'host' || $k === 'port' || $k === 'fragment') {
+				if (in_array($k, $skip_url_params)) {
 					continue;
 				}
 				$arr_out[] = $k.'='.$v;
@@ -271,10 +272,21 @@ class yf_rewrite {
 			if (!empty($arr_out)) {
 				$u .= (strpos($u, '?') === false ? '?' : '&'). implode('&', $arr_out);
 			}
+			$http_protocol = main()->USE_ONLY_HTTPS ? 'https' : 'http';
 			if ($for_section == 'admin') {
-				$link = ADMIN_WEB_PATH. $u;
+				if ($params['admin_host']) {
+					$_host = $params['admin_host'];
+					$_port = $params['admin_port'] ?: '80';
+					$_path = $params['admin_path'] ?: '/admin/';
+					$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && $_port != '80' ? ':'.$_port : ''). ($_path ?: '/'). $u);
+				} else {
+					$link = ADMIN_WEB_PATH. $u;
+				}
 			} else {
-				$link = $this->_correct_protocol((main()->USE_ONLY_HTTPS ? 'https' : 'http').'://'.$params['host']. ($params['port'] && $params['port'] != '80' ? ':'.$params['port'] : ''). '/'.$u);
+				$_host = $params['host'];
+				$_port = $params['port'] ?: '80';
+				$_path = $params['path'] ?: '/';
+				$link = $this->_correct_protocol($http_protocol. '://'. $_host. ($_port && $_port != '80' ? ':'.$_port : ''). ($_path ?: '/'). $u);
 			}
 			if ($params['fragment']) {
 				$link .= '#'.$params['fragment'];
