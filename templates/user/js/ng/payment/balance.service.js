@@ -5,7 +5,8 @@ var __NS__ = 'payment.balance';
 angular.module( __NS__ )
 
 .constant( 'PaymentBalanceConfig', {
-	url: '/api/payment/balance',
+	url       : '/api/payment/balance',
+	url_login : '/login_form/login',
 })
 
 .factory( 'PaymentApi',
@@ -16,6 +17,9 @@ function( $log, $resource, PaymentBalanceConfig ) {
 	angular.extend( config, PaymentBalanceConfig );
 	// service
 	var service = {};
+	service.config = function() {
+		return( config );
+	};
 	service.url = function( value ) {
 		if( value && typeof value === 'string' ) {
 			config.url = value;
@@ -48,8 +52,8 @@ function( $log, $resource, PaymentBalanceConfig ) {
 }])
 
 .factory( 'PaymentBalance',
-[ '$log', 'PaymentApi',
-function( $log, PaymentApi ) {
+[ '$log', '$timeout', 'PaymentApi',
+function( $log, $timeout, PaymentApi ) {
 	// private
 	var _data     = {};
 	var _balance  = 0;
@@ -69,24 +73,42 @@ function( $log, PaymentApi ) {
 		return( _currency );
 	};
 	service.load = function( value ) {
-		if( value && typeof value === 'object' ) {
+		if( value && typeof value === 'object' && value.account ) {
 			angular.extend( _data, value );
 			service.balance( _data.account.balance );
 			service.currency( _data.currency );
 		}
 		return( _currency );
 	};
+	service.is_load = function() {
+		var result = false;
+		var value = _data;
+		if( value && typeof value === 'object' && value.account ) {
+			result = true;
+		}
+		return( result );
+	};
 	service.refresh = function() {
 		var result = PaymentApi.refresh();
+		var $this = this;
 		result.$promise.then(
 			function( r ) {
-				if( r.response && r.response.balance ) {
+				if( r.response.balance ) {
 					service.load( r.response.balance );
 				} else {
 					$log.error( 'balance->refresh is fail data:', r );
 				}
 			},
 			function( r ) {
+				if( r.status && r.status == 403 ) {
+					$log.log( 'Требуется авторизация' );
+					$timeout.cancel( $this.timer );
+					$this.timer = $timeout( function() {
+						// window.location.href = PaymentApi.config().url_login;
+						window.location.reload();
+					}, 3000 );
+					return( false );
+				}
 				$log.error( 'balance->refresh is fail transport:', r );
 			}
 		);
@@ -96,19 +118,35 @@ function( $log, PaymentApi ) {
 }])
 
 .controller( 'payment.balance.ctrl',
-[ '$log', '$scope', 'PaymentBalance',
-function( $log, $scope, PaymentBalance ) {
-	$scope.balance = function() {
-		$scope.currency = PaymentBalance.currency();
-		return( PaymentBalance.balance() );
+[ '$log', '$scope', '$timeout', 'PaymentBalance',
+function( $log, $scope, $timeout, PaymentBalance ) {
+	$scope.is_load = function() {
+		var is_load = PaymentBalance.is_load();
+		if( is_load ) {
+			$scope.currency = PaymentBalance.currency();
+			$scope.balance  = PaymentBalance.balance();
+		} else {
+			$scope.currency = null;
+			$scope.balance  = null;
+		}
+		return( is_load );
 	};
-}])
-
-.run(
-[ '$log', 'PaymentBalance',
-function( $log, PaymentBalance ) {
-	// init
-	PaymentBalance.refresh();
+	var timer = null;
+	var timeout = 1000 * 60 * 5; // 5 min
+	timeout = 2000; // debug 2 sec
+	var refresh = function() {
+		var result = PaymentBalance.refresh();
+		result.$promise.then( function( r ) {
+			if( $scope.is_load ) { autorefresh(); }
+		});
+	};
+	var autorefresh = function() {
+		$timeout.cancel( timer );
+		timer = $timeout( function() {
+			refresh();
+		}, timeout );
+	};
+	refresh();
 }])
 
 ;
