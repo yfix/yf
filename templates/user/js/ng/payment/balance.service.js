@@ -133,7 +133,7 @@ function( $log, $scope, $timeout, PaymentBalance ) {
 	};
 	var timer = null;
 	var timeout = 1000 * 60 * 5; // 5 min
-	timeout = 2000; // debug 2 sec
+	// timeout = 2000; // debug 2 sec
 	var refresh = function() {
 		var result = PaymentBalance.refresh();
 		result.$promise.then( function( r ) {
