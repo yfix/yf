@@ -2,7 +2,7 @@
 
 if [ -t 0 ]; then
 	echo "== ERROR: please provide first argument to this script";
-	echo "usage: cat in.json | "$0" > out.xml";
+	echo "usage: cat in.xml | "$0" > out.json";
 	exit;
 fi
 
