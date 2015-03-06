@@ -24,7 +24,7 @@ class yf_manage_news {
 			))
 			->text('id')
 			->text('title')
-			->date('add_date', array('format' => 'full'))
+			->date('add_date', array('format' => 'full', 'nowrap' => 1))
 			->btn('View', url('/@object/view/%d'))
 			->btn_edit(array('no_ajax' => 1))
 			->btn_delete()
