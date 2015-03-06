@@ -81,7 +81,7 @@ class yf_blocks {
 				),
 				'hide_empty' => 1,
 			))
-			->link('name', './?object='.$_GET['object'].'&action=show_rules&id=%d', '', array('link_field_name' => 'id'))
+			->link('name', url('/@object/show_rules/%d'), '', array('link_field_name' => 'id'))
 			->text('type')
 			->text('num_rules')
 			->text('stpl_name', 'Template')
@@ -469,7 +469,7 @@ class yf_blocks {
 	*/
 	function _hook_wall_link($msg = array()) {
 		$action = $msg['action'] == 'activate_block' ? 'edit' : 'show';
-		return './?object=blocks&action='.$action.'&id='.$msg['object_id'];
+		return url('/blocks/'.$action.'/'.$msg['object_id']);
 	}
 
 	/**
