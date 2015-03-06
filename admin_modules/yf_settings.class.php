@@ -68,7 +68,7 @@ class yf_settings {
 				}
 				common()->message_info('Saved settings file contents ('.$saved_settings_file.') <pre>'.str_replace('_', '&#95;', _prepare_html($saved_settings_content)).'</pre>');
 				file_put_contents($saved_settings_file, $saved_settings_content);
-				return js_redirect(url_admin('/@object'));
+				return js_redirect(url('/@object'));
 			}
 		}
 		$a = array(
@@ -120,7 +120,7 @@ class yf_settings {
 	*/
 	function cache_purge() {
 		$result = _class('cache')->_clear_all();
-		return js_redirect(url_admin('/@object'));
+		return js_redirect(url('/@object'));
 	}
 
 	/**
@@ -208,7 +208,7 @@ $container_html .= '
     </ul>
 </div>
 			';
-		$a['back_link'] = url_admin('/@object');
+		$a['back_link'] = url('/@object');
 		return form($a, array('legend' => 'Settings items'))
 			->hidden('sort')
 			->container($container_html, array('wide' => 1))
@@ -357,7 +357,7 @@ $container_html .= '
 			return false;
 		}
 		$items = array();
-		$url = process_url(url_admin('/@object'));
+		$url = process_url(url('/@object'));
 		foreach ((array)$this->_used_modules as $module_name) {
 			$items[] = '<li><a href="'.$url.'#module_'.$module_name.'"><i class="icon-chevron-right fa fa-chevron-right"></i> '.t($module_name).'</a></li>';
 		}

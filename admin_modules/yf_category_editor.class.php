@@ -70,7 +70,7 @@ class yf_category_editor {
 	*/
 	function add() {
 		$a = $_POST;
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required|is_unique[categories.name]',
@@ -99,7 +99,7 @@ class yf_category_editor {
 			return _e('No id');
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('categories').' WHERE id='.intval($_GET['id']));
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required',
@@ -136,7 +136,7 @@ class yf_category_editor {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -180,7 +180,7 @@ class yf_category_editor {
 		}
 		common()->admin_wall_add(array('category cloned: from '.$cat_info['name'].' into '.$sql['name'], $_GET['id']));
 		module('category_editor')->_purge_category_caches();
-		return js_redirect(url_admin('/@object'));
+		return js_redirect(url('/@object'));
 	}
 
 	/**
@@ -198,7 +198,7 @@ class yf_category_editor {
 			main()->NO_GRAPHICS = true;
 			echo ($cat_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -728,7 +728,7 @@ class yf_category_editor {
 
 		$replace = array(
 			'sql_text'	=> _prepare_html($EXPORTED_SQL, 0),
-			'back_link'	=> url_admin('/@object'),
+			'back_link'	=> url('/@object'),
 		);
 		return tpl()->parse('db_manager/export_text_result', $replace);
 	}
