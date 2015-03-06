@@ -82,11 +82,10 @@ class yf_user_modules {
 				'locations'	=> $locations,
 			);
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		return table($items, array(
 				'condensed' => 1,
 				'pager_records_on_page' => 10000,
-				'filter' => $_SESSION[$filter_name],
+				'filter' => true,
 				'filter_params' => array(
 					'name' => 'like',
 				),
@@ -441,11 +440,6 @@ class yf_user_modules {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> url('/@object/filter_save/'.$filter_name),
-			'clear_url'		=> url('/@object/filter_save/'.$filter_name.'/clear'),
-		);
 		$order_fields = array();
 		foreach (explode('|', 'name|active') as $f) {
 			$order_fields[$f] = $f;
@@ -455,14 +449,13 @@ class yf_user_modules {
 			$locations[$f] = $f;
 		}
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->text('name')
 			->select_box('locations', $locations, array('show_text' => 1))
 			->active_box()
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}

@@ -12,9 +12,8 @@ class yf_manage_icons {
 	/**
 	*/
 	function show() {
-		$filter_name = $_GET['object'].'__show';
 		return table('SELECT * FROM '.db('icons'), array(
-				'filter' => $_SESSION[$filter_name],
+				'filter' => true,
 				'filter_params' => array('name' => 'like'),
 			))
 			->text('name')
@@ -84,24 +83,18 @@ class yf_manage_icons {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__show';
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$order_fields = array(
 			'name' => 'name',
 			'active' => 'active',
 		);
 		$per_page = array('' => '', 10 => 10, 20 => 20, 50 => 50, 100 => 100, 200 => 200, 500 => 500, 1000 => 1000, 2000 => 2000, 5000 => 5000);
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->text('name')
 			->select_box('per_page', $per_page, array('class' => 'input-small'))
 			->select_box('order_by', $order_fields, array('show_text' => 1, 'class' => 'input-medium'))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}

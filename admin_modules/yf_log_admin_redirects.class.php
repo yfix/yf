@@ -60,18 +60,12 @@ class yf_log_admin_redirects {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$order_fields = array();
 		foreach (explode('|', 'user_id|user_group|date|ip|user_agent|referer|url_from|url_to') as $f) {
 			$order_fields[$f] = $f;
 		}
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->number('user_id')
 			->text('ip')
@@ -80,7 +74,7 @@ class yf_log_admin_redirects {
 			->text('url_from')
 			->text('url_to')
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}

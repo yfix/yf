@@ -8,7 +8,7 @@ class yf_manage_revisions {
 	*/
 	function show() {
 		return table('SELECT * FROM '.db('shop_revisions'), array(
-				'filter' => $_SESSION[$_GET['object'].'__show'],
+				'filter' => true,
 				'filter_params' => array(
 					'user_id'	=> array('eq','user_id'),
 					'add_date'	=> array('dt_between','add_date'),
@@ -24,25 +24,27 @@ class yf_manage_revisions {
 			->text('action')
 			->text('item_id')
 			->btn_view('', './?object=manage_revisions&action=details&id=%d')
-			;
+		;
 	}
 
 	/**
 	*/
 	function new_revision($function, $ids, $db_table){
-		if(empty($function) || empty($ids) || empty($db_table))
+		if (empty($function) || empty($ids) || empty($db_table)) {
 			return false;
+		}
 		if (!is_array($ids) && intval($ids)) {
 			$ids = array(intval($ids));
 		}
-		$user_id = intval(main()->ADMIN_ID)?:intval($_GET['admin_id']);
+		$user_id = intval(main()->ADMIN_ID) ?: intval($_GET['admin_id']);
 		$add_rev_date = time();
-		foreach((array)$ids as $id){
+		foreach ((array)$ids as $id) {
 			$data_stump = db()->query_fetch('SELECT * FROM '.db($db_table).' WHERE id='.$id);
 			$data_stump_json = json_encode($data_stump);
 			$check_equal_data = db()->get_one('SELECT data FROM '.db('shop_revisions').' WHERE item_id='.$id.' ORDER BY id DESC');
-			if($data_stump_json == $check_equal_data)
+			if ($data_stump_json == $check_equal_data) {
 				continue;
+			}
 			$insert = array(
 				'user_id'  => $user_id,
 				'add_date' => $add_rev_date,
@@ -61,8 +63,9 @@ class yf_manage_revisions {
 	/**
 	*/
 	function check_revision($function, $id, $db_table){
-		if(empty($function) || empty($id) || empty($db_table))
+		if(empty($function) || empty($id) || empty($db_table)) {
 			return false;
+		}
 		if (!is_array($id) && intval($id)) {
 			$ids = array(intval($id));
 		}
@@ -80,28 +83,28 @@ class yf_manage_revisions {
 			return _e('Revision not found');
 		}
 		return form($a, array(
-			'dd_mode' => 1,
-		))
-		->link('Revisions list','./?object=manage_revisions')
-		->admin_info('user_id')
-		->info_date('add_date', array('format' => 'full'))
-		->info('action')
-		->link('Activate new version', './?object=manage_revisions&action=rollback_revision&id='.$a['id'])
-		->tab_start('View_difference')
-			->func('data', function($extra, $r, $_this) {
-				$origin = json_decode($r[$extra['name']], true);
-				$before = db()->get('SELECT * FROM '.db('shop_revisions').' WHERE id<'.$r['id'].' AND item_id='.$r['item_id'].' ORDER BY id DESC' );
-				$before = json_decode($before[$extra['name']], true);
-				$origin = var_export($origin, true);
-				$before = var_export($before, true);
-				return common()->get_diff($before, $origin);
-			})
-		->tab_end()
-		->tab_start('New_version')
-			->func('data', function($extra, $r, $_this) {
-				return '<pre>'.var_export(json_decode($r[$extra['name']], true), 1).'</pre>';
-			})
-		->tab_end()
+				'dd_mode' => 1,
+			))
+			->link('Revisions list','./?object=manage_revisions')
+			->admin_info('user_id')
+			->info_date('add_date', array('format' => 'full'))
+			->info('action')
+			->link('Activate new version', './?object=manage_revisions&action=rollback_revision&id='.$a['id'])
+			->tab_start('View_difference')
+				->func('data', function($extra, $r, $_this) {
+					$origin = json_decode($r[$extra['name']], true);
+					$before = db()->get('SELECT * FROM '.db('shop_revisions').' WHERE id<'.$r['id'].' AND item_id='.$r['item_id'].' ORDER BY id DESC' );
+					$before = json_decode($before[$extra['name']], true);
+					$origin = var_export($origin, true);
+					$before = var_export($before, true);
+					return common()->get_diff($before, $origin);
+				})
+			->tab_end()
+			->tab_start('New_version')
+				->func('data', function($extra, $r, $_this) {
+					return '<pre>'.var_export(json_decode($r[$extra['name']], true), 1).'</pre>';
+				})
+			->tab_end()
 		;
 	}
 
@@ -129,11 +132,6 @@ class yf_manage_revisions {
 	/**
 	*/
 	function _show_filter() {
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$filters = array(
 			'show'	=> function($filter_name, $replace) {
 				$fields = array('id','add_date','action','item_id','ip', 'user_id');
@@ -143,8 +141,7 @@ class yf_manage_revisions {
 				$action = db()->get_2d('SELECT DISTINCT action FROM '.db('shop_revisions'));
 				$action = array_combine($action, $action );
 				return form($replace, array(
-						'selected' => $_SESSION[$filter_name],
-						'class' => 'form-vertical',
+						'filter' => true,
 					))
 					->datetime_select('add_date',      null, array( 'with_time' => 1 ) )
 					->datetime_select('add_date__and', null, array( 'with_time' => 1 ) )
@@ -157,7 +154,7 @@ class yf_manage_revisions {
 		$action = $_GET['action'];
 		if (isset($filters[$action])) {
 			return $filters[$action]($filter_name, $replace)
-				->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+				->order_box()
 				->save_and_clear();
 		}
 		return false;

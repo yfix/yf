@@ -55,24 +55,18 @@ class yf_log_user_auth_fails {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$order_fields = array();
 		foreach (explode('|', 'login|time|ip|user_agent|referer') as $f) {
 			$order_fields[$f] = $f;
 		}
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->text('login')
 			->text('ip')
 			->select_box('reason', $this->_reasons, array('show_text' => 1))
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}
