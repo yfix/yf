@@ -1,7 +1,0 @@
-<form method="post" action="{form_action}" class="form-horizontal">
-	{form_row("text","title","Title")}
-	{form_row("textarea","head_text","Head text")}
-	{form_row("textarea","full_text","Full text")}
-	{form_row("active_box")}
-	{form_row("save_and_back")}
-</form>
