@@ -1720,6 +1720,7 @@ class yf_table2 {
 			if (false === strpos($extra['name'], '[')) {
 				$extra['name'] .= '['.$field.']';
 			}
+			$extra['desc'] = $extra['desc'] ?: '';
 			$extra['id'] = 'checkbox_'.$field;
 			return _class('html')->check_box($extra);
 		}, $extra);
@@ -1740,6 +1741,7 @@ class yf_table2 {
 			if (false === strpos($extra['name'], '[')) {
 				$extra['name'] .= '['.$field.']';
 			}
+#			$extra['desc'] = $extra['desc'] ?: '';
 			$extra['id'] = 'radiobox_'.$field;
 			return _class('html')->radio_box($extra);
 		}, $extra);
