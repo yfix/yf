@@ -94,6 +94,9 @@ class yf_form2 {
 			$params['selected'] = $_SESSION[$filter_name];
 			$replace['form_action'] = $replace['form_action'] ?: url('/@object/filter_save/'.$filter_name);
 			$replace['clear_url'] = $replace['clear_url'] ?: url('/@object/filter_save/'.$filter_name.'/clear');
+			if (MAIN_TYPE_ADMIN && !isset($params['class'])) {
+				$params['class'] = 'form-vertical';
+			}
 		}
 		if (!$params['no_chained_mode']) {
 			$this->_chained_mode = true;
@@ -1418,6 +1421,18 @@ class yf_form2 {
 		}
 		$extra['items'] = $this->_pair_yes_no;
 		return $this->active_box($name, $desc, $extra, $replace);
+	}
+
+	/**
+	*/
+	function order_box($name = '', $data = array(), $extra = array(), $replace = array()) {
+		$data = $data ?: array(
+			'asc' => 'Ascending',
+			'desc' => 'Descending'
+		);
+		$extra['horizontal'] = isset($extra['horizontal']) ? $extra['horizontal'] : 1;
+		$extra['translate'] = isset($extra['translate']) ? $extra['translate'] : 1;
+		return $this->radio_box($name ?: 'order_direction', t($data), $extra, $replace);
 	}
 
 	/**
