@@ -1427,11 +1427,10 @@ class yf_form2 {
 	*/
 	function order_box($name = '', $data = array(), $extra = array(), $replace = array()) {
 		$data = $data ?: array(
-			'asc' => 'Ascending',
-			'desc' => 'Descending'
+			'asc'	=> 'Ascending',
+			'desc'	=> 'Descending'
 		);
 		$extra['horizontal'] = isset($extra['horizontal']) ? $extra['horizontal'] : 1;
-		$extra['translate'] = isset($extra['translate']) ? $extra['translate'] : 1;
 		return $this->radio_box($name ?: 'order_direction', t($data), $extra, $replace);
 	}
 
