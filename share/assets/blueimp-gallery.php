@@ -10,4 +10,11 @@ return array(
 	'require' => array(
 		'js' => 'jquery',
 	),
+	'info' => array(
+		'url' => 'https://blueimp.github.io/Gallery/',
+		'name' => 'blueimp Gallery',
+		'desc' => 'blueimp Gallery is a touch-enabled, responsive and customizable image & video gallery, carousel and lightbox, optimized for both mobile and desktop web browsers.
+			It features swipe, mouse and keyboard navigation, transition effects, slideshow functionality, fullscreen support and on-demand content loading 
+			and can be extended to display additional content types.',
+	),
 );

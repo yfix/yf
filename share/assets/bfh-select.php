@@ -22,4 +22,10 @@ return array(
 			'bootstrap',
 		),
 	),
+	'info' => array(
+		'url' => 'http://bootstrapformhelpers.com/',
+		'name' => 'Bootstrap Form Helpers',
+		'desc' => 'Extend Bootstrap\'s components with Bootstrap Form Helpers custom jQuery plugins.',
+		'git' => 'https://github.com/yfix/bootstrap-form-helpers.git',
+	),
 );
