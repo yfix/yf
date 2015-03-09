@@ -696,7 +696,7 @@ class yf_html {
 			if (!strlen($body)) {
 				continue;
 			}
-			$class_item = $v['class_item'] ?: $extra['class_item'];
+			$class_item = $v['class'] ?: $extra['class_item'];
 			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
 			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"'. ($v['id'] ? ' id="'.$v['id'].'"' : '').'>'. $badge. ($v['link'] ? '<a href="'.$v['link'].'">'.$body.'</a>' : $body).'</li>';
 			if (is_array($v['sub'])) {
@@ -704,7 +704,7 @@ class yf_html {
 				continue;
 			}
 		}
-		return '<ul class="'.($extra['class'] ? ' '.$extra['class'] : '').'">'.implode(PHP_EOL, (array)$items).'</ul>';
+		return '<ul'._attrs(array('id','class','style'), $extra).'>'.implode(PHP_EOL, (array)$items).'</ul>';
 	}
 
 	/**
