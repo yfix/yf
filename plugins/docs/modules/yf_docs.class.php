@@ -5,7 +5,7 @@ class yf_docs {
 	/**
 	* Catch all methods calls
 	*/
-	function _module_action_handler($name) {
+	public function _module_action_handler($name) {
 		if (method_exists($this, $name)) {
 			return $this->$name();
 		} else {
@@ -16,7 +16,7 @@ class yf_docs {
 
 	/**
 	*/
-	function _init() {
+	public function _init() {
 		_class('core_api')->add_syntax_highlighter();
 
 		$this->docs_dir = YF_PATH.'.dev/docs/en/';
@@ -27,7 +27,18 @@ class yf_docs {
 	}
 
 	/***/
-	function view() {
+	public function show() {
+		if ($_GET['id']) {
+			return $this->view();
+		}
+		return ''
+			. '<h1>Docs</h1>' . $this->_show_docs()
+#			. '<h1>Assets</h1>' . $this->assets()
+		;
+	}
+
+	/***/
+	public function view() {
 		$name = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
 		if ($name) {
 			$f = $this->docs_dir. $name. '.stpl';
@@ -39,24 +50,67 @@ class yf_docs {
 	}
 
 	/***/
-	function show() {
-		if ($_GET['id']) {
-			return $this->view();
-		}
+	public function _show_docs() {
 		foreach (glob($this->docs_dir.'*.stpl') as $path) {
 			$f = basename($path);
 			$name = substr($f, 0, -strlen('.stpl'));
 			$data[++$i] = array(
 				'name'	=> $name,
-				'link'	=> './?object='.$_GET['object'].'&action=show&id='.$name,
+				'link'	=> url('/@object/show/'.$name),
 			);
 		}
 		return _class('html')->tree($data, array('draggable' => false));
 	}
 
 	/***/
-	function _hook_side_column() {
-		$url = process_url('./?object='.$_GET['object']);
+	public function assets() {
+		$yf_len = strlen(realpath(YF_PATH));
+		foreach ($this->_load_predefined_assets() as $asset) {
+			$data[++$i] = array(
+				'name'	=> $asset['name'],
+#				'link'	=> url('/@object/show/'.$name),
+				'link'	=> 'https://github.com/yfix/yf/tree/master/'.ltrim(substr(realpath($asset['path']), $yf_len), '/'),
+			);
+		}
+		return _class('html')->navlist($data);
+	}
+
+	/***/
+	public function _load_predefined_assets() {
+		$assets = array();
+		$suffix = '.php';
+		$dir = 'share/assets/';
+		$pattern = $dir. '*'. $suffix;
+		$globs = array(
+			'yf_main'				=> YF_PATH. $pattern,
+			'yf_plugins'			=> YF_PATH. 'plugins/*/'. $pattern,
+#			'project_main'			=> PROJECT_PATH. $pattern,
+#			'project_app'			=> APP_PATH. $pattern,
+#			'project_plugins'		=> PROJECT_PATH. 'plugins/*/'. $pattern,
+#			'project_app_plugins'	=> APP_PATH. 'plugins/*/'. $pattern,
+		);
+		$slen = strlen($suffix);
+		$names = array();
+		foreach($globs as $gname => $glob) {
+			foreach(glob($glob) as $path) {
+				$name = substr(basename($path), 0, -$slen);
+				$names[$name] = $path;
+			}
+		}
+		// This double iterating code ensures we can inherit/replace assets with same name inside project
+		foreach($names as $name => $path) {
+			$assets[$name] = array(
+				'name'		=> $name,
+				'path'		=> $path,
+				'content'	=> include $path,
+			);
+		}
+		return $assets;
+	}
+
+	/***/
+	public function _hook_side_column() {
+		$url = url('/@object');
 		$names = array();
 		foreach (array_merge((array)glob(APP_PATH.'modules/*.class.php'),(array)glob(PROJECT_PATH.'modules/*.class.php')) as $cls) {
 			$cls = basename($cls);
