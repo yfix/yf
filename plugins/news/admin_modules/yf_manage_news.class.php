@@ -25,7 +25,7 @@ class yf_manage_news {
 			->text('id')
 			->text('title')
 			->date('add_date', array('format' => 'full', 'nowrap' => 1))
-			->btn('View', url('/@object/view/%d'))
+#			->btn('View', url('/@object/view/%d'))
 			->btn_edit(array('no_ajax' => 1))
 			->btn_delete()
 			->btn_active()
@@ -68,9 +68,7 @@ class yf_manage_news {
 		return form($a)
 			->validate(array(
 				'__before__'=> 'trim',
-				'title' => array('required', function(&$in) use ($_this) {
-					return (bool)strlen($in);
-				}),
+				'title' => array('required'),
 				'full_text' => 'required',
 			))
 			->db_update_if_ok('news', array('title','head_text','full_text','meta_keywords','meta_desc','active'), 'id='.$a['id'])
@@ -107,6 +105,7 @@ class yf_manage_news {
 				),
 			))
 			->hidden('full_text')
+			->hidden('title')
 			->save_and_back();
 	}
 
