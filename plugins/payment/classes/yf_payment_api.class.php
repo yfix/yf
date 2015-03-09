@@ -774,7 +774,7 @@ class yf_payment_api {
 			'options'        => $options,
 			'operation_data' => $operation_data,
 		));
-		array_push( $result, $operation_id );
+		$result[ 'operation_id' ] = $operation_id;
 		return( $result );
 	}
 
@@ -832,7 +832,7 @@ class yf_payment_api {
 			'options'        => $options,
 			'operation_data' => $operation_data,
 		));
-		array_push( $result, $operation_id );
+		$result[ 'operation_id' ] = $operation_id;
 		return( $result );
 	}
 
