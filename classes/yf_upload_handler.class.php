@@ -1,7 +1,7 @@
 <?php
 
-require_once( YF_PATH . 'libs/jquery-file-upload/server/php/UploadHandler.php' );
-
+require_php_lib('jquery-file-upload');
+#require_once( YF_PATH . 'libs/jquery-file-upload/server/php/UploadHandler.php' );
 class yf_upload_handler extends UploadHandler {
 
 	protected $options_default = array();
