@@ -7,9 +7,8 @@ class yf_manage_users {
 	/**
 	*/
 	function show () {
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		return table('SELECT * FROM '.db('user'), array(
-				'filter' => $_SESSION[$filter_name],
+				'filter' => true,
 				'filter_params' => array(
 					'login'	=> 'like',
 					'email'	=> 'like',
@@ -35,7 +34,7 @@ class yf_manage_users {
 	*/
 	function add() {
 		$a = $_POST;
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'login' => 'trim|required|alpha_numeric|is_unique[user.login]',
@@ -60,8 +59,8 @@ class yf_manage_users {
 			return _e('No id');
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('user').' WHERE id='.intval($_GET['id']));
-		$a['back_link'] = url_admin('/@object');
-		$a['redirect_link'] = url_admin('/@object');
+		$a['back_link'] = url('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'login' => 'trim|alpha_numeric|is_unique_without[user.login.'.$id.']',
@@ -97,7 +96,7 @@ class yf_manage_users {
 			main()->NO_GRAPHICS = true;
 			echo ($user_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -219,18 +218,12 @@ class yf_manage_users {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$order_fields = array();
 		foreach (explode('|', 'name,login,email|add_date|last_login|num_logins|active') as $f) {
 			$order_fields[$f] = $f;
 		}
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->number('id')
 			->text('name')
@@ -238,7 +231,7 @@ class yf_manage_users {
 			->email('email')
 			->select_box('group', main()->get_data('user_groups'), array('show_text' => 1))
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}

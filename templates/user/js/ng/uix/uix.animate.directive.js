@@ -10,12 +10,17 @@ function( $log, $animate ) {
 	return {
 		restrict: 'A',
 		scope: {
-			content: '=ngBind'
+			content1: '=ngBind',
+			content2: '=animateOnChange',
 		},
 		link: function( scope, element, attrs ) {
-			scope.$watch( 'content', function( item_new, item_old ) {
-				$animate.removeClass( element, 'change' );
+			scope.$watch( 'content1', function( item_new, item_old ) {
 				$animate.addClass( element, 'change' );
+				$animate.removeClass( element, 'change' );
+			});
+			scope.$watch( 'content2', function( item_new, item_old ) {
+				$animate.addClass( element, 'change' );
+				$animate.removeClass( element, 'change' );
 			});
 		},
 	};

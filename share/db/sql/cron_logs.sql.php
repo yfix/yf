@@ -1,7 +1,7 @@
 <?php
 return '
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
+  `cron_id` int(10) unsigned NOT NULL,
   `log` text NOT NULL,
   `time_start` int(10) unsigned NOT NULL,
   `time_end` int(10) unsigned NOT NULL,

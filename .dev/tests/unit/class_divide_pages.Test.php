@@ -4,9 +4,12 @@ require_once __DIR__.'/yf_unit_tests_setup.php';
 
 class class_divide_pages_test extends PHPUnit_Framework_TestCase {
 	public function _get_expected_html($href, $num_pages = 10, $next = 2) {
+		if (!$num_pages) {
+			return false;
+		}
 		$html = 
-			'<div class="pagination"> <ul> </ul> <ul>
-					<li class="disabled"><a>1</a></li>';
+			'<div class="pagination"> <ul> </ul> <ul>'.
+			($num_pages > 1 ? ' <li class="disabled"><a>1</a></li>' : '');
 		foreach (range($next, $num_pages) as $page) {
 			$html .= '<li><a href="'. $href. $page. '" title="Page '.$page.'">'.$page.'</a></li>';
 		}
@@ -48,7 +51,21 @@ class class_divide_pages_test extends PHPUnit_Framework_TestCase {
 		$result = common()->divide_pages($sql, $href, '', '', $num_records = count($data));
 		$result[1] = $this->_cleanup_html($result[1]);
 		$this->assertEquals( $expect_for_sql, $result );
-
+/*
+		$expect_for_sql = array_values(array(
+			'limit_sql'		=> ' LIMIT 0, 1',
+			'pages_html'	=> $this->_get_expected_html($href.'&page=', 1),
+			'total_records'	=> 1,
+			'first_record'	=> 0,
+			'total_pages'	=> 1,
+			'limited_pages' => 0,
+			'per_page'		=> 1,
+			'requested_page'=> 0,
+		));
+		$result = common()->divide_pages($sql, $href, '', '', $num_records = 1);
+		$result[1] = $this->_cleanup_html($result[1]);
+		$this->assertEquals( $expect_for_sql, $result );
+*/
 		$expect_for_array = array_values(array(
 			'items'			=> array_slice($data, 0, $per_page, true),
 			'pages_html'	=> $this->_get_expected_html($href.'&page=', $num_pages),

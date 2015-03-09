@@ -19,7 +19,7 @@ class yf_payment__user {
 		));
 		$payment_api->provider_options( $providers, array(
 			'IS_DEPOSITION', 'IS_PAYMENT',
-			'fee', 'currency_allow', 'description',
+			'method_allow', 'fee', 'currency_allow', 'description',
 		));
 		$provider_user = $payment_api->provider();
 		$provider = array();

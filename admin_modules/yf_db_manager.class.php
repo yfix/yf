@@ -652,7 +652,7 @@ class yf_db_manager {
 			if (!common()->_error_exists()) {
 				$replace2 = array(
 					'sql_text'	=> _prepare_html($EXPORTED_SQL, 0),
-					'back_link'	=> url_admin('/@object'),
+					'back_link'	=> url('/@object'),
 				);
 				return tpl()->parse($_GET['object'].'/export_text_result', $replace2);
 			}
@@ -660,7 +660,7 @@ class yf_db_manager {
 		$replace = array(
 			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action']._add_get(),
 			'error_message'		=> _e(),
-			'back_link'			=> url_admin('/@object'),
+			'back_link'			=> url('/@object'),
 			'single_table'		=> _prepare_html($SINGLE_TABLE),
 #			'tables_box'		=> $this->_box('tables', ''),
 #			'export_type_box'	=> $this->_box('export_type', ''),
@@ -749,7 +749,7 @@ class yf_db_manager {
 			'form_action'		=> './?object='.$_GET['object'].'&action=backup',
 			'import_form_action'=> './?object='.$_GET['object'].'&action=show_backup',
 			'error_message'		=> _e(),
-			'back_link'			=> url_admin('/@object'),
+			'back_link'			=> url('/@object'),
 		);
 		return tpl()->parse($_GET['object'].'/backup', $replace);
 	}

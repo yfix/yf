@@ -774,6 +774,7 @@ class yf_payment_api {
 			'options'        => $options,
 			'operation_data' => $operation_data,
 		));
+		$result[ 'operation_id' ] = $operation_id;
 		return( $result );
 	}
 
@@ -789,6 +790,11 @@ class yf_payment_api {
 	 */
 	public function payment_system( $options = null ) {
 		$options[ 'provider_name' ] = 'system';
+		$result = $this->payment( $options );
+		return( $result );
+	}
+	public function payment_user( $options = null ) {
+		$options[ 'user_mode' ] = true;
 		$result = $this->payment( $options );
 		return( $result );
 	}
@@ -826,6 +832,7 @@ class yf_payment_api {
 			'options'        => $options,
 			'operation_data' => $operation_data,
 		));
+		$result[ 'operation_id' ] = $operation_id;
 		return( $result );
 	}
 

@@ -241,6 +241,13 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 				'data-some' => 'mydata',
 			)
 		)));
+#		$this->assertEquals(
+#			'<label class="'.$def_class.' active"><input type="checkbox" name="is_public" id="is_public" value="1" checked="checked"> &nbsp;</label>'
+#			, trim(self::form_no_chain($r)->check_box('is_public', array(
+#				'checked' => 'true',
+#				'no_label' => true,
+#			)
+#		)));
 	}
 	public function test_multi_check_box() {
 		$html = html();
@@ -500,5 +507,24 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 		$form1 = form(array('k'=>'v'))->text('k');
 		$form2 = form(array('k'=>'v'))->text('k');
 		$this->assertNotSame( $form1, $form2 );
+	}
+	public function test_stacked() {
+		$desc = 'Desc';
+		$r['name'] = 'value1';
+
+		$this->assertEquals('<span class="stacked-item"><input name="name" type="text" id="name" class="form-control" placeholder="'.$desc.'" value="'.$r['name'].'">'.PHP_EOL.'</span>'
+			, trim(form($r, array('no_form' => 1))->text('name', array('desc' => $desc, 'stacked' => 1))) );
+
+		$this->assertEquals('<span class="my_stacked_class"><input name="name" type="text" id="name" class="form-control" placeholder="'.$desc.'" value="'.$r['name'].'">'.PHP_EOL.'</span>'
+			, trim(form($r, array('no_form' => 1))->text('name', array('desc' => $desc, 'stacked' => array('class' => 'my_stacked_class')))) );
+
+		$this->assertEquals('<span class="stacked-item my_stacked_class"><input name="name" type="text" id="name" class="form-control" placeholder="'.$desc.'" value="'.$r['name'].'">'.PHP_EOL.'</span>'
+			, trim(form($r, array('no_form' => 1))->text('name', array('desc' => $desc, 'stacked' => array('class_add' => 'my_stacked_class')))) );
+
+		$this->assertEquals('<span class="stacked-item my_stacked_class" style="float:none;"><input name="name" type="text" id="name" class="form-control" placeholder="'.$desc.'" value="'.$r['name'].'">'.PHP_EOL.'</span>'
+			, trim(form($r, array('no_form' => 1))->text('name', array('desc' => $desc, 'stacked' => array('class_add' => 'my_stacked_class', 'style' => 'float:none;')))) );
+
+		$this->assertEquals('<span class="stacked-item my_stacked_class" style="float:none;"><button type="submit" name="name" id="name" class="btn btn-default btn-primary" value="Save">'.$desc.'</button>'.PHP_EOL.'</span>'
+			, trim(form($r, array('no_form' => 1))->submit('name', array('desc' => $desc, 'stacked' => array('class_add' => 'my_stacked_class', 'style' => 'float:none;')))) );
 	}
 }

@@ -94,6 +94,9 @@ class yf_form2 {
 			$params['selected'] = $_SESSION[$filter_name];
 			$replace['form_action'] = $replace['form_action'] ?: url('/@object/filter_save/'.$filter_name);
 			$replace['clear_url'] = $replace['clear_url'] ?: url('/@object/filter_save/'.$filter_name.'/clear');
+			if (MAIN_TYPE_ADMIN && !isset($params['class'])) {
+				$params['class'] = 'form-vertical';
+			}
 		}
 		if (!$params['no_chained_mode']) {
 			$this->_chained_mode = true;
@@ -330,7 +333,7 @@ class yf_form2 {
 				}
 			}
 			if ($this->_stacked_mode_on) {
-				$_extra['stacked'] = true;
+				$_extra['stacked'] = $_extra['stacked'] ?: true;
 			}
 			// Callback to decide if we need to show this field or not
 			if (isset($_extra['display_func']) && is_callable($_extra['display_func'])) {
@@ -637,7 +640,7 @@ class yf_form2 {
 			$extra['prepend'] = '';
 		}
 		if ($this->_stacked_mode_on) {
-			$extra['stacked'] = true;
+			$extra['stacked'] = $extra['stacked'] ?: true;
 		}
 		$css_framework = $extra['css_framework'] ?: ($this->_params['css_framework'] ?: conf('css_framework'));
 		$extra['css_framework'] = $css_framework;
@@ -1421,6 +1424,17 @@ class yf_form2 {
 	}
 
 	/**
+	*/
+	function order_box($name = '', $data = array(), $extra = array(), $replace = array()) {
+		$data = $data ?: array(
+			'asc'	=> 'Ascending',
+			'desc'	=> 'Descending'
+		);
+		$extra['horizontal'] = isset($extra['horizontal']) ? $extra['horizontal'] : 1;
+		return $this->radio_box($name ?: 'order_direction', t($data), $extra, $replace);
+	}
+
+	/**
 	* Helper to display one or more buttons in one row without need to do work with row_start, etc..
 	*/
 	function buttons($names = array(), $extra = array(), $replace = array()) {
@@ -2104,7 +2118,7 @@ class yf_form2 {
 			$extra['id'] = $form->_prepare_id($extra);
 			$extra['required'] = true;
 			$extra['value'] = $r['captcha'];
-			$extra['input_attrs'] = _attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value'));
+			$extra['input_attrs'] = _attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value','size'));
 			$extra = $form->_input_assign_params_from_validate($extra);
 			return $form->_row_html(_class('captcha')->show_block('./?object=dynamic&action=captcha_image', $extra), $extra, $r);
 		};

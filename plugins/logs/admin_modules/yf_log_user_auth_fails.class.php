@@ -1,39 +1,38 @@
 <?php
 
 /**
-* Admin "log in" info analyser
+* Log authentification fails viewer
 */
-class yf_log_admin_auth {
+class yf_log_user_auth_fails {
+
+	private $_reasons = array(
+		'w' => 'Wrong login',
+		'b' => 'Blocked',
+	);
 
 	/**
 	*/
 	function show () {
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		$default_filter = array(
-			'order_by' => 'date',
+			'order_by' => 'time',
 			'order_direction' => 'desc',
 		);
-		$sql = 'SELECT * FROM '.db('log_admin_auth');
+		$sql = 'SELECT * FROM '.db('log_auth_fails');
 		return table($sql, array(
 				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
 				'filter_params' => array(
 					'name'	=> 'like',
 				),
 			))
-			->admin('admin_id')
+			->text('reason', array('data' => $this->_reasons))
+			->date('time', array('format' => 'full', 'nowrap' => 1))
 			->link('ip', './?object='.$_GET['object'].'&action=show_for_ip&id=%d')
-			->date('date', array('format' => 'full', 'nowrap' => 1))
+			->text('login')
+			->text('pswd')
 			->text('user_agent')
 			->text('referer')
 		;
-	}
-
-	/**
-	*/
-	function show_for_admin() {
-		$_GET['page'] = 'clear';
-		$_GET['filter'] = 'admin_id:'.intval($_GET['id']);
-		return $this->filter_save();
 	}
 
 	/**
@@ -56,30 +55,23 @@ class yf_log_admin_auth {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$order_fields = array();
-		foreach (explode('|', 'admin_id|login|group|date|ip|user_agent|referer') as $f) {
+		foreach (explode('|', 'login|time|ip|user_agent|referer') as $f) {
 			$order_fields[$f] = $f;
 		}
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-				'class' => 'form-vertical',
+				'filter' => true,
 			))
-			->number('admin_id')
+			->text('login')
 			->text('ip')
+			->select_box('reason', $this->_reasons, array('show_text' => 1))
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}
 
-	/**
-	*/
-	function _hook_widget__admin_auth_successes ($params = array()) {
+	function _hook_widget__user_auth_fails ($params = array()) {
 // TODO
 	}
 }

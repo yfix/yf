@@ -81,7 +81,7 @@ class yf_blocks {
 				),
 				'hide_empty' => 1,
 			))
-			->link('name', './?object='.$_GET['object'].'&action=show_rules&id=%d', '', array('link_field_name' => 'id'))
+			->link('name', url('/@object/show_rules/%d'), '', array('link_field_name' => 'id'))
 			->text('type')
 			->text('num_rules')
 			->text('stpl_name', 'Template')
@@ -99,7 +99,7 @@ class yf_blocks {
 	*/
 	function add () {
 		$a = $_POST;
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required|alpha_dash', //|is_unique[blocks.name]
@@ -124,7 +124,7 @@ class yf_blocks {
 	function edit () {
 		$a = db()->get('SELECT * FROM '.db('blocks').' WHERE id='.intval($_GET['id']).' OR name="'._es($_GET['id']).'"');
 		$_GET['id'] = $a['id'];
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		return form($a)
 			->validate(array(
 				'name'	=> 'trim|required|alpha_dash',
@@ -167,7 +167,7 @@ class yf_blocks {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -197,7 +197,7 @@ class yf_blocks {
 		}
 		common()->admin_wall_add(array('block cloned: '.$_info['name'].' from '.$block_info['name'], $NEW_ITEM_ID));
 		module('blocks')->_cache_purge();
-		return js_redirect(url_admin('/@object'));
+		return js_redirect(url('/@object'));
 	}
 
 	/**
@@ -216,7 +216,7 @@ class yf_blocks {
 			main()->NO_GRAPHICS = true;
 			echo ($block_info['active'] ? 0 : 1);
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -264,7 +264,7 @@ class yf_blocks {
 				$_POST[$k] = $this->_multi_html_to_db($_POST[$k]);
 			}
 		}
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		$a['type'] = $block_info['type'];
 		return form($a)
 			->validate(array(
@@ -316,7 +316,7 @@ class yf_blocks {
 				$a[$k] = $this->_multi_db_to_html($a[$k]);
 			}
 		}
-		$a['redirect_link'] = url_admin('/@object');
+		$a['redirect_link'] = url('/@object');
 		$a['type'] = $block_info['type'];
 		return form($a)
 			->validate(array(
@@ -449,24 +449,18 @@ class yf_blocks {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$order_fields = array();
 		foreach (explode('|', 'name|active|stpl_name|method_name') as $f) {
 			$order_fields[$f] = $f;
 		}
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->text('name')
 			->select_box('type', array('admin' => 'admin', 'user' => 'user'), array('show_text' => 1))
 			->active_box()
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}
@@ -475,7 +469,7 @@ class yf_blocks {
 	*/
 	function _hook_wall_link($msg = array()) {
 		$action = $msg['action'] == 'activate_block' ? 'edit' : 'show';
-		return './?object=blocks&action='.$action.'&id='.$msg['object_id'];
+		return url('/blocks/'.$action.'/'.$msg['object_id']);
 	}
 
 	/**

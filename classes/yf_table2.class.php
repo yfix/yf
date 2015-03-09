@@ -408,11 +408,18 @@ class yf_table2 {
 			} else {
 				$db = db();
 			}
+// TODO: add direct support for query builder and filter
 			if ($params['filter']) {
 				list($filter_sql, $order_sql) = $this->_filter_sql_prepare($params['filter'], $params['filter_params'], $sql);
 				// These 2 arrays needed to be able to use filter parts somehow inside methods
 				$this->_filter_data = $params['filter'];
 				$this->_filter_params = $params['filter_params'];
+			}
+			if (!$filter_sql && isset($params['filter_params']['__default_filter'])) {
+				$filter_sql = $params['filter_params']['__default_filter'];
+			}
+			if (!$order_sql && isset($params['filter_params']['__default_order'])) {
+				$order_sql = $params['filter_params']['__default_order'];
 			}
 			if ($filter_sql || $order_sql) {
 				$sql_upper = strtoupper($sql);
@@ -424,6 +431,9 @@ class yf_table2 {
 					$sql .= ' '.$filter_sql;
 				}
 				if ($order_sql) {
+					if (strpos($order_sql, 'ORDER BY') === false) {
+						$order_sql = 'ORDER BY '.$order_sql;
+					}
 					if (strpos($sql, '/*ORDER*/') !== false) {
 						$sql = str_replace('/*ORDER*/', ' '.$order_sql.' ', $sql);
 					} else {
@@ -1710,6 +1720,7 @@ class yf_table2 {
 			if (false === strpos($extra['name'], '[')) {
 				$extra['name'] .= '['.$field.']';
 			}
+			$extra['desc'] = $extra['desc'] ?: '';
 			$extra['id'] = 'checkbox_'.$field;
 			return _class('html')->check_box($extra);
 		}, $extra);
@@ -1730,6 +1741,7 @@ class yf_table2 {
 			if (false === strpos($extra['name'], '[')) {
 				$extra['name'] .= '['.$field.']';
 			}
+#			$extra['desc'] = $extra['desc'] ?: '';
 			$extra['id'] = 'radiobox_'.$field;
 			return _class('html')->radio_box($extra);
 		}, $extra);

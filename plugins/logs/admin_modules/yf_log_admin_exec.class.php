@@ -1,9 +1,6 @@
 <?php
 
-/**
-* Users "log in" info analyser
-*/
-class yf_log_user_auth {
+class yf_log_admin_exec{
 
 	/**
 	*/
@@ -13,36 +10,39 @@ class yf_log_user_auth {
 			'order_by' => 'date',
 			'order_direction' => 'desc',
 		);
-		$sql = 'SELECT * FROM '.db('log_auth');
+		$sql = 'SELECT * FROM '.db('log_admin_exec');
 		return table($sql, array(
 				'filter' => (array)$_SESSION[$filter_name] + $default_filter,
 				'filter_params' => array(
-					'name'	=> 'like',
+					'ip'			=> 'like',
+					'user_agent'	=> 'like',
+					'referer'		=> 'like',
+					'request_uri'	=> 'like',
 				),
 			))
-			->user('user_id')
-			->text('login')
-			->link('group', './?object=user_groups&action=edit&id=%d', main()->get_data('user_groups'))
+			->admin('admin_id')
 			->link('ip', './?object='.$_GET['object'].'&action=show_for_ip&id=%d')
 			->date('date', array('format' => 'full', 'nowrap' => 1))
 			->text('user_agent')
 			->text('referer')
+			->text('request_uri')
+			->text('exec_time')
+			->text('num_dbq')
+			->text('page_size')
 		;
 	}
 
 	/**
-	* Show log logins for selected user
 	*/
-	function show_for_user () {
+	function show_for_admin() {
 		$_GET['page'] = 'clear';
-		$_GET['filter'] = 'user_id:'.intval($_GET['id']);
+		$_GET['filter'] = 'admin_id:'.intval($_GET['id']);
 		return $this->filter_save();
 	}
 
 	/**
-	* Show log logins for selected IP address
 	*/
-	function show_for_ip () {
+	function show_for_ip() {
 		$_GET['page'] = 'clear';
 		$_GET['filter'] = 'ip:'.preg_replace('~[^0-9\.]+~ims', '', $_GET['id']);
 		return $this->filter_save();
@@ -60,32 +60,27 @@ class yf_log_user_auth {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$order_fields = array();
-		foreach (explode('|', 'user_id|login|group|date|ip|user_agent|referer') as $f) {
+		foreach (explode('|', 'admin_id|login|group|date|ip|user_agent|referer') as $f) {
 			$order_fields[$f] = $f;
 		}
 		return form($r, array(
 				'selected'	=> $_SESSION[$filter_name],
 				'class' => 'form-vertical',
 			))
-			->number('user_id')
-			->text('login')
+			->number('admin_id')
 			->text('ip')
-			->select_box('group', main()->get_data('user_groups'), array('show_text' => 1))
+			->text('user_agent')
+			->text('referer')
+			->text('request_uri')
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}
 
-	/**
-	*/
-	function _hook_widget__user_auth_log ($params = array()) {
+	function _hook_widget__admin_access_log ($params = array()) {
 // TODO
 	}
+
 }
