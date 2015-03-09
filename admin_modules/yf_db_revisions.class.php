@@ -8,7 +8,7 @@ class yf_db_revisions {
 	*/
 	function show() {
 		return table('SELECT * FROM '.db('db_revisions'), array(
-				'filter' => $_SESSION[$_GET['object'].'__show'],
+				'filter' => true,
 				'filter_params' => array(
 					'user_id'	=> array('eq','user_id'),
 					'add_date'	=> array('like','date'),
@@ -85,11 +85,6 @@ class yf_db_revisions {
 	/**
 	*/
 	function _show_filter() {
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$filters = array(
 			'show'	=> function($filter_name, $replace) {
 				$fields = array('id','date','query_method','query_table','ip', 'user_id');
@@ -101,9 +96,7 @@ class yf_db_revisions {
 				$tables = db()->get_2d('SELECT DISTINCT query_table FROM '.db('db_revisions'));
 				$table_fields = array_combine($tables, $tables);
 				return form($replace, array(
-						'selected' => $_SESSION[$filter_name],
-						'class' => 'form-vertical',
-#						'class' => 'form-horizontal form-condensed'
+						'filter' => true,
 					))
 					->text('add_date')
 					->text('user_id')
@@ -116,7 +109,7 @@ class yf_db_revisions {
 		$action = $_GET['action'];
 		if (isset($filters[$action])) {
 			return $filters[$action]($filter_name, $replace)
-				->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+				->order_box()
 				->save_and_clear();
 		}
 		return false;

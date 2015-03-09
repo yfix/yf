@@ -12,11 +12,9 @@ class yf_admin_wall {
 	/**
 	*/
 	function show() {
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-
 		$sql = 'SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' ORDER BY add_date DESC';
 		return table($sql, array(
-				'filter' => $_SESSION[$filter_name],
+				'filter' => true,
 				'filter_params' => array(
 					'message'	=> 'like',
 				),
@@ -34,9 +32,9 @@ class yf_admin_wall {
 	* Proxy between real link and wall contents
 	*/
 	function view() {
-		$_GET['id'] = intval($_GET['id']);
-		if ($_GET['id']) {
-			$msg = db()->get('SELECT * FROM '.db('admin_walls').' WHERE user_id='.intval(main()->ADMIN_ID).' AND id='.intval($_GET['id']).' LIMIT 1');
+		$id = intval($_GET['id']);
+		if ($id) {
+			$msg = db()->from('admin_walls')->where('user_id', (int)main()->ADMIN_ID)->where($id)->get();
 		}
 		if (!$msg['id']) {
 			return _e('Wrong message id');
@@ -51,7 +49,7 @@ class yf_admin_wall {
 			$link = $module->$hook_name($msg);
 		}
 		if (!$link) {
-			$link = './?object='.$object.'&action='.$action.'&id='.$object_id;
+			$link = url('/'.$object.'/'.$action.'/'.$object_id);
 		}
 		return js_redirect($link);
 	}
@@ -79,25 +77,19 @@ class yf_admin_wall {
 		if (!in_array($_GET['action'], array('show'))) {
 			return false;
 		}
-		$filter_name = $_GET['object'].'__'.$_GET['action'];
-		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
-		);
 		$order_fields = array();
 		foreach (explode('|', 'add_date|message|object|action|object_id|admin_id') as $v) {
 			$order_fields[$v] = $v;
 		}
 		return form($r, array(
-				'selected'	=> $_SESSION[$filter_name],
-				'class' => 'form-vertical',
+				'filter' => true,
 			))
 			->text('message')
 			->text('object')
 			->text('action')
 			->integer('object_id')
 			->select_box('order_by', $order_fields, array('show_text' => 1))
-			->radio_box('order_direction', array('asc'=>'Ascending','desc'=>'Descending'), array('horizontal' => 1, 'translate' => 1))
+			->order_box()
 			->save_and_clear();
 		;
 	}

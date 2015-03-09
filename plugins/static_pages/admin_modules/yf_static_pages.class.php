@@ -29,15 +29,14 @@ class yf_static_pages {
 			$in = common()->make_translit(_strtolower($in));
 		}
 		$in = preg_replace('/[^a-z0-9\_\-]/i', '_', strtolower($in));
-		$in = str_replace(array('__', '___'), '_', $in);
+		$in = trim(str_replace(array('__', '___'), '_', $in), '_');
 		return $in;
 	}
 
 	/**
 	*/
 	function show() {
-		$sql = 'SELECT * FROM '.db('static_pages');
-		return table($sql, array(
+		return table(db()->from('static_pages'), array(
 				'filter' => true,
 				'filter_params' => array(
 					'name'	=> 'like',
@@ -46,16 +45,16 @@ class yf_static_pages {
 			->text('name')
 			->btn_edit(array('no_ajax' => 1))
 			->btn_delete()
-			->btn('View', './?object='.$_GET['object'].'&action=view&id=%d')
+			->btn('View', url('/@object/view/%d'))
 			->btn_active()
-			->footer_link('Add', './?object='.$_GET['object'].'&action=add');
+			->footer_link('Add', url('/@object/add'));
 	}
 
 	/**
 	*/
 	function add() {
 		$a = (array)$_POST + (array)$a;
-		$a['back_link'] = url_admin('/@object');
+		$a['back_link'] = url('/@object');
 		$_this = $this;
 		return form($a)
 			->validate(array(
@@ -70,7 +69,7 @@ class yf_static_pages {
 				$id = db()->insert_id();
 				common()->admin_wall_add(array('static page added: '.$name, $id));
 				cache_del('static_pages_names');
-				js_redirect(url_admin('/@object/edit/'.$id));
+				js_redirect(url('/@object/edit/'.$id));
 			})
 			->text('name')
 			->save_and_back()
@@ -85,7 +84,7 @@ class yf_static_pages {
 			return _e('No info');
 		}
 		$a = (array)$_POST + (array)$a;
-		$a['back_link'] = url_admin('/@object');
+		$a['back_link'] = url('/@object');
 		$_this = $this;
 		$cke_config = array(
 			'toolbar' => array(
@@ -136,7 +135,7 @@ class yf_static_pages {
 			main()->NO_GRAPHICS = true;
 			echo $page_name;
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -153,7 +152,7 @@ class yf_static_pages {
 			main()->NO_GRAPHICS = true;
 			echo intval( ! $a['active']);
 		} else {
-			return js_redirect(url_admin('/@object'));
+			return js_redirect(url('/@object'));
 		}
 	}
 
@@ -166,8 +165,8 @@ class yf_static_pages {
 		}
 		$body = stripslashes($a['text']);
 		$replace = array(
-			'form_action'	=> url_admin('/@object/edit/'.$a['id']),
-			'back_link'		=> url_admin('/@object'),
+			'form_action'	=> url('/@object/edit/'.$a['id']),
+			'back_link'		=> url('/@object'),
 			'body'			=> $body,
 		);
 		return form($replace)
@@ -253,9 +252,8 @@ class yf_static_pages {
 			$sql->limit($avail_limits[$config['limit']]);
 		}
 		return table($sql, array('no_header' => 1, 'btn_no_text' => 1))
-			->link('name', './?object='.$_GET['object'].'&action=view&id=%d', '', array('width' => '100%'))
+			->link('name', url('/@object/view/%d'), '', array('width' => '100%'))
 			->btn_edit()
 		;
 	}
-
 }

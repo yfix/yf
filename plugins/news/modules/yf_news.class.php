@@ -30,10 +30,12 @@ class yf_news extends yf_module {
 		}
 		foreach ((array)$news_array as $news_info) {
 			$news_info['head_text'] = nl2br($news_info['head_text']);
+			$news_info['full_text'] = nl2br($news_info['full_text']);
 			$replace2 = array(
 				'title'			=> _prepare_html($news_info['title'], 0),
 				'add_date'		=> _format_date($news_info['add_date'], 'long'),
 				'head_text'		=> $news_info['head_text'],
+				'full_text'		=> $news_info['full_text'],
 				'full_link'		=> './?object='.$_GET['object'].'&action=full_news&id='.$news_info['id'],
 				'num_comments'	=> intval(isset($num_comments[$news_info['id']]) ? $num_comments[$news_info['id']] : 0),
 			);
