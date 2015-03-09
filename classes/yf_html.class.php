@@ -698,13 +698,13 @@ class yf_html {
 			}
 			$class_item = $v['class_item'] ?: $extra['class_item'];
 			$badge = $v['badge'] ? ' <sup class="badge badge-'.($v['class_badge'] ?: 'info').'">'.$v['badge'].'</sup>' : '';
-			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'">'. $badge. ($v['link'] ? '<a href="'.$v['link'].'">'.$body.'</a>' : $body).'</li>';
+			$items[] = '<li class="'. ($class_item ? ' '.$class_item : '').'"'. ($v['id'] ? ' id="'.$v['id'].'"' : '').'>'. $badge. ($v['link'] ? '<a href="'.$v['link'].'">'.$body.'</a>' : $body).'</li>';
 			if (is_array($v['sub'])) {
 				$items[] = $this->li($v['sub'], $extra);
 				continue;
 			}
 		}
-		return '<ul class="'.($extra['class'] ? ' '.$extra['class'] : '').'" id="'.$extra['id'].'">'.implode(PHP_EOL, (array)$items).'</ul>';
+		return '<ul class="'.($extra['class'] ? ' '.$extra['class'] : '').'">'.implode(PHP_EOL, (array)$items).'</ul>';
 	}
 
 	/**
