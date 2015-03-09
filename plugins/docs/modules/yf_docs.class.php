@@ -33,7 +33,7 @@ class yf_docs {
 		}
 		return ''
 			. '<h1>Docs</h1>' . $this->_show_docs()
-#			. '<h1>Assets</h1>' . $this->assets()
+			. '<h1><a href="'.url('/@object/assets').'">Assets</a></h1>' 
 		;
 	}
 
@@ -64,15 +64,37 @@ class yf_docs {
 
 	/***/
 	public function assets() {
+		asset('font-awesome4');
+
 		$yf_len = strlen(realpath(YF_PATH));
 		foreach ($this->_load_predefined_assets() as $asset) {
+			$name = $asset['name'];
+			$sub = array();
+			$asset_github_link = 'https://github.com/yfix/yf/tree/master/'.ltrim(substr(realpath($asset['path']), $yf_len), '/');
+			$sub[] = '<i class="fa fa-github fa-lg"></i> <a href="'.$asset_github_link.'">'.$asset_github_link.'</a>';
+			$content = $asset['content'];
+			$info = is_array($content) ? $content['info'] : array();
+			if ($info['name']) {
+				$sub[] = '<b>'.t('name').'</b>: '.$info['name'];
+			}
+			if ($info['desc']) {
+				$sub[] = '<b>'.t('desc').'</b>: '.$info['desc'];
+			}
+			if ($info['url']) {
+				$sub[] = '<b>'.t('url').'</b>: <a href="'._prepare_html($info['url']).'">'._prepare_html($info['url']).'</a>';
+			}
+			if ($info['git']) {
+				$sub[] = '<b>'.t('git').'</b>: <a href="'.$info['git'].'">'.$info['git'].'</a>';
+			}
 			$data[++$i] = array(
-				'name'	=> $asset['name'],
-#				'link'	=> url('/@object/show/'.$name),
-				'link'	=> 'https://github.com/yfix/yf/tree/master/'.ltrim(substr(realpath($asset['path']), $yf_len), '/'),
+				'name'	=> $name,
+				'link'	=> url('/@object/@action/#'.$name),
+				'sub'	=> $sub,
+				'id'	=> $name,
+				'class'	=> 'btn btn-default btn-small btn-sm',
 			);
 		}
-		return _class('html')->navlist($data);
+		return _class('html')->li($data);
 	}
 
 	/***/
