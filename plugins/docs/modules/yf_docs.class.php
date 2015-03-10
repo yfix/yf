@@ -116,13 +116,14 @@ class yf_docs {
 	public function form() {
 		$id = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
 		if (strlen($id)) {
-			return module($id)->show();
+			return _class($id, YF_PATH.'.dev/samples/form2/')->show();
 		}
 		$ext = '.class.php';
 		$ext_len = strlen($ext);
 		$globs = array(
-			'app'		=> APP_PATH.'modules/*'.$ext,
-			'project'	=> PROJECT_PATH.'modules/*'.$ext,
+			'yf_dev'	=> YF_PATH.'.dev/samples/form2/*'.$ext,
+#			'app'		=> APP_PATH.'modules/*'.$ext,
+#			'project'	=> PROJECT_PATH.'modules/*'.$ext,
 		);
 		$names = array();
 		foreach ($globs as $glob) {
@@ -149,13 +150,14 @@ class yf_docs {
 	public function table() {
 		$id = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
 		if (strlen($id)) {
-			return module($id)->show();
+			return _class($id, YF_PATH.'.dev/samples/table2/')->show();
 		}
 		$ext = '.class.php';
 		$ext_len = strlen($ext);
 		$globs = array(
-			'app'		=> APP_PATH.'modules/*'.$ext,
-			'project'	=> PROJECT_PATH.'modules/*'.$ext,
+			'yf_dev'	=> YF_PATH.'.dev/samples/table2/*'.$ext,
+#			'app'		=> APP_PATH.'modules/*'.$ext,
+#			'project'	=> PROJECT_PATH.'modules/*'.$ext,
 		);
 		$names = array();
 		foreach ($globs as $glob) {
@@ -180,7 +182,7 @@ class yf_docs {
 
 	/***/
 	public function html() {
-		return module('test_html')->show();
+		return _class('test_html', YF_PATH.'.dev/samples/classes/')->show();
 	}
 
 	/***/
@@ -237,6 +239,11 @@ class yf_docs {
 
 		$name = preg_replace('~[^a-z0-9/_-]+~ims', '', $_GET['id']);
 		if (strlen($name)) {
+			$dev_path = YF_PATH.'.dev/samples/classes/';
+			$dev_class_path = $dev_path. $name. '.class.php';
+			if (file_exists($dev_class_path)) {
+				return _class($name, $dev_path)->show();
+			}
 			$f = $dir. $name. '.stpl';
 			if (!file_exists($f)) {
 				return _404('Not found');
@@ -338,17 +345,38 @@ class yf_docs {
 	public function _hook_side_column() {
 		$url = url('/@object');
 		$names = array();
-		foreach (array_merge((array)glob(APP_PATH.'modules/*.class.php'),(array)glob(PROJECT_PATH.'modules/*.class.php')) as $cls) {
-			$cls = basename($cls);
-			if ($cls == __CLASS__) {
-				continue;
+
+		$ext = '.class.php';
+		$ext_len = strlen($ext);
+		$globs = array(
+			'yf_dev_form2'		=> YF_PATH.'.dev/samples/form2/*'.$ext,
+			'yf_dev_table2'		=> YF_PATH.'.dev/samples/table2/*'.$ext,
+			'yf_dev_classes'	=> YF_PATH.'.dev/samples/classes/*'.$ext,
+#			'app'		=> APP_PATH.'modules/*'.$ext,
+#			'project'	=> PROJECT_PATH.'modules/*'.$ext,
+		);
+		$names = array();
+		foreach ($globs as $glob) {
+			foreach (glob($glob) as $cls) {
+				$cls = basename($cls);
+				if ($cls == __CLASS__) {
+					continue;
+				}
+				$name = substr($cls, 0, -$ext_len);
+				$names[$name] = $name;
 			}
-			$name = substr($cls, 0, -strlen('.class.php'));
-			$names[$name] = $name;
 		}
 		$links = array();
 		foreach ($names as $name) {
-			$links[url('/'.$name)] = t($name);
+			$url = '/';
+			if (substr($name, 0, strlen('table2_')) === 'table2_') {
+				$url = '/@object/table/';
+			} elseif (substr($name, 0, strlen('form2_')) === 'form2_') {
+				$url = '/@object/form/';
+			} else {
+				$url = '/@object/misc/';
+			}
+			$links[url($url. $name)] = t($name);
 		}
 		return html()->navlist($links);
 	}
