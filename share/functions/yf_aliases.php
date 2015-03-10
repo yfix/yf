@@ -177,13 +177,18 @@ if (!function_exists('sass')) {
 if (!function_exists('less')) {
 	function less($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'less', $content_type, $params); }
 }
+if (!function_exists('coffee')) {
+	function coffee($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'coffee', $content_type, $params); }
+}
 if (!function_exists('jade')) {
 	function jade($content, $content_type = 'auto', $params = array()) {
 // TODO
 	}
 }
-if (!function_exists('coffee')) {
-	function coffee($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'coffee', $content_type, $params); }
+if (!function_exists('haml')) {
+	function haml($content, $content_type = 'auto', $params = array()) {
+// TODO
+	}
 }
 if (!function_exists('require_php_lib')) {
 	function require_php_lib($name, $params = array()) { return main()->require_php_lib($name, $params); }
@@ -200,6 +205,12 @@ if (!function_exists('js_redirect')) {
 if (!function_exists('redirect')) {
 	function redirect($location, $rewrite = true, $text = '', $ttl = 3) { return common()->redirect($location, $rewrite, 'html', $text, $ttl); }
 }
+if (!function_exists('_302')) {
+	function _302($url, $text = '') { return common()->redirect(array('url' => $url, 'text' => $text, 'type' => '302')); }
+}
+if (!function_exists('_301')) {
+	function _301($url, $text = '') { return common()->redirect(array('url' => $url, 'text' => $text, 'type' => '301')); }
+}
 if (!function_exists('_e')) {
 	function _e($text = '', $clear_error = true) { return common()->_show_error_message($text, $clear_error); }
 }
@@ -208,6 +219,12 @@ if (!function_exists('_re')) {
 }
 if (!function_exists('_ee')) {
 	function _ee($error_key = '') { return common()->_error_exists($error_key); }
+}
+if (!function_exists('_404')) {
+	function _404($text = '') { return common()->error_404($text); }
+}
+if (!function_exists('_403')) {
+	function _403($text = '') { return common()->error_403($text); }
 }
 if (!function_exists('user')) {
 	function user($user_id, $fields = 'full', $params = '', $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, 'user') ? $_common->user($user_id, $fields, $params, $return_sql) : false; }
@@ -241,6 +258,7 @@ if (!function_exists('_check_rights')) {
 }
 // Execute command on remote server using SSH
 if (!function_exists('_ssh_exec')) {
+// TODO: rename into just "ssh" and reimplement with laravel-style
 	function _ssh_exec($server_info = array(), $cmd = '') { return _class('ssh')->exec($server_info, $cmd); }
 }
 if (!function_exists('_add_get')) {
