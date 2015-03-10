@@ -1007,8 +1007,20 @@ class yf_main {
 			$storages['dev_app'] = array(APP_PATH. $project_path_dev);
 			$storages['dev_project'] = array(PROJECT_PATH. $project_path_dev);
 		}
-		if (strlen($SITE_PATH. $site_path) && ($SITE_PATH. $site_path) != (PROJECT_PATH. $project_path)) {
-			$storages['site'] = array($SITE_PATH. $site_path);
+		if (strlen($site_path)) {
+			$def_path = 'classes/';
+			if (substr($site_path, 0, strlen($def_path)) !== $def_path) {
+				if (strlen(YF_PATH) > 3 && substr($site_path, 0, strlen(YF_PATH)) === YF_PATH) {
+					$storages['site'] = array($site_path);
+				} elseif (strlen(APP_PATH) > 3 && substr($site_path, 0, strlen(APP_PATH)) === APP_PATH) {
+					$storages['site'] = array($site_path);
+				} elseif (strlen(PROJECT_PATH) > 3 && substr($site_path, 0, strlen(PROJECT_PATH)) === PROJECT_PATH) {
+					$storages['site'] = array($site_path);
+				}
+			}
+			if (!isset($storages['site']) && strlen($SITE_PATH. $site_path) && ($SITE_PATH. $site_path) != (PROJECT_PATH. $project_path)) {
+				$storages['site'] = array($SITE_PATH. $site_path);
+			}
 		}
 		$storages['app_site_hook'] = array(APP_PATH. $site_path, $cur_hook_prefix);
 		$storages['app'] = array(APP_PATH. $project_path);
