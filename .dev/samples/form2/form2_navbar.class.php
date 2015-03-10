@@ -1,7 +1,7 @@
 <?php
 
 class form2_navbar {
-	function go() {
+	function show() {
 #		$body[] = form_item()->country_box(array('selected' => 'US'));
 		$body[] = form_item()->country_box(array('selected' => 'US', 'renderer' => 'div_box'));
 		$body[] = form_item()->language_box(array('selected' => 'ru', 'renderer' => 'div_box'));
