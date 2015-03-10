@@ -367,16 +367,21 @@ class yf_docs {
 			}
 		}
 		$links = array();
+		$links[url('/@object/assets')] = t('assets');
+		$links[url('/@object/services')] = t('services');
+		$links[url('/@object/misc')] = t('misc');
 		foreach ($names as $name) {
 			$url = '/';
 			if (substr($name, 0, strlen('table2_')) === 'table2_') {
-				$url = '/@object/table/';
+				$url = '/@object/table/'. $name;
 			} elseif (substr($name, 0, strlen('form2_')) === 'form2_') {
-				$url = '/@object/form/';
+				$url = '/@object/form/'. $name;
+			} elseif (substr($name, 0, strlen('test_html')) === 'test_html') {
+				$url = '/@object/html/';
 			} else {
-				$url = '/@object/misc/';
+				$url = '/@object/misc/'. $name;
 			}
-			$links[url($url. $name)] = t($name);
+			$links[url($url)] = t($name);
 		}
 		return html()->navlist($links);
 	}
