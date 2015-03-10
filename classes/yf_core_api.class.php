@@ -496,7 +496,16 @@ class yf_core_api {
 	/**
 	*/
 	function get_assets() {
+// TODO: other folders, plugins
 		$folder = 'share/assets/';
+		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
+	}
+
+	/**
+	*/
+	function get_services() {
+// TODO: other folders, plugins
+		$folder = 'share/services/';
 		return $this->get_classes_by_params(array('folder' => $folder, 'suffix' => '.php'));
 	}
 
