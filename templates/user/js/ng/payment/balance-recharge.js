@@ -193,7 +193,8 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, PaymentBalanceRech
 	};
 	// balance api
 	var BalanceApi = {
-		timer: {
+		_timer : null,
+		timer  : {
 			id      : null,
 			timeout : 5000,
 			cancel  : function() {
@@ -201,39 +202,40 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, PaymentBalanceRech
 			},
 		},
 		operation: function( options ) {
-			var $this = this;
+			var $this             = this;
 			$scope.block_wait     = true;
 			$scope.status         = false;
 			$scope.status_message = null;
-			var result = PaymentApi.operation( options );
-			result.$promise.then(
-				function( r ) {
-					$scope.block_wait = false;
-					if( r.response && r.response.payment ) {
-						if( r.response.payment ) {
+			$timeout.cancel( $this._timer );
+			$this._timer = $timeout( function() {
+				var result = PaymentApi.operation( options );
+				result.$promise.then(
+					function( r ) {
+						$scope.block_wait = false;
+						if( r.response && r.response.payment ) {
 							angular.extend( $scope.payment, r.response.payment );
 							PaymentBalance.load({ account: r.response.payment.account });
+						} else {
+							$scope.status_message = 'Ошибка при выполнении операции';
+							$log.error( 'balance->operation is fail operation:', r );
 						}
-					} else {
-						$scope.status_message = 'Ошибка при выполнении операции';
-						$log.error( 'balance->operation is fail operation:', r );
+					},
+					function( r ) {
+						$scope.block_wait = false;
+						if( r.status && r.status == 403 ) {
+							$scope.status_message = 'Требуется авторизация';
+							// reload page for login
+							$this.timer.cancel();
+							$this.timer.id = $timeout( function() {
+								window.location.href = ( '{url( /login_form )}' );
+							}, 3000 );
+						} else {
+							$scope.status_message = 'Ошибка при выполнении запроса';
+							$log.error( 'balance->operation is fail transport:', r );
+						}
 					}
-				},
-				function( r ) {
-					$scope.block_wait = false;
-					if( r.status && r.status == 403 ) {
-						$scope.status_message = 'Требуется авторизация';
-						// reload page for login
-						$this.timer.cancel();
-						$this.timer.id = $timeout( function() {
-							window.location.href = ( '{url( /login_form )}' );
-						}, 3000 );
-					} else {
-						$scope.status_message = 'Ошибка при выполнении запроса';
-						$log.error( 'balance->operation is fail transport:', r );
-					}
-				}
-			);
+				);
+			}, 500 );
 		},
 		recharge: function( options ) {
 			var $this = this;
@@ -349,17 +351,18 @@ $log.error( 'payout', r );
 		BalanceApi.operation({ page: $scope.payment.operation_pagination.pages });
 	};
 	$scope.operation = function( direction ) {
-		var payment      = $scope.payment;
-		var count        = payment.operation.length;
-		var page_per     = payment.operation_pagination.page_per;
-		var page_current = payment.operation_pagination.page;
-		// next
-		if( direction > 0 && count < page_per ) { return( false ); }
-		// previous
-		if( direction < 0 && page_current <= 1 ) { return( false ); }
-		// request
-		var page = page_current + direction;
+		var payment  = $scope.payment;
+		var page     = +payment.operation_pagination.page;
+		$scope.operation_page_change( page + direction );
+	};
+	$scope.operation_page_change = function( value ) {
+		var $this   = this;
+		var payment = $scope.payment;
+		var pages   = +payment.operation_pagination.pages;
+		var page   = +value;
+		if( page < 1 || page > pages ) { return( false ); }
 		BalanceApi.operation({ page: page });
+		return( true );
 	};
 	// init
 	$scope.block_wait = false;
