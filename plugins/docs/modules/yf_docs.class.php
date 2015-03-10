@@ -31,9 +31,12 @@ class yf_docs {
 		if ($_GET['id']) {
 			return $this->view();
 		}
-		return ''
-			. '<h1>Docs</h1>' . $this->_show_docs()
-			. '<h1><a href="'.url('/@object/assets').'">Assets</a></h1>' 
+		return implode(PHP_EOL, array(
+			'<h1><a href="'.url('/@object/show_docs').'">Docs</a></h1>',
+			$this->show_docs(),
+			'<h1><a href="'.url('/@object/assets').'">Assets</a></h1>',
+			$this->assets(),
+		));
 		;
 	}
 
@@ -50,7 +53,7 @@ class yf_docs {
 	}
 
 	/***/
-	public function _show_docs() {
+	public function show_docs() {
 		foreach (glob($this->docs_dir.'*.stpl') as $path) {
 			$f = basename($path);
 			$name = substr($f, 0, -strlen('.stpl'));
@@ -59,7 +62,7 @@ class yf_docs {
 				'link'	=> url('/@object/show/'.$name),
 			);
 		}
-		return _class('html')->tree($data, array('draggable' => false));
+		return _class('html')->li($data);
 	}
 
 	/***/
