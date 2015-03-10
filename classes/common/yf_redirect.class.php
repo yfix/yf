@@ -114,10 +114,10 @@ class yf_redirect {
 		if (is_array($location)) {
 			$params += $location;
 			$rewrite = isset($params['rewrite']) ? $params['rewrite'] : $rewrite;
-			$redirect_type = isset($params['redirect_type']) ? $params['redirect_type'] : $redirect_type;
+			$redirect_type = isset($params['type']) ? $params['type'] : (isset($params['redirect_type']) ? $params['redirect_type'] : $redirect_type);
 			$text = isset($params['text']) ? $params['text'] : $text;
 			$ttl = isset($params['ttl']) ? $params['ttl'] : $ttl;
-			$location = $params['location'];
+			$location = isset($params['location']) ? $params['location'] : $params['url'];
 		}
 		// Avoid rewriting by mistake
 		if (strpos($location, 'http://') === 0 || strpos($location, 'https://') === 0) {
@@ -210,8 +210,10 @@ class yf_redirect {
 			$body = $this->_redirect_js($location, $text, $ttl, $params);
 		} elseif ($redirect_type == 'html') {
 			$body = $this->_redirect_html($location, $text, $ttl, $params);
-		} elseif ($redirect_type == 'http') {
-			$body = $this->_redirect_http($location, $text, $ttl, $params);
+		} elseif ($redirect_type == 'http' || $redirect_type == '302') {
+			$body = $this->_redirect_http_302($location, $text, $ttl, $params);
+		} elseif ($redirect_type == '301') {
+			$body = $this->_redirect_http_301($location, $text, $ttl, $params);
 		}
 		$this->_save_log(array(
 			'url_to'	=> $location,
@@ -254,10 +256,17 @@ class yf_redirect {
 	}
 
 	/**
-	* HTTP redirect method (using response headers)
 	*/
-	function _redirect_http ($location, $text = '', $ttl = 3, $params = array()) {
+	function _redirect_http_302 ($location, $text = '', $ttl = 3, $params = array()) {
 		header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 302 Found');
+		header('Location: '.$location);
+		return '';
+	}
+
+	/**
+	*/
+	function _redirect_http_301 ($location, $text = '', $ttl = 3, $params = array()) {
+		header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 301 Moved Permanently');
 		header('Location: '.$location);
 		return '';
 	}
