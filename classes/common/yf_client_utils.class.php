@@ -117,6 +117,7 @@ class yf_client_utils {
 	/**
 	* Get browser detailed info
 	*/
+// TODO: replace this with  require_php_lib('mobile_detect')
 // TODO: add unit tests for this
 	function _get_browser_info () {
 		if (!empty($_SERVER['HTTP_USER_AGENT'])) {
