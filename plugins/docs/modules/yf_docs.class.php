@@ -36,27 +36,26 @@ class yf_docs {
 	/***/
 	public function show() {
 		if ($_GET['id']) {
-			return $this->view();
+			return $this->misc();
 		}
-		return implode(PHP_EOL, array(
-			'<h2><a href="'.url('/@object/assets').'">Assets</a></h2>',
-			'<h2><a href="'.url('/@object/services').'">Services</a></h2>',
-			'<h2><a href="'.url('/@object/form').'">Form</a></h2>',
-			'<h2><a href="'.url('/@object/table').'">Table</a></h2>',
-			'<h2><a href="'.url('/@object/html').'">Html</a></h2>',
-#			'<h2><a href="'.url('/@object/db').'">Database</a></h2>',
-			'<h2><a href="'.url('/@object/misc').'">Miscellaneous</a></h2>',
-		));
+		$a = array();
+		foreach (get_class_methods($this) as $m) {
+			if ($m[0] === '_' || $m === __FUNCTION__) {
+				continue;
+			}
+			$a[$m] = '<h2><a href="'.url('/@object/'.$m).'">'.ucfirst($m).'</a></h2>';
+		}
+		return implode(PHP_EOL, $a);
 	}
 
 	/***/
 	public function assets() {
 		asset('font-awesome4');
-		foreach ($this->_get_assets() as $asset) {
-			$name = $asset['name'];
+		foreach ($this->_get_assets() as $a) {
+			$name = $a['name'];
 			$sub = array();
-			$sub[] = $this->_github_link($asset['path']);
-			$content = $asset['content'];
+			$sub[] = $this->_github_link($a['path']);
+			$content = $a['content'];
 			$info = is_array($content) ? $content['info'] : array();
 			if ($info['name']) {
 				$sub[] = '<b>'.t('name').'</b>: '.$info['name'];
@@ -70,7 +69,7 @@ class yf_docs {
 			if ($info['git']) {
 				$sub[] = '<b>'.t('git').'</b>: <a href="'.$info['git'].'">'.$info['git'].'</a>';
 			}
-			$data[++$i] = array(
+			$data[$name] = array(
 				'name'	=> $name,
 				'link'	=> url('/@object/@action/#'.$name),
 				'sub'	=> $sub,
@@ -78,17 +77,17 @@ class yf_docs {
 #				'class'	=> 'btn btn-default btn-small btn-sm',
 			);
 		}
-		return _class('html')->li($data);
+		return html()->li($data);
 	}
 
 	/***/
 	public function services() {
 		asset('font-awesome4');
-		foreach ($this->_get_services() as $service) {
-			$name = $service['name'];
+		foreach ($this->_get_services() as $a) {
+			$name = $a['name'];
 			$sub = array();
-			$sub[] = $this->_github_link($service['path']);
-			$content = $service['content'];
+			$sub[] = $this->_github_link($a['path']);
+			$content = $a['content'];
 			$info = is_array($content) ? $content['info'] : array();
 			if ($info['name']) {
 				$sub[] = '<b>'.t('name').'</b>: '.$info['name'];
@@ -102,7 +101,7 @@ class yf_docs {
 			if ($info['git']) {
 				$sub[] = '<b>'.t('git').'</b>: <a href="'.$info['git'].'">'.$info['git'].'</a>';
 			}
-			$data[++$i] = array(
+			$data[$name] = array(
 				'name'	=> $name,
 				'link'	=> url('/@object/@action/#'.$name),
 				'sub'	=> $sub,
@@ -110,68 +109,124 @@ class yf_docs {
 #				'class'	=> 'btn btn-default btn-small btn-sm',
 			);
 		}
-		return _class('html')->li($data);
+		return html()->li($data);
 	}
 
 	/***/
 	public function form() {
-// TODO
+		$id = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
+		if (strlen($id)) {
+			return module($id)->show();
+		}
+		$ext = '.class.php';
+		$ext_len = strlen($ext);
+		$globs = array(
+			'app'		=> APP_PATH.'modules/*'.$ext,
+			'project'	=> PROJECT_PATH.'modules/*'.$ext,
+		);
+		$names = array();
+		foreach ($globs as $glob) {
+			foreach (glob($glob) as $cls) {
+				$cls = basename($cls);
+				if ($cls == __CLASS__ || false === strpos($cls, __FUNCTION__)) {
+					continue;
+				}
+				$name = substr($cls, 0, -$ext_len);
+				$names[$name] = $name;
+			}
+		}
+		$links = array();
+		foreach ($names as $name) {
+			$data[$name] = array(
+				'name'	=> $name,
+				'link'	=> url('/@object/@action/'. $name),
+			);
+		}
+		return html()->li($data);
 	}
 
 	/***/
 	public function table() {
-// TODO
+		$id = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
+		if (strlen($id)) {
+			return module($id)->show();
+		}
+		$ext = '.class.php';
+		$ext_len = strlen($ext);
+		$globs = array(
+			'app'		=> APP_PATH.'modules/*'.$ext,
+			'project'	=> PROJECT_PATH.'modules/*'.$ext,
+		);
+		$names = array();
+		foreach ($globs as $glob) {
+			foreach (glob($glob) as $cls) {
+				$cls = basename($cls);
+				if ($cls == __CLASS__ || false === strpos($cls, __FUNCTION__)) {
+					continue;
+				}
+				$name = substr($cls, 0, -$ext_len);
+				$names[$name] = $name;
+			}
+		}
+		$links = array();
+		foreach ($names as $name) {
+			$data[$name] = array(
+				'name'	=> $name,
+				'link'	=> url('/@object/@action/'. $name),
+			);
+		}
+		return html()->li($data);
 	}
 
 	/***/
 	public function html() {
-// TODO
+		return module('test_html')->show();
 	}
 
 	/***/
-	public function db() {
+#	public function db() {
 // TODO
-	}
+#	}
 
 	/***/
-	public function orm() {
+#	public function orm() {
 // TODO
-	}
+#	}
 
 	/***/
-	public function common() {
+#	public function common() {
 // TODO
-	}
+#	}
 
 	/***/
-	public function main() {
+#	public function main() {
 // TODO
-	}
+#	}
 
 	/***/
-	public function aliases() {
+#	public function aliases() {
 // TODO
-	}
+#	}
 
 	/***/
-	public function fast_init() {
+#	public function fast_init() {
 // TODO
-	}
+#	}
 
 	/***/
-	public function yf() {
+#	public function yf() {
 // TODO: console tool docs
-	}
+#	}
 
 	/***/
-	public function dir() {
+#	public function dir() {
 // TODO
-	}
+#	}
 
 	/***/
-	public function auth() {
+#	public function auth() {
 // TODO
-	}
+#	}
 
 	/***/
 	public function misc() {
@@ -201,7 +256,7 @@ class yf_docs {
 			);
 		}
 		ksort($data);
-		return _class('html')->li($data);
+		return html()->li($data);
 	}
 
 	/***/
