@@ -6,6 +6,10 @@ class yf_form2_tbl_funcs {
 	* For use inside table item template
 	*/
 	function tbl_link($name, $link, $extra = array(), $replace = array(), $form) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
 		$extra['name'] = $extra['name'] ?: $name;
 		$extra['link'] = $extra['link'] ?: $link;
 		$func = function($extra, $r, $form) {
@@ -30,7 +34,7 @@ class yf_form2_tbl_funcs {
 			$extra['href'] = $link_url;
 			$extra['class'] = $extra['class'] ?: $form->CLASS_BTN_MINI. ($extra['class_add'] ? ' '.$extra['class_add'] : '');
 			$attrs_names = array('id','name','href','class','style','target','alt','title');
-			return ' <a'._attrs($extra, $attrs_names).'><i class="'.$icon.'"></i> '.t($extra['name']).'</a> ';
+			return ' <a'._attrs($extra, $attrs_names).'><i class="'.$icon.'"></i>'. (!$extra['hide_text'] ? ' '.t($extra['name']) : '').'</a> ';
 		};
 		if ($form->_chained_mode) {
 			$form->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -42,7 +46,29 @@ class yf_form2_tbl_funcs {
 	/**
 	* For use inside table item template
 	*/
+	function tbl_link_add($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
+		if (!$name) {
+			$name = 'Add';
+		}
+		$extra['link_variants'] = array('add_link','add_url');
+		if (!isset($extra['icon'])) {
+			$extra['icon'] = _class('table2')->CLASS_ICON_ADD;
+		}
+		return $form->tbl_link($name, $link, $extra, $replace);
+	}
+
+	/**
+	* For use inside table item template
+	*/
 	function tbl_link_edit($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
 		if (!$name) {
 			$name = 'Edit';
 		}
@@ -60,6 +86,10 @@ class yf_form2_tbl_funcs {
 	* For use inside table item template
 	*/
 	function tbl_link_delete($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
 		if (!$name) {
 			$name = 'Delete';
 		}
@@ -77,6 +107,10 @@ class yf_form2_tbl_funcs {
 	* For use inside table item template
 	*/
 	function tbl_link_clone($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
 		if (!$name) {
 			$name = 'Clone';
 		}
@@ -94,6 +128,10 @@ class yf_form2_tbl_funcs {
 	* For use inside table item template
 	*/
 	function tbl_link_view($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
 		if (!$name) {
 			$name = 'View';
 		}
@@ -111,6 +149,10 @@ class yf_form2_tbl_funcs {
 	* For use inside table item template
 	*/
 	function tbl_link_active($name = '', $link = '', $extra = array(), $replace = array(), $form) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = $extra['name'];
+		}
 		$extra['name'] = $extra['name'] ?: ($name ?: 'active');
 		$extra['link'] = $extra['link'] ?: $link;
 		$extra['desc'] = $form->_prepare_desc($extra, $desc);
