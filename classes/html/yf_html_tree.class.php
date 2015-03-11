@@ -52,7 +52,8 @@ class yf_html_tree {
 			);
 			$form_controls = form_item($r)->tbl_link_edit()
 				. form_item($r)->tbl_link_delete()
-				. form_item($r)->tbl_link_clone();
+				. form_item($r)->tbl_link_clone()
+			;
 		}
 		$opened_levels = isset($extra['opened_levels']) ? $extra['opened_levels'] : 1;
 		$is_draggable = isset($extra['draggable']) ? $extra['draggable'] : true;
@@ -82,7 +83,12 @@ class yf_html_tree {
 			if ($item['link']) {
 				$content = '<a href="'.$item['link'].'">'.$content. '</a>';
 			}
-			$controls = $extra['show_controls'] ? str_replace('%d', $id, $form_controls) : '';
+			if (is_callable($extra['show_controls'])) {
+				$func = $extra['show_controls'];
+				$controls = $func($id, $item);
+			} else {
+				$controls = $extra['show_controls'] ? str_replace('%d', $id, $form_controls) : '';
+			}
 			$badge = $item['badge'] ? ' <sup class="badge badge-'.($item['class_badge'] ?: 'info').'">'.$item['badge'].'</sup>' : '';
 			$items[] = '
 				<li id="item_'.$id.'"'.(!$is_draggable ? ' class="not_draggable"' : '').'>
