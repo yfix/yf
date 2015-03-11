@@ -114,7 +114,7 @@ class yf_manage_news {
 	function delete() {
 		$id = (int)$_GET['id'];
 		if ($a = db()->from('news')->whereid($id)->get()) {
-			db()->from('news')->delete($id);
+			db()->delete('news', $id);
 		}
 		return js_redirect(url('/@object'));
 	}

@@ -122,7 +122,7 @@ class yf_admin {
 	function delete() {
 		$id = (int)$_GET['id'];
 		if ($id && $id != 1 && $id != main()->ADMIN_ID) {
-			db()->from('admin')->delete($id);
+			db()->delete('admin', $id);
 			common()->admin_wall_add(array('admin account deleted', $id));
 		}
 		if (main()->is_ajax()) {
