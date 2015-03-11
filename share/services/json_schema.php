@@ -1,13 +1,12 @@
 #!/usr/bin/php
 <?php
 
-$requires = array();
-$git_urls = array('https://github.com/justinrainbow/json-schema.git' => 'json_schema/');
-$autoload_config = array('json_schema/src/JsonSchema/' => 'JsonSchema');
-require __DIR__.'/_config.php';
-
-// Test mode when direct call
-if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
-	$retriever = new JsonSchema\Uri\UriRetriever;
-	var_dump($retriever);
-}
+$config = array(
+	'git_urls' => array('https://github.com/justinrainbow/json-schema.git' => 'json_schema/'),
+	'autoload_config' => array('json_schema/src/JsonSchema/' => 'JsonSchema'),
+	'example' => function() {
+		$retriever = new JsonSchema\Uri\UriRetriever;
+		var_dump($retriever);
+	}
+);
+if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);
