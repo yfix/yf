@@ -1,14 +1,12 @@
 #!/usr/bin/php
 <?php
 
-$requires = array('twig');
-$git_urls = array('https://github.com/symfony/TwigBridge.git' => 'sf_twig_bridge/');
-$autoload_config = array('sf_twig_bridge/' => 'Symfony\Bridge\Twig');
-require __DIR__.'/_config.php';
-
-// Test mode when direct call
-if (!isset($_SERVER['REQUEST_METHOD']) && realpath($argv[0]) === realpath(__FILE__)) {
-
-	passthru('ls -l '.$libs_root.'sf_twig_bridge/');
-
-}
+$config = array(
+	'require_services' => array('twig'),
+	'git_urls' => array('https://github.com/symfony/TwigBridge.git' => 'sf_twig_bridge/'),
+	'autoload_config' => array('sf_twig_bridge/' => 'Symfony\Bridge\Twig'),
+	'example' => function($loader) {
+		passthru('ls -l '.$loader->libs_root.'sf_twig_bridge/');
+	}
+);
+if ($return_config) { return $config; } require_once __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);
