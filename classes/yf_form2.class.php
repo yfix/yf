@@ -2232,6 +2232,12 @@ class yf_form2 {
 
 	/**
 	*/
+	function tbl_link_add($name = '', $link = '', $extra = array(), $replace = array()) {
+		return _class('form2_tbl_funcs', 'classes/form2/')->{__FUNCTION__}($name, $link, $extra, $replace, $this);
+	}
+
+	/**
+	*/
 	function tbl_link_edit($name = '', $link = '', $extra = array(), $replace = array()) {
 		return _class('form2_tbl_funcs', 'classes/form2/')->{__FUNCTION__}($name, $link, $extra, $replace, $this);
 	}
