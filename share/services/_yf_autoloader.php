@@ -19,9 +19,9 @@ class yf_autoloader {
 	public $git_urls = array();
 	public $autoload_config = array();
 	public $pear = array();
+	public $require_services = array();
 	public $manual = array();
 	public $require_once = array();
-	public $require_services = array();
 	public $example = array();
 
 	/***/
@@ -38,9 +38,9 @@ class yf_autoloader {
 		$this->process_git();
 		$this->process_pear();
 		$this->process_yf_autoload();
-		$this->process_require_once();
-		$this->process_manual();
 		$this->process_require_services();
+		$this->process_manual();
+		$this->process_require_once();
 		$this->process_example();
 	}
 
