@@ -8,8 +8,4 @@ $config = array(
 		echo (int)class_exists('ApnsPHP_Push_Server');
 	}
 );
-if ($return_config) {
-	return $config;
-}
-require __DIR__.'/_yf_autoloader.php';
-new yf_autoloader($config);
+if ($return_config) { return $config; } require __DIR__.'/_yf_autoloader.php'; new yf_autoloader($config);
