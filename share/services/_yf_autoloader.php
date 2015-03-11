@@ -4,12 +4,24 @@ class yf_autoloader {
 
 	public $libs_root = '';
 	public $is_console = false;
+	public $config_names = array(
+		'file',
+		'composer_names',
+		'git_urls',
+		'pear',
+		'autoload_config',
+		'require_once',
+		'manual',
+		'require_services',
+		'example',
+	);
 	public $composer_names = array();
 	public $git_urls = array();
 	public $autoload_config = array();
 	public $pear = array();
 	public $manual = array();
-	public $requires = array();
+	public $require_once = array();
+	public $require_services = array();
 	public $example = array();
 
 	/***/
@@ -18,44 +30,46 @@ class yf_autoloader {
 		$this->libs_root = YF_PATH.'libs/';
 		$this->is_console = $_SERVER['argc'] && !isset($_SERVER['REQUEST_METHOD']);
 
-		$this->file = $config['file'];
-		$this->composer_names = $config['composer_names'];
-		$this->git_urls	= $config['git_urls'];
-		$this->autoload_config = $config['autoload_config'];
-		$this->pear = $config['pear'];
-		$this->manual = $config['manual'];
-		$this->requires = $config['requires'];
-		$this->example = $config['example'];
+		foreach ($this->config_names as $name) {
+			$this->$name = $config[$name];
+		}
 
-		$this->process_composer();
 		$this->process_composer();
 		$this->process_git();
 		$this->process_pear();
 		$this->process_yf_autoload();
+		$this->process_require_once();
 		$this->process_manual();
-		$this->process_requires();
+		$this->process_require_services();
 		$this->process_example();
 	}
 
 	/***/
 	public function process_example() {
+		$libs_root = $this->libs_root;
 		$example = $this->example;
 		if (!is_callable($example)) {
 			return false;
 		}
-		if (!isset($_SERVER['REQUEST_METHOD'])/* && realpath($argv[0]) === realpath(__FILE__)*/) {
-			$example($this);
+		if ($this->is_console) {
+			$trace = debug_backtrace();
+			if (realpath($_SERVER['argv'][0]) === realpath($trace[1]['file'])) {
+				try {
+					$example($this);
+				} catch (Exception $e) {
+					var_dump($e);
+				}
+			}
 		}
 	}
 
 	/***/
 	public function process_composer() {
+		$libs_root = $this->libs_root;
 		$composer_names = $this->composer_names;
 		if (!$composer_names) {
 			return false;
 		}
-		$libs_root = $this->libs_root;
-
 		$dir = $libs_root.'vendor/';
 		foreach ((array)$composer_names as $composer_package) {
 			$check_file = $dir. dirname($composer_package).'/'.basename($composer_package).'/';
@@ -72,6 +86,7 @@ class yf_autoloader {
 
 	/***/
 	public function process_git() {
+		$libs_root = $this->libs_root;
 		$git_urls = $this->git_urls;
 		foreach ((array)$git_urls as $git_url => $lib_dir) {
 			$dir = $libs_root. $lib_dir;
@@ -91,6 +106,7 @@ class yf_autoloader {
 
 	/***/
 	public function process_yf_autoload() {
+		$libs_root = $this->libs_root;
 		$autoload_config = $this->autoload_config;
 		if ($autoload_config) {
 			spl_autoload_register(array($this, 'yf_autoloader'));
@@ -98,30 +114,47 @@ class yf_autoloader {
 	}
 
 	/***/
+	public function process_require_once() {
+		$libs_root = $this->libs_root;
+		$require_once = $this->require_once;
+		if (!$require_once) {
+			return false;
+		}
+		foreach ((array)$require_once as $path) {
+			require_once $libs_root. $path;
+		}
+	}
+
+	/***/
+	public function process_require_services() {
+		$libs_root = $this->libs_root;
+		$requires = $this->requires;
+		if (!$requires) {
+			return false;
+		}
+		ob_start();
+		foreach ((array)$requires as $name) {
+			require_once __DIR__.'/'.$name.'.php';
+		}
+		ob_end_clean();
+	}
+
+	/***/
 	public function process_manual() {
-		$manual = $this->manual();
+		$libs_root = $this->libs_root;
+		$manual = $this->manual;
 		if (is_callable($manual)) {
 			$manual($this);
 		}
 	}
 
 	/***/
-	public function process_requires() {
-
-
-
-!isset($requires) && $requires = array();
-if ($requires) {
-	ob_start();
-	foreach ((array)$requires as $name) {
-		require_once __DIR__.'/'.$name.'.php';
+	public function process_pear() {
+# pear-style autoload
+#if (is_file($file = dirname(__FILE__).'/../'.str_replace(array('_', "\0"), array('/', ''), $class).'.php')) {
+#	require $file;
+#}
 	}
-	ob_end_clean();
-}
-
-}
-	}
-
 
 	// TODO: auto-install composer into /usr/local/bin with symlink
 	// globally: curl -s http://getcomposer.org/installer | php -- --install-dir=/usr/local/bin
@@ -155,10 +188,10 @@ if ($requires) {
 		chdir($cwd);
 	}
 
+	/***/
 	public function yf_autoloader($class) {
+		$libs_root = $this->libs_root;
 		$autoload_config = $this->autoload_config;
-		$libs_root = $this->libs_root;	
-
 		foreach ((array)$autoload_config as $lib_dir => $prefix) {
 			$no_cut_prefix = false;
 			if (substr($prefix, 0, strlen('no_cut_prefix:')) === 'no_cut_prefix:') {
@@ -185,6 +218,7 @@ if ($requires) {
 
 	/***/
 	public function check_error($name, $dir, $check_file, $error_reason = 'git url or command is wrong') {
+		$libs_root = $this->libs_root;
 		$error_reasons = array();
 		if (!file_exists($check_file)) {
 			if (!is_writable($dir)) {
@@ -201,13 +235,5 @@ if ($requires) {
 		if ($error_reasons) {
 			throw new Exception('lib "'.$name.'" install failed. Reasons: '.implode(', ', $error_reasons));
 		}
-	}
-
-	/***/
-	public function process_pear() {
-# pear-style autoload
-#if (is_file($file = dirname(__FILE__).'/../'.str_replace(array('_', "\0"), array('/', ''), $class).'.php')) {
-#	require $file;
-#}
 	}
 }
