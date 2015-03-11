@@ -2534,13 +2534,13 @@ class yf_form2 {
 	/**
 	* Alias
 	*/
-	function update_if_ok($table, $fields, $where_id, $extra = array()) {
+	function update_if_ok($table, $fields, $where_id = null, $extra = array()) {
 		return $this->db_update_if_ok($table, $fields, $where_id, $extra);
 	}
 
 	/**
 	*/
-	function db_update_if_ok($table, $fields, $where_id, $extra = array()) {
+	function db_update_if_ok($table, $fields, $where_id = null, $extra = array()) {
 		$extra['where_id'] = $where_id;
 		return $this->_db_change_if_ok($table, $fields, 'update', $extra);
 	}
@@ -2590,9 +2590,14 @@ class yf_form2 {
 			if ($data && $table) {
 				$db = is_object($form->_params['db']) ? $form->_params['db'] : db();
 				if ($type == 'update') {
-					$db->update($table, $db->es($data), $extra['where_id']);
+					$where_id = $extra['where_id'] ?: $form->_replace[$form->_params['id'] ?: 'id'];
+					if ($where_id) {
+						$db->update_safe($table, $data, $where_id);
+					} else {
+						throw new Exception(__CLASS__.'::'.__FUNCTION__.' where_id param is empty, not updating table: '.$table);
+					}
 				} elseif ($type == 'insert') {
-					$db->insert($table, $db->es($data));
+					$db->insert_safe($table, $data);
 				}
 				// Callback/hook function implementation
 				$on_after_update = isset($extra['on_after_update']) ? $extra['on_after_update'] : $form->_on['on_after_update'];
