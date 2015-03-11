@@ -1514,7 +1514,7 @@ class yf_form2 {
 			$form->_prepare_inline_error($extra);
 			$extra['id'] = $extra['id'] ?: ($extra['name'] ?: strtolower($extra['value']));
 			$extra['link_url'] = $extra['link_url'] ? (isset($r[$extra['link_url']]) ? $r[$extra['link_url']] : $extra['link_url']) : '';
-			if (preg_match('~^[a-z0-9_-]+$~ims', $extra['link_url'])) {
+			if (false === strpos($extra['link_url'], '/')) {
 				$extra['link_url'] = '';
 			}
 			$extra['link_name'] = $extra['link_name'] ?: '';
