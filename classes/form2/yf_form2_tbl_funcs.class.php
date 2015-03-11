@@ -76,7 +76,7 @@ class yf_form2_tbl_funcs {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = _class('table2')->CLASS_ICON_EDIT;
 		}
-		if (!isset($extra['class_add'])) {
+		if (!isset($extra['class_add']) && !$extra['no_ajax']) {
 			$extra['class_add'] = _class('table2')->CLASS_AJAX_EDIT;
 		}
 		return $form->tbl_link($name, $link, $extra, $replace);
@@ -97,7 +97,7 @@ class yf_form2_tbl_funcs {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = _class('table2')->CLASS_ICON_DELETE;
 		}
-		if (!isset($extra['class_add'])) {
+		if (!isset($extra['class_add']) && !$extra['no_ajax']) {
 			$extra['class_add'] = _class('table2')->CLASS_AJAX_DELETE;
 		}
 		return $form->tbl_link($name, $link, $extra, $replace);
@@ -118,7 +118,7 @@ class yf_form2_tbl_funcs {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = _class('table2')->CLASS_ICON_CLONE;
 		}
-		if (!isset($extra['class_add'])) {
+		if (!isset($extra['class_add']) && !$extra['no_ajax']) {
 			$extra['class_add'] = _class('table2')->CLASS_AJAX_CLONE;
 		}
 		return $form->tbl_link($name, $link, $extra, $replace);
@@ -139,7 +139,7 @@ class yf_form2_tbl_funcs {
 		if (!isset($extra['icon'])) {
 			$extra['icon'] = _class('table2')->CLASS_ICON_VIEW;
 		}
-		if (!isset($extra['class_add'])) {
+		if (!isset($extra['class_add']) && !$extra['no_ajax']) {
 			$extra['class_add'] = _class('table2')->CLASS_AJAX_VIEW;
 		}
 		return $form->tbl_link($name, $link, $extra, $replace);
