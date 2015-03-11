@@ -39,8 +39,8 @@ class yf_autoloader {
 		$this->process_pear();
 		$this->process_yf_autoload();
 		$this->process_require_services();
-		$this->process_manual();
 		$this->process_require_once();
+		$this->process_manual();
 		$this->process_example();
 	}
 
