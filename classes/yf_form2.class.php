@@ -443,7 +443,7 @@ class yf_form2 {
 			}
 			$extra['enctype'] = $enctype;
 			if (!isset($extra['action'])) {
-				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : './?object='.$_GET['object'].'&action='.$_GET['action']. ($_GET['id'] ? '&id='.$_GET['id'] : ''). $form->_params['links_add'];
+				$extra['action'] = isset($r[$extra['name']]) ? $r[$extra['name']] : url('/@object/@action/@id'). $form->_params['links_add'];
 			}
 			if (MAIN_TYPE_USER) {
 				if (strpos($extra['action'], 'http://') === false && strpos($extra['action'], 'https://') !== 0) {
@@ -2120,7 +2120,7 @@ class yf_form2 {
 			$extra['value'] = $r['captcha'];
 			$extra['input_attrs'] = _attrs($extra, array('class','style','placeholder','pattern','disabled','required','autocomplete','accept','value','size'));
 			$extra = $form->_input_assign_params_from_validate($extra);
-			return $form->_row_html(_class('captcha')->show_block('./?object=dynamic&action=captcha_image', $extra), $extra, $r);
+			return $form->_row_html(_class('captcha')->show_block(url('/dynamic/captcha_image'), $extra), $extra, $r);
 		};
 		if ($this->_chained_mode) {
 			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
@@ -2611,7 +2611,7 @@ class yf_form2 {
 				}
 				$redirect_link = isset($extra['redirect_link']) ? $extra['redirect_link'] : (!empty($form->_replace['redirect_link']) ? $form->_replace['redirect_link'] : !empty($form->_replace['back_link']) ? $form->_replace['back_link'] : '');
 				if (!$redirect_link) {
-					$redirect_link = './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : '');
+					$redirect_link = url('/@object/@action/@id');
 				}
 				if (!$extra['no_redirect'] && !main()->is_console()) {
 					js_redirect($redirect_link);
