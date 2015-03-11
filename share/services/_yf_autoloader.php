@@ -128,12 +128,12 @@ class yf_autoloader {
 	/***/
 	public function process_require_services() {
 		$libs_root = $this->libs_root;
-		$requires = $this->requires;
-		if (!$requires) {
+		$require_services = $this->require_services;
+		if (!$require_services) {
 			return false;
 		}
 		ob_start();
-		foreach ((array)$requires as $name) {
+		foreach ((array)$require_services as $name) {
 			require_once __DIR__.'/'.$name.'.php';
 		}
 		ob_end_clean();
