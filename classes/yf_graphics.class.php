@@ -407,7 +407,7 @@ class yf_graphics {
 			header('Cache-Control: post-check=0, pre-check=0', false); // HTTP/1.1
 			header('Pragma: no-cache'); // HTTP/1.0
 		}
-		if (main()->is_ajax()/* || main()->is_post()*/) {
+		if (main()->is_ajax() || DEBUG_MODE || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX')) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
 		}
 		$this->_send_custom_http_headers();
