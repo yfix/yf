@@ -118,4 +118,57 @@ class yf_html_tree {
 		}
 		return $items;
 	}
+
+	/**
+	*/
+	function li_tree($data = array(), $extra = array()) {
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		if ($data) {
+			$data = $this->_parent->_recursive_sort_items($data);
+		}
+		if (!$data) {
+			return false;
+		}
+		$opened_levels = isset($extra['opened_levels']) ? $extra['opened_levels'] : 1;
+		$keys = array_keys($data);
+		$keys_counter = array_flip($keys);
+		$items = array();
+		$ul_opened = false;
+		foreach ((array)$data as $id => $item) {
+			$next_item = $data[ $keys[$keys_counter[$id] + 1] ];
+			$has_children = false;
+			$close_li = 1;
+			$close_ul = 0;
+			if ($next_item) {
+				if ($next_item['level'] > $item['level']) {
+					$has_children = true;
+				}
+				$close_li = $item['level'] - $next_item['level'] + 1;
+				if ($close_li < 0) {
+					$close_li = 0;
+				}
+			}
+			$body = $item['name'] ?: $item['body'];
+			$content = ($item['icon_class'] ? '<i class="'.$item['icon_class'].'"></i>' : ''). (strlen($body) ? '<span class="li-content">'.$body.'</span>' : '');
+			if ($item['link']) {
+				$content = '<a href="'.$item['link'].'">'.$content. '</a>';
+			}
+			$items[] = '<li id="'.($item['id'] ?: ($extra['id'] ?: 'item').'_'.$id).'" class="li-header li-level-'.$item['level'].'">'. $content;
+			if ($has_children) {
+				$ul_opened = true;
+				$items[] = PHP_EOL. '<ul class="'.($item['level'] >= $opened_levels ? 'closed' : '').'">'. PHP_EOL;
+			} elseif ($close_li) {
+				if ($ul_opened && !$has_children && $item['level'] != $next_item['level']) {
+					$ul_opened = false;
+					$close_ul = 1;
+				}
+				$tmp = str_repeat(PHP_EOL. ($close_ul ? '</li></ul>' : '</li>'). PHP_EOL, $close_li);
+				if ($close_li > 1 && $close_ul) {
+					$tmp = substr($tmp, 0, -strlen('</ul>'.PHP_EOL)). PHP_EOL;
+				}
+				$items[] = $tmp;
+			}
+		}
+		return implode(PHP_EOL, $items);
+	}
 }
