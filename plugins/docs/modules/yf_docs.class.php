@@ -343,6 +343,13 @@ class yf_docs {
 
 	/***/
 	public function _hook_side_column() {
+		if ($_GET['action'] == 'html') {
+			// class should be instantinated with full path before this
+			$custom = _class('test_html')->_hook_side_column();
+		}
+		if ($custom) {
+			return $custom;
+		}
 		$url = url('/@object');
 		$names = array();
 
