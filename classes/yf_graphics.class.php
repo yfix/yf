@@ -139,12 +139,16 @@ class yf_graphics {
 		if (DEBUG_MODE) {
 			debug('_DEBUG_META', $meta);
 		}
+		$robots_no_index = (main()->is_ajax() || DEBUG_MODE || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX'));
 		$replace = array(
 			'charset'		=> _prepare_html($meta['charset']),
 			'keywords'		=> $meta['keywords'],
 			'description'	=> $meta['description'],
+			'robots_no_index' => (int)$robots_no_index,
 		);
-		return tpl()->parse('system/meta_tags', $replace);
+		return tpl()->parse('system/meta_tags', $replace)
+			. ($robots_no_index ? PHP_EOL. '<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">'.PHP_EOL : '')
+		;
 	}
 
 	/**
