@@ -715,6 +715,12 @@ class yf_html {
 
 	/**
 	*/
+	function li_tree($data = array(), $extra = array()) {
+		return _class('html_tree', 'classes/html/')->li_tree($data, $extra);
+	}
+
+	/**
+	*/
 	function select_box($name, $values = array(), $selected = '', $show_text = false, $type = 2, $add_str = '', $translate = 0, $level = 0) {
 		// Passing params as array
 		if (is_array($name)) {
