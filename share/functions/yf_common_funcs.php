@@ -374,25 +374,26 @@ if (!function_exists('load_db_class')) {
 
 if (!function_exists('cache_memcached_connect')) {
 function cache_memcached_connect($params = array()) {
-	if (isset($GLOBALS['memcache_obj'])) {
-		return $GLOBALS['memcache_obj'];
+	global $memcache_obj, $CONF;
+	if (isset($memcache_obj)) {
+		return $memcache_obj;
 	}
 	if (!$params) {
-		$conf_host = $GLOBALS['CONF']['MEMCACHED_HOST'];
-		$conf_port = $GLOBALS['CONF']['MEMCACHED_PORT'];
+		$conf_host = $CONF['MEMCACHED_HOST'];
+		$conf_port = $CONF['MEMCACHED_PORT'];
 		$params = array(
-			'host'	=> $conf_host ? $conf_host : '127.0.0.1',
-			'port'	=> $conf_port ? $conf_port : 11211,
+			'host'	=> $conf_host ?: '127.0.0.1',
+			'port'	=> $conf_port ?: 11211,
 		);
 	}
-	$GLOBALS['memcache_obj'] = null;
+	$memcache_obj = null;
 	if (class_exists('Memcached')) {
-		$GLOBALS['memcache_obj'] = new Memcached();
-		$GLOBALS['memcache_obj']->addServer($params['host'], $params['port']);
+		$memcache_obj = new Memcached();
+		$memcache_obj->addServer($params['host'], $params['port']);
 	} elseif (function_exists('memcache_connect')) {
-		$GLOBALS['memcache_obj'] = memcache_connect($params['host'], $params['port']);
+		$memcache_obj = memcache_connect($params['host'], $params['port']);
 	}
-	return $GLOBALS['memcache_obj'];
+	return $memcache_obj;
 }
 }
 
