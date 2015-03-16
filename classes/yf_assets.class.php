@@ -184,10 +184,10 @@ class yf_assets {
 				break;
 			}
 		}
-		if (!$path_loaded) {
-			throw new Exception('Assets: filter libs not loaded as composer autoload not found on these paths: '.implode(', ', $paths).'.'
-				. PHP_EOL. 'You need to install composer dependencies by running this script from console: %YF_PATH%/.dev/scripts/assets/install_global.sh');
-		}
+#		if (!$path_loaded) {
+#			throw new Exception('Assets: filter libs not loaded as composer autoload not found on these paths: '.implode(', ', $paths).'.'
+#				. PHP_EOL. 'You need to install composer dependencies by running this script from console: %YF_PATH%/.dev/scripts/assets/install_global.sh');
+#		}
 		$this->_autoload_registered = $paths[$path_loaded];
 	}
 
