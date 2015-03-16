@@ -563,6 +563,8 @@ class yf_html {
 				if ($close_num_levels < 0) {
 					$close_num_levels = 0;
 				}
+			} elseif ($item['level'] > 0) {
+				$close_num_levels = $item['level'] + 1;
 			}
 			$items[] = '
 				<div class="media">
