@@ -627,6 +627,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	}
 	public function test_add_foreign_key() {
 		if ($this->_need_skip_test(__FUNCTION__)) { return ; }
+		self::utils()->db->db->select_db($this->db_name());
 		$table1 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_1';
 		$table2 = self::utils()->db->DB_PREFIX. __FUNCTION__.'_2';
 		$data = array(
