@@ -10,12 +10,17 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		self::$_bak['DB_DRIVER'] = self::$DB_DRIVER;
 		self::$DB_DRIVER = 'mysql5';
 		self::_connect();
-		self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
+		if (!$_ENV['TRAVIS']) {
+			self::$db->query('DROP DATABASE IF EXISTS '.self::$DB_NAME);
+		}
 	}
 	public static function tearDownAfterClass() {
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 	public static function _need_skip_test($name) {
+		if ($_ENV['TRAVIS'] && in_array($name, array('drop_database','create_database'))) {
+			return true;
+		}
 		return false;
 	}
 	public static function db_name() {
