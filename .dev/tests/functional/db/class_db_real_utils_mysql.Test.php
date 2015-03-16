@@ -18,8 +18,10 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 		self::$DB_DRIVER = self::$_bak['DB_DRIVER'];
 	}
 	public static function _need_skip_test($name) {
-		if ($_ENV['TRAVIS'] && in_array($name, array('drop_database','create_database')) && false !== strpos($name, '_foreign_')) {
-			return true;
+		if ($_ENV['TRAVIS']) {	
+			if (in_array($name, array('drop_database','create_database')) || false !== strpos($name, '_foreign_')) {
+				return true;
+			}
 		}
 		return false;
 	}
