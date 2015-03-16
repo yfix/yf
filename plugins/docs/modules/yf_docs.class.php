@@ -27,6 +27,7 @@ class yf_docs {
 		_class('core_api')->add_syntax_highlighter();
 
 		$this->docs_dir = YF_PATH.'.dev/docs/';
+		$this->demo_dir = YF_PATH.'.dev/demo/';
 
 		tpl()->add_function_callback('github', function($m, $r, $name, $_this) {
 			return _class('core_api')->get_github_link($m[1]);
@@ -46,6 +47,38 @@ class yf_docs {
 			$a[$m] = '<h2><a href="'.url('/@object/'.$m).'">'.ucfirst($m).'</a></h2>';
 		}
 		return implode(PHP_EOL, $a);
+	}
+
+	/***/
+	public function demo() {
+		$dir = $this->demo_dir;
+		$dir_len = strlen($dir);
+		$ext = '.php';
+		$ext_len = strlen($ext);
+
+		$name = preg_replace('~[^a-z0-9/_-]+~ims', '', $_GET['id']);
+		if (strlen($name)) {
+			$f = $dir. $name. '.php';
+			if (!file_exists($f)) {
+				return _404('Not found');
+			}
+			$body = include $f;
+			return '<section class="page-contents">'.tpl()->parse_string($body, $replace, 'demo_'.$name).'</section>';
+		}
+		$url = rtrim(url('/@object/@action/')).'/';
+		$data = array();
+		foreach ((array)_class('dir')->scan($dir) as $path) {
+			if (substr($path, -$ext_len) !== $ext) {
+				continue;
+			}
+			$name = substr($path, $dir_len, -$ext_len);
+			$data[$name] = array(
+				'name'	=> $name,
+				'link'	=> $url. urlencode($name),
+			);
+		}
+		ksort($data);
+		return html()->li($data);
 	}
 
 	/***/
