@@ -19,7 +19,7 @@ class class_db_real_utils_mysql_test extends db_real_abstract {
 	}
 	public static function _need_skip_test($name) {
 		if ($_ENV['TRAVIS']) {	
-			if (in_array($name, array('drop_database','create_database')) || false !== strpos($name, '_foreign_')) {
+			if (in_array($name, array('test_drop_database','test_create_database')) || false !== strpos($name, '_foreign_')) {
 				return true;
 			}
 		}
