@@ -2,6 +2,7 @@
 
 define('APP_PATH', __DIR__.'/_tmp/');
 define('STORAGE_PATH', __DIR__.'/_tmp/');
+$_SERVER['HTTP_HOST'] = 'test.dev';
 if (!defined('YF_PATH')) {
 	$CONF['cache']['DRIVER'] = 'tmp';
 	$CONF['cache']['NO_CACHE'] = true;
