@@ -33,7 +33,7 @@ class class_form_test extends PHPUnit_Framework_TestCase {
 
 		self::$css = $css;
 
-		self::$action = './?object=dynamic&action=unit_test_form';
+		self::$action = url('/dynamic/unit_test_form');
 	}
 	public static function tearDownAfterClass() {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = self::$_bak_settings['REWRITE_MODE'];
