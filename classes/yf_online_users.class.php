@@ -65,16 +65,20 @@ class yf_online_users {
         }
         // details not cached for current url to be shown
         if (main()->TRACK_ONLINE_DETAILS && !(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' || !empty($_GET['ajax_mode'])) && intval($this->online_user_id) != 0) {
-            db()->replace_safe('users_online_details', array(
-                'user_id'		=> $this->online_user_id,
-                'user_type'		=> $this->online_user_type,
-                'time'			=> $_SERVER['REQUEST_TIME'],
-                'session_id'	=> session_id(),
-                'url'			=> 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'],
-                'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
-                'ip'			=> $_SERVER['REMOTE_ADDR'],
-            ));
-        }
+			$ip = $_SERVER[ 'HTTP_X_FORWARDED_FOR' ]
+				?: $_SERVER[ 'HTTP_CLIENT_IP' ]
+				?: $_SERVER[ 'REMOTE_ADDR' ]
+			;
+			db()->replace_safe('users_online_details', array(
+				'user_id'    => $this->online_user_id,
+				'user_type'  => $this->online_user_type,
+				'time'       => $_SERVER['REQUEST_TIME'],
+				'session_id' => session_id(),
+				'url'        => 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'],
+				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+				'ip'         => $ip,
+			));
+		}
 	}
 
 	function _cleanup() {
