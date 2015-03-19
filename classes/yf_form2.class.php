@@ -2609,7 +2609,10 @@ class yf_form2 {
 				if ($on_success_text) {
 					common()->set_notice($on_success_text);
 				}
-				$redirect_link = isset($extra['redirect_link']) ? $extra['redirect_link'] : (!empty($form->_replace['redirect_link']) ? $form->_replace['redirect_link'] : !empty($form->_replace['back_link']) ? $form->_replace['back_link'] : '');
+				$redirect_link = $extra['redirect_link'] ?: $form->_replace['redirect_link'];
+				if (!$redirect_link) {
+					$redirect_link = $form->_replace['back_link'];
+				}
 				if (!$redirect_link || false === strpos($redirect_link, '/')) {
 					$redirect_link = url('/@object/@action/@id');
 				}
