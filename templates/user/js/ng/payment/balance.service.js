@@ -93,7 +93,7 @@ function( $log, $timeout, PaymentApi ) {
 		var $this = this;
 		result.$promise.then(
 			function( r ) {
-				if( r.response.balance ) {
+				if( r.responser && r.response.balance ) {
 					service.load( r.response.balance );
 				} else {
 					$log.error( 'balance->refresh is fail data:', r );
