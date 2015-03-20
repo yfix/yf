@@ -117,8 +117,9 @@ class yf_rewrite_pattern_yf {
 			}
 		}
 		// Filter bad symbols
-		$arr['object'] = preg_replace('~[^a-z0-9_]+~ims', '', trim($arr['object']));
-		$arr['action'] = preg_replace('~[^a-z0-9_]+~ims', '', trim($arr['action']));
+		$cleanup_regex = '~[^a-z0-9_-]+~ims';
+		$arr['object'] = preg_replace($cleanup_regex, '', trim($arr['object']));
+		$arr['action'] = preg_replace($cleanup_regex, '', trim($arr['action']));
 		return $arr;
 	}
 
