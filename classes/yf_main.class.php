@@ -1922,6 +1922,12 @@ class yf_main {
 	}
 
 	/**
+	*/
+	function is_hhvm() {
+		return defined('HHVM_VERSION');
+	}
+
+	/**
 	* Return class name of the object, stripping all YF-related prefixes
 	* Needed to ensure singleton pattern and extending classes with same name
 	*/
