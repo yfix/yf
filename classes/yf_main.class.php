@@ -1510,6 +1510,9 @@ class yf_main {
 		// Save current working directory (to restore it later when execute shutdown functions)
 		$this->_CWD = getcwd();
 
+		$this->_ORIGINAL_VARS_GET = $_GET;
+		$this->_ORIGINAL_VARS_SERVER = $_SERVER;
+
 		if (!defined('DEBUG_MODE')) {
 			define('DEBUG_MODE', false);
 		}
