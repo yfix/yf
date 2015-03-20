@@ -958,6 +958,9 @@ class yf_html {
 		$extra['checked'] = $selected ? 'checked' : null;
 		$extra['id'] = ($extra['force_id'] ?: $extra['id']) ?: ($this->AUTO_ASSIGN_IDS ? __FUNCTION__.'_'.++$this->_ids[__FUNCTION__] : null);
 		$extra['desc'] = isset($extra['desc']) ? $extra['desc'] : ucfirst(str_replace('_', '', $extra['name']));
+		if ($extra['no_desc']) {
+			$extra['desc'] = '';
+		}
 		$extra['class'] = trim($extra['class'].' '.$extra['class_add']);
 		$add_str = $extra['add_str'] ? $extra['add_str'] : $add_str;
 		$translate = $extra['translate'] ? $extra['translate'] : $translate;
@@ -1043,10 +1046,16 @@ class yf_html {
 				$label_extra['class'] .= ' '.$this->CLASS_LABEL_CHECKBOX_SELECTED;
 			}
 			$id = __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+			if ($extra['no_desc']) {
+				$desc = '';
+			} else {
+				$desc = ($translate ? t($value) : $value);
+			}
 			if ($this->BOXES_USE_STPL) {
 				$body[] = tpl()->parse('system/common/check_box_item', array(
 					'name'		=> $val_name,
 					'value'		=> $key,
+					'desc'		=> $desc,
 					'selected'	=> $sel_text,
 					'add_str'	=> $add_str,
 					'label'		=> $translate ? t($value) : $value,
@@ -1057,7 +1066,7 @@ class yf_html {
 				$body[] = '<label'._attrs($label_extra, array('id', 'class', 'style')).'>'
 							. '<input type="checkbox" name="'.$val_name.'" id="'.$id.'" value="'.$key.'"'
 							. ($is_selected ? ' '.$sel_text : '') . ($add_str ? ' '.trim($add_str) : '')
-							. '> &nbsp;'. ($translate ? t($value) : $value) // Please do not remove whitespace :)
+							. '> &nbsp;'. $desc  // Please do not remove whitespace :)
 						.'</label>';
 			}
 		}
