@@ -1185,7 +1185,7 @@ class yf_main {
 		}
 		if (!is_object($obj)) {
 			if (!$silent) {
-				trigger_error('MAIN: module "'.$class_name.'" init failed'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'"' : ''), E_USER_WARNING);
+				trigger_error('MAIN: module "'.$class_name.'" init failed'. (!empty($tpl_name) ? ' (template "'.$tpl_name.'")' : ''), E_USER_WARNING);
 			}
 			return false;
 		}
