@@ -1928,6 +1928,18 @@ class yf_main {
 	}
 
 	/**
+	*/
+	function is_dev() {
+		return (defined('DEVELOP') && DEVELOP) || (defined('TEST_MODE') && TEST_MODE);
+	}
+
+	/**
+	*/
+	function is_debug() {
+		return (defined('DEBUG_MODE') && DEBUG_MODE);
+	}
+
+	/**
 	* Return class name of the object, stripping all YF-related prefixes
 	* Needed to ensure singleton pattern and extending classes with same name
 	*/
