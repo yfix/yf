@@ -7,7 +7,7 @@
 {exec_last(assets,show_css)}
 {execute(graphics,show_metatags)}
 </head>
-<body class="bs-theme-{execute(common,bs_current_theme)} cssfw-{conf(css_framework)}">
+<body class="{execute(common,css_class_body)}">
 {if(conf.css_framework eq bs3)}
 	<div class="navbar navbar-default">
 {else}
