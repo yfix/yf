@@ -425,4 +425,9 @@ class yf_docs {
 		}
 		return html()->navlist($links);
 	}
+
+	/***/
+	public function _sample_navbar() {
+		return _class('form2_navbar', YF_PATH.'.dev/samples/form2/')->show($source = false);
+	}
 }
