@@ -71,14 +71,16 @@ class yf_common {
 		$extra['is_spider']		= $main->is_spider() ? 'is-spider' : '';
 		$extra['is_redirect']	= $main->is_redirect() ? 'is-redirect' : '';
 		$extra['is_unit_test']	= $main->is_unit_test() ? 'is-unit-test' : '';
-		$extra['language']		= 'lang-'.strtolower(conf('language') ?: 'en');
-		$extra['country']		= $_SERVER['GEOIP_COUNTRY_CODE'] ? 'country-'.strtolower($_SERVER['GEOIP_COUNTRY_CODE']) : '';
-		$extra['currency']		= ($currency = conf('currency')) ? 'currency-'.strtolower($currency) : '';
+		$extra['is_logged_in']	= $main->is_logged_in() ? 'is-logged-in' : 'is-guest';
+		$extra['is_banned']		= $main->is_banned() ? 'is-banned' : '';
+		$extra['group_id']		= ($group = MAIN_TYPE_ADMIN ? $main->ADMIN_GROUP : $main->USER_GROUP) ? 'groupid-'.strtolower($group) : '';
+		$extra['site_id']		= ($site_id = $main->SITE_ID) ? 'siteid-'.strtolower($site_id) : '';
 		$extra['get_object']	= 'get-object-'.strtolower($_GET['object']);
 		$extra['get_action']	= 'get-action-'.strtolower($_GET['action']);
 		$extra['get_id']		= $_GET['id'] ? 'get-id-'.strtolower($_GET['id']) : '';
-		$extra['is_logged_in']	= $main->is_logged_in() ? 'is-logged-in' : 'is-guest';
-		$extra['group_id']		= ($group = MAIN_TYPE_ADMIN ? $main->ADMIN_GROUP : $main->USER_GROUP) ? 'groupid-'.strtolower($group) : '';
+		$extra['language']		= 'lang-'.strtolower(conf('language') ?: 'en');
+		$extra['country']		= $_SERVER['GEOIP_COUNTRY_CODE'] ? 'country-'.strtolower($_SERVER['GEOIP_COUNTRY_CODE']) : '';
+		$extra['currency']		= ($currency = conf('currency')) ? 'currency-'.strtolower($currency) : '';
 		return implode(' ', array_filter($extra));
 	}
 
