@@ -54,6 +54,36 @@ class yf_common {
 
 	/**
 	*/
+	function css_class_body($extra = array()) {
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$main = main();
+		$extra['css_framework']	= 'cssfw-'.strtolower(conf('css_framework'));
+		$extra['bs_theme']		= 'bs-theme-'.strtolower($this->bs_current_theme());
+		$extra['main_type']		= 'main-type-'.strtolower(MAIN_TYPE);
+		$extra['is_common_page']= $main->is_common_page() ? 'is-common-page' : '';
+		$extra['is_ajax']		= $main->is_ajax() ? 'is-ajax' : '';
+		$extra['is_post']		= $main->is_post() ? 'is-post' : '';
+		$extra['is_dev']		= $main->is_dev() ? 'is-dev' : '';
+		$extra['is_debug']		= $main->is_debug() ? 'is-debug' : '';
+		$extra['is_https']		= $main->is_https() ? 'is-https' : '';
+		$extra['is_spider']		= $main->is_spider() ? 'is-spider' : '';
+		$extra['is_redirect']	= $main->is_redirect() ? 'is-redirect' : '';
+		$extra['is_unit_test']	= $main->is_unit_test() ? 'is-unit-test' : '';
+		$extra['language']		= 'lang-'.strtolower(conf('language') ?: 'en');
+		$extra['country']		= $_SERVER['GEOIP_COUNTRY_CODE'] ? 'country-'.strtolower($_SERVER['GEOIP_COUNTRY_CODE']) : '';
+		$extra['currency']		= ($currency = conf('currency')) ? 'currency-'.strtolower($currency) : '';
+		$extra['get_object']	= 'get-object-'.strtolower($_GET['object']);
+		$extra['get_action']	= 'get-action-'.strtolower($_GET['action']);
+		$extra['get_id']		= $_GET['id'] ? 'get-id-'.strtolower($_GET['id']) : '';
+		$extra['is_logged_in']	= $main->is_logged_in() ? 'is-logged-in' : 'is-guest';
+		$extra['group_id']		= ($group = MAIN_TYPE_ADMIN ? $main->ADMIN_GROUP : $main->USER_GROUP) ? 'groupid-'.strtolower($group) : '';
+		return implode(' ', array_filter($extra));
+	}
+
+	/**
+	*/
 	function bs_get_avail_themes() {
 		$css_fw = conf('css_framework');
 		if (!$css_fw) {
