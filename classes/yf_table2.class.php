@@ -177,6 +177,14 @@ class yf_table2 {
 				}
 			}
 		}
+		if ($params['group_by'] && $data) {
+			if (!is_array($params['group_by'])) {
+				$params['group_by'] = array($params['group_by']);
+			}
+			foreach ((array)$params['group_by'] as $group_by) {
+				$this->_rowspan[$group_by] = $this->_data_group_by($data, $group_by);
+			}
+		}
 		if ($params['as_json']) {
 			$body = $this->_render_as_json($params, $a, $to_hide);
 		} else {
@@ -194,6 +202,29 @@ class yf_table2 {
 		}
 		_class('core_events')->fire('table.after_render', array('this' => $this));
 		return $body;
+	}
+
+	/**
+	*/
+	function _data_group_by($data, $group_by) {
+		$index = array();
+		$inverse = array();
+		foreach ($data as $id => $row) {
+			if (!isset($row[$group_by])) {
+				continue;
+			}
+			$val = $row[$group_by];
+			$index[$id] = $val;
+			if (!isset($inverse[$val])) {
+				$inverse[$val] = $id;
+			}
+		}
+		$rowspan = array();
+		foreach (array_count_values($index) as $val => $num) {
+			$id = $inverse[$val];
+			$rowspan[$id] = $num;
+		}
+		return $rowspan;
 	}
 
 	/**
@@ -246,7 +277,7 @@ class yf_table2 {
 			if ($params['condensed']) {
 				$params['table_class'] .= ' '.$this->CLASS_CONDENSED;
 			}
-			$table_class = trim(trim($this->CLASS_TABLE_MAIN.' '.$params['table_class']).' '.$params['table_class_add']);
+			$table_class = isset($params['force_class']) ? $params['force_class'] : trim(trim($this->CLASS_TABLE_MAIN.' '.$params['table_class']).' '.$params['table_class_add']);
 			$table_attrs = (isset($params['table_attr']) ? ' '.$params['table_attr'] : '');
 			$body .= '<table class="'.trim($table_class).'"'.$table_attrs.'>'.PHP_EOL;
 
@@ -544,6 +575,8 @@ class yf_table2 {
 				}
 				$custom_foreign_fields[$custom_name] = $foreign_field;
 				$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $_ids_sql, $custom_sql));
+			} elseif (is_object($custom_sql) && $custom_sql instanceof yf_db_query_builder_driver) {
+				$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $ids_sql, $custom_sql->sql()));
 			} elseif (!is_callable($custom_sql)) {
 				$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
 			}
@@ -614,7 +647,7 @@ class yf_table2 {
 				if (isset($to_hide[$name])) {
 					continue;
 				}
-				$body .= $this->_render_table_td($info, $row, $params);
+				$body .= $this->_render_table_td($info, $row, $params, $_id);
 			}
 			if ($this->_buttons) {
 				$td_attrs = '';
@@ -658,7 +691,7 @@ class yf_table2 {
 			}
 			$body .= '<tr'.$tr_attrs.'>'.PHP_EOL;
 			foreach ((array)$data as $_id => $row) {
-				$body .= $this->_render_table_td($info, $row, $params);
+				$body .= $this->_render_table_td($info, $row, $params, $_id);
 			}
 			$body .= '</tr>'.PHP_EOL;
 		}
@@ -693,7 +726,7 @@ class yf_table2 {
 
 	/**
 	*/
-	function _render_table_td($info, $row, $params) {
+	function _render_table_td($info, $row, $params, $row_id) {
 		$name = $info['name'];
 		if (!array_key_exists($name, $row)) {
 			return false;
@@ -727,6 +760,13 @@ class yf_table2 {
 		$td_attrs = '';
 		if (isset($params['td']) || isset($_extra['td'])) {
 			$td_attrs = $this->_get_attrs_string_from_params($params['td'] ?: $_extra['td'], $name, $row);
+		}
+		if (!is_null($row_id) && isset($this->_rowspan[$name])) {
+			$rowspan = $this->_rowspan[$name][$row_id];
+			if ($rowspan <= 1) {
+				return '';
+			}
+			$td_attrs .= ' rowspan="'.(int)$rowspan.'"';
 		}
 		return '<td'. $td_width. $td_nowrap. $td_attrs. '>'.$func($row[$name], $info, $row, $params, $this). $tip. '</td>'.PHP_EOL;
 	}
