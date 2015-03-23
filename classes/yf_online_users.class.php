@@ -53,6 +53,21 @@ class yf_online_users {
 		return( $result );
 	}
 
+	function _ip( $options = null ) {
+		if( !empty( $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] ) ) {
+			$ips = explode( ',', $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] );
+			$ip  = reset( $ips );
+		} else {
+			$ip =
+				   $_SERVER[ 'HTTP_CLIENT_IP' ]
+				?: $_SERVER[ 'HTTP_X_REAL_IP' ]
+				?: $_SERVER[ 'REMOTE_ADDR' ]
+			;
+		}
+		$result = trim( $ip );
+		return( $result );
+	}
+
 	function _update() {
 		$cache_name = __CLASS__.'|'.__FUNCTION__.'|'.$this->online_user_id.'|'.$this->online_user_type;
 		if (cache()->get($cache_name) != 'OK' && intval($this->online_user_id) != 0) {
@@ -65,10 +80,7 @@ class yf_online_users {
         }
         // details not cached for current url to be shown
         if (main()->TRACK_ONLINE_DETAILS && !(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' || !empty($_GET['ajax_mode'])) && intval($this->online_user_id) != 0) {
-			$ip = $_SERVER[ 'HTTP_X_FORWARDED_FOR' ]
-				?: $_SERVER[ 'HTTP_CLIENT_IP' ]
-				?: $_SERVER[ 'REMOTE_ADDR' ]
-			;
+			$ip = $this->_ip();
 			db()->replace_safe('users_online_details', array(
 				'user_id'    => $this->online_user_id,
 				'user_type'  => $this->online_user_type,
