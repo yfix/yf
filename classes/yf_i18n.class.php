@@ -596,10 +596,7 @@ class yf_i18n {
 		if (empty($var_name)) {
 			return false;
 		}
-		db()->insert('locale_vars', array(
-			'value'		=> _es($var_name),
-			'location'	=> '',
-		));
+		return db()->insert_safe('locale_vars', array('value' => $var_name, 'location' => ''));
 	}
 
 	/**
