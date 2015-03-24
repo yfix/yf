@@ -205,11 +205,11 @@ class yf_auth_admin {
 		} else {
 			unset($admin_info);
 			if ($this->LOG_FAILED_LOGINS) {
-				db()->INSERT('log_admin_auth_fails', array(
-					'time'		=> _es(str_replace(',', '.', microtime(true))),
-					'ip'		=> _es(common()->get_ip()),
-					'login'		=> _es($AUTH_LOGIN),
-					'pswd'		=> _es($AUTH_PSWD),
+				db()->insert_safe('log_admin_auth_fails', array(
+					'time'		=> str_replace(',', '.', microtime(true)),
+					'ip'		=> common()->get_ip(),
+					'login'		=> $AUTH_LOGIN,
+					'pswd'		=> $AUTH_PSWD,
 					'reason'	=> $NEED_QUERY_DB ? 'w' : 'b', // 'w' means wrong login, 'b' means blocked
 					'site_id'	=> (int)conf('SITE_ID'),
 					'server_id'	=> (int)conf('SERVER_ID'),

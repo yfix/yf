@@ -310,11 +310,11 @@ class yf_auth_user {
 			} else {
 				unset($user_info);
 				if ($this->LOG_FAILED_LOGINS) {
-					db()->INSERT('log_auth_fails', array(
-						'time'	=> _es(str_replace(',', '.', microtime(true))),
-						'ip'	=> _es(common()->get_ip()),
-						'login'	=> _es($AUTH_LOGIN),
-						'pswd'	=> _es($AUTH_PSWD),
+					db()->insert_safe('log_auth_fails', array(
+						'time'	=> str_replace(',', '.', microtime(true)),
+						'ip'	=> common()->get_ip(),
+						'login'	=> $AUTH_LOGIN,
+						'pswd'	=> $AUTH_PSWD,
 						'reason'=> $NEED_QUERY_DB ? 'w' : 'b', // 'w' means wrong login, 'b' means blocked
 					));
 				}
@@ -624,15 +624,15 @@ class yf_auth_user {
 		}
 		$matching_users = implode(',', $cookie_users);
 		if (empty($data)) {
-			db()->INSERT('check_multi_accounts', array(
+			db()->insert_safe('check_multi_accounts', array(
 				'user_id'		=> intval($_SESSION[$this->VAR_USER_ID]),
-				'matching_users'=> _es($matching_users),
+				'matching_users'=> $matching_users,
 				'last_update'	=> time(),
 				'cookie_match'	=> 1,
 			));
 		} else {
-			db()->UPDATE('check_multi_accounts', array(
-				'matching_users'=> _es($matching_users),
+			db()->update_safe('check_multi_accounts', array(
+				'matching_users'=> $matching_users,
 				'last_update'	=> time(),
 				'cookie_match'	=> 1,
 			), 'user_id='.intval($_SESSION[$this->VAR_USER_ID]));
