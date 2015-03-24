@@ -87,7 +87,7 @@ class yf_admin_methods {
 					$params['on_before_update']($sql);
 				}
 
-				$db->insert($table, $db->es($sql));
+				$db->insert_safe($table, $sql);
 				$NEW_ID = $db->insert_id();
 				common()->admin_wall_add(array($_GET['object'].': added record into table '.$table, $NEW_ID));
 
@@ -183,7 +183,7 @@ class yf_admin_methods {
 					$params['on_before_update']($sql);
 				}
 
-				$db->update($table, $db->es($sql), '`'.$db->es($primary_field).'`="'.$db->es($id).'"');
+				$db->update_safe($table, $sql, '`'.$db->es($primary_field).'`="'.$db->es($id).'"');
 				common()->admin_wall_add(array($_GET['object'].': updated record in table '.$table, $id));
 
 				if (is_callable($params['on_after_update'])) {
@@ -287,7 +287,7 @@ class yf_admin_methods {
 			if (is_callable($params['on_before_update'])) {
 				$params['on_before_update']($info);
 			}
-			$db->update($table, array('active' => (int)!$info['active']), $db->es($primary_field).'="'.$db->es($id).'"');
+			$db->update_safe($table, array('active' => (int)!$info['active']), $db->es($primary_field).'="'.$db->es($id).'"');
 			common()->admin_wall_add(array($_GET['object'].': item in table '.$table.' '.($info['active'] ? 'inactivated' : 'activated'), $id));
 
 			if (is_callable($params['on_after_update'])) {
@@ -334,7 +334,7 @@ class yf_admin_methods {
 				$params['on_before_update']($sql);
 			}
 
-			$db->insert($table, $db->es($sql));
+			$db->insert_safe($table, $sql);
 			$new_id = $db->insert_id();
 
 			common()->admin_wall_add(array($_GET['object'].': item cloned in table '.$table, $new_id));
