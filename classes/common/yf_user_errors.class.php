@@ -45,27 +45,25 @@ class yf_user_errors {
 		// Do store message into database (also check if that possible)
 		if ($this->LOG_INTO_DB && is_object(db())) {
 			$error_type = 0;
-			// Prepare SQL
-			$sql = db()->INSERT("log_user_errors", array(
-				"error_level"	=> intval($error_type),
-				"error_text"	=> _es($error_message),
-				"source_file"	=> _es($cur_trace["file"]),
-				"source_line"	=> intval($cur_trace["line"]),
-				"date"			=> time(),
-				"site_id"		=> (int)conf('SITE_ID'),
-				"user_id"		=> intval($_SESSION[MAIN_TYPE_ADMIN ? "admin_id" : "user_id"]),
-				"user_group"	=> intval($_SESSION[MAIN_TYPE_ADMIN ? "admin_group" : "user_group"]),
-				"is_admin"		=> MAIN_TYPE_ADMIN ? 1 : 0,
-				"ip"			=> _es(common()->get_ip()),
-				"query_string"	=> _es(WEB_PATH."?".$_SERVER["QUERY_STRING"]),
-				"user_agent"	=> _es($_SERVER["HTTP_USER_AGENT"]),
-				"referer"		=> _es($_SERVER["HTTP_REFERER"]),
-				"request_uri"	=> _es($_SERVER["REQUEST_URI"]),
-				"env_data"		=> $this->DB_LOG_ENV ? _es($this->_prepare_env()) : "",
-				"object"		=> _es($_GET["object"]),
-				"action"		=> _es($_GET["action"]),
-			), true);
-			db()->_add_shutdown_query($sql);
+			db()->insert_safe('log_user_errors', array(
+				'error_level'	=> intval($error_type),
+				'error_text'	=> $error_message,
+				'source_file'	=> $cur_trace['file'],
+				'source_line'	=> intval($cur_trace['line']),
+				'date'			=> time(),
+				'site_id'		=> (int)conf('SITE_ID'),
+				'user_id'		=> intval($_SESSION[MAIN_TYPE_ADMIN ? 'admin_id' : 'user_id']),
+				'user_group'	=> intval($_SESSION[MAIN_TYPE_ADMIN ? 'admin_group' : 'user_group']),
+				'is_admin'		=> MAIN_TYPE_ADMIN ? 1 : 0,
+				'ip'			=> common()->get_ip(),
+				'query_string'	=> WEB_PATH.'?'.$_SERVER['QUERY_STRING'],
+				'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
+				'referer'		=> $_SERVER['HTTP_REFERER'],
+				'request_uri'	=> $_SERVER['REQUEST_URI'],
+				'env_data'		=> $this->DB_LOG_ENV ? $this->_prepare_env() : '',
+				'object'		=> $_GET['object'],
+				'action'		=> $_GET['action'],
+			));
 		}
 	}
 

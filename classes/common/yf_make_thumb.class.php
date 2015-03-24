@@ -315,8 +315,7 @@ class yf_make_thumb {
 				if (!empty($tried_cmds) && $this->LOG_EXEC_CMDS) {
 					$other_options .= "tried cmds (exec):  ".implode(";", $tried_cmds)."; ";
 				}
-				// Prepare SQL
-				$sql = db()->insert_safe('log_img_resizes', array(
+				db()->insert_safe('log_img_resizes', array(
 					'source_path'		=> $source_file_path,
 					'source_file_size'	=> intval($source_size),
 					'source_x'			=> intval($_source_width),
@@ -339,7 +338,7 @@ class yf_make_thumb {
 					'user_agent'		=> $_SERVER['HTTP_USER_AGENT'],
 					'referer'			=> $_SERVER['HTTP_REFERER'],
 					'request_uri'		=> $_SERVER['REQUEST_URI'],
-					'env_data'			=> $this->DB_LOG_ENV ? _es(serialize(array('_GET'=>$_GET,'_POST'=>$_POST))) : '',
+					'env_data'			=> $this->DB_LOG_ENV ? serialize(array('_GET' => $_GET,'_POST' => $_POST)) : '',
 					'object'			=> $_GET['object'],
 					'action'			=> $_GET['action'],
 					'success'			=> intval((bool)$resize_success),
@@ -348,8 +347,7 @@ class yf_make_thumb {
 					'used_lib'			=> $USED_LIB,
 					'tried_libs'		=> implode(',', $tried_libs),
 					'other_options'		=> $other_options,
-				), true);
-				db()->_add_shutdown_query($sql);
+				));
 			}
 		}
 		return $resize_success;

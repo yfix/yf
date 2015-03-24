@@ -393,7 +393,7 @@ class yf_send_mail {
 				.', smtp_secure: '.$smtp['smtp_secure']
 				."\r\n";
 		}
-		$sql = db()->insert_safe('log_emails', array(
+		return db()->insert_safe('log_emails', array(
 			'email_from'	=> $params['email_from'],
 			'name_from'		=> $params['name_from'],
 			'email_to'		=> $params['email_to'],
@@ -412,7 +412,7 @@ class yf_send_mail {
 			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
 			'referer'		=> $_SERVER['HTTP_REFERER'],
 			'request_uri'	=> $_SERVER['REQUEST_URI'],
-			'env_data'		=> $this->DB_LOG_ENV ? _es(serialize(array('_GET'=>$_GET,'_POST'=>$_POST))) : '',
+			'env_data'		=> $this->DB_LOG_ENV ? serialize(array('_GET' => $_GET,'_POST' => $_POST)) : '',
 			'object'		=> $_GET['object'],
 			'action'		=> $_GET['action'],
 			'success'		=> intval((bool)$params['send_success']),
@@ -421,7 +421,6 @@ class yf_send_mail {
 			'mail_debug'	=> intval((bool)$params['mail_debug']),
 			'used_mailer'	=> $params['used_mailer'],
 			'other_options'	=> $other_options,
-		), true);
-		db()->query($sql);
+		));
 	}
 }
