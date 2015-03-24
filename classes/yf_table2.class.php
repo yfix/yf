@@ -954,6 +954,24 @@ class yf_table2 {
 	}
 
 	/**
+	* Register callback for TR element
+	*/
+	function tr($func, $extra = array()) {
+// TODO: implement this
+		$this->_callbacks['tr'][] = array($func, $extra);
+		return $this;
+	}
+
+	/**
+	* Register callback for TD element
+	*/
+	function td($func, $extra = array()) {
+// TODO: implement this
+		$this->_callbacks['td'][] = array($func, $extra);
+		return $this;
+	}
+
+	/**
 	*/
 	function text($name, $desc = '', $extra = array()) {
 		// Shortcut: use second param as $extra
