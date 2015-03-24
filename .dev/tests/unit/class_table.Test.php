@@ -176,4 +176,33 @@ class class_table_test extends PHPUnit_Framework_TestCase {
 			'<table class="'._class('table2')->CLASS_TABLE_MAIN.'"><tbody><tr><td>1</td><td>2</td></tr><tr><td>122</td><td>222</td></tr></tbody></table>'
 		), str_replace(PHP_EOL, '', trim($table)));
 	}
+	public function test_group_by() {
+		$a = array(
+			array('id' => '1', 'user_id' => '111'),
+			array('id' => '2', 'user_id' => '111'),
+		);
+		$table = table($a, array('group_by' => 'user_id'))->text('id')->text('user_id');
+		$this->assertEquals(str_replace(PHP_EOL, '', 
+			'<table class="'._class('table2')->CLASS_TABLE_MAIN.'">'
+			. '<thead><th>Id</th><th>User id</th></thead><tbody><tr><td>1</td><td rowspan="2">111</td></tr><tr><td>2</td></tr>'
+			. '</tbody></table>'
+		), str_replace(PHP_EOL, '', trim($table)));
+	}
+	public function test_table_force_class() {
+		$a = array(array('id' => '1'), array('id' => '2'));
+		$table = table($a, array('force_class' => 'test_class'))->text('id');
+		$this->assertEquals(str_replace(PHP_EOL, '', '<table class="test_class"><thead><th>Id</th></thead><tbody><tr><td>1</td></tr><tr><td>2</td></tr></tbody></table>'), str_replace(PHP_EOL, '', trim($table)));
+	}
+	public function test_rowspan() {
+// TODO
+	}
+	public function test_colspan() {
+// TODO
+	}
+	public function test_tr() {
+// TODO
+	}
+	public function test_td() {
+// TODO
+	}
 }
