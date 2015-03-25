@@ -1379,4 +1379,62 @@ class yf_html {
 		css('.popover { width:auto; min-width: 100px;}');
 		return '&nbsp;<span class="yf_tip" data-toggle="popover" data-content="'._prepare_html($text).'"><i class="icon icon-question-sign fa fa-question-circle"></i></span>';
 	}
+
+	/**
+	* Hyperlink container
+	*/
+	function a() {
+		$args = func_get_args();
+		$a = array();
+		// numerics params
+		if (isset($args[0]) && is_array($args[0])) {
+			$a = $a[0];
+		} elseif (isset($args[0])) {
+			$a['href']	= $args[0];
+			$a['title']	= $args[1];
+			$a['icon']	= $args[2];
+			$a['text']	= $args[3];
+			$a['class']	= $args[4];
+		// named params
+		} elseif (isset($args['link'])) {
+			$a = $args;
+		}
+		if (isset($args['extra']) && is_array($args['extra'])) {
+			foreach($args['extra'] as $k => $v) {
+				$a[$k] = $v;
+			}
+		}
+		if (!isset($a['text'])) {
+			$a['text'] = $a['title'] ?: $a['href'];
+		}
+		if ($a['href'] && substr($a['href'], strlen('http')) !== 'http') {
+			$a['href'] = url($a['href']);
+		}
+		if (!isset($a['class'])) {
+			$a['class'] = 'btn btn-default btn-mini btn-xs';
+		}
+		if (!isset($a['target'])) {
+			$a['target'] = '_blank';
+		}
+		if (isset($a['icon'])) {
+			$a['icon'] = '<i class="'.$a['icon'].'"></i>';
+		}
+		return '<a'._attrs($a, array('href','title','class','style','id','rel','target','disabled')).'>'. $a['icon']. (strlen($a['text']) ? ($a['icon'] ? '&nbsp;' : '')._prepare_html($a['text']) : '').'</a>';
+	}
+
+	/**
+	* Icon container
+	*/
+	function icon() {
+		$args = func_get_args();
+// TODO
+	}
+
+	/**
+	* IP container
+	*/
+	function ip() {
+		$args = func_get_args();
+// TODO
+	}
 }
