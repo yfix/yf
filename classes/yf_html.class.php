@@ -1427,7 +1427,31 @@ class yf_html {
 	*/
 	function icon() {
 		$args = func_get_args();
-// TODO
+		$a = array();
+		// numerics params
+		if (isset($args[0]) && is_array($args[0])) {
+			$a = $a[0];
+		} elseif (isset($args[0])) {
+			$a['icon']	= $args[0];
+			$a['title']	= $args[1];
+			$a['text']	= $args[2];
+			$a['class']	= $args[3];
+		// named params
+		} elseif (isset($args['link'])) {
+			$a = $args;
+		}
+		if (isset($args['extra']) && is_array($args['extra'])) {
+			foreach($args['extra'] as $k => $v) {
+				$a[$k] = $v;
+			}
+		}
+		if (!isset($a['text'])) {
+			$a['text'] = $a['title'];
+		}
+		if (!isset($a['style'])) {
+			$a['style'] = 'padding-right:5px';
+		}
+		return '<span style="'.$a['style'].'" title="'._prepare_html($a['title']).'"><i class="'.$a['icon'].'"></i>'.(strlen($a['text']) ? '&nbsp;'._prepare_html($a['text']) : '').'</span>';
 	}
 
 	/**
