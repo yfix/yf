@@ -72,6 +72,7 @@ class yf_api {
 	public function _reject( $message = 'Service Unavailable', $header = 'Status: 503 Service Unavailable', $code = 503 ) {
 		if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP 5 >= 5.4.0
 		header( $header );
+		header('Content-Type: text/html; charset=utf-8');
 		$this->_send( $message );
 	}
 
@@ -85,6 +86,7 @@ class yf_api {
 		if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP 5 >= 5.4.0
 		header( $header   );
 		header( $location );
+		header('Content-Type: text/html; charset=utf-8');
 		$this->_send( $message );
 	}
 
@@ -117,7 +119,7 @@ class yf_api {
 		}
 		if( function_exists( 'http_response_code' ) ) { http_response_code( 200 ); } // PHP 5 >= 5.4.0
 		header( 'Status: 200' );
-		header( "Content-Type: application/$type; charset=UTF-8" );
+		header( "Content-Type: application/$type; charset=utf-8" );
 		$this->_send( $response );
 	}
 
