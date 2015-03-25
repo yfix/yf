@@ -545,11 +545,16 @@ class yf_table2 {
 	*	->text('name')
 	*	->text('num_logins')
 	*	->text('num_auth_fails')
-	*
+	*	-------------------
 	*	table2('SELECT * FROM '.db('shop_orders'), array('custom_fields' => array(
 	*		'user' => array('SELECT id, CONCAT(login," ",email) AS name FROM '.db('user').' WHERE id IN(%ids)', 'user_id'),
 	*	)))
 	*	->text('user')
+	*	-------------------
+	*	table2(db()->from('shop_orders'), array('custom_fields' => array(
+	*		'user' => array(db()->from('user')->where_raw('id IN(%ids)'), $db_func = 'get_all'),
+	*	)))
+	*	->func('user', function($user) { return print_r($user, 1); })
 	*/
 	function _render_add_custom_fields(&$params, &$data, &$ids) {
 		if (!$data || !$ids || !$params['custom_fields']) {
@@ -558,27 +563,37 @@ class yf_table2 {
 		$db = is_object($params['db']) ? $params['db'] : db();
 		$ids_sql = implode(',', $ids);
 		$custom_foreign_fields = array();
+		$db_func_orig = 'get_2d';
 		foreach ((array)$params['custom_fields'] as $custom_name => $custom_sql) {
-			// In this case we can override name of the field used in virtual foreign key, used for custom field.
-			// good example is 'user_id' instead of 'id'
+			$_ids_sql = $ids_sql;
+			$db_func = $db_func_orig;
 			if (is_array($custom_sql)) {
-				$tmp = $custom_sql;
-				$custom_sql = $tmp[0];
-				$foreign_field = $tmp[1];
-				unset($tmp);
-				if ($foreign_field != 'id') {
-					$_ids = array();
-					foreach((array)$data as $k => $v) {
-						$_ids[$v[$foreign_field]] = $v[$foreign_field];
+				list($custom_sql, $param2) = $custom_sql;
+				// Check if second param is name of db method
+				if (in_array($param2, array('get', 'get_2d', 'get_all'))) {
+					$db_func = $param2;
+				} else {
+					// In this case we can override name of the field used in virtual foreign key, used for custom field.
+					// good example is 'user_id' instead of 'id'
+					$foreign_field = $param2;
+					if ($foreign_field != 'id') {
+						$_ids = array();
+						foreach((array)$data as $k => $v) {
+							$_ids[$v[$foreign_field]] = $v[$foreign_field];
+						}
+						$_ids_sql = implode(',', $_ids);
 					}
-					$_ids_sql = implode(',', $_ids);
+					$custom_foreign_fields[$custom_name] = $foreign_field;
 				}
-				$custom_foreign_fields[$custom_name] = $foreign_field;
-				$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $_ids_sql, $custom_sql));
-			} elseif (is_object($custom_sql) && $custom_sql instanceof yf_db_query_builder_driver) {
-				$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $ids_sql, $custom_sql->sql()));
-			} elseif (!is_callable($custom_sql)) {
-				$this->_data_sql_names[$custom_name] = $db->get_2d(str_replace('%ids', $ids_sql, $custom_sql));
+			}
+			if (is_object($custom_sql) && $custom_sql instanceof yf_db_query_builder_driver) {
+				$custom_sql = $custom_sql->sql();
+			} elseif (is_callable($custom_sql)) {
+				$custom_sql = $custom_sql($_ids_sql);
+			}
+			if ($custom_sql) {
+				$custom_sql = str_replace('%ids', $_ids_sql, $custom_sql);
+				$this->_data_sql_names[$custom_name] = $db->$db_func($custom_sql);
 			}
 		}
 		foreach ((array)$data as $_id => $row) {
