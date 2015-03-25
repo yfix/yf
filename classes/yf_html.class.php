@@ -1407,7 +1407,7 @@ class yf_html {
 		if (!isset($a['text'])) {
 			$a['text'] = $a['title'] ?: $a['href'];
 		}
-		if ($a['href'] && substr($a['href'], strlen('http')) !== 'http') {
+		if ($a['href'] && substr($a['href'], 0, strlen('http')) !== 'http' && substr($a['href'], 0, strlen('//')) !== '//') {
 			$a['href'] = url($a['href']);
 		}
 		if (!isset($a['class'])) {
