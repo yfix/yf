@@ -302,6 +302,9 @@ if (!function_exists('sphinx_escape_string')) {
 if (!function_exists('html')) {
 	function html(array $params = array()) { return _class('html')->chained_wrapper($params); }
 }
+if (!function_exists('a')) {
+	function a() { return call_user_func_array(array(_class('html'), __FUNCTION__), func_get_args()); }
+}
 if (!function_exists('validate')) {
 	function validate($input = '', $rules = array()) { return _class('validate')->_input_is_valid($input, $rules); }
 }
