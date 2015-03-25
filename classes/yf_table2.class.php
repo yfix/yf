@@ -565,26 +565,30 @@ class yf_table2 {
 		$custom_foreign_fields = array();
 		$db_func_orig = 'get_2d';
 		foreach ((array)$params['custom_fields'] as $custom_name => $custom_sql) {
+			$foreign_field = $this->_params['custom_fields_id'];
 			$_ids_sql = $ids_sql;
 			$db_func = $db_func_orig;
 			if (is_array($custom_sql)) {
-				list($custom_sql, $param2) = $custom_sql;
+				list($custom_sql, $param2, $param3) = $custom_sql;
 				// Check if second param is name of db method
 				if (in_array($param2, array('get', 'get_2d', 'get_all'))) {
 					$db_func = $param2;
+					$param3 && $foreign_field = $param3;
 				} else {
-					// In this case we can override name of the field used in virtual foreign key, used for custom field.
-					// good example is 'user_id' instead of 'id'
 					$foreign_field = $param2;
-					if ($foreign_field != 'id') {
-						$_ids = array();
-						foreach((array)$data as $k => $v) {
-							$_ids[$v[$foreign_field]] = $v[$foreign_field];
-						}
-						$_ids_sql = implode(',', $_ids);
-					}
-					$custom_foreign_fields[$custom_name] = $foreign_field;
 				}
+			}
+			// In this case we can override name of the field used in virtual foreign key, used for custom field.
+			// good example is 'user_id' instead of 'id'
+			if ($foreign_field) {
+				if ($foreign_field != 'id') {
+					$_ids = array();
+					foreach((array)$data as $k => $v) {
+						$_ids[$v[$foreign_field]] = $v[$foreign_field];
+					}
+					$_ids_sql = implode(',', $_ids);
+				}
+				$custom_foreign_fields[$custom_name] = $foreign_field;
 			}
 			if (is_object($custom_sql) && $custom_sql instanceof yf_db_query_builder_driver) {
 				$custom_sql = $custom_sql->sql();
@@ -603,7 +607,7 @@ class yf_table2 {
 				} else {
 					$_custom_id = $_id;
 				}
-				$data[$_id][$custom_name] = strval($custom_data[$_custom_id]);
+				$data[$_id][$custom_name] = is_array($custom_data[$_custom_id]) ? $custom_data[$_custom_id] : (string)$custom_data[$_custom_id];
 			}
 		}
 		// Needed to correctly pass inside $instance_params to each function
