@@ -1437,7 +1437,7 @@ class yf_html {
 			$a['text']	= $args[2];
 			$a['class']	= $args[3];
 		// named params
-		} elseif (isset($args['link'])) {
+		} elseif (isset($args['icon'])) {
 			$a = $args;
 		}
 		if (isset($args['extra']) && is_array($args['extra'])) {
@@ -1458,7 +1458,43 @@ class yf_html {
 	* IP container
 	*/
 	function ip() {
+		asset('bfh-select');
+
 		$args = func_get_args();
-// TODO
+		$a = array();
+		// numerics params
+		if (isset($args[0]) && is_array($args[0])) {
+			$a = $a[0];
+		} elseif (isset($args[0])) {
+			$a['ip'] = $args[0];
+		}
+		if (isset($args['extra']) && is_array($args['extra'])) {
+			foreach($args['extra'] as $k => $v) {
+				$a[$k] = $v;
+			}
+		}
+		$ip = $a['ip'];
+		$code = strtoupper($this->_get_ip_country($ip));
+		$name = _prepare_html($this->_get_country_name($code));
+		return a('http://whois.domaintools.com/'.urlencode($ip), $ip. ' | '. $code. ' | '. $name, ($code ? 'bfh-flag-'.$code : ''), $ip);
+	}
+
+	/**
+	*/
+	function _get_ip_country ($ip) {
+		if (!isset($this->_ip_to_country[$ip])) {
+			$func = 'geoip_country_code_by_name';
+			$this->_ip_to_country[$ip] = is_callable($func) ? $func($ip) : '';
+		}
+		return $this->_ip_to_country[$ip];
+	}
+
+	/**
+	*/
+	function _get_country_name ($code) {
+		if (!isset($this->_country_names)) {
+			$this->_country_names = db()->select('code','name')->from('geo_countries')->get_2d();
+		}
+		return $this->_country_names[$code];
 	}
 }
