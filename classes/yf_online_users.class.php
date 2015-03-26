@@ -42,14 +42,32 @@ class yf_online_users {
 		return array($_COOKIE['user_id_tmp'], 'user_id_tmp');
 	}
 
-	function _is_online( $user_id, $user_type = null ) {
-		$user_id = (int)$user_id;
-		if( $user_id < 1 ) { return( null ); }
+	function _is_online( $user_ids, $user_type = null ) {
+		if( is_array( $user_ids ) ) {
+		} else {
+			$user_ids = (int)$user_ids;
+			if( $user_ids < 1 ) { return( null ); }
+			$user_ids = (array)$user_ids;
+		}
 		if( empty( $this->_type[ $user_type ] ) ) {
 			$user_type = 'user_id';
 		}
-		$time = db()->select( 'time' )->table( 'users_online' )->where( array( 'user_id' => $user_id, 'user_type' => $user_type ) )->get_one();
-		$result = ( time() - $this->_ONLINE_TTL ) < $time;
+		$time = db()->table( 'users_online' )->select( 'user_id', 'time' )
+			->where( 'user_type', _es( $user_type ) )
+			->where_in( $user_id, 'user_ids' )
+			->get_deep_array(1)
+		;
+		$result = array();
+		foreach( $user_ids as $user_id ) {
+			$user_id = (int)$user_id;
+			$result[ $user_id ] = false;
+			if( !empty( $time[ $user_id ] ) ) {
+				$result[ $user_id ] = ( time() - $this->_ONLINE_TTL ) < $time[ $user_id ];
+			}
+		}
+		if( count( $user_ids ) == 1 ) {
+			$result = reset( $result );
+		}
 		return( $result );
 	}
 
