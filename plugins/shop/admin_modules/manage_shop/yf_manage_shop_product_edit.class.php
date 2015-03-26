@@ -179,28 +179,6 @@ class yf_manage_shop_product_edit {
 			'units'       => $products_to_unit,
 		);
 		$textarea_id = 'description';
-/*
-		$cke_config = '
-			CKEDITOR.replace("'.$textarea_id.'", {
-				toolbar: [
-					[ "Cut", "Copy", "Paste", "PasteText", "PasteFromWord", "-", "Undo", "Redo" ], [ "RemoveFormat" ], [ "Bold", "Italic", "Underline" ],
-					[ "FontSize" ], [ "TextColor" ], [ "NumberedList", "BulletedList", "-", "Blockquote" ], [ "Link", "Unlink", "SpecialChar" ], [ "Source" ], [ "Maximize" ]
-				],
-				language: "ru",
-				removePlugins: "bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates",
-			});
-		';
-*/
-		$cke_config = array(
-			'toolbar' => array(
-				array(
-					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat' , 'Bold', 'Italic', 'Underline' ,
-					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', '-', 'Blockquote', 'Link', 'Unlink', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
-				),
-			),
-			'language' => conf('language'),
-			'removePlugins' => 'bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates',
-		);
 		return form($replace, array(
 // TODO: use validation
 				'for_upload' => 1,
@@ -213,7 +191,7 @@ class yf_manage_shop_product_edit {
 				),
 			))
 		->tab_start('tab_desc', array('tab_body' => array('class' => 'active span12 col-md-12')))
-			->textarea('description', array('style' => 'min-width:100%', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => $cke_config)))
+			->textarea('description', array('style' => 'min-width:100%', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
 		->tab_end()
 		->tab_start('main')
 			->link('product_url_user', url_user('/shop/product/'.$product_info['id']), array('target' => '_blank'))
