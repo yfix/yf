@@ -6,6 +6,9 @@ return array(
 			'js' => '//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js',
 		),
 	),
+	'config' => array(
+		'no_cache' => true,
+	),
 	'info' => array(
 		'url' => 'http://ace.c9.io/',
 		'name' => 'Ace - The High Performance Code Editor for the Web',
