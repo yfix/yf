@@ -343,22 +343,22 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Return first item from resultset
 	*/
-	public function first($use_cache = false) {
+	public function first($select = null, $use_cache = false) {
 		if (is_object($this->get_model())) {
 			return $this->order_by($this->get_key_name().' asc')->limit(1)->get($use_cache);
 		} else {
-			return $this->get($use_cache);
+			return $this->get($select, $use_cache);
 		}
 	}
 
 	/**
 	* Return last item from resultset
 	*/
-	public function last($use_cache = false) {
+	public function last($select = null, $use_cache = false) {
 		if (is_object($this->get_model())) {
 			return $this->order_by($this->get_key_name().' desc')->limit(1)->get($use_cache);
 		} else {
-			$result = $this->get_all($use_cache);
+			$result = $this->get_all($select, $use_cache);
 			if (is_array($result) && count($result)) {
 				return end($result);
 			} else {
@@ -370,7 +370,10 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Render SQL and execute db->get()
 	*/
-	public function get($use_cache = false) {
+	public function get($select = null, $use_cache = false) {
+		if (isset($select)) {
+			$this->select($select);
+		}
 		$sql = $this->sql();
 		if ($sql) {
 			$result = $this->db->get($sql, $use_cache);
@@ -385,14 +388,17 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Alias for get_one()
 	*/
-	public function one($use_cache = false) {
-		return $this->get_one($use_cache);
+	public function one($field = '', $use_cache = false) {
+		return $this->get_one($field, $use_cache);
 	}
 
 	/**
 	* Render SQL and execute db->get_one()
 	*/
-	public function get_one($use_cache = false) {
+	public function get_one($field = '', $use_cache = false) {
+		if (strlen($field)) {
+			$this->select($field);
+		}
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get_one($sql, $use_cache);
@@ -433,14 +439,17 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Alias for get_all()
 	*/
-	public function all($use_cache = false) {
-		return $this->get_all($use_cache);
+	public function all($select = null, $use_cache = false) {
+		return $this->get_all($select, $use_cache);
 	}
 
 	/**
 	* Get all records with generated SQL
 	*/
-	public function get_all($use_cache = false) {
+	public function get_all($select = null, $use_cache = false) {
+		if (isset($select)) {
+			$this->select($select);
+		}
 		$sql = $this->sql();
 		if ($sql) {
 			$result = $this->db->get_all($sql, $key_name, $use_cache);
@@ -457,7 +466,10 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Render SQL and execute db->get_2d()
 	*/
-	public function get_2d($use_cache = false) {
+	public function get_2d($select = null, $use_cache = false) {
+		if (isset($select)) {
+			$this->select($select);
+		}
 		$sql = $this->sql();
 		if ($sql) {
 			$result = $this->db->get_2d($sql, $use_cache);
@@ -472,7 +484,10 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Render SQL and execute db->get_deep_array()
 	*/
-	public function get_deep_array($levels = 1, $use_cache = false) {
+	public function get_deep_array($levels = 1, $select = null, $use_cache = false) {
+		if (isset($select)) {
+			$this->select($select);
+		}
 		$sql = $this->sql();
 		if ($sql) {
 			return $this->db->get_deep_array($sql, $levels, $use_cache);
@@ -483,7 +498,10 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Delete records matching query params
 	*/
-	public function delete($as_sql = false) {
+	public function delete($where = null, $as_sql = false) {
+		if (isset($where)) {
+			$this->select($where);
+		}
 		$sql = false;
 		$remove_as_from_delete = true;
 		if ($remove_as_from_delete) {
