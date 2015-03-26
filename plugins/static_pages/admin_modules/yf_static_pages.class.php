@@ -83,7 +83,7 @@ class yf_static_pages {
 	function edit() {
 		$a = $this->_get_info();
 		if (!$a) {
-			return _e('No info');
+			return _404();
 		}
 		$a = (array)$_POST + (array)$a;
 		$a['back_link'] = url('/@object');
@@ -151,7 +151,7 @@ class yf_static_pages {
 	function view() {
 		$a = $this->_get_info();
 		if (empty($a)) {
-			return _e('No such page!');
+			return _404();
 		}
 		$body = stripslashes($a['text']);
 		$replace = array(
