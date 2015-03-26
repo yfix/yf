@@ -9,11 +9,13 @@
 */
 class yf_static_pages {
 
+	const table = 'static_pages';
+
 	/**
 	*/
-	function _get_page_info($id = null) {
+	function _get_info($id = null) {
 		$id = isset($id) ? $id : $_GET['id'];
-		return db()->from('static_pages')
+		return db()->from(self::table)
 			->where('name', _strtolower(urldecode($id)) )
 			->or_where('id', (int)$id)->get();
 	}
@@ -36,7 +38,7 @@ class yf_static_pages {
 	/**
 	*/
 	function show() {
-		return table(db()->from('static_pages'), array(
+		return table(db()->from(self::table), array(
 				'filter' => true,
 				'filter_params' => array(
 					'name'	=> 'like',
@@ -64,7 +66,7 @@ class yf_static_pages {
 					return (bool)strlen($in);
 				}),
 			))
-			->db_insert_if_ok('static_pages', array('name'))
+			->db_insert_if_ok(self::table, array('name'))
 			->on_after_update(function() {
 				$id = db()->insert_id();
 				common()->admin_wall_add(array('static page added: '.$name, $id));
@@ -79,25 +81,13 @@ class yf_static_pages {
 	/**
 	*/
 	function edit() {
-		$a = $this->_get_page_info();
+		$a = $this->_get_info();
 		if (!$a) {
 			return _e('No info');
 		}
 		$a = (array)$_POST + (array)$a;
 		$a['back_link'] = url('/@object');
 		$_this = $this;
-		$cke_config = array(
-			'toolbar' => array(
-				array(
-					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
-					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', '-', 'Blockquote', 'Link', 'Unlink', 'Image', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
-				),
-			),
-			'language' => conf('language'),
-			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,table,tabletools,templates,style',
-			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
-			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*)',
-		);
 		return form($a)
 			->validate(array(
 				'__before__'=> 'trim',
@@ -107,13 +97,13 @@ class yf_static_pages {
 				}),
 				'text' => 'required',
 			))
-			->db_update_if_ok('static_pages', array('name','text','page_title','page_heading','meta_keywords','meta_desc','active'), 'id='.$a['id'])
+			->db_update_if_ok(self::table, array('name','text','page_title','page_heading','meta_keywords','meta_desc','active'), 'id='.$a['id'])
 			->on_after_update(function() {
 				common()->admin_wall_add(array('static page updated: '.$a['name'], $a['id']));
 				cache_del('static_pages_names');
 			})
 			->text('name')
-			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => $cke_config)))
+			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
 			->text('page_title')
 			->text('page_heading')
 			->text('meta_keywords')
@@ -125,9 +115,9 @@ class yf_static_pages {
 	/**
 	*/
 	function delete() {
-		$a = $this->_get_page_info();
+		$a = $this->_get_info();
 		if ($a) {
-			db()->from('static_pages')->whereid($a['id'])->delete();
+			db()->from(self::table)->whereid($a['id'])->delete();
 			common()->admin_wall_add(array('static page deleted: '.$a['id'], $a['id']));
 			cache_del('static_pages_names');
 		}
@@ -142,9 +132,9 @@ class yf_static_pages {
 	/**
 	*/
 	function active () {
-		$a = $this->_get_page_info();
+		$a = $this->_get_info();
 		if (!empty($a['id'])) {
-			db()->update('static_pages', array('active' => (int)!$a['active']), (int)$a['id']);
+			db()->update(self::table, array('active' => (int)!$a['active']), (int)$a['id']);
 			common()->admin_wall_add(array('static page: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']));
 			cache_del('static_pages_names');
 		}
@@ -159,7 +149,7 @@ class yf_static_pages {
 	/**
 	*/
 	function view() {
-		$a = $this->_get_page_info();
+		$a = $this->_get_info();
 		if (empty($a)) {
 			return _e('No such page!');
 		}
@@ -240,7 +230,7 @@ class yf_static_pages {
 		if ($params['describe_self']) {
 			return $meta;
 		}
-		$sql = db()->from('static_pages');
+		$sql = db()->from(self::table);
 
 		$config = $params;
 		$avail_orders = $meta['configurable']['order_by'];

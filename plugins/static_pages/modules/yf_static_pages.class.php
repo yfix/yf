@@ -9,6 +9,7 @@
 */
 class yf_static_pages {
 
+	const table = 'static_pages';
 	/** @var string @conf_skip */
 	public $PAGE_NAME			= null;
 	/** @var string @conf_skip */
@@ -120,7 +121,7 @@ class yf_static_pages {
 		if (empty($id)) {
 			return array();
 		}
-		$q = db()->from('static_pages')->where('active = 1');
+		$q = db()->from(self::table)->where('active = 1');
 		if (is_numeric($id)) {
 			$q->where('id', (int)$id);
 		} else {
@@ -219,7 +220,7 @@ class yf_static_pages {
 		if (!is_object($OBJ)) {
 			return false;
 		}
-		$Q = db()->query('SELECT * FROM '.db('static_pages')." WHERE active='1'". ($this->MULTILANG_MODE ? " AND locale='"._es(conf('language'))."'" : ""));
+		$Q = db()->query('SELECT * FROM '.db(self::table)." WHERE active='1'". ($this->MULTILANG_MODE ? " AND locale='"._es(conf('language'))."'" : ""));
 		while ($A = db()->fetch_assoc($Q)) {
 			$OBJ->_store_item(array(
 				'url'	=> './?object=static_pages&action=show&id='.$A['id'],
