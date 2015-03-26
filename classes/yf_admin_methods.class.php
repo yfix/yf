@@ -427,5 +427,17 @@ class yf_admin_methods {
 			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
 			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*)',
 		);
+		// Other config variant example
+		/* 
+		return '
+			CKEDITOR.replace("'.$textarea_id.'", {
+				toolbar: [
+					[ "Cut", "Copy", "Paste", "PasteText", "PasteFromWord", "-", "Undo", "Redo" ], [ "RemoveFormat" ], [ "Bold", "Italic", "Underline" ],
+					[ "FontSize" ], [ "TextColor" ], [ "NumberedList", "BulletedList", "-", "Blockquote" ], [ "Link", "Unlink", "SpecialChar" ], [ "Source" ], [ "Maximize" ]
+				],
+				language: "ru",
+				removePlugins: "bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates",
+			});
+		';*/
 	}
 }
