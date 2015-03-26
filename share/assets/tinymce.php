@@ -9,4 +9,7 @@ return array(
 			),
 		),
 	),
+	'config' => array(
+		'no_cache' => true,
+	),
 );
