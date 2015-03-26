@@ -1362,7 +1362,7 @@ class yf_common {
 	*/
 	function error_404($msg = '') {
 		if (MAIN_TYPE_ADMIN && is_logged_in()) {
-			// Do nothing for logged in admin, just display error inlined
+			// Do not override status header for logged in admin, just display error inlined
 			!$msg && $msg = t('404 Not Found');
 		} else {
 			// All other cases
@@ -1375,7 +1375,13 @@ class yf_common {
 	* Show error and set response header to "403 Forbidden"
 	*/
 	function error_403($msg = '') {
-		header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+		if (MAIN_TYPE_ADMIN && is_logged_in()) {
+			// Do not override status header for logged in admin, just display error inlined
+			!$msg && $msg = t('403 Forbidden');
+		} else {
+			// All other cases
+			header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+		}
 		return $this->_show_error_message($msg);
 	}
 
