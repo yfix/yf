@@ -1361,7 +1361,13 @@ class yf_common {
 	* Show error and set response header to "404 Not Found"
 	*/
 	function error_404($msg = '') {
-		header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 404 Not Found');
+		if (MAIN_TYPE_ADMIN && is_logged_in()) {
+			// Do nothing for logged in admin, just display error inlined
+			!$msg && $msg = t('404 Not Found');
+		} else {
+			// All other cases
+			header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 404 Not Found');
+		}
 		return $this->_show_error_message($msg);
 	}
 
