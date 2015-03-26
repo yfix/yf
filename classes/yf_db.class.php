@@ -1178,7 +1178,7 @@ class yf_db {
 	* Helper
 	*/
 	function delete($table, $where, $as_sql = false) {
-		$sql = $this->from($table)->where($where)->delete($_as_sql = true);
+		$sql = $this->from($table)->delete($where, $_as_sql = true);
 		if (MAIN_TYPE_ADMIN && $this->QUERY_REVISIONS && !$as_sql) {
 			$this->_save_query_revision(__FUNCTION__, $table, array('where' => $where, 'cond' => $cond));
 		}
