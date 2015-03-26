@@ -500,7 +500,7 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function delete($where = null, $as_sql = false) {
 		if (isset($where)) {
-			$this->select($where);
+			$this->where($where);
 		}
 		$sql = false;
 		$remove_as_from_delete = true;
