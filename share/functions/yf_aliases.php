@@ -342,7 +342,7 @@ if (!function_exists('_env')) {
 	function _env($key = null, $val = null) { return input()->env($key, $val); }
 }
 if (!function_exists('no_graphics')) {
-	function no_graphics($val = null) { return main()->no_graphics(); }
+	function no_graphics($val = null) { return main()->no_graphics($val); }
 }
 if (!function_exists('is_dev')) {
 	function is_dev() { return (defined('DEVELOP') && DEVELOP) || (defined('TEST_MODE') && TEST_MODE); }
