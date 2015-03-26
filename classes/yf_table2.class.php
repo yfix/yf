@@ -1633,6 +1633,10 @@ class yf_table2 {
 	/**
 	*/
 	function header_add($name = '', $link = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+			$name = $extra['name'];
+		}
 		$extra['display_in'] = 'header';
 		return $this->footer_add($name, $link, $extra);
 	}
@@ -1642,6 +1646,7 @@ class yf_table2 {
 	function footer_add($name = '', $link = '', $extra = array()) {
 		if (is_array($name)) {
 			$extra = $name;
+			$name = $extra['name'];
 		}
 		if (!$name) {
 			$name = 'add';
@@ -1664,6 +1669,10 @@ class yf_table2 {
 	/**
 	*/
 	function header_submit($name = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+			$name = $extra['name'];
+		}
 		$extra['display_in'] = 'header';
 		return $this->footer_submit($name, $extra);
 	}
@@ -1671,6 +1680,10 @@ class yf_table2 {
 	/**
 	*/
 	function footer_submit($name = '', $extra = array()) {
+		if (is_array($name)) {
+			$extra = $name;
+			$name = $extra['name'];
+		}
 		$item = array(
 			'type'	=> __FUNCTION__,
 			'name'	=> $name,
