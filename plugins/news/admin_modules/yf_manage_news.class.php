@@ -53,18 +53,6 @@ class yf_manage_news {
 		$a = (array)$_POST + (array)$a;
 		$a['back_link'] = url('/@object');
 		$_this = $this;
-		$cke_config = array(
-			'toolbar' => array(
-				array(
-					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
-					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', '-', 'Blockquote', 'Link', 'Unlink', 'Image', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
-				),
-			),
-			'language' => conf('language'),
-			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,table,tabletools,templates,style',
-			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
-			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*)',
-		);
 		return form($a)
 			->validate(array(
 				'__before__'=> 'trim',
@@ -76,7 +64,7 @@ class yf_manage_news {
 				common()->admin_wall_add(array('news updated: '.$a['id'], $a['id']));
 			})
 			->text('title')
-			->textarea('full_text', array('id' => 'full_text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => $cke_config)))
+			->textarea('full_text', array('id' => 'full_text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
 			->active_box()
 			->save_and_back()
 		;
