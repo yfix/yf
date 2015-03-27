@@ -108,13 +108,13 @@ class Interkassa {
 		return( $result );
 	}
 
-	public function key_private( $request = true ) {
-		$result = !(bool)$request && $this->_test_mode ? $this->_key_private_test : $this->_key_private;
+	public function key_private( $is_request = true ) {
+		$result = !(bool)$is_request && $this->_test_mode ? $this->_key_private_test : $this->_key_private;
 		// $result = $this->_test_mode ? $this->_key_private_test : $this->_key_private;
 		return( $result );
 	}
 
-	public function signature( $options, $request = true ) {
+	public function signature( $options, $is_request = true ) {
 		$_ = &$options;
 		$request = array();
 		// add allow fields
@@ -133,7 +133,7 @@ class Interkassa {
 		ksort( $request, SORT_STRING );
 // var_dump( $request );
 		// compile string
-		$key = $this->key_private( $request );
+		$key = $this->key_private( $is_request );
 // $key = $this->_key_private;
 // var_dump( $key  );
 		$str = implode( ':', $request ) . ':' . $key;
