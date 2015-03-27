@@ -412,6 +412,8 @@ class yf_tpl_driver_yf_compile {
 
 		$func = trim($m['func']);
 		$orig_arr_name = trim($m['key']);
+// TODO: fix as in not compiled version for foreach_exec and {#.something}
+//		$orig_arr_name = str_replace(',', '__', $orig_arr_name);
 		$foreach_arr_name = $orig_arr_name;
 		$foreach_body = $m['body'];
 		// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}

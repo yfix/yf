@@ -823,6 +823,8 @@ class yf_tpl_driver_yf {
 		return preg_replace_callback($pattern, function($m) use ($_this, $replace, $stpl_name) {
 			$func = trim($m['func']);
 			$key_to_cycle = trim($m['key']);
+			$orig_key_to_cycle = $key_to_cycle;
+			$key_to_cycle = str_replace(',', '__', $key_to_cycle);
 			if (empty($key_to_cycle)) {
 				return '';
 			}
@@ -842,7 +844,7 @@ class yf_tpl_driver_yf {
 			$sub_array = array();
 			// Ability to directly execute some class method and do foreach over it like {foreach_exec(test,give_me_array)} {_key}={_val} {/foreach}
 			if ($func === 'foreach_exec') {
-				if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $key_to_cycle, $m_exec)) {
+				if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $orig_key_to_cycle, $m_exec)) {
 					$sub_array = main()->_execute($m_exec['object'], $m_exec['action'], $m_exec['args'], $stpl_name. $_this->_STPL_EXT, 0, $use_cache = false);
 				} else {
 					return '';
