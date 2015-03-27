@@ -345,7 +345,7 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function first($select = null, $use_cache = false) {
 		if (is_object($this->get_model())) {
-			return $this->order_by($this->get_key_name().' asc')->limit(1)->get($use_cache);
+			return $this->order_by($this->get_key_name().' asc')->limit(1)->get($select, $use_cache);
 		} else {
 			return $this->get($select, $use_cache);
 		}
@@ -356,7 +356,7 @@ abstract class yf_db_query_builder_driver {
 	*/
 	public function last($select = null, $use_cache = false) {
 		if (is_object($this->get_model())) {
-			return $this->order_by($this->get_key_name().' desc')->limit(1)->get($use_cache);
+			return $this->order_by($this->get_key_name().' desc')->limit(1)->get($select, $use_cache);
 		} else {
 			$result = $this->get_all($select, $use_cache);
 			if (is_array($result) && count($result)) {
