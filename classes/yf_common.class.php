@@ -175,21 +175,21 @@ class yf_common {
 	* Send emails with attachments with DEBUG ability
 	*/
 	function send_mail($email_from, $name_from = '', $email_to = '', $name_to = '', $subject = '', $text = '', $html = '', $attaches = array(), $charset = '', $pear_mailer_backend = 'smtp', $force_mta_opts = array(), $priority = 3) {
-		return _class('send_mail', 'classes/common/')->send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $pear_mailer_backend, $force_mta_opts, $priority);
+		return _class('send_mail')->send($email_from, $name_from, $email_to, $name_to, $subject, $text, $html, $attaches, $charset, $pear_mailer_backend, $force_mta_opts, $priority);
 	}
 
 	/**
 	* Quick send mail (From admin info)
 	*/
 	function quick_send_mail($email_to, $subject, $html) {
-		return $this->send_mail (SITE_ADMIN_EMAIL, defined('SITE_ADMIN_NAME') ? SITE_ADMIN_NAME : 'Site admin', $email_to, '', $subject, strip_tags($html), $html);
+		return $this->send_mail(SITE_ADMIN_EMAIL, defined('SITE_ADMIN_NAME') ? SITE_ADMIN_NAME : 'Site admin', $email_to, '', $subject, strip_tags($html), $html);
 	}
 
 	/**
 	* Quick email notification to the admin (from the system)
 	*/
 	function send_notify_mail_to_admin($subject, $html) {
-		return $this->send_mail (SITE_ADMIN_EMAIL, SITE_NAME.' system notification', SITE_ADMIN_EMAIL, '', $subject, strip_tags($html), $html);
+		return $this->send_mail(SITE_ADMIN_EMAIL, SITE_NAME.' system notification', SITE_ADMIN_EMAIL, '', $subject, strip_tags($html), $html);
 	}
 
 	/**
