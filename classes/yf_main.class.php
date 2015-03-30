@@ -375,6 +375,9 @@ class yf_main {
 		if (!isset($_GET['action'])) {
 			$_GET['action'] = 'show';
 		}
+		if (isset($_GET['utm_source']) && !isset($_SESSION['utm_source'])) {
+			$_SESSION['utm_source'] = $_GET['utm_source'];
+		}
         $_SERVER['QUERY_STRING'] = http_build_query((array)$_GET);
     }
 
