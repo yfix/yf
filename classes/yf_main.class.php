@@ -375,8 +375,18 @@ class yf_main {
 		if (!isset($_GET['action'])) {
 			$_GET['action'] = 'show';
 		}
-		if (isset($_GET['utm_source']) && !isset($_SESSION['utm_source'])) {
-			$_SESSION['utm_source'] = $_GET['utm_source'];
+		if (!$this->is_console() && !isset($_SESSION['utm_source'])) {
+			$utm_source = $_GET['utm_source'] ?: ($_POST['utm_source'] ?: $_COOKIE['utm_source']);
+			if (!$utm_source && $_SERVER['HTTP_REFERER']) {
+				$cur_domain = trim($_SERVER['HTTP_HOST']);
+				$ref_domain = trim(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST));
+				if ($ref_domain && $ref_domain != $cur_domain) {
+					$utm_source = $ref_domain;
+				}
+			}
+			if ($utm_source) {
+				$_SESSION['utm_source'] = trim(preg_replace('~[^a-z0-9\.\/_@-]~ims', '', substr(strtolower($utm_source), 0, 255)));
+			}
 		}
         $_SERVER['QUERY_STRING'] = http_build_query((array)$_GET);
     }
