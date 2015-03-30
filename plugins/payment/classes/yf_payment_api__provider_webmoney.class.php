@@ -146,8 +146,9 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 				unset( $_[ $from ] );
 			}
 		}
-		var_dump( $_ );
-		exit;
+// todo: this point
+// var_dump( $_ );
+// exit;
 		// url
 		if( !empty( $_[ 'url_result' ] )
 			|| empty( $_[ 'LMI_RESULT_URL' ] )
