@@ -87,7 +87,6 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	public $url_server = null;
 
 	public function _init() {
-		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/webmoney/WebMoney.php' );
