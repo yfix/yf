@@ -131,7 +131,7 @@ class yf_logs_exec_user {
 			'num_dbq'		=> (int)db()->NUM_QUERIES,
 			'page_size'		=> (int)tpl()->_output_body_length,
 			'site_id'		=> (int)conf('SITE_ID'),
-			'utm_source'	=> (string)$_GET['utm_source'],
+			'utm_source'	=> strval($_GET['utm_source'] ?: ($_POST['utm_source'] ?: $_SESSION['utm_source'])),
 // TODO: add all checks results from main()->is_*()
 		);
 		if (in_array('db', $this->LOG_DRIVER)) {
