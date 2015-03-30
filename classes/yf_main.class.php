@@ -1946,6 +1946,36 @@ class yf_main {
 	}
 
 	/**
+	*/
+	function is_403() {
+		return (bool)$this->IS_403;
+	}
+
+	/**
+	*/
+	function is_404() {
+		return (bool)$this->IS_404;
+	}
+
+	/**
+	*/
+	function is_blocks_task_403() {
+		return (bool)$this->BLOCKS_TASK_403;
+	}
+
+	/**
+	*/
+	function is_blocks_task_404() {
+		return (bool)$this->BLOCKS_TASK_404;
+	}
+
+	/**
+	*/
+	function is_503() {
+		return (bool)$this->IS_503;
+	}
+
+	/**
 	* Return class name of the object, stripping all YF-related prefixes
 	* Needed to ensure singleton pattern and extending classes with same name
 	*/
