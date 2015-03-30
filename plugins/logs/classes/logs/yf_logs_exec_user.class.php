@@ -60,8 +60,11 @@ class yf_logs_exec_user {
 	/**
 	*/
 	function _init () {
-		if (!$this->LOG_DRIVER || !in_array($this->LOG_DRIVER, array('db', 'file'))) {
+		if (!$this->LOG_DRIVER) {
 			$this->LOG_DRIVER = 'file';
+		}
+		if (!is_array($this->LOG_DRIVER)) {
+			$this->LOG_DRIVER = array($this->LOG_DRIVER);
 		}
 	}
 
@@ -129,12 +132,13 @@ class yf_logs_exec_user {
 			'page_size'		=> (int)tpl()->_output_body_length,
 			'site_id'		=> (int)conf('SITE_ID'),
 			'utm_source'	=> (string)$_GET['utm_source'],
-		);
 // TODO: add all checks results from main()->is_*()
-		if ($this->LOG_DRIVER == 'db') {
+		);
+		if (in_array('db', $this->LOG_DRIVER)) {
 			$sql = db()->insert_safe('log_exec', $data);
 			db()->_add_shutdown_query($sql);
-		} elseif ($this->LOG_DRIVER == 'file') {
+		}
+		if (in_array('file', $this->LOG_DRIVER)) {
 			$data['output_cache'] = '0';  // mean: exec full mode (not from output cache)
 			$log_file_path	= STORAGE_PATH. $this->LOG_DIR_NAME. 'log_exec_'.gmdate('Y-m-d').'.log';
 			$log_dir_path	= dirname($log_file_path);
