@@ -1995,6 +1995,23 @@ class yf_main {
 	}
 
 	/**
+	*/
+	function is_mobile() {
+		if (isset($this->_is_mobile)) {
+			return $this->_is_mobile;
+		}
+		$this->_is_mobile = false;
+		if (!$this->is_console()) {
+			try {
+				require_php_lib('mobile_detect');
+				$detect = new Mobile_Detect(array(), strtolower($_SERVER['HTTP_USER_AGENT']));
+				$this->_is_mobile = (bool)$detect->isMobile();
+			} catch (Exception $e) { }
+		}
+		return $this->_is_mobile;
+	}
+
+	/**
 	* Return class name of the object, stripping all YF-related prefixes
 	* Needed to ensure singleton pattern and extending classes with same name
 	*/

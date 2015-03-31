@@ -13,17 +13,29 @@ class yf_spider_detection {
 	const data_dir = 'share/spiders/';
 	/** @var */
 	public $well_known_bots = array(
-		'googlebot'		=> 'Google',
-		'yahooseeker'	=> 'Yahoo',
-		'slurp'			=> 'Yahoo',
-		'inktomi'		=> 'Yahoo',
-		'baiduspider'	=> 'Baidu',
-		'yandex/'		=> 'Yandex',
-		'curl'			=> 'Curl',
-		'wget'			=> 'Wget',
-		'bot'			=> 'Bot',
-		'spider'		=> 'Spider',
-		'crawler'		=> 'Crawler',
+		'googlebot'				=> 'Google',
+		'google.com/bot'		=> 'Google',
+		'mediapartners-google'	=> 'Google',
+		'adsbot-google' 		=> 'Google',
+		'yahooseeker'			=> 'Yahoo',
+		'slurp'					=> 'Yahoo',
+		'inktomi'				=> 'Yahoo',
+		'baiduspider'			=> 'Baidu',
+		'yandex.com/bots'		=> 'Yandex',
+		'bingbot'				=> 'Bing',
+		'msnbot'				=> 'Bing',
+		'bingpreview'			=> 'Bing',
+		'facebookexternalhit'	=> 'Facebook',
+		'vkshare'				=> 'VK',
+		'pingdom'				=> 'Pingdom',
+		'http://'				=> 'Bot', // Examples: http://Anonymouse.org/ (Unix) | Mozilla/5.0 (compatible; vkShare; +http://vk.com/dev/Share)
+		'curl'					=> 'Curl',
+		'wget'					=> 'Wget',
+		'bot'					=> 'Bot',
+		'spider'				=> 'Spider',
+		'crawler'				=> 'Crawler',
+		'http-java-client'		=> 'Bot',
+		'python-urllib'			=> 'Bot',
 	);
 	/** @var */
 	public $browsers_keywords = array(
