@@ -153,7 +153,7 @@ class yf_logs_exec_user {
 			'memory'		=> (int)memory_get_peak_usage(),
 			'site_id'		=> (int)conf('SITE_ID'),
 			'ip'			=> (string)common()->get_ip(),
-			'country'		=> (string)conf('country'),
+			'country'		=> (string)(conf('country') ?: $_SERVER['GEOIP_COUNTRY_CODE']),
 			'lang'			=> (string)conf('language'),
 			'utm_source'	=> strval($_GET['utm_source'] ?: ($_POST['utm_source'] ?: $_SESSION['utm_source'])),
 			'is_common_page'=> (int)$is['is_common_page'],
