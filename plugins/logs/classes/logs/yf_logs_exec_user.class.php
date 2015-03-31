@@ -57,6 +57,8 @@ class yf_logs_exec_user {
 	/** @var bool */
 	public $LOG_IS_503			= true;
 	/** @var bool */
+	public $LOG_IS_CACHE_ON		= true;
+	/** @var bool */
 	public $EXCLUDE_IPS			= array();
 
 	/**
@@ -92,6 +94,7 @@ class yf_logs_exec_user {
 			'is_403'		=> $main->is_403(),
 			'is_404'		=> $main->is_404(),
 			'is_503'		=> $main->is_503(),
+			'is_cache_on'	=> $main->is_cache_on(),
 		);
 		$checks = array(
 			'is_user_guest'	=> !$this->is['is_logged_in'] && !$this->LOG_IS_USER_GUEST,
@@ -140,7 +143,6 @@ class yf_logs_exec_user {
 			'user_id'		=> (int)$_SESSION['user_id'],
 			'user_group'	=> (int)$_SESSION['user_group'],
 			'date'			=> time(),
-			'ip'			=> (string)common()->get_ip(),
 			'user_agent'	=> (string)$_SERVER['HTTP_USER_AGENT'],
 			'referer'		=> (string)$_SERVER['HTTP_REFERER'],
 			'query_string'	=> (string)$_SERVER['QUERY_STRING'],
@@ -148,7 +150,11 @@ class yf_logs_exec_user {
 			'exec_time'		=> str_replace(',', '.', common()->_format_time_value($GLOBALS['time_end'] ?: microtime(true) - main()->_time_start)),
 			'num_dbq'		=> (int)db()->NUM_QUERIES,
 			'page_size'		=> (int)tpl()->_output_body_length,
+			'memory'		=> (int)memory_get_peak_usage(),
 			'site_id'		=> (int)conf('SITE_ID'),
+			'ip'			=> (string)common()->get_ip(),
+			'country'		=> (string)(conf('country') ?: $_SERVER['GEOIP_COUNTRY_CODE']),
+			'lang'			=> (string)conf('language'),
 			'utm_source'	=> strval($_GET['utm_source'] ?: ($_POST['utm_source'] ?: $_SESSION['utm_source'])),
 			'is_common_page'=> (int)$is['is_common_page'],
 			'is_https'		=> (int)$is['is_https'],
@@ -165,6 +171,7 @@ class yf_logs_exec_user {
 			'is_403'		=> (int)$is['is_403'],
 			'is_404'		=> (int)$is['is_404'],
 			'is_503'		=> (int)$is['is_503'],
+			'is_cache_on'	=> (int)$is['is_cache_on'],
 		);
 		if (in_array('db', $this->LOG_DRIVER)) {
 			$sql = db()->insert_safe('log_exec', $data);

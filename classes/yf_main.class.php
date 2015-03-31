@@ -1989,6 +1989,12 @@ class yf_main {
 	}
 
 	/**
+	*/
+	function is_cache_on() {
+		return (bool)(($this->USE_SYSTEM_CACHE || conf('USE_CACHE')) && !cache()->NO_CACHE);
+	}
+
+	/**
 	* Return class name of the object, stripping all YF-related prefixes
 	* Needed to ensure singleton pattern and extending classes with same name
 	*/
