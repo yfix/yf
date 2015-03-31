@@ -14,6 +14,7 @@ class yf_spider_detection {
 	/** @var */
 	public $well_known_bots = array(
 		'googlebot'				=> 'Google',
+		'google.com/bot'		=> 'Google',
 		'mediapartners-google'	=> 'Google',
 		'adsbot-google' 		=> 'Google',
 		'yahooseeker'			=> 'Yahoo',
@@ -25,11 +26,14 @@ class yf_spider_detection {
 		'msnbot'				=> 'Bing',
 		'bingpreview'			=> 'Bing',
 		'facebookexternalhit'	=> 'Facebook',
+		'vkshare'				=> 'VK',
 		'curl'					=> 'Curl',
 		'wget'					=> 'Wget',
 		'bot'					=> 'Bot',
 		'spider'				=> 'Spider',
 		'crawler'				=> 'Crawler',
+		'http-java-client'		=> 'Bot',
+		'http://'				=> 'Bot', // Examples: http://Anonymouse.org/ (Unix) | Mozilla/5.0 (compatible; vkShare; +http://vk.com/dev/Share)
 	);
 	/** @var */
 	public $browsers_keywords = array(
