@@ -27,6 +27,7 @@ class yf_spider_detection {
 		'bingpreview'			=> 'Bing',
 		'facebookexternalhit'	=> 'Facebook',
 		'vkshare'				=> 'VK',
+		'pingdom'				=> 'Pingdom',
 		'http://'				=> 'Bot', // Examples: http://Anonymouse.org/ (Unix) | Mozilla/5.0 (compatible; vkShare; +http://vk.com/dev/Share)
 		'curl'					=> 'Curl',
 		'wget'					=> 'Wget',
