@@ -14,7 +14,7 @@ return '
   `referer` varchar(255) NOT NULL DEFAULT \'\',
   `site_id` tinyint(3) unsigned NOT NULL DEFAULT \'0\',
   `server_id` tinyint(3) unsigned NOT NULL DEFAULT \'0\',
-  `is_admin` enum(\'0\',\'1\') NOT NULL DEFAULT \'0\',
+  `is_admin` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
   `is_common_page` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
   `is_https` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
   `is_post` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
