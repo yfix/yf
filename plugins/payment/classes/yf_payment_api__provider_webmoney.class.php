@@ -22,18 +22,17 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	);
 
 	public $_options_transform_reverse = array(
-		'amt'         => 'amount',
-		'ccy'         => 'currency',
-		'details'     => 'title',
-		'ext_details' => 'description',
-		'order'       => 'operation_id',
-		'merchant'    => 'public_key',
+		'LMI_PAYMENT_AMOUNT' => 'amount',
+		'LMI_PAYMENT_DESC'   => 'title',
+		'LMI_PAYMENT_NO'     => 'operation_id',
+		'LMI_PAYEE_PURSE'    => 'key_public',
+		'LMI_MODE'           => 'test',
 	);
 
 	public $_status = array(
-		'ok'   => 'success',
-		'wait' => 'in_progress',
-		'fail' => 'refused',
+		'success' => 'success',
+		'wait'    => 'in_progress',
+		'fail'    => 'refused',
 	);
 
 	public $currency_default = 'USD';
@@ -212,9 +211,6 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$_ = &$options;
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
-		$signature    = $this->signature( $form_options );
-		if( empty( $signature ) ) { return( null ); }
-		$form_options[ 'signature' ] = $signature;
 		$url = $this->URL;
 		$result = array();
 		if( $is_array ) {
@@ -236,6 +232,20 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
+	public function _get_operation( $response ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$payment_api = $this->payment_api;
+		// get operation options
+		$operation_id = (int)$_response[ 'operation_id' ];
+		if( empty( $operation_id ) ) { return( null ); }
+		$operation = $payment_api->operation( array(
+			'operation_id' => $operation_id,
+		));
+		if( empty( $operation ) ) { return( null ); }
+		return( $operation );
+	}
+
 	public function _api_response() {
 		$payment_api = $this->payment_api;
 		$is_server = !empty( $_GET[ 'server' ] );
@@ -244,42 +254,82 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// response POST:
 		$payment   = $_POST[ 'payment'   ];
-		$signature = $_POST[ 'signature' ];
 		// test data
-		// $payment = 'amt=16.00&ccy=UAH&details=Поплнение счета (Приват 24)&ext_details=3#71#9#3#16&pay_way=webmoney&order=71&merchant=104702&state=test&date=171214180311&ref=test payment&payCountry=UA';
-		// $signature = '585b0c173ec36300a5ff77f6cbd9f195492f0c0d';
-		// check signature
-		if( empty( $signature ) ) {
+		/*
+		$payment = array (
+			'LMI_MODE'             => '1',
+			'LMI_PAYMENT_AMOUNT'   => '0.10',
+			'LMI_PAYEE_PURSE'      => 'U403573875538',
+			'LMI_PAYMENT_NO'       => '1',
+			'LMI_PAYER_WM'         => '352775132080',
+			'LMI_PAYER_PURSE'      => 'U403573875538',
+			'LMI_PAYER_COUNTRYID'  => 'UA',
+			'LMI_PAYER_PCOUNTRYID' => 'UA',
+			'LMI_PAYER_IP'         => '46.46.72.161',
+			'LMI_SYS_INVS_NO'      => '658',
+			'LMI_SYS_TRANS_NO'     => '899',
+			'LMI_SYS_TRANS_DATE'   => '20150331 15:29:19',
+			'LMI_HASH'             => 'C711D8976302BD23D96AA1240912C406E2DE3B655C789C3061A0B12C7BECB193',
+			'LMI_PAYMENT_DESC'     => 'Поплнение счета',
+			'LMI_LANG'             => 'ru-RU',
+			'LMI_DBLCHK'           => 'ENUM',
+		); // */
+		// prerequest
+		// todo
+		if( !empty( $response[ 'LMI_PREREQUEST' ] ) ) {
 			$result = array(
-				'status'         => false,
-				'status_message' => 'Пустая подпись',
+				'status'         => true,
+				'status_message' => 'Предзапрос',
 			);
 			return( $result );
 		}
-		$_signature = $this->signature( $payment, $is_request = false );
-		if( $signature != $_signature ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Неверная подпись',
-			);
-			return( $result );
-		}
-		// update operation
 		$response = $this->_response_parse( $payment );
-		// check public key (merchant)
-		$public_key = $response[ 'public_key' ];
-		$_public_key = $this->KEY_PUBLIC;
-		if( $public_key != $_public_key ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Неверный ключ (merchant)',
-			);
-			return( $result );
-		}
 		// check status
-		// ok, fail, test, wait
-		$state = $response[ 'state' ];
-		if( $this->TEST_MODE && $state == 'test' ) { $state = 'ok'; }
+		$test = null;
+		isset( $response[ 'test' ] ) && $test =  (int)$response[ 'test' ] == 1 ? true : false;
+		switch( $_GET[ 'status' ] ) {
+			case 'result':
+				$state = 'wait';
+				// public key (purse)
+				$key_public = $response[ 'key_public' ];
+				$signature = null;
+				$is_signature = isset( $payment[ 'LMI_HASH' ] );
+				$is_signature && $signature = $payment[ 'LMI_HASH' ];
+				// check signature
+				if( empty( $signature ) ) {
+					$result = array(
+						'status'         => false,
+						'status_message' => 'Пустая подпись',
+					);
+					return( $result );
+				}
+				$_signature = $this->signature( $payment, $is_request = false );
+				if( $signature != $_signature ) {
+					$result = array(
+						'status'         => false,
+						'status_message' => 'Неверная подпись',
+					);
+					return( $result );
+				}
+				break;
+			case 'success':
+				$state = 'success';
+				if( empty( $payment[ 'LMI_SYS_INVS_NO' ] )
+					&& empty( $payment[ 'LMI_SYS_TRANS_NO' ] )
+					&& empty( $payment[ 'LMI_SYS_TRANS_DATE' ] )
+				) {
+					$state = 'fail';
+				}
+				// check response options
+				$operation = $this->_get_operation( $response );
+				var_dump( $operation );
+				exit;
+				break;
+			case 'fail':
+			default:
+				$state = 'fail';
+				break;
+		}
 		list( $payment_status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
@@ -292,12 +342,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	}
 
 	public function _response_parse( $response ) {
-		$options = explode( '&', $response );
-		$_ = array();
-		foreach( (array)$options as $option ) {
-			list( $key, $value ) = explode( '=', $option );
-			$_[ $key ] = $value;
-		}
+		$_ = $response;
 		// transform
 		foreach( (array)$this->_options_transform_reverse as $from => $to  ) {
 			if( isset( $_[ $from ] ) ) {
