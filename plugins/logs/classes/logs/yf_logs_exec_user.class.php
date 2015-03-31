@@ -75,30 +75,39 @@ class yf_logs_exec_user {
 	function allow () {
 		if (!$this->LOGGING || MAIN_TYPE_ADMIN) { return false; }
 		$main = main();
-		$checks = array(
-			'is_user_guest'	=> !$main->is_logged_in() && !$this->LOG_IS_USER_GUEST,
-			'is_user_member'=> $main->is_logged_in() && !$this->LOG_IS_USER_MEMBER,
-			'is_common_page'=> !$main->is_common_page() && $this->LOG_IS_COMMON_PAGE,
-			'is_https'		=> $main->is_https() && !$this->LOG_IS_HTTPS,
-			'is_post'		=> $main->is_post() && !$this->LOG_IS_POST,
-			'is_no_graphics'=> $main->no_graphics() && !$this->LOG_IS_NO_GRAPHICS,
-			'is_ajax'		=> $main->is_ajax() && !$this->LOG_IS_AJAX,
-			'is_spider'		=> $main->is_spider() && !$this->LOG_IS_SPIDER,
-			'is_redirect'	=> $main->is_redirect() && !$this->LOG_IS_REDIRECT,
-			'is_console'	=> $main->is_console() && !$this->LOG_IS_CONSOLE,
-			'is_unit_test'	=> $main->is_unit_test() && !$this->LOG_IS_UNIT_TEST,
-			'is_dev'		=> $main->is_dev() && !$this->LOG_IS_DEV,
-			'is_debug'		=> $main->is_debug() && !$this->LOG_IS_DEBUG,
-			'is_banned'		=> $main->is_banned() && !$this->LOG_IS_BANNED,
-			'is_403'		=> $main->is_403() && !$this->LOG_IS_403,
-			'is_404'		=> $main->is_404() && !$this->LOG_IS_404,
-			'is_503'		=> $main->is_503() && !$this->LOG_IS_503,
-			'is_stop_list'	=> false,
+		$this->is = array(
+			'is_logged_in'	=> (bool)$main->is_logged_in(),
+			'is_common_page'=> $main->is_common_page(),
+			'is_https'		=> $main->is_https(),
+			'is_post'		=> $main->is_post(),
+			'is_no_graphics'=> (bool)$main->no_graphics(),
+			'is_ajax'		=> $main->is_ajax(),
+			'is_spider'		=> $main->is_spider(),
+			'is_redirect'	=> $main->is_redirect(),
+			'is_console'	=> $main->is_console(),
+			'is_unit_test'	=> $main->is_unit_test(),
+			'is_dev'		=> $main->is_dev(),
+			'is_debug'		=> $main->is_debug(),
+			'is_banned'		=> $main->is_banned(),
+			'is_403'		=> $main->is_403(),
+			'is_404'		=> $main->is_404(),
+			'is_503'		=> $main->is_503(),
 		);
+		$checks = array(
+			'is_user_guest'	=> !$this->is['is_logged_in'] && !$this->LOG_IS_USER_GUEST,
+			'is_user_member'=> $this->is['is_logged_in'] && !$this->LOG_IS_USER_MEMBER,
+		);
+		foreach((array)$this->is as $name => $val) {
+			if ($name === 'is_logged_in') {
+				continue;
+			}
+			$conf = 'LOG_'.strtoupper($name);
+			$checks[$name] = $val && !$this->$conf;
+		}
 		if ($this->USE_STOP_LIST) {
 			foreach ((array)$this->STOP_LIST as $_cur_pattern) {
 				if (preg_match('/'.$_cur_pattern.'/i', $_SERVER['QUERY_STRING'])) {
-					$checks['stop_list'] = true;
+					$checks['in_stop_list'] = true;
 					break;
 				}
 			}
@@ -126,7 +135,7 @@ class yf_logs_exec_user {
 		if (!$this->allow()) {
 			return false;
 		}
-		$checks = $this->checks;
+		$is = $this->is;
 		$data = array(
 			'user_id'		=> (int)$_SESSION['user_id'],
 			'user_group'	=> (int)$_SESSION['user_group'],
@@ -141,21 +150,21 @@ class yf_logs_exec_user {
 			'page_size'		=> (int)tpl()->_output_body_length,
 			'site_id'		=> (int)conf('SITE_ID'),
 			'utm_source'	=> strval($_GET['utm_source'] ?: ($_POST['utm_source'] ?: $_SESSION['utm_source'])),
-			'is_common_page'=> (int)$checks['is_common_page'],
-			'is_https'		=> (int)$checks['is_https'],
-			'is_post'		=> (int)$checks['is_post'],
-			'is_no_graphics'=> (int)$checks['is_no_graphics'],
-			'is_ajax'		=> (int)$checks['is_ajax'],
-			'is_spider'		=> (int)$checks['is_spider'],
-			'is_redirect'	=> (int)$checks['is_redirect'],
-			'is_console'	=> (int)$checks['is_console'],
-			'is_unit_test'	=> (int)$checks['is_unit_test'],
-			'is_dev'		=> (int)$checks['is_dev'],
-			'is_debug'		=> (int)$checks['is_debug'],
-			'is_banned'		=> (int)$checks['is_banned'],
-			'is_403'		=> (int)$checks['is_403'],
-			'is_404'		=> (int)$checks['is_404'],
-			'is_503'		=> (int)$checks['is_503'],
+			'is_common_page'=> (int)$is['is_common_page'],
+			'is_https'		=> (int)$is['is_https'],
+			'is_post'		=> (int)$is['is_post'],
+			'is_no_graphics'=> (int)$is['is_no_graphics'],
+			'is_ajax'		=> (int)$is['is_ajax'],
+			'is_spider'		=> (int)$is['is_spider'],
+			'is_redirect'	=> (int)$is['is_redirect'],
+			'is_console'	=> (int)$is['is_console'],
+			'is_unit_test'	=> (int)$is['is_unit_test'],
+			'is_dev'		=> (int)$is['is_dev'],
+			'is_debug'		=> (int)$is['is_debug'],
+			'is_banned'		=> (int)$is['is_banned'],
+			'is_403'		=> (int)$is['is_403'],
+			'is_404'		=> (int)$is['is_404'],
+			'is_503'		=> (int)$is['is_503'],
 		);
 		if (in_array('db', $this->LOG_DRIVER)) {
 			$sql = db()->insert_safe('log_exec', $data);
