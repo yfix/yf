@@ -165,18 +165,20 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			unset( $_[ 'url_result' ] );
 		}
 		if( !empty( $_[ 'url_server' ] ) ) {
-			$_[ 'LMI_RESULT_URL' ] = $_[ 'url_server' ] . '&status=result';
-			$_[ 'LMI_FAIL_URL'   ] = $_[ 'url_server' ] . '&status=fail';
+			$_[ 'LMI_RESULT_URL'  ] = $_[ 'url_server' ] . '&status=result';
+			$_[ 'LMI_SUCCESS_URL' ] = $_[ 'url_server' ] . '&status=success';
+			$_[ 'LMI_FAIL_URL'    ] = $_[ 'url_server' ] . '&status=fail';
 			unset( $_[ 'url_server' ] );
 		}
 		$url = $this->_url( $options, $is_server = true );
 		if( empty( $_[ 'LMI_RESULT_URL' ] ) ) {
 			$_[ 'LMI_RESULT_URL' ] = $url . '&status=result';
-			unset( $_[ 'url_result' ] );
+		}
+		if( empty( $_[ 'LMI_SUCCESS_URL'    ] ) ) {
+			$_[ 'LMI_SUCCESS_URL'   ] = $url . '&status=success';
 		}
 		if( empty( $_[ 'LMI_FAIL_URL'    ] ) ) {
 			$_[ 'LMI_FAIL_URL'   ] = $url . '&status=fail';
-			unset( $_[ 'url_server' ] );
 		}
 		// default
 		// amount
