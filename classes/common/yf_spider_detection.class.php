@@ -13,17 +13,23 @@ class yf_spider_detection {
 	const data_dir = 'share/spiders/';
 	/** @var */
 	public $well_known_bots = array(
-		'googlebot'		=> 'Google',
-		'yahooseeker'	=> 'Yahoo',
-		'slurp'			=> 'Yahoo',
-		'inktomi'		=> 'Yahoo',
-		'baiduspider'	=> 'Baidu',
-		'yandex/'		=> 'Yandex',
-		'curl'			=> 'Curl',
-		'wget'			=> 'Wget',
-		'bot'			=> 'Bot',
-		'spider'		=> 'Spider',
-		'crawler'		=> 'Crawler',
+		'googlebot'				=> 'Google',
+		'mediapartners-google'	=> 'Google',
+		'adsbot-google' 		=> 'Google',
+		'yahooseeker'			=> 'Yahoo',
+		'slurp'					=> 'Yahoo',
+		'inktomi'				=> 'Yahoo',
+		'baiduspider'			=> 'Baidu',
+		'yandex.com/bots'		=> 'Yandex',
+		'bingbot'				=> 'Bing',
+		'msnbot'				=> 'Bing',
+		'bingpreview'			=> 'Bing',
+		'facebookexternalhit'	=> 'Facebook',
+		'curl'					=> 'Curl',
+		'wget'					=> 'Wget',
+		'bot'					=> 'Bot',
+		'spider'				=> 'Spider',
+		'crawler'				=> 'Crawler',
 	);
 	/** @var */
 	public $browsers_keywords = array(
