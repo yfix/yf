@@ -161,13 +161,14 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		}
 		// url
 		if( !empty( $_[ 'url_result' ] ) ) {
-			$_[ 'LMI_RESULT_URL' ] =  $_[ 'url_result' ];
+			$_[ 'LMI_RESULT_URL'    ] =  $_[ 'url_result' ];
+			$_[ 'LMI_RESULT_METHOD' ] = 1;
 			unset( $_[ 'url_result' ] );
 		}
 		if( !empty( $_[ 'url_server' ] ) ) {
-			$_[ 'LMI_RESULT_URL'  ] = $_[ 'url_server' ] . '&status=result';
-			$_[ 'LMI_SUCCESS_URL' ] = $_[ 'url_server' ] . '&status=success';
-			$_[ 'LMI_FAIL_URL'    ] = $_[ 'url_server' ] . '&status=fail';
+			$_[ 'LMI_RESULT_URL'     ] = $_[ 'url_server' ] . '&status=result';
+			$_[ 'LMI_SUCCESS_URL'    ] = $_[ 'url_server' ] . '&status=success';
+			$_[ 'LMI_FAIL_URL'       ] = $_[ 'url_server' ] . '&status=fail';
 			unset( $_[ 'url_server' ] );
 		}
 		$url = $this->_url( $options, $is_server = true );
@@ -180,6 +181,9 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		if( empty( $_[ 'LMI_FAIL_URL'    ] ) ) {
 			$_[ 'LMI_FAIL_URL'   ] = $url . '&status=fail';
 		}
+		$_[ 'LMI_RESULT_METHOD'  ] = 1;
+		$_[ 'LMI_SUCCESS_METHOD' ] = 1;
+		$_[ 'LMI_FAIL_METHOD'    ] = 1;
 		// default
 		// amount
 		$_[ 'LMI_PAYMENT_AMOUNT' ] = number_format( $_[ 'LMI_PAYMENT_AMOUNT' ], 2, '.', '' );
