@@ -122,6 +122,7 @@ class yf_core_blocks {
 		if ($block_name == 'center_area') {
 			if ($this->TASK_DENIED_403_HEADER) {
 				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+				main()->IS_403 = true;
 			}
 			if (MAIN_TYPE_USER && !main()->USER_ID) {
 				$redir_params = array(
@@ -379,8 +380,10 @@ class yf_core_blocks {
 			}
 		};
 		if ($not_found) {
+			main()->BLOCKS_TASK_404 = true;
 			if ($this->TASK_NOT_FOUND_404_HEADER) {
 				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 404 Not Found');
+				main()->IS_404 = true;
 			}
 			if (_class('graphics')->NOT_FOUND_RAISE_WARNING) {
 				trigger_error(__CLASS__.': Task not found: '.$_GET['object'].'.'.$_GET['action'], E_USER_WARNING);
@@ -402,16 +405,16 @@ class yf_core_blocks {
 				} else {
 					$redirect_func($u);
 				}
-				$GLOBALS['task_not_found'] = true;
 			}
 		} elseif ($allowed_check && $access_denied) {
+			main()->BLOCKS_TASK_403 = true;
 			if ($this->TASK_DENIED_403_HEADER) {
 				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+				main()->IS_403 = true;
 			}
 			trigger_error(__CLASS__.': Access denied: '.$_GET['object'].'.'.$_GET['action'], E_USER_WARNING);
 			if (MAIN_TYPE_USER) {
 				$redirect_func(main()->REDIR_URL_DENIED);
-				$GLOBALS['task_denied'] = true;
 			}
 		}
 		$block_name = 'center_area';

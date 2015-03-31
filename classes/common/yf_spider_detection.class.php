@@ -9,8 +9,24 @@
 */
 class yf_spider_detection {
 
+	/** @const */
+	const data_dir = 'share/spiders/';
 	/** @var */
-	public $not_spiders = array(
+	public $well_known_bots = array(
+		'googlebot'		=> 'Google',
+		'yahooseeker'	=> 'Yahoo',
+		'slurp'			=> 'Yahoo',
+		'inktomi'		=> 'Yahoo',
+		'baiduspider'	=> 'Baidu',
+		'yandex/'		=> 'Yandex',
+		'curl'			=> 'Curl',
+		'wget'			=> 'Wget',
+		'bot'			=> 'Bot',
+		'spider'		=> 'Spider',
+		'crawler'		=> 'Crawler',
+	);
+	/** @var */
+	public $browsers_keywords = array(
 		'opera',
 		'presto',
 		'gecko',
@@ -21,18 +37,6 @@ class yf_spider_detection {
 		'webkit',
 		'chrome',
 		'safari',
-	);
-	/** @var */
-	public $well_known_bots = array(
-		'googlebot'		=> 'Google',
-		'yahooseeker'	=> 'Yahoo',
-		'slurp'			=> 'Yahoo',
-		'inktomi'		=> 'Yahoo',
-		'baiduspider'	=> 'Baidu',
-		'yandex/'		=> 'Yandex',
-		'bot'			=> 'Some Bot',
-		'spider'		=> 'Some Spider',
-		'crawler'		=> 'Some Crawler',
 	);
 
 	/**
@@ -53,22 +57,18 @@ class yf_spider_detection {
 		}
 		// try by user agent strings
 		if ($CHECK_UA) {
-			// Quick check by not spiders user agents
-			foreach ((array)$this->not_spiders as $findme) {
-				if (false !== strpos($ua, $findme)) {
-					return false;
-				}
-			}
 			foreach ((array)$this->well_known_bots as $findme => $name) {
 				if (false !== strpos($ua, $findme)) {
 					return $name;
 				}
 			}
-
-			$this->load_spiders_uas();
-
-			if ($this->_cache_ua) {
-				foreach ((array)$this->_cache_ua as $_test_ua => $name) {
+#			foreach ((array)$this->browsers_keywords as $findme) {
+#				if (false !== strpos($ua, $findme)) {
+#					return false;
+#				}
+#			}
+			if ($uas = $this->load_spiders_uas()) {
+				foreach ((array)$uas as $_test_ua => $name) {
 					if (!$_test_ua) {
 						continue;
 					}
@@ -79,41 +79,56 @@ class yf_spider_detection {
 			}
 		}
 		if ($CHECK_IP) {
-			$this->load_spiders_ips();
-
-			if ($this->_cache_ip) {
+			if ($ips = $this->load_spiders_ips()) {
 				$ip_tmp = explode('.', $ip);
 				$ip_digits_4 = implode('.', $ip_tmp);
 				unset($ip_tmp[3]);
 				$ip_digits_3 = implode('.', $ip_tmp);
 				unset($ip_tmp[2]);
 				$ip_digits_2 = implode('.', $ip_tmp);
-				// Do check
-				if (isset($this->_cache_ip[$ip_digits_4])) {
-					return $this->_cache_ip[$ip_digits_4];
-				} elseif ($this->_cache_ip[$ip_digits_3]) {
-					return $this->_cache_ip[$ip_digits_3];
-				} elseif ($this->_cache_ip[$ip_digits_2]) {
-					return $this->_cache_ip[$ip_digits_2];
+
+				if (isset($ips[$ip_digits_4])) {
+					return $ips[$ip_digits_4];
+				} elseif (isset($ips[$ip_digits_3])) {
+					return $ips[$ip_digits_3];
+				} elseif (isset($ips[$ip_digits_2])) {
+					return $ips[$ip_digits_2];
 				}
 			}
 		}
-		return '';
+		return false;
 	}
 
 	/**
 	* Return spiders IPs array
 	*/
 	function load_spiders_ips () {
-		if ($this->_cache_ip) {
-			return false;
+		$cache_name	= 'spiders_ip';
+		if (isset($this->_cache[$cache_name])) {
+			return $this->_cache[$cache_name];
 		}
-
-		$CACHE_CORE_NAME_IP	= 'spiders_ip';
-		$this->_cache_ip = cache_get($CACHE_CORE_NAME_IP);
-
-		foreach ((array)_class('dir')->scan_dir(INCLUDE_PATH. 'share/spiders/', true, '/[a-z\_\-]\.txt$/i') as $path) {
-			$name = substr(basename($path), 0, -strlen('.txt'));
+		if ($this->_cache[$cache_name] = cache_get($cache_name)) {
+			return $this->_cache[$cache_name];
+		}
+		$ext = '.txt';
+		$ext_len = strlen($ext);
+		$globs = array(
+			'app'		=> APP_PATH. self::data_dir. '*'. $ext,
+			'project'	=> PROJECT_PATH. self::data_dir. '*'. $ext,
+			'yf'		=> YF_PATH. self::data_dir. '*'. $ext,
+		);
+		$paths = array();
+		foreach ((array)$globs as $glob) {
+			foreach (glob($glob) as $path) {
+				$paths[] = $path;
+			}
+		}
+		$data = array();
+		foreach ((array)$paths as $path) {
+			if (!$path) {
+				continue;
+			}
+			$name = substr(basename($path), 0, -$ext_len);
 			$tmp = file($path);
 			$name = '';
 			foreach ((array)$tmp as $line) {
@@ -123,28 +138,47 @@ class yf_spider_detection {
 					$name = '';
 					continue;
 				}
-				if ($line[0] == '#') {
+				if ($line[0] === '#') {
 					// Assign spider name
 				} elseif ($name) {
-					$this->_cache_ip[$line] = $name;
+					$data[$line] = $name;
 				}
 			}
 		}
-		cache_set($CACHE_CORE_NAME_IP, $this->_cache_ip);
+		cache_set($cache_name, $data);
+		$this->_cache[$cache_name] = $data;
+		return $data;
 	}
 
 	/**
 	* Return spiders UAs array
 	*/
 	function load_spiders_uas () {
-		if ($this->_cache_ua) {
-			return false;
+		$cache_name	= 'spiders_ua';
+		if (isset($this->_cache[$cache_name])) {
+			return $this->_cache[$cache_name];
 		}
-
-		$CACHE_CORE_NAME_UA	= 'spiders_ua';
-		$this->_cache_ua = cache_get($CACHE_CORE_NAME_UA);
-
-		foreach ((array)_class('dir')->scan_dir(INCLUDE_PATH. 'share/spiders/', true, '/[a-z\_\-]\.txt$/i') as $path) {
+		if ($this->_cache[$cache_name] = cache_get($cache_name)) {
+			return $this->_cache[$cache_name];
+		}
+		$ext = '.txt';
+		$ext_len = strlen($ext);
+		$globs = array(
+			'app'		=> APP_PATH. self::data_dir. '*'. $ext,
+			'project'	=> PROJECT_PATH. self::data_dir. '*'. $ext,
+			'yf'		=> YF_PATH. self::data_dir. '*'. $ext,
+		);
+		$paths = array();
+		foreach ((array)$globs as $glob) {
+			foreach (glob($glob) as $path) {
+				$paths[] = $path;
+			}
+		}
+		$data = array();
+		foreach ((array)$paths as $path) {
+			if (!$path) {
+				continue;
+			}
 			$name = substr(basename($path), 0, -strlen('.txt'));
 			$tmp = file($path);
 			$name = '';
@@ -161,12 +195,14 @@ class yf_spider_detection {
 						$name = substr($line, 2);
 					} elseif (substr($line, 0, 5) == '# UA ') {
 						$_cache_ua = trim(strtolower(substr($line, 5)), "\"'");
-						$this->_cache_ua[$_cache_ua] = $name;
+						$data[$_cache_ua] = $name;
 					}
 				}
 			}
 		}
-		cache_set($CACHE_CORE_NAME_UA, $this->_cache_ua);
+		cache_set($cache_name, $data);
+		$this->_cache[$cache_name] = $data;
+		return $data;
 	}
 
 	/**
@@ -176,12 +212,15 @@ class yf_spider_detection {
 		if (!$field_name) {
 			$field_name = 'ip';
 		}
-		$this->load_spiders_ips();
+		$spiders_ips = $this->load_spiders_ips();
+		if (!$spiders_ips) {
+			return '';
+		}
 
 		$sql = '';
 		$full_ips = array();
 		$ips_without_1_dot = array();
-		foreach ((array)$this->_cache_spiders as $ip => $_s_name) {
+		foreach ((array)$spiders_ips as $ip => $_s_name) {
 			$dots = substr_count($ip, '.');
 			if ($dots == 3) {
 				$full_ips[$ip] = $ip;
