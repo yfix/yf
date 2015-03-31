@@ -125,6 +125,9 @@ class yf_spider_detection {
 		}
 		$data = array();
 		foreach ((array)$paths as $path) {
+			if (!$path) {
+				continue;
+			}
 			$name = substr(basename($path), 0, -$ext_len);
 			$tmp = file($path);
 			$name = '';
@@ -173,6 +176,9 @@ class yf_spider_detection {
 		}
 		$data = array();
 		foreach ((array)$paths as $path) {
+			if (!$path) {
+				continue;
+			}
 			$name = substr(basename($path), 0, -strlen('.txt'));
 			$tmp = file($path);
 			$name = '';
