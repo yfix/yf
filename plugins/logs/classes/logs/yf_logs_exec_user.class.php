@@ -126,6 +126,7 @@ class yf_logs_exec_user {
 		if (!$this->allow()) {
 			return false;
 		}
+		$checks = $this->checks;
 		$data = array(
 			'user_id'		=> (int)$_SESSION['user_id'],
 			'user_group'	=> (int)$_SESSION['user_group'],
@@ -140,7 +141,21 @@ class yf_logs_exec_user {
 			'page_size'		=> (int)tpl()->_output_body_length,
 			'site_id'		=> (int)conf('SITE_ID'),
 			'utm_source'	=> strval($_GET['utm_source'] ?: ($_POST['utm_source'] ?: $_SESSION['utm_source'])),
-// TODO: add all checks results from main()->is_*()
+			'is_common_page'=> (int)$checks['is_common_page'],
+			'is_https'		=> (int)$checks['is_https'],
+			'is_post'		=> (int)$checks['is_post'],
+			'is_no_graphics'=> (int)$checks['is_no_graphics'],
+			'is_ajax'		=> (int)$checks['is_ajax'],
+			'is_spider'		=> (int)$checks['is_spider'],
+			'is_redirect'	=> (int)$checks['is_redirect'],
+			'is_console'	=> (int)$checks['is_console'],
+			'is_unit_test'	=> (int)$checks['is_unit_test'],
+			'is_dev'		=> (int)$checks['is_dev'],
+			'is_debug'		=> (int)$checks['is_debug'],
+			'is_banned'		=> (int)$checks['is_banned'],
+			'is_403'		=> (int)$checks['is_403'],
+			'is_404'		=> (int)$checks['is_404'],
+			'is_503'		=> (int)$checks['is_503'],
 		);
 		if (in_array('db', $this->LOG_DRIVER)) {
 			$sql = db()->insert_safe('log_exec', $data);
