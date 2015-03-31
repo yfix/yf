@@ -27,13 +27,14 @@ class yf_spider_detection {
 		'bingpreview'			=> 'Bing',
 		'facebookexternalhit'	=> 'Facebook',
 		'vkshare'				=> 'VK',
+		'http://'				=> 'Bot', // Examples: http://Anonymouse.org/ (Unix) | Mozilla/5.0 (compatible; vkShare; +http://vk.com/dev/Share)
 		'curl'					=> 'Curl',
 		'wget'					=> 'Wget',
 		'bot'					=> 'Bot',
 		'spider'				=> 'Spider',
 		'crawler'				=> 'Crawler',
 		'http-java-client'		=> 'Bot',
-		'http://'				=> 'Bot', // Examples: http://Anonymouse.org/ (Unix) | Mozilla/5.0 (compatible; vkShare; +http://vk.com/dev/Share)
+		'python-urllib'			=> 'Bot',
 	);
 	/** @var */
 	public $browsers_keywords = array(
