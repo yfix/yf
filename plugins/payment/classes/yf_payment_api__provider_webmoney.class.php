@@ -121,9 +121,22 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
+	public function _description( $value ) {
+		if( empty( $value ) ) { return( null ); }
+		$result = base64_encode( $value );
+		return( $result );
+	}
+
 	public function _purse_by_currency( $options ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		$purse = &$this->purse_by_currency;
+		if( empty( $purse[ $_currency ] )
+			|| empty( $purse[ $_currency ][ 'active' ] ) ) {
+			return( null );
+		}
+		$result = $this->purse_by_currency[ $_currency ][ 'id' ];
+		return( $result );
 	}
 
 	public function _url( $options, $is_server = false ) {
@@ -146,9 +159,6 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 				unset( $_[ $from ] );
 			}
 		}
-// todo: this point
-// var_dump( $_ );
-// exit;
 		// url
 		if( !empty( $_[ 'url_result' ] )
 			|| empty( $_[ 'LMI_RESULT_URL' ] )
@@ -167,8 +177,21 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			unset( $_[ 'url_server' ] );
 		}
 		// default
+		// amount
 		$_[ 'LMI_PAYMENT_AMOUNT' ] = number_format( $_[ 'LMI_PAYMENT_AMOUNT' ], 2, '.', '' );
-		empty( $_[ 'LMI_PAYEE_PURSE' ] ) && $_[ 'LMI_PAYEE_PURSE' ] = $this->_purse_by_currency( $options );
+		// purse
+		if( empty( $_[ 'LMI_PAYEE_PURSE' ] ) ) {
+			$value = $this->_purse_by_currency( $options );
+			if( empty( $value ) ) { return( null ); }
+			$_[ 'LMI_PAYEE_PURSE' ] = $value;
+			unset( $_[ 'currency' ] );
+		}
+		// description
+		if( !empty( $_[ 'LMI_PAYMENT_DESC' ] ) ) {
+			$_[ 'LMI_PAYMENT_DESC_BASE64' ] = $this->_description( $_[ 'LMI_PAYMENT_DESC' ] );
+			unset( $_[ 'LMI_PAYMENT_DESC' ] );
+		}
+		unset( $_[ 'description' ] );
 		if( empty( $_[ 'LMI_PAYEE_PURSE' ] )
 			|| empty( $_[ 'LMI_PAYMENT_AMOUNT' ] )
 			|| ( empty( $_[ 'LMI_PAYMENT_DESC' ] ) && empty( $_[ 'LMI_PAYMENT_DESC_BASE64' ] ) )
