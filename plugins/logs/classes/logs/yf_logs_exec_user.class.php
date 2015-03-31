@@ -56,6 +56,8 @@ class yf_logs_exec_user {
 	public $LOG_IS_403			= true;
 	/** @var bool */
 	public $LOG_IS_503			= true;
+	/** @var bool */
+	public $EXCLUDE_IPS			= array();
 
 	/**
 	*/
@@ -99,6 +101,12 @@ class yf_logs_exec_user {
 					$checks['stop_list'] = true;
 					break;
 				}
+			}
+		}
+		if ($this->EXCLUDE_IPS) {
+			$ip = common()->get_ip();
+			if ($ip && (isset($this->EXCLUDE_IPS[$ip]) || in_array($ip, $this->EXCLUDE_IPS))) {
+				$checks['exclude_ip'] = true;
 			}
 		}
 		$this->checks = $checks;
