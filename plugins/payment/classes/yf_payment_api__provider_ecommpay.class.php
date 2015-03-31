@@ -26,22 +26,35 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		'site_id'     => 'key_public',
 	);
 
-	public $_status = array(
-		'success'    => 'success',
-		'new'        => 'in_progress',
-		'waitAccept' => 'in_progress',
-		'process'    => 'in_progress',
-		'fail'       => 'refused',
-		'canceled'   => 'refused',
+	public $_status_response = array(
+		'1'  => 'success',
+		'2'  => 'refused',
+	);
+	public $_status_server = array(
+		'1'  => 'in_progress',
+		'2'  => 'in_progress',
+		'3'  => 'in_progress',
+		'4'  => 'success',
+		'5'  => 'refused',
+		'6'  => 'refused',
+		'7'  => 'refused',
+		'8'  => 'refused',
+		'9'  => 'refused',
+		'10' => 'refused',
+		'11' => 'refused',
+		'12' => 'refused',
+		'13' => 'refused',
+		'14' => 'refused',
+		'15' => 'refused',
 	);
 
-	public $currency_default = 'RUB';
+	public $currency_default = 'USD';
 	public $currency_allow = array(
 		'USD' => array(
 			'currency_id' => 'USD',
 			'active'      => true,
 		),
-		'EUR' => array(
+		/* 'EUR' => array(
 			'currency_id' => 'EUR',
 			'active'      => true,
 		),
@@ -52,13 +65,18 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		'RUB' => array(
 			'currency_id' => 'RUB',
 			'active'      => true,
-		),
+		), */
 	);
 
 	// public $fee = 5; // 5%
 
 	public $service_allow = array(
 		'Ecommpay',
+	);
+
+	public $provider_ips = array(
+		'78.140.183.154',
+		'204.26.61.98',
 	);
 
 	public $url_result = null;
@@ -86,6 +104,31 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 
 	public function signature( $options, $request = true ) {
 		$result = $this->api->signature( $options, $request );
+		return( $result );
+	}
+
+	public function _amount( $amount, $currency, $is_request = true ) {
+		$currency_id = $this->get_currency( array(
+			'currency_id' => $currency,
+		));
+		if( $currency_id != $currency ) { return( null ); }
+		$payment_api = $this->payment_api;
+		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
+			'currency_id' => $currency_id,
+		));
+		if( empty( $_currency_id ) ) {
+			// $result = array(
+				// 'status'         => false,
+				// 'status_message' => 'Неизвестная валюта',
+			// );
+			return( null );
+		}
+		$units = pow( 10, $currency[ 'minor_units' ] );
+		if( $is_request ) {
+			$result = (int)( $amount * $units );
+		} else {
+			$result = (float)$amount / $units;
+		}
 		return( $result );
 	}
 
@@ -117,20 +160,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		}
 		unset( $_[ 'url_server' ] );
 		// default
-		// todo: get currency minor unit from payment_api
-		$payment_api = $this->payment_api;
-		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
-			'currency_id' => $_[ 'currency' ],
-		));
-		if( empty( $_currency_id ) ) {
-			// $result = array(
-				// 'status'         => false,
-				// 'status_message' => 'Неизвестная валюта',
-			// );
-			return( null );
-		}
-		$units = pow( 10, $currency[ 'minor_units' ] );
-		$_[ 'amount' ] = (int)( $_[ 'amount' ] * $units );
+		empty( $_[ 'language' ] ) && $_[ 'language' ] = 'ru';
+		// amount
+		$_[ 'amount' ] = $this->_amount( $_[ 'amount' ], $_[ 'currency' ], $is_request = true );
 		// site id
 		empty( $_[ 'site_id' ] ) && $_[ 'site_id' ] = $this->KEY_PUBLIC;
 		if( empty( $_[ 'amount' ] ) || empty( $_[ 'site_id' ] ) ) { $_ = null; }
@@ -153,6 +185,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$_ = &$options;
 		$is_array = (bool)$_[ 'is_array' ];
 		$form_options = $this->_form_options( $data );
+		if( empty( $form_options ) ) { return( null ); }
 		$signature    = $this->api->signature( $form_options );
 		if( empty( $signature ) ) { return( null ); }
 		$form_options[ 'signature' ] = $signature;
@@ -165,7 +198,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		if( $is_array ) {
 			$result[ 'url' ] = $url;
 		} else {
-			$result[] = '<form id="_js_provider_ecommpay_form" method="post" accept-charset="utf-8" enctype="application/x-www-form-urlencoded" action="' . $url . '" class="display: none;">';
+			$result[] = '<form id="_js_provider_ecommpay_form" method="post" accept-charset="utf-8" action="' . $url . '" class="display: none;">';
 		}
 		foreach ((array)$form_options as $key => $value ) {
 			if( $is_array ) {
@@ -188,83 +221,42 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$result = null;
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
-		/* // test data
-		$this->key( 'private',      'xXceiJgnFURU0lq9' );
-		$this->key( 'private_test', 'AxlrteZIreEpMddf' );
-		$this->hash_method( 'sha256' );
+		// TEST DATA
+		/*
 		$_POST = array (
-			'ik_co_id' => '54be5909bf4efc7f6b8ab8f5',
-			'ik_co_prs_id' => '203295131974',
-			'ik_inv_id' => '33274174',
-			'ik_inv_st' => 'success',
-			'ik_inv_crt' => '2015-01-23 11:20:09',
-			'ik_inv_prc' => '2015-01-23 11:20:09',
-			'ik_trn_id' => '',
-			'ik_pm_no' => 'ID_4233',
-			'ik_pw_via' => 'test_interkassa_test_xts',
-			'ik_am' => '100.00',
-			'ik_co_rfn' => '100.0000',
-			'ik_ps_price' => '103.00',
-			'ik_cur' => 'USD',
-			'ik_desc' => 'Пополнение счета (Interkassa)',
-			'ik_x_user_id' => '3',
-			'_ik_x_user_id' => '3',
-			'ik_sign' => 'mgNlOcdt6ydxAZZvAPEZYo7PZRoWnM/zvlgk2pdZe20=',
+			'site_id'         => '2415',
+			'payment_type_id' => '2',
+			'transaction_id'  => '36356',
+			'external_id'     => '_1',
+			'description'     => 'Поплнение счета',
+			'amount'          => '10',
+			'currency'        => 'USD',
+			'real_amount'     => '10',
+			'real_currency'   => 'USD',
+			'language'        => 'en',
+			'sign'            => '43a47044792b0fa69a934178973458c60e578d78',
+			'signature'       => '88d2309a2dc33534ebd593a744697fbebf08ba40',
+			'type'            => '1',
 		); // */
-/*
-	&status=success
-		string '$_GET' (length=5)
-		array (size=4)
-			'test_mode' => string '1' (length=1)
-			'status' => string 'success' (length=7)
-			'object' => string 'payment_test' (length=12)
-			'action' => string 'provider' (length=8)
-		string '$_POST' (length=6)
-		array (size=12)
-			'ik_co_id' => string '54be5909bf4efc7f6b8ab8f5' (length=24)
-			'ik_inv_id' => string '33226688' (length=8)
-			'ik_inv_st' => string 'success' (length=7)
-			'ik_inv_crt' => string '2015-01-21 13:14:26' (length=19)
-			'ik_inv_prc' => string '2015-01-21 13:14:26' (length=19)
-			'ik_pm_no' => string 'ID_4233' (length=7)
-			'ik_pw_via' => string 'test_interkassa_test_xts' (length=24)
-			'ik_am' => string '100.00' (length=6)
-			// Checkout Refund - Сумма зачисления на счет кассы.
-			'ik_co_rfn' => string '97.0000' (length=7)
-			// Paysystem Price - Сумма платежа в платежной системе.
-			'ik_ps_price' => string '100.00' (length=6)
-			'ik_cur' => string 'USD' (length=3)
-			'ik_desc' => string 'Пополнение счета (Interkassa)' (length=44)
-			'ik_x_user_id' => string '3' (length=1)
-	&status=fail
-		string '$_GET' (length=5)
-		array (size=4)
-			'status' => string 'fail' (length=4)
-		string '$_POST' (length=6)
-		array (size=12)
-			'ik_inv_st' => string 'canceled' (length=8)
-			'ik_inv_prc' => string '' (length=0)
-	&status=pending
-		string '$_GET' (length=5)
-		array (size=4)
-			'status' => string 'pending' (length=7)
-		string '$_POST' (length=6)
-		array (size=12)
-			'ik_inv_st' => string 'waitAccept' (length=10)
-			'ik_inv_prc' => string '' (length=0)
- */
 		$payment = $_POST;
 		// response POST:
-		$signature = $payment[ 'ik_sign' ];
+		$signature = $payment[ 'signature' ];
 		// check signature
-		if( !$test_mode && empty( $signature ) ) {
+		if( empty( $signature ) ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Пустая подпись',
 			);
 			return( $result );
 		}
-		$_signature = $this->signature( $payment, false );
+		$signature_options = $payment;
+		unset( $signature_options[ 'sign' ] );
+		unset( $signature_options[ 'signature' ] );
+		// unset( $signature_options[ 'language' ] );
+		$_signature = $this->signature( $signature_options, true );
+// DEBUG
+// var_dump( $payment, $signature, $signature_options, 'calc: ', $_signature );
+// exit;
 		if( !( $test_mode && empty( $signature ) ) && $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
@@ -274,24 +266,30 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		}
 		// update operation
 		$response = $this->_response_parse( $payment );
-		// check public key (ik_co_id)
+		// check public key (site_id)
 		$key_public = $response[ 'key_public' ];
 		$_key_public = $this->key( 'public' );
 		if( $key_public != $_key_public ) {
 			$result = array(
 				'status'         => false,
-				'status_message' => 'Неверный ключ (ik_co_id)',
+				'status_message' => 'Неверный ключ (site_id)',
 			);
 			return( $result );
 		}
 		// check status
-		$state = $response[ 'ik_inv_st' ];
-		list( $payment_status_name, $status_message ) = $this->_state( $state );
-		// test
-		// $response[ 'operation_id' ] = '3304';
+		if( $is_server ) {
+			$state = $response[ 'status_id' ];
+			$status = $this->_status_server;
+		} else {
+			$state = $response[ 'type' ];
+			$status = $this->_status_response;
+		}
+		list( $payment_status_name, $status_message ) = $this->_state( $state, $status );
+		// amount
+		// $response[ 'amount' ] = $this->_amount( $response[ 'amount' ], $response[ 'currency' ], $is_request = false );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
-			'provider_name'       => 'interkassa',
+			'provider_name'       => 'ecommpay',
 			'response'            => $response,
 			'payment_status_name' => $payment_status_name,
 			'status_message'      => $status_message,
@@ -402,7 +400,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$result = array(
 			'form'           => $form,
 			'status'         => true,
-			'status_message' => 'Поплнение через сервис: Интеркасса',
+			'status_message' => 'Поплнение через сервис: EcommPay',
 		);
 		return( $result );
 	}

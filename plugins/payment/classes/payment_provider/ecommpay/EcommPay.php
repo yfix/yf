@@ -32,7 +32,7 @@ class EcommPay {
 		return( $_value );
 	}
 
-	public function options_to_str( array $options, $level = 1 ) {
+	public function options_to_str( array $options, $is_request = true, $level = 1 ) {
 		if( $level > $this->options_level_max ) { return( null ); }
 		$result = array();
 		ksort( $options );
@@ -46,30 +46,41 @@ class EcommPay {
 					$_value = (string)$value;
 					break;
 				case is_array( $value ):
-					$_value = $this->options_to_str( $value, $level + 1 );
+					$_value = $this->options_to_str( $value, $is_request, $level + 1 );
 					break;
 				case is_null( $value ):
 				default:
 					break;
 			}
 			if( !isset( $_value ) ) { continue; }
-			$result[ $key ] = $key . ':' . $_value;
+			if( $is_request ) {
+				$_value = $key . ':' . $_value;
+			} else {
+				$_value = $_value;
+			}
+			$result[ $key ] = $_value;
 		}
-		$result = implode( ';', $result );
+		if( $is_request ) { $separator = ';'; }
+		else { $separator = ''; }
+		$result = implode( $separator, $result );
 		return( $result );
 	}
 
 	public function signature( array $options, $is_request = true ) {
-		$_ = &$options;
+		$_ = $options;
 		$request = array();
 		// compile string
 		unset( $_[ 'signature' ] );
-		$str = $this->options_to_str( $_ );
+		$str = $this->options_to_str( $_, $is_request );
 		// add salt
 		$key = $this->_key_private;
-		$str = $str . ';' . $key;
+		if( $is_request ) { $separator = ';'; }
+		else { $separator = ''; }
+		$str = $str . $separator . $key;
 		// create signature
 		$result = $this->str_to_sign( $str );
+// DEBUG
+// var_dump( $options, $str, $result );
 		return( $result );
 	}
 

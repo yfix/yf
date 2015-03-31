@@ -17,6 +17,7 @@ class yf_payment_api__provider_remote {
 	public $service_allow = null;
 	public $description   = null;
 
+	public $_status = array();
 	public $_status_message = array(
 		'success'     => 'Выполнено: ',
 		'in_progress' => 'Ожидание: ',
@@ -37,9 +38,12 @@ class yf_payment_api__provider_remote {
 		return( $result );
 	}
 
-	protected function _state( $value ) {
+	protected function _state( $value, $status = null ) {
 		if( !$this->ENABLE ) { return( null ); }
-		$name    = $this->_status[ $value ];
+		if( !is_array( $status ) ) {
+			$status = &$this->_status;
+		}
+		$name    = $status[ $value ];
 		$message = $this->_status_message[ $name ];
 		return( array( $name, $message ) );
 	}
