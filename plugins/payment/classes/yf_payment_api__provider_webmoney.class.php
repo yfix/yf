@@ -27,6 +27,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		'LMI_PAYMENT_NO'     => 'operation_id',
 		'LMI_PAYEE_PURSE'    => 'key_public',
 		'LMI_MODE'           => 'test',
+		'LMI_HASH'           => 'signature',
 	);
 
 	public $_status = array(
@@ -205,8 +206,8 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		) { $_ = null; }
 		// DEBUG
 		// test: 0 - success; 1 - fail.
-		// $_[ 'LMI_SIM_MODE' ] = 0;
-		$_[ 'LMI_SIM_MODE' ] = 1;
+		$_[ 'LMI_SIM_MODE' ] = 0;
+		// $_[ 'LMI_SIM_MODE' ] = 1;
 		return( $_ );
 	}
 
@@ -250,6 +251,91 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		return( $operation );
 	}
 
+	public function __api_response__result( $operation_id, $response ) {
+		$_response = $this->_response_parse( $response );
+		// public key (purse)
+		$key_public = $_response[ 'key_public' ];
+		// check signature
+		$is_signature = isset( $_response[ 'signature' ] );
+		if( !$is_signature ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Пустая подпись',
+			);
+			return( $result );
+		}
+		$signature  = $_response[ 'signature' ];
+		$_signature = $this->signature( $response, $is_request = false );
+		if( $signature != $_signature ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверная подпись',
+			);
+			return( $result );
+		}
+		// save options
+		$operation_options = array(
+			'response' => array( array(
+				'data'     => $_response,
+				'datetime' => $sql_datetime,
+			))
+		);
+		$result = $payment_api->operation_update( array(
+			'operation_id' => $operation_id,
+			'options'      => $operation_options,
+		));
+		if( !$result[ 'status' ] ) { return( $result ); }
+		$result = array(
+			'status'         => true,
+			'status_message' => 'Поплнение через сервис: WebMoney',
+		);
+	}
+
+	public function __api_response__success( $operation_id, $response ) {
+		$_response = $this->_response_parse( $response );
+		if( empty( $response[ 'LMI_SYS_INVS_NO' ] )
+			|| empty( $response[ 'LMI_SYS_TRANS_NO' ] )
+			|| empty( $response[ 'LMI_SYS_TRANS_DATE' ] )
+		) {
+			$state = 'fail';
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверный ответ: отсутствуют данные транзакции',
+			);
+			return( $result );
+		}
+		// check response options
+		$operation = $this->_get_operation( $_response );
+		if( empty( $operation[ 'options' ] ) && empty( $operation[ 'options' ][ 'response' ] ) ) {
+			$state = 'fail';
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверный ответ: отсутствуют данные операции',
+			);
+			return( $result );
+		}
+		$__response = reset( $operation[ 'options' ][ 'response' ] );
+		$_data = $__response[ 'data' ];
+		// check transaction data
+		if(
+			$_data[ 'LMI_SYS_INVS_NO' ] != $response[ 'LMI_SYS_INVS_NO' ]
+			|| $_data[ 'LMI_SYS_TRANS_NO' ] != $response[ 'LMI_SYS_TRANS_NO' ]
+			|| $_data[ 'LMI_SYS_TRANS_DATE' ] != $response[ 'LMI_SYS_TRANS_DATE' ]
+		) {
+			$state = 'fail';
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверный ответ: данные операции не совпадают',
+			);
+			return( $result );
+		}
+		return( true );
+	}
+
+	public function __api_response__fail( $response ) {
+		return( true );
+	}
+
 	public function _api_response( $request ) {
 		$payment_api = $this->payment_api;
 		$sql_datetime = $payment_api->sql_datatime();
@@ -258,155 +344,58 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// response
-		$payment = $_POST;
-		if( empty( $payment ) ) {
+		$response = $_POST;
+		if( empty( $response ) ) {
 			$result = array(
 				'status'         => true,
 				'status_message' => 'Пустой ответ',
 			);
 			return( $result );
 		}
-// DEBUG DATA
-		/* result
-		$payment = array (
-			'LMI_MODE'             => '1',
-			'LMI_PAYMENT_AMOUNT'   => '0.10',
-			'LMI_PAYEE_PURSE'      => 'U403573875538',
-			'LMI_PAYMENT_NO'       => '1',
-			'LMI_PAYER_WM'         => '352775132080',
-			'LMI_PAYER_PURSE'      => 'U403573875538',
-			'LMI_PAYER_COUNTRYID'  => 'UA',
-			'LMI_PAYER_PCOUNTRYID' => 'UA',
-			'LMI_PAYER_IP'         => '46.46.72.161',
-			'LMI_SYS_INVS_NO'      => '658',
-			'LMI_SYS_TRANS_NO'     => '899',
-			'LMI_SYS_TRANS_DATE'   => '20150331 15:29:19',
-			'LMI_HASH'             => 'C711D8976302BD23D96AA1240912C406E2DE3B655C789C3061A0B12C7BECB193',
-			'LMI_PAYMENT_DESC'     => 'Поплнение счета',
-			'LMI_LANG'             => 'ru-RU',
-			'LMI_DBLCHK'           => 'ENUM',
-		);
-		// success
-		$payment = array (
-			'LMI_PAYMENT_NO'     => '1',
-			'LMI_SYS_INVS_NO'    => '658',
-			'LMI_SYS_TRANS_NO'   => '899',
-			'LMI_SYS_TRANS_DATE' => '20150331 15:29:19',
-			'LMI_LANG'           => 'ru-RU',
-			'signature'          => 'FECEF41D954115DDFE13F2FD310DBD461F944675845DE070D616604423CD4A64',
-		);
-		// */
-		$response = $this->_response_parse( $payment );
+		$_response = $this->_response_parse( $response );
 		// prerequest
 		// todo
-		if( !empty( $response[ 'LMI_PREREQUEST' ] ) ) {
+		if( !empty( $_response[ 'LMI_PREREQUEST' ] ) ) {
 			$result = array(
 				'status'         => true,
 				'status_message' => 'Предзапрос',
 			);
 			return( $result );
 		}
+		// check operation_id
+		if( $operation_id != (int)$_response[ 'operation_id' ] ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неверный код операции',
+			);
+			return( $result );
+		}
 		// check status
 		$test = null;
-		isset( $response[ 'test' ] ) && $test =  (int)$response[ 'test' ] == 1 ? true : false;
+		isset( $_response[ 'test' ] ) && $test =  (int)$_response[ 'test' ] == 1 ? true : false;
 		switch( $_GET[ 'status' ] ) {
 			case 'result':
 				$state = 'wait';
-				// public key (purse)
-				$key_public = $response[ 'key_public' ];
-				$signature = null;
-				$is_signature = isset( $payment[ 'LMI_HASH' ] );
-				$is_signature && $signature = $payment[ 'LMI_HASH' ];
-				// check signature
-				if( empty( $signature ) ) {
-					$result = array(
-						'status'         => false,
-						'status_message' => 'Пустая подпись',
-					);
-					return( $result );
-				}
-				$_signature = $this->signature( $payment, $is_request = false );
-				if( $signature != $_signature ) {
-					$result = array(
-						'status'         => false,
-						'status_message' => 'Неверная подпись',
-					);
-					return( $result );
-				}
-				if( $operation_id != (int)$response[ 'operation_id' ] ) {
-					$result = array(
-						'status'         => false,
-						'status_message' => 'Неверный код операции',
-					);
-					return( $result );
-				}
-				// save options
-				$operation_options = array(
-					'response' => array( array(
-						'data'     => $response,
-						'datetime' => $sql_datetime,
-					))
-				);
-				$result = $payment_api->operation_update( array(
-					'operation_id' => $operation_id,
-					'options'      => $operation_options,
-				));
-				if( !$result[ 'status' ] ) { return( $result ); }
-				$result = array(
-					'status'         => true,
-					'status_message' => 'Поплнение через сервис: WebMoney',
-				);
+				$result = $this->__api_response__result( $operation_id, $response );
 				return( $result );
 				break;
 			case 'success':
 				$state = 'success';
-				if( empty( $payment[ 'LMI_SYS_INVS_NO' ] )
-					|| empty( $payment[ 'LMI_SYS_TRANS_NO' ] )
-					|| empty( $payment[ 'LMI_SYS_TRANS_DATE' ] )
-				) {
-					$state = 'fail';
-					$result = array(
-						'status'         => false,
-						'status_message' => 'Неверный ответ: отсутствуют данные транзакции',
-					);
-					return( $result );
-				}
-				// check response options
-				$operation = $this->_get_operation( $response );
-				if( empty( $operation[ 'options' ] ) && empty( $operation[ 'options' ][ 'response' ] ) ) {
-					$state = 'fail';
-					$result = array(
-						'status'         => false,
-						'status_message' => 'Неверный ответ: отсутствуют данные операции',
-					);
-					return( $result );
-				}
-				$_response = reset( $operation[ 'options' ][ 'response' ] );
-				$_data = $_response[ 'data' ];
-				// check transaction data
-				if(
-					$_data[ 'LMI_SYS_INVS_NO' ] != $response[ 'LMI_SYS_INVS_NO' ]
-					|| $_data[ 'LMI_SYS_TRANS_NO' ] != $response[ 'LMI_SYS_TRANS_NO' ]
-					|| $_data[ 'LMI_SYS_TRANS_DATE' ] != $response[ 'LMI_SYS_TRANS_DATE' ]
-				) {
-					$state = 'fail';
-					$result = array(
-						'status'         => false,
-						'status_message' => 'Неверный ответ: данные операции не совпадают',
-					);
-					return( $result );
-				}
+				$result = $this->__api_response__success( $operation_id, $response );
+				if( is_array( $result ) ) { return( $result ); }
 				break;
 			case 'fail':
 			default:
 				$state = 'fail';
+				$result = $this->__api_response__fail( $operation_id, $response );
+				if( is_array( $result ) ) { return( $result ); }
 				break;
 		}
 		list( $payment_status_name, $status_message ) = $this->_state( $state );
 		// update account, operation data
 		$result = $this->_api_deposition( array(
 			'provider_name'       => 'webmoney',
-			'response'            => $response,
+			'response'            => $_response,
 			'payment_status_name' => $payment_status_name,
 			'status_message'      => $status_message,
 		));
