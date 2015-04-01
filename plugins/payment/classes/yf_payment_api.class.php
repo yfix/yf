@@ -1054,14 +1054,20 @@ class yf_payment_api {
 		$table = 'payment_' . $name;
 		// extend options
 $dump = $this->dump( array( 'var' => array(
-	'_options' => $_options,
+	'update _options' => $_options,
 )));
 		if( is_array( $_options ) ) {
 			// get operation
 			$operation = db()->table( $table )
 				->where( $id_name, $id )
 				->get();
+$dump = $this->dump( array( 'var' => array(
+	'get operation' => $operation,
+)));
 			$operation_options = (array)json_decode( $operation[ 'options' ], true );
+$dump = $this->dump( array( 'var' => array(
+	'json' => $operation_options,
+)));
 			$_options = json_encode( array_merge_recursive(
 				$operation_options,
 				$_options
