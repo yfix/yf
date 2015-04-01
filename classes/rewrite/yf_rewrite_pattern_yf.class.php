@@ -72,6 +72,10 @@ class yf_rewrite_pattern_yf {
 	*/
 	function _parse($host, $url, $query, $url_str, $class_rewrite) {
 		$s = '';
+		$static_pages = $this->_get_static_pages_names();
+		if (false !== strpos($url[0], '%')) {
+			$url[0] = urldecode($url[0]);
+		}
 		// Examples: /login    /logout
 		if ($url[0] == 'login' || $url[0] == 'logout') {
 			$s = 'task='.$url[0];
@@ -79,7 +83,7 @@ class yf_rewrite_pattern_yf {
 				$s .= '&id='.$url[1];
 				unset($url[1]);
 			}
-		} elseif (in_array($url[0], $this->_get_static_pages_names())) {
+		} elseif (in_array($url[0], $static_pages)) {
 			$s = 'object=static_pages&id='.$url[0];
 		// Examples: /table2_test/0/5,  where 5 - page number
 		} elseif (!empty($url[0]) && is_numeric($url[1]) && is_numeric($url[2])) {
