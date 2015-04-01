@@ -255,6 +255,13 @@ $dump = $payment_api->dump();
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// response POST:
 		$payment = $_POST;
+		if( empty( $payment ) ) {
+			$result = array(
+				'status'         => true,
+				'status_message' => 'Пустой ответ',
+			);
+			return( $result );
+		}
 // DEBUG DATA
 		/* result
 		$payment = array (
