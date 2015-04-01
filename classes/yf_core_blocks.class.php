@@ -321,12 +321,11 @@ class yf_core_blocks {
 	*/
 	function tasks($allowed_check = false) {
 		$main = main();
-		$tpl = tpl();
 		if ($main->is_console() || $main->is_ajax()) {
 			$main->no_graphics(true);
 		}
 		// Singleton
-		$_center_result = $tpl->_CENTER_RESULT;
+		$_center_result = tpl()->_CENTER_RESULT;
 		if (isset($_center_result)) {
 			return $_center_result;
 		}
@@ -378,7 +377,7 @@ class yf_core_blocks {
 			);
 			$redir_url = str_replace(array_keys($redir_params), array_values($redir_params), $url);
 			if (!empty($redir_url)) {
-				redirect($redir_url, 1, $tpl->parse('system/error_not_found'));
+				redirect($redir_url, 1, tpl()->parse('system/error_not_found'));
 			}
 		};
 		if ($not_found) {
@@ -402,7 +401,7 @@ class yf_core_blocks {
 						$body = _class_safe($u['object'], $u['path'])->$action();
 					} elseif (isset($u['stpl'])) {
 						$main->no_graphics(true);
-						print $tpl->parse($u['stpl']);
+						print tpl()->parse($u['stpl']);
 					}
 				} else {
 					$redirect_func($u);
@@ -425,7 +424,7 @@ class yf_core_blocks {
 		$append	= $events->fire('block.append['.$block_name.']', array(&$body));
 		$body = ($prepend ? implode(PHP_EOL, $prepend) : ''). $body. ($append ? implode(PHP_EOL, $append) : '');
 		// Singleton
-		$tpl->_CENTER_RESULT = (string)$body;
+		tpl()->_CENTER_RESULT = (string)$body;
 		// Output only center content, when we are inside AJAX_MODE
 		if ($main->is_ajax()) {
 			print $body;
