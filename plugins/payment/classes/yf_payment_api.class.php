@@ -1058,7 +1058,7 @@ class yf_payment_api {
 			$operation = db()->table( $table )
 				->where( $id_name, $id )
 				->get();
-			$operation_options = (array)json_decode( $operation[ 'options' ], JSON_NUMERIC_CHECK );
+			$operation_options = json_decode( $operation[ 'options' ], true );
 			$_options = json_encode( array_merge_recursive(
 				$operation_options,
 				$_options

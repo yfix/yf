@@ -366,6 +366,10 @@ $dump = $payment_api->dump( array( 'var' => array(
 					);
 					return( $result );
 				}
+// DEBUG
+$dump = $payment_api->dump( array( 'var' => array(
+	'before update' => $this->_get_operation( array( 'operation_id' => $operation_id ) )
+)));
 				// save options
 				$operation_options = array(
 					'response' => array( array(
@@ -380,6 +384,7 @@ $dump = $payment_api->dump( array( 'var' => array(
 $dump = $payment_api->dump( array( 'var' => array(
 	'operation_options' => $operation_options,
 	'result' => $result,
+	'after update' => $this->_get_operation( array( 'operation_id' => $operation_id ) )
 )));
 				if( !$result[ 'status' ] ) { return( $result ); }
 				$result = array(
