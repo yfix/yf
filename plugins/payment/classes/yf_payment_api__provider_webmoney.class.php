@@ -255,10 +255,10 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// response POST:
 		$payment = $_POST;
 // DEBUG
-$dump = $payment_api->dump( array(
+$dump = $payment_api->dump( array( 'var' => array(
 	'payment' => $payment,
 	'request' => $request,
-));
+)));
 		if( empty( $payment ) ) {
 			$result = array(
 				'status'         => true,
