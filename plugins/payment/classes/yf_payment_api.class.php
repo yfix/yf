@@ -1053,29 +1053,26 @@ class yf_payment_api {
 		}
 		$table = 'payment_' . $name;
 		// extend options
-$dump = $this->dump( array( 'var' => array(
-	'update _options' => $_options,
-)));
 		if( is_array( $_options ) ) {
 			// get operation
 			$operation = db()->table( $table )
 				->where( $id_name, $id )
 				->get();
-$dump = $this->dump( array( 'var' => array(
-	'get operation' => $operation,
-)));
 			$operation_options = (array)json_decode( $operation[ 'options' ], true );
-$dump = $this->dump( array( 'var' => array(
-	'json' => $operation_options,
-)));
-			$_options = json_encode( array_merge_recursive(
+			$json_options = (array)json_encode( array_merge_recursive(
 				$operation_options,
 				$_options
 			), JSON_NUMERIC_CHECK );
-		}
 $dump = $this->dump( array( 'var' => array(
+	'json_options' => $json_options,
+	'operation_options' => $operation_options,
 	'_options' => $_options,
 )));
+			$json_options && $_options = $json_options;
+$dump = $this->dump( array( 'var' => array(
+	'result _options' => $_options,
+)));
+		}
 		// remove id by update
 		unset( $data[ $id_name ] );
 		// escape sql data
