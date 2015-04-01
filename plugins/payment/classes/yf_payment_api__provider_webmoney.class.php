@@ -258,6 +258,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 $dump = $payment_api->dump( array( 'var' => array(
 	'payment' => $payment,
 	'request' => $request,
+	'operation' => $this->_get_operation( array( 'operation_id' => $operation_id ) )
 )));
 		if( empty( $payment ) ) {
 			$result = array(

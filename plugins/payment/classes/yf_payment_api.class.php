@@ -643,7 +643,7 @@ class yf_payment_api {
 		if( is_array( $result ) ) {
 			foreach( $result as $index => $item ) {
 				$_options = &$result[ $index ][ 'options' ];
-				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
+				$_options && $_options = (array)json_decode( $_options, true );
 			}
 		}
 		return( $result );
@@ -977,7 +977,7 @@ class yf_payment_api {
 			} else {
 				$result = $db->get();
 				$_options = &$result[ 'options' ];
-				isset( $_options ) && $_options = json_decode( $_options, true );
+				isset( $_options ) && $_options = (array)json_decode( $_options, true );
 			}
 			return( $result );
 		}
@@ -1014,7 +1014,7 @@ class yf_payment_api {
 			$datetime_key = array( 'start', 'finish', 'update', );
 			foreach( $result as $index => &$item ) {
 				$_options = &$item[ 'options' ];
-				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
+				$_options && $_options = (array)json_decode( $_options, true );
 				foreach( $datetime_key as $key ) {
 					$item[ '_ts_' . $key ] = strtotime( $item[ 'datetime_' . $key ] );
 				}
@@ -1058,11 +1058,11 @@ class yf_payment_api {
 			$operation = db()->table( $table )
 				->where( $id_name, $id )
 				->get();
-			$operation_options = json_decode( $operation[ 'options' ], true );
+			$operation_options = (array)json_decode( $operation[ 'options' ], true );
 			$_options = json_encode( array_merge_recursive(
 				$operation_options,
 				$_options
-			));
+			), JSON_NUMERIC_CHECK );
 		}
 		// remove id by update
 		unset( $data[ $id_name ] );
