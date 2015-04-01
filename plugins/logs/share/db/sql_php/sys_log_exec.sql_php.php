@@ -526,6 +526,21 @@ return array(
 			'unique' => false,
 			'values' => NULL,
 		),
+		'is_mobile' => array(
+			'name' => 'is_mobile',
+			'type' => 'tinyint',
+			'length' => 1,
+			'decimals' => NULL,
+			'unsigned' => true,
+			'nullable' => false,
+			'default' => '0',
+			'charset' => NULL,
+			'collate' => NULL,
+			'auto_inc' => false,
+			'primary' => false,
+			'unique' => false,
+			'values' => NULL,
+		),
 	),
 	'indexes' => array(
 		'PRIMARY' => array(

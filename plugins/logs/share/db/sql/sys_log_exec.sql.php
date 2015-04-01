@@ -35,5 +35,6 @@ return '
   `is_404` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
   `is_503` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
   `is_cache_on` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
+  `is_mobile` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
   PRIMARY KEY (`id`)
 ';
