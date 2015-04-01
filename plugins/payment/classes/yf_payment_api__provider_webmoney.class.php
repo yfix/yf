@@ -354,7 +354,12 @@ $dump = $payment_api->dump( array( 'var' => array(
 					);
 					return( $result );
 				}
-				if( $operation_id != $payment[ 'LMI_PAYMENT_NO' ] ) {
+// DEBUG
+$dump = $payment_api->dump( array( 'var' => array(
+	'operation_id' => $operation_id,
+	'_operation_id' => $response[ 'operation_id' ],
+)));
+				if( $operation_id != (int)$response[ 'operation_id' ] ) {
 					$result = array(
 						'status'         => false,
 						'status_message' => 'Неверный код операции',
@@ -371,6 +376,11 @@ $dump = $payment_api->dump( array( 'var' => array(
 					'operation_id' => $operation_id,
 					'options'      => $operation_options,
 				));
+// DEBUG
+$dump = $payment_api->dump( array( 'var' => array(
+	'operation_options' => $operation_options,
+	'result' => $result,
+)));
 				if( !$result[ 'status' ] ) { return( $result ); }
 				$result = array(
 					'status'         => true,
