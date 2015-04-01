@@ -320,8 +320,9 @@ class yf_core_blocks {
 	* Main $_GET tasks handler
 	*/
 	function tasks($allowed_check = false) {
-		if (main()->is_console() || main()->is_ajax()) {
-			main()->NO_GRAPHICS = true;
+		$main = main();
+		if ($main->is_console() || $main->is_ajax()) {
+			$main->no_graphics(true);
 		}
 		// Singleton
 		$_center_result = tpl()->_CENTER_RESULT;
@@ -348,16 +349,16 @@ class yf_core_blocks {
 				$not_found = true;
 			}
 			// Check if we have custom action handler in module (catch all requests to module methods)
-			if (method_exists($obj, main()->MODULE_CUSTOM_HANDLER)) {
+			if (method_exists($obj, $main->MODULE_ACTION_HANDLER)) {
 				$custom_handler_exists = true;
 			}
 			if (!$not_found || $custom_handler_exists) {
 				if ($custom_handler_exists) {
 					$not_found = false;
-					$body = $obj->{main()->MODULE_CUSTOM_HANDLER}($_GET['action']);
+					$body = $obj->{$main->MODULE_ACTION_HANDLER}($_GET['action'], $main->_ARGS_DIRTY);
 				} else {
 					$is_banned = false;
-					if (MAIN_TYPE_USER && main()->AUTO_BAN_CHECKING) {
+					if (MAIN_TYPE_USER && $main->AUTO_BAN_CHECKING) {
 						$is_banned = _class('ban_status')->_auto_check(array());
 					}
 					if ($is_banned) {
@@ -380,16 +381,16 @@ class yf_core_blocks {
 			}
 		};
 		if ($not_found) {
-			main()->BLOCKS_TASK_404 = true;
+			$main->BLOCKS_TASK_404 = true;
 			if ($this->TASK_NOT_FOUND_404_HEADER) {
 				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 404 Not Found');
-				main()->IS_404 = true;
+				$main->IS_404 = true;
 			}
 			if (_class('graphics')->NOT_FOUND_RAISE_WARNING) {
 				trigger_error(__CLASS__.': Task not found: '.$_GET['object'].'.'.$_GET['action'], E_USER_WARNING);
 			}
 			if (MAIN_TYPE_USER) {
-				$u = main()->REDIR_URL_NOT_FOUND;
+				$u = $main->REDIR_URL_NOT_FOUND;
 				if (is_array($u) && !empty($u)) {
 					// Prefill GET keys from redirect url
 					foreach (array('object','action','id','page') as $k) {
@@ -399,7 +400,7 @@ class yf_core_blocks {
 						$action = $u['action'] ?: 'show';
 						$body = _class_safe($u['object'], $u['path'])->$action();
 					} elseif (isset($u['stpl'])) {
-						main()->NO_GRAPHICS = true;
+						$main->no_graphics(true);
 						print tpl()->parse($u['stpl']);
 					}
 				} else {
@@ -407,24 +408,25 @@ class yf_core_blocks {
 				}
 			}
 		} elseif ($allowed_check && $access_denied) {
-			main()->BLOCKS_TASK_403 = true;
+			$main->BLOCKS_TASK_403 = true;
 			if ($this->TASK_DENIED_403_HEADER) {
 				header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
-				main()->IS_403 = true;
+				$main->IS_403 = true;
 			}
 			trigger_error(__CLASS__.': Access denied: '.$_GET['object'].'.'.$_GET['action'], E_USER_WARNING);
 			if (MAIN_TYPE_USER) {
-				$redirect_func(main()->REDIR_URL_DENIED);
+				$redirect_func($main->REDIR_URL_DENIED);
 			}
 		}
 		$block_name = 'center_area';
-		$prepend = _class('core_events')->fire('block.prepend['.$block_name.']');
-		$append = _class('core_events')->fire('block.append['.$block_name.']', array(&$body));
+		$events = _class('core_events');
+		$prepend= $events->fire('block.prepend['.$block_name.']');
+		$append	= $events->fire('block.append['.$block_name.']', array(&$body));
 		$body = ($prepend ? implode(PHP_EOL, $prepend) : ''). $body. ($append ? implode(PHP_EOL, $append) : '');
 		// Singleton
 		tpl()->_CENTER_RESULT = (string)$body;
 		// Output only center content, when we are inside AJAX_MODE
-		if (main()->is_ajax()) {
+		if ($main->is_ajax()) {
 			print $body;
 		}
 		return $body;

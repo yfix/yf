@@ -437,7 +437,7 @@ class yf_common {
 	* Show print version of the given page
 	*/
 	function print_page($text = '') {
-		main()->NO_GRAPHICS = true;
+		main()->no_graphics(true);
 		return print tpl()->parse('system/common/print_page', array(
 			'text'			=> $text,
 			'path_to_tpls'	=> WEB_PATH. tpl()->TPL_PATH,
@@ -490,7 +490,7 @@ class yf_common {
 	* Show empty page (useful for popup windows, etc)
 	*/
 	function show_empty_page($text = '', $params = array()) {
-		main()->NO_GRAPHICS = true;
+		main()->no_graphics(true);
 		$output = tpl()->parse('empty_page', array(
 			'text'			=> $text,
 			'title'			=> $params['title'],
@@ -1367,6 +1367,7 @@ class yf_common {
 		} else {
 			// All other cases
 			header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 404 Not Found');
+			main()->IS_404 = true;
 		}
 		return $this->_show_error_message($msg);
 	}
@@ -1381,6 +1382,7 @@ class yf_common {
 		} else {
 			// All other cases
 			header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+			main()->IS_403 = true;
 		}
 		return $this->_show_error_message($msg);
 	}

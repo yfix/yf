@@ -204,7 +204,7 @@ class yf_tpl {
 		if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
 			_class('output_cache')->_process_output_cache();
 		}
-		if (!main()->NO_GRAPHICS) {
+		if (!main()->no_graphics()) {
 			if ($this->OB_CATCH_CONTENT) {
 				ob_start();
 			}
@@ -229,8 +229,9 @@ class yf_tpl {
 			if ($init_type == 'admin' && (empty($_SESSION['admin_id']) || empty($_SESSION['admin_group']))) {
 				$tpl_name = 'login';
 				if (main()->is_ajax()) {
+					no_graphics(true);
+					main()->IS_403 = true;
 					header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
-					main()->NO_GRAPHICS = true;
 					$skip_prefetch = true;
 				}
 				if (!main()->is_console()) {
@@ -255,7 +256,7 @@ class yf_tpl {
 				}
 			}
 		}
-		if (!main()->NO_GRAPHICS) {
+		if (!main()->no_graphics()) {
 			$body['content'] = $this->_init_main_stpl($tpl_name);
 			$this->_CENTER_RESULT = '';
 			if ($this->CUSTOM_META_INFO && $init_type == 'user') {
@@ -265,7 +266,7 @@ class yf_tpl {
 				$this->register_output_filter(array($this, '_replace_for_iframe_callback'), 'replace_for_iframe');
 			}
 		}
-		if (!main()->NO_GRAPHICS) {
+		if (!main()->no_graphics()) {
 			// Replace images paths with their absolute ones
 			if ($this->REWRITE_MODE && $init_type != 'admin') {
 				$this->register_output_filter(array($this, '_rewrite_links_callback'), 'rewrite_links');
@@ -312,11 +313,11 @@ class yf_tpl {
 			// Throw generated output to user
 			echo $output;
 		}
-		if (DEBUG_MODE && main()->NO_GRAPHICS && !main()->is_console() && !main()->is_ajax()) {
+		if (DEBUG_MODE && main()->no_graphics() && !main()->is_console() && !main()->is_ajax()) {
 			echo common()->show_debug_info();
 		}
 		// Output cache for 'no graphics' content
-		if (main()->NO_GRAPHICS && main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
+		if (main()->no_graphics() && main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
 			_class('output_cache')->_put_page_to_output_cache(ob_get_clean());
 		}
 		if (main()->LOG_EXEC || $this->LOG_EXEC_INFO) {

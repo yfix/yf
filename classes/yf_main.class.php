@@ -112,7 +112,7 @@ class yf_main {
 	/** @var string Path to the server health check result */
 	public $SERVER_HEALTH_FILE		= '/tmp/isok.txt';
 	/** @var string @conf_skip Custom module handler method name */
-	public $MODULE_CUSTOM_HANDLER	= '_module_action_handler';
+	public $MODULE_ACTION_HANDLER	= '_module_action_handler';
 	/** @var string @conf_skip Module (not class) constructor name */
 	public $MODULE_CONSTRUCT		= '_init';
 	/** @var int @conf_skip Current user session info */
@@ -360,7 +360,8 @@ class yf_main {
         unset($_GET['object']);
         unset($_GET['action']);
 
-		$arr = _class('rewrite')->REWRITE_PATTERNS['yf']->_parse($host, $u_arr, $_GET);
+		$class_rewrite = _class('rewrite');
+		$arr = $class_rewrite->REWRITE_PATTERNS['yf']->_parse($host, $u_arr, $_GET, '', $class_rewrite);
 
         foreach ((array)$arr as $k => $v) {
             if ($k != '%redirect_url%') {
@@ -1961,13 +1962,13 @@ class yf_main {
 	/**
 	*/
 	function is_403() {
-		return (bool)$this->IS_403;
+		return (bool)($this->IS_403 || $this->BLOCKS_TASK_403);
 	}
 
 	/**
 	*/
 	function is_404() {
-		return (bool)$this->IS_404;
+		return (bool)($this->IS_404 || $this->BLOCKS_TASK_404);
 	}
 
 	/**
@@ -1992,6 +1993,12 @@ class yf_main {
 	*/
 	function is_cache_on() {
 		return (bool)(($this->USE_SYSTEM_CACHE || conf('USE_CACHE')) && !cache()->NO_CACHE);
+	}
+
+	/**
+	*/
+	function is_output_cache_on() {
+		return (bool)$this->OUTPUT_CACHING;
 	}
 
 	/**
