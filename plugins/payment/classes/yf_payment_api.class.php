@@ -1059,7 +1059,7 @@ class yf_payment_api {
 				->where( $id_name, $id )
 				->get();
 			$operation_options = (array)json_decode( $operation[ 'options' ], true );
-			$json_options = (array)json_encode( array_merge_recursive(
+			$json_options = json_encode( array_merge_recursive(
 				$operation_options,
 				$_options
 			), JSON_NUMERIC_CHECK );
@@ -1077,7 +1077,8 @@ $dump = $this->dump( array( 'var' => array(
 		unset( $data[ $id_name ] );
 		// escape sql data
 		$sql_data = $data;
-		$__is_escape && $sql_data = _es( $data );
+		$is_escape = isset( $__is_escape ) ? (bool)$__is_escape : true;
+		$is_escape && $sql_data = _es( $data );
 		// query
 		$sql_status = db()->table( $table )
 			->where( $id_name, $id )
