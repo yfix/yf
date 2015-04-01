@@ -1053,6 +1053,9 @@ class yf_payment_api {
 		}
 		$table = 'payment_' . $name;
 		// extend options
+$dump = $payment_api->dump( array( 'var' => array(
+	'_options' => $_options,
+)));
 		if( is_array( $_options ) ) {
 			// get operation
 			$operation = db()->table( $table )
@@ -1064,6 +1067,9 @@ class yf_payment_api {
 				$_options
 			), JSON_NUMERIC_CHECK );
 		}
+$dump = $payment_api->dump( array( 'var' => array(
+	'_options' => $_options,
+)));
 		// remove id by update
 		unset( $data[ $id_name ] );
 		// escape sql data
