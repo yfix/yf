@@ -265,7 +265,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		$signature  = $_response[ 'signature' ];
-		$_signature = $this->signature( $_response, $is_request = false );
+		$_signature = $this->signature( $response, $is_request = false );
 		if( $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
