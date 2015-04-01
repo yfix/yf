@@ -374,7 +374,7 @@ $dump = $payment_api->dump( array( 'var' => array(
 				// save options
 				$operation_options = array(
 					'response' => array( array(
-						'data'     => $payment,
+						'data'     => $response,
 					))
 				);
 				$result = $payment_api->operation_update( array(
@@ -474,6 +474,9 @@ $dump = $payment_api->dump( array( 'var' => array(
 				$_[ $to ] = $_[ $from ];
 				unset( $_[ $from ] );
 			}
+		}
+		if( !empty( $_[ 'title' ] ) ) {
+			$_[ 'title' ] = iconv( 'windows-1251', 'utf-8', $_[ 'title' ] );
 		}
 		return( $_ );
 	}
