@@ -107,7 +107,6 @@ class yf_static_pages {
 	*/
 	function _get_page_from_db ($id = null) {
 		$id = $id ?: $_GET['id'];
-var_dump($id);
 		if (empty($id)) {
 			return array();
 		}
