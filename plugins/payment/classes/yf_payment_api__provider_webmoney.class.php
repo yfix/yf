@@ -86,7 +86,6 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	public $url_server = null;
 
 	public function _init() {
-		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/webmoney/WebMoney.php' );
 		$this->api = new WebMoney( $this->KEY_PUBLIC, $this->KEY_PRIVATE, $this->HASH_METHOD );
@@ -232,13 +231,13 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
-	public function _get_operation( $response ) {
+	public function _get_operation( $options ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-		$payment_api = $this->payment_api;
 		// get operation options
-		$operation_id = (int)$_response[ 'operation_id' ];
+		$operation_id = (int)$_operation_id;
 		if( empty( $operation_id ) ) { return( null ); }
+		$payment_api = $this->payment_api;
 		$operation = $payment_api->operation( array(
 			'operation_id' => $operation_id,
 		));
@@ -254,8 +253,8 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// response POST:
 		$payment   = $_POST[ 'payment'   ];
-		// test data
-		/*
+// DEBUG DATA
+		//* result
 		$payment = array (
 			'LMI_MODE'             => '1',
 			'LMI_PAYMENT_AMOUNT'   => '0.10',
@@ -273,7 +272,17 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			'LMI_PAYMENT_DESC'     => 'Поплнение счета',
 			'LMI_LANG'             => 'ru-RU',
 			'LMI_DBLCHK'           => 'ENUM',
-		); // */
+		);
+		// success
+		$payment = array (
+			'LMI_PAYMENT_NO'     => '1',
+			'LMI_SYS_INVS_NO'    => '658',
+			'LMI_SYS_TRANS_NO'   => '899',
+			'LMI_SYS_TRANS_DATE' => '20150331 15:29:19',
+			'LMI_LANG'           => 'ru-RU',
+			'signature'          => 'FECEF41D954115DDFE13F2FD310DBD461F944675845DE070D616604423CD4A64',
+		);
+		// */
 		// prerequest
 		// todo
 		if( !empty( $response[ 'LMI_PREREQUEST' ] ) ) {
@@ -284,6 +293,8 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		$response = $this->_response_parse( $payment );
+// DEBUG
+$response[ 'operation_id' ] = 24558;
 		// check status
 		$test = null;
 		isset( $response[ 'test' ] ) && $test =  (int)$response[ 'test' ] == 1 ? true : false;
@@ -319,11 +330,37 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 					&& empty( $payment[ 'LMI_SYS_TRANS_DATE' ] )
 				) {
 					$state = 'fail';
+					$result = array(
+						'status'         => false,
+						'status_message' => 'Неверный ответ: отсутствуют данные транзакции',
+					);
+					return( $result );
 				}
 				// check response options
 				$operation = $this->_get_operation( $response );
-				var_dump( $operation );
-				exit;
+				if( empty( $operation[ 'options' ] ) && empty( $operation[ 'options' ][ 'response' ] ) ) {
+					$state = 'fail';
+					$result = array(
+						'status'         => false,
+						'status_message' => 'Неверный ответ: отсутствуют данные операции',
+					);
+					return( $result );
+				}
+				$_response = reset( $operation[ 'options' ][ 'response' ] );
+				$_data = $_response[ 'data' ];
+				// check transaction data
+				if(
+					$_data[ 'LMI_SYS_INVS_NO' ] != $response[ 'LMI_SYS_INVS_NO' ]
+					|| $_data[ 'LMI_SYS_TRANS_NO' ] != $response[ 'LMI_SYS_TRANS_NO' ]
+					|| $_data[ 'LMI_SYS_TRANS_DATE' ] != $response[ 'LMI_SYS_TRANS_DATE' ]
+				) {
+					$state = 'fail';
+					$result = array(
+						'status'         => false,
+						'status_message' => 'Неверный ответ: данные операции не совпадают',
+					);
+					return( $result );
+				}
 				break;
 			case 'fail':
 			default:
@@ -444,60 +481,9 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$result = array(
 			'form'           => $form,
 			'status'         => true,
-			'status_message' => 'Поплнение через сервис: Приват24',
+			'status_message' => 'Поплнение через сервис: WebMoney',
 		);
 		return( $result );
 	}
 
-	public function payment( $options ) {
-		$payment_api    = $this->payment_api;
-		$_              = $options;
-		$data           = &$_[ 'data'           ];
-		$options        = &$_[ 'options'        ];
-		$operation_data = &$_[ 'operation_data' ];
-		// prepare data
-		$user_id        = (int)$operation_data[ 'user_id' ];
-		$operation_id   = (int)$data[ 'operation_id' ];
-		$account_id     = (int)$data[ 'account_id'   ];
-		$provider_id    = (int)$data[ 'provider_id'  ];
-		$amount         = $payment_api->_number_float( $data[ 'amount' ] );
-		$currency_id    = $this->get_currency( $options );
-		if( empty( $operation_id ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Не определен код операции',
-			);
-			return( $result );
-		}
-		// currency conversion
-		$amount_currency = $payment_api->currency_conversion( array(
-			'conversion_type' => 'sell',
-			'currency_id'     => $currency_id,
-			'amount'          => $amount,
-		));
-		if( empty( $amount_currency ) ) {
-			$result = array(
-				'status'         => false,
-				'status_message' => 'Невозможно произвести конвертацию валют',
-			);
-			return( $result );
-		}
-		// fee
-		$fee = $this->fee;
-		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
-		// prepare
-		$method_id = $options[ 'method_id' ];
-		$request   = array(
-			'operation_id' => $operation_id,
-			'amount'       => $amount_currency_total,
-			// 'currency'     => 'UAH',
-			'title'        => $options[ 'operation_title' ],
-			'account'      => $options[ 'account' ],
-		);
-		$result = $this->api_request( $method_id, $request );
-		ini_set( 'html_errors', 0 );
-		var_dump( $options, $request, $result );
-		exit;
-		list( $status, $status_message ) = $result;
-	}
 }

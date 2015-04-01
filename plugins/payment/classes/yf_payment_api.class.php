@@ -977,7 +977,7 @@ class yf_payment_api {
 			} else {
 				$result = $db->get();
 				$_options = &$result[ 'options' ];
-				$_options && $_options = (array)json_decode( $_options, JSON_NUMERIC_CHECK );
+				isset( $_options ) && $_options = json_decode( $_options, true );
 			}
 			return( $result );
 		}
