@@ -1367,6 +1367,7 @@ class yf_common {
 		} else {
 			// All other cases
 			header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 404 Not Found');
+			main()->IS_404 = true;
 		}
 		return $this->_show_error_message($msg);
 	}
@@ -1381,6 +1382,7 @@ class yf_common {
 		} else {
 			// All other cases
 			header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
+			main()->IS_403 = true;
 		}
 		return $this->_show_error_message($msg);
 	}
