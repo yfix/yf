@@ -4,7 +4,7 @@
 * Default YF rewrite pattern
 */
 class yf_rewrite_pattern_yf {
-	function _get($a) {
+	function _get($a, $class_rewrite) {
 		if ($a['task'] == 'login' || $a['task'] == 'logout') {
 			$u = $a['task'];
 			unset($a['task']);
@@ -60,7 +60,6 @@ class yf_rewrite_pattern_yf {
 		if ($fragment) {
 			$u .= '#'.$fragment;
 		}
-		$class_rewrite = _class('rewrite');
 		if ($class_rewrite->USE_WEB_PATH) {
 			$url = WEB_PATH;
 		} else {
@@ -71,7 +70,7 @@ class yf_rewrite_pattern_yf {
 
 	/**
 	*/
-	function _parse ($host, $url, $query) {
+	function _parse($host, $url, $query, $url_str, $class_rewrite) {
 		$s = '';
 		// Examples: /login    /logout
 		if ($url[0] == 'login' || $url[0] == 'logout') {
@@ -116,10 +115,14 @@ class yf_rewrite_pattern_yf {
 				$arr[$k] = $v;
 			}
 		}
+		if (!isset($class_rewrite->_ARGS_DIRTY)) {
+			$class_rewrite->_ARGS_DIRTY = $arr;
+			main()->_ARGS_DIRTY = &$class_rewrite->_ARGS_DIRTY;
+		}
 		// Filter bad symbols
 		$cleanup_regex = '~[^a-z0-9_-]+~ims';
-		$arr['object'] = preg_replace($cleanup_regex, '', trim($arr['object']));
-		$arr['action'] = preg_replace($cleanup_regex, '', trim($arr['action']));
+		$arr['object'] = trim(preg_replace($cleanup_regex, '', trim($arr['object'])), '-');
+		$arr['action'] = trim(preg_replace($cleanup_regex, '', trim($arr['action'])), '-_');
 		return $arr;
 	}
 
@@ -127,10 +130,11 @@ class yf_rewrite_pattern_yf {
 	*/
 	function _get_static_pages_names() {
 		if (!isset($this->_static_pages)) {
-			if (!main()->STATIC_PAGES_ROUTE_TOP) {
+			$main = main();
+			if (!$main->STATIC_PAGES_ROUTE_TOP) {
 				$this->_static_pages = array();
 			} else {
-				$this->_static_pages = main()->get_data('static_pages_names');
+				$this->_static_pages = $main->get_data('static_pages_names');
 			}
 		}
 		return $this->_static_pages;

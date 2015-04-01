@@ -140,7 +140,7 @@ class yf_rewrite {
 		$u_arr = explode('/', $u);
 		parse_str($result['query'], $s_arr);
 
-		$arr = $this->REWRITE_PATTERNS['yf']->_parse($host, (array)$u_arr, (array)$s_arr, $url);
+		$arr = $this->REWRITE_PATTERNS['yf']->_parse($host, (array)$u_arr, (array)$s_arr, $url, $this);
 
 		$new_url = $this->_force_get_url($arr, WEB_DOMAIN);
 
@@ -260,7 +260,7 @@ class yf_rewrite {
 		}
 		$REWRITE_ENABLED = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		if ($REWRITE_ENABLED && $for_section != 'admin') {
-			$link = $this->REWRITE_PATTERNS['yf']->_get($params);
+			$link = $this->REWRITE_PATTERNS['yf']->_get($params, $this);
 		} else {
 			$skip_url_params = array('host', 'port', 'fragment', 'path', 'admin_host', 'admin_port', 'admin_path');
 			foreach ((array)$params as $k => $v) {

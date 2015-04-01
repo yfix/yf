@@ -360,7 +360,8 @@ class yf_main {
         unset($_GET['object']);
         unset($_GET['action']);
 
-		$arr = _class('rewrite')->REWRITE_PATTERNS['yf']->_parse($host, $u_arr, $_GET);
+		$class_rewrite = _class('rewrite');
+		$arr = $class_rewrite->REWRITE_PATTERNS['yf']->_parse($host, $u_arr, $_GET, '', $class_rewrite);
 
         foreach ((array)$arr as $k => $v) {
             if ($k != '%redirect_url%') {
