@@ -248,27 +248,18 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 
 	public function _api_response( $request ) {
 		$payment_api = $this->payment_api;
+		$sql_datetime = $payment_api->sql_datatime();
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// response
 		$payment = $_POST;
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'payment' => $payment,
-	'request' => $request,
-	'operation' => $this->_get_operation( array( 'operation_id' => $operation_id ) )
-)));
 		if( empty( $payment ) ) {
 			$result = array(
 				'status'         => true,
 				'status_message' => 'Пустой ответ',
 			);
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'result' => $result,
-)));
 			return( $result );
 		}
 // DEBUG DATA
@@ -309,14 +300,8 @@ $dump = $payment_api->dump( array( 'var' => array(
 				'status'         => true,
 				'status_message' => 'Предзапрос',
 			);
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'result' => $result,
-)));
 			return( $result );
 		}
-// DEBUG
-// $response[ 'operation_id' ] = 24558;
 		// check status
 		$test = null;
 		isset( $response[ 'test' ] ) && $test =  (int)$response[ 'test' ] == 1 ? true : false;
@@ -328,12 +313,6 @@ $dump = $payment_api->dump( array( 'var' => array(
 				$signature = null;
 				$is_signature = isset( $payment[ 'LMI_HASH' ] );
 				$is_signature && $signature = $payment[ 'LMI_HASH' ];
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'payment' => $payment,
-	'response' => $response,
-	'signature' => $signature,
-)));
 				// check signature
 				if( empty( $signature ) ) {
 					$result = array(
@@ -343,11 +322,6 @@ $dump = $payment_api->dump( array( 'var' => array(
 					return( $result );
 				}
 				$_signature = $this->signature( $payment, $is_request = false );
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'signature' => $signature,
-	'_signature' => $_signature,
-)));
 				if( $signature != $_signature ) {
 					$result = array(
 						'status'         => false,
@@ -355,11 +329,6 @@ $dump = $payment_api->dump( array( 'var' => array(
 					);
 					return( $result );
 				}
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'operation_id' => $operation_id,
-	'_operation_id' => $response[ 'operation_id' ],
-)));
 				if( $operation_id != (int)$response[ 'operation_id' ] ) {
 					$result = array(
 						'status'         => false,
@@ -367,26 +336,17 @@ $dump = $payment_api->dump( array( 'var' => array(
 					);
 					return( $result );
 				}
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'before update' => $this->_get_operation( array( 'operation_id' => $operation_id ) )
-)));
 				// save options
 				$operation_options = array(
 					'response' => array( array(
 						'data'     => $response,
+						'datetime' => $sql_datetime,
 					))
 				);
 				$result = $payment_api->operation_update( array(
 					'operation_id' => $operation_id,
 					'options'      => $operation_options,
 				));
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'operation_options' => $operation_options,
-	'result' => $result,
-	'after update' => $this->_get_operation( array( 'operation_id' => $operation_id ) )
-)));
 				if( !$result[ 'status' ] ) { return( $result ); }
 				$result = array(
 					'status'         => true,
@@ -410,20 +370,11 @@ $dump = $payment_api->dump( array( 'var' => array(
 				// check response options
 				$operation = $this->_get_operation( $response );
 				if( empty( $operation[ 'options' ] ) && empty( $operation[ 'options' ][ 'response' ] ) ) {
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'response' => $response,
-	'operation' => $operation,
-)));
 					$state = 'fail';
 					$result = array(
 						'status'         => false,
 						'status_message' => 'Неверный ответ: отсутствуют данные операции',
 					);
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'result' => $result,
-)));
 					return( $result );
 				}
 				$_response = reset( $operation[ 'options' ][ 'response' ] );
@@ -439,20 +390,12 @@ $dump = $payment_api->dump( array( 'var' => array(
 						'status'         => false,
 						'status_message' => 'Неверный ответ: данные операции не совпадают',
 					);
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'result' => $result,
-)));
 					return( $result );
 				}
 				break;
 			case 'fail':
 			default:
 				$state = 'fail';
-// DEBUG
-$dump = $payment_api->dump( array( 'var' => array(
-	'fail' => ':(',
-)));
 				break;
 		}
 		list( $payment_status_name, $status_message ) = $this->_state( $state );

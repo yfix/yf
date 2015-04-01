@@ -1063,15 +1063,7 @@ class yf_payment_api {
 				$operation_options,
 				$_options
 			), JSON_NUMERIC_CHECK );
-$dump = $this->dump( array( 'var' => array(
-	'json_options' => $json_options,
-	'operation_options' => $operation_options,
-	'_options' => $_options,
-)));
 			$json_options && $_options = $json_options;
-$dump = $this->dump( array( 'var' => array(
-	'result _options' => $_options,
-)));
 		}
 		// remove id by update
 		unset( $data[ $id_name ] );
