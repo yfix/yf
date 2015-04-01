@@ -252,7 +252,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$result = null;
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
-		// response POST:
+		// response
 		$payment = $_POST;
 // DEBUG
 $dump = $payment_api->dump( array( 'var' => array(
@@ -264,6 +264,10 @@ $dump = $payment_api->dump( array( 'var' => array(
 				'status'         => true,
 				'status_message' => 'Пустой ответ',
 			);
+// DEBUG
+$dump = $payment_api->dump( array( 'var' => array(
+	'result' => $result,
+)));
 			return( $result );
 		}
 // DEBUG DATA
@@ -296,6 +300,7 @@ $dump = $payment_api->dump( array( 'var' => array(
 			'signature'          => 'FECEF41D954115DDFE13F2FD310DBD461F944675845DE070D616604423CD4A64',
 		);
 		// */
+		$response = $this->_response_parse( $payment );
 		// prerequest
 		// todo
 		if( !empty( $response[ 'LMI_PREREQUEST' ] ) ) {
@@ -303,9 +308,12 @@ $dump = $payment_api->dump( array( 'var' => array(
 				'status'         => true,
 				'status_message' => 'Предзапрос',
 			);
+// DEBUG
+$dump = $payment_api->dump( array( 'var' => array(
+	'result' => $result,
+)));
 			return( $result );
 		}
-		$response = $this->_response_parse( $payment );
 // DEBUG
 // $response[ 'operation_id' ] = 24558;
 		// check status
@@ -385,6 +393,10 @@ $dump = $payment_api->dump( array( 'var' => array(
 						'status'         => false,
 						'status_message' => 'Неверный ответ: отсутствуют данные операции',
 					);
+// DEBUG
+$dump = $payment_api->dump( array( 'var' => array(
+	'result' => $result,
+)));
 					return( $result );
 				}
 				$_response = reset( $operation[ 'options' ][ 'response' ] );
@@ -400,12 +412,20 @@ $dump = $payment_api->dump( array( 'var' => array(
 						'status'         => false,
 						'status_message' => 'Неверный ответ: данные операции не совпадают',
 					);
+// DEBUG
+$dump = $payment_api->dump( array( 'var' => array(
+	'result' => $result,
+)));
 					return( $result );
 				}
 				break;
 			case 'fail':
 			default:
 				$state = 'fail';
+// DEBUG
+$dump = $payment_api->dump( array( 'var' => array(
+	'fail' => ':(',
+)));
 				break;
 		}
 		list( $payment_status_name, $status_message ) = $this->_state( $state );
