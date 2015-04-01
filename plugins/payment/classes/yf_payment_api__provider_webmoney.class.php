@@ -254,7 +254,7 @@ $dump = $payment_api->dump();
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// response POST:
-		$payment   = $_POST[ 'payment'   ];
+		$payment = $_POST;
 // DEBUG DATA
 		/* result
 		$payment = array (
