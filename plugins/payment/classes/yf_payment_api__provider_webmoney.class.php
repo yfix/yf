@@ -247,6 +247,8 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 
 	public function _api_response() {
 		$payment_api = $this->payment_api;
+// DEBUG
+$dump = $payment_api->dump();
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation
