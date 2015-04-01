@@ -404,6 +404,11 @@ $dump = $payment_api->dump( array( 'var' => array(
 				// check response options
 				$operation = $this->_get_operation( $response );
 				if( empty( $operation[ 'options' ] ) && empty( $operation[ 'options' ][ 'response' ] ) ) {
+// DEBUG
+$dump = $payment_api->dump( array( 'var' => array(
+	'response' => $response,
+	'operation' => $operation,
+)));
 					$state = 'fail';
 					$result = array(
 						'status'         => false,
