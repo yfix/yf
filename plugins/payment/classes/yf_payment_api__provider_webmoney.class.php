@@ -328,6 +328,11 @@ $dump = $payment_api->dump( array( 'var' => array(
 					return( $result );
 				}
 				$_signature = $this->signature( $payment, $is_request = false );
+// DEBUG
+$dump = $payment_api->dump( array( 'var' => array(
+	'signature' => $signature,
+	'_signature' => $_signature,
+)));
 				if( $signature != $_signature ) {
 					$result = array(
 						'status'         => false,
@@ -335,6 +340,29 @@ $dump = $payment_api->dump( array( 'var' => array(
 					);
 					return( $result );
 				}
+				if( $operation_id != $payment[ 'LMI_PAYMENT_NO' ] ) {
+					$result = array(
+						'status'         => false,
+						'status_message' => 'Неверный код операции',
+					);
+					return( $result );
+				}
+				// save options
+				$operation_options = array(
+					'response' => array( array(
+						'data'     => $payment,
+					))
+				);
+				$result = $payment_api->operation_update( array(
+					'operation_id' => $operation_id,
+					'options'      => $operation_options,
+				));
+				if( !$result[ 'status' ] ) { return( $result ); }
+				$result = array(
+					'status'         => true,
+					'status_message' => 'Поплнение через сервис: WebMoney',
+				);
+				return( $result );
 				break;
 			case 'success':
 				$state = 'success';
@@ -465,18 +493,13 @@ $dump = $payment_api->dump( array( 'var' => array(
 			'amount_currency'       => $amount_currency,
 			'amount_currency_total' => $amount_currency_total,
 		);
-		// $description = implode( '#', array_values( $description ) );
 		$form_options = array(
 			'amount'       => $amount_currency_total,
 			'currency'     => $currency_id,
 			'operation_id' => $operation_id,
 			'title'        => $data[ 'title' ],
-			// 'description'  => $description,
-			// 'result_url'   => $result_url,
-			// 'server_url'   => $server_url,
 		);
 		$form = $this->_form( $form_options );
-		// $form = $this->_form( $form_options, array( 'is_array' => true, ) );
 		// save options
 		$operation_options = array(
 			'request' => array( array(
