@@ -280,6 +280,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 				'datetime' => $sql_datetime,
 			))
 		);
+		$payment_api = $this->payment_api;
 		$result = $payment_api->operation_update( array(
 			'operation_id' => $operation_id,
 			'options'      => $operation_options,
@@ -297,7 +298,6 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			|| empty( $response[ 'LMI_SYS_TRANS_NO' ] )
 			|| empty( $response[ 'LMI_SYS_TRANS_DATE' ] )
 		) {
-			$state = 'fail';
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверный ответ: отсутствуют данные транзакции',
@@ -307,7 +307,6 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// check response options
 		$operation = $this->_get_operation( $_response );
 		if( empty( $operation[ 'options' ] ) && empty( $operation[ 'options' ][ 'response' ] ) ) {
-			$state = 'fail';
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверный ответ: отсутствуют данные операции',
@@ -322,7 +321,6 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			|| $_data[ 'LMI_SYS_TRANS_NO' ] != $response[ 'LMI_SYS_TRANS_NO' ]
 			|| $_data[ 'LMI_SYS_TRANS_DATE' ] != $response[ 'LMI_SYS_TRANS_DATE' ]
 		) {
-			$state = 'fail';
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверный ответ: данные операции не совпадают',
@@ -333,7 +331,11 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 	}
 
 	public function __api_response__fail( $response ) {
-		return( true );
+		$result = array(
+			'status'         => false,
+			'status_message' => 'Отказано в транзакции',
+		);
+		return( $result );
 	}
 
 	public function _api_response( $request ) {
@@ -374,13 +376,13 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			case 'success':
 				$state = 'success';
 				$result = $this->__api_response__success( $operation_id, $response );
-				if( is_array( $result ) ) { return( $result ); }
+				if( is_array( $result ) ) { $state = 'fail'; }
 				break;
 			case 'fail':
 			default:
 				$state = 'fail';
 				$result = $this->__api_response__fail( $operation_id, $response );
-				if( is_array( $result ) ) { return( $result ); }
+				if( is_array( $result ) ) { $state = 'fail'; }
 				break;
 		}
 		list( $payment_status_name, $status_message ) = $this->_state( $state );
