@@ -246,16 +246,19 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		return( $operation );
 	}
 
-	public function _api_response() {
+	public function _api_response( $request ) {
 		$payment_api = $this->payment_api;
-// DEBUG
-$dump = $payment_api->dump();
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// response POST:
 		$payment = $_POST;
+// DEBUG
+$dump = $payment_api->dump( array(
+	'payment' => $payment,
+	'request' => $request,
+));
 		if( empty( $payment ) ) {
 			$result = array(
 				'status'         => true,
