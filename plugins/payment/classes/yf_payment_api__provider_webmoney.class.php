@@ -169,9 +169,10 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			$_[ 'LMI_FAIL_URL'       ] = $_[ 'url_server' ] . '&status=fail';
 			unset( $_[ 'url_server' ] );
 		}
-		$url = $this->_url( $options, $is_server = true );
+		$url        = $this->_url( $options, $is_server = false );
+		$url_server = $this->_url( $options, $is_server = true  );
 		if( empty( $_[ 'LMI_RESULT_URL' ] ) ) {
-			$_[ 'LMI_RESULT_URL' ] = $url . '&status=result';
+			$_[ 'LMI_RESULT_URL' ] = $url_server . '&status=result';
 		}
 		if( empty( $_[ 'LMI_SUCCESS_URL'    ] ) ) {
 			$_[ 'LMI_SUCCESS_URL'   ] = $url . '&status=success';
@@ -335,8 +336,8 @@ $dump = $payment_api->dump();
 			case 'success':
 				$state = 'success';
 				if( empty( $payment[ 'LMI_SYS_INVS_NO' ] )
-					&& empty( $payment[ 'LMI_SYS_TRANS_NO' ] )
-					&& empty( $payment[ 'LMI_SYS_TRANS_DATE' ] )
+					|| empty( $payment[ 'LMI_SYS_TRANS_NO' ] )
+					|| empty( $payment[ 'LMI_SYS_TRANS_DATE' ] )
 				) {
 					$state = 'fail';
 					$result = array(
@@ -467,7 +468,6 @@ $dump = $payment_api->dump();
 			'currency'     => $currency_id,
 			'operation_id' => $operation_id,
 			'title'        => $data[ 'title' ],
-			'description'  => $operation_id,
 			// 'description'  => $description,
 			// 'result_url'   => $result_url,
 			// 'server_url'   => $server_url,
