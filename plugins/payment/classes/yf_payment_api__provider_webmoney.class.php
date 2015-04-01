@@ -265,7 +265,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		$signature  = $_response[ 'signature' ];
-		$_signature = $this->signature( $response, $is_request = false );
+		$_signature = $this->signature( $_response, $is_request = false );
 		if( $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
@@ -345,23 +345,15 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// response
 		$response = $_POST;
-		if( empty( $response ) ) {
-			$result = array(
-				'status'         => true,
-				'status_message' => 'Пустой ответ',
-			);
-			return( $result );
-		}
-		$_response = $this->_response_parse( $response );
 		// prerequest
-		// todo
-		if( !empty( $_response[ 'LMI_PREREQUEST' ] ) ) {
+		if( empty( $response ) || !empty( $response[ 'LMI_PREREQUEST' ] ) ) {
 			$result = array(
 				'status'         => true,
 				'status_message' => 'Предзапрос',
 			);
 			return( $result );
 		}
+		$_response = $this->_response_parse( $response );
 		// check operation_id
 		if( $operation_id != (int)$_response[ 'operation_id' ] ) {
 			$result = array(
