@@ -107,10 +107,11 @@ class yf_static_pages {
 	*/
 	function _get_page_from_db ($id = null) {
 		$id = $id ?: $_GET['id'];
+var_dump($id);
 		if (empty($id)) {
 			return array();
 		}
-		$q = db()->from(self::table)->where('active = 1');
+		$q = db()->from(self::table)->where('active', '1');
 		if (is_numeric($id)) {
 			$q->where('id', (int)$id);
 		} else {
