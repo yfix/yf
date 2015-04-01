@@ -112,7 +112,7 @@ class yf_main {
 	/** @var string Path to the server health check result */
 	public $SERVER_HEALTH_FILE		= '/tmp/isok.txt';
 	/** @var string @conf_skip Custom module handler method name */
-	public $MODULE_CUSTOM_HANDLER	= '_module_action_handler';
+	public $MODULE_ACTION_HANDLER	= '_module_action_handler';
 	/** @var string @conf_skip Module (not class) constructor name */
 	public $MODULE_CONSTRUCT		= '_init';
 	/** @var int @conf_skip Current user session info */
