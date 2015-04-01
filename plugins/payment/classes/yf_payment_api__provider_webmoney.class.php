@@ -254,7 +254,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		// response POST:
 		$payment   = $_POST[ 'payment'   ];
 // DEBUG DATA
-		//* result
+		/* result
 		$payment = array (
 			'LMI_MODE'             => '1',
 			'LMI_PAYMENT_AMOUNT'   => '0.10',
@@ -294,7 +294,7 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 		}
 		$response = $this->_response_parse( $payment );
 // DEBUG
-$response[ 'operation_id' ] = 24558;
+// $response[ 'operation_id' ] = 24558;
 		// check status
 		$test = null;
 		isset( $response[ 'test' ] ) && $test =  (int)$response[ 'test' ] == 1 ? true : false;
