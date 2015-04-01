@@ -327,6 +327,12 @@ $dump = $payment_api->dump( array( 'var' => array(
 				$signature = null;
 				$is_signature = isset( $payment[ 'LMI_HASH' ] );
 				$is_signature && $signature = $payment[ 'LMI_HASH' ];
+// DEBUG
+$dump = $payment_api->dump( array( 'var' => array(
+	'payment' => $payment,
+	'response' => $response,
+	'signature' => $signature,
+)));
 				// check signature
 				if( empty( $signature ) ) {
 					$result = array(
