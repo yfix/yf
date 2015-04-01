@@ -95,6 +95,7 @@ class yf_logs_exec_user {
 			'is_404'		=> $main->is_404(),
 			'is_503'		=> $main->is_503(),
 			'is_cache_on'	=> $main->is_cache_on(),
+#			'is_mobile'		=> $main->is_mobile(),
 		);
 		$checks = array(
 			'is_user_guest'	=> !$this->is['is_logged_in'] && !$this->LOG_IS_USER_GUEST,
@@ -172,6 +173,7 @@ class yf_logs_exec_user {
 			'is_404'		=> (int)$is['is_404'],
 			'is_503'		=> (int)$is['is_503'],
 			'is_cache_on'	=> (int)$is['is_cache_on'],
+#			'is_mobile'		=> (int)$is['is_mobile'],
 		);
 		if (in_array('db', $this->LOG_DRIVER)) {
 			$sql = db()->insert_safe('log_exec', $data);
