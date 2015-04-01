@@ -321,7 +321,7 @@ class yf_core_blocks {
 	*/
 	function tasks($allowed_check = false) {
 		if (main()->is_console() || main()->is_ajax()) {
-			main()->NO_GRAPHICS = true;
+			main()->no_graphics(true);
 		}
 		// Singleton
 		$_center_result = tpl()->_CENTER_RESULT;
@@ -399,7 +399,7 @@ class yf_core_blocks {
 						$action = $u['action'] ?: 'show';
 						$body = _class_safe($u['object'], $u['path'])->$action();
 					} elseif (isset($u['stpl'])) {
-						main()->NO_GRAPHICS = true;
+						main()->no_graphics(true);
 						print tpl()->parse($u['stpl']);
 					}
 				} else {

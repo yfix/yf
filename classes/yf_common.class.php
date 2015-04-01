@@ -437,7 +437,7 @@ class yf_common {
 	* Show print version of the given page
 	*/
 	function print_page($text = '') {
-		main()->NO_GRAPHICS = true;
+		main()->no_graphics(true);
 		return print tpl()->parse('system/common/print_page', array(
 			'text'			=> $text,
 			'path_to_tpls'	=> WEB_PATH. tpl()->TPL_PATH,
@@ -490,7 +490,7 @@ class yf_common {
 	* Show empty page (useful for popup windows, etc)
 	*/
 	function show_empty_page($text = '', $params = array()) {
-		main()->NO_GRAPHICS = true;
+		main()->no_graphics(true);
 		$output = tpl()->parse('empty_page', array(
 			'text'			=> $text,
 			'title'			=> $params['title'],
