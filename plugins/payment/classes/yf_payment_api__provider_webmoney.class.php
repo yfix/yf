@@ -203,6 +203,10 @@ class yf_payment_api__provider_webmoney extends yf_payment_api__provider_remote 
 			|| empty( $_[ 'LMI_PAYMENT_AMOUNT' ] )
 			|| ( empty( $_[ 'LMI_PAYMENT_DESC' ] ) && empty( $_[ 'LMI_PAYMENT_DESC_BASE64' ] ) )
 		) { $_ = null; }
+		// DEBUG
+		// test: 0 - success; 1 - fail.
+		// $_[ 'LMI_SIM_MODE' ] = 0;
+		$_[ 'LMI_SIM_MODE' ] = 1;
 		return( $_ );
 	}
 
