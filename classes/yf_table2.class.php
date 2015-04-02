@@ -782,7 +782,7 @@ class yf_table2 {
 		}
 		if (!is_null($row_id) && isset($this->_rowspan[$name])) {
 			$rowspan = $this->_rowspan[$name][$row_id];
-			if ($rowspan <= 1) {
+			if ($rowspan < 1) {
 				return '';
 			}
 			$td_attrs .= ' rowspan="'.(int)$rowspan.'"';
