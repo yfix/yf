@@ -1395,6 +1395,7 @@ class yf_html {
 			$a['icon']	= $args[2];
 			$a['text']	= $args[3];
 			$a['class']	= $args[4];
+			$a['target']= $args[5];
 		// named params
 		} elseif (isset($args['link'])) {
 			$a = $args;
