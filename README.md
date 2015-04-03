@@ -9,6 +9,7 @@ http://blog.yfix.net/
 [![Circle CI Status](https://circleci.com/gh/yfix/yf.png?style=shield)](https://circleci.com/gh/yfix/yf)
 [![Shippable Status](https://api.shippable.com/projects/54cbdf795ab6cc13528a582a/badge?branchName=master)](https://app.shippable.com/projects/54cbdf795ab6cc13528a582a/builds/latest)
 [![Codeship Status](https://codeship.com/projects/64c0cc20-8ae9-0132-28a4-660f9dc63bc4/status?branch=master)](https://codeship.com/projects/60198)
+[![Semaphore CI Status](https://semaphoreci.com/api/v1/projects/23d5945c-40bd-40c3-9851-d97f5f627e63/383963/badge.svg)](https://semaphoreci.com/yfix/yf)
 [![Latest Stable Version](https://img.shields.io/packagist/v/yfix/yf.svg)](https://packagist.org/packages/yfix/yf)
 [![Code Climate](https://codeclimate.com/github/yfix/yf/badges/gpa.svg)](https://codeclimate.com/github/yfix/yf)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/yfix/yf)
