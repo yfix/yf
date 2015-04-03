@@ -5,6 +5,7 @@ class yf_rewrite {
 	public $DEFAULT_HOST = '';
 	public $DEFAULT_PORT = '';
 	public $special_links = array('../', './', '/');
+	public $URL_ADD_BUILTIN_PARAMS = true;
 
 	/**
 	* YF module constructor
@@ -219,7 +220,7 @@ class yf_rewrite {
 		$params = $p;
 		unset($p);
 		// Add built-in url params, if needed
-		if (isset($_GET['debug']) || isset($_GET['no_cache']) || isset($_GET['no_core_cache']) || isset($_GET['host'])) {
+		if ($this->URL_ADD_BUILTIN_PARAMS && (isset($_GET['debug']) || isset($_GET['no_cache']) || isset($_GET['no_core_cache']) || isset($_GET['host']))) {
 			$params['debug'] = $_GET['debug'];
 			$params['get_host'] = $_GET['host'];
 			$params['no_cache'] = isset($_GET['no_cache']) ? 'y' : '';
