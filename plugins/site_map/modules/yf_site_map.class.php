@@ -18,7 +18,7 @@ class yf_site_map {
 	/** @var string Sitemap file name */
 	public $SITEMAP_FILE_NAME		= 'site_map';
 	/** @var @conf_skip */
-	public $HOOK_NAMES				= array('_site_map_items', '_hook_sitemap', '_hook_site_map');
+	public $HOOK_NAMES				= array('_hook_sitemap', '_hook_site_map', '_site_map_items');
 	/** @var mixed */
 	public $DEFAULT_LAST_UPDATE		= '';
 	/** @var mixed */
