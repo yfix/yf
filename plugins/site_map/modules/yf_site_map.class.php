@@ -18,7 +18,7 @@ class yf_site_map {
 	/** @var string Sitemap file name */
 	public $SITEMAP_FILE_NAME		= 'site_map';
 	/** @var @conf_skip */
-	public $_HOOK_NAME				= '_site_map_items';
+	public $HOOK_NAMES				= array('_site_map_items', '_hook_sitemap', '_hook_site_map');
 	/** @var bool Notify Google */
 	public $NOTIFY_GOOGLE			= false;
 	/** @var int Max entries for sitemap file */
@@ -88,18 +88,19 @@ class yf_site_map {
 
 		if (empty($this->MODULES_TO_INCLUDE)) {
 			$this->MODULES_TO_INCLUDE = $this->_get_modules_from_files();
-		} else {
-			$tmp = array();
-			foreach ((array)$this->MODULES_TO_INCLUDE as $v) {
-				$tmp[$v] = $v;
-			}
-			$this->MODULES_TO_INCLUDE = $tmp;
 		}
+		// Ensure uniqueness of module names
+		$tmp = array();
+		foreach ((array)$this->MODULES_TO_INCLUDE as $v) {
+			$tmp[$v] = $v;
+		}
+		$this->MODULES_TO_INCLUDE = $tmp;
+
 		// Remove non-active modules
-		$modules = db()->select('name', 'name AS n2')->from('user_modules')->where('active = 0')->get_2d();
-		foreach ((array)$modules as $name) {
-			if (in_array($name, $this->MODULES_TO_INCLUDE)) {
-				unset($this->MODULES_TO_INCLUDE[$name]);
+		$active_modules = db()->select('name', 'name AS n2')->from('user_modules')->where('active = 1')->get_2d();
+		foreach ($this->MODULES_TO_INCLUDE as $k => $name) {
+			if (!isset($active_modules[$name])) {
+				unset($this->MODULES_TO_INCLUDE[$k]);
 			}
 		}
 		if ($this->ALLOW_REWRITE && !tpl()->REWRITE_MODE) {
@@ -170,30 +171,36 @@ class yf_site_map {
 		_mkdir_m($this->SITEMAP_STORE_FOLDER);
 		_class('dir')->delete_files($this->SITEMAP_STORE_FOLDER, '/'.$_sitemap_base_name.'.*/i');
 
-		$this->_fp = fopen($this->SITEMAP_STORE_FOLDER.$this->SITEMAP_FILE_NAME.$this->_sitemap_file_counter.$this->_file_extension, 'w+');
+		$this->_fp = fopen($this->SITEMAP_STORE_FOLDER. $this->SITEMAP_FILE_NAME. $this->_sitemap_file_counter. $this->_file_extension, 'w+');
 		$this->_total_length = 0;
 		$this->_entries_counter = 0;
 
 		$this->_output($this->_tpl_sitemap_header());
 		$this->_total_length = strlen($header_text);
 
-		foreach ((array)$this->MODULES_TO_INCLUDE as $_mod_name) {
-			$MOD_OBJ = module($_mod_name);
-			if (!is_object($MOD_OBJ) || !method_exists($MOD_OBJ, $this->_HOOK_NAME) || $this->LIMIT_REACHED) {
+		foreach ((array)$this->MODULES_TO_INCLUDE as $module_name) {
+			$module_obj = module_safe($module_name);
+			if ($this->LIMIT_REACHED || !is_object($module_obj)) {
 				continue;
 			}
-			$MOD_OBJ->{$this->_HOOK_NAME}($this);
+			$hook_name = '';
+			foreach ((array)$this->HOOK_NAMES as $_hook_name) {
+				if (method_exists($module_obj, $_hook_name)) {
+					$hook_name = $_hook_name;
+					break;
+				}
+			}
+			if ($hook_name) {
+				$module_obj->$hook_name($this);
+			}
 		}
 		if (!$this->LIMIT_REACHED) {
 			$this->_output($this->_tpl_sitemap_footer());
 			@fclose($this->_fp);
 		}
-		$files = _class('dir')->scan_dir($this->SITEMAP_STORE_FOLDER);
+		$files = _class('dir')->scan($this->SITEMAP_STORE_FOLDER);
 		foreach ((array)$files as $file_name) {
-			if (false !== strpos($file_name, '.svn')) {
-				continue;
-			}
-			if (false !== strpos($file_name, '.git')) {
+			if (false !== strpos($file_name, '.svn') || false !== strpos($file_name, '.git')) {
 				continue;
 			}
 			$path_info = pathinfo($file_name);
@@ -376,7 +383,7 @@ class yf_site_map {
 	* Get available user modules from the project modules folder
 	*/
 	function _get_modules_from_files () {
-		$regex = '~function(\s)+(_site_map_items|_hook_site_map|_hook_sitemap)\s*\(~ims';
+		$regex = '~function(\s)+('.implode('|', $this->HOOK_NAMES).')\s*\(~ims';
 
 		$yf_prefix_len = strlen(YF_PREFIX);
 		$yf_cls_ext_len = strlen(YF_CLS_EXT);
