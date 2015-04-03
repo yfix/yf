@@ -191,7 +191,12 @@ class yf_site_map {
 				}
 			}
 			if ($hook_name) {
-				$module_obj->$hook_name($this);
+				$items = $module_obj->$hook_name($this);
+				if (is_array($items)) {
+					foreach ((array)$items as $item) {
+						$this->_add($item);
+					}
+				}
 			}
 		}
 		if (!$this->LIMIT_REACHED) {
@@ -249,19 +254,34 @@ class yf_site_map {
 	}
 
 	/**
+	* Alias for _store_item
+	*/
+	function _add ($data = array()) {
+		return $this->_store_item($data);
+	}
+
+	/**
 	* Store sitemap item
 	*/
 	function _store_item ($data = array()) {
+		if (is_string($data) && strlen($data)) {
+			$data = array('url' => $data);
+		}
 		if (empty($data) || empty($data['url'])) {
 			return false;
 		}
 		if ($this->LIMIT_REACHED) {
 			return false;
 		}
+		// Shortcut for calling url('/some_module')
+		if (substr($data['url'], 0, 1) === '/' && substr($data['url'], 0, 2) !== '//') {
+			$data['url'] = url($data['url']);
+		}
 		$location = $data['url'];
 		if ((strlen($location) + $this->_path_size_bytes) >= $this->MAX_URL_LENGTH) {
 			return false;
 		}
+
 		$string .= "\t<url>\n";
 		$string .= "\t\t<loc>".$location."</loc>\n";
 		// Adding size of path string to a total size of data
