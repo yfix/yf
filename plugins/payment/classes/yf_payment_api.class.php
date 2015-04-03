@@ -1207,7 +1207,7 @@ class yf_payment_api {
 			$result .= 'GET:'    . PHP_EOL . var_export( $_GET,    true ) . PHP_EOL . PHP_EOL;
 			$result .= 'POST:'   . PHP_EOL . var_export( $_POST,   true ) . PHP_EOL . PHP_EOL;
 		}
-		$_var && $result .= 'VAR:' . PHP_EOL . var_export( $_var, true ) . PHP_EOL . PHP_EOL;
+		isset( $_var ) && $result .= 'VAR:' . PHP_EOL . var_export( $_var, true ) . PHP_EOL . PHP_EOL;
 		!empty( $result ) && file_put_contents( $file, $result, FILE_APPEND );
 		$is_first = false;
 		return( $result );

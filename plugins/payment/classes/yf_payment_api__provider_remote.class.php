@@ -47,6 +47,31 @@ class yf_payment_api__provider_remote {
 		return( array( $name, $message ) );
 	}
 
+	protected function _ip( $options = null ) {
+		if( !empty( $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] ) ) {
+			$ips = explode( ',', $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] );
+			$ip  = reset( $ips );
+		} else {
+			$ip =
+				   $_SERVER[ 'HTTP_CLIENT_IP' ]
+				?: $_SERVER[ 'HTTP_X_REAL_IP' ]
+				?: $_SERVER[ 'REMOTE_ADDR' ]
+			;
+		}
+		$result = trim( $ip );
+		return( $result );
+	}
+
+	protected function _check_ip( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// allow ip
+		$ip_allow = isset( $_provider_ip_allow ) ? $_provider_ip_allow : $this->provider_ip_allow;
+		$ip = isset( $_ip ) ? $_ip : $this->_ip();
+		$result = empty( $ip_allow[ $ip ] ) ? false : true;
+		return( $result );
+	}
+
 	protected function _api_post( $url, $post ) {
 		// options
 		$options = array(

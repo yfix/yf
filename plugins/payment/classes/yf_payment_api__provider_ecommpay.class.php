@@ -89,12 +89,12 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	// public $fee = 5; // 5%
 
 	public $service_allow = array(
-		'Ecommpay',
+		'EcommPay',
 	);
 
-	public $provider_ips = array(
-		'78.140.183.154',
-		'204.26.61.98',
+	public $provider_ip_allow = array(
+		'78.140.183.154' => true,
+		'204.26.61.98'   => true,
 	);
 
 	public $url_result = null;
@@ -263,7 +263,11 @@ $payment_api->dump();
 		// user success or fail
 		if( !$is_server ) {
 			// check status
-			$status = isset( $_GET[ 'status' ] ) && $_GET[ 'status' ] == 'success' ? true : false;
+			$state = isset( $response[ 'type' ] ) && $response[ 'type' ] == '1' ? true : false;
+			$status = isset( $_GET[ 'status' ] )
+				&& $_GET[ 'status' ] == 'success'
+				&& $state
+				? true : false;
 			$status_message = $status ? 'Операция выполнена успешно' : 'Операция не выполнена';
 			$result = array(
 				'status'         => $status,
@@ -272,7 +276,7 @@ $payment_api->dump();
 			return( $result );
 		}
 		// check signature
-		$signature = $response[ 'signature' ];
+		isset( $response[ 'signature' ] ) && $signature = $response[ 'signature' ];
 		// check signature
 		if( empty( $signature ) ) {
 			$result = array(
@@ -281,16 +285,24 @@ $payment_api->dump();
 			);
 			return( $result );
 		}
+		// check ip
+		$ip_allow = $this->_check_ip();
+		if( !$ip_allow ) {
+			$payment_api->dump( array( 'var' => 'ip not allow' ));
+			return( null );
+		}
 		$signature_options = $response;
 		$_signature = $this->signature( $signature_options );
 // DEBUG
 // var_dump( $response, $signature, $signature_options, 'calc: ', $_signature );
 // exit;
-		if( empty( $signature ) && $signature != $_signature ) {
+		if( $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
 			);
+// DEBUG
+$payment_api->dump( array( 'var' => $result ));
 			return( $result );
 		}
 		// update operation
@@ -303,6 +315,8 @@ $payment_api->dump();
 				'status'         => false,
 				'status_message' => 'Неверный ключ (site_id)',
 			);
+// DEBUG
+$payment_api->dump( array( 'var' => $result ));
 			return( $result );
 		}
 		// check status
@@ -313,7 +327,11 @@ $payment_api->dump();
 		$state = $_response[ 'type_id' ];
 		$status = $this->_type_server;
 		list( $payment_type ) = $this->_state( $state, $status );
-		if( empty( $payment_type ) ) { return( null ); }
+		if( empty( $payment_type ) ) {
+// DEBUG
+$payment_api->dump( array( 'var' => 'type: ' . $state ));
+			return( null );
+		}
 		// amount
 		// $_response[ 'amount' ] = $this->_amount( $_response[ 'amount' ], $_response[ 'currency' ], $is_request = false );
 		// update account, operation data
