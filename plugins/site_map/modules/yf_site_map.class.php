@@ -136,6 +136,10 @@ class yf_site_map {
 		if (!$this->SITE_MAP_ENABLED) {
 			return false;
 		}
+		// !! Important !!
+		// Turn off rewrite adding url params into sitemap urls
+		_class('rewrite')->URL_ADD_BUILTIN_PARAMS = false;
+
 		$_sitemap_base_name = $this->SITEMAP_FILE_NAME;
 		// Check if needed to recreate sitemap files
 		$_path = $this->SITEMAP_STORE_FOLDER. $this->SITEMAP_FILE_NAME.'_index'.$this->_file_extension;
