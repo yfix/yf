@@ -337,6 +337,12 @@ class yf_site_map {
 	*/
 	function _output($string) {
 		if ($this->TEST_MODE) {
+			if (DEBUG_MODE) {
+				echo '<pre>'._prepare_html($string).'</pre>';
+			} else {
+				header('Content-type: text/xml');
+				echo $string;
+			}
 			return false;
 		}
 		if ($this->_fp) {
