@@ -19,6 +19,12 @@ class yf_site_map {
 	public $SITEMAP_FILE_NAME		= 'site_map';
 	/** @var @conf_skip */
 	public $HOOK_NAMES				= array('_site_map_items', '_hook_sitemap', '_hook_site_map');
+	/** @var mixed */
+	public $DEFAULT_LAST_UPDATE		= '';
+	/** @var mixed */
+	public $DEFAULT_PRIORITY		= '';
+	/** @var mixed */
+	public $DEFAULT_CHANGEFREQ		= 'daily';
 	/** @var bool Notify Google */
 	public $NOTIFY_GOOGLE			= false;
 	/** @var int Max entries for sitemap file */
@@ -285,19 +291,40 @@ class yf_site_map {
 		if ((strlen($location) + $this->_path_size_bytes) >= $this->MAX_URL_LENGTH) {
 			return false;
 		}
+		if (!$data['last_update'] && $this->DEFAULT_LAST_UPDATE) {
+			$data['last_update'] = $this->DEFAULT_LAST_UPDATE;
+			if (is_callable($data['last_update'])) {
+				$func = $data['last_update'];
+				$data['last_update'] = $func($data);
+			}
+		}
+		if (!$data['priority'] && $this->DEFAULT_PRIORITY) {
+			$data['priority'] = $this->DEFAULT_PRIORITY;
+			if (is_callable($data['priority'])) {
+				$func = $data['priority'];
+				$data['priority'] = $func($data);
+			}
+		}
+		if (!$data['changefreq'] && $this->DEFAULT_CHANGEFREQ) {
+			$data['changefreq'] = $this->DEFAULT_CHANGEFREQ;
+			if (is_callable($data['changefreq'])) {
+				$func = $data['changefreq'];
+				$data['changefreq'] = $func($data);
+			}
+		}
 
 		$string .= "\t<url>\n";
 		$string .= "\t\t<loc>".$location."</loc>\n";
 		// Adding size of path string to a total size of data
 		$this->_total_length += $this->_path_size_bytes;
-		if ($data["last_update"]) {
-			$string .= "\t\t<lastmod>".$this->_iso8601_date($data["last_update"])."</lastmod>\n";
+		if ($data['last_update']) {
+			$string .= "\t\t<lastmod>".$this->_iso8601_date($data['last_update'])."</lastmod>\n";
 		}
-		if ($data["priority"]) {
-			$string .= "\t\t<priority>".floatval($data["priority"])."</priority>\n";
+		if ($data['priority']) {
+			$string .= "\t\t<priority>".floatval($data['priority'])."</priority>\n";
 		}
-		if ($data["changefreq"] && in_array($data["changefreq"], $this->CHANGEFREQ_VALUES)) {
-			$string .= "\t\t<changefreq>".$data["changefreq"]."</changefreq>\n";
+		if ($data['changefreq'] && in_array($data['changefreq'], $this->CHANGEFREQ_VALUES)) {
+			$string .= "\t\t<changefreq>".$data['changefreq']."</changefreq>\n";
 		}
 		$string .= "\t</url>\n";
 
