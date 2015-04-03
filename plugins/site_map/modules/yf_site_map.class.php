@@ -19,37 +19,32 @@ class yf_site_map {
 	public $SITEMAP_FILE_NAME		= 'site_map';
 	/** @var @conf_skip */
 	public $_HOOK_NAME				= '_site_map_items';
-	/** @var bool Use GZIP */
-	public $USE_GZIP				= false;
 	/** @var bool Notify Google */
 	public $NOTIFY_GOOGLE			= false;
 	/** @var int Max entries for sitemap file */
-	public $MAX_ENTRIES			= 50000;
+	public $MAX_ENTRIES				= 50000;
 	/** @var int Max sitemap filesize */
 	public $MAX_SIZE				= 10000000;
 	/** @var int Limit max URL length to the 2048 symbols*/
 	public $MAX_URL_LENGTH			= 2048;
 	/** @var int Max number of sitemaps */
 	public $MAX_SITEMAPS			= 1000;
-	/** @var bool Do not change! 
-	* It's a flag which is become 'true' if number of sitemap 
-	* files reached $MAX_SITEMAPS. There will be no actions after this
-	*/
+	/** @var bool Do not change! It's a flag which is become 'true' if number of sitemap files reached $MAX_SITEMAPS. There will be no actions after this */
 	public $LIMIT_REACHED			= false;
 	/** @var array Frequency avail values @conf_skip */
 	public $CHANGEFREQ_VALUES		= array('always','hourly','daily','weekly','monthly','yearly','never');
 	/** @var string @conf_skip */
-	public $_notify_url			= '';
+	public $_notify_url				= '';
 	/** @var string @conf_skip */
 	public $_file_name				= '';
 	/** @var string @conf_skip */
-	public $_file_extension		= '.xml';
+	public $_file_extension			= '.xml';
 	/** @var bool Use locking */
-	public $USE_LOCKING			= false;
+	public $USE_LOCKING				= false;
 	/** @var int Lock timeout */
 	public $LOCK_TIMEOUT			= 600;
 	/** @var string Lock file name */
-	public $LOCK_FILE_NAME			= 'uploads/site_map.lock';
+	public $LOCK_FILE_NAME			= 'site_map.lock';
 	/** @var int Site map TTL */
 	public $SITEMAP_LIVE_TIME		= 43200;	// 60*60*12 = 12hours
 	/** @var bool Allow rewrite */
@@ -78,49 +73,33 @@ class yf_site_map {
 	* @return	void
 	*/
 	function _init () {
-		// Prepare lock file
 		if ($this->USE_LOCKING) {
-			$this->LOCK_FILE_NAME = INCLUDE_PATH. $this->LOCK_FILE_NAME;
+			$this->LOCK_FILE_NAME = STORAGE_PATH. $this->LOCK_FILE_NAME;
 		}
-		// Define path to folder where sitemap files are stored
-		if (!defined('UPLOADS_DIR')) {
-			define('UPLOADS_DIR', 'uploads/');
-		}
-		if (defined('SEARCH_VERTICAL') && SEARCH_VERTICAL != '') {
-			$this->SITEMAP_FILE_NAME .= '_'.SEARCH_VERTICAL;
-			$this->LOCK_FILE_NAME = str_replace('.lock', '_'.SEARCH_VERTICAL.'.lock', $this->LOCK_FILE_NAME);
-		}
-		if (defined('SEARCH_COUNTRY') && SEARCH_COUNTRY != '') {
-			$this->SITEMAP_FILE_NAME .= '_'.SEARCH_COUNTRY;
-			$this->LOCK_FILE_NAME = str_replace('.lock', '_'.SEARCH_COUNTRY.'.lock', $this->LOCK_FILE_NAME);
-		}
-		$this->SITEMAP_WEB_PATH = WEB_PATH. UPLOADS_DIR. $this->SITEMAP_STORE_FOLDER;
-		$this->SITEMAP_STORE_FOLDER = INCLUDE_PATH. UPLOADS_DIR. $this->SITEMAP_STORE_FOLDER;
+		$this->SITEMAP_WEB_PATH = WEB_PATH. 'uploads/'. $this->SITEMAP_STORE_FOLDER;
+		$this->SITEMAP_STORE_FOLDER = PROJECT_PATH. 'uploads/'. $this->SITEMAP_STORE_FOLDER;
+
 		// Calculate size of a string (web path) adding to url when file processed
 		$this->_path_size_bytes = strlen(htmlspecialchars(utf8_encode(WEB_PATH)));
 		// Leave some space in file size
 		$this->MAX_SIZE = $this->MAX_SIZE * 0.9;
-		// Current page URL
-		$this->_notify_url = process_url(WEB_PATH. $_GET['object']);
-		// Turn off gzip if not available
-		if ($this->USE_GZIP && extension_loaded('zlib')) {
-			$this->USE_GZIP = false;
-		}
-		// Get available user section modules (only when list is not predefined)
+
+		$this->_notify_url = url('/@object');
+
 		if (empty($this->MODULES_TO_INCLUDE)) {
 			$this->MODULES_TO_INCLUDE = $this->_get_modules_from_files();
+		} else {
+			$tmp = array();
+			foreach ((array)$this->MODULES_TO_INCLUDE as $v) {
+				$tmp[$v] = $v;
+			}
+			$this->MODULES_TO_INCLUDE = $tmp;
 		}
-		// Ensure uniqueness of module names
-		$tmp = array();
-		foreach ((array)$this->MODULES_TO_INCLUDE as $v) {
-			$tmp[$v] = $v;
-		}
-		$this->MODULES_TO_INCLUDE = $tmp;
 		// Remove non-active modules
-		$Q = db()->query('SELECT * FROM '.db('user_modules').' WHERE active=0');
-		while ($A = db()->fetch_assoc($Q)) {
-			if (in_array($A['name'], $this->MODULES_TO_INCLUDE)) {
-				unset($this->MODULES_TO_INCLUDE[$A['name']]);
+		$modules = db()->select('name', 'name AS n2')->from('user_modules')->where('active = 0')->get_2d();
+		foreach ((array)$modules as $name) {
+			if (in_array($name, $this->MODULES_TO_INCLUDE)) {
+				unset($this->MODULES_TO_INCLUDE[$name]);
 			}
 		}
 		if ($this->ALLOW_REWRITE && !tpl()->REWRITE_MODE) {
@@ -146,15 +125,13 @@ class yf_site_map {
 	* XML-Specification: https://www.google.com/webmasters/sitemaps/docs/en/protocol.html
 	* 
 	* You can use the gzip feature or compress your Sitemap files using gzip. 
-	* Please note that your uncompressed Sitemap file
-	* may not be larger than 10MB.
+	* Please note that your uncompressed Sitemap file may not be larger than 10MB.
 	*
 	* No support for more the 50.000 URLs at the moment. See
 	* http://www.google.com/webmasters/sitemaps/docs/en/protocol.html#sitemapFileRequirements
 	*/
 	function _generate_sitemap () {
 		main()->NO_GRAPHICS = true;
-		// Ability to turn off site map
 		if (!$this->SITE_MAP_ENABLED) {
 			return false;
 		}
@@ -177,18 +154,16 @@ class yf_site_map {
 		// Start generate sitemap
 		@ignore_user_abort(true);
 		@set_time_limit($this->LOCK_TIMEOUT);
-		// Process locking
+
 		if ($this->USE_LOCKING) {
 			clearstatcache();
 			if (file_exists($this->LOCK_FILE_NAME)) {
-				// Timed out lock file
 				if ((time() - filemtime($this->LOCK_FILE_NAME)) > $this->LOCK_TIMEOUT) {
 					unlink($this->LOCK_FILE_NAME);
 				} else {
 					return false;
 				}
 			}
-			// Put lock file
 			file_put_contents($this->LOCK_FILE_NAME, time());
 		}
 		$this->_sitemap_file_counter = 1;		
@@ -201,7 +176,7 @@ class yf_site_map {
 
 		$this->_output($this->_tpl_sitemap_header());
 		$this->_total_length = strlen($header_text);
-		// Process modules hooks
+
 		foreach ((array)$this->MODULES_TO_INCLUDE as $_mod_name) {
 			$MOD_OBJ = module($_mod_name);
 			if (!is_object($MOD_OBJ) || !method_exists($MOD_OBJ, $this->_HOOK_NAME) || $this->LIMIT_REACHED) {
@@ -234,19 +209,15 @@ class yf_site_map {
 				$this->_process_sitemap_file($filename);
 			}
 		} 
-		$this->_file_for_google = str_replace(INCLUDE_PATH, WEB_PATH, $this->SITEMAP_STORE_FOLDER). $this->SITEMAP_FILE_NAME.'1'.$this->_file_extension;
+		$this->_file_for_google = str_replace(PROJECT_PATH, WEB_PATH, $this->SITEMAP_STORE_FOLDER). $this->SITEMAP_FILE_NAME.'1'.$this->_file_extension;
 		if ($sitemaps && count($sitemaps) > 1) {
 			$this->_output($this->_tpl_sitemap_index_header());
 
 			// Create sitemap index 
 			$this->_fp = fopen($this->SITEMAP_STORE_FOLDER.$this->SITEMAP_FILE_NAME.'_index'.$this->_file_extension, 'w+');
-			foreach ((array)$sitemaps as $sitemap_file){
-				// Gzip sitemap files
-				if ($this->USE_GZIP){
-					$sitemap_file = $this->_gzip_file($sitemap_file);
-				}
+			foreach ((array)$sitemaps as $sitemap_file) {
 				$string = "\t<sitemap>\n";
-				$string .= "\t\t<loc>".str_replace(INCLUDE_PATH, WEB_PATH, $sitemap_file)."</loc>\n";
+				$string .= "\t\t<loc>".str_replace(PROJECT_PATH, WEB_PATH, $sitemap_file)."</loc>\n";
 				$last_mod = $this->_iso8601_date(filemtime($sitemap_file));
 				if ($last_mod) {
 					$string .= "\t\t<lastmod>".$last_mod."</lastmod>\n";
@@ -259,7 +230,7 @@ class yf_site_map {
 
 			$this->_output($this->_tpl_sitemap_index_footer());
 
-			$this->_file_for_google = str_replace(INCLUDE_PATH, WEB_PATH, $this->SITEMAP_STORE_FOLDER) .$this->SITEMAP_FILE_NAME. '_index'. $this->_file_extension;
+			$this->_file_for_google = str_replace(PROJECT_PATH, WEB_PATH, $this->SITEMAP_STORE_FOLDER) .$this->SITEMAP_FILE_NAME. '_index'. $this->_file_extension;
 		}	
 		// Release lock
 		if ($this->USE_LOCKING) {
@@ -277,7 +248,6 @@ class yf_site_map {
 		if (empty($data) || empty($data['url'])) {
 			return false;
 		}
-		// Do nothing
 		if ($this->LIMIT_REACHED) {
 			return false;
 		}
@@ -306,7 +276,6 @@ class yf_site_map {
 		if ($this->_total_length >= $this->MAX_SIZE || $this->_entries_counter >= $this->MAX_ENTRIES) {
 			// Finish to write file and create another one
 			if ($this->_fp) {
-				// Output footer
 				$this->_output($this->_tpl_sitemap_footer());
 				fclose($this->_fp);
 			}
@@ -322,13 +291,12 @@ class yf_site_map {
 				$this->_sitemap_file_counter++;
 				// Create and open to write next sitemap file 
 				$this->_fp = fopen($this->SITEMAP_STORE_FOLDER.$this->SITEMAP_FILE_NAME.$this->_sitemap_file_counter.$this->_file_extension, 'w+');
-				// Output header
+
 				$this->_output($this->_tpl_sitemap_header());
 				$this->_total_length = strlen($this->_tpl_sitemap_header());
 			}
 		}
 		if (!$this->LIMIT_REACHED) {
-			// Store entry data to file
 			$this->_output($string);
 		}
 	}
@@ -363,17 +331,7 @@ class yf_site_map {
 	}
 
 	/**
-	* Do gzip file
-	*/
-	function _gzip_file($filename) {
-		$new_filename = $filename.'.gz';
-		file_put_contents($new_filename, gzencode(file_get_contents($filename)));
-		return $new_filename;		
-	}
-
-	/**
-	* Notify google about update
-	* $this->_file_for_google - sitemap or sitemap index file to give to google
+	* Notify google about update. $this->_file_for_google - sitemap or sitemap index file to give to google
 	*/
 	function _do_notify_google() {
 		if ($this->NOTIFY_GOOGLE) {
@@ -393,7 +351,6 @@ class yf_site_map {
 	*/
 	function _process_sitemap_file($_path = ''){
 		$text = file_get_contents($_path);
-		// Process URLs
 		if ($this->ALLOW_REWRITE) {
 			$RW = _class('rewrite');
 			$RW->FORCE_NO_DEBUG = true;
@@ -401,7 +358,6 @@ class yf_site_map {
 			$old_pattern = $RW->_links_pattern;
 			// Aplly our custom pattern
 			$RW->_links_pattern = '/(<loc>)([^\<]+)(<\/loc>)/ms';
-			// Process rewrite
 			foreach ((array)common()->_my_split($text, '<url>', $this->REWRITE_SPLIT_LENGTH) as $_cur_text) {
 				$rewrited .= $RW->_rewrite_replace_links($_cur_text);
 			}
@@ -417,83 +373,45 @@ class yf_site_map {
 	}
 
 	/**
-	* Get available modules for the sitemap creation
+	* Get available user modules from the project modules folder
 	*/
-	function _get_modules_from_files ($include_framework = true, $with_sub_modules = false) {
-		$pattern = '/(function)(\s)+(_site_map_items)/ims';
+	function _get_modules_from_files () {
+		$regex = '~function(\s)+(_site_map_items|_hook_site_map|_hook_sitemap)\s*\(~ims';
 
-		$user_modules_array = array();
-		$dir_to_scan = INCLUDE_PATH. USER_MODULES_DIR;
-		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
-			$v = str_replace('//', '/', $v);
-			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
-				continue;
-			}
-			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
-				continue;
-			}
-			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-			$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
-			$file_content = file_get_contents($v);
-			if (preg_match($pattern, $file_content, $matches)) {
-				$user_modules_array[$module_name] = $module_name;
+		$yf_prefix_len = strlen(YF_PREFIX);
+		$yf_cls_ext_len = strlen(YF_CLS_EXT);
+		$site_prefix_len = strlen(YF_SITE_CLS_PREFIX);
+
+		$pattern = USER_MODULES_DIR.'*'.YF_CLS_EXT;
+		$places = array(
+			'yf_main'			=> YF_PATH. $pattern,
+			'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
+			'project_main'		=> PROJECT_PATH. $pattern,
+			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
+			'app_main'			=> APP_PATH. $pattern,
+			'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
+		);
+		$modules = array();
+		foreach ($places as $place_name => $glob) {
+			foreach (glob($glob) as $path) {
+				if (substr($path, -$yf_cls_ext_len) !== YF_CLS_EXT) {
+					continue;
+				}
+				$name = substr(basename($path), 0, -$yf_cls_ext_len);
+				if (substr($name, 0, $yf_prefix_len) === YF_PREFIX) {
+					$name = substr($name, $yf_prefix_len);
+				}
+				if (substr($name, 0, $site_prefix_len) === YF_SITE_CLS_PREFIX) {
+					$name = substr($name, $site_prefix_len);
+				}
+				if (!strlen($name) || !preg_match($regex, file_get_contents($path), $m)) {
+					continue;
+				}
+				$modules[$name] = $name;
 			}
 		}
-		$dir_to_scan = INCLUDE_PATH. 'priority2/'. USER_MODULES_DIR;
-		foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
-			$v = str_replace('//', '/', $v);
-			if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
-				continue;
-			}
-			if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
-				continue;
-			}
-			$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-			$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
-			$file_content = file_get_contents($v);
-			if (preg_match($pattern, $file_content, $matches)) {
-				$user_modules_array[$module_name] = $module_name;
-			}
-		}
-		// Do parse files from the framework
-		if ($include_framework) {
-			$dir_to_scan = YF_PATH. USER_MODULES_DIR;
-			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
-				$v = str_replace('//', '/', $v);
-				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
-					continue;
-				}
-				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
-					continue;
-				}
-				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-				$module_name = str_replace(YF_PREFIX, '', $module_name);
-				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
-				$file_content = file_get_contents($v);
-				if (preg_match($pattern, $file_content, $matches)) {
-					$user_modules_array[$module_name] = $module_name;
-				}
-			}
-			$dir_to_scan = YF_PATH. 'priority2/'. USER_MODULES_DIR;
-			foreach ((array)_class('dir')->scan_dir($dir_to_scan) as $k => $v) {
-				$v = str_replace('//', '/', $v);
-				if (substr($v, -strlen(YF_CLS_EXT)) != YF_CLS_EXT) {
-					continue;
-				}
-				if (!$with_sub_modules && false !== strpos(substr($v, strlen($dir_to_scan)), '/')) {
-					continue;
-				}
-				$module_name = substr(basename($v), 0, -strlen(YF_CLS_EXT));
-				$module_name = str_replace(YF_PREFIX, '', $module_name);
-				$module_name = str_replace(YF_SITE_CLS_PREFIX, '', $module_name);
-				$file_content = file_get_contents($v);
-				if (preg_match($pattern, $file_content, $matches)) {
-					$user_modules_array[$module_name] = $module_name;
-				}
-			}
-		}
-		ksort($user_modules_array);
-		return $user_modules_array;
+		ksort($modules);
+		return $modules;
 	}
 
 	/**
