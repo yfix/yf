@@ -31,21 +31,39 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		'2'  => 'refused',
 	);
 	public $_status_server = array(
-		'1'  => 'in_progress',
-		'2'  => 'in_progress',
-		'3'  => 'in_progress',
-		'4'  => 'success',
-		'5'  => 'refused',
-		'6'  => 'refused',
-		'7'  => 'refused',
-		'8'  => 'refused',
+		'1'  => 'in_progress', // initiated
+		'2'  => 'in_progress', // external processing
+		'3'  => 'in_progress', // awaiting confirmation
+		'4'  => 'success',     // success
+		'5'  => 'refused',     // void
+		'6'  => 'refused',     // processor decline
+		'7'  => 'refused',     // fraudstop decline
+		'8'  => 'refused',     // mpi decline
 		'9'  => 'refused',
-		'10' => 'refused',
-		'11' => 'refused',
-		'12' => 'refused',
-		'13' => 'refused',
-		'14' => 'refused',
-		'15' => 'refused',
+		'10' => 'refused',     // system failure
+		'11' => 'refused',     // unsupported protocol operation
+		'12' => 'refused',     // protocol configuration error
+		'13' => 'refused',     // transaction is expired
+		'14' => 'refused',     // transaction rejected by user
+		'15' => 'refused',     // internal decline
+	);
+
+	public $_type_server = array(
+		// deposition         payout
+		// 1 (authorization)  4  (void)
+		// 3 (purchase)       5  (refund)
+		// 6 (rebill)         11 (payout)
+		'1'  => 'deposition',     // authorization Авторизация
+		// '2'  => 'payout', // confirm Подтверждение авторизации
+		'3'  => 'deposition',     // purchase Прямое списание
+		'4'  => 'payout', // void Отмена авторизации
+		'5'  => 'payout', // refund Возврат
+		'6'  => 'deposition',     // rebill Рекуррентный платеж
+		// '7'  => 'payout', // chargeback Опротестование платежа
+		// '8'  => 'payout', // complete3ds Завершение платежа 3ds
+		// '9'  => 'payout',
+		// '10' => 'payout',
+		'11' => 'payout', // payout Выплата
 	);
 
 	public $currency_default = 'USD';
@@ -216,6 +234,8 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 
 	public function _api_response() {
 		$payment_api = $this->payment_api;
+// DEBUG
+$payment_api->dump();
 		$test_mode = &$this->TEST_MODE;
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
@@ -238,9 +258,21 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			'signature'       => '88d2309a2dc33534ebd593a744697fbebf08ba40',
 			'type'            => '1',
 		); // */
-		$payment = $_POST;
-		// response POST:
-		$signature = $payment[ 'signature' ];
+		// response
+		$response = $_POST;
+		// user success or fail
+		if( !$is_server ) {
+			// check status
+			$status = isset( $_GET[ 'status' ] ) && $_GET[ 'status' ] == 'success' ? true : false;
+			$status_message = $status ? 'Операция выполнена успешно' : 'Операция не выполнена';
+			$result = array(
+				'status'         => $status,
+				'status_message' => $status_message,
+			);
+			return( $result );
+		}
+		// check signature
+		$signature = $response[ 'signature' ];
 		// check signature
 		if( empty( $signature ) ) {
 			$result = array(
@@ -249,15 +281,12 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			);
 			return( $result );
 		}
-		$signature_options = $payment;
-		unset( $signature_options[ 'sign' ] );
-		unset( $signature_options[ 'signature' ] );
-		// unset( $signature_options[ 'language' ] );
-		$_signature = $this->signature( $signature_options, true );
+		$signature_options = $response;
+		$_signature = $this->signature( $signature_options );
 // DEBUG
-// var_dump( $payment, $signature, $signature_options, 'calc: ', $_signature );
+// var_dump( $response, $signature, $signature_options, 'calc: ', $_signature );
 // exit;
-		if( !( $test_mode && empty( $signature ) ) && $signature != $_signature ) {
+		if( empty( $signature ) && $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
 				'status_message' => 'Неверная подпись',
@@ -265,9 +294,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		// update operation
-		$response = $this->_response_parse( $payment );
+		$_response = $this->_response_parse( $response );
 		// check public key (site_id)
-		$key_public = $response[ 'key_public' ];
+		$key_public = $_response[ 'key_public' ];
 		$_key_public = $this->key( 'public' );
 		if( $key_public != $_key_public ) {
 			$result = array(
@@ -277,20 +306,20 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		// check status
-		if( $is_server ) {
-			$state = $response[ 'status_id' ];
-			$status = $this->_status_server;
-		} else {
-			$state = $response[ 'type' ];
-			$status = $this->_status_response;
-		}
+		$state = $_response[ 'status_id' ];
+		$status = $this->_status_server;
 		list( $payment_status_name, $status_message ) = $this->_state( $state, $status );
+		// deposition or payout
+		$state = $_response[ 'type_id' ];
+		$status = $this->_type_server;
+		list( $payment_type ) = $this->_state( $state, $status );
+		if( empty( $payment_type ) ) { return( null ); }
 		// amount
-		// $response[ 'amount' ] = $this->_amount( $response[ 'amount' ], $response[ 'currency' ], $is_request = false );
+		// $_response[ 'amount' ] = $this->_amount( $_response[ 'amount' ], $_response[ 'currency' ], $is_request = false );
 		// update account, operation data
-		$result = $this->_api_deposition( array(
+		$result = $this->{ '_api_' . $payment_type }( array(
 			'provider_name'       => 'ecommpay',
-			'response'            => $response,
+			'response'            => $_response,
 			'payment_status_name' => $payment_status_name,
 			'status_message'      => $status_message,
 		));

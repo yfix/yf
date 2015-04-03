@@ -38,13 +38,12 @@ class yf_payment_api__provider_remote {
 		return( $result );
 	}
 
-	protected function _state( $value, $status = null ) {
+	protected function _state( $value, $status = null, $status_message = null ) {
 		if( !$this->ENABLE ) { return( null ); }
-		if( !is_array( $status ) ) {
-			$status = &$this->_status;
-		}
-		$name    = $status[ $value ];
-		$message = $this->_status_message[ $name ];
+		if( !is_array( $status         ) ) { $status         = &$this->_status;         }
+		if( !is_array( $status_message ) ) { $status_message = &$this->_status_message; }
+		$name    = isset( $status[ $value ] ) ? $status[ $value ] : null;
+		$message = isset( $status_message[ $name ] ) ? $status_message[ $name ] : null;
 		return( array( $name, $message ) );
 	}
 
