@@ -120,6 +120,9 @@ class yf_redirect {
 			$location = isset($params['location']) ? $params['location'] : $params['url'];
 		}
 		// Avoid rewriting by mistake
+		if (substr($location, 0, 1) === '/' && substr($location, 0, 2) !== '//' && $rewrite) {
+			$location = url($location);
+		}
 		if (strpos($location, 'http://') === 0 || strpos($location, 'https://') === 0) {
 			$rewrite = false;
 		}
@@ -173,6 +176,9 @@ class yf_redirect {
 					}
 					$hidden_fields = $form;
 				}
+			}
+			if (in_array($redirect_type, array('http','301','302'))) {
+				$ttl = 0;
 			}
 			$body .= tpl()->parse('system/redirect', array(
 				'mode'			=> 'debug',
