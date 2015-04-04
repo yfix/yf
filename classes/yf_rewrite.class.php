@@ -6,6 +6,8 @@ class yf_rewrite {
 	public $DEFAULT_PORT = '';
 	public $special_links = array('../', './', '/');
 	public $URL_ADD_BUILTIN_PARAMS = true;
+	public $PARSE_RULES = array();
+	public $BUILD_RULES = array();
 
 	/**
 	* YF module constructor
@@ -288,7 +290,7 @@ class yf_rewrite {
 		}
 		$REWRITE_ENABLED = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		if ($REWRITE_ENABLED && $for_section != 'admin') {
-			$link = $this->REWRITE_PATTERNS['yf']->_get($params, $this);
+			$link = $this->REWRITE_PATTERNS['yf']->_build($params, $this);
 		} else {
 			$skip_url_params = array('host', 'port', 'fragment', 'path', 'admin_host', 'admin_port', 'admin_path');
 			foreach ((array)$params as $k => $v) {

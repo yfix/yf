@@ -8,10 +8,10 @@ class yf_rewrite_pattern_yf {
 	/**
 	* Build url
 	*/
-	function _get($a, $class_rewrite) {
+	function _build($a, $class_rewrite) {
 		$u = false;
-		if (!empty($class_rewrite->CUSTOM_BUILD)) {
-			foreach ((array)$class_rewrite->CUSTOM_BUILD as $func) {
+		if (!empty($class_rewrite->BUILD_RULES)) {
+			foreach ((array)$class_rewrite->BUILD_RULES as $func) {
 				if ($u = $func($a, $class_rewrite)) {
 					break;
 				}
@@ -87,8 +87,8 @@ class yf_rewrite_pattern_yf {
 		if (false !== strpos($url[0], '%')) {
 			$url[0] = urldecode($url[0]);
 		}
-		if (!empty($class_rewrite->CUSTOM_PARSE)) {
-			foreach ((array)$class_rewrite->CUSTOM_PARSE as $func) {
+		if (!empty($class_rewrite->PARSE_RULES)) {
+			foreach ((array)$class_rewrite->PARSE_RULES as $func) {
 				if ($s = $func($url, $query, $host, $class_rewrite)) {
 					break;
 				}
