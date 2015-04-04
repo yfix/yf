@@ -18,14 +18,13 @@ class class_rewrite_testing_shared_test extends PHPUnit_Framework_TestCase {
 		$GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'] = self::$_bak_settings['REWRITE_MODE'];
 	}
 	public function test_rewrite_enabled() {
-		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_force_get_url() );
-		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_force_get_url('') );
-		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_force_get_url('', '') );
-		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_force_get_url('', self::$host) );
+		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_url() );
+		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_url('') );
+		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_url('', '') );
+		$this->assertEquals('http://'.self::$host.'/', _class('rewrite')->_url('', self::$host) );
 	}
 	public function test_rewrite_compatibility() {
-		$this->assertEquals('http://'.self::$host.'/test', _class('rewrite')->_force_get_url(array('object' => 'test'), self::$host) );
-		$this->assertEquals('http://'.self::$host.'/test', _force_get_url(array('object' => 'test'), self::$host) );
+		$this->assertEquals('http://'.self::$host.'/test', _class('rewrite')->_url(array('object' => 'test'), self::$host) );
 		$this->assertEquals('http://'.self::$host.'/test', url(array('object' => 'test'), self::$host) );
 	}
 	public function test_rewrite_params_array() {

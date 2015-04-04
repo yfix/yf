@@ -39,7 +39,7 @@ abstract class yf_oauth_driver2 {
 			trigger_error('Error: no config client_id and client_secret for provider: '.$this->provider, E_USER_WARNING);
 			return false;
 		}
-		$this->redirect_uri = _force_get_url(array('object' => $_GET['object'], 'action' => $_GET['action'], 'id' => $_GET['id']));
+		$this->redirect_uri = url('/@object/@action/@id');
 		if ($this->redirect_uri_force_https) {
 			$this->redirect_uri = str_replace('http://', 'https://', $this->redirect_uri);
 		}

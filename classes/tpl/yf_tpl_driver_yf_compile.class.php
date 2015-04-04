@@ -75,7 +75,6 @@ class yf_tpl_driver_yf_compile {
 			'/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\}/i' => function($m) use ($start, $end) {
 				$global_arrays = tpl()->_avail_arrays;
 				$is_global = is_array($global_arrays) && array_key_exists($m[1], $global_arrays);
-#				return $start. 'echo '.($is_global ? '$'.$global_arrays[$m[1]].'[\''.$m[2].'\']' : '($replace[\''.$m[1].'\'][\''.$m[2].'\'] ?: _class_safe(\''.$m[1].'\')->'.$m[2].')').';'. $end;
 				return $start. 'echo '.($is_global ? '$'.$global_arrays[$m[1]].'[\''.$m[2].'\']' : '$replace[\''.$m[1].'\'][\''.$m[2].'\']').';'. $end;
 			},
 			// Variable filtering like in Smarty/Twig. Examples: {var1|trim} {var1|urlencode|trim} {var1|_prepare_html} {var1|my_func} {sub1.var1|trim}
@@ -84,7 +83,6 @@ class yf_tpl_driver_yf_compile {
 			},
 			// Second level variables with filters
 			'/\{([a-z0-9_-]+)\.([a-z0-9_-]+)\|([a-z0-9_\|-]+)\}/i' => function($m) use ($start, $end) {
-#				return $start. 'echo _class(\'tpl\')->_process_var_filters($replace[\''.$m[1].'\'][\''.$m[2].'\'] ?: _class_safe(\''.$m[1].'\')->'.$m[2].', \''.$m[3].'\');'. $end;
 				return $start. 'echo _class(\'tpl\')->_process_var_filters($replace[\''.$m[1].'\'][\''.$m[2].'\'], \''.$m[3].'\');'. $end;
 			},
 			// Vars inside foreach with filters
@@ -124,7 +122,7 @@ class yf_tpl_driver_yf_compile {
 				return $start. 'echo module_safe("advertising")->_show(array("ad"=>\''.$m[1].'\'));'. $end;
 			},
 			'/\{url\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
-				return $start. 'echo _class(\'tpl\')->_generate_url_wrapper(\''.$m[1].'\');'. $end;
+				return $start. 'echo _class(\'tpl\')->_url_wrapper(\''.$m[1].'\');'. $end;
 			},
 			'/\{form_row\(\s*["\']{0,1}[\s\t]*([a-z0-9_-]+)[\s\t]*["\']{0,1}([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?([\s\t]*,[\s\t]*["\']{1}([^"\']*)["\']{1})?\s*\)\}/ims' => function($m) use ($start, $end) {
 				return $start. 'echo _class("form2")->tpl_row(\''.$m[1].'\',$replace,\''.$m[3].'\',\''.$m[5].'\',\''.$m[7].'\');'. $end;

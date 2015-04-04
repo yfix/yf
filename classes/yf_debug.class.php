@@ -768,7 +768,7 @@ class yf_debug {
 			$data['session'][$k] = $v['local_value'];
 		}
 		$a = $_POST + $_SESSION;
-		$body .= form($a, array('action' => _force_get_url(array('object' => 'test', 'action' => 'change_debug')), 'class' => 'form-inline', 'style' => 'padding-left:20px;'))
+		$body .= form($a, array('action' => url('/test/change_debug'), 'class' => 'form-inline', 'style' => 'padding-left:20px;'))
 			->row_start()
 				->container('Locale edit')
 				->active_box('locale_edit', array('selected' => $_SESSION['locale_vars_edit']))
@@ -938,7 +938,7 @@ class yf_debug {
 		if (!$this->SHOW_REWRITE_INFO) {
 			return '';
 		}
-		$items = $this->_get_debug_data('_force_get_url');
+		$items = $this->_get_debug_data('_url');
 		foreach ((array)$items as $k => $v) {
 			$items[$k]['time'] = round($v['time'], 4);
 			$items[$k]['rewrited_link'] = strval($this->_admin_link('link', $v['rewrited_link']));

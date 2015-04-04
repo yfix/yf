@@ -117,12 +117,6 @@ if (!function_exists('url_user')) {
 if (!function_exists('url_admin')) {
 	function url_admin($params = array(), $host = '', $url_str = '') { return _class('rewrite')->_url_admin($params, $host, $url_str); }
 }
-if (!function_exists('_force_get_url')) {
-	function _force_get_url($params = array(), $host = '', $url_str = '') { return _class('rewrite')->_force_get_url($params, $host, $url_str); }
-}
-if (!function_exists('_generate_url')) {
-	function _generate_url($params = array(), $host = '') { return _class('rewrite')->_generate_url($params, $host); }
-}
 if (!function_exists('process_url')) {
 	function process_url($url = '', $force_rewrite = false, $for_site_id = false) { return _class('rewrite')->_process_url($url, $force_rewrite, $for_site_id); }
 }

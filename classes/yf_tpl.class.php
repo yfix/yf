@@ -821,13 +821,10 @@ class yf_tpl {
 	}
 
 	/**
-	* Wrapper around '_generate_url' function, called like this inside templates:
+	* Wrapper around 'url()' function, called like this inside templates:
 	* {url(object=home_page;action=test)}
 	*/
-	function _generate_url_wrapper($params = array()){
-		if (!function_exists('_force_get_url')) {
-			return '';
-		}
+	function _url_wrapper($params = array()){
 		// Try to process method params (string like attrib1=value1;attrib2=value2)
 		if (is_string($params) && strlen($params)) {
 			// Url like this: /object/action/id
