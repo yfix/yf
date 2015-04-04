@@ -71,4 +71,12 @@ class yf_services {
 	function haml($content, $params = array()) {
 // TODO
 	}
+
+	/**
+	* phpmailer fresh instance, intended to use its helper methods
+	*/
+	function phpmailer($content, $params = array()) {
+		$this->require_php_lib('phpmailer');
+		return new PHPMailer(true);
+	}
 }
