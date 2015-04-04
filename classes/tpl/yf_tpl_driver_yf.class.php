@@ -821,7 +821,7 @@ class yf_tpl_driver_yf {
 			$func = trim($m['func']);
 			$key_to_cycle = trim($m['key']);
 			$orig_key_to_cycle = $key_to_cycle;
-			$key_to_cycle = str_replace(',', '__', $key_to_cycle);
+			$key_to_cycle = str_replace(array(',',';',' ','=','\'','"'), '__', $key_to_cycle);
 			if (empty($key_to_cycle)) {
 				return '';
 			}
