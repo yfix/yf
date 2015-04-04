@@ -604,8 +604,11 @@ class tpl_driver_yf_core_test extends tpl_abstract {
 		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,_callme2)} _{_key}={_val}_ {/foreach_exec}'));
 		$_GET['action'] = '_callme2';
 		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,@action)} _{_key}={_val}_ {/foreach_exec}'));
-		$_GET['action'] = 'callme2';
 		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object,@action)} _{_key}={_val}_ {/foreach_exec}'));
+		$this->assertSame(' _k1=v1_  _k2=v2_ ', self::_tpl('{foreach_exec(@object;@action)} _{_key}={_val}_ {/foreach_exec}'));
+		$this->assertSame(' _arg1=val1_  _arg2=val2_ ', self::_tpl('{foreach_exec(@object;@action;arg1=val1;arg2=val2)} _{_key}={_val}_ {/foreach_exec}'));
+		$this->assertSame(' _arg1=val1_  _arg2=val2_ ', self::_tpl('{foreach_exec(@object; @action; arg1=val1; arg2=val2)} _{_key}={_val}_ {/foreach_exec}'));
+		$this->assertSame(' _arg1=val1_  _arg2=val2_ ', self::_tpl('{foreach_exec(unittest2; _callme2; arg1=val1; arg2=val2)} _{_key}={_val}_ {/foreach_exec}'));
 
 		$result = _class('unittest2')->_callme2(array());
 		$this->assertSame($result, array());
