@@ -204,6 +204,12 @@ if (!function_exists('_302')) {
 if (!function_exists('_301')) {
 	function _301($url, $text = '') { return common()->redirect(array('url' => $url, 'text' => $text, 'type' => '301')); }
 }
+if (!function_exists('_404')) {
+	function _404($text = '') { return common()->error_404($text); }
+}
+if (!function_exists('_403')) {
+	function _403($text = '') { return common()->error_403($text); }
+}
 if (!function_exists('_e')) {
 	function _e($text = '', $clear_error = true) { return common()->_show_error_message($text, $clear_error); }
 }
@@ -212,12 +218,6 @@ if (!function_exists('_re')) {
 }
 if (!function_exists('_ee')) {
 	function _ee($error_key = '') { return common()->_error_exists($error_key); }
-}
-if (!function_exists('_404')) {
-	function _404($text = '') { return common()->error_404($text); }
-}
-if (!function_exists('_403')) {
-	function _403($text = '') { return common()->error_403($text); }
 }
 if (!function_exists('user')) {
 	function user($user_id, $fields = 'full', $params = '', $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, 'user') ? $_common->user($user_id, $fields, $params, $return_sql) : false; }
