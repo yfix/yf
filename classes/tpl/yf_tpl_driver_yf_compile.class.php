@@ -410,9 +410,8 @@ class yf_tpl_driver_yf_compile {
 
 		$func = trim($m['func']);
 		$orig_arr_name = trim($m['key']);
-// TODO: fix as in not compiled version for foreach_exec and {#.something}
-//		$orig_arr_name = str_replace(',', '__', $orig_arr_name);
 		$foreach_arr_name = $orig_arr_name;
+		$orig_arr_name = str_replace(array(',',';',' ','=','\'','"'), '__', $orig_arr_name);
 		$foreach_body = $m['body'];
 		// Example of elseforeach: {foreach(items)} {_key} = {_val} {elseforeach} No records {/foreach}
 		$no_rows_text = '';
@@ -440,7 +439,7 @@ class yf_tpl_driver_yf_compile {
 		if ($func === 'foreach_exec') {
 			$foreach_data_tag = 'array()';
 			if (preg_match('/(?P<object>[\w@\-]+)\s*[,;]\s*(?P<action>[\w@\-]+)\s*[,;]{0,1}\s*(?P<args>.*?)$/ims', $foreach_arr_name, $m_exec)) {
-				$foreach_data_tag = '(array)main()->_execute(\''.$m_exec['object'].'\', \''.$m_exec['action'].'\', \''.$m_exec['args'].'\', $name. $this->_STPL_EXT, 0, $use_cache = false)';
+				$foreach_data_tag = 'main()->_execute(\''.$m_exec['object'].'\', \''.$m_exec['action'].'\', \''.$m_exec['args'].'\', $name. $this->_STPL_EXT, 0, $use_cache = false)';
 			}
 		// Support for deep arrays as main array
 		} elseif (false !== strpos($foreach_arr_name, '.')) {
