@@ -216,9 +216,12 @@ class yf_email {
 				$copy_to[$mail_to] = $mail_to;
 			}
 		}
+		$orig_to_mail = strtolower(trim($params['to_mail']));
+		$orig_subj = $params['subj'];
+		$params['subj'] = '[AUTO-COPY] '.$params['subj'];
 		foreach ((array)$copy_to as $mail_to) {
 			$mail_to = trim($mail_to);
-			if (!$mail_to) {
+			if (!$mail_to || strtolower($mail_to) == $orig_to_mail) {
 				continue;
 			}
 			$params['to_mail'] = $mail_to;
