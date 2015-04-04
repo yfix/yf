@@ -257,7 +257,9 @@ class yf_email {
 		if (!strlen($html)) {
 			return $html;
 		}
+
 		$text = trim($html);
+#		$text = services()->phpmailer()->html2text($text, $advanced = true);
 		$text = trim($this->strip_html_tags($text));
 		$text = str_replace("\t", '  ', $text);
 		$text = preg_replace("~[\r\n][ ]+~m", PHP_EOL, $text);
