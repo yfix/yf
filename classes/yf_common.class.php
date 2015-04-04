@@ -17,6 +17,8 @@ class yf_common {
 	public $TRANSLIT_FROM	= 'cp1251';
 	/** @var string Required for the compatibility with old main class */
 	public $MEDIA_PATH		= '';
+	/** @var bool Used by propose url from name */
+	public $URL_FORCE_DASHES = false;
 
 	/**
 	* Constructor
@@ -853,7 +855,7 @@ class yf_common {
 	/**
 	* Convert name into URL-friendly string
 	*/
-	function _propose_url_from_name($name = '', $from_encoding = '', $force_dashes = false) {
+	function _propose_url_from_name($name = '', $from_encoding = '', $force_dashes = null) {
 		if (empty($name)) {
 			return '';
 		}
@@ -870,6 +872,9 @@ class yf_common {
 		$url = preg_replace('/[_-]{2,}/', '-', $url);
 		$url = strtolower(preg_replace('/[^a-z0-9_-]+/i', '', $url));
 		$url = trim(trim(trim($url), '_-'));
+		if (!isset($force_dashes)) {
+			$force_dashes = $this->URL_FORCE_DASHES;
+		}
 		if ($force_dashes) {
 			$url = str_replace('_', '-', $url);
 		}
