@@ -175,14 +175,10 @@ if (!function_exists('coffee')) {
 	function coffee($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'coffee', $content_type, $params); }
 }
 if (!function_exists('jade')) {
-	function jade($content, $content_type = 'auto', $params = array()) {
-// TODO
-	}
+	function jade($content, $params = array()) { return _class('services')->jade($content, $params); }
 }
 if (!function_exists('haml')) {
-	function haml($content, $content_type = 'auto', $params = array()) {
-// TODO
-	}
+	function haml($content, $params = array()) { return _class('services')->haml($content, $params); }
 }
 if (!function_exists('require_php_lib')) {
 	function require_php_lib($name, $params = array()) { return main()->require_php_lib($name, $params); }
