@@ -1240,6 +1240,9 @@ class yf_main {
 			$_time_start = microtime(true);
 		}
 		$body = $this->call_class_method($class_name, $path, $method_name, $method_params, $tpl_name, $silent, $use_cache, $cache_ttl, $cache_key_override);
+		if (!$body) {
+			$body = '';
+		}
 		$this->events->fire('main.execute', array(
 			'body' => &$body,
 			'args' => func_get_args()
