@@ -66,6 +66,12 @@ if (!function_exists('common')) {
 if (!function_exists('input')) {
 	function input($silent = false) { return _class('input') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
+if (!function_exists('events')) {
+	function events($silent = false) { return _class('core_events') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
+if (!function_exists('services')) {
+	function services($silent = false) { return _class('services') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
 // example: cache()->put()
 if (!function_exists('cache')) {
 	function cache($silent = false) { return _class('cache') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
@@ -181,10 +187,7 @@ if (!function_exists('haml')) {
 	function haml($content, $params = array()) { return _class('services')->haml($content, $params); }
 }
 if (!function_exists('require_php_lib')) {
-	function require_php_lib($name, $params = array()) { return main()->require_php_lib($name, $params); }
-}
-if (!function_exists('events')) {
-	function events() { return _class('core_events'); }
+	function require_php_lib($name, $params = array()) { return _class('services')->require_php_lib($name, $params); }
 }
 if (!function_exists('getmicrotime')) {
 	function getmicrotime() { return microtime(true); }
