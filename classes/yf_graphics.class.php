@@ -85,70 +85,110 @@ class yf_graphics {
 		// For compatibility with old versions
 		$website_name = conf('website_name');
 		if (strlen($website_name)) {
-			$title = _prepare_html($website_name);
+			$title = $website_name;
 		}
 		// Add pages names to the title
 		if ($this->ADD_TITLE_PAGES) {
 			if (strlen($_GET['object']) && $_GET['object'] != 'static_pages') {
 				$title .= ' :: '._ucfirst(t($_GET['object']));
+				$title = _ucfirst(t($_GET['object'])).' : '.$title;
 			}
 		}
 		// Override by hook method
-		$method_name = '_site_title';
-// TODO: need to check permissions at first
-#		$obj = module($_GET['object']);
-		if (method_exists($obj, $method_name)) {
-			$title = _prepare_html($obj->$method_name($title));
+// TODO: maybe need to check permissions at first
+		$obj = module_safe($_GET['object']);
+		if (is_object($obj)) {
+			$hook_names = array('_hook_title', '_site_title');
+			foreach ($hook_names as $method_name) {
+				if (method_exists($obj, $method_name)) {
+					$title = $obj->$method_name($title);
+					break;
+				}
+			}
 		}
 		// Force by global var
 		$conf_title = conf('site_title');
 		if ($conf_title) {
-			$title = _prepare_html($conf_title);
+			$title = $conf_title;
 		}
-		return $title;
+		return _prepare_html($title);
 	}
 
 	/**
 	* Show metatags
 	*/
-	function show_metatags() {
-		$charset = conf('charset');
-		if (!$charset) {
-			$charset = 'utf-8';
+	function show_metatags($meta = array()) {
+		if (empty($meta)) {
+			$meta = $this->META_DEFAULT;
 		}
-		$meta_keywords = conf('meta_keywords');
-		if (!$meta_keywords) {
-			$meta_keywords = $this->META_KEYWORDS;
+		if (!is_array($meta)) {
+			$meta = array();
 		}
-		$meta_description = conf('meta_description');
-		if (!$meta_description) {
-			$meta_description = $this->META_DESCRIPTION;
-		}
-		$meta = array(
-			'charset'		=> $charset,
-			'keywords'		=> $meta_keywords,
-			'description'	=> $meta_description,
-		);
+		$meta['charset']	= $meta['charset'] ?: (conf('charset') ?: 'utf-8');
+		$meta['keywords']	= $meta['keywords'] ?: (conf('meta_keywords') ?: $this->META_KEYWORDS);
+		$meta['description']= $meta['description'] ?: (conf('meta_description') ?: $this->META_DESCRIPTION);
 		// Override by hook method
-		$method_name = '_hook_meta_tags';
-// TODO: need to check permissions at first
-#		$obj = module($_GET['object']);
-		if (method_exists($obj, $method_name)) {
-			$meta = _prepare_html($obj->$method_name($meta));
+// TODO: maybe need to check permissions at first
+		$obj = module_safe($_GET['object']);
+		if (is_object($obj)) {
+			$hook_names = array('_hook_meta_tags', '_hook_meta');
+			foreach ($hook_names as $method_name) {
+				if (method_exists($obj, $method_name)) {
+					$meta = $obj->$method_name($meta);
+					break;
+				}
+			}
+		}
+		foreach ((array)$this->META_ADD as $k => $v) {
+			if (!is_string($v) && is_callable($v)) {
+				$meta = $v($meta);
+			} elseif (isset($meta[$k])) {
+				continue;
+			} else {
+				$meta[$k] = $v;
+			}
+		}
+		// Quick fixes for common meta "og:" and "fb:"
+		foreach ((array)$meta as $name => $value) {
+			if (substr($name, 0, 3) === 'og_') {
+				$meta['og:'. substr($name, 3)] = $value;
+				unset($meta[$name]);
+			} elseif (substr($name, 0, 3) === 'fb_') {
+				$meta['og:'. substr($name, 3)] = $value;
+				unset($meta[$name]);
+			}
+		}
+		if (isset($meta['og:title']) && !isset($meta['og:type'])) {
+			$meta['og:type'] = 'website';
+		}
+		$robots_no_index = (main()->is_ajax() || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX') || DEBUG_MODE || (defined('DEVELOP') && DEVELOP) || (defined('TEST_MODE') && TEST_MODE));
+		if ($robots_no_index) {
+			$meta['robots'] = 'noindex,nofollow,noarchive,nosnippet';
+		}
+		$out = array();
+		foreach ((array)$meta as $name => $value) {
+			$name = trim($name);
+			$value = trim($value);
+			if (!strlen($name) || !strlen($value)) {
+				continue;
+			}
+			$_name = _prepare_html($name);
+			$_value = _prepare_html($value);
+			if ($name === 'canonical') {
+				$out[$name] = '<link rel="canonical" href="'.$_value.'" />';
+			} elseif ($name === 'charset') {
+				$out[$name] = '<meta http-equiv="Content-Type" content="text/html; charset='.$_value.'" />';
+			} elseif (false !== strpos($name, ':')) {
+				$out[$name] = '<meta property="'.$_name.'" content="'.$_value.'" />';
+			} else {
+				$out[$name] = '<meta name="'.$_name.'" content="'.$_value.'" />';
+			}
 		}
 		if (DEBUG_MODE) {
 			debug('_DEBUG_META', $meta);
+			debug('_DEBUG_META_OUT', $out);
 		}
-		$robots_no_index = (main()->is_ajax() || DEBUG_MODE || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX'));
-		$replace = array(
-			'charset'		=> _prepare_html($meta['charset']),
-			'keywords'		=> $meta['keywords'],
-			'description'	=> $meta['description'],
-			'robots_no_index' => (int)$robots_no_index,
-		);
-		return tpl()->parse('system/meta_tags', $replace)
-			. ($robots_no_index ? PHP_EOL. '<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">'.PHP_EOL : '')
-		;
+		return implode(PHP_EOL, $out);
 	}
 
 	/**
