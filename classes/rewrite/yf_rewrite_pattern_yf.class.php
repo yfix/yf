@@ -12,7 +12,9 @@ class yf_rewrite_pattern_yf {
 		$u = false;
 		if (!empty($class_rewrite->BUILD_RULES)) {
 			foreach ((array)$class_rewrite->BUILD_RULES as $func) {
-				if ($u = $func($a, $class_rewrite)) {
+				$is_last = true;
+				$u = $func($a, $class_rewrite, $is_last);
+				if ($u && $is_last) {
 					break;
 				}
 			}
@@ -49,7 +51,7 @@ class yf_rewrite_pattern_yf {
 						$u[] = $a['page'];
 					}
 				}
-				$u = implode('/',$u);
+				$u = implode('/', $u);
 			}
 		}
 		$arr = $a;
@@ -62,6 +64,8 @@ class yf_rewrite_pattern_yf {
 		unset($arr['page']);
 		$fragment = $arr['fragment'];
 		unset($arr['fragment']);
+		$lang = $arr['lang'];
+		unset($arr['lang']);
 		foreach ((array)$arr as $k => $v) {
 			$arr_out[] = $k.'='.$v;
 		}
@@ -70,6 +74,9 @@ class yf_rewrite_pattern_yf {
 		}
 		if ($fragment) {
 			$u .= '#'.$fragment;
+		}
+		if (strlen($lang) === 2) {
+			$u = $lang.'/'.$u;
 		}
 		if ($class_rewrite->USE_WEB_PATH) {
 			$url = WEB_PATH;
@@ -89,7 +96,9 @@ class yf_rewrite_pattern_yf {
 		}
 		if (!empty($class_rewrite->PARSE_RULES)) {
 			foreach ((array)$class_rewrite->PARSE_RULES as $func) {
-				if ($s = $func($url, $query, $host, $class_rewrite)) {
+				$is_last = true;
+				$s = $func($url, $query, $host, $class_rewrite, $is_last);
+				if ($s && $is_last) {
 					break;
 				}
 			}
