@@ -271,13 +271,77 @@ class yf_locale_editor {
 
 	/**
 	*/
-	function files_vars() {
-// TODO: show vars from files
+	function _get_vars_from_files($lang) {
+		$lang_files = array();
+		// Auto-find shared language vars. They will be connected in order of file system
+		// Names can be any, but better to include lang name into file name. Examples:
+		// share/langs/ru/001_other.php
+		// share/langs/ru/002_other2.php
+		// share/langs/ru/other.php
+		// share/langs/ru/ru_shop.php
+		// share/langs/ru/ru_user_register.php
+		// plugins/shop/share/langs/ru/ru_user_register.php
+		$pattern = 'share/langs/'.$lang.'/';
+		$dirs = array(
+			'yf_main'			=> YF_PATH. $pattern,
+			'yf_plugins'		=> YF_PATH. 'plugins/*/'. $pattern,
+			'project_main'		=> PROJECT_PATH. $pattern,
+			'project_plugins'	=> PROJECT_PATH. 'plugins/*/'. $pattern,
+			'app_main'			=> APP_PATH. $pattern,
+			'app_plugins'		=> APP_PATH. 'plugins/*/'. $pattern,
+		);
+		// Order matters! Project vars will have ability to override vars from franework
+		foreach ($dirs as $dir) {
+			foreach ((array)glob($dir.'*.php') as $f) {
+				$lang_files[basename($f)] = $f;
+			}
+		}
+		//
+		// Inside each file $data array will be searched for
+		//
+		foreach ((array)$lang_files as $path) {
+			$data = include $path;
+			foreach ((array)$data as $_source => $_trans) {
+				$_source = str_replace(' ', '_', strtolower($_source));
+				$tr_vars[$_source] = $_trans;
+				$tr_files[$_source] = $path;
+			}
+		}
+		return array($tr_vars, $tr_files);
 	}
 
 	/**
 	*/
 	function show_vars() {
+		$vars = array();
+		foreach ((array)$this->_cur_langs as $lang => $lang_name) {
+			list($lang_vars, $var_files) = $this->_get_vars_from_files($lang);
+			foreach ((array)$lang_vars as $source => $translation) {
+				$vars[$source.'|'.$lang] = array(
+					'lang'			=> (string)$lang,
+					'source'		=> (string)$source,
+					'translation'	=> (string)$translation,
+					'files'			=> (string)$var_files[$source],
+				);
+			}
+		}
+		ksort($vars);
+		return table($vars, array('pager_records_on_page' => 1000, 'group_by' => 'source', 'id' => 'source'))
+			->text('source')
+			->text('lang', array('badge' => 'default'))
+			->text('translation')
+#			->text('files')
+			->btn_edit('', url('/@object/edit_var/%d'), array('btn_no_text' => 1))
+			->btn_func('files', function($row, $extra, $replace, $table) {
+				$path = $row['files'];
+				return a('/file_manager/view/'.urlencode($path), substr($path, strlen(APP_PATH)), 'fa fa-eye');
+			})
+		;
+	}
+
+	/**
+	*/
+	function __old__show_vars() {
 		if (array_key_exists('mass_delete', $_POST)) {
 			return $this->mass_delete_vars();
 		}
