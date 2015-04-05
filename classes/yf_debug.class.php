@@ -48,7 +48,7 @@ class yf_debug {
 	public $ADMIN_PATHS				= array(
 		'edit_stpl'		=> 'object=template_editor&action=edit_stpl&location={LOCATION}&theme={THEME}&name={ID}',
 		'edit_i18n'		=> 'object=locale_editor&action=edit_var&id={ID}',
-		'edit_file'		=> 'object=file_manager&action=edit_item&id={ID}',
+		'edit_file'		=> 'object=file_manager&action=edit&id={ID}',
 		'show_db_table'	=> 'object=db_manager&action=table_show&id={ID}',
 		'sql_query'		=> 'object=db_manager&action=import&id={ID}',
 		'link'			=> '{ID}',
