@@ -190,7 +190,7 @@ class yf_locale_editor {
 		}
 		$a = db()->query_fetch('SELECT * FROM '.db('locale_langs').' WHERE id='.intval($_GET['id']));
 		$a = (array)$_POST + (array)$a;
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name' => 'trim|required|is_unique_without[locale_langs.name.'.$id.']',
@@ -370,13 +370,13 @@ class yf_locale_editor {
 			->check_box('id', array('width' => '1%', 'desc' => ''))
 			->text('value', array('wordwrap' => '40', 'hl_filter' => 1))
 			->text('translation', array('wordwrap' => '40', 'hl_filter' => 1))
-			->btn_edit('', './?object='.$_GET['object'].'&action=edit_var&id=%d')
-			->btn_delete('', './?object='.$_GET['object'].'&action=delete_var&id=%d')
-			->footer_add('', './?object='.$_GET['object'].'&action=add_var')
+			->btn_edit('', url('/@object/edit_var/%d'))
+			->btn_delete('', url('/@object/delete_var/%d'))
+			->footer_add('', url('/@object='.$_GET['object'].'&action=add_var'))
 			->footer_submit('mass_delete', array('icon' => 'icon-trash', 'class' => 'btn-danger'))
-			->header_add('', './?object='.$_GET['object'].'&action=add_var')
-#			->footer_link('collect_vars', './?object='.$_GET['object'].'&action=collect_vars')
-#			->footer_link('cleanup_vars', './?object='.$_GET['object'].'&action=cleanup_vars')
+			->header_add('', url('/@object/add_var'))
+#			->footer_link('collect_vars', url('/@object/collect_vars'))
+#			->footer_link('cleanup_vars', url('/@object/cleanup_vars'))
 		;
 	}
 
@@ -414,12 +414,11 @@ class yf_locale_editor {
 					cache_del($cnames);
 				}
 				common()->admin_wall_add(array('locale var added: '.$_POST['var_name']));
-				return js_redirect($INSERT_ID ? './?object='.$_GET['object'].'&action=edit_var&id='.intval($INSERT_ID) : './?object='.$_GET['object'].'&action=show_vars');
+				return js_redirect($INSERT_ID ? url('/@object/edit_var/'.intval($INSERT_ID)) : url('/@object/show_vars'));
 			}
 		}
 		$r = (array)$_POST + array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'back_link'		=> './?object='.$_GET['object'].'&action=show_vars',
+			'back_link'		=> url('/@object/show_vars'),
 		);
 		$form = form($r)->text('var_name');
 		foreach ((array)$this->_cur_langs_array as $info) {
@@ -477,7 +476,7 @@ class yf_locale_editor {
 					cache_del('locale_translate_'.$lang_info['locale']);
 				}
 				common()->admin_wall_add(array('locale var updated: '.$var_info['value'], $_GET['id']));
-				return js_redirect('./?object='.$_GET['object'].'&action=show_vars');
+				return js_redirect('/@object/show_vars');
 			}
 		}
 		foreach ((array)$this->_cur_langs_array as $lang_id => $lang_info) {
@@ -490,8 +489,8 @@ class yf_locale_editor {
 			);
 		}
 		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'&id='.$_GET['id'],
-			'back_link'		=> './?object='.$_GET['object'].'&action=show_vars',
+			'form_action'	=> url('/@object/@action/@id'),
+			'back_link'		=> url('/@object/show_vars'),
 			'error_message'	=> _e(),
 			'langs'			=> $langs,
 			'var_value'		=> _prepare_html($var_info['value']),
@@ -515,7 +514,7 @@ class yf_locale_editor {
 			db()->query('DELETE FROM '.db('locale_translate').' WHERE var_id IN('.implode(',',$ids_to_delete).')');
 			common()->admin_wall_add(array('locale vars mass deletion: '.implode(',',$ids_to_delete)));
 		}
-		return js_redirect('./?object='.$_GET['object'].'&action=show_vars');
+		return js_redirect('/@object/show_vars');
 	}
 
 	/**
@@ -534,7 +533,7 @@ class yf_locale_editor {
 			no_graphics(true);
 			echo $_GET['id'];
 		} else {
-			return js_redirect('./?object='.$_GET['object'].'&action=show_vars');
+			return js_redirect('/@object/show_vars');
 		}
 	}
 
@@ -636,7 +635,7 @@ class yf_locale_editor {
 			}
 		}
 		// Return user back
-		js_redirect('./?object='.$_GET['object'].'&action=show_vars');
+		js_redirect('/@object/show_vars');
 	}
 
 	/**
@@ -810,7 +809,7 @@ class yf_locale_editor {
 				$body[] = $cur_source;
 			} else {
 				$replace = array(
-					'link'	=> './?object=file_manager&action=edit_item&f_='.basename($cur_file_name).'&dir_name='.urlencode($path_to.dirname($cur_file_name)),
+					'link'	=> url('/file_manager/edit/'.urlencode($cur_file_name)),
 					'text'	=> _prepare_html($cur_source),
 				);
 				$body[] = tpl()->parse($_GET['object'].'/location_item', $replace);
@@ -886,7 +885,7 @@ class yf_locale_editor {
 				}
 			}
 		}
-		return js_redirect('./?object='.$_GET['object'].'&action='. str_replace ($_GET['object'].'__', '', $filter_name));
+		return js_redirect('/@object/'. str_replace($_GET['object'].'__', '', $filter_name));
 	}
 
 	/**
@@ -897,8 +896,8 @@ class yf_locale_editor {
 		}
 		$filter_name = $_GET['object'].'__'.$_GET['action'];
 		$r = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name,
-			'clear_url'		=> './?object='.$_GET['object'].'&action=filter_save&id='.$filter_name.'&page=clear',
+			'form_action'	=> url('/@object/filter_save/'.$filter_name),
+			'clear_url'		=> url('/@object/filter_save/'.$filter_name.'/clear'),
 		);
 		$order_fields = array(
 			'v.value'     => 'value',
