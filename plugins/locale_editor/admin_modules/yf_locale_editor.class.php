@@ -496,7 +496,7 @@ class yf_locale_editor {
 			'var_value'		=> _prepare_html($var_info['value']),
 			'location'		=> $this->DISPLAY_VARS_LOCATIONS ? $this->_prepare_locations($var_info['location']) : '',
 		);
-		return tpl()->parse($_GET['object'].'/edit_var', $replace);
+		return tpl()->parse('@object/edit_var', $replace);
 	}
 
 	/**
@@ -812,7 +812,7 @@ class yf_locale_editor {
 					'link'	=> url('/file_manager/edit/'.urlencode($cur_file_name)),
 					'text'	=> _prepare_html($cur_source),
 				);
-				$body[] = tpl()->parse($_GET['object'].'/location_item', $replace);
+				$body[] = tpl()->parse('@object/location_item', $replace);
 			}
 		}
 		return !empty($body) ? nl2br(implode(';'.PHP_EOL, $body)) : _prepare_html($source_text);

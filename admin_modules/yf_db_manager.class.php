@@ -400,7 +400,7 @@ class yf_db_manager {
 			'fetch_result'		=> $fetch_result,
 		);
 // TODO: form display file upload to import
-		return tpl()->parse($_GET['object'].'/import', $replace);
+		return tpl()->parse('@object/import', $replace);
 	}
 
 	/**
@@ -654,7 +654,7 @@ class yf_db_manager {
 					'sql_text'	=> _prepare_html($EXPORTED_SQL, 0),
 					'back_link'	=> url('/@object'),
 				);
-				return tpl()->parse($_GET['object'].'/export_text_result', $replace2);
+				return tpl()->parse('@object/export_text_result', $replace2);
 			}
 		}
 		$replace = array(
@@ -668,7 +668,7 @@ class yf_db_manager {
 			'table_num_rows'	=> intval($_single_table_info['rows']),
 			'table_size'		=> common()->format_file_size($_single_table_info['data_size']),
 		);
-		return tpl()->parse($_GET['object'].'/export', $replace);
+		return tpl()->parse('@object/export', $replace);
 	}
 
 	/**
@@ -740,7 +740,7 @@ class yf_db_manager {
 				'restore_url'	=> url('/@object/restore/'.$id),
 				'download_url'	=> url('/@object/export_backup/'.$id),
 			);
-			$items .= tpl()->parse($_GET['object'].'/backup_item', $replace2);
+			$items .= tpl()->parse('@object/backup_item', $replace2);
 		}
 
 		// Show form
@@ -751,7 +751,7 @@ class yf_db_manager {
 			'error_message'		=> _e(),
 			'back_link'			=> url('/@object'),
 		);
-		return tpl()->parse($_GET['object'].'/backup', $replace);
+		return tpl()->parse('@object/backup', $replace);
 	}
 
 	/**

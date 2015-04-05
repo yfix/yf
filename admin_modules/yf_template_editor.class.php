@@ -87,7 +87,7 @@ class yf_template_editor {
 				'themes_lib_dir'	=> realpath($this->_dir_array[$theme_class]),
 				'add_url'			=> './?object='.$_GET['object'].'&action=add_theme_form&location='.$theme_class,
 			);
-			$items .= tpl()->parse($_GET['object'].'/themes_location_item', $replace3);
+			$items .= tpl()->parse('@object/themes_location_item', $replace3);
  
 			foreach ((array)$theme_attr as $theme_path => $theme_name) {
 				$replace2 = array(
@@ -99,7 +99,7 @@ class yf_template_editor {
 					'edit_url'			=> './?object='.$_GET['object'].'&action=edit_theme&theme='.$theme_name.'&location='.$theme_class,
 					'location'			=> $theme_class,
 				);
-				$items .= tpl()->parse($_GET['object'].'/themes_item', $replace2);
+				$items .= tpl()->parse('@object/themes_item', $replace2);
 			}
 		}
 		$replace = array(
@@ -107,7 +107,7 @@ class yf_template_editor {
 			'add_url'		=> './?object='.$_GET['object'].'&action=add_theme_form',
 			'import_url'	=> './?object='.$_GET['object'].'&action=import',
 		);
-		return tpl()->parse($_GET['object'].'/themes_main', $replace);
+		return tpl()->parse('@object/themes_main', $replace);
 	}
 
 	/**
@@ -132,7 +132,7 @@ class yf_template_editor {
 			'theme_name' 	=> _prepare_html($_GET['theme']),
 			'location'		=> $_GET['location'],
 		);
-		return tpl()->parse($_GET['object'].'/edit_theme', $replace);
+		return tpl()->parse('@object/edit_theme', $replace);
 	}
 
 	/**
@@ -155,7 +155,7 @@ class yf_template_editor {
 			'form_action'	=> './?object='.$_GET['object'].'&action=save_stpl&theme='.$this->theme_name.'&location='.$_GET['location'],
 			'location'		=> $_GET['location'],
 		);
-		return tpl()->parse($_GET['object'].'/stpls_list_main', $replace);
+		return tpl()->parse('@object/stpls_list_main', $replace);
 	}
 
 	/**
@@ -262,7 +262,7 @@ class yf_template_editor {
 			'edit_stpl_url'	=> './?object='.$_GET['object'].'&action='.($is_folder ? 'edit_dir' : 'edit_stpl').'&name='.$name.'&theme='.$this->theme_name.'&location='.$_GET['location'],
 			'location'		=> $_GET['location'],
 		);
-		return tpl()->parse($_GET['object'].'/stpls_list_item', $replace);
+		return tpl()->parse('@object/stpls_list_item', $replace);
 	}
 
 	/**
@@ -337,7 +337,7 @@ class yf_template_editor {
 			'stpl_text'	=> trim($stpl_text),
 			'location'	=> $path,
 		);
-		return tpl()->parse($_GET['object'].'/view_content', $replace);
+		return tpl()->parse('@object/view_content', $replace);
 	}
 
 	/**
@@ -399,7 +399,7 @@ class yf_template_editor {
 	/**
 	*/
 	function _framework_warning () {
-		return _e( tpl()->parse($_GET['object'].'/framework_warning') );
+		return _e( tpl()->parse('@object/framework_warning') );
 	}
 
 	/**

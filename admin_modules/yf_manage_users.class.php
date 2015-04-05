@@ -189,14 +189,14 @@ class yf_manage_users {
 				'email'		=> $A['email'],
 				'password'	=> $A['password'],
 			);
-			$message = tpl()->parse($_GET['object'].'/email', $replace2);
+			$message = tpl()->parse('@object/email', $replace2);
 			// Set user confirmed
 			db()->query('UPDATE '.db('user').' SET active='1' WHERE id='.intval($A['id']));
 			common()->send_mail(SITE_ADVERT_NAME, SITE_ADMIN_EMAIL, $A['email'], _display_name($A), 'Thank you for registering with us!', $message, nl2br($message));
 			$replace = array(
 				'name'	=> _display_name($A),
 			);
-			$body = tpl()->parse($_GET['object'].'/confirmed', $replace);
+			$body = tpl()->parse('@object/confirmed', $replace);
 		} else {
 			$body .= _e();
 			$body .= $this->show($_POST);

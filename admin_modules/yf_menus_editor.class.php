@@ -321,7 +321,7 @@ class yf_menus_editor {
 			$item['delete_link']	= './?object='.$_GET['object'].'&action=delete_item&id='.$id;
 			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
 			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
-			$tpl_items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
+			$tpl_items[$id] = tpl()->parse('@object/drag_item', $item);
 		}
 		$replace = array(
 			'items' 		=> implode(PHP_EOL, (array)$tpl_items),
@@ -329,7 +329,7 @@ class yf_menus_editor {
 			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
 			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
 		);
-		return tpl()->parse($_GET['object'].'/drag_main', $replace);
+		return tpl()->parse('@object/drag_main', $replace);
 	}
 
 	/**
