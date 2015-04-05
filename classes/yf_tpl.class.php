@@ -173,15 +173,11 @@ class yf_tpl {
 	* Global scope tags
 	*/
 	function _init_global_tags() {
-		$user_id = main()->USER_ID;
 		$data = array(
-			'main_user_id'	=> (int)$user_id,
-			'is_logged_in'  => intval((bool) $user_id),
-			'is_spider'     => (int)conf('IS_SPIDER'),
-			'is_https'      => isset($_SERVER['HTTPS']) || isset($_SERVER['SSL_PROTOCOL']) ? 1 : 0,
+			'main_user_id'	=> (int)main()->USER_ID,
+			'is_logged_in'  => intval((bool) main()->USER_ID),
 			'site_id'       => (int)conf('SITE_ID'),
 			'lang'          => conf('language'),
-			'debug_mode'    => (int)((bool)DEBUG_MODE),
 			'tpl_path'      => MEDIA_PATH. $this->TPL_PATH,
 		);
 		foreach ($data as $k => $v) {
