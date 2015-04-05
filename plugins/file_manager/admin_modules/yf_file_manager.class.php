@@ -49,8 +49,9 @@ class yf_file_manager {
 // TODO: add filesystem stats (disks usage, mounted filesystems, iostat if possible, etc)
 		$path_info = pathinfo($_SERVER['SCRIPT_FILENAME']);
 		$_old_dir_name	= str_replace("\\", '/', getcwd());
-		if ($_GET['dir_name']) {
-			$dir_name = urldecode($_GET['dir_name']);
+		$_dir_name = $_GET['dir_name'] ?: $_GET['id'];
+		if ($_dir_name) {
+			$dir_name = urldecode($_dir_name);
 			chdir($dir_name);
 		} else {
 			$dir_name = $path_info['dirname'];
@@ -160,35 +161,61 @@ class yf_file_manager {
 
 	/**
 	*/
+	function view() {
+		return $this->view_item();
+	}
+
+	/**
+	*/
 	function view_item() {
-// TODO: unify with edit_item, just set readonly for ace editor
-		foreach ((array)$_POST as $k => $v) {
-			$tmp = substr($k, 0, 2);
-			if ($tmp == 'd_' || $tmp == 'f_') {
-				$name = $v;
-				break;
+		if (!empty($_GET['id'])) {
+			$file_name	= urldecode($_GET['id']);
+			$file_path	= $file_name;
+			$dir_name	= dirname($file_path);
+		} else {
+			foreach ((array)$_REQUEST as $k => $v) {
+				$tmp = substr($k, 0, 2);
+				if ($tmp == 'd_' || $tmp == 'f_') {
+					$name = $v;
+					break;
+				}
+			}
+			$dir_name	= urldecode($_REQUEST['dir_name']);
+			$file_name	= str_replace("\\", '/', $dir_name.'/'.$name);
+			$file_path	= $file_name;
+		}
+		$_tmp_array = array();
+		$tmp_path = '/';
+		foreach ((array)explode('/', dirname($file_name)) as $_folder) {
+			if ($_folder) {
+				$tmp_path .= $_folder.'/';
+				$_tmp_array[] = a('/@object/show/'.urlencode($tmp_path), $_folder);
 			}
 		}
-		$dir_name	= urldecode($_POST['dir_name']);
-		$file_name	= str_replace("\\", '/', $dir_name.'/'.$name);
-		$file_path	= $file_name;
-
-		$_tmp_path = '';
-		$_tmp_array = array();
-		foreach ((array)explode('/', dirname($file_name)) as $_folder) {
-			$_tmp_path .= $_folder.'/';
-			$_tmp_array[] = '<a href="./?object='.$_GET['object'].'&dir_name='.urlencode($_tmp_path)._add_get(array('dir_name')).'">'._prepare_html($_folder).'</a>';
-		}
 		if ($_tmp_array) {
-			$file_name = implode('/', $_tmp_array).'/'._prepare_html($name, 0);
+			$file_name = '/'. implode('/', $_tmp_array). '/'._prepare_html(basename($file_name), 0);
 		}
+		$file_text = _prepare_html(file_get_contents($file_path), 0);
 		$replace = array(
-			'file_name'	=> $file_name,
-			'text'		=> highlight_file($file_path, true),
-			'edit_link'	=> './?object='.$_GET['object'].'&action=edit_item&f_='.urlencode(basename($file_path)).'&dir_name='.urlencode(dirname($file_path))._add_get(array('dir_name')),
-			'back'		=> back('./?object='.$_GET['object'].'&dir_name='.$_POST['dir_name']._add_get(array('dir_name'))),
+			'back_link'	=> url('/@object/show/'.urlencode($_REQUEST['dir_name'])),
 		);
-		return tpl()->parse($_GET['object'].'/view', $replace);
+		$div_id = 'editor_html';
+		$hidden_id = 'file_text_hidden';
+		return '<h4>View: '.$file_name. '</h4>'.
+			form($replace)
+			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'.$file_text.'</div>', '', array(
+				'id'	=> $div_id,
+				'wide'	=> 1,
+				'ace_editor' => array('mode' => common()->get_file_ext($file_path)),
+			))
+			->hidden($hidden_id)
+		;
+	}
+
+	/**
+	*/
+	function edit() {
+		return $this->edit_item();
 	}
 
 	/**
@@ -214,23 +241,27 @@ class yf_file_manager {
 		if (main()->is_post()) {
 			$file_name = urldecode($_GET['file_name']);
 			file_put_contents($file_name, $_POST['file_text_hidden']);
-			return js_redirect('./?object='.$_GET['object'].'&dir_name='.$_GET['dir_name']._add_get(array('dir_name')));
+			return js_redirect('/@object/show/'.urlencode($_GET['dir_name']));
 		}
 		$_tmp_array = array();
+		$tmp_path = '/';
 		foreach ((array)explode('/', dirname($file_name)) as $_folder) {
-			$_tmp_array[] = '<a href="./?object='.$_GET['object'].'&dir_name='.urlencode($_folder.'/')._add_get(array('dir_name')).'" class="btn btn-mini btn-xs">'._prepare_html($_folder).'</a>';
+			if ($_folder) {
+				$tmp_path .= $_folder.'/';
+				$_tmp_array[] = a('/@object/show/'.urlencode($tmp_path), $_folder);
+			}
 		}
 		if ($_tmp_array) {
-			$file_name = implode('/', $_tmp_array).'/'._prepare_html($name, 0);
+			$file_name = '/'. implode('/', $_tmp_array). '/'._prepare_html(basename($file_name), 0);
 		}
 		$file_text = _prepare_html(file_get_contents($file_path), 0);
 		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'].'dir_name='.$_REQUEST['dir_name'].'&file_name='.urlencode($file_path)._add_get(array('dir_name')),
-			'back_link'		=> './?object='.$_GET['object'].'&dir_name='.$_REQUEST['dir_name']._add_get(array('dir_name')),
+			'form_action'	=> url('/@object/@action/'.urlencode($file_path)),
+			'back_link'		=> url('/@object/show/'.urlencode($_REQUEST['dir_name'])),
 		);
 		$div_id = 'editor_html';
 		$hidden_id = 'file_text_hidden';
-		return '<h4>edit: '.$file_name. '</h4>'.
+		return '<h4>Edit: '.$file_name. '</h4>'.
 			form($replace, array(
 				'data-onsubmit' => '$(this).find("#'.$hidden_id.'").val( $("#'.$div_id.'").data("ace_editor").session.getValue() );',
 			))
