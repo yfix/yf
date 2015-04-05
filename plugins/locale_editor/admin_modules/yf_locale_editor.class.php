@@ -16,11 +16,11 @@ class yf_locale_editor {
 	/** @var string @conf_skip STPL Files to parse */
 	public $_include_stpl_pattern	= array('#\/(templates)#', '#\.stpl$#');
 	/** @var string @conf_skip Exclude files from parser */
-	public $_exclude_pattern		= array('#\/(adodb|captcha_fonts|domit|feedcreator|html2fpdf|locale|smarty|samples|pear)#', '');
+	public $_exclude_pattern		= array('#\/(commands|docs|libs|scripts|sql|storage|tests)#', '');
 	/** @var string @conf_skip Search vars in PHP files */
-	public $_translate_php_pattern	= "/[\(\{\.\,\s\t=]+?(translate|t|i18n)[\s\t]*?\([\s\t]*?('[^'\$]+?'|\"[^\"\$]+?\")/ims";
+	public $_translate_php_pattern	= "/[\(\{\.\,\s\t=]+?(t)[\s\t]*?\([\s\t]*?('[^'\$]+?'|\"[^\"\$]+?\")/ims";
 	/** @var string @conf_skip Search vars in STPL files */
-	public $_translate_stpl_pattern= "/\{(t|translate|i18n)\([\"']*([\s\w\-\.\,\:\;\%\&\#\/\<\>]*)[\"']*[,]*[^\)\}]*\)\}/is";
+	public $_translate_stpl_pattern= "/\{(t)\([\"']*([\s\w\-\.\,\:\;\%\&\#\/\<\>]*)[\"']*[,]*[^\)\}]*\)\}/is";
 	/** @var bool Display vars locations */
 	public $DISPLAY_VARS_LOCATIONS	= true;
 	/** @var bool Display links to edit source files (in location) */
@@ -87,7 +87,7 @@ class yf_locale_editor {
 				'active'	=> 1,
 				'is_default'=> 1,
 			));
-			js_redirect('./?object='.$_GET['object'].'&action='.$_GET['action']);
+			js_redirect('/@object/@action');
 		}
 
 		$langs_for_search[''] = t('All languages');
@@ -135,63 +135,50 @@ class yf_locale_editor {
 			->text('tr_count', 'Num vars')
 			->text('tr_percent', 'Translated', array('badge' => 'info'))
 			->text('is_default')
-			->btn_edit('', './?object='.$_GET['object'].'&action=lang_edit&id=%d')
-			->btn_delete('', './?object='.$_GET['object'].'&action=lang_delete&id=%d', array('display_func' => $no_actions_if_default))
-			->btn('Make default', './?object='.$_GET['object'].'&action=lang_default&id=%d', array('class_add' => 'btn-info', 'display_func' => $no_actions_if_default))
-			->btn_active('', './?object='.$_GET['object'].'&action=lang_active&id=%d', array('display_func' => $no_actions_if_default))
-			->footer_link('Manage vars', './?object='.$_GET['object'].'&action=show_vars')
-			->footer_add('Add language', './?object='.$_GET['object'].'&action=lang_add')
-			->footer_link('Import vars', './?object='.$_GET['object'].'&action=import_vars', array('icon' => 'icon-signin'))
-			->footer_link('Export vars', './?object='.$_GET['object'].'&action=export_vars', array('icon' => 'icon-signout'))
-#			->footer_link('Collect vars', './?object='.$_GET['object'].'&action=collect_vars')
-#			->footer_link('Cleanup vars', './?object='.$_GET['object'].'&action=cleanup_vars')
-#			->footer_link('Import vars', './?object='.$_GET['object'].'&action=import_vars')
-#			->footer_link('Export vars', './?object='.$_GET['object'].'&action=export_vars')
-#			->footer_link('User vars', './?object='.$_GET['object'].'&action=user_vars')
+			->btn_edit('', url('/@object/lang_edit/%d'))
+			->btn_delete('', url('/@object/lang_delete/%d'), array('display_func' => $no_actions_if_default))
+			->btn('Make default', url('/@object/lang_default/%d'), array('class_add' => 'btn-info', 'display_func' => $no_actions_if_default))
+			->btn_active('', url('/@object/lang_active/%d'), array('display_func' => $no_actions_if_default))
+			->footer_link('Manage vars', url('/@object/show_vars'))
+			->footer_add('Add language', url('/@object/lang_add'))
+			->footer_link('Import vars', url('/@object/import_vars'), array('icon' => 'icon-signin'))
+			->footer_link('Export vars', url('/@object/export_vars'), array('icon' => 'icon-signout'))
+#			->footer_link('Collect vars', url('/@object/collect_vars'))
+#			->footer_link('Cleanup vars', url('/@object/cleanup_vars'))
+#			->footer_link('Import vars', url('/@object/import_vars'))
+#			->footer_link('Export vars', url('/@object/export_vars'))
+#			->footer_link('User vars', url('/@object/user_vars'))
 		;
 	}
 
 	/**
 	*/
 	function lang_add() {
-		foreach ((array)$this->_cur_langs_array as $A) {
-			if (isset($this->_langs[$A['locale']])) {
-				unset($this->_langs[$A['locale']]);
+		$raw = $this->_get_iso639_list();
+		$langs = array();
+		foreach ($raw as $code => $v) {
+			if (isset($this->_cur_langs[$code])) {
+				continue;
 			}
+			$langs[$code] = implode(' | ', $v);
 		}
-		if (main()->is_post()) {
-			if (empty($_POST['lang_code'])) {
-				common()->_error_exists('Please select language to add');
-			}
-			if (!empty($_POST['lang_code']) && isset($this->_langs[$_POST['lang_code']])) {
-				common()->_error_exists('This language has been added already');
-			}
-// TODO: replace this with form->language_box()
-			$raw_langs = $this->_get_iso639_list();
-			if (!isset($raw_langs[$_POST['lang_code']])) {
-				common()->_error_exists('Wrong language code');
-			}
-			if (!common()->_error_exists()) {
-				db()->INSERT('locale_langs', array(
-					'locale'		=> _es($_POST['lang_code']),
-					'name'			=> _es($raw_langs[$_POST['lang_code']][0]),
-					'charset'		=> _es('utf-8'),
-					'active'		=> 1,
-					'is_default'	=> 0,
-				));
-				$this->_create_empty_vars_for_locale($_POST['lang_code']);
+		$a['redirect_link'] = url('/@object');
+		return form((array)$_POST + (array)$a)
+			->validate(array(
+				'locale' => array('trim|required', function($in) use ($langs) { return isset($langs[$in]); })
+			))
+			->insert_if_ok('sys_locale_langs', array('locale'), array(
+				'name'		=> $raw[$_POST['locale']][0],
+				'charset'	=> 'utf-8',
+				'active'	=> 0,
+				'is_default'=> 0,
+			))
+			->on_after_update(function(){
 				cache_del('locale_langs');
-				return js_redirect('./?object='.$_GET['object']);
-			}
-		}
-		$replace = array(
-			'form_action'	=> './?object='.$_GET['object'].'&action='.$_GET['action'],
-// TODO: replace this with _class('html')->list_box()
-			'langs_box'		=> $this->_box('lang_code',	-1),
-			'back_link'		=> './?object='.$_GET['object'],
-			'error_message'	=> _e(),
-		);
-		return tpl()->parse($_GET['object'].'/add_lang', $replace);
+			})
+			->select_box('locale', $langs)
+			->save('Add')
+		;
 	}
 
 	/**
