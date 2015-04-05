@@ -72,7 +72,7 @@ class yf_get_pswd {
 		if (empty($user)) {
 			return false;
 		}
-		$html = tpl()->parse($_GET['object'].'/email', array(
+		$html = tpl()->parse('@object/email', array(
 			'user_name'		=> _display_name($user),
 			'password'		=> $user['password'],
 			'login'			=> $user['login'],
