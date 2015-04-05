@@ -364,6 +364,14 @@ class yf_tpl {
 		if (substr($name, 0, $yfp_len) == $yf_prefix) {
 			$name = substr($name, $yfp_len);
 		}
+		if (false !== strpos($name, '@')) {
+			$r = array(
+				'@object'	=> $_GET['object'],
+				'@action'	=> $_GET['action'],
+				'@id'		=> $_GET['id'],
+			);
+			$name = str_replace(array_keys($r), array_values($r), $name);
+		}
 		if (!is_array($params)) {
 			$params = array();
 		}
