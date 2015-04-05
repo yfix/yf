@@ -73,7 +73,7 @@ class yf_manage_forum_manage_main {
 				'forum_home_page_posts',
 			));
 		}
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
@@ -248,7 +248,7 @@ class yf_manage_forum_manage_main {
 		cache_del('forum_totals');
 		cache_del('forum_home_page_posts');
 
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
@@ -353,7 +353,7 @@ class yf_manage_forum_manage_main {
 		cache_del('forum_forums');
 		cache_del('forum_totals');
 		cache_del('forum_home_page_posts');
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {
@@ -430,7 +430,7 @@ class yf_manage_forum_manage_main {
 		cache_del('forum_forums');
 		cache_del('forum_totals');
 		cache_del('forum_home_page_posts');
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['msg_id'];
 		} else {
@@ -452,7 +452,7 @@ class yf_manage_forum_manage_main {
 			cache_del('forum_totals');
 			cache_del('forum_home_page_posts');
 		}
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo ($cat_info['active'] ? 0 : 1);
 		} else {
@@ -473,7 +473,7 @@ class yf_manage_forum_manage_main {
 			cache_del('forum_totals');
 			cache_del('forum_home_page_posts');
 		}
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo ($forum_info['active'] ? 0 : 1);
 		} else {
@@ -496,7 +496,7 @@ class yf_manage_forum_manage_main {
 			cache_del('forum_totals');
 			cache_del('forum_home_page_posts');
 		}
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo ($topic_info['active'] ? 0 : 1);
 		} else {
@@ -519,7 +519,7 @@ class yf_manage_forum_manage_main {
 			cache_del('forum_totals');
 			cache_del('forum_home_page_posts');
 		}
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo ($post_info['active'] ? 0 : 1);
 		} else {

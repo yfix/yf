@@ -316,7 +316,7 @@ class yf_manage_forum_manage_future {
 				db()->query('DELETE FROM '.db('forum_future_posts').' WHERE id='.intval($_GET['id']));
 			}
 		}
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo $_GET['id'];
 		} else {

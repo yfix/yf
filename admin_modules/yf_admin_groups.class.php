@@ -96,8 +96,8 @@ class yf_admin_groups {
 			common()->admin_wall_add(array('admin group deleted', $_GET['id']));
 		}
 		cache_del(array('admin_groups', 'admin_groups_details'));
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
 			return js_redirect(url('/@object'));
@@ -119,8 +119,8 @@ class yf_admin_groups {
 			common()->admin_wall_add(array('admin group '.$group_info['name'].' '.($group_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
 		cache_del(array('admin_groups', 'admin_groups_details'));
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($group_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect(url('/@object'));

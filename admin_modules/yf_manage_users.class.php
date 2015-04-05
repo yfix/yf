@@ -92,8 +92,8 @@ class yf_manage_users {
 			db()->update('user', array('active' => (int)!$user_info['active']), $user_info['id']);
 		}
 		cache_del('user');
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($user_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect(url('/@object'));

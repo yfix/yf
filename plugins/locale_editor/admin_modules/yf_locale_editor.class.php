@@ -210,60 +210,69 @@ class yf_locale_editor {
 	/**
 	*/
 	function lang_active() {
-		$_GET['id'] = intval($_GET['id']);
-		if (!empty($_GET['id'])) {
-			$info = db()->get('SELECT * FROM '.db('locale_langs').' WHERE id='.intval($_GET['id']));
+		$id = intval($_GET['id']);
+		if ($id) {
+			$a = db()->from('locale_langs')->whereid($id)->get();
 		}
-		if (!empty($info) && !$info['is_default']) {
-			db()->update('locale_langs', array('active' => intval(!$info['active'])), 'id='.intval($_GET['id']));
-			common()->admin_wall_add(array('locale lang '.$info['name'].' '.($info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
+		if (!empty($a) && !$a['is_default']) {
+			db()->update('locale_langs', array('active' => intval(!$a['active'])), 'id='.(int)$id);
+			common()->admin_wall_add(array('locale lang '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $id));
 			cache_del(array('locale_langs'));
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
-			echo ($info['active'] ? 0 : 1);
+		if (is_ajax()) {
+			no_graphics(true);
+			echo ($a['active'] ? 0 : 1);
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect('/@object');
 		}
 	}
 
 	/**
 	*/
 	function lang_default() {
-		$_GET['id'] = intval($_GET['id']);
-		if (!empty($_GET['id'])) {
-			$info = db()->get('SELECT * FROM '.db('locale_langs').' WHERE id='.intval($_GET['id']));
+		$id = intval($_GET['id']);
+		if ($id) {
+			$a = db()->from('locale_langs')->whereid($id)->get();
 		}
 		if (!empty($info) && !$info['is_default']) {
 			db()->update('locale_langs', array('is_default' => 0), '1=1');
-			db()->update('locale_langs', array('is_default' => 1), 'id='.intval($_GET['id']));
-			common()->admin_wall_add(array('locale lang '.$info['name'].' made default', $_GET['id']));
+			db()->update('locale_langs', array('is_default' => 1), 'id='.intval($id));
+			common()->admin_wall_add(array('locale lang '.$info['name'].' made default', $id));
 			cache_del(array('locale_langs'));
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
-			echo ($group_info['active'] ? 0 : 1);
+		if (is_ajax()) {
+			no_graphics(true);
+			echo 1;
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect('/@object');
 		}
 	}
 
 	/**
 	*/
 	function lang_delete() {
-		$_GET['id'] = intval($_GET['id']);
-		if ($_GET['id']) {
-			db()->query('DELETE FROM '.db('locale_langs').' WHERE id='.intval($_GET['id']).' LIMIT 1');
-			db()->query('DELETE FROM '.db('locale_translate').' WHERE locale="'._es($this->_cur_langs_array[$_GET['id']]['locale']).'"');
-			common()->admin_wall_add(array('locale language deleted: '.$this->_cur_langs_array[$_GET['id']]['locale'], $_GET['id']));
+		$id = intval($_GET['id']);
+		if ($id) {
+			$a = db()->from('locale_langs')->whereid($id)->get();
 		}
-		cache_del('locale_langs');
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
-			echo $_GET['id'];
+		if ($a) {
+			db()->query('DELETE FROM '.db('locale_langs').' WHERE id='.intval($id).' LIMIT 1');
+			db()->query('DELETE FROM '.db('locale_translate').' WHERE locale="'._es($this->_cur_langs_array[$id]['locale']).'"');
+			common()->admin_wall_add(array('locale language deleted: '.$this->_cur_langs_array[$id]['locale'], $id));
+			cache_del('locale_langs');
+		}
+		if (is_ajax()) {
+			no_graphics(true);
+			echo $id;
 		} else {
-			return js_redirect('./?object='.$_GET['object']);
+			return js_redirect('/@object');
 		}
+	}
+
+	/**
+	*/
+	function files_vars() {
+// TODO: show vars from files
 	}
 
 	/**
@@ -459,8 +468,8 @@ class yf_locale_editor {
 			db()->query('DELETE FROM '.db('locale_translate').' WHERE var_id='.intval($_GET['id']));
 			common()->admin_wall_add(array('locale var deleted: '.$var_info['value'], $_GET['id']));
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
 			return js_redirect('./?object='.$_GET['object'].'&action=show_vars');
@@ -573,7 +582,7 @@ class yf_locale_editor {
 	*/
 	function collect_vars_for_module () {
 // TODO: move out into submodule
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 
 		$module_name = preg_replace('/[^a-z0-9\_]/i', '', strtolower(trim($_GET['id'])));
 		if (!$module_name) {

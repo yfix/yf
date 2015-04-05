@@ -80,8 +80,8 @@ class yf_manage_dashboards {
 			db()->query('DELETE FROM '.db('dashboards').' WHERE id='.intval($_GET['id']).' LIMIT 1');
 			common()->admin_wall_add(array('dashboard deleted: '.$ds_info['name'].'', $_GET['id']));
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
 			return js_redirect(url('/@object'));
@@ -116,8 +116,8 @@ class yf_manage_dashboards {
 			db()->update('dashboards', array('active' => (int)!$ds_info['active']), 'id='.intval($_GET['id']));
 			common()->admin_wall_add(array('dashboard '.$ds_info['name'].' '.($ds_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($ds_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect(url('/@object'));

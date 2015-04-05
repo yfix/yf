@@ -88,8 +88,8 @@ class yf_user_groups {
 			common()->admin_wall_add(array('user group deleted: '.$_GET['id'].'', $_GET['id']));
 		}
 		cache_del(array('user_groups', 'user_groups_details'));
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
 			return js_redirect(url('/@object'));
@@ -110,8 +110,8 @@ class yf_user_groups {
 			common()->admin_wall_add(array('user group: '.$group_info['name'].' '.($group_info['active'] ? 'inactivated' : 'activated'), $group_info['id']));
 		}
 		cache_del(array('user_groups', 'user_groups_details'));
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($group_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect(url('/@object'));

@@ -161,7 +161,7 @@ class yf_db_manager {
 	/**
 	*/
 	function table_truncate () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		if (empty($_POST['tables'])) {
 			return false;
 		}
@@ -177,7 +177,7 @@ class yf_db_manager {
 	/**
 	*/
 	function table_drop () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		if (empty($_POST['tables'])) {
 			return false;
 		}
@@ -193,7 +193,7 @@ class yf_db_manager {
 	/**
 	*/
 	function table_optimize () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 
 		if (empty($_POST['tables'])) {
 			return false;
@@ -217,7 +217,7 @@ class yf_db_manager {
 	/**
 	*/
 	function table_check () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		
 		if(empty($_POST['tables'])){
 			return false;
@@ -241,7 +241,7 @@ class yf_db_manager {
 	/**
 	*/
 	function table_repair () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		
 		if(empty($_POST['tables'])){
 			return false;
@@ -632,7 +632,7 @@ class yf_db_manager {
 						$_exported_file_path	.= '.gz';
 					}
 				}
-				main()->NO_GRAPHICS = true;
+				no_graphics(true);
 				header('Content-Type: application/force-download; name=\''.$_exported_name.'\'');
 				header('Content-Disposition: attachment; filename=\''.$_exported_name.'\'');
 				header('Content-Transfer-Encoding: binary');
@@ -775,7 +775,7 @@ class yf_db_manager {
 		if (file_exists($fpath)) {
 
 			$body = file_get_contents($fpath);
-			main()->NO_GRAPHICS = true;
+			no_graphics(true);
 			// Throw headers
 			header('Content-Type: application/force-download; name=\''.$fname.'\'');
 			header('Content-Transfer-Encoding: binary');
