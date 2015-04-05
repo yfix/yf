@@ -383,13 +383,11 @@ class yf_locale_editor {
 	/**
 	*/
 	function add_var() {
-		if (main()->is_post()) {
+		if (is_post()) {
 			$_POST['var_name'] = _strtolower(str_replace(' ', '_', $_POST['var_name']));
 			$var_info = db()->get('SELECT * FROM '.db('locale_vars').' WHERE LOWER(REPLACE(CONVERT(value USING utf8), " ", "_")) = "'._es($_POST['var_name']).'"');
 			if (!empty($_POST['var_name']) && empty($var_info)) {
-				db()->insert('locale_vars', _es(array(
-					'value' => $_POST['var_name']
-				)));
+				db()->insert_safe('locale_vars', array('value' => $_POST['var_name']));
 				$INSERT_ID = db()->insert_id();
 				common()->admin_wall_add(array('locale var added: '.$_POST['var_name'], $INSERT_ID));
 			}
@@ -443,9 +441,7 @@ class yf_locale_editor {
 			if ($var_info) {
 				$_GET['id'] = $var_info['id'];
 			} else {
-				db()->INSERT('locale_vars', array(
-					'value'	=> _es($_GET['id'])
-				));
+				db()->insert_safe('locale_vars', array('value' => $_GET['id']));
 				$_GET['id'] = db()->INSERT_ID();
 			}
 		}
@@ -462,7 +458,7 @@ class yf_locale_editor {
 			$var_tr[$A['locale']] = $A['value'];
 		}
 
-		if (main()->is_post()) {
+		if (is_post()) {
 			if (!_ee()) {
 				foreach ((array)$this->_cur_langs_array as $lang_id => $lang_info) {
 					if (!isset($_POST[$lang_info['locale']])) {
