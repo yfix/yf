@@ -330,11 +330,13 @@ class yf_locale_editor {
 			->text('source')
 			->text('lang', array('badge' => 'default'))
 			->text('translation')
-#			->text('files')
 			->btn_edit('', url('/@object/edit_var/%d'), array('btn_no_text' => 1))
 			->btn_func('files', function($row, $extra, $replace, $table) {
 				$path = $row['files'];
-				return a('/file_manager/view/'.urlencode($path), substr($path, strlen(APP_PATH)), 'fa fa-eye');
+				$show_path = $path;
+				$show_path = substr($show_path, 0, strlen(APP_PATH)) === APP_PATH ? substr($show_path, strlen(APP_PATH)) : $show_path;
+				$show_path = substr($show_path, 0, strlen(YF_PATH)) === YF_PATH ? substr($show_path, strlen(YF_PATH)) : $show_path;
+				return a('/file_manager/view/'.urlencode($path), $show_path, 'fa fa-eye');
 			})
 		;
 	}
