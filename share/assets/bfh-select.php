@@ -17,9 +17,9 @@ return array(
 		),
 	),
 	'require' => array(
-		'js' => array(
-			'jquery',
-			'bootstrap',
+		'asset' => array(
+#			'jquery',
+#			'bootstrap-theme',
 		),
 	),
 	'info' => array(
