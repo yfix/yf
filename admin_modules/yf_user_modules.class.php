@@ -117,8 +117,8 @@ class yf_user_modules {
 			db()->UPDATE('user_modules', array('active' => (int)!$module_info['active']), 'id='.intval($module_info['id']));
 		}
 		cache_del(array('user_modules','user_modules_for_select'));
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($module_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect(url('/@object'));

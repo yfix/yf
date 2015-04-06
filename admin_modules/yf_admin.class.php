@@ -126,7 +126,7 @@ class yf_admin {
 			common()->admin_wall_add(array('admin account deleted', $id));
 		}
 		if (main()->is_ajax()) {
-			main()->NO_GRAPHICS = true;
+			no_graphics(true);
 			echo $id;
 		} else {
 			return js_redirect(url('/@object'));
@@ -145,7 +145,7 @@ class yf_admin {
 			common()->admin_wall_add(array('admin account '.($a['active'] ? 'inactivated' : 'activated'), $id));
 		}
 		if (main()->is_ajax()) {
-			main()->NO_GRAPHICS = true;
+			no_graphics(true);
 			echo (int)(!$a['active']);
 		} else {
 			return js_redirect(url('/@object'));

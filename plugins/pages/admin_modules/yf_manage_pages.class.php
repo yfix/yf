@@ -156,7 +156,7 @@ class yf_manage_pages {
 			common()->admin_wall_add(array('page deleted: '.$_GET['id'], $_GET['id']));
 		}
 		cache_del('pages_names');
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo $page_name;
 		} else {
@@ -175,7 +175,7 @@ class yf_manage_pages {
 			common()->admin_wall_add(array('page: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']));
 			cache_del('pages_names');
 		}
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo ($a['active'] ? 0 : 1);
 		} else {

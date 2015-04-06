@@ -84,9 +84,9 @@ class yf_db_manager {
 			return _e('Wrong params');
 		}
 		return table2('SELECT * FROM '.db($table), array('auto_no_buttons' => 1))
-			->btn_edit('', './?object='.$_GET['object'].'&action=table_edit&id=%d&table='.$table)
-			->btn_delete('', './?object='.$_GET['object'].'&action=table_delete&id=%d&table='.$table)
-			->footer_add('', './?object='.$_GET['object'].'&action=table_add&id='.$table)
+			->btn_edit('', url('/@object/table_edit/%d/?table='.$table))
+			->btn_delete('', url('/@object/table_delete/%d/?table='.$table))
+			->footer_add('', url('/@object/table_add/'.$table))
 			->auto();
 	}
 
@@ -101,7 +101,7 @@ class yf_db_manager {
 		$replace = _class('admin_methods')->edit(array(
 			'table' 	=> $table,
 			'links_add' => '&table='.$table,
-			'back_link'	=> './?object='.$_GET['object'].'&action=table_show&id='.$table,
+			'back_link'	=> url('/@object/table_show/'.$table),
 		));
 		return form2($replace)
 			->auto(db($table), $id, array('links_add' => '&table='.$table));
@@ -117,7 +117,7 @@ class yf_db_manager {
 		$replace = _class('admin_methods')->add(array(
 			'table' 	=> $table,
 			'links_add' => '&table='.$table,
-			'back_link'	=> './?object='.$_GET['object'].'&action=table_show&id='.$table,
+			'back_link'	=> url('/@object/table_show/'.$table),
 		));
 		return form2($replace)
 			->auto(db($table), $id, array('links_add' => '&table='.$table));
@@ -161,7 +161,7 @@ class yf_db_manager {
 	/**
 	*/
 	function table_truncate () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		if (empty($_POST['tables'])) {
 			return false;
 		}
@@ -177,7 +177,7 @@ class yf_db_manager {
 	/**
 	*/
 	function table_drop () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		if (empty($_POST['tables'])) {
 			return false;
 		}
@@ -193,7 +193,7 @@ class yf_db_manager {
 	/**
 	*/
 	function table_optimize () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 
 		if (empty($_POST['tables'])) {
 			return false;
@@ -217,7 +217,7 @@ class yf_db_manager {
 	/**
 	*/
 	function table_check () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		
 		if(empty($_POST['tables'])){
 			return false;
@@ -241,7 +241,7 @@ class yf_db_manager {
 	/**
 	*/
 	function table_repair () {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		
 		if(empty($_POST['tables'])){
 			return false;
@@ -390,17 +390,17 @@ class yf_db_manager {
 			$fetch_result .= table($data, array('auto_no_buttons' => 1, 'no_pages' => 1))->auto();
 		}
 		$replace = array(
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action'],
+			'form_action'		=> url('/@object/@action'),
 			'error_message'		=> _e(),
 			'sql'				=> strlen($sql) < 10000 ? nl2br(_prepare_html($sql, 0)) : t('%num queries executed successfully', array('%num' => $num_queries)),
 			'exec_success'		=> (int)($exec_success),
 			'exec_time'			=> $_query_exec_time ? common()->_format_time_value($_query_exec_time) : '',
-			'back_link'			=> './?object='.$_GET['object'],
+			'back_link'			=> url('/@object'),
 			'num_queries'		=> intval($num_queries),
 			'fetch_result'		=> $fetch_result,
 		);
 // TODO: form display file upload to import
-		return tpl()->parse($_GET['object'].'/import', $replace);
+		return tpl()->parse('@object/import', $replace);
 	}
 
 	/**
@@ -632,7 +632,7 @@ class yf_db_manager {
 						$_exported_file_path	.= '.gz';
 					}
 				}
-				main()->NO_GRAPHICS = true;
+				no_graphics(true);
 				header('Content-Type: application/force-download; name=\''.$_exported_name.'\'');
 				header('Content-Disposition: attachment; filename=\''.$_exported_name.'\'');
 				header('Content-Transfer-Encoding: binary');
@@ -654,11 +654,11 @@ class yf_db_manager {
 					'sql_text'	=> _prepare_html($EXPORTED_SQL, 0),
 					'back_link'	=> url('/@object'),
 				);
-				return tpl()->parse($_GET['object'].'/export_text_result', $replace2);
+				return tpl()->parse('@object/export_text_result', $replace2);
 			}
 		}
 		$replace = array(
-			'form_action'		=> './?object='.$_GET['object'].'&action='.$_GET['action']._add_get(),
+			'form_action'		=> url('/@object/@action'),
 			'error_message'		=> _e(),
 			'back_link'			=> url('/@object'),
 			'single_table'		=> _prepare_html($SINGLE_TABLE),
@@ -668,7 +668,7 @@ class yf_db_manager {
 			'table_num_rows'	=> intval($_single_table_info['rows']),
 			'table_size'		=> common()->format_file_size($_single_table_info['data_size']),
 		);
-		return tpl()->parse($_GET['object'].'/export', $replace);
+		return tpl()->parse('@object/export', $replace);
 	}
 
 	/**
@@ -736,22 +736,22 @@ class yf_db_manager {
 				'backup_date'	=> _format_date($_info['file_mtime'], 'long'),
 				'backup_fsize'	=> common()->format_file_size($_info['file_size']),
 				'backup_name'	=> basename($fpath),
-				'delete_url'	=> './?object='.$_GET['object'].'&action=delete_backup&id='.$id,
-				'restore_url'	=> './?object='.$_GET['object'].'&action=restore&id='.$id,
-				'download_url'	=> './?object='.$_GET['object'].'&action=export_backup&id='.$id,
+				'delete_url'	=> url('/@object/delete_backup/'.$id),
+				'restore_url'	=> url('/@object/restore/'.$id),
+				'download_url'	=> url('/@object/export_backup/'.$id),
 			);
-			$items .= tpl()->parse($_GET['object'].'/backup_item', $replace2);
+			$items .= tpl()->parse('@object/backup_item', $replace2);
 		}
 
 		// Show form
 		$replace = array(
 			'items'				=> $items,
-			'form_action'		=> './?object='.$_GET['object'].'&action=backup',
-			'import_form_action'=> './?object='.$_GET['object'].'&action=show_backup',
+			'form_action'		=> url('/@object/backup'),
+			'import_form_action'=> url('/@object/show_backup'),
 			'error_message'		=> _e(),
 			'back_link'			=> url('/@object'),
 		);
-		return tpl()->parse($_GET['object'].'/backup', $replace);
+		return tpl()->parse('@object/backup', $replace);
 	}
 
 	/**
@@ -775,7 +775,7 @@ class yf_db_manager {
 		if (file_exists($fpath)) {
 
 			$body = file_get_contents($fpath);
-			main()->NO_GRAPHICS = true;
+			no_graphics(true);
 			// Throw headers
 			header('Content-Type: application/force-download; name=\''.$fname.'\'');
 			header('Content-Transfer-Encoding: binary');

@@ -183,8 +183,8 @@ class yf_menus_editor {
 			common()->admin_wall_add(array('menu deleted: '.$menu_info['name'].'', $menu_info['id']));
 			module('menus_editor')->_purge_caches();
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
 			return js_redirect(url('/@object'));
@@ -203,8 +203,8 @@ class yf_menus_editor {
 			common()->admin_wall_add(array('menu: '.$menu_info['name'].' '.($menu_info['active'] ? 'inactivated' : 'activated'), $menu_info['id']));
 			module('menus_editor')->_purge_caches();
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($menu_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect(url('/@object'));
@@ -306,7 +306,7 @@ class yf_menus_editor {
 				common()->admin_wall_add(array('menu items dragged: '.$menu_info['name'].'', $menu_info['id']));
 				module('menus_editor')->_purge_caches();
 			}
-			main()->NO_GRAPHICS = true;
+			no_graphics(true);
 			return false;
 		}
 		if (isset($items[''])) {
@@ -321,7 +321,7 @@ class yf_menus_editor {
 			$item['delete_link']	= './?object='.$_GET['object'].'&action=delete_item&id='.$id;
 			$item['active_link']	= './?object='.$_GET['object'].'&action=activate_item&id='.$id;
 			$item['clone_link']		= './?object='.$_GET['object'].'&action=clone_item&id='.$id;
-			$tpl_items[$id] = tpl()->parse($_GET['object'].'/drag_item', $item);
+			$tpl_items[$id] = tpl()->parse('@object/drag_item', $item);
 		}
 		$replace = array(
 			'items' 		=> implode(PHP_EOL, (array)$tpl_items),
@@ -329,7 +329,7 @@ class yf_menus_editor {
 			'add_link'		=> './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'],
 			'back_link'		=> './?object='.$_GET['object'].'&action=show_items&id='.$_GET['id'],
 		);
-		return tpl()->parse($_GET['object'].'/drag_main', $replace);
+		return tpl()->parse('@object/drag_main', $replace);
 	}
 
 	/**
@@ -711,8 +711,8 @@ class yf_menus_editor {
 			common()->admin_wall_add(array('menu item: '.$item_info['name'].' '.($item_info['active'] ? 'inactivated' : 'activated'), $item_info['id']));
 		}
 		module('menus_editor')->_purge_caches();
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($item_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$item_info['menu_id']);
@@ -732,8 +732,8 @@ class yf_menus_editor {
 			common()->admin_wall_add(array('menu item deleted: '.$item_info['name'].'', $item_info['id']));
 		}
 		module('menus_editor')->_purge_caches();
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
 			return js_redirect('./?object='.$_GET['object'].'&action=show_items&id='.$item_info['menu_id']);

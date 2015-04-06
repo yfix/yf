@@ -173,15 +173,11 @@ class yf_tpl {
 	* Global scope tags
 	*/
 	function _init_global_tags() {
-		$user_id = main()->USER_ID;
 		$data = array(
-			'main_user_id'	=> (int)$user_id,
-			'is_logged_in'  => intval((bool) $user_id),
-			'is_spider'     => (int)conf('IS_SPIDER'),
-			'is_https'      => isset($_SERVER['HTTPS']) || isset($_SERVER['SSL_PROTOCOL']) ? 1 : 0,
+			'main_user_id'	=> (int)main()->USER_ID,
+			'is_logged_in'  => intval((bool) main()->USER_ID),
 			'site_id'       => (int)conf('SITE_ID'),
-			'lang_id'       => conf('language'),
-			'debug_mode'    => (int)((bool)DEBUG_MODE),
+			'lang'          => conf('language'),
 			'tpl_path'      => MEDIA_PATH. $this->TPL_PATH,
 		);
 		foreach ($data as $k => $v) {
@@ -367,6 +363,14 @@ class yf_tpl {
 		$yfp_len = strlen($yf_prefix);
 		if (substr($name, 0, $yfp_len) == $yf_prefix) {
 			$name = substr($name, $yfp_len);
+		}
+		if (false !== strpos($name, '@')) {
+			$r = array(
+				'@object'	=> $_GET['object'],
+				'@action'	=> $_GET['action'],
+				'@id'		=> $_GET['id'],
+			);
+			$name = str_replace(array_keys($r), array_values($r), $name);
 		}
 		if (!is_array($params)) {
 			$params = array();
@@ -821,13 +825,10 @@ class yf_tpl {
 	}
 
 	/**
-	* Wrapper around '_generate_url' function, called like this inside templates:
+	* Wrapper around 'url()' function, called like this inside templates:
 	* {url(object=home_page;action=test)}
 	*/
-	function _generate_url_wrapper($params = array()){
-		if (!function_exists('_force_get_url')) {
-			return '';
-		}
+	function _url_wrapper($params = array()){
 		// Try to process method params (string like attrib1=value1;attrib2=value2)
 		if (is_string($params) && strlen($params)) {
 			// Url like this: /object/action/id

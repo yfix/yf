@@ -115,8 +115,8 @@ class yf_admin_modules {
 			db()->UPDATE('admin_modules', array('active' => (int)!$module_info['active']), 'id='.intval($module_info['id']));
 		}
 		cache_del('admin_modules');
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($module_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect(url('/@object'));

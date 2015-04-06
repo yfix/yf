@@ -149,7 +149,7 @@ class yf_db_admin {
 
 	/***/
 	function database_show_ajax() {
-		main()->NO_GRAPHICS = true;
+		no_graphics(true);
 		$db_name = $this->_database_name($_GET['id']);
 		if (!$db_name) {
 			return false;

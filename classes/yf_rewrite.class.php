@@ -6,6 +6,8 @@ class yf_rewrite {
 	public $DEFAULT_PORT = '';
 	public $special_links = array('../', './', '/');
 	public $URL_ADD_BUILTIN_PARAMS = true;
+	public $PARSE_RULES = array();
+	public $BUILD_RULES = array();
 
 	/**
 	* YF module constructor
@@ -57,7 +59,7 @@ class yf_rewrite {
 		}
 		// Special processing for short links '/', './', '../' == this case mostly used in redirects like js_redirect('./')
 		if (in_array(trim($body), $this->special_links)) {
-			$out = $this->_force_get_url('/');
+			$out = $this->_url('/');
 			if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
 				debug('rewrite[]', array(
 					'source'	=> $body,
@@ -82,7 +84,7 @@ class yf_rewrite {
 				if (MAIN_TYPE_ADMIN && in_array($arr['task'], array('login','logout'))) {
 					continue;
 				}
-				$replace = $this->_force_get_url($arr). (strlen($url['fragment']) ? '#'.$url['fragment'] : '');
+				$replace = $this->_url($arr). (strlen($url['fragment']) ? '#'.$url['fragment'] : '');
 				$r_array[$v] = $replace;
 			}
 			// Fix for bug with similar shorter links, sort by length DESC
@@ -119,7 +121,7 @@ class yf_rewrite {
 	* Special processing for short links '/', './', '../'
 	*/
 	function _replace_special_links ($body = '', $links = array()) {
-		$rewrite_to_url = $this->_force_get_url('/');
+		$rewrite_to_url = $this->_url('/');
 		foreach ((array)$this->special_links as $link) {
 			if (!in_array($link, $links)) {
 #				continue;
@@ -143,14 +145,38 @@ class yf_rewrite {
 
 		$arr = $this->REWRITE_PATTERNS['yf']->_parse($host, (array)$u_arr, (array)$s_arr, $url, $this);
 
-		$new_url = $this->_force_get_url($arr, WEB_DOMAIN);
+		$new_url = $this->_url($arr, WEB_DOMAIN);
 
 		return $url == $new_url;
 	}
 
 	/**
 	*/
-	function _force_get_url ($params = array(), $host = '', $url_str = '', $gen_cache = true, $for_section = false) {
+	function _process_url ($url = '', $force_rewrite = false, $for_site_id = false) {
+		if (strpos($url, 'http://') === false && strpos($url, 'https://') !== 0) {
+			$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
+		}
+		// fix for rewrite tests
+		return str_replace(array('http:///', 'https:///'), './', $url);
+	}
+
+	/**
+	* Generate url for admin section, no matter from where was called
+	*/
+	function _url_admin ($params = array(), $host = '', $url_str = '') {
+		return $this->_url($params, $host, $url_str, $for_section = 'admin');
+	}
+
+	/**
+	* Generate url for user section, no matter from where was called
+	*/
+	function _url_user ($params = array(), $host = '', $url_str = '') {
+		return $this->_url($params, $host, $url_str, $for_section = 'user');
+	}
+
+	/**
+	*/
+	function _url ($params = array(), $host = '', $url_str = '', $for_section = null) {
 		if (DEBUG_MODE && !$this->FORCE_NO_DEBUG) {
 			$time_start = microtime(true);
 		}
@@ -194,6 +220,9 @@ class yf_rewrite {
 		}
 		if (!is_array($params) && empty($url_str)) {
 			return false;
+		}
+		if (!$for_section || ($for_section !== 'user' && $for_section !== 'admin')) {
+			$for_section = MAIN_TYPE;
 		}
 		// Support for other params passed by http encoded string (&k1=v1&k2=v2)
 		if (isset($params['_other'])) {
@@ -261,7 +290,7 @@ class yf_rewrite {
 		}
 		$REWRITE_ENABLED = $GLOBALS['PROJECT_CONF']['tpl']['REWRITE_MODE'];
 		if ($REWRITE_ENABLED && $for_section != 'admin') {
-			$link = $this->REWRITE_PATTERNS['yf']->_get($params, $this);
+			$link = $this->REWRITE_PATTERNS['yf']->_build($params, $this);
 		} else {
 			$skip_url_params = array('host', 'port', 'fragment', 'path', 'admin_host', 'admin_port', 'admin_path');
 			foreach ((array)$params as $k => $v) {
@@ -375,41 +404,5 @@ class yf_rewrite {
 			}
 		}
 		return $unique;
-	}
-
-	/**
-	*/
-	function _process_url ($url = '', $force_rewrite = false, $for_site_id = false) {
-		if (strpos($url, 'http://') === false && strpos($url, 'https://') !== 0) {
-			$url = $this->_rewrite_replace_links($url, true, $force_rewrite, $for_site_id);
-		}
-		// fix for rewrite tests
-		return str_replace(array('http:///', 'https:///'), './', $url);
-	}
-
-	/**
-	*/
-	function _url ($params = array(), $host = '', $url_str = '') {
-		return $this->_force_get_url($params, $host, $url_str, true, $for_section = MAIN_TYPE);
-	}
-
-	/**
-	* Generate url for admin section, no matter from where was called
-	*/
-	function _url_admin ($params = array(), $host = '', $url_str = '') {
-		return $this->_force_get_url($params, $host, $url_str, true, $for_section = 'admin');
-	}
-
-	/**
-	* Generate url for user section, no matter from where was called
-	*/
-	function _url_user ($params = array(), $host = '', $url_str = '') {
-		return $this->_force_get_url($params, $host, $url_str, true, $for_section = 'user');
-	}
-
-	/**
-	*/
-	function _generate_url($params = array(), $host = '') {
-// TODO
 	}
 }

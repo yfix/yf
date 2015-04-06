@@ -66,6 +66,12 @@ if (!function_exists('common')) {
 if (!function_exists('input')) {
 	function input($silent = false) { return _class('input') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
 }
+if (!function_exists('events')) {
+	function events($silent = false) { return _class('core_events') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
+if (!function_exists('services')) {
+	function services($silent = false) { return _class('services') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
+}
 // example: cache()->put()
 if (!function_exists('cache')) {
 	function cache($silent = false) { return _class('cache') ?: new yf_missing_method_handler(__FUNCTION__, $silent); }
@@ -116,12 +122,6 @@ if (!function_exists('url_user')) {
 }
 if (!function_exists('url_admin')) {
 	function url_admin($params = array(), $host = '', $url_str = '') { return _class('rewrite')->_url_admin($params, $host, $url_str); }
-}
-if (!function_exists('_force_get_url')) {
-	function _force_get_url($params = array(), $host = '', $url_str = '') { return _class('rewrite')->_force_get_url($params, $host, $url_str); }
-}
-if (!function_exists('_generate_url')) {
-	function _generate_url($params = array(), $host = '') { return _class('rewrite')->_generate_url($params, $host); }
 }
 if (!function_exists('process_url')) {
 	function process_url($url = '', $force_rewrite = false, $for_site_id = false) { return _class('rewrite')->_process_url($url, $force_rewrite, $for_site_id); }
@@ -181,20 +181,13 @@ if (!function_exists('coffee')) {
 	function coffee($content, $content_type = 'auto', $params = array()) { return _class('assets')->add($content, 'coffee', $content_type, $params); }
 }
 if (!function_exists('jade')) {
-	function jade($content, $content_type = 'auto', $params = array()) {
-// TODO
-	}
+	function jade($content, $params = array()) { return _class('services')->jade($content, $params); }
 }
 if (!function_exists('haml')) {
-	function haml($content, $content_type = 'auto', $params = array()) {
-// TODO
-	}
+	function haml($content, $params = array()) { return _class('services')->haml($content, $params); }
 }
 if (!function_exists('require_php_lib')) {
-	function require_php_lib($name, $params = array()) { return main()->require_php_lib($name, $params); }
-}
-if (!function_exists('events')) {
-	function events() { return _class('core_events'); }
+	function require_php_lib($name, $params = array()) { return _class('services')->require_php_lib($name, $params); }
 }
 if (!function_exists('getmicrotime')) {
 	function getmicrotime() { return microtime(true); }
@@ -211,6 +204,12 @@ if (!function_exists('_302')) {
 if (!function_exists('_301')) {
 	function _301($url, $text = '') { return common()->redirect(array('url' => $url, 'text' => $text, 'type' => '301')); }
 }
+if (!function_exists('_404')) {
+	function _404($text = '') { return common()->error_404($text); }
+}
+if (!function_exists('_403')) {
+	function _403($text = '') { return common()->error_403($text); }
+}
 if (!function_exists('_e')) {
 	function _e($text = '', $clear_error = true) { return common()->_show_error_message($text, $clear_error); }
 }
@@ -219,12 +218,6 @@ if (!function_exists('_re')) {
 }
 if (!function_exists('_ee')) {
 	function _ee($error_key = '') { return common()->_error_exists($error_key); }
-}
-if (!function_exists('_404')) {
-	function _404($text = '') { return common()->error_404($text); }
-}
-if (!function_exists('_403')) {
-	function _403($text = '') { return common()->error_403($text); }
 }
 if (!function_exists('user')) {
 	function user($user_id, $fields = 'full', $params = '', $return_sql = false) { $_common = common(); return is_object($_common) && method_exists($_common, 'user') ? $_common->user($user_id, $fields, $params, $return_sql) : false; }

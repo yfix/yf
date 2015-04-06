@@ -121,7 +121,7 @@ class yf_static_pages {
 			common()->admin_wall_add(array('static page deleted: '.$a['id'], $a['id']));
 			cache_del('static_pages_names');
 		}
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo $page_name;
 		} else {
@@ -138,7 +138,7 @@ class yf_static_pages {
 			common()->admin_wall_add(array('static page: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']));
 			cache_del('static_pages_names');
 		}
-		if ($_POST['ajax_mode']) {
+		if (is_ajax()) {
 			main()->NO_GRAPHICS = true;
 			echo intval( ! $a['active']);
 		} else {

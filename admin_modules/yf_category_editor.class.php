@@ -132,8 +132,8 @@ class yf_category_editor {
 			common()->admin_wall_add(array('category deleted: '.$cat_info['name'], $_GET['id']));
 		}
 		module('category_editor')->_purge_category_caches();
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
 			return js_redirect(url('/@object'));
@@ -194,8 +194,8 @@ class yf_category_editor {
 			common()->admin_wall_add(array('category '.$cat_info['name'].' '.($cat_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
 		module('category_editor')->_purge_category_caches();
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($cat_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect(url('/@object'));
@@ -291,7 +291,7 @@ class yf_category_editor {
 					module('category_editor')->_purge_category_caches($cat_info);
 				_class( 'core_events' )->fire( 'category_editor.drag_items.after', array( array_keys( $batch ) ) );
 			}
-			main()->NO_GRAPHICS = true;
+			no_graphics(true);
 			return false;
 		}
 		if (isset($items[''])) {
@@ -649,8 +649,8 @@ class yf_category_editor {
 			common()->admin_wall_add(array('category item '.$item_info['id'].' '.($item_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 			module('category_editor')->_purge_category_caches($cat_info);
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($item_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect(url('/@object/show_items/'.$item_info['cat_id']));
@@ -681,8 +681,8 @@ class yf_category_editor {
 
 			_class( 'core_events' )->fire( 'category_editor.delete_item.after', array( $id, $cats_id ) );
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
 			return js_redirect(url('/@object/show_items/'.$item_info['cat_id']));

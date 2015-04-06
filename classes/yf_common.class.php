@@ -17,6 +17,8 @@ class yf_common {
 	public $TRANSLIT_FROM	= 'cp1251';
 	/** @var string Required for the compatibility with old main class */
 	public $MEDIA_PATH		= '';
+	/** @var bool Used by propose url from name */
+	public $URL_FORCE_DASHES = false;
 
 	/**
 	* Constructor
@@ -853,7 +855,7 @@ class yf_common {
 	/**
 	* Convert name into URL-friendly string
 	*/
-	function _propose_url_from_name($name = '', $from_encoding = '', $force_dashes = false) {
+	function _propose_url_from_name($name = '', $from_encoding = '', $force_dashes = null) {
 		if (empty($name)) {
 			return '';
 		}
@@ -870,6 +872,9 @@ class yf_common {
 		$url = preg_replace('/[_-]{2,}/', '-', $url);
 		$url = strtolower(preg_replace('/[^a-z0-9_-]+/i', '', $url));
 		$url = trim(trim(trim($url), '_-'));
+		if (!isset($force_dashes)) {
+			$force_dashes = $this->URL_FORCE_DASHES;
+		}
 		if ($force_dashes) {
 			$url = str_replace('_', '-', $url);
 		}
@@ -1361,13 +1366,19 @@ class yf_common {
 	* Show error and set response header to "404 Not Found"
 	*/
 	function error_404($msg = '') {
-		if (MAIN_TYPE_ADMIN && is_logged_in()) {
+		if ((MAIN_TYPE_ADMIN && is_logged_in()) || DEBUG_MODE) {
 			// Do not override status header for logged in admin, just display error inlined
 			!$msg && $msg = t('404 Not Found');
 		} else {
 			// All other cases
 			header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 404 Not Found');
 			main()->IS_404 = true;
+		}
+		if (DEBUG_MODE) {
+			no_graphics(true);
+			$body .= '<b>404 Not found</b><br />'. PHP_EOL. '<i>'.$msg.'</i>';
+			$body .= '<pre><small>'.htmlspecialchars(main()->trace_string()).'</small></pre>';
+			return print common()->show_empty_page($body, array('full_width' => 1));
 		}
 		return $this->_show_error_message($msg);
 	}
@@ -1376,13 +1387,19 @@ class yf_common {
 	* Show error and set response header to "403 Forbidden"
 	*/
 	function error_403($msg = '') {
-		if (MAIN_TYPE_ADMIN && is_logged_in()) {
+		if ((MAIN_TYPE_ADMIN && is_logged_in()) || DEBUG_MODE) {
 			// Do not override status header for logged in admin, just display error inlined
 			!$msg && $msg = t('403 Forbidden');
 		} else {
 			// All other cases
 			header(($_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1').' 403 Forbidden');
 			main()->IS_403 = true;
+		}
+		if (DEBUG_MODE) {
+			no_graphics(true);
+			$body .= '<b>404 Not found</b><br />'. PHP_EOL. '<i>'.$msg.'</i>';
+			$body .= '<pre><small>'.htmlspecialchars(main()->trace_string()).'</small></pre>';
+			return print common()->show_empty_page($body, array('full_width' => 1));
 		}
 		return $this->_show_error_message($msg);
 	}

@@ -92,8 +92,8 @@ class yf_manage_users {
 			db()->update('user', array('active' => (int)!$user_info['active']), $user_info['id']);
 		}
 		cache_del('user');
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($user_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect(url('/@object'));
@@ -159,8 +159,7 @@ class yf_manage_users {
 		$integrity_hash = md5($to_encode);
 		$encrypted = _class('encryption')->_safe_encrypt_with_base64($to_encode.'-'.$integrity_hash, $secret_key);
 		if (tpl()->REWRITE_MODE) {
-#			$url = WEB_PATH.'login/'.$encrypted;
-			$url = _force_get_url(array('task' => 'login', 'id' => $encrypted), parse_url(WEB_PATH, PHP_URL_HOST));
+			$url = url_user(array('task' => 'login', 'id' => $encrypted), parse_url(WEB_PATH, PHP_URL_HOST));
 		} else {
 			$url = WEB_PATH.'?task=login&id='.$encrypted;
 		}
@@ -190,14 +189,14 @@ class yf_manage_users {
 				'email'		=> $A['email'],
 				'password'	=> $A['password'],
 			);
-			$message = tpl()->parse($_GET['object'].'/email', $replace2);
+			$message = tpl()->parse('@object/email', $replace2);
 			// Set user confirmed
 			db()->query('UPDATE '.db('user').' SET active='1' WHERE id='.intval($A['id']));
 			common()->send_mail(SITE_ADVERT_NAME, SITE_ADMIN_EMAIL, $A['email'], _display_name($A), 'Thank you for registering with us!', $message, nl2br($message));
 			$replace = array(
 				'name'	=> _display_name($A),
 			);
-			$body = tpl()->parse($_GET['object'].'/confirmed', $replace);
+			$body = tpl()->parse('@object/confirmed', $replace);
 		} else {
 			$body .= _e();
 			$body .= $this->show($_POST);

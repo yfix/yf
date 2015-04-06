@@ -163,8 +163,8 @@ class yf_blocks {
 			common()->admin_wall_add(array('block deleted: '.$block_info['name'].'', $_GET['id']));
 		}
 		module('blocks')->_cache_purge();
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
 			return js_redirect(url('/@object'));
@@ -212,8 +212,8 @@ class yf_blocks {
 			common()->admin_wall_add(array('block '.$block_info['name'].' '.($block_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 		}
 		module('blocks')->_cache_purge();
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($block_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect(url('/@object'));
@@ -358,8 +358,8 @@ class yf_blocks {
 			common()->admin_wall_add(array('block rule deleted for: '.$block_info['name'], $_GET['id']));
 			module('blocks')->_cache_purge();
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo $_GET['id'];
 		} else {
 			return js_redirect('./?object='.$_GET['object'].'&action=show_rules&id='.$block_info['id']);
@@ -405,8 +405,8 @@ class yf_blocks {
 			common()->admin_wall_add(array('block rule for '.$block_info['name'].' '.($rule_info['active'] ? 'inactivated' : 'activated'), $_GET['id']));
 			module('blocks')->_cache_purge();
 		}
-		if ($_POST['ajax_mode']) {
-			main()->NO_GRAPHICS = true;
+		if (is_ajax()) {
+			no_graphics(true);
 			echo ($rule_info['active'] ? 0 : 1);
 		} else {
 			return js_redirect('./?object='.$_GET['object'].'&action=show_rules&id='.$block_info['id']);
