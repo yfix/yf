@@ -962,12 +962,9 @@ class yf_table2 {
 					$link = str_replace('%'.$lp, urlencode($row[$lp]), $link);
 				}
 			}
-		} else {
-			if ($row[$extra['id']]) {
-				$link = str_replace('%d', urlencode($row[$extra['id']]), $link);
-			} else {
-				$link = '';
-			}
+		}
+		if ($row[$extra['id']]) {
+			$link = str_replace('%d', urlencode($row[$extra['id']]), $link);
 		}
 		return $link;
 	}
@@ -1043,9 +1040,12 @@ class yf_table2 {
 				}
 				$is_link_allowed = true;
 				if ($params['link']) {
+					$link = $params['link']. $instance_params['links_add'];
+				}
+				if ($link) {
 					$link_field_name = $extra['link_field_name'];
 					$link_id = $link_field_name ?: $name;
-					$link = $table->_process_link_params($params['link']. $instance_params['links_add'], $row, $extra + array('id' => $link_id));
+					$link = $table->_process_link_params($link, $row, $extra + array('id' => $link_id));
 					$is_link_allowed = $table->_is_link_allowed($link);
 				}
 				if ($link && $is_link_allowed) {
@@ -1131,7 +1131,7 @@ class yf_table2 {
 			$extra['link'] = $link;
 		}
 		if (!$extra['link']) {
-			$extra['link'] = './?object=members&action=edit&id=%d';
+			$extra['link'] = url_admin('/members/edit/%d');
 		}
 		if (!$extra['link_field_name']) {
 			$extra['link_field_name'] = $name;
