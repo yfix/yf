@@ -1218,30 +1218,12 @@ class yf_html {
 		asset('bfh-select');
 // TODO: allow deep customization of its layout
 		$selected = strval($selected);
-/*
+
 		$body .= '<div class="bfh-selectbox" id="'.$extra['id'].'" data-name="'.$name.'" data-value="'.$selected.'" data-filter="true">';
 		foreach ((array)$values as $key => $cur_value) {
 			$body .= '<div data-value="'.$key.'">'.($translate ? t($cur_value) : $cur_value).'</div>'.PHP_EOL;
 		}
 		$body .= '</div>';
-*/
-		$body .= '<div class="bfh-selectbox" id="'.$extra['id'].'" data-name="'.$name.'">'
-					.'<input type="hidden" name="'.$name.'" value="'.$selected.'">'
-					.'<a class="bfh-selectbox-toggle form-control" role="button" data-toggle="bfh-selectbox" href="#">'
-						.'<span class="bfh-selectbox-option bfh-selectbox-medium" data-option="'.$selected.'">'.$values[$selected].'</span>'
-						.'<b class="caret"></b>'
-					.'</a>'
-					.'<div class="bfh-selectbox-options">'
-						.'<input type="text" class="bfh-selectbox-filter">'
-						.'<div role="listbox">'
-							.'<ul role="option">';
-		foreach ((array)$values as $key => $cur_value) {
-			$body .= '<li'.($is_selected ? ' class="active"' : '').'><a tabindex="-1" href="#" data-option="'.$key.'">'.($translate ? t($cur_value) : $cur_value).'</a></li>'.PHP_EOL;
-		}
-		$body .= 			'</ul>'
-						.'</div>'
-					.'</div>'
-				.'</div>';
 
 		return $body;
 	}
