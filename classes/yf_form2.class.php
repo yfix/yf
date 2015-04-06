@@ -1990,6 +1990,12 @@ class yf_form2 {
 
 	/**
 	*/
+	function locale_box($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+	}
+
+	/**
+	*/
 	function language_box($name = '', $desc = '', $extra = array(), $replace = array()) {
 		return _class('form2_boxes', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
 	}
