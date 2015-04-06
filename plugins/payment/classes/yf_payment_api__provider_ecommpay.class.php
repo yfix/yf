@@ -235,7 +235,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	public function _api_response() {
 		$payment_api = $this->payment_api;
 // DEBUG
-$payment_api->dump();
+// $payment_api->dump();
 		$test_mode = &$this->TEST_MODE;
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
@@ -308,7 +308,7 @@ $payment_api->dump();
 				'status_message' => 'Неверная подпись',
 			);
 // DEBUG
-$payment_api->dump( array( 'var' => $result ));
+// $payment_api->dump( array( 'var' => $result ));
 			return( $result );
 		}
 		// user success or fail
@@ -344,7 +344,7 @@ $payment_api->dump( array( 'var' => $result ));
 				'status_message' => 'Неверный ключ (site_id)',
 			);
 // DEBUG
-$payment_api->dump( array( 'var' => $result ));
+// $payment_api->dump( array( 'var' => $result ));
 			return( $result );
 		}
 		// check status
@@ -357,7 +357,7 @@ $payment_api->dump( array( 'var' => $result ));
 		list( $payment_type ) = $this->_state( $state, $status );
 		if( empty( $payment_type ) ) {
 // DEBUG
-$payment_api->dump( array( 'var' => 'type: ' . $state ));
+// $payment_api->dump( array( 'var' => 'type: ' . $state ));
 			return( null );
 		}
 		// amount
