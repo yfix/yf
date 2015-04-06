@@ -223,6 +223,33 @@ class yf_auth_admin {
 	}
 
 	/**
+	*/
+	function login_as($id) {
+		if (!$id) {
+			return _e('Wrong id');
+		}
+		if (main()->ADMIN_GROUP != 1) {
+			return _e('Allowed only for super-admins');
+		}
+		$a = db()->from('admin')->whereid($id)->get();
+		if (!$a) {
+			return _e('Target admin user info not found');
+		}
+		$t_group = db()->from('admin_groups')->whereid((int)$a['group'])->get();
+		// Save previous session
+		$tmp = $_SESSION;
+		$_SESSION['admin_prev_info'] = $tmp;
+		// Login as different admin user
+		$_SESSION['admin_id'] = $a['id'];
+		$_SESSION['admin_group'] = $a['group'];
+		$_SESSION['admin_login_time'] = time();
+
+		$after_login = $t_group['go_after_login'] ?: $t_group['go_after_login'];
+		return js_redirect($after_login ?: './');
+	}
+
+
+	/**
 	* Process previous login (used when super-admin logged in as less privileged user and want to login back as super-admin)
 	*/
 	function _login_with_prev_info() {
@@ -233,14 +260,14 @@ class yf_auth_admin {
 			}
 			return false;
 		}
-		$a = db()->get('SELECT * FROM '.db('admin').' WHERE id='.intval($prev_info[$this->VAR_ADMIN_ID]));
+		$a = db()->from('admin')->whereid((int)$prev_info[$this->VAR_ADMIN_ID])->get();
 		if (!$a) {
 			if (!empty($this->URL_WRONG_LOGIN)) {
 				return js_redirect($this->URL_WRONG_LOGIN);
 			}
 			return false;
 		}
-		$t_group = db()->get('SELECT * FROM '.db('admin_groups').' WHERE id='.(int)$a['group']);
+		$t_group = db()->from('admin_groups')->whereid((int)$a['group'])->get();
 		// Save previous session
 		$_SESSION = $_SESSION['admin_prev_info'];
 		unset($_SESSION['admin_prev_info']); // Prevent recursion
@@ -252,7 +279,6 @@ class yf_auth_admin {
 		$after_login = $t_group[$this->VAR_ADMIN_GO_URL] ?: $t_group[$this->VAR_ADMIN_GO_URL];
 		return js_redirect($after_login ?: './');
 	}
-
 	/**
 	* Process logout
 	*/
