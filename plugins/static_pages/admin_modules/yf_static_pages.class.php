@@ -40,7 +40,7 @@ class yf_static_pages {
 			})
 			->func('text', function($text) { return strlen($text); }, array('desc' => 'Text length') )
 			->date('add_date', array('format' => 'long', 'nowrap' => 1))
-			->btn('View as user', url_user('/static_pages/show/%d/?lang=%locale'), array('icon' => 'fa fa-eye', 'btn_no_text' => 1, 'id' => 'name', 'link_params' => 'locale', 'rewrite' => false))
+			->btn('View as user', '/static_pages/show/%d/?lang=%locale', array('icon' => 'fa fa-eye', 'btn_no_text' => 1, 'id' => 'name', 'link_params' => 'locale', 'rewrite' => 'user'))
 			->btn_edit('', url('/@object/edit/%d/%locale'), array('no_ajax' => 1, 'btn_no_text' => 1, 'link_params' => 'locale'))
 			->btn_delete('', url('/@object/delete/%d/%locale'), array('btn_no_text' => 1, 'link_params' => 'locale'))
 			->btn_active('', url('/@object/active/%d/%locale'), array('link_params' => 'locale'))
@@ -176,12 +176,23 @@ class yf_static_pages {
 	function _get_info($id = null, $lang = null) {
 		$id = isset($id) ? $id : $_GET['id'];
 		$lang = isset($lang) ? $lang : $_GET['page'];
-		return db()->from(self::table)
+		$a = db()->from(self::table)
 			->where('locale', $lang ? strtolower($lang) : '')
 			->where('name', _strtolower(urldecode($id)) )
 			->or_where('id', (int)$id)
 			->get()
 		;
+		if ($a) {
+			return $a;
+		} elseif ($lang) {
+			// Try with first lang as fallback
+			$a = db()->from(self::table)
+				->where('name', _strtolower(urldecode($id)) )
+				->or_where('id', (int)$id)
+				->get()
+			;
+		}
+		return false;
 	}
 
 	/**
