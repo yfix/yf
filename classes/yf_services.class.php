@@ -78,13 +78,6 @@ class yf_services {
 	}
 
 	/**
-	* Process and output HAML content
-	*/
-	function haml($content, $params = array()) {
-// TODO
-	}
-
-	/**
 	*/
 	function sass($content, $params = array()) {
 		$this->require_php_lib('scssphp');
@@ -105,5 +98,31 @@ class yf_services {
 	function coffee($content, $params = array()) {
 		$this->require_php_lib('coffeescript_php');
 		return \CoffeeScript\Compiler::compile($content, array('header' => false));
+	}
+
+	/**
+	* Process and output HAML content
+	*/
+	function haml($content, $params = array()) {
+		$this->require_php_lib('mthaml');
+		$haml = new MtHaml\Environment('php');
+		$executor = new MtHaml\Support\Php\Executor($haml, array(
+			'cache' => sys_get_temp_dir().'/haml',
+		));
+		$path = tempnam(sys_get_temp_dir(), 'haml');
+		file_put_contents($path, $content);
+		return $executor->render($path, $params);
+	}
+
+	/**
+	*/
+	function markdown($content, $params = array()) {
+// TODO: mthaml consists one of these
+	}
+
+	/**
+	*/
+	function yaml($content, $params = array()) {
+// TODO
 	}
 }
