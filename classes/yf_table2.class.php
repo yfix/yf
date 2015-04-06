@@ -331,7 +331,7 @@ class yf_table2 {
 			}
 			$sortable_url = $params['sortable'];
 			if ($sortable_url && strlen($sortable_url) <= 5) {
-				$sortable_url = './?object='.$_GET['object'].'&action=sortable';
+				$sortable_url = url('/@object/sortable');
 			}
 			if ($params['rotate_table']) {
 				$body .= $this->_render_table_contents_rotated($data, $params, $to_hide);
@@ -1163,7 +1163,7 @@ class yf_table2 {
 			$extra['link'] = $link;
 		}
 		if (!$extra['link']) {
-			$extra['link'] = './?object=admin&action=edit&id=%d';
+			$extra['link'] = url_admin('/admin/edit/%d');
 		}
 		if (!$extra['link_field_name']) {
 			$extra['link_field_name'] = $name;
@@ -1427,7 +1427,7 @@ class yf_table2 {
 			$name = 'Edit';
 		}
 		if (!$link) {
-			$link = './?object='.$_GET['object'].'&action=edit&id=%d';
+			$link = url('/@object/edit/%d');
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -1455,7 +1455,7 @@ class yf_table2 {
 			$name = 'Delete';
 		}
 		if (!$link) {
-			$link = './?object='.$_GET['object'].'&action=delete&id=%d';
+			$link = url('/@object/delete/%d');
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -1483,7 +1483,7 @@ class yf_table2 {
 			$name = 'Clone';
 		}
 		if (!$link) {
-			$link = './?object='.$_GET['object'].'&action=clone_item&id=%d';
+			$link = url('/@object/clone_item/%d');
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -1511,7 +1511,7 @@ class yf_table2 {
 			$name = 'View';
 		}
 		if (!$link) {
-			$link = './?object='.$_GET['object'].'&action=view&id=%d';
+			$link = url('/@object/view/%d');
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -1539,7 +1539,7 @@ class yf_table2 {
 			$name = 'Active';
 		}
 		if (!$link) {
-			$link = './?object='.$_GET['object'].'&action=active&id=%d';
+			$link = url('/@object/active/%d');
 		}
 		$this->_buttons[] = array(
 			'type'	=> __FUNCTION__,
@@ -1556,9 +1556,12 @@ class yf_table2 {
 					$override_id = $instance_params['id'];
 				}
 				$id = $override_id ? $override_id : 'id';
-				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				if (strlen($link) && !$table->_is_link_allowed($link)) {
-					return '';
+				$link = $params['link']. $instance_params['links_add'];
+				if (strlen($link)) {
+					$link = $table->_process_link_params($link, $row, $extra + array('id' => $id));
+					if (!$table->_is_link_allowed($link)) {
+						return '';
+					}
 				}
 				if ($extra['rewrite']) {
 					$link = url($link);
@@ -1598,9 +1601,12 @@ class yf_table2 {
 			'func'	=> function($params, $instance_params, $table) {
 				$extra = $params['extra'];
 				$id = isset($extra['id']) ? $extra['id'] : 'id';
-				$link = str_replace('%d', urlencode($row[$id]), $params['link']). $instance_params['links_add'];
-				if (strlen($link) && !$table->_is_link_allowed($link)) {
-					return '';
+				$link = $params['link']. $instance_params['links_add'];
+				if (strlen($link)) {
+					$link = $table->_process_link_params($link, $row, $extra + array('id' => $id));
+					if (!$table->_is_link_allowed($link)) {
+						return '';
+					}
 				}
 				if ($extra['rewrite']) {
 					$link = url($link);
@@ -1652,7 +1658,7 @@ class yf_table2 {
 			$name = 'add';
 		}
 		if (!$link) {
-			$link = './?object='.$_GET['object'].'&action=add';
+			$link = url('/@object/add');
 		}
 		if (!is_array($extra)) {
 			$extra = array();
@@ -1734,8 +1740,8 @@ class yf_table2 {
 			$method = '';
 		}
 		$this->_form_params = array(
-			'action'=> $action ? $action : './?object='.$_GET['object']. ($_GET['action'] != 'show' ? '&action='.$_GET['action'] : ''). ($_GET['id'] ? '&id='.$_GET['id'] : ''),
-			'method'=> $method ? $method : 'POST',
+			'action'=> $action ?: url('/@object/@action/@id'),
+			'method'=> $method ?: 'POST',
 			'extra'	=> (array)$extra,
 		);
 		return $this;
