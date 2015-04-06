@@ -166,7 +166,7 @@ class yf_form2_boxes {
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = url('/locale_editor');
 		}
-		$renderer = $extra['renderer'] ?: 'list_box';
+		$renderer = $extra['renderer'] ?: 'select_box';
 		return $form->$renderer($name, $data, $extra, $replace);
 	}
 
