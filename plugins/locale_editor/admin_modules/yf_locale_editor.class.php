@@ -60,6 +60,9 @@ class yf_locale_editor {
 		}
 		$this->_preload_complete = true;
 
+		asset('bfh-select');
+		$this->lang_def_country = main()->get_data('lang_def_country');
+
 		$this->_boxes = array(
 			'lang_code'		=> 'select_box("lang_code",		$this->_langs,			$selected, false, 2, "", false)',
 			'cur_langs'		=> 'select_box("lang_code",		$this->_cur_langs,		$selected, false, 2, "", false)',
@@ -128,8 +131,12 @@ class yf_locale_editor {
 		$no_actions_if_default = function($row) {
 			return $row['is_default'] ? false : true;
 		};
+		$_this = $this;
 		return table($data)
-			->text('locale', array('badge' => 'default', 'transform' => 'strtoupper'))
+			->func('locale', function($lang) use ($_this) {
+				return html()->icon('bfh-flag-'.$_this->lang_def_country[$lang], strtoupper($lang));
+			})
+#			->text('locale', array('badge' => 'default', 'transform' => 'strtoupper'))
 			->text('name')
 			->text('charset')
 			->text('tr_count', 'Num vars')
@@ -318,7 +325,7 @@ class yf_locale_editor {
 			list($lang_vars, $var_files) = $this->_get_vars_from_files($lang);
 			foreach ((array)$lang_vars as $source => $translation) {
 				$vars[$source.'|'.$lang] = array(
-					'lang'			=> (string)$lang,
+					'locale'		=> (string)$lang,
 					'source'		=> (string)$source,
 					'translation'	=> (string)$translation,
 					'files'			=> (string)$var_files[$source],
@@ -326,9 +333,12 @@ class yf_locale_editor {
 			}
 		}
 		ksort($vars);
+		$_this = $this;
 		return table($vars, array('pager_records_on_page' => 1000, 'group_by' => 'source', 'id' => 'source'))
 			->text('source')
-			->text('lang', array('badge' => 'default'))
+			->func('locale', function($lang) use ($_this) {
+				return html()->icon('bfh-flag-'.$_this->lang_def_country[$lang], strtoupper($lang));
+			})
 			->text('translation')
 			->btn_edit('', url('/@object/edit_var/%d'), array('btn_no_text' => 1))
 			->btn_func('files', function($row, $extra, $replace, $table) {
