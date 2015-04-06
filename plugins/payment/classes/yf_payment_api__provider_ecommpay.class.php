@@ -242,21 +242,33 @@ $payment_api->dump();
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// TEST DATA
-		/*
+		//*
 		$_POST = array (
-			'site_id'         => '2415',
-			'payment_type_id' => '2',
-			'transaction_id'  => '36356',
-			'external_id'     => '_1',
-			'description'     => 'Поплнение счета',
-			'amount'          => '10',
-			'currency'        => 'USD',
-			'real_amount'     => '10',
-			'real_currency'   => 'USD',
-			'language'        => 'en',
-			'sign'            => '43a47044792b0fa69a934178973458c60e578d78',
-			'signature'       => '88d2309a2dc33534ebd593a744697fbebf08ba40',
-			'type'            => '1',
+			'type_id'               => '3',
+			'status_id'             => '4',
+			'transaction_id'        => '36876',
+			'external_id'           => '4488',
+			'acquirer_id'           => '5522470251c72',
+			'payment_type_id'       => '2',
+			'site_id'               => '2415',
+			'amount'                => '1100',
+			'currency'              => 'USD',
+			'real_amount'           => '1100',
+			'real_currency'         => 'USD',
+			'extended_info_enabled' => '1',
+			'customer_purse'        => '555555...4444',
+			'completed_at'          => '2015-04-06T08:42:42+00:00',
+			'processor_date'        => '2015-04-06T08:42:42+00:00',
+			'source_type'           => '2',
+			'holder_name'           => 'AA AA',
+			'expiry_date'           => '11/16',
+			'authcode'              => '3O0X9R',
+			'recurring_allowed'     => '0',
+			'recurring_valid_thru'  => '',
+			'processor_id'          => '1',
+			'processor_code'        => '00',
+			'processor_message'     => 'SUCCESS',
+			'signature'             => '4d6d96a20e8e0864a464703ec33b399d0ab4c176',
 		); // */
 		// response
 		$response = $_POST;
@@ -275,6 +287,12 @@ $payment_api->dump();
 			);
 			return( $result );
 		}
+		// check ip
+		// $ip_allow = $this->_check_ip();
+		// if( !$ip_allow ) {
+			// $payment_api->dump( array( 'var' => 'ip not allow' ));
+			// return( null );
+		// }
 		// check signature
 		isset( $response[ 'signature' ] ) && $signature = $response[ 'signature' ];
 		// check signature
@@ -285,17 +303,11 @@ $payment_api->dump();
 			);
 			return( $result );
 		}
-		// check ip
-		$ip_allow = $this->_check_ip();
-		if( !$ip_allow ) {
-			$payment_api->dump( array( 'var' => 'ip not allow' ));
-			return( null );
-		}
 		$signature_options = $response;
 		$_signature = $this->signature( $signature_options );
 // DEBUG
-// var_dump( $response, $signature, $signature_options, 'calc: ', $_signature );
-// exit;
+var_dump( $response, $signature, $signature_options, 'calc: ', $_signature );
+exit;
 		if( $signature != $_signature ) {
 			$result = array(
 				'status'         => false,

@@ -42,7 +42,7 @@ class EcommPay {
 				case is_bool( $value ):
 					$_value = $value ? '1' : '0';
 					break;
-				case is_scalar( $value ) && !is_resource($value):
+				case is_scalar( $value ) && !is_resource($value) && $value != '':
 					$_value = (string)$value;
 					break;
 				case is_array( $value ):
@@ -52,7 +52,7 @@ class EcommPay {
 				default:
 					break;
 			}
-			if( !isset( $_value ) ) { continue; }
+			if( is_null( $_value ) ) { continue; }
 			if( $is_request ) {
 				$_value = $key . ':' . $_value;
 			} else {
