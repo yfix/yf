@@ -244,6 +244,7 @@ $payment_api->dump();
 		// TEST DATA
 		/*
 		$_POST = array (
+			// notification url
 			'type_id'               => '3',
 			'status_id'             => '4',
 			'transaction_id'        => '36876',
@@ -269,30 +270,23 @@ $payment_api->dump();
 			'processor_code'        => '00',
 			'processor_message'     => 'SUCCESS',
 			'signature'             => '4d6d96a20e8e0864a464703ec33b399d0ab4c176',
+			// success_url
+			'site_id'         => '2415',
+			'payment_type_id' => '2',
+			'transaction_id'  => '36886',
+			'external_id'     => '4497',
+			'description'     => 'Пополнение счета',
+			'amount'          => '200',
+			'currency'        => 'USD',
+			'real_amount'     => '200',
+			'real_currency'   => 'USD',
+			'language'        => 'ru',
+			'sign'            => 'e21f3eb88ea9de9b10a8d9371e32757d4e31a6cc',
+			'signature'       => 'a4565dac9ae8333a9da92ac514e5053fcc07d14f',
+			'type'            => '1',
 		); // */
 		// response
 		$response = $_POST;
-		// user success or fail
-		if( !$is_server ) {
-			// check status
-			$state = isset( $response[ 'type' ] ) && $response[ 'type' ] == '1' ? true : false;
-			$status = isset( $_GET[ 'status' ] )
-				&& $_GET[ 'status' ] == 'success'
-				&& $state
-				? true : false;
-			$status_message = $status ? 'Операция выполнена успешно' : 'Операция не выполнена';
-			$result = array(
-				'status'         => $status,
-				'status_message' => $status_message,
-			);
-			return( $result );
-		}
-		// check ip
-		$ip_allow = $this->_check_ip();
-		if( !$ip_allow ) {
-			$payment_api->dump( array( 'var' => 'ip not allow' ));
-			return( null );
-		}
 		// check signature
 		isset( $response[ 'signature' ] ) && $signature = $response[ 'signature' ];
 		// check signature
@@ -316,6 +310,28 @@ $payment_api->dump();
 // DEBUG
 $payment_api->dump( array( 'var' => $result ));
 			return( $result );
+		}
+		// user success or fail
+		if( !$is_server ) {
+			// check status
+			$state = isset( $response[ 'type' ] ) && $response[ 'type' ] == '1' ? true : false;
+			$status = isset( $_GET[ 'status' ] )
+				&& $_GET[ 'status' ] == 'success'
+				&& $state
+				? true : false;
+			$status_message = $status ? 'Операция выполнена успешно' : 'Операция не выполнена';
+			$result = array(
+				'status'         => $status,
+				'status_message' => $status_message,
+			);
+			return( $result );
+		}
+		// server notification
+		// check ip
+		$ip_allow = $this->_check_ip();
+		if( !$ip_allow ) {
+			$payment_api->dump( array( 'var' => 'ip not allow' ));
+			return( null );
 		}
 		// update operation
 		$_response = $this->_response_parse( $response );

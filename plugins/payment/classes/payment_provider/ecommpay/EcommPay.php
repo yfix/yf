@@ -70,7 +70,7 @@ class EcommPay {
 		$_ = $options;
 		$request = array();
 		// compile string
-		unset( $_[ 'signature' ] );
+		unset( $_[ 'signature' ], $_[ 'sign' ] );
 		$str = $this->options_to_str( $_, $is_request );
 		// add salt
 		$key = $this->_key_private;
