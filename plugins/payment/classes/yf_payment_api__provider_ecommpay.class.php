@@ -242,7 +242,7 @@ $payment_api->dump();
 		// check operation
 		$operation_id = (int)$_GET[ 'operation_id' ];
 		// TEST DATA
-		//*
+		/*
 		$_POST = array (
 			'type_id'               => '3',
 			'status_id'             => '4',
@@ -288,11 +288,11 @@ $payment_api->dump();
 			return( $result );
 		}
 		// check ip
-		// $ip_allow = $this->_check_ip();
-		// if( !$ip_allow ) {
-			// $payment_api->dump( array( 'var' => 'ip not allow' ));
-			// return( null );
-		// }
+		$ip_allow = $this->_check_ip();
+		if( !$ip_allow ) {
+			$payment_api->dump( array( 'var' => 'ip not allow' ));
+			return( null );
+		}
 		// check signature
 		isset( $response[ 'signature' ] ) && $signature = $response[ 'signature' ];
 		// check signature
@@ -306,8 +306,8 @@ $payment_api->dump();
 		$signature_options = $response;
 		$_signature = $this->signature( $signature_options );
 // DEBUG
-var_dump( $response, $signature, $signature_options, 'calc: ', $_signature );
-exit;
+// var_dump( $response, $signature, $signature_options, 'calc: ', $_signature );
+// exit;
 		if( $signature != $_signature ) {
 			$result = array(
 				'status'         => false,
