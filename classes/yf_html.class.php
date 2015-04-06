@@ -1401,7 +1401,7 @@ class yf_html {
 			$a['title']	= $args[1];
 			$a['icon']	= $args[2];
 			$a['text']	= $args[3];
-			$a['class']	= $args[4];
+			$a['class_add']	= $args[4];
 			$a['target']= $args[5];
 		// named params
 		} elseif (isset($args['link'])) {
@@ -1420,6 +1420,9 @@ class yf_html {
 		}
 		if (!isset($a['class'])) {
 			$a['class'] = 'btn btn-default btn-mini btn-xs';
+		}
+		if ($a['class_add']) {
+			$a['class'] .= ' '.$a['class_add'];
 		}
 		if (!isset($a['target'])) {
 			$a['target'] = '_blank';
