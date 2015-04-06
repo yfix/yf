@@ -63,6 +63,7 @@ class form2_new_controls {
 			->country_box(array('selected' => 'US', 'renderer' => 'multi_check_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'radio_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'radio_box', 'row_tpl' => '%name %icon'))
+			->country_box(array('selected' => 'US', 'renderer' => 'radio_box', 'horizontal' => '0'))
 			->country_box(array('selected' => 'US', 'renderer' => 'div_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'button_box'))
 			->country_box(array('selected' => 'US', 'renderer' => 'button_split_box'))
