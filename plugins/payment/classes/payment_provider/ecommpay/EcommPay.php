@@ -42,15 +42,14 @@ class EcommPay {
 				case is_bool( $value ):
 					$_value = $value ? '1' : '0';
 					break;
-				case is_scalar( $value ) && !is_resource($value) && $value != '':
+				case is_scalar( $value ) && !is_resource($value) && $value !== '':
 					$_value = (string)$value;
 					break;
 				case is_array( $value ):
 					$_value = $this->options_to_str( $value, $is_request, $level + 1 );
 					break;
-				case is_null( $value ):
 				default:
-					break;
+					continue 2;
 			}
 			if( is_null( $_value ) ) { continue; }
 			if( $is_request ) {
