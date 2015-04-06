@@ -13,11 +13,15 @@ class yf_static_pages {
 
 	/**
 	*/
-	function _get_info($id = null) {
+	function _get_info($id = null, $lang = null) {
 		$id = isset($id) ? $id : $_GET['id'];
+		$lang = isset($lang) ? $lang : $_GET['page'];
 		return db()->from(self::table)
+			->where('locale', $lang ? strtolower($lang) : '')
 			->where('name', _strtolower(urldecode($id)) )
-			->or_where('id', (int)$id)->get();
+			->or_where('id', (int)$id)
+			->get()
+		;
 	}
 
 	/**
@@ -38,18 +42,27 @@ class yf_static_pages {
 	/**
 	*/
 	function show() {
-		return table(db()->from(self::table), array(
+		asset('bfh-select');
+		$lang_def_country = main()->get_data('lang_def_country');
+		return table(db()->from(self::table)->order_by('name ASC, locale ASC'), array(
 				'filter' => true,
 				'filter_params' => array(
 					'name'	=> 'like',
 				),
+				'group_by' => 'name',
 			))
-			->text('name')
-			->btn_edit(array('no_ajax' => 1))
-			->btn_delete()
-			->btn('View', url('/@object/view/%d'))
-			->btn_active()
-			->footer_link('Add', url('/@object/add'));
+			->text('name', array('link' => url('/@object/view/%d/%locale'), 'link_params' => 'locale'))
+			->func('locale', function($lang) use ($lang_def_country) {
+				$lang = strtoupper($lang);
+				return html()->icon('bfh-flag-'.$lang, $lang);
+			})
+			->func('text', function($text) { return strlen($text); }, array('desc' => 'Text length') )
+			->date('add_date', array('format' => 'long', 'nowrap' => 1))
+			->btn('View as user', url_user('/static_pages/show/%d?lang=%locale'), array('icon' => 'fa fa-eye', 'btn_no_text' => 1, 'id' => 'name', 'link_params' => 'locale'))
+			->btn_edit('', url('/@object/edit/%d/%locale'), array('no_ajax' => 1, 'btn_no_text' => 1, 'link_params' => 'locale'))
+			->btn_delete('', url('/@object/delete/%d/%locale'), array('btn_no_text' => 1, 'link_params' => 'locale'))
+			->btn_active('', url('/@object/active/%d/%locale'), array('link_params' => 'locale'))
+			->footer_add('', url('/@object/add'));
 	}
 
 	/**
@@ -104,10 +117,12 @@ class yf_static_pages {
 			})
 			->text('name')
 			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
+// TODO: locale
 			->text('page_title')
 			->text('page_heading')
 			->text('meta_keywords')
 			->text('meta_desc')
+			->locale_box('locale')
 			->active_box()
 			->save_and_back();
 	}
@@ -117,12 +132,13 @@ class yf_static_pages {
 	function delete() {
 		$a = $this->_get_info();
 		if ($a) {
+// TODO: locale
 			db()->from(self::table)->whereid($a['id'])->delete();
 			common()->admin_wall_add(array('static page deleted: '.$a['id'], $a['id']));
 			cache_del('static_pages_names');
 		}
 		if (is_ajax()) {
-			main()->NO_GRAPHICS = true;
+			no_graphics(true);
 			echo $page_name;
 		} else {
 			return js_redirect(url('/@object'));
@@ -134,12 +150,13 @@ class yf_static_pages {
 	function active () {
 		$a = $this->_get_info();
 		if (!empty($a['id'])) {
+// TODO: locale
 			db()->update(self::table, array('active' => (int)!$a['active']), (int)$a['id']);
 			common()->admin_wall_add(array('static page: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']));
 			cache_del('static_pages_names');
 		}
 		if (is_ajax()) {
-			main()->NO_GRAPHICS = true;
+			no_graphics(true);
 			echo intval( ! $a['active']);
 		} else {
 			return js_redirect(url('/@object'));
@@ -149,6 +166,7 @@ class yf_static_pages {
 	/**
 	*/
 	function view() {
+// TODO: locale
 		$a = $this->_get_info();
 		if (empty($a)) {
 			return _404();
@@ -206,6 +224,7 @@ class yf_static_pages {
 			'name'		=> 'name',
 			'active'	=> 'active',
 		);
+// TODO: locale
 		return form($r, array(
 				'class' => 'form-vertical',
 				'filter' => true,
