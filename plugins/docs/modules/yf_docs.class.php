@@ -148,8 +148,25 @@ class yf_docs {
 	/***/
 	public function form() {
 		$id = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['id']);
+		$method = preg_replace('~[^a-z0-9_-]+~ims', '', $_GET['page']);
 		if (strlen($id)) {
-			return _class($id, YF_PATH.'.dev/samples/form2/')->show();
+			$obj = _class($id, YF_PATH.'.dev/samples/form2/');
+			if ($method) {
+				return $obj->$method();
+			}
+			foreach (get_class_methods($obj) as $name) {
+				if (substr($name, 0, 1) === '_' || $name === 'show') {
+					continue;
+				}
+				$names[$name] = $name;
+			}
+			foreach ($names as $name) {
+				$data[$name] = array(
+					'name'	=> $name,
+					'link'	=> url('/@object/@action/@id/'. $name),
+				);
+			}
+			return html()->li($data);
 		}
 		$ext = '.class.php';
 		$ext_len = strlen($ext);
