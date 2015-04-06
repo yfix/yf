@@ -59,10 +59,22 @@ class yf_services {
 	}
 
 	/**
+	* phpmailer fresh instance, intended to use its helper methods
+	*/
+	function phpmailer($content, $params = array()) {
+		$this->require_php_lib('phpmailer');
+		return new PHPMailer(true);
+	}
+
+	/**
 	* Process and output JADE content
 	*/
 	function jade($content, $params = array()) {
-// TODO
+		$this->require_php_lib('jade_php');
+		$dumper = new \Everzet\Jade\Dumper\PHPDumper();
+		$parser = new \Everzet\Jade\Parser(new \Everzet\Jade\Lexer\Lexer());
+		$jade   = new \Everzet\Jade\Jade($parser, $dumper);
+		return $jade->render($content);
 	}
 
 	/**
@@ -73,10 +85,25 @@ class yf_services {
 	}
 
 	/**
-	* phpmailer fresh instance, intended to use its helper methods
 	*/
-	function phpmailer($content, $params = array()) {
-		$this->require_php_lib('phpmailer');
-		return new PHPMailer(true);
+	function sass($content, $params = array()) {
+		$this->require_php_lib('scssphp');
+		$scss = new scssc();
+		return $scss->compile($content);
+	}
+
+	/**
+	*/
+	function less($content, $params = array()) {
+		$this->require_php_lib('lessphp');
+		$less = new \lessc;
+		return $less->compile($content);
+	}
+
+	/**
+	*/
+	function coffee($content, $params = array()) {
+		$this->require_php_lib('coffeescript_php');
+		return \CoffeeScript\Compiler::compile($content, array('header' => false));
 	}
 }
