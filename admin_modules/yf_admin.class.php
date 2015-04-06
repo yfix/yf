@@ -125,7 +125,7 @@ class yf_admin {
 			db()->delete('admin', $id);
 			common()->admin_wall_add(array('admin account deleted', $id));
 		}
-		if (main()->is_ajax()) {
+		if (is_ajax()) {
 			no_graphics(true);
 			echo $id;
 		} else {
@@ -144,7 +144,7 @@ class yf_admin {
 			db()->update_safe('admin', array('active' => (int)!$a['active']), $id);
 			common()->admin_wall_add(array('admin account '.($a['active'] ? 'inactivated' : 'activated'), $id));
 		}
-		if (main()->is_ajax()) {
+		if (is_ajax()) {
 			no_graphics(true);
 			echo (int)(!$a['active']);
 		} else {

@@ -144,26 +144,11 @@ class yf_manage_users {
 	/**
 	*/
 	function login_as() {
-// TODO: move this into classes/auth_user ?
 		$id = intval($_GET['id']);
 		if (!$id) {
 			return _e('Wrong id');
 		}
-		$a = db()->get('SELECT * FROM '.db('user').' WHERE id='.$id);
-		if (!$a) {
-			return _e('Target user not found');
-		}
-		$t = time();
-		$secret_key = db()->get_one('SELECT MD5(CONCAT(`password`, "'.str_replace(array('http://', 'https://'), '//', INCLUDE_PATH).'")) FROM '.db('admin').' WHERE id=1');
-		$to_encode = 'userid-'.$a['id'].'-'.$t.'-'.md5($a['password']);
-		$integrity_hash = md5($to_encode);
-		$encrypted = _class('encryption')->_safe_encrypt_with_base64($to_encode.'-'.$integrity_hash, $secret_key);
-		if (tpl()->REWRITE_MODE) {
-			$url = url_user(array('task' => 'login', 'id' => $encrypted), parse_url(WEB_PATH, PHP_URL_HOST));
-		} else {
-			$url = WEB_PATH.'?task=login&id='.$encrypted;
-		}
-		return js_redirect($url, $rewrite = false);
+		return _class('auth_user', 'classes/auth/')->login_as($id);
 	}
 
 	/**
