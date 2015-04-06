@@ -1050,7 +1050,13 @@ class yf_table2 {
 				}
 				if ($link && $is_link_allowed) {
 					if ($extra['rewrite']) {
-						$link = url($link);
+						if ($extra['rewrite'] === 'user') {
+							$link = url_user($link);
+						} elseif ($extra['rewrite'] === 'admin') {
+							$link = url_admin($link);
+						} else {
+							$link = url($link);
+						}
 					}
 					$extra['href'] = $link;
 					if (!isset($extra['nowrap']) || $extra['nowrap']) {
@@ -1364,7 +1370,13 @@ class yf_table2 {
 					}
 				}
 				if ($extra['rewrite']) {
-					$link = url($link);
+					if ($extra['rewrite'] === 'user') {
+						$link = url_user($link);
+					} elseif ($extra['rewrite'] === 'admin') {
+						$link = url_admin($link);
+					} else {
+						$link = url($link);
+					}
 				}
 				$extra['href'] = $link;
 				$class = ($extra['class'] ?: $extra['a_class']) ?: $table->CLASS_BTN_MINI;
@@ -1564,7 +1576,13 @@ class yf_table2 {
 					}
 				}
 				if ($extra['rewrite']) {
-					$link = url($link);
+					if ($extra['rewrite'] === 'user') {
+						$link = url_user($link);
+					} elseif ($extra['rewrite'] === 'admin') {
+						$link = url_admin($link);
+					} else {
+						$link = url($link);
+					}
 				}
 				$extra['href'] = $link;
 				$extra['title'] = $params['name'];
@@ -1609,7 +1627,13 @@ class yf_table2 {
 					}
 				}
 				if ($extra['rewrite']) {
-					$link = url($link);
+					if ($extra['rewrite'] === 'user') {
+						$link = url_user($link);
+					} elseif ($extra['rewrite'] === 'admin') {
+						$link = url_admin($link);
+					} else {
+						$link = url($link);
+					}
 				}
 				$extra['href'] = $link;
 				$icon = ($extra['icon'] ? ' '.$extra['icon'] : $table->CLASS_ICON_BTN);
