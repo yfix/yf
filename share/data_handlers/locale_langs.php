@@ -1,10 +1,10 @@
 <?php
 
 $data = array();
-$is_db = main()->is_db();
-if( !$is_db ) { return( $data ); }
-$q = db()->query('SELECT * FROM '.db('locale_langs').' WHERE active="1" ORDER BY locale ASC');
-while ($a = db()->fetch_assoc($q)) {
+if (!main()->is_db()) {
+	return $data;
+}
+foreach ((array)db()->from('locale_langs')->where('active', '1')->order_by('is_default DESC, locale ASC')->get_all() as $a) {
 	$data[$a['locale']] = $a;
 }
 return $data;
