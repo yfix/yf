@@ -955,13 +955,23 @@ class yf_table2 {
 		if (!strlen($link) || empty($row) || false === strpos($link, '%')) {
 			return $link;
 		}
+		$params = array();
 		if (isset($extra['link_params'])) {
 			foreach (explode(',', $extra['link_params']) as $lp) {
 				$lp = trim($lp);
 				if (strlen($lp)) {
-					$link = str_replace('%'.$lp, urlencode($row[$lp]), $link);
+					$params[$lp] = $lp;
 				}
 			}
+		} else {
+			$params = array_keys($row);
+		}
+		foreach ((array)$params as $lp) {
+			$what = '%'.$lp;
+			if (false === strpos($link, $what)) {
+				continue;
+			}
+			$link = str_replace($what, urlencode($row[$lp]), $link);
 		}
 		if ($row[$extra['id']]) {
 			$link = str_replace('%d', urlencode($row[$extra['id']]), $link);

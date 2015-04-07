@@ -1409,10 +1409,18 @@ class yf_html {
 		if (!isset($a['target'])) {
 			$a['target'] = '_blank';
 		}
+		$icon = '';
 		if (isset($a['icon'])) {
-			$a['icon'] = '<i class="'.$a['icon'].'"></i>';
+			$icon = array();
+			if (!is_array($a['icon'])) {
+				$a['icon'] = array($a['icon']);
+			}
+			foreach ((array)$a['icon'] as $i) {
+				$icon[] = '<i class="'.$i.'"></i>';
+			}
+			$icon = implode('&nbsp;', $icon);
 		}
-		return '<a'._attrs($a, array('href','title','class','style','id','rel','target','disabled')).'>'. $a['icon']. (strlen($a['text']) ? ($a['icon'] ? '&nbsp;' : '')._prepare_html($a['text']) : '').'</a>';
+		return '<a'._attrs($a, array('href','title','class','style','id','rel','target','disabled')).'>'. $icon. (strlen($a['text']) ? ($icon ? '&nbsp;' : '')._prepare_html($a['text']) : '').'</a>';
 	}
 
 	/**

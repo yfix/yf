@@ -33,6 +33,7 @@ class yf_static_pages {
 					'name'	=> 'like',
 				),
 				'group_by' => 'name',
+				'pager_records_on_page' => 1000,
 			))
 			->text('name', array('link' => url('/@object/view/%d/%locale'), 'link_params' => 'locale'))
 			->func('locale', function($lang) use ($_this) {
@@ -40,10 +41,10 @@ class yf_static_pages {
 			})
 			->func('text', function($text) { return strlen($text); }, array('desc' => 'Text length') )
 			->date('add_date', array('format' => 'long', 'nowrap' => 1))
-			->btn('View as user', '/static_pages/show/%d/?lang=%locale', array('icon' => 'fa fa-eye', 'btn_no_text' => 1, 'id' => 'name', 'link_params' => 'locale', 'rewrite' => 'user'))
-			->btn_edit('', url('/@object/edit/%d/%locale'), array('no_ajax' => 1, 'btn_no_text' => 1, 'link_params' => 'locale'))
-			->btn_delete('', url('/@object/delete/%d/%locale'), array('btn_no_text' => 1, 'link_params' => 'locale'))
-			->btn_active('', url('/@object/active/%d/%locale'), array('link_params' => 'locale'))
+			->btn('View as user', '/static_pages/show/%d/?lang=%locale', array('icon' => 'fa fa-eye', 'btn_no_text' => 1, 'id' => 'name', 'rewrite' => 'user'))
+			->btn_edit('', url('/@object/edit/%d/%locale'), array('no_ajax' => 1, 'btn_no_text' => 1))
+			->btn_delete('', url('/@object/delete/%d/%locale'), array('btn_no_text' => 1))
+			->btn_active('', url('/@object/active/%d/%locale'))
 			->footer_add('', url('/@object/add'));
 	}
 
@@ -185,12 +186,28 @@ class yf_static_pages {
 		if ($a) {
 			return $a;
 		} elseif ($lang) {
+			$all_langs = main()->get_data('locale_langs');
+			if (!isset($all_langs[$lang])) {
+				return false;
+			}
 			// Try with first lang as fallback
 			$a = db()->from(self::table)
 				->where('name', _strtolower(urldecode($id)) )
 				->or_where('id', (int)$id)
 				->get()
 			;
+			// Create missing page
+			if ($a && $a['locale'] && $lang !== $locale) {
+				$new = $a;
+				unset($new['id']);
+				$new['active'] = 0;
+				$new['locale'] = $lang;
+				db()->insert_safe(self::table, $new);
+				$new['id'] = db()->insert_id();
+				$this->pages_langs[$new['name']][$lang] = $lang;
+				return $new;
+			}
+			return $a;
 		}
 		return false;
 	}
@@ -215,13 +232,17 @@ class yf_static_pages {
 	function _get_lang_links($cur_lang = null, $cur_name = null, $link_for = 'edit') {
 		$lang_links = array();
 		foreach (main()->get_data('locale_langs') as $lang => $l) {
-			if (!isset($this->pages_langs[$cur_name][$lang])) {
-				continue;
-			}
 			$is_selected = ($lang === $cur_lang);
-			$lang_links[] = a('/@object/'.$link_for.'/'.urlencode($cur_name).'/'.$lang, strtoupper($lang), 'bfh-flag-'.$this->lang_def_country[$lang], null, $is_selected ? 'disabled' : '', '');
+			$icon = 'bfh-flag-'.$this->lang_def_country[$lang];
+			if (!isset($this->pages_langs[$cur_name][$lang])) {
+				$icon = array('fa fa-plus', $icon);
+				$class = 'btn-warning';
+			} else {
+				$class = 'btn-success'. ($is_selected ? ' disabled' : '');
+			}
+			$lang_links[] = a('/@object/'.$link_for.'/'.urlencode($cur_name).'/'.$lang, strtoupper($lang), $icon, null, $class, '');
 		}
-		return implode(PHP_EOL, $lang_links);
+		return implode(PHP_EOL, $lang_links).' '.a('/locale_editor', 'Edit locales', 'fa fa-edit');
 	}
 
 	/**

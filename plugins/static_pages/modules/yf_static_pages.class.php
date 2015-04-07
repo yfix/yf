@@ -16,8 +16,6 @@ class yf_static_pages {
 	public $PAGE_TITLE			= null;
 	/** @var bool Allow HTML in text */
 	public $ALLOW_HTML_IN_TEXT	= true;
-	/** @var bool */
-	public $MULTILANG_MODE		= false;
 
 	/**
 	* Catch missing method call
@@ -110,16 +108,22 @@ class yf_static_pages {
 		if (empty($id)) {
 			return array();
 		}
+		$cache_name = $id.'|'.$lang;
+		$a = $this->_cache[$cache_name];
+		if (!is_null($a)) {
+			return $a;
+		}
 		$q = db()->from(self::table)->where('active', '1');
 		if (is_numeric($id)) {
 			$q->where('id', (int)$id);
 		} else {
 			$q->where('name', _strtolower($id));
 		}
-		if ($this->MULTILANG_MODE) {
-			$q->where('locale', conf('language'));
-		}
-		return $q->get();
+		$lang = conf('language');
+		$q->where('locale', $lang);
+		$a = $q->get();
+		$this->_cache[$cache_name] = $a;
+		return $a;
 	}
 
 	/**
@@ -195,22 +199,6 @@ class yf_static_pages {
 	}
 
 	/**
-	* Hook for the site_map
-	*/
-	function _site_map_items ($OBJ = false) {
-		if (!is_object($OBJ)) {
-			return false;
-		}
-		$Q = db()->query('SELECT * FROM '.db(self::table)." WHERE active='1'". ($this->MULTILANG_MODE ? " AND locale='"._es(conf('language'))."'" : ""));
-		while ($A = db()->fetch_assoc($Q)) {
-			$OBJ->_store_item(array(
-				'url'	=> './?object=static_pages&action=show&id='.$A['id'],
-			));
-		}
-		return true;
-	}
-
-	/**
 	* Page header hook
 	*/
 	function _show_header() {
@@ -233,19 +221,6 @@ class yf_static_pages {
 	}
 
 	/**
-	* Title hook
-	*/
-	function _site_title($title) {
-		$subtitle = '';
-
-		$subtitle = $this->PAGE_TITLE ? $this->PAGE_TITLE : $this->PAGE_NAME;
-		if ($subtitle) {
-			$title .= ' : '.t($subtitle);
-		}
-		return $title;
-	}
-
-	/**
 	* Hook for navigation bar
 	*/
 	function _nav_bar_items ($params = array()) {
@@ -261,5 +236,31 @@ class yf_static_pages {
 #		$items[]	= $NAV_BAR_OBJ->_nav_item('Home', './');
 		$items[]	= $NAV_BAR_OBJ->_nav_item($subtitle);
 		return $items;
+	}
+
+	/**
+	* Title hook
+	*/
+	function _site_title($title) {
+		$subtitle = '';
+
+		$subtitle = $this->PAGE_TITLE ? $this->PAGE_TITLE : $this->PAGE_NAME;
+		if ($subtitle) {
+			$title .= ' : '.t($subtitle);
+		}
+		return $title;
+	}
+
+	/**
+	* Hook for the site_map
+	*/
+	function _hook_sitemap($sitemap = false) {
+		if (!is_object($sitemap)) {
+			return false;
+		}
+		foreach ((array)db()->from(self::table)->where('active','1')->where('locale', conf('language'))->get_all() as $a) {
+			$sitemap->_add('/static_pages/show/'.$a['name']);
+		}
+		return true;
 	}
 }
