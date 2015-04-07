@@ -29,7 +29,8 @@ class yf_html_tree {
 #		$btn_back	= $r['back_link'] ? '<a href="'.$r['back_link'].'" class="btn btn-mini btn-xs"><i class="icon-large fa-lg icon-backward fa fa-backward"></i> '.t('Go Back').'</a>' : '';
 #		$btn_add	= $r['add_link'] ? '<a href="'.$r['add_link'].'" class="btn btn-mini btn-xs ajax_add"><i class="icon-large fa-lg icon-plus-sign fa fa-plus-circle"></i> '.t('Add').'</a>' : '';
 		$btn_expand = !$extra['no_expand'] ? '<a href="javascript:void(0);" class="btn btn-mini btn-xs draggable-menu-expand-all"><i class="icon-large fa-lg icon-expand-alt fa fa-expand"></i> '.t('Expand').'</a>' : '';
-		return '<form action="'.$r['form_action'].'" method="post" class="draggable_form'.($extra['form_class'] ? ' '.$extra['form_class'] : '').'">
+		$form_class = 'draggable_form'. ($extra['form_class'] ? ' '.$extra['form_class'] : ''). ($extra['class_add'] ? ' '.$extra['class_add'] : '');
+		return '<form action="'.$r['form_action'].'" method="post" class="'.$form_class.'">
 				<div class="controls">'
 					. $btn_save
 					. $btn_back
@@ -90,6 +91,7 @@ class yf_html_tree {
 				$controls = $extra['show_controls'] ? str_replace('%d', $id, $form_controls) : '';
 			}
 			$badge = $item['badge'] ? ' <sup class="badge badge-'.($item['class_badge'] ?: 'info').'">'.$item['badge'].'</sup>' : '';
+			$controls_style = 'float:right;'.($extra['class_add'] != 'no_hide_controls' ? 'display:none;' : '');
 			$items[] = '
 				<li id="item_'.$id.'"'.(!$is_draggable ? ' class="not_draggable"' : '').'>
 					<div class="dropzone"></div>
@@ -98,7 +100,7 @@ class yf_html_tree {
 						.$content
 						.$badge
 						.($is_draggable ? '&nbsp;<span class="move" title="'.t('Move').'"><i class="icon icon-move fa fa-arrows"></i></span>' : '')
-						.($controls ? '<div style="float:right;display:none;" class="controls_over">'.$controls.'</div>' : '')
+						.($controls ? '<div style="'.$controls_style.'" class="controls_over">'.$controls.'</div>' : '')
 					.'</dl>'
 				;
 			if ($has_children) {
