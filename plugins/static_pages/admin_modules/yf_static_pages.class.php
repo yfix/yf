@@ -96,7 +96,7 @@ class yf_static_pages {
 				}),
 				'text' => 'required',
 			))
-			->db_update_if_ok(self::table, array('name','text','page_title','page_heading','meta_keywords','meta_desc','active'), 'id='.$a['id'])
+			->db_update_if_ok(self::table, array('name','text','page_title','page_heading','meta_keywords','meta_desc','active','locale'), 'id='.$a['id'])
 			->on_after_update(function() {
 				common()->admin_wall_add(array('static page updated: '.$a['name'], $a['id']));
 				cache_del('static_pages_names');
