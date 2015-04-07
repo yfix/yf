@@ -166,15 +166,22 @@ class yf_email {
 	/**
 	*/
 	function _get_email_text($replace = array(), $extra = array()){
-		if ($extra['tpl_name']) { 
-			$a = db()->from(self::table_tpls)->where('name', $extra['tpl_name'])->get();
+		if ($extra['tpl_name']) {
+			$lang = $extra['locale'] ?: conf('language');
+			$a = db()->from(self::table_tpls)->where('name', $extra['tpl_name'])->where('locale', $lang)->get();
+			if (!$a) {
+				$a = db()->from(self::table_tpls)->where('name', $extra['tpl_name'])->get();
+			}
 		}
 		if ($extra['subject']) {
 			$a['subject'] = $extra['subject'];
 		}
 		$body = $a['text'] ?: $extra['body'];
 		if ($a['parent_id']) {
-			$parent = db()->from(self::table_tpls)->whereid($a['parent_id'])->get();
+			$parent = db()->from(self::table_tpls)->whereid($a['parent_id'])->where('locale', $a['locale'])->get();
+			if (!$parent) {
+				$parent = db()->from(self::table_tpls)->whereid($a['parent_id'])->get();
+			}
 			if ($parent) {
 				$body = tpl()->parse_string($parent['text'], array(
 					'main_content' => $body,
