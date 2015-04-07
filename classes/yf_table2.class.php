@@ -1351,6 +1351,20 @@ class yf_table2 {
 	}
 
 	/**
+	* Display language with default country flag for language
+	*/
+	function lang($name, $data = array(), $extra = array()) {
+		$_this = $this;
+		return $this->func($name, function($lang) use ($_this) {
+			asset('bfh-select');
+			if (!isset($_this->lang_def_country)) {
+				$_this->lang_def_country = main()->get_data('lang_def_country');
+			}
+			return html()->icon('bfh-flag-'.$_this->lang_def_country[$lang], strtoupper($lang));
+		}, $extra);
+	}
+
+	/**
 	*/
 	function btn($name, $link, $extra = array()) {
 		$this->_buttons[] = array(
