@@ -128,7 +128,7 @@ return array(
 			'decimals' => NULL,
 			'unsigned' => NULL,
 			'nullable' => false,
-			'default' => '',
+			'default' => 'en',
 			'charset' => NULL,
 			'collate' => NULL,
 			'auto_inc' => false,
