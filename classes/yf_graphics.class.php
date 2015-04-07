@@ -432,7 +432,8 @@ class yf_graphics {
 	* Send main headers
 	*/
 	function _send_main_headers($content_length = 0) {
-		if (headers_sent() || conf('no_headers')) {
+		if (headers_sent($file, $line) || conf('no_headers')) {
+#			trigger_error('Headers were sent in '.$file.':'.$line, E_USER_WARNING);
 			return false;
 		}
 		if ($this->HEADER_POWERED_BY) {
@@ -454,6 +455,11 @@ class yf_graphics {
 		if (main()->is_ajax() || DEBUG_MODE || MAIN_TYPE_ADMIN || conf('ROBOTS_NO_INDEX')) {
 			header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
 		}
+// TODO: unify headers sending for 301, 302, 403, 404, also chech php_sapi_name() for strpos "cgi"
+// http://stackoverflow.com/questions/3258634/php-how-to-send-http-response-code
+#			http_response_code(404); // 5.4+
+#			header('X-PHP-Response-Code: 404', true, 404);
+#			header('Status: 404 Not Found');
 		$this->_send_custom_http_headers();
 	}
 
