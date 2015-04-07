@@ -1216,10 +1216,13 @@ class yf_html {
 			return false;
 		}
 		asset('bfh-select');
-// TODO: allow deep customization of its layout
-		$selected = strval($selected);
 
-		$body .= '<div class="bfh-selectbox" id="'.$extra['id'].'" data-name="'.$name.'" data-value="'.$selected.'" data-filter="true">';
+		$extra['class'] = 'bfh-selectbox '.$extra['class_add'];
+		$extra['data-name']		= $name;
+		$extra['data-value']	= strval($selected);
+		$extra['data-filter']	= isset($extra['data-filter']) ? $extra['data-filter'] : 'true';
+
+		$body .= '<div'._attrs($extra, array('id','class','style')).'>';
 		foreach ((array)$values as $key => $cur_value) {
 			$body .= '<div data-value="'.$key.'">'.($translate ? t($cur_value) : $cur_value).'</div>'.PHP_EOL;
 		}
