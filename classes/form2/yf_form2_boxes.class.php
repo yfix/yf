@@ -152,6 +152,8 @@ class yf_form2_boxes {
 		$row_tpl = $extra['row_tpl'] ?: '%icon %name %code';
 
 		asset('bfh-select');
+		$extra['style'] = $extra['style'] ?: 'max-width:200px;';
+
 		$lang_def_country = main()->get_data('lang_def_country');
 		foreach ((array)db()->from('sys_locale_langs')->get_all() as $v) {
 			$lang = strtolower($v['locale']);
@@ -166,7 +168,7 @@ class yf_form2_boxes {
 		if (MAIN_TYPE_ADMIN && !isset($extra['edit_link'])) {
 			$extra['edit_link'] = url('/locale_editor');
 		}
-		$renderer = $extra['renderer'] ?: 'select_box';
+		$renderer = $extra['renderer'] ?: 'list_box';
 		return $form->$renderer($name, $data, $extra, $replace);
 	}
 
