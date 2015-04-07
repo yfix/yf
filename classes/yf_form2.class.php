@@ -1709,6 +1709,35 @@ class yf_form2 {
 
 	/**
 	*/
+	function info_lang($name = '', $extra = array(), $replace = array()) {
+		if (is_array($name)) {
+			$extra = (array)$extra + $name;
+			$name = '';
+		}
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['name'] = $extra['name'] ?: $name;
+		$func = function($extra, $r, $form) {
+			$extra['desc'] = !$extra['no_label'] && !$form->_params['no_label'] ? $extra['desc'] : '';
+			$value = $r[$extra['name']] ?: $extra['value'];
+			$lang = $value;
+			asset('bfh-select');
+			if (!isset($form->lang_def_country)) {
+				$form->lang_def_country = main()->get_data('lang_def_country');
+			}
+			$content = html()->icon('bfh-flag-'.$form->lang_def_country[$lang], strtoupper($lang));
+			return $form->_row_html($content, $extra, $r);
+		};
+		if ($this->_chained_mode) {
+			$this->_body[] = array('func' => $func, 'extra' => $extra, 'replace' => $replace, 'name' => __FUNCTION__);
+			return $this;
+		}
+		return $func((array)$extra + (array)$this->_extra, (array)$replace + (array)$this->_replace, $this);
+	}
+
+	/**
+	*/
 	function link($name = '', $link = '', $extra = array(), $replace = array()) {
 		if (is_array($name)) {
 			$extra = (array)$extra + $name;
