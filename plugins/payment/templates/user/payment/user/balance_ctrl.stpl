@@ -3,12 +3,20 @@
 {js()}
 (function () { 'use strict';
 
-var __NS__ = 'payment.balance.recharge';
-
-angular.module( __NS__ )
-
-.value( 'PaymentBalanceRechargeConfig', { payment: {payment}, } )
-
+{if_not_empty( payment )}
+angular.module( 'payment.balance.recharge' )
+	.value( 'payment.balance.recharge.config', { payment: {payment}, } )
 ;
+{/if}
+
+{if_not_empty( payment_config )}
+angular.module( 'payment.balance' )
+	.value( 'payment.balance.config', {
+		url       : '{url( /api/payment/balance )}'
+		url_login : '{url( /login_form/login    )}',
+	})
+;
+{/if}
+
 })();
 {/js}

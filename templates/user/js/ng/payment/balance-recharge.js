@@ -7,13 +7,16 @@ angular.module( __NS__, [
 	'payment.balance',
 ])
 
-.value( 'PaymentBalanceRechargeConfig', { payment: {}, } )
+// .value( 'payment.balance.recharge.config', { payment: {}, } )
 
 .controller( 'payment.balance.recharge.ctrl',
-[ '$log', '$scope', '$timeout', 'PaymentApi', 'PaymentBalance', 'PaymentBalanceRechargeConfig',
-function( $log, $scope, $timeout, PaymentApi, PaymentBalance, PaymentBalanceRechargeConfig ) {
+[ '$log', '$scope', '$timeout', 'PaymentApi', 'PaymentBalance', 'payment.balance.config', 'payment.balance.recharge.config',
+function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _config_recharge ) {
+	// var config = PaymentApiConfig.config();
+	var config = {};
+	angular.extend( config, _config_balance  );
 	$scope.payment = {};
-	angular.extend( $scope.payment, PaymentBalanceRechargeConfig.payment );
+	angular.extend( $scope.payment, _config_recharge.payment );
 	$scope.amount_init = function() {
 		// min, step
 		$scope.amount_min           = $scope.currency_min( false );
@@ -227,7 +230,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, PaymentBalanceRech
 							// reload page for login
 							$this.timer.cancel();
 							$this.timer.id = $timeout( function() {
-								window.location.href = ( '{url( /login_form )}' );
+								window.location.href = config.url_login;
 							}, 3000 );
 						} else {
 							$scope.status_message = 'Ошибка при выполнении запроса';
@@ -282,7 +285,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, PaymentBalanceRech
 							// reload page for login
 							$timeout.cancel( $this.timer );
 							$this.timer = $timeout( function() {
-								window.location.href = ( '{url( /login_form )}' );
+								window.location.href = config.url_login;
 							}, 3000 );
 						} else {
 							$scope.status_message = 'Ошибка при выполнении запроса';

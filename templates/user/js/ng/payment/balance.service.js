@@ -4,17 +4,36 @@ var __NS__ = 'payment.balance';
 
 angular.module( __NS__ )
 
-.constant( 'PaymentBalanceConfig', {
-	url       : '/api/payment/balance',
-	url_login : '/login_form/login',
-})
+// .value( 'payment.balance.config', {
+	// url       : '/api/payment/balance',
+	// url_login : '/login_form/login',
+// })
+
+.factory( 'PaymentApiConfig',
+[ '$log',
+function( $log ) {
+	var _config_default = {
+		url       : '/api/payment/balance',
+		url_login : '/login_form/login',
+	};
+	var _config = _config_default;
+	var service = {};
+	service.config = function( config ) {
+		if( config && angular.isObject( config ) ) {
+			angular.extend( _config, config  );
+		}
+		return( _config );
+	};
+	return( service );
+}])
 
 .factory( 'PaymentApi',
-[ '$log', '$resource', 'PaymentBalanceConfig',
-function( $log, $resource, PaymentBalanceConfig ) {
+[ '$log', '$resource', 'payment.balance.config',
+function( $log, $resource, _config ) {
 	// private
+	// var config = PaymentApiConfig.config();
 	var config = {};
-	angular.extend( config, PaymentBalanceConfig );
+	angular.extend( config, _config  );
 	// service
 	var service = {};
 	service.config = function() {
