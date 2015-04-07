@@ -67,6 +67,7 @@ class yf_form2_datetime {
 				. ($extra['default_date'] ? ', defaultDate: \''.date($extra['limit_date_format'], $extra['default_date']).'\'' : '')
 				. ($extra['side_by_side'] && $extra['no_time'] != 1 ? ', sideBySide: true' : '')
 				. ($extra['stepping']  ? ', stepping: '.$extra['stepping'] : '')
+				. ($extra['widgetPositioning']  ? ', widgetPositioning: '.$extra['widgetPositioning'] : '')
 				.'
 			});
 		');
