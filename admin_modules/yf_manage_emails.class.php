@@ -17,8 +17,12 @@ class yf_manage_emails {
 	*/
 	function show() {
 		$data = db()->from(self::table)->get_all();
-		return table($data, array('pager_records_on_page' => 100))
+		return table($data, array(
+				'pager_records_on_page' => 100,
+				'group_by' => 'name',
+			))
 			->text('name', array('link' => url('/@object/view/%d')))
+			->lang('locale')
 			->text('subject')
 			->func('parent_id', function($pid) use ($data) { return $pid ? $data[$pid]['name'] : ''; } )
 			->func('text', function($text) { return strlen($text); }, array('desc' => 'Text length') )
@@ -144,8 +148,9 @@ class yf_manage_emails {
 				'name'		=> 'required|alpha_dash',
 				'subject'	=> 'required',
 				'text'		=> 'required',
+				'locale'	=> 'required',
 			))
-			->db_update_if_ok(self::table, array('name','subject','text','active','parent_id'))
+			->db_update_if_ok(self::table, array('name','subject','text','active','parent_id','locale'))
 			->on_after_update(function() use ($a) {
 				common()->admin_wall_add(array('Email template updated: '.$a['name'], $a['id']));
 			})
@@ -158,6 +163,7 @@ class yf_manage_emails {
 			))
 			->hidden($hidden_id)
 			->select_box('parent_id', db()->from(self::table)->where('id != '.$a['id'])->get_2d('id, name'), array('show_text' => '== Select parent template =='))
+			->locale_box('locale')
 			->active_box()
 			->save_and_back()
 		;
@@ -171,7 +177,7 @@ class yf_manage_emails {
 			db()->delete(self::table, $id);
 			common()->admin_wall_add(array('Email temptate deleted: '.$id, $id));
 		}
-		if (main()->is_ajax()) {
+		if (is_ajax()) {
 			no_graphics(true);
 			echo $id;
 		} else {
@@ -187,7 +193,7 @@ class yf_manage_emails {
 			db()->update_safe(self::table, array('active' => (int)!$a['active']), 'id='.intval($a['id']));
 			common()->admin_wall_add(array('Email template: '.$a['name'].' '.($a['active'] ? 'inactivated' : 'activated'), $a['id']));
 		}
-		if (main()->is_ajax()) {
+		if (is_ajax()) {
 			no_graphics(true);
 			return print intval(!$a['active']);
 		}
