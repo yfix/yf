@@ -7,7 +7,7 @@ class yf_manage_emails {
 	/**
 	*/
 	function show() {
-		$data = db()->from(self::table)->get_all();
+		$data = db()->from(self::table)->order_by('name ASC, locale ASC')->get_all();
 		return table($data, array(
 				'pager_records_on_page' => 100,
 				'group_by' => 'name',
@@ -15,7 +15,7 @@ class yf_manage_emails {
 			->text('name', array('link' => url('/@object/view/%d')))
 			->lang('locale')
 			->text('subject')
-			->func('parent_id', function($pid) use ($data) { return $pid ? $data[$pid]['name'] : ''; } )
+			->func('parent_id', function($pid) use ($data) { return $pid ? $data[$pid]['name'].' ['.strtoupper($data[$pid]['locale']).']' : ''; } )
 			->func('text', function($text) { return strlen($text); }, array('desc' => 'Text length') )
 			->btn('Raw', url('/@object/raw/%d'), array('target' => '_blank', 'btn_no_text' => 1))
 			->btn_view('Preview', url('/@object/view/%d'), array('btn_no_text' => 1))
@@ -43,6 +43,7 @@ class yf_manage_emails {
 		return form($a)
 			->validate(array('to_email' => 'trim|email|required'))
 			->on_validate_ok(function($post) use ($a) {
+				conf('language', $a['locale']);
 				$result = _class('email')->_send_email_safe($a['to_email'], $a['to_name'], $a['name'], $a, $instant_send = true, array('subject' => $a['to_subject'], 'force_send' => true));
 				if ($result) {
 					common()->message_success('Test email sent successfully');
@@ -67,7 +68,7 @@ class yf_manage_emails {
 		if (empty($a)) {
 			return _404();
 		}
-		list($subject, $html) = _class('email')->_get_email_text($replace, array('tpl_name' => $a['name']));
+		list($subject, $html) = _class('email')->_get_email_text($replace, array('tpl_name' => $a['name'], 'locale' => $a['locale']));
 		no_graphics(true);
 		$charset = conf('charset');
 		header('Content-type: text/html, charset='.$charset);
@@ -82,7 +83,7 @@ class yf_manage_emails {
 		if (empty($a)) {
 			return _404();
 		}
-		list($subject, $html) = _class('email')->_get_email_text($replace, array('tpl_name' => $a['name']));
+		list($subject, $html) = _class('email')->_get_email_text($replace, array('tpl_name' => $a['name'], 'locale' => $a['locale']));
 		$text = _class('email')->_text_from_html($html);
 		no_graphics(true);
 		$charset = conf('charset');
@@ -130,6 +131,8 @@ class yf_manage_emails {
 		$div_id = 'text_div';
 		$hidden_id = 'text';
 
+		$parents = db()->from(self::table)->where('id != '.$a['id'])->order_by('name ASC, locale ASC')->get_2d('id, CONCAT(name," [", UPPER(locale),"]")');
+
 		$_this = $this;
 		return form($a, array(
 				'data-onsubmit' => '$(this).find("#'.$hidden_id.'").val( $("#'.$div_id.'").data("ace_editor").session.getValue() );',
@@ -139,7 +142,6 @@ class yf_manage_emails {
 				'name'		=> 'required|alpha_dash',
 				'subject'	=> 'required',
 				'text'		=> 'required',
-#				'locale'	=> 'required',
 			))
 			->db_update_if_ok(self::table, array('name','subject','text','active','parent_id','locale'))
 			->on_after_update(function() use ($a) {
@@ -154,8 +156,7 @@ class yf_manage_emails {
 				'ace_editor' => array('mode' => 'html'),
 			))
 			->hidden($hidden_id)
-			->select_box('parent_id', db()->from(self::table)->where('id != '.$a['id'])->get_2d('id, name'), array('show_text' => '== Select parent template =='))
-#			->locale_box('locale')
+			->select_box('parent_id', $parents, array('show_text' => '== Select parent template =='))
 			->active_box()
 			->save_and_back()
 		;
@@ -230,6 +231,7 @@ class yf_manage_emails {
 				$new = $a;
 				unset($new['id']);
 				$new['active'] = 0;
+				$new['parent_id'] = 0;
 				$new['locale'] = $lang;
 				db()->insert_safe(self::table, $new);
 				$new['id'] = db()->insert_id();
