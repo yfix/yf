@@ -13,18 +13,6 @@ class yf_static_pages {
 
 	/**
 	*/
-	function _init() {
-		asset('bfh-select');
-
-		$this->lang_def_country = main()->get_data('lang_def_country');
-
-		foreach((array)db()->select('name, locale')->from(self::table)->get_all() as $p) {
-			$this->pages_langs[$p['name']][$p['locale']] = $p['locale'];
-		}
-	}
-
-	/**
-	*/
 	function show() {
 		$_this = $this;
 		return table(db()->from(self::table)->order_by('name ASC, locale ASC'), array(
@@ -36,9 +24,7 @@ class yf_static_pages {
 				'pager_records_on_page' => 1000,
 			))
 			->text('name', array('link' => url('/@object/view/%d/%locale'), 'link_params' => 'locale'))
-			->func('locale', function($lang) use ($_this) {
-				return html()->icon('bfh-flag-'.$_this->lang_def_country[$lang], strtoupper($lang));
-			})
+			->lang('locale')
 			->func('text', function($text) { return strlen($text); }, array('desc' => 'Text length') )
 			->date('add_date', array('format' => 'long', 'nowrap' => 1))
 			->btn('View as user', '/static_pages/show/%d/?lang=%locale', array('icon' => 'fa fa-eye', 'btn_no_text' => 1, 'id' => 'name', 'rewrite' => 'user'))
@@ -204,7 +190,6 @@ class yf_static_pages {
 				$new['locale'] = $lang;
 				db()->insert_safe(self::table, $new);
 				$new['id'] = db()->insert_id();
-				$this->pages_langs[$new['name']][$lang] = $lang;
 				return $new;
 			}
 			return $a;
@@ -230,6 +215,13 @@ class yf_static_pages {
 	/**
 	*/
 	function _get_lang_links($cur_lang = null, $cur_name = null, $link_for = 'edit') {
+		asset('bfh-select');
+		$this->lang_def_country = main()->get_data('lang_def_country');
+
+		foreach((array)db()->select('name, locale')->from(self::table)->get_all() as $p) {
+			$this->pages_langs[$p['name']][$p['locale']] = $p['locale'];
+		}
+
 		$lang_links = array();
 		foreach (main()->get_data('locale_langs') as $lang => $l) {
 			$is_selected = ($lang === $cur_lang);
