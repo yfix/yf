@@ -326,7 +326,8 @@ class yf_locale_editor {
 			foreach ((array)$lang_vars as $source => $translation) {
 				$vars[$source.'|'.$lang] = array(
 					'locale'		=> (string)$lang,
-					'source'		=> (string)$source,
+#					'source'		=> (string)_wordwrap($source, 100, PHP_EOL, true),
+					'source'		=> (string)str_replace('_', ' ', $source),
 					'translation'	=> (string)$translation,
 					'files'			=> (string)$var_files[$source],
 				);
@@ -340,7 +341,7 @@ class yf_locale_editor {
 				return html()->icon('bfh-flag-'.$_this->lang_def_country[$lang], strtoupper($lang));
 			})
 			->text('translation')
-			->btn_edit('', url('/@object/edit_var/%d'), array('btn_no_text' => 1))
+			->btn_edit('', url('/@object/edit_var/%source'), array('btn_no_text' => 1))
 			->btn_func('files', function($row, $extra, $replace, $table) {
 				$path = $row['files'];
 				$show_path = $path;
