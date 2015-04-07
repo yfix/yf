@@ -2,7 +2,10 @@
 
 class yf_payment__user {
 
+	public $payment_module = null;
+
 	public function _init() {
+		$this->payment_module = module( 'payment' );
 	}
 
 	public function balance( $options ) {
@@ -33,16 +36,24 @@ class yf_payment__user {
 		$status        = $payment_api->status();
 		$currencies    = $payment_api->currencies;
 		$currency_rate = $payment_api->currency_rate__buy();
+		// transition
+		$payment_module = $this->payment_module;
+		$payment_module->t( $currency,   'currency' );
+		$payment_module->t( $currencies, 'currency' );
+		$payment_module->t( $operation );
+		$payment_module->t( $providers );
+		$payment_module->t( $status );
+		// tpl
 		$replace = array(
 			'payment'   => json_encode( array(
 				'account'              => $account,
 				'currency'             => $currency,
+				'currencies'           => $currencies,
+				'currency_rate'        => $currency_rate,
 				'operation'            => $operation,
 				'provider'             => $provider,
 				'providers'            => $providers,
 				'status'               => $status,
-				'currencies'           => $currencies,
-				'currency_rate'        => $currency_rate,
 				'operation_pagination' => array(
 					'count'    => $count,
 					'page_per' => $page_per,

@@ -219,21 +219,21 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 							angular.extend( $scope.payment, r.response.payment );
 							PaymentBalance.load({ account: r.response.payment.account });
 						} else {
-							$scope.status_message = 'Ошибка при выполнении операции';
+							$scope.status_message = config.message.error.operation;
 							$log.error( 'balance->operation is fail operation:', r );
 						}
 					},
 					function( r ) {
 						$scope.block_wait = false;
 						if( r.status && r.status == 403 ) {
-							$scope.status_message = 'Требуется авторизация';
+							$scope.status_message = config.message.error.authentication;
 							// reload page for login
 							$this.timer.cancel();
 							$this.timer.id = $timeout( function() {
 								window.location.href = config.url_login;
 							}, 3000 );
 						} else {
-							$scope.status_message = 'Ошибка при выполнении запроса';
+							$scope.status_message = config.message.error.request;
 							$log.error( 'balance->operation is fail transport:', r );
 						}
 					}
@@ -269,7 +269,7 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 							$scope.show_balance_recharge( !$scope.status );
 						}, $this.timer.timeout );
 					} else {
-						$scope.status_message = 'Ошибка при выполнении операции';
+						$scope.status_message = config.message.error.operation;
 						$log.error( 'balance->recharge is fail operation:', r );
 					}
 				},
@@ -281,14 +281,14 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 						$log.warnig( 'balance->recharge is fail transport operation:', r );
 					} else {
 						if( r.status && r.status == 403 ) {
-							$scope.status_message = 'Требуется авторизация';
+							$scope.status_message = config.message.error.authentication;
 							// reload page for login
 							$timeout.cancel( $this.timer );
 							$this.timer = $timeout( function() {
 								window.location.href = config.url_login;
 							}, 3000 );
 						} else {
-							$scope.status_message = 'Ошибка при выполнении запроса';
+							$scope.status_message = config.message.error.request;
 							$log.error( 'balance->recharge is fail transport:', r );
 						}
 					}
@@ -307,7 +307,7 @@ $log.error( 'payout', r );
 					$scope.block_wait = false;
 					if( r.response && r.response.payout ) {
 					} else {
-						$scope.status_message = 'Ошибка при выполнении операции';
+						$scope.status_message = config.message.error.operation;
 						$log.error( 'balance->payout is fail operation:', r );
 					}
 				},
@@ -319,14 +319,14 @@ $log.error( 'payout', r );
 						$log.warnig( 'balance->payout is fail transport operation:', r );
 					} else {
 						if( r.status && r.status == 403 ) {
-							$scope.status_message = 'Требуется авторизация';
+							$scope.status_message = config.message.error.authentication;
 							// reload page for login
 							$timeout.cancel( $this.timer );
 							$this.timer = $timeout( function() {
 								window.location.href = ( '{url( /login_form )}' );
 							}, 3000 );
 						} else {
-							$scope.status_message = 'Ошибка при выполнении запроса';
+							$scope.status_message = config.message.error.request;
 							$log.error( 'balance->payout is fail transport:', r );
 						}
 					}
