@@ -6,15 +6,6 @@ class yf_manage_emails {
 
 	/**
 	*/
-	function _get_info($id = null) {
-		$id = isset($id) ? $id : $_GET['id'];
-		return db()->from(self::table)
-			->where('name', _strtolower(urldecode($id)) )
-			->or_where('id', (int)$id)->get();
-	}
-
-	/**
-	*/
 	function show() {
 		$data = db()->from(self::table)->get_all();
 		return table($data, array(
@@ -148,12 +139,13 @@ class yf_manage_emails {
 				'name'		=> 'required|alpha_dash',
 				'subject'	=> 'required',
 				'text'		=> 'required',
-				'locale'	=> 'required',
+#				'locale'	=> 'required',
 			))
 			->db_update_if_ok(self::table, array('name','subject','text','active','parent_id','locale'))
 			->on_after_update(function() use ($a) {
 				common()->admin_wall_add(array('Email template updated: '.$a['name'], $a['id']));
 			})
+			->container($this->_get_lang_links($a['locale'], $a['name'], 'edit'))
 			->text('name')
 			->text('subject')
 			->container('<div id="'.$div_id.'" style="width: 90%; height: 500px;">'._prepare_html($a['text']).'</div>', '', array(
@@ -163,7 +155,7 @@ class yf_manage_emails {
 			))
 			->hidden($hidden_id)
 			->select_box('parent_id', db()->from(self::table)->where('id != '.$a['id'])->get_2d('id, name'), array('show_text' => '== Select parent template =='))
-			->locale_box('locale')
+#			->locale_box('locale')
 			->active_box()
 			->save_and_back()
 		;
@@ -207,5 +199,69 @@ class yf_manage_emails {
 			return _404('Only for console testing');
 		}
 		_class('email')->_send_admin_email('moved_to_arbitration', 1);
+	}
+
+	/**
+	*/
+	function _get_info($id = null, $lang = null) {
+		$id = isset($id) ? $id : $_GET['id'];
+		$lang = isset($lang) ? $lang : $_GET['page'];
+		$a = db()->from(self::table)
+			->where('locale', $lang ? strtolower($lang) : '')
+			->where('name', _strtolower(urldecode($id)) )
+			->or_where('id', (int)$id)
+			->get()
+		;
+		if ($a) {
+			return $a;
+		} elseif ($lang) {
+			$all_langs = main()->get_data('locale_langs');
+			if (!isset($all_langs[$lang])) {
+				return false;
+			}
+			// Try with first lang as fallback
+			$a = db()->from(self::table)
+				->where('name', _strtolower(urldecode($id)) )
+				->or_where('id', (int)$id)
+				->get()
+			;
+			// Create missing page
+			if ($a && $a['locale'] && $lang !== $locale) {
+				$new = $a;
+				unset($new['id']);
+				$new['active'] = 0;
+				$new['locale'] = $lang;
+				db()->insert_safe(self::table, $new);
+				$new['id'] = db()->insert_id();
+				return $new;
+			}
+			return $a;
+		}
+		return false;
+	}
+
+	/**
+	*/
+	function _get_lang_links($cur_lang = null, $cur_name = null, $link_for = 'edit') {
+		asset('bfh-select');
+		$this->lang_def_country = main()->get_data('lang_def_country');
+
+		foreach((array)db()->select('name, locale')->from(self::table)->get_all() as $p) {
+			$this->pages_langs[$p['name']][$p['locale']] = $p['locale'];
+		}
+
+		$lang_links = array();
+		foreach (main()->get_data('locale_langs') as $lang => $l) {
+			$is_selected = ($lang === $cur_lang);
+			$icon = 'bfh-flag-'.$this->lang_def_country[$lang];
+			if (!isset($this->pages_langs[$cur_name][$lang])) {
+				$icon = array('fa fa-plus', $icon);
+				$class = 'btn-warning';
+			} else {
+				$class = 'btn-success'. ($is_selected ? ' disabled' : '');
+			}
+			$lang_links[] = a('/@object/'.$link_for.'/'.urlencode($cur_name).'/'.$lang, strtoupper($lang), $icon, null, $class, '');
+		}
+		return implode(PHP_EOL, $lang_links).' '.a('/locale_editor', 'Edit locales', 'fa fa-edit');
 	}
 }
