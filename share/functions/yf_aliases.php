@@ -186,6 +186,9 @@ if (!function_exists('jade')) {
 if (!function_exists('haml')) {
 	function haml($content, $params = array()) { return _class('services')->haml($content, $params); }
 }
+if (!function_exists('tip')) {
+	function tip($text, $extra = array()) { return _class('graphics')->tip($text, $extra); }
+}
 if (!function_exists('require_php_lib')) {
 	function require_php_lib($name, $params = array()) { return _class('services')->require_php_lib($name, $params); }
 }
