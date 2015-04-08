@@ -2,10 +2,12 @@
 
 class yf_manage_tips {
 
+	const table = 'tips';
+
 	/**
 	*/
 	function show() {
-		$data = db()->from('tips')->order_by('name ASC, locale ASC')->get_all();
+		$data = db()->from(self::table)->order_by('name ASC, locale ASC')->get_all();
 		return table($data, array(
 				'pager_records_on_page' => 1000,
 				'group_by' => 'name',
@@ -16,46 +18,132 @@ class yf_manage_tips {
 			->btn_edit(array('no_ajax' => 1, 'btn_no_text' => 1))
 			->btn_delete(array('btn_no_text' => 1))
 			->btn_active()
-			->header_add();
+			->header_add(array('no_ajax' => 1));
 	}
 
 	/**
 	*/
 	function add() {
-		$replace = _class('admin_methods')->add(array('table' => 'tips'));
-		return form($replace)
+		$a = (array)$_POST + (array)$a;
+		$a['back_link'] = url('/@object');
+		!$a['locale'] && $a['locale'] = conf('language');
+		return form($a)
+			->validate(array(
+				'__before__'=> 'trim',
+				'name' => 'required',
+				'text' => 'required',
+				'locale' => 'required',
+			))
+			->db_insert_if_ok(self::table, array('name','text','active','locale'))
 			->text('name')
-			->textarea('text')
-			->select_box('locale', main()->get_data('languages'))
+			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
+			->locale_box('locale')
+			->active_box()
 			->save_and_back();
 	}
 
 	/**
 	*/
 	function edit() {
-		$replace = _class('admin_methods')->edit(array('table' => 'tips'));
-		return form($replace)
+		$a = $this->_get_info();
+		if (!$a) {
+			return _404();
+		}
+		$a = (array)$_POST + (array)$a;
+		$a['back_link'] = url('/@object');
+		return form($a)
+			->validate(array(
+				'__before__'=> 'trim',
+				'name' => 'required',
+				'text' => 'required',
+			))
+			->db_update_if_ok(self::table, array('name','text','active','locale'))
+			->container($this->_get_lang_links($a['locale'], $a['name'], 'edit'))
 			->text('name')
-			->textarea('text')
-			->select_box('locale', main()->get_data('languages'))
+			->textarea('text', array('id' => 'text', 'cols' => 200, 'rows' => 10, 'ckeditor' => array('config' => _class('admin_methods')->_get_cke_config())))
+			->active_box()
 			->save_and_back();
 	}
 
 	/**
 	*/
 	function delete() {
-		return _class('admin_methods')->delete(array('table' => 'tips'));
+		return _class('admin_methods')->delete(array('table' => self::table));
 	}
 
 	/**
 	*/
 	function active() {
-		return _class('admin_methods')->active(array('table' => 'tips'));
+		return _class('admin_methods')->active(array('table' => self::table));
 	}
 
 	/**
 	*/
 	function clone_item() {
-		return _class('admin_methods')->clone_item(array('table' => 'tips'));
+		return _class('admin_methods')->clone_item(array('table' => self::table));
+	}
+
+	/**
+	*/
+	function _get_lang_links($cur_lang = null, $cur_name = null, $link_for = 'edit') {
+		asset('bfh-select');
+		$this->lang_def_country = main()->get_data('lang_def_country');
+
+		foreach((array)db()->select('name, locale')->from(self::table)->get_all() as $p) {
+			$this->pages_langs[$p['name']][$p['locale']] = $p['locale'];
+		}
+
+		$lang_links = array();
+		foreach (main()->get_data('locale_langs') as $lang => $l) {
+			$is_selected = ($lang === $cur_lang);
+			$icon = 'bfh-flag-'.$this->lang_def_country[$lang];
+			if (!isset($this->pages_langs[$cur_name][$lang])) {
+				$icon = array('fa fa-plus', $icon);
+				$class = 'btn-warning';
+			} else {
+				$class = 'btn-success'. ($is_selected ? ' disabled' : '');
+			}
+			$lang_links[] = a('/@object/'.$link_for.'/'.urlencode($cur_name).'/'.$lang, strtoupper($lang), $icon, null, $class, '');
+		}
+		return implode(PHP_EOL, $lang_links).' '.a('/locale_editor', 'Edit locales', 'fa fa-edit');
+	}
+
+	/**
+	*/
+	function _get_info($id = null, $lang = null) {
+		$id = isset($id) ? $id : $_GET['id'];
+		$lang = isset($lang) ? $lang : $_GET['page'];
+		$a = db()->from(self::table)
+			->where('locale', $lang ? strtolower($lang) : '')
+			->where('name', _strtolower(urldecode($id)) )
+			->or_where('id', (int)$id)
+			->get()
+		;
+		if ($a) {
+			return $a;
+		} elseif ($lang) {
+			$all_langs = main()->get_data('locale_langs');
+			if (!isset($all_langs[$lang])) {
+				return false;
+			}
+			// Try with first lang as fallback
+			$a = db()->from(self::table)
+				->where('name', _strtolower(urldecode($id)) )
+				->or_where('id', (int)$id)
+				->get()
+			;
+			// Create missing page
+			if ($a && $a['locale'] && $lang !== $locale) {
+				$new = $a;
+				unset($new['id']);
+				$new['active'] = 0;
+				$new['locale'] = $lang;
+				db()->insert_safe(self::table, $new);
+				$new['id'] = db()->insert_id();
+				return $new;
+			}
+			return $a;
+		}
+		return false;
 	}
 }
