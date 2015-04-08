@@ -616,11 +616,17 @@ class yf_graphics {
 			// 'Some inline help text';'fa-eye'
 			// 'Some inline help text';'fa-eye';'my_tip_class'
 			$raw = explode(';', str_replace(array('\'','"'), '', $in['raw']));
-			$extra['text']	= $raw[0];
-			$extra['icon']	= $raw[1];
-			$extra['class']	= $raw[1];
+			$extra['text']	= trim($raw[0]);
+			$extra['icon']	= trim($raw[1]);
+			$extra['class']	= trim($raw[1]);
+			if (isset($in['replace']) && $extra['text'] && substr($extra['text'], 0, 1) === '@') {
+				$replace_var = substr($extra['text'], 1);
+				if (isset($in['replace'][$replace_var])) {
+					$extra['text'] = $in['replace'][$replace_var];
+				}
+			}
 		}
-		$extra['text'] = $extra['text'] ?: (is_string($in) ? $in : '');
+		$extra['text'] = trim($extra['text'] ?: (is_string($in) ? $in : ''));
 		if (!strlen($extra['text'])) {
 			return false;
 		}
