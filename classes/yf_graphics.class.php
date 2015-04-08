@@ -359,46 +359,6 @@ class yf_graphics {
 	}
 
 	/**
-	* Show help tip block
-	*/
-	function _show_help_tip($params = array()) {
-		$tip_id		= $params['tip_id'];
-		$tip_type	= !empty($params['tip_type']) ? intval($params['tip_type']) : 1;
-		if (empty($tip_id)) {
-			return false;
-		}
-		if (!isset($this->_avail_tips)) {
-			$this->_avail_tips = (array)main()->get_data('tips');
-		}
-		$r = $params['replace'];
-		$legend = '';
-		$var = $tip_id[0] == '#' ? substr($tip_id, 1) : '';
-		if ($var && isset($r[$var])) {
-			$legend = $r[$var];
-		} elseif (isset($this->_avail_tips[$tip_id])) {
-			$legend = $this->_avail_tips[$tip_id];
-		} else {
-			$legend = t($tip_id);
-		}
-		if (!strlen($legend)) {
-			return false;
-		}
-		return tpl()->parse('system/help_tip', array(
-			'tip_id'	=> _prepare_html($tip_id),
-			'tip_type'	=> intval($tip_type),
-			'legend'	=> _prepare_html($legend),
-		));
-	}
-
-	/**
-	* Show inline tip block
-	*/
-	function _show_inline_tip($params = array()) {
-		$params['tip_id'] = $params['text'];
-		return $this->_show_help_tip($params);
-	}
-
-	/**
 	* Prepare help for show
 	*/
 	function show_help(){
@@ -412,20 +372,6 @@ class yf_graphics {
 			$body = tpl()->parse($STPL_NAME, $replace);
 		}
 		return tpl()->parse('system/help_wrapper', array('body' => nl2br(trim($body))));
-	}
-
-	/**
-	* Get html code for external bookmarking (Yahoo, Digg, etc)
-	*/
-	function _show_bookmarks_button($title = '', $url = '', $only_links = 1) {
-		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_bookmarks_button($title, $url, $only_links);
-	}
-
-	/**
-	* Get html code for external bookmarking (Yahoo, Digg, etc)
-	*/
-	function _show_rss_button($feed_name = '', $feed_link = '', $only_links = 1) {
-		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_rss_button($feed_name, $feed_link, $only_links);
 	}
 
 	/**
@@ -481,13 +427,6 @@ class yf_graphics {
 	}
 
 	/**
-	* Generate typos for the given text
-	*/
-	function _generate_typos($params = array()) {
-		return _class('graphics_typos', $this->SUB_MODULES_PATH)->get_all_with_stpl($params['text'], $params);
-	}
-
-	/**
 	* Display user geo location block
 	*/
 	function _show_user_geo_block($params = array()) {
@@ -507,6 +446,27 @@ class yf_graphics {
 			'change_link'			=> './?object=geo_content&action=change_location',
 		);
 		return tpl()->parse('user_geo_block', $replace);
+	}
+
+	/**
+	* Generate typos for the given text
+	*/
+	function _generate_typos($params = array()) {
+		return _class('graphics_typos', $this->SUB_MODULES_PATH)->get_all_with_stpl($params['text'], $params);
+	}
+
+	/**
+	* Get html code for external bookmarking (Yahoo, Digg, etc)
+	*/
+	function _show_bookmarks_button($title = '', $url = '', $only_links = 1) {
+		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_bookmarks_button($title, $url, $only_links);
+	}
+
+	/**
+	* Get html code for external bookmarking (Yahoo, Digg, etc)
+	*/
+	function _show_rss_button($feed_name = '', $feed_link = '', $only_links = 1) {
+		return _class('graphics_bookmarks', $this->SUB_MODULES_PATH)->_show_rss_button($feed_name, $feed_link, $only_links);
 	}
 
 	/**
@@ -590,5 +550,95 @@ class yf_graphics {
 			'items'	=> $items,
 		);
 		return tpl()->parse('system/quick_menu_main', $replace);
+	}
+
+	/**
+	* Show help tip block
+	*/
+	function _show_help_tip($params = array()) {
+		$tip_id		= $params['tip_id'];
+		$tip_type	= !empty($params['tip_type']) ? intval($params['tip_type']) : 1;
+		if (empty($tip_id)) {
+			return false;
+		}
+		if (!isset($this->_avail_tips)) {
+			$this->_avail_tips = (array)main()->get_data('tips');
+		}
+		$r = $params['replace'];
+		$legend = '';
+		$var = $tip_id[0] == '#' ? substr($tip_id, 1) : '';
+		if ($var && isset($r[$var])) {
+			$legend = $r[$var];
+		} elseif (isset($this->_avail_tips[$tip_id])) {
+			$legend = $this->_avail_tips[$tip_id];
+		} else {
+			$legend = t($tip_id);
+		}
+		if (!strlen($legend)) {
+			return false;
+		}
+		return tpl()->parse('system/help_tip', array(
+			'tip_id'	=> _prepare_html($tip_id),
+			'tip_type'	=> intval($tip_type),
+			'legend'	=> _prepare_html($legend),
+		));
+	}
+
+	/**
+	* Show inline tip block
+	*/
+// DEPRECATED, use tip()
+	function _show_inline_tip($params = array()) {
+		$params['tip_id'] = $params['text'];
+		return $this->_show_help_tip($params);
+	}
+
+	/**
+	* New unified method to display tooltips, all others should be deprecated. Examples:
+	* tip('register.login')     tpl version: {tip('register.login')}
+	* tip('Some inline help text')     tpl version: {tip('Some inline help text')}
+	* tip('Some inline help text';'fa-eye')    tpl version: {tip('Some inline help text';'fa-eye')}
+	* tip(array('raw' => '\'Some inline help text\';\'fa-eye\''))
+	* tip(array('text' => 'Some inline help text', 'icon' => 'fa-eye'))
+	* tip('Some inline help text', array('icon' => 'fa-eye'))
+	*/
+	function tip($in = null, $extra = array()) {
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		if (is_array($in) && isset($in['text'])) {
+			$extra = (array)$extra + $in;
+		} elseif (is_array($in) && isset($in['raw'])) {
+			// Some inline help text
+			// Some inline help text;fa-eye;my_tip_class'
+			// Some inline help text; fa-eye; my_tip_class
+			// 'Some inline help text'
+			// 'Some inline help text';'fa-eye'
+			// 'Some inline help text';'fa-eye';'my_tip_class'
+			$raw = explode(';', str_replace(array('\'','"'), '', $in['raw']));
+			$extra['text']	= $raw[0];
+			$extra['icon']	= $raw[1];
+			$extra['class']	= $raw[1];
+		}
+		$extra['text'] = $extra['text'] ?: (is_string($in) ? $in : '');
+		if (!strlen($extra['text'])) {
+			return false;
+		}
+		if (!isset($this->_avail_tips)) {
+			$this->_avail_tips = (array)main()->get_data('tips');
+		}
+		$tip = $this->_avail_tips[$extra['text']] ?: array();
+		if ($tip) {
+			$extra['text'] = $tip['text'];
+		}
+		$extra['icon'] = $extra['icon'] ?: ($tip['icon'] ?: 'icon icon-info-sign fa fa-question-circle');
+		$extra['href'] = $extra['href'] ?: '#';
+		$class_add = $extra['class_add'] ?: $tip['class_add'];
+		$extra['class'] = ($extra['class'] ?: 'yf_tip'). ($class_add ? ' '.$class_add : '');
+		$extra['data-content'] = $extra['data-content'] ?: _prepare_html($extra['text']);
+		$extra['data-toggle'] = $extra['data-toggle'] ?: 'popover';
+		$extra['data-container'] = $extra['data-container'] ?: 'body';
+		$extra['data-html']	= $extra['data-html'] ?: 'true';
+		return '<span'._attrs($extra, array('id','class','style')).'><i class="'.$extra['icon'].'"></i></span>';
 	}
 }
