@@ -99,11 +99,9 @@ class yf_tpl_driver_yf_compile {
 			'/\{block\(\s*([\w\-]+)\s*[,;]{0,1}\s*([^"\'\)\}]*)["\']{0,1}\s*\)\}/i' => function($m) use ($start, $end, $name) {
 				return $start.'echo main()->_execute(\'graphics\',\'_show_block\',\'name='.$m[1].';'.$m[2].'\',\''.$name.'\',0,false);'.$end;
 			},
-			'/\{tip\(\s*["\']{0,1}([\w\.#-]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
-				return $start.'echo _class_safe("graphics")->_show_help_tip(array("tip_id"=>\''.$m[1].'\',"tip_type"=>\''.$m[2].'\'));'.$end;
-			},
-			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
-				return $start.'echo _class_safe("graphics")->_show_inline_tip(array("text"=>\''.$m[1].'\'));'.$end;
+			// Display help tooltip. Examples: {tip('register.login')} or {tip('Some inline help text')} or {tip('Some inline help text';'fa-eye')}
+			'/\{(tip|itip)\(\s*["\']{0,1}(?P<raw>[^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end, $name) {
+				return $start.'echo _class_safe("graphics")->tip(array("raw"=>\''.addslashes($m['raw']).'\', "replace" => $replace, "tpl_name" => $name));'.$end;
 			},
 			'/\{(e|user_error)\(\s*["\']{0,1}([\w\.-]+)["\']{0,1}\s*\)\}/ims' => function($m) use ($start, $end) {
 				return $start.'echo common()->_show_error_inline(\''.$m[2].'\');'.$end;

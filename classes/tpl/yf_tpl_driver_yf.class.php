@@ -468,13 +468,9 @@ class yf_tpl_driver_yf {
 			'/\{cleanup\(\s*\)\}(.*?)\{\/cleanup\}/ims' => function($m) {
 				return trim(str_replace(array("\r","\n","\t"), '', stripslashes($m[1])));
 			},
-			// Display help tooltip. Examples: {tip('register.login')} or {tip('form.some_field',2)}
-			'/\{tip\(\s*["\']{0,1}([\w\-\.#]+)["\']{0,1}[,]{0,1}["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name) {
-				return _class_safe('graphics')->_show_help_tip(array('tip_id' => $m[1], 'tip_type' => $m[2], 'replace' => $replace));
-			},
-			// Display help tooltip inline. Examples: {itip('register.login')}
-			'/\{itip\(\s*["\']{0,1}([^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name) {
-				return _class_safe('graphics')->_show_inline_tip(array('text' => $m[1], 'replace' => $replace));
+			// Display help tooltip. Examples: {tip('register.login')} or {tip('Some inline help text')} or {tip('Some inline help text';'fa-eye')}
+			'/\{(tip|itip)\(\s*["\']{0,1}(?P<raw>[^"\'\)\}]*)["\']{0,1}\s*\)\}/ims' => function($m) use ($replace, $name) {
+				return _class_safe('graphics')->tip(array('raw' => $m['raw'], 'replace' => $replace, 'tpl_name' => $name));
 			},
 			// Display user level single (inline) error message by its name (keyword). Examples: {e('login')} or {user_error('name_field')}
 			'/\{(e|user_error)\(\s*["\']{0,1}([\w\-\.]+)["\']{0,1}\s*\)\}/ims' => function($m) {
