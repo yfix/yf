@@ -64,30 +64,35 @@ class yf_api {
 		return( $request );
 	}
 
+	// 403 Forbidden
 	// usage if user_id < 1
 	public function _forbidden() {
-		$this->_reject( 'Forbidden', 'Status: 403 Forbidden', 403 );
+		$this->_reject( 403 );
 	}
 
-	public function _reject( $message = 'Service Unavailable', $header = 'Status: 503 Service Unavailable', $code = 503 ) {
-		if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP 5 >= 5.4.0
-		header( $header );
-		header('Content-Type: text/html; charset=utf-8');
-		$this->_send( $message );
+	public function _error() {
+		$this->_reject( 500 );
 	}
 
+	// service unavailable
+	public function _reject( $code = 503 ) {
+		list( $protocol, $code, $status ) = $this->_send_http_status( $code );
+		$this->_send_http_type();
+		$this->_send_http_content( $status );
+	}
+
+	// 301 Moved Permanently
+	// 302 Moved Temporarily
+	// 302 Found
 	public function _redirect( $url, $message = null ) {
-		$code     = 302;
-		$status   = '302 Found';
-		$header   = 'Status: ' . $status;
-		// $header   = ( $_SERVER['SERVER_PROTOCOL'] ?: 'HTTP/1.1' ) . ' ' . $status;
+		list( $protocol, $code, $status ) = $this->_send_http_status( 302 );
+		// location
 		$url      = $url ?: url( '/' );
 		$location = 'Location: ' . $url;
-		if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP 5 >= 5.4.0
-		header( $header   );
 		header( $location );
-		header('Content-Type: text/html; charset=utf-8');
-		$this->_send( $message );
+		// message
+		$this->_send_http_type();
+		$this->_send_http_content( $message );
 	}
 
 	protected function _firewall( $class = null, $class_path = null, $method = null, $options = array() ) {
@@ -117,13 +122,71 @@ class yf_api {
 			$response = '/**/ ' . $jsonp_callback . '(' . $json . ');';
 			$type = 'javascript';
 		}
-		if( function_exists( 'http_response_code' ) ) { http_response_code( 200 ); } // PHP 5 >= 5.4.0
-		header( 'Status: 200' );
-		header( "Content-Type: application/$type; charset=utf-8" );
-		$this->_send( $response );
+		list( $protocol, $code, $status ) = $this->_send_http_status( 200 );
+		$this->_send_http_type( $type );
+		$this->_send_http_content( $response );
 	}
 
-	protected function _send( $response = null ) {
+	protected function _send_http_status( $code = null, $status = null ) {
+		$code     = (int)$code;
+		$protocol = null;
+		$status   = null;
+		if( $code > 0 ) {
+			// send http code
+			if( function_exists( 'http_response_code' ) ) { http_response_code( $code ); } // PHP >= 5.4.0
+			// protocol detect
+			$protocol = 'HTTP/1.1';
+			if( function_exists( 'php_sapi_name' ) ) { // PHP >= 4.1.0
+				$type = php_sapi_name();
+				substr( $type, 0, 3 ) == 'cgi' && $protocol = 'Status:';
+			} else {
+				isset( $_SERVER[ 'SERVER_PROTOCOL' ] ) && $protocol = $_SERVER[ 'SERVER_PROTOCOL' ];
+			}
+			$header = array();
+			$header[] = $protocol;
+			// status default
+			if( empty( $status ) ) {
+				switch( $code ) {
+					case 200: $status = 'OK';                    break;
+					case 301: $status = 'Moved Permanently';     break;
+					case 302: $status = 'Moved Temporarily';     break;
+					case 403: $status = 'Forbidden';             break;
+					case 500: $status = 'Internal Server Error'; break;
+					case 503: $status = 'Service Unavailable';   break;
+				}
+			}
+			// code
+			$header[] = $code;
+			// status
+			!empty( $status ) && $header[] = $status;
+			// send http status
+			$header = implode( ' ', $header );
+			header( $header );
+		}
+		return( array( $protocol, $code, $status ) );
+	}
+
+	protected function _send_http_type( $type = null, $charset = null ) {
+		empty( $type    ) && $type    = 'html';
+		empty( $charset ) && $charset = 'utf-8';
+		switch( $type ) {
+			case 'json':
+			case 'javascript':
+				$content_type = 'application/' . $type;
+				break;
+			case 'plain':
+			case 'html':
+				$content_type = 'text/' . $type;
+				break;
+			default:
+				$content_type = 'text/html';
+				break;
+		}
+		$header = 'Content-Type: '. $content_type .'; charset='. $charset;
+		header( $header );
+	}
+
+	protected function _send_http_content( $response = null ) {
 		// $error = ob_get_contents();
 		// ob_end_clean();
 		if( !empty( $this->JSON_VULNERABILITY_PROTECTION ) ) { echo( ")]}',\n" ); }
