@@ -5,14 +5,18 @@ class yf_manage_tips {
 	/**
 	*/
 	function show() {
-		return table('SELECT * FROM '.db('tips').' ORDER BY `name` ASC')
-			->text('name','',array('badge' => 'info'))
+		$data = db()->from('tips')->order_by('name ASC, locale ASC')->get_all();
+		return table($data, array(
+				'pager_records_on_page' => 1000,
+				'group_by' => 'name',
+			))
+			->text('name')
+			->lang('locale')
 			->text('text')
-			->text('locale')
-			->btn_edit()
-			->btn_delete()
+			->btn_edit(array('no_ajax' => 1, 'btn_no_text' => 1))
+			->btn_delete(array('btn_no_text' => 1))
 			->btn_active()
-			->footer_add();
+			->header_add();
 	}
 
 	/**
@@ -54,9 +58,4 @@ class yf_manage_tips {
 	function clone_item() {
 		return _class('admin_methods')->clone_item(array('table' => 'tips'));
 	}
-
-	function _hook_widget__tips ($params = array()) {
-// TODO
-	}
-
 }
