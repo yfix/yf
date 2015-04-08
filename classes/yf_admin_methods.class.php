@@ -419,13 +419,13 @@ class yf_admin_methods {
 			'toolbar' => array(
 				array(
 					'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'RemoveFormat', 'Format', 'Bold', 'Italic', 'Underline' ,
-					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', '-', 'Blockquote', 'Link', 'Unlink', 'Image', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
+					'FontSize' ,'TextColor' , 'NumberedList', 'BulletedList', 'Table', '-', 'Blockquote', 'Link', 'Unlink', 'Image', '-', 'SpecialChar', '-', 'Source', '-', 'Maximize'
 				),
 			),
 			'language' => conf('language'),
-			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,table,tabletools,templates,style',
+			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,templates,style',
 			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
-			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*)',
+			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*) table tr th td caption',
 		);
 		// Other config variant example
 		/* 
