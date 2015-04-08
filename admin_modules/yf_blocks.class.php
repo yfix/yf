@@ -71,7 +71,8 @@ class yf_blocks {
 			'order_by' => 'type',
 			'order_direction' => 'desc',
 		);
-		return table('SELECT * FROM '.db('blocks').'', array(
+		$data = db()->from('blocks')->order_by('name ASC, type ASC')->get_all();
+		return table($data, array(
 				'custom_fields' => array('num_rules' => 'SELECT block_id, COUNT(*) AS num FROM '.db('block_rules').' GROUP BY block_id'),
 #				'condensed' => 1,
 				'pager_records_on_page' => 10000,
@@ -80,16 +81,17 @@ class yf_blocks {
 					'name' => 'like',
 				),
 				'hide_empty' => 1,
+				'group_by' => 'name',
 			))
 			->link('name', url('/@object/show_rules/%d'), '', array('link_field_name' => 'id'))
 			->text('type')
 			->text('num_rules')
 			->text('stpl_name', 'Template')
 			->text('method_name', 'Method')
-			->btn('Rules', './?object='.$_GET['object'].'&action=show_rules&id=%d')
-			->btn_edit()
-			->btn_delete(array('display_func' => $func))
-			->btn_clone()
+			->btn('Rules', url('/@object/show_rules/%d'))
+			->btn_edit(array('btn_no_text' => 1))
+			->btn_clone(array('btn_no_text' => 1))
+			->btn_delete(array('btn_no_text' => 1, 'display_func' => $func))
 			->btn_active(array('display_func' => $func))
 			->footer_add('', './?object='.$_GET['object'].'&action=add')
 		;
