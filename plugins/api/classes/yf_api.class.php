@@ -70,11 +70,12 @@ class yf_api {
 		$this->_reject( 403 );
 	}
 
+	// 500 Internal Server Error
 	public function _error() {
 		$this->_reject( 500 );
 	}
 
-	// service unavailable
+	// 503 Service Unavailable
 	public function _reject( $code = 503 ) {
 		list( $protocol, $code, $status ) = $this->_send_http_status( $code );
 		$this->_send_http_type();
