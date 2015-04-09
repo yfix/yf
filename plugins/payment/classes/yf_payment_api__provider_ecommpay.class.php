@@ -12,6 +12,27 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	public $IS_DEPOSITION = true;
 	// public $IS_PAYMENT    = true;
 
+	public $method_allow = array(
+		'payment' => array(
+			'pay_card' => array(
+				'title' => 'Visa',
+				'icon'  => 'visa',
+				'amount_min' => 100,
+				'field' => array(
+					'b_name',
+					'b_card_or_acc',
+					'amt',
+					'ccy',
+					'details',
+				),
+				'option' => array(
+					'name'    => 'ФИО получателя',
+					'account' => 'Счет',
+				),
+			),
+		),
+	);
+
 	public $_options_transform = array(
 		'title'        => 'description',
 		'operation_id' => 'external_id',

@@ -211,8 +211,8 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		libxml_use_internal_errors( true );
 		$xml_response = simplexml_load_string( $response );
 // debug
-ini_set( 'html_errors', 0 );
-var_dump( $response, $xml_response );
+// ini_set( 'html_errors', 0 );
+// var_dump( $response, $xml_response );
 		// error?
 		$error = libxml_get_errors();
 		if( $error ) {
@@ -575,9 +575,10 @@ var_dump( $response, $xml_response );
 			'account'      => $options[ 'account' ],
 		);
 		$result = $this->api_request( $method_id, $request );
-		ini_set( 'html_errors', 0 );
-		var_dump( $options, $request, $result );
-		exit;
+// DEBUG
+// ini_set( 'html_errors', 0 );
+// var_dump( $options, $request, $result );
+// exit;
 		list( $status, $status_message ) = $result;
 	}
 }
