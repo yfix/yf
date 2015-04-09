@@ -4,9 +4,6 @@ _class( 'payment_api__provider' );
 
 class yf_payment_api__provider_test extends yf_payment_api__provider {
 
-	public $ENABLE    = null;
-	public $TEST_MODE = null;
-
 	public $IS_DEPOSITION = true;
 	// public $IS_PAYMENT    = true;
 
@@ -15,6 +12,7 @@ class yf_payment_api__provider_test extends yf_payment_api__provider {
 	);
 
 	public function _init() {
+		if( !$this->ENABLE ) { return( null ); }
 		// ( defined( 'TEST_MODE' ) && TEST_MODE ) && $allow = true;
 		// $allow = $this->allow( $allow );
 		$allow = $this->allow();

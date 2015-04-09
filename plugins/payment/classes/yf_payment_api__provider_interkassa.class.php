@@ -104,6 +104,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	public $url_server = null;
 
 	public function _init() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/interkassa/Interkassa.php' );
@@ -115,31 +116,37 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function key( $name = 'public', $value = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$value = $this->api->key( $name, $value );
 		return( $value );
 	}
 
 	public function key_reset() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->key( 'public',       $this->KEY_PUBLIC       );
 		$this->key( 'private',      $this->KEY_PRIVATE      );
 		$this->key( 'private_test', $this->KEY_PRIVATE_TEST );
 	}
 
 	public function hash_method( $value = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$value = $this->api->hash_method( $value );
 		return( $value );
 	}
 
 	public function hash_method_reset() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->api->hash_method( $this->HASH_METHOD );
 	}
 
 	public function signature( $options, $request = true ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->api->signature( $options, $request );
 		return( $result );
 	}
 
 	public function _form_options( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_ = $options;
 		// transform
 		foreach ((array)$this->_options_transform as $from => $to ) {
@@ -182,6 +189,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function _url( $options, $is_server = false ) {
+		if( !$this->ENABLE ) { return( null ); }
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( $is_server ) {
 			$url = $_url_server ?: $this->url_server;
@@ -193,6 +201,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function _form( $data, $options = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		if( empty( $data ) ) { return( null ); }
 		$_ = &$options;
 		$is_array = (bool)$_[ 'is_array' ];
@@ -222,6 +231,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function _api_response() {
+		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		$test_mode = &$this->TEST_MODE;
 		$is_server = !empty( $_GET[ 'server' ] );
@@ -340,6 +350,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function _response_parse( $response ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_ = $response;
 		// transform
 		foreach( (array)$this->_options_transform_reverse as $from => $to  ) {
@@ -352,6 +363,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function get_currency( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_       = &$options;
 		$api     = $this->api;
 		$allow   = &$this->currency_allow;
@@ -366,6 +378,7 @@ class yf_payment_api__provider_interkassa extends yf_payment_api__provider_remot
 	}
 
 	public function deposition( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		$_              = $options;
 		$data           = &$_[ 'data'           ];

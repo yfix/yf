@@ -28,13 +28,19 @@ class yf_payment_api__provider_remote {
 	public $api         = null;
 
 	public function _init() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		!empty( $this->service_allow ) && $this->description = implode( ', ', $this->service_allow );
 	}
 
-	public function allow( $value ) {
+	public function allow( $value = null ) {
 		$result = &$this->ENABLE;
-		isset( $value ) && $result = (bool)$value;
+		if( isset( $value ) ) {
+			$value = (bool)$value;
+			// init if enable
+			if( !$result && $value ) { $this->_init(); }
+			$result = $value;
+		}
 		return( $result );
 	}
 
@@ -63,6 +69,7 @@ class yf_payment_api__provider_remote {
 	}
 
 	protected function _check_ip( $options = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// allow ip
@@ -73,6 +80,7 @@ class yf_payment_api__provider_remote {
 	}
 
 	protected function _api_post( $url, $post ) {
+		if( !$this->ENABLE ) { return( null ); }
 		// options
 		$options = array(
 			// CURLOPT_URL            =>  $url,
@@ -142,6 +150,7 @@ class yf_payment_api__provider_remote {
 	}
 
 	protected function _api_request( $uri, $data ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$url    = $this->URL . $uri;
 		$result = $this->_api_post( $url, $data );
 		return( $result );

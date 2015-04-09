@@ -112,6 +112,7 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	public $url_server = null;
 
 	public function _init() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		// load api
 		require_once( __DIR__ . '/payment_provider/privat24/Privat24.php' );
@@ -123,21 +124,25 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 	}
 
 	public function key( $name = 'public', $value = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$value = $this->api->key( $name, $value );
 		return( $value );
 	}
 
 	public function key_reset() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->key( 'public',  $this->KEY_PUBLIC  );
 		$this->key( 'private', $this->KEY_PRIVATE );
 	}
 
 	public function signature( $options, $is_request = true ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$result = $this->api->signature( $options, $is_request );
 		return( $result );
 	}
 
 	public function api_request( $method, $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$api_method_allow = $this->method_allow[ 'payment' ][ $method ];
 		if( !is_array( $api_method_allow ) ) { return( null ); }
 		$payment_api = &$this->payment_api;
@@ -296,6 +301,7 @@ var_dump( $response, $xml_response );
 	}
 
 	public function _form_options( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_ = $options;
 		// transform
 		foreach ((array)$this->_options_transform as $from => $to ) {
@@ -321,6 +327,7 @@ var_dump( $response, $xml_response );
 	}
 
 	public function _form( $data, $options = null ) {
+		if( !$this->ENABLE ) { return( null ); }
 		if( empty( $data ) ) { return( null ); }
 		$_ = &$options;
 		$is_array = (bool)$_[ 'is_array' ];
@@ -350,6 +357,7 @@ var_dump( $response, $xml_response );
 	}
 
 	public function _api_response() {
+		if( !$this->ENABLE ) { return( null ); }
 		$payment_api = $this->payment_api;
 		$is_server = !empty( $_GET[ 'server' ] );
 		$result = null;
@@ -405,6 +413,7 @@ var_dump( $response, $xml_response );
 	}
 
 	public function _response_parse( $response ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$options = explode( '&', $response );
 		$_ = array();
 		foreach( (array)$options as $option ) {
@@ -422,6 +431,7 @@ var_dump( $response, $xml_response );
 	}
 
 	public function get_currency( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$_       = &$options;
 		$api     = $this->api;
 		$allow   = &$this->currency_allow;
@@ -436,6 +446,7 @@ var_dump( $response, $xml_response );
 	}
 
 	public function deposition( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$payment_api    = $this->payment_api;
 		$_              = $options;
 		$data           = &$_[ 'data'           ];
@@ -518,6 +529,7 @@ var_dump( $response, $xml_response );
 	}
 
 	public function payment( $options ) {
+		if( !$this->ENABLE ) { return( null ); }
 		$payment_api    = $this->payment_api;
 		$_              = $options;
 		$data           = &$_[ 'data'           ];

@@ -8,13 +8,19 @@ class yf_payment_api__provider {
 	public $payment_api = null;
 
 	public function _init() {
+		if( !$this->ENABLE ) { return( null ); }
 		$this->payment_api = _class( 'payment_api' );
 		!empty( $this->service_allow ) && $this->description = implode( ', ', $this->service_allow );
 	}
 
 	public function allow( $value = null ) {
 		$result = &$this->ENABLE;
-		isset( $value ) && $result = (bool)$value;
+		if( isset( $value ) ) {
+			$value = (bool)$value;
+			// init if enable
+			if( !$result && $value ) { $this->_init(); }
+			$result = $value;
+		}
 		return( $result );
 	}
 
