@@ -44,31 +44,34 @@ class yf_menus_editor {
 	* Display menus
 	*/
 	function show() {
-		$q = db()->query('SELECT m.id, COUNT(i.id) AS num FROM '.db('menus').' AS m LEFT JOIN '.db('menu_items').' AS i ON m.id = i.menu_id GROUP BY m.id');
-		while ($a = db()->fetch_assoc($q)) {
-			$num_items[$a['id']] = $a['num'];
-		}
-		return table('SELECT * FROM '.db('menus').' ORDER BY type DESC')
-			->link('name', './?object='.$_GET['object'].'&action=show_items&id=%d')
+		$num_items = db()->get_2d('SELECT m.id, COUNT(i.id) AS num FROM '.db('menus').' AS m LEFT JOIN '.db('menu_items').' AS i ON m.id = i.menu_id GROUP BY m.id');
+		$data = db()->from('menus')->order_by('name ASC, type DESC')->get_all();
+		return table($data, array(
+				'pager_records_on_page' => 1000,
+				'group_by' => 'name',
+				'hide_empty' => 1,
+			))
+			->link('name', url('/@object/show_items/%d'))
 			->text('id', 'Num Items', array('data' => $num_items))
 			->text('type')
 			->text('stpl_name')
 			->text('method_name')
 			->text('custom_fields')
-			->btn('Items', './?object='.$_GET['object'].'&action=show_items&id=%d')
-			->btn_edit()
-			->btn_delete()
-			->btn_clone('', './?object='.$_GET['object'].'&action=clone_menu&id=%d')
-			->btn('Export', './?object='.$_GET['object'].'&action=export&id=%d')
+			->btn('Drag items', url('/@object/drag_items/@id'), array('icon' => 'icon-move fa fa-arrows', 'btn_no_text' => 1))
+			->btn('View Items', url('/@object/show_items/%d'), array('btn_no_text' => 1))
+			->btn_clone('', url('/@object/clone_menu/%d'), array('btn_no_text' => 1))
+#			->btn('Export', url('/@object/export/%d'), array('btn_no_text' => 1, 'icon' => 'fa fa-angle-double-up'))
+			->btn_edit(array('no_ajax' => 1, 'btn_no_text' => 1))
+			->btn_delete(array('btn_no_text' => 1))
 			->btn_active()
-			->footer_add();
+			->footer_add(array('no_ajax' => 1));
 	}
 
 	/**
 	*/
 	function add() {
 		$a = $_POST;
-		$a['redirect_link'] = './?object='.$_GET['object'];
+		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
 				'name'	=> 'trim|required|is_unique[menus.name]',
@@ -86,7 +89,8 @@ class yf_menus_editor {
 			->text('method_name')
 			->text('custom_fields')
 			->active_box()
-			->save_and_back();
+			->save_and_back()
+		;
 	}
 
 	/**
@@ -96,7 +100,7 @@ class yf_menus_editor {
 		if (!$id) {
 			return _e('No id');
 		}
-		$a = db()->query_fetch('SELECT * FROM '.db('menus').' WHERE id='.intval($_GET['id']));
+		$a = db()->from('menus')->whereid($id)->get();
 		$a['redirect_link'] = url('/@object');
 		return form($a, array('autocomplete' => 'off'))
 			->validate(array(
@@ -252,12 +256,12 @@ class yf_menus_editor {
 			->data('sites', $this->_sites)
 			->data('servers', $this->_servers)
 			->text('other_info')
-			->btn_edit('', './?object='.$_GET['object'].'&action=edit_item&id=%d')
-			->btn_delete('', './?object='.$_GET['object'].'&action=delete_item&id=%d')
-			->btn_clone('', './?object='.$_GET['object'].'&action=clone_item&id=%d')
-			->btn_active('', './?object='.$_GET['object'].'&action=activate_item&id=%d')
-			->footer_add('Add item', './?object='.$_GET['object'].'&action=add_item&id='.$_GET['id'], array('copy_to_header' => 1))
-			->footer_link('Drag items', './?object='.$_GET['object'].'&action=drag_items&id='.$_GET['id'], array('icon' => 'icon-move', 'copy_to_header' => 1))
+			->btn_edit('', url('/@object/edit_item/%d'), array('no_ajax' => 1, 'btn_no_text' => 1))
+			->btn_delete('', url('/@object/delete_item/%d'), array('btn_no_text' => 1))
+			->btn_clone('', url('/@object/clone_item/%d'), array('btn_no_text' => 1))
+			->btn_active('', url('/@object/activate_item/%d'))
+			->footer_add('Add item', url('/@object/add_item/@id'), array('copy_to_header' => 1, 'no_ajax' => 1))
+			->footer_link('Drag items', url('/@object/drag_items/@id'), array('icon' => 'icon-move fa fa-arrows', 'copy_to_header' => 1, 'no_ajax' => 1))
 			->footer_submit()
 		;
 	}
