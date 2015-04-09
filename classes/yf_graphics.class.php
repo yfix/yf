@@ -633,14 +633,18 @@ class yf_graphics {
 		if (!strlen($extra['text'])) {
 			return false;
 		}
-		if (!isset($this->_avail_tips)) {
-			$this->_avail_tips = (array)main()->get_data('tips');
+		if (!isset($this->_tips)) {
+			$this->_tips = (array)main()->get_data('tips');
 		}
-		$tip = $this->_avail_tips[$extra['text']] ?: array();
+		$tip = $this->_tips[$extra['text']] ?: array();
 		if ($tip) {
 			$extra['text'] = $tip['text'];
+			if (!$tip['active']) {
+				return false;
+			}
 		}
-		if ($this->TIPS_STRIP_TAGS) {
+		$strip_tags = isset($extra['strip_tags']) ? $extra['strip_tags'] : $this->TIPS_STRIP_TAGS;
+		if ($strip_tags) {
 			$extra['text'] = strip_tags($extra['text']);
 		}
 		if (!strlen($extra['text'])) {
