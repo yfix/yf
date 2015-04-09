@@ -640,6 +640,12 @@ class yf_graphics {
 		if ($tip) {
 			$extra['text'] = $tip['text'];
 		}
+		if ($this->TIPS_STRIP_TAGS) {
+			$extra['text'] = strip_tags($extra['text']);
+		}
+		if (!strlen($extra['text'])) {
+			return false;
+		}
 		if ($return_text || $extra['return_text']) {
 			return $extra['text'];
 		}
