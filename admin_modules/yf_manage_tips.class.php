@@ -8,7 +8,11 @@ class yf_manage_tips {
 	*/
 	function show() {
 		$data = db()->from(self::table)->order_by('name ASC, locale ASC')->get_all();
+		foreach ((array)$data as $k => $v) {
+			$data[$k]['text'] = strip_tags($v['text']);
+		}
 		return table($data, array(
+				'condensed' => true,
 				'pager_records_on_page' => 1000,
 				'group_by' => 'name',
 			))
