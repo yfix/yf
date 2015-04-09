@@ -1364,12 +1364,23 @@ class yf_html {
 	/**
 	*/
 	function tooltip($text = '', $extra = array()) {
-		if (!strlen($text)) {
-			return '';
+		if (is_array($text)) {
+			$extra = (array)$extra + $text;
+			$text = '';
 		}
-#		return form()->_show_tip($text);
-		css('.popover { width:auto; min-width: 100px;}');
-		return '&nbsp;<span class="yf_tip" data-toggle="popover" data-content="'._prepare_html($text).'"><i class="icon icon-question-sign fa fa-question-circle"></i></span>';
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+#		css('.popover { width:auto; min-width: 100px;}');
+		$extra['text'] = $extra['text'] ?: $text;
+		$extra['icon'] = $extra['icon'] ?: 'icon icon-info-sign fa fa-question-circle';
+		$extra['href'] = $extra['href'] ?: '#';
+		$extra['class'] = ($extra['class'] ?: 'yf_tip'). ($extra['class_add'] ? ' '.$extra['class_add'] : '');
+		$extra['data-content'] = $extra['data-content'] ?: _prepare_html($extra['text']);
+		$extra['data-toggle'] = $extra['data-toggle'] ?: 'popover';
+		$extra['data-container'] = $extra['data-container'] ?: 'body';
+		$extra['data-html']	= $extra['data-html'] ?: 'true';
+		return '<span'._attrs($extra, array('id','class','style')).'><i class="'.$extra['icon'].'"></i></span>';
 	}
 
 	/**
