@@ -12,7 +12,7 @@ class yf_manage_tips {
 				'pager_records_on_page' => 1000,
 				'group_by' => 'name',
 			))
-			->text('name')
+			->text('name', array('link' => url('/@object/edit/%id')))
 			->lang('locale')
 			->text('text')
 			->btn_edit(array('no_ajax' => 1, 'btn_no_text' => 1))
