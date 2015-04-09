@@ -665,10 +665,7 @@ class yf_form2 {
 	/**
 	*/
 	function _show_tip($value = '', $extra = array(), $replace = array()) {
-		return _class('graphics')->_show_help_tip(array(
-			'tip_id'	=> $value,
-			'replace'	=> $replace,
-		));
+		return tip($value, $replace);
 	}
 
 	/**
