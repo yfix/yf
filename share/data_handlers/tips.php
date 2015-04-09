@@ -1,8 +1,6 @@
 <?php
 
-$data = array();
-$Q = db()->query('SELECT * FROM '.db('tips').' WHERE active="1" '.($locale ? ' AND locale="'.db()->es($locale).'"' : ''));
-while ($A = db()->fetch_assoc($Q)) {
-	$data[$A['name']] = $A;
-}
-return $data;
+return function($params = array()) {
+	$locale = $params['locale'] ?: ($params['lang'] ?: conf('language'));
+	return db()->from('tips')->where('locale', $locale)->get_all(null, null, 'name');
+};
