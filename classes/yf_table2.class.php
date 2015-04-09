@@ -896,7 +896,7 @@ class yf_table2 {
 		} elseif (is_callable($value)) {
 			$tip = $value($name, $row);
 		}
-		return strlen($tip) ? _class('graphics')->_show_help_tip(array('tip_id' => $tip)) : '';
+		return strlen($tip) ? tip($tip) : '';
 	}
 
 	/**
