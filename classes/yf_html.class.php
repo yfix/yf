@@ -1380,7 +1380,7 @@ class yf_html {
 		$extra['data-toggle'] = $extra['data-toggle'] ?: 'popover';
 		$extra['data-container'] = $extra['data-container'] ?: 'body';
 		$extra['data-html']	= $extra['data-html'] ?: 'true';
-		return '<span'._attrs($extra, array('id','class','style')).'><i class="'.$extra['icon'].'"></i></span>';
+		return (!$extra['no_nbsp'] ? '&nbsp;' : ''). '<span'._attrs($extra, array('id','class','style')).'><i class="'.$extra['icon'].'"></i></span>';
 	}
 
 	/**
