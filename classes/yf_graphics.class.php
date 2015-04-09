@@ -617,6 +617,9 @@ class yf_graphics {
 			// 'Some inline help text';'fa-eye';'my_tip_class'
 			$raw = explode(';', str_replace(array('\'','"'), '', $in['raw']));
 			$extra['text']	= trim($raw[0]);
+			if ($raw[1] === 'return_text=1' || $raw[1] === 'text=1') {
+				$return_text = true;
+			}
 			$extra['icon']	= trim($raw[1]);
 			$extra['class']	= trim($raw[1]);
 			if (isset($in['replace']) && $extra['text'] && substr($extra['text'], 0, 1) === '@') {
@@ -636,6 +639,9 @@ class yf_graphics {
 		$tip = $this->_avail_tips[$extra['text']] ?: array();
 		if ($tip) {
 			$extra['text'] = $tip['text'];
+		}
+		if ($return_text) {
+			return $extra['text'];
 		}
 		$extra['icon'] = $extra['icon'] ?: ($tip['icon'] ?: 'icon icon-info-sign fa fa-question-circle');
 		$extra['href'] = $extra['href'] ?: '#';
