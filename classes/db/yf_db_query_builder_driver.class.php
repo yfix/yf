@@ -439,14 +439,14 @@ abstract class yf_db_query_builder_driver {
 	/**
 	* Alias for get_all()
 	*/
-	public function all($select = null, $use_cache = false) {
-		return $this->get_all($select, $use_cache);
+	public function all($select = null, $use_cache = false, $key_name = null) {
+		return $this->get_all($select, $use_cache, $key_name);
 	}
 
 	/**
 	* Get all records with generated SQL
 	*/
-	public function get_all($select = null, $use_cache = false) {
+	public function get_all($select = null, $use_cache = false, $key_name = null) {
 		if (isset($select)) {
 			$this->select($select);
 		}
