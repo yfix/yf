@@ -640,7 +640,7 @@ class yf_graphics {
 		if ($tip) {
 			$extra['text'] = $tip['text'];
 		}
-		if ($return_text) {
+		if ($return_text || $extra['return_text']) {
 			return $extra['text'];
 		}
 		$extra['icon'] = $extra['icon'] ?: ($tip['icon'] ?: 'icon icon-info-sign fa fa-question-circle');
