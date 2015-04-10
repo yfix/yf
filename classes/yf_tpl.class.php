@@ -129,12 +129,8 @@ class yf_tpl {
 				$this->_INHERITED_SKIN2 = conf('INHERIT_SKIN2');
 			}
 		}
-		if (isset($_SESSION['force_gzip'])) {
-			main()->OUTPUT_GZIP_COMPRESS = $_SESSION['force_gzip'];
-		}
 		// Turn off CPU expensive features on overloading
 		if (conf('HIGH_CPU_LOAD') == 1) {
-			main()->OUTPUT_GZIP_COMPRESS = false;
 			$this->COMPRESS_OUTPUT  = false;
 			$this->TIDY_OUTPUT		= false;
 			$this->FROM_DB_GET_ALL  = false;
@@ -261,24 +257,7 @@ class yf_tpl {
 			if ($this->TIDY_OUTPUT && $init_type != 'admin') {
 				$this->register_output_filter(array($this, '_tidy_cleanup_callback'), 'tidy_cleanup');
 			}
-
 			$body['content'] = $this->_apply_output_filters($body['content']);
-
-			if (main()->OUTPUT_GZIP_COMPRESS && !conf('no_gzip')) {
-				if ($this->OB_CATCH_CONTENT && ob_get_level()) {
-					$old_content = ob_get_clean();
-				}
-				ob_start('ob_gzhandler');
-				conf('GZIP_ENABLED', true);
-				if ($this->OB_CATCH_CONTENT) {
-					$body['content'] = $old_content.$body['content'];
-				}
-				// Count number of compressed bytes (not exactly accurate)
-				if (DEBUG_MODE) {
-					debug('gzip_page::size_original', strlen($body['content']));
-					debug('gzip_page::size_gzipped', strlen(gzencode($body['content'], 3, FORCE_GZIP)));
-				}
-			}
 			if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
 				_class('output_cache')->_put_page_to_output_cache($body);
 			}

@@ -712,15 +712,6 @@ class yf_debug {
 				'compress: ratio'			=> ($c_info['size_compressed'] ? round($c_info['size_original'] / $c_info['size_compressed'] * 100, 0) : 0).'%',
 			);
 		}
-		if (conf('GZIP_ENABLED')) {
-			$g_info = $this->_get_debug_data('gzip_page');
-
-			$data['ini'] += array(
-				'gzip: size original'		=> $g_info['size_original'].' bytes',
-				'gzip: size gzipped approx'	=> $g_info['size_gzipped'].' bytes',
-				'gzip: ratio approx'		=> round($g_info['size_original'] / $g_info['size_gzipped'] * 100, 0).'%',
-			);
-		}
 		$data['ini'] += array(
 			'memory_usage'			=> function_exists('memory_get_usage') ? memory_get_usage() : 'n/a',
 			'memory_peak_usage'		=> function_exists('memory_get_peak_usage') ? memory_get_peak_usage() : 'n/a',
