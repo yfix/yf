@@ -37,8 +37,6 @@ class yf_tpl {
 	public $ALLOW_CUSTOM_FILTER		= false;
 	/** @var bool Allow language-based special stpls */
 	public $ALLOW_LANG_BASED_STPLS	= false;
-	/** @var bool Allow inline debug */
-	public $ALLOW_INLINE_DEBUG		= false;
 	/** @var bool Allow skin inheritance (only one level used) */
 	public $ALLOW_SKIN_INHERITANCE	= true;
 	/** @var bool Allow to compile templates */
@@ -141,10 +139,6 @@ class yf_tpl {
 			$this->TIDY_OUTPUT		= false;
 			$this->FROM_DB_GET_ALL  = false;
 		}
-		// Force inline debug setting
-		if (isset($_SESSION['stpls_inline_edit'])) {
-			$this->ALLOW_INLINE_DEBUG = intval((bool)$_SESSION['stpls_inline_edit']);
-		}
 		$this->_init_global_tags();
 
 		if (DEBUG_MODE) {
@@ -240,9 +234,6 @@ class yf_tpl {
 					$this->_TMP_FROM_DB[$A['name']] = stripslashes($A['text']);
 				}
 			}
-			if (DEBUG_MODE && $this->ALLOW_INLINE_DEBUG || main()->INLINE_EDIT_LOCALE) {
-				conf('inline_js_edit', true);
-			}
 			if (!$skip_prefetch) {
 				if (main()->is_console()) {
 					// Skip security checks for console mode
@@ -293,9 +284,6 @@ class yf_tpl {
 			}
 			if (DEBUG_MODE && !main()->is_console() && !main()->is_ajax()) {
 				$body['debug_info'] = common()->show_debug_info();
-				if ($this->ALLOW_INLINE_DEBUG || main()->INLINE_EDIT_LOCALE) {
-					$body['debug_info'] .= $this->parse('system/js_inline_editor');
-				}
 				$_last_pos = strpos($body['content'], '</body>');
 				if ($_last_pos) {
 					$body['content'] = substr($body['content'], 0, $_last_pos). $body['exec_time']. $body['debug_info']. '</body></html>';
@@ -459,11 +447,6 @@ class yf_tpl {
 		}
 		if ($this->USE_SOURCE_BACKTRACE) {
 			debug('STPL_TRACES::'.$name, main()->trace_string());
-		}
-		if ($this->ALLOW_INLINE_DEBUG && strlen($string) > 20 && !in_array($name, array('main', 'system/debug_info', 'system/js_inline_editor')) ) {
-			if (preg_match('/^<([^>]*?)>/ims', ltrim($string), $m)) {
-				$string = '<'.$m[1].' stpl_name="'.$name.'">'.substr(ltrim($string), strlen($m[0]));
-			}
 		}
 		return true;
 	}
