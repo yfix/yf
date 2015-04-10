@@ -39,6 +39,18 @@ class yf_common {
 	}
 
 	/**
+	*/
+	function show_ga () {
+		if (DEBUG_MODE || MAIN_TYPE_ADMIN) {
+			return false;
+		}
+		$body = array();
+		// override this method and insert your google analytics tracking code here and all other analytics codes too
+		return $body ? implode(PHP_EOL, $body) : '';
+	}
+
+
+	/**
 	* Form2 chained wrapper
 	*/
 	function form2($replace = array(), $params = array()) {
@@ -300,6 +312,70 @@ class yf_common {
 			$timestamp = $r;
 		}
 		return $result_string;
+	}
+
+	/**
+	*/
+	function _get_time_diff_human($seconds, $delimiter = ' ', $need_return = false, $only_text = false, $need_closing_tag = false) {
+		$d = array();
+		$tr = array(
+			'years'		=> array('лет', 'год', 'года'),
+			'months'	=> array('месяцев', 'месяц', 'месяца'),
+			'days'		=> array('дней', 'день', 'дня'),
+			'hours'		=> array('часов', 'час', 'часа'),
+			'minutes'	=> array('минут', 'минута', 'минуты'),
+			'seconds'	=> array('секунд', 'секунда', 'секунды'),
+		);
+		if ($need_return && is_array($need_return)) {
+			$check_format = true;
+		}
+		if ($check_format && in_array('years', $need_return)) {
+			$d['years'] = floor($seconds / (3600 * 24 * 365));
+			$seconds -= $d['years'] * (3600 * 24 * 365);
+	    }
+		if ($check_format && in_array('months', $need_return)) {
+			$d['months'] = floor($seconds / (3600 * 24 * 365 / 12));
+			$seconds -= $d['months'] * (3600 * 24 * 365 / 12);
+		}	
+		if ($check_format && in_array('days', $need_return)) {
+			$d['days'] = floor($seconds / (3600 * 24));
+			$seconds -= $d['days'] * (3600 * 24);
+		}
+		if ($check_format && in_array('hours', $need_return)) {
+			$d['hours'] = floor($seconds / 3600);
+			$seconds -= $d['hours'] * 3600;
+		}
+		if ($check_format && in_array('minutes', $need_return)) {
+			$d['minutes'] = floor($seconds / 60);
+			$seconds -= $d['minutes'] * 60;
+		}
+		if ($check_format && in_array('seconds', $need_return)) {
+			$d['seconds'] = $seconds;
+		}
+		$out = array();
+		foreach ($d as $name => $val) {
+			if (!$val) {
+				continue;
+			}
+			$last1 = substr($val, -1);
+			$last2 = substr($val, -2);
+			if ($last1 == 0 || ($last1 >= 5 && $last1 <= 9) || ($last2 >= 10 && $last2 <= 20)) {
+				$str = $tr[$name][0];
+			} elseif ($last1 === '1') {
+				$str = $tr[$name][1];
+			} else {
+				$str = $tr[$name][2];
+			}
+			$out[] = $only_text ? $str : $val.' '.$str;
+		}
+		$open_tag = '';
+		$close_tag = '';
+		if ($need_closing_tag) {
+			$open_tag = '<'.$delimiter.'>';
+			$close_tag = '</'.$delimiter.'>';
+			$delimiter = $close_tag.$open_tag;
+		}
+		return $open_tag . implode($delimiter, $out) . $close_tag;
 	}
 
 	/**
