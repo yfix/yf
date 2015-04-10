@@ -303,9 +303,10 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 			var result = PaymentApi.payout( options );
 			result.$promise.then(
 				function( r ) {
-$log.error( 'payout', r );
 					$scope.block_wait = false;
 					if( r.response && r.response.payout ) {
+						$scope.status            = r.response.payout.status;
+						$scope.status_message    = r.response.payout.status_message;
 					} else {
 						$scope.status_message = config.message.error.operation;
 						$log.error( 'balance->payout is fail operation:', r );
@@ -314,8 +315,8 @@ $log.error( 'payout', r );
 				function( r ) {
 					$scope.block_wait = false;
 					if( r.response && r.response.payout ) {
-						$scope.status         = r.response.balance.status;
-						$scope.status_message = r.response.balance.status_message;
+						$scope.status            = r.response.payout.status;
+						$scope.status_message    = r.response.payout.status_message;
 						$log.warnig( 'balance->payout is fail transport operation:', r );
 					} else {
 						if( r.status && r.status == 403 ) {
