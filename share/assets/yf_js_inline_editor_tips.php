@@ -1,4 +1,15 @@
-{jquery()}
+<?php
+
+return function() {
+
+return array(
+	'versions' => array('master' => array(
+		'css' => array('
+		'),
+		'js' => array('
+		'),
+		'jquery' => array(
+<<<END
 	// Prepare html for the tips inline editor
 	$("body").append("" 
 		+ "<div id='inline_edit_tip'>" 
@@ -105,5 +116,11 @@
 		$("#inline_edit_tip").css({"display" : "none"});
 		_old_tip_text = "";
 	});
+END
+	))),
+	'require' => array(
+		'asset' => 'jquery',
+	),
+);
 
-{/jquery}
+};
