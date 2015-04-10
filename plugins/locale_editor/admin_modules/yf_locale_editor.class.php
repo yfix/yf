@@ -132,7 +132,10 @@ class yf_locale_editor {
 			return $row['is_default'] ? false : true;
 		};
 		$_this = $this;
-		return table($data)
+		return table($data, array(
+				'pager_records_on_page' => 1000,
+				'hide_empty' => 1,
+			))
 			->func('locale', function($lang) use ($_this) {
 				return html()->icon('bfh-flag-'.$_this->lang_def_country[$lang], strtoupper($lang));
 			})
@@ -141,15 +144,16 @@ class yf_locale_editor {
 			->text('charset')
 			->text('tr_count', 'Num vars')
 			->text('tr_percent', 'Translated', array('badge' => 'info'))
-			->text('is_default')
-			->btn_edit('', url('/@object/lang_edit/%d'))
-			->btn_delete('', url('/@object/lang_delete/%d'), array('display_func' => $no_actions_if_default))
-			->btn('Make default', url('/@object/lang_default/%d'), array('class_add' => 'btn-info', 'display_func' => $no_actions_if_default))
+			->func('is_default', function($is) { return $is ? '<span class="label label-info">'.t('DEFAULT').'</span>' : ''; })
+			->btn_edit('', url('/@object/lang_edit/%d'), array('btn_no_text' => 1))
+			->btn_delete('', url('/@object/lang_delete/%d'), array('display_func' => $no_actions_if_default, 'btn_no_text' => 1))
+			->btn('Make default', url('/@object/lang_default/%d'), array('class_add' => 'btn-info', 'display_func' => $no_actions_if_default, 'btn_no_text' => 1))
 			->btn_active('', url('/@object/lang_active/%d'), array('display_func' => $no_actions_if_default))
+			->footer_link('Manage files', url('/@object/show_files'))
 			->footer_link('Manage vars', url('/@object/show_vars'))
-			->footer_add('Add language', url('/@object/lang_add'))
-			->footer_link('Import vars', url('/@object/import_vars'), array('icon' => 'icon-signin'))
-			->footer_link('Export vars', url('/@object/export_vars'), array('icon' => 'icon-signout'))
+			->footer_add('Add language', url('/@object/lang_add'), array('no_ajax' => 1))
+#			->footer_link('Import vars', url('/@object/import_vars'), array('icon' => 'icon-signin'))
+#			->footer_link('Export vars', url('/@object/export_vars'), array('icon' => 'icon-signout'))
 #			->footer_link('Collect vars', url('/@object/collect_vars'))
 #			->footer_link('Cleanup vars', url('/@object/cleanup_vars'))
 #			->footer_link('Import vars', url('/@object/import_vars'))
@@ -314,7 +318,81 @@ class yf_locale_editor {
 				$tr_files[$_source] = $path;
 			}
 		}
-		return array($tr_vars, $tr_files);
+		return array($tr_vars, $tr_files, $lang_files);
+	}
+
+	/**
+	*/
+	function show_files() {
+		$self_page_css = 'body.get-object-'.$_GET['object'];
+		css('
+			'.$self_page_css.' li.li-header { list-style: none; display:none; }
+			'.$self_page_css.' li.li-level-0 { display: block; font-size: 15px; }
+			'.$self_page_css.' li.li-level-1 { padding-top: 10px; font-size: 13px; }
+			'.$self_page_css.' .source_container { width: 90%; height: 400px; }
+		');
+		jquery('
+			var self_page = "'.$self_page_css.'";
+			$(".li-level-0 > a", self_page).before("&nbsp;<button class=\"btn btn-mini btn-xs btn-default\" class=\"toggle_source\"><i class=\"fa fa-toggle-down\"></i> Toggle source</button>&nbsp;")
+			$(".li-level-0 .togle_source", self_page).click(function(){
+				$(".li-level-1", $(this).closest(".li-level-0")).toggle()
+			})
+			$(".li-level-0", self_page).click(function(){
+				$(".li-level-1", this).toggle()
+			})
+		');
+		$all_langs = (array)$this->_cur_langs;
+		foreach ((array)$all_langs as $lang => $lang_name) {
+			list($lang_vars, $var_files, $lang_files) = $this->_get_vars_from_files($lang);
+			if (!$lang_files) {
+				continue;
+			}
+			$body[] = '<h3>'.html()->icon('bfh-flag-'.$this->lang_def_country[$lang], strtoupper($lang)).'</h3>';
+			$body[] = $this->_show_files_for_lang($lang, $lang_files, $var_files);
+		}
+		return implode(PHP_EOL, $body);
+	}
+
+	/**
+	*/
+	function _show_files_for_lang($lang, $lang_files, $var_files) {
+		$yf_path_len = strlen(YF_PATH);
+		$project_path_len = strlen(PROJECT_PATH);
+		$app_path_len = strlen(APP_PATH);
+
+		$vars_by_path = array();
+		foreach ((array)$var_files as $source => $path) {
+			$vars_by_path[$path]++;
+		}
+		foreach ((array)$lang_files as $path) {
+			$i++;
+			$name = $path;
+			if (substr($name, 0, $yf_path_len) === YF_PATH) {
+				$name = '[YF] '.substr($name, $yf_path_len);
+			} elseif (substr($name, 0, $project_path_len) === PROJECT_PATH) {
+				$name = '[PROJECT] '.substr($name, $project_path_len);
+			} elseif (substr($name, 0, $app_path_len) === APP_PATH) {
+				$name = '[APP] '.substr($name, $app_path_len);
+			}
+			$name .= ' (vars: '.$vars_by_path[$path].')';
+			$items[$i] = array(
+				'parent_id'	=> 0,
+				'name'		=> $name,
+				'link'		=> url('/file_manager/view/'.urlencode($path)),
+				'id'		=> 'lang_file_'.$i,
+			);
+			$div_id = 'editor_html_'.$i;
+			$hidden_id = 'file_text_hidden_'.$i;
+			$items['1111'.$i] = array(
+				'parent_id'	=> $i,
+				'body'		=> form()
+					->container('<div id="'.$div_id.'" class="source_container">'._prepare_html(addslashes(file_get_contents($path))).'</div>', '', array(
+						'id' => $div_id, 'wide' => 1, 'ace_editor' => array('mode' => common()->get_file_ext($path)),
+					))
+					->hidden($hidden_id)
+			);
+		}
+		return html()->li_tree($items);
 	}
 
 	/**
@@ -324,6 +402,9 @@ class yf_locale_editor {
 		foreach ((array)$this->_cur_langs as $lang => $lang_name) {
 			list($lang_vars, $var_files) = $this->_get_vars_from_files($lang);
 			foreach ((array)$lang_vars as $source => $translation) {
+				if (!$source) {
+					continue;
+				}
 				$vars[$source.'|'.$lang] = array(
 					'locale'		=> (string)$lang,
 #					'source'		=> (string)_wordwrap($source, 100, PHP_EOL, true),
@@ -337,18 +418,16 @@ class yf_locale_editor {
 		$_this = $this;
 		return table($vars, array('pager_records_on_page' => 1000, 'group_by' => 'source', 'id' => 'source'))
 			->text('source')
-			->func('locale', function($lang) use ($_this) {
-				return html()->icon('bfh-flag-'.$_this->lang_def_country[$lang], strtoupper($lang));
-			})
-			->text('translation')
+			->lang('locale')
+#			->text('translation')
 			->btn_edit('', url('/@object/edit_var/%source'), array('btn_no_text' => 1))
-			->btn_func('files', function($row, $extra, $replace, $table) {
-				$path = $row['files'];
-				$show_path = $path;
-				$show_path = substr($show_path, 0, strlen(APP_PATH)) === APP_PATH ? substr($show_path, strlen(APP_PATH)) : $show_path;
-				$show_path = substr($show_path, 0, strlen(YF_PATH)) === YF_PATH ? substr($show_path, strlen(YF_PATH)) : $show_path;
-				return a('/file_manager/view/'.urlencode($path), $show_path, 'fa fa-eye');
-			})
+#			->btn_func('files', function($row, $extra, $replace, $table) {
+#				$path = $row['files'];
+#				$show_path = $path;
+#				$show_path = substr($show_path, 0, strlen(APP_PATH)) === APP_PATH ? substr($show_path, strlen(APP_PATH)) : $show_path;
+#				$show_path = substr($show_path, 0, strlen(YF_PATH)) === YF_PATH ? substr($show_path, strlen(YF_PATH)) : $show_path;
+#				return a('/file_manager/view/'.urlencode($path), $show_path, 'fa fa-eye');
+#			})
 		;
 	}
 

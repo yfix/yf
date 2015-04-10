@@ -592,17 +592,29 @@ class yf_graphics {
 		if (!strlen($extra['text'])) {
 			return false;
 		}
+		$strip_tags = isset($extra['strip_tags']) ? $extra['strip_tags'] : $this->TIPS_STRIP_TAGS;
 		if (!isset($this->_tips)) {
 			$this->_tips = (array)main()->get_data('tips');
 		}
-		$tip = $this->_tips[$extra['text']] ?: array();
-		if ($tip) {
-			$extra['text'] = $tip['text'];
+		$tip = array();
+		if (isset($this->_tips[$extra['text']])) {
+			$lang = conf('language');
+			// Exact match for current language
+			if (isset($this->_tips[$extra['text']][$lang])) {
+				$tip = $this->_tips[$extra['text']][$lang];
+			} else {
+				// Try to get first record and translate it
+				$tip = current($this->_tips[$extra['text']]);
+				if ($strip_tags) {
+					$tip['text'] = strip_tags($tip['text']); // Needed for correct translation
+				}
+				$tip['text'] = t($tip['text']);
+			}
 			if (!$tip['active']) {
 				return false;
 			}
+			$extra['text'] = $tip['text'];
 		}
-		$strip_tags = isset($extra['strip_tags']) ? $extra['strip_tags'] : $this->TIPS_STRIP_TAGS;
 		if ($strip_tags) {
 			$extra['text'] = strip_tags($extra['text']);
 		}

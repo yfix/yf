@@ -1,6 +1,9 @@
 <?php
 
 return function($params = array()) {
-	$locale = $params['locale'] ?: ($params['lang'] ?: conf('language'));
-	return db()->from('tips')->where('locale', $locale)->get_all(null, null, 'name');
+	$data = array();
+	foreach ((array)db()->from('tips')->get_all() as $a) {
+		$data[$a['name']][$a['locale']] = $a;
+	}
+	return $data;
 };

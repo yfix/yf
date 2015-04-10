@@ -589,38 +589,6 @@ class yf_debug {
 
 	/**
 	*/
-	function _i18n_vars_todo() {
-// TODO: JS full rewrite needed, as was done for i18n inline editor
-		// !!! Needed to be on the bottom of the page
-		$i18n_vars = _class('i18n')->_I18N_VARS;
-		if (!$this->SHOW_I18N_VARS || empty($i18n_vars)) {
-			return false;
-		}
-		ksort($i18n_vars);
-		$js_vars1 = array();
-		foreach ((array)$i18n_vars as $name => $value) {
-			$name = str_replace("_", " ", strtolower($name));
-			$js_vars1[$name] = $value;
-		}
-		$body .= 'var _i18n_for_page = '.json_encode($js_vars1);
-
-		$not_translated = _class('i18n')->_NOT_TRANSLATED;
-		if (!empty($not_translated)) {
-			ksort($not_translated);
-			$js_vars2 = array();
-			foreach ((array)$not_translated as $name => $hits) {
-				$name = str_replace("_", " ", strtolower($name));
-				$js_vars2[$name] = (int)$hits;
-			}
-			$body .= 'var _i18n_not_translated = '.json_encode($js_vars2);
-		}
-
-		$body .= 'var _i18n_for_page = '.json_encode($js_vars);
-		return '<script type="text/javascript">'.$body.'</script>';
-	}
-
-	/**
-	*/
 	function _var_export($var) {
 		if (defined('HHVM_VERSION')) {
 			return is_array($var) ? print_r($var, 1) : $var;
@@ -859,18 +827,13 @@ class yf_debug {
 			if (empty($v['calls'])) {
 				continue;
 			}
-			$stpl_inline_edit = '';
-			if (tpl()->ALLOW_INLINE_DEBUG) {
-				$stpl_inline_edit = ' stpl_name=\''._prepare_html($k).'\' ';
-			}
 			$cur_size = strlen($v['string']);
 			$total_size += $cur_size;
 			$total_stpls_exec_time += (float)$v['exec_time'];
 
 			$items[$counter] = array(
 				'id'		=> ++$counter,
-// TODO: add link to inline stpl edit
-				'name'		=> /*$stpl_inline_edit. */$this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $debug[$k]['storage'])),
+				'name'		=> $this->_admin_link('edit_stpl', $k, false, array('{LOCATION}' => $debug[$k]['storage'])),
 				'calls'		=> strval($v['calls']),
 				'driver'	=> strval($v['driver']),
 				'compiled'	=> (int)$v['is_compiled'],

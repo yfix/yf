@@ -1,4 +1,15 @@
-{jquery()}
+<?php
+
+return function() {
+
+return array(
+	'versions' => array('master' => array(
+		'css' => array('
+		'),
+		'js' => array('
+		'),
+		'jquery' => array(
+<<<END
 	// Prepare html for the templates inline editor
 	$("body").append("" 
 		+ "<div id='inline_edit_stpl'>" 
@@ -96,5 +107,11 @@
 		} catch (e) {
 		}
 	});
+END
+	))),
+	'require' => array(
+		'asset' => 'jquery',
+	),
+);
 
-{/jquery}
+};

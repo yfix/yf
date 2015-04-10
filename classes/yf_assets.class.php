@@ -359,6 +359,11 @@ class yf_assets {
 	/**
 	*/
 	public function get_asset_details($name) {
+		// If overall asset is callable - call it and save result to prevent multiple calls
+		if (!is_string($this->assets[$name]) && is_callable($this->assets[$name])) {
+			$func = $this->assets[$name];
+			$this->assets[$name] = $func();
+		}
 		return $this->assets[$name];
 	}
 
