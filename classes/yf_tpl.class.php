@@ -267,7 +267,6 @@ class yf_tpl {
 				if (DEBUG_MODE) {
 					$body['debug_info'] = common()->show_debug_info();
 				} elseif ($this->ADD_QUICK_PAGE_INFO) {
-					$cur_time = gmdate();
 					$body['exec_time'] = PHP_EOL. '<!-- date: '.gmdate('Y-m-d H:i:s').' UTC, time: '.round(microtime(true) - main()->_time_start, 3).', memory: '.memory_get_peak_usage().', db: '.(int)db()->NUM_QUERIES.' -->'. PHP_EOL;
 				}
 				$_last_pos = strpos($body['content'], '</body>');
