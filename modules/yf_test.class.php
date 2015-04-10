@@ -37,12 +37,14 @@ class yf_test {
 			return;
 		}
 		if (is_post()) {
-			$_SESSION['stpls_inline_edit']		= intval((bool)$_POST['stpl_edit']);
+#			$_SESSION['stpls_inline_edit']		= intval((bool)$_POST['stpl_edit']);
 			$_SESSION['locale_vars_edit']		= intval((bool)$_POST['locale_edit']);
+			$_SESSION['debug_console_light']	= intval((bool)$_POST['debug_console_light']);
 			return js_redirect($_SERVER['HTTP_REFERER'], 0);
 		}
 		$a = $_POST + $_SESSION;
 		return form($a)
+			->active_box('debug_console_light', array('selected' => $_SESSION['debug_console_light']))
 			->active_box('locale_edit', array('selected' => $_SESSION['locale_vars_edit']))
 //			->active_box('stpl_edit', array('selected' => $_SESSION['stpls_inline_edit']))
 			->save()
