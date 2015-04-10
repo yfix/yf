@@ -9,7 +9,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	public $KEY_PUBLIC       = null;  // site id
 	public $KEY_PRIVATE      = null;  // salt
 
-	public $IS_DEPOSITION = true;
+	// public $IS_DEPOSITION = true;
 	// public $IS_PAYMENT    = true;
 
 	public $URL_API          = 'https://gate.ecommpay.com/card/json/';
