@@ -328,6 +328,10 @@ function( $log, $scope, $timeout, PaymentApi, PaymentBalance, _config_balance, _
 					if( r.response && r.response.payout ) {
 						$scope.status            = r.response.payout.status;
 						$scope.status_message    = r.response.payout.status_message;
+						if( r.response.payment ) {
+							angular.extend( $scope.payment, r.response.payment);
+							PaymentBalance.load({ account: r.response.payment.account });
+						}
 					} else {
 						$scope.status_message = config.message.error.operation;
 						$log.error( 'balance->payout is fail operation:', r );

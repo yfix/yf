@@ -841,7 +841,14 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		);
 		// check account
 		$account_result = $payment_api->get_account( array( 'account_id' => $account_id ) );
-		if( empty( $account_result ) ) { $status = false; }
+		if( empty( $account_result ) ) {
+			db()->rollback();
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка при получении, баланса',
+			);
+			return( $result );
+		}
 		list( $account_id, $account ) = $account_result;
 		// prepare
 		// save options
@@ -857,15 +864,16 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 				'datetime' => $operation_data[ 'sql_datetime' ],
 			))
 		);
-		$result = $payment_api->operation_update( array(
+		$operation_update_data = array(
 			'operation_id'    => $operation_id,
 			'balance'         => $account[ 'balance' ],
 			'datetime_update' => $sql_datetime,
 			'options'         => $operation_options,
-		));
-		if( !$_result[ 'status' ] ) {
+		);
+		$result = $payment_api->operation_update( $operation_update_data );
+		if( !$result[ 'status' ] ) {
 			db()->rollback();
-			return( $_result );
+			return( $result );
 		}
 		db()->commit();
 		$result = array(
