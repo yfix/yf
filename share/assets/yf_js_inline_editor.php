@@ -2,13 +2,29 @@
 
 return function() {
 
-#{include("system/js_inline_editor_locale_vars")}
-#{{--include("system/js_inline_editor_templates")--}}
-#{{--include("system/js_inline_editor_tips")--}}
+	if (!_class('i18n')->WRAP_VARS_FOR_INLINE_EDIT) {
+		return false;
+	}
+	$lang = _class('i18n')->CUR_LOCALE;
+	$i18n_vars = _class('i18n')->TR_VARS[$lang];
+	if (empty($i18n_vars)) {
+		return false;
+	}
+	ksort($i18n_vars);
 
-// TODO
-$i18n_for_page = array();
-$i18n_not_translated = array();
+	$i18n_for_page = array();
+	foreach ((array)$i18n_vars as $name => $value) {
+		$i18n_for_page[str_replace('_', ' ', strtolower($name))] = $value;
+	}
+
+	$i18n_not_translated = array();
+	$not_translated = _class('i18n')->_NOT_TRANSLATED[$lang];
+	if (!empty($not_translated)) {
+		ksort($not_translated);
+		foreach ((array)$not_translated as $name => $hits) {
+			$i18n_not_translated[str_replace('_', ' ', strtolower($name))] = (int)$hits;
+		}
+	}
 
 return array(
 	'versions' => array('master' => array(
