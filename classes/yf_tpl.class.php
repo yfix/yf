@@ -49,6 +49,8 @@ class yf_tpl {
 	public $ALLOW_PHP_TEMPLATES		= false;
 	/** @var bool */
 	public $DEBUG_STPL_VARS			= false;
+	/** @var bool Will add cur date, generation time, memory and db queries into any common page before body */
+	public $ADD_QUICK_PAGE_INFO		= true;
 	/** @var bool Compile templates folder */
 	public $COMPILED_DIR			= 'stpls_compiled/';
 	/** @var string @conf_skip */
@@ -261,8 +263,13 @@ class yf_tpl {
 			if (main()->OUTPUT_CACHING && $init_type == 'user' && $_SERVER['REQUEST_METHOD'] == 'GET') {
 				_class('output_cache')->_put_page_to_output_cache($body);
 			}
-			if (DEBUG_MODE && !main()->is_console() && !main()->is_ajax()) {
-				$body['debug_info'] = common()->show_debug_info();
+			if (!main()->is_console() && !main()->is_ajax()) {
+				if (DEBUG_MODE) {
+					$body['debug_info'] = common()->show_debug_info();
+				} elseif ($this->ADD_QUICK_PAGE_INFO) {
+					$cur_time = gmdate();
+					$body['exec_time'] = PHP_EOL. '<!-- date: '.gmdate('Y-m-d H:i:s').' UTC, time: '.round(microtime(true) - main()->_time_start, 3).', memory: '.memory_get_peak_usage().', db: '.(int)db()->NUM_QUERIES.' -->'. PHP_EOL;
+				}
 				$_last_pos = strpos($body['content'], '</body>');
 				if ($_last_pos) {
 					$body['content'] = substr($body['content'], 0, $_last_pos). $body['exec_time']. $body['debug_info']. '</body></html>';
