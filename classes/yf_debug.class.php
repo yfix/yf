@@ -66,6 +66,7 @@ class yf_debug {
 	*/
 	function _init() {
 		$this->_NOT_TRANSLATED_FILE = PROJECT_PATH. 'logs/not_translated_'. conf('language'). '.php';
+		$this->DEBUG_CONSOLE_LIGHT = intval((bool)$_SESSION['debug_console_light']);
 	}
 
 	/**
@@ -89,6 +90,9 @@ class yf_debug {
 				continue;
 			}
 			$name = substr($method, strlen('_debug_'));
+			if ($this->DEBUG_CONSOLE_LIGHT && $name !== 'DEBUG_YF') {
+				continue;
+			}
 			$ts2 = microtime(true);
 			$content = $this->$method($method_params);
 			if ($method_params) {
@@ -740,8 +744,10 @@ class yf_debug {
 			->row_start()
 				->container('Locale edit')
 				->active_box('locale_edit', array('selected' => $_SESSION['locale_vars_edit']))
-				->save(array('class' => 'btn btn-default btn-mini btn-xs'))
+				->container('<span style="padding-left:20px;">Debug console light</span>')
+				->active_box('debug_console_light', array('selected' => $_SESSION['debug_console_light']))
 			->row_end()
+			->save(array('class' => 'btn btn-default btn-mini btn-xs'))
 		;
 		foreach ($data as $name => $_data) {
 			foreach ($_data as $k => $v) {
