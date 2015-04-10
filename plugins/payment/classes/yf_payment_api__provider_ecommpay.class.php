@@ -29,11 +29,25 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					),
 				),
 				'field' => array(
-					'b_name',
-					'b_card_or_acc',
-					'amt',
-					'ccy',
-					'details',
+					'action',
+					'site_id',
+					'amount',
+					'currency',
+					'external_id',
+					'customer_ip',
+					'comment',
+					'card',
+					'sender_first_name',
+					'sender_last_name',
+					'sender_middle_name',
+					'sender_passport_number',
+					'sender_passport_issue_date',
+					'sender_passport_issued_by',
+					'sender_phone',
+					'sender_birthdate',
+					'sender_address',
+					'sender_city',
+					'sender_postindex',
 				),
 				'option' => array(
 					'card'                       => 'Номер карты',
@@ -155,7 +169,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 	// public $fee = 5; // 5%
 
 	public $service_allow = array(
-		'EcommPay',
+		'Visa, MasterCard',
 	);
 
 	public $provider_ip_allow = array(
@@ -786,6 +800,24 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		// fee
 		$fee = $this->get_fee_payout( $options );
 		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
+		// check balance
+		$account_result = $payment_api->get_account( array( 'account_id' => $account_id ) );
+		if( empty( $account_result ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка при проверке, баланса',
+			);
+			return( $result );
+		}
+		list( $account_id, $account ) = $account_result;
+		$balance = $account[ 'balance' ];
+		if( $amount > $balance ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Недостаточно средств на счету',
+			);
+			return( $result );
+		}
 		// update account balance
 		db()->begin();
 		$sql_datetime = $operation_data[ 'sql_datetime' ];
