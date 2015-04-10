@@ -59,6 +59,11 @@ class yf_i18n {
 			$this->TRACK_TRANSLATED = intval((bool)$_SESSION['locale_vars_edit']);
 			main()->INLINE_EDIT_LOCALE = intval((bool)$_SESSION['locale_vars_edit']);
 		}
+		if (function_exists('locale_accept_from_http')) {
+// TODO: use this method for language detection
+#			$locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+#			var_dump($locale);
+		}
 		conf('languages', main()->get_data('locale_langs'));
 		// Force default language as it set in locale editor
 		foreach ((array)conf('languages') as $lang_info) {
