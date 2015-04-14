@@ -168,7 +168,7 @@ class yf_table2_filter {
 		if ($sql) {
 			$filter_sql = ' AND '.implode(' AND ', $sql);
 		}
-		if (isset($filter_data['order_by']) && strpos(strtoupper($__sql), 'ORDER BY') === false) {
+		if (isset($filter_data['order_by']) && $filter_data['order_by'] && strpos(strtoupper($__sql), 'ORDER BY') === false) {
 			$order_by_field = $filter_data['order_by'];
 			if (is_array($filter_params[$order_by_field])) {
 				$field_params = $filter_params[$order_by_field];
