@@ -621,6 +621,10 @@ class yf_graphics {
 		if (!strlen($extra['text'])) {
 			return false;
 		}
+		// Thinking that we have template variables or tags inside tip contents, try to replace them
+		if (isset($in['replace']) && false !== strpos($extra['text'], '{')) {
+			$extra['text'] = tpl()->parse_string($extra['text'], $in['replace'], 'html_tip_auto__'.crc32($extra['text']));
+		}
 		if ($return_text || $extra['return_text']) {
 			return $extra['text'];
 		}
