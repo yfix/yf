@@ -7,16 +7,8 @@ class yf_table2_filter {
 
 	/**
 	*/
-	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $table = null) {
-		if (!$filter_data) {
-			return '';
-		}
-		$db = is_object($table->_params['db']) ? $table->_params['db'] : db();
-		$special_fields = array(
-			'order_by',
-			'order_direction',
-		);
-		$supported_conds = array(
+	function _init() {
+		$this->supported_conds = array(
 			'in'		=> function($a){ return ' IN( '._es($a['value']).')'; }, // "equal"
 			'eq'		=> function($a){ return ' = "'._es($a['value']).'"'; }, // "equal"
 			'ne'		=> function($a){ return ' != "'._es($a['value']).'"'; }, // "not equal"
@@ -32,54 +24,81 @@ class yf_table2_filter {
 			'dt_gte'	=> function($a){ return ' >= "'._es(strtotime($a['value'])).'"'; }, // "greater or equal than",
 			'dt_lt'		=> function($a){ return ' < "'._es(strtotime($a['value'])).'"'; }, // "less than",
 			'dt_lte'	=> function($a){ return ' <= "'._es(strtotime($a['value'])).'"'; }, // "lower or equal than"
-			'between'	=> function($a){ return ' BETWEEN "'._es($a['value']).'" AND "'._es($a['and']).'"'; }, // BETWEEN $min AND $max
-			'between' => function( $a ){
-				$from = trim( $a[ 'value' ] );
-				$to   = trim( $a[ 'and'   ] );
-				if( $from && $to ) {
-					$result = sprintf( " BETWEEN '%s' AND '%s'", $from, $to );
-				} else {
-					if( $from ) {
-						$result = sprintf( " >= '%s'", $from );
-					} elseif( $to ) {
-						$result = sprintf( " <= '%s'", $to );
-					}
+			'between'	=> function($a){
+				$from = trim($a['value']);
+				$to = trim($a['and']);
+				if ($from && $to) {
+					$result = sprintf(' BETWEEN "%s" AND "%s"', $from, $to);
+				} elseif ($from) {
+					$result = sprintf(' >= "%s"', $from);
+				} elseif ($to) {
+					$result = sprintf(' <= "%s"', $to);
 				}
-				return( $result );
+				return $result;
 			},
-			'dt_between' => function( $a ){
-				$from = trim( $a[ 'value' ] );
-				$to   = trim( $a[ 'and'   ] );
-				!empty( $from ) && $from = strtotime( $from );
-				!empty( $to )   && $to   = strtotime( $to   );
-				if( $from && $to ) {
-					$result = sprintf( " BETWEEN '%s' AND '%s'", $from, $to );
-				} else {
-					if( $from ) {
-						$result = sprintf( " >= '%s'", $from );
-					} elseif( $to ) {
-						$result = sprintf( " <= '%s'", $to );
-					}
+			'dt_between' => function($a){
+				$from = trim($a['value']);
+				$to = trim($a['and']);
+				!empty($from) && $from = strtotime($from);
+				!empty($to) && $to = strtotime($to);
+				if ($from && $to) {
+					$result = sprintf(' BETWEEN "%s" AND "%s"', $from, $to);
+				} elseif ($from) {
+					$result = sprintf(' >= "%s"', $from);
+				} elseif ($to) {
+					$result = sprintf(' <= "%s"', $to);
 				}
-				return( $result );
+				return $result;
 			},
-			'datetime_between' => function( $a ){
-				$from = trim( $a[ 'value' ] );
-				$to   = trim( $a[ 'and'   ] );
-				!empty( $from ) && $from = date( 'Y-m-d H-i-s', strtotime( $from ) );
-				!empty( $to )   && $to   = date( 'Y-m-d H-i-s', strtotime( $to )   );
-				if( $from && $to ) {
-					$result = sprintf( " BETWEEN '%s' AND '%s'", $from, $to );
-				} else {
-					if( $from ) {
-						$result = sprintf( " >= '%s'", $from );
-					} elseif( $to ) {
-						$result = sprintf( " <= '%s'", $to );
-					}
+			'datetime_between' => function($a){
+				$from = trim($a['value']);
+				$to = trim($a['and']);
+				$format = 'Y-m-d H-i-s';
+				!empty($from) && $from = date($format, strtotime($from));
+				!empty($to) && $to = date($format, strtotime($to));
+				if ($from && $to) {
+					$result = sprintf(' BETWEEN "%s" AND "%s"', $from, $to);
+				} elseif ($from) {
+					$result = sprintf(' >= "%s"', $from);
+				} elseif ($to) {
+					$result = sprintf(' <= "%s"', $to);
 				}
-				return( $result );
+				return $result;
+			},
+			'daterange_between' => function($a){
+				$value = $a['value'];
+				if (!$value || false === strpos($value, '-')) {
+					return false;
+				}
+				list($from, $to) = explode('-', $value);
+				$from = trim($from);
+				$to = trim($to);
+				!empty($from) && $from = strtotime($from);
+				!empty($to) && $to = strtotime($to);
+				if ($from && $to) {
+					$result = sprintf(' BETWEEN "%s" AND "%s"', $from, $to);
+				} elseif ($from) {
+					$result = sprintf(' >= "%s"', $from);
+				} elseif ($to) {
+					$result = sprintf(' <= "%s"', $to);
+				}
+				return $result;
 			},
 		);
+	}
+
+	/**
+	*/
+	function _filter_sql_prepare($filter_data = array(), $filter_params = array(), $__sql = '', $table = null) {
+		if (!$filter_data) {
+			return '';
+		}
+		$db = is_object($table->_params['db']) ? $table->_params['db'] : db();
+		$special_fields = array(
+			'order_by',
+			'order_direction',
+		);
+		$supported_conds = &$this->supported_conds;
 		foreach((array)$filter_data as $k => $v) {
 			if (!strlen($k)) {
 				continue;

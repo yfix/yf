@@ -2257,6 +2257,20 @@ class yf_form2 {
 	}
 
 	/**
+	* Daterange picker (Alias)
+	*/
+	function daterange($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return $this->daterange_select($name, $desc, $extra, $replace);
+	}
+
+	/**
+	* Daterange picker
+	*/
+	function daterange_select($name = '', $desc = '', $extra = array(), $replace = array()) {
+		return _class('form2_daterange', 'classes/form2/')->{__FUNCTION__}($name, $desc, $extra, $replace, $this);
+	}
+
+	/**
 	*/
 	function tbl_link($name, $link, $extra = array(), $replace = array()) {
 		return _class('form2_tbl_funcs', 'classes/form2/')->{__FUNCTION__}($name, $link, $extra, $replace, $this);

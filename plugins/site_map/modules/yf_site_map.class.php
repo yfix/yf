@@ -112,6 +112,7 @@ class yf_site_map {
 		if ($this->ALLOW_REWRITE && !tpl()->REWRITE_MODE) {
 			$this->ALLOW_REWRITE = false;
 		}
+		$this->_file_extension = '_'. conf('language'). $this->_file_extension;
 	}
 
 	/**
