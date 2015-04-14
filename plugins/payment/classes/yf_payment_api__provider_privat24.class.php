@@ -141,6 +141,13 @@ class yf_payment_api__provider_privat24 extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
+	protected function _api_request( $uri, $data ) {
+		if( !$this->ENABLE ) { return( null ); }
+		$url    = $this->URL . $uri;
+		$result = $this->_api_post( $url, $data );
+		return( $result );
+	}
+
 	public function api_request( $method, $options ) {
 		if( !$this->ENABLE ) { return( null ); }
 		$api_method_allow = $this->method_allow[ 'payment' ][ $method ];

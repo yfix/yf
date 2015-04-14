@@ -20,6 +20,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			'pay_card' => array(
 				'title'       => 'EcommPay',
 				'icon'        => 'ecommpay',
+				'action'      => 'payout',
 				'amount_min'  => 100,
 				'fee'         => 0, // 0.1%
 				'currency' => array(
@@ -34,7 +35,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 					'amount',
 					'currency',
 					'external_id',
-					'customer_ip',
+					// 'customer_ip',
 					'comment',
 					'card',
 					'sender_first_name',
@@ -77,19 +78,19 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		'transaction_id'             => 'transaction_id',             // ? Numeric ID успешного платежа по той банковской карте, на которую нужно сделать выплату.
 		'force_disable_callback'     => 'force_disable_callback',     // - Enum Отключить оповещения (callback) об операции. Допустимые значения - 1 (да, отключить), 0 (нет, высылать оповещения)
 		'first_callback_delay'       => 'first_callback_delay',       // - Numeric Задержка перед отправкой первого оповещения
-		'card'                       => 'card',                       // ? Numeric(13,19) Номер банковской карт, на которую совершается выплата.
+		'account'                    => 'card',                       // ? Numeric(13,19) Номер банковской карт, на которую совершается выплата.
 		'title'                      => 'comment',                    // + String(4096) Комментарий к запросу example_comment
-		'sender_first_name'          => 'sender_first_name',          // + String(255) Имя пользователя
-		'sender_last_name'           => 'sender_last_name',           // + String(255) Фамилия пользователя
-		'sender_middle_name'         => 'sender_middle_name',         // + String(255) Отчество пользователя
-		'sender_passport_number'     => 'sender_passport_number',     // + String(255) Серия и номер паспорта пользователя
-		'sender_passport_issue_date' => 'sender_passport_issue_date', // + String(255) Дата выдачи паспорта: 2002-01-31
-		'sender_passport_issued_by'  => 'sender_passport_issued_by',  // + String(255) Орган, выдавший паспорт
-		'sender_phone'               => 'sender_phone',               // + String(11) Контактный телефон пользователя.
-		'sender_birthdate'           => 'sender_birthdate',           // + Date Дата рождения пользователя: 1980-01-31
-		'sender_address'             => 'sender_address',             // + String(255) Адрес пользователя
-		'sender_city'                => 'sender_city',                // ? String(255) Город пользователя.
-		'sender_postindex'           => 'sender_postindex',           // ? String(255) Почтовый индекс пользователя.
+		'first_name'          => 'sender_first_name',          // + String(255) Имя пользователя
+		'last_name'           => 'sender_last_name',           // + String(255) Фамилия пользователя
+		'middle_name'         => 'sender_middle_name',         // + String(255) Отчество пользователя
+		'passport_number'     => 'sender_passport_number',     // + String(255) Серия и номер паспорта пользователя
+		'passport_issue_date' => 'sender_passport_issue_date', // + String(255) Дата выдачи паспорта: 2002-01-31
+		'passport_issued_by'  => 'sender_passport_issued_by',  // + String(255) Орган, выдавший паспорт
+		'phone'               => 'sender_phone',               // + String(11) Контактный телефон пользователя.
+		'birthdate'           => 'sender_birthdate',           // + Date Дата рождения пользователя: 1980-01-31
+		'address'             => 'sender_address',             // + String(255) Адрес пользователя
+		'city'                => 'sender_city',                // ? String(255) Город пользователя.
+		'postindex'           => 'sender_postindex',           // ? String(255) Почтовый индекс пользователя.
 	);
 
 	public $_options_transform = array(
@@ -226,6 +227,22 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			// );
 			return( null );
 		}
+		$units = pow( 10, $currency[ 'minor_units' ] );
+		if( $is_request ) {
+			$result = (int)( $amount * $units );
+		} else {
+			$result = (float)$amount / $units;
+		}
+		return( $result );
+	}
+
+	public function _amount_payout( $amount, $currency, $is_request = true ) {
+		if( !$this->ENABLE ) { return( null ); }
+		$payment_api = $this->payment_api;
+		list( $_currency_id, $currency ) = $payment_api->get_currency__by_id( array(
+			'currency_id' => $currency_id,
+		));
+		if( empty( $_currency_id ) ) { return( null ); }
 		$units = pow( 10, $currency[ 'minor_units' ] );
 		if( $is_request ) {
 			$result = (int)( $amount * $units );
@@ -602,165 +619,152 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		return( $result );
 	}
 
+	public function _url_api() {
+		if( !empty( $this->TEST_MODE ) || !empty( $_[ 'test_mode' ] ) ) {
+			$result = &$this->URL_API_TEST;
+		} else {
+			$result = &$this->URL_API;
+		}
+		return( $result );
+	}
+
 	public function api_request( $method, $options ) {
 		if( !$this->ENABLE ) { return( null ); }
-		$api_method_allow = $this->method_allow[ 'payment' ][ $method ];
-		if( !is_array( $api_method_allow ) ) { return( null ); }
-		$payment_api = &$this->payment_api;
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
-// var_dump( $method, $options );
-// return;
+		// method
+		$api_method_allow = $this->method_allow[ 'payment' ][ $method ];
+		if( !is_array( $api_method_allow ) ) { return( null ); }
+		$options[ 'method_id' ] = $method;
+		$payment_api = &$this->payment_api;
+		// operation_id
+		$_operation_id = (int)$_operation_id;
+		if( empty( $_operation_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Не определен код операции',
+			);
+			return( $result );
+		}
+		// currency_id
+		$currency_id = $this->get_currency_payout( $options );
+		if( empty( $currency_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Неизвестная валюта',
+			);
+			return( $result );
+		}
+		// currency conversion
+		$amount_currency = $payment_api->currency_conversion( array(
+			'conversion_type' => 'sell',
+			'currency_id'     => $currency_id,
+			'amount'          => $_amount,
+		));
+		if( empty( $amount_currency ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Невозможно произвести конвертацию валют',
+			);
+			return( $result );
+		}
+		// fee
+		$fee = $this->get_fee_payout( $options );
+		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
 		// transform
-		foreach( $this->_xml_transform as $from => $to ) {
+		foreach( $this->_api_transform as $from => $to ) {
 			$f = &${ '_'.$from };
 			$t = &${ '_'.$to   };
 			if( isset( $f ) ) { $t = $f; unset( ${ '_'.$from } ); }
 		}
 		// default
-		$_amt  = number_format( $_amt, 2, '.', '' );
-		$_ccy  = $payment_api->_default( array( $_ccy, $this->currency_default ) );
-		$_wait = $_wait ?: $this->_api_request_timeout;
-		$_test = $payment_api->_default( array( $_test, $this->TEST_MODE ) );
-		// $_test = (int)$_test;
-		foreach( $api_method_allow[ 'field' ] as $name ) {
-			$value = &${ '_'.$name };
+		$_currency = $currency_id;
+		$_amount = $this->_amount_payout( $amount_currency_total, $_currency, $is_request = true );
+		!isset( $_site_id ) && $_site_id = $this->key( 'public' );
+		!isset( $_site_id ) && $_site_id = $this->key( 'public' );
+		!isset( $_comment ) && $_comment = t( 'Вывод средств (id: ' . $_external_id . ')' );
+		!isset( $_action ) && $_action = $api_method_allow[ 'action' ];
+		// check required
+		$request = array();
+		foreach( $api_method_allow[ 'field' ] as $key ) {
+			$value = &${ '_'.$key };
 			if( !isset( $value ) ) {
 				$result = array(
 					'status'         => false,
-					'status_message' => 'Отсутствуют данные запроса',
+					'status_message' => 'Отсутствуют данные запроса: '. $key,
 				);
-				return( $result );
+				continue;
+				// return( $result );
 			}
-		}
-		// build xml
-		$xml_request = new SimpleXMLElement(
-			'<?xml version="1.0" encoding="UTF-8"?>'
-			.'<request version="1.0">'
-			.'</request>'
-		);
-		$xml_merchant = $xml_request->addChild( 'merchant' );
-		$xml_data     = $xml_request->addChild( 'data'     );
-		// oper, wait, test
-		$xml_data->addChild( 'oper', 'cmt' );
-		$xml_data->addChild( 'wait', $_wait );
-		$xml_data->addChild( 'test', $_test );
-		// payment
-		$xml_payment = $xml_data->addChild( 'payment' );
-		// payment id
-		isset( $_payment_id ) && $xml_payment->addAttribute( 'id', $_payment_id );
-		// data
-		$data = '';
-		foreach( $api_method_allow[ 'field' ] as $name ) {
-			$value = ${ '_'.$name };
-			$value = htmlentities( $value, ENT_COMPAT | ENT_XML1, 'UTF-8', $double_encode = false );
-			$prop = $xml_payment->addChild( 'prop' );
-			$prop->addAttribute( 'name',  $name  );
-			$prop->addAttribute( 'value', $value );
+			$request[ $key ] = &${ '_'.$key };
 		}
 		// signature
-		$key_public  = $this->KEY_PUBLIC;
-		$data = '';
-		foreach( $xml_data->children() as $_xml ) { $data .= $_xml->asXML(); }
-		$signature = $this->api->str_to_sign( $data );
-		// merchant
-		$xml_merchant->addChild( 'id',        $key_public );
-		$xml_merchant->addChild( 'signature', $signature   );
+		$signature = $this->api->signature( $request );
+		if( empty( $signature ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Ошибка генерации подписи',
+			);
+			return( $result );
+		}
+		$request[ 'signature' ] = $signature;
 		// request
-		$data = $xml_request->asXML();
-		$result = $this->_api_request( $method, $data );
+		$url  = $this->_url_api();
+		$data = http_build_query( $request );
+		$result = $this->_api_request( $url, $data );
+		// $data_json = json_encode( $request, JSON_NUMERIC_CHECK );
+		// $result = $this->_api_request( $url, $data, array( 'is_json' => true, ) );
+		if( empty( $result ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Невозможно отправить запрос',
+			);
+			return( $result );
+		}
+		list( $status, $response ) = $result;
+		$response = json_decode( $response, true );
+		if( is_null( $response ) ) {
+			$result = array(
+				'status'         => false,
+				'status_message' => 'Невозможно декодировать ответа',
+			);
+			return( $result );
+		}
+		$result = array(
+			'status'         => &$status,
+			'status_message' => &$status_message,
+		);
+		$status = false;
+		$code = (int)$response[ 'code' ];
+		switch( $code ) {
+			// success
+			case 0:
+				$status = true;
+				$status_message = 'Выполнено';
+				break;
+			// in progress
+			case 50:
+				$status = true;
+				$status_message = 'В процессе';
+				break;
+			// fails...
+			case 2:
+				$status_message = 'Доступ запрещен';
+				break;
+			default:
+				$status_message = 'Ошибка при выполнении';
+				break;
+		}
+		$status_message .= ': ' . $_comment;
+var_dump( $url, $request, $data, $data_json );
+var_dump( $response, $result );
+exit;
+var_dump( $url, $request_options, $request_options_json, $data );
+var_dump( $result );
+exit;
+		return( $result );
 		list( $status, $response ) = $result;
 		if( !$status ) { return( $result ); }
-		libxml_use_internal_errors( true );
-		$xml_response = simplexml_load_string( $response );
-// debug
-// ini_set( 'html_errors', 0 );
-// var_dump( $response, $xml_response );
-		// error?
-		$error = libxml_get_errors();
-		if( $error ) {
-			libxml_clear_errors();
-			$result = array(
-				'status'         => null,
-				'status_message' => 'Ошибка ответа: неверная структура данных',
-			);
-			return( $result );
-		}
-		if( $xml_response->getName() == 'error' ) {
-			$result = array(
-				'status'         => null,
-				'status_message' => 'Ошибка ответа: неверные данные - ' . (string)$xml_response,
-			);
-			return( $result );
-		}
-		// ----- check response
-		// key public - merchant
-		$value = $key_public;
-		$r_value = (string)$xml_response->merchant->id;
-		if( $value != $r_value ) {
-			$result = array(
-				'status'         => null,
-				'status_message' => 'Ошибка ответа: неверный публичный ключ (merchant)',
-			);
-			return( $result );
-		}
-		// signature
-		$data = '';
-		foreach( $xml_response->data->children() as $_xml ) { $data .= $_xml->asXML(); }
-		$value = $this->api->str_to_sign( $data );
-		$r_value = (string)$xml_response->merchant->signature;
-		if( $value != $r_value ) {
-			$result = array(
-				'status'         => null,
-				'status_message' => 'Ошибка ответа: неверный подпись (signature)',
-			);
-			return( $result );
-		}
-		// payment
-		$xml_response_payment = $xml_response->data->payment->attributes();
-		// id
-		$value = $_payment_id;
-		$r_value = (string)$xml_response_payment->id;
-		if( $value != $r_value ) {
-			$result = array(
-				'status'         => null,
-				'status_message' => 'Ошибка ответа: неверный номер операции (operation_id)',
-			);
-			return( $result );
-		}
-		// amt
-		$value = $_amt;
-		$r_value = (string)$xml_response_payment->amt;
-		if( $value != $r_value ) {
-			$result = array(
-				'status'         => null,
-				'status_message' => 'Ошибка ответа: неверная сумма (amt)',
-			);
-			return( $result );
-		}
-		// ccy
-		$value = $_ccy;
-		$r_value = (string)$xml_response_payment->ccy;
-		if( $value != $r_value ) {
-			$result = array(
-				'status'         => null,
-				'status_message' => 'Ошибка ответа: неверная валюта (ccy)',
-			);
-			return( $result );
-		}
-		// state
-		$status         = (bool)$xml_response_payment->state;
-		$status_message = (string)$xml_response_payment->message;
-		if( $status ) {
-			if( $status_message == 'payment added to the queue' ) {
-				$status_message = 'Платеж добавлен в очередь';
-			} else {
-				$status_message = 'Платеж выполнен успешно';
-			}
-		} else {
-			$status_message = 'Платеж забракован';
-		}
-		return( array( $status, $status_message ) );
 	}
 
 	public function payment( $options ) {

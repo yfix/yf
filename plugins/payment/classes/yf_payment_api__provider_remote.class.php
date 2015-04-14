@@ -79,8 +79,10 @@ class yf_payment_api__provider_remote {
 		return( $result );
 	}
 
-	protected function _api_post( $url, $post ) {
+	protected function _api_post( $url, $post, $options = true ) {
 		if( !$this->ENABLE ) { return( null ); }
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// options
 		$options = array(
 			// CURLOPT_URL            =>  $url,
@@ -88,6 +90,13 @@ class yf_payment_api__provider_remote {
 			CURLOPT_POSTFIELDS     =>  $post,
 			CURLOPT_RETURNTRANSFER =>  true,
 		);
+		if( !empty( $_is_json ) ) {
+			$options += array(
+				CURLOPT_HTTPHEADER => array(
+					'Content-Type: application/json; charset=utf-8'
+				),
+			);
+		}
 		if( $this->API_SSL_VERIFY && strpos( $url, 'https' ) !== false ) {
 			$options += array(
 				CURLOPT_SSL_VERIFYPEER => true,
@@ -108,9 +117,9 @@ class yf_payment_api__provider_remote {
 		$error_number  = curl_errno( $ch );
 		$error_message = curl_error( $ch );
 		curl_close( $ch );
-		// debug
-		// var_dump( $url, $options, $result, $http_code );
-		// exit;
+// DEBUG
+// var_dump( $url, $options, $result, $http_code );
+// exit;
 		// result
 		$status = null;
 		if( $result === false ) {
@@ -149,10 +158,9 @@ class yf_payment_api__provider_remote {
 		return( array( $status, $result ) );
 	}
 
-	protected function _api_request( $uri, $data ) {
+	protected function _api_request( $url, $data, $options = array() ) {
 		if( !$this->ENABLE ) { return( null ); }
-		$url    = $this->URL . $uri;
-		$result = $this->_api_post( $url, $data );
+		$result = $this->_api_post( $url, $data, $options );
 		return( $result );
 	}
 
