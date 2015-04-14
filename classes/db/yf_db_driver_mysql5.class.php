@@ -87,7 +87,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function num_rows($query_id) {
-		return $query_id ? mysql_num_rows($query_id) : false;
+		return is_resource($query_id) ? mysql_num_rows($query_id) : false;
 	}
 
 	/**
@@ -105,7 +105,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function fetch_row($query_id) {
-		if ($query_id) {
+		if (is_resource($query_id)) {
 			return mysql_fetch_row($query_id);
 		}
 		return false;
@@ -114,7 +114,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function fetch_assoc($query_id) {
-		if ($query_id) {
+		if (is_resource($query_id)) {
 			return mysql_fetch_assoc($query_id);
 		}
 		return false;
@@ -123,7 +123,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function fetch_array($query_id) {
-		if ($query_id) {
+		if (is_resource($query_id)) {
 			return mysql_fetch_array($query_id);
 		}
 		return false;
@@ -132,7 +132,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function fetch_object($query_id) {
-		if ($query_id) {
+		if (is_resource($query_id)) {
 			return mysql_fetch_object($query_id);
 		}
 		return false;
@@ -159,7 +159,7 @@ class yf_db_driver_mysql5 extends yf_db_driver {
 	/**
 	*/
 	function free_result($query_id = false) {
-		if ($query_id) {
+		if (is_resource($query_id)) {
 			return mysql_free_result($query_id);
 		}
 		return false;
