@@ -72,14 +72,14 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		// '+' - required
 		// '-' - not required
 		// '?' - may be by conditions
-		'amount'                     => 'amount',                     // + Numeric Сумма к выплате в валюте сайта
-		'currency'                   => 'currency',                   // - Enum Валюта
-		'operation_id'               => 'external_id',                // + String Идентификатор заказа в системе продавца
-		'transaction_id'             => 'transaction_id',             // ? Numeric ID успешного платежа по той банковской карте, на которую нужно сделать выплату.
-		'force_disable_callback'     => 'force_disable_callback',     // - Enum Отключить оповещения (callback) об операции. Допустимые значения - 1 (да, отключить), 0 (нет, высылать оповещения)
-		'first_callback_delay'       => 'first_callback_delay',       // - Numeric Задержка перед отправкой первого оповещения
-		'account'                    => 'card',                       // ? Numeric(13,19) Номер банковской карт, на которую совершается выплата.
-		'title'                      => 'comment',                    // + String(4096) Комментарий к запросу example_comment
+		// 'amount'                 => 'amount',                     // + Numeric Сумма к выплате в валюте сайта
+		'currency'               => 'currency',                   // - Enum Валюта
+		'operation_id'           => 'external_id',                // + String Идентификатор заказа в системе продавца
+		'transaction_id'         => 'transaction_id',             // ? Numeric ID успешного платежа по той банковской карте, на которую нужно сделать выплату.
+		'force_disable_callback' => 'force_disable_callback',     // - Enum Отключить оповещения (callback) об операции. Допустимые значения - 1 (да, отключить), 0 (нет, высылать оповещения)
+		'first_callback_delay'   => 'first_callback_delay',       // - Numeric Задержка перед отправкой первого оповещения
+		'account'                => 'card',                       // ? Numeric(13,19) Номер банковской карт, на которую совершается выплата.
+		'title'                  => 'comment',                    // + String(4096) Комментарий к запросу example_comment
 		'first_name'          => 'sender_first_name',          // + String(255) Имя пользователя
 		'last_name'           => 'sender_last_name',           // + String(255) Фамилия пользователя
 		'middle_name'         => 'sender_middle_name',         // + String(255) Отчество пользователя
@@ -91,6 +91,11 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		'address'             => 'sender_address',             // + String(255) Адрес пользователя
 		'city'                => 'sender_city',                // ? String(255) Город пользователя.
 		'postindex'           => 'sender_postindex',           // ? String(255) Почтовый индекс пользователя.
+	);
+
+	public $_api_transform_reverse = array(
+		'external_id' => 'operation_id',
+		'code'        => 'state',
 	);
 
 	public $_options_transform = array(
@@ -188,6 +193,9 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$this->api = new EcommPay( $this->KEY_PUBLIC, $this->KEY_PRIVATE );
 		$this->url_result = url( '/api/payment/provider?name=ecommpay&operation=response' );
 		$this->url_server = url( '/api/payment/provider?name=ecommpay&operation=response&server=true' );
+		// translation
+		$strs = &$this->method_allow[ 'payment' ][ 'pay_card' ][ 'option' ];
+		foreach( $strs as $key => &$str ) { $str = t( $str ); }
 		// parent
 		parent::_init();
 	}
@@ -257,7 +265,7 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$_ = $options;
 		// transform
 		foreach ((array)$this->_options_transform as $from => $to ) {
-			if( isset( $_[ $from ] ) ) {
+			if( isset( $_[ $from ] ) && $from != $to ) {
 				$_[ $to ] = $_[ $from ];
 				unset( $_[ $from ] );
 			}
@@ -673,9 +681,11 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 		$amount_currency_total = $payment_api->fee( $amount_currency, $fee );
 		// transform
 		foreach( $this->_api_transform as $from => $to ) {
-			$f = &${ '_'.$from };
-			$t = &${ '_'.$to   };
-			if( isset( $f ) ) { $t = $f; unset( ${ '_'.$from } ); }
+			$_from = '_'.$from;
+			$_to   = '_'.$to;
+			$f = &${ $_from };
+			$t = &${ $_to   };
+			if( isset( $f ) && $_from != $_to ) { $t = $f; unset( ${ $_from } ); }
 		}
 		// default
 		$_currency = $currency_id;
@@ -708,12 +718,14 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		$request[ 'signature' ] = $signature;
+// DEBUG
+// var_dump( $request );
 		// request
 		$url  = $this->_url_api();
 		$data = http_build_query( $request );
 		$result = $this->_api_request( $url, $data );
-		// $data_json = json_encode( $request, JSON_NUMERIC_CHECK );
-		// $result = $this->_api_request( $url, $data, array( 'is_json' => true, ) );
+// DEBUG
+// var_dump( $result );
 		if( empty( $result ) ) {
 			$result = array(
 				'status'         => false,
@@ -722,7 +734,28 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			return( $result );
 		}
 		list( $status, $response ) = $result;
+		// DEBUG
+		/*
+		$response = '
+			{
+			"code"              : 0,
+			"message"           : "Success.",
+			"acquirer_id"       : "552e1df177a9e",
+			"transaction_id"    : "42169",
+			"processor_id"      : "1",
+			"processor_code"    : "00",
+			"processor_message" : "SUCCESS",
+			"amount"            : "89",
+			"currency"          : "RUB",
+			"real_amount"       : "89",
+			"real_currency"     : "RUB",
+			"external_id"       : "24563",
+			"authcode"          : "6Y8A0C"
+			}
+		'; //*/
 		$response = json_decode( $response, true );
+// DEBUG
+// var_dump( $result, $response );
 		if( is_null( $response ) ) {
 			$result = array(
 				'status'         => false,
@@ -735,12 +768,25 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			'status_message' => &$status_message,
 		);
 		$status = false;
-		$code = (int)$response[ 'code' ];
-		switch( $code ) {
+		// transform reverse
+		foreach( $this->_api_transform_reverse as $from => $to ) {
+			if( $from != $to && isset( $response[ $from ] ) ) {
+				$response[ $to ] = $response[ $from ];
+				unset( $response[ $from ] );
+			}
+		}
+		$state = (int)$response[ 'state' ];
+		switch( $state ) {
 			// success
 			case 0:
-				$status = true;
-				$status_message = 'Выполнено';
+				if( $response[ 'amount' ] == $_amount
+					&& $response[ 'external_id' ] == $_operation_id
+				) {
+					$status         = true;
+					$status_message = 'Выполнено';
+				} else {
+					$status_message = 'Выполнено, но сумма или код операции не совпадают';
+				}
 				break;
 			// in progress
 			case 50:
@@ -751,20 +797,21 @@ class yf_payment_api__provider_ecommpay extends yf_payment_api__provider_remote 
 			case 2:
 				$status_message = 'Доступ запрещен';
 				break;
+			case 113:
+				$status_message = 'Выплата отключена';
+				break;
+			case 908:
+				$status_message = 'Выплата уже произведена ранее';
+				break;
 			default:
 				$status_message = 'Ошибка при выполнении';
 				break;
 		}
 		$status_message .= ': ' . $_comment;
-var_dump( $url, $request, $data, $data_json );
-var_dump( $response, $result );
-exit;
-var_dump( $url, $request_options, $request_options_json, $data );
-var_dump( $result );
-exit;
+// DEBUG
+// var_dump( $url, $request, $data_json );
+// exit;
 		return( $result );
-		list( $status, $response ) = $result;
-		if( !$status ) { return( $result ); }
 	}
 
 	public function payment( $options ) {
