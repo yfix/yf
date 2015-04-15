@@ -209,30 +209,22 @@ class yf_utils {
 			return $text;
 		}
 		$have_tr = false;
-		if (DEBUG_MODE && main()->INLINE_EDIT_LOCALE) {
-			if (preg_match("/(<span class=['\"]{0,1}localetr['\"]{0,1}[^>]*?>).*?(<\/span>)/i", $text, $m)) {
-				$tr_1 = $m[1];
-				$tr_2 = $m[2];
+		if (DEBUG_MODE) {
+			if (main()->INLINE_EDIT_LOCALE && preg_match('/(?P<tag1><span class=[\'"]?localetr[\'"]?[^>]*?>)(?P<body>.+?)(?P<tag2><\/span>)/i', $text, $m)) {
+				$tr_1 = $m['tag1'];
+				$tr_2 = $m['tag2'];
 				$text = substr($text, strlen($tr_1), -strlen($tr_2));
 				$have_tr = true;
 			}
 		}
-		$replace = array(
-			'{'	=> '&#123;',
-			'}'	=> '&#125;',
-			"\\"=> '&#92;',
-			'(' => '&#40;',
-			')' => '&#41;',
-			'?' => '&#63;',
-		);
 		if ($need_strip_slashes) {
 			$text = stripslashes($text);
 		}
-		// Prepare special chars
 		$text = $use_smart_function ? $this->smart_htmlspecialchars($text) : htmlspecialchars($text, ENT_QUOTES);
 		if (DEBUG_MODE && $have_tr) {
-			$text = $tr_1.$text.$tr_2;
+			$text = $tr_1. $text. $tr_2;
 		}
+		$replace = array('{' => '&#123;', '}' => '&#125;', "\\"=> '&#92;', '(' => '&#40;', ')' => '&#41;', '?' => '&#63;');
 		return str_replace(array_keys($replace), array_values($replace), $text);
 	}
 
