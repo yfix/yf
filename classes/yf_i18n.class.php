@@ -489,7 +489,7 @@ class yf_i18n {
 			}
 		}
 		if (DEBUG_MODE) {
-			if ($this->WRAP_VARS_FOR_INLINE_EDIT) {
+			if ($this->WRAP_VARS_FOR_INLINE_EDIT && false === strpos($output_string, 'class=localetr')) {
 				$r = array(
 					' ' => '%20',
 					'='	=> '&equals;',
