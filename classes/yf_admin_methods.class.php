@@ -428,6 +428,7 @@ class yf_admin_methods {
 			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
 			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*) table tr th td caption',
 			'extraPlugins' => 'autosave',
+#			'autosave_SaveKey' => 'cke_autosave_'.abs(crc32($_GET['object'].'_'.$_GET['action'].'_'.$_GET['id'])),// 'autosaveKey',
 		);
 		// Other config variant example
 		/* 
