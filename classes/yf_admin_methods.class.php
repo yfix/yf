@@ -415,6 +415,7 @@ class yf_admin_methods {
 	* Return default config used by CKEditor
 	*/
 	function _get_cke_config($params = array()) {
+		asset('ckeditor-plugin-autosave');
 		return array(
 			'toolbar' => array(
 				array(
@@ -426,6 +427,7 @@ class yf_admin_methods {
 			'removePlugins' => 'bidi,dialogadvtab,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,templates,style',
 			'format_tags' => 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
 			'extraAllowedContent' => 'a[*]{*}(*); img[*]{*}(*); div[*]{*}(*) table tr th td caption',
+			'extraPlugins' => 'autosave',
 		);
 		// Other config variant example
 		/* 
@@ -435,7 +437,7 @@ class yf_admin_methods {
 					[ "Cut", "Copy", "Paste", "PasteText", "PasteFromWord", "-", "Undo", "Redo" ], [ "RemoveFormat" ], [ "Bold", "Italic", "Underline" ],
 					[ "FontSize" ], [ "TextColor" ], [ "NumberedList", "BulletedList", "-", "Blockquote" ], [ "Link", "Unlink", "SpecialChar" ], [ "Source" ], [ "Maximize" ]
 				],
-				language: "ru",
+				language: "'.conf('language').'",
 				removePlugins: "bidi,dialogadvtab,div,filebrowser,flash,horizontalrule,iframe,pagebreak,showborders,stylescombo,table,tabletools,templates",
 			});
 		';*/
