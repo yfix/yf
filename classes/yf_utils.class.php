@@ -210,7 +210,7 @@ class yf_utils {
 		}
 		$have_tr = false;
 		if (DEBUG_MODE && main()->INLINE_EDIT_LOCALE) {
-			if (preg_match("/(<span class=['\"]{0,1}locale_tr['\"]{0,1}[^>]*?>).*?(<\/span>)/i", $text, $m)) {
+			if (preg_match("/(<span class=['\"]{0,1}localetr['\"]{0,1}[^>]*?>).*?(<\/span>)/i", $text, $m)) {
 				$tr_1 = $m[1];
 				$tr_2 = $m[2];
 				$text = substr($text, strlen($tr_1), -strlen($tr_2));

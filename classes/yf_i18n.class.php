@@ -496,8 +496,8 @@ class yf_i18n {
 					'<' => '&lt;',
 					'>' => '&gt;',
 				);
-				$s_var = _prepare_html(str_replace(array_keys($r), array_values($r), $_source));
-				$output_string = '<span class=locale_tr s_var='.$s_var.'>'.$output_string.'</span>';
+				$svar = _prepare_html(str_replace(array_keys($r), array_values($r), $_source));
+				$output_string = '<span class=localetr svar='.$svar.'>'.$output_string.'</span>';
 			}
 			debug('i18n[]', array(
 				'name_orig'	=> $_source,
