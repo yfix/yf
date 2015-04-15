@@ -56,25 +56,25 @@ return array(
 			, _last_tr_html		= null
 			, _edited_value		= null
 			, _source_var		= null
-			, _stpl_name		= ""
+			, _stpl_name		= ''
 			, _old_clicks		= { }
-			, _old_text			= ""
+			, _old_text			= ''
 			, _just_saved		= 0
-			, _old_tip_text		= ""
+			, _old_tip_text		= ''
 			, _tip_just_saved	= 0
 			, _tip_id			= 0
 			, _USE_EDITAREA		= 0
 
-	$("input[value*=localetr]").not("[type=text]").each(function(){
+	$('input[value*=localetr]').not('[type=text]').each(function(){
 		var _old_val = $(this).val();
 		$(this).val( remove_localetr_span(_old_val) ).after( _old_val );
 	});
-	$("input[placeholder]").each(function(){
-		var _old_placeholder = $(this).attr("placeholder").replace(/&lt;/ig, "<").replace(/&gt;/ig, ">");
-		$(this).attr("placeholder", remove_localetr_span( _old_placeholder )).after( _old_placeholder )
+	$('input[placeholder]').each(function(){
+		var _old_placeholder = $(this).attr('placeholder').replace('&lt;', '<').replace('&gt;', '>');
+		$(this).attr('placeholder', remove_localetr_span( _old_placeholder )).after( _old_placeholder )
 	});
-	$("button").each(function(){
-		var _old_html = $(this).html().replace(/&lt;/ig, "<").replace(/&gt;/ig, ">");
+	$('button').each(function(){
+		var _old_html = $(this).html().replace('&lt;', '<').replace('&gt;', '>');
 		$(this).html( remove_localetr_span(_old_html) ).after( _old_html );
 
 		var _old_val = $(this).val();
@@ -83,44 +83,44 @@ return array(
 
 	// Highlight not translated vars
 	if (window.yf_i18n_not_translated) {
-		$("span.localetr").each(function(){
+		$('span.localetr').each(function(){
 			if (window.yf_i18n_not_translated[($(this).html()).toLowerCase()]) {
-				$(this).addClass("localenottr");
+				$(this).addClass('localenottr');
 			}
 		});
 	}
 
 	// Save edited var on double click
-	$(document).on("dblclick", function(e){
+	$(document).on('dblclick', function(e){
 		_my_save_var();
 		return false;
 	});
 
 	// Catch keyboard keys Enter and Esc
-	$(document).on("keyup", function(e){
+	$(document).on('keyup', function(e){
 		var _key_code = e.keyCode;
 		if (_key_code != 13 && _key_code != 27) {
 			return true;
 		}
-		// "Enter"
+		// 'Enter'
 		if (_key_code == 13) {
 			_my_save_var();
 		}
-		// "Esc" -> cancel editing
+		// 'Esc' -> cancel editing
 		if (_key_code == 27) {
 			if (_last_tr_item != null) {
 				_last_tr_item.html(_last_tr_html);
-				_last_tr_item.parent().off("click");
+				_last_tr_item.parent().off('click');
 				_last_tr_item = null;
 			}
 			// Hide stpl edit div
-			if (_old_text != "" && _old_text != $("#inline_edit_text").val()) {
-				if (!confirm("Text has changed, are you sure you want to quit editing?")) {
+			if (_old_text != '' && _old_text != $('#inline_edit_text').val()) {
+				if (!confirm('Text has changed, are you sure you want to quit editing?')) {
 					return false;
 				}
 			}
-			$("#inline_edit_stpl").css({"display" : "none"});
-			_old_text = "";
+			$('#inline_edit_stpl').css({'display' : 'none'});
+			_old_text = '';
 		}
 		return false;
 
@@ -133,47 +133,47 @@ return array(
 //			console.log('window.yf_i18n_for_page:', window.yf_i18n_for_page)
 			return false;
 		}
-		var _edited_value = _last_tr_item.find("input.editabletr").val();
-		var _source_var = "";
-		if (_last_tr_html != "") {
-			_source_var = _last_tr_item.find("input.editabletr").attr("svar");
+		var _edited_value = _last_tr_item.find('input.editabletr').val();
+		var _source_var = '';
+		if (_last_tr_html != '') {
+			_source_var = _last_tr_item.find('input.editabletr').attr('svar');
 		}
-		if (_edited_value != "" && _source_var != "" && $.trim(_last_tr_html) != $.trim(_edited_value)
-			&& confirm("Are you sure you want to save your changes?")
+		if (_edited_value != '' && _source_var != '' && $.trim(_last_tr_html) != $.trim(_edited_value)
+			&& confirm('Are you sure you want to save your changes?')
 		) {
-			$.post(window.yf_i18n_form_action, { "source_var": _source_var, "edited_value":_edited_value }, function(data) {
+			$.post(window.yf_i18n_form_action, { 'source_var': _source_var, 'edited_value':_edited_value }, function(data) {
 				// Translate all same elements on page
-				$("span.localetr").each(function(i){
-					if (_last_tr_html != "" && $(this).html() == _last_tr_html) {
+				$('span.localetr').each(function(i){
+					if (_last_tr_html != '' && $(this).html() == _last_tr_html) {
 						$(this).html(_edited_value);
 					}
 				});
 				alert('NEW:' + '<br />' + _edited_value + '<br />' + 'OLD:' + '<br />' + _last_tr_html + '<br />' + 'SERVER SAID:' + '<br />' + data);
-				_last_tr_html = "";
+				_last_tr_html = '';
 				// Allow further edit this var without page refresh
 				window.yf_i18n_for_page[_edited_value] = _source_var;
 			});
 			_last_tr_item.html(_edited_value);
 		} else {
-			if (_last_tr_html != "") {
+			if (_last_tr_html != '') {
 				_last_tr_item.html(_last_tr_html);
 			}
 		}
-		_last_tr_item.parent().off("click");
+		_last_tr_item.parent().off('click');
 		_last_tr_item = null;
 	}
 
-	// Fix "input" fields
+	// Fix 'input' fields
 	function remove_localetr_span(text) {
-		return text.replace(/<span class=localetr[^>]*>|<\/span>/ig, "").replace(/<span class=\'localetr\'[^>]*>|<\/span>/ig, "").replace(/<span class="localetr"[^>]*>|<\/span>/ig, "");
+		return text.replace(new RegExp('<span class=[\'"]?localetr[\'"]?[^>]*>(.+)<\/span>', 'ig'), '$1');
 	}
 
-	// Display edit var dialog on "context menu" mouse click over editable var
-	$(document).on("contextmenu", "span.localetr", function(e) {
+	// Display edit var dialog on 'context menu' mouse click over editable var
+	$(document).on('contextmenu', 'span.localetr', function(e) {
 		// Special case for the hyperlinks
-		$(this).closest("a").on("click", function(){ return false; });
+		$(this).closest('a').on('click', function(){ return false; });
 
-		$(this).attr("svar", $(this).attr("svar").replace("%20", " "));
+		$(this).attr('svar', $(this).attr('svar').replace('%20', ' '));
 
 		_my_save_var();
 
@@ -181,12 +181,12 @@ return array(
 		_last_tr_item = $(this);
 		_last_tr_html = $(this).html();
 		$(this).html(
-			"<input type=\"text\" value=\"" + $(this).text().replace(/\'/, "&#39;") + "\" class=\"editabletr\" svar=\"" + $(this).attr("svar").replace(/\'/, '&#39;') + "\" />" 
-			+ " <span class=\"var_old_value\">" + $(this).attr("svar") + "</span>"
+			'<input type="text" value="' + $(this).text().replace('\'', '&#39;') + '" class="editabletr" svar="' + $(this).attr('svar').replace('\'', '&#39;') + '" />'
+			+ ' <span class="var_old_value">' + $(this).attr('svar') + '</span>'
 		);
 
 		// Set current field focused and selected
-		$(this).find("input.editabletr").focus().select();
+		$(this).find('input.editabletr').focus().select();
 
 		return false;
 	});
