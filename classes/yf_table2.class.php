@@ -142,11 +142,6 @@ class yf_table2 {
 			$params['filter'] = $_SESSION[$filter_name];
 		}
 
-		$on_before_render = isset($params['on_before_render']) ? $params['on_before_render'] : $this->_on['on_before_render'];
-		if (is_callable($on_before_render)) {
-			$on_before_render($params, $this);
-		}
-		_class('core_events')->fire('table.before_render', array('this' => $this));
 		$a = $this->_render_get_data($params);
 		$data	= &$a['data'];
 		$ids	= &$a['ids'];
@@ -185,11 +180,18 @@ class yf_table2 {
 				$this->_rowspan[$group_by] = $this->_data_group_by($data, $group_by);
 			}
 		}
+		$on_before_render = isset($params['on_before_render']) ? $params['on_before_render'] : $this->_on['on_before_render'];
+		if (is_callable($on_before_render)) {
+			$on_before_render($params, $data, $this);
+		}
+		_class('core_events')->fire('table.before_render', array('this' => $this));
+
 		if ($params['as_json']) {
 			$body = $this->_render_as_json($params, $a, $to_hide);
 		} else {
 			$body = $this->_render_as_html($params, $a, $to_hide);
 		}
+
 		$on_after_render = isset($params['on_after_render']) ? $params['on_after_render'] : $this->_on['on_after_render'];
 		if (is_callable($on_after_render)) {
 			$on_after_render($params, $a, $body, $this);
