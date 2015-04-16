@@ -2,13 +2,139 @@
 
 class yf_manage_payout {
 
-	/**
-	*/
+	protected $object      = null;
+	protected $action      = null;
+	protected $id          = null;
+	protected $filter_name = null;
+	protected $filter      = null;
+	protected $url         = null;
+
 	function _init() {
+		// property
+		$object      = &$this->object;
+		$action      = &$this->action;
+		$id          = &$this->id;
+		$filter_name = &$this->filter_name;
+		$filter      = &$this->filter;
+		$url         = &$this->url;
+		// setup property
+		$object = $_GET[ 'object' ];
+		$action = $_GET[ 'action' ];
+		$id     = $_GET[ 'id'     ];
+		$filter_name = $object . '__' . $action;
+		$filter      = $_SESSION[ $filter_name ];
+		// url
+		$url = array(
+			'list' => url_admin( array(
+				'object'       => $object,
+			)),
+			'view' => url_admin( array(
+				'object'       => $object,
+				'action'       => 'view',
+				'operation_id' => '%operation_id',
+			)),
+			'balance' => url_admin( array(
+				'object'     => 'manage_payment',
+				'action'     => 'balance',
+				'user_id'    => '%user_id',
+				'account_id' => '%account_id',
+			)),
+			'user' => url_admin( array(
+				'object' => 'members',
+				'action' => 'edit',
+				'id'     => '%user_id',
+			)),
+		);
 	}
 
-	/**
-	*/
+	function _filter_form_show( $filter, $replace ) {
+		// order
+		$order_fields = array(
+			'o.operation_id'    => 'номер операций',
+			'o.amount'          => 'сумма',
+			'a.balance'         => 'баланс',
+			'o.datetime_start'  => 'дата создания',
+			'o.datetime_update' => 'дата обновления',
+		);
+		// provider
+		$payment_api = _class( 'payment_api' );
+		$providers = $payment_api->provider();
+		$providers__select_box = array();
+		foreach( $providers as $id => $item ) {
+			$providers__select_box[ $id ] = $item[ 'title' ];
+		}
+		// status
+		$payment_status = $payment_api->get_status();
+		$payment_status__select_box = array();
+		$payment_status__select_box[ -1 ] = 'ВСЕ СТАТУСЫ';
+		foreach( $payment_status as $id => $item ) {
+			$payment_status__select_box[ $id ] = $item[ 'title' ];
+		}
+		// render
+		$result = form( $replace, array(
+				'selected' => $filter,
+			))
+			->text( 'user_id'     , 'Номер(а) пользователя' )
+			->text( 'name'        , 'Имя'                   )
+			->text( 'amount'      , 'Сумма от'              )
+			->text( 'amount__and' , 'Сумма до'              )
+			->text( 'balance'     , 'Баланс от'             )
+			->text( 'balance__and', 'Баланс до'             )
+			->select_box( 'status_id'  , $payment_status__select_box, array( 'show_text' => 'статус'    , 'desc' => 'Статус'     ) )
+			->select_box( 'provider_id', $providers__select_box     , array( 'show_text' => 'провайдер' , 'desc' => 'Провайдер'  ) )
+			->select_box( 'order_by'   , $order_fields              , array( 'show_text' => 'сортировка', 'desc' => 'Сортировка' ) )
+			->radio_box( 'order_direction', array( 'asc' => 'прямой', 'desc' => 'обратный' ), array( 'desc' => 'Направление сортировки' ) )
+			->save_and_clear()
+		;
+		return( $result );
+	}
+
+	function _show_filter() {
+		$object      = &$this->object;
+		$action      = &$this->action;
+		$filter_name = &$this->filter_name;
+		$filter      = &$this->filter;
+		if( !in_array( $action, array( 'show' ) ) ) { return( false ); }
+		// url
+		$url_base = array(
+			'object' => $object,
+			'action' => 'filter_save',
+			'id'     => $filter_name,
+		);
+		$result = '';
+		switch( $action ) {
+			case 'show':
+				$url_filter       = url_admin( $url_base );
+				$url_filter_clear = url_admin( $url_base + array(
+					'page'   => 'clear',
+				));
+				$replace = array(
+					'form_action' => $url_filter,
+					'clear_url'   => $url_filter_clear,
+				);
+				$result = $this->_filter_form_show( $filter, $replace );
+			break;
+		}
+		return( $result );
+	}
+
+	function filter_save() {
+		$object = &$this->object;
+		$id     = &$this->id;
+		switch( $id ) {
+			case 'manage_payout__show':
+				$url_redirect_url = url_admin( array(
+					'object' => $object,
+				));
+			break;
+		}
+		$options = array(
+			'filter_name'  => $id,
+			'redirect_url' => $url_redirect_url,
+		);
+		return( _class( 'admin_methods' )->filter_save( $options ) );
+	}
+
 	function show() {
 		$sql = "
 			SELECT op.operation_id as id, op.provider_id, op.status_id as status, op.amount, op.balance, op.title, op.datetime_start
@@ -18,35 +144,99 @@ class yf_manage_payout {
 				AND op.status_id = 1
 			ORDER BY op.datetime_start DESC
 		";
-		$providers = _class( 'payment_api' )->provider( array(
-			'all' => true,
-		));
-		$op_status = _class( 'payment_api' )->get_status();
-		return table($sql)
-			->text('id', '#')
-			->text('title')
-			->func('provider_id', function($value, $extra, $row_info) use ($providers){
-				return $providers[$value]['name'];
-			}, array('desc' => 'provider'))
-			->text('amount')
-			->text('balance')
-			->func('status', function($value, $extra, $row_info) use ($op_status){
-				return $op_status[1][$value]['title'];
-			})
-			->text('datetime_start', 'date')
-			->btn_view()
-			;
+		$object      = &$this->object;
+		$action      = &$this->action;
+		$filter_name = &$this->filter_name;
+		$filter      = &$this->filter;
+		$url         = &$this->url;
+		// payment status
+		$payment_api = _class( 'payment_api' );
+		$payment_status = $payment_api->get_status();
+		$name = 'in_progress';
+		$item = $payment_api->get_status( array( 'name' => $name) );
+		list( $payment_status_in_progress_id, $payment_success_in_progress ) = $item;
+		if( empty( $payment_status_in_progress_id ) ) {
+			$result = array(
+				'status'         => false,
+				'status_header'  => 'Ошибка',
+				'status_message' => 'Статус платежей не найден: ' . $object_name,
+			);
+			return( $this->_user_message( $result ) );
+		}
+		// prepare sql
+		$db = db()->select(
+			'o.operation_id',
+			'o.account_id',
+			'o.provider_id',
+			'a.user_id',
+			'u.name as user_name',
+			'o.amount',
+			'a.balance',
+			'p.title as provider_title',
+			'o.status_id as status_id',
+			'o.datetime_start'
+			)
+			->table( 'payment_operation as o' )
+				->left_join( 'payment_provider as p', 'p.provider_id = o.provider_id' )
+				->left_join( 'payment_account  as a', 'a.account_id  = o.account_id'   )
+				->left_join( 'user as u'            , 'u.id = a.user_id'              )
+			->where( 'p.system', 'in', 0 )
+			->where( 'p.active', 1 )
+			->where( 'o.direction', 'out' )
+		;
+		$sql = $db->sql();
+		return( table( $sql, array(
+				'filter' => $filter,
+				'filter_params' => array(
+					'status_id'   => function( $a ) use( $payment_status_in_progress_id ) {
+						$result = null;
+						$value  = $a[ 'value' ];
+						// default status_id = in_progress
+						if( empty( $value ) ) {
+							$value = $payment_status_in_progress_id;
+						} elseif( $value == -1 ) {
+							$value = null;
+						}
+						isset( $value ) && $result = ' o.status_id = ' . $value;
+						return( $result );
+					},
+					'provider_id' => array( 'cond' => 'eq',      'field' => 'o.provider_id' ),
+					'user_id'     => array( 'cond' => 'in',      'field' => 'a.user_id'     ),
+					'name'        => array( 'cond' => 'like',    'field' => 'u.name'        ),
+					'balance'     => array( 'cond' => 'between', 'field' => 'a.balance'     ),
+					'amount'      => array( 'cond' => 'between', 'field' => 'o.amount'      ),
+					'__default_order'  => 'ORDER BY o.datetime_start DESC',
+				),
+			))
+			->text( 'operation_id'  , 'операция' )
+			->text( 'provider_title', 'провайдер' )
+			->text( 'amount'        , 'сумма' )
+			->text( 'balance'       , 'баланс' )
+			->func( 'user_name', function( $value, $extra, $row_info ) {
+				$result = $value . ' (id: ' . $row_info[ 'user_id' ] . ')';
+				return( $result );
+			}, array( 'desc' => 'пользователь' ) )
+			->func( 'status_id', function( $value, $extra, $row_info ) use ( $payment_status ){
+				$result = $payment_status[ $value ][ 'title' ];
+				return( $result );
+			}, array( 'desc' => 'статус' ) )
+			->text( 'datetime_start', 'дата создания' )
+			->btn( 'Вывод средств', $url[ 'view'    ], array( 'link_params' => 'operation_id'       , 'icon' => 'fa fa-sign-out', 'class_add' => 'btn-danger' ) )
+			->btn( 'Пользователь' , $url[ 'user'    ], array( 'link_params' => 'user_id'            , 'icon' => 'fa fa-user'    , 'class_add' => 'btn-info'   ) )
+			->btn( 'Счет'         , $url[ 'balance' ], array( 'link_params' => 'user_id, account_id', 'icon' => 'fa fa-money'   , 'class_add' => 'btn-info'   ) )
+		);
 	}
 
-	/**
-	*/
-	function view() {
-		$operation_id = (int)$_GET[ 'id' ];
+	function _check_operation( $options = null ) {
+		// import options
+		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		// var
 		$payment_api = _class( 'payment_api' );
+		// check operation
+		$operation_id = isset( $_operation_id ) ? $_operation_id : (int)$_GET[ 'operation_id' ];
 		$operation = $payment_api->operation( array(
 			'operation_id' => $operation_id,
 		));
-		// check operation
 		if( empty( $operation ) ) {
 			$result = array(
 				'status'         => false,
@@ -55,9 +245,9 @@ class yf_manage_payout {
 			return( $this->_user_message( $result ) );
 		}
 		// import operation
-		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, 'o' );
 		// check account
-		$account_result = $payment_api->get_account( array( 'account_id' => $_account_id ) );
+		$account_result = $payment_api->get_account( array( 'account_id' => $o_account_id ) );
 		if( empty( $account_result ) ) {
 			$result = array(
 				'status'         => false,
@@ -82,7 +272,7 @@ class yf_manage_payout {
 		$user_is_online = $online_users->_is_online( $user_id );
 		// check provider
 		$providers_user = $payment_api->provider();
-		if( empty( $providers_user[ $_provider_id ] ) ) {
+		if( empty( $providers_user[ $o_provider_id ] ) ) {
 			$result = array(
 				'status'         => false,
 				'status_header'  => 'Ошибка',
@@ -90,7 +280,7 @@ class yf_manage_payout {
 			);
 			return( $this->_user_message( $result ) );
 		}
-		$provider = &$providers_user[ $_provider_id ];
+		$provider = &$providers_user[ $o_provider_id ];
 		$provider_class = $payment_api->provider_class( array(
 			'provider_name' => $provider[ 'name' ],
 		));
@@ -103,8 +293,8 @@ class yf_manage_payout {
 		}
 		// check request
 		if(
-			empty( $_options[ 'request' ] )
-			|| !is_array( $_options[ 'request' ] )
+			empty( $o_options[ 'request' ] )
+			|| !is_array( $o_options[ 'request' ] )
 		) {
 			$result = array(
 				'status_header'  => 'Ошибка',
@@ -112,7 +302,7 @@ class yf_manage_payout {
 			);
 			return( $this->_user_message( $result ) );
 		}
-		$request = reset( $_options[ 'request' ] );
+		$request = reset( $o_options[ 'request' ] );
 		// check method
 		if( empty( $request[ 'options' ][ 'method_id' ] ) ) {
 			$result = array(
@@ -122,6 +312,41 @@ class yf_manage_payout {
 			return( $this->_user_message( $result ) );
 		}
 		$method = $provider_class->api_method_payout( $request[ 'options' ][ 'method_id' ] );
+		// prepare view: request options
+		$content = array();
+		foreach( $method[ 'option' ] as $key => $title ) {
+			if( !empty( $request[ 'options' ][ $key ] ) ) {
+				$content[ $title ] = $request[ 'options' ][ $key ];
+			}
+		}
+//
+		$result = array(
+			'status'         => true,
+			'operation_id'   => &$operation_id,
+			'operation'      => &$operation,
+			'account_id'     => &$account_id,
+			'account'        => &$account,
+			'user_id'        => &$user_id,
+			'user'           => &$user,
+			'user_is_online' => &$user_is_online,
+			'provider_id'    => &$o_provider_id,
+			'provider'       => &$provider,
+			'provider_class' => &$provider_class,
+			'providers_user' => &$providers_user,
+			'request'        => &$request,
+			'method'         => &$method,
+		);
+		return( $result );
+	}
+
+	function view() {
+		// check operation
+		$result = $this->_check_operation();
+var_dump( $result );
+exit;
+		if( empty( $result[ 'status' ] ) ) { return( $result ); }
+		// var
+		$payment_api = _class( 'payment_api' );
 		// prepare view: request options
 		$content = array();
 		foreach( $method[ 'option' ] as $key => $title ) {
@@ -241,6 +466,7 @@ class yf_manage_payout {
 	}
 
 	protected function _user_message( $options = null ) {
+		$url = &$this->url;
 		// import operation
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		if( empty( $_status_message ) ) { return( null ); }
@@ -262,9 +488,9 @@ class yf_manage_payout {
 		$content = htmlentities( $content, ENT_HTML5, 'UTF-8', $double_encode = false );
 		$panel_header = '<div class="panel-heading">'. $content .'</div>';
 		// footer
+		$url = $url[ 'list' ];
 		$content = '<a href="'. $url .'" class="btn btn-success">Список операций</a>';
 		if( !empty( $_status_footer ) ) {
-			$url = url( '/@object' );
 			$content = $_status_footer;
 		}
 		isset( $content ) && $panel_footer = '<div class="panel-footer">'. $content .'</div>';

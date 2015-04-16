@@ -576,8 +576,11 @@ class yf_payment_api {
 		if( count( $payment_status ) == 1 ) {
 			$payment_status    = reset( $payment_status );
 			$payment_status_id = (int)$payment_status[ 'status_id' ];
+			$result = array( $payment_status_id, $payment_status );
+		} else {
+			$result = $payment_status;
 		}
-		return( array( $payment_status_id, $payment_status ) );
+		return( $result );
 	}
 
 	public function provider_class( $options = null ) {
