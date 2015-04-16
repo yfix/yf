@@ -227,7 +227,7 @@ class yf_manage_payout {
 		);
 	}
 
-	function _check_operation( $options = null ) {
+	function _operation( $options = null ) {
 		// import options
 		is_array( $options ) && extract( $options, EXTR_PREFIX_ALL | EXTR_REFS, '' );
 		// var
@@ -312,14 +312,10 @@ class yf_manage_payout {
 			return( $this->_user_message( $result ) );
 		}
 		$method = $provider_class->api_method_payout( $request[ 'options' ][ 'method_id' ] );
-		// prepare view: request options
-		$content = array();
-		foreach( $method[ 'option' ] as $key => $title ) {
-			if( !empty( $request[ 'options' ][ $key ] ) ) {
-				$content[ $title ] = $request[ 'options' ][ $key ];
-			}
-		}
-//
+		// url
+		$html_amount         = $payment_api->money_html( $o_amount );
+		$html_datetime_start = $o_datetime_start;
+		// result
 		$result = array(
 			'status'         => true,
 			'operation_id'   => &$operation_id,
@@ -335,40 +331,58 @@ class yf_manage_payout {
 			'providers_user' => &$providers_user,
 			'request'        => &$request,
 			'method'         => &$method,
+			'html_amount'         => &$html_amount,
+			'html_datetime_start' => &$html_datetime_start,
 		);
 		return( $result );
 	}
 
 	function view() {
 		// check operation
-		$result = $this->_check_operation();
-var_dump( $result );
-exit;
-		if( empty( $result[ 'status' ] ) ) { return( $result ); }
+		$operation = $this->_operation();
+		/**
+		 * operation options:
+		 *   'operation_id'
+		 *   'operation'
+		 *   'account_id'
+		 *   'account'
+		 *   'user_id'
+		 *   'user'
+		 *   'user_is_online'
+		 *   'provider_id'
+		 *   'provider'
+		 *   'provider_class'
+		 *   'providers_user'
+		 *   'request'
+		 *   'method'
+		 *   etc: see _operation()
+		 */
+		// import options
+		is_array( $operation ) && extract( $operation, EXTR_PREFIX_ALL | EXTR_REFS, '' );
+		if( empty( $_status ) ) { return( $result ); }
 		// var
+		$html        = _class( 'html' );
 		$payment_api = _class( 'payment_api' );
 		// prepare view: request options
 		$content = array();
-		foreach( $method[ 'option' ] as $key => $title ) {
-			if( !empty( $request[ 'options' ][ $key ] ) ) {
-				$content[ $title ] = $request[ 'options' ][ $key ];
+		foreach( $_method[ 'option' ] as $key => $title ) {
+			if( !empty( $_request[ 'options' ][ $key ] ) ) {
+				$content[ $title ] = $_request[ 'options' ][ $key ];
 			}
 		}
-		$html_request_options = _class( 'html' )->dd_table( $content, null, array( 'div_class' => ' ' ) );
+		$html_request_options = $html->simple_table( $content );
 		// prepare view: amount
 		$html_user_url = url_admin( '/members/edit/' . $user_id );
-		$html_amount = $payment_api->money_html( $_amount );
-		$html_date   = $_datetime_start;
 		$content = array(
-			'Сумма'         => $html_amount,
-			'Дата создания' => $html_date,
+			'Сумма'         => $_html_amount,
+			'Дата создания' => $_html_datetime_start,
 		);
 		$html_operation_options = _class( 'html' )->dd_table( $content, null, array( 'div_class' => ' ' ) );
 		// $html_request_options = table( $request_options )->auto();
 // var_dump( $request_options, (string)$html_request_options );
 // exit;
 		// url
-		$is_test = $provider_class->is_test();
+		$is_test = $_provider_class->is_test();
 		$url_base = 'https://cliff.ecommpay.com/';
 		$is_test && $url_base = 'https://cliff-sandbox.ecommpay.com/';
 		$url_operation_detail = $url_base . 'operations/detail/' . $operation_id;
