@@ -656,11 +656,7 @@ class yf_table2 {
 		}
 		$body .= '<tbody'.$tbody_attrs.'>'.PHP_EOL;
 		foreach ((array)$data as $_id => $row) {
-			$tr_attrs = '';
-			if (isset($params['tr'])) {
-				$tr_attrs = $this->_get_attrs_string_from_params($params['tr'], $_id, $row);
-			}
-			$body .= '<tr'.$tr_attrs.'>'.PHP_EOL;
+			$body .= '<tr'.$this->_get_attrs_string_from_params($params['tr'], $_id, $row).'>'.PHP_EOL;
 			foreach ((array)$this->_fields as $info) {
 				$name = $info['name'];
 				if (isset($to_hide[$name])) {
@@ -669,11 +665,7 @@ class yf_table2 {
 				$body .= $this->_render_table_td($info, $row, $params, $_id);
 			}
 			if ($this->_buttons) {
-				$td_attrs = '';
-				if (isset($params['td'])) {
-					$td_attrs = $this->_get_attrs_string_from_params($params['td'], 'buttons', $row);
-				}
-				$body .= '<td nowrap'.$td_attrs.'>';
+				$body .= '<td nowrap'.$this->_get_attrs_string_from_params($params['td'], 'buttons', $row).'>';
 				foreach ((array)$this->_buttons as $info) {
 					$name = $info['name'];
 					$func = &$info['func'];
@@ -698,17 +690,17 @@ class yf_table2 {
 	/**
 	*/
 	function _render_table_contents_rotated($data = array(), $params, $to_hide = array()) {
-		$body .= '<tbody>'.PHP_EOL;
+		$tbody_attrs = '';
+		if (isset($params['tbody'])) {
+			$tbody_attrs = is_array($params['tbody']) ? _attrs($params['tbody'], array('class', 'id')) : ' '.$params['tbody'];
+		}
+		$body .= '<tbody'.$tbody_attrs.'>'.PHP_EOL;
 		foreach ((array)$this->_fields as $info) {
 			$name = $info['name'];
 			if (isset($to_hide[$name])) {
 				continue;
 			}
-			$tr_attrs = '';
-			if (isset($params['tr'])) {
-				$tr_attrs = $this->_get_attrs_string_from_params($params['tr'], $name, $row);
-			}
-			$body .= '<tr'.$tr_attrs.'>'.PHP_EOL;
+			$body .= '<tr'.$this->_get_attrs_string_from_params($params['tr'], $name, $row).'>'.PHP_EOL;
 			foreach ((array)$data as $_id => $row) {
 				$body .= $this->_render_table_td($info, $row, $params, $_id);
 			}
@@ -717,11 +709,7 @@ class yf_table2 {
 		if ($this->_buttons) {
 			$body .= '<tr>'.PHP_EOL;
 			foreach ((array)$data as $_id => $row) {
-				$td_attrs = '';
-				if (isset($params['td'])) {
-					$td_attrs = $this->_get_attrs_string_from_params($params['td'], $_id, $row);
-				}
-				$body .= '<td nowrap'.$td_attrs.'>';
+				$body .= '<td nowrap'.$this->_get_attrs_string_from_params($params['td'], $_id, $row).'>';
 				foreach ((array)$this->_buttons as $info) {
 					$name = $info['name'];
 					$func = &$info['func'];
@@ -778,7 +766,7 @@ class yf_table2 {
 		}
 		$td_attrs = '';
 		if (isset($params['td']) || isset($_extra['td'])) {
-			$td_attrs = $this->_get_attrs_string_from_params($params['td'] ?: $_extra['td'], $name, $row);
+			$td_attrs = $this->_get_attrs_string_from_params($params['td'] ?: $_extra['td'], $name, $row, $row_id);
 		}
 		if (!is_null($row_id) && isset($this->_rowspan[$name])) {
 			$rowspan = $this->_rowspan[$name][$row_id];
@@ -866,17 +854,20 @@ class yf_table2 {
 
 	/**
 	*/
-	function _get_attrs_string_from_params($params, $_id, $row) {
+	function _get_attrs_string_from_params($params, $_id, $row, $row_id = null) {
+		if (!$params) {
+			return '';
+		}
+		$attrs = '';
 		if (is_callable($params)) {
-			$attrs = $params($row, $_id);
+			$attrs = $params($row, $_id, $row_id);
 		} elseif (is_array($params)) {
-			if (is_array($params[$_id])) {
-				$attrs = isset($params[$_id]) ? _attrs($params[$_id], array('class', 'style')) : '';
-			} elseif (is_string($params[$_id])) {
-				$attrs = $params[$_id];
-			}
+			$attrs = $params[$_id];
 		} elseif (is_string($params)) {
 			$attrs = $params;
+		}
+		if (is_array($attrs)) {
+			$attrs = _attrs($attrs, array('class', 'style'));
 		}
 		return $attrs ? ' '.$attrs : '';
 	}
@@ -983,7 +974,6 @@ class yf_table2 {
 	* Register callback for TR element
 	*/
 	function tr($func, $extra = array()) {
-// TODO: implement this
 		$this->_callbacks['tr'][] = array($func, $extra);
 		return $this;
 	}
@@ -992,7 +982,6 @@ class yf_table2 {
 	* Register callback for TD element
 	*/
 	function td($func, $extra = array()) {
-// TODO: implement this
 		$this->_callbacks['td'][] = array($func, $extra);
 		return $this;
 	}

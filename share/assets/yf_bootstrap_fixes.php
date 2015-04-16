@@ -50,6 +50,7 @@ td input[type=text], td textarea { margin-bottom:0; }
 .cssfw-bs2 label.radio-inline input[type=radio] { float:none; margin-left:inherit; margin-top:0; }
 
 .cssfw-bs2 .dropdown-toggle .caret { margin:0 !important; }
+.cssfw-bs2 .navbar .dropdown-toggle .caret { margin-top: 8px !important; }
 
 .cssfw-bs2 .icon-email:before { content:"@"; }
 

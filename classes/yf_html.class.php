@@ -110,6 +110,46 @@ class yf_html {
 
 	/**
 	*/
+	function simple_table($replace = array(), $extra = array()) {
+		if (!$replace) {
+			return false;
+		}
+		$key_name = isset($extra['key']['name']) ? $extra['key']['name'] : 'key';
+		$val_name = isset($extra['val']['name']) ? $extra['val']['name'] : 'val';
+
+		$key_extra = isset($extra['key']['extra']) ? $extra['key']['extra'] : array();
+		$val_extra = isset($extra['val']['extra']) ? $extra['val']['extra'] : array();
+
+		$key_func = isset($extra['key']['func']) ? $extra['key']['func'] : 'text';
+		if (!is_string($key_func) && is_callable($key_func)) {
+			$key_callable = $key_func;
+			$key_func = 'func';
+		}
+		$val_func = isset($extra['val']['func']) ? $extra['val']['func'] : 'text';
+		if (!is_string($val_func) && is_callable($val_func)) {
+			$val_callable = $val_func;
+			$val_func = 'func';
+		}
+
+		$data = array();
+		foreach ((array)$replace as $k => $v) {
+			$data[] = array(
+				$key_name => $k,
+				$val_name => $v,
+			);
+		}
+
+		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
+		$extra['no_header'] = isset($extra['no_header']) ? $extra['no_header'] : 1;
+
+		return table($data, $extra)
+			->$key_func($key_name, $key_callable, $key_extra)
+			->$val_func($val_name, $val_callable, $val_extra)
+		;
+	}
+
+	/**
+	*/
 	function dd_table($replace = array(), $field_types = array(), $extra = array()) {
 		$extra['id'] = $extra['id'] ?: __FUNCTION__.'_'.++$this->_ids[__FUNCTION__];
 		if (DEBUG_MODE) {
