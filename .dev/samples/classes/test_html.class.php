@@ -27,11 +27,17 @@ class test_html {
 
 	/***/
 	function show() {
+		if (preg_match('~^[a-z0-9_]+$~ims', $_GET['id'])) {
+			$only_method = strtolower($_GET['id']);
+		}
 		$url = url('/@object');
 		$methods = get_class_methods($this);
 		sort($methods);
 		foreach ((array)$methods as $name) {
 			if ($name == 'show' || substr($name, 0, 1) == '_') {
+				continue;
+			}
+			if ($only_method && $only_method !== $name) {
 				continue;
 			}
 			$self_source	= _class('core_api')->get_method_source(__CLASS__, $name);
@@ -40,7 +46,7 @@ class test_html {
 
 			$items[] = 
 				'<div id="head_'.$name.'" style="margin-bottom: 30px;">
-					<h1>'.$name.'
+					<h1><a href="'.url('/@object/@action/'.$name).'">'.$name.'</a>
 						<button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_self_source_'.$name.'">test '.$name.'() source</button> '
 						.($target_source['source'] ? ' <button class="btn btn-primary btn-small btn-sm" data-toggle="collapse" data-target="#func_target_source_'.$name.'">_class("html")-&gt;'.$name.'() source</button> ' : '')
 						._class('core_api')->get_github_link('html.'.$name)
@@ -87,6 +93,35 @@ class test_html {
 			'fourth'	=> '44444',
 		);
 		return _class('html')->dd_table($data, array());
+	}
+
+	/***/
+	function simple_table() {
+		$data = array(
+			'first key' 	=> 'first text',
+			'second key'	=> 'second text',
+			'third key'		=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. 
+				Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. 
+				Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. 
+				Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably havent heard of them accusamus labore sustainable VHS.',
+			'fourth key'	=> '44444',
+		);
+		return _class('html')->simple_table($data, array(
+			'key' => array(
+				'func' => function($in) {
+					return '<b>'.$in.'</b>';
+				},
+				'extra' => array(
+					'width' => '20%',
+				),
+			),
+			'tr' => function($row, $id) {
+				return $id === 2 ? array('class' => 'success') : '';
+			},
+			'td' => function($row, $name, $row_id) {
+				return $row_id === 1 && $name == 'key' ? array('class' => 'info') : '';
+			},
+		));
 	}
 
 	/***/
