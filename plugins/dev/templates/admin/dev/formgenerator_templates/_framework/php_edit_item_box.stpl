@@ -1,1 +1,0 @@
-			"%value%_box"			=> common()->select_box("%value%", $%value%_array, $DATA["%value%"]),

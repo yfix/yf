@@ -1,4 +1,0 @@
-	<p>
-		<label>{t(%f_label%)}</label>
-		{%value%}
-	</p>

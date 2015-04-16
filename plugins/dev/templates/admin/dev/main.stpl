@@ -1,4 +1,0 @@
-<br />
-{foreach("methods")}
-	<a href="{#.link}">{#.name}</a><br />
-{/foreach}
