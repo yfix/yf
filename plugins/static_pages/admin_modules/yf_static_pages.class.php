@@ -31,7 +31,7 @@ class yf_static_pages {
 			->btn_edit('', url('/@object/edit/%d/%locale'), array('no_ajax' => 1, 'btn_no_text' => 1))
 			->btn_delete('', url('/@object/delete/%d/%locale'), array('btn_no_text' => 1))
 			->btn_active('', url('/@object/active/%d/%locale'))
-			->footer_add('', url('/@object/add'));
+			->footer_add('', url('/@object/add'), array('no_ajax' => 1));
 	}
 
 	/**
@@ -39,6 +39,7 @@ class yf_static_pages {
 	function add() {
 		$a = (array)$_POST + (array)$a;
 		$a['back_link'] = url('/@object');
+		$a['locale'] = $a['locale'] ?: conf('language');
 		$_this = $this;
 		return form($a)
 			->validate(array(
@@ -49,7 +50,7 @@ class yf_static_pages {
 				}),
 				'locale' => 'required',
 			))
-			->db_insert_if_ok(self::table, array('name'))
+			->db_insert_if_ok(self::table, array('name','locale','active'))
 			->on_after_update(function() {
 				$id = db()->insert_id();
 				common()->admin_wall_add(array('static page added: '.$name, $id));
@@ -58,6 +59,7 @@ class yf_static_pages {
 			})
 			->text('name')
 			->locale_box('locale')
+			->hidden('active')
 			->save_and_back()
 		;
 	}

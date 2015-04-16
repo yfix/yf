@@ -489,15 +489,15 @@ class yf_i18n {
 			}
 		}
 		if (DEBUG_MODE) {
-			if ($this->WRAP_VARS_FOR_INLINE_EDIT) {
+			if ($this->WRAP_VARS_FOR_INLINE_EDIT && false === strpos($output_string, 'class=localetr')) {
 				$r = array(
 					' ' => '%20',
 					'='	=> '&equals;',
 					'<' => '&lt;',
 					'>' => '&gt;',
 				);
-				$s_var = _prepare_html(str_replace(array_keys($r), array_values($r), $_source));
-				$output_string = '<span class=locale_tr s_var='.$s_var.'>'.$output_string.'</span>';
+				$svar = _prepare_html(str_replace(array_keys($r), array_values($r), $_source));
+				$output_string = '<span class=localetr svar='.$svar.'>'.$output_string.'</span>';
 			}
 			debug('i18n[]', array(
 				'name_orig'	=> $_source,
